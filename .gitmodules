@@ -1,0 +1,3 @@
+[submodule "OpenROAD"]
+	path = OpenROAD
+	url = git@github.com:The-OpenROAD-Project/OpenROAD.git

@@ -1,0 +1,54 @@
+# Build working directories
+build/export/*
+!build/export/Dockerfile
+build/logs
+
+# Test working directories
+flow/results
+flow/logs
+flow/reports
+flow/objects
+flow/tech
+
+# Tar archives
+flow/*tar.gz
+
+# Common temp files
+flow/pt_shell_command.log
+flow/command.log
+flow/default.svf
+flow/rc_model.bin
+flow/*.tif.gz
+flow/*.def.v
+
+# RePlAce deps
+*PORT9.dat
+*POST9.dat
+*POWV9.dat
+
+
+# yosys temps
+flow/_tmp_yosys-abc-*
+flow/*_pdn.def
+flow/*.plt
+flow/run.param
+flow/dummy.guide
+flow/macrocell.list
+
+# utdBox router temps
+flow/layer_*.mps
+flow/*.did
+flow/*.log
+flow/*.met
+
+# FlexRoute
+flow/*.opennet
+
+# TSMC65 LP
+flow/platforms/tsmc65lp/
+*m0*
+
+# network
+.nfs*
+
+

@@ -1,0 +1,11 @@
+# These paths are relative to this script (which will run from the SCRIPT_DIR)
+open "generic" {
+  "lefFiles" : "../../../${OBJECTS_DIR}/merged_padded.lef",
+  "defFiles" : "../../../${RESULTS_DIR}/4_cts.def"
+};
+
+run "rsyn.fastRoute" {"outfile" : "${RESULTS_DIR}/route.guide"};
+
+# outfile: string. indicate the name of the generated guides file
+# adjustment: float. indicate the percentage reduction of each edge
+# maxRoutingLayer: integer. indicate the max routing layer available for FastRoute
