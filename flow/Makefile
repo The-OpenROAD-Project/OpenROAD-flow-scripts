@@ -4,7 +4,7 @@ shell:
 # Uncomment or add the design to run
 # ==============================================================================
 
-DESIGN_CONFIG=./designs/aes_nangate45.mk
+# DESIGN_CONFIG=./designs/aes_nangate45.mk
 # DESIGN_CONFIG=./designs/dynamic_node_nangate45.mk
 # DESIGN_CONFIG=./designs/gcd_nangate45.mk
 # DESIGN_CONFIG=./designs/ibex_nangate45.mk
@@ -97,20 +97,20 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 # Link flute data files
 # ==============================================================================
 ./PORT9.dat:
-	ln -sf $(OPENROAD)/share/replace/$@ $@
+	ln -sf $(OPENROAD)/src/yosys/$@ $@
 ./POST9.dat:
-	ln -sf $(OPENROAD)/share/replace/$@ $@
+	ln -sf $(OPENROAD)/etc/$@ $@
 ./POWV9.dat:
-	ln -sf $(OPENROAD)/share/replace/$@ $@
+	ln -sf $(OPENROAD)/etc/$@ $@
 ../etc/PORT9.dat:
 	mkdir -p ../etc
-	ln -sf $(OPENROAD)/share/replace/PORT9.dat $@
+	ln -sf $(OPENROAD)/src/yosys/PORT9.dat $@
 ../etc/POST9.dat:
 	mkdir -p ../etc
-	ln -sf $(OPENROAD)/share/replace/POST9.dat $@
+	ln -sf $(OPENROAD)/etc/POST9.dat $@
 ../etc/POWV9.dat:
 	mkdir -p ../etc
-	ln -sf $(OPENROAD)/share/replace/POWV9.dat $@
+	ln -sf $(OPENROAD)/etc/POWV9.dat $@
 
 
 
@@ -182,14 +182,15 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_syn
 # STEP 2: IO Placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_1_floorplan.def
-	ioPlacer --input-lef $(OBJECTS_DIR)/merged.lef \
-	         --input-def $(RESULTS_DIR)/2_1_floorplan.def \
-	         --output $@ \
-	         --hmetal 5 \
-	         --vmetal 6 \
-	         --random 2 \
-	         --wirelen 1 \
-	         2>&1 | tee $(LOG_DIR)/2_2_ioPlacer.log
+	openroad $(SCRIPTS_DIR)/io_placement.tcl
+#	ioPlacer --input-lef $(OBJECTS_DIR)/merged.lef \
+#	         --input-def $(RESULTS_DIR)/2_1_floorplan.def \
+#	         --output $@ \
+#	         --hmetal 5 \
+#	         --vmetal 6 \
+#	         --random 2 \
+#	         --wirelen 1 \
+#	         2>&1 | tee $(LOG_DIR)/2_2_ioPlacer.log
 
 # STEP 3: Timing Driven Mixed Sized Placement
 # Only run if required
@@ -378,7 +379,7 @@ $(RESULTS_DIR)/4_cts.v: $(OBJECTS_DIR)/tritonCts.config | ./PORT9.dat ./POST9.da
 	  -executablePath=$(TRITONCTS)/genHtree \
 	  -legalizerPath=$(TRITONCTS)/../OpenDP/opendp \
 	  -outputPath=$(RESULTS_DIR)/run 2>&1 | tee $(LOG_DIR)/4_tritonCTS.log
-	opendp < $(SCRIPTS_DIR)/cts_legalize.tcl
+	openroad $(SCRIPTS_DIR)/cts_legalize.tcl
 	cp $(RESULTS_DIR)/run/final.v $@
 
 $(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_cts.v
@@ -506,13 +507,16 @@ nuke:
 	rm -rf *.rpt *.def.v innovus.* pin_dumper.log
 
 
-# Open any def file using innovus
+# DEF/GDS viewer shortcuts
 #-------------------------------------------------------------------------------
-$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),debug_$(def)): debug_%:
+$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),innovus_$(def)): innovus_%:
 	innovus -execute "loadLefFile $(MERGED_LEF) ; \
 	                  loadDefFile $(RESULTS_DIR)/$* ; \
 	                  win" \
 	                  -no_logv ; stty sane
+
+$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayout_%:
+	klayout -nn $(KLAYOUT_TECH_FILE) $(RESULTS_DIR)/$*
 
 # run test using gnu parallel
 #-------------------------------------------------------------------------------
@@ -523,6 +527,3 @@ run_test:
 	         --workdir `pwd` < $(TEST_SCRIPT) \
 	         --joblog $(TEST_DIR)/parallel.log
 
-innovus_%:
-	#innovus -execute "loadLefFile $(OBJECTS_DIR)/merged_padded.lef; loadDefFile $(RESULTS_DIR)/$*.def; win;"
-	innovus -execute "puts $(OBJECTS_DIR)/merged_padded.lef; puts $(RESULTS_DIR)/$*.v; puts $(RESULTS_DIR)/$*.def; win;"

@@ -24,7 +24,7 @@ This repository serves as an example RTL-to-GDS flow using the OpenROAD tools. T
 See the flow [README](flow#running-the-flow) for details about the flow and how to run designs through the flow
 
 
-## Useful resources
+## Useful Resources
 Your feedback is very welcome.
 - **Website**: Visit our [website](https://theopenroadproject.org/) for more informaiton on the project, participants and objectives.
 - **GitHub Issues**: Please submit GitHub issues for any bugs, improvements, or new feature requests. Feedback can be directed at this repository or the repositry for the tool, component or design as appropriate. This [link](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+archived%3Afalse+user%3AThe-OpenROAD-Project+) is an aggregate of all OpenROAD related issues

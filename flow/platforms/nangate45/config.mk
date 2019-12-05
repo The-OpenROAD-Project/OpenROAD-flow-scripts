@@ -46,12 +46,15 @@ export CAP_PER_MICRON = 0.235146e-12
 export RES_PER_MICRON = 1.59
 
 # Primarily used by Resizer (Typically pF and kOhm)
-export CAP_UNIT_PER_MICRON    = 0.00020
-export RES_UNIT_PER_MICRON    = 0.0020
-export RESIZER_BUF_CELL = BUF_X4
+export CAP_UNIT_PER_MICRON = 0.00020
+export RES_UNIT_PER_MICRON = 0.0020
+export RESIZER_BUF_CELL    = BUF_X4
 
 # Magic technology file
 export MAGIC_TECH_FILE = ./platforms/nangate45/magic.tech
+
+# KLayout layer properties
+export KLAYOUT_TECH_FILE = ./platforms/nangate45/FreePDK45.lyt
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
