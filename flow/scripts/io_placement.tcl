@@ -2,21 +2,22 @@ if {[info exists standalone] && !$standalone} {
   # Do nothing
 } else {
   # Read process files
+  read_lef $::env(OBJECTS_DIR)/merged.lef
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
   }
-  read_lef $::env(OBJECTS_DIR)/merged_padded.lef
-
+  
   # Read design files
-  read_def $::env(RESULTS_DIR)/run/cts_no_dummies.def
+  read_def $::env(RESULTS_DIR)/2_1_floorplan.def
 }
 
-legalize_placement
+run_io_placement -hor_layer 3 -ver_layer 2
 
 if {[info exists standalone] && !$standalone} {
   # Do nothing
 } else {
   # write output
-  write_def $::env(RESULTS_DIR)/run/cts_final.def
+  write_def $::env(RESULTS_DIR)/2_2_floorplan_io.def
+  
   exit
 }

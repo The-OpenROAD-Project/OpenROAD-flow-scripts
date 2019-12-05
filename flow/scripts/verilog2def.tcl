@@ -14,12 +14,9 @@ if {[info exists standalone] && !$standalone} {
   link_design $::env(DESIGN_NAME)
 }
 
-
 # create floorplan
 initialize_floorplan -die_area $::env(DIE_AREA) -core_area $::env(CORE_AREA) \
   -tracks $::env(TRACKS_INFO_FILE) -site $::env(PLACE_SITE)
-
-autoPlacePins metal1
 
 if {[info exists standalone] && !$standalone} {
   # Do nothing

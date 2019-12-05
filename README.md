@@ -1,4 +1,4 @@
-# OpenROAD Alpha Release
+# OpenROAD Flow
 [![Gitter](https://badges.gitter.im/The-OpenROAD-Project/community.svg)](https://gitter.im/The-OpenROAD-Project/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 

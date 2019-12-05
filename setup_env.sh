@@ -1,4 +1,4 @@
-modroot="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+modroot="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )/OpenROAD"
 
 
 if [ ! -d "${modroot}" ]; then
@@ -24,8 +24,8 @@ else
 fi
 
 if [ -n "${MANPATH}" ]; then
-    export MANPATH=/net/trenton/x/rovinski/openroad/openroad/OpenROAD-2019-09-05_20-10/share/man
-    #export MANPATH=${modroot}/share/man:$MANPATH
+    #export MANPATH=/net/trenton/x/rovinski/openroad/openroad/OpenROAD-2019-09-05_20-10/share/man
+    export MANPATH=${modroot}/share/man:$MANPATH
 else
   export MANPATH=${modroot}/share/man
 fi
