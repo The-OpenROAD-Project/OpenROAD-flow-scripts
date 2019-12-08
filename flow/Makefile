@@ -136,7 +136,7 @@ $(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
 	yosys -l $(LOG_DIR)/1_yosys.log -c $(SYNTH_SCRIPT)
 
 $(RESULTS_DIR)/1_2_buffer.v: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE) | ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat
-	openroad $(SCRIPTS_DIR)/buffer.tcl \
+	sta $(SCRIPTS_DIR)/buffer.tcl \
 	        2>&1 | tee $(LOG_DIR)/1_2_buffer.log
 	@! grep --color "Error:" $(LOG_DIR)/1_2_buffer.log
 
