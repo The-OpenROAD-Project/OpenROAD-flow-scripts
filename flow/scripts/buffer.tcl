@@ -1,67 +1,28 @@
-################################################################################
-# This script is intended to be run in the OpenSTA/Resizer framework.
-#
-# Purpose: It reads an input verilog file (from yosys) and performs buffering on
-#          high fanout nets to reduce routing/congestion issues experienced by
-#          tools further down in the flow.
-#          - For high fanout nets from tie-hi/low cells, the script adds more
-#            of the tie cells instead of buffering
-#          - The primary clock net ($::env(CLOCK_PORT)) is excluded from buffering
-#          - Other high fanout nets are buffered using an algorithm that attempts
-#            to implement a balanced tree
-# Author: Tutu Ajayi
-#
-################################################################################
+if {[info exists standalone] && !$standalone} {
+  # Do nothing
+} else {
+  # Read liberty files
+  foreach libFile $::env(LIB_FILES) {
+    read_liberty $libFile
+  }
+
+  # Read tech LEF
+  read_lef $::env(OBJECTS_DIR)/merged.lef 
+  
+  # Read verilog
+  read_verilog $::env(RESULTS_DIR)/1_1_yosys.v
+  
+  # Link the design
+  link_design $::env(DESIGN_NAME)
+  
+  # Read sdc
+  read_sdc $::env(SDC_FILE)
+}
 
 puts "Max Fanout Settings: $::env(MAX_FANOUT)"
 
 ################################################################################
-# 1) Open the design
-################################################################################
-
-# Read liberty files
-foreach libFile $::env(LIB_FILES) {
-  read_liberty $libFile
-}
-
-  # Read tech LEF
-  read_lef $::env(OBJECTS_DIR)/merged.lef
-
-# Read verilog
-read_verilog $::env(RESULTS_DIR)/1_1_yosys.v
-
-# Link the design
-link_design $::env(DESIGN_NAME)
-
-# Read sdc
-read_sdc $::env(SDC_FILE)
-
-
-################################################################################
-# 2) Search for floating nets and print them out
-################################################################################
-
-set floatingNetObjs ""
-foreach net [get_nets *] {
-  set pinCount [expr [llength [get_pins -of $net]] + [llength [get_ports -of $net]]]
-
-  if {$pinCount == 1} {
-    lappend floatingNetObjs $net
-  }
-}
-
-# Print user message
-if {[llength $floatingNetObjs] > 0} {
-  puts "\n---------------------------------------------------------------------"
-  puts "WARNING: [llength $floatingNetObjs] floating nets"
-  foreach net $floatingNetObjs {
-    puts " - [get_full_name $net]"
-  }
-}
-
-
-################################################################################
-# 3a) Handle Tie High
+# Handle Tie High
 ################################################################################
 
 # Setup tie cell information
@@ -121,7 +82,7 @@ foreach netObj $tieHiHighFanoutNetObjs {
 }
 
 ################################################################################
-# 3b) Handle Tie Low
+# Handle Tie Low
 # Same as Tie Hi (Should probably make it a function)
 ################################################################################
 
@@ -185,7 +146,7 @@ foreach netObj $tieLoHighFanoutNetObjs {
 
 
 ################################################################################
-# 4) Handle Other High Fanout nets
+# Handle Other High Fanout nets
 ################################################################################
 
 
@@ -407,4 +368,9 @@ report_tns > $::env(REPORTS_DIR)/1_synth_tns.rpt
 report_wns > $::env(REPORTS_DIR)/1_synth_wns.rpt
 
 
-exit
+if {[info exists standalone] && !$standalone} {
+  # Do nothing
+} else {
+  exit
+}
+
