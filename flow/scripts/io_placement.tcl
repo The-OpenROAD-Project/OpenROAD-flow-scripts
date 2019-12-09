@@ -11,7 +11,7 @@ if {[info exists standalone] && !$standalone} {
   read_def $::env(RESULTS_DIR)/2_1_floorplan.def
 }
 
-run_io_placement -hor_layer 3 -ver_layer 2
+run_io_placement -hor_layer 3 -ver_layer 2 -random
 
 if {[info exists standalone] && !$standalone} {
   # Do nothing

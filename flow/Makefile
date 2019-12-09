@@ -411,8 +411,7 @@ route: $(RESULTS_DIR)/5_route.def \
 $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_cts.def
 	@$(call BANNER, 5. ROUTING)
 	envsubst < $(SCRIPTS_DIR)/fastroute.rsyn > $(OBJECTS_DIR)/fastroute.rsyn
-	FRlefdef -l $(OBJECTS_DIR)/merged_padded.lef -d $(RESULTS_DIR)/4_cts.def -o $@ 2>&1 | tee $(LOG_DIR)/5_1_FRlefdef.log
-	#FRlefdef --no-gui --script $(OBJECTS_DIR)/fastroute.rsyn 2>&1 | tee $(LOG_DIR)/5_1_FRlefdef.log
+	openroad $(SCRIPTS_DIR)/global_route.tcl | tee $(LOG_DIR)/5_1_FRlefdef.log
 
 
 # STEP 2: Run detail route
