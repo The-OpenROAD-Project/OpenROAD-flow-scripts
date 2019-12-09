@@ -410,8 +410,7 @@ route: $(RESULTS_DIR)/5_route.def \
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_cts.def
 	@$(call BANNER, 5. ROUTING)
-	envsubst < $(SCRIPTS_DIR)/fastroute.rsyn > $(OBJECTS_DIR)/fastroute.rsyn
-	openroad $(SCRIPTS_DIR)/global_route.tcl | tee $(LOG_DIR)/5_1_FRlefdef.log
+	openroad $(SCRIPTS_DIR)/global_route.tcl | tee $(LOG_DIR)/5_1_fastroute.log
 
 
 # STEP 2: Run detail route
