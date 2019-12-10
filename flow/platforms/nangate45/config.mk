@@ -27,8 +27,8 @@ export PLACE_SITE = FreePDK45_38x28_10R_NP_162NW_34O
 # Track information for generating DEF tracks
 export TRACKS_INFO_FILE = ./platforms/nangate45/tracks.info
 
-# Cell padding in microns to ease rout-ability
-export CELL_PAD_IN_MICRON = 1.0
+# Cell padding in SITE widths to ease rout-ability
+export CELL_PAD_IN_SITES = 5
 
 # Endcap and Welltie cells
 # Use fillers if kit doesn't have them

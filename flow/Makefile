@@ -79,7 +79,7 @@ $(OBJECTS_DIR)/merged.lef: $(MERGED_LEF)
 	cp $< $@
 
 $(OBJECTS_DIR)/merged_padded.lef: $(OBJECTS_DIR)/merged.lef
-	$(SCRIPTS_DIR)/padLefMacro.py -p $(CELL_PAD_IN_MICRON) -i $< -o $@
+	$(SCRIPTS_DIR)/padLefMacro.py -p $(CELL_PAD_IN_SITES) -i $< -o $@
 
 # Modify lef files for TritonRoute
 $(OBJECTS_DIR)/merged_padded_spacing.lef: $(OBJECTS_DIR)/merged_padded.lef

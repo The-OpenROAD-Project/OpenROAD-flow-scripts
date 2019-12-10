@@ -8,17 +8,38 @@ import argparse  # argument parsing
 # ==============================================================================
 parser = argparse.ArgumentParser(
     description='Adds padding to the right of all macros in a lef file')
-parser.add_argument('--padding', '-p', required=True,
-                    help='Padding')
+parser.add_argument('--padding', '-p', required=True, type=int,
+                    help='Padding in SITE widths')
 parser.add_argument('--exclude', '-e', required=False,
                     default='ENDCAPTIE* FILL* WELLTAP* tsmc65lp_*',
                     help='exclude')
 parser.add_argument('--inputLef', '-i', required=True,
-                    help='Input Lef')
+                    help='Input LEF')
 parser.add_argument('--outputLef', '-o', required=True,
-                    help='Output Lef')
+                    help='Output LEF')
 args = parser.parse_args()
 
+
+# Function to parse SITE width from inputLef
+def get_site_width(content):
+  site_struct = []
+  add_to_struct = False
+
+  lef = content.split('\n')
+
+  for line in lef:
+    if re.search("^SITE", line):
+      add_to_struct = True
+    if add_to_struct:
+      site_struct.append(line)
+
+      if re.search("^END", line):
+        break
+  for prop in site_struct:
+    site_prop = re.search("^\s*SIZE\s([0-9\.]*)\sBY", prop)
+    if site_prop:
+      return float(site_prop.group(1))
+  raise ValueError("SIZE property of SITE not found")
 
 # Function used by re.sub
 def replace_pad(match):
@@ -36,7 +57,7 @@ def replace_pad(match):
   if skip:
     new_x = m[2]
   else:
-    new_x = str(round(float(m[2]) + float(args.padding), 2))
+    new_x = str(round(float(m[2]) + cell_padding, 2))
 
   replace = r"MACRO " + m[0] + m[1] + "SIZE " + new_x + " BY " + m[3] + m[4] + "END"
   return replace
@@ -47,6 +68,14 @@ print(os.path.basename(__file__),": Padding technology lef file")
 f = open(args.inputLef)
 content = f.read()
 f.close()
+
+# Set padding
+site_width = get_site_width(content)
+cell_padding = float(args.padding) * site_width
+
+print("Cell padding (in SITE widths): " + str(args.padding))
+print("Derived SITE width: " + str(site_width))
+print("Cell padding: " + str(cell_padding))
 
 # Perform match
 pattern = r"MACRO\s+(\S+)(.*?)SIZE (\S+) BY (\S+)(.*?)END"
