@@ -1,6 +1,4 @@
-if {[info exists standalone] && !$standalone} {
-  # Do nothing
-} else {
+if {![info exists standalone] || $standalone} {
   # Read liberty files
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
@@ -368,9 +366,7 @@ report_tns > $::env(REPORTS_DIR)/1_synth_tns.rpt
 report_wns > $::env(REPORTS_DIR)/1_synth_wns.rpt
 
 
-if {[info exists standalone] && !$standalone} {
-  # Do nothing
-} else {
+if {![info exists standalone] || $standalone} {
   exit
 }
 

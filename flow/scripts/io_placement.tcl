@@ -1,6 +1,4 @@
-if {[info exists standalone] && !$standalone} {
-  # Do nothing
-} else {
+if {![info exists standalone] || $standalone} {
   # Read process files
   read_lef $::env(OBJECTS_DIR)/merged.lef
   foreach libFile $::env(LIB_FILES) {
@@ -13,11 +11,8 @@ if {[info exists standalone] && !$standalone} {
 
 run_io_placement -hor_layer 3 -ver_layer 2 -random
 
-if {[info exists standalone] && !$standalone} {
-  # Do nothing
-} else {
+if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/2_2_floorplan_io.def
-  
   exit
 }

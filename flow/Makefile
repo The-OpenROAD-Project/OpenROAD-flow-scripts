@@ -135,7 +135,7 @@ $(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	yosys -l $(LOG_DIR)/1_yosys.log -c $(SYNTH_SCRIPT)
 
-$(RESULTS_DIR)/1_2_buffer.v: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE) | ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat
+$(RESULTS_DIR)/1_2_buffer.v: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE) $(OBJECTS_DIR)/merged.lef | ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat
 	openroad $(SCRIPTS_DIR)/buffer.tcl \
 	        2>&1 | tee $(LOG_DIR)/1_2_buffer.log
 	@! grep --color "Error:" $(LOG_DIR)/1_2_buffer.log
@@ -183,14 +183,6 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_syn
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_1_floorplan.def
 	openroad $(SCRIPTS_DIR)/io_placement.tcl
-#	ioPlacer --input-lef $(OBJECTS_DIR)/merged.lef \
-#	         --input-def $(RESULTS_DIR)/2_1_floorplan.def \
-#	         --output $@ \
-#	         --hmetal 5 \
-#	         --vmetal 6 \
-#	         --random 2 \
-#	         --wirelen 1 \
-#	         2>&1 | tee $(LOG_DIR)/2_2_ioPlacer.log
 
 # STEP 3: Timing Driven Mixed Sized Placement
 # Only run if required

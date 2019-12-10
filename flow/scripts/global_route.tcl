@@ -4,15 +4,14 @@ if {![info exists standalone] || $standalone} {
     read_liberty $libFile
   }
   read_lef $::env(OBJECTS_DIR)/merged_padded.lef
-
+  
   # Read design files
-  read_def $::env(RESULTS_DIR)/run/cts_no_dummies.def
+  read_def $::env(RESULTS_DIR)/4_cts.def
 }
 
-legalize_placement
+set_wire_rc -resistance $::env(RES_UNIT_PER_MICRON) -capacitance $::env(CAP_UNIT_PER_MICRON)
+run_global_routing -output_file $::env(RESULTS_DIR)/route.guide
 
 if {![info exists standalone] || $standalone} {
-  # write output
-  write_def $::env(RESULTS_DIR)/run/cts_final.def
   exit
 }

@@ -1,6 +1,4 @@
-if {[info exists standalone] && !$standalone} {
-  # Do nothing
-} else {
+if {![info exists standalone] || $standalone} {
   # Read process files
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
@@ -13,9 +11,7 @@ if {[info exists standalone] && !$standalone} {
 
 legalize_placement
 
-if {[info exists standalone] && !$standalone} {
-  # Do nothing
-} else {
+if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/3_3_place_dp.def
   exit

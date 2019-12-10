@@ -18,9 +18,9 @@ done
 
 
 if [ -n "${PATH}" ]; then
-  export PATH=${modroot}/build/src:$modroot/build/src/pdn/scripts:$path_string$PATH
+  export PATH=${modroot}/build/src:$modroot/build/src/pdn/src/scripts:$path_string$PATH
 else
-  export PATH=${modroot}/build/src:$modroot/build/src/pdn/scripts:$path_string
+  export PATH=${modroot}/build/src:$modroot/build/src/pdn/src/scripts:$path_string
 fi
 
 if [ -n "${MANPATH}" ]; then
