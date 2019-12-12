@@ -8,5 +8,5 @@ Downloaded from https://projects.si2.org/openeda.si2.org/project/showfiles.php?g
 
 ### Modifications
 - Performed abstract generation from the gds files to avoid polygon pin shapes in the LEF
-- Added additional files and info required for the OpenROAD alpha-release flow
+- Added additional files and info required for the OpenROAD flow
 - Added LICENSE

@@ -26,14 +26,14 @@ See the flow [README](flow#running-the-flow) for details about the flow and how 
 
 ## Useful Resources
 Your feedback is very welcome.
-- **Website**: Visit our [website](https://theopenroadproject.org/) for more informaiton on the project, participants and objectives.
-- **GitHub Issues**: Please submit GitHub issues for any bugs, improvements, or new feature requests. Feedback can be directed at this repository or the repositry for the tool, component or design as appropriate. This [link](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+archived%3Afalse+user%3AThe-OpenROAD-Project+) is an aggregate of all OpenROAD related issues
+- **Website**: Visit our [website](https://theopenroadproject.org/) for more information on the project, participants and objectives.
+- **GitHub Issues**: Please submit GitHub issues for any bugs, improvements, or new feature requests. Feedback can be directed at this repository or the repository for the tool, component or design as appropriate. This [link](https://github.com/issues?utf8=%E2%9C%93&q=is%3Aopen+archived%3Afalse+user%3AThe-OpenROAD-Project+) is an aggregate of all OpenROAD related issues
 - **Community**: Find us on the public [Gitter community](https://gitter.im/The-OpenROAD-Project/community) where you can ask quick questions or discuss anything OpenROAD related.
 
 
 ## Contributing
 We welcome any comments, patches and designs to help us improve the tool.
-At this time we are focused on overhauling the build process, build testing, and the continous integration framework. This will set us up for better integration with contributers. Please stay tuned.
+At this time we are focused on overhauling the build process, build testing, and the continuous integration framework. This will set us up for better integration with contributors. Please stay tuned.
 
 ## License
 The OpenROAD-flow repository (build and run scripts) has a BSD 3-Clause License. The flow relies on several tools, platforms and designs that each have their own licenses:
