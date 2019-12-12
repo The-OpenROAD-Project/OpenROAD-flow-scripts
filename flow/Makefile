@@ -238,8 +238,7 @@ endif
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_5_floorplan_pdn.def: $(RESULTS_DIR)/2_4_floorplan_macro.def
 ifneq ($(PDN_CFG),)
-	apply_pdn $(PDN_CFG) | tee $(LOG_DIR)/2_5_apply_pdn.log
-	mv $(DESIGN_NAME)_post_T8.def $@
+	openroad $(SCRIPTS_DIR)/pdn.tcl | tee $(LOG_DIR)/2_5_apply_pdn.log
 else
 	cp $< $@
 endif
