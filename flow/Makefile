@@ -133,7 +133,7 @@ SYNTH_SCRIPT ?= scripts/synth.tcl
 $(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
 	@$(call BANNER, 1. SYNTHESIS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	yosys -l $(LOG_DIR)/1_yosys.log -c $(SYNTH_SCRIPT)
+	yosys -l $(LOG_DIR)/1_1_yosys.log -c $(SYNTH_SCRIPT)
 
 $(RESULTS_DIR)/1_2_buffer.v: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE) $(OBJECTS_DIR)/merged.lef | ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat
 	openroad $(SCRIPTS_DIR)/buffer.tcl \
@@ -182,7 +182,8 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_syn
 # STEP 2: IO Placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_1_floorplan.def
-	openroad $(SCRIPTS_DIR)/io_placement.tcl
+	openroad $(SCRIPTS_DIR)/io_placement.tcl \
+		2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 
 # STEP 3: Timing Driven Mixed Sized Placement
 # Only run if required
@@ -238,7 +239,7 @@ endif
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_5_floorplan_pdn.def: $(RESULTS_DIR)/2_4_floorplan_macro.def
 ifneq ($(PDN_CFG),)
-	openroad $(SCRIPTS_DIR)/pdn.tcl | tee $(LOG_DIR)/2_5_apply_pdn.log
+	openroad $(SCRIPTS_DIR)/pdn.tcl | tee $(LOG_DIR)/2_5_pdn.log
 else
 	cp $< $@
 endif
@@ -254,7 +255,7 @@ $(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DI
 	        -welltap $(WELLTIE_CELL) \
 	        -endcap $(ENDCAP_CELL) \
 	        -rows \
-	        -outdef $@ | tee $(LOG_DIR)/2_6_tapcell.log
+	        -outdef $@ 2>&1 | tee $(LOG_DIR)/2_6_tapcell.log
 
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_tapcell.def
 	cp $< $@
@@ -287,7 +288,8 @@ place: $(RESULTS_DIR)/3_place.def \
 $(RESULTS_DIR)/3_1_place_gp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
 	@$(call BANNER, 3. PLACE)
 	rm -rf $(RESULTS_DIR)/etc/
-	openroad $(SCRIPTS_DIR)/global_place.tcl
+	openroad $(SCRIPTS_DIR)/global_place.tcl \
+		2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 
 $(RESULTS_DIR)/replace.gif: $(RESULTS_DIR)/3_1_place_gp.def
 	convert -delay 20  $(RESULTS_DIR)/replace/etc/floorplan/output/cell/cGP2D*.jpg \
@@ -401,7 +403,7 @@ route: $(RESULTS_DIR)/5_route.def \
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_cts.def
 	@$(call BANNER, 5. ROUTING)
-	openroad $(SCRIPTS_DIR)/global_route.tcl | tee $(LOG_DIR)/5_1_fastroute.log
+	openroad $(SCRIPTS_DIR)/global_route.tcl 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
 
 
 # STEP 2: Run detail route
@@ -448,8 +450,8 @@ clean_route:
 # |  _|  | || |\  || | ___) |  _  || || |\  | |_| |
 # |_|   |___|_| \_|___|____/|_| |_|___|_| \_|\____|
 #
-finish: $(RESULTS_DIR)/6_final.gds \
-        $(REPORTS_DIR)/6_final_report.rpt
+finish: $(REPORTS_DIR)/6_final_report.rpt \
+        $(RESULTS_DIR)/6_final.gds
 # ==============================================================================
 $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.sdc
 	openroad $(SCRIPTS_DIR)/final_report.tcl \
@@ -461,7 +463,7 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_r
 $(RESULTS_DIR)/6_final.gds: $(MAGIC_TECH_FILE) $(GDS_FILES) $(RESULTS_DIR)/5_route.def
 	@$(call BANNER, 6. FINISHING)
 	magic -dnull -noconsole -T $(MAGIC_TECH_FILE) \
-	      $(SCRIPTS_DIR)/magic.tcl | tee $(LOG_DIR)/6_magic.log
+	      $(SCRIPTS_DIR)/magic.tcl 2>&1 | tee $(LOG_DIR)/6_magic.log
 
 clean_finish:
 	rm -rf $(RESULTS_DIR)/6_final.gds

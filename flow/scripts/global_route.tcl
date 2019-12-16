@@ -10,7 +10,7 @@ if {![info exists standalone] || $standalone} {
 }
 
 set_wire_rc -resistance $::env(RES_UNIT_PER_MICRON) -capacitance $::env(CAP_UNIT_PER_MICRON)
-run_global_routing -output_file $::env(RESULTS_DIR)/route.guide
+fastroute -output_file $::env(RESULTS_DIR)/route.guide
 
 if {![info exists standalone] || $standalone} {
   exit
