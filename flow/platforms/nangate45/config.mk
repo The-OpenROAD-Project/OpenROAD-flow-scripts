@@ -59,3 +59,6 @@ export KLAYOUT_TECH_FILE = ./platforms/nangate45/FreePDK45.lyt
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS = FILLCELL_X1
+
+# Define default PDN config
+export PDN_CFG ?= ./platforms/nangate45/pdn.cfg
