@@ -1,5 +1,3 @@
-shell:
-	openroad
 # ==============================================================================
 # Uncomment or add the design to run
 # ==============================================================================
@@ -61,7 +59,7 @@ export TEST_DIR    = ./test
 SHELL = /bin/bash -o pipefail
 BANNER = printf "\e[31m" ; \
          date ; \
-         figlet -c -p -d $(OPENROAD)/figlet/fonts/ $(1) ; \
+         figlet -c -p -d $(OPENROAD)/build/src/TritonCTS/fonts/ $(1) ; \
          printf "\e[0m" ; \
          sleep 1 ;
 
