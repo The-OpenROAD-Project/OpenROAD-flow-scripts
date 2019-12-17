@@ -230,28 +230,31 @@ if {[llength $highFanoutNetObjs] > 0} {
 
 
 ################################################################################
-# Process each long net
+# Process each high fanout net
 ################################################################################
 foreach netObj $highFanoutNetObjs {
   puts "\n---------------------------------------------------------------------"
   puts "Buffering Net: [get_full_name $netObj]"
 
-  set netSrcPinObj    [get_pins -of $netObj -filter "direction == output"]
+  set netSrcObj    [get_pins -of $netObj -filter "direction == output"]
   # The source may fail to set if it's a toplevel port. Falling back to that
-  if {$netSrcPinObj == ""} {
-    set netSrcPinObj [get_ports -of $netObj]
-    set netSrcPinObjisPort 1
+  set netSrcObjisPort 0
+  if {$netSrcObj == ""} {
+    set netSrcObj [get_ports -of $netObj]
+    set netSrcObjisPort 1
   }
 
-  # HACK REMOVING THE LAST ENTRY OF THE SINK LIST
+  # HACK ALERT:
+  # Removing the last entry in the sink list... really hope this is this is
+  # the pin associated with a Port.
   set netSinkPinObjs  [get_pins -of $netObj -filter "direction == input"]
-  if {$netSrcPinObjisPort} {
+  if {$netSrcObjisPort} {
     set netSinkPinObjs [lreplace $netSinkPinObjs [expr [llength $netSinkPinObjs] -1] [expr [llength $netSinkPinObjs] -1]]
   }
 
   set netSinkPinCnt   [llength $netSinkPinObjs]
 
-  puts "Source Pin: [get_full_name $netSrcPinObj]"
+  puts "Source Pin: [get_full_name $netSrcObj]"
   puts "Sink Pin Count: $netSinkPinCnt"
 
 
@@ -271,9 +274,6 @@ foreach netObj $highFanoutNetObjs {
 
   # Disconnect all sinks
   # ------------------------------------------------------------------------------
-  # disconnect_pin $netObj -all
-  # connect_pin $netObj $netSrcPinObj
-  # HACK: Connect pin no longer connects objects of type port
   foreach var $netSinkPinObjs {
     disconnect_pin $netObj $var
   }
