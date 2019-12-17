@@ -3,15 +3,23 @@
 # ==============================================================================
 
 # DESIGN_CONFIG=./designs/aes_nangate45.mk
+# DESIGN_CONFIG=./designs/black_parrot_nangate45.mk
+# DESIGN_CONFIG=./designs/bp_be_top_nangate45.mk
+# DESIGN_CONFIG=./designs/bp_fe_top_nangate45.mk
+# DESIGN_CONFIG=./designs/bp_multi_top_nangate45.mk
 # DESIGN_CONFIG=./designs/dynamic_node_nangate45.mk
 # DESIGN_CONFIG=./designs/gcd_nangate45.mk
 # DESIGN_CONFIG=./designs/ibex_nangate45.mk
 # DESIGN_CONFIG=./designs/swerv_nangate45.mk
+# DESIGN_CONFIG=./designs/swerv_wrapper_nangate45.mk
 # DESIGN_CONFIG=./designs/tinyRocket_nangate45.mk
 
 # DESIGN_CONFIG=./designs/aes_tsmc65lp.mk
 # DESIGN_CONFIG=./designs/ariane_tsmc65lp.mk
+# DESIGN_CONFIG=./designs/black_parrot_tsmc65lp.mk
+# DESIGN_CONFIG=./designs/bp_be_top_tsmc65lp.mk
 # DESIGN_CONFIG=./designs/bp_fe_top_tsmc65lp.mk
+# DESIGN_CONFIG=./designs/bp_multi_top_tsmc65lp.mk
 # DESIGN_CONFIG=./designs/coyote_tsmc65lp.mk
 # DESIGN_CONFIG=./designs/dynamic_node_tsmc65lp.mk
 # DESIGN_CONFIG=./designs/gcd_tsmc65lp.mk
@@ -72,9 +80,9 @@ endif
 
 # Pre-process Lefs
 # ==============================================================================
-$(OBJECTS_DIR)/merged.lef: $(MERGED_LEF)
+$(OBJECTS_DIR)/merged.lef: $(MERGED_LEF) $(ADDITIONAL_LEFS)
 	mkdir -p $(OBJECTS_DIR)
-	cp $< $@
+	./scripts/mergeLef.py --inputLef $(MERGED_LEF) $(ADDITIONAL_LEFS) --outputLef $@
 
 $(OBJECTS_DIR)/merged_padded.lef: $(OBJECTS_DIR)/merged.lef
 	$(SCRIPTS_DIR)/padLefMacro.py -p $(CELL_PAD_IN_SITES) -i $< -o $@
@@ -516,3 +524,6 @@ run_test:
 	         --workdir `pwd` < $(TEST_SCRIPT) \
 	         --joblog $(TEST_DIR)/parallel.log
 
+clean_test:
+	rm -rf $(TEST_DIR)/logs
+	rm -rf parallel.log

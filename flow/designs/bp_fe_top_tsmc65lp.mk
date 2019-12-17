@@ -1,7 +1,8 @@
 export DESIGN_NAME = bp_fe_top
 export PLATFORM    = tsmc65lp
 
-export VERILOG_FILES = ./designs/src/bp_fe_top/design.v
+export VERILOG_FILES = ./designs/src/bp_fe_top/pickled.v \
+                       ./designs/src/bp_fe_top/tsmc65lp_macros.v
 export SDC_FILE      = ./designs/src/bp_fe_top/design.sdc
 
 export MERGED_LEF = ./platforms/tsmc65lp/merged.lef
