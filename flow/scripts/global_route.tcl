@@ -9,7 +9,7 @@ if {![info exists standalone] || $standalone} {
   read_def $::env(RESULTS_DIR)/4_cts.def
 }
 
-set_wire_rc -resistance $::env(RES_UNIT_PER_MICRON) -capacitance $::env(CAP_UNIT_PER_MICRON)
+set_wire_rc -layer $::env(WIRE_RC_LAYER)
 fastroute -output_file $::env(RESULTS_DIR)/route.guide
 
 if {![info exists standalone] || $standalone} {
