@@ -10,8 +10,8 @@ if {![info exists standalone] || $standalone} {
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
 }
 
-set_wire_rc -resistance $::env(RES_UNIT_PER_MICRON) -capacitance $::env(CAP_UNIT_PER_MICRON)
-global_placement -timing_driven 1
+set_wire_rc -layer $::env(WIRE_RC_LAYER)
+global_placement -timing_driven
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/3_1_place_gp.def
