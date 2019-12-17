@@ -41,13 +41,10 @@ export CTS_DUMMY_CELL = BUF_X1
 export CTS_BUF_CELL   = BUF_X4
 export CTS_TECH_DIR   = ./platforms/nangate45/tritonCTS
 
-# Primarily used by Replace Typically F and Ohm)
-export CAP_PER_MICRON = 0.235146e-12
-export RES_PER_MICRON = 1.59
+# Layer to use for parasitics estimations
+export WIRE_RC_LAYER = metal3
 
-# Primarily used by Resizer (Typically pF and kOhm)
-export CAP_UNIT_PER_MICRON = 0.00020
-export RES_UNIT_PER_MICRON = 0.0020
+# Resizer options
 export RESIZER_BUF_CELL    = BUF_X4
 
 # Magic technology file
