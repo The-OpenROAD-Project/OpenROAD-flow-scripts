@@ -10,7 +10,7 @@ if {![info exists standalone] || $standalone} {
 }
 
 set_wire_rc -layer $::env(WIRE_RC_LAYER)
-fastroute -output_file $::env(RESULTS_DIR)/route.guide
+fastroute -output_file $::env(RESULTS_DIR)/route.guide -max_routing_layer $::env(MAX_ROUTING_LAYER)
 
 if {![info exists standalone] || $standalone} {
   exit
