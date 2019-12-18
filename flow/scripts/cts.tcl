@@ -7,7 +7,8 @@ if {![info exists standalone] || $standalone} {
   
   # Read design files
   read_def $::env(RESULTS_DIR)/3_place.def
-  
+
+  # Read verilog  
   read_verilog $::env(RESULTS_DIR)/3_place.v
   
   # Read SDC file
@@ -23,7 +24,6 @@ clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
                      -root_buf "$::env(CTS_BUF_CELL)" \
                      -wire_unit 20 
 
-# Legalize buffers
 # legalize_placement
 
 if {![info exists standalone] || $standalone} {
