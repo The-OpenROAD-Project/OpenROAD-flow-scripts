@@ -1,3 +1,22 @@
+################################################################################
+# This script is intended to be run in the OpenSTA/Resizer framework.
+#
+# Purpose: It reads an input verilog file (from yosys) and performs buffering on
+#          high fanout nets to reduce routing/congestion issues experienced by
+#          tools further down in the flow.
+#          - For high fanout nets from tie-hi/low cells, the script adds more
+#            of the tie cells instead of buffering
+#          - The primary clock net ($::env(CLOCK_PORT)) is excluded from buffering
+#          - Other high fanout nets are buffered using an algorithm that attempts
+#            to implement a balanced tree
+# Author: Tutu Ajayi
+#
+################################################################################
+
+
+################################################################################
+# 1) Open the design
+################################################################################
 if {![info exists standalone] || $standalone} {
   # Read liberty files
   foreach libFile $::env(LIB_FILES) {
@@ -5,14 +24,14 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read tech LEF
-  read_lef $::env(OBJECTS_DIR)/merged.lef 
-  
+  read_lef $::env(OBJECTS_DIR)/merged.lef
+
   # Read verilog
   read_verilog $::env(RESULTS_DIR)/1_1_yosys.v
-  
+
   # Link the design
   link_design $::env(DESIGN_NAME)
-  
+
   # Read sdc
   read_sdc $::env(SDC_FILE)
 }
@@ -20,7 +39,30 @@ if {![info exists standalone] || $standalone} {
 puts "Max Fanout Settings: $::env(MAX_FANOUT)"
 
 ################################################################################
-# Handle Tie High
+# 2) Search for floating nets and print them out
+################################################################################
+
+set floatingNetObjs ""
+foreach net [get_nets *] {
+  set pinCount [expr [llength [get_pins -of $net]] + [llength [get_ports -of $net]]]
+
+  if {$pinCount == 1} {
+    lappend floatingNetObjs $net
+  }
+}
+
+# Print user message
+if {[llength $floatingNetObjs] > 0} {
+  puts "\n---------------------------------------------------------------------"
+  puts "WARNING: [llength $floatingNetObjs] floating nets"
+  # foreach net $floatingNetObjs {
+  #   puts " - [get_full_name $net]"
+  # }
+}
+
+
+################################################################################
+# 3a) Handle Tie High
 ################################################################################
 
 # Setup tie cell information
@@ -80,7 +122,7 @@ foreach netObj $tieHiHighFanoutNetObjs {
 }
 
 ################################################################################
-# Handle Tie Low
+# 3b) Handle Tie Low
 # Same as Tie Hi (Should probably make it a function)
 ################################################################################
 
@@ -144,7 +186,7 @@ foreach netObj $tieLoHighFanoutNetObjs {
 
 
 ################################################################################
-# Handle Other High Fanout nets
+# 4) Handle Other High Fanout nets
 ################################################################################
 
 
@@ -188,22 +230,31 @@ if {[llength $highFanoutNetObjs] > 0} {
 
 
 ################################################################################
-# Process each long net
+# Process each high fanout net
 ################################################################################
 foreach netObj $highFanoutNetObjs {
   puts "\n---------------------------------------------------------------------"
   puts "Buffering Net: [get_full_name $netObj]"
 
-  set netSrcPinObj    [get_pins -of $netObj -filter "direction == output"]
+  set netSrcObj    [get_pins -of $netObj -filter "direction == output"]
   # The source may fail to set if it's a toplevel port. Falling back to that
-  if {$netSrcPinObj == ""} {
-    set netSrcPinObj [get_ports -of $netObj]
+  set netSrcObjisPort 0
+  if {$netSrcObj == ""} {
+    set netSrcObj [get_ports -of $netObj]
+    set netSrcObjisPort 1
   }
 
+  # HACK ALERT:
+  # Removing the last entry in the sink list... really hope this is this is
+  # the pin associated with a Port.
   set netSinkPinObjs  [get_pins -of $netObj -filter "direction == input"]
+  if {$netSrcObjisPort} {
+    set netSinkPinObjs [lreplace $netSinkPinObjs [expr [llength $netSinkPinObjs] -1] [expr [llength $netSinkPinObjs] -1]]
+  }
+
   set netSinkPinCnt   [llength $netSinkPinObjs]
 
-  puts "Source Pin: [get_full_name $netSrcPinObj]"
+  puts "Source Pin: [get_full_name $netSrcObj]"
   puts "Sink Pin Count: $netSinkPinCnt"
 
 
@@ -223,8 +274,10 @@ foreach netObj $highFanoutNetObjs {
 
   # Disconnect all sinks
   # ------------------------------------------------------------------------------
-  disconnect_pin $netObj -all
-  connect_pin $netObj $netSrcPinObj
+  foreach var $netSinkPinObjs {
+    disconnect_pin $netObj $var
+  }
+
 
 
   # Simple procedure to format buffer names

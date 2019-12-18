@@ -1,7 +1,7 @@
 export DESIGN_NAME = dynamic_node_top_wrap
 export PLATFORM    = nangate45
 
-export VERILOG_FILES = ./designs/src/dynamic_node/design.v
+export VERILOG_FILES = ./designs/src/dynamic_node/dynamic_node.pickle.v
 export SDC_FILE      = ./designs/src/dynamic_node/design.sdc
 
 export MERGED_LEF = ./platforms/nangate45/NangateOpenCellLibrary.mod.lef

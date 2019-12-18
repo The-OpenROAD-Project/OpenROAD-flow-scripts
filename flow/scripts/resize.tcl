@@ -23,14 +23,7 @@ foreach cell $::env(DONT_USE_CELLS) {
   set dont_use_cells "$dont_use_cells [get_full_name [get_lib_cells */$cell]]"
 }
 
-# DISABLED repair max slew due to crashes running some designs
-       # -repair_max_slew \
-
-resize -buffer_inputs \
-       -buffer_outputs \
-       -resize \
-       -repair_max_cap \
-       -buffer_cell [get_full_name [get_lib_cells */$::env(RESIZER_BUF_CELL)]] \
+resize -buffer_cell [get_full_name [get_lib_cells */$::env(RESIZER_BUF_CELL)]] \
        -dont_use $dont_use_cells
 
 

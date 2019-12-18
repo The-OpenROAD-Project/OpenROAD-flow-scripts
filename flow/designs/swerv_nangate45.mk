@@ -4,8 +4,10 @@ export PLATFORM    = nangate45
 export VERILOG_FILES = ./designs/src/swerv/design.v
 export SDC_FILE      = ./designs/src/swerv/design.sdc
 
-export MERGED_LEF = ./platforms/nangate45/NangateOpenCellLibrary.mod.lef
-export LIB_FILES  = ./platforms/nangate45/NangateOpenCellLibrary_typical.lib
+export MERGED_LEF = ./platforms/nangate45/NangateOpenCellLibrary.mod.lef \
+                    $(wildcard ./designs/src/swerv/fakeram45*.lef)
+export LIB_FILES  = ./platforms/nangate45/NangateOpenCellLibrary_typical.lib \
+                    $(wildcard ./designs/src/swerv/fakeram45*.lib)
 export GDS_FILES  = $(wildcard ./platforms/nangate45/gds/*)
 
 # These values must be multiples of placement site
