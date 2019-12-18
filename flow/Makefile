@@ -182,7 +182,7 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_syn
 	@$(call BANNER, 2. FLOORPLAN)
 	openroad $(SCRIPTS_DIR)/verilog2def.tcl \
 		2>&1 | tee $(LOG_DIR)/2_1_verilog2def.log
-	sed -i 's/VERSION 5.5/VERSION 5.6/' $@
+	@! grep --color "Error:" $(LOG_DIR)/2_1_verilog2def.log
 
 
 # STEP 2: IO Placement
@@ -190,6 +190,7 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_syn
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_1_floorplan.def
 	openroad $(SCRIPTS_DIR)/io_placement.tcl \
 		2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
+	@! grep --color "Error:" $(LOG_DIR)/2_2_floorplan_io.log
 
 # STEP 3: Timing Driven Mixed Sized Placement
 # Only run if required
@@ -246,6 +247,7 @@ endif
 $(RESULTS_DIR)/2_5_floorplan_pdn.def: $(RESULTS_DIR)/2_4_floorplan_macro.def
 ifneq ($(PDN_CFG),)
 	openroad $(SCRIPTS_DIR)/pdn.tcl | tee $(LOG_DIR)/2_5_pdn.log
+	@! grep --color "Error:" $(LOG_DIR)/2_5_pdn.log
 else
 	cp $< $@
 endif
@@ -296,6 +298,7 @@ $(RESULTS_DIR)/3_1_place_gp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)
 	rm -rf $(RESULTS_DIR)/etc/
 	openroad $(SCRIPTS_DIR)/global_place.tcl \
 		2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
+	@! grep --color "Error:" $(LOG_DIR)/3_1_place_gp.log
 
 $(RESULTS_DIR)/replace.gif: $(RESULTS_DIR)/3_1_place_gp.def
 	convert -delay 20  $(RESULTS_DIR)/replace/etc/floorplan/output/cell/cGP2D*.jpg \
@@ -307,7 +310,7 @@ $(RESULTS_DIR)/replace.gif: $(RESULTS_DIR)/3_1_place_gp.def
 $(RESULTS_DIR)/3_2_place_resized.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/3_1_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc | ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat
 	openroad $(SCRIPTS_DIR)/resize.tcl \
 	         2>&1 | tee $(LOG_DIR)/3_2_resizer.log
-	# @! grep --color "Error:" $(LOG_DIR)/3_2_resizer.log
+	@! grep --color "Error:" $(LOG_DIR)/3_2_resizer.log
 
 $(RESULTS_DIR)/3_place.v: $(RESULTS_DIR)/3_2_place_resized.def
 
@@ -317,6 +320,7 @@ $(RESULTS_DIR)/3_place.v: $(RESULTS_DIR)/3_2_place_resized.def
 $(RESULTS_DIR)/3_3_place_dp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/3_2_place_resized.def
 	openroad $(SCRIPTS_DIR)/detail_place.tcl \
 	         2>&1 | tee $(LOG_DIR)/3_3_opendp.log
+	@! grep --color "Error:" $(LOG_DIR)/3_3_opendp.log
 
 $(RESULTS_DIR)/3_place.def: $(RESULTS_DIR)/3_3_place_dp.def
 	cp $< $@
@@ -379,6 +383,7 @@ $(RESULTS_DIR)/4_cts.v: $(OBJECTS_DIR)/tritonCts.config | ./PORT9.dat ./POST9.da
 	  -legalizerPath=$(TRITONCTS)/../OpenDP/opendp \
 	  -outputPath=$(RESULTS_DIR)/run 2>&1 | tee $(LOG_DIR)/4_tritonCTS.log
 	openroad $(SCRIPTS_DIR)/cts_legalize.tcl
+	@! grep --color "Error:" $(LOG_DIR)/cts_legalize.log
 	cp $(RESULTS_DIR)/run/final.v $@
 
 $(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_cts.v
@@ -410,6 +415,7 @@ route: $(RESULTS_DIR)/5_route.def \
 $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_cts.def
 	@$(call BANNER, 5. ROUTING)
 	openroad $(SCRIPTS_DIR)/global_route.tcl 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
+	@! grep --color "Error:" $(LOG_DIR)/5_1_fastroute.log
 
 
 # STEP 2: Run detail route
@@ -462,7 +468,7 @@ finish: $(REPORTS_DIR)/6_final_report.rpt \
 $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.sdc
 	openroad $(SCRIPTS_DIR)/final_report.tcl \
 	         2>&1 | tee $(LOG_DIR)/6_1_report.log
-
+	@! grep --color "Error:" $(LOG_DIR)/6_1_report.log
 
 # Run magic
 #-------------------------------------------------------------------------------
