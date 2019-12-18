@@ -44,9 +44,9 @@ flow/*.met
 # FlexRoute
 flow/*.opennet
 
-# TSMC65 LP
-flow/platforms/tsmc65lp/
-*m0*
+# Platforms
+flow/platforms/*
+!flow/platforms/nangate45
 
 # network
 .nfs*
