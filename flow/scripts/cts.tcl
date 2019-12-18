@@ -24,7 +24,7 @@ clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
                      -root_buf "$::env(CTS_BUF_CELL)" \
                      -wire_unit 20 
 
-# legalize_placement
+legalize_placement
 
 if {![info exists standalone] || $standalone} {
   # write output
