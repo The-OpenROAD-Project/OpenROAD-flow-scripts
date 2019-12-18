@@ -337,52 +337,18 @@ cts: $(RESULTS_DIR)/4_cts.def \
      $(RESULTS_DIR)/4_cts.sdc
 # ==============================================================================
 
-# Prepare tritonCTS config
-# ------------------------------------------------------------------------------
-SKEW  = 50
-TOLER = 1000
-PERCENTILE = 0.075
-$(OBJECTS_DIR)/tritonCts.config: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/3_place.def
-	@$(call BANNER, 4. CTS)
-	mkdir -p $(OBJECTS_DIR)
-	echo "lef $(OBJECTS_DIR)/merged_padded.lef" > $@
-	echo "path $(RESULTS_DIR)/3_place.def" >> $@
-	echo "verilog $(RESULTS_DIR)/3_place.v" >> $@
-	echo "design $(DESIGN_NAME)" >> $@
-	echo "target_skew $(SKEW)" >> $@
-	echo "width $(CORE_WIDTH)" >> $@
-	echo "height $(CORE_HEIGHT)" >> $@
-	echo "tech $(PROCESS)" >> $@
-	echo "ck_port $(CLOCK_PORT)" >> $@
-	echo "db_units 2000" >> $@
-	echo "root_buff $(CTS_BUF_CELL)" >> $@
-	echo "toler $(TOLER)" >> $@
-	echo "percentile $(PERCENTILE)" >> $@
-
-
 # Run TritonCTS
 # ------------------------------------------------------------------------------
-TRITONCTS = $(OPENROAD)/build/src/TritonCTS
-$(RESULTS_DIR)/4_cts.v: $(OBJECTS_DIR)/tritonCts.config | ./PORT9.dat ./POST9.dat ./POWV9.dat
-	$(TRITONCTS)/runTritonCTS.tcl \
-	  -configFilePath=$< \
-	  -scriptsPath=$(TRITONCTS)/scripts \
-	  -techFilesPath=$(CTS_TECH_DIR) \
-	  -lefDefParserPath=$(TRITONCTS)/lefdef2cts \
-	  -executablePath=$(TRITONCTS)/genHtree \
-	  -legalizerPath=$(TRITONCTS)/../OpenDP/opendp \
-	  -outputPath=$(RESULTS_DIR)/run 2>&1 | tee $(LOG_DIR)/4_tritonCTS.log
-	openroad $(SCRIPTS_DIR)/cts_legalize.tcl
-	cp $(RESULTS_DIR)/run/final.v $@
+$(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
+	openroad $(SCRIPTS_DIR)/cts.tcl \
+		2>&1 | tee $(LOG_DIR)/4_cts.log
 
 $(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_cts.v
-	cp $(RESULTS_DIR)/run/cts_final.def $@
 
-$(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/3_place.sdc
-	cp $< $@
+
+$(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.v
 
 clean_cts:
-	rm -rf $(OBJECTS_DIR)/tritonCts.config
 	rm -rf $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_cts.sdc
 
 
