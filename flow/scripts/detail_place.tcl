@@ -3,7 +3,7 @@ if {![info exists standalone] || $standalone} {
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
   }
-  read_lef $::env(OBJECTS_DIR)/merged.lef
+  read_lef $::env(OBJECTS_DIR)/merged_padded.lef
   
   # Read design files
   read_def $::env(RESULTS_DIR)/3_2_place_resized.def
