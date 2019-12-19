@@ -2,38 +2,38 @@
 # Uncomment or add the design to run
 # ==============================================================================
 
-# DESIGN_CONFIG=./designs/aes_nangate45.mk
-# DESIGN_CONFIG=./designs/black_parrot_nangate45.mk
-# DESIGN_CONFIG=./designs/bp_be_top_nangate45.mk
-# DESIGN_CONFIG=./designs/bp_fe_top_nangate45.mk
-# DESIGN_CONFIG=./designs/bp_multi_top_nangate45.mk
-# DESIGN_CONFIG=./designs/dynamic_node_nangate45.mk
-# DESIGN_CONFIG=./designs/gcd_nangate45.mk
-# DESIGN_CONFIG=./designs/ibex_nangate45.mk
-# DESIGN_CONFIG=./designs/jpeg_nangate45.mk
-# DESIGN_CONFIG=./designs/swerv_nangate45.mk
-# DESIGN_CONFIG=./designs/swerv_wrapper_nangate45.mk
-# DESIGN_CONFIG=./designs/tinyRocket_nangate45.mk
+# DESIGN_CONFIG=./designs/nangate45/aes.mk
+# DESIGN_CONFIG=./designs/nangate45/black_parrot.mk
+# DESIGN_CONFIG=./designs/nangate45/bp_be_top.mk
+# DESIGN_CONFIG=./designs/nangate45/bp_fe_top.mk
+# DESIGN_CONFIG=./designs/nangate45/bp_multi_top.mk
+# DESIGN_CONFIG=./designs/nangate45/dynamic_node.mk
+# DESIGN_CONFIG=./designs/nangate45/gcd.mk
+# DESIGN_CONFIG=./designs/nangate45/ibex.mk
+# DESIGN_CONFIG=./designs/nangate45/jpeg.mk
+# DESIGN_CONFIG=./designs/nangate45/swerv.mk
+# DESIGN_CONFIG=./designs/nangate45/swerv_wrapper.mk
+# DESIGN_CONFIG=./designs/nangate45/tinyRocket.mk
 
-# DESIGN_CONFIG=./designs/aes_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/ariane_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/black_parrot_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/bp_be_top_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/bp_fe_top_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/bp_multi_top_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/coyote_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/dynamic_node_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/gcd_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/ibex_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/jpeg_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/swerv_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/swerv_wrapper_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/tinyRocket_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/vb_tsmc65lp.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/aes.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/ariane.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/black_parrot.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/bp_be_top.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/bp_fe_top.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/bp_multi_top.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/coyote.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/dynamic_node.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/gcd.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/ibex.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/jpeg.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/swerv.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/swerv_wrapper.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/vb.mk
 
 
 # Default design
-DESIGN_CONFIG ?= ./designs/gcd_nangate45.mk
+DESIGN_CONFIG ?= ./designs/nangate45/gcd.mk
 
 # # Global override Floorplan
 # CORE_UTILIZATION := 30
