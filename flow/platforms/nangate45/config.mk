@@ -46,6 +46,9 @@ export CTS_TECH_DIR   = ./platforms/nangate45/tritonCTS
 # FastRoute Options
 export MAX_ROUTING_LAYER = 10
 
+# IO Pin fix margin
+export IO_PIN_MARGIN = 70
+
 # Layer to use for parasitics estimations
 export WIRE_RC_LAYER = metal3
 

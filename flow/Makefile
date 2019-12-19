@@ -10,6 +10,7 @@
 # DESIGN_CONFIG=./designs/dynamic_node_nangate45.mk
 # DESIGN_CONFIG=./designs/gcd_nangate45.mk
 # DESIGN_CONFIG=./designs/ibex_nangate45.mk
+# DESIGN_CONFIG=./designs/jpeg_nangate45.mk
 # DESIGN_CONFIG=./designs/swerv_nangate45.mk
 # DESIGN_CONFIG=./designs/swerv_wrapper_nangate45.mk
 # DESIGN_CONFIG=./designs/tinyRocket_nangate45.mk
@@ -191,6 +192,7 @@ $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_
 	openroad $(SCRIPTS_DIR)/io_placement.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 	@! grep --color "Error:" $(LOG_DIR)/2_2_floorplan_io.log
+	$(SCRIPTS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
 
 # STEP 3: Timing Driven Mixed Sized Placement
 # Only run if required
@@ -475,7 +477,7 @@ clean:
 
 clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish
 
-nuke:
+nuke: clean_test
 	rm -rf ./results ./logs ./reports ./objects
 	rm -rf ./POST9.dat ./PORT9.dat ./POWV9.dat
 	rm -rf ../etc/POST9.dat ../etc/PORT9.dat ../etc/POWV9.dat
@@ -507,4 +509,4 @@ run_test:
 
 clean_test:
 	rm -rf $(TEST_DIR)/logs
-	rm -rf parallel.log
+	rm -rf $(TEST_DIR)/parallel.log

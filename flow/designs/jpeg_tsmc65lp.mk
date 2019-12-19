@@ -17,6 +17,3 @@ export CORE_HEIGHT = 939.2
 
 export CLOCK_PERIOD = 4.000
 export CLOCK_PORT   = clk
-
-testv:
-	echo $(VERILOG_FILES)

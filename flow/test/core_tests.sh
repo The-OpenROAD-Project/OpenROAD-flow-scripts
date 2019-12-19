@@ -6,6 +6,7 @@ test/test_helper.sh bp_multi_top nangate45
 test/test_helper.sh dynamic_node nangate45
 test/test_helper.sh gcd nangate45
 test/test_helper.sh ibex nangate45
+test/test_helper.sh jpeg nangate45
 test/test_helper.sh swerv nangate45
 test/test_helper.sh swerv_wrapper nangate45
 test/test_helper.sh tinyRocket nangate45
