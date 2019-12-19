@@ -1,25 +1,18 @@
+if {![info exists standalone] || $standalone} {
+  # Read process files
+  foreach libFile $::env(LIB_FILES) {
+    read_liberty $libFile
+  }
+  read_lef $::env(OBJECTS_DIR)/merged_padded.lef
 
-mplace_external mp
-
-mp import_lef $::env(OBJECTS_DIR)/merged_padded.lef
-
-mp import_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def
-mp import_verilog $::env(RESULTS_DIR)/1_synth.v
-mp import_sdc $::env(RESULTS_DIR)/1_synth.sdc
-
-# Read liberty files
-foreach libFile $::env(LIB_FILES) {
-  mp import_lib $libFile
+  # Read design files
+  read_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def
+  read_sdc $::env(RESULTS_DIR)/1_synth.sdc
 }
 
-mp import_global_config $::env(IP_GLOBAL_CFG)
+macro_placement -global_config $::env(IP_GLOBAL_CFG)
 
-mp place_macros
-
-mp set_plot_enable true
-
-puts "Possible Solutions: [mp get_solution_count]"
-mp export_all_def $::env(OBJECTS_DIR)/$::env(DESIGN_NAME)
-mp export_def $::env(RESULTS_DIR)/2_4_floorplan_macro.def
-
-exit
+if {![info exists standalone] || $standalone} {
+  write_def $::env(RESULTS_DIR)/2_4_floorplan_macro.def
+  exit
+}
