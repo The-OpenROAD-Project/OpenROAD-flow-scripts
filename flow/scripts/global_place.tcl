@@ -11,7 +11,7 @@ if {![info exists standalone] || $standalone} {
 }
 
 set_wire_rc -layer $::env(WIRE_RC_LAYER)
-global_placement -timing_driven
+global_placement -timing_driven -density $::env(PLACE_DENSITY)
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/3_1_place_gp.def

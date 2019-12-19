@@ -19,3 +19,5 @@ export CORE_HEIGHT = 1321.6
 
 export CLOCK_PERIOD = 10.000
 export CLOCK_PORT   = clk
+
+export PLACE_DENSITY = 0.55
