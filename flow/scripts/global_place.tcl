@@ -4,7 +4,7 @@ if {![info exists standalone] || $standalone} {
     read_liberty $libFile
   }
   read_lef $::env(OBJECTS_DIR)/merged_padded.lef
-  
+
   # Read design files
   read_def $::env(RESULTS_DIR)/2_floorplan.def
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
