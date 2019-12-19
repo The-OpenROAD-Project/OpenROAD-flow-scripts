@@ -492,7 +492,7 @@ $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),innovus_$(def)): innovu
 	                  -no_logv ; stty sane
 
 $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayout_%:
-	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(MERGED_LEF))</lef-files>,g' \
+	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' \
 	  $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
