@@ -51,7 +51,7 @@
    <produce-routing>true</produce-routing>
    <routing-suffix/>
    <routing-datatype>0</routing-datatype>
-   <lef-files>/net/trenton/x/rovinski/openroad/OpenROAD-flow/flow/platforms/nangate45/NangateOpenCellLibrary.mod.lef</lef-files>
+   <lef-files>./NangateOpenCellLibrary.mod.lef</lef-files>
   </lefdef>
   <dxf>
    <dbu>0.001</dbu>

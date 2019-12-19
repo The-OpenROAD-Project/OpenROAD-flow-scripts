@@ -181,7 +181,7 @@ endif
 $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_synth.v
 	@$(call BANNER, 2. FLOORPLAN)
 	openroad $(SCRIPTS_DIR)/verilog2def.tcl \
-		2>&1 | tee $(LOG_DIR)/2_1_verilog2def.log
+	  2>&1 | tee $(LOG_DIR)/2_1_verilog2def.log
 	@! grep --color "Error:" $(LOG_DIR)/2_1_verilog2def.log
 
 
@@ -189,7 +189,7 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_syn
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_1_floorplan.def
 	openroad $(SCRIPTS_DIR)/io_placement.tcl \
-		2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
+	  2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 	@! grep --color "Error:" $(LOG_DIR)/2_2_floorplan_io.log
 
 # STEP 3: Timing Driven Mixed Sized Placement
@@ -197,25 +197,10 @@ $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES) $(OBJECTS_DIR)/merged_padded.lef | ./PORT9.dat ./POST9.dat ./POWV9.dat
 ifeq ($(RUN_MACRO_PLACEMENT),1)
-	RePlAce \
-	  -bmflag etc \
-	  -lef $(OBJECTS_DIR)/merged_padded.lef \
-	  -def $(RESULTS_DIR)/2_2_floorplan_io.def  \
-	  -verilog $(RESULTS_DIR)/1_synth.v \
-	  $(foreach file,$(LIB_FILES),-lib $(file)) \
-	  -sdc $(RESULTS_DIR)/1_synth.sdc \
-	  -output $(RESULTS_DIR)/td-ms-replace \
-	  -t 1 \
-	  -timing \
-	  -resPerMicron $(RES_PER_MICRON) \
-	  -capPerMicron $(CAP_PER_MICRON) \
-	  -skipIP \
-	  -plot \
-	  -experi output \
-	  -den 0.7 \
-	  -onlyGP \
-	  2>&1 | tee $(LOG_DIR)/2_3_TD-MS-RePlAce.log
-	cp $(RESULTS_DIR)/td-ms-replace/etc/2_2_floorplan_io/output/2_2_floorplan_io_final.def $@
+
+	openroad $(SCRIPTS_DIR)/tdms_place.tcl \
+	  2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
+	@! grep --color "Error:" $(LOG_DIR)/2_3_tdms_place.log
 else
 	cp $< $@
 endif
@@ -225,19 +210,8 @@ endif
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(IP_GLOBAL_CFG)
 ifeq ($(RUN_MACRO_PLACEMENT),1)
-	fplan $(foreach file,$(LIB_FILES),-lib $(file)) \
-	    -verilog $(RESULTS_DIR)/1_synth.v \
-	    -lef $(OBJECTS_DIR)/merged_padded.lef \
-	    -def $(RESULTS_DIR)/2_3_floorplan_tdms.def \
-	    -design $(DESIGN_NAME) \
-	    -sdc $(RESULTS_DIR)/1_synth.sdc \
-	    -output $(DESIGN_NAME) \
-	    -globalConfig $(IP_GLOBAL_CFG) \
-	    -depth 3 \
-	    -plot \
-	    -westFix \
-	    | tee $(LOG_DIR)/2_4_fplan.log
-	    mv $(DESIGN_NAME)_best.def $@
+	mplace < $(SCRIPTS_DIR)/macro_place.tcl \
+	  2>&1 | tee $(LOG_DIR)/2_4_mplace.log
 else
 	cp $< $@
 endif
@@ -295,9 +269,8 @@ place: $(RESULTS_DIR)/3_place.def \
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_1_place_gp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
 	@$(call BANNER, 3. PLACE)
-	rm -rf $(RESULTS_DIR)/etc/
 	openroad $(SCRIPTS_DIR)/global_place.tcl \
-		2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
+	  2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 	@! grep --color "Error:" $(LOG_DIR)/3_1_place_gp.log
 
 $(RESULTS_DIR)/replace.gif: $(RESULTS_DIR)/3_1_place_gp.def
@@ -513,13 +486,15 @@ nuke:
 # DEF/GDS viewer shortcuts
 #-------------------------------------------------------------------------------
 $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),innovus_$(def)): innovus_%:
-	innovus -execute "loadLefFile $(MERGED_LEF) ; \
+	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
 	                  loadDefFile $(RESULTS_DIR)/$* ; \
 	                  win" \
 	                  -no_logv ; stty sane
 
 $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayout_%:
-	klayout -nn $(KLAYOUT_TECH_FILE) $(RESULTS_DIR)/$*
+	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' \
+	  $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
+	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
 # run test using gnu parallel
 #-------------------------------------------------------------------------------
