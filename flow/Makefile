@@ -354,8 +354,8 @@ $(RESULTS_DIR)/4_cts.v: $(OBJECTS_DIR)/tritonCts.config | ./PORT9.dat ./POST9.da
 	  -lefDefParserPath=$(TRITONCTS)/lefdef2cts \
 	  -executablePath=$(TRITONCTS)/genHtree \
 	  -legalizerPath=$(TRITONCTS)/../OpenDP/opendp \
-	  -outputPath=$(RESULTS_DIR)/run 2>&1 | tee $(LOG_DIR)/4_tritonCTS.log
-	openroad $(SCRIPTS_DIR)/cts_legalize.tcl
+	  -outputPath=$(RESULTS_DIR)/run 2>&1 | tee $(LOG_DIR)/4_1_tritonCTS.log
+	openroad $(SCRIPTS_DIR)/cts_legalize.tcl 2>&1 | tee $(LOG_DIR)/4_2_cts_legalize.log
 	@! grep --color "Error:" $(LOG_DIR)/cts_legalize.log
 	cp $(RESULTS_DIR)/run/final.v $@
 

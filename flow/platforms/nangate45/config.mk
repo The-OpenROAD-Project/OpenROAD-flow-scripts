@@ -30,7 +30,7 @@ export TRACKS_INFO_FILE = ./platforms/nangate45/tracks.info
 export IP_GLOBAL_CFG = ./platforms/nangate45/IP_global.cfg
 
 # Cell padding in SITE widths to ease rout-ability
-export CELL_PAD_IN_SITES = 5
+export CELL_PAD_IN_SITES = 8
 
 # Endcap and Welltie cells
 # Use fillers if kit doesn't have them
@@ -43,11 +43,14 @@ export CTS_DUMMY_CELL = BUF_X1
 export CTS_BUF_CELL   = BUF_X4
 export CTS_TECH_DIR   = ./platforms/nangate45/tritonCTS
 
+# FastRoute Options
+export MAX_ROUTING_LAYER = 10
+
 # Layer to use for parasitics estimations
 export WIRE_RC_LAYER = metal3
 
 # Resizer options
-export RESIZER_BUF_CELL    = BUF_X4
+export RESIZER_BUF_CELL = BUF_X4
 
 # Magic technology file
 export MAGIC_TECH_FILE = ./platforms/nangate45/magic.tech
@@ -57,7 +60,7 @@ export KLAYOUT_TECH_FILE = ./platforms/nangate45/FreePDK45.lyt
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
-export DONT_USE_CELLS = FILLCELL_X1
+export DONT_USE_CELLS = FILLCELL_X1 AOI211_X1 OAI211_X1
 
 # Define default PDN config
 export PDN_CFG ?= ./platforms/nangate45/pdn.cfg
