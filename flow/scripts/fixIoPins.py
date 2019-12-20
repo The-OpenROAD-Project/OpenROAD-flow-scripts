@@ -26,24 +26,35 @@ print(os.path.basename(__file__),": Fixing Pins in Def file")
 # Function used by re.sub
 def replace_coords(match):
   # print(match.groups())
+  global countFail, countL, countB, countR, countT
 
   # Left-side
   if match[1] == str(margin):
+    countL += 1
     return "PLACED ( 0 " + match[2] + " ) N"
   # Bottom-side
   elif match[2] == str(margin):
+    countB += 1
     return "PLACED ( " + match[1] + " 0 ) N"
   # Right-side
   elif match[1] == str(width - margin):
+    countR += 1
     return "PLACED ( "+ str(width) + " " + match[2] + " ) N"
-  # Bottom-side
+  # Top-side
   elif match[2] == str(height - margin):
+    countT += 1
     return "PLACED ( " + match[1] + " " + str(height) + " ) N"
   # Shouldn't happen
-    print("Warning")
-    return match[0]
+  else:
+    countFail += 1
+    return "PLACED ( " + match[1] + " " + match[2] + " ) N"
 
 margin = int(args.margin)
+countFail = 0
+countL = 0
+countB = 0
+countR = 0
+countT = 0
 
 # Open Def File
 f = open(args.inputDef)
@@ -62,6 +73,11 @@ height = int(m.group(2))
 # Perform replacement
 placePattern = r"PLACED \( (\d+) (\d+) \) N"
 result, count = re.subn(placePattern, replace_coords, content, 0, re.S)
+
+print("Replacements made: L:" + str(countL) + " B:" + str(countB) + " R:" + str(countR) + " T:" + str(countT))
+
+if countFail > 0:
+  print("WARNING: Failed to make " + str(countFail) + " replacements" )
 
 # Write output
 f = open(args.outputDef, "w")
