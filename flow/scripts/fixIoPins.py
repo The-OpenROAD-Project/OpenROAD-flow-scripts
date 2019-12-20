@@ -26,35 +26,35 @@ print(os.path.basename(__file__),": Fixing Pins in Def file")
 # Function used by re.sub
 def replace_coords(match):
   # print(match.groups())
-  global countFail, countL, countB, countR, countT
+  global countFail, countWest, countSouth, countEast, countNorth
 
-  # Left-side
+  # West side
   if match[1] == str(margin):
-    countL += 1
-    return "PLACED ( 0 " + match[2] + " ) N"
-  # Bottom-side
+    countWest += 1
+    return "PLACED ( 0 " + match[2] + " ) E + LAYER " + match[3] + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
+  # South side
   elif match[2] == str(margin):
-    countB += 1
-    return "PLACED ( " + match[1] + " 0 ) N"
-  # Right-side
+    countSouth += 1
+    return "PLACED ( " + match[1] + " 0 ) N + LAYER " + match[3] + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
+  # East side
   elif match[1] == str(width - margin):
-    countR += 1
-    return "PLACED ( "+ str(width) + " " + match[2] + " ) N"
-  # Top-side
+    countEast += 1
+    return "PLACED ( "+ str(width) + " " + match[2] + " ) W + LAYER " + match[3] + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
+  # North side
   elif match[2] == str(height - margin):
-    countT += 1
-    return "PLACED ( " + match[1] + " " + str(height) + " ) N"
+    countNorth += 1
+    return "PLACED ( " + match[1] + " " + str(height) + " ) S + LAYER " + match[3] + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
   # Shouldn't happen
   else:
     countFail += 1
-    return "PLACED ( " + match[1] + " " + match[2] + " ) N"
+    return match[0]
 
 margin = int(args.margin)
 countFail = 0
-countL = 0
-countB = 0
-countR = 0
-countT = 0
+countWest = 0
+countSouth = 0
+countEast = 0
+countNorth = 0
 
 # Open Def File
 f = open(args.inputDef)
@@ -63,7 +63,6 @@ f.close()
 
 # Find width and height
 dieAreaPattern = r"DIEAREA *\( *\d+ *\d+ *\) *\( *(\d+) *(\d+) *\)"
-# dieAreaPattern = r"(DIEAREA.*)"
 m = re.search(dieAreaPattern, content)
 
 width = int(m.group(1))
@@ -71,10 +70,10 @@ height = int(m.group(2))
 
 
 # Perform replacement
-placePattern = r"PLACED \( (\d+) (\d+) \) N"
+placePattern = r"PLACED \( (\d+) (\d+) \) N \+ LAYER (\S+) \( \S+ \S+ \) \( \S+ \S+ \)"
 result, count = re.subn(placePattern, replace_coords, content, 0, re.S)
 
-print("Replacements made: L:" + str(countL) + " B:" + str(countB) + " R:" + str(countR) + " T:" + str(countT))
+print("Replacements made - West:" + str(countWest) + " South:" + str(countSouth) + " East:" + str(countEast) + " North:" + str(countNorth))
 
 if countFail > 0:
   print("WARNING: Failed to make " + str(countFail) + " replacements" )
