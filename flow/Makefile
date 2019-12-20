@@ -31,6 +31,8 @@
 # DESIGN_CONFIG=./designs/tinyRocket_tsmc65lp.mk
 # DESIGN_CONFIG=./designs/vb_tsmc65lp.mk
 
+DESIGN_CONFIG=./designs/gcd_gf14.mk
+
 
 # Default design
 DESIGN_CONFIG ?= ./designs/gcd_nangate45.mk
@@ -199,7 +201,6 @@ $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES) $(OBJECTS_DIR)/merged_padded.lef | ./PORT9.dat ./POST9.dat ./POWV9.dat
 ifeq ($(RUN_MACRO_PLACEMENT),1)
-
 	openroad $(SCRIPTS_DIR)/tdms_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 	@! grep --color "Error:" $(LOG_DIR)/2_3_tdms_place.log
@@ -231,15 +232,10 @@ endif
 
 # STEP 6: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_5_floorplan_pdn.def
-	cp $(RESULTS_DIR)/2_5_floorplan_pdn.def $@
-	tapcell -lef $(OBJECTS_DIR)/merged.lef \
-	        -def $(RESULTS_DIR)/2_5_floorplan_pdn.def \
-	        -rule $(WELLTTAP_RULE) \
-	        -welltap $(WELLTIE_CELL) \
-	        -endcap $(ENDCAP_CELL) \
-	        -rows \
-	        -outdef $@ 2>&1 | tee $(LOG_DIR)/2_6_tapcell.log
+$(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_5_floorplan_pdn.def | ./PORT9.dat ./POST9.dat ./POWV9.dat
+	openroad $(SCRIPTS_DIR)/tapcell.tcl \
+	  2>&1 | tee $(LOG_DIR)/2_6_tapcell.log
+	@! grep --color "Error:" $(LOG_DIR)/2_6_tapcell.log
 
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_tapcell.def
 	cp $< $@
