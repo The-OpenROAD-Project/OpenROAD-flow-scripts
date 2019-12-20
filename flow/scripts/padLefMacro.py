@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--padding', '-p', required=True, type=int,
                     help='Padding in SITE widths')
 parser.add_argument('--exclude', '-e', required=False,
-                    default='ENDCAPTIE* FILL* WELLTAP* tsmc65lp_*',
+                    default='ENDCAPTIE* CNRCAP* INCNR* TBCAP* FILL* WELLTAP* tsmc65lp_*',
                     help='exclude')
 parser.add_argument('--inputLef', '-i', required=True,
                     help='Input LEF')

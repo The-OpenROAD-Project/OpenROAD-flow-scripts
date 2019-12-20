@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 import re
 import sys
+import os
 import argparse  # argument parsing
+
+# WARNING: this script expects the tech lef first
 
 # Parse and validate arguments
 # ==============================================================================
@@ -14,33 +17,40 @@ parser.add_argument('--outputLef', '-o', required=True,
 args = parser.parse_args()
 
 
+print(os.path.basename(__file__),": Merging LEFs")
+
 f = open(args.inputLef[0])
 content = f.read()
 f.close()
 
-# Find the
+# Remove Last line ending the library
 content = re.sub("END LIBRARY","",content)
 
-
+# Iterate through additional lefs
 for lefFile in args.inputLef[1:]:
   f = open(lefFile)
   snippet = f.read()
   f.close()
 
-  pattern = r".*?(MACRO.*)(END LIBRARY)"
-  replace = r"\1"
+  # Match the sites
+  pattern = r"^SITE.*?^END\s\S+"
+  m = re.findall(pattern, snippet, re.M | re.DOTALL)
 
-  result,count = re.subn(pattern, replace, snippet, 1, re.S)
+  print(os.path.basename(lefFile) + ": SITEs matched found: " + str(len(m)))
+  content += "\n".join(m)
 
-  if count > 0:
-    content += result
-  else:
-    print("ERROR: Pattern not found")
-    sys.exit(1)
+  # Match the macros
+  pattern = r"^MACRO.*?^END\s\S+"
+  m = re.findall(pattern, snippet, re.M | re.DOTALL)
 
-content += "END LIBRARY"
+  print(os.path.basename(lefFile) + ": MACROs matched found: " + str(len(m)))
+  content += "\n" + "\n".join(m)
 
+
+content += "\nEND LIBRARY"
 
 f = open(args.outputLef, "w")
 f.write(content)
 f.close()
+
+print(os.path.basename(__file__),": Merging LEFs complete")
