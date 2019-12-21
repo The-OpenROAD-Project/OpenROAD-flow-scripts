@@ -497,6 +497,26 @@ $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayou
 	  $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
+
+# Utilities
+#-------------------------------------------------------------------------------
+drc: $(REPORTS_DIR)/drc.rpt
+
+$(REPORTS_DIR)/drc.rpt: $(RESULTS_DIR)/5_route.def
+	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
+	                  loadDefFile $<; \
+	                  verify_drc -limit 10000 -report $(REPORTS_DIR)/drc.rpt; \
+	                  exit" \
+	                  -no_gui -no_logv
+#; stty sane here breaks gnu parallel
+
+
+print_cells:
+	find ./logs/ -iname 1_1_yosys.log -exec sh -c "grep -iH 'Number of cells' {} | tail -1" \;
+
+print_drc:
+	find ./reports/ -iname drc.rpt -exec sh -c "grep -iH 'viol' {} | tail -1" \;
+
 # run test using gnu parallel
 #-------------------------------------------------------------------------------
 TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh
