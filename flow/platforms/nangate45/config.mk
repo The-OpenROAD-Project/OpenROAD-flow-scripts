@@ -67,3 +67,5 @@ export DONT_USE_CELLS = FILLCELL_X1 AOI211_X1 OAI211_X1
 
 # Define default PDN config
 export PDN_CFG ?= ./platforms/nangate45/pdn.cfg
+
+export PLACE_DENSITY ?= 0.70

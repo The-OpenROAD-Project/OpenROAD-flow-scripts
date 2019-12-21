@@ -2,40 +2,40 @@
 # Uncomment or add the design to run
 # ==============================================================================
 
-# DESIGN_CONFIG=./designs/aes_nangate45.mk
-# DESIGN_CONFIG=./designs/black_parrot_nangate45.mk
-# DESIGN_CONFIG=./designs/bp_be_top_nangate45.mk
-# DESIGN_CONFIG=./designs/bp_fe_top_nangate45.mk
-# DESIGN_CONFIG=./designs/bp_multi_top_nangate45.mk
-# DESIGN_CONFIG=./designs/dynamic_node_nangate45.mk
-# DESIGN_CONFIG=./designs/gcd_nangate45.mk
-# DESIGN_CONFIG=./designs/ibex_nangate45.mk
-# DESIGN_CONFIG=./designs/jpeg_nangate45.mk
-# DESIGN_CONFIG=./designs/swerv_nangate45.mk
-# DESIGN_CONFIG=./designs/swerv_wrapper_nangate45.mk
-# DESIGN_CONFIG=./designs/tinyRocket_nangate45.mk
+# DESIGN_CONFIG=./designs/nangate45/aes.mk
+# DESIGN_CONFIG=./designs/nangate45/black_parrot.mk
+# DESIGN_CONFIG=./designs/nangate45/bp_be_top.mk
+# DESIGN_CONFIG=./designs/nangate45/bp_fe_top.mk
+# DESIGN_CONFIG=./designs/nangate45/bp_multi_top.mk
+# DESIGN_CONFIG=./designs/nangate45/dynamic_node.mk
+# DESIGN_CONFIG=./designs/nangate45/gcd.mk
+# DESIGN_CONFIG=./designs/nangate45/ibex.mk
+# DESIGN_CONFIG=./designs/nangate45/jpeg.mk
+# DESIGN_CONFIG=./designs/nangate45/swerv.mk
+# DESIGN_CONFIG=./designs/nangate45/swerv_wrapper.mk
+# DESIGN_CONFIG=./designs/nangate45/tinyRocket.mk
 
-# DESIGN_CONFIG=./designs/aes_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/ariane_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/black_parrot_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/bp_be_top_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/bp_fe_top_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/bp_multi_top_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/coyote_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/dynamic_node_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/gcd_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/ibex_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/jpeg_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/swerv_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/swerv_wrapper_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/tinyRocket_tsmc65lp.mk
-# DESIGN_CONFIG=./designs/vb_tsmc65lp.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/aes.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/ariane.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/black_parrot.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/bp_be_top.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/bp_fe_top.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/bp_multi_top.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/coyote.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/dynamic_node.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/gcd.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/ibex.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/jpeg.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/swerv.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/swerv_wrapper.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/vb.mk
 
-DESIGN_CONFIG=./designs/gcd_gf14.mk
+# DESIGN_CONFIG=./designs/gcd_gf14.mk
 
 
 # Default design
-DESIGN_CONFIG ?= ./designs/gcd_nangate45.mk
+DESIGN_CONFIG ?= ./designs/nangate45/gcd.mk
 
 # # Global override Floorplan
 # CORE_UTILIZATION := 30
@@ -194,7 +194,6 @@ $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_
 	openroad $(SCRIPTS_DIR)/io_placement.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 	@! grep --color "Error:" $(LOG_DIR)/2_2_floorplan_io.log
-	$(SCRIPTS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
 
 # STEP 3: Timing Driven Mixed Sized Placement
 # Only run if required
@@ -204,6 +203,7 @@ ifeq ($(RUN_MACRO_PLACEMENT),1)
 	openroad $(SCRIPTS_DIR)/tdms_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 	@! grep --color "Error:" $(LOG_DIR)/2_3_tdms_place.log
+	$(SCRIPTS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
 else
 	cp $< $@
 endif
@@ -459,6 +459,26 @@ $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayou
 	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' \
 	  $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
+
+
+# Utilities
+#-------------------------------------------------------------------------------
+drc: $(REPORTS_DIR)/drc.rpt
+
+$(REPORTS_DIR)/drc.rpt: $(RESULTS_DIR)/5_route.def
+	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
+	                  loadDefFile $<; \
+	                  verify_drc -limit 10000 -report $(REPORTS_DIR)/drc.rpt; \
+	                  exit" \
+	                  -no_gui -no_logv
+#; stty sane here breaks gnu parallel
+
+
+print_cells:
+	find ./logs/ -iname 1_1_yosys.log -exec sh -c "grep -iH 'Number of cells' {} | tail -1" \;
+
+print_drc:
+	find ./reports/ -iname drc.rpt -exec sh -c "grep -iH 'viol' {} | tail -1" \;
 
 # run test using gnu parallel
 #-------------------------------------------------------------------------------
