@@ -64,6 +64,7 @@ export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NAME)
 export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NAME)
 
 export SCRIPTS_DIR = ./scripts
+export UTILS_DIR = ./util
 export TEST_DIR    = ./test
 
 # Tool Options
@@ -85,10 +86,10 @@ endif
 # ==============================================================================
 $(OBJECTS_DIR)/merged.lef: $(MERGED_LEF) $(ADDITIONAL_LEFS)
 	mkdir -p $(OBJECTS_DIR)
-	./scripts/mergeLef.py --inputLef $(MERGED_LEF) $(ADDITIONAL_LEFS) --outputLef $@
+	$(UTILS_DIR)/mergeLef.py --inputLef $(MERGED_LEF) $(ADDITIONAL_LEFS) --outputLef $@
 
 $(OBJECTS_DIR)/merged_padded.lef: $(OBJECTS_DIR)/merged.lef
-	$(SCRIPTS_DIR)/padLefMacro.py -r $(CELL_PAD_IN_SITES) \
+	$(UTILS_DIR)/padLefMacro.py -r $(CELL_PAD_IN_SITES) \
 	                              -l 0 \
 	                              -s $(PLACE_SITE) \
 	                              -i $< \
@@ -96,16 +97,16 @@ $(OBJECTS_DIR)/merged_padded.lef: $(OBJECTS_DIR)/merged.lef
 
 # Modify lef files for TritonRoute
 $(OBJECTS_DIR)/merged_padded_spacing.lef: $(OBJECTS_DIR)/merged_padded.lef
-	$(SCRIPTS_DIR)/modifyLefSpacing.py -i $< -o $@
+	$(UTILS_DIR)/modifyLefSpacing.py -i $< -o $@
 
 # Pre-process libraries
 # ==============================================================================
 $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 	mkdir -p $(OBJECTS_DIR)
-	$(SCRIPTS_DIR)/mergeLib.pl $(PLATFORM)_merged \
+	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged \
 	                           $(LIB_FILES) \
 	                           > $@.tmp
-	$(SCRIPTS_DIR)/markDontUse.pl -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
+	$(UTILS_DIR)/markDontUse.pl -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
 
 # Link flute data files
 # ==============================================================================
@@ -207,7 +208,7 @@ ifeq ($(RUN_MACRO_PLACEMENT),1)
 	openroad $(SCRIPTS_DIR)/tdms_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 	@! grep --color "Error:" $(LOG_DIR)/2_3_tdms_place.log
-	$(SCRIPTS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
+	$(UTILS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
 else
 	cp $< $@
 endif
