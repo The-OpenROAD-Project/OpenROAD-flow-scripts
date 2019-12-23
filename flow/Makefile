@@ -88,7 +88,11 @@ $(OBJECTS_DIR)/merged.lef: $(MERGED_LEF) $(ADDITIONAL_LEFS)
 	./scripts/mergeLef.py --inputLef $(MERGED_LEF) $(ADDITIONAL_LEFS) --outputLef $@
 
 $(OBJECTS_DIR)/merged_padded.lef: $(OBJECTS_DIR)/merged.lef
-	$(SCRIPTS_DIR)/padLefMacro.py -p $(CELL_PAD_IN_SITES) -i $< -o $@
+	$(SCRIPTS_DIR)/padLefMacro.py -r $(CELL_PAD_IN_SITES) \
+	                              -l 0 \
+	                              -s $(PLACE_SITE) \
+	                              -i $< \
+	                              -o $@
 
 # Modify lef files for TritonRoute
 $(OBJECTS_DIR)/merged_padded_spacing.lef: $(OBJECTS_DIR)/merged_padded.lef
@@ -321,9 +325,9 @@ cts: $(RESULTS_DIR)/4_cts.def \
 # Run TritonCTS
 # ------------------------------------------------------------------------------
 $(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
-	openroad $(SCRIPTS_DIR)/cts.tcl
-	@! grep --color "Error:" $(LOG_DIR)/4_cts.log \
+	openroad $(SCRIPTS_DIR)/cts.tcl \
 		2>&1 | tee $(LOG_DIR)/4_cts.log
+	@! grep --color "Error:" $(LOG_DIR)/4_cts.log
 
 $(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_cts.v
 
@@ -367,6 +371,7 @@ $(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/merged_padded_spacing.lef $(RES
 	echo "output:$(RESULTS_DIR)/5_route.def" >> $@
 	echo "outputTA:$(RESULTS_DIR)/5_route_TA.def" >> $@
 	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" >> $@
+	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NPROC)" >> $@
 	echo "cpxthreads:1" >> $@
@@ -438,6 +443,7 @@ clean:
 	@echo
 
 clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish
+	rm -rf $(OBJECTS_DIR)
 
 nuke: clean_test
 	rm -rf ./results ./logs ./reports ./objects
