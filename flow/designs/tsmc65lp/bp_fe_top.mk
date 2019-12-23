@@ -5,7 +5,11 @@ export VERILOG_FILES = ./designs/src/bp_fe_top/pickled.v \
                        ./designs/src/bp_fe_top/tsmc65lp_macros.v
 export SDC_FILE      = ./designs/src/bp_fe_top/design.sdc
 
-export MERGED_LEF = ./platforms/tsmc65lp/merged.lef
+export MERGED_LEF       = ./platforms/tsmc65lp/merged.lef
+export ADDITIONAL_LEFS += ./platforms/tsmc65lp/tsmc65lp_1rf_lg6_w8_bit.lef \
+                          ./platforms/tsmc65lp/tsmc65lp_1rf_lg6_w96_bit.lef \
+                          ./platforms/tsmc65lp/tsmc65lp_1rf_lg9_w64_all.lef \
+                          ./platforms/tsmc65lp/tsmc65lp_1rf_lg9_w64_bit.lef
 export LIB_FILES  = $(sort $(wildcard ./platforms/tsmc65lp/lib/*.lib))
 export GDS_FILES  = $(sort $(wildcard ./platforms/tsmc65lp/gds/*.gds2))
 

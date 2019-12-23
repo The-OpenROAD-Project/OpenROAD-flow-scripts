@@ -10,7 +10,11 @@ export VERILOG_FILES = ./designs/src/tinyRocket/AsyncResetReg.v \
 
 export SDC_FILE      = ./designs/src/tinyRocket/RocketTile.sdc
 
-export MERGED_LEF = ./platforms/tsmc65lp/merged.lef
+export MERGED_LEF       = ./platforms/tsmc65lp/merged.lef
+export ADDITIONAL_LEFS += ./platforms/tsmc65lp/tsmc65lp_1rf_lg6_w32_all.lef \
+                          ./platforms/tsmc65lp/tsmc65lp_1rf_lg6_w32_byte.lef \
+                          ./platforms/tsmc65lp/tsmc65lp_2rf_lg10_w32_bit.lef
+
 export LIB_FILES  = $(sort $(wildcard ./platforms/tsmc65lp/lib/*.lib))
 export GDS_FILES  = $(sort $(wildcard ./platforms/tsmc65lp/gds/*.gds2))
 
