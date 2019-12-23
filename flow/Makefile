@@ -31,6 +31,8 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/vb.mk
 
+# DESIGN_CONFIG=./designs/gcd_gf14.mk
+
 
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd.mk
@@ -192,17 +194,16 @@ $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_
 	openroad $(SCRIPTS_DIR)/io_placement.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 	@! grep --color "Error:" $(LOG_DIR)/2_2_floorplan_io.log
-	$(SCRIPTS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
 
 # STEP 3: Timing Driven Mixed Sized Placement
 # Only run if required
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES) $(OBJECTS_DIR)/merged_padded.lef | ./PORT9.dat ./POST9.dat ./POWV9.dat
 ifeq ($(RUN_MACRO_PLACEMENT),1)
-
 	openroad $(SCRIPTS_DIR)/tdms_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 	@! grep --color "Error:" $(LOG_DIR)/2_3_tdms_place.log
+	$(SCRIPTS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
 else
 	cp $< $@
 endif
@@ -212,7 +213,7 @@ endif
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(IP_GLOBAL_CFG)
 ifeq ($(RUN_MACRO_PLACEMENT),1)
-	mplace < $(SCRIPTS_DIR)/macro_place.tcl \
+	openroad $(SCRIPTS_DIR)/macro_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_4_mplace.log
 else
 	cp $< $@
@@ -231,15 +232,10 @@ endif
 
 # STEP 6: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_5_floorplan_pdn.def
-	cp $(RESULTS_DIR)/2_5_floorplan_pdn.def $@
-	tapcell -lef $(OBJECTS_DIR)/merged.lef \
-	        -def $(RESULTS_DIR)/2_5_floorplan_pdn.def \
-	        -rule $(WELLTTAP_RULE) \
-	        -welltap $(WELLTIE_CELL) \
-	        -endcap $(ENDCAP_CELL) \
-	        -rows \
-	        -outdef $@ 2>&1 | tee $(LOG_DIR)/2_6_tapcell.log
+$(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_5_floorplan_pdn.def | ./PORT9.dat ./POST9.dat ./POWV9.dat
+	openroad $(SCRIPTS_DIR)/tapcell.tcl \
+	  2>&1 | tee $(LOG_DIR)/2_6_tapcell.log
+	@! grep --color "Error:" $(LOG_DIR)/2_6_tapcell.log
 
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_tapcell.def
 	cp $< $@
@@ -322,53 +318,19 @@ cts: $(RESULTS_DIR)/4_cts.def \
      $(RESULTS_DIR)/4_cts.sdc
 # ==============================================================================
 
-# Prepare tritonCTS config
-# ------------------------------------------------------------------------------
-SKEW  = 50
-TOLER = 1000
-PERCENTILE = 0.075
-$(OBJECTS_DIR)/tritonCts.config: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/3_place.def
-	@$(call BANNER, 4. CTS)
-	mkdir -p $(OBJECTS_DIR)
-	echo "lef $(OBJECTS_DIR)/merged_padded.lef" > $@
-	echo "path $(RESULTS_DIR)/3_place.def" >> $@
-	echo "verilog $(RESULTS_DIR)/3_place.v" >> $@
-	echo "design $(DESIGN_NAME)" >> $@
-	echo "target_skew $(SKEW)" >> $@
-	echo "width $(CORE_WIDTH)" >> $@
-	echo "height $(CORE_HEIGHT)" >> $@
-	echo "tech $(PROCESS)" >> $@
-	echo "ck_port $(CLOCK_PORT)" >> $@
-	echo "db_units 2000" >> $@
-	echo "root_buff $(CTS_BUF_CELL)" >> $@
-	echo "toler $(TOLER)" >> $@
-	echo "percentile $(PERCENTILE)" >> $@
-
-
 # Run TritonCTS
 # ------------------------------------------------------------------------------
-TRITONCTS = $(OPENROAD)/build/src/TritonCTS
-$(RESULTS_DIR)/4_cts.v: $(OBJECTS_DIR)/tritonCts.config | ./PORT9.dat ./POST9.dat ./POWV9.dat
-	$(TRITONCTS)/runTritonCTS.tcl \
-	  -configFilePath=$< \
-	  -scriptsPath=$(TRITONCTS)/scripts \
-	  -techFilesPath=$(CTS_TECH_DIR) \
-	  -lefDefParserPath=$(TRITONCTS)/lefdef2cts \
-	  -executablePath=$(TRITONCTS)/genHtree \
-	  -legalizerPath=$(TRITONCTS)/../OpenDP/opendp \
-	  -outputPath=$(RESULTS_DIR)/run 2>&1 | tee $(LOG_DIR)/4_1_tritonCTS.log
-	openroad $(SCRIPTS_DIR)/cts_legalize.tcl 2>&1 | tee $(LOG_DIR)/4_2_cts_legalize.log
-	@! grep --color "Error:" $(LOG_DIR)/cts_legalize.log
-	cp $(RESULTS_DIR)/run/final.v $@
+$(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
+	openroad $(SCRIPTS_DIR)/cts.tcl
+	@! grep --color "Error:" $(LOG_DIR)/4_cts.log \
+		2>&1 | tee $(LOG_DIR)/4_cts.log
 
 $(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_cts.v
-	cp $(RESULTS_DIR)/run/cts_final.def $@
 
-$(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/3_place.sdc
-	cp $< $@
+
+$(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.v
 
 clean_cts:
-	rm -rf $(OBJECTS_DIR)/tritonCts.config
 	rm -rf $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_cts.sdc
 
 
@@ -497,6 +459,26 @@ $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayou
 	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' \
 	  $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
+
+
+# Utilities
+#-------------------------------------------------------------------------------
+drc: $(REPORTS_DIR)/drc.rpt
+
+$(REPORTS_DIR)/drc.rpt: $(RESULTS_DIR)/5_route.def
+	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
+	                  loadDefFile $<; \
+	                  verify_drc -limit 10000 -report $(REPORTS_DIR)/drc.rpt; \
+	                  exit" \
+	                  -no_gui -no_logv
+#; stty sane here breaks gnu parallel
+
+
+print_cells:
+	find ./logs/ -iname 1_1_yosys.log -exec sh -c "grep -iH 'Number of cells' {} | tail -1" \;
+
+print_drc:
+	find ./reports/ -iname drc.rpt -exec sh -c "grep -iH 'viol' {} | tail -1" \;
 
 # run test using gnu parallel
 #-------------------------------------------------------------------------------

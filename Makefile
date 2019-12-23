@@ -1,4 +1,4 @@
-OPENROAD_MODULES = yosys tapcell TritonCTS TritonMacroPlace pdn TritonRoute
+OPENROAD_MODULES = yosys TritonRoute
 SRC_PATH = OpenROAD/src
 BUILD_PATH = OpenROAD/build/src
 clone_all: $(addprefix clone_,$(OPENROAD_MODULES))
