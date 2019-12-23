@@ -10,11 +10,8 @@ export VERILOG_FILES = ./designs/src/tinyRocket/AsyncResetReg.v \
 
 export SDC_FILE      = ./designs/src/tinyRocket/RocketTile.sdc
 
-export MERGED_LEF = ./platforms/nangate45/NangateOpenCellLibrary.mod.lef
 export ADDITIONAL_LEFS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lef)
-export LIB_FILES  = ./platforms/nangate45/NangateOpenCellLibrary_typical.lib \
-                    $(wildcard ./designs/src/tinyRocket/fakeram45*.lib)
-export GDS_FILES  = $(wildcard ./platforms/nangate45/gds/*)
+export ADDITIONAL_LIBS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lib)
 
 export RUN_MACRO_PLACEMENT = 1
 

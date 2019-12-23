@@ -4,10 +4,6 @@ export PLATFORM    = tsmc65lp
 export VERILOG_FILES = $(wildcard ./designs/src/aes/*.v)
 export SDC_FILE      = ./designs/src/aes/aes_cipher_top.sdc
 
-export MERGED_LEF = ./platforms/tsmc65lp/merged.lef
-export LIB_FILES  = $(sort $(wildcard ./platforms/tsmc65lp/lib/*.lib))
-export GDS_FILES  = $(sort $(wildcard ./platforms/tsmc65lp/gds/*.gds2))
-
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 620 520.8
 export CORE_AREA   = 10 12 610 511.2

@@ -64,7 +64,7 @@ export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NAME)
 export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NAME)
 
 export SCRIPTS_DIR = ./scripts
-export UTILS_DIR = ./util
+export UTILS_DIR   = ./util
 export TEST_DIR    = ./test
 
 # Tool Options
@@ -84,9 +84,9 @@ endif
 
 # Pre-process Lefs
 # ==============================================================================
-$(OBJECTS_DIR)/merged.lef: $(MERGED_LEF) $(ADDITIONAL_LEFS)
+$(OBJECTS_DIR)/merged.lef: $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
 	mkdir -p $(OBJECTS_DIR)
-	$(UTILS_DIR)/mergeLef.py --inputLef $(MERGED_LEF) $(ADDITIONAL_LEFS) --outputLef $@
+	$(UTILS_DIR)/mergeLef.py --inputLef $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
 
 $(OBJECTS_DIR)/merged_padded.lef: $(OBJECTS_DIR)/merged.lef
 	$(UTILS_DIR)/padLefMacro.py -r $(CELL_PAD_IN_SITES) \
@@ -98,6 +98,19 @@ $(OBJECTS_DIR)/merged_padded.lef: $(OBJECTS_DIR)/merged.lef
 # Modify lef files for TritonRoute
 $(OBJECTS_DIR)/merged_padded_spacing.lef: $(OBJECTS_DIR)/merged_padded.lef
 	$(UTILS_DIR)/modifyLefSpacing.py -i $< -o $@
+
+# Create special generic lef for TritonRoute if required.
+ifneq ($(GENERIC_TECH_LEF),)
+$(OBJECTS_DIR)/generic_merged_padded_spacing.lef: $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
+	mkdir -p $(OBJECTS_DIR)
+	$(UTILS_DIR)/mergeLef.py --inputLef $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
+	$(UTILS_DIR)/padLefMacro.py -r $(CELL_PAD_IN_SITES) \
+	                              -l 0 \
+	                              -s $(PLACE_SITE) \
+	                              -i $@ \
+	                              -o $@
+	$(UTILS_DIR)/modifyLefSpacing.py -i $@ -o $@
+endif
 
 # Pre-process libraries
 # ==============================================================================
@@ -365,8 +378,13 @@ $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_ct
 
 # Generate param file for TritonRoute
 #-------------------------------------------------------------------------------
+ifneq ($(GENERIC_TECH_LEF),)
+$(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/generic_merged_padded_spacing.lef $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
+	echo "lef:$(OBJECTS_DIR)/generic_merged_padded_spacing.lef" > $@
+else
 $(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/merged_padded_spacing.lef $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
 	echo "lef:$(OBJECTS_DIR)/merged_padded_spacing.lef" > $@
+endif
 	echo "def:$(RESULTS_DIR)/4_cts.def" >> $@
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
 	echo "output:$(RESULTS_DIR)/5_route.def" >> $@

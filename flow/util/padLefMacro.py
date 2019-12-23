@@ -39,7 +39,7 @@ def replace_rectMask(match):
   m = match.groups()
   pt1 = '{0:g}'.format(float(m[1]) + left_padding) + " " + m[2]
   pt2 = '{0:g}'.format(float(m[3]) + left_padding) + " " + m[4]
-  return "RECT MASK " + m[0] + " " + pt1 + " " + pt2
+  return "RECT MASK " + str(m[0]) + " " + pt1 + " " + pt2
 
 # Function used by re.sub
 def replace_pad(match):
@@ -59,11 +59,11 @@ def replace_pad(match):
   returnString = re.sub(sizePattern, replace_size, returnString, 0, re.M | re.DOTALL)
 
   # Pad RECTs
-  rectPattern = r"RECT (\S+) (\S+) (\S+) (\S+)"
+  rectPattern = r"RECT (\S+) (\S+) (\S+) (\S+)\n"
   returnString = re.sub(rectPattern, replace_rect, returnString, 0, re.M | re.DOTALL)
 
   # Pad RECT MASKs
-  rectMastPattern = r"RECT MASK (\S+) (\S+) (\S+) (\S+) (\S+)"
+  rectMastPattern = r"RECT MASK (\S+) (\S+) (\S+) (\S+) (\S+)\n"
   returnString = re.sub(rectMastPattern, replace_rectMask, returnString, 0, re.M | re.DOTALL)
 
   return returnString
