@@ -31,7 +31,7 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/vb.mk
 
-# DESIGN_CONFIG=./designs/gcd_gf14.mk
+# DESIGN_CONFIG=./designs/gf14/gcd.mk
 
 
 # Default design
