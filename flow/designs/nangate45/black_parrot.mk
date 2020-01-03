@@ -5,11 +5,8 @@ export VERILOG_FILES = ./designs/src/black_parrot/pickled.v \
                        ./designs/src/black_parrot/nangate45_macros.v
 export SDC_FILE      = ./designs/src/black_parrot/design.sdc
 
-export MERGED_LEF = ./platforms/nangate45/NangateOpenCellLibrary.mod.lef
 export ADDITIONAL_LEFS = $(wildcard ./designs/src/black_parrot/fakeram45*.lef)
-export LIB_FILES  = ./platforms/nangate45/NangateOpenCellLibrary_typical.lib \
-                    $(wildcard ./designs/src/black_parrot/fakeram45*.lib)
-export GDS_FILES  = $(wildcard ./platforms/nangate45/gds/*)
+export ADDITIONAL_LIBS = $(wildcard ./designs/src/black_parrot/fakeram45*.lib)
 
 export RUN_MACRO_PLACEMENT = 1
 

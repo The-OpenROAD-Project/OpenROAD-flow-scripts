@@ -9,7 +9,7 @@ if {![info exists standalone] || $standalone} {
 tapcell \
  -endcap_cpp "1" \
  -distance $::env(WELLTTAP_RULE) \
- -tabcell_master $::env(WELLTIE_CELL) \
+ -tapcell_master $::env(WELLTIE_CELL) \
  -endcap_master $::env(ENDCAP_CELL)
 
 

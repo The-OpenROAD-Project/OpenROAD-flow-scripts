@@ -8,8 +8,12 @@ import argparse  # argument parsing
 # ==============================================================================
 parser = argparse.ArgumentParser(
     description='Adds padding to the right of all macros in a lef file')
-parser.add_argument('--padding', '-p', required=True, type=int,
-                    help='Padding in SITE widths')
+parser.add_argument('--right', '-r', required=True, type=int,
+                    help='Padding on the right in SITE widths')
+parser.add_argument('--right', '-l', required=True, type=int,
+                    help='Padding on the left in SITE widths')
+parser.add_argument('--site', '-s', required=True, type=int,
+                    help='Lef SITE')
 parser.add_argument('--exclude', '-e', required=False,
                     default='ENDCAPTIE* CNRCAP* INCNR* TBCAP* FILL* WELLTAP* tsmc65lp_*',
                     help='exclude')
@@ -70,25 +74,28 @@ content = f.read()
 f.close()
 
 # Set padding
-site_width = get_site_width(content)
+sitePattern = r"SITE\s" + args.site + ".*?SIZE\s(\S+)\sBY\s(\S+)"
+m = re.search(sitePattern, content)
+
+site_width = int(m.groups(1))
 cell_padding = float(args.padding) * site_width
 
 print("Cell padding (in SITE widths): " + str(args.padding))
 print("Derived SITE width: " + str(site_width))
 print("Cell padding: " + str(cell_padding))
 
-# Perform match
-pattern = r"MACRO\s+(\S+)(.*?)SIZE (\S+) BY (\S+)(.*?)END"
-result, count = re.subn(pattern, replace_pad, content, 0, re.S)
+# # Perform match
+# pattern = r"MACRO\s+(\S+)(.*?)SIZE (\S+) BY (\S+)(.*?)END"
+# result, count = re.subn(pattern, replace_pad, content, 0, re.S)
 
-# Write output file
-f = open(args.outputLef, "w")
-f.write(result)
-f.close()
+# # Write output file
+# f = open(args.outputLef, "w")
+# f.write(result)
+# f.close()
 
-# Check
-if count < 1:
-  print("WARNING: Replacement pattern not found")
-  # sys.exit(1)
+# # Check
+# if count < 1:
+#   print("WARNING: Replacement pattern not found")
+#   # sys.exit(1)
 
-print(os.path.basename(__file__),": Finished")
+# print(os.path.basename(__file__),": Finished")

@@ -31,7 +31,7 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/vb.mk
 
-# DESIGN_CONFIG=./designs/gcd_gf14.mk
+# DESIGN_CONFIG=./designs/gf14/gcd.mk
 
 
 # Default design
@@ -64,6 +64,7 @@ export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NAME)
 export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NAME)
 
 export SCRIPTS_DIR = ./scripts
+export UTILS_DIR   = ./util
 export TEST_DIR    = ./test
 
 # Tool Options
@@ -83,25 +84,42 @@ endif
 
 # Pre-process Lefs
 # ==============================================================================
-$(OBJECTS_DIR)/merged.lef: $(MERGED_LEF) $(ADDITIONAL_LEFS)
+$(OBJECTS_DIR)/merged.lef: $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
 	mkdir -p $(OBJECTS_DIR)
-	./scripts/mergeLef.py --inputLef $(MERGED_LEF) $(ADDITIONAL_LEFS) --outputLef $@
+	$(UTILS_DIR)/mergeLef.py --inputLef $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
 
 $(OBJECTS_DIR)/merged_padded.lef: $(OBJECTS_DIR)/merged.lef
-	$(SCRIPTS_DIR)/padLefMacro.py -p $(CELL_PAD_IN_SITES) -i $< -o $@
+	$(UTILS_DIR)/padLefMacro.py -r $(CELL_PAD_IN_SITES) \
+	                              -l 0 \
+	                              -s $(PLACE_SITE) \
+	                              -i $< \
+	                              -o $@
 
 # Modify lef files for TritonRoute
 $(OBJECTS_DIR)/merged_padded_spacing.lef: $(OBJECTS_DIR)/merged_padded.lef
-	$(SCRIPTS_DIR)/modifyLefSpacing.py -i $< -o $@
+	$(UTILS_DIR)/modifyLefSpacing.py -i $< -o $@
+
+# Create special generic lef for TritonRoute if required.
+ifneq ($(GENERIC_TECH_LEF),)
+$(OBJECTS_DIR)/generic_merged_padded_spacing.lef: $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
+	mkdir -p $(OBJECTS_DIR)
+	$(UTILS_DIR)/mergeLef.py --inputLef $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
+	$(UTILS_DIR)/padLefMacro.py -r $(CELL_PAD_IN_SITES) \
+	                              -l 0 \
+	                              -s $(PLACE_SITE) \
+	                              -i $@ \
+	                              -o $@
+	$(UTILS_DIR)/modifyLefSpacing.py -i $@ -o $@
+endif
 
 # Pre-process libraries
 # ==============================================================================
 $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 	mkdir -p $(OBJECTS_DIR)
-	$(SCRIPTS_DIR)/mergeLib.pl $(PLATFORM)_merged \
+	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged \
 	                           $(LIB_FILES) \
 	                           > $@.tmp
-	$(SCRIPTS_DIR)/markDontUse.pl -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
+	$(UTILS_DIR)/markDontUse.pl -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
 
 # Link flute data files
 # ==============================================================================
@@ -203,7 +221,7 @@ ifeq ($(RUN_MACRO_PLACEMENT),1)
 	openroad $(SCRIPTS_DIR)/tdms_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 	@! grep --color "Error:" $(LOG_DIR)/2_3_tdms_place.log
-	$(SCRIPTS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
+	$(UTILS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
 else
 	cp $< $@
 endif
@@ -321,9 +339,9 @@ cts: $(RESULTS_DIR)/4_cts.def \
 # Run TritonCTS
 # ------------------------------------------------------------------------------
 $(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
-	openroad $(SCRIPTS_DIR)/cts.tcl
-	@! grep --color "Error:" $(LOG_DIR)/4_cts.log \
+	openroad $(SCRIPTS_DIR)/cts.tcl \
 		2>&1 | tee $(LOG_DIR)/4_cts.log
+	@! grep --color "Error:" $(LOG_DIR)/4_cts.log
 
 $(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_cts.v
 
@@ -360,13 +378,19 @@ $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_ct
 
 # Generate param file for TritonRoute
 #-------------------------------------------------------------------------------
+ifneq ($(GENERIC_TECH_LEF),)
+$(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/generic_merged_padded_spacing.lef $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
+	echo "lef:$(OBJECTS_DIR)/generic_merged_padded_spacing.lef" > $@
+else
 $(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/merged_padded_spacing.lef $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
 	echo "lef:$(OBJECTS_DIR)/merged_padded_spacing.lef" > $@
+endif
 	echo "def:$(RESULTS_DIR)/4_cts.def" >> $@
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
 	echo "output:$(RESULTS_DIR)/5_route.def" >> $@
 	echo "outputTA:$(RESULTS_DIR)/5_route_TA.def" >> $@
 	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" >> $@
+	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NPROC)" >> $@
 	echo "cpxthreads:1" >> $@
@@ -438,6 +462,7 @@ clean:
 	@echo
 
 clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish
+	rm -rf $(OBJECTS_DIR)
 
 nuke: clean_test
 	rm -rf ./results ./logs ./reports ./objects
