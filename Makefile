@@ -34,7 +34,7 @@ clone_yosys:
 	fi
 
 clone_TritonRoute:
-	if ! [ -d $(SRC_PATH)/yosys ]; then \
+	if ! [ -d $(SRC_PATH)/TritonRoute ]; then \
 		git clone --recursive git@github.com:The-OpenROAD-Project/TritonRoute.git $(SRC_PATH)/TritonRoute; \
 	fi
 	cd $(SRC_PATH)/TritonRoute && \
@@ -53,7 +53,7 @@ cmake_yosys:
 	cd $(SRC_PATH)/yosys && \
 	make -j4
 
-cmake_TritonRoute%:
+cmake_TritonRoute:
 	mkdir -p $(SRC_PATH)/TritonRoute/build
 	cd $(SRC_PATH)/TritonRoute/build && \
 	cmake $(CMAKE_OPTS) .. && \
