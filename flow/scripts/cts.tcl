@@ -1,6 +1,6 @@
 if {![info exists standalone] || $standalone} {
   # Read process files
-  read_lef $::env(OBJECTS_DIR)/merged.lef
+  read_lef $::env(OBJECTS_DIR)/merged_padded.lef
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
   }
