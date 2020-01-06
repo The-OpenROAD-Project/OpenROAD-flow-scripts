@@ -16,17 +16,14 @@ clone_all: clone_OpenROAD $(addprefix clone_,$(OPENROAD_MODULES))
 	@
 
 clone_OpenROAD:
-	git submodule init
-	git submodule update --recursive
+	git submodule update --init --recursive
 	
 	# --recursive doesn't recurse all the way
 	cd OpenROAD && \
-	git submodule init && \
-	git submodule update --recursive
+	git submodule update --init --recursive
 	
 	cd $(SRC_PATH)/OpenDB && \
-	git submodule init && \
-	git submodule update --recursive 
+	git submodule update --init --recursive
 
 clone_yosys:
 	if ! [ -d $(SRC_PATH)/yosys ]; then \
