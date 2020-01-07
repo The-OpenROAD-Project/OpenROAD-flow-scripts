@@ -27,12 +27,12 @@ clone_OpenROAD:
 
 clone_yosys:
 	if ! [ -d $(SRC_PATH)/yosys ]; then \
-		git clone --recursive git@github.com:The-OpenROAD-Project/yosys.git $(SRC_PATH)/yosys; \
+		git clone --recursive https://github.com/The-OpenROAD-Project/yosys.git $(SRC_PATH)/yosys; \
 	fi
 
 clone_TritonRoute:
 	if ! [ -d $(SRC_PATH)/TritonRoute ]; then \
-		git clone --recursive git@github.com:The-OpenROAD-Project/TritonRoute.git $(SRC_PATH)/TritonRoute --branch alpha2; \
+		git clone --recursive https://github.com/The-OpenROAD-Project/TritonRoute.git $(SRC_PATH)/TritonRoute --branch alpha2; \
 	fi
 
 docker_%: clone_%
@@ -44,11 +44,11 @@ cmake_OpenROAD: clone_OpenROAD
 	cmake $(CMAKE_OPTS) .. && \
 	make -j4
 
-cmake_yosys:
+cmake_yosys: clone_yosys
 	cd $(SRC_PATH)/yosys && \
 	make -j4
 
-cmake_TritonRoute:
+cmake_TritonRoute: clone_TritonRoute
 	mkdir -p $(SRC_PATH)/TritonRoute/build
 	cd $(SRC_PATH)/TritonRoute/build && \
 	cmake $(CMAKE_OPTS) .. && \
