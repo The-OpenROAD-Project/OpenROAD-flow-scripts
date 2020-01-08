@@ -60,12 +60,18 @@ cmake_TritonRoute: clone_TritonRoute
 build_all: $(addprefix $(BUILD_PATH)/,$(OPENROAD_MODULES))
 	@
 
+# TODO(rovinski) terrible hack, maybe this should just be a bash script
 $(BUILD_PATH)/%: $(BUILD_DEP)
 	mkdir -p $(BUILD_PATH)
 	rm -rf ./$@
 	if [ "$(BUILD_DEP)" == "docker_%" ]; then \
-	  container_id=$$(docker create openroad/$(shell echo $* | tr A-Z a-z)) && \
-	  docker cp $$container_id:/build $@ && \
+	  if [ "$*" == "OpenROAD" ]; then \
+	    container_id=$$(docker create openroad); \
+	    docker cp $$container_id:/OpenROAD/build OpenROAD/build; \
+	  else \
+	    container_id=$$(docker create openroad/$(shell echo $* | tr A-Z a-z)); \
+	    docker cp $$container_id:/build $@; \
+	  fi; \
 	  docker rm -v $$container_id; \
 	fi
 
