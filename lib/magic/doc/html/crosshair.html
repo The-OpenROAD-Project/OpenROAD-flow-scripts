@@ -1,0 +1,57 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>crosshair</H2>
+<HR>
+Implements a crosshair highlight on top of the layout.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>crosshair</B> <I>x y</I><BR><BR>
+      <B>crosshair off</B><BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>crosshair</B> command generates, moves, or removes a crosshair
+      highlight in the layout window.  Option <B>off</B> removes the crosshair,
+      while coordinates <I>x y</I> place the crosshair at a specific layout
+      location, creating the crosshair if it has been previously disabled.
+      The crosshair is disabled by default upon startup.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>crosshair</B> is implemented as a built-in window command in <B>magic</B>.
+      The crosshair is available as an interactive feature in the Tcl/Tk
+      version of magic from the "Options" menu.  The commands above are
+      executed in response to pointer motion events.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 5:05pm <P>
+</BODY>
+</HTML>

@@ -1,0 +1,66 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>pushbutton</H2>
+<HR>
+Emulate a mouse button event.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>pushbutton</B> <I>button action</I> <BR><BR>
+      <BLOCKQUOTE>
+        where <I>button</I> is one of <B>left</B>, <B>middle</B>, or
+	<B>right</B>, and <I>action</I> is is one of <B>up</B> or
+	<B>down</B>.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>pushbutton</B> command is a way of invoking the actions
+      associated with mouse buttons from the command-line, or from
+      a Tcl script.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>pushbutton</B> is implemented as a built-in window command
+      in <B>magic</B>.  However, it is functionally equivalent to
+      calling the Tk function <B>event generate</B>.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+      This is all backwards!  There should be commands implemented to
+      generate the actions that are caused by button pushes in each
+      tool, and these commands should be bound to the button events.
+      Presumably the existing setup is a holdover from pre-X11 days.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 12:44am <P>
+</BODY>
+</HTML>

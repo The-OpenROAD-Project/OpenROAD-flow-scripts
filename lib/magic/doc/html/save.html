@@ -1,0 +1,65 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>save</H2>
+<HR>
+Save edit cell on disk
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>save</B> [<I>filename</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>filename</I> is a new name for the cell as well as
+	 the root name of the <TT>.mag</TT> file to be saved.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>save</B> command saves the current edit cell to disk.
+      If <I>filename</I> is specified, then the layout will be
+      saved to "<I>filename</I><TT>.mag</TT>", and the current edit
+      cell will be renamed to <I>filename</I>. <P>
+
+      The <B>save</B> command differs from <B>writeall</B> in several
+      ways:  <B>save</B> does not descend the hierarchy, and does not
+      prompt the user for an action.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>save</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=writeall.html><B>writeall</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 2:05am <P>
+</BODY>
+</HTML>

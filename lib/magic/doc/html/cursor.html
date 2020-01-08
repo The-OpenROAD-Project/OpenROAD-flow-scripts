@@ -1,0 +1,64 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>cursor</H2>
+<HR>
+Return <B>magic</B> internal coordinates of the cursor (X11 pointer)
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>cursor</B> <BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>cursor</B> command returns the current position of the
+      cursor (the X11 pointer, not the <B>magic</B> cursor box) in
+      internal layout coordinates.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>cursor</B> is implemented as a built-in window command in <B>magic</B>.
+      In the Tcl version of magic, it returns a Tcl result (list of two
+      elements, <B>x</B> and <B>y</B> coordinates). <P>
+
+      Like all window commands, it reports relative to the existing window
+      if only one window is present, or the active window if called with
+      the "<TT>:</TT>" macro.  Otherwise, it must be called using the
+      <I>tk_path_name</I> command to specify relative to which layout
+      window the cursor coordinates will be given.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=tk_path_name.html><I>tk_path_name</I></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 5, 2004 at 2:47am <P>
+</BODY>
+</HTML>

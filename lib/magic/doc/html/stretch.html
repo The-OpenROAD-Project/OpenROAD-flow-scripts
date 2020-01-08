@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>stretch</H2>
+<HR>
+Stretch the cursor box and the selection.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>M</B> implements the command <B>move</B> (no arguments).<BR>
+      Key macro <I>Shift-Keypad-</I><B>8</B> implements the
+	command <B>stretch n 1</B> <BR>
+      Key macro <I>Shift-Keypad-</I><B>6</B> implements the
+	command <B>stretch e 1</B> <BR>
+      (and so forth for all 8 compass rose directions).
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>stretch</B> [<I>direction</I> [<I>distance</I>]] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>direction</I> is any valid <A HREF=direction.html>
+		direction</A> specification in magic, and <I>distance</I>
+		is any valid <A HREF=distance.html>distance</A>
+		specification.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>stretch</B> command moves the current selection from
+      its current position according to the command arguments,
+      and fills in behind with material such that electrical
+      connections are maintained across the area in between the
+      original and final positions. <P>
+
+      Without arguments, the lower-left hand corner of the
+      selection is moved to the current cursor position (the X11
+      cursor, not the <B>magic</B> "cursor box").  With arguments
+      <I>direction</I> and <I>distance</I>, the selection is moved
+      relative to the original in the indicated direction by the
+      indicated amount.  The default distance is 1 unit (usually
+      lambda; see <A HREF=distance.html><I>distance</I></A> for
+      further explication).<P>
+
+      The stretching algorithm fills in with the material that
+      crosses or touches the cursor box in the opposite direction
+      to the direction being stretched.  If two different materials
+      are on opposite sides of this boundary, the effect depends
+      on the material types.  Contact types will not be stretched
+      unless the contact material is on both sides of the cursor
+      box boundary.  If two different contact types are on opposite
+      sides of the boundary, then the material that electrically
+      connects those two contacts (if any) will be filled in the
+      stretch area.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>stretch</B> is implemented as a built-in <B>magic</B> command.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=direction.html><I>direction</I></A><BR>
+      <A HREF=distance.html><I>distance</I></A><BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 16, 2004 at 2:00pm <P>
+</BODY>
+</HTML>

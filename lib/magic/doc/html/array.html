@@ -1,0 +1,118 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>array</H2>
+<HR>
+Array everything in the current selection
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>array</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	   <DT> <I>xsize ysize</I>
+	   <DD> Array the selection with <I>xsize</I> copies in the <B>x</B>
+		(horizontal) direction and <I>ysize</I> copies in the <B>y</B>
+		(vertical) direction.  Array pitch is determined by the
+		current cursor box.
+	   <DT> <I>xlo xhi ylo yhi</I>
+	   <DD> Array the selection with indices <I>xlo, xhi, ylo</I>, and
+		<I>yhi</I> inclusive.  Thus, (<I>xhi</I> - <I>xlo</I> + 1)
+		copies will be created in the <B>x</B> direction and
+		(<I>yhi</I> - <I>ylo</I> + 1) copies will be created in the
+		<B>y</B> direction.  Arrayed cell uses will be numbered according
+		to the indices.  Array pitch is determined by the current
+		cursor box.
+	   <DT> <B>count</B> [[<I>xlo</I>] <I>xhi</I> [<I>ylo</I>] <I>yhi</I>]
+	   <DD> With no arguments, returns the array indices of the currently
+		selected cell.  With arguments, is equivalent to the first two
+		options (see above).
+	   <DT> <B>width</B> [<I>value</I>]
+	   <DD> With no arguments, returns the array spacing in <B>x</B> of
+		the currently selected cell.  With arguments, redefines the
+		spacing in <B>x</B> between cells in the array.
+	   <DT> <B>height</B> [<I>value</I>]
+	   <DD> With no arguments, returns the array spacing in <B>y</B> of
+		the currently selected cell.  With arguments, redefines the
+		spacing in <B>y</B> between cells in the array.
+	   <DT> <B>pitch</B> [<I>x y</I>]
+	   <DD> With no arguments, returns the array spacing in <B>x</B> and
+		<B>y</B> of the currently selected cell.  With arguments,
+		redefines the spacing in <B>x</B> and <B>y</B> between cells
+		in the array.
+	   <DT> <B>position</B> [<I>x y</I>]
+	   <DD> With no arguments, returns the position of the array origin.
+		With arguments, redefines the array origin.
+	   <DT> <B>help</B>
+	   <DD> Print help information
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>array</B> command creates multiple copies of the current
+      paint selection.  In the case of selected paint, only the first
+      two options are available, and the function makes multiple copies
+      of the selected paint in the <B>x</B> and/or <B>y</B> direction(s).
+      In the case of selected cells, the cell is copied multiple times
+      but is maintained in the database as an <I>array</I> type, rather
+      than multiple individual uses.  As an <I>array</I> type, certain
+      functions such as <B>move</B> or <B>copy</B> operate on the array
+      as a single unit, and subsequent calles to the <B>array</B>
+      command may resize the array. <P>
+
+      The cursor box defines the pitch between cells or paint copies
+      in the array.  The height of the box is the pitch in <B>y</B>,
+      and the width of the box is the pitch in <B>x</B>. <P>
+
+      The Tcl version allows useful constructs on the command line
+      such as:
+	<BLOCKQUOTE>
+	<B>array width [expr {1 + [array width]}]</B> <BR>
+	<B>move s [array height]</B>
+	</BLOCKQUOTE>
+      The first example expands the pitch of the array by 1 unit in
+      the <B>x</B> direction without requiring explicitly sizing the
+      cursor box to match the array pitch.  The second example moves
+      the array down by the <B>y</B pitch of the array, for instance,
+      to make room for one more cell.  Cells are arrayed to the
+      right and above the current selection, so this is the only
+      useful way to expand an array to the left or down.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>array</B> is implemented as a <B>magic</B> built-in command.
+      Command options which return values from a selected array
+      generate Tcl results in the Tcl version of <B>magic</B>.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 16, 2004 at 2:20pm <P>
+</BODY>
+</HTML>

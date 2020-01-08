@@ -1,0 +1,68 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>crashbackups</H2>
+<HR>
+Handle periodic backups during a layout editing session.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>crashbackups </B>[<B>start</B>|<B>stop</B>] <BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+      The <B>crashbackups</B> procedure enables or disables the
+      periodic saving of crash recovery backup files.
+      <B>crashbackups</B> or <B>crashbackups start</B> sets the
+      timer for the first periodic save.  After the timer times
+      out, backup file is generated and written in the system
+      temporary directory, and the timer is reset.  By default,
+      the backup interval is 10 minutes (600000 msec).  The
+      interval can be changed by setting the value of Tcl variable
+      <B>$Opts(backupinterval)</B> to the interval value in msec. <BR><BR>
+
+      <B>crashbackups stop</B> removes the timer callback and thus
+      prevents further writing of backup files.  Note that if
+      crash recovery is stopped or started multiple times during
+      a session, the same filename is used to save the data.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>crashbackups</B> is implemented as a Tcl procedure in the
+      "tools.tcl" script file.  It calls the magic command
+      "<B>crash save</B>".
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=crash.html><B>crash</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 7, 2005 at 3:15pm <P>
+</BODY>
+</HTML>

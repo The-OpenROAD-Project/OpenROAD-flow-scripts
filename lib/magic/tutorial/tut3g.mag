@@ -1,0 +1,31 @@
+magic
+tech scmos
+timestamp 616380642
+<< polysilicon >>
+rect -5 23 -3 27
+rect -19 21 -3 23
+rect -19 7 -17 21
+rect -1 19 1 27
+rect -15 17 1 19
+rect -15 11 -13 17
+rect -15 9 -5 11
+rect -19 5 -9 7
+rect -11 2 -9 5
+rect -19 0 -9 2
+rect -19 -17 -17 0
+rect -7 -2 -5 9
+rect -15 -4 -5 -2
+rect -15 -13 -13 -4
+rect -15 -15 1 -13
+rect -19 -19 -3 -17
+rect -5 -20 -3 -19
+rect -1 -20 1 -15
+<< ndiffusion >>
+rect 2 16 5 27
+rect -2 13 5 16
+rect -2 -8 1 13
+rect -2 -11 6 -8
+rect 3 -20 6 -11
+<< labels >>
+rlabel space -23 -23 10 28 0 put box here
+<< end >>

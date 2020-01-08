@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=../graphics/blpaper.gif>
+<H1> <IMG SRC=../graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=../graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>cleanup</H2>
+<HR>
+Interactively clean up the netlist
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>cleanup</B>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>cleanup</B> command performs an interactive netlist cleanup.
+      It checks the current netlist for terminals that aren't present in
+      the design and for nets with only one terminal.  When found,
+      the user is informed and an action requested. <P>
+
+      Requested actions are as follows:
+      <DL>
+ 	<DT> <B>dterm</B>
+	<DD> Delete the terminal
+	<DT> <B>dnet</B>
+	<DD> Delete the net
+	<DT> <B>skip</B>
+	<DD> Take no action on this problem
+	<DT> <B>abort</B>
+	<DD> End the <B>cleanup</B> command immediately with no
+	     further checks, requests, or actions. 
+      </DL>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>cleanup</B> is implemented as a built-in <B>netlist</B>
+	window command in <B>magic</B>.  It can only be invoked from
+	a window created with the <B>specialopen netlist</B> command.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=../graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=../commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October, 2004<P>
+</BODY>
+</HTML>

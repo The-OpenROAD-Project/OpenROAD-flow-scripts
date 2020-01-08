@@ -1,0 +1,66 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>property</H2>
+<HR>
+Attach a "property" (string key and value pair) to the edit cell
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>property</B> [<I>key</I> [<I>value</I>]] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>key</I> and <I>value</I> are any text strings.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>property</B> command implements a general-purpose method
+      of attaching information to a cell definition.  Except for a
+      few properties known to the <B>lef</B> and <B>gds</B> commands
+      (q.v.), properties have no inherent meaning to magic but may be
+      used with other programs or scripts to add additional information
+      about a cell definition. <P>
+
+      With no arguments, all properties of the current edit cell are
+      listed.  With only the <I>key</I> argument, the value associated
+      with the key is returned.  With both arguments, the string
+      <I>value</I> is associated with the string <I>key</I> as a
+      property of the cell.  If <I>key</I> is an existing key, then
+      its original value will be overwritten.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>property</B> is implemented as a built-in command in <B>magic</B>.
+      The property structure itself is implemented as a hash table in
+      the cell definition structure.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 8:05pm <P>
+</BODY>
+</HTML>

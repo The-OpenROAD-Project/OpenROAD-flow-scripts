@@ -1,0 +1,113 @@
+timestamp 552706284
+version 7.2
+tech scmos
+style lambda=1.0(scna20_orb)
+scale 1000 1 100
+resistclasses 26670 59550 23860 19690 27260 2000000 49 26 2505830
+use tut11c bit_3 0 1 28 -1 0 -62
+use tut11b bit_2 0 1 82 -1 0 -62
+use tut11c bit_1 0 1 136 -1 0 -62
+use tut11b bit_0 0 1 190 -1 0 -62
+node "GND" 2 68694 -34 -222 m1 0 0 0 0 0 0 0 0 0 0 0 0 1350 462 276 116 0 0
+node "bit_0" 0 4248 158 -197 v 0 0 0 0 0 0 0 0 0 0 0 0 16 16 208 112 0 0
+node "bit_1" 0 4248 104 -197 v 0 0 0 0 0 0 0 0 0 0 0 0 16 16 208 112 0 0
+node "bit_2" 0 4248 50 -197 v 0 0 0 0 0 0 0 0 0 0 0 0 16 16 208 112 0 0
+node "bit_3" 0 4248 -4 -197 v 0 0 0 0 0 0 0 0 0 0 0 0 16 16 208 112 0 0
+node "hold" 0 9306 190 -32 m1 0 0 0 0 0 0 0 0 0 0 0 0 206 90 0 0 0 0
+node "Vdd" 2 65682 -32 -19 v 0 0 0 0 0 0 0 0 0 0 0 0 1332 456 162 90 0 0
+node "a_36_n244#" 596 12852 36 -244 p 0 0 0 0 108 108 0 0 0 0 0 0 0 0 0 0 0 0
+node "a_24_n244#" 322 6746 24 -244 p 0 0 0 0 54 58 0 0 0 0 0 0 0 0 0 0 0 0
+node "a_8_n244#" 643 13804 8 -244 p 0 0 0 0 116 116 0 0 0 0 0 0 0 0 0 0 0 0
+node "phi2" 203 4366 190 -159 p 0 0 0 0 34 38 0 0 0 0 0 0 0 0 0 0 0 0
+node "RESET_B" 97 9316 190 -151 p 0 0 0 0 124 56 0 0 0 0 0 0 0 0 0 0 0 0
+node "phi1_b" 203 4366 190 -129 p 0 0 0 0 34 38 0 0 0 0 0 0 0 0 0 0 0 0
+node "phi2_b" 322 25379 190 -175 p 0 0 0 0 62 62 0 0 0 0 0 0 375 256 0 0 0 0
+node "phi1" 644 24191 190 -113 p 0 0 0 0 116 116 0 0 0 0 0 0 189 132 0 0 0 0
+cap "phi1" "phi2_b" 180
+cap "phi1" "hold" 240
+cap "GND" "bit_3" 1080
+cap "phi1_b" "phi2_b" 180
+cap "GND" "bit_2" 1080
+cap "phi2_b" "RESET_B" 180
+cap "phi2_b" "phi2" 180
+cap "GND" "bit_1" 1080
+cap "bit_0" "GND" 1080
+cap "bit_3/tut11d_0/phi2" "bit_3/tut11d_0/GND" -784
+cap "bit_3/tut11d_0/phi2_b" "bit_3/tut11d_0/GND" -784
+cap "bit_3/tut11d_0/reset_b" "bit_3/tut11d_0/GND" -784
+cap "bit_2/tut11d_0/Vdd" "bit_2/tut11d_0/reset_b" -316
+cap "bit_2/tut11d_0/phi2" "bit_2/tut11d_0/Vdd" -316
+cap "bit_2/tut11d_0/phi2_b" "bit_2/tut11d_0/Vdd" -316
+cap "bit_1/tut11d_0/GND" "bit_2/tut11d_0/reset_b" -784
+cap "bit_1/tut11d_0/GND" "bit_2/tut11d_0/phi2" -784
+cap "bit_1/tut11d_0/GND" "bit_2/tut11d_0/phi2_b" -784
+cap "bit_2/tut11d_0/phi1" "bit_3/tut11d_0/GND" -784
+cap "bit_3/tut11d_0/phi1_b" "bit_3/tut11d_0/GND" -784
+cap "bit_1/tut11d_0/GND" "bit_2/tut11d_0/phi1" -784
+cap "bit_2/tut11d_0/Vdd" "bit_2/tut11d_0/phi1" -316
+cap "bit_1/tut11d_0/GND" "bit_2/tut11d_0/phi1_b" -784
+cap "bit_2/tut11d_0/Vdd" "bit_2/tut11d_0/phi1_b" -316
+cap "bit_3/a_n40_n60#" "bit_2/tut11d_0/GND" -228
+cap "bit_3/w_n40_n28#" "bit_3/a_n34_n13#" -1128
+cap "bit_3/w_n40_n28#" "bit_3/a_n20_n60#" -468
+cap "bit_3/w_n40_n28#" "bit_3/a_n40_n60#" -468
+cap "bit_2/tut11d_0/GND" "bit_3/a_n34_n13#" -1080
+cap "bit_2/tut11d_0/GND" "bit_3/a_n20_n60#" -228
+cap "bit_3/w_n40_n28#" "bit_2/tut11d_0/GND" -1710
+cap "bit_1/w_n40_n28#" "bit_2/a_n20_n60#" -468
+cap "bit_1/w_n40_n28#" "bit_0/tut11d_0/GND" -1710
+cap "bit_2/a_n40_n60#" "bit_2/a_n18_n22#" -228
+cap "bit_2/a_n40_n60#" "bit_0/tut11d_0/GND" -228
+cap "bit_2/a_n18_n22#" "bit_2/a_n34_n41#" -1080
+cap "bit_0/tut11d_0/GND" "bit_1/a_n34_n13#" -1080
+cap "bit_1/w_n40_n28#" "bit_2/a_n40_n60#" -468
+cap "bit_2/a_n18_n22#" "bit_2/a_n20_n60#" -228
+cap "bit_0/tut11d_0/GND" "bit_2/a_n20_n60#" -228
+cap "bit_1/w_n40_n28#" "bit_1/a_n34_n13#" -1128
+merge "bit_0/a_n18_n22#" "bit_1/tut11d_0/Vdd" -1710 0 0 0 0 0 0 0 0 0 0 0 0 0 -4 -138 -88 0 0
+merge "bit_1/tut11d_0/Vdd" "bit_2/tut11d_0/Vdd" -1710
+merge "bit_2/tut11d_0/Vdd" "bit_2/a_n18_n22#" -1710
+merge "bit_2/a_n18_n22#" "bit_3/a_n18_n44#" -1710
+merge "bit_3/a_n18_n44#" "Vdd" -1710
+merge "bit_0/tut11d_0/GND" "bit_1/tut11d_0/GND" 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+merge "bit_1/tut11d_0/GND" "bit_2/tut11d_0/GND" 0
+merge "bit_2/tut11d_0/GND" "bit_3/tut11d_0/GND" 0
+merge "bit_3/tut11d_0/GND" "GND" 0
+merge "GND" "bit_3/w_n40_n28#" 0
+merge "bit_3/w_n40_n28#" "bit_1/w_n40_n28#" 0
+merge "bit_0/tut11d_0/phi1_b" "bit_1/tut11d_0/phi1_b" -320 0 0 0 0 0 -4 0 0 0 0 0 0 0 0 0 0 0 0
+merge "bit_1/tut11d_0/phi1_b" "bit_2/tut11d_0/phi1_b" -320
+merge "bit_2/tut11d_0/phi1_b" "bit_3/tut11d_0/phi1_b" -320
+merge "bit_3/tut11d_0/phi1_b" "phi1_b" -320
+merge "bit_2/tut11d_0/Q_out" "bit_2" -752 0 0 0 0 0 0 0 0 0 0 0 0 -16 -16 0 0 0 0
+merge "bit_0/a_n34_n41#" "hold" 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -8 0 0 0 0
+merge "bit_0/a_n20_n60#" "bit_1/a_n20_n60#" -640 0 0 0 0 0 -8 0 0 0 0 0 0 0 0 0 0 0 0
+merge "bit_1/a_n20_n60#" "bit_2/a_n20_n60#" -640
+merge "bit_2/a_n20_n60#" "bit_3/a_n20_n60#" -640
+merge "bit_3/a_n20_n60#" "bit_0/tut11d_0/phi2_b" -640
+merge "bit_0/tut11d_0/phi2_b" "bit_1/tut11d_0/phi2_b" -640
+merge "bit_1/tut11d_0/phi2_b" "bit_2/tut11d_0/phi2_b" -640
+merge "bit_2/tut11d_0/phi2_b" "bit_3/tut11d_0/phi2_b" -640
+merge "bit_3/tut11d_0/phi2_b" "phi2_b" -640
+merge "bit_0/tut11d_0/reset_b" "bit_1/tut11d_0/reset_b" -320 0 0 0 0 0 -4 0 0 0 0 0 0 0 0 0 0 0 0
+merge "bit_1/tut11d_0/reset_b" "bit_2/tut11d_0/reset_b" -320
+merge "bit_2/tut11d_0/reset_b" "bit_3/tut11d_0/reset_b" -320
+merge "bit_3/tut11d_0/reset_b" "RESET_B" -320
+merge "bit_0/a_n34_n52#" "bit_1/a_n34_n13#" 0 0 0 0 0 0 0 0 0 0 0 0 0 -24 -20 0 0 0 0
+merge "bit_1/a_n34_n24#" "bit_2/a_n34_n41#" -1128 0 0 0 0 0 0 0 0 0 0 0 0 -24 -20 0 0 0 0
+merge "bit_2/a_n34_n52#" "bit_3/a_n34_n13#" 0 0 0 0 0 0 0 0 0 0 0 0 0 -24 -20 0 0 0 0
+merge "bit_0/tut11d_0/Q_out" "bit_0" -752 0 0 0 0 0 0 0 0 0 0 0 0 -16 -16 0 0 0 0
+merge "bit_0/a_n40_n60#" "bit_1/a_n40_n60#" -640 0 0 0 0 0 -8 0 0 0 0 0 0 0 0 0 0 0 0
+merge "bit_1/a_n40_n60#" "bit_2/a_n40_n60#" -640
+merge "bit_2/a_n40_n60#" "bit_3/a_n40_n60#" -640
+merge "bit_3/a_n40_n60#" "bit_0/tut11d_0/phi1" -640
+merge "bit_0/tut11d_0/phi1" "bit_1/tut11d_0/phi1" -640
+merge "bit_1/tut11d_0/phi1" "bit_2/tut11d_0/phi1" -640
+merge "bit_2/tut11d_0/phi1" "bit_3/tut11d_0/phi1" -640
+merge "bit_3/tut11d_0/phi1" "phi1" -640
+merge "bit_1/tut11d_0/Q_out" "bit_1" -752 0 0 0 0 0 0 0 0 0 0 0 0 -16 -16 0 0 0 0
+merge "bit_0/tut11d_0/phi2" "bit_1/tut11d_0/phi2" -320 0 0 0 0 0 -4 0 0 0 0 0 0 0 0 0 0 0 0
+merge "bit_1/tut11d_0/phi2" "bit_2/tut11d_0/phi2" -320
+merge "bit_2/tut11d_0/phi2" "bit_3/tut11d_0/phi2" -320
+merge "bit_3/tut11d_0/phi2" "phi2" -320
+merge "bit_3/tut11d_0/Q_out" "bit_3" -752 0 0 0 0 0 0 0 0 0 0 0 0 -16 -16 0 0 0 0

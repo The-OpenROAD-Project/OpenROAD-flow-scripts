@@ -1,0 +1,150 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>tool</H2>
+<HR>
+Change the layout "tool" (button bindings).  This page describes the
+version of the command used by the Tcl version of magic.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <I>space</I> implements the command <B>tool</B>.<BR>
+      Key macro <I>shift-space</I> implements the command <B>tool box</B>.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>tool</B> [<I>name</I>|<B>info</B>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>name</I> may be one of <B>box</B>, <B>wiring</B>,
+		<B>netlist</B>, or <B>pick</B>.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>tool</B> command selects or queries the mode of operation
+      of the mouse buttons in the layout window.  Each <I>tool</I>
+      type has a unique set of button bindings. <P>
+
+      Without arguments, the <B>tool</B> command selects the next
+      tool type in round-robin fashion.  With a tool type as argument,
+      the button bindings switch to those for the indicated tool.
+      With the <B>info</B> option, a summary of the commands bound to
+      each mouse button is given for the current tool. <P>
+
+      The default mouse bindings for each of the three tools is as follows:
+      <UL>
+	<LI><I>Box Tool</I>
+	  <DL>
+	    <DT> <B>left</B>
+	    <DD> Move the box so its lower-left corner is at cursor position
+	    <DT> <B>right</B>
+	    <DD> Resize box by moving upper-right corner to cursor position
+	    <DT> <B>middle</B>
+	    <DD> Paint box area with material underneath cursor
+	  </DL>
+	  In addition, you can move or resize the box by different corners
+	  by pressing left or right, holding it down, moving the cursor
+	  near a different corner and clicking the other (left or right)
+	  button down then up without releasing the initial button.
+	<LI><I>Wiring Tool</I>
+	  <DL>
+	    <DT> <B>left</B>
+	    <DD> Pick wire material and size from under the cursor and begin
+	    	 interactive wire placement.
+	    <DT> <B>right</B>
+	    <DD> Cancel interactive wire placement.
+	    <DT> <B>middle</B>
+	    <DD> Place a wire at the position shown by the interactive wire
+	    	 tool highlight box, and continue interactive wire placement.
+	    <DT> <I>shift-</I><B>left</B>
+	    <DD> Change the type of wire to the next plane (e.g., metal1 to metal2)
+	    <DT> <I>shift-</I><B>right</B>
+	    <DD> Change the type of wire to the previous plane (e.g., metal2 to metal1)
+	    <DT> <I>shift-</I><B>middle</B>
+	    <DD> Place a contact at the current location and switch to the wire
+	    	 type on the next plane.
+	    <DT> <B>scrollwheel up<B>
+	    <DD> Increase the wire size by one unit
+	    <DT> <B>scrollwheel down<B>
+	    <DD> Decrease the wire size by one unit
+	  </DL>
+	  Note that the methods for the wire tool differ significantly between
+	  Tcl-based magic, with its interactive capabilities, and non-Tcl-based
+	  magic.
+	<LI><I>Netlist Tool</I>
+	  <DL>
+	    <DT> <B>left</B>
+	    <DD> Select the net containing the terminal nearest the cursor
+	    <DT> <B>right</B>
+	    <DD> Toggle the terminal nearest the cursor into/out of current net
+	    <DT> <B>middle</B>
+	    <DD> Join current net and net containing terminal nearest the cursor
+	  </DL>
+	<LI><I>Pick Tool</I>
+	  <DL>
+	    <DT> <B>left</B>
+	    <DD> Remove the current selection from the layout, place it
+	    	 in the pick buffer, and follow the cursor.
+	    <DT> <B>right</B>
+	    <DD> Cancel the current pick buffer and stop following the
+	    	 cursor.
+	    <DT> <B>middle</B>
+	    <DD> Place a copy of the pick buffer at the current location,
+	    	 and continue following the cursor.
+	    <DT> <I>shift-</I><B>middle</B>
+	    <DD> Make a copy of the current selection from the layout,
+	    	 place it in the pick buffer, and follow the cursor.
+	  </DL>
+	  The pick tool is an interactive feature only available in the
+	  Tcl-based version of magic.
+      </UL>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>tool</B> is implemented as a Tcl script in the Tcl-based
+      version of <B>magic</B>.  The command duplicates the function of
+      the original <B>tool</B> command, which remains for the non-Tcl
+      based version of magic, and which performs the function of
+      changing the cursor style in the window. <P>
+
+      Button functions for each "tool" may be added to or modified in
+      the startup scripts.  The Tcl variable <B>Opts(tool)</B> contains
+      the current tool name, and may be used by a user <B>tool</B>
+      procedure overriding the default one in "tools.tcl".
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=tool.html><B>tool (non-Tcl version)</B></A>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 5:25pm <P>
+</BODY>
+</HTML>

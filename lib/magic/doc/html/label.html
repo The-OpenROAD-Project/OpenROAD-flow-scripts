@@ -1,0 +1,79 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>command_name</H2>
+<HR>
+Place a label in the layout
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>label</B> <I>string</I> [<I>position</I> [<I>layer</I>]] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>string</I> is the text of the label, <I>position</I>
+	 may be any valid <A HREF=direction.html><I>direction</I></A>
+	 in <B>magic</B>, and <I>layer</I> may be any valid layer in
+	 the technology.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>label</B> command places a label on the layout.  The label
+      is marked by a point, line, or rectangle, depending on the size
+      of the cursor box.  If the area under the cursor box contains
+      exactly one type, the label will be "attached" to that type; that
+      is, the label will name the network of the node containing that
+      type.  If the area under the cursor box contains multiple layers,
+      one will be chosen for attachment to the label.  If there are
+      multiple network nodes under the cursor box, the result may not
+      be what the user intended; in such cases, the user should specify
+      which <I>layer</I> the label should be attached to, so that the
+      appropriate network node will be labeled. <P>
+
+      The label text is placed to one side of the marker in the
+      direction indicated by the <I>position</I> argument.  For
+      example, "<B>label text north</B>" will draw the label string
+      "<TT>text</TT>" to the north (above) the marker. <P>
+
+      Labels cannot be directly modified;  modifications should be
+      handled by first erasing the label with "<B>erase label</B>"
+      and then redrawing.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>label</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=port.html><B>port</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 7, 2004 at 1:11am <P>
+</BODY>
+</HTML>

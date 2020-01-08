@@ -1,0 +1,11 @@
+magic
+tech scmos
+timestamp 502162889
+<< polycontact >>
+rect 24 36 47 51
+use tut9y tut9y_0
+array 0 3 27 0 0 30
+timestamp 502162889
+transform 1 0 -17 0 1 13
+box -1 -16 26 14
+<< end >>

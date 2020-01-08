@@ -1,0 +1,107 @@
+magic
+tech scmos
+timestamp 539905536
+<< polysilicon >>
+rect -1 25 4 27
+rect 8 25 10 27
+rect 31 25 36 27
+rect 40 25 42 27
+rect 54 25 59 27
+rect 63 25 65 27
+rect -1 3 1 25
+rect 31 12 33 25
+rect 8 10 33 12
+rect 54 12 56 25
+rect 40 10 56 12
+rect 31 3 33 10
+rect 54 3 56 10
+rect -6 1 4 3
+rect 8 1 10 3
+rect 31 1 36 3
+rect 40 1 42 3
+rect 54 1 59 3
+rect 63 1 65 3
+<< ndiffusion >>
+rect 4 3 8 4
+rect 36 3 40 4
+rect 59 3 63 4
+rect 4 -2 8 1
+rect 36 -2 40 1
+rect 59 -2 63 1
+<< pdiffusion >>
+rect 4 27 8 35
+rect 36 27 40 35
+rect 59 27 63 35
+rect 4 24 8 25
+rect 36 24 40 25
+rect 59 24 63 25
+<< metal1 >>
+rect -5 35 4 39
+rect 12 35 36 39
+rect 40 35 59 39
+rect 63 35 67 39
+rect -5 28 26 32
+rect 30 28 67 32
+rect 4 14 8 20
+rect 4 8 8 10
+rect 36 14 40 20
+rect 36 8 40 10
+rect 59 14 63 20
+rect 59 10 67 14
+rect 59 8 63 10
+rect -6 -6 4 -2
+rect 12 -6 36 -2
+rect 40 -6 59 -2
+rect 63 -6 67 -2
+<< pwell >>
+rect -2 -12 15 14
+rect 30 -12 46 14
+<< nwell >>
+rect -2 14 15 43
+rect 26 14 46 43
+<< polycontact >>
+rect 4 10 8 14
+rect 36 10 40 14
+<< ndcontact >>
+rect 4 4 8 8
+rect 36 4 40 8
+rect 59 4 63 8
+rect 4 -6 8 -2
+rect 36 -6 40 -2
+rect 59 -6 63 -2
+<< pdcontact >>
+rect 4 35 8 39
+rect 36 35 40 39
+rect 59 35 63 39
+rect 4 20 8 24
+rect 36 20 40 24
+rect 59 20 63 24
+<< ntransistor >>
+rect 4 1 8 3
+rect 36 1 40 3
+rect 59 1 63 3
+<< ptransistor >>
+rect 4 25 8 27
+rect 36 25 40 27
+rect 59 25 63 27
+<< psubstratepcontact >>
+rect 8 -6 12 -2
+<< nsubstratencontact >>
+rect 8 35 12 39
+rect 26 28 30 32
+<< labels >>
+rlabel polysilicon -6 1 -6 3 7 In
+rlabel pwell 38 -10 38 -10 1 Float
+rlabel metal1 -5 28 -5 32 7 VBias
+rlabel metal1 67 10 67 14 3 Out
+rlabel polysilicon 19 11 19 11 1 Mid1
+rlabel polysilicon 50 11 50 11 1 Mid2
+rlabel metal1 -5 35 -5 39 7 Vdd#0
+rlabel metal1 -6 -6 -6 -2 7 Vss#0
+rlabel ntransistor 6 2 6 2 7 N1^
+rlabel ntransistor 38 2 38 2 7 N2^
+rlabel ntransistor 61 2 61 2 7 N3^
+rlabel ptransistor 6 26 6 26 7 P1^
+rlabel ptransistor 38 26 38 26 7 P2^
+rlabel ptransistor 61 26 61 26 7 P3^
+<< end >>

@@ -1,0 +1,24 @@
+magic
+tech scmos
+timestamp 539486845
+<< polysilicon >>
+rect -3 -14 -1 7
+<< metal1 >>
+rect -14 8 -1 12
+rect -18 0 -1 4
+rect -18 -8 -14 0
+<< metal2 >>
+rect -18 -18 -14 8
+<< m2contact >>
+rect -18 8 -14 12
+use tut8b tut8b_0
+timestamp 500619087
+transform 1 0 5 0 1 0
+box -6 0 18 12
+use tut8c tut8c_0
+timestamp 500619087
+transform 1 0 4 0 1 -14
+box -22 -8 11 6
+<< labels >>
+rlabel polysilicon -3 -14 -1 7 3 delete_me
+<< end >>

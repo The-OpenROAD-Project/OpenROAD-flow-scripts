@@ -1,0 +1,71 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>techmanager</H2>
+<HR>
+Generate the technology manager GUI window.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Menu item <I>Options->Technology manager</I> implements the command
+      <B>techmanager</B>.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>techmanager</B> <BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>techmanager</B> command generates the "technology manager"
+      GUI window (see Figure 1 below).  This window shows the current
+      technology along with its version and description strings
+      shows the internal grid scaling, the current and available CIF/GDS
+      input and output styles, and the current and available extraction
+      styles.  It also shows the known technology files by searching
+      the <I>system</I> search path (see the command <B>path</B> for
+      more information).  It allows a new technology to be loaded, or
+      the CIF/GDS and extraction styles to be changed, as well as
+      allowing internal grid rescaling by specifying the internal units
+      per lambda.<P>
+
+     <CENTER>
+       <IMG SRC=graphics/techmgr.gif> <BR>
+       <I>Figure 1.  The technology manager GUI window.</I>
+     </CENTER>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>techmanager</B> is implemented as a Tcl procedure in the
+	"wrapper" script.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 11:09pm <P>
+</BODY>
+</HTML>

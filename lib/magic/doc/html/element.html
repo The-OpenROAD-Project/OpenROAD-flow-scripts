@@ -1,0 +1,198 @@
+
+
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>element</H2>
+<HR>
+Handle generic drawing elements (line, box, text) in the layout.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>element</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	   <DT> <B>add</B> <I>type</I> <I>name</I> <I>parameters</I>
+	   <DD> Create a new element.  The <I>name</I> is a unique name
+		to be assigned to the new element.  The <I>parameters</I>
+		depend on the <I>type</I>, and are as follows:
+		<DL>
+		  <DT> <B>line</B> <I>name style x1 y1 x2 y2</I>
+		  <DD> Create a new line element, with position starting
+		       at coordinate <I>x1 y1</I> and ending at <I>x2 y2</I>.
+		       The line does not need to be on a Manhattan grid.
+		       Initial coordinates must be on internal magic grid
+		       points (that is, must be integer).  However, half-grid
+		       units can be generated with the <B>configure</B>
+		       option (see below).
+		  <DT> <B>rectangle</B> <I>name style llx lly urx ury</I>
+		  <DD> Create a new box element, with lower left corner
+		       at coordinate <I>llx lly</I> and upper right corner
+		       at coordinate <I>urx ury</I>.
+		  <DT> <B>text</B> <I>name style cx cy label_text</I>
+		  <DD> Create a new text label at coordinate position
+		       <I>cx cy</I> with text string "<I>label_text</I>".
+		</DL>
+		For an explanation of the <I>style</I> parameter, see
+		the <B>configure</B> option, below.
+	   <DT> <B>delete</B> <I>name</I>
+	   <DD> Delete an existing element by name.
+	   <DT> <B>configure</B> <I>name</I> <I>config_option</I>
+	   <DD> Configure or query an existing element named <I>name</I>.
+		<I>config_option</I> may be one of the following:
+		<DL>
+		  <DT> <B>text</B> [<I>new_label_text</I>]
+		  <DD> 
+		  <DT> <B>style</B> [<B>add</B>|<B>remove</B> [<I>style_type</I>]]
+		  <DD> With no arguments, return the list of styles used
+		       to draw the element.  With option <B>add</B> or
+		       <B>remove</B>, add or remove, respectively, a
+		       style from the list of styles for
+		       an element.  Styles are the same as styles for
+		       tile types in magic, and are defined in the
+		       "dstyle" file in the <B>magic</B> install directory.
+		       The "dstyle" file declares a "long name" for each
+		       style type.  This "long name" is what is expected
+		       for parameter <I>style_type</I>.  The most useful
+		       values are the colors defined in the "dstyle" file,
+		       such as <B>black</B>, <B>white</B>, <B>red</B>,
+		       etc. <P>
+
+		       Like tile types, elements may be drawn in multiple
+		       styles.  So, styles are maintained as a list and
+		       the <B>element configure style</B> option takes
+		       the keyword <B>add</B> or <B>remove</B> to add
+		       or remove specific styles from the list.
+		       Removing the last remaining style for an element
+		       is prohibited.  Changing styles requires first
+		       adding the new style type, then removing the
+		       original.
+		  <DT> <B>position</B> [<I>x y</I> [<I>x2 y2</I>]]
+		  <DD> With no arguments, returns the position of the
+		       element.  For text elements, this is the label
+		       position (a single coordinate).  For lines, both
+		       endpoint coordinates are returned, and for
+		       rectangles, the lower-left and upper-right
+		       coordinates are returned.  With one or two coordinate
+		       specified, the position of the element is changed.
+		       For text, a single coordinate indicates the new
+		       position of the text.  For lines and rectangles,
+		       the two coordinates completely describe the line
+		       or box.
+		  <DT> <B>flags</B> <I>flag_type</I>
+		  <DD> Add or change flags of an element.  The specific flag
+		       indicated is set.  Valid flags are as follows.
+		       All elements have these flags:
+		       <BLOCKQUOTE>
+		       <DL>
+			 <DT> <B>temporary</B>
+			 <DD> Indicates an element that is not saved to the
+			      database with a <B>save</B> or <B>writeall</B>
+			      command (the default flag).
+			 <DT> <B>persistant</B>
+			 <DD> Indicates an element that is saved to the
+			      database with a <B>save</B> or <B>writeall</B>
+			      command, and can be recovered with a <B>load</B>
+			      command.
+		       </DL>
+		       </BLOCKQUOTE>
+		       Text elements have the following additional flags:
+		       <BLOCKQUOTE>
+		       <DL>
+			 <DT> <B>small</B>, <B>medium</B>, <B>large</B>,
+				<B>xlarge</B>
+			 <DD> One of four text sizes.
+			 <DT> <A HREF=direction.html><I>direction</I></A>
+			 <DD> Any valid <I>direction</I> specification in
+			      <B>magic</B> will be translated to a text
+			      justification;  that is, the text will be
+			      printed relative to its position in the
+			      indicated direction.
+		       </DL>
+		       </BLOCKQUOTE>
+		       Line elements have the following additional flags:
+		       <BLOCKQUOTE>
+		       <DL>
+			  <DT> <B>halfx</B>, <B>halfy</B>
+			  <DD> Adjust the position of the line endpoints
+			       by one-half unit (postive, that is, right 
+			       or up).  This allows lines to be drawn on,
+			       for example, wire centerlines.  There is
+			       no allowance for having only one endpoint
+			       on the half-integer grid.
+			  <DT> <B>exactx</B>, <B>exacty</B>
+			  <DD> Set line endpoints on the exact coordinates
+			       of the line position (the default flag).
+			  <DT> <B>arrowleft</B>, <B>arrowbottom</B>
+			       <B>arrowtop</B>, <B>arrowright</B>
+			  <DD> Add arrows to the line endpoints at the
+			       indicated end.  Note that four possible
+			       positions are allowed, although only two
+			       will be relevant for any given line.
+			       Arrowheads are of fixed size and may not
+			       be visible at large zoom factors.
+			  <DT> <B>plainleft</B>, <B>plainbottom</B>
+			       <B>plaintop</B>, <B>plaintright</B>
+			  <DD> Draw plain lines, with no arrowheads
+			       (the default flags).
+		       </DL>
+		       </BLOCKQUOTE>
+		       Rectangle elements have no additional flags.
+		</DL>
+	   <DT> <B>names</B>
+	   <DD> Print names of all elements
+	   <DT> <B>inbox</B>
+	   <DD> Print name of element in (or nearest) the box
+	   <DT> <B>help</B>
+ 	   <DD> Print help information
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>element</B> command creates and manipulates
+      general-purpose "elements", which are lines, rectangles,
+      and text that have no inherent meaning to the database.
+      They are positioned in units of the layout and so scale
+      and move with zooms and pans.  They are intended to be
+      used for layout annotation, measurement rulers, user-defined
+      feedback, flylines, wire paths, and so forth.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>element</B> is implemented as a built-in <B>magic</B> command.
+      The syntax is complicated and is expected to be driven by Tcl
+      scripts with simpler syntax for specific purposes such as
+      annotation or measurement rulers.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 5, 2004 at 6:32am <P>
+</BODY>
+</HTML>

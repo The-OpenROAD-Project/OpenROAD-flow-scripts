@@ -1,0 +1,30 @@
+magic
+tech scmos
+timestamp 616458517
+<< error_p >>
+rect 55 47 57 51
+rect 10 33 12 37
+rect 10 -4 12 0
+rect 55 -4 57 0
+rect 55 -23 56 -21
+rect 55 -41 57 -37
+<< polysilicon >>
+rect 53 28 55 30
+rect 54 -23 56 -21
+<< metal1 >>
+rect 52 47 55 51
+rect 9 33 10 37
+rect 52 10 55 14
+rect 9 -4 10 0
+rect 52 -4 55 0
+rect 52 -41 55 -37
+use tut6y tut6y_0
+timestamp 616458517
+transform 1 0 -23 0 1 -33
+box 13 29 32 70
+use tut6y tut6y_1
+array 0 3 20 0 1 51
+timestamp 616458517
+transform 1 0 22 0 1 -70
+box 13 29 32 70
+<< end >>

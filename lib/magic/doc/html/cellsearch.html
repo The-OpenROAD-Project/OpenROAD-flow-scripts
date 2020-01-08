@@ -1,0 +1,113 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>cellsearch</H2>
+<HR>
+Execute a TCL procedure on each cell definition or instance in the hierarchy
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>cellsearch</B> [<B>instances</B>] <I>procedure</I> <BR><BR>
+      <BLOCKQUOTE>
+	 where <I>procedure</I> is the name of a predefined Tcl procedure
+	 (see Summary, below).
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+     The <B>cellsearch</B> command is a method for user access to
+     the <B>magic</B> database search routines.  It searches the
+     hierarchical database for all cell definitions and applies
+     the callback procedure to each.  If the <B>instances</B>
+     keyword is present, it searches the database for all cell
+     instances and applies the callback procedure to each.  The
+     callback procedure must be defined as described below.
+     Note that the callback method into Tcl is inherently slow
+     and should only be used for non-compute-intensive tasks. <P>
+  
+     The Tcl callback procedure for the <B>instances</B> version of
+     the <B>cellsearch</B> command is passed six values, the bounding
+     box coordinates of the instance, the instance use name (id), and
+     the name of the parent cell definition.  The procedure must be
+     defined to accept these six arguments, as in the following
+     example:
+     <BLOCKQUOTE> <TT> <PRE>
+	proc inst_callback {llx lly urx ury usename defname} {
+	   puts stdout "Instance $usename of $defname bbox $llx $lly $urx $ury"
+        }
+     </PRE> </TT> </BLOCKQUOTE>
+
+     The Tcl callback procedure for the cell definition search
+     is passed one value, the name of the cell definition.  The
+     procedure must be defined to accept this single argument, as
+     in the following example:
+     <BLOCKQUOTE> <TT> <PRE>
+	proc def_callback {defname} {
+	   puts stdout "Cell $defname"
+        }
+     </PRE> </TT> </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>cellsearch</B> is implemented as an internal <B>magic</B>
+      command that links to an external Tcl procedure as a callback
+      function.  This routine is experimental and subject to change
+      without notice.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+      As currently implemented, there is no protection against
+      calling a <B>magic</B> command from the callback procedure
+      that will alter the internal cell hash table while it is
+      being traversed, causing a crash.  The implementation
+      should be changed to a 2-step procedure that traverses the
+      cell hash table first, creating an internal list of function
+      arguments to pass for each cell, and then executes the
+      callback function on each. <P>
+
+      There are more efficient ways of executing the callback
+      function than Tcl_EvalEx().  In particular, the procedure
+      should be cast as a Tcl object and Tcl_EvalObjEx() used.<P>
+
+      The callback function should allow in-line Tcl procedures
+      and use the standard Tcl/Tk method of "%" escape sequences
+      used as arguments to the callback function that allow the
+      user to specify what arguments are passed to the callback
+      function (as is done for the <B>tag</B> command).
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=search.html><B>search</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 4, 2004 at 5:05am <P>
+</BODY>
+</HTML>

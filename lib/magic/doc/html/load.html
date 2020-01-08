@@ -1,0 +1,97 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>load</H2>
+<HR>
+Load a cell into the layout window
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>load</B> [<I>cellname</I> [<B>scaled</B> <I>n</I> [<I>d</I>]]]
+		[<B>-force</B>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>cellname</I> is the name of a cell that presumably
+	 exists either in the database memory or on disk as a
+	 <TT>.mag</TT> file.  <I>n</I> and <I>d</I>
+	 are the numerator and denominator, respectively, of a 
+	 magnification factor, if it is desired to load the cell at a
+	 different scale than it was written.  <I>d</I> defaults to 1
+	 if not specified.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>load</B> command loads a cell into the database and
+      displays it in the current layout window (if available).  If
+      the cell is not already in the database memory, it is loaded
+      from disk.  If it cannot be found on disk, then a new cell
+      definition of name <I>cellname</I> is created and loaded
+      into the window. <P>
+
+      By default, <B>magic</B> loads a cell from disk only if the
+      technology name matches the current technology.  Historically,
+      this has led to most technologies being named "scmos" which
+      undermines the purpose of having a technology name in the
+      first place.  In magic-7.2 and 7.3, this behavior can be
+      overridden with the <B>-force</B> option.  <B>magic</B> will
+      read the cell to the extent that layer names match between
+      the current technology and the technology of the file. <P>
+
+      The <B>-force</B> option and <B>scaled</B> option can be
+      used together to port layouts from one technology to
+      another.  The <B>scaled</B> option implements a scale
+      conversion during input by redefining the ratio of lambda
+      to internal units during the load.  This is useful if
+      a cell was written in a lambda-based technology but needs
+      to be read into a vendor-rules-based technology with a
+      fine internal scale such as 0.1 micron per internal unit.
+      The <B>scaled</B> option may also be used simply to resize
+      cell geometry, although this is generally only useful to
+      do for layout such as logos and text lettering drawn in
+      routing layers. <P>
+
+      Note that if it is not desired to have <I>cellname</I>
+      created if not found on disk (e.g., because the path for
+      the cell was missing from the search path), the database
+      can be updated with the <B>flush</B> command or the
+      <B>cellname delete</B> command.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>load</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=xload.html><B>xload</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 7, 2004 at 2:02am <P>
+</BODY>
+</HTML>

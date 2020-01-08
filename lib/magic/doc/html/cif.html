@@ -1,0 +1,193 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>cif</H2>
+<HR>
+Read CIF input or generate CIF output.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>cif</B> [<I>option</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	    <DT> <B>help</B>
+	    <DD> Print usage information
+	    <DT> <B>arealabels</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Enable/diable use of the CIF area label extension.  The
+		 default is "yes".  Normally there is no reason not to
+		 do this.
+	    <DT> <B>coverage</B> <I>layer</I>
+	    <DD> Report the coverage of the indicated CIF layer within the
+		 bounds of the current edit cell.  This is useful for
+		 fabrication processes that require a minimum amount of
+		 coverage for specific layers (usually the metal routing
+		 layers).
+	    <DT> <B>idcell</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Enable/diable use of the CIF cell ID extension.  The
+		 default is "yes".  Normally there is no reason not to
+		 do this.
+	    <DT> <B>lambda</B> <B>in</B>|<B>out</B>
+	    <DD> Report the number of microns per lambda for the current
+		 style.  If "<B>in</B>" is specified, the value is
+		 reported for the current CIF/GDS input style.  If
+		 "<B>out</B>" is specified, the value is reported for
+		 the current CIF/GDS output style. 
+	    <DT> <B>limit</B> [<I>value</I>]
+	    <DD> Limit the amount of internal grid subdivision to the
+		 indicated value (which is dimensionless, the ratio
+	         of the maximum subdivision to the current lambda
+		 value).  If no <I>value</I> is given, the current
+		 limit is reported.  By default, the value is set to
+		 100, as grid subdivision smaller than this amount
+		 can result in integer overflow on subsequent CIF or
+		 GDS output.
+	    <DT> <B>rescale</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Allow or disallow internal grid subdivision while reading
+		 CIF input.  Default is "yes".  Normally, one wants to allow
+	 	 rescaling to ensure that the CIF is displayed exactly as it
+		 is in the input file.  Occasionally, however, the CIF input
+		 is on a very fine scale, such as nanometers, and it is
+		 preferable to snap the input to lambda boundaries rather
+		 than to subsplit the internal grid to such a fine value.
+		 The <B>limit</B> option may also be used to limit grid
+		 subdivision to a minimum value (see above).
+	    <DT> <B>warning</B> [<I>option</I>]
+	    <DD> Set warning information level.  "<I>option</I>" may be one
+		 of the following:
+		 <DL>
+		 <DT><B>default</B>
+		 <DD> The default setting is equivalent to all the other
+		      options (<B>align</B>, <B>limit</B>, <B>redirect</B>,
+		      and <B>none</B>) being disabled.
+		 <DT><B>align</B>
+		 <DD> Generate warnings during a "<B>cif see</B>" command
+		      if the alignment of geometry is on fractional lambda.
+		      Normally, magic allows contacts to be drawn at
+		      half-lambda positions.  If this violates DRC requirements
+		      for the minimum output grid, this warning setting can be
+		      used to detect such violations.
+		 <DT><B>limit</B>
+		 <DD> Limit warnings to the first 100 warnings or errors only. 
+		 <DT><B>redirect</B> [<I>file</I>]
+		 <DD> Redirect all warnings to an output file named <I>file</I>.
+		      If <I>file</I> is not given, then redirection is disabled.
+		 <DT><B>none</B>
+		 <DD> Do not produce any warning messages on CIF input.
+		 </DL>
+	    <DT> <B>polygon subcells</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Put non-Manhattan polygons into subcells.  Default is "no".
+		 Normally this option is not needed.  However, input layout
+		 that defines a number of angled wires, particularly those
+		 that are closely spaced, can cause <B>magic</B> to generate
+		 literally millions of internal tiles.  This tends to be
+		 true in particular for corner cells in padframes for deep
+		 submicron feature sizes, where the angled corners are
+		 required to meet the DRC specification.  When set to "yes",
+		 each polygon encountered in the CIF input is placed in its
+		 own uniquely-named subcell.  This prevents interations with
+		 other polygons on the same plane and so reduces tile splitting.
+	    <DT> <B>see</B> <I>layers</I>
+	    <DD> View the CIF/GDS output layers in the comma-separated list
+		 <I>layers</I> as feedback entries on the layout.  This is
+		 useful for determining what the actual foundry layer types
+		 are doing as a result of the boolean operations in the
+		 CIF/GDS output style.  Most useful for debugging technology
+		 file CIF/GDS output style sections, or tracing DRC error
+		 reports from sources other than <B>magic</B>.  CIF output
+		 is computed and feedback is shown only inside the cursor
+		 box area.
+		 <CENTER>
+		 <IMG SRC=graphics/cif_see.gif> <BR>
+		 <I>Figure 1.  Command <B>cif see CSP</B> shows the P+
+		 implant layer surrounding the P diffusion regions within
+		 the cursor box area.</I>
+		 </CENTER>
+	    <DT> <B>statistics</B>
+	    <DD> Print statistics from the CIF generator, including tile
+		 operations, rectangles output, and interactions between
+		 cells.  Not especially useful to the typical end-user.
+	    <DT> <B>prefix</B> [<I>path</I>]
+	    <DD> Prepend the path name <I>path</I> to cell names in the
+		 CIF output.  If no <I>path</I> is specified, reports the
+		 existing path name.
+	    <DT> [<B>list|listall</B>] <B>istyle</B> [<I>style</I>]
+	    <DD> Set the current input style to <I>style</I>.  If no
+		 <I>style</I> is specified, returns the current input
+		 style.  To get a list of all available input styles
+		 in the current technology, use the <B>listall
+		 istyle</B> option.  The <B>list istyle</B> option
+		 returns the current style name as a Tcl result.
+	    <DT> [<B>list|listall</B>] <B>ostyle</B> [<I>style</I>]
+	    <DD> Set the current output style to <I>style</I>.  If no
+		 <I>style</I> is specified, returns the current output
+		 style.  To get a list of all available output styles
+		 in the current technology, use the <B>listall
+		 ostyle</B> option.  The <B>list ostyle</B> option
+		 returns the current style name as a Tcl result.
+	    <DT> <B>flat</B> <I>file</I>
+	    <DD> Output CIF format to "<I>file</I>" for the window's root
+		 cell, flattening the hierarchy prior to output.
+	    <DT> <B>read</B> <I>file</I>
+	    <DD> Read CIF format from file <I>file</I> into the edit cell.
+		 If <I>file</I> does not have a file extension, then <B>magic</B>
+		 searches for a file named <I>file</I> or <I>file</I>.cif.
+	    <DT> <B>write</B> <I>file</I>
+	    <DD> Output CIF format to "<I>file</I>" for the window's root cell.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>cif</B> command reads CIF input or produces CIF input/output
+      ("Caltech Intermediate Format", as described in Mead & Conway),
+      or sets various parameters affecting the CIF (and GDS) input and
+      output.  Certain <B>cif</B> command options also affect GDS input
+      and output. <P>
+
+      If no option is given, a CIF file is produced for the root cell,
+      with the default name of the root cell definition and the
+      filename extension ".cif". <P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>cif</B> is implemented as a built-in function in <B>magic</B>.
+      Options <B>list</B> and <B>listall</B> cause output to be
+      returned as a Tcl result, rather than printed to stdout (the
+      console).
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=gds.html><B>gds</B> (<B>calma</B>)</A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 4, 2004 at 8:03am <P>
+</BODY>
+</HTML>

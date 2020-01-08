@@ -1,0 +1,22 @@
+magic
+tech scmos
+timestamp 500618087
+<< metal1 >>
+rect 5 -10 8 -3
+rect 20 -10 23 -3
+rect 40 -10 43 -3
+rect 55 -10 58 -3
+rect 76 -10 79 -3
+rect 91 -10 94 -3
+rect 111 -10 114 -3
+rect 126 -10 129 -3
+rect 147 -10 150 -3
+rect 162 -10 165 -3
+rect 182 -10 185 -3
+rect 197 -10 200 -3
+use tut4x tut4x_0
+array 0 2 71 0 0 39
+timestamp 500618087
+transform 1 0 13 0 1 -75
+box -16 72 55 112
+<< end >>

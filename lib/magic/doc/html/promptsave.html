@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>promptsave</H2>
+<HR>
+Invoke the load-file widget in the GUI version of magic, prompting for
+a file to load.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Menu item <B>File->Save layout</B> implements the command
+		<B>promptsave magic</B>.<BR>
+      Menu item <B>File->Write CIF</B> implements the command <B>promptsave cif</B>.<BR>
+      Menu item <B>File->Write GDS</B> implements the command <B>promptsave gds</B>.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>promptsave</B> <B>magic</B>|<B>cif</B>|<B>gds</B> <BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>promptsave</B> command handles output of various file formats
+      for the GUI layout window in the Tcl-based version of magic when
+      invoked with the <B>magic -w</B> option.  The handling of CIF and
+      GDS formats merely makes calls to the <B>cif</B> and <B>gds</B>
+      write routines.  The handling of <B>magic</B> (<TT>.mag</TT>)
+      format appends the destination path to the search path.  If the
+      destination filename is changed in the Tk file window, the <B>save</B>
+      command is invoked to rename the top-level layout appropriately before
+      writing the output.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>promptsave</B> is implemented as a Tcl procedure in the "wrapper"
+	script.  It calls the <B>tk_getSaveFile</B> widget in Tk.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=promptload.html><B>promptload</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 16, 2004 at 2:09pm <P>
+</BODY>
+</HTML>

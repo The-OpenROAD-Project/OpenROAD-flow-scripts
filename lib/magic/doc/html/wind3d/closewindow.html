@@ -1,0 +1,71 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=../graphics/blpaper.gif>
+<H1> <IMG SRC=../graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=../graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>closewindow</H2>
+<HR>
+Close the 3D display
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>closewindow</B>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>closewindow</B> command closes the 3D display window.
+      Note that the syntax of <B>closewindow</B> is different for
+      the 3D display window than for other windows, which use the
+      default window client <B>closewindow</B> command.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>closewindow</B> is implemented as a built-in <B>wind3d</B>
+	window command in <B>magic</B>.  It overrides the default
+	window client <B>closewindow</B> command.  Note that the
+	<B>wind3d</B> window is only available when magic is
+	compiled with the OpenGL graphics option and invoked with
+	<B>magic -d OGL</B>. <P>
+	
+        Note that macros of the <B>wind3d</B> window are hard-coded,
+	and cannot be changed with the <B>macro</B>, <B>gmacro</B>, or
+	<B>imacro</B> commands.  There is no "<TT>:</TT>" macro for
+	entering commands; to enter commands from the command-line,
+	use the <A HREF=../tk_path_name.html> <I>tk_path_name</I></A>
+	command.  The default Tk path name of the <B>wind3d</B> window
+	is "<TT>.magic3d</TT>".   When invoked with the Tcl procedure
+	<B>render</B>, the default window name is "<TT>.render.magic</TT>".
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=../closewindow.html><B>closewindow</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=../graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=../commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October, 2004<P>
+</BODY>
+</HTML>

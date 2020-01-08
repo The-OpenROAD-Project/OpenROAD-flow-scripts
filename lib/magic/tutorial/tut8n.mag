@@ -1,0 +1,20 @@
+magic
+tech scmos
+timestamp 539560185
+<< checkpaint >>
+rect -28 -19 58 9
+<< metal1 >>
+rect -16 -7 46 -3
+use tut8m left
+timestamp 539557994
+transform 1 0 -16 0 1 -7
+box 0 0 16 44
+use tut8m center
+timestamp 539557994
+transform 1 0 7 0 1 -7
+box 0 0 16 44
+use tut8m right
+timestamp 539557994
+transform 1 0 30 0 1 -7
+box 0 0 16 44
+<< end >>

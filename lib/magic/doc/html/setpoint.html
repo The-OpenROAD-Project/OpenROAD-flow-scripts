@@ -1,0 +1,84 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>setpoint</H2>
+<HR>
+Set the value of the cursor reference point in a specific window.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>setpoint</B> [<I>x y</I> [<I>window_id</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>x</I> and <I>y</I> are screen coordinates and
+	 <I>window_id</I> is the identifying number for a layout
+	 window.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>setpoint</B> command forces the reference point for a specific
+      window.  Each command that executes relative to a window must be able
+      to translate from the pointer position to a layout coordinate.
+      Commands that are executed from a script or from the command-line
+      may not have access to the pointer, but can set the reference point
+      with this command so that the effect of the command is predictable. <P>
+
+      Normally, in interactive this command is not used.  However,
+      scripts that open more than one window need to specify which one
+      is to take the action of the command.  In the Tcl/Tk version, this
+      can be done by using the <I>tk_path_name</I> command to pass a
+      command to a specific window.  The non-Tcl/Tk version, and the Tcl/Tk
+      version using the "-dnull" option on the command line (i.e., no
+      graphics package initialized) must use the <B>setpoint</B> command
+      to track windows.  Although possible, it is generally a bad idea
+      for a script running in batch mode ("-dnull") to create and access
+      multiple windows, since the window structures have no useful
+      function outside of a graphics environment.  Nevertheless, it is
+      important to realize that the <B>openwindow</B> command <I>will</I>
+      generate multiple virtual windows in a batch-mode environment, and
+      these can only be separately accessed using the <B>setpoint</B>
+      command.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>setpoint</B> is implemented as a built-in window command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+      The use of the window ID number is unique to this command and should
+      be a window name like every other window-related command.  Likewise,
+      scripts would best make use of this command if the position were in
+      layout coordinates, and <B>magic</B> translated them back to screen
+      coordinates in the indicated window to set the reference point.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 9:02pm <P>
+</BODY>
+</HTML>

@@ -1,0 +1,21 @@
+magic
+tech scmos
+timestamp 500617727
+<< metal1 >>
+rect -20 64 18 67
+rect -20 56 18 59
+rect -20 48 18 51
+rect -20 40 18 43
+rect -20 32 18 35
+rect -20 24 18 27
+rect -20 16 18 19
+rect -20 8 18 11
+rect -20 0 18 3
+rect -20 -8 18 -5
+<< metal2 >>
+rect 22 -8 24 -5
+<< m2contact >>
+rect 18 -8 22 -4
+<< labels >>
+rlabel space 18 0 20 8 5 Array
+<< end >>

@@ -1,0 +1,86 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>copy</H2>
+<HR>
+Make a copy of the selection.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>c</B> implements the command <B>copy</B>.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>copy</B> [<I>option</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	    <DT> <A HREF=direction.html><I>direction</I></A>
+		[<A HREF=distance.html><I>distance</I></A>]
+	    <DD> Copy the selection relative to the original
+		 in the direction <I>direction</I> by an
+		 amount <I>distance</I>.
+	    <DT> <B>to</B> <I>x y</I>
+	    <DD> Copy the selection to the coordinate location
+		 specified by the coordinate pair <I>x y</I>.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>copy</B> command creates a copy of the current selection.
+      Without arguments, the lower-left hand corner of the copied
+      selection is placed at the current cursor position (the X11
+      cursor, not the <B>magic</B> "cursor box").  With arguments
+      <I>direction</I> and <I>distance</I>, the new copy is placed
+      relative to the original in the indicated direction by the
+      indicated amount.  The default distance is 1 unit (usually
+      lambda; see <A HREF=distance.html><I>distance</I></A> for
+      further explication).<P>
+
+      Note that usage <B>copy center</B> is useful to make a copy
+      in the current edit cell of a selection of paint and/or
+      subcells in a non-edit cell.  With this use, the copy will
+      be generated directly on top of the original.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>copy</B> is implemented as a built-in <B>magic</B> command.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=direction.html><I>direction</I></A><BR>
+      <A HREF=distance.html><I>distance</I></A><BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 6, 2004 at 12:41am <P>
+</BODY>
+</HTML>

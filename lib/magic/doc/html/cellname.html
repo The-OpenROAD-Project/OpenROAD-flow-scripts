@@ -1,0 +1,146 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>cellname</H2>
+<HR>
+Operations on cell definitions.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>cellname</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	   <DT> [<B>list</B>] <B>children</B> [<I>name</I>]
+	   <DD> List all of the children definitions of cell <I>name</I>,
+		or the children of the currently selected cell instance.
+	   <DT> [<B>list</B>] <B>parent</B> [<I>name</I>]
+	   <DD> List the parent cell definition of cell <I>name</I>,
+		or the parent of the currently selected cell instance.
+	   <DT> [<B>list</B>] <B>exists</B>|<B>self</B> [<I>name</I>]
+	   <DD> Returns the name of the cell if the cell exists, or false
+		(0) if the cell does not exist (is not loaded into the
+		database; the cell may still exist on disk).  If <I>name</I>
+		is not present, returns the name of the currently selected
+		cell.
+	   <DT> [<B>list</B>] <B>allcells</B>
+	   <DD> List all of the cells in the database.  Note that expansion
+		is not automatic, so cells that are not expanded are not
+		searched.
+	   <DT> [<B>list</B>] <B>topcells</B>
+	   <DD> List the name of the top-level cell or cells.  Note that
+		the cells are searched in the whole database, so multiple
+		cells may be returned, regardless of what cell is the
+		topmost cell in the layout window.  For that, use
+		<B>cellname window</B> (see below).
+	   <DT> [<B>list</B>] <B>window</B>
+	   <DD> List the name of the topmost cell in the window.  If only
+		one window exists, it is implicit.  If more than one
+		window exists, the command operates on the window from
+		which the command was called if the "<TT>:</TT>" macro
+		was used to invoke the command.  Otherwise, the window
+		can be specified as the command (q.v. <I>tk_path_name</I>).
+	   <DT> <B>create</B> <I>name</I>
+	   <DD> Create a new cell definition with name <I>name</I>.  This
+		is most often used with scripts, where it is not necessary
+		or desirable to load the cell into the window.  Note that
+		this command does not search the layout search path for a
+		cell named <I>name</I>.mag, so it can be used to replace
+		a cell which exists on disk but is not currently loaded.
+	   <DT> <B>rename</B> <I>name newname</I>
+	   <DD> Change the name of the cell definition <I>name</I> to 
+		<I>newname</I>.
+	   <DT> <B>delete</B> <I>name</I>
+	   <DD> Delete the cell definition with name <I>name</I>.  If cell
+		<I>name</I> is a descendent of another cell, the command
+		will be prohibited.  If the cell <I>name</I> is currently
+		the topmost cell in the window, the window will be loaded
+		with default cell "(UNNAMED)".
+	   <DT> <B>flags</B>
+	   <DD> Reports flag settings for the cell.  Flags which are reported
+	   	are "available", "modified", and "readonly".  Flag "available"
+		is true if the cell has been loaded into the database.  Flag
+		"modified" is true if layout changes have been made to the
+		cell.  Flag "readonly" is true if the cell has been locked to
+		prevent edits.
+	   <DT> <B>writeable</B> [<B>true</B>|<B>false</B>]
+	   <DD> Option <B>writeable false</B> makes the current cell
+	   	read-only and therefore prevents any edits from being
+		written to disk.  If magic is compiled with file-locking,
+		then any advisory lock on the file is released.
+		Option <B>writeable true</B> makes the current cell read-write.
+		If magic is compiled with file-locking, then magic attempts
+		to grab an advisory lock on the file.  If a lock is already
+		held on the file, then the command cannot be executed, and the
+		cell remains read-only.  Option <B>writeable</B> with no other
+		arguments returns the state of the cell (roughly equivalent to
+		<B>cellname flags readonly</B>).
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>cellname</B> command performs various operations on
+      cell definitions.  For the first four options listed above,
+      <B>cellname</B> lists cells by their relationship to cell
+      <I>name</I>, or to the current selection if no <I>name</I>
+      is given.  The optional argument <B>list</B> returns the
+      result as a list.  In particular, in the Tcl version of
+      magic, this list is a Tcl result that may be operated on
+      by Tcl procedures.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>cellname</B> is implemented as a built-in function in <B>magic</B>
+      The Tcl version of magic returns Tcl results when the "<B>list</B>"
+      option is present.  <B>instance</B> is essentially an alias for the
+      <B>cellname</B> command, and takes the same options, but references
+      are to cell instances rather that cell definitions (q.v.). <P>
+
+      The command option <B>cellname list exists</B> is nonsensical from
+      the standpoint of the end-user (if the cell is selected, of course
+      it exists).  However, it is a very useful function for Tcl scripts
+      to determine the name of the cell that is currently selected. <P>
+
+      The <B>cellname</B> command replaces a number of commands that
+      briefly appeared in version 7.1, such as <B>parent</B>,
+      <B>child</B>, and <B>top</B>.  These commands are now options
+      of the <B>cellname</B> and <B>instance</B> commands.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=instance.html><B>instance</B></A> <BR>
+      <A HREF=load.html><B>load</B></A> <BR>
+      <A HREF=tk_path_name.html><I>tk_path_name</I></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 5:38pm <P>
+</BODY>
+</HTML>

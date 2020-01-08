@@ -1,0 +1,54 @@
+#
+#    7-pixel wide glyphs for the window package
+#
+#	rcsid $Header: /usr/cvsroot/magic-8.0/windows/windows7.glyphs,v 1.1.1.1 2008/02/03 20:43:50 tim Exp $
+#
+#
+
+# syntax of first line:  size <number of glyphs> <width> <height>
+size 5 7 7
+
+#up
+W W W K W W W
+W W K K K W W 
+W K K K K K W 
+K K K K K K K 
+W W K K K W W 
+W W K K K W W 
+W W K K K W W 
+
+#down
+W W K K K W W 
+W W K K K W W 
+W W K K K W W 
+K K K K K K K 
+W K K K K K W 
+W W K K K W W 
+W W W K W W W
+
+#left
+W W W K W W W 
+W W K K W W W 
+W K K K K K K
+K K K K K K K 
+W K K K K K K 
+W W K K W W W 
+W W W K W W W 
+
+#right
+W W W K W W W
+W W W K K W W
+K K K K K K W
+K K K K K K K
+K K K K K K W
+W W W K K W W
+W W W K W W W
+
+#zoom
+W W W W W W W 
+W K K K K K W 
+W K W W W K W 
+W K W K W K W 
+W K W W W K W 
+W K K K K K W 
+W W W W W W W 

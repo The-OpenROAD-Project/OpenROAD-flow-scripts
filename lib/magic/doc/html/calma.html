@@ -1,0 +1,189 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>gds, calma</H2>
+<HR>
+Read GDSII input or generate GDSII output.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>gds</B> [<I>option</I>] <BR><BR>
+      <B>calma</B> [<I>option</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	    <DT> <B>help</B>
+	    <DD> Print usage information
+	    <DT> <B>arrays</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Output arrays as individual subuses (like in CIF).  Default
+		 is "no".  Normally there is no reason to do this.
+	    <DT> <B>contacts</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Causes contacts to be written to the GDS file as subcell
+	    	 arrays (experimental, introduced in version 7.3.55).  This
+		 method can produce very efficient output compared to writing
+		 each contact cut square separately.
+	    <DT> <B>flatten</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Flatten simple cells (e.g., contacts) on input.  This helps
+		 magic to use its contact-area representation of contacts,
+	         and can also avoid situations where contacts are lost or
+		 translated to "generic" types because the arrayed part of
+	         the contacts is missing one or more residue layers.
+	    <DT> <B>ordering</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Forces post-ordering of subcells read from a GDS file; that
+	    	 is, if a cell use is encountered before it is defined, magic
+		 will read through the remainder of the file until it finds
+		 the definition, read it, and then return to the original file
+		 position to continue reading.  This option is always enabled
+		 when using <B>gds flatten</B>.  Otherwise, the default behavior
+		 is <B>ordering no</B> to avoid lengthy searches through the
+		 GDS stream file.
+	    <DT> <B>labels</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Cause labels to be output when writing GDSII.  Default
+		 is "yes".  Normally there is no reason not to do this.
+	    <DT> <B>lower</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Allow both upper and lower case in labels.  Default is "yes".
+	    <DT> <B>read</B> <I>file</I>
+	    <DD> Read GDSII format from file <I>file</I> into the edit cell.
+		 If <I>file</I> does not have a file extension, then <B>magic</B>
+		 searches for a file named <I>file</I>, <I>file</I>.gds,
+		 <I>file</I>.gds2, or <I>file</I>.strm.
+	    <DT> <B>readonly</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Set cell as "read-only".  This has the effect of marking each
+		 cell definition (using the <B>property</B> method) with the
+		 start and end positions of the cell definition in the input
+		 file.  In subsequent output, the cell definition will be
+		 transferred verbatim from the input to the output file.  This
+		 is useful for 3rd-party standard cells or pad cells where the
+		 original GDS is trusted and it is desirable to bypass the
+		 boolean operators of <B>magic</B>'s GDS reader and writer to
+		 prevent the layout from being altered.  Note that "read-only"
+		 layout can be written to a <TT>.mag</TT> file, but the
+		 contents of this file are representational only.  It can
+		 be useful to keep a simplified respresentation in the case
+		 of pad cells or digital standard cells, for example, by
+		 reading them using a GDS input style that defines only metal
+		 layers.
+	    <DT> <B>rescale</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Allow or disallow internal grid subdivision while reading
+		 GDS input.  Default is "yes".  Normally, one wants to allow
+	 	 rescaling to ensure that the GDS is displayed exactly as it
+		 is in the input file.  Occasionally, however, the GDS input
+		 is on a very fine scale, such as nanometers, and it is
+		 preferable to snap the input to lambda boundaries rather
+		 than to subsplit the internal grid to such a fine value.
+		 The "<B>cif limit</B>" function may also be used to limit
+		 grid subdivision to a minimum value.
+	    <DT> <B>warning</B> [<I>option</I>]
+	    <DD> Set warning information level.  "<I>option</I>" may be one
+		 of the following:
+		 <DL>
+		 <DT><B>default</B>
+		 <DD> The default setting is equivalent to all the other
+		      options (<B>align</B>, <B>limit</B>, <B>redirect</B>,
+		      and <B>none</B>) being disabled.
+		 <DT><B>align</B>
+		 <DD> Generate warnings during a "<B>cif see</B>" command
+		      if the alignment of geometry is on fractional lambda.
+		      Normally, magic allows contacts to be drawn at
+		      half-lambda positions.  If this violates DRC requirements
+		      for the minimum output grid, this warning setting can be
+		      used to detect such violations.
+		 <DT><B>limit</B>
+		 <DD> Limit warnings to the first 100 warnings or errors only. 
+		 <DT><B>redirect</B> [<I>file</I>]
+		 <DD> Redirect all warnings to an output file named <I>file</I>.
+		      If <I>file</I> is not given, then redirection is disabled.
+		 <DT><B>none</B>
+		 <DD> Do not produce any warning messages on GDS input.
+		 </DL>
+	    <DT> <B>write</B> <I>file</I>
+	    <DD> Output GDSII format to "<I>file</I>" for the window's root cell.
+	    <DT> <B>polygon subcells</B> [<B>yes</B>|<B>no</B>]
+	    <DD> Put non-Manhattan polygons into subcells.  Default is "no".
+		 Normally this option is not needed.  However, input layout
+		 that defines a number of angled wires, particularly those
+		 that are closely spaced, can cause <B>magic</B> to generate
+		 literally millions of internal tiles.  This tends to be
+		 true in particular for corner cells in padframes for deep
+		 submicron feature sizes, where the angled corners are
+		 required to meet the DRC specification.  When set to "yes",
+		 each polygon encountered in the GDS input is placed in its
+		 own uniquely-named subcell.  This prevents interations with
+		 other polygons on the same plane and so reduces tile splitting.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>gds</B> command reads or produces GDSII output (also known as
+      "stream" output, or "calma" output after the name of the company
+      that invented the format), or sets various parameters affecting
+      the GDS input and output.  In magic, the GDS read and write routines
+      are a subset of the CIF read and write routines, and so it is
+      important to note that certain <B>cif</B> command options (q.v.) also
+      affect GDS input and output.  In particular, <B>cif istyle</B> and
+      <B>cif ostyle</B> set the input and output styles from the technology
+      file, respectively. <P>
+
+      If no option is given, a CALMA GDS-II stream file is produced for the
+      root cell, with the default name of the root cell definition and the
+      filename extension ".gds". <P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>gds</B> is implemented as a built-in function in <B>magic</B>.
+      The <B>calma</B> command is an alias for <B>gds</B> and is
+      exactly equivalent.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+     <UL>
+       <LI> The <B>cif</B> command options that affect GDS input and output
+            should <I>really</I> be duplicates as options of the GDS command.
+       <LI> GDS input is "interpreted" through boolean operations in the
+	    technology file definition, and so it is not guaranteed that
+	    all input will be read correctly.
+       <LI> Not all non-Manhattan geometry is read correctly.
+       <LI> The input can be fouled up if the magic grid is rescaled during
+	    input.  This error can be avoided by scaling the grid prior
+	    to GDS read-in.
+       <LI> "polygon subcells" in GDS creates a duplicate image of the
+	    layout read into the subcells;  this needs to be fixed.
+     </UL>
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=cif.html><B>cif</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 3:17pm <P>
+</BODY>
+</HTML>

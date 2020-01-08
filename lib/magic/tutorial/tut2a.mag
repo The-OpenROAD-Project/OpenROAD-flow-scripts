@@ -1,0 +1,20 @@
+magic
+tech scmos
+timestamp 500615676
+<< polysilicon >>
+rect -33 3 -29 7
+<< ndiffusion >>
+rect -40 3 -36 7
+<< pdiffusion >>
+rect -12 3 -8 7
+<< metal2 >>
+rect -19 3 -15 7
+<< polycontact >>
+rect -26 3 -22 7
+<< labels >>
+rlabel ndiffusion -38 3 -38 3 5 ndiff
+rlabel polysilicon -31 3 -31 3 5 poly
+rlabel polycontact -24 3 -24 3 5 pcontact
+rlabel metal2 -17 3 -17 3 5 metal2
+rlabel pdiffusion -10 3 -10 3 5 pdiff
+<< end >>

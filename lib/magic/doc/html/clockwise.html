@@ -1,0 +1,78 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>clockwise</H2>
+<HR>
+Rotate the selection and box clockwise
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>r</B> implements the command <B>clockwise</B>
+      (or <B>rotate 90</B>). <BR>
+      Key macro <B>R</B> implements the command <B>clockwise 270</B>
+      (or <B>rotate -90</B>). <BR>
+      Key macro <I>Control-</I><B>R</B> implements the command <B>clockwise 180</B>
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>clockwise</B> [<I>degrees</I>] [<B>-origin</B>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>degrees</I> is the number of degrees to rotate, and
+	 must be a manhattan amount (90, 180, 270).
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>clockwise</B> command rotates the current selection by
+      the specified amount, in degrees.  The default rotation is by
+      90 degrees.  The amount of rotation must be one of 90, 180,
+      or 270. <P>
+
+      If <B>-origin</B> is specified, the rotation is around the
+      origin of the selection, not around the lower left-hand
+      corner.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>clockwise</B> is implemented as a built-in <B>magic</B> command.
+      Because a "standard abbreviation" is <B>clock</B> and conflicts with
+      the Tcl command <B>clock</B>, this case is handled specially.
+      The command <B>clock</B> is deprecated in favor of the more general
+      command <B>rotate</B>, but is maintained for backward compatibility.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=rotate.html><B>rotate</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 15, 2004 at 10:09am <P>
+</BODY>
+</HTML>

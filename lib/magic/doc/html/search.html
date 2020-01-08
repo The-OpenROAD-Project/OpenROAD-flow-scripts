@@ -1,0 +1,114 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>search</H2>
+<HR>
+Execute a TCL procedure on each tile in the current edit cell definition.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>search</B> [<I>layers</I>] <I>procedure</I> <BR><BR>
+      <BLOCKQUOTE>
+	 where <I>layers</I> is a comma-separated list of layer types
+	 to generate a mask to limit the tile search, and <I>procedure</I>
+	 is the name of a predefined Tcl procedure (see Summary, below).
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+     The <B>search</B> command is a method for user access to
+     the <B>magic</B> database search routines.  It searches the
+     tile database of the current edit cell definition and its
+     hierarchy of descendents and applies the callback procedure
+     to each.  The callback procedure must be defined as described
+     below. <P>
+
+     Note that the callback method into Tcl is inherently slow
+     and should only be used for non-compute-intensive tasks.
+     In particular, unless it is known that the cell definition
+     being traversed has relatively few structures, the <I>layers</I>
+     argument should be used to severely limit the scope of the
+     search.  This function can be useful in certain situations,
+     such as parsing a layout for layer "pad" to enumerate the number
+     of pads in a design. <P>
+  
+     The Tcl callback procedure is passed five values, the four
+     coordinates of the tile, and the layer type of the tile.
+     The procedure must be defined to accept these five arguments,
+     as in the following example:
+     <BLOCKQUOTE> <TT> <PRE>
+	proc tile_callback {llx lly urx ury ttype} {
+	   puts stdout "Tile type $ttype at $llx $lly $urx $ury"
+        }
+     </PRE> </TT> </BLOCKQUOTE>
+
+     When non-manhattan tiles are parsed, the type $ttype is passed
+     as a list of two string elements, the type on the left side of
+     the diagonal split, and the type on the right side of the
+     diagonal split.
+
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>search</B> is implemented as an internal <B>magic</B>
+      command that links to an external Tcl procedure as a callback
+      function.  This routine is experimental and subject to change
+      without notice.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+      As currently implemented, there is no protection against
+      calling a <B>magic</B> command from the callback procedure
+      that will alter the internal tile structures while the tile
+      plane is being traversed, causing a crash.  The implementation
+      should be changed to a 2-step procedure that traverses the
+      tile plane first, creating an internal list of function
+      arguments to pass for each tile, and then executes the
+      callback function on each. <P>
+
+      There are more efficient ways of executing the callback
+      function than Tcl_EvalEx().  In particular, the procedure
+      should be cast as a Tcl object and Tcl_EvalObjEx() used.<P>
+
+      The callback function should allow in-line Tcl procedures
+      and use the standard Tcl/Tk method of "%" escape sequences
+      used as arguments to the callback function that allow the
+      user to specify what arguments are passed to the callback
+      function (as is done for the <B>tag</B> command).
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=cellsearch.html><B>cellsearch</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 4, 2004 at 5:05am <P>
+</BODY>
+</HTML>

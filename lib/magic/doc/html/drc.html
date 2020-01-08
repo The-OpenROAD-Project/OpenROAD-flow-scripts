@@ -1,0 +1,135 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>drc</H2>
+<HR>
+Background design rule checker control and status.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>drc</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	   <DT> <B>catchup</B>
+	   <DD> Run checker and wait for it to complete
+	   <DT> <B>check</B>
+	   <DD> Recheck area under box in all cells
+	   <DT> <B>count</B> [<B>total</B>]
+	   <DD> Count error tiles in each cell under box.  Option <B>total</B>
+	   	returns the total number of DRC error tiles in the cell.
+	   <DT> <B>euclidean on</B>|<B>off</B>
+	   <DD> Enable/disable Euclidean geometry checking
+	   <DT> <B>find</B> [<I>nth</I>]
+	   <DD> Locate next (or <I>nth</I>) error in current cell
+	   <DT> <B>help</B>
+	   <DD> Print help information
+	   <DT> <B>off</B>
+	   <DD> Turn off background checker
+	   <DT> <B>on</B>
+	   <DD> Reenable background checker
+	   <DT> <B>status</B>
+	   <DD> Report whether the background checker is on or off.
+	   <DT> <B>printrules</B> [<I>file</I>]
+	   <DD> Print out design rules in <I>file</I> or to <TT>stdout</TT>
+	   <DT> <B>rulestats</B>
+	   <DD> Print out statistics about design rule database
+	   <DT> <B>statistics</B>
+	   <DD> Print out statistics gathered by checker
+	   <DT> <B>why</B>
+	   <DD> Print out reasons for errors under box
+	   <DT> <B>*halo</B> [<I>value</I>]
+	   <DD> Without option <I>value</I>, prints out the DRC halo distance,
+	   	which is the largest distance at which a DRC interaction can
+		occur outside of any area to be checked.  Becuase large DRC
+		haloes can cause very long delays in the interactive DRC
+		checks, it can be helpful to use <I>value</I> to force a
+		smaller halo.  This causes certain DRC errors to be missed,
+		but allows all the basic short-distance design rules to be
+		checked without undue processing delays.
+	   <DT> <B>*stepsize</B> [<I>value</I>]
+	   <DD> The step size is the length of a side of the area into which
+		the DRC checker routine breaks up larger areas for more
+		efficient processing.  Changing this value can greatly
+		effect the speed of the DRC checker, although it is
+		difficult to predict what step size is "optimal".  Without
+		option <I>value</I>, returns the current value of the
+		step size.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>drc</B> command controls the behavior of magic's "background"
+      design rule checker.  Normally the design rule checker is invoked
+      whenever the design is changed and checks all parts of the design
+      close to the changed area that might have been affected by the
+      change.  The design rule checker flags areas that have been checked
+      as it runs.  It starts whenever a layout change has been made or
+      after any command has been executed if areas of the layout still
+      need to be checked.  Any macro keystroke in the layout window or
+      command executed on the command line will interrupt the design
+      rule checker pending completion of the action, at which time
+      the design rule checker will be reactivated. <P>
+
+      The <B>drc on</B> and <B>drc off</B> options are the main controls
+      for starting and stopping the design rule checker.  <B>drc status</B>
+      returns the status of the background checker, either "on" or "off".
+      The Tcl version of magic returns a boolean value (0 or 1). <P>
+
+      The <B>drc check</B> option marks all areas of the layout under the
+      box as requiring a check and restarts the design rule checker. <P>
+
+      The <B>drc why</B> and <B>drc find</B> commands can be used to
+      query errors in the layout discovered by the design rule checker.
+      <B>drc why</B> reports the reason for all error regions found
+      inside the <B>magic</B> cursor box.  The <B>drc find</B> command
+      can be used to find errors that may not be visible inside the
+      current window view, or that may be difficult to find on a large
+      layout. <P>
+
+      The <B>drc euclidean on</B> command can be useful in cases where
+      vendor design rules intend a Euclidean distance metric (minimum
+      linear distance) rather than a Manhattan distance metric (minimum
+      distance in either the <B>x</B> or <B>y</B> direction, evaluated
+      separately).  The default option is "off", as most vendor rules
+      and design rule checkers assume Manhattan distances when checking
+      rules. <P>
+
+      The remaining options are relativly obscure and unlikely to be
+      useful to the typical end-user.</P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>drc</B> is implemented as a built-in <B>magic</B> command.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 5:39pm <P>
+</BODY>
+</HTML>

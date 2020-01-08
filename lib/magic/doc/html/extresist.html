@@ -1,0 +1,118 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>extresist</H2>
+<HR>
+Patch the extraction <TT>.ext</TT> files with detailed route resistance
+information.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>extresist</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> <B>tolerance</B> <I>value</I>
+	   <DD> Set the ratio between resistor and transistor tolerance
+		for determining when to insert resistance into a network route.
+	   <DT> <B>all</B>
+	   <DD> Extract all the nets.
+	   <DT> <B>simplify</B> [<B>on</B>|<B>off</B>]
+	   <DD> Turn on/off simplification of resistor nets.
+	   <DT> <B>extout</B> [<B>on</B>|<B>off</B>]
+	   <DD> Turn on/off writing of the <TT>.res.ext</TT> file.
+	   <DT> <B>lumped</B> [<B>on</B>|<B>off</B>]
+	   <DD> Turn on/off writing of updated lumped resistances.
+	   <DT> <B>silent</B> [<B>on</B>|<B>off</B>]
+	   <DD> Turn off/on printing of net statistics.
+	   <DT> <B>skip</B> <I>mask</I>
+	   <DD> Don't extract types indicated in the comma-separated list <I>mask</I>
+	   <DT> <B>box</B> <I>type</I>
+	   <DD> Extract the signal under the cursor box on layer <I>type</I>
+	   <DT> <B>cell</B> <I>cellname</I>
+	   <DD> Extract the network for the cell named <I>cellname</I>
+	   <DT> <B>geometry</B>
+	   <DD> Extract network geometry and present as a collection of line
+		elements on the layout.
+	   <DT> <B>fasthenry</B> [<I>freq</I>]
+	   <DD> Extract subcircuit network geometry into a <B>fasthenry</B>-format
+		<TT>.fh</TT> file.  If <I>freq</I> is specified, the file will
+		be customized for <B>fasthenry</B> analysis at the indicated
+		frequency (in Hz).
+	   <DT> <B>help</B>
+	   <DD> Print help information
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The normal flow through layout extraction into a simulation file
+      treats routes as nonphysical entities, that is, with infinitesimal
+      impedence through the wires.  Extraction for digital simulation
+      using <B>irsim</B> generates "lumped resistances", a single
+      resistance per network node that, along with the node capacitance
+      to substrate, provides an <I>RC</I> time constant to approximately
+      model the delay from point to point in the network node.  The
+      lumped resistance model is inappropriate for analog (i.e., SPICE)
+      simulation, and for digital simulation, is a poor approximation
+      for branching networks, where the delay between endpoints is
+      different for each pair of endpoints in the network node. <P>
+
+      The <B>extresist</B> command provides a method for generating
+      a more detailed model of resistance, in which long network
+      routes and branching routes are replaced with resistor devices
+      and device networks. <P>
+
+      Using <B>extresist</B> is a multi-step process.  It is first
+      necessary to run both <B>extract</B> and <B>ext2sim</B> to get
+      the initial netlist (with lumped, not detailed, resistances).
+      After a <TT>.sim</TT> file has been generated, the
+      <B>extresist all</B> command may be run.  The output is
+      a file <TT>.res.ext</TT> for each cell in the hierarchy.
+      Finally, with the option <B>extresist on</B> set,
+      <B>ext2sim</B> or <B>ext2spice</B> will generate the final,
+      detailed simulation file. <P>
+
+      More details on using <B>extresist</B> can be found in
+      <B>magic</B> Tutorial number 8.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>extresist</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=extract.html><B>extract</B></A> <BR>
+      <A HREF=ext2sim.html><B>ext2sim</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 21, 2004 at 10:48am <P>
+</BODY>
+</HTML>

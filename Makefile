@@ -1,4 +1,4 @@
-OPENROAD_MODULES = yosys TritonRoute
+OPENROAD_MODULES = OpenROAD yosys TritonRoute
 SRC_PATH = OpenROAD/src
 BUILD_PATH = OpenROAD/build/src
 
@@ -10,9 +10,9 @@ else
   BUILD_DEP = cmake_%
 endif
 
-default: build_all
+default: build_all link_magic
 
-clone_all: clone_OpenROAD $(addprefix clone_,$(OPENROAD_MODULES))
+clone_all: $(addprefix clone_,$(OPENROAD_MODULES))
 	@
 
 clone_OpenROAD:
@@ -34,6 +34,9 @@ clone_TritonRoute:
 	if ! [ -d $(SRC_PATH)/TritonRoute ]; then \
 		git clone --recursive https://github.com/The-OpenROAD-Project/TritonRoute.git $(SRC_PATH)/TritonRoute --branch alpha2; \
 	fi
+
+docker_OpenROAD: clone_OpenROAD
+	docker build -t openroad -f $(SRC_PATH)/../Dockerfile $(SRC_PATH)/..
 
 docker_%: clone_%
 	docker build -t openroad/$(shell echo $* | tr A-Z a-z) -f $(SRC_PATH)/$*/Dockerfile $(SRC_PATH)/$*
@@ -60,6 +63,14 @@ build_all: $(addprefix $(BUILD_PATH)/,$(OPENROAD_MODULES))
 $(BUILD_PATH)/%: $(BUILD_DEP)
 	mkdir -p $(BUILD_PATH)
 	rm -rf ./$@
-	container_id=$$(docker create openroad/$(shell echo $* | tr A-Z a-z)) && \
-	docker cp $$container_id:/build $@ && \
-	docker rm -v $$container_id
+	if [ "$(BUILD_DEP)" == "docker_%" ]; then \
+	  container_id=$$(docker create openroad/$(shell echo $* | tr A-Z a-z)) && \
+	  docker cp $$container_id:/build $@ && \
+	  docker rm -v $$container_id; \
+	fi
+
+# TODO(rovinski) terrible hack
+link_magic:
+	if [ ! -d OpenROAD/lib ]; then \
+	  ln -s ../lib OpenROAD/lib; \
+	fi

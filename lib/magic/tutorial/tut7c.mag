@@ -1,0 +1,53 @@
+magic
+tech scmos
+timestamp 616462327
+<< polysilicon >>
+rect 9 25 11 30
+<< ndiffusion >>
+rect 38 10 41 13
+<< pdiffusion >>
+rect -10 -5 -5 -2
+<< metal1 >>
+rect 1 30 4 35
+rect 30 32 35 35
+rect 30 30 33 32
+rect 38 -5 45 -2
+rect -14 -18 -7 -15
+rect 6 -29 9 -22
+rect 37 -29 45 -25
+<< metal2 >>
+rect -12 22 -9 35
+rect 38 23 41 26
+rect -14 19 -9 22
+rect -14 10 -5 13
+rect 38 -17 45 -14
+rect -6 -26 -3 -19
+rect -12 -29 -3 -26
+rect 25 -29 28 -22
+<< polycontact >>
+rect 9 30 13 35
+<< ndcontact >>
+rect 41 10 45 14
+<< pdcontact >>
+rect -14 -5 -10 -1
+<< m2contact >>
+rect 41 23 45 27
+rect -7 -19 -3 -15
+<< labels >>
+rlabel metal2 -12 -29 -3 -29 1 bot3
+rlabel metal1 6 -29 9 -29 1 bot2
+rlabel pdcontact -14 -5 -14 -1 3 left2
+rlabel ndcontact 45 10 45 14 7 right2
+rlabel polycontact 9 35 13 35 5 top3
+rlabel m2contact 45 23 45 27 7 right1
+rlabel metal1 30 35 35 35 5 top4
+rlabel metal2 -14 10 -14 13 3 left3
+rlabel metal1 -14 -18 -14 -15 3 left1
+rlabel metal2 25 -29 28 -29 1 bot1
+rlabel metal1 45 -29 45 -25 7 right5
+rlabel metal2 45 -17 45 -14 7 right4
+rlabel metal1 45 -5 45 -2 7 right3
+rlabel metal2 -14 19 -14 22 3 left4
+rlabel metal2 -12 35 -9 35 5 top1
+rlabel metal1 1 35 4 35 5 top2
+<< end >>

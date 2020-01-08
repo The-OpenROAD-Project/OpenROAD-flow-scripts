@@ -1,0 +1,9 @@
+magic
+tech scmos
+timestamp 500619087
+<< polysilicon >>
+rect 10 2 18 4
+<< metal1 >>
+rect 10 5 18 9
+rect 10 -3 18 1
+<< end >>

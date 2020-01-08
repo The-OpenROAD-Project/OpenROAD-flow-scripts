@@ -1,0 +1,119 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>tool</H2>
+<HR>
+Change layout tool or print information about what the
+button bindings are for the current tool.  This page describes the
+<B>tool</B> command as implemented in the non-Tcl version of magic.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <I>space</I> implements the command <B>tool</B>. <BR>
+      Key macro <I>shift-space</I> implements the command <B>tool box</B>.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>tool</B> [<I>name</I>|<B>info</B>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>name</I> may be one of <B>box</B>, <B>wiring</B>,
+		<B>netlist</B>, or <B>rsim</B>.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>tool</B> command selects or queries the mode of operation
+      of the mouse buttons in the layout window.  Each <B>tool</B>
+      type has a unique set of button bindings. <P>
+
+      Without arguments, the <B>tool</B> command selects the next
+      tool type in round-robin fashion.  With a tool type as argument,
+      the button bindings switch to those for the indicated tool.
+      With the <B>info</B> option, a summary of the mouse buttons is
+      given for the current tool. <P>
+
+      The mouse bindings for each of the three tools is as follows:
+      <UL>
+	<LI><I>Box Tool</I>
+	  <DL>
+	    <DT> <B>left</B>
+	    <DD> Move the box so its lower-left corner is at cursor position
+	    <DT> <B>right</B>
+	    <DD> Resize box by moving upper-right corner to cursor position
+	    <DT> <B>middle</B>
+	    <DD> Paint box area with material underneath cursor
+	  </DL>
+	  In addition, you can move or resize the box by different corners
+	  by pressing left or right, holding it down, moving the cursor
+	  near a different corner and clicking the other (left or right)
+	  button down then up without releasing the initial button.
+	<LI><I>Wiring Tool</I>
+	  <DL>
+	    <DT> <B>left</B>
+	    <DD> Pick a wiring layer and width (same as "<B>wire type</B>")
+	    <DT> <B>right</B>
+	    <DD> Add a leg to the wire (same as "<B>wire leg</B>")
+	    <DT> <B>middle</B>
+	    <DD> Place a contact to switch layers (same as "<B>wire switch</B>")
+	  </DL>
+	<LI><I>Netlist Tool</I>
+	  <DL>
+	    <DT> <B>left</B>
+	    <DD> Select the net containing the terminal nearest the cursor
+	    <DT> <B>right</B>
+	    <DD> Toggle the terminal nearest the cursor into/out of current net
+	    <DT> <B>middle</B>
+	    <DD> Join current net and net containing terminal nearest the cursor
+	  </DL>
+	<LI><I>Rsim Tool</I>
+	  <DL>
+	    <DT> <B>left</B>
+	    <DD>
+	    <DT> <B>right</B>
+	    <DD>
+	    <DT> <B>middle</B>
+	    <DD>
+	  </DL>
+      </UL>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>tool</B> is implemented as a built-in command in the non-Tcl
+      version of <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=changetool.html><B>tool</B> <I>(Tcl version)</I></A>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 5:11pm <P>
+</BODY>
+</HTML>

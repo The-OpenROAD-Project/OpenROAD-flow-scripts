@@ -1,0 +1,14 @@
+magic
+tech scmos
+timestamp 617925832
+<< metal2 >>
+rect 39 89 49 93
+rect 38 1 49 5
+use tut8e tut8e_0
+timestamp 617925319
+transform 1 0 103 0 1 55
+box -103 -55 -54 39
+<< labels >>
+rlabel metal2 47 3 47 3 8 Vdd!
+rlabel metal2 47 91 47 91 6 Vdd!
+<< end >>

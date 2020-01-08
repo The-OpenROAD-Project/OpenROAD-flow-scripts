@@ -1,0 +1,104 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>crash</H2>
+<HR>
+Handle crash backup files
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>crash save</B> | <B>recover</B> [<I>filename</I>] <BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>crash</B> command handles crash backup files.  The exact
+      operation depends on the options, and are outlined below:
+      <DL>
+      	<DT> <B>crash save</B>
+	<DD> creates and writes to a single file a copy of the contents
+		of all modified cells.  If <B>crash save</B> has been
+		called previously, then the filename specified or
+		generated will be used again.  If this is the first
+		call to <B>crash save</B>, or if the previous call was
+		<B>crash save ""</B>, then a new, unique filename of
+		a file in the system temporary directory (normally
+		"<TT>/tmp</TT>") is created and remembered for subsequent
+		calls to <B>crash save</B>.
+      	<DT> <B>crash save</B> <I>filename</I>
+	<DD> creates and writes to the file <I>filename</I> a copy of
+		the contents of all modified cells.  <I>filename</I>
+		is retained as the crash filename, so subsequent uses
+		of <B>crash save</B> without a filename specified will
+		also write to this file.
+      	<DT> <B>crash save ""</B>
+	<DD> causes magic to forget the name of the crash file.  The
+		next use of <B>crash save</B> without a filename will
+		revert to the behavior of generating a unique filename
+		in the system temporary directory.
+      	<DT> <B>crash recover</B>
+	<DD> searches the system temporary directory for magic crash
+		recovery files.  If one or more such files is found,
+		then the user is prompted for the action of either
+		recovering or ignoring the most recent file found.
+		If the chosen action is to recover the file, then the
+		contents of the saved crash file are loaded into the
+		database, and the file is removed.
+      	<DT> <B>crash recover</B> <I>filename</I>
+	<DD> recovers the database from the contents of the saved crash
+		file <I>filename</I> upon successful read-in, the file
+		<I>filename</I> is removed. <B>
+      </DL>
+
+      If a crash file has been generated during a layout editing session,
+      and magic is exited normally with the "quit" command, then the
+      crash backup file is removed. <P>
+
+      For backward-compatibility, crash backup files are always generated
+      when magic receives a SIGTERM signal.  In the non-Tcl version of
+      magic, periodic backups are not made.
+
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>crash</B> is implemented as a built-in command in <B>magic</B>.
+      The Tcl/Tk version defines various scripts in "tools.tcl" that
+      implement a periodic backup using the <B>crash</B> command.
+      Invoking magic on the command-line using "<B>magic -r</B>" is
+      equivalent to starting magic followed by the command
+      "<B>crash recover</B>".
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=crashbackups.html><B>crashbackups</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 7, 2005 at 3:06pm <P>
+</BODY>
+</HTML>

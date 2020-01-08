@@ -1,0 +1,88 @@
+magic
+tech scmos
+timestamp 616465268
+<< metal1 >>
+rect -24 80 3 83
+rect -24 43 -21 80
+rect 0 75 3 80
+rect 84 72 94 81
+rect -32 32 -17 35
+rect -32 -13 -29 32
+rect -40 -16 -29 -13
+rect -40 -53 -37 -16
+rect -24 -45 -21 23
+rect 56 21 67 24
+rect 64 19 67 21
+rect 64 16 71 19
+rect 67 8 83 11
+rect 72 -45 75 -1
+rect 80 -13 83 8
+rect 80 -16 91 -13
+rect -24 -48 -5 -45
+rect 72 -48 79 -45
+rect -8 -53 -5 -48
+rect 88 -53 91 -16
+rect -40 -56 -13 -53
+rect -8 -56 11 -53
+rect -16 -77 -13 -56
+rect 8 -61 11 -56
+rect 48 -56 91 -53
+rect 48 -71 51 -56
+rect -24 -80 -13 -77
+rect -24 -93 -21 -80
+rect -13 -88 -9 -85
+rect -24 -96 -9 -93
+rect -16 -125 -13 -105
+rect -8 -124 4 -121
+rect -8 -125 -5 -124
+rect -16 -128 -5 -125
+rect -41 -160 -31 -151
+rect 8 -157 11 -145
+rect 40 -149 43 -145
+rect 80 -149 83 -65
+rect 40 -152 83 -149
+rect 88 -157 91 -56
+rect 8 -160 91 -157
+<< metal2 >>
+rect -1 61 2 71
+rect -24 27 -21 39
+rect -17 36 -3 39
+rect -17 35 -13 36
+rect 56 11 67 12
+rect 56 9 63 11
+rect 72 3 75 15
+rect 80 -61 83 -49
+rect 6 -65 7 -61
+rect 6 -71 9 -65
+rect -9 -85 4 -84
+rect -5 -87 4 -85
+rect -16 -101 -13 -89
+rect -5 -96 4 -93
+rect 8 -141 11 -135
+rect 43 -145 46 -135
+<< m2contact >>
+rect -1 71 3 75
+rect -25 39 -21 43
+rect -17 31 -13 35
+rect -25 23 -21 27
+rect 71 15 75 19
+rect 63 7 67 11
+rect 71 -1 75 3
+rect 79 -49 83 -45
+rect 7 -65 11 -61
+rect 79 -65 83 -61
+rect -17 -89 -13 -85
+rect -9 -89 -5 -85
+rect -9 -97 -5 -93
+rect -17 -105 -13 -101
+rect 7 -145 11 -141
+rect 39 -145 43 -141
+use tut7c tut7c_0
+timestamp 616462327
+transform 1 0 11 0 1 26
+box -14 -29 45 35
+use tut7c tut7c_1
+timestamp 616462327
+transform 1 0 18 0 1 -106
+box -14 -29 45 35
+<< end >>

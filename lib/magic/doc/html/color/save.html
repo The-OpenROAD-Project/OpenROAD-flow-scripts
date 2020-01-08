@@ -1,0 +1,79 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=../graphics/blpaper.gif>
+<H1> <IMG SRC=../graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=../graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>save</H2>
+<HR>
+Save the layer colormap to a file.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>save</B> [<I>techStyle displayStyle monitorType</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>techStyle</I> is the type of "dstyle" file requested
+	 by the technology (normally "mos"), <I>displayStyle</I> is
+	 the type of display (normally NULL, but when specified should
+	 be "24bit", "8bit", or "OpenGL" to match the type of display),
+	 and <I>monitorType</I> is typically "std".
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>save</B> command saves the contents of the color map
+      in a file that can be retrieved with the color window
+      <B>load</B> command.  This file is saved in the current working
+      directory and has the format
+      <BLOCKQUOTE>
+	 <I>techStyle</I><B>.</B><I>displayStyle</I><B>.</B><I>monType</I><B>.cmap</B>
+      </BLOCKQUOTE>
+      Without arguments, the default colormap filename varies according
+      to the display type, but is normally one of:
+      <BLOCKQUOTE>
+	 <B>mos.24bit.std.cmap</B> for 24- and 32-bit display visuals<BR>
+	 <B>mos.7bit.std.cmap</B> for 8-bit display visuals<BR>
+	 <B>mos.OpenGL.std.cmap</B> for OpenGL displays<BR>
+      </BLOCKQUOTE>
+
+      Note that for the colormap to be read by <B>magic</B> on startup,
+      the filename format above <I>must</I> be adhered to.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>save</B> is implemented as a built-in <B>color</B>
+	window command in <B>magic</B>.  It can only be invoked from
+	a window created with the <B>specialopen color</B> command.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=load.html><B>load</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=../graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=../commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October, 2004<P>
+</BODY>
+</HTML>

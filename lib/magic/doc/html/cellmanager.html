@@ -1,0 +1,169 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>cellmanager</H2>
+<HR>
+Invoke the cell manager GUI window
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Menu option <I>Options->Cell Manager</I> implements the command
+      <B>cellmanager create</B> in the GUI layout window.  This menu
+      item has a checkbox and is used both to open and to close the
+      Cell Manager window.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>cellmanager</B> [<I>option</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is optional and may be one of the following:
+	 <DL>
+	    <DT> <B>update</B>
+	    <DD> The default option if no option is given.  Update the
+		 cell manager to reflect the current state of the layout.
+	    <DT> <B>create</B>
+	    <DD> Create the cell manager window.  This option is normally
+		 called only from the "<I>Cell Manager</I>" button in the
+		 <B>magic</B> GUI layout window.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>cellmanager</B> command is normally invoked automatically
+      from inside the GUI wrapper procedures and tag callbacks, and
+      normally should not be called directly from the command line.
+   </BLOCKQUOTE>
+
+   <BLOCKQUOTE>
+      <CENTER>
+      <IMG SRC=graphics/cellmgr.gif> <BR>
+      <I>Figure 1.  The Cell Manager Window</I>
+      </CENTER>
+   </BLOCKQUOTE>
+
+   <BLOCKQUOTE>
+      The Cell Manager window (see above) is a separate top-level window
+      with Tk pathname "<B>.cellmgr</B>".  It consists of a tree widget
+      (defined in the Tcl package "BLT") display in the center, a message
+      window and button on the bottom, and a row of menu buttons at the
+      top. <P>
+
+      The Cell Manager displays cells for everything stored in the layout
+      database.  As such, it is only necessary to have a single cell
+      manager for all layout windows.  However, commands such as "Load",
+      "Edit", etc., apply to a specific window.  When a new layout window
+      is created, rather than generate a new Cell Manager window, the
+      new window is added to the list of "target windows".  The currently
+      selected target window is displayed at the bottom of the Cell
+      Manager.  This is also a button that can be used to select a new
+      target window.  If only one layout window is present, the target is
+      declared "default" and may be left alone. <P>
+
+      The hierarchical tree view shows all of the <I>instances</I> (cell
+      uses) in a layout.  When first invoked, the top-level cell only
+      is shown, with a "folder" icon showing that this cell contains
+      uses.  By clicking on the "+" symbol next to the folder icon,
+      the tree view is expanded to show the cell instances used by the
+      top-level layout cell.  This expansion may continue until a cell
+      instance is found that does not contain any descendents.  Note that
+      the name displayed is the name of the cell <I>definition</I>, with
+      the instance number given in parentheses after the name.  If
+      the instance name is non-default (e.g., because it came from a
+      3rd party vendor database or was altered with the <B>identify</B>
+      command), the full name of the instance is shown in the
+      parentheses.  If the instance is arrayed, the array indices are
+      shown in brackets ("<B>[]</B>") after the instance number or name.
+      <P>
+
+      The use of tag callbacks on commands allows the cell manager to
+      be updated in response to certain commands entered on the command
+      line.  The cell manager will be updated in response to a
+      "<B>load</B>" or "<B>getcell</B>" command. <P>
+
+      The menu buttons perform certain functions based on the selection
+      made in the tree window.  These functions are as follows:
+      <BLOCKQUOTE>
+      <DL>
+	 <DT> <B>Load</B>
+	 <DD> load the selected cell into the window.  The <B>load</B>
+	      command is invoked and passed the cell definition name
+	      of the selected cell instance.  Note that this menu
+	      function operates on the cell <I>definition</I> of the
+	      selected cell <I>instance</I>.
+	 <DT> <B>Edit</B>
+	 <DD> edit the selected cell instance.  The cell instance
+	      selected becomes the current edit cell.
+	 <DT> <B>Expand</B>
+	 <DD> expand (or unexpand, if already expanded) the selected
+	      cell instance.
+	 <DT> <B>Zoom</B>
+	 <DD> change the current view of the layout so that it is
+	      centered on the selected cell instance, and scaled so
+	      that the cell instance fills the screen.
+      </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>cellmanager</B> is implemented as a Tcl procedure in the GUI wrapper
+	script.  Because layouts with complicated hierarchy can cause
+	<B>magic</B> to run very slowly due to processing in the cell
+	manager window, this window does not exist on startup and is
+	deleted entirely when turned off in the "<I>Options</I>" menu of
+	the GUI wrapper layout window. <P>
+      <B>cellmanager</B> uses the tree display widget from the tcl package
+	"BLT".  Therefore, in order to see the Cell Manager window, it is
+	necessary to have BLT installed on the system.  If BLT is not
+	installed, no option for "Cell Manager" will appear in the "Options"
+	menu of the GUI wrapper window. <P>
+      <B>cellmanager</B> depends on the GUI wrapper window, as it is defined
+	in the wrapper script.  Therefore, to use the cell manager, it is
+	necessary to invoke magic with the option "<B>-w</B>".
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+   The "<B>Expand</B>" function should expand everything above the selected
+   cell.  Otherwise, if something higher up in the hierarchy is unexpanded,
+   the selected cell will not be expanded.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+   <A HREF=load.html><B>load</B></A> <BR>
+   <A HREF=edit.html><B>edit</B></A> <BR>
+   <A HREF=expand.html><B>expand</B></A> <BR>
+   <A HREF=zoom.html><B>zoom</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 6, 2004 at 12:47am <P>
+</BODY>
+</HTML>

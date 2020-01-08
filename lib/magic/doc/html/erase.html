@@ -1,0 +1,84 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>erase</H2>
+<HR>
+Erase paint from the layout inside the bounds of the cursor box.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>Control-D</B> implements the command "<B>erase $</B>",
+      which indicates to erase all paint and labels in the cursor box. <BR>
+
+      Key <B>e</B> typed while the cursor is in a layer box in the GUI toolbar
+      implements the command "<B>erase</B> <I>layer</I>", passing the layer
+      type in the toolbar. <BR>
+
+      Key Shift plus Mouse button 2 implements the command
+      <B>erase cursor</B> when using the "box tool" in a layout
+      window. <BR>
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>erase</B> [<I>layers</I>|<B>cursor</B>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>layers</I> is a comma-separated list of layer types
+	 to be erased, or <B>*</B> to indicate all paint but not labels,
+         or <B>$</B> to indicate both paint and labels.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>erase</B> command erases paint inside the cursor box in the
+      current edit cell.  Without arguments, everything inside the box
+      is erased.  With argument <I>layers</I>, only the indicated layers
+      are erased.  <P>
+
+      Note that some layer types, such as DRC paint, cannot be erased.
+      Feedback areas are not considered paint and should be erased
+      using the <B>feedback clear</B> command. <P>
+
+      The option "<B>erase cursor</B>" picks the layers at the position
+      of the (X11) cursor and erases these from the area of the cursor
+      box.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>erase</B> is implemented as a built-in <B>magic</B> command.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=paint.html><B>paint</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> November 8, 2004 at 3:02pm <P>
+</BODY>
+</HTML>

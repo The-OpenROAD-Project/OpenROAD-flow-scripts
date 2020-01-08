@@ -1,0 +1,18 @@
+magic
+tech scmos
+timestamp 500618984
+<< metal1 >>
+rect 94 93 100 102
+rect -66 -45 94 -29
+rect -61 -181 -55 -173
+use tut7c tut7c_0
+timestamp 500618984
+transform 1 0 11 0 1 26
+box -14 -29 45 35
+use tut7c tut7c_1
+timestamp 500618984
+transform 1 0 18 0 1 -106
+box -14 -29 45 35
+<< labels >>
+rlabel metal1 -66 -45 -66 -29 3 foo
+<< end >>

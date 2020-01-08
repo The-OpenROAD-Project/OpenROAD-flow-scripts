@@ -1,0 +1,98 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>corner</H2>
+<HR>
+Make L-shaped wires inside the cursor box.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>corner</B> <I>d1 d2</I> [<I>layers</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>d1</I> and <I>d2</I> are valid manhattan
+	 <A HREF=direction.html><I>directions</I></A>, and
+	 <I>layers</I> is an optional comma-separated list
+	 of valid paint layers.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>corner</B> command makes L-shaped wires inside
+      the cursor box, filling first in direction <I>d1</I>,
+      then in direction <I>d2</I>.  If no <I>layers</I> are
+      specified, then the cornering algorithm is applied to
+      all layers crossing the cursor box boundary opposite
+      to direction <I>d1</I>.  If <I>layers</I> is specified,
+      the cornering algorithm is applied only to those layers
+      specified.  The usage of <B>corner</B> is similar to
+      that for the command <B>fill</B> (q.v.).
+   </BLOCKQUOTE>
+
+   <BLOCKQUOTE>
+      Below is an example showing how the cornering algorithm
+      responds to the command <B>corner n e</B>.  First it
+      finds layers crossing the cursor box boundary to the
+      south (opposite to the first specified direction,
+      <B>north</B>), and then extends these layers as wires
+      first to the north, then to the east.  The position of
+      the layers leaving the box to the east is such that
+      the same distance is maintained from each layer to the
+      north side of the box at the exit point as it was
+      from each layer to the east side of the box at the
+      entrance point.
+
+      <CENTER>
+      <IMG SRC=graphics/corner1.gif>
+      <IMG SRC=graphics/corner2.gif> <BR>
+      <I>Figure 1: The cornering operation in response to the layout
+      shown, given magic command <B>corner n e</B></I>.
+      </CENTER>
+   </BLOCKQUOTE>
+   
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>corner</B> is implemented as a built-in <B>magic</B> command.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+      If the area in the box is not large enough for
+      the cornering algorithm to produce the cornered
+      wires, unpredictable results often result.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=diretion.html><I>direction</I></A> <BR>
+      <A HREF=fill.html><B>fill</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 4, 2004 at 7:56am <P>
+</BODY>
+</HTML>

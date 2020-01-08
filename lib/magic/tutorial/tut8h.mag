@@ -1,0 +1,32 @@
+magic
+tech scmos
+timestamp 617922660
+<< error_s >>
+rect -3 -7 0 -5
+<< polysilicon >>
+rect -1 6 5 8
+rect -7 -7 4 -5
+<< ndiffusion >>
+rect -9 15 -1 20
+rect -10 8 -1 11
+rect -10 6 -7 8
+rect -10 3 -1 6
+<< ntransistor >>
+rect -7 6 -1 8
+use tut8j tut8j
+timestamp 617922547
+transform 0 1 -3 -1 0 -1
+box 0 0 10 3
+use tut8i tut8i_0
+timestamp 617922660
+transform 1 0 -13 0 1 -17
+box -15 0 11 2
+use tut8i tut8i_1
+timestamp 617922660
+transform 1 0 13 0 1 -17
+box -15 0 11 2
+<< labels >>
+rlabel polysilicon 5 6 5 8 7 Gate
+rlabel ndiffusion -9 15 -9 20 3 Drain
+rlabel ndiffusion -10 3 -10 11 3 Drain
+<< end >>

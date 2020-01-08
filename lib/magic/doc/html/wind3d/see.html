@@ -1,0 +1,77 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=../graphics/blpaper.gif>
+<H1> <IMG SRC=../graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=../graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>see</H2>
+<HR>
+View or hide layers from the 3D view
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>see</B> [<B>no</B>] <I>layer</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>layer</I> is a <B>magic</B> layer type if the
+	 current view is of <B>magic</B> layers, and is a
+	 <B>CIF</B> layer name if the view is of CIF/GDS layers.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>see</B> command is similar to the <B>see</B> command
+      in the layout window.  It adds or subtracts layers from what
+      is viewed in the 3D window.  By default, all layers are
+      displayed.  The "<B>see</B> <I>layer</I>" command causes
+      layers to be displayed, while "<B>see no</B> <I>layer</I>"
+      causes them to be hidden.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>see</B> is implemented as a built-in <B>wind3d</B>
+	window command in <B>magic</B>.  It can only be invoked from
+	a window created with the <B>specialopen wind3d</B> command,
+	or the <B>render</B> procedure.  Note that the <B>wind3d</B>
+	window is only available when magic is compiled with the OpenGL
+	graphics option and invoked with <B>magic -d OGL</B>. <P>
+	
+      Note that macros of the <B>wind3d</B> window are hard-coded,
+	and cannot be changed with the <B>macro</B>, <B>gmacro</B>, or
+	<B>imacro</B> commands.  There is no "<TT>:</TT>" macro for
+	entering commands; to enter commands from the command-line,
+	use the <A HREF=../tk_path_name.html> <I>tk_path_name</I></A>
+	command.  The default Tk path name of the <B>wind3d</B> window
+	is "<TT>.magic3d</TT>".
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=cif.html><B>cif</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=../graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=../commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October, 2004<P>
+</BODY>
+</HTML>

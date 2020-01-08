@@ -1,0 +1,81 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>openwindow</H2>
+<HR>
+Open a new (non-GUI) layout window with indicated name, bound to indicated cell
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>o</B> implements the command <B>openwindow</B>.  This
+      macro is disabled when using the GUI wrapper.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>openwindow</B> [<I>cell</I>] [<I>name</I>] <BR><BR>
+      <BLOCKQUOTE>
+	 where <I>cell</I> is the name of a cell to be loaded into the
+	 new window, and <I>name</I> is the Tk path name of a top-level
+	 window (see below).  An empty string or Tcl NULL list "{}" for
+	 <I>cell</I> will cause the default cell "(UNNAMED)" to be loaded.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>openwindow</B> command opens a new layout window.  Without
+      arguments, a new layout window named "magic<I>n</I>" is created,
+      where <I>n</I> is the index of the <I>n</I>th window to be
+      created.   Without a named cell, the new window is loaded with
+      a copy of the cell that was present in the last generated layout
+      window. <P>
+	
+      The use of parameter <I>name</I> is used in conjunction with a
+      wrapper script to attach the layout window to an existing Tk
+      frame window.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>openwindow</B> is implemented as a built-in <B>magic</B>
+      window command.  It should not be used with the GUI wrapper
+      (invoked with <B>magic -w</B>); instead, the <B>openwrapper</B>
+      function should be used.  Note that it is possible to use
+      this command in batch mode, although there is no useful
+      reason to do so.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=closewindow.html><B>closewindow</B></A> <BR>
+      <A HREF=openwrapper.html><B>openwrapper</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 9:03pm <P>
+</BODY>
+</HTML>

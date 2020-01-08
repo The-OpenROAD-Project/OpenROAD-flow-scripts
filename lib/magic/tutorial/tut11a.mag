@@ -1,0 +1,100 @@
+magic
+tech scmos
+timestamp 552706284
+<< polysilicon >>
+rect 190 -24 201 -22
+rect 199 -42 201 -24
+rect 190 -44 192 -42
+rect 190 -113 199 -111
+rect 203 -113 207 -111
+rect 190 -129 207 -127
+rect 197 -149 207 -143
+rect 190 -151 207 -149
+rect 197 -154 207 -151
+rect 190 -159 207 -157
+rect 190 -175 193 -173
+rect 197 -175 207 -173
+rect 8 -226 19 -224
+rect 8 -233 10 -226
+rect 17 -233 19 -226
+rect 8 -235 19 -233
+rect 8 -244 10 -235
+rect 15 -237 17 -235
+rect 15 -239 19 -237
+rect 17 -240 19 -239
+rect 17 -242 21 -240
+rect 19 -244 21 -242
+rect 24 -242 26 -224
+rect 36 -226 47 -224
+rect 36 -233 38 -226
+rect 45 -233 47 -226
+rect 36 -235 47 -233
+rect 24 -244 33 -242
+rect 36 -244 38 -235
+rect 45 -244 47 -235
+<< metal1 >>
+rect -26 -19 76 -13
+rect 82 -19 184 -13
+rect 214 -28 224 -24
+rect 190 -32 224 -28
+rect 214 -35 224 -32
+rect 193 -171 196 -46
+rect 199 -109 202 -46
+rect -34 -222 22 -216
+rect 28 -222 130 -216
+rect 136 -222 191 -216
+<< metal2 >>
+rect -32 -22 -26 -19
+rect 76 -22 82 -19
+rect 184 -22 190 -19
+rect -4 -245 0 -197
+rect 22 -216 28 -199
+rect 50 -245 54 -197
+rect 104 -245 108 -197
+rect 130 -216 136 -199
+rect 158 -245 162 -197
+<< polycontact >>
+rect 192 -46 196 -42
+rect 199 -46 203 -42
+rect 199 -113 203 -109
+rect 193 -175 197 -171
+<< m2contact >>
+rect -32 -19 -26 -13
+rect 76 -19 82 -13
+rect 184 -19 190 -13
+rect -4 -197 0 -193
+rect 50 -197 54 -193
+rect 104 -197 108 -193
+rect 158 -197 162 -193
+rect 22 -222 28 -216
+rect 130 -222 136 -216
+use tut11c bit_3
+timestamp 552706284
+transform 0 1 28 -1 0 -62
+box -40 -60 137 0
+use tut11b bit_2
+timestamp 552706284
+transform 0 1 82 -1 0 -62
+box -40 -60 137 0
+use tut11c bit_1
+timestamp 552706284
+transform 0 1 136 -1 0 -62
+box -40 -60 137 0
+use tut11b bit_0
+timestamp 552706284
+transform 0 1 190 -1 0 -62
+box -40 -60 137 0
+<< labels >>
+rlabel metal1 224 -35 224 -24 7 hold
+rlabel polysilicon 207 -113 207 -111 7 phi1
+rlabel metal1 191 -222 191 -216 1 GND
+rlabel m2contact 190 -19 190 -13 5 Vdd
+rlabel polysilicon 207 -129 207 -127 7 phi1_b
+rlabel polysilicon 207 -159 207 -157 7 phi2
+rlabel polysilicon 207 -175 207 -173 7 phi2_b
+rlabel metal2 160 -245 160 -245 5 bit_0
+rlabel metal2 106 -245 106 -245 5 bit_1
+rlabel metal2 52 -245 52 -245 5 bit_2
+rlabel metal2 -2 -245 -2 -245 5 bit_3
+rlabel polysilicon 202 -143 202 -143 1 RESET_B
+<< end >>

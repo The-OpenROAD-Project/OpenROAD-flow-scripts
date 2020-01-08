@@ -1,0 +1,79 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>help</H2>
+<HR>
+Print out synopses for all commands valid in the current window (or
+restrict output to those containing the indicated pattern)
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>help</B> [<I>pattern</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>pattern</I> is any keyword or text string.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>help</B> command invokes the built-in help function in
+      <B>magic</B>, which lists the summary usage information that
+      has been compiled into magic for each command.  The summary
+      help information is usually only a single line of text.
+      Commands that have complicated sets of options have their
+      own <B>help</B> option, which is not part of the <B>help</B>
+      command. <P>
+
+      Without arguments, <B>help</B> reports a summary usage for
+      every command in magic.  With arguments, magic filters the
+      output to report only those commands matching the indicated
+      text <I>pattern</I>. <P>
+
+      The output is divided into
+      general-purpose and window-specific sections.  The window-specfic
+      section depends on the active window.  For instance, with a
+      single layout window present, <B>help cleanup</B> returns no
+      information.  However, the command <B>specialopen netlist</B>
+      followed by <B>help cleanup</B> will report the usage of the
+      command <B>cleanup</B>, which is a command that can only be
+      invoked from the netlist window. <P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>help</B> is implemented as a built-in command in <B>magic</B>.
+      Note that there is no general-purpose command-line-based help
+      method for Tcl commands, so the <B>help</B> command will not
+      provide any information about magic commands written as Tcl
+      procedures, such as <B>openwrapper</B> or <B>pushstack</B>.
+      The general convention is for each Tcl procedure to allow the
+      option <B>help</B> and provide its own usage information.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 6, 2004 at 7:02pm <P>
+</BODY>
+</HTML>

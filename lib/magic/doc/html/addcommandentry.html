@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>addcommandentry</H2>
+<HR>
+Generate a new frame for command-line entry.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>addcommandentry</B> <I>framename</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>framename</I> is the Tk pathname of a frame.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>addcommandentry</B> command is used with the GUI wrapper in
+      magic version 7.3.  It adds a narrow text entry frame to the bottom
+      of the window.  This frame duplicates the output of the Tk console,
+      and can be used as an alternative console from which to enter 
+      command-line commands.  The <I>framename</I> is the Tk path name
+      of the frame holding the layout window.  By default these are
+      named <B>.layout1</B>, <B>.layout2</B>, etc., for each call to
+      <B>openwrapper</B>. <P>
+
+      The command entry window has a prompt with the name of the Tk frame,
+      e.g., "<TEXT color=brown><TT>layout1&gt;</TT></TEXT>", and all
+      window commands entered into this area will be relative to the
+      associated layout window.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>addcommandentry</B> is implemented as a Tcl procedure defined
+      in the GUI wrapper script.  It is only available when the wrapper
+      is used, that is, when <B>magic</B> is invoked with argument <B>-w</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=deletecommandentry.html><B>deletecommandentry</B></A> <BR>
+      <A HREF=openwrapper.html><B>openwrapper</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 5, 2004 at 3:19am <P>
+</BODY>
+</HTML>

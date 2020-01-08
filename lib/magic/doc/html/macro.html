@@ -1,0 +1,102 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>macro</H2>
+<HR>
+Define or print a macro called char
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>macro</B> [<I>window_type</I>] [<I>key</I> [<I>value</I>]] <BR><BR>
+      <BLOCKQUOTE>
+	 where <I>key</I> is the name of a valid key (see below), and
+	 <I>value</I> is a <B>magic</B> command-line command.  If
+	 present, <I>window_type</I> must be one of the four window
+	 types accepted by the <B>specialopen</B> command:  <B>layout</B>,
+	 <B>color</B>, <B>netlist</B>, and <B>wind3d</B>.  If omitted,
+	 the layout window is assumed by default, unless the command has
+	 been called from inside a window (using the colon or semicolon
+	 escape to the command-line), in which case that window type is
+	 assumed.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>macro</B> command translates keystrokes typed into
+      a layout window into <B>magic</B> command-line commands.
+      When the key <I>key</I> is pressed in a layout window, the
+      command stored in <I>value</I> is executed relative to that
+      layout window.  The default bindings are specified in the
+      system <TT>.magic</TT> file, read at startup.  These macros
+      may be arbitrarily rebound using the <B>macro</B> command. <P>
+
+      A key <B>macro</B> may be unbound from a command by
+      passing an empty string ("") for the <I>value</I>. <P>
+
+      <I>key</I> is any valid name for a keyboard keypress event.
+      In its simplest form, this may just be the name of the key,
+      such as "g" or "X".  The space bar key must be quoted in
+      double-quotes;  most other characters may be unquoted.
+      Control characters may be specified by the two-character
+      combination of the carat ("^") key followed by a capital
+      letter, such as "^Z".  The use of embedded control characters
+      is deprecated, as it is incompatible with Tcl syntax. <P>
+
+      <I>key</I> may also be specified as any valid X11 name for
+      a key as defined in the include file <TT>keysymdef.h</TT>
+      on UNIX systems.  This allows specification of function
+      keys such as "XK_F8" or keypad keys such as "XK_KP_Right". <P>
+
+      Buttons are treated just like keys for the purpose of
+      defining macros.  While the official names for buttons
+      in <TT>keysymdef.h</TT> are "<B>XK_Pointer_Button_1</B>",
+      etc., the <B>macro</B> command accepts the abbreviated
+      forms <B>Button1</B>, and so forth. <P>
+
+
+      Finally, key modifiers may be prepended to the key name.
+      Valid key modifiers are <B>Shift_</B>, <B>Control_</B>,
+      <B>Alt_</B>, and <B>Meta_</B>, and may be coupled in any
+      combination.  Mouse buttons may also be combined with key
+      modifiers, so, for example, <B>Shift_Button1</B> is a legal,
+      unique binding. <P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>macro</B> is implemented as a built-in window command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=imacro.html><B>imacro</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> November 10, 2004 at 10:34am <P>
+</BODY>
+</HTML>

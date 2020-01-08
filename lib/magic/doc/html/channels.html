@@ -1,0 +1,64 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>channels</H2>
+<HR>
+See channels (as feedback) without doing routing.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>channels</B> [<I>netlist_file</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>netlist_file</I> is the name of a <TT>.net</TT>
+	 file containing a routing netlist.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>channels</B> command is part of the routing module in
+      <B>magic</B>.  It shows available routing channels in the
+      current layout using the feedback layer mechanism.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>channesl</B> is implemented as a built-in command in <B>magic</B>
+      when the router modules are compiled in (which currently they are,
+      in the default compilation configuration).
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=route.html><B>route</B></A> <BR>
+      <A HREF=iroute.html><B>iroute</B></A> <BR>
+      <A HREF=garoute.html><B>garoute</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 4, 2004 at 5:13am <P>
+</BODY>
+</HTML>
