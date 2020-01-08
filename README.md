@@ -45,7 +45,16 @@ a pre-compiled build export or can be built manually. The tools in the flow have
 the following dynamic/runtime dependencies:
 
 ### Option 1: Installing build exports
-TODO
+1.  Clone the OpenROAD-flow repository
+```
+git clone https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
+```
+2. Navigate to the "Releases" tab and download the latest release
+3. Extract the tar to `OpenROAD-flow/OpenROAD`
+4. Update your shell environment
+```
+source setup_env.sh
+```
 
 ### Option 2: Building the tools using docker
 This build options leveraged docker to build the seperate tool binaries in
