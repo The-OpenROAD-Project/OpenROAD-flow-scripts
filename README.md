@@ -55,30 +55,13 @@ run docker to follow these instructions.
 ```
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
 ```
-2. Build the main `openroad` app
+2. Build the Dockerfiles using the Makefile.
 ```
-docker build -t openroad -f ./OpenROAD/Dockerfile ./OpenROAD
-container_id=$(docker create openroad)
-docker cp $container_id:/OpenROAD/build ./OpenROAD/build
-docker rm -v $$container_id
+make
 ```
+Make sure that `docker` is in your PATH and detected by the Makefile.
 
-3. Clone tools in external linked  repositories
-```
-make clone_all
-```
-
-4. Build tools in externally linked repositories
-```
-make docker_all
-```
-
-5. Assemble the tools
-```
-make build_all
-```
-
-6. Update your shell environment
+3. Update your shell environment
 ```
 source setup_env.sh
 ```
@@ -89,10 +72,6 @@ prerequisites and steps.
 ```
 ./OpenROAD/Dockerfile
 ./OpenROAD/yosys/Dockerfile
-./OpenROAD/tapcell/Dockerfile
-./OpenROAD/TritonCTS/Dockerfile
-./OpenROAD/TritonMacroPlace/Dockerfile
-./OpenROAD/pdn/Dockerfile
 ./OpenROAD/TritonRoute/Dockerfile
 ```
 After building, ensure that the `PATH` variable and shell environment is setup to point to the binaries
@@ -131,4 +110,3 @@ licenses:
 - Find the tool license at: `OpenROAD/src/{tool}/`
 - Find the platform license at: `flow/platforms/{platform}/`
 - Find the design license at: `flow/designs/src/{design}/`
-
