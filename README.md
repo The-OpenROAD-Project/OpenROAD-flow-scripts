@@ -47,7 +47,7 @@ the following dynamic/runtime dependencies:
 ### Option 1: Installing build exports
 1.  Clone the OpenROAD-flow repository
 ```
-git clone https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
+git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
 ```
 2. Navigate to the "Releases" tab and download the latest release
 3. Extract the tar to `OpenROAD-flow/OpenROAD`
