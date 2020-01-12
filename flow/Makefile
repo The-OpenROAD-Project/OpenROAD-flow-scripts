@@ -191,13 +191,6 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
-ifneq ($(CORE_UTILIZATION),)
-  FLOORPLAN_ARGS = -utilization $(CORE_UTILIZATION) \
-                   -aspect_ratio $(CORE_ASPECT_RATIO) \
-                   -core_space $(CORE_MARGIN)
-else
-  FLOORPLAN_ARGS = -die_area "$(DIE_AREA)" -core_area "$(CORE_AREA)"
-endif
 
 $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_synth.v
 	@$(call BANNER, 2. FLOORPLAN)
