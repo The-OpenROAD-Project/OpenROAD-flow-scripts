@@ -1,0 +1,4408 @@
+# 1 "scmos.tech.out"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "scmos.tech.out"
+# 352 "scmos.tech.out"
+tech
+    format 28
+    scmos
+end
+
+
+version
+    version 8.2.8
+
+
+
+
+
+
+
+    description "MOSIS Scalable CMOS Technology for Tight Metal Rules"
+# 377 "scmos.tech.out"
+end
+
+
+planes
+    well,w
+    implant,i
+    active,a
+    metal1,m1
+    metal2,m2
+
+
+
+    metal3,m3
+    oxide,ox
+end
+
+
+types
+
+
+    well pwell,pw
+    well nwell,nw
+    well capwell,cwell,cw
+    well highvoltnwell,hvnwell,hnwell,hnw
+    well highvoltpwell,hvpwell,hpwell,hpw
+    active polysilicon,red,poly,p
+    active electrode,poly2,el,p2
+    active capacitor,polycap,pcap,cap
+    active wellcapacitor,wellcap,wcap
+    active ndiffusion,ndiff,green
+    active pdiffusion,pdiff,brown
+    active highvoltndiffusion,hvndiff,hndiff
+    active highvoltpdiffusion,hvpdiff,hpdiff
+    metal1 metal1,m1,blue
+    metal2 metal2,m2,purple
+    metal3 metal3,m3,cyan
+
+
+
+    active ntransistor,nfet
+    active ptransistor,pfet
+    active entransistor,enfet
+    active eptransistor,epfet
+    active doublentransistor,nfloating-gate,nfloatg,nfg,nffet
+    active doubleptransistor,pfloating-gate,pfloatg,pfg,pffet
+    active highvoltntransistor,hvnfet,hnfet
+    active highvoltptransistor,hvpfet,hpfet
+
+
+
+    active collector,coll,col,co,cl
+    active emitter,emit,em
+    active pbase,pb
+
+
+
+    implant bccdiffusion,bd
+    active nbccdiffusion,nbd
+
+
+
+    active polycontact,pcontact,polycut,pc
+    active ndcontact,ndiffcut,ndc
+    active pdcontact,pdiffcut,pdc
+    active highvoltndcontact,hndiffcut,hndc
+    active highvoltpdcontact,hpdiffcut,hpdc
+    active capcontact,ccontact,capc,cc
+    active electrodecontact,econtact,ec,poly2contact,p2c
+    active collectorcontact,colcontact,colc,coc,clc
+    active emittercontact,emitcontact,emc
+    active pbasecontact,pbcontact,pbc
+    active nbccdiffcontact,nbdc
+    metal1 m2contact,m2cut,m2c,via,v
+
+
+
+    metal2 m3contact,m3cut,m3c,via2,v2
+
+
+
+
+
+
+    active psubstratepcontact,ppcontact,ppc,pwcontact,pwc,psc
+    active nsubstratencontact,nncontact,nnc,nwcontact,nwc,nsc
+    active psubstratepdiff,ppdiff,pohmic,ppd,psd
+    active nsubstratendiff,nndiff,nohmic,nnd,nsd
+
+    active highvoltpsubcontact,hpwcontact,hpsc
+    active highvoltnsubcontact,hnwcontact,hnsc
+    active highvoltpsubdiff,hpohmic,hpsd
+    active highvoltnsubdiff,hnohmic,hnsd
+
+
+    active nplusdoping,ndoping,ndop
+    active pplusdoping,pdoping,pdop
+    metal1 genericcontact,gcontact,gc
+
+
+    oxide substrateopen,subopen,open
+    oxide pdiffusionstop,pdiffstop,pstop
+
+
+
+    metal2 pad
+    oxide glass
+end
+
+contact
+
+    ec poly2 metal1
+    cc cap metal1
+    pc poly metal1
+
+    ndc ndiff metal1
+    pdc pdiff metal1
+    nsc nsd metal1
+    psc psd metal1
+    hndc hndiff metal1
+    hpdc hpdiff metal1
+    hnsc hnsd metal1
+    hpsc hpsd metal1
+
+    clc col metal1
+    emc emit metal1
+    pbc pbase metal1
+
+    nbdc nbd metal1
+
+    m2c metal1 metal2
+
+
+
+    m3c metal2 metal3
+
+
+
+
+
+end
+
+styles
+    styletype mos
+
+
+    cwell 10
+    nwell 12
+    pwell 13
+    hnwell 18
+    hpwell 11
+
+    poly 1
+    poly2 14
+
+    ndiff 2
+    pdiff 4
+    psd 5
+    nsd 3
+    hndiff 2
+    hndiff 11
+    hpdiff 4
+    hpdiff 18
+    hpsd 5
+    hpsd 11
+    hnsd 3
+    hnsd 18
+    ndop 2
+    ndop 38
+    pdop 4
+    pdop 38
+
+    nfet 6
+    nfet 7
+    pfet 8
+    pfet 9
+
+    enfet 6
+    enfet 30
+
+    epfet 8
+    epfet 31
+
+
+    nffet 6
+    nffet 7
+
+    nffet 30
+    pffet 8
+    pffet 9
+
+    pffet 31
+
+    hnfet 6
+    hnfet 7
+    hnfet 30
+
+    hpfet 8
+    hpfet 9
+    hpfet 31
+
+    pbase 15
+    pbc 15
+    pbc 20
+    pbc 32
+
+    emit 16
+    emc 16
+    emc 20
+    emc 32
+
+    col 3
+    clc 3
+    clc 20
+    clc 32
+
+    cap 1
+    cap 14
+    wcap 6
+    wcap 10
+    cc 1
+    cc 14
+    cc 20
+    cc 32
+
+    metal1 20
+    metal2 21
+    metal3 22
+
+    gc 19
+
+    pcontact 26
+    pcontact 32
+    ec 14
+    ec 20
+    ec 32
+
+    ndc 2
+    ndc 20
+    ndc 32
+    pdc 4
+    pdc 20
+    pdc 32
+    psc 5
+    psc 20
+    psc 32
+    nsc 3
+    nsc 20
+    nsc 32
+
+    hndc 2
+    hndc 20
+    hndc 32
+    hndc 11
+    hpdc 4
+    hpdc 20
+    hpdc 32
+    hpdc 18
+    hpsc 5
+    hpsc 20
+    hpsc 32
+    hpsc 11
+    hnsc 3
+    hnsc 20
+    hnsc 32
+    hnsc 18
+
+    m2contact 20
+    m2contact 21
+    m2contact 33
+    m3contact 21
+    m3contact 22
+    m3contact 37
+
+    pad 20
+    pad 21
+    pad 33
+    pad 34
+    glass 34
+
+    bd 17
+    nbd 17
+    nbd 3
+    nbdc 3
+    nbdc 17
+    nbdc 20
+    nbdc 32
+
+    open 2
+    open 20
+    pstop 8
+
+    error_p 42
+    error_s 42
+    error_ps 42
+end
+
+compose
+
+    compose nfet poly hndiff
+    compose pfet poly hpdiff
+    compose nfet poly ndiff
+    compose pfet poly pdiff
+    compose hnfet poly2 hndiff
+    compose hpfet poly2 hpdiff
+    compose enfet poly2 ndiff
+    compose epfet poly2 pdiff
+    compose nffet nfet poly2
+    compose pffet pfet poly2
+    compose nffet enfet poly
+    compose pffet epfet poly
+    compose cap poly poly2
+
+    paint clc col clc
+    paint emc emit emc
+    paint emc pbase emc
+
+    paint poly2 poly cap
+    paint poly poly2 cap
+    paint poly cap cap
+    paint poly2 cap cap
+    paint cap poly cap
+    paint cap poly2 cap
+
+
+    paint ec poly cc
+
+
+
+    paint pdc pwell ndc
+    paint pfet pwell nfet
+    paint epfet pwell enfet
+    paint pffet pwell nffet
+    paint pdiff pwell ndiff
+    paint nsd pwell psd
+    paint nsc pwell psc
+    paint ndc nwell pdc
+    paint nfet nwell pfet
+    paint enfet nwell epfet
+    paint nffet nwell pffet
+    paint ndiff nwell pdiff
+    paint psd nwell nsd
+    paint psc nwell nsc
+
+    paint pdc hpwell hndc
+    paint epfet hpwell hnfet
+    paint pffet hpwell hnfet
+    paint pdiff hpwell hndiff
+    paint nsd hpwell hpsd
+    paint nsc hpwell hpsc
+    paint ndc hnwell hpdc
+    paint enfet hnwell hpfet
+    paint nffet hnwell hpfet
+    paint ndiff hnwell hpdiff
+    paint psd hnwell hnsd
+    paint psc hnwell hnsc
+# 740 "scmos.tech.out"
+    paint nfet cwell wcap
+    paint poly wcap wcap
+    paint ndiff wcap wcap
+    paint wcap poly wcap
+    paint wcap ndiff wcap
+    erase wcap poly ndiff
+    erase wcap ndiff poly
+    erase wcap cwell nfet
+    paint cwell nfet wcap active
+    erase wcap nfet cwell well
+
+
+    paint gc m1 gc
+
+
+    paint pad m1 pad
+    paint pad m2 pad
+    paint pad m3 pad
+    paint pad m2c pad
+
+
+
+
+    paint hpdc hpwell hndc
+    paint hpfet hpwell hnfet
+    paint hpdiff hpwell hndiff
+    paint hnsd hpwell hpsd
+    paint hnsc hpwell hpsc
+    paint hndc hnwell hpdc
+    paint hnfet hnwell hpfet
+    paint hndiff hnwell hpdiff
+    paint hpsd hnwell hnsd
+    paint hpsc hnwell hnsc
+
+    paint hpdc pwell ndc
+    paint hpfet pwell enfet
+    paint hpdiff pwell ndiff
+    paint hnsd pwell psd
+    paint hnsc pwell psc
+    paint hndc nwell pdc
+    paint hnfet nwell epfet
+    paint hndiff nwell pdiff
+    paint hpsd nwell nsd
+    paint hpsc nwell nsc
+
+end
+
+connect
+
+
+
+
+
+
+
+    nwell,nsc,nsd nwell,nsc,nsd
+    pwell,psc,psd pwell,psc,psd
+
+    hnwell,hnsc,hnsd hnwell,hnsc,hnsd
+    hpwell,hpsc,hpsd hpwell,hpsc,hpsd
+
+    ndiff,ndc/a cwell
+
+    pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc
+    m2,m2c/m2,m3c/m2,pad m2,m2c/m2,m3c/m2,pad
+    m3,m3c/m3 m3,m3c/m3
+
+    poly,pc/a,nfet,pfet,wcap poly,pc/a,nfet,pfet,wcap
+    poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet
+
+
+
+    ndiff,ndc/a,ndop psd,psc/a,pdop,pstop
+    pdiff,pdc/a,pdop,pstop nsd,nsc/a,ndop
+    hndiff,hndc/a,ndop hpsd,hpsc/a,pdop,pstop
+    hpdiff,hpdc/a,pdop,pstop hnsd,hnsc/a,ndop
+    ndiff ndc
+    pdiff pdc
+    hndiff hndc
+    hpdiff hpdc
+
+    nbd nbdc
+
+    pbase pbc
+    collector clc,nwell
+    emitter emc
+
+    gc ndiff,ndc/a,nfet,enfet,nffet,wcap,pdiff,pdc/a,pfet,epfet,pffet,nsd,nsc/a,psd,psc/a,nsd,nsc/a,psd,psc/a,hndiff,hndc/a,hpdiff,hpdc/a,metal1
+    gc poly,pc/a,nfet,pfet,wcap
+    gc poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet
+
+    pad pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc
+    pad m2,m2c/m2,m3c/m2,pad
+    pad m3,m3c/m3
+
+end
+# 845 "scmos.tech.out"
+cifoutput
+# 856 "scmos.tech.out"
+# 1 "cif_template/objs/TMCIFout" 1
+style lambda=0.6(gen)
+    scalefactor 60 30
+    layer CWC cwell
+ calma 59 1
+    layer CWN nwell
+ bloat-or pbase,pbc/act * 360
+ bloat-or pdiff,pdc/a,pfet,epfet,pffet * 300
+ bloat-or nsd,nsc/a * 180
+ bloat-or clc/a * 60
+ or col
+ grow 180
+ shrink 180
+ calma 42 1
+    layer CWP pwell
+ bloat-or ndiff,ndc/a,nfet,enfet,nffet * 300
+        bloat-or psd,psc/a * 180
+ and-not CWC
+ shrink 180
+ grow 180
+ grow 180
+ shrink 180
+ calma 41 1
+    layer CMS m2,m2c/m2,m3c/m2,pad
+ labels m2
+ calma 51 1
+    layer CMF pad
+ grow 60
+ or pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc
+ labels pdc,ndc,psc,nsc,hpdc,hndc,hpsc,hnsc,pc,ec,capc,nbdc,m1,m2c,gc
+ calma 49 1
+    layer CPG cap,cc
+ or poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet
+ labels poly,nfet,pfet
+ calma 46 1
+    layer CAA clc
+ grow 60
+ or em,emc,col,pbase,pbc
+ or ndiff,ndc/a,nfet,enfet,nffet,wcap,pdiff,pdc/a,pfet,epfet,pffet,nsd,nsc/a,psd,psc/a
+ or hndiff,hndc/a,hpdiff,hpdc/a
+ or bd,nbd,nbdc/a
+
+ or open,pstop
+
+ labels ndiff,pdiff
+ calma 43 1
+
+    layer CX col,clc
+ grow 60
+ calma 60 1
+    layer CVA pad
+ shrink 300
+
+ or open
+
+ calma 50 1
+    layer CVA m2c
+ squares 60 120 180
+ calma 50 1
+    layer CEL poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet
+ calma 56 1
+    layer CCE capc,ec
+ squares 120
+ calma 55 1
+
+
+    layer CCC gc
+ calma 48 1
+
+    layer CCA ndc,pdc,clc,emc,pbc,nbdc
+ squares 120
+
+ or open
+
+ calma 48 1
+    layer CCA nsc,psc
+ squares 120
+ calma 48 1
+    layer CCP pc
+ squares 120
+ calma 47 1
+    layer CBA emc,emit
+ grow 240
+ bloat-or pbc * 60
+ or pbase
+ calma 58 1
+
+    templayer XTN clc
+ grow 60
+ or em,emc,col
+ grow 120
+ bloat-or ndiff,ndc/a,ndop * 120 psd,psc/a,pdiff,pdc/a,pdop 0
+ bloat-or nbd,nbdc,wcap * 120
+ grow 60
+ shrink 60
+ shrink 30
+ grow 30
+    templayer XTP pbc
+ grow 60
+ bloat-or pdiff,pdc/a,pdop * 120 nsd,nsc/a,ndiff,ndc/a,ndop 0
+ grow 60
+ shrink 60
+ shrink 30
+ grow 30
+    layer CSN clc
+ grow 60
+ or em,emc,col
+ grow 120
+ bloat-or ndiff,ndc/a * 120 psd,psc/a 0
+ bloat-or nfet,enfet,nffet * 120 ndiff 180 psd,psc/a 0
+ bloat-or nsd,nsc/a * 120 pdiff,pdc/a 0
+ bloat-or nbd,nbdc,wcap * 120
+ bloat-or ndop * 120 psd,psc/a,pdiff,pdc/a,pdop 0
+ grow 60
+ shrink 60
+ shrink 30
+ grow 30
+ and-not XTP
+ calma 45 1
+    layer CSP pbc
+ grow 60
+ bloat-or pdiff,pdc/a * 120 nsd,nsc/a 0
+ bloat-or pfet,epfet,pffet * 120 pdiff 180 nsd,nsc/a 0
+ bloat-or psd,psc/a * 120 ndiff,ndc/a 0
+ bloat-or pdop * 120 nsd,nsc/a,ndiff,ndc/a,ndop 0
+ grow 60
+ shrink 60
+ shrink 30
+ grow 30
+
+ bloat-min pstop * 120 open 0
+
+ and-not XTN
+ and-not CSN
+ calma 44 1
+    layer CCD bd,nbd,nbdc/a
+ grow 120
+ calma 57 1
+    layer COP open
+        calma 23 1
+    layer CPS pstop
+        calma 24 1
+    layer COG pad
+ shrink 600
+ or glass
+
+ or open
+
+ labels pad
+ calma 52 1
+    layer XP pad
+ shrink 600
+ calma 26 1
+style lambda=0.6(nwell)
+    scalefactor 60 30
+    layer CWC cwell
+ calma 59 1
+    layer CWN nwell
+ bloat-or pbase,pbc/a * 360
+ bloat-or pdiff,pdc/a,pfet,epfet,pffet * 300
+ bloat-or nsd,nsc/a * 180
+ bloat-or clc/a * 60
+ or col
+ grow 180
+ shrink 180
+ calma 42 1
+    layer CMS m2,m2c/m2,m3c/m2,pad
+ labels m2
+ calma 51 1
+    layer CMF pad
+ grow 60
+ or pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc
+ labels pdc,ndc,psc,nsc,hpdc,hndc,hpsc,hnsc,pc,ec,capc,nbdc,m1,m2c,gc
+ calma 49 1
+    layer CPG cap,cc
+ or poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet
+ labels poly,nfet,pfet
+ calma 46 1
+    layer CAA clc
+ grow 60
+ or em,emc,col,pbase,pbc
+ or ndiff,ndc/a,nfet,enfet,nffet,wcap,pdiff,pdc/a,pfet,epfet,pffet,nsd,nsc/a,psd,psc/a
+ or hndiff,hndc/a,hpdiff,hpdc/a
+ or bd,nbd,nbdc/a
+
+        or open,pstop
+
+ labels ndiff,pdiff
+ calma 43 1
+
+    layer CX col,clc
+ grow 60
+ calma 60 1
+    layer CVA pad
+ shrink 300
+
+        or open
+
+ calma 50 1
+    layer CVA m2c
+ squares 60 120 180
+ calma 50 1
+    layer CEL poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet
+ calma 56 1
+    layer CCE capc,ec
+ squares 120
+ calma 55 1
+
+
+    layer CCC gc
+ calma 63 1
+
+    layer CCA ndc,pdc,clc,emc,pbc,nbdc
+ squares 120
+
+        or open
+
+ calma 48 1
+    layer CCA nsc,psc
+ squares 120
+ calma 48 1
+    layer CCP pc
+ squares 120
+ calma 47 1
+    layer CBA emc,emit
+ grow 240
+ bloat-or pbc * 60
+ or pbase
+ calma 58 1
+
+    templayer XTN clc
+ grow 60
+ or em,emc,col
+ grow 120
+ bloat-or ndiff,ndc/a * 120 psd,psc/a 0
+ bloat-or nbd,nbdc,ndop,wcap * 120
+    templayer XTP pbc
+ grow 60
+ bloat-or pdiff,pdc/a * 120 nsd,nsc/a 0
+    layer CSN clc
+ grow 60
+ or emc,emit,col
+ grow 120
+ bloat-or ndiff,ndc/a * 120 psd,psc/a 0
+ bloat-or nfet,enfet,nffet * 120 ndiff 180 psd,psc/a 0
+ bloat-or nsd,nsc/a * 120 pdiff,pdc/a 0
+ bloat-or nbd,nbdc,ndop,wcap * 120
+ grow 60
+ shrink 60
+ shrink 30
+ grow 30
+ and-not XTP
+ calma 45 1
+    layer CSP pbc
+ grow 60
+ bloat-or pdiff,pdc/a * 120 nsd,nsc/a 0
+ bloat-or pfet,epfet,pffet * 120 pdiff 180 nsd,nsc/a 0
+ bloat-or psd,psc/a * 120 ndiff,ndc/a 0
+ bloat-or pdop * 120
+ grow 60
+ shrink 60
+ shrink 30
+ grow 30
+
+        bloat-min pstop * 120 open 0
+
+ and-not XTN
+ and-not CSN
+ calma 44 1
+    layer CCD bd,nbd,nbdc/a
+ grow 120
+ calma 57 1
+    layer COP open
+        calma 23 1
+    layer CPS pstop
+        calma 24 1
+    layer COG pad
+ shrink 600
+ or glass
+
+        or open
+
+ labels pad
+ calma 52 1
+    layer XP pad
+ shrink 600
+ calma 26 1
+
+
+
+
+
+
+
+style lambda=0.6(pwell)
+    scalefactor 60 30
+    layer CWP pwell
+ bloat-or ndiff,ndc/a,nfet,enfet,nffet * 300
+        bloat-or psd,psc/a * 180
+ grow 180
+ shrink 180
+ calma 41 1
+    layer CMS m2,m2c/m2,m3c/m2,pad
+ labels m2
+ calma 51 1
+    layer CMF pad
+ grow 60
+ or pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc
+ labels pdc,ndc,psc,nsc,hpdc,hndc,hpsc,hnsc,pc,ec,capc,nbdc,m1,m2c,gc
+ calma 49 1
+    layer CPG cap,cc
+ or poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet
+ labels poly,nfet,pfet
+ calma 46 1
+
+    layer CAA clc
+ grow 60
+ or em,emc,col
+ or ndiff,ndc/a,nfet,enfet,nffet,wcap,pdiff,pdc/a,pfet,epfet,pffet,nsd,nsc/a,psd,psc/a
+ or hndiff,hndc/a,hpdiff,hpdc/a
+
+        or open,pstop
+
+ labels ndiff,pdiff
+ calma 43 1
+
+    layer CX col,clc
+ grow 60
+ calma 60 1
+    layer CVA pad
+ shrink 300
+
+        or open
+
+ calma 50 1
+    layer CVA m2c
+ squares 60 120 180
+ calma 50 1
+    layer CEL poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet
+ calma 56 1
+    layer CCE capc,ec
+ squares 120
+ calma 55 1
+
+
+    layer CCC gc
+ calma 63 1
+
+    layer CCA ndc,pdc,clc,emc,pbc
+ squares 120
+
+        or open
+
+ calma 48 1
+    layer CCA nsc,psc
+ squares 120
+ calma 48 1
+    layer CCP pc
+ squares 120
+ calma 47 1
+    layer CBA emc,emit
+ grow 240
+ bloat-or pbc * 60
+ or pbase
+ calma 58 1
+
+    templayer XTN
+        bloat-or ndiff,ndc/a * 120 psd,psc/a 0
+    templayer XTP
+        bloat-or pdiff,pdc/a * 120 nsd,nsc/a 0
+    layer CSP
+ bloat-or pdiff,pdc/a * 120 nsd,nsc/a 0
+ bloat-or pfet,epfet,pffet * 120 pdiff 180 nsd,nsc/a 0
+ bloat-or psd,psc/a * 120 ndiff,ndc/a 0
+ bloat-or pdop * 120
+ grow 60
+ shrink 60
+ shrink 30
+ grow 30
+
+        bloat-min pstop * 120 open 0
+
+ and-not XTN
+ calma 44 1
+    layer CSN
+ bloat-or ndiff,ndc/a * 120 psd,psc/a 0
+ bloat-or nfet,enfet,nffet * 120 ndiff 180 psd,psc/a 0
+ bloat-or nsd,nsc/a * 120 pdiff,pdc/a 0
+ bloat-or ndop * 120
+ grow 60
+ shrink 60
+ shrink 30
+ grow 30
+ and-not XTP
+ and-not CSP
+ calma 45 1
+    layer COP open
+        calma 23 1
+    layer CPS pstop
+        calma 24 1
+    layer COG pad
+ shrink 600
+ or glass
+
+        or open
+
+ labels pad
+ calma 52 1
+    layer XP pad
+ shrink 600
+ calma 26 1
+# 423 "cif_template/objs/TMCIFout"
+style lambda=0.5(sub)
+    scalefactor 50 5
+    layer CWN nwell
+        bloat-or pbase,pbc/act * 300
+        bloat-or pdiff,pdc/a,pfet,epfet,pffet * 250
+        bloat-or nsd,nsc/a * 150
+        bloat-or clc/act * 50
+ or col
+        grow 150
+        shrink 150
+        calma 42 1
+    layer CWP pwell
+        bloat-or ndiff,ndc/a,nfet,enfet,nffet * 250 pdop 0
+        bloat-or psd,psc/a * 150 ndop 0
+        grow 150
+        shrink 150
+        calma 41 1
+    layer CMT m3,m3c/m3,pad
+        labels m3
+        calma 62 1
+    layer CMS pad
+        grow 100
+        or m2,m2c/m2,m3c/m2,pad
+        labels m2
+        calma 51 1
+    layer CMF pad
+ grow 200
+        or pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc
+        labels pdc,ndc,psc,nsc,hpdc,hndc,hpsc,hnsc,pc,ec,capc,nbdc,m1,m2c,gc
+        calma 49 1
+    layer CPG cap,cc
+        or poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet
+        labels poly,nfet,pfet
+        calma 46 1
+    layer CAA ndiff,ndc/a,nfet,enfet,nffet,wcap,pdiff,pdc/a,pfet,epfet,pffet,nsd,nsc/a,psd,psc/a
+ or ndop,pdop
+
+ or open,pstop
+
+        labels ndiff,pdiff
+        calma 43 1
+    layer CVS pad
+        shrink 200
+
+ or open
+
+        calma 61 1
+    layer CVS m3c
+        squares 50 100 150
+        calma 61 1
+    layer CVA pad
+        shrink 300
+
+ or open
+
+        calma 50 1
+    layer CVA m2c
+        squares 50 100 150
+        calma 50 1
+
+
+
+    layer CCC gc
+ calma 48 1
+
+
+    layer CCA pad
+ shrink 400
+        calma 48 1
+
+    layer CCA ndc,pdc
+        squares 100
+
+ or open
+
+        calma 48 1
+    layer CCA nsc,psc
+ squares 100
+ calma 48 1
+    layer CCP pc
+        squares 100
+        calma 47 1
+
+    templayer XTN
+        bloat-or ndiff,ndc/a,ndop * 100 psd,psc/a,pdiff,pdc/a,pdop 0
+        bloat-or nbd,nbdc * 100
+        grow 50
+        shrink 50
+        shrink 25
+        grow 25
+
+    templayer XTP
+        bloat-or pdiff,pdc/a,pdop * 100 nsd,nsc/a,ndiff,ndc/a,ndop 0
+        grow 50
+        shrink 50
+        shrink 25
+        grow 25
+    layer CSN
+        bloat-or ndiff,ndc/a * 100 psd,psc/a,pdop 0
+        bloat-or nfet,enfet,nffet * 100 ndiff 150 psd,psc/a 0
+        bloat-or nsd,nsc/a * 100 pdiff,pdc/a,pdop 0
+ bloat-or ndop * 100 psd,psc/a,pdiff,pdc/a,pdop 0
+        grow 50
+        shrink 50
+        shrink 25
+        grow 25
+        and-not XTP
+        calma 45 1
+    layer CSP
+        bloat-or pdiff,pdc/a * 100 nsd,nsc/a,ndop 0
+        bloat-or pfet,epfet,pffet * 100 pdiff 150 nsd,nsc/a 0
+        bloat-or psd,psc/a * 100 ndiff,ndc/a,ndop 0
+ bloat-or pdop * 100 nsd,nsc/a,ndiff,ndc/a,ndop 0
+        grow 50
+        shrink 50
+        shrink 25
+        grow 25
+
+        bloat-min pstop * 100 open 0
+
+        and-not XTN
+ and-not CSN
+        calma 44 1
+    layer COP open
+        calma 23 1
+    layer CPS pstop
+        calma 24 1
+    layer COG pad
+        shrink 600
+        or glass
+
+ or open
+
+ labels pad
+        calma 52 1
+    layer XP pad
+        shrink 600
+ calma 26 1
+
+    render CWN 12 -0.2 0.2
+    render CAA 2 -0.15 0.15
+    render CPG 1 0.025 0.05
+    render CEL 14 0.1 0.05
+    render CCC 19 0.0 0.2
+    render CCA 19 0.0 0.2
+    render CCP 19 0.075 0.125
+    render CMF 20 0.2 0.05
+    render CVA 19 0.25 0.05
+    render CMS 21 0.3 0.05
+
+
+
+style lambda=0.35(sub)
+    scalefactor 35 calmaonly
+    layer CWN nwell
+        bloat-or pdiff,pdc/a,pfet,epfet,pffet * 175
+        bloat-or nsd,nsc/a * 105
+        grow 105
+        shrink 105
+        calma 42 1
+    layer CWP pwell
+        bloat-or ndiff,ndc/a,nfet,enfet,nffet * 175 pdop 0
+        bloat-or psd,psc/a * 105 ndop 0
+        grow 105
+        shrink 105
+        calma 41 1
+    layer CMT m3,m3c/m3,pad
+        labels m3
+        calma 62 1
+    layer CMS pad
+        grow 70
+        or m2,m2c/m2,m3c/m2,pad
+        labels m2
+        calma 51 1
+    layer CMF pad
+ grow 140
+        or pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc
+        labels pdc,ndc,psc,nsc,hpdc,hndc,hpsc,hnsc,pc,ec,capc,nbdc,m1,m2c,gc
+        calma 49 1
+    layer CPG cap,cc
+        or poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet
+        labels poly,nfet,pfet
+        calma 46 1
+    layer CAA ndiff,ndc/a,nfet,enfet,nffet,wcap,pdiff,pdc/a,pfet,epfet,pffet,nsd,nsc/a,psd,psc/a
+ or ndop,pdop
+
+ or open,pstop
+
+        labels ndiff,pdiff
+        calma 43 1
+    layer CVS pad
+        shrink 200
+
+ or open
+
+        calma 61 1
+    layer CVS m3c
+        squares 35 70 105
+        calma 61 1
+    layer CVA pad
+        shrink 300
+
+ or open
+
+        calma 50 1
+    layer CVA m2c
+        squares 35 70 105
+        calma 50 1
+
+
+
+    layer CCC gc
+ calma 48 1
+
+    layer CCA ndc,pdc
+        squares 70
+
+ or open
+
+        calma 48 1
+    layer CCA nsc,psc
+ squares 70
+ calma 48 1
+    layer CCP pc
+        squares 70
+        calma 47 1
+
+    templayer XTN
+        bloat-or ndiff,ndc/a,ndop * 70 psd,psc/a,pdiff,pdc/a,pdop 0
+        bloat-or nbd,nbdc * 70
+        grow 35
+        shrink 35
+        shrink 20
+        grow 20
+
+    templayer XTP
+        bloat-or pdiff,pdc/a,pdop * 70 nsd,nsc/a,ndiff,ndc/a,ndop 0
+        grow 35
+        shrink 35
+        shrink 20
+        grow 20
+    layer CSN
+        bloat-or ndiff,ndc/a * 70 psd,psc/a,pdop 0
+        bloat-or nfet,enfet,nffet * 70 ndiff 105 psd,psc/a 0
+        bloat-or nsd,nsc/a * 70 pdiff,pdc/a,pdop 0
+ bloat-or ndop * 70 psd,psc/a,pdiff,pdc/a,pdop 0
+        grow 35
+        shrink 35
+        shrink 20
+        grow 20
+        and-not XTP
+        calma 45 1
+    layer CSP
+        bloat-or pdiff,pdc/a * 70 nsd,nsc/a,ndop 0
+        bloat-or pfet,epfet,pffet * 70 pdiff 105 nsd,nsc/a 0
+        bloat-or psd,psc/a * 70 ndiff,ndc/a,ndop 0
+ bloat-or pdop * 70 nsd,nsc/a,ndiff,ndc/a,ndop 0
+        grow 35
+        shrink 35
+        shrink 20
+        grow 20
+
+        bloat-min pstop * 70 open 0
+
+        and-not XTN
+ and-not CSN
+        calma 44 1
+    layer COP open
+        calma 23 1
+    layer CPS pstop
+        calma 24 1
+    layer COG pad
+        shrink 600
+        or glass
+
+ or open
+
+ labels pad
+        calma 52 1
+    layer XP pad
+        shrink 600
+        calma 26 1
+# 857 "scmos.tech.out" 2
+# 867 "scmos.tech.out"
+style plot
+    scalefactor 100 50
+    layer CM2 m2,m2c/m2,pad/m2
+ labels m2
+    layer CM1 pad
+ grow 100
+ or m1,m2c/m1,pc/m1,ndc/m1,pdc/m1,ppcont/m1,nncont/m1
+ labels m1,m2c/m1,pc/m1,ndc/m1,pdc/m1,ppcont/m1,nncont/m1,pad/m1
+    layer CP poly,pc/active,nfet,pfet
+ labels poly,nfet,pfet
+    layer CND ndiff,ndc,nfet,pwc,psd
+ labels ndiff
+    layer CPD pdiff,pdc,pfet,nwc,nsd
+ labels pdiff
+    layer CNP
+ bloat-or nsd,nwc * 150 ndiff,pdiff,ndc/active,pdc/active,ppcont/active,nncont/active,pfet,nfet,psd,nsd 0
+    layer CPP
+ bloat-or psd,pwc * 150 ndiff,pdiff,ndc/active,pdc/active,ppcont/active,nncont/active,pfet,nfet,psd,nsd 0
+    layer CV m2c
+ squares 100 200 300
+    layer CC ndc,pdc,pc,pwc,nwc
+ squares 200
+    layer CNW nwell
+ grow 400
+ shrink 400
+    layer CG pad
+ shrink 600
+ or glass
+ labels glass
+
+
+end
+# 910 "scmos.tech.out"
+cifinput
+
+
+
+
+
+
+# 1 "cif_template/objs/TMCIFin" 1
+style lambda=0.6(gen)
+    scalefactor 60
+
+    layer nwell CWN
+ labels CWN
+    layer pwell CWP
+ labels CWP
+
+    layer poly CPG
+        labels CPG
+    layer pdiff CSP
+        and CAA
+        and CWN
+    layer ndiff CWP
+ or CWC
+        and CAA
+        and CSN
+        and-not CCD
+    layer nsd CWN
+        and CSN
+        and CAA
+    layer psd CWP
+        and CSP
+        and CAA
+    layer pbase CBA
+        labels CBA
+    layer nfet CPG
+        and CAA
+        and CSN
+        and-not CCD
+    layer pfet CAA
+        and CPG
+        and CSP
+    layer enfet CEL
+        and CAA
+        and CSN
+        and-not CCD
+    layer epfet CAA
+        and CEL
+        and CSP
+    layer nffet CAA
+        and CEL
+        and CPG
+        and CSN
+ and CWP
+    layer pffet CAA
+        and CEL
+        and CPG
+        and CSP
+        and CWN
+    layer ndc CWP
+ or CWC
+ and CCA
+        grow 60
+        and CAA
+        and CSN
+        and CMF
+    layer pdc CCA
+        grow 60
+        and CAA
+        and CWN
+        and CSP
+        and CMF
+    layer nsc CCA
+        grow 60
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer psc CCA
+        grow 60
+        and CAA
+        and CSP
+        and CWP
+        and CMF
+    layer gc CCC
+    layer m2c CVA
+        grow 60
+        and CMS
+        and CMF
+        labels CMS
+    layer m3c CVS
+        grow 60
+        and CMT
+        and CMS
+        and-not XP
+    layer electrode CEL
+        labels CEL
+    layer ec CCE
+        grow 60
+        and CMF
+        and CEL
+        labels CMF
+    layer cc CCE
+        grow 60
+        and CMF
+        and CEL
+        and CPG
+        labels CMF
+    layer cap CPG
+        and CEL
+        and-not CAA
+        labels CEL
+    layer pbc CCA
+        grow 60
+        and CBA
+        and CMF
+        labels CBA
+    layer col CX
+        and CAA
+        and CSN
+        and CWN
+        labels CAA
+    layer clc CCA
+        grow 60
+        and CX
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+        labels CCA
+    layer emit CBA
+        and CSN
+        shrink 120
+        labels CBA
+    layer emc CCA
+        grow 60
+        and CBA
+        and CSN
+        and CMF
+        labels CBA
+    layer pc CCP
+        grow 60
+        and CPG
+        and CMF
+    layer nbd CSN
+        shrink 120
+        and CCD
+        and CAA
+ and-not CPG
+    layer nbdc CCA
+        grow 60
+        and CCD
+        and CSN
+        and CAA
+    layer bd CPG
+ or CEL
+ and CCD
+ and CAA
+        labels CCD
+
+
+    layer cwell CWC
+ labels CWC
+    layer glass COG
+
+    layer open CAA
+        and CCA
+        and CVA
+        and COG
+ and COP
+    layer pstop CAA
+ and CPS
+        and CSP
+        and-not CWP
+        and-not CWN
+
+    layer pad CMF
+        shrink 60
+        and CMS
+        shrink 300
+        and CVA
+        shrink 60
+ and XP
+        and COG
+        grow 360
+    layer m1 CMF
+        labels CMF
+    layer m2 CMS
+        labels CMS
+    layer m3 CMT
+
+        and-not XP
+        labels CMT
+
+
+   calma COP 23 *
+   calma CPS 24 *
+
+   calma CCC 25 *
+   calma XP 26 *
+   calma CWP 41 *
+   calma CWN 42 *
+   calma CAA 43 *
+   calma CSP 44 *
+   calma CSN 45 *
+   calma CPG 46 *
+   calma CCP 47 *
+   calma CCA 48 *
+   calma CMF 49 *
+   calma CVA 50 *
+   calma CMS 51 *
+   calma COG 52 *
+   calma CCE 55 *
+   calma CEL 56 *
+   calma CCD 57 *
+   calma CBA 58 *
+   calma CWC 59 *
+   calma CVS 61 *
+   calma CMT 62 *
+   calma CX 63 *
+style lambda=0.6(nwell)
+    scalefactor 60
+    layer nwell CWN
+        labels CWN
+    layer m3 CMT
+
+        and-not XP
+        labels CMT
+    layer m2 CMS
+        labels CMS
+    layer m1 CMF
+        labels CMF
+    layer poly CPG
+        labels CPG
+    layer psd CAA
+        and CSP
+ and-not CPS
+    layer pdiff CWN
+        and CAA
+        and CSP
+        labels CSP
+    layer ndiff CAA
+        and CSN
+        and-not CCD
+        labels CSN
+    layer nsd CWN
+        and CSN
+        and CAA
+    layer pbase CBA
+        labels CBA
+    layer nfet CPG
+        and CAA
+        and CSN
+        and-not CCD
+    layer pfet CAA
+        and CPG
+        and CSP
+        and CWN
+    layer enfet CEL
+        and CAA
+        and CSN
+        and-not CCD
+    layer epfet CAA
+        and CEL
+        and CSP
+        and CWN
+    layer nffet CAA
+        and CEL
+        and CPG
+        and CSN
+    layer pffet CAA
+        and CEL
+        and CPG
+        and CSP
+        and CWN
+    layer m3c CVS
+        grow 60
+        and CMT
+        and CMS
+        and-not XP
+    layer m2c CVA
+        grow 60
+        and CMS
+        and CMF
+    layer electrode CEL
+        labels CEL
+    layer ec CCE
+ or CCC
+        grow 60
+        and CMF
+        and CEL
+    layer cc CCE
+        grow 60
+        and CMF
+        and CEL
+        and CPG
+        labels CCE
+    layer cap CPG
+        and CEL
+        and-not CAA
+    layer psc CCA
+        grow 60
+        and CAA
+        and CSP
+        and CMF
+    layer ndc CCA
+ or CCC
+        grow 60
+        and CAA
+        and CSN
+        and CMF
+    layer pdc CCA
+ or CCC
+        grow 60
+        and CAA
+        and CWN
+        and CSP
+        and CMF
+    layer nsc CCA
+ or CCC
+        grow 60
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer pbc CCA
+ or CCC
+        grow 60
+        and CBA
+        and CMF
+    layer emit CBA
+        and CSN
+        shrink 120
+    layer emc CCA
+        grow 60
+        and CBA
+        and CSN
+        and CMF
+    layer col CX
+        and CAA
+        and CSN
+        and CWN
+    layer clc CCA
+        grow 60
+        and CX
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer pc CCP
+ or CCC
+        grow 60
+        and CPG
+        and CMF
+        labels CCP
+    layer nbd CSN
+        shrink 120
+        and CCD
+        and CAA
+ and-not CPG
+    layer nbdc CCA
+        grow 60
+        and CCD
+        and CSN
+        and CAA
+    layer bd CPG
+        or CEL
+        and CCD
+        and CAA
+ labels CCD
+
+
+    layer cwell CWC
+ labels CWC
+    layer glass COG
+        labels COG
+
+    layer open CAA
+        and CCA
+        and CVA
+        and COG
+        and COP
+    layer pstop CAA
+        and CPS
+        and CSP
+        and-not CWN
+
+    layer pad CMF
+        shrink 60
+        and CMS
+        shrink 300
+        and CVA
+        shrink 60
+ and XP
+        and COG
+        grow 360
+
+
+   calma COP 23 *
+   calma CPS 24 *
+
+   calma XP 26 *
+   calma CWN 42 *
+   calma CAA 43 *
+   calma CSP 44 *
+   calma CSN 45 *
+   calma CPG 46 *
+   calma CCP 47 *
+   calma CCA 48 *
+   calma CMF 49 *
+   calma CVA 50 *
+   calma CMS 51 *
+   calma COG 52 *
+   calma CCE 55 *
+   calma CEL 56 *
+   calma CCD 57 *
+   calma CBA 58 *
+   calma CWC 59 *
+   calma CVS 61 *
+   calma CMT 62 *
+   calma CX 63 *
+style lambda=0.6(oldnwell)
+    scalefactor 60
+    layer cwell CWC
+    layer nwell CWN
+        labels CWN
+    layer m3 CMT
+
+        and-not XP
+        labels CMT
+    layer m2 CMS
+        labels CMS
+    layer m1 CMF
+        labels CMF
+    layer poly CPG
+        labels CPG
+    layer psd CAA
+    layer pdiff CWN
+        and CAA
+    layer ndiff CAA
+        and CSN
+        and-not CCD
+    layer nsd CWN
+        and CSN
+        and CAA
+    layer pbase CBA
+        labels CBA
+    layer nfet CPG
+        and CAA
+        and CSN
+        and-not CCD
+    layer pfet CAA
+        and CPG
+        and CWN
+    layer enfet CEL
+        and CAA
+        and CSN
+        and-not CCD
+    layer epfet CAA
+        and CEL
+        and CWN
+    layer nffet CAA
+        and CEL
+        and CPG
+        and CSN
+        labels CEL
+    layer pffet CAA
+        and CEL
+        and CPG
+        and CWN
+        labels CEL
+    layer m2c CVA
+        grow 150
+        shrink 50
+        and CMS
+        and CMF
+    layer electrode CEL
+        labels CEL
+    layer ec CCE
+        grow 60
+        and CMF
+        and CEL
+    layer cc CCE
+        grow 60
+        and CMF
+        and CEL
+        and CPG
+    layer cap CPG
+        and CEL
+        and-not CAA
+        labels CEL
+    layer psc CCA
+        grow 60
+        and CAA
+        and CMF
+    layer ndc CCA
+        grow 60
+        and CAA
+        and CSN
+        and CMF
+    layer pdc CCA
+        grow 60
+        and CAA
+        and CWN
+        and CMF
+    layer nsc CCA
+        grow 60
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer m3c CVS
+        grow 60
+        and CMT
+        and CMS
+        and-not XP
+    layer gc CCC
+    layer pbc CCA
+        grow 60
+        and CBA
+        and CMF
+    layer col CX
+        and CAA
+        and CSN
+        and CWN
+        labels CAA
+    layer clc CCA
+        grow 60
+        and CX
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+        labels CCA
+    layer emit CBA
+        and CSN
+        shrink 120
+    layer emc CCA
+        grow 60
+        and CBA
+        and CSN
+        and CMF
+    layer pc CCP
+        grow 60
+        and CPG
+        and CMF
+    layer nbd CSN
+        shrink 120
+        and CCD
+        and CAA
+ and-not CPG
+    layer nbdc CCA
+        grow 60
+        and CCD
+        and CSN
+ and CAA
+    layer bd CPG
+        or CEL
+        and CCD
+        and CAA
+ labels CCD
+    layer glass COG
+    layer pad CMF
+        shrink 60
+        and CMS
+        shrink 300
+        and CVA
+        shrink 60
+        and COG
+        grow 360
+        and XP
+
+   calma CWN 42 *
+   calma CAA 43 *
+
+   calma CSN 45 *
+   calma CPG 46 *
+   calma CCP 47 *
+   calma CCA 48 *
+   calma CMF 49 *
+   calma CVA 50 *
+   calma CMS 51 *
+   calma COG 52 *
+   calma CCE 55 *
+   calma CEL 56 *
+   calma CCD 57 *
+   calma CBA 58 *
+   calma CWC 59 *
+   calma CX 60 *
+
+style lambda=0.6(nowell)
+    scalefactor 60
+
+
+
+
+
+
+    layer poly CPG
+        labels CPG
+    layer pdiff CSP
+        and CAA
+        and CWN
+    layer ndiff CWP
+ or CWC
+        and CAA
+        and CSN
+        and-not CCD
+    layer nsd CWN
+        and CSN
+        and CAA
+    layer psd CWP
+        and CSP
+        and CAA
+    layer pbase CBA
+        labels CBA
+    layer nfet CPG
+        and CAA
+        and CSN
+        and-not CCD
+    layer pfet CAA
+        and CPG
+        and CSP
+    layer enfet CEL
+        and CAA
+        and CSN
+        and-not CCD
+    layer epfet CAA
+        and CEL
+        and CSP
+    layer nffet CAA
+        and CEL
+        and CPG
+        and CSN
+ and CWP
+    layer pffet CAA
+        and CEL
+        and CPG
+        and CSP
+        and CWN
+    layer ndc CWP
+ or CWC
+ and CCA
+        grow 60
+        and CAA
+        and CSN
+        and CMF
+    layer pdc CCA
+        grow 60
+        and CAA
+        and CWN
+        and CSP
+        and CMF
+    layer nsc CCA
+        grow 60
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer psc CCA
+        grow 60
+        and CAA
+        and CSP
+        and CWP
+        and CMF
+    layer gc CCC
+    layer m2c CVA
+        grow 60
+        and CMS
+        and CMF
+        labels CMS
+    layer m3c CVS
+        grow 60
+        and CMT
+        and CMS
+        and-not XP
+    layer electrode CEL
+        labels CEL
+    layer ec CCE
+        grow 60
+        and CMF
+        and CEL
+        labels CMF
+    layer cc CCE
+        grow 60
+        and CMF
+        and CEL
+        and CPG
+        labels CMF
+    layer cap CPG
+        and CEL
+        and-not CAA
+        labels CEL
+    layer pbc CCA
+        grow 60
+        and CBA
+        and CMF
+        labels CBA
+    layer col CX
+        and CAA
+        and CSN
+        and CWN
+        labels CAA
+    layer clc CCA
+        grow 60
+        and CX
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+        labels CCA
+    layer emit CBA
+        and CSN
+        shrink 120
+        labels CBA
+    layer emc CCA
+        grow 60
+        and CBA
+        and CSN
+        and CMF
+        labels CBA
+    layer pc CCP
+        grow 60
+        and CPG
+        and CMF
+    layer nbd CSN
+        shrink 120
+        and CCD
+        and CAA
+ and-not CPG
+    layer nbdc CCA
+        grow 60
+        and CCD
+        and CSN
+        and CAA
+    layer bd CPG
+ or CEL
+ and CCD
+ and CAA
+        labels CCD
+
+
+    layer cwell CWC
+ labels CWC
+    layer glass COG
+
+    layer open CAA
+        and CCA
+        and CVA
+        and COG
+ and COP
+    layer pstop CAA
+ and CPS
+        and CSP
+        and-not CWP
+        and-not CWN
+
+    layer pad CMF
+        shrink 60
+        and CMS
+        shrink 300
+        and CVA
+        shrink 60
+ and XP
+        and COG
+        grow 360
+    layer m1 CMF
+        labels CMF
+    layer m2 CMS
+        labels CMS
+    layer m3 CMT
+
+        and-not XP
+        labels CMT
+
+
+   calma COP 23 *
+   calma CPS 24 *
+
+   calma CCC 25 *
+   calma XP 26 *
+   calma CWP 41 *
+   calma CWN 42 *
+   calma CAA 43 *
+   calma CSP 44 *
+   calma CSN 45 *
+   calma CPG 46 *
+   calma CCP 47 *
+   calma CCA 48 *
+   calma CMF 49 *
+   calma CVA 50 *
+   calma CMS 51 *
+   calma COG 52 *
+   calma CCE 55 *
+   calma CEL 56 *
+   calma CCD 57 *
+   calma CBA 58 *
+   calma CWC 59 *
+   calma CVS 61 *
+   calma CMT 62 *
+   calma CX 63 *
+
+
+
+
+style lambda=0.5(sub)
+
+    scalefactor 50
+
+    layer nwell CWN
+        labels CWN
+    layer pwell CWP
+        labels CWP
+
+    layer m3 CMT
+
+ and-not XP
+        labels CMT
+    layer m2 CMS
+        labels CMS
+    layer m1 CMF
+        labels CMF
+    layer poly CPG
+        labels CPG
+    layer ndop CSN
+        and-not CWP
+        and CAA
+    layer pdop CSP
+        and CAA
+        and-not CWP
+ and-not CPS
+    layer pdiff CSP
+        and CWN
+        and CAA
+    layer ndiff CSN
+        and CWP
+        and CAA
+    layer nsd CWN
+        and CSN
+        and CAA
+    layer psd CSP
+        and CWP
+        and CAA
+    layer pbase CBA
+        labels CBA
+    layer nfet CPG
+        and CAA
+        and CSN
+        labels CPG
+    layer pfet CAA
+        and CPG
+        and CSP
+        labels CPG
+    layer ndc CCA
+        grow 50
+        and CAA
+        and CWP
+        and CSN
+        and CMF
+    layer pdc CCA
+        grow 50
+        and CAA
+        and CWN
+        and CSP
+        and CMF
+    layer nsc CCA
+        grow 50
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer psc CCA
+        grow 50
+        and CAA
+        and CSP
+        and CWP
+        and CMF
+    layer pbc CCA
+        grow 50
+        and CBA
+        and CMF
+        labels CBA
+    layer m3c CVS
+        grow 50
+        and CMT
+        and CMS
+ and-not XP
+    layer m2c CVA
+        grow 50
+        and CMS
+        and CMF
+    layer pc CCP
+        grow 50
+        and CPG
+        and CMF
+    layer gc CCC
+    layer glass COG
+ labels COG
+
+    layer open CAA
+        and CCA
+        and CVA
+        and COG
+ and COP
+    layer pstop CAA
+ and CPS
+        and CSP
+        and-not CWP
+        and-not CWN
+
+
+    layer pad COG
+        grow 600
+        and XP
+
+
+   calma COP 23 *
+   calma CPS 24 *
+
+   calma CCC 25 *
+   calma XP 26 *
+   calma CWP 41 *
+   calma CWN 42 *
+   calma CAA 43 *
+   calma CSP 44 *
+   calma CSN 45 *
+   calma CPG 46 *
+   calma CCP 47 *
+   calma CCA 48 *
+   calma CMF 49 *
+   calma CVA 50 *
+   calma CMS 51 *
+   calma COG 52 *
+   calma CVS 61 *
+   calma CMT 62 *
+style lambda=0.5(nwell)
+    scalefactor 50
+    layer nwell CWN
+        labels CWN
+    layer m3 CMT
+
+        and-not XP
+        labels CMT
+    layer m2 CMS
+        labels CMS
+    layer m1 CMF
+        labels CMF
+    layer poly CPG
+        labels CPG
+    layer psd CAA
+        and CSP
+ and-not CPS
+    layer pdiff CWN
+        and CAA
+        and CSP
+        labels CSP
+    layer ndiff CAA
+        and CSN
+        and-not CCD
+        labels CSN
+    layer nsd CWN
+        and CSN
+        and CAA
+    layer pbase CBA
+        labels CBA
+    layer nfet CPG
+        and CAA
+        and CSN
+        and-not CCD
+    layer pfet CAA
+        and CPG
+        and CSP
+        and CWN
+    layer enfet CEL
+        and CAA
+        and CSN
+        and-not CCD
+    layer epfet CAA
+        and CEL
+        and CSP
+        and CWN
+    layer nffet CAA
+        and CEL
+        and CPG
+        and CSN
+    layer pffet CAA
+        and CEL
+        and CPG
+        and CSP
+        and CWN
+    layer m3c CVS
+        grow 50
+        and CMT
+        and CMS
+        and-not XP
+    layer m2c CVA
+        grow 50
+        and CMS
+        and CMF
+    layer electrode CEL
+        labels CEL
+    layer ec CCE
+ or CCC
+        grow 50
+        and CMF
+        and CEL
+    layer cc CCE
+        grow 50
+        and CMF
+        and CEL
+        and CPG
+        labels CCE
+    layer cap CPG
+        and CEL
+        and-not CAA
+    layer psc CCA
+        grow 50
+        and CAA
+        and CSP
+        and CMF
+    layer ndc CCA
+ or CCC
+        grow 50
+        and CAA
+        and CSN
+        and CMF
+    layer pdc CCA
+ or CCC
+        grow 50
+        and CAA
+        and CWN
+        and CSP
+        and CMF
+    layer nsc CCA
+ or CCC
+        grow 50
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer pbc CCA
+ or CCC
+        grow 50
+        and CBA
+        and CMF
+    layer emit CBA
+        and CSN
+        shrink 100
+    layer emc CCA
+        grow 50
+        and CBA
+        and CSN
+        and CMF
+    layer col CX
+        and CAA
+        and CSN
+        and CWN
+    layer clc CCA
+        grow 50
+        and CX
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer pc CCP
+ or CCC
+        grow 50
+        and CPG
+        and CMF
+        labels CCP
+    layer nbd CSN
+        shrink 100
+        and CCD
+        and CAA
+ and-not CPG
+    layer nbdc CCA
+        grow 50
+        and CCD
+        and CSN
+        and CAA
+    layer bd CPG
+        or CEL
+        and CCD
+        and CAA
+ labels CCD
+
+
+    layer cwell CWC
+ labels CWC
+    layer glass COG
+        labels COG
+
+    layer open CAA
+        and CCA
+        and CVA
+        and COG
+        and COP
+    layer pstop CAA
+        and CPS
+        and CSP
+        and-not CWN
+
+    layer pad CMF
+        shrink 50
+        and CMS
+        shrink 250
+        and CVA
+        shrink 50
+ and XP
+        and COG
+        grow 300
+
+
+   calma COP 23 *
+   calma CPS 24 *
+
+   calma XP 26 *
+   calma CWN 42 *
+   calma CAA 43 *
+   calma CSP 44 *
+   calma CSN 45 *
+   calma CPG 46 *
+   calma CCP 47 *
+   calma CCA 48 *
+   calma CMF 49 *
+   calma CVA 50 *
+   calma CMS 51 *
+   calma COG 52 *
+   calma CCE 55 *
+   calma CEL 56 *
+   calma CCD 57 *
+   calma CBA 58 *
+   calma CWC 59 *
+   calma CVS 61 *
+   calma CMT 62 *
+   calma CX 63 *
+style lambda=0.5(oldnwell)
+    scalefactor 50
+    layer cwell CWC
+    layer nwell CWN
+        labels CWN
+    layer m3 CMT
+
+        and-not XP
+        labels CMT
+    layer m2 CMS
+        labels CMS
+    layer m1 CMF
+        labels CMF
+    layer poly CPG
+        labels CPG
+    layer psd CAA
+    layer pdiff CWN
+        and CAA
+    layer ndiff CAA
+        and CSN
+        and-not CCD
+    layer nsd CWN
+        and CSN
+        and CAA
+    layer pbase CBA
+        labels CBA
+    layer nfet CPG
+        and CAA
+        and CSN
+        and-not CCD
+    layer pfet CAA
+        and CPG
+        and CWN
+    layer enfet CEL
+        and CAA
+        and CSN
+        and-not CCD
+    layer epfet CAA
+        and CEL
+        and CWN
+    layer nffet CAA
+        and CEL
+        and CPG
+        and CSN
+        labels CEL
+    layer pffet CAA
+        and CEL
+        and CPG
+        and CWN
+        labels CEL
+    layer m2c CVA
+        grow 150
+        shrink 50
+        and CMS
+        and CMF
+    layer electrode CEL
+        labels CEL
+    layer ec CCE
+        grow 50
+        and CMF
+        and CEL
+    layer cc CCE
+        grow 50
+        and CMF
+        and CEL
+        and CPG
+    layer cap CPG
+        and CEL
+        and-not CAA
+        labels CEL
+    layer psc CCA
+        grow 50
+        and CAA
+        and CMF
+    layer ndc CCA
+        grow 50
+        and CAA
+        and CSN
+        and CMF
+    layer pdc CCA
+        grow 50
+        and CAA
+        and CWN
+        and CMF
+    layer nsc CCA
+        grow 50
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer m3c CVS
+        grow 50
+        and CMT
+        and CMS
+        and-not XP
+    layer gc CCC
+    layer pbc CCA
+        grow 50
+        and CBA
+        and CMF
+    layer col CX
+        and CAA
+        and CSN
+        and CWN
+        labels CAA
+    layer clc CCA
+        grow 50
+        and CX
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+        labels CCA
+    layer emit CBA
+        and CSN
+        shrink 100
+    layer emc CCA
+        grow 50
+        and CBA
+        and CSN
+        and CMF
+    layer pc CCP
+        grow 50
+        and CPG
+        and CMF
+    layer nbd CSN
+        shrink 100
+        and CCD
+        and CAA
+ and-not CPG
+    layer nbdc CCA
+        grow 50
+        and CCD
+        and CSN
+ and CAA
+    layer bd CPG
+        or CEL
+        and CCD
+        and CAA
+ labels CCD
+    layer glass COG
+    layer pad CMF
+        shrink 50
+        and CMS
+        shrink 250
+        and CVA
+        shrink 50
+        and COG
+        grow 300
+        and XP
+
+   calma CWN 42 *
+   calma CAA 43 *
+
+   calma CSN 45 *
+   calma CPG 46 *
+   calma CCP 47 *
+   calma CCA 48 *
+   calma CMF 49 *
+   calma CVA 50 *
+   calma CMS 51 *
+   calma COG 52 *
+   calma CCE 55 *
+   calma CEL 56 *
+   calma CCD 57 *
+   calma CBA 58 *
+   calma CWC 59 *
+   calma CX 60 *
+
+style lambda=0.5(nowell)
+
+
+
+
+
+    scalefactor 50
+
+
+
+
+
+
+    layer m3 CMT
+
+ and-not XP
+        labels CMT
+    layer m2 CMS
+        labels CMS
+    layer m1 CMF
+        labels CMF
+    layer poly CPG
+        labels CPG
+    layer ndop CSN
+        and-not CWP
+        and CAA
+    layer pdop CSP
+        and CAA
+        and-not CWP
+ and-not CPS
+    layer pdiff CSP
+        and CWN
+        and CAA
+    layer ndiff CSN
+        and CWP
+        and CAA
+    layer nsd CWN
+        and CSN
+        and CAA
+    layer psd CSP
+        and CWP
+        and CAA
+    layer pbase CBA
+        labels CBA
+    layer nfet CPG
+        and CAA
+        and CSN
+        labels CPG
+    layer pfet CAA
+        and CPG
+        and CSP
+        labels CPG
+    layer ndc CCA
+        grow 50
+        and CAA
+        and CWP
+        and CSN
+        and CMF
+    layer pdc CCA
+        grow 50
+        and CAA
+        and CWN
+        and CSP
+        and CMF
+    layer nsc CCA
+        grow 50
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer psc CCA
+        grow 50
+        and CAA
+        and CSP
+        and CWP
+        and CMF
+    layer pbc CCA
+        grow 50
+        and CBA
+        and CMF
+        labels CBA
+    layer m3c CVS
+        grow 50
+        and CMT
+        and CMS
+ and-not XP
+    layer m2c CVA
+        grow 50
+        and CMS
+        and CMF
+    layer pc CCP
+        grow 50
+        and CPG
+        and CMF
+    layer gc CCC
+    layer glass COG
+ labels COG
+
+    layer open CAA
+        and CCA
+        and CVA
+        and COG
+ and COP
+    layer pstop CAA
+ and CPS
+        and CSP
+        and-not CWP
+        and-not CWN
+
+
+    layer pad COG
+        grow 600
+        and XP
+
+
+   calma COP 23 *
+   calma CPS 24 *
+
+   calma CCC 25 *
+   calma XP 26 *
+   calma CWP 41 *
+   calma CWN 42 *
+   calma CAA 43 *
+   calma CSP 44 *
+   calma CSN 45 *
+   calma CPG 46 *
+   calma CCP 47 *
+   calma CCA 48 *
+   calma CMF 49 *
+   calma CVA 50 *
+   calma CMS 51 *
+   calma COG 52 *
+   calma CVS 61 *
+   calma CMT 62 *
+
+
+
+
+style lambda=0.35(sub)
+
+    scalefactor 35
+
+    layer nwell CWN
+        labels CWN
+    layer pwell CWP
+        labels CWP
+
+    layer m3 CMT
+
+ and-not XP
+        labels CMT
+    layer m2 CMS
+        labels CMS
+    layer m1 CMF
+        labels CMF
+    layer poly CPG
+        labels CPG
+    layer ndop CSN
+        and-not CWP
+        and CAA
+    layer pdop CSP
+        and CAA
+        and-not CWP
+ and-not CPS
+    layer pdiff CSP
+        and CWN
+        and CAA
+    layer ndiff CSN
+        and CWP
+        and CAA
+    layer nsd CWN
+        and CSN
+        and CAA
+    layer psd CSP
+        and CWP
+        and CAA
+    layer pbase CBA
+        labels CBA
+    layer nfet CPG
+        and CAA
+        and CSN
+        labels CPG
+    layer pfet CAA
+        and CPG
+        and CSP
+        labels CPG
+    layer ndc CCA
+        grow 35
+        and CAA
+        and CWP
+        and CSN
+        and CMF
+    layer pdc CCA
+        grow 35
+        and CAA
+        and CWN
+        and CSP
+        and CMF
+    layer nsc CCA
+        grow 35
+        and CAA
+        and CSN
+        and CWN
+        and CMF
+    layer psc CCA
+        grow 35
+        and CAA
+        and CSP
+        and CWP
+        and CMF
+    layer pbc CCA
+        grow 35
+        and CBA
+        and CMF
+        labels CBA
+    layer m3c CVS
+        grow 35
+        and CMT
+        and CMS
+ and-not XP
+    layer m2c CVA
+        grow 35
+        and CMS
+        and CMF
+    layer pc CCP
+        grow 35
+        and CPG
+        and CMF
+    layer gc CCC
+    layer glass COG
+ labels COG
+
+    layer open CAA
+        and CCA
+        and CVA
+        and COG
+ and COP
+    layer pstop CAA
+ and CPS
+        and CSP
+        and-not CWP
+        and-not CWN
+
+
+    layer pad COG
+        grow 600
+        and XP
+
+
+   calma COP 23 *
+   calma CPS 24 *
+
+   calma CCC 25 *
+   calma XP 26 *
+   calma CWP 41 *
+   calma CWN 42 *
+   calma CAA 43 *
+   calma CSP 44 *
+   calma CSN 45 *
+   calma CPG 46 *
+   calma CCP 47 *
+   calma CCA 48 *
+   calma CMF 49 *
+   calma CVA 50 *
+   calma CMS 51 *
+   calma COG 52 *
+   calma CVS 61 *
+   calma CMT 62 *
+# 918 "scmos.tech.out" 2
+# 928 "scmos.tech.out"
+end
+
+mzrouter
+  style irouter
+    layer m2 32 64 256 1
+    layer m1 64 32 256 1
+    layer poly 128 128 512 1
+    contact m2contact metal1 metal2 1024
+    contact pcontact metal1 poly 2056
+    notactive poly pcontact
+  style garouter
+    layer m2 32 64 256 1
+    layer m1 64 32 256 1
+    contact m2contact metal1 metal2 1024
+end
+
+
+
+drc
+# 960 "scmos.tech.out"
+    edge4way (~nwell)/w nwell 10 nwell nwell 10\
+ "N-Well width must be at least 10 (MOSIS rule #1.1)"
+    edge4way (~pwell)/w pwell 10 pwell pwell 10\
+ "P-Well width must be at least 10 (MOSIS rule #1.1)"
+# 980 "scmos.tech.out"
+    edge4way nwell (~nwell)/w 9 (~nwell)/w (~nwell)/w 9\
+        "N-Well spacing must be at least 9 (MOSIS rule #1.2)"
+    edge4way pwell (~pwell)/w 9 (~pwell)/w (~pwell)/w 9\
+        "P-Well spacing must be at least 9 (MOSIS rule #1.2)"
+# 1018 "scmos.tech.out"
+    width ndiff,ndc/a,nfet,enfet,nffet,wcap 3 \
+ "N-type Diffusion width must be at least 3 (MOSIS rule #2.1a)"
+    width pdiff,pdc/a,pfet,epfet,pffet 3 \
+ "P-type Diffusion width must be at least 3 (MOSIS rule #2.1b)"
+    width nsd,nsc/a,psd,psc/a 3 \
+ "Ohmic diffusion width must be at least 3 (MOSIS rule #2.1c)"
+
+
+    spacing ndiff,ndc/a,nfet,enfet,nffet,wcap ndiff,ndc/a,nfet,enfet,nffet,wcap 3 touching_ok \
+ "Diffusion spacing must be at least 3 (MOSIS rule #2.2)"
+    spacing pdiff,pdc/a,pfet,epfet,pffet pdiff,pdc/a,pfet,epfet,pffet 3 touching_ok \
+ "Diffusion spacing must be at least 3 (MOSIS rule #2.2)"
+    spacing nsd,nsc/a nsd,nsc/a 3 touching_ok \
+ "Diffusion spacing must be at least 3 (MOSIS rule #2.2)"
+    spacing psd,psc/a psd,psc/a 3 touching_ok \
+ "Diffusion spacing must be at least 3 (MOSIS rule #2.2)"
+
+
+
+
+
+
+    spacing ndiff,ndc/a pdiff,pdc/a 10 touching_illegal \
+ "P-type diffusion must be 10 away from N-type diffusion (MOSIS rule #2.3a)"
+# 1051 "scmos.tech.out"
+    spacing ndiff,ndc/a nsd,nsc/a 8 touching_illegal \
+ "N-type diffusion must be 8 away from N-substrate contact (MOSIS rule #2.3a,4a)"
+    spacing pdiff,pdc/a psd,psc/a 8 touching_illegal \
+ "P-type diffusion must be 8 away from P-substrate contact (MOSIS rule #2.3a,4a)"
+
+
+
+    spacing nsd,nsc/a psd,psc/a 6 touching_illegal \
+ "Opposite well contacts must be separated by 6 (MOSIS rule #2.4)"
+# 1068 "scmos.tech.out"
+    spacing ndiff,ndc/a,nfet,enfet,nffet,wcap nwell 5 touching_illegal \
+ "N-diffusion and N-well must be separated by 5 (MOSIS rule #2.3a)"
+    spacing pdiff,pdc/a,pfet,epfet,pffet pwell 5 touching_illegal \
+ "P-diffusion and P-well must be separated by 5 (MOSIS rule #2.3a)"
+
+
+
+    spacing nsd,nsc/a pwell 3 touching_illegal \
+ "N-substrate diffusion and P-well must be separated by 3 (MOSIS rule #2.4)"
+    spacing psd,psc/a nwell 3 touching_illegal \
+ "P-substrate diffusion and N-well must be separated by 3 (MOSIS rule #2.4)"
+
+
+
+
+    spacing ndiff,ndc/a,nfet,enfet,nffet,wcap psd,psc/a 4 touching_ok \
+ "Opposite diffusion spacing must be at least 4 (MOSIS extension rule)"
+    spacing pdiff,pdc/a,pfet,epfet,pffet nsd,nsc/a 4 touching_ok \
+ "Opposite diffusion spacing must be at least 4 (MOSIS extension rule)"
+
+
+
+
+
+
+    width poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet 2 \
+ "Polysilicon width must be at least 2 (MOSIS rule #3.1)"
+
+
+
+
+
+
+    spacing poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet 2 touching_ok \
+ "Polysilicon spacing must be at least 2 (MOSIS rule #3.2a)"
+
+
+
+    edge4way nfet,pfet poly,pc/act 2 poly,pc/act 0 0 \
+ "Poly must overhang transistor by at least 2 (MOSIS rule #3.3)"
+
+
+    edge4way nfet,enfet ndiff,ndc/a 3 ndiff,ndc/a,nfet,enfet,nffet,wcap ndiff,ndc/a 3 \
+ "Diffusion must overhang transistor by at least 3 (MOSIS rule #3.4)"
+    edge4way pfet,epfet pdiff,pdc/a 3 pdiff,pdc/a,pfet,epfet,pffet ndiff,ndc/a 3 \
+ "Diffusion must overhang transistor by at least 3 (MOSIS rule #3.4)"
+
+
+    edge4way nfet,pfet space 1 poly 0 0 \
+ "Transistor overhang is missing (MOSIS rule #3.3,4)"
+    edge4way enfet,epfet space 1 poly2 0 0 \
+ "Transistor overhang is missing (MOSIS rule #3.3,4)"
+    edge4way nffet,pffet space 1 poly 0 0 \
+ "Transistor overhang is missing (MOSIS rule #3.3,4)"
+    edge4way nffet,pffet space 1 poly2 0 0 \
+ "Transistor overhang is missing (MOSIS rule #3.3,4)"
+
+
+    edge4way ndiff,ndc/a,pdiff,pdc/a,nsd,nsc/a,psd,psc/a poly,pc 1 space/a 0 1 \
+        "Poly and diffusion must be separated by at least 1 (MOSIS rule #3.5)"
+    edge4way poly,pc ndiff,ndc/a,pdiff,pdc/a,nsd,nsc/a,psd,psc/a 1 space/a 0 1 \
+        "Poly and diffusion must be separated by at least 1 (MOSIS rule #3.5)"
+    edge poly,pc space/a 1 space/a space/a 1 \
+        "Poly and diffusion must be separated by at least 1 (MOSIS rule #3.5)"
+    edge nsd,nsc/a,psd,psc/a,ndiff,ndc/a,pdiff,pdc/a space/a 1 space/a space/a 1 \
+        "Poly and diffusion must be separated by at least 1 (MOSIS rule #3.5)"
+# 1157 "scmos.tech.out"
+    spacing pfet,epfet,pffet nsd,nsc/a 3 touching_illegal \
+ "Transistors must be separated from substrate contacts by 3 (MOSIS rule #4.1.a)"
+    spacing nfet,enfet,nffet psd,psc/a 3 touching_illegal \
+ "Transistors must be separated from substrate contacts by 3 (MOSIS rule #4.1.b)"
+
+    edge4way psd,psc/a space/act 3 ~(nfet,enfet,nffet)/act psd,psc/a,ndiff,ndc/a 3 \
+ "Transistors must be separated from selects(generated by well cont) by 3 (MOSIS rule #4.1.c)"
+
+    edge4way nsd,nsc/a space/act 3 ~(pfet,epfet,pffet)/act nsd,nsc/a,pdiff,pdc/a 3 \
+ "Transistors must be separated from selects(generated by well cont) by 3 (MOSIS rule #4.1.d)"
+
+    edge4way psd,psc/a ~(ndiff,ndc,psc,psd)/act 4 ~(nfet,enfet)/act ~(ndiff,ndc,psc,psd)/act 4 \
+        "Transistors must be separated from selects(generated by well cont) by 4 (MOSIS rule #4.1.e)"
+
+    edge4way nsd,nsc/a ~(pdiff,pdc,nsc,nsd)/act 4 ~(pfet,epfet)/act ~(pdiff,pdc,nsc,nsd)/act 4 \
+        "Transistors must be separated from selects(generated by well cont) by 4 (MOSIS rule #4.1.f)"
+
+
+
+    edge4way ~(pdiff,pdc/a,pfet,epfet,pffet)/act pdiff,pdc,pfet 4 ~(nsd,nsc/a)/act pdiff,pdc/a,pfet,epfet,pffet 2 \
+ "Backedge of diffusion must be 4 from substrate diff (MOSIS rule #4.2.a)"
+    edge4way ~(ndiff,ndc/a,nfet,enfet,nffet,wcap)/act ndiff,ndc,nfet 4 ~(psd,psc/a)/act ndiff,ndc/a,nfet,enfet,nffet,wcap 2 \
+ "Backedge of diffusion must be 4 from substrate diff (MOSIS rule #4.2.b)"
+# 1191 "scmos.tech.out"
+    width pc 4 \
+ "Poly contact width must be at least 4 (MOSIS rule #5B.1,2,3)"
+
+
+
+
+
+
+
+    edge4way poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet ~(poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet)/act 3 ~pc/act ~(poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet)/act 3 \
+ "Poly contact must be at least 3 from other poly (MOSIS rule #5B.4,5)"
+
+
+
+
+
+    spacing pc ndiff,ndc/a,nfet,enfet,nffet,wcap,pdiff,pdc/a,pfet,epfet,pffet,nsd,nsc/a,psd,psc/a 1 touching_illegal \
+ "Poly contact must be 1 unit from diffusion (MOSIS rule #5B.6)"
+# 1217 "scmos.tech.out"
+    width ndc,pdc 4 \
+ "Diffusion contact width must be at least 4 (MOSIS rule #6B.1,2,3)"
+    width nsc,psc 4 \
+ "Substrate contact width must be at least 4 (MOSIS rule #6B.1,2,3)"
+# 1241 "scmos.tech.out"
+    edge4way ndiff,ndc/a,nfet,enfet,nffet,wcap,pdiff,pdc/a,pfet,epfet,pffet,nsd,nsc/a,psd,psc/a ~(ndiff,ndc/a,nfet,enfet,nffet,wcap,pdiff,pdc/a,pfet,epfet,pffet,nsd,nsc/a,psd,psc/a)/act 4 ~(ndc,pdc,nsc,psc)/act \
+ ~(ndiff,ndc/a,nfet,enfet,nffet,wcap,pdiff,pdc/a,pfet,epfet,pffet,nsd,nsc/a,psd,psc/a)/act 4 \
+        "Diffusion contacts must be 4 from other diffusions (MOSIS rule #6B.4,5)"
+
+
+    spacing pdc,ndc,psc,nsc nfet,enfet,nffet,pfet,epfet,pffet 1 touching_illegal \
+ "Diffusion contacts cannot touch transistors (MOSIS rule #6B.6)"
+
+
+    spacing pdc,ndc,psc,nsc poly 1 touching_illegal \
+ "Diffusion contact to field poly must be at least 1 (MOSIS rule #6B.7)"
+
+
+
+
+    spacing pdc,ndc,psc,nsc pc/act 2 touching_illegal \
+ "Poly contacts must be 2 away from diffusion contacts (MOSIS rule #6B.9)"
+# 1266 "scmos.tech.out"
+    edge4way m3c/m3 ~m3c/m3 1 ~m3c/m3 (~m3c,m3c)/m3 1 \
+ "Metal3 contacts must be rectangular (Magic rules)"
+    edge4way m2c/m2 ~m2c/m2 1 ~m2c/m2 (~m2c,m2c)/m2 1 \
+ "Metal2 contacts must be rectangular (Magic rules)"
+
+    edge4way ndc/m1 ~ndc/m1 1 ~ndc/m1 (~ndc,ndc)/m1 1 \
+ "N-diffusion contacts must be rectangular (Magic rules)"
+    edge4way pdc/m1 ~pdc/m1 1 ~pdc/m1 (~pdc,pdc)/m1 1 \
+ "P-diffusion contacts must be rectangular (Magic rules)"
+    edge4way psc/m1 ~psc/m1 1 ~psc/m1 (~psc,psc)/m1 1 \
+ "P-substrate contacts must be rectangular (Magic rules)"
+    edge4way nsc/m1 ~nsc/m1 1 ~nsc/m1 (~nsc,nsc)/m1 1 \
+ "N-substrate contacts must be rectangular (Magic rules)"
+
+    edge4way pc/m1 ~pc/m1 1 ~pc/m1 (~pc,pc)/m1 1 \
+ "Polysilicon contacts must be rectangular (Magic rules)"
+    edge4way ec/m1 ~ec/m1 1 ~ec/m1 (~ec,ec)/m1 1 \
+ "Electrode contacts must be rectangular (Magic rules)"
+    edge4way cc/m1 ~cc/m1 1 ~cc/m1 (~cc,cc)/m1 1 \
+ "Capacitor contacts must be rectangular (Magic rules)"
+
+    edge4way emc/m1 ~emc/m1 1 ~emc/m1 (~emc,emc)/m1 1 \
+ "Emitter contacts must be rectangular (Magic rules)"
+    edge4way clc/m1 ~clc/m1 1 ~clc/m1 (~clc,clc)/m1 1 \
+ "Collector contacts must be rectangular (Magic rules)"
+    edge4way pbc/m1 ~pbc/m1 1 ~pbc/m1 (~pbc,pbc)/m1 1 \
+ "P-base Contacts must be rectangular (Magic rules)"
+    edge4way nbdc/m1 ~nbdc/m1 1 ~nbdc/m1 (~nbdc,nbdc)/m1 1 \
+ "CCD-diffusion Contacts must be rectangular (Magic rules)"
+
+
+
+
+
+    width pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc,pad/m1 3 \
+ "First-level metal width must be at least 3 (MOSIS rule #7.1)"
+
+    spacing pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc,pad/m1 pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc,pad/m1 2 touching_ok \
+ "First-level metal spacing must be at least 2 (MOSIS rule #7.2)"
+# 1319 "scmos.tech.out"
+    width m2c 4 \
+ "Contact width must be at least 4 (MOSIS rule #8.1,2,3)"
+# 1348 "scmos.tech.out"
+    width m2,m2c/m2,m3c/m2,pad 3 \
+ "Second-level metal width must be at least 3 (MOSIS rule #9.1)"
+
+
+
+    spacing m2,m2c/m2,m3c/m2,pad m2,m2c/m2,m3c/m2,pad 3 touching_ok \
+ "Second-level metal spacing must be at least 3 (MOSIS rule #9.2b)"
+# 1418 "scmos.tech.out"
+    width cap,capc/a 2 \
+ "Electrode capacitor width must be at least 3 (MOSIS rule #11.1)"
+
+
+    spacing poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet 3 touching_ok \
+ "Second-level poly spacing must be at least 3 (MOSIS rule #11.2,12.2)"
+
+
+    edge4way cap,cc space 1 0 0 0 \
+        "Cap must be overlapped by poly or poly2 (MOSIS rule #11.3)"
+    edge4way cap,cc poly 2 poly poly 2 \
+        "Cap must be overlapped by poly or poly2 (MOSIS rule #11.3)"
+    edge4way cap,cc poly2 2 poly2 poly2 2 \
+        "Cap must be overlapped by poly or poly2 (MOSIS rule #11.3)"
+
+
+    edge4way nw,pw,cw ~(nw,pw,cw)/w 2 ~(cap,cc)/a ~(nw,pw,cw)/w 2 \
+ "Cap must be on a flat surface (MOSIS rule #11.4)" active
+    edge4way ~(nw,pw,cw)/w nw,pw,cw 2 ~(cap,cc)/a nw,pw,cw 2 \
+ "Cap must be on a flat surface (MOSIS rule #11.4)" active
+    edge4way cap ~(cap)/a 2 nfet,enfet,nffet,pfet,epfet,pffet,poly,poly2,space/a,cc/a \
+ ndiff,ndc/a,pdiff,pdc/a,poly 2 "Cap must be on a flat surface (MOSIS rule #11.4)" active
+# 1449 "scmos.tech.out"
+    width poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet 2 \
+ "Electrode width must be at least 2 (MOSIS rule #12.1)"
+
+
+
+
+
+    edge4way enfet,epfet poly2,ec/a 2 poly2,ec/a 0 0 \
+ "Poly2 must overhang transistor by at least 2 (MOSIS rule #12.3)"
+    edge4way nffet,pffet cap 2 cap 0 0 \
+ "Cap must overhang transistor by at least 2 (MOSIS rule #12.3)"
+    edge4way nffet ~(cap,nffet,enfet,nfet)/a 2 cap 0 0 \
+ "Cap must overhang doubletransistor by at least 2 (MOSIS rule #12.3)"
+    edge4way pffet ~(cap,pffet,epfet,pfet)/a 2 cap 0 0 \
+ "Cap must overhang doubletransistor by at least 2 (MOSIS rule #12.3)"
+
+
+    edge4way ndiff,ndc/a,pdiff,pdc/a,nsd,nsc/a,psd,psc/a el 1 space/a 0 1 \
+ "Poly2 and diffusion must be separated by at least 1 (MOSIS rule #12.4)"
+
+
+
+
+    spacing poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet pc,ndc,pdc 2 touching_illegal \
+ "Poly2 spacing to poly or diffusion contact must be at least 3 (MOSIS rule #12.6)"
+# 1490 "scmos.tech.out"
+    width ec,capc 4 \
+ "Electrode contact width must be at least 4 (MOSIS rule #13.1)"
+
+
+
+
+
+    edge4way ec/a space 1 poly2 poly2 1 \
+ "Electrode contact must be overlaped by poly2 (MOSIS rule #13.4)"
+    edge4way ec/a poly2 1 poly2 poly2 1 \
+ "Electrode contact must be overlaped by poly2 by 1 (MOSIS rule #13.4)"
+
+
+    edge4way ndiff,ndc/a,pdiff,pdc/a,nsd,nsc/a,psd,psc/a ec 2 space/a 0 2 \
+ "Poly2 and diffusion contact must be separated by at least 2 (MOSIS rule #13.5)"
+
+
+
+
+
+
+
+    width m3c 4 \
+        "Third-level metal contact width must be at least 4 (MOSIS rule #14.1,2,3)"
+# 1528 "scmos.tech.out"
+    width m3,m3c/m3 6 \
+       "Third-level metal width must be at least 6 (MOSIS rule #15.1a)"
+
+
+
+
+
+
+
+    spacing m3,m3c/m3 m3,m3c/m3 4 touching_ok \
+        "Third-level metal spacing must be at least 4 from other third-level metal (MOSIS rule #15.2a)"
+
+
+
+    edge4way m3c/m3 ~m3c/m3 1 m3 m3 1 \
+ "Mimimum metal3 overlap of via must be at least 1 (MOSIS rule #15.3)"
+# 1552 "scmos.tech.out"
+    width clc,pbc,emc 4 \
+ "Transistor contact width must be at least 4 (MOSIS rule #16.1)"
+# 1562 "scmos.tech.out"
+    edge4way emc/a,emit pbase 4 pbase pbase 4 \
+ "Pbase overlap of emitter must be at least 4 (MOSIS rule #16.3)"
+
+
+
+    spacing pbc emc/a,emit 7 touching_illegal \
+ "Base must be 7 (4+2+1) away from emitter (MOSIS rule #16.3,4,11)"
+
+
+
+
+
+    edge4way pbc (~pbc)/a 3 pb,pbc/a pb,pbc/a 3 \
+ "Pbase overlap of base contact must be at least 3 (MOSIS rule #16.5)"
+# 1584 "scmos.tech.out"
+    width col,clc/a 6 \
+ "Collector width must be at least 6 (MOSIS rule #16.6)"
+
+
+
+    edge4way pbase space/a 6 nwell space/a 6 \
+ "Nwell overlap of Pbase must be at least 6 (MOSIS rule #16.7)" well
+
+
+    edge4way pbase (~pbase)/a 4 ~(col,clc)/a ~(col,clc)/a 4 \
+ "Pbase must be at least 4 away from collector (MOSIS rule #16.8)"
+
+
+    edge4way clc (~clc)/a 1 col col 1 \
+ "Collector overlap of contact must be at least 1 (MOSIS rule #16.9)"
+
+
+
+
+
+
+    edge4way nw ~(nw)/w 3 ~(col,clc)/a ~(nw)/w 3 \
+ "N-well overlap of collector must be at least 3 (MOSIS rule #16.11)" active
+    edge4way ~(nw)/w nw 3 ~(col,clc)/a nw 3 \
+ "N-well overlap of collector must be at least 3 (MOSIS rule #16.11)" active
+
+
+    width em,emc/a 4 \
+ "Emitter width must be at least 4 (Magic Bipolar Transistor rule)"
+
+
+
+    spacing em,emc/a em,emc/a 7 touching_ok \
+ "Unrelated emitter must be at least 7 apart (Magic Bipolar transistor rule)"
+
+
+
+
+
+    width pbase,pbc/a 4 \
+ "Pbase width must be at least 4 (MOSIS extension rule)"
+
+    spacing pbase,pbc/a pbase,pbc/a 4 touching_ok \
+ "Pbase spacing must be at least 4 (MOSIS extension rule)"
+# 1637 "scmos.tech.out"
+    width cwell 10 \
+ "Cap-well width must be at least 10 (MOSIS rule #17.1)"
+
+
+    spacing cwell cwell 9 touching_ok \
+ "Cap-well spacing must be at least 9 (MOSIS rule #17.2)"
+    spacing cwell nwell 9 touching_illegal \
+ "Cap-well spacing must be at least 9 (MOSIS rule #17.2)"
+
+
+    edge4way cwell space 5 ~(ndiff,ndc/a,nfet,enfet,nffet,wcap)/a ~(ndiff,ndc/a,nfet,enfet,nffet,wcap)/w 5 \
+ "Cap-well spacing to external active must be at least 5 (MOSIS rule #17.3)" active
+    edge4way cwell space 3 ~(psd,psc/a)/a ~(psd,psc/a)/w 3 \
+ "P-substrate diffusion and Cap-well must be separated by 3 (MOSIS rule #17.3)" active
+
+
+
+
+
+    edge4way space cwell 3 (space,poly,pc)/a 0 0 \
+ "Cap-well overlap of diffusion must be at least 3 (MOSIS rule #17.4)" active
+# 1667 "scmos.tech.out"
+    width wcap 3 \
+ "Well-capacitor must be at least 3 (MOSIS rule #18.1)"
+
+
+
+
+
+    edge4way wcap space 1 poly poly 1 \
+ "Well-capacitor overhang is missing (MOSIS rule #18.3)"
+
+
+    edge4way wcap ndiff 3 ndiff ndiff 3 \
+ "N-diffusion overlap of well-capacitor must be at least 3 (MOSIS rule #18.4)"
+
+
+
+    spacing wcap pc 2 touching_illegal \
+ "Well-capacitor spacing to poly contact must be at least 2 (MOSIS rule #18.5)"
+
+
+
+
+    spacing wcap ndc 4 touching_illegal \
+ "Well-capacitor spacing to diffusion contact must be at least 4 (MOSIS rule #18.6)"
+
+
+
+
+
+
+
+    width nbd,nbdc,bd/a 4 \
+ "CCD channel width must be at least 4 (MOSIS rule #19.1)"
+    width nbdc 4 \
+ "CCD contact width must be at least 4 (MOSIS rule #19.1)"
+# 1712 "scmos.tech.out"
+    edge4way nbd,nbdc ~(bd,nbd,nbdc)/a 4 (bd,space)/i 0 0 \
+ "CCD channel spacing must be at least 4 (MOSIS rule #19.2)" implant
+    edge4way nbd,nbdc ~(poly,nbd,nbdc)/a 4 ~(poly,nbd,nbdc)/a ~(poly,nbd,nbdc)/a 4 \
+ "CCD channel spacing must be at least 4 (MOSIS rule #19.2)" active
+
+
+
+
+
+
+    edge4way bd space 2 nbd,poly,cap,el 0 0 \
+ "CCD channel overhang is missing (MOSIS rule #19.6)" active
+
+
+
+
+    spacing nbdc poly,el 1 touching_illegal \
+ "CCD-diffusion contact spacing to poly must be at least 1 (MOSIS CCD rule)"
+    edge4way nbd poly,el 1 bd 0 0 \
+ "Missing Buried CCD Difussion layer (MOSIS CCD rule)" implant
+# 1744 "scmos.tech.out"
+    edge (~hnwell)/w hnwell 10 hnwell hnwell 10\
+        "High-Voltage N-Well width must be at least 10 (MOSIS rule #1.1)"
+    edge (~hpwell)/w hpwell 10 hpwell hpwell 10\
+        "High-Voltage P-Well width must be at least 10 (MOSIS rule #1.1)"
+
+    edge hnwell space,pw,hpw 9 space,pw,hpw space,pw,hpw 9\
+        "High-Voltage N-Well spacing to N-Well must be at least 9 (MOSIS rule #1.2)"
+    edge hpwell space,nw,hnw 9 space,nw,hnw space,nw,hnw 9\
+        "High-Voltage P-Well spacing to P-Well must be at least 9 (MOSIS rule #1.2)"
+    edge hnwell space,pw,hpw,nw 12 space,pw,hpw,nw space,pw,hpw,nw 12\
+        "High-Voltage N-Well spacing must be at least 12 (MOSIS rule #20.1)"
+    edge hpwell space,nw,hnw,pw 12 space,nw,hnw,pw space,nw,hnw,pw 12\
+        "High-Voltage P-Well spacing must be at least 12 (MOSIS rule #20.1)"
+
+
+
+
+
+
+    edge4way ~(hndiff,hndc/a,hpdiff,hpdc/a)/a hndiff,hndc/a,hpdiff,hpdc/a 3 hndiff,hndc/a,hpdiff,hpdc/a hndiff,hndc/a,hpdiff,hpdc/a 3\
+        "High-Voltage Diffusion width must be at least 3 (MOSIS rule #2.1)"
+    spacing hndiff,hndc/a,hnfet hndiff,hndc/a,hnfet 5 touching_ok \
+        "High-Voltage Diffusion spacing must be at least 5 (MOSIS rule #20.2)"
+    spacing hpdiff,hpdc/a,hpfet hpdiff,hpdc/a,hpfet 5 touching_ok \
+        "High-Voltage Diffusion spacing must be at least 5 (MOSIS rule #20.2)"
+
+
+
+
+
+    spacing hndiff,hndc/a hpdiff,hpdc/a 14 touching_illegal \
+        "P-type diffusion must be 14 away from N-type diffusion (MOSIS rule #20.3)"
+    spacing hndiff,hndc/a pdiff,pdc/a 12 touching_illegal \
+        "P-type diffusion must be 12 away from N-type diffusion (MOSIS rule #20.3+2.3)"
+    spacing hpdiff,hpdc/a ndiff,ndc/a 12 touching_illegal \
+        "P-type diffusion must be 12 away from N-type diffusion (MOSIS rule #20.3+2.3)"
+
+
+    spacing hndiff,hnfet,hndc/a hnwell 7 touching_illegal \
+        "HVN-diffusion and HVN-well must be separated by 7 (MOSIS rule #20.3)"
+    spacing hpdiff,hpfet,hpdc/a hpwell 7 touching_illegal \
+        "HVP-diffusion and HVP-well must be separated by 7 (MOSIS rule #20.3)"
+    spacing nsd,nsc/a hpwell 3 touching_illegal \
+        "N-substrate diffusion and HVP-well must be separated by 3 (MOSIS rule #2.4+20.3)"
+    spacing psd,psc/a hnwell 3 touching_illegal \
+        "P-substrate diffusion and HVN-well must be separated by 3 (MOSIS rule #2.4+20.3)"
+# 1798 "scmos.tech.out"
+    edge (~hndc)/a hndc/a 6 hndc/a hndc/a 6\
+        "High-Voltage Diffusion contact width must be at least 6 (MOSIS rule #20.5)"
+    edge (~hpdc)/a hpdc/a 6 hpdc/a hpdc/a 6\
+        "High-Voltage Diffusion contact width must be at least 6 (MOSIS rule #20.5)"
+
+
+
+    edge hpdiff,hpdc/a hpfet 4 hpfet 0 0 \
+        "High-Voltage transistor must be at least 4 units long (MOSIS rule #20.6)"
+    edge hndiff,hndc/a hnfet 4 hnfet 0 0 \
+        "High-Voltage transistor must be at least 4 units long (MOSIS rule #20.6)"
+
+
+
+
+
+    exact_overlap m3c,m2c,ndc,pdc,pc,psc,nsc,ec,capc,clc,emc,pbc,hndc,hpdc,hnsc,hpsc
+    no_overlap pfet,nfet pfet,nfet
+    no_overlap epfet,enfet epfet,enfet
+    no_overlap pffet,nffet pffet,nffet
+    no_overlap hpfet,hnfet hpfet,hnfet
+
+end
+
+
+extract
+
+
+
+
+
+# 1 "./extract_template/scmosExt.tech.in" 1
+# 87 "./extract_template/scmosExt.tech.in"
+# 1 "./extract_template/scmosExt34.tech.in" 1
+
+
+
+
+
+
+
+style lambda=0.6(hp)
+
+
+
+
+ lambda 60
+ step 100
+ sidehalo 6
+
+
+
+
+
+
+ areacap nwell 35
+ perimc nwell ~(nwell) 47
+
+
+ areacap ndiff,nsd,ndc/a,nsc/a 0
+ areacap pdiff,psd,pdc/a,psc/a 0
+
+ perimc ndiff,nsd,ndc/a,nsc/a space,pwell 0
+ perimc pdiff,psd,pdc/a,psc/a space,nwell 0
+# 42 "./extract_template/scmosExt34.tech.in"
+ areacap (poly,pc)/a 28
+ overlap (poly,pc)/a nwell,pwell 28
+
+ perimc (poly,pc)/a ~(poly,pc)/a 38
+ sideoverlap (poly,pc)/a ~(poly,pc)/a nwell,pwell 38
+ sideoverlap (poly,pc)/a ~(poly,pc)/a (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 34
+ sideoverlap (poly,pc)/a ~(poly,pc)/a (m2,m2c,m3c,pad)/m2 27 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+
+ sidewall (poly,pc)/a ~(poly,pc)/a ~(poly,pc)/a (poly,pc)/a 15
+
+
+
+ areacap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 18
+ overlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 nwell,pwell 18 (poly,pc)/a,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a
+ overlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 46
+ overlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (poly,pc)/a 46
+
+ perimc (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 33
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 nwell,pwell 33 ((poly,pc)/a,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a)
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 33
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (poly,pc)/a 33
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (m2,m2c,m3c,pad)/m2 28
+
+ sidewall (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 27
+
+
+
+
+ areacap (m2,m2c,m3c,pad)/m2 9
+ overlap (m2,m2c,m3c,pad)/m2 nwell,pwell 9 (poly,pc)/a,(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a
+ overlap (m2,m2c,m3c,pad)/m2 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 12 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ overlap (m2,m2c,m3c,pad)/m2 (poly,pc)/a 14 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ overlap (m2,m2c,m3c,pad)/m2 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 30
+
+ perimc (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 22
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 nwell,pwell 22 ((m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(poly,pc)/a,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a)
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 20 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (poly,pc)/a 22 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 28
+
+ sidewall (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (m2,m2c,m3c,pad)/m2 33
+
+
+
+
+
+ fet pfet pdiff,pdc 2 pfet Vdd! nwell 270 623
+ fet nfet ndiff,ndc 2 nfet Gnd! pwell 90 623
+ fet wcap ndiff,ndc 1 wcap Gnd! pwell 300 0
+
+
+ fetresis nfet linear 9700
+ fetresis pfet linear 35700
+
+
+
+ contact pc 4 16210
+ contact ndc,nsc, 4 77000
+ contact pdc,psc, 4 44260
+ contact m2c 4 150
+
+
+ resist ndiff,nsd,ndc/a,nsc/a 99630
+ resist pdiff,psd,pdc/a,psc/a 120000
+ resist (poly,pc/act,pfet,nfet) 25000
+ resist (metal1,m2c/metal1) 60
+ resist (metal2,via/m2,pad) 40
+ resist nwell 1500000
+
+
+
+ planeorder implant 0
+ planeorder well 1
+ planeorder active 2
+ planeorder metal1 3
+ planeorder metal2 4
+ planeorder metal3 5
+ planeorder oxide 6
+# 88 "./extract_template/scmosExt.tech.in" 2
+# 1 "./extract_template/scmosExt26b.tech.in" 1
+# 13 "./extract_template/scmosExt26b.tech.in"
+style lambda=0.5
+
+
+
+
+ lambda 50
+ step 100
+ sidehalo 8
+
+
+
+
+
+
+ areacap nwell 40
+ perimc nwell ~(nwell) 100
+
+
+
+ areacap (ndiff,nsd,ndc,nsc)/a 0
+ perimc (ndiff,nsd,ndc,nsc)/a space,pwell 0
+
+ areacap (pdiff,psd,pdc,psc)/a 0
+ perimc (pdiff,psd,pdc,psc)/a space,nwell 0
+# 51 "./extract_template/scmosExt26b.tech.in"
+ areacap (poly,pc)/a 15
+ overlap (poly,pc)/a nwell,pwell 15
+
+ perimc (poly,pc)/a ~(poly,pc)/a 22
+ sideoverlap (poly,pc)/a ~(poly,pc)/a nwell,pwell 22
+ sideoverlap (poly,pc)/a ~(poly,pc)/a (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 10
+ sideoverlap (poly,pc)/a ~(poly,pc)/a (m2,m2c,m3c,pad)/m2 6 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ sideoverlap (poly,pc)/a ~(poly,pc)/a (m3,m3c,pad)/m3 4 ((m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2)
+
+ sidewall (poly,pc)/a ~(poly,pc)/a ~(poly,pc)/a (poly,pc)/a 11
+
+
+
+
+ areacap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 8
+ overlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 nwell,pwell 8 (poly,pc)/a,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a
+ overlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 14
+ overlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (poly,pc)/a 14
+
+ perimc (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 22
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 nwell,pwell 22 ((poly,pc)/a,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a)
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 25
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (poly,pc)/a 25
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (m2,m2c,m3c,pad)/m2 12
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (m3,m3c,pad)/m3 7 (m2,m2c,m3c,pad)/m2
+
+ sidewall (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 27
+
+
+
+
+ areacap (m2,m2c,m3c,pad)/m2 4
+ overlap (m2,m2c,m3c,pad)/m2 nwell,pwell 4 (poly,pc)/a,(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a
+ overlap (m2,m2c,m3c,pad)/m2 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 5 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ overlap (m2,m2c,m3c,pad)/m2 (poly,pc)/a 6 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ overlap (m2,m2c,m3c,pad)/m2 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 9
+
+ perimc (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 18
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 nwell,pwell 18 ((m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(poly,pc)/a,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a)
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 19 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (poly,pc)/a 20 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 23
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (m3,m3c,pad)/m3 10
+
+ sidewall (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (m2,m2c,m3c,pad)/m2 33
+
+
+
+
+ areacap (m3,m3c,pad)/m3 3
+ overlap (m3,m3c,pad)/m3 nwell,pwell 3 (poly,pc)/a,(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a
+ overlap (m3,m3c,pad)/m3 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 3 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2
+ overlap (m3,m3c,pad)/m3 (poly,pc)/a 3 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2
+ overlap (m3,m3c,pad)/m3 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 4 (m2,m2c,m3c,pad)/m2
+ overlap (m3,m3c,pad)/m3 (m2,m2c,m3c,pad)/m2 9
+
+ perimc (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 17
+ sideoverlap (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 nwell,pwell 17 ((ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a,(poly,pc)/a,(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2)
+ sideoverlap (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 17 ((m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2)
+ sideoverlap (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 (poly,pc)/a 17 ((m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2)
+ sideoverlap (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 20 ((m2,m2c,m3c,pad)/m2)
+ sideoverlap (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 (m2,m2c,m3c,pad)/m2 25
+
+ sidewall (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 (m3,m3c,pad)/m3 50
+
+
+
+
+
+ fet pfet pdiff,pdc 2 pfet Vdd! nwell 204 450
+ fet nfet ndiff,ndc 2 nfet Gnd! pwell 150 450
+
+
+
+ fetresis nfet linear 14100
+ fetresis pfet linear 48100
+
+ fetresis nfet saturation 14100
+ fetresis pfet saturation 48100
+
+
+
+
+
+ resist (ndiff,nsd,ndc/act,nsc/act) 3800
+ resist (pdiff,psd,pdc/act,psc/act) 3800
+ resist (poly,pc/act,pfet,nfet) 5000
+ resist (metal1,m2c/metal1) 81
+ resist (metal2,via/m2,pad) 81
+ resist (metal3,pad/m3,via2/m3) 34
+ resist nwell 1980000
+
+ contact pc 4 15000
+ contact ndc,pdc,nsc,psc 4 1500
+ contact m2c 4 500
+ contact m3c 4 500
+
+
+
+ planeorder implant 0
+ planeorder well 1
+ planeorder active 2
+ planeorder metal1 3
+ planeorder metal2 4
+ planeorder metal3 5
+ planeorder oxide 6
+# 89 "./extract_template/scmosExt.tech.in" 2
+# 1 "./extract_template/scmosExt14b-tm.tech.in" 1
+# 13 "./extract_template/scmosExt14b-tm.tech.in"
+style lambda=0.35
+
+
+
+
+ lambda 35
+ step 100
+ sidehalo 10
+
+
+
+
+
+
+ areacap nwell 25
+ perimc nwell ~(nwell) 70
+
+
+
+ areacap (ndiff,nsd,ndc,nsc)/a 0
+ perimc (ndiff,nsd,ndc,nsc)/a space,pwell 0
+
+ areacap (pdiff,psd,pdc,psc)/a 0
+ perimc (pdiff,psd,pdc,psc)/a space,nwell 0
+# 55 "./extract_template/scmosExt14b-tm.tech.in"
+ areacap (poly,pc)/a 11.1
+ overlap (poly,pc)/a nwell,pwell 11.1
+
+ perimc (poly,pc)/a ~(poly,pc)/a 14.7
+ sideoverlap (poly,pc)/a ~(poly,pc)/a nwell,pwell 14.7
+ sideoverlap (poly,pc)/a ~(poly,pc)/a (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 6.7
+ sideoverlap (poly,pc)/a ~(poly,pc)/a (m2,m2c,m3c,pad)/m2 3.2 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ sideoverlap (poly,pc)/a ~(poly,pc)/a (m3,m3c,pad)/m3 2.1 ((m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2)
+
+ sidewall (poly,pc)/a ~(poly,pc)/a ~(poly,pc)/a (poly,pc)/a 8.4
+
+
+
+
+ areacap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 4.8
+ overlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 nwell,pwell 4.8 (poly,pc)/a,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a
+ overlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 7.7
+ overlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (poly,pc)/a 7.7
+
+ perimc (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 17.5
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 nwell,pwell 17.5 ((poly,pc)/a,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a)
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 20.3
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (poly,pc)/a 20.3
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (m2,m2c,m3c,pad)/m2 10.2
+ sideoverlap (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (m3,m3c,pad)/m3 5.6 (m2,m2c,m3c,pad)/m2
+
+ sidewall (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 ~(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 22.4
+
+
+
+
+ areacap (m2,m2c,m3c,pad)/m2 1.8
+ overlap (m2,m2c,m3c,pad)/m2 nwell,pwell 1.8 (poly,pc)/a,(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a
+ overlap (m2,m2c,m3c,pad)/m2 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 2.1 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ overlap (m2,m2c,m3c,pad)/m2 (poly,pc)/a 2.1 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ overlap (m2,m2c,m3c,pad)/m2 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 4.7
+
+ perimc (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 14.4
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 nwell,pwell 14.4 ((m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(poly,pc)/a,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a)
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 15.1 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (poly,pc)/a 15.1 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 17.5
+ sideoverlap (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (m3,m3c,pad)/m3 12.6
+
+ sidewall (m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 ~(m2,m2c,m3c,pad)/m2 (m2,m2c,m3c,pad)/m2 25.2
+
+
+
+
+ areacap (m3,m3c,pad)/m3 1.1
+ overlap (m3,m3c,pad)/m3 nwell,pwell 1.1 (poly,pc)/a,(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2,(ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a
+ overlap (m3,m3c,pad)/m3 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 1.2 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2
+ overlap (m3,m3c,pad)/m3 (poly,pc)/a 1.2 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2
+ overlap (m3,m3c,pad)/m3 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 1.8 (m2,m2c,m3c,pad)/m2
+ overlap (m3,m3c,pad)/m3 (m2,m2c,m3c,pad)/m2 4.5
+
+ perimc (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 14.4
+ sideoverlap (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 nwell,pwell 14.4 ((ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a,(poly,pc)/a,(m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2)
+ sideoverlap (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 (ndiff,pdiff,em,col,ppd,nnd,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc)/a 15.1 ((m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2)
+ sideoverlap (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 (poly,pc)/a 15.1 ((m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1,(m2,m2c,m3c,pad)/m2)
+ sideoverlap (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 (m1,ndc,pdc,nwc,pwc,nbdc,capc,ec,clc,emc,pbc,pc,via)/m1 17.9 ((m2,m2c,m3c,pad)/m2)
+ sideoverlap (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 (m2,m2c,m3c,pad)/m2 22.4
+
+ sidewall (m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 ~(m3,m3c,pad)/m3 (m3,m3c,pad)/m3 40
+
+
+
+
+
+
+ fet pfet pdiff,pdc 2 pfet Vdd! nwell 254 120
+ fet nfet ndiff,ndc 2 nfet Gnd! pwell 311 120
+
+
+
+ fetresis nfet linear 14285
+ fetresis pfet linear 40914
+
+ fetresis nfet saturation 14285
+ fetresis pfet saturation 40914
+
+
+
+
+
+ resist (ndiff,nsd,ndc/act,nsc/act) 3100
+ resist (pdiff,psd,pdc/act,psc/act) 2500
+ resist (poly,pc/act,pfet,nfet) 7500
+ resist (metal1,m2c/metal1) 83
+ resist (metal2,via/m2,pad) 84
+ resist (metal3,pad/m3,via2/m3) 41
+ resist nwell 1980000
+
+
+ contact pc 4 10000
+ contact ndc,pdc,nsc,psc 4 4500
+ contact m2c 4 1000
+ contact m3c 4 1000
+
+
+
+ planeorder implant 0
+ planeorder well 1
+ planeorder active 2
+ planeorder metal1 3
+ planeorder metal2 4
+ planeorder metal3 5
+ planeorder oxide 6
+# 90 "./extract_template/scmosExt.tech.in" 2
+
+
+
+
+
+
+
+# 1 "./extract_template/scmosExtDiag.tech.in" 1
+
+
+
+
+
+
+style check_nwell
+
+    lambda 100
+    step 100
+
+    resist nwell 2000000
+    areacap nw,nwc,nsd 100
+
+
+    noplaneordering
+
+style check_pwell
+
+    lambda 100
+    step 100
+
+    resist pwell 2000000
+    areacap pw,pwc,psd 100
+
+    noplaneordering
+
+style check_psubstr
+
+
+
+
+
+    lambda 50
+    step 200
+
+    areacap psd,psc 1000
+
+    noplaneordering
+
+style check_nsubstr
+
+
+
+
+
+    lambda 50
+    step 200
+
+    areacap nsd,nsc 1000
+
+    noplaneordering
+# 97 "./extract_template/scmosExt.tech.in" 2
+# 1830 "scmos.tech.out" 2
+# 2635 "scmos.tech.out"
+end
+
+
+wiring
+    contact pdcontact 4 pdiff 0 metal1 0
+    contact ndcontact 4 ndiff 0 metal1 0
+    contact pcontact 4 poly 0 metal1 0
+    contact ec 6 poly2 0 metal1 0
+    contact m2contact 4 metal1 0 metal2 0
+    contact m3contact 5 metal2 0 metal3 0
+end
+
+router
+    layer1 metal1 3 pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc 3
+    layer2 metal2 3 m2,m2c/m2,m3c/m2,pad 4 poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet,ndiff,ndc/a,pdiff,pdc/a 1
+    contacts m2contact 4
+    gridspacing 8
+end
+
+plowing
+    fixed nfet,enfet,nffet,pfet,epfet,pffet,glass,pad
+    covered nfet,enfet,nffet,pfet,epfet,pffet
+    drag nfet,enfet,nffet,pfet,epfet,pffet
+end
+
+plot
+
+    style colorversatec
+
+ ndiff,ndc yellow \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA
+
+ ndiff,ndc cyan \
+     0000 5555 0000 5555 \
+     0000 5555 0000 5555 \
+     0000 5555 0000 5555 \
+     0000 5555 0000 5555
+
+
+ nsd,nsc,col,clc yellow \
+     1515 2A2A 5151 A2A2 \
+     1515 2A2A 5151 A2A2 \
+     1515 2A2A 5151 A2A2 \
+     1515 2A2A 5151 A2A2
+
+ nsd,nsc,col,clc cyan \
+     0000 1515 0000 5151 \
+     0000 1515 0000 5151 \
+     0000 1515 0000 5151 \
+     0000 1515 0000 5151
+
+
+ pdiff,pdc yellow \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA
+
+ pdiff,pdc cyan \
+     0000 5555 0000 5555 \
+     0000 5555 0000 5555 \
+     0000 5555 0000 5555 \
+     0000 5555 0000 5555
+
+ pdiff,pdc magenta \
+     AAAA 0000 AAAA 0000 \
+     AAAA 0000 AAAA 0000 \
+     AAAA 0000 AAAA 0000 \
+     AAAA 0000 AAAA 0000
+
+
+ psd,psc yellow \
+     1515 2A2A 5151 A2A2 \
+     1515 2A2A 5151 A2A2 \
+     1515 2A2A 5151 A2A2 \
+     1515 2A2A 5151 A2A2
+
+ psd,psc cyan \
+     0000 1515 0000 5151 \
+     0000 1515 0000 5151 \
+     0000 1515 0000 5151 \
+     0000 1515 0000 5151
+
+ psd,psc magenta \
+     2A2A 0000 A2A2 0000 \
+     2A2A 0000 A2A2 0000 \
+     2A2A 0000 A2A2 0000 \
+     2A2A 0000 A2A2 0000
+
+
+ poly,pc/a magenta \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA
+
+
+ poly2,ec/a yellow \
+     FFFF FFFF FFFF FFFF \
+     FFFF FFFF FFFF FFFF \
+     FFFF FFFF FFFF FFFF \
+     FFFF FFFF FFFF FFFF
+
+
+ nfet yellow \
+     0505 8282 1414 0A0A \
+     5050 2828 4141 A0A0 \
+     0505 8282 1414 0A0A \
+     5050 2828 4141 A0A0
+
+ nfet cyan \
+     0000 0505 0000 1414 \
+     0000 5050 0000 4141 \
+     0000 0505 0000 1414 \
+     0000 5050 0000 4141
+
+ nfet magenta \
+     5050 2828 4141 A0A0 \
+     0505 8282 1414 0A0A \
+     5050 2828 4141 A0A0 \
+     0505 8282 1414 0A0A
+
+
+ enfet yellow \
+     BABA 7575 EAEA D5D5 \
+     ABAB 5757 AEAE 5D5D \
+     BABA 7575 EAEA D5D5 \
+     ABAB 5757 AEAE 5D5D
+
+ enfet cyan \
+     4141 0A0A 0505 2828 \
+     1414 A0A0 5050 8282 \
+     4141 0A0A 0505 2828 \
+     1414 A0A0 5050 8282
+
+
+ nffet yellow \
+     8E8E 0707 8B8B D5D5 \
+     E8E8 7070 B8B8 5D5D \
+     8E8E 0707 8B8B D5D5 \
+     E8E8 7070 B8B8 5D5D
+
+ nffet cyan \
+     0101 0808 1414 2828 \
+     1010 8080 4141 8282 \
+     0101 0808 1414 2828 \
+     1010 8080 4141 8282
+
+ nffet magenta \
+     5050 A0A0 4040 0202 \
+     0505 0A0A 0404 2020 \
+     5050 A0A0 4040 0202 \
+     0505 0A0A 0404 2020
+
+
+ pfet yellow \
+     6363 A0A0 5050 2828 \
+     3636 0A0A 0505 8282 \
+     6363 A0A0 5050 2828 \
+     3636 0A0A 0505 8282
+
+ pfet cyan \
+     0000 5151 0000 5454 \
+     0000 1515 0000 1515 \
+     0000 5151 0000 5454 \
+     0000 1515 0000 1515
+
+ pfet magenta \
+     9494 0A0A 2525 8282 \
+     4949 A0A0 5252 2828 \
+     9494 0A0A 2525 8282 \
+     4949 A0A0 5252 2828
+
+
+ epfet yellow \
+     BCBC 4F4F 2F2F D3D3 \
+     CBCB F4F4 F2F2 3D3D \
+     BCBC 4F4F 2F2F D3D3 \
+     CBCB F4F4 F2F2 3D3D
+
+ epfet cyan \
+     0000 A0A0 0000 2828 \
+     0000 0A0A 0000 8282 \
+     0000 A0A0 0000 2828 \
+     0000 0A0A 0000 8282
+
+ epfet magenta \
+     4141 0000 5050 0000 \
+     1414 0000 0505 0000 \
+     4141 0000 5050 0000 \
+     1414 0000 0505 0000
+
+
+ pffet yellow \
+     7B7B F0F0 F0F0 E9E9 \
+     B7B7 0F0F 0F0F 9E9E \
+     7B7B F0F0 F0F0 E9E9 \
+     B7B7 0F0F 0F0F 9E9E
+
+ pffet cyan \
+     0000 0101 0000 1414 \
+     0000 1010 0000 4141 \
+     0000 0101 0000 1414 \
+     0000 1010 0000 4141
+
+ pffet magenta \
+     8484 0A0A 2525 8282 \
+     4848 A0A0 5252 2828 \
+     8484 0A0A 2525 8282 \
+     4848 A0A0 5252 2828
+
+
+ cap,cc/a yellow \
+     3E3E 7777 E3E3 C1C1 \
+     E3E3 7777 3E3E 1C1C \
+     3E3E 7777 E3E3 C1C1 \
+     E3E3 7777 3E3E 1C1C
+
+ cap,cc/a magenta \
+     4141 8888 1414 2A2A \
+     1414 8888 4141 A2A2 \
+     4141 8888 1414 2A2A \
+     1414 8888 4141 A2A2
+
+
+ pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc cyan \
+     AAAA 0000 AAAA 0000 \
+     AAAA 0000 AAAA 0000 \
+     AAAA 0000 AAAA 0000 \
+     AAAA 0000 AAAA 0000
+
+
+ m2,m2c/m2,m3c/m2,pad cyan \
+     0000 1111 0000 4444 \
+     0000 1111 0000 4444 \
+     0000 1111 0000 4444 \
+     0000 1111 0000 4444
+
+ m2,m2c/m2,m3c/m2,pad magenta \
+     0000 4444 0000 1111 \
+     0000 4444 0000 1111 \
+     0000 4444 0000 1111 \
+     0000 4444 0000 1111
+
+
+ m2c/m1 black \
+     0000 6666 6666 0000 \
+     0000 9999 9999 0000 \
+     0000 6666 6666 0000 \
+     0000 9999 9999 0000
+
+
+ pad,glass black \
+     0300 0700 0E00 1C00 \
+     3800 7000 E000 C000 \
+     00C0 00E0 0070 0038 \
+     001C 000E 0007 0003
+
+
+ nwell yellow \
+     0800 1000 2000 4000 \
+     8000 0001 0002 0004 \
+     0008 0010 0020 0040 \
+     0080 0010 0200 0400
+
+ nwell cyan \
+     1000 2000 4000 8000 \
+     0001 0002 0004 0008 \
+     0010 0020 0040 0080 \
+     0100 0200 0400 0800
+
+
+ pwell yellow \
+     1000 0400 0400 0100 \
+     0100 0040 0040 0010 \
+     0010 0004 0004 0001 \
+     0001 4000 4000 1000
+
+ pwell cyan \
+     0000 0800 0000 0200 \
+     0000 0080 0000 0020 \
+     0000 0008 0000 0002 \
+     0000 8000 0000 2000
+
+ pwell magenta \
+     0800 0000 0200 0000 \
+     0080 0000 0020 0000 \
+     0008 0000 0002 0000 \
+     8000 0000 2000 0000
+
+
+ bd yellow \
+     4444 8888 4444 8888 \
+     4444 8888 4444 8888 \
+     4444 8888 4444 8888 \
+     4444 8888 4444 8888
+
+ bd cyan \
+     0000 4444 0000 4444 \
+     0000 4444 0000 4444 \
+     0000 4444 0000 4444 \
+     0000 4444 0000 4444
+
+ bd magenta \
+     8888 0000 8888 0000 \
+     8888 0000 8888 0000 \
+     8888 0000 8888 0000 \
+     8888 0000 8888 0000
+
+
+        nbd,nbdc yellow \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA \
+     5555 AAAA 5555 AAAA
+
+ nbd,nbdc cyan \
+     0000 5555 0000 5555 \
+     0000 5555 0000 5555 \
+     0000 5555 0000 5555 \
+     0000 5555 0000 5555
+
+ nbd,nbdc magenta \
+     8888 0000 8888 0000 \
+     8888 0000 8888 0000 \
+     8888 0000 8888 0000 \
+     8888 0000 8888 0000
+
+
+ em,emc yellow \
+     4444 8888 4444 8888 \
+     4444 8888 4444 8888 \
+     4444 8888 4444 8888 \
+     4444 8888 4444 8888
+
+ em,emc cyan \
+     0000 4444 0000 4444 \
+     0000 4444 0000 4444 \
+     0000 4444 0000 4444 \
+     0000 4444 0000 4444
+
+
+ pbase,pbc yellow \
+     5555 AAAA 0000 0000 \
+     5555 AAAA 0000 0000 \
+     5555 AAAA 0000 0000 \
+     5555 AAAA 0000 0000
+
+ pbase,pbc cyan \
+     0000 5555 0000 0000 \
+     0000 5555 0000 0000 \
+     0000 5555 0000 0000 \
+     0000 5555 0000 0000
+
+ pbase,pbc magenta \
+     AAAA 0000 0000 0000 \
+     AAAA 0000 0000 0000 \
+     AAAA 0000 0000 0000 \
+     AAAA 0000 0000 0000
+
+
+ m3,m3c/m3 black \
+     0100 0000 0000 0000 \
+     1010 0000 0000 0000 \
+     0001 0000 0000 0000 \
+     1010 0000 0000 0000
+
+ m3,m3c/m3 cyan \
+     0280 0000 0820 0000 \
+     2008 0000 8002 0000 \
+     8002 0000 2008 0000 \
+     0820 0000 0280 0000
+
+ m3,m3c/m3 magenta \
+     0100 06C0 0440 1830 \
+     1010 600C 4004 8003 \
+     0001 C006 4004 3018 \
+     1010 0C60 0440 0380
+
+
+ m3c/m2 black \
+     0820 0820 0820 0FE0 \
+     E00F 2008 2008 2008 \
+     2008 2008 2008 E00F \
+     0000 0FE0 0820 0820
+
+
+ error_p,error_s,error_ps black \
+     0000 3C3C 4646 4A4A \
+     5252 6262 3C3C 0000 \
+     0000 3C3C 4646 4A4A \
+     5252 6262 3C3C 0000
+
+
+ magnet yellow \
+     AAAA 0000 5555 0000 \
+     AAAA 0000 5555 0000 \
+     AAAA 0000 5555 0000 \
+     AAAA 0000 5555 0000
+
+
+ fence magenta \
+     FFFF 0000 0000 0000 \
+     0000 0000 0000 0000 \
+     FFFF 0000 0000 0000 \
+     0000 0000 0000 0000
+
+
+ rotate cyan \
+     0000 E0E0 E0E0 E0E0 \
+     0000 0000 0000 0000 \
+     0000 E0E0 E0E0 E0E0 \
+     0000 0000 0000 0000
+
+
+ pdc,ndc,psc,nsc,hpdc,hndc,hpsc,hnsc,pc,ec,capc,nbdc,clc,emc,pbc X
+
+
+    style versatec
+
+ pfet \
+     07c0 0f80 1f00 3e00 \
+     7c00 f800 f001 e003 \
+     c007 800f 001f 003e \
+     00c7 00f8 01f0 03e0
+
+
+ nfet \
+     1f00 0f80 07c0 03e0 \
+     01f0 00f8 007c 003e \
+     001f 800f c007 e003 \
+     f001 f800 7c00 3e00
+
+
+ m2c \
+     c3c3 c3c3 0000 0000 \
+     0000 0000 c3c3 c3c3 \
+     c3c3 c3c3 0000 0000 \
+     0000 0000 c3c3 c3c3
+
+
+ pwell \
+     2020 2020 2020 2020 \
+     2020 2020 2020 2020 \
+     0000 0000 0000 0000 \
+     0000 0000 0000 0000
+
+
+ nwell \
+     0808 0404 0202 0101 \
+     0000 0000 0000 0000 \
+     0808 0404 0202 0101 \
+     0000 0000 0000 0000
+
+
+ poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet \
+     0808 0400 0202 0101 \
+     8080 4000 2020 1010 \
+     0808 0004 0202 0101 \
+     8080 0040 2020 1010
+
+
+ pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc \
+     8080 0000 0000 0000 \
+     0808 0000 0000 0000 \
+     8080 0000 0000 0000 \
+     0808 0000 0000 0000
+
+
+ pad,glass \
+     0000 0000 1c1c 3e3e \
+     3636 3e3e 1c1c 0000 \
+     0000 0000 1c1c 3e3e \
+     3636 3e3e 1c1c 0000
+
+
+ nsd,nsc,col,clc \
+     0808 1414 2222 4141 \
+     8080 4040 2020 1010 \
+     0808 1414 2222 4141 \
+     8080 4040 2020 1010
+
+
+ m2,m2c/m2,m3c/m2,pad \
+     0000 1111 0000 0000 \
+     0000 1111 0000 0000 \
+     0000 1111 0000 0000 \
+     0000 1111 0000 0000
+
+
+ pdiff,pdc,pfet \
+     0000 0808 5555 8080 \
+     0000 8080 5555 0808 \
+     0000 0808 5555 8080 \
+     0000 8080 5555 0808
+
+
+ psd,psc \
+     1414 2222 0000 2222 \
+     4141 2222 0000 2222 \
+     1414 2222 0000 2222 \
+     4141 2222 0000 2222
+
+
+ ndiff,nfet,ndc \
+     0808 1010 2020 4040 \
+     8080 4141 2222 1414 \
+     0808 1010 2020 4040 \
+     8080 4141 2222 1414
+
+
+ poly2,ec/a,enfet,epfet,cap,capc/a,nffet,pffet,hnfet,hpfet \
+     0000 2020 5050 2020 \
+     0000 0202 0505 0202 \
+     0000 2020 5050 2020 \
+     0000 0202 0505 0202
+
+
+ pdc,ndc,psc,nsc,hpdc,hndc,hpsc,hnsc,pc,ec,capc,nbdc,clc,emc,pbc X
+
+
+    style gremlin
+ pfet 9
+ nfet 10
+ m2c 11
+ pwell 15
+ nwell 16
+ poly,pc/a,nfet,pfet,wcap,cap,capc/a,nffet,pffet 19
+ pdc/m1,ndc/m1,psc/m1,nsc/m1,hpdc/m1,hndc/m1,hpsc/m1,hnsc/m1,pc/m1,ec/m1,capc/m1,clc/m1,emc/m1,pbc/m1,nbdc/m1,m1,m2c/m1,gc 22
+ pad,glass 23
+ nsd,nsc 24
+ m2,m2c/m2,m3c/m2,pad 28
+ pdiff,pdc,pfet 29
+ psd,psc 30
+ ndiff,nfet,ndc 31
+ m2c/m1,pc/m1,ndc/m1,pdc/m1,psc/m1,nsc/m1,pad/m1 X
+
+    style postscript
+
+
+
+
+  1 C0C0C0C0 C0C0C0C0 00000000 00000000 0C0C0C0C 0C0C0C0C 00000000 00000000
+  2 A0A0A0A0 0A0A0A0A A0A0A0A0 0A0A0A0A A0A0A0A0 0A0A0A0A A0A0A0A0 0A0A0A0A
+  3 00030003 000C000C 00300030 00C000C0 03000300 0C000C00 30003000 C000C000
+  4 00000000 00000000 C0C0C0C0 00000000 00000000 00000000 0C0C0C0C 00000000
+  5 FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFF
+  6 07070707 0E0E0E0E 1C1C1C1C 38383838 70707070 E0E0E0E0 C1C1C1C1 83838383
+  7 18181818 30303030 60606060 C0C0C0C0 81818181 03030303 06060606 0C0C0C0C
+  8 18181818 0C0C0C0C 06060606 03030303 81818181 C0C0C0C0 60606060 30303030
+  9 18181818 3C3C3C3C 3C3C3C3C 18181818 81818181 C3C3C3C3 C3C3C3C3 81818181
+ 10 F0F0F0F0 60606060 06060606 0F0F0F0F 0F0F0F0F 06060606 60606060 F0F0F0F0
+ 11 01000080 02000040 0C000030 F000000F 000FF000 00300C00 00400200 00800100
+ 12 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ 13 00000000 00000000 33333333 33333333 00000000 00000000 CCCCCCCC CCCCCCCC
+
+
+
+
+  1 47 95 111 0
+  2 223 31 223 0
+  3 0 0 0 192
+  4 31 111 31 0
+  5 31 111 255 0
+  6 63 95 191 0
+  7 255 63 255 0
+  8 0 0 0 127
+  9 223 47 223 0
+ 10 0 255 255 0
+ 11 0 0 255 0
+ 12 191 127 0 0
+ 13 95 223 63 0
+ 14 0 0 0 255
+ 15 191 127 63 0
+ 16 111 151 244 0
+ 17 23 175 183 0
+
+
+
+
+ cc,pc,ndc,pdc,psc,nsc 14 X
+ m2c,pad,glass 14 B
+ pad,glass 14 11
+ m2c 14 13
+ m2,m2c,pad 13 10
+ pdc,ndc,psc,nsc,hpdc,hndc,hpsc,hnsc,pc,ec,capc,clc,emc,pbc,nbdc,m1,m2c,gc 12 9
+ cap,cc,poly2 11 7
+ nsd,nsc 7 1
+ psd,psc 6 1
+ nfet,nffet 9 8
+ pfet,wcap,pffet 1 7
+ poly,pc,cap,cc 10 5
+ nfet 16 5
+ pfet,wcap 17 5
+ pdiff,pdc,pffet 1 5
+ ndiff,ndc,nffet 9 5
+ pwell 1 4
+ nwell 2 4
+
+
+    style pnm
+  draw metal1
+  draw metal2
+  draw polysilicon
+  draw ndiffusion
+  draw pdiffusion
+  draw ntransistor
+  draw ptransistor
+  map psubstratepdiff pdiffusion
+  map nsubstratendiff ndiffusion
+  map polycontact polysilicon metal1
+  map m2contact metal1 metal2
+  map m3contact metal2 metal3
+  map ndcontact ndiffusion metal1
+  map pdcontact pdiffusion metal1
+  map nsubstratencontact ndiffusion metal1
+  map psubstratepcontact pdiffusion metal1
+
+end

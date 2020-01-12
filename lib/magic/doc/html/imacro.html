@@ -1,0 +1,80 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>imacro</H2>
+<HR>
+Define or print an interactive macro.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>imacro</B> [<I>window_type</I>] <I>key value</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>key</I> is a valid name for a keyboard key and
+	 <I>value</I> is the command to be printed to the console,
+	 pending completion.  If present, <I>window_type</I> must
+	 be one of the window types recognized by the <B>specialopen</B>
+	 command:  <B>layout</B>, <B>color</B>, <B>netlist</B>, or
+	 <B>wind3d</B>.  If omitted, the <B>layout</B> window type is
+	 assumed, unless the command was called from inside a window
+	 using the colon or semicolon escape to the command-line, in
+	 which case the type of the calling window is assumed.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>imacro</B> command allows a variant of the <B>macro</B>
+      command in which the bound command, rather than being immediately
+      executed, is instead printed to the console as the beginning
+      portion of a command, awaiting completion.  It can be used to
+      simplify typing of commands by pre-formatting the command line
+      with the command and possibly some options.  For example,
+      <BLOCKQUOTE>
+	 <B>imacro p "paint "</B>
+      </BLOCKQUOTE>
+      will allow the single keystroke "p" to automatically format
+      the command "paint " on the command line, waiting for the
+      user to enter the type to paint and execute the command. <P>
+
+      Unlike the <B>macro</B> command, commands entered by <B>imacro</B>
+      are ultimately evaluated by the Tcl interpreter, and so may
+      contain Tcl commands as well as magic commands. <P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>imacro</B> is implemented as a built-in window command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=macro.html><B>macro</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> November 9, 2004 at 10:13am <P>
+</BODY>
+</HTML>

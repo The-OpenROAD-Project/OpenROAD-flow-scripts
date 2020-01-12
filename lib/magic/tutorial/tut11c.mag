@@ -1,0 +1,74 @@
+magic
+tech scmos
+timestamp 552706284
+<< polysilicon >>
+rect -40 -13 -38 0
+rect -40 -15 -34 -13
+rect -28 -15 -26 -13
+rect -40 -60 -38 -15
+rect -36 -19 -34 -17
+rect -28 -19 -25 -17
+rect -27 -22 -25 -19
+rect -29 -24 -25 -22
+rect -29 -30 -27 -24
+rect -30 -32 -27 -30
+rect -30 -50 -28 -32
+rect -20 -38 -18 0
+rect -30 -52 -27 -50
+rect -20 -60 -18 -44
+<< ndiffusion >>
+rect -30 -12 -28 -11
+rect -34 -13 -28 -12
+rect -34 -17 -28 -15
+rect -34 -20 -28 -19
+rect -30 -21 -28 -20
+<< pdiffusion >>
+rect -21 -42 -20 -38
+rect -22 -44 -20 -42
+rect -18 -42 -13 -38
+rect -18 -44 -17 -42
+<< metal1 >>
+rect -34 -8 -30 0
+rect -30 -12 -22 -8
+rect -34 -38 -30 -24
+rect -26 -25 -22 -12
+rect -16 -30 -12 -29
+rect -16 -34 -15 -30
+rect -34 -42 -25 -38
+rect -34 -60 -30 -42
+rect -27 -50 -23 -49
+rect -17 -55 -13 -51
+<< metal2 >>
+rect -40 -6 -13 0
+rect -22 -29 -16 -25
+rect -27 -41 -17 -37
+rect -27 -45 -23 -41
+rect -40 -55 -13 -54
+rect -40 -59 -17 -55
+rect -40 -60 -13 -59
+<< pwell >>
+rect -40 -28 -13 0
+<< polycontact >>
+rect -15 -34 -11 -30
+rect -27 -54 -23 -50
+<< ndcontact >>
+rect -34 -12 -30 -8
+rect -34 -24 -30 -20
+<< pdcontact >>
+rect -25 -42 -21 -38
+rect -17 -51 -13 -42
+<< m2contact >>
+rect -26 -29 -22 -25
+rect -16 -29 -12 -25
+rect -27 -49 -23 -45
+rect -17 -59 -13 -55
+<< ntransistor >>
+rect -34 -15 -28 -13
+rect -34 -19 -28 -17
+<< ptransistor >>
+rect -20 -44 -18 -38
+use tut11d tut11d_0
+timestamp 552706284
+transform 1 0 0 0 -1 -60
+box -17 -60 137 0
+<< end >>

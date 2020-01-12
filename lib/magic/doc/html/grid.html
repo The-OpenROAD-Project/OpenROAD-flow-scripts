@@ -1,0 +1,115 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>grid</H2>
+<HR>
+Toggle the grid lines on or off, and set grid parameters
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>g</B> implements the command <B>grid</B> (with no arguments).
+      Key macro <B>G</B> implements the command <B>grid 2</B>.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>grid</B> [<I>option</I>]<BR><BR>
+      <BLOCKQUOTE>
+	 where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> <I>x_spacing</I> [<I>y_spacing</I> [<I>x_origin</I>
+		<I>y_origin</I>]]
+	   <DD> set the grid to the indicated spacing, where all
+		spacing and origin values are any valid <B>magic</B>
+		<A HREF=distance.html><I>distance</I></A> value.
+	   <DT> <B>on</B>|<B>off</B>
+	   <DD> Set the visibility of the grid on or off, as indicated.
+	   <DT> <B>state</B>
+	   <DD> Report the state (on or off) of the grid.  In the Tcl
+		version, this is returned as a boolean value (0 or 1).
+	   <DT> <B>box</B>
+	   <DD> Report the box (rectangle) of the unit grid, in magic
+		internal coordinates.
+	   <DT> <B>help</B>
+	   <DD>	Print usage information on the <B>grid</B> command.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>grid</B> command has two purposes:  to draw a reference grid
+      on the screen as an aid to layout placement, and to define a snap
+      grid of arbitrary (and not necessarily square) units.  This second
+      use works in conjunction with the <B>snap</B> command; with the
+      invocation of <B>snap grid</B> (or, equivalently, <B>snap user</B>),
+      standard magic dimensions for commands such as <B>move</B>, <B>copy</B>,
+      <B>box</B>, <B>stretch</B>, and mouse-button movement of the cursor
+      box are parsed as integer divisions of the user grid.  The grid does
+      not have to be visible ("<B>grid on</B>") for the snap function to be
+      enabled. <P>
+
+      Note that the grid has both spacing values and an offset;  unlike the
+      lambda grid, which is always aligned to the internal coordinate system,
+      the user grid may be any value; for grid spacings that are not a
+      multiple of internal or lambda values, the grid may need to be
+      offset from the origin to get the desired alignment.  To do this,
+      specify the <I>x_origin</I> and <I>y_origin</I> values, which
+      describe the offset of the grid origin from the internal coordinate
+      system origin. <P>
+
+      Usually there is no reason to have different <I>x_spacing</I> and
+      <I>y_spacing</I> values (only one spacing value is required for
+      both).  However, occasionally it may be useful to define something
+      like the following:
+      <BLOCKQUOTE>
+	<B>grid 150um 3l; snap grid</B>
+      </BLOCKQUOTE>
+      This example makes it easy to draw a number of horizontal routing
+      lines aligned to a pad cell spacing of 150 microns. <P>
+
+      Note that even when the grid is set to visible, at a large enough
+      zoom factor, where the grid lines become dense, the grid will not
+      be drawn. <P>
+
+      <B>grid</B> with no arguments toggles the visibility of the grid
+      lines on the screen.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>grid</B> is implemented as a built-in window command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=snap.html><B>snap</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> November 7, 2004 at 3:24pm <P>
+</BODY>
+</HTML>

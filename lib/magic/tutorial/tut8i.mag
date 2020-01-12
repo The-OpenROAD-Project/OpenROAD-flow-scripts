@@ -1,0 +1,8 @@
+magic
+tech scmos
+timestamp 617922660
+<< polysilicon >>
+rect -15 0 11 2
+<< labels >>
+rlabel polysilicon -15 0 -15 2 3 A
+<< end >>

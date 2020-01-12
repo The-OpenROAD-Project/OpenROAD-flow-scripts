@@ -1,0 +1,131 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>tech</H2>
+<HR>
+Query properties of the current technology, or change the current
+technology.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>tech</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> <B>load</B> <I>filename</I> [<B>-noprompt</B>][<B>-nooverride</B>]
+	   <DD> Load a new technology from the file <I>filename</I>[<TT>.tech</TT>].
+	   <DT> <B>help</B>
+	   <DD> Display help information
+	   <DT> <B>name</B>
+	   <DD> Show current technology name
+	   <DT> <B>filename</B>
+	   <DD> Show current technology filename
+	   <DT> <B>version</B>
+	   <DD> Show current technology version and description strings
+	   <DT> <B>lambda</B>
+	   <DD> Show internal units per lambda
+	   <DT> <B>planes</B>
+	   <DD> Show defined planes
+	   <DT> <B>layers</B> [<I>layer</I>]
+	   <DD> Show defined layers
+	   <DT> <B>drc</B> <I>option</I>
+	   <DD> Query the DRC ruleset, where <I>option</I> is one of the
+		following:
+		<DL>
+		  <DT> <B>width</B> <I>layer</I>
+		  <DD> Return the minimum allowed width for the indicated
+		       layer type.
+		  <DT> <B>spacing</B> <I>layer1</I> [<I>layer2</I>]
+		  <DD> Return the minimum allowed spacing between
+		       <I>layer1</I> and <I>layer2</I>, if <I>layer2</I>
+		       is specified, or between <I>layer1</I> and itself,
+		       if not.
+		</DL>
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>tech</B> command queries aspects of the current
+      technology, and can also be used to change the current
+      technology.  The <B>tech load</B> command completely
+      replaces the technology.  Normally a call to <B>tech load</B>
+      generates a dialog window asking the user for confirmation,
+      since the <B>tech load</B> command is potentially destructive
+      and can cause loss of an existing layout.  The <B>-noprompt</B>
+      option forces a technology load without presenting a dialog.
+      This is particularly useful to put a "<B>tech load</B> <I>name</I>
+      <B>-noprompt</B>" command in a <TT>.magic</TT> startup
+      file in the directory of a project, so that it is not necessary to
+      specify the technology on the command line when invoking <B>magic</B>.
+      However, occasionally one may want to run magic from the same
+      project directory with a different technology.
+      The <B>-nooverride</B> option prevents the <B>tech load</B> command
+      from overriding a technology name entered on the UNIX
+      command line when starting <B>magic</B>. <P>
+
+      Technology file reloading is especially useful when
+      developing a technology file, to immediately see the
+      results of a change made to the file.  The current
+      technology can be reloaded with the simple Tcl command
+      "<B>tech load [tech filename]</B>". <P>
+
+      Note that there is a slightly different meaning between
+      the command "<B>tech layers</B>" and "<B>tech layers "*"</B>".
+      The former prints a formatted list of layers, including all
+      aliases for each layer, to the console.  The second returns
+      a Tcl list of all layers, with only the primary name for
+      each layer. <P>
+
+      A few aspects of the technology must be queried from other
+      commands.  The CIF/GDS input and output styles are given
+      by the <B>cif istyle</B> and <B>cif ostyle</B> commands, while
+      the extraction style is given by the <B>extract style</B>
+      command. <P>
+
+      The <B>drc</B> option is intended for use by Tcl scripted
+      procedures that wish to place layout while satisfying the
+      DRC rules.  The two accepted <I>rule</I> options are
+      <B>spacing</B> and <B>width</B>.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>tech</B> is implemented as a built-in command in <B>magic</B>.
+      The command replaces the original <B>techinfo</B> command, which
+      no longer exists.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+      <B>tech drc</B> may not return the correct value in all cases.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 16, 2004 at 1:59pm <P>
+</BODY>
+</HTML>

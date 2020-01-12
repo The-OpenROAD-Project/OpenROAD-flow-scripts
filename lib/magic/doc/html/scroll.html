@@ -1,0 +1,75 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>scroll</H2>
+<HR>
+Scroll the window
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      The keyboard arrow keys implement the command.  Without modifiers, the
+      window scrolls by 1/10 width in the indicated direction.  With <I>Shift</I>,
+      the window scrolls by one width in the indicated direction.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>scroll</B> <I>direction</I> [<I>amount</I> [<I>units</I>]] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>direction</I> is a valid Manhattan
+	 <A HREF=direction.html>direction</A>, and <I>amount</I>
+	 by default is an absolute <A HREF=distance.html>distance</A>
+	 in any acceptable units.  If <I>units</I> is
+	 <B>w</B>, then the <I>amount</I> is interpreted as
+	 a fraction of the screen width.  If <I>units</I> ls
+	 <B>l</B>, then the <I>amount</I> is interpreted as
+	 a fraction of the layout width.  Note that units of
+	 distance for <I>amount</I>, such as "um" for microns or
+	 "i" for internal units, are attached to the value with
+ 	 no intervening space, whereas the two <I>units</I>
+	 keywords accepted by the <B>scroll</B> command are
+	 a separate argument and separated from <I>amount</I> by
+	 whitespace.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>scroll</B> command implements a pan of the layout in the
+      window in the indicated direction by the indicated amount.
+      The interpretation of <I>amount</I> is described above in the
+      Usage section.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>scroll</B> is implemented as a built-in window command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 2:45am <P>
+</BODY>
+</HTML>

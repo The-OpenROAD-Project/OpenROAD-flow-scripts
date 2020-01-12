@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>zoom</H2>
+<HR>
+Zoom window by specified magnification factor.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>z</B> implements the command <B>zoom 0.5</B> (zoom out
+	by a factor of 2). <BR>
+      Key macro <B>Z</B> implements the command <B>zoom 2</B> (zoom in
+	by a factor of 2).
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>zoom</B> <I>factor</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>factor</I> is any real value.  Values larger than 1
+	 indicate a zoom in, while values smaller than 1 indicate a
+	 zoom out.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>zoom</B> command implements view scaling in the layout
+      window in and out by the indicated magnification factor.  <P>
+
+      Note that several other commands effect a change in the view scale
+      factor, including <B>findbox zoom</B> and <B>view</B> with
+      coordinate arguments.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>zoom</B> is implemented as a built-in window command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=center.html><B>center</B></A> <BR>
+      <A HREF=view.html><B>view</B></A> <BR>
+      <A HREF=findbox.html><B>findbox</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 9, 2004 at 7:23am <P>
+</BODY>
+</HTML>

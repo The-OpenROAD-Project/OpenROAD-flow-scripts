@@ -1,0 +1,138 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>lef</H2>
+<HR>
+LEF-format input and output
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>lef</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> <B>read</B> [<I>filename</I>]
+	   <DD> Read a LEF file named <I>filename</I>[<B>.lef</B>]
+	   <DT> [<I>filename</I>] <B>-import</B>
+	   <DD> Read a LEF file.  Import standard cells from <TT>.mag</TT>
+		files
+	   <DT> <B>write</B> [<I>cell</I>]
+	   <DD> Write LEF for the current or indicated cell.
+	   <DT> <B>writeall</B>
+	   <DD> Write all cells including the top-level cell.  This might
+		be appropriate if the top-level cell is a compendium of
+		standard cells.
+	   <DT> <B>writeall -notop</B>
+	   <DD> write all subcells of the top-level cell, but not the top-level
+		cell itself.  This is appropriate for generating a LEF library
+		from a layout, for which the layout itself would be written to
+		a DEF file.
+	   <DT> <B>help</B>
+	   <DD> Print help information
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>lef</B> command writes LEF-format files, which are files
+      containing technology information and information about the content
+      of standard cells.  It is used in conjunction with the <B>def</B>
+      command to read databases of routed digital standard-cell layouts.
+      The <TT>.lef</TT> file shares some information with the technology
+      file in <B>magic</B>.  At a minimum, to read <TT>.lef</TT> files
+      from third-party sources, the technology file should have a
+      <B>lef</B> section that maps magic layers to layer names that are
+      found in the <TT>.lef</TT> and <TT>.def</TT> files.  Without
+      this information, <B>magic</B> will attempt to make an educated
+      guess about the routing layers, which normally will be named
+      in an obvious manner such as "metal1", "metal2", etc.  The
+      technology file section may be necessary to handle more complicated
+      input such as obstruction layers.  Most other aspects of a
+      technology will be contained within the <TT>.lef</TT> file.
+      When writing <TT>.lef</TT> files, <B>magic</B> will use internal
+      layer names for the routing layers if no other information is
+      present in the <B>lef</B> section of the technology file. <P>
+
+      Because the <B>lef</B> format allows standard cells to be minimally
+      defined (for purposes of protecting intellectual property), often
+      the <TT>.lef</TT> file contains no actual layout information for
+      the standard cells.  <B>magic</B> provides a command option
+      "<B>-import</B>".  When specified, for each macro cell in the
+      input <TT>.lef</TT> file, <B>magic</B> will look for a <TT>.mag</TT>
+      file of the same name.  If found, it will be loaded and used in
+      preference to the definition in the <TT>lef</TT> file. <P>
+
+      Magic uses the <B>port</B> mechanism for labels to determine
+      what are the standard cells in a design.  All cells containing
+      <B>port</B> labels will be considered standard cells when writing
+      a <TT>.lef</TT> file.   Ports retain various bits of information
+      used by the LEF/DEF definition, including the port use and
+      direction.  See the <B>port</B> documentation for more information.<P>
+
+      Macro cell properties common to the LEF/DEF definition but that
+      have no corresponding database interpretation in <B>magic</B>
+      are retained using the cell <B>property</B> method in <B>magic</B>.
+      There are specific property names associated with the LEF format.
+      These are as follows:
+      <DL>
+	<DT> <B>LEFclass</B>
+	<DD> Corresponds to the value of <B>CLASS</B> for a macro
+	     cell in the LEF format.
+	<DT> <B>LEFsource</B>
+	<DD> Corresponds to the value of <B>SOURCE</B> for a macro
+	     cell in the LEF format.
+	<DT> <B>LEFsymmetry</B>
+	<DD> Corresponds to the vlaue of <B>SYMMETRY</B> for a macro
+	     cell in the LEF format.
+      </DL>
+
+      Normally, when importing a LEF/DEF layout into <B>magic</B>, one
+      will first execute a <B>lef read</B> command followed by a
+      <B>def read</B> command.  Likewise, when writing a layout, one
+      will first execute a <B>lef writeall -notop</B> command followed
+      by a <B>def write</B> command.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>lef</B> is implemented as a built-in command in <B>magic</B>.
+      Only the critical portion of the LEF syntax has been implemented.
+      In particular, simulation-specific properties of the technology
+      and of macro cells are not implemented.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=def.html><B>def</B></A> <BR>
+      <A HREF=port.html><B>port</B></A> <BR>
+      <A HREF=property.html><B>property</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 7, 2004 at 1:43am <P>
+</BODY>
+</HTML>

@@ -1,0 +1,68 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>resumeall</H2>
+<HR>
+Resume normal display refresh on all windows.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>resumeall</B> <BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>resumeall</B> command is a script that invokes the command
+      <B>update resume</B> on all layout windows.  It is used in
+      conjunction with the <B>suspendall</B> command and is intended
+      for use in Tcl scripts that perform multiple manipulations on
+      layout in a window, where it is desired to have the entire
+      display refresh at one time at the end of the script rather than
+      for each command within the script. <P>
+
+      Because calls to <B>update</B> can be nested, calls to <B>suspendall</B>
+      and <B>resumeall</B> are likewise nested.  The <B>resumeall</B>
+      command will have no effect until the same number of <B>resumeall</B>
+      calls has been encountered as the number of <B>suspendall</B> calls
+      made.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>resumeall</B> is implemented as a Tcl procedure in the "tools"
+      script.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=update.html><B>update</B></A> <BR>
+      <A HREF=suspendall.html><B>suspendall</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 1:25am <P>
+</BODY>
+</HTML>

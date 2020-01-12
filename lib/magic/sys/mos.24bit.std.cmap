@@ -1,0 +1,73 @@
+#---------------------------------------
+# Colormap file for X11, 24-bit graphics
+#---------------------------------------
+# R  G   B  idx color-name
+#---------------------------------------
+200 200 200 0   background_gray
+220 95  95  1   poly_red
+66  213 66  2   diff_green
+202 160 115 3   diff_brown
+169 131 101 4   nfet_brown
+184 73  83  5   pfet_brown
+230 230 0   6   well_yellow
+0   0   0   7   contact_black
+125 166 250 8   metal_blue
+160 48  191 9   pc_purple
+190 153 222 16  metal_purple
+255 255 255 32  cursor_white
+170 170 170 33  pale_gray
+145 145 145 34  dark_gray
+0   0   0   35  box_black
+239 188 198 36  pale_red
+239 125 162 37  medium_red
+210 0   155 38  dark_red
+165 216 175 39  pale_green
+124 191 148 40  medium_green
+0   181 0   41  dark_green
+170 202 242 42  light_blue
+0   0   250 43  dark_blue
+40  169 166 44  teal_blue
+45  94  179 45  deep_purple
+167 0   200 46  bright_purple
+255 248 179 47  light_yellow
+255 255 0   48  bright_yellow
+235 198 160 49  yellow_orange
+234 132 73  50  medium_orange
+198 152 0   51  ochre_brown
+139 108 0   52  medium_brown
+255 119 202 53  bright_pink
+50  228 225 54  port_cyan
+120 81  29  55  border_brown
+200 230 230 56  caption_blue
+180 210 180 57  window_gray
+0   0   0   58
+246 246 7   59  label_yellow
+180 180 180 60  medium_gray
+230 180 50  61  pale_orange
+235 235 235 62  light_gray
+255 255 255 64  white
+210 148 148 65  deep_pink
+133 206 133 66  pale_green
+201 170 157 67  peach_gray
+184 165 150 68  gray_brown
+192 136 141 69  rosy_brown
+215 215 100 70  pale_ochre
+130 130 130 71  gray50
+163 183 225 72  steel_blue
+180 124 196 73  medium_purple
+137 210 179 74  pale_teal
+200 185 255 75  bright_lavender
+169 213 198 76  pale_cyan
+210 210 230 77  pale_steel
+195 176 211 80  pale_purple
+185 185 185 97  gray75
+160 160 160 98  gray62
+100 100 100 99  gray40
+220 163 181 101 pale_pink
+220 120 200 102 medium_pink
+80  175 80  105 sea_green
+175 115 175 110 deep_lavender
+215 170 90  115 medium_tan
+228 160 201 117 light_lavender
+215 190 125 125 light_tan
+0   0   0   255

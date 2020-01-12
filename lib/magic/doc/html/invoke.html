@@ -1,0 +1,149 @@
+<H2> <A NAME="Usage">Magic version 7.3 Usage</A> </H2>
+
+<BLOCKQUOTE>
+	Basic usage: <BR><BR>
+
+	<TABLE border="1" frame="box" rules="none" cellpadding="6"
+		bgcolor="white">
+	<TBODY>
+	<TR><TD>
+	<TABLE border="0" frame="box" rules="none" cellspacing="0"
+		cellpadding="0" bgcolor="white">
+	<TBODY>
+	<TR> <TD> <TT> magic </TT>
+		[<TT>-noc</TT>[<TT>onsole</TT>]]
+		[<TT>-w</TT>[<TT>rapper</TT>]]
+		[<TT>-d</TT> <I>devType</I>]
+		[<TT>-T</TT> <I>technology</I>]
+		[<I>file</I>]
+		</TD> </TR>
+	</TBODY>
+	</TABLE>
+	</TD></TR></TBODY></TABLE> <BR>
+
+	where: <BR><BR>
+	<BLOCKQUOTE>
+	<TT>-noconsole</TT> <BR>
+		<BLOCKQUOTE>
+		(Tcl version only) Uses the calling terminal
+		for terminal-based command-line input.  Otherwise, a Tk
+		console window is used.
+		</BLOCKQUOTE>
+	<TT>-wrapper</TT> <BR>
+		<BLOCKQUOTE>
+		(Tcl version only) Magic layout windows use
+		the GUI wrapper, including cell and technology manager
+		windows, layer toolbar, and file menu.
+		</BLOCKQUOTE>
+	<TT>-d</TT> <I>devType</I> <BR>
+		<BLOCKQUOTE> <BR>
+		(all versions) Select the graphics interface at runtime.
+		Specifying an invalid <I>devType</I> will result in a list
+		of known types.  The possible values of <I>devType</I> are
+		determined at compile time, but the usual ones are
+		<B><TT>NULL</TT></B> (no graphics), <B><TT>X11</TT></B>, and
+		<B><TT>OpenGL</TT></B>.  <TT>X11</TT> is the usual default.
+		</BLOCKQUOTE>
+	<TT>-T</TT> <I>technology</I> <BR>
+		<BLOCKQUOTE>
+		(all versions)
+		Select the appropriate technology (<TT>.tech27</TT>) file.
+		At present (this is on the to-do list), magic cannot change
+		technology after startup.  So the technology file corresponding
+		to the layout to be loaded must be supplied to the command line
+		at startup.  The default technology is <TT>scmos</TT>, which
+		is included with the magic source distribution.  The complete
+		list of available technology files depends on what has been 
+		installed on the system (see the <A HREF=tech.html>technology
+		file</A> page for details).
+		</BLOCKQUOTE>
+	<I>file</I> <BR>
+		<BLOCKQUOTE>
+		(all versions) Load the layout (<TT>.mag</TT>) file <I>file</I>
+		into the layout window on startup.
+		</BLOCKQUOTE>
+	</BLOCKQUOTE>
+
+	Complete usage information: <BR><BR>
+
+	<BLOCKQUOTE>
+
+	<TT> magic </TT>
+		[<TT>-noc</TT>[<TT>onsole</TT>]]
+		[<TT>-w</TT>[<TT>rapper</TT>]]
+		[<TT>-nowindow</TT>]
+		[<TT>-d</TT> <I>devType</I>]
+		[<TT>-T</TT> <I>technology</I>]
+		[<TT>-m</TT> <I>monType</I>]
+		[<TT>-D</TT>]
+		[<I>file</I>] <BR>
+	</BLOCKQUOTE>
+
+	where the additional options not covered above are: <BR><BR>
+
+	<BLOCKQUOTE>
+	<TT>-nowindow</TT> <BR>
+		<BLOCKQUOTE>
+		(Tcl version only) Run without displaying an initial layout
+		window.  This is used mainly for GUI wrapper scripts which
+		like to generate and handle their own windows.
+		</BLOCKQUOTE>
+	<TT>-m</TT> <I>monType</I> <BR>
+		<BLOCKQUOTE>
+		(obscure) <I>monType</I> names a monitor type.
+		This is used in the search for the colomap file name,
+		which is designated <TT>
+		&lt;tech&gt;.&lt;planes&gt;.&lt;mon&gt;.cmap1</TT>.
+		The default is "<B><TT>std</TT></B>" (corresponding to
+		colormap file "<TT>mos.7bit.std.cmap1</TT>".  The only other
+		monitor type for which colormaps exist in the distribution
+		is "<TT>mraster</TT>".  This provides a way for users to
+		override the system color assignments.
+		</BLOCKQUOTE>
+	<TT>-D</TT> <BR>
+		<BLOCKQUOTE>
+		(all versions) Run in Debug mode.
+		</BLOCKQUOTE>
+	</BLOCKQUOTE>
+	
+	Obsolete usage information: <BR><BR>
+
+	<BLOCKQUOTE>
+	<TT> magic </TT>
+		[<TT>-g</TT> <I>gPort</I>]
+		[<TT>-i</TT> <I>tabletPort</I>]
+		[<TT>-F</TT> <I>objFile</I> <I>saveFile</I>]
+		... <BR>
+	</BLOCKQUOTE>
+
+	where the additional options not covered above are: <BR><BR>
+
+	<BLOCKQUOTE>
+	<TT>-g</TT> <I>gPort</I> <BR>
+		<BLOCKQUOTE>
+		(largely obsolete) <I>gPort</I> names a device to use
+		for the display.  This was generally used in the past with
+		dual-monitor systems, especially Sun systems in which the
+		layout display might go to <TT>/dev/fb</TT>.
+		</BLOCKQUOTE>
+	<TT>-i</TT> <I>tabletPort</I> <BR>
+		<BLOCKQUOTE>
+		(largely obsolete) <I>tabletPort</I> names a device to use
+		for graphics input.  This has not been tested with modern
+		graphics tablet devices.  It is ignored by the X11 and OpenGL
+		display interfaces.
+		</BLOCKQUOTE>
+	<TT>-F</TT> <I>objFile</I> <I>saveFile</I> <BR>
+		<BLOCKQUOTE>
+		(largely obsolete) Create an executable file of
+		the current magic process, a core image snapshot
+		taken after all initialization.  <I>objFile</I>
+		is the name of the original executable, and the
+		image will be saved in <I>saveFile</I>.  This
+		only works on VAXen and SUNs running an old SunOS
+		(using a.out executables).
+		</BLOCKQUOTE>
+	</BLOCKQUOTE>
+	
+</BLOCKQUOTE>
+

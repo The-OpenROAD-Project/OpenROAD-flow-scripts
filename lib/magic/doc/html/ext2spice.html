@@ -1,0 +1,176 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>ext2spice, exttospice</H2>
+<HR>
+Convert extracted file(s) to a SPICE format file.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>ext2spice</B> [<I>option</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	   <DT> [<B>run</B>] [<I>runtime_options</I>]
+	   <DD> Run <B>ext2spice</B> on current cell, with command-line options
+		(see Summary, below).
+	   <DT> <B>default</B>
+	   <DD> Reset to default values
+	   <DT> <B>format hspice</B>|<B>spice2</B>|<B>spice3</B>
+	   <DD> Set output format.  <B>spice3</B> is the default,
+		for compatibility with <B>tclspice</B>.  This is a
+		change from previous versions of magic, where the
+		default was <B>hspice</B>.
+	   <DT> <B>rthresh</B> [<I>value</I>]
+	   <DD> Set resistance threshold value.  Lumped resistances
+		below this value will not be written to the output.  The
+		value is in ohms, or may be the keyword <B>infinite</B>
+		to prohibit writing any lumped resistances to the output.
+	   <DT> <B>cthresh</B> [<I>value</I>]
+	   <DD> Set capacitance threshold value.  The value is in femtofarads,
+		or may be the keyword <B>infinite</B> to prohibit writing
+		any parasitic capacitances to the output.
+	   <DT> <B>merge</B> [<I>merge_option</I>]
+	   <DD> Merge parallel devices/transistors.  The valid merge options are:
+		<BLOCKQUOTE>
+		<DL>
+		  <DT><B>conservative</B>
+		  <DD> Merge transistors and capacitors having the same device
+		       type and node connections and having the same width and
+		       length.  Widths are summed in the final output for
+		       transistors.  Capacitor values are summed in the final
+		       output.
+		  <DT><B>aggressive</B>
+		  <DD> Merge transistors having the same node
+		       connections and having the same length.  Widths
+		       are summed in the final output.  Merge any capacitors
+		       having the same device type and node connections.
+		       Capacitance is summed in the final output.
+		  <DT><B>none</B>
+		  <DD> Do not merge any devices.
+		</DL>
+		</BLOCKQUOTE>
+	   <DT> <B>extresist on</B>|<B>off</B>
+	   <DD> Incorporate output from the command <B>extresist</B> into
+		the final SPICE file.
+	   <DT> <B>resistor tee</B> [<B>on</B>|<B>off</B>]
+	   <DD> Model resistor capacitance as a T-network.  Each resistor
+		device is split into two, with all substrate and overlap
+		capacitance placed on the node between the two half-length
+		devices.  Without this option, resistor devices lose all
+		parasitic capacitance information, and <B>ext2spice</B>
+		may produce warnings about unknown nodes.  However, use of
+		this option may conflict with LVS (layout-vs.-schematic),
+		when only one resistor is expected per drawn device.
+	   <DT> <B>subcircuits</B> [<B>on</B>|<B>off</B>]
+	   <DD> When set to <B>on</B> (the default), standard cells become
+		subcircuit calls ("X") in the SPICE output.  The contents
+		of the standard cells are not output, and it is assumed
+		that a pre-characterized SPICE deck exists modeling the
+		behavior of each standard cell definition.  Standard cells
+		are defined by the use of the <B>port</B> method for
+		labeling input and output ports.  When set to <B>off</B>,
+		ports are ignored, and the entire circuit hierarchy is
+		flattened down to the device level.
+	   <DT> <B>help</B>
+	   <DD> Print help information.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      Without options, or with the option <B>run</B>,
+      the <B>ext2spice</B> command converts the hierarchical extracted
+      netlist information produced by the <B>extract</B> command in
+      a series of <TT>.ext</TT> files into a flattened representation
+      in SPICE format, used for detailed analog simulation. <P>
+
+      <I>runtime_options</I> may be passed on the command line, and
+      represent the original command-line options passed to the
+      standalone version of ext2spice.  A number of the original
+      command-line options have been deprecated in the Tcl-based
+      version, and some are duplicated by other <B>ext2spice</B> options.
+      Valid <I>runtime_options</I> are:
+      <BLOCKQUOTE>
+      <DL>
+	<DT> <B>-B</B>
+        <DD> Don't output transistor or node attributes in the SPICE file.
+             This option will also disable the output of information such
+	     as the area and perimeter of source and drain diffusion and
+	     the FET substrate.
+	<DT> <B>-F</B>
+	<DD> Don't output nodes that aren't connected to devices (floating
+	     nodes).
+	<DT> <B>-t</B><I>char</I>
+	<DD> Trim characters from node names when writing the output file.
+             <I>char</I> should be either "<B>#</B>" or "<B>!</B>".  The
+	     option may be used twice if both characters require trimming.
+	<DT> <B>-y</B> <I>num</I>
+	<DD> Select the precision for outputting capacitors. The default is
+	     1 which means that the capacitors will be printed to a precision
+             of 0.1 fF.
+	<DT> <B>-J</B> <B>hier</B>|<B>flat</B>
+	<DD> Select the source/drain area and perimeter extraction algorithm.
+             If <B>hier</B> is selected then the areas and perimeters are
+	     extracted only within each subcell.  For each device in a
+	     subcell the area and perimeter of its source and drain within
+	     this subcell are output.  If two or more devices share a
+	     source/drain node then the total area and perimeter will be
+	     output in only one of them and the other will have 0.  If
+	     <B>flat</B> is selected the same rules apply, only the scope
+	     of search for area and perimeter is the whole netlist.  In
+	     general, <B>flat</B> (which is the default) will give accurate
+	     results (it will take into account shared sources/drains).
+      </DL>
+      </BLOCKQUOTE>
+
+      With options, the command sets various parameters affecting the
+      output format and content. <P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>ext2spice</B> is implemented as a separate loadable Tcl package,
+      but one which depends on the presence of the standard "tclmagic"
+      package.  <B>magic</B> is set up with a placeholder command for
+      <B>ext2spice</B>, and will automatically load the Tcl package when
+      this command is invoked. <P>
+
+      <B>exttospice</B> is an alias for <B>ext2spice</B>, to satisfy the
+      grammatically anal retentive.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=extract.html><B>extract</B></A> <BR>
+      <A HREF=ext2sim.html><B>ext2sim</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 12, 2005 at 9:40pm <P>
+</BODY>
+</HTML>

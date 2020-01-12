@@ -1,0 +1,77 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>polygon</H2>
+<HR>
+Generate polygons from the command line.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      None.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>polygon</B> <I>type x1 y1 x2 y2</I> ... <I>xn yn</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>type</I> is a tile type to draw, and <I>x1 y1</I> ...
+	 <I>xn yn</I> are <I>n</I> vertices of a polygon.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>polygon</B> command allows generation of polygons on the
+      layout from the command line, similarly to the <B>wire segment</B>
+      command.  The <B>polygon</B> command automatically generates the
+      proper tile geometry for the polygon as specified by vertices.
+      Vertex points are pairs of X Y coordinates, and may take any
+      dimensional value (default lambda, but may be internal units or
+      metric units).  Note that polygons should be convex;  the tile
+      generation algorithm is not guaranteed to work with non-convex
+      geometries. <P>
+
+      While simple non-Manhattan structures (triangles) can be generated
+      with the "splitpaint" and "spliterase" commands using macros, there
+      is no convenient interactive method for generating complex polygon
+      geometry.  The <B>polygon</B> command is best used in scripts to
+      create specific patterns based on known geometry.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>polygon</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=wire.html><B>wire</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 8:39pm <P>
+</BODY>
+</HTML>

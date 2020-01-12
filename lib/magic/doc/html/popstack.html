@@ -1,0 +1,63 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>popstack</H2>
+<HR>
+Return from editing a cell that was loaded using <B>pushstack</B>.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>&lt;</B> implements the command <B>popstack</B>.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>popstack</B> <BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>popstack</B> command returns from editing a cell that was
+      loaded using the <B>pushstack</B> command, reverting the layout
+      window to the cell that was loaded prior to the <B>pushstack</B>
+      call.  This is implemented as a stack, and calls may be nested.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>popstack</B> is implemented as a Tcl procedure in the "tools"
+	script.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=pushstack.html><B>pushstack</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 7, 2004 at 11:47pm <P>
+</BODY>
+</HTML>

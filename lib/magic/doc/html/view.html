@@ -1,0 +1,73 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>view</H2>
+<HR>
+Zoom window out so everything is visible, or zoom window to the specified
+area bounds.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>v</B> implements the command <B>view</B>.
+   </BLOCKQUOTE>
+
+view [get|bbox|llx lly urx ury]
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>view</B> [<B>get</B>|<B>bbox</B>|<I>llx lly urx ury</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>llx lly urx ury</I> are layout dimensions to become
+         the screen view limits.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>view</B> command is most often used without arguments to
+      center and scale the screen view of the layout window to fit the layout. <P>
+
+      <B>view bbox</B> returns the bounding box dimensions of the layout,
+      in the coordinate system of the layout. <P>
+
+      <B>view get</B> returns the coordinates of the screen limits in
+      the coordinate system of the layout (internal database units). <P>
+
+      <B>view</B> <I>llx lly urx ury</I> sets the view so that the
+      corners of the screen are at the indicated positions in the
+      coordinate system of the layout.  Where the dimensions do not
+      match exactly to the screen aspect ratio, the view will be
+      centered on the indicated coordinates.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>view</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 9, 2004 at 1:59am <P>
+</BODY>
+</HTML>

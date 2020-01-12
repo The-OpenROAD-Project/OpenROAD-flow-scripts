@@ -1,0 +1,474 @@
+#
+#		      MOSIS distribution Version 8.2
+#
+# jws 1997/06/26: added new styles for m1t-m3t (49-51)
+# tim 2002/12/19: redesigned format to eliminate 256 style limit
+#
+# This file has been updated by MOSIS to be used for three metal, two poly
+# SCMOS technology files.
+#
+# (C) Copyright 1992, 1993, 1994, 1995 by
+#
+#       Jen-I Pi	       pi@isi.edu
+#       The MOSIS Service
+#	USC Information Sciences Institute	
+#	4676 Admiralty Way
+#	Marina del Rey, CA 90292
+#	(310) 822-1511 x640  fax (310)823-5624
+#
+# All Rights Reserved.
+# Last Modified Date: 12/03/03
+#
+# Permission to use, copy, modify, and distribute this technology
+# file and its associated documentation for any purpose and without
+# fee is hereby granted, provided that the above copyright notice
+# appears in all copies and that both that copyright notice and this
+# permission notice appear in supporting documentation, and that the
+# name of the University of Southern California not be used in
+# advertising or publicity pertaining to distribution of the software
+# without specific, written prior permission.  The University of
+# Southern California makes no representations about the suitability
+# of this technology file for any purpose. This technology file is
+# provided "as is" without express or implied warranty and the
+# University of Southern California retains the right to change its
+# content at any time without notice any other party.
+#
+# THE UNIVERSITY OF SOUTHERN CALIFORNIA DISCLAIMS ALL WARRANTIES WITH
+# REGARD TO THIS TECHNOLOGY FILE, INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL THE UNIVERSITY OF
+# SOUTHERN CALIFORNIA BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+# OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+# NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS TECHNOLOGY FILE.
+#
+# This file describes the various display styles that are available
+# in Magic.  This new file is relatively technology-independent: it
+# contains enough different styles to support MOSIS's SCMOS process
+# without any changes.  Each display style describes a particular
+# way of drawing things on the display.  See "Magic Maintainer's
+# Manual #3: The Display Style and Glyph Files" for details on the
+# file format.
+#
+# Please send bug reports/comments to mosis@mosis.edu :-)
+# 
+# Version keyword replaces the version embedded in the filename.
+
+version 7
+#
+# BitPlane Usage:
+#
+#
+#		msb			      lsb
+#		+-------+-----------+-----------+
+#		| 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
+#		+-------+-----------+-----------+
+#		  |   |   |   |   |   \_______/
+#	not used -+   |   |   |   |       |
+#	highlights ---+   |   |   |       +---- poly, diff, fets
+#	opaque/trans. ----+   |   +------------ metal1
+#			      +---------------- metal2
+#
+# Bits 0-2 represent the material on the poly-diff plane (poly,
+# different flavors of diffusion, different flavors of transistor)
+# with mutually-opaque colors.
+#
+# Bits 3-4 are used for the two metal layers.  Each layer has a
+# separate bit plane, so the two metal layers are mutually transparent,
+# and they are both transparent with respect to the poly-diff layers.
+#
+# If bit 5 is set, then bits 0-4 are used for one of 32 opaque colors
+# which override any other mask information.  These colors are used
+# for various stipples, contact crosses, etc.  They also provide a
+# palette of standard colors (red, green, etc.) for use in making
+# window borders, menus, etc.  The last of these colors to be drawn in
+# an area is the one that will appear.
+#
+# Bit 6 is used for highlights such as the box, the selection, etc.
+# It overrides any of the other bits and produces a pure white color.
+#
+# Bit 7 is not used in this display style file.  This is important for
+# Sun workstations, since they can't really give Magic all 8 bits.
+# For AEDs and other displays, this is a bit wasteful, but still seems
+# to work ok.
+
+display_styles 7
+#
+# The style below means "no color at all".  It is special, in that
+# it is used by cursors to indicate transparency.
+#
+# num   mask    color   outline  fill  number   name    name
+# ----+------+--------+--------+------+-------+------+--------------
+0	0x00	000	0x00	solid	0	.	no_color_at_all
+#
+# Opaque styles used for drawing and erasing highlights, window borders,
+# etc.
+#				       stipple  short    long
+# num   mask    color   outline  fill  number   name     name
+# ----+------+--------+--------+------+-------+------+--------------
+1	0x40	64	0x00	solid	0	-	solid_highlights
+2	0x40	64	0x00	stipple 12	-	medium_highlights
+3	0x40	64	0x00	stipple 9	-	pale_highlights
+4	0x40	64	0x00	stipple 10	-	horiz_highlights
+5	0x40	64	0x00	stipple 11	-	vert_highlights
+6	0x40	64	0xff	outline	0	-	outline_highlights
+7	0x40	64	0xcc	outline 0	-	dotted_highlights
+#
+8	0x40	0	0xff	outline	0	-	erase_box
+9	0x40	0	0x00	solid	0	-	erase_highlights
+10	0x7f	0	0x00	solid	0	-	erase_everything
+11	0x3f	0	0x00	solid	0	-	erase_all_but_highl
+#
+12	0x3f	59	0xff	outline	0	-	labels
+13	0x3f	45	0xff	outline	0	-	ports
+14	0x3f	54	0xff	outline	0	-	port_connections
+15	0x3f	35	0xff	outline	0	-	bounding_boxes
+16	0x3f	35	0xaa	grid	0	-	dotted_grid
+17	0x3f	35	0xff	grid	0	-	solid_grid
+18	0x3f	35	0x00	solid	0	-	origin_square
+19	0x3f	35	0xff	outline	0	-	draw_tile_details
+#
+20	0x7f	55	0x00	solid	0	w	window_border
+21	0x7f	55	0xff	stipple	6	-	window_elevator
+22	0x7f	56	0x00	solid	0	c	window_caption
+23	0x7f	57	0x00	solid	0	x	window_background
+#
+24	0x7f	58	0x00	solid	0	-	color_editing
+#
+25	0x7f	60	0x00	solid	0	T	tk_medium_gray
+26	0x7f	62	0x00	solid	0	t	tk_light_gray
+#
+27      0x7f    47      0xff    outline 0       -       pale_labels
+28      0x7f    53      0xff    outline 0       -       pale_ports
+#
+#
+# General-purpose opaque colors.  These entries define a whole
+# bunch of generally-useful colors.
+#
+#				       stipple  short    long
+# num   mask    color   outline  fill  number   name     name
+# ----+------+--------+--------+------+-------+------+--------------
+29	0x3f	32	0x00	solid	0	W	white
+30	0x3f	33	0x00	solid	0	-	gray1 (pale)
+31	0x3f	34	0x00	solid	0	k	gray2 (dark)
+32	0x3f	35	0x00	solid	0	K	black
+33	0x3f	36	0x00	solid	0	r	red1 (pale)
+34	0x3f	37	0x00	solid	0	-	red2 (medium)
+35	0x3f	38	0x00	solid	0	R	red3 (dark)
+36	0x3f	39	0x00	solid	0	g	green1 (pale)
+37	0x3f	40	0x00	solid	0	-	green2 (medium)
+38	0x3f	41	0x00	solid	0	G	green3 (dark)
+39	0x3f	42	0x00	solid	0	b	blue1
+40	0x3f	43	0x00	solid	0	B	blue2  (dark)
+41	0x3f	44	0x00	solid	0	-	blue3
+42	0x3f	45	0x00	solid	0	p	purple1
+43	0x3f	46	0x00	solid	0	P	purple2
+44	0x3f	47	0x00	solid	0	y	yellow1
+45	0x3f	48	0x00	solid	0	Y	yellow2
+46	0x3f	49	0x00	solid	0	o	orange1
+47	0x3f	50	0x00	solid	0	O	orange2
+48	0x3f	51	0x00	solid	0	-	brown1
+49	0x3f	52	0x00	solid	0	-	brown2
+50	0x3f	53	0x00	solid	0	-	magenta
+51	0x3f	54	0x00	solid	0	C	cyan
+#
+#----------------------------------------------------------------------
+# All of the styles above this point are used internally by Magic for
+# things like menus, drawing the box, etc.  The style numbers must
+# match the definitions in misc/style.h.  All of the styles below
+# this point are used by the technology file, addressed by number.
+# Note that the numbers are only for backwards compatibility with
+# .tech27 files which specify styles by number.  .tech28 files may
+# specify styles by name, and numbers may be listed out of order.
+# The order in which styles are drawn is the order in which they
+# appear in this file.
+#----------------------------------------------------------------------
+
+layout_styles
+#
+# Poly-diff styles:
+#				       stipple  short    long
+# num   mask    color   outline  fill  number   name     name
+# ----+------+--------+--------+------+-------+------+--------------
+1	0x07	1	0x00	solid	0	-	polysilicon
+87      0x07    50	0x00	solid   0       -       poly_light
+88	0x07	1	0x00	stipple 1	-	obspoly
+2	0x07	2	0x00	solid	0	-	ndiffusion
+3	0x07	2	0x00	stipple	13	-	ndiff_in_nwell
+4	0x07	3	0x00	solid	0	-	pdiffusion
+5	0x07	3	0x00	stipple 13	-	pdiff_in_pwell
+6	0x07	4	0x00	solid	0	-	ntransistor
+7	0x07	2	0x00	stipple 7	-       ntransistor_stripes
+8	0x07	5	0x00	solid	0	-	ptransistor
+9	0x07	3	0x00	stipple 5	-       ptransistor_stripes
+10	0x3f	6	0x00	stipple 7	-	cwell
+11	0x07	5	0x00	stipple 22	-	hvndiff_mask
+12	0x07	7	0x00	stipple 7	-	nwell
+13	0x07	3	0x00	stipple 5	-	pwell
+79	0x07	71	0x00	stipple 21	-	highvolt_nwell
+80	0x07	69	0x00	stipple 22	-	highvolt_pwell
+83	0x3f	51	0x00	stipple 5	-	implant1
+84	0x3f	48	0x00	stipple 5	-	implant2
+85	0x3f	38	0x00	stipple 5	-	implant3
+86	0x3f	62	0x00	stipple 5	-	implant4
+14	0x3f	6	0x00	stipple 2	-	electrode
+15	0x07	3	0x00	stipple	10	-	pbase
+16	0x07	2	0x00	stipple 17	-	emitter
+17	0x07	3	0x00	stipple 11	-	bccd
+18	0x07	4	0x00	stipple 21	-       hvpdiff_mask
+19	0x07	7	0x00	solid	0	-	via
+#
+# Metal styles:
+#				       stipple  short    long
+# num   mask    color   outline  fill  number   name     name
+# ----+------+--------+--------+------+-------+------+--------------
+20	0x08	8	0x00	solid	0	-	metal1
+21	0x10	16	0x00	solid	0	-	metal2
+22	0x3f	53	0x00	stipple	23	-	metal3
+23	0x3f	33	0x00	stipple	20	-	metal4
+24	0x3f	44	0x00	stipple	8	-	metal5
+25	0x3f	37	0x00	solid	0	-	pad4
+26	0x0f	9	0x00	solid	0	-	poly_contact
+27	0x07	1	0x00	solid	0	-	electrode_stripes
+28	0x3f	6	0x00	stipple 2	-	capacitor
+29	0x08	8	0x00	solid	0	-	metal1_alt
+#
+# Opaque stipples and such for mask display:
+#				       stipple  short    long
+# num   mask    color   outline  fill  number   name     name
+# ----+------+--------+--------+------+-------+------+--------------
+30	0x3f	2	0x00	stipple 22	-	ndop_stripes
+31	0x3f	3	0x00	stipple 21	-	pdop_stripes
+32	0x3f	7	0xff	cross	0	-	contact_X'es
+33	0x3f	7	0xff	stipple 2	-	contact_waffle
+34	0x3f	34	0xff	stipple 10	-	overglass
+35	0x3f	3	0xff	stipple 1	-	pselect
+36	0x3f	2	0xff	stipple 15	-	nselect
+37	0x3f	46	0xff	stipple 19	-	via2
+38	0x3f	38	0xff	stipple	24	-	via3
+39	0x3f	41	0xff	stipple	5	-	via4
+#
+40	0x3f	53	0x00	stipple 5	-	check_paint
+41	0x3f	54	0x00	stipple 7	-	check_subcells
+42	0x3f	32	0x00	stipple 4	-	error_waffle
+43      0x07    2	0x00	stipple 5       -       nselect2
+44      0x07    3	0x00	stipple 7       -       pselect2
+45      0x07    35	0x00	solid   0       -       comment
+46      0x07    42	0x00	stipple 7       -       silicide_block
+47      0x07    1	0x00	solid   0       -       poly_resist
+48      0x07    3	0x00	stipple 7       -       poly_resist_stripes    
+#jws
+49	0x08	8	0x00	stipple 19	-	metal1tight
+89	0x08	8	0x00	stipple 1	-	obsmetal1
+50	0x10	16	0x00	stipple 19	-	metal2tight
+90	0x10	16	0x00	stipple 1	-	obsmetal2
+51	0x3f	53	0x00	stipple	8	-	metal3tight
+91	0x3f	53	0x00	stipple 1	-	obsmetal3
+92	0x3f	33	0x00	stipple 1	-	obsmetal4
+93	0x3f	44	0x00	stipple 1	-	obsmetal5
+52	0x07	2	0x00	stipple 19	-	cwellnsc
+53      0x07    7	0x00	stipple 7       -       nwell_field_implant
+54      0x07    7	0x00	stipple 5       -       substrate_field_implant
+55	0x3f	43	0xff	stipple	35	-	via1arrow
+81	0x3f	43	0xff	stipple	2	-	via1
+56	0x3f	53	0xff	stipple	36	-	via2arrow
+82	0x3f	53	0xff	stipple	2	-	via2alt
+57	0x3f	6	0xff	stipple	2	-	via3alt
+58	0x3f	7	0x00	solid	0	-	gen_contact
+#
+59	0x3f	16	0xff	stipple 2	-	via5
+60	0x3f	46	0xff	stipple 28	-	via6
+61	0x3f	51	0xff	stipple 29	-	via7
+76	0x3f	7	0xff	stipple 30	-	via8
+78	0x3f	7	0xff	stipple 31	-	via9
+#
+64	0x3f	46	0x00	stipple 17	-	metal6
+94	0x3f	46	0x00	stipple 1	-	obsmetal6
+65	0x3f	38	0x00	stipple 9	-	metal7
+95	0x3f	38	0x00	stipple 1	-	obsmetal7
+66	0x3f	34	0x00	stipple 16	-	metal8
+96	0x3f	34	0x00	stipple 1	-	obsmetal8
+75	0x3f	40	0x00	stipple 26	-	metal9
+97	0x3f	40	0x00	stipple 1	-	obsmetal9
+77	0x3f	42	0x00	stipple 23	-	metal10
+98	0x3f	42	0x00	stipple 1	-	obsmetal10
+#
+62	0x3f	0	0x00	solid	0	-	mim_bottom
+63	0x3f	0	0x00	solid	0	-	mim_top
+67	0x07	9	0x00	outline	0	-	subcircuit
+68	0x3f	34	0xff	stipple 12	-	mems
+#
+69	0x3f	40	0x00	stipple	3	-	mvndiff
+70	0x3f	41	0x00	stipple	3	-	hvndiff
+71	0x3f	44	0x00	stipple	3	-	ncontact
+72	0x3f	51	0x00	solid	25	-	mvpdiff
+73	0x3f	52	0x00	solid	25	-	hvpdiff
+74	0x3f	45	0x00	solid	25	-	pcontact
+#
+#----------------------------------------------------------------------
+# All of the styles below this point must duplicate the styles in
+# the section above, and represent a version of each previous
+# layer to use in non-edit cells ("pale" styles):
+#----------------------------------------------------------------------
+
+pale_styles
+#
+# Poly-diff styles:
+#				       stipple  short    long
+# num   mask    color   outline  fill  number   name     name
+# ----+------+--------+--------+------+-------+------+--------------
+1	0x07	1	0x00	stipple 14	-	polysilicon
+87      0x07    49	0x00	solid   0       -       poly_light
+88	0x07	1	0x00	stipple 1	-	obspoly
+2	0x07	2	0x00	stipple 14	-	ndiffusion
+3	0x07	2	0x00	stipple	13	-	ndiff_in_nwell
+4	0x07	3	0x00	stipple 14	-	pdiffusion
+5	0x07	3	0x00	stipple 13	-	pdiff_in_pwell
+6	0x07	4	0x00	stipple 14	-	ntransistor
+7	0x07	2	0x00	stipple 7	-	ntransistor_stripes
+8	0x07	5	0x00	stipple 14	-	ptransistor
+9	0x07	3	0x00	stipple 5	-	ptransistor_stripes
+10	0x07	6	0x00	stipple 7	-	cwell
+11	0x07	5	0x00	stipple 22	-	hvndiff_mask
+12	0x07	7	0x00	stipple 7	-	nwell
+13	0x07	3	0x00	stipple 5	-	pwell
+79	0x07	71	0x00	stipple 21	-	highvolt_nwell
+80	0x07	69	0x00	stipple 22	-	highvolt_pwell
+83	0x3f	51	0x00	stipple 5	-	implant1
+84	0x3f	48	0x00	stipple 5	-	implant2
+85	0x3f	38	0x00	stipple 5	-	implant3
+86	0x3f	62	0x00	stipple 5	-	implant4
+14	0x3f	6	0x00	stipple 2	-	electrode
+15	0x07	3	0x00	stipple 10	-	pbase
+16	0x07	2	0x00	stipple 17	-	emitter
+17	0x07	3	0x00	stipple 11	-	bccd
+18	0x07	7	0x00	stipple 21	-       hvpdiff_mask
+19	0x07	7	0x00	stipple	2	-	via
+#
+# Metal styles:
+#				       stipple  short    long
+# num   mask    color   outline  fill  number   name     name
+# ----+------+--------+--------+------+-------+------+--------------
+20	0x08	8	0x00	stipple 14	-	metal1
+21	0x10	16	0x00	stipple 14	-	metal2
+22	0x3f	53	0x00	stipple 5	-	metal3
+23	0x3f	33	0x00	stipple 21	-	metal4
+24	0x3f	44	0x00	stipple 22	-	metal5
+25	0x3f	37	0x00	stipple 18	-	pad4
+26	0x09	9	0x00	stipple	14	-	poly_contact
+27	0x07	1	0x00	stipple	14	-	electrode_stripes
+28	0x3f	6	0x00	stipple 2	-	capacitor
+29	0x08	8	0x00	stipple 14	-	metal1_alt
+#
+# Opaque stipples and such for mask display:
+#				       stipple  short    long
+# num   mask    color   outline  fill  number   name     name
+# ----+------+--------+--------+------+-------+------+--------------
+30	0x3f	2	0x00	stipple 22	-	ndop_stripes
+31	0x3f	3	0x00	stipple 21	-	pdop_stripes
+32	0x3f	35	0xff	cross	0	-	contact_X'es
+33	0x3f	35	0xff	stipple 2	-	contact_waffle
+34	0x3f	34	0xff	stipple 10	-	overglass
+35	0x3f	3	0xff	stipple 1	-	pselect
+36	0x3f	2	0xff	stipple 15	-	nselect
+37	0x3f	46	0xff	stipple 19	-	via2
+38	0x3f	38	0xff	stipple 24	-	via3
+39	0x3f	41	0xff	stipple 5	-	via4
+#
+40	0x3f	53	0x00	stipple 5	-	check_paint
+41	0x3f	54	0x00	stipple 7	-	check_subcells
+42	0x3f	32	0x00	stipple 4	-	error_waffle
+43	0x07    2	0x00	stipple 5       -       nselect2
+44	0x07    3	0x00	stipple 7       -       pselect2
+45	0x07    15	0x00	solid   0       -       comment
+46	0x07    42	0x00	stipple 7       -       silicide_block
+47	0x07    1	0x00	solid   0       -       poly_resist
+48	0x07    3	0x00	stipple 7       -       poly_resist_stripes
+#jws:
+49	0x08	8	0x00	stipple 14	-	metal1tight
+89	0x08	8	0x00	stipple 1	-	obsmetal1
+50	0x10	16	0x00	stipple 5	-	metal2tight
+90	0x10	16	0x00	stipple 1	-	obsmetal2
+51	0x3f	53	0x00	stipple	21	-	metal3tight
+91	0x3f	53	0x00	stipple 1	-	obsmetal3
+92	0x3f	33	0x00	stipple 1	-	obsmetal4
+93	0x3f	44	0x00	stipple 1	-	obsmetal5
+52	0x07	2	0x00	stipple 13	-	cwellnsc
+53	0x07    7	0x00	stipple 7       -       nwell_field_implant
+54	0x07    7	0x00	stipple 5       -       substrate_field_implant
+55	0x3f	43	0x00	stipple	35	-	via1arrow
+81	0x3f	43	0x00	stipple	2	-	via1
+56	0x3f	53	0x00	stipple	36	-	via2arrow
+82	0x3f	53	0x00	stipple	2	-	via2
+57	0x3f	6	0x00	stipple	2	-	via3
+58	0x3f	34	0x00	stipple	6	-	gen_contact
+#
+59	0x3f	16	0xff	stipple 2	-	via5
+60	0x3f	46	0xff	stipple 28	-	via6
+61	0x3f	51	0xff	stipple 29	-	via7
+76	0x3f	34	0xff	stipple 30	-	via8
+78	0x3f	34	0xff	stipple 31	-	via9
+#
+64	0x3f	46	0x00	stipple 11	-	metal6
+94	0x3f	46	0x00	stipple 1	-	obsmetal6
+65	0x3f	38	0x00	stipple 5	-	metal7
+95	0x3f	38	0x00	stipple 1	-	obsmetal7
+66	0x3f	34	0x00	stipple 10	-	metal8
+96	0x3f	34	0x00	stipple 1	-	obsmetal8
+75	0x3f	40	0x00	stipple 27	-	metal9
+97	0x3f	40	0x00	stipple 1	-	obsmetal9
+77	0x3f	42	0x00	stipple 20	-	metal10
+98	0x3f	42	0x00	stipple 1	-	obsmetal10
+#
+62	0x3f	0	0x00	solid	0	-	mim_bottom
+63	0x3f	0	0x00	solid	0	-	mim_top
+67	0x07	9	0x00	outline	0	-	subcircuit
+68	0x3f	33	0xff	stipple 12	-	mems
+#
+69	0x3f	40	0x00	stipple	5	-	mvndiff
+70	0x3f	41	0x00	stipple	5	-	hvndiff
+71	0x3f	44	0x00	stipple	5	-	ncontact
+72	0x3f	51	0x00	stipple	7	-	mvpdiff
+73	0x3f	52	0x00	stipple	7	-	hvpdiff
+74	0x3f	45	0x00	stipple	7	-	pcontact
+
+stipples
+#-----------------------------------+---------------------------------------
+# hex bit pattern (8x8)	        description
+#-----------------------------------+---------------------------------------
+1  40 00 18 00 18 00 00 00	very sparsed stripes, ll to ur
+2  cc cc 00 00 33 33 00 00	coarse knight's move (waffle)
+3  ee 77 bb dd ee 77 bb dd	all but diagonal stripes, ll to ur
+4  00 00 cc cc 00 00 cc cc	offset waffle
+5  40 20 10 08 04 02 01 80	sparse diagonal stripes, ll to ur
+6  aa 55 aa 55 aa 55 aa 55	half 'n half (checkerboard)
+7  02 04 08 10 20 40 80 01	sparse diagonal stripes, lr to ul
+8  81 03 06 0c 18 30 60 c0	wide sparse diagonal stripes, lr to ul
+9  81 c0 60 30 18 0c 06 03	wide sparse diagonal stripes, ll to ur
+10 00 00 00 ff 00 00 00 ff	horizontal stripes
+11 44 44 44 44 44 44 44 44	vertical stripes
+12 55 aa 55 aa 55 aa 55 aa	complement of half `n half
+13 33 33 ff ff cc cc ff ff	complement of #2 (coarse knight's move)
+14 aa 55 aa 55 aa 55 aa 55	half 'n half (checkerboard)
+15 00 01 00 18 00 00 00 18	very sparsed stripes, 11 to ur
+16 c0 07 ff ff c0 07 ff ff	wide horizontal stripes
+17 c7 c7 c7 c7 c7 c7 c7 c7	wide vertical stripes
+18 7c 7c 7c 7c 7c 7c 7c 7c	wide vertical stripes (reverse of 17)
+19 3c c3 42 42 c3 3c 24 24	bubbles
+20 24 42 81 81 42 24 18 18	offset diagonal crossex
+21 10 20 00 00 00 02 04 08	diagonal dotted line, lr to ul
+22 08 04 00 00 00 40 20 10      diagonal dotted line, ll to ur
+23 3c 66 c3 81 c3 66 3c 18	dense diagonal crossex
+24 c3 3c bd bd 3c c3 db db      complement of #19 empty bubbles
+25 dd bb 77 ee dd bb 77 ee	all but diagonal stripes, lr to ul
+26 e2 4e 52 29 94 e4 8e 11	T pattern
+27 71 47 41 00 42 72 47 99	sparse offset T pattern
+28 99 3c 7e e7 e7 7e 3c 99	alternating diamonds
+29 44 88 55 22 44 88 55 22	bricks, ll to ur
+30 30 60 c0 c1 63 36 1c 18	bricks, lr to ul
+31 55 db 22 db 55 db 22 db	linoleum
+32 60 c0 81 03 06 0c 18 30
+33 00 00 00 30 60 60 30 00	new gc thin
+34 00 02 06 0e 0e 06 02 00
+35 00 7e 3c 18 00 e7 c3 81	arrows pointing up
+36 e0 62 26 0e 0e 26 62 e0	arrows pointing left

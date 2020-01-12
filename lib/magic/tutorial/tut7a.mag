@@ -1,0 +1,41 @@
+magic
+tech scmos
+timestamp 616462131
+<< polysilicon >>
+rect -23 -8 -15 -6
+<< ndiffusion >>
+rect -27 14 -20 17
+rect -23 2 -20 5
+<< metal1 >>
+rect 14 26 17 32
+rect 18 15 21 19
+rect 13 12 21 15
+rect -2 -8 1 -1
+rect 16 -8 19 0
+<< metal2 >>
+rect -21 29 -16 32
+rect -21 26 -18 29
+rect -4 26 -1 32
+rect 6 0 15 3
+rect 19 0 21 3
+rect 6 -3 9 0
+<< ndcontact >>
+rect -27 1 -23 5
+<< m2contact >>
+rect 15 0 19 4
+<< labels >>
+rlabel metal1 17 -8 17 -8 1 bad1
+rlabel metal1 17 -8 17 -8 5 (use line label)
+rlabel ndcontact -27 1 -27 5 3 good5
+rlabel metal2 -4 32 -3 32 5 bad4
+rlabel metal2 -4 32 -3 32 1 (not wide enough to route to)
+rlabel polysilicon -20 -8 -15 -8 1 bad5
+rlabel polysilicon -20 -8 -15 -8 5 (will work, but why not make wider?)
+rlabel metal1 21 12 21 19 7 good2
+rlabel metal2 6 -3 9 0 1 (works, but better to place on cell edge)
+rlabel metal2 6 -3 9 0 5 bad3
+rlabel metal2 -21 29 -16 32 5 good4
+rlabel metal1 14 32 17 32 5 good3
+rlabel metal1 -2 -8 1 -5 1 good1
+rlabel ndiffusion -27 14 -27 17 3 bad2 (can't route to diff)
+<< end >>

@@ -1,0 +1,85 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>see</H2>
+<HR>
+Change what layers are displayed in the window
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Mouse buttons 1 and 3 pressed in the GUI window toolbar implement the
+      <B>see</B> and <B>see no</B> commands for the layer represented by
+      the toolbar button.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>see</B> [<B>no</B>] <I>layers</I>|<B>allSame</B> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>layers</I> is a comma-separated list of layers
+	 in the technology, and may also be the character <B>*</B>
+	 indicating all layers but not labels, <B>$</B> indicating
+	 all layers including labels, <B>labels</B> indicating
+	 only labels, <B>error</B> indicating DRC error paint,
+	 and <B>subcell</B> indicating subcells.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>see</B> command allows various layers in the layout
+      to be made visible, including labels and error paint.
+      With the keyword <B>no</B>, the command causes these layers
+      to be made invisible on the display. <P>
+
+      The keyword <B>allSame</B> is a special use and indicates that
+      non-edit cells should be drawn in the same manner as the edit
+      cell, rather than being drawn in the "pale" styles. <P>
+
+      Undisplayed layers generally do not respond to commands such
+      as <B>erase</B> or <B>select</B>.  However, network selection
+      will select across invisible layers, and copying or moving
+      such a network selection will alter the invisible layers as
+      well as the visible.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>see</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+      It should be enforced everywhere in the code that invisible
+      layers cannot be altered.  This may require removing invisible
+      layers from a selection after doing a network connectivity
+      search.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 16, 2004 at 2:02pm <P>
+</BODY>
+</HTML>

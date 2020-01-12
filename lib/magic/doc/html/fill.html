@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>fill</H2>
+<HR>
+Fill layers from one side of box to other.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>fill</B> <I>direction</I> [<I>layers</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>direction</I> is any valid Manhattan
+	 <A HREF=direction.html>direction</A> in <B>magic</B>, and
+	 <I>layers</I> is an optional comma-separated list of layers
+	 to restrict the operation of the <B>fill</B> command.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>fill</B> command extends paint from one side of the
+      cursor box to the other.  It is most often used to fill
+      gaps in wire routes or fill paint between subcells.  The
+      algorithm is to select all paint that touches or crosses
+      the cursor box on the side opposite the indicated <I>direction</I>,
+      and extend this paint in the indicated <I>direction</I> to the
+      other side of the cursor box.  Paint that is in the cursor box
+      but does not touch the side of entry is not changed.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>fill</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=corner.html><B>corner</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 6, 2004 at 1:42am <P>
+</BODY>
+</HTML>

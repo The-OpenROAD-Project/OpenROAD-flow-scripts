@@ -1,0 +1,80 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=../graphics/blpaper.gif>
+<H1> <IMG SRC=../graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=../graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>load</H2>
+<HR>
+Load an alternate layer colormap.
+<HR>
+
+
+load [techStyle displayStyle monitorType]
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>load</B> [<I>techStyle displayStyle monitorType</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>techStyle</I>  is declared by the technology
+	 (normally "<B>mos</B>"), <I>displayStyle</I> is determined
+	 by the display visual (normally "<B>7bit</B>", "<B>24bit</B>",
+	 or "<B>OpenGL</B>"), and <I>monitorType</I> is normally
+	 "<B>std</B>".
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>load</B> command loads an alternative colormap file
+      that can be used to change the colors used by magic for
+      drawing layout. <P>
+
+      By default, without arguments, the filename searched for 
+      varies according to the display visual type, but is normally
+      <BLOCKQUOTE>
+	<B>mos.24bit.std.cmap</B> for 24- and 32-bit visuals,
+	<B>mos.7bit.std.cmap</B> for 8-bit visuals, and
+	<B>mos.OpenGL.std.cmap</B> for OpenGL visuals.
+      </BLOCKQUOTE>
+      The current directory is searched first for local files
+      overriding the system colormap defaults, followed by a
+      search of the <B>sys</B> path as declared by the <B>path</B>
+      command.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>load</B> is implemented as a built-in <B>color</B>
+	window command in <B>magic</B>.  It can only be invoked from
+	a window created with the <B>specialopen color</B> command.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=save.html><B>save</B></A> <BR>
+      <A HREF=../path.html><B>path</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=../graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=../commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October, 2004<P>
+</BODY>
+</HTML>

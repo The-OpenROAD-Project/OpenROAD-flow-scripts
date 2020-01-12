@@ -1,4 +1,4 @@
-OPENROAD_MODULES = yosys TritonRoute
+OPENROAD_MODULES = OpenROAD yosys TritonRoute
 SRC_PATH = OpenROAD/src
 BUILD_PATH = OpenROAD/build/src
 
@@ -10,35 +10,33 @@ else
   BUILD_DEP = cmake_%
 endif
 
-default: build_all
+default: build_all link_magic
 
-clone_all: clone_OpenROAD $(addprefix clone_,$(OPENROAD_MODULES))
+clone_all: $(addprefix clone_,$(OPENROAD_MODULES))
 	@
 
 clone_OpenROAD:
-	git submodule init
-	git submodule update --recursive
+	git submodule update --init --recursive
 	
 	# --recursive doesn't recurse all the way
 	cd OpenROAD && \
-	git submodule init && \
-	git submodule update --recursive
+	git submodule update --init --recursive
 	
 	cd $(SRC_PATH)/OpenDB && \
-	git submodule init && \
-	git submodule update --recursive 
+	git submodule update --init --recursive
 
 clone_yosys:
 	if ! [ -d $(SRC_PATH)/yosys ]; then \
-		git clone --recursive git@github.com:The-OpenROAD-Project/yosys.git $(SRC_PATH)/yosys; \
+		git clone --recursive https://github.com/The-OpenROAD-Project/yosys.git $(SRC_PATH)/yosys; \
 	fi
 
 clone_TritonRoute:
 	if ! [ -d $(SRC_PATH)/TritonRoute ]; then \
-		git clone --recursive git@github.com:The-OpenROAD-Project/TritonRoute.git $(SRC_PATH)/TritonRoute; \
+		git clone --recursive https://github.com/The-OpenROAD-Project/TritonRoute.git $(SRC_PATH)/TritonRoute --branch alpha2; \
 	fi
-	cd $(SRC_PATH)/TritonRoute && \
-	git checkout alpha2
+
+docker_OpenROAD: clone_OpenROAD
+	docker build -t openroad -f $(SRC_PATH)/../Dockerfile $(SRC_PATH)/..
 
 docker_%: clone_%
 	docker build -t openroad/$(shell echo $* | tr A-Z a-z) -f $(SRC_PATH)/$*/Dockerfile $(SRC_PATH)/$*
@@ -49,11 +47,11 @@ cmake_OpenROAD: clone_OpenROAD
 	cmake $(CMAKE_OPTS) .. && \
 	make -j4
 
-cmake_yosys:
+cmake_yosys: clone_yosys
 	cd $(SRC_PATH)/yosys && \
 	make -j4
 
-cmake_TritonRoute:
+cmake_TritonRoute: clone_TritonRoute
 	mkdir -p $(SRC_PATH)/TritonRoute/build
 	cd $(SRC_PATH)/TritonRoute/build && \
 	cmake $(CMAKE_OPTS) .. && \
@@ -62,9 +60,23 @@ cmake_TritonRoute:
 build_all: $(addprefix $(BUILD_PATH)/,$(OPENROAD_MODULES))
 	@
 
+# TODO(rovinski) terrible hack, maybe this should just be a bash script
 $(BUILD_PATH)/%: $(BUILD_DEP)
 	mkdir -p $(BUILD_PATH)
 	rm -rf ./$@
-	container_id=$$(docker create openroad/$(shell echo $* | tr A-Z a-z)) && \
-	docker cp $$container_id:/build $@ && \
-	docker rm -v $$container_id
+	if [ "$(BUILD_DEP)" == "docker_%" ]; then \
+	  if [ "$*" == "OpenROAD" ]; then \
+	    container_id=$$(docker create openroad); \
+	    docker cp $$container_id:/OpenROAD/build OpenROAD/build; \
+	  else \
+	    container_id=$$(docker create openroad/$(shell echo $* | tr A-Z a-z)); \
+	    docker cp $$container_id:/build $@; \
+	  fi; \
+	  docker rm -v $$container_id; \
+	fi
+
+# TODO(rovinski) terrible hack
+link_magic:
+	if [ ! -d OpenROAD/lib ]; then \
+	  ln -s ../lib OpenROAD/lib; \
+	fi

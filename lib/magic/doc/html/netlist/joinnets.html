@@ -1,0 +1,65 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=../graphics/blpaper.gif>
+<H1> <IMG SRC=../graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=../graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>joinnets</H2>
+<HR>
+Join the nets containing the two indicated terminals.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>joinnets</B> <I>term1 term2</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>term1</I> and <I>term2</I> are names of netlist
+	 terminals.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>joinnets</B> command joins two networks together into a single
+      network.  The two networks are specified by naming a terminal on
+      each network.  If either terminal is not connected to a network,
+      no action is taken (use the <B>add</B> command to add an
+      unconnected terminal to a network).
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>joinnets</B> is implemented as a built-in <B>netlist</B>
+	window command in <B>magic</B>.  It can only be invoked from
+	a window created with the <B>specialopen netlist</B> command.
+	This command was previously called <B>join</B>, and may be
+	used as that abbreviation in the non-Tcl version of <B>magic</B>.
+	However, the command name <B>join</B> conflicts with the Tcl
+	command of the same name, and its syntax is not distinct.
+	Therefore, in Tcl-based <B>magic</B>, the command name <B>join</B>
+	is interpreted as the Tcl command.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=../graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=../commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October, 2004<P>
+</BODY>
+</HTML>

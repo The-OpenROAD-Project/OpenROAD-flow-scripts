@@ -1,0 +1,116 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>tag</H2>
+<HR>
+Register a tag callback command.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>tag</B> <I>command_name</I> [<I>procedure</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>command_name</I> is the name of any <B>magic</B>
+	 command, and <I>procedure</I> is any valid Tcl procedure.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>tag</B> command is registers callback procedures to be
+      executed after the indicated <B>magic</B> command has been
+      executed.  The primary use of the <B>tag</B> command is to
+      register procedures that update the GUI window in response
+      to commands that are typed on the command line or generated
+      from macro calls. <P>
+
+      In keeping with standard methods for Tcl callback functions,
+      certain "escape sequences" beginning with the percent ("<B>%</B>")
+      character are allowed to be embedded in the callback function
+      <I>procedure</I>, and are substituted prior to execution, with
+      the substitutions defined as follows:
+      <BLOCKQUOTE>
+      <DL>
+	<DT> <B>%W</B>
+	<DD> Substitute the Tk path of the layout window from which
+	     or in reference to which <I>command_name</I> was invoked.
+	<DT> <B>%r</B>
+	<DD> Substitute the previous Tcl result string, but do not reset
+	     the Tcl result of the execution of <I>procedure</I>.
+	<DT> <B>%R</B>
+	<DD> Substitute the previous Tcl result string and reset the Tcl
+	     result from the execution of <I>procedure</I> such that the
+	     the result of <I>command_name</I> becomes the result of
+	     <I>procedure</I>.
+	<DT> <B>%</B>[<B>0</B>-<B>5</B>]
+	<DD> Substitute the zeroth to fifth argument to the original command.
+	<DT> <B>%%</B>
+	<DD> Substitute a single percent character.
+	<DT> <B>%</B><I>char</I>
+	<DD> where <I>char</I> is any character not defined above: No action,
+	     print exactly as written.
+      </DL>
+      </BLOCKQUOTE>
+
+      When a tag callback is used, the return value seen by the interpreter
+      is the return value of the function <I>procedure</I>, not the return
+      value of the tagged command <I>command_name</I>.  The escape sequence
+      <B>%R</B> can be used to force the result of <I>command_name</I> to
+      become the result of <I>procedure</I> (unless <I>procedure</I>
+      produces an error condition, in which case the error is returned).
+      The escape sequence <I>%r</I> passes the result of <I>command_name</I>
+      as an argument to the procedure, which may choose to return it as
+      a result, or not. <P>
+
+      If no <I>procedure</I> is present, then the <B>tag</B> command
+      returns whatever procedure string is attached to the indicated
+      <I>command_name</I>, if any.  This can be used as a way to prevent
+      infinite recursion inside a tag callback; for example,
+      <BLOCKQUOTE>
+         <B>set savetag [tag callback </B><I>command</I><B>]</B> <BR>
+	 <I>(procedure calls, which may include a call to </I>command<I>)</I> <BR>
+	 <B>tag</B> <I>command</I> <B>$savetag</B>
+      </BLOCKQUOTE>
+
+      Another way to avoid infinite recursion is to check the procedure
+      depth from within the tag callback procedure using the Tcl command
+      "<B>info level</B>", to avoid executing the callback procedure if
+      the level is not zero. <P>
+
+      Only one tag callback is allowed per command name.  However, only
+      one is needed as that procedure may call as many other procedures
+      as it wants to.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>tag</B> is implemented as a built-in command in <B>magic</B>,
+      but only in the Tcl version.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 10:15pm <P>
+</BODY>
+</HTML>

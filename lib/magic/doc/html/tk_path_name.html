@@ -1,0 +1,93 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2><I>tk_path_name</I></H2>
+<HR>
+Execute a window command in the indicated window.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>:</B> (colon) implements the command <I>tk_path_name</I>
+      by prepending the window name to the command typed on the command
+      line when the command is executed.  This action is, however,
+      transparent to the end user.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <I>tk_path_name command_name</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>command_name</I> is any valid window command
+	 for the type of window indicated by <I>tk_path_name</I>.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <I>tk_path_name</I> command is unique for each window
+      that is created in magic.  The name of the window is
+      registered as a command name with the Tcl interpreter.
+      When the window name is used as a command, the arguments
+      of the command are passed to the <B>magic</B> command
+      interpreter to be executed in the context of that
+      specific window.  Effectively, it is the same as typing
+      the macro "<B>:</B>" (colon) in a layout window, and then
+      typing the command on the command line. <P>
+
+      For example, the default first window that is created in
+      the Tcl GUI version of magic is <B>.layout1.magic</B>.
+      Upon creation, the command name <B>.layout1.magic</B> is
+      registered with the Tcl interpreter.  Subsequently, any
+      command on the command-line will be executed in relation
+      to that window if it is specified as an option to the
+      <B>.layout1.magic</B> command:
+      <BLOCKQUOTE>
+         <B>.layout1.magic box 0 0 10 10</B>
+      </BLOCKQUOTE>
+      which is exactly the same as putting the X11 pointer
+      cursor in the layout window, typing the "<B>:</B>"
+      (colon) macro, then typing the command <B>box 0 0 10 10</B>
+      into the command line and hitting the <B>return</B> key. <P>
+
+      Similarly to layout windows, windows created with the
+      <B>specialopen</B> command have their Tk path names registered
+      as commands with the Tcl interpreter, and can be passed
+      commands recognized by the specific window type (e.g.,
+      netlist commands in the netlist special window).
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <I>tk_path_name</I> is implemented as a built-in command
+      in <B>magic</B> which is registered with the Tcl interpreter
+      when the window is created and unregistered when the
+      window is destroyed.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 16, 2004 at 1:54pm <P>
+</BODY>
+</HTML>

@@ -1,0 +1,66 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>measure</H2>
+<HR>
+Create a ruler to measure the distance between two points on a layout.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>measure</B> [<I>orient</I>] <BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>measure</B> command is a script that creates a ruler
+      to measure the distance between two points on a layout.  The
+      ruler is positioned within the bounds of the cursor box.  The
+      option <I>orient</I> may be "<B>horizontal</B>", "<B>vertical</B>",
+      or "<B>auto</B>", and determines whether the ruler measures
+      a width or a height.  Without any option, orientation <B>auto</B>
+      is assumed.  Automatic orientation chooses the longer dimension
+      of the cursor box as the dimension to measure.  Dimensions are
+      printed in microns.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>measure</B> is implemented as a Tcl procedure in the "tools"
+      script.  The ruler itself is implemented as elements (see the
+      <B>element</B> command), including line elements for the ruler
+      and a text element for the printed dimension.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=unmeasure.html><B>unmeasure</B></A> <BR>
+      <A HREF=element.html><B>element</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 9:12pm <P>
+</BODY>
+</HTML>

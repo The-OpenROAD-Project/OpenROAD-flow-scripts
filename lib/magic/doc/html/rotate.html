@@ -1,0 +1,73 @@
+
+rotate [+/-][deg]
+			rotate selection and box (counter)clockwise
+			only manhattan rotations (90, 180, 270) are
+			supported
+
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>rotate</H2>
+<HR>
+Rotate the selection and box clockwise by the indicated amount.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>rotate</B> [<B>+</B>|<B>-</B>][<I>degrees</I>] [<B>-origin</B>]<BR><BR>
+      <BLOCKQUOTE>
+         where <I>degrees</I> is the number of degrees to rotate, and
+	 must be a manhattan amount (90, 180, 270).
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>rotate</B> command rotates the current selection by
+      the specified amount, in degrees.  The default rotation is by
+      90 degrees.  The amount of rotation can be positive or negative,
+      but must be one of the Manhattan rotations 90, 180, or 270. <P>
+
+      If <B>-origin</B> is specified, the rotation is around the
+      origin of the selection, not around the lower left-hand
+      corner.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>rotate</B> is implemented as a built-in <B>magic</B> command.
+      It is equivalent to the <B>clockwise</B> command but allows
+      negative values to represent counterclockwise rotation.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=clockwise.html><B>clockwise</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 15, 2004 at 10:10am <P>
+</BODY>
+</HTML>

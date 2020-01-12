@@ -1,0 +1,71 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>windownames</H2>
+<HR>
+Get name of current or all windows
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>windownames</B> [<B>all</B>|<I>type</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>type</I> is one of the window types known
+	 to the <B>specialopen</B> command, which are:
+	 <B>layout</B>, <B>wind3d</B>, <B>color</B>, and <B>netlist</B>.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>windownames</B> command returns a list of <B>magic</B>
+      windows as specified by the command options.  No options is
+      equivalent to option <B>all</B>, and prints the names of all
+      existing windows.  Otherwise, windows can be listed by <I>type</I>,
+      where <I>type</I> is the type of window as understood by the
+      <B>specialopen</B> command. <P>
+
+      The Tcl/Tk version of magic returns the full Tk path name of each
+      window, including any parent frames.  The non-Tcl/Tk version of
+      magic returns window IDs (the ID is an integer number used by the
+      <B>setpoint</B> command.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+         <A HREF=setpoint.html><B>setpoint</B></A> <BR>
+	    </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>windownames</B> is implemented as a built-in command in <B>magic</B>.
+      The Tcl version returns a Tcl list of Tk path names for each window.
+      The non-Tcl version of magic writes the window list to standard output.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 8:40pm <P>
+</BODY>
+</HTML>

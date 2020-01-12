@@ -1,0 +1,62 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>command_name</H2>
+<HR>
+Load a cell into a window unexpanded
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>xload</B> <I>cellname</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>cellname</I> is the name of a layout cell in the
+	 database memory or on disk.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>xload</B> command works exactly like the <B>load</B>
+      command, but keeps the top-level cell <I>cellname</I> 
+      unexpanded.  This can be useful for large layouts where
+      the expanded view takes a long time to redraw.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>xload</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=load.html><B>load</B></A> <BR>
+      <A HREF=xview.html><B>xview</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 9, 2004 at 7:17am <P>
+</BODY>
+</HTML>

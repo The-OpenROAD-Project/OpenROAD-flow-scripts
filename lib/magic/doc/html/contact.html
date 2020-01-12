@@ -1,0 +1,60 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>contact</H2>
+<HR>
+Paint a contact at the intersection of two layers.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>contact</B> <I>type</I><BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>contact</B> command computes the intersection area (inside the
+      cursor box) of the two (or more) residue types that make up the contact
+      type <I>type</I>, and paints the contact type <I>type</I> on top of the
+      area of intersection.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>contact</B> is implemented as a built-in layout command in <B>magic</B>.
+      As of magic version 7.3.115 this command does not correctly translate the
+      cursor box for edit cells and may paint outside of the cursor box, with
+      random results.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=paint.html><B>paint</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 8:18pm <P>
+</BODY>
+</HTML>

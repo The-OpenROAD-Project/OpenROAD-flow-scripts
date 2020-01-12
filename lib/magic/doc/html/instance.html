@@ -1,0 +1,103 @@
+
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>instance</H2>
+<HR>
+Operations on cell instances (uses).
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>instance</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	   <DT> [<B>list</B>] <B>children</B> [<I>name</I>]
+	   <DD> List all of the children definitions of cell use <I>name</I>,
+		or the children of the currently selected cell instance.
+	   <DT> [<B>list</B>] <B>parent</B> [<I>name</I>]
+	   <DD> List the parent cell definition of cell use <I>name</I>,
+		or the parent of the currently selected cell instance.
+	   <DT> [<B>list</B>] <B>exists</B>|<B>self</B> [<I>name</I>]
+	   <DD> Returns the name of the instance if the cell exists, or false
+		(0) if the instance does not exist (is not loaded into the
+		database; the cell may still exist on disk).  If <I>name</I>
+		is not present, returns the name of the currently selected
+		instance.
+	   <DT> [<B>list</B>] <B>allcells</B>
+	   <DD> List all of the cell instances in the database.  Note that
+		expansion is not automatic, so cells that are not expanded
+		are not searched.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>instance</B> command performs various operations on
+      cell uses, or instances.  For the first four options listed
+      above, <B>instance</B> lists cells by their relationship to
+      cell use <I>name</I>, or to the current selection if no
+      <I>name</I> is given.  The optional argument <B>list</B>
+      returns the result as a list.  In particular, in the Tcl
+      version of magic, this list is a Tcl result that may be
+      operated on by Tcl procedures. <P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>instance</B> is implemented as a built-in function in <B>magic</B>
+      The Tcl version of magic returns Tcl results when the "<B>list</B>"
+      option is present.  <B>instance</B> is essentially an alias for the
+      <B>cellname</B> command, and takes many of the same options, but
+      references are to cell instances rather that cell definitions
+      (q.v.).  A number of options to <B>cellname</B> are meaningless
+      for instances. <P>
+
+      The command option <B>instance list exists</B> is nonsensical from
+      the standpoint of the end-user (if the cell is selected, of course
+      it exists).  However, it is a very useful function for Tcl scripts
+      to determine the name of the cell instance that is currently
+      selected.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+      Technically, <B>instance rename</B> should be implemented as a
+      replacement for the command <B>identify</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=cellname.html><B>cellname</B></A> <BR>
+      <A HREF=load.html><B>load</B></A> <BR>
+      <A HREF=tk_path_name.html><I>tk_path_name</I></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 8:06am <P>
+</BODY>
+</HTML>

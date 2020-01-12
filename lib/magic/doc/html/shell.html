@@ -1,0 +1,66 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>shell</H2>
+<HR>
+Execute a command in a UNIX subshell
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>shell</B> [<I>command</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>command</I> is a valid UNIX command-line command.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>shell</B> command allows UNIX commands to be executed from
+      the magic command line.  This use is superceded by the Tcl
+      interpreter, which executes shell commands directly from the
+      interpreter prompt.  Differences between the two uses is noted
+      below.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>shell</B> is implemented as a built-in command in <B>magic</B>.
+      This is similar to the Tcl interpreter execution of shell commands
+      directly from the Tcl command-line.  The primary difference is that
+      results from the shell interpreter are printed to the calling
+      terminal with <B>shell</B>, and are printed to the console when
+      invoked directly from Tcl.  For example, note the difference in
+      the output target for:
+      <BLOCKQUOTE>
+	 <B>ls -l</B> <PRE>           </PRE> <I>vs.</I><BR>
+	 <B>shell ls -l</B>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 3:55am <P>
+</BODY>
+</HTML>

@@ -1,0 +1,147 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>box</H2>
+<HR>
+Move box dist units in direction or (with no arguments) show box size.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>b</B> implements the command <B>box</B> (with no arguments),
+      which prints information about the box to the console (terminal
+      <TT>stdout</TT>).
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>box</B> [<I>option</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	   <DT> [<A HREF=direction.html><I>direction</I></A>
+		[<A HREF=distance.html><I>distance</I></A>]]
+	   <DD> Move the box in the indicated direction by the indicated distance.
+	   <DT> <B>width</B> [<I>width</I>]
+	   <DD> Set or return box width
+	   <DT> <B>height</B> [<I>height</I>]
+	   <DD> Set or return box height
+	   <DT> <B>size</B> [<I>width height</I>]
+	   <DD> Set or return box size
+	   <DT> <B>position</B> [<I>llx lly</I>] [<B>-edit</B>]
+	   <DD> Set or return box position
+	   <DT> <B>values</B> [<I>llx lly urx ury</I>] [<B>-edit</B>]
+	   <DD> Set or return box coordinates.
+	   <DT> <B>move</B> <I>direction distance</I>|<B>cursor</B>
+	   <DD> Move box position
+	   <DT> <B>grow</B> <I>direction distance</I>
+	   <DD> Expand box size
+	   <DT> <B>shrink</B> <I>direction distance</I>
+	   <DD> Shrink box size
+	   <DT> <B>corner</B> <I>direction distance</I>|<B>cursor</B>
+	   <DD> Reposition a box corner
+	   <DT> <B>exists</B>
+	   <DD> Is the cursor box present?
+	   <DT> <B>help</B>
+	   <DD> Print help information
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>box</B> command, with no arguments, prints information about
+      the current position and size of the cursor box to the console
+      (terminal <TT>stdout</TT>).  The output shows the lower-left
+      and upper-right coordinates of the box, plus the box width, height,
+      and area.  These coordinates and dimensions are shown both in
+      microns and in lambda units.  If the internal grid has been
+      subdivided to a finer grid than lambda, then internal units will
+      also be reported. <P>
+
+      With arguments, the <B>box</B> command adjusts the position and
+      dimensions of the cursor box as outlined in the Usage section
+      (see above).  The <B>-edit</B> switch causes coordinate values
+      to be reported relative to the origin of the current edit cell,
+      if the edit cell is not the topmost cell in the layout window. <P>
+      
+      For a discussion of valid distances, see the page
+      <A HREF=distance.html><I>distance</I></A>.  This includes
+      dimensional values such as <I>width</I> and <I>height</I>, e.g.,
+      <BLOCKQUOTE>
+	<B>box width 1.2um</B>
+      </BLOCKQUOTE>
+      Note that because metric dimensions do not always match lambda
+      dimensions, the dimension may be rounded down to the nearest
+      lambda.  This is important in case this use of <B>box</B> is
+      intended to meet some DRC requirement.  For the options <B>move</B>
+      and <B>corner</B>, the <I>distance</I> may be the keyword
+      "<B>cursor</B>", indicating that the box should be moved or
+      the corner repositioned to the position of the cursor.
+      These versions of the command implement the standard mouse
+      button bindings for the "box tool" in layout windows. <P>
+
+      For a discussion of valid directions, see the page
+      <A HREF=direction.html><B>direction</B></A>.
+      Note that special cases <B>box grow center</B> and
+      <B>box shrink center</B> will cause the box to expand or shrink on
+      all sides, whereas <B>box move center</B> is nonfunctional.
+      Also, the <B>box corner</B> command expects the direction to be
+      a nonmanhattan direction (<B>ur</B>, <B>bl</B>, etc.), indicating
+      the corner to be repositioned.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>box</B> is implemented as a <B>magic</B> built-in command.
+      Command options with keywords and no arguments return Tcl results in
+      the Tcl version of <B>magic</B>.  However, to be backwardly compatible
+      with versions of <B>magic</B> prior to 7.3, the <B>box</B> command with
+      no arguments prints information directly to <TT>stdout</TT> (the
+      command-line console).  The separate option <B>box values</B> is
+      provided to return the two box coordinates (lower-left and upper-right)
+      as a Tcl list. <P>
+
+      The use of returned Tcl values allows various useful constructs on the
+      command-line, such as:
+      <BLOCKQUOTE>
+	 <B>box move e [box width]</B>
+	 <B>box height [box width]</B>
+      </BLOCKQUOTE>
+      The first example moves the box to the right by the width of the box,
+      while the second example makes the box square by adjusting the height
+      to match the width.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+	<A HREF=snap.html><B>snap</B></A>
+	<A HREF=scalegrid.html><B>scalegrid</B></A>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> November 8, 2004 at 2:53pm <P>
+</BODY>
+</HTML>

@@ -1,0 +1,75 @@
+
+center [x y]
+
+
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>center</H2>
+<HR>
+Center the layout window view on the cursor lower-left coordinate,
+or the indicated coordinate if present.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>center</B> [<I>x y</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>x y</I> is a coordinate in default magic units
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      Without arguments, the <B>center</B> command centers the layout
+      window on the lower-left corner of the cursor box.  When values
+      <I>x</I> and <I>y</I> are given, the view is centered on that
+      coordinate.  Coordinate values must be in (integer) units of
+      the <B>magic</B> internal grid.  This command is similar to
+      the "<B>view</B> <I>llx lly urx ury</I>" command, which
+      centers on a box instead of a point.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>center</B> is implemented as a magic built-in command.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+      Coordinate values should be any acceptable value, including
+      lambda, grid, and metric values, as they are for the <B>box</B>
+      command.
+   </BLOCKQUOTE>
+   
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=view.html><B>view</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 4, 2004 at 3:59am <P>
+</BODY>
+</HTML>

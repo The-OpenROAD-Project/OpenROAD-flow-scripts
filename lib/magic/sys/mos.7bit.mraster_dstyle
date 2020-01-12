@@ -1,0 +1,82 @@
+#
+# This file describes the various display styles that are available
+# in Magic.  This new file is relatively technology-independent: it
+# contains enough different styles to support MOSIS's SCMOS process
+# without any changes.  Each display style describes a particular
+# way of drawing things on the display.  See "Magic Maintainer's
+# Manual #3: The Display Style and Glyph Files" for details on the
+# file format.
+#
+# Please send bug reports/comments to mosis@mosis.edu :-)
+#
+
+# BitPlane Usage:
+#
+#
+#		msb			      lsb
+#		+-------+-----------+-----------+
+#		| 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
+#		+-------+-----------+-----------+
+#		  |   |   |   |   |   \_______/
+#	not used -+   |   |   |   |       |
+#	highlights ---+   |   |   |       +---- poly, diff, fets
+#	opaque/trans. ----+   |   +------------ metal1
+#			      +---------------- metal2
+#
+# Bits 0-2 represent the material on the poly-diff plane (poly,
+# different flavors of diffusion, different flavors of transistor)
+# with mutually-opaque colors.
+#
+# Bits 3-4 are used for the two metal layers.  Each layer has a
+# separate bit plane, so the two metal layers are mutually transparent,
+# and they are both transparent with respect to the poly-diff layers.
+#
+# If bit 5 is set, then bits 0-4 are used for one of 32 opaque colors
+# which override any other mask information.  These colors are used
+# for various stipples, contact crosses, etc.  They also provide a
+# palette of standard colors (red, green, etc.) for use in making
+# window borders, menus, etc.  The last of these colors to be drawn in
+# an area is the one that will appear.
+#
+# Bit 6 is used for highlights such as the box, the selection, etc.
+# It overrides any of the other bits and produces a pure white color.
+#
+# Bit 7 is not used in this display style file.  This is important for
+# Sun workstations, since they can't really give Magic all 8 bits.
+# For AEDs and other displays, this is a bit wasteful, but still seems
+# to work ok.
+
+
+display_styles 7
+#
+# Poly-diff styles:
+#				       stipple  short    long
+# num   mask    color   outline  fill  number   name     name
+# ----+------+--------+--------+------+-------+------+--------------
+1	7	1	0	solid	0	-	polysilicon
+2	7	2	0	solid	0	-	ndiffusion
+3	7	2	0	stipple	13	-	ndiff_in_nwell
+4	7	3	0	solid	0	-	pdiffusion
+5	7	3	0	stipple 13	-	pdiff_in_pwell
+6	7	4	0	solid	0	-	ntransistor
+7	7	2	0	stipple 7	-       ntransistor_stripes
+8	7	5	0	solid	0	-	ptransistor
+9	7	3	0	stipple 5	-       ptransistor_stripes
+10	63	6	0	stipple 7	-	cwell
+11	7	5	0	stipple 22	-	highvolt_pwell
+12	7	7	0	stipple 7	-	nwell
+13	7	3	0	stipple 5	-	pwell
+14	63	6	0	stipple 2	-	electrode
+15	7	3	0	stipple	10	-	pbase
+16	7	2	0	stipple 17	-	emitter
+17	7	3	0	stipple 11	-	bccd
+18	7	4	0	stipple 21	-       highvolt_nwell
+19	7	7	0	solid	0	-	via
+#
+# Metal styles:
+#				       stipple  short    long
+# num   mask    color   outline  fill  number   name     name
+# ----+------+--------+--------+------+-------+------+--------------
+20	8	8	0	solid	0	-	metal1
+21	16	16	0	solid	0	-	metal2
+22	32	32	0	stipple	23	-	metal3

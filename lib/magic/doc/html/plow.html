@@ -1,0 +1,94 @@
+
+
+
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>plow</H2>
+<HR>
+Layout stretching and compaction
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>plow</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> <I>direction</I>
+	   <DD> Where <I>direction</I> may be any valid Manhattan
+		<A HREF=direction.html>direction</A>, and
+		causes the plow to be moved in that direction.
+	   <DT> <B>boundary</B>
+	   <DD> Set boundary around area plowing may affect
+	   <DT> <B>help</B>
+	   <DD>	Print help information
+	   <DT> <B>horizon</B> <I>n</I>
+	   <DD> Set the horizon for jog introduction to <I>n</I> lambda units.
+	   <DT> <B>jogs</B>
+	   <DD> Reenable jog insertion (set horizon to 0)
+	   <DT> <B>selection</B> [<I>direction</I> [<I>distance</I>]]
+	   <DD> Plow the selection in the indicated <A HREF=direction.html>
+		<I>direction</I></A> for the indicated
+		<A HREF=distance.html><I>distance</I></A>.
+	   <DT> <B>straighten</B>
+	   <DD> Automatically straighten jogs after each plow
+	   <DT> <B>noboundary</B>
+	   <DD> Remove boundary around area plowing may affect
+	   <DT> <B>nojogs</B>
+	   <DD> Disable jog insertion (infinite jog horizon)
+	   <DT> <B>nostraighten</B>
+	   <DD> Don't automatically straighten jogs after each plow
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>plow</B> command implements a sophisticated method of
+      stretching and compacting layout.  The cursor box can be
+      used to shove layout in one direction or another, preserving
+      net connectivity through the modifications. <P>
+
+      Results of <B>plow</B> are usually messier than most VLSI
+      designers care to cope with.  The best cell compaction is
+      realized with careful floorplanning considerations, not
+      brute force pushing and shoving.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>plow</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=straighten.html><B>straighten</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 8:32pm <P>
+</BODY>
+</HTML>

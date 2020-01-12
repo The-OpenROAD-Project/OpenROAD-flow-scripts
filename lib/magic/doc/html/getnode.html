@@ -1,0 +1,77 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>getnode</H2>
+<HR>
+Get node names of all selected paint
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>getnode</B> [<I>option</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> <B>abort</B> [<I>string</I>]
+	   <DD> Stop the <B>getnode</B> search when the node name
+		<I>string</I> is encountered.
+	   <DT> <B>alias</B> [<B>on</B>|<B>off</B>]
+	   <DD> If <B>on</B>, reports all names found for the node.  If
+		<B>off</B>, only the canonical name is returned.
+	   <DT> <B>globals</B> [<B>on</B>|<B>off</B>]
+	   <DD> If <B>on</B>, any global node name (names ending with "!")
+		will terminate the search, returning the global name.
+		If <B>off</B>, global names are treated like local
+		node names.
+	   <DT> <B>fast</B>
+	   <DD> Return the first name encountered, rather than finding
+		the canonical node name.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>getnode</B> command queries areas of selected paint for
+      netlist node names.  The converse of this command is <B>goto</B>.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>getnode</B> is implemented as a built-in command in <B>magic</B>.
+      The node name search uses the same algorithm as the netlist
+      connectivity selection function, and for very large networks, can
+      be quite slow.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=goto.html><B>goto</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 6, 2004 at 6:01am <P>
+</BODY>
+</HTML>

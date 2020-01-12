@@ -1,0 +1,61 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=../graphics/blpaper.gif>
+<H1> <IMG SRC=../graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=../graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>shownet</H2>
+<HR>
+Highlight edit cell paint connected to paint under the box.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>shownet</B> [<B>erase</B>]
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>shownet</B> command highlights (using highlights)
+      the network connected to any painted material under the box.
+      Although the highlights look like feedback entries, they are
+      actually separate, and cannot be removed by the
+      "<B>feedback clear</B>".  The command option
+      "<B>shownet erase</B>" will remove the highlighted entries.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>shownet</B> is implemented as a built-in <B>netlist</B>
+	window command in <B>magic</B>.  It can only be invoked from
+	a window created with the <B>specialopen netlist</B> command.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=showterms.html><B>showterms</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=../graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=../commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October, 2004<P>
+</BODY>
+</HTML>

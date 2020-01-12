@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>updatedisplay</H2>
+<HR>
+Force display update, or suspend/resume updates
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>updatedisplay</B> [<B>suspend</B>|<B>resume</B>] <BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>updatedisplay</B> command allows the display redraw to
+      be suspended and resumed.  The main situation where this is
+      useful is inside a script or series of commands, where it is
+      not desired to have the display refresh at each step.  Areas
+      needing to be redrawn will accumulate and be processed all at
+      once when <B>updatedisplay resume</B> is called. <P>
+ 
+      Calls to <B>updatedisplay suspend</B> can be nested, so that
+      the display will not update until the same number of calls
+      to <B>updatedisplay resume</B> have been encountered. <P>
+
+      Without arguments, <B>updatedisplay</B> forces an immediate
+      display redraw.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>updatedisplay</B> is implemented as a built-in window command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=suspendall.html><B>suspendall</B></A> <BR>
+      <A HREF=resumeall.html><B>resumeall</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 9, 2004 at 1:45am <P>
+</BODY>
+</HTML>

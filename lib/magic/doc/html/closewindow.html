@@ -1,0 +1,74 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>closewindow</H2>
+<HR>
+Close a (non-GUI) window
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>O</B> implements the command <B>closewindow</B>.  This
+      macro is disabled when using the GUI wrapper.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>closewindow</B> [<I>name</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>name</I> is the name of a window.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>closewindow</B> command closes a window.  Without
+      arguments, if only one window is present, that window will
+      be closed.  Otherwise, if multiple windows are present, the
+      window to be closed must be specified by name. <P>
+      <B>closewindow</B> closes both layout windows created with
+      the <B>openwindow</B> command or windows created with the
+      <B>specialopen</B> command.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>closewindow</B> is implemented as a built-in <B>magic</B>
+      window command.  It should not be used with the GUI wrapper
+      (invoked with <B>magic -w</B>); instead, the <B>closewrapper</B>
+      function should be used.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=openwindow.html><B>openwindow</B></A> <BR>
+      <A HREF=specialopen.html><B>specialopen</B></A> <BR>
+      <A HREF=closewrapper.html><B>closewrapper</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> November 10, 2004 at 6:08pm <P>
+</BODY>
+</HTML>

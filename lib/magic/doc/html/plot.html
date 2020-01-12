@@ -1,0 +1,163 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>plot</H2>
+<HR>
+Hardcopy plotting
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>plot</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> <B>postscript</B> <I>file</I> [<I>layers</I>]
+	   <DD> Generate a PostScript file of layout underneath the box.
+	   <DT> <B>pnm</B> <I>file</I> [<I>scale</I> [<I>layers</I>]]
+	   <DD> Generate a <TT>.pnm</TT> ("portable anymap") file of
+		layout underneath the box.  The output size is propotional
+		to <I>scale</I>, where a scale of 1 is one output pixel per
+		<B>magic</B> internal unit.  The default <I>scale</I>
+		value, if unspecified, is 0.5.
+	   <DT> <B>parameters</B> [<I>name value</I>]
+	   <DD> Set or print out plotting parameters (see Summary below).
+	   <DT> <B>help</B>
+	   <DD> Print help information
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>plot</B> command generates hardcopy plots of a layout.
+      The use of <B>plot</B> for any particular output format requires
+      that the parameters of the format be defined in the <B>plot</B>
+      section of the technology file.  However, from magic-7.3.56, the
+      PNM handler will create a default set of output styles from the
+      existing layout styles for the technology.  This makes <B>plot
+      pnm</B> compatible with <I>all</I> technology files, regardless
+      of whether or not a section exists for "<B>style pnm</B>". <P>
+
+      Each <B>plot</B> format has its own set of parameters, but all
+      parameters are controlled with the <B>plot parameters</B> option.
+      Valid parameters and their defaults are as follows:
+      <BLOCKQUOTE>
+	General parameters:
+        <TABLE BORDER=0> 
+	  <TR> <TD> <I>parameter name</I> </TD><TD> <I>default value</I> </TD> </TR>
+	  <TR> <TD> <B>showCellNames</B> </TD><TD> <B>true</B> </TD> </TR>
+        </TABLE>
+	PostScript parameters:
+        <TABLE BORDER=0> 
+	  <TR> <TD> <I>parameter name</I> </TD><TD> <I>default value</I> </TD>
+		<TD> <I>explanation</I> </TD> </TR>
+	  <TR> <TD> <B>PS_cellIdFont</B> </TD><TD> <B>/Helvetica</B> </TD>
+		<TD> Font used for writing cell use IDs</TD></TR>
+	  <TR> <TD> <B>PS_cellNameFont</B> </TD><TD> <B>/HelveticaBold</B> </TD>
+		<TD> Font used for writing cell definition names</TD></TR>
+	  <TR> <TD> <B>PS_labelFont</B> </TD><TD> <B>/Helvetica</B> </TD>
+		<TD> Font used for writing label text</TD></TR>
+	  <TR> <TD> <B>PS_cellIdSize</B> </TD><TD> <B>8</B> </TD>
+		<TD> Font size for writing cell use IDs (in points)</TD></TR>
+	  <TR> <TD> <B>PS_cellNameSize</B> </TD><TD> <B>12</B> </TD>
+		<TD> Font size for writing cell definition names (in points)</TD></TR>
+	  <TR> <TD> <B>PS_labelSize</B> </TD><TD> <B>12</B> </TD>
+		<TD> Font size for writing label text (in points)</TD></TR>
+	  <TR> <TD> <B>PS_boundary</B> </TD><TD> <B>true</B> </TD>
+		<TD> Whether to draw boundaries around layers in addition to
+		     fill patterns</TD></TR>
+	  <TR> <TD> <B>PS_width</B> </TD><TD> <B>612 (8.5in)</B> </TD>
+		<TD> Page width of the target output</TD></TR>
+	  <TR> <TD> <B>PS_height</B> </TD><TD> <B>792 (11in)</B> </TD>
+		<TD> Page height of the target output</TD></TR>
+	  <TR> <TD> <B>PS_margin</B> </TD><TD> <B>72 (1in)</B> </TD>
+		<TD> Minimum margin to allow on all sides of the output page</TD></TR>
+        </TABLE>
+	PNM parameters:
+        <TABLE BORDER=0> 
+	  <TR> <TD> <I>parameter name</I> </TD><TD> <I>default value</I> </TD>
+		<TD> <I>explanation</I> </TD> </TR>
+	  <TR> <TD> <B>pnmmaxmem</B> </TD><TD> <B>65536</B> </TD>
+		<TD>Maximum memory (in KB) to use to generate output.  Larger
+		    values allow larger chunks of the layout to be processed
+		    at a time.  Normally, anything larger than the default
+		    will just take a long time to render, so it's better
+		    to leave it alone and let the <B>plot pnm</B> routine
+		    downsample the image to fit in memory if the size
+		    of the layout requires it.</TD> </TR>
+	  <TR> <TD> <B>pnmbackground</B> </TD><TD> <B>255</B> </TD>
+		<TD>Value of the background, where 0=black and 255=white.
+		    White is default to match the printed page, which is
+		    where the plots usually end up.  A value of 200 is
+		    approximately the default background color in <B>magic</B>.
+		    </TD> </TR>
+	  <TR> <TD> <B>pnmdownsample</B> </TD><TD> <B>0</B> </TD>
+		<TD>Number of bits to downsample the original layout.
+		    In the first pass, one pixel is generated for each
+		    <I>n</I> magic internal units in each of x and y,
+		    where <I>n</I> is the downsampling value.
+		    Each downsampling bit therefore represents a factor
+		    of 4 in decreased computation time.
+		    Generally speaking, downsampling causes information to
+		    be lost in the translation from layout to the PNM file.
+		    However, if the grid has been scaled from the original
+		    lambda, then downsampling up to the scale factor will
+		    have no impact on the output other than speeding up
+		    the rendering (because the minimum feature size is
+		    still in lambda, so no feature will be overstepped by
+		    the downsampling).  For example, for a grid scaling
+		    of 1:10 the proper downsampling would be 3 bits.
+		    Note that layouts that are too large for the allocated
+		    memory blocksize <B>pnmmaxmem</B> will force
+		    downsampling regardless of the value of
+		    <B>pnmdownsample</B>.  </TD> </TR>
+        </TABLE>
+      </BLOCKQUOTE>
+
+      PostScript plotting is best suited for drawing small layouts with
+      relatively few components.  PNM plotting is best suited for drawing
+      large layouts.  For chip-size layouts, the PNM plots are virtually
+      identical to chip photographs.  From magic version 7.3.56, plotting
+      PNM files requires no special entries in the technology file.
+      Although such entries can fine-tune the output, this is usually
+      not necessary.  Also, since version 7.3.56, magic makes intelligent
+      decisions about memory usage, so it's generally not necessary to
+      change the PNM plot parameters.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>plot</B> is implemented as a built-in command in <B>magic</B>. <P>
+      Original plot styles <B>versatec</B> and <B>gremlin</B> have been
+      removed, but shells of the code are retained so that magic doesn't
+      complain when encountering styles for these types in a technology
+      file.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 3:24pm <P>
+</BODY>
+</HTML>

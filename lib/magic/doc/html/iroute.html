@@ -1,0 +1,124 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>iroute</H2>
+<HR>
+Do interactive point-to-point routing from the pointer cursor to the
+cursor box
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>iroute</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT><B>contacts</B> [<I>type</I>] [<I>parameter</I>] [<I>value</I>...]
+	   <DD> Set route-contact parameters. <I>parameter</I> may be one of
+		the following keywords:
+		<DL>
+		  <DT> <B>active</B>
+		  <DD>
+		  <DT> <B>width</B>
+		  <DD>
+		  <DT> <B>cost</B>
+		  <DD>
+		</DL>
+	   <DT> <B>help</B> [<I>option_name</I>]
+	   <DD> Summarize iroute subcommands
+	   <DT> <B>layers</B> [<I>type</I>] [<I>parameter</I>] [<I>value</I>...]
+	   <DD> Set route-layer parameters.  <I>parameter</I> may be one of
+		the following keywords:
+		<DL>
+		  <DT> <B>active</B>
+		  <DD>
+		  <DT> <B>width</B>
+		  <DD>
+		  <DT> <B>hCost</B>
+		  <DD>
+		  <DT> <B>vCost</B>
+		  <DD>
+		  <DT> <B>jogCost</B>
+		  <DD>
+		  <DT> <B>hintCost</B>
+		  <DD>
+		</DL>
+	   <DT> <B>route</B> <I>node_name</I>...
+	   <DD> Connect point to named node(s)
+	   <DT> <B>saveParameters</B>
+	   <DD> Write out all irouter parameters.  These are written out
+		as command calls so they can be read back with the Tcl
+		<B>source</B> command.
+	   <DT> <B>search</B> <B>rate</B>|<B>width</B>
+	   <DD> Set parameters controlling the internal search for routes
+	   <DT> <B>spacings</B> <I>type</I>
+	   <DD> Set minimum spacing between route-type and arbitrary type
+	   <DT> <B>verbosity</B> <I>level</I>
+	   <DD> Control the amount of messages printed
+	   <DT> <B>version</B>
+	   <DD> Identify irouter version
+	   <DT> <B>wizard</B> <I>parameter</I>
+	   <DD> Set miscellaneous parameters.  <I>parameter</I> may be one of
+		the following keywords:
+		<DL>
+		  <DT> <B>bloom</B>
+		  <DD>
+		  <DT> <B>boundsIncrement</B>
+		  <DD>
+		  <DT> <B>estimate</B>
+		  <DD>
+		  <DT> <B>expandDests</B>
+		  <DD>
+		  <DT> <B>penalty</B>
+		  <DD>
+		  <DT> <B>penetration</B>
+		  <DD>
+		  <DT> <B>window</B>
+		  <DD>
+		</DL>
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>iroute</B> command is. . . 
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>iroute</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=route.html><B>route</B></A> <BR>
+      <A HREF=garoute.html><B>garoute</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 6, 2004 at 11:11pm <P>
+</BODY>
+</HTML>

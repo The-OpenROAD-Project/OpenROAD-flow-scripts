@@ -1,0 +1,4 @@
+#       $(CAD_ROOT)/magic/sys/.initrc
+#       System wide initialization file for magic
+#	May be used to override default startup
+catch {source ${CAD_ROOT}/magic/sys/site.pre}

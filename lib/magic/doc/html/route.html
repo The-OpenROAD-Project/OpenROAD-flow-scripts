@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>route</H2>
+<HR>
+Route the current cell
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>route</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> <B>end</B> <I>value</I>
+	   <DD> Set channel router end constant.  <I>value</I> type is real,
+		and defaults to 1.0.
+	   <DT> <B>help</B>
+	   <DD>	Print help information
+	   <DT> <B>jog</B> <I>length</I>
+	   <DD> Set minimum jog length (integer grid units)
+	   <DT> <B>metal</B>
+	   <DD> Toggle metal maximization (default is "on").
+	   <DT> <B>netlist</B> <I>file</I>
+	   <DD> Set current netlist (default NULL)
+	   <DT> <B>obstacle</B> <I>value</I>
+	   <DD> Set obstacle constant.  <I>value</I> type is real,
+		and defaults to 0.7.
+	   <DT> <B>origin</B> [<I>x y</I>]
+	   <DD> Print or set routing grid origin
+	   <DT> <B>stats</B>
+	   <DD> Print and clear previous route statistics
+	   <DT> <B>settings</B>
+	   <DD> Show router parameters
+	   <DT> <B>steady</B> <I>value</I>
+	   <DD> Set steady net constant.  <I>value</I> type is integer,
+		and defaults to 1.
+	   <DT> <B>tech</B>
+	   <DD> Show router parameters read from the technology file.
+	   <DT> <B>vias</B> <I>value</I>
+	   <DD> Set metal maximization via limit (grid units).  <I>value</I>
+		type is integer, and defaults to 2.
+	   <DT> <B>viamin</B>
+	   <DD> Via minimization
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>route</B> command performs standard routing of networks
+      in a netlist.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>route</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=iroute.html><B>iroute</B></A> <BR>
+      <A HREF=garoute.html><B>garoute</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 1:47am <P>
+</BODY>
+</HTML>

@@ -1,0 +1,86 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>move</H2>
+<HR>
+Move the cursor box and the selection.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>m</B> implements the command <B>move</B> (no arguments).<BR>
+      Key macro <I>Keypad-</I><B>8</B> implements the command <B>move n 1</B> <BR>
+      Key macro <I>Keypad-</I><B>6</B> implements the command <B>move e 1</B> <BR>
+      (and so forth for all 8 compass rose directions).
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>move</B> [<I>option</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	    <DT> <A HREF=direction.html><I>direction</I></A>
+		[<A HREF=distance.html><I>distance</I></A>]
+	    <DD> Move the selection relative to the original
+		 position in the direction <I>direction</I> by
+		 an amount <I>distance</I>.
+	    <DT> <B>to</B> <I>x y</I>
+	    <DD> Move the selection to the coordinate location
+		 specified by the coordinate pair <I>x y</I>.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>move</B> command erases the current selection from
+      its current position and moves it according to the command
+      arguments.
+      Without arguments, the lower-left hand corner of the
+      selection is moved to the current cursor position (the X11
+      cursor, not the <B>magic</B> "cursor box").  With arguments
+      <I>direction</I> and <I>distance</I>, the selection is moved
+      relative to the original in the indicated direction by the
+      indicated amount.  The default distance is 1 unit (usually
+      lambda; see <A HREF=distance.html><I>distance</I></A> for
+      further explication).<P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>move</B> is implemented as a built-in <B>magic</B> command.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=direction.html><I>direction</I></A><BR>
+      <A HREF=distance.html><I>distance</I></A><BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 7, 2004 at 3:19am <P>
+</BODY>
+</HTML>

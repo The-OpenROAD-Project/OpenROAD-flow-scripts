@@ -1,0 +1,80 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>specialopen</H2>
+<HR>
+Open a window of a specific type.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>specialopen</B> <I>type</I> [<I>arguments</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>type</I> may be one of the following:
+	 <DL>
+	   <DT> <B>layout</B>
+	   <DD> Open a layout window.  Equivalent to the
+		<B>openwindow</B> command.
+	   <DT> <B>wind3d</B> <I>tk_path_name</I>
+	   <DD> Generate the 3D window.  Only available when using
+		OpenGL graphics ("<B>magic -d OGL</B>").  The
+		<I>tk_path_name</I> argument allows the window to
+		be inserted into a Tk frame instead of generated
+		directly on the desktop.
+	   <DT> <B>color</B>
+	   <DD> Open a window allowing layout colors to be edited.
+	   <DT> <B>netlist</B>
+	   <DD> Open a window allowing interactive definition of
+		netlists.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>specialopen</B> command opens one of several special-purpose
+      windows known to <B>magic</B>, as well as the default layout window.
+      Each window has a set of commands associated with it.  The layout
+      window commands are listed in this reference guide along with the
+      general-purpose commands, because the layout window is the most
+      common type.  For the command sets of the other special-purpose
+      windows, see the sections on the colormap, netlist, and 3D
+      rendering.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>specialopen</B> is implemented as a built-in window command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=openwindow.html><B>openwindow</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 7:29am <P>
+</BODY>
+</HTML>

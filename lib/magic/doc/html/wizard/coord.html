@@ -1,0 +1,61 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=../graphics/blpaper.gif>
+<H1> <IMG SRC=../graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=../graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>*coord</H2>
+<HR>
+Show coordinates of setpoint, cursor box, root cell, and edit cell.
+<HR>
+
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>*coord</B>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>*coord</B> command shows coordinates of the current set
+      point (point tool), cursor box (box tool), root cell, and edit cell.
+      Coordinate values are prefixed as follows:
+      <DL>
+	<DT> <B>e</B>
+	<DD> Edit cell coordinate system
+	<DT> <B>r</B>
+	<DD> Root cell coordinate system
+      </DL>
+      If the cursor is not in the window in which the command has been
+      executed, then the <B>point</B> is not reported.  If the box
+      does not exist in the window, then the <B>box</B> is not reported.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>*coord</B> is implemented as a built-in "wizard" command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=../graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=../commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October, 2004<P>
+</BODY>
+</HTML>

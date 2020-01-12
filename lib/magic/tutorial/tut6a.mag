@@ -1,0 +1,17 @@
+magic
+tech scmos
+timestamp 500618582
+<< error_p >>
+rect -4 15 -2 17
+rect -1 12 1 15
+rect 9 12 12 14
+rect 9 8 15 11
+rect -5 2 8 4
+<< metal1 >>
+rect -7 12 -2 17
+rect -1 11 2 15
+rect 9 12 12 16
+rect 9 8 12 11
+rect 12 5 15 8
+rect -5 1 8 2
+<< end >>

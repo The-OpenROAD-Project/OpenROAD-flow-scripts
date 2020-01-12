@@ -1,0 +1,703 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.4 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.4">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H1> Magic User's Guide </H1>
+
+<H3> Table of Contents </H3> <P>
+<BLOCKQUOTE>
+<A HREF="#Usage">Command-line invocation (usage)</A><BR>
+<A HREF="#Script">Script Invocation</A><BR>
+<A HREF="#Commands">Magic command summary</A><BR>
+</BLOCKQUOTE>
+
+<H2> <A NAME="Screenshot"> Obligatory Screenshot </H2>
+
+<BLOCKQUOTE>
+   <A HREF=../giffiles/magic-screenshot.gif>Screenshot of Magic</A>
+   <BLOCKQUOTE>
+       This screenshot, from Magic version 7.2, shows off a number of
+       features of the Tcl version, including the cell manager window,
+       the tech manager window, the toolbar, the console command-line
+       entry window, and popup dialog boxes.  Also shows off the
+       version 7.1+ features of the OpenGL display and the non-Manhattan
+       geometry extension.
+   </BLOCKQUOTE>
+</BLOCKQUOTE>
+
+<H2> <A NAME="Usage">Magic version 7.4 Usage (command-line invocation) </H2>
+
+<BLOCKQUOTE>
+	Basic usage: <BR><BR>
+
+	<TABLE border="1" frame="box" rules="none" cellpadding="6"
+		bgcolor="white">
+	<TBODY>
+	<TR><TD>
+	<TABLE border="0" frame="box" rules="none" cellspacing="0"
+		cellpadding="0" bgcolor="white">
+	<TBODY>
+	<TR> <TD> <B> magic </B>
+		[<B>-noc</B>[<B>onsole</B>]]
+		[<B>-now</B>[<B>rapper</B>]]
+		[<B>-d</B> <I>devType</I>]
+		[<B>-T</B> <I>technology</I>]
+		[<I>file</I>]
+		</TD> </TR>
+	</TBODY>
+	</TABLE>
+	</TD></TR></TBODY></TABLE> <BR>
+
+	where:
+	<BLOCKQUOTE>
+	<DL>
+	<DT><B>-noconsole</B>
+	<DD>	(Tcl version only) Uses the calling terminal
+		for terminal-based command-line input.  Otherwise, a Tk
+		console window is used.
+	<DT><B>-nowrapper</B>
+	<DD>	(Tcl version only) Magic layout windows use
+		the GUI wrapper, including cell and technology manager
+		windows, layer toolbar, and file menu.
+	<DT><B>-d</B> <I>devType</I>
+	<DD>	(all versions) Select the graphics interface at runtime.
+		Specifying an invalid <I>devType</I> will result in a list
+		of known types.  The possible values of <I>devType</I> are
+		determined at compile time, but the usual ones are
+		<B><TT>NULL</TT></B> (no graphics), <B><TT>X11</TT></B>, and
+		<B><TT>OpenGL</TT></B>.  <TT>X11</TT> is the usual default.
+	<DT><B>-T</B> <I>technology</I>
+	<DD>	(all versions)
+		Select the appropriate technology (<TT>.tech</TT>) file.
+		At present (this is on the to-do list), magic cannot change
+		technology after startup.  So the technology file corresponding
+		to the layout to be loaded must be supplied to the command line
+		at startup.  The default technology is <TT>scmos</TT>, which
+		is included with the magic source distribution.  The complete
+		list of available technology files depends on what has been 
+		installed on the system (see the <A HREF=tech.html>technology
+		file</A> page for details).
+	<DT><I>file</I>
+	<DD>	(all versions) Load the layout (<TT>.mag</TT>) file <I>file</I>
+		into the layout window on startup.
+	</BLOCKQUOTE>
+
+	Other standard usage: <BR><BR>
+
+	<TABLE border="1" frame="box" rules="none" cellpadding="6"
+		bgcolor="white">
+	<TBODY>
+	<TR><TD>
+	<TABLE border="0" frame="box" rules="none" cellspacing="0"
+		cellpadding="0" bgcolor="white">
+	<TBODY>
+	<TR> <TD> <B> magic </B>
+		[<B>-dnull</B>]
+		[<I>file</I>]
+	</TBODY>
+	</TABLE>
+	</TD></TR></TBODY></TABLE> <BR>
+
+	<TABLE border="1" frame="box" rules="none" cellpadding="6"
+		bgcolor="white">
+	<TBODY>
+	<TR><TD>
+	<TABLE border="0" frame="box" rules="none" cellspacing="0"
+		cellpadding="0" bgcolor="white">
+	<TBODY>
+	<TR> <TD> <B> magic </B>
+		[<B>-r</B>[<B>ecover</B>]]
+	</TBODY>
+	</TABLE>
+	</TD></TR></TBODY></TABLE> <BR>
+
+	where options are as follows:
+
+	<BLOCKQUOTE>
+	   <TT>-recover</TT> <BR>
+		<BLOCKQUOTE>
+		This option recovers a layout after a crash.  Note that
+		crash recovery files are only <I>automatically</I>
+		created and updated by the Tcl/Tk version of magic.
+		A single file containing multiple layouts is placed in
+		the <TT>/tmp</TT> directory.  Upon normal program exit,
+		it is removed.  However, if magic terminates abnormally
+		due to a program bug, reception of a termination signal
+		from the operating system, or a system crash or shutdown,
+		the file will remain and can be recovered.  It is
+		<I>very</I> important that you recover the file from the
+		same directory where it was initially created;  otherwise,
+		if startup conditions are different (such as a different
+		technology specified), layout may be lost.
+		</BLOCKQUOTE>
+
+	   <TT>-dnull</TT> <I>file</I> <BR>
+		<BLOCKQUOTE>
+		This option starts magic without graphics.  It is
+		appropriate for running magic in batch mode from a
+		script.  Note that there is a subtle difference between
+		options "<TT>-d null</TT>" and "<TT>-dnull</TT>".  The
+		former starts magic without the ability to create a
+		layout window, but still invokes the graphics
+		initialization routines (in the Tcl/Tk version, a Tk
+		window may briefly appear).  The latter form specifically
+		ignores all graphics and therefore runs with less
+		overhead on startup.
+		</BLOCKQUOTE>
+		
+	</BLOCKQUOTE>
+
+	Complete usage information: <BR><BR>
+
+	<TABLE border="1" frame="box" rules="none" cellpadding="6"
+		bgcolor="white">
+	<TBODY>
+	<TR><TD>
+	<TABLE border="0" frame="box" rules="none" cellspacing="0"
+		cellpadding="0" bgcolor="white">
+	<TBODY>
+	<TR> <TD> <B> magic </B>
+		[<B>-noc</B>[<B>onsole</B>]]
+		[<B>-now</B>[<B>rapper</B>]]
+		[<B>-nowindow</B>]
+		[<B>-d</B> <I>devType</I>]
+		[<B>-T</B> <I>technology</I>]
+		[<B>-m</B> <I>monType</I>]
+		[<B>-D</B>]
+		[<I>file</I>]
+		</TD> </TR>
+	</TBODY>
+	</TABLE>
+	</TD></TR></TBODY></TABLE> <BR>
+
+	where the additional options not covered above are: <BR><BR>
+
+	<BLOCKQUOTE>
+	<TT>-nowindow</TT> <BR>
+		<BLOCKQUOTE>
+		(Tcl version only) Run without displaying an initial layout
+		window.  This is used mainly for GUI wrapper scripts which
+		like to generate and handle their own windows.
+		</BLOCKQUOTE>
+	<TT>-m</TT> <I>monType</I> <BR>
+		<BLOCKQUOTE>
+		(obscure) <I>monType</I> names a monitor type.
+		This is used in the search for the colomap file name,
+		which is designated <TT>
+		&lt;tech&gt;.&lt;planes&gt;.&lt;mon&gt;.cmap1</TT>.
+		The default is "<B><TT>std</TT></B>" (corresponding to
+		colormap file "<TT>mos.7bit.std.cmap1</TT>".  The only other
+		monitor type for which colormaps exist in the distribution
+		is "<TT>mraster</TT>".  This provides a way for users to
+		override the system color assignments.
+		</BLOCKQUOTE>
+	<TT>-D</TT> <BR>
+		<BLOCKQUOTE>
+		(all versions) Run in Debug mode.
+		</BLOCKQUOTE>
+	</BLOCKQUOTE>
+	
+	Obsolete usage information: <BR><BR>
+
+	<TABLE border="1" frame="box" rules="none" cellpadding="6"
+		bgcolor="white">
+	<TBODY>
+	<TR><TD>
+	<TABLE border="0" frame="box" rules="none" cellspacing="0"
+		cellpadding="0" bgcolor="white">
+	<TBODY>
+	<TR> <TD> <B> magic </B>
+		[<TT>-g</TT> <I>gPort</I>]
+		[<TT>-i</TT> <I>tabletPort</I>]
+		[<TT>-F</TT> <I>objFile</I> <I>saveFile</I>]
+		...
+	</TBODY>
+	</TABLE>
+	</TD></TR></TBODY></TABLE> <BR>
+
+	where the additional options not covered above are: <BR><BR>
+
+	<BLOCKQUOTE>
+	<TT>-g</TT> <I>gPort</I> <BR>
+		<BLOCKQUOTE>
+		(largely obsolete) <I>gPort</I> names a device to use
+		for the display.  This was generally used in the past with
+		dual-monitor systems, especially Sun systems in which the
+		layout display might go to <TT>/dev/fb</TT>.
+		</BLOCKQUOTE>
+	<TT>-i</TT> <I>tabletPort</I> <BR>
+		<BLOCKQUOTE>
+		(largely obsolete) <I>tabletPort</I> names a device to use
+		for graphics input.  This has not been tested with modern
+		graphics tablet devices.  It is ignored by the X11 and OpenGL
+		display interfaces.
+		</BLOCKQUOTE>
+	<TT>-F</TT> <I>objFile</I> <I>saveFile</I> <BR>
+		<BLOCKQUOTE>
+		(largely obsolete) Create an executable file of
+		the current magic process, a core image snapshot
+		taken after all initialization.  <I>objFile</I>
+		is the name of the original executable, and the
+		image will be saved in <I>saveFile</I>.  This
+		only works on VAXen and SUNs running an old SunOS
+		(using a.out executables).
+		</BLOCKQUOTE>
+	</BLOCKQUOTE>
+	
+</BLOCKQUOTE>
+
+<H2> <A NAME="Script">Script invocation </H2>
+<BLOCKQUOTE>
+   Often it is helpful to have a shell script invoke magic with specific
+   options to perform tasks such as generating a GDS file for tapeout.
+   The following example code clip imports GDS into magic as a "vendor
+   cell":
+
+   <BLOCKQUOTE>
+	<TABLE border="1" frame="box" rules="none" cellpadding="6"
+		bgcolor="beige">
+	<TBODY>
+	<TR><TD>
+	<TABLE border="0" frame="box" rules="none" cellspacing="0"
+		cellpadding="0" bgcolor="white">
+	<TBODY>
+	<TR> <TD> magic  -dnull -noconsole &lt;&lt; EOF </TD> </TR>
+	<TR> <TD> drc off </TD> </TR>
+	<TR> <TD> box 0 0 0 0 </TD> </TR>
+	<TR> <TD> load vtop.mag -force </TD> </TR>
+	<TR> <TD> drc off </TD> </TR>
+	<TR> <TD> gds readonly true  </TD> </TR>
+	<TR> <TD> gds rescale false </TD> </TR>
+	<TR> <TD> gds read ${cellname}.gds </TD> </TR>
+	<TR> <TD> cellname rename ${cellname} vtmp </TD> </TR>
+	<TR> <TD> load vtmp </TD> </TR>
+	<TR> <TD> select top cell </TD> </TR>
+	<TR> <TD> set pname [lindex [cellname list children] 0] </TD> </TR>
+	<TR> <TD> cellname rename \\\$pname ${cellname} </TD> </TR>
+	<TR> <TD> select cell \\\${pname}_0 </TD> </TR>
+	<TR> <TD> identify ${cellname}_0 </TD> </TR>
+	<TR> <TD> writeall force ${cellname} </TD> </TR>
+	<TR> <TD> quit -noprompt </TD> </TR>
+	<TR> <TD> EOF </TD> </TR>
+	</TBODY>
+	</TABLE>
+	</TD></TR></TBODY></TABLE> <BR>
+   </BLOCKQUOTE>
+
+</BLOCKQUOTE>
+
+<H2> <A NAME="Commands">General window commands (for all windows) </H2>
+<BLOCKQUOTE>
+<TABLE border="1" frame="box" rules="none" width="90%" cellspacing="0"
+	cellpadding="5" bgcolor="#ccffff">
+<TBODY>
+<TR>
+<TD> <A HREF=center.html> <B>center</B></A> </TD>
+<TD> <A HREF=closewindow.html> <B>closewindow</B></A> </TD>
+<TD> <A HREF=cursor.html> <B>cursor</B></A> </TD>
+</TR>
+<TR>
+<TD> <A HREF=help.html> <B>help</B></A> </TD>
+<TD> <A HREF=imacro.html> <B>imacro</B></A> </TD>
+<TD> <A HREF=logcommands.html> <B>logcommands</B></A> </TD>
+</TR>
+<TR>
+<TD> <A HREF=macro.html> <B>macro</B></A> </TD>
+<TD> <A HREF=openwindow.html> <B>openwindow</B></A> </TD>
+<TD> <A HREF=redo.html> <B>redo</B></A> </TD>
+</TR>
+<TR>
+<TD> <A HREF=redraw.html> <B>redraw</B></A> </TD>
+<TD> <A HREF=scroll.html> <B>scroll</B></A> </TD>
+<TD> <A HREF=setpoint.html> <B>setpoint</B></A> </TD>
+</TR>
+<TR>
+<TD> <A HREF=sleep.html> <B>sleep</B></A> </TD>
+<TD> <A HREF=specialopen.html> <B>specialopen</B></A> </TD>
+<TD> <A HREF=quit.html> <B>quit</B></A> </TD>
+</TR>
+<TR>
+<TD> <A HREF=undo.html> <B>undo</B></A> </TD>
+<TD> <A HREF=updatedisplay.html> <B>updatedisplay</B></A> </TD>
+<TD> <A HREF=version.html> <B>version</B></A> </TD>
+</TR>
+<TR>
+<TD> <A HREF=view.html> <B>view</B></A> </TD>
+<TD> <A HREF=windowborder.html> <B>windowborder</B></A> </TD>
+<TD> <A HREF=windowcaption.html> <B>windowcaption</B></A> </TD>
+</TR>
+<TR>
+<TD> <A HREF=windownames.html> <B>windownames</B></A> </TD>
+<TD> <A HREF=windowscrollbars.html> <B>windowscrollbars</B></A> </TD>
+<TD> <A HREF=xview.html> <B>xview</B></A> </TD>
+</TR>
+<TR>
+<TD> <A HREF=zoom.html> <B>zoom</B></A> </TD>
+<TD> <A HREF=tk_path_name.html> <I>tk_path_name</I></A> </TD>
+<TD> </TD>
+</TR>
+</TBODY>
+</TABLE>
+</BLOCKQUOTE>
+
+<H2> Layout window commands and window-less commands </H2>
+<BLOCKQUOTE>
+<TABLE border="1" frame="box" rules="none" width="90%" cellspacing="0"
+	cellpadding="5" bgcolor="#ccccff">
+<TBODY>
+<TR>
+<TD> <A HREF=addcommandentry.html><B>addcommandentry</B></A><TD>
+<TD> <A HREF=addpath.html> <B>addpath</B></A><TD>
+<TD> <A HREF=array.html> <B>array</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=box.html> <B>box</B></A><TD>
+<TD> <A HREF=calma.html> <B>calma</B></A><TD>
+<TD> <A HREF=caption.html> <B>caption</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=cellmanager.html> <B>cellmanager</B></A><TD>
+<TD> <A HREF=cellname.html> <B>cellname</B></A><TD>
+<TD> <A HREF=cellsearch.html> <B>cellsearch</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=channels.html> <B>channels</B></A><TD>
+<TD> <A HREF=cif.html> <B>cif</B></A><TD>
+<TD> <A HREF=clockwise.html> <B>clockwise</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=closewrapper.html> <B>closewrapper</B></A><TD>
+<TD> <A HREF=contact.html> <B>contact</B></A><TD>
+<TD> <A HREF=copy.html> <B>copy</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=corner.html> <B>corner</B></A><TD>
+<TD> <A HREF=crash.html> <B>crash</B></A><TD>
+<TD> <A HREF=crashbackups.html> <B>crashbackups</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=crosshair.html> <B>crosshair</B></A><TD>
+<TD> <A HREF=def.html> <B>def</B></A><TD>
+<TD> <A HREF=delete.html> <B>delete</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=deletecommandentry.html> <B>deletecommandentry</B></A><TD>
+<TD> <A HREF=down.html> <B>down</B></A><TD>
+<TD> <A HREF=drc.html> <B>drc</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=dump.html> <B>dump</B></A><TD>
+<TD> <A HREF=edit.html> <B>edit</B></A><TD>
+<TD> <A HREF=element.html> <B>element</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=erase.html> <B>erase</B></A><TD>
+<TD> <A HREF=expand.html> <B>expand</B></A><TD>
+<TD> <A HREF=ext.html> <B>ext</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=ext2sim.html> <B>ext2sim</B></A><TD>
+<TD> <A HREF=ext2spice.html> <B>ext2spice</B></A><TD>
+<TD> <A HREF=extract.html> <B>extract</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=extresist.html> <B>extresist</B></A><TD>
+<TD> <A HREF=exttosim.html> <B>exttosim</B></A><TD>
+<TD> <A HREF=exttospice.html> <B>exttospice</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=feedback.html> <B>feedback</B></A><TD>
+<TD> <A HREF=fill.html> <B>fill</B></A><TD>
+<TD> <A HREF=findbox.html> <B>findbox</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=findlabel.html> <B>findlabel</B></A><TD>
+<TD> <A HREF=flatten.html> <B>flatten</B></A><TD>
+<TD> <A HREF=flush.html> <B>flush</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=garoute.html> <B>garoute</B></A><TD>
+<TD> <A HREF=gds.html> <B>gds</B></A><TD>
+<TD> <A HREF=get.html> <B>get</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=getcell.html> <B>getcell</B></A><TD>
+<TD> <A HREF=getnode.html> <B>getnode</B></A><TD>
+<TD> <A HREF=goto.html> <B>goto</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=grid.html> <B>grid</B></A><TD>
+<TD> <A HREF=help.html> <B>help</B></A><TD>
+<TD> <A HREF=identify.html> <B>identify</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=initialize.html> <B>initialize</B></A><TD>
+<TD> <A HREF=instance.html> <B>instance</B></A><TD>
+<TD> <A HREF=iroute.html> <B>iroute</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=irsim.html> <B>irsim</B></A><TD>
+<TD> <A HREF=label.html> <B>label</B></A><TD>
+<TD> <A HREF=lef.html> <B>lef</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=load.html> <B>load</B></A><TD>
+<TD> <A HREF=maketoolbar.html> <B>maketoolbar</B></A><TD>
+<TD> <A HREF=measure.html> <B>measure</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=move.html> <B>move</B></A><TD>
+<TD> <A HREF=openwrapper.html> <B>openwrapper</B></A><TD>
+<TD> <A HREF=paint.html> <B>paint</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=path.html> <B>path</B></A><TD>
+<TD> <A HREF=peekbox.html> <B>peekbox</B></A><TD>
+<TD> <A HREF=plot.html> <B>plot</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=plow.html> <B>plow</B></A><TD>
+<TD> <A HREF=polygon.html> <B>polygon</B></A><TD>
+<TD> <A HREF=popbox.html> <B>popbox</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=popstack.html> <B>popstack</B></A><TD>
+<TD> <A HREF=port.html> <B>port</B></A><TD>
+<TD> <A HREF=promptload.html> <B>promptload</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=promptsave.html> <B>promptsave</B></A><TD>
+<TD> <A HREF=property.html> <B>property</B></A><TD>
+<TD> <A HREF=pushbox.html> <B>pushbox</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=pushstack.html> <B>pushstack</B></A><TD>
+<TD> <A HREF=render3d.html> <B>render3d</B></A><TD>
+<TD> <A HREF=resumeall.html> <B>resumeall</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=rotate.html> <B>rotate</B></A><TD>
+<TD> <A HREF=route.html> <B>route</B></A><TD>
+<TD> <A HREF=save.html> <B>save</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=scalegrid.html> <B>scalegrid</B></A><TD>
+<TD> <A HREF=search.html> <B>search</B></A><TD>
+<TD> <A HREF=see.html> <B>see</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=select.html> <B>select</B></A><TD>
+<TD> <A HREF=shell.html> <B>shell</B></A><TD>
+<TD> <A HREF=sideways.html> <B>sideways</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=snap.html> <B>snap</B></A><TD>
+<TD> <A HREF=spliterase.html> <B>spliterase</B></A><TD>
+<TD> <A HREF=splitpaint.html> <B>splitpaint</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=startup.html> <B>startup</B></A><TD>
+<TD> <A HREF=straighten.html> <B>straighten</B></A><TD>
+<TD> <A HREF=stretch.html> <B>stretch</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=suspendall.html> <B>suspendall</B></A><TD>
+<TD> <A HREF=tag.html> <B>tag</B></A><TD>
+<TD> <A HREF=tech.html> <B>tech</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=techmanager.html> <B>techmanager</B></A><TD>
+<TD> <A HREF=tool.html> <B>tool</B> <I>(non-Tcl version)</I></A><TD>
+<TD> <A HREF=changetool.html> <B>tool</B> <I>(Tcl version)</I></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=unexpand.html> <B>unexpand</B></A><TD>
+<TD> <A HREF=unmeasure.html> <B>unmeasure</B></A><TD>
+<TD> <A HREF=upsidedown.html> <B>upsidedown</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=what.html> <B>what</B></A><TD>
+<TD> <A HREF=wire.html> <B>wire</B></A><TD>
+<TD> <A HREF=writeall.html> <B>writeall</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=xload.html> <B>xload</B></A><TD>
+<TD></TD>
+<TD></TD>
+</TR>
+</TBODY>
+</TABLE>
+</BLOCKQUOTE>
+
+<H2> Netlist window commands </H2>
+<BLOCKQUOTE>
+<TABLE border="1" frame="box" rules="none" width="90%" cellspacing="0"
+	cellpadding="5" bgcolor="#ffcccc">
+<TBODY>
+<TR>
+<TD> <A HREF=netlist/add.html><B>add</B></A><TD>
+<TD> <A HREF=netlist/cleanup.html><B>cleanup</B></A><TD>
+<TD> <A HREF=netlist/cull.html><B>cull</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=netlist/dnet.html><B>dnet</B></A><TD>
+<TD> <A HREF=netlist/dterm.html><B>dterm</B></A><TD>
+<TD> <A HREF=netlist/extract.html><B>extract</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=netlist/find.html><B>find</B></A><TD>
+<TD> <A HREF=netlist/flush.html><B>flush</B></A><TD>
+<TD> <A HREF=netlist/join.html><B>join</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=netlist/netlist.html><B>netlist</B></A><TD>
+<TD> <A HREF=netlist/pushbutton.html><B>pushbutton</B></A><TD>
+<TD> <A HREF=netlist/print.html><B>print</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=netlist/ripup.html><B>ripup</B></A><TD>
+<TD> <A HREF=netlist/savenetlist.html><B>savenetlist</B></A><TD>
+<TD> <A HREF=netlist/shownet.html><B>shownet</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=netlist/showterms.html><B>showterms</B></A><TD>
+<TD> <A HREF=netlist/trace.html><B>trace</B></A><TD>
+<TD> <A HREF=netlist/verify.html><B>verify</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=netlist/writeall.html><B>writeall</B></A><TD>
+<TD></TD>
+</TR>
+</TBODY>
+</TABLE>
+</BLOCKQUOTE>
+
+<H2> 3D window commands </H2>
+<BLOCKQUOTE>
+<TABLE border="1" frame="box" rules="none" width="90%" cellspacing="0"
+	cellpadding="5" bgcolor="#ccffcc">
+<TBODY>
+<TR>
+<TD> <A HREF=wind3d/cif.html><B>cif</B></A><TD>
+<TD> <A HREF=wind3d/closewindow.html><B>closewindow</B></A><TD>
+<TD> <A HREF=wind3d/cutbox.html><B>cutbox</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=wind3d/defaults.html><B>defaults</B></A><TD>
+<TD> <A HREF=wind3d/help.html><B>help</B></A><TD>
+<TD> <A HREF=wind3d/level.html><B>level</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=wind3d/refresh.html><B>refresh</B></A><TD>
+<TD> <A HREF=wind3d/render.html><B>render</B></A><TD>
+<TD> <A HREF=wind3d/scroll.html><B>scroll</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=wind3d/see.html><B>see</B></A><TD>
+<TD> <A HREF=wind3d/view.html><B>view</B></A><TD>
+<TD> <A HREF=wind3d/zoom.html><B>zoom</B></A><TD>
+</TR>
+</TBODY>
+</TABLE>
+</BLOCKQUOTE>
+
+<H2> Color window commands </H2>
+<BLOCKQUOTE>
+<TABLE border="1" frame="box" rules="none" width="90%" cellspacing="0"
+	cellpadding="5" bgcolor="#ffccff">
+<TBODY>
+<TR>
+<TD> <A HREF=color/pushbutton.html><B>pushbutton</B></A><TD>
+<TD> <A HREF=color/color.html><B>color</B></A><TD>
+<TD> <A HREF=color/load.html><B>load</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=color/save.html><B>save</B></A><TD>
+<TD></TD>
+<TD></TD>
+</TR>
+</TBODY>
+</TABLE>
+</BLOCKQUOTE>
+
+<H2> "Wizard" (developer) layout commands </H2>
+<BLOCKQUOTE>
+<TABLE border="1" frame="box" rules="none" width="90%" cellspacing="0"
+	cellpadding="5" bgcolor="#ffffcc">
+<TBODY>
+<TR>
+<TD> <A HREF=wizard/bypass.html><B>*bypass</B></A><TD>
+<TD> <A HREF=wizard/coord.html><B>*coord</B></A><TD>
+<TD> <A HREF=wizard/extract.html><B>*extract</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=wizard/plow.html><B>*plow</B></A><TD>
+<TD> <A HREF=wizard/psearch.html><B>*psearch</B></A><TD>
+<TD> <A HREF=wizard/showtech.html><B>*showtech</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=wizard/tilestats.html><B>*tilestats</B></A><TD>
+<TD> <A HREF=wizard/tsearch.html><B>*tsearch</B></A><TD>
+<TD> <A HREF=wizard/watch.html><B>*watch</B></A><TD>
+</TR>
+</TBODY>
+</TABLE>
+</BLOCKQUOTE>
+
+<H2> "Wizard" (developer) window commands </H2>
+<BLOCKQUOTE>
+<TABLE border="1" frame="box" rules="none" width="90%" cellspacing="0"
+	cellpadding="5" bgcolor="#cccccc">
+<TBODY>
+<TR>
+<TD> <A HREF=wizard/crash.html><B>*crash</B></A><TD>
+<TD> <A HREF=wizard/files.html><B>*files</B></A><TD>
+<TD> <A HREF=wizard/grstats.html><B>*grstats</B></A><TD>
+</TR>
+<TR>
+<TD> <A HREF=wizard/pause.html><B>*pause</B></A><TD>
+<TD> <A HREF=wizard/winddebug.html><B>*winddebug</B></A><TD>
+<TD> <A HREF=wizard/winddump.html><B>*winddump</B></A><TD>
+</TR>
+</TBODY>
+</TABLE>
+</BLOCKQUOTE>
+
+<H2> User's Guide Development </H2>
+<BLOCKQUOTE>
+To be done:
+  <UL>
+    <LI> Add some general topics, not command-specific.
+    <LI> Incorporate a lot of the currently text-only material into HTML format.
+    <LI> Run latex2html on all of the LaTeX distribution documentation.
+    <LI> More information on the routers and netlists
+    <LI> Subject index.
+  </UL>
+</BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> email:
+    <TD> <IMG BORDER=0 SRC=graphics/email_address.png>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 15, 2005 at 6:59am <P>
+</BODY>
+</HTML>

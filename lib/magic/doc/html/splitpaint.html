@@ -1,0 +1,75 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>splitpaint</H2>
+<HR>
+Paint into the cursor box, splitting the box diagonally with one layer
+forming a right triangle in one corner and space or another layer in
+the other.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>splitpaint</B> <I>dir layer</I> [<I>layer2</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>dir</I> is a valid non-Manhattan direction indicating
+         the direction of the right angle corner of the right triangle
+         to be painted.  This triangle is painted with layer type
+	 <I>layer</I>.  If specified, the opposite triangle is painted
+	 with layer type <I>layer2</I>; otherwise, it is unpainted.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>splitpaint</B> command implements a form of non-Manhattan
+      geometry that conforms to the corner-stitched tile database
+      format used by <B>magic</B> for painting and searching operations
+      in a plane.  It lets a rectangular area, as defined by the
+      position of the cursor box, be split diagonally, with one half
+      containing one layer type, and the other half containing
+      another. <P>
+
+      Note that <B>splitpaint</B> is somewhat cumbersome to use;
+      to generate diagonal wires, use the <B>wire segment</B> command,
+      which is also able to compute mitred joints between segments at
+      different angles. <P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>splitpaint</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=spliterase.html><B>spliterase</B></A> <BR>
+      <A HREF=wire.html><B>wire</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 7:38am <P>
+</BODY>
+</HTML>

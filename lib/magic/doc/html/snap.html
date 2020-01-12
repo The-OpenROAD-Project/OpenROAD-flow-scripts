@@ -1,0 +1,94 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>snap</H2>
+<HR>
+Cause box to snap to the selected grid when moved by the cursor.  Also,
+cause distance measurements to be interpreted by default as measurments
+in the selected grid.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>snap</B> [<B>internal</B>|<B>lambda</B>|<B>user</B>] <BR><BR>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>snap</B> command causes the cursor box to snap to the
+      selected grid when moved by pointer button events.  The selected
+      grids are <B>internal</B>, the size of the internal database,
+      <B>lambda</B>, the lambda grid based on the technology minimum
+      feature size, and <B>user</B>, based on the value given by the
+      user to the <B>grid</B> command. <P>
+
+      In addition to changing the behavior of the box to mouse
+      button events, the <B>snap</B> command also changes the way
+      that <A HREF=distance.html>distance measurements</A> are
+      interpreted in commands that take distance arguments, such
+      as <B>move</B>, <B>copy</B>, and <B>stretch</B>.  An integer
+      number with no other identifying units is interpreted as a
+      measurement in the current snap grid.  All other measurements
+      must have an identifying unit: <B>i</B> for internal units,
+      <B>l</B> for lambda units, and <B>g</B> for user grid units
+      (as well as the usual metric units).  Even when <B>snap</B>
+      is set to the larger lambda or user grids, it is possible to
+      move the cursor box to finer grid positions from the command
+      line.  See the reference page on
+      <A HREF=distance.html>distance measures</A> for a complete
+      description of distance values. <P>
+
+      <B>snap</B> with no arguments returns the current snap grid
+      type. <P>
+
+      By default, the internal and lambda grids are the same.  However,
+      CIF, GDS, or LEF/DEF input on a finer scale can cause the internal
+      grid to be set finer than the lambda grid.  Also, the <B>scalegrid</B>
+      command can be used to separate the internal and lambda grids.
+      Note that the use of "lambda" is merely a convention.  Traditionally,
+      scalable CMOS rules were based on units of "lambda", equal to
+      one-half the minimum feature size of the technology.  Many
+      technology files are still based on lambda rules, which are usually
+      more conservative than vendor rules.  However, some technology files
+      may be based on exactly implementing vendor rules, and may set
+      the internal grid spacing to a finer resolution, such as 0.1 micron
+      or smaller.  In such cases, the use of the term "lambda" is a
+      misnomer.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>snap</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=grid.html><B>grid</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 8, 2004 at 7:16am <P>
+</BODY>
+</HTML>

@@ -1,0 +1,128 @@
+#
+#    22-pixel sized glyphs for the Window package
+#
+# rcsid $Header: /usr/cvsroot/magic-8.0/windows/windows22.glyphs,v 1.1.1.1 2008/02/03 20:43:50 tim Exp $
+#
+
+# syntax of first line:  size <number of glyphs> <width> <height>
+size 5 22 22
+
+#up
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W K K W W W W W W W W W W
+W W W W W W W W W K K K K W W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W K K K K K K K K W W W W W W W
+W W W W W W K K K K K K K K K K W W W W W W
+W W W W W K K K K K K K K K K K K W W W W W
+W W W W K K K K K K K K K K K K K K W W W W
+W W W K K K K K K K K K K K K K K K K W W W
+W W K K K K K K K K K K K K K K K K K K W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+
+#down
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W K K K K K K K K K K K K K K K K K K W W
+W W W K K K K K K K K K K K K K K K K W W W
+W W W W K K K K K K K K K K K K K K W W W W
+W W W W W K K K K K K K K K K K K W W W W W
+W W W W W W K K K K K K K K K K W W W W W W
+W W W W W W W K K K K K K K K W W W W W W W
+W W W W W W W W K K K K K K W W W W W W W W
+W W W W W W W W W K K K K W W W W W W W W W
+W W W W W W W W W W K K W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+
+#left
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W K W W W W W W W W W W
+W W W W W W W W W W K K W W W W W W W W W W
+W W W W W W W W W K K K W W W W W W W W W W
+W W W W W W W W K K K K W W W W W W W W W W
+W W W W W W W K K K K K W W W W W W W W W W
+W W W W W W K K K K K K W W W W W W W W W W
+W W W W W K K K K K K K K K K K K K K K W W
+W W W W K K K K K K K K K K K K K K K K W W
+W W W K K K K K K K K K K K K K K K K K W W
+W W W K K K K K K K K K K K K K K K K K W W
+W W W W K K K K K K K K K K K K K K K K W W
+W W W W W K K K K K K K K K K K K K K K W W
+W W W W W W K K K K K K W W W W W W W W W W
+W W W W W W W K K K K K W W W W W W W W W W
+W W W W W W W W K K K K W W W W W W W W W W
+W W W W W W W W W K K K W W W W W W W W W W
+W W W W W W W W W W K K W W W W W W W W W W
+W W W W W W W W W W W K W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+
+#right
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W K W W W W W W W W W W W
+W W W W W W W W W W K K W W W W W W W W W W
+W W W W W W W W W W K K K W W W W W W W W W
+W W W W W W W W W W K K K K W W W W W W W W
+W W W W W W W W W W K K K K K W W W W W W W
+W W W W W W W W W W K K K K K K W W W W W W
+W W K K K K K K K K K K K K K K K W W W W W
+W W K K K K K K K K K K K K K K K K W W W W
+W W K K K K K K K K K K K K K K K K K W W W
+W W K K K K K K K K K K K K K K K K K W W W
+W W K K K K K K K K K K K K K K K K W W W W
+W W K K K K K K K K K K K K K K K W W W W W
+W W W W W W W W W W K K K K K K W W W W W W
+W W W W W W W W W W K K K K K W W W W W W W
+W W W W W W W W W W K K K K W W W W W W W W
+W W W W W W W W W W K K K W W W W W W W W W
+W W W W W W W W W W K K W W W W W W W W W W
+W W W W W W W W W W K W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+
+#zoom
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W K K K K K K K K K K K K K K W W W W
+W W W W K K K K K K K K K K K K K K W W W W
+W W W W K K W W W W W W W W W W K K W W W W
+W W W W K K W W W W W W W W W W K K W W W W
+W W W W K K W W W W W W W W W W K K W W W W
+W W W W K K W W W W W W W W W W K K W W W W
+W W W W K K W W W W K K W W W W K K W W W W
+W W W W K K W W W W K K W W W W K K W W W W
+W W W W K K W W W W W W W W W W K K W W W W
+W W W W K K W W W W W W W W W W K K W W W W
+W W W W K K W W W W W W W W W W K K W W W W
+W W W W K K W W W W W W W W W W K K W W W W
+W W W W K K K K K K K K K K K K K K W W W W
+W W W W K K K K K K K K K K K K K K W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W
+W W W W W W W W W W W W W W W W W W W W W W

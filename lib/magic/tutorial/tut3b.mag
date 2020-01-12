@@ -1,0 +1,15 @@
+magic
+tech scmos
+timestamp 616379430
+<< polysilicon >>
+rect -16 19 16 21
+<< ndiffusion >>
+rect -16 28 16 31
+rect -16 22 16 25
+<< metal1 >>
+rect -16 32 16 35
+rect -16 13 16 16
+<< labels >>
+rlabel space -32 12 -14 36 1 Fill here
+rlabel space 14 12 52 36 1 Corner here
+<< end >>

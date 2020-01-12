@@ -1,0 +1,152 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>select</H2>
+<HR>
+Select or unselect portions of the layout according to the options, or
+create a new cell definition from a selection.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key macro <B>,</B> (comma) implements the command <B>select clear</B>. <BR>
+      Key macro <B>s</B> implements the command <B>select</B>. <BR>
+      Key macro <B>S</B> implements the command <B>select more</B>. <BR>
+      Key macro <I>Control-</I><B>S</B> implements the
+		command <B>select less</B>. <BR>
+      Key macro <B>a</B> implements the command <B>select visible</B>. <BR>
+      Key macro <B>A</B> implements the command <B>select more visible</B>. <BR>
+      Key macro <I>Control-</I><B>A</B> implements the
+		command <B>select less visible</B>. <BR>
+      Key macro <B>i</B> implements the command <B>select cell</B>. <BR>
+      Key macro <B>I</B> implements the command <B>select more cell</B>. <BR>
+      Key macro <I>Control-</I><B>I</B> implements the
+		command <B>select less cell</B>.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>select</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> [<B>more</B> | <B>less</B>] [<I>layers</I>]
+	   <DD> [De]select material under cursor, or
+		[de]select a subcell if the cursor is over space.
+	   <DT>	<B>nocycle</B> [<I>layers</I>]
+	   <DD> Select material without cycling through different tile
+	   	types when "select" is called from the same cursor position
+		more than once.
+	   <DT>	[<B>more</B> | <B>less</B>] <B>area</B> [<I>layers</I>]
+	   <DD> [De]select all material under box in layers <I>layers</I>
+	   <DT>	[<B>more</B> | <B>less</B>] <B>visible</B> [<I>layers</I>]
+	   <DD> [De]select all visible material under box in layers <I>layers</I>.
+	   <DT>	[<B>more</B> | <B>less</B>] <B>box</B> [<I>layers</I>]
+	   <DD> [De]select material specified by the boundary of the cursor box
+	   <DT>	[<B>more</B> | <B>less</B>] <B>chunk</B> [<I>layers</I>]
+	   <DD> [De]select a network chunk (largest rectangle) specified by
+		the lower left corner of the cursor box
+	   <DT>	[<B>more</B> | <B>less</B>] <B>region</B> [<I>layers</I>]
+	   <DD> [De]select a network region specified by
+		the lower left corner of the cursor box
+	   <DT>	[<B>more</B> | <B>less</B>] <B>net</B> [<I>layers</I>]
+	   <DD> [De]select an entire electrical network specified by
+		the lower left corner of the cursor box
+	   <DT>	[<B>more</B> | <B>less</B>] <B>cell</B> [<I>name</I>]
+	   <DD> [De]select the cell under cursor, or the cell use (instance)
+		named <I>name</I>.
+	   <DT>	<B>top cell</B>
+	   <DD> Select the topmost cell in the window, which does not have
+		an instance name and therefore cannot be selected with the
+		<B>select cell</B> command.
+	   <DT>	<B>save</B> <I>cell</I>
+	   <DD> Save selection as cell named <I>cell</I>, which is also
+		saved to disk as <I>cell</I><TT>.mag</TT>.
+	   <DT>	<B>clear</B>
+	   <DD> Clear selection
+	   <DT>	<B>pick</B>
+	   <DD> Remove the selection from the layout, but retain the
+	   	selection buffer for interactive processing.
+	   <DT>	<B>keep</B>
+	   <DD> Copy the selection from the layout into the selection
+	   	buffer, and keep the selection buffer for interactive
+		processing.
+	   <DT>	<B>move</B> <I>x y</I>
+	   <DD> Move the selection buffer to position <I>x y</I>,
+	   	relative to the cell definition origin.
+	   <DT>	<B>help</B>
+	   <DD> Print help information
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>select</B> command changes what material is in the current
+      selection.  <B>magic</B> maintains a separate cell definition
+      that represents the current selection.  Without the options
+      <B>more</B> or <B>less</B>, the selection is cleared prior to
+      executing the new selection command.  Otherwise, <B>more</B>
+      adds to the existing selection and <B>less</B> subtracts from
+      it. <P>
+
+      Network selection differs from other types of selection in
+      that <B>magic</B> uses a sophisticated algorithm to determine
+      what is electrically connected together throughout the layout.
+      A <B>chunk</B> is the largest rectangle containing a single
+      layer type.  A <B>region</B> is the largest network area
+      containing a single layer type.  The region stops where the
+      net connects to a different layer type.  The <B>net</B> is
+      the entire electrical network. <P>
+
+      The <B>select save</B> options differs from the rest in that it
+      does not alter the current selection, but creates a new cell
+      definition from the current selection.  Note that this cell
+      is created as a top-level cell, and does not replace the current
+      selection as a use in the edit cell.  To do that requires
+      "<B>select save</B> <I>cell</I>" followed by "<B>delete</B>"
+      and "<B>getcell child 0 0 parent 0 0</B>".  The last command
+      syntax is used because the bounds of the selection may differ
+      from the cursor box.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>select</B> is implemented as a built-in command in <B>magic</B>.
+      The <B>select keep</B>, <B>select move</B>, and <B>select pick</B>
+      are interactive functions used by the "pick" tool.
+   </BLOCKQUOTE>
+
+<H3>Bugs:</H3>
+   <BLOCKQUOTE>
+      To be consistent, <B>select save</B> should be a separate command,
+      since like other commands it operates on the selection rather than
+      alter what is in the selection.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 5:06pm <P>
+</BODY>
+</HTML>

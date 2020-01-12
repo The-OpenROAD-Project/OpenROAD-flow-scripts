@@ -1,0 +1,13 @@
+magic
+tech scmos
+timestamp 500618087
+<< polysilicon >>
+rect -6 -16 34 -14
+rect -6 -20 34 -18
+rect -6 -24 34 -22
+rect -6 -28 34 -26
+rect -6 -32 34 -30
+<< labels >>
+rlabel space 9 -32 19 -12 0 put plow here
+rlabel space -8 -37 36 -9 3 put boundary here
+<< end >>

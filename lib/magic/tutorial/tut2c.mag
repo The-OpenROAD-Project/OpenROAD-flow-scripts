@@ -1,0 +1,15 @@
+magic
+tech scmos
+timestamp 500615676
+<< polysilicon >>
+rect -17 7 0 13
+<< pdiffusion >>
+rect 5 -15 13 -4
+<< metal1 >>
+rect -18 -18 -5 -10
+<< labels >>
+rlabel polysilicon -15 10 -15 10 3 Label1
+rlabel metal1 -17 -14 -17 -14 3 Metal1 label
+rlabel pdiffusion 13 -13 13 -7 7 Line label
+rlabel space 4 2 25 22 1 Rectangular label
+<< end >>

@@ -1,0 +1,101 @@
+timestamp 552706284
+version 7.2
+tech scmos
+style lambda=1.0(scna20_orb)
+scale 1000 1 100
+resistclasses 26670 59550 23860 19690 27260 2000000 49 26 2505830
+node "phi2_b" 859 9684 99 -20 p 0 0 0 0 144 148 0 0 0 0 0 0 0 0 0 0 0 0
+equiv "phi2_b" "phi2_b"
+node "a_101_n47#" 820 11470 101 -47 ndc 30 34 30 22 100 100 0 0 0 0 0 0 176 120 0 0 0 0
+node "phi2" 859 7936 95 -60 p 0 0 0 0 144 148 0 0 0 0 0 0 0 0 0 0 0 0
+equiv "phi2" "phi2"
+node "a_77_n44#" 80 0 77 -44 ndiff 12 16 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+node "a_77_n40#" 1150 11092 77 -40 ndiff 60 68 117 80 0 0 0 0 0 0 0 0 176 108 0 0 0 0
+node "reset_b" 859 7066 75 -46 p 0 0 0 0 144 148 0 0 0 0 0 0 0 0 0 0 0 0
+equiv "reset_b" "reset_b"
+node "phi1_b" 859 9684 53 -18 p 0 0 0 0 144 148 0 0 0 0 0 0 0 0 0 0 0 0
+equiv "phi1_b" "phi1_b"
+node "a_55_n47#" 773 11298 55 -47 ndc 30 34 30 22 100 96 0 0 0 0 0 0 176 96 0 0 0 0
+node "phi1" 859 7698 49 -42 p 0 0 0 0 144 148 0 0 0 0 0 0 0 0 0 0 0 0
+node "a_39_n39#" 80 0 39 -39 ndiff 12 16 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+node "a_26_n39#" 53 0 26 -39 ndiff 18 18 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+node "a_39_n23#" 179 0 39 -23 pdiff 0 0 12 16 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+node "a_31_n39#" 973 9635 31 -39 ndiff 66 82 66 46 0 0 0 0 0 0 0 0 169 96 0 0 0 0
+node "a_26_n23#" 119 0 26 -23 pdiff 0 0 18 18 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+node "A" 1107 6996 0 -52 ndiff 30 34 25 20 150 150 0 0 0 0 0 0 81 74 0 0 0 0
+node "B_b" 713 12278 11 -39 ndc 30 34 30 22 86 84 0 0 0 0 0 0 186 130 0 0 0 0
+node "A_b" 1537 14566 -16 -52 ndc 30 34 30 22 220 220 0 0 0 0 0 0 116 98 0 0 0 0
+node "a_n11_n54#" 561 4606 -11 -54 p 0 0 0 0 94 98 0 0 0 0 0 0 0 0 0 0 0 0
+node "B" 1655 32895 13 -14 pc 60 58 60 34 212 210 0 0 0 0 0 0 140 62 648 332 0 0
+equiv "B" "Q_out"
+node "Vdd" 2107 59727 -17 -18 pdc 120 116 255 162 0 0 0 0 0 0 0 0 650 374 924 320 0 0
+node "GND" 3185 57314 -17 -60 pw 198 224 112 112 0 0 0 0 0 0 0 0 650 396 924 320 0 0
+cap "B_b" "a_26_n23#" 846
+cap "phi2_b" "B" 152
+cap "phi1" "Vdd" 316
+cap "a_55_n47#" "GND" 5868
+cap "A_b" "B_b" 180
+cap "a_31_n39#" "phi1" 180
+cap "a_31_n39#" "B_b" 60
+cap "B" "a_n11_n54#" 152
+cap "phi2_b" "a_101_n47#" 480
+cap "phi2_b" "GND" 6980
+cap "a_26_n39#" "B_b" 846
+cap "phi2" "B" 152
+cap "A" "B" 1080
+cap "reset_b" "B" 152
+cap "phi2_b" "Vdd" 316
+cap "a_101_n47#" "B" 720
+cap "GND" "B" 5114
+cap "a_77_n40#" "B" 2160
+cap "Vdd" "B" 2150
+cap "GND" "a_n11_n54#" 4684
+cap "A_b" "B" 692
+cap "phi1_b" "GND" 6980
+cap "a_31_n39#" "B" 2516
+cap "phi2" "GND" 8728
+cap "GND" "A" 15163
+cap "phi1" "B" 152
+cap "B_b" "B" 1618
+cap "A_b" "a_n11_n54#" 180
+cap "phi2" "a_77_n40#" 240
+cap "phi1_b" "Vdd" 316
+cap "reset_b" "GND" 8728
+cap "a_39_n23#" "B" 176
+cap "phi2" "Vdd" 316
+cap "a_101_n47#" "GND" 6638
+cap "reset_b" "a_77_n40#" 240
+cap "a_55_n47#" "B" 3167
+cap "a_77_n40#" "GND" 1692
+cap "reset_b" "Vdd" 316
+cap "A_b" "A" 180
+cap "a_31_n39#" "A" 180
+cap "A_b" "GND" 15778
+cap "a_31_n39#" "GND" 1316
+cap "a_55_n47#" "phi1_b" 2220
+cap "phi1" "GND" 8966
+cap "B_b" "GND" 5826
+device mosfet nfet 123 -42 124 -41 2 12 "GND" "a_101_n47#" 4 0 "GND" 12 0 "B" 12 0
+device mosfet pfet 123 -20 124 -19 2 12 "Vdd!" "a_101_n47#" 4 0 "B" 12 0 "Vdd" 12 0
+device mosfet nfet 101 -42 102 -41 2 6 "GND" "phi2" 4 0 "a_101_n47#" 6 0 "a_77_n40#" 6 0
+device mosfet pfet 101 -20 102 -19 2 6 "Vdd!" "phi2_b" 4 0 "a_77_n40#" 6 0 "a_101_n47#" 6 0
+device mosfet nfet 77 -46 78 -45 2 6 "GND" "reset_b" 4 0 "GND" 6 0 "a_77_n44#" 6 0
+device mosfet nfet 77 -42 78 -41 2 6 "GND" "a_55_n47#" 4 0 "a_77_n44#" 6 0 "a_77_n40#" 6 0
+device mosfet pfet 77 -20 78 -19 2 6 "Vdd!" "a_55_n47#" 4 0 "a_77_n40#" 6 0 "Vdd" 6 0
+device mosfet nfet 55 -42 56 -41 2 6 "GND" "phi1" 4 0 "a_55_n47#" 6 0 "a_31_n39#" 6 0
+device mosfet pfet 87 -17 88 -16 2 5 "Vdd!" "reset_b" 4 0 "Vdd" 5 0 "a_77_n40#" 5 0
+device mosfet pfet 55 -18 56 -17 2 6 "Vdd!" "phi1_b" 4 0 "a_31_n39#" 6 0 "a_55_n47#" 6 0
+device mosfet nfet -2 -52 -1 -51 2 6 "GND" "A_b" 4 0 "GND" 6 0 "A" 6 0
+device mosfet nfet -11 -52 -10 -51 2 6 "GND" "a_n11_n54#" 4 0 "A_b" 6 0 "GND" 6 0
+device mosfet nfet 41 -39 42 -38 2 6 "GND" "A" 4 0 "a_39_n39#" 6 0 "GND" 6 0
+device mosfet nfet 37 -39 38 -38 2 6 "GND" "B_b" 4 0 "a_31_n39#" 6 0 "a_39_n39#" 6 0
+device mosfet nfet 29 -39 30 -38 2 6 "GND" "B" 4 0 "a_26_n39#" 6 0 "a_31_n39#" 6 0
+device mosfet nfet 24 -39 25 -38 2 6 "GND" "A_b" 4 0 "GND" 6 0 "a_26_n39#" 6 0
+device mosfet nfet 16 -39 17 -38 2 6 "GND" "B" 4 0 "B_b" 6 0 "GND" 6 0
+device mosfet pfet 41 -23 42 -22 2 6 "Vdd!" "A" 4 0 "a_39_n23#" 6 0 "Vdd" 6 0
+device mosfet pfet 37 -23 38 -22 2 6 "Vdd!" "B" 4 0 "a_31_n39#" 6 0 "a_39_n23#" 6 0
+device mosfet pfet 29 -23 30 -22 2 6 "Vdd!" "B_b" 4 0 "a_26_n23#" 6 0 "a_31_n39#" 6 0
+device mosfet pfet 24 -23 25 -22 2 6 "Vdd!" "A_b" 4 0 "Vdd" 6 0 "a_26_n23#" 6 0
+device mosfet pfet 16 -23 17 -22 2 6 "Vdd!" "B" 4 0 "B_b" 6 0 "Vdd" 6 0
+device mosfet pfet 0 -18 1 -17 2 5 "Vdd!" "A_b" 4 0 "A" 5 0 "Vdd" 5 0
+device mosfet pfet -11 -15 -10 -14 2 6 "Vdd!" "a_n11_n54#" 4 0 "Vdd" 6 0 "A_b" 6 0

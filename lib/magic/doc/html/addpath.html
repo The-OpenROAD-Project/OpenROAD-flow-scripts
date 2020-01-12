@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>addpath</H2>
+<HR>
+Append to current search path
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>addpath</B> [<I>path</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>path</I> is the path of a directory to add to the
+	 list of directories searched for layout cells, relative to
+	 the current working directory.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>addpath</B> command is used to control which directories
+      magic searches when attempting to read an undefined cell.  It
+      can only be used to append new directories to the existing
+      search path (see below).  This command is most often used when
+      groups of subcells such as a standard-cell library or padframe
+      library is kept in a separate place from the rest of the layout.
+      In such cases it is convenient to put this command in the
+      <B>.magic</B> file in the layout directory to ensure that all
+      cells required by the layout are accessible at runtime.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>addpath</B> is a <B>magic</B> built-in command.  It is
+      retained for backwards compatibility, but is superceded by
+      the <B>path</B> command, which allows complete control over
+      the layout search path contents, as well as other search
+      paths used by <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=path.html><B>path</B></A> <BR>
+      <A HREF=getcell.html><B>getcell</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 3, 2004 at 6:53am <P>
+</BODY>
+</HTML>

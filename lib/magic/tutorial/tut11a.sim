@@ -1,0 +1,280 @@
+| units: 100 tech: scmos format: SU
+p hold Vdd bit_0/tut11d_0/A_b 2 6 175 -52 g=S_Vdd! s=A_1108,P_688 d=A_30,P_22
+p bit_0/tut11d_0/A_b bit_0/tut11d_0/A Vdd 2 5 172 -63 g=S_Vdd! s=A_25,P_20 d=A_0,P_0
+p bit_0 bit_0/tut11d_0/B_b Vdd 2 6 167 -79 g=S_Vdd! s=A_30,P_22 d=A_0,P_0
+p bit_0/tut11d_0/A_b Vdd bit_0/tut11d_0/a_26_n23# 2 6 167 -87 g=S_Vdd! s=A_0,P_0 d=A_18,P_18
+p bit_0/tut11d_0/B_b bit_0/tut11d_0/a_26_n23# bit_0/tut11d_0/a_31_n39# 2 6 167 -92 g=S_Vdd! s=A_0,P_0 d=A_66,P_46
+p bit_0 bit_0/tut11d_0/a_31_n39# bit_0/tut11d_0/a_39_n23# 2 6 167 -100 g=S_Vdd! s=A_0,P_0 d=A_12,P_16
+p bit_0/tut11d_0/A bit_0/tut11d_0/a_39_n23# Vdd 2 6 167 -104 g=S_Vdd! s=A_0,P_0 d=A_0,P_0
+n bit_0 bit_0/tut11d_0/B_b GND 2 6 151 -79 g=S_GND s=A_30,P_34 d=A_792,P_896
+n bit_0/tut11d_0/A_b GND bit_0/tut11d_0/a_26_n39# 2 6 151 -87 g=S_GND s=A_0,P_0 d=A_18,P_18
+n bit_0 bit_0/tut11d_0/a_26_n39# bit_0/tut11d_0/a_31_n39# 2 6 151 -92 g=S_GND s=A_0,P_0 d=A_66,P_82
+n bit_0/tut11d_0/B_b bit_0/tut11d_0/a_31_n39# bit_0/tut11d_0/a_39_n39# 2 6 151 -100 g=S_GND s=A_0,P_0 d=A_12,P_16
+n bit_0/tut11d_0/A bit_0/tut11d_0/a_39_n39# GND 2 6 151 -104 g=S_GND s=A_0,P_0 d=A_0,P_0
+n hold bit_0/tut11d_0/A_b GND 2 6 138 -52 g=S_GND s=A_30,P_34 d=A_0,P_0
+n bit_0/tut11d_0/A_b GND bit_0/tut11d_0/A 2 6 138 -61 g=S_GND s=A_0,P_0 d=A_30,P_34
+p phi1_b bit_0/tut11d_0/a_31_n39# bit_0/tut11d_0/a_55_n47# 2 6 172 -118 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+p RESET_B Vdd bit_0/tut11d_0/a_77_n40# 2 5 173 -150 g=S_Vdd! s=A_0,P_0 d=A_117,P_80
+n phi1 bit_0/tut11d_0/a_55_n47# bit_0/tut11d_0/a_31_n39# 2 6 148 -118 g=S_GND s=A_30,P_34 d=A_0,P_0
+p bit_0/tut11d_0/a_55_n47# bit_0/tut11d_0/a_77_n40# Vdd 2 6 170 -140 g=S_Vdd! s=A_0,P_0 d=A_0,P_0
+n bit_0/tut11d_0/a_55_n47# bit_0/tut11d_0/a_77_n44# bit_0/tut11d_0/a_77_n40# 2 6 148 -140 g=S_GND s=A_12,P_16 d=A_60,P_68
+n RESET_B GND bit_0/tut11d_0/a_77_n44# 2 6 144 -140 g=S_GND s=A_0,P_0 d=A_0,P_0
+p phi2_b bit_0/tut11d_0/a_77_n40# bit_0/tut11d_0/a_101_n47# 2 6 170 -164 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+n phi2 bit_0/tut11d_0/a_101_n47# bit_0/tut11d_0/a_77_n40# 2 6 148 -164 g=S_GND s=A_30,P_34 d=A_0,P_0
+p bit_0/tut11d_0/a_101_n47# bit_0 Vdd 2 12 170 -186 g=S_Vdd! s=A_60,P_34 d=A_0,P_0
+n bit_0/tut11d_0/a_101_n47# GND bit_0 2 12 148 -186 g=S_GND s=A_0,P_0 d=A_60,P_58
+p phi2_b bit_1/a_n34_n13# Vdd 2 6 168 -43 g=S_Vdd! s=A_24,P_22 d=A_0,P_0
+n bit_0 bit_0/a_n34_n45# hold 2 6 147 -29 g=S_GND s=A_12,P_16 d=A_24,P_36
+n phi1 bit_1/a_n34_n13# bit_0/a_n34_n45# 2 6 143 -29 g=S_GND s=A_48,P_72 d=A_0,P_0
+p bit_1/a_n34_n13# Vdd bit_1/tut11d_0/A_b 2 6 90 -52 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+p bit_1/tut11d_0/A_b bit_1/tut11d_0/A Vdd 2 5 93 -63 g=S_Vdd! s=A_25,P_20 d=A_0,P_0
+p bit_1 bit_1/tut11d_0/B_b Vdd 2 6 98 -79 g=S_Vdd! s=A_30,P_22 d=A_0,P_0
+p bit_1/tut11d_0/A_b Vdd bit_1/tut11d_0/a_26_n23# 2 6 98 -87 g=S_Vdd! s=A_0,P_0 d=A_18,P_18
+p bit_1/tut11d_0/B_b bit_1/tut11d_0/a_26_n23# bit_1/tut11d_0/a_31_n39# 2 6 98 -92 g=S_Vdd! s=A_0,P_0 d=A_66,P_46
+p bit_1 bit_1/tut11d_0/a_31_n39# bit_1/tut11d_0/a_39_n23# 2 6 98 -100 g=S_Vdd! s=A_0,P_0 d=A_12,P_16
+p bit_1/tut11d_0/A bit_1/tut11d_0/a_39_n23# Vdd 2 6 98 -104 g=S_Vdd! s=A_0,P_0 d=A_0,P_0
+n bit_1 bit_1/tut11d_0/B_b GND 2 6 114 -79 g=S_GND s=A_30,P_34 d=A_0,P_0
+n bit_1/tut11d_0/A_b GND bit_1/tut11d_0/a_26_n39# 2 6 114 -87 g=S_GND s=A_0,P_0 d=A_18,P_18
+n bit_1 bit_1/tut11d_0/a_26_n39# bit_1/tut11d_0/a_31_n39# 2 6 114 -92 g=S_GND s=A_0,P_0 d=A_66,P_82
+n bit_1/tut11d_0/B_b bit_1/tut11d_0/a_31_n39# bit_1/tut11d_0/a_39_n39# 2 6 114 -100 g=S_GND s=A_0,P_0 d=A_12,P_16
+n bit_1/tut11d_0/A bit_1/tut11d_0/a_39_n39# GND 2 6 114 -104 g=S_GND s=A_0,P_0 d=A_0,P_0
+n bit_1/a_n34_n13# bit_1/tut11d_0/A_b GND 2 6 127 -52 g=S_GND s=A_30,P_34 d=A_0,P_0
+n bit_1/tut11d_0/A_b GND bit_1/tut11d_0/A 2 6 127 -61 g=S_GND s=A_0,P_0 d=A_30,P_34
+p phi1_b bit_1/tut11d_0/a_31_n39# bit_1/tut11d_0/a_55_n47# 2 6 93 -118 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+p RESET_B Vdd bit_1/tut11d_0/a_77_n40# 2 5 92 -150 g=S_Vdd! s=A_0,P_0 d=A_117,P_80
+n phi1 bit_1/tut11d_0/a_55_n47# bit_1/tut11d_0/a_31_n39# 2 6 117 -118 g=S_GND s=A_30,P_34 d=A_0,P_0
+p bit_1/tut11d_0/a_55_n47# bit_1/tut11d_0/a_77_n40# Vdd 2 6 95 -140 g=S_Vdd! s=A_0,P_0 d=A_0,P_0
+n bit_1/tut11d_0/a_55_n47# bit_1/tut11d_0/a_77_n44# bit_1/tut11d_0/a_77_n40# 2 6 117 -140 g=S_GND s=A_12,P_16 d=A_60,P_68
+n RESET_B GND bit_1/tut11d_0/a_77_n44# 2 6 121 -140 g=S_GND s=A_0,P_0 d=A_0,P_0
+p phi2_b bit_1/tut11d_0/a_77_n40# bit_1/tut11d_0/a_101_n47# 2 6 95 -164 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+n phi2 bit_1/tut11d_0/a_101_n47# bit_1/tut11d_0/a_77_n40# 2 6 117 -164 g=S_GND s=A_30,P_34 d=A_0,P_0
+p bit_1/tut11d_0/a_101_n47# bit_1 Vdd 2 12 95 -186 g=S_Vdd! s=A_60,P_34 d=A_0,P_0
+n bit_1/tut11d_0/a_101_n47# GND bit_1 2 12 117 -186 g=S_GND s=A_0,P_0 d=A_60,P_58
+n phi1 bit_1/a_n34_n17# bit_1/a_n34_n13# 2 6 121 -29 g=S_GND s=A_12,P_16 d=A_0,P_0
+n bit_1 bit_2/a_n34_n41# bit_1/a_n34_n17# 2 6 117 -29 g=S_GND s=A_48,P_72 d=A_0,P_0
+p phi2_b bit_2/a_n34_n41# Vdd 2 6 92 -43 g=S_Vdd! s=A_24,P_22 d=A_0,P_0
+p bit_2/a_n34_n41# Vdd bit_2/tut11d_0/A_b 2 6 67 -52 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+p bit_2/tut11d_0/A_b bit_2/tut11d_0/A Vdd 2 5 64 -63 g=S_Vdd! s=A_25,P_20 d=A_0,P_0
+p bit_2 bit_2/tut11d_0/B_b Vdd 2 6 59 -79 g=S_Vdd! s=A_30,P_22 d=A_0,P_0
+p bit_2/tut11d_0/A_b Vdd bit_2/tut11d_0/a_26_n23# 2 6 59 -87 g=S_Vdd! s=A_0,P_0 d=A_18,P_18
+p bit_2/tut11d_0/B_b bit_2/tut11d_0/a_26_n23# bit_2/tut11d_0/a_31_n39# 2 6 59 -92 g=S_Vdd! s=A_0,P_0 d=A_66,P_46
+p bit_2 bit_2/tut11d_0/a_31_n39# bit_2/tut11d_0/a_39_n23# 2 6 59 -100 g=S_Vdd! s=A_0,P_0 d=A_12,P_16
+p bit_2/tut11d_0/A bit_2/tut11d_0/a_39_n23# Vdd 2 6 59 -104 g=S_Vdd! s=A_0,P_0 d=A_0,P_0
+n bit_2 bit_2/tut11d_0/B_b GND 2 6 43 -79 g=S_GND s=A_30,P_34 d=A_0,P_0
+n bit_2/tut11d_0/A_b GND bit_2/tut11d_0/a_26_n39# 2 6 43 -87 g=S_GND s=A_0,P_0 d=A_18,P_18
+n bit_2 bit_2/tut11d_0/a_26_n39# bit_2/tut11d_0/a_31_n39# 2 6 43 -92 g=S_GND s=A_0,P_0 d=A_66,P_82
+n bit_2/tut11d_0/B_b bit_2/tut11d_0/a_31_n39# bit_2/tut11d_0/a_39_n39# 2 6 43 -100 g=S_GND s=A_0,P_0 d=A_12,P_16
+n bit_2/tut11d_0/A bit_2/tut11d_0/a_39_n39# GND 2 6 43 -104 g=S_GND s=A_0,P_0 d=A_0,P_0
+n bit_2/a_n34_n41# bit_2/tut11d_0/A_b GND 2 6 30 -52 g=S_GND s=A_30,P_34 d=A_0,P_0
+n bit_2/tut11d_0/A_b GND bit_2/tut11d_0/A 2 6 30 -61 g=S_GND s=A_0,P_0 d=A_30,P_34
+p phi1_b bit_2/tut11d_0/a_31_n39# bit_2/tut11d_0/a_55_n47# 2 6 64 -118 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+p RESET_B Vdd bit_2/tut11d_0/a_77_n40# 2 5 65 -150 g=S_Vdd! s=A_0,P_0 d=A_117,P_80
+n phi1 bit_2/tut11d_0/a_55_n47# bit_2/tut11d_0/a_31_n39# 2 6 40 -118 g=S_GND s=A_30,P_34 d=A_0,P_0
+p bit_2/tut11d_0/a_55_n47# bit_2/tut11d_0/a_77_n40# Vdd 2 6 62 -140 g=S_Vdd! s=A_0,P_0 d=A_0,P_0
+n bit_2/tut11d_0/a_55_n47# bit_2/tut11d_0/a_77_n44# bit_2/tut11d_0/a_77_n40# 2 6 40 -140 g=S_GND s=A_12,P_16 d=A_60,P_68
+n RESET_B GND bit_2/tut11d_0/a_77_n44# 2 6 36 -140 g=S_GND s=A_0,P_0 d=A_0,P_0
+p phi2_b bit_2/tut11d_0/a_77_n40# bit_2/tut11d_0/a_101_n47# 2 6 62 -164 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+n phi2 bit_2/tut11d_0/a_101_n47# bit_2/tut11d_0/a_77_n40# 2 6 40 -164 g=S_GND s=A_30,P_34 d=A_0,P_0
+p bit_2/tut11d_0/a_101_n47# bit_2 Vdd 2 12 62 -186 g=S_Vdd! s=A_60,P_34 d=A_0,P_0
+n bit_2/tut11d_0/a_101_n47# GND bit_2 2 12 40 -186 g=S_GND s=A_0,P_0 d=A_60,P_58
+p phi2_b bit_3/a_n34_n13# Vdd 2 6 60 -43 g=S_Vdd! s=A_24,P_22 d=A_0,P_0
+n bit_2 bit_2/a_n34_n45# bit_2/a_n34_n41# 2 6 39 -29 g=S_GND s=A_12,P_16 d=A_0,P_0
+n phi1 bit_3/a_n34_n13# bit_2/a_n34_n45# 2 6 35 -29 g=S_GND s=A_48,P_72 d=A_0,P_0
+p bit_3/a_n34_n13# Vdd bit_3/tut11d_0/A_b 2 6 -18 -52 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+p bit_3/tut11d_0/A_b bit_3/tut11d_0/A Vdd 2 5 -15 -63 g=S_Vdd! s=A_25,P_20 d=A_0,P_0
+p bit_3 bit_3/tut11d_0/B_b Vdd 2 6 -10 -79 g=S_Vdd! s=A_30,P_22 d=A_0,P_0
+p bit_3/tut11d_0/A_b Vdd bit_3/tut11d_0/a_26_n23# 2 6 -10 -87 g=S_Vdd! s=A_0,P_0 d=A_18,P_18
+p bit_3/tut11d_0/B_b bit_3/tut11d_0/a_26_n23# bit_3/tut11d_0/a_31_n39# 2 6 -10 -92 g=S_Vdd! s=A_0,P_0 d=A_66,P_46
+p bit_3 bit_3/tut11d_0/a_31_n39# bit_3/tut11d_0/a_39_n23# 2 6 -10 -100 g=S_Vdd! s=A_0,P_0 d=A_12,P_16
+p bit_3/tut11d_0/A bit_3/tut11d_0/a_39_n23# Vdd 2 6 -10 -104 g=S_Vdd! s=A_0,P_0 d=A_0,P_0
+n bit_3 bit_3/tut11d_0/B_b GND 2 6 6 -79 g=S_GND s=A_30,P_34 d=A_0,P_0
+n bit_3/tut11d_0/A_b GND bit_3/tut11d_0/a_26_n39# 2 6 6 -87 g=S_GND s=A_0,P_0 d=A_18,P_18
+n bit_3 bit_3/tut11d_0/a_26_n39# bit_3/tut11d_0/a_31_n39# 2 6 6 -92 g=S_GND s=A_0,P_0 d=A_66,P_82
+n bit_3/tut11d_0/B_b bit_3/tut11d_0/a_31_n39# bit_3/tut11d_0/a_39_n39# 2 6 6 -100 g=S_GND s=A_0,P_0 d=A_12,P_16
+n bit_3/tut11d_0/A bit_3/tut11d_0/a_39_n39# GND 2 6 6 -104 g=S_GND s=A_0,P_0 d=A_0,P_0
+n bit_3/a_n34_n13# bit_3/tut11d_0/A_b GND 2 6 19 -52 g=S_GND s=A_30,P_34 d=A_0,P_0
+n bit_3/tut11d_0/A_b GND bit_3/tut11d_0/A 2 6 19 -61 g=S_GND s=A_0,P_0 d=A_30,P_34
+p phi1_b bit_3/tut11d_0/a_31_n39# bit_3/tut11d_0/a_55_n47# 2 6 -15 -118 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+p RESET_B Vdd bit_3/tut11d_0/a_77_n40# 2 5 -16 -150 g=S_Vdd! s=A_0,P_0 d=A_117,P_80
+n phi1 bit_3/tut11d_0/a_55_n47# bit_3/tut11d_0/a_31_n39# 2 6 9 -118 g=S_GND s=A_30,P_34 d=A_0,P_0
+p bit_3/tut11d_0/a_55_n47# bit_3/tut11d_0/a_77_n40# Vdd 2 6 -13 -140 g=S_Vdd! s=A_0,P_0 d=A_0,P_0
+n bit_3/tut11d_0/a_55_n47# bit_3/tut11d_0/a_77_n44# bit_3/tut11d_0/a_77_n40# 2 6 9 -140 g=S_GND s=A_12,P_16 d=A_60,P_68
+n RESET_B GND bit_3/tut11d_0/a_77_n44# 2 6 13 -140 g=S_GND s=A_0,P_0 d=A_0,P_0
+p phi2_b bit_3/tut11d_0/a_77_n40# bit_3/tut11d_0/a_101_n47# 2 6 -13 -164 g=S_Vdd! s=A_0,P_0 d=A_30,P_22
+n phi2 bit_3/tut11d_0/a_101_n47# bit_3/tut11d_0/a_77_n40# 2 6 9 -164 g=S_GND s=A_30,P_34 d=A_0,P_0
+p bit_3/tut11d_0/a_101_n47# bit_3 Vdd 2 12 -13 -186 g=S_Vdd! s=A_60,P_34 d=A_0,P_0
+n bit_3/tut11d_0/a_101_n47# GND bit_3 2 12 9 -186 g=S_GND s=A_0,P_0 d=A_60,P_58
+n phi1 bit_3/a_n34_n17# bit_3/a_n34_n13# 2 6 13 -29 g=S_GND s=A_12,P_16 d=A_0,P_0
+n bit_3 bit_3/a_n34_n24# bit_3/a_n34_n17# 2 6 9 -29 g=S_GND s=A_24,P_36 d=A_0,P_0
+p phi2_b bit_3/a_n34_n24# Vdd 2 6 -16 -43 g=S_Vdd! s=A_24,P_22 d=A_0,P_0
+C bit_3/tut11d_0/B_b GND 5.8
+C bit_3 bit_3/tut11d_0/a_55_n47# 3.2
+C bit_0/tut11d_0/A GND 15.2
+C bit_2 Vdd 2.5
+C bit_1/tut11d_0/a_55_n47# GND 5.9
+C bit_1/tut11d_0/a_55_n47# bit_1 3.2
+C bit_3 Vdd 2.5
+C phi1_b GND 26.4
+C bit_0/tut11d_0/a_55_n47# GND 5.9
+C bit_2/tut11d_0/a_101_n47# GND 6.6
+C bit_0 GND 10.0
+C phi2 GND 33.3
+C bit_3/tut11d_0/a_55_n47# GND 5.9
+C bit_0/tut11d_0/B_b GND 5.8
+C bit_1 Vdd 2.5
+C bit_0/tut11d_0/a_31_n39# bit_0 2.5
+C bit_0/tut11d_0/a_101_n47# GND 6.6
+C bit_2 GND 10.0
+C bit_0/tut11d_0/a_77_n40# bit_0 2.2
+C bit_3 GND 10.5
+C bit_3 bit_3/tut11d_0/a_77_n40# 2.2
+C bit_0/tut11d_0/A_b GND 15.8
+C bit_2/a_n34_n41# GND 7.5
+C bit_2 bit_2/tut11d_0/a_31_n39# 2.5
+C bit_1 bit_1/tut11d_0/a_77_n40# 2.2
+C bit_1 GND 10.5
+C bit_3/tut11d_0/A_b GND 15.8
+C bit_1/tut11d_0/B_b GND 5.8
+C bit_2/tut11d_0/a_55_n47# phi1_b 2.2
+C RESET_B GND 33.3
+C bit_2/tut11d_0/A GND 15.2
+C phi1 GND 58.5
+C bit_2/tut11d_0/B_b GND 5.8
+C bit_1/tut11d_0/a_55_n47# phi1_b 2.2
+C bit_2/tut11d_0/a_55_n47# bit_2 3.2
+C GND bit_1/tut11d_0/a_101_n47# 6.6
+C bit_0/tut11d_0/a_55_n47# phi1_b 2.2
+C bit_3 bit_3/tut11d_0/a_31_n39# 2.5
+C bit_0/tut11d_0/a_55_n47# bit_0 3.2
+C bit_1/tut11d_0/A_b GND 15.8
+C hold GND 6.7
+C bit_3/tut11d_0/a_101_n47# GND 6.6
+C bit_3/tut11d_0/a_55_n47# phi1_b 2.2
+C bit_2/tut11d_0/A_b GND 15.8
+C bit_2/tut11d_0/a_55_n47# GND 5.9
+C Vdd bit_0 2.5
+C phi2_b GND 52.5
+C bit_3/tut11d_0/A GND 15.2
+C bit_1/tut11d_0/a_31_n39# bit_1 2.5
+C bit_1/tut11d_0/A GND 15.2
+C bit_3/a_n34_n13# GND 16.9
+C bit_1/a_n34_n13# GND 16.9
+C bit_2/tut11d_0/a_77_n40# bit_2 2.2
+C a_36_n244# GND 12.9
+R a_36_n244# 596
+C a_24_n244# GND 6.7
+R a_24_n244# 322
+C a_8_n244# GND 13.8
+R a_8_n244# 643
+C bit_3/a_n34_n24# GND 8.1
+R bit_3/a_n34_n24# 464
+R bit_3/a_n34_n17# 80
+C bit_3/tut11d_0/a_101_n47# GND 11.5
+R bit_3/tut11d_0/a_101_n47# 820
+R bit_3/tut11d_0/a_77_n44# 80
+C bit_3/tut11d_0/a_77_n40# GND 11.1
+R bit_3/tut11d_0/a_77_n40# 1150
+C bit_3/tut11d_0/a_55_n47# GND 11.3
+R bit_3/tut11d_0/a_55_n47# 773
+R bit_3/tut11d_0/a_39_n39# 80
+R bit_3/tut11d_0/a_26_n39# 53
+R bit_3/tut11d_0/a_39_n23# 179
+C bit_3/tut11d_0/a_31_n39# GND 9.6
+R bit_3/tut11d_0/a_31_n39# 973
+R bit_3/tut11d_0/a_26_n23# 119
+C bit_3/tut11d_0/A GND 7.0
+R bit_3/tut11d_0/A 1107
+C bit_3/tut11d_0/B_b GND 12.3
+R bit_3/tut11d_0/B_b 713
+C bit_3/tut11d_0/A_b GND 14.6
+R bit_3/tut11d_0/A_b 1537
+C bit_3 GND 46.3
+R bit_3 2324
+R bit_2/a_n34_n45# 80
+C bit_3/a_n34_n13# GND 12.2
+R bit_3/a_n34_n13# 1386
+C bit_2/tut11d_0/a_101_n47# GND 11.5
+R bit_2/tut11d_0/a_101_n47# 820
+R bit_2/tut11d_0/a_77_n44# 80
+C bit_2/tut11d_0/a_77_n40# GND 11.1
+R bit_2/tut11d_0/a_77_n40# 1150
+C bit_2/tut11d_0/a_55_n47# GND 11.3
+R bit_2/tut11d_0/a_55_n47# 773
+R bit_2/tut11d_0/a_39_n39# 80
+R bit_2/tut11d_0/a_26_n39# 53
+R bit_2/tut11d_0/a_39_n23# 179
+C bit_2/tut11d_0/a_31_n39# GND 9.6
+R bit_2/tut11d_0/a_31_n39# 973
+R bit_2/tut11d_0/a_26_n23# 119
+C bit_2/tut11d_0/A GND 7.0
+R bit_2/tut11d_0/A 1107
+C bit_2/tut11d_0/B_b GND 12.3
+R bit_2/tut11d_0/B_b 713
+C bit_2/tut11d_0/A_b GND 14.6
+R bit_2/tut11d_0/A_b 1537
+C bit_2 GND 46.9
+R bit_2 2324
+C bit_2/a_n34_n41# GND 21.0
+R bit_2/a_n34_n41# 1386
+R bit_1/a_n34_n17# 80
+C bit_1/tut11d_0/a_101_n47# GND 11.5
+R bit_1/tut11d_0/a_101_n47# 820
+R bit_1/tut11d_0/a_77_n44# 80
+C bit_1/tut11d_0/a_77_n40# GND 11.1
+R bit_1/tut11d_0/a_77_n40# 1150
+C bit_1/tut11d_0/a_55_n47# GND 11.3
+R bit_1/tut11d_0/a_55_n47# 773
+R bit_1/tut11d_0/a_39_n39# 80
+R bit_1/tut11d_0/a_26_n39# 53
+R bit_1/tut11d_0/a_39_n23# 179
+C bit_1/tut11d_0/a_31_n39# GND 9.6
+R bit_1/tut11d_0/a_31_n39# 973
+R bit_1/tut11d_0/a_26_n23# 119
+C bit_1/tut11d_0/A GND 7.0
+R bit_1/tut11d_0/A 1107
+C bit_1/tut11d_0/B_b GND 12.3
+R bit_1/tut11d_0/B_b 713
+C bit_1/tut11d_0/A_b GND 14.6
+R bit_1/tut11d_0/A_b 1537
+C bit_1 GND 46.3
+R bit_1 2324
+R bit_0/a_n34_n45# 80
+C bit_1/a_n34_n13# GND 12.2
+R bit_1/a_n34_n13# 1386
+C phi2_b GND 86.3
+R phi2_b 6913
+C phi1 GND 90.6
+R phi1 7806
+C bit_0/tut11d_0/a_101_n47# GND 11.5
+R bit_0/tut11d_0/a_101_n47# 820
+C phi2 GND 34.8
+R phi2 3784
+R bit_0/tut11d_0/a_77_n44# 80
+C bit_0/tut11d_0/a_77_n40# GND 11.1
+R bit_0/tut11d_0/a_77_n40# 1150
+C RESET_B GND 36.3
+R RESET_B 3486
+C phi1_b GND 41.8
+R phi1_b 3784
+C bit_0/tut11d_0/a_55_n47# GND 11.3
+R bit_0/tut11d_0/a_55_n47# 773
+R bit_0/tut11d_0/a_39_n39# 80
+R bit_0/tut11d_0/a_26_n39# 53
+R bit_0/tut11d_0/a_39_n23# 179
+C bit_0/tut11d_0/a_31_n39# GND 9.6
+R bit_0/tut11d_0/a_31_n39# 973
+R bit_0/tut11d_0/a_26_n23# 119
+C bit_0/tut11d_0/A GND 7.0
+R bit_0/tut11d_0/A 1107
+C bit_0/tut11d_0/B_b GND 12.3
+R bit_0/tut11d_0/B_b 713
+C bit_0/tut11d_0/A_b GND 14.6
+R bit_0/tut11d_0/A_b 1537
+C hold GND 23.4
+R hold 866
+C bit_0 GND 46.9
+R bit_0 2324
+C Vdd GND 302.9
+R Vdd 9192
+C GND GND 297.9
+R GND 13271

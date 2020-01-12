@@ -1,0 +1,84 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>def</H2>
+<HR>
+Read or write DEF format files.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>def</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> is one of the following:
+	 <DL>
+	   <DT> <B>read</B> [<I>filename</I>]
+	   <DD> Read a DEF file <I>filename</I>[<B>.def</B>]
+	   <DT> <B>write</B> [<I>cell</I>]
+	   <DD> Write DEF for current or indicated cell named <I>cell</I>
+	   <DT> <B>help</B>
+	   <DD> Print help information (command summary)
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>def</B> command reads and writes DEF format files.  These
+      files are generally assumed to be digital standard-cell based
+      layouts.  The DEF format has no real concept of hierarchy.  To
+      generate a valid DEF file that may be recognized by other
+      software, it is necessary to have a layout with standard cells
+      using the <B>port</B> method to declare input and output ports.
+      In particular, the <B>port class</B>  and <B>port use</B> are
+      designed to work with the DEF read and write routines. <P>
+
+      The technology file should have a <B>lef</B> section
+      describing how LEF and DEF files should be written.  However, if
+      an appropriate LEF file exists and is read prior to writing a
+      DEF format file, the technology will be initialized from the
+      file if it is not declared in the technology file. <P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>def</B> is implemented as a built-in <B>magic</B> command.
+      Only the critical part of the DEF definition has been
+      implemented.  Some uncommon forms of syntax such as
+      wire extensions are not implemented.  This is largely due
+      to the incomplete nature of the LEF/DEF spec.  It is unlikely
+      that such forms will be encountered in third-party input.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=lef.html><B>lef</B></A> <BR>
+      <A HREF=port.html><B>port</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 7, 2004 at 1:45am <P>
+</BODY>
+</HTML>

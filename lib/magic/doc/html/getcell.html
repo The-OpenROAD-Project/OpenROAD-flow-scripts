@@ -1,0 +1,102 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>get, getcell</H2>
+<HR>
+Import a cell as a subcell of the current edit cell.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>getcell</B> <I>cellname</I> [<I>orientation</I>] <BR><BR>
+      <B>getcell</B> <I>cellname</I> [<B>child</B> <I>child_refpoint</I>]
+		[<B>parent</B> <I>parent_refpoint</I>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>orientation</I> may be one of the following:
+	 <DL>
+	   <DT> <B>90</B>
+	   <DD> Load rotated by 90 degrees clockwise
+	   <DT> <B>180</B>
+	   <DD> Load rotated by 180 degrees
+	   <DT> <B>270</B>
+	   <DD> Load rotated by 90 degrees counterclockwise
+	   <DT> <B>v</B>
+	   <DD> Load flipped top to bottom
+	   <DT> <B>h</B>
+	   <DD> Load flipped left to right
+	   <DT> <B>90v</B>
+	   <DD> Load rotated 90 degrees clockwise and flipped top to bottom
+	   <DT> <B>90h</B>
+	   <DD> Load rotated 90 degrees clockwise and flipped left to right
+	   <DT> <B>180v</B>
+	   <DD> Load rotated 180 degrees and flipped top to bottom
+	   <DT> <B>180h</B>
+	   <DD> Load rotated 180 degrees and flipped left to right
+	   <DT> <B>270v</B>
+	   <DD> Load rotated 90 degrees counterclockwise and flipped top to bottom
+	   <DT> <B>270h</B>
+	   <DD> Load rotated 90 degrees counterclockwise and flipped left to right
+	 </DL>
+	 and <I>child_refpoint</I> and <I>parent_refpoint</I> may be
+	 <I>x y</I> coordinate pairs, or one of the four keywords
+	 <B>ll</B>, <B>lr</B>, <B>ul</B>, or <B>ur</B>, indicating
+	 one of the four box corners.   For the child,
+	 coordinate pairs are in the coordinate system of the child,
+	 and corners indicate cell bounding box corners.  For the
+	 parent, coordinate pairs are in the coordinate system of
+	 the parent, and corners indicate corners of the cursor box.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>getcell</B> command creates subcell instances within the
+      current edit cell.  By default, with only the <I>cellname</I>
+      given, an orientation of zero is assumed, and the cell is placed
+      such that the lower-left corner of the cell's bounding box is
+      placed at the lower-left corner of the cursor box in the parent
+      cell. <P>
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>getcell</B> is implemented as a built-in command in <B>magic</B>. <P>
+      <B>get</B> is an alias for the command <B>getcell</B> (allowed
+      abbreviation where otherwise use would be ambiguous). <P>
+
+      Scripts will find it more convenient to place cells according to
+      the cell origin, with the usage "<B>getcell</B> <I>cellname</I>
+      <B>child 0 0</B>".
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=dump.html><B>dump</B></A>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 6, 2004 at 3:32am <P>
+</BODY>
+</HTML>

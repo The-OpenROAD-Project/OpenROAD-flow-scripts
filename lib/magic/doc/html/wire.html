@@ -1,0 +1,114 @@
+<HTML>
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=wire.html><I>wire</I></A> <BR>
+   </BLOCKQUOTE>
+
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>wire</H2>
+<HR>
+Generate wires from the command line.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Mouse buttons in conjunction with the <B>wire</B> tool implement
+      various <B>wire</B> commands (see the <B>tool</B> command
+      reference).
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>wire</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> <B>help</B>
+	   <DD> Print help information
+	   <DT> <B>horizontal</B>
+	   <DD> Add a new horizontal wire leg
+	   <DT> <B>leg</B>
+	   <DD> Add a new horizontal or vertical leg
+	   <DT> <B>switch</B> [<I>layer width</I>]
+	   <DD> Place contact and switch layers
+	   <DT> <B>type</B> [<I>layer width</I>]
+	   <DD> Select the type and size of wires
+	   <DT> <B>vertical</B>
+	   <DD> add a new vertical wire leg
+	   <DT> <B>segment</B> <I>layer width x1 y1 x2 y2</I>... [<B>-noendcap</B>]
+	   <DD> Paint one or more wire segments
+	   <DT> <B>show</B>
+	   <DD> Determine where the next wire leg will be according to
+	   	the rules for <B>wire leg</B>, but place the result in
+		the selection buffer rather than directly on the layout.
+	   <DT> <B>increment layer</B>
+	   <DD> Change the layer type used for wires to the wire type on
+	   	the plane above the plane of the current wire type.
+	   <DT> <B>decrement layer</B>
+	   <DD> Change the layer type used for wires to the wire type on
+	   	the plane below the plane of the current wire type.
+	   <DT> <B>increment width</B>
+	   <DD> Increment the width of the current wire by 1 internal unit.
+	   <DT> <B>decrement width</B>
+	   <DD> Decrement the width of the current wire by 1 internal unit.
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>wire</B> command allows quick generation of wires on the
+      layout.  Some of these commands are bound to mouse button events
+      in the wire tool, making a convenient interface for fast wiring
+      where full netlist routing is not required.  Due to the presence
+      of the wire tool, most of these commands are not typically called
+      from the command line. <P>
+
+      The <B>wire segment</B> command can generate non-Manhattan segments.
+      All other wiring commands generate only Manhattan routes.  This
+      command places wire segments in relation to the <I>centerline</I>
+      coordinates specified by <I>x1 y1</I>, <I>x2 y2</I>, and so forth.
+      By default, wires are drawn with an endcap extension of one-half
+      the wire width.  The <B>-noendcap</B> option causes the wire to
+      end at the coordinate, with no extension.  The <B>wire segment</B>
+      command is intended to be used from Tcl scripts for automatic
+      layout generation.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>wire</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=polygon.html><B>polygon</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> December 4, 2005 at 8:38pm <P>
+</BODY>
+</HTML>

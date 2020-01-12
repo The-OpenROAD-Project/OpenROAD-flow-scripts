@@ -1,0 +1,140 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>port</H2>
+<HR>
+Declare a label to be a subcircuit port, or manipulate port parameters.
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>port</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> </I>index</I> <I>directions</I>
+	   <DD> Declare a label to be a port with order number
+		<I>index</I> and with allowed connection directions
+		specified by the list <I>directions</I>.  This is
+		equivalent to the <B>make</B> option, except that
+		the index and direction must be specified.
+	   <DT><B>class</B> [<I>type</I>]
+	   <DD> Get [set] port class type (see Summary, below).
+    	   <DT> <B>use</B> [<I>type</I>]
+	   <DD> Get [set] port use type (see Summary, below).
+	   <DT> <B>index</B> [<I>number</I>]
+	   <DD> Get [set] port number
+	   <DT> <B>equivalent</B> [<I>number</I>]
+	   <DD> Make the port equivalent to the (other) port numbered
+		<I>number</I>.
+	   <DT> <B>connections</B> [<I>directions</I>]
+	   <DD> Get [set] port connection directions
+	   <DT> <B>make</B> [</I>index</I>] [<I>directions</I>]
+	   <DD> Declare a label to be a port with order number
+		<I>index</I> and with allowed connection directions
+		specified by the list <I>directions</I>.  If not
+		specified, the index is set to the first unused
+		number, starting with 1, and the direction defaults
+		to the direction of the label text.  That is, if the
+		label text is drawn to the right of the port, then
+		connections are allowed to the right side of the
+		port.
+	   <DT> <B>remove</B>
+	   <DD> Turn a port back into an ordinary label, removing
+		all of its port properties.
+	   <DT> <B>help</B>
+	   <DD> Print help information
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>port</B> command turns labels into ports and
+      manipulates the properties of those ports.  The <B>port</B>
+      command gives <B>magic</B> some understanding of "standard
+      cells".  A cell definition that contains declared ports is
+      treated specially by the <B>extract</B>, <B>ext2spice</B>,
+      <B>lef</B>, and <B>def</B> commands.  All other commands
+      interpret ports as ordinary labels.  <B>ext2spice</B> only
+      interprets ports specially if the option <B>ext2spice subcircuits
+      on</B> is enabled.  Cells that contain port labels are assumed
+      in these cases to be <I>standard cells</I>, that is, cells
+      which are pre-characterized, and for which the layout is not
+      to be interpreted as a physical circuit.  When writing SPICE
+      output, a cell containing port labels that is a descendent cell
+      of the top-level layout is written as a subcircuit call, that
+      is, an "X" record.  If the top-level cell in the layout
+      contains ports, then the SPICE output is written as a subcircuit
+      definition, that is, wrapped in a ".subckt . . . .ends" pair.
+      For LEF files, a cell that contains ports is written as a
+      macro cell, and the ports are the declared PINs of the macro.
+      For DEF files, a cell that contains ports is written as a
+      COMPONENT. <P>
+	
+      The "index" property of the port is used only when the
+      cell is written into a SPICE deck as a subcircuit entry,
+      when the <B>ext2spice subcircuit on</B> option is enabled
+      (which it is by default).  In that case, the subcircuit
+      call parameters (nodes) are written in the order of the port
+      indices, which are then assumed to match the definition for
+      the subcircuit.  Likewise, if the circuit is written as a
+      subcircuit to a SPICE file, the order of parameters in the
+      subcircuit definition will match the order of the port
+      indices.  Note that the actual port numbers are ignored;
+      the port values will be written in ascending order starting
+      with the lowest numbered port and ending with the highest
+      numbered port. <P>
+
+      The "direction" property of the port has no particular
+      meaning to magic but may be used by other programs to control
+      the allowed direction of routes into a standard cell. <P>
+
+      The "class" and "use" properties of the port have no
+      internal meaning to magic but are used by the LEF and DEF
+      format read and write routines, and match the LEF/DEF
+      CLASS and USE properties for macro cell pins.  Valid
+      classes are: <B>default</B>, <B>input</B>, <B>output</B>,
+      <B>tristate</B>, <B>bidirectional</B>, <B>inout</B>,
+      <B>feedthrough</B>, and <B>feedthru</B>.  Valid uses are:
+      <B>default</B>, <B>analog</B>, <B>signal</B>, <B>digital</B>,
+      <B>power</B>, <B>ground</B>, and <B>clock</B>.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>port</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=label.html><B>label</B></A> <BR>
+      <A HREF=lef.html><B>lef</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 16, 2004 at 2:10pm <P>
+</BODY>
+</HTML>

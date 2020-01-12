@@ -1,0 +1,71 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>closewrapper</H2>
+<HR>
+Close a GUI layout window and all of its associated frames.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Menu option <I>File->Close</I> implements the command <B>closewrapper</B>
+      <I>tk_path_name</I> in the GUI layout window.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>closewrapper</B> <I>frame_name</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>frame_name</I> is the Tk path name of the top-level
+	 layout GUI window frame.  By default, this name is <TT>.layout1</TT>,
+	 <TT>.layout2</TT>, etc., for successive windows created with
+	 the <B>openwrapper</B> command.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>closewrapper</B> command removes a layout window in the
+      Tcl version of magic.  It is only applicable when magic is
+      invoked with the GUI wrapper, using <B>magic -w</B>, and
+      supercedes the built-in command <B>closewindow</B>.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>closewrapper</B> is implemented as a Tcl procedure in the
+      GUI wrapper script.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=closewindow.html><B>closewindow</B></A> <BR>
+      <A HREF=openwrapper.html><B>openwrapper</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 6, 2004 at 12:45am <P>
+</BODY>
+</HTML>

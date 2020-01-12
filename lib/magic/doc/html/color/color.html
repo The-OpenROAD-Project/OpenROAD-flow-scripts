@@ -1,0 +1,82 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=../graphics/blpaper.gif>
+<H1> <IMG SRC=../graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=../graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>color</H2>
+<HR>
+Specify color to edit, or print intensities of the currently edited color
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>color</B> [<I>number</I>|<B>next</B>|<B>last</B>|<B>get</B>|<B>rgb</B>]
+		<BR><BR>
+      <BLOCKQUOTE>
+         where <I>number</I> is the number of a color in the colormap list.
+	 Historically, this number was given in octal.  This has been changed
+	 to the variable format of C syntax, in which numbers are treated as
+	 decimal unless beginning with "0" (zero), in which case they are
+	 treated as octal, or "0x" (zero-x), in which case they are treated
+	 as hexidecimal.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>color</B> command specifies the color number to edit in
+      the colormap window.  With no arguments, prints the color
+      index and RGB values for the color being edited. <P>
+
+      In the Tcl-based version of magic, the "color picking" and
+      "color copying" functions are no longer functional.  For
+      this reason, options <B>color next</B> and <B>color last</B>
+      have been added to allow scrolling through the colors in the
+      colormap.  These commands are bound to the key macros
+      "<B>+</B>" (plus) and "<B>-</B>" (minus), respectively. <P>
+
+      Options <B>color get</B> and <B>color rgb</B> return subsets
+      of the information reported by <B>color</B> with no arguments.
+      <B>color get</B> returns the color index of the color, and
+      <B>color rgb</B> returns the individual red, green, and blue
+      intensities of the color.  In the Tcl-based version of <B>magic</B>,
+      these values are returned as Tcl results. <P>
+
+      Note that color changes made in the <B>color</B> window do not
+      immediately take effect on the layout.  It is necessary to pass
+      a <B>refresh</B> command to the layout window, or to type the
+      <I>Control-</I><B>L</B> macro in the layout window to update
+      the colors.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>color</B> is implemented as a built-in <B>color</B>
+	window command in <B>magic</B>.  It can only be invoked from
+	a window created with the <B>specialopen color</B> command.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=../graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=../commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October, 2004<P>
+</BODY>
+</HTML>

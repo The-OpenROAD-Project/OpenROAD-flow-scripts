@@ -1,0 +1,138 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>ext, extract</H2>
+<HR>
+Circuit netlist extractor
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>extract</B> <I>option</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>option</I> may be one of the following:
+	 <DL>
+	   <DT> <B>all</B>
+	   <DD> Extract the root cell and all its children.  This bypasses
+		the incremental extraction and ensures that a new <TT>.ext</TT>
+		file is written for every cell definition.
+	   <DT> <B>cell</B> <I>name</I>
+	   <DD> Extract the indicated cell into file <I>name</I>
+	   <DT> <B>do</B>|<B>no</B> [<I>option</I>]
+	   <DD> Enable or disable an extractor option, where <I>option</I>
+		may be one of the following:
+	      <BLOCKQUOTE>
+		<DL>
+		  <DT> <B>capacitance</B>
+		  <DD>
+		  <DT> <B>resistance</B>
+		  <DD>
+		  <DT> <B>coupling</B>
+		  <DD>
+		  <DT> <B>length</B>
+		  <DD>
+		  <DT> <B>adjust</B>
+		  <DD>
+		  <DT> <B>all</B>
+		  <DD>
+		</DL>
+	      </BLOCKQUOTE>
+
+	   <DT> <B>length</B> [<I>option</I>]
+	   <DD> Control pathlength extraction information, where <I>option</I>
+		may be one of the following:
+	      <BLOCKQUOTE>
+		<DL>
+	          <DT> <B>driver</B> <I>termname</I>
+		  <DD>
+	          <DT> <B>receiver</B> <I>termname</I>
+		  <DD>
+	          <DT> <B>clear</B>
+		  <DD>
+		</DL>
+	      </BLOCKQUOTE>
+	
+	   <DT> <B>help</B>
+	   <DD> Print help information
+	   <DT> <B>parents</B>
+	   <DD> Extract the selected cell and all its parents
+	   <DT> <B>showparents</B>
+	   <DD> List the cell and all parents of selected cell.  Note that
+		this is not really an extract option and is superceded by
+		the <B>cellname</B> command.
+	   <DT> [<B>list</B>|<B>listall</B>] <B>style</B> [<I>stylename</I>]
+	   <DD> Set the current extraction style to <I>stylename</I>.
+		Without arguments, print the current extraction style.
+		With keyword <B>list</B>, return the current extraction
+		style as a Tcl result.  With keyword <B>listall</B>, return
+		all valid extraction styles for the technology as a Tcl
+		list.
+	   <DT> <B>unique</B> [<I>#</I>]
+	   <DD> Generate unique names when different nodes have the same name
+	   <DT> <B>warn</B> [[<B>no</B>] <I>option</I>]
+	   <DD> Enable/disable reporting of non-fatal errors, where <I>option</I>
+		may be one of the following:
+	      <BLOCKQUOTE>
+		<DL>
+		  <DT> <B>fets</B>
+		  <DD>
+		  <DT> <B>labels</B>
+		  <DD>
+		  <DT> <B>dup</B>
+		  <DD>
+		  <DT> <B>all</B>
+		  <DD>
+		</DL>
+	      </BLOCKQUOTE>
+	 </DL>
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+        With no options given, the <B>extract</B> command incrementally
+	extracts the root cell and all its children into separate
+	<TT>.ext</TT> files.  With options, the effect is as described
+	in the Usage section above.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>extract</B> is implemented as a built-in <B>magic</B> command. <P>
+      <B>ext</B> is an alias for command <B>extract</B> (allowed
+      abbreviation where the usage would otherwise be ambiguous).
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=extresist.html><B>extresist</B></A> <BR>
+      <A HREF=ext2spice.html><B>ext2spice</B></A> <BR>
+      <A HREF=ext2sim.html><B>ext2sim</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 6, 2004 at 3:16am <P>
+</BODY>
+</HTML>

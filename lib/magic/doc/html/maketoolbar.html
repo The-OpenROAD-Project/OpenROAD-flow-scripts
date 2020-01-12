@@ -1,0 +1,101 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>maketoolbar</H2>
+<HR>
+Generate the GUI layout window toolbar.
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Menu item <I>Options->Toolbar</I> implements the command
+	<B>maketoolbar</B>.
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>maketoolbar</B> <I>frame_name</I> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>frame_name</I> is the Tk path name of a GUI layout
+	 window frame (e.g., ".layout1", ".layout2").
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>maketoolbar</B> command generates the toolbar for the
+      GUI layout window.  The toolbar contains a set of buttons
+      representing each layer type in the technology file.
+      Each toolbar button has bindings for mouse buttons and
+      keys to implement shortcut commands in <B>magic</B>.
+      While the mouse pointer is inside the boundary of the
+      toolbar button, the name of the layer represented by the
+      toolbar is printed in the title bar of the window.<P>
+
+      <BLOCKQUOTE>
+      <CENTER>
+	<IMG SRC=graphics/toolbar.gif> <BR>
+	<I>Figure 1.  The GUI toolbar for the default scmos technology.</I>
+      </CENTER>
+      </BLOCKQUOTE>
+
+      The default bindings for the toolbar buttons and the <B>magic</B>
+      commands they invoke are as follows:
+      <BLOCKQUOTE>
+      <DL>
+        <DT> <I>Button-</I><B>1</B>
+        <DD> <B>see</B> <I>layername</I>
+        <DT> <I>Button-</I><B>3</B>
+        <DD> <B>see no</B> <I>layername</I>
+        <DT> <I>Button-</I><B>2</B>
+        <DD> <B>paint</B> <I>layername</I>
+        <DT> <I>Shift-Button-</I><B>2</B>
+        <DD> <B>erase</B> <I>layername</I>
+        <DT> <I>Key-</I><B>p</B>
+        <DD> <B>paint</B> <I>layername</I>
+        <DT> <I>Key-</I><B>e</B>
+        <DD> <B>erase</B> <I>layername</I>
+        <DT> <I>Key-</I><B>s</B>
+        <DD> <B>select more area</B> <I>layername</I>
+        <DT> <I>Key-</I><B>S</B>
+        <DD> <B>select less area</B> <I>layername</I>
+      </DL>
+      </BLOCKQUOTE>
+
+      The toolbar is not present on window startup due to timing
+      problems with several window managers that prevents the
+      correct measurement of window height.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>maketoolbar</B> is implemented as a Tcl procedure in the
+      GUI wrapper script.
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 7, 2004 at 3:12am <P>
+</BODY>
+</HTML>

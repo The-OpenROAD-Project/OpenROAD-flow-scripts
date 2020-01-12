@@ -1,0 +1,76 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>paint</H2>
+<HR>
+Paint mask information into the current edit cell
+<HR>
+
+<H3>Shortcuts:</H3>
+   <BLOCKQUOTE>
+      Key interactive macro <B>p</B> implements the command <B>paint</B> and
+      waits for input of the layer type. <BR>
+      Mouse button 2 implements the command <B>paint cursor</B> when using
+      the "box tool" in a layout window. <BR>
+   </BLOCKQUOTE>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>paint</B> <I>layers</I>|<B>cursor</B> <BR><BR>
+      <BLOCKQUOTE>
+         where <I>layers</I> is a comma-separated list of types to paint.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>paint</B> command paints layer types in the current edit
+      cell inside the area of the cursor box. <P>
+
+      Note that some layers, such as DRC layers, cannot be painted.
+      Elements are painted with the <B>element</B> command and
+      feedback areas are painted using the <B>feedback</B> command. <P>
+
+      The "<B>paint cursor</B>" option picks the layers underneath the
+      position of the (X11) cursor and fills the cursor box with these
+      types.  However, when no material (e.g., "space") is present under
+      the cursor, then all material and labels are erased from the
+      area of the cursor box.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>paint</B> is implemented as a built-in command in <B>magic</B>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=erase.html><B>erase</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> November 8, 2004 at 3:02pm <P>
+</BODY>
+</HTML>

@@ -1,0 +1,75 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2>goto</H2>
+<HR>
+Goto the named node
+<HR>
+
+<H3>Usage:</H3>
+   <BLOCKQUOTE>
+      <B>goto</B> <I>nodename</I> [<B>-nocomplain</B>] <BR><BR>
+      <BLOCKQUOTE>
+         where <I>nodename</I> is any valid name for a network node.
+      </BLOCKQUOTE>
+   </BLOCKQUOTE>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      The <B>goto</B> command moves the cursor box to some position
+      representing the network node named <I>nodename</I>, if it
+      exists in the layout.  Because any given area of the layout
+      may contain more than one unconnected network node, a layer
+      type is returned.  The area of the cursor box plus the layer
+      type always uniquely identifies the node. <P>
+
+      The <B>-nocomplain</B> switch supresses the warning message
+      if the node does not exist.  In the Tcl version, an empty
+      list is returned for nodes that cannot be found, and no
+      error condition is reported.
+   </BLOCKQUOTE>
+
+<H3>Implementation Notes:</H3>
+   <BLOCKQUOTE>
+      <B>goto</B> is implemented as a built-in command in <B>magic</B>.
+      The Tcl version of <B>magic</B> returns the layer of the node
+      as a Tcl result. <P>
+      A script may make use of the return value in the following
+      manner:
+      <BLOCKQUOTE>
+	 <B>select box [goto</B> <I>nodename</I><B>]; select more net</B>
+      </BLOCKQUOTE>
+      which selects the entire network named <I>nodename</I>.
+   </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+      <A HREF=getnode.html><B>getnode</B></A> <BR>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 16, 2004 at 2:15pm <P>
+</BODY>
+</HTML>

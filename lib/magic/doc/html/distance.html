@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+  <STYLE type="text/css">
+    H1 {color: black }
+    H2 {color: maroon }
+    H3 {color: #007090 }
+    A.head:link {color: #0060a0 }
+    A.head:visited {color: #3040c0 }
+    A.head:active {color: white }
+    A.head:hover {color: yellow }
+    A.red:link {color: red }
+    A.red:visited {color: maroon }
+    A.red:active {color: yellow }
+  </STYLE>
+</HEAD>
+<TITLE>Magic-7.3 Command Reference</TITLE>
+<BODY BACKGROUND=graphics/blpaper.gif>
+<H1> <IMG SRC=graphics/magic_title2.gif ALT="Magic VLSI Layout Tool Version 7.3">
+     <IMG SRC=graphics/magic_OGL_sm.gif ALIGN="top" ALT="*"> </H1>
+
+<H2><I>distance</I></H2>
+<HR>
+Valid distance specifications in magic.
+<HR>
+
+<H3>Summary:</H3>
+   <BLOCKQUOTE>
+      Distances are normally interpreted as <I>lambda</I> values.  However,
+      this depends on the last use of the <B>snap</B> command;  <B>snap
+      internal</B> changes the interpretation of units to the internal
+      grid, while <B>snap user</B> changes the interpretation of units to
+      the user grid.  Distances may always be explicitly called out by
+      appending one of the following to the distance value (with no
+      intervening whitespace):
+	<DL>
+	  <DT> <B>i</B>
+	  <DD> internal units
+	  <DT> <B>l</B>
+	  <DD> lambda units
+	  <DT> <B>um</B>
+	  <DD> microns
+	  <DT> <B>mm</B>
+	  <DD> millimeters
+	  <DT> <B>cu</B>
+	  <DD> centimicrons
+       </DL>
+     In any case where the internal grid is finer than the declared
+     distance measure, fractional distances may be specified; e.g.,
+     <BLOCKQUOTE>
+	<B>box move e 1.25um</B>
+     </BLOCKQUOTE>
+
+<H3>See Also:</H3>
+   <BLOCKQUOTE>
+	<A HREF=direction.html><B>direction</B></A>
+	<A HREF=snap.html><B>snap</B></A>
+   </BLOCKQUOTE>
+
+<P><IMG SRC=graphics/line1.gif><P>
+<TABLE BORDER=0>
+  <TR>
+    <TD> <A HREF=commands.html>Return to command index</A>
+  </TR>
+</TABLE>
+<P><I>Last updated:</I> October 4, 2004 at 7:21am <P>
+</BODY>
+</HTML>
