@@ -42,7 +42,7 @@ DESIGN_CONFIG ?= ./designs/nangate45/gcd.mk
 # CORE_ASPECT_RATIO := 1
 # CORE_MARGIN := 4
 
-all: route
+default: route
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -170,6 +170,9 @@ $(RESULTS_DIR)/1_2_buffer.v: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE) $(OBJECTS_DI
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_2_buffer.v
 	cp $< $@
+
+$(RESULTS_DIR)/1_synth.sdc: $(RESULTS_DIR)/1_1_yosys.v
+	@
 
 clean_synth:
 	rm -rf $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
@@ -372,12 +375,13 @@ $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_ct
 # Generate param file for TritonRoute
 #-------------------------------------------------------------------------------
 ifneq ($(GENERIC_TECH_LEF),)
-$(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/generic_merged_padded_spacing.lef $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
-	echo "lef:$(OBJECTS_DIR)/generic_merged_padded_spacing.lef" > $@
+  TRITON_ROUTE_LEF := $(OBJECTS_DIR)/generic_merged_padded_spacing.lef
 else
-$(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/merged_padded_spacing.lef $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
-	echo "lef:$(OBJECTS_DIR)/merged_padded_spacing.lef" > $@
+  TRITON_ROUTE_LEF := $(OBJECTS_DIR)/merged_padded_spacing.lef
 endif
+
+$(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
+	echo "lef:$(TRITON_ROUTE_LEF)" > $@
 	echo "def:$(RESULTS_DIR)/4_cts.def" >> $@
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
 	echo "output:$(RESULTS_DIR)/5_route.def" >> $@
@@ -393,8 +397,8 @@ endif
 
 # Run TritonRoute
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param
-	TritonRoute $< 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
+$(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
+	TritonRoute $(OBJECTS_DIR)/TritonRoute.param  2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 
 $(RESULTS_DIR)/5_route.v: $(RESULTS_DIR)/4_cts.v
 	cp $< $@
@@ -446,6 +450,10 @@ clean_finish:
 #
 # ==============================================================================
 
+all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/merged.lef $(OBJECTS_DIR)/TritonRoute.param \
+		| ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat PORT9.dat POST9.dat POWV9.dat
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	openroad $(SCRIPTS_DIR)/run_all.tcl
 
 clean:
 	@echo
