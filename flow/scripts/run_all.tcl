@@ -31,7 +31,6 @@ source $::env(SCRIPTS_DIR)/tapcell.tcl
 
 # Place
 source $::env(SCRIPTS_DIR)/global_place.tcl
-#source $::env(SCRIPTS_DIR)/resize.tcl
 source $::env(SCRIPTS_DIR)/detail_place.tcl
 
 # CTS
