@@ -29,7 +29,7 @@ resize -buffer_cell [get_full_name [get_lib_cells */$::env(RESIZER_BUF_CELL)]] \
 
 
 # final report
-report_checks > $::env(REPORTS_DIR)/3_resize_checks.report_tns > $::env(REPORTS_DIR)/3_resize_tns.rpt
+report_checks > $::env(REPORTS_DIR)/3_resize_checks.rpt
 report_tns > $::env(REPORTS_DIR)/3_resize_tns.rpt
 report_wns > $::env(REPORTS_DIR)/3_resize_wns.rpt
 report_design_area

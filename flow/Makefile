@@ -69,12 +69,6 @@ export TEST_DIR    = ./test
 
 # Tool Options
 SHELL = /bin/bash -o pipefail
-BANNER = printf "\e[31m" ; \
-         date ; \
-         figlet -c -p -d $(OPENROAD)/build/src/TritonCTS/fonts/ $(1) ; \
-         printf "\e[0m" ; \
-         sleep 1 ;
-
 
 # Quick check to make sure OpenROAD tools are installed
 ifeq ("$(OPENROAD)","")
@@ -163,7 +157,6 @@ synth: $(RESULTS_DIR)/1_synth.v \
 SYNTH_SCRIPT ?= scripts/synth.tcl
 
 $(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
-	@$(call BANNER, 1. SYNTHESIS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	yosys -l $(LOG_DIR)/1_1_yosys.log -c $(SYNTH_SCRIPT)
 
@@ -201,7 +194,6 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 #-------------------------------------------------------------------------------
 
 $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_synth.v
-	@$(call BANNER, 2. FLOORPLAN)
 	openroad $(SCRIPTS_DIR)/verilog2def.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_1_verilog2def.log
 	@! grep --color "Error:" $(LOG_DIR)/2_1_verilog2def.log
@@ -285,7 +277,6 @@ place: $(RESULTS_DIR)/3_place.def \
 # STEP 1: Global placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_1_place_gp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
-	@$(call BANNER, 3. PLACE)
 	openroad $(SCRIPTS_DIR)/global_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 	@! grep --color "Error:" $(LOG_DIR)/3_1_place_gp.log
@@ -369,7 +360,6 @@ route: $(RESULTS_DIR)/5_route.def \
 # STEP 1: Run global route
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_cts.def
-	@$(call BANNER, 5. ROUTING)
 	openroad $(SCRIPTS_DIR)/global_route.tcl 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
 	@! grep --color "Error:" $(LOG_DIR)/5_1_fastroute.log
 
@@ -436,7 +426,6 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_r
 # Run magic
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_final.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/5_route.def
-	@$(call BANNER, 6. FINISHING)
 	klayout -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_lef=$(abspath $(OBJECTS_DIR)/merged.lef) \
 	        -rd in_def=$(RESULTS_DIR)/5_route.def \
