@@ -121,6 +121,11 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 	                           > $@.tmp
 	$(UTILS_DIR)/markDontUse.pl -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
 
+# Pre-process KLayout tech
+# ==============================================================================
+ $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE)
+	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' $^ > $@
+
 # Link flute data files
 # ==============================================================================
 ./PORT9.dat:
@@ -430,10 +435,15 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_r
 
 # Run magic
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/6_final.gds: $(MAGIC_TECH_FILE) $(GDS_FILES) $(RESULTS_DIR)/5_route.def
+$(RESULTS_DIR)/6_final.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/5_route.def
 	@$(call BANNER, 6. FINISHING)
-	magic -dnull -noconsole -T $(MAGIC_TECH_FILE) \
-	      $(SCRIPTS_DIR)/magic.tcl 2>&1 | tee $(LOG_DIR)/6_magic.log
+	klayout -zz -rd design_name=$(DESIGN_NAME) \
+	        -rd in_lef=$(abspath $(OBJECTS_DIR)/merged.lef) \
+	        -rd in_def=$(RESULTS_DIR)/5_route.def \
+	        -rd in_gds="$(GDS_FILES)" \
+	        -rd out_gds=$@ \
+	        -rd map_file=./platforms/$(PLATFORM)/layermap.txt \
+	        -rm $(UTILS_DIR)/def2gds.py
 
 clean_finish:
 	rm -rf $(RESULTS_DIR)/6_final.gds
