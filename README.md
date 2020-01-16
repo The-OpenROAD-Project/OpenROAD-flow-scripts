@@ -40,9 +40,15 @@ The two main components are:
    designs through the flow. It also contains platforms and test designs.
 
 ## Setup
-The tools required to run through the OpenROAD flow can either be obtained from
-a pre-compiled build export or can be built manually. The tools in the flow have
-the following dynamic/runtime dependencies:
+The flow has the following dependencies:
+* OpenROAD
+* KLayout
+* TritonRoute
+* Yosys
+
+The dependencies can either be obtained from a pre-compiled build export or
+built manually. See the [KLayout website](https://www.klayout.de/) for
+installation instructions.
 
 ### Option 1: Installing build exports
 1.  Clone the OpenROAD-flow repository
