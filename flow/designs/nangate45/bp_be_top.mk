@@ -8,7 +8,6 @@ export SDC_FILE      = ./designs/src/bp_be_top/design.sdc
 export ADDITIONAL_LEFS = $(wildcard ./designs/src/bp_be_top/fakeram45*.lef)
 export ADDITIONAL_LIBS = $(wildcard ./designs/src/bp_be_top/fakeram45*.lib)
 
-export RUN_MACRO_PLACEMENT = 1
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4

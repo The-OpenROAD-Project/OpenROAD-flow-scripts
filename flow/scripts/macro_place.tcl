@@ -10,7 +10,28 @@ if {![info exists standalone] || $standalone} {
   read_sdc $::env(RESULTS_DIR)/1_synth.sdc
 }
 
-macro_placement -global_config $::env(IP_GLOBAL_CFG)
+proc find_macros {} {
+  set macros ""
+
+  set db [::ord::get_db]
+  set block [[$db getChip] getBlock]
+  foreach inst [$block getInsts] {
+    set inst_master [$inst getMaster]
+
+    # BLOCK means MACRO cells
+    if { [string match [$inst_master getType] "BLOCK"] } {
+      append macros " " $inst
+    }
+  }
+  return $macros
+}
+
+
+if {[find_macros] != ""} {
+  macro_placement -global_config $::env(IP_GLOBAL_CFG)
+} else {
+  puts "No macros found: Skipping macro_placement"
+}
 
 if {![info exists standalone] || $standalone} {
   set db [::ord::get_db]

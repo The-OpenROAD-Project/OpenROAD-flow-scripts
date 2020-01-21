@@ -211,25 +211,17 @@ $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_
 # Only run if required
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES) $(OBJECTS_DIR)/merged_padded.lef | ./PORT9.dat ./POST9.dat ./POWV9.dat
-ifeq ($(RUN_MACRO_PLACEMENT),1)
 	openroad $(SCRIPTS_DIR)/tdms_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 	@! grep --color "Error:" $(LOG_DIR)/2_3_tdms_place.log
 	$(UTILS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
-else
-	cp $< $@
-endif
 
 # STEP 4: Macro Placement
 # Only run if required
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(IP_GLOBAL_CFG)
-ifeq ($(RUN_MACRO_PLACEMENT),1)
 	openroad $(SCRIPTS_DIR)/macro_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_4_mplace.log
-else
-	cp $< $@
-endif
 
 # STEP 5: PDN generation
 #-------------------------------------------------------------------------------

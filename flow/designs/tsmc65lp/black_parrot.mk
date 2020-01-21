@@ -25,7 +25,6 @@ export ADDITIONAL_GDS  = ./platforms/tsmc65lp/gds/tsmc65lp_1rf_lg6_w16_bit.gds2 
                          ./platforms/tsmc65lp/gds/tsmc65lp_1rf_lg9_w64_all.gds2
 
 
-export RUN_MACRO_PLACEMENT = 1
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 2200 2000.8
