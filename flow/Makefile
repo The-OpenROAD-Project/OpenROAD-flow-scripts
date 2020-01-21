@@ -33,16 +33,17 @@
 
 # DESIGN_CONFIG=./designs/gf14/gcd.mk
 
+# DESIGN_CONFIG=./designs/invecas12/gcd.mk
 
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd.mk
 
 # # Global override Floorplan
-# CORE_UTILIZATION := 30
-# CORE_ASPECT_RATIO := 1
-# CORE_MARGIN := 4
+# export CORE_UTILIZATION := 30
+# export CORE_ASPECT_RATIO := 1
+# export CORE_MARGIN := 4
 
-default: route
+default: finish
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -480,9 +481,7 @@ $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),innovus_$(def)): innovu
 	                  win" \
 	                  -no_logv ; stty sane
 
-$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayout_%:
-	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' \
-	  $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
+$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
 
@@ -517,3 +516,23 @@ run_test:
 clean_test:
 	rm -rf $(TEST_DIR)/logs
 	rm -rf $(TEST_DIR)/parallel.log
+
+# Utility to print information tool version information
+#-------------------------------------------------------------------------------
+YOSYS_PATH := $(dir $(shell which yosys))
+OPENROAD_PATH := $(dir $(shell which openroad))
+TRITONROUTE_PATH := $(dir $(shell which TritonRoute))
+versions.txt:
+	@echo "======================================================" > $(abspath $@)
+	@cd $(OPENROAD_PATH); echo OpenROAD `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
+	@cd $(OPENROAD_PATH); echo `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
+	@cd $(OPENROAD_PATH); git submodule foreach --recursive 'echo $$path `git diff --quiet || echo -n '*dirty*'` `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD`' >> $(abspath $@)
+	@echo "======================================================" >> $(abspath $@)
+	@cd $(YOSYS_PATH); echo Yosys `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
+	@cd $(YOSYS_PATH); echo `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
+	@echo "======================================================" >> $(abspath $@)
+	@cd $(TRITONROUTE_PATH); echo TritonRoute `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
+	@cd $(TRITONROUTE_PATH); echo `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
+	@echo "======================================================" >> $(abspath $@)
+	@cd $(TRITONROUTE_PATH); echo `klayout -v` >> $(abspath $@)
+	@echo "======================================================" >> $(abspath $@)
