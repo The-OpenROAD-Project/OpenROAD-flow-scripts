@@ -28,6 +28,8 @@ if {[info exists ::env(CORE_UTILIZATION)] && $::env(CORE_UTILIZATION) != "" } {
 
 if {![info exists standalone] || $standalone} {
   # write output
-  write_def $::env(RESULTS_DIR)/2_1_floorplan.def
+  set db [::ord::get_db]
+  set block [[$db getChip] getBlock]
+  odb::odb_write_def $block $::env(RESULTS_DIR)/2_1_floorplan.def DEF_5_6
   exit
 }

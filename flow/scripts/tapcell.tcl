@@ -15,6 +15,8 @@ tapcell \
 
 if {![info exists standalone] || $standalone} {
   # write output
-  write_def $::env(RESULTS_DIR)/2_6_floorplan_tapcell.def
+  set db [::ord::get_db]
+  set block [[$db getChip] getBlock]
+  odb::odb_write_def $block $::env(RESULTS_DIR)/2_6_floorplan_tapcell.def DEF_5_6
   exit
 }

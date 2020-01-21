@@ -37,7 +37,9 @@ source $::env(SCRIPTS_DIR)/detail_place.tcl
 source $::env(SCRIPTS_DIR)/cts.tcl
 
 # Save output for global route
-write_def $::env(RESULTS_DIR)/4_cts.def
+set db [::ord::get_db]
+set block [[$db getChip] getBlock]
+odb::odb_write_def $block $::env(RESULTS_DIR)/4_cts.def DEF_5_6
 
 # Route
 source $::env(SCRIPTS_DIR)/global_route.tcl

@@ -13,6 +13,8 @@ if {![info exists standalone] || $standalone} {
 macro_placement -global_config $::env(IP_GLOBAL_CFG)
 
 if {![info exists standalone] || $standalone} {
-  write_def $::env(RESULTS_DIR)/2_4_floorplan_macro.def
+  set db [::ord::get_db]
+  set block [[$db getChip] getBlock]
+  odb::odb_write_def $block $::env(RESULTS_DIR)/2_4_floorplan_macro.def DEF_5_6
   exit
 }

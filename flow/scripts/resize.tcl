@@ -36,7 +36,9 @@ report_design_area
 
 if {![info exists standalone] || $standalone} {
   # write output
-  write_def $::env(RESULTS_DIR)/3_2_place_resized.def
+  set db [::ord::get_db]
+  set block [[$db getChip] getBlock]
+  odb::odb_write_def $block $::env(RESULTS_DIR)/3_2_place_resized.def DEF_5_6
   write_verilog $::env(RESULTS_DIR)/3_place.v
   exit
 }

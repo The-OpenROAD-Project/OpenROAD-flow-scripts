@@ -4,15 +4,15 @@ if {![info exists standalone] || $standalone} {
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
   }
-  
+
   # Read design files
   read_def $::env(RESULTS_DIR)/3_place.def
 
-  # Read verilog  
+  # Read verilog
   read_verilog $::env(RESULTS_DIR)/3_place.v
-  
+
   # Read SDC file
-  read_sdc $::env(RESULTS_DIR)/3_place.sdc 
+  read_sdc $::env(RESULTS_DIR)/3_place.sdc
 }
 
 # Report timing before CTS
@@ -22,13 +22,15 @@ report_checks
 clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
                      -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
                      -root_buf "$::env(CTS_BUF_CELL)" \
-                     -wire_unit 20 
+                     -wire_unit 20
 
 legalize_placement
 
 if {![info exists standalone] || $standalone} {
   # write output
-  write_def $::env(RESULTS_DIR)/4_cts.def
+  set db [::ord::get_db]
+  set block [[$db getChip] getBlock]
+  odb::odb_write_def $block $::env(RESULTS_DIR)/4_cts.def DEF_5_6
   write_verilog $::env(RESULTS_DIR)/4_cts.v
   write_sdc $::env(RESULTS_DIR)/4_cts.sdc
   exit

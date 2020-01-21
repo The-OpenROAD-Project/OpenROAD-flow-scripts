@@ -13,6 +13,8 @@ io_placer -hor_layer 3 -ver_layer 2 -random
 
 if {![info exists standalone] || $standalone} {
   # write output
-  write_def $::env(RESULTS_DIR)/2_2_floorplan_io.def
+  set db [::ord::get_db]
+  set block [[$db getChip] getBlock]
+  odb::odb_write_def $block $::env(RESULTS_DIR)/2_2_floorplan_io.def DEF_5_6
   exit
 }
