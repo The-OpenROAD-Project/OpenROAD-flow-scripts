@@ -208,15 +208,14 @@ foreach net [get_nets *] {
   }
 }
 
-# Remove clock from list
-set clkNetObj [get_nets $::env(CLOCK_PORT)]
-if {$clkNetObj == ""} {
-  puts "Error: Cannot find toplevel clock net - $::env(CLOCK_PORT). Check design configuration"
-  exit -1
-}
-set idx [lsearch $highFanoutNetObjs $clkNetObj]
-set highFanoutNetObjs [lreplace $highFanoutNetObjs $idx $idx]
+# Remove clocks from list
+# foreach clkNetObj [get_net [get_name [get_clocks *]]] {
+foreach clkNetObj [get_net [get_name [get_property [get_clocks *] sources]]] {
+  puts "Skipping buffering for clk: [get_name $clkNetObj]"
+  set idx [lsearch $highFanoutNetObjs $clkNetObj]
+  set highFanoutNetObjs [lreplace $highFanoutNetObjs $idx $idx]
 
+}
 
 # Print user message
 if {[llength $highFanoutNetObjs] > 0} {

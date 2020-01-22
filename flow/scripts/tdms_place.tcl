@@ -10,10 +10,32 @@ if {![info exists standalone] || $standalone} {
   read_sdc $::env(RESULTS_DIR)/1_synth.sdc
 }
 
-set_wire_rc -layer $::env(WIRE_RC_LAYER)
-global_placement -timing_driven
+proc find_macros {} {
+  set macros ""
+
+  set db [::ord::get_db]
+  set block [[$db getChip] getBlock]
+  foreach inst [$block getInsts] {
+    set inst_master [$inst getMaster]
+
+    # BLOCK means MACRO cells
+    if { [string match [$inst_master getType] "BLOCK"] } {
+      append macros " " $inst
+    }
+  }
+  return $macros
+}
+
+if {[find_macros] != ""} {
+  set_wire_rc -layer $::env(WIRE_RC_LAYER)
+  global_placement -timing_driven
+} else {
+  puts "No macros found: Skipping global_placement"
+}
 
 if {![info exists standalone] || $standalone} {
-  write_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def
+  set db [::ord::get_db]
+  set block [[$db getChip] getBlock]
+  odb::odb_write_def $block $::env(RESULTS_DIR)/2_3_floorplan_tdms.def DEF_5_6
   exit
 }

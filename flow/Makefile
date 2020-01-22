@@ -31,16 +31,19 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/vb.mk
 
+# DESIGN_CONFIG=./designs/gf14/gcd.mk
+
+# DESIGN_CONFIG=./designs/invecas12/gcd.mk
 
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd.mk
 
 # # Global override Floorplan
-# CORE_UTILIZATION := 30
-# CORE_ASPECT_RATIO := 1
-# CORE_MARGIN := 4
+# export CORE_UTILIZATION := 30
+# export CORE_ASPECT_RATIO := 1
+# export CORE_MARGIN := 4
 
-all: route
+default: finish
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -62,16 +65,11 @@ export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NAME)
 export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NAME)
 
 export SCRIPTS_DIR = ./scripts
+export UTILS_DIR   = ./util
 export TEST_DIR    = ./test
 
 # Tool Options
 SHELL = /bin/bash -o pipefail
-BANNER = printf "\e[31m" ; \
-         date ; \
-         figlet -c -p -d $(OPENROAD)/build/src/TritonCTS/fonts/ $(1) ; \
-         printf "\e[0m" ; \
-         sleep 1 ;
-
 
 # Quick check to make sure OpenROAD tools are installed
 ifeq ("$(OPENROAD)","")
@@ -81,25 +79,47 @@ endif
 
 # Pre-process Lefs
 # ==============================================================================
-$(OBJECTS_DIR)/merged.lef: $(MERGED_LEF) $(ADDITIONAL_LEFS)
+$(OBJECTS_DIR)/merged.lef: $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
 	mkdir -p $(OBJECTS_DIR)
-	./scripts/mergeLef.py --inputLef $(MERGED_LEF) $(ADDITIONAL_LEFS) --outputLef $@
+	$(UTILS_DIR)/mergeLef.py --inputLef $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
 
 $(OBJECTS_DIR)/merged_padded.lef: $(OBJECTS_DIR)/merged.lef
-	$(SCRIPTS_DIR)/padLefMacro.py -p $(CELL_PAD_IN_SITES) -i $< -o $@
+	$(UTILS_DIR)/padLefMacro.py -r $(CELL_PAD_IN_SITES) \
+	                              -l 0 \
+	                              -s $(PLACE_SITE) \
+	                              -i $< \
+	                              -o $@
 
 # Modify lef files for TritonRoute
 $(OBJECTS_DIR)/merged_padded_spacing.lef: $(OBJECTS_DIR)/merged_padded.lef
-	$(SCRIPTS_DIR)/modifyLefSpacing.py -i $< -o $@
+	$(UTILS_DIR)/modifyLefSpacing.py -i $< -o $@
+
+# Create special generic lef for TritonRoute if required.
+ifneq ($(GENERIC_TECH_LEF),)
+$(OBJECTS_DIR)/generic_merged_padded_spacing.lef: $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
+	mkdir -p $(OBJECTS_DIR)
+	$(UTILS_DIR)/mergeLef.py --inputLef $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
+	$(UTILS_DIR)/padLefMacro.py -r $(CELL_PAD_IN_SITES) \
+	                              -l 0 \
+	                              -s $(PLACE_SITE) \
+	                              -i $@ \
+	                              -o $@
+	$(UTILS_DIR)/modifyLefSpacing.py -i $@ -o $@
+endif
 
 # Pre-process libraries
 # ==============================================================================
 $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 	mkdir -p $(OBJECTS_DIR)
-	$(SCRIPTS_DIR)/mergeLib.pl $(PLATFORM)_merged \
+	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged \
 	                           $(LIB_FILES) \
 	                           > $@.tmp
-	$(SCRIPTS_DIR)/markDontUse.pl -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
+	$(UTILS_DIR)/markDontUse.pl -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
+
+# Pre-process KLayout tech
+# ==============================================================================
+ $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE)
+	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' $^ > $@
 
 # Link flute data files
 # ==============================================================================
@@ -138,7 +158,6 @@ synth: $(RESULTS_DIR)/1_synth.v \
 SYNTH_SCRIPT ?= scripts/synth.tcl
 
 $(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
-	@$(call BANNER, 1. SYNTHESIS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	yosys -l $(LOG_DIR)/1_1_yosys.log -c $(SYNTH_SCRIPT)
 
@@ -150,6 +169,9 @@ $(RESULTS_DIR)/1_2_buffer.v: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE) $(OBJECTS_DI
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_2_buffer.v
 	cp $< $@
+
+$(RESULTS_DIR)/1_synth.sdc: $(RESULTS_DIR)/1_1_yosys.v
+	@
 
 clean_synth:
 	rm -rf $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
@@ -171,16 +193,8 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
-ifneq ($(CORE_UTILIZATION),)
-  FLOORPLAN_ARGS = -utilization $(CORE_UTILIZATION) \
-                   -aspect_ratio $(CORE_ASPECT_RATIO) \
-                   -core_space $(CORE_MARGIN)
-else
-  FLOORPLAN_ARGS = -die_area "$(DIE_AREA)" -core_area "$(CORE_AREA)"
-endif
 
 $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_synth.v
-	@$(call BANNER, 2. FLOORPLAN)
 	openroad $(SCRIPTS_DIR)/verilog2def.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_1_verilog2def.log
 	@! grep --color "Error:" $(LOG_DIR)/2_1_verilog2def.log
@@ -192,31 +206,22 @@ $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_
 	openroad $(SCRIPTS_DIR)/io_placement.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 	@! grep --color "Error:" $(LOG_DIR)/2_2_floorplan_io.log
-	$(SCRIPTS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
 
 # STEP 3: Timing Driven Mixed Sized Placement
 # Only run if required
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES) $(OBJECTS_DIR)/merged_padded.lef | ./PORT9.dat ./POST9.dat ./POWV9.dat
-ifeq ($(RUN_MACRO_PLACEMENT),1)
-
 	openroad $(SCRIPTS_DIR)/tdms_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 	@! grep --color "Error:" $(LOG_DIR)/2_3_tdms_place.log
-else
-	cp $< $@
-endif
+	$(UTILS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
 
 # STEP 4: Macro Placement
 # Only run if required
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(IP_GLOBAL_CFG)
-ifeq ($(RUN_MACRO_PLACEMENT),1)
-	mplace < $(SCRIPTS_DIR)/macro_place.tcl \
+	openroad $(SCRIPTS_DIR)/macro_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_4_mplace.log
-else
-	cp $< $@
-endif
 
 # STEP 5: PDN generation
 #-------------------------------------------------------------------------------
@@ -231,15 +236,10 @@ endif
 
 # STEP 6: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_5_floorplan_pdn.def
-	cp $(RESULTS_DIR)/2_5_floorplan_pdn.def $@
-	tapcell -lef $(OBJECTS_DIR)/merged.lef \
-	        -def $(RESULTS_DIR)/2_5_floorplan_pdn.def \
-	        -rule $(WELLTTAP_RULE) \
-	        -welltap $(WELLTIE_CELL) \
-	        -endcap $(ENDCAP_CELL) \
-	        -rows \
-	        -outdef $@ 2>&1 | tee $(LOG_DIR)/2_6_tapcell.log
+$(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_5_floorplan_pdn.def | ./PORT9.dat ./POST9.dat ./POWV9.dat
+	openroad $(SCRIPTS_DIR)/tapcell.tcl \
+	  2>&1 | tee $(LOG_DIR)/2_6_tapcell.log
+	@! grep --color "Error:" $(LOG_DIR)/2_6_tapcell.log
 
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_tapcell.def
 	cp $< $@
@@ -270,7 +270,6 @@ place: $(RESULTS_DIR)/3_place.def \
 # STEP 1: Global placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_1_place_gp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
-	@$(call BANNER, 3. PLACE)
 	openroad $(SCRIPTS_DIR)/global_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 	@! grep --color "Error:" $(LOG_DIR)/3_1_place_gp.log
@@ -332,53 +331,19 @@ cts: $(RESULTS_DIR)/4_cts.def \
      $(RESULTS_DIR)/4_cts.sdc
 # ==============================================================================
 
-# Prepare tritonCTS config
-# ------------------------------------------------------------------------------
-SKEW  = 50
-TOLER = 1000
-PERCENTILE = 0.075
-$(OBJECTS_DIR)/tritonCts.config: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/3_place.def
-	@$(call BANNER, 4. CTS)
-	mkdir -p $(OBJECTS_DIR)
-	echo "lef $(OBJECTS_DIR)/merged_padded.lef" > $@
-	echo "path $(RESULTS_DIR)/3_place.def" >> $@
-	echo "verilog $(RESULTS_DIR)/3_place.v" >> $@
-	echo "design $(DESIGN_NAME)" >> $@
-	echo "target_skew $(SKEW)" >> $@
-	echo "width $(CORE_WIDTH)" >> $@
-	echo "height $(CORE_HEIGHT)" >> $@
-	echo "tech $(PROCESS)" >> $@
-	echo "ck_port $(CLOCK_PORT)" >> $@
-	echo "db_units 2000" >> $@
-	echo "root_buff $(CTS_BUF_CELL)" >> $@
-	echo "toler $(TOLER)" >> $@
-	echo "percentile $(PERCENTILE)" >> $@
-
-
 # Run TritonCTS
 # ------------------------------------------------------------------------------
-TRITONCTS = $(OPENROAD)/build/src/TritonCTS
-$(RESULTS_DIR)/4_cts.v: $(OBJECTS_DIR)/tritonCts.config | ./PORT9.dat ./POST9.dat ./POWV9.dat
-	$(TRITONCTS)/runTritonCTS.tcl \
-	  -configFilePath=$< \
-	  -scriptsPath=$(TRITONCTS)/scripts \
-	  -techFilesPath=$(CTS_TECH_DIR) \
-	  -lefDefParserPath=$(TRITONCTS)/lefdef2cts \
-	  -executablePath=$(TRITONCTS)/genHtree \
-	  -legalizerPath=$(TRITONCTS)/../OpenDP/opendp \
-	  -outputPath=$(RESULTS_DIR)/run 2>&1 | tee $(LOG_DIR)/4_1_tritonCTS.log
-	openroad $(SCRIPTS_DIR)/cts_legalize.tcl 2>&1 | tee $(LOG_DIR)/4_2_cts_legalize.log
-	@! grep --color "Error:" $(LOG_DIR)/cts_legalize.log
-	cp $(RESULTS_DIR)/run/final.v $@
+$(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
+	openroad $(SCRIPTS_DIR)/cts.tcl \
+		2>&1 | tee $(LOG_DIR)/4_cts.log
+	@! grep --color "Error:" $(LOG_DIR)/4_cts.log
 
 $(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_cts.v
-	cp $(RESULTS_DIR)/run/cts_final.def $@
 
-$(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/3_place.sdc
-	cp $< $@
+
+$(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.v
 
 clean_cts:
-	rm -rf $(OBJECTS_DIR)/tritonCts.config
 	rm -rf $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_cts.sdc
 
 
@@ -398,7 +363,6 @@ route: $(RESULTS_DIR)/5_route.def \
 # STEP 1: Run global route
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_cts.def
-	@$(call BANNER, 5. ROUTING)
 	openroad $(SCRIPTS_DIR)/global_route.tcl 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
 	@! grep --color "Error:" $(LOG_DIR)/5_1_fastroute.log
 
@@ -408,13 +372,20 @@ $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_ct
 
 # Generate param file for TritonRoute
 #-------------------------------------------------------------------------------
-$(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/merged_padded_spacing.lef $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
-	echo "lef:$(OBJECTS_DIR)/merged_padded_spacing.lef" > $@
+ifneq ($(GENERIC_TECH_LEF),)
+  TRITON_ROUTE_LEF := $(OBJECTS_DIR)/generic_merged_padded_spacing.lef
+else
+  TRITON_ROUTE_LEF := $(OBJECTS_DIR)/merged_padded_spacing.lef
+endif
+
+$(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
+	echo "lef:$(TRITON_ROUTE_LEF)" > $@
 	echo "def:$(RESULTS_DIR)/4_cts.def" >> $@
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
 	echo "output:$(RESULTS_DIR)/5_route.def" >> $@
 	echo "outputTA:$(RESULTS_DIR)/5_route_TA.def" >> $@
 	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" >> $@
+	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NPROC)" >> $@
 	echo "cpxthreads:1" >> $@
@@ -424,8 +395,8 @@ $(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/merged_padded_spacing.lef $(RES
 
 # Run TritonRoute
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param
-	TritonRoute $< 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
+$(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
+	TritonRoute $(OBJECTS_DIR)/TritonRoute.param  2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 
 $(RESULTS_DIR)/5_route.v: $(RESULTS_DIR)/4_cts.v
 	cp $< $@
@@ -457,10 +428,14 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_r
 
 # Run magic
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/6_final.gds: $(MAGIC_TECH_FILE) $(GDS_FILES) $(RESULTS_DIR)/5_route.def
-	@$(call BANNER, 6. FINISHING)
-	magic -dnull -noconsole -T $(MAGIC_TECH_FILE) \
-	      $(SCRIPTS_DIR)/magic.tcl 2>&1 | tee $(LOG_DIR)/6_magic.log
+$(RESULTS_DIR)/6_final.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/5_route.def
+	klayout -zz -rd design_name=$(DESIGN_NAME) \
+	        -rd in_lef=$(abspath $(OBJECTS_DIR)/merged.lef) \
+	        -rd in_def=$(RESULTS_DIR)/5_route.def \
+	        -rd in_gds="$(GDS_FILES)" \
+	        -rd out_gds=$@ \
+	        -rd map_file=./platforms/$(PLATFORM)/layermap.txt \
+	        -rm $(UTILS_DIR)/def2gds.py
 
 clean_finish:
 	rm -rf $(RESULTS_DIR)/6_final.gds
@@ -477,6 +452,10 @@ clean_finish:
 #
 # ==============================================================================
 
+all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/merged.lef $(OBJECTS_DIR)/TritonRoute.param \
+		| ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat PORT9.dat POST9.dat POWV9.dat
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	openroad $(SCRIPTS_DIR)/run_all.tcl
 
 clean:
 	@echo
@@ -486,6 +465,7 @@ clean:
 	@echo
 
 clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish
+	rm -rf $(OBJECTS_DIR)
 
 nuke: clean_test
 	rm -rf ./results ./logs ./reports ./objects
@@ -503,10 +483,28 @@ $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),innovus_$(def)): innovu
 	                  win" \
 	                  -no_logv ; stty sane
 
-$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayout_%:
-	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' \
-	  $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
+$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
+
+
+# Utilities
+#-------------------------------------------------------------------------------
+drc: $(REPORTS_DIR)/drc.rpt
+
+$(REPORTS_DIR)/drc.rpt: $(RESULTS_DIR)/5_route.def
+	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
+	                  loadDefFile $<; \
+	                  verify_drc -limit 10000 -report $(REPORTS_DIR)/drc.rpt; \
+	                  exit" \
+	                  -no_gui -no_logv
+#; stty sane here breaks gnu parallel
+
+
+print_cells:
+	find ./logs/ -iname 1_1_yosys.log -exec sh -c "grep -iH 'Number of cells' {} | tail -1" \;
+
+print_drc:
+	find ./reports/ -iname drc.rpt -exec sh -c "grep -iH 'viol' {} | tail -1" \;
 
 # run test using gnu parallel
 #-------------------------------------------------------------------------------
@@ -520,3 +518,23 @@ run_test:
 clean_test:
 	rm -rf $(TEST_DIR)/logs
 	rm -rf $(TEST_DIR)/parallel.log
+
+# Utility to print information tool version information
+#-------------------------------------------------------------------------------
+YOSYS_PATH := $(dir $(shell which yosys))
+OPENROAD_PATH := $(dir $(shell which openroad))
+TRITONROUTE_PATH := $(dir $(shell which TritonRoute))
+versions.txt:
+	@echo "======================================================" > $(abspath $@)
+	@cd $(OPENROAD_PATH); echo OpenROAD `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
+	@cd $(OPENROAD_PATH); echo `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
+	@cd $(OPENROAD_PATH); git submodule foreach --recursive 'echo $$path `git diff --quiet || echo -n '*dirty*'` `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD`' >> $(abspath $@)
+	@echo "======================================================" >> $(abspath $@)
+	@cd $(YOSYS_PATH); echo Yosys `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
+	@cd $(YOSYS_PATH); echo `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
+	@echo "======================================================" >> $(abspath $@)
+	@cd $(TRITONROUTE_PATH); echo TritonRoute `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
+	@cd $(TRITONROUTE_PATH); echo `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
+	@echo "======================================================" >> $(abspath $@)
+	@cd $(TRITONROUTE_PATH); echo `klayout -v` >> $(abspath $@)
+	@echo "======================================================" >> $(abspath $@)

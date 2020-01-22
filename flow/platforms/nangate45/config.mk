@@ -29,6 +29,14 @@ export TRACKS_INFO_FILE = ./platforms/nangate45/tracks.info
 
 export IP_GLOBAL_CFG = ./platforms/nangate45/IP_global.cfg
 
+export TECH_LEF = ./platforms/nangate45/NangateOpenCellLibrary.tech.lef
+export SC_LEF = ./platforms/nangate45/NangateOpenCellLibrary.macro.mod.lef
+
+export LIB_FILES = ./platforms/nangate45/NangateOpenCellLibrary_typical.lib \
+                     $(ADDITIONAL_LIBS)
+export GDS_FILES = $(wildcard ./platforms/nangate45/gds/*) \
+                     $(ADDITIONAL_GDS_FILES)
+
 # Cell padding in SITE widths to ease rout-ability
 export CELL_PAD_IN_SITES = 8
 
