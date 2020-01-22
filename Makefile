@@ -1,4 +1,4 @@
-OPENROAD_MODULES = OpenROAD yosys TritonRoute
+OPENROAD_MODULES = OpenROAD yosys TritonRoute OpeNPDN
 SRC_PATH = OpenROAD/src
 BUILD_PATH = OpenROAD/build/src
 

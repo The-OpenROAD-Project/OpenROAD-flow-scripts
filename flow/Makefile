@@ -302,6 +302,16 @@ $(RESULTS_DIR)/3_place.def: $(RESULTS_DIR)/3_3_place_dp.def
 $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
 	cp $< $@
 
+#OpeNPDN 
+export OPDN_OPENDBPY = $(OPENROAD)/build/src/OpeNPDN/modules/OpenDB/src/swig/python/opendbpy.py
+OpeNPDN = $(OPENROAD)/src/OpeNPDN/
+export OPDN_SRC = $(OpeNPDN)
+
+analyze_power_grid:  $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc $(OBJECTS_DIR)/merged.lib
+	openroad -exit $(SCRIPTS_DIR)/analyze_pdn_ir.tcl  \
+			2>&1 | tee $(LOG_DIR)/analyze_pdn_ir.log
+	@! grep --color "Error:" $(LOG_DIR)/analyze_pdn_ir.log
+
 # Clean Targets
 #-------------------------------------------------------------------------------
 clean_place:
