@@ -21,7 +21,7 @@ report_wns > $::env(REPORTS_DIR)/wns.rpt
 # Perform resizing and buffering
 set dont_use_cells ""
 foreach cell $::env(DONT_USE_CELLS) {
-  set dont_use_cells "$dont_use_cells [get_full_name [get_lib_cells */$cell]]"
+  lappend $dont_use_cells [get_full_name [get_lib_cells */$cell]]
 }
 
 resize -buffer_cell [get_full_name [get_lib_cells */$::env(RESIZER_BUF_CELL)]] \

@@ -6,7 +6,9 @@ if {![info exists standalone] || $standalone} {
   read_def $::env(RESULTS_DIR)/2_4_floorplan_macro.def
 }
 
-pdngen $::env(PDN_CFG) -verbose
+if {[file exist $::env(PDN_CFG)]} {
+  pdngen $::env(PDN_CFG) -verbose
+}
 
 if {![info exists standalone] || $standalone} {
   # write output

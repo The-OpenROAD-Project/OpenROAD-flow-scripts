@@ -4,7 +4,7 @@
 set standalone 0
 
 # Synthesis
-yosys scripts/synth.tcl
+source $::env(SCRIPTS_DIR)/yosys.tcl
 
 # Read process / design
 read_lef $::env(OBJECTS_DIR)/merged_padded.lef
@@ -22,10 +22,8 @@ source $::env(SCRIPTS_DIR)/buffer.tcl
 # Floorplan
 source $::env(SCRIPTS_DIR)/verilog2def.tcl
 source $::env(SCRIPTS_DIR)/io_placement.tcl
-if {[info exist env(RUN_MACRO_PLACEMENT)] && $::env(RUN_MACRO_PLACEMENT)} {
-  source $::env(SCRIPTS_DIR)/tdms_place.tcl
-  source $::env(SCRIPTS_DIR)/macro_place.tcl
-}
+source $::env(SCRIPTS_DIR)/tdms_place.tcl
+source $::env(SCRIPTS_DIR)/macro_place.tcl
 source $::env(SCRIPTS_DIR)/pdn.tcl
 source $::env(SCRIPTS_DIR)/tapcell.tcl
 
@@ -45,8 +43,9 @@ odb::odb_write_def $block $::env(RESULTS_DIR)/4_cts.def DEF_5_6
 source $::env(SCRIPTS_DIR)/global_route.tcl
 
 # Detail route not integrated yet
-TritonRoute $::env(OBJECTS_DIR)/TritonRoute.param
+source $::env(SCRIPTS_DIR)/tritonRoute.tcl
 
 # Finishing
-magic -dnull -noconsole -T $::env(MAGIC_TECH_FILE) $::env(SCRIPTS_DIR)/magic.tcl
+source $::env(SCRIPTS_DIR)/klayout.tcl
+
 exit
