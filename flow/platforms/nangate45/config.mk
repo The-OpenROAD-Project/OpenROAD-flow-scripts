@@ -69,4 +69,7 @@ export DONT_USE_CELLS = FILLCELL_X1 AOI211_X1 OAI211_X1
 # Define default PDN config
 export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
 
+# Template definition for power grid analysis
+export TEMPLATE_PGA_CFG ?= ./platforms/nangate45/template_pga.cfg
+
 export PLACE_DENSITY ?= 0.70
