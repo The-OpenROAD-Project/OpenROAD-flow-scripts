@@ -114,7 +114,7 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged \
 	                           $(LIB_FILES) \
 	                           > $@.tmp
-	$(UTILS_DIR)/markDontUse.pl -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
+	$(UTILS_DIR)/markDontUse.py -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
 
 # Pre-process KLayout tech
 # ==============================================================================
@@ -123,15 +123,10 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 
 # Link flute data files
 # ==============================================================================
-./PORT9.dat:
-	ln -sf $(OPENROAD)/src/yosys/$@ $@
 ./POST9.dat:
 	ln -sf $(OPENROAD)/etc/$@ $@
 ./POWV9.dat:
 	ln -sf $(OPENROAD)/etc/$@ $@
-../etc/PORT9.dat:
-	mkdir -p ../etc
-	ln -sf $(OPENROAD)/src/yosys/PORT9.dat $@
 ../etc/POST9.dat:
 	mkdir -p ../etc
 	ln -sf $(OPENROAD)/etc/POST9.dat $@
@@ -161,7 +156,7 @@ $(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	yosys -l $(LOG_DIR)/1_1_yosys.log -c $(SYNTH_SCRIPT)
 
-$(RESULTS_DIR)/1_2_buffer.v: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE) $(OBJECTS_DIR)/merged.lef | ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat
+$(RESULTS_DIR)/1_2_buffer.v: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE) $(OBJECTS_DIR)/merged.lef | ../etc/POST9.dat ../etc/POWV9.dat
 	openroad $(SCRIPTS_DIR)/buffer.tcl \
 	        2>&1 | tee $(LOG_DIR)/1_2_buffer.log
 	@! grep --color "Error:" $(LOG_DIR)/1_2_buffer.log
@@ -210,7 +205,7 @@ $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_
 # STEP 3: Timing Driven Mixed Sized Placement
 # Only run if required
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES) $(OBJECTS_DIR)/merged_padded.lef | ./PORT9.dat ./POST9.dat ./POWV9.dat
+$(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES) $(OBJECTS_DIR)/merged_padded.lef | ./POST9.dat ./POWV9.dat
 	openroad $(SCRIPTS_DIR)/tdms_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 	@! grep --color "Error:" $(LOG_DIR)/2_3_tdms_place.log
@@ -226,17 +221,13 @@ $(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(
 # STEP 5: PDN generation
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_5_floorplan_pdn.def: $(RESULTS_DIR)/2_4_floorplan_macro.def
-ifneq ($(PDN_CFG),)
 	openroad $(SCRIPTS_DIR)/pdn.tcl | tee $(LOG_DIR)/2_5_pdn.log
 	@! grep --color "Error:" $(LOG_DIR)/2_5_pdn.log
-else
-	cp $< $@
-endif
-
+	@! grep --color "ERROR:" $(LOG_DIR)/2_5_pdn.log
 
 # STEP 6: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_5_floorplan_pdn.def | ./PORT9.dat ./POST9.dat ./POWV9.dat
+$(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_5_floorplan_pdn.def | ./POST9.dat ./POWV9.dat
 	openroad $(SCRIPTS_DIR)/tapcell.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_6_tapcell.log
 	@! grep --color "Error:" $(LOG_DIR)/2_6_tapcell.log
@@ -269,7 +260,7 @@ place: $(RESULTS_DIR)/3_place.def \
 
 # STEP 1: Global placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_1_place_gp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
+$(RESULTS_DIR)/3_1_place_gp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc | ./POST9.dat ./POWV9.dat
 	openroad $(SCRIPTS_DIR)/global_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 	@! grep --color "Error:" $(LOG_DIR)/3_1_place_gp.log
@@ -281,7 +272,7 @@ $(RESULTS_DIR)/replace.gif: $(RESULTS_DIR)/3_1_place_gp.def
 
 # STEP 2: Resizing & Buffering
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_2_place_resized.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/3_1_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc | ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat
+$(RESULTS_DIR)/3_2_place_resized.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/3_1_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc | ../etc/POST9.dat ../etc/POWV9.dat
 	openroad $(SCRIPTS_DIR)/resize.tcl \
 	         2>&1 | tee $(LOG_DIR)/3_2_resizer.log
 	@! grep --color "Error:" $(LOG_DIR)/3_2_resizer.log
@@ -323,7 +314,7 @@ cts: $(RESULTS_DIR)/4_cts.def \
 
 # Run TritonCTS
 # ------------------------------------------------------------------------------
-$(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
+$(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc | ./POST9.dat ./POWV9.dat
 	openroad $(SCRIPTS_DIR)/cts.tcl \
 		2>&1 | tee $(LOG_DIR)/4_cts.log
 	@! grep --color "Error:" $(LOG_DIR)/4_cts.log
@@ -373,7 +364,7 @@ $(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
 	echo "def:$(RESULTS_DIR)/4_cts.def" >> $@
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
 	echo "output:$(RESULTS_DIR)/5_route.def" >> $@
-	echo "outputTA:$(RESULTS_DIR)/5_route_TA.def" >> $@
+	echo "outputTA:$(OBJECTS_DIR)/5_route_TA.def" >> $@
 	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" >> $@
 	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
@@ -416,7 +407,7 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_r
 	         2>&1 | tee $(LOG_DIR)/6_1_report.log
 	@! grep --color "Error:" $(LOG_DIR)/6_1_report.log
 
-# Run magic
+# Run Klayout
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_final.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/5_route.def
 	klayout -zz -rd design_name=$(DESIGN_NAME) \
@@ -443,7 +434,7 @@ clean_finish:
 # ==============================================================================
 
 all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/merged.lef $(OBJECTS_DIR)/TritonRoute.param \
-		| ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat PORT9.dat POST9.dat POWV9.dat
+		| ../etc/POST9.dat ../etc/POWV9.dat POST9.dat POWV9.dat
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	openroad $(SCRIPTS_DIR)/run_all.tcl
 
@@ -457,12 +448,13 @@ clean:
 clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish
 	rm -rf $(OBJECTS_DIR)
 
-nuke: clean_test
+nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
-	rm -rf ./POST9.dat ./PORT9.dat ./POWV9.dat
-	rm -rf ../etc/POST9.dat ../etc/PORT9.dat ../etc/POWV9.dat
+	rm -rf ./POST9.dat ./POWV9.dat
+	rm -rf ../etc/PORT9.dat ../etc/POWV9.dat
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide run.param
 	rm -rf *.rpt *.def.v innovus.* pin_dumper.log
+	rm -rf versions.txt
 
 
 # DEF/GDS viewer shortcuts
@@ -514,17 +506,64 @@ clean_test:
 YOSYS_PATH := $(dir $(shell which yosys))
 OPENROAD_PATH := $(dir $(shell which openroad))
 TRITONROUTE_PATH := $(dir $(shell which TritonRoute))
+.PHONY: versions.txt
 versions.txt:
-	@echo "======================================================" > $(abspath $@)
-	@cd $(OPENROAD_PATH); echo OpenROAD `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
-	@cd $(OPENROAD_PATH); echo `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
-	@cd $(OPENROAD_PATH); git submodule foreach --recursive 'echo $$path `git diff --quiet || echo -n '*dirty*'` `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD`' >> $(abspath $@)
-	@echo "======================================================" >> $(abspath $@)
-	@cd $(YOSYS_PATH); echo Yosys `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
-	@cd $(YOSYS_PATH); echo `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
-	@echo "======================================================" >> $(abspath $@)
-	@cd $(TRITONROUTE_PATH); echo TritonRoute `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
-	@cd $(TRITONROUTE_PATH); echo `git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
-	@echo "======================================================" >> $(abspath $@)
-	@cd $(TRITONROUTE_PATH); echo `klayout -v` >> $(abspath $@)
-	@echo "======================================================" >> $(abspath $@)
+	-@echo "======================================================" > $(abspath $@)
+	@openroad -version >> $(abspath $@)
+	-@cd $(OPENROAD_PATH); echo OpenROAD `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
+	-@cd $(OPENROAD_PATH); echo branch:`git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
+	-@cd $(OPENROAD_PATH); git submodule foreach --recursive 'echo $$path `git diff --quiet || echo -n '*dirty*'` branch:`git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD`' >> $(abspath $@)
+	-@echo "======================================================" >> $(abspath $@)
+	@yosys -V >> $(abspath $@)
+	-@cd $(YOSYS_PATH); echo Yosys `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
+	-@cd $(YOSYS_PATH); echo branch:`git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
+	-@echo "======================================================" >> $(abspath $@)
+	-@cd $(TRITONROUTE_PATH); echo TritonRoute `git diff --quiet || echo '*dirty*'` `git config --get remote.origin.url` >> $(abspath $@)
+	-@cd $(TRITONROUTE_PATH); echo branch:`git rev-parse --abbrev-ref HEAD` `git rev-parse HEAD` >> $(abspath $@)
+	-@echo "======================================================" >> $(abspath $@)
+	@klayout -v >> $(abspath $@)
+	-@echo "======================================================" >> $(abspath $@)
+	-@sed -i '/Entering /d' $@
+
+
+# Utility to print information tool version information
+#-------------------------------------------------------------------------------
+# Run "make {script}_issue" where script is wildcarded from the scripts folder
+#   e.g "make cts_issue"
+# Set the ISSUE_TAG variable to rename the generated tar file
+#-------------------------------------------------------------------------------
+ISSUE_TAG ?= $(DESIGN_NAME)_$(PLATFORM)_$(shell date +"%Y-%m-%d_%H-%M")
+ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(wildcard $(SCRIPTS_DIR)/*.tcl)))
+ISSUE_CP_FILE_VARS = BLACKBOX_MAP_TCL BLACKBOX_V_FILE CTS_TECH_DIR GENERIC_TECH_LEF \
+                     IP_GLOBAL_CFG LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
+                     TRACKS_INFO_FILE SDC_FILE VERILOG_FILES TAPCELL_TCL
+
+$(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt ./POST9.dat ./POWV9.dat
+	# Creating runme.sh script
+	@echo "#!/bin/bash"                    > runme.sh
+	@echo "source vars.sh"                 >> runme.sh
+	@echo "openroad $(SCRIPTS_DIR)/$*.tcl" >> runme.sh
+	@chmod +x runme.sh
+
+	# Creating vars.sh script
+	-@rm -f vars.sh
+	@$(foreach V, $(.VARIABLES), \
+	  $(if $(filter-out environment% default automatic, $(origin $V)), \
+	  echo export $V=\""$($V)\""  >> vars.sh ;) \
+	)
+	@sed -i '/export \./d' vars.sh
+
+	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
+	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
+	    --xform='s|^|$*_$(ISSUE_TAG)/|S' $(LOG_DIR) \
+	                                     $(OBJECTS_DIR) \
+	                                     $(REPORTS_DIR) \
+	                                     $(RESULTS_DIR) \
+	                                     $(SCRIPTS_DIR) \
+	                                     $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
+	                                     runme.sh vars.sh \
+	                                     $^
+
+clean_issues:
+	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
+	rm -rf vars.sh runme.sh
