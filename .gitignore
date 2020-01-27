@@ -12,6 +12,8 @@ flow/tech
 
 # Tar archives
 flow/*tar.gz
+flow/vars.sh
+flow/versions.txt
 
 # Common temp files
 flow/pt_shell_command.log
