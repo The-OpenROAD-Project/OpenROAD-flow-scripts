@@ -29,10 +29,10 @@ export TRACKS_INFO_FILE = ./platforms/$(PLATFORM)/tracks.info
 
 export IP_GLOBAL_CFG = ./platforms/$(PLATFORM)/IP_global.cfg
 
-export TECH_LEF = ./platforms/$(PLATFORM)/NangateOpenCellLibrary.tech.lef
-export SC_LEF = ./platforms/$(PLATFORM)/NangateOpenCellLibrary.macro.mod.lef
+export TECH_LEF = ./platforms/$(PLATFORM)/lef/NangateOpenCellLibrary.tech.lef
+export SC_LEF = ./platforms/$(PLATFORM)/lef/NangateOpenCellLibrary.macro.mod.lef
 
-export LIB_FILES = ./platforms/$(PLATFORM)/NangateOpenCellLibrary_typical.lib \
+export LIB_FILES = ./platforms/$(PLATFORM)/lib/NangateOpenCellLibrary_typical.lib \
                      $(ADDITIONAL_LIBS)
 export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*) \
                      $(ADDITIONAL_GDS_FILES)

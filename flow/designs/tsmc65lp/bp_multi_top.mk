@@ -5,13 +5,13 @@ export VERILOG_FILES = ./designs/src/bp_multi_top/pickled.v \
                        ./designs/src/bp_multi_top/tsmc65lp_macros.v
 export SDC_FILE      = ./designs/src/bp_multi_top/design.sdc
 
-export ADDITIONAL_LEFS = ./platforms/tsmc65lp/tsmc65lp_1rf_lg6_w16_bit.lef \
-                         ./platforms/tsmc65lp/tsmc65lp_1rf_lg6_w8_bit.lef \
-                         ./platforms/tsmc65lp/tsmc65lp_1rf_lg6_w96_bit.lef \
-                         ./platforms/tsmc65lp/tsmc65lp_1rf_lg9_w64_bit.lef \
-                         ./platforms/tsmc65lp/tsmc65lp_1rf_lg8_w96_all.lef \
-                         ./platforms/tsmc65lp/tsmc65lp_1rf_lg9_w64_all.lef \
-                         ./platforms/tsmc65lp/tsmc65lp_2rf_lg5_w64_all.lef
+export ADDITIONAL_LEFS = ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg6_w16_bit.lef \
+                         ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg6_w8_bit.lef \
+                         ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg6_w96_bit.lef \
+                         ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg9_w64_bit.lef \
+                         ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg8_w96_all.lef \
+                         ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg9_w64_all.lef \
+                         ./platforms/tsmc65lp/lef/tsmc65lp_2rf_lg5_w64_all.lef
 export ADDITIONAL_LIBS = ./platforms/tsmc65lp/lib/tsmc65lp_1rf_lg6_w16_bit_ss_1p08v_1p08v_125c.lib \
                          ./platforms/tsmc65lp/lib/tsmc65lp_1rf_lg6_w8_bit_ss_1p08v_1p08v_125c.lib \
                          ./platforms/tsmc65lp/lib/tsmc65lp_1rf_lg6_w96_bit_ss_1p08v_1p08v_125c.lib \
