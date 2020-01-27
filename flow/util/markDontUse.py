@@ -24,17 +24,20 @@ f = open(args.inputFile)
 content = f.read()
 f.close()
 
-# for i in range(0, len(patternList)):
-#   pattern =   r"(^\s*cell\s*\(\s*"+patternList[i]+"\)\s*\{)"
-#   replace = r"\1\n    dont_use : TRUE;"
-#   content, count = re.subn(pattern, replace, content, 1, re.M)
-#   print("Marked", count, "cell of", patternList[i],"as dont_use")
-
+# Pattern to match a cell header
 pattern = r"(^\s*cell\s*\(\s*("+"|".join(patternList)+")\)\s*\{)"
 # print(pattern)
 replace = r"\1\n    dont_use : TRUE;"
 content, count = re.subn(pattern, replace, content, 0, re.M)
 print("Marked", count, "cells as dont_use")
+
+
+# Yosys-abc throws an error if original_pin is found within the liberty file.
+# removing
+pattern = r"(.*original_pin.*)"
+replace = r"/* \1 */;"
+content, count = re.subn(pattern, replace, content)
+print("Commented", count, "lines containing \"original_pin\"")
 
 # Write output file
 print("Writing replaced file:",args.outputFile)
