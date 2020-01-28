@@ -12,13 +12,33 @@ if {![info exists standalone] || $standalone} {
   link_design $::env(DESIGN_NAME)
 }
 
-# create floorplan
-if {[info exists ::env(CORE_UTILIZATION)] && $::env(CORE_UTILIZATION) != "" } {
+# Initialize floorplan using ICeWall FOOTPRINT
+# ----------------------------------------------------------------------------
+if {[info exists ::env(FOOTPRINT)]} {
+  source $::env(SCRIPTS_DIR)/ICeWall.tcl
+
+
+  ICeWall load_footprint $env(FOOTPRINT)
+
+  initialize_floorplan \
+    -die_area  [ICeWall get_die_area] \
+    -core_area [ICeWall get_core_area] \
+    -tracks    [ICeWall get_tracks] \
+    -site      $::env(PLACE_SITE)
+
+  ICeWall init_footprint $env(SIG_MAP_FILE)
+
+# Initialize floorplan using CORE_UTILIZATION
+# ----------------------------------------------------------------------------
+} elseif {[info exists ::env(CORE_UTILIZATION)] && $::env(CORE_UTILIZATION) != "" } {
   initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
                        -aspect_ratio $::env(CORE_ASPECT_RATIO) \
                        -core_space $::env(CORE_MARGIN) \
                        -tracks $::env(TRACKS_INFO_FILE) \
                        -site $::env(PLACE_SITE)
+
+# Initialize floorplan using DIE_AREA/CORE_AREA
+# ----------------------------------------------------------------------------
 } else {
   initialize_floorplan -die_area $::env(DIE_AREA) \
                        -core_area $::env(CORE_AREA) \
@@ -28,8 +48,6 @@ if {[info exists ::env(CORE_UTILIZATION)] && $::env(CORE_UTILIZATION) != "" } {
 
 if {![info exists standalone] || $standalone} {
   # write output
-  set db [::ord::get_db]
-  set block [[$db getChip] getBlock]
-  odb::odb_write_def $block $::env(RESULTS_DIR)/2_1_floorplan.def DEF_5_6
+  write_def $::env(RESULTS_DIR)/2_1_floorplan.def
   exit
 }

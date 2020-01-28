@@ -34,8 +34,6 @@ if {[find_macros] != ""} {
 }
 
 if {![info exists standalone] || $standalone} {
-  set db [::ord::get_db]
-  set block [[$db getChip] getBlock]
-  odb::odb_write_def $block $::env(RESULTS_DIR)/2_3_floorplan_tdms.def DEF_5_6
+  write_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def
   exit
 }

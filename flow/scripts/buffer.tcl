@@ -42,151 +42,13 @@ puts "Max Fanout Settings: $::env(MAX_FANOUT)"
 # 2) Search for floating nets and print them out
 ################################################################################
 
-set floatingNetObjs ""
-foreach net [get_nets *] {
-  set pinCount [expr [llength [get_pins -of $net]] + [llength [get_ports -of $net]]]
-
-  if {$pinCount == 1} {
-    lappend floatingNetObjs $net
-  }
-}
-
-# Print user message
-if {[llength $floatingNetObjs] > 0} {
-  puts "\n---------------------------------------------------------------------"
-  puts "WARNING: [llength $floatingNetObjs] floating nets"
-  # foreach net $floatingNetObjs {
-  #   puts " - [get_full_name $net]"
-  # }
-}
+puts "\n---------------------------------------------------------------------"
+puts "Floating Nets:"
+report_floating_nets -verbose
 
 
 ################################################################################
-# 3a) Handle Tie High
-################################################################################
-
-# Setup tie cell information
-# ------------------------------------------------------------------------------
-set tieHiCellName [lindex $::env(TIEHI_CELL_AND_PORT) 0]
-set tieHiLibCell [get_lib_cells */$tieHiCellName]
-set tieHiCellOutPin [lindex $::env(TIEHI_CELL_AND_PORT) 1]
-set tieHiObjs [get_cells -filter "ref_name == $tieHiCellName"]
-
-
-# Search for Tie Hie nets
-set tieHiHighFanoutNetObjs ""
-foreach net [get_nets -of $tieHiObjs] {
-  set pinCount [llength [get_pins -of $net]]
-
-  if {$pinCount > [expr $::env(MAX_FANOUT) + 1]} {
-    lappend tieHiHighFanoutNetObjs $net
-  }
-}
-
-# Print user message
-if {[llength $tieHiHighFanoutNetObjs] > 0} {
-  puts "\n---------------------------------------------------------------------"
-  puts "[llength $tieHiHighFanoutNetObjs] tie high nets with high fanout exist"
-  foreach net $tieHiHighFanoutNetObjs {
-    puts -nonewline " - [get_full_name $net]"
-    puts " ([llength [get_pins -of $net]] pins)"
-  }
-}
-
-# Iterate through nets
-foreach netObj $tieHiHighFanoutNetObjs {
-  set netName [get_full_name $netObj]
-  set tieHiSrcPinObj    [get_pins -of $netObj -filter "direction == output"]
-  set tieHiSinkPinObjs  [get_pins -of $netObj -filter "direction == input"]
-
-
-  set numTieHiCells [expr round(ceil([llength $tieHiSinkPinObjs] * 1.0 / $::env(MAX_FANOUT)))]
-
-  delete_instance [get_full_name [get_cells -of $tieHiSrcPinObj]]
-  delete_net $netObj
-
-  set tieHiConnectCnt 0
-  for {set i 0} {$i < $numTieHiCells} {incr i} {
-    make_instance $netName\_$i $tieHiLibCell
-    make_net $netName\_$i
-    connect_pin $netName\_$i $netName\_$i/$tieHiCellOutPin
-
-    set loopLimit [expr min($::env(MAX_FANOUT),[expr [llength $tieHiSinkPinObjs] - $tieHiConnectCnt])]
-    for {set j 0} {$j < $loopLimit} {incr j} {
-      connect_pin $netName\_$i [lindex $tieHiSinkPinObjs $tieHiConnectCnt]
-      incr tieHiConnectCnt
-    }
-  }
-
-  puts "Created $numTieHiCells tie high cells for $tieHiConnectCnt sinks"
-}
-
-################################################################################
-# 3b) Handle Tie Low
-# Same as Tie Hi (Should probably make it a function)
-################################################################################
-
-
-# Setup tie cell information
-# ------------------------------------------------------------------------------
-set tieLoCellName [lindex $::env(TIELO_CELL_AND_PORT) 0]
-set tieLoLibCell [get_lib_cells */$tieLoCellName]
-set tieLoCellOutPin [lindex $::env(TIELO_CELL_AND_PORT) 1]
-set tieLoObjs [get_cells -filter "ref_name == $tieLoCellName"]
-
-
-
-# Search for Tie Hie nets
-set tieLoHighFanoutNetObjs ""
-foreach net [get_nets -of $tieLoObjs] {
-  set pinCount [llength [get_pins -of $net]]
-
-  if {$pinCount > [expr $::env(MAX_FANOUT) + 1]} {
-    lappend tieLoHighFanoutNetObjs $net
-  }
-}
-
-# Print user message
-if {[llength $tieLoHighFanoutNetObjs] > 0} {
-  puts "\n---------------------------------------------------------------------"
-  puts "[llength $tieLoHighFanoutNetObjs] tie low nets with high fanout exist"
-  foreach net $tieLoHighFanoutNetObjs {
-    puts -nonewline " - [get_full_name $net]"
-    puts " ([llength [get_pins -of $net]] pins)"
-  }
-}
-
-# Iterate through nets
-foreach netObj $tieLoHighFanoutNetObjs {
-  set netName [get_full_name $netObj]
-  set tieLoSrcPinObj    [get_pins -of $netObj -filter "direction == output"]
-  set tieLoSinkPinObjs  [get_pins -of $netObj -filter "direction == input"]
-
-
-  set numTieLoCells [expr round(ceil([llength $tieLoSinkPinObjs] * 1.0 / $::env(MAX_FANOUT)))]
-
-  delete_instance [get_full_name [get_cells -of $tieLoSrcPinObj]]
-  delete_net $netObj
-
-  set tieLoConnectCnt 0
-  for {set i 0} {$i < $numTieLoCells} {incr i} {
-    make_instance $netName\_$i $tieLoLibCell
-    make_net $netName\_$i
-    connect_pin $netName\_$i $netName\_$i/$tieLoCellOutPin
-
-    set loopLimit [expr min($::env(MAX_FANOUT),[expr [llength $tieLoSinkPinObjs] - $tieLoConnectCnt])]
-    for {set j 0} {$j < $loopLimit} {incr j} {
-      connect_pin $netName\_$i [lindex $tieLoSinkPinObjs $tieLoConnectCnt]
-      incr tieLoConnectCnt
-    }
-  }
-
-  puts "Created $numTieLoCells tie low cells for $tieLoConnectCnt sinks"
-}
-
-
-################################################################################
-# 4) Handle Other High Fanout nets
+# 3) Handle Other High Fanout nets
 ################################################################################
 
 
@@ -209,9 +71,9 @@ foreach net [get_nets *] {
 }
 
 # Remove clocks from list
-# foreach clkNetObj [get_net [get_name [get_clocks *]]] {
-foreach clkNetObj [get_net [get_name [get_property [get_clocks *] sources]]] {
-  puts "Skipping buffering for clk: [get_name $clkNetObj]"
+foreach clk [get_clocks *] {
+  set clkNetObj [get_net -of [get_name [get_property $clk sources]]]
+  puts "Skipping buffering for clk: [get_name $clk]"
   set idx [lsearch $highFanoutNetObjs $clkNetObj]
   set highFanoutNetObjs [lreplace $highFanoutNetObjs $idx $idx]
 

@@ -1,5 +1,10 @@
 yosys -import
 
+if {[info exist ::env(DC_NETLIST)]} {
+  file copy -force $::env(DC_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
+  exit
+}
+
 # Don't change these unless you know what you are doing
 set stat_ext    "_stat.rep"
 set gl_ext      "_gl.v"
@@ -36,7 +41,7 @@ if {[info exist ::env(VERILOG_TOP_PARAMS)]} {
 
 # Use hierarchy to automatically generate blackboxes for known memory macro.
 # Pins are enumerated for proper mapping
-if {[file exist $::env(BLACKBOX_MAP_TCL)]} {
+if {[info exist ::env(BLACKBOX_MAP_TCL)]} {
   source $::env(BLACKBOX_MAP_TCL)
 }
 
@@ -48,7 +53,7 @@ synth  -top $::env(DESIGN_NAME) -flatten
 opt -purge
 
 # technology mapping of latches
-if {[file exist $::env(LATCH_MAP_FILE)]} {
+if {[info exist ::env(LATCH_MAP_FILE)]} {
   techmap -map $::env(LATCH_MAP_FILE)
 }
 
@@ -64,7 +69,9 @@ abc -D [expr $::env(CLOCK_PERIOD) * 1000] \
     -showtmp
 
 # technology mapping of constant hi- and/or lo-drivers
-hilomap -hicell {*}$::env(TIEHI_CELL_AND_PORT) -locell {*}$::env(TIELO_CELL_AND_PORT)
+hilomap -singleton \
+        -hicell {*}$::env(TIEHI_CELL_AND_PORT) \
+        -locell {*}$::env(TIELO_CELL_AND_PORT)
 
 # replace undef values with defined constants
 setundef -zero

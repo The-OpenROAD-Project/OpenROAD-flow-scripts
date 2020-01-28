@@ -6,14 +6,12 @@ if {![info exists standalone] || $standalone} {
   read_def $::env(RESULTS_DIR)/2_4_floorplan_macro.def
 }
 
-if {[file exist $::env(PDN_CFG)]} {
+if {[info exist ::env(PDN_CFG)]} {
   pdngen $::env(PDN_CFG) -verbose
 }
 
 if {![info exists standalone] || $standalone} {
   # write output
-  set db [::ord::get_db]
-  set block [[$db getChip] getBlock]
-  odb::odb_write_def $block $::env(RESULTS_DIR)/2_5_floorplan_pdn.def DEF_5_6
+  write_def $::env(RESULTS_DIR)/2_5_floorplan_pdn.def
   exit
 }

@@ -13,8 +13,6 @@ legalize_placement
 
 if {![info exists standalone] || $standalone} {
   # write output
-  set db [::ord::get_db]
-  set block [[$db getChip] getBlock]
-  odb::odb_write_def $block $::env(RESULTS_DIR)/3_3_place_dp.def DEF_5_6
+  write_def $::env(RESULTS_DIR)/3_3_place_dp.def
   exit
 }

@@ -6,14 +6,12 @@ if {![info exists standalone] || $standalone} {
   read_def $::env(RESULTS_DIR)/2_5_floorplan_pdn.def
 }
 
-if {[file exist $::env(TAPCELL_TCL)]} {
+if {[info exist ::env(TAPCELL_TCL)]} {
   source $::env(TAPCELL_TCL)
 }
 
 if {![info exists standalone] || $standalone} {
   # write output
-  set db [::ord::get_db]
-  set block [[$db getChip] getBlock]
-  odb::odb_write_def $block $::env(RESULTS_DIR)/2_6_floorplan_tapcell.def DEF_5_6
+  write_def $::env(RESULTS_DIR)/2_6_floorplan_tapcell.def
   exit
 }
