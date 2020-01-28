@@ -73,3 +73,7 @@ export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
 export TEMPLATE_PGA_CFG ?= ./platforms/nangate45/template_pga.cfg
 
 export PLACE_DENSITY ?= 0.70
+
+# IO Placer pin layers
+export IO_PLACER_H = 3
+export IO_PLACER_V = 2
