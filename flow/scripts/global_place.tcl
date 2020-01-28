@@ -14,8 +14,6 @@ set_wire_rc -layer $::env(WIRE_RC_LAYER)
 global_placement -timing_driven -density $::env(PLACE_DENSITY)
 
 if {![info exists standalone] || $standalone} {
-  set db [::ord::get_db]
-  set block [[$db getChip] getBlock]
-  odb::odb_write_def $block $::env(RESULTS_DIR)/3_1_place_gp.def DEF_5_6
+  write_def $::env(RESULTS_DIR)/3_1_place_gp.def
   exit
 }
