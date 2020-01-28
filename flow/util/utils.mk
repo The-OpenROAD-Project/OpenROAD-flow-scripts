@@ -1,21 +1,34 @@
 # Utilities
 #===============================================================================
 drc: $(REPORTS_DIR)/drc.rpt
-
-$(REPORTS_DIR)/drc.rpt: $(RESULTS_DIR)/5_route.def
+$(REPORTS_DIR)/drc.rpt: finish
 	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
-	                  loadDefFile $<; \
+	                  loadDefFile $(RESULTS_DIR)/5_route.def; \
 	                  verify_drc -limit 10000 -report $(REPORTS_DIR)/drc.rpt; \
 	                  exit" \
 	                  -no_gui -no_logv
 #; stty sane here breaks gnu parallel
 
+congestion: $(REPORTS_DIR)/congestion.rpt
+$(REPORTS_DIR)/congestion.rpt: $(RESULTS_DIR)/4_cts.def
+	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
+	                  loadDefFile $<; \
+	                  earlyGlobalRoute; \
+	                  describeCongestion > $@; \
+	                  reportCongestion -hotSpot -overflow >> $@; \
+	                  exit" \
+	                  -no_gui -no_logv
+#; stty sane here breaks gnu parallel
 
-print_cells:
+
+grep_cells:
 	find ./logs/ -iname 1_1_yosys.log -exec sh -c "grep -iH 'Number of cells' {} | tail -1" \;
 
-print_drc:
+grep_drc:
 	find ./reports/ -iname drc.rpt -exec sh -c "grep -iH 'viol' {} | tail -1" \;
+
+grep_util:
+	find ./reports/ -iname 6_final_report.rpt -exec sh -c "grep -iH 'Design area' {} | tail -1" \;
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------
@@ -32,8 +45,8 @@ clean_test:
 
 # Utility to print information tool version information
 #-------------------------------------------------------------------------------
-YOSYS_PATH := $(dir $(shell which yosys))
-OPENROAD_PATH := $(dir $(shell which openroad))
+YOSYS_PATH       := $(dir $(shell which yosys))
+OPENROAD_PATH    := $(dir $(shell which openroad))
 TRITONROUTE_PATH := $(dir $(shell which TritonRoute))
 .PHONY: versions.txt
 versions.txt:
@@ -65,13 +78,14 @@ ISSUE_TAG ?= $(DESIGN_NAME)_$(PLATFORM)_$(shell date +"%Y-%m-%d_%H-%M")
 ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(wildcard $(SCRIPTS_DIR)/*.tcl)))
 ISSUE_CP_FILE_VARS = BLACKBOX_MAP_TCL BLACKBOX_V_FILE CTS_TECH_DIR GENERIC_TECH_LEF \
                      IP_GLOBAL_CFG LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
-                     TRACKS_INFO_FILE SDC_FILE VERILOG_FILES TAPCELL_TCL
+                     TRACKS_INFO_FILE SDC_FILE VERILOG_FILES TAPCELL_TCL DC_NETLIST \
+                     FOOTPRINT SIG_MAP_FILE
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt ./POST9.dat ./POWV9.dat
 	# Creating runme.sh script
-	@echo "#!/bin/bash"                    > runme.sh
-	@echo "source vars.sh"                 >> runme.sh
-	@echo "openroad $(SCRIPTS_DIR)/$*.tcl" >> runme.sh
+	@echo "#!/bin/bash"                             > runme.sh
+	@echo "source vars.sh"                          >> runme.sh
+	@echo "openroad -no_init $(SCRIPTS_DIR)/$*.tcl" >> runme.sh
 	@chmod +x runme.sh
 
 	# Creating vars.sh script

@@ -22,7 +22,7 @@ set -o pipefail
 mkdir -p $TEST_DIR/logs/$PLATFORM
 
 make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN.mk clean_all
-make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN.mk drc 2>&1 | tee $LOG_FILE
+make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN.mk finish drc congestion 2>&1 | tee $LOG_FILE
 
 
 #diff $LOG_FILE $GOLD_LOG_FILE
