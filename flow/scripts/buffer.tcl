@@ -51,6 +51,9 @@ report_floating_nets -verbose
 # 3) Handle Other High Fanout nets
 ################################################################################
 
+puts "\n---------------------------------------------------------------------"
+puts "Handle Other High Fanout nets:"
+
 
 # Setup buffer cell information
 # ------------------------------------------------------------------------------
@@ -72,11 +75,15 @@ foreach net [get_nets *] {
 
 # Remove clocks from list
 foreach clk [get_clocks *] {
-  set clkNetObj [get_net -of [get_name [get_property $clk sources]]]
-  puts "Skipping buffering for clk: [get_name $clk]"
+  set clkNetObj [get_net [get_name [get_property $clk sources]]]
+  puts -nonewline "Skipping buffering for clk: [get_name $clk]"
   set idx [lsearch $highFanoutNetObjs $clkNetObj]
+  if {$idx} {
+    puts " (net found)"
+  } else {
+    puts " (Warning: Clock net not found)"
+  }
   set highFanoutNetObjs [lreplace $highFanoutNetObjs $idx $idx]
-
 }
 
 # Print user message
