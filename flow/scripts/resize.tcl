@@ -13,11 +13,6 @@ if {![info exists standalone] || $standalone} {
 # Set res and cap
 set_wire_rc -layer $::env(WIRE_RC_LAYER)
 
-# initial report
-report_checks > $::env(REPORTS_DIR)/checks.rpt
-report_tns > $::env(REPORTS_DIR)/tns.rpt
-report_wns > $::env(REPORTS_DIR)/wns.rpt
-
 # pre report
 log_begin $::env(REPORTS_DIR)/3_pre_resize.rpt
 
@@ -34,8 +29,17 @@ foreach cell $::env(DONT_USE_CELLS) {
   lappend $dont_use_cells [get_full_name [get_lib_cells */$cell]]
 }
 
-resize -buffer_cell [get_full_name [get_lib_cells */$::env(RESIZER_BUF_CELL)]] \
-       -dont_use $dont_use_cells
+if {[info exists ::env(FOOTPRINT)]} {
+  # Disable input and output buffering to the io cell pads
+  resize -resize \
+         -repair_max_cap \
+         -repair_max_slew \
+         -buffer_cell [get_full_name [get_lib_cells */$::env(RESIZER_BUF_CELL)]] \
+         -dont_use $dont_use_cells
+} else {
+  resize -buffer_cell [get_full_name [get_lib_cells */$::env(RESIZER_BUF_CELL)]] \
+         -dont_use $dont_use_cells
+}
 
 set lib_port [get_full_name [get_lib_cells */[lindex $::env(TIEHI_CELL_AND_PORT) 0]]]/[lindex $::env(TIEHI_CELL_AND_PORT) 1]
 puts "repair_tie_fanout on $lib_port"
