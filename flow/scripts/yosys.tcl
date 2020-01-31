@@ -1,1 +1,1 @@
-yosys $::env(SCRIPTS_DIR)/synth.tcl
+exec yosys $::env(SCRIPTS_DIR)/synth.tcl

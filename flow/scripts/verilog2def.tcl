@@ -10,6 +10,7 @@ if {![info exists standalone] || $standalone} {
   read_verilog $::env(RESULTS_DIR)/1_synth.v
 
   link_design $::env(DESIGN_NAME)
+  read_sdc $::env(RESULTS_DIR)/1_synth.sdc
 }
 
 # Initialize floorplan using ICeWall FOOTPRINT
@@ -23,7 +24,7 @@ if {[info exists ::env(FOOTPRINT)]} {
   initialize_floorplan \
     -die_area  [ICeWall get_die_area] \
     -core_area [ICeWall get_core_area] \
-    -tracks    [ICeWall get_tracks] \
+    -tracks    $::env(TRACKS_INFO_FILE) \
     -site      $::env(PLACE_SITE)
 
   ICeWall init_footprint $env(SIG_MAP_FILE)

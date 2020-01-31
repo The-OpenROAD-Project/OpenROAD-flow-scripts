@@ -4,7 +4,7 @@
 set standalone 0
 
 # Synthesis
-source $::env(SCRIPTS_DIR)/yosys.tcl
+source -verbose $::env(SCRIPTS_DIR)/yosys.tcl
 
 # Read process / design
 read_lef $::env(OBJECTS_DIR)/merged_padded.lef
@@ -17,35 +17,33 @@ read_sdc $::env(SDC_FILE)
 
 # Pre-placement buffering
 set_wire_rc -layer $::env(WIRE_RC_LAYER)
-source $::env(SCRIPTS_DIR)/buffer.tcl
+source -verbose $::env(SCRIPTS_DIR)/buffer.tcl
 
 # Floorplan
-source $::env(SCRIPTS_DIR)/verilog2def.tcl
-source $::env(SCRIPTS_DIR)/io_placement.tcl
-source $::env(SCRIPTS_DIR)/tdms_place.tcl
-source $::env(SCRIPTS_DIR)/macro_place.tcl
-source $::env(SCRIPTS_DIR)/pdn.tcl
-source $::env(SCRIPTS_DIR)/tapcell.tcl
+source -verbose $::env(SCRIPTS_DIR)/verilog2def.tcl
+source -verbose $::env(SCRIPTS_DIR)/io_placement.tcl
+source -verbose $::env(SCRIPTS_DIR)/tdms_place.tcl
+source -verbose $::env(SCRIPTS_DIR)/macro_place.tcl
+source -verbose $::env(SCRIPTS_DIR)/pdn.tcl
+source -verbose $::env(SCRIPTS_DIR)/tapcell.tcl
 
 # Place
-source $::env(SCRIPTS_DIR)/global_place.tcl
-source $::env(SCRIPTS_DIR)/detail_place.tcl
+source -verbose $::env(SCRIPTS_DIR)/global_place.tcl
+source -verbose $::env(SCRIPTS_DIR)/detail_place.tcl
 
 # CTS
-source $::env(SCRIPTS_DIR)/cts.tcl
+source -verbose $::env(SCRIPTS_DIR)/cts.tcl
 
 # Save output for global route
-set db [::ord::get_db]
-set block [[$db getChip] getBlock]
-odb::odb_write_def $block $::env(RESULTS_DIR)/4_cts.def DEF_5_6
+write_def $::env(RESULTS_DIR)/4_cts.def
 
 # Route
-source $::env(SCRIPTS_DIR)/global_route.tcl
+source -verbose $::env(SCRIPTS_DIR)/global_route.tcl
 
 # Detail route not integrated yet
-source $::env(SCRIPTS_DIR)/tritonRoute.tcl
+source -verbose $::env(SCRIPTS_DIR)/tritonRoute.tcl
 
 # Finishing
-source $::env(SCRIPTS_DIR)/klayout.tcl
+source -verbose $::env(SCRIPTS_DIR)/klayout.tcl
 
 exit

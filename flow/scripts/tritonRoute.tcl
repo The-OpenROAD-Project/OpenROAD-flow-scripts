@@ -1,1 +1,1 @@
-TritonRoute $::env(OBJECTS_DIR)/TritonRoute.param
+exec TritonRoute $::env(OBJECTS_DIR)/TritonRoute.param
