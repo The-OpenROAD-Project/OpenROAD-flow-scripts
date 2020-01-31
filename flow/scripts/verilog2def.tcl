@@ -10,6 +10,7 @@ if {![info exists standalone] || $standalone} {
   read_verilog $::env(RESULTS_DIR)/1_synth.v
 
   link_design $::env(DESIGN_NAME)
+  read_sdc $::env(RESULTS_DIR)/1_synth.sdc
 }
 
 # Initialize floorplan using ICeWall FOOTPRINT
