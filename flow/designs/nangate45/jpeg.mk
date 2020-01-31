@@ -1,3 +1,4 @@
+export DESIGN_NICKNAME = jpeg
 export DESIGN_NAME = jpeg_encoder
 export PLATFORM    = nangate45
 

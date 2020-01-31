@@ -1,3 +1,4 @@
+export DESIGN_NICKNAME = bsg_loopback
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf14
 

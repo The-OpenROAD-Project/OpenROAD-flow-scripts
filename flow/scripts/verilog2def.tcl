@@ -46,6 +46,18 @@ if {[info exists ::env(FOOTPRINT)]} {
                        -site $::env(PLACE_SITE)
 }
 
+
+# pre report
+log_begin $::env(REPORTS_DIR)/2_init.rpt
+
+report_checks
+report_tns
+report_wns
+report_design_area
+
+log_end
+
+
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/2_1_floorplan.def

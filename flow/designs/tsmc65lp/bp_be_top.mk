@@ -1,3 +1,4 @@
+export DESIGN_NICKNAME = bp_be
 export DESIGN_NAME = bp_be_top
 export PLATFORM    = tsmc65lp
 

@@ -1,3 +1,4 @@
+export DESIGN_NICKNAME = aes
 export DESIGN_NAME = aes_cipher_top
 export PLATFORM    = nangate45
 

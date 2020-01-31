@@ -1,3 +1,4 @@
+export DESIGN_NAME = vb
 export DESIGN_NAME = bsg_manycore_tile
 export PLATFORM    = tsmc65lp
 

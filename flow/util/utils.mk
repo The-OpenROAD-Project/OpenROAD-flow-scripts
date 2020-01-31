@@ -74,7 +74,7 @@ versions.txt:
 #   e.g "make cts_issue"
 # Set the ISSUE_TAG variable to rename the generated tar file
 #-------------------------------------------------------------------------------
-ISSUE_TAG ?= $(DESIGN_NAME)_$(PLATFORM)_$(shell date +"%Y-%m-%d_%H-%M")
+ISSUE_TAG ?= $(DESIGN_NICKNAME)_$(PLATFORM)_$(shell date +"%Y-%m-%d_%H-%M")
 ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(wildcard $(SCRIPTS_DIR)/*.tcl)))
 ISSUE_CP_FILE_VARS = BLACKBOX_MAP_TCL BLACKBOX_V_FILE CTS_TECH_DIR GENERIC_TECH_LEF \
                      IP_GLOBAL_CFG LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
@@ -88,13 +88,17 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt ./POS
 	@echo "openroad -no_init $(SCRIPTS_DIR)/$*.tcl" >> runme.sh
 	@chmod +x runme.sh
 
-	# Creating vars.sh script
-	-@rm -f vars.sh
+	# Creating vars.sh/tcl script
+	-@rm -f vars.sh vars.tcl
 	@$(foreach V, $(.VARIABLES), \
 	  $(if $(filter-out environment% default automatic, $(origin $V)), \
-	  echo export $V=\""$($V)\""  >> vars.sh ;) \
+	  echo export $V=\""$($V)\""  >> vars.sh ; \
+	  echo set env\($V\) \""$($V)\""     >> vars.tcl ;) \
 	)
 	@sed -i '/export \./d' vars.sh
+	@sed -i '/$(USER)/d' vars.sh
+	@sed -i '/set env(\./d' vars.tcl
+	@sed -i '/$(USER)/d' vars.tcl
 
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
 	@tar -czhf $*_$(ISSUE_TAG).tar.gz \

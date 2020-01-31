@@ -1,12 +1,13 @@
+export DESIGN_NICKNAME = bp_quad
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf14
 
-export VERILOG_FILES = ./platforms/gf14/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.sv2v.v \
+export VERILOG_FILES = ./platforms/gf14/bp/bsg_ac_black_parrot_quad_core_v0/bsg_chip.sv2v.v \
                        ./platforms/gf14/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
-# export DC_NETLIST    = ./platforms/gf14/bp/bsg_ac_black_parrot_single_core_v0/dc/results/bsg_chip.mapped.flat.v
+# export DC_NETLIST    = ./platforms/gf14/bp/bsg_ac_black_parrot_quad_core_v0/dc/results/bsg_chip.mapped.flat.v
 
-export SDC_FILE      = ./platforms/gf14/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.elab.v.sdc
+export SDC_FILE      = ./platforms/gf14/bp/bsg_ac_black_parrot_quad_core_v0/bsg_chip.elab.v.sdc
 
 export ADDITIONAL_LEFS = ./platforms/gf14/bp/lef/gf14_1r1w_d32_w64_m1.lef \
                          ./platforms/gf14/bp/lef/gf14_1rw_d128_w116_m2_bit.lef \

@@ -1,3 +1,4 @@
+export DESIGN_NAME = coyote
 export DESIGN_NAME = bsg_rocket_node_client_rocc
 export PLATFORM    = tsmc65lp
 

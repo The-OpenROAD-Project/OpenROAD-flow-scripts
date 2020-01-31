@@ -1,3 +1,4 @@
+export DESIGN_NICKNAME = tinyRocket
 export DESIGN_NAME = RocketTile
 export PLATFORM    = nangate45
 

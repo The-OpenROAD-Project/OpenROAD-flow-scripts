@@ -1,3 +1,4 @@
+export DESIGN_NICKNAME = ibex
 export DESIGN_NAME = ibex_core
 export PLATFORM    = tsmc65lp
 
