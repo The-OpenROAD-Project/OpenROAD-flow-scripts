@@ -411,16 +411,29 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_r
 
 # Run Klayout
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/6_final.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/5_route.def
+$(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/5_route.def
 	klayout -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_lef=$(abspath $(OBJECTS_DIR)/merged.lef) \
 	        -rd in_def=$(RESULTS_DIR)/5_route.def \
 	        -rd in_gds="$(GDS_FILES)" \
 	        -rd out_gds=$@ \
 	        -rd map_file=./platforms/$(PLATFORM)/layermap.txt \
-	        -rm $(UTILS_DIR)/def2gds.py 2>&1 | tee $(LOG_DIR)/6_2_klayout.log
+	        -rm $(UTILS_DIR)/def2gds.py 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+
+# TODO(rovinski) Placeholder until fill script works for more platforms
+ifneq ($(USE_FILL),)
+$(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
+	klayout -zz -rd in_gds="$^" \
+	        -rd out_gds="$@" \
+	        -rd report_file="$(REPORTS_DIR)/6_2_density.rpt" \
+	        -rm $(UTILS_DIR)/gdsFill.py 2>&1 | tee $(LOG_DIR)/6_2_fill.log
+else
+$(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
+	cp $^ $@
+endif
 
 clean_finish:
+	rm -rf $(RESULTS_DIR)/6_1_merged.gds
 	rm -rf $(RESULTS_DIR)/6_final.gds
 	rm -rf $(REPORTS_DIR)/6_*.rpt
 
@@ -467,11 +480,11 @@ $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),innovus_$(def)): innovu
 	                  win" \
 	                  -no_logv ; stty sane
 
-$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
+RESULTS_DEF = $(notdir $(wildcard $(RESULTS_DIR)/*.def))
+RESULTS_GDS = $(notdir $(wildcard $(RESULTS_DIR)/*.gds))
+$(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
-klayout_gds: $(OBJECTS_DIR)/klayout.lyt
-	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/6_final.gds
 
 # Utilities
 #-------------------------------------------------------------------------------

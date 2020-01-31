@@ -34,7 +34,7 @@ export SC_LEF = ./platforms/$(PLATFORM)/lef/NangateOpenCellLibrary.macro.mod.lef
 
 export LIB_FILES = ./platforms/$(PLATFORM)/lib/NangateOpenCellLibrary_typical.lib \
                      $(ADDITIONAL_LIBS)
-export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*) \
+export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*.gds) \
                      $(ADDITIONAL_GDS_FILES)
 
 # Cell padding in SITE widths to ease rout-ability
@@ -59,7 +59,7 @@ export WIRE_RC_LAYER = metal3
 # Resizer options
 export RESIZER_BUF_CELL = BUF_X4
 
-# KLayout layer properties
+# KLayout technology file
 export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/FreePDK45.lyt
 
 # Dont use cells to ease congestion
