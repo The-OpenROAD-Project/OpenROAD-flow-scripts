@@ -189,9 +189,9 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc | ../etc/POST9.dat ../etc/POWV9.dat POST9.dat POWV9.dat
-	openroad -no_init $(SCRIPTS_DIR)/verilog2def.tcl \
-	  2>&1 | tee $(LOG_DIR)/2_1_verilog2def.log
-	@! grep --color "Error:" $(LOG_DIR)/2_1_verilog2def.log
+	openroad -no_init $(SCRIPTS_DIR)/floorplan.tcl \
+	  2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
+	@! grep --color "Error:" $(LOG_DIR)/2_1_floorplan.log
 
 
 # STEP 2: IO Placement
