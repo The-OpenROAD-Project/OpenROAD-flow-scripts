@@ -4,7 +4,7 @@ pipeline {
   stages {
     stage('Build') {
       steps {
-        sh label: 'Build', script: 'make'
+        sh label: 'Build', script: './build_openroad.sh'
       }
     }
       
