@@ -1,4 +1,4 @@
-
+#!/bin/bash
 # This script builds the OpenROAD tools locally
 
 # Exit on first error
