@@ -16,6 +16,9 @@ if {![info exists standalone] || $standalone} {
 }
 
 # Report timing before CTS
+puts "\n=========================================================================="
+puts "report_checks"
+puts "--------------------------------------------------------------------------"
 report_checks
 
 # Run CTS
