@@ -29,7 +29,7 @@ if ! [ -d $src_path/yosys ]; then
   sed -i 's/^# CONFIG := gcc$/CONFIG := gcc/g' $src_path/yosys/Makefile
 else
   echo "INFO: Updating repository 'yosys'"
-  (cd $src_path/yosys && git submodule update --init --recursive)
+  (cd $src_path/yosys && git pull && git submodule update --init --recursive)
 fi
 
 if ! [ -d $src_path/TritonRoute ]; then
@@ -37,7 +37,7 @@ if ! [ -d $src_path/TritonRoute ]; then
   git clone --recursive https://github.com/The-OpenROAD-Project/TritonRoute.git $src_path/TritonRoute --branch alpha2
 else
   echo "INFO: Updating repository 'TritonRoute'"
-  (cd $src_path/TritonRoute && git submodule update --init --recursive)
+  (cd $src_path/TritonRoute && git pull && git submodule update --init --recursive)
 fi
 
 
