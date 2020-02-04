@@ -42,17 +42,7 @@ if [ "$build_method" == "DOCKER" ]; then
   docker build -t openroad -f $src_path/../Dockerfile $src_path/..
   docker build -t openroad/tritonroute -f $src_path/TritonRoute/Dockerfile $src_path/TritonRoute
   docker build -t openroad/yosys -f $src_path/yosys/Dockerfile $src_path/yosys
-  
-  mkdir -p $build_path
-  container_id=$(docker create openroad)
-  docker cp $container_id:/OpenROAD/build OpenROAD/
-  docker rm -v $container_id
-  
-  for module in TritonRoute yosys; do
-    container_id=$(docker create openroad/${module,,})
-    docker cp $container_id:/build $build_path/$module 
-    docker rm -v $container_id
-  done
+  docker build -t openroad/flow -f Dockerfile .
 
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then

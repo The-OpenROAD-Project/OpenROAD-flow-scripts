@@ -15,7 +15,7 @@ pipeline {
             catchError {
               sh label: 'nangate45_gcd', script: '''#!/bin/bash
 source setup_env.sh
-cd flow && make DESIGN_CONFIG=designs/nangate45/gcd.mk'''
+cd flow && test/test_helper.sh gcd nangate45'''
             }
             echo currentBuild.result
           }
@@ -25,7 +25,7 @@ cd flow && make DESIGN_CONFIG=designs/nangate45/gcd.mk'''
             catchError {
               sh label: 'nangate45_aes', script: '''#!/bin/bash
 source setup_env.sh
-cd flow && make DESIGN_CONFIG=designs/nangate45/aes.mk all'''
+cd flow && test/test_helper.sh aes nangate45'''
             }
             echo currentBuild.result
           }
