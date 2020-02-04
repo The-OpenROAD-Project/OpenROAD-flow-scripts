@@ -14,7 +14,7 @@ pipeline {
           steps {
             catchError {
               sh label: 'nangate45_gcd', script: '''
-docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45
+docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"
 '''
             }
             echo currentBuild.result
@@ -24,7 +24,7 @@ docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_he
           steps {
             catchError {
               sh label: 'nangate45_aes', script: '''#!/bin/bash
-docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45
+docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"
 '''
             }
             echo currentBuild.result
