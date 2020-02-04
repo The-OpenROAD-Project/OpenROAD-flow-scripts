@@ -7,15 +7,15 @@ pipeline {
         sh label: 'Build', script: './build_openroad.sh'
       }
     }
-      
+
     stage('Test') {
+      failFast true
       parallel {
         stage('nangate45_gcd') {
           steps {
             catchError {
-              sh label: 'nangate45_gcd', script: '''
-docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"
-'''
+              sh label: '_gcd', script: '''
+              docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"'''
             }
             echo currentBuild.result
           }
@@ -23,9 +23,17 @@ docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_he
         stage('nangate45_aes') {
           steps {
             catchError {
-              sh label: 'nangate45_aes', script: '''#!/bin/bash
-docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"
-'''
+              sh label: '_aes', script: '''
+              docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"'''
+            }
+            echo currentBuild.result
+          }
+        }
+        stage('nangate45_tinyRocket') {
+          steps {
+            catchError {
+              sh label: '_tinyRocket', script: '''
+              docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'''
             }
             echo currentBuild.result
           }
