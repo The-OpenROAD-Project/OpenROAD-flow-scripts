@@ -23,16 +23,20 @@ git submodule update --init --recursive
 (cd $src_path/OpenDB && git submodule update --init --recursive)
 
 if ! [ -d $src_path/yosys ]; then
+  echo "INFO: Cloning repository 'yosys'"
   git clone --recursive https://github.com/The-OpenROAD-Project/yosys.git $src_path/yosys
   sed -i 's/^CONFIG := clang$/#CONFIG := clang/g' $src_path/yosys/Makefile
   sed -i 's/^# CONFIG := gcc$/CONFIG := gcc/g' $src_path/yosys/Makefile
 else
+  echo "INFO: Updating repository 'yosys'"
   (cd $src_path/yosys && git submodule update --init --recursive)
 fi
 
 if ! [ -d $src_path/TritonRoute ]; then
+  echo "INFO: Cloning repository 'TritonRoute'"
   git clone --recursive https://github.com/The-OpenROAD-Project/TritonRoute.git $src_path/TritonRoute --branch alpha2
 else
+  echo "INFO: Updating repository 'TritonRoute'"
   (cd $src_path/TritonRoute && git submodule update --init --recursive)
 fi
 
