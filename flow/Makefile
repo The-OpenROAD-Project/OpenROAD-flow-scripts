@@ -127,21 +127,6 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
  $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE)
 	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' $^ > $@
 
-# Link flute data files
-# ==============================================================================
-./POST9.dat:
-	ln -sf $(OPENROAD)/etc/$@ $@
-./POWV9.dat:
-	ln -sf $(OPENROAD)/etc/$@ $@
-../etc/POST9.dat:
-	mkdir -p ../etc
-	ln -sf $(OPENROAD)/etc/POST9.dat $@
-../etc/POWV9.dat:
-	mkdir -p ../etc
-	ln -sf $(OPENROAD)/etc/POWV9.dat $@
-
-
-
 # ==============================================================================
 #  ______   ___   _ _____ _   _ _____ ____ ___ ____
 # / ___\ \ / / \ | |_   _| | | | ____/ ___|_ _/ ___|
@@ -188,7 +173,7 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc | ../etc/POST9.dat ../etc/POWV9.dat POST9.dat POWV9.dat
+$(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc
 	openroad -no_init $(SCRIPTS_DIR)/floorplan.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
 	@! grep --color "Error:" $(LOG_DIR)/2_1_floorplan.log
@@ -448,8 +433,7 @@ clean_finish:
 #
 # ==============================================================================
 
-all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/merged.lef $(OBJECTS_DIR)/TritonRoute.param \
-		| ../etc/POST9.dat ../etc/POWV9.dat POST9.dat POWV9.dat
+all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/merged.lef $(OBJECTS_DIR)/TritonRoute.param
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	openroad -no_init $(SCRIPTS_DIR)/run_all.tcl
 
@@ -465,8 +449,6 @@ clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_f
 
 nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
-	rm -rf ./POST9.dat ./POWV9.dat
-	rm -rf ../etc/PORT9.dat ../etc/POWV9.dat
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide run.param
 	rm -rf *.rpt *.rpt.old *.def.v innovus.* pin_dumper.log
 	rm -rf versions.txt
