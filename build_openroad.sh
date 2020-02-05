@@ -23,17 +23,21 @@ git submodule update --init --recursive
 (cd $src_path/OpenDB && git submodule update --init --recursive)
 
 if ! [ -d $src_path/yosys ]; then
+  echo "INFO: Cloning repository 'yosys'"
   git clone --recursive https://github.com/The-OpenROAD-Project/yosys.git $src_path/yosys
   sed -i 's/^CONFIG := clang$/#CONFIG := clang/g' $src_path/yosys/Makefile
   sed -i 's/^# CONFIG := gcc$/CONFIG := gcc/g' $src_path/yosys/Makefile
 else
-  (cd $src_path/yosys && git submodule update --init --recursive)
+  echo "INFO: Updating repository 'yosys'"
+  (cd $src_path/yosys && git pull && git submodule update --init --recursive)
 fi
 
 if ! [ -d $src_path/TritonRoute ]; then
+  echo "INFO: Cloning repository 'TritonRoute'"
   git clone --recursive https://github.com/The-OpenROAD-Project/TritonRoute.git $src_path/TritonRoute --branch alpha2
 else
-  (cd $src_path/TritonRoute && git submodule update --init --recursive)
+  echo "INFO: Updating repository 'TritonRoute'"
+  (cd $src_path/TritonRoute && git pull && git submodule update --init --recursive)
 fi
 
 
@@ -42,17 +46,7 @@ if [ "$build_method" == "DOCKER" ]; then
   docker build -t openroad -f $src_path/../Dockerfile $src_path/..
   docker build -t openroad/tritonroute -f $src_path/TritonRoute/Dockerfile $src_path/TritonRoute
   docker build -t openroad/yosys -f $src_path/yosys/Dockerfile $src_path/yosys
-  
-  mkdir -p $build_path
-  container_id=$(docker create openroad)
-  docker cp $container_id:/OpenROAD/build OpenROAD/
-  docker rm -v $container_id
-  
-  for module in TritonRoute yosys; do
-    container_id=$(docker create openroad/${module,,})
-    docker cp $container_id:/build $build_path/$module 
-    docker rm -v $container_id
-  done
+  docker build -t openroad/flow -f Dockerfile .
 
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then

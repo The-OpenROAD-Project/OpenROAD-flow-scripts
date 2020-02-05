@@ -21,8 +21,15 @@ set -o pipefail
 
 mkdir -p $TEST_DIR/logs/$PLATFORM
 
+if which innovus &> /dev/null; then
+  TARGETS="finish drc congestion"
+else
+  echo "INFO: No innovus installation detected; skipping third-party DRC"
+  TARGETS="finish"
+fi
+
 make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN.mk clean_all
-make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN.mk finish drc congestion 2>&1 | tee $LOG_FILE
+make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN.mk $TARGETS 2>&1 | tee $LOG_FILE
 
 
 #diff $LOG_FILE $GOLD_LOG_FILE
