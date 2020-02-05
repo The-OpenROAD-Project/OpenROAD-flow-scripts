@@ -59,7 +59,8 @@ git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
 3. Extract the tar to `OpenROAD-flow/OpenROAD`
 4. Update your shell environment
 ```
-source setup_env.sh
+source setup_env.sh if building locally
+source setup_env_docker if running inside the docker image
 ```
 
 ### Option 2: Building the tools using docker
