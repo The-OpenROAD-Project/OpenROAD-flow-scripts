@@ -70,11 +70,12 @@ run docker to follow these instructions.
 ```
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
 ```
-2. Build the Dockerfiles using the Makefile.
+2. Build the Dockerfiles using the script build_openroad.sh
 ```
-make
+ensure the docker daemon is running or start it in a second terminal window with the unix command dockerd
+./build_openroad.sh
 ```
-Make sure that `docker` is in your PATH and detected by the Makefile.
+Make sure that `docker` is in your PATH.
 
 3. Update your shell environment
 ```

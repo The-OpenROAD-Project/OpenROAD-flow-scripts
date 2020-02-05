@@ -16,10 +16,6 @@ fi
 # Clone repositories
 git submodule update --init --recursive
 
-# Change Yosys compiler to gcc
-sed -i 's/^CONFIG := clang$/#CONFIG := clang/g' tools/yosys/Makefile
-sed -i 's/^# CONFIG := gcc$/CONFIG := gcc/g' tools/yosys/Makefile
-
 # Docker build
 if [ "$build_method" == "DOCKER" ]; then
   docker build -t openroad/yosys -f tools/yosys/Dockerfile tools/yosys
@@ -30,7 +26,7 @@ if [ "$build_method" == "DOCKER" ]; then
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then
   mkdir -p tools/yosys/build
-  (cd tools/yosys && make install -j$(nproc) PREFIX=build TCL_VERSION=tcl8.5)
+  (cd tools/yosys && make install -j$(nproc) PREFIX=build CONFIG=gcc TCL_VERSION=tcl8.5)
 
   mkdir -p tools/TritonRoute/build tools/TritonRoute
   (cd tools/TritonRoute/build && cmake .. && make -j$(nproc))
