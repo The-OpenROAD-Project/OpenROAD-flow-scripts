@@ -15,7 +15,7 @@ pipeline {
           steps {
             catchError {
               sh label: '_gcd', script: '''
-              docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"'''
+              docker run -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"'''
             }
             echo currentBuild.result
           }
@@ -24,7 +24,7 @@ pipeline {
           steps {
             catchError {
               sh label: '_aes', script: '''
-              docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"'''
+              docker run -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"'''
             }
             echo currentBuild.result
           }
@@ -33,7 +33,7 @@ pipeline {
           steps {
             catchError {
               sh label: '_tinyRocket', script: '''
-              docker run openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'''
+              docker run -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'''
             }
             echo currentBuild.result
           }

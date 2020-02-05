@@ -13,4 +13,4 @@ COPY --from=openroad/yosys /build ./OpenROAD/build/src/yosys
 COPY --from=openroad/tritonroute /build ./OpenROAD/build/src/TritonRoute
 COPY ./setup_env.sh .
 COPY ./flow ./flow
-
+RUN chmod o+rw -R /OpenROAD-flow/flow
