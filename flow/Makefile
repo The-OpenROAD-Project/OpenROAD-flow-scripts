@@ -77,10 +77,14 @@ export TEST_DIR    = ./test
 # Tool Options
 SHELL = /bin/bash -o pipefail
 
-# Quick check to make sure OpenROAD tools are installed
-ifeq ("$(OPENROAD)","")
-  $(error ERROR: These tests require the OpenROAD tools to be setup.)
-endif
+
+# Utility to print tool version information
+#-------------------------------------------------------------------------------
+versions.txt:
+	@yosys -V > $(abspath $@)
+	@echo openroad `openroad -version` >> $(abspath $@)
+	@klayout -v >> $(abspath $@)
+	@echo TritonRoute `which TritonRoute` >> $(abspath $@)
 
 
 # Pre-process Lefs
@@ -134,7 +138,8 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 #  ___) || | | |\  | | | |  _  | |___ ___) | | ___) |
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
-synth: $(RESULTS_DIR)/1_synth.v \
+synth: versions.txt \
+       $(RESULTS_DIR)/1_synth.v \
        $(RESULTS_DIR)/1_synth.sdc
 # ==============================================================================
 
@@ -217,11 +222,9 @@ $(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DI
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_tapcell.def
 	cp $< $@
 
-$(RESULTS_DIR)/2_floorplan.v: $(RESULTS_DIR)/1_synth.v
-	cp $< $@
+$(RESULTS_DIR)/2_floorplan.v: $(RESULTS_DIR)/2_1_floorplan.def
 
-$(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/1_synth.sdc
-	cp $< $@
+$(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.def
 
 
 clean_floorplan:

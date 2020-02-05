@@ -1,7 +1,7 @@
 yosys -import
 
 if {[info exist ::env(DC_NETLIST)]} {
-  file copy -force $::env(DC_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
+  exec cp $::env(DC_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
   exit
 }
 
