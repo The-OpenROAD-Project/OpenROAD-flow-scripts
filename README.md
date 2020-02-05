@@ -80,7 +80,7 @@ Make sure that `docker` is in your PATH.
 
 3. Update your shell environment
 ```
-source setup_env.sh
+source setup_env.sh or source setup_env_docker.sh
 ```
 
 ### Option 3: Building the tools locally
