@@ -25,14 +25,14 @@ if [ "$build_method" == "DOCKER" ]; then
 
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then
-  mkdir -p tools/yosys/build
-  (cd tools/yosys && make install -j$(nproc) PREFIX=build CONFIG=gcc TCL_VERSION=tcl8.5)
+  mkdir -p tools/build/yosys
+  (cd tools/yosys && make install -j$(nproc) PREFIX=../build/yosys CONFIG=gcc TCL_VERSION=tcl8.5)
 
-  mkdir -p tools/TritonRoute/build tools/TritonRoute
-  (cd tools/TritonRoute/build && cmake .. && make -j$(nproc))
+  mkdir -p tools/build/TritonRoute
+  (cd tools/build/TritonRoute && cmake ../TritonRoute && make -j$(nproc))
 
-  mkdir -p tools/OpenROAD/build
-  (cd tools/OpenROAD/build && cmake .. && make -j$(nproc))
+  mkdir -p tools/build/OpenROAD
+  (cd tools/build/OpenROAD && cmake ../OpenROAD && make -j$(nproc))
 else
   echo "ERROR: No valid build method found"
   exit 1
