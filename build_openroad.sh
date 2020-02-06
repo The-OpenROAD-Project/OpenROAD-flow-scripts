@@ -9,7 +9,7 @@ if which docker &> /dev/null; then
   echo "INFO: using docker build method. This will create a docker image tagged 'openroad/flow'"
   build_method="DOCKER"
 else
-  echo "INFO: using local build method. This will create binaries at tools/*/build"
+  echo "INFO: using local build method. This will create binaries at tools/build/"
   build_method="LOCAL"
 fi
 
@@ -29,10 +29,10 @@ elif [ "$build_method" == "LOCAL" ]; then
   (cd tools/yosys && make install -j$(nproc) PREFIX=../build/yosys CONFIG=gcc TCL_VERSION=tcl8.5)
 
   mkdir -p tools/build/TritonRoute
-  (cd tools/build/TritonRoute && cmake ../TritonRoute && make -j$(nproc))
+  (cd tools/build/TritonRoute && cmake ../../TritonRoute && make -j$(nproc))
 
   mkdir -p tools/build/OpenROAD
-  (cd tools/build/OpenROAD && cmake ../OpenROAD && make -j$(nproc))
+  (cd tools/build/OpenROAD && cmake ../../OpenROAD && make -j$(nproc))
 else
   echo "ERROR: No valid build method found"
   exit 1

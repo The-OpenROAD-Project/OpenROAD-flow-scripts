@@ -1,7 +1,5 @@
 # Build working directories
-build/export/*
-!build/export/Dockerfile
-build/logs
+tools/build/
 
 # Test working directories
 flow/results
