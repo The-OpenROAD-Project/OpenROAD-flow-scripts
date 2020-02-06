@@ -9,7 +9,11 @@ if {![info exists standalone] || $standalone} {
   read_def $::env(RESULTS_DIR)/2_1_floorplan.def
 }
 
-io_placer -hor_layer 3 -ver_layer 2 -random
+if {![info exists ::env(FOOTPRINT)]} {
+  io_placer -hor_layer $::env(IO_PLACER_H) \
+            -ver_layer $::env(IO_PLACER_V) \
+            -random
+}
 
 if {![info exists standalone] || $standalone} {
   # write output

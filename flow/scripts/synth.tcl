@@ -1,5 +1,10 @@
 yosys -import
 
+if {[info exist ::env(DC_NETLIST)]} {
+  file copy -force $::env(DC_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
+  exit
+}
+
 # Don't change these unless you know what you are doing
 set stat_ext    "_stat.rep"
 set gl_ext      "_gl.v"
@@ -36,26 +41,9 @@ if {[info exist ::env(VERILOG_TOP_PARAMS)]} {
 
 # Use hierarchy to automatically generate blackboxes for known memory macro.
 # Pins are enumerated for proper mapping
-
-if {$::env(PLATFORM) == "tsmc65lp"} {
-  hierarchy -generate tsmc65lp_* o:Q o:QA o:QB \
-                                 i:CLK i:CLKA i:CLKB \
-                                 i:CEN i:CENA i:CENB \
-                                 i:GWEN \
-                                 i:A i:AA i:AB \
-                                 i:D i:DB \
-                                 i:WEN i:WENA i:WENB\
-                                 i:STOV \
-                                 i:EMA i:EMAA i:EMAB \
-                                 i:EMAW i:EMAS i:RET1N \
-                                 i:SE i:TEN o:CENY o:WENY o:AY \
-                                 o:SO i:SI i:TCEN i:TWEN i:TA i:TD \
-                                 i:DFTRAMBYP i:PGEN i:KEN i:BEN i:TQ
-} elseif {$::env(PLATFORM) == "nangate45"} {
-  hierarchy -generate fakeram45_* o:rd_out i:addr_in i:we_in \
-                                 i:wd_in i:w_mask_in i:clk i:ce_in
+if {[info exist ::env(BLACKBOX_MAP_TCL)]} {
+  source $::env(BLACKBOX_MAP_TCL)
 }
-
 
 
 # generic synthesis
@@ -65,7 +53,9 @@ synth  -top $::env(DESIGN_NAME) -flatten
 opt -purge
 
 # technology mapping of latches
-techmap -map $::env(LATCH_MAP_FILE)
+if {[info exist ::env(LATCH_MAP_FILE)]} {
+  techmap -map $::env(LATCH_MAP_FILE)
+}
 
 # technology mapping of flip-flops
 dfflibmap -liberty $::env(OBJECTS_DIR)/merged.lib
@@ -79,7 +69,9 @@ abc -D [expr $::env(CLOCK_PERIOD) * 1000] \
     -showtmp
 
 # technology mapping of constant hi- and/or lo-drivers
-hilomap -hicell {*}$::env(TIEHI_CELL_AND_PORT) -locell {*}$::env(TIELO_CELL_AND_PORT)
+hilomap -singleton \
+        -hicell {*}$::env(TIEHI_CELL_AND_PORT) \
+        -locell {*}$::env(TIELO_CELL_AND_PORT)
 
 # replace undef values with defined constants
 setundef -zero

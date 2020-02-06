@@ -8,14 +8,11 @@ export MERGED_LEF = ./platforms/nangate45/NangateOpenCellLibrary.mod.lef
 export LIB_FILES  = ./platforms/nangate45/NangateOpenCellLibrary_typical.lib
 export GDS_FILES  = $(wildcard ./platforms/nangate45/gds/*)
 
-#export RUN_MACRO_PLACEMENT = 1
-
+#
 # These values must be multiples of placement site
 # x=0.19 y=1.4
 export DIE_AREA    = 0 0 9002.2 9016
 export CORE_AREA   = 20.14 22.4 8623.34 8618.4
-export CORE_WIDTH  = 8603.2
-export CORE_HEIGHT = 8596
 
 # Start with 250MHz for nangate45, relatively conservative
 export CLOCK_PERIOD = 4

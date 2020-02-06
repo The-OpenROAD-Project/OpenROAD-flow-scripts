@@ -6,12 +6,9 @@ if {![info exists standalone] || $standalone} {
   read_def $::env(RESULTS_DIR)/2_5_floorplan_pdn.def
 }
 
-tapcell \
- -endcap_cpp "1" \
- -distance $::env(WELLTTAP_RULE) \
- -tapcell_master $::env(WELLTIE_CELL) \
- -endcap_master $::env(ENDCAP_CELL)
-
+if {[info exist ::env(TAPCELL_TCL)]} {
+  source $::env(TAPCELL_TCL)
+}
 
 if {![info exists standalone] || $standalone} {
   # write output

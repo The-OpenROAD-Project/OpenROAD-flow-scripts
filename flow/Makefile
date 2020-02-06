@@ -32,17 +32,22 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/vb.mk
 
 # DESIGN_CONFIG=./designs/gf14/gcd.mk
+# DESIGN_CONFIG=./designs/gf14/bsg_padring.mk
+# DESIGN_CONFIG=./designs/gf14/bsg_loopback.mk
+# DESIGN_CONFIG=./designs/gf14/bp_single.mk
+# DESIGN_CONFIG=./designs/gf14/bp_quad.mk
 
+# DESIGN_CONFIG=./designs/invecas12/gcd.mk
 
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd.mk
 
 # # Global override Floorplan
-# CORE_UTILIZATION := 30
-# CORE_ASPECT_RATIO := 1
-# CORE_MARGIN := 4
+# export CORE_UTILIZATION := 30
+# export CORE_ASPECT_RATIO := 1
+# export CORE_MARGIN := 4
 
-all: route
+default: finish
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -58,10 +63,12 @@ include $(DESIGN_CONFIG)
 include ./platforms/$(PLATFORM)/config.mk
 
 # Setup working directories
-export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NAME)
-export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NAME)
-export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NAME)
-export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NAME)
+export DESIGN_NICKNAME ?= $(DESIGN_NAME)
+
+export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)
+export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)
+export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)
+export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)
 
 export SCRIPTS_DIR = ./scripts
 export UTILS_DIR   = ./util
@@ -69,12 +76,6 @@ export TEST_DIR    = ./test
 
 # Tool Options
 SHELL = /bin/bash -o pipefail
-BANNER = printf "\e[31m" ; \
-         date ; \
-         figlet -c -p -d $(OPENROAD)/build/src/TritonCTS/fonts/ $(1) ; \
-         printf "\e[0m" ; \
-         sleep 1 ;
-
 
 # Quick check to make sure OpenROAD tools are installed
 ifeq ("$(OPENROAD)","")
@@ -119,27 +120,12 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged \
 	                           $(LIB_FILES) \
 	                           > $@.tmp
-	$(UTILS_DIR)/markDontUse.pl -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
+	$(UTILS_DIR)/markDontUse.py -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
 
-# Link flute data files
+# Pre-process KLayout tech
 # ==============================================================================
-./PORT9.dat:
-	ln -sf $(OPENROAD)/src/yosys/$@ $@
-./POST9.dat:
-	ln -sf $(OPENROAD)/etc/$@ $@
-./POWV9.dat:
-	ln -sf $(OPENROAD)/etc/$@ $@
-../etc/PORT9.dat:
-	mkdir -p ../etc
-	ln -sf $(OPENROAD)/src/yosys/PORT9.dat $@
-../etc/POST9.dat:
-	mkdir -p ../etc
-	ln -sf $(OPENROAD)/etc/POST9.dat $@
-../etc/POWV9.dat:
-	mkdir -p ../etc
-	ln -sf $(OPENROAD)/etc/POWV9.dat $@
-
-
+ $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE)
+	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' $^ > $@
 
 # ==============================================================================
 #  ______   ___   _ _____ _   _ _____ ____ ___ ____
@@ -158,17 +144,13 @@ synth: $(RESULTS_DIR)/1_synth.v \
 SYNTH_SCRIPT ?= scripts/synth.tcl
 
 $(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
-	@$(call BANNER, 1. SYNTHESIS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	yosys -l $(LOG_DIR)/1_1_yosys.log -c $(SYNTH_SCRIPT)
 
-$(RESULTS_DIR)/1_2_buffer.v: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE) $(OBJECTS_DIR)/merged.lef | ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat
-	openroad $(SCRIPTS_DIR)/buffer.tcl \
-	        2>&1 | tee $(LOG_DIR)/1_2_buffer.log
-	@! grep --color "Error:" $(LOG_DIR)/1_2_buffer.log
+$(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
+	cp $< $@
 
-
-$(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_2_buffer.v
+$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
 	cp $< $@
 
 clean_synth:
@@ -191,67 +173,44 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
-ifneq ($(CORE_UTILIZATION),)
-  FLOORPLAN_ARGS = -utilization $(CORE_UTILIZATION) \
-                   -aspect_ratio $(CORE_ASPECT_RATIO) \
-                   -core_space $(CORE_MARGIN)
-else
-  FLOORPLAN_ARGS = -die_area "$(DIE_AREA)" -core_area "$(CORE_AREA)"
-endif
-
-$(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_synth.v
-	@$(call BANNER, 2. FLOORPLAN)
-	openroad $(SCRIPTS_DIR)/verilog2def.tcl \
-	  2>&1 | tee $(LOG_DIR)/2_1_verilog2def.log
-	@! grep --color "Error:" $(LOG_DIR)/2_1_verilog2def.log
+$(RESULTS_DIR)/2_1_floorplan.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc
+	openroad -no_init $(SCRIPTS_DIR)/floorplan.tcl \
+	  2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
+	@! grep --color "Error:" $(LOG_DIR)/2_1_floorplan.log
 
 
 # STEP 2: IO Placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_1_floorplan.def
-	openroad $(SCRIPTS_DIR)/io_placement.tcl \
+	openroad -no_init $(SCRIPTS_DIR)/io_placement.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 	@! grep --color "Error:" $(LOG_DIR)/2_2_floorplan_io.log
 
 # STEP 3: Timing Driven Mixed Sized Placement
-# Only run if required
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES) $(OBJECTS_DIR)/merged_padded.lef | ./PORT9.dat ./POST9.dat ./POWV9.dat
-ifeq ($(RUN_MACRO_PLACEMENT),1)
-	openroad $(SCRIPTS_DIR)/tdms_place.tcl \
+$(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES) $(OBJECTS_DIR)/merged_padded.lef
+	openroad -no_init $(SCRIPTS_DIR)/tdms_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 	@! grep --color "Error:" $(LOG_DIR)/2_3_tdms_place.log
 	$(UTILS_DIR)/fixIoPins.py --inputDef $@ --outputDef $@ --margin $(IO_PIN_MARGIN)
-else
-	cp $< $@
-endif
 
 # STEP 4: Macro Placement
-# Only run if required
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(IP_GLOBAL_CFG)
-ifeq ($(RUN_MACRO_PLACEMENT),1)
-	openroad $(SCRIPTS_DIR)/macro_place.tcl \
+	openroad -no_init $(SCRIPTS_DIR)/macro_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_4_mplace.log
-else
-	cp $< $@
-endif
 
 # STEP 5: PDN generation
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_5_floorplan_pdn.def: $(RESULTS_DIR)/2_4_floorplan_macro.def
-ifneq ($(PDN_CFG),)
-	openroad $(SCRIPTS_DIR)/pdn.tcl | tee $(LOG_DIR)/2_5_pdn.log
+	openroad -no_init $(SCRIPTS_DIR)/pdn.tcl | tee $(LOG_DIR)/2_5_pdn.log
 	@! grep --color "Error:" $(LOG_DIR)/2_5_pdn.log
-else
-	cp $< $@
-endif
-
+	@! grep --color "ERROR:" $(LOG_DIR)/2_5_pdn.log
 
 # STEP 6: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_5_floorplan_pdn.def | ./PORT9.dat ./POST9.dat ./POWV9.dat
-	openroad $(SCRIPTS_DIR)/tapcell.tcl \
+$(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/2_5_floorplan_pdn.def
+	openroad -no_init $(SCRIPTS_DIR)/tapcell.tcl \
 	  2>&1 | tee $(LOG_DIR)/2_6_tapcell.log
 	@! grep --color "Error:" $(LOG_DIR)/2_6_tapcell.log
 
@@ -283,21 +242,15 @@ place: $(RESULTS_DIR)/3_place.def \
 
 # STEP 1: Global placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_1_place_gp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
-	@$(call BANNER, 3. PLACE)
-	openroad $(SCRIPTS_DIR)/global_place.tcl \
+$(RESULTS_DIR)/3_1_place_gp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc
+	openroad -no_init $(SCRIPTS_DIR)/global_place.tcl \
 	  2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 	@! grep --color "Error:" $(LOG_DIR)/3_1_place_gp.log
 
-$(RESULTS_DIR)/replace.gif: $(RESULTS_DIR)/3_1_place_gp.def
-	convert -delay 20  $(RESULTS_DIR)/replace/etc/floorplan/output/cell/cGP2D*.jpg \
-	        -delay 100 $(RESULTS_DIR)/replace/etc/floorplan/output/globalPlaceResult.jpg \
-	        $@
-
 # STEP 2: Resizing & Buffering
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_2_place_resized.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/3_1_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc | ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat
-	openroad $(SCRIPTS_DIR)/resize.tcl \
+$(RESULTS_DIR)/3_2_place_resized.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DIR)/3_1_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc
+	openroad -no_init $(SCRIPTS_DIR)/resize.tcl \
 	         2>&1 | tee $(LOG_DIR)/3_2_resizer.log
 	@! grep --color "Error:" $(LOG_DIR)/3_2_resizer.log
 
@@ -307,7 +260,7 @@ $(RESULTS_DIR)/3_place.v: $(RESULTS_DIR)/3_2_place_resized.def
 # STEP 3: Detail placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_3_place_dp.def: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/3_2_place_resized.def
-	openroad $(SCRIPTS_DIR)/detail_place.tcl \
+	openroad -no_init $(SCRIPTS_DIR)/detail_place.tcl \
 	         2>&1 | tee $(LOG_DIR)/3_3_opendp.log
 	@! grep --color "Error:" $(LOG_DIR)/3_3_opendp.log
 
@@ -316,6 +269,16 @@ $(RESULTS_DIR)/3_place.def: $(RESULTS_DIR)/3_3_place_dp.def
 
 $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
 	cp $< $@
+
+#OpeNPDN
+export OPDN_OPENDBPY = $(OPENROAD)/build/src/OpeNPDN/modules/OpenDB/src/swig/python/opendbpy.py
+OpeNPDN = $(OPENROAD)/src/OpeNPDN/
+export OPDN_SRC = $(OpeNPDN)
+
+analyze_power_grid:  $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc $(OBJECTS_DIR)/merged.lib
+	openroad -no_init -exit $(SCRIPTS_DIR)/analyze_pdn_ir.tcl  \
+			2>&1 | tee $(LOG_DIR)/analyze_pdn_ir.log
+	@! grep --color "Error:" $(LOG_DIR)/analyze_pdn_ir.log
 
 # Clean Targets
 #-------------------------------------------------------------------------------
@@ -338,8 +301,8 @@ cts: $(RESULTS_DIR)/4_cts.def \
 
 # Run TritonCTS
 # ------------------------------------------------------------------------------
-$(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc | ./PORT9.dat ./POST9.dat ./POWV9.dat
-	openroad $(SCRIPTS_DIR)/cts.tcl \
+$(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc
+	openroad -no_init $(SCRIPTS_DIR)/cts.tcl \
 		2>&1 | tee $(LOG_DIR)/4_cts.log
 	@! grep --color "Error:" $(LOG_DIR)/4_cts.log
 
@@ -368,8 +331,7 @@ route: $(RESULTS_DIR)/5_route.def \
 # STEP 1: Run global route
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_cts.def
-	@$(call BANNER, 5. ROUTING)
-	openroad $(SCRIPTS_DIR)/global_route.tcl 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
+	openroad -no_init $(SCRIPTS_DIR)/global_route.tcl 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
 	@! grep --color "Error:" $(LOG_DIR)/5_1_fastroute.log
 
 
@@ -379,16 +341,17 @@ $(RESULTS_DIR)/route.guide: $(OBJECTS_DIR)/merged_padded.lef $(RESULTS_DIR)/4_ct
 # Generate param file for TritonRoute
 #-------------------------------------------------------------------------------
 ifneq ($(GENERIC_TECH_LEF),)
-$(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/generic_merged_padded_spacing.lef $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
-	echo "lef:$(OBJECTS_DIR)/generic_merged_padded_spacing.lef" > $@
+  export TRITON_ROUTE_LEF := $(OBJECTS_DIR)/generic_merged_padded_spacing.lef
 else
-$(OBJECTS_DIR)/TritonRoute.param: $(OBJECTS_DIR)/merged_padded_spacing.lef $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
-	echo "lef:$(OBJECTS_DIR)/merged_padded_spacing.lef" > $@
+  export TRITON_ROUTE_LEF := $(OBJECTS_DIR)/merged_padded_spacing.lef
 endif
+
+$(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
+	echo "lef:$(TRITON_ROUTE_LEF)" > $@
 	echo "def:$(RESULTS_DIR)/4_cts.def" >> $@
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
 	echo "output:$(RESULTS_DIR)/5_route.def" >> $@
-	echo "outputTA:$(RESULTS_DIR)/5_route_TA.def" >> $@
+	echo "outputTA:$(OBJECTS_DIR)/5_route_TA.def" >> $@
 	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" >> $@
 	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
@@ -400,8 +363,8 @@ endif
 
 # Run TritonRoute
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param
-	TritonRoute $< 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
+$(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
+	TritonRoute $(OBJECTS_DIR)/TritonRoute.param  2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 
 $(RESULTS_DIR)/5_route.v: $(RESULTS_DIR)/4_cts.v
 	cp $< $@
@@ -413,7 +376,7 @@ clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
 	rm -rf *.gdid *.log *.met *.sav *.res.dmp
 	rm -rf $(RESULTS_DIR)/route.guide $(OBJECTS_DIR)/TritonRoute.param
-	rm -rf $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.v $(RESULTS_DIR)/5_route.sdc $(RESULTS_DIR)/5_route_TA.def
+	rm -rf $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.v $(RESULTS_DIR)/5_route.sdc $(OBJECTS_DIR)/5_route_TA.def
 
 
 # ==============================================================================
@@ -427,18 +390,35 @@ finish: $(REPORTS_DIR)/6_final_report.rpt \
         $(RESULTS_DIR)/6_final.gds
 # ==============================================================================
 $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.sdc
-	openroad $(SCRIPTS_DIR)/final_report.tcl \
+	openroad -no_init $(SCRIPTS_DIR)/final_report.tcl \
 	         2>&1 | tee $(LOG_DIR)/6_1_report.log
 	@! grep --color "Error:" $(LOG_DIR)/6_1_report.log
 
-# Run magic
+# Run Klayout
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/6_final.gds: $(MAGIC_TECH_FILE) $(GDS_FILES) $(RESULTS_DIR)/5_route.def
-	@$(call BANNER, 6. FINISHING)
-	magic -dnull -noconsole -T $(MAGIC_TECH_FILE) \
-	      $(SCRIPTS_DIR)/magic.tcl 2>&1 | tee $(LOG_DIR)/6_magic.log
+$(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/5_route.def
+	klayout -zz -rd design_name=$(DESIGN_NAME) \
+	        -rd in_lef=$(abspath $(OBJECTS_DIR)/merged.lef) \
+	        -rd in_def=$(RESULTS_DIR)/5_route.def \
+	        -rd in_gds="$(GDS_FILES)" \
+	        -rd out_gds=$@ \
+	        -rd map_file=./platforms/$(PLATFORM)/layermap.txt \
+	        -rm $(UTILS_DIR)/def2gds.py 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+
+# TODO(rovinski) Placeholder until fill script works for more platforms
+ifneq ($(USE_FILL),)
+$(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
+	klayout -zz -rd in_gds="$^" \
+	        -rd out_gds="$@" \
+	        -rd report_file="$(REPORTS_DIR)/6_2_density.rpt" \
+	        -rm $(UTILS_DIR)/gdsFill.py 2>&1 | tee $(LOG_DIR)/6_2_fill.log
+else
+$(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
+	cp $^ $@
+endif
 
 clean_finish:
+	rm -rf $(RESULTS_DIR)/6_1_merged.gds
 	rm -rf $(RESULTS_DIR)/6_final.gds
 	rm -rf $(REPORTS_DIR)/6_*.rpt
 
@@ -453,6 +433,9 @@ clean_finish:
 #
 # ==============================================================================
 
+all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/merged.lef $(OBJECTS_DIR)/TritonRoute.param
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	openroad -no_init $(SCRIPTS_DIR)/run_all.tcl
 
 clean:
 	@echo
@@ -464,12 +447,11 @@ clean:
 clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish
 	rm -rf $(OBJECTS_DIR)
 
-nuke: clean_test
+nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
-	rm -rf ./POST9.dat ./PORT9.dat ./POWV9.dat
-	rm -rf ../etc/POST9.dat ../etc/PORT9.dat ../etc/POWV9.dat
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide run.param
-	rm -rf *.rpt *.def.v innovus.* pin_dumper.log
+	rm -rf *.rpt *.rpt.old *.def.v innovus.* pin_dumper.log
+	rm -rf versions.txt
 
 
 # DEF/GDS viewer shortcuts
@@ -480,40 +462,12 @@ $(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),innovus_$(def)): innovu
 	                  win" \
 	                  -no_logv ; stty sane
 
-$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),klayout_$(def)): klayout_%:
-	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' \
-	  $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
+RESULTS_DEF = $(notdir $(wildcard $(RESULTS_DIR)/*.def))
+RESULTS_GDS = $(notdir $(wildcard $(RESULTS_DIR)/*.gds))
+$(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
 
 # Utilities
 #-------------------------------------------------------------------------------
-drc: $(REPORTS_DIR)/drc.rpt
-
-$(REPORTS_DIR)/drc.rpt: $(RESULTS_DIR)/5_route.def
-	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
-	                  loadDefFile $<; \
-	                  verify_drc -limit 10000 -report $(REPORTS_DIR)/drc.rpt; \
-	                  exit" \
-	                  -no_gui -no_logv
-#; stty sane here breaks gnu parallel
-
-
-print_cells:
-	find ./logs/ -iname 1_1_yosys.log -exec sh -c "grep -iH 'Number of cells' {} | tail -1" \;
-
-print_drc:
-	find ./reports/ -iname drc.rpt -exec sh -c "grep -iH 'viol' {} | tail -1" \;
-
-# run test using gnu parallel
-#-------------------------------------------------------------------------------
-TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh
-run_test:
-	parallel --sshloginfile $(TEST_DIR)/nodes.txt \
-	         --timeout 21600 \
-	         --workdir `pwd` < $(TEST_SCRIPT) \
-	         --joblog $(TEST_DIR)/parallel.log
-
-clean_test:
-	rm -rf $(TEST_DIR)/logs
-	rm -rf $(TEST_DIR)/parallel.log
+include $(UTILS_DIR)/utils.mk

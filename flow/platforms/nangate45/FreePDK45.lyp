@@ -2818,12 +2818,12 @@
    <source>63/63@1</source>
   </properties>
   <properties>
-   <frame-color>#80ff8d</frame-color>
-   <fill-color>#80ff8d</fill-color>
+   <frame-color>#ffffff</frame-color>
+   <fill-color/>
    <frame-brightness>0</frame-brightness>
    <fill-brightness>0</fill-brightness>
-   <dither-pattern>I5</dither-pattern>
-   <line-style/>
+   <dither-pattern>I1</dither-pattern>
+   <line-style>I1</line-style>
    <valid>true</valid>
    <visible>true</visible>
    <transparent>false</transparent>
@@ -2831,7 +2831,7 @@
    <marked>false</marked>
    <xfill>false</xfill>
    <animation>0</animation>
-   <name/>
+   <name>OUTLINE - 235/0</name>
    <source>235/0@1</source>
   </properties>
   <properties>

@@ -5,9 +5,9 @@ export VERILOG_FILES = ./designs/src/swerv/design.v \
                        ./designs/src/swerv/tsmc65lp_macros.v
 export SDC_FILE      = ./designs/src/swerv/design.sdc
 
-export ADDITIONAL_LEFS = ./platforms/tsmc65lp/tsmc65lp_1rf_lg11_w40_all.lef \
-                         ./platforms/tsmc65lp/tsmc65lp_1rf_lg6_w22_all.lef \
-                         ./platforms/tsmc65lp/tsmc65lp_1rf_lg8_w34_all.lef
+export ADDITIONAL_LEFS = ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg11_w40_all.lef \
+                         ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg6_w22_all.lef \
+                         ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg8_w34_all.lef
 export ADDITIONAL_LIBS = ./platforms/tsmc65lp/lib/tsmc65lp_1rf_lg11_w40_all_ss_1p08v_1p08v_125c.lib \
                          ./platforms/tsmc65lp/lib/tsmc65lp_1rf_lg6_w22_all_ss_1p08v_1p08v_125c.lib \
                          ./platforms/tsmc65lp/lib/tsmc65lp_1rf_lg8_w34_all_ss_1p08v_1p08v_125c.lib
@@ -15,13 +15,10 @@ export ADDITIONAL_GDS  = ./platforms/tsmc65lp/gds/tsmc65lp_1rf_lg11_w40_all.gds2
                          ./platforms/tsmc65lp/gds/tsmc65lp_1rf_lg6_w22_all.gds2 \
                          ./platforms/tsmc65lp/gds/tsmc65lp_1rf_lg8_w34_all.gds2
 
-export RUN_MACRO_PLACEMENT = 1
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 1848 1449.6
 export CORE_AREA   = 10 12 1838 1440
-export CORE_WIDTH  = 1828
-export CORE_HEIGHT = 1428
 
 export CLOCK_PERIOD = 10.000
 export CLOCK_PORT   = clk

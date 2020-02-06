@@ -1,3 +1,4 @@
+export DESIGN_NICKNAME = tinyRocket
 export DESIGN_NAME = RocketTile
 export PLATFORM    = nangate45
 
@@ -13,14 +14,11 @@ export SDC_FILE      = ./designs/src/tinyRocket/RocketTile.sdc
 export ADDITIONAL_LEFS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lef)
 export ADDITIONAL_LIBS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lib)
 
-export RUN_MACRO_PLACEMENT = 1
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4
 export DIE_AREA    = 0 0 924.92 799.4
 export CORE_AREA   = 10.07 9.8 914.85 789.6
-export CORE_WIDTH  = 904.78
-export CORE_HEIGHT = 779.8
 
 export CLOCK_PERIOD = 5.600
 export CLOCK_PORT   = clock
