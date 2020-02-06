@@ -59,7 +59,8 @@ git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
 3. Extract the tar to `OpenROAD-flow/OpenROAD`
 4. Update your shell environment
 ```
-source setup_env.sh
+source setup_env.sh if building locally
+source setup_env_docker if running inside the docker image
 ```
 
 ### Option 2: Building the tools using docker
@@ -70,15 +71,16 @@ run docker to follow these instructions.
 ```
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
 ```
-2. Build the Dockerfiles using the Makefile.
+2. Build the Dockerfiles using the script build_openroad.sh
 ```
-make
+ensure the docker daemon is running or start it in a second terminal window with the unix command dockerd
+./build_openroad.sh
 ```
-Make sure that `docker` is in your PATH and detected by the Makefile.
+Make sure that `docker` is in your PATH.
 
 3. Update your shell environment
 ```
-source setup_env.sh
+source setup_env.sh or source setup_env_docker.sh
 ```
 
 ### Option 3: Building the tools locally

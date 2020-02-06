@@ -22,7 +22,7 @@ for platform in $platforms; do
         stage('${platform}_${design}') {
           steps {
             catchError {
-              sh label: '${platfor}_${design}', script: '''
+              sh label: '${platform}_${design}', script: '''
               docker run -u \$(id -u \${USER}):\$(id -g \${USER}) openroad/flow bash -c \"source setup_env.sh && cd flow && test/test_helper.sh ${design} ${platform}\"'''
             }
             echo currentBuild.result
