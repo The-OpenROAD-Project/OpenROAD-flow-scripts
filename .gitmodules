@@ -1,6 +1,3 @@
-[submodule "OpenROAD"]
-	path = tools/OpenROAD
-	url = https://github.com/The-OpenROAD-Project/OpenROAD.git
 [submodule "tools/TritonRoute"]
 	path = tools/TritonRoute
 	url = https://github.com/The-OpenROAD-Project/TritonRoute.git
