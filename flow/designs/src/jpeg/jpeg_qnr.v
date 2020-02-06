@@ -51,9 +51,9 @@
 //               Started (Motion)JPEG hardware encoder project.
 //
 
-//synopsys translate_off
+`ifdef SIMULATION
 `include "timescale.v"
-//synopsys translate_on
+`endif
 
 module jpeg_qnr(clk, ena, rst, dstrb, din, qnt_val, qnt_cnt, dout, douten);
 

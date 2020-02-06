@@ -1,9 +1,9 @@
 export DESIGN_NAME = swerv_wrapper
 export PLATFORM    = tsmc65lp
 
-export VERILOG_FILES = ./designs/src/swerv/design.v \
+export VERILOG_FILES = ./designs/src/swerv/swerv_wrapper.sv2v.v \
                        ./designs/src/swerv/tsmc65lp_macros.v
-export SDC_FILE      = ./designs/src/swerv/design.sdc
+export SDC_FILE      = ./designs/src/swerv/swerv_wrapper.elab.v.sdc
 
 export ADDITIONAL_LEFS = ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg11_w40_all.lef \
                          ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg6_w22_all.lef \

@@ -31,7 +31,13 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/vb.mk
 
+# DESIGN_CONFIG=./designs/gf14/aes.mk
+# DESIGN_CONFIG=./designs/gf14/dynamic_node.mk
 # DESIGN_CONFIG=./designs/gf14/gcd.mk
+# DESIGN_CONFIG=./designs/gf14/ibex.mk
+# DESIGN_CONFIG=./designs/gf14/jpeg.mk
+# DESIGN_CONFIG=./designs/gf14/swerv.mk
+
 # DESIGN_CONFIG=./designs/gf14/bsg_padring.mk
 # DESIGN_CONFIG=./designs/gf14/bsg_loopback.mk
 # DESIGN_CONFIG=./designs/gf14/bp_single.mk

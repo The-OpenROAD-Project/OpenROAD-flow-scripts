@@ -75,7 +75,7 @@ always @(posedge clk)
 
 function [31:0]	frcon;
 input	[3:0]	i;
-case(i)	// synopsys parallel_case
+(* parallel_case *) case(i)
    4'h0: frcon=32'h01_00_00_00;
    4'h1: frcon=32'h02_00_00_00;
    4'h2: frcon=32'h04_00_00_00;

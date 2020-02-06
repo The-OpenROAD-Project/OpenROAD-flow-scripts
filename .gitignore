@@ -12,7 +12,9 @@ flow/tech
 
 # Tar archives
 flow/*tar.gz
+flow/runme.sh
 flow/vars.sh
+flow/vars.tcl
 flow/versions.txt
 
 # Common temp files
@@ -22,6 +24,7 @@ flow/default.svf
 flow/rc_model.bin
 flow/*.tif.gz
 flow/*.def.v
+
 
 # RePlAce deps
 *PORT9.dat

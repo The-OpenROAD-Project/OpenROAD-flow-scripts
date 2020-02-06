@@ -58,9 +58,9 @@
 //               Started (Motion)JPEG hardware encoder project.
 //
 
-//synopsys translate_off
+`ifdef SIMULATION
 `include "timescale.v"
-//synopsys translate_on
+`endif
 
 module jpeg_rle(clk, rst, ena, dstrb, din, size, rlen, amp, douten, bstart);
 

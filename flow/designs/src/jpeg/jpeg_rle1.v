@@ -59,9 +59,9 @@
 //               Started (Motion)JPEG hardware encoder project.
 //
 
-//synopsys translate_off
+`ifdef SIMULATION
 `include "timescale.v"
-//synopsys translate_on
+`endif
 
 module jpeg_rle1(clk, rst, ena, go, din, rlen, size, amp, den, dcterm);
 
@@ -107,7 +107,7 @@ module jpeg_rle1(clk, rst, ena, go, din, rlen, size, amp, den, dcterm);
 	//
 	// function declarations
 	//
-	
+
 	// Function abs; absolute value
 	function [10:0] abs;
 	  input [11:0] a;
@@ -128,7 +128,7 @@ module jpeg_rle1(clk, rst, ena, go, din, rlen, size, amp, den, dcterm);
 	    tmp = abs(a);
 
 	    // determine category
-	    casex(tmp) // synopsys full_case parallel_case
+	    (* full_case, parallel_case *) casex(tmp)
 	      11'b1??_????_???? : cat = 4'hb; // 1024..2047
 	      11'b01?_????_???? : cat = 4'ha; //  512..1023
 	      11'b001_????_???? : cat = 4'h9; //  256.. 511
@@ -158,7 +158,7 @@ module jpeg_rle1(clk, rst, ena, go, din, rlen, size, amp, den, dcterm);
 	      // get absolute value
 	      tmp = abs(a);
 
-	      casex(tmp) // synopsys full_case parallel_case
+	      (* full_case, parallel_case *) casex(tmp)
 	        11'b1??_????_???? : rem = tmp_rem & 11'b111_1111_1111;
 	        11'b01?_????_???? : rem = tmp_rem & 11'b011_1111_1111;
 	        11'b001_????_???? : rem = tmp_rem & 11'b001_1111_1111;
@@ -213,7 +213,7 @@ module jpeg_rle1(clk, rst, ena, go, din, rlen, size, amp, den, dcterm);
 	        dcterm <= #1 1'b0;
 	    end
 	  else if (ena)
-	    case (state) // synopsys full_case parallel_case
+	    (* full_case, parallel_case *) case (state)
 	      dc:
 	        begin
 	            rlen <= #1 0;

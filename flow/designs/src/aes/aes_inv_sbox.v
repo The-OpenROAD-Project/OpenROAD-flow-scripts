@@ -62,7 +62,7 @@ output	[7:0]	d;
 reg	[7:0]	d;
 
 always @(a)
-	case(a)		// synopsys full_case parallel_case
+	(* full_case, parallel_case *) case(a)
 	   8'h00: d=8'h52;
 	   8'h01: d=8'h09;
 	   8'h02: d=8'h6a;

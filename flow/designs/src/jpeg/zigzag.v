@@ -47,14 +47,14 @@
 //               $Log: not supported by cvs2svn $
 
 
-// synopsys translate_off
+`ifdef SIMULATION
 `include "timescale.v"
-// synopsys translate_on
+`endif
 
 module zigzag(
-	clk, 
-	ena, 
-	dstrb, 
+	clk,
+	ena,
+	dstrb,
 	din_00, din_01, din_02, din_03, din_04, din_05, din_06, din_07,
 	din_10, din_11, din_12, din_13, din_14, din_15, din_16, din_17,
 	din_20, din_21, din_22, din_23, din_24, din_25, din_26, din_27,

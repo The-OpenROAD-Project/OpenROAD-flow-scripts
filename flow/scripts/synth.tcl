@@ -23,7 +23,7 @@ if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
 
 # read verilog files
 foreach file $::env(VERILOG_FILES) {
-  read_verilog {*}$vIdirsArgs $file
+  read_verilog -sv {*}$vIdirsArgs $file
 }
 
 

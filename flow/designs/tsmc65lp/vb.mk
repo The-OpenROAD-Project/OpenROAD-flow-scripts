@@ -1,9 +1,9 @@
-export DESIGN_NAME = vb
+export DESIGN_NICKNAME = vb
 export DESIGN_NAME = bsg_manycore_tile
 export PLATFORM    = tsmc65lp
 
-export VERILOG_FILES = ./designs/src/vb/design.v
-export SDC_FILE      = ./designs/src/vb/design.sdc
+export VERILOG_FILES = ./designs/src/vb/bsg_manycore_tile.sv2v.v
+export SDC_FILE      = ./designs/src/vb/bsg_manycore_tile.elab.v.sdc
 
 export ADDITIONAL_LEFS = ./platforms/tsmc65lp/lef/tsmc65lp_1rf_lg10_w32_all.lef \
                          ./platforms/tsmc65lp/lef/tsmc65lp_2rf_lg5_w32_all.lef \
