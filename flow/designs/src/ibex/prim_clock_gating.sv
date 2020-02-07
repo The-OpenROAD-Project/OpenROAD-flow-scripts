@@ -11,16 +11,24 @@ module prim_clock_gating (
     output logic clk_o
 );
 
-  logic clk_en;
+  // logic clk_en;
 
-  always_latch begin
-    if (clk_i == 1'b0) begin
-      clk_en <= en_i | test_en_i;
-    end
-  end
+  // always_latch begin
+  //   if (clk_i == 1'b0) begin
+  //     clk_en <= en_i | test_en_i;
+  //   end
+  // end
 
-  assign clk_o = clk_i & clk_en;
+  // assign clk_o = clk_i & clk_en;
 
-  // assign clk_o = clk_i;
+
+  logic enable;
+  assign enable = en_i | test_en_i;
+
+  OPENROAD_CLKGATE clkgate (
+    .CK (clk_i),
+    .E  (enable),
+    .GCK(clk_o)
+  );
 
 endmodule

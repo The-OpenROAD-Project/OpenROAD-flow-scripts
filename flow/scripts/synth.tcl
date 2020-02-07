@@ -39,6 +39,11 @@ if {[info exist ::env(VERILOG_TOP_PARAMS)]} {
 }
 
 
+# Read platform specific mapfile for OPENROAD_CLKGATE cells
+if {[info exist ::env(CLKGATE_MAP_FILE)]} {
+  read_verilog $::env(CLKGATE_MAP_FILE)
+}
+
 # Use hierarchy to automatically generate blackboxes for known memory macro.
 # Pins are enumerated for proper mapping
 if {[info exist ::env(BLACKBOX_MAP_TCL)]} {
