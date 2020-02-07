@@ -21,10 +21,9 @@ set -o pipefail
 
 mkdir -p $TEST_DIR/logs/$PLATFORM
 
-if which innovus &> /dev/null; then
+if [ -f "./private/util/utils.mk" ]; then
   TARGETS="finish drc congestion"
 else
-  echo "INFO: No innovus installation detected; skipping third-party DRC"
   TARGETS="finish"
 fi
 

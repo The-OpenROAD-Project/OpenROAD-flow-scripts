@@ -459,18 +459,12 @@ clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_f
 nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide run.param
-	rm -rf *.rpt *.rpt.old *.def.v innovus.* pin_dumper.log
+	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
 	rm -rf versions.txt
 
 
 # DEF/GDS viewer shortcuts
 #-------------------------------------------------------------------------------
-$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),innovus_$(def)): innovus_%:
-	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
-	                  loadDefFile $(RESULTS_DIR)/$* ; \
-	                  win" \
-	                  -no_logv ; stty sane
-
 RESULTS_DEF = $(notdir $(wildcard $(RESULTS_DIR)/*.def))
 RESULTS_GDS = $(notdir $(wildcard $(RESULTS_DIR)/*.gds))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
@@ -480,3 +474,4 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJE
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
+-include ./private/util/utils.mk

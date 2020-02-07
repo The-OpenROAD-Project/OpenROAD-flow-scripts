@@ -1,41 +1,14 @@
 # Utilities
 #===============================================================================
-drc: $(REPORTS_DIR)/drc.rpt
-$(REPORTS_DIR)/drc.rpt: finish
-	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
-	                  loadDefFile $(RESULTS_DIR)/5_route.def; \
-	                  verify_drc -limit 10000 -report $(REPORTS_DIR)/drc.rpt; \
-	                  exit" \
-	                  -no_gui -no_logv
-#; stty sane here breaks gnu parallel
-
-congestion: $(REPORTS_DIR)/congestion.rpt
-$(REPORTS_DIR)/congestion.rpt: $(RESULTS_DIR)/4_cts.def
-	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
-	                  loadDefFile $<; \
-	                  earlyGlobalRoute; \
-	                  describeCongestion > $@; \
-	                  reportCongestion -hotSpot -overflow >> $@; \
-	                  exit" \
-	                  -no_gui -no_logv
-#; stty sane here breaks gnu parallel
-
-
 grep_cells:
 	find ./logs/ -iname 1_1_yosys.log -exec sh -c "grep -iH 'Number of cells' {} | tail -1" \;
-
-grep_drc:
-	find ./reports/ -iname drc.rpt -exec sh -c "grep -iH 'viol' {} | tail -1" \;
-
-grep_congestion:
-	find ./reports/ -iname congestion.rpt -exec sh -c "grep -iH 'congestion index' {} | tail -1" \;
 
 grep_util:
 	find ./reports/ -iname 6_final_report.rpt -exec sh -c "grep -iH 'Design area' {} | tail -1" \;
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------
-TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh
+TEST_SCRIPT ?= $(TEST_DIR)/gf14.sh
 run_test:
 	parallel --sshloginfile $(TEST_DIR)/nodes.txt \
 	         --timeout 21600 \
@@ -92,6 +65,3 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 clean_issues:
 	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
 	rm -rf vars.sh runme.sh
-
-explore:
-	min_routing_layer=2 max_routing_layer=7 capacity_adjustment=0 unidirectional_routing=1 layers_adjustment1=0.9 layers_adjustment2=0.5 layers_adjustment3=0.5 layers_adjustment4=0.5 layers_adjustment5=0.5 layers_adjustment6=0.5 layers_adjustment7=0.5 openroad -no_init ./util/explore_route.tcl

@@ -51,6 +51,8 @@ flow/*.opennet
 flow/platforms/*
 !flow/platforms/nangate45
 
+flow/private/*
+
 # network
 .nfs*
 
