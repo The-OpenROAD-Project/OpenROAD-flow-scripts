@@ -56,6 +56,30 @@ if {[info exists ::env(FOOTPRINT)]} {
          -dont_use $dont_use_cells
 }
 
+set buffer_cell [get_lib_cell */[lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
+
+repair_max_cap -buffer_cell $buffer_cell
+
+repair_max_slew -buffer_cell $buffer_cell
+
+# Repair tie hi fanout
+set tielo_cell_name [lindex $env(TIELO_CELL_AND_PORT) 0]
+set tielo_lib_name [get_name [get_property [get_lib_cell */$tielo_cell_name] library]]
+set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $env(TIELO_CELL_AND_PORT) 1]
+repair_tie_fanout -max_fanout $::env(MAX_FANOUT) $tielo_pin
+
+# Repair tie lo fanout
+set tiehi_cell_name [lindex $env(TIEHI_CELL_AND_PORT) 0]
+set tiehi_lib_name [get_name [get_property [get_lib_cell */$tiehi_cell_name] library]]
+set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $env(TIEHI_CELL_AND_PORT) 1]
+repair_tie_fanout -max_fanout $::env(MAX_FANOUT) $tiehi_pin
+
+# Repair max fanout
+repair_max_fanout -max_fanout $::env(MAX_FANOUT) -buffer_cell $buffer_cell
+
+# Repair max fanout
+repair_hold_violations -buffer_cell $buffer_cell
+
 # post report
 log_begin $::env(REPORTS_DIR)/3_post_resize.rpt
 
