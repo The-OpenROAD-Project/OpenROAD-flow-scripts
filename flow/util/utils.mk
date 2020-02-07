@@ -8,7 +8,7 @@ grep_util:
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------
-TEST_SCRIPT ?= $(TEST_DIR)/gf14.sh
+TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh
 run_test:
 	parallel --sshloginfile $(TEST_DIR)/nodes.txt \
 	         --timeout 21600 \
