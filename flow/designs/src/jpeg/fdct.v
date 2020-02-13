@@ -52,9 +52,9 @@
 //
 
 
-//synopsys translate_off
+`ifdef SIMULATION
 `include "timescale.v"
-//synopsys translate_on
+`endif
 
 module fdct(clk, ena, rst, dstrb, din, dout, douten);
 
@@ -131,9 +131,9 @@ module fdct(clk, ena, rst, dstrb, din, dout, douten);
 		res00, res01, res02, res03, res04, res05, res06, res07,
 		res10, res11, res12, res13, res14, res15, res16, res17,
 		res20, res21, res22, res23, res24, res25, res26, res27,
-		res30, res31, res32, res33, res34, res35, res36, res37, 
+		res30, res31, res32, res33, res34, res35, res36, res37,
 		res40, res41, res42, res43, res44, res45, res46, res47,
-		res50, res51, res52, res53, res54, res55, res56, res57, 
+		res50, res51, res52, res53, res54, res55, res56, res57,
 		res60, res61, res62, res63, res64, res65, res66, res67,
 		res70, res71, res72, res73, res74, res75, res76, res77;
 
@@ -219,7 +219,7 @@ module fdct(clk, ena, rst, dstrb, din, dout, douten);
 
 	// Hookup ZigZag unit
 	zigzag zigzag_mod(
-		.clk(clk), 
+		.clk(clk),
 		.ena(ena),
 		.dstrb(doe),
 		.din_00(res00),

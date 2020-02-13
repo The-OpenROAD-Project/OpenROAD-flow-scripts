@@ -1,11 +1,4 @@
-###################################################################
 
-# Created by write_sdc on Mon Jun 17 07:36:42 2019
-
-###################################################################
-set sdc_version 2.0
-
-set_units -time ns
 create_clock [get_ports clk_i]  -name CLK  -period 5.4  -waveform {0 2.7}
 set_input_delay -clock CLK  -max 0.6  [get_ports reset_i]
 set_input_delay -clock CLK  -min 0  [get_ports reset_i]

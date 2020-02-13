@@ -31,7 +31,13 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/vb.mk
 
+# DESIGN_CONFIG=./designs/gf14/aes.mk
+# DESIGN_CONFIG=./designs/gf14/dynamic_node.mk
 # DESIGN_CONFIG=./designs/gf14/gcd.mk
+# DESIGN_CONFIG=./designs/gf14/ibex.mk
+# DESIGN_CONFIG=./designs/gf14/jpeg.mk
+# DESIGN_CONFIG=./designs/gf14/swerv.mk
+
 # DESIGN_CONFIG=./designs/gf14/bsg_padring.mk
 # DESIGN_CONFIG=./designs/gf14/bsg_loopback.mk
 # DESIGN_CONFIG=./designs/gf14/bp_single.mk
@@ -77,10 +83,14 @@ export TEST_DIR    = ./test
 # Tool Options
 SHELL = /bin/bash -o pipefail
 
-# Quick check to make sure OpenROAD tools are installed
-ifeq ("$(OPENROAD)","")
-  $(error ERROR: These tests require the OpenROAD tools to be setup.)
-endif
+
+# Utility to print tool version information
+#-------------------------------------------------------------------------------
+versions.txt:
+	@yosys -V > $(abspath $@)
+	@echo openroad `openroad -version` >> $(abspath $@)
+	@klayout -v >> $(abspath $@)
+	@echo TritonRoute `which TritonRoute` >> $(abspath $@)
 
 
 # Pre-process Lefs
@@ -134,7 +144,8 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 #  ___) || | | |\  | | | |  _  | |___ ___) | | ___) |
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
-synth: $(RESULTS_DIR)/1_synth.v \
+synth: versions.txt \
+       $(RESULTS_DIR)/1_synth.v \
        $(RESULTS_DIR)/1_synth.sdc
 # ==============================================================================
 
@@ -217,11 +228,9 @@ $(RESULTS_DIR)/2_6_floorplan_tapcell.def: $(OBJECTS_DIR)/merged.lef $(RESULTS_DI
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_tapcell.def
 	cp $< $@
 
-$(RESULTS_DIR)/2_floorplan.v: $(RESULTS_DIR)/1_synth.v
-	cp $< $@
+$(RESULTS_DIR)/2_floorplan.v: $(RESULTS_DIR)/2_1_floorplan.def
 
-$(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/1_synth.sdc
-	cp $< $@
+$(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.def
 
 
 clean_floorplan:
@@ -450,18 +459,12 @@ clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_f
 nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide run.param
-	rm -rf *.rpt *.rpt.old *.def.v innovus.* pin_dumper.log
+	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
 	rm -rf versions.txt
 
 
 # DEF/GDS viewer shortcuts
 #-------------------------------------------------------------------------------
-$(foreach def,$(notdir $(wildcard $(RESULTS_DIR)/*.def)),innovus_$(def)): innovus_%:
-	innovus -execute "loadLefFile $(OBJECTS_DIR)/merged.lef ; \
-	                  loadDefFile $(RESULTS_DIR)/$* ; \
-	                  win" \
-	                  -no_logv ; stty sane
-
 RESULTS_DEF = $(notdir $(wildcard $(RESULTS_DIR)/*.def))
 RESULTS_GDS = $(notdir $(wildcard $(RESULTS_DIR)/*.gds))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
@@ -471,3 +474,4 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJE
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
+-include ./private/util/utils.mk

@@ -1,7 +1,7 @@
 yosys -import
 
 if {[info exist ::env(DC_NETLIST)]} {
-  file copy -force $::env(DC_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
+  exec cp $::env(DC_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
   exit
 }
 
@@ -23,7 +23,7 @@ if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
 
 # read verilog files
 foreach file $::env(VERILOG_FILES) {
-  read_verilog {*}$vIdirsArgs $file
+  read_verilog -sv {*}$vIdirsArgs $file
 }
 
 
@@ -38,6 +38,11 @@ if {[info exist ::env(VERILOG_TOP_PARAMS)]} {
   }
 }
 
+
+# Read platform specific mapfile for OPENROAD_CLKGATE cells
+if {[info exist ::env(CLKGATE_MAP_FILE)]} {
+  read_verilog $::env(CLKGATE_MAP_FILE)
+}
 
 # Use hierarchy to automatically generate blackboxes for known memory macro.
 # Pins are enumerated for proper mapping

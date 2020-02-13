@@ -55,10 +55,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// 63         50 49      42 41      34 33           30 29      22 21                 0   
+// 63         50 49      42 41      34 33           30 29      22 21                 0
 // ------------------------------------------------------------------------------------
 // |            |          |          |               |          |                    |
-// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  | 
+// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  |
 // |            |          |          |               |          |                    |
 // ------------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,27 +75,27 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  //whether the routing is based on chipid or x y position
  //`define    ROUTING_CHIP_ID
- 
+
 
  //defines for different topology, only one should be active
  //`define    NETWORK_TOPO_2D_MESH
  //`define    NETWORK_TOPO_3D_MESH
- 
-module network_input_blk_multi_out 
+
+module network_input_blk_multi_out
    #(parameter LOG2_NUMBER_FIFO_ELEMENTS = 2)
 (
-   input wire clk, 
+   input wire clk,
    input wire reset,
-   input wire [64-1:0] data_in, 
-   input wire valid_in, 
+   input wire [64-1:0] data_in,
+   input wire valid_in,
    input wire thanks_in,
 
-   output wire yummy_out, 
+   output wire yummy_out,
    // data_val and data_val1 are the same, this is just done for buffering to
    // convince the synthesis tool to buffer up these high fanout nets
-   output wire [64-1:0] data_val, 
-   output wire [64-1:0] data_val1, 
-   output wire data_avail 
+   output wire [64-1:0] data_val,
+   output wire [64-1:0] data_val1,
+   output wire data_avail
 );
 
 reg [64-1:0] storage_data_f [0:(1<<LOG2_NUMBER_FIFO_ELEMENTS)-1];
@@ -207,7 +207,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //State: count_f, yummy_f, valid_f
 //
-//Instantiates: 
+//Instantiates:
 
 module space_avail_top (valid,
 		    yummy,
@@ -217,8 +217,8 @@ module space_avail_top (valid,
 
 parameter BUFFER_SIZE = 4;
 parameter BUFFER_BITS = 3;
-   
- 
+
+
 input valid;			// sending data to the output
 input yummy;			// output consumed data
 
@@ -312,7 +312,7 @@ begin
 end
 
 endmodule
-      
+
 /*
 Copyright (c) 2015 Princeton University
 All rights reserved.
@@ -382,7 +382,7 @@ module flip_bus (in, out);
 
     input [WIDTH-1:0] in;
     output wire [WIDTH-1:0] out;
-    
+
     assign out = ~in;
 endmodule
 /*
@@ -513,8 +513,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Just a simple D Flip Flip without a reset
 
-module net_dff #(parameter WIDTH=8, parameter BHC=10) 
-    (input wire [WIDTH-1:0] d, 
+module net_dff #(parameter WIDTH=8, parameter BHC=10)
+    (input wire [WIDTH-1:0] d,
     output reg [WIDTH-1:0] q,
     input wire clk);
 
@@ -593,10 +593,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// 63         50 49      42 41      34 33           30 29      22 21                 0   
+// 63         50 49      42 41      34 33           30 29      22 21                 0
 // ------------------------------------------------------------------------------------
 // |            |          |          |               |          |                    |
-// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  | 
+// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  |
 // |            |          |          |               |          |                    |
 // ------------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -613,12 +613,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  //whether the routing is based on chipid or x y position
  //`define    ROUTING_CHIP_ID
- 
+
 
  //defines for different topology, only one should be active
  //`define    NETWORK_TOPO_2D_MESH
  //`define    NETWORK_TOPO_3D_MESH
- 
+
 module dynamic_input_control(thanks_all_temp_out,
                              route_req_n_out, route_req_e_out, route_req_s_out, route_req_w_out, route_req_p_out,
                              default_ready_n, default_ready_e, default_ready_s, default_ready_w, default_ready_p,
@@ -815,10 +815,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //Function: This generates all of the route_request lines and the default_ready lines from
 //the absolute location of the tile, the abs address of the message, and the fbits of the message
 //
-//State: 
+//State:
 //NONE
 //
-//Instantiates: 
+//Instantiates:
 //
 //Note:
 //
@@ -851,10 +851,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// 63         50 49      42 41      34 33           30 29      22 21                 0   
+// 63         50 49      42 41      34 33           30 29      22 21                 0
 // ------------------------------------------------------------------------------------
 // |            |          |          |               |          |                    |
-// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  | 
+// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  |
 // |            |          |          |               |          |                    |
 // ------------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -871,15 +871,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  //whether the routing is based on chipid or x y position
  //`define    ROUTING_CHIP_ID
- 
+
 
  //defines for different topology, only one should be active
  //`define    NETWORK_TOPO_2D_MESH
  //`define    NETWORK_TOPO_3D_MESH
- 
 
-module dynamic_input_route_request_calc(route_req_n, route_req_e, route_req_s, route_req_w, route_req_p, 
-                                        default_ready_n, default_ready_e, default_ready_s, default_ready_w, default_ready_p, 
+
+module dynamic_input_route_request_calc(route_req_n, route_req_e, route_req_s, route_req_w, route_req_p,
+                                        default_ready_n, default_ready_e, default_ready_s, default_ready_w, default_ready_p,
                                         my_loc_x_in, my_loc_y_in, my_chip_id_in, abs_x, abs_y, abs_chip_id, final_bits, length, header_in);
 
 // begin port declarations
@@ -907,7 +907,7 @@ input [8-1:0] length;
 input header_in;
 
 // end port declarations
-   
+
 //fbit declarations
 
 
@@ -981,7 +981,7 @@ assign default_ready_p = route_req_p;
 //instantiations
 
 endmodule
-   
+
 /*
 Copyright (c) 2015 Princeton University
 All rights reserved.
@@ -1011,7 +1011,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //Function: This ties together a 16 space NIB with the dynamic_input_control logic
 //
-//State: 
+//State:
 //
 //Instantiates: dynamic_input_control, network_input_blk_4elmt
 //
@@ -1045,10 +1045,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// 63         50 49      42 41      34 33           30 29      22 21                 0   
+// 63         50 49      42 41      34 33           30 29      22 21                 0
 // ------------------------------------------------------------------------------------
 // |            |          |          |               |          |                    |
-// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  | 
+// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  |
 // |            |          |          |               |          |                    |
 // ------------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1065,12 +1065,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  //whether the routing is based on chipid or x y position
  //`define    ROUTING_CHIP_ID
- 
+
 
  //defines for different topology, only one should be active
  //`define    NETWORK_TOPO_2D_MESH
  //`define    NETWORK_TOPO_3D_MESH
- 
+
 
 module dynamic_input_top_16(route_req_n_out, route_req_e_out, route_req_s_out, route_req_w_out, route_req_p_out, default_ready_n_out, default_ready_e_out, default_ready_s_out, default_ready_w_out, default_ready_p_out, tail_out, yummy_out, data_out, valid_out, clk, reset, my_loc_x_in, my_loc_y_in, my_chip_id_in, valid_in, data_in, thanks_n, thanks_e, thanks_s, thanks_w, thanks_p);
 
@@ -1107,7 +1107,7 @@ input thanks_w;
 input thanks_p;
 
 // end port declarations
-   
+
 //This is the state
 
 //inputs to the state
@@ -1127,11 +1127,11 @@ assign data_out = data_out_internal;
 network_input_blk_multi_out #(.LOG2_NUMBER_FIFO_ELEMENTS(4)) NIB(.clk(clk), .reset(reset), .data_in(data_in), .valid_in(valid_in), .yummy_out(yummy_out), .thanks_in(thanks_all_temp), .data_val(data_out_internal_pre), .data_val1(), .data_avail(valid_out_internal));
 
 // need buffering for this one
-// rBuffer #(`DATA_WIDTH, 1) NIB_buf(.A(data_out_internal_pre), .Z(data_out_internal));   
+// rBuffer #(`DATA_WIDTH, 1) NIB_buf(.A(data_out_internal_pre), .Z(data_out_internal));
 assign data_out_internal = data_out_internal_pre;
 
-// Change fbits position in order to be compatible   
-dynamic_input_control control(.thanks_all_temp_out(thanks_all_temp), .route_req_n_out(route_req_n_out), .route_req_e_out(route_req_e_out), .route_req_s_out(route_req_s_out), .route_req_w_out(route_req_w_out), .route_req_p_out(route_req_p_out), .default_ready_n(default_ready_n_out), .default_ready_e(default_ready_e_out), .default_ready_s(default_ready_s_out), .default_ready_w(default_ready_w_out), .default_ready_p(default_ready_p_out), .tail_out(tail_out), .clk(clk), .reset(reset), .my_loc_x_in(my_loc_x_in), .my_loc_y_in(my_loc_y_in), 
+// Change fbits position in order to be compatible
+dynamic_input_control control(.thanks_all_temp_out(thanks_all_temp), .route_req_n_out(route_req_n_out), .route_req_e_out(route_req_e_out), .route_req_s_out(route_req_s_out), .route_req_w_out(route_req_w_out), .route_req_p_out(route_req_p_out), .default_ready_n(default_ready_n_out), .default_ready_e(default_ready_e_out), .default_ready_s(default_ready_s_out), .default_ready_w(default_ready_w_out), .default_ready_p(default_ready_p_out), .tail_out(tail_out), .clk(clk), .reset(reset), .my_loc_x_in(my_loc_x_in), .my_loc_y_in(my_loc_y_in),
     .my_chip_id_in(my_chip_id_in), .abs_x(data_out_internal[64-14-1:64-14-8]), .abs_y(data_out_internal[64-14-8-1:64-14-2*8]), .abs_chip_id(data_out_internal[64-1:64-14]),.final_bits(data_out_internal[64-14-2*8-2:64-14-2*8-4]), .valid_in(valid_out_internal), .thanks_n(thanks_n), .thanks_e(thanks_e), .thanks_s(thanks_s), .thanks_w(thanks_w), .thanks_p(thanks_p), .length(data_out_internal[64-14-2*8-5:64-14-2*8-4-8]));
 
 endmodule
@@ -1198,10 +1198,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// 63         50 49      42 41      34 33           30 29      22 21                 0   
+// 63         50 49      42 41      34 33           30 29      22 21                 0
 // ------------------------------------------------------------------------------------
 // |            |          |          |               |          |                    |
-// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  | 
+// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  |
 // |            |          |          |               |          |                    |
 // ------------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1218,12 +1218,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  //whether the routing is based on chipid or x y position
  //`define    ROUTING_CHIP_ID
- 
+
 
  //defines for different topology, only one should be active
  //`define    NETWORK_TOPO_2D_MESH
  //`define    NETWORK_TOPO_3D_MESH
- 
+
 
 module dynamic_input_top_4(route_req_n_out, route_req_e_out, route_req_s_out, route_req_w_out, route_req_p_out,
                            default_ready_n_out, default_ready_e_out, default_ready_s_out, default_ready_w_out, default_ready_p_out,
@@ -1290,23 +1290,23 @@ network_input_blk_multi_out #(.LOG2_NUMBER_FIFO_ELEMENTS(2)) NIB(.clk(clk),
                                       .data_avail(valid_out_internal));
 
 dynamic_input_control control(.thanks_all_temp_out(thanks_all_temp),
-                              .route_req_n_out(route_req_n_out), 
-                              .route_req_e_out(route_req_e_out), 
-                              .route_req_s_out(route_req_s_out), 
-                              .route_req_w_out(route_req_w_out), 
+                              .route_req_n_out(route_req_n_out),
+                              .route_req_e_out(route_req_e_out),
+                              .route_req_s_out(route_req_s_out),
+                              .route_req_w_out(route_req_w_out),
                               .route_req_p_out(route_req_p_out),
-                              .default_ready_n(default_ready_n_out), 
-                              .default_ready_e(default_ready_e_out), 
-                              .default_ready_s(default_ready_s_out), 
-                              .default_ready_w(default_ready_w_out), 
+                              .default_ready_n(default_ready_n_out),
+                              .default_ready_e(default_ready_e_out),
+                              .default_ready_s(default_ready_s_out),
+                              .default_ready_w(default_ready_w_out),
                               .default_ready_p(default_ready_p_out),
                               .tail_out(tail_out),
                               .clk(clk), .reset(reset),
-                              .my_loc_x_in(my_loc_x_in), 
-                              .my_loc_y_in(my_loc_y_in), 
+                              .my_loc_x_in(my_loc_x_in),
+                              .my_loc_y_in(my_loc_y_in),
                               .my_chip_id_in(my_chip_id_in),
-                              .abs_x(data_internal[64-14-1:64-14-8]), 
-                              .abs_y(data_internal[64-14-8-1:64-14-2*8]), 
+                              .abs_x(data_internal[64-14-1:64-14-8]),
+                              .abs_y(data_internal[64-14-8-1:64-14-2*8]),
                               .abs_chip_id(data_internal[64-1:64-14]),
                               .final_bits(data_internal[64-14-2*8-2:64-14-2*8-4]),
                               .valid_in(valid_out_internal),
@@ -1380,10 +1380,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// 63         50 49      42 41      34 33           30 29      22 21                 0   
+// 63         50 49      42 41      34 33           30 29      22 21                 0
 // ------------------------------------------------------------------------------------
 // |            |          |          |               |          |                    |
-// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  | 
+// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  |
 // |            |          |          |               |          |                    |
 // ------------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1400,12 +1400,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  //whether the routing is based on chipid or x y position
  //`define    ROUTING_CHIP_ID
- 
+
 
  //defines for different topology, only one should be active
  //`define    NETWORK_TOPO_2D_MESH
  //`define    NETWORK_TOPO_3D_MESH
- 
+
 
 module dynamic_output_control(thanks_a, thanks_b, thanks_c, thanks_d, thanks_x, valid_out, current_route, ec_wants_to_send_but_cannot, clk, reset, route_req_a_in, route_req_b_in, route_req_c_in, route_req_d_in, route_req_x_in, tail_a_in, tail_b_in, tail_c_in, tail_d_in, tail_x_in, valid_out_temp, default_ready, space_avail);
 
@@ -1514,7 +1514,7 @@ assign valid_out = valid_out_internal;
 //a mux for current_route_f's tail bit
 always @ (current_route_f or tail_a_in or tail_b_in or tail_c_in or tail_d_in or tail_x_in)
 begin
-	case(current_route_f) //synopsys parallel_case
+	(* parallel_case *) case(current_route_f)
 	3'b000:
 	begin
 		tail_current_route <= tail_a_in;
@@ -1676,7 +1676,7 @@ begin
 	if(planned_f)
 	begin
 		case(current_route_f)
-		3'b000:	
+		3'b000:
 			begin
 				route_req_a_mask <= 1'b0;
 				route_req_b_mask <= 1'b1;
@@ -1739,7 +1739,7 @@ end
 //calculation of new_route_needed
 always @ (planned_f or tail_current_route or valid_out_internal or default_ready)
 begin
-	case({default_ready, valid_out_internal, tail_current_route, planned_f}) //synopsys parallel_case
+	(* parallel_case *) case({default_ready, valid_out_internal, tail_current_route, planned_f})
 	4'b0000:	new_route_needed <= 1'b1;
 	4'b0001:	new_route_needed <= 1'b0;
 	4'b0010:	new_route_needed <= 1'b1;
@@ -1768,7 +1768,7 @@ end
 //random five input function
 always @ (planned_f or tail_current_route or valid_out_internal or default_ready or route_req_all_or_with_planned or route_req_all_but_default)
 begin
-	case({route_req_all_or_with_planned, default_ready, valid_out_internal, tail_current_route, planned_f}) //synopsys parallel_case
+	(* parallel_case *) case({route_req_all_or_with_planned, default_ready, valid_out_internal, tail_current_route, planned_f})
 	5'b00000:	planned_temp <= 1'b0;
 	5'b00001:	planned_temp <= 1'b1;
 	5'b00010:	planned_temp <= 1'b0;
@@ -1862,7 +1862,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //Function: This is the Datapath for the dynamic output
 //
-//Instantiates: 
+//Instantiates:
 //
 //State: NONE
 //
@@ -1896,10 +1896,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// 63         50 49      42 41      34 33           30 29      22 21                 0   
+// 63         50 49      42 41      34 33           30 29      22 21                 0
 // ------------------------------------------------------------------------------------
 // |            |          |          |               |          |                    |
-// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  | 
+// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  |
 // |            |          |          |               |          |                    |
 // ------------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1916,12 +1916,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  //whether the routing is based on chipid or x y position
  //`define    ROUTING_CHIP_ID
- 
+
 
  //defines for different topology, only one should be active
  //`define    NETWORK_TOPO_2D_MESH
  //`define    NETWORK_TOPO_3D_MESH
- 
+
 
 module dynamic_output_datapath(data_out, valid_out_temp, data_a_in, data_b_in, data_c_in, data_d_in, data_x_in, valid_a_in, valid_b_in, valid_c_in, valid_d_in, valid_x_in, current_route_in);
 
@@ -2031,10 +2031,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// 63         50 49      42 41      34 33           30 29      22 21                 0   
+// 63         50 49      42 41      34 33           30 29      22 21                 0
 // ------------------------------------------------------------------------------------
 // |            |          |          |               |          |                    |
-// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  | 
+// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  |
 // |            |          |          |               |          |                    |
 // ------------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2051,12 +2051,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  //whether the routing is based on chipid or x y position
  //`define    ROUTING_CHIP_ID
- 
+
 
  //defines for different topology, only one should be active
  //`define    NETWORK_TOPO_2D_MESH
  //`define    NETWORK_TOPO_3D_MESH
- 
+
 
 module dynamic_output_top(data_out, thanks_a_out, thanks_b_out, thanks_c_out, thanks_d_out, thanks_x_out, valid_out, popped_interrupt_mesg_out, popped_memory_ack_mesg_out, popped_memory_ack_mesg_out_sender, ec_wants_to_send_but_cannot, clk, reset, route_req_a_in, route_req_b_in, route_req_c_in, route_req_d_in, route_req_x_in, tail_a_in, tail_b_in, tail_c_in, tail_d_in, tail_x_in, data_a_in, data_b_in, data_c_in, data_d_in, data_x_in, valid_a_in, valid_b_in, valid_c_in, valid_d_in, valid_x_in, default_ready_in, yummy_in);
 
@@ -2205,7 +2205,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ////Function: This wraps the dynamic_node top and ties off signals
 //            we will not be using at the tile level
 ////
-////State: 
+////State:
 ////
 ////Instantiates: dynamic_node_top
 ////
@@ -2287,10 +2287,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-// 63         50 49      42 41      34 33           30 29      22 21                 0   
+// 63         50 49      42 41      34 33           30 29      22 21                 0
 // ------------------------------------------------------------------------------------
 // |            |          |          |               |          |                    |
-// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  | 
+// |  Chip ID   |  Dest X  |  Dest Y  |  Final Route  |  Length  |    Header Payload  |
 // |            |          |          |               |          |                    |
 // ------------------------------------------------------------------------------------
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2307,12 +2307,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  //whether the routing is based on chipid or x y position
  //`define    ROUTING_CHIP_ID
- 
+
 
  //defines for different topology, only one should be active
  //`define    NETWORK_TOPO_2D_MESH
  //`define    NETWORK_TOPO_3D_MESH
- 
+
 
 // Tile config
 
@@ -2888,25 +2888,25 @@ module dynamic_node_top_wrap
 (
     input clk,
     input reset_in,
-       
+
     input [64-1:0] dataIn_N,   // data inputs from neighboring tiles
     input [64-1:0] dataIn_E,
     input [64-1:0] dataIn_S,
     input [64-1:0] dataIn_W,
      input [64-1:0] dataIn_P,   // data input from processor
-       
+
     input validIn_N,        // valid signals from neighboring tiles
     input validIn_E,
     input validIn_S,
     input validIn_W,
     input validIn_P,        // valid signal from processor
-       
+
     input yummyIn_N,        // neighbor consumed output data
     input yummyIn_E,
     input yummyIn_S,
     input yummyIn_W,
     input yummyIn_P,        // processor consumed output data
-       
+
     input [8-1:0] myLocX,       // this tile's position
     input [8-1:0] myLocY,
     input [14-1:0] myChipID,
@@ -2916,20 +2916,20 @@ module dynamic_node_top_wrap
     output [64-1:0] dataOut_S,
      output [64-1:0] dataOut_W,
      output [64-1:0] dataOut_P, // data output to processor
-    
+
     output validOut_N,      // valid outputs to neighbors
     output validOut_E,
     output validOut_S,
     output validOut_W,
     output validOut_P,      // valid output to processor
-       
+
     output yummyOut_N,      // yummy signal to neighbors' output buffers
     output yummyOut_E,
     output yummyOut_S,
     output yummyOut_W,
     output yummyOut_P,      // yummy signal to processor's output buffer
-    
-    
+
+
     output thanksIn_P      // thanksIn to processor's space_avail
 );
 
@@ -2978,7 +2978,7 @@ module dynamic_node_top_wrap
         .store_meter_ack_partner(),
         .store_meter_ack_non_partner(),
         .ec_out()
-    ); 
+    );
 
 endmodule
 /*
@@ -3679,25 +3679,25 @@ module dynamic_node_top(clk,
 
 input clk;
 input reset_in;
-   
+
 input [64-1:0] dataIn_N;	// data inputs from neighboring tiles
 input [64-1:0] dataIn_E;
 input [64-1:0] dataIn_S;
 input [64-1:0] dataIn_W;
 input [64-1:0] dataIn_P;	// data input from processor
-   
+
 input validIn_N;		// valid signals from neighboring tiles
 input validIn_E;
 input validIn_S;
 input validIn_W;
 input validIn_P;		// valid signal from processor
-   
+
 input yummyIn_N;		// neighbor consumed output data
 input yummyIn_E;
 input yummyIn_S;
 input yummyIn_W;
 input yummyIn_P;		// processor consumed output data
-   
+
 input [8-1:0] myLocX;		// this tile's position
 input [8-1:0] myLocY;
 input [14-1:0] myChipID;
@@ -3719,7 +3719,7 @@ output validOut_E;
 output validOut_S;
 output validOut_W;
 output validOut_P;		// valid output to processor
-   
+
 output yummyOut_N;		// yummy signal to neighbors' output buffers
 output yummyOut_E;
 output yummyOut_S;
@@ -4103,7 +4103,7 @@ assign dataOut_P = dataOut_P_internal;
 assign yummyIn_P_internal = yummyIn_P;
 assign yummyOut_P = yummyOut_P_internal;
 
-   
+
 // two sets of inverters for output signals (buffering for timing purposes)
 flip_bus #(1, 14) yummyOut_N_flip1(yummyOut_N_internal, yummyOut_N_flip1_out);
 flip_bus #(1, 14) yummyOut_E_flip1(yummyOut_E_internal, yummyOut_E_flip1_out);
@@ -4241,7 +4241,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ////Function: This wraps the dynamic_node top and ties off signals
 //            we will not be using at the tile level
 ////
-////State: 
+////State:
 ////
 ////Instantiates: dynamic_node_top
 ////
@@ -4872,7 +4872,7 @@ module dynamic_node_top_wrap_para
 (
     input clk,
     input reset_in,
-    
+
     input [64-1:0] dataIn_0,
     input [64-1:0] dataIn_1,
 
@@ -4889,23 +4889,23 @@ module dynamic_node_top_wrap_para
     input [`DATA_WIDTH-1:0] dataIn_S,
     input [`DATA_WIDTH-1:0] dataIn_W,
     input [`DATA_WIDTH-1:0] dataIn_P,   // data input from processor
-       
+
     input validIn_N,        // valid signals from neighboring tiles
     input validIn_E,
     input validIn_S,
     input validIn_W,
     input validIn_P,        // valid signal from processor
-       
+
     input yummyIn_N,        // neighbor consumed output data
     input yummyIn_E,
     input yummyIn_S,
     input yummyIn_W,
     input yummyIn_P,        // processor consumed output data
-    */   
+    */
     input [8-1:0] myLocX,       // this tile's position
     input [8-1:0] myLocY,
     input [14-1:0] myChipID,
-    
+
     output [64-1:0] dataOut_0,
     output [64-1:0] dataOut_1,
 
@@ -4923,20 +4923,20 @@ module dynamic_node_top_wrap_para
     output [`DATA_WIDTH-1:0] dataOut_S,
     output [`DATA_WIDTH-1:0] dataOut_W,
     output [`DATA_WIDTH-1:0] dataOut_P, // data output to processor
-    
+
     output validOut_N,      // valid outputs to neighbors
     output validOut_E,
     output validOut_S,
     output validOut_W,
     output validOut_P,      // valid output to processor
-       
+
     output yummyOut_N,      // yummy signal to neighbors' output buffers
     output yummyOut_E,
     output yummyOut_S,
     output yummyOut_W,
     output yummyOut_P,      // yummy signal to processor's output buffer
     */
-    
+
     output thanksIn_1      // thanksIn to processor's space_avail
 );
 
@@ -4944,7 +4944,7 @@ module dynamic_node_top_wrap_para
     (
         .clk(clk),
         .reset_in(reset_in),
-        
+
         .dataIn_0(dataIn_0),
         .dataIn_1(dataIn_1),
         .validIn_0(validIn_0),
@@ -4958,7 +4958,7 @@ module dynamic_node_top_wrap_para
         .ec_cfg(6'b0),
         .store_meter_partner_address_X(5'b0),
         .store_meter_partner_address_Y(5'b0),
-        
+
         .dataOut_0(dataOut_0),
         .dataOut_1(dataOut_1),
         .validOut_0(validOut_0),
@@ -4971,7 +4971,7 @@ module dynamic_node_top_wrap_para
         .store_meter_ack_partner(),
         .store_meter_ack_non_partner(),
         .ec_out()
-    ); 
+    );
 
 endmodule
 /*
@@ -5627,8 +5627,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 module dynamic_node_top_para(clk,
 		    reset_in,
-        dataIn_0, dataIn_1, 
-        validIn_0, validIn_1, 
+        dataIn_0, dataIn_1,
+        validIn_0, validIn_1,
         yummyIn_0,yummyIn_1,
 		    myLocX,
 		    myLocY,
@@ -5636,8 +5636,8 @@ module dynamic_node_top_para(clk,
 		    store_meter_partner_address_X,
 		    store_meter_partner_address_Y,
 		    ec_cfg,
-        dataOut_0, dataOut_1, 
-        validOut_0, validOut_1, 
+        dataOut_0, dataOut_1,
+        validOut_0, validOut_1,
         yummyOut_0,yummyOut_1,
 		    thanksIn_1,
 		    external_interrupt,
@@ -5660,25 +5660,25 @@ input yummyIn_0;
 input yummyIn_1;
 
 /*
-//original 
+//original
 input [`DATA_WIDTH-1:0] dataIn_N;	// data inputs from neighboring tiles
 input [`DATA_WIDTH-1:0] dataIn_E;
 input [`DATA_WIDTH-1:0] dataIn_S;
 input [`DATA_WIDTH-1:0] dataIn_W;
 input [`DATA_WIDTH-1:0] dataIn_P;	// data input from processor
-   
+
 input validIn_N;		// valid signals from neighboring tiles
 input validIn_E;
 input validIn_S;
 input validIn_W;
 input validIn_P;		// valid signal from processor
-   
+
 input yummyIn_N;		// neighbor consumed output data
 input yummyIn_E;
 input yummyIn_S;
 input yummyIn_W;
 input yummyIn_P;		// processor consumed output data
-*/   
+*/
 input [8-1:0] myLocX;		// this tile's position
 input [8-1:0] myLocY;
 input [14-1:0] myChipID;
@@ -5710,7 +5710,7 @@ output validOut_E;
 output validOut_S;
 output validOut_W;
 output validOut_P;		// valid output to processor
-   
+
 output yummyOut_N;		// yummy signal to neighbors' output buffers
 output yummyOut_E;
 output yummyOut_S;
@@ -5902,7 +5902,7 @@ reg ec_north_input_valid_reg, ec_east_input_valid_reg, ec_south_input_valid_reg,
 // let's register these babies before they do any damage to the cycle time -- mbt
 always @(posedge clk)
   begin
-    
+
     ec_thanks_0_to_0_reg <= thanks_0_to_0; ec_thanks_0_to_1_reg <= thanks_0_to_1;
     ec_thanks_1_to_0_reg <= thanks_1_to_0; ec_thanks_1_to_1_reg <= thanks_1_to_1;
     ec_wants_to_send_but_cannot_0_reg <= ec_wants_to_send_but_cannot_0;

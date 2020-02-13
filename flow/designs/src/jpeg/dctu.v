@@ -52,9 +52,9 @@
 //
 
 
-//synopsys translate_off
+`ifdef SIMULATION
 `include "timescale.v"
-//synopsys translate_on
+`endif
 
 module dctu(clk, ena, ddgo, x, y, ddin, dout);
 

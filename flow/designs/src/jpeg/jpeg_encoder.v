@@ -54,9 +54,9 @@
 //               Started (Motion)JPEG hardware encoder project.
 //
 
-//synopsys translate_off
+`ifdef SIMULATION
 `include "timescale.v"
-//synopsys translate_on
+`endif
 
 module jpeg_encoder(
 	clk,
@@ -140,7 +140,7 @@ module jpeg_encoder(
 	input [7:0]          qnt_val;   // quantization value
 
 	output [ 5:0] qnt_cnt;          // quantization value address
-	
+
 	output [ 3:0] size;    // size
 	output [ 3:0] rlen;    // run-length
 	output [11:0] amp;     // amplitude
