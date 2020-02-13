@@ -32,11 +32,12 @@ available from ACM Digital Library
 ## Code Organization
 This repository serves as an example RTL-to-GDS flow using the OpenROAD tools.
 The two main components are:
-1. **OpenROAD**: This submodule contains the source code for all the `openroad`
-   app as well as other tools required for the flow. The Makefile in this
-   repository will automatically build the OpenROAD toolchain.
+1. **tools**: This directory contains the source code for the entire `openroad`
+   app (via submodules) as well as other tools required for the flow. The script
+   `build_openroad.sh` in this repository will automatically build the OpenROAD
+   toolchain.
 
-2. **flow**: This directory contains reference recipes and scripts to run
+2. **flow**: This directory contains reference recipes and scripts to run      |
    designs through the flow. It also contains platforms and test designs.
 
 ## Setup
@@ -56,42 +57,50 @@ installation instructions.
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
 ```
 2. Navigate to the "Releases" tab and download the latest release
-3. Extract the tar to `OpenROAD-flow/OpenROAD`
+3. Extract the tar to `OpenROAD-flow/tools/OpenROAD`
 4. Update your shell environment
 ```
-source setup_env.sh if building locally
-source setup_env_docker if running inside the docker image
+source setup_env.sh
 ```
 
 ### Option 2: Building the tools using docker
-This build options leveraged docker to build the seperate tool binaries in
-different docker images. You must have docker installed and have permissions to
-run docker to follow these instructions.
+This build option leverages a multi-step docker flow to install the tools and
+dependencies to a runner image. To follow these instructions, you must have
+docker installed, permissions to run docker, and docker container network access
+enabled. This step will create a runner image tagged as `openroad/flow`.
 1.  Clone the OpenROAD-flow repository
 ```
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
 ```
-2. Build the Dockerfiles using the script build_openroad.sh
+2. Ensure your docker daemon is running and `docker` is in your PATH, then run
+the docker build.
 ```
-ensure the docker daemon is running or start it in a second terminal window with the unix command dockerd
 ./build_openroad.sh
 ```
-Make sure that `docker` is in your PATH.
-
-3. Update your shell environment
+3. Start an interactive shell in a docker container using your user credentials
 ```
-source setup_env.sh or source setup_env_docker.sh
+docker run -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash
 ```
 
 ### Option 3: Building the tools locally
-Reference the Dockerfiles and READMEs for the separate tools on the build
-prerequisites and steps.
+1. Reference the Dockerfiles and READMEs for the separate tools on the build steps
+and dependencies.
 ```
-./OpenROAD/Dockerfile
-./OpenROAD/yosys/Dockerfile
-./OpenROAD/TritonRoute/Dockerfile
+OpenROAD-flow/tools/OpenROAD/Dockerfile
+OpenROAD-flow/tools/yosys/Dockerfile
+OpenROAD-flow/tools/TritonRoute/Dockerfile
 ```
-After building, ensure that the `PATH` variable and shell environment is setup to point to the binaries
+See the [KLayout](https://www.klayout.de) instructions for installing KLayout from source.
+
+2. Run the build script
+```
+./build_openroad.sh
+```
+3. Update your shell environment
+```
+source setup_env.sh
+```
+`klayout` must be added to the path manually.
 
 ## Using the flow
 See the flow [README](flow) for details about the flow and how
@@ -124,6 +133,7 @@ with contributors. Please stay tuned.
 The OpenROAD-flow repository (build and run scripts) has a BSD 3-Clause License.
 The flow relies on several tools, platforms and designs that each have their own
 licenses:
-- Find the tool license at: `OpenROAD/src/{tool}/`
-- Find the platform license at: `flow/platforms/{platform}/`
-- Find the design license at: `flow/designs/src/{design}/`
+- Find the tool license at: `OpenROAD-flow/tools/{tool}/` or
+`OpenROAD-flow/tools/OpenROAD/src/{tool}/`
+- Find the platform license at: `OpenROAD-flow/flow/platforms/{platform}/`
+- Find the design license at: `OpenROAD-flow/flow/designs/src/{design}/`
