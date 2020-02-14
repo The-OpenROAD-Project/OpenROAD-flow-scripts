@@ -29,25 +29,25 @@ def replace_coords(match):
   global countFail, countWest, countSouth, countEast, countNorth
 
   # West side
-  if match[1] == str(margin):
+  if match.group(1) == str(margin):
     countWest += 1
-    return "PLACED ( 0 " + match[2] + " ) E + LAYER " + match[3] + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
+    return "PLACED ( 0 " + match.group(2) + " ) E + LAYER " + match.group(3) + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
   # South side
-  elif match[2] == str(margin):
+  elif match.group(2) == str(margin):
     countSouth += 1
-    return "PLACED ( " + match[1] + " 0 ) N + LAYER " + match[3] + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
+    return "PLACED ( " + match.group(1) + " 0 ) N + LAYER " + match.group(3) + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
   # East side
-  elif match[1] == str(width - margin):
+  elif match.group(1) == str(width - margin):
     countEast += 1
-    return "PLACED ( "+ str(width) + " " + match[2] + " ) W + LAYER " + match[3] + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
+    return "PLACED ( "+ str(width) + " " + match.group(2) + " ) W + LAYER " + match.group(3) + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
   # North side
-  elif match[2] == str(height - margin):
+  elif match.group(2) == str(height - margin):
     countNorth += 1
-    return "PLACED ( " + match[1] + " " + str(height) + " ) S + LAYER " + match[3] + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
+    return "PLACED ( " + match.group(1) + " " + str(height) + " ) S + LAYER " + match.group(3) + " ( " + str(margin*-1) + " 0 ) ( " + str(margin) + " " + str(margin*2) + " )"
   # Shouldn't happen
   else:
     countFail += 1
-    return match[0]
+    return match.group(0)
 
 margin = int(args.margin)
 countFail = 0
