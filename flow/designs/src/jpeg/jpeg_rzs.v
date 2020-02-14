@@ -57,9 +57,9 @@
 //               Started (Motion)JPEG hardware encoder project.
 //
 
-//synopsys translate_off
+`ifdef SIMULATION
 `include "timescale.v"
-//synopsys translate_on
+`endif
 
 module jpeg_rzs(clk, ena, rst, deni, dci, rleni, sizei, ampi, deno, dco, rleno, sizeo, ampo);
 
@@ -134,7 +134,7 @@ module jpeg_rzs(clk, ena, rst, deni, dci, rleni, sizei, ampi, deno, dco, rleno, 
 	     end
 	  else
 	    if(ena)
-	      case (state) // synopsys full_case parallel_case
+	      (* full_case, parallel_case *) case (state)
 	         1'b0:
 	             begin
 	                 if (zerobl)

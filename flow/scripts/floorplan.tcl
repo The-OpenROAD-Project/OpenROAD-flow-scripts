@@ -51,9 +51,24 @@ if {[info exists ::env(FOOTPRINT)]} {
 # pre report
 log_begin $::env(REPORTS_DIR)/2_init.rpt
 
+puts "\n=========================================================================="
+puts "report_checks"
+puts "--------------------------------------------------------------------------"
 report_checks
+
+puts "\n=========================================================================="
+puts "report_tns"
+puts "--------------------------------------------------------------------------"
 report_tns
+
+puts "\n=========================================================================="
+puts "report_wns"
+puts "--------------------------------------------------------------------------"
 report_wns
+
+puts "\n=========================================================================="
+puts "report_design_area"
+puts "--------------------------------------------------------------------------"
 report_design_area
 
 log_end
@@ -62,5 +77,7 @@ log_end
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/2_1_floorplan.def
+  write_verilog $::env(RESULTS_DIR)/2_floorplan.v
+  write_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
   exit
 }

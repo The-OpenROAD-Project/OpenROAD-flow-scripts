@@ -51,9 +51,9 @@
 //               Started (Motion)JPEG hardware encoder project.
 //
 
-//synopsys translate_off
+`ifdef SIMULATION
 `include "timescale.v"
-//synopsys translate_on
+`endif
 
 module div_uu(clk, ena, z, d, q, s, div0, ovf);
 
@@ -62,7 +62,7 @@ module div_uu(clk, ena, z, d, q, s, div0, ovf);
 	//
 	parameter z_width = 16;
 	parameter d_width = z_width /2;
-	
+
 	//
 	// inputs & outputs
 	//
@@ -80,7 +80,7 @@ module div_uu(clk, ena, z, d, q, s, div0, ovf);
 	output ovf;
 	reg ovf;
 
-	//	
+	//
 	// functions
 	//
 	function [z_width:0] gen_s;
@@ -127,13 +127,13 @@ module div_uu(clk, ena, z, d, q, s, div0, ovf);
 	//
 	// perform parameter checks
 	//
-	// synopsys translate_off
+`ifdef SIMULATION
 	initial
 	begin
 	  if(d_width !== z_width / 2)
 	    $display("div.v parameter error (d_width != z_width/2).");
 	end
-	// synopsys translate_on
+`endif
 
 	integer n0, n1, n2, n3;
 

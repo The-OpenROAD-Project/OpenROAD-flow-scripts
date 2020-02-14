@@ -18,6 +18,7 @@ export BLACKBOX_V_FILE = ./platforms/$(PLATFORM)/NangateOpenCellLibrary.blackbox
 
 # Yosys mapping files
 export LATCH_MAP_FILE = ./platforms/$(PLATFORM)/cells_latch.v
+export CLKGATE_MAP_FILE = ./platforms/$(PLATFORM)/cells_clkgate.v
 export BLACKBOX_MAP_TCL = ./platforms/$(PLATFORM)/blackbox_map.tcl
 
 # Placement site for core cells

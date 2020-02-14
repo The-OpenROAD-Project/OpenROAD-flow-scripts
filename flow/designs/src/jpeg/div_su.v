@@ -52,9 +52,9 @@
 //               Started (Motion)JPEG hardware encoder project.
 //
 
-//synopsys translate_off
+`ifdef SIMULATION
 `include "timescale.v"
-//synopsys translate_on
+`endif
 
 module div_su(clk, ena, z, d, q, s, div0, ovf);
 
@@ -63,7 +63,7 @@ module div_su(clk, ena, z, d, q, s, div0, ovf);
 	//
 	parameter z_width = 16;
 	parameter d_width = z_width /2;
-	
+
 	//
 	// inputs & outputs
 	//
