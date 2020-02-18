@@ -45,6 +45,9 @@
 
 # DESIGN_CONFIG=./designs/invecas12/gcd.mk
 
+# DESIGN_CONFIG=./designs/skywater130/gcd.mk
+
+
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd.mk
 
@@ -407,11 +410,10 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_r
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/5_route.def
 	klayout -zz -rd design_name=$(DESIGN_NAME) \
-	        -rd in_lef=$(abspath $(OBJECTS_DIR)/merged.lef) \
 	        -rd in_def=$(RESULTS_DIR)/5_route.def \
 	        -rd in_gds="$(GDS_FILES)" \
 	        -rd out_gds=$@ \
-	        -rd map_file=./platforms/$(PLATFORM)/layermap.txt \
+	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/def2gds.py 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
 # TODO(rovinski) Placeholder until fill script works for more platforms

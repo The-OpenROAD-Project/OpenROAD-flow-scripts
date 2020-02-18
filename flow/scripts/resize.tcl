@@ -41,7 +41,7 @@ log_end
 # Perform resizing and buffering
 set dont_use_cells ""
 foreach cell $::env(DONT_USE_CELLS) {
-  lappend $dont_use_cells [get_full_name [get_lib_cells */$cell]]
+  lappend dont_use_cells [get_full_name [get_lib_cells */$cell]]
 }
 
 if {[info exists ::env(FOOTPRINT)]} {
