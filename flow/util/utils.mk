@@ -6,6 +6,12 @@ grep_cells:
 grep_util:
 	find ./reports/ -iname 6_final_report.rpt -exec sh -c "grep -iH 'Design area' {} | tail -1" \;
 
+metadata: $(REPORTS_DIR)/metadata.json
+$(REPORTS_DIR)/metadata.json: $(RESULTS_DIR)/6_final.gds
+	$(UTILS_DIR)/genMetadata.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -o $@
+
+
+
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------
 TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh
