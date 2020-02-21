@@ -428,9 +428,9 @@ $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
 	cp $^ $@
 endif
 
-drc: $(RESULTS_DIR)/6_drc.lyrdb
+drc: $(REPORTS_DIR)/6_drc.lyrdb
 
-$(RESULTS_DIR)/6_drc.lyrdb: $(RESULTS_DIR)/6_final.gds $(KLAYOUT_DRC_FILE)
+$(REPORTS_DIR)/6_drc.lyrdb: $(RESULTS_DIR)/6_final.gds $(KLAYOUT_DRC_FILE)
 	klayout -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_DRC_FILE) 2>&1 | tee $(LOG_DIR)/6_drc.log
