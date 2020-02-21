@@ -45,10 +45,10 @@ rptPath = os.path.join(args.flowPath, "reports", args.platform, args.design)
 # Main function to do specific extraction and
 
 # This function will look for a regular expression "pattern" in a "file", and
-# set the key, "jsonTag", to the value found. The specific "occurence" selects
-# which occurence it uses. If pattern not found, it will print an error and set
+# set the key, "jsonTag", to the value found. The specific "occurrence" selects
+# which occurrence it uses. If pattern not found, it will print an error and set
 # the value to N/A. If a "defaultNotFound" is set, it will use that instead
-def extractTagFromFile(jsonTag, pattern, file, occurence=-1, defaultNotFound="N/A"):
+def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A"):
   # Open file
   try:
     searchFilePath = os.path.join(args.flowPath, file)
@@ -58,12 +58,12 @@ def extractTagFromFile(jsonTag, pattern, file, occurence=-1, defaultNotFound="N/
     m = re.findall(pattern, content, re.M)
 
     if m:
-      if occurence == -2:
+      if occurrence == -2:
         # Return the count
         jsonFile[jsonTag] = str(len(m))
       else:
-        # Note: This gets the specified occurence
-        jsonFile[jsonTag] = m[occurence].strip()
+        # Note: This gets the specified occurrence
+        jsonFile[jsonTag] = m[occurrence].strip()
     else:
       # Only print a warning if the defaultNotFound is not set
       if defaultNotFound == "N/A":
