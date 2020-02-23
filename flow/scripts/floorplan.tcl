@@ -16,8 +16,6 @@ if {![info exists standalone] || $standalone} {
 # Initialize floorplan using ICeWall FOOTPRINT
 # ----------------------------------------------------------------------------
 if {[info exists ::env(FOOTPRINT)]} {
-  source $::env(SCRIPTS_DIR)/ICeWall.tcl
-
 
   ICeWall load_footprint $env(FOOTPRINT)
 

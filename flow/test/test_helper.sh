@@ -22,9 +22,9 @@ set -o pipefail
 mkdir -p $TEST_DIR/logs/$PLATFORM
 
 if [ -f "./private/util/utils.mk" ]; then
-  TARGETS="finish drc congestion"
+  TARGETS="finish metadata drc congestion"
 else
-  TARGETS="finish"
+  TARGETS="finish metadata"
 fi
 
 make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG.mk clean_all

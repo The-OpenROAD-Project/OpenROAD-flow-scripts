@@ -15,17 +15,15 @@ read_verilog $::env(RESULTS_DIR)/1_1_yosys.v
 link_design $::env(DESIGN_NAME)
 read_sdc $::env(SDC_FILE)
 
-# Pre-placement buffering
 set_wire_rc -layer $::env(WIRE_RC_LAYER)
-source -verbose $::env(SCRIPTS_DIR)/buffer.tcl
 
 # Floorplan
-source -verbose $::env(SCRIPTS_DIR)/verilog2def.tcl
+source -verbose $::env(SCRIPTS_DIR)/floorplan.tcl
 source -verbose $::env(SCRIPTS_DIR)/io_placement.tcl
 source -verbose $::env(SCRIPTS_DIR)/tdms_place.tcl
 source -verbose $::env(SCRIPTS_DIR)/macro_place.tcl
-source -verbose $::env(SCRIPTS_DIR)/pdn.tcl
 source -verbose $::env(SCRIPTS_DIR)/tapcell.tcl
+source -verbose $::env(SCRIPTS_DIR)/pdn.tcl
 
 # Place
 source -verbose $::env(SCRIPTS_DIR)/global_place.tcl

@@ -141,10 +141,6 @@ extractTagFromFile("mplace_macro_count",
                    logPath+"/2_4_mplace.log", -1, "0")
 
 
-
-
-
-
 # Place
 # ==============================================================================
 
@@ -208,6 +204,10 @@ extractTagFromFile("resizer_maxfabout_bufs",
                    logPath+"/3_2_resizer.log", -1, "0")
 
 
+# Inserted 5 tie LOGIC0_X1 instances for 1 nets.
+# Repair tie lo fanout...
+# Inserted 5 tie LOGIC1_X1 instances for 1 nets.
+# Repair max fanout...
 #TODO Tie hi tie low
 
 
@@ -303,6 +303,15 @@ extractTagFromFile("droute_peak_mem",
                    "peak = (\S+)",
                    logPath+"/5_2_TritonRoute.log")
 
+extractTagFromFile("droute_warnings",
+                   "(?i)warning:",
+                   logPath+"/5_2_TritonRoute.log", -2, "0")
+extractTagFromFile("droute_errors",
+                   "(?i)error:",
+                   logPath+"/5_2_TritonRoute.log", -2, "0")
+extractTagFromFile("droute_viols",
+                   "(?i)violation",
+                   rptPath+"/5_route_drc.rpt", -2, "0")
 
 # Finish
 # ==============================================================================
