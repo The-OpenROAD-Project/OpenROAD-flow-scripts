@@ -302,11 +302,6 @@ extractTagFromFile("droute_num_vias",
 extractTagFromFile("droute_peak_mem",
                    "peak = (\S+)",
                    logPath+"/5_2_TritonRoute.log")
-extractTagFromFile("droute_drc_count",
-                   "violation type",
-                   rptPath+"/5_route_drc.rpt",
-                   occurrence=-2,
-                   defaultNotFound="0")
 
 extractTagFromFile("droute_warnings",
                    "(?i)warning:",

@@ -14,7 +14,7 @@ $(REPORTS_DIR)/metadata.json: $(RESULTS_DIR)/6_final.gds
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------
-TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh
+TEST_SCRIPT ?= $(TEST_DIR)/smoke.sh
 run_test:
 	parallel --sshloginfile $(TEST_DIR)/nodes.txt \
 	         --timeout 21600 \
