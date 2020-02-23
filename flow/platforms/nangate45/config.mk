@@ -63,6 +63,9 @@ export RESIZER_BUF_CELL = BUF_X4
 # KLayout technology file
 export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/FreePDK45.lyt
 
+# KLayout DRC ruledeck
+export KLAYOUT_DRC_FILE = ./platforms/$(PLATFORM)/drc/FreePDK45.lydrc
+
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS = FILLCELL_X1 AOI211_X1 OAI211_X1

@@ -84,7 +84,7 @@ for i in range(len(metal_widths)):
   #TODO(rovinski) get outline layer properly
   fill_area = pya.Region(fill_top_cell.shapes(12))
   exclude_area = pya.Region(fill_top_cell.shapes(metal_layers[i]))
-  fill_area = fill_area - exclude_area.extents(fill_margin[i], fill_margin[i])
+  fill_area = fill_area - exclude_area.size(fill_margin[i], fill_margin[i])
   outline = pya.Box(0,0,6*metal_widths[i],4*metal_widths[i])
 
   print("INFO: Performing fill for metal" + str(i+1))

@@ -398,7 +398,7 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_r
 	$(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl 2>&1 | tee $(LOG_DIR)/6_1_report.log
 	@! grep --color -i "^Error:" $(LOG_DIR)/6_1_report.log
 
-# Run Klayout
+# Merge GDS using Klayout
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/5_route.def
 	klayout -zz -rd design_name=$(DESIGN_NAME) \
@@ -411,7 +411,7 @@ $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS
 # TODO(rovinski) Placeholder until fill script works for more platforms
 ifneq ($(USE_FILL),)
 $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
-	klayout -zz -rd in_gds="$^" \
+	klayout -zz -rd in_gds="$<" \
 	        -rd out_gds="$@" \
 	        -rd report_file="$(REPORTS_DIR)/6_2_density.rpt" \
 	        -rm $(UTILS_DIR)/gdsFill.py 2>&1 | tee $(LOG_DIR)/6_2_fill.log
@@ -419,6 +419,15 @@ else
 $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
 	cp $^ $@
 endif
+
+drc: $(REPORTS_DIR)/6_drc.lyrdb
+
+$(REPORTS_DIR)/6_drc.lyrdb: $(RESULTS_DIR)/6_final.gds $(KLAYOUT_DRC_FILE)
+	klayout -zz -rd in_gds="$<" \
+	        -rd report_file=$(abspath $@) \
+	        -r $(KLAYOUT_DRC_FILE) 2>&1 | tee $(LOG_DIR)/6_drc.log
+	# Hacky way of getting DRV count
+	grep -c "<value>" $@ > $(REPORTS_DIR)/6_drc_count.rpt
 
 clean_finish:
 	rm -rf $(RESULTS_DIR)/6_1_merged.gds
