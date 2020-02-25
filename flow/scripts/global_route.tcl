@@ -15,8 +15,7 @@ fastroute -output_file $::env(RESULTS_DIR)/route.guide \
           -max_routing_layer $::env(MAX_ROUTING_LAYER) \
           -unidirectional_routing true \
           -capacity_adjustment 0.15 \
-          -layers_adjustments {{2 0.7} {3 0.7}} \
-          -pitches_in_tile 45
+          -layers_adjustments {{2 0.7} {3 0.7}}
 
 if {![info exists standalone] || $standalone} {
   exit

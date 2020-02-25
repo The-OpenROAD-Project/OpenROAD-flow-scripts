@@ -140,6 +140,9 @@ extractTagFromFile("mplace_macro_count",
                    "Extracted # Macros: (\S+)",
                    logPath+"/2_4_mplace.log", -1, "0")
 
+extractTagFromFile("mplace_solutions",
+                   "Total Extracted Solution: (\S+)",
+                   logPath+"/2_4_mplace.log", -1, "0")
 
 # Place
 # ==============================================================================
