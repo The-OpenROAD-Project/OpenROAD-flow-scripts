@@ -76,7 +76,7 @@ export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
 # Template definition for power grid analysis
 export TEMPLATE_PGA_CFG ?= ./platforms/nangate45/template_pga.cfg
 
-export PLACE_DENSITY ?= 0.70
+export PLACE_DENSITY ?= 0.50
 
 # IO Placer pin layers
 export IO_PLACER_H = 3
