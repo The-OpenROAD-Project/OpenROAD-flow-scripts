@@ -13,9 +13,6 @@ else
   build_method="LOCAL"
 fi
 
-# Clone repositories
-git submodule update --init --recursive
-
 # Docker build
 if [ "$build_method" == "DOCKER" ]; then
   docker build -t openroad/yosys -f tools/yosys/Dockerfile tools/yosys
