@@ -14,9 +14,9 @@ RULES = $(dir $(DESIGN_CONFIG))$(DESIGN_NICKNAME)_rules.json
 
 $(REPORTS_DIR)/metadata-check.log: $(REPORTS_DIR)/metadata.json
 	if test -f $(RULES); then \
-	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES) > $@; \
+	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES) | tee $@; \
 	else \
-	  echo "No rules" > $@; \
+	  echo "No rules" | tee $@; \
 	fi
 
 
