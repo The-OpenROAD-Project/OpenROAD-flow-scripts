@@ -70,6 +70,8 @@ for rule in rules:
         or not op(check_value, rule_value)):
         errors = True
         print 'Error: field {} fails rule {} {} {}'.format(field, check_value, compare, rule_value)
+    else:
+        print 'Passed: field {} passed rule {} {} {}'.format(field, check_value, compare, rule_value)
 
 if not errors:
     print 'All metadata rules passed ({} rules)'.format(len(rules))
