@@ -10,7 +10,7 @@ metadata: $(REPORTS_DIR)/metadata-check.log
 $(REPORTS_DIR)/metadata.json: $(RESULTS_DIR)/6_final.gds
 	$(UTILS_DIR)/genMetadata.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -o $@
 
-RULES = $(dir $(DESIGN_CONFIG))$(DESIGN_NAME)_rules.json
+RULES = $(dir $(DESIGN_CONFIG))$(DESIGN_NICKNAME)_rules.json
 
 $(REPORTS_DIR)/metadata-check.log: $(REPORTS_DIR)/metadata.json
 	if test -f $(RULES); then \
