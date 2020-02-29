@@ -10,5 +10,3 @@ export CORE_AREA   = 10 12 1540 1332
 
 export CLOCK_PERIOD = 10.000
 export CLOCK_PORT   = clk
-
-export PLACE_DENSITY = 0.55
