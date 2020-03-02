@@ -1,12 +1,17 @@
 if {![info exists standalone] || $standalone} {
-  read_lef $::env(OBJECTS_DIR)/merged.lef
+  # Read lef
+  read_lef $::env(TECH_LEF)
+  read_lef $::env(SC_LEF)
+  if {[info exist ::env(ADDITIONAL_LEFS)]} {
+    read_lef $::env(ADDITIONAL_LEFS)
+  }
 
   # Read liberty files
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
   }
 
-  # Read lef and verilog
+  # Read verilog
   read_verilog $::env(RESULTS_DIR)/1_synth.v
 
   link_design $::env(DESIGN_NAME)
@@ -26,6 +31,29 @@ if {[info exists ::env(FOOTPRINT)]} {
     -site      $::env(PLACE_SITE)
 
   ICeWall init_footprint $env(SIG_MAP_FILE)
+
+
+puts "\n Setting nets within the padring as special"
+puts "--------------------------------------------------------------------------"
+
+set db [::ord::get_db]
+set block [[$db getChip] getBlock]
+
+foreach inst [$block getInsts] {
+  set inst_master [$inst getMaster]
+
+  if { [string match [$inst_master getName] "IN12LP_GPIO18_13M9S30P_IO_H"] ||
+       [string match [$inst_master getName] "IN12LP_GPIO18_13M9S30P_IO_V"]} {
+
+      foreach termName "IOPWROK PWROK RETC" {
+        set term [$inst findITerm $termName]
+        if {[set net [$term getNet]] != "NULL"} {
+          $net setSpecial
+          $term setSpecial
+        }
+      }
+  }
+}
 
 # Initialize floorplan using CORE_UTILIZATION
 # ----------------------------------------------------------------------------

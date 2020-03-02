@@ -1,9 +1,15 @@
 if {![info exists standalone] || $standalone} {
-  # Read process files
+  # Read lef
+  read_lef $::env(TECH_LEF)
+  read_lef $::env(SC_LEF)
+  if {[info exist ::env(ADDITIONAL_LEFS)]} {
+    read_lef $::env(ADDITIONAL_LEFS)
+  }
+
+  # Read liberty files
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
   }
-  read_lef $::env(OBJECTS_DIR)/merged_padded.lef
 
   # Read design files
   read_def $::env(RESULTS_DIR)/2_floorplan.def
