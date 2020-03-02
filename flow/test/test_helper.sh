@@ -22,7 +22,7 @@ set -o pipefail
 mkdir -p $TEST_DIR/logs/$PLATFORM
 
 if [ -f "./private/util/utils.mk" ]; then
-  TARGETS="finish metadata private_drc private_congestion"
+  TARGETS="finish metadata private_drc private_congestion private_metadata"
 else
   TARGETS="finish metadata"
 fi

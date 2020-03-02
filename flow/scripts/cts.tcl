@@ -8,9 +8,6 @@ if {![info exists standalone] || $standalone} {
   # Read design files
   read_def $::env(RESULTS_DIR)/3_place.def
 
-  # Read verilog
-  read_verilog $::env(RESULTS_DIR)/3_place.v
-
   # Read SDC file
   read_sdc $::env(RESULTS_DIR)/3_place.sdc
 }

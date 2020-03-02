@@ -65,15 +65,15 @@ repair_max_cap -buffer_cell $buffer_cell
 puts "Repair max slew..."
 repair_max_slew -buffer_cell $buffer_cell
 
-# Repair tie hi fanout
-puts "Repair tie hi fanout..."
+# Repair tie lo fanout
+puts "Repair tie lo fanout..."
 set tielo_cell_name [lindex $env(TIELO_CELL_AND_PORT) 0]
 set tielo_lib_name [get_name [get_property [get_lib_cell */$tielo_cell_name] library]]
 set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $env(TIELO_CELL_AND_PORT) 1]
 repair_tie_fanout -max_fanout $::env(MAX_FANOUT) $tielo_pin
 
-# Repair tie lo fanout
-puts "Repair tie lo fanout..."
+# Repair tie hi fanout
+puts "Repair tie hi fanout..."
 set tiehi_cell_name [lindex $env(TIEHI_CELL_AND_PORT) 0]
 set tiehi_lib_name [get_name [get_property [get_lib_cell */$tiehi_cell_name] library]]
 set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $env(TIEHI_CELL_AND_PORT) 1]

@@ -141,6 +141,7 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 # Pre-process KLayout tech
 # ==============================================================================
  $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE)
+	mkdir -p $(OBJECTS_DIR)
 	sed 's,<lef-files>.*</lef-files>,<lef-files>$(abspath $(OBJECTS_DIR)/merged.lef)</lef-files>,g' $^ > $@
 
 # ==============================================================================
@@ -162,7 +163,7 @@ SYNTH_SCRIPT ?= scripts/synth.tcl
 
 $(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	yosys -l $(LOG_DIR)/1_1_yosys.log -c $(SYNTH_SCRIPT)
+	($(TIME_CMD) yosys -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	cp $< $@
@@ -365,12 +366,15 @@ $(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
 	echo "verbose:1" >> $@
 	echo "gap:0" >> $@
 	echo "timeout:2400" >> $@
+ifeq ($(PLATFORM),gf14)
+	echo "dbProcessNode:GF14_13M_3Mx_2Cx_4Kx_2Hx_2Gx_LB" >> $@
+endif
 
 # Run TritonRoute
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
 ifeq ($(PLATFORM),gf14)
-	($(TIME_CMD) TritonRoute14 $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
+	($(TIME_CMD) FlexRoute_200227 $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 else
 	($(TIME_CMD) TritonRoute   $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 endif
@@ -399,26 +403,26 @@ finish: $(REPORTS_DIR)/6_final_report.rpt \
         $(RESULTS_DIR)/6_final.gds
 # ==============================================================================
 $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.v $(RESULTS_DIR)/5_route.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl) 2>&1 | tee $(LOG_DIR)/6_1_report.log
-	@! grep --color -i "^Error:" $(LOG_DIR)/6_1_report.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl) 2>&1 | tee $(LOG_DIR)/6_report.log
+	@! grep --color -i "^Error:" $(LOG_DIR)/6_report.log
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/5_route.def
-	klayout -zz -rd design_name=$(DESIGN_NAME) \
+	($(TIME_CMD) klayout -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$(RESULTS_DIR)/5_route.def \
 	        -rd in_gds="$(GDS_FILES)" \
 	        -rd out_gds=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/def2gds.py 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
 # TODO(rovinski) Placeholder until fill script works for more platforms
 ifneq ($(USE_FILL),)
 $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
-	klayout -zz -rd in_gds="$<" \
+	($(TIME_CMD) klayout -zz -rd in_gds="$<" \
 	        -rd out_gds="$@" \
 	        -rd report_file="$(REPORTS_DIR)/6_2_density.rpt" \
-	        -rm $(UTILS_DIR)/gdsFill.py 2>&1 | tee $(LOG_DIR)/6_2_fill.log
+	        -rm $(UTILS_DIR)/gdsFill.py) 2>&1 | tee $(LOG_DIR)/6_2_fill.log
 else
 $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
 	cp $^ $@
@@ -427,11 +431,15 @@ endif
 drc: $(REPORTS_DIR)/6_drc.lyrdb
 
 $(REPORTS_DIR)/6_drc.lyrdb: $(RESULTS_DIR)/6_final.gds $(KLAYOUT_DRC_FILE)
-	klayout -zz -rd in_gds="$<" \
+ifneq ($(KLAYOUT_DRC_FILE),)
+	($(TIME_CMD) klayout -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
-	        -r $(KLAYOUT_DRC_FILE) 2>&1 | tee $(LOG_DIR)/6_drc.log
+	        -r $(KLAYOUT_DRC_FILE)) 2>&1 | tee $(LOG_DIR)/6_drc.log
 	# Hacky way of getting DRV count
 	grep -c "<value>" $@ > $(REPORTS_DIR)/6_drc_count.rpt
+else
+	echo "DRC not supported on this platform" > $@
+endif
 
 clean_finish:
 	rm -rf $(RESULTS_DIR)/6_1_merged.gds
