@@ -2,7 +2,7 @@
     "rules": [
         {
             "field" : "droute_viols",
-            "value" : 234,
+            "value" : 104,
             "compare": "<="
         }
     ]
