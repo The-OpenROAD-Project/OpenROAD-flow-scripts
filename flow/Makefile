@@ -25,7 +25,7 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/dynamic_node.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/gcd.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/ibex.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/jpeg.mk
+DESIGN_CONFIG=./designs/tsmc65lp/jpeg.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/swerv.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/swerv_wrapper.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
@@ -129,7 +129,7 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 # ==============================================================================
  $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE)
 	mkdir -p $(OBJECTS_DIR)
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(file)</lef-files>),g' $^ > $@
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
 
 # ==============================================================================
 #  ______   ___   _ _____ _   _ _____ ____ ___ ____
@@ -353,8 +353,8 @@ $(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
 	echo "verbose:1" >> $@
 	echo "gap:0" >> $@
 	echo "timeout:2400" >> $@
-ifeq ($(PLATFORM),gf14)
-	echo "dbProcessNode:GF14_13M_3Mx_2Cx_4Kx_2Hx_2Gx_LB" >> $@
+ifneq ($(dbProcessNode),)
+	echo "dbProcessNode:$(dbProcessNode)" >> $@
 endif
 
 # Run TritonRoute
@@ -363,7 +363,7 @@ $(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_ct
 ifeq ($(PLATFORM),gf14)
 	($(TIME_CMD) FlexRoute_200227 $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 else
-	($(TIME_CMD) TritonRoute   $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
+	($(TIME_CMD) TritonRoute      $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 endif
 
 $(RESULTS_DIR)/5_route.v: $(RESULTS_DIR)/4_cts.v

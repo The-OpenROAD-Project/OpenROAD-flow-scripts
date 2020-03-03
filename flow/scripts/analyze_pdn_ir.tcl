@@ -9,7 +9,9 @@ source $env(OPDN_SRC)/src/analyze_power_grid.tcl
 read_lef $::env(TECH_LEF)
 read_lef $::env(SC_LEF)
 if {[info exist ::env(ADDITIONAL_LEFS)]} {
-  read_lef $::env(ADDITIONAL_LEFS)
+    foreach lef $::env(ADDITIONAL_LEFS) {
+      read_lef $lef
+    }
 }
 
 # Read liberty files
