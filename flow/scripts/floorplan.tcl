@@ -35,28 +35,6 @@ if {[info exists ::env(FOOTPRINT)]} {
   ICeWall init_footprint $env(SIG_MAP_FILE)
 
 
-puts "\n Setting nets within the padring as special"
-puts "--------------------------------------------------------------------------"
-
-set db [::ord::get_db]
-set block [[$db getChip] getBlock]
-
-foreach inst [$block getInsts] {
-  set inst_master [$inst getMaster]
-
-  if { [string match [$inst_master getName] "IN12LP_GPIO18_13M9S30P_IO_H"] ||
-       [string match [$inst_master getName] "IN12LP_GPIO18_13M9S30P_IO_V"]} {
-
-      foreach termName "IOPWROK PWROK RETC" {
-        set term [$inst findITerm $termName]
-        if {[set net [$term getNet]] != "NULL"} {
-          $net setSpecial
-          $term setSpecial
-        }
-      }
-  }
-}
-
 # Initialize floorplan using CORE_UTILIZATION
 # ----------------------------------------------------------------------------
 } elseif {[info exists ::env(CORE_UTILIZATION)] && $::env(CORE_UTILIZATION) != "" } {

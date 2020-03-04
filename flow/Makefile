@@ -25,7 +25,7 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/dynamic_node.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/gcd.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/ibex.mk
-DESIGN_CONFIG=./designs/tsmc65lp/jpeg.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/jpeg.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/swerv.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/swerv_wrapper.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
@@ -97,7 +97,6 @@ versions.txt:
 	@echo openroad `openroad -version` >> $(abspath $@)
 	@klayout -v >> $(abspath $@)
 	@echo TritonRoute `which TritonRoute` >> $(abspath $@)
-
 
 # Pre-process Lefs
 # ==============================================================================

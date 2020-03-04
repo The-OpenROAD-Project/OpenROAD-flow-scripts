@@ -219,16 +219,16 @@ extractTagFromFile("resizer_hbuf_count",
                    "Inserted (\d+) hold buffers",
                    logPath+"/3_2_resizer.log")
 extractTagFromFile("resizer_maxcap_viols",
-                   "Found (/d+) max capacitance violations",
+                   "Found (\d+) max capacitance violations",
                    logPath+"/3_2_resizer.log", -1, "0")
 extractTagFromFile("resizer_maxslew_viols",
-                   "Found (/d+) max slew violations",
+                   "Found (\d+) max slew violations",
                    logPath+"/3_2_resizer.log", -1, "0")
 extractTagFromFile("resizer_maxfanout_viols",
-                   "Found (/d+) max fanout violations",
+                   "Found (\d+) max fanout violations",
                    logPath+"/3_2_resizer.log", -1, "0")
 extractTagFromFile("resizer_maxfanout_bufs",
-                   "Inserted (/d+) buffers",
+                   "Inserted (\d+) buffers",
                    logPath+"/3_2_resizer.log", -1, "0")
 #TODO Tie hi tie low
 # extractTagFromFile("resizer_maxfanout_bufs_tielo",
