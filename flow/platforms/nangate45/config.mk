@@ -39,7 +39,7 @@ export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*.gds) \
                      $(ADDITIONAL_GDS_FILES)
 
 # Cell padding in SITE widths to ease rout-ability
-export CELL_PAD_IN_SITES = 8
+export CELL_PAD_IN_SITES = 5
 
 # Endcap and Welltie cells
 export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
@@ -76,7 +76,7 @@ export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
 # Template definition for power grid analysis
 export TEMPLATE_PGA_CFG ?= ./platforms/nangate45/template_pga.cfg
 
-export PLACE_DENSITY ?= 0.70
+export PLACE_DENSITY ?= 0.30
 
 # IO Placer pin layers
 export IO_PLACER_H = 3

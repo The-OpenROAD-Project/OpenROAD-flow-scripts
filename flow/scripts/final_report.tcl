@@ -1,18 +1,20 @@
 if {![info exists standalone] || $standalone} {
+  # Read lef
+  read_lef $::env(TECH_LEF)
+  read_lef $::env(SC_LEF)
+  if {[info exist ::env(ADDITIONAL_LEFS)]} {
+    foreach lef $::env(ADDITIONAL_LEFS) {
+      read_lef $lef
+    }
+  }
+
   # Read liberty files
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
   }
 
-  # Read lef def and sdc
-  read_lef $::env(OBJECTS_DIR)/merged.lef
-
-  # TODO: Reading verilog instead of def because OpenDB doesn't support RECTs
-  #      and doesn't' do extraction yet/
-  # read_def $::env(RESULTS_DIR)/5_route.def
-  read_verilog $::env(RESULTS_DIR)/5_route.v
-  link_design $::env(DESIGN_NAME)
-
+  # Read def and sdc
+  read_def $::env(RESULTS_DIR)/5_route.def
   read_sdc $::env(RESULTS_DIR)/5_route.sdc
 }
 
