@@ -82,7 +82,12 @@ jsonFile = OrderedDict()
 
 jsonFile["generate_date"] = now.strftime("%Y-%m-%d %H:%M")
 cmdOutput = subprocess.check_output(['openroad', '-version'])
-jsonFile["openroad_version"],jsonFile["openroad_commit"] = cmdOutput.split()
+cmdFields = cmdOutput.split()
+jsonFile["openroad_version"] = cmdFields[0]
+if (len(cmdFields) > 1):
+  jsonFile["openroad_commit"] = cmdFields[1]
+else:
+  jsonFile["openroad_commit"] = "N/A"
 jsonFile["uuid"] = str(uuid.uuid4())
 jsonFile["design"] = args.design
 jsonFile["platform"] = args.platform

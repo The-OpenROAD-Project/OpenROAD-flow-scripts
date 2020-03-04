@@ -14,7 +14,9 @@ else
 fi
 
 # Clone repositories
-git submodule update --init --recursive
+if [ -z ${OPENROAD_FLOW_NO_GIT_INIT+x} ]; then
+  git submodule update --init --recursive
+fi
 
 # Docker build
 if [ "$build_method" == "DOCKER" ]; then
