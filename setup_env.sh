@@ -15,9 +15,3 @@ if [ -n "${PATH}" ]; then
 else
   export PATH=$path_string
 fi
-
-if [ -n "${MANPATH}" ]; then
-  export MANPATH=${modroot}/share/man:$MANPATH
-else
-  export MANPATH=${modroot}/share/man
-fi
