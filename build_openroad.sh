@@ -20,9 +20,9 @@ fi
 
 if [ -d flow/platforms/gf14 ]; then
   if [ -d tools/TritonRoute14 ]; then
-    git -C tools/TritonRoute14 pull
+    git -C tools/TritonRoute14 pull || true
   else
-    git -C tools clone git@github.com:The-OpenROAD-Project/TritonRoute14.git
+    git -C tools clone git@github.com:The-OpenROAD-Project/TritonRoute14.git || true
   fi
 fi
 
