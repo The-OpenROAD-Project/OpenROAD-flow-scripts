@@ -210,7 +210,8 @@
         },
         "yosys_cell_count": {
             "$id": "#/properties/yosys_cell_count",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
@@ -219,7 +220,8 @@
         },
         "yosys_chip_area": {
             "$id": "#/properties/yosys_chip_area",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
@@ -246,7 +248,8 @@
         },
         "yosys_warnings": {
             "$id": "#/properties/yosys_warnings",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
@@ -318,7 +321,8 @@
         },
         "floorplan_warnings": {
             "$id": "#/properties/floorplan_warnings",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
@@ -1038,7 +1042,8 @@
         },
         "droute_warnings": {
             "$id": "#/properties/droute_warnings",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
@@ -1047,7 +1052,8 @@
         },
         "droute_errors": {
             "$id": "#/properties/droute_errors",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
@@ -1056,7 +1062,8 @@
         },
         "droute_viols": {
             "$id": "#/properties/droute_viols",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "improvement": -1,
             "description": "An explanation about the purpose of this instance.",
             "examples": [
@@ -1192,7 +1199,6 @@
         "merge_mem": {
             "$id": "#/properties/merge_mem",
             "type": "string",
-            "format": "integer",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [

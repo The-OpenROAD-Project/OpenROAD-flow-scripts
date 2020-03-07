@@ -16,7 +16,6 @@ import uuid
 import platform
 from collections import OrderedDict
 
-
 # Parse and validate arguments
 # ==============================================================================
 parser = argparse.ArgumentParser(
@@ -49,8 +48,9 @@ rptPath = os.path.join(args.flowPath, "reports", args.platform, args.design)
 # set the key, "jsonTag", to the value found. The specific "occurrence" selects
 # which occurrence it uses. If pattern not found, it will print an error and set
 # the value to N/A. If a "defaultNotFound" is set, it will use that instead.
-# If occurrence is set to -2, it will return the count of the pattern
-def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A"):
+# If occurrence is set to -2, it will return the count of the pattern.
+# t indicates the type that should be written to the JSON file (default: string)
+def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str):
   if jsonTag in jsonFile:
     print "WARNING: Overwriting Tag", jsonTag
 
@@ -65,10 +65,10 @@ def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N
     if m:
       if occurrence == -2:
         # Return the count
-        jsonFile[jsonTag] = str(len(m))
+        jsonFile[jsonTag] = len(m)
       else:
         # Note: This gets the specified occurrence
-        jsonFile[jsonTag] = m[occurrence].strip()
+        jsonFile[jsonTag] = (t)(m[occurrence].strip())
     else:
       # Only print a warning if the defaultNotFound is not set
       if defaultNotFound == "N/A":
@@ -122,10 +122,10 @@ extractTagFromFile("yosys_version",
                    logPath+"/1_1_yosys.log")
 extractTagFromFile("yosys_cell_count",
                    "Number of cells: +(\S+)",
-                   rptPath+"/synth_stat.txt")
+                   rptPath+"/synth_stat.txt", t=int)
 extractTagFromFile("yosys_chip_area",
                    "Chip area for module.*: +(\S+)",
-                   rptPath+"/synth_stat.txt")
+                   rptPath+"/synth_stat.txt", t=float)
 extractTagFromFile("yosys_runtime",
                    "^CPU: user (\S+)",
                    logPath+"/1_1_yosys.log")
@@ -134,7 +134,7 @@ extractTagFromFile("yosys_mem",
                    logPath+"/1_1_yosys.log")
 extractTagFromFile("yosys_warnings",
                    "Warnings: \d+ unique messages, (\d+) total",
-                   logPath+"/1_1_yosys.log")
+                   logPath+"/1_1_yosys.log", t=int)
 
 extractGnuTime("synth",logPath+"/1_1_yosys.log")
 
@@ -154,7 +154,7 @@ extractTagFromFile("floorplan_util",
                    rptPath+"/2_init.rpt")
 extractTagFromFile("floorplan_warnings",
                    "(?i)warning",
-                   logPath+"/2_1_floorplan.log", -2, "0")
+                   logPath+"/2_1_floorplan.log", -2, 0)
 extractGnuTime("floorplan",logPath+"/2_1_floorplan.log")
 
 extractTagFromFile("floorplan_io_count",
@@ -342,13 +342,13 @@ extractTagFromFile("droute_peak_mem",
 
 extractTagFromFile("droute_warnings",
                    "(?i)warning:",
-                   logPath+"/5_2_TritonRoute.log", -2, "0")
+                   logPath+"/5_2_TritonRoute.log", -2, 0)
 extractTagFromFile("droute_errors",
                    "(?i)error:",
-                   logPath+"/5_2_TritonRoute.log", -2, "0")
+                   logPath+"/5_2_TritonRoute.log", -2, 0)
 extractTagFromFile("droute_viols",
                    "(?i)violation",
-                   rptPath+"/5_route_drc.rpt", -2, "0")
+                   rptPath+"/5_route_drc.rpt", -2, 0)
 
 extractGnuTime("droute",logPath+"/5_2_TritonRoute.log")
 
@@ -385,7 +385,7 @@ extractGnuTime("merge",logPath+"/6_1_merge.log")
 
 extractTagFromFile("klayout_viols",
                    "<value>",
-                   rptPath+"/6_drc_count.rpt", -2, "0")
+                   rptPath+"/6_drc_count.rpt", -2, 0)
 
 
 # Accumulate time
