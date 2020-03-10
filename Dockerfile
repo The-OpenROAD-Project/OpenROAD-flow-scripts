@@ -3,7 +3,7 @@ LABEL maintainer="Abdelrahman Hosny <abdelrahman_hosny@brown.edu>"
 
 RUN yum group install -y "Development Tools" && \
     yum update -y && yum install -y libffi-devel python3 tcl-devel which time && \
-    yum localinstall https://www.klayout.org/downloads/CentOS_7/klayout-0.26.3-0.x86_64.rpm -y
+    yum localinstall https://www.klayout.org/downloads/CentOS_7/klayout-0.26.4-0.x86_64.rpm -y
 
 WORKDIR /OpenROAD-flow
 RUN mkdir -p /OpenROAD-flow
