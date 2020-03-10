@@ -56,4 +56,6 @@ flow/private/*
 # network
 .nfs*
 
-
+# core dumps
+core
+core.*

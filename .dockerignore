@@ -45,6 +45,10 @@ flow/platforms/*
 # network
 .nfs*
 
+# core dumps
+core
+core.*
+
 # git
 **/.git
 **/.gitignore
