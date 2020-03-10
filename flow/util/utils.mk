@@ -7,7 +7,8 @@ grep_util:
 	find ./reports/ -iname 6_final_report.rpt -exec sh -c "grep -iH 'Design area' {} | tail -1" \;
 
 metadata: $(REPORTS_DIR)/metadata-check.log
-$(REPORTS_DIR)/metadata.json: $(REPORTS_DIR)/6_final_report.rpt $(RESULTS_DIR)/6_final.gds
+
+$(REPORTS_DIR)/metadata.json:
 	$(UTILS_DIR)/genMetadata.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -o $@
 
 RULES = $(dir $(DESIGN_CONFIG))$(DESIGN_NICKNAME)_rules.json
