@@ -32,8 +32,9 @@ clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
                      -root_buf "$::env(CTS_BUF_CELL)" \
                      -wire_unit 20
 
-set_padding -global -left 0 -right $::env(CELL_PAD_IN_SITES)
-legalize_placement
+set_placement_padding -global -left 0 -right $::env(CELL_PAD_IN_SITES)
+detailed_placement
+check_placement
 
 if {![info exists standalone] || $standalone} {
   # write output

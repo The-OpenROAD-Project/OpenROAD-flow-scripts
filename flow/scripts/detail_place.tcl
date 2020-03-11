@@ -17,8 +17,9 @@ if {![info exists standalone] || $standalone} {
   read_def $::env(RESULTS_DIR)/3_2_place_resized.def
 }
 
-set_padding -global -left 0 -right $::env(CELL_PAD_IN_SITES)
-legalize_placement
+set_placement_padding -global -left 0 -right $::env(CELL_PAD_IN_SITES)
+detailed_placement
+check_placement
 
 if {![info exists standalone] || $standalone} {
   # write output
