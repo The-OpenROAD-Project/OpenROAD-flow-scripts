@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 # Setting args (and setting default values for testing)
 DESIGN_CONFIG=${1:-gcd}
