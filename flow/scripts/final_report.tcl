@@ -14,7 +14,9 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read def and sdc
-  read_def $::env(RESULTS_DIR)/5_route.def
+  # FIXME(rovinski) read verilog instead of DEF until OpenDB has RECT support
+  read_verilog $::env(RESULTS_DIR)/5_route.v
+  link_design $::env(DESIGN_NAME)
   read_sdc $::env(RESULTS_DIR)/5_route.sdc
 }
 
