@@ -8,6 +8,10 @@ grep_util:
 
 metadata: $(REPORTS_DIR)/metadata-check.log
 
+clean_metadata:
+	rm -f $(REPORTS_DIR)/metadata-check.log
+	rm -f $(REPORTS_DIR)/metadata.json
+
 $(REPORTS_DIR)/metadata.json:
 	$(UTILS_DIR)/genMetadata.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -o $@
 
