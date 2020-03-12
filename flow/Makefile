@@ -158,7 +158,9 @@ $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
 	cp $< $@
 
 clean_synth:
-	rm -rf $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
+	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
+	rm -f  $(REPORTS_DIR)/synth_*
+	rm -f  $(LOG_DIR)/1_*
 	rm -rf _tmp_yosys-abc-*
 
 
@@ -224,6 +226,8 @@ $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.def
 clean_floorplan:
 	rm -rf $(RESULTS_DIR)/2_*floorplan*.def
 	rm -rf $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc
+	rm -f  $(REPORTS_DIR)/2_*
+	rm -f  $(LOG_DIR)/2_*
 
 # ==============================================================================
 #  ____  _        _    ____ _____
@@ -278,6 +282,8 @@ analyze_power_grid: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc $(OBJE
 clean_place:
 	rm -rf $(RESULTS_DIR)/3_*place*.def
 	rm -rf $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc
+	rm -f  $(REPORTS_DIR)/3_*
+	rm -f  $(LOG_DIR)/3_*
 
 
 # ==============================================================================
@@ -305,6 +311,8 @@ $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.def
 
 clean_cts:
 	rm -rf $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_cts.sdc
+	rm -f  $(REPORTS_DIR)/4_*
+	rm -f  $(LOG_DIR)/4_*
 
 
 # ==============================================================================
@@ -376,6 +384,8 @@ clean_route:
 	rm -rf *.gdid *.log *.met *.sav *.res.dmp
 	rm -rf $(RESULTS_DIR)/route.guide $(OBJECTS_DIR)/TritonRoute.param
 	rm -rf $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.v $(RESULTS_DIR)/5_route.sdc $(OBJECTS_DIR)/5_route_TA.def
+	rm -f  $(REPORTS_DIR)/5_*
+	rm -f  $(LOG_DIR)/5_*
 
 
 # ==============================================================================
@@ -431,6 +441,7 @@ clean_finish:
 	rm -rf $(RESULTS_DIR)/6_1_merged.gds
 	rm -rf $(RESULTS_DIR)/6_final.gds
 	rm -rf $(REPORTS_DIR)/6_*.rpt
+	rm -f  $(LOG_DIR)/6_*
 
 
 
