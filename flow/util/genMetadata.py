@@ -415,7 +415,7 @@ for key in jsonFile:
     total += delta
 
 if failed:
-  jsonFile["total_time"] = "ERR")
+  jsonFile["total_time"] = "ERR"
 else:
   jsonFile["total_time"] = str(total)
 
