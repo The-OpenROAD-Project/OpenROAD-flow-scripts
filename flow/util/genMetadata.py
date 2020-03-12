@@ -391,6 +391,7 @@ extractTagFromFile("klayout_viols",
 # Accumulate time
 # ==============================================================================
 
+failed = False
 total = datetime.timedelta()
 for key in jsonFile:
   if key.endswith("_time"):
@@ -404,12 +405,19 @@ for key in jsonFile:
         try:
           t = datetime.datetime.strptime(jsonFile[key],"%H:%M:%S")
         except ValueError:
-          t = datetime.datetime.strptime(jsonFile[key],"%M:%S")
+          try:
+            t = datetime.datetime.strptime(jsonFile[key],"%M:%S")
+          except ValueError:
+            failed = True
+            break
 
     delta = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
     total += delta
 
-jsonFile["total_time"] = str(total)
+if failed:
+  jsonFile["total_time"] = "ERR")
+else:
+  jsonFile["total_time"] = str(total)
 
 # print json.dumps(jsonFile, indent=2)
 with open(args.output, "w") as resultSpecfile:
