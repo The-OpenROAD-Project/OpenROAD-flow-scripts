@@ -13,10 +13,10 @@ else
   docker_tag="openroad/flow"
 fi
 
-docker_script="source setup_env.sh && \
+docker_script='source setup_env.sh && \
   cd flow/flow && \
   test/test_helper.sh ${DESIGN} ${PLATFORM}; \
   status=$?; \
-  make metadata DESIGN_CONFIG=designs/${PLATFORM}/${DESIGN}.mk && exit $status"
+  make metadata DESIGN_CONFIG=designs/${PLATFORM}/${DESIGN}.mk && exit $status'
 
 docker run -u ${user_id} -v ${flow_mount} -v ${tr_mount} ${docker_tag} bash -xc "${docker_script}"
