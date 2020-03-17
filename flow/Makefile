@@ -417,6 +417,7 @@ ifneq ($(USE_FILL),)
 $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
 	($(TIME_CMD) klayout -zz -rd in_gds="$<" \
 	        -rd out_gds="$@" \
+	        -rd config_file=$(FILL_CONFIG) \
 	        -rd report_file="$(REPORTS_DIR)/6_2_density.rpt" \
 	        -rm $(UTILS_DIR)/gdsFill.py) 2>&1 | tee $(LOG_DIR)/6_2_fill.log
 else
