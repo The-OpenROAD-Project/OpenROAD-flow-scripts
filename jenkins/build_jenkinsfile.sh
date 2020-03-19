@@ -23,7 +23,7 @@ for platform in $platforms; do
           steps {
             catchError {
               sh label: '${platform}_${design}', script: '''
-              docker run -u \$(id -u \${USER}):\$(id -g \${USER}) openroad/flow bash -c \"source setup_env.sh && cd flow && test/test_helper.sh ${design} ${platform}\"'''
+              docker run --rm -u \$(id -u \${USER}):\$(id -g \${USER}) openroad/flow bash -c \"source setup_env.sh && cd flow && test/test_helper.sh ${design} ${platform}\"'''
             }
             echo currentBuild.result
           }
