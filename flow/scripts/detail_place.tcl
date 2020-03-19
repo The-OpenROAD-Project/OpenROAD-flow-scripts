@@ -19,7 +19,7 @@ if {![info exists standalone] || $standalone} {
 
 set_placement_padding -global -left 0 -right $::env(CELL_PAD_IN_SITES)
 detailed_placement
-check_placement
+check_placement -verbose
 
 if {![info exists standalone] || $standalone} {
   # write output
