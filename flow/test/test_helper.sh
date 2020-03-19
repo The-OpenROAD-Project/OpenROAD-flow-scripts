@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 # Setting args (and setting default values for testing)
 DESIGN_CONFIG=${1:-gcd}
@@ -12,8 +12,8 @@ then
   LOG_FILE=$TEST_DIR/logs/$PLATFORM/$DESIGN_CONFIG.log
   GOLD_LOG_FILE=$TEST_DIR/gold_logs/$PLATFORM/$DESIGN_CONFIG.log
 else
-  LOG_FILE=$TEST_DIR/logs/$PLATFORM/$DESIGN\_$DESIGN_NICKNAME.log
-  GOLD_LOG_FILE=$TEST_DIR/gold_logs/$PLATFORM/$DESIGN\_$DESIGN_NICKNAME.log
+  LOG_FILE=$TEST_DIR/logs/$PLATFORM/$DESIGN/$DESIGN_NICKNAME.log
+  GOLD_LOG_FILE=$TEST_DIR/gold_logs/$PLATFORM/$DESIGN/$DESIGN_NICKNAME.log
 fi
 
 
@@ -22,12 +22,12 @@ set -o pipefail
 mkdir -p $TEST_DIR/logs/$PLATFORM
 
 if [ -f "./private/util/utils.mk" ]; then
-  TARGETS="finish drc congestion"
+  TARGETS="finish metadata private_drc private_congestion private_metadata"
 else
-  TARGETS="finish"
+  TARGETS="finish metadata"
 fi
 
-make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG.mk clean_all
+make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG.mk clean_all clean_metadata
 make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG.mk $TARGETS 2>&1 | tee $LOG_FILE
 
 

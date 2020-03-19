@@ -1,5 +1,5 @@
 export DESIGN_NAME = gcd
-export PLATFORM    = skywater130
+export PLATFORM    = sw130
 
 export VERILOG_FILES = ./designs/src/gcd/gcd.v
 export SDC_FILE      = ./designs/src/gcd/gcd.sdc

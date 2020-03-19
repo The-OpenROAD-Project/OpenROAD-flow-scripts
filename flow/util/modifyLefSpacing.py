@@ -21,7 +21,7 @@ f = open(args.inputLef)
 content = f.read()
 f.close()
 
-pattern = r"PROPERTY LEF58_SPACING.*?(SPACING.*?)\"\s+;"
+pattern = r"PROPERTY LEF58_SPACING +.*?(SPACING.*?)\"\s+;"
 replace = r"\1"
 
 result,count = re.subn(pattern, replace, content, 0, re.S)

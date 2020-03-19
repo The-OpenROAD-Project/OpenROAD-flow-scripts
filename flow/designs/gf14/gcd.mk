@@ -1,3 +1,4 @@
+export DESIGN_NICKNAME = gcd_$(TRACK_OPTION)_$(TECH_OPTION)
 export DESIGN_NAME = gcd
 export PLATFORM    = gf14
 

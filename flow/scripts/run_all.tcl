@@ -7,25 +7,33 @@ set standalone 0
 source -verbose $::env(SCRIPTS_DIR)/yosys.tcl
 
 # Read process / design
-read_lef $::env(OBJECTS_DIR)/merged_padded.lef
+# Read lef
+read_lef $::env(TECH_LEF)
+read_lef $::env(SC_LEF)
+if {[info exist ::env(ADDITIONAL_LEFS)]} {
+    foreach lef $::env(ADDITIONAL_LEFS) {
+      read_lef $lef
+    }
+}
+
+# Read liberty files
 foreach libFile $::env(LIB_FILES) {
   read_liberty $libFile
 }
+
 read_verilog $::env(RESULTS_DIR)/1_1_yosys.v
 link_design $::env(DESIGN_NAME)
 read_sdc $::env(SDC_FILE)
 
-# Pre-placement buffering
 set_wire_rc -layer $::env(WIRE_RC_LAYER)
-source -verbose $::env(SCRIPTS_DIR)/buffer.tcl
 
 # Floorplan
-source -verbose $::env(SCRIPTS_DIR)/verilog2def.tcl
+source -verbose $::env(SCRIPTS_DIR)/floorplan.tcl
 source -verbose $::env(SCRIPTS_DIR)/io_placement.tcl
 source -verbose $::env(SCRIPTS_DIR)/tdms_place.tcl
 source -verbose $::env(SCRIPTS_DIR)/macro_place.tcl
-source -verbose $::env(SCRIPTS_DIR)/pdn.tcl
 source -verbose $::env(SCRIPTS_DIR)/tapcell.tcl
+source -verbose $::env(SCRIPTS_DIR)/pdn.tcl
 
 # Place
 source -verbose $::env(SCRIPTS_DIR)/global_place.tcl
