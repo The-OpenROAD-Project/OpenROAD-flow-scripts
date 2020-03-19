@@ -7,6 +7,9 @@ pipeline {
 
   stages {
     stage('Build') {
+      environment {
+        OPENROAD_FLOW_NO_GIT_INIT = 1
+      }
       steps {
         sh label: 'Build', script: './build_openroad.sh'
       }
