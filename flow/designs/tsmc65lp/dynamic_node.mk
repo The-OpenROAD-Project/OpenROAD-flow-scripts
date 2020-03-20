@@ -8,6 +8,3 @@ export SDC_FILE      = ./designs/src/dynamic_node/design.sdc
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 500 501.6
 export CORE_AREA   = 10 12 490 492
-
-export CLOCK_PERIOD = 15.000
-export CLOCK_PORT   = clk

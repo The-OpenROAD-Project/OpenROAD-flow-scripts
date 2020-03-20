@@ -237,7 +237,6 @@ clean_floorplan:
 # |_|   |_____/_/   \_\____|_____|
 #
 place: $(RESULTS_DIR)/3_place.def \
-       $(RESULTS_DIR)/3_place.v \
        $(RESULTS_DIR)/3_place.sdc
 # ==============================================================================
 
@@ -252,9 +251,6 @@ $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2
 $(RESULTS_DIR)/3_2_place_resized.def: $(RESULTS_DIR)/3_1_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl) 2>&1 | tee $(LOG_DIR)/3_2_resizer.log
 	@! grep --color -i "^Error:" $(LOG_DIR)/3_2_resizer.log
-
-$(RESULTS_DIR)/3_place.v: $(RESULTS_DIR)/3_2_place_resized.def
-
 
 # STEP 3: Detail placement
 #-------------------------------------------------------------------------------
@@ -280,10 +276,10 @@ analyze_power_grid: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc $(OBJE
 # Clean Targets
 #-------------------------------------------------------------------------------
 clean_place:
-	rm -rf $(RESULTS_DIR)/3_*place*.def
-	rm -rf $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc
-	rm -f  $(REPORTS_DIR)/3_*
-	rm -f  $(LOG_DIR)/3_*
+	rm -f $(RESULTS_DIR)/3_*place*.def
+	rm -f $(RESULTS_DIR)/3_place.sdc
+	rm -f $(REPORTS_DIR)/3_*
+	rm -f $(LOG_DIR)/3_*
 
 
 # ==============================================================================
@@ -300,7 +296,7 @@ cts: $(RESULTS_DIR)/4_cts.def \
 
 # Run TritonCTS
 # ------------------------------------------------------------------------------
-$(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc
+$(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cts.tcl) 2>&1 | tee $(LOG_DIR)/4_cts.log
 	@! grep --color -i "^Error:" $(LOG_DIR)/4_cts.log
 
@@ -455,7 +451,7 @@ clean_finish:
 #
 # ==============================================================================
 
-all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/TritonRoute.param
+all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/TritonRoute.param $(OBJECTS_DIR)/klayout.lyt
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/run_all.tcl) 2>&1 | tee $(LOG_DIR)/run_all.log
 

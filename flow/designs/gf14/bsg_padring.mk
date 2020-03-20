@@ -22,6 +22,3 @@ export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
 # These values must be multiples of placement site
 # export DIE_AREA    =
 # export CORE_AREA   =
-
-export CLOCK_PERIOD = 0
-export CLOCK_PORT   = dummy

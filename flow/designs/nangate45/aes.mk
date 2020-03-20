@@ -11,6 +11,3 @@ export SDC_FILE      = ./designs/src/aes/aes_cipher_top.sdc
 #export CORE_AREA   = 10.07 11.2 310.27 310.8
 export DIE_AREA    = 0 0 620.15 620.6
 export CORE_AREA   = 10.07 11.2 610.27 610.8
-
-export CLOCK_PERIOD = 5.000
-export CLOCK_PORT   = clk

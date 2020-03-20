@@ -10,7 +10,3 @@ export SDC_FILE      = ./designs/src/ibex/ibex_core.elab.v.sdc
 # x=0.19 y=1.4
 export DIE_AREA    = 0 0 600.08 599.8
 export CORE_AREA   = 10.07 11.2 590.01 590
-
-export CLOCK_PERIOD = 10.000
-export CLOCK_PORT   = clk_i
-
