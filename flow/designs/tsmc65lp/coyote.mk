@@ -24,6 +24,10 @@ export ADDITIONAL_GDS  = ./platforms/tsmc65lp/gds/tsmc65lp_1rf_lg6_w80_bit.gds2 
                          ./platforms/tsmc65lp/gds/tsmc65lp_2rf_lg8_w64_bit.gds2 \
                          ./platforms/tsmc65lp/gds/tsmc65lp_2rf_lg8_w64_bit.gds2
 
+
+
 # These values must be multiples of placement site
 export DIE_AREA    = 0.0 0.0 4200 1860
 export CORE_AREA   = 10 12 4190 1850.4
+
+export CLOCK_PERIOD = 5.600

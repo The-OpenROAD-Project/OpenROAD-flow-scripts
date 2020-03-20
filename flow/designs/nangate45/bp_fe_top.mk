@@ -14,3 +14,5 @@ export ADDITIONAL_LIBS = $(wildcard ./designs/src/bp_fe_top/fakeram45*.lib)
 # x=0.19 y=1.4
 export DIE_AREA    = 0 0 999.97 799.4
 export CORE_AREA   = 10.07 9.8 989.9 789.6
+
+export CLOCK_PERIOD = 5.600
