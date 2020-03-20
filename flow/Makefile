@@ -428,8 +428,8 @@ ifneq ($(KLAYOUT_DRC_FILE),)
 	($(TIME_CMD) klayout -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_DRC_FILE)) 2>&1 | tee $(LOG_DIR)/6_drc.log
-	# Hacky way of getting DRV count
-	grep -c "<value>" $@ > $(REPORTS_DIR)/6_drc_count.rpt
+	# Hacky way of getting DRV count (don't error on no matches)
+	grep -c "<value>" $@ > $(REPORTS_DIR)/6_drc_count.rpt || [[ $$? == 1 ]]
 else
 	echo "DRC not supported on this platform" > $@
 endif
