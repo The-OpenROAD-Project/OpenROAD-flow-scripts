@@ -24,4 +24,3 @@ export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
 # export CORE_AREA   =
 
 export CLOCK_PERIOD = 5.600
-export CLOCK_PORT   = clk_i

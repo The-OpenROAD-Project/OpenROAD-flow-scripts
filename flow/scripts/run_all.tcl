@@ -37,12 +37,13 @@ source -verbose $::env(SCRIPTS_DIR)/pdn.tcl
 
 # Place
 source -verbose $::env(SCRIPTS_DIR)/global_place.tcl
+source -verbose $::env(SCRIPTS_DIR)/resize.tcl
 source -verbose $::env(SCRIPTS_DIR)/detail_place.tcl
 
 # CTS
 source -verbose $::env(SCRIPTS_DIR)/cts.tcl
 
-# Save output for global route
+# Save output for detail route
 write_def $::env(RESULTS_DIR)/4_cts.def
 
 # Route
@@ -52,6 +53,7 @@ source -verbose $::env(SCRIPTS_DIR)/global_route.tcl
 source -verbose $::env(SCRIPTS_DIR)/tritonRoute.tcl
 
 # Finishing
+source -verbose $::env(SCRIPTS_DIR)/final_report.tcl
 source -verbose $::env(SCRIPTS_DIR)/klayout.tcl
 
 exit

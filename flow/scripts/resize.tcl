@@ -1,6 +1,4 @@
 if {![info exists standalone] || $standalone} {
-  #TODO: currently reading liberty file before lef due to a reported issue with
-  #      buffer_ports
 
   # Read liberty files
   foreach libFile $::env(LIB_FILES) {
@@ -130,6 +128,5 @@ log_end
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/3_2_place_resized.def
-  write_verilog $::env(RESULTS_DIR)/3_place.v
   exit
 }
