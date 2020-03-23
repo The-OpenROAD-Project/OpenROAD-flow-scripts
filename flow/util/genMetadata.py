@@ -88,7 +88,7 @@ def extractGnuTime(prefix, file):
                      file)
   extractTagFromFile(prefix + "_mem",
                      "^\S+elapsed \S+CPU (\S+)memKB",
-                     file)
+                     file, t=int)
 
 
 # Main
@@ -142,10 +142,10 @@ extractGnuTime("synth",logPath+"/1_1_yosys.log")
 # ==============================================================================
 extractTagFromFile("floorplan_tns",
                    "^tns (\S+)",
-                   rptPath+"/2_init.rpt")
+                   rptPath+"/2_init.rpt", t=float)
 extractTagFromFile("floorplan_wns",
                    "^wns (\S+)",
-                   rptPath+"/2_init.rpt")
+                   rptPath+"/2_init.rpt", t=float)
 extractTagFromFile("floorplan_area",
                    "^Design area (\S+ \S+)",
                    rptPath+"/2_init.rpt")
@@ -299,34 +299,34 @@ extractGnuTime("fastroute",logPath+"/5_1_fastroute.log")
 
 extractTagFromFile("droute_num_layers",
                    "#layers: +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_num_macros",
                    "#macros: +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_num_vias",
                    "#vias: +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_trackPts",
                    "trackPts: +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_defvias",
                    "defvias: +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_num_components",
                    "#components: +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_num_terminals",
                    "#terminals: +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_num_nets",
                    "nets: +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_num_unique_instances",
                    "#unique instances = +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_num_instances",
                    "#scanned instances += +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_runtime",
                    "Runtime taken \(hrt\): +(\S+)",
                    logPath+"/5_2_TritonRoute.log")
@@ -335,10 +335,10 @@ extractTagFromFile("droute_wirelength",
                    logPath+"/5_2_TritonRoute.log")
 extractTagFromFile("droute_total_num_vias",
                    "total number of vias = +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_peak_mem",
                    "peak = (\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=float)
 
 extractTagFromFile("droute_warnings",
                    "(?i)warning:",
@@ -357,19 +357,19 @@ extractGnuTime("droute",logPath+"/5_2_TritonRoute.log")
 
 extractTagFromFile("finish_internal_power",
                    "Total +(\S+) +\S+ +\S+ +\S+ +\S+",
-                   rptPath+"/6_final_report.rpt")
+                   rptPath+"/6_final_report.rpt", t=float)
 
 extractTagFromFile("finish_switching_power",
                    "Total +\S+ +(\S+) +\S+ +\S+ +\S+",
-                   rptPath+"/6_final_report.rpt")
+                   rptPath+"/6_final_report.rpt", t=float)
 
 extractTagFromFile("finish_leakage_power",
                    "Total +\S+ +\S+ +(\S+) +\S+ +\S+",
-                   rptPath+"/6_final_report.rpt")
+                   rptPath+"/6_final_report.rpt", t=float)
 
 extractTagFromFile("finish_total_power",
                    "Total +\S+ +\S+ +\S+ +(\S+) +\S+",
-                   rptPath+"/6_final_report.rpt")
+                   rptPath+"/6_final_report.rpt", t=float)
 
 extractTagFromFile("finish_area",
                    "^Design area (\S+ \S+)",
@@ -383,9 +383,9 @@ extractGnuTime("report",logPath+"/6_report.log")
 extractGnuTime("merge",logPath+"/6_1_merge.log")
 
 
-extractTagFromFile("klayout_viols",
+extractTagFromFile("drc_klayout_viols",
                    "<value>",
-                   rptPath+"/6_drc_count.rpt", -2, 0)
+                   rptPath+"/6_drc_count.rpt", -2, 0, t=int)
 
 
 # Accumulate time

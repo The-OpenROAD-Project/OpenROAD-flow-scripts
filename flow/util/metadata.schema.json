@@ -215,7 +215,7 @@
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "457"
+                457
             ]
         },
         "yosys_chip_area": {
@@ -253,12 +253,13 @@
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "72"
+                72
             ]
         },
         "synth_time": {
             "$id": "#/properties/synth_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -276,29 +277,32 @@
         },
         "synth_mem": {
             "$id": "#/properties/synth_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "29516"
+                29516
             ]
         },
         "floorplan_tns": {
             "$id": "#/properties/floorplan_tns",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 1,
             "examples": [
-                "0.00"
+                0.00
             ]
         },
         "floorplan_wns": {
             "$id": "#/properties/floorplan_wns",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 1,
             "examples": [
-                "0.00"
+                0.00
             ]
         },
         "floorplan_area": {
@@ -326,12 +330,13 @@
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "0"
+                0
             ]
         },
         "floorplan_time": {
             "$id": "#/properties/floorplan_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -349,11 +354,12 @@
         },
         "floorplan_mem": {
             "$id": "#/properties/floorplan_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "50436"
+                50436
             ]
         },
         "floorplan_io_count": {
@@ -362,12 +368,13 @@
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "54"
+                54
             ]
         },
         "floorplan_io_time": {
             "$id": "#/properties/floorplan_io_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -385,16 +392,18 @@
         },
         "floorplan_io_mem": {
             "$id": "#/properties/floorplan_io_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "49144"
+                49144
             ]
         },
         "floorplan_tdms_time": {
             "$id": "#/properties/floorplan_tdms_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -412,11 +421,12 @@
         },
         "floorplan_tdms_mem": {
             "$id": "#/properties/floorplan_tdms_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "49268"
+                49268
             ]
         },
         "mplace_macro_count": {
@@ -440,6 +450,7 @@
         "mplace_time": {
             "$id": "#/properties/mplace_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -457,16 +468,18 @@
         },
         "mplace_mem": {
             "$id": "#/properties/mplace_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "49268"
+                49268
             ]
         },
         "tapcell_time": {
             "$id": "#/properties/tapcell_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -484,16 +497,18 @@
         },
         "tapcell_mem": {
             "$id": "#/properties/tapcell_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "50100"
+                50100
             ]
         },
         "pdn_time": {
             "$id": "#/properties/pdn_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -511,11 +526,12 @@
         },
         "pdn_mem": {
             "$id": "#/properties/pdn_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "53860"
+                53860
             ]
         },
         "globalplace_hpwl": {
@@ -557,6 +573,7 @@
         "globalplace_time": {
             "$id": "#/properties/globalplace_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -574,11 +591,12 @@
         },
         "globalplace_mem": {
             "$id": "#/properties/globalplace_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "77236"
+                77236
             ]
         },
         "resizer_pre_tns": {
@@ -728,6 +746,7 @@
         "resizer_time": {
             "$id": "#/properties/resizer_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -745,11 +764,12 @@
         },
         "resizer_mem": {
             "$id": "#/properties/resizer_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "78336"
+                78336
             ]
         },
         "dp_core_area": {
@@ -828,7 +848,7 @@
             "$id": "#/properties/dp_delta_HPWL",
             "type": "string",
             "description": "An explanation about the purpose of this instance.",
-            "improvement": -1,
+            "improvement": 0,
             "examples": [
                 "4%"
             ]
@@ -836,6 +856,7 @@
         "dp_time": {
             "$id": "#/properties/dp_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -853,16 +874,18 @@
         },
         "dp_mem": {
             "$id": "#/properties/dp_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "51952"
+                51952
             ]
         },
         "cts_time": {
             "$id": "#/properties/cts_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -880,16 +903,18 @@
         },
         "cts_mem": {
             "$id": "#/properties/cts_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "55824"
+                55824
             ]
         },
         "fastroute_time": {
             "$id": "#/properties/fastroute_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -907,106 +932,118 @@
         },
         "fastroute_mem": {
             "$id": "#/properties/fastroute_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "81784"
+                81784
             ]
         },
         "droute_num_layers": {
             "$id": "#/properties/droute_num_layers",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "19"
+                19
             ]
         },
         "droute_num_macros": {
             "$id": "#/properties/droute_num_macros",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "134"
+                134
             ]
         },
         "droute_num_vias": {
             "$id": "#/properties/droute_num_vias",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "27"
+                27
             ]
         },
         "droute_trackPts": {
             "$id": "#/properties/droute_trackPts",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "20"
+                20
             ]
         },
         "droute_defvias": {
             "$id": "#/properties/droute_defvias",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "6"
+                6
             ]
         },
         "droute_num_components": {
             "$id": "#/properties/droute_num_components",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "631"
+                631
             ]
         },
         "droute_num_terminals": {
             "$id": "#/properties/droute_num_terminals",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "54"
+                54
             ]
         },
         "droute_num_nets": {
             "$id": "#/properties/droute_num_nets",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "588"
+                588
             ]
         },
         "droute_num_unique_instances": {
             "$id": "#/properties/droute_num_unique_instances",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "66"
+                66
             ]
         },
         "droute_num_instances": {
             "$id": "#/properties/droute_num_instances",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "631"
+                631
             ]
         },
         "droute_runtime": {
             "$id": "#/properties/droute_runtime",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -1024,16 +1061,18 @@
         },
         "droute_total_num_vias": {
             "$id": "#/properties/droute_total_num_vias",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "2878"
+                2878
             ]
         },
         "droute_peak_mem": {
             "$id": "#/properties/droute_peak_mem",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -1047,7 +1086,7 @@
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "0"
+                0
             ]
         },
         "droute_errors": {
@@ -1057,7 +1096,7 @@
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "0"
+                0
             ]
         },
         "droute_viols": {
@@ -1067,12 +1106,13 @@
             "improvement": -1,
             "description": "An explanation about the purpose of this instance.",
             "examples": [
-                "1"
+                1
             ]
         },
         "droute_time": {
             "$id": "#/properties/droute_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -1090,16 +1130,18 @@
         },
         "droute_mem": {
             "$id": "#/properties/droute_mem",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "19796"
+                19796
             ]
         },
         "finish_internal_power": {
             "$id": "#/properties/finish_internal_power",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
@@ -1108,7 +1150,8 @@
         },
         "finish_switching_power": {
             "$id": "#/properties/finish_switching_power",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
@@ -1117,7 +1160,8 @@
         },
         "finish_leakage_power": {
             "$id": "#/properties/finish_leakage_power",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
@@ -1126,7 +1170,8 @@
         },
         "finish_total_power": {
             "$id": "#/properties/finish_total_power",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
@@ -1154,6 +1199,7 @@
         "report_time": {
             "$id": "#/properties/report_time",
             "type": "string",
+            "format": "duration",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
@@ -1171,17 +1217,19 @@
         },
         "report_mem": {
             "$id": "#/properties/report_mem",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Memory usage (KB) during final reporting, as measured by unix time utility",
             "improvement": 0,
             "examples": [
-                "54396"
+                54396
             ]
         },
         "merge_time": {
             "$id": "#/properties/merge_time",
             "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "format": "duration",
+            "description": "Wall time for GDS merge, as measured by unix time utility",
             "improvement": 0,
             "examples": [
                 "0:01.32"
@@ -1190,7 +1238,7 @@
         "merge_cpu": {
             "$id": "#/properties/merge_cpu",
             "type": "string",
-            "description": "Average CPU Utilization during GDS merge",
+            "description": "Average CPU Utilization during GDS merge, as measured by unix time utility",
             "improvement": 0,
             "examples": [
                 "86%"
@@ -1198,20 +1246,22 @@
         },
         "merge_mem": {
             "$id": "#/properties/merge_mem",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Memory usage (KB) during merge, as measured by unix time utility",
             "improvement": 0,
             "examples": [
-                "229228"
+                229228
             ]
         },
-        "klayout_viols": {
+        "drc_klayout_viols": {
             "$id": "#/properties/klayout_viols",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "DRC violations reported by KLayout ruledeck",
             "improvement": -1,
             "examples": [
-                "15"
+                15
             ]
         },
         "total_time": {
