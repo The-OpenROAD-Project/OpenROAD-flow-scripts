@@ -127,10 +127,10 @@ extractTagFromFile("yosys_chip_area",
                    "Chip area for module.*: +(\S+)",
                    rptPath+"/synth_stat.txt", t=float)
 extractTagFromFile("yosys_runtime",
-                   "^CPU: user (\S+)",
+                   "CPU: user (\S+)",
                    logPath+"/1_1_yosys.log")
 extractTagFromFile("yosys_mem",
-                   "^CPU: user.*MEM: (\S+ \S+)",
+                   "CPU: user.*MEM: (\S+ \S+)",
                    logPath+"/1_1_yosys.log")
 extractTagFromFile("yosys_warnings",
                    "Warnings: \d+ unique messages, (\d+) total",
@@ -259,32 +259,32 @@ extractGnuTime("resizer",logPath+"/3_2_resizer.log")
 
 # Detail place
 extractTagFromFile("dp_core_area",
-                   "core area +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "design area +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_total_cells",
-                   "total cells +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "total instances +(\d+)",
+                   logPath+"/3_3_opendp.log", t=int)
 extractTagFromFile("dp_design_utilization",
-                   "design utilization +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "utilization +(\d+)",
+                   logPath+"/3_3_opendp.log", t=int)
 extractTagFromFile("dp_total_displacement",
-                   "total displacement +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "total displacement +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_average_displacement",
-                   "average displacement +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "average displacement +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_max_displacement",
-                   "max displacement +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "max displacement +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_original_HPWL",
-                   "original HPWL +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "original HPWL +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_legalized_HPWL",
-                   "legalized HPWL +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "legalized HPWL +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_delta_HPWL",
-                   "delta HPWL +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "delta HPWL +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=int)
 extractGnuTime("dp",logPath+"/3_3_opendp.log")
 
 # CTS

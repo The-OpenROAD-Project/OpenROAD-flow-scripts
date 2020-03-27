@@ -231,7 +231,7 @@
         "yosys_runtime": {
             "$id": "#/properties/yosys_runtime",
             "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "description": "Yosys self-reported user cpu time",
             "improvement": 0,
             "examples": [
                 "0.91s"
@@ -790,83 +790,92 @@
         },
         "dp_core_area": {
             "$id": "#/properties/dp_core_area",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Design core area (um^2)",
             "improvement": 0,
             "examples": [
-                "(20140, 22400) (180500, 182000)"
+                6398.4
             ]
         },
         "dp_total_cells": {
             "$id": "#/properties/dp_total_cells",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Standard cell instance count during detail placement",
             "improvement": -1,
             "examples": [
-                "624"
+                624
             ]
         },
         "dp_design_utilization": {
             "$id": "#/properties/dp_design_utilization",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Utilization % during detail placement. Measured as (standard cell area)/(core area)",
             "improvement": 0,
             "examples": [
-                "11.1%"
+                11
             ]
         },
         "dp_total_displacement": {
             "$id": "#/properties/dp_total_displacement",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Total instance displacement after detail placement (um)",
             "improvement": 0,
             "examples": [
-                "1730252"
+                522.8
             ]
         },
         "dp_average_displacement": {
             "$id": "#/properties/dp_average_displacement",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Average instance displacement after detail placement (um)",
             "improvement": 0,
             "examples": [
-                "2772"
+                0.9
             ]
         },
         "dp_max_displacement": {
             "$id": "#/properties/dp_max_displacement",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Maximum instance displacement after detail placement (um)",
             "improvement": 0,
             "examples": [
-                "45320"
+                6.2
             ]
         },
         "dp_original_HPWL": {
             "$id": "#/properties/dp_original_HPWL",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "6.63e+03"
+                6657.7
             ]
         },
         "dp_legalized_HPWL": {
             "$id": "#/properties/dp_legalized_HPWL",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "6.87e+03"
+                6858.0
             ]
         },
         "dp_delta_HPWL": {
             "$id": "#/properties/dp_delta_HPWL",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "4%"
+                3
             ]
         },
         "dp_time": {
