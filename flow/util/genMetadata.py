@@ -52,7 +52,7 @@ rptPath = os.path.join(args.flowPath, "reports", args.platform, args.design)
 # t indicates the type that should be written to the JSON file (default: string)
 def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str):
   if jsonTag in jsonFile:
-    print "WARNING: Overwriting Tag", jsonTag
+    print "[WARN] Overwriting Tag", jsonTag
 
   # Open file
   try:
@@ -72,10 +72,10 @@ def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N
     else:
       # Only print a warning if the defaultNotFound is not set
       if defaultNotFound == "N/A":
-        print "WARNING: Tag", jsonTag, "not found in", searchFilePath
+        print "[WARN] Tag", jsonTag, "not found in", searchFilePath
       jsonFile[jsonTag] = defaultNotFound
   except IOError:
-    print "WARNING: Failed to open file:", searchFilePath
+    print "[WARN] Failed to open file:", searchFilePath
     jsonFile[jsonTag] = "ERR"
 
 
