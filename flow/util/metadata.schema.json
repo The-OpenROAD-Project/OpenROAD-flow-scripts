@@ -231,7 +231,7 @@
         "yosys_runtime": {
             "$id": "#/properties/yosys_runtime",
             "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "description": "Yosys self-reported user cpu time",
             "improvement": 0,
             "examples": [
                 "0.91s"
@@ -307,11 +307,12 @@
         },
         "floorplan_area": {
             "$id": "#/properties/floorplan_area",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Total standard cell area during floorplanning (um^2)",
             "improvement": -1,
             "examples": [
-                "2791 u^2"
+                2791
             ]
         },
         "floorplan_util": {
@@ -364,8 +365,9 @@
         },
         "floorplan_io_count": {
             "$id": "#/properties/floorplan_io_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Number of input/output ports",
             "improvement": 0,
             "examples": [
                 54
@@ -431,20 +433,22 @@
         },
         "mplace_macro_count": {
             "$id": "#/properties/mplace_macro_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Total count of block macros in the design",
             "improvement": 0,
             "examples": [
-                "0"
+                0
             ]
         },
         "mplace_solutions": {
             "$id": "#/properties/mplace_solutions",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "0"
+                0
             ]
         },
         "mplace_time": {
@@ -601,20 +605,22 @@
         },
         "resizer_pre_tns": {
             "$id": "#/properties/resizer_pre_tns",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Total negative slack before running resizer (library time units)",
             "improvement": 1,
             "examples": [
-                "0.00"
+                0.0
             ]
         },
         "resizer_pre_wns": {
             "$id": "#/properties/resizer_pre_wns",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Worst negative slack before running resizer (library time units)",
             "improvement": 1,
             "examples": [
-                "0.00"
+                0.0
             ]
         },
         "resizer_pre_area": {
@@ -637,88 +643,98 @@
         },
         "resizer_ibuf_count": {
             "$id": "#/properties/resizer_ibuf_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Number of buffers inserted by resizer on input ports",
             "improvement": 0,
             "examples": [
-                "35"
+                35
             ]
         },
         "resizer_obuf_count": {
             "$id": "#/properties/resizer_obuf_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Number of buffers inserted by resizer on output ports",
             "improvement": 0,
             "examples": [
-                "18"
+                18
             ]
         },
         "resizer_resize_count": {
             "$id": "#/properties/resizer_resize_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Number of instances resized by resizer",
             "improvement": 0,
             "examples": [
-                "212"
+                212
             ]
         },
         "resizer_hbuf_count": {
             "$id": "#/properties/resizer_hbuf_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Number of hold buffers inserted byu resizer",
             "improvement": 0,
             "examples": [
-                "0"
+                0
             ]
         },
         "resizer_maxcap_viols": {
             "$id": "#/properties/resizer_maxcap_viols",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "0"
+                0
             ]
         },
         "resizer_maxslew_viols": {
             "$id": "#/properties/resizer_maxslew_viols",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "0"
+                0
             ]
         },
         "resizer_maxfanout_viols": {
             "$id": "#/properties/resizer_maxfanout_viols",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "0"
+                0
             ]
         },
         "resizer_maxfanout_bufs": {
             "$id": "#/properties/resizer_maxfanout_bufs",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "0"
+                0
             ]
         },
         "resizer_post_tns": {
             "$id": "#/properties/resizer_post_tns",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 1,
             "examples": [
-                "0.00"
+                0.0
             ]
         },
         "resizer_post_wns": {
             "$id": "#/properties/resizer_post_wns",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 1,
             "examples": [
@@ -774,83 +790,92 @@
         },
         "dp_core_area": {
             "$id": "#/properties/dp_core_area",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Design core area (um^2)",
             "improvement": 0,
             "examples": [
-                "(20140, 22400) (180500, 182000)"
+                6398.4
             ]
         },
         "dp_total_cells": {
             "$id": "#/properties/dp_total_cells",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Standard cell instance count during detail placement",
             "improvement": -1,
             "examples": [
-                "624"
+                624
             ]
         },
         "dp_design_utilization": {
             "$id": "#/properties/dp_design_utilization",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Utilization % during detail placement. Measured as (standard cell area)/(core area)",
             "improvement": 0,
             "examples": [
-                "11.1%"
+                11
             ]
         },
         "dp_total_displacement": {
             "$id": "#/properties/dp_total_displacement",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Total instance displacement after detail placement (um)",
             "improvement": 0,
             "examples": [
-                "1730252"
+                522.8
             ]
         },
         "dp_average_displacement": {
             "$id": "#/properties/dp_average_displacement",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Average instance displacement after detail placement (um)",
             "improvement": 0,
             "examples": [
-                "2772"
+                0.9
             ]
         },
         "dp_max_displacement": {
             "$id": "#/properties/dp_max_displacement",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Maximum instance displacement after detail placement (um)",
             "improvement": 0,
             "examples": [
-                "45320"
+                6.2
             ]
         },
         "dp_original_HPWL": {
             "$id": "#/properties/dp_original_HPWL",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "6.63e+03"
+                6657.7
             ]
         },
         "dp_legalized_HPWL": {
             "$id": "#/properties/dp_legalized_HPWL",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "6.87e+03"
+                6858.0
             ]
         },
         "dp_delta_HPWL": {
             "$id": "#/properties/dp_delta_HPWL",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "4%"
+                3
             ]
         },
         "dp_time": {
@@ -1042,21 +1067,22 @@
         },
         "droute_runtime": {
             "$id": "#/properties/droute_runtime",
-            "type": "string",
-            "format": "duration",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "TritonRoute self-measured runtime (s)",
             "improvement": 0,
             "examples": [
-                "3.81088"
+                3.81088
             ]
         },
         "droute_wirelength": {
             "$id": "#/properties/droute_wirelength",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Total routed wirelength (um)",
             "improvement": -1,
             "examples": [
-                "7269 um"
+                7269
             ]
         },
         "droute_total_num_vias": {
