@@ -307,11 +307,12 @@
         },
         "floorplan_area": {
             "$id": "#/properties/floorplan_area",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Total standard cell area during floorplanning (um^2)",
             "improvement": -1,
             "examples": [
-                "2791 u^2"
+                2791
             ]
         },
         "floorplan_util": {
@@ -364,8 +365,9 @@
         },
         "floorplan_io_count": {
             "$id": "#/properties/floorplan_io_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Number of input/output ports",
             "improvement": 0,
             "examples": [
                 54
@@ -431,20 +433,22 @@
         },
         "mplace_macro_count": {
             "$id": "#/properties/mplace_macro_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Total count of block macros in the design",
             "improvement": 0,
             "examples": [
-                "0"
+                0
             ]
         },
         "mplace_solutions": {
             "$id": "#/properties/mplace_solutions",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "0"
+                0
             ]
         },
         "mplace_time": {
@@ -601,20 +605,22 @@
         },
         "resizer_pre_tns": {
             "$id": "#/properties/resizer_pre_tns",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Total negative slack before running resizer (library time units)",
             "improvement": 1,
             "examples": [
-                "0.00"
+                0.0
             ]
         },
         "resizer_pre_wns": {
             "$id": "#/properties/resizer_pre_wns",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Worst negative slack before running resizer (library time units)",
             "improvement": 1,
             "examples": [
-                "0.00"
+                0.0
             ]
         },
         "resizer_pre_area": {
@@ -637,88 +643,98 @@
         },
         "resizer_ibuf_count": {
             "$id": "#/properties/resizer_ibuf_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Number of buffers inserted by resizer on input ports",
             "improvement": 0,
             "examples": [
-                "35"
+                35
             ]
         },
         "resizer_obuf_count": {
             "$id": "#/properties/resizer_obuf_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Number of buffers inserted by resizer on output ports",
             "improvement": 0,
             "examples": [
-                "18"
+                18
             ]
         },
         "resizer_resize_count": {
             "$id": "#/properties/resizer_resize_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Number of instances resized by resizer",
             "improvement": 0,
             "examples": [
-                "212"
+                212
             ]
         },
         "resizer_hbuf_count": {
             "$id": "#/properties/resizer_hbuf_count",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Number of hold buffers inserted byu resizer",
             "improvement": 0,
             "examples": [
-                "0"
+                0
             ]
         },
         "resizer_maxcap_viols": {
             "$id": "#/properties/resizer_maxcap_viols",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "0"
+                0
             ]
         },
         "resizer_maxslew_viols": {
             "$id": "#/properties/resizer_maxslew_viols",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "0"
+                0
             ]
         },
         "resizer_maxfanout_viols": {
             "$id": "#/properties/resizer_maxfanout_viols",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": -1,
             "examples": [
-                "0"
+                0
             ]
         },
         "resizer_maxfanout_bufs": {
             "$id": "#/properties/resizer_maxfanout_bufs",
-            "type": "string",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 0,
             "examples": [
-                "0"
+                0
             ]
         },
         "resizer_post_tns": {
             "$id": "#/properties/resizer_post_tns",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 1,
             "examples": [
-                "0.00"
+                0.0
             ]
         },
         "resizer_post_wns": {
             "$id": "#/properties/resizer_post_wns",
-            "type": "string",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
             "description": "An explanation about the purpose of this instance.",
             "improvement": 1,
             "examples": [
@@ -1042,21 +1058,22 @@
         },
         "droute_runtime": {
             "$id": "#/properties/droute_runtime",
-            "type": "string",
-            "format": "duration",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["number", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "TritonRoute self-measured runtime (s)",
             "improvement": 0,
             "examples": [
-                "3.81088"
+                3.81088
             ]
         },
         "droute_wirelength": {
             "$id": "#/properties/droute_wirelength",
-            "type": "string",
-            "description": "An explanation about the purpose of this instance.",
+            "type": ["integer", "string"],
+            "pattern": "^N/A$|^ERR$",
+            "description": "Total routed wirelength (um)",
             "improvement": -1,
             "examples": [
-                "7269 um"
+                7269
             ]
         },
         "droute_total_num_vias": {
