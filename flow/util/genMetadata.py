@@ -52,7 +52,7 @@ rptPath = os.path.join(args.flowPath, "reports", args.platform, args.design)
 # t indicates the type that should be written to the JSON file (default: string)
 def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str):
   if jsonTag in jsonFile:
-    print "WARNING: Overwriting Tag", jsonTag
+    print "[WARN] Overwriting Tag", jsonTag
 
   # Open file
   try:
@@ -72,10 +72,10 @@ def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N
     else:
       # Only print a warning if the defaultNotFound is not set
       if defaultNotFound == "N/A":
-        print "WARNING: Tag", jsonTag, "not found in", searchFilePath
+        print "[WARN] Tag", jsonTag, "not found in", searchFilePath
       jsonFile[jsonTag] = defaultNotFound
   except IOError:
-    print "WARNING: Failed to open file:", searchFilePath
+    print "[WARN] Failed to open file:", searchFilePath
     jsonFile[jsonTag] = "ERR"
 
 
@@ -127,10 +127,10 @@ extractTagFromFile("yosys_chip_area",
                    "Chip area for module.*: +(\S+)",
                    rptPath+"/synth_stat.txt", t=float)
 extractTagFromFile("yosys_runtime",
-                   "^CPU: user (\S+)",
+                   "CPU: user (\S+)",
                    logPath+"/1_1_yosys.log")
 extractTagFromFile("yosys_mem",
-                   "^CPU: user.*MEM: (\S+ \S+)",
+                   "CPU: user.*MEM: (\S+ \S+)",
                    logPath+"/1_1_yosys.log")
 extractTagFromFile("yosys_warnings",
                    "Warnings: \d+ unique messages, (\d+) total",
@@ -147,8 +147,8 @@ extractTagFromFile("floorplan_wns",
                    "^wns (\S+)",
                    rptPath+"/2_init.rpt", t=float)
 extractTagFromFile("floorplan_area",
-                   "^Design area (\S+ \S+)",
-                   rptPath+"/2_init.rpt")
+                   "^Design area (\S+) u\^2",
+                   rptPath+"/2_init.rpt", t=int)
 extractTagFromFile("floorplan_util",
                    "^Design area.* (\S+%) utilization",
                    rptPath+"/2_init.rpt")
@@ -159,7 +159,7 @@ extractGnuTime("floorplan",logPath+"/2_1_floorplan.log")
 
 extractTagFromFile("floorplan_io_count",
                    "Num of I/O +(\d+)",
-                   logPath+"/2_2_floorplan_io.log")
+                   logPath+"/2_2_floorplan_io.log", t=int)
 extractGnuTime("floorplan_io",logPath+"/2_2_floorplan_io.log")
 
 
@@ -168,10 +168,10 @@ extractGnuTime("floorplan_tdms",logPath+"/2_3_tdms_place.log")
 
 extractTagFromFile("mplace_macro_count",
                    "Extracted # Macros: (\S+)",
-                   logPath+"/2_4_mplace.log", -1, "0")
+                   logPath+"/2_4_mplace.log", -1, 0, t=int)
 extractTagFromFile("mplace_solutions",
                    "Total Extracted Solution: (\S+)",
-                   logPath+"/2_4_mplace.log", -1, "0")
+                   logPath+"/2_4_mplace.log", -1, 0, t=int)
 extractGnuTime("mplace",logPath+"/2_4_mplace.log")
 
 extractGnuTime("tapcell",logPath+"/2_5_tapcell.log")
@@ -201,10 +201,10 @@ extractGnuTime("globalplace",logPath+"/3_1_place_gp.log")
 # Resizer
 extractTagFromFile("resizer_pre_tns",
                    "^tns (\S+)",
-                   rptPath+"/3_pre_resize.rpt")
+                   rptPath+"/3_pre_resize.rpt", t=float)
 extractTagFromFile("resizer_pre_wns",
                    "^wns (\S+)",
-                   rptPath+"/3_pre_resize.rpt")
+                   rptPath+"/3_pre_resize.rpt", t=float)
 extractTagFromFile("resizer_pre_area",
                    "^Design area (\S+ \S+)",
                    rptPath+"/3_pre_resize.rpt")
@@ -213,28 +213,28 @@ extractTagFromFile("resizer_pre_util",
                    rptPath+"/3_pre_resize.rpt")
 extractTagFromFile("resizer_ibuf_count",
                    "Inserted (\d+) input buffers",
-                   logPath+"/3_2_resizer.log")
+                   logPath+"/3_2_resizer.log", t=int)
 extractTagFromFile("resizer_obuf_count",
                    "Inserted (\d+) output buffers",
-                   logPath+"/3_2_resizer.log")
+                   logPath+"/3_2_resizer.log", t=int)
 extractTagFromFile("resizer_resize_count",
                    "Resized (\d+) instances",
-                   logPath+"/3_2_resizer.log")
+                   logPath+"/3_2_resizer.log", t=int)
 extractTagFromFile("resizer_hbuf_count",
                    "Inserted (\d+) hold buffers",
-                   logPath+"/3_2_resizer.log")
+                   logPath+"/3_2_resizer.log", t=int)
 extractTagFromFile("resizer_maxcap_viols",
                    "Found (\d+) max capacitance violations",
-                   logPath+"/3_2_resizer.log", -1, "0")
+                   logPath+"/3_2_resizer.log", -1, 0, t=int)
 extractTagFromFile("resizer_maxslew_viols",
                    "Found (\d+) max slew violations",
-                   logPath+"/3_2_resizer.log", -1, "0")
+                   logPath+"/3_2_resizer.log", -1, 0, t=int)
 extractTagFromFile("resizer_maxfanout_viols",
                    "Found (\d+) max fanout violations",
-                   logPath+"/3_2_resizer.log", -1, "0")
+                   logPath+"/3_2_resizer.log", -1, 0, t=int)
 extractTagFromFile("resizer_maxfanout_bufs",
                    "Inserted (\d+) buffers",
-                   logPath+"/3_2_resizer.log", -1, "0")
+                   logPath+"/3_2_resizer.log", -1, 0, t=int)
 #TODO Tie hi tie low
 # extractTagFromFile("resizer_maxfanout_bufs_tielo",
 #                    "Inserted (\d+) tie \S+ instances for \d+ nets",
@@ -244,10 +244,10 @@ extractTagFromFile("resizer_maxfanout_bufs",
 #                    logPath+"/3_2_resizer.log", 1, "0")
 extractTagFromFile("resizer_post_tns",
                    "^tns (\S+)",
-                   rptPath+"/3_post_resize.rpt")
+                   rptPath+"/3_post_resize.rpt", t=float)
 extractTagFromFile("resizer_post_wns",
                    "^wns (\S+)",
-                   rptPath+"/3_post_resize.rpt")
+                   rptPath+"/3_post_resize.rpt", t=float)
 extractTagFromFile("resizer_post_area",
                    "^Design area (\S+ \S+)",
                    rptPath+"/3_post_resize.rpt")
@@ -259,32 +259,32 @@ extractGnuTime("resizer",logPath+"/3_2_resizer.log")
 
 # Detail place
 extractTagFromFile("dp_core_area",
-                   "core area +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "design area +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_total_cells",
-                   "total cells +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "total instances +(\d+)",
+                   logPath+"/3_3_opendp.log", t=int)
 extractTagFromFile("dp_design_utilization",
-                   "design utilization +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "utilization +(\d+)",
+                   logPath+"/3_3_opendp.log", t=int)
 extractTagFromFile("dp_total_displacement",
-                   "total displacement +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "total displacement +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_average_displacement",
-                   "average displacement +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "average displacement +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_max_displacement",
-                   "max displacement +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "max displacement +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_original_HPWL",
-                   "original HPWL +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "original HPWL +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_legalized_HPWL",
-                   "legalized HPWL +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "legalized HPWL +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=float)
 extractTagFromFile("dp_delta_HPWL",
-                   "delta HPWL +: +(.*)",
-                   logPath+"/3_3_opendp.log")
+                   "delta HPWL +(\d*\.?\d*)",
+                   logPath+"/3_3_opendp.log", t=int)
 extractGnuTime("dp",logPath+"/3_3_opendp.log")
 
 # CTS
@@ -329,10 +329,10 @@ extractTagFromFile("droute_num_instances",
                    logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_runtime",
                    "Runtime taken \(hrt\): +(\S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   logPath+"/5_2_TritonRoute.log", t=float)
 extractTagFromFile("droute_wirelength",
-                   "total wire length = +(\S+ \S+)",
-                   logPath+"/5_2_TritonRoute.log")
+                   "total wire length = +(\S+) um",
+                   logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_total_num_vias",
                    "total number of vias = +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)

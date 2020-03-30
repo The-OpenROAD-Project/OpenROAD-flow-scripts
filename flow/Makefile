@@ -296,12 +296,19 @@ cts: $(RESULTS_DIR)/4_cts.def \
 
 # Run TritonCTS
 # ------------------------------------------------------------------------------
-$(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cts.tcl) 2>&1 | tee $(LOG_DIR)/4_cts.log
+$(RESULTS_DIR)/4_1_cts_prefillcell.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cts.tcl) 2>&1 | tee $(LOG_DIR)/4_1_cts_prefillcell.log
+	@! grep --color -i "^Error:" $(LOG_DIR)/4_1_cts_prefillcell.log
+
+# Filler insertion
+# TODO(rovinski) This is more logically part of finishing, but OpenDB can't read
+# the post-TritonRoute DEF at the moment
+# ------------------------------------------------------------------------------
+$(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_1_cts_prefillcell.def
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/fillcell.tcl) 2>&1 | tee $(LOG_DIR)/4_cts.log
 	@! grep --color -i "^Error:" $(LOG_DIR)/4_cts.log
 
 $(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/4_cts.def
-
 
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.def
 

@@ -70,6 +70,9 @@ export KLAYOUT_DRC_FILE = ./platforms/$(PLATFORM)/drc/FreePDK45.lydrc
 # Specify at least one filler cell if none
 export DONT_USE_CELLS = FILLCELL_X1 AOI211_X1 OAI211_X1
 
+# Fill cells used in fill cell insertion
+export FILL_CELLS = FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32
+
 # Define default PDN config
 export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
 
