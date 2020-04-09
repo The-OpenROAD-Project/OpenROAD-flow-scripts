@@ -2,12 +2,13 @@
 # This script builds the OpenROAD tools locally
 
 # Exit on first error
-set -ex
+set -e
 
 function usage() {
-  echo "Usage: $0 [-h|--help] [-l|--latest] [-b|--branch BRANCH]"
+  echo "Usage: $0 [-h|--help] [-l|--latest] [-o|--local] [--or_branch] [--tr_branch]"
   echo "  -h, --help          print this help message"
-  echo "  -l, --latest        build using the head of branch 'openroad' for OpenROAD and TritonRoute"
+  echo "  -l, --latest        build using the head of branch 'openroad' for OpenROAD"
+  echo "                      and TritonRoute"
   echo "  -o, --local         force local build instead of docker build"
   echo "  --or_branch BRANCH  build using the head of branch BRANCH for OpenROAD"
   echo "  --tr_branch BRANCH  build using the head of branch BRANCH for TritonRoute"
@@ -21,7 +22,7 @@ function usage() {
 while (( "$#" )); do
   case "$1" in
     -h|--help)
-      usage
+      usage 2> /dev/null
       exit
       ;;
     --or_branch)
