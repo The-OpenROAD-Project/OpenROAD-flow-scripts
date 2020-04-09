@@ -270,7 +270,7 @@ OpeNPDN = $(OPENROAD)/src/OpeNPDN/
 export OPDN_SRC = $(OpeNPDN)
 
 analyze_power_grid: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc $(OBJECTS_DIR)/merged.lib
-	($(TIME_CMD) $(OPENROAD_CMD) -exit $(SCRIPTS_DIR)/analyze_pdn_ir).tcl 2>&1 | tee $(LOG_DIR)/analyze_pdn_ir.log
+	($(TIME_CMD) $(OPENROAD_CMD) -exit $(SCRIPTS_DIR)/analyze_pdn_ir.tcl) 2>&1 | tee $(LOG_DIR)/analyze_pdn_ir.log
 	@! grep --color -i "^Error:" $(LOG_DIR)/analyze_pdn_ir.log
 
 # Clean Targets
