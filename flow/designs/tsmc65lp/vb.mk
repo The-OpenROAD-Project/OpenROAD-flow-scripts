@@ -21,5 +21,3 @@ export DIE_AREA    = 0 0 1100 400.8
 export CORE_AREA   = 10 12 1090 391.2
 
 export CLOCK_PERIOD = 5.000
-export CLOCK_PORT   = clk_i
-

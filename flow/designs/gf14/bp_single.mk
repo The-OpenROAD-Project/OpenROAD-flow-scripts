@@ -34,7 +34,7 @@ export ADDITIONAL_GDS  = ./platforms/gf14/bp/gds/gf14_1r1w_d32_w64_m1.gds2 \
                          ./platforms/gf14/bp/gds/IN12LP_GPIO18_13M9S30P.gds
 
 
-export FOOTPRINT    = ./platforms/gf14/bp/bsg_black_parrot.package.strategy
+export FOOTPRINT    = ./platforms/gf14/bp/bsg_bp_single.package.strategy
 export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
 
 # These values must be multiples of placement site
@@ -42,4 +42,6 @@ export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
 # export CORE_AREA   =
 
 export CLOCK_PERIOD = 5.600
-export CLOCK_PORT   = clk_i
+
+# TODO(rovinski) This density needs to be lower, but it is constrained by the core area of the bsg package
+export PLACE_DENSITY = 0.45

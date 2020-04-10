@@ -237,7 +237,6 @@ clean_floorplan:
 # |_|   |_____/_/   \_\____|_____|
 #
 place: $(RESULTS_DIR)/3_place.def \
-       $(RESULTS_DIR)/3_place.v \
        $(RESULTS_DIR)/3_place.sdc
 # ==============================================================================
 
@@ -252,9 +251,6 @@ $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2
 $(RESULTS_DIR)/3_2_place_resized.def: $(RESULTS_DIR)/3_1_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl) 2>&1 | tee $(LOG_DIR)/3_2_resizer.log
 	@! grep --color -i "^Error:" $(LOG_DIR)/3_2_resizer.log
-
-$(RESULTS_DIR)/3_place.v: $(RESULTS_DIR)/3_2_place_resized.def
-
 
 # STEP 3: Detail placement
 #-------------------------------------------------------------------------------
@@ -274,16 +270,16 @@ OpeNPDN = $(OPENROAD)/src/OpeNPDN/
 export OPDN_SRC = $(OpeNPDN)
 
 analyze_power_grid: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc $(OBJECTS_DIR)/merged.lib
-	($(TIME_CMD) $(OPENROAD_CMD) -exit $(SCRIPTS_DIR)/analyze_pdn_ir).tcl 2>&1 | tee $(LOG_DIR)/analyze_pdn_ir.log
+	($(TIME_CMD) $(OPENROAD_CMD) -exit $(SCRIPTS_DIR)/analyze_pdn_ir.tcl) 2>&1 | tee $(LOG_DIR)/analyze_pdn_ir.log
 	@! grep --color -i "^Error:" $(LOG_DIR)/analyze_pdn_ir.log
 
 # Clean Targets
 #-------------------------------------------------------------------------------
 clean_place:
-	rm -rf $(RESULTS_DIR)/3_*place*.def
-	rm -rf $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc
-	rm -f  $(REPORTS_DIR)/3_*
-	rm -f  $(LOG_DIR)/3_*
+	rm -f $(RESULTS_DIR)/3_*place*.def
+	rm -f $(RESULTS_DIR)/3_place.sdc
+	rm -f $(REPORTS_DIR)/3_*
+	rm -f $(LOG_DIR)/3_*
 
 
 # ==============================================================================
@@ -300,12 +296,19 @@ cts: $(RESULTS_DIR)/4_cts.def \
 
 # Run TritonCTS
 # ------------------------------------------------------------------------------
-$(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.v $(RESULTS_DIR)/3_place.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cts.tcl) 2>&1 | tee $(LOG_DIR)/4_cts.log
+$(RESULTS_DIR)/4_1_cts_prefillcell.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cts.tcl) 2>&1 | tee $(LOG_DIR)/4_1_cts_prefillcell.log
+	@! grep --color -i "^Error:" $(LOG_DIR)/4_1_cts_prefillcell.log
+
+# Filler insertion
+# TODO(rovinski) This is more logically part of finishing, but OpenDB can't read
+# the post-TritonRoute DEF at the moment
+# ------------------------------------------------------------------------------
+$(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_1_cts_prefillcell.def
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/fillcell.tcl) 2>&1 | tee $(LOG_DIR)/4_cts.log
 	@! grep --color -i "^Error:" $(LOG_DIR)/4_cts.log
 
 $(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/4_cts.def
-
 
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.def
 
@@ -432,8 +435,8 @@ ifneq ($(KLAYOUT_DRC_FILE),)
 	($(TIME_CMD) klayout -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_DRC_FILE)) 2>&1 | tee $(LOG_DIR)/6_drc.log
-	# Hacky way of getting DRV count
-	grep -c "<value>" $@ > $(REPORTS_DIR)/6_drc_count.rpt
+	# Hacky way of getting DRV count (don't error on no matches)
+	grep -c "<value>" $@ > $(REPORTS_DIR)/6_drc_count.rpt || [[ $$? == 1 ]]
 else
 	echo "DRC not supported on this platform" > $@
 endif
@@ -455,7 +458,7 @@ clean_finish:
 #
 # ==============================================================================
 
-all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/TritonRoute.param
+all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/TritonRoute.param $(OBJECTS_DIR)/klayout.lyt
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/run_all.tcl) 2>&1 | tee $(LOG_DIR)/run_all.log
 

@@ -14,15 +14,14 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read design files
-  read_def $::env(RESULTS_DIR)/3_2_place_resized.def
+  read_def $::env(RESULTS_DIR)/4_1_cts_prefillcell.def
 }
 
-set_placement_padding -global -left 0 -right $::env(CELL_PAD_IN_SITES)
-detailed_placement
-check_placement -verbose
+filler_placement $::env(FILL_CELLS)
+check_placement
 
 if {![info exists standalone] || $standalone} {
   # write output
-  write_def $::env(RESULTS_DIR)/3_3_place_dp.def
+  write_def $::env(RESULTS_DIR)/4_cts.def
   exit
 }
