@@ -24,7 +24,7 @@ fastroute -output_file $::env(RESULTS_DIR)/route.guide \
           -unidirectional_routing true \
           -capacity_adjustment 0.15 \
           -layers_adjustments {{2 0.5} {3 0.5}} \
-          -overflow_iterations 200
+          -overflow_iterations 100
 
 if {![info exists standalone] || $standalone} {
   exit
