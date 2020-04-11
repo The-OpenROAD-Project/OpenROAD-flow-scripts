@@ -1,9 +1,17 @@
 if {![info exists standalone] || $standalone} {
-  # Read process files
+  # Read lef
+  read_lef $::env(TECH_LEF)
+  read_lef $::env(SC_LEF)
+  if {[info exist ::env(ADDITIONAL_LEFS)]} {
+    foreach lef $::env(ADDITIONAL_LEFS) {
+      read_lef $lef
+    }
+  }
+
+  # Read liberty files
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
   }
-  read_lef $::env(OBJECTS_DIR)/merged_padded.lef
 
   # Read design files
   read_def $::env(RESULTS_DIR)/4_cts.def
@@ -15,8 +23,8 @@ fastroute -output_file $::env(RESULTS_DIR)/route.guide \
           -max_routing_layer $::env(MAX_ROUTING_LAYER) \
           -unidirectional_routing true \
           -capacity_adjustment 0.15 \
-          -layers_adjustments {{2 0.7} {3 0.7}} \
-          -pitches_in_tile 45
+          -layers_adjustments {{2 0.5} {3 0.5}} \
+          -overflow_iterations 100
 
 if {![info exists standalone] || $standalone} {
   exit

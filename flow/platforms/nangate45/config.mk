@@ -39,7 +39,7 @@ export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*.gds) \
                      $(ADDITIONAL_GDS_FILES)
 
 # Cell padding in SITE widths to ease rout-ability
-export CELL_PAD_IN_SITES = 8
+export CELL_PAD_IN_SITES = 5
 
 # Endcap and Welltie cells
 export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
@@ -63,9 +63,15 @@ export RESIZER_BUF_CELL = BUF_X4
 # KLayout technology file
 export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/FreePDK45.lyt
 
+# KLayout DRC ruledeck
+export KLAYOUT_DRC_FILE = ./platforms/$(PLATFORM)/drc/FreePDK45.lydrc
+
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS = FILLCELL_X1 AOI211_X1 OAI211_X1
+
+# Fill cells used in fill cell insertion
+export FILL_CELLS = FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32
 
 # Define default PDN config
 export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
@@ -73,7 +79,7 @@ export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
 # Template definition for power grid analysis
 export TEMPLATE_PGA_CFG ?= ./platforms/nangate45/template_pga.cfg
 
-export PLACE_DENSITY ?= 0.70
+export PLACE_DENSITY ?= 0.30
 
 # IO Placer pin layers
 export IO_PLACER_H = 3

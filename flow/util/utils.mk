@@ -6,6 +6,25 @@ grep_cells:
 grep_util:
 	find ./reports/ -iname 6_final_report.rpt -exec sh -c "grep -iH 'Design area' {} | tail -1" \;
 
+metadata: $(REPORTS_DIR)/metadata-check.log
+
+clean_metadata:
+	rm -f $(REPORTS_DIR)/metadata-check.log
+	rm -f $(REPORTS_DIR)/metadata.json
+
+$(REPORTS_DIR)/metadata.json:
+	$(UTILS_DIR)/genMetadata.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -o $@
+
+RULES = $(dir $(DESIGN_CONFIG))$(DESIGN_NICKNAME)_rules.json
+
+$(REPORTS_DIR)/metadata-check.log: $(REPORTS_DIR)/metadata.json
+	if test -f $(RULES); then \
+	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES) | tee $@; \
+	else \
+	  echo "No rules" | tee $@; \
+	fi
+
+
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------
 TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh

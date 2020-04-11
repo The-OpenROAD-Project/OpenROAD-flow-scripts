@@ -1,9 +1,17 @@
 if {![info exists standalone] || $standalone} {
-  # Read process files
+  # Read lef
+  read_lef $::env(TECH_LEF)
+  read_lef $::env(SC_LEF)
+  if {[info exist ::env(ADDITIONAL_LEFS)]} {
+    foreach lef $::env(ADDITIONAL_LEFS) {
+      read_lef $lef
+    }
+  }
+
+  # Read liberty files
   foreach libFile $::env(LIB_FILES) {
     read_liberty $libFile
   }
-  read_lef $::env(OBJECTS_DIR)/merged_padded.lef
 
   # Read design files
   read_def $::env(RESULTS_DIR)/2_2_floorplan_io.def
@@ -27,10 +35,13 @@ proc find_macros {} {
 }
 
 if {[find_macros] != ""} {
-  set_wire_rc -layer $::env(WIRE_RC_LAYER)
-  global_placement -timing_driven
+    #@workaround crash
+    if {$::env(DESIGN_NICKNAME)!="bp_single"} {
+	set_wire_rc -layer $::env(WIRE_RC_LAYER)
+    }
+    global_placement -timing_driven -density $::env(PLACE_DENSITY)
 } else {
-  puts "No macros found: Skipping global_placement"
+    puts "No macros found: Skipping global_placement"
 }
 
 if {![info exists standalone] || $standalone} {
