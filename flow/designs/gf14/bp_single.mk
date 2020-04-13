@@ -43,5 +43,4 @@ export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
 
 export CLOCK_PERIOD = 5.600
 
-# TODO(rovinski) This density needs to be lower, but it is constrained by the core area of the bsg package
-export PLACE_DENSITY = 0.45
+export PLACE_DENSITY = 0.20
