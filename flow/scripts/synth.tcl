@@ -8,6 +8,7 @@ if {[info exist ::env(DC_NETLIST)]} {
 # Don't change these unless you know what you are doing
 set stat_ext    "_stat.rep"
 set gl_ext      "_gl.v"
+set abc_script  "+read_constr,$::env(SDC_FILE);strash;ifraig;dc2;fraig;rewrite;refactor;resub;rewrite;refactor;resub;rewrite;rewrite,-z;rewrite,-z;rewrite,-z;balance;refactor,-z;refactor,-N,11;resub,-K,10;resub,-K,12;resub,-K,14;resub,-K,16;refactor;balance;map,-a;topo;dnsize;buffer,-p;upsize;"
 set abc_script  "+read_constr,$::env(SDC_FILE);strash;ifraig;retime,-D,{D},-M,6;strash;dch,-f;map,-p,-M,1,{D},-f;topo;dnsize;buffer,-p;upsize;"
 
 
