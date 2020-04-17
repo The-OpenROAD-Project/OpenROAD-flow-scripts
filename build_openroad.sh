@@ -37,17 +37,14 @@ while (( "$#" )); do
       OR_BRANCH="openroad"
       TR_BRANCH="openroad"
       shift
-      break
       ;;
     -o|--local)
       BUILD_METHOD="LOCAL"
       shift
-      break
       ;;
     -n|--no_init)
       NO_INIT=1
       shift
-      break
       ;;
     -*|--*=) # unsupported flags
       echo "[ERROR][FLOW-1000] Unsupported flag $1" >&2
