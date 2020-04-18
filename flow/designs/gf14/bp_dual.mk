@@ -1,13 +1,13 @@
-export DESIGN_NICKNAME = bp_quad
+export DESIGN_NICKNAME = bp_dual
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf14
 
-export VERILOG_FILES = ./platforms/gf14/bp/bsg_ac_black_parrot_quad_core_v0/bsg_chip.sv2v.v \
+export VERILOG_FILES = ./platforms/gf14/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.sv2v.v \
                        ./platforms/gf14/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
-# export DC_NETLIST    = ./platforms/gf14/bp/bsg_ac_black_parrot_quad_core_v0/dc/results/bsg_chip.mapped.flat.v
+# export DC_NETLIST    = ./platforms/gf14/bp/bsg_ac_black_parrot_dual_core_v0/dc/results/bsg_chip.mapped.flat.v
 
-export SDC_FILE      = ./platforms/gf14/bp/bsg_ac_black_parrot_quad_core_v0/bsg_chip.elab.v.sdc
+export SDC_FILE      = ./platforms/gf14/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.elab.v.sdc
 
 export ADDITIONAL_LEFS = ./platforms/gf14/bp/lef/gf14_1r1w_d32_w64_m1.lef \
                          ./platforms/gf14/bp/lef/gf14_1rw_d128_w116_m2_bit.lef \
@@ -34,7 +34,7 @@ export ADDITIONAL_GDS  = ./platforms/gf14/bp/gds/gf14_1r1w_d32_w64_m1.gds2 \
                          ./platforms/gf14/bp/gds/IN12LP_GPIO18_13M9S30P.gds
 
 
-export FOOTPRINT    = ./platforms/gf14/bp/bsg_black_parrot.package.strategy
+export FOOTPRINT    = ./platforms/gf14/bp/bsg_bp_dual.package.strategy
 export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
 
 # These values must be multiples of placement site
@@ -42,3 +42,5 @@ export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
 # export CORE_AREA   =
 
 export CLOCK_PERIOD = 5.600
+
+export PLACE_DENSITY = 0.20

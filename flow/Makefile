@@ -41,6 +41,7 @@
 # DESIGN_CONFIG=./designs/gf14/bsg_padring.mk
 # DESIGN_CONFIG=./designs/gf14/bsg_loopback.mk
 # DESIGN_CONFIG=./designs/gf14/bp_single.mk
+# DESIGN_CONFIG=./designs/gf14/bp_dual.mk
 # DESIGN_CONFIG=./designs/gf14/bp_quad.mk
 
 # DESIGN_CONFIG=./designs/invecas12/gcd.mk
@@ -86,7 +87,7 @@ export TEST_DIR    = ./test
 # Tool Options
 SHELL = /bin/bash -o pipefail
 TIME_CMD = /usr/bin/time -f "%Eelapsed %PCPU %MmemKB"
-NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
+export NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
 OPENROAD_CMD = openroad -no_init -exit
 
 
