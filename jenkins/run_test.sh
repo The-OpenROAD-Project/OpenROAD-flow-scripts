@@ -19,4 +19,4 @@ docker_script="source setup_env.sh && \
   status=\$?; \
   make metadata DESIGN_CONFIG=designs/${PLATFORM}/${DESIGN}.mk && exit \$status"
 
-docker run --rm -u ${user_id} -v ${flow_mount} -v ${tr_mount} ${docker_tag} bash -xc "${docker_script}"
+docker run --rm -u ${user_id} -v ${flow_mount} -v ${tr_mount} ${docker_tag} -e PATH -e LD_LIBRARY_PATH bash -xc "${docker_script}"
