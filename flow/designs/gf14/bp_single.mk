@@ -5,7 +5,7 @@ export PLATFORM    = gf14
 export VERILOG_FILES = ./platforms/gf14/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.sv2v.v \
                        ./platforms/gf14/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
-# export DC_NETLIST    = ./platforms/gf14/bp/bsg_ac_black_parrot_single_core_v0/dc/results/bsg_chip.mapped.flat.v
+export DC_NETLIST    = ./platforms/gf14/bp/bsg_ac_black_parrot_single_core_v0/dc/results/bsg_chip.mapped.flat.v
 
 export SDC_FILE      = ./platforms/gf14/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.elab.v.sdc
 
