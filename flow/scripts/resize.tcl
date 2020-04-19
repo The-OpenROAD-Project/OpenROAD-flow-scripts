@@ -92,8 +92,8 @@ repair_tie_fanout -max_fanout $::env(MAX_FANOUT) $tiehi_pin
 puts "Repair max fanout..."
 repair_max_fanout -max_fanout $::env(MAX_FANOUT) -buffer_cell $buffer_cell
 
-# Repair max fanout
-puts "Repair max fanout..."
+# Repair hold violations
+puts "Repair hold violations..."
 repair_hold_violations -buffer_cell $buffer_cell
 
 # post report
