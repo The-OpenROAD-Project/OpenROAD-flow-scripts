@@ -38,8 +38,9 @@ export LIB_FILES = ./platforms/$(PLATFORM)/lib/NangateOpenCellLibrary_typical.li
 export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*.gds) \
                      $(ADDITIONAL_GDS_FILES)
 
-# Cell padding in SITE widths to ease rout-ability
-export CELL_PAD_IN_SITES = 5
+# Cell padding in SITE widths to ease rout-ability.  Applied to both sides
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 3
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 1
 
 # Endcap and Welltie cells
 export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl

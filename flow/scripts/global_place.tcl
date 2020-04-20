@@ -21,7 +21,8 @@ if {![info exists standalone] || $standalone} {
 set_wire_rc -layer $::env(WIRE_RC_LAYER)
 
 global_placement -timing_driven -density $::env(PLACE_DENSITY) \
-    -pad_left 0 -pad_right $::env(CELL_PAD_IN_SITES)
+    -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+    -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/3_1_place_gp.def
