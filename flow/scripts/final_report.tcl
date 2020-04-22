@@ -46,9 +46,9 @@ puts "--------------------------------------------------------------------------
 report_wns
 
 puts "\n=========================================================================="
-puts "report_check_types -max_transition -all_violators"
+puts "report_check_types -max_slew -violators"
 puts "--------------------------------------------------------------------------"
-report_check_types -max_transition -all_violators
+report_check_types -max_slew -violators
 
 puts "\n=========================================================================="
 puts "report_power"
