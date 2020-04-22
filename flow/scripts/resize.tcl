@@ -19,31 +19,37 @@ if {![info exists standalone] || $standalone} {
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
 }
 
+proc print_banner {header} {
+  puts "\n=========================================================================="
+  puts "$header"
+  puts "--------------------------------------------------------------------------"
+}
+
 # Set res and cap
 set_wire_rc -layer $::env(WIRE_RC_LAYER)
 
 # pre report
 log_begin $::env(REPORTS_DIR)/3_pre_resize.rpt
 
-puts "\n=========================================================================="
-puts "report_checks"
-puts "--------------------------------------------------------------------------"
+print_banner "report_checks"
 report_checks
 
-puts "\n=========================================================================="
-puts "report_tns"
-puts "--------------------------------------------------------------------------"
+print_banner "report_tns"
 report_tns
 
-puts "\n=========================================================================="
-puts "report_wns"
-puts "--------------------------------------------------------------------------"
+print_banner "report_wns"
 report_wns
 
-puts "\n=========================================================================="
-puts "report_design_area"
-puts "--------------------------------------------------------------------------"
+print_banner "report_design_area"
 report_design_area
+
+print_banner "instance_count"
+puts [sta::network_leaf_instance_count]
+
+print_banner "pin_count"
+puts [sta::network_leaf_pin_count]
+
+puts ""
 
 log_end
 
@@ -99,30 +105,28 @@ repair_hold_violations -buffer_cell $buffer_cell
 # post report
 log_begin $::env(REPORTS_DIR)/3_post_resize.rpt
 
-puts "\n=========================================================================="
-puts "report_floating_nets"
-puts "--------------------------------------------------------------------------"
+print_banner "report_floating_nets"
 report_floating_nets
 
-puts "\n=========================================================================="
-puts "report_checks"
-puts "--------------------------------------------------------------------------"
+print_banner "report_checks"
 report_checks
 
-puts "\n=========================================================================="
-puts "report_tns"
-puts "--------------------------------------------------------------------------"
+print_banner "report_tns"
 report_tns
 
-puts "\n=========================================================================="
-puts "report_wns"
-puts "--------------------------------------------------------------------------"
+print_banner "report_wns"
 report_wns
 
-puts "\n=========================================================================="
-puts "report_design_area"
-puts "--------------------------------------------------------------------------"
+print_banner "report_design_area"
 report_design_area
+
+print_banner "instance_count"
+puts [sta::network_leaf_instance_count]
+
+print_banner "pin_count"
+puts [sta::network_leaf_pin_count]
+
+puts ""
 
 log_end
 
