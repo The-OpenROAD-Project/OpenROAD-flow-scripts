@@ -30,6 +30,9 @@ set abc_retime_area   	"retime,-D,{D},-M,5"
 set abc_retime_dly    	"retime,-D,{D},-M,6"
 set abc_map_new_area  	"amap,-m,-Q,0.1,-F,20,-A,20,-C,5000"
 
+set max_FO 7
+set max_Tran 200
+
 if {$buffering==1} {
   set abc_fine_tune		    "buffer,-N,${max_FO},-S,${max_Tran};upsize,{D};dnsize,{D}"
 } elseif {$sizing} {
