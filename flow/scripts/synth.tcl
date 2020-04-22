@@ -38,7 +38,8 @@ if {$buffering==1} {
   set abc_fine_tune       ""
 }
 
-#set abc_script  "fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_area};scleanup;${abc_map_new_area};retime,-D,{D};${abc_fine_tune};stime,-p;print_stats -m"
+#set abc_script_2  "+fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_area};scleanup;${abc_map_new_area};retime,-D,{D};${abc_fine_tune};stime,-p;print_stats -m"
+#set abc_script_3  "+strash;ifraig;scorr;dc2; dretime; strash; &get -n; &dch -f; &nf {D}; &put; buffer,-N,${max_FO}; upsize {D}; dnsize {D}; stime -p;print_stats -m"
 set abc_script  "+strash;ifraig;dc2;fraig;rewrite;refactor;resub;rewrite;refactor;resub;rewrite;rewrite,-z;rewrite,-z;rewrite,-z;balance;refactor,-z;refactor,-N,11;resub,-K,10;resub,-K,12;resub,-K,14;resub,-K,16;refactor;balance;map,-a;topo;dnsize;buffer,-p;upsize;"
 
 
