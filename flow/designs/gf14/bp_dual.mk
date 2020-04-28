@@ -41,6 +41,6 @@ export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
 # export DIE_AREA    =
 # export CORE_AREA   =
 
-export CLOCK_PERIOD = 5.600
+export ABC_CLOCK_PERIOD_IN_PS = 1250
 
 export PLACE_DENSITY = 0.20
