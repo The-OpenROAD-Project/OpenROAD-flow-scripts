@@ -35,10 +35,7 @@ proc find_macros {} {
 }
 
 if {[find_macros] != ""} {
-    #@workaround crash
-    if {$::env(DESIGN_NICKNAME)!="bp_single"} {
-	set_wire_rc -layer $::env(WIRE_RC_LAYER)
-    }
+    set_wire_rc -layer $::env(WIRE_RC_LAYER)
     global_placement -timing_driven -density $::env(PLACE_DENSITY)
 } else {
     puts "No macros found: Skipping global_placement"
