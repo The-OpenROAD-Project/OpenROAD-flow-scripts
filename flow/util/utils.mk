@@ -1,10 +1,5 @@
 # Utilities
 #===============================================================================
-grep_cells:
-	find ./logs/ -iname 1_1_yosys.log -exec sh -c "grep -iH 'Number of cells' {} | tail -1" \;
-
-grep_util:
-	find ./reports/ -iname 6_final_report.rpt -exec sh -c "grep -iH 'Design area' {} | tail -1" \;
 
 metadata: $(REPORTS_DIR)/metadata-check.log
 
