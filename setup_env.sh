@@ -8,7 +8,7 @@ fi
 export OPENROAD=${modroot}/OpenROAD
 echo "OPENROAD: ${OPENROAD}"
 
-path_string=${modroot}/build/OpenROAD/src:${modroot}/build/TritonRoute:${modroot}/build/yosys/bin
+path_string=${modroot}/build/OpenROAD/src:${modroot}/build/TritonRoute14:${modroot}/build/TritonRoute:${modroot}/build/yosys/bin
 
 if [ -n "${PATH}" ]; then
   export PATH=$path_string:$PATH
