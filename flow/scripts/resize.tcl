@@ -53,14 +53,8 @@ puts ""
 
 log_end
 
-# Set the dont use list
-set dont_use_cells ""
-foreach cell $::env(DONT_USE_CELLS) {
-  lappend dont_use_cells [get_full_name [get_lib_cells */$cell]]
-}
-
 # Set the buffer cell
-set buffer_cell [get_lib_cell */[lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
+set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
 
 # Do not buffer chip-level designs
 if {![info exists ::env(FOOTPRINT)]} {
@@ -70,7 +64,7 @@ if {![info exists ::env(FOOTPRINT)]} {
 
 # Perform resizing
 puts "Perform resizing..."
-resize -resize -dont_use $dont_use_cells
+resize -dont_use $::env(DONT_USE_CELLS)
 
 # Repair max cap
 puts "Repair max cap..."
@@ -83,14 +77,14 @@ repair_max_slew -buffer_cell $buffer_cell
 # Repair tie lo fanout
 puts "Repair tie lo fanout..."
 set tielo_cell_name [lindex $env(TIELO_CELL_AND_PORT) 0]
-set tielo_lib_name [get_name [get_property [get_lib_cell */$tielo_cell_name] library]]
+set tielo_lib_name [get_name [get_property [get_lib_cell $tielo_cell_name] library]]
 set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $env(TIELO_CELL_AND_PORT) 1]
 repair_tie_fanout -max_fanout $::env(MAX_FANOUT) $tielo_pin
 
 # Repair tie hi fanout
 puts "Repair tie hi fanout..."
 set tiehi_cell_name [lindex $env(TIEHI_CELL_AND_PORT) 0]
-set tiehi_lib_name [get_name [get_property [get_lib_cell */$tiehi_cell_name] library]]
+set tiehi_lib_name [get_name [get_property [get_lib_cell $tiehi_cell_name] library]]
 set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $env(TIEHI_CELL_AND_PORT) 1]
 repair_tie_fanout -max_fanout $::env(MAX_FANOUT) $tiehi_pin
 
