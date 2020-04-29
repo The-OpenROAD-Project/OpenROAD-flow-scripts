@@ -17,11 +17,6 @@ export ADDITIONAL_LIBS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lib)
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4
-# export DIE_AREA    = 0 0 924.92 799.4
-# export CORE_AREA   = 10.07 9.8 914.85 789.6
-
-export CORE_UTILIZATION = 20.0
-export CORE_ASPECT_RATIO = 1.0
-export CORE_MARGIN = 2.0
-
+export DIE_AREA    = 0 0 924.92 799.4
+export CORE_AREA   = 10.07 9.8 914.85 789.6
 
