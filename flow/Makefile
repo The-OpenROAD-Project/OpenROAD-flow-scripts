@@ -13,6 +13,7 @@
 # DESIGN_CONFIG=./designs/nangate45/jpeg.mk
 # DESIGN_CONFIG=./designs/nangate45/swerv.mk
 # DESIGN_CONFIG=./designs/nangate45/swerv_wrapper.mk
+# DESIGN_CONFIG=./designs/nangate45/tiny-tests.mk
 # DESIGN_CONFIG=./designs/nangate45/tinyRocket.mk
 
 # DESIGN_CONFIG=./designs/tsmc65lp/aes.mk
@@ -43,8 +44,6 @@
 # DESIGN_CONFIG=./designs/gf14/bp_single.mk
 # DESIGN_CONFIG=./designs/gf14/bp_dual.mk
 # DESIGN_CONFIG=./designs/gf14/bp_quad.mk
-
-# DESIGN_CONFIG=./designs/invecas12/gcd.mk
 
 # DESIGN_CONFIG=./designs/sw130/gcd.mk
 
