@@ -10,4 +10,3 @@ export SDC_FILE      = ./designs/src/jpeg/jpeg_encoder.sdc
 export DIE_AREA    = 0 0 1200 960.8
 export CORE_AREA   = 10 12 1190 951.2
 
-export CLOCK_PERIOD = 4.000

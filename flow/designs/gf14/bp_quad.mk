@@ -6,6 +6,7 @@ export VERILOG_FILES = ./platforms/gf14/bp/bsg_ac_black_parrot_quad_core_v0/bsg_
                        ./platforms/gf14/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
 # export DC_NETLIST    = ./platforms/gf14/bp/bsg_ac_black_parrot_quad_core_v0/dc/results/bsg_chip.mapped.flat.v
+# export DC_NETLIST    = ./platforms/gf14/bp/bsg_ac_black_parrot_quad_core_v0/yosys/synth.v
 
 export SDC_FILE      = ./platforms/gf14/bp/bsg_ac_black_parrot_quad_core_v0/bsg_chip.elab.v.sdc
 
@@ -41,4 +42,4 @@ export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
 # export DIE_AREA    =
 # export CORE_AREA   =
 
-export CLOCK_PERIOD = 5.600
+export ABC_CLOCK_PERIOD_IN_PS = 1250

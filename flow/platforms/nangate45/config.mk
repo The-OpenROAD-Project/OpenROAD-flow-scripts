@@ -85,3 +85,9 @@ export PLACE_DENSITY ?= 0.30
 # IO Placer pin layers
 export IO_PLACER_H = 3
 export IO_PLACER_V = 2
+
+# Set yosys-abc clock period to first "-period" found in sdc file
+export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_FILE) | awk '{print $$2*1000}')
+export ABC_DRIVER_CELL = BUF_X1
+# BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
+export ABC_LOAD_IN_FF = 3.898

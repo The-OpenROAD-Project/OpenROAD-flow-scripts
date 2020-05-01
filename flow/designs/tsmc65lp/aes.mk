@@ -9,4 +9,3 @@ export SDC_FILE      = ./designs/src/aes/aes_cipher_top.sdc
 export DIE_AREA    = 0 0 620 520.8
 export CORE_AREA   = 10 12 610 511.2
 
-export CLOCK_PERIOD = 5.000
