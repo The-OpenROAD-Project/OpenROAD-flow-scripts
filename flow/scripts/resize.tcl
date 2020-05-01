@@ -62,10 +62,6 @@ if {![info exists ::env(FOOTPRINT)]} {
   buffer_ports -buffer_cell $buffer_cell
 }
 
-# Perform resizing
-puts "Perform resizing..."
-resize -dont_use $::env(DONT_USE_CELLS)
-
 # Repair max cap
 puts "Repair max cap..."
 repair_max_cap -buffer_cell $buffer_cell
@@ -73,6 +69,14 @@ repair_max_cap -buffer_cell $buffer_cell
 # Repair max slew
 puts "Repair max slew..."
 repair_max_slew -buffer_cell $buffer_cell
+
+# Repair max fanout
+puts "Repair max fanout..."
+repair_max_fanout -max_fanout $::env(MAX_FANOUT) -buffer_cell $buffer_cell
+
+# Perform resizing
+puts "Perform resizing..."
+resize -dont_use $::env(DONT_USE_CELLS)
 
 # Repair tie lo fanout
 puts "Repair tie lo fanout..."
@@ -87,10 +91,6 @@ set tiehi_cell_name [lindex $env(TIEHI_CELL_AND_PORT) 0]
 set tiehi_lib_name [get_name [get_property [get_lib_cell $tiehi_cell_name] library]]
 set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $env(TIEHI_CELL_AND_PORT) 1]
 repair_tie_fanout -max_fanout $::env(MAX_FANOUT) $tiehi_pin
-
-# Repair max fanout
-puts "Repair max fanout..."
-repair_max_fanout -max_fanout $::env(MAX_FANOUT) -buffer_cell $buffer_cell
 
 # Repair hold violations
 puts "Repair hold violations..."
