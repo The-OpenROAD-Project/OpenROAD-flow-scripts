@@ -54,16 +54,19 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	@chmod +x runme.sh
 
 	# Creating vars.sh/tcl script
-	-@rm -f vars.sh vars.tcl
+	-@rm -f vars.sh vars.tcl vars.gdb
 	@$(foreach V, $(.VARIABLES), \
 	  $(if $(filter-out environment% default automatic, $(origin $V)), \
 	  echo export $V=\""$($V)\""  >> vars.sh ; \
-	  echo set env\($V\) \""$($V)\""     >> vars.tcl ;) \
+	  echo set env\($V\) \""$($V)\""     >> vars.tcl ; \
+	  echo set env $V "$($V)"     >> vars.gdb ;) \
 	)
 	@sed -i '/export \./d' vars.sh
 	@sed -i '/$(USER)/d' vars.sh
 	@sed -i '/set env(\./d' vars.tcl
 	@sed -i '/$(USER)/d' vars.tcl
+	@sed -i '/set env \./d' vars.gdb
+	@sed -i '/$(USER)/d' vars.gdb
 
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
 	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
