@@ -66,9 +66,15 @@ puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
 close $constr
 
 # Technology mapping for cells
-abc -D [expr $::env(ABC_CLOCK_PERIOD_IN_PS)] \
-    -liberty $::env(OBJECTS_DIR)/merged.lib \
-    -constr $::env(OBJECTS_DIR)/abc.constr
+if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
+  abc -D [expr $::env(ABC_CLOCK_PERIOD_IN_PS)] \
+      -liberty $::env(OBJECTS_DIR)/merged.lib \
+      -constr $::env(OBJECTS_DIR)/abc.constr
+} else {
+  puts "WARNING: No clock period constraints detected in design"
+  abc -liberty $::env(OBJECTS_DIR)/merged.lib \
+      -constr $::env(OBJECTS_DIR)/abc.constr
+}
 
 # technology mapping of constant hi- and/or lo-drivers
 hilomap -singleton \
