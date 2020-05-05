@@ -60,3 +60,5 @@ export PLACE_DENSITY = 0.20
 
 export MACRO_WRAPPERS = ./platforms/gf14/bp/wrappers/wrappers.tcl
 
+export PDN_CFG ?= ./platforms/gf14/pdn_grid_strategy_13m_9T.top.cfg
+
