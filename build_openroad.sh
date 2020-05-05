@@ -10,6 +10,7 @@ function usage() {
   echo "  -l, --latest        build using the head of branch 'openroad' for OpenROAD"
   echo "                      and TritonRoute"
   echo "  -o, --local         force local build instead of docker build"
+  echo "  -p, --platform      perform git pull on all git-based platform repos"
   echo "  --or_branch BRANCH  build using the head of branch BRANCH for OpenROAD"
   echo "  --tr_branch BRANCH  build using the head of branch BRANCH for TritonRoute"
 
@@ -40,6 +41,10 @@ while (( "$#" )); do
       ;;
     -o|--local)
       BUILD_METHOD="LOCAL"
+      shift
+      ;;
+    -p|--platform)
+      UPDATE_PLATFORM=1
       shift
       ;;
     -n|--no_init)
@@ -84,6 +89,18 @@ if [ -d flow/platforms/gf14 ]; then
   else
     git -C tools clone git@github.com:The-OpenROAD-Project/TritonRoute14.git || true
   fi
+fi
+
+# Update platforms
+if [ ! -z ${UPDATE_PLATFORM+x} ]; then
+  for dir in flow/platforms/*/ ; do
+    if [ -d $dir/.git ]; then
+      echo "[INFO][FLOW-0001] updating git repository '$dir'"
+      (cd $dir && git pull)
+    else
+      echo "[INFO][FLOW-0002] directory '$dir' is not a git repository. Skipping update."
+    fi
+  done
 fi
 
 # Docker build
