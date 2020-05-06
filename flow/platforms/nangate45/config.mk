@@ -91,3 +91,12 @@ export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_
 export ABC_DRIVER_CELL = BUF_X1
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
 export ABC_LOAD_IN_FF = 3.898
+
+# adjustment parameter for placer and global router's routability-driven loop
+#
+# if routing resources are highly reduced in global router (e.g. higher value in below)
+# placer will bloat lots of cells in each RD iteration and cause unstableness.
+#
+# will be used in script/global_place.tcl
+export REPLACE_FASTROUTE_RESOURCE_ADJ_23 0.4
+export REPLACE_FASTROUTE_RESOURCE_ADJ_OTHER 0.2
