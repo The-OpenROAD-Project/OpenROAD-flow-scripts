@@ -98,5 +98,5 @@ export ABC_LOAD_IN_FF = 3.898
 # placer will bloat lots of cells in each RD iteration and cause unstableness.
 #
 # will be used in script/global_place.tcl
-export REPLACE_FASTROUTE_RESOURCE_ADJ_23 0.4
-export REPLACE_FASTROUTE_RESOURCE_ADJ_OTHER 0.2
+export REPLACE_FASTROUTE_RESOURCE_ADJ_23=0.4
+export REPLACE_FASTROUTE_RESOURCE_ADJ_OTHER=0.2

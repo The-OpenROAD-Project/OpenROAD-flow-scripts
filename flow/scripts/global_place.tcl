@@ -25,7 +25,7 @@ if {![info exists standalone] || $standalone} {
 # For routability-driven (RD) feature, FR needs routing resource adjustments.
 FastRoute::add_layer_adjustment 2 $::env(REPLACE_FASTROUTE_RESOURCE_ADJ_23)
 FastRoute::add_layer_adjustment 3 $::env(REPLACE_FASTROUTE_RESOURCE_ADJ_23)
-for {set i 4} {$i <= 10} {
+for {set i 4} {$i <= 10} {incr i} {
   FastRoute::add_layer_adjustment $i $::env(REPLACE_FASTROUTE_RESOURCE_ADJ_OTHER)
 }
 
