@@ -1,5 +1,4 @@
 import pya
-import sys
 
 # Load technology file
 tech = pya.Technology()
@@ -44,5 +43,5 @@ if not missing_gds:
   print("[INFO] All LEF cells have matching GDS cells")
 
 # Write out the gds
-print("[INFO] Write out gds '{0}".format(out_gds))
+print("[INFO] Write out gds '{0}'".format(out_gds))
 top_only_layout.write(out_gds)
