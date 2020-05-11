@@ -14,7 +14,7 @@
 # DESIGN_CONFIG=./designs/nangate45/swerv.mk
 # DESIGN_CONFIG=./designs/nangate45/swerv_wrapper.mk
 # DESIGN_CONFIG=./designs/nangate45/tiny-tests.mk
- DESIGN_CONFIG=./designs/nangate45/tinyRocket.mk
+# DESIGN_CONFIG=./designs/nangate45/tinyRocket.mk
 
 # DESIGN_CONFIG=./designs/tsmc65lp/aes.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/ariane.mk
