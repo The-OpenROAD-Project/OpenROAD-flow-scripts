@@ -14,26 +14,14 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read design files
-  read_def $::env(RESULTS_DIR)/5_route.def
+  read_def $::env(RESULTS_DIR)/4_1_cts.def
 }
 
 filler_placement $::env(FILL_CELLS)
 check_placement
 
-# Clear routing blockages for final DEF
-set db [ord::get_db]
-set chip [$db getChip]
-set block [$chip getBlock]
-set obstructions [$block getObstructions]
-
-foreach obstruction $obstructions {
-  odb::dbObstruction_destroy $obstruction
-}
-puts "\[INFO\] Deleted [llength $obstructions] routing obstructions"
-
-
 if {![info exists standalone] || $standalone} {
   # write output
-  write_def $::env(RESULTS_DIR)/6_final.def
+  write_def $::env(RESULTS_DIR)/4_2_cts_fillcell.def
   exit
 }
