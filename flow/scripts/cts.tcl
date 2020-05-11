@@ -40,8 +40,7 @@ check_placement
 
 if {![info exists standalone] || $standalone} {
   # write output
-  write_def $::env(RESULTS_DIR)/4_cts.def
-  write_verilog $::env(RESULTS_DIR)/4_cts.v
+  write_def $::env(RESULTS_DIR)/4_1_cts.def
   write_sdc $::env(RESULTS_DIR)/4_cts.sdc
   exit
 }

@@ -72,6 +72,11 @@ puts "[sta::network_leaf_pin_count]"
 
 log_end
 
+# Delete routing obstructions for final DEF
+source scripts/deleteRoutingObstructions.tcl
+deleteRoutingObstructions
+
 if {![info exists standalone] || $standalone} {
+  write_def $::env(RESULTS_DIR)/6_final.def
   exit
 }

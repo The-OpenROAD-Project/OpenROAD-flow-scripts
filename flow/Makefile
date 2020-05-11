@@ -14,7 +14,7 @@
 # DESIGN_CONFIG=./designs/nangate45/swerv.mk
 # DESIGN_CONFIG=./designs/nangate45/swerv_wrapper.mk
 # DESIGN_CONFIG=./designs/nangate45/tiny-tests.mk
-# DESIGN_CONFIG=./designs/nangate45/tinyRocket.mk
+ DESIGN_CONFIG=./designs/nangate45/tinyRocket.mk
 
 # DESIGN_CONFIG=./designs/tsmc65lp/aes.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/ariane.mk
@@ -288,13 +288,18 @@ cts: $(RESULTS_DIR)/4_cts.def \
 
 # Run TritonCTS
 # ------------------------------------------------------------------------------
-$(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cts.tcl) 2>&1 | tee $(LOG_DIR)/4_cts.log
+$(RESULTS_DIR)/4_1_cts.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cts.tcl) 2>&1 | tee $(LOG_DIR)/4_1_cts.log
 
+$(RESULTS_DIR)/4_2_cts_fillcell.def: $(RESULTS_DIR)/4_1_cts.def
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/fillcell.tcl) 2>&1 | tee $(LOG_DIR)/4_2_cts_fillcell.log
 
 $(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/4_cts.def
 
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.def
+
+$(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_2_cts_fillcell.def
+	cp $< $@
 
 clean_cts:
 	rm -rf $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_cts.sdc
