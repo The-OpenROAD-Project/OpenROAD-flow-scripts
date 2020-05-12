@@ -38,12 +38,12 @@ export ADDITIONAL_LIBS = ./platforms/gf14/bp/lib/gf14_1r1w_d32_w64_m1_tt_nominal
                          ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w124_m2_bit_mod_tt_nominal_0p80v_0p80v_25c.lib \
                          ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w62_m2_bit_mod_tt_nominal_0p80v_0p80v_25c.lib
 
-export ADDITIONAL_GDS  = ./platforms/gf14/bp/gds/gf14_1r1w_d32_w64_m1.gds2 \
-                         ./platforms/gf14/bp/gds/gf14_1rw_d128_w116_m2_bit.gds2 \
-                         ./platforms/gf14/bp/gds/gf14_1rw_d256_w48_m2.gds2 \
-                         ./platforms/gf14/bp/gds/gf14_1rw_d512_w64_m2_byte.gds2 \
-                         ./platforms/gf14/bp/gds/gf14_1rw_d64_w124_m2_bit.gds2 \
-                         ./platforms/gf14/bp/gds/gf14_1rw_d64_w62_m2_bit.gds2 \
+export ADDITIONAL_GDS  = ./platforms/gf14/bp/wrappers/gf14_1r1w_d32_w64_m1_mod.gds2 \
+                         ./platforms/gf14/bp/wrappers/gf14_1rw_d128_w116_m2_bit_mod.gds2 \
+                         ./platforms/gf14/bp/wrappers/gf14_1rw_d256_w48_m2_mod.gds2 \
+                         ./platforms/gf14/bp/wrappers/gf14_1rw_d512_w64_m2_byte_mod.gds2 \
+                         ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w124_m2_bit_mod.gds2 \
+                         ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w62_m2_bit_mod.gds2 \
                          ./platforms/gf14/bp/gds/IN12LP_GPIO18_13M9S30P.gds
 
 
