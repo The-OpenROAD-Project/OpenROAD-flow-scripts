@@ -392,14 +392,10 @@ finish: $(REPORTS_DIR)/6_final_report.rpt \
 
 # Filler insertion
 # ------------------------------------------------------------------------------
-$(RESULTS_DIR)/6_final.def: $(RESULTS_DIR)/5_route.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/fillcell.tcl) 2>&1 | tee $(LOG_DIR)/6_fillcell.log
-
-$(RESULTS_DIR)/6_final.sdc: $(RESULTS_DIR)/5_route.sdc
-	cp $< $@
-
-$(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/6_final.def $(RESULTS_DIR)/6_final.sdc
+$(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl) 2>&1 | tee $(LOG_DIR)/6_report.log
+
+$(RESULTS_DIR)/6_final.def: $(REPORTS_DIR)/6_final_report.rpt
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------

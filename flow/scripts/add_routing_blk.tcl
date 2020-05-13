@@ -42,5 +42,8 @@ foreach inst $allInsts {
 
     incr cnt
   }
+}
+
+if {$cnt != 0} {
   puts "$cnt OBS created over macros !!"
 }
