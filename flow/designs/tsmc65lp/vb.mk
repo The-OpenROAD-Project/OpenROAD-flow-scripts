@@ -20,4 +20,3 @@ export ADDITIONAL_GDS  = ./platforms/tsmc65lp/gds/tsmc65lp_1rf_lg10_w32_all.gds2
 export DIE_AREA    = 0 0 1100 400.8
 export CORE_AREA   = 10 12 1090 391.2
 
-export CLOCK_PERIOD = 5.000

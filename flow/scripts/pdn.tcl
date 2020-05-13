@@ -21,6 +21,10 @@ if {[info exist ::env(PDN_CFG)]} {
   pdngen $::env(PDN_CFG) -verbose
 }
 
+#foreach net_name [concat $::power_nets $::ground_nets] {
+#  check_power_grid -net $net_name
+#}
+
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/2_6_floorplan_pdn.def

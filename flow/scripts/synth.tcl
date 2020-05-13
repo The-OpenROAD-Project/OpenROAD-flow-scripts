@@ -5,12 +5,6 @@ if {[info exist ::env(DC_NETLIST)]} {
   exit
 }
 
-# Don't change these unless you know what you are doing
-set stat_ext    "_stat.rep"
-set gl_ext      "_gl.v"
-set abc_script  "+read_constr,$::env(SDC_FILE);strash;ifraig;retime,-D,{D},-M,6;strash;dch,-f;map,-p,-M,1,{D},-f;topo;dnsize;buffer,-p;upsize;"
-
-
 # Setup verilog include directories
 set vIdirsArgs ""
 if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
@@ -66,12 +60,21 @@ if {[info exist ::env(LATCH_MAP_FILE)]} {
 dfflibmap -liberty $::env(OBJECTS_DIR)/merged.lib
 opt
 
+set constr [open $::env(OBJECTS_DIR)/abc.constr w]
+puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
+puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
+close $constr
+
 # Technology mapping for cells
-abc -D [expr $::env(CLOCK_PERIOD) * 1000] \
-    -constr "$::env(SDC_FILE)" \
-    -liberty $::env(OBJECTS_DIR)/merged.lib \
-    -script $abc_script \
-    -showtmp
+if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
+  abc -D [expr $::env(ABC_CLOCK_PERIOD_IN_PS)] \
+      -liberty $::env(OBJECTS_DIR)/merged.lib \
+      -constr $::env(OBJECTS_DIR)/abc.constr
+} else {
+  puts "WARNING: No clock period constraints detected in design"
+  abc -liberty $::env(OBJECTS_DIR)/merged.lib \
+      -constr $::env(OBJECTS_DIR)/abc.constr
+}
 
 # technology mapping of constant hi- and/or lo-drivers
 hilomap -singleton \
@@ -84,11 +87,11 @@ setundef -zero
 # Splitting nets resolves unwanted compound assign statements in netlist (assign {..} = {..})
 splitnets
 
-# insert buffer cells for pass through wires
-insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
-
 # remove unused cells and wires
 opt_clean -purge
+
+# insert buffer cells for pass through wires
+insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
 
 # reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check

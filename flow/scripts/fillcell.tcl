@@ -14,7 +14,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read design files
-  read_def $::env(RESULTS_DIR)/4_1_cts_prefillcell.def
+  read_def $::env(RESULTS_DIR)/4_1_cts.def
 }
 
 filler_placement $::env(FILL_CELLS)
@@ -22,6 +22,6 @@ check_placement
 
 if {![info exists standalone] || $standalone} {
   # write output
-  write_def $::env(RESULTS_DIR)/4_cts.def
+  write_def $::env(RESULTS_DIR)/4_2_cts_fillcell.def
   exit
 }

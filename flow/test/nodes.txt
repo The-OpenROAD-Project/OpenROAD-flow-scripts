@@ -1,10 +1,1 @@
-2/vlsipool-j01
-2/vlsipool-j08
-2/vlsipool-j10
-2/vlsipool-j11
-2/vlsipool-j12
-2/vlsipool-j13
-2/vlsipool-j15
-2/vlsipool-j16
-2/vlsipool-j17
-2/vlsipool-j20
+1/localhost

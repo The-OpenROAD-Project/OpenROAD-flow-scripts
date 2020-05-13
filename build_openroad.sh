@@ -10,6 +10,7 @@ function usage() {
   echo "  -l, --latest        build using the head of branch 'openroad' for OpenROAD"
   echo "                      and TritonRoute"
   echo "  -o, --local         force local build instead of docker build"
+  echo "  -p, --platform      perform git pull on all git-based platform repos"
   echo "  --or_branch BRANCH  build using the head of branch BRANCH for OpenROAD"
   echo "  --tr_branch BRANCH  build using the head of branch BRANCH for TritonRoute"
 
@@ -37,17 +38,18 @@ while (( "$#" )); do
       OR_BRANCH="openroad"
       TR_BRANCH="openroad"
       shift
-      break
       ;;
     -o|--local)
       BUILD_METHOD="LOCAL"
       shift
-      break
+      ;;
+    -p|--platform)
+      UPDATE_PLATFORM=1
+      shift
       ;;
     -n|--no_init)
       NO_INIT=1
       shift
-      break
       ;;
     -*|--*=) # unsupported flags
       echo "[ERROR][FLOW-1000] Unsupported flag $1" >&2
@@ -89,6 +91,18 @@ if [ -d flow/platforms/gf14 ]; then
   fi
 fi
 
+# Update platforms
+if [ ! -z ${UPDATE_PLATFORM+x} ]; then
+  for dir in flow/platforms/*/ ; do
+    if [ -d $dir/.git ]; then
+      echo "[INFO][FLOW-0001] updating git repository '$dir'"
+      (cd $dir && git pull)
+    else
+      echo "[INFO][FLOW-0002] directory '$dir' is not a git repository. Skipping update."
+    fi
+  done
+fi
+
 # Docker build
 if [ "$build_method" == "DOCKER" ]; then
   docker build -t openroad/yosys -f tools/yosys/Dockerfile tools/yosys
@@ -107,6 +121,11 @@ elif [ "$build_method" == "LOCAL" ]; then
 
   mkdir -p tools/build/TritonRoute
   (cd tools/build/TritonRoute && cmake ../../TritonRoute && make -j$(nproc))
+
+  if [ -d flow/platforms/gf14 ]; then
+    mkdir -p tools/build/TritonRoute14
+    (cd tools/build/TritonRoute14 && cmake ../../TritonRoute14 && make -j$(nproc) && mv TritonRoute TritonRoute14)
+  fi
 
   mkdir -p tools/build/OpenROAD
   (cd tools/build/OpenROAD && cmake ../../OpenROAD && make -j$(nproc))

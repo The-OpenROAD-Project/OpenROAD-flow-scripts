@@ -28,7 +28,8 @@ flow/*.def.v
 *PORT9.dat
 *POST9.dat
 *POWV9.dat
-
+# RePlAce debug dir
+plot
 
 # yosys temps
 flow/_tmp_yosys-abc-*

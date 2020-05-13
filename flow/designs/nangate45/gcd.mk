@@ -9,4 +9,3 @@ export SDC_FILE      = ./designs/src/gcd/gcd.sdc
 export DIE_AREA    = 0 0 100.13 100.8
 export CORE_AREA   = 10.07 11.2 90.25 91
 
-export CLOCK_PERIOD = 10.000

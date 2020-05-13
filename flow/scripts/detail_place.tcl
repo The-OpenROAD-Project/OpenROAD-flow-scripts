@@ -17,7 +17,9 @@ if {![info exists standalone] || $standalone} {
   read_def $::env(RESULTS_DIR)/3_2_place_resized.def
 }
 
-set_placement_padding -global -left 0 -right $::env(CELL_PAD_IN_SITES)
+set_placement_padding -global \
+    -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
+    -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 detailed_placement
 check_placement -verbose
 

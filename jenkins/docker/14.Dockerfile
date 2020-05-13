@@ -5,6 +5,8 @@ RUN yum group install -y "Development Tools" && \
     yum update -y && yum install -y libffi-devel python3 tcl-devel which time && \
     yum localinstall https://www.klayout.org/downloads/CentOS_7/klayout-0.26.3-0.x86_64.rpm -y
 
+RUN yum install -y libXft libXScrnSaver
+
 WORKDIR /OpenROAD-flow
 RUN mkdir -p /OpenROAD-flow
 

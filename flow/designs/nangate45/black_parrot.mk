@@ -15,5 +15,4 @@ export ADDITIONAL_LIBS = $(wildcard ./designs/src/black_parrot/fakeram45*.lib)
 export DIE_AREA    = 0 0 2200.01 2199.4
 export CORE_AREA   = 10.07 11.2 2189.94 2189.6
 
-export CLOCK_PERIOD = 5.600
 export PLACE_DENSITY = 0.15
