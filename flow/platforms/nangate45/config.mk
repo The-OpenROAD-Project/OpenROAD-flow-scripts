@@ -58,9 +58,6 @@ export IO_PIN_MARGIN = 70
 # Layer to use for parasitics estimations
 export WIRE_RC_LAYER = metal3
 
-# Resizer options
-export RESIZER_BUF_CELL = BUF_X4
-
 # KLayout technology file
 export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/FreePDK45.lyt
 
