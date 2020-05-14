@@ -13,11 +13,16 @@ function usage() {
   echo "  -p, --platform      perform git pull on all git-based platform repos"
   echo "  --or_branch BRANCH  build using the head of branch BRANCH for OpenROAD"
   echo "  --tr_branch BRANCH  build using the head of branch BRANCH for TritonRoute"
-
+  echo "  -n, --nice          build using all cpus but nice the jobs"
+  
   echo "This script builds the openroad tools (OpenROAD, yosys, TritonRoute)"
   echo "By default, the tools will be built from the linked submodule hashes"
   echo "Using -b or -l will By default, the tools will be built from the linked submodule hashes"
 }
+
+# defaults
+NICE=""
+PROC=`nproc`
 
 # Parse arguments
 while (( "$#" )); do
@@ -37,6 +42,11 @@ while (( "$#" )); do
     -l|--latest)
       OR_BRANCH="openroad"
       TR_BRANCH="openroad"
+      shift
+      ;;
+    -n|--nice)
+      NICE="nice"
+      PROC=`nproc --all`
       shift
       ;;
     -o|--local)
@@ -117,18 +127,18 @@ if [ "$build_method" == "DOCKER" ]; then
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then
   mkdir -p tools/build/yosys
-  (cd tools/yosys && make install -j$(nproc) PREFIX=../build/yosys CONFIG=gcc TCL_VERSION=tcl8.5)
+  (cd tools/yosys && $NICE make install -j$PROC PREFIX=../build/yosys CONFIG=gcc TCL_VERSION=tcl8.5)
 
   mkdir -p tools/build/TritonRoute
-  (cd tools/build/TritonRoute && cmake ../../TritonRoute && make -j$(nproc))
+  (cd tools/build/TritonRoute && cmake ../../TritonRoute && $NICE make -j$PROC)
 
   if [ -d flow/platforms/gf14 ]; then
     mkdir -p tools/build/TritonRoute14
-    (cd tools/build/TritonRoute14 && cmake ../../TritonRoute14 && make -j$(nproc) && mv TritonRoute TritonRoute14)
+    (cd tools/build/TritonRoute14 && cmake ../../TritonRoute14 && $NICE make -j$PROC && mv TritonRoute TritonRoute14)
   fi
 
   mkdir -p tools/build/OpenROAD
-  (cd tools/build/OpenROAD && cmake ../../OpenROAD && make -j$(nproc))
+  (cd tools/build/OpenROAD && cmake ../../OpenROAD && $NICE make -j$PROC)
 else
   echo "ERROR: No valid build method found"
   exit 1
