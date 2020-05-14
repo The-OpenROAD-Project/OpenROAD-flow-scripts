@@ -41,6 +41,11 @@ if {[find_macros] != ""} {
   puts "No macros found: Skipping macro_placement"
 }
 
+if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
+  source scripts/placement_blockages.tcl
+  block_channels $::env(MACRO_BLOCKAGE_HALO)
+}
+
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/2_4_floorplan_macro.def
   exit
