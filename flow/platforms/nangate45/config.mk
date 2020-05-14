@@ -36,7 +36,7 @@ export SC_LEF = ./platforms/$(PLATFORM)/lef/NangateOpenCellLibrary.macro.mod.lef
 export LIB_FILES = ./platforms/$(PLATFORM)/lib/NangateOpenCellLibrary_typical.lib \
                      $(ADDITIONAL_LIBS)
 export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*.gds) \
-                     $(ADDITIONAL_GDS_FILES)
+                     $(ADDITIONAL_GDS)
 
 # Cell padding in SITE widths to ease rout-ability.  Applied to both sides
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 2
