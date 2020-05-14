@@ -7,6 +7,7 @@ set -e
 function usage() {
   echo "Usage: $0 [-h|--help] [-l|--latest] [-o|--local] [--or_branch] [--tr_branch]"
   echo "  -h, --help          print this help message"
+  echo "  -d, --dev_repo      (dev only) perform git pull on developer repositories"
   echo "  -l, --latest        build using the head of branch 'openroad' for OpenROAD"
   echo "                      and TritonRoute"
   echo "  -o, --local         force local build instead of docker build"
@@ -16,7 +17,6 @@ function usage() {
 
   echo "This script builds the openroad tools (OpenROAD, yosys, TritonRoute)"
   echo "By default, the tools will be built from the linked submodule hashes"
-  echo "Using -b or -l will By default, the tools will be built from the linked submodule hashes"
 }
 
 # Parse arguments
@@ -33,6 +33,10 @@ while (( "$#" )); do
     --tr_branch)
       TR_BRANCH=$2
       shift 2
+      ;;
+    -d|--dev_repo)
+      UPDATE_PRIVATE=1
+      shift
       ;;
     -l|--latest)
       OR_BRANCH="openroad"
@@ -101,6 +105,16 @@ if [ ! -z ${UPDATE_PLATFORM+x} ]; then
       echo "[INFO][FLOW-0002] directory '$dir' is not a git repository. Skipping update."
     fi
   done
+fi
+
+# Update developer repos
+if [ ! -z ${UPDATE_PRIVATE+x} ]; then
+  if [ -d flow/private ]; then
+    echo "[INFO][FLOW-0001] updating git repository 'private'"
+    (cd flow/private && git pull)
+  else
+    echo "[INFO][FLOW-0002] directory 'flow/private' is not a git repository. Skipping update."
+  fi
 fi
 
 # Docker build
