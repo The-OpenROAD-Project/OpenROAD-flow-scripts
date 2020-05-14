@@ -45,5 +45,5 @@ foreach inst $allInsts {
 }
 
 if {$cnt != 0} {
-  puts "$cnt OBS created over macros !!"
+  puts "\[INFO\] created $cnt routing blockages over macros"
 }
