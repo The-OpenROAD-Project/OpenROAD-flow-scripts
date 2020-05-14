@@ -62,3 +62,5 @@ export MACRO_WRAPPERS = ./platforms/gf14/bp/wrappers/wrappers.tcl
 
 export PDN_CFG ?= ./platforms/gf14/pdn_grid_strategy_13m_9T.top.cfg
 
+# TODO: replace this with max(CHANNEL_WIDTH_[HV]) from IP_global.cfg
+export MACRO_BLOCKAGE_HALO = 25
