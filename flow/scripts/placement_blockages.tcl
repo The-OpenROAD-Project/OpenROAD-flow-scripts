@@ -14,30 +14,21 @@ proc block_channels {channel_width_in_microns} {
     }
   }
 
-  # Put a halo around the core to block the outside edges between
-  # the macros and the core area.
+  #
+  # Resize to fill the channels and edge gap
+  #
+  set resize_by [expr round($channel_width_in_microns * $units)]
+  set shapeSet [odb::orSets $shapes]
+  set shapeSet [odb::bloatSet $shapeSet $resize_by]
+
+  #
+  # Clip result to the core area
+  #
   set core [$block getCoreArea]
   set xl [$core xMin]
   set yl [$core yMin]
   set xh [$core xMax]
   set yh [$core yMax]
-
-  lappend shapes [odb::newSetFromRect [expr $xl - 100] $yl $xl $yh]
-  lappend shapes [odb::newSetFromRect $xh $yl [expr $xh + 100] $yh]
-  lappend shapes [odb::newSetFromRect $xl [expr $yl - 100] $xh $yl]
-  lappend shapes [odb::newSetFromRect $xl $yh $xh [expr $yh + 100]]
-
-  #
-  # Resize to fill the channels and edge gap
-  #
-  set resize_by [expr round($channel_width_in_microns / 2 * $units)]
-  set shapeSet [odb::orSets $shapes]
-  set shapeSet [odb::bloatSet $shapeSet $resize_by]
-  set shapeSet [odb::shrinkSet $shapeSet $resize_by]
-
-  #
-  # Clip result to the core area (ie remove the halo)
-  #
   set core_rect [odb::newSetFromRect $xl $yl $xh $yh]
   set shapeSet [odb::andSet $shapeSet $core_rect]
 
@@ -46,8 +37,9 @@ proc block_channels {channel_width_in_microns} {
   #
   set rects [odb::getRectangles $shapeSet]
   foreach rect $rects {
-    odb::dbBlockage_create $block \
-        [$rect xMin] [$rect yMin] [$rect xMax] [$rect yMax]
+      set b [odb::dbBlockage_create $block \
+                 [$rect xMin] [$rect yMin] [$rect xMax] [$rect yMax]]
+      $b setSoft
   }
 }
 
