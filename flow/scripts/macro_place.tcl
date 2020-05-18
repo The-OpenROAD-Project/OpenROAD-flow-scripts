@@ -37,13 +37,13 @@ proc find_macros {} {
 
 if {[find_macros] != ""} {
   macro_placement -global_config $::env(IP_GLOBAL_CFG)
+
+  if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
+    source scripts/placement_blockages.tcl
+    block_channels $::env(MACRO_BLOCKAGE_HALO)
+  }
 } else {
   puts "No macros found: Skipping macro_placement"
-}
-
-if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
-  source scripts/placement_blockages.tcl
-  block_channels $::env(MACRO_BLOCKAGE_HALO)
 }
 
 if {![info exists standalone] || $standalone} {
