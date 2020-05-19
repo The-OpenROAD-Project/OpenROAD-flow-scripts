@@ -78,5 +78,6 @@ deleteRoutingObstructions
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/6_final.def
+  write_verilog $::env(RESULTS_DIR)/6_final.v
   exit
 }
