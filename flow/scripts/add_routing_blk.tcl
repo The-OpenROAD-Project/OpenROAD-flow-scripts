@@ -10,9 +10,11 @@ set layer_M2 [$tech findLayer M2]
 set layer_M3 [$tech findLayer M3]
 set layer_C4 [$tech findLayer C4]
 
-set numTrack 3
+set numTrack 5
 
 set allInsts [$block getInsts]
+
+set cnt 0
 
 foreach inst $allInsts {
   set master [$inst getMaster]
@@ -20,9 +22,7 @@ foreach inst $allInsts {
   set loc_llx [lindex [$inst getLocation] 0]
   set loc_lly [lindex [$inst getLocation] 1]
 
-  set cnt 0
-
-  if {[string match "*gf14*" $name]} {
+  if {[string match "*gf14*" $name]||[string match "IN12LP*" $name]} {
     set w [$master getWidth]
     set h [$master getHeight]
 

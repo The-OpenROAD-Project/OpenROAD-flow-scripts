@@ -17,8 +17,6 @@ if {![info exists standalone] || $standalone} {
   read_def $::env(RESULTS_DIR)/4_cts.def
 }
 
-source $::env(SCRIPTS_DIR)/add_routing_blk.tcl
-
 set_wire_rc -layer $::env(WIRE_RC_LAYER)
 
 fastroute -output_file $::env(RESULTS_DIR)/route.guide \
