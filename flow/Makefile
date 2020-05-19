@@ -378,6 +378,11 @@ clean_route:
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
+klayout_tr_rpt: $(RESULTS_DIR)/5_route.def
+	klayout -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
+                -rd in_def="$<" \
+	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
+	        -rm $(UTILS_DIR)/viewDrc.py
 
 # ==============================================================================
 #  _____ ___ _   _ ___ ____  _   _ ___ _   _  ____
