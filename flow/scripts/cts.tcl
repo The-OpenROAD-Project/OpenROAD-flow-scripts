@@ -38,6 +38,8 @@ set_placement_padding -global \
 detailed_placement
 check_placement
 
+source $::env(SCRIPTS_DIR)/add_routing_blk.tcl
+
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/4_1_cts.def

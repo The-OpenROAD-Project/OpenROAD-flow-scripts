@@ -302,7 +302,7 @@ $(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_2_cts_fillcell.def
 	cp $< $@
 
 clean_cts:
-	rm -rf $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_cts.sdc
+	rm -rf $(RESULTS_DIR)/4_*cts*.def $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_cts.sdc
 	rm -f  $(REPORTS_DIR)/4_*
 	rm -f  $(LOG_DIR)/4_*
 
