@@ -56,6 +56,10 @@ log_end
 # Set the buffer cell
 set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
 
+# Resize before buffer insertion
+puts "Perform resizing before buffer insertion..."
+resize -dont_use $::env(DONT_USE_CELLS)
+
 # Do not buffer chip-level designs
 if {![info exists ::env(FOOTPRINT)]} {
   puts "Perform port buffering..."
@@ -75,7 +79,7 @@ puts "Repair max fanout..."
 repair_max_fanout -max_fanout $::env(MAX_FANOUT) -buffer_cell $buffer_cell
 
 # Perform resizing
-puts "Perform resizing..."
+puts "Perform resizing after buffer insertion..."
 resize -dont_use $::env(DONT_USE_CELLS)
 
 # Repair tie lo fanout
