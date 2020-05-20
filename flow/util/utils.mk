@@ -76,7 +76,7 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	                                     $(RESULTS_DIR) \
 	                                     $(SCRIPTS_DIR) \
 	                                     $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
-	                                     runme.sh vars.sh vars.tcl \
+	                                     runme.sh vars.sh vars.tcl vars.gdb \
 	                                     $^
 
 clean_issues:
