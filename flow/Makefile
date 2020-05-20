@@ -95,7 +95,7 @@ OPENROAD_CMD = openroad -no_init -exit
 versions.txt:
 	@yosys -V > $(abspath $@)
 	@echo openroad `openroad -version` >> $(abspath $@)
-	@klayout -v >> $(abspath $@)
+	@klayout -zz -v >> $(abspath $@)
 	@echo TritonRoute `which TritonRoute` >> $(abspath $@)
 
 # Pre-process Lefs
