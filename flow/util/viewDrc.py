@@ -1,9 +1,6 @@
 # This is a KLayout script to load a TritonRoute DRC rpt file
 # and make a marker database.  Markers are categorized by their
 # 'violation type'.
-#
-# Unfortunately I don't see a way to auto-open the browser so the
-# user will need to do so from the menu: Tools -> Marker Browser.
 
 import pya
 import re
@@ -66,3 +63,5 @@ with open(in_drc) as fp:
             field += 1
 
 assert(field == 0)
+
+win.menu().action('tools_menu.browse_markers').trigger()
