@@ -17,7 +17,8 @@ docker_script="source setup_env.sh && \
   cd flow/flow && \
   test/test_helper.sh ${DESIGN} ${PLATFORM}; \
   status=\$?; \
-  make metadata DESIGN_CONFIG=designs/${PLATFORM}/${DESIGN}.mk && exit \$status"
+  make metadata DESIGN_CONFIG=designs/${PLATFORM}/${DESIGN}.mk && \
+  exit \$status"
 
 # Additional DOCKER_OPTS should be set in the environment
-docker run --rm -u ${user_id} -v ${flow_mount} -v ${tr_mount} ${DOCKER_OPTS} -e PATH -e LD_LIBRARY_PATH ${docker_tag} bash -xc "${docker_script}"
+docker run --rm -u ${user_id} -v ${flow_mount} -v ${tr_mount} ${DOCKER_OPTS} -e PATH -e LD_LIBRARY_PATH -e MAKE_ISSUE ${docker_tag} bash -xc "${docker_script}"
