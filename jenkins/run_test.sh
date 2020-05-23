@@ -21,4 +21,4 @@ docker_script="source setup_env.sh && \
   exit \$status"
 
 # Additional DOCKER_OPTS should be set in the environment
-docker run --rm -u ${user_id} -v ${flow_mount} -v ${tr_mount} ${DOCKER_OPTS} -e PATH -e LD_LIBRARY_PATH -e MAKE_ISSUE ${docker_tag} bash -xc "${docker_script}"
+docker run --rm -u ${user_id} -v ${flow_mount} -v ${tr_mount} ${DOCKER_OPTS} -e PATH -e LD_LIBRARY_PATH -e MAKE_ISSUE -e USER ${docker_tag} bash -xc "${docker_script}"
