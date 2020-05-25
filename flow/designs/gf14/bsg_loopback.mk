@@ -6,7 +6,7 @@ export VERILOG_FILES = ./platforms/gf14/bp/bsg_ac_io_complex_loopback/bsg_chip.s
                        ./platforms/gf14/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
 # export CACHED_NETLIST    = ./platforms/gf14/bp/bsg_ac_io_complex_loopback/dc/results/bsg_chip.mapped.flat.v
-# export CACHED_NETLIST    = ./platforms/gf14/bp/bsg_ac_io_complex_loopback/yosys/synth.v
+export CACHED_NETLIST    = ./platforms/gf14/bp/bsg_ac_io_complex_loopback/yosys/synth.v
 
 export SDC_FILE      = ./platforms/gf14/bp/bsg_ac_io_complex_loopback/bsg_chip.elab.v.sdc
 
