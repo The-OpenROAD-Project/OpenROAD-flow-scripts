@@ -27,8 +27,8 @@ else
   TARGETS="finish metadata"
 fi
 
-make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG.mk clean_all clean_metadata
-make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG.mk $TARGETS 2>&1 | tee $LOG_FILE
+make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk clean_all clean_metadata
+make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk $TARGETS 2>&1 | tee $LOG_FILE
 
 
 #diff $LOG_FILE $GOLD_LOG_FILE
