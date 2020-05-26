@@ -2,12 +2,12 @@ export DESIGN_NICKNAME = bp_be
 export DESIGN_NAME = bp_be_top
 export PLATFORM    = nangate45
 
-export VERILOG_FILES = ./designs/src/bp_be_top/pickled.v \
-                       ./designs/src/bp_be_top/nangate45_macros.v
-export SDC_FILE      = ./designs/src/bp_be_top/design.sdc
+export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/pickled.v \
+                       ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
-export ADDITIONAL_LEFS = $(wildcard ./designs/src/bp_be_top/fakeram45*.lef)
-export ADDITIONAL_LIBS = $(wildcard ./designs/src/bp_be_top/fakeram45*.lib)
+export ADDITIONAL_LEFS = $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lef)
+export ADDITIONAL_LIBS = $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lib)
 
 
 # These values must be multiples of placement site

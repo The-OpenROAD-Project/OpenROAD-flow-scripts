@@ -2,17 +2,17 @@ export DESIGN_NICKNAME = tinyRocket
 export DESIGN_NAME = RocketTile
 export PLATFORM    = nangate45
 
-export VERILOG_FILES = ./designs/src/tinyRocket/AsyncResetReg.v \
-                       ./designs/src/tinyRocket/ClockDivider2.v \
-                       ./designs/src/tinyRocket/ClockDivider3.v \
-                       ./designs/src/tinyRocket/plusarg_reader.v \
-                       ./designs/src/tinyRocket/freechips.rocketchip.system.TinyConfig.v \
-                       ./designs/src/tinyRocket/freechips.rocketchip.system.TinyConfig.nangate45.v
+export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
+                       ./designs/src/$(DESIGN_NICKNAME)/ClockDivider2.v \
+                       ./designs/src/$(DESIGN_NICKNAME)/ClockDivider3.v \
+                       ./designs/src/$(DESIGN_NICKNAME)/plusarg_reader.v \
+                       ./designs/src/$(DESIGN_NICKNAME)/freechips.rocketchip.system.TinyConfig.v \
+                       ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/freechips.rocketchip.system.TinyConfig.v
 
-export SDC_FILE      = ./designs/src/tinyRocket/RocketTile.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export ADDITIONAL_LEFS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lef)
-export ADDITIONAL_LIBS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lib)
+export ADDITIONAL_LEFS = $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/*.lef)
+export ADDITIONAL_LIBS = $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/*.lib)
 
 
 # These values must be multiples of placement site
