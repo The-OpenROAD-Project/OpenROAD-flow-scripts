@@ -10,7 +10,7 @@ clean_metadata:
 $(REPORTS_DIR)/metadata.json:
 	$(UTILS_DIR)/genMetadata.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -o $@
 
-RULES = $(dir $(DESIGN_CONFIG))$(DESIGN_NICKNAME)_rules.json
+RULES = $(dir $(DESIGN_CONFIG))rules.json
 
 $(REPORTS_DIR)/metadata-check.log: $(REPORTS_DIR)/metadata.json
 	if test -f $(RULES); then \
