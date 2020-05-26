@@ -2,9 +2,9 @@ export DESIGN_NICKNAME = ibex
 export DESIGN_NAME = ibex_core
 export PLATFORM    = nangate45
 
-export VERILOG_FILES = ./designs/src/ibex/ibex_core.sv2v.v \
-                       ./designs/src/ibex/prim_clock_gating.sv
-export SDC_FILE      = ./designs/src/ibex/ibex_core.elab.v.sdc
+export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_core.sv2v.v \
+                       ./designs/src/$(DESIGN_NICKNAME)/prim_clock_gating.sv
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4
