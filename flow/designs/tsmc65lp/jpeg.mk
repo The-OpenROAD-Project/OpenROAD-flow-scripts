@@ -2,7 +2,7 @@ export DESIGN_NICKNAME = jpeg
 export DESIGN_NAME = jpeg_encoder
 export PLATFORM    = tsmc65lp
 
-export VERILOG_FILES = $(wildcard ./designs/src/jpeg/*.v)
+export VERILOG_FILES = $(sort $(wildcard ./designs/src/jpeg/*.v))
 export VERILOG_INCLUDE_DIRS = ./designs/src/jpeg/include
 export SDC_FILE      = ./designs/src/jpeg/jpeg_encoder.sdc
 

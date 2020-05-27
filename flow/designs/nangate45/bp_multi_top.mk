@@ -6,8 +6,8 @@ export VERILOG_FILES = ./designs/src/bp_multi_top/pickled.v \
                        ./designs/src/bp_multi_top/nangate45_macros.v
 export SDC_FILE      = ./designs/src/bp_multi_top/design.sdc
 
-export ADDITIONAL_LEFS = $(wildcard ./designs/src/bp_multi_top/fakeram45*.lef)
-export ADDITIONAL_LIBS = $(wildcard ./designs/src/bp_multi_top/fakeram45*.lib)
+export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/src/bp_multi_top/fakeram45*.lef))
+export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/src/bp_multi_top/fakeram45*.lib))
 
 
 # These values must be multiples of placement site

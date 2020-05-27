@@ -2,7 +2,7 @@ export DESIGN_NICKNAME = aes
 export DESIGN_NAME = aes_cipher_top
 export PLATFORM    = tsmc65lp
 
-export VERILOG_FILES = $(wildcard ./designs/src/aes/*.v)
+export VERILOG_FILES = $(sort $(wildcard ./designs/src/aes/*.v))
 export SDC_FILE      = ./designs/src/aes/aes_cipher_top.sdc
 
 # These values must be multiples of placement site

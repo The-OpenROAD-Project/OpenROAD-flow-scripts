@@ -478,8 +478,8 @@ nuke: clean_test clean_issues
 
 # DEF/GDS viewer shortcuts
 #-------------------------------------------------------------------------------
-RESULTS_DEF = $(notdir $(wildcard $(RESULTS_DIR)/*.def))
-RESULTS_GDS = $(notdir $(wildcard $(RESULTS_DIR)/*.gds))
+RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
+RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 

@@ -6,7 +6,7 @@ export SDC_FILE      = ./designs/src/tiny-tests/design.sdc
 
 export MERGED_LEF = ./platforms/nangate45/NangateOpenCellLibrary.mod.lef
 export LIB_FILES  = ./platforms/nangate45/NangateOpenCellLibrary_typical.lib
-export GDS_FILES  = $(wildcard ./platforms/nangate45/gds/*)
+export GDS_FILES  = $(sort $(wildcard ./platforms/nangate45/gds/*))
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4

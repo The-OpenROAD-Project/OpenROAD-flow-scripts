@@ -11,8 +11,8 @@ export VERILOG_FILES = ./designs/src/tinyRocket/AsyncResetReg.v \
 
 export SDC_FILE      = ./designs/src/tinyRocket/RocketTile.sdc
 
-export ADDITIONAL_LEFS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lef)
-export ADDITIONAL_LIBS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lib)
+export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/src/tinyRocket/fakeram45*.lef))
+export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/src/tinyRocket/fakeram45*.lib))
 
 
 # These values must be multiples of placement site

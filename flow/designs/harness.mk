@@ -6,7 +6,7 @@ export SDC_FILE      = ./designs/src/harness/design.sdc
 
 export MERGED_LEF = ./platforms/nangate45/NangateOpenCellLibrary.mod.lef
 export LIB_FILES  = ./platforms/nangate45/NangateOpenCellLibrary_typical.lib
-export GDS_FILES  = $(wildcard ./platforms/nangate45/gds/*)
+export GDS_FILES  = $(sort $(wildcard ./platforms/nangate45/gds/*))
 
 # Automatically pick a reasonable area and utilization
 
