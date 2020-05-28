@@ -38,7 +38,7 @@ proc find_macros {} {
 if {[find_macros] != ""} {
   if {[info exists ::env(MACRO_PLACEMENT)]} {
     source scripts/read_macro_placement.tcl
-    puts "INFO \[FLOW-xxxx\] - Using manual macro placement file $::env(MACRO_PLACEMENT)"
+    puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
     read_macro_placement $::env(MACRO_PLACEMENT)
   } else {
     macro_placement -global_config $::env(IP_GLOBAL_CFG)
