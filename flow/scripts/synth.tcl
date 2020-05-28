@@ -41,6 +41,7 @@ if {[info exist ::env(CLKGATE_MAP_FILE)]} {
 # Use hierarchy to automatically generate blackboxes for known memory macro.
 # Pins are enumerated for proper mapping
 if {[info exist ::env(BLACKBOX_MAP_TCL)]} {
+  hierarchy -top $::env(DESIGN_NAME)
   source $::env(BLACKBOX_MAP_TCL)
 }
 
