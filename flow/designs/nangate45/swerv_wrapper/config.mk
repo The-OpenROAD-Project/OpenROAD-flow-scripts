@@ -3,7 +3,7 @@ export PLATFORM    = nangate45
 
 export VERILOG_FILES = ./designs/src/swerv/swerv_wrapper.sv2v.v \
                        ./designs/$(PLATFORM)/swerv/macros.v
-export SDC_FILE      = ./designs/$(PLATFORM)/swerv/swerv_wrapper.elab.v.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/swerv/constraint.sdc
 
 export ADDITIONAL_LEFS = $(wildcard ./designs/$(PLATFORM)/swerv/*.lef)
 export ADDITIONAL_LIBS = $(wildcard ./designs/$(PLATFORM)/swerv/*.lib)
