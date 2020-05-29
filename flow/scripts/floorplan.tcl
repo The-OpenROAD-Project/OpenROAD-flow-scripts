@@ -18,6 +18,8 @@ if {![info exists standalone] || $standalone} {
 
   link_design $::env(DESIGN_NAME)
   read_sdc $::env(RESULTS_DIR)/1_synth.sdc
+  set num_instances [llength [get_cells -hier *]]
+  puts "number instances in verilog is $num_instances"
 }
 
 # Initialize floorplan using ICeWall FOOTPRINT
