@@ -22,9 +22,8 @@ set_wire_rc -layer $::env(WIRE_RC_LAYER)
 fastroute -output_file $::env(RESULTS_DIR)/route.guide \
           -max_routing_layer $::env(MAX_ROUTING_LAYER) \
           -unidirectional_routing true \
-          -capacity_adjustment 0.15 \
-          -layers_adjustments {{2 0.5} {3 0.5}} \
-          -overflow_iterations 100
+          -layers_adjustments {{2 0.7} {3 0.7} {4 0.3} {5 0.3} {6 0.3} {7 0.3} {8 0.3} {9 0.3}} \
+          -overflow_iterations 100 \
 
 if {![info exists standalone] || $standalone} {
   exit
