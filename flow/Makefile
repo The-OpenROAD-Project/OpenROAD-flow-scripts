@@ -128,7 +128,8 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 # ==============================================================================
  $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE)
 	mkdir -p $(OBJECTS_DIR)
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
+	sed '/OR_DEFAULT/d' $(TECH_LEF) > $(OBJECTS_DIR)/klayout_tech.lef
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
 
 # ==============================================================================
 #  ______   ___   _ _____ _   _ _____ ____ ___ ____
