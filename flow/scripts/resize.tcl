@@ -115,6 +115,9 @@ report_tns
 print_banner "report_wns"
 report_wns
 
+print_banner "report_slew_violations"
+report_check_types -max_slew -violators
+
 print_banner "report_design_area"
 report_design_area
 
