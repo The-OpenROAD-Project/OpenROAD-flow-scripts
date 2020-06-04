@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # This scripts attempts to extract relevant data from a completed flow design
 # and save it into a "metadata.json". It achieves this by looking for specific
