@@ -49,8 +49,8 @@ parser.add_argument('--output', '-o', required=False, default="metadata.json",
 args = parser.parse_args()
 
 if not os.path.isdir(args.flowPath):
-  print "Error: flowPath does not exist"
-  print "Path: " + args.flowPath
+  print("Error: flowPath does not exist")
+  print("Path: " + args.flowPath)
   sys.exit(1)
 
 logPath = os.path.join(args.flowPath, "logs", args.platform, args.design)
@@ -68,7 +68,7 @@ rptPath = os.path.join(args.flowPath, "reports", args.platform, args.design)
 # t indicates the type that should be written to the JSON file (default: string)
 def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str):
   if jsonTag in jsonFile:
-    print "[WARN] Overwriting Tag", jsonTag
+    print("[WARN] Overwriting Tag", jsonTag)
 
   # Open file
   try:
@@ -88,10 +88,10 @@ def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N
     else:
       # Only print a warning if the defaultNotFound is not set
       if defaultNotFound == "N/A":
-        print "[WARN] Tag", jsonTag, "not found in", searchFilePath
+        print("[WARN] Tag", jsonTag, "not found in", searchFilePath)
       jsonFile[jsonTag] = defaultNotFound
   except IOError:
-    print "[WARN] Failed to open file:", searchFilePath
+    print("[WARN] Failed to open file:", searchFilePath)
     jsonFile[jsonTag] = "ERR"
 
 
