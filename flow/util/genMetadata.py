@@ -16,6 +16,22 @@ import uuid
 import platform
 from collections import OrderedDict
 
+
+# Integrating EDAAC for metrics collection and storage
+# ==============================================================================
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "-U", package])
+install('edaac')  
+install('edaac')
+from edaac.metrics.parsers import parse_yosys_log
+
+def add_metrics(combined_metrics, tool_metrics):
+  for k, v in tool_metrics.items():
+    if v:
+      combined_metrics[k] = v
+  return combined_metrics
+
+
 # Parse and validate arguments
 # ==============================================================================
 parser = argparse.ArgumentParser(
@@ -117,6 +133,13 @@ jsonFile["comment"] = args.comment
 # ==============================================================================
 
 # yosys
+try:
+  # just try for now as it is experimental
+  metrics = parse_yosys_log(logPath + "/1_1_yosys.log")
+  jsonFile = add_metrics(jsonFile, metrics)
+except Exception as e:
+  print(e)  # just log it for now to debug the error
+
 extractTagFromFile("yosys_version",
                    "^Yosys (.*)",
                    logPath+"/1_1_yosys.log")
