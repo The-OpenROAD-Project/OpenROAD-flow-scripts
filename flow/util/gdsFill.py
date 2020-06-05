@@ -40,13 +40,9 @@ def setup_top():
   top.insert(pya.CellInstArray(design_top.cell_index(), pya.Trans()))
   top.insert(pya.CellInstArray(fill_top_cell.cell_index(), pya.Trans()))
 
-  print('INFO: Flattening top cell')
-  top.move_tree(fill_top_cell)
-  fill_top_cell.copy_tree(design_top)
-  fill_top_cell.flatten(True)
-  return fill_top_cell
+  return fill_top_cell, design_top
 
-fill_top_cell = setup_top()
+fill_top_cell, design_top = setup_top()
 
 # Expand layers in json
 def expand_cfg_layers(cfg):
@@ -212,21 +208,18 @@ def do_fill():
   # Map outline from GDS to layer index
   outline = cfg['outline']
   outline_index = main_layout.find_layer(outline['layer'], outline['datatype'])
+  base_outline_area = pya.Region(design_top.bbox_per_layer(outline_index))
 
   for layer, layer_cfg in cfg['layers'].items():
     print('INFO: Performing fill for {} [gds={}:{} klayout={}]'.format(
       layer, layer_cfg['layer'], layer_cfg['datatype'], layer_cfg['klayout']))
 
-    outline_area = pya.Region(fill_top_cell.bbox_per_layer(outline_index))
-    outline_area.size(-layer_cfg['space_to_outline'])
+    outline_area = base_outline_area.dup().size(-layer_cfg['space_to_outline'])
 
-    shapes_area = pya.Region(fill_top_cell.shapes(layer_cfg['klayout']))
+    shapes_area = pya.Region(design_top.begin_shapes_rec(layer_cfg['klayout']))
 
     do_non_opc_fill(fill_top_cell, layer, layer_cfg, outline_area, shapes_area)
     do_opc_fill(fill_top_cell, layer, layer_cfg, outline_area, shapes_area)
-
-  # Discards the flatten shapes from the design but keeps the fill instances
-  fill_top_cell.clear_shapes()
 
   print('INFO: Writing gds: ' + out_gds)
   main_layout.write(out_gds)

@@ -35,10 +35,10 @@ proc find_macros {} {
 }
 
 if {[find_macros] != ""} {
-  set_wire_rc -layer $::env(WIRE_RC_LAYER)
-  global_placement -timing_driven -density $::env(PLACE_DENSITY)
+    set_wire_rc -layer $::env(WIRE_RC_LAYER)
+    global_placement -disable_routability_driven -density $::env(PLACE_DENSITY)
 } else {
-  puts "No macros found: Skipping global_placement"
+    puts "No macros found: Skipping global_placement"
 }
 
 if {![info exists standalone] || $standalone} {

@@ -5,7 +5,8 @@ export PLATFORM    = gf14
 export VERILOG_FILES = ./platforms/gf14/bp/bsg_ac_io_complex_loopback/bsg_chip.sv2v.v \
                        ./platforms/gf14/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
-# export DC_NETLIST    = ./platforms/gf14/bp/bsg_ac_io_complex_loopback/dc/results/bsg_chip.mapped.flat.v
+# export CACHED_NETLIST    = ./platforms/gf14/bp/bsg_ac_io_complex_loopback/dc/results/bsg_chip.mapped.flat.v
+export CACHED_NETLIST    = ./platforms/gf14/bp/bsg_ac_io_complex_loopback/yosys/synth.v
 
 export SDC_FILE      = ./platforms/gf14/bp/bsg_ac_io_complex_loopback/bsg_chip.elab.v.sdc
 
@@ -23,4 +24,4 @@ export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
 # export DIE_AREA    =
 # export CORE_AREA   =
 
-export CLOCK_PERIOD = 5.600
+export ABC_CLOCK_PERIOD_IN_PS = 1666

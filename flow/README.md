@@ -1,6 +1,7 @@
 
 ## OpenROAD-flow
 ![alt text](docs/flow.png "flow")
+<!-- Original source at: https://docs.google.com/drawings/d/1XGPD7g_X3Pna87XtBf6EB_kCXerGPSeKEWGPO_Q-Sb4 -->
 
 ## Quick Start
 ```

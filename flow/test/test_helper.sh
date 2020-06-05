@@ -22,13 +22,16 @@ set -o pipefail
 mkdir -p $TEST_DIR/logs/$PLATFORM
 
 if [ -f "./private/util/utils.mk" ]; then
-  TARGETS="finish metadata private_drc private_congestion private_metadata"
+  TARGETS="finish metadata private_drc_calibre"
 else
   TARGETS="finish metadata"
 fi
 
 make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG.mk clean_all clean_metadata
 make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG.mk $TARGETS 2>&1 | tee $LOG_FILE
+if [ ! -z ${MAKE_ISSUE+x} ]; then
+  make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG.mk final_report_issue
+fi
 
 
 #diff $LOG_FILE $GOLD_LOG_FILE

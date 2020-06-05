@@ -18,6 +18,8 @@ if {![info exists standalone] || $standalone} {
 
   link_design $::env(DESIGN_NAME)
   read_sdc $::env(RESULTS_DIR)/1_synth.sdc
+  set num_instances [llength [get_cells -hier *]]
+  puts "number instances in verilog is $num_instances"
 }
 
 # Initialize floorplan using ICeWall FOOTPRINT
@@ -53,6 +55,23 @@ if {[info exists ::env(FOOTPRINT)]} {
                        -site $::env(PLACE_SITE)
 }
 
+# If wrappers defined replace macros with their wrapped version
+# # ----------------------------------------------------------------------------
+if {[info exists ::env(MACRO_WRAPPERS)]} {
+  source $::env(MACRO_WRAPPERS)
+
+  set wrapped_macros [dict keys [dict get $wrapper around]]
+  set db [ord::get_db]
+  set block [ord::get_db_block]
+
+  foreach inst [$block getInsts] {
+    if {[lsearch -exact $wrapped_macros [[$inst getMaster] getName]] > -1} {
+      set new_master [dict get $wrapper around [[$inst getMaster] getName]]
+      puts "Replacing [[$inst getMaster] getName] with $new_master for [$inst getName]"
+      $inst swapMaster [$db findMaster $new_master]
+    }
+  }
+}
 
 # pre report
 log_begin $::env(REPORTS_DIR)/2_init.rpt

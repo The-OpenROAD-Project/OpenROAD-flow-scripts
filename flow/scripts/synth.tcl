@@ -1,15 +1,9 @@
 yosys -import
 
-if {[info exist ::env(DC_NETLIST)]} {
-  exec cp $::env(DC_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
+if {[info exist ::env(CACHED_NETLIST)]} {
+  exec cp $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
   exit
 }
-
-# Don't change these unless you know what you are doing
-set stat_ext    "_stat.rep"
-set gl_ext      "_gl.v"
-set abc_script  "+read_constr,$::env(SDC_FILE);strash;ifraig;retime,-D,{D},-M,6;strash;dch,-f;map,-p,-M,1,{D},-f;topo;dnsize;buffer,-p;upsize;"
-
 
 # Setup verilog include directories
 set vIdirsArgs ""
@@ -23,13 +17,13 @@ if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
 
 # read verilog files
 foreach file $::env(VERILOG_FILES) {
-  read_verilog -sv {*}$vIdirsArgs $file
+  read_verilog -defer -sv {*}$vIdirsArgs $file
 }
 
 
 # Read blackbox stubs of standard cells. This allows for standard cell (or
 # structural netlist) support in the input verilog
-read_verilog $::env(BLACKBOX_V_FILE)
+read_verilog -defer $::env(BLACKBOX_V_FILE)
 
 # Apply toplevel parameters (if exist)
 if {[info exist ::env(VERILOG_TOP_PARAMS)]} {
@@ -41,12 +35,13 @@ if {[info exist ::env(VERILOG_TOP_PARAMS)]} {
 
 # Read platform specific mapfile for OPENROAD_CLKGATE cells
 if {[info exist ::env(CLKGATE_MAP_FILE)]} {
-  read_verilog $::env(CLKGATE_MAP_FILE)
+  read_verilog -defer $::env(CLKGATE_MAP_FILE)
 }
 
 # Use hierarchy to automatically generate blackboxes for known memory macro.
 # Pins are enumerated for proper mapping
 if {[info exist ::env(BLACKBOX_MAP_TCL)]} {
+  hierarchy -top $::env(DESIGN_NAME)
   source $::env(BLACKBOX_MAP_TCL)
 }
 
@@ -66,12 +61,21 @@ if {[info exist ::env(LATCH_MAP_FILE)]} {
 dfflibmap -liberty $::env(OBJECTS_DIR)/merged.lib
 opt
 
+set constr [open $::env(OBJECTS_DIR)/abc.constr w]
+puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
+puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
+close $constr
+
 # Technology mapping for cells
-abc -D [expr $::env(CLOCK_PERIOD) * 1000] \
-    -constr "$::env(SDC_FILE)" \
-    -liberty $::env(OBJECTS_DIR)/merged.lib \
-    -script $abc_script \
-    -showtmp
+if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
+  abc -D [expr $::env(ABC_CLOCK_PERIOD_IN_PS)] \
+      -liberty $::env(OBJECTS_DIR)/merged.lib \
+      -constr $::env(OBJECTS_DIR)/abc.constr
+} else {
+  puts "WARNING: No clock period constraints detected in design"
+  abc -liberty $::env(OBJECTS_DIR)/merged.lib \
+      -constr $::env(OBJECTS_DIR)/abc.constr
+}
 
 # technology mapping of constant hi- and/or lo-drivers
 hilomap -singleton \
@@ -84,11 +88,11 @@ setundef -zero
 # Splitting nets resolves unwanted compound assign statements in netlist (assign {..} = {..})
 splitnets
 
-# insert buffer cells for pass through wires
-insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
-
 # remove unused cells and wires
 opt_clean -purge
+
+# insert buffer cells for pass through wires
+insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
 
 # reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check

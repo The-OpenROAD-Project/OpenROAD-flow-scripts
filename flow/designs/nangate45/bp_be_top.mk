@@ -6,8 +6,8 @@ export VERILOG_FILES = ./designs/src/bp_be_top/pickled.v \
                        ./designs/src/bp_be_top/nangate45_macros.v
 export SDC_FILE      = ./designs/src/bp_be_top/design.sdc
 
-export ADDITIONAL_LEFS = $(wildcard ./designs/src/bp_be_top/fakeram45*.lef)
-export ADDITIONAL_LIBS = $(wildcard ./designs/src/bp_be_top/fakeram45*.lib)
+export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/src/bp_be_top/fakeram45*.lef))
+export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/src/bp_be_top/fakeram45*.lib))
 
 
 # These values must be multiples of placement site
@@ -15,4 +15,4 @@ export ADDITIONAL_LIBS = $(wildcard ./designs/src/bp_be_top/fakeram45*.lib)
 export DIE_AREA    = 0 0 1550.02 1342.6
 export CORE_AREA   = 10.07 11.2 1540.14 1332.8
 
-export CLOCK_PERIOD = 5.600
+export PLACE_DENSITY = 0.15

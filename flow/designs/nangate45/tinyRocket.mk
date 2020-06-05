@@ -11,8 +11,8 @@ export VERILOG_FILES = ./designs/src/tinyRocket/AsyncResetReg.v \
 
 export SDC_FILE      = ./designs/src/tinyRocket/RocketTile.sdc
 
-export ADDITIONAL_LEFS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lef)
-export ADDITIONAL_LIBS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lib)
+export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/src/tinyRocket/fakeram45*.lef))
+export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/src/tinyRocket/fakeram45*.lib))
 
 
 # These values must be multiples of placement site
@@ -20,4 +20,3 @@ export ADDITIONAL_LIBS = $(wildcard ./designs/src/tinyRocket/fakeram45*.lib)
 export DIE_AREA    = 0 0 924.92 799.4
 export CORE_AREA   = 10.07 9.8 914.85 789.6
 
-export CLOCK_PERIOD = 5.600

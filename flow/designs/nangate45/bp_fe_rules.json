@@ -2,7 +2,7 @@
     "rules": [
         {
             "field" : "detailedroute__drc__num__total",
-            "value" : 104,
+            "value" : 248,
             "compare": "<="
         }
     ]
