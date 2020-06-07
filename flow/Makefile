@@ -2,54 +2,55 @@
 # Uncomment or add the design to run
 # ==============================================================================
 
-# DESIGN_CONFIG=./designs/nangate45/aes.mk
-# DESIGN_CONFIG=./designs/nangate45/black_parrot.mk
-# DESIGN_CONFIG=./designs/nangate45/bp_be_top.mk
-# DESIGN_CONFIG=./designs/nangate45/bp_fe_top.mk
-# DESIGN_CONFIG=./designs/nangate45/bp_multi_top.mk
-# DESIGN_CONFIG=./designs/nangate45/dynamic_node.mk
-# DESIGN_CONFIG=./designs/nangate45/gcd.mk
-# DESIGN_CONFIG=./designs/nangate45/ibex.mk
-# DESIGN_CONFIG=./designs/nangate45/jpeg.mk
-# DESIGN_CONFIG=./designs/nangate45/swerv.mk
-# DESIGN_CONFIG=./designs/nangate45/swerv_wrapper.mk
-# DESIGN_CONFIG=./designs/nangate45/tiny-tests.mk
-# DESIGN_CONFIG=./designs/nangate45/tinyRocket.mk
+# DESIGN_CONFIG=./designs/nangate45/aes/config.mk
+# DESIGN_CONFIG=./designs/nangate45/black_parrot/config.mk
+# DESIGN_CONFIG=./designs/nangate45/bp_be_top/config.mk
+# DESIGN_CONFIG=./designs/nangate45/bp_fe_top/config.mk
+# DESIGN_CONFIG=./designs/nangate45/bp_multi_top/config.mk
+# DESIGN_CONFIG=./designs/nangate45/dynamic_node/config.mk
+# DESIGN_CONFIG=./designs/nangate45/gcd/config.mk
+# DESIGN_CONFIG=./designs/nangate45/ibex/config.mk
+# DESIGN_CONFIG=./designs/nangate45/jpeg/config.mk
+# DESIGN_CONFIG=./designs/nangate45/swerv/config.mk
+# DESIGN_CONFIG=./designs/nangate45/swerv_wrapper/config.mk
+# DESIGN_CONFIG=./designs/nangate45/tiny-tests/config.mk
+# DESIGN_CONFIG=./designs/nangate45/tinyRocket/config.mk
 
-# DESIGN_CONFIG=./designs/tsmc65lp/aes.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/ariane.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/black_parrot.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/bp_be_top.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/bp_fe_top.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/bp_multi_top.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/coyote.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/dynamic_node.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/gcd.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/ibex.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/jpeg.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/swerv.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/swerv_wrapper.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/vb.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/aes/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/ariane/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/black_parrot/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/bp_be_top/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/bp_fe_top/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/bp_multi_top/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/coyote/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/dynamic_node/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/gcd/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/ibex/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/jpeg/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/swerv/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/swerv_wrapper/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket/config.mk
+# DESIGN_CONFIG=./designs/tsmc65lp/vanilla5/config.mk
 
-# DESIGN_CONFIG=./designs/gf14/aes.mk
-# DESIGN_CONFIG=./designs/gf14/dynamic_node.mk
-# DESIGN_CONFIG=./designs/gf14/gcd.mk
-# DESIGN_CONFIG=./designs/gf14/ibex.mk
-# DESIGN_CONFIG=./designs/gf14/jpeg.mk
-# DESIGN_CONFIG=./designs/gf14/swerv.mk
+# DESIGN_CONFIG=./designs/gf14/aes/config.mk
+# DESIGN_CONFIG=./designs/gf14/dynamic_node/config.mk
+# DESIGN_CONFIG=./designs/gf14/gcd/config.mk
+# DESIGN_CONFIG=./designs/gf14/ibex/config.mk
+# DESIGN_CONFIG=./designs/gf14/jpeg/config.mk
+# DESIGN_CONFIG=./designs/gf14/swerv/config.mk
+# DESIGN_CONFIG=./designs/gf14/tinyRocket/config.mk
 
-# DESIGN_CONFIG=./designs/gf14/bsg_padring.mk
-# DESIGN_CONFIG=./designs/gf14/bsg_loopback.mk
-# DESIGN_CONFIG=./designs/gf14/bp_single.mk
-# DESIGN_CONFIG=./designs/gf14/bp_dual.mk
-# DESIGN_CONFIG=./designs/gf14/bp_quad.mk
+# DESIGN_CONFIG=./designs/gf14/bsg_padring/config.mk
+# DESIGN_CONFIG=./designs/gf14/bsg_loopback/config.mk
+# DESIGN_CONFIG=./designs/gf14/bp_single/config.mk
+# DESIGN_CONFIG=./designs/gf14/bp_dual/config.mk
+# DESIGN_CONFIG=./designs/gf14/bp_quad/config.mk
 
 # DESIGN_CONFIG=./designs/sw130/gcd.mk
 
 
 # Default design
-DESIGN_CONFIG ?= ./designs/nangate45/gcd.mk
+DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
 # # Global override Floorplan
 # export CORE_UTILIZATION := 30
