@@ -8,3 +8,6 @@
 [submodule "tools/OpenROAD"]
 	path = tools/OpenROAD
 	url = https://github.com/The-OpenROAD-Project/OpenROAD.git
+[submodule "flow/util/cell-veneer"]
+	path = flow/util/cell-veneer
+	url = https://github.com/The-OpenROAD-Project-Attic/cell-veneer.git

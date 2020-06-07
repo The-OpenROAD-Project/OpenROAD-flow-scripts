@@ -2,7 +2,8 @@ export DESIGN_NICKNAME = coyote
 export DESIGN_NAME = bsg_rocket_node_client_rocc
 export PLATFORM    = tsmc65lp
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/coyote.sv2v.v
+export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \
+                       ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export ADDITIONAL_LEFS = ./platforms/$(PLATFORM)/lef/tsmc65lp_1rf_lg6_w80_bit.lef \
