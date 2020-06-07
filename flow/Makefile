@@ -90,6 +90,9 @@ TIME_CMD = /usr/bin/time -f "%Eelapsed %PCPU %MmemKB"
 export NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
 OPENROAD_CMD = openroad -no_init -exit
 
+WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
+WRAPPED_GDS  = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.gds))
+export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
@@ -131,6 +134,21 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 	mkdir -p $(OBJECTS_DIR)
 	sed '/OR_DEFAULT/d' $(TECH_LEF) > $(OBJECTS_DIR)/klayout_tech.lef
 	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
+
+$(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE)
+	mkdir -p $(OBJECTS_DIR)
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(TECH_LEF) $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
+# Create Macro wrappers (if necessary)
+# ==============================================================================
+WRAP_CFG = platforms/gf14/bp/wrappers/wrapper.cfg
+
+
+export TCLLIBPATH := util/cell-veneer $(TCLLIBPATH)
+$(WRAPPED_LEFS):
+	mkdir -p $(OBJECTS_DIR)/lef $(OBJECTS_DIR)/def
+	util/cell-veneer/wrap.tcl -cfg $(WRAP_CFG) -macro $(filter %$(notdir $(@:_mod.lef=.lef)),$(WRAP_LEFS))
+	mv $(notdir $@) $@
+	mv $(notdir $(@:lef=def)) $(dir $@)../def/$(notdir $(@:lef=def))
 
 # ==============================================================================
 #  ______   ___   _ _____ _   _ _____ ____ ___ ____
@@ -183,7 +201,7 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc
+$(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(WRAPPED_LEFS)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
 
 
@@ -382,14 +400,14 @@ clean_route:
 
 klayout_tr_rpt: $(RESULTS_DIR)/5_route.def
 	klayout -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
-                -rd in_def="$<" \
+	        -rd in_def="$<" \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/viewDrc.py
 
 klayout_guides: $(RESULTS_DIR)/5_route.def
 	klayout -rd in_guide="$(RESULTS_DIR)/route.guide" \
-                -rd in_def="$<" \
-                -rd net_name=$(GUIDE_NET) \
+	        -rd in_def="$<" \
+	        -rd net_name=$(GUIDE_NET) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/viewGuide.py
 
@@ -411,12 +429,22 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_r
 
 $(RESULTS_DIR)/6_final.def: $(REPORTS_DIR)/6_final_report.rpt
 
+# Merge wrapped macros using Klayout
+#-------------------------------------------------------------------------------
+$(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
+	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
+	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:gds=def)) \
+	        -rd in_gds="$(ADDITIONAL_GDS)" \
+	        -rd out_gds=$@ \
+	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
+	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
+
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(RESULTS_DIR)/6_final.def
+$(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED_GDS) $(RESULTS_DIR)/6_final.def
 	($(TIME_CMD) klayout -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$(RESULTS_DIR)/5_route.def \
-	        -rd in_gds="$(GDS_FILES)" \
+	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
 	        -rd out_gds=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
