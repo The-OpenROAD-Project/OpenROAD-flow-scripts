@@ -121,7 +121,7 @@ endif
 
 # Pre-process libraries
 # ==============================================================================
-$(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
+$(OBJECTS_DIR)/merged.lib: $(LIB_FILES)
 	mkdir -p $(OBJECTS_DIR)
 	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged \
 	                           $(LIB_FILES) \
@@ -137,7 +137,7 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE)
 	mkdir -p $(OBJECTS_DIR)
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(TECH_LEF) $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
 # Create Macro wrappers (if necessary)
 # ==============================================================================
 WRAP_CFG = platforms/gf14/bp/wrappers/wrapper.cfg
