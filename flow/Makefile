@@ -91,8 +91,10 @@ export NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
 OPENROAD_CMD = openroad -no_init -exit
 
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
+WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
 WRAPPED_GDS  = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.gds))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
+export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
@@ -150,6 +152,10 @@ $(WRAPPED_LEFS):
 	mv $(notdir $@) $@
 	mv $(notdir $(@:lef=def)) $(dir $@)../def/$(notdir $(@:lef=def))
 
+$(WRAPPED_LIBS):
+	mkdir -p $(OBJECTS_DIR)/lib
+	sed 's/library(\(.*\))/library(\1_mod)/g' $(filter %$(notdir $(@:_mod.lib=.lib)),$(WRAP_LIBS)) | sed 's/cell(\(.*\))/cell(\1_mod)/g' > $@
+
 # ==============================================================================
 #  ______   ___   _ _____ _   _ _____ ____ ___ ____
 # / ___\ \ / / \ | |_   _| | | | ____/ ___|_ _/ ___|
@@ -167,7 +173,7 @@ synth: versions.txt \
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= scripts/synth.tcl
 
-$(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
+$(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib $(WRAPPED_LIBS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) yosys -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
