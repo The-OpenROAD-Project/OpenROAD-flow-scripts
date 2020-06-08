@@ -11,17 +11,17 @@ export VERILOG_FILES  = ./designs/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
 
 export SDC_FILE       = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export WRAP_LEFS      = ./platforms/gf14/lef/$(DESIGN_NICKNAME)/gf14_1rf_lg6_w32_all.lef \
-                        ./platforms/gf14/lef/$(DESIGN_NICKNAME)/gf14_1rf_lg6_w32_byte.lef \
-                        ./platforms/gf14/lef/$(DESIGN_NICKNAME)/gf14_2rf_lg10_w32_bit.lef
+export WRAP_LEFS      = ./platforms/gf14/lef/gf14_1rf_lg6_w32_all.lef \
+                        ./platforms/gf14/lef/gf14_1rf_lg6_w32_byte.lef \
+                        ./platforms/gf14/lef/gf14_2rf_lg10_w32_bit.lef
 
-export WRAP_LIBS      = ./platforms/gf14/lib/$(DESIGN_NICKNAME)/gf14_1rf_lg6_w32_all_nn_nominal_0p80v_0p80v_25c.lib \
-                        ./platforms/gf14/lib/$(DESIGN_NICKNAME)/gf14_1rf_lg6_w32_byte_nn_nominal_0p80v_0p80v_25c.lib \
-                        ./platforms/gf14/lib/$(DESIGN_NICKNAME)/gf14_2rf_lg10_w32_bit_nn_nominal_0p80v_0p80v_25c.lib
+export WRAP_LIBS      = ./platforms/gf14/lib/gf14_1rf_lg6_w32_all_nn_nominal_0p80v_0p80v_25c.lib \
+                        ./platforms/gf14/lib/gf14_1rf_lg6_w32_byte_nn_nominal_0p80v_0p80v_25c.lib \
+                        ./platforms/gf14/lib/gf14_2rf_lg10_w32_bit_nn_nominal_0p80v_0p80v_25c.lib
 
-export ADDITIONAL_GDS = ./platforms/gf14/gds/$(DESIGN_NICKNAME)/gf14_1rf_lg6_w32_all.gds2 \
-                        ./platforms/gf14/gds/$(DESIGN_NICKNAME)/gf14_1rf_lg6_w32_byte.gds2 \
-                        ./platforms/gf14/gds/$(DESIGN_NICKNAME)/gf14_2rf_lg10_w32_bit.gds2 \
+export ADDITIONAL_GDS = ./platforms/gf14/gds/gf14_1rf_lg6_w32_all.gds2 \
+                        ./platforms/gf14/gds/gf14_1rf_lg6_w32_byte.gds2 \
+                        ./platforms/gf14/gds/gf14_2rf_lg10_w32_bit.gds2 \
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 400.008 399.84
