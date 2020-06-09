@@ -18,6 +18,13 @@ if {![info exists standalone] || $standalone} {
   read_sdc $::env(RESULTS_DIR)/5_route.sdc
 }
 
+# Set res and cap
+if {[info exists ::env(WIRE_RC_RES)] && [info exists ::env(WIRE_RC_CAP)]} {
+  set_wire_rc -res $::env(WIRE_RC_RES) -cap $::env(WIRE_RC_CAP)
+}
+
+set_propagated_clock [all_clocks]
+
 log_begin $::env(REPORTS_DIR)/6_final_report.rpt
 
 puts "\n=========================================================================="
