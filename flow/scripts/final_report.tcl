@@ -32,12 +32,12 @@ log_begin $::env(REPORTS_DIR)/6_final_report.rpt
 puts "\n=========================================================================="
 puts "report_checks -path_delay min"
 puts "--------------------------------------------------------------------------"
-report_checks -path_delay min
+report_checks -path_delay min -fields {slew cap input}
 
 puts "\n=========================================================================="
 puts "report_checks -path_delay max"
 puts "--------------------------------------------------------------------------"
-report_checks -path_delay max
+report_checks -path_delay max -fields {slew cap input}
 
 puts "\n=========================================================================="
 puts "report_checks -unconstrained"
@@ -57,7 +57,12 @@ report_wns
 puts "\n=========================================================================="
 puts "report_check_types -max_slew -violators"
 puts "--------------------------------------------------------------------------"
-report_check_types -max_slew -violators
+report_check_types -max_slew -max_capacitance -max_fanout -violators
+
+puts "\n=========================================================================="
+puts "report_clock_skew"
+puts "--------------------------------------------------------------------------"
+report_clock_skew
 
 puts "\n=========================================================================="
 puts "report_power"
