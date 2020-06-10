@@ -59,7 +59,7 @@ export ABC_CLOCK_PERIOD_IN_PS = 1250
 export PLACE_DENSITY = 0.20
 
 export MACRO_WRAPPERS = ./platforms/gf14/bp/wrappers/wrappers.tcl
-#export MACRO_PLACEMENT = ./platforms/gf14/bp/bp_single.macro_placment.cfg
+export MACRO_PLACEMENT = ./platforms/gf14/bp/bp_single.macro_placment.cfg
 
 export PDN_CFG ?= ./platforms/gf14/pdn_grid_strategy_13m_9T.top.cfg
 
