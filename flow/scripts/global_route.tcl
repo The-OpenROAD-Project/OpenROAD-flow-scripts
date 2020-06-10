@@ -17,8 +17,6 @@ if {![info exists standalone] || $standalone} {
   read_def $::env(RESULTS_DIR)/4_cts.def
 }
 
-set_wire_rc -layer $::env(WIRE_RC_LAYER)
-
 if {[info exist ::env(FASTROUTE_TCL)]} {
   source $::env(FASTROUTE_TCL)
 } else {

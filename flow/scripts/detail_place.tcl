@@ -21,6 +21,7 @@ set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 detailed_placement
+optimize_mirroring
 check_placement -verbose
 
 if {![info exists standalone] || $standalone} {
