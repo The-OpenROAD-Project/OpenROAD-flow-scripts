@@ -77,11 +77,6 @@ if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
       -constr $::env(OBJECTS_DIR)/abc.constr
 }
 
-# technology mapping of constant hi- and/or lo-drivers
-hilomap -singleton \
-        -hicell {*}$::env(TIEHI_CELL_AND_PORT) \
-        -locell {*}$::env(TIELO_CELL_AND_PORT)
-
 # replace undef values with defined constants
 setundef -zero
 
@@ -90,6 +85,11 @@ splitnets
 
 # remove unused cells and wires
 opt_clean -purge
+
+# technology mapping of constant hi- and/or lo-drivers
+hilomap -singleton \
+        -hicell {*}$::env(TIEHI_CELL_AND_PORT) \
+        -locell {*}$::env(TIELO_CELL_AND_PORT)
 
 # insert buffer cells for pass through wires
 insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)

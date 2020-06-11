@@ -200,7 +200,6 @@ clean_synth:
 # |_|   |_____\___/ \___/|_| \_\_|   |_____/_/   \_\_| \_|
 #
 floorplan: $(RESULTS_DIR)/2_floorplan.def \
-           $(RESULTS_DIR)/2_floorplan.v \
            $(RESULTS_DIR)/2_floorplan.sdc
 # ==============================================================================
 
@@ -240,16 +239,13 @@ $(RESULTS_DIR)/2_6_floorplan_pdn.def: $(RESULTS_DIR)/2_5_floorplan_tapcell.def
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_pdn.def
 	cp $< $@
 
-$(RESULTS_DIR)/2_floorplan.v: $(RESULTS_DIR)/2_1_floorplan.def
-
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.def
 
 
 clean_floorplan:
-	rm -rf $(RESULTS_DIR)/2_*floorplan*.def
-	rm -rf $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc
-	rm -f  $(REPORTS_DIR)/2_*
-	rm -f  $(LOG_DIR)/2_*
+	rm -f $(RESULTS_DIR)/2_*floorplan*.def $(RESULTS_DIR)/2_floorplan.sdc
+	rm -f $(REPORTS_DIR)/2_*
+	rm -f $(LOG_DIR)/2_*
 
 # ==============================================================================
 #  ____  _        _    ____ _____
@@ -264,7 +260,7 @@ place: $(RESULTS_DIR)/3_place.def \
 
 # STEP 1: Global placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc
+$(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 
 # STEP 2: Resizing & Buffering
@@ -308,7 +304,6 @@ clean_place:
 #  \____| |_| |____/
 #
 cts: $(RESULTS_DIR)/4_cts.def \
-     $(RESULTS_DIR)/4_cts.v \
      $(RESULTS_DIR)/4_cts.sdc
 # ==============================================================================
 
@@ -320,15 +315,13 @@ $(RESULTS_DIR)/4_1_cts.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sd
 $(RESULTS_DIR)/4_2_cts_fillcell.def: $(RESULTS_DIR)/4_1_cts.def
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/fillcell.tcl) 2>&1 | tee $(LOG_DIR)/4_2_cts_fillcell.log
 
-$(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/4_cts.def
-
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.def
 
 $(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_2_cts_fillcell.def
 	cp $< $@
 
 clean_cts:
-	rm -rf $(RESULTS_DIR)/4_*cts*.def $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_cts.sdc
+	rm -rf $(RESULTS_DIR)/4_*cts*.def $(RESULTS_DIR)/4_cts.sdc
 	rm -f  $(REPORTS_DIR)/4_*
 	rm -f  $(LOG_DIR)/4_*
 
@@ -341,7 +334,6 @@ clean_cts:
 # |_| \_\\___/ \___/  |_| |___|_| \_|\____|
 #
 route: $(RESULTS_DIR)/5_route.def \
-       $(RESULTS_DIR)/5_route.v \
        $(RESULTS_DIR)/5_route.sdc
 # ==============================================================================
 
@@ -390,9 +382,6 @@ else
 	($(TIME_CMD) TritonRoute $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 endif
 
-$(RESULTS_DIR)/5_route.v: $(RESULTS_DIR)/4_cts.v
-	cp $< $@
-
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
 	cp $< $@
 
@@ -400,7 +389,7 @@ clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
 	rm -rf *.gdid *.log *.met *.sav *.res.dmp
 	rm -rf $(RESULTS_DIR)/route.guide $(OBJECTS_DIR)/TritonRoute.param
-	rm -rf $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.v $(RESULTS_DIR)/5_route.sdc $(OBJECTS_DIR)/5_route_TA.def
+	rm -rf $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.sdc $(OBJECTS_DIR)/5_route_TA.def
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
@@ -425,6 +414,7 @@ klayout_guides: $(RESULTS_DIR)/5_route.def
 # |_|   |___|_| \_|___|____/|_| |_|___|_| \_|\____|
 #
 finish: $(REPORTS_DIR)/6_final_report.rpt \
+        $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.gds
 # ==============================================================================
 
@@ -454,6 +444,8 @@ $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED
 	        -rd out_gds=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+
+$(RESULTS_DIR)/6_final.v: $(REPORTS_DIR)/6_final_report.rpt
 
 # TODO(rovinski) Placeholder until fill script works for more platforms
 ifneq ($(USE_FILL),)
