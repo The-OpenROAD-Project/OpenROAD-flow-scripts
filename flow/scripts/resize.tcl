@@ -15,7 +15,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read def and sdc
-  read_def $::env(RESULTS_DIR)/3_1_place_gp.def
+  read_def $::env(RESULTS_DIR)/3_1_place_iop.def
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
 }
 
