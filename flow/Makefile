@@ -210,10 +210,10 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synt
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
 
 
-# STEP 2: IO Placement
+# STEP 2: IO Placement (random)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(RESULTS_DIR)/2_1_floorplan.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement_random.tcl) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 
 # STEP 3: Timing Driven Mixed Sized Placement
 #-------------------------------------------------------------------------------
@@ -258,14 +258,17 @@ place: $(RESULTS_DIR)/3_place.def \
        $(RESULTS_DIR)/3_place.sdc
 # ==============================================================================
 
-# STEP 1: Global placement
+# STEP 1: Global placement + IO placement (not random)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 
+$(RESULTS_DIR)/3_1_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl) 2>&1 | tee $(LOG_DIR)/3_1_place_iop.log
+
 # STEP 2: Resizing & Buffering
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_2_place_resized.def: $(RESULTS_DIR)/3_1_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc
+$(RESULTS_DIR)/3_2_place_resized.def: $(RESULTS_DIR)/3_1_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl) 2>&1 | tee $(LOG_DIR)/3_2_resizer.log
 
 # STEP 3: Detail placement
