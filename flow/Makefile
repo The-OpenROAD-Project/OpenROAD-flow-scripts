@@ -263,7 +263,7 @@ place: $(RESULTS_DIR)/3_place.def \
 $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 
-$(RESULTS_DIR)/3_1_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.log
+$(RESULTS_DIR)/3_1_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl) 2>&1 | tee $(LOG_DIR)/3_1_place_iop.log
 
 # STEP 2: Resizing & Buffering
