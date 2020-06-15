@@ -22,7 +22,8 @@ export ADDITIONAL_LEFS = ./platforms/gf14/bp/lef/gf14_1r1w_d32_w64_m1.lef \
                          ./platforms/gf14/bp/wrappers/gf14_1rw_d256_w48_m2_mod.lef \
                          ./platforms/gf14/bp/wrappers/gf14_1rw_d512_w64_m2_byte_mod.lef \
                          ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w124_m2_bit_mod.lef \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w62_m2_bit_mod.lef
+                         ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w62_m2_bit_mod.lef \
+                         ./platforms/gf14/bp/lef/CDMM_13M_3Mx_2Cx_4Kx_2Hx_2Gx_LB.lef
 
 export ADDITIONAL_LIBS = ./platforms/gf14/bp/lib/gf14_1r1w_d32_w64_m1_tt_nominal_0p80v_0p80v_25c.lib \
                          ./platforms/gf14/bp/lib/gf14_1rw_d128_w116_m2_bit_tt_nominal_0p80v_0p80v_25c.lib \
