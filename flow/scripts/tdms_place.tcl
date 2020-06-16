@@ -34,12 +34,15 @@ proc find_macros {} {
   return $macros
 }
 
-if {[find_macros] != ""} {
+if {[info exists ::env(MACRO_PLACEMENT)]} {
+    puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
+} elseif {[find_macros] != ""} {
     set_wire_rc -layer $::env(WIRE_RC_LAYER)
     global_placement -disable_routability_driven -density $::env(PLACE_DENSITY)
 } else {
     puts "No macros found: Skipping global_placement"
 }
+
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def

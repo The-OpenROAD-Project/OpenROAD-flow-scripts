@@ -20,12 +20,6 @@ if {![info exists standalone] || $standalone} {
   read_sdc $::env(RESULTS_DIR)/3_place.sdc
 }
 
-# Report timing before CTS
-puts "\n=========================================================================="
-puts "report_checks"
-puts "--------------------------------------------------------------------------"
-report_checks
-
 # Run CTS
 clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
                      -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \

@@ -26,7 +26,11 @@ proc print_banner {header} {
 }
 
 # Set res and cap
-set_wire_rc -layer $::env(WIRE_RC_LAYER)
+if {[info exists ::env(WIRE_RC_RES)] && [info exists ::env(WIRE_RC_CAP)]} {
+  set_wire_rc -res $::env(WIRE_RC_RES) -cap $::env(WIRE_RC_CAP)
+} else {
+  set_wire_rc -layer $::env(WIRE_RC_LAYER)
+}
 
 # pre report
 log_begin $::env(REPORTS_DIR)/3_pre_resize.rpt
@@ -55,10 +59,11 @@ log_end
 
 # Set the buffer cell
 set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
+set_dont_use $::env(DONT_USE_CELLS)
 
 # Resize before buffer insertion
 puts "Perform resizing before buffer insertion..."
-resize -dont_use $::env(DONT_USE_CELLS)
+resize
 
 # Do not buffer chip-level designs
 if {![info exists ::env(FOOTPRINT)]} {
@@ -76,25 +81,32 @@ repair_max_slew -buffer_cell $buffer_cell
 
 # Repair max fanout
 puts "Repair max fanout..."
-repair_max_fanout -max_fanout $::env(MAX_FANOUT) -buffer_cell $buffer_cell
+set_max_fanout $::env(MAX_FANOUT) [current_design]
+repair_max_fanout -buffer_cell $buffer_cell
 
 # Perform resizing
 puts "Perform resizing after buffer insertion..."
-resize -dont_use $::env(DONT_USE_CELLS)
+resize
+
+if { [info exists env(TIE_SEPARATION)] } {
+  set tie_separation $env(TIE_SEPARATION)
+} else {
+  set tie_separation 0
+}
 
 # Repair tie lo fanout
 puts "Repair tie lo fanout..."
 set tielo_cell_name [lindex $env(TIELO_CELL_AND_PORT) 0]
 set tielo_lib_name [get_name [get_property [get_lib_cell $tielo_cell_name] library]]
 set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $env(TIELO_CELL_AND_PORT) 1]
-repair_tie_fanout -max_fanout $::env(MAX_FANOUT) $tielo_pin
+repair_tie_fanout -separation $tie_separation $tielo_pin
 
 # Repair tie hi fanout
 puts "Repair tie hi fanout..."
 set tiehi_cell_name [lindex $env(TIEHI_CELL_AND_PORT) 0]
 set tiehi_lib_name [get_name [get_property [get_lib_cell $tiehi_cell_name] library]]
 set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $env(TIEHI_CELL_AND_PORT) 1]
-repair_tie_fanout -max_fanout $::env(MAX_FANOUT) $tiehi_pin
+repair_tie_fanout -separation $tie_separation $tiehi_pin
 
 # Repair hold violations
 puts "Repair hold violations..."
@@ -107,7 +119,9 @@ print_banner "report_floating_nets"
 report_floating_nets
 
 print_banner "report_checks"
-report_checks
+report_checks -path_delay max -fields {slew cap input}
+
+report_checks -path_delay min -fields {slew cap input}
 
 print_banner "report_tns"
 report_tns
@@ -116,7 +130,7 @@ print_banner "report_wns"
 report_wns
 
 print_banner "report_slew_violations"
-report_check_types -max_slew -violators
+report_check_types -max_slew -max_capacitance -max_fanout -violators
 
 print_banner "report_design_area"
 report_design_area

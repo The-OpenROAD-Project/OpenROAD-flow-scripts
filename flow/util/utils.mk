@@ -79,6 +79,21 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	                                     runme.sh vars.sh vars.tcl vars.gdb \
 	                                     $^
 
+vars.tcl:
+	-@rm -f vars.sh vars.tcl vars.gdb
+	@$(foreach V, $(.VARIABLES), \
+	$(if $(filter-out environment% default automatic, $(origin $V)), \
+	echo export $V=\""$($V)\""  >> vars.sh ; \
+	echo set env\($V\) \""$($V)\""     >> vars.tcl ; \
+	echo set env $V "$($V)"     >> vars.gdb ;) \
+	)
+	@sed -i '/export \./d' vars.sh
+	@sed -i '/$(USER)/d' vars.sh
+	@sed -i '/set env(\./d' vars.tcl
+	@sed -i '/$(USER)/d' vars.tcl
+	@sed -i '/set env \./d' vars.gdb
+	@sed -i '/$(USER)/d' vars.gdb
+
 clean_issues:
 	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
 	rm -rf vars.sh runme.sh

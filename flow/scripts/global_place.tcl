@@ -18,8 +18,6 @@ if {![info exists standalone] || $standalone} {
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
 }
 
-set_wire_rc -layer $::env(WIRE_RC_LAYER)
-
 if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
 global_placement -disable_routability_driven -density $::env(PLACE_DENSITY) \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \

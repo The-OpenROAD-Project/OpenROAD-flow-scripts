@@ -91,8 +91,10 @@ export NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
 OPENROAD_CMD = openroad -no_init -exit
 
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
+WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
 WRAPPED_GDS  = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.gds))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
+export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
@@ -121,7 +123,7 @@ endif
 
 # Pre-process libraries
 # ==============================================================================
-$(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
+$(OBJECTS_DIR)/merged.lib: $(LIB_FILES)
 	mkdir -p $(OBJECTS_DIR)
 	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged \
 	                           $(LIB_FILES) \
@@ -137,7 +139,7 @@ $(OBJECTS_DIR)/merged.lib: $(DESIGN_LIB_FILES)
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE)
 	mkdir -p $(OBJECTS_DIR)
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(TECH_LEF) $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
 # Create Macro wrappers (if necessary)
 # ==============================================================================
 WRAP_CFG = platforms/gf14/bp/wrappers/wrapper.cfg
@@ -149,6 +151,10 @@ $(WRAPPED_LEFS):
 	util/cell-veneer/wrap.tcl -cfg $(WRAP_CFG) -macro $(filter %$(notdir $(@:_mod.lef=.lef)),$(WRAP_LEFS))
 	mv $(notdir $@) $@
 	mv $(notdir $(@:lef=def)) $(dir $@)../def/$(notdir $(@:lef=def))
+
+$(WRAPPED_LIBS):
+	mkdir -p $(OBJECTS_DIR)/lib
+	sed 's/library(\(.*\))/library(\1_mod)/g' $(filter %$(notdir $(@:_mod.lib=.lib)),$(WRAP_LIBS)) | sed 's/cell(\(.*\))/cell(\1_mod)/g' > $@
 
 # ==============================================================================
 #  ______   ___   _ _____ _   _ _____ ____ ___ ____
@@ -167,7 +173,7 @@ synth: versions.txt \
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= scripts/synth.tcl
 
-$(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
+$(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib $(WRAPPED_LIBS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) yosys -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
@@ -194,7 +200,6 @@ clean_synth:
 # |_|   |_____\___/ \___/|_| \_\_|   |_____/_/   \_\_| \_|
 #
 floorplan: $(RESULTS_DIR)/2_floorplan.def \
-           $(RESULTS_DIR)/2_floorplan.v \
            $(RESULTS_DIR)/2_floorplan.sdc
 # ==============================================================================
 
@@ -234,16 +239,13 @@ $(RESULTS_DIR)/2_6_floorplan_pdn.def: $(RESULTS_DIR)/2_5_floorplan_tapcell.def
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_pdn.def
 	cp $< $@
 
-$(RESULTS_DIR)/2_floorplan.v: $(RESULTS_DIR)/2_1_floorplan.def
-
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.def
 
 
 clean_floorplan:
-	rm -rf $(RESULTS_DIR)/2_*floorplan*.def
-	rm -rf $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc
-	rm -f  $(REPORTS_DIR)/2_*
-	rm -f  $(LOG_DIR)/2_*
+	rm -f $(RESULTS_DIR)/2_*floorplan*.def $(RESULTS_DIR)/2_floorplan.sdc
+	rm -f $(REPORTS_DIR)/2_*
+	rm -f $(LOG_DIR)/2_*
 
 # ==============================================================================
 #  ____  _        _    ____ _____
@@ -258,7 +260,7 @@ place: $(RESULTS_DIR)/3_place.def \
 
 # STEP 1: Global placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_floorplan.sdc
+$(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 
 # STEP 2: Resizing & Buffering
@@ -302,7 +304,6 @@ clean_place:
 #  \____| |_| |____/
 #
 cts: $(RESULTS_DIR)/4_cts.def \
-     $(RESULTS_DIR)/4_cts.v \
      $(RESULTS_DIR)/4_cts.sdc
 # ==============================================================================
 
@@ -314,15 +315,13 @@ $(RESULTS_DIR)/4_1_cts.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sd
 $(RESULTS_DIR)/4_2_cts_fillcell.def: $(RESULTS_DIR)/4_1_cts.def
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/fillcell.tcl) 2>&1 | tee $(LOG_DIR)/4_2_cts_fillcell.log
 
-$(RESULTS_DIR)/4_cts.v: $(RESULTS_DIR)/4_cts.def
-
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.def
 
 $(RESULTS_DIR)/4_cts.def: $(RESULTS_DIR)/4_2_cts_fillcell.def
 	cp $< $@
 
 clean_cts:
-	rm -rf $(RESULTS_DIR)/4_*cts*.def $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_cts.sdc
+	rm -rf $(RESULTS_DIR)/4_*cts*.def $(RESULTS_DIR)/4_cts.sdc
 	rm -f  $(REPORTS_DIR)/4_*
 	rm -f  $(LOG_DIR)/4_*
 
@@ -335,7 +334,6 @@ clean_cts:
 # |_| \_\\___/ \___/  |_| |___|_| \_|\____|
 #
 route: $(RESULTS_DIR)/5_route.def \
-       $(RESULTS_DIR)/5_route.v \
        $(RESULTS_DIR)/5_route.sdc
 # ==============================================================================
 
@@ -384,9 +382,6 @@ else
 	($(TIME_CMD) TritonRoute $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 endif
 
-$(RESULTS_DIR)/5_route.v: $(RESULTS_DIR)/4_cts.v
-	cp $< $@
-
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
 	cp $< $@
 
@@ -394,7 +389,7 @@ clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
 	rm -rf *.gdid *.log *.met *.sav *.res.dmp
 	rm -rf $(RESULTS_DIR)/route.guide $(OBJECTS_DIR)/TritonRoute.param
-	rm -rf $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.v $(RESULTS_DIR)/5_route.sdc $(OBJECTS_DIR)/5_route_TA.def
+	rm -rf $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.sdc $(OBJECTS_DIR)/5_route_TA.def
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
@@ -419,6 +414,7 @@ klayout_guides: $(RESULTS_DIR)/5_route.def
 # |_|   |___|_| \_|___|____/|_| |_|___|_| \_|\____|
 #
 finish: $(REPORTS_DIR)/6_final_report.rpt \
+        $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.gds
 # ==============================================================================
 
@@ -449,6 +445,8 @@ $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
+$(RESULTS_DIR)/6_final.v: $(REPORTS_DIR)/6_final_report.rpt
+
 # TODO(rovinski) Placeholder until fill script works for more platforms
 ifneq ($(USE_FILL),)
 $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
@@ -476,8 +474,7 @@ else
 endif
 
 clean_finish:
-	rm -rf $(RESULTS_DIR)/6_*.gds
-	rm -rf $(RESULTS_DIR)/6_*.def
+	rm -rf $(RESULTS_DIR)/6_*.gds $(RESULTS_DIR)/6_*.def $(RESULTS_DIR)/6_*.v
 	rm -rf $(REPORTS_DIR)/6_*.rpt
 	rm -f  $(LOG_DIR)/6_*
 
