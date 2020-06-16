@@ -16,6 +16,7 @@ import uuid
 import platform
 from collections import OrderedDict
 
+
 # Parse and validate arguments
 # ==============================================================================
 parser = argparse.ArgumentParser(
@@ -33,8 +34,8 @@ parser.add_argument('--output', '-o', required=False, default="metadata.json",
 args = parser.parse_args()
 
 if not os.path.isdir(args.flowPath):
-  print "Error: flowPath does not exist"
-  print "Path: " + args.flowPath
+  print("Error: flowPath does not exist")
+  print("Path: " + args.flowPath)
   sys.exit(1)
 
 logPath = os.path.join(args.flowPath, "logs", args.platform, args.design)
@@ -52,7 +53,7 @@ rptPath = os.path.join(args.flowPath, "reports", args.platform, args.design)
 # t indicates the type that should be written to the JSON file (default: string)
 def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str):
   if jsonTag in jsonFile:
-    print "[WARN] Overwriting Tag", jsonTag
+    print("[WARN] Overwriting Tag", jsonTag)
 
   # Open file
   try:
@@ -72,21 +73,21 @@ def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N
     else:
       # Only print a warning if the defaultNotFound is not set
       if defaultNotFound == "N/A":
-        print "[WARN] Tag", jsonTag, "not found in", searchFilePath
+        print("[WARN] Tag", jsonTag, "not found in", searchFilePath)
       jsonFile[jsonTag] = defaultNotFound
   except IOError:
-    print "[WARN] Failed to open file:", searchFilePath
+    print("[WARN] Failed to open file:", searchFilePath)
     jsonFile[jsonTag] = "ERR"
 
 
 def extractGnuTime(prefix, file):
-  extractTagFromFile(prefix + "_time",
+  extractTagFromFile(prefix + "__runtime__total",
                      "^(\S+)elapsed \S+CPU \S+memKB",
                      file)
-  extractTagFromFile(prefix + "_cpu",
+  extractTagFromFile(prefix + "__cpu__total",
                      "^\S+elapsed (\S+)CPU \S+memKB",
                      file)
-  extractTagFromFile(prefix + "_mem",
+  extractTagFromFile(prefix + "__mem__peak",
                      "^\S+elapsed \S+CPU (\S+)memKB",
                      file, t=int)
 
@@ -97,19 +98,19 @@ def extractGnuTime(prefix, file):
 now = datetime.datetime.now()
 jsonFile = OrderedDict()
 
-jsonFile["generate_date"] = now.strftime("%Y-%m-%d %H:%M")
+jsonFile["run__flow__generate_date"] = now.strftime("%Y-%m-%d %H:%M")
 cmdOutput = subprocess.check_output(['openroad', '-version'])
 cmdFields = cmdOutput.split()
-jsonFile["openroad_version"] = cmdFields[0]
+jsonFile["run__flow__openroad_version"] = cmdFields[0]
 if (len(cmdFields) > 1):
-  jsonFile["openroad_commit"] = cmdFields[1]
+  jsonFile["run__flow__openroad_commit"] = cmdFields[1]
 else:
-  jsonFile["openroad_commit"] = "N/A"
-jsonFile["uuid"] = str(uuid.uuid4())
-jsonFile["design"] = args.design
-jsonFile["platform"] = args.platform
+  jsonFile["run__flow__openroad_commit"] = "N/A"
+jsonFile["run__flow__uuid"] = str(uuid.uuid4())
+jsonFile["run__flow__design"] = args.design
+jsonFile["run__flow__platform"] = args.platform
 jsonFile["comment"] = args.comment
-jsonFile["hostname"] = platform.node()
+jsonFile["run__flow__hostname"] = platform.node()
 jsonFile["comment"] = args.comment
 
 
@@ -117,122 +118,122 @@ jsonFile["comment"] = args.comment
 # ==============================================================================
 
 # yosys
-extractTagFromFile("yosys_version",
+extractTagFromFile("run__synth__yosys_version",
                    "^Yosys (.*)",
                    logPath+"/1_1_yosys.log")
-extractTagFromFile("yosys_cell_count",
+extractTagFromFile("synth__inst__num__total",
                    "Number of cells: +(\S+)",
                    rptPath+"/synth_stat.txt", t=int)
-extractTagFromFile("yosys_chip_area",
+extractTagFromFile("synth__inst__stdcell__area__total",
                    "Chip area for module.*: +(\S+)",
                    rptPath+"/synth_stat.txt", t=float)
-extractTagFromFile("yosys_runtime",
+extractTagFromFile("run__synth__yosys_runtime__total",
                    "CPU: user (\S+)",
                    logPath+"/1_1_yosys.log")
-extractTagFromFile("yosys_mem",
+extractTagFromFile("run__synth__yosys_mem",
                    "CPU: user.*MEM: (\S+ \S+)",
                    logPath+"/1_1_yosys.log")
-extractTagFromFile("yosys_warnings",
+extractTagFromFile("run__synth__yosys_warnings",
                    "Warnings: \d+ unique messages, (\d+) total",
                    logPath+"/1_1_yosys.log", t=int)
 
-extractGnuTime("synth",logPath+"/1_1_yosys.log")
+extractGnuTime("run__synth",logPath+"/1_1_yosys.log")
 
 # Floorplan
 # ==============================================================================
-extractTagFromFile("floorplan_tns",
+extractTagFromFile("floorplan__slack__average__totneg",
                    "^tns (\S+)",
                    rptPath+"/2_init.rpt", t=float)
-extractTagFromFile("floorplan_wns",
+extractTagFromFile("floorplan__slack__average__worst",
                    "^wns (\S+)",
                    rptPath+"/2_init.rpt", t=float)
-extractTagFromFile("floorplan_area",
+extractTagFromFile("floorplan__std__area__total",
                    "^Design area (\S+) u\^2",
                    rptPath+"/2_init.rpt", t=int)
-extractTagFromFile("floorplan_util",
+extractTagFromFile("floorplan__util",
                    "^Design area.* (\S+%) utilization",
                    rptPath+"/2_init.rpt")
-extractTagFromFile("floorplan_warnings",
+extractTagFromFile("run__floorplan__warnings",
                    "(?i)warning",
                    logPath+"/2_1_floorplan.log", -2, 0)
 extractGnuTime("floorplan",logPath+"/2_1_floorplan.log")
 
-extractTagFromFile("floorplan_io_count",
+extractTagFromFile("floorplan__io__count__total",
                    "Num of I/O +(\d+)",
                    logPath+"/2_2_floorplan_io.log", t=int)
-extractGnuTime("floorplan_io",logPath+"/2_2_floorplan_io.log")
+extractGnuTime("run__floorplan_io",logPath+"/2_2_floorplan_io.log")
 
 
-extractGnuTime("floorplan_tdms",logPath+"/2_3_tdms_place.log")
+extractGnuTime("run__floorplan_tdms",logPath+"/2_3_tdms_place.log")
 
 
-extractTagFromFile("mplace_macro_count",
+extractTagFromFile("macroplace__inst__macro__count__total",
                    "Extracted # Macros: (\S+)",
                    logPath+"/2_4_mplace.log", -1, 0, t=int)
-extractTagFromFile("mplace_solutions",
+extractTagFromFile("macroplace__solutions",
                    "Total Extracted Solution: (\S+)",
                    logPath+"/2_4_mplace.log", -1, 0, t=int)
-extractGnuTime("mplace",logPath+"/2_4_mplace.log")
+extractGnuTime("run__mplace",logPath+"/2_4_mplace.log")
 
-extractGnuTime("tapcell",logPath+"/2_5_tapcell.log")
+extractGnuTime("run__tapcell",logPath+"/2_5_tapcell.log")
 
-extractGnuTime("pdn",logPath+"/2_6_pdn.log")
+extractGnuTime("run__pdn",logPath+"/2_6_pdn.log")
 
 
 # Place
 # ==============================================================================
 
 # global place
-extractTagFromFile("globalplace_hpwl",
+extractTagFromFile("globalplace__wirelength__est",
                    "^HP wire length: (\S+)",
                    logPath+"/3_1_place_gp.log")
-extractTagFromFile("globalplace_ws",
+extractTagFromFile("globalplace__slack__average__worst",
                    "^Worst slack: (\S+)",
                    logPath+"/3_1_place_gp.log")
-extractTagFromFile("globalplace_tns",
+extractTagFromFile("globalplace__slack__average__totneg",
                    "^Total negative slack: (\S+)",
                    logPath+"/3_1_place_gp.log")
-extractTagFromFile("globalplace_util",
+extractTagFromFile("globalplace__util",
                    "Util\(%\) = (\S+)",
                    logPath+"/3_1_place_gp.log")
-extractGnuTime("globalplace",logPath+"/3_1_place_gp.log")
+extractGnuTime("run__globalplace",logPath+"/3_1_place_gp.log")
 
 
 # Resizer
-extractTagFromFile("resizer_pre_tns",
+extractTagFromFile("resizer__pre__slack__average__totneg",
                    "^tns (\S+)",
                    rptPath+"/3_pre_resize.rpt", t=float)
-extractTagFromFile("resizer_pre_wns",
+extractTagFromFile("resizer__pre__slack__average_worst",
                    "^wns (\S+)",
                    rptPath+"/3_pre_resize.rpt", t=float)
-extractTagFromFile("resizer_pre_area",
+extractTagFromFile("resizer__pre__core__area__area",
                    "^Design area (\S+ \S+)",
                    rptPath+"/3_pre_resize.rpt")
-extractTagFromFile("resizer_pre_util",
+extractTagFromFile("resizer__pre__util",
                    "^Design area.* (\S+%) utilization",
                    rptPath+"/3_pre_resize.rpt")
-extractTagFromFile("resizer_ibuf_count",
+extractTagFromFile("resizer__ibuf_count",
                    "Inserted (\d+) input buffers",
                    logPath+"/3_2_resizer.log", t=int)
-extractTagFromFile("resizer_obuf_count",
+extractTagFromFile("resizer__obuf_count",
                    "Inserted (\d+) output buffers",
                    logPath+"/3_2_resizer.log", t=int)
-extractTagFromFile("resizer_resize_count",
+extractTagFromFile("resizer__resize_count",
                    "Resized (\d+) instances",
                    logPath+"/3_2_resizer.log", t=int)
-extractTagFromFile("resizer_hbuf_count",
+extractTagFromFile("resizer__hbuf_count",
                    "Inserted (\d+) hold buffers",
                    logPath+"/3_2_resizer.log", t=int)
-extractTagFromFile("resizer_maxcap_viols",
+extractTagFromFile("resizer__maxcap_viols",
                    "Found (\d+) max capacitance violations",
                    logPath+"/3_2_resizer.log", -1, 0, t=int)
-extractTagFromFile("resizer_maxslew_viols",
+extractTagFromFile("resizer__maxslew_viols",
                    "Found (\d+) max slew violations",
                    logPath+"/3_2_resizer.log", -1, 0, t=int)
-extractTagFromFile("resizer_maxfanout_viols",
+extractTagFromFile("resizer__maxfanout_viols",
                    "Found (\d+) max fanout violations",
                    logPath+"/3_2_resizer.log", -1, 0, t=int)
-extractTagFromFile("resizer_maxfanout_bufs",
+extractTagFromFile("resizer__maxfanout_bufs",
                    "Inserted (\d+) buffers",
                    logPath+"/3_2_resizer.log", -1, 0, t=int)
 #TODO Tie hi tie low
@@ -242,145 +243,145 @@ extractTagFromFile("resizer_maxfanout_bufs",
 # extractTagFromFile("resizer_maxfanout_bufs_tielo",
 #                    "Inserted (\d+) tie \S+ instances for \d+ nets",
 #                    logPath+"/3_2_resizer.log", 1, "0")
-extractTagFromFile("resizer_post_tns",
+extractTagFromFile("resizer__post__slack__average__totneg",
                    "^tns (\S+)",
                    rptPath+"/3_post_resize.rpt", t=float)
-extractTagFromFile("resizer_post_wns",
+extractTagFromFile("resizer__post__slack__average__worst",
                    "^wns (\S+)",
                    rptPath+"/3_post_resize.rpt", t=float)
-extractTagFromFile("resizer_post_area",
+extractTagFromFile("resizer__post__core__area__total",
                    "^Design area (\S+ \S+)",
                    rptPath+"/3_post_resize.rpt")
-extractTagFromFile("resizer_post_util",
+extractTagFromFile("resizer__post__util",
                    "^Design area.* (\S+%) utilization",
                    rptPath+"/3_post_resize.rpt")
-extractGnuTime("resizer",logPath+"/3_2_resizer.log")
+extractGnuTime("run__resizer",logPath+"/3_2_resizer.log")
 
 
 # Detail place
-extractTagFromFile("dp_core_area",
+extractTagFromFile("detailedplace__inst__core__area__total",
                    "design area +(\d*\.?\d*)",
                    logPath+"/3_3_opendp.log", t=float)
-extractTagFromFile("dp_total_cells",
+extractTagFromFile("detailedplace__inst__num__total",
                    "total instances +(\d+)",
                    logPath+"/3_3_opendp.log", t=int)
-extractTagFromFile("dp_design_utilization",
+extractTagFromFile("detailedplace__util",
                    "utilization +(\d+)",
                    logPath+"/3_3_opendp.log", t=int)
-extractTagFromFile("dp_total_displacement",
+extractTagFromFile("detailedplace__total_displacement",
                    "total displacement +(\d*\.?\d*)",
                    logPath+"/3_3_opendp.log", t=float)
-extractTagFromFile("dp_average_displacement",
+extractTagFromFile("detailedplace__average_displacement",
                    "average displacement +(\d*\.?\d*)",
                    logPath+"/3_3_opendp.log", t=float)
-extractTagFromFile("dp_max_displacement",
+extractTagFromFile("detailedplace__max_displacement",
                    "max displacement +(\d*\.?\d*)",
                    logPath+"/3_3_opendp.log", t=float)
-extractTagFromFile("dp_original_HPWL",
+extractTagFromFile("detailedplace__wirelength__est__original",
                    "original HPWL +(\d*\.?\d*)",
                    logPath+"/3_3_opendp.log", t=float)
-extractTagFromFile("dp_legalized_HPWL",
+extractTagFromFile("detailedplace__wirelength__est__legalized",
                    "legalized HPWL +(\d*\.?\d*)",
                    logPath+"/3_3_opendp.log", t=float)
-extractTagFromFile("dp_delta_HPWL",
+extractTagFromFile("detailedplace__wirelength__est__delta",
                    "delta HPWL +(\d*\.?\d*)",
                    logPath+"/3_3_opendp.log", t=int)
-extractGnuTime("dp",logPath+"/3_3_opendp.log")
+extractGnuTime("run__dp",logPath+"/3_3_opendp.log")
 
 # CTS
 # ==============================================================================
-extractGnuTime("cts",logPath+"/4_cts.log")
+extractGnuTime("run__cts",logPath+"/4_cts.log")
 
 # Route
 # ==============================================================================
 
-extractGnuTime("fastroute",logPath+"/5_1_fastroute.log")
+extractGnuTime("run__globalroute",logPath+"/5_1_fastroute.log")
 
 
-extractTagFromFile("droute_num_layers",
+extractTagFromFile("detailedroute__layers__num__total",
                    "#layers: +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_num_macros",
+extractTagFromFile("detailedroute__inst__macro__num__total",
                    "#macros: +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_num_vias",
+extractTagFromFile("detailedroute__num_vias",
                    "#vias: +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_trackPts",
+extractTagFromFile("detailedroute__trackPts",
                    "trackPts: +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_defvias",
+extractTagFromFile("detailedroute__defvias__num__total",
                    "defvias: +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_num_components",
+extractTagFromFile("detailedroute__components__num__total",
                    "#components: +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_num_terminals",
+extractTagFromFile("detailedroute__terminals__num__total",
                    "#terminals: +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_num_nets",
+extractTagFromFile("detailedroute__nets__num__total",
                    "nets: +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
 extractTagFromFile("droute_num_unique_instances",
                    "#unique instances = +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_num_instances",
+extractTagFromFile("detailedroute__unique_instances__num__total",
                    "#scanned instances += +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_runtime",
+extractTagFromFile("detailedroute__runtime",
                    "Runtime taken \(hrt\): +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=float)
-extractTagFromFile("droute_wirelength",
+extractTagFromFile("detailedroute__wirelength__est",
                    "total wire length = +(\S+) um",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_total_num_vias",
+extractTagFromFile("detailedroute__via__num__total",
                    "total number of vias = +(\S+)",
                    logPath+"/5_2_TritonRoute.log", t=int)
-extractTagFromFile("droute_peak_mem",
+extractTagFromFile("detailedroute__peak_mem",
                    "peak = (\S+)",
                    logPath+"/5_2_TritonRoute.log", t=float)
 
-extractTagFromFile("droute_warnings",
+extractTagFromFile("detailedroute__warnings",
                    "(?i)warning:",
                    logPath+"/5_2_TritonRoute.log", -2, 0)
-extractTagFromFile("droute_errors",
+extractTagFromFile("detailedroute__errors",
                    "(?i)error:",
                    logPath+"/5_2_TritonRoute.log", -2, 0)
-extractTagFromFile("droute_viols",
+extractTagFromFile("detailedroute__drc__num__total",
                    "(?i)violation",
                    rptPath+"/5_route_drc.rpt", -2, 0)
 
-extractGnuTime("droute",logPath+"/5_2_TritonRoute.log")
+extractGnuTime("run__detailedroute",logPath+"/5_2_TritonRoute.log")
 
 # Finish
 # ==============================================================================
 
-extractTagFromFile("finish_internal_power",
+extractTagFromFile("finish__power__internal__total",
                    "Total +(\S+) +\S+ +\S+ +\S+ +\S+",
                    rptPath+"/6_final_report.rpt", t=float)
 
-extractTagFromFile("finish_switching_power",
+extractTagFromFile("finish__power__switch__total",
                    "Total +\S+ +(\S+) +\S+ +\S+ +\S+",
                    rptPath+"/6_final_report.rpt", t=float)
 
-extractTagFromFile("finish_leakage_power",
+extractTagFromFile("finish__power__leak__total",
                    "Total +\S+ +\S+ +(\S+) +\S+ +\S+",
                    rptPath+"/6_final_report.rpt", t=float)
 
-extractTagFromFile("finish_total_power",
+extractTagFromFile("finish__power__total",
                    "Total +\S+ +\S+ +\S+ +(\S+) +\S+",
                    rptPath+"/6_final_report.rpt", t=float)
 
-extractTagFromFile("finish_area",
+extractTagFromFile("finish__area",
                    "^Design area (\S+ \S+)",
                    rptPath+"/6_final_report.rpt")
-extractTagFromFile("finish_util",
+extractTagFromFile("finish__util",
                    "^Design area.* (\S+%) utilization",
                    rptPath+"/6_final_report.rpt")
 
-extractGnuTime("report",logPath+"/6_report.log")
+extractGnuTime("run__report",logPath+"/6_report.log")
 
-extractGnuTime("merge",logPath+"/6_1_merge.log")
+extractGnuTime("run__merge",logPath+"/6_1_merge.log")
 
 
 extractTagFromFile("drc_klayout_viols",
