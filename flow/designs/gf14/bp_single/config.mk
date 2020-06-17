@@ -38,6 +38,8 @@ export ADDITIONAL_GDS  = ./platforms/gf14/bp/wrappers/gf14_1r1w_d32_w64_m1_mod.g
                          ./platforms/gf14/bp/gds/IN12LP_GPIO18_13M9S30P.gds \
                          ./platforms/gf14/bp/gds/GoLd_LN14_CDMM_32xxx.gds.gz
 
+export SEAL_GDS        = ./platforms/gf14/bp/gds/crackstop_3x3.gds
+
 
 export FOOTPRINT    = ./platforms/gf14/bp/bsg_bp_single.package.strategy
 export SIG_MAP_FILE = ./platforms/gf14/bp/soc_bsg_black_parrot.sigmap
