@@ -1,7 +1,7 @@
 {
     "rules": [
         {
-            "field" : "droute_viols",
+            "field" : "detailedroute__drc__num__total",
             "value" : 55,
             "compare": "<="
         }

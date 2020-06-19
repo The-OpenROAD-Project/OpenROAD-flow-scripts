@@ -20,7 +20,7 @@ for i in main_layout.each_cell():
       i.clear()
 
 # Load in the gds to merge
-print("[INFO] Merging gds files...")
+print("[INFO] Merging GDS files...")
 for gds in in_gds.split():
   print("\t{0}".format(gds))
   main_layout.read(gds)
@@ -42,6 +42,19 @@ for i in top_only_layout.each_cell():
 if not missing_gds:
   print("[INFO] All LEF cells have matching GDS cells")
 
-# Write out the gds
-print("[INFO] Write out gds '{0}'".format(out_gds))
+if seal_gds:
+  top_name = design_name + '_sealed'
+  print("[INFO] Creating new top cell: '{0}'".format(top_name))
+  top = top_only_layout.create_cell(top_name)
+
+  print("[INFO] Merging seal GDS file...")
+  print("\t{0}".format(seal_gds))
+  top_only_layout.read(seal_gds)
+
+  for cell in top_only_layout.top_cells():
+    if cell != top:
+      top.insert(pya.CellInstArray(cell.cell_index(), pya.Trans()))
+
+# Write out the GDS
+print("[INFO] Writing out GDS '{0}'".format(out_gds))
 top_only_layout.write(out_gds)

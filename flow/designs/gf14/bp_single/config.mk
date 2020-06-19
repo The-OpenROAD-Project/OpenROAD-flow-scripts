@@ -10,33 +10,24 @@ export CACHED_NETLIST    = ./platforms/gf14/bp/bsg_ac_black_parrot_single_core_v
 
 export SDC_FILE      = ./platforms/gf14/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.elab.v.sdc
 
-export ADDITIONAL_LEFS = ./platforms/gf14/bp/lef/gf14_1r1w_d32_w64_m1.lef \
+export WRAP_LEFS       = ./platforms/gf14/bp/lef/gf14_1r1w_d32_w64_m1.lef \
                          ./platforms/gf14/bp/lef/gf14_1rw_d128_w116_m2_bit.lef \
                          ./platforms/gf14/bp/lef/gf14_1rw_d256_w48_m2.lef \
                          ./platforms/gf14/bp/lef/gf14_1rw_d512_w64_m2_byte.lef \
                          ./platforms/gf14/bp/lef/gf14_1rw_d64_w124_m2_bit.lef \
-                         ./platforms/gf14/bp/lef/gf14_1rw_d64_w62_m2_bit.lef \
-                         ./platforms/gf14/bp/lef/IN12LP_GPIO18_13M9S30P.lef \
-                         ./platforms/gf14/bp/wrappers/gf14_1r1w_d32_w64_m1_mod.lef \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d128_w116_m2_bit_mod.lef \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d256_w48_m2_mod.lef \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d512_w64_m2_byte_mod.lef \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w124_m2_bit_mod.lef \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w62_m2_bit_mod.lef
+                         ./platforms/gf14/bp/lef/gf14_1rw_d64_w62_m2_bit.lef
 
-export ADDITIONAL_LIBS = ./platforms/gf14/bp/lib/gf14_1r1w_d32_w64_m1_tt_nominal_0p80v_0p80v_25c.lib \
+export ADDITIONAL_LEFS = ./platforms/gf14/bp/lef/IN12LP_GPIO18_13M9S30P.lef \
+                         ./platforms/gf14/bp/lef/CDMM_13M_3Mx_2Cx_4Kx_2Hx_2Gx_LB.lef
+
+export WRAP_LIBS       = ./platforms/gf14/bp/lib/gf14_1r1w_d32_w64_m1_tt_nominal_0p80v_0p80v_25c.lib \
                          ./platforms/gf14/bp/lib/gf14_1rw_d128_w116_m2_bit_tt_nominal_0p80v_0p80v_25c.lib \
                          ./platforms/gf14/bp/lib/gf14_1rw_d256_w48_m2_tt_nominal_0p80v_0p80v_25c.lib \
                          ./platforms/gf14/bp/lib/gf14_1rw_d512_w64_m2_byte_tt_nominal_0p80v_0p80v_25c.lib \
                          ./platforms/gf14/bp/lib/gf14_1rw_d64_w124_m2_bit_tt_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/gf14/bp/lib/gf14_1rw_d64_w62_m2_bit_tt_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/gf14/bp/lib/IN12LP_GPIO18_13M9S30P_TT_0P8_1P8_25.lib \
-                         ./platforms/gf14/bp/wrappers/gf14_1r1w_d32_w64_m1_mod_tt_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d128_w116_m2_bit_mod_tt_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d256_w48_m2_mod_tt_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d512_w64_m2_byte_mod_tt_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w124_m2_bit_mod_tt_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w62_m2_bit_mod_tt_nominal_0p80v_0p80v_25c.lib
+                         ./platforms/gf14/bp/lib/gf14_1rw_d64_w62_m2_bit_tt_nominal_0p80v_0p80v_25c.lib
+
+export ADDITIONAL_LIBS = ./platforms/gf14/bp/lib/IN12LP_GPIO18_13M9S30P_TT_0P8_1P8_25.lib
 
 export ADDITIONAL_GDS  = ./platforms/gf14/bp/wrappers/gf14_1r1w_d32_w64_m1_mod.gds2 \
                          ./platforms/gf14/bp/wrappers/gf14_1rw_d128_w116_m2_bit_mod.gds2 \
@@ -44,7 +35,10 @@ export ADDITIONAL_GDS  = ./platforms/gf14/bp/wrappers/gf14_1r1w_d32_w64_m1_mod.g
                          ./platforms/gf14/bp/wrappers/gf14_1rw_d512_w64_m2_byte_mod.gds2 \
                          ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w124_m2_bit_mod.gds2 \
                          ./platforms/gf14/bp/wrappers/gf14_1rw_d64_w62_m2_bit_mod.gds2 \
-                         ./platforms/gf14/bp/gds/IN12LP_GPIO18_13M9S30P.gds
+                         ./platforms/gf14/bp/gds/IN12LP_GPIO18_13M9S30P.gds \
+                         ./platforms/gf14/bp/gds/GoLd_LN14_CDMM_32xxx.gds.gz
+
+export SEAL_GDS        = ./platforms/gf14/bp/gds/crackstop_3x3.gds
 
 
 export FOOTPRINT    = ./platforms/gf14/bp/bsg_bp_single.package.strategy

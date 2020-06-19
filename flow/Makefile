@@ -206,7 +206,7 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(WRAPPED_LEFS)
+$(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(ADDITIONAL_LEFS)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
 
 
@@ -431,6 +431,7 @@ $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:gds=def)) \
 	        -rd in_gds="$(ADDITIONAL_GDS)" \
+	        -rd seal_gds="" \
 	        -rd out_gds=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
 	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
@@ -441,6 +442,7 @@ $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED
 	($(TIME_CMD) klayout -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$(RESULTS_DIR)/5_route.def \
 	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
+	        -rd seal_gds="$(SEAL_GDS)" \
 	        -rd out_gds=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
