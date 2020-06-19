@@ -61,7 +61,7 @@ log_end
 set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
 set_dont_use $::env(DONT_USE_CELLS)
 
-if { [info exists ::env(MAX_WIRE_LENGTH)] {
+if { [info exists ::env(MAX_WIRE_LENGTH)] } {
 #  puts "Repair long wires..."
 #  repair_long_wires -buffer_cell $buffer_cell
 }
