@@ -61,28 +61,29 @@ log_end
 set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
 set_dont_use $::env(DONT_USE_CELLS)
 
-if { [info exists ::env(MAX_WIRE_LENGTH)] } {
-#  puts "Repair long wires..."
-#  repair_long_wires -buffer_cell $buffer_cell
-}
-
-# Resize before buffer insertion
-puts "Perform resizing before buffer insertion..."
-resize
-
 # Do not buffer chip-level designs
 if {![info exists ::env(FOOTPRINT)]} {
   puts "Perform port buffering..."
   buffer_ports -buffer_cell $buffer_cell
 }
 
-# Repair max cap
-puts "Repair max cap..."
-repair_max_cap -buffer_cell $buffer_cell
-
-# Repair max slew
-puts "Repair max slew..."
-repair_max_slew -buffer_cell $buffer_cell
+set repair_wires 1
+if { $repair_wires } {
+  puts "Repair long wires..."
+  repair_long_wires -max_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
+} else {
+  # Resize before buffer insertion
+  puts "Perform resizing before buffer insertion..."
+  resize
+  
+  # Repair max cap
+  puts "Repair max cap..."
+  repair_max_cap -buffer_cell $buffer_cell
+  
+  # Repair max slew
+  puts "Repair max slew..."
+  repair_max_slew -buffer_cell $buffer_cell
+}
 
 # Repair max fanout
 puts "Repair max fanout..."
