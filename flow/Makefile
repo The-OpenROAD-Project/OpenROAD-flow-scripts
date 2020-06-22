@@ -393,7 +393,7 @@ clean_route:
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
-klayout_tr_rpt: $(RESULTS_DIR)/5_route.def
+klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 	klayout -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
 	        -rd in_def="$<" \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
@@ -439,7 +439,7 @@ $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED_GDS) $(RESULTS_DIR)/6_final.def
-	($(TIME_CMD) klayout -zz -rd design_name=$(DESIGN_NAME) \
+	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$(RESULTS_DIR)/5_route.def \
 	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
 	        -rd seal_gds="$(SEAL_GDS)" \
@@ -452,7 +452,7 @@ $(RESULTS_DIR)/6_final.v: $(REPORTS_DIR)/6_final_report.rpt
 # TODO(rovinski) Placeholder until fill script works for more platforms
 ifneq ($(USE_FILL),)
 $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
-	($(TIME_CMD) klayout -zz -rd in_gds="$<" \
+	($(TIME_CMD) stdbuf -o L klayout -zz -rd in_gds="$<" \
 	        -rd out_gds="$@" \
 	        -rd config_file=$(FILL_CONFIG) \
 	        -rd report_file="$(REPORTS_DIR)/6_2_density.rpt" \
