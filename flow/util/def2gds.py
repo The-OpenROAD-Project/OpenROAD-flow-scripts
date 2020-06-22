@@ -43,16 +43,16 @@ if not missing_gds:
   print("[INFO] All LEF cells have matching GDS cells")
 
 if seal_gds:
-  top_name = design_name + '_sealed'
-  print("[INFO] Creating new top cell: '{0}'".format(top_name))
-  top = top_only_layout.create_cell(top_name)
 
-  print("[INFO] Merging seal GDS file...")
+  top_cell = top_only_layout.top_cell()
+
+  print("[INFO] Reading seal GDS file...")
   print("\t{0}".format(seal_gds))
   top_only_layout.read(seal_gds)
 
   for cell in top_only_layout.top_cells():
-    if cell != top:
+    if cell != top_cell:
+      print("[INFO] Merging '{0}' as child of '{1}'".format(cell.name, top_cell.name))
       top.insert(pya.CellInstArray(cell.cell_index(), pya.Trans()))
 
 # Write out the GDS
