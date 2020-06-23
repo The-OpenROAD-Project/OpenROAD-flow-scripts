@@ -268,6 +268,9 @@ $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2
 $(RESULTS_DIR)/3_2_place_resized.def: $(RESULTS_DIR)/3_1_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl) 2>&1 | tee $(LOG_DIR)/3_2_resizer.log
 
+clean_resize:
+	rm -f $(RESULTS_DIR)/3_2_place_resized.def
+
 # STEP 3: Detail placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_3_place_dp.def: $(RESULTS_DIR)/3_2_place_resized.def

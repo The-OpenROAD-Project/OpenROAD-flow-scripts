@@ -64,31 +64,12 @@ set_dont_use $::env(DONT_USE_CELLS)
 # Do not buffer chip-level designs
 if {![info exists ::env(FOOTPRINT)]} {
   puts "Perform port buffering..."
-  buffer_ports -buffer_cell $buffer_cell
+#  buffer_ports -buffer_cell $buffer_cell
 }
 
-set repair_wires 1
-if { $repair_wires } {
-  puts "Repair long wires..."
-  repair_long_wires -max_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
-} else {
-  # Resize before buffer insertion
-  puts "Perform resizing before buffer insertion..."
-  resize
-  
-  # Repair max cap
-  puts "Repair max cap..."
-  repair_max_cap -buffer_cell $buffer_cell
-  
-  # Repair max slew
-  puts "Repair max slew..."
-  repair_max_slew -buffer_cell $buffer_cell
-}
-
-# Repair max fanout
-puts "Repair max fanout..."
+puts "Perform buffer insertion..."
 set_max_fanout $::env(MAX_FANOUT) [current_design]
-repair_max_fanout -buffer_cell $buffer_cell
+repair_design -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
 
 # Perform resizing
 puts "Perform resizing after buffer insertion..."
