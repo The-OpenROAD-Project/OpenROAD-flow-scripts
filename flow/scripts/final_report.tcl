@@ -19,8 +19,10 @@ if {![info exists standalone] || $standalone} {
 }
 
 # Set res and cap
-if [file exists platforms/$::env(PLATFORM)/setRC.tcl] {
-  source platforms/$::env(PLATFORM)/setRC.tcl
+if {[info exists ::env(WIRE_RC_RES)] && [info exists ::env(WIRE_RC_CAP)]} {
+  set_wire_rc -res $::env(WIRE_RC_RES) -cap $::env(WIRE_RC_CAP)
+} else {
+  set_wire_rc -layer $::env(WIRE_RC_LAYER)
 }
 
 set_propagated_clock [all_clocks]
