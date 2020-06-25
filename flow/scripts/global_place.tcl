@@ -16,6 +16,9 @@ if {![info exists standalone] || $standalone} {
   # Read design files
   read_def $::env(RESULTS_DIR)/2_floorplan.def
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
+  if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
+    source platforms/$::env(PLATFORM)/derate.tcl
+  }
 }
 
 if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {

@@ -18,6 +18,9 @@ if {![info exists standalone] || $standalone} {
 
   # Read SDC file
   read_sdc $::env(RESULTS_DIR)/3_place.sdc
+  if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
+    source platforms/$::env(PLATFORM)/derate.tcl
+  }
 }
 
 # Run CTS

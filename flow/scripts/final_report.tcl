@@ -16,6 +16,9 @@ if {![info exists standalone] || $standalone} {
   # Read def and sdc
   read_def $::env(RESULTS_DIR)/5_route.def
   read_sdc $::env(RESULTS_DIR)/5_route.sdc
+  if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
+    source platforms/$::env(PLATFORM)/derate.tcl
+  }
 }
 
 # Set res and cap

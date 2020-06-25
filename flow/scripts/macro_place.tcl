@@ -16,6 +16,9 @@ if {![info exists standalone] || $standalone} {
   # Read design files
   read_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def
   read_sdc $::env(RESULTS_DIR)/1_synth.sdc
+  if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
+    source platforms/$::env(PLATFORM)/derate.tcl
+  }
 }
 
 proc find_macros {} {
