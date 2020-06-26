@@ -240,6 +240,19 @@ namespace eval lef {
         ::close $ch
     }
 
+    proc get_blockage_layers {design} {
+      if {[dict exists $design blockage_layers]} {
+        return [dict get $design blockage_layers]
+      }
+
+      set blocked_layers {}
+
+      dict for {layer_name obstructions} [dict get $design obstructions] {
+        lappend blocked_layers $layer_name
+      }
+      return $blocked_layers
+    }
+
     proc write_header {} {
     }
     proc write_footer {} {
@@ -327,15 +340,26 @@ namespace eval lef {
 
         if {[dict exists $design obstructions]} {
             out "  OBS"
-            dict for {layer_name obstructions} [dict get $design obstructions] {
+            if {[dict get $design use_sheet_obstructions]} {
+              dict for {layer_name obstructions} [dict get $design obstructions] {
+                lappend blocked_layers $layer_name
+              }
+              set sheet "0 0 [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units] BY [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units]"
+              foreach layer_name [get_blockage_layers $design] {
                 out "    LAYER $layer_name ;"
-                foreach obs $obstructions {
-                    if {[dict exists $obs mask]} {
-                        out "      RECT MASK [dict get $obs mask] [lmap x [dict get $obs rect] {expr 1.0 * $x / $def_units}] ;"
-                    } else {
-                        out "      RECT [lmap x [dict get $obs rect] {expr 1.0 * $x / $def_units}] ;"
-                    }
-                }
+                out "      RECT $sheet ;"
+              }
+            } else {
+              dict for {layer_name obstructions} [dict get $design obstructions] {
+                  out "    LAYER $layer_name ;"
+                  foreach obs $obstructions {
+                      if {[dict exists $obs mask]} {
+                          out "      RECT MASK [dict get $obs mask] [lmap x [dict get $obs rect] {expr 1.0 * $x / $def_units}] ;"
+                      } else {
+                          out "      RECT [lmap x [dict get $obs rect] {expr 1.0 * $x / $def_units}] ;"
+                      }
+                  }
+              }
             }
             out "  END"
         }

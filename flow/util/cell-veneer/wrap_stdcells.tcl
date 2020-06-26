@@ -122,6 +122,7 @@ namespace eval wrapper {
   }
 
   proc create_def_wrapper {cell_name new_cell_name} {
+    variable tech    
     set orig_cell [lef get_cell $cell_name]
     
     set design $orig_cell
@@ -129,6 +130,13 @@ namespace eval wrapper {
     dict set design name $new_cell_name
     dict set design tool "cell-veneer"
     dict set design units 2000
+    dict set design use_sheet_obstructions 0
+    if {[dict exists $tech use_sheet_obstructions]} {
+      dict set design use_sheet_obstructions [dict get $tech use_sheet_obstructions]
+    }
+    if {[dict exists $tech blockage_layers]} {
+      dict set design blockage_layers [dict get $tech blockage_layers]
+    }
     dict set design die_area [dict get $orig_cell die_area]
 
     dict set design components u0 cell_name $cell_name
@@ -443,6 +451,9 @@ namespace eval wrapper {
   proc wrap_macro {cell_name} {
     variable tech
     set wrapper [wrapper::create_def_wrapper $cell_name ${cell_name}_mod]
+    debug "$tech"
+    debug "[dict get $wrapper use_sheet_obstructions]"
+
     set cell [lef get_cell $cell_name]
     # debug "$cell_name"
     
@@ -653,14 +664,10 @@ namespace eval wrapper {
       }
     }
 
-    return [list \
-      pitch [list \
-        vertical_track [expr round([dict get $tech pitch vertical_track] * $def_units)] \
-        horizontal_track  [expr round([dict get $tech pitch horizontal_track] * $def_units)] \
-      ] \
-      layer [dict get $tech layer] \
-      via [dict get $tech via] \
-    ]
+    dict set tech pitch vertical_track [expr round([dict get $tech pitch vertical_track] * $def_units)]
+    dict set tech pitch horizontal_track [expr round([dict get $tech pitch horizontal_track] * $def_units)]
+
+    return $tech
   }
 
   proc set_macro_config {lef_tech} {
