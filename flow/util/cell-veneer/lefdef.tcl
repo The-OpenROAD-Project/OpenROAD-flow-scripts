@@ -15,6 +15,15 @@ proc relative_rectangle {rect offset} {
     ]
 }
 
+if [package vcompare 8.6 $tcl_version] {
+    proc lmap {_var list body} {
+        upvar 1 $_var var
+        set res {}
+        foreach var $list {lappend res [uplevel 1 $body]}
+        set res
+    }
+}
+
 namespace eval lef {
     variable lefOut stdout
     variable def_units 2000
