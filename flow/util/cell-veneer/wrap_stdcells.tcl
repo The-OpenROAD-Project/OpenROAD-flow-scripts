@@ -122,7 +122,6 @@ namespace eval wrapper {
   }
 
   proc create_def_wrapper {cell_name new_cell_name} {
-    variable tech    
     set orig_cell [lef get_cell $cell_name]
     
     set design $orig_cell
@@ -130,13 +129,6 @@ namespace eval wrapper {
     dict set design name $new_cell_name
     dict set design tool "cell-veneer"
     dict set design units 2000
-    dict set design use_sheet_obstructions 0
-    if {[dict exists $tech use_sheet_obstructions]} {
-      dict set design use_sheet_obstructions [dict get $tech use_sheet_obstructions]
-    }
-    if {[dict exists $tech blockage_layers]} {
-      dict set design blockage_layers [dict get $tech blockage_layers]
-    }
     dict set design die_area [dict get $orig_cell die_area]
 
     dict set design components u0 cell_name $cell_name
@@ -451,9 +443,6 @@ namespace eval wrapper {
   proc wrap_macro {cell_name} {
     variable tech
     set wrapper [wrapper::create_def_wrapper $cell_name ${cell_name}_mod]
-    debug "$tech"
-    debug "[dict get $wrapper use_sheet_obstructions]"
-
     set cell [lef get_cell $cell_name]
     # debug "$cell_name"
     
@@ -501,7 +490,7 @@ namespace eval wrapper {
     # If there is another pin close by, the we will need to have the jog 3 grids further in
     dict set net_info [dict get $grid_pins $prev_pos] h_offset 3
     foreach pin_pos [lrange $order 1 end] {
-      if {$pin_pos - $prev_pos > 3} {
+      if {$pin_pos - $prev_pos > 2} {
          dict set net_info [dict get $grid_pins $pin_pos] h_offset 3
       } else {
          dict set net_info [dict get $grid_pins $pin_pos] h_offset [expr [dict get $net_info [dict get $grid_pins $prev_pos] h_offset] + 3]
@@ -562,7 +551,6 @@ namespace eval wrapper {
 
       # First segment from RAM to jog location, to the y grid of the pin
       set target_grid_point [expr ($wrapper_depth - [dict get $net h_offset]) * [dict get $tech pitch vertical_track]]
-      set width [dict get $tech layer [dict get $net pin_layer] width]
       lappend segments [list \
         layer [dict get $net pin_layer] \
         points [list \
@@ -584,7 +572,7 @@ namespace eval wrapper {
         layer C4 \
         points [list \
           "$target_grid_point $y_position" \
-          "0 $y_position" \
+          "[expr round([dict get $tech layer C4 width] / 2)] $y_position" \
         ] \
       ]
 
@@ -649,25 +637,23 @@ namespace eval wrapper {
   proc convert_tech_to_def_units {tech} {
     set def_units [dict get $tech units]
     dict for {layer_name layer} [dict get $tech layer] {
-      foreach property {depth width non_preferred_width} {
-        if {[dict exists $layer $property]} {
-          dict set tech layer $layer_name $property [expr round([dict get $layer $property] * $def_units)]
-        }
+      if {[dict exists $layer depth]} {
+        dict set layers $layer_name [list \
+          width [expr round([dict get $layer width] * $def_units)] \
+          depth [expr round([dict get $layer depth] * $def_units)] \
+        ]
+      } else {
+        dict set layers $layer_name width [expr round([dict get $layer width] * $def_units)]
       }
     }
-    
-    foreach layer_name [dict keys [dict get $tech layer]] {
-      foreach property {direction width non_preferred_width} { 
-        if {[dict exists $tech layer $layer_name $property]} {
-          def set_layer_info $layer_name $property [dict get $tech layer $layer_name $property]
-        }
-      }
-    }
-
-    dict set tech pitch vertical_track [expr round([dict get $tech pitch vertical_track] * $def_units)]
-    dict set tech pitch horizontal_track [expr round([dict get $tech pitch horizontal_track] * $def_units)]
-
-    return $tech
+    return [list \
+      pitch [list \
+        vertical_track [expr round([dict get $tech pitch vertical_track] * $def_units)] \
+        horizontal_track  [expr round([dict get $tech pitch horizontal_track] * $def_units)] \
+      ] \
+      layer $layers \
+      via [dict get $tech via] \
+    ]
   }
 
   proc set_macro_config {lef_tech} {
