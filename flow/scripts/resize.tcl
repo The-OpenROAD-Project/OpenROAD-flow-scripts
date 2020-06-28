@@ -17,6 +17,9 @@ if {![info exists standalone] || $standalone} {
   # Read def and sdc
   read_def $::env(RESULTS_DIR)/3_1_place_gp.def
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
+  if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
+    source platforms/$::env(PLATFORM)/derate.tcl
+  }
 }
 
 proc print_banner {header} {

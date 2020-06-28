@@ -22,6 +22,9 @@ foreach libFile $::env(LIB_FILES) {
 
 read_def $env(RESULTS_DIR)/3_place.def
 read_sdc $env(RESULTS_DIR)/3_place.sdc
+if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
+  source platforms/$::env(PLATFORM)/derate.tcl
+}
 
 
 analyze_power_grid -verbose

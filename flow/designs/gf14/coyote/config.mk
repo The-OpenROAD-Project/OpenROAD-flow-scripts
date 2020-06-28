@@ -23,8 +23,8 @@ export ADDITIONAL_GDS  = ./platforms/$(PLATFORM)/gds/gf14_1rf_lg6_w80_bit.gds2 \
                          ./platforms/$(PLATFORM)/gds/gf14_2rf_lg8_w64_bit.gds2
 
 # These values must be multiples of placement site
-export DIE_AREA    = 0 0 1100.008 1099.84
-export CORE_AREA   = 19.992 20.16 1080.016 1080.16
+export DIE_AREA    = 0 0 1099.98 1099.584
+export CORE_AREA   = 19.992 20.16 1079.988 1080
 
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
