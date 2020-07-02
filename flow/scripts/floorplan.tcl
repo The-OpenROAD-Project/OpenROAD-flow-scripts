@@ -76,9 +76,6 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
   }
 }
 
-# remove buffers inserted by yosys/abc
-remove_buffers
-
 # pre report
 log_begin $::env(REPORTS_DIR)/2_init.rpt
 
