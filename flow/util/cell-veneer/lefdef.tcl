@@ -353,7 +353,7 @@ namespace eval lef {
               dict for {layer_name obstructions} [dict get $design obstructions] {
                 lappend blocked_layers $layer_name
               }
-              set sheet "0 0 [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units] BY [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units]"
+              set sheet "0 0 [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units] [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units]"
               foreach layer_name [get_blockage_layers $design] {
                 out "    LAYER $layer_name ;"
                 out "      RECT $sheet ;"
