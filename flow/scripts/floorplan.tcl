@@ -76,11 +76,8 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
   }
 }
 
-# This shouldn't be conditional but it causes failures in nangate45
-# that we aren't ready to address
-if {[string match "gf14" $::env(PLATFORM)]} {
-    remove_buffers
-}
+# remove buffers inserted by yosys/abc
+remove_buffers
 
 # pre report
 log_begin $::env(REPORTS_DIR)/2_init.rpt
