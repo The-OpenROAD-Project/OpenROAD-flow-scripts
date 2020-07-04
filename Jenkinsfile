@@ -13,22 +13,32 @@ pipeline {
 
     stage('Test') {
       failFast true
-      matrix {
-        axes {
-          axis {
-            name 'PLATFORM'
-            values 'nangate45'
-          }
-          axis {
-            name 'DESIGN'
-            values 'gcd', 'aes', 'tinyRocket'
+      parallel {
+        stage('nangate45_gcd') {
+          steps {
+            catchError {
+              sh label: 'nangate45_gcd', script: '''
+              docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"'''
+            }
+            echo currentBuild.result
           }
         }
-        stages {
-          stage("${PLATFORM}_${DESIGN}") {
-            steps {
-              sh label: "${PLATFORM}_${DESIGN}", script: "flow/jenkins/run_test.sh ${DESIGN} ${PLATFORM}"
+        stage('nangate45_aes') {
+          steps {
+            catchError {
+              sh label: 'nangate45_aes', script: '''
+              docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"'''
             }
+            echo currentBuild.result
+          }
+        }
+        stage('nangate45_tinyRocket') {
+          steps {
+            catchError {
+              sh label: 'nangate45_tinyRocket', script: '''
+              docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'''
+            }
+            echo currentBuild.result
           }
         }
       }
