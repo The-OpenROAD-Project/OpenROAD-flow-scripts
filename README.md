@@ -82,6 +82,9 @@ docker run -it -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash
 source ./setup_env.sh
 ```
 
+To transfer files between your host system and container, it is often useful to
+use [docker bind mounts](https://docs.docker.com/storage/bind-mounts/) instead.
+
 #### Option 2: Local
 1.  Clone the OpenROAD-flow repository
 ```
@@ -97,7 +100,7 @@ cd OpenROAD-flow
 source setup_env.sh
 ```
 
-## Using the flow
+## Using the Flow
 See the flow [README](flow) for details about the flow and how
 to run designs through the flow
 
@@ -122,7 +125,7 @@ this time we are focused on overhauling the build process, build testing, and
 the continuous integration framework. This will set us up for better integration
 with contributors. Please stay tuned.
 
-## About the project
+## About the Project
 The OpenROAD ("Foundations and Realization of Open, Accessible Design") project
 was launched in June 2018 within the DARPA IDEA program. OpenROAD aims to bring
 down the barriers of cost, expertise and unpredictability that currently block
