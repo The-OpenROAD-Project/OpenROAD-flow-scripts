@@ -12,10 +12,10 @@ export WRAP_LEFS       = ./platforms/$(PLATFORM)/lef/gf14_1rf_lg6_w80_bit.lef \
                          ./platforms/$(PLATFORM)/lef/gf14_2rf_lg6_w44_bit.lef \
                          ./platforms/$(PLATFORM)/lef/gf14_2rf_lg8_w64_bit.lef
 
-export WRAP_LIBS       = ./platforms/$(PLATFORM)/lib/gf14_1rf_lg6_w80_bit_nn_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/$(PLATFORM)/lib/gf14_1rf_lg8_w128_all_nn_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/$(PLATFORM)/lib/gf14_2rf_lg6_w44_bit_nn_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/$(PLATFORM)/lib/gf14_2rf_lg8_w64_bit_nn_nominal_0p80v_0p80v_25c.lib
+export WRAP_LIBS       = ./platforms/$(PLATFORM)/lib/gf14_1rf_lg6_w80_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                         ./platforms/$(PLATFORM)/lib/gf14_1rf_lg8_w128_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                         ./platforms/$(PLATFORM)/lib/gf14_2rf_lg6_w44_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                         ./platforms/$(PLATFORM)/lib/gf14_2rf_lg8_w64_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib
 
 export ADDITIONAL_GDS  = ./platforms/$(PLATFORM)/gds/gf14_1rf_lg6_w80_bit.gds2 \
                          ./platforms/$(PLATFORM)/gds/gf14_1rf_lg8_w128_all.gds2 \
