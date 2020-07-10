@@ -23,6 +23,10 @@ if {![info exists standalone] || $standalone} {
   }
 }
 
+# Clone clock tree inverters next to register loads
+# so cts does not try to buffer the inverted clocks.
+repair_clock_inverters
+
 # Run CTS
 clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
                      -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
