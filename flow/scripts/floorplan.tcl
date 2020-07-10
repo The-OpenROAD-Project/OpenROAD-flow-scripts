@@ -76,8 +76,10 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
   }
 }
 
-# remove buffers inserted by yosys/abc
-#remove_buffers
+if { $::env(PLATFORM) == "gf14" } {
+  # remove buffers inserted by yosys/abc
+  remove_buffers
+}
 
 # pre report
 log_begin $::env(REPORTS_DIR)/2_init.rpt
@@ -85,7 +87,7 @@ log_begin $::env(REPORTS_DIR)/2_init.rpt
 puts "\n=========================================================================="
 puts "report_checks"
 puts "--------------------------------------------------------------------------"
-report_checks
+report_checks -fields {input slew capacitance} -format full_clock
 
 puts "\n=========================================================================="
 puts "report_tns"
