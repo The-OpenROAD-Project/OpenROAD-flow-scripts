@@ -2,7 +2,7 @@ name: Merge openroad into master branch
 on:
   # Run nightly at 12 AM PDT (7 AM UTC)
   schedule:
-    - cron: '0 7 * * *'
+    - cron: '0 7 * * 6'
 jobs:
   pullRequest:
     runs-on: ubuntu-latest
