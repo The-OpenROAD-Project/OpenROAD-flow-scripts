@@ -42,6 +42,14 @@ set_placement_padding -global \
 detailed_placement
 check_placement
 
+puts "Repair hold violations..."
+set_propagated_clock [all_clocks]
+estimate_parasitics -placement
+repair_hold_violations -buffer_cell $buffer_cell
+
+detailed_placement
+check_placement
+
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/4_1_cts.def
