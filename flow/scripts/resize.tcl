@@ -96,9 +96,7 @@ set tiehi_lib_name [get_name [get_property [get_lib_cell $tiehi_cell_name] libra
 set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $env(TIEHI_CELL_AND_PORT) 1]
 repair_tie_fanout -separation $tie_separation $tiehi_pin
 
-# Repair hold violations
-puts "Repair hold violations..."
-repair_hold_violations -buffer_cell $buffer_cell
+# hold violations are not repaired until after CTS
 
 # post report
 log_begin $::env(REPORTS_DIR)/3_post_resize.rpt
