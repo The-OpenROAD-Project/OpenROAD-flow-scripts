@@ -443,7 +443,7 @@ $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED_GDS) $(RESULTS_DIR)/6_final.def
 	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
-	        -rd in_def=$(RESULTS_DIR)/5_route.def \
+	        -rd in_def=$(RESULTS_DIR)/6_final.def \
 	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
 	        -rd seal_gds="$(SEAL_GDS)" \
 	        -rd out_gds=$@ \
