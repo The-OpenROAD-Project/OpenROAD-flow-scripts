@@ -52,7 +52,7 @@ flow/*.opennet
 # Platforms
 flow/platforms/*
 !flow/platforms/nangate45
-
+!flow/platforms/sw130
 flow/private/*
 
 # network
