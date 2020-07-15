@@ -97,14 +97,6 @@ if [ ! -z ${TR_BRANCH+x} ]; then
   (cd tools/TritonRoute && git checkout ${TR_BRANCH} && git pull)
 fi
 
-if [ -d flow/platforms/gf14 ]; then
-  if [ -d tools/TritonRoute14 ]; then
-    git -C tools/TritonRoute14 pull || true
-  else
-    git -C tools clone git@github.com:The-OpenROAD-Project/TritonRoute14.git || true
-  fi
-fi
-
 # Update platforms
 if [ ! -z ${UPDATE_PLATFORM+x} ]; then
   for dir in flow/platforms/*/ ; do
@@ -133,10 +125,6 @@ if [ "$build_method" == "DOCKER" ]; then
   docker build -t openroad/tritonroute -f tools/TritonRoute/Dockerfile tools/TritonRoute
   docker build -t openroad -f tools/OpenROAD/Dockerfile tools/OpenROAD
   docker build -t openroad/flow -f Dockerfile .
-  if [ -d flow/platforms/gf14 ]; then
-    docker build -t openroad/tritonroute14 -f tools/TritonRoute14/Dockerfile tools/TritonRoute14
-    docker build -t openroad/flow14 -f jenkins/docker/14.Dockerfile .
-  fi
 
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then
@@ -145,11 +133,6 @@ elif [ "$build_method" == "LOCAL" ]; then
 
   mkdir -p tools/build/TritonRoute
   (cd tools/build/TritonRoute && cmake ../../TritonRoute && $NICE make -j$PROC)
-
-  if [ -d flow/platforms/gf14 ]; then
-    mkdir -p tools/build/TritonRoute14
-    (cd tools/build/TritonRoute14 && cmake ../../TritonRoute14 && $NICE make -j$PROC && mv TritonRoute TritonRoute14)
-  fi
 
   mkdir -p tools/build/OpenROAD
   (cd tools/build/OpenROAD && cmake ../../OpenROAD && $NICE make -j$PROC)

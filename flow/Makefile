@@ -379,11 +379,7 @@ endif
 # Run TritonRoute
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
-ifeq ($(PLATFORM),gf14)
-	($(TIME_CMD) TritonRoute14 $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
-else
 	($(TIME_CMD) TritonRoute $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
-endif
 
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
 	cp $< $@
