@@ -13,17 +13,26 @@ foreach libFile $::env(LIB_FILES) {
 # Read def and sdc
 read_def $::env(RESULTS_DIR)/6_final.def
 
-set nets [[[[ord::get_db] getChip] getBlock] getNets]
+set block [[[ord::get_db] getChip] getBlock]
+set nets  [$block getNets]
+set insts [$block getInsts]
 
+# Delete all non-clock nets
 foreach net $nets {
   set sigType [$net getSigType]
-  if {"$sigType" eq "SIGNAL"} {
-    odb::dbWire_destroy [$net getWire]
-    #[$net getWire] -delete
+  set wire [$net getWire]
+  if {"$sigType" eq "SIGNAL" && "$wire" ne "NULL"} {
+    odb::dbWire_destroy $wire
   } elseif {"$sigType" eq "POWER" ||
             "$sigType" eq "GROUND"} {
     $net destroySWires
   }
 }
 
+# Delete fill cells to clean up screenshot
+foreach inst $insts {
+  if {"[[$inst getMaster] getType]" eq "CORE_SPACER"} {
+    odb::dbInst_destroy $inst
+  }
+}
 write_def $::env(RESULTS_DIR)/6_final_only_clk.def
