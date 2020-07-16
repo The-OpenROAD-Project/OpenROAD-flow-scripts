@@ -9,6 +9,15 @@
     "hide_layers": true
   },
   {
+    "name" : "cts",
+    "layout_file": "6_final_only_clk.def",
+    "min_hierarchy": 0,
+    "max_hierarchy": 1,
+    "x_resolution": 2000,
+    "y_resolution": 2000,
+    "hide_layers": false
+  },
+  {
     "name" : "final",
     "layout_file": "6_final.def",
     "min_hierarchy": 0,
