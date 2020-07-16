@@ -104,7 +104,8 @@ $(RESULTS_DIR)/6_final_only_clk.def: $(RESULTS_DIR)/6_final.def
 $(RESULTS_DIR)/6_final_no_power.def: $(RESULTS_DIR)/6_final.def
 	$(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/deletePowerNets.tcl
 
-gallery: $(RESULTS_DIR)/6_final_only_clk.def $(RESULTS_DIR)/6_final_no_power.def
+# TODO(rovinski) $(RESULTS_DIR)/6_final_only_clk.def
+gallery: $(RESULTS_DIR)/6_final_no_power.def
 	($(TIME_CMD) klayout -z -rd gallery_json=platforms/$(PLATFORM)/gallery.json \
 	        -rd results_path=$(RESULTS_DIR) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
