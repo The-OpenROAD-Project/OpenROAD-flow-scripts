@@ -1,0 +1,29 @@
+[
+  {
+    "name" : "placement",
+    "layout_file": "4_1_cts.def",
+    "min_hierarchy": 0,
+    "max_hierarchy": 1,
+    "x_resolution": 2000,
+    "y_resolution": 2000,
+    "hide_layers": true
+  },
+  {
+    "name" : "final",
+    "layout_file": "6_final.def",
+    "min_hierarchy": 0,
+    "max_hierarchy": 1,
+    "x_resolution": 2000,
+    "y_resolution": 2000,
+    "hide_layers": false
+  },
+  {
+    "name" : "final_no_power",
+    "layout_file": "6_final_no_power.def",
+    "min_hierarchy": 0,
+    "max_hierarchy": 1,
+    "x_resolution": 2000,
+    "y_resolution": 2000,
+    "hide_layers": false
+  }
+]
