@@ -4,34 +4,16 @@
 <!-- Original source at: https://docs.google.com/drawings/d/1XGPD7g_X3Pna87XtBf6EB_kCXerGPSeKEWGPO_Q-Sb4 -->
 
 ## Quick Start
+1. Follow the installation instructions in the top-level
+[README](../README.md#installation)
+2. Build an example design
 ```
-# Clone the repository and submodules
-git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow
-
-# Build the OpenROAD app
-cd OpenROAD
-make
-
-# Setup your environment
-source setup_env.sh
-
-# Implement the example gcd design
 cd flow
 make
 ```
-The resulting GDS will be available at `flow/results/nangate45/gcd/6_final.gds`
-
-## Setting up the Flow
-
-1. Clone the repository
-```
-git clone https://github.com/The-OpenROAD-Project/OpenROAD-flow
-cd OpenROAD-flow/flow
-```
-2. The `openroad` app must be setup to implement designs or run tests. See setup
-   instructions in the repository [README](../README.md#Setup)
-3. Setup your shell environment. If the tools are built locally using the setup
-   [instructions](../README.md#Setup), you can run `source setup_env.sh`
+This will build an example design `gcd` using the `nangate45` platform. The
+resulting GDS will be available at `flow/results/nangate45/gcd/6_final.gds`. The
+flow should take only a few minutes to produce a GDS.
 
 ## Designs
 Sample design configurations are available in the `designs` directory. You can
@@ -41,8 +23,8 @@ select a design using either of the following methods:
 2. Specify the design using the shell environment, e.g.
    `make DESIGN_CONFIG=./designs/nangate45/swerv.mk` or
    `export DESIGN_CONFIG=./designs/nangate45/swerv.mk; make`
-By default, the simple design gcd is selected. We recommend implementing this
-design first to validate your flow and tool setup.
+By default, the simple design `gcd` is selected. We recommend implementing this
+design first to validate your tool and flow setup.
 
 ### Adding a New Design
 To add a new design, we recommend looking at the included designs for examples
@@ -75,36 +57,11 @@ about the design. See sample configurations in the `design` directory.
 
 
 ### Adding a New Platform
-At this time, we recommend looking at the [Nangate45](platforms/nangate45) as an
+At this time, we recommend looking at [`nangate45`](platforms/nangate45) as an
 example of how to set up a new platform for OpenROAD-flow.
 
 ## Implement the Design
 Run `make` to perform Verilog to GDS. The final output will be located at
 `flow/results/{platform}/{design_name}/6_final.gds`
-
-## Miscellaneous
-### tiny-tests - easy to add, single concern, single Verilog file
-
-The tiny-tests are have been designed with two design goals in mind:
-
-1. It should be trivial to add a new test: simply add a tiny standalone
-   Verilog file to `OpenROAD-flow/flow/designs/src/tiny-tests`
-2. Each test should be as small and as standalone as possible and be a single
-   concern test.
-
-To run a test:
-
-```
-make DESIGN_NAME=SmallPinCount DESIGN_CONFIG=`pwd`/designs/tiny-tests.mk
-```
-
-### nangate45 smoke-test harness for top level Verilog designs
-
-1. Drop your Verilog files into designs/src/harness
-2. Start the workflow:
-
-```
-make DESIGN_NAME=TopLevelName DESIGN_CONFIG=`pwd`/designs/harness.mk
-```
 
 TIP! Start with a small tiny submodule in your design with few pins
