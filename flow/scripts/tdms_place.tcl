@@ -16,6 +16,9 @@ if {![info exists standalone] || $standalone} {
   # Read design files
   read_def $::env(RESULTS_DIR)/2_2_floorplan_io.def
   read_sdc $::env(RESULTS_DIR)/1_synth.sdc
+  if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
+    source platforms/$::env(PLATFORM)/derate.tcl
+  }
 }
 
 proc find_macros {} {
@@ -37,7 +40,6 @@ proc find_macros {} {
 if {[info exists ::env(MACRO_PLACEMENT)]} {
     puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
 } elseif {[find_macros] != ""} {
-    set_wire_rc -layer $::env(WIRE_RC_LAYER)
     global_placement -disable_routability_driven -density $::env(PLACE_DENSITY)
 } else {
     puts "No macros found: Skipping global_placement"

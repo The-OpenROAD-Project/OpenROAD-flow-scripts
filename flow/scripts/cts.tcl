@@ -18,7 +18,14 @@ if {![info exists standalone] || $standalone} {
 
   # Read SDC file
   read_sdc $::env(RESULTS_DIR)/3_place.sdc
+  if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
+    source platforms/$::env(PLATFORM)/derate.tcl
+  }
 }
+
+# Clone clock tree inverters next to register loads
+# so cts does not try to buffer the inverted clocks.
+repair_clock_inverters
 
 # Run CTS
 clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
@@ -26,15 +33,30 @@ clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
                      -root_buf "$::env(CTS_BUF_CELL)" \
                      -wire_unit 20
 
+set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
+repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
+
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
+detailed_placement
+
+puts "Repair hold violations..."
+set_propagated_clock [all_clocks]
+# This should be required, NOT conditional -cherry
+if [file exists platforms/$::env(PLATFORM)/setRC.tcl] {
+  source platforms/$::env(PLATFORM)/setRC.tcl
+}
+estimate_parasitics -placement
+repair_hold_violations -buffer_cell $buffer_cell
+
 detailed_placement
 check_placement
 
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/4_1_cts.def
+  write_verilog $::env(RESULTS_DIR)/4_cts.v
   write_sdc $::env(RESULTS_DIR)/4_cts.sdc
   exit
 }

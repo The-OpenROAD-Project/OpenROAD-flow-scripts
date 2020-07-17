@@ -14,15 +14,18 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read def and sdc
-  read_def $::env(RESULTS_DIR)/5_route.def
+  # Use -order_wires to build wire graph
+  read_def -order_wires $::env(RESULTS_DIR)/5_route.def
   read_sdc $::env(RESULTS_DIR)/5_route.sdc
+  if [file exists platforms/$::env(PLATFORM)/derate_final.tcl] {
+    source platforms/$::env(PLATFORM)/derate_final.tcl
+    puts "derate_final.tcl sourced"
+  }
 }
 
 # Set res and cap
-if {[info exists ::env(WIRE_RC_RES)] && [info exists ::env(WIRE_RC_CAP)]} {
-  set_wire_rc -res $::env(WIRE_RC_RES) -cap $::env(WIRE_RC_CAP)
-} else {
-  set_wire_rc -layer $::env(WIRE_RC_LAYER)
+if [file exists platforms/$::env(PLATFORM)/setRC.tcl] {
+  source platforms/$::env(PLATFORM)/setRC.tcl
 }
 
 set_propagated_clock [all_clocks]
@@ -32,17 +35,17 @@ log_begin $::env(REPORTS_DIR)/6_final_report.rpt
 puts "\n=========================================================================="
 puts "report_checks -path_delay min"
 puts "--------------------------------------------------------------------------"
-report_checks -path_delay min -fields {slew cap input}
+report_checks -path_delay min -fields {slew cap input nets fanout} -format full_clock_expanded
 
 puts "\n=========================================================================="
 puts "report_checks -path_delay max"
 puts "--------------------------------------------------------------------------"
-report_checks -path_delay max -fields {slew cap input}
+report_checks -path_delay max -fields {slew cap input nets fanout} -format full_clock_expanded
 
 puts "\n=========================================================================="
 puts "report_checks -unconstrained"
 puts "--------------------------------------------------------------------------"
-report_checks -unconstrained
+report_checks -unconstrained -fields {slew cap input nets fanout} -format full_clock_expanded
 
 puts "\n=========================================================================="
 puts "report_tns"
@@ -83,6 +86,11 @@ puts "\n========================================================================
 puts "pin_count"
 puts "--------------------------------------------------------------------------"
 puts "[sta::network_leaf_pin_count]"
+
+#puts "\n=========================================================================="
+#puts "check_antennas"
+#puts "--------------------------------------------------------------------------"
+#check_antennas -path $::env(REPORTS_DIR) 
 
 log_end
 

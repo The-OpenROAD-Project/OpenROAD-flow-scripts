@@ -97,3 +97,16 @@ vars.tcl:
 clean_issues:
 	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
 	rm -rf vars.sh runme.sh
+
+$(RESULTS_DIR)/6_final_only_clk.def: $(RESULTS_DIR)/6_final.def
+	$(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/deleteNonClkNets.tcl
+
+$(RESULTS_DIR)/6_final_no_power.def: $(RESULTS_DIR)/6_final.def
+	$(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/deletePowerNets.tcl
+
+
+gallery: $(RESULTS_DIR)/6_final_no_power.def $(RESULTS_DIR)/6_final_only_clk.def
+	($(TIME_CMD) klayout -z -nc -rx -rd gallery_json=util/gallery.json \
+	        -rd results_path=$(RESULTS_DIR) \
+	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
+	        -rm $(UTILS_DIR)/createGallery.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log

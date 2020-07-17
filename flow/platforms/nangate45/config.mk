@@ -58,6 +58,9 @@ export IO_PIN_MARGIN = 70
 # Layer to use for parasitics estimations
 export WIRE_RC_LAYER = metal3
 
+# resizer repair_long_wires -max_length
+export MAX_WIRE_LENGTH = 1000
+
 # KLayout technology file
 export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/FreePDK45.lyt
 

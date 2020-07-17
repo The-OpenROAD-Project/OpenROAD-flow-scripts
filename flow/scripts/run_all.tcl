@@ -24,6 +24,9 @@ foreach libFile $::env(LIB_FILES) {
 read_verilog $::env(RESULTS_DIR)/1_1_yosys.v
 link_design $::env(DESIGN_NAME)
 read_sdc $::env(SDC_FILE)
+if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
+  source platforms/$::env(PLATFORM)/derate.tcl
+}
 
 set_wire_rc -layer $::env(WIRE_RC_LAYER)
 

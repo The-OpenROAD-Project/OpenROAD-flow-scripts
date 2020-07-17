@@ -46,7 +46,7 @@
 # DESIGN_CONFIG=./designs/gf14/bp_dual/config.mk
 # DESIGN_CONFIG=./designs/gf14/bp_quad/config.mk
 
-# DESIGN_CONFIG=./designs/sw130/gcd.mk
+# DESIGN_CONFIG=./designs/sky130/gcd.mk
 
 
 # Default design
@@ -206,7 +206,7 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(WRAPPED_LEFS)
+$(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(ADDITIONAL_LEFS)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
 
 
@@ -270,6 +270,9 @@ $(RESULTS_DIR)/3_1_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_2_place_resized.def: $(RESULTS_DIR)/3_1_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl) 2>&1 | tee $(LOG_DIR)/3_2_resizer.log
+
+clean_resize:
+	rm -f $(RESULTS_DIR)/3_2_place_resized.def
 
 # STEP 3: Detail placement
 #-------------------------------------------------------------------------------
@@ -379,11 +382,7 @@ endif
 # Run TritonRoute
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
-ifeq ($(PLATFORM),gf14)
-	($(TIME_CMD) TritonRoute14 $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
-else
 	($(TIME_CMD) TritonRoute $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
-endif
 
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
 	cp $< $@
@@ -396,7 +395,7 @@ clean_route:
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
-klayout_tr_rpt: $(RESULTS_DIR)/5_route.def
+klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 	klayout -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
 	        -rd in_def="$<" \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
@@ -434,6 +433,7 @@ $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:gds=def)) \
 	        -rd in_gds="$(ADDITIONAL_GDS)" \
+	        -rd seal_gds="" \
 	        -rd out_gds=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
 	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
@@ -441,9 +441,10 @@ $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED_GDS) $(RESULTS_DIR)/6_final.def
-	($(TIME_CMD) klayout -zz -rd design_name=$(DESIGN_NAME) \
-	        -rd in_def=$(RESULTS_DIR)/5_route.def \
+	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
+	        -rd in_def=$(RESULTS_DIR)/6_final.def \
 	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
+	        -rd seal_gds="$(SEAL_GDS)" \
 	        -rd out_gds=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
@@ -453,7 +454,7 @@ $(RESULTS_DIR)/6_final.v: $(REPORTS_DIR)/6_final_report.rpt
 # TODO(rovinski) Placeholder until fill script works for more platforms
 ifneq ($(USE_FILL),)
 $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
-	($(TIME_CMD) klayout -zz -rd in_gds="$<" \
+	($(TIME_CMD) stdbuf -o L klayout -zz -rd in_gds="$<" \
 	        -rd out_gds="$@" \
 	        -rd config_file=$(FILL_CONFIG) \
 	        -rd report_file="$(REPORTS_DIR)/6_2_density.rpt" \
@@ -477,8 +478,7 @@ else
 endif
 
 clean_finish:
-	rm -rf $(RESULTS_DIR)/6_*.gds
-	rm -rf $(RESULTS_DIR)/6_*.def
+	rm -rf $(RESULTS_DIR)/6_*.gds $(RESULTS_DIR)/6_*.def $(RESULTS_DIR)/6_*.v
 	rm -rf $(REPORTS_DIR)/6_*.rpt
 	rm -f  $(LOG_DIR)/6_*
 

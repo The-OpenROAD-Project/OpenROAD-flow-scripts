@@ -15,6 +15,15 @@ proc relative_rectangle {rect offset} {
     ]
 }
 
+if [package vcompare 8.6 $tcl_version] {
+    proc lmap {_var list body} {
+        upvar 1 $_var var
+        set res {}
+        foreach var $list {lappend res [uplevel 1 $body]}
+        set res
+    }
+}
+
 namespace eval lef {
     variable lefOut stdout
     variable def_units 2000
@@ -240,6 +249,19 @@ namespace eval lef {
         ::close $ch
     }
 
+    proc get_blockage_layers {design} {
+      if {[dict exists $design blockage_layers]} {
+        return [dict get $design blockage_layers]
+      }
+
+      set blocked_layers {}
+
+      dict for {layer_name obstructions} [dict get $design obstructions] {
+        lappend blocked_layers $layer_name
+      }
+      return $blocked_layers
+    }
+
     proc write_header {} {
     }
     proc write_footer {} {
@@ -327,15 +349,26 @@ namespace eval lef {
 
         if {[dict exists $design obstructions]} {
             out "  OBS"
-            dict for {layer_name obstructions} [dict get $design obstructions] {
+            if {[dict get $design use_sheet_obstructions]} {
+              dict for {layer_name obstructions} [dict get $design obstructions] {
+                lappend blocked_layers $layer_name
+              }
+              set sheet "0 0 [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units] [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units]"
+              foreach layer_name [get_blockage_layers $design] {
                 out "    LAYER $layer_name ;"
-                foreach obs $obstructions {
-                    if {[dict exists $obs mask]} {
-                        out "      RECT MASK [dict get $obs mask] [lmap x [dict get $obs rect] {expr 1.0 * $x / $def_units}] ;"
-                    } else {
-                        out "      RECT [lmap x [dict get $obs rect] {expr 1.0 * $x / $def_units}] ;"
-                    }
-                }
+                out "      RECT $sheet ;"
+              }
+            } else {
+              dict for {layer_name obstructions} [dict get $design obstructions] {
+                  out "    LAYER $layer_name ;"
+                  foreach obs $obstructions {
+                      if {[dict exists $obs mask]} {
+                          out "      RECT MASK [dict get $obs mask] [lmap x [dict get $obs rect] {expr 1.0 * $x / $def_units}] ;"
+                      } else {
+                          out "      RECT [lmap x [dict get $obs rect] {expr 1.0 * $x / $def_units}] ;"
+                      }
+                  }
+              }
             }
             out "  END"
         }
@@ -578,7 +611,80 @@ namespace eval def {
 
         return $design
     }
-    
+
+    variable layer_info {} 
+    proc set_layer_info {layer_name key value} {
+        variable layer_info
+
+        dict set layer_info layers $layer_name $key $value
+    }
+
+    proc get_layer_width {layer_name} {
+        variable layer_info
+        return [dict get $layer_info layers $layer_name width]
+    }
+
+    proc get_layer_non_preferred_width {layer_name} {
+        variable layer_info
+        if {[dict exists $layer_info layers $layer_name non_preferred_width]} {
+            return [dict get $layer_info layers $layer_name non_preferred_width]
+        }
+        return [dict get $layer_info layers $layer_name width]
+    }
+
+    proc get_layer_direction {layer_name} {
+        variable layer_info
+        return [dict get $layer_info layers $layer_name direction]
+    }
+
+    proc get_line_direction {points} {
+        if {[lindex $points 0 0] == [lindex $points 1 0]} {
+            set direction "VERTICAL"
+        } elseif {[lindex $points 0 1] == [lindex $points 1 1]} {
+            set direction "HORIZONTAL"
+        } else {
+            error "Non orthogonal line $points"
+        }
+        return $direction
+    }
+    proc get_line_width {layer_name points} {
+        set direction [get_line_direction $points]
+
+        if {[get_layer_direction $layer_name] == $direction} {
+            return [get_layer_width $layer_name]
+        } else {
+            return [get_layer_non_preferred_width $layer_name]
+        }
+    }
+
+    proc get_extended_line {layer_name points} {
+        if {[llength [lindex $points 1]] == 1} {
+            return "( [lindex $points 0] ) [lindex $points 1]"
+        }
+
+        set direction [get_line_direction $points]
+
+        if {$direction == [get_layer_direction $layer_name]} {
+          set extension [expr [get_layer_non_preferred_width $layer_name] / 2]
+        } else {
+          set extension [expr [get_layer_width $layer_name] / 2]
+        }
+
+        if {$direction == "VERTICAL"} {
+            set x_min [lindex $points 0 0]
+            set x_max [lindex $points 0 0]
+            set y_min [expr min([lindex $points 0 1], [lindex $points 1 1]) - $extension]
+            set y_max [expr max([lindex $points 0 1], [lindex $points 1 1]) + $extension]
+        } else {
+            set x_min [expr min([lindex $points 0 0], [lindex $points 1 0])]
+            set x_max [expr max([lindex $points 0 0], [lindex $points 1 0])]
+            set y_min [lindex $points 0 1]
+            set y_max [lindex $points 0 1]
+        }
+
+        return "( $x_min $y_min ) ( $x_max $y_max )"
+    }
+
     proc write {design} {
         out "###############################################################"
         if {[dict exists $design tool]} {
@@ -696,56 +802,49 @@ namespace eval def {
         
         if {[dict exists $design nets]} {
             out ""
-            out "NETS [dict size [dict get $design nets]] ;"
+            out "SPECIALNETS [dict size [dict get $design nets]] ;"
             dict for {net_name net} [dict get $design nets] {
                 out -nonewline "- $net_name "
                 foreach connection [dict get $net connections] {
                     out " ( $connection )"
                 }
                 if {[dict exists $net routes]} {
-                    set route [lindex [dict get $net routes] 0]
-		    out -nonewline "  + ROUTED [dict get $route layer] "
-                    if {[dict exists $route shape]} {
-		        out -nonewline " + SHAPE [dict get $route shape] "
-                    }
-                    foreach point [dict get $route points] {
-                        if {[llength $point] == 2} {
-                            out -nonewline "( $point ) "
-                        } else {
-                            out -nonewline "$point "
-                        }
-                    }
-                    out ""
-
-                    foreach route [lrange [dict get $net routes] 1 end] {
-		        out -nonewline "    NEW [dict get $route layer] "
-                        if {[dict exists $route shape]} {
-                            out -nonewline " + SHAPE [dict get $route shape] "
-                        }
-                        if {[dict exists $route points]} {
-                            set point [lindex [dict get $route points] 0]
-                            if {[llength $point] == 2} {
-                                out -nonewline "( $point ) "
+                    set type "ROUTED"
+                    foreach route [dict get $net routes] {
+                        set first_point [lindex [dict get $route points] 0]
+ 
+                        foreach point [lrange [dict get $route points] 1 end] {
+                            set points [get_extended_line [dict get $route layer] [list $first_point $point]]
+                            if {[dict exists $route shape]} {
+		                set shape " + SHAPE [dict get $route shape] "
                             } else {
-                                out -nonewline "$point "
+                                set shape ""
                             }
                             if {[dict exists $route mask]} {
-                                out -nonewline "MASK [dict get $route mask] "
+                                set mask "MASK [dict get $route mask] "
+                            } else {
+                                set mask ""
                             }
-                            foreach point [lrange [dict get $route points] 1 end] {
-                                if {[llength $point] == 2} {
-                                    out -nonewline "( $point ) "
-                                } else {
-                                    out -nonewline "$point "
-                                }
+                            if {[llength $point] == 2} {
+    		                out -nonewline "  + $type [dict get $route layer] [get_line_width [dict get $route layer] [list $first_point $point]] "
+                                out -nonewline $shape
+                                out -nonewline $points
+                                out -nonewline $mask
+                            } else {
+    		                out -nonewline "  + $type [dict get $route layer] 0 "
+                                out -nonewline $shape
+                                out -nonewline $points
+                                out -nonewline $mask
                             }
                             out ""
+                            set first_point $point
+                            set type "ROUTED"
                         }
                     }
                 }
                 out "  + USE [dict get $net use]\n ;"
             }
-            out "END NETS"
+            out "END SPECIALNETS"
         }
 
         if {[dict exists $design special_nets]} {
@@ -829,6 +928,7 @@ namespace eval def {
     namespace export new_design add_component get_current_design
     namespace export set_def_units get_def_units shift_origin shift_rect
     namespace export open close out write write_cells
+    namespace export set_layer_info
     namespace ensemble create
 }
 

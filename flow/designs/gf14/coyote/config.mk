@@ -12,10 +12,10 @@ export WRAP_LEFS       = ./platforms/$(PLATFORM)/lef/gf14_1rf_lg6_w80_bit.lef \
                          ./platforms/$(PLATFORM)/lef/gf14_2rf_lg6_w44_bit.lef \
                          ./platforms/$(PLATFORM)/lef/gf14_2rf_lg8_w64_bit.lef
 
-export WRAP_LIBS       = ./platforms/$(PLATFORM)/lib/gf14_1rf_lg6_w80_bit_nn_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/$(PLATFORM)/lib/gf14_1rf_lg8_w128_all_nn_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/$(PLATFORM)/lib/gf14_2rf_lg6_w44_bit_nn_nominal_0p80v_0p80v_25c.lib \
-                         ./platforms/$(PLATFORM)/lib/gf14_2rf_lg8_w64_bit_nn_nominal_0p80v_0p80v_25c.lib
+export WRAP_LIBS       = ./platforms/$(PLATFORM)/lib/gf14_1rf_lg6_w80_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                         ./platforms/$(PLATFORM)/lib/gf14_1rf_lg8_w128_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                         ./platforms/$(PLATFORM)/lib/gf14_2rf_lg6_w44_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                         ./platforms/$(PLATFORM)/lib/gf14_2rf_lg8_w64_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib
 
 export ADDITIONAL_GDS  = ./platforms/$(PLATFORM)/gds/gf14_1rf_lg6_w80_bit.gds2 \
                          ./platforms/$(PLATFORM)/gds/gf14_1rf_lg8_w128_all.gds2 \
@@ -23,8 +23,8 @@ export ADDITIONAL_GDS  = ./platforms/$(PLATFORM)/gds/gf14_1rf_lg6_w80_bit.gds2 \
                          ./platforms/$(PLATFORM)/gds/gf14_2rf_lg8_w64_bit.gds2
 
 # These values must be multiples of placement site
-export DIE_AREA    = 0 0 1100.008 1099.84
-export CORE_AREA   = 19.992 20.16 1080.016 1080.16
+export DIE_AREA    = 0 0 1099.98 1099.584
+export CORE_AREA   = 19.992 20.16 1079.988 1080
 
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 

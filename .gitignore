@@ -13,6 +13,7 @@ flow/*tar.gz
 flow/runme.sh
 flow/vars.sh
 flow/vars.tcl
+flow/vars.gdb
 flow/versions.txt
 
 # Common temp files
@@ -51,7 +52,7 @@ flow/*.opennet
 # Platforms
 flow/platforms/*
 !flow/platforms/nangate45
-
+!flow/platforms/sw130
 flow/private/*
 
 # network
