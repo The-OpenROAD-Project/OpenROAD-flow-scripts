@@ -15,7 +15,8 @@ if {![info exists standalone] || $standalone} {
 
   # Read def and sdc
   # Use -order_wires to build wire graph
-  read_def -order_wires $::env(RESULTS_DIR)/5_route.def
+  # for antenna checker read_def -order_wires $::env(RESULTS_DIR)/5_route.def
+  read_def $::env(RESULTS_DIR)/5_route.def
   read_sdc $::env(RESULTS_DIR)/5_route.sdc
   if [file exists platforms/$::env(PLATFORM)/derate_final.tcl] {
     source platforms/$::env(PLATFORM)/derate_final.tcl
