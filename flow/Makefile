@@ -46,7 +46,7 @@
 # DESIGN_CONFIG=./designs/gf14/bp_dual/config.mk
 # DESIGN_CONFIG=./designs/gf14/bp_quad/config.mk
 
-# DESIGN_CONFIG=./designs/sw130/gcd.mk
+# DESIGN_CONFIG=./designs/sky130/gcd.mk
 
 
 # Default design
@@ -379,11 +379,7 @@ endif
 # Run TritonRoute
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
-ifeq ($(PLATFORM),gf14)
-	($(TIME_CMD) TritonRoute14 $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
-else
 	($(TIME_CMD) TritonRoute $(OBJECTS_DIR)/TritonRoute.param) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
-endif
 
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
 	cp $< $@
@@ -443,7 +439,7 @@ $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED_GDS) $(RESULTS_DIR)/6_final.def
 	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
-	        -rd in_def=$(RESULTS_DIR)/5_route.def \
+	        -rd in_def=$(RESULTS_DIR)/6_final.def \
 	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
 	        -rd seal_gds="$(SEAL_GDS)" \
 	        -rd out_gds=$@ \

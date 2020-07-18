@@ -14,7 +14,8 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read def and sdc
-  read_def $::env(RESULTS_DIR)/5_route.def
+  # Use -order_wires to build wire graph
+  read_def -order_wires $::env(RESULTS_DIR)/5_route.def
   read_sdc $::env(RESULTS_DIR)/5_route.sdc
   if [file exists platforms/$::env(PLATFORM)/derate_final.tcl] {
     source platforms/$::env(PLATFORM)/derate_final.tcl
@@ -85,6 +86,11 @@ puts "\n========================================================================
 puts "pin_count"
 puts "--------------------------------------------------------------------------"
 puts "[sta::network_leaf_pin_count]"
+
+#puts "\n=========================================================================="
+#puts "check_antennas"
+#puts "--------------------------------------------------------------------------"
+#check_antennas -path $::env(REPORTS_DIR) 
 
 log_end
 

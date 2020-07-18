@@ -40,6 +40,17 @@ set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 detailed_placement
+
+puts "Repair hold violations..."
+set_propagated_clock [all_clocks]
+# This should be required, NOT conditional -cherry
+if [file exists platforms/$::env(PLATFORM)/setRC.tcl] {
+  source platforms/$::env(PLATFORM)/setRC.tcl
+}
+estimate_parasitics -placement
+repair_hold_violations -buffer_cell $buffer_cell
+
+detailed_placement
 check_placement
 
 if {![info exists standalone] || $standalone} {
