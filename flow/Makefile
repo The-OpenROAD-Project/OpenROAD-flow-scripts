@@ -46,7 +46,7 @@
 # DESIGN_CONFIG=./designs/gf14/bp_dual/config.mk
 # DESIGN_CONFIG=./designs/gf14/bp_quad/config.mk
 
-# DESIGN_CONFIG=./designs/sky130/gcd.mk
+# DESIGN_CONFIG=./designs/sky130/gcd/config.mk
 
 
 # Default design
