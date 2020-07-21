@@ -263,20 +263,13 @@ place: $(RESULTS_DIR)/3_place.def \
 $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 
-ifneq ($(NON_RANDOM_IO_PLACEMENT),)
 $(RESULTS_DIR)/3_1_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl) 2>&1 | tee $(LOG_DIR)/3_1_place_iop.log
-endif
 
 # STEP 2: Resizing & Buffering
 #-------------------------------------------------------------------------------
-ifneq ($(NON_RANDOM_IO_PLACEMENT),)
 $(RESULTS_DIR)/3_2_place_resized.def: $(RESULTS_DIR)/3_1_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl) 2>&1 | tee $(LOG_DIR)/3_2_resizer.log
-else
-$(RESULTS_DIR)/3_2_place_resized.def: $(RESULTS_DIR)/3_1_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl) 2>&1 | tee $(LOG_DIR)/3_2_resizer.log
-endif
 
 clean_resize:
 	rm -f $(RESULTS_DIR)/3_2_place_resized.def
