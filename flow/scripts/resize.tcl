@@ -15,7 +15,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read def and sdc
-  read_def $::env(RESULTS_DIR)/3_1_place_iop.def
+  read_def $::env(RESULTS_DIR)/3_2_place_iop.def
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
   if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
     source platforms/$::env(PLATFORM)/derate.tcl
@@ -132,6 +132,6 @@ puts ""
 log_end
 
 if {![info exists standalone] || $standalone} {
-  write_def $::env(RESULTS_DIR)/3_2_place_resized.def
+  write_def $::env(RESULTS_DIR)/3_3_place_resized.def
   exit
 }

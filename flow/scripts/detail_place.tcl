@@ -14,7 +14,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read design files
-  read_def $::env(RESULTS_DIR)/3_2_place_resized.def
+  read_def $::env(RESULTS_DIR)/3_3_place_resized.def
 }
 
 set_placement_padding -global \
@@ -26,6 +26,6 @@ check_placement -verbose
 
 if {![info exists standalone] || $standalone} {
   # write output
-  write_def $::env(RESULTS_DIR)/3_3_place_dp.def
+  write_def $::env(RESULTS_DIR)/3_4_place_dp.def
   exit
 }
