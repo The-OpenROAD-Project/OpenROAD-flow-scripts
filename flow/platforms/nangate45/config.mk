@@ -9,6 +9,9 @@ export TIELO_CELL_AND_PORT = LOGIC0_X1 Z
 # Used in synthesis
 export MIN_BUF_CELL_AND_PORTS = BUF_X1 A Z
 
+# Resizer hold buffer
+export HOLD_BUF_CELL = BUF_X1
+
 # Used in synthesis
 export MAX_FANOUT = 100
 

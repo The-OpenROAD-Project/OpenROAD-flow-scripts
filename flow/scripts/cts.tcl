@@ -48,7 +48,7 @@ if [file exists platforms/$::env(PLATFORM)/setRC.tcl] {
   source platforms/$::env(PLATFORM)/setRC.tcl
 }
 estimate_parasitics -placement
-repair_hold_violations -buffer_cell $buffer_cell
+repair_hold_violations -buffer_cell $::env(HOLD_BUF_CELL)
 
 detailed_placement
 check_placement
