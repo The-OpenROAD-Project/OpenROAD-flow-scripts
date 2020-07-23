@@ -25,7 +25,8 @@ content = f.read()
 f.close()
 
 # Pattern to match a cell header
-pattern = r"(^\s*cell\s*\(\s*("+"|".join(patternList)+")\)\s*\{)"
+pattern = r"(^\s*cell\s*\(\s*([\"]*"+"[\"]*|[\"]*".join(patternList)+"[\"]*)\)\s*\{)"
+
 # print(pattern)
 replace = r"\1\n    dont_use : TRUE;"
 content, count = re.subn(pattern, replace, content, 0, re.M)

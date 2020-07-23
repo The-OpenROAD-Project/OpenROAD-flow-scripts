@@ -15,7 +15,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 VERSION 5.5 ;
-NAMESCASESENSITIVE ON ;
 BUSBITCHARS "[]" ;
 DIVIDERCHAR "/" ;
 MACRO sky130_fd_sc_hs__a2111o_1
