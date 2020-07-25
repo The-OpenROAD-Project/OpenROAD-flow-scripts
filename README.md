@@ -93,7 +93,7 @@ cd OpenROAD-flow
 ```
 2. Run the build script
 ```
-./build_openroad.sh
+./build_openroad.sh --local
 ```
 3. Update your shell environment
 ```
