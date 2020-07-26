@@ -45,7 +45,7 @@ export CELL_PAD_IN_SITES = 4
 export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
 
 # TritonCTS options
-export CTS_BUF_CELL   = sky130_fd_sc_hs__clkbuf_1
+export CTS_BUF_CELL   = sky130_fd_sc_hs__buf_1
 export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTS
 
 # FastRoute options
@@ -58,7 +58,7 @@ export IO_PIN_MARGIN = 70
 export WIRE_RC_LAYER = met3
 
 # Resizer options
-export RESIZER_BUF_CELL = sky130_fd_sc_hs__clkbuf_1
+export RESIZER_BUF_CELL = sky130_fd_sc_hs__buf_1
 
 # KLayout technology file
 export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
@@ -112,7 +112,10 @@ export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl
 # Template definition for power grid analysis
 export TEMPLATE_PGA_CFG ?= ./platforms/sky130/template_pga.cfg
 
-export PLACE_DENSITY ?= 0.40
+export PLACE_DENSITY ?= 0.30
+
+# Define Hold Buffer
+export HOLD_BUF_CELL = sky130_fd_sc_hs__buf_1
 
 # IO Placer pin layers
 export IO_PLACER_H = 4
@@ -127,3 +130,4 @@ export FILL_CELLS = sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc
 
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 1000
+
