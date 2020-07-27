@@ -49,6 +49,7 @@
 # DESIGN_CONFIG=./designs/sky130/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130/aes/config.mk
+
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
@@ -70,7 +71,17 @@ default: finish
 
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
-include ./platforms/$(PLATFORM)/config.mk
+
+ifneq ($(wildcard ./platforms/$(PLATFORM)),)
+  export PLATFORM_DIR = ./platforms/$(PLATFORM)
+else ifneq ($(wildcard ../../$(PLATFORM)),)
+  export PLATFORM_DIR = ../../$(PLATFORM)
+else
+  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found)
+endif
+
+$(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
+include $(PLATFORM_DIR)/config.mk
 
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
