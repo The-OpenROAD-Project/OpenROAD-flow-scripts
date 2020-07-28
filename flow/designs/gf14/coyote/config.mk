@@ -7,20 +7,20 @@ export VERILOG_FILES   = ./designs/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \
 
 export SDC_FILE        = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export WRAP_LEFS       = ./platforms/$(PLATFORM)/lef/gf14_1rf_lg6_w80_bit.lef \
-                         ./platforms/$(PLATFORM)/lef/gf14_1rf_lg8_w128_all.lef \
-                         ./platforms/$(PLATFORM)/lef/gf14_2rf_lg6_w44_bit.lef \
-                         ./platforms/$(PLATFORM)/lef/gf14_2rf_lg8_w64_bit.lef
+export WRAP_LEFS       = $(PLATFORM_DIR)/lef/gf14_1rf_lg6_w80_bit.lef \
+                         $(PLATFORM_DIR)/lef/gf14_1rf_lg8_w128_all.lef \
+                         $(PLATFORM_DIR)/lef/gf14_2rf_lg6_w44_bit.lef \
+                         $(PLATFORM_DIR)/lef/gf14_2rf_lg8_w64_bit.lef
 
-export WRAP_LIBS       = ./platforms/$(PLATFORM)/lib/gf14_1rf_lg6_w80_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         ./platforms/$(PLATFORM)/lib/gf14_1rf_lg8_w128_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         ./platforms/$(PLATFORM)/lib/gf14_2rf_lg6_w44_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         ./platforms/$(PLATFORM)/lib/gf14_2rf_lg8_w64_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib
+export WRAP_LIBS       = $(PLATFORM_DIR)/lib/gf14_1rf_lg6_w80_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                         $(PLATFORM_DIR)/lib/gf14_1rf_lg8_w128_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                         $(PLATFORM_DIR)/lib/gf14_2rf_lg6_w44_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                         $(PLATFORM_DIR)/lib/gf14_2rf_lg8_w64_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib
 
-export ADDITIONAL_GDS  = ./platforms/$(PLATFORM)/gds/gf14_1rf_lg6_w80_bit.gds2 \
-                         ./platforms/$(PLATFORM)/gds/gf14_1rf_lg8_w128_all.gds2 \
-                         ./platforms/$(PLATFORM)/gds/gf14_2rf_lg6_w44_bit.gds2 \
-                         ./platforms/$(PLATFORM)/gds/gf14_2rf_lg8_w64_bit.gds2
+export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf14_1rf_lg6_w80_bit.gds2 \
+                         $(PLATFORM_DIR)/gds/gf14_1rf_lg8_w128_all.gds2 \
+                         $(PLATFORM_DIR)/gds/gf14_2rf_lg6_w44_bit.gds2 \
+                         $(PLATFORM_DIR)/gds/gf14_2rf_lg8_w64_bit.gds2
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 1099.98 1099.584

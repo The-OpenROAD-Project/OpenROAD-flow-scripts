@@ -5,17 +5,17 @@ export VERILOG_FILES = ./designs/src/swerv/swerv_wrapper.sv2v.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
-export WRAP_LEFS      = ./platforms/$(PLATFORM)/lef/gf14_1rf_lg11_w40_all.lef \
-                        ./platforms/$(PLATFORM)/lef/gf14_1rf_lg6_w22_all.lef \
-                        ./platforms/$(PLATFORM)/lef/gf14_1rf_lg8_w34_all.lef
+export WRAP_LEFS      = $(PLATFORM_DIR)/lef/gf14_1rf_lg11_w40_all.lef \
+                        $(PLATFORM_DIR)/lef/gf14_1rf_lg6_w22_all.lef \
+                        $(PLATFORM_DIR)/lef/gf14_1rf_lg8_w34_all.lef
 
-export WRAP_LIBS      = ./platforms/$(PLATFORM)/lib/gf14_1rf_lg11_w40_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                        ./platforms/$(PLATFORM)/lib/gf14_1rf_lg6_w22_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                        ./platforms/$(PLATFORM)/lib/gf14_1rf_lg8_w34_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib
+export WRAP_LIBS      = $(PLATFORM_DIR)/lib/gf14_1rf_lg11_w40_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                        $(PLATFORM_DIR)/lib/gf14_1rf_lg6_w22_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                        $(PLATFORM_DIR)/lib/gf14_1rf_lg8_w34_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib
 
-export ADDITIONAL_GDS = ./platforms/$(PLATFORM)/gds/gf14_1rf_lg11_w40_all.gds2 \
-                        ./platforms/$(PLATFORM)/gds/gf14_1rf_lg6_w22_all.gds2 \
-                        ./platforms/$(PLATFORM)/gds/gf14_1rf_lg8_w34_all.gds2
+export ADDITIONAL_GDS = $(PLATFORM_DIR)/gds/gf14_1rf_lg11_w40_all.gds2 \
+                        $(PLATFORM_DIR)/gds/gf14_1rf_lg6_w22_all.gds2 \
+                        $(PLATFORM_DIR)/gds/gf14_1rf_lg8_w34_all.gds2
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 970.2 760.896
