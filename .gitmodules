@@ -1,10 +1,9 @@
 [submodule "tools/TritonRoute"]
 	path = tools/TritonRoute
-	url = https://github.com/The-OpenROAD-Project/TritonRoute.git
-	branch = alpha2
+	url = ../TritonRoute.git
 [submodule "tools/yosys"]
 	path = tools/yosys
-	url = https://github.com/The-OpenROAD-Project/yosys.git
+	url = ../yosys.git
 [submodule "tools/OpenROAD"]
 	path = tools/OpenROAD
-	url = https://github.com/The-OpenROAD-Project/OpenROAD.git
+	url = ../OpenROAD.git
