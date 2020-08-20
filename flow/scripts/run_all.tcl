@@ -28,7 +28,9 @@ if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
   source platforms/$::env(PLATFORM)/derate.tcl
 }
 
-set_wire_rc -layer $::env(WIRE_RC_LAYER)
+if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
+  source $::env(PLATFORM_DIR)/setRC.tcl
+}
 
 # Floorplan
 source -verbose $::env(SCRIPTS_DIR)/floorplan.tcl
