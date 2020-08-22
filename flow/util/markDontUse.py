@@ -16,7 +16,8 @@ parser.add_argument('--outputFile', '-o', required=True,
 args = parser.parse_args()
 
 
-patternList = args.patterns.split()
+# Convert * wildcards to regex wildcards
+patternList = args.patterns.replace('*','.*').split()
 
 # Read input file
 print("Opening file for replace:",args.inputFile)
