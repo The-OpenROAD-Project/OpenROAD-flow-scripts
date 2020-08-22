@@ -29,7 +29,7 @@ f.close()
 pattern = r"(^\s*cell\s*\(\s*([\"]*"+"[\"]*|[\"]*".join(patternList)+"[\"]*)\)\s*\{)"
 
 # print(pattern)
-replace = r"\1\n    dont_use : TRUE;"
+replace = r"\1\n    dont_use : true;"
 content, count = re.subn(pattern, replace, content, 0, re.M)
 print("Marked", count, "cells as dont_use")
 
