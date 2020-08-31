@@ -30,6 +30,7 @@ if [file exists platforms/$::env(PLATFORM)/setRC.tcl] {
 }
 
 set_propagated_clock [all_clocks]
+estimate_parasitics -placement
 
 log_begin $::env(REPORTS_DIR)/6_final_report.rpt
 

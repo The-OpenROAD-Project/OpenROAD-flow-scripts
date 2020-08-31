@@ -33,6 +33,8 @@ if [file exists platforms/$::env(PLATFORM)/setRC.tcl] {
   source platforms/$::env(PLATFORM)/setRC.tcl
 }
 
+estimate_parasitics -placement
+
 # pre report
 log_begin $::env(REPORTS_DIR)/3_pre_resize.rpt
 
@@ -71,10 +73,6 @@ if {![info exists ::env(FOOTPRINT)]} {
 puts "Perform buffer insertion..."
 set_max_fanout $::env(MAX_FANOUT) [current_design]
 repair_design -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
-
-# Perform resizing
-puts "Perform resizing after buffer insertion..."
-resize
 
 if { [info exists env(TIE_SEPARATION)] } {
   set tie_separation $env(TIE_SEPARATION)
