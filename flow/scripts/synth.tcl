@@ -20,8 +20,10 @@ foreach file $::env(VERILOG_FILES) {
   read_verilog -defer -sv {*}$vIdirsArgs $file
 }
 
-# Read standard cells as blackbox inputs
-read_liberty -lib $::env(OBJECTS_DIR)/merged.lib
+
+# Read blackbox stubs of standard cells. This allows for standard cell (or
+# structural netlist) support in the input verilog
+read_verilog -defer $::env(BLACKBOX_V_FILE)
 
 # Apply toplevel parameters (if exist)
 if {[info exist ::env(VERILOG_TOP_PARAMS)]} {
@@ -70,7 +72,7 @@ if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
       -liberty $::env(OBJECTS_DIR)/merged.lib \
       -constr $::env(OBJECTS_DIR)/abc.constr
 } else {
-  puts "\[WARN\]\[FLOW\] No clock period constraints detected in design"
+  puts "WARNING: No clock period constraints detected in design"
   abc -liberty $::env(OBJECTS_DIR)/merged.lib \
       -constr $::env(OBJECTS_DIR)/abc.constr
 }
