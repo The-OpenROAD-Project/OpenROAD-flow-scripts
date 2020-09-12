@@ -540,4 +540,4 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJE
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
--include ./private/util/utils.mk
+-include ../../private_tool_scripts/util/utils.mk

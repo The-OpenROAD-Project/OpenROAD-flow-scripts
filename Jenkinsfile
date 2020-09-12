@@ -1,6 +1,8 @@
 pipeline {
   agent any
-
+  environment {
+    COMMIT_AUTHOR_EMAIL= sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim()
+  }
   stages {
     stage('Build') {
       environment {
@@ -10,7 +12,6 @@ pipeline {
         sh label: 'Build', script: './build_openroad.sh'
       }
     }
-
     stage('Test') {
       failFast true
       parallel {
@@ -32,6 +33,27 @@ pipeline {
             docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'''
           }
         }
+      }
+    }
+  }
+  post {
+    failure {
+      script {
+        if ( env.BRANCH_NAME == 'openroad' ) {
+          echo('Main development branch: report to stakeholders and commit author.')
+          EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS"
+          REPLY_TO="$EMAIL_TO"
+        } else {
+          echo('Feature development branch: report only to commit author.')
+          EMAIL_TO="$COMMIT_AUTHOR_EMAIL"
+          REPLY_TO='$DEFAULT_REPLYTO'
+        }
+        emailext (
+            to: "$EMAIL_TO",
+            replyTo: "$REPLY_TO",
+            subject: '$DEFAULT_SUBJECT',
+            body: '$DEFAULT_CONTENT',
+            )
       }
     }
   }
