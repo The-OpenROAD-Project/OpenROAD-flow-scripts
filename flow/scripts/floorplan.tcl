@@ -18,8 +18,8 @@ if {![info exists standalone] || $standalone} {
 
   link_design $::env(DESIGN_NAME)
   read_sdc $::env(RESULTS_DIR)/1_synth.sdc
-  if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
-    source platforms/$::env(PLATFORM)/derate.tcl
+  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
+    source $::env(PLATFORM_DIR)/derate.tcl
   }
   set num_instances [llength [get_cells -hier *]]
   puts "number instances in verilog is $num_instances"

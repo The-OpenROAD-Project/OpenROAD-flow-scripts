@@ -18,8 +18,8 @@ if {![info exists standalone] || $standalone} {
 
   # Read SDC file
   read_sdc $::env(RESULTS_DIR)/3_place.sdc
-  if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
-    source platforms/$::env(PLATFORM)/derate.tcl
+  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
+    source $::env(PLATFORM_DIR)/derate.tcl
   }
 }
 
@@ -44,8 +44,8 @@ detailed_placement
 puts "Repair hold violations..."
 set_propagated_clock [all_clocks]
 # This should be required, NOT conditional -cherry
-if [file exists platforms/$::env(PLATFORM)/setRC.tcl] {
-  source platforms/$::env(PLATFORM)/setRC.tcl
+if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
+  source $::env(PLATFORM_DIR)/setRC.tcl
 }
 estimate_parasitics -placement
 repair_hold_violations -buffer_cell $::env(HOLD_BUF_CELL)

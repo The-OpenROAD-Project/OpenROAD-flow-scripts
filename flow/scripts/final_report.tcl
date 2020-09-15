@@ -18,15 +18,15 @@ if {![info exists standalone] || $standalone} {
   # for antenna checker read_def -order_wires $::env(RESULTS_DIR)/5_route.def
   read_def $::env(RESULTS_DIR)/5_route.def
   read_sdc $::env(RESULTS_DIR)/5_route.sdc
-  if [file exists platforms/$::env(PLATFORM)/derate_final.tcl] {
-    source platforms/$::env(PLATFORM)/derate_final.tcl
+  if [file exists $::env(PLATFORM_DIR)/derate_final.tcl] {
+    source $::env(PLATFORM_DIR)/derate_final.tcl
     puts "derate_final.tcl sourced"
   }
 }
 
 # Set res and cap
-if [file exists platforms/$::env(PLATFORM)/setRC.tcl] {
-  source platforms/$::env(PLATFORM)/setRC.tcl
+if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
+  source $::env(PLATFORM_DIR)/setRC.tcl
 }
 
 set_propagated_clock [all_clocks]
