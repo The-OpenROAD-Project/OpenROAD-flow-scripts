@@ -49,6 +49,7 @@ export CTS_BUF_CELL   = sky130_fd_sc_hs__buf_1
 export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTS
 
 # FastRoute options
+export MIN_ROUTING_LAYER = 2
 export MAX_ROUTING_LAYER = 6
 
 # IO Pin fix margin
