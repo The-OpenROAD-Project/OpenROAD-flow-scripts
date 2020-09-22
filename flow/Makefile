@@ -536,6 +536,9 @@ RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
+gui_final: $(RESULTS_DIR)/6_final.def
+	openroad -gui $(SCRIPTS_DIR)/gui.tcl
+
 
 # Utilities
 #-------------------------------------------------------------------------------
