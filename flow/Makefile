@@ -155,7 +155,7 @@ $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE)
 	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
 # Create Macro wrappers (if necessary)
 # ==============================================================================
-WRAP_CFG = platforms/gf14/bp/wrappers/wrapper.cfg
+WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
 
 
 export TCLLIBPATH := util/cell-veneer $(TCLLIBPATH)
