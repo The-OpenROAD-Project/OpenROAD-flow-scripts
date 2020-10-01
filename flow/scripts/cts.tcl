@@ -33,6 +33,8 @@ clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
                      -root_buf "$::env(CTS_BUF_CELL)" \
                      -wire_unit 20
 
+set_propagated_clock [all_clocks]
+
 set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
 repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
 
@@ -42,7 +44,6 @@ set_placement_padding -global \
 detailed_placement
 
 puts "Repair hold violations..."
-set_propagated_clock [all_clocks]
 # This should be required, NOT conditional -cherry
 if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
   source $::env(PLATFORM_DIR)/setRC.tcl
