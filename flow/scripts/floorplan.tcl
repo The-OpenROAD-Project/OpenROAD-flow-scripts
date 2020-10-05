@@ -76,7 +76,7 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
   }
 }
 
-if { $::env(PLATFORM) == "gf14" } {
+if { $::env(PLATFORM) == "gf12" } {
   # remove buffers inserted by yosys/abc
   remove_buffers
 }
