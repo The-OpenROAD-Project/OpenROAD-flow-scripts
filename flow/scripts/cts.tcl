@@ -35,6 +35,10 @@ clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
 
 set_propagated_clock [all_clocks]
 
+# This should be required, NOT conditional -cherry
+if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
+  source $::env(PLATFORM_DIR)/setRC.tcl
+}
 set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
 repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
 
@@ -45,6 +49,7 @@ detailed_placement
 
 puts "Repair hold violations..."
 # This should be required, NOT conditional -cherry
+# THis should not need to be loaded again - tspyrou
 if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
   source $::env(PLATFORM_DIR)/setRC.tcl
 }
