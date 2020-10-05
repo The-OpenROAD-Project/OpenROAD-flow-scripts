@@ -48,11 +48,6 @@ set_placement_padding -global \
 detailed_placement
 
 puts "Repair hold violations..."
-# This should be required, NOT conditional -cherry
-# THis should not need to be loaded again - tspyrou
-if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
-  source $::env(PLATFORM_DIR)/setRC.tcl
-}
 estimate_parasitics -placement
 repair_hold_violations -buffer_cell $::env(HOLD_BUF_CELL)
 
