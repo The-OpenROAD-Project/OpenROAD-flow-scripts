@@ -46,6 +46,9 @@
 # DESIGN_CONFIG=./designs/gf14/bp_dual/config.mk
 # DESIGN_CONFIG=./designs/gf14/bp_quad/config.mk
 
+# DESIGN_CONFIG=./designs/gf12/bp_single/config.mk
+
+
 # DESIGN_CONFIG=./designs/sky130/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130/aes/config.mk
@@ -73,6 +76,8 @@ default: finish
 include $(DESIGN_CONFIG)
 
 PUBLIC=nangate45 sky130
+
+$(info [INFO][FLOW] Using platform $(PLATFORM))
 
 ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ./platforms/$(PLATFORM)
