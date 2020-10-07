@@ -77,8 +77,6 @@ include $(DESIGN_CONFIG)
 
 PUBLIC=nangate45 sky130
 
-$(info [INFO][FLOW] Using platform $(PLATFORM))
-
 ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ./platforms/$(PLATFORM)
 else ifneq ($(wildcard ../../$(PLATFORM)),)
@@ -548,4 +546,5 @@ gui_final: $(RESULTS_DIR)/6_final.def
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
--include ../../private_tool_scripts/util/utils.mk
+export PRIVATE_DIR = ../../private_tool_scripts
+-include $(PRIVATE_DIR)/util/utils.mk
