@@ -39,6 +39,11 @@ set_propagated_clock [all_clocks]
 if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
   source $::env(PLATFORM_DIR)/setRC.tcl
 }
+
+estimate_parasitics -placement
+set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]                         
+set_dont_use $::env(DONT_USE_CELLS)
+
 set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
 repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
 
@@ -50,6 +55,42 @@ detailed_placement
 puts "Repair hold violations..."
 estimate_parasitics -placement
 repair_hold_violations -buffer_cell $::env(HOLD_BUF_CELL)
+
+
+puts "\n=========================================================================="
+puts "post cts report_checks -path_delay min"
+puts "--------------------------------------------------------------------------"
+report_checks -path_delay min -fields {slew cap input nets fanout} -format full_clock_expanded
+
+puts "\n=========================================================================="
+puts "post cts report_checks -path_delay max"
+puts "--------------------------------------------------------------------------"
+report_checks -path_delay max -fields {slew cap input nets fanout} -format full_clock_expanded
+
+puts "\n=========================================================================="
+puts "post cts report_checks -unconstrained"
+puts "--------------------------------------------------------------------------"
+report_checks -unconstrained -fields {slew cap input nets fanout} -format full_clock_expanded
+
+puts "\n=========================================================================="
+puts "post cts report_tns"
+puts "--------------------------------------------------------------------------"
+report_tns
+
+puts "\n=========================================================================="
+puts "post cts report_wns"
+puts "--------------------------------------------------------------------------"
+report_wns
+
+puts "\n=========================================================================="
+puts "post cts report_check_types -max_slew -violators"
+puts "--------------------------------------------------------------------------"
+report_check_types -max_slew -max_capacitance -max_fanout -violators
+
+puts "\n=========================================================================="
+puts "post cts report_clock_skew"
+puts "--------------------------------------------------------------------------"
+report_clock_skew
 
 detailed_placement
 check_placement
