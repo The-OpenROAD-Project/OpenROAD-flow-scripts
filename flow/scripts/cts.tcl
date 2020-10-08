@@ -41,11 +41,8 @@ if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
 }
 
 estimate_parasitics -placement
-set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]                         
 set_dont_use $::env(DONT_USE_CELLS)
-
-set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
-repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
+repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell "$::env(CTS_BUF_CELL)"
 
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
