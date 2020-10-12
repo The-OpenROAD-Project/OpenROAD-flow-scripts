@@ -58,6 +58,9 @@ rect_pat = re.compile(r'''
                       re.VERBOSE)
 
 def read_fills(top):
+  if config_file == '':
+    print('WARNING: no fill config file specified')
+    return
   # KLayout doesn't support FILL in DEF so we have to side load them :(
   cfg = read_cfg()
   in_fills = False
