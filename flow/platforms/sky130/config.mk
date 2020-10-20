@@ -1,5 +1,9 @@
 # Process node
 export PROCESS = 130
+export LIBRARY ?= hd
+
+
+include ./platforms/$(PLATFORM)/config_$(LIBRARY).mk 
 
 # Set the TIEHI/TIELO cells
 # These are used in yosys synthesis to avoid logical 1/0's in the netlist
@@ -131,4 +135,5 @@ export FILL_CELLS = sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc
 
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 1000
+
 
