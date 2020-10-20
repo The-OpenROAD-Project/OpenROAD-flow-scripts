@@ -53,6 +53,7 @@ export CTS_BUF_CELL   = BUF_X4
 export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTS
 
 # FastRoute options
+export MIN_ROUTING_LAYER = 2
 export MAX_ROUTING_LAYER = 10
 
 # IO Pin fix margin

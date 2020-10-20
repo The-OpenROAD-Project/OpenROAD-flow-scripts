@@ -20,12 +20,15 @@ if {![info exists standalone] || $standalone} {
 if {[info exist ::env(FASTROUTE_TCL)]} {
   source $::env(FASTROUTE_TCL)
 } else {
-  fastroute -output_file $::env(RESULTS_DIR)/route.guide \
-            -max_routing_layer $::env(MAX_ROUTING_LAYER) \
-            -unidirectional_routing true \
-            -layers_adjustments {{2 0.5} {3 0.5} {4 0.5} {5 0.5} {6 0.5} {7 0.5} {8 0.5} {9 0.5} {10 0.5}} \
+  for {set layer $::env(MIN_ROUTING_LAYER)} {$layer <= $::env(MAX_ROUTING_LAYER)} {incr layer} {
+    set_global_routing_layer_adjustment $layer 0.5
+  }
+
+  fastroute -guide_file $::env(RESULTS_DIR)/route.guide \
+            -layers $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) \
+            -unidirectional_routing \
             -overflow_iterations 100 \
-	    -verbose 2 \
+            -verbose 2
 }
 
 if {![info exists standalone] || $standalone} {

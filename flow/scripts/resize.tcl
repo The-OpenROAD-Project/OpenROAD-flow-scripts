@@ -17,8 +17,8 @@ if {![info exists standalone] || $standalone} {
   # Read def and sdc
   read_def $::env(RESULTS_DIR)/3_2_place_iop.def
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
-  if [file exists platforms/$::env(PLATFORM)/derate.tcl] {
-    source platforms/$::env(PLATFORM)/derate.tcl
+  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
+    source $::env(PLATFORM_DIR)/derate.tcl
   }
 }
 
@@ -29,9 +29,11 @@ proc print_banner {header} {
 }
 
 # Set res and cap
-if [file exists platforms/$::env(PLATFORM)/setRC.tcl] {
-  source platforms/$::env(PLATFORM)/setRC.tcl
+if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
+  source $::env(PLATFORM_DIR)/setRC.tcl
 }
+
+estimate_parasitics -placement
 
 # pre report
 log_begin $::env(REPORTS_DIR)/3_pre_resize.rpt
@@ -71,10 +73,6 @@ if {![info exists ::env(FOOTPRINT)]} {
 puts "Perform buffer insertion..."
 set_max_fanout $::env(MAX_FANOUT) [current_design]
 repair_design -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
-
-# Perform resizing
-puts "Perform resizing after buffer insertion..."
-resize
 
 if { [info exists env(TIE_SEPARATION)] } {
   set tie_separation $env(TIE_SEPARATION)

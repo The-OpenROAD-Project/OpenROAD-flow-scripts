@@ -32,19 +32,19 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket/config.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/vanilla5/config.mk
 
-# DESIGN_CONFIG=./designs/gf14/aes/config.mk
-# DESIGN_CONFIG=./designs/gf14/dynamic_node/config.mk
-# DESIGN_CONFIG=./designs/gf14/gcd/config.mk
-# DESIGN_CONFIG=./designs/gf14/ibex/config.mk
-# DESIGN_CONFIG=./designs/gf14/jpeg/config.mk
-# DESIGN_CONFIG=./designs/gf14/swerv/config.mk
-# DESIGN_CONFIG=./designs/gf14/tinyRocket/config.mk
+# DESIGN_CONFIG=./designs/gf12/aes/config.mk
+# DESIGN_CONFIG=./designs/gf12/dynamic_node/config.mk
+# DESIGN_CONFIG=./designs/gf12/gcd/config.mk
+# DESIGN_CONFIG=./designs/gf12/ibex/config.mk
+# DESIGN_CONFIG=./designs/gf12/jpeg/config.mk
+# DESIGN_CONFIG=./designs/gf12/swerv/config.mk
+# DESIGN_CONFIG=./designs/gf12/tinyRocket/config.mk
 
-# DESIGN_CONFIG=./designs/gf14/bsg_padring/config.mk
-# DESIGN_CONFIG=./designs/gf14/bsg_loopback/config.mk
-# DESIGN_CONFIG=./designs/gf14/bp_single/config.mk
-# DESIGN_CONFIG=./designs/gf14/bp_dual/config.mk
-# DESIGN_CONFIG=./designs/gf14/bp_quad/config.mk
+# DESIGN_CONFIG=./designs/gf12/bsg_padring/config.mk
+# DESIGN_CONFIG=./designs/gf12/bsg_loopback/config.mk
+# DESIGN_CONFIG=./designs/gf12/bp_single/config.mk
+# DESIGN_CONFIG=./designs/gf12/bp_dual/config.mk
+# DESIGN_CONFIG=./designs/gf12/bp_quad/config.mk
 
 # DESIGN_CONFIG=./designs/sky130/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130/ibex/config.mk
@@ -155,7 +155,7 @@ $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE)
 	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
 # Create Macro wrappers (if necessary)
 # ==============================================================================
-WRAP_CFG = platforms/gf14/bp/wrappers/wrapper.cfg
+WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
 
 
 export TCLLIBPATH := util/cell-veneer $(TCLLIBPATH)
@@ -333,6 +333,8 @@ cts: $(RESULTS_DIR)/4_cts.def \
 $(RESULTS_DIR)/4_1_cts.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cts.tcl) 2>&1 | tee $(LOG_DIR)/4_1_cts.log
 
+# Filler cell insertion
+# ------------------------------------------------------------------------------
 $(RESULTS_DIR)/4_2_cts_fillcell.def: $(RESULTS_DIR)/4_1_cts.def
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/fillcell.tcl) 2>&1 | tee $(LOG_DIR)/4_2_cts_fillcell.log
 
@@ -435,9 +437,18 @@ finish: $(REPORTS_DIR)/6_final_report.rpt \
         $(RESULTS_DIR)/6_final.gds
 # ==============================================================================
 
-# Filler insertion
-# ------------------------------------------------------------------------------
-$(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.sdc
+ifneq ($(USE_FILL),)
+$(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl) 2>&1 | tee $(LOG_DIR)/6_density_fill.log
+else
+$(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def
+	cp $< $@
+endif
+
+$(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
+	cp $< $@
+
+$(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_1_fill.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl) 2>&1 | tee $(LOG_DIR)/6_report.log
 
 $(RESULTS_DIR)/6_final.def: $(REPORTS_DIR)/6_final_report.rpt
@@ -448,6 +459,7 @@ $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:gds=def)) \
 	        -rd in_gds="$(ADDITIONAL_GDS)" \
+	        -rd config_file=$(FILL_CONFIG) \
 	        -rd seal_gds="" \
 	        -rd out_gds=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
@@ -459,6 +471,7 @@ $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED
 	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$(RESULTS_DIR)/6_final.def \
 	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
+	        -rd config_file=$(FILL_CONFIG) \
 	        -rd seal_gds="$(SEAL_GDS)" \
 	        -rd out_gds=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
@@ -466,18 +479,8 @@ $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED
 
 $(RESULTS_DIR)/6_final.v: $(REPORTS_DIR)/6_final_report.rpt
 
-# TODO(rovinski) Placeholder until fill script works for more platforms
-ifneq ($(USE_FILL),)
-$(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
-	($(TIME_CMD) stdbuf -o L klayout -zz -rd in_gds="$<" \
-	        -rd out_gds="$@" \
-	        -rd config_file=$(FILL_CONFIG) \
-	        -rd report_file="$(REPORTS_DIR)/6_2_density.rpt" \
-	        -rm $(UTILS_DIR)/gdsFill.py) 2>&1 | tee $(LOG_DIR)/6_2_fill.log
-else
 $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
 	cp $^ $@
-endif
 
 drc: $(REPORTS_DIR)/6_drc.lyrdb
 
@@ -536,8 +539,12 @@ RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
+gui_final: $(RESULTS_DIR)/6_final.def
+	openroad -gui $(SCRIPTS_DIR)/gui.tcl
+
 
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
--include ../../private_tool_scripts/util/utils.mk
+export PRIVATE_DIR = ../../private_tool_scripts
+-include $(PRIVATE_DIR)/util/utils.mk

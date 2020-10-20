@@ -129,7 +129,7 @@ if [ "$build_method" == "DOCKER" ]; then
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then
   mkdir -p tools/build/yosys
-  (cd tools/yosys && $NICE make install -j$PROC PREFIX=../build/yosys CONFIG=gcc TCL_VERSION=tcl8.5)
+  (cd tools/yosys && $NICE make install -j$PROC PREFIX=../build/yosys CONFIG=gcc)
 
   mkdir -p tools/build/TritonRoute
   (cd tools/build/TritonRoute && cmake ../../TritonRoute && $NICE make -j$PROC)

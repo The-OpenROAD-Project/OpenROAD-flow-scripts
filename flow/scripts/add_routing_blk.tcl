@@ -1,5 +1,5 @@
 ###################################################
-# Create Routing Blockages around Macros for GF14 #
+# Create Routing Blockages around Macros for GF12 #
 # Created by Minsoo Kim (mik226@eng.ucsd.edu)     #
 ###################################################
 set db [::ord::get_db]
@@ -22,7 +22,7 @@ foreach inst $allInsts {
   set loc_llx [lindex [$inst getLocation] 0]
   set loc_lly [lindex [$inst getLocation] 1]
 
-  if {[string match "*gf14*" $name]||[string match "IN12LP*" $name]} {
+  if {[string match "*gf12*" $name]||[string match "IN12LP*" $name]} {
     set w [$master getWidth]
     set h [$master getHeight]
 
