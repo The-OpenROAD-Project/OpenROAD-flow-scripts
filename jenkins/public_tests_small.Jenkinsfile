@@ -3,6 +3,10 @@ pipeline {
   environment {
     COMMIT_AUTHOR_EMAIL= sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim()
   }
+  options {
+    disableConcurrentBuilds()
+    timeout(time: 8, unit: 'HOURS')
+  }
   stages {
     stage('Build') {
       environment {
@@ -13,7 +17,6 @@ pipeline {
       }
     }
     stage('Test') {
-      failFast true
       parallel {
         stage('nangate45_aes') {
           steps {
