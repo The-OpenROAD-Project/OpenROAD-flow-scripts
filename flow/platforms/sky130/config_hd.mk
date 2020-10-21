@@ -4,7 +4,7 @@ export TIEHI_CELL_AND_PORT = sky130_fd_sc_hd__conb_1 HI
 export TIELO_CELL_AND_PORT = sky130_fd_sc_hd__conb_1 LO
 
 # Used in synthesis
-export MIN_BUF_CELL_AND_PORTS = sky130_fd_sc_hd__buf_1 A X
+export MIN_BUF_CELL_AND_PORTS = sky130_fd_sc_hd__buf_4 A X
 
 # Used in synthesis
 export MAX_FANOUT = 5
@@ -46,6 +46,7 @@ export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
 export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShd
 
 # FastRoute options
+export MIN_ROUTING_LAYER = 2
 export MAX_ROUTING_LAYER = 6
 
 # IO Pin fix margin
@@ -63,7 +64,7 @@ export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 
-export DONT_USE_CELLS += sky130_fd_sc_hd__dfstp_2 sky130_fd_sc_hd__xor3_4 sky130_fd_sc_hd__or2b_2 \
+export DONT_USE_CELLS += sky130_fd_sc_hd__probec_p_8 sky130_fd_sc_hd__probe_p_8 sky130_fd_sc_hd__dfstp_2 sky130_fd_sc_hd__xor3_4 sky130_fd_sc_hd__or2b_2 \
 sky130_fd_sc_hd__xnor3_2 sky130_fd_sc_hd__sdfbbn_2 sky130_fd_sc_hd__sdfxtp_2 sky130_fd_sc_hd__dfxtp_2 \
 sky130_fd_sc_hd__xor2_2 sky130_fd_sc_hd__o311ai_2 sky130_fd_sc_hd__nand2_2 sky130_fd_sc_hd__sdfrtp_2 \
 sky130_fd_sc_hd__and4_2 sky130_fd_sc_hd__dfsbp_2 sky130_fd_sc_hd__or4_2 sky130_fd_sc_hd__inv_2 \
@@ -126,5 +127,5 @@ export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 2
 export FILL_CELLS = sky130_fd_sc_hd__fill_1 sky130_fd_sc_hd__fill_2 sky130_fd_sc_hd__fill_4 sky130_fd_sc_hd__fill_8
 
 # resizer repair_long_wires -max_length
-export MAX_WIRE_LENGTH = 1000
+export MAX_WIRE_LENGTH = 400
 
