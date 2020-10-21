@@ -82,6 +82,9 @@ pipeline {
     }
   }
   post {
+    always {
+      archiveArtifacts artifacts: 'flow/reports/**/*'
+    }
     failure {
       script {
         if ( env.BRANCH_NAME == 'openroad' ) {
