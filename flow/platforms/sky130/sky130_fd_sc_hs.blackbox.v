@@ -104,42 +104,42 @@ endmodule
   output X,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a21bo_2(
   output X,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a21bo_4(
   output X,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a21boi_1(
   output Y,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a21boi_2(
   output Y,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a21boi_4(
   output Y,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a21o_1(
@@ -328,48 +328,48 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a2bb2o_1(
   output X,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a2bb2o_2(
   output X,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a2bb2o_4(
   output X,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a2bb2oi_1(
   output Y,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a2bb2oi_2(
   output Y,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__a2bb2oi_4(
   output Y,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
@@ -604,19 +604,19 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and2b_1(
   output X,
-  input AN,
+  input A_N,
   input B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and2b_2(
   output X,
-  input AN,
+  input A_N,
   input B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and2b_4(
   output X,
-  input AN,
+  input A_N,
   input B
 );
 endmodule
@@ -643,21 +643,21 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and3b_1(
   output X,
-  input AN,
+  input A_N,
   input B,
   input C
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and3b_2(
   output X,
-  input AN,
+  input A_N,
   input B,
   input C
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and3b_4(
   output X,
-  input AN,
+  input A_N,
   input B,
   input C
 );
@@ -688,7 +688,7 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and4b_1(
   output X,
-  input AN,
+  input A_N,
   input B,
   input C,
   input D
@@ -696,7 +696,7 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and4b_2(
   output X,
-  input AN,
+  input A_N,
   input B,
   input C,
   input D
@@ -704,7 +704,7 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and4b_4(
   output X,
-  input AN,
+  input A_N,
   input B,
   input C,
   input D
@@ -712,24 +712,24 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and4bb_1(
   output X,
-  input AN,
-  input BN,
+  input A_N,
+  input B_N,
   input C,
   input D
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and4bb_2(
   output X,
-  input AN,
-  input BN,
+  input A_N,
+  input B_N,
   input C,
   input D
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__and4bb_4(
   output X,
-  input AN,
-  input BN,
+  input A_N,
+  input B_N,
   input C,
   input D
 );
@@ -871,71 +871,71 @@ endmodule
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfbbn_1(
-  input SETB,
-  input RESETB,
-  input CLKN,
+  input SET_B,
+  input RESET_B,
+  input CLK_N,
   input D,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfbbn_2(
-  input SETB,
-  input RESETB,
-  input CLKN,
+  input SET_B,
+  input RESET_B,
+  input CLK_N,
   input D,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfbbp_1(
-  input SETB,
-  input RESETB,
+  input SET_B,
+  input RESET_B,
   input CLK,
   input D,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfrbp_1(
-  input RESETB,
+  input RESET_B,
   input CLK,
   input D,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfrbp_2(
-  input RESETB,
+  input RESET_B,
   input CLK,
   input D,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfrtn_1(
-  input RESETB,
-  input CLKN,
+  input RESET_B,
+  input CLK_N,
   input D,
   output Q
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfrtp_1(
-  input RESETB,
+  input RESET_B,
   input CLK,
   input D,
   output Q
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfrtp_2(
-  input RESETB,
+  input RESET_B,
   input CLK,
   input D,
   output Q
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfrtp_4(
-  input RESETB,
+  input RESET_B,
   input CLK,
   input D,
   output Q
@@ -945,51 +945,51 @@ endmodule
   input CLK,
   input D,
   output Q,
-  output QN,
-  input SETB
+  output Q_N,
+  input SET_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfsbp_2(
   input CLK,
   input D,
   output Q,
-  output QN,
-  input SETB
+  output Q_N,
+  input SET_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfstp_1(
   input CLK,
   input D,
   output Q,
-  input SETB
+  input SET_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfstp_2(
   input CLK,
   input D,
   output Q,
-  input SETB
+  input SET_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfstp_4(
   input CLK,
   input D,
   output Q,
-  input SETB
+  input SET_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfxbp_1(
   input CLK,
   input D,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfxbp_2(
   input CLK,
   input D,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dfxtp_1(
@@ -1029,74 +1029,74 @@ endmodule
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlrbn_1(
-  input RESETB,
+  input RESET_B,
   input D,
-  input GATEN,
+  input GATE_N,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlrbn_2(
-  input RESETB,
+  input RESET_B,
   input D,
-  input GATEN,
+  input GATE_N,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlrbp_1(
-  input RESETB,
+  input RESET_B,
   input D,
   input GATE,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlrbp_2(
-  input RESETB,
+  input RESET_B,
   input D,
   input GATE,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlrtn_1(
-  input RESETB,
+  input RESET_B,
   input D,
-  input GATEN,
+  input GATE_N,
   output Q
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlrtn_2(
-  input RESETB,
+  input RESET_B,
   input D,
-  input GATEN,
+  input GATE_N,
   output Q
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlrtn_4(
-  input RESETB,
+  input RESET_B,
   input D,
-  input GATEN,
+  input GATE_N,
   output Q
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlrtp_1(
-  input RESETB,
+  input RESET_B,
   input D,
   input GATE,
   output Q
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlrtp_2(
-  input RESETB,
+  input RESET_B,
   input D,
   input GATE,
   output Q
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlrtp_4(
-  input RESETB,
+  input RESET_B,
   input D,
   input GATE,
   output Q
@@ -1104,40 +1104,40 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlxbn_1(
   input D,
-  input GATEN,
+  input GATE_N,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlxbn_2(
   input D,
-  input GATEN,
+  input GATE_N,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlxbp_1(
   input D,
   input GATE,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlxtn_1(
   input D,
-  input GATEN,
+  input GATE_N,
   output Q
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlxtn_2(
   input D,
-  input GATEN,
+  input GATE_N,
   output Q
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__dlxtn_4(
   input D,
-  input GATEN,
+  input GATE_N,
   output Q
 );
 endmodule
@@ -1180,30 +1180,30 @@ endmodule
 (* blackbox *) module sky130_fd_sc_hs__ebufn_1(
   output Z,
   input A,
-  input TEB
+  input TE_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__ebufn_2(
   output Z,
   input A,
-  input TEB
+  input TE_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__ebufn_4(
   output Z,
   input A,
-  input TEB
+  input TE_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__ebufn_8(
   output Z,
   input A,
-  input TEB
+  input TE_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__edfxbp_1(
   output Q,
-  output QN,
+  output Q_N,
   input CLK,
   input D,
   input DE
@@ -1218,25 +1218,25 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__einvn_1(
   input A,
-  input TEB,
+  input TE_B,
   output Z
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__einvn_2(
   input A,
-  input TEB,
+  input TE_B,
   output Z
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__einvn_4(
   input A,
-  input TEB,
+  input TE_B,
   output Z
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__einvn_8(
   input A,
-  input TEB,
+  input TE_B,
   output Z
 );
 endmodule
@@ -1321,7 +1321,7 @@ endmodule
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__fahcon_1(
-  output COUTN,
+  output COUT_N,
   output SUM,
   input A,
   input B,
@@ -1493,19 +1493,19 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand2b_1(
   output Y,
-  input AN,
+  input A_N,
   input B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand2b_2(
   output Y,
-  input AN,
+  input A_N,
   input B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand2b_4(
   output Y,
-  input AN,
+  input A_N,
   input B
 );
 endmodule
@@ -1532,21 +1532,21 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand3b_1(
   output Y,
-  input AN,
+  input A_N,
   input B,
   input C
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand3b_2(
   output Y,
-  input AN,
+  input A_N,
   input B,
   input C
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand3b_4(
   output Y,
-  input AN,
+  input A_N,
   input B,
   input C
 );
@@ -1577,7 +1577,7 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand4b_1(
   output Y,
-  input AN,
+  input A_N,
   input B,
   input C,
   input D
@@ -1585,7 +1585,7 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand4b_2(
   output Y,
-  input AN,
+  input A_N,
   input B,
   input C,
   input D
@@ -1593,7 +1593,7 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand4b_4(
   output Y,
-  input AN,
+  input A_N,
   input B,
   input C,
   input D
@@ -1601,24 +1601,24 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand4bb_1(
   output Y,
-  input AN,
-  input BN,
+  input A_N,
+  input B_N,
   input C,
   input D
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand4bb_2(
   output Y,
-  input AN,
-  input BN,
+  input A_N,
+  input B_N,
   input C,
   input D
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nand4bb_4(
   output Y,
-  input AN,
-  input BN,
+  input A_N,
+  input B_N,
   input C,
   input D
 );
@@ -1650,19 +1650,19 @@ endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor2b_1(
   output Y,
   input A,
-  input BN
+  input B_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor2b_2(
   output Y,
   input A,
-  input BN
+  input B_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor2b_4(
   output Y,
   input A,
-  input BN
+  input B_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor3_1(
@@ -1690,21 +1690,21 @@ endmodule
   output Y,
   input A,
   input B,
-  input CN
+  input C_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor3b_2(
   output Y,
   input A,
   input B,
-  input CN
+  input C_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor3b_4(
   output Y,
   input A,
   input B,
-  input CN
+  input C_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor4_1(
@@ -1736,7 +1736,7 @@ endmodule
   input A,
   input B,
   input C,
-  input DN
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor4b_2(
@@ -1744,7 +1744,7 @@ endmodule
   input A,
   input B,
   input C,
-  input DN
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor4b_4(
@@ -1752,31 +1752,31 @@ endmodule
   input A,
   input B,
   input C,
-  input DN
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor4bb_1(
   output Y,
   input A,
   input B,
-  input CN,
-  input DN
+  input C_N,
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor4bb_2(
   output Y,
   input A,
   input B,
-  input CN,
-  input DN
+  input C_N,
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__nor4bb_4(
   output Y,
   input A,
   input B,
-  input CN,
-  input DN
+  input C_N,
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o2111a_1(
@@ -1927,42 +1927,42 @@ endmodule
   output X,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o21ba_2(
   output X,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o21ba_4(
   output X,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o21bai_1(
   output Y,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o21bai_2(
   output Y,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o21bai_4(
   output Y,
   input A1,
   input A2,
-  input B1N
+  input B1_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o221a_1(
@@ -2069,48 +2069,48 @@ endmodule
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o2bb2a_1(
   output X,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o2bb2a_2(
   output X,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o2bb2a_4(
   output X,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o2bb2ai_1(
   output Y,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o2bb2ai_2(
   output Y,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__o2bb2ai_4(
   output Y,
-  input A1N,
-  input A2N,
+  input A1_N,
+  input A2_N,
   input B1,
   input B2
 );
@@ -2346,19 +2346,19 @@ endmodule
 (* blackbox *) module sky130_fd_sc_hs__or2b_1(
   output X,
   input A,
-  input BN
+  input B_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or2b_2(
   output X,
   input A,
-  input BN
+  input B_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or2b_4(
   output X,
   input A,
-  input BN
+  input B_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or3_1(
@@ -2386,21 +2386,21 @@ endmodule
   output X,
   input A,
   input B,
-  input CN
+  input C_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or3b_2(
   output X,
   input A,
   input B,
-  input CN
+  input C_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or3b_4(
   output X,
   input A,
   input B,
-  input CN
+  input C_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or4_1(
@@ -2432,7 +2432,7 @@ endmodule
   input A,
   input B,
   input C,
-  input DN
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or4b_2(
@@ -2440,7 +2440,7 @@ endmodule
   input A,
   input B,
   input C,
-  input DN
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or4b_4(
@@ -2448,133 +2448,133 @@ endmodule
   input A,
   input B,
   input C,
-  input DN
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or4bb_1(
   output X,
   input A,
   input B,
-  input CN,
-  input DN
+  input C_N,
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or4bb_2(
   output X,
   input A,
   input B,
-  input CN,
-  input DN
+  input C_N,
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__or4bb_4(
   output X,
   input A,
   input B,
-  input CN,
-  input DN
+  input C_N,
+  input D_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfbbn_1(
-  input SETB,
-    input RESETB,
-    input CLKN,
+  input SET_B,
+    input RESET_B,
+    input CLK_N,
     input D,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
-    input SETB,
-  input RESETB,
-  input CLKN,
+    input SET_B,
+  input RESET_B,
+  input CLK_N,
   input D,
   input SCD,
   input SCE,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfbbn_2(
-  input SETB,
-    input RESETB,
-    input CLKN,
+  input SET_B,
+    input RESET_B,
+    input CLK_N,
     input D,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
-    input SETB,
-  input RESETB,
-  input CLKN,
+    input SET_B,
+  input RESET_B,
+  input CLK_N,
   input D,
   input SCD,
   input SCE,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfbbp_1(
-  input SETB,
-    input RESETB,
+  input SET_B,
+    input RESET_B,
     input CLK,
     input D,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
-    input SETB,
-  input RESETB,
+    input SET_B,
+  input RESET_B,
   input CLK,
   input D,
   input SCD,
   input SCE,
   output Q,
-  output QN
+  output Q_N
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfrbp_1(
-  input RESETB,
+  input RESET_B,
     input CLK,
     input D,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
-    input RESETB,
+    input RESET_B,
   input CLK,
   input D,
   output Q,
-  output QN,
+  output Q_N,
   input SCD,
   input SCE
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfrbp_2(
-  input RESETB,
+  input RESET_B,
     input CLK,
     input D,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
-    input RESETB,
+    input RESET_B,
   input CLK,
   input D,
   output Q,
-  output QN,
+  output Q_N,
   input SCD,
   input SCE
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfrtn_1(
-  input RESETB,
-    input CLKN,
+  input RESET_B,
+    input CLK_N,
     input D,
     output Q,
     input SCD,
     input SCE,
-    input RESETB,
-  input CLKN,
+    input RESET_B,
+  input CLK_N,
   input D,
   output Q,
   input SCD,
@@ -2582,13 +2582,13 @@ endmodule
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfrtp_1(
-  input RESETB,
+  input RESET_B,
     input CLK,
     input D,
     output Q,
     input SCD,
     input SCE,
-    input RESETB,
+    input RESET_B,
   input CLK,
   input D,
   output Q,
@@ -2597,13 +2597,13 @@ endmodule
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfrtp_2(
-  input RESETB,
+  input RESET_B,
     input CLK,
     input D,
     output Q,
     input SCD,
     input SCE,
-    input RESETB,
+    input RESET_B,
   input CLK,
   input D,
   output Q,
@@ -2612,13 +2612,13 @@ endmodule
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfrtp_4(
-  input RESETB,
+  input RESET_B,
     input CLK,
     input D,
     output Q,
     input SCD,
     input SCE,
-    input RESETB,
+    input RESET_B,
   input CLK,
   input D,
   output Q,
@@ -2630,34 +2630,34 @@ endmodule
   input CLK,
     input D,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
-    input SETB,
+    input SET_B,
     input CLK,
   input D,
   output Q,
-  output QN,
+  output Q_N,
   input SCD,
   input SCE,
-  input SETB
+  input SET_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfsbp_2(
   input CLK,
     input D,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
-    input SETB,
+    input SET_B,
     input CLK,
   input D,
   output Q,
-  output QN,
+  output Q_N,
   input SCD,
   input SCE,
-  input SETB
+  input SET_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfstp_1(
@@ -2666,13 +2666,13 @@ endmodule
     output Q,
     input SCD,
     input SCE,
-    input SETB,
+    input SET_B,
     input CLK,
   input D,
   output Q,
   input SCD,
   input SCE,
-  input SETB
+  input SET_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfstp_2(
@@ -2681,13 +2681,13 @@ endmodule
     output Q,
     input SCD,
     input SCE,
-    input SETB,
+    input SET_B,
     input CLK,
   input D,
   output Q,
   input SCD,
   input SCE,
-  input SETB
+  input SET_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfstp_4(
@@ -2696,26 +2696,26 @@ endmodule
     output Q,
     input SCD,
     input SCE,
-    input SETB,
+    input SET_B,
     input CLK,
   input D,
   output Q,
   input SCD,
   input SCE,
-  input SETB
+  input SET_B
 );
 endmodule
 (* blackbox *) module sky130_fd_sc_hs__sdfxbp_1(
   input CLK,
     input D,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
     input CLK,
   input D,
   output Q,
-  output QN,
+  output Q_N,
   input SCD,
   input SCE
 );
@@ -2724,13 +2724,13 @@ endmodule
   input CLK,
     input D,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
     input CLK,
   input D,
   output Q,
-  output QN,
+  output Q_N,
   input SCD,
   input SCE
 );
@@ -2800,11 +2800,11 @@ endmodule
     input D,
     input DE,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
     output Q,
-  output QN,
+  output Q_N,
   input CLK,
   input D,
   input DE,
@@ -2817,11 +2817,11 @@ endmodule
     input D,
     input DE,
     output Q,
-    output QN,
+    output Q_N,
     input SCD,
     input SCE,
     output Q,
-  output QN,
+  output Q_N,
   input CLK,
   input D,
   input DE,
