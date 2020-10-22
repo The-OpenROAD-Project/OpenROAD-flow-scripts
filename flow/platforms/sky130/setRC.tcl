@@ -4,7 +4,7 @@ set_layer_rc -layer met1 -capacitance 0.243182 -resistance 0.001218041
 set_layer_rc -layer met2 -capacitance 0.311007 -resistance 0.000401691
 set_layer_rc -layer met3 -capacitance 0.339162 -resistance 0.000167980
 set_layer_rc -layer met4 -capacitance 0.346672 -resistance 0.000133337
-set_layer_rc -layer met5 -capacitance 0.000315935 -resistance 0.000003125
+set_layer_rc -layer met5 -capacitance 315.935 -resistance 0.000003125
 
 set_layer_rc -layer mcon -capacitance 0.070290 -resistance 0.004475656
 set_layer_rc -layer via -capacitance 0.153021 -resistance 0.003368786
