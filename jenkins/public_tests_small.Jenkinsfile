@@ -3,40 +3,43 @@ pipeline {
   environment {
     COMMIT_AUTHOR_EMAIL= sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim()
   }
+  options {
+    disableConcurrentBuilds()
+    timeout(time: 8, unit: 'HOURS')
+  }
   stages {
     stage('Build') {
       environment {
         OPENROAD_FLOW_NO_GIT_INIT = 1
       }
       steps {
-        sh label: 'Build', script: './build_openroad.sh'
+        sh './build_openroad.sh --local'
       }
     }
     stage('Test') {
-      failFast true
       parallel {
-        stage('nangate45_gcd') {
-          steps {
-            sh label: 'nangate45_gcd', script: '''
-            docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"'''
-          }
-        }
         stage('nangate45_aes') {
           steps {
-            sh label: 'nangate45_aes', script: '''
-            docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"'''
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"'
+          }
+        }
+        stage('nangate45_gcd') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"'
           }
         }
         stage('nangate45_tinyRocket') {
           steps {
-            sh label: 'nangate45_tinyRocket', script: '''
-            docker run --rm -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash -c "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'''
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'
           }
         }
       }
     }
   }
   post {
+    always {
+      archiveArtifacts artifacts: 'flow/reports/**/*'
+    }
     failure {
       script {
         if ( env.BRANCH_NAME == 'openroad' ) {
