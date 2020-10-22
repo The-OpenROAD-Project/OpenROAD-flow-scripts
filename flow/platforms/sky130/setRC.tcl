@@ -8,9 +8,9 @@ set_layer_rc -layer met5 -capacitance 0.000315935 -resistance 0.000003125
 
 set_layer_rc -layer mcon -capacitance 0.070290 -resistance 0.004475656
 set_layer_rc -layer via -capacitance 0.153021 -resistance 0.003368786
-set_layer_rc -layer via2 -capacitance 0.142742 -resistance 0.003368786
-set_layer_rc -layer via3 -capacitance 0.074106 -resistance 0.000376635
-set_layer_rc -layer via4 -capacitance 0.602843 -resistance 0.000005686
+set_layer_rc -layer via2 -capacitance 0.142385 -resistance 0.003368786
+set_layer_rc -layer via3 -capacitance 0.073086 -resistance 0.000376635
+set_layer_rc -layer via4 -capacitance 0.591704 -resistance 0.000005686
 
 set_wire_rc -layer li1
 set_wire_rc -layer met1
