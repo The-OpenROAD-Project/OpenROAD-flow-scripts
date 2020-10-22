@@ -12,9 +12,9 @@ set_layer_rc -layer via2 -capacitance 0.142385 -resistance 0.003368786
 set_layer_rc -layer via3 -capacitance 0.073086 -resistance 0.000376635
 set_layer_rc -layer via4 -capacitance 0.591704 -resistance 0.000005686
 
-set_wire_rc -layer li1
-set_wire_rc -layer met1
+
+
 set_wire_rc -layer met2
-set_wire_rc -layer met3
-set_wire_rc -layer met4
-set_wire_rc -layer met5
+
+
+
