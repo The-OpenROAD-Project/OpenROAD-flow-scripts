@@ -21,8 +21,8 @@ set -o pipefail
 
 mkdir -p $TEST_DIR/logs/$PLATFORM
 
-if [ -f "./private/util/utils.mk" ]; then
-  TARGETS="finish metadata private_drc_calibre"
+if [ -f "../../private_tool_scripts/util/utils.mk" ]; then
+  TARGETS="finish metadata drc_calibre"
 else
   TARGETS="finish metadata"
 fi
