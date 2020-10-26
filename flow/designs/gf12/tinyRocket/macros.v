@@ -14,7 +14,7 @@ module data_arrays_0_ext(
                             ,{8{RW0_wmask[1]}}
                             ,{8{RW0_wmask[0]}}};
 
-    gf14_1rf_lg6_w32_byte mem (
+    gf12_1rf_lg6_w32_byte mem (
       .CLK  (RW0_clk   ),
       .Q    (RW0_rdata), // out
       .CEN  (~RW0_en  ), // lo true
@@ -94,7 +94,7 @@ module data_arrays_0_0_ext(
   output [31:0] RW0_rdata
 );
 
-    gf14_1rf_lg6_w32_all mem (
+    gf12_1rf_lg6_w32_all mem (
       .CLK  (RW0_clk   ),
       .Q    (RW0_rdata), // out
       .CEN  (~RW0_en  ), // lo true
@@ -125,7 +125,7 @@ module mem_ext(
                             ,{8{W0_mask[1]}}
                             ,{8{W0_mask[0]}}};
 
-      gf14_2rf_lg10_w32_bit mem (
+      gf12_2rf_lg10_w32_bit mem (
          .CLKA   (W0_clk)
         ,.CLKB   (W0_clk)
         /// Read port
