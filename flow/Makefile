@@ -49,6 +49,7 @@
 # DESIGN_CONFIG=./designs/sky130/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130/aes/config.mk
+# DESIGN_CONFIG=./designs/sky130/jpeg/config.mk
 
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
@@ -493,6 +494,24 @@ ifneq ($(KLAYOUT_DRC_FILE),)
 	grep -c "<value>" $@ > $(REPORTS_DIR)/6_drc_count.rpt || [[ $$? == 1 ]]
 else
 	echo "DRC not supported on this platform" > $@
+endif
+
+$(RESULTS_DIR)/6_final.cdl: $(RESULTS_DIR)/6_final.v
+	($(TIME_CMD) yosys -c ./scripts/cdl.tcl) 2>&1 | tee $(LOG_DIR)/6_cdl.log
+
+$(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
+	cat $^ > $@
+
+lvs: $(RESULTS_DIR)/6_lvs.lvsdb
+
+$(RESULTS_DIR)/6_lvs.lvsdb: $(RESULTS_DIR)/6_final.gds $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
+ifneq ($(KLAYOUT_LVS_FILE),)
+	($(TIME_CMD) klayout -b -rd in_gds="$<" \
+	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
+	        -rd report_file=$(abspath $@) \
+	        -r $(KLAYOUT_LVS_FILE)) 2>&1 | tee $(LOG_DIR)/6_lvs.log
+else
+	echo "LVS not supported on this platform" > $@
 endif
 
 clean_finish:

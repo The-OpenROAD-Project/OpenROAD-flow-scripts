@@ -18,6 +18,7 @@ export MAX_FANOUT = 100
 # Blackbox verilog file
 # List all standard cells and cells yosys should treat as blackboxes here
 export BLACKBOX_V_FILE = ./platforms/$(PLATFORM)/NangateOpenCellLibrary.blackbox.v
+export BLACKBOX_LVS_FILE = ./platforms/$(PLATFORM)/NangateOpenCellLibrary.blackbox.lvs.v
 
 # Yosys mapping files
 export LATCH_MAP_FILE = ./platforms/$(PLATFORM)/cells_latch.v
@@ -70,6 +71,11 @@ export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/FreePDK45.lyt
 
 # KLayout DRC ruledeck
 export KLAYOUT_DRC_FILE = ./platforms/$(PLATFORM)/drc/FreePDK45.lydrc
+
+# KLayout LVS ruledeck
+export KLAYOUT_LVS_FILE = ./platforms/$(PLATFORM)/lvs/FreePDK45.lylvs
+
+export CDL_FILE = ./platforms/$(PLATFORM)/cdl/NangateOpenCellLibrary.cdl
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none

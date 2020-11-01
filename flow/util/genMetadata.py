@@ -214,35 +214,35 @@ extractTagFromFile("resizer__pre__util",
                    rptPath+"/3_pre_resize.rpt")
 extractTagFromFile("resizer__ibuf_count",
                    "Inserted (\d+) input buffers",
-                   logPath+"/3_2_resizer.log", t=int)
+                   logPath+"/3_3_resizer.log", t=int)
 extractTagFromFile("resizer__obuf_count",
                    "Inserted (\d+) output buffers",
-                   logPath+"/3_2_resizer.log", t=int)
+                   logPath+"/3_3_resizer.log", t=int)
 extractTagFromFile("resizer__resize_count",
                    "Resized (\d+) instances",
-                   logPath+"/3_2_resizer.log", t=int)
+                   logPath+"/3_3_resizer.log", t=int)
 extractTagFromFile("resizer__hbuf_count",
                    "Inserted (\d+) hold buffers",
-                   logPath+"/3_2_resizer.log", t=int)
+                   logPath+"/3_3_resizer.log", t=int)
 extractTagFromFile("resizer__maxcap_viols",
                    "Found (\d+) max capacitance violations",
-                   logPath+"/3_2_resizer.log", -1, 0, t=int)
+                   logPath+"/3_3_resizer.log", -1, 0, t=int)
 extractTagFromFile("resizer__maxslew_viols",
                    "Found (\d+) max slew violations",
-                   logPath+"/3_2_resizer.log", -1, 0, t=int)
+                   logPath+"/3_3_resizer.log", -1, 0, t=int)
 extractTagFromFile("resizer__maxfanout_viols",
                    "Found (\d+) max fanout violations",
-                   logPath+"/3_2_resizer.log", -1, 0, t=int)
+                   logPath+"/3_3_resizer.log", -1, 0, t=int)
 extractTagFromFile("resizer__maxfanout_bufs",
                    "Inserted (\d+) buffers",
-                   logPath+"/3_2_resizer.log", -1, 0, t=int)
+                   logPath+"/3_3_resizer.log", -1, 0, t=int)
 #TODO Tie hi tie low
 # extractTagFromFile("resizer_maxfanout_bufs_tielo",
 #                    "Inserted (\d+) tie \S+ instances for \d+ nets",
-#                    logPath+"/3_2_resizer.log", 0, "0")
+#                    logPath+"/3_3_resizer.log", 0, "0")
 # extractTagFromFile("resizer_maxfanout_bufs_tielo",
 #                    "Inserted (\d+) tie \S+ instances for \d+ nets",
-#                    logPath+"/3_2_resizer.log", 1, "0")
+#                    logPath+"/3_3_resizer.log", 1, "0")
 extractTagFromFile("resizer__post__slack__average__totneg",
                    "^tns (\S+)",
                    rptPath+"/3_post_resize.rpt", t=float)
@@ -255,42 +255,42 @@ extractTagFromFile("resizer__post__core__area__total",
 extractTagFromFile("resizer__post__util",
                    "^Design area.* (\S+%) utilization",
                    rptPath+"/3_post_resize.rpt")
-extractGnuTime("run__resizer",logPath+"/3_2_resizer.log")
+extractGnuTime("run__resizer",logPath+"/3_3_resizer.log")
 
 
 # Detail place
 extractTagFromFile("detailedplace__inst__core__area__total",
                    "design area +(\d*\.?\d*)",
-                   logPath+"/3_3_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log", t=float)
 extractTagFromFile("detailedplace__inst__num__total",
                    "total instances +(\d+)",
-                   logPath+"/3_3_opendp.log", t=int)
+                   logPath+"/3_4_opendp.log", t=int)
 extractTagFromFile("detailedplace__util",
                    "utilization +(\d+)",
-                   logPath+"/3_3_opendp.log", t=int)
+                   logPath+"/3_4_opendp.log", t=int)
 extractTagFromFile("detailedplace__total_displacement",
                    "total displacement +(\d*\.?\d*)",
-                   logPath+"/3_3_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log", t=float)
 extractTagFromFile("detailedplace__average_displacement",
                    "average displacement +(\d*\.?\d*)",
-                   logPath+"/3_3_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log", t=float)
 extractTagFromFile("detailedplace__max_displacement",
                    "max displacement +(\d*\.?\d*)",
-                   logPath+"/3_3_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log", t=float)
 extractTagFromFile("detailedplace__wirelength__est__original",
                    "original HPWL +(\d*\.?\d*)",
-                   logPath+"/3_3_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log", t=float)
 extractTagFromFile("detailedplace__wirelength__est__legalized",
                    "legalized HPWL +(\d*\.?\d*)",
-                   logPath+"/3_3_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log", t=float)
 extractTagFromFile("detailedplace__wirelength__est__delta",
                    "delta HPWL +(\d*\.?\d*)",
-                   logPath+"/3_3_opendp.log", t=int)
-extractGnuTime("run__dp",logPath+"/3_3_opendp.log")
+                   logPath+"/3_4_opendp.log", t=int)
+extractGnuTime("run__dp",logPath+"/3_4_opendp.log")
 
 # CTS
 # ==============================================================================
-extractGnuTime("run__cts",logPath+"/4_cts.log")
+extractGnuTime("run__cts",logPath+"/4_1_cts.log")
 
 # Route
 # ==============================================================================
