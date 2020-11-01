@@ -496,6 +496,24 @@ else
 	echo "DRC not supported on this platform" > $@
 endif
 
+$(RESULTS_DIR)/6_final.cdl: $(RESULTS_DIR)/6_final.v
+	($(TIME_CMD) yosys -c ./scripts/cdl.tcl) 2>&1 | tee $(LOG_DIR)/6_cdl.log
+
+$(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
+	cat $^ > $@
+
+lvs: $(RESULTS_DIR)/6_lvs.lvsdb
+
+$(RESULTS_DIR)/6_lvs.lvsdb: $(RESULTS_DIR)/6_final.gds $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
+ifneq ($(KLAYOUT_LVS_FILE),)
+	($(TIME_CMD) klayout -b -rd in_gds="$<" \
+	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
+	        -rd report_file=$(abspath $@) \
+	        -r $(KLAYOUT_LVS_FILE)) 2>&1 | tee $(LOG_DIR)/6_lvs.log
+else
+	echo "LVS not supported on this platform" > $@
+endif
+
 clean_finish:
 	rm -rf $(RESULTS_DIR)/6_*.gds $(RESULTS_DIR)/6_*.def $(RESULTS_DIR)/6_*.v
 	rm -rf $(REPORTS_DIR)/6_*.rpt
