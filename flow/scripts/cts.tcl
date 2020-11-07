@@ -28,10 +28,55 @@ if {![info exists standalone] || $standalone} {
 repair_clock_inverters
 
 # Run CTS
+#
+
+#--------------------------------------------------
+# opt 1-1) non-LUT - no clustering
+#configure_cts_characterization \
+#                     -sqr_cap $::env(CTS_SQR_CAP) \
+#                     -sqr_res $::env(CTS_SQR_RES) \
+#                     -slew_inter $::env(CTS_SLEW_INTER) \
+#                     -cap_inter $::env(CTS_CAP_INTER) \
+#                     -max_slew $::env(CTS_SLEW_MAX) \
+#                     -max_cap $::env(CTS_CAP_MAX)
+#
+#clock_tree_synthesis -buf_list "$::env(CTS_BUF_LIST)" \
+#                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
+#
+
+# opt 1-2) non-LUT - do clustering
+#configure_cts_characterization \
+#                     -sqr_cap $::env(CTS_SQR_CAP) \
+#                     -sqr_res $::env(CTS_SQR_RES) \
+#                     -slew_inter $::env(CTS_SLEW_INTER) \
+#                     -cap_inter $::env(CTS_CAP_INTER) \
+#                     -max_slew $::env(CTS_SLEW_MAX) \
+#                     -max_cap $::env(CTS_CAP_MAX)
+#
+#clock_tree_synthesis -buf_list "$::env(CTS_BUF_LIST)" \
+#                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)" \
+#                     -sink_clustering_enable \
+#                     -sink_clustering_max_diameter 80
+#--------------------------------------------------
+
+# opt 2-1) using LUT - no clustering
 clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
                      -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
                      -root_buf "$::env(CTS_BUF_CELL)" \
-                     -wire_unit 20
+                     -wire_unit 20 \
+                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
+
+
+## opt 2-2) using LUT - do clustering
+#clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
+#                     -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
+#                     -root_buf "$::env(CTS_BUF_CELL)" \
+#                     -wire_unit 20 \
+#                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)" \
+#                     -sink_clustering_enable \
+#                     -sink_clustering_max_diameter 80
+#--------------------------------------------------
+
 
 set_propagated_clock [all_clocks]
 

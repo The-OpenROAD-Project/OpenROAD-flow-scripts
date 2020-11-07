@@ -22,3 +22,4 @@ export DIE_AREA    = 0 0 970.2 760.896
 export CORE_AREA   = 9.996 20.16 960.036 749.952
 
 export PLACE_DENSITY = 0.25
+export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl

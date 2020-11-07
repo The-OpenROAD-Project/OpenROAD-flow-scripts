@@ -20,5 +20,5 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/tsmc65lp_1rf_lg6_w80_bit.gds2 \
                          $(PLATFORM_DIR)/gds/tsmc65lp_2rf_lg8_w64_bit.gds2
 
 # These values must be multiples of placement site
-export DIE_AREA    = 0.0 0.0 4200 1860
-export CORE_AREA   = 10 12 4190 1850.4
+export DIE_AREA = 0 0 6000 2550
+export CORE_AREA = 10 12 5990 2540.4
