@@ -60,12 +60,18 @@ repair_clock_inverters
 #--------------------------------------------------
 
 # opt 2-1) using LUT - no clustering
-clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
-                     -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
-                     -root_buf "$::env(CTS_BUF_CELL)" \
-                     -wire_unit 20 \
-                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
-
+if {[info exist ::env(CTS_BUF_DISTANCE)]} {
+  clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
+                       -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
+                       -root_buf "$::env(CTS_BUF_CELL)" \
+                       -wire_unit 20 \
+                       -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
+} else {
+  clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
+                       -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
+                       -root_buf "$::env(CTS_BUF_CELL)" \
+                       -wire_unit 20
+}
 
 ## opt 2-2) using LUT - do clustering
 #clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
