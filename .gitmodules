@@ -7,3 +7,4 @@
 [submodule "tools/OpenROAD"]
 	path = tools/OpenROAD
 	url = ../OpenROAD.git
+	branch = openroad
