@@ -15,10 +15,11 @@ if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
 }
 
 
-# read verilog files
+# Read verilog files
 foreach file $::env(VERILOG_FILES) {
   read_verilog -defer -sv {*}$vIdirsArgs $file
 }
+
 # Read standard cells as blackbox inputs
 read_liberty -lib $::env(OBJECTS_DIR)/merged.lib
 
@@ -34,18 +35,18 @@ if {[info exist ::env(CLKGATE_MAP_FILE)]} {
   read_verilog -defer $::env(CLKGATE_MAP_FILE)
 }
 
-# generic synthesis
+# Generic synthesis
 synth  -top $::env(DESIGN_NAME) -flatten
 
 # Optimize the design
 opt -purge
 
-# technology mapping of latches
+# Technology mapping of latches
 if {[info exist ::env(LATCH_MAP_FILE)]} {
   techmap -map $::env(LATCH_MAP_FILE)
 }
 
-# technology mapping of flip-flops
+# Technology mapping of flip-flops
 dfflibmap -liberty $::env(OBJECTS_DIR)/merged.lib
 opt
 
@@ -60,31 +61,31 @@ if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
       -liberty $::env(OBJECTS_DIR)/merged.lib \
       -constr $::env(OBJECTS_DIR)/abc.constr
 } else {
-  puts "WARNING: No clock period constraints detected in design"
+  puts "\[WARN\]\[FLOW\] No clock period constraints detected in design"
   abc -liberty $::env(OBJECTS_DIR)/merged.lib \
       -constr $::env(OBJECTS_DIR)/abc.constr
 }
 
-# replace undef values with defined constants
+# Replace undef values with defined constants
 setundef -zero
 
 # Splitting nets resolves unwanted compound assign statements in netlist (assign {..} = {..})
 splitnets
 
-# remove unused cells and wires
+# Remove unused cells and wires
 opt_clean -purge
 
-# technology mapping of constant hi- and/or lo-drivers
+# Technology mapping of constant hi- and/or lo-drivers
 hilomap -singleton \
         -hicell {*}$::env(TIEHI_CELL_AND_PORT) \
         -locell {*}$::env(TIELO_CELL_AND_PORT)
 
-# insert buffer cells for pass through wires
+# Insert buffer cells for pass through wires
 insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
 
-# reports
+# Reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat -liberty $::env(OBJECTS_DIR)/merged.lib
 
-# write synthesized design
+# Write synthesized design
 write_verilog -noattr -noexpr -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
