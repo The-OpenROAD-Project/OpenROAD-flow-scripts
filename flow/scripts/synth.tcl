@@ -58,6 +58,7 @@ puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
 close $constr
 
 # Technology mapping for cells
+# ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
 if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
   abc -D [expr $::env(ABC_CLOCK_PERIOD_IN_PS)] \
       -liberty $::env(DONT_USE_SC_LIB) \
@@ -88,6 +89,7 @@ insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
 # Reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check
 
+# Create argument list for stat
 set stat_libs ""
 foreach lib $::env(DONT_USE_LIBS) {
   append stat_libs "-liberty $lib "
