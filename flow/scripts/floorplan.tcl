@@ -75,11 +75,9 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
     }
   }
 }
-
-if { $::env(PLATFORM) == "gf12" } {
-  # remove buffers inserted by yosys/abc
-  remove_buffers
-}
+ 
+# remove buffers inserted by yosys/abc
+remove_buffers
 
 # pre report
 log_begin $::env(REPORTS_DIR)/2_init.rpt
