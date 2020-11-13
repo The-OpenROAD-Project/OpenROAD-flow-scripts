@@ -121,7 +121,7 @@ fi
 
 # Docker build
 if [ "$build_method" == "DOCKER" ]; then
-  docker build -t openroad/yosys -f tools/yosys/Dockerfile tools/yosys
+  docker build -t openroad/yosys -f tools/yosys_util/Dockerfile tools/yosys
   docker build -t openroad/tritonroute -f tools/TritonRoute/Dockerfile tools/TritonRoute
   docker build -t openroad -f tools/OpenROAD/Dockerfile tools/OpenROAD
   docker build -t openroad/flow -f Dockerfile .

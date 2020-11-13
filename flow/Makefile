@@ -112,6 +112,9 @@ WRAPPED_GDS  = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_m
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
+export DONT_USE_LIBS   = $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES)))
+export DONT_USE_SC_LIB = $(OBJECTS_DIR)/lib/$(notdir $(firstword $(LIB_FILES)))
+
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
 versions.txt:
@@ -139,12 +142,13 @@ endif
 
 # Pre-process libraries
 # ==============================================================================
-$(OBJECTS_DIR)/merged.lib: $(LIB_FILES)
-	mkdir -p $(OBJECTS_DIR)
-	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged \
-	                           $(LIB_FILES) \
-	                           > $@.tmp
-	$(UTILS_DIR)/markDontUse.py -p "$(DONT_USE_CELLS)" -i $@.tmp -o $@
+
+# Create temporary Liberty files which have the proper dont_use properties set
+# For use with Yosys and ABC
+.SECONDEXPANSION:
+$(DONT_USE_LIBS): $$(filter %$$(@F),$(LIB_FILES))
+	@mkdir -p $(OBJECTS_DIR)/lib
+	$(UTILS_DIR)/markDontUse.py -p "$(DONT_USE_CELLS)" -i $^ -o $@
 
 # Pre-process KLayout tech
 # ==============================================================================
@@ -189,7 +193,7 @@ synth: versions.txt \
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= scripts/synth.tcl
 
-$(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib $(WRAPPED_LIBS)
+$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) yosys -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
@@ -308,7 +312,7 @@ export OPDN_OPENDBPY = $(OPENROAD)/build/src/OpeNPDN/modules/OpenDB/src/swig/pyt
 OpeNPDN = $(OPENROAD)/src/OpeNPDN/
 export OPDN_SRC = $(OpeNPDN)
 
-analyze_power_grid: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc $(OBJECTS_DIR)/merged.lib
+analyze_power_grid: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc $(DONT_USE_LIBS)
 	($(TIME_CMD) $(OPENROAD_CMD) -exit $(SCRIPTS_DIR)/analyze_pdn_ir.tcl) 2>&1 | tee $(LOG_DIR)/analyze_pdn_ir.log
 
 # Clean Targets
