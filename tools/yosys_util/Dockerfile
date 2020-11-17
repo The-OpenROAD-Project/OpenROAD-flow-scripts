@@ -15,7 +15,7 @@ ENV PATH=/opt/rh/rh-python36/root/usr/bin:$PATH
 
 
 # install other yosys dependencies
-RUN yum install -y clang flex tcl tcl-devel libffi-devel git graphviz readline-devel glibc-static wget autoconf zlib-devel && \
+RUN yum install -y flex tcl tcl-devel libffi-devel git graphviz readline-devel glibc-static wget autoconf zlib-devel && \
     wget https://ftp.gnu.org/gnu/bison/bison-3.0.1.tar.gz && \
     tar -xvzf bison-3.0.1.tar.gz && \
     cd bison-3.0.1 && \
