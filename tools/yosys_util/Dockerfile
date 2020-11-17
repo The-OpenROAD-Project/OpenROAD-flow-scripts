@@ -25,6 +25,4 @@ RUN yum install -y flex tcl tcl-devel libffi-devel git graphviz readline-devel g
 
 COPY . /yosys
 WORKDIR /yosys
-RUN make PREFIX=/build config-gcc-static-tcl-dynamic
-RUN make PREFIX=/build -j$(nproc)
-RUN make PREFIX=/build install
+RUN make PREFIX=/build CONFIG=gcc install -j$(nproc)
