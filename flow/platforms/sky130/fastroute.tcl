@@ -10,7 +10,7 @@ set_global_routing_layer_pitch 5 0.96
 
 fastroute -guide_file $::env(RESULTS_DIR)/route.guide \
           -layers $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) \
-          -unidirectional_routing true \
+          -unidirectional_routing \
           -layers_adjustments {{2 0.5} {3 0.5} {4 0.5} {5 0.5}}  \
           -overflow_iterations 100 \
 	      -verbose 2 \
