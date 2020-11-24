@@ -24,7 +24,7 @@ if {[info exist ::env(FASTROUTE_TCL)]} {
     set_global_routing_layer_adjustment $layer 0.5
   }
 
-  fastroute -guide_file $::env(RESULTS_DIR)/route.guide \
+  global_route -guide_file $::env(RESULTS_DIR)/route.guide \
             -layers $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) \
             -unidirectional_routing \
             -overflow_iterations 100 \
