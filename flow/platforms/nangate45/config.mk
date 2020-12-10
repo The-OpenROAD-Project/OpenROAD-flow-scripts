@@ -52,6 +52,8 @@ export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
 # TritonCTS options
 export CTS_BUF_CELL   = BUF_X4
 export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTS
+export CTS_MAX_SLEW   = .198e-9
+export CTS_MAX_CAP    = .242e-12
 
 # FastRoute options
 export MIN_ROUTING_LAYER = 2
