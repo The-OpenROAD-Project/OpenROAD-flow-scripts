@@ -143,7 +143,7 @@ report_clock_skew
 detailed_placement
 check_placement
 
-if {$::env(PLATFORM) == "gf12"} {
+if {[info exists ::env(PAD_CORNER)]} {
   puts "\[INFO-FLOW\] OpenROAD - post cts patch\n"
   
   #--------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ if {$::env(PLATFORM) == "gf12"} {
   set block [[$db getChip] getBlock]
   set tech [$db getTech]
   
-  set master [$db findMaster IN12LP_GPIO18_13M9S30P_CORNER]
+  set master [$db findMaster $::env(PAD_CORNER)]
   
   if { $master != "NULL" } {
     set xList [list]
