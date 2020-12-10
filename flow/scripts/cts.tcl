@@ -28,7 +28,6 @@ if {![info exists standalone] || $standalone} {
 repair_clock_inverters
 
 # Run CTS
-#
 # Use set_wire_rc -clock resitance/capacitance values.
 configure_cts_characterization \
   -sqr_cap [expr [rsz::wire_clk_capacitance] * 1e12 * 1e-6] \
