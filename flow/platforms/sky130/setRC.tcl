@@ -34,6 +34,7 @@ set_layer_rc -layer via4 -capacitance 0.000602843 -resistance 0.000475
 #set_wire_rc -layer li1
 #set_wire_rc -layer met1
 #set_wire_rc -layer met2
-set_wire_rc -layer met3
+set_wire_rc -signal -layer met3
 #set_wire_rc -layer met4
 #set_wire_rc -layer met5
+set_wire_rc -clock -layer met5

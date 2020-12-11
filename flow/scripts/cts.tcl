@@ -27,8 +27,12 @@ if {![info exists standalone] || $standalone} {
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
 
+# This should be required, NOT conditional -cherry
+if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
+  source $::env(PLATFORM_DIR)/setRC.tcl
+}
+
 # Run CTS
-# Use set_wire_rc -clock resitance/capacitance values.
 configure_cts_characterization \
   -sqr_cap [expr [rsz::wire_clk_capacitance] * 1e12 * 1e-6] \
   -sqr_res [expr [rsz::wire_clk_resistance] * 1e-6] \
@@ -46,11 +50,6 @@ clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_
 
 
 set_propagated_clock [all_clocks]
-
-# This should be required, NOT conditional -cherry
-if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
-  source $::env(PLATFORM_DIR)/setRC.tcl
-}
 
 estimate_parasitics -placement
 set_dont_use $::env(DONT_USE_CELLS)
