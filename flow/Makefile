@@ -52,6 +52,7 @@
 # DESIGN_CONFIG=./designs/sky130/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130/aes/config.mk
 # DESIGN_CONFIG=./designs/sky130/jpeg/config.mk
+# DESIGN_CONFIG=./designs/sky130/coyote_tc/config.mk
 
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
