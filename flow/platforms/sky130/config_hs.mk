@@ -30,7 +30,7 @@ export IP_GLOBAL_CFG = ./platforms/$(PLATFORM)/IP_global.cfg
 export TECH_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hs.tlef
 export SC_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hs_merged.lef
 
-export LIB_FILES = ./platforms/$(PLATFORM)/lib/sky130_fd_sc_hs__tt_025C_1v80.lib
+export LIB_FILES = ./platforms/$(PLATFORM)/lib/sky130_fd_sc_hs__tt_025C_1v80.lib \
                      $(ADDITIONAL_LIBS)
 export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*.gds) \
                      $(ADDITIONAL_GDS_FILES)
