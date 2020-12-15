@@ -103,7 +103,7 @@ detailed_placement
 puts "Repair hold violations..."
 estimate_parasitics -placement
 if {![info exists ::env(PLACE_DENSITY_MAX_POST_HOLD)]} {
-    set ::env(PLACE_DENSITY_MAX_POST_HOLD) [expr $::env($PLACE_DENSITY) * 1.3]
+    set ::env(PLACE_DENSITY_MAX_POST_HOLD) [expr $::env(PLACE_DENSITY) * 1.3]
 }
 puts "PLACE_DENSITY_MAX_POST_HOLD = $::env(PLACE_DENSITY_MAX_POST_HOLD)"
 catch {repair_timing -hold -max_utilization [expr $::env(PLACE_DENSITY_MAX_POST_HOLD) * 100]} puts "utilization limit caught, continuing"
