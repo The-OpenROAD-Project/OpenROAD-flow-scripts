@@ -70,11 +70,13 @@ pipeline {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh swerv nangate45"'
           }
         }
+/*
         stage('nangate45_swerv_wrapper') {
           steps {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh swerv_wrapper nangate45"'
           }
         }
+*/	
         stage('nangate45_tinyRocket') {
           steps {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'
