@@ -50,7 +50,7 @@ set_propagated_clock [all_clocks]
 
 estimate_parasitics -placement
 set_dont_use $::env(DONT_USE_CELLS)
-repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell "$::env(CTS_BUF_CELL)"
+repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH)
 
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
@@ -59,8 +59,11 @@ detailed_placement
 
 puts "Repair hold violations..."
 estimate_parasitics -placement
-repair_hold_violations -buffer_cell $::env(HOLD_BUF_CELL)
-
+if {![info exists ::env(PLACE_DENSITY_MAX_POST_HOLD)]} {
+    set ::env(PLACE_DENSITY_MAX_POST_HOLD) [expr $::env(PLACE_DENSITY) * 1.3]
+}
+puts "PLACE_DENSITY_MAX_POST_HOLD = $::env(PLACE_DENSITY_MAX_POST_HOLD)"
+catch {repair_timing -hold -max_utilization [expr $::env(PLACE_DENSITY_MAX_POST_HOLD) * 100]} puts "utilization limit caught, continuing"
 
 puts "\n=========================================================================="
 puts "post cts report_checks -path_delay min"
