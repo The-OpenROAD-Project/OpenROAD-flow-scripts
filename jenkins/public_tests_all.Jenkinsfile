@@ -23,6 +23,7 @@ pipeline {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"'
           }
         }
+/*	
         stage('nangate45_black_parrot') {
           steps {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh black_parrot nangate45"'
@@ -43,6 +44,7 @@ pipeline {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh bp_multi_top nangate45"'
           }
         }
+*/
         stage('nangate45_dynamic_node') {
           steps {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh dynamic_node nangate45"'
