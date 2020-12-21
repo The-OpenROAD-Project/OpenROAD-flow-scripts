@@ -1,6 +1,3 @@
-[submodule "tools/TritonRoute"]
-	path = tools/TritonRoute
-	url = ../TritonRoute.git
 [submodule "tools/yosys"]
 	path = tools/yosys
 	url = ../yosys.git
