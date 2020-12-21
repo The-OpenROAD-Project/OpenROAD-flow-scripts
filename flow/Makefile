@@ -121,7 +121,6 @@ versions.txt:
 	@yosys -V > $(abspath $@)
 	@echo openroad `openroad -version` >> $(abspath $@)
 	@klayout -zz -v >> $(abspath $@)
-	@echo TritonRoute `which TritonRoute` >> $(abspath $@)
 
 # Pre-process Lefs
 # ==============================================================================
