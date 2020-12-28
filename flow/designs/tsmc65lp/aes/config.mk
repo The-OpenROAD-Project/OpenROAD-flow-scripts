@@ -6,7 +6,9 @@ export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 # These values must be multiples of placement site
-export DIE_AREA    = 0 0 620 520.8
-export CORE_AREA   = 10 12 610 511.2
-
-export PLACE_DENSITY = 0.50
+#export DIE_AREA    = 0 0 620 520.8
+#export CORE_AREA   = 10 12 610 511.2
+export CORE_UTILIZATION = 20
+export CORE_ASPECT_RATIO = 1
+export CORE_MARGIN = 10
+export PLACE_DENSITY = 0.4
