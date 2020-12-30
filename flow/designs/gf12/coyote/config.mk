@@ -30,6 +30,8 @@ export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
 # TODO: replace this with max(CHANNEL_WIDTH_[HV]) from IP_global.cfg
 export MACRO_BLOCKAGE_HALO = 25
-export CORE_UTILIZATION = 10
-export CORE_ASPECT_RATIO = 1
-export CORE_MARGIN = 10
+export DIE_AREA    = 0 0 1300 1300
+export CORE_AREA   = 2 2 1298 1298
+#export CORE_UTILIZATION = 10
+#export CORE_ASPECT_RATIO = 1
+#export CORE_MARGIN = 10
