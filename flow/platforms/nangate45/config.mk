@@ -59,6 +59,9 @@ export CTS_MAX_CAP    = .242e-12
 export MIN_ROUTING_LAYER = 2
 export MAX_ROUTING_LAYER = 10
 
+# Define fastRoute tcl
+export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl
+
 # IO Pin fix margin
 export IO_PIN_MARGIN = 70
 
