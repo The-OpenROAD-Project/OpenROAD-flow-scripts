@@ -38,11 +38,9 @@ configure_cts_characterization \
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
 clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
-                     -wire_unit 20 \
                      -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
 } else {
-clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
-                     -wire_unit 20
+clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)"
 }
 
 
