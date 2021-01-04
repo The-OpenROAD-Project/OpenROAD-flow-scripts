@@ -121,7 +121,6 @@ versions.txt:
 	@yosys -V > $(abspath $@)
 	@echo openroad `openroad -version` >> $(abspath $@)
 	@klayout -zz -v >> $(abspath $@)
-	@echo TritonRoute `which TritonRoute` >> $(abspath $@)
 
 # Pre-process Lefs
 # ==============================================================================
@@ -388,7 +387,9 @@ endif
 $(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
 	echo "lef:$(TRITON_ROUTE_LEF)" > $@
 	echo "def:$(RESULTS_DIR)/4_cts.def" >> $@
+ifeq ($(USE_WXL),)
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
+endif
 	echo "output:$(RESULTS_DIR)/5_route.def" >> $@
 	echo "outputTA:$(OBJECTS_DIR)/5_route_TA.def" >> $@
 	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" >> $@
@@ -405,7 +406,10 @@ endif
 
 # Run TritonRoute
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/route.guide
+ifeq ($(USE_WXL),)
+$(RESULTS_DIR)/5_route.def: $(RESULTS_DIR)/route.guide
+endif
+$(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_route.tcl) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
