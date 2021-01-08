@@ -62,11 +62,11 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	  echo set env $V "$($V)"     >> vars.gdb ;) \
 	)
 	@sed -i '/export \./d' vars.sh
-	@sed -i '/$(USER)/d' vars.sh
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.sh
 	@sed -i '/set env(\./d' vars.tcl
-	@sed -i '/$(USER)/d' vars.tcl
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.tcl
 	@sed -i '/set env \./d' vars.gdb
-	@sed -i '/$(USER)/d' vars.gdb
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.gdb
 
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
 	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
@@ -88,11 +88,11 @@ vars.tcl:
 	echo set env $V "$($V)"     >> vars.gdb ;) \
 	)
 	@sed -i '/export \./d' vars.sh
-	@sed -i '/$(USER)/d' vars.sh
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.sh
 	@sed -i '/set env(\./d' vars.tcl
-	@sed -i '/$(USER)/d' vars.tcl
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.tcl
 	@sed -i '/set env \./d' vars.gdb
-	@sed -i '/$(USER)/d' vars.gdb
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.gdb
 
 clean_issues:
 	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
