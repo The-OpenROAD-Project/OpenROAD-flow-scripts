@@ -66,7 +66,8 @@ export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 
-export DONT_USE_CELLS += sky130_fd_sc_hs__dfrtp_4 sky130_fd_sc_hs__dfstp_2 sky130_fd_sc_hs__xor3_4 sky130_fd_sc_hs__or2b_2 \
+export DONT_USE_CELLS += sky130_fd_sc_hd__probec_p_8 sky130_fd_sc
+#export DONT_USE_CELLS += sky130_fd_sc_hs__dfrtp_4 sky130_fd_sc_hs__dfstp_2 sky130_fd_sc_hs__xor3_4 sky130_fd_sc_hs__or2b_2 \
 sky130_fd_sc_hs__xnor3_2 sky130_fd_sc_hs__sdfbbn_2 sky130_fd_sc_hs__sdfxtp_2 sky130_fd_sc_hs__dfxtp_2 \
 sky130_fd_sc_hs__xor2_2 sky130_fd_sc_hs__o311ai_2 sky130_fd_sc_hs__nand2_2 sky130_fd_sc_hs__sdfrtp_2 \
 sky130_fd_sc_hs__and4_2 sky130_fd_sc_hs__dfsbp_2 sky130_fd_sc_hs__or4_2 sky130_fd_sc_hs__inv_2 \
@@ -102,6 +103,7 @@ sky130_fd_sc_hs__sedfxbp_2 sky130_fd_sc_hs__sedfxtp_1 sky130_fd_sc_hs__sedfxtp_2
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
 export ABC_LOAD_IN_FF = 5
+export ABC_CLOCK_PERIOD_IN_PS = 10000
 
 # Define default PDN config
 export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
@@ -129,5 +131,5 @@ export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 2
 export FILL_CELLS = sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc_hs__fill_4 sky130_fd_sc_hs__fill_8
 
 # resizer repair_long_wires -max_length
-export MAX_WIRE_LENGTH = 400
+export MAX_WIRE_LENGTH = 21000
 
