@@ -48,7 +48,7 @@ set_propagated_clock [all_clocks]
 
 estimate_parasitics -placement
 set_dont_use $::env(DONT_USE_CELLS)
-repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH)
+repair_clock_nets
 
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
