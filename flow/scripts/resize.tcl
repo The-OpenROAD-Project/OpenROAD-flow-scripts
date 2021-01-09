@@ -29,9 +29,7 @@ proc print_banner {header} {
 }
 
 # Set res and cap
-if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
-  source $::env(PLATFORM_DIR)/setRC.tcl
-}
+source $::env(PLATFORM_DIR)/setRC.tcl
 
 estimate_parasitics -placement
 
@@ -60,19 +58,16 @@ puts ""
 
 log_end
 
-# Set the buffer cell
-set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
 set_dont_use $::env(DONT_USE_CELLS)
 
 # Do not buffer chip-level designs
 if {![info exists ::env(FOOTPRINT)]} {
   puts "Perform port buffering..."
-#  buffer_ports -buffer_cell $buffer_cell
+  buffer_ports
 }
 
 puts "Perform buffer insertion..."
-set_max_fanout $::env(MAX_FANOUT) [current_design]
-repair_design -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
+repair_design
 
 if { [info exists env(TIE_SEPARATION)] } {
   set tie_separation $env(TIE_SEPARATION)
