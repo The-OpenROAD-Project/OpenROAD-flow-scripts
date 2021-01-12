@@ -57,16 +57,31 @@ puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
 puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
 close $constr
 
+
+set script [open $::env(OBJECTS_DIR)/abc.script w]
+puts $script "strash"
+puts $script "dch"
+puts $script "map"
+puts $script "topo"
+puts $script "stime -c"
+puts $script "buffer -c"
+puts $script "upsize -c"
+puts $script "dnsize -c"
+close $script
+
+
 # Technology mapping for cells
 # ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
 if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
   abc -D [expr $::env(ABC_CLOCK_PERIOD_IN_PS)] \
+      -script $::env(OBJECTS_DIR)/abc.script \
       -liberty $::env(DONT_USE_SC_LIB) \
       -constr $::env(OBJECTS_DIR)/abc.constr
 } else {
   puts "\[WARN\]\[FLOW\] No clock period constraints detected in design"
-  abc -liberty $::env(DONT_USE_SC_LIB) \
-      -constr $::env(OBJECTS_DIR)/abc.constr
+  abc -script $::env(OBJECTS_DIR)/abc.script \
+      -liberty $::env(DONT_USE_SC_LIB) \
+      -constr $::env(OBJECTS_DIR)/abc.constr 
 }
 
 # Replace undef values with defined constants
