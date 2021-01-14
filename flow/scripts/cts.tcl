@@ -30,11 +30,6 @@ repair_clock_inverters
 source $::env(PLATFORM_DIR)/setRC.tcl
 
 # Run CTS
-configure_cts_characterization \
-  -sqr_cap [expr [rsz::wire_clk_capacitance] * 1e12 * 1e-6] \
-  -sqr_res [expr [rsz::wire_clk_resistance] * 1e-6] \
-  -max_slew "$::env(CTS_MAX_SLEW)" \
-  -max_cap "$::env(CTS_MAX_CAP)"
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
 clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
