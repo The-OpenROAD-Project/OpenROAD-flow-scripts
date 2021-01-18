@@ -35,5 +35,6 @@
 #set_wire_rc -layer met1
 #set_wire_rc -layer met2
 set_wire_rc -layer met3
+set_wire_rc -clock -layer met5
 #set_wire_rc -layer met4
 #set_wire_rc -layer met5

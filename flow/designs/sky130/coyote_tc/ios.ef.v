@@ -14,7 +14,7 @@
     .IB_MODE_SEL(tie_lo), \
     .VTRIP_SEL(tie_lo), \
     .SLOW(tie_lo), \
-    .HLD_OVR(tie_lo), \
+    .HLD_OVR(tue_lo), \
     .ANALOG_EN(tie_lo), \
     .ANALOG_SEL(tie_lo), \
     .ANALOG_POL(tie_lo), \
@@ -22,11 +22,9 @@
     .PAD_A_NOESD_H(), \
     .PAD_A_ESD_0_H(), \
     .PAD_A_ESD_1_H(), \
-    .TIE_HI_ESD(tie_hi_esd), \
+    .TIE_HI_ESD(), \
     .TIE_LO_ESD(tie_lo_esd)
 
-`define INPUT_PAD(PAD,SIGNAL) input_pad u_`SIGNAL (.PAD(`PAD), .y(`SIGNAL), .AMUXBUS_A(analog_a), .AMUXBUS_B(analog_b))
-`define OUTPUT_PAD(PAD,SIGNAL) output_pad u_`SIGNAL (.PAD(`PAD), .a(`SIGNAL), .AMUXBUS_A(analog_a), .AMUXBUS_B(analog_b))
 
 module input_pad (
   input PAD,
@@ -34,16 +32,12 @@ module input_pad (
   `ABUT_PORTS
 );
 
-  supply1 VDDIO;
-  supply1 VDD;
-  supply0 VSS;
-
   wire tie_lo_esd;
   wire tie_low = VSS;
   wire tie_hi = VDD;
   wire tie_io = VDDIO;
 
-  sky130_fd_io__top_gpiov2 u_in (
+  sky130_ef_io__gpiov2_pad u_in (
     .PAD(PAD), 
     .IN(y),
     .IN_H(),
@@ -60,16 +54,12 @@ module output_pad (
   `ABUT_PORTS
 );
 
-  supply1 VDDIO;
-  supply1 VDD;
-  supply0 VSS;
-
   wire tie_lo_esd;
   wire tie_low = VSS;
   wire tie_hi = VDD;
   wire tie_io = VDDIO;
 
-  sky130_fd_io__top_gpiov2 u_io (
+  sky130_ef_io__gpiov2_pad u_io (
     .PAD(PAD), 
     .IN(),
     .IN_H(),
@@ -99,15 +89,15 @@ endmodule
 module core_pg_pads #(parameter NUM_PAIRS = 1) (
   `ABUT_PORTS
 );
-  sky130_fd_io__top_power_hvc_wpad vccd [NUM_PAIRS-1:0] (`ABUT_CONNECT);
-  sky130_fd_io__top_ground_hvc_wpad vssd [NUM_PAIRS-1:0] (`ABUT_CONNECT);
+  sky130_ef_io__vccd_hvc_pad vccd [NUM_PAIRS-1:0] (`ABUT_CONNECT);
+  sky130_ef_io__vssd_hvc_pad vssd [NUM_PAIRS-1:0] (`ABUT_CONNECT);
 endmodule 
 
 module io_pg_pads #(parameter NUM_PAIRS = 1) (
   `ABUT_PORTS
 );
-    sky130_fd_io__top_power_hvc_wpad vddio [NUM_PAIRS-1:0] (`ABUT_CONNECT);
-    sky130_fd_io__top_power_hvc_wpad vssio [NUM_PAIRS-1:0] (`ABUT_CONNECT);
+    sky130_ef_io__vddio_hvc_pad vddio [NUM_PAIRS-1:0] (`ABUT_CONNECT);
+    sky130_ef_io__vssio_hvc_pad vssio [NUM_PAIRS-1:0] (`ABUT_CONNECT);
 endmodule
 
 
