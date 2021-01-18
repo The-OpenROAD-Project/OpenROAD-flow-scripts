@@ -44,6 +44,8 @@ export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
 
 # TritonCTS options
 export CTS_BUF_CELL   = sky130_fd_sc_hs__buf_1
+export CTS_MAX_SLEW   = 1.5e-9
+export CTS_MAX_CAP    = .2e-12
 export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShs
 
 # FastRoute options
@@ -56,15 +58,13 @@ export IO_PIN_MARGIN = 70
 # Layer to use for parasitics estimations
 export WIRE_RC_LAYER = met3
 
-# Resizer options
-export RESIZER_BUF_CELL = sky130_fd_sc_hs__buf_1
-
 # KLayout technology file
 export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 
+<<<<<<< HEAD
 export DONT_USE_CELLS += \
 sky130_fd_sc_hs__dfrtp_4 \
 sky130_fd_sc_hs__dfstp_2 \
@@ -232,10 +232,14 @@ sky130_fd_sc_hs__clkdlyinv5sd1_1 \
 sky130_fd_sc_hs__clkdlyinv5sd2_1 \
 sky130_fd_sc_hs__clkdlyinv5sd3_1 
 
+=======
+export DONT_USE_CELLS += sky130_fd_sc_hd__probec_p_8 sky130_fd_sc
+>>>>>>> openroad
 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
 export ABC_LOAD_IN_FF = 5
+export ABC_CLOCK_PERIOD_IN_PS = 10
 
 # Define default PDN config
 export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
@@ -263,5 +267,5 @@ export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 2
 export FILL_CELLS = sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc_hs__fill_4 sky130_fd_sc_hs__fill_8
 
 # resizer repair_long_wires -max_length
-export MAX_WIRE_LENGTH = 25000
+export MAX_WIRE_LENGTH = 21000
 

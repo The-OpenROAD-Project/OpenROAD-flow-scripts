@@ -27,73 +27,28 @@ if {![info exists standalone] || $standalone} {
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
 
+source $::env(PLATFORM_DIR)/setRC.tcl
+
 # Run CTS
-#
+configure_cts_characterization \
+  -sqr_cap [expr [rsz::wire_clk_capacitance] * 1e12 * 1e-6] \
+  -sqr_res [expr [rsz::wire_clk_resistance] * 1e-6] \
+  -max_slew "$::env(CTS_MAX_SLEW)" \
+  -max_cap "$::env(CTS_MAX_CAP)"
 
-#--------------------------------------------------
-# opt 1-1) non-LUT - no clustering
-#configure_cts_characterization \
-#                     -sqr_cap $::env(CTS_SQR_CAP) \
-#                     -sqr_res $::env(CTS_SQR_RES) \
-#                     -slew_inter $::env(CTS_SLEW_INTER) \
-#                     -cap_inter $::env(CTS_CAP_INTER) \
-#                     -max_slew $::env(CTS_SLEW_MAX) \
-#                     -max_cap $::env(CTS_CAP_MAX)
-#
-#clock_tree_synthesis -buf_list "$::env(CTS_BUF_LIST)" \
-#                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
-#
-
-# opt 1-2) non-LUT - do clustering
-#configure_cts_characterization \
-#                     -sqr_cap $::env(CTS_SQR_CAP) \
-#                     -sqr_res $::env(CTS_SQR_RES) \
-#                     -slew_inter $::env(CTS_SLEW_INTER) \
-#                     -cap_inter $::env(CTS_CAP_INTER) \
-#                     -max_slew $::env(CTS_SLEW_MAX) \
-#                     -max_cap $::env(CTS_CAP_MAX)
-#
-#clock_tree_synthesis -buf_list "$::env(CTS_BUF_LIST)" \
-#                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)" \
-#                     -sink_clustering_enable \
-#                     -sink_clustering_max_diameter 80
-#--------------------------------------------------
-
-# opt 2-1) using LUT - no clustering
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
-  clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
-                       -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
-                       -root_buf "$::env(CTS_BUF_CELL)" \
-                       -wire_unit 20 \
-                       -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
+clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
 } else {
-  clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
-                       -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
-                       -root_buf "$::env(CTS_BUF_CELL)" \
-                       -wire_unit 20
+clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)"
 }
-
-## opt 2-2) using LUT - do clustering
-#clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
-#                     -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
-#                     -root_buf "$::env(CTS_BUF_CELL)" \
-#                     -wire_unit 20 \
-#                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)" \
-#                     -sink_clustering_enable \
-#                     -sink_clustering_max_diameter 80
-#--------------------------------------------------
 
 
 set_propagated_clock [all_clocks]
 
-# This should be required, NOT conditional -cherry
-if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
-  source $::env(PLATFORM_DIR)/setRC.tcl
-}
-
 estimate_parasitics -placement
 set_dont_use $::env(DONT_USE_CELLS)
-repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell "$::env(CTS_BUF_CELL)"
+repair_clock_nets
 
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
@@ -102,8 +57,11 @@ detailed_placement
 
 puts "Repair hold violations..."
 estimate_parasitics -placement
-repair_hold_violations -buffer_cell $::env(HOLD_BUF_CELL)
-
+if {![info exists ::env(PLACE_DENSITY_MAX_POST_HOLD)]} {
+    set ::env(PLACE_DENSITY_MAX_POST_HOLD) [expr $::env(PLACE_DENSITY) * 1.3]
+}
+puts "PLACE_DENSITY_MAX_POST_HOLD = $::env(PLACE_DENSITY_MAX_POST_HOLD)"
+catch {repair_timing -hold -max_utilization [expr $::env(PLACE_DENSITY_MAX_POST_HOLD) * 100]} puts "utilization limit caught, continuing"
 
 puts "\n=========================================================================="
 puts "post cts report_checks -path_delay min"
