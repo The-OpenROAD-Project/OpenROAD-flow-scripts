@@ -9,9 +9,6 @@ export TIELO_CELL_AND_PORT = LOGIC0_X1 Z
 # Used in synthesis
 export MIN_BUF_CELL_AND_PORTS = BUF_X1 A Z
 
-# Resizer hold buffer
-export HOLD_BUF_CELL = BUF_X1
-
 # Used in synthesis
 export MAX_FANOUT = 100
 
@@ -51,7 +48,6 @@ export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
 
 # TritonCTS options
 export CTS_BUF_CELL   = BUF_X4
-export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTS
 export CTS_MAX_SLEW   = .198e-9
 export CTS_MAX_CAP    = .242e-12
 

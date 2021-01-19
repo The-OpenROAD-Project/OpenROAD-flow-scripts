@@ -45,7 +45,6 @@ export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
 export CTS_BUF_CELL   = sky130_fd_sc_hs__buf_1
 export CTS_MAX_SLEW   = 1.5e-9
 export CTS_MAX_CAP    = .2e-12
-export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShs
 
 # FastRoute options
 export MIN_ROUTING_LAYER = 2
@@ -80,9 +79,6 @@ export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl
 export TEMPLATE_PGA_CFG ?= ./platforms/sky130/template_pga.cfg
 
 export PLACE_DENSITY ?= 0.50
-
-# Define Hold Buffer
-export HOLD_BUF_CELL = sky130_fd_sc_hs__buf_1
 
 # IO Placer pin layers
 export IO_PLACER_H = 4
