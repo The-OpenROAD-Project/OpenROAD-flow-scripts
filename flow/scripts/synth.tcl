@@ -61,7 +61,7 @@ close $constr
 set script [open $::env(OBJECTS_DIR)/abc.script w]
 puts $script "strash"
 puts $script "dch"
-puts $script "map"
+puts $script "map -B 0.9"
 puts $script "topo"
 puts $script "stime -c"
 puts $script "buffer -c"
@@ -73,11 +73,13 @@ close $script
 # Technology mapping for cells
 # ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
 if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
+  puts "CLOCK"
   abc -D [expr $::env(ABC_CLOCK_PERIOD_IN_PS)] \
       -script $::env(OBJECTS_DIR)/abc.script \
       -liberty $::env(DONT_USE_SC_LIB) \
       -constr $::env(OBJECTS_DIR)/abc.constr
 } else {
+  puts "NOCLOCK"
   puts "\[WARN\]\[FLOW\] No clock period constraints detected in design"
   abc -script $::env(OBJECTS_DIR)/abc.script \
       -liberty $::env(DONT_USE_SC_LIB) \
