@@ -30,12 +30,29 @@ repair_clock_inverters
 source $::env(PLATFORM_DIR)/setRC.tcl
 
 # Run CTS
+if {[info exist ::env(CTS_CLUSTER_SIZE)]} {
+  set cluster_size "$::env(CTS_CLUSTER_SIZE)"
+} else {
+  set cluster_size 30
+}
+if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
+  set cluster_diameter "$::env(CTS_CLUSTER_DIAMETER)"
+} else {
+  set cluster_diameter 100
+}
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
 clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+                     -sink_clustering_enable \
+                     -sink_clustering_size $cluster_size \
+                     -sink_clustering_max_diameter $cluster_diameter \
                      -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
 } else {
-clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)"
+clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+                     -sink_clustering_enable \
+                     -sink_clustering_size $cluster_size \
+                     -sink_clustering_max_diameter $cluster_diameter \
+
 }
 
 
