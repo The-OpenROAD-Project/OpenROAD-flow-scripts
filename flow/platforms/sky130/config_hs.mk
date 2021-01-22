@@ -64,7 +64,6 @@ export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 
-<<<<<<< HEAD
 export DONT_USE_CELLS += \
 sky130_fd_sc_hs__dfrtp_4 \
 sky130_fd_sc_hs__dfstp_2 \
@@ -231,10 +230,6 @@ sky130_fd_sc_hs__clkdlyinv3sd3_1 \
 sky130_fd_sc_hs__clkdlyinv5sd1_1 \
 sky130_fd_sc_hs__clkdlyinv5sd2_1 \
 sky130_fd_sc_hs__clkdlyinv5sd3_1 
-
-=======
-export DONT_USE_CELLS += sky130_fd_sc_hd__probec_p_8 sky130_fd_sc
->>>>>>> openroad
 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
