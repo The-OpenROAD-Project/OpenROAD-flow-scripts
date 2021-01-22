@@ -69,7 +69,7 @@ export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 
-export DONT_USE_CELLS +=  sky130_fd_sc_hs__xor3_1 
+export DONT_USE_CELLS +=   
 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
