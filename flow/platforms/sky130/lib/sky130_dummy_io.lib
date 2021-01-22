@@ -110,6 +110,10 @@ library (sky130_io_dummy_tt) {
       pg_type : primary_ground;
       voltage_name : "VSSIO";
     }
+    pg_pin (VSSIO_Q) {
+      pg_type : primary_ground;
+      voltage_name : "VSSIO_Q";
+    }
     leakage_power () {
       value : 0.0;
       related_pg_pin : VDDIO;
