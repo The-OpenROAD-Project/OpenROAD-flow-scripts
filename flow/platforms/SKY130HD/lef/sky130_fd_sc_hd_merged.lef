@@ -25852,7 +25852,7 @@ MACRO sky130_fd_sc_hd__lpflow_isobufsrckapwr_16
   END
 END sky130_fd_sc_hd__lpflow_isobufsrckapwr_16
 MACRO sky130_fd_sc_hd__lpflow_lsbuf_lh_hl_isowell_tap_1
-  CLASS CORE WELLTAP ;
+  CLASS CORE ;
   ORIGIN  0.000000  0.000000 ;
   SIZE  6.440000 BY  5.440000 ;
   SYMMETRY X Y R90 ;
