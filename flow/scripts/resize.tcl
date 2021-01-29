@@ -33,9 +33,6 @@ source $::env(PLATFORM_DIR)/setRC.tcl
 
 estimate_parasitics -placement
 
-# pre report
-log_begin $::env(REPORTS_DIR)/3_pre_resize.rpt
-
 print_banner "report_checks"
 report_checks
 
@@ -55,8 +52,6 @@ print_banner "pin_count"
 puts [sta::network_leaf_pin_count]
 
 puts ""
-
-log_end
 
 set_dont_use $::env(DONT_USE_CELLS)
 
@@ -92,7 +87,6 @@ repair_tie_fanout -separation $tie_separation $tiehi_pin
 # hold violations are not repaired until after CTS
 
 # post report
-log_begin $::env(REPORTS_DIR)/3_post_resize.rpt
 
 print_banner "report_floating_nets"
 report_floating_nets
@@ -121,8 +115,6 @@ print_banner "pin_count"
 puts [sta::network_leaf_pin_count]
 
 puts ""
-
-log_end
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/3_3_place_resized.def
