@@ -32,8 +32,6 @@ if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
 set_propagated_clock [all_clocks]
 estimate_parasitics -placement
 
-log_begin $::env(REPORTS_DIR)/6_final_report.rpt
-
 puts "\n=========================================================================="
 puts "report_checks -path_delay min"
 puts "--------------------------------------------------------------------------"
@@ -93,8 +91,6 @@ puts "[sta::network_leaf_pin_count]"
 #puts "check_antennas"
 #puts "--------------------------------------------------------------------------"
 #check_antennas -path $::env(REPORTS_DIR) 
-
-log_end
 
 # Delete routing obstructions for final DEF
 source scripts/deleteRoutingObstructions.tcl
