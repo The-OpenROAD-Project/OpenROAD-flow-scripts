@@ -69,7 +69,10 @@ export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 
-export DONT_USE_CELLS +=   
+# The *probe* are for inserting probe points and have metal shapes
+ # on all layers.
+export DONT_USE_CELLS += \
+   sky130_fd_sc_hd__probe_p_8 sky130_fd_sc_hd__probec_p_8
 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
