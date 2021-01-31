@@ -23,28 +23,6 @@ pipeline {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"'
           }
         }
-/*	
-        stage('nangate45_black_parrot') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh black_parrot nangate45"'
-          }
-        }
-        stage('nangate45_bp_be_top') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh bp_be_top nangate45"'
-          }
-        }
-        stage('nangate45_bp_fe_top') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh bp_fe_top nangate45"'
-          }
-        }
-        stage('nangate45_bp_multi_top') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh bp_multi_top nangate45"'
-          }
-        }
-*/
         stage('nangate45_dynamic_node') {
           steps {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh dynamic_node nangate45"'
@@ -70,13 +48,6 @@ pipeline {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh swerv nangate45"'
           }
         }
-/*
-        stage('nangate45_swerv_wrapper') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh swerv_wrapper nangate45"'
-          }
-        }
-*/	
         stage('nangate45_tinyRocket') {
           steps {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'
