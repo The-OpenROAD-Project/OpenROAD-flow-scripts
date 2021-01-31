@@ -12,8 +12,7 @@ export VERILOG_FILES  = ./designs/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
 export SDC_FILE       = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export WRAP_LEFS      = $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w32_all.lef \
-                        $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w32_byte.lef \
-                        $(PLATFORM_DIR)/lef/gf12_2rf_lg10_w32_bit.lef
+                        $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w32_byte.lef
 
 export WRAP_LIBS      = $(PLATFORM_DIR)/lib/gf12_1rf_lg6_w32_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
                         $(PLATFORM_DIR)/lib/gf12_1rf_lg6_w32_byte_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
@@ -21,8 +20,7 @@ export WRAP_LIBS      = $(PLATFORM_DIR)/lib/gf12_1rf_lg6_w32_all_ffpg_sigcmin_0p
 #$(PLATFORM_DIR)/lib/gf12_2rf_lg10_w32_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib
 
 export ADDITIONAL_GDS = $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w32_all.gds2 \
-                        $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w32_byte.gds2 \
-                        $(PLATFORM_DIR)/gds/gf12_2rf_lg10_w32_bit.gds2 \
+                        $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w32_byte.gds2
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 400.008 399.84
@@ -34,7 +32,7 @@ export PLACE_DENSITY = 0.20
 
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
-export PDN_CFG ?= $(PLATFORM_DIR)/pdn_grid_strategy_13m_9T.top.cfg
+export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.cfg
 
 # TODO: replace this with max(CHANNEL_WIDTH_[HV]) from IP_global.cfg
 export MACRO_BLOCKAGE_HALO = 25
