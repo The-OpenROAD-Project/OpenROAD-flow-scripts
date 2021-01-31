@@ -33,6 +33,26 @@ pipeline {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'
           }
         }
+        stage('sky130_hs_gcd') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd SKY130HS"'
+          }
+        }
+        stage('sky130_hs_aes') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes SKY130HS"'
+          }
+        }
+        stage('sky130_hd_gcd') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd SKY130HD"'
+          }
+        }
+        stage('sky130_hd_aes') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes SKY130HD"'
+          }
+        }
       }
     }
   }
