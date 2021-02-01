@@ -311,14 +311,6 @@ $(RESULTS_DIR)/3_place.def: $(RESULTS_DIR)/3_4_place_dp.def
 $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
 	cp $< $@
 
-#OpeNPDN
-export OPDN_OPENDBPY = $(OPENROAD)/build/src/OpeNPDN/modules/OpenDB/src/swig/python/opendbpy.py
-OpeNPDN = $(OPENROAD)/src/OpeNPDN/
-export OPDN_SRC = $(OpeNPDN)
-
-analyze_power_grid: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc $(DONT_USE_LIBS)
-	($(TIME_CMD) $(OPENROAD_CMD) -exit $(SCRIPTS_DIR)/analyze_pdn_ir.tcl -metrics $(LOG_DIR)/analyze_pdn_ir.json) 2>&1 | tee $(LOG_DIR)/analyze_pdn_ir.log
-
 # Clean Targets
 #-------------------------------------------------------------------------------
 clean_place:
