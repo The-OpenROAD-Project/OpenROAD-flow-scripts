@@ -1,6 +1,6 @@
 export DESIGN_NICKNAME = aes
 export DESIGN_NAME = aes_cipher_top
-export PLATFORM    = SKY130HD
+export PLATFORM    = sky130hd
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc

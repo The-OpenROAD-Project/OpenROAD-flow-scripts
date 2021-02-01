@@ -1,6 +1,6 @@
 export DESIGN_NICKNAME = jpeg
 export DESIGN_NAME = jpeg_encoder
-export PLATFORM    = sky130
+export PLATFORM    = sky130hs
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export VERILOG_INCLUDE_DIRS = ./designs/src/$(DESIGN_NICKNAME)/include

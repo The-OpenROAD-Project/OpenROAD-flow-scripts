@@ -56,7 +56,7 @@ export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShs
 
 # FastRoute options
 export MIN_ROUTING_LAYER = 2
-export MAX_ROUTING_LAYER = 5
+export MAX_ROUTING_LAYER = 6
 
 # IO Pin fix margin
 export IO_PIN_MARGIN = 70
