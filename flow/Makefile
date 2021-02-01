@@ -48,15 +48,15 @@
 # DESIGN_CONFIG=./designs/gf12/bp_dual/config.mk
 # DESIGN_CONFIG=./designs/gf12/bp_quad/config.mk
 
-# DESIGN_CONFIG=./designs/SKY130HD/gcd/config.mk
-# DESIGN_CONFIG=./designs/SKY130HD/ibex/config.mk
-# DESIGN_CONFIG=./designs/SKY130HD/aes/config.mk
-# DESIGN_CONFIG=./designs/SKY130HD/jpeg/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/gcd/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/aes/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/jpeg/config.mk
 
-# DESIGN_CONFIG=./designs/SKY130HS/gcd/config.mk
-# DESIGN_CONFIG=./designs/SKY130HS/ibex/config.mk
-# DESIGN_CONFIG=./designs/SKY130HS/aes/config.mk
-# DESIGN_CONFIG=./designs/SKY130HS/jpeg/config.mk
+# DESIGN_CONFIG=./designs/sky130hs/gcd/config.mk
+# DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
+# DESIGN_CONFIG=./designs/sky130hs/aes/config.mk
+# DESIGN_CONFIG=./designs/sky130hs/jpeg/config.mk
 
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
@@ -80,7 +80,7 @@ default: finish
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
 
-PUBLIC=nangate45 SKY130HD SKY130HS
+PUBLIC=nangate45 sky130hd sky130hs
 
 ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ./platforms/$(PLATFORM)
