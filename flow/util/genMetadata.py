@@ -143,16 +143,16 @@ extractGnuTime("run__synth",logPath+"/1_1_yosys.log")
 # ==============================================================================
 extractTagFromFile("floorplan__slack__average__totneg",
                    "^tns (\S+)",
-                   rptPath+"/2_init.rpt", t=float)
+                   logPath+"/2_1_floorplan.log", t=float)
 extractTagFromFile("floorplan__slack__average__worst",
                    "^wns (\S+)",
-                   rptPath+"/2_init.rpt", t=float)
+                   logPath+"/2_1_floorplan.log", t=float)
 extractTagFromFile("floorplan__std__area__total",
                    "^Design area (\S+) u\^2",
-                   rptPath+"/2_init.rpt", t=int)
+                   logPath+"/2_1_floorplan.log", t=int)
 extractTagFromFile("floorplan__util",
                    "^Design area.* (\S+%) utilization",
-                   rptPath+"/2_init.rpt")
+                   logPath+"/2_1_floorplan.log")
 extractTagFromFile("run__floorplan__warnings",
                    "(?i)warning",
                    logPath+"/2_1_floorplan.log", -2, 0)
@@ -160,7 +160,7 @@ extractGnuTime("floorplan",logPath+"/2_1_floorplan.log")
 
 extractTagFromFile("floorplan__io__count__total",
                    "Num of I/O +(\d+)",
-                   logPath+"/2_2_floorplan_io.log", t=int)
+                   logPath+"/3_2_place_iop.log", t=int)
 extractGnuTime("run__floorplan_io",logPath+"/2_2_floorplan_io.log")
 
 
@@ -185,8 +185,9 @@ extractGnuTime("run__pdn",logPath+"/2_6_pdn.log")
 
 # global place
 extractTagFromFile("globalplace__wirelength__est",
-                   "^HP wire length: (\S+)",
+                   "Total wirelength: (\S+)",
                    logPath+"/3_1_place_gp.log")
+'''
 extractTagFromFile("globalplace__slack__average__worst",
                    "^Worst slack: (\S+)",
                    logPath+"/3_1_place_gp.log")
@@ -196,22 +197,23 @@ extractTagFromFile("globalplace__slack__average__totneg",
 extractTagFromFile("globalplace__util",
                    "Util\(%\) = (\S+)",
                    logPath+"/3_1_place_gp.log")
+'''
 extractGnuTime("run__globalplace",logPath+"/3_1_place_gp.log")
 
 
 # Resizer
 extractTagFromFile("resizer__pre__slack__average__totneg",
                    "^tns (\S+)",
-                   rptPath+"/3_pre_resize.rpt", t=float)
+                   logPath+"/3_3_resizer.log", occurrence=0, t=float)
 extractTagFromFile("resizer__pre__slack__average_worst",
                    "^wns (\S+)",
-                   rptPath+"/3_pre_resize.rpt", t=float)
+                   logPath+"/3_3_resizer.log", occurrence=0, t=float)
 extractTagFromFile("resizer__pre__core__area__area",
                    "^Design area (\S+ \S+)",
-                   rptPath+"/3_pre_resize.rpt")
+                   logPath+"/3_3_resizer.log", occurrence=0)
 extractTagFromFile("resizer__pre__util",
                    "^Design area.* (\S+%) utilization",
-                   rptPath+"/3_pre_resize.rpt")
+                   logPath+"/3_3_resizer.log", occurrence=0)
 extractTagFromFile("resizer__ibuf_count",
                    "Inserted (\d+) input buffers",
                    logPath+"/3_3_resizer.log", t=int)
@@ -221,9 +223,11 @@ extractTagFromFile("resizer__obuf_count",
 extractTagFromFile("resizer__resize_count",
                    "Resized (\d+) instances",
                    logPath+"/3_3_resizer.log", t=int)
+'''
 extractTagFromFile("resizer__hbuf_count",
                    "Inserted (\d+) hold buffers",
                    logPath+"/3_3_resizer.log", t=int)
+'''
 extractTagFromFile("resizer__maxcap_viols",
                    "Found (\d+) max capacitance violations",
                    logPath+"/3_3_resizer.log", -1, 0, t=int)
@@ -245,20 +249,21 @@ extractTagFromFile("resizer__maxfanout_bufs",
 #                    logPath+"/3_3_resizer.log", 1, "0")
 extractTagFromFile("resizer__post__slack__average__totneg",
                    "^tns (\S+)",
-                   rptPath+"/3_post_resize.rpt", t=float)
+                   logPath+"/3_3_resizer.log", t=float)
 extractTagFromFile("resizer__post__slack__average__worst",
                    "^wns (\S+)",
-                   rptPath+"/3_post_resize.rpt", t=float)
+                   logPath+"/3_3_resizer.log", t=float)
 extractTagFromFile("resizer__post__core__area__total",
                    "^Design area (\S+ \S+)",
-                   rptPath+"/3_post_resize.rpt")
+                   logPath+"/3_3_resizer.log")
 extractTagFromFile("resizer__post__util",
                    "^Design area.* (\S+%) utilization",
-                   rptPath+"/3_post_resize.rpt")
+                   logPath+"/3_3_resizer.log")
 extractGnuTime("run__resizer",logPath+"/3_3_resizer.log")
 
 
 # Detail place
+'''
 extractTagFromFile("detailedplace__inst__core__area__total",
                    "design area +(\d*\.?\d*)",
                    logPath+"/3_4_opendp.log", t=float)
@@ -268,6 +273,7 @@ extractTagFromFile("detailedplace__inst__num__total",
 extractTagFromFile("detailedplace__util",
                    "utilization +(\d+)",
                    logPath+"/3_4_opendp.log", t=int)
+'''
 extractTagFromFile("detailedplace__total_displacement",
                    "total displacement +(\d*\.?\d*)",
                    logPath+"/3_4_opendp.log", t=float)
@@ -358,26 +364,26 @@ extractGnuTime("run__detailedroute",logPath+"/5_2_TritonRoute.log")
 
 extractTagFromFile("finish__power__internal__total",
                    "Total +(\S+) +\S+ +\S+ +\S+ +\S+",
-                   rptPath+"/6_final_report.rpt", t=float)
+                   logPath+"/6_report.log", t=float)
 
 extractTagFromFile("finish__power__switch__total",
                    "Total +\S+ +(\S+) +\S+ +\S+ +\S+",
-                   rptPath+"/6_final_report.rpt", t=float)
+                   logPath+"/6_report.log", t=float)
 
 extractTagFromFile("finish__power__leak__total",
                    "Total +\S+ +\S+ +(\S+) +\S+ +\S+",
-                   rptPath+"/6_final_report.rpt", t=float)
+                   logPath+"/6_report.log", t=float)
 
 extractTagFromFile("finish__power__total",
                    "Total +\S+ +\S+ +\S+ +(\S+) +\S+",
-                   rptPath+"/6_final_report.rpt", t=float)
+                   logPath+"/6_report.log", t=float)
 
 extractTagFromFile("finish__area",
                    "^Design area (\S+ \S+)",
-                   rptPath+"/6_final_report.rpt")
+                   logPath+"/6_report.log")
 extractTagFromFile("finish__util",
                    "^Design area.* (\S+%) utilization",
-                   rptPath+"/6_final_report.rpt")
+                   logPath+"/6_report.log")
 
 extractGnuTime("run__report",logPath+"/6_report.log")
 
