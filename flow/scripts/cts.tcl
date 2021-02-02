@@ -74,7 +74,11 @@ if {![info exists ::env(PLACE_DENSITY_MAX_POST_HOLD)]} {
 }
 puts "PLACE_DENSITY_MAX_POST_HOLD = $::env(PLACE_DENSITY_MAX_POST_HOLD)"
 if { [catch {repair_timing -hold -max_utilization [expr $::env(PLACE_DENSITY_MAX_POST_HOLD) * 100]}] } {
-  puts "utilization limit caught, continuing"
+  puts "hold utilization limit caught, continuing"
+}
+puts "Repair setup violations..."
+if { [catch {repair_timing -setup -max_utilization [expr $::env(PLACE_DENSITY_MAX_POST_HOLD) * 100]}]} {
+  puts "setup utilization limit caught, continuing"
 }
 
 puts "\n=========================================================================="
