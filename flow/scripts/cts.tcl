@@ -70,11 +70,11 @@ detailed_placement
 estimate_parasitics -placement
 
 puts "Repair hold violations..."
-if { [catch {repair_timing -hold } {
+if { [catch {repair_timing -hold }]} {
   puts "hold utilization limit caught, continuing"
 }
 puts "Repair setup violations..."
-if { [catch {repair_timing -setup } {
+if { [catch {repair_timing -setup }]} {
   puts "setup utilization limit caught, continuing"
 }
 

@@ -79,9 +79,8 @@ if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
       -constr $::env(OBJECTS_DIR)/abc.constr
 } else {
   puts "\[WARN\]\[FLOW\] No clock period constraints detected in design"
-  abc -script $::env(OBJECTS_DIR)/abc.script \
-      -liberty $::env(DONT_USE_SC_LIB) \
-      -constr $::env(OBJECTS_DIR)/abc.constr 
+  abc -liberty $::env(DONT_USE_SC_LIB) \
+      -constr $::env(OBJECTS_DIR)/abc.constr
 }
 
 # Replace undef values with defined constants
