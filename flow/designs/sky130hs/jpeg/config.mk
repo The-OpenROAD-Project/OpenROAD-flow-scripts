@@ -10,3 +10,4 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 export DIE_AREA    = 0 0 3000.04 2999.8
 export CORE_AREA   = 10.07 9.8 2989.97 2990
 
+export ABC_CLOCK_PERIOD_IN_PS = 10
