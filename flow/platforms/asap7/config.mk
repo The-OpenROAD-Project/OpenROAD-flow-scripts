@@ -76,8 +76,8 @@ export CTS_BUF_CELL            = BUFx4_ASAP7_75t_R
 #export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTS/
 
 # FastRoute options
-export MIN_ROUTING_LAYER = 1
-export MAX_ROUTING_LAYER = 9
+export MIN_ROUTING_LAYER = 2
+export MAX_ROUTING_LAYER = 7
 
 # IO Pin fix margin
 export IO_PIN_MARGIN = 70
