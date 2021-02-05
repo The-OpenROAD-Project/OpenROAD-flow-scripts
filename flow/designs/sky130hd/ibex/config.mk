@@ -1,16 +1,14 @@
 export DESIGN_NICKNAME = ibex
 export DESIGN_NAME = ibex_core
-export PLATFORM    = gf12
+export PLATFORM    = sky130hd
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_core.sv2v.v \
                        ./designs/src/$(DESIGN_NICKNAME)/prim_clock_gating.sv
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 # These values must be multiples of placement site
-#export DIE_AREA    = 0 0 950 650.4
-#export CORE_AREA   = 10 12 940 640.8
-export CORE_UTILIZATION = 18
-export CORE_ASPECT_RATIO = 1
-export CORE_MARGIN = 2
+# x=0.19 y=1.4
+export DIE_AREA    = 0 0 3000 1999
+export CORE_AREA   = 150.0 150 2850.0 1850
 
-export PLACE_DENSITY = 0.50
+
