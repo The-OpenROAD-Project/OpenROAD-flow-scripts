@@ -8,7 +8,7 @@ function usage() {
   echo "Usage: $0 [-h|--help] [-l|--latest] [-o|--local] [--or_branch]"
   echo "  -h, --help          print this help message"
   echo "  -d, --dev_repo      (dev only) perform git pull on developer repositories"
-  echo "  -l, --latest        build using the head of branch 'openroad' for OpenROAD"
+  echo "  -l, --latest        build using the head of branch 'master' for OpenROAD"
   echo "  -o, --local         force local build instead of docker build"
   echo "  -p, --platform      perform git pull on all git-based platform repos"
   echo "  --or_branch BRANCH  build using the head of branch BRANCH for OpenROAD"
@@ -38,7 +38,7 @@ while (( "$#" )); do
       shift
       ;;
     -l|--latest)
-      OR_BRANCH="openroad"
+      OR_BRANCH="master"
       shift
       ;;
     -n|--nice)

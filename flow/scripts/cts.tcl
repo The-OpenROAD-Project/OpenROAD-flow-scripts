@@ -30,17 +30,29 @@ repair_clock_inverters
 source $::env(PLATFORM_DIR)/setRC.tcl
 
 # Run CTS
-configure_cts_characterization \
-  -sqr_cap [expr [rsz::wire_clk_capacitance] * 1e12 * 1e-6] \
-  -sqr_res [expr [rsz::wire_clk_resistance] * 1e-6] \
-  -max_slew "$::env(CTS_MAX_SLEW)" \
-  -max_cap "$::env(CTS_MAX_CAP)"
+if {[info exist ::env(CTS_CLUSTER_SIZE)]} {
+  set cluster_size "$::env(CTS_CLUSTER_SIZE)"
+} else {
+  set cluster_size 30
+}
+if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
+  set cluster_diameter "$::env(CTS_CLUSTER_DIAMETER)"
+} else {
+  set cluster_diameter 100
+}
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
 clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+                     -sink_clustering_enable \
+                     -sink_clustering_size $cluster_size \
+                     -sink_clustering_max_diameter $cluster_diameter \
                      -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
 } else {
-clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)"
+clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+                     -sink_clustering_enable \
+                     -sink_clustering_size $cluster_size \
+                     -sink_clustering_max_diameter $cluster_diameter \
+
 }
 
 
@@ -55,13 +67,16 @@ set_placement_padding -global \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 detailed_placement
 
-puts "Repair hold violations..."
 estimate_parasitics -placement
-if {![info exists ::env(PLACE_DENSITY_MAX_POST_HOLD)]} {
-    set ::env(PLACE_DENSITY_MAX_POST_HOLD) [expr $::env(PLACE_DENSITY) * 1.3]
+
+puts "Repair hold violations..."
+if { [catch {repair_timing -hold }]} {
+  puts "hold utilization limit caught, continuing"
 }
-puts "PLACE_DENSITY_MAX_POST_HOLD = $::env(PLACE_DENSITY_MAX_POST_HOLD)"
-catch {repair_timing -hold -max_utilization [expr $::env(PLACE_DENSITY_MAX_POST_HOLD) * 100]} puts "utilization limit caught, continuing"
+puts "Repair setup violations..."
+if { [catch {repair_timing -setup }]} {
+  puts "setup utilization limit caught, continuing"
+}
 
 puts "\n=========================================================================="
 puts "post cts report_checks -path_delay min"

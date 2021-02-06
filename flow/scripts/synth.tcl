@@ -61,7 +61,7 @@ close $constr
 set script [open $::env(OBJECTS_DIR)/abc.script w]
 puts $script "strash"
 puts $script "dch"
-puts $script "map"
+puts $script "map -B 0.9"
 puts $script "topo"
 puts $script "stime -c"
 puts $script "buffer -c"
@@ -79,9 +79,8 @@ if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
       -constr $::env(OBJECTS_DIR)/abc.constr
 } else {
   puts "\[WARN\]\[FLOW\] No clock period constraints detected in design"
-  abc -script $::env(OBJECTS_DIR)/abc.script \
-      -liberty $::env(DONT_USE_SC_LIB) \
-      -constr $::env(OBJECTS_DIR)/abc.constr 
+  abc -liberty $::env(DONT_USE_SC_LIB) \
+      -constr $::env(OBJECTS_DIR)/abc.constr
 }
 
 # Replace undef values with defined constants
