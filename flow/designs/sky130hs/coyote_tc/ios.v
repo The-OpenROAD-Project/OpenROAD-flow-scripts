@@ -99,15 +99,15 @@ endmodule
 module core_pg_pads #(parameter NUM_PAIRS = 1) (
   `ABUT_PORTS
 );
-  sky130_fd_io__top_power_hvc_wpad vccd [NUM_PAIRS-1:0] (`ABUT_CONNECT);
-  sky130_fd_io__top_ground_hvc_wpad vssd [NUM_PAIRS-1:0] (`ABUT_CONNECT);
+  sky130_ef_io__vccd_hvc_pad vccd [NUM_PAIRS-1:0] (`ABUT_CONNECT);
+  sky130_ef_io__vssd_hvc_pad vssd [NUM_PAIRS-1:0] (`ABUT_CONNECT);
 endmodule 
 
 module io_pg_pads #(parameter NUM_PAIRS = 1) (
   `ABUT_PORTS
 );
-    sky130_fd_io__top_power_hvc_wpad vddio [NUM_PAIRS-1:0] (`ABUT_CONNECT);
-    sky130_fd_io__top_power_hvc_wpad vssio [NUM_PAIRS-1:0] (`ABUT_CONNECT);
+    sky130_ef_io__vddio_hvc_pad vddio [NUM_PAIRS-1:0] (`ABUT_CONNECT);
+    sky130_ef_io__vssio_hvc_pad vssio [NUM_PAIRS-1:0] (`ABUT_CONNECT);
 endmodule
 
 module sky130_ef_io__gpiov2_pad_wrapped (IN_H, PAD_A_NOESD_H, PAD_A_ESD_0_H, PAD_A_ESD_1_H,

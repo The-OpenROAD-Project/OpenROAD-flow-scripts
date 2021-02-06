@@ -1,7 +1,6 @@
 module coyote_tc (
   clk_i,
   reset_i,
-  en_i,
   rocc_cmd_v_o,
   rocc_cmd_data_o_0,
   rocc_cmd_data_o_1,
@@ -108,12 +107,7 @@ module coyote_tc (
   rocc_ctrl_i_interrupt_,
   rocc_ctrl_o_s_,
   rocc_ctrl_o_exception_,
-  rocc_ctrl_o_host_id_,
-  TDI,
-  TDO,
-  TCK,
-  TRST,
-  TMS
+  rocc_ctrl_o_host_id_
 );
 
   output rocc_cmd_data_o_0;
@@ -209,7 +203,6 @@ module coyote_tc (
   output fsb_node_data_o_7;
   input clk_i;
   input reset_i;
-  input en_i;
   input rocc_cmd_ready_i;
   input rocc_resp_v_i;
   input rocc_mem_req_v_i;
@@ -226,11 +219,6 @@ module coyote_tc (
   output rocc_ctrl_o_s_;
   output rocc_ctrl_o_exception_;
   output rocc_ctrl_o_host_id_;
-  input TDI;
-  output TDO;
-  input TCK;
-  input TMS;
-  input TRST;
 
   wire [7:0] fsb_node_datai;
   wire [31:0] rocc_mem_req_data;
@@ -404,15 +392,5 @@ module coyote_tc (
   input_pad u_tms(.PAD(TMS), .y(tms));
   input_pad u_trst(.PAD(TRST), .y(trst));
   output_pad u_tdo(.PAD(TDO), .a(tdo));
-endmodule
-
-module tap_controller (
-  input TCK,
-  input TMS,
-  input TRST,
-  input TDI,
-  output TDO
-);
-
 endmodule
 

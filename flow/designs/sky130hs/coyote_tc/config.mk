@@ -1,25 +1,25 @@
 export DESIGN_NICKNAME = coyote_tc
 export DESIGN_NAME = coyote_tc
 
-export PLATFORM    = sky130hd
+export PLATFORM    = sky130hs
 # Clone Skywater library:
 # git clone git@github.com:google/skywater-pdk.git --recursive
 #
 
 export SKY130_IO_VERSION ?= v0.2.0
 export OPENRAMS_DIR = ./platforms/sky130ram
-export IO_DIR       = ./platforms/sky130io
+export IO_DIR = ./platforms/sky130io
 
 export VERILOG_FILES = ./designs/src/coyote_tc/coyote_tc.v \
                        ./designs/src/coyote/coyote.sv2v.v \
                        ./designs/$(PLATFORM)/coyote_tc/ios.v \
-                       ./designs/$(PLATFORM)/coyote_tc/macros.v \
+                       ./designs/$(PLATFORM)/coyote_tc/macros.v 
 
 export SDC_FILE          = ./designs/$(PLATFORM)/coyote_tc/constraint.sdc
 
+export FOOTPRINT_LIBRARY = $(IO_DIR)/library.sky130_fd_io.tcl
 export FOOTPRINT         = ./designs/$(PLATFORM)/coyote_tc/coyote_tc.package.strategy
 export SIG_MAP_FILE      = ./designs/$(PLATFORM)/coyote_tc/coyote_tc.sigmap
-export FOOTPRINT_LIBRARY = $(IO_DIR)/library.sky130_fd_io.tcl
 
 export ADDITIONAL_LIBS = $(OPENRAMS_DIR)/sky130_sram_1rw1r_80x64_8/sky130_sram_1rw1r_80x64_8_TT_1p8V_25C.lib \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_128x256_8/sky130_sram_1rw1r_128x256_8_TT_1p8V_25C.lib \
@@ -55,14 +55,14 @@ export ADDITIONAL_LEFS = \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_128x256_8/sky130_sram_1rw1r_128x256_8.lef \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_44x64_8/sky130_sram_1rw1r_44x64_8.lef \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_64x256_8/sky130_sram_1rw1r_64x256_8.lef \
-                         $(PLATFORM_DIR)/lef/sky130io_fill.lef
+
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0.0 0.0 5200 4609.14
 export CORE_AREA   = 210 210 4990 4389.14
 
 export ABC_CLOCK_PERIOD_IN_PS = 10000
-export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
+export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
 export ABC_LOAD_IN_FF = 3
 
 export POST_SYNTHESYS_RENAMING = ./designs/$(PLATFORM)/coyote_tc/post_synthesis_rename.tcl
@@ -73,8 +73,8 @@ export PDN_CFG = ./designs/$(PLATFORM)/coyote_tc/pdn.cfg
 # Point to the RC file
 export SETRC_FILE = $(PLATFORM_DIR)/setRC.tcl
 
-export MIN_ROUTING_LAYER 2
-export MAX_ROUTING_LAYER 6
+export MIN_ROUTING_LAYER 1
+export MAX_ROUTING_LAYER 5
 
 export FASTROUTE_TCL $(PLATFORM_DIR)/fastroute.tcl
 
