@@ -1,6 +1,6 @@
-sig0   clk_i
+sig0   UNASSIGNED
 sig1   reset_i
-sig2   en_i
+sig2   UNASSIGNED
 sig3   rocc_cmd_v_o 
 sig4   rocc_cmd_data_o_0
 sig5   rocc_cmd_data_o_1
@@ -161,7 +161,7 @@ sig159 TMS
 sig160 UNASSIGNED
 sig161 UNASSIGNED
 sig162 UNASSIGNED
-sig163 UNASSIGNED
+sig163 clk_i
 vdd_0   VDD
 vdd_1   VDD
 vdd_2   VDD
