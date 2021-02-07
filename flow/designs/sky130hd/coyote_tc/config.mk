@@ -14,6 +14,7 @@ export VERILOG_FILES = ./designs/src/coyote_tc/coyote_tc.v \
                        ./designs/src/coyote/coyote.sv2v.v \
                        ./designs/$(PLATFORM)/coyote_tc/ios.v \
                        ./designs/$(PLATFORM)/coyote_tc/macros.v \
+                       $(IO_DIR)/verilog/sky130_io.blackbox.v
 
 export SDC_FILE          = ./designs/$(PLATFORM)/coyote_tc/constraint.sdc
 
@@ -55,7 +56,6 @@ export ADDITIONAL_LEFS = \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_128x256_8/sky130_sram_1rw1r_128x256_8.lef \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_44x64_8/sky130_sram_1rw1r_44x64_8.lef \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_64x256_8/sky130_sram_1rw1r_64x256_8.lef \
-                         $(PLATFORM_DIR)/lef/sky130io_fill.lef
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0.0 0.0 5200 4609.14
