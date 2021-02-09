@@ -16,15 +16,15 @@ module data_arrays_0_ext(
 
     tsmc65lp_1rf_lg6_w32_byte mem (
       .CLK  (RW0_clk   ),
-      .Q    (RW0_rdata), // out
-      .CEN  (~RW0_en  ), // lo true
-      .WEN  (wen      ), // lo true
-      .GWEN (~RW0_wmode  ), // lo true
+      .Q    (RW0_rdata ), // out
+      .CEN  (~RW0_en   ), // lo true
+      .WEN  (wen       ), // lo true
+      .GWEN (~RW0_wmode), // lo true
       .A    (RW0_addr  ), // in
-      .D    (RW0_wdata), // in
-      .EMA  (3'd3     ), // Extra Margin Adjustment - default value
-      .EMAW (2'd1     ), // Extra Margin Adjustment Write - default value
-      .RET1N(1'b1     )  // Retention Mode (active low) - disabled
+      .D    (RW0_wdata ), // in
+      .EMA  (3'd3      ), // Extra Margin Adjustment - default value
+      .EMAW (2'd1      ), // Extra Margin Adjustment Write - default value
+      .RET1N(1'b1      )  // Retention Mode (active low) - disabled
     );
 
 endmodule
@@ -95,15 +95,15 @@ module data_arrays_0_0_ext(
 );
 
     tsmc65lp_1rf_lg6_w32_all mem (
-      .CLK  (RW0_clk   ),
-      .Q    (RW0_rdata), // out
-      .CEN  (~RW0_en  ), // lo true
-      .GWEN (~RW0_wmode  ), // lo true
-      .A    (RW0_addr  ), // in
-      .D    (RW0_wdata), // in
-      .EMA  (3'd3     ), // Extra Margin Adjustment - default value
-      .EMAW (2'd1     ), // Extra Margin Adjustment Write - default value
-      .RET1N(1'b1     )  // Retention Mode (active low) - disabled
+      .CLK  ( RW0_clk  ),
+      .Q    ( RW0_rdata), // out
+      .CEN  (~RW0_en   ), // lo true
+      .WEN  (~RW0_wmode), // lo true
+      .A    ( RW0_addr ), // in
+      .D    ( RW0_wdata), // in
+      .EMA  ( 3'd3     ), // Extra Margin Adjustment - default value
+      .EMAW ( 2'd1     ), // Extra Margin Adjustment Write - default value
+      .RET1N( 1'b1     )  // Retention Mode (active low) - disabled
     );
 
 endmodule

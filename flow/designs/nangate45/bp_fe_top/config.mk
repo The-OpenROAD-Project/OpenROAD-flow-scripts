@@ -16,4 +16,5 @@ export DIE_AREA    = 0 0 999.97 799.4
 export CORE_AREA   = 10.07 9.8 989.9 789.6
 
 
-export PLACE_DENSITY = 0.15
+export PLACE_DENSITY = 0.12
+export PLACE_DENSITY_MAX_POST_HOLD = 0.12

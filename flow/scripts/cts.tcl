@@ -27,32 +27,56 @@ if {![info exists standalone] || $standalone} {
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
 
+source $::env(PLATFORM_DIR)/setRC.tcl
+
 # Run CTS
-clock_tree_synthesis -lut_file "$::env(CTS_TECH_DIR)/lut.txt" \
-                     -sol_list "$::env(CTS_TECH_DIR)/sol_list.txt" \
-                     -root_buf "$::env(CTS_BUF_CELL)" \
-                     -wire_unit 20
+if {[info exist ::env(CTS_CLUSTER_SIZE)]} {
+  set cluster_size "$::env(CTS_CLUSTER_SIZE)"
+} else {
+  set cluster_size 30
+}
+if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
+  set cluster_diameter "$::env(CTS_CLUSTER_DIAMETER)"
+} else {
+  set cluster_diameter 100
+}
+
+if {[info exist ::env(CTS_BUF_DISTANCE)]} {
+clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+                     -sink_clustering_enable \
+                     -sink_clustering_size $cluster_size \
+                     -sink_clustering_max_diameter $cluster_diameter \
+                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
+} else {
+clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+                     -sink_clustering_enable \
+                     -sink_clustering_size $cluster_size \
+                     -sink_clustering_max_diameter $cluster_diameter \
+
+}
+
 
 set_propagated_clock [all_clocks]
 
-# This should be required, NOT conditional -cherry
-if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
-  source $::env(PLATFORM_DIR)/setRC.tcl
-}
-
 estimate_parasitics -placement
 set_dont_use $::env(DONT_USE_CELLS)
-repair_clock_nets -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell "$::env(CTS_BUF_CELL)"
+repair_clock_nets
 
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 detailed_placement
 
-puts "Repair hold violations..."
 estimate_parasitics -placement
-repair_hold_violations -buffer_cell $::env(HOLD_BUF_CELL)
 
+puts "Repair hold violations..."
+if { [catch {repair_timing -hold }]} {
+  puts "hold utilization limit caught, continuing"
+}
+puts "Repair setup violations..."
+if { [catch {repair_timing -setup }]} {
+  puts "setup utilization limit caught, continuing"
+}
 
 puts "\n=========================================================================="
 puts "post cts report_checks -path_delay min"
@@ -92,7 +116,7 @@ report_clock_skew
 detailed_placement
 check_placement
 
-if {$::env(PLATFORM) == "gf12"} {
+if {[info exists ::env(PAD_CORNER)]} {
   puts "\[INFO-FLOW\] OpenROAD - post cts patch\n"
   
   #--------------------------------------------------------------------------------
@@ -101,7 +125,7 @@ if {$::env(PLATFORM) == "gf12"} {
   set block [[$db getChip] getBlock]
   set tech [$db getTech]
   
-  set master [$db findMaster IN12LP_GPIO18_13M9S30P_CORNER]
+  set master [$db findMaster $::env(PAD_CORNER)]
   
   if { $master != "NULL" } {
     set xList [list]

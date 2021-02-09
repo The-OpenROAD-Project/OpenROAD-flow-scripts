@@ -33,6 +33,26 @@ pipeline {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'
           }
         }
+        stage('sky130_hs_gcd') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hs"'
+          }
+        }
+        stage('sky130_hs_aes') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hs"'
+          }
+        }
+        stage('sky130_hd_gcd') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hd"'
+          }
+        }
+        stage('sky130_hd_aes') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hd"'
+          }
+        }
       }
     }
   }
@@ -42,7 +62,7 @@ pipeline {
     }
     failure {
       script {
-        if ( env.BRANCH_NAME == 'openroad' ) {
+        if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'openroad' ) {
           echo('Main development branch: report to stakeholders and commit author.')
           EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS"
           REPLY_TO="$EMAIL_TO"

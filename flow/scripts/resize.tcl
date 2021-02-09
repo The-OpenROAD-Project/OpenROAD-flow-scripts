@@ -29,14 +29,9 @@ proc print_banner {header} {
 }
 
 # Set res and cap
-if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
-  source $::env(PLATFORM_DIR)/setRC.tcl
-}
+source $::env(PLATFORM_DIR)/setRC.tcl
 
 estimate_parasitics -placement
-
-# pre report
-log_begin $::env(REPORTS_DIR)/3_pre_resize.rpt
 
 print_banner "report_checks"
 report_checks
@@ -58,21 +53,16 @@ puts [sta::network_leaf_pin_count]
 
 puts ""
 
-log_end
-
-# Set the buffer cell
-set buffer_cell [get_lib_cell [lindex $::env(MIN_BUF_CELL_AND_PORTS) 0]]
 set_dont_use $::env(DONT_USE_CELLS)
 
 # Do not buffer chip-level designs
 if {![info exists ::env(FOOTPRINT)]} {
   puts "Perform port buffering..."
-#  buffer_ports -buffer_cell $buffer_cell
+  buffer_ports
 }
 
 puts "Perform buffer insertion..."
-set_max_fanout $::env(MAX_FANOUT) [current_design]
-repair_design -max_wire_length $::env(MAX_WIRE_LENGTH) -buffer_cell $buffer_cell
+repair_design
 
 if { [info exists env(TIE_SEPARATION)] } {
   set tie_separation $env(TIE_SEPARATION)
@@ -97,7 +87,6 @@ repair_tie_fanout -separation $tie_separation $tiehi_pin
 # hold violations are not repaired until after CTS
 
 # post report
-log_begin $::env(REPORTS_DIR)/3_post_resize.rpt
 
 print_banner "report_floating_nets"
 report_floating_nets
@@ -126,8 +115,6 @@ print_banner "pin_count"
 puts [sta::network_leaf_pin_count]
 
 puts ""
-
-log_end
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/3_3_place_resized.def

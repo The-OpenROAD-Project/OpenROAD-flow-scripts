@@ -1,12 +1,25 @@
-yosys -import
+if {![info exists standalone] || $standalone} {
+  # Read lef
+  read_lef $::env(TECH_LEF)
+  read_lef $::env(SC_LEF)
+  if {[info exist ::env(ADDITIONAL_LEFS)]} {
+    foreach lef $::env(ADDITIONAL_LEFS) {
+      read_lef $lef
+    }
+  }
 
-# Read blackbox stubs of standard cells. This allows for standard cell (or
-# structural netlist) support in the input verilog
-# Blackbox file must have power ports
-read_verilog $::env(BLACKBOX_LVS_FILE)
+  # Read liberty files
+  foreach libFile $::env(LIB_FILES) {
+    read_liberty $libFile
+  }
 
-# Read verilog netlist
-read_verilog $::env(RESULTS_DIR)/6_final.v
+  # Read def
+  read_def $::env(RESULTS_DIR)/6_1_fill.def
+}
 
-# Write spice netlist
-write_spice $::env(RESULTS_DIR)/6_final.cdl
+cdl read_masters $::env(CDL_FILE)
+cdl out $::env(RESULTS_DIR)/6_final.cdl
+
+if {![info exists standalone] || $standalone} {
+  exit
+}

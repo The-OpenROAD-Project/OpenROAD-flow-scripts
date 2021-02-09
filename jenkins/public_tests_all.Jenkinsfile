@@ -23,26 +23,6 @@ pipeline {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"'
           }
         }
-        stage('nangate45_black_parrot') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh black_parrot nangate45"'
-          }
-        }
-        stage('nangate45_bp_be_top') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh bp_be_top nangate45"'
-          }
-        }
-        stage('nangate45_bp_fe_top') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh bp_fe_top nangate45"'
-          }
-        }
-        stage('nangate45_bp_multi_top') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh bp_multi_top nangate45"'
-          }
-        }
         stage('nangate45_dynamic_node') {
           steps {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh dynamic_node nangate45"'
@@ -68,14 +48,49 @@ pipeline {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh swerv nangate45"'
           }
         }
-        stage('nangate45_swerv_wrapper') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh swerv_wrapper nangate45"'
-          }
-        }
         stage('nangate45_tinyRocket') {
           steps {
             sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'
+          }
+        }
+        stage('sky130_hs_gcd') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hs"'
+          }
+        }
+        stage('sky130_hs_aes') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hs"'
+          }
+        }
+        stage('sky130_hs_ibex') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hs"'
+          }
+        }
+        stage('sky130_hs_jpeg') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hs"'
+          }
+        }
+        stage('sky130_hd_gcd') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hd"'
+          }
+        }
+        stage('sky130_hd_aes') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hd"'
+          }
+        }
+        stage('sky130_hd_ibex') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hd"'
+          }
+        }
+        stage('sky130_hd_jpeg') {
+          steps {
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hd"'
           }
         }
       }
@@ -87,7 +102,7 @@ pipeline {
     }
     failure {
       script {
-        if ( env.BRANCH_NAME == 'openroad' ) {
+        if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'openroad' ) {
           echo('Main development branch: report to stakeholders and commit author.')
           EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS"
           REPLY_TO="$EMAIL_TO"

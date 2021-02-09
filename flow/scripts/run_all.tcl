@@ -34,7 +34,7 @@ if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
 
 # Floorplan
 source -verbose $::env(SCRIPTS_DIR)/floorplan.tcl
-source -verbose $::env(SCRIPTS_DIR)/io_placement.tcl
+source -verbose $::env(SCRIPTS_DIR)/io_placement_random.tcl
 source -verbose $::env(SCRIPTS_DIR)/tdms_place.tcl
 source -verbose $::env(SCRIPTS_DIR)/macro_place.tcl
 source -verbose $::env(SCRIPTS_DIR)/tapcell.tcl
@@ -42,20 +42,22 @@ source -verbose $::env(SCRIPTS_DIR)/pdn.tcl
 
 # Place
 source -verbose $::env(SCRIPTS_DIR)/global_place.tcl
+source -verbose $::env(SCRIPTS_DIR)/io_placement.tcl
 source -verbose $::env(SCRIPTS_DIR)/resize.tcl
 source -verbose $::env(SCRIPTS_DIR)/detail_place.tcl
 
 # CTS
 source -verbose $::env(SCRIPTS_DIR)/cts.tcl
-
-# Save output for detail route
-write_def $::env(RESULTS_DIR)/4_cts.def
+source -verbose $::env(SCRIPTS_DIR)/fillcell.tcl
 
 # Route
 source -verbose $::env(SCRIPTS_DIR)/global_route.tcl
+source -verbose $::env(SCRIPTS_DIR)/detail_route.tcl
 
-# Detail route not integrated yet
-source -verbose $::env(SCRIPTS_DIR)/tritonRoute.tcl
+# Finishing
+ifneq ($(USE_FILL),)
+source -verbose $::env(SCRIPTS_DIR)/density_fill.tcl
+endif
 
 # Finishing
 source -verbose $::env(SCRIPTS_DIR)/final_report.tcl
