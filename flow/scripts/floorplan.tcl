@@ -32,8 +32,8 @@ if {[info exists ::env(FOOTPRINT)]} {
   ICeWall load_footprint $env(FOOTPRINT)
 
   initialize_floorplan \
-    -die_area  [ICeWall get_die_area] \
-    -core_area [ICeWall get_core_area] \
+    -die_area  $::env(DIE_AREA) \
+    -core_area $::env(CORE_AREA) \
     -tracks    $::env(TRACKS_INFO_FILE) \
     -site      $::env(PLACE_SITE)
 

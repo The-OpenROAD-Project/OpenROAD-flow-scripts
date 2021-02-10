@@ -14,7 +14,7 @@ export TIELO_CELL_AND_PORT = sky130_fd_sc_hs__conb_1 LO
 export MIN_BUF_CELL_AND_PORTS = sky130_fd_sc_hs__buf_4 A X
 
 # Used in synthesis
-export MAX_FANOUT = 5
+export MAX_FANOUT ?= 100
 
 # Blackbox verilog file
 # List all standard cells and cells yosys should treat as blackboxes here
@@ -37,13 +37,14 @@ export IP_GLOBAL_CFG = ./platforms/$(PLATFORM)/IP_global.cfg
 export TECH_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hs.tlef
 export SC_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hs_merged.lef
 
-export LIB_FILES = ./platforms/$(PLATFORM)/lib/sky130_fd_sc_hs__tt_100C_1v80.lib
+export LIB_FILES = ./platforms/$(PLATFORM)/lib/sky130_fd_sc_hs__tt_025C_1v80.lib \
                      $(ADDITIONAL_LIBS)
 export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*.gds) \
                      $(ADDITIONAL_GDS_FILES)
 
 # Cell padding in SITE widths to ease rout-ability
-export CELL_PAD_IN_SITES = 4
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 2
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 4
 
 # Endcap and Welltie cells
 export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
@@ -71,7 +72,6 @@ export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
 # Specify at least one filler cell if none
 
 export DONT_USE_CELLS += 
-
 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
