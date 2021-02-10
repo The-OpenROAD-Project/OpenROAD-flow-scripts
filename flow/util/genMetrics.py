@@ -501,7 +501,11 @@ for platform_it in os.scandir(rootdir):
                     all_metrics_df = design_metrics_df
                 else:
                     all_metrics_df = all_metrics_df.merge(design_metrics_df, on = 'Metrics', how = 'inner')
-print(all_metrics_df)
+metrics_json = all_metrics_df.to_json(orient='columns')
+#print(metrics_json)
+with open("metrics.json", "w") as outFile:
+  outFile.write(json.dumps(metrics_json))
+#print(all_metrics_df)
 
 #
 # render to html
