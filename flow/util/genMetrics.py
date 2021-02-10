@@ -504,7 +504,7 @@ for platform_it in os.scandir(rootdir):
 metrics_json = all_metrics_df.to_json(orient='columns')
 #print(metrics_json)
 with open("metrics.json", "w") as outFile:
-  outFile.write(json.dumps(metrics_json))
+  outFile.write(metrics_json)
 #print(all_metrics_df)
 
 #
