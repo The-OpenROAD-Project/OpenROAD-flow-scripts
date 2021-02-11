@@ -10,6 +10,8 @@ if {![info exists standalone] || $standalone} {
 
   # Read def
   read_def $::env(RESULTS_DIR)/5_route.def
+} else {
+  puts "Starting density fill"
 }
 
 # Delete routing obstructions for final DEF

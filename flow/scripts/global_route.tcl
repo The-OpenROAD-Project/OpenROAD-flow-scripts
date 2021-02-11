@@ -21,6 +21,8 @@ if {![info exists standalone] || $standalone} {
     source $::env(PLATFORM_DIR)/derate_final.tcl
     puts "derate_final.tcl sourced"
   }
+} else {
+  puts "Starting global routing"
 }
 
 if {[info exist ::env(FASTROUTE_TCL)]} {

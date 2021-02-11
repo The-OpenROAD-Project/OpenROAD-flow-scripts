@@ -19,6 +19,8 @@ if {![info exists standalone] || $standalone} {
   if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
     source $::env(PLATFORM_DIR)/derate.tcl
   }
+} else {
+  puts "Starting TDMS placement"
 }
 
 proc find_macros {} {
