@@ -15,6 +15,8 @@ if {![info exists standalone] || $standalone} {
 
   # Read design files
   read_def $::env(RESULTS_DIR)/4_1_cts.def
+} else {
+  puts "Starting fill cell"
 }
 
 filler_placement $::env(FILL_CELLS)
@@ -24,4 +26,7 @@ if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/4_2_cts_fillcell.def
   exit
+} else {
+  # FIXME: TritonRoute still requires this for .def.ref hack
+  write_def $::env(RESULTS_DIR)/4_cts.def
 }
