@@ -29,13 +29,14 @@ if {![info exists standalone] || $standalone} {
 
 # Initialize floorplan using ICeWall FOOTPRINT
 # ----------------------------------------------------------------------------
+
 if {[info exists ::env(FOOTPRINT)]} {
 
   ICeWall load_footprint $env(FOOTPRINT)
 
   initialize_floorplan \
-    -die_area  $::env(DIE_AREA) \
-    -core_area $::env(CORE_AREA) \
+    -die_area  [ICeWall get_die_area] \
+    -core_area [ICeWall get_core_area] \
     -tracks    $::env(TRACKS_INFO_FILE) \
     -site      $::env(PLACE_SITE)
 
