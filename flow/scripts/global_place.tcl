@@ -23,13 +23,17 @@ if {![info exists standalone] || $standalone} {
   puts "Starting global placement"
 }
 
+
+# Set res and cap
+source $::env(PLATFORM_DIR)/setRC.tcl
+
 if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
-global_placement -disable_timing_driven -density $::env(PLACE_DENSITY) \
+global_placement -density $::env(PLACE_DENSITY) \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     $::env(GLOBAL_PLACEMENT_ARGS)
 } else {
-global_placement -disable_timing_driven -density $::env(PLACE_DENSITY) \
+global_placement -density $::env(PLACE_DENSITY) \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 }
