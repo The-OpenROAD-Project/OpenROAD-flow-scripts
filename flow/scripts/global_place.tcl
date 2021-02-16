@@ -26,6 +26,7 @@ if {![info exists standalone] || $standalone} {
 
 # Set res and cap
 source $::env(PLATFORM_DIR)/setRC.tcl
+set_dont_use $::env(DONT_USE_CELLS)
 
 if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
 global_placement -density $::env(PLACE_DENSITY) \
