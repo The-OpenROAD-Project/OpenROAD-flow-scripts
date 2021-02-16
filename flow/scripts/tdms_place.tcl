@@ -39,6 +39,9 @@ proc find_macros {} {
   return $macros
 }
 
+# Set res and cap
+source $::env(PLATFORM_DIR)/setRC.tcl
+
 if {[info exists ::env(MACRO_PLACEMENT)]} {
     puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
 } elseif {[find_macros] != ""} {
