@@ -42,8 +42,7 @@ proc find_macros {} {
 if {[info exists ::env(MACRO_PLACEMENT)]} {
     puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
 } elseif {[find_macros] != ""} {
-    global_placement -disable_timing_driven \
-	             -disable_routability_driven -density $::env(PLACE_DENSITY) \
+    global_placement -disable_routability_driven -density $::env(PLACE_DENSITY) \
                      -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
                      -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 } else {
