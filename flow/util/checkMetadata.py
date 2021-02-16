@@ -17,8 +17,21 @@
 #
 # field is the name of a field in the metadata file
 # value is the reference value to compare to
-# operator can be one of "<", ">", "<=", ">=", "==", "!="
+# operator can be one of "<", ">", "<=", ">=", "==", "!=", "%"
 # The value is converted to a float for comparison if possible
+#
+# Note: the operator "%" computes the difference (in percentage) between the
+# reference value against the gold metadata. The test will pass if the
+# difference is +/- the value of the rule. In the example below, the value of
+# metricX can differ by +/- 10% between current run and the gold metadata file:
+#        ...
+#        {
+#            "field" : "metricX",
+#            "value" : 0.1,
+#            "compare": "%",
+#            "sign": "abs/inc/dec"
+#        }, ...
+#
 #-------------------------------------------------------------------------------
 
 import argparse  # argument parsing
@@ -29,7 +42,7 @@ import operator
 # Parse and validate arguments
 # ==============================================================================
 parser = argparse.ArgumentParser(
-    description='Generates metadata from OpenROAD flow')
+    description='Checks metadata from OpenROAD flow against a set of rules')
 parser.add_argument('--metadata', '-m', required=True,
                     help='The metadata file')
 parser.add_argument('--rules', '-r', required=True,
