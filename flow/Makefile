@@ -134,14 +134,12 @@ versions.txt:
 $(OBJECTS_DIR)/merged_spacing.lef: $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
 	mkdir -p $(OBJECTS_DIR)
 	$(UTILS_DIR)/mergeLef.py --inputLef $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
-	$(UTILS_DIR)/modifyLefSpacing.py -i $@ -o $@
 
 # Create special generic lef for TritonRoute if required.
 ifneq ($(GENERIC_TECH_LEF),)
 $(OBJECTS_DIR)/generic_merged_spacing.lef: $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
 	mkdir -p $(OBJECTS_DIR)
 	$(UTILS_DIR)/mergeLef.py --inputLef $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
-# 	$(UTILS_DIR)/modifyLefSpacing.py -i $@ -o $@
 endif
 
 # Pre-process libraries
