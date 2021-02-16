@@ -36,6 +36,8 @@ parser.add_argument('--rules', '-r', required=True,
                     help='The rules file')
 parser.add_argument('--goldMetadata', '-g', required=True,
                     help='The gold/reference metadata file')
+parser.add_argument('--rulesGlobal', '-l', required=False,
+                    help='The global rules file')
 args = parser.parse_args()
 
 with open(args.metadata) as metadataFile:
@@ -45,7 +47,13 @@ with open(args.goldMetadata) as goldMetadataFile:
     referenceMetadata = json.load(goldMetadataFile)
 
 with open(args.rules) as rulesFile:
-    rules = json.load(rulesFile)['rules']
+    rulesDesign = json.load(rulesFile)['rules']
+
+rulesGlobal = list()
+if args.rulesGlobal is not None:
+    with open(args.rulesGlobal) as rulesFile:
+        rulesGlobal = json.load(rulesFile)['rules']
+    rules = rulesDesign + rulesGlobal
 
 # Convert to a float if possible
 def try_number(s):
@@ -92,6 +100,6 @@ for rule in rules:
         print('Passed: field {} passed rule {} {} {}'.format(field, check_value, compare, rule_value))
 
 if not errors:
-    print('All metadata rules passed ({} rules)'.format(len(rules)))
+    print('All metadata rules passed ({} rules)'.format(len(rulesDesign)+len(rulesGlobal)))
 
 sys.exit(1 if errors else 0)

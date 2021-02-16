@@ -1,0 +1,9 @@
+{
+    "rules": [
+        {
+            "field" : "detailedroute__errors__count",
+            "value" : 0,
+            "compare": "<="
+        }
+    ]
+}
