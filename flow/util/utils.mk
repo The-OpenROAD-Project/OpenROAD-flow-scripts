@@ -10,11 +10,13 @@ clean_metadata:
 $(REPORTS_DIR)/metadata.json:
 	$(UTILS_DIR)/genMetadata.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -o $@
 
-RULES = $(dir $(DESIGN_CONFIG))rules.json
+RULES_DESIGN = $(dir $(DESIGN_CONFIG))rules.json
+RULES_GLOBAL = $(UTILS_DIR)/rules-global.json
+GOLD_METADATA = $(dir $(DESIGN_CONFIG))metadata-ok.json
 
 $(REPORTS_DIR)/metadata-check.log: $(REPORTS_DIR)/metadata.json
-	if test -f $(RULES); then \
-	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES) | tee $@; \
+	if test -f $(RULES_DESIGN); then \
+	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) -g $(GOLD_METADATA) -l $(RULES_GLOBAL) | tee $@; \
 	else \
 	  echo "No rules" | tee $@; \
 	fi
