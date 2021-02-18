@@ -49,7 +49,7 @@
 # DESIGN_CONFIG=./designs/gf12/bp_quad/config.mk
 
 # DESIGN_CONFIG=./designs/sky130hd/gcd/config.mk
- DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/aes/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/jpeg/config.mk
 
