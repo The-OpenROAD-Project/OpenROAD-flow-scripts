@@ -45,8 +45,6 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
 
 
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_core.sv2v.v \
-                       ./designs/src/$(DESIGN_NICKNAME)/prim_clock_gating.sv
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 # These values must be multiples of placement site
