@@ -84,6 +84,7 @@ if [ -z ${OPENROAD_FLOW_NO_GIT_INIT+x} ]; then
 fi
 
 if [ ! -z ${OR_BRANCH+x} ]; then
+  echo "updating OpenROAD tool to the latest"
   (cd tools/OpenROAD && git checkout ${OR_BRANCH} && git pull && git submodule update --init --recursive)
 fi
 
