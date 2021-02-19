@@ -46,7 +46,9 @@ if {[find_macros] != ""} {
     puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
     read_macro_placement $::env(MACRO_PLACEMENT)
   } else {
-    macro_placement -global_config $::env(IP_GLOBAL_CFG)
+    macro_placement \
+      -halo $::env(MACRO_PLACE_HALO) \
+      -channel $::env(MACRO_PLACE_CHANNEL)
   }
 
   if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {

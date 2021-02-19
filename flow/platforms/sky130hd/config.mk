@@ -31,7 +31,8 @@ export PLACE_SITE = unithd
 # Track information for generating DEF tracks
 export TRACKS_INFO_FILE = ./platforms/$(PLATFORM)/tracks_hd.info
 
-export IP_GLOBAL_CFG = ./platforms/$(PLATFORM)/IP_global.cfg
+export MACRO_PLACE_HALO = 1 1
+export MACRO_PLACE_CHANNEL = 80 80
 
 export TECH_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hd.tlef
 export SC_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hd_merged.lef
