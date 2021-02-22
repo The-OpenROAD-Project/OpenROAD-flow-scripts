@@ -59,8 +59,6 @@ export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
 export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.cfg
 
-# TODO: replace this with max(CHANNEL_WIDTH_[HV]) from IP_global.cfg
-export MACRO_BLOCKAGE_HALO = 25
-export MACRO_PLACEMENT_FENCE = 350 640 2650 2640
-
-export IP_GLOBAL_CFG ?= $(PLATFORM_DIR)/bp/IP_global_bp_dual.cfg
+# Define macro halo and channel spacings
+export MACRO_PLACE_HALO = 0 0
+export MACRO_PLACE_CHANNEL = 30.24 30.24
