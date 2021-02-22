@@ -84,7 +84,7 @@ ops = { "<" : operator.lt,
         "%" : "delta",
       }
 
-errors = False
+errors = 0
 
 for rule in rules:
     field = rule['field']
@@ -95,24 +95,41 @@ for rule in rules:
 
     if op == "delta":
         reference_value = try_number(referenceMetadata[field])
-        if isinstance(check_value, float) != isinstance(reference_value, float):
-            errors = True
+        if not isinstance(check_value, float) or not isinstance(reference_value, float):
+            print('Error: field {} fails rule {} {} {}'.format(field, check_value, compare, rule_value))
+            errors += 1
             continue
-        percentage = (check_value - reference_value) / reference_value
+        percentage = (check_value - reference_value) / reference_value * 100
         print("check_value = {}, reference_value = {}, diff_percentage = {}%".format(
-            check_value, reference_value, percentage*100))
-        check_value = abs(percentage)
-        op = operator.le
-        compare = "(module value) should be less or equal than"
+            check_value, reference_value, percentage))
+        check_value = percentage
+        if not rule.has_key('sign') or rule['sign'] == 'abs':
+            check_value = abs(check_value)
+            op = operator.le
+            compare = "(module value) should be less or equal than"
+        elif rule['sign'] == 'inc':
+            op = operator.le
+            compare = "<="
+        elif rule['sign'] == 'dec':
+            if rule_value > 0.0:
+                rule_value = - rule_value
+            op = operator.ge
+            compare = ">="
+        else:
+            print('invalid sign filed', rule['sign'])
+            errors += 1
+            continue
 
     if (isinstance(rule_value, float) != isinstance(check_value, float)
         or not op(check_value, rule_value)):
-        errors = True
+        errors += 1
         print('Error: field {} fails rule {} {} {}'.format(field, check_value, compare, rule_value))
     else:
         print('Passed: field {} passed rule {} {} {}'.format(field, check_value, compare, rule_value))
 
-if not errors:
+if errors == 0:
     print('All metadata rules passed ({} rules)'.format(len(rulesDesign)+len(rulesGlobal)))
+else:
+    print('Failed metadata checks: {} out of {}'.format(errors, len(rulesDesign)+len(rulesGlobal)))
 
 sys.exit(1 if errors else 0)
