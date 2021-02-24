@@ -453,8 +453,6 @@ if failed:
 else:
   jsonFile["total_time"] = str(total)
 
-#print(jsonFile)
-#json.dump(jsonFile, resultSpecfile, indent=2)
 with open(args.output, "w") as resultSpecfile:
   json.dump(jsonFile, resultSpecfile, indent=2)
 
