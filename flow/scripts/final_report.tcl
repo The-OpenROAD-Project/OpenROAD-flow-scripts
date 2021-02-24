@@ -29,6 +29,9 @@ deleteRoutingObstructions
 write_def $::env(RESULTS_DIR)/6_final.def
 write_verilog $::env(RESULTS_DIR)/6_final.v
 
+report_design_area
+report_power
+
 if {![info exists standalone] || $standalone} {
   exit
 }

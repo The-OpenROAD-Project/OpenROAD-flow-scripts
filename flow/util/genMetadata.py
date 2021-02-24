@@ -404,8 +404,9 @@ extractTagFromFile("finish__power__total",
                    logPath+"/6_report.log", t=float)
 
 extractTagFromFile("finish__area",
-                   "^Design area (\S+ \S+)",
+                   "^Design area (\S+)",
                    logPath+"/6_report.log")
+
 extractTagFromFile("finish__util",
                    "^Design area.* (\S+%) utilization",
                    logPath+"/6_report.log")
