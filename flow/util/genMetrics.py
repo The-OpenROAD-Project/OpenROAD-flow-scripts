@@ -102,14 +102,14 @@ def extract_metrics(cwd, plt, des):
     now = datetime.datetime.now()
     metrics_dict = {}
 
-    jsonFile["run__flow__generate_date"] = now.strftime("%Y-%m-%d %H:%M")
+    jsonFile["run__flow__generate__date"] = now.strftime("%Y-%m-%d %H:%M")
     cmdOutput = subprocess.check_output(['openroad', '-version'])
     cmdFields = cmdOutput.split()
-    jsonFile["run__flow__openroad_version"] = cmdFields[0]
+    jsonFile["run__flow__openroad__version"] = cmdFields[0]
     if (len(cmdFields) > 1):
-      jsonFile["run__flow__openroad_commit"] = cmdFields[1]
+      jsonFile["run__flow__openroad__commit"] = cmdFields[1]
     else:
-      jsonFile["run__flow__openroad_commit"] = "N/A"
+      jsonFile["run__flow__openroad__commit"] = "N/A"
     jsonFile["run__flow__uuid"] = str(uuid.uuid4())
     jsonFile["run__flow__design"] = des
     jsonFile["run__flow__platform"] = plt
@@ -121,24 +121,24 @@ def extract_metrics(cwd, plt, des):
 # Synthesis
 # ==============================================================================
 # yosys
-    extractTagFromFile("run__synth__yosys_version",
+    extractTagFromFile("run__synth__yosys__version",
                        "^Yosys (.*)",
                        logPath+"/1_1_yosys.log")
     extractTagFromFile("synth__inst__num__total",
                        "Number of cells: +(\S+)",
                        rptPath+"/synth_stat.txt", t=int)
     metrics_dict["synth__inst__num__total"] = jsonFile["synth__inst__num__total"]
-    extractTagFromFile("synth__inst__stdcell__area__total",
+    extractTagFromFile("synth__inst__area__stdcell",
                        "Chip area for module.*: +(\S+)",
                        rptPath+"/synth_stat.txt", t=float)
-    metrics_dict["synth__inst__area__stdcell"] = jsonFile["synth__inst__stdcell__area__total"]
-    extractTagFromFile("run__synth__yosys_runtime__total",
+    metrics_dict["synth__inst__area__stdcell"] = jsonFile["synth__inst__area__stdcell"]
+    extractTagFromFile("run__synth__yosys__runtime",
                        "CPU: user (\S+)",
                        logPath+"/1_1_yosys.log")
-    extractTagFromFile("run__synth__yosys_mem",
+    extractTagFromFile("run__synth__yosys__mem",
                        "CPU: user.*MEM: (\S+ \S+)",
                        logPath+"/1_1_yosys.log")
-    extractTagFromFile("run__synth__yosys_warnings",
+    extractTagFromFile("run__synth__yosys__warnings",
                        "Warnings: \d+ unique messages, (\d+) total",
                        logPath+"/1_1_yosys.log", t=int)
 
@@ -152,15 +152,15 @@ def extract_metrics(cwd, plt, des):
 
 # Floorplan
 # ==============================================================================
-    extractTagFromFile("floorplan__slack__average__totneg",
+    extractTagFromFile("floorplan__timing__tns_total",
                        "^tns (\S+)",
                        logPath+"/2_1_floorplan.log", t=float)
-    metrics_dict["floorplan__timing__tns_total"] = jsonFile["floorplan__slack__average__totneg"]
+    metrics_dict["floorplan__timing__tns_total"] = jsonFile["floorplan__timing__tns_total"]
 
-    extractTagFromFile("floorplan__slack__average__worst",
+    extractTagFromFile("floorplan__timing__wns__worst",
                        "^wns (\S+)",
                        logPath+"/2_1_floorplan.log", t=float)
-    metrics_dict["floorplan__timing__wns__worst"] = jsonFile["floorplan__slack__average__worst"]
+    metrics_dict["floorplan__timing__wns__worst"] = jsonFile["floorplan__timing__wns__worst"]
 
     metrics_dict["floorplan__timing__tns__regreg"] = "N/A"
     metrics_dict["floorplan__timing__wns__regreg"] = "N/A"
@@ -169,28 +169,28 @@ def extract_metrics(cwd, plt, des):
     metrics_dict["floorplan__timing__tns__regpo"] = "N/A"
     metrics_dict["floorplan__timing__wns__regpo"] = "N/A"
 
-    extractTagFromFile("floorplan__std__area__total",
+    extractTagFromFile("floorplan__inst__area__stdcell",
                        "^Design area (\S+) u\^2",
                        logPath+"/2_1_floorplan.log", t=int)
     metrics_dict["floorplan__inst__count__stdcell"] = 0
-    metrics_dict["floorplan__inst__area__stdcell"] = jsonFile["floorplan__std__area__total"]
+    metrics_dict["floorplan__inst__area__stdcell"] = jsonFile["floorplan__inst__area__stdcell"]
 
-    extractTagFromFile("macroplace__inst__macro__count__total",
+    extractTagFromFile("floorplan__inst__count__macros",
                        "Extracted # Macros: (\S+)",
                        logPath+"/2_4_mplace.log", -1, 0, t=int)
-    metrics_dict["floorplan__inst__count__macros"] = jsonFile["macroplace__inst__macro__count__total" ]
+    metrics_dict["floorplan__inst__count__macros"] = jsonFile["floorplan__inst__count__macros" ]
 
     metrics_dict["floorplan__inst__area__macros"] = 0 
     metrics_dict["floorplan__inst__area__total"] = 0 
-    extractTagFromFile("floorplan__io__count__total",
+    extractTagFromFile("floorplan__inst__count__IO",
                        "Num of I/O +(\d+)",
                        logPath+"/3_2_place_iop.log", t=int)
-    metrics_dict["floorplan__inst__count__IO"] = jsonFile["floorplan__io__count__total"]
+    metrics_dict["floorplan__inst__count__IO"] = jsonFile["floorplan__inst__count__IO"]
 
-    extractTagFromFile("floorplan__util",
+    extractTagFromFile("floorplan__inst__area__util",
                        "^Design area.* (\S+%) utilization",
                        logPath+"/2_1_floorplan.log")
-    metrics_dict["floorplan__inst__area__util"] = jsonFile["floorplan__util"]
+    metrics_dict["floorplan__inst__area__util"] = jsonFile["floorplan__inst__area__util"]
 
     '''
     extractTagFromFile("run__floorplan__warnings",
@@ -216,10 +216,10 @@ def extract_metrics(cwd, plt, des):
 # ==============================================================================
 
 # global place
-    extractTagFromFile("globalplace__target_density",
+    extractTagFromFile("globalplace__density__target",
                        "TargetDensity: (\S+)",
                        logPath+"/3_1_place_gp.log")
-    metrics_dict["globalplace__density__target"] = jsonFile["globalplace__target_density"]
+    metrics_dict["globalplace__density__target"] = jsonFile["globalplace__density__target"]
 
     extractTagFromFile("globalplace__wirelength__est",
                        "Total wirelength: (\S+)",
@@ -256,21 +256,21 @@ def extract_metrics(cwd, plt, des):
                        "^Design area.* (\S+%) utilization",
                        rptPath+"/3_pre_resize.rpt")
     '''
-    extractTagFromFile("resizer__ibuf_count",
+    extractTagFromFile("placeopt__buffer__input__count",
                        "Inserted (\d+) input buffers",
                        logPath+"/3_3_resizer.log", t=int)
-    metrics_dict["placeopt__buffer___input__count"] = jsonFile["resizer__ibuf_count"]
+    metrics_dict["placeopt__buffer__input__count"] = jsonFile["placeopt__buffer__input__count"]
 
-    extractTagFromFile("resizer__obuf_count",
+    extractTagFromFile("placeopt__buffer__output__count",
                        "Inserted (\d+) output buffers",
                        logPath+"/3_3_resizer.log", t=int)
-    metrics_dict["placeopt__buffer__output__count"] = jsonFile["resizer__obuf_count"]
+    metrics_dict["placeopt__buffer__output__count"] = jsonFile["placeopt__buffer__output__count"]
 
 
-    extractTagFromFile("resizer__resize_count",
+    extractTagFromFile("placeopt__resize__inst__count",
                        "Resized (\d+) instances",
                        logPath+"/3_3_resizer.log", t=int)
-    metrics_dict["placeopt__resize__inst__count"] = jsonFile["resizer__resize_count"]
+    metrics_dict["placeopt__resize__inst__count"] = jsonFile["placeopt__resize__inst__count"]
 
     '''
     extractTagFromFile("resizer__hbuf_count",
@@ -340,30 +340,30 @@ def extract_metrics(cwd, plt, des):
                        logPath+"/3_4_opendp.log", t=int)
     '''
 
-    extractTagFromFile("detailedplace__total_displacement",
+    extractTagFromFile("detailedplace__inst__displacement__total",
                        "total displacement +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log", t=float)
-    metrics_dict["detailedplace__inst__displacement__total"] = jsonFile["detailedplace__total_displacement"]
+    metrics_dict["detailedplace__inst__displacement__total"] = jsonFile["detailedplace__inst__displacement__total"]
 
-    extractTagFromFile("detailedplace__average_displacement",
+    extractTagFromFile("detailedplace__inst__displacement__average",
                        "average displacement +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log", t=float)
-    metrics_dict["detailedplace__inst__displacement__average"] = jsonFile["detailedplace__average_displacement"]
+    metrics_dict["detailedplace__inst__displacement__average"] = jsonFile["detailedplace__inst__displacement__average"]
 
-    extractTagFromFile("detailedplace__max_displacement",
+    extractTagFromFile("detailedplace__inst__displacement__max",
                        "max displacement +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log", t=float)
-    metrics_dict["detailedplace__inst__displacement__max"] = jsonFile["detailedplace__max_displacement"]
+    metrics_dict["detailedplace__inst__displacement__max"] = jsonFile["detailedplace__inst__displacement__max"]
 
-    extractTagFromFile("detailedplace__wirelength__est__original",
+    extractTagFromFile("detailedplace__wirelength__initial__estimate",
                        "original HPWL +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log", t=float)
-    metrics_dict["detailedplace__wirelength__initial__estimate"] = jsonFile["detailedplace__wirelength__est__original"]
+    metrics_dict["detailedplace__wirelength__initial__estimate"] = jsonFile["detailedplace__wirelength__initial__estimate"]
 
-    extractTagFromFile("detailedplace__wirelength__est__legalized",
+    extractTagFromFile("detailedplace__wirelength__final__estimate",
                        "legalized HPWL +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log", t=float)
-    metrics_dict["detailedplace__wirelength__final__estimate"] = jsonFile["detailedplace__wirelength__est__legalized"]
+    metrics_dict["detailedplace__wirelength__final__estimate"] = jsonFile["detailedplace__wirelength__final__estimate"]
 
     metrics_dict["detailedplace_timing_tns_total"] = "N/A"
     metrics_dict["detailedplace_timing_wns_worst"] = "N/A"
@@ -388,8 +388,8 @@ def extract_metrics(cwd, plt, des):
                        "^wns (\S+)",
                        logPath+"/4_1_cts.log", t=float)
     metrics_dict["cts__timing__wns__worst"] = jsonFile["cts__timing__slack__wns"]
-    metrics_dict["cts__timing__skew__worst"] = 59.49 
-    metrics_dict["cts__timing__latency__worst"] = 114.64 
+    metrics_dict["cts__timing__skew__worst"] = 0 
+    metrics_dict["cts__timing__latency__worst"] = 0 
 
 
 # ==============================================================================
@@ -438,15 +438,15 @@ def extract_metrics(cwd, plt, des):
                        "Runtime taken \(hrt\): +(\S+)",
                        logPath+"/5_2_TritonRoute.log", t=float)
     '''
-    extractTagFromFile("detailedroute__wirelength__est",
+    extractTagFromFile("detailedroute__wirelength",
                        "total wire length = +(\S+) um",
                        logPath+"/5_2_TritonRoute.log", t=int)
-    metrics_dict["detailedroute__wirelength"] = jsonFile["detailedroute__wirelength__est"]
+    metrics_dict["detailedroute__wirelength"] = jsonFile["detailedroute__wirelength"]
 
-    extractTagFromFile("detailedroute__via__num__total",
+    extractTagFromFile("detailedroute__via__count",
                        "total number of vias = +(\S+)",
                        logPath+"/5_2_TritonRoute.log", t=int)
-    metrics_dict["detailedroute__via__count"] = jsonFile["detailedroute__via__num__total"]
+    metrics_dict["detailedroute__via__count"] = jsonFile["detailedroute__via__count"]
 
     '''
     extractTagFromFile("detailedroute__peak_mem",
@@ -457,15 +457,15 @@ def extract_metrics(cwd, plt, des):
                        "(?i)warning:",
                        logPath+"/5_2_TritonRoute.log", -2, 0)
     '''
-    extractTagFromFile("detailedroute__errors",
+    extractTagFromFile("detailedroute__errors__count",
                        "(?i)error:",
                        logPath+"/5_2_TritonRoute.log", -2, 0)
-    metrics_dict["detailedroute__errors__count"] = jsonFile["detailedroute__errors"]
+    metrics_dict["detailedroute__errors__count"] = jsonFile["detailedroute__errors__count"]
 
-    extractTagFromFile("detailedroute__drc__num__total",
+    extractTagFromFile("detailedroute__drc__error__count",
                        "(?i)violation",
                        rptPath+"/5_route_drc.rpt", -2, 0)
-    metrics_dict["detailedroute__drc__error__count"] = jsonFile["detailedroute__drc__num__total"]
+    metrics_dict["detailedroute__drc__error__count"] = jsonFile["detailedroute__drc__error__count"]
 
     '''
     extractGnuTime("run__detailedroute",logPath+"/5_2_TritonRoute.log")
@@ -477,7 +477,7 @@ def extract_metrics(cwd, plt, des):
     metrics_df = pd.DataFrame(list(metrics_dict.items()))
     col_index = metrics_df.iloc[0][1] + "__" + metrics_df.iloc[1][1]
     metrics_df.columns = ["Metrics", col_index]
-    return metrics_df
+    return metrics_dict, metrics_df
 
 
 # Main
@@ -487,6 +487,7 @@ rootdir = './logs'
 
 jsonFile = OrderedDict()
 all_metrics_df = pd.DataFrame()
+all_metrics = []
 
 cwd = os.getcwd()
 for platform_it in os.scandir(rootdir):
@@ -496,15 +497,19 @@ for platform_it in os.scandir(rootdir):
             if design_it.is_dir():
                 des = design_it.name
                 print(plt,des)
-                design_metrics_df = extract_metrics(cwd, plt, des)
+                design_metrics, design_metrics_df = extract_metrics(cwd, plt, des)
+                all_metrics.append(design_metrics)
                 if all_metrics_df.shape[0] == 0:
                     all_metrics_df = design_metrics_df
                 else:
                     all_metrics_df = all_metrics_df.merge(design_metrics_df, on = 'Metrics', how = 'inner')
-metrics_json = all_metrics_df.to_json(orient='columns')
+#print(all_metrics)
+#metrics_json = all_metrics_df.to_json(orient='columns')
+#metrics_json = all_metrics.to_json()
 #print(metrics_json)
 with open("metrics.json", "w") as outFile:
-  outFile.write(metrics_json)
+  json.dump(all_metrics, outFile)
+  #outFile.write(metrics_json)
 #print(all_metrics_df)
 
 #
