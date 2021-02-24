@@ -66,7 +66,8 @@ rulesGlobal = list()
 if args.rulesGlobal is not None:
     with open(args.rulesGlobal) as rulesFile:
         rulesGlobal = json.load(rulesFile)['rules']
-    rules = rulesDesign + rulesGlobal
+
+rules = rulesDesign + rulesGlobal
 
 # Convert to a float if possible
 def try_number(s):
