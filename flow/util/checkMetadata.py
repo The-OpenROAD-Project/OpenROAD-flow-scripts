@@ -40,6 +40,7 @@ import argparse  # argument parsing
 import json  # json parsing
 import sys
 import operator
+from os.path import isfile
 
 # Parse and validate arguments
 # ==============================================================================
@@ -51,8 +52,6 @@ parser.add_argument('--rules', '-r', required=True,
                     help='The rules file')
 parser.add_argument('--goldMetadata', '-g', required=True,
                     help='The gold/reference metadata file')
-parser.add_argument('--rulesGlobal', '-l', required=False,
-                    help='The global rules file')
 args = parser.parse_args()
 
 with open(args.metadata) as metadataFile:
@@ -61,15 +60,14 @@ with open(args.metadata) as metadataFile:
 with open(args.goldMetadata) as goldMetadataFile:
     referenceMetadata = json.load(goldMetadataFile)
 
-with open(args.rules) as rulesFile:
-    rulesDesign = json.load(rulesFile)['rules']
-
-rulesGlobal = list()
-if args.rulesGlobal is not None:
-    with open(args.rulesGlobal) as rulesFile:
-        rulesGlobal = json.load(rulesFile)['rules']
-
-rules = rulesDesign + rulesGlobal
+rules = list()
+for filePath in args.rules.split(','):
+    if isfile(filePath):
+        with open(filePath) as rulesFile:
+            rules += json.load(rulesFile)['rules']
+if len(rules) == 0:
+    print('No rules')
+    sys.exit(1)
 
 # Convert to a float if possible
 def try_number(s):
@@ -125,8 +123,8 @@ for rule in rules:
         print('Passed: field {} passed rule {} {} {}'.format(field, check_value, compare, rule_value))
 
 if errors == 0:
-    print('All metadata rules passed ({} rules)'.format(len(rulesDesign)+len(rulesGlobal)))
+    print('All metadata rules passed ({} rules)'.format(len(rules)))
 else:
-    print('Failed metadata checks: {} out of {}'.format(errors, len(rulesDesign)+len(rulesGlobal)))
+    print('Failed metadata checks: {} out of {}'.format(errors, len(rules)))
 
 sys.exit(1 if errors else 0)
