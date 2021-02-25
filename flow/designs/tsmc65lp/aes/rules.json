@@ -1,7 +1,7 @@
 {
     "rules": [
         {
-            "field" : "detailedroute__drc__num__total",
+            "field" : "detailedroute__drc__error__count",
             "value" : 6,
             "compare": "<="
         }
