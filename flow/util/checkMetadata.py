@@ -61,10 +61,12 @@ with open(args.goldMetadata) as goldMetadataFile:
     referenceMetadata = json.load(goldMetadataFile)
 
 rules = list()
-for filePath in args.rules.split(','):
+for filePath in args.rules:
     if isfile(filePath):
         with open(filePath) as rulesFile:
             rules += json.load(rulesFile)['rules']
+    else:
+        print('[WARN] File {} not found'.format(filePath))
 if len(rules) == 0:
     print('No rules')
     sys.exit(1)
