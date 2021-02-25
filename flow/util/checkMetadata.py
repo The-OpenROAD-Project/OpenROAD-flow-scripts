@@ -20,16 +20,18 @@
 # operator can be one of "<", ">", "<=", ">=", "==", "!=", "%"
 # The value is converted to a float for comparison if possible
 #
-# Note: the operator "%" computes the difference (in percentage) between the
-# reference value against the gold metadata. The test will pass if the
-# difference is +/- the value of the rule. In the example below, the value of
-# metricX can differ by +/- 10% between current run and the gold metadata file:
+# Note: the operator "%" computes the difference (in percentage) between
+# the reference value against the gold metadata. The rule also can have
+# an attribute called "sign". The values allowed are "abs" (default if not
+# explicitly defined), or one of "<", ">", "<=", ">=", "==", "!=".  In the
+# example below, the value of"tns" can differ by +/- 15% between current run
+# and the gold metadata file:
 #        ...
 #        {
-#            "field" : "metricX",
-#            "value" : 0.1,
+#            "field" : "tns",
+#            "value" : 15,
 #            "compare": "%",
-#            "sign": "abs/inc/dec"
+#            "sign": "abs"
 #        }, ...
 #
 #-------------------------------------------------------------------------------
@@ -109,18 +111,9 @@ for rule in rules:
             check_value = abs(check_value)
             op = operator.le
             compare = "(absolute value) <="
-        elif rule['sign'] == 'inc':
-            op = operator.le
-            compare = "<="
-        elif rule['sign'] == 'dec':
-            if rule_value > 0.0:
-                rule_value = - rule_value
-            op = operator.ge
-            compare = ">="
         else:
-            print('invalid sign filed', rule['sign'])
-            errors += 1
-            continue
+            compare = rule['sign']
+            op = ops[compare]
 
     if (isinstance(rule_value, float) != isinstance(check_value, float)
         or not op(check_value, rule_value)):

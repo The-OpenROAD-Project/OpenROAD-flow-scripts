@@ -4,6 +4,12 @@
             "field" : "detailedroute__errors__count",
             "value" : 0,
             "compare": "<="
+        },
+        {
+            "field" : "finish__area",
+            "value" : 1,
+            "compare": "%",
+            "sign": "<="
         }
     ]
 }
