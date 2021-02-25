@@ -33,7 +33,7 @@ export CORE_AREA 	= 20 20 2900 3500
 
 export chameleon_DIR = ./platforms/$(PLATFORM)/chameleon
 
-# DFFRAM_4K.gds needs to be uncompressed from DFFRAM_4K.7z first
+# DFFRAM_4K.7z in platforms/sky130hd/chameleon/gds is too large and needs to be uncompressed to DFFRAM_4K.gds
 export ADDITIONAL_GDS_FILES  = $(chameleon_DIR)/gds/apb_sys_0.gds \
                          	   $(chameleon_DIR)/gds/DMC_32x16HC.gds \
                                $(chameleon_DIR)/gds/DFFRAM_4K.gds \
@@ -44,7 +44,7 @@ export ADDITIONAL_LEFS  = $(chameleon_DIR)/lef/apb_sys_0.lef \
                           $(chameleon_DIR)/lef/DMC_32x16HC.lef \
                           $(chameleon_DIR)/lef/ibex_wrapper.lef
 
-export MACRO_PLACEMENT = $(chameleon_DIR)/chameleon.macro_placment.cfg
+#export MACRO_PLACEMENT = $(chameleon_DIR)/chameleon.macro_placment.cfg
 
 export PDN_CFG = $(chameleon_DIR)/pdn.cfg
 
