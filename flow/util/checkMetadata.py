@@ -107,7 +107,7 @@ for rule in rules:
         if not rule.has_key('sign') or rule['sign'] == 'abs':
             check_value = abs(check_value)
             op = operator.le
-            compare = "(module value) should be less or equal than"
+            compare = "(absolute value) <="
         elif rule['sign'] == 'inc':
             op = operator.le
             compare = "<="
