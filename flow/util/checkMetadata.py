@@ -22,9 +22,9 @@
 #
 # Note: the operator "%" computes the difference (in percentage) between
 # the reference value against the gold metadata. The rule also can have
-# an attribute called "sign". The values allowed are "abs" (default if not
-# explicitly defined), or one of "<", ">", "<=", ">=", "==", "!=".  In the
-# example below, the value of"tns" can differ by +/- 15% between current run
+# an attribute called "sign". The values allowed are "abs" for absolute value
+# (default if not explicitly defined), or one of "<", ">", "<=", ">=", "==", "!=".
+# In the example below, the value of "tns" can differ by +/- 15% between current run
 # and the gold metadata file:
 #        ...
 #        {
