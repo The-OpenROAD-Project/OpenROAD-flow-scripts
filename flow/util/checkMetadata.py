@@ -94,6 +94,7 @@ for rule in rules:
     op = ops[compare]
     check_value = try_number(metadata[field])
 
+    deltaErrorMessage = ''
     if op == "delta":
         reference_value = try_number(referenceMetadata[field])
         if not isinstance(check_value, float) or not isinstance(reference_value, float):
@@ -101,8 +102,8 @@ for rule in rules:
             errors += 1
             continue
         percentage = (check_value - reference_value) / reference_value * 100
-        print("check_value = {}, reference_value = {}, diff_percentage = {}%".format(
-            check_value, reference_value, percentage))
+        deltaErrorMessage = "check_value = {}, reference_value = {}, diff_percentage = {}%".format(
+                check_value, reference_value, percentage)
         check_value = percentage
         if not rule.has_key('sign') or rule['sign'] == 'abs':
             check_value = abs(check_value)
@@ -125,6 +126,8 @@ for rule in rules:
         or not op(check_value, rule_value)):
         errors += 1
         print('Error: field {} fails rule {} {} {}'.format(field, check_value, compare, rule_value))
+        if deltaErrorMessage != '':
+            print(deltaErrorMessage)
     else:
         print('Passed: field {} passed rule {} {} {}'.format(field, check_value, compare, rule_value))
 
