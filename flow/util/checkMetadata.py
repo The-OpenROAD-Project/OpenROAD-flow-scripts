@@ -48,7 +48,7 @@ parser = argparse.ArgumentParser(
     description='Checks metadata from OpenROAD flow against a set of rules')
 parser.add_argument('--metadata', '-m', required=True,
                     help='The metadata file')
-parser.add_argument('--rules', '-r', required=True,
+parser.add_argument('--rules', '-r', required=True, nargs='+',
                     help='The rules file')
 parser.add_argument('--goldMetadata', '-g', required=True,
                     help='The gold/reference metadata file')

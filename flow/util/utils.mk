@@ -15,7 +15,11 @@ RULES_GLOBAL = $(UTILS_DIR)/rules-global.json
 GOLD_METADATA = $(dir $(DESIGN_CONFIG))metadata-ok.json
 
 $(REPORTS_DIR)/metadata-check.log: $(REPORTS_DIR)/metadata.json
-	$(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN),$(RULES_GLOBAL)  -g $(GOLD_METADATA) | tee $@
+	if test -f $(RULES_DESIGN); then \
+	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) $(RULES_GLOBAL) -g $(GOLD_METADATA) | tee $@; \
+	else \
+	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_GLOBAL)  -g $(GOLD_METADATA) | tee $@; \
+	fi
 
 
 # Run test using gnu parallel
