@@ -44,21 +44,21 @@ export ADDITIONAL_LEFS  = $(chameleon_DIR)/lef/apb_sys_0.lef \
                           $(chameleon_DIR)/lef/DMC_32x16HC.lef \
                           $(chameleon_DIR)/lef/ibex_wrapper.lef
 
-#export MACRO_PLACEMENT = $(chameleon_DIR)/chameleon.macro_placment.cfg
+export MACRO_PLACEMENT = $(chameleon_DIR)/chameleon.macro_placment.cfg
 
-export PDN_CFG = $(chameleon_DIR)/pdn.cfg
-
-export _VDD_NET_NAME = vccd1
-export _GND_NET_NAME = vssd1
-export _V_OFFSET = 14
-export _H_OFFSET = $(_V_OFFSET)
-export _V_PITCH = 180
-export _H_PITCH = 180
-export _V_PDN_OFFSET = 0
-export _H_PDN_OFFSET = 0
-export _SPACING = 1.7
-export _WIDTH = 3
-export CONNECT_GRIDS = 1
+#export PDN_CFG = $(chameleon_DIR)/pdn.cfg
+#
+#export _VDD_NET_NAME = vccd1
+#export _GND_NET_NAME = vssd1
+#export _V_OFFSET = 14
+#export _H_OFFSET = $(_V_OFFSET)
+#export _V_PITCH = 180
+#export _H_PITCH = 180
+#export _V_PDN_OFFSET = 0
+#export _H_PDN_OFFSET = 0
+#export _SPACING = 1.7
+#export _WIDTH = 3
+#export CONNECT_GRIDS = 1
 
 
 export FP_PDN_RAIL_WIDTH = 0.48
