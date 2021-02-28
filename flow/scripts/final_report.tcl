@@ -26,6 +26,9 @@ if {![info exists standalone] || $standalone} {
 source scripts/deleteRoutingObstructions.tcl
 deleteRoutingObstructions
 
+report_power
+report_design_area
+
 write_def $::env(RESULTS_DIR)/6_final.def
 write_verilog $::env(RESULTS_DIR)/6_final.v
 
