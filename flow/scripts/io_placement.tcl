@@ -15,6 +15,8 @@ if {![info exists standalone] || $standalone} {
 
   # Read design files
   read_def $::env(RESULTS_DIR)/3_1_place_gp.def
+} else {
+  puts "Starting io placement"
 }
 
 if {![info exists ::env(FOOTPRINT)]} {

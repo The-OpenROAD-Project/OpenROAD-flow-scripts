@@ -15,6 +15,8 @@ if {![info exists standalone] || $standalone} {
 
   # Read design files
   read_def $::env(RESULTS_DIR)/2_4_floorplan_macro.def
+} else {
+  puts "Starting tapcell"
 }
 
 if {[info exist ::env(TAPCELL_TCL)]} {

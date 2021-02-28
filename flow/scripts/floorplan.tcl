@@ -23,10 +23,13 @@ if {![info exists standalone] || $standalone} {
   }
   set num_instances [llength [get_cells -hier *]]
   puts "number instances in verilog is $num_instances"
+} else {
+  puts "Starting floorplan"
 }
 
 # Initialize floorplan using ICeWall FOOTPRINT
 # ----------------------------------------------------------------------------
+
 if {[info exists ::env(FOOTPRINT)]} {
 
   ICeWall load_footprint $env(FOOTPRINT)
