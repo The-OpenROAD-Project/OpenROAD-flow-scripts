@@ -48,15 +48,15 @@
 # DESIGN_CONFIG=./designs/gf12/bp_dual/config.mk
 # DESIGN_CONFIG=./designs/gf12/bp_quad/config.mk
 
-# DESIGN_CONFIG=./designs/SKY130HD/gcd/config.mk
-# DESIGN_CONFIG=./designs/SKY130HD/ibex/config.mk
-# DESIGN_CONFIG=./designs/SKY130HD/aes/config.mk
-# DESIGN_CONFIG=./designs/SKY130HD/jpeg/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/gcd/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/aes/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/jpeg/config.mk
 
-# DESIGN_CONFIG=./designs/SKY130HS/gcd/config.mk
-# DESIGN_CONFIG=./designs/SKY130HS/ibex/config.mk
-# DESIGN_CONFIG=./designs/SKY130HS/aes/config.mk
-# DESIGN_CONFIG=./designs/SKY130HS/jpeg/config.mk
+# DESIGN_CONFIG=./designs/sky130hs/gcd/config.mk
+# DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
+# DESIGN_CONFIG=./designs/sky130hs/aes/config.mk
+# DESIGN_CONFIG=./designs/sky130hs/jpeg/config.mk
 
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
@@ -80,7 +80,7 @@ default: finish
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
 
-PUBLIC=nangate45 SKY130HD SKY130HS
+PUBLIC=nangate45 sky130hd sky130hs
 
 ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ./platforms/$(PLATFORM)
@@ -113,7 +113,7 @@ OPENROAD_CMD = openroad -no_init -exit
 
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
-WRAPPED_GDS  = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.gds))
+export WRAPPED_GDS  = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.gds))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
@@ -134,14 +134,12 @@ versions.txt:
 $(OBJECTS_DIR)/merged_spacing.lef: $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
 	mkdir -p $(OBJECTS_DIR)
 	$(UTILS_DIR)/mergeLef.py --inputLef $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
-	$(UTILS_DIR)/modifyLefSpacing.py -i $@ -o $@
 
 # Create special generic lef for TritonRoute if required.
 ifneq ($(GENERIC_TECH_LEF),)
 $(OBJECTS_DIR)/generic_merged_spacing.lef: $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
 	mkdir -p $(OBJECTS_DIR)
 	$(UTILS_DIR)/mergeLef.py --inputLef $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
-# 	$(UTILS_DIR)/modifyLefSpacing.py -i $@ -o $@
 endif
 
 # Pre-process libraries
@@ -310,14 +308,6 @@ $(RESULTS_DIR)/3_place.def: $(RESULTS_DIR)/3_4_place_dp.def
 
 $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
 	cp $< $@
-
-#OpeNPDN
-export OPDN_OPENDBPY = $(OPENROAD)/build/src/OpeNPDN/modules/OpenDB/src/swig/python/opendbpy.py
-OpeNPDN = $(OPENROAD)/src/OpeNPDN/
-export OPDN_SRC = $(OpeNPDN)
-
-analyze_power_grid: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc $(DONT_USE_LIBS)
-	($(TIME_CMD) $(OPENROAD_CMD) -exit $(SCRIPTS_DIR)/analyze_pdn_ir.tcl -metrics $(LOG_DIR)/analyze_pdn_ir.json) 2>&1 | tee $(LOG_DIR)/analyze_pdn_ir.log
 
 # Clean Targets
 #-------------------------------------------------------------------------------
@@ -545,7 +535,7 @@ clean_finish:
 #
 # ==============================================================================
 
-all: $(SDC_FILE) $(OBJECTS_DIR)/merged.lib $(OBJECTS_DIR)/TritonRoute.param $(OBJECTS_DIR)/klayout.lyt
+all: $(SDC_FILE) $(WRAPPED_LIBS) $(DONT_USE_LIBS) $(OBJECTS_DIR)/TritonRoute.param $(OBJECTS_DIR)/klayout.lyt $(WRAPPED_GDS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/run_all.tcl -metrics $(LOG_DIR)/run_all.json) 2>&1 | tee $(LOG_DIR)/run_all.log
 

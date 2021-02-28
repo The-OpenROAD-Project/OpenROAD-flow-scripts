@@ -21,6 +21,8 @@ if {![info exists standalone] || $standalone} {
   if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
     source $::env(PLATFORM_DIR)/derate.tcl
   }
+} else {
+  puts "Starting CTS"
 }
 
 # Clone clock tree inverters next to register loads
@@ -67,13 +69,16 @@ set_placement_padding -global \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 detailed_placement
 
-puts "Repair hold violations..."
 estimate_parasitics -placement
-if {![info exists ::env(PLACE_DENSITY_MAX_POST_HOLD)]} {
-    set ::env(PLACE_DENSITY_MAX_POST_HOLD) [expr $::env(PLACE_DENSITY) * 1.3]
+
+puts "Repair hold violations..."
+if { [catch {repair_timing -hold }]} {
+  puts "hold utilization limit caught, continuing"
 }
-puts "PLACE_DENSITY_MAX_POST_HOLD = $::env(PLACE_DENSITY_MAX_POST_HOLD)"
-catch {repair_timing -hold -max_utilization [expr $::env(PLACE_DENSITY_MAX_POST_HOLD) * 100]} puts "utilization limit caught, continuing"
+puts "Repair setup violations..."
+if { [catch {repair_timing -setup }]} {
+  puts "setup utilization limit caught, continuing"
+}
 
 puts "\n=========================================================================="
 puts "post cts report_checks -path_delay min"

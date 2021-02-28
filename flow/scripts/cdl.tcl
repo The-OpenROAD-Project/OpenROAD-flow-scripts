@@ -15,6 +15,8 @@ if {![info exists standalone] || $standalone} {
 
   # Read def
   read_def $::env(RESULTS_DIR)/6_1_fill.def
+} else {
+  puts "Starting CDL"
 }
 
 cdl read_masters $::env(CDL_FILE)

@@ -23,10 +23,13 @@ if {![info exists standalone] || $standalone} {
   }
   set num_instances [llength [get_cells -hier *]]
   puts "number instances in verilog is $num_instances"
+} else {
+  puts "Starting floorplan"
 }
 
 # Initialize floorplan using ICeWall FOOTPRINT
 # ----------------------------------------------------------------------------
+
 if {[info exists ::env(FOOTPRINT)]} {
 
   ICeWall load_footprint $env(FOOTPRINT)
@@ -80,7 +83,6 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
 remove_buffers
 
 # pre report
-log_begin $::env(REPORTS_DIR)/2_init.rpt
 
 puts "\n=========================================================================="
 puts "report_checks"
@@ -101,9 +103,6 @@ puts "\n========================================================================
 puts "report_design_area"
 puts "--------------------------------------------------------------------------"
 report_design_area
-
-log_end
-
 
 if {![info exists standalone] || $standalone} {
   # write output

@@ -15,6 +15,8 @@ if {![info exists standalone] || $standalone} {
 
   # Read design files
   read_def $::env(RESULTS_DIR)/3_3_place_resized.def
+} else {
+  puts "Starting detailed placement"
 }
 
 set_placement_padding -global \
