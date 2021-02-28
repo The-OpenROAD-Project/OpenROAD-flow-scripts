@@ -39,6 +39,10 @@ global_placement -routability_driven -density $::env(PLACE_DENSITY) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 }
 
+report_tns
+report_worst_slack
+report_design_area
+
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/3_1_place_gp.def
   exit
