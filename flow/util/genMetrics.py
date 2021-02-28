@@ -29,6 +29,7 @@ from collections import OrderedDict
 # the value to N/A. If a "defaultNotFound" is set, it will use that instead.
 # If occurrence is set to -2, it will return the count of the pattern.
 # t indicates the type that should be written to the JSON file (default: string)
+#
 def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str):
 #  if jsonTag in jsonFile:
 #    print("[WARN] Overwriting Tag", jsonTag)
@@ -37,7 +38,7 @@ def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N
   try:
     #searchFilePath = os.path.join(args.flowPath, file)
     searchFilePath = file
-    with open(searchFilePath) as f:
+    with open(searchFilePath,encoding='latin1') as f:
       content = f.read()
 
     m = re.findall(pattern, content, re.M)
@@ -51,8 +52,8 @@ def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N
         jsonFile[jsonTag] = (t)(m[occurrence].strip())
     else:
       # Only print a warning if the defaultNotFound is not set
-      if defaultNotFound == "N/A":
-        print("[WARN] Tag", jsonTag, "not found in", searchFilePath)
+      #if defaultNotFound == "N/A":
+      #  print("[WARN] Tag", jsonTag, "not found in", searchFilePath)
       jsonFile[jsonTag] = defaultNotFound
   except IOError:
     print("[WARN] Failed to open file:", searchFilePath)
@@ -324,22 +325,6 @@ def extract_metrics(cwd, plt, des):
 
 
 # Detail place
-    '''
-    extractTagFromFile("detailedplace__inst__core__area__total",
-                       "design area +(\d*\.?\d*)",
-                       logPath+"/3_4_opendp.log", t=float)
-    metrics_dict["detailedplace__inst__area"] = jsonFile["detailedplace__inst__core__area__total"]
-
-    extractTagFromFile("detailedplace__inst__num__total",
-                       "total instances +(\d+)",
-                       logPath+"/3_4_opendp.log", t=int)
-    metrics_dict["detailedplace__inst__count"] = jsonFile["detailedplace__inst__num__total"]
-
-    extractTagFromFile("detailedplace__util",
-                       "utilization +(\d+)",
-                       logPath+"/3_4_opendp.log", t=int)
-    '''
-
     extractTagFromFile("detailedplace__inst__displacement__total",
                        "total displacement +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log", t=float)
@@ -369,6 +354,19 @@ def extract_metrics(cwd, plt, des):
     metrics_dict["detailedplace_timing_wns_worst"] = "N/A"
 
     '''
+    extractTagFromFile("detailedplace__inst__core__area__total",
+                       "design area +(\d*\.?\d*)",
+                       logPath+"/3_4_opendp.log", t=float)
+    metrics_dict["detailedplace__inst__area"] = jsonFile["detailedplace__inst__core__area__total"]
+
+    extractTagFromFile("detailedplace__inst__num__total",
+                       "total instances +(\d+)",
+                       logPath+"/3_4_opendp.log", t=int)
+    metrics_dict["detailedplace__inst__count"] = jsonFile["detailedplace__inst__num__total"]
+
+    extractTagFromFile("detailedplace__util",
+                       "utilization +(\d+)",
+                       logPath+"/3_4_opendp.log", t=int)
     extractTagFromFile("detailedplace__wirelength__est__delta",
                        "delta HPWL +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log", t=int)
@@ -406,6 +404,26 @@ def extract_metrics(cwd, plt, des):
                        logPath+"/5_2_TritonRoute.log", t=int)
     metrics_dict["detailedroute__layers__count"] = jsonFile["detailedroute__layers__num__total"]
 
+    extractTagFromFile("detailedroute__wirelength",
+                       "total wire length = +(\S+) um",
+                       logPath+"/5_2_TritonRoute.log", t=int)
+    metrics_dict["detailedroute__wirelength"] = jsonFile["detailedroute__wirelength"]
+
+    extractTagFromFile("detailedroute__via__count",
+                       "total number of vias = +(\S+)",
+                       logPath+"/5_2_TritonRoute.log", t=int)
+    metrics_dict["detailedroute__via__count"] = jsonFile["detailedroute__via__count"]
+
+    extractTagFromFile("detailedroute__errors__count",
+                       "(?i)error:",
+                       logPath+"/5_2_TritonRoute.log", -2, 0)
+    metrics_dict["detailedroute__errors__count"] = jsonFile["detailedroute__errors__count"]
+
+    extractTagFromFile("detailedroute__drc__error__count",
+                       "(?i)violation",
+                       rptPath+"/5_route_drc.rpt", -2, 0)
+    metrics_dict["detailedroute__drc__error__count"] = jsonFile["detailedroute__drc__error__count"]
+
     '''
     extractTagFromFile("detailedroute__inst__macro__num__total",
                        "#macros: +(\S+)",
@@ -437,18 +455,6 @@ def extract_metrics(cwd, plt, des):
     extractTagFromFile("detailedroute__runtime",
                        "Runtime taken \(hrt\): +(\S+)",
                        logPath+"/5_2_TritonRoute.log", t=float)
-    '''
-    extractTagFromFile("detailedroute__wirelength",
-                       "total wire length = +(\S+) um",
-                       logPath+"/5_2_TritonRoute.log", t=int)
-    metrics_dict["detailedroute__wirelength"] = jsonFile["detailedroute__wirelength"]
-
-    extractTagFromFile("detailedroute__via__count",
-                       "total number of vias = +(\S+)",
-                       logPath+"/5_2_TritonRoute.log", t=int)
-    metrics_dict["detailedroute__via__count"] = jsonFile["detailedroute__via__count"]
-
-    '''
     extractTagFromFile("detailedroute__peak_mem",
                        "peak = (\S+)",
                        logPath+"/5_2_TritonRoute.log", t=float)
@@ -456,18 +462,6 @@ def extract_metrics(cwd, plt, des):
     extractTagFromFile("detailedroute__warnings",
                        "(?i)warning:",
                        logPath+"/5_2_TritonRoute.log", -2, 0)
-    '''
-    extractTagFromFile("detailedroute__errors__count",
-                       "(?i)error:",
-                       logPath+"/5_2_TritonRoute.log", -2, 0)
-    metrics_dict["detailedroute__errors__count"] = jsonFile["detailedroute__errors__count"]
-
-    extractTagFromFile("detailedroute__drc__error__count",
-                       "(?i)violation",
-                       rptPath+"/5_route_drc.rpt", -2, 0)
-    metrics_dict["detailedroute__drc__error__count"] = jsonFile["detailedroute__drc__error__count"]
-
-    '''
     extractGnuTime("run__detailedroute",logPath+"/5_2_TritonRoute.log")
     '''
 
@@ -503,7 +497,6 @@ for platform_it in os.scandir(rootdir):
                     all_metrics_df = design_metrics_df
                 else:
                     all_metrics_df = all_metrics_df.merge(design_metrics_df, on = 'Metrics', how = 'inner')
-#print(all_metrics)
 #metrics_json = all_metrics_df.to_json(orient='columns')
 #metrics_json = all_metrics.to_json()
 #print(metrics_json)
