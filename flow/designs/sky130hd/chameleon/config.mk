@@ -33,7 +33,7 @@ export CORE_AREA 	= 20 20 2900 3500
 
 export chameleon_DIR = ./platforms/$(PLATFORM)/chameleon
 
-# DFFRAM_4K.7z in platforms/sky130hd/chameleon/gds is too large and needs to be uncompressed to DFFRAM_4K.gds
+# gds files are massive and are zipped in platforms/sky130hd/chameleon/gds -- Please unzip them locally 
 export ADDITIONAL_GDS_FILES  = $(chameleon_DIR)/gds/apb_sys_0.gds \
                          	   $(chameleon_DIR)/gds/DMC_32x16HC.gds \
                                $(chameleon_DIR)/gds/DFFRAM_4K.gds \
