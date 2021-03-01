@@ -28,7 +28,17 @@ else
 fi
 
 make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk clean_all clean_metadata
+
+# turn off abort on error so we can always capture the result
+set +e
+
 make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk $TARGETS 2>&1 | tee $LOG_FILE
+
+# Save the return code to return as the overall status after we package
+# the results
+ret=$?
+set -e
+
 if [ ! -z ${MAKE_ISSUE+x} ]; then
   make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk final_report_issue
   if [ ! -z ${COPY_ISSUE+x} ]; then
@@ -36,5 +46,4 @@ if [ ! -z ${MAKE_ISSUE+x} ]; then
   fi
 fi
 
-
-#diff $LOG_FILE $GOLD_LOG_FILE
+exit $ret
