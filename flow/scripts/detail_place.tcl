@@ -26,6 +26,8 @@ detailed_placement
 optimize_mirroring
 check_placement -verbose
 
+report_design_area
+
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/3_4_place_dp.def
