@@ -114,8 +114,6 @@ jsonFile["run__flow__platform"] = args.platform
 # Synthesis
 # ==============================================================================
 
-# yosys
-
 extractTagFromFile("synth__area__stdcell__count",
                    "Number of cells: +(\S+)",
                    rptPath+"/synth_stat.txt", t=int)
@@ -127,7 +125,7 @@ extractTagFromFile("synth__area__stdcell__area",
 # Floorplan
 # ==============================================================================
 
-extractTagFromFile("floorplan__timing__tns_total",
+extractTagFromFile("floorplan__timing__tns__total",
                    "^tns (\S+)",
                    logPath+"/2_1_floorplan.log", t=float)
 
@@ -154,8 +152,6 @@ extractTagFromFile("floorplan__area__macros__count",
 # Place
 # ==============================================================================
 
-# global place
-
 extractTagFromFile("globalplace__area__density__target",
                    "TargetDensity: (\S+)",
                    logPath+"/3_1_place_gp.log")
@@ -163,8 +159,6 @@ extractTagFromFile("globalplace__area__density__target",
 extractTagFromFile("globalplace__area__wirelength__estimate",
                    "Total wirelength: (\S+)",
                    logPath+"/3_1_place_gp.log")
-
-# Resizer
 
 extractTagFromFile("placeopt__area__inbuffer__count",
                    "Inserted (\d+) input buffers",
@@ -193,8 +187,6 @@ extractTagFromFile("placeopt__area__instance__area",
 extractTagFromFile("placeopt__area__instance__util",
                    "^Design area.* (\S+)% utilization",
                    logPath+"/3_3_resizer.log", t=float)
-
-# Detail place
 
 extractTagFromFile("detailedplace__inst__displacement__total",
                    "total displacement +(\d*\.?\d*)",
