@@ -211,11 +211,11 @@ extractTagFromFile("detailedplace__wirelength__final__estimate",
 # CTS
 # ==============================================================================
 
-extractTagFromFile("cts__timing__slack__tns",
+extractTagFromFile("cts__timing__tns__total",
                    "^tns (\S+)",
                    logPath+"/4_1_cts.log", t=float)
 
-extractTagFromFile("cts__timing__slack__wns",
+extractTagFromFile("cts__timing__wns__total",
                    "^wns (\S+)",
                    logPath+"/4_1_cts.log", t=float)
 
