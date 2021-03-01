@@ -52,6 +52,8 @@
 # DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/aes/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/jpeg/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/coyote_tc/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
 
 # DESIGN_CONFIG=./designs/sky130hs/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
