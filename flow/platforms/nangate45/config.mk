@@ -29,9 +29,6 @@ export BLACKBOX_MAP_TCL = ./platforms/$(PLATFORM)/blackbox_map.tcl
 # This can be found in the technology lef
 export PLACE_SITE = FreePDK45_38x28_10R_NP_162NW_34O
 
-# Track information for generating DEF tracks
-export TRACKS_INFO_FILE = ./platforms/$(PLATFORM)/tracks.info
-
 export MACRO_PLACE_HALO ?= 22.4 15.12
 export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 
