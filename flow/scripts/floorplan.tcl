@@ -58,7 +58,7 @@ if {[info exists ::env(FOOTPRINT)]} {
                        -site $::env(PLACE_SITE)
 }
 
-source platforms/$(PLATFORM)/make_tracks.tcl
+source $::env(PLATFORM_DIR)/make_tracks.tcl
 
 # If wrappers defined replace macros with their wrapped version
 # # ----------------------------------------------------------------------------
