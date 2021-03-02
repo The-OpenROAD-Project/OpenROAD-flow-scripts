@@ -47,11 +47,12 @@ rptPath = os.path.join(args.flowPath, "reports", args.platform, args.design)
 
 # This function will look for a regular expression "pattern" in a "file", and
 # set the key, "jsonTag", to the value found. The specific "occurrence" selects
-# which occurrence it uses. If pattern not found, it will print an error and set
-# the value to N/A. If a "defaultNotFound" is set, it will use that instead.
-# If occurrence is set to -2, it will return the count of the pattern.
+# which occurrence it uses (default -1, i.e., last). If pattern not found, it
+# will print an error and set the value to N/A. If a "defaultNotFound" is set,
+# it will use that instead.  If count is set to True, it will return the count
+# of the pattern.
 
-def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str, arrayPos=0):
+def extractTagFromFile(jsonTag, pattern, file, count=False, occurrence=-1, defaultNotFound="N/A", arrayPos=0):
   if jsonTag in jsonFile:
     print("[WARN] Overwriting Tag", jsonTag)
 
@@ -64,7 +65,7 @@ def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N
     m = re.findall(pattern, content, re.M)
 
     if m:
-      if occurrence == -2:
+      if count:
         # Return the count
         jsonFile[jsonTag] = len(m)
       else:
@@ -307,12 +308,12 @@ extractTagFromFile("detailedroute__via__count",
 extractTagFromFile("detailedroute__errors__count",
                    "(?i)error:",
                    logPath+"/5_2_TritonRoute.log",
-                   occurrence=-2, defaultNotFound=0)
+                   count=True, defaultNotFound=0)
 
 extractTagFromFile("detailedroute__drc__error__count",
                    "(?i)violation",
                    rptPath+"/5_route_drc.rpt",
-                   occurrence=-2, defaultNotFound=0)
+                   count=True, defaultNotFound=0)
 
 # Finish
 # ==============================================================================
