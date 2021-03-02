@@ -52,7 +52,7 @@ rptPath = os.path.join(args.flowPath, "reports", args.platform, args.design)
 # If occurrence is set to -2, it will return the count of the pattern.
 # t indicates the type that should be written to the JSON file (default: string)
 
-def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str):
+def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str, arrayPos=0):
   if jsonTag in jsonFile:
     print("[WARN] Overwriting Tag", jsonTag)
 
@@ -70,7 +70,11 @@ def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N
         jsonFile[jsonTag] = len(m)
       else:
         # Note: This gets the specified occurrence
-        jsonFile[jsonTag] = (t)(m[occurrence].strip())
+        value = m[occurrence]
+        if isinstance(value, tuple):
+          value = value[arrayPos]
+        value = value.strip()
+        jsonFile[jsonTag] = (t)(value)
     else:
       # Only print a warning if the defaultNotFound is not set
       if defaultNotFound == "N/A":
