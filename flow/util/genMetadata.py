@@ -5,15 +5,14 @@
 # information in specific files using regular expressions
 #-------------------------------------------------------------------------------
 
-import argparse  # argument parsing
-import json  # json parsing
-import subprocess
-import sys
+import argparse
+import json
+from subprocess import check_output as runCommand
+from sys import exit
 import re
-import os  # filesystem manipulation
+import os
 import datetime
 import uuid
-import platform
 from collections import OrderedDict
 
 
@@ -36,7 +35,7 @@ args = parser.parse_args()
 if not os.path.isdir(args.flowPath):
   print("Error: flowPath does not exist")
   print("Path: " + args.flowPath)
-  sys.exit(1)
+  exit(1)
 
 logPath = os.path.join(args.flowPath, "logs", args.platform, args.design)
 rptPath = os.path.join(args.flowPath, "reports", args.platform, args.design)
@@ -107,7 +106,7 @@ now = datetime.datetime.now()
 jsonFile = OrderedDict()
 
 jsonFile["run__flow__generate__date"] = now.strftime("%Y-%m-%d %H:%M")
-cmdOutput = subprocess.check_output(['openroad', '-version'])
+cmdOutput = runCommand(['openroad', '-version'])
 cmdFields = [ x.decode('utf-8') for x in cmdOutput.split()  ]
 jsonFile["run__flow__openroad__version"] = str(cmdFields[0])
 if (len(cmdFields) > 1):
