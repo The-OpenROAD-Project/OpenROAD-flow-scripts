@@ -29,9 +29,6 @@ export BLACKBOX_MAP_TCL = ./platforms/$(PLATFORM)/blackbox_map.tcl
 # This can be found in the technology lef
 export PLACE_SITE = unit
 
-# Track information for generating DEF tracks
-export TRACKS_INFO_FILE = ./platforms/$(PLATFORM)/tracks_hs.info
-
 export MACRO_PLACE_HALO ?= 1 1
 export MACRO_PLACE_CHANNEL ?= 80 80
 
