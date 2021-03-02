@@ -27,6 +27,8 @@ optimize_mirroring
 check_placement -verbose
 
 report_design_area
+report_tns
+report_wns
 
 if {![info exists standalone] || $standalone} {
   # write output

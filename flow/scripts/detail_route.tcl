@@ -2,6 +2,11 @@ if {![info exists standalone] || $standalone} {
   # Read lef
   read_lef $::env(TRITON_ROUTE_LEF)
 
+  # Read liberty files
+  foreach libFile $::env(LIB_FILES) {
+    read_liberty $libFile
+  }
+
   # Read design files
   read_def $::env(RESULTS_DIR)/4_cts.def
 } else {
@@ -9,6 +14,10 @@ if {![info exists standalone] || $standalone} {
 }
 
 detailed_route -param $::env(OBJECTS_DIR)/TritonRoute.param
+
+report_tns
+report_wns
+report_power
 
 if {![info exists standalone] || $standalone} {
   exit
