@@ -160,6 +160,14 @@ extractTagFromFile("globalplace__area__wirelength__estimate",
                    "Total wirelength: (\S+)",
                    logPath+"/3_1_place_gp.log")
 
+extractTagFromFile("globalplace__timing__tns__total",
+                   "^tns (\S+)",
+                   logPath+"/3_1_place_gp.log")
+
+extractTagFromFile("globalplace__timing__wns__worst",
+                   "^wns (\S+)",
+                   logPath+"/3_1_place_gp.log")
+
 extractTagFromFile("placeopt__area__inbuffer__count",
                    "Inserted (\d+) input buffers",
                    logPath+"/3_3_resizer.log", t=int)
@@ -188,6 +196,14 @@ extractTagFromFile("placeopt__area__instance__util",
                    "^Design area.* (\S+)% utilization",
                    logPath+"/3_3_resizer.log", t=float)
 
+extractTagFromFile("detailedplace__timing__tns__total",
+                   "^tns (\S+)",
+                   logPath+"/3_4_opendp.log", t=float)
+
+extractTagFromFile("detailedplace__timing__wns__worst",
+                   "^wns (\S+)",
+                   logPath+"/3_4_opendp.log", t=float)
+
 extractTagFromFile("detailedplace__inst__displacement__total",
                    "total displacement +(\d*\.?\d*)",
                    logPath+"/3_4_opendp.log", t=float)
@@ -215,12 +231,64 @@ extractTagFromFile("cts__timing__tns__total",
                    "^tns (\S+)",
                    logPath+"/4_1_cts.log", t=float)
 
-extractTagFromFile("cts__timing__wns__total",
+extractTagFromFile("cts__timing__wns__worst",
                    "^wns (\S+)",
                    logPath+"/4_1_cts.log", t=float)
 
 # Route
 # ==============================================================================
+
+extractTagFromFile("globalroute__timing__tns__total",
+                   "^tns (\S+)",
+                   logPath+"/5_1_fastroute.log", t=float)
+
+extractTagFromFile("globalroute__timing__wns__worst",
+                   "^wns (\S+)",
+                   logPath+"/5_1_fastroute.log", t=float)
+
+extractTagFromFile("detailedroute__timing__tns__total",
+                   "^tns (\S+)",
+                   logPath+"/5_2_TritonRoute.log", t=float)
+
+extractTagFromFile("detailedroute__timing__wns__worst",
+                   "^wns (\S+)",
+                   logPath+"/5_2_TritonRoute.log", t=float)
+
+extractTagFromFile("detailedroute__power__internal__total",
+                   "^Total +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
+                   logPath+"/5_2_TritonRoute.log", arrayPos=0)
+
+extractTagFromFile("detailedroute__power__switching__total",
+                   "^Total +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
+                   logPath+"/5_2_TritonRoute.log", arrayPos=1)
+
+extractTagFromFile("detailedroute__power__leakage__total",
+                   "^Total +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
+                   logPath+"/5_2_TritonRoute.log", arrayPos=2)
+
+extractTagFromFile("detailedroute__power__internal__combinational",
+                   "^Combinational +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
+                   logPath+"/5_2_TritonRoute.log", arrayPos=0)
+
+extractTagFromFile("detailedroute__power__switching__combinational",
+                   "^Combinational +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
+                   logPath+"/5_2_TritonRoute.log", arrayPos=1)
+
+extractTagFromFile("detailedroute__power__leakage__combinational",
+                   "^Combinational +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
+                   logPath+"/5_2_TritonRoute.log", arrayPos=2)
+
+extractTagFromFile("detailedroute__power__internal__sequential",
+                   "^Sequential +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
+                   logPath+"/5_2_TritonRoute.log", arrayPos=0)
+
+extractTagFromFile("detailedroute__power__switching__sequential",
+                   "^Sequential +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
+                   logPath+"/5_2_TritonRoute.log", arrayPos=1)
+
+extractTagFromFile("detailedroute__power__leakage__sequential",
+                   "^Sequential +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
+                   logPath+"/5_2_TritonRoute.log", arrayPos=2)
 
 extractTagFromFile("detailedroute__wirelength",
                    "total wire length = +(\S+) um",
