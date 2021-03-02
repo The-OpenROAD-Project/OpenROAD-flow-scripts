@@ -338,7 +338,7 @@ extractTagFromFile("finish__area",
                    logPath+"/6_report.log")
 
 extractTagFromFile("finish__util",
-                   "^Design area.* (\S+%) utilization",
+                   "^Design area.* (\S+)% utilization",
                    logPath+"/6_report.log")
 
 # Accumulate time
