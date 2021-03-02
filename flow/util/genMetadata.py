@@ -195,7 +195,7 @@ extractTagFromFile("placeopt__timing__wns__worst",
                    logPath+"/3_3_resizer.log")
 
 extractTagFromFile("placeopt__area__instance__area",
-                   "^Design area (\S+ \S+)",
+                   "^Design area (\S+) u\^2",
                    logPath+"/3_3_resizer.log")
 
 extractTagFromFile("placeopt__area__instance__util",
@@ -334,7 +334,7 @@ extractTagFromFile("finish__power__total",
                    logPath+"/6_report.log")
 
 extractTagFromFile("finish__area",
-                   "^Design area (\S+)",
+                   "^Design area (\S+) u\^2",
                    logPath+"/6_report.log")
 
 extractTagFromFile("finish__util",
