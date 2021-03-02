@@ -50,7 +50,6 @@ rptPath = os.path.join(args.flowPath, "reports", args.platform, args.design)
 # which occurrence it uses. If pattern not found, it will print an error and set
 # the value to N/A. If a "defaultNotFound" is set, it will use that instead.
 # If occurrence is set to -2, it will return the count of the pattern.
-# t indicates the type that should be written to the JSON file (default: string)
 
 def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str, arrayPos=0):
   if jsonTag in jsonFile:
@@ -74,7 +73,10 @@ def extractTagFromFile(jsonTag, pattern, file, occurrence=-1, defaultNotFound="N
         if isinstance(value, tuple):
           value = value[arrayPos]
         value = value.strip()
-        jsonFile[jsonTag] = (t)(value)
+        try:
+          jsonFile[jsonTag] = float(value)
+        except:
+          jsonFile[jsonTag] = str(value)
     else:
       # Only print a warning if the defaultNotFound is not set
       if defaultNotFound == "N/A":
@@ -94,7 +96,7 @@ def extractGnuTime(prefix, file):
                      file)
   extractTagFromFile(prefix + "__mem__peak",
                      "^\S+elapsed \S+CPU (\S+)memKB",
-                     file, t=int)
+                     file)
 
 
 # Main
@@ -120,38 +122,38 @@ jsonFile["run__flow__platform"] = args.platform
 
 extractTagFromFile("synth__area__stdcell__count",
                    "Number of cells: +(\S+)",
-                   rptPath+"/synth_stat.txt", t=int)
+                   rptPath+"/synth_stat.txt")
 
 extractTagFromFile("synth__area__stdcell__area",
                    "Chip area for module.*: +(\S+)",
-                   rptPath+"/synth_stat.txt", t=float)
+                   rptPath+"/synth_stat.txt")
 
 # Floorplan
 # ==============================================================================
 
 extractTagFromFile("floorplan__timing__tns__total",
                    "^tns (\S+)",
-                   logPath+"/2_1_floorplan.log", t=float)
+                   logPath+"/2_1_floorplan.log")
 
 extractTagFromFile("floorplan__timing__wns__worst",
                    "^wns (\S+)",
-                   logPath+"/2_1_floorplan.log", t=float)
+                   logPath+"/2_1_floorplan.log")
 
 extractTagFromFile("floorplan__area__stdcell__count",
                    "^Design area (\S+) u\^2",
-                   logPath+"/2_1_floorplan.log", t=int)
+                   logPath+"/2_1_floorplan.log")
 
 extractTagFromFile("floorplan__area__instance__util",
                    "^Design area.* (\S+)% utilization",
-                   logPath+"/2_1_floorplan.log", t=int)
+                   logPath+"/2_1_floorplan.log")
 
 extractTagFromFile("floorplan__area__IO__count",
                    "Num of I/O +(\d+)",
-                   logPath+"/3_2_place_iop.log", t=int)
+                   logPath+"/3_2_place_iop.log")
 
 extractTagFromFile("floorplan__area__macros__count",
                    "Extracted # Macros: (\S+)",
-                   logPath+"/2_4_mplace.log", -1, 0, t=int)
+                   logPath+"/2_4_mplace.log", defaultNotFound=0)
 
 # Place
 # ==============================================================================
@@ -174,89 +176,89 @@ extractTagFromFile("globalplace__timing__wns__worst",
 
 extractTagFromFile("placeopt__area__inbuffer__count",
                    "Inserted (\d+) input buffers",
-                   logPath+"/3_3_resizer.log", t=int)
+                   logPath+"/3_3_resizer.log")
 
 extractTagFromFile("placeopt__area__outbuffer__count",
                    "Inserted (\d+) output buffers",
-                   logPath+"/3_3_resizer.log", t=int)
+                   logPath+"/3_3_resizer.log")
 
 extractTagFromFile("placeopt__area__resize__count",
                    "Resized (\d+) instances",
-                   logPath+"/3_3_resizer.log", t=int)
+                   logPath+"/3_3_resizer.log")
 
 extractTagFromFile("placeopt__timing__tns__total",
                    "^tns (\S+)",
-                   logPath+"/3_3_resizer.log", occurrence=-1, t=float)
+                   logPath+"/3_3_resizer.log")
 
 extractTagFromFile("placeopt__timing__wns__worst",
                    "^wns (\S+)",
-                   logPath+"/3_3_resizer.log", occurrence=-1, t=float)
+                   logPath+"/3_3_resizer.log")
 
 extractTagFromFile("placeopt__area__instance__area",
                    "^Design area (\S+ \S+)",
-                   logPath+"/3_3_resizer.log", occurrence=-1)
+                   logPath+"/3_3_resizer.log")
 
 extractTagFromFile("placeopt__area__instance__util",
                    "^Design area.* (\S+)% utilization",
-                   logPath+"/3_3_resizer.log", t=float)
+                   logPath+"/3_3_resizer.log")
 
 extractTagFromFile("detailedplace__timing__tns__total",
                    "^tns (\S+)",
-                   logPath+"/3_4_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log")
 
 extractTagFromFile("detailedplace__timing__wns__worst",
                    "^wns (\S+)",
-                   logPath+"/3_4_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log")
 
 extractTagFromFile("detailedplace__inst__displacement__total",
                    "total displacement +(\d*\.?\d*)",
-                   logPath+"/3_4_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log")
 
 extractTagFromFile("detailedplace__inst__displacement__average",
                    "average displacement +(\d*\.?\d*)",
-                   logPath+"/3_4_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log")
 
 extractTagFromFile("detailedplace__inst__displacement__max",
                    "max displacement +(\d*\.?\d*)",
-                   logPath+"/3_4_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log")
 
 extractTagFromFile("detailedplace__wirelength__initial__estimate",
                    "original HPWL +(\d*\.?\d*)",
-                   logPath+"/3_4_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log")
 
 extractTagFromFile("detailedplace__wirelength__final__estimate",
                    "legalized HPWL +(\d*\.?\d*)",
-                   logPath+"/3_4_opendp.log", t=float)
+                   logPath+"/3_4_opendp.log")
 
 # CTS
 # ==============================================================================
 
 extractTagFromFile("cts__timing__tns__total",
                    "^tns (\S+)",
-                   logPath+"/4_1_cts.log", t=float)
+                   logPath+"/4_1_cts.log")
 
 extractTagFromFile("cts__timing__wns__worst",
                    "^wns (\S+)",
-                   logPath+"/4_1_cts.log", t=float)
+                   logPath+"/4_1_cts.log")
 
 # Route
 # ==============================================================================
 
 extractTagFromFile("globalroute__timing__tns__total",
                    "^tns (\S+)",
-                   logPath+"/5_1_fastroute.log", t=float)
+                   logPath+"/5_1_fastroute.log")
 
 extractTagFromFile("globalroute__timing__wns__worst",
                    "^wns (\S+)",
-                   logPath+"/5_1_fastroute.log", t=float)
+                   logPath+"/5_1_fastroute.log")
 
 extractTagFromFile("detailedroute__timing__tns__total",
                    "^tns (\S+)",
-                   logPath+"/5_2_TritonRoute.log", t=float)
+                   logPath+"/5_2_TritonRoute.log")
 
 extractTagFromFile("detailedroute__timing__wns__worst",
                    "^wns (\S+)",
-                   logPath+"/5_2_TritonRoute.log", t=float)
+                   logPath+"/5_2_TritonRoute.log")
 
 extractTagFromFile("detailedroute__power__internal__total",
                    "^Total +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
@@ -296,38 +298,40 @@ extractTagFromFile("detailedroute__power__leakage__sequential",
 
 extractTagFromFile("detailedroute__wirelength",
                    "total wire length = +(\S+) um",
-                   logPath+"/5_2_TritonRoute.log", t=int)
+                   logPath+"/5_2_TritonRoute.log")
 
 extractTagFromFile("detailedroute__via__count",
                    "total number of vias = +(\S+)",
-                   logPath+"/5_2_TritonRoute.log", t=int)
+                   logPath+"/5_2_TritonRoute.log")
 
 extractTagFromFile("detailedroute__errors__count",
                    "(?i)error:",
-                   logPath+"/5_2_TritonRoute.log", -2, 0)
+                   logPath+"/5_2_TritonRoute.log",
+                   occurrence=-2, defaultNotFound=0)
 
 extractTagFromFile("detailedroute__drc__error__count",
                    "(?i)violation",
-                   rptPath+"/5_route_drc.rpt", -2, 0)
+                   rptPath+"/5_route_drc.rpt",
+                   occurrence=-2, defaultNotFound=0)
 
 # Finish
 # ==============================================================================
 
 extractTagFromFile("finish__power__internal__total",
                    "Total +(\S+) +\S+ +\S+ +\S+ +\S+",
-                   logPath+"/6_report.log", t=float)
+                   logPath+"/6_report.log")
 
 extractTagFromFile("finish__power__switch__total",
                    "Total +\S+ +(\S+) +\S+ +\S+ +\S+",
-                   logPath+"/6_report.log", t=float)
+                   logPath+"/6_report.log")
 
 extractTagFromFile("finish__power__leak__total",
                    "Total +\S+ +\S+ +(\S+) +\S+ +\S+",
-                   logPath+"/6_report.log", t=float)
+                   logPath+"/6_report.log")
 
 extractTagFromFile("finish__power__total",
                    "Total +\S+ +\S+ +\S+ +(\S+) +\S+",
-                   logPath+"/6_report.log", t=float)
+                   logPath+"/6_report.log")
 
 extractTagFromFile("finish__area",
                    "^Design area (\S+)",
