@@ -15,10 +15,6 @@ if {![info exists standalone] || $standalone} {
 
 detailed_route -param $::env(OBJECTS_DIR)/TritonRoute.param
 
-report_tns
-report_wns
-report_power
-
 if {![info exists standalone] || $standalone} {
   exit
 }

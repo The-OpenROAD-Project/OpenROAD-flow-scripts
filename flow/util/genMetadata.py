@@ -252,50 +252,6 @@ extractTagFromFile("globalroute__timing__wns__worst",
                    "^wns (\S+)",
                    logPath+"/5_1_fastroute.log")
 
-extractTagFromFile("detailedroute__timing__tns__total",
-                   "^tns (\S+)",
-                   logPath+"/5_2_TritonRoute.log")
-
-extractTagFromFile("detailedroute__timing__wns__worst",
-                   "^wns (\S+)",
-                   logPath+"/5_2_TritonRoute.log")
-
-extractTagFromFile("detailedroute__power__internal__total",
-                   "^Total +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
-                   logPath+"/5_2_TritonRoute.log", arrayPos=0)
-
-extractTagFromFile("detailedroute__power__switching__total",
-                   "^Total +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
-                   logPath+"/5_2_TritonRoute.log", arrayPos=1)
-
-extractTagFromFile("detailedroute__power__leakage__total",
-                   "^Total +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
-                   logPath+"/5_2_TritonRoute.log", arrayPos=2)
-
-extractTagFromFile("detailedroute__power__internal__combinational",
-                   "^Combinational +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
-                   logPath+"/5_2_TritonRoute.log", arrayPos=0)
-
-extractTagFromFile("detailedroute__power__switching__combinational",
-                   "^Combinational +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
-                   logPath+"/5_2_TritonRoute.log", arrayPos=1)
-
-extractTagFromFile("detailedroute__power__leakage__combinational",
-                   "^Combinational +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
-                   logPath+"/5_2_TritonRoute.log", arrayPos=2)
-
-extractTagFromFile("detailedroute__power__internal__sequential",
-                   "^Sequential +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
-                   logPath+"/5_2_TritonRoute.log", arrayPos=0)
-
-extractTagFromFile("detailedroute__power__switching__sequential",
-                   "^Sequential +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
-                   logPath+"/5_2_TritonRoute.log", arrayPos=1)
-
-extractTagFromFile("detailedroute__power__leakage__sequential",
-                   "^Sequential +(\S+) +(\S+) +(\S+) +(\S+) +(\S+)",
-                   logPath+"/5_2_TritonRoute.log", arrayPos=2)
-
 extractTagFromFile("detailedroute__wirelength",
                    "total wire length = +(\S+) um",
                    logPath+"/5_2_TritonRoute.log")
