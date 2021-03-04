@@ -14,7 +14,7 @@ if {![info exists standalone] || $standalone} {
 }
 
 detailed_route -param $::env(OBJECTS_DIR)/TritonRoute.param
-
+write_def $::env(RESULTS_DIR)/5_route.def
 if {![info exists standalone] || $standalone} {
   exit
 }

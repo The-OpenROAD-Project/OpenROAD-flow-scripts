@@ -382,13 +382,9 @@ else
 endif
 
 $(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
-	echo "lef:$(TRITON_ROUTE_LEF)" > $@
-	echo "def:$(RESULTS_DIR)/4_cts.def" >> $@
 ifeq ($(USE_WXL),)
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
 endif
-	echo "output:$(RESULTS_DIR)/5_route.def" >> $@
-	echo "outputTA:$(OBJECTS_DIR)/5_route_TA.def" >> $@
 	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" >> $@
 	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
@@ -416,7 +412,7 @@ clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
 	rm -rf *.gdid *.log *.met *.sav *.res.dmp
 	rm -rf $(RESULTS_DIR)/route.guide $(OBJECTS_DIR)/TritonRoute.param
-	rm -rf $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.sdc $(OBJECTS_DIR)/5_route_TA.def
+	rm -rf $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.sdc
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
