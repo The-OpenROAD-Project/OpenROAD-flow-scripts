@@ -26,6 +26,7 @@ detailed_placement
 optimize_mirroring
 check_placement -verbose
 
+estimate_rc -placement
 report_design_area
 report_tns
 report_wns

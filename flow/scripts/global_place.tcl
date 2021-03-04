@@ -39,6 +39,7 @@ global_placement -routability_driven -density $::env(PLACE_DENSITY) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 }
 
+estimate_rc -placement
 report_wns
 report_tns
 report_worst_slack

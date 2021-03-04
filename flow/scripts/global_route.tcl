@@ -48,6 +48,7 @@ if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
 
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
+estimate_rc -global_routing
 
 puts "\n=========================================================================="
 puts "report_checks -path_delay min"
