@@ -26,6 +26,11 @@ detailed_placement
 optimize_mirroring
 check_placement -verbose
 
+estimate_parasitics -placement
+report_design_area
+report_tns
+report_wns
+
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/3_4_place_dp.def
