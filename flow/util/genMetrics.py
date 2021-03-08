@@ -106,15 +106,19 @@ def extract_metrics(cwd, plt, des):
     jsonFile["run__flow__generate__date"] = now.strftime("%Y-%m-%d %H:%M")
     cmdOutput = subprocess.check_output(['openroad', '-version'])
     cmdFields = cmdOutput.split()
-    jsonFile["run__flow__openroad__version"] = cmdFields[0]
+    jsonFile["run__flow__openroad__version"] = str(cmdFields[0])
     if (len(cmdFields) > 1):
-      jsonFile["run__flow__openroad__commit"] = cmdFields[1]
+      jsonFile["run__flow__openroad__commit"] = str(cmdFields[1])
     else:
       jsonFile["run__flow__openroad__commit"] = "N/A"
     jsonFile["run__flow__uuid"] = str(uuid.uuid4())
     jsonFile["run__flow__design"] = des
     jsonFile["run__flow__platform"] = plt
     jsonFile["run__flow__hostname"] = platform.node()
+    metrics_dict["run__flow__tool"] = "OpenROAD"
+    metrics_dict["run__flow__date"] = jsonFile["run__flow__generate__date"]
+    metrics_dict["run__flow__version"] = jsonFile["run__flow__openroad__version"]
+    metrics_dict["run__flow__commit"] = jsonFile["run__flow__openroad__commit"]
     metrics_dict["run__flow__design"] = jsonFile["run__flow__design"]
     metrics_dict["run__flow__platform"] = jsonFile["run__flow__platform"]
     metrics_dict["run__flow__hostname"] = jsonFile["run__flow__hostname"]
