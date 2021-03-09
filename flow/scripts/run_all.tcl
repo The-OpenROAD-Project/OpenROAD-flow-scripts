@@ -61,6 +61,7 @@ if {[info exists ::env(USE_FILL)]} {
 
 # Finishing
 source -verbose $::env(SCRIPTS_DIR)/final_report.tcl
+source -verbose $::env(SCRIPTS_DIR)/signoff_report.tcl
 source -verbose $::env(SCRIPTS_DIR)/klayout.tcl
 
 exit
