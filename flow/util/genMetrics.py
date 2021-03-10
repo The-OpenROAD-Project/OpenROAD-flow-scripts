@@ -133,6 +133,7 @@ def extract_metrics(cwd, platform, design, output):
     metrics_dict["run__flow__generate__date"] = now.strftime("%Y-%m-%d %H:%M")
     cmdOutput = subprocess.check_output(['openroad', '-version'])
     cmdFields = cmdOutput.split()
+    cmdFields = [ x.decode('utf-8') for x in cmdOutput.split()  ]
     metrics_dict["run__flow__openroad__version"] = str(cmdFields[0])
     if (len(cmdFields) > 1):
       metrics_dict["run__flow__openroad__commit"] = str(cmdFields[1])
