@@ -206,8 +206,14 @@ def extract_metrics(cwd, platform, design, output):
                        "Total wirelength: (\S+)",
                        logPath+"/3_1_place_gp.log")
 
-# Resizer
-#
+    extractTagFromFile("globalplace__timing__tns__total", metrics_dict,
+                      "^tns (\S+)",
+                      logPath+"/3_1_place_gp.log")
+
+    extractTagFromFile("globalplace__timing__wns__worst", metrics_dict,
+                      "^wns (\S+)",
+                      logPath+"/3_1_place_gp.log")
+
     extractTagFromFile("placeopt__area__inbuffer__count", metrics_dict,
                        "Inserted (\d+) input buffers",
                        logPath+"/3_3_resizer.log")
@@ -233,10 +239,17 @@ def extract_metrics(cwd, platform, design, output):
                        logPath+"/3_3_resizer.log")
 
     extractTagFromFile("placeopt__area__instance__util", metrics_dict,
-                       "^Design area.* (\S+%) utilization",
+                       "^Design area.* (\S+)% utilization",
                        logPath+"/3_3_resizer.log")
 
-# Detail place
+    extractTagFromFile("detailedplace__timing__tns__total", metrics_dict,
+                       "^tns (\S+)",
+                       logPath+"/3_4_opendp.log")
+
+    extractTagFromFile("detailedplace__timing__wns__worst", metrics_dict,
+                       "^wns (\S+)",
+                       logPath+"/3_4_opendp.log")
+
     extractTagFromFile("detailedplace__inst__displacement__total", metrics_dict,
                        "total displacement +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log")
@@ -271,6 +284,13 @@ def extract_metrics(cwd, platform, design, output):
 # Route
 # ==============================================================================
 
+    extractTagFromFile("globalroute__timing__tns__total", metrics_dict,
+                      "^tns (\S+)",
+                      logPath+"/5_1_fastroute.log")
+
+    extractTagFromFile("globalroute__timing__wns__worst", metrics_dict,
+                      "^wns (\S+)",
+                      logPath+"/5_1_fastroute.log")
 
     extractTagFromFile("detailedroute__wirelength", metrics_dict,
                        "total wire length = +(\S+) um",
