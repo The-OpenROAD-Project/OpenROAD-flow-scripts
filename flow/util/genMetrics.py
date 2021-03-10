@@ -49,12 +49,12 @@ def parse_args():
 
 # This function will look for a regular expression "pattern" in a "file", and
 # set the key, "jsonTag", to the value found. The specific "occurrence" selects
-# which occurrence it uses. If pattern not found, it will print an error and set
-# the value to N/A. If a "defaultNotFound" is set, it will use that instead.
-# If occurrence is set to -2, it will return the count of the pattern.
-# t indicates the type that should be written to the JSON file (default: string)
-#
-def extractTagFromFile(jsonTag, jsonFile, pattern, file, occurrence=-1, defaultNotFound="N/A", t=str):
+# which occurrence it uses (default -1, i.e., last). If pattern not found, it
+# will print an error and set the value to N/A. If a "defaultNotFound" is set,
+# it will use that instead.  If count is set to True, it will return the count
+# of the pattern.
+
+def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False, occurrence=-1, defaultNotFound="N/A", t=str):
   if jsonTag in jsonFile:
     print("[WARN] Overwriting Tag", jsonTag)
 
@@ -67,7 +67,7 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, occurrence=-1, defaultN
     m = re.findall(pattern, content, re.M)
 
     if m:
-      if occurrence == -2:
+      if count:
         # Return the count
         jsonFile[jsonTag] = len(m)
       else:
@@ -254,10 +254,13 @@ def extract_metrics(cwd, platform, design, output):
                        logPath+"/5_2_TritonRoute.log", t=int)
     extractTagFromFile("detailedroute__errors__count", metrics_dict,
                        "(?i)error:",
-                       logPath+"/5_2_TritonRoute.log", -2, 0)
+                       logPath+"/5_2_TritonRoute.log",
+                       count=True, defaultNotFound=0)
+
     extractTagFromFile("detailedroute__drc__error__count", metrics_dict,
                        "(?i)violation",
-                       rptPath+"/5_route_drc.rpt", -2, 0)
+                       rptPath+"/5_route_drc.rpt",
+                       count=True, defaultNotFound=0)
 
 # Finish
 # ==============================================================================
