@@ -72,7 +72,14 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False, occurrence
         jsonFile[jsonTag] = len(m)
       else:
         # Note: This gets the specified occurrence
-        jsonFile[jsonTag] = (t)(m[occurrence].strip())
+        value = m[occurrence]
+        if isinstance(value, tuple):
+          value = value[arrayPos]
+        value = value.strip()
+        try:
+          jsonFile[jsonTag] = float(value)
+        except:
+          jsonFile[jsonTag] = str(value)
     else:
       # Only print a warning if the defaultNotFound is not set
       if defaultNotFound == "N/A":
