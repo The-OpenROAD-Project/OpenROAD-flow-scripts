@@ -15,6 +15,8 @@ if {![info exists standalone] || $standalone} {
 
   # Read design files
   read_def $::env(RESULTS_DIR)/2_1_floorplan.def
+} else {
+  puts "Starting random IO placement"
 }
 
 if {![info exists ::env(FOOTPRINT)]} {

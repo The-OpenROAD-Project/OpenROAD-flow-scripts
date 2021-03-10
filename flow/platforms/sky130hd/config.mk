@@ -28,15 +28,13 @@ export BLACKBOX_MAP_TCL = ./platforms/$(PLATFORM)/blackbox_map.tcl
 # This can be found in the technology lef
 export PLACE_SITE = unithd
 
-# Track information for generating DEF tracks
-export TRACKS_INFO_FILE = ./platforms/$(PLATFORM)/tracks_hd.info
-
-export IP_GLOBAL_CFG = ./platforms/$(PLATFORM)/IP_global.cfg
+export MACRO_PLACE_HALO ?= 1 1
+export MACRO_PLACE_CHANNEL ?= 80 80
 
 export TECH_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hd.tlef
 export SC_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hd_merged.lef
 
-export LIB_FILES = ./platforms/$(PLATFORM)/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+export LIB_FILES = ./platforms/$(PLATFORM)/lib/sky130_fd_sc_hd__tt_025C_1v80.lib \
                      $(ADDITIONAL_LIBS)
 export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*.gds) \
                      $(ADDITIONAL_GDS_FILES)
@@ -50,7 +48,7 @@ export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
 # TritonCTS options
 export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
 export CTS_MAX_SLEW   = 1.5e-9
-export CTS_MAX_CAP    = .13e-12
+export CTS_MAX_CAP    = .1532e-12
 export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShd
 
 # FastRoute options
@@ -70,14 +68,49 @@ export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
 # Specify at least one filler cell if none
 
 # The *probe* are for inserting probe points and have metal shapes
- # on all layers.
+# on all layers.
+# *lpflow* cells are for multi-power domains
 export DONT_USE_CELLS += \
-   sky130_fd_sc_hd__probe_p_8 sky130_fd_sc_hd__probec_p_8
+    sky130_fd_sc_hd__probe_p_8 sky130_fd_sc_hd__probec_p_8 \
+    sky130_fd_sc_hd__lpflow_bleeder_1 \
+    sky130_fd_sc_hd__lpflow_clkbufkapwr_1 \
+    sky130_fd_sc_hd__lpflow_clkbufkapwr_16 \
+    sky130_fd_sc_hd__lpflow_clkbufkapwr_2 \
+    sky130_fd_sc_hd__lpflow_clkbufkapwr_4 \
+    sky130_fd_sc_hd__lpflow_clkbufkapwr_8 \
+    sky130_fd_sc_hd__lpflow_clkinvkapwr_1 \
+    sky130_fd_sc_hd__lpflow_clkinvkapwr_16 \
+    sky130_fd_sc_hd__lpflow_clkinvkapwr_2 \
+    sky130_fd_sc_hd__lpflow_clkinvkapwr_4 \
+    sky130_fd_sc_hd__lpflow_clkinvkapwr_8 \
+    sky130_fd_sc_hd__lpflow_decapkapwr_12 \
+    sky130_fd_sc_hd__lpflow_decapkapwr_3 \
+    sky130_fd_sc_hd__lpflow_decapkapwr_4 \
+    sky130_fd_sc_hd__lpflow_decapkapwr_6 \
+    sky130_fd_sc_hd__lpflow_decapkapwr_8 \
+    sky130_fd_sc_hd__lpflow_inputiso0n_1 \
+    sky130_fd_sc_hd__lpflow_inputiso0p_1 \
+    sky130_fd_sc_hd__lpflow_inputiso1n_1 \
+    sky130_fd_sc_hd__lpflow_inputiso1p_1 \
+    sky130_fd_sc_hd__lpflow_inputisolatch_1 \
+    sky130_fd_sc_hd__lpflow_isobufsrc_1 \
+    sky130_fd_sc_hd__lpflow_isobufsrc_16 \
+    sky130_fd_sc_hd__lpflow_isobufsrc_2 \
+    sky130_fd_sc_hd__lpflow_isobufsrc_4 \
+    sky130_fd_sc_hd__lpflow_isobufsrc_8 \
+    sky130_fd_sc_hd__lpflow_isobufsrckapwr_16 \
+    sky130_fd_sc_hd__lpflow_lsbuf_lh_hl_isowell_tap_1 \
+    sky130_fd_sc_hd__lpflow_lsbuf_lh_hl_isowell_tap_2 \
+    sky130_fd_sc_hd__lpflow_lsbuf_lh_hl_isowell_tap_4 \
+    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_4 \
+    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_1 \
+    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_2 \
+    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_4
 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
 export ABC_LOAD_IN_FF = 5
-export ABC_CLOCK_PERIOD_IN_PS = 10
+#export ABC_CLOCK_PERIOD_IN_PS = 10
 
 # Define default PDN config
 export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg

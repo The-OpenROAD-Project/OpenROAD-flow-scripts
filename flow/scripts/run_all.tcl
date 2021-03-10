@@ -55,9 +55,9 @@ source -verbose $::env(SCRIPTS_DIR)/global_route.tcl
 source -verbose $::env(SCRIPTS_DIR)/detail_route.tcl
 
 # Finishing
-ifneq ($(USE_FILL),)
-source -verbose $::env(SCRIPTS_DIR)/density_fill.tcl
-endif
+if {[info exists ::env(USE_FILL)]} {
+  source -verbose $::env(SCRIPTS_DIR)/density_fill.tcl
+}
 
 # Finishing
 source -verbose $::env(SCRIPTS_DIR)/final_report.tcl

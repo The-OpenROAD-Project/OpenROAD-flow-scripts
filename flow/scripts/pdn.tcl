@@ -15,6 +15,8 @@ if {![info exists standalone] || $standalone} {
 
   # Read design files
   read_def $::env(RESULTS_DIR)/2_5_floorplan_tapcell.def
+} else {
+  puts "Starting PDN generation"
 }
 
 if {[info exist ::env(PDN_CFG)]} {

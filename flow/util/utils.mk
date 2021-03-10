@@ -8,15 +8,17 @@ clean_metadata:
 	rm -f $(REPORTS_DIR)/metadata.json
 
 $(REPORTS_DIR)/metadata.json:
-	$(UTILS_DIR)/genMetadata.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -o $@
+	$(UTILS_DIR)/genMetrics.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -o $@
 
-RULES = $(dir $(DESIGN_CONFIG))rules.json
+RULES_DESIGN = $(dir $(DESIGN_CONFIG))rules.json
+RULES_GLOBAL = $(UTILS_DIR)/rules-global.json
+GOLD_METADATA = $(dir $(DESIGN_CONFIG))metadata-ok.json
 
 $(REPORTS_DIR)/metadata-check.log: $(REPORTS_DIR)/metadata.json
-	if test -f $(RULES); then \
-	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES) | tee $@; \
+	if test -f $(RULES_DESIGN); then \
+	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) $(RULES_GLOBAL) -g $(GOLD_METADATA) | tee $@; \
 	else \
-	  echo "No rules" | tee $@; \
+	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_GLOBAL)  -g $(GOLD_METADATA) | tee $@; \
 	fi
 
 
@@ -44,7 +46,7 @@ ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(sort $(wildcard $(SCRIPTS_DIR)/*.t
 ISSUE_CP_FILE_VARS = BLACKBOX_MAP_TCL BLACKBOX_V_FILE CTS_TECH_DIR GENERIC_TECH_LEF \
                      IP_GLOBAL_CFG LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
                      TRACKS_INFO_FILE SDC_FILE VERILOG_FILES TAPCELL_TCL CACHED_NETLIST \
-                     FOOTPRINT SIG_MAP_FILE PDN_CFG ADDITIONAL_LEFS
+                     FOOTPRINT SIG_MAP_FILE PDN_CFG ADDITIONAL_LEFS SETRC_FILE
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	# Creating runme.sh script
@@ -62,11 +64,11 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	  echo set env $V "$($V)"     >> vars.gdb ;) \
 	)
 	@sed -i '/export \./d' vars.sh
-	@sed -i '/$(USER)/d' vars.sh
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.sh
 	@sed -i '/set env(\./d' vars.tcl
-	@sed -i '/$(USER)/d' vars.tcl
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.tcl
 	@sed -i '/set env \./d' vars.gdb
-	@sed -i '/$(USER)/d' vars.gdb
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.gdb
 
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
 	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
@@ -88,11 +90,11 @@ vars.tcl:
 	echo set env $V "$($V)"     >> vars.gdb ;) \
 	)
 	@sed -i '/export \./d' vars.sh
-	@sed -i '/$(USER)/d' vars.sh
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.sh
 	@sed -i '/set env(\./d' vars.tcl
-	@sed -i '/$(USER)/d' vars.tcl
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.tcl
 	@sed -i '/set env \./d' vars.gdb
-	@sed -i '/$(USER)/d' vars.gdb
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.gdb
 
 clean_issues:
 	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)

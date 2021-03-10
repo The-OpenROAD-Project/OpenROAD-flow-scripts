@@ -8,3 +8,4 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 1120 1020.8
 export CORE_AREA   = 10 12 1110 1011.2
+export ABC_CLOCK_PERIOD_IN_PS = 10

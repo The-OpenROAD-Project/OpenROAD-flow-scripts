@@ -23,10 +23,13 @@ if {![info exists standalone] || $standalone} {
   }
   set num_instances [llength [get_cells -hier *]]
   puts "number instances in verilog is $num_instances"
+} else {
+  puts "Starting floorplan"
 }
 
 # Initialize floorplan using ICeWall FOOTPRINT
 # ----------------------------------------------------------------------------
+
 if {[info exists ::env(FOOTPRINT)]} {
 
   ICeWall load_footprint $env(FOOTPRINT)
@@ -34,7 +37,6 @@ if {[info exists ::env(FOOTPRINT)]} {
   initialize_floorplan \
     -die_area  [ICeWall get_die_area] \
     -core_area [ICeWall get_core_area] \
-    -tracks    $::env(TRACKS_INFO_FILE) \
     -site      $::env(PLACE_SITE)
 
   ICeWall init_footprint $env(SIG_MAP_FILE)
@@ -46,7 +48,6 @@ if {[info exists ::env(FOOTPRINT)]} {
   initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
                        -aspect_ratio $::env(CORE_ASPECT_RATIO) \
                        -core_space $::env(CORE_MARGIN) \
-                       -tracks $::env(TRACKS_INFO_FILE) \
                        -site $::env(PLACE_SITE)
 
 # Initialize floorplan using DIE_AREA/CORE_AREA
@@ -54,9 +55,10 @@ if {[info exists ::env(FOOTPRINT)]} {
 } else {
   initialize_floorplan -die_area $::env(DIE_AREA) \
                        -core_area $::env(CORE_AREA) \
-                       -tracks $::env(TRACKS_INFO_FILE) \
                        -site $::env(PLACE_SITE)
 }
+
+source $::env(PLATFORM_DIR)/make_tracks.tcl
 
 # If wrappers defined replace macros with their wrapped version
 # # ----------------------------------------------------------------------------
