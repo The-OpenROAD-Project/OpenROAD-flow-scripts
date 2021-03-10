@@ -184,7 +184,7 @@ def extract_metrics(cwd, platform, design, output):
                        logPath+"/2_1_floorplan.log")
 
     extractTagFromFile("floorplan__area__instance__util", metrics_dict,
-                       "^Design area.* (\S+%) utilization",
+                       "^Design area.* (\S+)% utilization",
                        logPath+"/2_1_floorplan.log")
 
     extractTagFromFile("floorplan__area__IO__count", metrics_dict,
@@ -310,11 +310,11 @@ def extract_metrics(cwd, platform, design, output):
                        logPath+"/6_report.log")
 
     extractTagFromFile("finish__area", metrics_dict,
-                       "^Design area (\S+ \S+)",
+                      "^Design area (\S+) u\^2",
                        logPath+"/6_report.log")
 
     extractTagFromFile("finish__util", metrics_dict,
-                       "^Design area.* (\S+%) utilization",
+                      "^Design area.* (\S+)% utilization",
                        logPath+"/6_report.log")
 
 # Accumulate time
