@@ -8,7 +8,7 @@ export CORNER                ?= BC
 
 export PLACE_DENSITY          = 0.30
 
-export PDN_CFG                = $(FOUNDRY_DIR)/openRoad/pdn/grid_strategy-M2-M4-M7.cfg
+export PDN_CFG                = $(FOUNDRY_DIR)/openRoad/pdn/grid_strategy-M2-M5-M7.cfg
 
 # These values must be multiples of placement site
 # # x=0.19 y=1.4
