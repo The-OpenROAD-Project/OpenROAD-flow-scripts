@@ -16,7 +16,7 @@ if {![info exists standalone] || $standalone} {
   # Read def and sdc
   # Use -order_wires to build wire graph
   # for antenna checker read_def -order_wires $::env(RESULTS_DIR)/6_1_fill.def
-  read_def $::env(RESULTS_DIR)/6_1_fill.def
+  read_def -order_wires $::env(RESULTS_DIR)/6_1_fill.def
 } else {
   puts "Starting final report"
 }
@@ -31,6 +31,34 @@ write_verilog $::env(RESULTS_DIR)/6_final.v
 
 report_design_area
 report_power
+
+# Run extraction and STA
+if [file exists $::env(PLATFORM_DIR)/patterns.rules] {
+  
+  # Set res and cap
+  if [file exists $::env(PLATFORM_DIR)/rcx_via_resistance.tcl] {
+    source $::env(PLATFORM_DIR)/rcx_via_resistance.tcl
+  }
+
+  # RCX section
+  define_process_corner -ext_model_index 0 X
+  extract_parasitics -ext_model_file $::env(PLATFORM_DIR)/patterns.rules
+  
+  # Write Spef
+  write_spef $::env(RESULTS_DIR)/6_final.spef
+  file delete $::env(DESIGN_NAME).totCap
+
+  read_verilog $::env(RESULTS_DIR)/6_final.v
+  link_design $::env(DESIGN_NAME)
+  read_sdc $::env(RESULTS_DIR)/6_1_fill.sdc
+  
+  # Read Spef for OpenSTA
+  read_spef $::env(RESULTS_DIR)/6_final.spef
+
+  source $::env(SCRIPTS_DIR)/timing_report.tcl
+} else {
+  puts "RCX patterns.rules is not available! Can't run signoff flow."
+}
 
 if {![info exists standalone] || $standalone} {
   exit
