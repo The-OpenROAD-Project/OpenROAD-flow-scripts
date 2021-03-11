@@ -1,13 +1,29 @@
-export DESIGN_NICKNAME = aes
-export DESIGN_NAME = aes_cipher_top
-export PLATFORM    = asap7
+$(info [INFO-FLOW] AES Design)
 
-export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+DESIGN_DIR                   := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-# These values must be multiples of placement site
-#export DIE_AREA    = 0 0 620 520.8
-#export CORE_AREA   = 10 12 610 511.2
-export CORE_UTILIZATION = 15
-export CORE_ASPECT_RATIO = 1
-export CORE_MARGIN = 2
+export DESIGN_NAME            = aes_cipher_top
+export DESIGN_NICKNAME        = aes
+export DESIGN                 = aes
+
+export VERILOG_FILES          = $(sort $(wildcard $(DESIGN_DIR)/src/*.v))
+export SDC_FILE               = $(DESIGN_DIR)/src/constraint.sdc
+
+export CORNER                ?= BC
+
+export LIB_FILES             += $($(CORNER)_LIB_FILES)
+export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
+export DB_FILES              += $($(CORNER)_DB_FILES)
+export DB_DIRS               += $($(CORNER)_DB_DIRS)
+export WRAP_LIBS             += $(WRAP_$(CORNER)_LIBS)
+export WRAP_LEFS             += $(WRAP_$(CORNER)_LEFS)
+export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
+
+export ABC_CLOCK_PERIOD_IN_PS = 400
+
+export DESIGN_POWER           = VDD
+export DESIGN_GROUND          = VSS
+
+export DESIGN_DIR
+
+include $(DESIGN_DIR)/config_asap7.mk

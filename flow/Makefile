@@ -61,7 +61,7 @@
 # DESIGN_CONFIG=./designs/sky130hs/jpeg/config.mk
 
 # Default design
-DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
+DESIGN_CONFIG ?= ./designs/asap7/aes/config.mk
 
 # # Global override Floorplan
 # export CORE_UTILIZATION := 30
@@ -120,7 +120,7 @@ export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
 export DONT_USE_LIBS   = $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES)))
-export DONT_USE_SC_LIB = $(OBJECTS_DIR)/lib/$(notdir $(firstword $(LIB_FILES)))
+export DONT_USE_SC_LIB ?= $(OBJECTS_DIR)/lib/$(notdir $(firstword $(LIB_FILES)))
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
@@ -153,6 +153,10 @@ endif
 $(DONT_USE_LIBS): $$(filter %$$(@F),$(LIB_FILES))
 	@mkdir -p $(OBJECTS_DIR)/lib
 	$(UTILS_DIR)/markDontUse.py -p "$(DONT_USE_CELLS)" -i $^ -o $@
+
+$(DONT_USE_SC_LIB):
+	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
+
 
 # Pre-process KLayout tech
 # ==============================================================================
@@ -197,7 +201,7 @@ synth: versions.txt \
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= scripts/synth.tcl
 
-$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS)
+$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) yosys -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
@@ -570,3 +574,7 @@ gui_final: $(RESULTS_DIR)/6_final.def
 include $(UTILS_DIR)/utils.mk
 export PRIVATE_DIR = ../../private_tool_scripts
 -include $(PRIVATE_DIR)/util/utils.mk
+
+stat:
+	echo $(DONT_USE_LIBS)
+	echo $(DONT_USE_SC_LIB)

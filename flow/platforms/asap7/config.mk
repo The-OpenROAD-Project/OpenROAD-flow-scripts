@@ -1,8 +1,17 @@
-# Process node
-export PROCESS = 7
+$(info [INFO-FLOW] ASU ASAP7)
 
-# Rules for metal fill
-export FILL_CONFIG = $(PLATFORM_DIR)/fill.json
+FOUNDRY_DIR                   := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
+
+export FOUNDRY_DIR  
+
+export PLATFORM                = asap7
+export PROCESS                 = 7
+
+export OPENROAD_PATCHES        +=
+
+# Placement site for core cells
+# This can be found in the technology lef
+export PLACE_SITE              = asap7sc7p5t
 
 # Set the TIEHI/TIELO cells
 # These are used in yosys synthesis to avoid logical 1/0's in the netlist
@@ -11,133 +20,151 @@ export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_R L
 
 # Used in synthesis
 export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_R A Y
-#export MIN_BUF_CELL_AND_PORTS  = BUFx4_ASAP7_75t_R A Y
 
 # Resizer hold buffer
 export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_R
-#export HOLD_BUF_CELL           = BUFx4_ASAP7_75t_R
 
 # Used in synthesis
 export MAX_FANOUT              = 100
 
-# Blackbox verilog file
-# List all standard cells and cells yosys should treat as blackboxes here
-#export BLACKBOX_V_FILE = $(PLATFORM_DIR)/asap7sc7p5t_27_R_1x.blackbox.v
-export BLACKBOX_V_FILE = $(PLATFORM_DIR)/merged_blackbox.v
-
 # Yosys mapping files
-export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch.v
-export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
-export BLACKBOX_MAP_TCL = $(PLATFORM_DIR)/blackbox_map.tcl
-
-# Placement site for core cells
-# This can be found in the technology lef
-export PLACE_SITE = asap7sc7p5t
+# Blackbox - list all standard cells and cells yosys should treat as blackboxes
+export BLACKBOX_V_FILE         = $(FOUNDRY_DIR)/yoSys/asap7sc7p5t.blackbox.v
+export LATCH_MAP_FILE          = $(FOUNDRY_DIR)/yoSys/cells_latch.v
+export CLKGATE_MAP_FILE        = $(FOUNDRY_DIR)/yoSys/cells_clkgate.v
+export BLACKBOX_MAP_TCL        = $(FOUNDRY_DIR)/yoSys/blackbox_map.tcl
 
 # Track information for generating DEF tracks
-export TRACKS_INFO_FILE = $(PLATFORM_DIR)/tracks.info
-#export TRACKS_INFO_FILE = $(PLATFORM_DIR)/tracks2.info
+#export TRACKS_INFO_FILE        = $(FOUNDRY_DIR)/openRoad/tracks.info
+export TRACKS_INFO_FILE        = $(FOUNDRY_DIR)/openRoad/tracks2.info
+export IP_GLOBAL_CFG           = $(FOUNDRY_DIR)/openRoad/IP_global.cfg
 
-export IP_GLOBAL_CFG = $(PLATFORM_DIR)/IP_global.cfg
+export BC_LIB_FILES            = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_INVBUF_RVT_FF_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_OA_RVT_FF_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib
 
-#export TECH_LEF = $(PLATFORM_DIR)/lef/asap7_tech_1x_201209.lef
-export TECH_LEF = $(PLATFORM_DIR)/lef/asap7_tech_1x_201209_mod.lef
-export SC_LEF = $(PLATFORM_DIR)/lef/asap7sc7p5t_27_R_1x_201211.lef
-export ADDITIONAL_LEFS += 
-#export ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/asap7sc7p5t_27_SRAM_1x_201211.lef \
-													$(PLATFORM_DIR)/lef/asap7sc7p5t_27_L_1x_201211.lef \
-													$(PLATFORM_DIR)/lef/asap7sc7p5t_27_SL_1x_201211.lef
+export WC_LIB_FILES           = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_RVT_SS_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_INVBUF_RVT_SS_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_OA_RVT_SS_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib
 
-#export LIB_FILES = $(PLATFORM_DIR)/lib/mod.lib \
-									 $(ADDITIONAL_LIBS)
-export LIB_FILES = $(PLATFORM_DIR)/lib/asap7_rvt_tt_merged.lib \
-									 $(ADDITIONAL_LIBS)
-#export LIB_FILES = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_201020.lib \
-									 $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_TT_nldm_201020.lib \
-									 $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_TT_nldm_201020.lib \
-									 $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib \
-									 $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_TT_nldm_201020.lib \
-                   $(ADDITIONAL_LIBS)
+export TC_LIB_FILES           = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_INVBUF_RVT_TT_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_OA_RVT_TT_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib \
+                                 $(FOUNDRY_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_TT_nldm_201020.lib
 
-#export LIB_FILES = $(PLATFORM_DIR)/lib/temp/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib \
-                   $(ADDITIONAL_LIBS)
-export GDS_FILES = $(wildcard $(PLATFORM_DIR)/gds/*) \
-                   $(ADDITIONAL_GDS)
+export BC_TEMPERATURE          = 25C
+export TC_TEMPERATURE          = 0C
+export WC_TEMPERATURE          = 100C
+
+export TECH_LEF                = $(FOUNDRY_DIR)/lef/asap7_tech_1x_201209.lef
+export SC_LEF                  = $(FOUNDRY_DIR)/lef/asap7sc7p5t_27_R_1x_201211.lef
+
+export GDS_FILES               = $(FOUNDRY_DIR)/asap7/asap7sc7p5t_27/GDS/asap7sc7p5t_27_R_201211.gds
+
+export TRITON_ROUTE_LEF_FILTER = $(FOUNDRY_DIR)/tritonRoute/LEF_filter.txt
+export TRITON_ROUTE_TECH_LEF   = $(TECH_LEF)
 
 # Cell padding in SITE widths to ease rout-ability.  Applied to both sides
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 4
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 2
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 2
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 1
 
 # Endcap and Welltie cells
-export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
+export TAPCELL_TCL             = $(FOUNDRY_DIR)/openRoad/tapcell.tcl
 
 # TritonCTS options
 export CTS_BUF_CELL            = BUFx4_ASAP7_75t_R
-#export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTS/
 
-# FastRoute options
-export MIN_ROUTING_LAYER = 2
-export MAX_ROUTING_LAYER = 7
+#export CTS_TECH_DIR           = $(FOUNDRY_DIR)/tritonCTS
+export CTS_SQR_CAP             = 2.28541e-4
+export CTS_SQR_RES             = 1.832146e-0
+export CTS_SLEW_INTER          = 7.5e-13
+export CTS_CAP_INTER           = 65.0e-17
+export CTS_MAX_SLEW            = 1.77e-9
+export CTS_MAX_CAP             = 0.968693e-12
+
+export CTS_BUF_DISTANCE        = 60
+
+# Route options
+export MIN_ROUTING_LAYER       = 2
+export MAX_ROUTING_LAYER       = 7
 
 # IO Pin fix margin
-export IO_PIN_MARGIN = 70
+export IO_PIN_MARGIN           = 70
+
+# Layer to use for parasitics estimations
+export WIRE_RC_LAYER           = metal3
 
 # resizer repair_long_wires -max_length
-# This number is random because there are no RC values -cherry
-export MAX_WIRE_LENGTH = 1000
+export MAX_WIRE_LENGTH         = 1000
 
-# KLayout layer properties
-export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/$(PLATFORM).lyt
+# KLayout technology file
+export KLAYOUT_TECH_FILE       = $(FOUNDRY_DIR)/KLayout/klayout.lyt
+
+# KLayout DRC ruledeck
+export KLAYOUT_DRC_FILE        = 
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
-export DONT_USE_CELLS          =  SDF* ICG* 
-
-# Cells with strength <= 1 have difficult pin access
-export DONT_USE_CELLS += OAI21xp* AOI21xp* OAI21x1* AOI21x1* A2O1A1O1Ixp* A2O1A1O1Ix1* MAJIxp* NAND2x1* AO21x1* AOI22xp* AOI22x1* AOI211xp* AOI31xp* A2O1A1Ixp* HB4xp* HB3xp* HB2xp* HB1xp*
-
-#export DONT_USE_CELLS += DFFHQNx1* DFFHQNx2*
+export DONT_USE_CELLS          = *x1_ASAP7* *x1p*_ASAP7* *xp*_ASAP7*
+export DONT_USE_CELLS          += SDF* ICG* DFFHQNx2*
 
 # Fill cells used in fill cell insertion
-export FILL_CELLS = FILLER*
+export FILL_CELLS              = FILLER_ASAP7_75t_R
 
-# Define default PDN config
-#TODO
-export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
+#export POST_MERGELIB           = $(FOUNDRY_DIR)/openRoad/post_mergeLib.py
 
-export PLACE_DENSITY ?= 0.40
+# Template definition for power grid analysis
+export TEMPLATE_PGA_CFG        = $(FOUNDRY_DIR)/pdn/template_pga.cfg
 
 # IO Placer pin layers
-export IO_PLACER_H = 2
-export IO_PLACER_V = 3
+export IO_PLACER_H             = 4
+export IO_PLACER_V             = 5
 
 # Set yosys-abc clock period to first "-period" found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_FILE) | awk '{print $$2}')
-export ABC_DRIVER_CELL = BUFx2_ASAP7_75t_R
-#export ABC_DRIVER_CELL = BUFx4_ASAP7_75t_R
-# BUFx2_ASAP7_75t_R, pin (A) = 0.534279. Arbitrarily multiply by 4
-# BUFx4_ASAP7_75t_R, pin (A) = 0.538751. Arbitrarily multiply by 4
-export ABC_LOAD_IN_FF = 2.137116
-#export ABC_LOAD_IN_FF = 2.155004
+export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_R
 
-# adjustment parameter for placer and global router's routability-driven loop
-#
-# if routing resources are highly reduced in global router (e.g. higher value in below)
-# placer will bloat lots of cells in each RD iteration and cause unstableness.
-#
-# will be used in script/global_place.tcl
-export REPLACE_FASTROUTE_RESOURCE_ADJ_23=0.5
-export REPLACE_FASTROUTE_RESOURCE_ADJ_OTHER=0.2
+# BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
+export ABC_LOAD_IN_FF          = 3.898
 
-# TritonCTS options
-export CTS_BUF_LIST     = BUFx4_ASAP7_75t_R
+export SET_RC_TCL              = $(FOUNDRY_DIR)/openROAD/setRC.tcl
 
-#TODO
-export CTS_SQR_CAP      = 2.28541e-4
-export CTS_SQR_RES      = 1.832146e-0
-export CTS_SLEW_INTER   = 7.5e-13
-export CTS_CAP_INTER    = 65.0e-17
-export CTS_MAX_SLEW     = 1.77e-9
-export CTS_MAX_CAP      = 0.968693e-12
+# XS - defining function for selecting different timing library set
+# XS - defining function for 4x sizing
+define use_4x
+  export TECH_LEF                = $(FOUNDRY_DIR)/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef
+  export SC_LEF                  = $(FOUNDRY_DIR)/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_R_4x_201211.lef
+endef
 
-export CTS_BUF_DISTANCE = 60
+# XS - defining function for using LVT
+define use_lvt
+  export TIEHI_CELL_AND_PORT     = TIEHIx1_ASAP7_75t_L H
+  export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_L L
+
+  export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_L A Y
+
+  export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_L
+
+  export BC_LIB_FILES            = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_LVT_FF_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib
+
+  export WC_LIB_FILES           = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_LVT_SS_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_OA_LVT_SS_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib
+
+  export TC_LIB_FILES           = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_LVT_TT_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_INVBUF_LVT_TT_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_OA_LVT_TT_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_201020.lib \
+                                   $(FOUNDRY_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_TT_nldm_201020.lib
+
+endef
