@@ -457,10 +457,6 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_
 
 $(RESULTS_DIR)/6_final.def: $(REPORTS_DIR)/6_final_report.rpt
 
-$(RESULTS_DIR)/6_final.spef: $(REPORTS_DIR)/6_final.def $(REPORTS_DIR)/6_final.v $(RESULTS_DIR)/6_1_fill.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/signoff_report.tcl -metrics $(LOG_DIR)/6_signoff_report.json) 2>&1 | tee $(LOG_DIR)/6_signoff_report.log
-	rm -f ./$(DESIGN_NAME).totCap
-
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
 $(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
