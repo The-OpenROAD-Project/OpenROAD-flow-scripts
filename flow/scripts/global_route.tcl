@@ -49,17 +49,7 @@ if [file exists $::env(PLATFORM_DIR)/setRC.tcl] {
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
 
-source $::env(SCRIPTS_DIR)/timing_report.tcl
-
-puts "\n=========================================================================="
-puts "report_power"
-puts "--------------------------------------------------------------------------"
-report_power
-
-puts "\n=========================================================================="
-puts "report_design_area"
-puts "--------------------------------------------------------------------------"
-report_design_area
+source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
 puts "\n=========================================================================="
 puts "check_antennas"
