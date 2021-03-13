@@ -177,7 +177,11 @@ def extract_metrics(cwd, platform, design, output):
 
     extractTagFromFile("floorplan__timing__wns__worst", metrics_dict,
                        "^wns (\S+)",
-                       logPath+"/2_1_floorplan.log")
+                       logPath+"/2_1_floorplan.log", occurrence=0)
+
+    extractTagFromFile("floorplan__timing__ws__worst", metrics_dict,
+                       "^worst slack (\S+)",
+                       logPath+"/2_1_floorplan.log", occurrence=0)
 
     extractTagFromFile("floorplan__area__stdcell__count", metrics_dict,
                        "^Design area (\S+) u\^2",
@@ -234,6 +238,10 @@ def extract_metrics(cwd, platform, design, output):
                        "^wns (\S+)",
                        logPath+"/3_3_resizer.log")
 
+    extractTagFromFile("placeopt__timing__ws__worst", metrics_dict,
+                       "^worst slack (\S+)",
+                       logPath+"/3_3_resizer.log")
+
     extractTagFromFile("placeopt__area__instance__area", metrics_dict,
                        "^Design area (\S+) u\^2",
                        logPath+"/3_3_resizer.log")
@@ -248,6 +256,10 @@ def extract_metrics(cwd, platform, design, output):
 
     extractTagFromFile("detailedplace__timing__wns__worst", metrics_dict,
                        "^wns (\S+)",
+                       logPath+"/3_4_opendp.log")
+
+    extractTagFromFile("detailedplace__timing__ws__worst", metrics_dict,
+                       "^worst slack (\S+)",
                        logPath+"/3_4_opendp.log")
 
     extractTagFromFile("detailedplace__inst__displacement__total", metrics_dict,
@@ -273,12 +285,16 @@ def extract_metrics(cwd, platform, design, output):
 # CTS
 # ==============================================================================
 
-    extractTagFromFile("cts__timing__slack__tns", metrics_dict,
+    extractTagFromFile("cts__timing__tns__total", metrics_dict,
                        "^tns (\S+)",
                        logPath+"/4_1_cts.log")
 
-    extractTagFromFile("cts__timing__slack__wns", metrics_dict,
+    extractTagFromFile("cts__timing__wns__worst", metrics_dict,
                        "^wns (\S+)",
+                       logPath+"/4_1_cts.log")
+
+    extractTagFromFile("cts__timing__ws__worst", metrics_dict,
+                       "^worst slack (\S+)",
                        logPath+"/4_1_cts.log")
 
 # Route
@@ -290,6 +306,10 @@ def extract_metrics(cwd, platform, design, output):
 
     extractTagFromFile("globalroute__timing__wns__worst", metrics_dict,
                       "^wns (\S+)",
+                      logPath+"/5_1_fastroute.log")
+
+    extractTagFromFile("globalroute__timing__ws__worst", metrics_dict,
+                      "^worst slack (\S+)",
                       logPath+"/5_1_fastroute.log")
 
     extractTagFromFile("detailedroute__wirelength", metrics_dict,

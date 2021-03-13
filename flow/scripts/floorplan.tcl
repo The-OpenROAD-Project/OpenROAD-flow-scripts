@@ -78,8 +78,6 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
   }
 }
  
-# remove buffers inserted by yosys/abc
-remove_buffers
 
 # pre report
 
@@ -97,11 +95,22 @@ puts "\n========================================================================
 puts "report_wns"
 puts "--------------------------------------------------------------------------"
 report_wns
+report_worst_slack
 
 puts "\n=========================================================================="
 puts "report_design_area"
 puts "--------------------------------------------------------------------------"
 report_design_area
+
+# remove buffers inserted by yosys/abc
+remove_buffers
+
+puts "\n=========================================================================="
+puts "report_design_area after buffer removal"
+puts "--------------------------------------------------------------------------"
+report_design_area
+report_worst_slack
+
 
 if {![info exists standalone] || $standalone} {
   # write output

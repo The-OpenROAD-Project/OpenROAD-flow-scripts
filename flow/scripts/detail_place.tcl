@@ -30,6 +30,7 @@ estimate_parasitics -placement
 report_design_area
 report_tns
 report_wns
+report_worst_slack
 
 if {![info exists standalone] || $standalone} {
   # write output
