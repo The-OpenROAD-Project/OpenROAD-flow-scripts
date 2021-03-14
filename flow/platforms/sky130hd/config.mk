@@ -140,3 +140,6 @@ export FILL_CELLS = sky130_fd_sc_hd__fill_1 sky130_fd_sc_hd__fill_2 sky130_fd_sc
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 21000
 
+# Avoid slew violations on clock tree
+export CTS_CLUSTER_SIZE = 20
+export CTS_CLUSTER_DIAMETER = 50
