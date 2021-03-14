@@ -53,6 +53,9 @@ if [file exists $::env(PLATFORM_DIR)/rcx_patterns.rules] {
   source $::env(SCRIPTS_DIR)/report_metrics.tcl
 } else {
   puts "rcx_patterns.rules is not available! Can't run signoff flow."
+
+  report_design_area
+  report_power
 }
 
 if {![info exists standalone] || $standalone} {
