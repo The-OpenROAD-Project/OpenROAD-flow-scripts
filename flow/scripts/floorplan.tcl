@@ -86,6 +86,7 @@ puts "report_checks"
 puts "--------------------------------------------------------------------------"
 report_checks -fields {input slew capacitance} -format full_clock
 
+report_clock_properties
 puts "\n=========================================================================="
 puts "report_tns"
 puts "--------------------------------------------------------------------------"
