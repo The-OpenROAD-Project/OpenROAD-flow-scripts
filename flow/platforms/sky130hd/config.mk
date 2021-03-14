@@ -46,7 +46,7 @@ export CELL_PAD_IN_SITES = 4
 export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
 
 # TritonCTS options
-export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
+export CTS_BUF_CELL   = sky130_fd_sc_hd__clkbuf_1
 export CTS_MAX_SLEW   = 1.5e-9
 export CTS_MAX_CAP    = .1532e-12
 export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShd
@@ -105,7 +105,12 @@ export DONT_USE_CELLS += \
     sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_4 \
     sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_1 \
     sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_2 \
-    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_4
+    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_4 \
+    sky130_fd_sc_hd__clkbuf_1 \
+    sky130_fd_sc_hd__clkbuf_2 \
+    sky130_fd_sc_hd__clkbuf_4 \
+    sky130_fd_sc_hd__clkbuf_8 \
+    sky130_fd_sc_hd__clkbuf_16
 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
