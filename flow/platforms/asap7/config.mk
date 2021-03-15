@@ -28,11 +28,9 @@ export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_R
 export MAX_FANOUT              = 100
 
 # Yosys mapping files
-# Blackbox - list all standard cells and cells yosys should treat as blackboxes
-export BLACKBOX_V_FILE         = $(FOUNDRY_DIR)/yoSys/asap7sc7p5t.blackbox.v
+# list all standard cells
 export LATCH_MAP_FILE          = $(FOUNDRY_DIR)/yoSys/cells_latch.v
 export CLKGATE_MAP_FILE        = $(FOUNDRY_DIR)/yoSys/cells_clkgate.v
-export BLACKBOX_MAP_TCL        = $(FOUNDRY_DIR)/yoSys/blackbox_map.tcl
 
 # Track information for generating DEF tracks
 #export TRACKS_INFO_FILE        = $(FOUNDRY_DIR)/openRoad/tracks.info
@@ -79,7 +77,6 @@ export TAPCELL_TCL             = $(FOUNDRY_DIR)/openRoad/tapcell.tcl
 # TritonCTS options
 export CTS_BUF_CELL            = BUFx4_ASAP7_75t_R
 
-#export CTS_TECH_DIR           = $(FOUNDRY_DIR)/tritonCTS
 export CTS_SQR_CAP             = 2.28541e-4
 export CTS_SQR_RES             = 1.832146e-0
 export CTS_SLEW_INTER          = 7.5e-13
