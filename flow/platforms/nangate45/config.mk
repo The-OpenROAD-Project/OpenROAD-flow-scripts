@@ -15,15 +15,9 @@ export HOLD_BUF_CELL = BUF_X1
 # Used in synthesis
 export MAX_FANOUT = 100
 
-# Blackbox verilog file
-# List all standard cells and cells yosys should treat as blackboxes here
-export BLACKBOX_V_FILE = ./platforms/$(PLATFORM)/NangateOpenCellLibrary.blackbox.v
-export BLACKBOX_LVS_FILE = ./platforms/$(PLATFORM)/NangateOpenCellLibrary.blackbox.lvs.v
-
 # Yosys mapping files
 export LATCH_MAP_FILE = ./platforms/$(PLATFORM)/cells_latch.v
 export CLKGATE_MAP_FILE = ./platforms/$(PLATFORM)/cells_clkgate.v
-export BLACKBOX_MAP_TCL = ./platforms/$(PLATFORM)/blackbox_map.tcl
 
 # Placement site for core cells
 # This can be found in the technology lef
@@ -49,7 +43,6 @@ export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
 
 # TritonCTS options
 export CTS_BUF_CELL   = BUF_X4
-export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTS
 export CTS_MAX_SLEW   = .198e-9
 export CTS_MAX_CAP    = .242e-12
 
