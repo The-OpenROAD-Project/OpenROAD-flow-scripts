@@ -53,10 +53,8 @@ if {[info exist ::env(OPENRCX_ENABLED)] &&
 
   source $::env(SCRIPTS_DIR)/report_metrics.tcl
 } else {
-  puts "rcx_patterns.rules is not available! Can't run signoff flow."
-
+  puts "OpenRCX is not enabled for this platform."
   report_design_area
-  report_power
 }
 
 if {![info exists standalone] || $standalone} {
