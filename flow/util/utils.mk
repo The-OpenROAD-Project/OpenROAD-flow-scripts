@@ -49,14 +49,14 @@ ISSUE_CP_FILE_VARS = GENERIC_TECH_LEF \
                      FOOTPRINT SIG_MAP_FILE PDN_CFG ADDITIONAL_LEFS SETRC_FILE
 
 VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)
-RUN_ME_SCRITP = run-me-$(DESIGN_NICKNAME)-$(PLATFORM).sh
+RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM).sh
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
-	# Creating $(RUN_ME_SCRITP) script
-	@echo "#!/bin/bash"                             > $(RUN_ME_SCRITP)
-	@echo "source $(VARS_BASENAME).sh"                          >> $(RUN_ME_SCRITP)
-	@echo "openroad -no_init $(SCRIPTS_DIR)/$*.tcl" >> $(RUN_ME_SCRITP)
-	@chmod +x $(RUN_ME_SCRITP)
+	# Creating $(RUN_ME_SCRIPT) script
+	@echo "#!/bin/bash"                             > $(RUN_ME_SCRIPT)
+	@echo "source $(VARS_BASENAME).sh"                          >> $(RUN_ME_SCRIPT)
+	@echo "openroad -no_init $(SCRIPTS_DIR)/$*.tcl" >> $(RUN_ME_SCRIPT)
+	@chmod +x $(RUN_ME_SCRIPT)
 
 	# Creating $(VARS_BASENAME).sh/tcl script
 	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
@@ -81,7 +81,7 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	                                     $(RESULTS_DIR) \
 	                                     $(SCRIPTS_DIR) \
 	                                     $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
-	                                     $(RUN_ME_SCRITP) $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb \
+	                                     $(RUN_ME_SCRIPT) $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb \
 	                                     $^
 
 $(VARS_BASENAME).tcl:
@@ -101,7 +101,7 @@ $(VARS_BASENAME).tcl:
 
 clean_issues:
 	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
-	rm -rf $(VARS_BASENAME).sh $(RUN_ME_SCRITP)
+	rm -rf $(VARS_BASENAME).sh $(RUN_ME_SCRIPT)
 
 $(RESULTS_DIR)/6_final_only_clk.def: $(RESULTS_DIR)/6_final.def
 	$(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/deleteNonClkNets.tcl
