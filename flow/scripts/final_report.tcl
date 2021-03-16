@@ -32,7 +32,8 @@ write_def $::env(RESULTS_DIR)/6_final.def
 write_verilog $::env(RESULTS_DIR)/6_final.v
 
 # Run extraction and STA
-if [file exists $::env(PLATFORM_DIR)/rcx_patterns.rules] {
+if {[info exist ::env(OPENRCX_ENABLED)] &&
+    [file exists $::env(PLATFORM_DIR)/rcx_patterns.rules]} {
   
   # Set res and cap
   if [file exists $::env(PLATFORM_DIR)/rcx_via_resistance.tcl] {
