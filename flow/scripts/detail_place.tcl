@@ -15,6 +15,10 @@ if {![info exists standalone] || $standalone} {
 
   # Read design files
   read_def $::env(RESULTS_DIR)/3_3_place_resized.def
+  read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
+  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
+    source $::env(PLATFORM_DIR)/derate.tcl
+  }
 } else {
   puts "Starting detailed placement"
 }
@@ -27,6 +31,7 @@ optimize_mirroring
 check_placement -verbose
 
 estimate_parasitics -placement
+report_checks
 report_design_area
 report_tns
 report_wns
