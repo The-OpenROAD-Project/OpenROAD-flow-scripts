@@ -16,14 +16,9 @@ export MIN_BUF_CELL_AND_PORTS = sky130_fd_sc_hs__buf_4 A X
 # Used in synthesis
 export MAX_FANOUT ?= 100
 
-# Blackbox verilog file
-# List all standard cells and cells yosys should treat as blackboxes here
-export BLACKBOX_V_FILE = ./platforms/$(PLATFORM)/sky130_fd_sc_hs.blackbox.v
-
 # Yosys mapping files
 export LATCH_MAP_FILE = ./platforms/$(PLATFORM)/cells_latch_hs.v
 export CLKGATE_MAP_FILE = ./platforms/$(PLATFORM)/cells_clkgate_hs.v
-export BLACKBOX_MAP_TCL = ./platforms/$(PLATFORM)/blackbox_map.tcl
 
 # Placement site for core cells
 # This can be found in the technology lef
@@ -51,7 +46,6 @@ export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
 export CTS_BUF_CELL   = sky130_fd_sc_hs__buf_1
 export CTS_MAX_SLEW   = 1.5e-9
 export CTS_MAX_CAP    = .2e-12
-export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShs
 
 # FastRoute options
 export MIN_ROUTING_LAYER = 2
