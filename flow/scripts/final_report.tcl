@@ -32,7 +32,8 @@ write_def $::env(RESULTS_DIR)/6_final.def
 write_verilog $::env(RESULTS_DIR)/6_final.v
 
 # Run extraction and STA
-if [file exists $::env(PLATFORM_DIR)/rcx_patterns.rules] {
+if {[info exist ::env(OPENRCX_ENABLED)] &&
+    [file exists $::env(PLATFORM_DIR)/rcx_patterns.rules]} {
   
   # Set res and cap
   if [file exists $::env(PLATFORM_DIR)/rcx_via_resistance.tcl] {
@@ -52,10 +53,8 @@ if [file exists $::env(PLATFORM_DIR)/rcx_patterns.rules] {
 
   source $::env(SCRIPTS_DIR)/report_metrics.tcl
 } else {
-  puts "rcx_patterns.rules is not available! Can't run signoff flow."
-
+  puts "OpenRCX is not enabled for this platform."
   report_design_area
-  report_power
 }
 
 if {![info exists standalone] || $standalone} {
