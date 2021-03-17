@@ -42,7 +42,7 @@ set -e
 if [ ! -z ${MAKE_ISSUE+x} ]; then
   make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk final_report_issue
   if [ ! -z ${COPY_ISSUE+x} ]; then
-    cp final_report*gz ${COPY_ISSUE}
+    cp final_report_${DESIGN_CONFIG}_${PLATFORM}_*gz ${COPY_ISSUE}
   fi
 fi
 
