@@ -17,7 +17,11 @@ if {![info exists standalone] || $standalone} {
   # Use -order_wires to build wire graph
   # for antenna checker read_def -order_wires $::env(RESULTS_DIR)/6_1_fill.def
   # -order_wires flag is REQUIRED to run RCX
-  read_def $::env(RESULTS_DIR)/6_1_fill.def
+  if {[info exist ::env(RCX_RULES)]} {
+    read_def -order_wires $::env(RESULTS_DIR)/6_1_fill.def
+  } else {
+    read_def $::env(RESULTS_DIR)/6_1_fill.def
+  }
   read_sdc $::env(RESULTS_DIR)/6_1_fill.sdc
 } else {
   puts "Starting final report"
@@ -32,8 +36,7 @@ write_def $::env(RESULTS_DIR)/6_final.def
 write_verilog $::env(RESULTS_DIR)/6_final.v
 
 # Run extraction and STA
-if {[info exist ::env(OPENRCX_ENABLED)] &&
-    [file exists $::env(PLATFORM_DIR)/rcx_patterns.rules]} {
+if {[info exist ::env(RCX_RULES)]} {
   
   # Set res and cap
   if [file exists $::env(PLATFORM_DIR)/rcx_via_resistance.tcl] {
