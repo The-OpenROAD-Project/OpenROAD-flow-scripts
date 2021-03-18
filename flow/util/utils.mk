@@ -84,6 +84,11 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	                                     $(RUN_ME_SCRIPT) $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb \
 	                                     $^
 
+	@if [ ! -z $${COPY_ISSUE+x} ]; then \
+		mkdir -p $${COPY_ISSUE} ; \
+		cp $*_$(ISSUE_TAG).tar.gz $${COPY_ISSUE} ; \
+	fi
+
 $(VARS_BASENAME).tcl:
 	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
 	@$(foreach V, $(.VARIABLES), \
