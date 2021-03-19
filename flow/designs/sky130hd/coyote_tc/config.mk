@@ -78,3 +78,8 @@ export MAX_ROUTING_LAYER 6
 
 export FASTROUTE_TCL $(PLATFORM_DIR)/fastroute.tcl
 
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+export VDD_NET_NAME  = VDD
+export VSS_NET_NAME  = VSS
+export VDD_VOLTAGE   = 1.8
+export VSS_VOLTAGE   = 0.0

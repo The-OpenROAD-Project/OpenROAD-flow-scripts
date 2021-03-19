@@ -61,6 +61,11 @@ export MACRO_PLACEMENT = $(chameleon_DIR)/chameleon.macro_placment.cfg
 #export _WIDTH = 3
 #export CONNECT_GRIDS = 1
 
-
 export FP_PDN_RAIL_WIDTH = 0.48
 export FP_PDN_RAIL_OFFSET = 0
+
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+export VDD_NET_NAME  = VDD
+export VSS_NET_NAME  = VSS
+export VDD_VOLTAGE   = 1.8
+export VSS_VOLTAGE   = 0.0

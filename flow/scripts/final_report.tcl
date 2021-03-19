@@ -55,8 +55,14 @@ if {[info exist ::env(RCX_RULES)]} {
   read_spef $::env(RESULTS_DIR)/6_final.spef
 
   source $::env(SCRIPTS_DIR)/report_metrics.tcl
+
+  # Static IR drop analysis
+  set_pdnsim_net_voltage -net $::env(VDD_NET_NAME) -voltage $::env(VDD_VOLTAGE)
+  analyze_power_grid -net $::env(VDD_NET_NAME)
+  set_pdnsim_net_voltage -net $::env(VSS_NET_NAME) -voltage $::env(VSS_VOLTAGE)
+  analyze_power_grid -net $::env(VSS_NET_NAME)
 } else {
-  puts "OpenRCX is not enabled for this platform."
+  puts "OpenRCX and IR drop analysis is not enabled for this platform."
   report_design_area
 }
 
