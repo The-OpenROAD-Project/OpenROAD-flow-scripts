@@ -50,7 +50,6 @@ export DIE_AREA    = 0 0 3000 1999
 export CORE_AREA   = 150.0 150 2850.0 1850
 
 # IR drop estimation supply net name to be analyzed and supply voltage variable
-export VDD_NET_NAME  = VDD
-export VSS_NET_NAME  = VSS
-export VDD_VOLTAGE   = 1.8
-export VSS_VOLTAGE   = 0.0
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  = "VDD 1.8"
+export GND_NETS_VOLTAGES  = "VSS 0.0"

@@ -57,12 +57,25 @@ if {[info exist ::env(RCX_RULES)]} {
   source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
   # Static IR drop analysis
-  set_pdnsim_net_voltage -net $::env(VDD_NET_NAME) -voltage $::env(VDD_VOLTAGE)
-  analyze_power_grid -net $::env(VDD_NET_NAME)
-  set_pdnsim_net_voltage -net $::env(VSS_NET_NAME) -voltage $::env(VSS_VOLTAGE)
-  analyze_power_grid -net $::env(VSS_NET_NAME)
+  if {[info exist ::env(PWR_NETS_VOLTAGES)]} {
+    dict for {pwrNetName pwrNetVoltage}  {*}$::env(PWR_NETS_VOLTAGES) {
+        set_pdnsim_net_voltage -net ${pwrNetName} -voltage ${pwrNetVoltage}
+        analyze_power_grid -net ${pwrNetName}
+    }
+  } else {
+    puts "IR drop analysis for power nets is skipped because GND_NETS_VOLTAGES is undefined"
+  }  
+  if {[info exist ::env(GND_NETS_VOLTAGES)]} {
+    dict for {gndNetName gndNetVoltage}  {*}$::env(GND_NETS_VOLTAGES) {
+        set_pdnsim_net_voltage -net ${gndNetName} -voltage ${gndNetVoltage}
+        analyze_power_grid -net ${gndNetName}
+    }
+  } else {
+    puts "IR drop analysis for ground nets is skipped because GND_NETS_VOLTAGES is undefined"
+  }  
+  
 } else {
-  puts "OpenRCX and IR drop analysis is not enabled for this platform."
+  puts "OpenRCX is not enabled for this platform."
   report_design_area
 }
 
