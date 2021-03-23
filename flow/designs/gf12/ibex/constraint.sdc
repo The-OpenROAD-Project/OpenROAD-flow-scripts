@@ -1,1 +1,1 @@
-create_clock [get_ports clk_i]  -name core_clock  -period 4000  -waveform {0 2000}
+create_clock [get_ports clk_i]  -name core_clock  -period 2000  -waveform {0 1000}
