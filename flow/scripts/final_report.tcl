@@ -63,7 +63,7 @@ if {[info exist ::env(RCX_RULES)]} {
         analyze_power_grid -net ${pwrNetName}
     }
   } else {
-    puts "IR drop analysis for power nets is skipped because GND_NETS_VOLTAGES is undefined"
+    puts "IR drop analysis for power nets is skipped because PWR_NETS_VOLTAGES is undefined"
   }  
   if {[info exist ::env(GND_NETS_VOLTAGES)]} {
     dict for {gndNetName gndNetVoltage}  {*}$::env(GND_NETS_VOLTAGES) {
