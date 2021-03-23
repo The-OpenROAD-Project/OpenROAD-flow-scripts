@@ -10,10 +10,10 @@ flow/tech
 
 # Tar archives
 flow/*tar.gz
-flow/runme.sh
-flow/vars.sh
-flow/vars.tcl
-flow/vars.gdb
+flow/run-me*.sh
+flow/vars*.sh
+flow/vars*.tcl
+flow/vars*.gdb
 flow/versions.txt
 
 # Common temp files

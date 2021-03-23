@@ -27,6 +27,7 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/acc/AHB_SPM.v \
 					   $(VERILOG_FILES_BLACKBOX)
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 
 export DIE_AREA 	= 0 0 2920 3520
 export CORE_AREA 	= 20 20 2900 3500
