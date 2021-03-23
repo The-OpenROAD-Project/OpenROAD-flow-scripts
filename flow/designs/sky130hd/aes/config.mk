@@ -10,3 +10,8 @@ export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 export DIE_AREA    = 0 0 1120 1020.8
 export CORE_AREA   = 10 12 1110 1011.2
 export ABC_CLOCK_PERIOD_IN_PS = 10
+
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  = "VDD 1.8"
+export GND_NETS_VOLTAGES  = "VSS 0.0"
