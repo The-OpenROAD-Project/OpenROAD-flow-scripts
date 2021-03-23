@@ -23,6 +23,8 @@ if {![info exists standalone] || $standalone} {
     read_def $::env(RESULTS_DIR)/6_1_fill.def
   }
   read_sdc $::env(RESULTS_DIR)/6_1_fill.sdc
+
+  set_propagated_clock [all_clocks]
 } else {
   puts "Starting final report"
 }
