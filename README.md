@@ -75,7 +75,7 @@ the docker build:
 ```
 3. Start an interactive shell in a docker container using your user credentials
 ```
-docker run -it -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow bash
+docker run -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow/flow/platforms:ro openroad/flow bash
 ```
 4. Update your container environment
 ```
