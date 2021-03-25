@@ -65,7 +65,7 @@ docker installed, permissions to run docker, and docker container network access
 enabled. This step will create a runner image tagged as `openroad/flow`.
 1.  Clone the OpenROAD-flow repository
 ```
-git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
+git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
 cd OpenROAD-flow
 ```
 2. Ensure the docker daemon is running and `docker` is in your `PATH`, then run
@@ -88,7 +88,7 @@ use [docker bind mounts](https://docs.docker.com/storage/bind-mounts/) instead.
 #### Option 2: Local
 1.  Clone the OpenROAD-flow repository
 ```
-git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow.git
+git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
 cd OpenROAD-flow
 ```
 2. Run the build script
