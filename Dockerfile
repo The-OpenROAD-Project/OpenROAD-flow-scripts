@@ -13,6 +13,9 @@ RUN mkdir -p /OpenROAD-flow
 
 COPY --from=openroad /OpenROAD/build ./tools/build/OpenROAD
 COPY --from=openroad/yosys /build ./tools/build/yosys
+COPY --from=openroad/lsoracle /LSOracle ./tools/build/LSOracle
+COPY --from=openroad/lsoracle /LSOracle/core/test.ini /usr/local/share/lsoracle/
+COPY --from=openroad/lsoracle /LSOracle-plugin/oracle.so /OpenROAD-flow/tools/build/yosys/share/yosys/plugins/
 COPY ./setup_env.sh .
 COPY ./flow ./flow
 RUN chmod o+rw -R /OpenROAD-flow/flow

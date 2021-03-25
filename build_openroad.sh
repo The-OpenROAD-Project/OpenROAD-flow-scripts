@@ -114,6 +114,7 @@ fi
 if [ "$build_method" == "DOCKER" ]; then
   docker build -t openroad/yosys -f tools/yosys_util/Dockerfile tools/yosys
   docker build -t openroad -f tools/OpenROAD/Dockerfile tools/OpenROAD
+  docker build -t openroad/lsoracle -f tools/LSOracle-plugin/Dockerfile.centos7 tools/LSOracle-plugin
   docker build -t openroad/flow -f Dockerfile .
 
 # Local build
