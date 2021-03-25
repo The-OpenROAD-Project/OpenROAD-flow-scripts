@@ -49,7 +49,11 @@ if {[info exist ::env(LATCH_MAP_FILE)]} {
 
 # Technology mapping of flip-flops
 # dfflibmap only supports one liberty file
-dfflibmap -liberty $::env(DONT_USE_SC_LIB)
+if {[info exist ::env(DFF_LIB_FILE)]} {
+  dfflibmap -liberty $::env(DFF_LIB_FILE)
+} else {
+  dfflibmap -liberty $::env(DONT_USE_SC_LIB)
+}
 opt
 
 set constr [open $::env(OBJECTS_DIR)/abc.constr w]
