@@ -46,9 +46,9 @@ and OpenROAD Flow versions.
 Be sure to check for nested dependencies when installing from source! You may
 reference the Dockerfiles and READMEs for the dependencies:
 ```
-OpenROAD-flow/tools/OpenROAD/Dockerfile
-OpenROAD-flow/tools/yosys/Dockerfile
-OpenROAD-flow/tools/TritonRoute/Dockerfile
+OpenROAD-flow-scripts/tools/OpenROAD/Dockerfile
+OpenROAD-flow-scripts/tools/yosys/Dockerfile
+OpenROAD-flow-scripts/tools/TritonRoute/Dockerfile
 ```
 
 ### Prebuilt Binaries
@@ -63,10 +63,10 @@ This build option leverages a multi-step docker flow to install the tools and
 dependencies to a runner image. To follow these instructions, you must have
 docker installed, permissions to run docker, and docker container network access
 enabled. This step will create a runner image tagged as `openroad/flow`.
-1.  Clone the OpenROAD-flow repository
+1.  Clone the OpenROAD-flow-scripts repository
 ```
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
-cd OpenROAD-flow
+cd OpenROAD-flow-scripts
 ```
 2. Ensure the docker daemon is running and `docker` is in your `PATH`, then run
 the docker build:
@@ -86,10 +86,10 @@ To transfer files between your host system and container, it is often useful to
 use [docker bind mounts](https://docs.docker.com/storage/bind-mounts/) instead.
 
 #### Option 2: Local
-1.  Clone the OpenROAD-flow repository
+1.  Clone the OpenROAD-flow-scripts repository
 ```
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
-cd OpenROAD-flow
+cd OpenROAD-flow-scripts
 ```
 2. Run the build script
 ```
@@ -178,10 +178,10 @@ A copy of this paper is availble
 If you like the tools, please give us a star on our GitHub repos!
 
 ## License
-The OpenROAD-flow repository (build and run scripts) has a BSD 3-Clause License.
+The OpenROAD-flow-scripts repository (build and run scripts) has a BSD 3-Clause License.
 The flow relies on several tools, platforms and designs that each have their own
 licenses:
-- Find the tool license at: `OpenROAD-flow/tools/{tool}/` or
-`OpenROAD-flow/tools/OpenROAD/src/{tool}/`
-- Find the platform license at: `OpenROAD-flow/flow/platforms/{platform}/`
-- Find the design license at: `OpenROAD-flow/flow/designs/src/{design}/`
+- Find the tool license at: `OpenROAD-flow-scripts/tools/{tool}/` or
+`OpenROAD-flow-scripts/tools/OpenROAD/src/{tool}/`
+- Find the platform license at: `OpenROAD-flow-scripts/flow/platforms/{platform}/`
+- Find the design license at: `OpenROAD-flow-scripts/flow/designs/src/{design}/`
