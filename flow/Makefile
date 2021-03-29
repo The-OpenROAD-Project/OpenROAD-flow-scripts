@@ -443,7 +443,7 @@ klayout_guides: $(RESULTS_DIR)/5_route.def
 # |  _|  | || |\  || | ___) |  _  || || |\  | |_| |
 # |_|   |___|_| \_|___|____/|_| |_|___|_| \_|\____|
 #
-finish: $(REPORTS_DIR)/6_final_report.rpt \
+finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.gds
 # ==============================================================================
@@ -459,10 +459,10 @@ endif
 $(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
 	cp $< $@
 
-$(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_1_fill.sdc
+$(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_1_fill.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
 
-$(RESULTS_DIR)/6_final.def: $(REPORTS_DIR)/6_final_report.rpt
+$(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
@@ -488,7 +488,7 @@ $(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
-$(RESULTS_DIR)/6_final.v: $(REPORTS_DIR)/6_final_report.rpt
+$(RESULTS_DIR)/6_final.v: $(LOG_DIR)/6_report.log
 
 $(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
 	cp $^ $@
