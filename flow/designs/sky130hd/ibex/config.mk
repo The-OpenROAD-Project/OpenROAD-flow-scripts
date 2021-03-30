@@ -42,10 +42,14 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
                        ./designs/src/$(DESIGN_NICKNAME)/prim_secded_72_64_enc.v \
                        ./designs/src/$(DESIGN_NICKNAME)/prim_xilinx_clock_gating.v
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4
 export DIE_AREA    = 0 0 3000 1999
 export CORE_AREA   = 150.0 150 2850.0 1850
 
-
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  = "VDD 1.8"
+export GND_NETS_VOLTAGES  = "VSS 0.0"
