@@ -43,32 +43,35 @@ clean_test:
 #-------------------------------------------------------------------------------
 ISSUE_TAG ?= $(DESIGN_NICKNAME)_$(PLATFORM)_$(shell date +"%Y-%m-%d_%H-%M")
 ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(sort $(wildcard $(SCRIPTS_DIR)/*.tcl))))
-ISSUE_CP_FILE_VARS = BLACKBOX_MAP_TCL BLACKBOX_V_FILE CTS_TECH_DIR GENERIC_TECH_LEF \
+ISSUE_CP_FILE_VARS = GENERIC_TECH_LEF \
                      IP_GLOBAL_CFG LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
                      TRACKS_INFO_FILE SDC_FILE VERILOG_FILES TAPCELL_TCL CACHED_NETLIST \
                      FOOTPRINT SIG_MAP_FILE PDN_CFG ADDITIONAL_LEFS SETRC_FILE
 
-$(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
-	# Creating runme.sh script
-	@echo "#!/bin/bash"                             > runme.sh
-	@echo "source vars.sh"                          >> runme.sh
-	@echo "openroad -no_init $(SCRIPTS_DIR)/$*.tcl" >> runme.sh
-	@chmod +x runme.sh
+VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)
+RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM).sh
 
-	# Creating vars.sh/tcl script
-	-@rm -f vars.sh vars.tcl vars.gdb
+$(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
+	# Creating $(RUN_ME_SCRIPT) script
+	@echo "#!/bin/bash"                             > $(RUN_ME_SCRIPT)
+	@echo "source $(VARS_BASENAME).sh"                          >> $(RUN_ME_SCRIPT)
+	@echo "openroad -no_init $(SCRIPTS_DIR)/$*.tcl" >> $(RUN_ME_SCRIPT)
+	@chmod +x $(RUN_ME_SCRIPT)
+
+	# Creating $(VARS_BASENAME).sh/tcl script
+	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
 	@$(foreach V, $(.VARIABLES), \
 	  $(if $(filter-out environment% default automatic, $(origin $V)), \
-	  echo export $V=\""$($V)\""  >> vars.sh ; \
-	  echo set env\($V\) \""$($V)\""     >> vars.tcl ; \
-	  echo set env $V "$($V)"     >> vars.gdb ;) \
+	  echo export $V=\""$($V)\""  >> $(VARS_BASENAME).sh ; \
+	  echo set env\($V\) \""$($V)\""     >> $(VARS_BASENAME).tcl ; \
+	  echo set env $V "$($V)"     >> $(VARS_BASENAME).gdb ;) \
 	)
-	@sed -i '/export \./d' vars.sh
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.sh
-	@sed -i '/set env(\./d' vars.tcl
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.tcl
-	@sed -i '/set env \./d' vars.gdb
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.gdb
+	@sed -i '/export \./d' $(VARS_BASENAME).sh
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).sh
+	@sed -i '/set env(\./d' $(VARS_BASENAME).tcl
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).tcl
+	@sed -i '/set env \./d' $(VARS_BASENAME).gdb
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).gdb
 
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
 	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
@@ -78,27 +81,32 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	                                     $(RESULTS_DIR) \
 	                                     $(SCRIPTS_DIR) \
 	                                     $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
-	                                     runme.sh vars.sh vars.tcl vars.gdb \
+	                                     $(RUN_ME_SCRIPT) $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb \
 	                                     $^
 
-vars.tcl:
-	-@rm -f vars.sh vars.tcl vars.gdb
+	@if [ ! -z $${COPY_ISSUE+x} ]; then \
+		mkdir -p $${COPY_ISSUE} ; \
+		cp $*_$(ISSUE_TAG).tar.gz $${COPY_ISSUE} ; \
+	fi
+
+$(VARS_BASENAME).tcl:
+	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
 	@$(foreach V, $(.VARIABLES), \
 	$(if $(filter-out environment% default automatic, $(origin $V)), \
-	echo export $V=\""$($V)\""  >> vars.sh ; \
-	echo set env\($V\) \""$($V)\""     >> vars.tcl ; \
-	echo set env $V "$($V)"     >> vars.gdb ;) \
+	echo export $V=\""$($V)\""  >> $(VARS_BASENAME).sh ; \
+	echo set env\($V\) \""$($V)\""     >> $(VARS_BASENAME).tcl ; \
+	echo set env $V "$($V)"     >> $(VARS_BASENAME).gdb ;) \
 	)
-	@sed -i '/export \./d' vars.sh
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.sh
-	@sed -i '/set env(\./d' vars.tcl
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.tcl
-	@sed -i '/set env \./d' vars.gdb
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' vars.gdb
+	@sed -i '/export \./d' $(VARS_BASENAME).sh
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).sh
+	@sed -i '/set env(\./d' $(VARS_BASENAME).tcl
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).tcl
+	@sed -i '/set env \./d' $(VARS_BASENAME).gdb
+	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).gdb
 
 clean_issues:
 	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
-	rm -rf vars.sh runme.sh
+	rm -rf $(VARS_BASENAME).sh $(RUN_ME_SCRIPT)
 
 $(RESULTS_DIR)/6_final_only_clk.def: $(RESULTS_DIR)/6_final.def
 	$(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/deleteNonClkNets.tcl

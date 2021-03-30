@@ -27,6 +27,7 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/acc/AHB_SPM.v \
 					   $(VERILOG_FILES_BLACKBOX)
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 
 export DIE_AREA 	= 0 0 2920 3520
 export CORE_AREA 	= 20 20 2900 3500
@@ -60,6 +61,10 @@ export MACRO_PLACEMENT = $(chameleon_DIR)/chameleon.macro_placment.cfg
 #export _WIDTH = 3
 #export CONNECT_GRIDS = 1
 
-
 export FP_PDN_RAIL_WIDTH = 0.48
 export FP_PDN_RAIL_OFFSET = 0
+
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  = "VDD 1.8"
+export GND_NETS_VOLTAGES  = "VSS 0.0"
