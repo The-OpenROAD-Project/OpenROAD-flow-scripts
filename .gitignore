@@ -51,9 +51,6 @@ flow/*.opennet
 
 # Platforms
 flow/platforms/*
-!flow/platforms/nangate45
-!flow/platforms/sky130hs
-!flow/platforms/sky130hd
 flow/private/*
 
 # network

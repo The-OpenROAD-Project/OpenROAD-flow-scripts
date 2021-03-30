@@ -34,7 +34,6 @@ if {[info exist ::env(FASTROUTE_TCL)]} {
 
   global_route -guide_file $::env(RESULTS_DIR)/route.guide \
             -layers $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) \
-            -unidirectional_routing \
             -overflow_iterations 100 \
             -macro_extension 2 \
             -verbose 2
@@ -54,7 +53,7 @@ source $::env(SCRIPTS_DIR)/report_metrics.tcl
 puts "\n=========================================================================="
 puts "check_antennas"
 puts "--------------------------------------------------------------------------"
-check_antennas -report_file antenna.log
+check_antennas -report_file $::env(REPORTS_DIR)/antenna.log
 
 
 if {![info exists standalone] || $standalone} {

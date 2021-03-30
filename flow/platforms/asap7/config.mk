@@ -28,13 +28,12 @@ export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_R
 export MAX_FANOUT              = 100
 
 # Yosys mapping files
-# list all standard cells
+# Blackbox - list all standard cells and cells yosys should treat as blackboxes
+export BLACKBOX_V_FILE         = $(FOUNDRY_DIR)/yoSys/asap7sc7p5t.blackbox.v
 export LATCH_MAP_FILE          = $(FOUNDRY_DIR)/yoSys/cells_latch.v
 export CLKGATE_MAP_FILE        = $(FOUNDRY_DIR)/yoSys/cells_clkgate.v
+export BLACKBOX_MAP_TCL        = $(FOUNDRY_DIR)/yoSys/blackbox_map.tcl
 
-# Track information for generating DEF tracks
-#export TRACKS_INFO_FILE        = $(FOUNDRY_DIR)/openRoad/tracks.info
-export TRACKS_INFO_FILE        = $(FOUNDRY_DIR)/openRoad/tracks2.info
 export IP_GLOBAL_CFG           = $(FOUNDRY_DIR)/openRoad/IP_global.cfg
 
 export BC_LIB_FILES            = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_201020.lib \
@@ -43,17 +42,23 @@ export BC_LIB_FILES            = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_2
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib \
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib
 
+export BC_DFF_LIB_FILE        = $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib
+
 export WC_LIB_FILES           = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_RVT_SS_nldm_201020.lib \
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_INVBUF_RVT_SS_nldm_201020.lib \
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_OA_RVT_SS_nldm_201020.lib \
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib
 
+export WC_DFF_LIB_FILE        = $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
+
 export TC_LIB_FILES           = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_201020.lib \
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_INVBUF_RVT_TT_nldm_201020.lib \
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_OA_RVT_TT_nldm_201020.lib \
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib \
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_TT_nldm_201020.lib
+
+export TC_DFF_LIB_FILE        = $(FOUNDRY_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib \
 
 export BC_TEMPERATURE          = 25C
 export TC_TEMPERATURE          = 0C
@@ -77,6 +82,7 @@ export TAPCELL_TCL             = $(FOUNDRY_DIR)/openRoad/tapcell.tcl
 # TritonCTS options
 export CTS_BUF_CELL            = BUFx4_ASAP7_75t_R
 
+#export CTS_TECH_DIR           = $(FOUNDRY_DIR)/tritonCTS
 export CTS_SQR_CAP             = 2.28541e-4
 export CTS_SQR_RES             = 1.832146e-0
 export CTS_SLEW_INTER          = 7.5e-13
@@ -108,7 +114,7 @@ export KLAYOUT_DRC_FILE        =
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS          = *x1_ASAP7* *x1p*_ASAP7* *xp*_ASAP7*
-export DONT_USE_CELLS          += SDF* ICG* DFFHQNx2*
+export DONT_USE_CELLS          += SDF* ICG* DFFH* 
 
 # Fill cells used in fill cell insertion
 export FILL_CELLS              = FILLER_ASAP7_75t_R
