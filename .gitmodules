@@ -6,4 +6,4 @@
 	url = ../OpenROAD.git
 [submodule "tools/LSOracle-Plugin"]
 	path = tools/LSOracle-Plugin
-	url = git@github.com:lnis-uofu/LSOracle-Plugin.git
+	url = https://github.com/lnis-uofu/LSOracle-Plugin.git
