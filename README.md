@@ -12,7 +12,7 @@ with 24-hour turnaround time.
   * [Building from Source](#building-from-source)
     * [Option 1: Docker](#option-1-docker)
     * [Option 2: Local](#option-2-local)
-* [Using the flow](#using-the-flow)
+* [Using the Flow](#using-the-flow)
 * [Useful Resources](#useful-resources)
 * [Contributing](#contributing)
 * [About the Project](#about-the-project)
@@ -33,15 +33,14 @@ The two main components are:
 ## Installation
 ### Dependencies
 * OpenROAD*
-* TritonRoute*
 * Yosys*
 * [KLayout](https://www.klayout.de)
 
 \*At this time, we strongly recommend using the
-[`build_openroad.sh`](build_openroad.sh) script to install OpenROAD,
-TritonRoute, and Yosys. Due to the early development stage, the API changes
-frequently and it is otherwise difficult to ensure compatibility between tool
-and OpenROAD Flow versions.
+[`build_openroad.sh`](build_openroad.sh) script to install OpenROAD and Yosys.
+Due to the early development stage, the API changes frequently and it is
+otherwise difficult to ensure compatibility between tool and OpenROAD Flow
+versions.
 
 Be sure to check for nested dependencies when installing from source! You may
 reference the Dockerfiles and READMEs for the dependencies:
