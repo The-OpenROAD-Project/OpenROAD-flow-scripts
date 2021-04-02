@@ -103,7 +103,14 @@ for rule in rules:
             errors += 1
             print('Error: field {} fails rule {} {} {}. Invalid number.'.format(field, check_value, compare, rule_value))
             continue
-        percentage = (check_value - reference_value) / reference_value * 100
+        if reference_value != 0:
+            percentage = (check_value - reference_value) / reference_value * 100
+        elif reference_value == check_value:
+            percentage = reference_value
+        else:
+            print('Error: field {} was 0, can not check %'.format(field))
+            errors += 1
+            continue
         deltaMessage = " check_value = {}, reference_value = {}, diff_percentage = {}%".format(
                 check_value, reference_value, percentage)
         check_value = percentage

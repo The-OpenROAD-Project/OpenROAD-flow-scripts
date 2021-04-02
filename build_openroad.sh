@@ -6,14 +6,15 @@ set -e
 
 function usage() {
   echo "Usage: $0 [-h|--help] [-l|--latest] [-o|--local] [--or_branch]"
-  echo "  -h, --help          print this help message"
-  echo "  -d, --dev_repo      (dev only) perform git pull on developer repositories"
-  echo "  -l, --latest        build using the head of branch 'master' for OpenROAD"
-  echo "  -o, --local         force local build instead of docker build"
-  echo "  -p, --platform      perform git pull on all git-based platform repos"
-  echo "  --or_branch BRANCH  build using the head of branch BRANCH for OpenROAD"
-  echo "  -n, --nice          build using all cpus but nice the jobs"
-  
+  echo "  -h, --help              print this help message"
+  echo "  -d, --dev_repo          (dev only) perform git pull on developer repositories"
+  echo "  -l, --latest            build using the head of branch 'master' for OpenROAD"
+  echo "  -o, --local             force local build instead of docker build"
+  echo "  -p, --platform          perform git pull on all git-based platform repos"
+  echo "  --or_branch BRANCH      build using the head of branch BRANCH for OpenROAD"
+  echo "  -n, --nice              build using all cpus but nice the jobs"
+  echo "  -c, --copy-platforms"   copy platforms to inside docker image
+
   echo "This script builds the openroad tools (OpenROAD, yosys)"
   echo "By default, the tools will be built from the linked submodule hashes"
 }
@@ -21,6 +22,7 @@ function usage() {
 # defaults
 NICE=""
 PROC=`nproc`
+COPY_PLATFORMS="NO"
 
 # Parse arguments
 while (( "$#" )); do
@@ -56,6 +58,10 @@ while (( "$#" )); do
       ;;
     -n|--no_init)
       NO_INIT=1
+      shift
+      ;;
+    -c|--copy-platforms)
+      COPY_PLATFORMS="YES"
       shift
       ;;
     -*|--*=) # unsupported flags
@@ -114,7 +120,14 @@ fi
 if [ "$build_method" == "DOCKER" ]; then
   docker build -t openroad/yosys -f tools/yosys_util/Dockerfile tools/yosys
   docker build -t openroad -f tools/OpenROAD/Dockerfile tools/OpenROAD
+  if [ "$COPY_PLATFORMS" == "YES" ]; then
+    cp .dockerignore{,.bak}
+    sed -i '/flow\/platforms/d' .dockerignore
+  fi
   docker build -t openroad/flow -f Dockerfile .
+  if [ "$COPY_PLATFORMS" == "YES" ]; then
+    mv .dockerignore{.bak,}
+  fi
 
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then

@@ -1,6 +1,26 @@
 {
     "rules": [
         {
+            "field" : "globalroute__timing__tns__total",
+            "value" : 5,
+            "compare": "%"
+        },
+        {
+            "field" : "globalroute__timing__ws__worst",
+            "value" : 5,
+            "compare": "%"
+        },
+        {
+            "field" : "detailedroute__wirelength",
+            "value" : 5,
+            "compare": "%"
+        },
+        {
+            "field" : "detailedroute__drc__error__count",
+            "value" : 0,
+            "compare": "<="
+        },
+        {
             "field" : "detailedroute__errors__count",
             "value" : 0,
             "compare": "<="

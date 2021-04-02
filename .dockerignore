@@ -1,53 +1,33 @@
 # Build working directories
-/tools/
+tools
 
 # Test working directories
 flow/results
 flow/logs
 flow/reports
 flow/objects
+flow/tech
 
 # Tar archives
 flow/*tar.gz
-flow/runme.sh
-flow/vars.sh
-flow/vars.tcl
+flow/run-me*.sh
+flow/vars*.sh
+flow/vars*.tcl
+flow/vars*.gdb
 flow/versions.txt
 
 # Common temp files
-flow/pt_shell_command.log
-flow/command.log
-flow/default.svf
-flow/rc_model.bin
-flow/*.tif.gz
-flow/*.def.v
-
-# yosys temps
-flow/_tmp_yosys-abc-*
-flow/*_pdn.def
-flow/*.plt
-flow/run.param
-flow/dummy.guide
-flow/macrocell.list
-
-# utdBox router temps
-flow/layer_*.mps
-flow/*.did
 flow/*.log
-flow/*.met
-
-# FlexRoute
-flow/*.opennet
 
 # Platforms
-flow/platforms/*
+flow/platforms
+
 # network
 .nfs*
 
 # core dumps
-core
-core.*
+core*
 
 # git
-**/.git
-**/.gitignore
+.git
+.gitignore
