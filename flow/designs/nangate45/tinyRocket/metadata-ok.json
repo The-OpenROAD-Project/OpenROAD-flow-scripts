@@ -30,6 +30,7 @@
   "placeopt__timing__ws__worst": 3.2,
   "placeopt__area__instance__area": 53402.0,
   "placeopt__area__instance__util": 8.0,
+  "placeopt__area__instance__count": 37473.0,
   "detailedplace__timing__tns__total": 0.0,
   "detailedplace__timing__wns__worst": 0.0,
   "detailedplace__timing__ws__worst": 3.32,
