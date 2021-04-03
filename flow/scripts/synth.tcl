@@ -3,7 +3,7 @@ yosys -import
 if {[info exist ::env(CACHED_NETLIST)]} {
   exec cp $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
   if {[info exist ::env(CACHED_REPORTS)]} {
-    exec cp $::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
+    exec cp {*}$::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
   }
   exit
 }
