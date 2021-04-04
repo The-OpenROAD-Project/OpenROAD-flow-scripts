@@ -250,6 +250,10 @@ def extract_metrics(cwd, platform, design, output):
                        "^Design area.* (\S+)% utilization",
                        logPath+"/3_3_resizer.log")
 
+    extractTagFromFile("placeopt__area__instance__count", metrics_dict,
+                       "^instance_count\n-*\n^(\S+)",
+                       logPath+"/3_3_resizer.log")
+
     extractTagFromFile("detailedplace__timing__tns__total", metrics_dict,
                        "^tns (\S+)",
                        logPath+"/3_4_opendp.log")
