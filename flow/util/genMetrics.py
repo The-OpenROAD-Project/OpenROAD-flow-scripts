@@ -103,6 +103,36 @@ def extractGnuTime(prefix, file, jsonFile):
 
 
 #
+# Extract Clock Latency, Skew numbers
+# Need to extract these from native json
+#
+def get_skew_latency(file_name):
+  f = open(file_name, 'r')
+  lines = f.readlines()
+  f.close()
+
+  latency_section = False
+  latency_max = latency_min = skew = 0
+
+  for line in lines:
+    if len(line.split())<1:
+      continue
+    if line.startswith('Latency'):
+      latency_section = True 
+      continue
+    if latency_section and len(line.split())==1:
+      latency_max = line.split()[0]
+      continue
+    if latency_section and len(line.split())>2:
+      latency_min = line.split()[0]
+      skew = line.split()[2]
+      break
+
+  return(latency_max, latency_min, skew)
+
+
+
+#
 #  Extract clock info from sdc file
 #
 def read_sdc(file_name):
@@ -288,6 +318,12 @@ def extract_metrics(cwd, platform, design, output):
 
 # CTS
 # ==============================================================================
+
+    latency_max,latency_min,skew = get_skew_latency(logPath+"/4_1_cts.log")
+    #print(f'skew = {skew}, latency_max = {latency_max}, latency_min = {latency_min}')
+    metrics_dict['cts__timing__latency__min'] = latency_min
+    metrics_dict['cts__timing__latency__max'] = latency_max
+    metrics_dict['cts__timing__skew__worst'] = skew
 
     extractTagFromFile("cts__timing__tns__total", metrics_dict,
                        "^tns (\S+)",
