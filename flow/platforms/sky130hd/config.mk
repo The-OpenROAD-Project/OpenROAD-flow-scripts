@@ -19,9 +19,10 @@ export CELL_PAD_IN_SITES = 4
 export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
 
 # TritonCTS options
-export CTS_BUF_CELL   = sky130_fd_sc_hd__clkbuf_1
+export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
 export CTS_MAX_SLEW   = 1.5e-9
 export CTS_MAX_CAP    = .1532e-12
+
 export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShd
 
 # FastRoute options
@@ -152,6 +153,10 @@ export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 2
 #
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 21000
+
+# Avoid slew violations on clock tree
+export CTS_CLUSTER_SIZE = 20
+export CTS_CLUSTER_DIAMETER = 50
 
 export PLACE_DENSITY ?= 0.60
 

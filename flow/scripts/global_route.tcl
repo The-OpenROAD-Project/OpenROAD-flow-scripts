@@ -25,6 +25,10 @@ if {![info exists standalone] || $standalone} {
   puts "Starting global routing"
 }
 
+if {[info exist ::env(PRE_GLOBAL_ROUTE)]} {
+  source $::env(PRE_GLOBAL_ROUTE)
+}
+
 if {[info exist ::env(FASTROUTE_TCL)]} {
   source $::env(FASTROUTE_TCL)
 } else {
