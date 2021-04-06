@@ -12,6 +12,30 @@ export LIB_FILES = ./platforms/$(PLATFORM)/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
 export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*.gds) \
                      $(ADDITIONAL_GDS_FILES)
 
+# Cell padding in SITE widths to ease rout-ability
+export CELL_PAD_IN_SITES = 4
+
+# Endcap and Welltie cells
+export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
+
+# TritonCTS options
+export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
+export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShd
+
+# FastRoute options
+export MIN_ROUTING_LAYER = 2
+export MAX_ROUTING_LAYER = 6
+
+# IO Pin fix margin
+export IO_PIN_MARGIN = 70
+
+# Layer to use for parasitics estimations
+export WIRE_RC_LAYER = met3
+
+# KLayout technology file
+export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
+
+
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 
