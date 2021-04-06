@@ -145,10 +145,6 @@ export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 2
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 21000
 
-# Avoid slew violations on clock tree
-export CTS_CLUSTER_SIZE = 20
-export CTS_CLUSTER_DIAMETER = 50
-
 export PLACE_DENSITY ?= 0.60
 
 # Cell padding in SITE widths to ease rout-ability
