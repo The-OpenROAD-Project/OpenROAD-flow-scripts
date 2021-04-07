@@ -122,12 +122,18 @@ for rule in rules:
             compare = rule['sign']
             op = ops[compare]
 
-    if (isinstance(rule_value, float) != isinstance(check_value, float)
-        or not op(check_value, rule_value)):
+    if isinstance(rule_value, float) != isinstance(check_value, float):
+        print('Error: field {} = {:.2f}, invalid float format', field, check_value)
         errors += 1
-        print('Error: field {} fails rule {} {} {}.{}'.format(field, check_value, compare, rule_value, deltaMessage))
+        continue
+
+    if op(check_value, rule_value):
+        print('Passed: field {} = {:.2f}, reference = {:.2f}, {} passed rule {} {}',
+              field, check_value, reference_value, diff, compare, rule_value)
     else:
-        print('Passed: field {} passed rule {} {} {}.{}'.format(field, check_value, compare, rule_value, deltaMessage))
+        errors += 1
+        print('Error: field {} = {:.2f}, reference = {:.2f}, {} fails rule {} {}',
+              field, check_value, reference_value, diff, compare, rule_value)
 
 if errors == 0:
     print('All metadata rules passed ({} rules)'.format(len(rules)))
