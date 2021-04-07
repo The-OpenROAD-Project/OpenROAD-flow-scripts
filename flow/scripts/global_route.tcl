@@ -32,15 +32,13 @@ if {[info exist ::env(PRE_GLOBAL_ROUTE)]} {
 if {[info exist ::env(FASTROUTE_TCL)]} {
   source $::env(FASTROUTE_TCL)
 } else {
-  for {set layer $::env(MIN_ROUTING_LAYER)} {$layer <= $::env(MAX_ROUTING_LAYER)} {incr layer} {
-    set_global_routing_layer_adjustment $layer 0.5
-  }
+  set_global_routing_layer_adjustment $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) 0.5
+  set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
+  set_macro_extension 2
 
   global_route -guide_file $::env(RESULTS_DIR)/route.guide \
-            -layers $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) \
-            -overflow_iterations 100 \
-            -macro_extension 2 \
-            -verbose 2
+               -overflow_iterations 100 \
+               -verbose 2
 }
 
 

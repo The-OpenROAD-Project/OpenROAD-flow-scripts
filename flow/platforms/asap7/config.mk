@@ -93,8 +93,8 @@ export CTS_MAX_CAP             = 0.968693e-12
 export CTS_BUF_DISTANCE        = 60
 
 # Route options
-export MIN_ROUTING_LAYER       = 2
-export MAX_ROUTING_LAYER       = 7
+export MIN_ROUTING_LAYER       = M2
+export MAX_ROUTING_LAYER       = M7
 
 # IO Pin fix margin
 export IO_PIN_MARGIN           = 70
