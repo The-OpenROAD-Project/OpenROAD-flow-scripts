@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import re
 import sys
+import gzip
 import argparse  # argument parsing
 
 # Parse and validate arguments
@@ -21,7 +22,10 @@ patternList = args.patterns.replace('*','.*').split()
 
 # Read input file
 print("Opening file for replace:",args.inputFile)
-f = open(args.inputFile)
+if args.inputFile.endswith(".gz"):
+    f = gzip.open(args.inputFile, 'rt')
+else:
+    f = open(args.inputFile)
 content = f.read()
 f.close()
 

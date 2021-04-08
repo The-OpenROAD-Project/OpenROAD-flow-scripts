@@ -97,8 +97,8 @@ export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShs
 #  Route
 # ---------------------------------------------------------
 # FastRoute options
-export MIN_ROUTING_LAYER = 2
-export MAX_ROUTING_LAYER = 6
+export MIN_ROUTING_LAYER = met1
+export MAX_ROUTING_LAYER = met5
 #
 # Define fastRoute tcl
 export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl
