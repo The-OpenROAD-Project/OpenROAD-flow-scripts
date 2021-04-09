@@ -569,8 +569,10 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJE
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
 gui_final: $(RESULTS_DIR)/6_final.def
-	openroad -gui $(SCRIPTS_DIR)/gui.tcl
+	$(patsubst -exit,,$(OPENROAD_CMD) -gui $(SCRIPTS_DIR)/gui.tcl
 
+$(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
+	DEF_FILE=$(RESULTS_DIR)/$* $(patsubst -exit,,$(OPENROAD_CMD)) -gui $(SCRIPTS_DIR)/gui_viewer.tcl
 
 # Utilities
 #-------------------------------------------------------------------------------
