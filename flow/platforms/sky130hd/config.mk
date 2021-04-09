@@ -23,8 +23,8 @@ export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
 export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShd
 
 # FastRoute options
-export MIN_ROUTING_LAYER = 2
-export MAX_ROUTING_LAYER = 6
+export MIN_ROUTING_LAYER = met1
+export MAX_ROUTING_LAYER = met5
 
 # IO Pin fix margin
 export IO_PIN_MARGIN = 70
@@ -145,10 +145,6 @@ export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 2
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 21000
 
-# Avoid slew violations on clock tree
-export CTS_CLUSTER_SIZE = 20
-export CTS_CLUSTER_DIAMETER = 50
-
 export PLACE_DENSITY ?= 0.60
 
 # Cell padding in SITE widths to ease rout-ability
@@ -166,8 +162,8 @@ export CTS_MAX_CAP    = .1532e-12
 #  Route
 # ---------------------------------------------------------
 # FastRoute options
-export MIN_ROUTING_LAYER = 2
-export MAX_ROUTING_LAYER = 6
+export MIN_ROUTING_LAYER = met1
+export MAX_ROUTING_LAYER = met5
 #
 # Define fastRoute tcl
 export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl
