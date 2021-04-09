@@ -112,7 +112,9 @@ def get_skew_latency(file_name):
   f.close()
 
   latency_section = False
-  latency_max = latency_min = skew = 0
+  latency_max = latency_min = skew = 0.0
+  worst_latency_max = worst_latency_min = worst_skew = 0.0
+
 
   for line in lines:
     if len(line.split())<1:
@@ -121,14 +123,18 @@ def get_skew_latency(file_name):
       latency_section = True 
       continue
     if latency_section and len(line.split())==1:
-      latency_max = line.split()[0]
+      latency_max = float(line.split()[0])
       continue
     if latency_section and len(line.split())>2:
-      latency_min = line.split()[0]
-      skew = line.split()[2]
-      break
+      latency_min = float(line.split()[0])
+      skew = float(line.split()[2])
+      if skew > worst_skew:
+          worst_skew = skew
+          worst_latency_max = latency_max
+          worst_latency_min = latency_min
+      latency_section = False
 
-  return(latency_max, latency_min, skew)
+  return(worst_latency_max, worst_latency_min, worst_skew)
 
 
 
