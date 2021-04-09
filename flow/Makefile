@@ -165,14 +165,15 @@ $(OBJECTS_DIR)/lib/merged.lib:
 
 # Pre-process KLayout tech
 # ==============================================================================
- $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE)
-	mkdir -p $(OBJECTS_DIR)
-	sed '/OR_DEFAULT/d' $(TECH_LEF) > $(OBJECTS_DIR)/klayout_tech.lef
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
+$(OBJECTS_DIR)/klayout_tech.lef: $(TECH_LEF)
+	@mkdir -p $(OBJECTS_DIR)
+	sed '/OR_DEFAULT/d' $< > $@
 
-$(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE)
-	mkdir -p $(OBJECTS_DIR)
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $^ > $@
+ $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $< > $@
+
+$(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $< > $@
 # Create Macro wrappers (if necessary)
 # ==============================================================================
 WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
@@ -206,7 +207,7 @@ synth: versions.txt \
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= scripts/synth.tcl
 
-$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB)
+$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(VERILOG_FILES)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) yosys -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
@@ -239,7 +240,7 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(ADDITIONAL_LEFS)
+$(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl -metrics $(LOG_DIR)/2_1_floorplan.json) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
 
 
@@ -255,17 +256,17 @@ $(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RES
 
 # STEP 4: Macro Placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc
+$(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(MACRO_PLACEMENT)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/macro_place.tcl -metrics $(LOG_DIR)/2_4_mplace.json) 2>&1 | tee $(LOG_DIR)/2_4_mplace.log
 
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_5_floorplan_tapcell.def: $(RESULTS_DIR)/2_4_floorplan_macro.def
+$(RESULTS_DIR)/2_5_floorplan_tapcell.def: $(RESULTS_DIR)/2_4_floorplan_macro.def $(TAPCELL_TCL)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_tapcell.log
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_6_floorplan_pdn.def: $(RESULTS_DIR)/2_5_floorplan_tapcell.def
+$(RESULTS_DIR)/2_6_floorplan_pdn.def: $(RESULTS_DIR)/2_5_floorplan_tapcell.def $(PDN_CFG)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/pdn.tcl -metrics $(LOG_DIR)/2_6_pdn.json) 2>&1 | tee $(LOG_DIR)/2_6_pdn.log
 
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_pdn.def
@@ -292,7 +293,7 @@ place: $(RESULTS_DIR)/3_place.def \
 
 # STEP 1: Global placement + IO placement (not random)
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc
+$(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_1_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 
 # STEP 2: IO placement (non-random)
@@ -374,7 +375,7 @@ route: $(RESULTS_DIR)/5_route.def \
 
 # STEP 1: Run global route
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/route.guide: $(RESULTS_DIR)/4_cts.def
+$(RESULTS_DIR)/route.guide: $(RESULTS_DIR)/4_cts.def $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_route.tcl -metrics $(LOG_DIR)/5_1_fastroute.json) 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
 
 
@@ -430,7 +431,7 @@ klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/viewDrc.py
 
-klayout_guides: $(RESULTS_DIR)/5_route.def
+klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 	klayout -rd in_guide="$(RESULTS_DIR)/route.guide" \
 	        -rd in_def="$<" \
 	        -rd net_name=$(GUIDE_NET) \
