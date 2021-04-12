@@ -123,3 +123,8 @@ gallery: $(RESULTS_DIR)/6_final_no_power.def $(RESULTS_DIR)/6_final_only_clk.def
 
 view_cells:
 	openroad -gui $(SCRIPTS_DIR)/view_cells.tcl
+
+## Provide easy access to debugging
+ifdef GDB
+OPENROAD_CMD := gdb --args $(OPENROAD_CMD)
+endif
