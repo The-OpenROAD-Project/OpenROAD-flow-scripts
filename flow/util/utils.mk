@@ -127,4 +127,8 @@ view_cells:
 ## Quick access to command line
 command:
 	$(OPENROAD_NO_EXIT_CMD)
-	
+
+## Provide easy access to debugging
+ifdef GDB
+OPENROAD_CMD := gdb --args $(OPENROAD_CMD)
+endif

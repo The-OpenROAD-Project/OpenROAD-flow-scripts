@@ -40,13 +40,13 @@ if {$design_stage >= 4} {
   set_propagated_clock [all_clocks]
 }
 
-#if {$design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef]} {
-#  puts "Loading spef"
-#  read_spef $::env(RESULTS_DIR)/6_final.spef
-#} elseif {$design_stage >= 3} {
-#  puts "Estimating parasitics"
-#  estimate_parasitics -placement
-#}
+if {$design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef]} {
+  puts "Loading spef"
+  read_spef $::env(RESULTS_DIR)/6_final.spef
+} elseif {$design_stage >= 3} {
+  puts "Estimating parasitics"
+  estimate_parasitics -placement
+}
 
 # Cleanup temporary variables
 unset sdc_file s design_stage
