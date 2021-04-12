@@ -55,7 +55,7 @@ source $::env(SCRIPTS_DIR)/report_metrics.tcl
 puts "\n=========================================================================="
 puts "check_antennas"
 puts "--------------------------------------------------------------------------"
-check_antennas -report_file $::env(REPORTS_DIR)/antenna.log
+check_antennas -report_file $::env(REPORTS_DIR)/antenna.log -simple_report
 
 
 if {![info exists standalone] || $standalone} {
