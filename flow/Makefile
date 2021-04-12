@@ -117,6 +117,7 @@ SHELL = /bin/bash -o pipefail
 TIME_CMD = /usr/bin/time -f "%Eelapsed %PCPU %MmemKB"
 export NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
 OPENROAD_CMD = openroad -no_init -exit
+OPENROAD_NO_EXIT_CMD = $(patsubst -exit,,$(OPENROAD_CMD))
 
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
@@ -568,9 +569,10 @@ RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
-gui_final: $(RESULTS_DIR)/6_final.def
-	openroad -gui $(SCRIPTS_DIR)/gui.tcl
+gui_final: gui_6_final.def
 
+$(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
+	DEF_FILE=$(RESULTS_DIR)/$* $(OPENROAD_NO_EXIT_CMD) -gui $(SCRIPTS_DIR)/gui.tcl
 
 # Utilities
 #-------------------------------------------------------------------------------
