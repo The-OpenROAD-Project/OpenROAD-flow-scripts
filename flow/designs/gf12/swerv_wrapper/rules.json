@@ -1,0 +1,14 @@
+{
+    "rules": [
+        {
+            "field" : "globalroute__timing__tns__total",
+            "value" : 20,
+            "compare": "%"
+        },
+        {
+            "field" : "globalroute__timing__ws__worst",
+            "value" : 16,
+            "compare": "%"
+        },
+    ]
+}
