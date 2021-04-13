@@ -60,11 +60,18 @@ with open(args.metadata) as metadataFile:
 with open(args.goldMetadata) as goldMetadataFile:
     referenceMetadata = json.load(goldMetadataFile)
 
-rules = list()
+rules = dict()
 for filePath in args.rules:
     if isfile(filePath):
         with open(filePath) as rulesFile:
-            rules += json.load(rulesFile)['rules']
+            for rule in json.load(rulesFile)['rules']:
+                field = rule['field']
+                if field in rules.keys():
+                    print('[WARN] rule for field {} = {}'.format(
+                        field, rules[field]['value']), end='')
+                    print(' was overwritten by design rule = {}'.format(
+                        rule['value']))
+                rules[field] = rule
     else:
         print('[WARN] File {} not found'.format(filePath))
 if len(rules) == 0:
@@ -88,7 +95,7 @@ ops = { "<" : operator.lt,
 
 errors = 0
 
-for rule in rules:
+for _, rule in rules.items():
     field = rule['field']
     compare = rule['compare']
     op = ops[compare]
