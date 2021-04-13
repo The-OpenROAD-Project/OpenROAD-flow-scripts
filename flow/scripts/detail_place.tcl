@@ -23,6 +23,8 @@ if {![info exists standalone] || $standalone} {
   puts "Starting detailed placement"
 }
 
+source $::env(PLATFORM_DIR)/setRC.tcl
+
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
