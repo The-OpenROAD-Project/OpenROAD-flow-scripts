@@ -20,7 +20,7 @@ if {![info exists standalone] || $standalone} {
 }
 
 if {![info exists ::env(FOOTPRINT)]} {
-  io_placer -hor_layer $::env(IO_PLACER_H) \
+  place_pins -hor_layer $::env(IO_PLACER_H) \
             -ver_layer $::env(IO_PLACER_V) \
 }
 
