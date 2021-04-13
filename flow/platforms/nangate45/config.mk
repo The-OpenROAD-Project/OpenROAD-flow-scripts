@@ -58,8 +58,8 @@ export PLACE_SITE = FreePDK45_38x28_10R_NP_162NW_34O
 export IO_PIN_MARGIN = 70
 #
 # IO Placer pin layers
-export IO_PLACER_H = 3
-export IO_PLACER_V = 2
+export IO_PLACER_H = metal3
+export IO_PLACER_V = metal2
 
 # Define default PDN config
 export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
