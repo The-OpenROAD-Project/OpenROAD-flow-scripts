@@ -57,8 +57,8 @@ export PLACE_SITE = unit
 export IO_PIN_MARGIN = 70
 #
 # IO Placer pin layers
-export IO_PLACER_H = 4
-export IO_PLACER_V = 3
+export IO_PLACER_H = met3
+export IO_PLACER_V = met2
 
 # Define default PDN config
 export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
