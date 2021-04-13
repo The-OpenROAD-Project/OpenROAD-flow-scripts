@@ -9,7 +9,7 @@
 #    "rules": [
 #        {
 #            "field" : "<name>",
-#            "value" : <numeric_value>
+#            "value" : <numeric_value>,
 #            "compare": "<operator>"
 #        }, ...
 #    ]
@@ -17,28 +17,55 @@
 #
 # field is the name of a field in the metadata file
 # value is the reference value to compare to
-# operator can be one of "<", ">", "<=", ">=", "==", "!=", "%"
+# operator can be one of "<", ">", "<=", ">=", "==", "!=".
 # The value is converted to a float for comparison if possible
 #
-# Note: the operator "%" computes the difference (in percentage) between
-# the reference value against the gold metadata. The rule also can have
-# an attribute called "sign". The values allowed are "abs" for absolute value
-# (default if not explicitly defined), or one of "<", ">", "<=", ">=", "==", "!=".
-# In the example below, the value of "tns" can differ by +/- 15% between current run
-# and the gold metadata file:
+# Optional Fields:
+#
+# "diff" field: if defined the checker will compute the percentage difference
+# between the current value and the reference. The "value" in this case is the
+# percentage used in the comparison. In the example below, the value of "tns"
+# can differ by at most 15% between current run and the gold metadata file:
 #        ...
 #        {
 #            "field" : "tns",
 #            "value" : 15,
-#            "compare": "%",
-#            "sign": "abs"
+#            "diff": "True",
+#            "compare": "<="
+#        }, ...
+#
+# "absolute" field: the value of this field will be checked against the current
+# value in addition to the percentage, thus this only make sense if "diff" is
+# defined. In the example below, the test will only pass if the "tns"
+# difference in at most 15% and smaller than 10 units of time.
+#        ...
+#        {
+#            "field" : "tns",
+#            "value" : 15,
+#            "diff": "True",
+#            "compare": "<=",
+#            "absolute": 10
+#        }, ...
+#
+# "dontAllowChangeToNonZero" field: if this field is set, the checker will
+# consider an error if the refence value is zero and the current value is
+# non-zero. In contrast, if this was not set a change from 0 -> 5 units of time
+# would be ok.
+#        ...
+#        {
+#            "field" : "tns",
+#            "value" : 15,
+#            "diff": "True",
+#            "compare": "<=",
+#            "absolute": 10,
+#            "dontAllowChangeToNonZero": "True"
 #        }, ...
 #
 #-------------------------------------------------------------------------------
 
-import argparse  # argument parsing
-import json  # json parsing
-import sys
+import argparse
+import json
+from sys import exit
 import operator
 from os.path import isfile
 
@@ -76,7 +103,7 @@ for filePath in args.rules:
         print('[WARN] File {} not found'.format(filePath))
 if len(rules) == 0:
     print('No rules')
-    sys.exit(1)
+    exit(1)
 
 # Convert to a float if possible
 def try_number(s):
@@ -103,6 +130,10 @@ for _, rule in rules.items():
     build_value = try_number(metadata[field])
     reference_value = try_number(referenceMetadata[field])
 
+    hasAbsolute = 'absolute' in rule
+    hasDiff = 'diff' in rule
+    dontAllowChangeToNonZero = 'dontAllowChangeToNonZero' in rule
+
     formatError = list()
     if not isinstance(rule_value, float):
         formatError.append('rule_value')
@@ -116,40 +147,50 @@ for _, rule in rules.items():
         errors += 1
         continue
 
-    percentage = ''
-    if reference_value != 0:
-        percentage = (build_value - reference_value) / reference_value * 100
-    elif reference_value == build_value:
-        percentage = reference_value
-    else:
-        errors += 1
-        continue
+    hasError = False
+    percentage = None
+    check_value = build_value
+    if hasDiff:
+        if reference_value != 0:
+            percentage = (build_value - reference_value) / reference_value
+            percentage *= 100
+            check_value = percentage
+        elif dontAllowChangeToNonZero and build_value != 0:
+            hasError = True
+            percentage = float('inf')
+        elif build_value == reference_value:
+            percentage = 0
 
-    if 'diff' in rule:
-        check_value = percentage
-        check_name = 'diff'
+    if not hasError and not op(check_value, rule_value):
+        if hasAbsolute and op(build_value, rule['absolute']):
+            print('[INFO] passed', end='')
+        else:
+            print('[ERROR] failed', end='')
+            errors += 1
     else:
-        check_value = build_value
-        check_name = 'field value'
+        print('[INFO] passed', end='')
 
-    if op(check_value, rule_value):
-        print('Passed:', end='')
+    print(' {} rule:'.format(field), end='')
+    if hasDiff:
+        print(' diff value', end='')
     else:
-        print('Error: ', end='')
-        errors += 1
-    print(' field {} = {:.2f},'.format(field, build_value), end='')
-    print(' reference = {:.2f},'.format(reference_value), end='')
-    if check_name == 'diff':
-        print(' diff = {:.2f}.'.format(percentage), end='')
-    print(' Rule: {} must be {} {:.2f}'.format(check_name, compare, rule_value), end='')
-    if check_name == 'diff':
-        print('%')
-    else:
-        print('')
+        print(' field value', end='')
+    print(' must be {} {:.2f}'.format(compare, rule_value), end='')
+    if hasDiff:
+        print('%', end='')
+    if hasAbsolute:
+        print(' and field value must be {} {:.2f}'.format(compare, rule['absolute']), end='')
+
+    print('. Values checked: field value = {:.2f}'.format(build_value), end='')
+    print(', reference = {:.2f}'.format(reference_value), end='')
+    if hasDiff and percentage is not None:
+        print(', diff = {:.2f}%'.format(percentage), end='')
+    print('')
+
 
 if errors == 0:
     print('All metadata rules passed ({} rules)'.format(len(rules)))
 else:
     print('Failed metadata checks: {} out of {}'.format(errors, len(rules)))
 
-sys.exit(1 if errors else 0)
+exit(1 if errors else 0)
