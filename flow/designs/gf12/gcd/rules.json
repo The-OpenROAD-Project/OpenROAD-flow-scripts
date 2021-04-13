@@ -5,5 +5,30 @@
             "value" : 4,
             "compare": "<="
         }
+        {
+            "field" : "cts__timing__tns__total",
+            "value" : 26,
+            "compare": "%"
+        },
+        {
+            "field" : "cts__timing__wns__worst",
+            "value" : 40,
+            "compare": "%"
+        },
+        {
+            "field" : "cts__timing__ws__worst",
+            "value" : 40,
+            "compare": "%"
+        },
+        {
+            "field" : "globalroute__timing__tns__total",
+            "value" : 20,
+            "compare": "%"
+        },
+        {
+            "field" : "globalroute__timing__ws__worst",
+            "value" : 30,
+            "compare": "%"
+        },
     ]
 }

@@ -11,7 +11,7 @@ RUN yum install -y libXft libXScrnSaver
 WORKDIR /OpenROAD-flow
 RUN mkdir -p /OpenROAD-flow
 
-COPY --from=openroad /OpenROAD/build ./tools/build/OpenROAD
+COPY --from=openroad/centos7-builder-gcc /OpenROAD/build ./tools/build/OpenROAD
 COPY --from=openroad/yosys /build ./tools/build/yosys
 COPY ./setup_env.sh .
 COPY ./flow ./flow
