@@ -90,15 +90,15 @@ export PLACE_DENSITY ?= 0.50
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   = sky130_fd_sc_hs__buf_1
-export CTS_MAX_SLEW   = 1.5e-9
-export CTS_MAX_CAP    = .2e-12
+export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShs
+
 
 # ---------------------------------------------------------
 #  Route
 # ---------------------------------------------------------
 # FastRoute options
-export MIN_ROUTING_LAYER = 2
-export MAX_ROUTING_LAYER = 6
+export MIN_ROUTING_LAYER = met1
+export MAX_ROUTING_LAYER = met5
 #
 # Define fastRoute tcl
 export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl

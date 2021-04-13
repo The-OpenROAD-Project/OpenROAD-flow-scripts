@@ -90,15 +90,15 @@ export PLACE_DENSITY ?= 0.30
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   = BUF_X4
-export CTS_MAX_SLEW   = .198e-9
-export CTS_MAX_CAP    = .242e-12
+export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTS
+
 
 # ---------------------------------------------------------
 #  Route
 # ---------------------------------------------------------
 # FastRoute options
-export MIN_ROUTING_LAYER = 2
-export MAX_ROUTING_LAYER = 10
+export MIN_ROUTING_LAYER = metal2
+export MAX_ROUTING_LAYER = metal10
 
 # Define fastRoute tcl
 export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl

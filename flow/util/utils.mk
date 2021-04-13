@@ -120,3 +120,6 @@ gallery: $(RESULTS_DIR)/6_final_no_power.def $(RESULTS_DIR)/6_final_only_clk.def
 	        -rd results_path=$(RESULTS_DIR) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/createGallery.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+
+view_cells:
+	openroad -gui $(SCRIPTS_DIR)/view_cells.tcl

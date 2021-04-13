@@ -25,9 +25,9 @@ if {![info exists standalone] || $standalone} {
 
   if {[info exist ::env(RCX_RULES)]} {
     puts "Loading spef"
-    read_spef $::env(RESULTS_DIR)/6_final.spef
+#    read_spef $::env(RESULTS_DIR)/6_final.spef
   } else {
     puts "Estimating parasitics"
-    estimate_parasitics -placement
+#    estimate_parasitics -placement
   }
 }

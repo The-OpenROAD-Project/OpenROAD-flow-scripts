@@ -73,8 +73,8 @@ export PDN_CFG = ./designs/$(PLATFORM)/coyote_tc/pdn.cfg
 # Point to the RC file
 export SETRC_FILE = $(PLATFORM_DIR)/setRC.tcl
 
-export MIN_ROUTING_LAYER 2
-export MAX_ROUTING_LAYER 6
+export MIN_ROUTING_LAYER met1
+export MAX_ROUTING_LAYER met5
 
 export FASTROUTE_TCL $(PLATFORM_DIR)/fastroute.tcl
 

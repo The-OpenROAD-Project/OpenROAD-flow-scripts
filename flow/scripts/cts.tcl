@@ -119,69 +119,6 @@ report_clock_skew
 detailed_placement
 check_placement
 
-if {[info exists ::env(PAD_CORNER)]} {
-  puts "\[INFO-FLOW\] OpenROAD - post cts patch\n"
-  
-  #--------------------------------------------------------------------------------
-  puts "\[INFO\] Adding routing blockages to address lonely vias"
-  set db [::ord::get_db]
-  set block [[$db getChip] getBlock]
-  set tech [$db getTech]
-  
-  set master [$db findMaster $::env(PAD_CORNER)]
-  
-  if { $master != "NULL" } {
-    set xList [list]
-    set yList [list]
-    foreach inst [$block getInsts] {
-      if {[$inst getMaster] == $master} {
-        set bbox [$inst getBBox]
-        lappend xList [$bbox xMin]
-        lappend yList [$bbox yMin]
-        lappend xList [$bbox xMax]
-        lappend yList [$bbox yMax]
-      }
-    }
-    
-    
-    set layer_1 [$tech findLayer V1]
-    set layer_2 [$tech findLayer V2]
-    set layer_3 [$tech findLayer J3]
-    set layer_4 [$tech findLayer A4]
-    set layer_5 [$tech findLayer CK]
-    set layer_6 [$tech findLayer U1]
-    set layer_7 [$tech findLayer U2]
-    
-    set ioEdgeXmin  [lindex [lsort -real -unique $xList] 1] 
-    set ioEdgeXmax  [lindex [lsort -real -unique $xList] 2] 
-    set ioEdgeYmin  [lindex [lsort -real -unique $yList] 1] 
-    set ioEdgeYmax  [lindex [lsort -real -unique $yList] 2] 
-    set coreDB [ord::get_db_core]
-    set coreXmin [$coreDB xMin]
-    set coreYmin [$coreDB yMin]
-    set coreXmax [$coreDB xMax]
-    set coreYmax [$coreDB yMax]
-    set offsetX1  [expr $coreXmin - $ioEdgeXmin]
-    set offsetX2  [expr $ioEdgeXmax - $coreXmax]
-    
-    foreach {createOBS llx lly urx ury} [list \
-                                          1 $ioEdgeXmin $ioEdgeYmin [expr $ioEdgeXmin + $offsetX1] $ioEdgeYmax \
-                                          1 [expr $ioEdgeXmax - $offsetX2] $ioEdgeYmin $ioEdgeXmax $ioEdgeYmax \
-                              ] {
-    
-      if { $createOBS } {
-        set obs_1 [odb::dbObstruction_create $block $layer_1 $llx $lly $urx $ury]
-        set obs_2 [odb::dbObstruction_create $block $layer_2 $llx $lly $urx $ury]
-        set obs_3 [odb::dbObstruction_create $block $layer_3 $llx $lly $urx $ury]
-        set obs_4 [odb::dbObstruction_create $block $layer_4 $llx $lly $urx $ury]
-        set obs_5 [odb::dbObstruction_create $block $layer_5 $llx $lly $urx $ury]
-      }
-    }
-  }
-  #--------------------------------------------------------------------------------
-  puts "\[INFO-FLOW\] OpenROAD - end post cts patch\n"
-}
-
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/4_1_cts.def
