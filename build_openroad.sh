@@ -119,7 +119,7 @@ fi
 # Docker build
 if [ "$build_method" == "DOCKER" ]; then
   docker build -t openroad/yosys -f tools/yosys_util/Dockerfile tools/yosys
-  docker build -t openroad -f tools/OpenROAD/Dockerfile tools/OpenROAD
+  ./tools/OpenROAD/etc/DockerHelper.sh create -target=builder
   if [ "$COPY_PLATFORMS" == "YES" ]; then
     cp .dockerignore{,.bak}
     sed -i '/flow\/platforms/d' .dockerignore
