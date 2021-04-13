@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # This scripts checks the metadata.json against a set of rules for allowed
 # values.  This allows degradation in results to be flagged as an error
@@ -84,56 +84,61 @@ ops = { "<" : operator.lt,
         ">=": operator.ge,
         "==": operator.eq,
         "!=": operator.ne,
-        "%" : "delta",
       }
 
 errors = 0
 
 for rule in rules:
     field = rule['field']
-    rule_value = try_number(rule['value'])
     compare = rule['compare']
     op = ops[compare]
-    check_value = try_number(metadata[field])
+    rule_value = try_number(rule['value'])
+    build_value = try_number(metadata[field])
+    reference_value = try_number(referenceMetadata[field])
 
-    deltaMessage = ''
-    if op == "delta":
-        reference_value = try_number(referenceMetadata[field])
-        if not isinstance(check_value, float) or not isinstance(reference_value, float):
-            errors += 1
-            print('Error: field {} fails rule {} {} {}. Invalid number.'.format(field, check_value, compare, rule_value))
-            continue
-        if reference_value != 0:
-            percentage = (check_value - reference_value) / reference_value * 100
-        elif reference_value == check_value:
-            percentage = reference_value
-        else:
-            print('Error: field {} was 0, can not check %'.format(field))
-            errors += 1
-            continue
-        deltaMessage = " check_value = {}, reference_value = {}, diff_percentage = {}%".format(
-                check_value, reference_value, percentage)
-        check_value = percentage
-        if not rule.has_key('sign') or rule['sign'] == 'abs':
-            check_value = abs(check_value)
-            op = operator.le
-            compare = "(absolute value) <="
-        else:
-            compare = rule['sign']
-            op = ops[compare]
-
-    if isinstance(rule_value, float) != isinstance(check_value, float):
-        print('Error: field {} = {:.2f}, invalid float format', field, check_value)
+    formatError = list()
+    if not isinstance(rule_value, float):
+        formatError.append('rule_value')
+    if not isinstance(build_value, float):
+        formatError.append('build_value')
+    if not isinstance(reference_value, float):
+        formatError.append('reference_value')
+    if len(formatError):
+        print('Error: field {}, has invalid float format for {}'.format(
+            field, ', '.join(formatError)))
         errors += 1
         continue
 
-    if op(check_value, rule_value):
-        print('Passed: field {} = {:.2f}, reference = {:.2f}, {} passed rule {} {}',
-              field, check_value, reference_value, diff, compare, rule_value)
+    percentage = ''
+    if reference_value != 0:
+        percentage = (build_value - reference_value) / reference_value * 100
+    elif reference_value == build_value:
+        percentage = reference_value
     else:
         errors += 1
-        print('Error: field {} = {:.2f}, reference = {:.2f}, {} fails rule {} {}',
-              field, check_value, reference_value, diff, compare, rule_value)
+        continue
+
+    if 'diff' in rule:
+        check_value = percentage
+        check_name = 'diff'
+    else:
+        check_value = build_value
+        check_name = 'field value'
+
+    if op(check_value, rule_value):
+        print('Passed:', end='')
+    else:
+        print('Error: ', end='')
+        errors += 1
+    print(' field {} = {:.2f},'.format(field, build_value), end='')
+    print(' reference = {:.2f},'.format(reference_value), end='')
+    if check_name == 'diff':
+        print(' diff = {:.2f}.'.format(percentage), end='')
+    print(' Rule: {} must be {} {:.2f}'.format(check_name, compare, rule_value), end='')
+    if check_name == 'diff':
+        print('%')
+    else:
+        print('')
 
 if errors == 0:
     print('All metadata rules passed ({} rules)'.format(len(rules)))
