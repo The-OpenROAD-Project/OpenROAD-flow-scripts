@@ -121,12 +121,26 @@ OPENROAD_NO_EXIT_CMD = $(patsubst -exit,,$(OPENROAD_CMD))
 
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
-export WRAPPED_GDS  = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.gds))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
 export DONT_USE_LIBS   = $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES)))
 export DONT_USE_SC_LIB ?= $(OBJECTS_DIR)/lib/$(notdir $(firstword $(LIB_FILES)))
+
+# Stream system used for final result (GDS is default): GDS, GSDII, GDS2, OASIS, or OAS
+STREAM_SYSTEM ?= GDS
+ifneq ($(findstring GDS,$(shell echo $(STREAM_SYSTEM) | tr '[:lower:]' '[:upper:]')),)
+	export STREAM_SYSTEM_EXT := gds
+	GDSOAS_FILES = $(GDS_FILES)
+	ADDITIONAL_GDSOAS = $(ADDITIONAL_GDS)
+	SEAL_GDSOAS = $(SEAL_GDS)
+else
+	export STREAM_SYSTEM_EXT := oas
+	GDSOAS_FILES = $(OAS_FILES)
+	ADDITIONAL_GDSOAS = $(ADDITIONAL_OAS)
+	SEAL_GDSOAS = $(SEAL_OAS)
+endif
+export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
@@ -445,9 +459,10 @@ klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 # |  _|  | || |\  || | ___) |  _  || || |\  | |_| |
 # |_|   |___|_| \_|___|____/|_| |_|___|_| \_|\____|
 #
+6_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
-        $(RESULTS_DIR)/6_final.gds
+        $(6_FINAL_FILE)
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
@@ -468,36 +483,37 @@ $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
-$(WRAPPED_GDS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
+$(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
-	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:gds=def)) \
-	        -rd in_gds="$(ADDITIONAL_GDS)" \
+	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:$(STREAM_SYSTEM_EXT)=def)) \
+	        -rd in_files="$(ADDITIONAL_GDSOAS)" \
 	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_gds="" \
-	        -rd out_gds=$@ \
+	        -rd seal_file="" \
+	        -rd out_file=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
-	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
+	        -rm $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/6_1_merged.gds: $(OBJECTS_DIR)/klayout.lyt $(GDS_FILES) $(WRAPPED_GDS) $(RESULTS_DIR)/6_final.def
+6_1_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
+$(6_1_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS)
 	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
-	        -rd in_def=$(RESULTS_DIR)/6_final.def \
-	        -rd in_gds="$(GDS_FILES) $(WRAPPED_GDS)" \
+	        -rd in_def=$< \
+	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
 	        -rd config_file=$(FILL_CONFIG) \
-	        -rd seal_gds="$(SEAL_GDS)" \
-	        -rd out_gds=$@ \
+	        -rd seal_file="$(SEAL_GDSOAS)" \
+	        -rd out_file=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/def2gds.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+	        -rm $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
 $(RESULTS_DIR)/6_final.v: $(LOG_DIR)/6_report.log
 
-$(RESULTS_DIR)/6_final.gds: $(RESULTS_DIR)/6_1_merged.gds
+$(6_FINAL_FILE): $(6_1_MERGED_FILE)
 	cp $^ $@
 
 drc: $(REPORTS_DIR)/6_drc.lyrdb
 
-$(REPORTS_DIR)/6_drc.lyrdb: $(RESULTS_DIR)/6_final.gds $(KLAYOUT_DRC_FILE)
+$(REPORTS_DIR)/6_drc.lyrdb: $(6_FINAL_FILE) $(KLAYOUT_DRC_FILE)
 ifneq ($(KLAYOUT_DRC_FILE),)
 	($(TIME_CMD) klayout -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
@@ -516,7 +532,7 @@ $(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
 
 lvs: $(RESULTS_DIR)/6_lvs.lvsdb
 
-$(RESULTS_DIR)/6_lvs.lvsdb: $(RESULTS_DIR)/6_final.gds $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
+$(RESULTS_DIR)/6_lvs.lvsdb: $(6_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
 ifneq ($(KLAYOUT_LVS_FILE),)
 	($(TIME_CMD) klayout -b -rd in_gds="$<" \
 	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
@@ -527,7 +543,7 @@ else
 endif
 
 clean_finish:
-	rm -rf $(RESULTS_DIR)/6_*.gds $(RESULTS_DIR)/6_*.def $(RESULTS_DIR)/6_*.v $(RESULTS_DIR)/6_*.sdc
+	rm -rf $(RESULTS_DIR)/6_*.gds $(RESULTS_DIR)/6_*.oas $(RESULTS_DIR)/6_*.def $(RESULTS_DIR)/6_*.v $(RESULTS_DIR)/6_*.sdc
 	rm -rf $(REPORTS_DIR)/6_*.rpt
 	rm -f  $(LOG_DIR)/6_*
 
@@ -542,7 +558,7 @@ clean_finish:
 #
 # ==============================================================================
 
-all: $(SDC_FILE) $(WRAPPED_LIBS) $(DONT_USE_LIBS) $(OBJECTS_DIR)/TritonRoute.param $(OBJECTS_DIR)/klayout.lyt $(WRAPPED_GDS)
+all: $(SDC_FILE) $(WRAPPED_LIBS) $(DONT_USE_LIBS) $(OBJECTS_DIR)/TritonRoute.param $(OBJECTS_DIR)/klayout.lyt $(WRAPPED_GDSOAS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/run_all.tcl -metrics $(LOG_DIR)/run_all.json) 2>&1 | tee $(LOG_DIR)/run_all.log
 
@@ -563,11 +579,12 @@ nuke: clean_test clean_issues
 	rm -rf versions.txt
 
 
-# DEF/GDS viewer shortcuts
+# DEF/GDS/OAS viewer shortcuts
 #-------------------------------------------------------------------------------
 RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
 RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
-$(foreach file,$(RESULTS_DEF) $(RESULTS_GDS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
+RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
+$(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
 gui_final: gui_6_final.def
