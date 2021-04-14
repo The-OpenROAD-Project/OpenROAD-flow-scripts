@@ -87,8 +87,15 @@ default: finish
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
 
-export PLATFORM_BASE ?= ./platforms
-export PLATFORM_DIR = $(PLATFORM_BASE)/$(PLATFORM)
+ifneq ($(wildcard $(PLATFORM_BASE)/$(PLATFORM)),)
+  export PLATFORM_DIR = $(PLATFORM_BASE)/$(PLATFORM)
+else ifneq ($(wildcard ./platforms/$(PLATFORM)),)
+  export PLATFORM_DIR = ./platforms/$(PLATFORM)
+else ifneq ($(wildcard ../../$(PLATFORM)),)
+  export PLATFORM_DIR = ../../$(PLATFORM)
+else
+  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found)
+endif
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
