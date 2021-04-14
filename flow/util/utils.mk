@@ -16,7 +16,7 @@ GOLD_METADATA = $(dir $(DESIGN_CONFIG))metadata-ok.json
 
 $(REPORTS_DIR)/metadata-check.log: $(REPORTS_DIR)/metadata.json
 	if test -f $(RULES_DESIGN); then \
-	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) $(RULES_GLOBAL) -g $(GOLD_METADATA) | tee $@; \
+	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_GLOBAL) $(RULES_DESIGN) -g $(GOLD_METADATA) | tee $@; \
 	else \
 	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_GLOBAL)  -g $(GOLD_METADATA) | tee $@; \
 	fi
