@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # This scripts checks the metadata.json against a set of rules for allowed
 # values.  This allows degradation in results to be flagged as an error
@@ -9,7 +9,7 @@
 #    "rules": [
 #        {
 #            "field" : "<name>",
-#            "value" : <numeric_value>
+#            "value" : <numeric_value>,
 #            "compare": "<operator>"
 #        }, ...
 #    ]
@@ -17,28 +17,55 @@
 #
 # field is the name of a field in the metadata file
 # value is the reference value to compare to
-# operator can be one of "<", ">", "<=", ">=", "==", "!=", "%"
+# operator can be one of "<", ">", "<=", ">=", "==", "!=".
 # The value is converted to a float for comparison if possible
 #
-# Note: the operator "%" computes the difference (in percentage) between
-# the reference value against the gold metadata. The rule also can have
-# an attribute called "sign". The values allowed are "abs" for absolute value
-# (default if not explicitly defined), or one of "<", ">", "<=", ">=", "==", "!=".
-# In the example below, the value of "tns" can differ by +/- 15% between current run
-# and the gold metadata file:
+# Optional Fields:
+#
+# "diff" field: if defined the checker will compute the percentage difference
+# between the current value and the reference. The "value" in this case is the
+# percentage used in the comparison. In the example below, the value of "tns"
+# can differ by at most 15% between current run and the gold metadata file:
 #        ...
 #        {
 #            "field" : "tns",
 #            "value" : 15,
-#            "compare": "%",
-#            "sign": "abs"
+#            "diff": "True",
+#            "compare": "<="
+#        }, ...
+#
+# "absolute" field: the value of this field will be checked against the current
+# value in addition to the percentage, thus this only make sense if "diff" is
+# defined. In the example below, the test will only pass if the "tns"
+# difference in at most 15% and smaller than 10 units of time.
+#        ...
+#        {
+#            "field" : "tns",
+#            "value" : 15,
+#            "diff": "True",
+#            "compare": "<=",
+#            "absolute": 10
+#        }, ...
+#
+# "dontAllowChangeToNonZero" field: if this field is set, the checker will
+# consider an error if the refence value is zero and the current value is
+# non-zero. In contrast, if this was not set a change from 0 -> 5 units of time
+# would be ok.
+#        ...
+#        {
+#            "field" : "tns",
+#            "value" : 15,
+#            "diff": "True",
+#            "compare": "<=",
+#            "absolute": 10,
+#            "dontAllowChangeToNonZero": "True"
 #        }, ...
 #
 #-------------------------------------------------------------------------------
 
-import argparse  # argument parsing
-import json  # json parsing
-import sys
+import argparse
+import json
+from sys import exit
 import operator
 from os.path import isfile
 
@@ -60,16 +87,23 @@ with open(args.metadata) as metadataFile:
 with open(args.goldMetadata) as goldMetadataFile:
     referenceMetadata = json.load(goldMetadataFile)
 
-rules = list()
+rules = dict()
 for filePath in args.rules:
     if isfile(filePath):
         with open(filePath) as rulesFile:
-            rules += json.load(rulesFile)['rules']
+            for rule in json.load(rulesFile)['rules']:
+                field = rule['field']
+                if field in rules.keys():
+                    print('[WARN] rule for field {} = {}'.format(
+                        field, rules[field]['value']), end='')
+                    print(' was overwritten by design rule = {}'.format(
+                        rule['value']))
+                rules[field] = rule
     else:
         print('[WARN] File {} not found'.format(filePath))
 if len(rules) == 0:
     print('No rules')
-    sys.exit(1)
+    exit(1)
 
 # Convert to a float if possible
 def try_number(s):
@@ -84,54 +118,79 @@ ops = { "<" : operator.lt,
         ">=": operator.ge,
         "==": operator.eq,
         "!=": operator.ne,
-        "%" : "delta",
       }
 
 errors = 0
 
-for rule in rules:
+for _, rule in rules.items():
     field = rule['field']
-    rule_value = try_number(rule['value'])
     compare = rule['compare']
     op = ops[compare]
-    check_value = try_number(metadata[field])
+    rule_value = try_number(rule['value'])
+    build_value = try_number(metadata[field])
+    reference_value = try_number(referenceMetadata[field])
 
-    deltaMessage = ''
-    if op == "delta":
-        reference_value = try_number(referenceMetadata[field])
-        if not isinstance(check_value, float) or not isinstance(reference_value, float):
-            errors += 1
-            print('Error: field {} fails rule {} {} {}. Invalid number.'.format(field, check_value, compare, rule_value))
-            continue
-        if reference_value != 0:
-            percentage = (check_value - reference_value) / reference_value * 100
-        elif reference_value == check_value:
-            percentage = reference_value
-        else:
-            print('Error: field {} was 0, can not check %'.format(field))
-            errors += 1
-            continue
-        deltaMessage = " check_value = {}, reference_value = {}, diff_percentage = {}%".format(
-                check_value, reference_value, percentage)
-        check_value = percentage
-        if not rule.has_key('sign') or rule['sign'] == 'abs':
-            check_value = abs(check_value)
-            op = operator.le
-            compare = "(absolute value) <="
-        else:
-            compare = rule['sign']
-            op = ops[compare]
+    hasAbsolute = 'absolute' in rule
+    hasDiff = 'diff' in rule
+    dontAllowChangeToNonZero = 'dontAllowChangeToNonZero' in rule
 
-    if (isinstance(rule_value, float) != isinstance(check_value, float)
-        or not op(check_value, rule_value)):
+    formatError = list()
+    if not isinstance(rule_value, float):
+        formatError.append('rule_value')
+    if not isinstance(build_value, float):
+        formatError.append('build_value')
+    if not isinstance(reference_value, float):
+        formatError.append('reference_value')
+    if len(formatError):
+        print('Error: field {}, has invalid float format for {}'.format(
+            field, ', '.join(formatError)))
         errors += 1
-        print('Error: field {} fails rule {} {} {}.{}'.format(field, check_value, compare, rule_value, deltaMessage))
+        continue
+
+    hasError = False
+    percentage = None
+    check_value = build_value
+    if hasDiff:
+        if reference_value != 0:
+            percentage = (build_value - reference_value) / reference_value
+            percentage *= 100
+            check_value = percentage
+        elif dontAllowChangeToNonZero and build_value != 0:
+            hasError = True
+            percentage = float('inf')
+        elif build_value == reference_value:
+            percentage = 0
+
+    if not hasError and not op(check_value, rule_value):
+        if hasAbsolute and op(build_value, rule['absolute']):
+            print('[INFO] passed', end='')
+        else:
+            print('[ERROR] failed', end='')
+            errors += 1
     else:
-        print('Passed: field {} passed rule {} {} {}.{}'.format(field, check_value, compare, rule_value, deltaMessage))
+        print('[INFO] passed', end='')
+
+    print(' {} rule:'.format(field), end='')
+    if hasDiff:
+        print(' diff value', end='')
+    else:
+        print(' field value', end='')
+    print(' must be {} {:.2f}'.format(compare, rule_value), end='')
+    if hasDiff:
+        print('%', end='')
+    if hasAbsolute:
+        print(' and field value must be {} {:.2f}'.format(compare, rule['absolute']), end='')
+
+    print('. Values checked: field value = {:.2f}'.format(build_value), end='')
+    print(', reference = {:.2f}'.format(reference_value), end='')
+    if hasDiff and percentage is not None:
+        print(', diff = {:.2f}%'.format(percentage), end='')
+    print('')
+
 
 if errors == 0:
     print('All metadata rules passed ({} rules)'.format(len(rules)))
 else:
     print('Failed metadata checks: {} out of {}'.format(errors, len(rules)))
 
-sys.exit(1 if errors else 0)
+exit(1 if errors else 0)
