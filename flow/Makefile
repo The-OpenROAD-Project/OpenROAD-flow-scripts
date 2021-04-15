@@ -87,9 +87,11 @@ default: finish
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
 
+PUBLIC=nangate45 sky130hd sky130hs asap7
+
 ifneq ($(wildcard $(PLATFORM_BASE)/$(PLATFORM)),)
   export PLATFORM_DIR = $(PLATFORM_BASE)/$(PLATFORM)
-else ifneq ($(wildcard ./platforms/$(PLATFORM)),)
+else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ./platforms/$(PLATFORM)
 else ifneq ($(wildcard ../../$(PLATFORM)),)
   export PLATFORM_DIR = ../../$(PLATFORM)
