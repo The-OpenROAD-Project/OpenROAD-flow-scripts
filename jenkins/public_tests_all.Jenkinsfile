@@ -1,96 +1,133 @@
 pipeline {
-  agent any
+  agent any;
   environment {
-    COMMIT_AUTHOR_EMAIL= sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim()
+    COMMIT_AUTHOR_EMAIL= sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
   }
   options {
-    disableConcurrentBuilds()
-    timeout(time: 8, unit: 'HOURS')
+    timeout(time: 1, unit: 'HOURS');
   }
   stages {
     stage('Build') {
       environment {
-        OPENROAD_FLOW_NO_GIT_INIT = 1
+        OPENROAD_FLOW_NO_GIT_INIT = 1;
       }
       steps {
-        sh './build_openroad.sh --local'
+        sh './build_openroad.sh --local';
+        stash name: 'build', includes: "tools/build/**";
       }
     }
     stage('Test') {
       parallel {
-        stage('nangate45_aes') {
+        stage('nangate45 aes') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"';
+            stash name: 'nangate45_aes', includes: 'flow/reports/**/*';
           }
         }
-        stage('nangate45_dynamic_node') {
+        stage('nangate45 gcd') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh dynamic_node nangate45"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"';
+            stash name: 'nangate45_gcd', includes: 'flow/reports/**/*';
           }
         }
-        stage('nangate45_gcd') {
+        stage('nangate45 ibex') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex nangate45"';
+            stash name: 'nangate45_ibex', includes: 'flow/reports/**/*';
           }
         }
-        stage('nangate45_ibex') {
+        stage('nangate45 jpeg') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex nangate45"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg nangate45"';
+            stash name: 'nangate45_jpeg', includes: 'flow/reports/**/*';
           }
         }
-        stage('nangate45_jpeg') {
+        stage('nangate45 swerv') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg nangate45"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh swerv nangate45"';
+            stash name: 'nangate45_swerv', includes: 'flow/reports/**/*';
           }
         }
-        stage('nangate45_swerv') {
+        stage('nangate45 tiny rocket') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh swerv nangate45"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"';
+            stash name: 'nangate45_tinyRocket', includes: 'flow/reports/**/*';
           }
         }
-        stage('nangate45_tinyRocket') {
+        stage('sky130 hd aes') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hd"';
+            stash name: 'sky130_hd_aes', includes: 'flow/reports/**/*';
           }
         }
-        stage('sky130_hs_gcd') {
+        stage('sky130 hd gcd') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hs"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hd"';
+            stash name: 'sky130_hd_gcd', includes: 'flow/reports/**/*';
           }
         }
-        stage('sky130_hs_aes') {
+        stage('sky130 hd ibex') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hs"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hd"';
+            stash name: 'sky130_hd_ibex', includes: 'flow/reports/**/*';
           }
         }
-        stage('sky130_hs_ibex') {
+        stage('sky130 hd jpeg') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hs"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hd"';
+            stash name: 'sky130_hd_jpeg', includes: 'flow/reports/**/*';
           }
         }
-        stage('sky130_hs_jpeg') {
+        stage('sky130 hs aes') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hs"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hs"';
+            stash name: 'sky130_hs_aes', includes: 'flow/reports/**/*';
           }
         }
-        stage('sky130_hd_gcd') {
+        stage('sky130 hs gcd') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hd"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hs"';
+            stash name: 'sky130_hs_gcd', includes: 'flow/reports/**/*';
           }
         }
-        stage('sky130_hd_aes') {
+        stage('sky130 hs ibex') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hd"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hs"';
+            stash name: 'sky130_hs_ibex', includes: 'flow/reports/**/*';
           }
         }
-        stage('sky130_hd_ibex') {
+        stage('sky130 hs jpeg') {
+          agent any;
           steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hd"'
-          }
-        }
-        stage('sky130_hd_jpeg') {
-          steps {
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hd"'
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hs"';
+            stash name: 'sky130_hs_jpeg', includes: 'flow/reports/**/*';
           }
         }
       }
@@ -98,18 +135,32 @@ pipeline {
   }
   post {
     always {
-      archiveArtifacts artifacts: 'flow/reports/**/*'
+      unstash 'nangate45_aes';
+      unstash 'nangate45_gcd';
+      unstash 'nangate45_ibex';
+      unstash 'nangate45_jpeg';
+      unstash 'nangate45_swerv';
+      unstash 'nangate45_tinyRocket';
+      unstash 'sky130_hd_aes';
+      unstash 'sky130_hd_gcd';
+      unstash 'sky130_hd_ibex';
+      unstash 'sky130_hd_jpeg';
+      unstash 'sky130_hs_aes';
+      unstash 'sky130_hs_gcd';
+      unstash 'sky130_hs_ibex';
+      unstash 'sky130_hs_jpeg';
+      archiveArtifacts artifacts: 'flow/reports/**/*';
     }
     failure {
       script {
         if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'openroad' ) {
-          echo('Main development branch: report to stakeholders and commit author.')
-          EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS"
-          REPLY_TO="$EMAIL_TO"
+          echo('Main development branch: report to stakeholders and commit author.');
+          EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
+          REPLY_TO="$EMAIL_TO";
         } else {
-          echo('Feature development branch: report only to commit author.')
-          EMAIL_TO="$COMMIT_AUTHOR_EMAIL"
-          REPLY_TO='$DEFAULT_REPLYTO'
+          echo('Feature development branch: report only to commit author.');
+          EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
+          REPLY_TO='$DEFAULT_REPLYTO';
         }
         emailext (
             to: "$EMAIL_TO",
