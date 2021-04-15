@@ -13,177 +13,121 @@ pipeline {
       }
       steps {
         sh './build_openroad.sh --local';
-        stash name: 'build', includes: 'tools/build/**';
+        stash name: 'build', includes: "tools/build/**";
       }
     }
     stage('Test') {
       parallel {
         stage('nangate45 aes') {
           agent any;
-          stages {
-            stage('nangate45_aes') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"';
-                stash name: 'nangate45_aes', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"';
+            stash name: 'nangate45_aes', includes: 'flow/reports/**/*';
           }
         }
         stage('nangate45 gcd') {
           agent any;
-          stages {
-            stage('nangate45_gcd') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"';
-                stash name: 'nangate45_gcd', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"';
+            stash name: 'nangate45_gcd', includes: 'flow/reports/**/*';
           }
         }
         stage('nangate45 ibex') {
           agent any;
-          stages {
-            stage('nangate45_ibex') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex nangate45"';
-                stash name: 'nangate45_ibex', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex nangate45"';
+            stash name: 'nangate45_ibex', includes: 'flow/reports/**/*';
           }
         }
         stage('nangate45 jpeg') {
           agent any;
-          stages {
-            stage('nangate45_jpeg') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg nangate45"';
-                stash name: 'nangate45_jpeg', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg nangate45"';
+            stash name: 'nangate45_jpeg', includes: 'flow/reports/**/*';
           }
         }
         stage('nangate45 swerv') {
           agent any;
-          stages {
-            stage('nangate45_swerv') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh swerv nangate45"';
-                stash name: 'nangate45_swerv', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh swerv nangate45"';
+            stash name: 'nangate45_swerv', includes: 'flow/reports/**/*';
           }
         }
         stage('nangate45 tiny rocket') {
           agent any;
-          stages {
-            stage('nangate45_tinyRocket') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"';
-                stash name: 'nangate45_tinyRocket', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"';
+            stash name: 'nangate45_tinyRocket', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hd aes') {
           agent any;
-          stages {
-            stage('sky130_hd_aes') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hd"';
-                stash name: 'sky130_hd_aes', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hd"';
+            stash name: 'sky130_hd_aes', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hd gcd') {
           agent any;
-          stages {
-            stage('sky130_hd_gcd') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hd"';
-                stash name: 'sky130_hd_gcd', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hd"';
+            stash name: 'sky130_hd_gcd', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hd ibex') {
           agent any;
-          stages {
-            stage('sky130_hd_ibex') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hd"';
-                stash name: 'sky130_hd_ibex', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hd"';
+            stash name: 'sky130_hd_ibex', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hd jpeg') {
           agent any;
-          stages {
-            stage('sky130_hd_jpeg') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hd"';
-                stash name: 'sky130_hd_jpeg', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hd"';
+            stash name: 'sky130_hd_jpeg', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hs aes') {
           agent any;
-          stages {
-            stage('sky130_hs_aes') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hs"';
-                stash name: 'sky130_hs_aes', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hs"';
+            stash name: 'sky130_hs_aes', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hs gcd') {
           agent any;
-          stages {
-            stage('sky130_hs_gcd') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hs"';
-                stash name: 'sky130_hs_gcd', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hs"';
+            stash name: 'sky130_hs_gcd', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hs ibex') {
           agent any;
-          stages {
-            stage('sky130_hs_ibex') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hs"';
-                stash name: 'sky130_hs_ibex', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hs"';
+            stash name: 'sky130_hs_ibex', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hs jpeg') {
           agent any;
-          stages {
-            stage('sky130_hs_jpeg') {
-              steps {
-                unstash 'build';
-                sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hs"';
-                stash name: 'sky130_hs_jpeg', includes: 'flow/reports/**/*';
-              }
-            }
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hs"';
+            stash name: 'sky130_hs_jpeg', includes: 'flow/reports/**/*';
           }
         }
       }
