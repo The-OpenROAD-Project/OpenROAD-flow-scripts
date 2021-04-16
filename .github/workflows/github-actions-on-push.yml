@@ -19,4 +19,3 @@ jobs:
           ls ${{ github.workspace }}
       - name: run the security scanning py script
         run: ../security/git/hooks/pre-commit.py --local
-
