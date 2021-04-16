@@ -8,7 +8,7 @@ clean_metadata:
 	rm -f $(REPORTS_DIR)/metadata.json
 
 $(REPORTS_DIR)/metadata.json:
-	$(UTILS_DIR)/genMetrics.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -o $@
+	$(UTILS_DIR)/genMetrics.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -v $(FLOW_VARIANT) -o $@
 
 RULES_DESIGN = $(dir $(DESIGN_CONFIG))rules.json
 RULES_GLOBAL = $(UTILS_DIR)/rules-global.json

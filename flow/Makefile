@@ -91,8 +91,10 @@ PUBLIC=nangate45 sky130hd sky130hs asap7
 
 ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ./platforms/$(PLATFORM)
+  export PPA_DESIGN_DIR = ./designs.ppa
 else ifneq ($(wildcard ../../$(PLATFORM)),)
   export PLATFORM_DIR = ../../$(PLATFORM)
+  export PPA_DESIGN_DIR = ../../designs.ppa
 else
   $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found)
 endif
@@ -100,13 +102,16 @@ endif
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
 
+export FLOW_VARIANT ?= base
+#export GLOBAL_PLACEMENT_ARGS ?= -timing_driven
+
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
-export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)
-export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)
-export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)
-export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)
+export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
 export SCRIPTS_DIR = ./scripts
 export UTILS_DIR   = ./util

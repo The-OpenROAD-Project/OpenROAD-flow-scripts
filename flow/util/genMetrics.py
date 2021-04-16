@@ -26,9 +26,11 @@ def parse_args():
   parser.add_argument('--flowPath', '-f', required=False, default="./",
                       help='Path to the flow directory')
   parser.add_argument('--design', '-d', required=False, default="all_designs",
-                      help='Path to the flow directory')
+                      help='Design Name for metrics')
+  parser.add_argument('--flowVariant', '-v', required=False, default="base",
+                      help='FLOW_VARIANT for the design')
   parser.add_argument('--platform', '-p', required=False, default="nangage45",
-                      help='Path to the flow directory')
+                      help='Design Platform')
   parser.add_argument('--comment', '-c', required=False, default="",
                       help='Additional comments to embed')
   parser.add_argument('--output', '-o', required=False, default="metadata.json",
@@ -107,7 +109,13 @@ def extractGnuTime(prefix, file, jsonFile):
 # Need to extract these from native json
 #
 def get_skew_latency(file_name):
-  f = open(file_name, 'r')
+  f = None
+  try:
+    f = open(file_name, 'r')
+  except IOError:
+    print("[WARN] Failed to open file:", file_name)
+    return ("ERR","ERR","ERR")
+
   lines = f.readlines()
   f.close()
 
@@ -142,11 +150,18 @@ def get_skew_latency(file_name):
 #  Extract clock info from sdc file
 #
 def read_sdc(file_name):
-  sdcFile = open(file_name, 'r')
+  clkList = []
+  sdcFile = None
+
+  try:
+    sdcFile = open(file_name, 'r')
+  except IOError:
+    print("[WARN] Failed to open file:", file_name)
+    return clkList 
+
   lines = sdcFile.readlines()
   sdcFile.close()
 
-  clkList = []
   for line in lines:
     if len(line.split())<2:
       continue
@@ -167,10 +182,10 @@ def read_sdc(file_name):
 # Main
 # ==============================================================================
 
-def extract_metrics(cwd, platform, design, output):
-    logPath = os.path.join(cwd, "logs", platform, design)
-    rptPath = os.path.join(cwd, "reports", platform, design)
-    resultPath = os.path.join(cwd, "results", platform, design)
+def extract_metrics(cwd, platform, design, flow_variant, output):
+    logPath = os.path.join(cwd, "logs", platform, design, flow_variant)
+    rptPath = os.path.join(cwd, "reports", platform, design, flow_variant)
+    resultPath = os.path.join(cwd, "results", platform, design, flow_variant)
 
     metrics_dict = {}
     metrics_dict["run__flow__generate__date"] = now.strftime("%Y-%m-%d %H:%M")
@@ -343,8 +358,18 @@ def extract_metrics(cwd, platform, design, output):
                        "^worst slack (\S+)",
                        logPath+"/4_1_cts.log")
 
+    extractTagFromFile("cts_hold_buffer_count", metrics_dict,
+                       "Inserted (\d+) hold buffers",
+                       logPath+"/4_1_cts.log")
+
 # Route
 # ==============================================================================
+
+    latency_max,latency_min,skew = get_skew_latency(logPath+"/5_1_fastroute.log")
+    #print(f'skew = {skew}, latency_max = {latency_max}, latency_min = {latency_min}')
+    metrics_dict['globalroute__timing__latency__min'] = latency_min
+    metrics_dict['globalroute__timing__latency__max'] = latency_max
+    metrics_dict['globalroute__timing__skew__worst'] = skew
 
     extractTagFromFile("globalroute__timing__tns__total", metrics_dict,
                       "^tns (\S+)",
@@ -462,8 +487,8 @@ if args.design == "all_designs":
                 if design_it.is_dir():
                     des = design_it.name
                     print(plt,des)
-                    design_metrics, design_metrics_df = extract_metrics(cwd, plt, des,
-                                        os.path.join(".", "reports", plt, des, "metrics.json"))
+                    design_metrics, design_metrics_df = extract_metrics(cwd, plt, des, "base",
+                                        os.path.join(".", "reports", plt, des, "base", "metrics.json"))
                     all_metrics.append(design_metrics)
                     if all_metrics_df.shape[0] == 0:
                         all_metrics_df = design_metrics_df
@@ -480,4 +505,4 @@ if args.design == "all_designs":
     metrics_html_file.write(metrics_html)
     metrics_html_file.close()
 else:
-    metrics_dict, metrics_df = extract_metrics(args.flowPath, args.platform, args.design, args.output)
+    metrics_dict, metrics_df = extract_metrics(args.flowPath, args.platform, args.design, args.flowVariant, args.output)
