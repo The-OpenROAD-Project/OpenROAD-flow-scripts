@@ -24,7 +24,7 @@ jobs:
       - run: echo "fetch upstream master"
       - run: git fetch upstream master
       - run: echo "merge upstream/master"
-      - run: git merge upstream/master
+      - run: git merge upstream/master --allow-unrelated-histories
       - run: echo "push"
       - run: git push
         
