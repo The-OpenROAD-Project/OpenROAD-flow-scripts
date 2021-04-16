@@ -14,17 +14,14 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
       - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "The workflow is now ready to test your code on the runner."
       - run: echo "This job's status is ${{ job.status }}."
       - run: ls
-      - run: echo "Switch to master branch"
+      - run: git config --local user.email "action@github.com"
+      - run: git config --local user.name "GitHub Action"
+      - run: git commit -m "Add URL" -a
       - run: git switch master; git status
-      - run: echo "add upstream remote"
       - run: git remote add upstream https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
-      - run: echo "fetch upstream master"
       - run: git fetch upstream master
-      - run: echo "merge upstream/master"
       - run: git merge upstream/master --allow-unrelated-histories
-      - run: echo "push"
       - run: git push
         
