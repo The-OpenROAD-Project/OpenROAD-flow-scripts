@@ -8,7 +8,7 @@ jobs:
   Sync-Fork-From-Upstream:
     runs-on: ubuntu-latest
     env:
-    GITHUB\_TOKEN: ${{ secrets.GITHUBTOKENTOM }}
+      GITHUB\_TOKEN: ${{ secrets.GITHUBTOKENTOM }}
     if: github.ref == 'refs/heads/master'
     steps:
       - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
