@@ -16,10 +16,7 @@ jobs:
       - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "The workflow is now ready to test your code on the runner."
       - run: echo "This job's status is ${{ job.status }}."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - name: perform the sync
+      - run: ls
       - run: echo "Switch to master branch"
       - run: git switch master
       - run: echo "add upstream remote"
