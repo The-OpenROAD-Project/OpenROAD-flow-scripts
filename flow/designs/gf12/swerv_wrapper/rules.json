@@ -2,13 +2,13 @@
     "rules": [
         {
             "field" : "globalroute__timing__tns__total",
-            "value" : 11,
+            "value" : 20,
             "diff": "True",
             "compare": "<="
         },
         {
             "field" : "globalroute__timing__ws__worst",
-            "value" : 8,
+            "value" : 16,
             "diff": "True",
             "compare": "<="
         }

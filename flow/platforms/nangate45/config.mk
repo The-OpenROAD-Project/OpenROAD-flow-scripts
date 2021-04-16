@@ -58,8 +58,8 @@ export PLACE_SITE = FreePDK45_38x28_10R_NP_162NW_34O
 export IO_PIN_MARGIN = 70
 #
 # IO Placer pin layers
-export IO_PLACER_H = 3
-export IO_PLACER_V = 2
+export IO_PLACER_H = metal3
+export IO_PLACER_V = metal2
 
 # Define default PDN config
 export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
@@ -97,8 +97,8 @@ export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTS
 #  Route
 # ---------------------------------------------------------
 # FastRoute options
-export MIN_ROUTING_LAYER = 2
-export MAX_ROUTING_LAYER = 10
+export MIN_ROUTING_LAYER = metal2
+export MAX_ROUTING_LAYER = metal10
 
 # Define fastRoute tcl
 export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl

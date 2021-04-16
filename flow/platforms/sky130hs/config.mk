@@ -57,8 +57,8 @@ export PLACE_SITE = unit
 export IO_PIN_MARGIN = 70
 #
 # IO Placer pin layers
-export IO_PLACER_H = 4
-export IO_PLACER_V = 3
+export IO_PLACER_H = met3
+export IO_PLACER_V = met2
 
 # Define default PDN config
 export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
@@ -97,8 +97,8 @@ export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShs
 #  Route
 # ---------------------------------------------------------
 # FastRoute options
-export MIN_ROUTING_LAYER = 2
-export MAX_ROUTING_LAYER = 6
+export MIN_ROUTING_LAYER = met1
+export MAX_ROUTING_LAYER = met5
 #
 # Define fastRoute tcl
 export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl

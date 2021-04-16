@@ -1,8 +1,33 @@
 {
     "rules": [
         {
-            "field" : "detailedroute__drc__error__count",
-            "value" : 4,
+            "field" : "cts__timing__tns__total",
+            "value" : 26,
+            "diff": "True",
+            "compare": "<="
+        },
+        {
+            "field" : "cts__timing__wns__worst",
+            "value" : 40,
+            "diff": "True",
+            "compare": "<="
+        },
+        {
+            "field" : "cts__timing__ws__worst",
+            "value" : 40,
+            "diff": "True",
+            "compare": "<="
+        },
+        {
+            "field" : "globalroute__timing__tns__total",
+            "value" : 20,
+            "diff": "True",
+            "compare": "<="
+        },
+        {
+            "field" : "globalroute__timing__ws__worst",
+            "value" : 30,
+            "diff": "True",
             "compare": "<="
         }
     ]

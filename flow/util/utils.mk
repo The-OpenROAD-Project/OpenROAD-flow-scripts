@@ -16,7 +16,7 @@ GOLD_METADATA = $(dir $(DESIGN_CONFIG))metadata-ok.json
 
 $(REPORTS_DIR)/metadata-check.log: $(REPORTS_DIR)/metadata.json
 	if test -f $(RULES_DESIGN); then \
-	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) $(RULES_GLOBAL) -g $(GOLD_METADATA) | tee $@; \
+	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_GLOBAL) $(RULES_DESIGN) -g $(GOLD_METADATA) | tee $@; \
 	else \
 	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_GLOBAL)  -g $(GOLD_METADATA) | tee $@; \
 	fi
@@ -120,3 +120,15 @@ gallery: $(RESULTS_DIR)/6_final_no_power.def $(RESULTS_DIR)/6_final_only_clk.def
 	        -rd results_path=$(RESULTS_DIR) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/createGallery.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+
+view_cells:
+	$(OPENROAD_NO_EXIT_CMD) -gui $(SCRIPTS_DIR)/view_cells.tcl
+
+## Quick access to command line
+command:
+	$(OPENROAD_NO_EXIT_CMD)
+
+## Provide easy access to debugging
+ifdef GDB
+OPENROAD_CMD := gdb --args $(OPENROAD_CMD)
+endif
