@@ -2,6 +2,7 @@ name: GitHub Actions Cron sync this fork from upstream
 on:
   schedule:
   - cron: "0/5 * * * *"
+  workflow_dispatch:
 
 jobs:
   Sync-Fork-From-Upstream:
