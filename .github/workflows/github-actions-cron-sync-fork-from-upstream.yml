@@ -1,7 +1,7 @@
 name: GitHub Actions Cron sync this fork from upstream
 on:
   schedule:
-  - cron: "0/10 * * * *"
+  - cron: "0/5 * * * *"
 
 jobs:
   Sync-Fork-From-Upstream:
