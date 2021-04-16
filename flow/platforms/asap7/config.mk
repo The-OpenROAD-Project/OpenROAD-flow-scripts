@@ -125,8 +125,8 @@ export FILL_CELLS              = FILLER_ASAP7_75t_R
 export TEMPLATE_PGA_CFG        = $(FOUNDRY_DIR)/pdn/template_pga.cfg
 
 # IO Placer pin layers
-export IO_PLACER_H             = 4
-export IO_PLACER_V             = 5
+export IO_PLACER_H             = M4
+export IO_PLACER_V             = M5
 
 # Set yosys-abc clock period to first "-period" found in sdc file
 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_R

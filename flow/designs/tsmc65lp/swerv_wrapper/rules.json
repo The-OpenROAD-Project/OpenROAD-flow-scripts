@@ -3,12 +3,14 @@
         {
             "field" : "globalroute__timing__tns__total",
             "value" : 8,
-            "compare": "%"
+            "diff": "True",
+            "compare": "<="
         },
         {
             "field" : "globalroute__timing__ws__worst",
             "value" : 1,
-            "compare": "%"
-        },
+            "diff": "True",
+            "compare": "<="
+        }
     ]
 }
