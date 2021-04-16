@@ -18,7 +18,7 @@ jobs:
       - run: echo "This job's status is ${{ job.status }}."
       - run: ls
       - run: echo "Switch to master branch"
-      - run: git switch master
+      - run: git switch master; git status
       - run: echo "add upstream remote"
       - run: git remote add upstream https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
       - run: echo "fetch upstream master"
