@@ -20,7 +20,7 @@ jobs:
       - run: echo "Switch to master branch"
       - run: git switch master
       - run: echo "add upstream remote"
-      - run: git remote add upstream git@github.com:The-OpenROAD-Project/OpenROAD-flow-scripts.git
+      - run: git remote add upstream https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
       - run: echo "fetch upstream master"
       - run: git fetch upstream master
       - run: echo "merge upstream/master"
