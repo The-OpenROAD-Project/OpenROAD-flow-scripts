@@ -19,5 +19,15 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
-      - name: run the sync
-        run: git switch master; git remote add upstream git@github.com:The-OpenROAD-Project/OpenROAD-flow-scripts.git; git fetch upstream master; git merge upstream/master; git push
+      - name: perform the sync
+      - run: echo "Switch to master branch"
+      - run: git switch master
+      - run: echo "add upstream remote"
+      - run: git remote add upstream git@github.com:The-OpenROAD-Project/OpenROAD-flow-scripts.git
+      - run: echo "fetch upstream master"
+      - run: git fetch upstream master
+      - run: echo "merge upstream/master"
+      - run: git merge upstream/master
+      - run: echo "push"
+      - run: git push
+        
