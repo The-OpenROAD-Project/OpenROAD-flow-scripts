@@ -24,4 +24,3 @@ jobs:
       - run: git fetch upstream master
       - run: git merge upstream/master --allow-unrelated-histories
       - run: git push
-      
