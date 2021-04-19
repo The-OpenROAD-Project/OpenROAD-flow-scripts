@@ -32,11 +32,11 @@ export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 export DIE_AREA 	= 0 0 2920 3520
 export CORE_AREA 	= 20 20 2900 3500
 
-export chameleon_DIR = ./platforms/$(PLATFORM)/chameleon
+export chameleon_DIR = $(PLATFORM_DIR)/chameleon
 
 # gds files are massive and are zipped in platforms/sky130hd/chameleon/gds -- Please unzip them locally 
 export ADDITIONAL_GDS_FILES  = $(chameleon_DIR)/gds/apb_sys_0.gds \
-                         	   $(chameleon_DIR)/gds/DMC_32x16HC.gds \
+                               $(chameleon_DIR)/gds/DMC_32x16HC.gds \
                                $(chameleon_DIR)/gds/DFFRAM_4K.gds \
                                $(chameleon_DIR)/gds/ibex_wrapper.gds
 

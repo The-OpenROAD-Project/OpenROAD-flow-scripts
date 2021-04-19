@@ -89,7 +89,9 @@ include $(DESIGN_CONFIG)
 
 PUBLIC=nangate45 sky130hd sky130hs asap7
 
-ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
+ifneq ($(wildcard $(PLATFORM_BASE)/$(PLATFORM)),)
+  export PLATFORM_DIR = $(PLATFORM_BASE)/$(PLATFORM)
+else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ./platforms/$(PLATFORM)
 else ifneq ($(wildcard ../../$(PLATFORM)),)
   export PLATFORM_DIR = ../../$(PLATFORM)
@@ -100,13 +102,15 @@ endif
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
 
+export FLOW_VARIANT ?= base
+
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
-export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)
-export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)
-export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)
-export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)
+export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
 export SCRIPTS_DIR = ./scripts
 export UTILS_DIR   = ./util
