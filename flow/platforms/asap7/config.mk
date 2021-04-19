@@ -2,7 +2,7 @@ $(info [INFO-FLOW] ASU ASAP7)
 
 FOUNDRY_DIR                   := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-export FOUNDRY_DIR  
+export FOUNDRY_DIR
 
 export PLATFORM                = asap7
 export PROCESS                 = 7
@@ -109,12 +109,12 @@ export MAX_WIRE_LENGTH         = 1000
 export KLAYOUT_TECH_FILE       = $(FOUNDRY_DIR)/KLayout/klayout.lyt
 
 # KLayout DRC ruledeck
-export KLAYOUT_DRC_FILE        = 
+export KLAYOUT_DRC_FILE        =
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS          = *x1_ASAP7* *x1p*_ASAP7* *xp*_ASAP7*
-export DONT_USE_CELLS          += SDF* ICG* DFFH* 
+export DONT_USE_CELLS          += SDF* ICG* DFFH*
 
 # Fill cells used in fill cell insertion
 export FILL_CELLS              = FILLER_ASAP7_75t_R

@@ -4,12 +4,12 @@ export PROCESS = 45
 #-----------------------------------------------------
 # Tech/Libs
 # ----------------------------------------------------
-export TECH_LEF = ./platforms/$(PLATFORM)/lef/NangateOpenCellLibrary.tech.lef
-export SC_LEF = ./platforms/$(PLATFORM)/lef/NangateOpenCellLibrary.macro.mod.lef
+export TECH_LEF = $(PLATFORM_DIR)/lef/NangateOpenCellLibrary.tech.lef
+export SC_LEF = $(PLATFORM_DIR)/lef/NangateOpenCellLibrary.macro.mod.lef
 
-export LIB_FILES = ./platforms/$(PLATFORM)/lib/NangateOpenCellLibrary_typical.lib \
+export LIB_FILES = $(PLATFORM_DIR)/lib/NangateOpenCellLibrary_typical.lib \
                      $(ADDITIONAL_LIBS)
-export GDS_FILES = $(sort $(wildcard ./platforms/$(PLATFORM)/gds/*.gds)) \
+export GDS_FILES = $(sort $(wildcard $(PLATFORM_DIR)/gds/*.gds)) \
                      $(ADDITIONAL_GDS)
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
@@ -37,8 +37,8 @@ export MIN_BUF_CELL_AND_PORTS = BUF_X1 A Z
 export MAX_FANOUT = 100
 
 # Yosys mapping files
-export LATCH_MAP_FILE = ./platforms/$(PLATFORM)/cells_latch.v
-export CLKGATE_MAP_FILE = ./platforms/$(PLATFORM)/cells_clkgate.v
+export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch.v
+export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
 #
 # Set yosys-abc clock period to first "-period" found in sdc file
 export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_FILE) | awk '{print $$2*1000}')
@@ -62,10 +62,10 @@ export IO_PLACER_H = metal3
 export IO_PLACER_V = metal2
 
 # Define default PDN config
-export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
+export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
 
 # Endcap and Welltie cells
-export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
+export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
 
 export MACRO_PLACE_HALO ?= 22.4 15.12
 export MACRO_PLACE_CHANNEL ?= 18.8 19.95
@@ -90,7 +90,7 @@ export PLACE_DENSITY ?= 0.30
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   = BUF_X4
-export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTS
+export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTS
 
 
 # ---------------------------------------------------------
@@ -101,21 +101,19 @@ export MIN_ROUTING_LAYER = metal2
 export MAX_ROUTING_LAYER = metal10
 
 # Define fastRoute tcl
-export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl
+export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute.tcl
 
 
 # KLayout technology file
-export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/FreePDK45.lyt
+export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/FreePDK45.lyt
 
 # KLayout DRC ruledeck
-export KLAYOUT_DRC_FILE = ./platforms/$(PLATFORM)/drc/FreePDK45.lydrc
+export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/FreePDK45.lydrc
 
 # KLayout LVS ruledeck
-export KLAYOUT_LVS_FILE = ./platforms/$(PLATFORM)/lvs/FreePDK45.lylvs
+export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/FreePDK45.lylvs
 
-export CDL_FILE = ./platforms/$(PLATFORM)/cdl/NangateOpenCellLibrary.cdl
+export CDL_FILE = $(PLATFORM_DIR)/cdl/NangateOpenCellLibrary.cdl
 
 # Template definition for power grid analysis
-export TEMPLATE_PGA_CFG ?= ./platforms/nangate45/template_pga.cfg
-
-
+export TEMPLATE_PGA_CFG ?= $(PLATFORM_DIR)/template_pga.cfg
