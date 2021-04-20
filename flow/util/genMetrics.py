@@ -123,12 +123,11 @@ def get_skew_latency(file_name):
   latency_max = latency_min = skew = 0.0
   worst_latency_max = worst_latency_min = worst_skew = 0.0
 
-
   for line in lines:
     if len(line.split())<1:
       continue
     if line.startswith('Latency'):
-      latency_section = True 
+      latency_section = True
       continue
     if latency_section and len(line.split())==1:
       latency_max = float(line.split()[0])
@@ -341,21 +340,32 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 # ==============================================================================
 
     latency_max,latency_min,skew = get_skew_latency(logPath+"/4_1_cts.log")
-    #print(f'skew = {skew}, latency_max = {latency_max}, latency_min = {latency_min}')
     metrics_dict['cts__timing__latency__min'] = latency_min
     metrics_dict['cts__timing__latency__max'] = latency_max
     metrics_dict['cts__timing__skew__worst'] = skew
 
+    extractTagFromFile("cts__timing__tns__total__pre_repair", metrics_dict,
+                       "^post cts-pre-repair.*report_tns\n^-*\n^tns (\S+)",
+                       logPath+"/4_1_cts.log")
+
+    extractTagFromFile("cts__timing__wns__worst__pre_repair", metrics_dict,
+                       "^post cts-pre-repair.*report_wns\n^-*\n^wns (\S+)",
+                       logPath+"/4_1_cts.log")
+
+    extractTagFromFile("cts__timing__ws__worst__pre_repair", metrics_dict,
+                       "^post cts-pre-repair.*report_wns\n^-*\n^.*\n^worst slack (\S+)",
+                       logPath+"/4_1_cts.log")
+
     extractTagFromFile("cts__timing__tns__total", metrics_dict,
-                       "^tns (\S+)",
+                       "^post cts.*report_tns\n^-*\n^tns (\S+)",
                        logPath+"/4_1_cts.log")
 
     extractTagFromFile("cts__timing__wns__worst", metrics_dict,
-                       "^wns (\S+)",
+                       "^post cts.*report_wns\n^-*\n^wns (\S+)",
                        logPath+"/4_1_cts.log")
 
     extractTagFromFile("cts__timing__ws__worst", metrics_dict,
-                       "^worst slack (\S+)",
+                       "^post cts.*report_wns\n^-*\n^.*\n^worst slack (\S+)",
                        logPath+"/4_1_cts.log")
 
     extractTagFromFile("cts_hold_buffer_count", metrics_dict,
