@@ -115,7 +115,7 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 export WIRE_RC_LAYER = met3
 #
 # default cell padding for cells 
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 4 
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 4
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 2
 #
 # resizer repair_long_wires -max_length
@@ -133,7 +133,6 @@ export CELL_PAD_IN_SITES = 4
 export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
 export CTS_MAX_SLEW   = 1.5e-9
 export CTS_MAX_CAP    = .1532e-12
-export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTShd
 
 # ---------------------------------------------------------
 #  Route

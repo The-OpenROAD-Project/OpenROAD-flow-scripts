@@ -90,8 +90,6 @@ export PLACE_DENSITY ?= 0.50
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   = sky130_fd_sc_hs__buf_1
-export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTShs
-
 
 # ---------------------------------------------------------
 #  Route
