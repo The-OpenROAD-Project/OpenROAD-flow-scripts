@@ -12,30 +12,6 @@ export LIB_FILES = $(PLATFORM_DIR)/lib/sky130_fd_sc_hd__tt_025C_1v80.lib \
 export GDS_FILES = $(wildcard $(PLATFORM_DIR)/gds/*.gds) \
                      $(ADDITIONAL_GDS_FILES)
 
-# Cell padding in SITE widths to ease rout-ability
-export CELL_PAD_IN_SITES = 4
-
-# Endcap and Welltie cells
-export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
-
-# TritonCTS options
-export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
-export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTShd
-
-# FastRoute options
-export MIN_ROUTING_LAYER = met1
-export MAX_ROUTING_LAYER = met5
-
-# IO Pin fix margin
-export IO_PIN_MARGIN = 70
-
-# Layer to use for parasitics estimations
-export WIRE_RC_LAYER = met3
-
-# KLayout technology file
-export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/$(PLATFORM).lyt
-
-
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 
@@ -138,8 +114,8 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 # Layer to use for parasitics estimations
 export WIRE_RC_LAYER = met3
 #
-# keep with gf
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 4
+# default cell padding for cells 
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 4 
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 2
 #
 # resizer repair_long_wires -max_length
@@ -157,6 +133,7 @@ export CELL_PAD_IN_SITES = 4
 export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
 export CTS_MAX_SLEW   = 1.5e-9
 export CTS_MAX_CAP    = .1532e-12
+export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTShd
 
 # ---------------------------------------------------------
 #  Route
