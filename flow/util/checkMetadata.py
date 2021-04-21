@@ -162,7 +162,8 @@ for _, rule in rules.items():
             percentage = 0
 
     if not hasError and not op(check_value, rule_value):
-        if hasAbsolute and op(build_value, rule['absolute']):
+        absoluteDiff = abs(build_value) - abs(reference_value)
+        if hasAbsolute and op(absoluteDiff, rule['absolute']):
             print('[INFO] passed', end='')
         else:
             print('[ERROR] failed', end='')
@@ -179,7 +180,7 @@ for _, rule in rules.items():
     if hasDiff:
         print('%', end='')
     if hasAbsolute:
-        print(' and field value must be {} {:.2f}'.format(compare, rule['absolute']), end='')
+        print(' and (field - reference) must be {} {:.2f}'.format(compare, rule['absolute']), end='')
 
     print('. Values checked: field value = {:.2f}'.format(build_value), end='')
     print(', reference = {:.2f}'.format(reference_value), end='')
