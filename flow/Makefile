@@ -55,10 +55,22 @@
 # DESIGN_CONFIG=./designs/sky130hd/coyote_tc/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
 
+# sky130hd PPA
+# DESIGN_CONFIG=./designs/sky130hd/gcd/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hd/aes/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hd/ibex/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hd/jpeg/config_ppa.mk
+
 # DESIGN_CONFIG=./designs/sky130hs/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/aes/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/jpeg/config.mk
+ 
+# sky130hs PPA
+# DESIGN_CONFIG=./designs/sky130hs/gcd/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hs/aes/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hs/ibex/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hs/jpeg/config_ppa.mk
 #
 # DESIGN_CONFIG=./designs/asap7/gcd/config.mk
 # DESIGN_CONFIG=./designs/asap7/ibex/config.mk
