@@ -76,7 +76,7 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 export WIRE_RC_LAYER = met3
 
 # Cell padding in SITE widths to ease rout-ability
-# keep with gf
+#
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 4
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 2
 #
@@ -90,8 +90,6 @@ export PLACE_DENSITY ?= 0.50
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   = sky130_fd_sc_hs__buf_1
-export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTShs
-
 
 # ---------------------------------------------------------
 #  Route

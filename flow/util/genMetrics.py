@@ -199,6 +199,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
     metrics_dict["run__flow__uuid"] = str(uuid.uuid4())
     metrics_dict["run__flow__design"] = design
     metrics_dict["run__flow__platform"] = platform
+    metrics_dict["run__flow__variant"] = flow_variant
 
 # Synthesis
 # ==============================================================================
@@ -488,6 +489,7 @@ if args.design == "all_designs":
 
     all_metrics_df = pd.DataFrame()
     all_metrics = []
+    flow_variants = args.flowVariant.split()
 
     cwd = os.getcwd()
     for platform_it in os.scandir(rootdir):
@@ -495,15 +497,16 @@ if args.design == "all_designs":
             plt = platform_it.name
             for design_it in os.scandir(platform_it.path):
                 if design_it.is_dir():
-                    des = design_it.name
-                    print(plt,des)
-                    design_metrics, design_metrics_df = extract_metrics(cwd, plt, des, "base",
-                                        os.path.join(".", "reports", plt, des, "base", "metrics.json"))
-                    all_metrics.append(design_metrics)
-                    if all_metrics_df.shape[0] == 0:
-                        all_metrics_df = design_metrics_df
-                    else:
-                        all_metrics_df = all_metrics_df.merge(design_metrics_df,
+                    for variant in flow_variants:
+                        des = design_it.name
+                        print(plt, des, variant)
+                        design_metrics, design_metrics_df = extract_metrics(cwd, plt, des, variant, 
+                                        os.path.join(".", "reports", plt, des, variant, "metrics.json"))
+                        all_metrics.append(design_metrics)
+                        if all_metrics_df.shape[0] == 0:
+                            all_metrics_df = design_metrics_df
+                        else:
+                            all_metrics_df = all_metrics_df.merge(design_metrics_df,
                                                     on = 'Metrics', how = 'inner')
 #
 # render to json and html
