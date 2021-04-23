@@ -196,13 +196,13 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
     else:
       metrics_dict["run__flow__openroad__commit"] = "N/A"
     cmdOutput = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
-    cmdOutput = cmdOutput.decode('utf-8')
+    cmdOutput = cmdOutput.decode('utf-8').strip()
     metrics_dict["run__flow__scripts__commit"] = cmdOutput
     metrics_dict["run__flow__uuid"] = str(uuid.uuid4())
     metrics_dict["run__flow__design"] = design
     metrics_dict["run__flow__platform"] = platform
     cmdOutput = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=os.environ['PLATFORM_DIR'])
-    cmdOutput = cmdOutput.decode('utf-8')
+    cmdOutput = cmdOutput.decode('utf-8').strip()
     metrics_dict["run__flow__platform__commit"] = cmdOutput
     metrics_dict["run__flow__variant"] = flow_variant
 
