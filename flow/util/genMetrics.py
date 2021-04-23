@@ -156,7 +156,7 @@ def read_sdc(file_name):
     sdcFile = open(file_name, 'r')
   except IOError:
     print("[WARN] Failed to open file:", file_name)
-    return clkList 
+    return clkList
 
   lines = sdcFile.readlines()
   sdcFile.close()
@@ -189,16 +189,21 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
     metrics_dict = {}
     metrics_dict["run__flow__generate__date"] = now.strftime("%Y-%m-%d %H:%M")
     cmdOutput = subprocess.check_output(['openroad', '-version'])
-    cmdFields = cmdOutput.split()
     cmdFields = [ x.decode('utf-8') for x in cmdOutput.split()  ]
     metrics_dict["run__flow__openroad__version"] = str(cmdFields[0])
     if (len(cmdFields) > 1):
       metrics_dict["run__flow__openroad__commit"] = str(cmdFields[1])
     else:
       metrics_dict["run__flow__openroad__commit"] = "N/A"
+    cmdOutput = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+    cmdOutput = cmdOutput.decode('utf-8')
+    metrics_dict["run__flow__scripts__commit"] = cmdOutput
     metrics_dict["run__flow__uuid"] = str(uuid.uuid4())
     metrics_dict["run__flow__design"] = design
     metrics_dict["run__flow__platform"] = platform
+    cmdOutput = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=os.environ['PLATFORM_DIR'])
+    cmdOutput = cmdOutput.decode('utf-8')
+    metrics_dict["run__flow__platform__commit"] = cmdOutput
     metrics_dict["run__flow__variant"] = flow_variant
 
 # Synthesis
@@ -500,7 +505,7 @@ if args.design == "all_designs":
                     for variant in flow_variants:
                         des = design_it.name
                         print(plt, des, variant)
-                        design_metrics, design_metrics_df = extract_metrics(cwd, plt, des, variant, 
+                        design_metrics, design_metrics_df = extract_metrics(cwd, plt, des, variant,
                                         os.path.join(".", "reports", plt, des, variant, "metrics.json"))
                         all_metrics.append(design_metrics)
                         if all_metrics_df.shape[0] == 0:
