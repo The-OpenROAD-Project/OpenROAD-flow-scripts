@@ -8,6 +8,8 @@ DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_NAME/$CONFIG_MK
 
 cd "$(dirname $(readlink -f $0))/../"
 
+source ../setup_env.sh
+
 if [ -z "$DESIGN_NICKNAME" ]
 then
   LOG_FILE=./logs/$PLATFORM/$DESIGN_NAME.log
