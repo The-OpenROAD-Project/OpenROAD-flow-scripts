@@ -99,7 +99,7 @@ export MIN_ROUTING_LAYER = met1
 export MAX_ROUTING_LAYER = met5
 #
 # Define fastRoute tcl
-export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute.tcl
+export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 
 
 # KLayout technology file
