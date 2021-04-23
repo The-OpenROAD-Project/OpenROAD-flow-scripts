@@ -154,12 +154,12 @@ pipeline {
             stash name: 'sky130_hd_ibex_ppa', includes: 'flow/reports/**/*';
           }
         }
-        stage('sky130 hs jpeg_ppa') {
+        stage('sky130 hd jpeg_ppa') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hs"';
-            stash name: 'sky130_hs_jpeg_ppa', includes: 'flow/reports/**/*';
+            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh jpeg sky130hd"';
+            stash name: 'sky130_hd_jpeg_ppa', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hs aes_ppa') {
