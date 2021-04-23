@@ -3,6 +3,7 @@
 # Setting args (and setting default values for testing)
 DESIGN_CONFIG=${1:-gcd}
 PLATFORM=${2:-nangate45}
+CONFIG_MK=${3:-config.mk}
 
 # TODO: Currently assumes this script must be called from the flowdir.
 TEST_DIR=${TEST_DIR:-test}
@@ -27,12 +28,12 @@ else
   TARGETS="finish metadata"
 fi
 
-make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk clean_all clean_metadata
+make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/$CONFIG_MK clean_all clean_metadata
 
 # turn off abort on error so we can always capture the result
 set +e
 
-make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk $TARGETS 2>&1 | tee $LOG_FILE
+make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/$CONFIG_MK $TARGETS 2>&1 | tee $LOG_FILE
 
 # Save the return code to return as the overall status after we package
 # the results
@@ -40,7 +41,7 @@ ret=$?
 set -e
 
 if [ ! -z ${MAKE_ISSUE+x} ]; then
-  make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk final_report_issue
+  make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/$CONFIG_MK final_report_issue
 fi
 
 exit $ret
