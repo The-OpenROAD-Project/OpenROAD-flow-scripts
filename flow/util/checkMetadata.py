@@ -194,8 +194,6 @@ for _, rule in rules.items():
         print('%', end='')
     if hasAbsolute:
         print(' and value diff = {:.2f} {} {:.2f}'.format(absoluteDiff, compare, rule['absolute']), end='')
-    # if hasDiff and percentage is not None:
-    #     print(', diff = {:.2f}%'.format(percentage), end='')
     print('')
 
 
