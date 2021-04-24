@@ -234,6 +234,7 @@ pipeline {
           EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
           REPLY_TO='$DEFAULT_REPLYTO';
         }
+        sh './flow/util/getMetricsErros.sh 2>&1 | tee error-list.txt';
         emailext (
             to: "$EMAIL_TO",
             replyTo: "$REPLY_TO",
