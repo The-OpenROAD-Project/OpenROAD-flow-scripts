@@ -41,15 +41,15 @@ clean_test:
 #   e.g "make cts_issue"
 # Set the ISSUE_TAG variable to rename the generated tar file
 #-------------------------------------------------------------------------------
-ISSUE_TAG ?= $(DESIGN_NICKNAME)_$(PLATFORM)_$(shell date +"%Y-%m-%d_%H-%M")
+ISSUE_TAG ?= $(DESIGN_NICKNAME)_$(PLATFORM)_$(FLOW_VARIANT)_$(shell date +"%Y-%m-%d_%H-%M")
 ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(sort $(wildcard $(SCRIPTS_DIR)/*.tcl))))
 ISSUE_CP_FILE_VARS = GENERIC_TECH_LEF \
                      IP_GLOBAL_CFG LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
                      TRACKS_INFO_FILE SDC_FILE VERILOG_FILES TAPCELL_TCL CACHED_NETLIST \
                      FOOTPRINT SIG_MAP_FILE PDN_CFG ADDITIONAL_LEFS SETRC_FILE
 
-VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)
-RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM).sh
+VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT)
+RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT).sh
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	# Creating $(RUN_ME_SCRIPT) script
