@@ -67,12 +67,10 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	      echo set env $V "$($V)"        >> $(VARS_BASENAME).gdb ; \
 	     ) \
 	)
+	# remove variables starting with a dot
 	@sed -i '/export \./d' $(VARS_BASENAME).sh
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).sh
 	@sed -i '/set env(\./d' $(VARS_BASENAME).tcl
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).tcl
 	@sed -i '/set env \./d' $(VARS_BASENAME).gdb
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).gdb
 
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
 	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
