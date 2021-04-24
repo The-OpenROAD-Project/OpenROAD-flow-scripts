@@ -96,9 +96,9 @@ $(VARS_BASENAME).tcl:
 	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
 	@$(foreach V, $(.VARIABLES), \
 	    $(if $(filter-out environment% default automatic, $(origin $V)), \
-	        echo export $V=\""$($V)\""  >> $(VARS_BASENAME).sh ; \
-	        echo set env\($V\) \""$($V)\""     >> $(VARS_BASENAME).tcl ; \
-	        echo set env $V "$($V)"     >> $(VARS_BASENAME).gdb ; \
+	        echo export $V=\""$($V)\""     >> $(VARS_BASENAME).sh ; \
+	        echo set env\($V\) \""$($V)\"" >> $(VARS_BASENAME).tcl ; \
+	        echo set env $V "$($V)"        >> $(VARS_BASENAME).gdb ; \
 	    ) \
 	)
 	@sed -i '/export \./d' $(VARS_BASENAME).sh
