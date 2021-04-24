@@ -1,4 +1,6 @@
-#!/bin/bash -ex
+#!/bin/bash
+
+set -eoux pipefail
 
 # Setting args (and setting default values for testing)
 DESIGN_NAME=${1:-gcd}
@@ -18,9 +20,6 @@ else
   LOG_FILE=./logs/$PLATFORM/$DESIGN/$DESIGN_NICKNAME.log
   GOLD_LOG_FILE=./gold_logs/$PLATFORM/$DESIGN/$DESIGN_NICKNAME.log
 fi
-
-
-set -o pipefail
 
 mkdir -p ./logs/$PLATFORM
 
