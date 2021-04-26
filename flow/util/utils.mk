@@ -55,7 +55,7 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	# Creating $(RUN_ME_SCRIPT) script
 	@echo "#!/bin/bash"                             > $(RUN_ME_SCRIPT)
 	@echo "source $(VARS_BASENAME).sh"                          >> $(RUN_ME_SCRIPT)
-	@echo "openroad -no_init $(SCRIPTS_DIR)/$*.tcl" >> $(RUN_ME_SCRIPT)
+	@echo "$(OPENROAD_CMD) -no_init $(SCRIPTS_DIR)/$*.tcl" >> $(RUN_ME_SCRIPT)
 	@chmod +x $(RUN_ME_SCRIPT)
 
 	# Creating $(VARS_BASENAME).sh/tcl script
@@ -116,7 +116,7 @@ $(RESULTS_DIR)/6_final_no_power.def: $(RESULTS_DIR)/6_final.def
 
 
 gallery: $(RESULTS_DIR)/6_final_no_power.def $(RESULTS_DIR)/6_final_only_clk.def
-	($(TIME_CMD) klayout -z -nc -rx -rd gallery_json=util/gallery.json \
+	($(TIME_CMD) $(KLAYOUT_CMD) -z -nc -rx -rd gallery_json=$(UTILS_DIR)/gallery.json \
 	        -rd results_path=$(RESULTS_DIR) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/createGallery.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
