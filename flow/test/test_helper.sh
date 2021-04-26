@@ -13,13 +13,7 @@ cd "$(dirname $(readlink -f $0))/../"
 
 source ../setup_env.sh
 
-if [ -z "$DESIGN_NICKNAME" ]
-then
-  LOG_FILE=./logs/$PLATFORM/$DESIGN_NAME.log
-else
-  LOG_FILE=./logs/$PLATFORM/$DESIGN/$DESIGN_NICKNAME.log
-fi
-
+LOG_FILE=./logs/$PLATFORM/$DESIGN_NAME.log
 mkdir -p ./logs/$PLATFORM
 
 if [ -f "../../private_tool_scripts/util/utils.mk" ]; then
