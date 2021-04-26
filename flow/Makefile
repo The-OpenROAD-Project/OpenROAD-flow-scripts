@@ -65,7 +65,7 @@
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/aes/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/jpeg/config.mk
- 
+
 # sky130hs PPA
 # DESIGN_CONFIG=./designs/sky130hs/gcd/config_ppa.mk
 # DESIGN_CONFIG=./designs/sky130hs/aes/config_ppa.mk
@@ -80,12 +80,15 @@
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
-# # Global override Floorplan
-# export CORE_UTILIZATION := 30
-# export CORE_ASPECT_RATIO := 1
-# export CORE_MARGIN := 4
+#-------------------------------------------------------------------------------
+# Default target when invoking without specific target.
+#-------------------------------------------------------------------------------
+.DEFAULT_GOAL := finish
 
-default: finish
+#-------------------------------------------------------------------------------
+# Proper way to initiate SHELL for make
+SHELL          = /bin/bash
+.SHELLFLAGS    = -o pipefail -c
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -95,19 +98,26 @@ default: finish
 # |____/|_____| |_|  \___/|_|
 #
 # ==============================================================================
+# Setup varialbles to point to root / head of the directory where each of which
+# can be located in separate directory
+# - the following settings allowed user to point OpenRoad binaries, platform and design
+#   root directory from anywhere, other than current directory 
+# - default is current running / clone directory
+export OPENROAD_HOME ?= $(abspath $(PWD)/..)
+
+export DESIGN_HOME   ?= $(abspath $(OPENROAD_HOME)/flow)
+export PLATFORM_HOME ?= $(abspath $(OPENROAD_HOME)/flow/platforms)
+export WORK_HOME     ?= $(PWD)
+
+export UTILS_DIR     ?= $(abspath $(OPENROAD_HOME)/flow/util)
+export SCRIPTS_DIR   ?= $(abspath $(OPENROAD_HOME)/flow/scripts)
+export TEST_DIR      ?= $(abspath $(OPENROAD_HOME)/flow/test)
 
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
+export PLATFORM_DIR  = $(PLATFORM_HOME)/$(PLATFORM)
 
-PUBLIC=nangate45 sky130hd sky130hs asap7
-
-ifneq ($(wildcard $(PLATFORM_BASE)/$(PLATFORM)),)
-  export PLATFORM_DIR = $(PLATFORM_BASE)/$(PLATFORM)
-else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
-  export PLATFORM_DIR = ./platforms/$(PLATFORM)
-else ifneq ($(wildcard ../../$(PLATFORM)),)
-  export PLATFORM_DIR = ../../$(PLATFORM)
-else
+ifeq ($(wildcard $(PLATFORM_DIR)),)
   $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found)
 endif
 
@@ -119,22 +129,42 @@ export FLOW_VARIANT ?= base
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
-export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
-export SCRIPTS_DIR = ./scripts
-export UTILS_DIR   = ./util
-export TEST_DIR    = ./test
-
-# Tool Options
-SHELL = /bin/bash -o pipefail
-TIME_CMD = /usr/bin/time -f "%Eelapsed %PCPU %MmemKB"
 export NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
-OPENROAD_CMD = openroad -no_init -exit
-OPENROAD_NO_EXIT_CMD = $(patsubst -exit,,$(OPENROAD_CMD))
 
+#-------------------------------------------------------------------------------
+# setup all commands used within this flow
+TIME_CMD             = /usr/bin/time -f "%Eelapsed %PCPU %MmemKB"
+
+# The following determine the executable location for each tool used by this flow.
+# Priority is given to 
+#       1 user include path to the executable prior to running make
+#       2 user explicity set with variable in Makefile or command line
+OPENROAD_CMD            ?= $(shell command -v openroad)
+OPENROAD_ARG            ?= -no_init -exit
+OPENROAD_NO_EXIT_CMD     = $(OPENROAD_CMD) -no_init
+ifeq ($(OPENROAD_CMD),)
+  OPENROAD_CMD           = $(OPENROAD_HOME)/tools/build/OpenROAD/src/openroad
+endif
+YOSYS_CMD               ?= $(shell command -v yosys)
+ifeq ($(YOSYS_CMD),)
+  YOSYS_CMD              = $(abspath $(OPENROAD_HOME)/tools/build/yosys/bin/yosys)
+endif
+TRITONROUTE_CMD         ?= $(shell command -v TritonRoute)
+ifeq ($(TRITONROUTE_CMD),)
+  TRITONROUTE_CMD        = $(OPENROAD_HOME)/tools/build/TritonRoute/TritonRoute
+endif
+KLAYOUT_CMD             ?= $(shell command -v klayout)
+ifeq ($(KLAYOUT_CMD),)
+  KLAYOUT_CMD            = /home/tool/klayout/install/0.26.5/bin/klayout
+  $(eval export LD_LIBRARY_PATH = $(LD_LIBRARY_PATH):/home/tool/klayout/install/0.26.5/lib64/klayout)
+endif
+
+#-------------------------------------------------------------------------------
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
@@ -161,9 +191,9 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
 versions.txt:
-	@yosys -V > $(abspath $@)
-	@echo openroad `openroad -version` >> $(abspath $@)
-	@klayout -zz -v >> $(abspath $@)
+	@$(YOSYS_CMD) -V > $(abspath $@)
+	@echo openroad `$(OPENROAD_CMD) -version` >> $(abspath $@)
+	@$(KLAYOUT_CMD) -zz -v >> $(abspath $@)
 
 # Pre-process Lefs
 # ==============================================================================
@@ -235,11 +265,11 @@ synth: versions.txt \
 
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
-SYNTH_SCRIPT ?= scripts/synth.tcl
+SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 
 $(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(VERILOG_FILES)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	($(TIME_CMD) yosys -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+	($(TIME_CMD) $(YOSYS_CMD) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
@@ -271,33 +301,33 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl -metrics $(LOG_DIR)/2_1_floorplan.json) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/floorplan.tcl -metrics $(LOG_DIR)/2_1_floorplan.json) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
 
 
 # STEP 2: IO Placement (random)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(RESULTS_DIR)/2_1_floorplan.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement_random.tcl -metrics $(LOG_DIR)/2_2_floorplan_io.json) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/io_placement_random.tcl -metrics $(LOG_DIR)/2_2_floorplan_io.json) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 
 # STEP 3: Timing Driven Mixed Sized Placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tdms_place.tcl -metrics $(LOG_DIR)/2_3_tdms.json) 2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/tdms_place.tcl -metrics $(LOG_DIR)/2_3_tdms.json) 2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 
 # STEP 4: Macro Placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(MACRO_PLACEMENT)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/macro_place.tcl -metrics $(LOG_DIR)/2_4_mplace.json) 2>&1 | tee $(LOG_DIR)/2_4_mplace.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/macro_place.tcl -metrics $(LOG_DIR)/2_4_mplace.json) 2>&1 | tee $(LOG_DIR)/2_4_mplace.log
 
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_5_floorplan_tapcell.def: $(RESULTS_DIR)/2_4_floorplan_macro.def $(TAPCELL_TCL)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_tapcell.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_tapcell.log
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_6_floorplan_pdn.def: $(RESULTS_DIR)/2_5_floorplan_tapcell.def $(PDN_CFG)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/pdn.tcl -metrics $(LOG_DIR)/2_6_pdn.json) 2>&1 | tee $(LOG_DIR)/2_6_pdn.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/pdn.tcl -metrics $(LOG_DIR)/2_6_pdn.json) 2>&1 | tee $(LOG_DIR)/2_6_pdn.log
 
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_pdn.def
 	cp $< $@
@@ -324,17 +354,17 @@ place: $(RESULTS_DIR)/3_place.def \
 # STEP 1: Global placement + IO placement (not random)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_1_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_1_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
 
 # STEP 2: IO placement (non-random)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_2_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
 
 # STEP 3: Resizing & Buffering
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_3_place_resized.def: $(RESULTS_DIR)/3_2_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_3_resizer.json) 2>&1 | tee $(LOG_DIR)/3_3_resizer.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_3_resizer.json) 2>&1 | tee $(LOG_DIR)/3_3_resizer.log
 
 clean_resize:
 	rm -f $(RESULTS_DIR)/3_3_place_resized.def
@@ -342,7 +372,7 @@ clean_resize:
 # STEP 4: Detail placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_4_place_dp.def: $(RESULTS_DIR)/3_3_place_resized.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_4_opendp.json) 2>&1 | tee $(LOG_DIR)/3_4_opendp.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_4_opendp.json) 2>&1 | tee $(LOG_DIR)/3_4_opendp.log
 
 $(RESULTS_DIR)/3_place.def: $(RESULTS_DIR)/3_4_place_dp.def
 	cp $< $@
@@ -373,12 +403,12 @@ cts: $(RESULTS_DIR)/4_cts.def \
 # Run TritonCTS
 # ------------------------------------------------------------------------------
 $(RESULTS_DIR)/4_1_cts.def: $(RESULTS_DIR)/3_place.def $(RESULTS_DIR)/3_place.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cts.tcl -metrics $(LOG_DIR)/4_1_cts.json) 2>&1 | tee $(LOG_DIR)/4_1_cts.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/cts.tcl -metrics $(LOG_DIR)/4_1_cts.json) 2>&1 | tee $(LOG_DIR)/4_1_cts.log
 
 # Filler cell insertion
 # ------------------------------------------------------------------------------
 $(RESULTS_DIR)/4_2_cts_fillcell.def: $(RESULTS_DIR)/4_1_cts.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/fillcell.tcl -metrics $(LOG_DIR)/4_2_cts_fillcell.json) 2>&1 | tee $(LOG_DIR)/4_2_cts_fillcell.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/fillcell.tcl -metrics $(LOG_DIR)/4_2_cts_fillcell.json) 2>&1 | tee $(LOG_DIR)/4_2_cts_fillcell.log
 
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.def
 
@@ -406,7 +436,7 @@ route: $(RESULTS_DIR)/5_route.def \
 # STEP 1: Run global route
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/route.guide: $(RESULTS_DIR)/4_cts.def $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_route.tcl -metrics $(LOG_DIR)/5_1_fastroute.json) 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/global_route.tcl -metrics $(LOG_DIR)/5_1_fastroute.json) 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
 
 
 # STEP 2: Run detail route
@@ -442,7 +472,7 @@ ifeq ($(USE_WXL),)
 $(RESULTS_DIR)/5_route.def: $(RESULTS_DIR)/route.guide
 endif
 $(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_route.tcl -metrics $(LOG_DIR)/5_2_TritonRoute.json) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/detail_route.tcl -metrics $(LOG_DIR)/5_2_TritonRoute.json) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
 	cp $< $@
@@ -456,13 +486,13 @@ clean_route:
 	rm -f  $(LOG_DIR)/5_*
 
 klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	klayout -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
+	$(KLAYOUT_CMD) -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
 	        -rd in_def="$<" \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/viewDrc.py
 
 klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	klayout -rd in_guide="$(RESULTS_DIR)/route.guide" \
+	$(KLAYOUT_CMD) -rd in_guide="$(RESULTS_DIR)/route.guide" \
 	        -rd in_def="$<" \
 	        -rd net_name=$(GUIDE_NET) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
@@ -483,7 +513,7 @@ finish: $(LOG_DIR)/6_report.log \
 
 ifneq ($(USE_FILL),)
 $(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_density_fill.json) 2>&1 | tee $(LOG_DIR)/6_density_fill.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_density_fill.json) 2>&1 | tee $(LOG_DIR)/6_density_fill.log
 else
 $(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def
 	cp $< $@
@@ -493,14 +523,14 @@ $(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
 	cp $< $@
 
 $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_1_fill.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
 $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
-	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
+	($(TIME_CMD) $(KLAYOUT_CMD) -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:$(STREAM_SYSTEM_EXT)=def)) \
 	        -rd in_files="$(ADDITIONAL_GDSOAS)" \
 	        -rd config_file=$(FILL_CONFIG) \
@@ -513,7 +543,7 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 #-------------------------------------------------------------------------------
 6_1_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
 $(6_1_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS)
-	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
+	($(TIME_CMD) stdbuf -o L $(KLAYOUT_CMD) -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$< \
 	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
 	        -rd config_file=$(FILL_CONFIG) \
@@ -531,7 +561,7 @@ drc: $(REPORTS_DIR)/6_drc.lyrdb
 
 $(REPORTS_DIR)/6_drc.lyrdb: $(6_FINAL_FILE) $(KLAYOUT_DRC_FILE)
 ifneq ($(KLAYOUT_DRC_FILE),)
-	($(TIME_CMD) klayout -zz -rd in_gds="$<" \
+	($(TIME_CMD) $(KLAYOUT_CMD) -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_DRC_FILE)) 2>&1 | tee $(LOG_DIR)/6_drc.log
 	# Hacky way of getting DRV count (don't error on no matches)
@@ -541,7 +571,7 @@ else
 endif
 
 $(RESULTS_DIR)/6_final.cdl: $(RESULTS_DIR)/6_final.v
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cdl.tcl) 2>&1 | tee $(LOG_DIR)/6_cdl.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/cdl.tcl) 2>&1 | tee $(LOG_DIR)/6_cdl.log
 
 $(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
 	cat $^ > $@
@@ -550,7 +580,7 @@ lvs: $(RESULTS_DIR)/6_lvs.lvsdb
 
 $(RESULTS_DIR)/6_lvs.lvsdb: $(6_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
 ifneq ($(KLAYOUT_LVS_FILE),)
-	($(TIME_CMD) klayout -b -rd in_gds="$<" \
+	($(TIME_CMD) $(KLAYOUT_CMD) -b -rd in_gds="$<" \
 	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_LVS_FILE)) 2>&1 | tee $(LOG_DIR)/6_lvs.log
@@ -576,7 +606,7 @@ clean_finish:
 
 all: $(SDC_FILE) $(WRAPPED_LIBS) $(DONT_USE_LIBS) $(OBJECTS_DIR)/TritonRoute.param $(OBJECTS_DIR)/klayout.lyt $(WRAPPED_GDSOAS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/run_all.tcl -metrics $(LOG_DIR)/run_all.json) 2>&1 | tee $(LOG_DIR)/run_all.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(OPENROAD_ARG) $(SCRIPTS_DIR)/run_all.tcl -metrics $(LOG_DIR)/run_all.json) 2>&1 | tee $(LOG_DIR)/run_all.log
 
 clean:
 	@echo
@@ -601,7 +631,7 @@ RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
 RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
 RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
-	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
+	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
 gui_final: gui_6_final.def
 
@@ -611,5 +641,9 @@ $(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
-export PRIVATE_DIR = ../../private_tool_scripts
+export PRIVATE_DIR ?= ../../private_tool_scripts
 -include $(PRIVATE_DIR)/util/utils.mk
+
+ifneq ($(PRIVATE_CONFIG),)
+  include $(PRIVATE_CONFIG)
+endif
