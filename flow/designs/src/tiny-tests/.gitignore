@@ -1,7 +1,0 @@
-.metals/
-*.json
-*.fir
-.bloop/
-target/
-project/target/
-project/project/
