@@ -134,7 +134,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'flow/test/test_helper.sh aes sky130hd';
+            sh 'flow/test/test_helper.sh aes sky130hd config_ppa.mk ppa';
             stash name: 'sky130_hd_aes_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -142,7 +142,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'flow/test/test_helper.sh gcd sky130hd';
+            sh 'flow/test/test_helper.sh gcd sky130hd config_ppa.mk ppa';
             stash name: 'sky130_hd_gcd_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -150,7 +150,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'flow/test/test_helper.sh ibex sky130hd';
+            sh 'flow/test/test_helper.sh ibex sky130hd config_ppa.mk ppa';
             stash name: 'sky130_hd_ibex_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -158,7 +158,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'flow/test/test_helper.sh jpeg sky130hd';
+            sh 'flow/test/test_helper.sh jpeg sky130hd config_ppa.mk ppa';
             stash name: 'sky130_hd_jpeg_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -166,7 +166,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'flow/test/test_helper.sh aes sky130hs';
+            sh 'flow/test/test_helper.sh aes sky130hs config_ppa.mk ppa';
             stash name: 'sky130_hs_aes_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -174,7 +174,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'flow/test/test_helper.sh gcd sky130hs';
+            sh 'flow/test/test_helper.sh gcd sky130hs config_ppa.mk ppa';
             stash name: 'sky130_hs_gcd_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -182,7 +182,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'flow/test/test_helper.sh ibex sky130hs';
+            sh 'flow/test/test_helper.sh ibex sky130hs config_ppa.mk ppa';
             stash name: 'sky130_hs_ibex_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -190,7 +190,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'flow/test/test_helper.sh jpeg sky130hs';
+            sh 'flow/test/test_helper.sh jpeg sky130hs config_ppa.mk ppa';
             stash name: 'sky130_hs_jpeg_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -234,6 +234,7 @@ pipeline {
           EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
           REPLY_TO='$DEFAULT_REPLYTO';
         }
+        sh './flow/util/getMetricsErrors.sh 2>&1 | tee error-list.txt';
         emailext (
             to: "$EMAIL_TO",
             replyTo: "$REPLY_TO",
