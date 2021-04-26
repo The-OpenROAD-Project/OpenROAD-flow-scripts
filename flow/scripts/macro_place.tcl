@@ -42,7 +42,7 @@ proc find_macros {} {
 
 if {[find_macros] != ""} {
   if {[info exists ::env(MACRO_PLACEMENT)]} {
-    source scripts/read_macro_placement.tcl
+    source $::env(SCRIPTS_DIR)/read_macro_placement.tcl
     puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
     read_macro_placement $::env(MACRO_PLACEMENT)
   } else {
@@ -52,7 +52,7 @@ if {[find_macros] != ""} {
   }
 
   if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
-    source scripts/placement_blockages.tcl
+    source $::env(SCRIPTS_DIR)/placement_blockages.tcl
     block_channels $::env(MACRO_BLOCKAGE_HALO)
   }
 } else {
