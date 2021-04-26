@@ -53,49 +53,53 @@ RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT).sh
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	# Creating $(RUN_ME_SCRIPT) script
-	@echo "#!/bin/bash"                             > $(RUN_ME_SCRIPT)
-	@echo "source $(VARS_BASENAME).sh"                          >> $(RUN_ME_SCRIPT)
+	@echo "#!/bin/bash"                             >  $(RUN_ME_SCRIPT)
+	@echo "source $(VARS_BASENAME).sh"              >> $(RUN_ME_SCRIPT)
 	@echo "openroad -no_init $(SCRIPTS_DIR)/$*.tcl" >> $(RUN_ME_SCRIPT)
 	@chmod +x $(RUN_ME_SCRIPT)
 
 	# Creating $(VARS_BASENAME).sh/tcl script
 	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
 	@$(foreach V, $(.VARIABLES), \
-	  $(if $(filter-out environment% default automatic, $(origin $V)), \
-	  echo export $V=\""$($V)\""  >> $(VARS_BASENAME).sh ; \
-	  echo set env\($V\) \""$($V)\""     >> $(VARS_BASENAME).tcl ; \
-	  echo set env $V "$($V)"     >> $(VARS_BASENAME).gdb ;) \
+	    $(if $(filter-out environment% default automatic, $(origin $V)), \
+	      echo export $V=\""$($V)\""     >> $(VARS_BASENAME).sh ; \
+	      echo set env\($V\) \""$($V)\"" >> $(VARS_BASENAME).tcl ; \
+	      echo set env $V "$($V)"        >> $(VARS_BASENAME).gdb ; \
+	     ) \
 	)
+	# remove variables starting with a dot
 	@sed -i '/export \./d' $(VARS_BASENAME).sh
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).sh
 	@sed -i '/set env(\./d' $(VARS_BASENAME).tcl
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).tcl
 	@sed -i '/set env \./d' $(VARS_BASENAME).gdb
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).gdb
 
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
 	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
-	    --xform='s|^|$*_$(ISSUE_TAG)/|S' $(LOG_DIR) \
-	                                     $(OBJECTS_DIR) \
-	                                     $(REPORTS_DIR) \
-	                                     $(RESULTS_DIR) \
-	                                     $(SCRIPTS_DIR) \
-	                                     $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
-	                                     $(RUN_ME_SCRIPT) $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb \
-	                                     $^
+	    --xform='s|^|$*_$(ISSUE_TAG)/|S' \
+	    $(LOG_DIR) \
+	    $(OBJECTS_DIR) \
+	    $(REPORTS_DIR) \
+	    $(RESULTS_DIR) \
+	    $(SCRIPTS_DIR) \
+	    $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
+	    $(RUN_ME_SCRIPT) \
+	    $(VARS_BASENAME).sh \
+	    $(VARS_BASENAME).tcl \
+	    $(VARS_BASENAME).gdb \
+	    $^
 
 	@if [ ! -z $${COPY_ISSUE+x} ]; then \
-		mkdir -p $${COPY_ISSUE} ; \
-		cp $*_$(ISSUE_TAG).tar.gz $${COPY_ISSUE} ; \
+	    mkdir -p $${COPY_ISSUE} ; \
+	    cp $*_$(ISSUE_TAG).tar.gz $${COPY_ISSUE} ; \
 	fi
 
 $(VARS_BASENAME).tcl:
 	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
 	@$(foreach V, $(.VARIABLES), \
-	$(if $(filter-out environment% default automatic, $(origin $V)), \
-	echo export $V=\""$($V)\""  >> $(VARS_BASENAME).sh ; \
-	echo set env\($V\) \""$($V)\""     >> $(VARS_BASENAME).tcl ; \
-	echo set env $V "$($V)"     >> $(VARS_BASENAME).gdb ;) \
+	    $(if $(filter-out environment% default automatic, $(origin $V)), \
+	        echo export $V=\""$($V)\""     >> $(VARS_BASENAME).sh ; \
+	        echo set env\($V\) \""$($V)\"" >> $(VARS_BASENAME).tcl ; \
+	        echo set env $V "$($V)"        >> $(VARS_BASENAME).gdb ; \
+	    ) \
 	)
 	@sed -i '/export \./d' $(VARS_BASENAME).sh
 	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).sh
