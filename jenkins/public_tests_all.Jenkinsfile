@@ -134,7 +134,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh aes sky130hd"';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh aes sky130hd config_ppa.mk ppa"';
             stash name: 'sky130_hd_aes_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -142,7 +142,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh gcd sky130hd"';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh gcd sky130hd config_ppa.mk ppa"';
             stash name: 'sky130_hd_gcd_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -150,7 +150,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh ibex sky130hd"';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh ibex sky130hd config_ppa.mk ppa"';
             stash name: 'sky130_hd_ibex_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -158,7 +158,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh jpeg sky130hd"';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh jpeg sky130hd config_ppa.mk ppa"';
             stash name: 'sky130_hd_jpeg_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -166,7 +166,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh aes sky130hs"';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh aes sky130hs config_ppa.mk ppa"';
             stash name: 'sky130_hs_aes_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -174,7 +174,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh gcd sky130hs"';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh gcd sky130hs config_ppa.mk ppa"';
             stash name: 'sky130_hs_gcd_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -182,7 +182,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh ibex sky130hs"';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh ibex sky130hs config_ppa.mk ppa"';
             stash name: 'sky130_hs_ibex_ppa', includes: 'flow/reports/**/*';
           }
         }
@@ -190,7 +190,7 @@ pipeline {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh jpeg sky130hs"';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh jpeg sky130hs config_ppa.mk ppa"';
             stash name: 'sky130_hs_jpeg_ppa', includes: 'flow/reports/**/*';
           }
         }
