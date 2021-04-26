@@ -15,10 +15,8 @@ source ../setup_env.sh
 if [ -z "$DESIGN_NICKNAME" ]
 then
   LOG_FILE=./logs/$PLATFORM/$DESIGN_NAME.log
-  GOLD_LOG_FILE=./gold_logs/$PLATFORM/$DESIGN_NAME.log
 else
   LOG_FILE=./logs/$PLATFORM/$DESIGN/$DESIGN_NICKNAME.log
-  GOLD_LOG_FILE=./gold_logs/$PLATFORM/$DESIGN/$DESIGN_NICKNAME.log
 fi
 
 mkdir -p ./logs/$PLATFORM
