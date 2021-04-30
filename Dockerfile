@@ -12,7 +12,9 @@ WORKDIR /OpenROAD-flow
 RUN mkdir -p /OpenROAD-flow
 
 COPY --from=openroad/centos7-builder-gcc /OpenROAD/build ./tools/build/OpenROAD
+COPY --from=openroad/centos7-builder-gcc /OpenROAD/etc/DependencyInstaller.sh ./DependencyInstaller.sh
 COPY --from=openroad/yosys /build ./tools/build/yosys
 COPY ./setup_env.sh .
 COPY ./flow ./flow
 RUN chmod o+rw -R /OpenROAD-flow/flow
+RUN ./DependencyInstaller.sh -runtime
