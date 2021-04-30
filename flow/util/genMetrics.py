@@ -191,18 +191,26 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
     cmdOutput = subprocess.check_output(['openroad', '-version'])
     cmdFields = [ x.decode('utf-8') for x in cmdOutput.split()  ]
     metrics_dict["run__flow__openroad__version"] = str(cmdFields[0])
-    if (len(cmdFields) > 1):
+    if len(cmdFields) > 1:
       metrics_dict["run__flow__openroad__commit"] = str(cmdFields[1])
     else:
       metrics_dict["run__flow__openroad__commit"] = "N/A"
-    cmdOutput = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
-    cmdOutput = cmdOutput.decode('utf-8').strip()
+    if os.system('git status') == 0:
+        cmdOutput = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
+        cmdOutput = cmdOutput.decode('utf-8').strip()
+    else:
+        cmdOutput = 'not a git repo'
+        print('[WARN]', cmdOutput)
     metrics_dict["run__flow__scripts__commit"] = cmdOutput
     metrics_dict["run__flow__uuid"] = str(uuid.uuid4())
     metrics_dict["run__flow__design"] = design
     metrics_dict["run__flow__platform"] = platform
-    cmdOutput = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=os.environ['PLATFORM_DIR'])
-    cmdOutput = cmdOutput.decode('utf-8').strip()
+    if os.system('cd {} && git status'.format(os.environ['PLATFORM_DIR'])) == 0:
+        cmdOutput = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=os.environ['PLATFORM_DIR'])
+        cmdOutput = cmdOutput.decode('utf-8').strip()
+    else:
+        cmdOutput = 'not a git repo'
+        print('[WARN]', cmdOutput)
     metrics_dict["run__flow__platform__commit"] = cmdOutput
     metrics_dict["run__flow__variant"] = flow_variant
 
