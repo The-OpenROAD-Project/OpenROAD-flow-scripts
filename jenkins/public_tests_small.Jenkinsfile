@@ -18,6 +18,13 @@ pipeline {
     }
     stage('Test') {
       parallel {
+        stage('Docker') {
+          agent any;
+          steps {
+            sh './build_openroad.sh';
+            sh 'docker run --rm -it -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms openroad/flow bash -c "source setup_env.sh && flow/test/test_helper.sh"';
+          }
+        }
         stage('nangate45 aes') {
           agent any;
           steps {
