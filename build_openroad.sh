@@ -23,6 +23,7 @@ function usage() {
 NICE=""
 PROC=`nproc`
 COPY_PLATFORMS="NO"
+DOCKER_TAG="openroad/flow-scripts"
 
 # Parse arguments
 while (( "$#" )); do
@@ -77,7 +78,7 @@ done
 
 # Choose install method
 if [ -z ${BUILD_METHOD+x} ] && which docker &> /dev/null; then
-  echo "[INFO][FLOW-0000] using docker build method. This will create a docker image tagged 'openroad/flow'"
+  echo "[INFO][FLOW-0000] using docker build method. This will create a docker image tagged '${DOCKER_TAG}'"
   build_method="DOCKER"
 else
   echo "[INFO][FLOW-0000] using local build method. This will create binaries at tools/build/"
@@ -124,7 +125,7 @@ if [ "$build_method" == "DOCKER" ]; then
     cp .dockerignore{,.bak}
     sed -i '/flow\/platforms/d' .dockerignore
   fi
-  docker build -t openroad/flow -f Dockerfile .
+  docker build -t ${DOCKER_TAG} -f Dockerfile .
   if [ "$COPY_PLATFORMS" == "YES" ]; then
     mv .dockerignore{.bak,}
   fi

@@ -1,10 +1,10 @@
-The OpenROAD-flow repository (build and run scripts) has a BSD 3-Clause License with its text below.
+The OpenROAD-flow-scripts repository (build and run scripts) has a BSD 3-Clause License with its text below.
 The flow relies on several tools, platforms and designs that each have their own licenses.
 
 The license below applies ***only*** to the build and run scripts, not the OpenROAD tools.
 See the README.md file LICENSE section for details on the location of each components' individual license.
 
-License for Build and Run scripts in the OpenROAD-flow repository only :
+License for Build and Run scripts in the OpenROAD-flow-scripts repository only :
 
 BSD 3-Clause License
 
