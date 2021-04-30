@@ -22,7 +22,7 @@ pipeline {
           agent any;
           steps {
             sh './build_openroad.sh';
-            sh 'docker run -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts bash -c "source setup_env.sh && flow/test/test_helper.sh"';
+            sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts bash -c "source setup_env.sh && flow/test/test_helper.sh"';
           }
         }
         stage('nangate45 aes') {
