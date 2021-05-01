@@ -4,7 +4,7 @@ set -uo pipefail
 
 cd "$(dirname $(readlink -f $0))/../"
 
-files=($(find . -name metadata-check.log))
+files=($(find . -name "metadata*-check.log"))
 numErrors=0
 
 for f in ${files[@]}
