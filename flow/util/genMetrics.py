@@ -182,8 +182,9 @@ def read_sdc(file_name):
 def is_git_repo(folder=None):
     cmd = ["git", "branch"]
     if folder is not None:
-        cmd = ["cd", folder, "&&"] + cmd
-    return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w')) == 0
+        return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w'), cwd=folder) == 0
+    else:
+        return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w')) == 0
 
 def extract_metrics(cwd, platform, design, flow_variant, output):
     logPath = os.path.join(cwd, "logs", platform, design, flow_variant)
