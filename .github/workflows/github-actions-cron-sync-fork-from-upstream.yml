@@ -20,5 +20,8 @@ jobs:
           ref: master
       
       - name: Pull Upstream
-        uses: The-OpenROAD-Project/actions/upstream-sync@main
-        
+        uses: The-OpenROAD-Project/actions/upstream_sync@main
+        with:
+          upstreamRepoUrl: https://github.com/The-OpenROAD-Project/OpenROAD.git
+          upstreamBranch: master
+                
