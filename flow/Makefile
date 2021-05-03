@@ -63,6 +63,7 @@
 # DESIGN_CONFIG=./designs/sky130hd/ibex/config_ppa.mk
 # DESIGN_CONFIG=./designs/sky130hd/jpeg/config_ppa.mk
 
+
 # DESIGN_CONFIG=./designs/sky130hs/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/aes/config.mk
@@ -229,6 +230,7 @@ else
 	SEAL_GDSOAS = $(SEAL_OAS)
 endif
 export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
+
 
 
 
@@ -544,6 +546,9 @@ $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_1_fill.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
+
+generate_abstract: $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
 
 generate_abstract: $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
