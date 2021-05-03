@@ -55,7 +55,7 @@
   "globalroute__timing__latency__min": 3.07,
   "globalroute__timing__latency__max": 3.66,
   "globalroute__timing__skew__worst": 0.6,
-  "globalroute__timing__tns__total": -2148.09,
+  "globalroute__timing__tns__total": -2300,
   "globalroute__timing__wns__worst": -2.79,
   "globalroute__timing__ws__worst": -2.79,
   "detailedroute__wirelength": 3404653.0,
