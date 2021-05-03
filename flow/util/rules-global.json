@@ -26,63 +26,63 @@
         },
         {
             "field" : "cts__timing__tns__total__pre_repair",
-            "value" : 5,
+            "value" : 25,
             "diff": "True",
             "compare": "<=",
-            "absolute": 5
+            "absolute": 250
         },
         {
             "field" : "cts__timing__wns__worst__pre_repair",
-            "value" : 5,
+            "value" : 25,
             "diff": "True",
             "compare": "<=",
-            "absolute": 5
+            "absolute": 250
         },
         {
             "field" : "cts__timing__ws__worst__pre_repair",
-            "value" : 5,
+            "value" : 25,
             "diff": "True",
             "compare": "<=",
-            "absolute": 5
+            "absolute": 250
         },
         {
             "field" : "cts__timing__tns__total",
-            "value" : 5,
+            "value" : 25,
             "diff": "True",
             "compare": "<=",
-            "absolute": 5
+            "absolute": 250
         },
         {
             "field" : "cts__timing__wns__worst",
-            "value" : 5,
+            "value" : 25,
             "diff": "True",
             "compare": "<=",
-            "absolute": 5
+            "absolute": 250
         },
         {
             "field" : "cts__timing__ws__worst",
-            "value" : 5,
+            "value" : 25,
             "diff": "True",
             "compare": "<=",
-            "absolute": 5
+            "absolute": 250
         },
         {
             "field" : "globalroute__timing__tns__total",
-            "value" : 5,
+            "value" : 25,
             "diff": "True",
             "compare": "<=",
-            "absolute": 5
+            "absolute": 250
         },
         {
             "field" : "globalroute__timing__ws__worst",
-            "value" : 5,
+            "value" : 25,
             "diff": "True",
             "compare": "<=",
-            "absolute": 5
+            "absolute": 250
         },
         {
             "field" : "detailedroute__wirelength",
-            "value" : 5,
+            "value" : 25,
             "diff": "True",
             "compare": "<="
         },
