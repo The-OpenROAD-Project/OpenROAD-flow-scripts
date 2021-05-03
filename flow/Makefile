@@ -55,6 +55,7 @@
 # DESIGN_CONFIG=./designs/sky130hd/coyote_tc/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/riscv32i/config.mk
+ DESIGN_CONFIG=./designs/sky130hd/chameleon_hier/config.mk
 
 # sky130hd PPA
 # DESIGN_CONFIG=./designs/sky130hd/gcd/config_ppa.mk
@@ -183,6 +184,14 @@ else
 	SEAL_GDSOAS = $(SEAL_OAS)
 endif
 export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
+
+
+
+ifdef BLOCKS
+$(info [INFO][FLOW] Hierarichal flow is invoked)
+$(foreach block,$(BLOCKS),$(info following block ist to be hardened :  ${block}))
+endif
+
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
@@ -320,6 +329,11 @@ $(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(
 $(RESULTS_DIR)/2_5_floorplan_tapcell.def: $(RESULTS_DIR)/2_4_floorplan_macro.def $(TAPCELL_TCL)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_tapcell.log
 
+view_macros: $(RESULTS_DIR)/2_4_floorplan_macro.def
+	openroad -gui  $(SCRIPTS_DIR)/view_macros.tcl & 
+
+interactive: 
+	openroad -gui  $(SCRIPTS_DIR)/interactive.tcl & 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_6_floorplan_pdn.def: $(RESULTS_DIR)/2_5_floorplan_tapcell.def $(PDN_CFG)
@@ -522,6 +536,9 @@ $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_1_fill.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
+
+generate_abstract: $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
 
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
