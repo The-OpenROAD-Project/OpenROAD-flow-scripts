@@ -57,9 +57,6 @@ export DONT_USE_CELLS += \
 #
 # Define fill cells
 export FILL_CELLS = sky130_fd_sc_hd__fill_1 sky130_fd_sc_hd__fill_2 sky130_fd_sc_hd__fill_4 sky130_fd_sc_hd__fill_8
-#
-# Define Hold Buffer
-export HOLD_BUF_CELL = sky130_fd_sc_hd__buf_1
 
 # -----------------------------------------------------
 #  Yosys

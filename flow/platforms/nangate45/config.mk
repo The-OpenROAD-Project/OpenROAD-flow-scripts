@@ -17,10 +17,6 @@ export DONT_USE_CELLS = FILLCELL_X1 AOI211_X1 OAI211_X1
 
 # Fill cells used in fill cell insertion
 export FILL_CELLS = FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32
-#
-# Resizer hold buffer
-export HOLD_BUF_CELL = BUF_X1
-
 
 # -----------------------------------------------------
 #  Yosys

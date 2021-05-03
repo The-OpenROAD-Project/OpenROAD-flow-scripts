@@ -16,9 +16,6 @@ export GDS_FILES = $(wildcard $(PLATFORM_DIR)/gds/*.gds) \
 # Specify at least one filler cell if none
 export DONT_USE_CELLS += 
 
-# Define Hold Buffer
-export HOLD_BUF_CELL = sky130_fd_sc_hs__buf_1
-
 # Define fill cells
 export FILL_CELLS = sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc_hs__fill_4 sky130_fd_sc_hs__fill_8
 
