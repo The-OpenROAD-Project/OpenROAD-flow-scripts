@@ -23,6 +23,6 @@ jobs:
       - name: Pull Upstream
         uses: The-OpenROAD-Project/actions/upstream_sync@main
         with:
-          upstreamRepoUrl: https://${{ env.GITHUBREPOTOKEN }}@github.com/The-OpenROAD-Project/OpenROAD.git
+          upstreamRepoUrl: https://${{ env.GITHUBREPOTOKEN }}@github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
           upstreamBranch: master
                 
