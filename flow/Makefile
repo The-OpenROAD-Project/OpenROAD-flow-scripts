@@ -53,7 +53,8 @@
 # DESIGN_CONFIG=./designs/sky130hd/aes/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/jpeg/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/coyote_tc/config.mk
-# DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
+#  DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
+ DESIGN_CONFIG=./designs/sky130hd/chameleon_hier/config.mk
 
 # DESIGN_CONFIG=./designs/sky130hs/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
@@ -126,6 +127,15 @@ export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
 export DONT_USE_LIBS   = $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES)))
 export DONT_USE_SC_LIB ?= $(OBJECTS_DIR)/lib/$(notdir $(firstword $(LIB_FILES)))
+
+
+
+
+ifdef BLOCKS
+$(info [INFO][FLOW] Hierarichal flow is invoked)
+$(foreach block,$(BLOCKS),$(info following block ist to be hardened :  ${block}))
+endif
+
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
@@ -262,6 +272,11 @@ $(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(
 $(RESULTS_DIR)/2_5_floorplan_tapcell.def: $(RESULTS_DIR)/2_4_floorplan_macro.def
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_tapcell.log
 
+view_macros: $(RESULTS_DIR)/2_4_floorplan_macro.def
+	openroad -gui  $(SCRIPTS_DIR)/view_macros.tcl & 
+
+interactive: 
+	openroad -gui  $(SCRIPTS_DIR)/interactive.tcl & 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_6_floorplan_pdn.def: $(RESULTS_DIR)/2_5_floorplan_tapcell.def
@@ -463,6 +478,9 @@ $(REPORTS_DIR)/6_final_report.rpt: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
 
 $(RESULTS_DIR)/6_final.def: $(REPORTS_DIR)/6_final_report.rpt
+
+generate_abstract: $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
 
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
