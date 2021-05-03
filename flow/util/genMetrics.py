@@ -5,18 +5,16 @@
 # information in specific files using regular expressions
 #-------------------------------------------------------------------------------
 
-import argparse  # argument parsing
-import json  # json parsing
-import pandas as pd
-import subprocess
-import sys
-import re
-import os  # filesystem manipulation
-import datetime
-import uuid
-import platform
-from collections import OrderedDict
+import os
+from sys import exit
+from datetime import datetime, timedelta
+from uuid import uuid4 as uuid
+from subprocess import check_output, call, STDOUT
 
+import argparse
+import json
+import pandas as pd
+import re
 
 # Parse and validate arguments
 # ==============================================================================
@@ -40,7 +38,7 @@ def parse_args():
   if not os.path.isdir(args.flowPath):
     print("Error: flowPath does not exist")
     print("Path: " + args.flowPath)
-    sys.exit(1)
+    exit(1)
 
   return args
 
@@ -181,6 +179,13 @@ def read_sdc(file_name):
 # Main
 # ==============================================================================
 
+def is_git_repo(folder=None):
+    cmd = ["git", "branch"]
+    if folder is not None:
+        return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w'), cwd=folder) == 0
+    else:
+        return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w')) == 0
+
 def extract_metrics(cwd, platform, design, flow_variant, output):
     logPath = os.path.join(cwd, "logs", platform, design, flow_variant)
     rptPath = os.path.join(cwd, "reports", platform, design, flow_variant)
@@ -188,21 +193,33 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 
     metrics_dict = {}
     metrics_dict["run__flow__generate__date"] = now.strftime("%Y-%m-%d %H:%M")
-    cmdOutput = subprocess.check_output(['openroad', '-version'])
+    cmdOutput = check_output(['openroad', '-version'])
     cmdFields = [ x.decode('utf-8') for x in cmdOutput.split()  ]
     metrics_dict["run__flow__openroad__version"] = str(cmdFields[0])
-    if (len(cmdFields) > 1):
+    if len(cmdFields) > 1:
       metrics_dict["run__flow__openroad__commit"] = str(cmdFields[1])
     else:
       metrics_dict["run__flow__openroad__commit"] = "N/A"
-    cmdOutput = subprocess.check_output(['git', 'rev-parse', 'HEAD'])
-    cmdOutput = cmdOutput.decode('utf-8').strip()
+    if is_git_repo():
+        cmdOutput = check_output(['git', 'rev-parse', 'HEAD'])
+        cmdOutput = cmdOutput.decode('utf-8').strip()
+    else:
+        cmdOutput = 'not a git repo'
+        print('[WARN]', cmdOutput)
     metrics_dict["run__flow__scripts__commit"] = cmdOutput
-    metrics_dict["run__flow__uuid"] = str(uuid.uuid4())
+    metrics_dict["run__flow__uuid"] = str(uuid())
     metrics_dict["run__flow__design"] = design
     metrics_dict["run__flow__platform"] = platform
-    cmdOutput = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=os.environ['PLATFORM_DIR'])
-    cmdOutput = cmdOutput.decode('utf-8').strip()
+    platformDir = os.environ.get('PLATFORM_DIR')
+    if platformDir is None:
+        print('[INFO]', 'PLATFORM_DIR env variable not set')
+        cmdOutput = 'N/A'
+    elif is_git_repo(folder=platformDir):
+        cmdOutput = check_output(['git', 'rev-parse', 'HEAD'], cwd=platformDir)
+        cmdOutput = cmdOutput.decode('utf-8').strip()
+    else:
+        print('[WARN]', 'not a git repo')
+        cmdOutput = 'N/A'
     metrics_dict["run__flow__platform__commit"] = cmdOutput
     metrics_dict["run__flow__variant"] = flow_variant
 
@@ -448,26 +465,26 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 # ==============================================================================
 
     failed = False
-    total = datetime.timedelta()
+    total = timedelta()
     for key in metrics_dict:
       if key.endswith("_time"):
         # Big try block because Hour and microsecond is optional
         try:
-          t = datetime.datetime.strptime(metrics_dict[key],"%H:%M:%S.%f")
+          t = datetime.strptime(metrics_dict[key],"%H:%M:%S.%f")
         except ValueError:
           try:
-            t = datetime.datetime.strptime(metrics_dict[key],"%M:%S.%f")
+            t = datetime.strptime(metrics_dict[key],"%M:%S.%f")
           except ValueError:
             try:
-              t = datetime.datetime.strptime(metrics_dict[key],"%H:%M:%S")
+              t = datetime.strptime(metrics_dict[key],"%H:%M:%S")
             except ValueError:
               try:
-                t = datetime.datetime.strptime(metrics_dict[key],"%M:%S")
+                t = datetime.strptime(metrics_dict[key],"%M:%S")
               except ValueError:
                 failed = True
                 break
 
-        delta = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
+        delta = timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
         total += delta
 
     if failed:
@@ -486,7 +503,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 
 
 args = parse_args()
-now = datetime.datetime.now()
+now = datetime.now()
 
 if args.design == "all_designs":
     print("List of designs")
