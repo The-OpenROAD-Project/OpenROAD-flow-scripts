@@ -12,7 +12,7 @@
         },
         {
             "field": "placeopt__area__instance__area",
-            "value": 178135.0,
+            "value": 222668.75,
             "compare": "<="
         },
         {
@@ -22,47 +22,47 @@
         },
         {
             "field": "cts__timing__tns__total__pre_repair",
-            "value": 0.0,
+            "value": -250,
             "compare": "<="
         },
         {
             "field": "cts__timing__wns__worst__pre_repair",
-            "value": 0.0,
+            "value": -250,
             "compare": "<="
         },
         {
             "field": "cts__timing__ws__worst__pre_repair",
-            "value": 7.47,
+            "value": 9.3375,
             "compare": "<="
         },
         {
             "field": "cts__timing__tns__total",
-            "value": 0.0,
+            "value": -250,
             "compare": "<="
         },
         {
             "field": "cts__timing__wns__worst",
-            "value": 0.0,
+            "value": -250,
             "compare": "<="
         },
         {
             "field": "cts__timing__ws__worst",
-            "value": 7.16,
+            "value": 8.95,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__tns__total",
-            "value": 0.0,
+            "value": -250,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__ws__worst",
-            "value": 7.25,
+            "value": 9.0625,
             "compare": "<="
         },
         {
             "field": "detailedroute__wirelength",
-            "value": 4706432.0,
+            "value": 5883040.0,
             "compare": "<="
         },
         {
@@ -77,7 +77,7 @@
         },
         {
             "field": "finish__area",
-            "value": 2022140.0,
+            "value": 2527675.0,
             "compare": "<="
         }
     ]
