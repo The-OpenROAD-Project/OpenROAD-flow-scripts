@@ -27,12 +27,12 @@
         },
         {
             "field": "cts__timing__wns__worst__pre_repair",
-            "value": -0.725,
+            "value": -20.725,
             "compare": "<="
         },
         {
             "field": "cts__timing__ws__worst__pre_repair",
-            "value": -0.725,
+            "value": -20.725,
             "compare": "<="
         },
         {
@@ -42,12 +42,12 @@
         },
         {
             "field": "cts__timing__wns__worst",
-            "value": -0.9125,
+            "value": -20.9125,
             "compare": "<="
         },
         {
             "field": "cts__timing__ws__worst",
-            "value": -0.9125,
+            "value": -20.9125,
             "compare": "<="
         },
         {
@@ -57,7 +57,7 @@
         },
         {
             "field": "globalroute__timing__ws__worst",
-            "value": -1.25,
+            "value": -21.25,
             "compare": "<="
         },
         {

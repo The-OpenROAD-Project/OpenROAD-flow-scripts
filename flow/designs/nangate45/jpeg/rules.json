@@ -32,7 +32,7 @@
         },
         {
             "field": "cts__timing__ws__worst__pre_repair",
-            "value": 3.0,
+            "value": 23.0,
             "compare": "<="
         },
         {
@@ -47,7 +47,7 @@
         },
         {
             "field": "cts__timing__ws__worst",
-            "value": 2.6374999999999997,
+            "value": 22.6375,
             "compare": "<="
         },
         {
@@ -57,7 +57,7 @@
         },
         {
             "field": "globalroute__timing__ws__worst",
-            "value": 2.7125,
+            "value": 22.7125,
             "compare": "<="
         },
         {

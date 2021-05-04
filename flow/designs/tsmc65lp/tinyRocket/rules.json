@@ -22,17 +22,17 @@
         },
         {
             "field": "cts__timing__tns__total__pre_repair",
-            "value": -5.7625,
+            "value": -25.7625,
             "compare": "<="
         },
         {
             "field": "cts__timing__wns__worst__pre_repair",
-            "value": -0.15,
+            "value": -20.15,
             "compare": "<="
         },
         {
             "field": "cts__timing__ws__worst__pre_repair",
-            "value": -0.15,
+            "value": -20.15,
             "compare": "<="
         },
         {
@@ -47,7 +47,7 @@
         },
         {
             "field": "cts__timing__ws__worst",
-            "value": 0.0375,
+            "value": 20.0375,
             "compare": "<="
         },
         {
@@ -57,7 +57,7 @@
         },
         {
             "field": "globalroute__timing__ws__worst",
-            "value": -0.2625,
+            "value": -20.2625,
             "compare": "<="
         },
         {
