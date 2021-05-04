@@ -21,6 +21,21 @@
             "compare": "<="
         },
         {
+            "field": "cts__timing__tns__total__pre_repair",
+            "value": 0.0,
+            "compare": "<="
+        },
+        {
+            "field": "cts__timing__wns__worst__pre_repair",
+            "value": 0.0,
+            "compare": "<="
+        },
+        {
+            "field": "cts__timing__ws__worst__pre_repair",
+            "value": 4.23,
+            "compare": "<="
+        },
+        {
             "field": "cts__timing__tns__total",
             "value": 0.0,
             "compare": "<="
