@@ -2,67 +2,67 @@
     "rules": [
         {
             "field": "synth__area__stdcell__count",
-            "value": 29037.0,
-            "compare": "<="
+            "value": 29037,
+            "compare": "=="
         },
         {
             "field": "constraints__clocks__count",
             "value": 1,
-            "compare": "<="
+            "compare": "=="
         },
         {
             "field": "placeopt__area__instance__area",
-            "value": 628111.25,
+            "value": 628111,
             "compare": "<="
         },
         {
             "field": "placeopt__area__instance__count",
-            "value": 36306.0,
+            "value": 36306,
             "compare": "<="
         },
         {
             "field": "cts__timing__tns__total__pre_repair",
-            "value": -115.91250000000001,
-            "compare": "<="
+            "value": -116,
+            "compare": ">="
         },
         {
             "field": "cts__timing__wns__worst__pre_repair",
-            "value": -12.7,
-            "compare": "<="
+            "value": -13,
+            "compare": ">="
         },
         {
             "field": "cts__timing__ws__worst__pre_repair",
-            "value": -12.7,
-            "compare": "<="
+            "value": -13,
+            "compare": ">="
         },
         {
             "field": "cts__timing__tns__total",
-            "value": -1069.175,
-            "compare": "<="
+            "value": -1069,
+            "compare": ">="
         },
         {
             "field": "cts__timing__wns__worst",
-            "value": -20.175,
-            "compare": "<="
+            "value": -20,
+            "compare": ">="
         },
         {
             "field": "cts__timing__ws__worst",
-            "value": -20.175,
-            "compare": "<="
+            "value": -20,
+            "compare": ">="
         },
         {
             "field": "globalroute__timing__tns__total",
-            "value": -1418.1375,
-            "compare": "<="
+            "value": -1418,
+            "compare": ">="
         },
         {
             "field": "globalroute__timing__ws__worst",
-            "value": -21.200000000000003,
-            "compare": "<="
+            "value": -21,
+            "compare": ">="
         },
         {
             "field": "detailedroute__wirelength",
-            "value": 3252785.0,
+            "value": 3252785,
             "compare": "<="
         },
         {
@@ -77,7 +77,7 @@
         },
         {
             "field": "finish__area",
-            "value": 1415783.75,
+            "value": 1415784,
             "compare": "<="
         }
     ]
