@@ -97,14 +97,6 @@ pipeline {
             stash name: 'nangate45_jpeg', includes: 'flow/reports/**/*';
           }
         }
-        stage('nangate45 opensparc_t1') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh opensparc_t1 nangate45"';
-            stash name: 'nangate45_opensparc_t1', includes: 'flow/reports/**/*';
-          }
-        }
         stage('nangate45 swerv') {
           agent any;
           steps {
@@ -295,7 +287,6 @@ pipeline {
       unstash 'nangate45_gcd';
       unstash 'nangate45_ibex';
       unstash 'nangate45_jpeg';
-      unstash 'nangate45_opensparc_t1';
       unstash 'nangate45_swerv';
       unstash 'nangate45_swerv_wrapper';
       unstash 'nangate45_tinyRocket';
