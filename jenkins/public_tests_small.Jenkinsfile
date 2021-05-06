@@ -18,38 +18,6 @@ pipeline {
     }
     stage('Test') {
       parallel {
-        stage('asap7 aes') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh aes asap7"';
-            stash name: 'asap7_aes', includes: 'flow/reports/**/*';
-          }
-        }
-        stage('asap7 gcd') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh gcd asap7"';
-            stash name: 'asap7_gcd', includes: 'flow/reports/**/*';
-          }
-        }
-        stage('asap7 ibex') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh ibex asap7"';
-            stash name: 'asap7_ibex', includes: 'flow/reports/**/*';
-          }
-        }
-        stage('asap7 jpeg') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh jpeg asap7"';
-            stash name: 'asap7_jpeg', includes: 'flow/reports/**/*';
-          }
-        }
         stage('nangate45 aes') {
           agent any;
           steps {
@@ -183,10 +151,6 @@ pipeline {
   }
   post {
     always {
-      unstash 'asap7_aes';
-      unstash 'asap7_gcd';
-      unstash 'asap7_ibex';
-      unstash 'asap7_jpeg';
       unstash 'nangate45_aes';
       unstash 'nangate45_gcd';
       unstash 'nangate45_ibex';
