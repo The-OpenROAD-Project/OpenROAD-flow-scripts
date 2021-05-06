@@ -22,10 +22,9 @@ if {![info exists standalone] || $standalone} {
 if {![info exists ::env(FOOTPRINT)]} {
   if {[info exists ::env(IO_CONSTRAINTS)]} {
     source $::env(IO_CONSTRAINTS)
-  } else {
-    place_pins -hor_layer $::env(IO_PLACER_H) \
-               -ver_layer $::env(IO_PLACER_V)
   }
+  place_pins -hor_layer $::env(IO_PLACER_H) \
+             -ver_layer $::env(IO_PLACER_V)
 }
 
 if {![info exists standalone] || $standalone} {
