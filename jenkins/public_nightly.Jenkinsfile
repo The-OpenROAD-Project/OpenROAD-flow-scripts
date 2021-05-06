@@ -4,7 +4,7 @@ pipeline {
     COMMIT_AUTHOR_EMAIL= sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
   }
   options {
-    timeout(time: 2, unit: 'HOURS');
+    timeout(time: 4, unit: 'HOURS');
   }
   stages {
     stage('Build') {
@@ -65,6 +65,46 @@ pipeline {
             stash name: 'nangate45_aes', includes: 'flow/reports/**/*';
           }
         }
+        stage('nangate45 black_parrot') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh black_parrot nangate45"';
+            stash name: 'nangate45_black_parrot', includes: 'flow/reports/**/*';
+          }
+        }
+        stage('nangate45 bp_be_top') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh bp_be_top nangate45"';
+            stash name: 'nangate45_bp_be_top', includes: 'flow/reports/**/*';
+          }
+        }
+        stage('nangate45 bp_fe_top') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh bp_fe_top nangate45"';
+            stash name: 'nangate45_bp_fe_top', includes: 'flow/reports/**/*';
+          }
+        }
+        stage('nangate45 bp_multi_top') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh bp_multi_top nangate45"';
+            stash name: 'nangate45_bp_multi_top', includes: 'flow/reports/**/*';
+          }
+        }
+        stage('nangate45 dynamic_node') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh dynamic_node nangate45"';
+            stash name: 'nangate45_dynamic_node', includes: 'flow/reports/**/*';
+          }
+        }
         stage('nangate45 gcd') {
           agent any;
           steps {
@@ -89,12 +129,28 @@ pipeline {
             stash name: 'nangate45_jpeg', includes: 'flow/reports/**/*';
           }
         }
+        stage('nangate45 opensparc_t1') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh opensparc_t1 nangate45"';
+            stash name: 'nangate45_opensparc_t1', includes: 'flow/reports/**/*';
+          }
+        }
         stage('nangate45 swerv') {
           agent any;
           steps {
             unstash 'build';
             sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh swerv nangate45"';
             stash name: 'nangate45_swerv', includes: 'flow/reports/**/*';
+          }
+        }
+        stage('nangate45 swerv_wrapper') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh swerv_wrapper nangate45"';
+            stash name: 'nangate45_swerv_wrapper', includes: 'flow/reports/**/*';
           }
         }
         stage('nangate45 tiny rocket') {
@@ -111,6 +167,22 @@ pipeline {
             unstash 'build';
             sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh aes sky130hd"';
             stash name: 'sky130_hd_aes', includes: 'flow/reports/**/*';
+          }
+        }
+        stage('sky130hd chameleon') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh chameleon sky130hd"';
+            stash name: 'sky130_hd_chameleon', includes: 'flow/reports/**/*';
+          }
+        }
+        stage('sky130hd coyote_tc') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh coyote_tc sky130hd"';
+            stash name: 'sky130_hd_coyote_tc', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hd gcd') {
@@ -143,6 +215,14 @@ pipeline {
             unstash 'build';
             sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh aes sky130hs"';
             stash name: 'sky130_hs_aes', includes: 'flow/reports/**/*';
+          }
+        }
+        stage('sky130hs coyote_tc') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'bash -ic "source setup_env.sh && flow/test/test_helper.sh coyote_tc sky130hs"';
+            stash name: 'sky130_hs_coyote_tc', includes: 'flow/reports/**/*';
           }
         }
         stage('sky130 hs gcd') {
@@ -243,16 +323,26 @@ pipeline {
       unstash 'asap7_ibex';
       unstash 'asap7_jpeg';
       unstash 'nangate45_aes';
+      unstash 'nangate45_black_parrot';
+      unstash 'nangate45_bp_be_top';
+      unstash 'nangate45_bp_fe_top';
+      unstash 'nangate45_bp_multi_top';
+      unstash 'nangate45_dynamic_node';
       unstash 'nangate45_gcd';
       unstash 'nangate45_ibex';
       unstash 'nangate45_jpeg';
+      unstash 'nangate45_opensparc_t1';
       unstash 'nangate45_swerv';
+      unstash 'nangate45_swerv_wrapper';
       unstash 'nangate45_tinyRocket';
       unstash 'sky130_hd_aes';
+      unstash 'sky130_hd_chameleon';
+      unstash 'sky130_hd_coyote_tc';
       unstash 'sky130_hd_gcd';
       unstash 'sky130_hd_ibex';
       unstash 'sky130_hd_jpeg';
       unstash 'sky130_hs_aes';
+      unstash 'sky130_hs_coyote_tc';
       unstash 'sky130_hs_gcd';
       unstash 'sky130_hs_ibex';
       unstash 'sky130_hs_jpeg';
