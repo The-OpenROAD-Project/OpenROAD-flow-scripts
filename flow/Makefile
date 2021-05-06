@@ -130,8 +130,32 @@ export TEST_DIR    = ./test
 
 # Tool Options
 SHELL = /bin/bash -o pipefail
+
 TIME_CMD = /usr/bin/time -f "%Eelapsed %PCPU %MmemKB"
-export NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
+TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
+ifeq (, $(strip $(TIME_TEST)))
+  TIME_CMD = /usr/bin/time
+endif
+
+ifeq (, $(strip $(NPROC)))
+  # Linux (utility program)
+  NPROC := $(shell nproc 2>/dev/null)
+
+  ifeq (, $(strip $(NPROC)))
+    # Linux (generic)
+    NPROC := $(shell grep -c ^processor /proc/cpuinfo 2>/dev/null)
+  endif
+  ifeq (, $(strip $(NPROC)))
+    # BSD (at least FreeBSD and Mac OSX)
+    NPROC := $(shell sysctl -n hw.ncpu 2>/dev/null)
+  endif
+  ifeq (, $(strip $(NPROC)))
+    # Fallback
+    NPROC := 1
+  endif
+endif
+export NUM_CORES := $(NPROC)
+
 OPENROAD_CMD = openroad -no_init -exit
 OPENROAD_NO_EXIT_CMD = $(patsubst -exit,,$(OPENROAD_CMD))
 

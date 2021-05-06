@@ -43,10 +43,9 @@ clean_test:
 #-------------------------------------------------------------------------------
 ISSUE_TAG ?= $(DESIGN_NICKNAME)_$(PLATFORM)_$(FLOW_VARIANT)_$(shell date +"%Y-%m-%d_%H-%M")
 ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(sort $(wildcard $(SCRIPTS_DIR)/*.tcl))))
-ISSUE_CP_FILE_VARS = GENERIC_TECH_LEF \
-                     IP_GLOBAL_CFG LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
+ISSUE_CP_FILE_VARS = LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
                      TRACKS_INFO_FILE SDC_FILE VERILOG_FILES TAPCELL_TCL CACHED_NETLIST \
-                     FOOTPRINT SIG_MAP_FILE PDN_CFG ADDITIONAL_LEFS SETRC_FILE
+                     FOOTPRINT SIG_MAP_FILE PDN_CFG ADDITIONAL_LEFS
 
 VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT)
 RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT).sh
@@ -68,10 +67,11 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	     ) \
 	)
 	# remove variables starting with a dot
-	@sed -i '/export \./d' $(VARS_BASENAME).sh
-	@sed -i '/set env(\./d' $(VARS_BASENAME).tcl
-	@sed -i '/set env \./d' $(VARS_BASENAME).gdb
+	@sed -i -e '/export \./d' $(VARS_BASENAME).sh
+	@sed -i -e '/set env(\./d' $(VARS_BASENAME).tcl
+	@sed -i -e '/set env \./d' $(VARS_BASENAME).gdb
 
+# This requires gnu-tar to support --xform
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
 	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
 	    --xform='s|^|$*_$(ISSUE_TAG)/|S' \

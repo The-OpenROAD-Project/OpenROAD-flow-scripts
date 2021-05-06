@@ -89,7 +89,6 @@
         {
             "field" : "detailedroute__drc__error__count",
             "value" : 0,
-            "diff": "True",
             "compare": "<="
         },
         {
