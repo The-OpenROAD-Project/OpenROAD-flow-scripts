@@ -55,7 +55,7 @@
   "cts__timing__tns__total": -85210.55,
   "cts__timing__wns__worst": -821.18,
   "cts__timing__ws__worst": -821.18,
-  "globalroute__timing__tns__total": -13086.21,
+  "globalroute__timing__tns__total": -19745.7,
   "globalroute__timing__wns__worst": -680.14,
   "globalroute__timing__ws__worst": -680.14,
   "detailedroute__wirelength": 9755895.0,
