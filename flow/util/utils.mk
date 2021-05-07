@@ -61,7 +61,9 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
 	@$(foreach V, $(.VARIABLES), \
 	    $(if $(filter-out environment% default automatic, $(origin $V)), \
-	      echo set env\($V\) \"$($V)\" >> $(VARS_BASENAME).tcl ; \
+	      echo export $V=\""$($V)\""     >> $(VARS_BASENAME).sh ; \
+	      echo set env\($V\) \""$($V)\"" >> $(VARS_BASENAME).tcl ; \
+	      echo set env $V "$($V)"        >> $(VARS_BASENAME).gdb ; \
 	     ) \
 	)
 	# remove variables starting with a dot
@@ -135,5 +137,5 @@ ifdef GDB
 OPENROAD_CMD := gdb --args $(OPENROAD_CMD)
 endif
 
-update_sdc_clock:
+update_sdc_clocks:
 	cp $(RESULTS_DIR)/updated_clks.sdc $(SDC_FILE)
