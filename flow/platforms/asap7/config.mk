@@ -2,7 +2,7 @@ $(info [INFO-FLOW] ASU ASAP7 - version 2)
 
 FOUNDRY_DIR                   := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-export FOUNDRY_DIR
+export FOUNDRY_DIR            := $(PLATFORM_DIR)
 
 export PLATFORM                = asap7
 export PROCESS                 = 7
