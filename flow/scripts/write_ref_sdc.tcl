@@ -5,7 +5,7 @@ set margin 5
 
 set clks [all_clocks]
 if { [llength $clks] > 1 } {
-  puts "[ERROR FLW] Only one clock supported."
+  puts "\[ERROR FLW\] Only one clock supported."
 } else {
   set clk [lindex $clks 0]
   set slack [sta::time_sta_ui [sta::worst_slack_cmd "max"]]
