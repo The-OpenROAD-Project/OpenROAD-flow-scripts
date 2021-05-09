@@ -161,31 +161,39 @@ for _, rule in rules.items():
         elif build_value == reference_value:
             percentage = 0
 
+    absoluteDiff = abs(build_value) - abs(reference_value)
     if not hasError and not op(check_value, rule_value):
-        absoluteDiff = abs(build_value) - abs(reference_value)
         if hasAbsolute and op(absoluteDiff, rule['absolute']):
-            print('[INFO] passed', end='')
+            hasError = False
+            print('[INFO]', end='')
         else:
-            print('[ERROR] failed', end='')
+            hasError = True
+            print('[ERROR]', end='')
             errors += 1
     else:
-        print('[INFO] passed', end='')
+        hasError = False
+        print('[INFO]', end='')
 
-    print(' {} rule:'.format(field), end='')
-    if hasDiff:
-        print(' diff value', end='')
+    print(' {}:'.format(field), end='')
+    print(' value = {:.2f}'.format(build_value), end='')
+    print(', reference = {:.2f}'.format(reference_value), end='')
+
+    if hasError:
+        print('. Failed', end='')
     else:
-        print(' field value', end='')
-    print(' must be {} {:.2f}'.format(compare, rule_value), end='')
+        print('. Passed', end='')
+    if hasDiff:
+        if percentage is not None:
+            print(' percentage diff = {:.2f}%'.format(percentage), end='')
+        else:
+            print(' percentage diff = inf%'.format(percentage), end='')
+    else:
+        print(' value', end='')
+    print(' {} {:.2f}'.format(compare, rule_value), end='')
     if hasDiff:
         print('%', end='')
     if hasAbsolute:
-        print(' and (field - reference) must be {} {:.2f}'.format(compare, rule['absolute']), end='')
-
-    print('. Values checked: field value = {:.2f}'.format(build_value), end='')
-    print(', reference = {:.2f}'.format(reference_value), end='')
-    if hasDiff and percentage is not None:
-        print(', diff = {:.2f}%'.format(percentage), end='')
+        print(' and value diff = {:.2f} {} {:.2f}'.format(absoluteDiff, compare, rule['absolute']), end='')
     print('')
 
 

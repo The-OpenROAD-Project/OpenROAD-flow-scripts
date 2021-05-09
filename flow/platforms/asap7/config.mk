@@ -21,9 +21,6 @@ export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_R L
 # Used in synthesis
 export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_R A Y
 
-# Resizer hold buffer
-export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_R
-
 # Used in synthesis
 export MAX_FANOUT              = 40
 
@@ -35,8 +32,6 @@ export BLACKBOX_V_FILE         = $(FOUNDRY_DIR)/yoSys/asap7sc7p5t.blackbox.v
 export LATCH_MAP_FILE          = $(FOUNDRY_DIR)/yoSys/cells_latch.v
 export CLKGATE_MAP_FILE        = $(FOUNDRY_DIR)/yoSys/cells_clkgate.v
 export BLACKBOX_MAP_TCL        = $(FOUNDRY_DIR)/yoSys/blackbox_map.tcl
-
-export IP_GLOBAL_CFG           = $(FOUNDRY_DIR)/openRoad/IP_global.cfg
 
 export BC_LIB_FILES            = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_201020.lib \
                                  $(FOUNDRY_DIR)/lib/asap7sc7p5t_INVBUF_RVT_FF_nldm_201020.lib \

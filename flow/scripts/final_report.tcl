@@ -40,10 +40,8 @@ write_verilog $::env(RESULTS_DIR)/6_final.v
 # Run extraction and STA
 if {[info exist ::env(RCX_RULES)]} {
   
-  # Set res and cap
-  if [file exists $::env(PLATFORM_DIR)/rcx_via_resistance.tcl] {
-    source $::env(PLATFORM_DIR)/rcx_via_resistance.tcl
-  }
+  # Set via resistances
+  source $::env(PLATFORM_DIR)/setRC.tcl
 
   # RCX section
   define_process_corner -ext_model_index 0 X

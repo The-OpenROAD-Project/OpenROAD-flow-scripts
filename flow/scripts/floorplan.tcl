@@ -110,13 +110,6 @@ report_design_area
 # remove buffers inserted by yosys/abc
 remove_buffers
 
-puts "\n=========================================================================="
-puts "report_design_area after buffer removal"
-puts "--------------------------------------------------------------------------"
-report_design_area
-report_worst_slack
-
-
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/2_1_floorplan.def

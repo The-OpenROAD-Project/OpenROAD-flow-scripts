@@ -26,7 +26,7 @@ if {![info exists standalone] || $standalone} {
 proc find_macros {} {
   set macros ""
 
-  set db [::ord::get_db]
+  set db [ord::get_db]
   set block [[$db getChip] getBlock]
   foreach inst [$block getInsts] {
     set inst_master [$inst getMaster]

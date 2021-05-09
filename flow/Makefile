@@ -54,6 +54,7 @@
 # DESIGN_CONFIG=./designs/sky130hd/jpeg/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/coyote_tc/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/riscv32i/config.mk
 
 # sky130hd PPA
 # DESIGN_CONFIG=./designs/sky130hd/gcd/config_ppa.mk
