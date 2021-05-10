@@ -113,3 +113,6 @@ export CDL_FILE = $(PLATFORM_DIR)/cdl/NangateOpenCellLibrary.cdl
 
 # Template definition for power grid analysis
 export TEMPLATE_PGA_CFG ?= $(PLATFORM_DIR)/template_pga.cfg
+
+# OpenRCX extRules
+export RCX_RULES                           = ./platforms/$(PLATFORM)/rcx_patterns.rules

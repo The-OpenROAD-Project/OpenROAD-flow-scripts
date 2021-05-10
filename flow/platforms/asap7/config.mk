@@ -131,6 +131,9 @@ export ABC_LOAD_IN_FF          = 3.898
 
 export SET_RC_TCL              = $(FOUNDRY_DIR)/openROAD/setRC.tcl
 
+# OpenRCX extRules
+export RCX_RULES               = ./platforms/$(PLATFORM)/rcx_patterns.rules
+
 # XS - defining function for selecting different timing library set
 # XS - defining function for 4x sizing
 define use_4x
