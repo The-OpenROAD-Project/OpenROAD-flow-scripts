@@ -55,7 +55,7 @@
 # DESIGN_CONFIG=./designs/sky130hd/coyote_tc/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/riscv32i/config.mk
- DESIGN_CONFIG=./designs/sky130hd/chameleon_hier/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/chameleon_hier/config.mk
 
 # sky130hd PPA
 # DESIGN_CONFIG=./designs/sky130hd/gcd/config_ppa.mk
@@ -88,7 +88,7 @@ DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 # export CORE_ASPECT_RATIO := 1
 # export CORE_MARGIN := 4
 
-default: finish
+default: build_macros finish
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -191,6 +191,11 @@ ifdef BLOCKS
 $(info [INFO][FLOW] Hierarichal flow is invoked)
 $(foreach block,$(BLOCKS),$(info following block ist to be hardened :  ${block}))
 endif
+
+build_macros: $(BLOCKS)
+
+$(BLOCKS): 
+	make DESIGN_CONFIG=./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$@/config.mk generate_abstract
 
 
 # Utility to print tool version information
@@ -539,6 +544,7 @@ $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
 generate_abstract: $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
+
 
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
