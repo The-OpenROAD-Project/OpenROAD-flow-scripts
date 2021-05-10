@@ -7,6 +7,8 @@ export DESIGN_NAME            = gcd
 export DESIGN_NICKNAME        = gcd
 export DESIGN                 = gcd
 
+export PLATFORM               = asap7
+
 export VERILOG_FILES          = $(sort $(wildcard $(abspath $(DESIGN_DIR)/../../src/$(DESIGN))/*.v))
 export SDC_FILE               = $(DESIGN_DIR)/constraint.sdc
 
@@ -25,19 +27,22 @@ export ABC_CLOCK_PERIOD_IN_PS = 400
 export DESIGN_POWER           = VDD
 export DESIGN_GROUND          = VSS
 
-export PLATFORM               = asap7
-export DESIGN_PDK_HOME
-
 export CORNER                ?= BC
-
-export PLACE_DENSITY          = 0.30
 
 export PDN_CFG                = $(FOUNDRY_DIR)/openRoad/pdn/grid_strategy-M2-M5-M7.cfg
 
 export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 
-export CORE_UTILIZATION       = 20
-export CORE_ASPECT_RATIO      = 1
-export CORE_MARGIN            = 2
+export PLACE_DENSITY          = 0.35
 
-export DESIGN_DIR
+
+ifdef ($(ASAP7_USE4X)) 
+  export DIE_AREA               = 0 0 50 50
+  export CORE_AREA              = 0.5 0.5 49.5 49.5
+else
+  export DIE_AREA               = 0 0 16.2 16.2
+  export CORE_AREA              = 1.08 1.08 15.12 15.12
+endif
+
+
+export DESIGN_DIR DESIGN_PDK_HOME
