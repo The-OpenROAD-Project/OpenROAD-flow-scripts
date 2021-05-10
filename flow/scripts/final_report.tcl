@@ -31,7 +31,7 @@ if {![info exists standalone] || $standalone} {
 
 
 # Delete routing obstructions for final DEF
-source scripts/deleteRoutingObstructions.tcl
+source $::env(SCRIPTS_DIR)/deleteRoutingObstructions.tcl
 deleteRoutingObstructions
 
 write_def $::env(RESULTS_DIR)/6_final.def

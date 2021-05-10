@@ -136,3 +136,8 @@ command:
 ifdef GDB
 OPENROAD_CMD := gdb --args $(OPENROAD_CMD)
 endif
+
+# Update the clock period sdc based on the worst slack reported by the final
+# (post global route) timing.
+update_sdc_clocks: $(RESULTS_DIR)/route.guide
+	cp $(RESULTS_DIR)/updated_clks.sdc $(SDC_FILE)
