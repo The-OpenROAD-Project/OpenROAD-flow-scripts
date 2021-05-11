@@ -33,10 +33,10 @@ export CORE_AREA  = 20 20 2900 3500
 
 export chameleon_DIR = $(PLATFORM_DIR)/chameleon
 
-export ADDITIONAL_GDS_FILES  = $(chameleon_DIR)/gds/apb_sys_0.gds.tar.gz \
-                               $(chameleon_DIR)/gds/DMC_32x16HC.gds.tar.gz \
-                               $(chameleon_DIR)/gds/DFFRAM_4K.gds.7z \
-                               $(chameleon_DIR)/gds/ibex_wrapper.gds.tar.gz
+export ADDITIONAL_GDS_FILES  = $(chameleon_DIR)/gds/apb_sys_0.gds.gz \
+                               $(chameleon_DIR)/gds/DMC_32x16HC.gds.gz \
+                               $(chameleon_DIR)/gds/DFFRAM_4K.gds.gz \
+                               $(chameleon_DIR)/gds/ibex_wrapper.gds.gz
 
 export ADDITIONAL_LEFS  = $(chameleon_DIR)/lef/apb_sys_0.lef \
                           $(chameleon_DIR)/lef/DFFRAM_4K.lef \
