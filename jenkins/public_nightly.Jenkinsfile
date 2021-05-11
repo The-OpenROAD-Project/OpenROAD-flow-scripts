@@ -12,7 +12,7 @@ pipeline {
         OPENROAD_FLOW_NO_GIT_INIT = 1;
       }
       steps {
-        sh './build_openroad.sh --local --or_branch master';
+        sh './build_openroad.sh --local';
         stash name: 'build', includes: "tools/build/**";
       }
     }
