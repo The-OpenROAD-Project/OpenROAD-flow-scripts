@@ -99,16 +99,29 @@ layoutOptions = tech.load_layout_options
 
 # Load def file
 main_layout = pya.Layout()
+print("[INFO] Reporting cells prior to loading DEF ...")
+for i in main_layout.each_cell():
+  print("[INFO] '{0}'".format(i.name))
+
+print("[INFO] Reading DEF ...")
 main_layout.read(in_def, layoutOptions)
+
+#print("[INFO] Reporting cells after loading DEF ...")
+#for i in main_layout.each_cell():
+#  print("[INFO] '{0}'".format(i.name))
 
 # Clear cells
 top_cell_index = main_layout.cell(design_name).cell_index()
 
+# remove orphan cell BUT preserve cell with VIA_
+#  - KLayout is prepending VIA_ when reading DEF that instantiates LEF's via
 print("[INFO] Clearing cells...")
 for i in main_layout.each_cell():
   if i.cell_index() != top_cell_index:
-    if i.parent_cells() == 0:
+    if not i.name.startswith("VIA_"):
       i.clear()
+    else:
+      print("[INFO] ... preserving '{0}'".format(i.name))
 
 # Load in the gds to merge
 print("[INFO] Merging GDS/OAS files...")
@@ -125,7 +138,7 @@ top.copy_tree(main_layout.cell(design_name))
 
 read_fills(top)
 
-print("[INFO] Checking for missing GDS/OAS...")
+print("[INFO] Checking for missing cell from GDS/OAS...")
 missing_cell = False
 for i in top_only_layout.each_cell():
   if i.is_empty():
@@ -134,6 +147,17 @@ for i in top_only_layout.each_cell():
 
 if not missing_cell:
   print("[INFO] All LEF cells have matching GDS/OAS cells")
+
+print("[INFO] Checking for orphan cell in the final layout...")
+orphan_cell = False
+for i in top_only_layout.each_cell():
+  if i.name != design_name and i.parent_cells() == 0:
+    orphan_cell = True
+    print("[ERROR] Found orphan cell '{0}'".format(i.name))
+
+if not orphan_cell:
+  print("[INFO] No orphan cells")
+
 
 if seal_file:
 
