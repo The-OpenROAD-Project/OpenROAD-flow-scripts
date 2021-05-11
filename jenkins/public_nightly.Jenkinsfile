@@ -2,6 +2,7 @@ pipeline {
   agent any;
   environment {
     COMMIT_AUTHOR_EMAIL= sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
+    MAKE_ISSUE = 1;
   }
   options {
     timeout(time: 4, unit: 'HOURS');
@@ -49,7 +50,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -61,7 +65,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -73,7 +80,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -85,7 +95,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -97,7 +110,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -109,7 +125,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -121,7 +140,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -133,7 +155,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -145,7 +170,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -157,7 +185,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -169,7 +200,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -181,7 +215,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -193,7 +230,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -205,7 +245,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -217,7 +260,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -229,7 +275,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -241,7 +290,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -253,7 +305,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -265,7 +320,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -277,7 +335,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -289,7 +350,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -301,7 +365,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -313,7 +380,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -325,7 +395,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -337,7 +410,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -349,7 +425,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
@@ -361,7 +440,10 @@ pipeline {
           }
           post {
             always {
-              archiveArtifacts artifacts: 'flow/reports/**/*';
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
             }
           }
         }
