@@ -7,12 +7,28 @@ pipeline {
     timeout(time: 4, unit: 'HOURS');
   }
   stages {
+    stage('Checkout OpenROAD') {
+      steps {
+        checkout([$class: 'GitSCM',
+            branches: [[name: '*/master']],
+            doGenerateSubmoduleConfigurations: false,
+            extensions: [
+            [$class: 'SubmoduleOption',
+            disableSubmodules: false,
+            parentCredentials: true,
+            recursiveSubmodules: true,
+            reference: '',
+            trackingSubmodules: false],
+            [$class: 'RelativeTargetDirectory', relativeTargetDir: 'tools/OpenROAD']],
+        ])
+      }
+    }
     stage('Build') {
       environment {
         OPENROAD_FLOW_NO_GIT_INIT = 1;
       }
       steps {
-        sh './build_openroad.sh --local --or_branch master';
+        sh './build_openroad.sh --local';
         stash name: 'build', includes: "tools/build/**";
       }
     }
