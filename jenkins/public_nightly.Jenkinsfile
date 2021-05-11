@@ -87,21 +87,6 @@ pipeline {
             }
           }
         }
-        stage('asap7 jpeg') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh jpeg asap7';
-          }
-          post {
-            always {
-              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
-            }
-            failure {
-              archiveArtifacts artifacts: 'flow/*tar.gz';
-            }
-          }
-        }
         stage('nangate45 aes') {
           agent any;
           steps {
@@ -297,36 +282,6 @@ pipeline {
             }
           }
         }
-        stage('sky130hd chameleon') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh chameleon sky130hd';
-          }
-          post {
-            always {
-              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
-            }
-            failure {
-              archiveArtifacts artifacts: 'flow/*tar.gz';
-            }
-          }
-        }
-        stage('sky130hd coyote_tc') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh coyote_tc sky130hd';
-          }
-          post {
-            always {
-              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
-            }
-            failure {
-              archiveArtifacts artifacts: 'flow/*tar.gz';
-            }
-          }
-        }
         stage('sky130 hd gcd') {
           agent any;
           steps {
@@ -377,21 +332,6 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh aes sky130hs';
-          }
-          post {
-            always {
-              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
-            }
-            failure {
-              archiveArtifacts artifacts: 'flow/*tar.gz';
-            }
-          }
-        }
-        stage('sky130hs coyote_tc') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh coyote_tc sky130hs';
           }
           post {
             always {
