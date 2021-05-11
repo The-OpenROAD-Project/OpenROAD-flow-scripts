@@ -12,17 +12,17 @@
         },
         {
             "field": "placeopt__area__instance__area",
-            "value": 704466,
+            "value": 693445,
             "compare": "<="
         },
         {
             "field": "placeopt__area__instance__count",
-            "value": 190037,
+            "value": 188342,
             "compare": "<="
         },
         {
             "field": "detailedroute__wirelength",
-            "value": 15986358,
+            "value": 13229526,
             "compare": "<="
         },
         {
