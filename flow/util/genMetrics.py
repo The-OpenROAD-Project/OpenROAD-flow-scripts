@@ -90,7 +90,7 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False, occurrence
     jsonFile[jsonTag] = "ERR"
 
 
-def extractGnuTime(prefix, file, jsonFile):
+def extractGnuTime(prefix, jsonFile, file):
   extractTagFromFile(prefix + "__runtime__total", jsonFile,
                      "^(\S+)elapsed \S+CPU \S+memKB",
                      file)
@@ -234,6 +234,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "Chip area for module.*: +(\S+)",
                        rptPath+"/synth_stat.txt")
 
+    extractGnuTime("synth", metrics_dict, logPath+"/1_1_yosys.log")
+
 # Clocks
 #===============================================================================
 
@@ -272,6 +274,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "Extracted # Macros: (\S+)",
                        logPath+"/2_4_mplace.log", defaultNotFound=0)
 
+    extractGnuTime("floorplan", metrics_dict, logPath+"/2_4_mplace.log")
+
 # Place
 # ==============================================================================
 
@@ -290,6 +294,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
     extractTagFromFile("globalplace__timing__wns__worst", metrics_dict,
                       "^wns (\S+)",
                       logPath+"/3_1_place_gp.log")
+
+    extractGnuTime("globalplace", metrics_dict, logPath+"/3_1_place_gp.log")
 
     extractTagFromFile("placeopt__area__inbuffer__count", metrics_dict,
                        "Inserted (\d+) input buffers",
@@ -327,6 +333,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "^instance_count\n-*\n^(\S+)",
                        logPath+"/3_3_resizer.log")
 
+    extractGnuTime("placeopt", metrics_dict, logPath+"/3_3_resizer.log")
+
     extractTagFromFile("detailedplace__timing__tns__total", metrics_dict,
                        "^tns (\S+)",
                        logPath+"/3_4_opendp.log")
@@ -358,6 +366,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
     extractTagFromFile("detailedplace__wirelength__final__estimate", metrics_dict,
                        "legalized HPWL +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log")
+
+    extractGnuTime("detailedplace", metrics_dict, logPath+"/3_4_opendp.log")
 
 # CTS
 # ==============================================================================
@@ -416,6 +426,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                       "^worst slack (\S+)",
                       logPath+"/5_1_fastroute.log")
 
+    extractGnuTime("globalroute", metrics_dict, logPath+"/5_1_fastroute.log")
+
     extractTagFromFile("detailedroute__wirelength", metrics_dict,
                        "total wire length = +(\S+) um",
                        logPath+"/5_2_TritonRoute.log")
@@ -433,6 +445,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "(?i)violation",
                        rptPath+"/5_route_drc.rpt",
                        count=True, defaultNotFound=0)
+
+    extractGnuTime("detailedroute", metrics_dict, logPath+"/5_2_TritonRoute.log")
 
 # Finish
 # ==============================================================================
@@ -461,13 +475,15 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                       "^Design area.* (\S+)% utilization",
                        logPath+"/6_report.log")
 
+    extractGnuTime("finish", metrics_dict, logPath+"/6_report.log")
+
 # Accumulate time
 # ==============================================================================
 
     failed = False
     total = timedelta()
     for key in metrics_dict:
-      if key.endswith("_time"):
+      if key.endswith("__runtime__total"):
         # Big try block because Hour and microsecond is optional
         try:
           t = datetime.strptime(metrics_dict[key],"%H:%M:%S.%f")
@@ -484,7 +500,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                 failed = True
                 break
 
-        delta = timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
+        delta = timedelta(hours=t.hour, minutes=t.minute, seconds=t.second, microseconds=t.microsecond)
         total += delta
 
     if failed:
