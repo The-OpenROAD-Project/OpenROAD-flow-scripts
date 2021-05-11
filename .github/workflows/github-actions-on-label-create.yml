@@ -21,7 +21,7 @@ jobs:
         uses: The-OpenROAD-Project/actions/security_scan_on_push@main
         
       - name: add remote
-        run: git remote set-url https://github.com/The-OpenROAD-Project-staging/OpenROAD-flow-scripts.git
+        run: git remote set-url origin https://github.com/The-OpenROAD-Project-staging/OpenROAD-flow-scripts.git
       - name: git status
         run: git status
       - name: Current label
