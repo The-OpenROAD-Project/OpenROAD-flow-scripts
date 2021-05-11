@@ -94,7 +94,7 @@ for _, rule in rules.items():
         errors += 1
         continue
 
-    if op(build_value, rule_value)
+    if op(build_value, rule_value):
         pre = '[INFO]'
         check = 'pass'
     else:
