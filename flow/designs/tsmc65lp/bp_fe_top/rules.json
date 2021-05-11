@@ -12,32 +12,32 @@
         },
         {
             "field": "placeopt__area__instance__area",
-            "value": 628310,
+            "value": 578045,
             "compare": "<="
         },
         {
             "field": "placeopt__area__instance__count",
-            "value": 36275,
+            "value": 41716,
             "compare": "<="
         },
         {
             "field": "detailedroute__wirelength",
-            "value": 3271414,
+            "value": 3009701,
             "compare": "<="
         },
         {
             "field": "detailedroute__errors__count",
             "value": 0,
-            "compare": "<="
+            "compare": "=="
         },
         {
             "field": "detailedroute__drc__error__count",
             "value": 0,
-            "compare": "<="
+            "compare": "=="
         },
         {
             "field": "finish__area",
-            "value": 1415784,
+            "value": 1302521,
             "compare": "<="
         }
     ]
