@@ -26,6 +26,51 @@ pipeline {
             sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
           }
         }
+        stage('asap7 aes') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh aes asap7';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
+          }
+        }
+        stage('asap7 gcd') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh gcd asap7';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
+          }
+        }
+        stage('asap7 ibex') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh ibex asap7';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
+          }
+        }
         stage('nangate45 aes') {
           agent any;
           steps {
