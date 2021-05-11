@@ -282,6 +282,21 @@ pipeline {
             }
           }
         }
+        stage('sky130hd chameleon') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh chameleon sky130hd';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
+          }
+        }
         stage('sky130 hd gcd') {
           agent any;
           steps {
