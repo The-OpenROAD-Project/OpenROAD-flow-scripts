@@ -12,57 +12,17 @@
         },
         {
             "field": "placeopt__area__instance__area",
-            "value": 284916,
+            "value": 286194,
             "compare": "<="
         },
         {
             "field": "placeopt__area__instance__count",
-            "value": 34251,
+            "value": 34267,
             "compare": "<="
         },
         {
-            "field": "cts__timing__tns__total__pre_repair",
-            "value": -47,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__wns__worst__pre_repair",
-            "value": -21,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__ws__worst__pre_repair",
-            "value": -21,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__tns__total",
-            "value": -143,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__wns__worst",
-            "value": -21,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__ws__worst",
-            "value": -21,
-            "compare": ">="
-        },
-        {
-            "field": "globalroute__timing__tns__total",
-            "value": -230,
-            "compare": ">="
-        },
-        {
-            "field": "globalroute__timing__ws__worst",
-            "value": -21,
-            "compare": ">="
-        },
-        {
             "field": "detailedroute__wirelength",
-            "value": 1816491,
+            "value": 1888002,
             "compare": "<="
         },
         {

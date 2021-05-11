@@ -21,31 +21,6 @@
             "compare": "<="
         },
         {
-            "field": "cts__timing__tns__total",
-            "value": -250,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__wns__worst",
-            "value": -250,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__ws__worst",
-            "value": 25,
-            "compare": "<="
-        },
-        {
-            "field": "globalroute__timing__tns__total",
-            "value": -250,
-            "compare": ">="
-        },
-        {
-            "field": "globalroute__timing__ws__worst",
-            "value": 25,
-            "compare": "<="
-        },
-        {
             "field": "detailedroute__wirelength",
             "value": 802011,
             "compare": "<="
