@@ -21,48 +21,8 @@
             "compare": "<="
         },
         {
-            "field": "cts__timing__tns__total__pre_repair",
-            "value": -250,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__wns__worst__pre_repair",
-            "value": -250,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__ws__worst__pre_repair",
-            "value": 1180,
-            "compare": "<="
-        },
-        {
-            "field": "cts__timing__tns__total",
-            "value": -6716,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__wns__worst",
-            "value": -1076,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__ws__worst",
-            "value": -1076,
-            "compare": ">="
-        },
-        {
-            "field": "globalroute__timing__tns__total",
-            "value": -14274,
-            "compare": ">="
-        },
-        {
-            "field": "globalroute__timing__ws__worst",
-            "value": -619,
-            "compare": ">="
-        },
-        {
             "field": "detailedroute__wirelength",
-            "value": 6819951,
+            "value": 6847270,
             "compare": "<="
         },
         {
