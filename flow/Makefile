@@ -246,7 +246,7 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 build_macros:  $(BLOCK_LEFS)
 
 $(BLOCK_LEFS): $(BLOCK_CONFIGS)
-	make DESIGN_CONFIG=$? generate_abstract 
+	make DESIGN_CONFIG=$< generate_abstract 
 
 $(BLOCK_GDS): $(BLOCK_CONFIGS)
 	make DESIGN_CONFIG=$< generate_abstract
