@@ -447,10 +447,10 @@ else
 endif
 
 $(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
+	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" > $@
 ifeq ($(USE_WXL),)
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
 endif
-	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" >> $@
 	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NUM_CORES)" >> $@
