@@ -33,25 +33,24 @@ export ADDITIONAL_GDS  = $(OPENRAMS_DIR)/sky130_sram_1rw1r_80x64_8/sky130_sram_1
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_44x64_8/sky130_sram_1rw1r_44x64_8.gds \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_64x256_8/sky130_sram_1rw1r_64x256_8.gds
 
-export ADDITIONAL_LEFS = \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__gpiov2_pad_wrapped.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__com_bus_slice_10um.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__com_bus_slice_1um.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__com_bus_slice_20um.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__com_bus_slice_5um.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__corner_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vccd_hvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vccd_lvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vdda_hvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vdda_lvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vddio_hvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vddio_lvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vssa_hvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vssa_lvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vssd_hvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vssd_lvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vssio_hvc_pad.lef \
-                         $(SKY130_EF_PDK)/custom/sky130_fd_io/lef/sky130_ef_io__vssio_lvc_pad.lef \
+export ADDITIONAL_LEFS = $(IO_DIR)/lef/sky130_ef_io__gpiov2_pad_wrapped.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__com_bus_slice_10um.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__com_bus_slice_1um.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__com_bus_slice_20um.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__com_bus_slice_5um.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__corner_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vccd_hvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vccd_lvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vdda_hvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vdda_lvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vddio_hvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vddio_lvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vssa_hvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vssa_lvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vssd_hvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vssd_lvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vssio_hvc_pad.lef \
+                         $(IO_DIR)/lef/sky130_ef_io__vssio_lvc_pad.lef \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_80x64_8/sky130_sram_1rw1r_80x64_8.lef \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_128x256_8/sky130_sram_1rw1r_128x256_8.lef \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_44x64_8/sky130_sram_1rw1r_44x64_8.lef \

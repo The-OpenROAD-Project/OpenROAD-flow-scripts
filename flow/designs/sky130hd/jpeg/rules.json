@@ -1,0 +1,44 @@
+{
+    "rules": [
+        {
+            "field": "synth__area__stdcell__count",
+            "value": 57644,
+            "compare": "=="
+        },
+        {
+            "field": "constraints__clocks__count",
+            "value": 1,
+            "compare": "=="
+        },
+        {
+            "field": "placeopt__area__instance__area",
+            "value": 803592,
+            "compare": "<="
+        },
+        {
+            "field": "placeopt__area__instance__count",
+            "value": 175854,
+            "compare": "<="
+        },
+        {
+            "field": "detailedroute__wirelength",
+            "value": 2591314,
+            "compare": "<="
+        },
+        {
+            "field": "detailedroute__errors__count",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "detailedroute__drc__error__count",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__area",
+            "value": 11104225,
+            "compare": "<="
+        }
+    ]
+}
