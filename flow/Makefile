@@ -131,6 +131,16 @@ export SCRIPTS_DIR = ./scripts
 export UTILS_DIR   = ./util
 export TEST_DIR    = ./test
 
+ifdef BLOCKS
+$(info [INFO][FLOW] Hierarichal flow is invoked)
+$(foreach block,$(BLOCKS),$(info following block is to be hardened :  ${block}))
+$(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(block)/config.mk))
+$(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/$(DESIGN_NICKNAME)_$(block).lef))
+$(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
+export ADDITIONAL_LEFS += $(BLOCK_LEFS)
+export ADDITIONAL_GDS += $(BLOCK_GDS)
+endif
+
 # Tool Options
 SHELL = /bin/bash -o pipefail
 
@@ -184,20 +194,18 @@ else
 	SEAL_GDSOAS = $(SEAL_OAS)
 endif
 export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
+ 
+ 
+# Targets to harden Blocks in case of hierarchical flow is triggered  
+build_macros:  $(BLOCK_LEFS)
 
+$(BLOCK_LEFS): $(BLOCK_CONFIGS)
+	make DESIGN_CONFIG=$? generate_abstract 
 
+$(BLOCK_GDS): $(BLOCK_CONFIGS)
+	make DESIGN_CONFIG=$< generate_abstract
 
-ifdef BLOCKS
-$(info [INFO][FLOW] Hierarichal flow is invoked)
-$(foreach block,$(BLOCKS),$(info following block ist to be hardened :  ${block}))
-endif
-
-build_macros: $(BLOCKS)
-
-$(BLOCKS): 
-	make DESIGN_CONFIG=./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$@/config.mk generate_abstract
-
-
+	
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
 versions.txt:
@@ -542,9 +550,8 @@ $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_1_fill.sdc
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
-generate_abstract: $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
+generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
-
 
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------

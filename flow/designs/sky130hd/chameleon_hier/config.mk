@@ -41,29 +41,18 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/rtl/acc/AHB_SPM.v \
 					   
 export MACRO_PLACE_CHANNEL  = 160 160
 export MACRO_PLACE_HALO = 2 2
-#export DIE_AREA    = 0.0 0.0 5800 5800
-#export CORE_AREA   = 200 200 5600 5600
 export DIE_AREA    = 0.0 0.0 6800 6800
 export CORE_AREA   = 200 200 6600 6600
 export SDC_FILE          = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 
+
 export MACRO_PLACEMENT = ./designs/sky130hd/$(DESIGN_NICKNAME)/macro_placment.cfg
 
+
 #export ADDITIONAL_LIBS = $(IO_DIR)/lib/sky130_dummy_io.lib
-
-			 
-export ADDITIONAL_LEFS = \
-			 ./results/sky130hd/$(DESIGN_NICKNAME)_DFFRAM_4K/$(DESIGN_NICKNAME)_DFFRAM_4K.lef \
-			 ./results/sky130hd/$(DESIGN_NICKNAME)_DMC_32x16HC/$(DESIGN_NICKNAME)_DMC_32x16HC.lef \
-			 ./results/sky130hd/$(DESIGN_NICKNAME)_apb_sys_0/$(DESIGN_NICKNAME)_apb_sys_0.lef \
-			 ./results/sky130hd/$(DESIGN_NICKNAME)_ibex_wrapper/$(DESIGN_NICKNAME)_ibex_wrapper.lef 
-
-export ADDITIONAL_GDS = \
-			 ./results/sky130hd/$(DESIGN_NICKNAME)_DFFRAM_4K/6_final.gds \
-			 ./results/sky130hd/$(DESIGN_NICKNAME)_DMC_32x16HC/6_final.gds \
-			 ./results/sky130hd/$(DESIGN_NICKNAME)_apb_sys_0/6_final.gds \
-			 ./results/sky130hd/$(DESIGN_NICKNAME)_ibex_wrapper/6_final.gds 
+#export ADDITIONAL_LEFS = 
+#export ADDITIONAL_GDS = 
 			
 # These values must be multiples of placement site
 
