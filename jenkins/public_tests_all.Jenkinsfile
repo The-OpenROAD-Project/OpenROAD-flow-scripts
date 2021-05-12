@@ -2,9 +2,10 @@ pipeline {
   agent any;
   environment {
     COMMIT_AUTHOR_EMAIL= sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
+    MAKE_ISSUE = 1;
   }
   options {
-    timeout(time: 1, unit: 'HOURS');
+    timeout(time: 2, unit: 'HOURS');
   }
   stages {
     stage('Build') {
@@ -22,7 +23,52 @@ pipeline {
           agent any;
           steps {
             sh './build_openroad.sh';
-            sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts bash -c "source setup_env.sh && flow/test/test_helper.sh"';
+            sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
+          }
+        }
+        stage('asap7 aes') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh aes asap7';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
+          }
+        }
+        stage('asap7 gcd') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh gcd asap7';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
+          }
+        }
+        stage('asap7 ibex') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh ibex asap7';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('nangate45 aes') {
@@ -30,7 +76,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh aes nangate45';
-            stash name: 'nangate45_aes', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('nangate45 gcd') {
@@ -38,7 +91,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh gcd nangate45';
-            stash name: 'nangate45_gcd', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('nangate45 ibex') {
@@ -46,7 +106,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh ibex nangate45';
-            stash name: 'nangate45_ibex', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('nangate45 jpeg') {
@@ -54,7 +121,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh jpeg nangate45';
-            stash name: 'nangate45_jpeg', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('nangate45 swerv') {
@@ -62,7 +136,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh swerv nangate45';
-            stash name: 'nangate45_swerv', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('nangate45 tiny rocket') {
@@ -70,7 +151,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh tinyRocket nangate45';
-            stash name: 'nangate45_tinyRocket', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hd aes') {
@@ -78,7 +166,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh aes sky130hd';
-            stash name: 'sky130_hd_aes', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hd gcd') {
@@ -86,7 +181,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh gcd sky130hd';
-            stash name: 'sky130_hd_gcd', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hd ibex') {
@@ -94,7 +196,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh ibex sky130hd';
-            stash name: 'sky130_hd_ibex', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hd jpeg') {
@@ -102,7 +211,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh jpeg sky130hd';
-            stash name: 'sky130_hd_jpeg', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hs aes') {
@@ -110,7 +226,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh aes sky130hs';
-            stash name: 'sky130_hs_aes', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hs gcd') {
@@ -118,7 +241,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh gcd sky130hs';
-            stash name: 'sky130_hs_gcd', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hs ibex') {
@@ -126,7 +256,14 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh ibex sky130hs';
-            stash name: 'sky130_hs_ibex', includes: 'flow/reports/**/*';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hs jpeg') {
@@ -134,102 +271,20 @@ pipeline {
           steps {
             unstash 'build';
             sh 'flow/test/test_helper.sh jpeg sky130hs';
-            stash name: 'sky130_hs_jpeg', includes: 'flow/reports/**/*';
           }
-        }
-        stage('sky130 hd aes_ppa') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh aes sky130hd config_ppa.mk ppa';
-            stash name: 'sky130_hd_aes_ppa', includes: 'flow/reports/**/*';
-          }
-        }
-        stage('sky130 hd gcd_ppa') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh gcd sky130hd config_ppa.mk ppa';
-            stash name: 'sky130_hd_gcd_ppa', includes: 'flow/reports/**/*';
-          }
-        }
-        stage('sky130 hd ibex_ppa') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh ibex sky130hd config_ppa.mk ppa';
-            stash name: 'sky130_hd_ibex_ppa', includes: 'flow/reports/**/*';
-          }
-        }
-        stage('sky130 hd jpeg_ppa') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh jpeg sky130hd config_ppa.mk ppa';
-            stash name: 'sky130_hd_jpeg_ppa', includes: 'flow/reports/**/*';
-          }
-        }
-        stage('sky130 hs aes_ppa') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh aes sky130hs config_ppa.mk ppa';
-            stash name: 'sky130_hs_aes_ppa', includes: 'flow/reports/**/*';
-          }
-        }
-        stage('sky130 hs gcd_ppa') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh gcd sky130hs config_ppa.mk ppa';
-            stash name: 'sky130_hs_gcd_ppa', includes: 'flow/reports/**/*';
-          }
-        }
-        stage('sky130 hs ibex_ppa') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh ibex sky130hs config_ppa.mk ppa';
-            stash name: 'sky130_hs_ibex_ppa', includes: 'flow/reports/**/*';
-          }
-        }
-        stage('sky130 hs jpeg_ppa') {
-          agent any;
-          steps {
-            unstash 'build';
-            sh 'flow/test/test_helper.sh jpeg sky130hs config_ppa.mk ppa';
-            stash name: 'sky130_hs_jpeg_ppa', includes: 'flow/reports/**/*';
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
       }
     }
   }
   post {
-    always {
-      unstash 'nangate45_aes';
-      unstash 'nangate45_gcd';
-      unstash 'nangate45_ibex';
-      unstash 'nangate45_jpeg';
-      unstash 'nangate45_swerv';
-      unstash 'nangate45_tinyRocket';
-      unstash 'sky130_hd_aes';
-      unstash 'sky130_hd_gcd';
-      unstash 'sky130_hd_ibex';
-      unstash 'sky130_hd_jpeg';
-      unstash 'sky130_hs_aes';
-      unstash 'sky130_hs_gcd';
-      unstash 'sky130_hs_ibex';
-      unstash 'sky130_hs_jpeg';
-      unstash 'sky130_hd_aes_ppa';
-      unstash 'sky130_hd_gcd_ppa';
-      unstash 'sky130_hd_ibex_ppa';
-      unstash 'sky130_hd_jpeg_ppa';
-      unstash 'sky130_hs_aes_ppa';
-      unstash 'sky130_hs_gcd_ppa';
-      unstash 'sky130_hs_ibex_ppa';
-      unstash 'sky130_hs_jpeg_ppa';
-      archiveArtifacts artifacts: 'flow/reports/**/*';
-    }
     failure {
       script {
         if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'openroad' ) {
