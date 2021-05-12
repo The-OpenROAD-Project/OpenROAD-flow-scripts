@@ -2,8 +2,8 @@
     "rules": [
         {
             "field": "synth__area__stdcell__count",
-            "value": 113101,
-            "compare": "=="
+            "value": 130066,
+            "compare": "<="
         },
         {
             "field": "constraints__clocks__count",
