@@ -11,15 +11,9 @@ $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
 	$(UTILS_DIR)/genMetrics.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -v $(FLOW_VARIANT) -o $@
 
 RULES_DESIGN = $(dir $(DESIGN_CONFIG))rules.json
-RULES_GLOBAL = $(UTILS_DIR)/rules-global.json
-GOLD_METADATA = $(dir $(DESIGN_CONFIG))metadata-$(FLOW_VARIANT)-ok.json
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
-	if test -f $(RULES_DESIGN); then \
-	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_GLOBAL) $(RULES_DESIGN) -g $(GOLD_METADATA) | tee $@; \
-	else \
-	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_GLOBAL)  -g $(GOLD_METADATA) | tee $@; \
-	fi
+	$(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) | tee $@; \
 
 
 # Run test using gnu parallel
