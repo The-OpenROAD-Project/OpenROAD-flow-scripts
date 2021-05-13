@@ -2,8 +2,8 @@
     "rules": [
         {
             "field": "synth__area__stdcell__count",
-            "value": 21972,
-            "compare": "=="
+            "value": 25268,
+            "compare": "<="
         },
         {
             "field": "constraints__clocks__count",
@@ -12,32 +12,32 @@
         },
         {
             "field": "placeopt__area__instance__area",
-            "value": 3755,
+            "value": 3455,
             "compare": "<="
         },
         {
             "field": "placeopt__area__instance__count",
-            "value": 24167,
+            "value": 27792,
             "compare": "<="
         },
         {
             "field": "detailedroute__wirelength",
-            "value": 195912,
+            "value": 180240,
             "compare": "<="
         },
         {
             "field": "detailedroute__errors__count",
             "value": 0,
-            "compare": "<="
+            "compare": "=="
         },
         {
             "field": "detailedroute__drc__error__count",
             "value": 0,
-            "compare": "<="
+            "compare": "=="
         },
         {
             "field": "finish__area",
-            "value": 18208,
+            "value": 16751,
             "compare": "<="
         }
     ]
