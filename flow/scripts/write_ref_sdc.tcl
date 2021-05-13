@@ -13,6 +13,7 @@ if { [llength $clks] > 1 } {
   set ref_period [expr ($period - $slack) * (1.0 - $margin/100.0)]
   set clk_name [get_name $clk]
   puts "\[INFO FLW\] Clock $clk_name period [format %.2f $period] -> [format %.2f $ref_period]"
+  puts "\[INFO FLW\] Clock $clk_name slack [format %.2f $slack]"
   set sources [$clk sources]
   create_clock -name $clk_name -period $ref_period $sources
   # Undo the set_propagated_clock so SDC at beginning of flow uses ideal clocks.
