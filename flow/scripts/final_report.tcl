@@ -40,12 +40,18 @@ write_verilog $::env(RESULTS_DIR)/6_final.v
 # Run extraction and STA
 if {[info exist ::env(RCX_RULES)]} {
   
+  # Set RC corner for RCX
+  # Set in config.mk
+  if {[info exist ::env(RCX_RC_CORNER)]} {
+    set rc_corner $::env(RCX_RC_CORNER)
+  }
+
   # Set via resistances
   source $::env(PLATFORM_DIR)/setRC.tcl
 
   # RCX section
   define_process_corner -ext_model_index 0 X
-  extract_parasitics -ext_model_file $::env(PLATFORM_DIR)/rcx_patterns.rules
+  extract_parasitics -ext_model_file $::env(RCX_RULES)
   
   # Write Spef
   write_spef $::env(RESULTS_DIR)/6_final.spef
