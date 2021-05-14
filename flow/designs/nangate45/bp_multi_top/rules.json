@@ -21,6 +21,11 @@
             "compare": "<="
         },
         {
+            "field": "globalroute__timing__clock__slack",
+            "value": -5.87,
+            "compare": ">="
+        },
+        {
             "field": "detailedroute__wirelength",
             "value": 6606104,
             "compare": "<="

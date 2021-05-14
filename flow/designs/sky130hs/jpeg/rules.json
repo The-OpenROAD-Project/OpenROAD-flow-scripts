@@ -12,17 +12,22 @@
         },
         {
             "field": "placeopt__area__instance__area",
-            "value": 1072552,
+            "value": 1074149,
             "compare": "<="
         },
         {
             "field": "placeopt__area__instance__count",
-            "value": 216824,
+            "value": 216866,
             "compare": "<="
         },
         {
+            "field": "globalroute__timing__clock__slack",
+            "value": -1.33,
+            "compare": ">="
+        },
+        {
             "field": "detailedroute__wirelength",
-            "value": 4001018,
+            "value": 3906571,
             "compare": "<="
         },
         {
