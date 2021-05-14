@@ -12,7 +12,7 @@
         },
         {
             "field": "placeopt__area__instance__area",
-            "value": 469,
+            "value": 466,
             "compare": "<="
         },
         {
@@ -21,8 +21,13 @@
             "compare": "<="
         },
         {
+            "field": "globalroute__timing__clock__slack",
+            "value": -32.25,
+            "compare": ">="
+        },
+        {
             "field": "detailedroute__wirelength",
-            "value": 4837,
+            "value": 4602,
             "compare": "<="
         },
         {
