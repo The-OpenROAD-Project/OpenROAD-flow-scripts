@@ -186,10 +186,11 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
+.PHONY: versions.txt
 versions.txt:
-	@yosys -V > $(abspath $@)
-	@echo openroad `openroad -version` >> $(abspath $@)
-	@klayout -zz -v >> $(abspath $@)
+	@yosys -V > $@
+	@echo openroad `$(firstword $(OPENROAD_CMD)) -version` >> $@
+	@klayout -zz -v >> $@
 
 # Pre-process Lefs
 # ==============================================================================
