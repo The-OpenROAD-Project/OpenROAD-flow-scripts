@@ -44,5 +44,7 @@ else
   export CORE_AREA              = 1.08 1.08 15.12 15.12
 endif
 
+# Adders degrade GCD
+export ADDER_MAP_FILE              :=
 
 export DESIGN_DIR DESIGN_PDK_HOME

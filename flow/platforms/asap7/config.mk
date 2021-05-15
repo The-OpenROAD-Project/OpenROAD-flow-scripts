@@ -31,6 +31,7 @@ export MAKE_TRACKS             = $(FOUNDRY_DIR)/openRoad/make_tracks.tcl
 export BLACKBOX_V_FILE         = $(FOUNDRY_DIR)/yoSys/asap7sc7p5t.blackbox.v
 export LATCH_MAP_FILE          = $(FOUNDRY_DIR)/yoSys/cells_latch.v
 export CLKGATE_MAP_FILE        = $(FOUNDRY_DIR)/yoSys/cells_clkgate.v
+export ADDER_MAP_FILE         ?= $(FOUNDRY_DIR)/yoSys/cells_adders.v
 export BLACKBOX_MAP_TCL        = $(FOUNDRY_DIR)/yoSys/blackbox_map.tcl
 
 export BC_LIB_FILES            = $(FOUNDRY_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_201020.lib \
