@@ -186,25 +186,11 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
+.PHONY: versions.txt
 versions.txt:
-	@yosys -V > $(abspath $@)
-	@echo openroad `openroad -version` >> $(abspath $@)
-	@klayout -zz -v >> $(abspath $@)
-
-# Pre-process Lefs
-# ==============================================================================
-
-# Modify lef files for TritonRoute
-$(OBJECTS_DIR)/merged_spacing.lef: $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
-	mkdir -p $(OBJECTS_DIR)
-	$(UTILS_DIR)/mergeLef.py --inputLef $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
-
-# Create special generic lef for TritonRoute if required.
-ifneq ($(GENERIC_TECH_LEF),)
-$(OBJECTS_DIR)/generic_merged_spacing.lef: $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
-	mkdir -p $(OBJECTS_DIR)
-	$(UTILS_DIR)/mergeLef.py --inputLef $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
-endif
+	@yosys -V > $@
+	@echo openroad `$(firstword $(OPENROAD_CMD)) -version` >> $@
+	@klayout -zz -v >> $@
 
 # Pre-process libraries
 # ==============================================================================
@@ -440,13 +426,8 @@ $(RESULTS_DIR)/route.guide: $(RESULTS_DIR)/4_cts.def $(FASTROUTE_TCL) $(PRE_GLOB
 
 # Generate param file for TritonRoute
 #-------------------------------------------------------------------------------
-ifneq ($(GENERIC_TECH_LEF),)
-  export TRITON_ROUTE_LEF := $(OBJECTS_DIR)/generic_merged_spacing.lef
-else
-  export TRITON_ROUTE_LEF := $(OBJECTS_DIR)/merged_spacing.lef
-endif
-
-$(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
+$(OBJECTS_DIR)/TritonRoute.param:
+	mkdir -p $(OBJECTS_DIR)
 	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" > $@
 ifeq ($(USE_WXL),)
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
