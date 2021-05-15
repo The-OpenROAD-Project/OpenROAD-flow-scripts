@@ -36,6 +36,7 @@ export MAX_FANOUT ?= 100
 # Yosys mapping files
 export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch_hs.v
 export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate_hs.v
+export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hs.v
 # 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
