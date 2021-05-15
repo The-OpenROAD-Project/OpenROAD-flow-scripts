@@ -1,6 +1,16 @@
 if {![info exists standalone] || $standalone} {
   # Read lef
-  read_lef $::env(TRITON_ROUTE_LEF)
+  if [info exists ::env(GENERIC_TECH_LEF)] {
+    read_lef $::env(GENERIC_TECH_LEF)
+  } else {
+    read_lef $::env(TECH_LEF)
+  }
+  read_lef $::env(SC_LEF)
+  if {[info exist ::env(ADDITIONAL_LEFS)]} {
+    foreach lef $::env(ADDITIONAL_LEFS) {
+      read_lef $lef
+    }
+  }
 
   # Read liberty files
   foreach libFile $::env(LIB_FILES) {
