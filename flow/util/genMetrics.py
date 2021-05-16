@@ -427,11 +427,11 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                       logPath+"/5_1_fastroute.log")
 
     extractTagFromFile("globalroute__timing__clock__slack", metrics_dict,
-                      "^\[INFO FLW\] Clock .* slack (\S+)",
+                      "^\[INFO FLW-....\] Clock .* slack (\S+)",
                       logPath+"/5_1_fastroute.log")
 
     extractTagFromFile("globalroute__timing__clock__period", metrics_dict,
-                      "^\[INFO FLW\] Clock .* period (\S+) .*",
+                      "^\[INFO FLW-....\] Clock .* period (\S+) .*",
                       logPath+"/5_1_fastroute.log")
 
     extractGnuTime("globalroute", metrics_dict, logPath+"/5_1_fastroute.log")
