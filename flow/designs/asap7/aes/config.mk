@@ -33,7 +33,7 @@ export DESIGN_PDK_HOME
 
 export CORNER                ?= BC
 
-export PLACE_DENSITY          = 0.30
+export PLACE_DENSITY          = 0.40
 
 export PDN_CFG                = $(FOUNDRY_DIR)/openRoad/pdn/grid_strategy-M2-M5-M7.cfg
 

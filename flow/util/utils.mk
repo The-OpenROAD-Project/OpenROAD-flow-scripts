@@ -11,15 +11,9 @@ $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
 	$(UTILS_DIR)/genMetrics.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -v $(FLOW_VARIANT) -o $@
 
 RULES_DESIGN = $(dir $(DESIGN_CONFIG))rules.json
-RULES_GLOBAL = $(UTILS_DIR)/rules-global.json
-GOLD_METADATA = $(dir $(DESIGN_CONFIG))metadata-$(FLOW_VARIANT)-ok.json
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
-	if test -f $(RULES_DESIGN); then \
-	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_GLOBAL) $(RULES_DESIGN) -g $(GOLD_METADATA) | tee $@; \
-	else \
-	  $(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_GLOBAL)  -g $(GOLD_METADATA) | tee $@; \
-	fi
+	$(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) | tee $@; \
 
 
 # Run test using gnu parallel
@@ -43,10 +37,9 @@ clean_test:
 #-------------------------------------------------------------------------------
 ISSUE_TAG ?= $(DESIGN_NICKNAME)_$(PLATFORM)_$(FLOW_VARIANT)_$(shell date +"%Y-%m-%d_%H-%M")
 ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(sort $(wildcard $(SCRIPTS_DIR)/*.tcl))))
-ISSUE_CP_FILE_VARS = GENERIC_TECH_LEF \
-                     IP_GLOBAL_CFG LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
+ISSUE_CP_FILE_VARS = LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
                      TRACKS_INFO_FILE SDC_FILE VERILOG_FILES TAPCELL_TCL CACHED_NETLIST \
-                     FOOTPRINT SIG_MAP_FILE PDN_CFG ADDITIONAL_LEFS SETRC_FILE
+                     FOOTPRINT SIG_MAP_FILE PDN_CFG ADDITIONAL_LEFS
 
 VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT)
 RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT).sh
@@ -68,10 +61,11 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	     ) \
 	)
 	# remove variables starting with a dot
-	@sed -i '/export \./d' $(VARS_BASENAME).sh
-	@sed -i '/set env(\./d' $(VARS_BASENAME).tcl
-	@sed -i '/set env \./d' $(VARS_BASENAME).gdb
+	@sed -i -e '/export \./d' $(VARS_BASENAME).sh
+	@sed -i -e '/set env(\./d' $(VARS_BASENAME).tcl
+	@sed -i -e '/set env \./d' $(VARS_BASENAME).gdb
 
+# This requires gnu-tar to support --xform
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
 	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
 	    --xform='s|^|$*_$(ISSUE_TAG)/|S' \
@@ -136,3 +130,8 @@ command:
 ifdef GDB
 OPENROAD_CMD := gdb --args $(OPENROAD_CMD)
 endif
+
+# Update the clock period sdc based on the worst slack reported by the final
+# (post global route) timing.
+update_sdc_clocks: $(RESULTS_DIR)/route.guide
+	cp $(RESULTS_DIR)/updated_clks.sdc $(SDC_FILE)

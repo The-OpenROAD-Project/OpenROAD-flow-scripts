@@ -16,9 +16,6 @@ export GDS_FILES = $(wildcard $(PLATFORM_DIR)/gds/*.gds) \
 # Specify at least one filler cell if none
 export DONT_USE_CELLS += 
 
-# Define Hold Buffer
-export HOLD_BUF_CELL = sky130_fd_sc_hs__buf_1
-
 # Define fill cells
 export FILL_CELLS = sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc_hs__fill_4 sky130_fd_sc_hs__fill_8
 
@@ -39,6 +36,7 @@ export MAX_FANOUT ?= 100
 # Yosys mapping files
 export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch_hs.v
 export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate_hs.v
+export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hs.v
 # 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1

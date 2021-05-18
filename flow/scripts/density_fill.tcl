@@ -15,7 +15,7 @@ if {![info exists standalone] || $standalone} {
 }
 
 # Delete routing obstructions for final DEF
-source scripts/deleteRoutingObstructions.tcl
+source $::env(SCRIPTS_DIR)/deleteRoutingObstructions.tcl
 deleteRoutingObstructions
 
 density_fill -rules $::env(FILL_CONFIG)

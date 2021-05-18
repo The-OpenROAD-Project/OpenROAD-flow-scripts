@@ -58,7 +58,11 @@ if {[info exists ::env(FOOTPRINT)]} {
                        -site $::env(PLACE_SITE)
 }
 
-source $::env(PLATFORM_DIR)/make_tracks.tcl
+if { [info exists ::env(MAKE_TRACKS)] } {
+  source $::env(MAKE_TRACKS)
+} else {
+  source $::env(PLATFORM_DIR)/make_tracks.tcl
+}
 
 # If wrappers defined replace macros with their wrapped version
 # # ----------------------------------------------------------------------------
@@ -105,13 +109,6 @@ report_design_area
 
 # remove buffers inserted by yosys/abc
 remove_buffers
-
-puts "\n=========================================================================="
-puts "report_design_area after buffer removal"
-puts "--------------------------------------------------------------------------"
-report_design_area
-report_worst_slack
-
 
 if {![info exists standalone] || $standalone} {
   # write output
