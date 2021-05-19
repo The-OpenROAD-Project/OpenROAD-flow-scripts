@@ -190,8 +190,7 @@ endif
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)
 ifeq ($(KLAYOUT_CMD),)
-  KLAYOUT_CMD            = /home/tool/klayout/install/0.26.5/bin/klayout
-  $(eval export LD_LIBRARY_PATH = $(LD_LIBRARY_PATH):/home/tool/klayout/install/0.26.5/lib64/klayout)
+  $(error KLayout (klayout) command not found)
 endif
 
 #-------------------------------------------------------------------------------
