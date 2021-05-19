@@ -1,5 +1,5 @@
 
-## OpenROAD-flow
+## OpenROAD-flow-scripts
 ![alt text](docs/flow.png "flow")
 <!-- Original source at: https://docs.google.com/drawings/d/1XGPD7g_X3Pna87XtBf6EB_kCXerGPSeKEWGPO_Q-Sb4 -->
 
@@ -37,14 +37,14 @@ and limitations, but it will take time.
 
 
 ## Platforms
-OpenROAD-flow supports Verilog to GDS for the following open platforms:
+OpenROAD-flow-scripts supports Verilog to GDS for the following open platforms:
 * Nangate45 / FreePDK45
 
 These platforms have a permissive license which allows us to redistribute the
 PDK and OpenROAD platform-specific files. The platform files and license(s) are
 located in `platforms/{platform}`.
 
-OpenROAD-flow also supports the following commercial platforms:
+OpenROAD-flow-scripts also supports the following commercial platforms:
 * TSMC65LP
 * GF14 (in progress)
 
@@ -58,7 +58,7 @@ about the design. See sample configurations in the `design` directory.
 
 ### Adding a New Platform
 At this time, we recommend looking at [`nangate45`](platforms/nangate45) as an
-example of how to set up a new platform for OpenROAD-flow.
+example of how to set up a new platform for OpenROAD-flow-scripts.
 
 ## Implement the Design
 Run `make` to perform Verilog to GDS. The final output will be located at

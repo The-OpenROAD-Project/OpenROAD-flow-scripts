@@ -5,18 +5,16 @@
 # information in specific files using regular expressions
 #-------------------------------------------------------------------------------
 
-import argparse  # argument parsing
-import json  # json parsing
-import pandas as pd
-import subprocess
-import sys
-import re
-import os  # filesystem manipulation
-import datetime
-import uuid
-import platform
-from collections import OrderedDict
+import os
+from sys import exit
+from datetime import datetime, timedelta
+from uuid import uuid4 as uuid
+from subprocess import check_output, call, STDOUT
 
+import argparse
+import json
+import pandas as pd
+import re
 
 # Parse and validate arguments
 # ==============================================================================
@@ -26,9 +24,11 @@ def parse_args():
   parser.add_argument('--flowPath', '-f', required=False, default="./",
                       help='Path to the flow directory')
   parser.add_argument('--design', '-d', required=False, default="all_designs",
-                      help='Path to the flow directory')
+                      help='Design Name for metrics')
+  parser.add_argument('--flowVariant', '-v', required=False, default="base",
+                      help='FLOW_VARIANT for the design')
   parser.add_argument('--platform', '-p', required=False, default="nangage45",
-                      help='Path to the flow directory')
+                      help='Design Platform')
   parser.add_argument('--comment', '-c', required=False, default="",
                       help='Additional comments to embed')
   parser.add_argument('--output', '-o', required=False, default="metadata.json",
@@ -38,7 +38,7 @@ def parse_args():
   if not os.path.isdir(args.flowPath):
     print("Error: flowPath does not exist")
     print("Path: " + args.flowPath)
-    sys.exit(1)
+    exit(1)
 
   return args
 
@@ -90,7 +90,7 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False, occurrence
     jsonFile[jsonTag] = "ERR"
 
 
-def extractGnuTime(prefix, file, jsonFile):
+def extractGnuTime(prefix, jsonFile, file):
   extractTagFromFile(prefix + "__runtime__total", jsonFile,
                      "^(\S+)elapsed \S+CPU \S+memKB",
                      file)
@@ -107,7 +107,13 @@ def extractGnuTime(prefix, file, jsonFile):
 # Need to extract these from native json
 #
 def get_skew_latency(file_name):
-  f = open(file_name, 'r')
+  f = None
+  try:
+    f = open(file_name, 'r')
+  except IOError:
+    print("[WARN] Failed to open file:", file_name)
+    return ("ERR","ERR","ERR")
+
   lines = f.readlines()
   f.close()
 
@@ -115,12 +121,11 @@ def get_skew_latency(file_name):
   latency_max = latency_min = skew = 0.0
   worst_latency_max = worst_latency_min = worst_skew = 0.0
 
-
   for line in lines:
     if len(line.split())<1:
       continue
     if line.startswith('Latency'):
-      latency_section = True 
+      latency_section = True
       continue
     if latency_section and len(line.split())==1:
       latency_max = float(line.split()[0])
@@ -142,11 +147,18 @@ def get_skew_latency(file_name):
 #  Extract clock info from sdc file
 #
 def read_sdc(file_name):
-  sdcFile = open(file_name, 'r')
+  clkList = []
+  sdcFile = None
+
+  try:
+    sdcFile = open(file_name, 'r')
+  except IOError:
+    print("[WARN] Failed to open file:", file_name)
+    return clkList
+
   lines = sdcFile.readlines()
   sdcFile.close()
 
-  clkList = []
   for line in lines:
     if len(line.split())<2:
       continue
@@ -167,24 +179,49 @@ def read_sdc(file_name):
 # Main
 # ==============================================================================
 
-def extract_metrics(cwd, platform, design, output):
-    logPath = os.path.join(cwd, "logs", platform, design)
-    rptPath = os.path.join(cwd, "reports", platform, design)
-    resultPath = os.path.join(cwd, "results", platform, design)
+def is_git_repo(folder=None):
+    cmd = ["git", "branch"]
+    if folder is not None:
+        return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w'), cwd=folder) == 0
+    else:
+        return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w')) == 0
+
+def extract_metrics(cwd, platform, design, flow_variant, output):
+    logPath = os.path.join(cwd, "logs", platform, design, flow_variant)
+    rptPath = os.path.join(cwd, "reports", platform, design, flow_variant)
+    resultPath = os.path.join(cwd, "results", platform, design, flow_variant)
 
     metrics_dict = {}
     metrics_dict["run__flow__generate__date"] = now.strftime("%Y-%m-%d %H:%M")
-    cmdOutput = subprocess.check_output(['openroad', '-version'])
-    cmdFields = cmdOutput.split()
+    cmdOutput = check_output(['openroad', '-version'])
     cmdFields = [ x.decode('utf-8') for x in cmdOutput.split()  ]
     metrics_dict["run__flow__openroad__version"] = str(cmdFields[0])
-    if (len(cmdFields) > 1):
+    if len(cmdFields) > 1:
       metrics_dict["run__flow__openroad__commit"] = str(cmdFields[1])
     else:
       metrics_dict["run__flow__openroad__commit"] = "N/A"
-    metrics_dict["run__flow__uuid"] = str(uuid.uuid4())
+    if is_git_repo():
+        cmdOutput = check_output(['git', 'rev-parse', 'HEAD'])
+        cmdOutput = cmdOutput.decode('utf-8').strip()
+    else:
+        cmdOutput = 'not a git repo'
+        print('[WARN]', cmdOutput)
+    metrics_dict["run__flow__scripts__commit"] = cmdOutput
+    metrics_dict["run__flow__uuid"] = str(uuid())
     metrics_dict["run__flow__design"] = design
     metrics_dict["run__flow__platform"] = platform
+    platformDir = os.environ.get('PLATFORM_DIR')
+    if platformDir is None:
+        print('[INFO]', 'PLATFORM_DIR env variable not set')
+        cmdOutput = 'N/A'
+    elif is_git_repo(folder=platformDir):
+        cmdOutput = check_output(['git', 'rev-parse', 'HEAD'], cwd=platformDir)
+        cmdOutput = cmdOutput.decode('utf-8').strip()
+    else:
+        print('[WARN]', 'not a git repo')
+        cmdOutput = 'N/A'
+    metrics_dict["run__flow__platform__commit"] = cmdOutput
+    metrics_dict["run__flow__variant"] = flow_variant
 
 # Synthesis
 # ==============================================================================
@@ -196,6 +233,8 @@ def extract_metrics(cwd, platform, design, output):
     extractTagFromFile("synth__area__stdcell__area", metrics_dict,
                        "Chip area for module.*: +(\S+)",
                        rptPath+"/synth_stat.txt")
+
+    extractGnuTime("synth", metrics_dict, logPath+"/1_1_yosys.log")
 
 # Clocks
 #===============================================================================
@@ -235,6 +274,8 @@ def extract_metrics(cwd, platform, design, output):
                        "Extracted # Macros: (\S+)",
                        logPath+"/2_4_mplace.log", defaultNotFound=0)
 
+    extractGnuTime("floorplan", metrics_dict, logPath+"/2_4_mplace.log")
+
 # Place
 # ==============================================================================
 
@@ -253,6 +294,8 @@ def extract_metrics(cwd, platform, design, output):
     extractTagFromFile("globalplace__timing__wns__worst", metrics_dict,
                       "^wns (\S+)",
                       logPath+"/3_1_place_gp.log")
+
+    extractGnuTime("globalplace", metrics_dict, logPath+"/3_1_place_gp.log")
 
     extractTagFromFile("placeopt__area__inbuffer__count", metrics_dict,
                        "Inserted (\d+) input buffers",
@@ -290,6 +333,8 @@ def extract_metrics(cwd, platform, design, output):
                        "^instance_count\n-*\n^(\S+)",
                        logPath+"/3_3_resizer.log")
 
+    extractGnuTime("placeopt", metrics_dict, logPath+"/3_3_resizer.log")
+
     extractTagFromFile("detailedplace__timing__tns__total", metrics_dict,
                        "^tns (\S+)",
                        logPath+"/3_4_opendp.log")
@@ -322,29 +367,52 @@ def extract_metrics(cwd, platform, design, output):
                        "legalized HPWL +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log")
 
+    extractGnuTime("detailedplace", metrics_dict, logPath+"/3_4_opendp.log")
+
 # CTS
 # ==============================================================================
 
     latency_max,latency_min,skew = get_skew_latency(logPath+"/4_1_cts.log")
-    #print(f'skew = {skew}, latency_max = {latency_max}, latency_min = {latency_min}')
     metrics_dict['cts__timing__latency__min'] = latency_min
     metrics_dict['cts__timing__latency__max'] = latency_max
     metrics_dict['cts__timing__skew__worst'] = skew
 
+    extractTagFromFile("cts__timing__tns__total__pre_repair", metrics_dict,
+                       "^post cts-pre-repair.*report_tns\n^-*\n^tns (\S+)",
+                       logPath+"/4_1_cts.log")
+
+    extractTagFromFile("cts__timing__wns__worst__pre_repair", metrics_dict,
+                       "^post cts-pre-repair.*report_wns\n^-*\n^wns (\S+)",
+                       logPath+"/4_1_cts.log")
+
+    extractTagFromFile("cts__timing__ws__worst__pre_repair", metrics_dict,
+                       "^post cts-pre-repair.*report_wns\n^-*\n^.*\n^worst slack (\S+)",
+                       logPath+"/4_1_cts.log")
+
     extractTagFromFile("cts__timing__tns__total", metrics_dict,
-                       "^tns (\S+)",
+                       "^post cts.*report_tns\n^-*\n^tns (\S+)",
                        logPath+"/4_1_cts.log")
 
     extractTagFromFile("cts__timing__wns__worst", metrics_dict,
-                       "^wns (\S+)",
+                       "^post cts.*report_wns\n^-*\n^wns (\S+)",
                        logPath+"/4_1_cts.log")
 
     extractTagFromFile("cts__timing__ws__worst", metrics_dict,
-                       "^worst slack (\S+)",
+                       "^post cts.*report_wns\n^-*\n^.*\n^worst slack (\S+)",
+                       logPath+"/4_1_cts.log")
+
+    extractTagFromFile("cts_hold_buffer_count", metrics_dict,
+                       "Inserted (\d+) hold buffers",
                        logPath+"/4_1_cts.log")
 
 # Route
 # ==============================================================================
+
+    latency_max,latency_min,skew = get_skew_latency(logPath+"/5_1_fastroute.log")
+    #print(f'skew = {skew}, latency_max = {latency_max}, latency_min = {latency_min}')
+    metrics_dict['globalroute__timing__latency__min'] = latency_min
+    metrics_dict['globalroute__timing__latency__max'] = latency_max
+    metrics_dict['globalroute__timing__skew__worst'] = skew
 
     extractTagFromFile("globalroute__timing__tns__total", metrics_dict,
                       "^tns (\S+)",
@@ -357,6 +425,16 @@ def extract_metrics(cwd, platform, design, output):
     extractTagFromFile("globalroute__timing__ws__worst", metrics_dict,
                       "^worst slack (\S+)",
                       logPath+"/5_1_fastroute.log")
+
+    extractTagFromFile("globalroute__timing__clock__slack", metrics_dict,
+                      "^\[INFO FLW-....\] Clock .* slack (\S+)",
+                      logPath+"/5_1_fastroute.log")
+
+    extractTagFromFile("globalroute__timing__clock__period", metrics_dict,
+                      "^\[INFO FLW-....\] Clock .* period (\S+) .*",
+                      logPath+"/5_1_fastroute.log")
+
+    extractGnuTime("globalroute", metrics_dict, logPath+"/5_1_fastroute.log")
 
     extractTagFromFile("detailedroute__wirelength", metrics_dict,
                        "total wire length = +(\S+) um",
@@ -375,6 +453,8 @@ def extract_metrics(cwd, platform, design, output):
                        "(?i)violation",
                        rptPath+"/5_route_drc.rpt",
                        count=True, defaultNotFound=0)
+
+    extractGnuTime("detailedroute", metrics_dict, logPath+"/5_2_TritonRoute.log")
 
 # Finish
 # ==============================================================================
@@ -403,30 +483,32 @@ def extract_metrics(cwd, platform, design, output):
                       "^Design area.* (\S+)% utilization",
                        logPath+"/6_report.log")
 
+    extractGnuTime("finish", metrics_dict, logPath+"/6_report.log")
+
 # Accumulate time
 # ==============================================================================
 
     failed = False
-    total = datetime.timedelta()
+    total = timedelta()
     for key in metrics_dict:
-      if key.endswith("_time"):
+      if key.endswith("__runtime__total"):
         # Big try block because Hour and microsecond is optional
         try:
-          t = datetime.datetime.strptime(metrics_dict[key],"%H:%M:%S.%f")
+          t = datetime.strptime(metrics_dict[key],"%H:%M:%S.%f")
         except ValueError:
           try:
-            t = datetime.datetime.strptime(metrics_dict[key],"%M:%S.%f")
+            t = datetime.strptime(metrics_dict[key],"%M:%S.%f")
           except ValueError:
             try:
-              t = datetime.datetime.strptime(metrics_dict[key],"%H:%M:%S")
+              t = datetime.strptime(metrics_dict[key],"%H:%M:%S")
             except ValueError:
               try:
-                t = datetime.datetime.strptime(metrics_dict[key],"%M:%S")
+                t = datetime.strptime(metrics_dict[key],"%M:%S")
               except ValueError:
                 failed = True
                 break
 
-        delta = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
+        delta = timedelta(hours=t.hour, minutes=t.minute, seconds=t.second, microseconds=t.microsecond)
         total += delta
 
     if failed:
@@ -445,7 +527,7 @@ def extract_metrics(cwd, platform, design, output):
 
 
 args = parse_args()
-now = datetime.datetime.now()
+now = datetime.now()
 
 if args.design == "all_designs":
     print("List of designs")
@@ -453,6 +535,7 @@ if args.design == "all_designs":
 
     all_metrics_df = pd.DataFrame()
     all_metrics = []
+    flow_variants = args.flowVariant.split()
 
     cwd = os.getcwd()
     for platform_it in os.scandir(rootdir):
@@ -460,15 +543,16 @@ if args.design == "all_designs":
             plt = platform_it.name
             for design_it in os.scandir(platform_it.path):
                 if design_it.is_dir():
-                    des = design_it.name
-                    print(plt,des)
-                    design_metrics, design_metrics_df = extract_metrics(cwd, plt, des,
-                                        os.path.join(".", "reports", plt, des, "metrics.json"))
-                    all_metrics.append(design_metrics)
-                    if all_metrics_df.shape[0] == 0:
-                        all_metrics_df = design_metrics_df
-                    else:
-                        all_metrics_df = all_metrics_df.merge(design_metrics_df,
+                    for variant in flow_variants:
+                        des = design_it.name
+                        print(plt, des, variant)
+                        design_metrics, design_metrics_df = extract_metrics(cwd, plt, des, variant,
+                                        os.path.join(".", "reports", plt, des, variant, "metrics.json"))
+                        all_metrics.append(design_metrics)
+                        if all_metrics_df.shape[0] == 0:
+                            all_metrics_df = design_metrics_df
+                        else:
+                            all_metrics_df = all_metrics_df.merge(design_metrics_df,
                                                     on = 'Metrics', how = 'inner')
 #
 # render to json and html
@@ -480,4 +564,4 @@ if args.design == "all_designs":
     metrics_html_file.write(metrics_html)
     metrics_html_file.close()
 else:
-    metrics_dict, metrics_df = extract_metrics(args.flowPath, args.platform, args.design, args.output)
+    metrics_dict, metrics_df = extract_metrics(args.flowPath, args.platform, args.design, args.flowVariant, args.output)

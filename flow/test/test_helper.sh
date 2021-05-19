@@ -1,25 +1,20 @@
-#!/bin/bash -ex
+#!/bin/bash
+
+set -eoux pipefail
 
 # Setting args (and setting default values for testing)
-DESIGN_CONFIG=${1:-gcd}
+DESIGN_NAME=${1:-gcd}
 PLATFORM=${2:-nangate45}
+CONFIG_MK=${3:-config.mk}
+FLOW_VARIANT=${4:-base}
+DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_NAME/$CONFIG_MK
 
-# TODO: Currently assumes this script must be called from the flowdir.
-TEST_DIR=${TEST_DIR:-test}
+cd "$(dirname $(readlink -f $0))/../"
 
-if [ -z "$DESIGN_NICKNAME" ]
-then
-  LOG_FILE=$TEST_DIR/logs/$PLATFORM/$DESIGN_CONFIG.log
-  GOLD_LOG_FILE=$TEST_DIR/gold_logs/$PLATFORM/$DESIGN_CONFIG.log
-else
-  LOG_FILE=$TEST_DIR/logs/$PLATFORM/$DESIGN/$DESIGN_NICKNAME.log
-  GOLD_LOG_FILE=$TEST_DIR/gold_logs/$PLATFORM/$DESIGN/$DESIGN_NICKNAME.log
-fi
+source ../setup_env.sh
 
-
-set -o pipefail
-
-mkdir -p $TEST_DIR/logs/$PLATFORM
+LOG_FILE=./logs/$PLATFORM/$DESIGN_NAME.log
+mkdir -p ./logs/$PLATFORM
 
 if [ -f "../../private_tool_scripts/util/utils.mk" ]; then
   TARGETS="finish metadata drc_calibre"
@@ -27,12 +22,12 @@ else
   TARGETS="finish metadata"
 fi
 
-make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk clean_all clean_metadata
+make DESIGN_CONFIG=$DESIGN_CONFIG FLOW_VARIANT=$FLOW_VARIANT clean_all clean_metadata 2>&1 | tee $LOG_FILE
 
 # turn off abort on error so we can always capture the result
 set +e
 
-make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk $TARGETS 2>&1 | tee $LOG_FILE
+make DESIGN_CONFIG=$DESIGN_CONFIG FLOW_VARIANT=$FLOW_VARIANT $TARGETS 2>&1 | tee -a $LOG_FILE
 
 # Save the return code to return as the overall status after we package
 # the results
@@ -40,7 +35,7 @@ ret=$?
 set -e
 
 if [ ! -z ${MAKE_ISSUE+x} ]; then
-  make -C $TEST_DIR/.. DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_CONFIG/config.mk final_report_issue
+  make DESIGN_CONFIG=$DESIGN_CONFIG FLOW_VARIANT=$FLOW_VARIANT final_report_issue 2>&1 | tee -a $LOG_FILE
 fi
 
 exit $ret

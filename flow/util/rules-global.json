@@ -25,36 +25,6 @@
             "compare": "<="
         },
         {
-            "field" : "cts__timing__tns__total",
-            "value" : 5,
-            "diff": "True",
-            "compare": "<="
-        },
-        {
-            "field" : "cts__timing__wns__worst",
-            "value" : 5,
-            "diff": "True",
-            "compare": "<="
-        },
-        {
-            "field" : "cts__timing__ws__worst",
-            "value" : 5,
-            "diff": "True",
-            "compare": "<="
-        },
-        {
-            "field" : "globalroute__timing__tns__total",
-            "value" : 5,
-            "diff": "True",
-            "compare": "<="
-        },
-        {
-            "field" : "globalroute__timing__ws__worst",
-            "value" : 5,
-            "diff": "True",
-            "compare": "<="
-        },
-        {
             "field" : "detailedroute__wirelength",
             "value" : 5,
             "diff": "True",
@@ -63,7 +33,6 @@
         {
             "field" : "detailedroute__drc__error__count",
             "value" : 0,
-            "diff": "True",
             "compare": "<="
         },
         {

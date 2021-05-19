@@ -54,11 +54,25 @@
 # DESIGN_CONFIG=./designs/sky130hd/jpeg/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/coyote_tc/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/riscv32i/config.mk
+
+# sky130hd PPA
+# DESIGN_CONFIG=./designs/sky130hd/gcd/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hd/aes/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hd/ibex/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hd/jpeg/config_ppa.mk
 
 # DESIGN_CONFIG=./designs/sky130hs/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/aes/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/jpeg/config.mk
+# DESIGN_CONFIG=./designs/sky130hs/riscv32i/config.mk
+
+# sky130hs PPA
+# DESIGN_CONFIG=./designs/sky130hs/gcd/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hs/aes/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hs/ibex/config_ppa.mk
+# DESIGN_CONFIG=./designs/sky130hs/jpeg/config_ppa.mk
 #
 # DESIGN_CONFIG=./designs/asap7/gcd/config.mk
 # DESIGN_CONFIG=./designs/asap7/ibex/config.mk
@@ -89,7 +103,9 @@ include $(DESIGN_CONFIG)
 
 PUBLIC=nangate45 sky130hd sky130hs asap7
 
-ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
+ifneq ($(wildcard $(PLATFORM_BASE)/$(PLATFORM)),)
+  export PLATFORM_DIR = $(PLATFORM_BASE)/$(PLATFORM)
+else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ./platforms/$(PLATFORM)
 else ifneq ($(wildcard ../../$(PLATFORM)),)
   export PLATFORM_DIR = ../../$(PLATFORM)
@@ -100,13 +116,15 @@ endif
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
 
+export FLOW_VARIANT ?= base
+
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
-export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)
-export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)
-export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)
-export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)
+export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
 export SCRIPTS_DIR = ./scripts
 export UTILS_DIR   = ./util
@@ -114,8 +132,32 @@ export TEST_DIR    = ./test
 
 # Tool Options
 SHELL = /bin/bash -o pipefail
+
 TIME_CMD = /usr/bin/time -f "%Eelapsed %PCPU %MmemKB"
-export NUM_CORES = $(shell grep -c ^processor /proc/cpuinfo)
+TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
+ifeq (, $(strip $(TIME_TEST)))
+  TIME_CMD = /usr/bin/time
+endif
+
+ifeq (, $(strip $(NPROC)))
+  # Linux (utility program)
+  NPROC := $(shell nproc 2>/dev/null)
+
+  ifeq (, $(strip $(NPROC)))
+    # Linux (generic)
+    NPROC := $(shell grep -c ^processor /proc/cpuinfo 2>/dev/null)
+  endif
+  ifeq (, $(strip $(NPROC)))
+    # BSD (at least FreeBSD and Mac OSX)
+    NPROC := $(shell sysctl -n hw.ncpu 2>/dev/null)
+  endif
+  ifeq (, $(strip $(NPROC)))
+    # Fallback
+    NPROC := 1
+  endif
+endif
+export NUM_CORES := $(NPROC)
+
 OPENROAD_CMD = openroad -no_init -exit
 OPENROAD_NO_EXIT_CMD = $(patsubst -exit,,$(OPENROAD_CMD))
 
@@ -144,25 +186,11 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
+.PHONY: versions.txt
 versions.txt:
-	@yosys -V > $(abspath $@)
-	@echo openroad `openroad -version` >> $(abspath $@)
-	@klayout -zz -v >> $(abspath $@)
-
-# Pre-process Lefs
-# ==============================================================================
-
-# Modify lef files for TritonRoute
-$(OBJECTS_DIR)/merged_spacing.lef: $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
-	mkdir -p $(OBJECTS_DIR)
-	$(UTILS_DIR)/mergeLef.py --inputLef $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
-
-# Create special generic lef for TritonRoute if required.
-ifneq ($(GENERIC_TECH_LEF),)
-$(OBJECTS_DIR)/generic_merged_spacing.lef: $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS)
-	mkdir -p $(OBJECTS_DIR)
-	$(UTILS_DIR)/mergeLef.py --inputLef $(GENERIC_TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) --outputLef $@
-endif
+	@yosys -V > $@
+	@echo openroad `$(firstword $(OPENROAD_CMD)) -version` >> $@
+	@klayout -zz -v >> $@
 
 # Pre-process libraries
 # ==============================================================================
@@ -260,7 +288,7 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synt
 
 # STEP 2: IO Placement (random)
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_2_floorplan_io.def: $(RESULTS_DIR)/2_1_floorplan.def
+$(RESULTS_DIR)/2_2_floorplan_io.def: $(RESULTS_DIR)/2_1_floorplan.def $(IO_CONSTRAINTS)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement_random.tcl -metrics $(LOG_DIR)/2_2_floorplan_io.json) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 
 # STEP 3: Timing Driven Mixed Sized Placement
@@ -312,7 +340,7 @@ $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2
 
 # STEP 2: IO placement (non-random)
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_2_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def
+$(RESULTS_DIR)/3_2_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def $(IO_CONSTRAINTS)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
 
 # STEP 3: Resizing & Buffering
@@ -398,17 +426,12 @@ $(RESULTS_DIR)/route.guide: $(RESULTS_DIR)/4_cts.def $(FASTROUTE_TCL) $(PRE_GLOB
 
 # Generate param file for TritonRoute
 #-------------------------------------------------------------------------------
-ifneq ($(GENERIC_TECH_LEF),)
-  export TRITON_ROUTE_LEF := $(OBJECTS_DIR)/generic_merged_spacing.lef
-else
-  export TRITON_ROUTE_LEF := $(OBJECTS_DIR)/merged_spacing.lef
-endif
-
-$(OBJECTS_DIR)/TritonRoute.param: $(TRITON_ROUTE_LEF)
+$(OBJECTS_DIR)/TritonRoute.param:
+	mkdir -p $(OBJECTS_DIR)
+	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" > $@
 ifeq ($(USE_WXL),)
 	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
 endif
-	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" >> $@
 	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NUM_CORES)" >> $@

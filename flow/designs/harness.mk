@@ -4,9 +4,9 @@ export PLATFORM    = nangate45
 export VERILOG_FILES = ./designs/src/harness/*.v
 export SDC_FILE      = ./designs/src/harness/design.sdc
 
-export MERGED_LEF = ./platforms/nangate45/NangateOpenCellLibrary.mod.lef
-export LIB_FILES  = ./platforms/nangate45/NangateOpenCellLibrary_typical.lib
-export GDS_FILES  = $(sort $(wildcard ./platforms/nangate45/gds/*))
+export MERGED_LEF = $(PLATFORM_DIR)/NangateOpenCellLibrary.mod.lef
+export LIB_FILES  = $(PLATFORM_DIR)/NangateOpenCellLibrary_typical.lib
+export GDS_FILES  = $(sort $(wildcard $(PLATFORM_DIR)/gds/*))
 
 # Automatically pick a reasonable area and utilization
 

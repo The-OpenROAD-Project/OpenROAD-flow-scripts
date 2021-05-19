@@ -4,20 +4,17 @@ export PROCESS = 130
 #-----------------------------------------------------
 # Tech/Libs
 # ----------------------------------------------------
-export TECH_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hs.tlef
-export SC_LEF = ./platforms/$(PLATFORM)/lef/sky130_fd_sc_hs_merged.lef
+export TECH_LEF = $(PLATFORM_DIR)/lef/sky130_fd_sc_hs.tlef
+export SC_LEF = $(PLATFORM_DIR)/lef/sky130_fd_sc_hs_merged.lef
 
-export LIB_FILES = ./platforms/$(PLATFORM)/lib/sky130_fd_sc_hs__tt_025C_1v80.lib \
+export LIB_FILES = $(PLATFORM_DIR)/lib/sky130_fd_sc_hs__tt_025C_1v80.lib \
                      $(ADDITIONAL_LIBS)
-export GDS_FILES = $(wildcard ./platforms/$(PLATFORM)/gds/*.gds) \
+export GDS_FILES = $(wildcard $(PLATFORM_DIR)/gds/*.gds) \
                      $(ADDITIONAL_GDS_FILES)
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS += 
-
-# Define Hold Buffer
-export HOLD_BUF_CELL = sky130_fd_sc_hs__buf_1
 
 # Define fill cells
 export FILL_CELLS = sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc_hs__fill_4 sky130_fd_sc_hs__fill_8
@@ -37,8 +34,9 @@ export MIN_BUF_CELL_AND_PORTS = sky130_fd_sc_hs__buf_4 A X
 export MAX_FANOUT ?= 100
 
 # Yosys mapping files
-export LATCH_MAP_FILE = ./platforms/$(PLATFORM)/cells_latch_hs.v
-export CLKGATE_MAP_FILE = ./platforms/$(PLATFORM)/cells_clkgate_hs.v
+export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch_hs.v
+export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate_hs.v
+export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hs.v
 # 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
@@ -61,10 +59,10 @@ export IO_PLACER_H = met3
 export IO_PLACER_V = met2
 
 # Define default PDN config
-export PDN_CFG ?= ./platforms/$(PLATFORM)/pdn.cfg
+export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
 
 # Endcap and Welltie cells
-export TAPCELL_TCL = ./platforms/$(PLATFORM)/tapcell.tcl
+export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
 
 export MACRO_PLACE_HALO ?= 1 1
 export MACRO_PLACE_CHANNEL ?= 80 80
@@ -76,7 +74,7 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 export WIRE_RC_LAYER = met3
 
 # Cell padding in SITE widths to ease rout-ability
-# keep with gf
+#
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 4
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 2
 #
@@ -90,8 +88,6 @@ export PLACE_DENSITY ?= 0.50
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   = sky130_fd_sc_hs__buf_1
-export CTS_TECH_DIR   = ./platforms/$(PLATFORM)/tritonCTShs
-
 
 # ---------------------------------------------------------
 #  Route
@@ -101,14 +97,14 @@ export MIN_ROUTING_LAYER = met1
 export MAX_ROUTING_LAYER = met5
 #
 # Define fastRoute tcl
-export FASTROUTE_TCL = ./platforms/$(PLATFORM)/fastroute.tcl
+export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 
 
 # KLayout technology file
-export KLAYOUT_TECH_FILE = ./platforms/$(PLATFORM)/$(PLATFORM).lyt
+export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/$(PLATFORM).lyt
 #
 # Rules for metal fill
-export FILL_CONFIG = ./platforms/$(PLATFORM)/fill.json
+export FILL_CONFIG = $(PLATFORM_DIR)/fill.json
 #
 # Template definition for power grid analysis
-export TEMPLATE_PGA_CFG ?= ./platforms/sky130/template_pga.cfg
+export TEMPLATE_PGA_CFG ?= $(PLATFORM_DIR)/template_pga.cfg

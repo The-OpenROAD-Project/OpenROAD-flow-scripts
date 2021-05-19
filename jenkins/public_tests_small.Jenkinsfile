@@ -2,9 +2,10 @@ pipeline {
   agent any;
   environment {
     COMMIT_AUTHOR_EMAIL= sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
+    MAKE_ISSUE = 1;
   }
   options {
-    timeout(time: 1, unit: 'HOURS');
+    timeout(time: 2, unit: 'HOURS');
   }
   stages {
     stage('Build') {
@@ -18,103 +19,205 @@ pipeline {
     }
     stage('Test') {
       parallel {
+        stage('asap7 aes') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh aes asap7';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
+          }
+        }
+        stage('asap7 gcd') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh gcd asap7';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
+          }
+        }
+        stage('asap7 ibex') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh ibex asap7';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
+          }
+        }
         stage('nangate45 aes') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes nangate45"';
-            stash name: 'nangate45_aes', includes: 'flow/reports/**/*';
+            sh 'flow/test/test_helper.sh aes nangate45';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('nangate45 gcd') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd nangate45"';
-            stash name: 'nangate45_gcd', includes: 'flow/reports/**/*';
+            sh 'flow/test/test_helper.sh gcd nangate45';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('nangate45 ibex') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex nangate45"';
-            stash name: 'nangate45_ibex', includes: 'flow/reports/**/*';
+            sh 'flow/test/test_helper.sh ibex nangate45';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('nangate45 tiny rocket') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh tinyRocket nangate45"';
-            stash name: 'nangate45_tinyRocket', includes: 'flow/reports/**/*';
+            sh 'flow/test/test_helper.sh tinyRocket nangate45';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hd aes') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hd"';
-            stash name: 'sky130_hd_aes', includes: 'flow/reports/**/*';
+            sh 'flow/test/test_helper.sh aes sky130hd';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hd gcd') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hd"';
-            stash name: 'sky130_hd_gcd', includes: 'flow/reports/**/*';
+            sh 'flow/test/test_helper.sh gcd sky130hd';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hd ibex') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hd"';
-            stash name: 'sky130_hd_ibex', includes: 'flow/reports/**/*';
+            sh 'flow/test/test_helper.sh ibex sky130hd';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hs aes') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh aes sky130hs"';
-            stash name: 'sky130_hs_aes', includes: 'flow/reports/**/*';
+            sh 'flow/test/test_helper.sh aes sky130hs';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hs gcd') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh gcd sky130hs"';
-            stash name: 'sky130_hs_gcd', includes: 'flow/reports/**/*';
+            sh 'flow/test/test_helper.sh gcd sky130hs';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
         stage('sky130 hs ibex') {
           agent any;
           steps {
             unstash 'build';
-            sh 'bash -ic "source setup_env.sh && cd flow && test/test_helper.sh ibex sky130hs"';
-            stash name: 'sky130_hs_ibex', includes: 'flow/reports/**/*';
+            sh 'flow/test/test_helper.sh ibex sky130hs';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
           }
         }
       }
     }
   }
   post {
-    always {
-      unstash 'nangate45_aes';
-      unstash 'nangate45_gcd';
-      unstash 'nangate45_ibex';
-      unstash 'nangate45_tinyRocket';
-      unstash 'sky130_hd_aes';
-      unstash 'sky130_hd_gcd';
-      unstash 'sky130_hd_ibex';
-      unstash 'sky130_hs_aes';
-      unstash 'sky130_hs_gcd';
-      unstash 'sky130_hs_ibex';
-      archiveArtifacts artifacts: 'flow/reports/**/*';
-    }
     failure {
       script {
         if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'openroad' ) {
@@ -126,6 +229,7 @@ pipeline {
           EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
           REPLY_TO='$DEFAULT_REPLYTO';
         }
+        sh './flow/util/getMetricsErrors.sh 2>&1 | tee error-list.txt';
         emailext (
             to: "$EMAIL_TO",
             replyTo: "$REPLY_TO",
