@@ -73,12 +73,15 @@
 # DESIGN_CONFIG=./designs/sky130hs/aes/config_ppa.mk
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config_ppa.mk
 # DESIGN_CONFIG=./designs/sky130hs/jpeg/config_ppa.mk
-#
+
 # DESIGN_CONFIG=./designs/asap7/gcd/config.mk
 # DESIGN_CONFIG=./designs/asap7/ibex/config.mk
 # DESIGN_CONFIG=./designs/asap7/aes/config.mk
 # DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
 
+# DESIGN_CONFIG=./designs/intel22/gcd/config.mk
+# DESIGN_CONFIG=./designs/intel22/aes/config.mk
+#
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 # Global override Floorplan
@@ -105,15 +108,20 @@ SHELL          = /bin/bash
 .SHELLFLAGS    = -o pipefail -c
 
 #-------------------------------------------------------------------------------
-# Setup varialbles to point to root / head of the directory where each of which
-# can be located in separate directory
-# - the following settings allowed user to point OpenRoad binaries, platform and design
-#   root directory from anywhere, other than current directory 
-# - default is current running / clone directory
+# Setup varialbles to point to root / head of the OpenROAD directory 
+# - the following settings allowed user to point OpenRoad binaries to different
+#   location
+# - default is current install / clone directory
 export OPENROAD_HOME ?= $(abspath $(PWD))
 
+#-------------------------------------------------------------------------------
+# Setup variables to point to other location for the following sub directory
+# - designs - default is under current directory
+# - platforms - default is under current directory
+# - work home - default is current directory
+# - utils, scripts, test - default is under current directory
 export DESIGN_HOME   ?= $(abspath $(OPENROAD_HOME)/designs)
-export PLATFORM_HOME  = $(abspath $(OPENROAD_HOME)/platforms)
+export PLATFORM_HOME ?= $(abspath $(OPENROAD_HOME)/platforms)
 export WORK_HOME     ?= $(PWD)
 
 export UTILS_DIR     ?= $(abspath $(OPENROAD_HOME)/util)
@@ -183,12 +191,10 @@ ifeq ($(YOSYS_CMD),)
   YOSYS_CMD              = $(abspath $(OPENROAD_HOME)/../tools/build/yosys/bin/yosys)
 endif
 
-TRITONROUTE_CMD         ?= $(shell command -v TritonRoute)
-ifeq ($(TRITONROUTE_CMD),)
-  TRITONROUTE_CMD        = $(OPENROAD_HOME)/../tools/build/TritonRoute/TritonRoute
-endif
-
 KLAYOUT_CMD             ?= $(shell command -v klayout)
+ifeq ($(KLAYOUT_CMD),)
+  $(error KLayout command not found.Please configure KLayout prior to running OpenROAD's flow)
+endif
 
 #-------------------------------------------------------------------------------
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
@@ -278,6 +284,8 @@ synth: versions.txt \
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
+
+$(info --> $(DONT_USE_LIBS) $(DONT_USER_SC_LIB))
 
 $(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(VERILOG_FILES)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
@@ -466,11 +474,6 @@ endif
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NUM_CORES)" >> $@
 	echo "cpxthreads:1" >> $@
-	echo "bottomRoutingLayer:$(MIN_ROUTING_LAYER)" >> $@
-	echo "topRoutingLayer:$(MAX_ROUTING_LAYER)" >> $@
-ifneq ($(VIA_IN_PIN_LAYER),)
-	echo "drouteViaInPinBottomLayerNum:$(VIA_IN_PIN_LAYER)" >> $@
-endif
 	echo "verbose:1" >> $@
 	echo "gap:0" >> $@
 	echo "timeout:2400" >> $@
