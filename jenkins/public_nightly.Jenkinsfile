@@ -8,20 +8,10 @@ pipeline {
     timeout(time: 4, unit: 'HOURS');
   }
   stages {
-    stage('Checkout OpenROAD') {
+    stage('Checkout master branch') {
       steps {
-        checkout([$class: 'GitSCM',
-            branches: [[name: '*/master']],
-            doGenerateSubmoduleConfigurations: false,
-            extensions: [
-            [$class: 'SubmoduleOption',
-            disableSubmodules: false,
-            parentCredentials: true,
-            recursiveSubmodules: true,
-            reference: '',
-            trackingSubmodules: false],
-            [$class: 'RelativeTargetDirectory', relativeTargetDir: 'tools/OpenROAD']],
-        ])
+        sh 'git checkout master'
+        sh 'cd tools/OpenROAD ; git checkout master ; git submodule update'
       }
     }
     stage('Build') {
@@ -408,19 +398,10 @@ pipeline {
   post {
     failure {
       script {
-        if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'openroad' ) {
-          echo('Main development branch: report to stakeholders and commit author.');
-          EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
-          REPLY_TO="$EMAIL_TO";
-        } else {
-          echo('Feature development branch: report only to commit author.');
-          EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
-          REPLY_TO='$DEFAULT_REPLYTO';
-        }
         sh './flow/util/getMetricsErrors.sh 2>&1 | tee error-list.txt';
         emailext (
-            to: "$EMAIL_TO",
-            replyTo: "$REPLY_TO",
+            to: '$DEFAULT_RECIPIENTS',
+            replyTo: '$DEFAULT_REPLYTO',
             subject: '$DEFAULT_SUBJECT',
             body: '$DEFAULT_CONTENT',
             )
