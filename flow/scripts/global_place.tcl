@@ -28,9 +28,9 @@ if {![info exists standalone] || $standalone} {
 source $::env(PLATFORM_DIR)/setRC.tcl
 set_dont_use $::env(DONT_USE_CELLS)
 
-# set global router for -routability_driven
-if [file exists $::env(PLATFORM_DIR)/setGR.tcl] {
-  source $::env(PLATFORM_DIR)/setGR.tcl
+# set fastroute layer reduction
+if {[info exist env(FASTROUTE_TCL)]} {
+  source $env(FASTROUTE_TCL)
 }
 
 if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
