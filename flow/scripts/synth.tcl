@@ -39,6 +39,17 @@ if {[info exist ::env(CLKGATE_MAP_FILE)]} {
   read_verilog -defer $::env(CLKGATE_MAP_FILE)
 }
 
+# Mark modules to keep from getting removed in flattening
+if {[info exist ::env(PRESERVE_CELLS)]} {
+  # Expand hierarchy since verilog was read in with -defer
+  hierarchy -check -top $::env(DESIGN_NAME)
+  foreach cell $::env(PRESERVE_CELLS) {
+    select -module $cell
+    setattr -mod -set keep_hierarchy 1
+    select -clear
+  }
+}
+
 # Generic synthesis
 synth  -top $::env(DESIGN_NAME) -flatten
 
