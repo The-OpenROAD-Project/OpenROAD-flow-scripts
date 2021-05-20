@@ -2,7 +2,7 @@ FROM centos:centos7
 
 RUN yum update -y \
     && yum group install -y "Development Tools" \
-    && yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-0.26.4-0.x86_64.rpm \
+    && yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-0.27-0.x86_64.rpm \
     && yum install -y libXScrnSaver libXft libffi-devel python3 python3-pip qt5-qtbase tcl time which \
     && pip3 install pandas
 
