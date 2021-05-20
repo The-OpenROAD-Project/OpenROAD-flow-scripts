@@ -189,9 +189,6 @@ ifeq ($(TRITONROUTE_CMD),)
 endif
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)
-ifeq ($(KLAYOUT_CMD),)
-  $(error KLayout (klayout) command not found)
-endif
 
 #-------------------------------------------------------------------------------
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
@@ -469,6 +466,11 @@ endif
 	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
 	echo "threads:$(NUM_CORES)" >> $@
 	echo "cpxthreads:1" >> $@
+	echo "bottomRoutingLayer:$(MIN_ROUTING_LAYER)" >> $@
+	echo "topRoutingLayer:$(MAX_ROUTING_LAYER)" >> $@
+ifneq ($(VIA_IN_PIN_LAYER),)
+	echo "drouteViaInPinBottomLayerNum:$(VIA_IN_PIN_LAYER)" >> $@
+endif
 	echo "verbose:1" >> $@
 	echo "gap:0" >> $@
 	echo "timeout:2400" >> $@
@@ -518,6 +520,7 @@ klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 6_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
+        $(RESULTS_DIR)/6_final.sdc \
         $(6_FINAL_FILE)
 # ==============================================================================
 
@@ -530,6 +533,9 @@ $(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def
 endif
 
 $(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
+	cp $< $@
+
+$(RESULTS_DIR)/6_final.sdc: $(RESULTS_DIR)/5_route.sdc
 	cp $< $@
 
 $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_1_fill.sdc
