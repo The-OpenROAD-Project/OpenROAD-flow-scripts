@@ -285,8 +285,6 @@ synth: versions.txt \
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 
-$(info --> $(DONT_USE_LIBS) $(DONT_USER_SC_LIB))
-
 $(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(VERILOG_FILES)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
