@@ -1,4 +1,4 @@
-module ibex_wrapper
+(* blackbox *) module ibex_wrapper
   (
  `ifdef USE_POWER_PINS
 	input VPWR,

@@ -9,10 +9,10 @@ export IO_DIR       = ./platforms/sky130io
 
 
 export VERILOG_FILES_BLACKBOX =  \
-					./designs/src/$(DESIGN_NICKNAME)/rtl/ibex/*.v \
-    					./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/DFFRAM_4K.v \
-    					./designs/src/$(DESIGN_NICKNAME)/rtl/AHB_sys_0/APB_sys_0/*.v \
-    					./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/DMC_32x16HC.v
+					./designs/src/$(DESIGN_NICKNAME)/rtl/BBOX/ibex_wrapper_BB.v \
+    					./designs/src/$(DESIGN_NICKNAME)/rtl/BBOX/DFFRAM_4K_BB.v \
+    					./designs/src/$(DESIGN_NICKNAME)/rtl/BBOX/APB_sys_0_BB.v \
+    					./designs/src/$(DESIGN_NICKNAME)/rtl/BBOX/DMC_32x16HC_BB.v
 
 export BLOCKS = \
                          DFFRAM_4K \

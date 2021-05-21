@@ -1,5 +1,5 @@
 
-
+undefine BLOCKS
 export TOP_NICKNAME = chameleon_hier
 export TOP_DIR = ./designs/$(PLATFORM)/${TOP_NICKNAME}
 
@@ -24,13 +24,9 @@ export ABC_LOAD_IN_FF = 3
 
 # Point to the RC file
 export SETRC_FILE = $(PLATFORM_DIR)/setRC.tcl
-export FASTROUTE_TCL $(PLATFORM_DIR)/fastroute.tcl
 
 # These values must be multiples of placement site
-#export DIE_AREA    = 0 0 1100 1400
-#export CORE_AREA    = 0 0 1100 1400
 export DIE_AREA    = 0 0 1925 2450
-#export CORE_AREA    = 0 0 1925 2450
 export CORE_AREA    = 0.46 2.720 1924.54 2447.28  
 export MIN_ROUTING_LAYER 2
 export MAX_ROUTING_LAYER 5

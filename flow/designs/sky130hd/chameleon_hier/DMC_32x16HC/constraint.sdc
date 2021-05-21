@@ -1,4 +1,4 @@
-create_clock [get_ports clk]  -name clk  -period 6  -waveform {0 3}
+create_clock [get_ports clk]  -name clk  -period 8  -waveform {0 4}
 set_clock_latency -source 0  [get_clocks clk]
 set_clock_uncertainty 0.25  [get_clocks clk]
 set_clock_transition -min -fall 0.15 [get_clocks clk]

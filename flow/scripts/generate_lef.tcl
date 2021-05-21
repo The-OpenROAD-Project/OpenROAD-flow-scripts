@@ -9,7 +9,7 @@ set lly [ expr [ $BBOX  yMin] / $defUnits]
 set llx [ expr [ $BBOX  xMin] / $defUnits]
 
 set width [ expr [ $BBOX dx ] / $defUnits]
-set hight [ expr [ $BBOX dy  ] / $defUnits]
+set hight [ expr [ $BBOX dy ] / $defUnits]
 
 set data "VERSION 5.7 ;\n  NOWIREEXTENSIONATPIN ON ;\n  DIVIDERCHAR \"/\" ;\n  BUSBITCHARS \"\[\]\" ;\nMACRO $BName \
 \n  CLASS BLOCK ; \n  FOREIGN $BName ; \n  ORIGIN $llx $lly ; \n  SIZE  $width BY $hight ; "
@@ -64,7 +64,7 @@ set data "$data  \n  END"
 
 
 set data "$data \nEND $BName \nEND LIBRARY"
-set outputLef "$::env(RESULTS_DIR)/$::env(DESIGN_NICKNAME).lef"
+set outputLef "$::env(RESULTS_DIR)/6_final.lef"
 set fileId [open $outputLef "w"]
 puts -nonewline $fileId $data
 close $fileId 
