@@ -164,8 +164,8 @@ ifdef BLOCKS
 $(info [INFO][FLOW] Hierarichal flow is invoked)
 $(foreach block,$(BLOCKS),$(info following block is to be hardened :  ${block}))
 $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(block)/config.mk))
-$(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.lef))
-$(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
+$(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.lef))
+$(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
 export ADDITIONAL_LEFS += $(BLOCK_LEFS)
 export ADDITIONAL_GDS += $(BLOCK_GDS)
 endif
@@ -243,11 +243,10 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
  
  
 # Targets to harden Blocks in case of hierarchical flow is triggered  
-build_macros:   $(BLOCK_LEFS) $(BLOCK_GDS)
+build_macros: $(BLOCK_LEFS) $(BLOCK_GDS)
 
-$(BLOCK_LEFS): ./results$(PLATFORM)/$(DESIGN_NICKNAME)_%/$(FLOW_VARIANT)/6_final.lef: ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%/config.mk	
+$(BLOCK_LEFS): ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_%/$(FLOW_VARIANT)/6_final.lef: ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%/config.mk	
 	make DESIGN_CONFIG=$< generate_abstract
-
 
 
 

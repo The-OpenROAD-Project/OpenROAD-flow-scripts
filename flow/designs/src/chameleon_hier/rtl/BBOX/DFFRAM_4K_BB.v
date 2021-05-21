@@ -10,7 +10,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-module DFFRAM_4K
+(* blackbox *) module DFFRAM_4K
 (
     CLK,
     WE,
