@@ -112,7 +112,7 @@ SHELL          = /bin/bash
 # - the following settings allowed user to point OpenRoad binaries to different
 #   location
 # - default is current install / clone directory
-export OPENROAD_HOME ?= $(abspath $(PWD))
+export OPENROAD_HOME ?= .
 
 #-------------------------------------------------------------------------------
 # Setup variables to point to other location for the following sub directory
@@ -120,13 +120,13 @@ export OPENROAD_HOME ?= $(abspath $(PWD))
 # - platforms - default is under current directory
 # - work home - default is current directory
 # - utils, scripts, test - default is under current directory
-export DESIGN_HOME   ?= $(abspath $(OPENROAD_HOME)/designs)
-export PLATFORM_HOME ?= $(abspath $(OPENROAD_HOME)/platforms)
-export WORK_HOME     ?= $(PWD)
+export DESIGN_HOME   ?= $(OPENROAD_HOME)/designs
+export PLATFORM_HOME ?= $(OPENROAD_HOME)/platforms
+export WORK_HOME     ?= .
 
-export UTILS_DIR     ?= $(abspath $(OPENROAD_HOME)/util)
-export SCRIPTS_DIR   ?= $(abspath $(OPENROAD_HOME)/scripts)
-export TEST_DIR      ?= $(abspath $(OPENROAD_HOME)/test)
+export UTILS_DIR     ?= $(OPENROAD_HOME)/util
+export SCRIPTS_DIR   ?= $(OPENROAD_HOME)/scripts
+export TEST_DIR      ?= $(OPENROAD_HOME)/test
 
 #-------------------------------------------------------------------------------
 # Include design and platform configuration
@@ -180,7 +180,7 @@ endif
 #       2 user explicity set with variable in Makefile or command line
 OPENROAD_CMD            ?= $(shell command -v openroad)
 ifeq ($(OPENROAD_CMD),)
-  OPENROAD_CMD           = $(OPENROAD_HOME)/../tools/build/OpenROAD/src/openroad -no_init -exit
+  OPENROAD_CMD           = $(abspath $(OPENROAD_HOME)/../tools/build/OpenROAD/src/openroad) -no_init -exit
 else
   OPENROAD_CMD           = $(shell command -v openroad) -no_init -exit
 endif
