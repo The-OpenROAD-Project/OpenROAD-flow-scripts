@@ -23,6 +23,9 @@ foreach file $::env(VERILOG_FILES) {
   read_verilog -defer -sv {*}$vIdirsArgs $file
 }
 
+
+
+
 # Read standard cells and macros as blackbox inputs
 # These libs have their dont_use properties set accordingly
 read_liberty -lib {*}$::env(DONT_USE_LIBS)
@@ -37,6 +40,19 @@ if {[info exist ::env(VERILOG_TOP_PARAMS)]} {
 # Read platform specific mapfile for OPENROAD_CLKGATE cells
 if {[info exist ::env(CLKGATE_MAP_FILE)]} {
   read_verilog -defer $::env(CLKGATE_MAP_FILE)
+}
+
+     puts "blackboxing $::env(BLOCKS)"
+
+# Change blocks to in case of hierarchical
+if {[info exist ::env(BLOCKS)]} {
+  hierarchy -check -top $::env(DESIGN_NAME)
+  foreach block $::env(BLOCKS) {
+  #  select -module *
+  #  select $block
+    blackbox $block
+    puts "blackboxing $block"
+  }
 }
 
 # Generic synthesis

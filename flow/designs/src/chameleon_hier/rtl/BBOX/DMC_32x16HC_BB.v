@@ -149,7 +149,7 @@ module OVERHEAD(
 
 endmodule
 
-(* blackbox *) module DMC_32x16HC (
+module DMC_32x16HC (
 `ifdef USE_POWER_PINS
     input VPWR,
     input VGND,
