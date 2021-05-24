@@ -42,14 +42,11 @@ if {[info exist ::env(CLKGATE_MAP_FILE)]} {
   read_verilog -defer $::env(CLKGATE_MAP_FILE)
 }
 
-     puts "blackboxing $::env(BLOCKS)"
 
 # Change blocks to in case of hierarchical
 if {[info exist ::env(BLOCKS)]} {
   hierarchy -check -top $::env(DESIGN_NAME)
   foreach block $::env(BLOCKS) {
-  #  select -module *
-  #  select $block
     blackbox $block
     puts "blackboxing $block"
   }

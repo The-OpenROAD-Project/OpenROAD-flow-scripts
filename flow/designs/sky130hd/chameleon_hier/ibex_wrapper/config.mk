@@ -1,9 +1,9 @@
 
 undefine BLOCKS
-#undefine ADDITIONAL_LIBS
 undefine ADDITIONAL_LEFS
-undefine ADDITIONAL_GDS
- 
+undefine ADDITIONAL_GDS 
+undefine DONT_USE_SC_LIB
+
 export TOP_NICKNAME = chameleon_hier
 export TOP_DIR = ./designs/$(PLATFORM)/${TOP_NICKNAME}
 
@@ -42,6 +42,7 @@ export VERILOG_FILES = \
 		 
 
 export SDC_FILE          = ${TOP_DIR}/${DESIGN_NAME}/constraint.sdc
+export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 
 export PDN_CFG = ${TOP_DIR}/${DESIGN_NAME}/pdn.cfg
 
@@ -59,3 +60,9 @@ export CORE_AREA    = 0.46 2.720 899.54 1197.28
 
 export MIN_ROUTING_LAYER 2
 export MAX_ROUTING_LAYER 5
+
+
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  = "VDD 1.8"
+export GND_NETS_VOLTAGES  = "VSS 0.0"	

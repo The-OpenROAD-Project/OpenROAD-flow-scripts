@@ -70,7 +70,3 @@ puts -nonewline $fileId $data
 close $fileId 
   
 
-#set core [odb::newSetFromRect [ $BBOX  xMin] [ $BBOX  yMin] [ $BBOX xMax] [ $BBOX  yMax]]
-#set pinshape [odb::newSetFromRect [  $BOX   xMin] [  $BOX yMin] [  $BOX  xMax] [  $BOX yMax]]
-#odb::subtractSet $core $pinshape
-
