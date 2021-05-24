@@ -9,9 +9,9 @@ export IO_DIR       = ./platforms/sky130io
 
  
 export VERILOG_FILES_BLACKBOX =  \
-					./designs/src/$(DESIGN_NICKNAME)/rtl/ibex/ibex_wrapper.v \
+					./designs/src/$(DESIGN_NICKNAME)/rtl/ibex/*.v \
     					./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/DFFRAM_4K.v \
-    					./designs/src/$(DESIGN_NICKNAME)/rtl/AHB_sys_0/APB_sys_0/APB_sys_0.v \
+    					./designs/src/$(DESIGN_NICKNAME)/rtl/AHB_sys_0/APB_sys_0/*.v \
     					./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/DMC_32x16HC.v
 
 export BLOCKS = \
@@ -23,6 +23,7 @@ export BLOCKS = \
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/rtl/acc/AHB_SPM.v \
     				   ./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/AHBSRAM.v \
+    				   ./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/DFFRAMBB.v \
     				   ./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/GPIO.v \
     				   ./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/APB_I2C.v \
     				   ./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/APB_SPI.v \
@@ -34,6 +35,7 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/rtl/acc/AHB_SPM.v \
     				   ./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/spi_master.v \
     				   ./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/TIMER32.v \
     				   ./designs/src/$(DESIGN_NICKNAME)/rtl/IPs/WDT32.v \
+    				   ./designs/src/$(DESIGN_NICKNAME)/rtl/AHB_sys_0/*.v \
     				   ./designs/src/$(DESIGN_NICKNAME)/rtl/soc_core.v \
 					   $(VERILOG_FILES_BLACKBOX)
 					   
@@ -56,5 +58,11 @@ export SETRC_FILE = $(PLATFORM_DIR)/setRC.tcl
 
 export MIN_ROUTING_LAYER 2
 export MAX_ROUTING_LAYER 6
+
+
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  = "VDD 1.8"
+export GND_NETS_VOLTAGES  = "VSS 0.0"	
 
 
