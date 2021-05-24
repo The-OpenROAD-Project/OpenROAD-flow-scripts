@@ -1,5 +1,9 @@
 
 undefine BLOCKS
+#undefine ADDITIONAL_LIBS
+undefine ADDITIONAL_LEFS
+undefine ADDITIONAL_GDS 
+
 export TOP_NICKNAME = chameleon_hier
 export TOP_DIR = ./designs/$(PLATFORM)/${TOP_NICKNAME}
 

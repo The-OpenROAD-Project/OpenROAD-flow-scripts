@@ -33,7 +33,6 @@ export CORE_AREA  = 20 20 2900 3500
 
 export chameleon_DIR = $(PLATFORM_DIR)/chameleon
 
-<<<<<<< HEAD
 export ADDITIONAL_GDS_FILES  = $(chameleon_DIR)/gds/apb_sys_0.gds.gz \
                                $(chameleon_DIR)/gds/DMC_32x16HC.gds.gz \
                                $(chameleon_DIR)/gds/DFFRAM_4K.gds.gz \
