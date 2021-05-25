@@ -1,8 +1,8 @@
 {
     "rules": [
         {
-            "field": "synth__area__stdcell__count",
-            "value": 106037,
+            "field": "synth__design__instance__stdcell__area",
+            "value": 718101,
             "compare": "<="
         },
         {
@@ -11,37 +11,32 @@
             "compare": "=="
         },
         {
-            "field": "placeopt__area__instance__area",
-            "value": 1074149,
+            "field": "placeopt__design__instance__design__area",
+            "value": 957910,
             "compare": "<="
         },
         {
-            "field": "placeopt__area__instance__count",
-            "value": 216866,
+            "field": "placeopt__design__instance__stdcell__count",
+            "value": 168792,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -1.33,
+            "value": -0.65,
             "compare": ">="
         },
         {
-            "field": "detailedroute__wirelength",
-            "value": 3906571,
+            "field": "detailedroute__route__wirelength",
+            "value": 2565338,
             "compare": "<="
         },
         {
-            "field": "detailedroute__errors__count",
+            "field": "detailedroute__route__drc_errors__count",
             "value": 0,
             "compare": "=="
         },
         {
-            "field": "detailedroute__drc__error__count",
-            "value": 0,
-            "compare": "=="
-        },
-        {
-            "field": "finish__area",
+            "field": "finish__design__instance__area",
             "value": 10214757,
             "compare": "<="
         }
