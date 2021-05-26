@@ -226,11 +226,11 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 # Synthesis
 # ==============================================================================
 
-    extractTagFromFile("synth__area__stdcell__count", metrics_dict,
+    extractTagFromFile("synth__design__instance__stdcell__count", metrics_dict,
                        "Number of cells: +(\S+)",
                        rptPath+"/synth_stat.txt")
 
-    extractTagFromFile("synth__area__stdcell__area", metrics_dict,
+    extractTagFromFile("synth__design__instance__stdcell__area", metrics_dict,
                        "Chip area for module.*: +(\S+)",
                        rptPath+"/synth_stat.txt")
 
@@ -246,31 +246,27 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 # Floorplan
 # ==============================================================================
 
-    extractTagFromFile("floorplan__timing__tns_total", metrics_dict,
+    extractTagFromFile("floorplan__timing__setup__tns", metrics_dict,
                        "^tns (\S+)",
                        logPath+"/2_1_floorplan.log")
 
-    extractTagFromFile("floorplan__timing__wns__worst", metrics_dict,
+    extractTagFromFile("floorplan__timing__setup__wns", metrics_dict,
                        "^wns (\S+)",
                        logPath+"/2_1_floorplan.log", occurrence=0)
 
-    extractTagFromFile("floorplan__timing__ws__worst", metrics_dict,
-                       "^worst slack (\S+)",
-                       logPath+"/2_1_floorplan.log", occurrence=0)
-
-    extractTagFromFile("floorplan__area__stdcell__count", metrics_dict,
+    extractTagFromFile("floorplan__design__instance__stdcell__area", metrics_dict,
                        "^Design area (\S+) u\^2",
                        logPath+"/2_1_floorplan.log")
 
-    extractTagFromFile("floorplan__area__instance__util", metrics_dict,
+    extractTagFromFile("floorplan__design__instance__design__util", metrics_dict,
                        "^Design area.* (\S+)% utilization",
                        logPath+"/2_1_floorplan.log")
 
-    extractTagFromFile("floorplan__area__IO__count", metrics_dict,
+    extractTagFromFile("floorplan__design__io__count", metrics_dict,
                        "Num of I/O +(\d+)",
                        logPath+"/3_2_place_iop.log")
 
-    extractTagFromFile("floorplan__area__macros__count", metrics_dict,
+    extractTagFromFile("floorplan__design__instance__macros__count", metrics_dict,
                        "Extracted # Macros: (\S+)",
                        logPath+"/2_4_mplace.log", defaultNotFound=0)
 
@@ -279,91 +275,63 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 # Place
 # ==============================================================================
 
-    extractTagFromFile("globalplace__area__density__target", metrics_dict,
-                       "TargetDensity: (\S+)",
-                       logPath+"/3_1_place_gp.log")
-
-    extractTagFromFile("globalplace__area__wirelength__estimate", metrics_dict,
+    extractTagFromFile("globalplace__route__wirelength__estimated", metrics_dict,
                        "Total wirelength: (\S+)",
                        logPath+"/3_1_place_gp.log")
 
-    extractTagFromFile("globalplace__timing__tns__total", metrics_dict,
+    extractTagFromFile("globalplace__timing__setup__tns", metrics_dict,
                       "^tns (\S+)",
                       logPath+"/3_1_place_gp.log")
 
-    extractTagFromFile("globalplace__timing__wns__worst", metrics_dict,
+    extractTagFromFile("globalplace__timing__setup__wns", metrics_dict,
                       "^wns (\S+)",
                       logPath+"/3_1_place_gp.log")
 
     extractGnuTime("globalplace", metrics_dict, logPath+"/3_1_place_gp.log")
 
-    extractTagFromFile("placeopt__area__inbuffer__count", metrics_dict,
-                       "Inserted (\d+) input buffers",
-                       logPath+"/3_3_resizer.log")
-
-    extractTagFromFile("placeopt__area__outbuffer__count", metrics_dict,
-                       "Inserted (\d+) output buffers",
-                       logPath+"/3_3_resizer.log")
-
-    extractTagFromFile("placeopt__area__resize__count", metrics_dict,
-                       "Resized (\d+) instances",
-                       logPath+"/3_3_resizer.log")
-
-    extractTagFromFile("placeopt__timing__tns__total", metrics_dict,
+    extractTagFromFile("placeopt__timing__setup__tns", metrics_dict,
                        "^tns (\S+)",
                        logPath+"/3_3_resizer.log")
 
-    extractTagFromFile("placeopt__timing__wns__worst", metrics_dict,
+    extractTagFromFile("placeopt__timing__setup__wns", metrics_dict,
                        "^wns (\S+)",
                        logPath+"/3_3_resizer.log")
 
-    extractTagFromFile("placeopt__timing__ws__worst", metrics_dict,
-                       "^worst slack (\S+)",
-                       logPath+"/3_3_resizer.log")
-
-    extractTagFromFile("placeopt__area__instance__area", metrics_dict,
+    extractTagFromFile("placeopt__design__instance__design__area", metrics_dict,
                        "^Design area (\S+) u\^2",
                        logPath+"/3_3_resizer.log")
 
-    extractTagFromFile("placeopt__area__instance__util", metrics_dict,
+    extractTagFromFile("placeopt__design__instance__design__util", metrics_dict,
                        "^Design area.* (\S+)% utilization",
                        logPath+"/3_3_resizer.log")
 
-    extractTagFromFile("placeopt__area__instance__count", metrics_dict,
+    extractTagFromFile("placeopt__design__instance__stdcell__count", metrics_dict,
                        "^instance_count\n-*\n^(\S+)",
                        logPath+"/3_3_resizer.log")
 
     extractGnuTime("placeopt", metrics_dict, logPath+"/3_3_resizer.log")
 
-    extractTagFromFile("detailedplace__timing__tns__total", metrics_dict,
+    extractTagFromFile("detailedplace__timing__setup__tns", metrics_dict,
                        "^tns (\S+)",
                        logPath+"/3_4_opendp.log")
 
-    extractTagFromFile("detailedplace__timing__wns__worst", metrics_dict,
+    extractTagFromFile("detailedplace__timing__setup__wns", metrics_dict,
                        "^wns (\S+)",
                        logPath+"/3_4_opendp.log")
 
-    extractTagFromFile("detailedplace__timing__ws__worst", metrics_dict,
-                       "^worst slack (\S+)",
-                       logPath+"/3_4_opendp.log")
-
-    extractTagFromFile("detailedplace__inst__displacement__total", metrics_dict,
+    extractTagFromFile("detailedplace__design__instance__displacement", metrics_dict,
                        "total displacement +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log")
 
-    extractTagFromFile("detailedplace__inst__displacement__average", metrics_dict,
+    extractTagFromFile("detailedplace__design__instance__displacement__mean", metrics_dict,
                        "average displacement +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log")
 
-    extractTagFromFile("detailedplace__inst__displacement__max", metrics_dict,
+    extractTagFromFile("detailedplace__desgin__instance__displacement__max", metrics_dict,
                        "max displacement +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log")
 
-    extractTagFromFile("detailedplace__wirelength__initial__estimate", metrics_dict,
-                       "original HPWL +(\d*\.?\d*)",
-                       logPath+"/3_4_opendp.log")
-
-    extractTagFromFile("detailedplace__wirelength__final__estimate", metrics_dict,
+    extractTagFromFile("detailedplace__route__wirelength__estimated", metrics_dict,
                        "legalized HPWL +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log")
 
@@ -373,35 +341,27 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 # ==============================================================================
 
     latency_max,latency_min,skew = get_skew_latency(logPath+"/4_1_cts.log")
-    metrics_dict['cts__timing__latency__min'] = latency_min
-    metrics_dict['cts__timing__latency__max'] = latency_max
-    metrics_dict['cts__timing__skew__worst'] = skew
+    metrics_dict['cts__clock__latency__min'] = latency_min
+    metrics_dict['cts__clock__latency__max'] = latency_max
+    metrics_dict['cts__clock__skew__worst'] = skew
 
-    extractTagFromFile("cts__timing__tns__total__pre_repair", metrics_dict,
+    extractTagFromFile("cts__timing__setup__tns__prerepair", metrics_dict,
                        "^post cts-pre-repair.*report_tns\n^-*\n^tns (\S+)",
                        logPath+"/4_1_cts.log")
 
-    extractTagFromFile("cts__timing__wns__worst__pre_repair", metrics_dict,
+    extractTagFromFile("cts__timing__setup__wns__prerepair", metrics_dict,
                        "^post cts-pre-repair.*report_wns\n^-*\n^wns (\S+)",
                        logPath+"/4_1_cts.log")
 
-    extractTagFromFile("cts__timing__ws__worst__pre_repair", metrics_dict,
-                       "^post cts-pre-repair.*report_wns\n^-*\n^.*\n^worst slack (\S+)",
-                       logPath+"/4_1_cts.log")
-
-    extractTagFromFile("cts__timing__tns__total", metrics_dict,
+    extractTagFromFile("cts__timing__setup__tns", metrics_dict,
                        "^post cts.*report_tns\n^-*\n^tns (\S+)",
                        logPath+"/4_1_cts.log")
 
-    extractTagFromFile("cts__timing__wns__worst", metrics_dict,
+    extractTagFromFile("cts__timing__setup__wns", metrics_dict,
                        "^post cts.*report_wns\n^-*\n^wns (\S+)",
                        logPath+"/4_1_cts.log")
 
-    extractTagFromFile("cts__timing__ws__worst", metrics_dict,
-                       "^post cts.*report_wns\n^-*\n^.*\n^worst slack (\S+)",
-                       logPath+"/4_1_cts.log")
-
-    extractTagFromFile("cts_hold_buffer_count", metrics_dict,
+    extractTagFromFile("cts__design__instance__hold_buffer__count", metrics_dict,
                        "Inserted (\d+) hold buffers",
                        logPath+"/4_1_cts.log")
 
@@ -410,20 +370,16 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 
     latency_max,latency_min,skew = get_skew_latency(logPath+"/5_1_fastroute.log")
     #print(f'skew = {skew}, latency_max = {latency_max}, latency_min = {latency_min}')
-    metrics_dict['globalroute__timing__latency__min'] = latency_min
-    metrics_dict['globalroute__timing__latency__max'] = latency_max
-    metrics_dict['globalroute__timing__skew__worst'] = skew
+    metrics_dict['globalroute__clock__latency__min'] = latency_min
+    metrics_dict['globalroute__clock__latency__max'] = latency_max
+    metrics_dict['globalroute__clock__skew__worst'] = skew
 
-    extractTagFromFile("globalroute__timing__tns__total", metrics_dict,
+    extractTagFromFile("globalroute__timing__setup__tns", metrics_dict,
                       "^tns (\S+)",
                       logPath+"/5_1_fastroute.log")
 
-    extractTagFromFile("globalroute__timing__wns__worst", metrics_dict,
+    extractTagFromFile("globalroute__timing__setup__wns", metrics_dict,
                       "^wns (\S+)",
-                      logPath+"/5_1_fastroute.log")
-
-    extractTagFromFile("globalroute__timing__ws__worst", metrics_dict,
-                      "^worst slack (\S+)",
                       logPath+"/5_1_fastroute.log")
 
     extractTagFromFile("globalroute__timing__clock__slack", metrics_dict,
@@ -431,25 +387,20 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                       logPath+"/5_1_fastroute.log")
 
     extractTagFromFile("globalroute__timing__clock__period", metrics_dict,
-                      "^\[INFO FLW-....\] Clock .* period (\S+) .*",
+                      "^\[INFO FLW-....\] Clock .* period (\S+)",
                       logPath+"/5_1_fastroute.log")
 
     extractGnuTime("globalroute", metrics_dict, logPath+"/5_1_fastroute.log")
 
-    extractTagFromFile("detailedroute__wirelength", metrics_dict,
+    extractTagFromFile("detailedroute__route__wirelength", metrics_dict,
                        "total wire length = +(\S+) um",
                        logPath+"/5_2_TritonRoute.log")
 
-    extractTagFromFile("detailedroute__via__count", metrics_dict,
+    extractTagFromFile("detailedroute__route__via__count", metrics_dict,
                        "total number of vias = +(\S+)",
                        logPath+"/5_2_TritonRoute.log")
 
-    extractTagFromFile("detailedroute__errors__count", metrics_dict,
-                       "(?i)error:",
-                       logPath+"/5_2_TritonRoute.log",
-                       count=True, defaultNotFound=0)
-
-    extractTagFromFile("detailedroute__drc__error__count", metrics_dict,
+    extractTagFromFile("detailedroute__route__drc_errors__count", metrics_dict,
                        "(?i)violation",
                        rptPath+"/5_route_drc.rpt",
                        count=True, defaultNotFound=0)
@@ -467,7 +418,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "Total +\S+ +(\S+) +\S+ +\S+ +\S+",
                        logPath+"/6_report.log")
 
-    extractTagFromFile("finish__power__leak__total", metrics_dict,
+    extractTagFromFile("finish__power__leakage__total", metrics_dict,
                        "Total +\S+ +\S+ +(\S+) +\S+ +\S+",
                        logPath+"/6_report.log")
 
@@ -475,11 +426,11 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "Total +\S+ +\S+ +\S+ +(\S+) +\S+",
                        logPath+"/6_report.log")
 
-    extractTagFromFile("finish__area", metrics_dict,
+    extractTagFromFile("finish__design__instance__area", metrics_dict,
                       "^Design area (\S+) u\^2",
                        logPath+"/6_report.log")
 
-    extractTagFromFile("finish__util", metrics_dict,
+    extractTagFromFile("finish__design__instance__utilization", metrics_dict,
                       "^Design area.* (\S+)% utilization",
                        logPath+"/6_report.log")
 

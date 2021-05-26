@@ -71,6 +71,21 @@ pipeline {
             }
           }
         }
+        stage('asap7 jpeg') {
+          agent any;
+          steps {
+            unstash 'build';
+            sh 'flow/test/test_helper.sh jpeg asap7';
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: 'flow/logs/**/*, flow/reports/**/*';
+            }
+            failure {
+              archiveArtifacts artifacts: 'flow/*tar.gz';
+            }
+          }
+        }
         stage('nangate45 aes') {
           agent any;
           steps {

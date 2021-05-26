@@ -1,8 +1,8 @@
 {
     "rules": [
         {
-            "field": "synth__area__stdcell__count",
-            "value": 534595,
+            "field": "synth__design__instance__stdcell__area",
+            "value": 1031508,
             "compare": "<="
         },
         {
@@ -11,32 +11,27 @@
             "compare": "=="
         },
         {
-            "field": "placeopt__area__instance__area",
-            "value": 554339,
+            "field": "placeopt__design__instance__design__area",
+            "value": 554384,
             "compare": "<="
         },
         {
-            "field": "placeopt__area__instance__count",
-            "value": 595868,
+            "field": "placeopt__design__instance__stdcell__count",
+            "value": 595885,
             "compare": "<="
         },
         {
-            "field": "detailedroute__wirelength",
-            "value": 11219279,
+            "field": "detailedroute__route__wirelength",
+            "value": 11213814,
             "compare": "<="
         },
         {
-            "field": "detailedroute__errors__count",
+            "field": "detailedroute__route__drc_errors__count",
             "value": 0,
             "compare": "=="
         },
         {
-            "field": "detailedroute__drc__error__count",
-            "value": 0,
-            "compare": "=="
-        },
-        {
-            "field": "finish__area",
+            "field": "finish__design__instance__area",
             "value": 8018189,
             "compare": "<="
         }
