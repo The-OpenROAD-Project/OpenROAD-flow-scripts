@@ -409,6 +409,13 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 
 # Finish
 # ==============================================================================
+    extractTagFromFile("finish__timing__setup__tns", metrics_dict,
+                      "^tns (\S+)",
+                      logPath+"/6_report.log")
+
+    extractTagFromFile("finish__timing__setup__wns", metrics_dict,
+                      "^wns (\S+)",
+                      logPath+"/6_report.log")
 
     extractTagFromFile("finish__power__internal__total", metrics_dict,
                        "Total +(\S+) +\S+ +\S+ +\S+ +\S+",
