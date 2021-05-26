@@ -131,7 +131,18 @@ export TEST_DIR      ?= $(FLOW_HOME)/test
 #-------------------------------------------------------------------------------
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
-export PLATFORM_DIR  ?= $(PLATFORM_HOME)/$(PLATFORM)
+
+PUBLIC=nangate45 sky130hd sky130hs asap7
+
+ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
+  export PLATFORM_DIR = $(PLATFORM_HOME)/$(PLATFORM)
+else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
+  export PLATFORM_DIR = ./platforms/$(PLATFORM)
+else ifneq ($(wildcard ../../$(PLATFORM)),)
+  export PLATFORM_DIR = ../../$(PLATFORM)
+else
+  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found)
+endif
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
