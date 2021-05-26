@@ -121,6 +121,7 @@ export FLOW_VARIANT ?= base
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
+export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
 export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
