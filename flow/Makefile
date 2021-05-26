@@ -454,34 +454,12 @@ $(RESULTS_DIR)/route.guide: $(RESULTS_DIR)/4_cts.def $(FASTROUTE_TCL) $(PRE_GLOB
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_route.tcl -metrics $(LOG_DIR)/5_1_fastroute.json) 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
 
 
-# STEP 2: Run detail route
-#-------------------------------------------------------------------------------
-
-# Generate param file for TritonRoute
-#-------------------------------------------------------------------------------
-$(OBJECTS_DIR)/TritonRoute.param:
-	mkdir -p $(OBJECTS_DIR)
-	echo "outputguide:$(RESULTS_DIR)/output_guide.mod" > $@
-ifeq ($(USE_WXL),)
-	echo "guide:$(RESULTS_DIR)/route.guide" >> $@
-endif
-	echo "outputDRC:$(REPORTS_DIR)/5_route_drc.rpt" >> $@
-	echo "outputMaze:$(RESULTS_DIR)/maze.log" >> $@
-	echo "threads:$(NUM_CORES)" >> $@
-	echo "cpxthreads:1" >> $@
-	echo "verbose:1" >> $@
-	echo "gap:0" >> $@
-	echo "timeout:2400" >> $@
-ifneq ($(dbProcessNode),)
-	echo "dbProcessNode:$(dbProcessNode)" >> $@
-endif
-
-# Run TritonRoute
+# STEP 2: Run detailed route
 #-------------------------------------------------------------------------------
 ifeq ($(USE_WXL),)
 $(RESULTS_DIR)/5_route.def: $(RESULTS_DIR)/route.guide
 endif
-$(RESULTS_DIR)/5_route.def: $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/4_cts.def
+$(RESULTS_DIR)/5_route.def: $(RESULTS_DIR)/4_cts.def
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_route.tcl -metrics $(LOG_DIR)/5_2_TritonRoute.json) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
@@ -490,7 +468,7 @@ $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
 clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
 	rm -rf *.gdid *.log *.met *.sav *.res.dmp
-	rm -rf $(RESULTS_DIR)/route.guide $(OBJECTS_DIR)/TritonRoute.param $(RESULTS_DIR)/output_guide.mod
+	rm -rf $(RESULTS_DIR)/route.guide $(RESULTS_DIR)/output_guide.mod
 	rm -rf $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/5_route.sdc
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
@@ -618,7 +596,7 @@ clean_finish:
 #
 # ==============================================================================
 
-all: $(SDC_FILE) $(WRAPPED_LIBS) $(DONT_USE_LIBS) $(OBJECTS_DIR)/TritonRoute.param $(OBJECTS_DIR)/klayout.lyt $(WRAPPED_GDSOAS)
+all: $(SDC_FILE) $(WRAPPED_LIBS) $(DONT_USE_LIBS) $(OBJECTS_DIR)/klayout.lyt $(WRAPPED_GDSOAS)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/run_all.tcl -metrics $(LOG_DIR)/run_all.json) 2>&1 | tee $(LOG_DIR)/run_all.log
 
@@ -634,7 +612,7 @@ clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_f
 
 nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
-	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide run.param
+	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
 	rm -rf versions.txt
 

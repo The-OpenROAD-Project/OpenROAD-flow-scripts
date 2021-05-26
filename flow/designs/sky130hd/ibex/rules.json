@@ -22,7 +22,7 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -2.16,
+            "value": -2.192,
             "compare": ">="
         },
         {
