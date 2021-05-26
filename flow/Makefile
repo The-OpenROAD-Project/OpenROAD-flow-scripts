@@ -112,7 +112,7 @@ SHELL          = /bin/bash
 # - the following settings allowed user to point OpenRoad binaries to different
 #   location
 # - default is current install / clone directory
-export OPENROAD_HOME ?= .
+export FLOW_HOME ?= .
 
 #-------------------------------------------------------------------------------
 # Setup variables to point to other location for the following sub directory
@@ -120,18 +120,18 @@ export OPENROAD_HOME ?= .
 # - platforms - default is under current directory
 # - work home - default is current directory
 # - utils, scripts, test - default is under current directory
-export DESIGN_HOME   ?= $(OPENROAD_HOME)/designs
-export PLATFORM_HOME ?= $(OPENROAD_HOME)/platforms
+export DESIGN_HOME   ?= $(FLOW_HOME)/designs
+export PLATFORM_HOME ?= $(FLOW_HOME)/platforms
 export WORK_HOME     ?= .
 
-export UTILS_DIR     ?= $(OPENROAD_HOME)/util
-export SCRIPTS_DIR   ?= $(OPENROAD_HOME)/scripts
-export TEST_DIR      ?= $(OPENROAD_HOME)/test
+export UTILS_DIR     ?= $(FLOW_HOME)/util
+export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
+export TEST_DIR      ?= $(FLOW_HOME)/test
 
 #-------------------------------------------------------------------------------
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
-export PLATFORM_DIR  = $(PLATFORM_HOME)/$(PLATFORM)
+export PLATFORM_DIR  ?= $(PLATFORM_HOME)/$(PLATFORM)
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
@@ -180,21 +180,18 @@ endif
 #       2 user explicity set with variable in Makefile or command line
 OPENROAD_CMD            ?= $(shell command -v openroad)
 ifeq ($(OPENROAD_CMD),)
-  OPENROAD_CMD           = $(abspath $(OPENROAD_HOME)/../tools/build/OpenROAD/src/openroad) -no_init -exit
+  OPENROAD_CMD           = $(abspath $(FLOW_HOME)/../tools/build/OpenROAD/src/openroad) -no_init -exit
 else
   OPENROAD_CMD           = $(shell command -v openroad) -no_init -exit
 endif
-OPENROAD_NO_EXIT_CMD     = $(firstword $(OPENROAD_CMD)) -no_exit
+OPENROAD_NO_EXIT_CMD     = $(firstword $(OPENROAD_CMD))
 
 YOSYS_CMD               ?= $(shell command -v yosys)
 ifeq ($(YOSYS_CMD),)
-  YOSYS_CMD              = $(abspath $(OPENROAD_HOME)/../tools/build/yosys/bin/yosys)
+  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/build/yosys/bin/yosys)
 endif
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)
-ifeq ($(KLAYOUT_CMD),)
-  $(error KLayout command not found.Please configure KLayout prior to running OpenROAD's flow)
-endif
 
 #-------------------------------------------------------------------------------
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
