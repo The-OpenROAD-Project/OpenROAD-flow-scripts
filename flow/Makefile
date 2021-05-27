@@ -73,21 +73,21 @@
 # DESIGN_CONFIG=./designs/sky130hs/aes/config_ppa.mk
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config_ppa.mk
 # DESIGN_CONFIG=./designs/sky130hs/jpeg/config_ppa.mk
-#
+
 # DESIGN_CONFIG=./designs/asap7/gcd/config.mk
 # DESIGN_CONFIG=./designs/asap7/ibex/config.mk
 # DESIGN_CONFIG=./designs/asap7/aes/config.mk
 # DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
 
+# DESIGN_CONFIG=./designs/intel22/gcd/config.mk
+# DESIGN_CONFIG=./designs/intel22/aes/config.mk
+#
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
-
-# # Global override Floorplan
+# Global override Floorplan
 # export CORE_UTILIZATION := 30
 # export CORE_ASPECT_RATIO := 1
 # export CORE_MARGIN := 4
-
-default: finish
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -98,13 +98,44 @@ default: finish
 #
 # ==============================================================================
 
+#-------------------------------------------------------------------------------
+# Default target when invoking without specific target.
+.DEFAULT_GOAL := finish
+
+#-------------------------------------------------------------------------------
+# Proper way to initiate SHELL for make
+SHELL          = /bin/bash
+.SHELLFLAGS    = -o pipefail -c
+
+#-------------------------------------------------------------------------------
+# Setup varialbles to point to root / head of the OpenROAD directory 
+# - the following settings allowed user to point OpenRoad binaries to different
+#   location
+# - default is current install / clone directory
+export FLOW_HOME ?= .
+
+#-------------------------------------------------------------------------------
+# Setup variables to point to other location for the following sub directory
+# - designs - default is under current directory
+# - platforms - default is under current directory
+# - work home - default is current directory
+# - utils, scripts, test - default is under current directory
+export DESIGN_HOME   ?= $(FLOW_HOME)/designs
+export PLATFORM_HOME ?= $(FLOW_HOME)/platforms
+export WORK_HOME     ?= .
+
+export UTILS_DIR     ?= $(FLOW_HOME)/util
+export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
+export TEST_DIR      ?= $(FLOW_HOME)/test
+
+#-------------------------------------------------------------------------------
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
 
 PUBLIC=nangate45 sky130hd sky130hs asap7
 
-ifneq ($(wildcard $(PLATFORM_BASE)/$(PLATFORM)),)
-  export PLATFORM_DIR = $(PLATFORM_BASE)/$(PLATFORM)
+ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
+  export PLATFORM_DIR = $(PLATFORM_HOME)/$(PLATFORM)
 else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ./platforms/$(PLATFORM)
 else ifneq ($(wildcard ../../$(PLATFORM)),)
@@ -121,24 +152,12 @@ export FLOW_VARIANT ?= base
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
-export LOG_DIR     = ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export OBJECTS_DIR = ./objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export REPORTS_DIR = ./reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export RESULTS_DIR = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
-export SCRIPTS_DIR = ./scripts
-export UTILS_DIR   = ./util
-export TEST_DIR    = ./test
-
-# Tool Options
-SHELL = /bin/bash -o pipefail
-
-TIME_CMD = /usr/bin/time -f "%Eelapsed %PCPU %MmemKB"
-TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
-ifeq (, $(strip $(TIME_TEST)))
-  TIME_CMD = /usr/bin/time
-endif
-
+#-------------------------------------------------------------------------------
 ifeq (, $(strip $(NPROC)))
   # Linux (utility program)
   NPROC := $(shell nproc 2>/dev/null)
@@ -158,9 +177,34 @@ ifeq (, $(strip $(NPROC)))
 endif
 export NUM_CORES := $(NPROC)
 
-OPENROAD_CMD = openroad -no_init -exit
-OPENROAD_NO_EXIT_CMD = $(patsubst -exit,,$(OPENROAD_CMD))
+#-------------------------------------------------------------------------------
+# setup all commands used within this flow
+TIME_CMD = /usr/bin/time -f "%Eelapsed %PCPU %MmemKB"
+TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
+ifeq (, $(strip $(TIME_TEST)))
+  TIME_CMD = /usr/bin/time
+endif
 
+# The following determine the executable location for each tool used by this flow.
+# Priority is given to 
+#       1 user include path to the executable prior to running make
+#       2 user explicity set with variable in Makefile or command line
+OPENROAD_CMD            ?= $(shell command -v openroad)
+ifeq ($(OPENROAD_CMD),)
+  OPENROAD_CMD           = $(abspath $(FLOW_HOME)/../tools/build/OpenROAD/src/openroad) -no_init -exit
+else
+  OPENROAD_CMD           = $(shell command -v openroad) -no_init -exit
+endif
+OPENROAD_NO_EXIT_CMD     = $(firstword $(OPENROAD_CMD))
+
+YOSYS_CMD               ?= $(shell command -v yosys)
+ifeq ($(YOSYS_CMD),)
+  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/build/yosys/bin/yosys)
+endif
+
+KLAYOUT_CMD             ?= $(shell command -v klayout)
+
+#-------------------------------------------------------------------------------
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
@@ -188,9 +232,9 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 #-------------------------------------------------------------------------------
 .PHONY: versions.txt
 versions.txt:
-	@yosys -V > $@
+	@$(YOSYS_CMD) -V > $@
 	@echo openroad `$(firstword $(OPENROAD_CMD)) -version` >> $@
-	@klayout -zz -v >> $@
+	@$(KLAYOUT_CMD) -zz -v >> $@
 
 # Pre-process libraries
 # ==============================================================================
@@ -247,11 +291,11 @@ synth: versions.txt \
 
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
-SYNTH_SCRIPT ?= scripts/synth.tcl
+SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 
 $(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(VERILOG_FILES)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	($(TIME_CMD) yosys -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+	($(TIME_CMD) $(YOSYS_CMD) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
@@ -441,13 +485,13 @@ clean_route:
 	rm -f  $(LOG_DIR)/5_*
 
 klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	klayout -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
+	$(KLAYOUT_CMD) -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
 	        -rd in_def="$<" \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/viewDrc.py
 
 klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	klayout -rd in_guide="$(RESULTS_DIR)/route.guide" \
+	$(KLAYOUT_CMD) -rd in_guide="$(RESULTS_DIR)/route.guide" \
 	        -rd in_def="$<" \
 	        -rd net_name=$(GUIDE_NET) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
@@ -463,6 +507,7 @@ klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 6_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
+        $(RESULTS_DIR)/6_final.sdc \
         $(6_FINAL_FILE)
 # ==============================================================================
 
@@ -477,6 +522,9 @@ endif
 $(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
 	cp $< $@
 
+$(RESULTS_DIR)/6_final.sdc: $(RESULTS_DIR)/5_route.sdc
+	cp $< $@
+
 $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_1_fill.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
 
@@ -485,7 +533,7 @@ $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
 $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
-	($(TIME_CMD) klayout -zz -rd design_name=$(basename $(notdir $@)) \
+	($(TIME_CMD) $(KLAYOUT_CMD) -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:$(STREAM_SYSTEM_EXT)=def)) \
 	        -rd in_files="$(ADDITIONAL_GDSOAS)" \
 	        -rd config_file=$(FILL_CONFIG) \
@@ -498,7 +546,7 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 #-------------------------------------------------------------------------------
 6_1_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
 $(6_1_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS)
-	($(TIME_CMD) stdbuf -o L klayout -zz -rd design_name=$(DESIGN_NAME) \
+	($(TIME_CMD) stdbuf -o L $(KLAYOUT_CMD) -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$< \
 	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
 	        -rd config_file=$(FILL_CONFIG) \
@@ -516,7 +564,7 @@ drc: $(REPORTS_DIR)/6_drc.lyrdb
 
 $(REPORTS_DIR)/6_drc.lyrdb: $(6_FINAL_FILE) $(KLAYOUT_DRC_FILE)
 ifneq ($(KLAYOUT_DRC_FILE),)
-	($(TIME_CMD) klayout -zz -rd in_gds="$<" \
+	($(TIME_CMD) $(KLAYOUT_CMD) -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_DRC_FILE)) 2>&1 | tee $(LOG_DIR)/6_drc.log
 	# Hacky way of getting DRV count (don't error on no matches)
@@ -535,7 +583,7 @@ lvs: $(RESULTS_DIR)/6_lvs.lvsdb
 
 $(RESULTS_DIR)/6_lvs.lvsdb: $(6_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
 ifneq ($(KLAYOUT_LVS_FILE),)
-	($(TIME_CMD) klayout -b -rd in_gds="$<" \
+	($(TIME_CMD) $(KLAYOUT_CMD) -b -rd in_gds="$<" \
 	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_LVS_FILE)) 2>&1 | tee $(LOG_DIR)/6_lvs.log
@@ -586,7 +634,7 @@ RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
 RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
 RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
-	klayout -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
+	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
 gui_final: gui_6_final.def
 
