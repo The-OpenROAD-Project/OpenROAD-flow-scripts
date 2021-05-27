@@ -100,11 +100,16 @@ clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_
 
 set_propagated_clock [all_clocks]
 
-estimate_parasitics -placement
 set_dont_use $::env(DONT_USE_CELLS)
+
+estimate_parasitics -placement
 report_time "cts-pre-repair"
 
 repair_clock_nets
+
+estimate_parasitics -placement
+report_time "cts-post-repair"
+
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
