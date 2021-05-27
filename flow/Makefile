@@ -108,7 +108,7 @@ SHELL          = /bin/bash
 .SHELLFLAGS    = -o pipefail -c
 
 #-------------------------------------------------------------------------------
-# Setup varialbles to point to root / head of the OpenROAD directory 
+# Setup varialbles to point to root / head of the OpenROAD directory
 # - the following settings allowed user to point OpenRoad binaries to different
 #   location
 # - default is current install / clone directory
@@ -152,6 +152,7 @@ export FLOW_VARIANT ?= base
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
+export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
 export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
@@ -186,7 +187,7 @@ ifeq (, $(strip $(TIME_TEST)))
 endif
 
 # The following determine the executable location for each tool used by this flow.
-# Priority is given to 
+# Priority is given to
 #       1 user include path to the executable prior to running make
 #       2 user explicity set with variable in Makefile or command line
 OPENROAD_CMD            ?= $(shell command -v openroad)
