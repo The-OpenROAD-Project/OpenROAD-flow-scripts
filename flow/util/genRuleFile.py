@@ -15,8 +15,8 @@ okFile = 'metadata-base-ok.json'
 outFile = 'rules.json'
 errors = 0
 rules = list()
-regularPadding = 1.15
-periodPadding = 0.05
+regularPadding = 1.15 # %
+periodPadding = 0.05 # %
 valueIfZero = -50
 
 if isfile(okFile):
@@ -27,50 +27,54 @@ else:
     sys.exit(1)
 
 metrics = [
-    # name                                        , allowChange , periodPad , roundValue
-    ["synth__design__instance__stdcell__area"     , True        , False     , True],
-    ["constraints__clocks__count"                 , False       , False     , True],
-    ["placeopt__design__instance__design__area"   , True        , False     , True],
-    ["placeopt__design__instance__stdcell__count" , True        , False     , True],
-    ["globalroute__timing__clock__slack"          , True        , True      , False],
-    ["detailedroute__route__wirelength"           , True        , False     , True],
-    ["detailedroute__route__drc_errors__count"    , False       , False     , True],
-    ["finish__design__instance__area"             , True        , False     , True],
+    # name                                        , usePadding , periodPad , roundValue
+    ["synth__design__instance__stdcell__area"     , True       , False     , True],
+    ["constraints__clocks__count"                 , False      , False     , True],
+    ["placeopt__design__instance__design__area"   , True       , False     , True],
+    ["placeopt__design__instance__stdcell__count" , True       , False     , True],
+    ["globalroute__timing__clock__slack"          , True       , True      , False],
+    ["detailedroute__route__wirelength"           , True       , False     , True],
+    ["detailedroute__route__drc_errors__count"    , False      , False     , True],
+    ["finish__design__instance__area"             , True       , False     , True],
 ]
 
 for entry in metrics:
-    field, allowChange, periodPad, roundValue = entry
+    field, usePadding, periodPad, roundValue = entry
     value = data[field]
-    if periodPad:
-        periodName = field.replace('slack', 'period')
-        period = data[periodName]
-        try:
-            if value >= 0:
-                value = - period * periodPadding
-            else:
-                value = value - period * periodPadding
-        except Exception as e:
-            print('[ERROR] while computing period padding', field, value, periodName, period)
-            print(e)
-            errors += 1
-            continue
-    else:
-        if value == 0 and allowChange:
+
+    if usePadding:
+        if periodPad:
+            periodName = field.replace('slack', 'period')
+            period = data[periodName]
+            try:
+                if value >= 0:
+                    value = - period * periodPadding
+                else:
+                    value = value - period * periodPadding
+            except Exception as e:
+                print('[ERROR] while computing period padding ', end='')
+                print(field, value, periodName, period)
+                print(e)
+                errors += 1
+                continue
+        elif value == 0:
             value = valueIfZero
-        elif allowChange:
+        else:
             try:
                 value *= regularPadding
             except Exception as e:
                 print('[ERROR] while computing padding', field, value)
                 print(e)
-                continue
                 errors += 1
-    if not allowChange:
+                continue
+
+    if not usePadding:
         compare = '=='
     elif value < 0:
         compare = '>='
     else:
         compare = '<='
+
     newRule = dict()
     newRule['field'] = field
     if roundValue :

@@ -7,14 +7,14 @@ clean_metadata:
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 
-.PHONY: update-metadata update-rules update-ok
-promote_ok: promote_metadata promote_rules
+.PHONY: update_metadata update_rules update_ok
+update_ok: update_metadata update_rules
 
-promote_metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
+update_metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 	cp -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
 	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
 
-promote_rules:
+update_rules:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR)
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
