@@ -7,6 +7,9 @@ clean_metadata:
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 
+promote_metadata:
+	cp -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json  $(dir $(DESIGN_CONFIG))/metadata-$(FLOW_VARIANT)-ok.json
+
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
 	$(UTILS_DIR)/genMetrics.py -f ./ -d $(DESIGN_NICKNAME) -p $(PLATFORM) -v $(FLOW_VARIANT) -o $@
 
