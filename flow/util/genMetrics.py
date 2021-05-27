@@ -409,6 +409,10 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
 
 # Finish
 # ==============================================================================
+    latency_max,latency_min,skew = get_skew_latency(logPath+"/6_report.log")
+    metrics_dict['finish__clock__latency__min'] = latency_min
+    metrics_dict['finish__clock__latency__max'] = latency_max
+    metrics_dict['finish__clock__skew__worst'] = skew
     extractTagFromFile("finish__timing__setup__tns", metrics_dict,
                       "^tns (\S+)",
                       logPath+"/6_report.log")
