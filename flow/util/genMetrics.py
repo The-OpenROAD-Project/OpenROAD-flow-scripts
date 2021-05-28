@@ -8,6 +8,7 @@
 import os
 from sys import exit
 from datetime import datetime, timedelta
+from collections import defaultdict
 from uuid import uuid4 as uuid
 from subprocess import check_output, call, STDOUT
 
@@ -33,6 +34,8 @@ def parse_args():
                       help='Additional comments to embed')
   parser.add_argument('--output', '-o', required=False, default="metadata.json",
                       help='Output file')
+  parser.add_argument('--hier', '-x', action = 'store_true',
+                      help='Hierarchical JSON')
   args = parser.parse_args()
 
   if not os.path.isdir(args.flowPath):
@@ -186,12 +189,12 @@ def is_git_repo(folder=None):
     else:
         return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w')) == 0
 
-def extract_metrics(cwd, platform, design, flow_variant, output):
+def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     logPath = os.path.join(cwd, "logs", platform, design, flow_variant)
     rptPath = os.path.join(cwd, "reports", platform, design, flow_variant)
     resultPath = os.path.join(cwd, "results", platform, design, flow_variant)
 
-    metrics_dict = {}
+    metrics_dict = defaultdict(dict) 
     metrics_dict["run__flow__generate__date"] = now.strftime("%Y-%m-%d %H:%M")
     cmdOutput = check_output(['openroad', '-version'])
     cmdFields = [ x.decode('utf-8') for x in cmdOutput.split()  ]
@@ -319,7 +322,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "^worst slack (\S+)",
                        logPath+"/3_4_opendp.log")
 
-    extractTagFromFile("detailedplace__design__instance__displacement", metrics_dict,
+    extractTagFromFile("detailedplace__design__instance__displacement__total", metrics_dict,
                        "total displacement +(\d*\.?\d*)",
                        logPath+"/3_4_opendp.log")
 
@@ -478,12 +481,20 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
     else:
       metrics_dict["total_time"] = str(total)
 
-    with open(output, "w") as resultSpecfile:
-        json.dump(metrics_dict, resultSpecfile, indent=2)
-
     metrics_df = pd.DataFrame(list(metrics_dict.items()))
     col_index = metrics_df.iloc[0][1] + "__" + metrics_df.iloc[1][1]
     metrics_df.columns = ["Metrics", col_index]
+
+    if hier_json:
+        hier_metrics_dict = defaultdict(dict) 
+        for metric in metrics_dict:
+            key_list = metric.split('__', 1)
+            if len(key_list) == 2:
+                hier_metrics_dict[key_list[0]][key_list[1]] = metrics_dict[metric]
+        metrics_dict = hier_metrics_dict
+
+    with open(output, "w") as resultSpecfile:
+        json.dump(metrics_dict, resultSpecfile, indent=2)
 
     return metrics_dict, metrics_df
 
@@ -509,7 +520,7 @@ if args.design == "all_designs":
                         des = design_it.name
                         print(plt, des, variant)
                         design_metrics, design_metrics_df = extract_metrics(cwd, plt, des, variant,
-                                        os.path.join(".", "reports", plt, des, variant, "metrics.json"))
+                                        os.path.join(".", "reports", plt, des, variant, "metrics.json"), args.hier)
                         all_metrics.append(design_metrics)
                         if all_metrics_df.shape[0] == 0:
                             all_metrics_df = design_metrics_df
@@ -520,10 +531,11 @@ if args.design == "all_designs":
 # render to json and html
 #
     with open("metrics.json", "w") as outFile:
-        json.dump(all_metrics, outFile)
+        json.dump(all_metrics, outFile, indent=2)
+
     metrics_html = all_metrics_df.to_html()
     metrics_html_file = open("metrics.html", "w")
     metrics_html_file.write(metrics_html)
     metrics_html_file.close()
 else:
-    metrics_dict, metrics_df = extract_metrics(args.flowPath, args.platform, args.design, args.flowVariant, args.output)
+    metrics_dict, metrics_df = extract_metrics(args.flowPath, args.platform, args.design, args.flowVariant, args.output, args.hier)
