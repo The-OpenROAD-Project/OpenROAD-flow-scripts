@@ -294,7 +294,7 @@ synth: versions.txt \
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 
-$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(VERILOG_FILES)
+$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
@@ -485,13 +485,13 @@ clean_route:
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
-klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
+klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(REPORTS_DIR)/5_route_drc.rpt $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
 	        -rd in_def="$<" \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/viewDrc.py
 
-klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
+klayout_guides: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/route.guide $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -rd in_guide="$(RESULTS_DIR)/route.guide" \
 	        -rd in_def="$<" \
 	        -rd net_name=$(GUIDE_NET) \
@@ -513,7 +513,7 @@ finish: $(LOG_DIR)/6_report.log \
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
-$(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def
+$(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def $(FILL_CONFIG)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_density_fill.json) 2>&1 | tee $(LOG_DIR)/6_density_fill.log
 else
 $(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def
@@ -546,7 +546,7 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
 6_1_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
-$(6_1_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS)
+$(6_1_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS) $(SEAL_GDSOAS)
 	($(TIME_CMD) stdbuf -o L $(KLAYOUT_CMD) -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$< \
 	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
