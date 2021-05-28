@@ -250,8 +250,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "^tns (\S+)",
                        logPath+"/2_1_floorplan.log")
 
-    extractTagFromFile("floorplan__timing__setup__wns", metrics_dict,
-                       "^wns (\S+)",
+    extractTagFromFile("floorplan__timing__setup__ws", metrics_dict,
+                       "^worst slack (\S+)",
                        logPath+"/2_1_floorplan.log", occurrence=0)
 
     extractTagFromFile("floorplan__design__instance__stdcell__area", metrics_dict,
@@ -283,8 +283,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                       "^tns (\S+)",
                       logPath+"/3_1_place_gp.log")
 
-    extractTagFromFile("globalplace__timing__setup__wns", metrics_dict,
-                      "^wns (\S+)",
+    extractTagFromFile("globalplace__timing__setup__ws", metrics_dict,
+                      "^worst slack (\S+)",
                       logPath+"/3_1_place_gp.log")
 
     extractGnuTime("globalplace", metrics_dict, logPath+"/3_1_place_gp.log")
@@ -293,8 +293,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "^tns (\S+)",
                        logPath+"/3_3_resizer.log")
 
-    extractTagFromFile("placeopt__timing__setup__wns", metrics_dict,
-                       "^wns (\S+)",
+    extractTagFromFile("placeopt__timing__setup__ws", metrics_dict,
+                       "^worst slack (\S+)",
                        logPath+"/3_3_resizer.log")
 
     extractTagFromFile("placeopt__design__instance__design__area", metrics_dict,
@@ -315,8 +315,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "^tns (\S+)",
                        logPath+"/3_4_opendp.log")
 
-    extractTagFromFile("detailedplace__timing__setup__wns", metrics_dict,
-                       "^wns (\S+)",
+    extractTagFromFile("detailedplace__timing__setup__ws", metrics_dict,
+                       "^worst slack (\S+)",
                        logPath+"/3_4_opendp.log")
 
     extractTagFromFile("detailedplace__design__instance__displacement", metrics_dict,
@@ -349,16 +349,16 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                        "^post cts-pre-repair.*report_tns\n^-*\n^tns (\S+)",
                        logPath+"/4_1_cts.log")
 
-    extractTagFromFile("cts__timing__setup__wns__prerepair", metrics_dict,
-                       "^post cts-pre-repair.*report_wns\n^-*\n^wns (\S+)",
+    extractTagFromFile("cts__timing__setup__ws__prerepair", metrics_dict,
+                       "^post cts-pre-repair.*report_wns\n^-*\n.*\n^worst slack (\S+)",
                        logPath+"/4_1_cts.log")
 
     extractTagFromFile("cts__timing__setup__tns", metrics_dict,
                        "^post cts.*report_tns\n^-*\n^tns (\S+)",
                        logPath+"/4_1_cts.log")
 
-    extractTagFromFile("cts__timing__setup__wns", metrics_dict,
-                       "^post cts.*report_wns\n^-*\n^wns (\S+)",
+    extractTagFromFile("cts__timing__setup__ws", metrics_dict,
+                       "^post cts.*report_wns\n^-*\n.*\n^worst slack (\S+)",
                        logPath+"/4_1_cts.log")
 
     extractTagFromFile("cts__design__instance__hold_buffer__count", metrics_dict,
@@ -378,8 +378,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                       "^tns (\S+)",
                       logPath+"/5_1_fastroute.log")
 
-    extractTagFromFile("globalroute__timing__setup__wns", metrics_dict,
-                      "^wns (\S+)",
+    extractTagFromFile("globalroute__timing__setup__ws", metrics_dict,
+                      "^worst slack (\S+)",
                       logPath+"/5_1_fastroute.log")
 
     extractTagFromFile("globalroute__timing__clock__slack", metrics_dict,
@@ -417,8 +417,8 @@ def extract_metrics(cwd, platform, design, flow_variant, output):
                       "^tns (\S+)",
                       logPath+"/6_report.log")
 
-    extractTagFromFile("finish__timing__setup__wns", metrics_dict,
-                      "^wns (\S+)",
+    extractTagFromFile("finish__timing__setup__ws", metrics_dict,
+                      "^worst slack (\S+)",
                       logPath+"/6_report.log")
 
     extractTagFromFile("finish__power__internal__total", metrics_dict,
