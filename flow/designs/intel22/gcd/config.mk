@@ -1,21 +1,15 @@
-$(info [INFO-FLOW] AES Design)
+$(info [INFO-FLOW] GCD Design)
 DESIGN_DIR                   := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 DESIGN_PDK_HOME              := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-export DESIGN_NICKNAME = aes
-export DESIGN_NAME = aes_cipher_top
-export PLATFORM    = intel22
+export DESIGN_NAME            = gcd
+export DESIGN_NICKNAME        = gcd
+export DESIGN                 = gcd
 
-export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*.v))
-export SDC_FILE      = $(DESIGN_DIR)/constraint.sdc
+export PLATFORM               = intel22
 
-# These values must be multiples of placement site
-# x=0.19 y=1.4
-export DIE_AREA    = 0 0 250 250
-export CORE_AREA   = 1.26 1.89 248 248
-
-
-export PLACE_DENSITY = uniform
+export VERILOG_FILES          = $(sort $(wildcard $(abspath $(DESIGN_HOME)/src/$(DESIGN))/*.v))
+export SDC_FILE               = $(DESIGN_DIR)/constraint.sdc
 
 export CORNER                ?= BC
 
@@ -34,3 +28,9 @@ export DESIGN_GROUND          = VSS
 
 export PDN_CFG                = $(FOUNDRY_DIR)/openRoad/pdn/grid_strategy-M1-M5-M7.cfg
 
+export PLACE_DENSITY          = 0.35
+
+export DIE_AREA               = 0 0 50 50
+export CORE_AREA              = 1.26 1.89 49 49
+
+export DESIGN_DIR DESIGN_PDK_HOME
