@@ -196,6 +196,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 
     metrics_dict = defaultdict(dict) 
     metrics_dict["run__flow__generate__date"] = now.strftime("%Y-%m-%d %H:%M")
+    metrics_dict["run__flow__metrics__version"] = "Metrics_2.1" 
     cmdOutput = check_output(['openroad', '-version'])
     cmdFields = [ x.decode('utf-8') for x in cmdOutput.split()  ]
     metrics_dict["run__flow__openroad__version"] = str(cmdFields[0])
@@ -486,6 +487,9 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     metrics_df.columns = ["Metrics", col_index]
 
     if hier_json:
+        #
+        # Convert the Metrics dictionary to hierarchical format by stripping the stage as a "key"
+        #
         hier_metrics_dict = defaultdict(dict) 
         for metric in metrics_dict:
             key_list = metric.split('__', 1)
