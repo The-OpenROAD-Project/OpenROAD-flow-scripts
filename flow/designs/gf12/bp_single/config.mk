@@ -63,3 +63,5 @@ export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.cfg
 
 # TODO: replace this with max(CHANNEL_WIDTH_[HV]) from IP_global.cfg
 export MACRO_BLOCKAGE_HALO = 25
+
+export DESIGN_TYPE = CHIP
