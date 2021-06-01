@@ -32,6 +32,15 @@ if { ![info exists ::env(USE_WXL)]} {
 if { [info exists ::env(dbProcessNode)]} {
   append additional_args " -db_process_node $::env(dbProcessNode)"
 }
+if { [info exists ::env(MIN_ROUTING_LAYER)]} {
+  append additional_args " -bottom_routing_layer $::env(MIN_ROUTING_LAYER)"
+}
+if { [info exists ::env(MAX_ROUTING_LAYER)]} {
+  append additional_args " -top_routing_layer $::env(MAX_ROUTING_LAYER)"
+}
+if { [info exists ::env(VIA_IN_PIN_LAYER)]} {
+  append additional_args " -droute_via_in_pin_bottom_layer_num $::env(VIA_IN_PIN_LAYER)"
+}
 
 detailed_route -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
                -output_guide $::env(RESULTS_DIR)/output_guide.mod \
