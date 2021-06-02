@@ -3,6 +3,7 @@ undefine BLOCKS
 undefine ADDITIONAL_LEFS
 undefine ADDITIONAL_GDS 
 undefine DONT_USE_SC_LIB
+undefine RCX_RULES
 
 export TOP_NICKNAME = chameleon_hier
 export TOP_DIR = ./designs/$(PLATFORM)/${TOP_NICKNAME}
@@ -18,7 +19,7 @@ export VERILOG_FILES = \
 
 			 
 export SDC_FILE          = ${TOP_DIR}/${DESIGN_NAME}/constraint.sdc
-export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
+#export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 
 export PDN_CFG = ${TOP_DIR}/${DESIGN_NAME}/pdn.cfg
 
