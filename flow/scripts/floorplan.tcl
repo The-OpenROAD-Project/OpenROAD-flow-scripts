@@ -81,34 +81,12 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
     }
   }
 }
- 
-
-# pre report
-
-puts "\n=========================================================================="
-puts "report_checks"
-puts "--------------------------------------------------------------------------"
-report_checks -fields {input slew capacitance} -format full_clock
-
-report_clock_properties
-puts "\n=========================================================================="
-puts "report_tns"
-puts "--------------------------------------------------------------------------"
-report_tns
-
-puts "\n=========================================================================="
-puts "report_wns"
-puts "--------------------------------------------------------------------------"
-report_wns
-report_worst_slack
-
-puts "\n=========================================================================="
-puts "report_design_area"
-puts "--------------------------------------------------------------------------"
-report_design_area
 
 # remove buffers inserted by yosys/abc
 remove_buffers
+
+source $::env(SCRIPTS_DIR)/report_metrics.tcl
+report_metrics "floorplan final"
 
 if {![info exists standalone] || $standalone} {
   # write output
