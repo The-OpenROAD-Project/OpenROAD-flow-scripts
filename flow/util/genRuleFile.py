@@ -66,9 +66,6 @@ for entry in metrics:
 
     if usePadding:
         if periodPad:
-            periodName = field.replace('slack', 'period')
-            if periodName in data.keys():
-                period = data[periodName]
             try:
                 if value >= 0:
                     value = - period * periodPadding
