@@ -66,6 +66,7 @@ set data "$data \nEND $BName \nEND LIBRARY"
 set outputLef "$::env(RESULTS_DIR)/${BName}.lef"
 set fileId [open $outputLef "w"]
 puts -nonewline $fileId $data
+
 close $fileId 
   
 
