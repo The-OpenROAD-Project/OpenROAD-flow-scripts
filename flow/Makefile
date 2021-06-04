@@ -485,13 +485,13 @@ clean_route:
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
-klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(REPORTS_DIR)/5_route_drc.rpt $(OBJECTS_DIR)/klayout.lyt
+klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
 	        -rd in_def="$<" \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/viewDrc.py
 
-klayout_guides: $(RESULTS_DIR)/5_route.def $(RESULTS_DIR)/route.guide $(OBJECTS_DIR)/klayout.lyt
+klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -rd in_guide="$(RESULTS_DIR)/route.guide" \
 	        -rd in_def="$<" \
 	        -rd net_name=$(GUIDE_NET) \
