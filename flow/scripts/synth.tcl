@@ -54,6 +54,7 @@ if {[info exist ::env(PRESERVE_CELLS)]} {
 }
 
 
+
 if {[info exist ::env(BLOCKS)]} {
   hierarchy -check -top $::env(DESIGN_NAME)
   foreach block $::env(BLOCKS) {

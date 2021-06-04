@@ -91,6 +91,7 @@ DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 # export CORE_ASPECT_RATIO := 1
 # export CORE_MARGIN := 4
 
+
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
 # / ___|| ____|_   _| | | |  _ \
@@ -168,6 +169,7 @@ $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NI
 $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
 export ADDITIONAL_LEFS += $(BLOCK_LEFS)
 export ADDITIONAL_GDS += $(BLOCK_GDS)
+
 endif
 
 #-------------------------------------------------------------------------------
