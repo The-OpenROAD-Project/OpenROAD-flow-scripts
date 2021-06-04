@@ -55,7 +55,7 @@
 # DESIGN_CONFIG=./designs/sky130hd/coyote_tc/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/riscv32i/config.mk
- DESIGN_CONFIG=./designs/sky130hd/chameleon_hier/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/chameleon_hier/config.mk
 
 # sky130hd PPA
 # DESIGN_CONFIG=./designs/sky130hd/gcd/config_ppa.mk
@@ -244,10 +244,6 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
  
 # Targets to harden Blocks in case of hierarchical flow is triggered  
 build_macros: $(BLOCK_LEFS) 
-
-$(BLOCK_LEFS): ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_%/$(FLOW_VARIANT)/6_final.lef: ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%/config.mk	
-	make DESIGN_CONFIG=$< generate_abstract
-
 
 $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef: ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/${block}/config.mk))
 
