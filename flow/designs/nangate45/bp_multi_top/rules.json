@@ -12,22 +12,42 @@
         },
         {
             "field": "placeopt__design__instance__design__area",
-            "value": 504967,
+            "value": 504462,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__stdcell__count",
-            "value": 130735,
+            "value": 130535,
             "compare": "<="
         },
         {
+            "field": "cts__timing__setup__ws",
+            "value": -5.65,
+            "compare": ">="
+        },
+        {
+            "field": "cts__timing__setup__ws__prerepair",
+            "value": -5.68,
+            "compare": ">="
+        },
+        {
+            "field": "cts__timing__setup__ws__postrepair",
+            "value": -5.68,
+            "compare": ">="
+        },
+        {
             "field": "globalroute__timing__clock__slack",
-            "value": -5.9,
+            "value": -5.95,
+            "compare": ">="
+        },
+        {
+            "field": "globalroute__timing__setup__ws",
+            "value": -5.95,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 6932293,
+            "value": 6728687,
             "compare": "<="
         },
         {
@@ -36,8 +56,13 @@
             "compare": "=="
         },
         {
+            "field": "finish__timing__setup__ws",
+            "value": -7.16,
+            "compare": ">="
+        },
+        {
             "field": "finish__design__instance__area",
-            "value": 2290629,
+            "value": 2295483,
             "compare": "<="
         }
     ]

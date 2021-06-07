@@ -33,11 +33,9 @@ optimize_mirroring
 check_placement -verbose
 
 estimate_parasitics -placement
-report_checks
-report_design_area
-report_tns
-report_wns
-report_worst_slack
+
+source $::env(SCRIPTS_DIR)/report_metrics.tcl
+report_metrics "detailed place"
 
 if {![info exists standalone] || $standalone} {
   # write output

@@ -35,18 +35,8 @@ source $::env(PLATFORM_DIR)/setRC.tcl
 
 estimate_parasitics -placement
 
-print_banner "report_checks"
-report_checks
-
-print_banner "report_tns"
-report_tns
-
-print_banner "report_wns"
-report_wns
-report_worst_slack
-
-print_banner "report_design_area"
-report_design_area
+source $::env(SCRIPTS_DIR)/report_metrics.tcl
+report_metrics "resizer pre"
 
 print_banner "instance_count"
 puts [sta::network_leaf_instance_count]
@@ -94,23 +84,8 @@ repair_tie_fanout -separation $tie_separation $tiehi_pin
 print_banner "report_floating_nets"
 report_floating_nets
 
-print_banner "report_checks"
-report_checks -path_delay max -fields {slew cap input}
-
-report_checks -path_delay min -fields {slew cap input}
-
-print_banner "report_tns"
-report_tns
-
-print_banner "report_wns"
-report_wns
-report_worst_slack
-
-print_banner "report_slew_violations"
-report_check_types -max_slew -max_capacitance -max_fanout -violators
-
-print_banner "report_design_area"
-report_design_area
+source $::env(SCRIPTS_DIR)/report_metrics.tcl
+report_metrics "resizer"
 
 print_banner "instance_count"
 puts [sta::network_leaf_instance_count]

@@ -39,7 +39,7 @@ write_verilog $::env(RESULTS_DIR)/6_final.v
 
 # Run extraction and STA
 if {[info exist ::env(RCX_RULES)]} {
-  
+
   # Set RC corner for RCX
   # Set in config.mk
   if {[info exist ::env(RCX_RC_CORNER)]} {
@@ -52,15 +52,13 @@ if {[info exist ::env(RCX_RULES)]} {
   # RCX section
   define_process_corner -ext_model_index 0 X
   extract_parasitics -ext_model_file $::env(RCX_RULES)
-  
+
   # Write Spef
   write_spef $::env(RESULTS_DIR)/6_final.spef
   file delete $::env(DESIGN_NAME).totCap
 
   # Read Spef for OpenSTA
   read_spef $::env(RESULTS_DIR)/6_final.spef
-
-  source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
   # Static IR drop analysis
   if {[info exist ::env(PWR_NETS_VOLTAGES)]} {
@@ -70,7 +68,7 @@ if {[info exist ::env(RCX_RULES)]} {
     }
   } else {
     puts "IR drop analysis for power nets is skipped because PWR_NETS_VOLTAGES is undefined"
-  }  
+  }
   if {[info exist ::env(GND_NETS_VOLTAGES)]} {
     dict for {gndNetName gndNetVoltage}  {*}$::env(GND_NETS_VOLTAGES) {
         set_pdnsim_net_voltage -net ${gndNetName} -voltage ${gndNetVoltage}
@@ -78,12 +76,14 @@ if {[info exist ::env(RCX_RULES)]} {
     }
   } else {
     puts "IR drop analysis for ground nets is skipped because GND_NETS_VOLTAGES is undefined"
-  }  
-  
+  }
+
 } else {
   puts "OpenRCX is not enabled for this platform."
-  report_design_area
 }
+
+source $::env(SCRIPTS_DIR)/report_metrics.tcl
+report_metrics "finish"
 
 if {![info exists standalone] || $standalone} {
   exit
