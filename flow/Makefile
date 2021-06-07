@@ -190,13 +190,13 @@ endif
 # Priority is given to
 #       1 user include path to the executable prior to running make
 #       2 user explicity set with variable in Makefile or command line
-OPENROAD_CMD            ?= $(shell command -v openroad)
-ifeq ($(OPENROAD_CMD),)
-  OPENROAD_CMD           = $(abspath $(FLOW_HOME)/../tools/build/OpenROAD/src/openroad) -no_init -exit
-else
-  OPENROAD_CMD           = $(shell command -v openroad) -no_init -exit
+OPENROAD_EXE            ?= $(shell command -v openroad)
+ifeq ($(OPENROAD_EXE),)
+  OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/build/OpenROAD/src/openroad)
 endif
-OPENROAD_NO_EXIT_CMD     = $(firstword $(OPENROAD_CMD))
+OPENROAD_ARGS           := -no_init $(OPENROAD_ARGS)
+OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
+OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 
 YOSYS_CMD               ?= $(shell command -v yosys)
 ifeq ($(YOSYS_CMD),)
@@ -234,7 +234,7 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 .PHONY: versions.txt
 versions.txt:
 	@$(YOSYS_CMD) -V > $@
-	@echo openroad `$(firstword $(OPENROAD_CMD)) -version` >> $@
+	@echo openroad `$(OPENROAD_EXE) -version` >> $@
 	@$(KLAYOUT_CMD) -zz -v >> $@
 
 # Pre-process libraries

@@ -138,7 +138,7 @@ command:
 
 ## Provide easy access to debugging
 ifdef GDB
-OPENROAD_CMD := gdb --args $(OPENROAD_CMD)
+OPENROAD_EXE := gdb --args $(OPENROAD_EXE)
 endif
 
 # Update the clock period sdc based on the worst slack reported by the final
