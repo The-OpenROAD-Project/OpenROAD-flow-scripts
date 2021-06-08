@@ -194,7 +194,7 @@ OPENROAD_EXE            ?= $(shell command -v openroad)
 ifeq ($(OPENROAD_EXE),)
   OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/build/OpenROAD/src/openroad)
 endif
-OPENROAD_ARGS           := -no_init $(OPENROAD_ARGS)
+OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 
