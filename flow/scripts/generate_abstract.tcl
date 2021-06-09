@@ -25,8 +25,6 @@ if {![info exists standalone] || $standalone} {
 }
 
 
-source scripts/generate_lef.tcl
-#source scripts/generate_libs.tcl
 
 if {![info exists standalone] || $standalone} {
   exit

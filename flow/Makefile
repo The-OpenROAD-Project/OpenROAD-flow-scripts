@@ -251,7 +251,7 @@ $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(bloc
 $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
 
 $(BLOCK_LEFS):   
-	make DESIGN_CONFIG=$< generate_abstract
+	$(MAKE) DESIGN_CONFIG=$< generate_abstract
       
 # Utility to print tool version information
 #-------------------------------------------------------------------------------

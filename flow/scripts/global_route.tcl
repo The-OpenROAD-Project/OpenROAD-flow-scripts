@@ -58,4 +58,4 @@ check_antennas -report_file $env(REPORTS_DIR)/antenna.log -simple_report
 
 # Write SDC to results with updated clock periods that are just failing.
 # Use make target update_sdc_clock to install the updated sdc.
-catch {source [file join $env(SCRIPTS_DIR) "write_ref_sdc.tcl"]}
+source [file join $env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
