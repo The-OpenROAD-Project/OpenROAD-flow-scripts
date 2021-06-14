@@ -805,23 +805,7 @@ module i2c_master #(
 		endcase
 	end
 
-	/*
-	always @(posedge sys_clk)
-	begin
-	  //io_do <= 8'd00;
-	  if(io_re & csr_selected)
-		case (io_a)
-			prer_low_addr: 		io_do <= #1 prer[ 7:0];
-			prer_high_addr: 	io_do <= #1 prer[15:8];
-			ctr_addr: 			io_do <= #1 ctr;
-			rxr_addr: 			io_do <= #1 rxr;
-			sr_addr: 			io_do <= #1 sr;
-			txr_addr: 			io_do <= #1 txr;
-			cr_addr: 			io_do <= #1 cr;
-			default: 			;   			 // reserved
-		endcase
-	end
-*/
+
 	// generate registers
 	always @(posedge sys_clk or posedge sys_rst)
 	  if (sys_rst)

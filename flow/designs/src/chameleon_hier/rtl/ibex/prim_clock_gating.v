@@ -10,7 +10,8 @@ module prim_clock_gating (
   input  test_en_i,
   output clk_o
 );
-/*
+
+`ifdef CG_LATCH
   reg en_latch;
 
   always @* begin
@@ -19,6 +20,9 @@ module prim_clock_gating (
     end
   end
   assign clk_o = en_latch & clk_i;
-*/
+`else
   assign clk_o = clk_i;
+`endif
+
+
 endmodule

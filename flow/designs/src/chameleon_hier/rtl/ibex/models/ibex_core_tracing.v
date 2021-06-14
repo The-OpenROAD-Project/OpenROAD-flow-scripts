@@ -383,7 +383,6 @@ module ibex_core_tracing (
 	localparam [31:0] CSR_MEIX_BIT = 11;
 	localparam [31:0] CSR_MFIX_BIT_LOW = 16;
 	localparam [31:0] CSR_MFIX_BIT_HIGH = 30;
-	ThisModuleDoesNotExist __sv2v_elab_fatal("Fatal error: RVFI needs to be defined globally.");
 	wire rvfi_valid;
 	wire [63:0] rvfi_order;
 	wire [31:0] rvfi_insn;

@@ -635,7 +635,10 @@ module ibex_alu (
 					else
 						shuffle_mode = shift_amt[3:0];
 					if (shuffle_flip)
-						shuffle_result = ((((((((shuffle_result & 32'h88224411) | ((shuffle_result << 6) & FLIP_MASK_L[96+:32])) | ((shuffle_result >> 6) & FLIP_MASK_R[96+:32])) | ((shuffle_result << 9) & FLIP_MASK_L[64+:32])) | ((shuffle_result >> 9) & FLIP_MASK_R[64+:32])) | ((shuffle_result << 15) & FLIP_MASK_L[32+:32])) | ((shuffle_result >> 15) & FLIP_MASK_R[32+:32])) | ((shuffle_result << 21) & FLIP_MASK_L[0+:32])) | ((shuffle_result >> 21) & FLIP_MASK_R[0+:32]);
+						shuffle_result = ((((((((shuffle_result & 32'h88224411) | ((shuffle_result << 6) & FLIP_MASK_L[96+:32])) | 
+						((shuffle_result >> 6) & FLIP_MASK_R[96+:32])) | ((shuffle_result << 9) & FLIP_MASK_L[64+:32])) | ((shuffle_result >> 9) 
+						& FLIP_MASK_R[64+:32])) | ((shuffle_result << 15) & FLIP_MASK_L[32+:32])) | ((shuffle_result >> 15) & FLIP_MASK_R[32+:32])) |
+						 ((shuffle_result << 21) & FLIP_MASK_L[0+:32])) | ((shuffle_result >> 21) & FLIP_MASK_R[0+:32]);
 					if (shuffle_mode[3])
 						shuffle_result = (shuffle_result & SHUFFLE_MASK_NOT[0]) | (((shuffle_result << 8) & SHUFFLE_MASK_L[96+:32]) | ((shuffle_result >> 8) & SHUFFLE_MASK_R[96+:32]));
 					if (shuffle_mode[2])
@@ -645,7 +648,10 @@ module ibex_alu (
 					if (shuffle_mode[0])
 						shuffle_result = (shuffle_result & SHUFFLE_MASK_NOT[3]) | (((shuffle_result << 1) & SHUFFLE_MASK_L[0+:32]) | ((shuffle_result >> 1) & SHUFFLE_MASK_R[0+:32]));
 					if (shuffle_flip)
-						shuffle_result = ((((((((shuffle_result & 32'h88224411) | ((shuffle_result << 6) & FLIP_MASK_L[96+:32])) | ((shuffle_result >> 6) & FLIP_MASK_R[96+:32])) | ((shuffle_result << 9) & FLIP_MASK_L[64+:32])) | ((shuffle_result >> 9) & FLIP_MASK_R[64+:32])) | ((shuffle_result << 15) & FLIP_MASK_L[32+:32])) | ((shuffle_result >> 15) & FLIP_MASK_R[32+:32])) | ((shuffle_result << 21) & FLIP_MASK_L[0+:32])) | ((shuffle_result >> 21) & FLIP_MASK_R[0+:32]);
+						shuffle_result = ((((((((shuffle_result & 32'h88224411) | ((shuffle_result << 6) & FLIP_MASK_L[96+:32])) |
+						((shuffle_result >> 6) & FLIP_MASK_R[96+:32])) | ((shuffle_result << 9) & FLIP_MASK_L[64+:32])) | ((shuffle_result >> 9)
+						& FLIP_MASK_R[64+:32])) | ((shuffle_result << 15) & FLIP_MASK_L[32+:32])) | ((shuffle_result >> 15) & FLIP_MASK_R[32+:32])) |
+						((shuffle_result << 21) & FLIP_MASK_L[0+:32])) | ((shuffle_result >> 21) & FLIP_MASK_R[0+:32]);
 				end
 				reg [191:0] bitcnt_partial_q;
 				for (i = 0; i < 32; i = i + 1) begin : gen_bitcnt_reg_in_lsb
@@ -712,11 +718,19 @@ module ibex_alu (
 				for (stg = 0; stg < 5; stg = stg + 1) begin : gen_butterfly_ctrl_stage
 					genvar seg;
 					for (seg = 0; seg < (2 ** stg); seg = seg + 1) begin : gen_butterfly_ctrl
-						assign lrotc_stage[stg][((2 * (16 >> stg)) * (seg + 1)) - 1:(2 * (16 >> stg)) * seg] = {{16 >> stg {1'b0}}, {16 >> stg {1'b1}}} << bitcnt_partial_q[((32 - ((16 >> stg) * ((2 * seg) + 1))) * 6) + ($clog2(16 >> stg) >= 0 ? $clog2(16 >> stg) : ($clog2(16 >> stg) + ($clog2(16 >> stg) >= 0 ? $clog2(16 >> stg) + 1 : 1 - $clog2(16 >> stg))) - 1)-:($clog2(16 >> stg) >= 0 ? $clog2(16 >> stg) + 1 : 1 - $clog2(16 >> stg))];
-						assign butterfly_mask_l[stg][((16 >> stg) * ((2 * seg) + 2)) - 1:(16 >> stg) * ((2 * seg) + 1)] = ~lrotc_stage[stg][((16 >> stg) * ((2 * seg) + 2)) - 1:(16 >> stg) * ((2 * seg) + 1)];
-						assign butterfly_mask_r[stg][((16 >> stg) * ((2 * seg) + 1)) - 1:(16 >> stg) * (2 * seg)] = ~lrotc_stage[stg][((16 >> stg) * ((2 * seg) + 2)) - 1:(16 >> stg) * ((2 * seg) + 1)];
-						assign butterfly_mask_l[stg][((16 >> stg) * ((2 * seg) + 1)) - 1:(16 >> stg) * (2 * seg)] = {((((16 >> stg) * ((2 * seg) + 1)) - 1) >= ((16 >> stg) * (2 * seg)) ? ((((16 >> stg) * ((2 * seg) + 1)) - 1) - ((16 >> stg) * (2 * seg))) + 1 : (((16 >> stg) * (2 * seg)) - (((16 >> stg) * ((2 * seg) + 1)) - 1)) + 1) {1'sb0}};
-						assign butterfly_mask_r[stg][((16 >> stg) * ((2 * seg) + 2)) - 1:(16 >> stg) * ((2 * seg) + 1)] = {((((16 >> stg) * ((2 * seg) + 2)) - 1) >= ((16 >> stg) * ((2 * seg) + 1)) ? ((((16 >> stg) * ((2 * seg) + 2)) - 1) - ((16 >> stg) * ((2 * seg) + 1))) + 1 : (((16 >> stg) * ((2 * seg) + 1)) - (((16 >> stg) * ((2 * seg) + 2)) - 1)) + 1) {1'sb0}};
+						assign lrotc_stage[stg][((2 * (16 >> stg)) * (seg + 1)) - 1:(2 * (16 >> stg)) * seg] = {{16 >> stg {1'b0}}, {16 >> stg {1'b1}}} 
+						<< bitcnt_partial_q[((32 - ((16 >> stg) * ((2 * seg) + 1))) * 6) + ($clog2(16 >> stg) >= 0 ? $clog2(16 >> stg) : ($clog2(16 >> stg) + ($clog2(16 >> stg) >= 0 
+						? $clog2(16 >> stg) + 1 : 1 - $clog2(16 >> stg))) - 1)-:($clog2(16 >> stg) >= 0 ? $clog2(16 >> stg) + 1 : 1 - $clog2(16 >> stg))];
+						assign butterfly_mask_l[stg][((16 >> stg) * ((2 * seg) + 2)) - 1:(16 >> stg) * ((2 * seg) + 1)] = ~lrotc_stage[stg][((16 >> stg) * ((2 * seg) + 2))
+						 - 1:(16 >> stg) * ((2 * seg) + 1)];
+						assign butterfly_mask_r[stg][((16 >> stg) * ((2 * seg) + 1)) - 1:(16 >> stg) * (2 * seg)] = ~lrotc_stage[stg][((16 >> stg) * ((2 * seg) + 2))
+						 - 1:(16 >> stg) * ((2 * seg) + 1)];
+						assign butterfly_mask_l[stg][((16 >> stg) * ((2 * seg) + 1)) - 1:(16 >> stg) * (2 * seg)] = {((((16 >> stg) * ((2 * seg) + 1)) - 1)
+						 >= ((16 >> stg) * (2 * seg)) ? ((((16 >> stg) * ((2 * seg) + 1)) - 1) - ((16 >> stg) * (2 * seg))) + 1 : (((16 >> stg) * (2 * seg)) - 
+						 (((16 >> stg) * ((2 * seg) + 1)) - 1)) + 1) {1'sb0}};
+						assign butterfly_mask_r[stg][((16 >> stg) * ((2 * seg) + 2)) - 1:(16 >> stg) * ((2 * seg) + 1)] = {((((16 >> stg) * ((2 * seg) + 2)) - 1)
+						 >= ((16 >> stg) * ((2 * seg) + 1)) ? ((((16 >> stg) * ((2 * seg) + 2)) - 1) - ((16 >> stg) * ((2 * seg) + 1))) + 1 : (((16 >> stg)
+						  * ((2 * seg) + 1)) - (((16 >> stg) * ((2 * seg) + 2)) - 1)) + 1) {1'sb0}};
 					end
 				end
 				for (stg = 0; stg < 5; stg = stg + 1) begin : gen_butterfly_not
@@ -733,11 +747,16 @@ module ibex_alu (
 				end
 				always @(*) begin
 					invbutterfly_result = operand_a_i & operand_b_i;
-					invbutterfly_result = ((invbutterfly_result & butterfly_mask_not[4]) | ((invbutterfly_result & butterfly_mask_l[4]) >> 1)) | ((invbutterfly_result & butterfly_mask_r[4]) << 1);
-					invbutterfly_result = ((invbutterfly_result & butterfly_mask_not[3]) | ((invbutterfly_result & butterfly_mask_l[3]) >> 2)) | ((invbutterfly_result & butterfly_mask_r[3]) << 2);
-					invbutterfly_result = ((invbutterfly_result & butterfly_mask_not[2]) | ((invbutterfly_result & butterfly_mask_l[2]) >> 4)) | ((invbutterfly_result & butterfly_mask_r[2]) << 4);
-					invbutterfly_result = ((invbutterfly_result & butterfly_mask_not[1]) | ((invbutterfly_result & butterfly_mask_l[1]) >> 8)) | ((invbutterfly_result & butterfly_mask_r[1]) << 8);
-					invbutterfly_result = ((invbutterfly_result & butterfly_mask_not[0]) | ((invbutterfly_result & butterfly_mask_l[0]) >> 16)) | ((invbutterfly_result & butterfly_mask_r[0]) << 16);
+					invbutterfly_result = ((invbutterfly_result & butterfly_mask_not[4]) | ((invbutterfly_result & butterfly_mask_l[4]) >> 1)) |
+					 ((invbutterfly_result & butterfly_mask_r[4]) << 1);
+					invbutterfly_result = ((invbutterfly_result & butterfly_mask_not[3]) | ((invbutterfly_result & butterfly_mask_l[3]) >> 2)) |
+					 ((invbutterfly_result & butterfly_mask_r[3]) << 2);
+					invbutterfly_result = ((invbutterfly_result & butterfly_mask_not[2]) | ((invbutterfly_result & butterfly_mask_l[2]) >> 4)) |
+					 ((invbutterfly_result & butterfly_mask_r[2]) << 4);
+					invbutterfly_result = ((invbutterfly_result & butterfly_mask_not[1]) | ((invbutterfly_result & butterfly_mask_l[1]) >> 8)) |
+					 ((invbutterfly_result & butterfly_mask_r[1]) << 8);
+					invbutterfly_result = ((invbutterfly_result & butterfly_mask_not[0]) | ((invbutterfly_result & butterfly_mask_l[0]) >> 16)) |
+					 ((invbutterfly_result & butterfly_mask_r[0]) << 16);
 				end
 				wire clmul_rmode;
 				wire clmul_hmode;
@@ -764,7 +783,8 @@ module ibex_alu (
 				reg [31:0] crc_operand;
 				wire [31:0] crc_poly;
 				wire [31:0] crc_mu_rev;
-				assign crc_op = (((((operator_i == ALU_CRC32C_W) | (operator_i == ALU_CRC32_W)) | (operator_i == ALU_CRC32C_H)) | (operator_i == ALU_CRC32_H)) | (operator_i == ALU_CRC32C_B)) | (operator_i == ALU_CRC32_B);
+				assign crc_op = (((((operator_i == ALU_CRC32C_W) | (operator_i == ALU_CRC32_W)) | (operator_i == ALU_CRC32C_H)) |
+				 (operator_i == ALU_CRC32_H)) | (operator_i == ALU_CRC32C_B)) | (operator_i == ALU_CRC32_B);
 				assign crc_cpoly = ((operator_i == ALU_CRC32C_W) | (operator_i == ALU_CRC32C_H)) | (operator_i == ALU_CRC32C_B);
 				assign crc_hmode = (operator_i == ALU_CRC32_H) | (operator_i == ALU_CRC32C_H);
 				assign crc_bmode = (operator_i == ALU_CRC32_B) | (operator_i == ALU_CRC32C_B);
