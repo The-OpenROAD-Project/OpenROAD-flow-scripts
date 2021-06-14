@@ -120,6 +120,7 @@ fi
 # Docker build
 if [ "$build_method" == "DOCKER" ]; then
   docker build -t openroad/yosys -f tools/yosys_util/Dockerfile tools/yosys
+  docker build -t openroad/lsoracle -f tools/LSOracle-Plugin/Dockerfile.centos7 tools/LSOracle-Plugin
   ./tools/OpenROAD/etc/DockerHelper.sh create -target=builder
   if [ "$COPY_PLATFORMS" == "YES" ]; then
     cp .dockerignore{,.bak}
@@ -137,6 +138,13 @@ elif [ "$build_method" == "LOCAL" ]; then
 
   mkdir -p tools/build/OpenROAD
   (cd tools/build/OpenROAD && cmake ../../OpenROAD && $NICE make -j$PROC)
+
+  mkdir -p tools/build/LSOracle
+  (cd tools/build/LSOracle && cmake ../../LSOracle-Plugin/LSOracle -D CMAKE_BUILD_TYPE=RELEASE && $NICE make -j$PROC)
+
+  mkdir - tools/build/yosys/share/yosys/plugins/
+  (cd tools/LSOracle-Plugin/ && make YOSYS_DIR=../yosys && cp oracle.so ../build/yosys/share/yosys/plugins/)
+
 else
   echo "ERROR: No valid build method found"
   exit 1

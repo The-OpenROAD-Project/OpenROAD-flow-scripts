@@ -53,6 +53,11 @@ if {[info exist ::env(PRESERVE_CELLS)]} {
 # Generic synthesis
 synth  -top $::env(DESIGN_NAME) -flatten
 
+if { [info exists ::env(USE_LSORACLE)] } {
+    # LSOracle synthesis
+    lsoracle
+}
+
 # Optimize the design
 opt -purge
 
