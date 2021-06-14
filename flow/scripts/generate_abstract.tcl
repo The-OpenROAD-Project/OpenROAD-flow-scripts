@@ -17,13 +17,10 @@ if {![info exists standalone] || $standalone} {
   # Use -order_wires to build wire graph
   # for antenna checker read_def -order_wires $::env(RESULTS_DIR)/6_1_fill.def
   read_def $::env(RESULTS_DIR)/6_1_fill.def
-  puts "Starting genration of abstract views"
-    
- source scripts/generate_lef.tcl 
-} else {
-  puts "Starting genration of abstract views"
 }
 
+puts "Starting generation of abstract views"
+source scripts/generate_lef.tcl 
 
 
 if {![info exists standalone] || $standalone} {

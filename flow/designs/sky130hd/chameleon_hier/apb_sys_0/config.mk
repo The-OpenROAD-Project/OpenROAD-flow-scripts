@@ -29,9 +29,6 @@ export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
 export ABC_LOAD_IN_FF = 3
 
 
-# Point to the RC file
-export SETRC_FILE = $(PLATFORM_DIR)/setRC.tcl
-
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 675 1050
 export CORE_AREA    = 0.46 2.720 674.54 1047.28  
