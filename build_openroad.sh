@@ -141,7 +141,7 @@ elif [ "$build_method" == "LOCAL" ]; then
 
   mkdir -p tools/build/LSOracle
   cmake -B tools/build/LSOracle tools/LSOracle -D CMAKE_BUILD_TYPE=RELEASE -D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys -D YOSYS_PLUGIN=ON
-  cmake --build tools/build/LSOracle -j$PROC
+  $NICE cmake --build tools/build/LSOracle -j$PROC
   mkdir -p tools/build/yosys/share/yosys/plugins
   cp tools/build/LSOracle/yosys-plugin/oracle.so tools/build/yosys/share/yosys/plugins/
 else
