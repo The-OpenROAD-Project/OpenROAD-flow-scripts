@@ -39,6 +39,7 @@ if {[info exist env(FASTROUTE_TCL)]} {
 
 global_route -guide_file $env(RESULTS_DIR)/route.guide \
                -overflow_iterations 100 \
+               -allow_overflow \
                -verbose 2
 
 # Set res and cap

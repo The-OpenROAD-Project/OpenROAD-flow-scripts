@@ -51,7 +51,11 @@ if {[info exist ::env(PRESERVE_CELLS)]} {
 }
 
 # Generic synthesis
-synth  -top $::env(DESIGN_NAME) -flatten
+if { 0 != [llength [array get ::env SYNTH_ARGS]] } {
+  synth  -top $::env(DESIGN_NAME)
+} else {
+  synth  -top $::env(DESIGN_NAME) -flatten
+}
 
 # Optimize the design
 opt -purge
