@@ -20,11 +20,12 @@ from ray.tune.suggest import ConcurrencyLimiter
 from ray.tune.schedulers import AsyncHyperBandScheduler
 from ray.tune.suggest.hyperopt import HyperOptSearch
 
-a = -10000
-b = 1
-c = 1000
 
+## User-defined evaluation function
 def evaluation_fn(step, a, ws, b, wl, c, ndrc):
+    a = -10000
+    b = 1
+    c = 1000
     #time.sleep(0.1)
     return ((a * ws + b * wl)*(step/100)**(-1) + c * ndrc)
 
@@ -84,6 +85,8 @@ def parse_massive(config):
 
     return fileName
 
+
+## Collects metrics to evalute the user-defined objective function.
 def read_metrics(path):
     with open('%s/metrics.json'%path) as f:
         data = json.load(f)
@@ -111,11 +114,11 @@ def easy_objective(config):
     ctsClusterDia = config["CTS_CLUSTER_DIAMETER"]
     grOverflow = config["GR_OVERFLOW"]
 
-    #TODO : parse trial config hyperparameters to genMassive.py script
+    # parse trial config hyperparameters to genMassive.py script
     # Newly generated genMassive.py scripts are located in ./util/autotune/runs/autotune-{variantName}.py
     variantName = parse_massive(config)
 
-    #TODO : run each runMassive.sh file ( generated from genMassive.py)
+    # run each runMassive.sh file ( generated from genMassive.py)
     os.chdir('%s'%cwd)
 
     print('run generated python to make run shell')
@@ -123,13 +126,13 @@ def easy_objective(config):
     print('run generated run shell')
     os.system('source %s/runs-%s.sh'%(cwd, variantName))
 
-    #TODO : run genMetrics.py to make metrics.json
+    # run genMetrics.py to make metrics.json
 
     #os.system('cd %s'%cwd)
     os.system('python %s/util/genMetrics.py -x -f %s -d %s -p %s -v %s -o %s/metrics.json'%(cwd,cwd,design,platform, variantName,runDir))
     #os.system('cd %s'%runDir)
 
-    #TODO : read generated metrics.json and parse Success / Fail, WNS, Wirelength and #DRC
+    # read generated metrics.json and parse Success / Fail, WNS, Wirelength and #DRC
 
     ws, wl, ndrc = read_metrics(runDir)
 
@@ -204,6 +207,7 @@ if __name__ == "__main__":
         "Ray Client.")
     args, _ = parser.parse_known_args()
 
+    # Optional
     current_best_params = [{
     'GP_PAD': 4,
     'DP_PAD': 2,
@@ -242,6 +246,8 @@ if __name__ == "__main__":
     # }
 
     algo = HyperOptSearch(points_to_evaluate=current_best_params)
+
+    ## User-defined concurrent #runs
     algo = ConcurrencyLimiter(algo, max_concurrent=30) 
 
     scheduler = AsyncHyperBandScheduler()
