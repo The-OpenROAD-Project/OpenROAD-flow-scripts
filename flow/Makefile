@@ -86,6 +86,10 @@
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 # Global setting for Synthesis
 export SYNTH_ARGS ?= -flatten
+
+# Global setting for Floorplan
+export PLACE_PINS_ARGS ?=
+
 # Global override Floorplan
 # export CORE_UTILIZATION := 30
 # export CORE_ASPECT_RATIO := 1

@@ -297,7 +297,7 @@ def writeConfigs(CurAttrs):
     fo.write('export ABC_CLOCK_PERIOD_IN_PS = %s\n'%CurAbcClkPeriod)
   if CurFlatten != 'empty':
     if CurFlatten == 0:
-      fo.write('export SYNTH_ARGS = hier\n')
+      fo.write('export SYNTH_ARGS = \n')
 
   if CurCoreUtil != 'empty':
     fo.write('export CORE_UTILIZATION = %s\n'%CurCoreUtil)
@@ -313,7 +313,7 @@ def writeConfigs(CurAttrs):
   if CurCoreDieMargin != 'empty':
     fo.write('export CORE_MARGIN = %s\n'%CurCoreDieMargin)
   if CurPinsDistance != 'empty':
-    fo.write('export IO_PLACEMENT_MIN_DIST = %s\n'%CurPinsDistance)
+    fo.write('export PLACE_PINS_ARGS = -min_distance %s\n'%CurPinsDistance)
   if CurGpPad != 'empty':
     fo.write('export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = %s\n'%CurGpPad)
   if CurDpPad != 'empty':
