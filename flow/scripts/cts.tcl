@@ -25,46 +25,6 @@ if {![info exists standalone] || $standalone} {
   puts "Starting CTS"
 }
 
-proc report_time { when } {
-  puts "\n=========================================================================="
-  puts "post $when report_checks -path_delay min"
-  puts "--------------------------------------------------------------------------"
-  report_checks -path_delay min -fields {slew cap input nets fanout} -format full_clock_expanded
-
-  puts "\n=========================================================================="
-  puts "post $when report_checks -path_delay max"
-  puts "--------------------------------------------------------------------------"
-  report_checks -path_delay max -fields {slew cap input nets fanout} -format full_clock_expanded
-
-  puts "\n=========================================================================="
-  puts "post $when report_checks -unconstrained"
-  puts "--------------------------------------------------------------------------"
-  report_checks -unconstrained -fields {slew cap input nets fanout} -format full_clock_expanded
-
-  puts "\n=========================================================================="
-  puts "post $when report_tns"
-  puts "--------------------------------------------------------------------------"
-  report_tns
-
-  puts "\n=========================================================================="
-  puts "post $when report_wns"
-  puts "--------------------------------------------------------------------------"
-  report_wns
-  report_worst_slack
-
-  puts "\n=========================================================================="
-  puts "post $when report_check_types -max_slew -violators"
-  puts "--------------------------------------------------------------------------"
-  report_check_types -max_slew -max_capacitance -max_fanout -violators
-
-  puts "\n=========================================================================="
-  puts "post $when report_clock_skew"
-  puts "--------------------------------------------------------------------------"
-  report_clock_skew
-
-
-}
-
 # Clone clock tree inverters next to register loads
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
@@ -102,13 +62,15 @@ set_propagated_clock [all_clocks]
 
 set_dont_use $::env(DONT_USE_CELLS)
 
+source $::env(SCRIPTS_DIR)/report_metrics.tcl
+
 estimate_parasitics -placement
-report_time "cts-pre-repair"
+report_metrics "cts pre-repair"
 
 repair_clock_nets
 
 estimate_parasitics -placement
-report_time "cts-post-repair"
+report_metrics "cts post-repair"
 
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
@@ -129,7 +91,7 @@ if { [catch {repair_timing -setup }]} {
 detailed_placement
 check_placement
 
-report_time "cts"
+report_metrics "cts final"
 
 if {![info exists standalone] || $standalone} {
   # write output

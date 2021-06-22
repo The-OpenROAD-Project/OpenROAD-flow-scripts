@@ -49,10 +49,9 @@ global_placement -routability_driven -density $::env(PLACE_DENSITY) \
 }
 
 estimate_parasitics -placement
-report_wns
-report_tns
-report_worst_slack
-report_design_area
+
+source $::env(SCRIPTS_DIR)/report_metrics.tcl
+report_metrics "global place"
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/3_1_place_gp.def

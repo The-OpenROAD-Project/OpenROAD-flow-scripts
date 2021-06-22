@@ -84,6 +84,12 @@
 #
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
+# Global setting for Synthesis
+export SYNTH_ARGS ?= -flatten
+
+# Global setting for Floorplan
+export PLACE_PINS_ARGS ?=
+
 # Global override Floorplan
 # export CORE_UTILIZATION := 30
 # export CORE_ASPECT_RATIO := 1
@@ -190,13 +196,13 @@ endif
 # Priority is given to
 #       1 user include path to the executable prior to running make
 #       2 user explicity set with variable in Makefile or command line
-OPENROAD_CMD            ?= $(shell command -v openroad)
-ifeq ($(OPENROAD_CMD),)
-  OPENROAD_CMD           = $(abspath $(FLOW_HOME)/../tools/build/OpenROAD/src/openroad) -no_init -exit
-else
-  OPENROAD_CMD           = $(shell command -v openroad) -no_init -exit
+OPENROAD_EXE            ?= $(shell command -v openroad)
+ifeq ($(OPENROAD_EXE),)
+  OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/build/OpenROAD/src/openroad)
 endif
-OPENROAD_NO_EXIT_CMD     = $(firstword $(OPENROAD_CMD))
+OPENROAD_ARGS            = -no_init $(OR_ARGS)
+OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
+OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 
 YOSYS_CMD               ?= $(shell command -v yosys)
 ifeq ($(YOSYS_CMD),)
@@ -234,7 +240,7 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 .PHONY: versions.txt
 versions.txt:
 	@$(YOSYS_CMD) -V > $@
-	@echo openroad `$(firstword $(OPENROAD_CMD)) -version` >> $@
+	@echo openroad `$(OPENROAD_EXE) -version` >> $@
 	@$(KLAYOUT_CMD) -zz -v >> $@
 
 # Pre-process libraries
@@ -294,7 +300,7 @@ synth: versions.txt \
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 
-$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(VERILOG_FILES)
+$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
@@ -513,7 +519,7 @@ finish: $(LOG_DIR)/6_report.log \
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
-$(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def
+$(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def $(FILL_CONFIG)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_density_fill.json) 2>&1 | tee $(LOG_DIR)/6_density_fill.log
 else
 $(RESULTS_DIR)/6_1_fill.def: $(RESULTS_DIR)/5_route.def
@@ -546,7 +552,7 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
 6_1_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
-$(6_1_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS)
+$(6_1_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS) $(SEAL_GDSOAS)
 	($(TIME_CMD) stdbuf -o L $(KLAYOUT_CMD) -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$< \
 	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
@@ -619,7 +625,7 @@ clean:
 	@echo "  clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish"
 	@echo
 
-clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish
+clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish clean_metadata
 	rm -rf $(OBJECTS_DIR)
 
 nuke: clean_test clean_issues

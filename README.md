@@ -61,7 +61,7 @@ Building dependencies from scratch can take up to an hour.
 This build option leverages a multi-step docker flow to install the tools and
 dependencies to a runner image. To follow these instructions, you must have
 docker installed, permissions to run docker, and docker container network access
-enabled. This step will create a runner image tagged as `openroad/flow`.
+enabled. This step will create a runner image tagged as `openroad/flow-scripts`.
 1.  Clone the OpenROAD-flow-scripts repository
 ```
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
