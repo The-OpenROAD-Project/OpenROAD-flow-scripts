@@ -8,10 +8,11 @@ function usage() {
   echo "Usage: $0 [-h|--help] [-l|--latest] [-o|--local] [--or_branch]"
   echo "  -h, --help              print this help message"
   echo "  -d, --dev_repo          (dev only) perform git pull on developer repositories"
-  echo "  -l, --latest            build using the head of branch 'master' for OpenROAD"
+  echo "  -l, --latest            build using the head of branch --or_branch or 'master' by default for OpenROAD"
   echo "  -o, --local             force local build instead of docker build"
   echo "  -p, --platform          perform git pull on all git-based platform repos"
   echo "  --or_branch BRANCH      build using the head of branch BRANCH for OpenROAD"
+  echo "  --or_repo REPO-URL      build using a fork at REPO-URL(https/ssh) for OpenROAD"
   echo "  -n, --nice              build using all cpus but nice the jobs"
   echo "  -c, --copy-platforms"   copy platforms to inside docker image
 
@@ -24,6 +25,8 @@ NICE=""
 PROC=`nproc`
 COPY_PLATFORMS="NO"
 DOCKER_TAG="openroad/flow-scripts"
+CURRENT_REMOTE="origin"
+OR_BRANCH="master"
 
 # Parse arguments
 while (( "$#" )); do
@@ -36,12 +39,16 @@ while (( "$#" )); do
       OR_BRANCH=$2
       shift 2
       ;;
+    --or_repo)
+      OR_REPO=$2
+      shift 2
+      ;;
     -d|--dev_repo)
       UPDATE_PRIVATE=1
       shift
       ;;
     -l|--latest)
-      OR_BRANCH="master"
+      UPDATE_OR=1
       shift
       ;;
     -n|--nice)
@@ -90,10 +97,28 @@ if [ -z ${OPENROAD_FLOW_NO_GIT_INIT+x} ]; then
   git submodule update --init --recursive
 fi
 
-if [ ! -z ${OR_BRANCH+x} ]; then
+
+if [ ! -z ${OR_REPO+x} ]; then 
+  base_url=$(dirname $OR_REPO)
+  [[ ${base_url##*/} = $base_url ]] && CURRENT_REMOTE=${base_url##*:} || CURRENT_REMOTE=${base_url##*/}
+  remotes=$(git --git-dir tools/OpenROAD/.git remote)
+  SAVEIFS=$IFS
+  IFS=$'\n'
+  remotes=($remotes)
+  IFS=$SAVEIFS
+  if [[ ! " ${remotes[@]} " =~ " ${CURRENT_REMOTE} " ]]; then
+    git --git-dir tools/OpenROAD/.git remote add $CURRENT_REMOTE $OR_REPO
+  fi
+fi 
+
+
+if [ ! -z ${UPDATE_OR+x} ]; then
   echo "updating OpenROAD tool to the latest"
-  (cd tools/OpenROAD && git checkout ${OR_BRANCH} && git pull && git submodule update --init --recursive)
-fi
+  (cd tools/OpenROAD && git fetch $CURRENT_REMOTE $OR_BRANCH \
+    && git checkout $CURRENT_REMOTE/$OR_BRANCH \
+    && git pull $CURRENT_REMOTE $OR_BRANCH \
+    && git submodule update --init --recursive)
+fi 
 
 # Update platforms
 if [ ! -z ${UPDATE_PLATFORM+x} ]; then
