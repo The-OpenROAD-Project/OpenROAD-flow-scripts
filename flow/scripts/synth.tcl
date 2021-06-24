@@ -66,6 +66,11 @@ if {[info exist ::env(BLOCKS)]} {
 # Generic synthesis
 synth  -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS)
 
+if { [info exists ::env(USE_LSORACLE)] } {
+    # LSOracle synthesis
+    lsoracle
+}
+
 # Optimize the design
 opt -purge
 
