@@ -23,6 +23,9 @@ foreach file $::env(VERILOG_FILES) {
   read_verilog -defer -sv {*}$vIdirsArgs $file
 }
 
+
+
+
 # Read standard cells and macros as blackbox inputs
 # These libs have their dont_use properties set accordingly
 read_liberty -lib {*}$::env(DONT_USE_LIBS)
@@ -47,6 +50,16 @@ if {[info exist ::env(PRESERVE_CELLS)]} {
     select -module $cell
     setattr -mod -set keep_hierarchy 1
     select -clear
+  }
+}
+
+
+
+if {[info exist ::env(BLOCKS)]} {
+  hierarchy -check -top $::env(DESIGN_NAME)
+  foreach block $::env(BLOCKS) {
+    blackbox $block
+    puts "blackboxing $block"
   }
 }
 
