@@ -16,6 +16,8 @@ PUBLIC = ['nangate45', 'sky130hd', 'sky130hs', 'asap7']
 # The number of generated config files into designs/{platform}/{design}/chunks/chuck{number} directory.
 NumFilesPerChunk = 50000
 
+## Orignal SDC file name
+OriginalSDC = 'constraint_doe.sdc'
 
 ##################################
 #  define input parameters
@@ -47,6 +49,7 @@ PLATFORM_DESIGN = [ \
     #'asap7-aes', \
     #'asap7-jpeg', \
     ]
+
 
 ## Target Clock Period (float)
 CLK_PERIOD = []
@@ -324,7 +327,7 @@ def writeConfigs(CurAttrs, CurChunkNum):
   fo.write('\n')
 
   if CurClkPeriod != 'empty' or CurUncertainty != 'empty' or CurIoDelay != 'empty':
-    fOrigSdc = open('%s/constraint.sdc'%(CurDesignDir),'r')
+    fOrigSdc = open('%s/%s'%(CurDesignDir,OriginalSDC),'r')
     filedata = fOrigSdc.read()
     fOrigSdc.close()
     if CurClkPeriod != 'empty':
