@@ -55,12 +55,14 @@
 # DESIGN_CONFIG=./designs/sky130hd/coyote_tc/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/riscv32i/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/chameleon_hier/config.mk
 
 # sky130hd PPA
 # DESIGN_CONFIG=./designs/sky130hd/gcd/config_ppa.mk
 # DESIGN_CONFIG=./designs/sky130hd/aes/config_ppa.mk
 # DESIGN_CONFIG=./designs/sky130hd/ibex/config_ppa.mk
 # DESIGN_CONFIG=./designs/sky130hd/jpeg/config_ppa.mk
+
 
 # DESIGN_CONFIG=./designs/sky130hs/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
@@ -94,6 +96,7 @@ export PLACE_PINS_ARGS ?=
 # export CORE_UTILIZATION := 30
 # export CORE_ASPECT_RATIO := 1
 # export CORE_MARGIN := 4
+
 
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
@@ -164,6 +167,17 @@ export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
+ifdef BLOCKS
+  $(info [INFO][FLOW] Hierarichal flow is invoked)
+  $(foreach block,$(BLOCKS),$(info following block is to be hardened :  ${block}))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(block)/config.mk))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
+  export ADDITIONAL_LEFS += $(BLOCK_LEFS)
+  export ADDITIONAL_GDS += $(BLOCK_GDS)
+  export GDS_FILES += $(BLOCK_GDS)
+endif
+
 #-------------------------------------------------------------------------------
 ifeq (, $(strip $(NPROC)))
   # Linux (utility program)
@@ -183,6 +197,11 @@ ifeq (, $(strip $(NPROC)))
   endif
 endif
 export NUM_CORES := $(NPROC)
+
+LSORACLE_PLUGIN ?= oracle
+ifneq ($(USE_LSORACLE),)
+	YOSYS_FLAGS ?= -m $(LSORACLE_PLUGIN)
+endif
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
@@ -234,7 +253,17 @@ else
 	SEAL_GDSOAS = $(SEAL_OAS)
 endif
 export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
+ 
+ 
+# Targets to harden Blocks in case of hierarchical flow is triggered  
+build_macros: $(BLOCK_LEFS) 
 
+$(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef: ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/${block}/config.mk))
+$(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+
+$(BLOCK_LEFS):   
+	$(MAKE) DESIGN_CONFIG=$< generate_abstract
+      
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
 .PHONY: versions.txt
@@ -302,7 +331,7 @@ SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 
 $(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	($(TIME_CMD) $(YOSYS_CMD) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
@@ -356,6 +385,7 @@ $(RESULTS_DIR)/2_4_floorplan_macro.def: $(RESULTS_DIR)/2_3_floorplan_tdms.def $(
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_5_floorplan_tapcell.def: $(RESULTS_DIR)/2_4_floorplan_macro.def $(TAPCELL_TCL)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_tapcell.log
+
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
@@ -537,6 +567,9 @@ $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.def $(RESULTS_DIR)/6_1_fill.sdc
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
+generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
+
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
 $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
@@ -603,8 +636,7 @@ clean_finish:
 	rm -rf $(REPORTS_DIR)/6_*.rpt
 	rm -f  $(LOG_DIR)/6_*
 
-
-
+	
 # ==============================================================================
 #  __  __ ___ ____   ____
 # |  \/  |_ _/ ___| / ___|
