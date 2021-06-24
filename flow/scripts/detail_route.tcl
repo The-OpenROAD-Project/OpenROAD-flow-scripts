@@ -32,6 +32,12 @@ if { ![info exists ::env(USE_WXL)]} {
 if { [info exists ::env(dbProcessNode)]} {
   append additional_args " -db_process_node $::env(dbProcessNode)"
 }
+if { [info exists ::env(OR_SEED)]} {
+  append additional_args " -or_seed $::env(OR_SEED)"
+}
+if { [info exists ::env(OR_K)]} {
+  append additional_args " -or_k $::env(OR_K)"
+}
 
 detailed_route -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
                -output_guide $::env(RESULTS_DIR)/output_guide.mod \
