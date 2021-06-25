@@ -4,3 +4,6 @@
 [submodule "tools/OpenROAD"]
 	path = tools/OpenROAD
 	url = ../OpenROAD.git
+[submodule "tools/LSOracle"]
+	path = tools/LSOracle
+	url = https://github.com/The-OpenROAD-Project/LSOracle.git
