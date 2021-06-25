@@ -22,6 +22,10 @@ if {![info exists standalone] || $standalone} {
 puts "Starting generation of abstract views"
 source scripts/generate_lef.tcl 
 
+if {[info exist ::env(CDL_FILE)]} {
+  cdl read_masters $::env(CDL_FILE)
+  cdl out $::env(RESULTS_DIR)/6_final.cdl
+}
 
 if {![info exists standalone] || $standalone} {
   exit
