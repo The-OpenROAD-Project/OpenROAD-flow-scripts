@@ -226,7 +226,7 @@ def productDict(dicts):
 
 def adjustFastRoute(filedata, adjSet, GrOverflow):
   if adjSet[0]!='empty':
-    filedata = re.sub("(set_global_routing_layer_adjustment .* )[0-9\.]+", "\g<1>{:.1f}".format(float(adjSet[0])), filedata)
+    filedata = re.sub("(set_global_routing_layer_adjustment .* )[0-9\.]+", "\g<1>{:.2f}".format(float(adjSet[0])), filedata)
   sep_la_cmds = ""
   for i, sep_la in enumerate(adjSet):
     if i==0 or sep_la=='empty':
@@ -234,7 +234,7 @@ def adjustFastRoute(filedata, adjSet, GrOverflow):
     ## TODO: Currently, only supports for SKY130HD and SKY130HS.
     ## TODO: user should manually change the layer name to match techLEF.
     layer_name = 'met%s'%i
-    sep_la_cmds += "set_global_routing_layer_adjustment " + layer_name + " {:.1f}\n".format(float(sep_la))
+    sep_la_cmds += "set_global_routing_layer_adjustment " + layer_name + " {:.2f}\n".format(float(sep_la))
   filedata = re.sub("set_global_routing_layer_adjustment.*\n", "\g<0>"+sep_la_cmds, filedata)
   if int(GrOverflow) == 1:
       filedata = re.sub("(global_route.*(\n\s+.*)*)", "\g<1> \\\n             -allow_overflow", filedata)
@@ -292,7 +292,7 @@ def writeConfigs(CurAttrs, CurChunkNum):
 
   if not os.path.isdir(CurChunkDir):
     os.mkdir(CurChunkDir)
-  print(CurChunkNum)
+  #print(CurChunkNum)
 
   if MakeArg=='clean':
     fileList = glob.glob('%s/*-DoE-*'%(CurChunkDir))
