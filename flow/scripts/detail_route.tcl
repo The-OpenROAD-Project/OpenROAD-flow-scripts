@@ -44,7 +44,7 @@ if { [info exists ::env(VIA_IN_PIN_MIN_LAYER)]} {
 }
 if { [info exists ::env(VIA_IN_PIN_MAX_LAYER)]} {
   append additional_args " -droute_via_in_pin_top_layer_num $::env(VIA_IN_PIN_MAX_LAYER)"
-
+}
 if { [info exists ::env(OR_SEED)]} {
   append additional_args " -or_seed $::env(OR_SEED)"
 }
