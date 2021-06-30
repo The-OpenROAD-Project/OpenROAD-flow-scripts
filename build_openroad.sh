@@ -168,6 +168,7 @@ elif [ "$build_method" == "LOCAL" ]; then
   cmake -B tools/build/LSOracle tools/LSOracle -D CMAKE_BUILD_TYPE=RELEASE -D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys -D YOSYS_PLUGIN=ON
   $NICE cmake --build tools/build/LSOracle -j$PROC
   mkdir -p tools/build/yosys/share/yosys/plugins
+  cp tools/LSOracle/core/test.ini tools/build/LSOracle/core/test.ini
   cp tools/build/LSOracle/yosys-plugin/oracle.so tools/build/yosys/share/yosys/plugins/
 else
   echo "ERROR: No valid build method found"
