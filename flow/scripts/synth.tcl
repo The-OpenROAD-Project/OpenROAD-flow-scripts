@@ -77,6 +77,7 @@ if { [info exists ::env(USE_LSORACLE)] } {
 
     # LSOracle synthesis
     lsoracle -script $::env(OBJECTS_DIR)/lso.script -lso_exe $::env(LSORACLE_CMD)
+    techmap
 }
 
 # Optimize the design
