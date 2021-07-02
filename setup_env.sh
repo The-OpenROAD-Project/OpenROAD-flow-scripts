@@ -8,4 +8,4 @@ fi
 export OPENROAD=${modroot}/OpenROAD
 echo "OPENROAD: ${OPENROAD}"
 
-export PATH=${modroot}/build/OpenROAD/src:${modroot}/build/yosys/bin:${modroot}/build/LSOracle/core:$PATH
+export PATH=${modroot}/build/OpenROAD/src:${modroot}/build/yosys/bin:${modroot}/build/LSOracle/bin:$PATH

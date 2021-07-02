@@ -200,11 +200,11 @@ export NUM_CORES := $(NPROC)
 
 export LSORACLE_CMD ?= $(shell command -v lsoracle)
 ifeq ($(LSORACLE_CMD),)
-  LSORACLE_CMD = $(abspath $(FLOW_HOME)/../tools/build/LSOracle/core/lsoracle)
+  LSORACLE_CMD = $(abspath $(FLOW_HOME)/../tools/build/LSOracle/bin/lsoracle)
 endif
 
-LSORACLE_PLUGIN ?= $(abspath $(FLOW_HOME)/../tools/build/LSOracle/yosys-plugin/oracle.so)
-export LSORACLE_KAHYPAR_CONFIG ?= $(abspath $(FLOW_HOME)/../tools/build/LSOracle/core/test.ini)
+LSORACLE_PLUGIN ?= $(abspath $(FLOW_HOME)/../tools/build/yosys/share/yosys/plugin/oracle.so)
+export LSORACLE_KAHYPAR_CONFIG ?= $(abspath $(FLOW_HOME)/../tools/build/LSOracle/share/lsoracle/test.ini)
 ifneq ($(USE_LSORACLE),)
   YOSYS_FLAGS ?= -m $(LSORACLE_PLUGIN)
 endif
