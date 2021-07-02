@@ -12,8 +12,8 @@ COPY --from=openroad/yosys /build ./tools/build/yosys
 COPY --from=openroad/centos7-builder-gcc /OpenROAD/build ./tools/build/OpenROAD
 COPY --from=openroad/centos7-builder-gcc /OpenROAD/etc/DependencyInstaller.sh /etc/DependencyInstaller.sh
 RUN /etc/DependencyInstaller.sh -runtime
-COPY --from=openroad/lsoracle /LSOracle ./tools/build/LSOracle
-COPY --from=openroad/lsoracle /LSOracle/core/test.ini /usr/local/share/lsoracle/
+COPY --from=openroad/lsoracle /LSOracle/build/core/lsoracle ./tools/build/LSOracle/bin/lsoracle
+COPY --from=openroad/lsoracle /LSOracle/core/test.ini ./tools/build/LSOracle/share/lsoracle/test.ini
 COPY --from=openroad/lsoracle /LSOracle/build/yosys-plugin/oracle.so /OpenROAD-flow/tools/build/yosys/share/yosys/plugins/
 COPY ./setup_env.sh .
 COPY ./flow ./flow
