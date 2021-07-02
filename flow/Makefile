@@ -86,6 +86,13 @@
 #
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
+
+# Enables hierarchical yosys and area reclaim using restructure command
+export SYNTH_HIER_AREA_RECOVER ?= 0
+ifeq ($(SYNTH_HIER_AREA_RECOVER), 1)
+export SYNTH_ARGS = 
+endif
+
 # Global setting for Synthesis
 export SYNTH_ARGS ?= -flatten
 
