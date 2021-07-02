@@ -168,7 +168,7 @@ elif [ "$build_method" == "LOCAL" ]; then
         -D CMAKE_BUILD_TYPE=RELEASE \
         -D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
         -D YOSYS_PLUGIN=ON \
-        -D YOSYS_SHARE_DIR=$(pwd)/tools/build/yosys/share \
+        -D YOSYS_SHARE_DIR=$(pwd)/tools/build/yosys/share/yosys \
         -D CMAKE_INSTALL_PREFIX=$(pwd)/tools/build/LSOracle
   $NICE cmake --build tools/LSOracle/build -j$PROC --target install
 else
