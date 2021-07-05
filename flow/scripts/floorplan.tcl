@@ -94,7 +94,7 @@ report_design_area
 
 if { [info exist ::env(SYNTH_HIER_AREA_RECOVER)] && $::env(SYNTH_HIER_AREA_RECOVER) == 1 } {
 
-  write_verilog $::env(RESULTS_DIR)/pre_abc.v
+  write_verilog $::env(RESULTS_DIR)/2_pre_abc.v
 
   set tielo_cell_name [lindex $env(TIELO_CELL_AND_PORT) 0]
   set tielo_lib_name [get_name [get_property [get_lib_cell $tielo_cell_name] library]]
@@ -111,7 +111,7 @@ if { [info exist ::env(SYNTH_HIER_AREA_RECOVER)] && $::env(SYNTH_HIER_AREA_RECOV
   # remove buffers inserted by abc
   remove_buffers
 
-  write_verilog $::env(RESULTS_DIR)/post_abc.v
+  write_verilog $::env(RESULTS_DIR)/2_post_abc.v
 }
 
 set num_instances [llength [get_cells -hier *]]
