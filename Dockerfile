@@ -8,8 +8,8 @@ RUN yum update -y \
 
 WORKDIR /OpenROAD-flow-scripts
 
-COPY --from=openroad/yosys /build ./tools/build/yosys
-COPY --from=openroad/centos7-builder-gcc /OpenROAD/build ./tools/build/OpenROAD
+COPY --from=openroad/yosys /install ./tools/install/yosys
+COPY --from=openroad/centos7-builder-gcc /OpenROAD/build/src/openroad ./tools/install/OpenROAD/bin/openroad
 COPY --from=openroad/centos7-builder-gcc /OpenROAD/etc/DependencyInstaller.sh /etc/DependencyInstaller.sh
 RUN /etc/DependencyInstaller.sh -runtime
 COPY --from=openroad/lsoracle /LSOracle/build/core/lsoracle ./tools/build/LSOracle/bin/lsoracle

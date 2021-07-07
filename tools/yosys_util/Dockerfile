@@ -20,9 +20,8 @@ RUN yum install -y flex tcl tcl-devel libffi-devel git graphviz readline-devel g
     tar -xvzf bison-3.0.1.tar.gz && \
     cd bison-3.0.1 && \
     ./configure && \
-    make -j$(nproc) && \
-    make install
+    make install -j$(nproc)
 
 COPY . /yosys
 WORKDIR /yosys
-RUN make PREFIX=/build CONFIG=gcc install -j$(nproc)
+RUN make PREFIX=/install CONFIG=gcc install -j$(nproc)

@@ -1,5 +1,5 @@
 # Build working directories
-tools/build/
+tools/install/
 
 # Test working directories
 flow/results

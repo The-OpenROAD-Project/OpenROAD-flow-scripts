@@ -14,6 +14,7 @@ function usage() {
   echo "  --or_branch BRANCH      build using the head of branch BRANCH for OpenROAD"
   echo "  --or_repo REPO-URL      build using a fork at REPO-URL(https/ssh) for OpenROAD"
   echo "  -n, --nice              build using all cpus but nice the jobs"
+  echo "  --no_init               Skip initializing submodules"
   echo "  -c, --copy-platforms"   copy platforms to inside docker image
 
   echo "This script builds the openroad tools (OpenROAD, yosys)"
@@ -64,8 +65,8 @@ while (( "$#" )); do
       UPDATE_PLATFORM=1
       shift
       ;;
-    -n|--no_init)
-      NO_INIT=1
+    --no_init)
+      OPENROAD_FLOW_NO_INIT=1
       shift
       ;;
     -c|--copy-platforms)
@@ -73,7 +74,7 @@ while (( "$#" )); do
       shift
       ;;
     -*|--*=) # unsupported flags
-      echo "[ERROR][FLOW-1000] Unsupported flag $1" >&2
+      echo "[ERROR][FLOW-0004] Unsupported flag $1" >&2
       exit 1
       ;;
     *) # preserve positional arguments
@@ -85,10 +86,10 @@ done
 
 # Choose install method
 if [ -z ${BUILD_METHOD+x} ] && which docker &> /dev/null; then
-  echo "[INFO][FLOW-0000] using docker build method. This will create a docker image tagged '${DOCKER_TAG}'"
+  echo "[INFO FLOW-0000] Using docker build method. This will create a docker image tagged '${DOCKER_TAG}'"
   build_method="DOCKER"
 else
-  echo "[INFO][FLOW-0000] using local build method. This will create binaries at tools/build/"
+  echo "[INFO FLOW-0000] Using local build method. This will create binaries at tools/install/"
   build_method="LOCAL"
 fi
 
@@ -113,7 +114,7 @@ fi
 
 
 if [ ! -z ${UPDATE_OR+x} ]; then
-  echo "updating OpenROAD tool to the latest"
+  echo "[INFO FLOW-0005] Updating OpenROAD tool to the latest"
   (cd tools/OpenROAD && git fetch $CURRENT_REMOTE $OR_BRANCH \
     && git checkout $CURRENT_REMOTE/$OR_BRANCH \
     && git pull $CURRENT_REMOTE $OR_BRANCH \
@@ -124,10 +125,10 @@ fi
 if [ ! -z ${UPDATE_PLATFORM+x} ]; then
   for dir in flow/platforms/*/ ; do
     if [ -d $dir/.git ]; then
-      echo "[INFO][FLOW-0001] updating git repository '$dir'"
+      echo "[INFO FLOW-0001] Updating git repository '$dir'"
       (cd $dir && git pull)
     else
-      echo "[INFO][FLOW-0002] directory '$dir' is not a git repository. Skipping update."
+      echo "[INFO FLOW-0002] Directory '$dir' is not a git repository. Skipping update."
     fi
   done
 fi
@@ -135,10 +136,10 @@ fi
 # Update developer repos
 if [ ! -z ${UPDATE_PRIVATE+x} ]; then
   if [ -d flow/private ]; then
-    echo "[INFO][FLOW-0001] updating git repository 'private'"
+    echo "[INFO FLOW-0001] Updating git repository 'private'"
     (cd flow/private && git pull)
   else
-    echo "[INFO][FLOW-0002] directory 'flow/private' is not a git repository. Skipping update."
+    echo "[INFO FLOW-0002] Directory 'flow/private' is not a git repository. Skipping update."
   fi
 fi
 
@@ -158,20 +159,19 @@ if [ "$build_method" == "DOCKER" ]; then
 
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then
-  mkdir -p tools/build/yosys
-  (cd tools/yosys && $NICE make install -j$PROC PREFIX=../build/yosys CONFIG=gcc)
+  $NICE make install -C tools/yosys -j$PROC PREFIX=$(pwd)/tools/install/yosys CONFIG=gcc
 
-  mkdir -p tools/build/OpenROAD
-  (cd tools/build/OpenROAD && cmake ../../OpenROAD && $NICE make -j$PROC)
+  cmake -B tools/OpenROAD/build tools/OpenROAD -DCMAKE_INSTALL_PREFIX=tools/install/OpenROAD
+  $NICE cmake --build tools/OpenROAD/build --target install -j$PROC
 
   cmake -B tools/LSOracle/build tools/LSOracle \
         -D CMAKE_BUILD_TYPE=RELEASE \
         -D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
         -D YOSYS_PLUGIN=ON \
-        -D YOSYS_SHARE_DIR=$(pwd)/tools/build/yosys/share/yosys \
-        -D CMAKE_INSTALL_PREFIX=$(pwd)/tools/build/LSOracle
+        -D YOSYS_SHARE_DIR=$(pwd)/tools/install/yosys/share/yosys \
+        -D CMAKE_INSTALL_PREFIX=$(pwd)/tools/install/LSOracle
   $NICE cmake --build tools/LSOracle/build -j$PROC --target install
 else
-  echo "ERROR: No valid build method found"
+  echo "[ERROR FLOW-0003] No valid build method found"
   exit 1
 fi
