@@ -52,7 +52,7 @@
         },
         {
             "field": "detailedroute__route__drc_errors__count",
-            "value": 1,
+            "value": 0,
             "compare": "=="
         },
         {
