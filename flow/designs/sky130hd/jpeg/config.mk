@@ -7,9 +7,6 @@ export VERILOG_INCLUDE_DIRS = ./designs/src/$(DESIGN_NICKNAME)/include
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 
-# These values must be multiples of placement site
-#export DIE_AREA    = 0 0 3000.04 2999.8
-#export CORE_AREA   = 10.07 9.8 2989.97 2990
 export CORE_UTILIZATION = 25 
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
