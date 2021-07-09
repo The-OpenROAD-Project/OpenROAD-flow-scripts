@@ -22,27 +22,27 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -0.14,
+            "value": -0.34,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__prerepair",
-            "value": -0.55,
+            "value": -0.95,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__postrepair",
-            "value": -0.55,
+            "value": -0.95,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.38,
+            "value": -0.79,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -0.38,
+            "value": -0.79,
             "compare": ">="
         },
         {
