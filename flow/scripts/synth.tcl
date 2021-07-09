@@ -63,6 +63,37 @@ if {[info exist ::env(BLOCKS)]} {
   }
 }
 
+if { [info exist ::env(SYNTH_HIER_AREA_RECOVER)]  && $::env(SYNTH_HIER_AREA_RECOVER) == 1 } {
+  # Hierarchical synthesis first
+  synth  -top $::env(DESIGN_NAME)
+
+  # Create argument list for stat
+  set stat_libs ""
+  foreach lib $::env(DONT_USE_LIBS) {
+    append stat_libs "-liberty $lib "
+  }
+  tee -o $::env(REPORTS_DIR)/synth_hier_stat.txt stat {*}$stat_libs
+
+  set ungroupThreshold 0
+  if { [info exists $::env(MAX_UNGROUP_SIZE)] } {
+    set ungroupThreshold $::env(MAX_UNGROUP_SIZE)
+  }
+  set fptr [open $::env(REPORTS_DIR)/synth_hier_stat.txt r]
+  set contents [read -nonewline $fptr]
+  close $fptr
+  set splitCont [split $contents "\n"]
+  foreach line $splitCont {
+    if {[regexp { +Chip area for module '(\S+)': (.*)} $line -> moduleName area]} {
+        if {[expr $area > $ungroupThreshold]} {
+           select -module $moduleName
+           setattr -mod -set keep_hierarchy 1
+           select -clear
+           puts "Preserving hierarchical module: $moduleName"
+        }
+    }
+  }
+}
+
 # Generic synthesis
 synth  -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS)
 
