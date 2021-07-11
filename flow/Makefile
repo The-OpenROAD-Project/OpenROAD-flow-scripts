@@ -703,4 +703,4 @@ $(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
 export PRIVATE_DIR = ../../private_tool_scripts
--include $(PRIVATE_DIR)/util/utils.mk
+-include $(PRIVATE_DIR)/private.mk
