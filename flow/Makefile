@@ -200,11 +200,11 @@ export NUM_CORES := $(NPROC)
 
 export LSORACLE_CMD ?= $(shell command -v lsoracle)
 ifeq ($(LSORACLE_CMD),)
-  LSORACLE_CMD = $(abspath $(FLOW_HOME)/../tools/build/LSOracle/bin/lsoracle)
+  LSORACLE_CMD = $(abspath $(FLOW_HOME)/../tools/install/LSOracle/bin/lsoracle)
 endif
 
-LSORACLE_PLUGIN ?= $(abspath $(FLOW_HOME)/../tools/build/yosys/share/yosys/plugin/oracle.so)
-export LSORACLE_KAHYPAR_CONFIG ?= $(abspath $(FLOW_HOME)/../tools/build/LSOracle/share/lsoracle/test.ini)
+LSORACLE_PLUGIN ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/share/yosys/plugin/oracle.so)
+export LSORACLE_KAHYPAR_CONFIG ?= $(abspath $(FLOW_HOME)/../tools/install/LSOracle/share/lsoracle/test.ini)
 ifneq ($(USE_LSORACLE),)
   YOSYS_FLAGS ?= -m $(LSORACLE_PLUGIN)
 endif
@@ -223,7 +223,7 @@ endif
 #       2 user explicity set with variable in Makefile or command line
 OPENROAD_EXE            ?= $(shell command -v openroad)
 ifeq ($(OPENROAD_EXE),)
-  OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/build/OpenROAD/src/openroad)
+  OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
 endif
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
@@ -231,7 +231,7 @@ OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 
 YOSYS_CMD               ?= $(shell command -v yosys)
 ifeq ($(YOSYS_CMD),)
-  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/build/yosys/bin/yosys)
+  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 endif
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)

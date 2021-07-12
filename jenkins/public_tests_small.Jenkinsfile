@@ -14,7 +14,7 @@ pipeline {
       }
       steps {
         sh './build_openroad.sh --local';
-        stash name: 'build', includes: "tools/build/**";
+        stash name: 'install', includes: "tools/install/**";
       }
     }
     stage('Test') {
@@ -22,7 +22,7 @@ pipeline {
         stage('asap7 aes') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh aes asap7';
           }
           post {
@@ -37,7 +37,7 @@ pipeline {
         stage('asap7 gcd') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh gcd asap7';
           }
           post {
@@ -52,7 +52,7 @@ pipeline {
         stage('asap7 ibex') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh ibex asap7';
           }
           post {
@@ -67,7 +67,7 @@ pipeline {
         stage('nangate45 aes') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh aes nangate45';
           }
           post {
@@ -82,7 +82,7 @@ pipeline {
         stage('nangate45 gcd') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh gcd nangate45';
           }
           post {
@@ -97,7 +97,7 @@ pipeline {
         stage('nangate45 ibex') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh ibex nangate45';
           }
           post {
@@ -112,7 +112,7 @@ pipeline {
         stage('nangate45 tiny rocket') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh tinyRocket nangate45';
           }
           post {
@@ -127,7 +127,7 @@ pipeline {
         stage('sky130 hd aes') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh aes sky130hd';
           }
           post {
@@ -142,7 +142,7 @@ pipeline {
         stage('sky130 hd gcd') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh gcd sky130hd';
           }
           post {
@@ -157,7 +157,7 @@ pipeline {
         stage('sky130 hd ibex') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh ibex sky130hd';
           }
           post {
@@ -172,7 +172,7 @@ pipeline {
         stage('sky130 hs aes') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh aes sky130hs';
           }
           post {
@@ -187,7 +187,7 @@ pipeline {
         stage('sky130 hs gcd') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh gcd sky130hs';
           }
           post {
@@ -202,7 +202,7 @@ pipeline {
         stage('sky130 hs ibex') {
           agent any;
           steps {
-            unstash 'build';
+            unstash 'install';
             sh 'flow/test/test_helper.sh ibex sky130hs';
           }
           post {
