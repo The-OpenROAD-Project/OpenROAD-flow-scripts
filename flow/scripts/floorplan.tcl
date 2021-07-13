@@ -106,7 +106,8 @@ if { [info exist ::env(SYNTH_HIER_AREA_RECOVER)] && $::env(SYNTH_HIER_AREA_RECOV
 
   restructure -liberty_file $::env(DONT_USE_SC_LIB) -target "area" \
         -tiehi_port $tiehi_port \
-        -tielo_port $tielo_port
+        -tielo_port $tielo_port \
+        -work_dir $::env(RESULTS_DIR)
 
   # remove buffers inserted by abc
   remove_buffers

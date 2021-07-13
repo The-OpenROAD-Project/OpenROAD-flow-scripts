@@ -63,9 +63,27 @@ if {[info exist ::env(BLOCKS)]} {
   }
 }
 
+set constr [open $::env(OBJECTS_DIR)/abc.constr w]
+puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
+puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
+close $constr
+
 if { [info exist ::env(SYNTH_HIER_AREA_RECOVER)]  && $::env(SYNTH_HIER_AREA_RECOVER) == 1 } {
   # Hierarchical synthesis first
   synth  -top $::env(DESIGN_NAME)
+  opt -purge
+  #extract_fa
+  # map full adders
+  #techmap -map $::env(ADDER_MAP_FILE)
+  techmap
+  if {[info exist ::env(DFF_LIB_FILE)]} {
+    dfflibmap -liberty $::env(DFF_LIB_FILE)
+  } else {
+    dfflibmap -liberty $::env(DONT_USE_SC_LIB)
+  }
+  abc -liberty $::env(DONT_USE_SC_LIB) \
+      -constr $::env(OBJECTS_DIR)/abc.constr
+  opt_clean -purge
 
   # Create argument list for stat
   set stat_libs ""
@@ -138,11 +156,6 @@ if {[info exist ::env(DFF_LIB_FILE)]} {
   dfflibmap -liberty $::env(DONT_USE_SC_LIB)
 }
 opt
-
-set constr [open $::env(OBJECTS_DIR)/abc.constr w]
-puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
-puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
-close $constr
 
 
 set script [open $::env(OBJECTS_DIR)/abc.script w]
