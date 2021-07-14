@@ -1,4 +1,4 @@
-proc report_metrics { when } {
+proc report_metrics { when {include_erc true} } {
   puts "\n=========================================================================="
   puts "$when report_checks -path_delay min"
   puts "--------------------------------------------------------------------------"
@@ -14,10 +14,12 @@ proc report_metrics { when } {
   puts "--------------------------------------------------------------------------"
   report_checks -unconstrained -fields {slew cap input nets fanout} -format full_clock_expanded
 
+if {$include_erc} {
   puts "\n=========================================================================="
   puts "$when report_check_types -max_slew -max_capacitance -max_fanout -violators"
   puts "--------------------------------------------------------------------------"
   report_check_types -max_slew -max_capacitance -max_fanout -violators
+}
 
   puts "\n=========================================================================="
   puts "$when report_tns"
