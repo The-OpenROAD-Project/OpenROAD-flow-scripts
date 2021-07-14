@@ -213,7 +213,10 @@ namespace eval lef {
                             set line [gets $ch]
                             if {[regexp {^\s*$} $line]} {
                                 continue
-                            } elseif {[regexp {LAYER\s+([^\s]*)} $line - layer]} {
+                            } elseif {[regexp {LAYER\s+([^\s]*)(\s+DESIGNRULEWIDTH\s+([0-9.]+))?} $line - layer - drw]} {
+                                if {$drw != ""} {
+                                    dict set cells $cell_name layers $layer drw $drw
+                                }
                                 continue
                             } elseif {[regexp {RECT\s+MASK\s+([^\s]*)\s+([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - mask x1 y1 x2 y2]} {
                                 if {[dict exists $cells $cell_name obstructions $layer]} {
@@ -355,7 +358,12 @@ namespace eval lef {
               }
               set sheet "0 0 [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units] [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units]"
               foreach layer_name [get_blockage_layers $design] {
-                out "    LAYER $layer_name ;"
+                if {[dict exists $design layers $layer_name drw]} {
+                    set drw "DESIGNRULEWIDTH [dict get $design layers $layer_name drw] "
+                } else {
+                    set drw ""
+                }
+                out "    LAYER $layer_name $drw;"
                 out "      RECT $sheet ;"
               }
             } else {
