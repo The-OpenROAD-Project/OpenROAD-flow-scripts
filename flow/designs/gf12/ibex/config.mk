@@ -44,12 +44,13 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
 
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+#export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_ppa.sdc
 
 # These values must be multiples of placement site
 #export DIE_AREA    = 0 0 950 650.4
 #export CORE_AREA   = 10 12 940 640.8
-export CORE_UTILIZATION = 18
+export CORE_UTILIZATION = 40 
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 
-export PLACE_DENSITY = 0.50
+export PLACE_DENSITY = 0.70

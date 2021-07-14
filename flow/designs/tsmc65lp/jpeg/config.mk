@@ -4,8 +4,11 @@ export PLATFORM    = tsmc65lp
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export VERILOG_INCLUDE_DIRS = ./designs/src/$(DESIGN_NICKNAME)/include
+#export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_ppa.sdc
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export CORE_UTILIZATION = 18
+export CORE_UTILIZATION = 40
 export CORE_ASPECT_RATIO = 1
-export CORE_MARGIN = 10
+export CORE_MARGIN = 5 
+
+export PLACE_DENSITY = 0.70
