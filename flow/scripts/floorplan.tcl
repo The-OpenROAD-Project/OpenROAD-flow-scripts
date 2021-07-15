@@ -86,7 +86,8 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
 remove_buffers
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "floorplan final"
+report_metrics "floorplan final" false
+
 set num_instances [llength [get_cells -hier *]]
 puts "number instances before restructure is $num_instances"
 puts "Design Area before restructure"
