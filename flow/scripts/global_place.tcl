@@ -64,7 +64,7 @@ global_placement -routability_driven -density $place_density \
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "global place"
+report_metrics "global place" false
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/3_1_place_gp.def

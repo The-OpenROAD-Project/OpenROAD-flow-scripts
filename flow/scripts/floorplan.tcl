@@ -86,7 +86,7 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
 remove_buffers
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "floorplan final"
+report_metrics "floorplan final" false
 
 if {![info exists standalone] || $standalone} {
   # write output
