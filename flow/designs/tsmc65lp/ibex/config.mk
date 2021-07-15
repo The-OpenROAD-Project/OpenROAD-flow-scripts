@@ -42,7 +42,6 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
 
 
 
-#export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_ppa.sdc
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export CORE_UTILIZATION = 40 
