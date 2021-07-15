@@ -68,7 +68,7 @@ puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
 puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
 close $constr
 
-if { [info exist ::env(SYNTH_HIER_AREA_RECOVER)]  && $::env(SYNTH_HIER_AREA_RECOVER) == 1 } {
+if { [info exist ::env(SYNTH_HIERARCHICAL)]  && $::env(SYNTH_HIERARCHICAL) == 1 } {
   # Hierarchical synthesis first
   synth  -top $::env(DESIGN_NAME)
   opt -purge
@@ -93,8 +93,9 @@ if { [info exist ::env(SYNTH_HIER_AREA_RECOVER)]  && $::env(SYNTH_HIER_AREA_RECO
   tee -o $::env(REPORTS_DIR)/synth_hier_stat.txt stat {*}$stat_libs
 
   set ungroupThreshold 0
-  if { [info exists $::env(MAX_UNGROUP_SIZE)] } {
+  if { [info exist ::env(MAX_UNGROUP_SIZE)] && $::env(MAX_UNGROUP_SIZE) > 0 } {
     set ungroupThreshold $::env(MAX_UNGROUP_SIZE)
+    puts "Ungroup modules of size $ungroupThreshold"
   }
   set fptr [open $::env(REPORTS_DIR)/synth_hier_stat.txt r]
   set contents [read -nonewline $fptr]

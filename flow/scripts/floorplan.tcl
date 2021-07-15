@@ -92,7 +92,7 @@ puts "number instances before restructure is $num_instances"
 puts "Design Area before restructure"
 report_design_area
 
-if { [info exist ::env(SYNTH_HIER_AREA_RECOVER)] && $::env(SYNTH_HIER_AREA_RECOVER) == 1 } {
+if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) == 1 } {
 
   write_verilog $::env(RESULTS_DIR)/2_pre_abc.v
 
