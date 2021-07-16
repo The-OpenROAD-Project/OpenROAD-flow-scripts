@@ -88,12 +88,12 @@ remove_buffers
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "floorplan final" false
 
-set num_instances [llength [get_cells -hier *]]
-puts "number instances before restructure is $num_instances"
-puts "Design Area before restructure"
-report_design_area
-
 if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) == 1 } {
+
+  set num_instances [llength [get_cells -hier *]]
+  puts "number instances before restructure is $num_instances"
+  puts "Design Area before restructure"
+  report_design_area
 
   write_verilog $::env(RESULTS_DIR)/2_pre_abc.v
 
@@ -114,12 +114,12 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   remove_buffers
 
   write_verilog $::env(RESULTS_DIR)/2_post_abc.v
-}
+  set num_instances [llength [get_cells -hier *]]
+  puts "number instances after restructure is $num_instances"
+  puts "Design Area after restructure"
+  report_design_area
 
-set num_instances [llength [get_cells -hier *]]
-puts "number instances after restructure is $num_instances"
-puts "Design Area after restructure"
-report_design_area
+}
 
 if {![info exists standalone] || $standalone} {
   # write output

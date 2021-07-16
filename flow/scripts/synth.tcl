@@ -63,51 +63,28 @@ if {[info exist ::env(BLOCKS)]} {
   }
 }
 
-set constr [open $::env(OBJECTS_DIR)/abc.constr w]
-puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
-puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
-close $constr
-
-if { [info exist ::env(SYNTH_HIERARCHICAL)]  && $::env(SYNTH_HIERARCHICAL) == 1 } {
-  # Hierarchical synthesis first
-  synth  -top $::env(DESIGN_NAME)
-  opt -purge
-  #extract_fa
-  # map full adders
-  #techmap -map $::env(ADDER_MAP_FILE)
-  techmap
-  if {[info exist ::env(DFF_LIB_FILE)]} {
-    dfflibmap -liberty $::env(DFF_LIB_FILE)
-  } else {
-    dfflibmap -liberty $::env(DONT_USE_SC_LIB)
-  }
-  abc -liberty $::env(DONT_USE_SC_LIB) \
-      -constr $::env(OBJECTS_DIR)/abc.constr
-  opt_clean -purge
-
-  # Create argument list for stat
-  set stat_libs ""
-  foreach lib $::env(DONT_USE_LIBS) {
-    append stat_libs "-liberty $lib "
-  }
-  tee -o $::env(REPORTS_DIR)/synth_hier_stat.txt stat {*}$stat_libs
-
+if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_hier_stat.txt] } {
   set ungroupThreshold 0
   if { [info exist ::env(MAX_UNGROUP_SIZE)] && $::env(MAX_UNGROUP_SIZE) > 0 } {
     set ungroupThreshold $::env(MAX_UNGROUP_SIZE)
     puts "Ungroup modules of size $ungroupThreshold"
   }
+  hierarchy -check -top $::env(DESIGN_NAME)
   set fptr [open $::env(REPORTS_DIR)/synth_hier_stat.txt r]
   set contents [read -nonewline $fptr]
   close $fptr
   set splitCont [split $contents "\n"]
   foreach line $splitCont {
-    if {[regexp { +Chip area for module '(\S+)': (.*)} $line -> moduleName area]} {
+    if {[regexp { +Chip area for module '\\(\S+)': (.*)} $line -> moduleName area]} {
         if {[expr $area > $ungroupThreshold]} {
-           select -module $moduleName
+           puts "Found hierarchical module: $moduleName"
+           if { [catch { select -module $moduleName
            setattr -mod -set keep_hierarchy 1
-           select -clear
-           puts "Preserving hierarchical module: $moduleName"
+           select -clear } result] } {
+              puts "Cound not find module $moduleName"
+           } else {
+             puts "Preserving hierarchical module: $moduleName"
+           }
         }
     }
   }
