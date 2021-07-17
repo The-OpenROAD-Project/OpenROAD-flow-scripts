@@ -63,31 +63,9 @@ if {[info exist ::env(BLOCKS)]} {
   }
 }
 
-if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_hier_stat.txt] } {
-  set ungroupThreshold 0
-  if { [info exist ::env(MAX_UNGROUP_SIZE)] && $::env(MAX_UNGROUP_SIZE) > 0 } {
-    set ungroupThreshold $::env(MAX_UNGROUP_SIZE)
-    puts "Ungroup modules of size $ungroupThreshold"
-  }
-  hierarchy -check -top $::env(DESIGN_NAME)
-  set fptr [open $::env(REPORTS_DIR)/synth_hier_stat.txt r]
-  set contents [read -nonewline $fptr]
-  close $fptr
-  set splitCont [split $contents "\n"]
-  foreach line $splitCont {
-    if {[regexp { +Chip area for module '\\(\S+)': (.*)} $line -> moduleName area]} {
-        if {[expr $area > $ungroupThreshold]} {
-           puts "Found hierarchical module: $moduleName"
-           if { [catch { select -module $moduleName
-           setattr -mod -set keep_hierarchy 1
-           select -clear } result] } {
-              puts "Cound not find module $moduleName"
-           } else {
-             puts "Preserving hierarchical module: $moduleName"
-           }
-        }
-    }
-  }
+if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 && [file isfile $::env(OBJECTS_DIR)/mark_hier_stop_modules.tcl] } {
+  puts "Sourcing $::env(OBJECTS_DIR)/mark_hier_stop_modules.tcl"
+  source $::env(OBJECTS_DIR)/mark_hier_stop_modules.tcl
 }
 
 # Generic synthesis
@@ -147,6 +125,10 @@ puts $script "upsize -c"
 puts $script "dnsize -c"
 close $script
 
+set constr [open $::env(OBJECTS_DIR)/abc.constr w]
+puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
+puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
+close $constr
 
 # Technology mapping for cells
 # ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
