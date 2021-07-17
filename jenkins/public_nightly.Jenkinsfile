@@ -10,8 +10,31 @@ pipeline {
   stages {
     stage('Checkout master branch') {
       steps {
-        sh 'git checkout master'
-        sh 'cd tools/OpenROAD ; git checkout master ; git submodule update'
+        checkout([$class: "GitSCM",
+              branches: [[name: "*/master"]],
+              doGenerateSubmoduleConfigurations: false,
+              extensions: [
+                [
+                  $class: "SubmoduleOption",
+                  disableSubmodules: false,
+                  parentCredentials: true,
+                  recursiveSubmodules: true,
+                  reference: "",
+                  trackingSubmodules: false
+                ],
+                [
+                  $class: "RelativeTargetDirectory",
+                  relativeTargetDir: "tools/OpenROAD"
+                ]
+              ],
+              submoduleCfg: [],
+              userRemoteConfigs: [
+                [
+                credentialsId: "openroad-ci",
+                url: "https://github.com/The-OpenROAD-Project/OpenROAD"
+                ]
+              ]
+            ])
       }
     }
     stage('Build') {
