@@ -41,7 +41,7 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
 						./designs/src/$(DESIGN_NICKNAME)/prim_xilinx_clock_gating.v
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export CORE_UTILIZATION = 20 
+export CORE_UTILIZATION = 15 
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 

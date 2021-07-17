@@ -47,7 +47,7 @@ export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 # Adders degrade ibex setup repair
 export ADDER_MAP_FILE :=
 
-export CORE_UTILIZATION = 20 
+export CORE_UTILIZATION = 15 
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 
