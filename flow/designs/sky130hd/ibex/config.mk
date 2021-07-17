@@ -53,6 +53,8 @@ export CORE_MARGIN = 2
 
 export PLACE_DENSITY = 0.65
 
+export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute_base.tcl
+
 
 # IR drop estimation supply net name to be analyzed and supply voltage variable
 # For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"

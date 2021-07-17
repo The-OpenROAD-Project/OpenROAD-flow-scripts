@@ -47,4 +47,6 @@ export CORE_MARGIN = 2
 
 export PLACE_DENSITY = 0.65
 
+export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute_base.tcl
+
 
