@@ -63,9 +63,9 @@ if {[info exist ::env(BLOCKS)]} {
   }
 }
 
-if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 && [file isfile $::env(OBJECTS_DIR)/mark_hier_stop_modules.tcl] } {
-  puts "Sourcing $::env(OBJECTS_DIR)/mark_hier_stop_modules.tcl"
-  source $::env(OBJECTS_DIR)/mark_hier_stop_modules.tcl
+if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 && [file isfile $::env(SYNTH_STOP_MODULE_SCRIPT)] } {
+  puts "Sourcing $::env(SYNTH_STOP_MODULE_SCRIPT)"
+  source $::env(SYNTH_STOP_MODULE_SCRIPT)
 }
 
 # Generic synthesis
