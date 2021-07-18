@@ -108,3 +108,6 @@ export FILL_CONFIG = $(PLATFORM_DIR)/fill.json
 #
 # Template definition for power grid analysis
 export TEMPLATE_PGA_CFG ?= $(PLATFORM_DIR)/template_pga.cfg
+
+# OpenRCX extRules
+export RCX_RULES = $(PLATFORM_DIR)/rcx_patterns.rules
