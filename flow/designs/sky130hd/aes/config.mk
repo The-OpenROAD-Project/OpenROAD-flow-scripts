@@ -4,7 +4,6 @@ export PLATFORM    = sky130hd
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
-export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
 
 export ABC_CLOCK_PERIOD_IN_PS = 10
 
