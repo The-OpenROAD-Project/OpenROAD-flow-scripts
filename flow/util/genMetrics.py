@@ -68,8 +68,12 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False, occurrence
       content = f.read()
 
     m = re.findall(pattern, content, re.M)
+    useDefault = False
+    if occurrence != -1 and abs(occurrence) > len(m):
+      # Not that many occurrences, use default
+      useDefault = True
 
-    if m:
+    if m and not useDefault :
       if count:
         # Return the count
         jsonFile[jsonTag] = len(m)
