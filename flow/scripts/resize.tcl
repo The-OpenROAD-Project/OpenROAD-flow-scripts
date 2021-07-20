@@ -36,7 +36,7 @@ source $::env(PLATFORM_DIR)/setRC.tcl
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "resizer pre"
+report_metrics "resizer pre" false
 
 print_banner "instance_count"
 puts [sta::network_leaf_instance_count]

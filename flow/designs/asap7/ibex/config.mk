@@ -33,12 +33,11 @@ export DESIGN_GROUND          = VSS
 
 export DESIGN_DIR DESIGN_PDK_HOME
 
-export PLACE_DENSITY          = 0.30
-
 export PDN_CFG                = $(FOUNDRY_DIR)/openRoad/pdn/grid_strategy-M2-M5-M7.cfg
 
-export CORE_UTILIZATION       = 20
+export CORE_UTILIZATION       = 25 
 export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
+export PLACE_DENSITY          = 0.60
 
 export DONT_USE_SC_LIB         = $(OBJECTS_DIR)/lib/merged.lib

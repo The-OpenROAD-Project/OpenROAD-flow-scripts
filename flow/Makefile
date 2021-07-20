@@ -57,24 +57,11 @@
 # DESIGN_CONFIG=./designs/sky130hd/riscv32i/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/chameleon_hier/config.mk
 
-# sky130hd PPA
-# DESIGN_CONFIG=./designs/sky130hd/gcd/config_ppa.mk
-# DESIGN_CONFIG=./designs/sky130hd/aes/config_ppa.mk
-# DESIGN_CONFIG=./designs/sky130hd/ibex/config_ppa.mk
-# DESIGN_CONFIG=./designs/sky130hd/jpeg/config_ppa.mk
-
-
 # DESIGN_CONFIG=./designs/sky130hs/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/aes/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/jpeg/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/riscv32i/config.mk
-
-# sky130hs PPA
-# DESIGN_CONFIG=./designs/sky130hs/gcd/config_ppa.mk
-# DESIGN_CONFIG=./designs/sky130hs/aes/config_ppa.mk
-# DESIGN_CONFIG=./designs/sky130hs/ibex/config_ppa.mk
-# DESIGN_CONFIG=./designs/sky130hs/jpeg/config_ppa.mk
 
 # DESIGN_CONFIG=./designs/asap7/gcd/config.mk
 # DESIGN_CONFIG=./designs/asap7/ibex/config.mk
@@ -198,9 +185,15 @@ ifeq (, $(strip $(NPROC)))
 endif
 export NUM_CORES := $(NPROC)
 
-LSORACLE_PLUGIN ?= oracle
+export LSORACLE_CMD ?= $(shell command -v lsoracle)
+ifeq ($(LSORACLE_CMD),)
+  LSORACLE_CMD = $(abspath $(FLOW_HOME)/../tools/install/LSOracle/bin/lsoracle)
+endif
+
+LSORACLE_PLUGIN ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/share/yosys/plugin/oracle.so)
+export LSORACLE_KAHYPAR_CONFIG ?= $(abspath $(FLOW_HOME)/../tools/install/LSOracle/share/lsoracle/test.ini)
 ifneq ($(USE_LSORACLE),)
-	YOSYS_FLAGS ?= -m $(LSORACLE_PLUGIN)
+  YOSYS_FLAGS ?= -m $(LSORACLE_PLUGIN)
 endif
 
 #-------------------------------------------------------------------------------
@@ -217,7 +210,7 @@ endif
 #       2 user explicity set with variable in Makefile or command line
 OPENROAD_EXE            ?= $(shell command -v openroad)
 ifeq ($(OPENROAD_EXE),)
-  OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/build/OpenROAD/src/openroad)
+  OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
 endif
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
@@ -225,7 +218,7 @@ OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 
 YOSYS_CMD               ?= $(shell command -v yosys)
 ifeq ($(YOSYS_CMD),)
-  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/build/yosys/bin/yosys)
+  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 endif
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)
@@ -369,12 +362,21 @@ $(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synt
 # STEP 2: IO Placement (random)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(RESULTS_DIR)/2_1_floorplan.def $(IO_CONSTRAINTS)
+ifeq ($(FOOTPRINT),)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement_random.tcl -metrics $(LOG_DIR)/2_2_floorplan_io.json) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
+else
+	cp $< $@
+endif
 
 # STEP 3: Timing Driven Mixed Sized Placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_3_floorplan_tdms.def: $(RESULTS_DIR)/2_2_floorplan_io.def $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES)
+ifeq ($(MACRO_PLACEMENT),)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tdms_place.tcl -metrics $(LOG_DIR)/2_3_tdms.json) 2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
+else
+	$(info [INFO][FLOW] Using manual macro placement file $(MACRO_PLACEMENT))
+	cp $< $@
+endif
 
 # STEP 4: Macro Placement
 #-------------------------------------------------------------------------------
@@ -422,7 +424,11 @@ $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2
 # STEP 2: IO placement (non-random)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_2_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def $(IO_CONSTRAINTS)
+ifeq ($(FOOTPRINT),)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
+else
+	cp $< $@
+endif
 
 # STEP 3: Resizing & Buffering
 #-------------------------------------------------------------------------------
