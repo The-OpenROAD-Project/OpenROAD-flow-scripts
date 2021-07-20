@@ -22,10 +22,10 @@ from ray.tune.suggest.hyperopt import HyperOptSearch
 
 
 ## User-defined evaluation function
+a = -10000
+b = 1
+c = 1000
 def evaluation_fn(step, a, ws, b, wl, c, ndrc):
-    a = -10000
-    b = 1
-    c = 1000
     #time.sleep(0.1)
     return ((a * ws + b * wl)*(step/100)**(-1) + c * ndrc)
 
@@ -47,28 +47,28 @@ def parse_massive(config):
     fileName = fileName+'-PINS_DISTANCE_%s'%pinsDist
     fileName = fileName+'-GP_PAD_%s'%gpPad
     fileName = fileName+'-DP_PAD_%s'%dpPad
-    fileName = fileName+'-PLACE_DENSITY_%s'%placeDensity
+    fileName = fileName+'-PD_%s'%placeDensity
     fileName = fileName+'-CTS_CLUSTER_SIZE_%s'%ctsClusterSize
     fileName = fileName+'-CTS_CLUSTER_DIAMETER_%s'%ctsClusterDia
     fileName = fileName+'-LAYER_ADJUST_%s'%layerAdjust
     fileName = fileName+'-GR_OVERFLOW_%s'%grOverflow
 
     
-    if not os.path.isdir('%s/util/autotune/runs'%cwd):
-        os.mkdir('%s/util/autotune/runs'%cwd)
+    if not os.path.isdir('%s/util/autotuner/runs'%cwd):
+        os.mkdir('%s/util/autotuner/runs'%cwd)
 
-    fo = open('%s/util/autotune/runs/autotune-%s.py'%(cwd,fileName), 'w')
+    fo = open('%s/util/autotuner/runs/auto-%s.py'%(cwd,fileName), 'w')
 
     for line in lines:
-        if line.startswith('shellName') and line.split()[1]=='=':
-            line = 'shellName = "runs-%s"\n'%fileName
+        if line.startswith('ShellName') and line.split()[1]=='=':
+            line = 'ShellName = "runs-%s"\n'%fileName
         if line.startswith('GP_PAD') and line.split()[1]=='=':
             line = 'GP_PAD = [ %s ]\n'%gpPad
         if line.startswith('DP_PAD') and line.split()[1]=='=':
             line = 'DP_PAD = [ %s ]\n'%dpPad
         if line.startswith('LAYER_ADJUST ') and line.split()[1]=='=':
             line = 'LAYER_ADJUST = [ %s ]\n'%layerAdjust
-        if line.startswith('PLACE_DENSITY') and line.split()[1]=='=':
+        if line.startswith('PLACE_DENSITY') and line.split()[1]=='=' and not line.startswith('PLACE_DENSITY_LB_ADDON'):
             line = 'PLACE_DENSITY = [ %s ]\n'%placeDensity
         if line.startswith('FLATTEN') and line.split()[1]=='=':
             line = 'FLATTEN = [ %s ]\n'%flatten
@@ -115,14 +115,14 @@ def easy_objective(config):
     grOverflow = config["GR_OVERFLOW"]
 
     # parse trial config hyperparameters to genMassive.py script
-    # Newly generated genMassive.py scripts are located in ./util/autotune/runs/autotune-{variantName}.py
+    # Newly generated genMassive.py scripts are located in ./util/autotuner/runs/autotuner-{variantName}.py
     variantName = parse_massive(config)
 
     # run each runMassive.sh file ( generated from genMassive.py)
     os.chdir('%s'%cwd)
 
     print('run generated python to make run shell')
-    os.system('python %s/util/autotune/runs/autotune-%s.py run'%(cwd, variantName))
+    os.system('python %s/util/autotuner/runs/auto-%s.py run'%(cwd, variantName))
     print('run generated run shell')
     os.system('source %s/runs-%s.sh'%(cwd, variantName))
 
@@ -160,7 +160,7 @@ def read_config():
     # When min==max, it means the constant value
 
     config_dict = {}
-    with open('./util/autotune/config.json') as f:
+    with open('./util/autotuner/config.json') as f:
         data = json.load(f)
     for key, value in data.items():
         config_type = value.get("type")
@@ -192,7 +192,7 @@ if __name__ == "__main__":
     import argparse
     cwd = os.getcwd()
     # TODO: Currently hard-coded. Design and platform should be considered to genMassive.py
-    design = 'ibex'
+    design = 'gcd'
     platform = 'sky130hd'
 
     parser = argparse.ArgumentParser()
@@ -227,7 +227,7 @@ if __name__ == "__main__":
 
     num_samples = 10 if args.smoke_test else 1000
     
-    resultsDir = "%s/util/autotune/results"%cwd
+    resultsDir = "%s/util/autotuner/results"%cwd
     
     if not os.path.isdir(resultsDir):
         os.mkdir(resultsDir)
@@ -248,7 +248,7 @@ if __name__ == "__main__":
     algo = HyperOptSearch(points_to_evaluate=current_best_params)
 
     ## User-defined concurrent #runs
-    algo = ConcurrencyLimiter(algo, max_concurrent=30) 
+    algo = ConcurrencyLimiter(algo, max_concurrent=1) 
 
     scheduler = AsyncHyperBandScheduler()
 
@@ -257,11 +257,10 @@ if __name__ == "__main__":
         metric="minimum",
         mode="min",
         search_alg=algo,
-        name="ibex-test-hyperopt",
+        name="gcd-test-hyperopt",
         scheduler=scheduler,
         num_samples=num_samples,
         config=config_dict,
-        server_port=6379,
         local_dir="%s"%(resultsDir)
         )
     print("Best config found: ", analysis.best_config)

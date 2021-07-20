@@ -32,8 +32,8 @@ ShellName = 'runMassive'
 
 ## Define platform-design. User should remove ',' for the last item in the list. (string)
 PLATFORM_DESIGN = [ \
-    #'sky130hd-gcd' \
-    'sky130hd-ibex', \
+    'sky130hd-gcd' \
+    #'sky130hd-ibex', \
     #'sky130hd-aes', \
     #'sky130hd-jpeg', \
     #'sky130hs-gcd', \
@@ -57,8 +57,8 @@ CLK_PERIOD = []
 ## SDC uncertainty and IO delay.
 ## TODO: Currently, it only support when 'set uncertainty' and 'set io_delay' 
 ## are defined in the constraint.sdc file.
-UNCERTAINTY = [0.999, 1.000, 1.001]
-IO_DELAY = [6.999, 7.000, 7.001]
+UNCERTAINTY = []
+IO_DELAY = []
 
 
 ##################
@@ -79,12 +79,12 @@ FLATTEN = []
 
 ## Utilization. e.g, 45 -> 45% of core util. (int)
 #CORE_UTIL = [20, 40, 55]
-CORE_UTIL = [20]
+CORE_UTIL = []
 
 ## Aspect ratio. It REQUIRES 'CORE_UTIL' values (float)
-ASPECT_RATIO = [1.0]
+ASPECT_RATIO = []
 ## Core-to-die gap distance (um). It REQUIRES 'CORE_UTIL' values (int)
-CORE_DIE_MARGIN = [10]
+CORE_DIE_MARGIN = []
 
 ## Pin Distance
 #PINS_DISTANCE = [2]
@@ -95,9 +95,9 @@ PINS_DISTANCE = []
 ##################
 
 ## Global Placement Padding for std cells (int)
-GP_PAD = [4]
+GP_PAD = []
 ## Detailed Placement Padding for std cells (int)
-DP_PAD = [2]
+DP_PAD = []
 
 ## Global Placement target bin density (select only one option) (.2 float)
 ## option 1) PLACE_DENSITY uses the values in the list as it is.
@@ -105,7 +105,7 @@ DP_PAD = [2]
 ## For eaxmple, PLACE_DENSITY_LB_ADDON = [0, 0.02, 0.04] means PLACE_DENSITY = [LB, LB+0.02, LB+0.04]
 ## LB of the place density == (total instance area + padding) / total die area
 PLACE_DENSITY = []
-PLACE_DENSITY_LB_ADDON = [0]
+PLACE_DENSITY_LB_ADDON = []
 
 
 ##################
@@ -424,8 +424,8 @@ def writeConfigs(CurAttrs, CurChunkNum):
   frun.close()
   
   
-  fcollect = open('./%s_metrics_collect.sh'%ShellName, 'a')
-  CollectName = 'python util/genMetrics.py -x -p %s -d %s -v %s -o metrics_%s/%s.json\n'%(CurPlatform, CurDesign, variantName, ShellName, variantName)
+  fcollect = open('./metrics/%s_metrics_collect.sh'%ShellName, 'a')
+  CollectName = 'python util/genMetrics.py -x -p %s -d %s -v %s -o metrics/metrics_%s/%s.json\n'%(CurPlatform, CurDesign, variantName, ShellName, variantName)
   fcollect.write(CollectName)
   fcollect.close()
 
@@ -436,16 +436,18 @@ def writeConfigs(CurAttrs, CurChunkNum):
 MakeArg = sys.argv[1]
 
 
-if not os.path.isdir('./metrics_%s'%ShellName):
-  os.mkdir('./metrics_%s'%ShellName)
+if not os.path.isdir('./metrics'):
+  os.mkdir('./metrics')
+if not os.path.isdir('./metrics/metrics_%s'%ShellName):
+  os.mkdir('./metrics/metrics_%s'%ShellName)
 
 knobs = assignEmptyAttrs(SweepingAttributes)
 ProductAttrs = list(productDict(knobs))
 writeDoeLog(SweepingAttributes, ProductAttrs)
 if os.path.isfile('./%s.sh'%ShellName):
   os.remove('./%s.sh'%ShellName)
-if os.path.isfile('./%s_metrics_collect.sh'%ShellName):
-  os.remove('./%s_metrics_collect.sh'%ShellName)
+if os.path.isfile('./metrics/%s_metrics_collect.sh'%ShellName):
+  os.remove('./metrics/%s_metrics_collect.sh'%ShellName)
 CurChunkNum = 0
 for i, CurAttrs in enumerate(ProductAttrs, 1):
   if i % NumFilesPerChunk == 0:
