@@ -50,6 +50,8 @@ export ADDER_MAP_FILE :=
 export DIE_AREA    = 0 0 3000 1999
 export CORE_AREA   = 150.0 150 2850.0 1850
 
+export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute_base.tcl
+
 # IR drop estimation supply net name to be analyzed and supply voltage variable
 # For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
 export PWR_NETS_VOLTAGES  = "VDD 1.8"
