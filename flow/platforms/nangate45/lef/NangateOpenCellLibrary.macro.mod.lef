@@ -4968,6 +4968,7 @@ MACRO TAPCELL_X1
     PORT
       LAYER metal1 ;
         RECT 0 1.315 0.19 1.485 ;
+        RECT 0.06 0.975 0.13 1.315 ;
     END
   END VDD
   PIN VSS
@@ -4977,6 +4978,7 @@ MACRO TAPCELL_X1
     PORT
       LAYER metal1 ;
         RECT 0 -0.085 0.19 0.085 ;
+        RECT 0.06 0.085 0.13 0.425 ;
     END
   END VSS
 END TAPCELL_X1
