@@ -28,7 +28,7 @@ def parse_args():
                       help='Design Name for metrics')
   parser.add_argument('--flowVariant', '-v', required=False, default="base",
                       help='FLOW_VARIANT for the design')
-  parser.add_argument('--platform', '-p', required=False, default="nangage45",
+  parser.add_argument('--platform', '-p', required=False, default="nangate45",
                       help='Design Platform')
   parser.add_argument('--comment', '-c', required=False, default="",
                       help='Additional comments to embed')
@@ -57,7 +57,7 @@ def parse_args():
 # it will use that instead.  If count is set to True, it will return the count
 # of the pattern.
 
-def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False, occurrence=-1, defaultNotFound="N/A", t=str):
+def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False, occurrence=-1, defaultNotFound="N/A", t=str, required=True):
   if jsonTag in jsonFile:
     print("[WARN] Overwriting Tag", jsonTag)
 
@@ -68,6 +68,11 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False, occurrence
       content = f.read()
 
     m = re.findall(pattern, content, re.M)
+
+    patternNotFound = (len(m) < abs(occurrence))
+    if patternNotFound and not required:
+      jsonFile[jsonTag] = defaultNotFound
+      return
 
     if m:
       if count:
@@ -251,6 +256,22 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 
 # Floorplan
 # ==============================================================================
+
+    extractTagFromFile("floorplan__design__restruct__stdcell__count__pre", metrics_dict,
+                       "number instances before restructure is (\d+)",
+                       logPath+"/2_1_floorplan.log", defaultNotFound=0, required=False)
+
+    extractTagFromFile("floorplan__design__restruct__stdcell__count__post", metrics_dict,
+                       "number instances after restructure is (\d+)",
+                       logPath+"/2_1_floorplan.log", defaultNotFound=0, required=False)
+
+    extractTagFromFile("floorplan__design__restruct__stdcell__area__pre", metrics_dict,
+                       "^Design area (\S+) u\^2",
+                       logPath+"/2_1_floorplan.log", occurrence=-2, defaultNotFound=0, required=False)
+
+    extractTagFromFile("floorplan__design__restruct__stdcell__area__post", metrics_dict,
+                       "^Design area (\S+) u\^2",
+                       logPath+"/2_1_floorplan.log", defaultNotFound=0, required=False)
 
     extractTagFromFile("floorplan__timing__setup__tns", metrics_dict,
                        baseRegEx.format("floorplan final report_tns", "tns (\S+)"),

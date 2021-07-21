@@ -63,6 +63,11 @@ if {[info exist ::env(BLOCKS)]} {
   }
 }
 
+if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 && [file isfile $::env(SYNTH_STOP_MODULE_SCRIPT)] } {
+  puts "Sourcing $::env(SYNTH_STOP_MODULE_SCRIPT)"
+  source $::env(SYNTH_STOP_MODULE_SCRIPT)
+}
+
 # Generic synthesis
 synth  -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS)
 
@@ -108,11 +113,6 @@ if {[info exist ::env(DFF_LIB_FILE)]} {
 }
 opt
 
-set constr [open $::env(OBJECTS_DIR)/abc.constr w]
-puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
-puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
-close $constr
-
 
 set script [open $::env(OBJECTS_DIR)/abc.script w]
 puts $script "strash"
@@ -125,6 +125,10 @@ puts $script "upsize -c"
 puts $script "dnsize -c"
 close $script
 
+set constr [open $::env(OBJECTS_DIR)/abc.constr w]
+puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
+puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
+close $constr
 
 # Technology mapping for cells
 # ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
