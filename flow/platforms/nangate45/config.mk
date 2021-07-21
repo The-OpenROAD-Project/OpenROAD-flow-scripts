@@ -13,7 +13,7 @@ export GDS_FILES = $(sort $(wildcard $(PLATFORM_DIR)/gds/*.gds)) \
                      $(ADDITIONAL_GDS)
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
-export DONT_USE_CELLS = FILLCELL_X1 AOI211_X1 OAI211_X1
+export DONT_USE_CELLS = TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1
 
 # Fill cells used in fill cell insertion
 export FILL_CELLS = FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32
