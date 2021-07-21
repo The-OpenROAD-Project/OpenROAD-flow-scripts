@@ -257,14 +257,6 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 # Floorplan
 # ==============================================================================
 
-    extractTagFromFile("floorplan__design__blob__restruct__stdcell__count__pre", metrics_dict,
-                       "Found (\d+) instances for restructuring",
-                       logPath+"/2_1_floorplan.log", defaultNotFound=0, required=False)
-
-    extractTagFromFile("floorplan__design__blob__restruct__stdcell__count__post", metrics_dict,
-                       "inserting (\d+) new instances",
-                       logPath+"/2_1_floorplan.log", defaultNotFound=0, required=False)
-
     extractTagFromFile("floorplan__design__restruct__stdcell__count__pre", metrics_dict,
                        "number instances before restructure is (\d+)",
                        logPath+"/2_1_floorplan.log", defaultNotFound=0, required=False)
