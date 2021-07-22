@@ -12,7 +12,7 @@
         },
         {
             "field": "placeopt__design__instance__design__area",
-            "value": 52,
+            "value": 53,
             "compare": "<="
         },
         {
@@ -47,7 +47,7 @@
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 1382,
+            "value": 1393,
             "compare": "<="
         },
         {
