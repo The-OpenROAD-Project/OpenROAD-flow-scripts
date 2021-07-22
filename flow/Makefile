@@ -73,6 +73,17 @@
 #
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
+
+# Enables hierarchical yosys
+export SYNTH_HIERARCHICAL ?= 0
+export SYNTH_STOP_MODULE_SCRIPT = $(OBJECTS_DIR)/mark_hier_stop_modules.tcl
+ifeq ($(SYNTH_HIERARCHICAL), 1)
+export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
+export MAX_UNGROUP_SIZE ?= 0
+endif
+# Enables Re-synthesis for area reclaim
+export RESYNTH_AREA_RECOVER ?= 0
+
 # Global setting for Synthesis
 export SYNTH_ARGS ?= -flatten
 
@@ -321,6 +332,14 @@ synth: versions.txt \
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
+
+$(SYNTH_STOP_MODULE_SCRIPT):
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys_hier_report.log
+
+ifeq ($(SYNTH_HIERARCHICAL), 1)
+$(RESULTS_DIR)/1_1_yosys.v: $(SYNTH_STOP_MODULE_SCRIPT)
+endif
 
 $(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
