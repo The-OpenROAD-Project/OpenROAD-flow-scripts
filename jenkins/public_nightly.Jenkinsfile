@@ -436,15 +436,8 @@ pipeline {
   post {
     failure {
       script {
-        if ( env.BRANCH_NAME == "master" ) {
-          echo("Main development branch: report to stakeholders and commit author.");
-          EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
-          REPLY_TO="$EMAIL_TO";
-        } else {
-          echo("Feature development branch: report only to commit author.");
-          EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
-          REPLY_TO='$DEFAULT_REPLYTO';
-        }
+        EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
+        REPLY_TO="$EMAIL_TO";
         sh "./flow/util/getMetricsErrors.sh 2>&1 | tee error-list.txt";
         emailext (
             to: "$EMAIL_TO",
