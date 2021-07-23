@@ -14,3 +14,4 @@ export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/swerv/*.lib))
 export DIE_AREA    = 0 0 1550.02 1342.6
 export CORE_AREA   = 10.07 11.2 1540.14 1332.8
 
+export MACRO_PLACE_HALO ?= 24.4 17.12
