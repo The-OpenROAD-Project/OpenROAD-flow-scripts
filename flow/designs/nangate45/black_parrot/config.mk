@@ -16,3 +16,5 @@ export DIE_AREA    = 0 0 2200.01 2199.4
 export CORE_AREA   = 10.07 11.2 2189.94 2189.6
 
 export PLACE_DENSITY = 0.15
+
+export MACRO_PLACE_HALO ?= 24.4 17.12
