@@ -124,6 +124,14 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/2_1_floorplan.def
+  
+  # append ICeWall cover
+  if {[info exists ::env(FOOTPRINT)] && 
+      [ICeWall::is_footprint_flipchip] && 
+      [file exists [ICeWall::get_footprint_rdl_cover_file_name]]} {
+    exec sed -ie "/END SPECIALNETS/r[ICeWall::get_footprint_rdl_cover_file_name]" $::env(RESULTS_DIR)/2_1_floorplan.def
+  }
+
   write_verilog $::env(RESULTS_DIR)/2_floorplan.v
   write_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
   exit
