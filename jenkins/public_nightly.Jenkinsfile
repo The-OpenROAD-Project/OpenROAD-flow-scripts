@@ -436,10 +436,12 @@ pipeline {
   post {
     failure {
       script {
+        EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
+        REPLY_TO="$EMAIL_TO";
         sh "./flow/util/getMetricsErrors.sh 2>&1 | tee error-list.txt";
         emailext (
-            to: '$DEFAULT_RECIPIENTS',
-            replyTo: '$DEFAULT_REPLYTO',
+            to: "$EMAIL_TO",
+            replyTo: "$REPLY_TO",
             subject: '$DEFAULT_SUBJECT',
             body: '$DEFAULT_CONTENT',
             )

@@ -13,7 +13,7 @@ export GDS_FILES = $(sort $(wildcard $(PLATFORM_DIR)/gds/*.gds)) \
                      $(ADDITIONAL_GDS)
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
-export DONT_USE_CELLS = FILLCELL_X1 AOI211_X1 OAI211_X1
+export DONT_USE_CELLS = TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1
 
 # Fill cells used in fill cell insertion
 export FILL_CELLS = FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32
@@ -64,7 +64,7 @@ export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
 # Endcap and Welltie cells
 export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
 
-export MACRO_PLACE_HALO ?= 22.4 15.12
+export MACRO_PLACE_HALO ?= 24.4 17.12
 export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 
 #---------------------------------------------------------
