@@ -64,7 +64,7 @@ export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
 # Endcap and Welltie cells
 export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
 
-export MACRO_PLACE_HALO ?= 24.4 17.12
+export MACRO_PLACE_HALO ?= 22.4 15.12
 export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 
 #---------------------------------------------------------
