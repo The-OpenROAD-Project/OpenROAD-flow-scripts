@@ -82,6 +82,7 @@ export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
 export MAX_UNGROUP_SIZE ?= 0
 endif
 # Enables Re-synthesis for area reclaim
+export RESYNTH_AREA_RECOVER = 1
 export RESYNTH_AREA_RECOVER ?= 0
 
 # Global setting for Synthesis
