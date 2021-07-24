@@ -5,7 +5,7 @@ pipeline {
     MAKE_ISSUE = 1;
   }
   options {
-    timeout(time: 4, unit: "HOURS");
+    timeout(time: 6, unit: "HOURS");
   }
   stages {
     stage("Checkout master branch") {

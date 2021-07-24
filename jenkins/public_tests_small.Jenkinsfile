@@ -5,7 +5,7 @@ pipeline {
     MAKE_ISSUE = 1;
   }
   options {
-    timeout(time: 1, unit: "HOURS");
+    timeout(time: 2, unit: "HOURS");
   }
   stages {
     stage("Build") {
