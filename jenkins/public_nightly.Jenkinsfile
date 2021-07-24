@@ -310,7 +310,7 @@ pipeline {
             }
           }
         }
-        stage("sky130hd chameleon") {
+        stage("sky130 hd chameleon") {
           agent any;
           steps {
             unstash "install";

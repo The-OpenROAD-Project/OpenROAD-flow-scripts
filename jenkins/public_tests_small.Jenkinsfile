@@ -5,7 +5,7 @@ pipeline {
     MAKE_ISSUE = 1;
   }
   options {
-    timeout(time: 2, unit: "HOURS");
+    timeout(time: 1, unit: "HOURS");
   }
   stages {
     stage("Build") {
@@ -49,11 +49,11 @@ pipeline {
             }
           }
         }
-        stage("asap7 ibex") {
+        stage("nangate45 aes") {
           agent any;
           steps {
             unstash "install";
-            sh "flow/test/test_helper.sh ibex asap7";
+            sh "flow/test/test_helper.sh aes nangate45";
           }
           post {
             always {
@@ -64,11 +64,41 @@ pipeline {
             }
           }
         }
-        stage("nangate45 aes") {
+        stage("nangate45 bp_be_top") {
           agent any;
           steps {
             unstash "install";
-            sh "flow/test/test_helper.sh aes nangate45";
+            sh "flow/test/test_helper.sh bp_be_top nangate45";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("nangate45 bp_fe_top") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh bp_fe_top nangate45";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("nangate45 dynamic_node") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh dynamic_node nangate45";
           }
           post {
             always {
@@ -109,6 +139,21 @@ pipeline {
             }
           }
         }
+        stage("nangate45 jpeg") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh jpeg nangate45";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("nangate45 tiny rocket") {
           agent any;
           steps {
@@ -139,6 +184,21 @@ pipeline {
             }
           }
         }
+        stage("sky130 hd chameleon") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh chameleon sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("sky130 hd gcd") {
           agent any;
           steps {
@@ -159,6 +219,21 @@ pipeline {
           steps {
             unstash "install";
             sh "flow/test/test_helper.sh ibex sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("sky130 hd jpeg") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh jpeg sky130hd";
           }
           post {
             always {
@@ -204,6 +279,21 @@ pipeline {
           steps {
             unstash "install";
             sh "flow/test/test_helper.sh ibex sky130hs";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("sky130 hs jpeg") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh jpeg sky130hs";
           }
           post {
             always {
