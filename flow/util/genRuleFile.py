@@ -16,8 +16,9 @@ okFile = 'metadata-base-ok.json'
 outFile = 'rules.json'
 errors = 0
 rules = list()
-regularPadding = 1.15 # %
-periodPadding = 0.05 # %
+regularPadding = 1.15  # %
+periodPadding = 0.05  # %
+periodPaddingRelax = 0.1  # %
 valueIfZero = -50
 
 if isfile(okFile):
@@ -27,29 +28,34 @@ else:
     print('Not found', abspath(okFile))
     sys.exit(1)
 
+# autopep8: off
 metrics = [
-    # name                                       , usePadding, periodPad, roundValue
+    # name                                        , usePadding , periodPad          , roundValue
     # synth
-    ['synth__design__instance__stdcell__area'    , True      , False    , True],
+    ['synth__design__instance__stdcell__area'     , True       , 0                  , True]      ,
     # clock
-    ['constraints__clocks__count'                , False     , False    , True],
+    ['constraints__clocks__count'                 , False      , 0                  , True]      ,
     # floorplan
     # place
-    ['placeopt__design__instance__design__area'  , True      , False    , True],
-    ['placeopt__design__instance__stdcell__count', True      , False    , True],
+    ['placeopt__design__instance__design__area'   , True       , 0                  , True]      ,
+    ['placeopt__design__instance__stdcell__count' , True       , 0                  , True]      ,
     # cts
-    ['cts__timing__setup__ws'                    , True      , True     , False],
-    ['cts__timing__setup__ws__prerepair'         , True      , True     , False],
-    ['cts__timing__setup__ws__postrepair'        , True      , True     , False],
+    ['cts__timing__setup__ws'                     , True       , periodPaddingRelax , False]     ,
+    ['cts__timing__setup__ws__prerepair'          , True       , periodPaddingRelax , False]     ,
+    ['cts__timing__setup__ws__postrepair'         , True       , periodPaddingRelax , False]     ,
     # route
-    ['globalroute__timing__clock__slack'         , True      , True     , False],
-    ['globalroute__timing__setup__ws'            , True      , True     , False],
-    ['detailedroute__route__wirelength'          , True      , False    , True],
-    ['detailedroute__route__drc_errors__count'   , False     , False    , True],
+    ['globalroute__timing__clock__slack'          , True       , periodPadding      , False]     ,
+    ['globalroute__timing__setup__ws'             , True       , periodPadding      , False]     ,
+    ['detailedroute__route__wirelength'           , True       , 0                  , True]      ,
+    ['detailedroute__route__drc_errors__count'    , False      , 0                  , True]      ,
     # finish
-    ['finish__timing__setup__ws'                 , True      , True     , False],
-    ['finish__design__instance__area'            , True      , False    , True],
+    ['finish__timing__setup__ws'                  , True       , periodPadding      , False]     ,
+    ['finish__design__instance__area'             , True       , 0                  , True]      ,
+    ['finish__timing__slew__violation__count'     , True       , 0                  , True]      ,
+    ['finish__timing__fanout__violation__count'   , True       , 0                  , True]      ,
+    ['finish__timing__max_cap__violation__count'  , True       , 0                  , True]      ,
 ]
+# autopep8: on
 
 period = list()
 for entry in data['constraints__clocks__details']:
@@ -97,7 +103,7 @@ for entry in metrics:
 
     newRule = dict()
     newRule['field'] = field
-    if roundValue :
+    if roundValue:
         newRule['value'] = round(value)
     else:
         newRule['value'] = float('{:.2f}'.format(value))
