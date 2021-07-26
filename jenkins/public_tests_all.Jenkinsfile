@@ -5,7 +5,7 @@ pipeline {
     MAKE_ISSUE = 1;
   }
   options {
-    timeout(time: 2, unit: "HOURS");
+    timeout(time: 4, unit: "HOURS");
   }
   stages {
     stage("Build") {
@@ -101,6 +101,81 @@ pipeline {
             }
           }
         }
+        stage("nangate45 black_parrot") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh black_parrot nangate45";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("nangate45 bp_be_top") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh bp_be_top nangate45";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("nangate45 bp_fe_top") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh bp_fe_top nangate45";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("nangate45 bp_multi_top") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh bp_multi_top nangate45";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("nangate45 dynamic_node") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh dynamic_node nangate45";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("nangate45 gcd") {
           agent any;
           steps {
@@ -161,6 +236,21 @@ pipeline {
             }
           }
         }
+        stage("nangate45 swerv_wrapper") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh swerv_wrapper nangate45";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("nangate45 tiny rocket") {
           agent any;
           steps {
@@ -181,6 +271,21 @@ pipeline {
           steps {
             unstash "install";
             sh "flow/test/test_helper.sh aes sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("sky130 hd chameleon") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh chameleon sky130hd";
           }
           post {
             always {
@@ -302,7 +407,7 @@ pipeline {
   post {
     failure {
       script {
-        if ( env.BRANCH_NAME == "master" || env.BRANCH_NAME == "openroad" ) {
+        if ( env.BRANCH_NAME == "master" ) {
           echo("Main development branch: report to stakeholders and commit author.");
           EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
           REPLY_TO="$EMAIL_TO";

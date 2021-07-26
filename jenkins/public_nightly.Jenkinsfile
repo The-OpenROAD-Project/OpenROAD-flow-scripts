@@ -5,7 +5,7 @@ pipeline {
     MAKE_ISSUE = 1;
   }
   options {
-    timeout(time: 4, unit: "HOURS");
+    timeout(time: 6, unit: "HOURS");
   }
   stages {
     stage("Checkout master branch") {
@@ -310,7 +310,7 @@ pipeline {
             }
           }
         }
-        stage("sky130hd chameleon") {
+        stage("sky130 hd chameleon") {
           agent any;
           steps {
             unstash "install";
@@ -436,10 +436,12 @@ pipeline {
   post {
     failure {
       script {
+        EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
+        REPLY_TO="$EMAIL_TO";
         sh "./flow/util/getMetricsErrors.sh 2>&1 | tee error-list.txt";
         emailext (
-            to: '$DEFAULT_RECIPIENTS',
-            replyTo: '$DEFAULT_REPLYTO',
+            to: "$EMAIL_TO",
+            replyTo: "$REPLY_TO",
             subject: '$DEFAULT_SUBJECT',
             body: '$DEFAULT_CONTENT',
             )
