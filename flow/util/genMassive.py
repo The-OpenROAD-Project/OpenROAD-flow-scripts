@@ -25,6 +25,9 @@ OriginalSDC = 'constraint_doe.sdc'
 
 # for generated .sh file name
 ShellName = 'runMassive'
+# for metrics collect script (with '.sh') file name
+MetricsShellName = '%s_metrics_collect.sh'%(ShellName)
+
 
 ##################
 # Design
@@ -32,22 +35,7 @@ ShellName = 'runMassive'
 
 ## Define platform-design. User should remove ',' for the last item in the list. (string)
 PLATFORM_DESIGN = [ \
-    #'sky130hd-gcd' \
-    'sky130hd-ibex', \
-    #'sky130hd-aes', \
-    #'sky130hd-jpeg', \
-    #'sky130hs-gcd', \
-    #'sky130hs-ibex', \
-    #'sky130hs-aes', \
-    #'sky130hs-jpeg', \
-    #'nangate45-gcd', \
-    #'nangate45-ibex', \
-    #'nangate45-aes', \
-    #'nangate45-jpeg', \
-    #'asap7-gcd', \
-    #'asap7-ibex', \
-    #'asap7-aes', \
-    #'asap7-jpeg', \
+    'sky130hd-gcd' \
     ]
 
 
@@ -57,8 +45,8 @@ CLK_PERIOD = []
 ## SDC uncertainty and IO delay.
 ## TODO: Currently, it only support when 'set uncertainty' and 'set io_delay' 
 ## are defined in the constraint.sdc file.
-UNCERTAINTY = [0.999, 1.000, 1.001]
-IO_DELAY = [6.999, 7.000, 7.001]
+UNCERTAINTY = []
+IO_DELAY = []
 
 
 ##################
@@ -79,12 +67,12 @@ FLATTEN = []
 
 ## Utilization. e.g, 45 -> 45% of core util. (int)
 #CORE_UTIL = [20, 40, 55]
-CORE_UTIL = [20]
+CORE_UTIL = []
 
 ## Aspect ratio. It REQUIRES 'CORE_UTIL' values (float)
-ASPECT_RATIO = [1.0]
+ASPECT_RATIO = []
 ## Core-to-die gap distance (um). It REQUIRES 'CORE_UTIL' values (int)
-CORE_DIE_MARGIN = [10]
+CORE_DIE_MARGIN = []
 
 ## Pin Distance
 #PINS_DISTANCE = [2]
@@ -95,9 +83,9 @@ PINS_DISTANCE = []
 ##################
 
 ## Global Placement Padding for std cells (int)
-GP_PAD = [4]
+GP_PAD = []
 ## Detailed Placement Padding for std cells (int)
-DP_PAD = [2]
+DP_PAD = []
 
 ## Global Placement target bin density (select only one option) (.2 float)
 ## option 1) PLACE_DENSITY uses the values in the list as it is.
@@ -105,7 +93,7 @@ DP_PAD = [2]
 ## For eaxmple, PLACE_DENSITY_LB_ADDON = [0, 0.02, 0.04] means PLACE_DENSITY = [LB, LB+0.02, LB+0.04]
 ## LB of the place density == (total instance area + padding) / total die area
 PLACE_DENSITY = []
-PLACE_DENSITY_LB_ADDON = [0]
+PLACE_DENSITY_LB_ADDON = []
 
 
 ##################
@@ -226,7 +214,7 @@ def productDict(dicts):
 
 def adjustFastRoute(filedata, adjSet, GrOverflow):
   if adjSet[0]!='empty':
-    filedata = re.sub("(set_global_routing_layer_adjustment .* )[0-9\.]+", "\g<1>{:.1f}".format(float(adjSet[0])), filedata)
+    filedata = re.sub("(set_global_routing_layer_adjustment .* )[0-9\.]+", "\g<1>{:.2f}".format(float(adjSet[0])), filedata)
   sep_la_cmds = ""
   for i, sep_la in enumerate(adjSet):
     if i==0 or sep_la=='empty':
@@ -234,7 +222,7 @@ def adjustFastRoute(filedata, adjSet, GrOverflow):
     ## TODO: Currently, only supports for SKY130HD and SKY130HS.
     ## TODO: user should manually change the layer name to match techLEF.
     layer_name = 'met%s'%i
-    sep_la_cmds += "set_global_routing_layer_adjustment " + layer_name + " {:.1f}\n".format(float(sep_la))
+    sep_la_cmds += "set_global_routing_layer_adjustment " + layer_name + " {:.2f}\n".format(float(sep_la))
   filedata = re.sub("set_global_routing_layer_adjustment.*\n", "\g<0>"+sep_la_cmds, filedata)
   if int(GrOverflow) == 1:
       filedata = re.sub("(global_route.*(\n\s+.*)*)", "\g<1> \\\n             -allow_overflow", filedata)
@@ -292,7 +280,6 @@ def writeConfigs(CurAttrs, CurChunkNum):
 
   if not os.path.isdir(CurChunkDir):
     os.mkdir(CurChunkDir)
-  print(CurChunkNum)
 
   if MakeArg=='clean':
     fileList = glob.glob('%s/*-DoE-*'%(CurChunkDir))
@@ -424,10 +411,9 @@ def writeConfigs(CurAttrs, CurChunkNum):
   frun.close()
   
   
-  fcollect = open('./%s_metrics_collect.sh'%ShellName, 'a')
-  CollectName = 'python util/genMetrics.py -x -p %s -d %s -v %s -o metrics_%s/%s.json\n'%(CurPlatform, CurDesign, variantName, ShellName, variantName)
-  fcollect.write(CollectName)
-  fcollect.close()
+  with open('./metrics/%s'%MetricsShellName, 'a') as fcollect:
+    CollectName = 'python util/genMetrics.py -x -p %s -d %s -v %s -o metrics/metrics_%s/%s.json\n'%(CurPlatform, CurDesign, variantName, ShellName, variantName)
+    fcollect.write(CollectName)
 
 
 
@@ -436,16 +422,18 @@ def writeConfigs(CurAttrs, CurChunkNum):
 MakeArg = sys.argv[1]
 
 
-if not os.path.isdir('./metrics_%s'%ShellName):
-  os.mkdir('./metrics_%s'%ShellName)
+if not os.path.isdir('./metrics'):
+  os.mkdir('./metrics')
+if not os.path.isdir('./metrics/metrics_%s'%ShellName):
+  os.mkdir('./metrics/metrics_%s'%ShellName)
 
 knobs = assignEmptyAttrs(SweepingAttributes)
 ProductAttrs = list(productDict(knobs))
 writeDoeLog(SweepingAttributes, ProductAttrs)
 if os.path.isfile('./%s.sh'%ShellName):
   os.remove('./%s.sh'%ShellName)
-if os.path.isfile('./%s_metrics_collect.sh'%ShellName):
-  os.remove('./%s_metrics_collect.sh'%ShellName)
+if os.path.isfile('./metrics/%s'%MetricsShellName):
+  os.remove('./metrics/%s'%MetricsShellName)
 CurChunkNum = 0
 for i, CurAttrs in enumerate(ProductAttrs, 1):
   if i % NumFilesPerChunk == 0:
