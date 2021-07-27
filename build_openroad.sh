@@ -138,7 +138,7 @@ if [ "$build_method" == "DOCKER" ]; then
     cp .dockerignore{,.bak}
     sed -i '/flow\/platforms/d' .dockerignore
   fi
-  docker build --tag ${DOCKER_TAG} --file Dockerfile .
+  docker build --tag ${DOCKER_TAG} --file Dockerfile --target flow .
   if [ "$COPY_PLATFORMS" == "YES" ]; then
     mv .dockerignore{.bak,}
   fi
