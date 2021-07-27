@@ -99,7 +99,7 @@ if [ -z ${OPENROAD_FLOW_NO_GIT_INIT+x} ]; then
 fi
 
 
-if [ ! -z ${OR_REPO+x} ]; then 
+if [ ! -z ${OR_REPO+x} ]; then
   base_url=$(dirname $OR_REPO)
   [[ ${base_url##*/} = $base_url ]] && CURRENT_REMOTE=${base_url##*:} || CURRENT_REMOTE=${base_url##*/}
   remotes=$(git --git-dir tools/OpenROAD/.git remote)
@@ -110,7 +110,7 @@ if [ ! -z ${OR_REPO+x} ]; then
   if [[ ! " ${remotes[@]} " =~ " ${CURRENT_REMOTE} " ]]; then
     git --git-dir tools/OpenROAD/.git remote add $CURRENT_REMOTE $OR_REPO
   fi
-fi 
+fi
 
 
 if [ ! -z ${UPDATE_OR+x} ]; then
@@ -119,7 +119,7 @@ if [ ! -z ${UPDATE_OR+x} ]; then
     && git checkout $CURRENT_REMOTE/$OR_BRANCH \
     && git pull $CURRENT_REMOTE $OR_BRANCH \
     && git submodule update --init --recursive)
-fi 
+fi
 
 # Update platforms
 if [ ! -z ${UPDATE_PLATFORM+x} ]; then
@@ -145,14 +145,14 @@ fi
 
 # Docker build
 if [ "$build_method" == "DOCKER" ]; then
-  docker build -t openroad/yosys -f tools/yosys_util/Dockerfile tools/yosys
-  docker build -t openroad/lsoracle -f tools/LSOracle/Dockerfile.openroad tools
+  docker build --tag openroad/yosys --file tools/yosys_util/Dockerfile --target builder tools/yosys
+  docker build --tag openroad/lsoracle --file tools/LSOracle/Dockerfile.openroad tools
   ./tools/OpenROAD/etc/DockerHelper.sh create -target=builder
   if [ "$COPY_PLATFORMS" == "YES" ]; then
     cp .dockerignore{,.bak}
     sed -i '/flow\/platforms/d' .dockerignore
   fi
-  docker build -t ${DOCKER_TAG} -f Dockerfile .
+  docker build --tag ${DOCKER_TAG} --file Dockerfile .
   if [ "$COPY_PLATFORMS" == "YES" ]; then
     mv .dockerignore{.bak,}
   fi
