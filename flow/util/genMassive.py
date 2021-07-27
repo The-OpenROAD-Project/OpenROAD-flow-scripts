@@ -25,6 +25,9 @@ OriginalSDC = 'constraint_doe.sdc'
 
 # for generated .sh file name
 ShellName = 'runMassive'
+# for metrics collect script (with '.sh') file name
+MetricsShellName = '%s_metrics_collect.sh'%(ShellName)
+
 
 ##################
 # Design
@@ -33,21 +36,6 @@ ShellName = 'runMassive'
 ## Define platform-design. User should remove ',' for the last item in the list. (string)
 PLATFORM_DESIGN = [ \
     'sky130hd-gcd' \
-    #'sky130hd-ibex', \
-    #'sky130hd-aes', \
-    #'sky130hd-jpeg', \
-    #'sky130hs-gcd', \
-    #'sky130hs-ibex', \
-    #'sky130hs-aes', \
-    #'sky130hs-jpeg', \
-    #'nangate45-gcd', \
-    #'nangate45-ibex', \
-    #'nangate45-aes', \
-    #'nangate45-jpeg', \
-    #'asap7-gcd', \
-    #'asap7-ibex', \
-    #'asap7-aes', \
-    #'asap7-jpeg', \
     ]
 
 
@@ -292,7 +280,6 @@ def writeConfigs(CurAttrs, CurChunkNum):
 
   if not os.path.isdir(CurChunkDir):
     os.mkdir(CurChunkDir)
-  #print(CurChunkNum)
 
   if MakeArg=='clean':
     fileList = glob.glob('%s/*-DoE-*'%(CurChunkDir))
@@ -424,10 +411,9 @@ def writeConfigs(CurAttrs, CurChunkNum):
   frun.close()
   
   
-  fcollect = open('./metrics/%s_metrics_collect.sh'%ShellName, 'a')
-  CollectName = 'python util/genMetrics.py -x -p %s -d %s -v %s -o metrics/metrics_%s/%s.json\n'%(CurPlatform, CurDesign, variantName, ShellName, variantName)
-  fcollect.write(CollectName)
-  fcollect.close()
+  with open('./metrics/%s'%MetricsShellName, 'a') as fcollect:
+    CollectName = 'python util/genMetrics.py -x -p %s -d %s -v %s -o metrics/metrics_%s/%s.json\n'%(CurPlatform, CurDesign, variantName, ShellName, variantName)
+    fcollect.write(CollectName)
 
 
 
@@ -446,8 +432,8 @@ ProductAttrs = list(productDict(knobs))
 writeDoeLog(SweepingAttributes, ProductAttrs)
 if os.path.isfile('./%s.sh'%ShellName):
   os.remove('./%s.sh'%ShellName)
-if os.path.isfile('./metrics/%s_metrics_collect.sh'%ShellName):
-  os.remove('./metrics/%s_metrics_collect.sh'%ShellName)
+if os.path.isfile('./metrics/%s'%MetricsShellName):
+  os.remove('./metrics/%s'%MetricsShellName)
 CurChunkNum = 0
 for i, CurAttrs in enumerate(ProductAttrs, 1):
   if i % NumFilesPerChunk == 0:
