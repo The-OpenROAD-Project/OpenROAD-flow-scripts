@@ -16,10 +16,6 @@ okFile = 'metadata-base-ok.json'
 outFile = 'rules.json'
 errors = 0
 rules = list()
-regularPadding = 1.15  # %
-periodPadding = 0.05  # %
-periodPaddingRelax = 0.1  # %
-valueIfZero = -50
 
 if isfile(okFile):
     with open(okFile, 'r') as f:
@@ -28,86 +24,171 @@ else:
     print('Not found', abspath(okFile))
     sys.exit(1)
 
-# autopep8: off
-metrics = [
-    # name                                        , usePadding , periodPad          , roundValue
+# dict format
+# 'metric__name': {
+#     'usePeriod': <bool>, use a percentage of the clock period as padding
+#     'padding': <float>, percentage of padding to use
+#     'roundValue': <bool>, use the rounded value for the rule
+#     'valueIfZero': <float>, value if the current gold metric is zero
+# },
+metrics = {
     # synth
-    ['synth__design__instance__stdcell__area'     , True       , 0                  , True]      ,
+    'synth__design__instance__stdcell__area': {
+        'usePeriod': False,
+        'padding': 15,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '<=',
+    },
     # clock
-    ['constraints__clocks__count'                 , False      , 0                  , True]      ,
+    'constraints__clocks__count': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '==',
+    },
     # floorplan
     # place
-    ['placeopt__design__instance__design__area'   , True       , 0                  , True]      ,
-    ['placeopt__design__instance__stdcell__count' , True       , 0                  , True]      ,
+    'placeopt__design__instance__design__area': {
+        'usePeriod': False,
+        'padding': 15,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '<=',
+    },
+    'placeopt__design__instance__stdcell__count': {
+        'usePeriod': False,
+        'padding': 15,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '<=',
+    },
     # cts
-    ['cts__timing__setup__ws'                     , True       , periodPaddingRelax , False]     ,
-    ['cts__timing__setup__ws__prerepair'          , True       , periodPaddingRelax , False]     ,
-    ['cts__timing__setup__ws__postrepair'         , True       , periodPaddingRelax , False]     ,
+    'cts__timing__setup__ws': {
+        'usePeriod': True,
+        'padding': 10,
+        'roundValue': False,
+        'valueIfZero': 0,
+        'compare': '>=',
+    },
+    'cts__timing__setup__ws__prerepair': {
+        'usePeriod': True,
+        'padding': 10,
+        'roundValue': False,
+        'valueIfZero': 0,
+        'compare': '>=',
+    },
+    'cts__timing__setup__ws__postrepair': {
+        'usePeriod': True,
+        'padding': 10,
+        'roundValue': False,
+        'valueIfZero': 0,
+        'compare': '>=',
+    },
     # route
-    ['globalroute__timing__clock__slack'          , True       , periodPadding      , False]     ,
-    ['globalroute__timing__setup__ws'             , True       , periodPadding      , False]     ,
-    ['detailedroute__route__wirelength'           , True       , 0                  , True]      ,
-    ['detailedroute__route__drc_errors__count'    , False      , 0                  , True]      ,
+    'globalroute__timing__clock__slack': {
+        'usePeriod': True,
+        'padding': 5,
+        'roundValue': False,
+        'valueIfZero': 0,
+        'compare': '>=',
+    },
+    'globalroute__timing__setup__ws': {
+        'usePeriod': True,
+        'padding': 5,
+        'roundValue': False,
+        'valueIfZero': 0,
+        'compare': '>=',
+    },
+    'detailedroute__route__wirelength': {
+        'usePeriod': False,
+        'padding': 15,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '<=',
+    },
+    'detailedroute__route__drc_errors__count': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '==',
+    },
     # finish
-    ['finish__timing__setup__ws'                  , True       , periodPadding      , False]     ,
-    ['finish__design__instance__area'             , True       , 0                  , True]      ,
-    ['finish__timing__slew__violation__count'     , True       , 0                  , True]      ,
-    ['finish__timing__fanout__violation__count'   , True       , 0                  , True]      ,
-    ['finish__timing__max_cap__violation__count'  , True       , 0                  , True]      ,
-]
-# autopep8: on
+    'finish__timing__setup__ws': {
+        'usePeriod': True,
+        'padding': 5,
+        'roundValue': False,
+        'valueIfZero': 0,
+        'compare': '>=',
+    },
+    'finish__design__instance__area': {
+        'usePeriod': False,
+        'padding': 15,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '<=',
+    },
+    'finish__timing__slew__violation__count': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '<=',
+    },
+    'finish__timing__fanout__violation__count': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '<=',
+    },
+    'finish__timing__max_cap__violation__count': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '<=',
+    },
+}
 
-period = list()
+periodList = list()
 for entry in data['constraints__clocks__details']:
-    period.append(float(sub(r'^.*: ', '', entry)))
+    periodList.append(float(sub(r'^.*: ', '', entry)))
 
-if len(period) == 1:
-    period = period[0]
-else:
-    period = 'multiple clocks not supported'
+if len(periodList) != 1:
+    print('[WARNING] Multiple clocks not supported. Will use first clock.')
+period = periodList[0]
 
-for entry in metrics:
-    field, usePadding, periodPad, roundValue = entry
+for field, option in metrics.items():
     value = data[field]
 
-    if usePadding:
-        if periodPad:
-            try:
-                if value >= 0:
-                    value = - period * periodPadding
-                else:
-                    value = value - period * periodPadding
-            except Exception as e:
-                print('[ERROR] while computing period padding ', end='')
-                print(field, value, period)
-                print(e)
-                errors += 1
-                continue
-        elif value == 0:
-            value = valueIfZero
-        else:
-            try:
-                value *= regularPadding
-            except Exception as e:
-                print('[ERROR] while computing padding', field, value)
-                print(e)
-                errors += 1
-                continue
+    if len(periodList) != 1 and field == 'globalroute__timing__clock__slack':
+        print('[WARNING] Skipping clock slack until multiple clocks support.')
+        continue
 
-    if not usePadding:
-        compare = '=='
-    elif value < 0:
-        compare = '>='
-    else:
-        compare = '<='
+    if option['padding'] != 0:
+        if option['usePeriod']:
+            if value >= 0:
+                value += - period * option['padding'] / 100
+            else:
+                value += value - period * option['padding'] / 100
+        elif value == 0:
+            value = option['valueIfZero']
+        else:
+            value += value * option['padding'] / 100
+
+    if 'timing' in field and not 'count' in field and value > 0:
+        value = 0
 
     newRule = dict()
     newRule['field'] = field
-    if roundValue:
+    if option['roundValue']:
         newRule['value'] = round(value)
     else:
         newRule['value'] = float('{:.2f}'.format(value))
-    newRule['compare'] = compare
+    newRule['compare'] = option['compare']
     rules.append(newRule)
 
 finalRules = dict()
