@@ -209,7 +209,7 @@ endif
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
-TIME_CMD = /usr/bin/time -f "Elapsed time: %E[h:]min:sec, Average CPU: %P, Peak memory: %MKB"
+TIME_CMD = /usr/bin/time -f "Elapsed time: %E[h:]min:sec, average CPU: %P, peak memory: %MKB"
 TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
 ifeq (, $(strip $(TIME_TEST)))
   TIME_CMD = /usr/bin/time
