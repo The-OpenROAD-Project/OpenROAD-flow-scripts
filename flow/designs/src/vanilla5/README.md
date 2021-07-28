@@ -1,9 +1,12 @@
-### Summary
-bsg_manycore tile derived from http://opencelerity.org/
+# Summary
 
-### Source
-See more at https://bitbucket.org/taylor-bsg/bsg_manycore/src
+`bsg_manycore` tile derived from [here](http://opencelerity.org/).
 
-### Modifications
-- Added sdc timing constraints
-- Converted to verilog using bsg_sv2v
+# Source
+
+See more at [this website](https://bitbucket.org/taylor-bsg/bsg_manycore/src).
+
+# Modifications
+
+- Added sdc timing constraints.
+- Converted to verilog using `bsg_sv2v`.
