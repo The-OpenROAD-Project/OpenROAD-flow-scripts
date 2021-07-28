@@ -123,7 +123,7 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False,
         jsonFile[jsonTag] = 'ERR'
 
 
-def extractGnuTime(prefix, jsonFile, file): #'^(\S+)elapsed \S+CPU \S+memKB',
+def extractGnuTime(prefix, jsonFile, file):
     
     extractTagFromFile(prefix + '__runtime__total',
                        jsonFile,
