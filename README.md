@@ -12,8 +12,6 @@ See the OpenROAD [documentation here](https://openroad.readthedocs.io/en/latest/
 How to [start using OpenROAD flow here](https://openroad.readthedocs.io/en/latest/user/GettingStarted.html)
 and our [user guide here](https://openroad.readthedocs.io/en/latest/user/UserGuide.html).
 
-See the flow [README](flow) for details about the flow and how to run designs through the flow
-
 ## Citing this Work
 
 If you use this software in any published work, we would appreciate a citation!
