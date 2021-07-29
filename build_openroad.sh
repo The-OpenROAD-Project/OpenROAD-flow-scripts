@@ -74,7 +74,7 @@ while (( "$#" )); do
       shift
       ;;
     -*|--*=) # unsupported flags
-      echo "[ERROR][FLOW-0004] Unsupported flag $1" >&2
+      echo "[ERROR FLW-0004] Unsupported flag $1." >&2
       exit 1
       ;;
     *) # preserve positional arguments
@@ -86,10 +86,10 @@ done
 
 # Choose install method
 if [ -z ${BUILD_METHOD+x} ] && which docker &> /dev/null; then
-  echo "[INFO FLOW-0000] Using docker build method. This will create a docker image tagged '${DOCKER_TAG}'"
+  echo "[INFO FLW-0000] Using docker build method. This will create a docker image tagged '${DOCKER_TAG}'."
   build_method="DOCKER"
 else
-  echo "[INFO FLOW-0000] Using local build method. This will create binaries at tools/install/"
+  echo "[INFO FLW-0000] Using local build method. This will create binaries at 'tools/install/..'."
   build_method="LOCAL"
 fi
 
@@ -114,7 +114,7 @@ fi
 
 
 if [ ! -z ${UPDATE_OR+x} ]; then
-  echo "[INFO FLOW-0005] Updating OpenROAD tool to the latest"
+  echo "[INFO FLW-0005] Updating OpenROAD tool to the latest."
   (cd tools/OpenROAD && git fetch $CURRENT_REMOTE $OR_BRANCH \
     && git checkout $CURRENT_REMOTE/$OR_BRANCH \
     && git pull $CURRENT_REMOTE $OR_BRANCH \
@@ -125,10 +125,10 @@ fi
 if [ ! -z ${UPDATE_PLATFORM+x} ]; then
   for dir in flow/platforms/*/ ; do
     if [ -d $dir/.git ]; then
-      echo "[INFO FLOW-0001] Updating git repository '$dir'"
+      echo "[INFO FLW-0001] Updating git repository '$dir'."
       (cd $dir && git pull)
     else
-      echo "[INFO FLOW-0002] Directory '$dir' is not a git repository. Skipping update."
+      echo "[INFO FLW-0002] Directory '$dir' is not a git repository. Skipping update."
     fi
   done
 fi
@@ -136,10 +136,10 @@ fi
 # Update developer repos
 if [ ! -z ${UPDATE_PRIVATE+x} ]; then
   if [ -d flow/private ]; then
-    echo "[INFO FLOW-0001] Updating git repository 'private'"
+    echo "[INFO FLW-0001] Updating git repository 'private'."
     (cd flow/private && git pull)
   else
-    echo "[INFO FLOW-0002] Directory 'flow/private' is not a git repository. Skipping update."
+    echo "[INFO FLW-0002] Directory 'flow/private' is not a git repository. Skipping update."
   fi
 fi
 
@@ -172,6 +172,6 @@ elif [ "$build_method" == "LOCAL" ]; then
         -D CMAKE_INSTALL_PREFIX=$(pwd)/tools/install/LSOracle
   $NICE cmake --build tools/LSOracle/build -j$PROC --target install
 else
-  echo "[ERROR FLOW-0003] No valid build method found"
+  echo "[ERROR FLW-0003] No valid build method found."
   exit 1
 fi
