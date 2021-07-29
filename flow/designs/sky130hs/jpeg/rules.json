@@ -21,6 +21,11 @@
             "compare": "<="
         },
         {
+            "field": "detailedplace__design__violations__count",
+            "value": 0,
+            "compare": "=="
+        },
+        {
             "field": "cts__timing__setup__ws",
             "value": -0.62,
             "compare": ">="
