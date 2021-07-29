@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__timing__slew__violation__count",
-            "value": 1071,
+            "value": 1125,
             "compare": "<="
         },
         {
@@ -77,7 +77,7 @@
         },
         {
             "field": "finish__timing__max_cap__violation__count",
-            "value": 40,
+            "value": 42,
             "compare": "<="
         }
     ]

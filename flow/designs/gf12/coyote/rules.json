@@ -67,12 +67,12 @@
         },
         {
             "field": "finish__timing__slew__violation__count",
-            "value": 36,
+            "value": 38,
             "compare": "<="
         },
         {
             "field": "finish__timing__fanout__violation__count",
-            "value": 1403,
+            "value": 1473,
             "compare": "<="
         },
         {
