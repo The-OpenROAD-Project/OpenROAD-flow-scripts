@@ -5,25 +5,32 @@
 set -e
 
 function usage() {
-  echo "Usage: $0 [-h|--help] [-l|--latest] [-o|--local] [--or_branch]"
-  echo "  -h, --help              print this help message"
-  echo "  -d, --dev_repo          (dev only) perform git pull on developer repositories"
-  echo "  -l, --latest            build using the head of branch --or_branch or 'master' by default for OpenROAD"
-  echo "  -o, --local             force local build instead of docker build"
-  echo "  -p, --platform          perform git pull on all git-based platform repos"
-  echo "  --or_branch BRANCH      build using the head of branch BRANCH for OpenROAD"
-  echo "  --or_repo REPO-URL      build using a fork at REPO-URL(https/ssh) for OpenROAD"
-  echo "  -n, --nice              build using all cpus but nice the jobs"
-  echo "  --no_init               Skip initializing submodules"
-  echo "  -c, --copy-platforms"   copy platforms to inside docker image
+  cat << EOF
 
-  echo "This script builds the openroad tools (OpenROAD, yosys)"
-  echo "By default, the tools will be built from the linked submodule hashes"
+Usage: $0 [-h|--help] [-l|--latest] [-o|--local] [--or_branch]
+
+Options:
+    -h, --help              print this help message
+    -d, --dev_repo          (dev only) perform git pull on developer repositories
+    -l, --latest            build using the head of branch --or_branch or 'master' by default for OpenROAD
+    -o, --local             force local build instead of docker build
+    -p, --platform          perform git pull on all git-based platform repos
+    --or_branch BRANCH      build using the head of branch BRANCH for OpenROAD
+    --or_repo REPO-URL      build using a fork at REPO-URL(https/ssh) for OpenROAD
+    -t, --threads N         build using N cpus
+    -n, --nice              build using all cpus but nice the jobs
+    --no_init               Skip initializing submodules
+    -c, --copy-platforms    copy platforms to inside docker image
+
+    This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
+    By default, the tools will be built from the linked submodule hashes.
+
+EOF
 }
 
 # defaults
 NICE=""
-PROC=`nproc`
+PROC=$(nproc)
 COPY_PLATFORMS="NO"
 DOCKER_TAG="openroad/flow-scripts"
 CURRENT_REMOTE="origin"
@@ -52,9 +59,13 @@ while (( "$#" )); do
       UPDATE_OR=1
       shift
       ;;
+    -t|--threads)
+      PROC=$2
+      shift 2
+      ;;
     -n|--nice)
       NICE="nice"
-      PROC=`nproc --all`
+      PROC=$(nproc --all)
       shift
       ;;
     -o|--local)
@@ -147,7 +158,7 @@ fi
 if [ "$build_method" == "DOCKER" ]; then
   docker build --tag openroad/yosys --file tools/yosys_util/Dockerfile --target builder tools/yosys
   docker build --tag openroad/lsoracle --file tools/LSOracle/Dockerfile.openroad tools
-  ./tools/OpenROAD/etc/DockerHelper.sh create -target=builder
+  ./tools/OpenROAD/etc/DockerHelper.sh create -target=builder -threads=${PROC}
   if [ "$COPY_PLATFORMS" == "YES" ]; then
     cp .dockerignore{,.bak}
     sed -i '/flow\/platforms/d' .dockerignore
@@ -159,10 +170,10 @@ if [ "$build_method" == "DOCKER" ]; then
 
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then
-  $NICE make install -C tools/yosys -j$PROC PREFIX=$(pwd)/tools/install/yosys CONFIG=gcc
+  $NICE make install -C tools/yosys -j${PROC} PREFIX=$(pwd)/tools/install/yosys CONFIG=gcc
 
   cmake -B tools/OpenROAD/build tools/OpenROAD -DCMAKE_INSTALL_PREFIX=tools/install/OpenROAD
-  $NICE cmake --build tools/OpenROAD/build --target install -j$PROC
+  $NICE cmake --build tools/OpenROAD/build --target install -j${PROC}
 
   cmake -B tools/LSOracle/build tools/LSOracle \
         -D CMAKE_BUILD_TYPE=RELEASE \
@@ -170,7 +181,7 @@ elif [ "$build_method" == "LOCAL" ]; then
         -D YOSYS_PLUGIN=ON \
         -D YOSYS_SHARE_DIR=$(pwd)/tools/install/yosys/share/yosys \
         -D CMAKE_INSTALL_PREFIX=$(pwd)/tools/install/LSOracle
-  $NICE cmake --build tools/LSOracle/build -j$PROC --target install
+  $NICE cmake --build tools/LSOracle/build -j${PROC} --target install
 else
   echo "[ERROR FLW-0003] No valid build method found."
   exit 1
