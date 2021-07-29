@@ -7,20 +7,24 @@ set -e
 function usage() {
   cat << EOF
 
-Usage: $0 [-h|--help] [-l|--latest] [-o|--local] [--or_branch]
+Usage: $0 [-h|--help] [-o|--local] [-l|--latest] [--or_branch BRANCH]
+          [--or_repo REPO-URL] [-n|--nice] [-t|--threads N]
+          [-c|--copy-platforms]
 
 Options:
-    -h, --help              print this help message
-    -d, --dev_repo          (dev only) perform git pull on developer repositories
-    -l, --latest            build using the head of branch --or_branch or 'master' by default for OpenROAD
-    -o, --local             force local build instead of docker build
-    -p, --platform          perform git pull on all git-based platform repos
-    --or_branch BRANCH      build using the head of branch BRANCH for OpenROAD
-    --or_repo REPO-URL      build using a fork at REPO-URL(https/ssh) for OpenROAD
-    -t, --threads N         build using N cpus
-    -n, --nice              build using all cpus but nice the jobs
-    --no_init               Skip initializing submodules
-    -c, --copy-platforms    copy platforms to inside docker image
+    -h, --help              Print this help message.
+
+    -o, --local             Build locally instead of building a Docker image.
+
+    -l, --latest            Use the head of branch --or_branch or 'master'
+                            by default for tools/OpenROAD.
+    --or_branch BRANCH      Use the head of branch BRANCH for tools/OpenROAD.
+    --or_repo REPO-URL      Use a fork at REPO-URL (https/ssh) for tools/OpenROAD.
+    -n, --nice              Use all cpus but nice the jobs.
+    -t, --threads N         Use N cpus when compiling software.
+
+Options valid only for Docker builds:
+    -c, --copy-platforms    Copy platforms to inside docker image.
 
     This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
     By default, the tools will be built from the linked submodule hashes.
@@ -51,10 +55,6 @@ while (( "$#" )); do
       OR_REPO=$2
       shift 2
       ;;
-    -d|--dev_repo)
-      UPDATE_PRIVATE=1
-      shift
-      ;;
     -l|--latest)
       UPDATE_OR=1
       shift
@@ -70,14 +70,6 @@ while (( "$#" )); do
       ;;
     -o|--local)
       BUILD_METHOD="LOCAL"
-      shift
-      ;;
-    -p|--platform)
-      UPDATE_PLATFORM=1
-      shift
-      ;;
-    --no_init)
-      OPENROAD_FLOW_NO_INIT=1
       shift
       ;;
     -c|--copy-platforms)
@@ -142,16 +134,6 @@ if [ ! -z ${UPDATE_PLATFORM+x} ]; then
       echo "[INFO FLW-0002] Directory '$dir' is not a git repository. Skipping update."
     fi
   done
-fi
-
-# Update developer repos
-if [ ! -z ${UPDATE_PRIVATE+x} ]; then
-  if [ -d flow/private ]; then
-    echo "[INFO FLW-0001] Updating git repository 'private'."
-    (cd flow/private && git pull)
-  else
-    echo "[INFO FLW-0002] Directory 'flow/private' is not a git repository. Skipping update."
-  fi
 fi
 
 # Docker build
