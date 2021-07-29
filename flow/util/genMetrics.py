@@ -124,17 +124,18 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False,
 
 
 def extractGnuTime(prefix, jsonFile, file):
+    
     extractTagFromFile(prefix + '__runtime__total',
                        jsonFile,
-                       '^(\S+)elapsed \S+CPU \S+memKB',
+                       '^Elapsed time: (\S+)\[h:\]min:sec. Average CPU: \S+. Peak memory: \S+KB.',
                        file)
     extractTagFromFile(prefix + '__cpu__total',
                        jsonFile,
-                       '^\S+elapsed (\S+)CPU \S+memKB',
+                       '^Elapsed time: \S+\[h:\]min:sec. Average CPU: (\S+). Peak memory: \S+KB.',
                        file)
     extractTagFromFile(prefix + '__mem__peak',
                        jsonFile,
-                       '^\S+elapsed \S+CPU (\S+)memKB',
+                       '^Elapsed time: \S+\[h:\]min:sec. Average CPU: \S+. Peak memory: (\S+)KB.',
                        file)
 
 
