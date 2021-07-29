@@ -64,6 +64,13 @@ metrics = {
         'valueIfZero': 0,
         'compare': '<=',
     },
+    'detailedplace__design__violations__count': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'valueIfZero': 0,
+        'compare': '==',
+    },
     # cts
     'cts__timing__setup__ws': {
         'usePeriod': True,
@@ -132,21 +139,21 @@ metrics = {
     },
     'finish__timing__slew__violation__count': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 5,
         'roundValue': True,
         'valueIfZero': 0,
         'compare': '<=',
     },
     'finish__timing__fanout__violation__count': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 5,
         'roundValue': True,
         'valueIfZero': 0,
         'compare': '<=',
     },
     'finish__timing__max_cap__violation__count': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 5,
         'roundValue': True,
         'valueIfZero': 0,
         'compare': '<=',
@@ -179,7 +186,7 @@ for field, option in metrics.items():
         else:
             value += value * option['padding'] / 100
 
-    if 'timing' in field and not 'count' in field and value > 0:
+    if 'timing' in field and 'count' not in field and value > 0:
         value = 0
 
     newRule = dict()

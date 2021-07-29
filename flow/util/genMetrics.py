@@ -124,19 +124,25 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False,
 
 
 def extractGnuTime(prefix, jsonFile, file):
-    
-    extractTagFromFile(prefix + '__runtime__total',
-                       jsonFile,
-                       '^Elapsed time: (\S+)\[h:\]min:sec. Average CPU: \S+. Peak memory: \S+KB.',
-                       file)
-    extractTagFromFile(prefix + '__cpu__total',
-                       jsonFile,
-                       '^Elapsed time: \S+\[h:\]min:sec. Average CPU: (\S+). Peak memory: \S+KB.',
-                       file)
-    extractTagFromFile(prefix + '__mem__peak',
-                       jsonFile,
-                       '^Elapsed time: \S+\[h:\]min:sec. Average CPU: \S+. Peak memory: (\S+)KB.',
-                       file)
+
+    extractTagFromFile(
+        prefix +
+        '__runtime__total',
+        jsonFile,
+        '^Elapsed time: (\S+)\[h:\]min:sec. Average CPU: \S+. Peak memory: \S+KB.',
+        file)
+    extractTagFromFile(
+        prefix +
+        '__cpu__total',
+        jsonFile,
+        '^Elapsed time: \S+\[h:\]min:sec. Average CPU: (\S+). Peak memory: \S+KB.',
+        file)
+    extractTagFromFile(
+        prefix +
+        '__mem__peak',
+        jsonFile,
+        '^Elapsed time: \S+\[h:\]min:sec. Average CPU: \S+. Peak memory: (\S+)KB.',
+        file)
 
 
 #
@@ -424,6 +430,11 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                        logPath + '/3_3_resizer.log')
 
     extractGnuTime('placeopt', metrics_dict, logPath + '/3_3_resizer.log')
+
+    extractTagFromFile('detailedplace__design__violations__count',
+                       metrics_dict,
+                       '^\[INFO FLW-0012\] Placement violations (\S+).',
+                       logPath + '/3_4_opendp.log')
 
     extractTagFromFile('detailedplace__timing__setup__tns',
                        metrics_dict,

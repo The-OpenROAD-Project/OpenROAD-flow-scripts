@@ -21,6 +21,11 @@
             "compare": "<="
         },
         {
+            "field": "detailedplace__design__violations__count",
+            "value": 0,
+            "compare": "=="
+        },
+        {
             "field": "cts__timing__setup__ws",
             "value": -0.02,
             "compare": ">="
@@ -77,7 +82,7 @@
         },
         {
             "field": "finish__timing__max_cap__violation__count",
-            "value": 309,
+            "value": 324,
             "compare": "<="
         }
     ]
