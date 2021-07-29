@@ -93,7 +93,7 @@ while (( "$#" )); do
 done
 
 # Choose install method
-if [ -z ${BUILD_METHOD+x} ] && which docker &> /dev/null; then
+if [ -z ${BUILD_METHOD+x} ] && command -v docker &> /dev/null; then
   echo "[INFO FLW-0000] Using docker build method. This will create a docker image tagged '${DOCKER_TAG}'."
   build_method="DOCKER"
 else
