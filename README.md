@@ -1,16 +1,16 @@
 # OpenROAD Flow
 
+[![Build Status](https://jenkins.openroad.tools/buildStatus/icon?job=OpenROAD-flow-script-Public%2Fpublic_tests_all%2Fmaster)](https://jenkins.openroad.tools/view/Public/job/OpenROAD-flow-script-Public/job/public_tests_all/job/master/)
+
 OpenROAD Flow is a full RTL-to-GDS flow built entirely on open-source tools.
 The project aims for automated, no-human-in-the-loop digital circuit design
 with 24-hour turnaround time.
 
-[![Build Status](https://jenkins.openroad.tools/buildStatus/icon?job=OpenROAD-flow-script-Public%2Fpublic_tests_all%2Fmaster)](https://jenkins.openroad.tools/view/Public/job/OpenROAD-flow-script-Public/job/public_tests_all/job/master/)
-
 ## Using the Flow
 
-See the OpenROAD [documentation here](https://openroad.readthedocs.io/en/latest/).
-How to [start using OpenROAD flow here](https://openroad.readthedocs.io/en/latest/user/GettingStarted.html)
-and our [user guide here](https://openroad.readthedocs.io/en/latest/user/UserGuide.html).
+- See the OpenROAD [documentation here](https://openroad.readthedocs.io/en/latest/).
+- How to [start using OpenROAD flow here](https://openroad.readthedocs.io/en/latest/user/GettingStarted.html).
+- Our [user guide here](https://openroad.readthedocs.io/en/latest/user/UserGuide.html).
 
 ## Citing this Work
 
@@ -26,8 +26,10 @@ Please use the following references:
   year={2019}
 }
 ```
+
 A copy of this paper is available
 [here](http://people.ece.umn.edu/users/sachin/conf/gomactech19.pdf) (PDF).
+
 ```
 @inproceedings{ajayi2019toward,
   title={Toward an open-source digital flow: First learnings from the openroad project},
@@ -37,7 +39,8 @@ A copy of this paper is available
   year={2019}
 }
 ```
-A copy of this paper is availble
+
+A copy of this paper is available
 [here](https://vlsicad.ucsd.edu/Publications/Conferences/371/c371.pdf) (PDF).
 
 If you like the tools, please give us a star on our GitHub repos!
@@ -47,6 +50,6 @@ If you like the tools, please give us a star on our GitHub repos!
 The OpenROAD-flow-scripts repository (build and run scripts) has a BSD 3-Clause License.
 The flow relies on several tools, platforms and designs that each have their own licenses:
 
-- Find the tool license at: `OpenROAD-flow-scripts/tools/{tool}/` or `OpenROAD-flow-scripts/tools/OpenROAD/src/{tool}/`
-- Find the platform license at: `OpenROAD-flow-scripts/flow/platforms/{platform}/`
-- Find the design license at: `OpenROAD-flow-scripts/flow/designs/src/{design}/`
+- Find the tool license at: `OpenROAD-flow-scripts/tools/{tool}/` or `OpenROAD-flow-scripts/tools/OpenROAD/src/{tool}/`.
+- Find the platform license at: `OpenROAD-flow-scripts/flow/platforms/{platform}/`.
+- Find the design license at: `OpenROAD-flow-scripts/flow/designs/src/{design}/`.
