@@ -20,6 +20,7 @@ Options:
                             by default for tools/OpenROAD.
     --or_branch BRANCH      Use the head of branch BRANCH for tools/OpenROAD.
     --or_repo REPO-URL      Use a fork at REPO-URL (https/ssh) for tools/OpenROAD.
+    --no_init               Skip initializing submodules.
     -n, --nice              Use all cpus but nice the jobs.
     -t, --threads N         Use N cpus when compiling software.
 
@@ -72,6 +73,10 @@ while (( "$#" )); do
       BUILD_METHOD="LOCAL"
       shift
       ;;
+    --no_init)
+      OPENROAD_FLOW_NO_GIT_INIT=1
+      shift
+      ;;
     -c|--copy-platforms)
       COPY_PLATFORMS="YES"
       shift
@@ -122,18 +127,6 @@ if [ ! -z ${UPDATE_OR+x} ]; then
     && git checkout $CURRENT_REMOTE/$OR_BRANCH \
     && git pull $CURRENT_REMOTE $OR_BRANCH \
     && git submodule update --init --recursive)
-fi
-
-# Update platforms
-if [ ! -z ${UPDATE_PLATFORM+x} ]; then
-  for dir in flow/platforms/*/ ; do
-    if [ -d $dir/.git ]; then
-      echo "[INFO FLW-0001] Updating git repository '$dir'."
-      (cd $dir && git pull)
-    else
-      echo "[INFO FLW-0002] Directory '$dir' is not a git repository. Skipping update."
-    fi
-  done
 fi
 
 # Docker build
