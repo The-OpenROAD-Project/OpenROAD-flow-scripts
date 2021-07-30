@@ -30,15 +30,14 @@ export DESIGN_GROUND          = VSS
 
 export PLATFORM               = asap7
 
-export PLACE_DENSITY          = 0.30
-
 export PDN_CFG                = $(FOUNDRY_DIR)/openRoad/pdn/grid_strategy-M2-M5-M7.cfg
 
 # These values must be multiples of placement site
 export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 
-export CORE_UTILIZATION       = 15
+export CORE_UTILIZATION       = 30
 export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
+export PLACE_DENSITY          = 0.60
 
 export DESIGN_DIR DESIGN_PDK_HOME

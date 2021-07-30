@@ -17,37 +17,42 @@
         },
         {
             "field": "placeopt__design__instance__stdcell__count",
-            "value": 27691,
+            "value": 27476,
             "compare": "<="
         },
         {
+            "field": "detailedplace__design__violations__count",
+            "value": 0,
+            "compare": "=="
+        },
+        {
             "field": "cts__timing__setup__ws",
-            "value": -0.04,
+            "value": -0.08,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__prerepair",
-            "value": -0.07,
+            "value": -0.2,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__postrepair",
-            "value": -0.07,
+            "value": -0.2,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.05,
+            "value": -0.06,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -0.05,
+            "value": -0.06,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 717870,
+            "value": 735878,
             "compare": "<="
         },
         {
@@ -57,12 +62,27 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -0.16,
+            "value": -0.3,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 413462,
+            "value": 29764,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__slew__violation__count",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__fanout__violation__count",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__max_cap__violation__count",
+            "value": 1,
             "compare": "<="
         }
     ]

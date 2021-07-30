@@ -14,12 +14,27 @@ proc report_metrics { when {include_erc true} } {
   puts "--------------------------------------------------------------------------"
   report_checks -unconstrained -fields {slew cap input nets fanout} -format full_clock_expanded
 
-if {$include_erc} {
-  puts "\n=========================================================================="
-  puts "$when report_check_types -max_slew -max_capacitance -max_fanout -violators"
-  puts "--------------------------------------------------------------------------"
-  report_check_types -max_slew -max_capacitance -max_fanout -violators
-}
+  if {$include_erc} {
+    puts "\n=========================================================================="
+    puts "$when report_check_types -max_slew -max_cap -max_fanout -violators"
+    puts "--------------------------------------------------------------------------"
+    report_check_types -max_slew -max_capacitance -max_fanout -violators
+
+    puts "\n=========================================================================="
+    puts "$when max_slew_violation_count"
+    puts "--------------------------------------------------------------------------"
+    puts "max slew violation count [sta::max_slew_violation_count]"
+
+    puts "\n=========================================================================="
+    puts "$when max_fanout_violation_count"
+    puts "--------------------------------------------------------------------------"
+    puts "max fanout violation count [sta::max_fanout_violation_count]"
+
+    puts "\n=========================================================================="
+    puts "$when max_cap_violation_count"
+    puts "--------------------------------------------------------------------------"
+    puts "max cap violation count [sta::max_capacitance_violation_count]"
+  }
 
   puts "\n=========================================================================="
   puts "$when report_tns"

@@ -1,4 +1,4 @@
-FROM centos:centos7 AS builder
+FROM centos:centos7 AS base
 
 # install gcc 7
 RUN yum -y install centos-release-scl && \
@@ -21,6 +21,8 @@ RUN yum install -y flex tcl tcl-devel libffi-devel git graphviz readline-devel g
     cd bison-3.0.1 && \
     ./configure && \
     make install -j$(nproc)
+
+FROM openroad/yosys-dev AS builder
 
 COPY . /yosys
 WORKDIR /yosys

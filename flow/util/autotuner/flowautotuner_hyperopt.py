@@ -7,7 +7,7 @@
 # User can change objective evaluation function by modifying 'evaluation_fn'.
 # User can decide the input parameter space by modifying 'config.json'.
 # run log files will be stored in util/autotuner/runs and util/autotuner/results
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 
 import time
 import json
@@ -20,14 +20,20 @@ from ray.tune.suggest import ConcurrencyLimiter
 from ray.tune.schedulers import AsyncHyperBandScheduler
 from ray.tune.suggest.hyperopt import HyperOptSearch
 
+# Global Variables
+autotunerPath = "util/autotuner"
 
-## User-defined evaluation function
-def evaluation_fn(step, a, ws, b, wl, c, ndrc):
-    a = -10000
-    b = 1
-    c = 1000
-    #time.sleep(0.1)
-    return ((a * ws + b * wl)*(step/100)**(-1) + c * ndrc)
+# User-defined evaluation function
+# It can change in any form to minimize the score (return value)
+
+
+def evaluation_fn(step, ws, wl, ndrc):
+    # alpha, beta, gamma are user-defined constant values
+    alpha = -(wl / 100)
+    beta = 1
+    gamma = (wl / 10)
+
+    return ((alpha * ws + beta * wl) * (step / 100)**(-1) + gamma * ndrc)
 
 
 def parse_massive(config):
@@ -39,56 +45,55 @@ def parse_massive(config):
     ctsClusterDia = config["CTS_CLUSTER_DIAMETER"]
     grOverflow = config["GR_OVERFLOW"]
 
-    with open('%s/util/genMassive.py'%cwd) as inFile:
+    with open('%s/util/genMassive.py' % cwd) as inFile:
         lines = inFile.readlines()
-    
+
     fileName = ''
-    fileName = fileName+'FLATTEN_%s'%flatten
-    fileName = fileName+'-PINS_DISTANCE_%s'%pinsDist
-    fileName = fileName+'-GP_PAD_%s'%gpPad
-    fileName = fileName+'-DP_PAD_%s'%dpPad
-    fileName = fileName+'-PLACE_DENSITY_%s'%placeDensity
-    fileName = fileName+'-CTS_CLUSTER_SIZE_%s'%ctsClusterSize
-    fileName = fileName+'-CTS_CLUSTER_DIAMETER_%s'%ctsClusterDia
-    fileName = fileName+'-LAYER_ADJUST_%s'%layerAdjust
-    fileName = fileName+'-GR_OVERFLOW_%s'%grOverflow
+    fileName = fileName + 'FLATTEN_%s' % flatten
+    fileName = fileName + '-PINS_DISTANCE_%s' % pinsDist
+    fileName = fileName + '-GP_PAD_%s' % gpPad
+    fileName = fileName + '-DP_PAD_%s' % dpPad
+    fileName = fileName + '-PD_%s' % placeDensity
+    fileName = fileName + '-CTS_CLUSTER_SIZE_%s' % ctsClusterSize
+    fileName = fileName + '-CTS_CLUSTER_DIAMETER_%s' % ctsClusterDia
+    fileName = fileName + '-LAYER_ADJUST_%s' % layerAdjust
+    fileName = fileName + '-GR_OVERFLOW_%s' % grOverflow
 
-    
-    if not os.path.isdir('%s/util/autotune/runs'%cwd):
-        os.mkdir('%s/util/autotune/runs'%cwd)
+    if not os.path.isdir('%s/%s/runs' % (cwd, autotunerPath)):
+        os.mkdir('%s/%s/runs' % (cwd, autotunerPath))
 
-    fo = open('%s/util/autotune/runs/autotune-%s.py'%(cwd,fileName), 'w')
+    fo = open('%s/%s/runs/auto-%s.py' % (cwd, autotunerPath, fileName), 'w')
 
     for line in lines:
-        if line.startswith('shellName') and line.split()[1]=='=':
-            line = 'shellName = "runs-%s"\n'%fileName
-        if line.startswith('GP_PAD') and line.split()[1]=='=':
-            line = 'GP_PAD = [ %s ]\n'%gpPad
-        if line.startswith('DP_PAD') and line.split()[1]=='=':
-            line = 'DP_PAD = [ %s ]\n'%dpPad
-        if line.startswith('LAYER_ADJUST ') and line.split()[1]=='=':
-            line = 'LAYER_ADJUST = [ %s ]\n'%layerAdjust
-        if line.startswith('PLACE_DENSITY') and line.split()[1]=='=':
-            line = 'PLACE_DENSITY = [ %s ]\n'%placeDensity
-        if line.startswith('FLATTEN') and line.split()[1]=='=':
-            line = 'FLATTEN = [ %s ]\n'%flatten
-        if line.startswith('PINS_DISTANCE') and line.split()[1]=='=':
-            line = 'PINS_DISTANCE = [ %s ]\n'%pinsDist
-        if line.startswith('CTS_CLUSTER_SIZE') and line.split()[1]=='=':
-            line = 'CTS_CLUSTER_SIZE = [ %s ]\n'%ctsClusterSize
-        if line.startswith('CTS_CLUSTER_DIAMETER') and line.split()[1]=='=':
-            line = 'CTS_CLUSTER_DIAMETER = [ %s ]\n'%ctsClusterDia
-        if line.startswith('GR_OVERFLOW') and line.split()[1]=='=':
-            line = 'GR_OVERFLOW = [ %s ]\n'%grOverflow
+        if line.startswith('ShellName') and line.split()[1] == '=':
+            line = 'ShellName = "runs-%s"\n' % fileName
+        if line.startswith('GP_PAD') and line.split()[1] == '=':
+            line = 'GP_PAD = [ %s ]\n' % gpPad
+        if line.startswith('DP_PAD') and line.split()[1] == '=':
+            line = 'DP_PAD = [ %s ]\n' % dpPad
+        if line.startswith('LAYER_ADJUST ') and line.split()[1] == '=':
+            line = 'LAYER_ADJUST = [ %s ]\n' % layerAdjust
+        if line.startswith('PLACE_DENSITY') and line.split()[1] == '=' and not line.startswith('PLACE_DENSITY_LB_ADDON'):
+            line = 'PLACE_DENSITY = [ %s ]\n' % placeDensity
+        if line.startswith('FLATTEN') and line.split()[1] == '=':
+            line = 'FLATTEN = [ %s ]\n' % flatten
+        if line.startswith('PINS_DISTANCE') and line.split()[1] == '=':
+            line = 'PINS_DISTANCE = [ %s ]\n' % pinsDist
+        if line.startswith('CTS_CLUSTER_SIZE') and line.split()[1] == '=':
+            line = 'CTS_CLUSTER_SIZE = [ %s ]\n' % ctsClusterSize
+        if line.startswith('CTS_CLUSTER_DIAMETER') and line.split()[1] == '=':
+            line = 'CTS_CLUSTER_DIAMETER = [ %s ]\n' % ctsClusterDia
+        if line.startswith('GR_OVERFLOW') and line.split()[1] == '=':
+            line = 'GR_OVERFLOW = [ %s ]\n' % grOverflow
         fo.write(line)
     fo.close()
 
     return fileName
 
 
-## Collects metrics to evalute the user-defined objective function.
+# Collects metrics to evalute the user-defined objective function.
 def read_metrics(path):
-    with open('%s/metrics.json'%path) as f:
+    with open('%s/metrics.json' % path) as f:
         data = json.load(f)
     for key, value in data.items():
         if key == 'detailedroute':
@@ -98,10 +103,7 @@ def read_metrics(path):
             ws = value.get('timing__setup__ws')
 
     return ws, wl, ndrc
-            
 
-
-    
 
 def easy_objective(config):
     runDir = os.getcwd()
@@ -115,52 +117,52 @@ def easy_objective(config):
     grOverflow = config["GR_OVERFLOW"]
 
     # parse trial config hyperparameters to genMassive.py script
-    # Newly generated genMassive.py scripts are located in ./util/autotune/runs/autotune-{variantName}.py
+    # Newly generated genMassive.py scripts are located in
+    # ./util/autotuner/runs/autotuner-{variantName}.py
     variantName = parse_massive(config)
 
     # run each runMassive.sh file ( generated from genMassive.py)
-    os.chdir('%s'%cwd)
+    os.chdir('%s' % cwd)
 
     print('run generated python to make run shell')
-    os.system('python %s/util/autotune/runs/autotune-%s.py run'%(cwd, variantName))
+    os.system('python %s/%s/runs/auto-%s.py run' %
+              (cwd, autotunerPath, variantName))
     print('run generated run shell')
-    os.system('source %s/runs-%s.sh'%(cwd, variantName))
+    os.system('source %s/runs-%s.sh' % (cwd, variantName))
 
     # run genMetrics.py to make metrics.json
+    os.system(
+        'python %s/util/genMetrics.py -x -f %s -d %s -p %s -v %s -o %s/metrics.json' %
+        (cwd, cwd, args.design, args.platform, variantName, runDir))
 
-    #os.system('cd %s'%cwd)
-    os.system('python %s/util/genMetrics.py -x -f %s -d %s -p %s -v %s -o %s/metrics.json'%(cwd,cwd,design,platform, variantName,runDir))
-    #os.system('cd %s'%runDir)
-
-    # read generated metrics.json and parse Success / Fail, WNS, Wirelength and #DRC
+    # read generated metrics.json and parse Success / Fail, WNS, Wirelength
+    # and #DRC
 
     ws, wl, ndrc = read_metrics(runDir)
 
-    os.chdir('%s'%runDir)
-    #TODO : For failed run, report to Tune.
-    for step in range(1,101):
+    os.chdir('%s' % runDir)
+    for step in range(1, 101):
         if ws == 'ERR' or ws == 'N/A' or ndrc == 'ERR' or ndrc == 'N/A' or wl == 'ERR' or wl == 'N/A':
-            intermediate_score =  (99999999999)*(step/100)**(-1)
+            intermediate_score = (99999999999) * (step / 100)**(-1)
         else:
-            # Iterative training function - can be any arbitrary training procedure
-            intermediate_score = evaluation_fn(step, a, ws, b, wl, c, ndrc)
-      
+            # Iterative training function
+            # can be any arbitrary training procedure
+            intermediate_score = evaluation_fn(step, ws, wl, ndrc)
 
         # Feed the score back back to Tune.
         tune.report(minimum=intermediate_score)
-        #time.sleep(0.1)
 
 
 def read_config():
     # Please consider inclusive, exclusive
     # Most type uses [min, max)
-    # But, Quantization makes the upper bound inclusive. 
-    # e.g., qrandint and qlograndint uses [min, max] 
+    # But, Quantization makes the upper bound inclusive.
+    # e.g., qrandint and qlograndint uses [min, max]
     # step value is used for quantized type (e.g., quniform). Otherwise, write 0.
     # When min==max, it means the constant value
 
     config_dict = {}
-    with open('./util/autotune/config.json') as f:
+    with open('./%s/config.json' % autotunerPath) as f:
         data = json.load(f)
     for key, value in data.items():
         config_type = value.get("type")
@@ -171,31 +173,60 @@ def read_config():
         config_max = config_minmax[1]
 
         # This means the param is constant.
-        if config_min==config_max:
-            config_dict[key]=config_min
+        if config_min == config_max:
+            config_dict[key] = config_min
             continue
 
         print(key, config_min, config_max, config_type)
-        if config_type=='int' and config_step==1:
+        if config_type == 'int' and config_step == 1:
             config_dict[key] = tune.randint(config_min, config_max)
-        elif config_type=='int' and config_step!=1:
-            config_dict[key] = tune.qrandint(config_min, config_max, config_step)
-        elif config_type=='float' and config_step!=0:
-            config_dict[key] = tune.quniform(config_min, config_max, config_step)
-        elif config_type=='float' and config_step==0:
+        elif config_type == 'int' and config_step != 1:
+            config_dict[key] = tune.qrandint(
+                config_min, config_max, config_step)
+        elif config_type == 'float' and config_step != 0:
+            config_dict[key] = tune.quniform(
+                config_min, config_max, config_step)
+        elif config_type == 'float' and config_step == 0:
             config_dict[key] = tune.uniform(config_min, config_max)
     return config_dict
-
 
 
 if __name__ == "__main__":
     import argparse
     cwd = os.getcwd()
-    # TODO: Currently hard-coded. Design and platform should be considered to genMassive.py
-    design = 'ibex'
-    platform = 'sky130hd'
 
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--design",
+        '-d',
+        type=str,
+        required=True,
+        help="Design Name for Autotuning")
+    parser.add_argument(
+        "--platform",
+        '-p',
+        type=str,
+        required=True,
+        help="Platform Name for Autotuning")
+    parser.add_argument(
+        "--exp-name",
+        '-e',
+        type=str,
+        required=False,
+        default="test-hyperopt",
+        help="Result Folder Name: {platform}-{design}-{exp-name}")
+    parser.add_argument(
+        "--num_jobs",
+        "-j",
+        type=int,
+        required=True,
+        help="Number of Concurrent Jobs")
+    parser.add_argument(
+        "--num_trials",
+        "-n",
+        type=int,
+        required=True,
+        help="Number of Trials")
     parser.add_argument(
         "--smoke-test", action="store_true", help="Finish quickly for testing")
     parser.add_argument(
@@ -209,15 +240,15 @@ if __name__ == "__main__":
 
     # Optional
     current_best_params = [{
-    'GP_PAD': 4,
-    'DP_PAD': 2,
-    'LAYER_ADJUST': 0.5,
-    'PLACE_DENSITY': 0.6,
-    'FLATTEN': 1,
-    'PINS_DISTANCE': 2,
-    'CTS_CLUSTER_SIZE': 30,
-    'CTS_CLUSTER_DIAMETER': 100,
-    'GR_OVERFLOW': 1,
+        'GP_PAD': 4,
+        'DP_PAD': 2,
+        'LAYER_ADJUST': 0.5,
+        'PLACE_DENSITY': 0.6,
+        'FLATTEN': 1,
+        'PINS_DISTANCE': 2,
+        'CTS_CLUSTER_SIZE': 30,
+        'CTS_CLUSTER_DIAMETER': 100,
+        'GR_OVERFLOW': 1,
     }]
 
     if args.server_address:
@@ -225,10 +256,10 @@ if __name__ == "__main__":
 
         ray.util.connect(args.server_address)
 
-    num_samples = 10 if args.smoke_test else 1000
-    
-    resultsDir = "%s/util/autotune/results"%cwd
-    
+    num_samples = 10 if args.smoke_test else args.num_trials
+
+    resultsDir = "%s/%s/results" % (cwd, autotunerPath)
+
     if not os.path.isdir(resultsDir):
         os.mkdir(resultsDir)
 
@@ -247,8 +278,8 @@ if __name__ == "__main__":
 
     algo = HyperOptSearch(points_to_evaluate=current_best_params)
 
-    ## User-defined concurrent #runs
-    algo = ConcurrencyLimiter(algo, max_concurrent=30) 
+    # User-defined concurrent #runs
+    algo = ConcurrencyLimiter(algo, max_concurrent=args.num_jobs)
 
     scheduler = AsyncHyperBandScheduler()
 
@@ -257,12 +288,10 @@ if __name__ == "__main__":
         metric="minimum",
         mode="min",
         search_alg=algo,
-        name="ibex-test-hyperopt",
+        name="%s-%s-%s" % (args.platform, args.design, args.exp_name),
         scheduler=scheduler,
         num_samples=num_samples,
         config=config_dict,
-        server_port=6379,
-        local_dir="%s"%(resultsDir)
-        )
+        local_dir="%s" % (resultsDir)
+    )
     print("Best config found: ", analysis.best_config)
-

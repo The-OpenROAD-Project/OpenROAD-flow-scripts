@@ -30,7 +30,7 @@ set_placement_padding -global \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 detailed_placement
 optimize_mirroring
-check_placement -verbose
+utl::info FLW 12 "Placement violations [check_placement -verbose]."
 
 estimate_parasitics -placement
 
