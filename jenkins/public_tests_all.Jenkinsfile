@@ -403,6 +403,23 @@ pipeline {
         }
       }
     }
+    stage("Generate Reports") {
+      agent any;
+      steps {
+        sh "flow/util/genReport.py -vv --single --file --no-print"
+        sh "flow/util/genReportTable.py"
+        sh "flow/util/genReport.py -vvv --file --no-print"
+        publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: false,
+            keepAll: true,
+            reportDir: 'flow/flow/reports',
+            reportFiles: 'report-table.html',
+            reportName: 'Report',
+            reportTitles: 'Flow Report'
+        ]);
+      }
+    }
   }
   post {
     failure {
@@ -416,7 +433,6 @@ pipeline {
           EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
           REPLY_TO='$DEFAULT_REPLYTO';
         }
-        sh "./flow/util/getMetricsErrors.sh 2>&1 | tee error-list.txt";
         emailext (
             to: "$EMAIL_TO",
             replyTo: "$REPLY_TO",
