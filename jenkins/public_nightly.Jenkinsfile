@@ -52,7 +52,7 @@ pipeline {
           agent any;
           steps {
             sh "./build_openroad.sh";
-            sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
+            sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro flow-scripts flow/test/test_helper.sh';
           }
         }
         stage("asap7 aes") {
