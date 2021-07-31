@@ -1,21 +1,5 @@
-# Target with dependencies to build all flow tools from their sources.
-# i.e., "./build_openroad.sh --local" from inside a docker container
-FROM openroad/centos7-dev AS flow-dev
-RUN yum update -y \
-    && yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-0.27.1-0.x86_64.rpm \
-    && yum install -y libffi-devel time \
-    && pip3 install pandas
-
-# Target with dependencies to run all flow tools from their pre-compiled
-# binaries.
-FROM openroad/centos7-runtime AS flow-runtime
-RUN yum update -y \
-    && yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-0.27.1-0.x86_64.rpm \
-    && yum install -y time \
-    && pip3 install pandas
-
 # Target with dependencies and the binaries to run the complete flow
-FROM openroad/flow-runtime AS flow-scripts
+FROM openroad/flow-runtime
 
 WORKDIR /OpenROAD-flow-scripts
 

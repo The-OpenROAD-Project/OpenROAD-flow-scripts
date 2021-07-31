@@ -37,7 +37,7 @@ EOF
 NICE=""
 PROC=$(nproc)
 COPY_PLATFORMS="NO"
-DOCKER_TAG="openroad/flow-scripts"
+DOCKER_TAG="flow-scripts"
 CURRENT_REMOTE="origin"
 OR_BRANCH="master"
 
@@ -138,7 +138,7 @@ if [ "$build_method" == "DOCKER" ]; then
     cp .dockerignore{,.bak}
     sed -i '/flow\/platforms/d' .dockerignore
   fi
-  docker build --tag ${DOCKER_TAG} --file Dockerfile --target flow-scripts .
+  docker build --no-cache --tag ${DOCKER_TAG} --file Dockerfile .
   if [ "$COPY_PLATFORMS" == "YES" ]; then
     mv .dockerignore{.bak,}
   fi
