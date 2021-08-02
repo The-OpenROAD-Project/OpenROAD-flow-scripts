@@ -52,7 +52,7 @@
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 5728007,
+            "value": 5726255,
             "compare": "<="
         },
         {
@@ -67,12 +67,12 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 328220,
+            "value": 328213,
             "compare": "<="
         },
         {
             "field": "finish__timing__slew__violation__count",
-            "value": 38,
+            "value": 44,
             "compare": "<="
         },
         {
