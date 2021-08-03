@@ -11,6 +11,7 @@ os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 goldFilename = 'metadata-base-ok.json'
 runFilename = 'metadata-base.json'
 htmlOutput = 'reports/report-table.html'
+cssOutput = 'reports/table.css'
 designPathFile = 'design-dir.txt'
 
 dontUse = re.compile(r'''
@@ -150,10 +151,7 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
 
     print()
 
-head = '''<!DOCTYPE html>
-<html>
-
-<style>
+cssStyle = '''/* table styles */
 table {
   border-collapse: collapse;
   margin: 25px 0;
@@ -202,11 +200,19 @@ table th {
 .main-table td:nth-child(3n+1) {
   border-right: solid 2px;
 }
-</style>
+'''
+
+with open(cssOutput, 'w') as f:
+    f.writelines(cssStyle)
+
+head = '''<!DOCTYPE html>
+<html lang="en">
 
 <head>
-<link rel="stylesheet" href="mystyle.css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="table.css">
 </head>
+
 <body>
 '''
 
