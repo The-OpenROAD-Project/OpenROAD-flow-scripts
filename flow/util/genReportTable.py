@@ -4,12 +4,14 @@ import re
 import argparse
 import os
 import json
+import operator
 
 # make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 goldFilename = 'metadata-base-ok.json'
 runFilename = 'metadata-base.json'
+rulesFilename = 'rules.json'
 htmlOutput = 'reports/report-table.html'
 cssOutput = 'reports/table.css'
 designPathFile = 'design-dir.txt'
@@ -39,7 +41,7 @@ parser = argparse.ArgumentParser(description=helpText)
 args = parser.parse_args()
 
 
-def readMetrics(fname):
+def readMetrics(fname, justLoad=False):
     global tableDict
     try:
         with open(fname, 'r') as f:
@@ -47,6 +49,8 @@ def readMetrics(fname):
     except Exception as e:
         print('Failed to open {}.'.format(fname))
         exit(1)
+    if justLoad:
+        return tempDict
     metrics = dict()
     for metric, value in tempDict.items():
         if not re.search(dontUse, metric):
@@ -57,8 +61,15 @@ def readMetrics(fname):
             tableDict[metric] = list()
     return metrics
 
+ops = { "<" : operator.lt,
+        ">" : operator.gt,
+        "<=": operator.le,
+        ">=": operator.ge,
+        "==": operator.eq,
+        "!=": operator.ne,
+      }
 
-def getDiff(metric, gold, run):
+def getDiff(metric, gold, run, rules):
     diff = '-'
     style = 'no_change'
     if isNumber:
@@ -73,12 +84,19 @@ def getDiff(metric, gold, run):
             if diff < 0:
                 style = 'green'
             elif diff > 0:
-                style = 'red'
+                style = 'orange'
         else:
             if diff < 0:
-                style = 'red'
+                style = 'orange'
             elif diff > 0:
                 style = 'green'
+        for rule in rules:
+            if metric != rule['field']:
+                continue
+            op = ops[rule['compare']]
+            value = rule['value']
+            if not op(run, value):
+                style = 'red'
         if diff != 0:
             diff = '{:+.2f} ({})'.format(diff, percentage)
     return diff, style
@@ -106,6 +124,7 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
         status[test] = dict()
         status[test]['no_change'] = 0
         status[test]['green'] = 0
+        status[test]['orange'] = 0
         status[test]['red'] = 0
 
     print('-' * 79)
@@ -128,6 +147,9 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
         print('Keys missing from the golden run: {}.'.format(keysDiff))
         print('Check the bottom of the table as they might be out-of-order.')
 
+    rules = readMetrics(os.path.join(designDir, rulesFilename), justLoad=True)
+    rules = rules['rules']
+
     for metric in tableDict.keys():
         if metric in gold.keys():
             goldValue = gold[metric]
@@ -145,7 +167,7 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
             isNumber = False
         tableDict[metric].append(goldValue)
         tableDict[metric].append(runValue)
-        diff, style = getDiff(metric, goldValue, runValue)
+        diff, style = getDiff(metric, goldValue, runValue, rules)
         tableDict[metric].append([diff, style])
         status[test][style] += 1
 
@@ -229,18 +251,24 @@ with open(htmlOutput, 'w') as f:
     noChangeList = list()
     improvementList = list()
     degradationList = list()
+    failedMetricsList = list()
     designsMoreImprovements = list()
     designsMoreDegradations = list()
     designsNoChange = list()
     designsSameNumber = list()
+    designsRed = list()
     for test, value in status.items():
         noChange = value['no_change']
         improvements = value['green']
-        degradations = value['red']
+        degradations = value['orange']
+        failedMetrics = value['red']
         noChangeList.append(noChange)
         improvementList.append(improvements)
         degradationList.append(degradations)
-        if improvements == degradations:
+        failedMetricsList.append(failedMetrics)
+        if failedMetrics > 0:
+            designsRed.append(test)
+        elif improvements == degradations:
             if improvements == 0:
                 designsNoChange.append(test)
             else:
@@ -252,6 +280,10 @@ with open(htmlOutput, 'w') as f:
 
     # Summary table begin
     table += '\n<h1>Metrics Overview</h1>\n'
+
+    table += '<pre>Number of designs failing metrics checks: '
+    table += '{}\n'.format(len(designsRed))
+    table += '    {}</pre>\n'.format(', '.join(designsRed))
 
     table += '<pre>Number of designs with more improvements: '
     table += '{}\n'.format(len(designsMoreImprovements))
@@ -278,6 +310,21 @@ with open(htmlOutput, 'w') as f:
     table += '  </tr>\n'
 
     # Summary rows
+
+    table += '  <tr>\n'
+    table += '    <td bgcolor="red">{}</td>\n'.format('Failed Metrics')
+    for value in failedMetricsList:
+        table += '    <td colspan=3>{}</td>\n'.format(value)
+    table += '    <td colspan=3>{}</td>\n'.format(sum(failedMetricsList))
+    table += '  </tr>\n'
+
+    table += '  <tr>\n'
+    table += '    <td bgcolor="orange">{}</td>\n'.format('Degradation')
+    for value in degradationList:
+        table += '    <td colspan=3>{}</td>\n'.format(value)
+    table += '    <td colspan=3>{}</td>\n'.format(sum(degradationList))
+    table += '  </tr>\n'
+
     table += '  <tr>\n'
     table += '    <td>{}</td>\n'.format('No Change')
     for value in noChangeList:
@@ -286,18 +333,12 @@ with open(htmlOutput, 'w') as f:
     table += '  </tr>\n'
 
     table += '  <tr>\n'
-    table += '    <td>{}</td>\n'.format('Improvement')
+    table += '    <td bgcolor="green">{}</td>\n'.format('Improvement')
     for value in improvementList:
         table += '    <td colspan=3>{}</td>\n'.format(value)
     table += '    <td colspan=3>{}</td>\n'.format(sum(improvementList))
     table += '  </tr>\n'
 
-    table += '  <tr>\n'
-    table += '    <td>{}</td>\n'.format('Degradation')
-    for value in degradationList:
-        table += '    <td colspan=3>{}</td>\n'.format(value)
-    table += '    <td colspan=3>{}</td>\n'.format(sum(degradationList))
-    table += '  </tr>\n'
     table += '</table>\n'
 
     # Main table begin
