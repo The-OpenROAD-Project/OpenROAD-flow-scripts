@@ -13,8 +13,8 @@ drcFilename = '5_route_drc.rpt'
 lastExpectedLog = '6_report.log'
 metricsLogFmt = 'gen-metrics-{}-check.log'
 metricsCheckFmt = 'metadata-{}-check.log'
-regexError = re.compile(r"^\[?err", re.VERBOSE | re.IGNORECASE)
-regexWarning = re.compile(r"^\[?warn", re.VERBOSE | re.IGNORECASE)
+regexError = re.compile(r"^\[?err", re.IGNORECASE)
+regexWarning = re.compile(r"^\[?warn", re.IGNORECASE)
 
 helpText = '''
 Scans "./logs" and "./reports" folders for errors and warnings.
@@ -63,16 +63,16 @@ def parseMessages(filename):
     for line in lines:
         if re.search(regexError, line):
             errors.append(line.strip())
-        if re.search(regexWarning, line):
+        elif re.search(regexWarning, line):
             warnings.append(line.strip())
     return errors, warnings
 
 
 def finish(output, outputFile='', summary=False):
-    global generateSingleFile
-    global generateFile
-    global printOutput
-    global reportFilename
+    generateSingleFile
+    generateFile
+    printOutput
+    reportFilename
     output = output.strip()
     if generateFile and not summary and outputFile != '':
         with open(outputFile, 'w') as f:
