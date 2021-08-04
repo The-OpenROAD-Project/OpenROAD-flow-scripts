@@ -18,12 +18,16 @@ update_rules:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR)
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
-	$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) -p $(PLATFORM) -v $(FLOW_VARIANT) -o $@
+	echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
+	$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
+		-p $(PLATFORM) \
+		-v $(FLOW_VARIANT) \
+		-o $@ 2>&1 | tee $(REPORTS_DIR)/gen-metrics-$(FLOW_VARIANT)-check.log
 
 RULES_DESIGN = $(dir $(DESIGN_CONFIG))rules.json
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
-	$(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) | tee $@
+	$(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) 2>&1 | tee $@
 
 
 # Run test using gnu parallel

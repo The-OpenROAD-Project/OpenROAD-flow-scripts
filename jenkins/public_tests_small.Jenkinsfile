@@ -6,6 +6,7 @@ pipeline {
   }
   options {
     timeout(time: 2, unit: "HOURS");
+    copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME);
   }
   stages {
     stage("Build") {
@@ -308,6 +309,26 @@ pipeline {
     }
   }
   post {
+    always {
+      copyArtifacts filter: 'flow/logs/**/*',
+                    projectName: '${JOB_NAME}',
+                    selector: specific('${BUILD_NUMBER}');
+      copyArtifacts filter: 'flow/reports/**/*',
+                    projectName: '${JOB_NAME}',
+                    selector: specific('${BUILD_NUMBER}');
+      sh "flow/util/genReport.py -vv --single --file --no-print";
+      sh "flow/util/genReportTable.py";
+      sh "flow/util/genReport.py -vvv --file --no-print";
+      publishHTML([
+          allowMissing: true,
+          alwaysLinkToLastBuild: false,
+          keepAll: true,
+          reportDir: 'flow/reports',
+          reportFiles: 'report-table.html',
+          reportName: 'Report',
+          reportTitles: 'Flow Report'
+      ]);
+    }
     failure {
       script {
         if ( env.BRANCH_NAME == "master" ) {
@@ -319,7 +340,6 @@ pipeline {
           EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
           REPLY_TO='$DEFAULT_REPLYTO';
         }
-        sh "./flow/util/getMetricsErrors.sh 2>&1 | tee error-list.txt";
         emailext (
             to: "$EMAIL_TO",
             replyTo: "$REPLY_TO",

@@ -17,6 +17,9 @@ import json
 import pandas as pd
 import re
 
+# make sure the working dir is flow/
+os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)) , '..'))
+
 # Parse and validate arguments
 # =============================================================================
 
