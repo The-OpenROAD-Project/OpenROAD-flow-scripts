@@ -69,10 +69,6 @@ def parseMessages(filename):
 
 
 def finish(output, outputFile='', summary=False):
-    generateSingleFile
-    generateFile
-    printOutput
-    reportFilename
     output = output.strip()
     if generateFile and not summary and outputFile != '':
         with open(outputFile, 'w') as f:
