@@ -46,9 +46,9 @@ def readMetrics(fname, justLoad=False):
     try:
         with open(fname, 'r') as f:
             tempDict = json.loads(f.read())
-    except Exception as e:
+    except BaseException:
         print('Failed to open {}.'.format(fname))
-        exit(1)
+        return None
     if justLoad:
         return tempDict
     metrics = dict()
@@ -61,13 +61,16 @@ def readMetrics(fname, justLoad=False):
             tableDict[metric] = list()
     return metrics
 
-ops = { "<" : operator.lt,
-        ">" : operator.gt,
-        "<=": operator.le,
-        ">=": operator.ge,
-        "==": operator.eq,
-        "!=": operator.ne,
-      }
+
+ops = {
+    "<": operator.lt,
+    ">": operator.gt,
+    "<=": operator.le,
+    ">=": operator.ge,
+    "==": operator.eq,
+    "!=": operator.ne,
+}
+
 
 def getDiff(metric, gold, run, rules):
     diff = '-'
@@ -112,53 +115,68 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
         continue
 
     # basic info about test design
-    reportDir = logDir.replace('logs', 'reports')
-    with open(os.path.join(reportDir, designPathFile), 'r') as f:
-        designDir = f.read().strip()
-
     platform = dirList[1]
     design = dirList[2]
     test = '{} {}'.format(platform, design)
-    testList.append(test)
-    if test not in status.keys():
-        status[test] = dict()
-        status[test]['no_change'] = 0
-        status[test]['green'] = 0
-        status[test]['orange'] = 0
-        status[test]['red'] = 0
+    reportDir = logDir.replace('logs', 'reports')
+    errors = 0
 
     print('-' * 79)
     print(test)
     print('-' * 79)
 
+    try:
+        with open(os.path.join(reportDir, designPathFile), 'r') as f:
+            designDir = f.read().strip()
+    except BaseException:
+        print('Failed to open {}.'.format(designPathFile))
+        designDir = os.path.join('designs', platform, design)
+        errors += 1
+
     gold = readMetrics(os.path.join(designDir, goldFilename))
+    if gold is None:
+        errors += 1
+        goldKeys = None
+    else:
+        goldKeys = gold.keys()
+
     run = readMetrics(os.path.join(reportDir, runFilename))
-
-    # report metrics missing from test run
-    keysDiff = gold.keys() - run.keys()
-    if keysDiff:
-        keysDiff = ', '.join([x for x in list(keysDiff)])
-        print('Keys missing from this run: {}.'.format(keysDiff))
-
-    # report metrics missing from golden
-    keysDiff = run.keys() - gold.keys()
-    if keysDiff:
-        keysDiff = ', '.join([x for x in list(keysDiff)])
-        print('Keys missing from the golden run: {}.'.format(keysDiff))
-        print('Check the bottom of the table as they might be out-of-order.')
+    if run is None:
+        errors += 1
+        runKeys = None
+    else:
+        runKeys = run.keys()
 
     rules = readMetrics(os.path.join(designDir, rulesFilename), justLoad=True)
-    rules = rules['rules']
+    if rules is None:
+        errors += 1
+    else:
+        rules = rules['rules']
+
+    testList.append(test)
+    if test not in status.keys():
+        status[test] = dict()
+        status[test]['error'] = errors
+        status[test]['red'] = 0
+        status[test]['orange'] = 0
+        status[test]['no_change'] = 0
+        status[test]['green'] = 0
 
     for metric in tableDict.keys():
-        if metric in gold.keys():
-            goldValue = gold[metric]
-        else:
-            goldValue = 'N/A'
-        if metric in run.keys():
-            runValue = run[metric]
-        else:
-            runValue = 'N/A'
+        try:
+            if metric in goldKeys:
+                goldValue = gold[metric]
+            else:
+                goldValue = 'N/A'
+        except BaseException:
+            goldValue = 'ERR'
+        try:
+            if metric in runKeys:
+                runValue = run[metric]
+            else:
+                runValue = 'N/A'
+        except BaseException:
+            runValue = 'ERR'
         try:
             goldValue = float(goldValue)
             runValue = float(runValue)
@@ -252,20 +270,26 @@ with open(htmlOutput, 'w') as f:
     improvementList = list()
     degradationList = list()
     failedMetricsList = list()
+    parsingErrorList = list()
     designsMoreImprovements = list()
     designsMoreDegradations = list()
     designsNoChange = list()
     designsSameNumber = list()
     designsRed = list()
+    designsParsingErrors = list()
     for test, value in status.items():
         noChange = value['no_change']
         improvements = value['green']
         degradations = value['orange']
         failedMetrics = value['red']
+        parsingErrors = value['error']
         noChangeList.append(noChange)
         improvementList.append(improvements)
         degradationList.append(degradations)
         failedMetricsList.append(failedMetrics)
+        parsingErrorList.append(parsingErrors)
+        if parsingErrors > 0:
+            designsParsingErrors.append(test)
         if failedMetrics > 0:
             designsRed.append(test)
         elif improvements == degradations:
@@ -280,6 +304,10 @@ with open(htmlOutput, 'w') as f:
 
     # Summary table begin
     table += '\n<h1>Metrics Overview</h1>\n'
+
+    table += '<pre>Number of designs that failed parsing: '
+    table += '{}\n'.format(len(designsParsingErrors))
+    table += '    {}</pre>\n'.format(', '.join(designsParsingErrors))
 
     table += '<pre>Number of designs failing metrics checks: '
     table += '{}\n'.format(len(designsRed))
@@ -310,6 +338,13 @@ with open(htmlOutput, 'w') as f:
     table += '  </tr>\n'
 
     # Summary rows
+
+    table += '  <tr>\n'
+    table += '    <td bgcolor="brown">{}</td>\n'.format('Parsing Errors')
+    for value in parsingErrorList:
+        table += '    <td colspan=3>{}</td>\n'.format(value)
+    table += '    <td colspan=3>{}</td>\n'.format(sum(parsingErrorList))
+    table += '  </tr>\n'
 
     table += '  <tr>\n'
     table += '    <td bgcolor="red">{}</td>\n'.format('Failed Metrics')
@@ -367,16 +402,18 @@ with open(htmlOutput, 'w') as f:
             style = 'white'
             goldValue = '{}'.format(entry[num])
             if goldValue == 'N/A':
-                table += '    <td bgcolor=yellow>{}</td>\n'.format(
-                    goldValue.strip())
+                table += '    <td bgcolor=yellow>{}</td>\n'.format(goldValue)
+            elif goldValue == 'ERR':
+                table += '    <td bgcolor=brown>{}</td>\n'.format(goldValue)
             else:
-                table += '    <td>{}</td>\n'.format(goldValue.strip())
+                table += '    <td>{}</td>\n'.format(goldValue)
             runValue = '{}'.format(entry[num + 1])
             if runValue == 'N/A':
-                table += '    <td bgcolor=yellow>{}</td>\n'.format(
-                    runValue.strip())
+                table += '    <td bgcolor=yellow>{}</td>\n'.format(runValue)
+            elif runValue == 'ERR':
+                table += '    <td bgcolor=brown>{}</td>\n'.format(runValue)
             else:
-                table += '    <td>{}</td>\n'.format(runValue.strip())
+                table += '    <td>{}</td>\n'.format(runValue)
             diffValue, style = entry[num + 2]
             if style == 'no_change':
                 style = ''
