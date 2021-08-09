@@ -38,7 +38,8 @@ def evaluation_fn(step, ws, wl, ndrc):
 
 def evaluation_fn_fmax(step, clk, ws, ndrc):
     # alpha, beta, gamma are user-defined constant values
-    fmax = (clk - ws) * (step / 100)**(-1)
+    gamma = (clk - ws) / 10
+    fmax = (clk - ws) * (step / 100)**(-1) + gamma * ndrc
 
     return fmax
 
@@ -190,7 +191,7 @@ def easy_objective(config):
     for step in range(1, 101):
         # if ws == 'ERR' or ws == 'N/A' or ndrc == 'ERR' or ndrc == 'N/A' or wl
         # == 'ERR' or wl == 'N/A':
-        if ndrc != 0:
+        if ws == 'ERR' or ws == 'N/A' or ndrc == 'ERR' or ndrc == 'N/A' or wl == 'ERR' or wl == 'N/A':
             intermediate_score = (99999) * (step / 100)**(-1)
         else:
             # Iterative training function
@@ -289,7 +290,7 @@ if __name__ == "__main__":
 
     # Optional
     current_best_params = [{
-        'CLK_PERIOD': 4.3647,
+        'CLK_PERIOD': 15.1550,
         'CORE_UTIL': 20,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 10,
