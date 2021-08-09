@@ -191,7 +191,7 @@ def easy_objective(config):
         # if ws == 'ERR' or ws == 'N/A' or ndrc == 'ERR' or ndrc == 'N/A' or wl
         # == 'ERR' or wl == 'N/A':
         if ndrc != 0:
-            intermediate_score = (99999999999) * (step / 100)**(-1)
+            intermediate_score = (99999) * (step / 100)**(-1)
         else:
             # Iterative training function
             # can be any arbitrary training procedure
