@@ -1,5 +1,6 @@
 # Build working directories
 tools
+!tools/OpenROAD/etc/DependencyInstaller.sh
 
 # Test working directories
 flow/results
