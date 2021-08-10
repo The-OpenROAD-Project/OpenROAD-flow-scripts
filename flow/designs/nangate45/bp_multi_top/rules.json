@@ -1,89 +1,89 @@
 {
     "rules": [
         {
-            "field": "synth__design__instance__stdcell__area",
-            "value": 474093,
-            "compare": "<="
-        },
-        {
-            "field": "constraints__clocks__count",
-            "value": 1,
-            "compare": "=="
-        },
-        {
-            "field": "placeopt__design__instance__design__area",
-            "value": 503316,
-            "compare": "<="
-        },
-        {
-            "field": "placeopt__design__instance__stdcell__count",
-            "value": 128352,
-            "compare": "<="
-        },
-        {
-            "field": "detailedplace__design__violations__count",
             "value": 0,
-            "compare": "=="
-        },
-        {
-            "field": "cts__timing__setup__ws",
-            "value": -11.2,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__setup__ws__prerepair",
-            "value": -11.34,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__setup__ws__postrepair",
-            "value": -11.34,
-            "compare": ">="
-        },
-        {
-            "field": "globalroute__timing__clock__slack",
-            "value": -11.41,
-            "compare": ">="
-        },
-        {
-            "field": "globalroute__timing__setup__ws",
-            "value": -11.4,
-            "compare": ">="
-        },
-        {
-            "field": "detailedroute__route__wirelength",
-            "value": 6643887,
-            "compare": "<="
-        },
-        {
             "field": "detailedroute__route__drc_errors__count",
-            "value": 0,
             "compare": "=="
         },
         {
-            "field": "finish__timing__setup__ws",
-            "value": -14.12,
+            "value": 503316,
+            "field": "placeopt__design__instance__design__area",
+            "compare": "<="
+        },
+        {
+            "value": -11.34,
+            "field": "cts__timing__setup__ws__prerepair",
             "compare": ">="
         },
         {
-            "field": "finish__design__instance__area",
+            "value": -14.12,
+            "field": "finish__timing__setup__ws",
+            "compare": ">="
+        },
+        {
             "value": 520160,
+            "field": "finish__design__instance__area",
             "compare": "<="
         },
         {
-            "field": "finish__timing__slew__violation__count",
-            "value": 1847,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__fanout__violation__count",
-            "value": 0,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__max_cap__violation__count",
             "value": 903,
+            "field": "finish__timing__max_cap__violation__count",
             "compare": "<="
+        },
+        {
+            "value": 0,
+            "field": "detailedplace__design__violations__count",
+            "compare": "=="
+        },
+        {
+            "value": 1847,
+            "field": "finish__timing__slew__violation__count",
+            "compare": "<="
+        },
+        {
+            "value": -11.34,
+            "field": "cts__timing__setup__ws__postrepair",
+            "compare": ">="
+        },
+        {
+            "value": 6643887,
+            "field": "detailedroute__route__wirelength",
+            "compare": "<="
+        },
+        {
+            "value": -11.41,
+            "field": "globalroute__timing__clock__slack",
+            "compare": ">="
+        },
+        {
+            "value": 1,
+            "field": "constraints__clocks__count",
+            "compare": "=="
+        },
+        {
+            "value": 474093,
+            "field": "synth__design__instance__stdcell__area",
+            "compare": "<="
+        },
+        {
+            "value": 128352,
+            "field": "placeopt__design__instance__stdcell__count",
+            "compare": "<="
+        },
+        {
+            "value": -11.4,
+            "field": "globalroute__timing__setup__ws",
+            "compare": ">="
+        },
+        {
+            "value": 0,
+            "field": "finish__timing__fanout__violation__count",
+            "compare": "<="
+        },
+        {
+            "value": -11.2,
+            "field": "cts__timing__setup__ws",
+            "compare": ">="
         }
     ]
 }
