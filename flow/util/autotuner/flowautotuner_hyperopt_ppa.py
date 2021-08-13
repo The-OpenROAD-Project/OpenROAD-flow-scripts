@@ -36,13 +36,27 @@ def evaluation_fn(step, ws, wl, ndrc):
     return ((alpha * ws + beta * wl) * (step / 100)**(-1) + gamma * ndrc)
 
 
-def evaluation_fn_fmax(step, clk, ws, ndrc):
+def evaluation_fn_effClkPeriod(step, clk, ws, ndrc):
     # alpha, beta, gamma are user-defined constant values
     gamma = (clk - ws) / 10
-    fmax = (clk - ws) * (step / 100)**(-1) + gamma * ndrc
+    effClkPeriod = (clk - ws) * (step / 100)**(-1) + gamma * ndrc
 
-    return fmax
+    return effClkPeriod
 
+def evaluation_fn_ppa(step, clk, ws, ndrc, power, util):
+    # alpha, beta, gamma are user-defined constant values
+    # effClkPeriod -100~100 -> multiply 100
+    # area (100/util), 0~100 -> multiply 1
+    # power 0~ about 0.1 -> muliply 1
+    if ws > 0:
+        ws = 0
+    effClkPeriod = (clk - ws) 
+    #ppa = effClkPeriod + (100/util*100) + (power*1000000)
+    ppa = effClkPeriod*100 + (100/util) + (power*10)
+    gamma = ppa / 10
+    score = ppa * (step/100)**(-1) + (gamma * ndrc)
+
+    return score
 
 def parse_massive(config):
     with open('%s/util/genMassive.py' % cwd) as inFile:
@@ -62,8 +76,8 @@ def parse_massive(config):
         dpPad = config["DP_PAD"]
     if "LAYER_ADJUST" in config:
         layerAdjust = config["LAYER_ADJUST"]
-    if "PLACE_DENSITY" in config:
-        placeDensity = config["PLACE_DENSITY"]
+    if "PLACE_DENSITY_LB_ADDON" in config:
+        placeDensity = config["PLACE_DENSITY_LB_ADDON"]
     if "FLATTEN" in config:
         flatten = config["FLATTEN"]
     if "PINS_DISTANCE" in config:
@@ -84,7 +98,7 @@ def parse_massive(config):
     fileName = fileName + '-PINS_DISTANCE_%s' % pinsDist
     fileName = fileName + '-GP_PAD_%s' % gpPad
     fileName = fileName + '-DP_PAD_%s' % dpPad
-    fileName = fileName + '-PD_%s' % placeDensity
+    fileName = fileName + '-PD_LB_ADD_%s' % placeDensity
     fileName = fileName + '-CTS_CLUSTER_SIZE_%s' % ctsClusterSize
     fileName = fileName + '-CTS_CLUSTER_DIAMETER_%s' % ctsClusterDia
     fileName = fileName + '-LAYER_ADJUST_%s' % layerAdjust
@@ -115,9 +129,8 @@ def parse_massive(config):
             line = 'DP_PAD = [ %s ]\n' % dpPad
         if line.startswith('LAYER_ADJUST ') and line.split()[1] == '=':
             line = 'LAYER_ADJUST = [ %s ]\n' % layerAdjust
-        if line.startswith('PLACE_DENSITY') and line.split()[
-                1] == '=' and not line.startswith('PLACE_DENSITY_LB_ADDON'):
-            line = 'PLACE_DENSITY = [ %s ]\n' % placeDensity
+        if line.startswith('PLACE_DENSITY_LB_ADDON') and line.split()[1] == '=':
+            line = 'PLACE_DENSITY_LB_ADDON = [ %s ]\n' % placeDensity
         if line.startswith('FLATTEN') and line.split()[1] == '=':
             line = 'FLATTEN = [ %s ]\n' % flatten
         if line.startswith('PINS_DISTANCE') and line.split()[1] == '=':
@@ -144,8 +157,11 @@ def read_metrics(path):
             wl = value.get('route__wirelength')
         if key == 'finish':
             ws = value.get('timing__setup__ws')
+            totalPower = value.get('power__total')
+            finalUtil = value.get('design__instance__utilization')
 
-    return ws, wl, ndrc
+
+    return ws, wl, ndrc, totalPower, finalUtil
 
 
 def easy_objective(config):
@@ -156,7 +172,7 @@ def easy_objective(config):
     aspectRatio = config["ASPECT_RATIO"]
     coreDieMargin = config["CORE_DIE_MARGIN"]
     gpPad, dpPad, layerAdjust = config["GP_PAD"], config["DP_PAD"], config["LAYER_ADJUST"]
-    placeDensity = config["PLACE_DENSITY"]
+    placeDensity = config["PLACE_DENSITY_LB_ADDON"]
     flatten = config["FLATTEN"]
     pinsDist = config["PINS_DISTANCE"]
     ctsClusterSize = config["CTS_CLUSTER_SIZE"]
@@ -185,19 +201,20 @@ def easy_objective(config):
     # read generated metrics.json and parse Success / Fail, WNS, Wirelength
     # and #DRC
 
-    ws, wl, ndrc = read_metrics(runDir)
+    ws, wl, ndrc, totalPower, finalUtil = read_metrics(runDir)
 
     os.chdir('%s' % runDir)
     for step in range(1, 101):
         # if ws == 'ERR' or ws == 'N/A' or ndrc == 'ERR' or ndrc == 'N/A' or wl
         # == 'ERR' or wl == 'N/A':
         if ws == 'ERR' or ws == 'N/A' or ndrc == 'ERR' or ndrc == 'N/A' or wl == 'ERR' or wl == 'N/A':
-            intermediate_score = (99999) * (step / 100)**(-1)
+            intermediate_score = (100000) * (step / 100)**(-1)
         else:
             # Iterative training function
             # can be any arbitrary training procedure
             #intermediate_score = evaluation_fn(step, ws, wl, ndrc)
-            intermediate_score = evaluation_fn_fmax(step, clkPeriod, ws, ndrc)
+            #intermediate_score = evaluation_fn_effClkPeriod(step, clkPeriod, ws, ndrc)
+            intermediate_score = evaluation_fn_ppa(step, clkPeriod, ws, ndrc, totalPower, coreUtil )
 
         # Feed the score back back to Tune.
         tune.report(minimum=intermediate_score)
@@ -290,14 +307,14 @@ if __name__ == "__main__":
 
     # Optional
     current_best_params = [{
-        'CLK_PERIOD': 15.1550,
+        'CLK_PERIOD': 3.7439,
         'CORE_UTIL': 20,
         'ASPECT_RATIO': 1.0,
-        'CORE_DIE_MARGIN': 10,
+        'CORE_DIE_MARGIN': 2,
         'GP_PAD': 4,
         'DP_PAD': 2,
         'LAYER_ADJUST': 0.5,
-        'PLACE_DENSITY': 0.6,
+        'PLACE_DENSITY_LB_ADDON': 0.25,
         'FLATTEN': 1,
         'PINS_DISTANCE': 2,
         'CTS_CLUSTER_SIZE': 30,
