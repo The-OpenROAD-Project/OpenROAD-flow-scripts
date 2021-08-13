@@ -82,7 +82,7 @@
         },
         {
             "field": "finish__timing__max_cap__violation__count",
-            "value": 4,
+            "value": 8,
             "compare": "<="
         }
     ]
