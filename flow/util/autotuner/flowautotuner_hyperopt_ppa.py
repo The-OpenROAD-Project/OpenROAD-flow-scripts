@@ -27,6 +27,25 @@ autotunerPath = "util/autotuner"
 # It can change in any form to minimize the score (return value)
 
 
+# Collects metrics to evalute the user-defined objective function.
+def read_metrics(metricsPath):
+    with open(metricsPath) as f:
+        data = json.load(f)
+    for key, value in data.items():
+        if key == 'constraints':
+            clkPeriod = float(value.get('clocks__details')[0].split()[1])
+        if key == 'floorplan':
+            coreUtil = value.get('design__instance__design__util')
+        if key == 'detailedroute':
+            ndrc = value.get('route__drc_errors__count')
+            wl = value.get('route__wirelength')
+        if key == 'finish':
+            ws = value.get('timing__setup__ws')
+            totalPower = value.get('power__total')
+            finalUtil = value.get('design__instance__utilization')
+
+    return clkPeriod, ws, wl, ndrc, totalPower, coreUtil, finalUtil
+
 def evaluation_fn(step, ws, wl, ndrc):
     # alpha, beta, gamma are user-defined constant values
     alpha = -(wl / 100)
@@ -49,10 +68,37 @@ def evaluation_fn_ppa(step, clk, ws, ndrc, power, util):
     # area (100/util), 0~100 -> multiply 1
     # power 0~ about 0.1 -> muliply 1
     if ws > 0:
-        ws = 0
-    effClkPeriod = (clk - ws) 
+        effClkPeriod = clk 
+    else:
+        effClkPeriod = (clk - ws)
     #ppa = effClkPeriod + (100/util*100) + (power*1000000)
     ppa = effClkPeriod*100 + (100/util) + (power*10)
+    gamma = ppa / 10
+    score = ppa * (step/100)**(-1) + (gamma * ndrc)
+
+    return score
+
+def evaluation_fn_ppa_improv(step, clk, ws, ndrc, power, util):
+
+    clkRef, wsRef, wlRef, ndrcRef, powerRef, utilRef, finalUtilRef = read_metrics(pathRef)
+    if ws > 0:
+        effClkPeriod = clk 
+    else:
+        effClkPeriod = (clk - ws)
+    if wsRef > 0:
+        effClkPeriodRef = clkRef 
+    else:
+        effClkPeriodRef = (clkRef - wsRef)
+    # Coefficient shoule be 0 to 100
+    coeffPerform, coeffPower, coeffArea = 100, 100, 100
+    improvPerform = 100 * (effClkPeriodRef - effClkPeriod) / effClkPeriodRef
+    improvPower = 100 * (powerRef - power) / powerRef
+    #improvArea = 100 * ((1/utilRef) - (1/util)) / (1/utilRef)
+    improvArea = 100 * ((100- utilRef) - (100- util)) / (100-utilRef)
+
+    # ppa: less is better.
+    ppaUpperBound = (100*(coeffPerform+coeffPower+coeffArea))
+    ppa = ppaUpperBound - (coeffPerform * improvPerform + coeffPower * improvPower + coeffArea * improvArea)
     gamma = ppa / 10
     score = ppa * (step/100)**(-1) + (gamma * ndrc)
 
@@ -147,28 +193,12 @@ def parse_massive(config):
     return fileName
 
 
-# Collects metrics to evalute the user-defined objective function.
-def read_metrics(path):
-    with open('%s/metrics.json' % path) as f:
-        data = json.load(f)
-    for key, value in data.items():
-        if key == 'detailedroute':
-            ndrc = value.get('route__drc_errors__count')
-            wl = value.get('route__wirelength')
-        if key == 'finish':
-            ws = value.get('timing__setup__ws')
-            totalPower = value.get('power__total')
-            finalUtil = value.get('design__instance__utilization')
-
-
-    return ws, wl, ndrc, totalPower, finalUtil
-
 
 def easy_objective(config):
     runDir = os.getcwd()
     # Hyperparameters
-    clkPeriod = config["CLK_PERIOD"]
-    coreUtil = config["CORE_UTIL"]
+    #clkPeriod = config["CLK_PERIOD"]
+    #coreUtil = config["CORE_UTIL"]
     aspectRatio = config["ASPECT_RATIO"]
     coreDieMargin = config["CORE_DIE_MARGIN"]
     gpPad, dpPad, layerAdjust = config["GP_PAD"], config["DP_PAD"], config["LAYER_ADJUST"]
@@ -201,20 +231,20 @@ def easy_objective(config):
     # read generated metrics.json and parse Success / Fail, WNS, Wirelength
     # and #DRC
 
-    ws, wl, ndrc, totalPower, finalUtil = read_metrics(runDir)
+    clkPeriod, ws, wl, ndrc, totalPower, coreUtil, finalUtil = read_metrics('%s/metrics.json'%runDir)
 
     os.chdir('%s' % runDir)
     for step in range(1, 101):
         # if ws == 'ERR' or ws == 'N/A' or ndrc == 'ERR' or ndrc == 'N/A' or wl
         # == 'ERR' or wl == 'N/A':
         if ws == 'ERR' or ws == 'N/A' or ndrc == 'ERR' or ndrc == 'N/A' or wl == 'ERR' or wl == 'N/A':
-            intermediate_score = (100000) * (step / 100)**(-1)
+            intermediate_score = (10000000) * (step / 100)**(-1)
         else:
             # Iterative training function
             # can be any arbitrary training procedure
             #intermediate_score = evaluation_fn(step, ws, wl, ndrc)
             #intermediate_score = evaluation_fn_effClkPeriod(step, clkPeriod, ws, ndrc)
-            intermediate_score = evaluation_fn_ppa(step, clkPeriod, ws, ndrc, totalPower, coreUtil )
+            intermediate_score = evaluation_fn_ppa_improv(step, clkPeriod, ws, ndrc, totalPower, coreUtil)
 
         # Feed the score back back to Tune.
         tune.report(minimum=intermediate_score)
@@ -295,6 +325,12 @@ if __name__ == "__main__":
         required=True,
         help="Number of Trials")
     parser.add_argument(
+        "--ref",
+        "-r",
+        type=str,
+        required=False,
+        help="Reference known-best metrics json to perform improvement-oriented optimization")
+    parser.add_argument(
         "--smoke-test", action="store_true", help="Finish quickly for testing")
     parser.add_argument(
         "--server-address",
@@ -305,6 +341,8 @@ if __name__ == "__main__":
         "Ray Client.")
     args, _ = parser.parse_known_args()
 
+    pathRef = os.path.abspath(args.ref)
+
     # Optional
     current_best_params = [{
         'CLK_PERIOD': 3.7439,
@@ -314,13 +352,30 @@ if __name__ == "__main__":
         'GP_PAD': 4,
         'DP_PAD': 2,
         'LAYER_ADJUST': 0.5,
-        'PLACE_DENSITY_LB_ADDON': 0.25,
+        'PLACE_DENSITY_LB_ADDON': 0.04,
         'FLATTEN': 1,
         'PINS_DISTANCE': 2,
         'CTS_CLUSTER_SIZE': 30,
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }]
+    # Optional
+    current_best_params = [{
+        'CLK_PERIOD': 3.7439,
+        'CORE_UTIL': 5,
+        'ASPECT_RATIO': 1.0,
+        'CORE_DIE_MARGIN': 2,
+        'GP_PAD': 4,
+        'DP_PAD': 2,
+        'LAYER_ADJUST': 0.5,
+        'PLACE_DENSITY_LB_ADDON': 0,
+        'FLATTEN': 1,
+        'PINS_DISTANCE': 2,
+        'CTS_CLUSTER_SIZE': 30,
+        'CTS_CLUSTER_DIAMETER': 100,
+        'GR_OVERFLOW': 1,
+    }]
+
 
     if args.server_address:
         import ray
@@ -354,6 +409,8 @@ if __name__ == "__main__":
     algo = ConcurrencyLimiter(algo, max_concurrent=args.num_jobs)
 
     scheduler = AsyncHyperBandScheduler()
+
+
 
     analysis = tune.run(
         easy_objective,
