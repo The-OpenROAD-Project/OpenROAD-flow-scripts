@@ -45,10 +45,9 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 # Adders degrade ibex setup repair
 export ADDER_MAP_FILE :=
 
-# These values must be multiples of placement site
-# x=0.19 y=1.4
-export DIE_AREA    = 0 0 3000 1999
-export CORE_AREA   = 150.0 150 2850.0 1850
+export CORE_UTILIZATION = 20 
+export CORE_ASPECT_RATIO = 1
+export CORE_MARGIN = 2
 
 export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute_base.tcl
 
