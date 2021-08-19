@@ -1,10 +1,13 @@
-### Summary
-Simple AES (Rijndael) IP Core
+# Summary
 
-### Source
-Downloaded from https://opencores.org/projects/aes_core on 8/8/2019
+Simple AES (Rijndael) IP Core.
 
-### Modifications
-- Added sdc timing constraints
-- Updated verilog to use standard verilog attributes
-- Added LICENSE file from http://asics.ws/v6/free-ip-cores
+# Source
+
+Downloaded from https://opencores.org/projects/aes_core on 8/8/2019.
+
+# Modifications
+
+- Added SDC timing constraints.
+- Updated verilog to use standard verilog attributes.
+- Added LICENSE file from [here](http://asics.ws/v6/free-ip-cores).
