@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__timing__slew__violation__count",
-            "value": 71,
+            "value": 90,
             "compare": "<="
         },
         {
