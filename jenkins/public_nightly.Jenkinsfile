@@ -1,7 +1,6 @@
 pipeline {
   agent any;
   environment {
-    COMMIT_AUTHOR_EMAIL= sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
     MAKE_ISSUE = 1;
   }
   options {
@@ -407,11 +406,16 @@ pipeline {
     }
     failure {
       script {
-        EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
-        REPLY_TO="$EMAIL_TO";
+        try {
+          COMMIT_AUTHOR_EMAIL = sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
+          EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
+        } catch (Exception e) {
+          echo "Exception occurred: " + e.toString();
+          EMAIL_TO="\$DEFAULT_RECIPIENTS";
+        }
         emailext (
             to: "$EMAIL_TO",
-            replyTo: "$REPLY_TO",
+            replyTo: "$EMAIL_TO",
             subject: '$DEFAULT_SUBJECT',
             body: '$DEFAULT_CONTENT',
             )

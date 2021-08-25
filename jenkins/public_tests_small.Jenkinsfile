@@ -293,13 +293,20 @@ pipeline {
     }
     failure {
       script {
-        if ( env.BRANCH_NAME == "master" ) {
-          echo("Main development branch: report to stakeholders and commit author.");
-          EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
-          REPLY_TO="$EMAIL_TO";
-        } else {
-          echo("Feature development branch: report only to commit author.");
-          EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
+        try {
+          COMMIT_AUTHOR_EMAIL = sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
+          if ( env.BRANCH_NAME == "master" ) {
+            echo("Main development branch: report to stakeholders and commit author.");
+            EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
+            REPLY_TO="$EMAIL_TO";
+          } else {
+            echo("Feature development branch: report only to commit author.");
+            EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
+            REPLY_TO='$DEFAULT_REPLYTO';
+          }
+        } catch (Exception e) {
+          echo "Exception occurred: " + e.toString();
+          EMAIL_TO="\$DEFAULT_RECIPIENTS";
           REPLY_TO='$DEFAULT_REPLYTO';
         }
         emailext (
