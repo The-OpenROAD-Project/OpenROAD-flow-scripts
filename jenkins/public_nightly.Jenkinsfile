@@ -65,8 +65,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -80,8 +78,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -95,8 +91,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -110,8 +104,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -125,8 +117,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -140,8 +130,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -155,8 +143,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -170,8 +156,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -185,8 +169,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -200,8 +182,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -215,8 +195,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -230,8 +208,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -245,8 +221,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -260,8 +234,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -275,8 +247,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -290,8 +260,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -305,8 +273,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -320,8 +286,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -335,8 +299,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -350,8 +312,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -365,8 +325,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -380,8 +338,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -395,8 +351,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -410,8 +364,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -425,8 +377,6 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-            }
-            failure {
               archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
@@ -436,10 +386,10 @@ pipeline {
   }
   post {
     always {
-      copyArtifacts filter: 'flow/logs/**/*',
+      copyArtifacts filter: "flow/logs/**/*",
                     projectName: '${JOB_NAME}',
                     selector: specific('${BUILD_NUMBER}');
-      copyArtifacts filter: 'flow/reports/**/*',
+      copyArtifacts filter: "flow/reports/**/*",
                     projectName: '${JOB_NAME}',
                     selector: specific('${BUILD_NUMBER}');
       sh "flow/util/genReport.py -vv --single --file --no-print";
@@ -449,10 +399,10 @@ pipeline {
           allowMissing: true,
           alwaysLinkToLastBuild: false,
           keepAll: true,
-          reportDir: 'flow/reports',
-          reportFiles: 'report-table.html',
-          reportName: 'Report',
-          reportTitles: 'Flow Report'
+          reportDir: "flow/reports",
+          reportFiles: "report-table.html",
+          reportName: "Report",
+          reportTitles: "Flow Report"
       ]);
     }
     failure {
