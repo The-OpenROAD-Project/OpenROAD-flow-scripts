@@ -305,73 +305,84 @@ with open(htmlOutput, 'w') as f:
     # Summary table begin
     table += '\n<h1>Metrics Overview</h1>\n'
 
-    table += '<pre>Number of designs that failed parsing: '
-    table += '{}\n'.format(len(designsParsingErrors))
-    table += '    {}</pre>\n'.format(', '.join(designsParsingErrors))
+    txt = 'Number of designs that failed parsing: '
+    txt += '{}\n'.format(len(designsParsingErrors))
+    txt += '    {}\n'.format(', '.join(designsParsingErrors))
+    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
 
-    table += '<pre>Number of designs failing metrics checks: '
-    table += '{}\n'.format(len(designsRed))
-    table += '    {}</pre>\n'.format(', '.join(designsRed))
+    txt = 'Number of designs failing metrics checks: '
+    txt += '{}\n'.format(len(designsRed))
+    txt += '    {}\n'.format(', '.join(designsRed))
+    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
 
-    table += '<pre>Number of designs with more improvements: '
-    table += '{}\n'.format(len(designsMoreImprovements))
-    table += '    {}</pre>\n'.format(', '.join(designsMoreImprovements))
+    txt = 'Number of designs with more improvements: '
+    txt += '{}\n'.format(len(designsMoreImprovements))
+    txt += '    {}\n'.format(', '.join(designsMoreImprovements))
+    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
 
-    table += '<pre>Number of designs with more degradations: '
-    table += '{}\n'.format(len(designsMoreDegradations))
-    table += '    {}</pre>\n'.format(', '.join(designsMoreDegradations))
+    txt = 'Number of designs with more degradations: '
+    txt += '{}\n'.format(len(designsMoreDegradations))
+    txt += '    {}\n'.format(', '.join(designsMoreDegradations))
+    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
 
-    table += '<pre>Number of designs with same number of degradations and improvements: '
-    table += '{}\n'.format(len(designsSameNumber))
-    table += '    {}</pre>\n'.format(', '.join(designsSameNumber))
+    txt = 'Number of designs with same number of degradations and improvements: '
+    txt += '{}\n'.format(len(designsSameNumber))
+    txt += '    {}\n'.format(', '.join(designsSameNumber))
+    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
 
-    table += '<pre>Number of designs with no change: '
-    table += '{}\n'.format(len(designsNoChange))
-    table += '    {}</pre>\n'.format(', '.join(designsNoChange))
+    txt = 'Number of designs with no change: '
+    txt += '{}\n'.format(len(designsNoChange))
+    txt += '    {}\n'.format(', '.join(designsNoChange))
+    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
 
-    table += '<table class="summary-table">\n'
+    table += '\n<table class="summary-table">\n'
     # Summary header
     table += '  <tr>\n'
     table += '    <th>Summary</th>\n'
     for test in testList + ['Total']:
-        table += '    <th colspan="3">{}</th>\n'.format(test.strip())
+        table += '    <th>{}</th>\n'.format(test)
     table += '  </tr>\n'
 
     # Summary rows
 
+    title = 'Parsing Errors'
     table += '  <tr>\n'
-    table += '    <td bgcolor="brown">{}</td>\n'.format('Parsing Errors')
+    table += '    <td bgcolor="brown">{}</td>\n'.format(title)
     for value in parsingErrorList:
-        table += '    <td colspan=3>{}</td>\n'.format(value)
-    table += '    <td colspan=3>{}</td>\n'.format(sum(parsingErrorList))
+        table += '    <td title="{}">{}</td>\n'.format(title, value)
+    table += '    <td>{}</td>\n'.format(sum(parsingErrorList))
     table += '  </tr>\n'
 
+    title = 'Failed Metrics'
     table += '  <tr>\n'
-    table += '    <td bgcolor="red">{}</td>\n'.format('Failed Metrics')
+    table += '    <td bgcolor="red">{}</td>\n'.format(title)
     for value in failedMetricsList:
-        table += '    <td colspan=3>{}</td>\n'.format(value)
-    table += '    <td colspan=3>{}</td>\n'.format(sum(failedMetricsList))
+        table += '    <td title="{}">{}</td>\n'.format(title, value)
+    table += '    <td>{}</td>\n'.format(sum(failedMetricsList))
     table += '  </tr>\n'
 
+    title = 'Degradation'
     table += '  <tr>\n'
-    table += '    <td bgcolor="orange">{}</td>\n'.format('Degradation')
+    table += '    <td bgcolor="orange">{}</td>\n'.format(title)
     for value in degradationList:
-        table += '    <td colspan=3>{}</td>\n'.format(value)
-    table += '    <td colspan=3>{}</td>\n'.format(sum(degradationList))
+        table += '    <td title="{}">{}</td>\n'.format(title, value)
+    table += '    <td>{}</td>\n'.format(sum(degradationList))
     table += '  </tr>\n'
 
+    title = 'No Change'
     table += '  <tr>\n'
-    table += '    <td>{}</td>\n'.format('No Change')
+    table += '    <td>{}</td>\n'.format(title)
     for value in noChangeList:
-        table += '    <td colspan=3>{}</td>\n'.format(value)
-    table += '    <td colspan=3>{}</td>\n'.format(sum(noChangeList))
+        table += '    <td title="{}">{}</td>\n'.format(title, value)
+    table += '    <td>{}</td>\n'.format(sum(noChangeList))
     table += '  </tr>\n'
 
+    title = 'Improvement'
     table += '  <tr>\n'
-    table += '    <td bgcolor="green">{}</td>\n'.format('Improvement')
+    table += '    <td bgcolor="green">{}</td>\n'.format(title)
     for value in improvementList:
-        table += '    <td colspan=3>{}</td>\n'.format(value)
-    table += '    <td colspan=3>{}</td>\n'.format(sum(improvementList))
+        table += '    <td title="{}">{}</td>\n'.format(title, value)
+    table += '    <td>{}</td>\n'.format(sum(improvementList))
     table += '  </tr>\n'
 
     table += '</table>\n'
@@ -383,7 +394,7 @@ with open(htmlOutput, 'w') as f:
     table += '  <tr>\n'
     table += '    <th>Metric</th>\n'
     for test in testList:
-        table += '    <th colspan="3">{}</th>\n'.format(test.strip())
+        table += '    <th colspan="3">{}</th>\n'.format(test)
     table += '  </tr>\n'
 
     # Main table header subdivision
@@ -391,33 +402,41 @@ with open(htmlOutput, 'w') as f:
     table += '    <td>Name</td>\n'
     for _ in testList:
         for col in subColumns:
-            table += '    <td>{}</td>\n'.format(col.strip())
+            table += '    <td>{}</td>\n'.format(col)
     table += '  </tr>\n'
+
 
     # Main table rows
     for metric, entry in tableDict.items():
         table += '  <tr>\n'
-        table += '    <td>{}</td>\n'.format(metric.strip())
+        table += '    <td>{}</td>\n'.format(metric)
+        title = 'title="{}"'.format(metric)
+
         for num in range(0, len(entry), len(subColumns)):
-            style = 'white'
+
             goldValue = '{}'.format(entry[num])
+            props = title
             if goldValue == 'N/A':
-                table += '    <td bgcolor=yellow>{}</td>\n'.format(goldValue)
+                props += 'bgcolor=yellow'
             elif goldValue == 'ERR':
-                table += '    <td bgcolor=brown>{}</td>\n'.format(goldValue)
-            else:
-                table += '    <td>{}</td>\n'.format(goldValue)
-            runValue = '{}'.format(entry[num + 1])
+                props += 'bgcolor=brown'
+            table += '    <td {}>{}</td>\n'.format(props, goldValue)
+
+            runValue = '{}'.format(entry[num])
+            props = title
             if runValue == 'N/A':
-                table += '    <td bgcolor=yellow>{}</td>\n'.format(runValue)
+                props += 'bgcolor=yellow'
             elif runValue == 'ERR':
-                table += '    <td bgcolor=brown>{}</td>\n'.format(runValue)
-            else:
-                table += '    <td>{}</td>\n'.format(runValue)
+                props += 'bgcolor=brown'
+            table += '    <td {}>{}</td>\n'.format(props, runValue)
+
             diffValue, style = entry[num + 2]
+            props = title
             if style == 'no_change':
                 style = ''
-            table += '    <td bgcolor="{}">{}</td>\n'.format(style, diffValue)
+            props = '{} bgcolor="{}"'.format(props, style)
+            table += '    <td {}>{}</td>\n'.format(props, diffValue)
+
         table += '  </tr>\n'
 
     table += '</table>\n\n'
@@ -427,7 +446,7 @@ with open(htmlOutput, 'w') as f:
     if os.path.isfile(fname):
         with open(fname, 'r') as reportFile:
             content = ''.join(reportFile.readlines()[4:])
-        content = '<pre>\n' + content + '</pre>\n'
+        content = '<pre>\n' + content + '\n</pre>\n'
         content = '<h1>Flow Finish State and Log Summary</h1>\n' + content
 
     html = head + table + content + tail
