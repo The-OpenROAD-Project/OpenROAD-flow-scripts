@@ -140,27 +140,6 @@ metrics = {
         'customThreshold': 0,
         'compare': '<=',
     },
-    'finish__timing__slew__violation__count': {
-        'usePeriod': False,
-        'padding': 25,
-        'roundValue': True,
-        'customThreshold': [16, 20],
-        'compare': '<=',
-    },
-    'finish__timing__fanout__violation__count': {
-        'usePeriod': False,
-        'padding': 25,
-        'roundValue': True,
-        'customThreshold': [16, 20],
-        'compare': '<=',
-    },
-    'finish__timing__max_cap__violation__count': {
-        'usePeriod': False,
-        'padding': 25,
-        'roundValue': True,
-        'customThreshold': [16, 20],
-        'compare': '<=',
-    },
 }
 
 periodList = list()
