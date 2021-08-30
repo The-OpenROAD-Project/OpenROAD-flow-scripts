@@ -17,9 +17,9 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/tsmc65lp_1rf_lg11_w40_all.gds2 \
 
 export REMOVE_BUFFER_TREE     = 1
 
-# These values must be multiples of placement site
-export DIE_AREA    = 0 0 2000 2000
-export CORE_AREA   = 5 5 1995 1995
+export DIE_AREA    = 0 0 1610 1410
+export CORE_AREA   = 5 5 1605 1405
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-300 -exclude bottom:1300-1600
 
-export PLACE_DENSITY ?= .4
-export MACRO_BLOCKAGE_HALO    = 60
+export PLACE_DENSITY ?= .60
+export MACRO_BLOCKAGE_HALO = 30

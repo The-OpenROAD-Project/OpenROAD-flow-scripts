@@ -20,13 +20,11 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/tsmc65lp_1rf_lg6_w80_bit.gds2 \
                          $(PLATFORM_DIR)/gds/tsmc65lp_2rf_lg8_w64_bit.gds2
 
 # These values must be multiples of placement site
-export DIE_AREA = 0 0 3080 3100
-export CORE_AREA = 4 4 3076 3096
+#export DIE_AREA = 0 0 3080 3100
+export DIE_AREA = 0 0 1810 1810 
+export CORE_AREA = 5 5 1805 1805
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-500 -exclude right:1500-2000 -exclude top:* -exclude bottom:*
 export MACRO_BLOCKAGE_HALO = 10
 
-export PLACE_DENSITY         ?= 0.45
+export PLACE_DENSITY         ?= 0.65
 export REMOVE_BUFFER_TREE     = 1
-
-#export CORE_UTILIZATION = 10
-#export CORE_ASPECT_RATIO = 1
-#export CORE_MARGIN = 2
