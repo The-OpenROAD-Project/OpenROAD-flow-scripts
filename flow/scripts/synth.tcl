@@ -91,9 +91,9 @@ opt -purge
 # Technology mapping of adders
 if {[info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)]} {
   # extract the full adders
-  extract_fa
+  # extract_fa
   # map full adders
-  techmap -map $::env(ADDER_MAP_FILE)
+  # techmap -map $::env(ADDER_MAP_FILE)
   techmap
   # Quick optimization
   opt -fast -purge
@@ -115,12 +115,49 @@ opt
 
 
 set script [open $::env(OBJECTS_DIR)/abc.script w]
-puts $script "strash"
-puts $script "dch"
-puts $script "map -B 0.9"
+puts $script "&get -n"
+puts $script "&st"
+puts $script "&dch"
+puts $script "&nf"
+puts $script "&put"
+puts $script "&get -n"
+puts $script "&st"
+puts $script "&syn2"
+puts $script "&if -g -K 6"
+puts $script "&synch2"
+puts $script "&nf"
+puts $script "&put"
+puts $script "&get -n"
+puts $script "&st"
+puts $script "&syn2"
+puts $script "&if -g -K 6"
+puts $script "&synch2"
+puts $script "&nf"
+puts $script "&put"
+puts $script "&get -n"
+puts $script "&st"
+puts $script "&syn2"
+puts $script "&if -g -K 6"
+puts $script "&synch2"
+puts $script "&nf"
+puts $script "&put"
+puts $script "&get -n"
+puts $script "&st"
+puts $script "&syn2"
+puts $script "&if -g -K 6"
+puts $script "&synch2"
+puts $script "&nf"
+puts $script "&put"
+puts $script "&get -n"
+puts $script "&st"
+puts $script "&syn2"
+puts $script "&if -g -K 6"
+puts $script "&synch2"
+puts $script "&nf"
+puts $script "&put"
+puts $script "buffer -c"
 puts $script "topo"
 puts $script "stime -c"
-puts $script "buffer -c"
 puts $script "upsize -c"
 puts $script "dnsize -c"
 close $script
