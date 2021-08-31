@@ -115,8 +115,8 @@ SHELL          = /bin/bash
 .SHELLFLAGS    = -o pipefail -c
 
 #-------------------------------------------------------------------------------
-# Setup varialbles to point to root / head of the OpenROAD directory
-# - the following settings allowed user to point OpenRoad binaries to different
+# Setup variables to point to root / head of the OpenROAD directory
+# - the following settings allowed user to point OpenROAD binaries to different
 #   location
 # - default is current install / clone directory
 export FLOW_HOME ?= .
@@ -148,7 +148,7 @@ else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
 else ifneq ($(wildcard ../../$(PLATFORM)),)
   export PLATFORM_DIR = ../../$(PLATFORM)
 else
-  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found)
+  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
 endif
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
@@ -166,8 +166,8 @@ export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
 ifdef BLOCKS
-  $(info [INFO][FLOW] Hierarichal flow is invoked)
-  $(foreach block,$(BLOCKS),$(info following block is to be hardened :  ${block}))
+  $(info [INFO][FLOW] Invoked hierarchical flow.)
+  $(foreach block,$(BLOCKS),$(info Block ${block} needs to be hardened.))
   $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(block)/config.mk))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
   $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
@@ -220,7 +220,7 @@ endif
 # The following determine the executable location for each tool used by this flow.
 # Priority is given to
 #       1 user include path to the executable prior to running make
-#       2 user explicity set with variable in Makefile or command line
+#       2 user explicit set with variable in Makefile or command line
 OPENROAD_EXE            ?= $(shell command -v openroad)
 ifeq ($(OPENROAD_EXE),)
   OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)

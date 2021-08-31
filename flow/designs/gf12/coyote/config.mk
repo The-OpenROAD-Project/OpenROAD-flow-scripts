@@ -24,14 +24,11 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w80_bit.gds2 \
 
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
-export PLACE_DENSITY = 0.25
+export PLACE_DENSITY = 0.35
 
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
-# TODO: replace this with max(CHANNEL_WIDTH_[HV]) from IP_global.cfg
 export MACRO_BLOCKAGE_HALO = 25
-export DIE_AREA    = 0 0 1300 1300
-export CORE_AREA   = 2 2 1298 1298
-#export CORE_UTILIZATION = 10
-#export CORE_ASPECT_RATIO = 1
-#export CORE_MARGIN = 10
+export DIE_AREA    = 0 0 752 752
+export CORE_AREA   = 2 2 750 750
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:450-750
