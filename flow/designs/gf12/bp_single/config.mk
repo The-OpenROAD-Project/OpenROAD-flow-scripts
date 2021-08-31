@@ -6,8 +6,9 @@ export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg
                        $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
 # export CACHED_NETLIST    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/dc/results/bsg_chip.mapped.flat.v
-export CACHED_NETLIST    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth.v
-export CACHED_REPORTS    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_stat.txt \
+#export CACHED_NETLIST    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth.v
+export CACHED_NETLIST    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_don_abc_script.v
+#export CACHED_REPORTS    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_stat.txt \
                            $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_check.txt
 
 export SDC_FILE      = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.elab.v.sdc
