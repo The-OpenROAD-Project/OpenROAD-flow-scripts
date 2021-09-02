@@ -1,5 +1,7 @@
-### Summary
-Simple RISCV 32I core
+# Summary
 
-### Source
-Created for an OSU undergraduate course in July 2019
+Simple RISCV 32I core.
+
+# Source
+
+Created for an OSU undergraduate course in July 2019.

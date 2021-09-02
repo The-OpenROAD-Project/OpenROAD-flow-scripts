@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__design__area",
-            "value": 503713,
+            "value": 503437,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__stdcell__count",
-            "value": 128439,
+            "value": 128409,
             "compare": "<="
         },
         {
@@ -27,32 +27,32 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -11.3,
+            "value": -12.0,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__prerepair",
-            "value": -11.46,
+            "value": -12.2,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__postrepair",
-            "value": -11.46,
+            "value": -12.2,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -11.48,
+            "value": -12.18,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -11.48,
+            "value": -12.18,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 6894247,
+            "value": 6766755,
             "compare": "<="
         },
         {
@@ -62,27 +62,12 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -14.5,
+            "value": -15.9,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 520641,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__slew__violation__count",
-            "value": 1805,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__fanout__violation__count",
-            "value": 0,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__max_cap__violation__count",
-            "value": 1122,
+            "value": 520083,
             "compare": "<="
         }
     ]

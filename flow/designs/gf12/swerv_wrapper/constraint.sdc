@@ -6,11 +6,11 @@ current_design swerv_wrapper
 ###############################################################################
 # Timing Constraints
 ###############################################################################
-create_clock -name core_clock -period 10000.0000 -waveform {0.0000 5000.0000} [get_ports {clk}]
+create_clock -name core_clock -period 4200 -waveform {0.0000 2100} [get_ports {clk}]
 set_clock_uncertainty -setup 70.0000 core_clock
 set_clock_uncertainty -hold  70.0000 core_clock
 #set_propagated_clock [get_clocks {core_clock}]
-create_clock -name jtag_clock -period 10000.0000 -waveform {0.0000 5000.0000} [get_ports {jtag_tck}]
+create_clock -name jtag_clock -period 4200 -waveform {0.0000 2100} [get_ports {jtag_tck}]
 set_clock_uncertainty -setup 70.0000 jtag_clock
 set_clock_uncertainty -hold  70.0000 jtag_clock
 #set_propagated_clock [get_clocks {jtag_clock}]
@@ -40,9 +40,9 @@ foreach input [all_inputs] {
     lappend input_not_jtag_ports $input
   }
 }
-set_input_delay  2500 -clock jtag_clock $jtag_ports
-set_output_delay 2500 -clock jtag_clock [get_ports "jtag_tdo"]
-set_input_delay  7500 -clock core_clock $input_not_jtag_ports
+set_input_delay  1200 -clock jtag_clock $jtag_ports
+set_output_delay 1200 -clock jtag_clock [get_ports "jtag_tdo"]
+set_input_delay  2100 -clock core_clock $input_not_jtag_ports
 #set_output_delay 7500 -clock core_clock [remove_from_collection [all_outputs] "jtag_tdo"]
 set ports_list [list]
 foreach output [all_outputs] {
@@ -57,7 +57,7 @@ foreach output [all_outputs] {
     lappend ports_list $output
   }
 }
-set_output_delay 7500 -clock core_clock $ports_list
+set_output_delay 2100 -clock core_clock $ports_list
 
 set_driving_cell -lib_cell BUFH_X2N_A9PP84TR_C14 [all_inputs]
 

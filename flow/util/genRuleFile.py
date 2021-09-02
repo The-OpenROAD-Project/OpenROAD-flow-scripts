@@ -29,7 +29,10 @@ else:
 #     'usePeriod': <bool>, use a percentage of the clock period as padding
 #     'padding': <float>, percentage of padding to use
 #     'roundValue': <bool>, use the rounded value for the rule
-#     'valueIfZero': <float>, value if the current gold metric is zero
+#     'customThreshold': <float>, value if the current gold metric is zero
+#                    OR [<float>, <float>] this will check if the gold metric
+#                    is <= to first <float>, if trye the rule value will be the
+#                    second <float>
 # },
 metrics = {
     # synth
@@ -37,7 +40,7 @@ metrics = {
         'usePeriod': False,
         'padding': 15,
         'roundValue': True,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '<=',
     },
     # clock
@@ -45,7 +48,7 @@ metrics = {
         'usePeriod': False,
         'padding': 0,
         'roundValue': True,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '==',
     },
     # floorplan
@@ -54,21 +57,21 @@ metrics = {
         'usePeriod': False,
         'padding': 15,
         'roundValue': True,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '<=',
     },
     'placeopt__design__instance__stdcell__count': {
         'usePeriod': False,
         'padding': 15,
         'roundValue': True,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '<=',
     },
     'detailedplace__design__violations__count': {
         'usePeriod': False,
         'padding': 0,
         'roundValue': True,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '==',
     },
     # cts
@@ -76,21 +79,21 @@ metrics = {
         'usePeriod': True,
         'padding': 10,
         'roundValue': False,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '>=',
     },
     'cts__timing__setup__ws__prerepair': {
         'usePeriod': True,
         'padding': 10,
         'roundValue': False,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '>=',
     },
     'cts__timing__setup__ws__postrepair': {
         'usePeriod': True,
         'padding': 10,
         'roundValue': False,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '>=',
     },
     # route
@@ -98,28 +101,28 @@ metrics = {
         'usePeriod': True,
         'padding': 5,
         'roundValue': False,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '>=',
     },
     'globalroute__timing__setup__ws': {
         'usePeriod': True,
         'padding': 5,
         'roundValue': False,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '>=',
     },
     'detailedroute__route__wirelength': {
         'usePeriod': False,
         'padding': 15,
         'roundValue': True,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '<=',
     },
     'detailedroute__route__drc_errors__count': {
         'usePeriod': False,
         'padding': 0,
         'roundValue': True,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '==',
     },
     # finish
@@ -127,35 +130,14 @@ metrics = {
         'usePeriod': True,
         'padding': 5,
         'roundValue': False,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '>=',
     },
     'finish__design__instance__area': {
         'usePeriod': False,
         'padding': 15,
         'roundValue': True,
-        'valueIfZero': 0,
-        'compare': '<=',
-    },
-    'finish__timing__slew__violation__count': {
-        'usePeriod': False,
-        'padding': 5,
-        'roundValue': True,
-        'valueIfZero': 0,
-        'compare': '<=',
-    },
-    'finish__timing__fanout__violation__count': {
-        'usePeriod': False,
-        'padding': 5,
-        'roundValue': True,
-        'valueIfZero': 0,
-        'compare': '<=',
-    },
-    'finish__timing__max_cap__violation__count': {
-        'usePeriod': False,
-        'padding': 5,
-        'roundValue': True,
-        'valueIfZero': 0,
+        'customThreshold': 0,
         'compare': '<=',
     },
 }
@@ -176,13 +158,18 @@ for field, option in metrics.items():
         continue
 
     if option['padding'] != 0:
+        if isinstance(option['customThreshold'], list):
+            customThreshold, customValue = option['customThreshold']
+        else:
+            customThreshold = 0
+            customValue = option['customThreshold']
         if option['usePeriod']:
             if value >= 0:
                 value += - period * option['padding'] / 100
             else:
                 value += value - period * option['padding'] / 100
-        elif value == 0:
-            value = option['valueIfZero']
+        elif value <= customThreshold:
+            value = customValue
         else:
             value += value * option['padding'] / 100
 

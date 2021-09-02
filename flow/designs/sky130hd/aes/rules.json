@@ -69,21 +69,6 @@
             "field": "finish__design__instance__area",
             "value": 198627,
             "compare": "<="
-        },
-        {
-            "field": "finish__timing__slew__violation__count",
-            "value": 229,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__fanout__violation__count",
-            "value": 0,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__max_cap__violation__count",
-            "value": 3,
-            "compare": "<="
         }
     ]
 }
