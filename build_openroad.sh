@@ -145,7 +145,7 @@ if [ "$build_method" == "DOCKER" ]; then
 
 # Local build
 elif [ "$build_method" == "LOCAL" ]; then
-  $NICE make install -C tools/yosys -j${PROC} PREFIX=$(pwd)/tools/install/yosys CONFIG=gcc
+  $NICE make install -C tools/yosys -j${PROC} PREFIX=$(pwd)/tools/install/yosys CONFIG=gcc ABCREV=62180f3 ABCURL=https://github.com/berkeley-abc/abc
 
   cmake -B tools/OpenROAD/build tools/OpenROAD -DCMAKE_INSTALL_PREFIX=tools/install/OpenROAD
   $NICE cmake --build tools/OpenROAD/build --target install -j${PROC}
