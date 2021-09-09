@@ -26,7 +26,7 @@ export ABC_CLOCK_PERIOD_IN_PS = 400
 export DESIGN_POWER           = VDD
 export DESIGN_GROUND          = VSS
 
-export PDN_CFG                = $(FOUNDRY_DIR)/openRoad/pdn/grid_strategy-M1-M5-M7.cfg
+export PDN_CFG                = $(FOUNDRY_DIR)/openRoad/pdn/grid_strategy-M1-M7-2.cfg
 
 export PLACE_DENSITY          = 0.35
 
