@@ -422,7 +422,7 @@ with open(htmlOutput, 'w') as f:
                 props += 'bgcolor=brown'
             table += '    <td {}>{}</td>\n'.format(props, goldValue)
 
-            runValue = '{}'.format(entry[num])
+            runValue = '{}'.format(entry[num + 1])
             props = title
             if runValue == 'N/A':
                 props += 'bgcolor=yellow'
