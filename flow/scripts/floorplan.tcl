@@ -64,6 +64,11 @@ if { [info exists ::env(MAKE_TRACKS)] } {
   source $::env(PLATFORM_DIR)/make_tracks.tcl
 }
 
+if {[info exists ::env(FOOTPRINT_TCL)]} {
+  source $::env(FOOTPRINT_TCL)
+  initialize_padring
+}
+
 # If wrappers defined replace macros with their wrapped version
 # # ----------------------------------------------------------------------------
 if {[info exists ::env(MACRO_WRAPPERS)]} {
