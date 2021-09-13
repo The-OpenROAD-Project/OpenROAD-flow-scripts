@@ -19,7 +19,10 @@ if {![info exists standalone] || $standalone} {
   puts "Starting PDN generation"
 }
 
-if {[info exist ::env(PDN_CFG)]} {
+if {[info exist ::env(PDN_TCL)]} {
+  source $::env(PDN_TCL)
+  pdngen -verbose
+} elseif {[info exist ::env(PDN_CFG)]} {
   pdngen $::env(PDN_CFG) -verbose
 }
 
