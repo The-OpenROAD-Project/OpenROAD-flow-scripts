@@ -9,6 +9,7 @@ export DESIGN                 = aes
 
 export VERILOG_FILES          = $(sort $(wildcard $(abspath $(DESIGN_DIR)/../../src/$(DESIGN))/*.v))
 export SDC_FILE               = $(DESIGN_DIR)/constraint.sdc
+export ABC_AREA               = 1
 
 export CORNER                ?= BC
 

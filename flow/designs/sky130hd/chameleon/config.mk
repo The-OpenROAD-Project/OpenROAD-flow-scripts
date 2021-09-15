@@ -25,6 +25,8 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/acc/AHB_SPM.v \
                        ./designs/src/$(DESIGN_NICKNAME)/soc_core.v \
                        $(VERILOG_FILES_BLACKBOX)
 
+export ABC_AREA = 1
+
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export DIE_AREA   = 0 0 2920 3520
