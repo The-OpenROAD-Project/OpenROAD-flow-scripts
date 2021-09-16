@@ -27,32 +27,32 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": 0.0,
+            "value": -47.77,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__prerepair",
-            "value": 0.0,
+            "value": -79.92,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__postrepair",
-            "value": 0.0,
+            "value": -79.92,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": 0.0,
+            "value": -44.18,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": 0.0,
+            "value": -44.18,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 142683,
+            "value": 142816,
             "compare": "<="
         },
         {
