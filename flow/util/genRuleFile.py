@@ -153,6 +153,10 @@ period = periodList[0]
 for field, option in metrics.items():
     value = data[field]
 
+    if isinstance(value, str):
+        print('[WARNING] Skipping string field {} = {}'.format(field, value))
+        continue
+
     if len(periodList) != 1 and field == 'globalroute__timing__clock__slack':
         print('[WARNING] Skipping clock slack until multiple clocks support.')
         continue
