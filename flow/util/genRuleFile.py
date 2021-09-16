@@ -153,6 +153,10 @@ period = periodList[0]
 for field, option in metrics.items():
     value = data[field]
 
+    if isinstance(value, str):
+        print('[WARNING] Skipping string field {} = {}'.format(field, value))
+        continue
+
     if len(periodList) != 1 and field == 'globalroute__timing__clock__slack':
         print('[WARNING] Skipping clock slack until multiple clocks support.')
         continue
@@ -165,9 +169,11 @@ for field, option in metrics.items():
             customValue = option['customThreshold']
         if option['usePeriod']:
             if value >= 0:
-                value += - period * option['padding'] / 100
+                # value is positive, allow degradation up to period with pad
+                value = - period * option['padding'] / 100
             else:
-                value += value - period * option['padding'] / 100
+                # value is negative, use current value - pad
+                value -= period * option['padding'] / 100
         elif value <= customThreshold:
             value = customValue
         else:
