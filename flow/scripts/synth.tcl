@@ -91,9 +91,9 @@ opt -purge
 # Technology mapping of adders
 if {[info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)]} {
   # extract the full adders
-  # extract_fa
+  extract_fa
   # map full adders
-  # techmap -map $::env(ADDER_MAP_FILE)
+  techmap -map $::env(ADDER_MAP_FILE)
   techmap
   # Quick optimization
   opt -fast -purge
