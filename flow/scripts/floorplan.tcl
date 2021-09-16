@@ -90,6 +90,8 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
 # remove buffers inserted by yosys/abc
 remove_buffers
 
+puts "Default units for flow"
+report_units
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "floorplan final" false
 
@@ -123,7 +125,6 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   puts "number instances after restructure is $num_instances"
   puts "Design Area after restructure"
   report_design_area
-
 }
 
 if {![info exists standalone] || $standalone} {
