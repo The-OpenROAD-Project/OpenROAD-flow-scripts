@@ -5,6 +5,7 @@ export PLATFORM    = nangate45
 export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/pickled.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
+export ABC_AREA      = 1
 
 export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lef))
 export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lib))

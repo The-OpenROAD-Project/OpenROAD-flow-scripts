@@ -145,6 +145,18 @@ ifdef GDB
 OPENROAD_EXE := gdb --args $(OPENROAD_EXE)
 endif
 
+## Convert RVE DRC database to JSON
+convert_rve: $(OBJECTS_DIR)/drc.json
+
+$(OBJECTS_DIR)/drc.json: $(DRC_FILE)
+ifneq ($(DRC_FILE),)
+	$(KLAYOUT_CMD) -z -rd in_drc="$<" \
+	        -rd out_file="$@" \
+	        -rm $(UTILS_DIR)/convertDrc.py
+else
+	@echo "No DRC_FILE defined."
+endif
+
 # Update the clock period sdc based on the worst slack reported by the final
 # (post global route) timing.
 update_sdc_clocks: $(RESULTS_DIR)/route.guide

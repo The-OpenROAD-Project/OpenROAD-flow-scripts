@@ -41,7 +41,7 @@
   "placeopt__timing__setup__ws": 121.27,
   "placeopt__design__instance__design__area": 2667.0,
   "placeopt__design__instance__design__util": 26.0,
-  "placeopt__timing__slew__violation__count": 12.0,
+  "placeopt__timing__slew__violation__count": 60.0,
   "placeopt__timing__fanout__violation__count": 0.0,
   "placeopt__timing__max_cap__violation__count": 0.0,
   "placeopt__design__instance__stdcell__count": 21755.0,
