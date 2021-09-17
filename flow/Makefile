@@ -83,6 +83,7 @@ export MAX_UNGROUP_SIZE ?= 0
 endif
 # Enables Re-synthesis for area reclaim
 export RESYNTH_AREA_RECOVER ?= 0
+export ABC_AREA ?= 0
 
 # Global setting for Synthesis
 export SYNTH_ARGS ?= -flatten

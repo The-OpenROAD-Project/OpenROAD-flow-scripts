@@ -6,6 +6,7 @@ export VERILOG_FILES   = ./designs/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \
                          ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
 
 export SDC_FILE        = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export ABC_AREA        = 1
 
 export WRAP_LEFS       = $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w80_bit.lef \
                          $(PLATFORM_DIR)/lef/gf12_1rf_lg8_w128_all.lef \
