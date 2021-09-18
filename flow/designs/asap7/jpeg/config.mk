@@ -10,6 +10,7 @@ export DESIGN                 = jpeg
 export VERILOG_FILES          = $(sort $(wildcard $(abspath $(DESIGN_DIR)/../../src/$(DESIGN))/*.v))
 export VERILOG_INCLUDE_DIRS   = $(abspath $(DESIGN_DIR)/../../src/$(DESIGN)/include)
 export SDC_FILE               = $(DESIGN_DIR)/jpeg_encoder15_7nm.sdc
+export ABC_AREA               = 1
 
 export CORNER                ?= BC
 
