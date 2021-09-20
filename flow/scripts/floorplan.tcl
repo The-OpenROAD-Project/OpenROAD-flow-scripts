@@ -87,6 +87,34 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
   }
 }
 
+##### Restructure for timing #########
+if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER) == 1 } {
+  repair_timing
+  # pre restructure area/timing report (ideal clocks)
+  puts "Post synth-opt area"
+  report_design_area
+  report_worst_slack -min -digits 3
+  puts "Post synth-opt wns"
+  report_worst_slack -max -digits 3
+  puts "Post synth-opt tns"
+  report_tns -digits 3
+
+  write_verilog $::env(RESULTS_DIR)/2_pre_abc_timing.v
+  restructure -target timing -liberty_file $::env(DONT_USE_SC_LIB) \
+              -abc_logfile $::env(RESULTS_DIR)/$::env(DESIGN_NICKNAME)_$::env(PLATFORM)_abc.log \
+              -work_dir $::env(RESULTS_DIR)
+
+  write_verilog $::env(RESULTS_DIR)/2_post_abc_timing.v
+
+  # post restructure area/timing report (ideal clocks)
+  repair_timing
+  puts "Post restructure-opt wns"
+  report_worst_slack -max -digits 3
+  puts "Post restructure-opt tns"
+  report_tns -digits 3
+
+}
+
 # remove buffers inserted by yosys/abc
 remove_buffers
 
