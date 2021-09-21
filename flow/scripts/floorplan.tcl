@@ -9,9 +9,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read liberty files
-  foreach libFile $::env(LIB_FILES) {
-    read_liberty $libFile
-  }
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read verilog
   read_verilog $::env(RESULTS_DIR)/1_synth.v
@@ -123,11 +121,11 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   write_verilog $::env(RESULTS_DIR)/2_pre_abc.v
 
   set tielo_cell_name [lindex $env(TIELO_CELL_AND_PORT) 0]
-  set tielo_lib_name [get_name [get_property [get_lib_cell $tielo_cell_name] library]]
+  set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
   set tielo_port $tielo_lib_name/$tielo_cell_name/[lindex $env(TIELO_CELL_AND_PORT) 1]
 
   set tiehi_cell_name [lindex $env(TIEHI_CELL_AND_PORT) 0]
-  set tiehi_lib_name [get_name [get_property [get_lib_cell $tiehi_cell_name] library]]
+  set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
   set tiehi_port $tiehi_lib_name/$tiehi_cell_name/[lindex $env(TIEHI_CELL_AND_PORT) 1]
 
   restructure -liberty_file $::env(DONT_USE_SC_LIB) -target "area" \
