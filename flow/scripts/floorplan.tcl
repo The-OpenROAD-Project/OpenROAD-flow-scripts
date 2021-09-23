@@ -119,6 +119,10 @@ if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER
   puts "Post restructure-opt tns"
   report_tns -digits 3
 
+  # remove buffers inserted by optimization
+  remove_buffers
+
+
 }
 
 
