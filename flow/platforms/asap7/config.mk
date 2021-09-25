@@ -71,8 +71,8 @@ export TRITON_ROUTE_LEF_FILTER = $(FOUNDRY_DIR)/tritonRoute/LEF_filter.txt
 export TRITON_ROUTE_TECH_LEF   = $(TECH_LEF)
 
 # Cell padding in SITE widths to ease rout-ability.  Applied to both sides
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 2
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 1
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 2
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 1
 
 # Endcap and Welltie cells
 export TAPCELL_TCL             = $(FOUNDRY_DIR)/openRoad/tapcell.tcl
