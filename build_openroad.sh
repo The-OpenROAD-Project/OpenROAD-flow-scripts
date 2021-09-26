@@ -37,7 +37,7 @@ EOF
 NICE=""
 PROC=$(nproc)
 COPY_PLATFORMS="NO"
-DOCKER_TAG="flow-scripts"
+DOCKER_TAG="openroad/flow-scripts"
 CURRENT_REMOTE="origin"
 OR_BRANCH="master"
 
