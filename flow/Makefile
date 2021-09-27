@@ -83,6 +83,7 @@ export MAX_UNGROUP_SIZE ?= 0
 endif
 # Enables Re-synthesis for area reclaim
 export RESYNTH_AREA_RECOVER ?= 0
+export RESYNTH_TIMING_RECOVER ?= 0
 export ABC_AREA ?= 0
 
 # Global setting for Synthesis
@@ -360,6 +361,7 @@ clean_synth:
 	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
 	rm -f  $(REPORTS_DIR)/synth_*
 	rm -f  $(LOG_DIR)/1_*
+	rm -f  $(SYNTH_STOP_MODULE_SCRIPT)
 	rm -rf _tmp_yosys-abc-*
 
 
