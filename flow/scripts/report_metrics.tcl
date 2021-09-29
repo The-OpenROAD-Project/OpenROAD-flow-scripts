@@ -68,3 +68,23 @@ proc report_metrics { when {include_erc true} } {
 
   puts ""
 }
+
+proc report_fmax { when } {
+  puts "report fmax at $when"
+  set time_unit [sta::unit_scale_abreviation "time"]
+  set slack_scale_factor 1
+  if {$time_unit == "p"} {
+    set slack_scale_factor 0.001
+  }
+
+  foreach clk [all_clocks] {
+    set clk_name [get_name $clk]
+    set clk_period [get_property $clk "period"]
+    report_checks -path_delay max -format full_clock_expanded -path_group $clk_name
+    set clk_slack [sta::time_sta_ui [sta::worst_slack_cmd "max"]]
+    set clk_fmax_period [expr $clk_period - $clk_slack]
+    set clk_normalized_period [expr $clk_fmax_period * $slack_scale_factor]
+    set clk_fmax [expr 1000.0 / $clk_normalized_period]
+    puts "fmax $clk_name [format %.2f $clk_fmax] Mhz"
+  }
+}

@@ -51,6 +51,7 @@ estimate_parasitics -global_routing
 
 source $env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "global route"
+report_fmax "global route"
 
 puts "\n=========================================================================="
 puts "check_antennas"

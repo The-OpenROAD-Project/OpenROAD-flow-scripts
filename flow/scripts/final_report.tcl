@@ -84,6 +84,7 @@ if {[info exist ::env(RCX_RULES)]} {
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "finish"
+report_fmax "finish"
 
 if {![info exists standalone] || $standalone} {
   exit
