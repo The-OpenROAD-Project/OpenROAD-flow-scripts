@@ -85,6 +85,11 @@ if {[info exist ::env(RCX_RULES)]} {
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "finish"
 
+# Save a final image if openroad is compiled with the gui
+if {[expr [llength [info procs save_image]] > 0]} {
+    save_image $::env(REPORTS_DIR)/final.webp
+}
+
 if {![info exists standalone] || $standalone} {
   exit
 }
