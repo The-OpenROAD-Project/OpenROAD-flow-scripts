@@ -92,6 +92,11 @@ export SYNTH_ARGS ?= -flatten
 # Global setting for Floorplan
 export PLACE_PINS_ARGS ?=
 
+# If we are running headless use offscreen rendering for save_image
+ifndef DISPLAY
+export QT_QPA_PLATFORM ?= offscreen
+endif
+
 # Global override Floorplan
 # export CORE_UTILIZATION := 30
 # export CORE_ASPECT_RATIO := 1
