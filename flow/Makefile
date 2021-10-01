@@ -34,6 +34,7 @@
 
 # DESIGN_CONFIG=./designs/gf12/aes/config.mk
 # DESIGN_CONFIG=./designs/gf12/ariane/config.mk
+# DESIGN_CONFIG=./designs/gf12/ca53/config.mk
 # DESIGN_CONFIG=./designs/gf12/coyote/config.mk
 # DESIGN_CONFIG=./designs/gf12/dynamic_node/config.mk
 # DESIGN_CONFIG=./designs/gf12/gcd/config.mk
