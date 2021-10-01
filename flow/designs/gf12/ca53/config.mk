@@ -32,8 +32,8 @@ export WRAP_LIBS = $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_128X32M2_FB1
 #export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12lp_1rf_lg8_w64_byte.gds2
 
 # These values must be multiples of placement site
-export DIE_AREA    = 0 0 1000 1000 
-export CORE_AREA   = 10 10 990 990 
-export PLACE_PINS_ARGS = -exclude left:0-600 exclude left: 970-1000 -exclude right:* -exclude top:* -exclude bottom:*
+export DIE_AREA    = 0 0 1400 1400 
+export CORE_AREA   = 10 10 1390 1390 
+export PLACE_PINS_ARGS = -exclude left:0-800 exclude left: 1350-1400 -exclude right:* -exclude top:* -exclude bottom:*
 
 export MACRO_WRAPPERS = $(dir $(DESIGN_CONFIG))/wrappers.tcl
