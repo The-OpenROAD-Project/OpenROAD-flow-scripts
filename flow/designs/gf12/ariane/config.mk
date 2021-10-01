@@ -1,7 +1,9 @@
 export DESIGN_NAME = ariane
 export PLATFORM    = gf12
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/ariane.sv2v_gf12.v
+export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/ariane.sv2v.v \
+						./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
+
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
 export WRAP_LEFS = $(PLATFORM_DIR)/lef/gf12lp_1rf_lg8_w64_byte.lef
