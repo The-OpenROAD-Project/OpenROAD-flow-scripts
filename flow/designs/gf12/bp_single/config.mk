@@ -64,3 +64,5 @@ export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.cfg
 export MACRO_BLOCKAGE_HALO = 25
 
 export DESIGN_TYPE = CHIP
+
+export POST_DETAIL_ROUTE = $(PLATFORM_DIR)/openRoad/post_detail_route.tcl
