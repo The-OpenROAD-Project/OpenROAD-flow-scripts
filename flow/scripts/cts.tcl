@@ -80,8 +80,15 @@ detailed_placement
 estimate_parasitics -placement
 
 puts "Repair hold violations..."
-if { [catch {repair_timing -hold }]} {
-  puts "hold utilization limit caught, continuing"
+if { [info exists ::env(HOLD_SLACK_MARGIN)] && $::env(HOLD_SLACK_MARGIN) > 0.0} {
+  puts "Hold repair with slack margin $::env(HOLD_SLACK_MARGIN)"
+  if { [catch {repair_timing -hold -slack_margin $::env(HOLD_SLACK_MARGIN}]} {
+    puts "hold utilization limit caught, continuing"
+  }
+} else {
+  if { [catch {repair_timing -hold}]} {
+    puts "hold utilization limit caught, continuing"
+  }
 }
 puts "Repair setup violations..."
 if { [catch {repair_timing -setup }]} {
