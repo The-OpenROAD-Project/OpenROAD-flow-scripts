@@ -42,22 +42,22 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -2.04,
+            "value": -2.05,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -2.04,
+            "value": -2.05,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 12814864,
+            "value": 12810445,
             "compare": "<="
         },
         {
             "field": "detailedroute__route__drc_errors__count",
-            "value": 25,
+            "value": 19,
             "compare": "=="
         },
         {
