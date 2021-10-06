@@ -66,10 +66,10 @@ export MACRO_BLOCKAGE_HALO = 25
 export DESIGN_TYPE = CHIP
 
 # set all clock uncertainty to 350, for OR to use in cts and repair_timing
-export POST_FLOORPLAN_UNCERTAINTY_PS    = 350
+export POST_FLOORPLAN_UNCERTAINTY_PS    = 300
 
 # set all clock uncertainty back to 50, after routing
-export POST_DETAIL_ROUTE_UNCERTAINTY_PS = 50
+export POST_DETAIL_ROUTE_UNCERTAINTY_PS = 0
 
 export POST_DETAIL_ROUTE_TCL = $(PLATFORM_DIR)/openRoad/post_detail_route.tcl
 export POST_FLOORPLAN_TCL    = $(PLATFORM_DIR)/openRoad/post_floorplan.tcl
