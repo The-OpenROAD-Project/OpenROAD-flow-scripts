@@ -5,7 +5,7 @@ export PLATFORM    = gf12
 export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.sv2v.v \
                        $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
-export CACHED_NETLIST    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth.v
+export CACHED_NETLIST    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_don_abc_script.v
 export CACHED_REPORTS    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_stat.txt \
                            $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_check.txt
 
@@ -64,3 +64,12 @@ export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.cfg
 export MACRO_BLOCKAGE_HALO = 25
 
 export DESIGN_TYPE = CHIP
+
+# set all clock uncertainty to 350, for OR to use in cts and repair_timing
+export POST_FLOORPLAN_UNCERTAINTY_PS    = 300
+
+# set all clock uncertainty back to 50, after routing
+export POST_DETAIL_ROUTE_UNCERTAINTY_PS = 0
+
+export POST_DETAIL_ROUTE_TCL = $(PLATFORM_DIR)/openRoad/post_detail_route.tcl
+export POST_FLOORPLAN_TCL    = $(PLATFORM_DIR)/openRoad/post_floorplan.tcl

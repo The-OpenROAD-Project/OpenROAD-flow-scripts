@@ -60,6 +60,12 @@ detailed_route -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
                {*}$additional_args
 
 write_def $::env(RESULTS_DIR)/5_route.def
+
+# post routing user TCL script hook
+if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
+  source $::env(POST_DETAIL_ROUTE_TCL)
+}
+
 if {![info exists standalone] || $standalone} {
   exit
 }
