@@ -3,7 +3,7 @@
 	url = ../yosys.git
 [submodule "tools/OpenROAD"]
 	path = tools/OpenROAD
-	url = ../OpenROAD.git
+	url = https://github.com/jjcherry56/OpenROAD.git
 [submodule "tools/LSOracle"]
 	path = tools/LSOracle
 	url = https://github.com/The-OpenROAD-Project/LSOracle.git
