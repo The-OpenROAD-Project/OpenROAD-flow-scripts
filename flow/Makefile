@@ -237,6 +237,7 @@ endif
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
+OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
 YOSYS_CMD               ?= $(shell command -v yosys)
 ifeq ($(YOSYS_CMD),)
@@ -720,7 +721,7 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): kl
 gui_final: gui_6_final.def
 
 $(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
-	DEF_FILE=$(RESULTS_DIR)/$* $(OPENROAD_NO_EXIT_CMD) -gui $(SCRIPTS_DIR)/gui.tcl
+	DEF_FILE=$(RESULTS_DIR)/$* $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/gui.tcl
 
 # Utilities
 #-------------------------------------------------------------------------------
