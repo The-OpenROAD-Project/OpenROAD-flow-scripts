@@ -16,6 +16,6 @@ export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/
 export DIE_AREA    = 0 0 1551.16 1345.4
 export CORE_AREA   = 9.5 9.8 1540.71 1334.2
 
-export PLACE_DENSITY = 0.15
+export PLACE_DENSITY = 0.17
 
-export MACRO_PLACE_HALO ?= 25.4 18.12
+export MACRO_PLACE_HALO ?= 36.4 40.74
