@@ -96,7 +96,7 @@ if { [catch {repair_timing -setup }]} {
 }
 
 detailed_placement
-check_placement
+check_placement -verbose
 
 report_metrics "cts final"
 
