@@ -27,7 +27,7 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -34.0,
+            "value": -33.63,
             "compare": ">="
         },
         {
@@ -62,7 +62,7 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -17.0,
+            "value": 0.0,
             "compare": ">="
         },
         {
