@@ -14,7 +14,6 @@ else:
 
 okFile = 'metadata-base-ok.json'
 outFile = 'rules.json'
-errors = 0
 rules = list()
 
 if isfile(okFile):
@@ -151,6 +150,10 @@ if len(periodList) != 1:
 period = periodList[0]
 
 for field, option in metrics.items():
+    if field not in data.keys():
+        print(f'[ERROR] Metric {field} not found in metrics file: {okFile}.')
+        sys.exit(1)
+
     value = data[field]
 
     if isinstance(value, str):
@@ -196,4 +199,3 @@ finalRules['rules'] = rules
 with open(outFile, 'w') as f:
     print('[INFO] writing', abspath(outFile))
     json.dump(finalRules, f, indent=4)
-sys.exit(errors)
