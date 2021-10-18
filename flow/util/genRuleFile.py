@@ -171,12 +171,8 @@ for field, option in metrics.items():
             customThreshold = 0
             customValue = option['customThreshold']
         if option['usePeriod']:
-            if value >= 0:
-                # value is positive, allow degradation up to period with pad
-                value = - period * option['padding'] / 100
-            else:
-                # value is negative, use current value - pad
-                value -= period * option['padding'] / 100
+            value = value - period * option['padding'] / 100
+            value = min(value, 0)
         elif value <= customThreshold:
             value = customValue
         else:
