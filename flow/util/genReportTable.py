@@ -95,7 +95,10 @@ def getDiff(metric, gold, run, rules):
             if not op(run, value):
                 style = 'red'
         if diff != 0:
-            diff = '{:+.2f} ({})'.format(diff, percentage)
+            if abs(diff) < 0.01:
+                diff = '{:+.2} ({})'.format(diff, percentage)
+            else:
+                diff = '{:+.2f} ({})'.format(diff, percentage)
     return diff, style
 
 
