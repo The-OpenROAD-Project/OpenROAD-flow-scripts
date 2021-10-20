@@ -74,30 +74,6 @@
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
-# Enables hierarchical yosys
-export SYNTH_HIERARCHICAL ?= 0
-export SYNTH_STOP_MODULE_SCRIPT = $(OBJECTS_DIR)/mark_hier_stop_modules.tcl
-ifeq ($(SYNTH_HIERARCHICAL), 1)
-export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
-export MAX_UNGROUP_SIZE ?= 0
-endif
-# Enables Re-synthesis for area reclaim
-export RESYNTH_AREA_RECOVER ?= 0
-export RESYNTH_TIMING_RECOVER ?= 0
-export ABC_AREA ?= 0
-
-# Global setting for Synthesis
-export SYNTH_ARGS ?= -flatten
-
-# Global setting for Floorplan
-export PLACE_PINS_ARGS ?=
-
-# Global override Floorplan
-# export CORE_UTILIZATION := 30
-# export CORE_ASPECT_RATIO := 1
-# export CORE_MARGIN := 4
-
-
 # ==============================================================================
 #  ____  _____ _____ _   _ ____
 # / ___|| ____|_   _| | | |  _ \
@@ -155,6 +131,24 @@ endif
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
+
+# Enables hierarchical yosys
+export SYNTH_HIERARCHICAL ?= 1
+export SYNTH_STOP_MODULE_SCRIPT = $(OBJECTS_DIR)/mark_hier_stop_modules.tcl
+ifeq ($(SYNTH_HIERARCHICAL), 1)
+export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
+export MAX_UNGROUP_SIZE ?= 100
+endif
+# Enables Re-synthesis for area reclaim
+export RESYNTH_AREA_RECOVER ?= 0
+export RESYNTH_TIMING_RECOVER ?= 0
+export ABC_AREA ?= 0
+
+# Global setting for Synthesis
+export SYNTH_ARGS ?= -flatten
+
+# Global setting for Floorplan
+export PLACE_PINS_ARGS ?=
 
 export FLOW_VARIANT ?= base
 
