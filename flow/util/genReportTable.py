@@ -30,6 +30,8 @@ version
 # list of metrics that should be considered green if they increase
 # all other metrics are considered better if they decrease in value
 higherIsBetter = re.compile(r'''
+__ws |
+__tns
 ''', re.VERBOSE | re.IGNORECASE)
 
 
