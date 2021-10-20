@@ -78,23 +78,15 @@ def getDiff(metric, gold, run, rules):
     diff = '-'
     style = 'no_change'
     if isNumber:
-        run = abs(run)
-        gold = abs(gold)
         diff = run - gold
         if gold != 0:
-            percentage = '{:+.2f}%'.format(diff / gold * 100)
+            percentage = '{:.2f}%'.format(abs(diff / gold) * 100)
         else:
             percentage = '#DIV/0!'
-        if re.search(higherIsBetter, metric):
-            if diff < 0:
-                style = 'green'
-            elif diff > 0:
-                style = 'orange'
-        else:
-            if diff < 0:
-                style = 'orange'
-            elif diff > 0:
-                style = 'green'
+        if run > gold:
+            style = 'green' if re.search(higherIsBetter, metric) else 'orange'
+        elif gold > run:
+            style = 'orange' if re.search(higherIsBetter, metric) else 'green'
         for rule in rules:
             if metric != rule['field']:
                 continue
