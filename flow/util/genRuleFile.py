@@ -123,7 +123,7 @@ metrics = {
         'padding': 0,
         'roundValue': True,
         'customThreshold': 0,
-        'compare': '==',
+        'compare': '<=',
     },
     # finish
     'finish__timing__setup__ws': {
