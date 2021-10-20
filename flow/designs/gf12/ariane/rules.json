@@ -27,7 +27,7 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -200.0,
+            "value": -198.03,
             "compare": ">="
         },
         {
@@ -42,12 +42,12 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -100.0,
+            "value": -30.16,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -100.0,
+            "value": -30.16,
             "compare": ">="
         },
         {
@@ -58,11 +58,11 @@
         {
             "field": "detailedroute__route__drc_errors__count",
             "value": 0,
-            "compare": "=="
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -100.0,
+            "value": 0.0,
             "compare": ">="
         },
         {

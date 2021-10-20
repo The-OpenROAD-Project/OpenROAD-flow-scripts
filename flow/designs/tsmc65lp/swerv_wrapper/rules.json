@@ -32,17 +32,17 @@
         },
         {
             "field": "cts__timing__setup__ws__prerepair",
-            "value": -5.48,
+            "value": -3.14,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__postrepair",
-            "value": -5.48,
+            "value": -3.14,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -1.08,
+            "value": -0.74,
             "compare": ">="
         },
         {
@@ -53,7 +53,7 @@
         {
             "field": "detailedroute__route__drc_errors__count",
             "value": 0,
-            "compare": "=="
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",

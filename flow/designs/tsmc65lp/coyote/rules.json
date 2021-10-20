@@ -42,12 +42,12 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -1.28,
+            "value": -1.06,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -1.28,
+            "value": -1.06,
             "compare": ">="
         },
         {
@@ -58,7 +58,7 @@
         {
             "field": "detailedroute__route__drc_errors__count",
             "value": 0,
-            "compare": "=="
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",

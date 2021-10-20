@@ -27,7 +27,7 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -130.0,
+            "value": -125.1,
             "compare": ">="
         },
         {
@@ -58,11 +58,11 @@
         {
             "field": "detailedroute__route__drc_errors__count",
             "value": 0,
-            "compare": "=="
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -65.0,
+            "value": -3.39,
             "compare": ">="
         },
         {

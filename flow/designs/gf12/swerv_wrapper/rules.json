@@ -27,17 +27,17 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -180.0,
+            "value": -126.11,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__prerepair",
-            "value": -180.0,
+            "value": -152.0,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__postrepair",
-            "value": -180.0,
+            "value": -120.87,
             "compare": ">="
         },
         {
@@ -53,11 +53,11 @@
         {
             "field": "detailedroute__route__drc_errors__count",
             "value": 0,
-            "compare": "=="
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -90.0,
+            "value": 0.0,
             "compare": ">="
         },
         {
