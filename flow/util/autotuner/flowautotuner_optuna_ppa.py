@@ -16,15 +16,27 @@ import re
 import subprocess
 
 from ray import tune
+from ray.tune import Stopper
 from ray.tune.suggest import ConcurrencyLimiter
 from ray.tune.schedulers import AsyncHyperBandScheduler
-from ray.tune.suggest.hyperopt import HyperOptSearch
+from ray.tune.suggest.optuna import OptunaSearch
 
 # Global Variables
 autotunerPath = "util/autotuner"
 
 # User-defined evaluation function
 # It can change in any form to minimize the score (return value)
+class TimeStopper(Stopper):
+    def __init__(self):
+        self._start = time.time()
+        self._deadline = 63966
+        self.stop_all
+
+    def __call__(self, trial_id, result):
+        return False
+
+    def stop_all(self):
+        return time.time() - self._start > self._deadline
 
 
 # Collects metrics to evalute the user-defined objective function.
@@ -420,12 +432,12 @@ if __name__ == "__main__":
         'LAYER_ADJUST': 0.5,
         'PLACE_DENSITY_LB_ADDON': 0.04,
         'FLATTEN': 1,
-        'PINS_DISTANCE': 1,
+        'PINS_DISTANCE': 2,
         'CTS_CLUSTER_SIZE': 30,
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-ibex': [{
-        'CLK_PERIOD': 2000,
+        'CLK_PERIOD': 6000,
         'CORE_UTIL': 25,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -434,12 +446,12 @@ if __name__ == "__main__":
         'LAYER_ADJUST': 0.5,
         'PLACE_DENSITY_LB_ADDON': 0.04,
         'FLATTEN': 1,
-        'PINS_DISTANCE': 1,
+        'PINS_DISTANCE': 2,
         'CTS_CLUSTER_SIZE': 30,
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-jpeg': [{
-        'CLK_PERIOD': 1200,
+        'CLK_PERIOD': 2200,
         'CORE_UTIL': 30,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -453,7 +465,7 @@ if __name__ == "__main__":
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-gcd': [{
-        'CLK_PERIOD': 400,
+        'CLK_PERIOD': 2000,
         'CORE_UTIL': 5,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -495,11 +507,10 @@ if __name__ == "__main__":
     #     "layers": (ValueType.GRID, [4, 8, 16])
     # }
 
-    algo = HyperOptSearch(points_to_evaluate=current_best_params)
-    #algo = HyperOptSearch()
-
+    algo = OptunaSearch(points_to_evaluate=current_best_params, seed=123)
     # User-defined concurrent #runs
     algo = ConcurrencyLimiter(algo, max_concurrent=args.num_jobs)
+
 
     scheduler = AsyncHyperBandScheduler()
 
@@ -512,6 +523,7 @@ if __name__ == "__main__":
         scheduler=scheduler,
         num_samples=num_samples,
         config=config_dict,
+        stop=TimeStopper(),
         local_dir="%s" % (resultsDir)
     )
     print("Best config found: ", analysis.best_config)

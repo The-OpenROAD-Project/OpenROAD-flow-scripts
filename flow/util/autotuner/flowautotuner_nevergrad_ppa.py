@@ -16,12 +16,26 @@ import re
 import subprocess
 
 from ray import tune
+from ray.tune import Stopper
 from ray.tune.suggest import ConcurrencyLimiter
 from ray.tune.schedulers import AsyncHyperBandScheduler
-from ray.tune.suggest.hyperopt import HyperOptSearch
+from ray.tune.suggest.nevergrad import NevergradSearch
 
 # Global Variables
 autotunerPath = "util/autotuner"
+
+
+class TimeStopper(Stopper):
+    def __init__(self):
+        self._start = time.time()
+        self._deadline = 63966
+        self.stop_all
+
+    def __call__(self, trial_id, result):
+        return False
+
+    def stop_all(self):
+        return time.time() - self._start > self._deadline
 
 # User-defined evaluation function
 # It can change in any form to minimize the score (return value)
@@ -204,7 +218,7 @@ def easy_objective(config):
     runDir = os.getcwd()
     # Hyperparameters
     #clkPeriod = config["CLK_PERIOD"]
-    #coreUtil = config["CORE_UTIL"]
+    coreUtil = config["CORE_UTIL"]
     aspectRatio = config["ASPECT_RATIO"]
     coreDieMargin = config["CORE_DIE_MARGIN"]
     gpPad, dpPad, layerAdjust = config["GP_PAD"], config["DP_PAD"], config["LAYER_ADJUST"]
@@ -237,7 +251,7 @@ def easy_objective(config):
     # read generated metrics.json and parse Success / Fail, WNS, Wirelength
     # and #DRC
 
-    clkPeriod, ws, wl, ndrc, totalPower, coreUtil, finalUtil = read_metrics(
+    clkPeriod, ws, wl, ndrc, totalPower, Util, finalUtil = read_metrics(
         '%s/metrics.json' %
         runDir)
 
@@ -281,7 +295,7 @@ def read_config():
 
         # This means the param is constant.
         if config_min == config_max:
-            config_dict[key] = config_min
+            config_dict[key] = tune.choice([config_min])
             continue
 
         print(key, config_min, config_max, config_type)
@@ -300,6 +314,7 @@ def read_config():
 
 if __name__ == "__main__":
     import argparse
+    import nevergrad as ng
     cwd = os.getcwd()
 
     parser = argparse.ArgumentParser()
@@ -420,12 +435,12 @@ if __name__ == "__main__":
         'LAYER_ADJUST': 0.5,
         'PLACE_DENSITY_LB_ADDON': 0.04,
         'FLATTEN': 1,
-        'PINS_DISTANCE': 1,
+        'PINS_DISTANCE': 2,
         'CTS_CLUSTER_SIZE': 30,
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-ibex': [{
-        'CLK_PERIOD': 2000,
+        'CLK_PERIOD': 6000,
         'CORE_UTIL': 25,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -434,12 +449,12 @@ if __name__ == "__main__":
         'LAYER_ADJUST': 0.5,
         'PLACE_DENSITY_LB_ADDON': 0.04,
         'FLATTEN': 1,
-        'PINS_DISTANCE': 1,
+        'PINS_DISTANCE': 2,
         'CTS_CLUSTER_SIZE': 30,
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-jpeg': [{
-        'CLK_PERIOD': 1200,
+        'CLK_PERIOD': 2200,
         'CORE_UTIL': 30,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -453,7 +468,7 @@ if __name__ == "__main__":
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-gcd': [{
-        'CLK_PERIOD': 400,
+        'CLK_PERIOD': 2000,
         'CORE_UTIL': 5,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -495,7 +510,14 @@ if __name__ == "__main__":
     #     "layers": (ValueType.GRID, [4, 8, 16])
     # }
 
-    algo = HyperOptSearch(points_to_evaluate=current_best_params)
+    # OnePlusOne is a simple robust method for continuous parameters with num_workers < 8.
+    #algo = NevergradSearch(points_to_evaluate=current_best_params, optimizer=ng.optimizers.OnePlusOne)
+
+    # TwoPointsDE is excellent in many cases, including very high num_workers.
+    #algo = NevergradSearch(points_to_evaluate=current_best_params, optimizer=ng.optimizers.registry["TwoPointsDE"])
+
+    # PortfolioDiscreteOnePlusOne is excellent in discrete settings of mixed settings when high precision on parameters is not relevant; it’s possibly a good choice for hyperparameter choice.
+    algo = NevergradSearch(points_to_evaluate=current_best_params, optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"])
     #algo = HyperOptSearch()
 
     # User-defined concurrent #runs
@@ -512,6 +534,7 @@ if __name__ == "__main__":
         scheduler=scheduler,
         num_samples=num_samples,
         config=config_dict,
+        stop=TimeStopper(),
         local_dir="%s" % (resultsDir)
     )
     print("Best config found: ", analysis.best_config)

@@ -14,18 +14,31 @@ import json
 import os
 import re
 import subprocess
+import numpy as np
 
 from ray import tune
+from ray.tune import Stopper
 from ray.tune.suggest import ConcurrencyLimiter
 from ray.tune.schedulers import AsyncHyperBandScheduler
-from ray.tune.suggest.hyperopt import HyperOptSearch
+from ray.tune.suggest.ax import AxSearch
+from ax.service.ax_client import AxClient
 
 # Global Variables
 autotunerPath = "util/autotuner"
 
 # User-defined evaluation function
 # It can change in any form to minimize the score (return value)
+class TimeStopper(Stopper):
+    def __init__(self):
+        self._start = time.time()
+        self._deadline = 63966
+        self.stop_all
 
+    def __call__(self, trial_id, result):
+        return False
+
+    def stop_all(self):
+        return time.time() - self._start > self._deadline
 
 # Collects metrics to evalute the user-defined objective function.
 def read_metrics(metricsPath):
@@ -200,7 +213,7 @@ def parse_massive(config):
     return fileName
 
 
-def easy_objective(config):
+def easy_objective(config, checkpoint_dir=None):
     runDir = os.getcwd()
     # Hyperparameters
     #clkPeriod = config["CLK_PERIOD"]
@@ -214,6 +227,15 @@ def easy_objective(config):
     ctsClusterSize = config["CTS_CLUSTER_SIZE"]
     ctsClusterDia = config["CTS_CLUSTER_DIAMETER"]
     grOverflow = config["GR_OVERFLOW"]
+
+    minimum = 0.0
+    start = 0
+
+    if checkpoint_dir:
+        with open(os.path.join(checkpoint_dir, "checkpoint")) as f:
+            state = json.loads(f.read())
+            start = state["step"] 
+
 
     # parse trial config hyperparameters to genMassive.py script
     # Newly generated genMassive.py scripts are located in
@@ -254,6 +276,12 @@ def easy_objective(config):
             #intermediate_score = evaluation_fn_effClkPeriod(step, clkPeriod, ws, ndrc)
             intermediate_score = evaluation_fn_ppa_improv(
                 step, clkPeriod, ws, ndrc, totalPower, coreUtil)
+        # Obtain a checkpoint directory
+        with tune.checkpoint_dir(step=step) as checkpoint_dir:
+            path = os.path.join(checkpoint_dir, "checkpoint")
+            with open(path, "w") as f:
+                f.write(json.dumps({"step": step}))
+
 
         # Feed the score back back to Tune.
         tune.report(minimum=intermediate_score)
@@ -267,11 +295,12 @@ def read_config():
     # step value is used for quantized type (e.g., quniform). Otherwise, write 0.
     # When min==max, it means the constant value
 
-    config_dict = {}
     # with open('./%s/config_fmax.json' % autotunerPath) as f:
     with open('./%s/config_fmax_%s-%s.json' % (autotunerPath, args.platform, args.design)) as f:
         data = json.load(f)
+    config = []
     for key, value in data.items():
+        config_dict = {}
         config_type = value.get("type")
         config_minmax = value.get("minmax")
         config_step = value.get("step")
@@ -279,23 +308,41 @@ def read_config():
         config_min = config_minmax[0]
         config_max = config_minmax[1]
 
-        # This means the param is constant.
-        if config_min == config_max:
-            config_dict[key] = config_min
-            continue
+        config_dict["name"] = key
 
+        # This means the param is constant.
         print(key, config_min, config_max, config_type)
+        if config_min == config_max:
+            config_dict["type"] = "fixed"
+            config_dict["value"] = config_min
+            config.append(config_dict)
+            continue
+	
         if config_type == 'int' and config_step == 1:
-            config_dict[key] = tune.randint(config_min, config_max)
+            config_dict["type"] = "range"
+            config_dict["bounds"] = [config_min, config_max]
+            config_dict["value_type"] = "int"
+            config.append(config_dict)
+            continue
         elif config_type == 'int' and config_step != 1:
-            config_dict[key] = tune.qrandint(
-                config_min, config_max, config_step)
+            config_dict["type"] = "choice"
+            config_dict["values"] = np.arange(config_min, config_max, config_step)
+            config_dict["value_type"] = "int"
+            config.append(config_dict)
+            continue
         elif config_type == 'float' and config_step != 0:
-            config_dict[key] = tune.quniform(
-                config_min, config_max, config_step)
+            config_dict["type"] = "choice"
+            config_dict["values"] = np.arange(config_min, config_max, config_step)
+            config_dict["value_type"] = "float"
+            config.append(config_dict)
+            continue
         elif config_type == 'float' and config_step == 0:
-            config_dict[key] = tune.uniform(config_min, config_max)
-    return config_dict
+            config_dict["type"] = "range"
+            config_dict["bounds"] = [config_min, config_max]
+            config_dict["value_type"] = "float"
+            config.append(config_dict)
+            continue
+    return config
 
 
 if __name__ == "__main__":
@@ -420,12 +467,12 @@ if __name__ == "__main__":
         'LAYER_ADJUST': 0.5,
         'PLACE_DENSITY_LB_ADDON': 0.04,
         'FLATTEN': 1,
-        'PINS_DISTANCE': 1,
+        'PINS_DISTANCE': 2,
         'CTS_CLUSTER_SIZE': 30,
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-ibex': [{
-        'CLK_PERIOD': 2000,
+        'CLK_PERIOD': 6000,
         'CORE_UTIL': 25,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -434,12 +481,12 @@ if __name__ == "__main__":
         'LAYER_ADJUST': 0.5,
         'PLACE_DENSITY_LB_ADDON': 0.04,
         'FLATTEN': 1,
-        'PINS_DISTANCE': 1,
+        'PINS_DISTANCE': 2,
         'CTS_CLUSTER_SIZE': 30,
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-jpeg': [{
-        'CLK_PERIOD': 1200,
+        'CLK_PERIOD': 2200,
         'CORE_UTIL': 30,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -453,7 +500,7 @@ if __name__ == "__main__":
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-gcd': [{
-        'CLK_PERIOD': 400,
+        'CLK_PERIOD': 2000,
         'CORE_UTIL': 5,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -495,23 +542,28 @@ if __name__ == "__main__":
     #     "layers": (ValueType.GRID, [4, 8, 16])
     # }
 
-    algo = HyperOptSearch(points_to_evaluate=current_best_params)
-    #algo = HyperOptSearch()
+    ax = AxClient(enforce_sequential_optimization=False)
+    ax.create_experiment(
+        name="%s-%s-%s" % (args.platform, args.design, args.exp_name),
+        parameters=config_dict,
+        objective_name="minimum",
+        minimize=True,
+    )
+
+    algo = AxSearch(ax_client=ax, points_to_evaluate=current_best_params, max_concurrent=args.num_jobs)
 
     # User-defined concurrent #runs
-    algo = ConcurrencyLimiter(algo, max_concurrent=args.num_jobs)
+    #algo = ConcurrencyLimiter(algo, max_concurrent=args.num_jobs)
 
     scheduler = AsyncHyperBandScheduler()
 
     analysis = tune.run(
         easy_objective,
-        metric="minimum",
-        mode="min",
         search_alg=algo,
         name="%s-%s-%s" % (args.platform, args.design, args.exp_name),
-        scheduler=scheduler,
+        resources_per_trial={"cpu": 4},
         num_samples=num_samples,
-        config=config_dict,
+        stop=TimeStopper(),
         local_dir="%s" % (resultsDir)
     )
     print("Best config found: ", analysis.best_config)

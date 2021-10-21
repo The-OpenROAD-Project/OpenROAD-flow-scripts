@@ -8,17 +8,17 @@
 # User can decide the input parameter space by modifying 'config.json'.
 # run log files will be stored in util/autotuner/runs and util/autotuner/results
 # -------------------------------------------------------------------------------
-
+import numpy as np
 import time
 import json
 import os
 import re
 import subprocess
+import random
 
 from ray import tune
 from ray.tune.suggest import ConcurrencyLimiter
-from ray.tune.schedulers import AsyncHyperBandScheduler
-from ray.tune.suggest.hyperopt import HyperOptSearch
+from ray.tune.schedulers import PopulationBasedTraining
 
 # Global Variables
 autotunerPath = "util/autotuner"
@@ -31,8 +31,9 @@ autotunerPath = "util/autotuner"
 def read_metrics(metricsPath):
     with open(metricsPath) as f:
         data = json.load(f)
+    clkPeriod = 9999999
     for key, value in data.items():
-        if key == 'constraints':
+        if key == 'constraints' and len(value.get('clocks__details')) > 0:
             clkPeriod = float(value.get('clocks__details')[0].split()[1])
         if key == 'floorplan':
             coreUtil = value.get('design__instance__design__util')
@@ -200,7 +201,7 @@ def parse_massive(config):
     return fileName
 
 
-def easy_objective(config):
+def easy_objective(config, checkpoint_dir=None):
     runDir = os.getcwd()
     # Hyperparameters
     #clkPeriod = config["CLK_PERIOD"]
@@ -214,6 +215,14 @@ def easy_objective(config):
     ctsClusterSize = config["CTS_CLUSTER_SIZE"]
     ctsClusterDia = config["CTS_CLUSTER_DIAMETER"]
     grOverflow = config["GR_OVERFLOW"]
+
+    minimum = 0.0
+    start = 0
+
+    if checkpoint_dir:
+        with open(os.path.join(checkpoint_dir, "checkpoint")) as f:
+            state = json.loads(f.read())
+            start = state["step"] + 1
 
     # parse trial config hyperparameters to genMassive.py script
     # Newly generated genMassive.py scripts are located in
@@ -255,6 +264,13 @@ def easy_objective(config):
             intermediate_score = evaluation_fn_ppa_improv(
                 step, clkPeriod, ws, ndrc, totalPower, coreUtil)
 
+        # Obtain a checkpoint directory
+        with tune.checkpoint_dir(step=step) as checkpoint_dir:
+            path = os.path.join(checkpoint_dir, "checkpoint")
+            with open(path, "w") as f:
+                f.write(json.dumps({"step": step}))
+
+
         # Feed the score back back to Tune.
         tune.report(minimum=intermediate_score)
 
@@ -281,7 +297,7 @@ def read_config():
 
         # This means the param is constant.
         if config_min == config_max:
-            config_dict[key] = config_min
+            config_dict[key] = [config_min]
             continue
 
         print(key, config_min, config_max, config_type)
@@ -420,12 +436,12 @@ if __name__ == "__main__":
         'LAYER_ADJUST': 0.5,
         'PLACE_DENSITY_LB_ADDON': 0.04,
         'FLATTEN': 1,
-        'PINS_DISTANCE': 1,
+        'PINS_DISTANCE': 2,
         'CTS_CLUSTER_SIZE': 30,
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-ibex': [{
-        'CLK_PERIOD': 2000,
+        'CLK_PERIOD': 6000,
         'CORE_UTIL': 25,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -434,12 +450,12 @@ if __name__ == "__main__":
         'LAYER_ADJUST': 0.5,
         'PLACE_DENSITY_LB_ADDON': 0.04,
         'FLATTEN': 1,
-        'PINS_DISTANCE': 1,
+        'PINS_DISTANCE': 2,
         'CTS_CLUSTER_SIZE': 30,
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-jpeg': [{
-        'CLK_PERIOD': 1200,
+        'CLK_PERIOD': 2200,
         'CORE_UTIL': 30,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -453,7 +469,7 @@ if __name__ == "__main__":
         'CTS_CLUSTER_DIAMETER': 100,
         'GR_OVERFLOW': 1,
     }], 'asap7-gcd': [{
-        'CLK_PERIOD': 400,
+        'CLK_PERIOD': 2000,
         'CORE_UTIL': 5,
         'ASPECT_RATIO': 1.0,
         'CORE_DIE_MARGIN': 2,
@@ -476,6 +492,8 @@ if __name__ == "__main__":
         ray.util.connect(args.server_address)
 
     num_samples = 10 if args.smoke_test else args.num_trials
+    #num_samples = num_samples//25
+    num_samples = num_samples
 
     resultsDir = "%s/%s/results" % (cwd, autotunerPath)
 
@@ -485,33 +503,30 @@ if __name__ == "__main__":
     config_dict = read_config()
     print(config_dict)
 
-    # Optional: Pass the parameter space yourself
-    # space = {
-    #     # for continuous dimensions: (continuous, search_range, precision)
-    #     "height": (ValueType.CONTINUOUS, [-10, 10], 1e-2),
-    #     # for discrete dimensions: (discrete, search_range, has_order)
-    #     "width": (ValueType.DISCRETE, [0, 10], True)
-    #     # for grid dimensions: (grid, grid_list)
-    #     "layers": (ValueType.GRID, [4, 8, 16])
-    # }
-
-    algo = HyperOptSearch(points_to_evaluate=current_best_params)
-    #algo = HyperOptSearch()
 
     # User-defined concurrent #runs
-    algo = ConcurrencyLimiter(algo, max_concurrent=args.num_jobs)
+    #algo = ConcurrencyLimiter(algo, max_concurrent=args.num_jobs)
 
-    scheduler = AsyncHyperBandScheduler()
+
+    algo = PopulationBasedTraining(
+        time_attr="training_iteration",
+        perturbation_interval=25,
+        hyperparam_mutations=config_dict,
+        synch=False
+        )
 
     analysis = tune.run(
         easy_objective,
         metric="minimum",
         mode="min",
-        search_alg=algo,
         name="%s-%s-%s" % (args.platform, args.design, args.exp_name),
-        scheduler=scheduler,
+        scheduler=algo,
         num_samples=num_samples,
-        config=config_dict,
+        stop={
+            "training_iteration": 100,
+        },
+        fail_fast=True,
+        resources_per_trial={"cpu": 4},
         local_dir="%s" % (resultsDir)
     )
     print("Best config found: ", analysis.best_config)
