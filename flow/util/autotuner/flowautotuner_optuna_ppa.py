@@ -26,6 +26,8 @@ autotunerPath = "util/autotuner"
 
 # User-defined evaluation function
 # It can change in any form to minimize the score (return value)
+
+
 class TimeStopper(Stopper):
     def __init__(self):
         self._start = time.time()
@@ -510,7 +512,6 @@ if __name__ == "__main__":
     algo = OptunaSearch(points_to_evaluate=current_best_params, seed=123)
     # User-defined concurrent #runs
     algo = ConcurrencyLimiter(algo, max_concurrent=args.num_jobs)
-
 
     scheduler = AsyncHyperBandScheduler()
 

@@ -26,6 +26,8 @@ autotunerPath = "util/autotuner"
 
 # User-defined evaluation function
 # It can change in any form to minimize the score (return value)
+
+
 class TimeStopper(Stopper):
     def __init__(self):
         self._start = time.time()
@@ -509,7 +511,6 @@ if __name__ == "__main__":
 
     #algo = BasicVariantGenerator(points_to_evaluate=current_best_params, max_concurrent=args.num_jobs)
     algo = BasicVariantGenerator(max_concurrent=args.num_jobs)
-
 
     analysis = tune.run(
         easy_objective,

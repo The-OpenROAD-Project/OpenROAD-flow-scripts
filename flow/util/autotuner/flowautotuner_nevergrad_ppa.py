@@ -516,8 +516,12 @@ if __name__ == "__main__":
     # TwoPointsDE is excellent in many cases, including very high num_workers.
     #algo = NevergradSearch(points_to_evaluate=current_best_params, optimizer=ng.optimizers.registry["TwoPointsDE"])
 
-    # PortfolioDiscreteOnePlusOne is excellent in discrete settings of mixed settings when high precision on parameters is not relevant; it’s possibly a good choice for hyperparameter choice.
-    algo = NevergradSearch(points_to_evaluate=current_best_params, optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"])
+    # PortfolioDiscreteOnePlusOne is excellent in discrete settings of mixed
+    # settings when high precision on parameters is not relevant; it’s
+    # possibly a good choice for hyperparameter choice.
+    algo = NevergradSearch(
+        points_to_evaluate=current_best_params,
+        optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"])
     #algo = HyperOptSearch()
 
     # User-defined concurrent #runs

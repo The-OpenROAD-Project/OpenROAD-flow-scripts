@@ -28,6 +28,8 @@ autotunerPath = "util/autotuner"
 
 # User-defined evaluation function
 # It can change in any form to minimize the score (return value)
+
+
 class TimeStopper(Stopper):
     def __init__(self):
         self._start = time.time()
@@ -41,6 +43,8 @@ class TimeStopper(Stopper):
         return time.time() - self._start > self._deadline
 
 # Collects metrics to evalute the user-defined objective function.
+
+
 def read_metrics(metricsPath):
     with open(metricsPath) as f:
         data = json.load(f)
@@ -234,8 +238,7 @@ def easy_objective(config, checkpoint_dir=None):
     if checkpoint_dir:
         with open(os.path.join(checkpoint_dir, "checkpoint")) as f:
             state = json.loads(f.read())
-            start = state["step"] 
-
+            start = state["step"]
 
     # parse trial config hyperparameters to genMassive.py script
     # Newly generated genMassive.py scripts are located in
@@ -282,7 +285,6 @@ def easy_objective(config, checkpoint_dir=None):
             with open(path, "w") as f:
                 f.write(json.dumps({"step": step}))
 
-
         # Feed the score back back to Tune.
         tune.report(minimum=intermediate_score)
 
@@ -317,7 +319,7 @@ def read_config():
             config_dict["value"] = config_min
             config.append(config_dict)
             continue
-	
+
         if config_type == 'int' and config_step == 1:
             config_dict["type"] = "range"
             config_dict["bounds"] = [config_min, config_max]
@@ -326,13 +328,15 @@ def read_config():
             continue
         elif config_type == 'int' and config_step != 1:
             config_dict["type"] = "choice"
-            config_dict["values"] = np.arange(config_min, config_max, config_step)
+            config_dict["values"] = np.arange(
+                config_min, config_max, config_step)
             config_dict["value_type"] = "int"
             config.append(config_dict)
             continue
         elif config_type == 'float' and config_step != 0:
             config_dict["type"] = "choice"
-            config_dict["values"] = np.arange(config_min, config_max, config_step)
+            config_dict["values"] = np.arange(
+                config_min, config_max, config_step)
             config_dict["value_type"] = "float"
             config.append(config_dict)
             continue
@@ -550,7 +554,10 @@ if __name__ == "__main__":
         minimize=True,
     )
 
-    algo = AxSearch(ax_client=ax, points_to_evaluate=current_best_params, max_concurrent=args.num_jobs)
+    algo = AxSearch(
+        ax_client=ax,
+        points_to_evaluate=current_best_params,
+        max_concurrent=args.num_jobs)
 
     # User-defined concurrent #runs
     #algo = ConcurrencyLimiter(algo, max_concurrent=args.num_jobs)

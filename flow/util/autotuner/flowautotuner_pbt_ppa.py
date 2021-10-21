@@ -270,7 +270,6 @@ def easy_objective(config, checkpoint_dir=None):
             with open(path, "w") as f:
                 f.write(json.dumps({"step": step}))
 
-
         # Feed the score back back to Tune.
         tune.report(minimum=intermediate_score)
 
@@ -503,17 +502,15 @@ if __name__ == "__main__":
     config_dict = read_config()
     print(config_dict)
 
-
     # User-defined concurrent #runs
     #algo = ConcurrencyLimiter(algo, max_concurrent=args.num_jobs)
-
 
     algo = PopulationBasedTraining(
         time_attr="training_iteration",
         perturbation_interval=25,
         hyperparam_mutations=config_dict,
         synch=False
-        )
+    )
 
     analysis = tune.run(
         easy_objective,
