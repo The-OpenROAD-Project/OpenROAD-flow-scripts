@@ -52,7 +52,7 @@
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 434850,
+            "value": 440650,
             "compare": "<="
         },
         {

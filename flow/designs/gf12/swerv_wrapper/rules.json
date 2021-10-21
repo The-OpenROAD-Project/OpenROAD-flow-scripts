@@ -42,12 +42,12 @@
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -114.93,
+            "value": -110.78,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 2368430,
+            "value": 2351244,
             "compare": "<="
         },
         {
@@ -62,7 +62,7 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 182911,
+            "value": 182912,
             "compare": "<="
         }
     ]
