@@ -17,9 +17,9 @@ export ADDITIONAL_GDS = $(PLATFORM_DIR)/gds/gf12_1rf_lg11_w40_all.gds2 \
                         $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w22_all.gds2 \
                         $(PLATFORM_DIR)/gds/gf12_1rf_lg8_w34_all.gds2
 
-# These values must be multiples of placement site
-export DIE_AREA    = 0 0 980 780
-export CORE_AREA   = 2 2 978 778
-
-export PLACE_DENSITY = 0.25
+export DIE_AREA    = 0 0 702 542 
+export CORE_AREA   = 2 2 700 540 
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-10 -exclude bottom:400-700
+export MACRO_BLOCKAGE_HALO = 10 
+export PLACE_DENSITY = 0.40
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl

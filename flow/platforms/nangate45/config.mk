@@ -74,8 +74,8 @@ export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 export WIRE_RC_LAYER = metal3
 
 # Cell padding in SITE widths to ease rout-ability.  Applied to both sides
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 2
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 1
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 2
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 1
 #
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 1000

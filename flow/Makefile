@@ -33,6 +33,8 @@
 # DESIGN_CONFIG=./designs/tsmc65lp/vanilla5/config.mk
 
 # DESIGN_CONFIG=./designs/gf12/aes/config.mk
+# DESIGN_CONFIG=./designs/gf12/ariane/config.mk
+# DESIGN_CONFIG=./designs/gf12/ca53/config.mk
 # DESIGN_CONFIG=./designs/gf12/coyote/config.mk
 # DESIGN_CONFIG=./designs/gf12/dynamic_node/config.mk
 # DESIGN_CONFIG=./designs/gf12/gcd/config.mk
@@ -83,12 +85,19 @@ export MAX_UNGROUP_SIZE ?= 0
 endif
 # Enables Re-synthesis for area reclaim
 export RESYNTH_AREA_RECOVER ?= 0
+export RESYNTH_TIMING_RECOVER ?= 0
+export ABC_AREA ?= 0
 
 # Global setting for Synthesis
 export SYNTH_ARGS ?= -flatten
 
 # Global setting for Floorplan
 export PLACE_PINS_ARGS ?=
+
+# If we are running headless use offscreen rendering for save_image
+ifndef DISPLAY
+export QT_QPA_PLATFORM ?= offscreen
+endif
 
 # Global override Floorplan
 # export CORE_UTILIZATION := 30
@@ -115,8 +124,8 @@ SHELL          = /bin/bash
 .SHELLFLAGS    = -o pipefail -c
 
 #-------------------------------------------------------------------------------
-# Setup varialbles to point to root / head of the OpenROAD directory
-# - the following settings allowed user to point OpenRoad binaries to different
+# Setup variables to point to root / head of the OpenROAD directory
+# - the following settings allowed user to point OpenROAD binaries to different
 #   location
 # - default is current install / clone directory
 export FLOW_HOME ?= .
@@ -148,7 +157,7 @@ else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
 else ifneq ($(wildcard ../../$(PLATFORM)),)
   export PLATFORM_DIR = ../../$(PLATFORM)
 else
-  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found)
+  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
 endif
 
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
@@ -166,8 +175,8 @@ export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
 ifdef BLOCKS
-  $(info [INFO][FLOW] Hierarichal flow is invoked)
-  $(foreach block,$(BLOCKS),$(info following block is to be hardened :  ${block}))
+  $(info [INFO][FLOW] Invoked hierarchical flow.)
+  $(foreach block,$(BLOCKS),$(info Block ${block} needs to be hardened.))
   $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(block)/config.mk))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
   $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
@@ -207,6 +216,8 @@ ifneq ($(USE_LSORACLE),)
   YOSYS_FLAGS ?= -m $(LSORACLE_PLUGIN)
 endif
 
+YOSYS_FLAGS += -v 3
+
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
 TIME_CMD = /usr/bin/time -f "Elapsed time: %E[h:]min:sec. Average CPU: %P. Peak memory: %MKB."
@@ -218,7 +229,7 @@ endif
 # The following determine the executable location for each tool used by this flow.
 # Priority is given to
 #       1 user include path to the executable prior to running make
-#       2 user explicity set with variable in Makefile or command line
+#       2 user explicit set with variable in Makefile or command line
 OPENROAD_EXE            ?= $(shell command -v openroad)
 ifeq ($(OPENROAD_EXE),)
   OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
@@ -226,6 +237,7 @@ endif
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
+OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
 YOSYS_CMD               ?= $(shell command -v yosys)
 ifeq ($(YOSYS_CMD),)
@@ -257,17 +269,17 @@ else
 	SEAL_GDSOAS = $(SEAL_OAS)
 endif
 export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
- 
- 
-# Targets to harden Blocks in case of hierarchical flow is triggered  
-build_macros: $(BLOCK_LEFS) 
+
+
+# Targets to harden Blocks in case of hierarchical flow is triggered
+build_macros: $(BLOCK_LEFS)
 
 $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef: ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/${block}/config.mk))
 $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
 
-$(BLOCK_LEFS):   
+$(BLOCK_LEFS):
 	$(MAKE) DESIGN_CONFIG=$< generate_abstract
-      
+
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
 .PHONY: versions.txt
@@ -357,6 +369,7 @@ clean_synth:
 	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
 	rm -f  $(REPORTS_DIR)/synth_*
 	rm -f  $(LOG_DIR)/1_*
+	rm -f  $(SYNTH_STOP_MODULE_SCRIPT)
 	rm -rf _tmp_yosys-abc-*
 
 
@@ -371,17 +384,22 @@ floorplan: $(RESULTS_DIR)/2_floorplan.def \
            $(RESULTS_DIR)/2_floorplan.sdc
 # ==============================================================================
 
+ifneq ($(FOOTPRINT),)
+IS_CHIP = 1
+else ifneq ($(FOOTPRINT_TCL),)
+IS_CHIP = 1
+endif
 
 # STEP 1: Translate verilog to def
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE)
+$(RESULTS_DIR)/2_1_floorplan.def: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl -metrics $(LOG_DIR)/2_1_floorplan.json) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
 
 
 # STEP 2: IO Placement (random)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_2_floorplan_io.def: $(RESULTS_DIR)/2_1_floorplan.def $(IO_CONSTRAINTS)
-ifeq ($(FOOTPRINT),)
+ifndef IS_CHIP
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement_random.tcl -metrics $(LOG_DIR)/2_2_floorplan_io.json) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 else
 	cp $< $@
@@ -410,7 +428,7 @@ $(RESULTS_DIR)/2_5_floorplan_tapcell.def: $(RESULTS_DIR)/2_4_floorplan_macro.def
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_6_floorplan_pdn.def: $(RESULTS_DIR)/2_5_floorplan_tapcell.def $(PDN_CFG)
+$(RESULTS_DIR)/2_6_floorplan_pdn.def: $(RESULTS_DIR)/2_5_floorplan_tapcell.def $(PDN_CFG) $(PDN_TCL)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/pdn.tcl -metrics $(LOG_DIR)/2_6_pdn.json) 2>&1 | tee $(LOG_DIR)/2_6_pdn.log
 
 $(RESULTS_DIR)/2_floorplan.def: $(RESULTS_DIR)/2_6_floorplan_pdn.def
@@ -443,7 +461,7 @@ $(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2
 # STEP 2: IO placement (non-random)
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_2_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def $(IO_CONSTRAINTS)
-ifeq ($(FOOTPRINT),)
+ifndef IS_CHIP
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
 else
 	cp $< $@
@@ -661,7 +679,7 @@ clean_finish:
 	rm -rf $(REPORTS_DIR)/6_*.rpt
 	rm -f  $(LOG_DIR)/6_*
 
-	
+
 # ==============================================================================
 #  __  __ ___ ____   ____
 # |  \/  |_ _/ ___| / ___|
@@ -703,10 +721,10 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): kl
 gui_final: gui_6_final.def
 
 $(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
-	DEF_FILE=$(RESULTS_DIR)/$* $(OPENROAD_NO_EXIT_CMD) -gui $(SCRIPTS_DIR)/gui.tcl
+	DEF_FILE=$(RESULTS_DIR)/$* $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/gui.tcl
 
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
 export PRIVATE_DIR = ../../private_tool_scripts
--include $(PRIVATE_DIR)/util/utils.mk
+-include $(PRIVATE_DIR)/private.mk

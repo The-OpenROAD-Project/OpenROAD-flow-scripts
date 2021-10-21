@@ -271,6 +271,18 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
         cmdOutput = 'N/A'
     metrics_dict['run__flow__platform__commit'] = cmdOutput
     metrics_dict['run__flow__variant'] = flow_variant
+    extractTagFromFile('run__flow__platform__timing_units',
+                       metrics_dict,
+                       '^ time (\S+)',
+                       logPath + '/2_1_floorplan.log')
+    extractTagFromFile('run__flow__platform__power_units',
+                       metrics_dict,
+                       '^ power (\S+)',
+                       logPath + '/2_1_floorplan.log')
+    extractTagFromFile('run__flow__platform__distance_units',
+                       metrics_dict,
+                       '^ distance (\S+)',
+                       logPath + '/2_1_floorplan.log')
 
     # Synthesis
     # =========================================================================
@@ -437,7 +449,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     extractTagFromFile('detailedplace__design__violations__count',
                        metrics_dict,
                        '^\[INFO FLW-0012\] Placement violations (\S+).',
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_4_opendp.log', defaultNotFound=0)
 
     extractTagFromFile('detailedplace__timing__setup__tns',
                        metrics_dict,

@@ -64,6 +64,11 @@ if { [info exists ::env(MAKE_TRACKS)] } {
   source $::env(PLATFORM_DIR)/make_tracks.tcl
 }
 
+if {[info exists ::env(FOOTPRINT_TCL)]} {
+  source $::env(FOOTPRINT_TCL)
+  initialize_padring
+}
+
 # If wrappers defined replace macros with their wrapped version
 # # ----------------------------------------------------------------------------
 if {[info exists ::env(MACRO_WRAPPERS)]} {
@@ -85,6 +90,44 @@ if {[info exists ::env(MACRO_WRAPPERS)]} {
 # remove buffers inserted by yosys/abc
 remove_buffers
 
+##### Restructure for timing #########
+if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER) == 1 } {
+  repair_design
+  repair_timing
+  # pre restructure area/timing report (ideal clocks)
+  puts "Post synth-opt area"
+  report_design_area
+  report_worst_slack -min -digits 3
+  puts "Post synth-opt wns"
+  report_worst_slack -max -digits 3
+  puts "Post synth-opt tns"
+  report_tns -digits 3
+
+  write_verilog $::env(RESULTS_DIR)/2_pre_abc_timing.v
+  restructure -target timing -liberty_file $::env(DONT_USE_SC_LIB) \
+              -work_dir $::env(RESULTS_DIR)
+
+  write_verilog $::env(RESULTS_DIR)/2_post_abc_timing.v
+
+  # post restructure area/timing report (ideal clocks)
+  remove_buffers
+  repair_design
+  repair_timing
+
+  puts "Post restructure-opt wns"
+  report_worst_slack -max -digits 3
+  puts "Post restructure-opt tns"
+  report_tns -digits 3
+
+  # remove buffers inserted by optimization
+  remove_buffers
+
+
+}
+
+
+puts "Default units for flow"
+report_units
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "floorplan final" false
 
@@ -118,21 +161,17 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   puts "number instances after restructure is $num_instances"
   puts "Design Area after restructure"
   report_design_area
-
 }
 
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/2_1_floorplan.def
-  
-  # append ICeWall cover
-  if {[info exists ::env(FOOTPRINT)] && 
-      [ICeWall::is_footprint_flipchip] && 
-      [file exists [ICeWall::get_footprint_rdl_cover_file_name]]} {
-    exec sed -ie "/END SPECIALNETS/r[ICeWall::get_footprint_rdl_cover_file_name]" $::env(RESULTS_DIR)/2_1_floorplan.def
-  }
-
   write_verilog $::env(RESULTS_DIR)/2_floorplan.v
   write_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
+
+  # post floorplan user TCL script hook
+  if { [info exists ::env(POST_FLOORPLAN_TCL)] } {
+    source $::env(POST_FLOORPLAN_TCL)
+  }
   exit
 }

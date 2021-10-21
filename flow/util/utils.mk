@@ -51,9 +51,20 @@ clean_test:
 #-------------------------------------------------------------------------------
 ISSUE_TAG ?= $(DESIGN_NICKNAME)_$(PLATFORM)_$(FLOW_VARIANT)_$(shell date +"%Y-%m-%d_%H-%M")
 ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(sort $(wildcard $(SCRIPTS_DIR)/*.tcl))))
-ISSUE_CP_FILE_VARS = LATCH_MAP_FILE LIB_FILES SC_LEF TECH_LEF \
-                     TRACKS_INFO_FILE SDC_FILE VERILOG_FILES TAPCELL_TCL CACHED_NETLIST \
-                     FOOTPRINT SIG_MAP_FILE PDN_CFG ADDITIONAL_LEFS
+ISSUE_CP_DESIGN_FILE_VARS = SDC_FILE VERILOG_FILES CACHED_NETLIST \
+                            FOOTPRINT_TCL FOOTPRINT SIG_MAP_FILE \
+                            IO_CONSTRAINTS MACRO_PLACEMENT
+
+ISSUE_CP_PLATFORM_FILE_VARS = LIB_FILES SC_LEF TECH_LEF ADDIONAL_LEFS \
+                              CLKGATE_MAP_FILE LATCH_MAP_FILE ADDER_MAP_FILE \
+                              TRACKS_INFO_FILE TAPCELL_TCL \
+                              PDN_CFG PDN_TCL \
+                              FASTROUTE_TCL
+
+ISSUE_CP_FILE_VARS = $(ISSUE_CP_DESIGN_FILE_VARS)
+ifndef EXCLUDE_PLATFORM
+ISSUE_CP_FILE_VARS += $(ISSUE_CP_PLATFORM_FILE_VARS)
+endif
 
 VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT)
 RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT).sh
@@ -95,6 +106,13 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	    $(VARS_BASENAME).gdb \
 	    $^
 
+ifdef EXCLUDE_PLATFORM
+	# Remove liberty and lef files from tar file
+	@gunzip -f $*_$(ISSUE_TAG).tar.gz
+	@tar --list --file $*_$(ISSUE_TAG).tar | grep -iE "*.(lib|lef|tlef)$$" | xargs -r tar --delete --file $*_$(ISSUE_TAG).tar
+	@gzip $*_$(ISSUE_TAG).tar
+endif
+
 	@if [ ! -z $${COPY_ISSUE+x} ]; then \
 	    mkdir -p $${COPY_ISSUE} ; \
 	    cp $*_$(ISSUE_TAG).tar.gz $${COPY_ISSUE} ; \
@@ -134,7 +152,7 @@ gallery: $(RESULTS_DIR)/6_final_no_power.def $(RESULTS_DIR)/6_final_only_clk.def
 	        -rm $(UTILS_DIR)/createGallery.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
 view_cells:
-	$(OPENROAD_NO_EXIT_CMD) -gui $(SCRIPTS_DIR)/view_cells.tcl
+	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/view_cells.tcl
 
 ## Quick access to command line
 command:
@@ -143,6 +161,18 @@ command:
 ## Provide easy access to debugging
 ifdef GDB
 OPENROAD_EXE := gdb --args $(OPENROAD_EXE)
+endif
+
+## Convert RVE DRC database to JSON
+convert_rve: $(OBJECTS_DIR)/drc.json
+
+$(OBJECTS_DIR)/drc.json: $(DRC_FILE)
+ifneq ($(DRC_FILE),)
+	$(KLAYOUT_CMD) -z -rd in_drc="$<" \
+	        -rd out_file="$@" \
+	        -rm $(UTILS_DIR)/convertDrc.py
+else
+	@echo "No DRC_FILE defined."
 endif
 
 # Update the clock period sdc based on the worst slack reported by the final

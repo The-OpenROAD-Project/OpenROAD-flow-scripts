@@ -32,22 +32,22 @@
         },
         {
             "field": "cts__timing__setup__ws__prerepair",
-            "value": -4.49,
+            "value": -2.52,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__postrepair",
-            "value": -4.49,
+            "value": -2.52,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.73,
+            "value": -0.51,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -0.74,
+            "value": -0.51,
             "compare": ">="
         },
         {
@@ -58,7 +58,7 @@
         {
             "field": "detailedroute__route__drc_errors__count",
             "value": 0,
-            "compare": "=="
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
@@ -68,21 +68,6 @@
         {
             "field": "finish__design__instance__area",
             "value": 229627,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__slew__violation__count",
-            "value": 20,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__fanout__violation__count",
-            "value": 20,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__max_cap__violation__count",
-            "value": 20,
             "compare": "<="
         }
     ]

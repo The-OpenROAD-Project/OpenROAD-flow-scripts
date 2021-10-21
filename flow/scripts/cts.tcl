@@ -80,8 +80,15 @@ detailed_placement
 estimate_parasitics -placement
 
 puts "Repair hold violations..."
-if { [catch {repair_timing -hold }]} {
-  puts "hold utilization limit caught, continuing"
+if { [info exists ::env(HOLD_SLACK_MARGIN)] && $::env(HOLD_SLACK_MARGIN) > 0.0} {
+  puts "Hold repair with slack margin $::env(HOLD_SLACK_MARGIN)"
+  if { [catch {repair_timing -hold -slack_margin $::env(HOLD_SLACK_MARGIN}]} {
+    puts "hold utilization limit caught, continuing"
+  }
+} else {
+  if { [catch {repair_timing -hold}]} {
+    puts "hold utilization limit caught, continuing"
+  }
 }
 puts "Repair setup violations..."
 if { [catch {repair_timing -setup }]} {
@@ -89,7 +96,7 @@ if { [catch {repair_timing -setup }]} {
 }
 
 detailed_placement
-check_placement
+check_placement -verbose
 
 report_metrics "cts final"
 
@@ -98,5 +105,10 @@ if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/4_1_cts.def
   write_verilog $::env(RESULTS_DIR)/4_cts.v
   write_sdc $::env(RESULTS_DIR)/4_cts.sdc
+
+  # post CTS user TCL script hook
+  if { [info exists ::env(POST_CTS_TCL)] } {
+    source $::env(POST_CTS_TCL)
+  }
   exit
 }

@@ -1,13 +1,13 @@
 # Liberty units are fF,kOhm
-set_layer_rc -layer M1 -capacitance	0.199068 -resistance 0.138889
-set_layer_rc -layer M2 -capacitance	0.235100 -resistance 0.024222
-set_layer_rc -layer M3 -capacitance	0.226204 -resistance 0.024222
-set_layer_rc -layer M4 -capacitance	0.199561 -resistance 0.016778
-set_layer_rc -layer M5 -capacitance	0.233302 -resistance 0.014677
-set_layer_rc -layer M6 -capacitance	0.202688 -resistance 0.010371
-set_layer_rc -layer M7 -capacitance	0.232781 -resistance 0.009672
-set_layer_rc -layer M8 -capacitance	0.207022 -resistance 0.007431
-set_layer_rc -layer M9 -capacitance	0.236344 -resistance 0.006874
+set_layer_rc -layer M1 -capacitance 1.1368e-01 -resistance 1.3889e-01
+set_layer_rc -layer M2 -capacitance 1.3426e-01 -resistance 2.4222e-02
+set_layer_rc -layer M3 -capacitance 1.2918e-01 -resistance 2.4222e-02
+set_layer_rc -layer M4 -capacitance 1.1396e-01 -resistance 1.6778e-02
+set_layer_rc -layer M5 -capacitance 1.3323e-01 -resistance 1.4677e-02
+set_layer_rc -layer M6 -capacitance 1.1575e-01 -resistance 1.0371e-02
+set_layer_rc -layer M7 -capacitance 1.3293e-01 -resistance 9.6720e-03
+set_layer_rc -layer M8 -capacitance 1.1822e-01 -resistance 7.4310e-03
+set_layer_rc -layer M9 -capacitance 1.3497e-01 -resistance 6.8740e-03
 
 set_layer_rc -via V1 -resistance 1.00E-02
 set_layer_rc -via V2 -resistance 1.00E-02

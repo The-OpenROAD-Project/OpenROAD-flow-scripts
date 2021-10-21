@@ -58,7 +58,7 @@
         {
             "field": "detailedroute__route__drc_errors__count",
             "value": 0,
-            "compare": "=="
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
@@ -68,21 +68,6 @@
         {
             "field": "finish__design__instance__area",
             "value": 6529465,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__slew__violation__count",
-            "value": 234,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__fanout__violation__count",
-            "value": 20,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__max_cap__violation__count",
-            "value": 20,
             "compare": "<="
         }
     ]

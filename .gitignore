@@ -1,5 +1,5 @@
 # Build working directories
-tools/install/
+tools/install
 
 # Test working directories
 flow/results
@@ -51,7 +51,13 @@ flow/*.opennet
 
 # Platforms
 flow/platforms/*
-flow/private/*
+!flow/platforms/asap7
+!flow/platforms/nangate45
+!flow/platforms/sky130hd
+!flow/platforms/sky130hs
+!flow/platforms/sky130io
+!flow/platforms/sky130ram
+flow/private
 
 # network
 .nfs*

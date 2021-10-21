@@ -19,7 +19,10 @@ if {![info exists standalone] || $standalone} {
   puts "Starting PDN generation"
 }
 
-if {[info exist ::env(PDN_CFG)]} {
+if {[info exist ::env(PDN_TCL)]} {
+  source $::env(PDN_TCL)
+  pdngen -verbose
+} elseif {[info exist ::env(PDN_CFG)]} {
   pdngen $::env(PDN_CFG) -verbose
 }
 
@@ -30,5 +33,10 @@ if {[info exist ::env(PDN_CFG)]} {
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/2_6_floorplan_pdn.def
+
+  if {[info exists ::env(POST_PDN_TCL)] && [file exists $::env(POST_PDN_TCL)]} {
+    source $::env(POST_PDN_TCL)
+  }
+
   exit
 }

@@ -14,7 +14,6 @@ else:
 
 okFile = 'metadata-base-ok.json'
 outFile = 'rules.json'
-errors = 0
 rules = list()
 
 if isfile(okFile):
@@ -123,7 +122,7 @@ metrics = {
         'padding': 0,
         'roundValue': True,
         'customThreshold': 0,
-        'compare': '==',
+        'compare': '<=',
     },
     # finish
     'finish__timing__setup__ws': {
@@ -140,27 +139,6 @@ metrics = {
         'customThreshold': 0,
         'compare': '<=',
     },
-    'finish__timing__slew__violation__count': {
-        'usePeriod': False,
-        'padding': 25,
-        'roundValue': True,
-        'customThreshold': [16, 20],
-        'compare': '<=',
-    },
-    'finish__timing__fanout__violation__count': {
-        'usePeriod': False,
-        'padding': 25,
-        'roundValue': True,
-        'customThreshold': [16, 20],
-        'compare': '<=',
-    },
-    'finish__timing__max_cap__violation__count': {
-        'usePeriod': False,
-        'padding': 25,
-        'roundValue': True,
-        'customThreshold': [16, 20],
-        'compare': '<=',
-    },
 }
 
 periodList = list()
@@ -172,7 +150,15 @@ if len(periodList) != 1:
 period = periodList[0]
 
 for field, option in metrics.items():
+    if field not in data.keys():
+        print(f'[ERROR] Metric {field} not found in metrics file: {okFile}.')
+        sys.exit(1)
+
     value = data[field]
+
+    if isinstance(value, str):
+        print('[WARNING] Skipping string field {} = {}'.format(field, value))
+        continue
 
     if len(periodList) != 1 and field == 'globalroute__timing__clock__slack':
         print('[WARNING] Skipping clock slack until multiple clocks support.')
@@ -185,10 +171,8 @@ for field, option in metrics.items():
             customThreshold = 0
             customValue = option['customThreshold']
         if option['usePeriod']:
-            if value >= 0:
-                value += - period * option['padding'] / 100
-            else:
-                value += value - period * option['padding'] / 100
+            value -= period * option['padding'] / 100
+            value = min(value, 0)
         elif value <= customThreshold:
             value = customValue
         else:
@@ -211,4 +195,3 @@ finalRules['rules'] = rules
 with open(outFile, 'w') as f:
     print('[INFO] writing', abspath(outFile))
     json.dump(finalRules, f, indent=4)
-sys.exit(errors)
