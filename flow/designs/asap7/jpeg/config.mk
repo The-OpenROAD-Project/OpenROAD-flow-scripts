@@ -7,9 +7,10 @@ export DESIGN_NAME            = jpeg_encoder
 export DESIGN_NICKNAME        = jpeg
 export DESIGN                 = jpeg
 
-export VERILOG_INCLUDE_DIRS   = ./designs/src/$(DESIGN_NICKNAME)/include
-export VERILOG_FILES          = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
-export SDC_FILE               = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_7nm.sdc
+export VERILOG_FILES          = $(sort $(wildcard $(abspath $(DESIGN_DIR)/../../src/$(DESIGN))/*.v))
+export VERILOG_INCLUDE_DIRS   = $(abspath $(DESIGN_DIR)/../../src/$(DESIGN)/include)
+export SDC_FILE               = $(DESIGN_DIR)/jpeg_encoder15_7nm.sdc
+export ABC_AREA               = 1
 
 export CORNER                ?= BC
 
