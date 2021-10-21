@@ -37,3 +37,5 @@ export CORE_AREA   = 10 10 1390 1390
 export PLACE_PINS_ARGS = -exclude left:0-800 exclude left: 1350-1400 -exclude right:* -exclude top:* -exclude bottom:*
 
 export MACRO_WRAPPERS = $(dir $(DESIGN_CONFIG))/wrappers.tcl
+
+export DESIGN_TYPE = CELL
