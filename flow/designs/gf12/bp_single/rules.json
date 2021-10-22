@@ -2,7 +2,7 @@
     "rules": [
         {
             "field": "synth__design__instance__stdcell__area",
-            "value": 1031508,
+            "value": 1024521,
             "compare": "<="
         },
         {
@@ -27,7 +27,7 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -1584.34,
+            "value": -1277.0,
             "compare": ">="
         },
         {
@@ -42,27 +42,27 @@
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -993.21,
+            "value": -670.96,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 10666280,
+            "value": 10623813,
             "compare": "<="
         },
         {
             "field": "detailedroute__route__drc_errors__count",
-            "value": 0,
-            "compare": "=="
+            "value": 3,
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -449.19,
+            "value": -406.39,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 858981,
+            "value": 859055,
             "compare": "<="
         }
     ]

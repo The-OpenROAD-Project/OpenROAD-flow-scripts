@@ -27,7 +27,7 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -0.24,
+            "value": -0.23,
             "compare": ">="
         },
         {
@@ -42,17 +42,17 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.24,
+            "value": -0.23,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -0.24,
+            "value": -0.22,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 677383,
+            "value": 678219,
             "compare": "<="
         },
         {
@@ -62,12 +62,12 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -0.25,
+            "value": -0.23,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 34681,
+            "value": 34405,
             "compare": "<="
         }
     ]

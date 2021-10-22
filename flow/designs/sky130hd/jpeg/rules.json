@@ -42,27 +42,27 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.77,
+            "value": -0.62,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -0.78,
+            "value": -0.63,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 1766202,
+            "value": 1768867,
             "compare": "<="
         },
         {
             "field": "detailedroute__route__drc_errors__count",
             "value": 0,
-            "compare": "=="
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -0.01,
+            "value": 0.0,
             "compare": ">="
         },
         {

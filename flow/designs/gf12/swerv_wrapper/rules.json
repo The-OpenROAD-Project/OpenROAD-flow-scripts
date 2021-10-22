@@ -27,42 +27,42 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -180.0,
+            "value": -126.11,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__prerepair",
-            "value": -180.0,
+            "value": -152.0,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__postrepair",
-            "value": -180.0,
+            "value": -120.87,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -114.93,
+            "value": -110.78,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 2368430,
+            "value": 2351244,
             "compare": "<="
         },
         {
             "field": "detailedroute__route__drc_errors__count",
             "value": 0,
-            "compare": "=="
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -90.0,
+            "value": 0.0,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 182911,
+            "value": 182912,
             "compare": "<="
         }
     ]

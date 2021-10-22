@@ -27,7 +27,7 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -46.0,
+            "value": -45.4,
             "compare": ">="
         },
         {
@@ -42,32 +42,32 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -24.53,
+            "value": -23.11,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -24.53,
+            "value": -23.11,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 197043,
+            "value": 194256,
             "compare": "<="
         },
         {
             "field": "detailedroute__route__drc_errors__count",
             "value": 0,
-            "compare": "=="
+            "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -23.0,
+            "value": -12.55,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 6706,
+            "value": 6704,
             "compare": "<="
         }
     ]
