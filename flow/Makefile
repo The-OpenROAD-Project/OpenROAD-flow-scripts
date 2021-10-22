@@ -140,11 +140,11 @@ $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
 
 # Enables hierarchical yosys
-export SYNTH_HIERARCHICAL ?= 1
+export SYNTH_HIERARCHICAL ?= 0
 export SYNTH_STOP_MODULE_SCRIPT = $(OBJECTS_DIR)/mark_hier_stop_modules.tcl
 ifeq ($(SYNTH_HIERARCHICAL), 1)
 export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
-export MAX_UNGROUP_SIZE ?= 100
+export MAX_UNGROUP_SIZE ?= 0
 endif
 # Enables Re-synthesis for area reclaim
 export RESYNTH_AREA_RECOVER ?= 0

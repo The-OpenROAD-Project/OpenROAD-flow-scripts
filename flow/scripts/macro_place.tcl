@@ -51,6 +51,24 @@ if {[find_macros] != ""} {
       -channel $::env(MACRO_PLACE_CHANNEL)
   }
 
+# If wrappers defined replace macros with their wrapped version
+# # ----------------------------------------------------------------------------
+  if {[info exists ::env(MACRO_WRAPPERS)]} {
+    source $::env(MACRO_WRAPPERS)
+
+    set wrapped_macros [dict keys [dict get $wrapper around]]
+    set db [ord::get_db]
+    set block [ord::get_db_block]
+
+    foreach inst [$block getInsts] {
+      if {[lsearch -exact $wrapped_macros [[$inst getMaster] getName]] > -1} {
+        set new_master [dict get $wrapper around [[$inst getMaster] getName]]
+        puts "Replacing [[$inst getMaster] getName] with $new_master for [$inst getName]"
+        $inst swapMaster [$db findMaster $new_master]
+      }
+    }
+  }
+
   if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
     source $::env(SCRIPTS_DIR)/placement_blockages.tcl
     block_channels $::env(MACRO_BLOCKAGE_HALO)

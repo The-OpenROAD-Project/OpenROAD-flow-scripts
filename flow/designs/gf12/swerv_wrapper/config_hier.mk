@@ -21,6 +21,8 @@ export WRAP_LIBS      = $(PLATFORM_DIR)/lib/gf12_1rf_lg11_w40_all_ffpg_sigcmin_0
 export ADDITIONAL_GDS = $(PLATFORM_DIR)/gds/gf12_1rf_lg11_w40_all.gds2 \
                         $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w22_all.gds2 \
                         $(PLATFORM_DIR)/gds/gf12_1rf_lg8_w34_all.gds2
+
+export FLOORPLAN_DEF = ./designs/$(PLATFORM)/$(DESIGN_NAME)/swerv_wrapper_fp_800x800.def
 #
 # RTL_MP Settings
 export RTLMP_MAX_INST = 5000
@@ -32,9 +34,9 @@ export RTLMP_RPT_FILE = partition.txt
 export RTLMP_CONFIG_FILE = ./designs/gf12/swerv_wrapper/rtlmp_config.txt
 #export RTLMP_BLOCKAGE_FILE = ./designs/gf12/swerv_wrapper/macro_blockage.txt
 
-export DIE_AREA    = 0 0 900 800
-export CORE_AREA   = 10 10 890 790
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:400-900
+export DIE_AREA    = 0 0 800 800
+export CORE_AREA   = 10 10 790 790
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:400-800
 export MACRO_BLOCKAGE_HALO = 10 
 export PLACE_DENSITY = 0.40
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
