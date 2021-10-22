@@ -23,3 +23,5 @@ export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclud
 export MACRO_BLOCKAGE_HALO = 10 
 export PLACE_DENSITY = 0.40
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
+
+export DESIGN_TYPE = CELL
