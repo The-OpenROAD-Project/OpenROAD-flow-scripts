@@ -30,6 +30,8 @@ version
 # list of metrics that should be considered green if they increase
 # all other metrics are considered better if they decrease in value
 higherIsBetter = re.compile(r'''
+__ws |
+__tns
 ''', re.VERBOSE | re.IGNORECASE)
 
 
@@ -76,23 +78,15 @@ def getDiff(metric, gold, run, rules):
     diff = '-'
     style = 'no_change'
     if isNumber:
-        run = abs(run)
-        gold = abs(gold)
         diff = run - gold
         if gold != 0:
-            percentage = '{:+.2f}%'.format(diff / gold * 100)
+            percentage = '{:.2f}%'.format(abs(diff / gold) * 100)
         else:
             percentage = '#DIV/0!'
-        if re.search(higherIsBetter, metric):
-            if diff < 0:
-                style = 'green'
-            elif diff > 0:
-                style = 'orange'
-        else:
-            if diff < 0:
-                style = 'orange'
-            elif diff > 0:
-                style = 'green'
+        if run > gold:
+            style = 'green' if re.search(higherIsBetter, metric) else 'orange'
+        elif gold > run:
+            style = 'orange' if re.search(higherIsBetter, metric) else 'green'
         for rule in rules:
             if metric != rule['field']:
                 continue
@@ -101,7 +95,10 @@ def getDiff(metric, gold, run, rules):
             if not op(run, value):
                 style = 'red'
         if diff != 0:
-            diff = '{:+.2f} ({})'.format(diff, percentage)
+            if abs(diff) < 0.01:
+                diff = '{:+.2} ({})'.format(diff, percentage)
+            else:
+                diff = '{:+.2f} ({})'.format(diff, percentage)
     return diff, style
 
 
