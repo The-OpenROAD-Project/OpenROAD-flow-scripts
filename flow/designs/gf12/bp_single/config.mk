@@ -70,3 +70,7 @@ export POST_DETAIL_ROUTE_UNCERTAINTY_PS = 0
 
 export POST_DETAIL_ROUTE_TCL = $(PLATFORM_DIR)/openRoad/post_detail_route.tcl
 export POST_FLOORPLAN_TCL    = $(PLATFORM_DIR)/openRoad/post_floorplan.tcl
+
+# enable slack margin for setup and hold fix after CTS
+export SETUP_SLACK_MARGIN = 100
+export HOLD_SLACK_MARGIN = 300
