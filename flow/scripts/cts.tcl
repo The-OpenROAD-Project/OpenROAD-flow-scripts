@@ -97,7 +97,6 @@ if { [info exists ::env(HOLD_SLACK_MARGIN)] && $::env(HOLD_SLACK_MARGIN) > 0.0} 
 }
 repair_timing -hold {*}$additional_args
 
-
 detailed_placement
 check_placement -verbose
 
