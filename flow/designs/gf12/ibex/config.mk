@@ -52,3 +52,6 @@ export CORE_MARGIN = 2
 export PLACE_DENSITY = 0.70
 
 export DESIGN_TYPE = CELL
+
+export SETUP_SLACK_MARGIN = 180
+export HOLD_SLACK_MARGIN = 50
