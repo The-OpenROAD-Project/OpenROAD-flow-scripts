@@ -1,10 +1,11 @@
 export DESIGN_NAME = swerv_wrapper
 export PLATFORM    = gf12
 
-export FLOW_VARIANT = hier
+#export FLOW_VARIANT = hier
+export FLOW_VARIANT = hier_rtlmp
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE = 100
-#export RTLMP_FLOW = True
+export RTLMP_FLOW = True
 
 export VERILOG_FILES = ./designs/src/swerv/swerv_wrapper.sv2v.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
@@ -31,8 +32,8 @@ export RTLMP_MAX_MACRO = 12
 export RTLMP_MIN_MACRO = 4
 export RTLMP_RPT_DIR = $(OBJECTS_DIR)/rtlmp
 export RTLMP_RPT_FILE = partition.txt
-export RTLMP_CONFIG_FILE = ./designs/gf12/swerv_wrapper/rtlmp_config.txt
-#export RTLMP_BLOCKAGE_FILE = ./designs/gf12/swerv_wrapper/macro_blockage.txt
+export RTLMP_CONFIG_FILE = ./designs/$(PLATFORM)/$(DESIGN_NAME)/rtlmp_config.txt
+export RTLMP_BLOCKAGE_FILE = ./designs/$(PLATFORM)/$(DESIGN_NAME)/macro_blockage.txt
 
 export DIE_AREA    = 0 0 800 800
 export CORE_AREA   = 10 10 790 790
