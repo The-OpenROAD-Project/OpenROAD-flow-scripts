@@ -108,8 +108,6 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False,
             else:
                 # Note: This gets the specified occurrence
                 value = parsedMetrics[occurrence]
-                if isinstance(value, tuple):
-                    value = value[arrayPos]
                 value = value.strip()
                 try:
                     jsonFile[jsonTag] = float(value)
