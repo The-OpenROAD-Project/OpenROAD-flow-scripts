@@ -118,22 +118,6 @@ endif
 	    cp $*_$(ISSUE_TAG).tar.gz $${COPY_ISSUE} ; \
 	fi
 
-$(VARS_BASENAME).tcl:
-	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
-	@$(foreach V, $(.VARIABLES), \
-	    $(if $(filter-out environment% default automatic, $(origin $V)), \
-	        echo export $V=\""$($V)\""     >> $(VARS_BASENAME).sh ; \
-	        echo set env\($V\) \""$($V)\"" >> $(VARS_BASENAME).tcl ; \
-	        echo set env $V "$($V)"        >> $(VARS_BASENAME).gdb ; \
-	    ) \
-	)
-	@sed -i '/export \./d' $(VARS_BASENAME).sh
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).sh
-	@sed -i '/set env(\./d' $(VARS_BASENAME).tcl
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).tcl
-	@sed -i '/set env \./d' $(VARS_BASENAME).gdb
-	@sed -i -e 's/ \// /g' -e 's/"\//"/' $(VARS_BASENAME).gdb
-
 clean_issues:
 	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
 	rm -rf $(VARS_BASENAME).sh $(RUN_ME_SCRIPT)
