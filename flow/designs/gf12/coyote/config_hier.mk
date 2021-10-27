@@ -29,7 +29,7 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w80_bit.gds2 \
                          $(PLATFORM_DIR)/gds/gf12_2rf_lg6_w44_bit.gds2 \
                          $(PLATFORM_DIR)/gds/gf12_2rf_lg8_w64_bit.gds2
 
-export FLOORPLAN_DEF = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/coyote_fp.def
+export FLOORPLAN_DEF = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)/2_2_floorplan_io.def
 #
 # RTL_MP Settings
 export RTLMP_MAX_INST = 20000
@@ -48,8 +48,8 @@ export PLACE_DENSITY = 0.35
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
 export MACRO_BLOCKAGE_HALO = 25
-export DIE_AREA    = 0 0 1000 1000
-export CORE_AREA   = 2 2 998 998 
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:500-1000
+export DIE_AREA    = 0 0 900 900
+export CORE_AREA   = 2 2 898 898 
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:500-900
 
 export DESIGN_TYPE = CELL
