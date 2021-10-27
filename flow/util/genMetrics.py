@@ -132,19 +132,28 @@ def extractGnuTime(prefix, jsonFile, file):
         prefix +
         '__runtime__total',
         jsonFile,
-        '^Elapsed time: (\S+)\[h:\]min:sec. Average CPU: \S+. Peak memory: \S+KB.',
+        '^Elapsed time: (\S+)\[h:\]min:sec.*',
         file)
     extractTagFromFile(
         prefix +
         '__cpu__total',
         jsonFile,
-        '^Elapsed time: \S+\[h:\]min:sec. Average CPU: (\S+). Peak memory: \S+KB.',
+        '^Elapsed time:.*CPU time:.*\((\S+)%\).*',
         file)
+    elapsed = jsonFile[prefix + '__runtime__total']
+    cpuPerc = jsonFile[prefix + '__cpu__total']
+    # convert from time string to seconds
+    elapsed = reversed(elapsed.split(":"))
+    cpuTime = 0
+    for time, multFactor in zip(elapsed, [1, 60, 3600]):
+        cpuTime += float(time) * multFactor
+    cpuTime *= cpuPerc / 100
+    jsonFile[prefix + '__cpu__total'] = float(f'{cpuTime:.2f}')
     extractTagFromFile(
         prefix +
         '__mem__peak',
         jsonFile,
-        '^Elapsed time: \S+\[h:\]min:sec. Average CPU: \S+. Peak memory: (\S+)KB.',
+        '^Elapsed time:.*Peak memory: (\S+)KB.',
         file)
 
 

@@ -220,7 +220,7 @@ YOSYS_FLAGS += -v 3
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
-TIME_CMD = /usr/bin/time -f "Elapsed time: %E[h:]min:sec. Average CPU: %P. Peak memory: %MKB."
+TIME_CMD = /usr/bin/time -f "Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB."
 TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
 ifeq (, $(strip $(TIME_TEST)))
   TIME_CMD = /usr/bin/time
