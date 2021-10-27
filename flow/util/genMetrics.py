@@ -108,8 +108,6 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False,
             else:
                 # Note: This gets the specified occurrence
                 value = parsedMetrics[occurrence]
-                if isinstance(value, tuple):
-                    value = value[arrayPos]
                 value = value.strip()
                 try:
                     jsonFile[jsonTag] = float(value)
@@ -132,19 +130,19 @@ def extractGnuTime(prefix, jsonFile, file):
         prefix +
         '__runtime__total',
         jsonFile,
-        '^Elapsed time: (\S+)\[h:\]min:sec. Average CPU: \S+. Peak memory: \S+KB.',
+        '^Elapsed time: (\S+)\[h:\]min:sec.*',
         file)
     extractTagFromFile(
         prefix +
         '__cpu__total',
         jsonFile,
-        '^Elapsed time: \S+\[h:\]min:sec. Average CPU: (\S+). Peak memory: \S+KB.',
+        '^Elapsed time:.*CPU time: user (\S+) .*',
         file)
     extractTagFromFile(
         prefix +
         '__mem__peak',
         jsonFile,
-        '^Elapsed time: \S+\[h:\]min:sec. Average CPU: \S+. Peak memory: (\S+)KB.',
+        '^Elapsed time:.*Peak memory: (\S+)KB.',
         file)
 
 
