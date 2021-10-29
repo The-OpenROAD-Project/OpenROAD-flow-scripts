@@ -20,7 +20,7 @@ if {![info exists standalone] || $standalone} {
     link_design $::env(DESIGN_NAME)
     read_def $::env(FLOORPLAN_DEF) -floorplan_initialize
   } else {
-  read_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def
+    read_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def
   }
   read_sdc $::env(RESULTS_DIR)/1_synth.sdc
   if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
