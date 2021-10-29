@@ -11,7 +11,7 @@ export RTLMP_FLOW = True
 export VERILOG_FILES   = ./designs/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \
                          ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
 
-export SDC_FILE        = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE        = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_hier.sdc
 export ABC_AREA        = 1
 
 export WRAP_LEFS       = $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w80_bit.lef \
@@ -50,6 +50,6 @@ export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 export MACRO_BLOCKAGE_HALO = 25
 export DIE_AREA    = 0 0 900 900
 export CORE_AREA   = 2 2 898 898 
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:500-900
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:0-350 -exclude top:650-900 -exclude bottom:*
 
 export DESIGN_TYPE = CELL
