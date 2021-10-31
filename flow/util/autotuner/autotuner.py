@@ -50,7 +50,7 @@ class TimeStopper(Stopper):
         return time.time() - self._start > self._deadline
 
 
-class Autotuner(tune.Trainable):
+class AutotunerBase(tune.Trainable):
     '''
     Atutotuner base class for experiments.
     '''
@@ -85,8 +85,8 @@ class Autotuner(tune.Trainable):
         User-defined evaluation function.
         It can change in any form to minimize the score (return value).
         '''
-        error = 'ERR' in metrics
-        not_found = 'N/A' in metrics
+        error = 'ERR' in metrics.values()
+        not_found = 'N/A' in metrics.values()
         if error or not_found:
             return (99999999999) * (self.step_ / 100)**(-1)
         alpha = -(metrics['wirelength'] / 100)
@@ -118,7 +118,7 @@ class Autotuner(tune.Trainable):
         return ret
 
 
-class AxPPA(Autotuner):
+class AxPPA(AutotunerBase):
     '''
     AxPPA
     '''
@@ -130,6 +130,12 @@ class AxPPA(Autotuner):
         with open(file_name) as file:
             data = json.load(file)
         clk_period = 9999999
+        worst_slack = 'ERR'
+        wirelength = 'ERR'
+        num_drc = 'ERR'
+        total_power = 'ERR'
+        core_util = 'ERR'
+        final_util = 'ERR'
         for key, value in data.items():
             if key == 'constraints' and len(value.get('clocks__details')) > 0:
                 clk_period = float(value.get('clocks__details')[0].split()[1])
@@ -148,7 +154,7 @@ class AxPPA(Autotuner):
             "wirelength": wirelength,
             "num_drc": num_drc,
             "total_power": total_power,
-            "core_uti": core_util,
+            "core_util": core_util,
             "final_util": final_util
         }
         return ret
@@ -160,10 +166,14 @@ class EffClkPeriod(AxPPA):
     '''
 
     def evaluate(self, metrics):
+        error = 'ERR' in metrics.values()
+        not_found = 'N/A' in metrics.values()
+        if error or not_found:
+            return (99999999999) * (self.step_ / 100)**(-1)
         gamma = (metrics['clk_period'] - metrics['worst_slack']) / 10
-        eff_clk_period = (metrics['clk_period'] - metrics['worst_slack']) * \
-            (self.step_ / 100)**(-1) + gamma * metrics['num_drc']
-        return eff_clk_period
+        score = metrics['clk_period'] - metrics['worst_slack']
+        score = (self.step_ / 100)**(-1) + gamma * metrics['num_drc']
+        return score
 
 
 class PPA(AxPPA):
@@ -172,15 +182,20 @@ class PPA(AxPPA):
     '''
 
     def evaluate(self, metrics):
+        error = 'ERR' in metrics.values()
+        not_found = 'N/A' in metrics.values()
+        if error or not_found:
+            return (99999999999) * (self.step_ / 100)**(-1)
         # eff_clk_period -100~100 -> multiply 100
-        # area (100/metrics['utilization']), 0~100 -> multiply 1
+        # area (100/metrics['final_util']), 0~100 -> multiply 1
         # metrics['total_power'] 0~ about 0.1 -> muliply 1
         if metrics['worst_slack'] > 0:
             eff_clk_period = metrics['clk_period']
         else:
             eff_clk_period = (metrics['clk_period'] - metrics['worst_slack'])
-        ppa = eff_clk_period * 100 + \
-            (100 / metrics['utilization']) + (metrics['total_power'] * 10)
+        ppa = 100 / metrics['final_util'] + (metrics['total_power'] * 10)
+        ppa += 100
+        ppa *= eff_clk_period
         gamma = ppa / 10
         score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['num_drc'])
         return score
@@ -192,7 +207,7 @@ class PPAImprov(AxPPA):
     '''
 
     @classmethod
-    def get_ppa(cls, metrics, reference):
+    def get_ppa(cls, metrics):
         '''
         Compute PPA term for evaluate.
         '''
@@ -212,8 +227,8 @@ class PPAImprov(AxPPA):
         performance = percent(eff_clk_period_ref, eff_clk_period)
         power = percent(reference['total_power'],
                         metrics['total_power'])
-        area = percent(100 - reference['utilization'],
-                       100 - metrics['utilization'])
+        area = percent(100 - reference['final_util'],
+                       100 - metrics['final_util'])
 
         # lower values of ppa are better.
         ppa_upper_bound = (coeff_perform + coeff_power + coeff_area) * 100
@@ -223,9 +238,11 @@ class PPAImprov(AxPPA):
         return ppa_upper_bound - ppa
 
     def evaluate(self, metrics):
-        # TODO
-        reference = {}
-        ppa = self.get_ppa(metrics, reference)
+        error = 'ERR' in metrics.values() or 'ERR' in reference.values()
+        not_found = 'N/A' in metrics.values() or 'N/A' in reference.values()
+        if error or not_found:
+            return (99999999999) * (self.step_ / 100)**(-1)
+        ppa = self.get_ppa(metrics)
         gamma = ppa / 10
         score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['num_drc'])
         return score
@@ -432,6 +449,12 @@ if __name__ == '__main__':
         required=False,
         help='Configuration file that sets which knobs to use for Autotuning.')
     parser.add_argument(
+        '--reference',
+        type=str,
+        default=None,
+        required=False,
+        help='Reference file for use with PPAImprov.')
+    parser.add_argument(
         '--resume',
         '-r',
         action='store_true',
@@ -448,7 +471,8 @@ if __name__ == '__main__':
             local_dir = f'/shared-data/autotuner-{RUN}'
         results = [nfs_setup.remote(local_dir)]
         # Use ray.get() to wait for nfs_setup().
-        print(f'[INFO TUN-0001] {ray.get(results)}')
+        _ = ray.get(results)
+        print('[INFO TUN-0001] Done waiting.')
     else:
         # on local run, use traditional logs folder
         local_dir = 'logs'
@@ -466,17 +490,18 @@ if __name__ == '__main__':
         search_algo = HyperOptSearch(points_to_evaluate=best_params)
     elif args.algorithm == 'axppa':
         ax = AxClient(enforce_sequential_optimization=False)
+        # TODO need to fix config_dict format
         ax.create_experiment(
             name=f'{args.platform}/{args.design}/{args.experiment}',
             parameters=config_dict,
             objective_name="minimum",
-            minimize=True,
+            minimize=True
         )
-        search_algo = AxSearch(
-            ax_client=ax,
-            points_to_evaluate=best_params,
-            max_concurrent=args.jobs)
+        search_algo = AxSearch(ax_client=ax,
+                               points_to_evaluate=best_params,
+                               max_concurrent=args.jobs)
     elif args.algorithm == 'nevergrad':
+        # TODO need to fix Lower bound issue
         search_algo = NevergradSearch(
             points_to_evaluate=best_params,
             optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"])
@@ -484,6 +509,7 @@ if __name__ == '__main__':
         search_algo = OptunaSearch(points_to_evaluate=best_params,
                                    seed=args.seed)
     elif args.algorithm == 'pbt':
+        # TODO need to fix config_dict format
         search_algo = PopulationBasedTraining(
             time_attr="training_iteration",
             perturbation_interval=args.perturbation,
@@ -497,13 +523,19 @@ if __name__ == '__main__':
         sys.exit(1)
 
     if args.eval == 'default':
-        TrainClass = Autotuner
+        TrainClass = AutotunerBase
     elif args.eval == 'eff-clk-period':
         TrainClass = EffClkPeriod
     elif args.eval == 'ppa':
         TrainClass = PPA
     elif args.eval == 'ppa-improv':
         TrainClass = PPAImprov
+        if args.reference is None:
+            print('''
+                  [ERROR TUN-0009] --eval ppa-improv requries --reference flag
+                  ''')
+            sys.exit(1)
+        reference = PPAImprov.read_metrics(args.reference)
     elif args.eval == 'ax-ppa':
         TrainClass = AxPPA
     else:
