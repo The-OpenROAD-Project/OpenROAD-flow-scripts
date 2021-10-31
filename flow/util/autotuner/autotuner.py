@@ -147,15 +147,12 @@ def objective_fn(config, checkpoint_dir=None):
     worst_slack, wirelength, num_drc = read_metrics(metrics_file)
     error = 'ERR' in [worst_slack, num_drc, wirelength]
     not_found = 'N/A' in [worst_slack, num_drc, wirelength]
-    for step in range(1, 101):
-        if error or not_found:
-            score = (99999999999) * (1 / 100)**(-1)
-        else:
-            # Iterative training function
-            # can be any arbitrary training procedure
-            score = evaluate_fn(step, worst_slack, wirelength, num_drc)
-        # Feed the score back back to Tune.
-        tune.report(minimum=score)
+    if error or not_found:
+        score = (99999999999) * (101 / 100)**(-1)
+    else:
+        score = evaluate_fn(101, worst_slack, wirelength, num_drc)
+    # Feed the score back back to Tune.
+    tune.report(minimum=score)
 
 
 def read_config(file_name):
