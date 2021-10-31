@@ -45,40 +45,52 @@ class TimeStopper(Stopper):
         return time.time() - self._start > self._deadline
 
 
-def evaluate_fn(step, worst_slack, wirelength, num_drc):
+class Autotuner(tune.Trainable):
     '''
-    User-defined evaluation function.
-    It can change in any form to minimize the score (return value).
+    Atutotuner base class for experiments.
     '''
-    alpha = -(wirelength / 100)
-    beta = 1
-    gamma = (wirelength / 10)
-    term_1 = alpha * worst_slack + beta * wirelength
-    term_2 = (step / 100)**(-1)
-    term_3 = gamma * num_drc
-    return term_1 * term_2 + term_3
 
+    def setup(self, config):
+        if args.server is not None:
+            self.run_dir = os.path.abspath(os.getcwd() + '/../../../../')
+        else:
+            self.run_dir = os.path.abspath(os.getcwd() + '/../')
+        self.parameters = parse_config(config)
+        self.flow_variant = get_flow_variant(self.parameters)
+        self.step = 0
 
-def objective_fn(config, checkpoint_dir=None):
-    '''
-    Run experiment and compute its score.
-    '''
-    if args.server is not None:
-        run_dir = os.path.abspath(os.getcwd() + '/../../../../')
-    else:
-        run_dir = os.path.abspath(os.getcwd() + '/../')
-    parameters = parse_config(config)
-    flow_variant = get_flow_variant(parameters)
-    metrics_file = run_openroad(run_dir, flow_variant, parameters)
-    worst_slack, wirelength, num_drc = read_metrics(metrics_file)
-    error = 'ERR' in [worst_slack, num_drc, wirelength]
-    not_found = 'N/A' in [worst_slack, num_drc, wirelength]
-    if error or not_found:
-        score = (99999999999) * (101 / 100)**(-1)
-    else:
-        score = evaluate_fn(101, worst_slack, wirelength, num_drc)
-    # Feed the score back back to Tune.
-    tune.report(minimum=score)
+    def step(self):
+        '''
+        Run step experiment and compute its score.
+        '''
+        metrics_file = run_openroad(self.run_dir,
+                                    self.flow_variant,
+                                    self.parameters)
+        metrics = read_metrics(metrics_file)
+        error = 'ERR' in metrics
+        not_found = 'N/A' in metrics
+        self.step += 1
+        if error or not_found:
+            score = (99999999999) * (self.step / 100)**(-1)
+        else:
+            score = self.evaluate_fn(metrics)
+        # Feed the score back back to Tune.
+        # return must match 'metric' used in tune.run()
+        return {"minimum": score}
+
+    def evaluate_fn(self, metrics):
+        '''
+        User-defined evaluation function.
+        It can change in any form to minimize the score (return value).
+        '''
+        worst_slack, wirelength, num_drc = metrics
+        alpha = -(wirelength / 100)
+        beta = 1
+        gamma = (wirelength / 10)
+        term_1 = alpha * worst_slack + beta * wirelength
+        term_2 = (self.step / 100)**(-1)
+        term_3 = gamma * num_drc
+        return term_1 * term_2 + term_3
 
 
 def read_metrics(file_name):
@@ -313,7 +325,7 @@ if __name__ == '__main__':
     config_dict, _ = read_config(args.config)
 
     analysis = tune.run(
-        objective_fn,
+        Autotuner,
         metric='minimum',
         mode='min',
         search_alg=search_algo,
