@@ -36,7 +36,6 @@ class TimeStopper(Stopper):
     def __init__(self):
         self._start = time.time()
         self._deadline = 63966
-        self.stop_all = True
 
     def __call__(self, trial_id, result):
         return False
