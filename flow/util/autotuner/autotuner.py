@@ -426,20 +426,20 @@ if __name__ == '__main__':
             best_params = json.load(f)
     else:
         best_params = []
-    search_algo = HyperOptSearch(points_to_evaluate=best_params)
-    search_algo = ConcurrencyLimiter(search_algo, max_concurrent=args.jobs)
-
-    scheduler = AsyncHyperBandScheduler()
 
     config_dict, _ = read_config(args.config)
+
+    # Default
+    search_algo = HyperOptSearch(points_to_evaluate=best_params)
+
 
     analysis = tune.run(
         Autotuner,
         metric='minimum',
         mode='min',
-        search_alg=search_algo,
+        search_alg=ConcurrencyLimiter(search_algo, max_concurrent=args.jobs),
         name=f'{args.platform}/{args.design}/{args.experiment}',
-        scheduler=scheduler,
+        scheduler=AsyncHyperBandScheduler(),
         num_samples=args.samples,
         config=config_dict,
         stop=TimeStopper(),
