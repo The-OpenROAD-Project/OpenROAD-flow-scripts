@@ -105,6 +105,119 @@ class Autotuner(tune.Trainable):
         return worst_slack, wirelength, num_drc
 
 
+class AxPPA(Autotuner):
+    '''
+    AxPPA
+    '''
+    @classmethod
+    def read_metrics(cls, file_name):
+        '''
+        Collects metrics to evaluate the user-defined objective function.
+        '''
+        with open(file_name) as file:
+            data = json.load(file)
+        clk_period = 9999999
+        for key, value in data.items():
+            if key == 'constraints' and len(value.get('clocks__details')) > 0:
+                clk_period = float(value.get('clocks__details')[0].split()[1])
+            if key == 'floorplan':
+                core_util = value.get('design__instance__design__util')
+            if key == 'detailedroute':
+                ndrc = value.get('route__drc_errors__count')
+                wirelength = value.get('route__wirelength')
+            if key == 'finish':
+                worst_slack = value.get('timing__setup__ws')
+                total_power = value.get('power__total')
+                final_util = value.get('design__instance__utilization')
+        ret = {
+            "clk_period": clk_period,
+            "worst_slack": worst_slack,
+            "wirelength": wirelength,
+            "ndrc": ndrc,
+            "total_power": total_power,
+            "core_uti": core_util,
+            "final_util": final_util
+        }
+        return ret
+
+
+class EffClkPeriod(AxPPA):
+    '''
+    EffClkPeriod
+    '''
+
+    def evaluate(self, metrics):
+        gamma = (metrics['clk_period'] - metrics['worst_slack']) / 10
+        eff_clk_period = (metrics['clk_period'] - metrics['worst_slack']) * \
+            (self.step_ / 100)**(-1) + gamma * metrics['ndrc']
+        return eff_clk_period
+
+
+class PPA(AxPPA):
+    '''
+    PPA
+    '''
+
+    def evaluate(self, metrics):
+        # eff_clk_period -100~100 -> multiply 100
+        # area (100/metrics['utilization']), 0~100 -> multiply 1
+        # metrics['total_power'] 0~ about 0.1 -> muliply 1
+        if metrics['worst_slack'] > 0:
+            eff_clk_period = metrics['clk_period']
+        else:
+            eff_clk_period = (metrics['clk_period'] - metrics['worst_slack'])
+        ppa = eff_clk_period * 100 + \
+            (100 / metrics['utilization']) + (metrics['total_power'] * 10)
+        gamma = ppa / 10
+        score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['ndrc'])
+        return score
+
+
+class PPAImprov(AxPPA):
+    '''
+    PPAImprov
+    '''
+
+    @classmethod
+    def get_ppa(cls, metrics, reference):
+        '''
+        Compute PPA term for evaluate.
+        '''
+        coeff_perform, coeff_power, coeff_area = 10000, 100, 100
+
+        eff_clk_period = metrics['clk_period']
+        if metrics['worst_slack'] < 0:
+            eff_clk_period -= metrics['worst_slack']
+
+        eff_clk_period_ref = reference['clk_period']
+        if reference['worst_slack'] < 0:
+            eff_clk_period_ref -= reference['worst_slack']
+
+        def percent(x_1, x_2):
+            return (x_1 - x_2) / x_1 * 100
+
+        performance = percent(eff_clk_period_ref, eff_clk_period)
+        power = percent(reference['total_power'],
+                        metrics['total_power'])
+        area = percent(100 - reference['utilization'],
+                       100 - metrics['utilization'])
+
+        # lower values of ppa are better.
+        ppa_upper_bound = (coeff_perform + coeff_power + coeff_area) * 100
+        ppa = performance * coeff_perform
+        ppa += power * coeff_power
+        ppa += area * coeff_area
+        return ppa_upper_bound - ppa
+
+    def evaluate(self, metrics):
+        # TODO
+        reference = {}
+        ppa = self.get_ppa(metrics, reference)
+        gamma = ppa / 10
+        score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['ndrc'])
+        return score
+
+
 def read_config(file_name):
     '''
     Please consider inclusive, exclusive
