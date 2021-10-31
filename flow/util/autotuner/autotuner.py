@@ -16,13 +16,22 @@ import hashlib
 import multiprocessing
 import math
 import time
+import sys
 
 import ray
 from ray import tune
 from ray.tune import Stopper
-from ray.tune.suggest import ConcurrencyLimiter
 from ray.tune.schedulers import AsyncHyperBandScheduler
+from ray.tune.schedulers import PopulationBasedTraining
+from ray.tune.suggest import ConcurrencyLimiter
+from ray.tune.suggest.ax import AxSearch
+from ray.tune.suggest.basic_variant import BasicVariantGenerator
 from ray.tune.suggest.hyperopt import HyperOptSearch
+from ray.tune.suggest.nevergrad import NevergradSearch
+from ray.tune.suggest.optuna import OptunaSearch
+
+import nevergrad as ng
+from ax.service.ax_client import AxClient
 
 
 class TimeStopper(Stopper):
@@ -393,6 +402,31 @@ if __name__ == '__main__':
         required=False,
         help='The port of Ray server to connect.')
     parser.add_argument(
+        '--seed',
+        type=int,
+        default=123,
+        required=False,
+        help='Random seed.')
+    parser.add_argument(
+        '--perturbation',
+        type=int,
+        default=25,
+        required=False,
+        help='Perturbation interval for PopulationBasedTraining.')
+    parser.add_argument(
+        '--algorithm',
+        '-a',
+        type=str,
+        default='hyperopt',
+        required=False,
+        help='Search algorithm to use for Autotuning.')
+    parser.add_argument(
+        '--eval',
+        type=str,
+        default='default',
+        required=False,
+        help='Evaluate function to use with search algorithm.')
+    parser.add_argument(
         '--config',
         '-c',
         type=str,
@@ -405,6 +439,7 @@ if __name__ == '__main__':
         action='store_true',
         help='Resume previous run.')
     args = parser.parse_args()
+    args.algorithm = args.algorithm.lower()
 
     # Connect to remote Ray server if any, otherwise will run locally
     if args.server is not None:
@@ -429,12 +464,56 @@ if __name__ == '__main__':
 
     config_dict, _ = read_config(args.config)
 
-    # Default
-    search_algo = HyperOptSearch(points_to_evaluate=best_params)
+    if args.algorithm == 'hyperopt':
+        search_algo = HyperOptSearch(points_to_evaluate=best_params)
+    elif args.algorithm == 'axppa':
+        ax = AxClient(enforce_sequential_optimization=False)
+        ax.create_experiment(
+            name="%s-%s-%s" % (args.platform, args.design, args.exp_name),
+            parameters=config_dict,
+            objective_name="minimum",
+            minimize=True,
+        )
+        search_algo = AxSearch(
+            ax_client=ax,
+            points_to_evaluate=best_params,
+            max_concurrent=args.num_jobs)
+    elif args.algorithm == 'nevergrad':
+        search_algo = NevergradSearch(
+            points_to_evaluate=best_params,
+            optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"])
+    elif args.algorithm == 'optuna':
+        search_algo = OptunaSearch(points_to_evaluate=best_params,
+                                   seed=args.seed)
+    elif args.algorithm == 'pbt':
+        search_algo = PopulationBasedTraining(
+            time_attr="training_iteration",
+            perturbation_interval=args.perturbation,
+            hyperparam_mutations=config_dict,
+            synch=False
+        )
+    elif args.algorithm == 'random':
+        search_algo = BasicVariantGenerator(max_concurrent=args.num_jobs)
+    else:
+        print(f'[ERROR TUN-0007] Invalid search algorithm: {args.algorithm}')
+        sys.exit(1)
 
+    if args.eval == 'default':
+        TrainClass = Autotuner
+    elif args.eval == 'eff-clk-period':
+        TrainClass = EffClkPeriod
+    elif args.eval == 'ppa':
+        TrainClass = PPA
+    elif args.eval == 'ppa-improv':
+        TrainClass = PPAImprov
+    elif args.eval == 'ax-ppa':
+        TrainClass = AxPPA
+    else:
+        print(f'[ERROR TUN-0008] Invalid evaluate function: {args.eval}')
+        sys.exit(1)
 
     analysis = tune.run(
-        Autotuner,
+        TrainClass,
         metric='minimum',
         mode='min',
         search_alg=ConcurrencyLimiter(search_algo, max_concurrent=args.jobs),
