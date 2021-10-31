@@ -196,6 +196,9 @@ def run_openroad(run_dir, flow_variant, parameters):
 
 @ray.remote
 def nfs_setup(path):
+    '''
+    Clone ORFS repo and compile binaries inside a NFS shared folder.
+    '''
     git_command = f'echo "Remote folder: {path}"'
     git_command += f' && mkdir -p {path}'
     # if args.force_clone:
