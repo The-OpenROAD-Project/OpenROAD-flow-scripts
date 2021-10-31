@@ -285,9 +285,9 @@ if __name__ == '__main__':
     if args.server is not None:
         ray.init(f'ray://{args.server}:{args.port}')
         # use a nfs mount to run experiment
-        with open(args.config) as file:
-            RUN_HASH = hashlib.md5(file.read().encode('utf-8')).hexdigest()
-            local_dir = f'/shared-data/autotuner-{RUN_HASH}'
+        with open(args.config) as config_file:
+            RUN = hashlib.md5(config_file.read().encode('utf-8')).hexdigest()
+            local_dir = f'/shared-data/autotuner-{RUN}'
         results = [nfs_setup.remote(local_dir)]
         # Use ray.get() to wait for nfs_setup().
         print(f'[INFO TUN-0001] {ray.get(results)}')
