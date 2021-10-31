@@ -240,15 +240,10 @@ def read_config(file_name):
     step value is used for quantized type (e.g., quniform). Otherwise, write 0.
     When min==max, it means the constant value
     '''
-
-    config = {}
     with open(file_name) as file:
         data = json.load(file)
-
-    config_data = data['param']
-    space = data['space']
-
-    for key, value in config_data.items():
+    config = {}
+    for key, value in data['param'].items():
         config_type = value.get('type')
         config_minmax = value.get('minmax')
         config_step = value.get('step')
@@ -268,8 +263,7 @@ def read_config(file_name):
                 config_min, config_max, config_step)
         elif config_type == 'float' and config_step == 0:
             config[key] = tune.uniform(config_min, config_max)
-
-    return config, space
+    return config, data['space']
 
 
 def parse_config(config):
@@ -473,7 +467,7 @@ if __name__ == '__main__':
     elif args.algorithm == 'axppa':
         ax = AxClient(enforce_sequential_optimization=False)
         ax.create_experiment(
-            name="%s-%s-%s" % (args.platform, args.design, args.exp_name),
+            name=f'{args.platform}/{args.design}/{args.experiment}',
             parameters=config_dict,
             objective_name="minimum",
             minimize=True,
@@ -481,7 +475,7 @@ if __name__ == '__main__':
         search_algo = AxSearch(
             ax_client=ax,
             points_to_evaluate=best_params,
-            max_concurrent=args.num_jobs)
+            max_concurrent=args.jobs)
     elif args.algorithm == 'nevergrad':
         search_algo = NevergradSearch(
             points_to_evaluate=best_params,
@@ -497,7 +491,7 @@ if __name__ == '__main__':
             synch=False
         )
     elif args.algorithm == 'random':
-        search_algo = BasicVariantGenerator(max_concurrent=args.num_jobs)
+        search_algo = BasicVariantGenerator(max_concurrent=args.jobs)
     else:
         print(f'[ERROR TUN-0007] Invalid search algorithm: {args.algorithm}')
         sys.exit(1)
@@ -516,11 +510,14 @@ if __name__ == '__main__':
         print(f'[ERROR TUN-0008] Invalid evaluate function: {args.eval}')
         sys.exit(1)
 
+    if args.algorithm != 'random':
+        search_algo = ConcurrencyLimiter(search_algo, max_concurrent=args.jobs)
+
     analysis = tune.run(
         TrainClass,
         metric='minimum',
         mode='min',
-        search_alg=ConcurrencyLimiter(search_algo, max_concurrent=args.jobs),
+        search_alg=search_algo,
         name=f'{args.platform}/{args.design}/{args.experiment}',
         scheduler=AsyncHyperBandScheduler(),
         num_samples=args.samples,
