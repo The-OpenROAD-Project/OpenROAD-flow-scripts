@@ -173,11 +173,9 @@ def run_openroad(run_dir, flow_variant, parameters):
         export_command = ''
         print('[INFO TUN-0004] Export command not set for local run.')
 
-    # work_home = f'~/autotuner-{RUN_HASH}'
     make_command = export_command
     make_command += f'make -C {run_dir}/orfs/flow DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
-    # make_command += f' WORK_HOME={work_home}'
     make_command += f' FLOW_VARIANT={flow_variant}'
     make_command += f' {parameters} > /dev/null'
     print(f'[INFO TUN-0005] Run current FLOW_VARIANT: {make_command}')
