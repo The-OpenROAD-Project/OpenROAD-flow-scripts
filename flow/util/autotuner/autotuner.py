@@ -32,6 +32,7 @@ class TimeStopper(Stopper):
     '''
     Experiment stop conditions.
     '''
+
     def __init__(self):
         self._start = time.time()
         self._deadline = 63966
