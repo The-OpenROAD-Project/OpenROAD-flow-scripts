@@ -66,7 +66,7 @@ class Autotuner(tune.Trainable):
                                     self.flow_variant,
                                     self.parameters)
         self.step_ += 1
-        score = self.evaluate(read_metrics(metrics_file))
+        score = self.evaluate(self.read_metrics(metrics_file))
         # Feed the score back back to Tune.
         # return must match 'metric' used in tune.run()
         return {"minimum": score}
@@ -89,20 +89,20 @@ class Autotuner(tune.Trainable):
         term_3 = gamma * num_drc
         return term_1 * term_2 + term_3
 
-
-def read_metrics(file_name):
-    '''
-    Collects metrics to evaluate the user-defined objective function.
-    '''
-    with open(file_name) as file:
-        data = json.load(file)
-    for key, value in data.items():
-        if key == 'detailedroute':
-            num_drc = value.get('route__drc_errors__count')
-            wirelength = value.get('route__wirelength')
-        if key == 'finish':
-            worst_slack = value.get('timing__setup__ws')
-    return worst_slack, wirelength, num_drc
+    @classmethod
+    def read_metrics(cls, file_name):
+        '''
+        Collects metrics to evaluate the user-defined objective function.
+        '''
+        with open(file_name) as file:
+            data = json.load(file)
+        for key, value in data.items():
+            if key == 'detailedroute':
+                num_drc = value.get('route__drc_errors__count')
+                wirelength = value.get('route__wirelength')
+            if key == 'finish':
+                worst_slack = value.get('timing__setup__ws')
+        return worst_slack, wirelength, num_drc
 
 
 def read_config(file_name):
