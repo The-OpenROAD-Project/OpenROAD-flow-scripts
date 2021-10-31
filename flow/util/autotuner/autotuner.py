@@ -294,8 +294,6 @@ if __name__ == '__main__':
         help='Resume previous run.')
     args = parser.parse_args()
 
-    flow_path = os.getcwd()
-
     # Connect to remote Ray server if any, otherwise will run locally
     if args.server is not None:
         ray.init(f'ray://{args.server}:{args.port}')
