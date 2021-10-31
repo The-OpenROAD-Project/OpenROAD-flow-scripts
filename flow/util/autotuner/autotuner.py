@@ -6,7 +6,6 @@ install python Ray and Tune package and corresponding searching algorithms.
 Ray and Tune installation instruction can be found in below URL.
 https://docs.ray.io/en/master/installation.html
 
-To change objective evaluation function by modifying 'evaluate_fn'.
 User can decide the input parameter space by modifying 'autotuner.json'.
 '''
 
@@ -72,12 +71,12 @@ class Autotuner(tune.Trainable):
         if error or not_found:
             score = (99999999999) * (self.step_ / 100)**(-1)
         else:
-            score = self.evaluate_fn(metrics)
+            score = self.evaluate(metrics)
         # Feed the score back back to Tune.
         # return must match 'metric' used in tune.run()
         return {"minimum": score}
 
-    def evaluate_fn(self, metrics):
+    def evaluate(self, metrics):
         '''
         User-defined evaluation function.
         It can change in any form to minimize the score (return value).
