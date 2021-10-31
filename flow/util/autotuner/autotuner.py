@@ -57,7 +57,7 @@ class Autotuner(tune.Trainable):
             self.run_dir = os.path.abspath(os.getcwd() + '/../')
         self.parameters = parse_config(config)
         self.flow_variant = get_flow_variant(self.parameters)
-        self.step = 0
+        self.step_ = 0
 
     def step(self):
         '''
@@ -69,9 +69,9 @@ class Autotuner(tune.Trainable):
         metrics = read_metrics(metrics_file)
         error = 'ERR' in metrics
         not_found = 'N/A' in metrics
-        self.step += 1
+        self.step_ += 1
         if error or not_found:
-            score = (99999999999) * (self.step / 100)**(-1)
+            score = (99999999999) * (self.step_ / 100)**(-1)
         else:
             score = self.evaluate_fn(metrics)
         # Feed the score back back to Tune.
@@ -88,7 +88,7 @@ class Autotuner(tune.Trainable):
         beta = 1
         gamma = (wirelength / 10)
         term_1 = alpha * worst_slack + beta * wirelength
-        term_2 = (self.step / 100)**(-1)
+        term_2 = (self.step_ / 100)**(-1)
         term_3 = gamma * num_drc
         return term_1 * term_2 + term_3
 
