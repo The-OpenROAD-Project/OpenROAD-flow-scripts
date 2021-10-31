@@ -1,6 +1,6 @@
 {
-    "CLK_PERIOD": {"type": "float", "minmax": [100, 600], "step": 0 },
-    "CORE_UTIL": {"type": "int", "minmax": [30, 99], "step": 1},
+    "CLK_PERIOD": {"type": "float", "minmax": [1.0, 4.3647], "step": 0 },
+    "CORE_UTIL": {"type": "int", "minmax": [5, 99], "step": 1},
     "ASPECT_RATIO": {"type": "float", "minmax": [0.1, 2.0], "step": 0 },
     "CORE_DIE_MARGIN": {"type": "int", "minmax": [2,2], "step": 0 },
     "GP_PAD": {"type": "int", "minmax": [0,4], "step": 1 },
@@ -13,4 +13,3 @@
     "CTS_CLUSTER_DIAMETER": {"type": "int", "minmax": [80,120], "step": 1 },
     "GR_OVERFLOW": {"type": "int", "minmax": [1,1], "step": 0 }
 }
-
