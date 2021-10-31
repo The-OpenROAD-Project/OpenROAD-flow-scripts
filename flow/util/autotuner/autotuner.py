@@ -62,14 +62,8 @@ class Autotuner(tune.Trainable):
         metrics_file = run_openroad(self.run_dir,
                                     self.flow_variant,
                                     self.parameters)
-        metrics = read_metrics(metrics_file)
-        error = 'ERR' in metrics
-        not_found = 'N/A' in metrics
         self.step_ += 1
-        if error or not_found:
-            score = (99999999999) * (self.step_ / 100)**(-1)
-        else:
-            score = self.evaluate(metrics)
+        score = self.evaluate(read_metrics(metrics_file))
         # Feed the score back back to Tune.
         # return must match 'metric' used in tune.run()
         return {"minimum": score}
@@ -79,6 +73,10 @@ class Autotuner(tune.Trainable):
         User-defined evaluation function.
         It can change in any form to minimize the score (return value).
         '''
+        error = 'ERR' in metrics
+        not_found = 'N/A' in metrics
+        if error or not_found:
+            return (99999999999) * (self.step_ / 100)**(-1)
         worst_slack, wirelength, num_drc = metrics
         alpha = -(wirelength / 100)
         beta = 1
