@@ -24,8 +24,6 @@ from ray.tune.suggest import ConcurrencyLimiter
 from ray.tune.schedulers import AsyncHyperBandScheduler
 from ray.tune.suggest.hyperopt import HyperOptSearch
 
-PYTHON_V = 'python3'
-
 
 class TimeStopper(Stopper):
     '''
@@ -194,7 +192,7 @@ def run_openroad(run_dir, flow_variant, parameters):
 
     metrics_file = os.path.join(os.getcwd(), 'metrics.json')
     metrics_command = export_command
-    metrics_command += f'{PYTHON_V} {run_dir}/orfs/flow/util/genMetrics.py -x'
+    metrics_command += f'{run_dir}/orfs/flow/util/genMetrics.py -x'
     metrics_command += f' -v {flow_variant}'
     metrics_command += f' -d {args.design}'
     metrics_command += f' -p {args.platform}'
