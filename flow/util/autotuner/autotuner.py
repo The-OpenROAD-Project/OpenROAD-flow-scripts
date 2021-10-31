@@ -47,6 +47,9 @@ class Autotuner(tune.Trainable):
     '''
 
     def setup(self, config):
+        '''
+        Setup current experiment step.
+        '''
         if args.server is not None:
             self.run_dir = os.path.abspath(os.getcwd() + '/../../../../')
         else:
