@@ -16,14 +16,32 @@ import json
 import hashlib
 import multiprocessing
 import math
+import time
 
 import ray
 from ray import tune
+from ray.tune import Stopper
 from ray.tune.suggest import ConcurrencyLimiter
 from ray.tune.schedulers import AsyncHyperBandScheduler
 from ray.tune.suggest.hyperopt import HyperOptSearch
 
 PYTHON_V = 'python3'
+
+
+class TimeStopper(Stopper):
+    '''
+    Experiment stop conditions.
+    '''
+    def __init__(self):
+        self._start = time.time()
+        self._deadline = 63966
+        self.stop_all = True
+
+    def __call__(self, trial_id, result):
+        return False
+
+    def stop_all(self):
+        return time.time() - self._start > self._deadline
 
 
 def parse_config(config):
@@ -289,7 +307,7 @@ if __name__ == '__main__':
     else:
         best_params = []
     search_algo = HyperOptSearch(points_to_evaluate=best_params)
-    # search_algo = ConcurrencyLimiter(search_algo, max_concurrent=args.jobs)
+    search_algo = ConcurrencyLimiter(search_algo, max_concurrent=args.jobs)
 
     scheduler = AsyncHyperBandScheduler()
 
@@ -304,6 +322,8 @@ if __name__ == '__main__':
         scheduler=scheduler,
         num_samples=args.samples,
         config=config_dict,
+        stop=TimeStopper(),
+        fail_fast=True,
         local_dir=local_dir,
         resume=args.resume,
         resources_per_trial={"cpu": 4},
