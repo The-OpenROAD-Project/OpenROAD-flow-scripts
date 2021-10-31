@@ -44,16 +44,6 @@ class TimeStopper(Stopper):
         return time.time() - self._start > self._deadline
 
 
-def parse_config(config):
-    '''
-    Parse config received from tune into make variables.
-    '''
-    options = ''
-    for key, value in config.items():
-        options += f' {key}={value}'
-    return options
-
-
 def evaluate_fn(step, worst_slack, wirelength, num_drc):
     '''
     User-defined evaluation function.
@@ -66,6 +56,28 @@ def evaluate_fn(step, worst_slack, wirelength, num_drc):
     term_2 = (step / 100)**(-1)
     term_3 = gamma * num_drc
     return term_1 * term_2 + term_3
+
+
+def objective_fn(config, checkpoint_dir=None):
+    '''
+    Run experiment and compute its score.
+    '''
+    if args.server is not None:
+        run_dir = os.path.abspath(os.getcwd() + '/../../../../')
+    else:
+        run_dir = os.path.abspath(os.getcwd() + '/../')
+    parameters = parse_config(config)
+    flow_variant = get_flow_variant(parameters)
+    metrics_file = run_openroad(run_dir, flow_variant, parameters)
+    worst_slack, wirelength, num_drc = read_metrics(metrics_file)
+    error = 'ERR' in [worst_slack, num_drc, wirelength]
+    not_found = 'N/A' in [worst_slack, num_drc, wirelength]
+    if error or not_found:
+        score = (99999999999) * (101 / 100)**(-1)
+    else:
+        score = evaluate_fn(101, worst_slack, wirelength, num_drc)
+    # Feed the score back back to Tune.
+    tune.report(minimum=score)
 
 
 def read_metrics(file_name):
@@ -81,6 +93,57 @@ def read_metrics(file_name):
         if key == 'finish':
             worst_slack = value.get('timing__setup__ws')
     return worst_slack, wirelength, num_drc
+
+
+def read_config(file_name):
+    '''
+    Please consider inclusive, exclusive
+    Most type uses [min, max)
+    But, Quantization makes the upper bound inclusive.
+    e.g., qrandint and qlograndint uses [min, max]
+    step value is used for quantized type (e.g., quniform). Otherwise, write 0.
+    When min==max, it means the constant value
+    '''
+
+    config = {}
+    with open(file_name) as file:
+        data = json.load(file)
+
+    config_data = data['param']
+    space = data['space']
+
+    for key, value in config_data.items():
+        config_type = value.get('type')
+        config_minmax = value.get('minmax')
+        config_step = value.get('step')
+        config_min = config_minmax[0]
+        config_max = config_minmax[1]
+        # This means the param is constant.
+        if config_min == config_max:
+            config[key] = config_min
+            continue
+        if config_type == 'int' and config_step == 1:
+            config[key] = tune.randint(config_min, config_max)
+        elif config_type == 'int' and config_step != 1:
+            config[key] = tune.qrandint(
+                config_min, config_max, config_step)
+        elif config_type == 'float' and config_step != 0:
+            config[key] = tune.quniform(
+                config_min, config_max, config_step)
+        elif config_type == 'float' and config_step == 0:
+            config[key] = tune.uniform(config_min, config_max)
+
+    return config, space
+
+
+def parse_config(config):
+    '''
+    Parse config received from tune into make variables.
+    '''
+    options = ''
+    for key, value in config.items():
+        options += f' {key}={value}'
+    return options
 
 
 def get_flow_variant(parameters):
@@ -131,69 +194,6 @@ def run_openroad(run_dir, flow_variant, parameters):
     os.system(metrics_command)
 
     return metrics_file
-
-
-def objective_fn(config, checkpoint_dir=None):
-    '''
-    Run experiment and compute its score.
-    '''
-    if args.server is not None:
-        run_dir = os.path.abspath(os.getcwd() + '/../../../../')
-    else:
-        run_dir = os.path.abspath(os.getcwd() + '/../')
-    parameters = parse_config(config)
-    flow_variant = get_flow_variant(parameters)
-    metrics_file = run_openroad(run_dir, flow_variant, parameters)
-    worst_slack, wirelength, num_drc = read_metrics(metrics_file)
-    error = 'ERR' in [worst_slack, num_drc, wirelength]
-    not_found = 'N/A' in [worst_slack, num_drc, wirelength]
-    if error or not_found:
-        score = (99999999999) * (101 / 100)**(-1)
-    else:
-        score = evaluate_fn(101, worst_slack, wirelength, num_drc)
-    # Feed the score back back to Tune.
-    tune.report(minimum=score)
-
-
-def read_config(file_name):
-    '''
-    Please consider inclusive, exclusive
-    Most type uses [min, max)
-    But, Quantization makes the upper bound inclusive.
-    e.g., qrandint and qlograndint uses [min, max]
-    step value is used for quantized type (e.g., quniform). Otherwise, write 0.
-    When min==max, it means the constant value
-    '''
-
-    config = {}
-    with open(file_name) as file:
-        data = json.load(file)
-
-    config_data = data['param']
-    space = data['space']
-
-    for key, value in config_data.items():
-        config_type = value.get('type')
-        config_minmax = value.get('minmax')
-        config_step = value.get('step')
-        config_min = config_minmax[0]
-        config_max = config_minmax[1]
-        # This means the param is constant.
-        if config_min == config_max:
-            config[key] = config_min
-            continue
-        if config_type == 'int' and config_step == 1:
-            config[key] = tune.randint(config_min, config_max)
-        elif config_type == 'int' and config_step != 1:
-            config[key] = tune.qrandint(
-                config_min, config_max, config_step)
-        elif config_type == 'float' and config_step != 0:
-            config[key] = tune.quniform(
-                config_min, config_max, config_step)
-        elif config_type == 'float' and config_step == 0:
-            config[key] = tune.uniform(config_min, config_max)
-
-    return config, space
 
 
 @ray.remote
