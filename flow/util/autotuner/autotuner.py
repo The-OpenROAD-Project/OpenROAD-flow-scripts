@@ -225,7 +225,8 @@ def nfs_setup(path):
     #     git_command += ' && git clean -xdf'
     #     git_command += ' && git submodule foreach --recursive git clean -xdf'
     if not os.path.isfile(f'{path}/orfs/tools/install/OpenROAD/bin/openroad'):
-        git_command += ' && bash -ic "./build_openroad.sh --local --threads 16"'
+        build_command = 'bash -ic "./build_openroad.sh --local --threads 16"'
+        git_command += f' && {build_command}'
     print(f'[INFO TUN-0000] Git command: {git_command}')
     os.system(git_command)
 
