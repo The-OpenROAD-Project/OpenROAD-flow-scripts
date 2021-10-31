@@ -89,13 +89,12 @@ class Autotuner(tune.Trainable):
         not_found = 'N/A' in metrics
         if error or not_found:
             return (99999999999) * (self.step_ / 100)**(-1)
-        worst_slack, wirelength, num_drc = metrics
-        alpha = -(wirelength / 100)
+        alpha = -(metrics['wirelength'] / 100)
         beta = 1
-        gamma = (wirelength / 10)
-        term_1 = alpha * worst_slack + beta * wirelength
+        gamma = (metrics['wirelength'] / 10)
+        term_1 = alpha * metrics['worst_slack'] + beta * metrics['wirelength']
         term_2 = (self.step_ / 100)**(-1)
-        term_3 = gamma * num_drc
+        term_3 = gamma * metrics['num_drc']
         return term_1 * term_2 + term_3
 
     @classmethod
@@ -111,7 +110,12 @@ class Autotuner(tune.Trainable):
                 wirelength = value.get('route__wirelength')
             if key == 'finish':
                 worst_slack = value.get('timing__setup__ws')
-        return worst_slack, wirelength, num_drc
+        ret = {
+            'worst_slack': worst_slack,
+            'wirelength': wirelength,
+            'num_drc': num_drc
+        }
+        return ret
 
 
 class AxPPA(Autotuner):
@@ -132,7 +136,7 @@ class AxPPA(Autotuner):
             if key == 'floorplan':
                 core_util = value.get('design__instance__design__util')
             if key == 'detailedroute':
-                ndrc = value.get('route__drc_errors__count')
+                num_drc = value.get('route__drc_errors__count')
                 wirelength = value.get('route__wirelength')
             if key == 'finish':
                 worst_slack = value.get('timing__setup__ws')
@@ -142,7 +146,7 @@ class AxPPA(Autotuner):
             "clk_period": clk_period,
             "worst_slack": worst_slack,
             "wirelength": wirelength,
-            "ndrc": ndrc,
+            "num_drc": num_drc,
             "total_power": total_power,
             "core_uti": core_util,
             "final_util": final_util
@@ -158,7 +162,7 @@ class EffClkPeriod(AxPPA):
     def evaluate(self, metrics):
         gamma = (metrics['clk_period'] - metrics['worst_slack']) / 10
         eff_clk_period = (metrics['clk_period'] - metrics['worst_slack']) * \
-            (self.step_ / 100)**(-1) + gamma * metrics['ndrc']
+            (self.step_ / 100)**(-1) + gamma * metrics['num_drc']
         return eff_clk_period
 
 
@@ -178,7 +182,7 @@ class PPA(AxPPA):
         ppa = eff_clk_period * 100 + \
             (100 / metrics['utilization']) + (metrics['total_power'] * 10)
         gamma = ppa / 10
-        score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['ndrc'])
+        score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['num_drc'])
         return score
 
 
@@ -223,7 +227,7 @@ class PPAImprov(AxPPA):
         reference = {}
         ppa = self.get_ppa(metrics, reference)
         gamma = ppa / 10
-        score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['ndrc'])
+        score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['num_drc'])
         return score
 
 
