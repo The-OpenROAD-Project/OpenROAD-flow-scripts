@@ -248,27 +248,23 @@ def read_config(file_name):
     with open(file_name) as file:
         data = json.load(file)
     config = {}
-    for key, value in data['param'].items():
-        config_type = value.get('type')
-        config_minmax = value.get('minmax')
-        config_step = value.get('step')
-        config_min = config_minmax[0]
-        config_max = config_minmax[1]
-        # This means the param is constant.
-        if config_min == config_max:
-            config[key] = config_min
-            continue
-        if config_type == 'int' and config_step == 1:
-            config[key] = tune.randint(config_min, config_max)
-        elif config_type == 'int' and config_step != 1:
-            config[key] = tune.qrandint(
-                config_min, config_max, config_step)
-        elif config_type == 'float' and config_step != 0:
-            config[key] = tune.quniform(
-                config_min, config_max, config_step)
-        elif config_type == 'float' and config_step == 0:
-            config[key] = tune.uniform(config_min, config_max)
-    return config, data['space']
+    for key, value in data.items():
+        type_ = value.get('type')
+        step = value.get('step')
+        min_, max_ = value.get('minmax')
+        if min_ == max_:
+            config[key] = min_
+        elif type_ == 'int':
+            if step == 1:
+                config[key] = tune.randint(min_, max_)
+            else:
+                config[key] = tune.qrandint(min_, max_, step)
+        elif type_ == 'float':
+            if step == 0:
+                config[key] = tune.uniform(min_, max_)
+            else:
+                config[key] = tune.quniform(min_, max_, step)
+    return config
 
 
 def parse_config(config):
@@ -523,7 +519,7 @@ if __name__ == '__main__':
     else:
         best_params = []
 
-    config_dict, _ = read_config(args.config)
+    config_dict = read_config(args.config)
 
     if args.algorithm == 'hyperopt':
         search_algo = HyperOptSearch(points_to_evaluate=best_params)
