@@ -15,12 +15,11 @@ import json
 import hashlib
 import multiprocessing
 import math
-import time
 import sys
+from datetime import datetime
 
 import ray
 from ray import tune
-from ray.tune import Stopper
 from ray.tune.schedulers import AsyncHyperBandScheduler
 from ray.tune.schedulers import PopulationBasedTraining
 from ray.tune.suggest import ConcurrencyLimiter
@@ -33,21 +32,10 @@ from ray.tune.suggest.optuna import OptunaSearch
 import nevergrad as ng
 from ax.service.ax_client import AxClient
 
-
-class TimeStopper(Stopper):
-    '''
-    Experiment stop conditions.
-    '''
-
-    def __init__(self):
-        self._start = time.time()
-        self._deadline = 63966
-
-    def __call__(self, trial_id, result):
-        return False
-
-    def stop_all(self):
-        return time.time() - self._start > self._deadline
+BUILD_CPUS = 16
+CPUS = 12
+DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
 
 
 class AutotunerBase(tune.Trainable):
@@ -314,18 +302,16 @@ def run_openroad(run_dir, flow_variant, parameters):
         export_command = f'export PATH={install_path}/OpenROAD/bin'
         export_command += f':{install_path}/yosys/bin'
         export_command += f':{install_path}/LSOracle/bin:$PATH'
-        print('[INFO TUN-0003] Export command:', export_command)
         export_command += ' && '
     else:
         export_command = ''
-        print('[INFO TUN-0004] Export command not set for local run.')
 
     make_command = export_command
     make_command += f'make -C {run_dir}/orfs/flow DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
-    make_command += f' FLOW_VARIANT={flow_variant}'
-    make_command += f' {parameters} > /dev/null'
-    print(f'[INFO TUN-0005] Run current FLOW_VARIANT: {make_command}')
+    make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
+    make_command += f' NPROC={CPUS}'
+    make_command += ' > make-finish-stdout.log 2> make-finish-stderr.log'
     os.system(make_command)
 
     metrics_file = os.path.join(os.getcwd(), 'metrics.json')
@@ -335,7 +321,7 @@ def run_openroad(run_dir, flow_variant, parameters):
     metrics_command += f' -d {args.design}'
     metrics_command += f' -p {args.platform}'
     metrics_command += f' -o {metrics_file}'
-    print(f'[INFO TUN-0006] Generate metrics file: {metrics_command}')
+    metrics_command += ' > metrics-stdout.log 2> metrics-stderr.log'
     os.system(metrics_command)
 
     return metrics_file
@@ -348,62 +334,157 @@ def nfs_setup(path):
     '''
     git_command = f'echo "Remote folder: {path}"'
     git_command += f' && mkdir -p {path}'
-    # if args.force_clone:
-    #     git_command += f' && rm -rf {path}/orfs'
+    if args.git_clone:
+        git_command += f' && rm -rf {path}/orfs'
     if not os.path.isdir(f'{path}/orfs/.git'):
-        url = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
-        git_options = '--recursive --single-branch --branch master --depth 1'
-        git_command += f' && git clone {git_options} {url} {path}/orfs'
+        git_command += ' && git clone --depth 1 --recursive --single-branch'
+        git_command += f' {args.git_clone_args}'
+        if args.git_orfs_branch != '':
+            git_command += f' --branch {args.git_orfs_branch}'
+        git_command += f' {args.git_url} {path}/orfs'
     git_command += f' && cd {path}/orfs'
-    # if args.clean:
-    #     git_command += ' && git clean -xdf'
-    #     git_command += ' && git submodule foreach --recursive git clean -xdf'
+    if args.git_clean:
+        git_command += ' && git clean -xdf tools'
+        git_command += ' && git submodule foreach --recursive git clean -xdf'
     if not os.path.isfile(f'{path}/orfs/tools/install/OpenROAD/bin/openroad'):
-        build_command = 'bash -ic "./build_openroad.sh --local --threads 16"'
-        git_command += f' && {build_command}'
+        build_command = './build_openroad.sh --local --threads {BUILD_CPUS}'
+        if args.git_latest:
+            build_command += ' --latest'
+        build_command += f' {args.build_args}'
+        git_command += f' && bash -ic "{build_command}"'
     print(f'[INFO TUN-0000] Git command: {git_command}')
     os.system(git_command)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+
+    # Setup
+    parser.add_argument(
+        '--git-clean',
+        action='store_true',
+        help='Clean binaries and build files.'
+             ' WARNING: may lose previous data.'
+             ' Use carfully.')
+    parser.add_argument(
+        '--git-clone',
+        action='store_true',
+        help='Force new git clone.'
+             ' WARNING: may lose previous data.'
+             ' Use carfully.')
+    parser.add_argument(
+        '--git-clone-args',
+        type=str,
+        required=False,
+        default='',
+        help='Additional git clone arugments.')
+    parser.add_argument(
+        '--git-latest',
+        action='store_true',
+        help='Use latest version of OpenROAD app.')
+    parser.add_argument(
+        '--git-or-branch',
+        type=str,
+        required=False,
+        default='',
+        help='OpenROAD app branch to use.')
+    parser.add_argument(
+        '--git-orfs-branch',
+        type=str,
+        required=False,
+        default='master',
+        help='OpenROAD-flow-scripts branch to use.')
+    parser.add_argument(
+        '--git-url',
+        type=str,
+        required=False,
+        default=ORFS_URL,
+        help='OpenROAD-flow-scripts repo URL to use.')
+    parser.add_argument(
+        '--build-args',
+        type=str,
+        required=False,
+        default='',
+        help='Additional arguments givent to ./build_openroad.sh.')
+
+    # DUT
     parser.add_argument(
         '--design',
-        '-d',
         type=str,
         required=False,
         default='gcd',
         help='Name of the design for Autotuning.')
     parser.add_argument(
         '--platform',
-        '-p',
         type=str,
         required=False,
         default='sky130hd',
         help='Name of the platform for Autotuning.')
+
+    # Experiment Setup
     parser.add_argument(
         '--experiment',
-        '-e',
         type=str,
         required=False,
         default='test-hyperopt',
         help='Experiment name. This parameter is used to prefix the'
-        ' FLOW_VARIANT and to set the Ray log destination'
-        ' (i.e., {platform}/{design}/{experiment}).')
+        ' FLOW_VARIANT and to set the Ray log destination.')
+    parser.add_argument(
+        '--config',
+        type=str,
+        default='util/autotuner.json',
+        required=False,
+        help='Configuration file that sets which knobs to use for Autotuning.')
+    parser.add_argument(
+        '--resume',
+        action='store_true',
+        help='Resume previous run.')
+
+    # ML
+    parser.add_argument(
+        '--algorithm',
+        type=str,
+        default='hyperopt',
+        required=False,
+        help='Search algorithm to use for Autotuning.')
+    parser.add_argument(
+        '--eval',
+        type=str,
+        default='default',
+        required=False,
+        help='Evaluate function to use with search algorithm.')
+    parser.add_argument(
+        '--samples',
+        type=int,
+        required=False,
+        default=10,
+        help='Number of samples for tunning.')
+    parser.add_argument(
+        '--reference',
+        type=str,
+        default=None,
+        required=False,
+        help='Reference file for use with PPAImprov.')
+    parser.add_argument(
+        '--perturbation',
+        type=int,
+        default=25,
+        required=False,
+        help='Perturbation interval for PopulationBasedTraining.')
+    parser.add_argument(
+        '--seed',
+        type=int,
+        default=42,
+        required=False,
+        help='Random seed.')
+
+    # Workload
     parser.add_argument(
         '--jobs',
-        '-j',
         type=int,
         required=False,
         default=math.floor(multiprocessing.cpu_count() / 2),
         help='Max number of concurrent jobs.')
-    parser.add_argument(
-        '--samples',
-        '-s',
-        type=int,
-        required=False,
-        default=10,
-        help='Number of samples for search algorithm.')
     parser.add_argument(
         '--server',
         type=str,
@@ -416,49 +497,7 @@ if __name__ == '__main__':
         default=10001,
         required=False,
         help='The port of Ray server to connect.')
-    parser.add_argument(
-        '--seed',
-        type=int,
-        default=123,
-        required=False,
-        help='Random seed.')
-    parser.add_argument(
-        '--perturbation',
-        type=int,
-        default=25,
-        required=False,
-        help='Perturbation interval for PopulationBasedTraining.')
-    parser.add_argument(
-        '--algorithm',
-        '-a',
-        type=str,
-        default='hyperopt',
-        required=False,
-        help='Search algorithm to use for Autotuning.')
-    parser.add_argument(
-        '--eval',
-        type=str,
-        default='default',
-        required=False,
-        help='Evaluate function to use with search algorithm.')
-    parser.add_argument(
-        '--config',
-        '-c',
-        type=str,
-        default='util/autotuner.json',
-        required=False,
-        help='Configuration file that sets which knobs to use for Autotuning.')
-    parser.add_argument(
-        '--reference',
-        type=str,
-        default=None,
-        required=False,
-        help='Reference file for use with PPAImprov.')
-    parser.add_argument(
-        '--resume',
-        '-r',
-        action='store_true',
-        help='Resume previous run.')
+
     args = parser.parse_args()
     args.algorithm = args.algorithm.lower()
 
@@ -550,16 +589,14 @@ if __name__ == '__main__':
         metric='minimum',
         mode='min',
         search_alg=search_algo,
-        name=f'{args.platform}/{args.design}/{args.experiment}',
+        name=f'{args.platform}/{args.design}/{args.experiment}-{DATE}',
         scheduler=AsyncHyperBandScheduler(),
         num_samples=args.samples,
         config=config_dict,
-        stop=TimeStopper(),
         fail_fast=True,
         local_dir=local_dir,
         resume=args.resume,
-        resources_per_trial={"cpu": 4},
-        queue_trials=True,
-        verbose=1
+        queue_trials=True
     )
     print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
+    ray.shutdown()
