@@ -35,8 +35,6 @@ from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
-SDC_FILE = ''
-FR_FILE = ''
 
 
 class AutotunerBase(tune.Trainable):
@@ -260,19 +258,21 @@ def read_config(file_name):
         return ret
     with open(file_name) as file:
         data = json.load(file)
-    sdc_file = SDC_FILE
-    fr_file = FR_FILE
+    sdc_file = ''
+    fr_file = ''
     config = {}
     for key, value in data.items():
         if key == '_SDC_FILE_PATH':
             if sdc_file != '':
                 print('[WARNING TUN-0004] Overwritting SDC base file.')
-            sdc_file = read(f'{os.path.dirname(file_name)}/{value}')
+            if value != '':
+                sdc_file = read(f'{os.path.dirname(file_name)}/{value}')
             continue
         if key == '_FR_FILE_PATH':
             if fr_file != '':
                 print('[WARNING TUN-0005] Overwritting FastRoute base file.')
-            fr_file = read(f'{os.path.dirname(file_name)}/{value}')
+            if value != '':
+                fr_file = read(f'{os.path.dirname(file_name)}/{value}')
             continue
         type_ = value.get('type')
         step = value.get('step')
@@ -289,7 +289,8 @@ def read_config(file_name):
                 config[key] = tune.uniform(min_, max_)
             else:
                 config[key] = tune.quniform(min_, max_, step)
-    return config
+    # Copy back to global variables
+    return config, sdc_file, fr_file
 
 
 def parse_config(config):
@@ -712,7 +713,7 @@ def set_training_class(function):
 if __name__ == '__main__':
     args = parse_arguments()
     experiment_name = f'{args.platform}/{args.design}/{args.experiment}'
-    config_dict = read_config(os.path.abspath(args.config))
+    config_dict, SDC_FILE, FR_FILE = read_config(os.path.abspath(args.config))
     best_params = set_best_params(args.platform, args.design)
     search_algo = set_algorithm(experiment_name)
     TrainClass = set_training_class(args.eval)
