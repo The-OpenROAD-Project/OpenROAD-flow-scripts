@@ -36,6 +36,7 @@ from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
+AUTOTUNER_BEST = 'autotuner-best.json'
 
 
 def run_command(cmd, check=True):
@@ -708,7 +709,7 @@ def set_best_params(platform, design):
     '''
     params = []
     best_param_file = f'designs/{platform}/{design}'
-    best_param_file += '/autotuner.json'
+    best_param_file += '/{AUTOTUNER_BEST}'
     if os.path.isfile(best_param_file):
         with open(best_param_file) as file:
             params = json.load(file)
@@ -793,7 +794,7 @@ if __name__ == '__main__':
     )
     ray.shutdown()
     print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
-    new_best_path = f'{LOCAL_DIR}/{experiment_name}-{DATE}/autotuner-best.json'
+    new_best_path = f'{LOCAL_DIR}/{experiment_name}-{DATE}/{AUTOTUNER_BEST}'
     with open(new_best_path, 'w') as new_best_file:
         json.dump(analysis.best_config, new_best_file, indent=4)
     print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
