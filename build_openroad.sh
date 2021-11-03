@@ -4,6 +4,8 @@
 # Exit on first error
 set -e
 
+cd "$(dirname $(readlink -f $0))"
+
 function usage() {
         cat << EOF
 
