@@ -146,6 +146,21 @@ __local_build()
         $NICE cmake --build tools/LSOracle/build -j ${PROC} --target install
 }
 
+__change_or_repo()
+(
+        base_url=$(dirname $OR_REPO)
+        [[ ${base_url##*/} = $base_url ]] && CURRENT_REMOTE=${base_url##*:} || CURRENT_REMOTE=${base_url##*/}
+        cd tools/OpenROAD
+        remotes=$(git remote)
+        SAVEIFS=$IFS
+        IFS=$'\n'
+        remotes=($remotes)
+        IFS=$SAVEIFS
+        if [[ ! " ${remotes[@]} " =~ " ${CURRENT_REMOTE} " ]]; then
+                git remote add $CURRENT_REMOTE $OR_REPO
+        fi
+)
+
 __update_or_latest()
 (
         cd tools/OpenROAD
@@ -163,17 +178,7 @@ __common_setup()
         fi
 
         if [ ! -z ${OR_REPO+x} ]; then
-                base_url=$(dirname $OR_REPO)
-                [[ ${base_url##*/} = $base_url ]] && CURRENT_REMOTE=${base_url##*:} || CURRENT_REMOTE=${base_url##*/}
-                remotes=$(git --git-dir tools/OpenROAD/.git remote)
-                SAVEIFS=$IFS
-                IFS=$'\n'
-                remotes=($remotes)
-                IFS=$SAVEIFS
-                if [[ ! " ${remotes[@]} " =~ " ${CURRENT_REMOTE} " ]]; then
-                        git --git-dir tools/OpenROAD/.git \
-                                remote add $CURRENT_REMOTE $OR_REPO
-                fi
+                __change_or_repo
         fi
 
         if [ ! -z ${UPDATE_OR+x} ]; then
