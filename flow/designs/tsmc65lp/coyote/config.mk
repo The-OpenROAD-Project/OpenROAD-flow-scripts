@@ -27,5 +27,5 @@ export CORE_AREA = 5 5 1805 1805
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-500 -exclude right:1500-2000 -exclude top:* -exclude bottom:*
 export MACRO_BLOCKAGE_HALO = 10
 
-export PLACE_DENSITY         ?= 0.65
+export PLACE_DENSITY         = 0.65
 export REMOVE_BUFFER_TREE     = 1
