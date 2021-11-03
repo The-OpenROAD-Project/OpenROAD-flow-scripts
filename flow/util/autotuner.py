@@ -114,10 +114,10 @@ class AutotunerBase(tune.Trainable):
             data = json.load(file)
         for key, value in data.items():
             if key == 'detailedroute':
-                num_drc = value.get('route__drc_errors__count')
-                wirelength = value.get('route__wirelength')
+                num_drc = value['route__drc_errors__count']
+                wirelength = value['route__wirelength']
             if key == 'finish':
-                worst_slack = value.get('timing__setup__ws')
+                worst_slack = value['timing__setup__ws']
         ret = {
             'worst_slack': worst_slack,
             'wirelength': wirelength,
@@ -145,17 +145,17 @@ class AxPPA(AutotunerBase):
         core_util = 'ERR'
         final_util = 'ERR'
         for key, value in data.items():
-            if key == 'constraints' and len(value.get('clocks__details')) > 0:
-                clk_period = float(value.get('clocks__details')[0].split()[1])
+            if key == 'constraints' and len(value['clocks__details']) > 0:
+                clk_period = float(value['clocks__details'][0].split()[1])
             if key == 'floorplan':
-                core_util = value.get('design__instance__design__util')
+                core_util = value['design__instance__design__util']
             if key == 'detailedroute':
-                num_drc = value.get('route__drc_errors__count')
-                wirelength = value.get('route__wirelength')
+                num_drc = value['route__drc_errors__count']
+                wirelength = value['route__wirelength']
             if key == 'finish':
-                worst_slack = value.get('timing__setup__ws')
-                total_power = value.get('power__total')
-                final_util = value.get('design__instance__utilization')
+                worst_slack = value['timing__setup__ws']
+                total_power = value['power__total']
+                final_util = value['design__instance__utilization']
         ret = {
             "clk_period": clk_period,
             "worst_slack": worst_slack,
@@ -275,33 +275,29 @@ def read_config(file_name):
     fr_file = ''
     config = {}
     for key, value in data.items():
-        if key == '_SDC_FILE_PATH':
+        if key == '_SDC_FILE_PATH' and value != '':
             if sdc_file != '':
                 print('[WARNING TUN-0004] Overwriting SDC base file.')
-            if value != '':
-                sdc_file = read(f'{os.path.dirname(file_name)}/{value}')
+            sdc_file = read(f'{os.path.dirname(file_name)}/{value}')
             continue
-        if key == '_FR_FILE_PATH':
+        if key == '_FR_FILE_PATH' and value != '':
             if fr_file != '':
                 print('[WARNING TUN-0005] Overwriting FastRoute base file.')
-            if value != '':
-                fr_file = read(f'{os.path.dirname(file_name)}/{value}')
+            fr_file = read(f'{os.path.dirname(file_name)}/{value}')
             continue
-        type_ = value.get('type')
-        step = value.get('step')
-        min_, max_ = value.get('minmax')
+        min_, max_ = value['minmax']
         if min_ == max_:
             config[key] = min_
-        elif type_ == 'int':
-            if step == 1:
+        elif value['type'] == 'int':
+            if value['step'] == 1:
                 config[key] = tune.randint(min_, max_)
             else:
-                config[key] = tune.qrandint(min_, max_, step)
-        elif type_ == 'float':
-            if step == 0:
+                config[key] = tune.qrandint(min_, max_, value['step'])
+        elif value['type'] == 'float':
+            if value['step'] == 0:
                 config[key] = tune.uniform(min_, max_)
             else:
-                config[key] = tune.quniform(min_, max_, step)
+                config[key] = tune.quniform(min_, max_, value['step'])
     # Copy back to global variables
     return config, sdc_file, fr_file
 
