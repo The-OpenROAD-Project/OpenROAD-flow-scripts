@@ -42,6 +42,8 @@ COPY_PLATFORMS="NO"
 DOCKER_TAG="openroad/flow-scripts"
 CURRENT_REMOTE="origin"
 OPENROAD_APP_BRANCH="master"
+CLEAN_BEFORE="NO"
+CLEAN_FORCE="NO"
 
 INSTALL_PATH="$(pwd)/tools/install"
 
@@ -122,6 +124,12 @@ while (( "$#" )); do
                 --install-path)
                         INSTALL_PATH="$2"
                         shift
+                        ;;
+                --clean)
+                        CLEAN_BEFORE="YES"
+                        ;;
+                --clean-force)
+                        CLEAN_FORCE="YES"
                         ;;
                 -*|--*) # unsupported flags
                         echo "[ERROR FLW-0004] Unsupported flag $1." >&2
@@ -262,6 +270,17 @@ __common_setup()
 }
 
 __common_setup
+
+if [[ "${CLEAN_FORCE}" == "YES" ]]; then
+        CLEAN_CMD="-x -d --force"
+else
+        CLEAN_CMD="-x -d --interactive"
+fi
+if [[ "${CLEAN_BEFORE}" == "YES" ]]; then
+        git clean "${CLEAN_CMD}" tools
+        git submodule foreach --recursive git clean "${CLEAN_CMD}"
+fi
+
 # Choose install method
 if [ -z "${BUILD_METHOD+x}" ] && command -v docker &> /dev/null; then
         echo -n "[INFO FLW-0000] Using docker build method."
