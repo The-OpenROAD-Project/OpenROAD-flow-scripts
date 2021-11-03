@@ -40,10 +40,10 @@ export RTLMP_BLOCKAGE_FILE = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macro_bloc
 
 # These values must be multiples of placement site
 #export DIE_AREA = 0 0 3080 3100
-export DIE_AREA = 0 0 1810 1810
-export CORE_AREA = 5 5 1805 1805
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-500 -exclude right:1500-2000 -exclude top:* -exclude bottom:*
+export DIE_AREA = 0 0 2510 2310
+export CORE_AREA = 5 5 2505 2505
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-700 -exclude right:1500-2510 -exclude top:* -exclude bottom:*
 export MACRO_BLOCKAGE_HALO = 10
 
-export PLACE_DENSITY         ?= 0.65
+export PLACE_DENSITY         = 0.70
 export REMOVE_BUFFER_TREE     = 1
