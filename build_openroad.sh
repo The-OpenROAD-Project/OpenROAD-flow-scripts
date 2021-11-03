@@ -132,7 +132,7 @@ while (( "$#" )); do
                         CLEAN_FORCE="YES"
                         ;;
                 -*|--*) # unsupported flags
-                        echo "[ERROR FLW-0004] Unsupported flag $1." >&2
+                        echo "[ERROR FLW-0005] Unsupported flag $1." >&2
                         usage 2> /dev/null
                         exit 1
                         ;;
@@ -152,6 +152,7 @@ PREFIX=${INSTALL_PATH}/yosys \
 ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc \
 "
 if [[ "${YOSYS_OVERWIRTE_ARGS}" == "YES" ]]; then
+        echo "[INFO FLW-0013] Overwriting Yosys compilation flags."
         YOSYS_ARGS="${YOSYS_USER_ARGS}"
 else
         YOSYS_ARGS="${YOSYS_ARGS} ${YOSYS_USER_ARGS}"
@@ -162,6 +163,7 @@ OPENROAD_APP_ARGS="\
 -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/OpenROAD \
 "
 if [[ "${OPENROAD_APP_OVERWIRTE_ARGS}" == "YES" ]]; then
+        echo "[INFO FLW-0014] Overwriting OpenROAD app compilation flags."
         OPENROAD_APP_ARGS="${OPENROAD_APP_USER_ARGS}"
 else
         OPENROAD_APP_ARGS="${OPENROAD_APP_ARGS} ${OPENROAD_APP_USER_ARGS}"
@@ -175,6 +177,7 @@ LSORACLE_ARGS="\
 -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/LSOracle \
 "
 if [[ "${LSORACLE_OVERWIRTE_ARGS}" == "YES" ]]; then
+        echo "[INFO FLW-0013] Overwriting LSOracle compilation flags."
         LSORACLE_ARGS="${LSORACLE_USER_ARGS}"
 else
         LSORACLE_ARGS="${LSORACLE_ARGS} ${LSORACLE_USER_ARGS}"
@@ -215,14 +218,14 @@ __docker_build()
 
 __local_build()
 {
-        # build yosys
+        # Build Yosys
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
-        # build openroad
+        # Build OpenROAD app
         ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/build ${OPENROAD_APP_ARGS}
         ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
 
-        # build lsoracle
+        # Build LSOracle
         ${NICE} cmake tools/LSOracle -B tools/LSOracle/build ${LSORACLE_ARGS}
         ${NICE} cmake --build tools/LSOracle/build --target install -j "${PROC}"
 }
@@ -264,15 +267,18 @@ __common_setup()
 {
         # Clone repositories
         if [ -z "${OPENROAD_FLOW_NO_GIT_INIT+x}" ]; then
+                echo "[INFO FLW-0002] Updating git submodules."
                 git submodule update --init --recursive
         fi
 
         if [ ! -z "${OPENROAD_APP_GIT_URL+x}" ]; then
+                echo -n "[INFO FLW-0003] Changing OpenROAD app remote to"
+                echo " ${OPENROAD_APP_GIT_URL}."
                 __change_openroad_app_remote
         fi
 
         if [ ! -z "${USE_OPENROAD_APP_MASTER+x}" ] || [ ! -z "${OPENROAD_APP_BRANCH+x}" ]; then
-                echo -n "[INFO FLW-0005] Updating OpenROAD app to the HEAD"
+                echo -n "[INFO FLW-0004] Updating OpenROAD app to the HEAD"
                 echo "  of ${OPENROAD_APP_REMOTE}/${OPENROAD_APP_BRANCH}."
                 __update_openroad_app_latest
         fi
@@ -296,7 +302,7 @@ if [ -z "${BUILD_METHOD+x}" ] && command -v docker &> /dev/null; then
         echo " This will create a docker image tagged '${DOCKER_TAG}'."
         __docker_build
 else
-        echo -n "[INFO FLW-0000] Using local build method."
+        echo -n "[INFO FLW-0001] Using local build method."
         echo " This will create binaries at 'tools/install unless overwritten."
         __local_build
 fi
