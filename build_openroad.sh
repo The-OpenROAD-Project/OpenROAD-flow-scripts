@@ -94,20 +94,20 @@ done
 
 __docker_build()
 {
-        docker build \
+        $NICE docker build \
                 --no-cache \
                 --tag openroad/yosys \
                 --file tools/yosys_util/Dockerfile \
                 --target builder \
                 tools/yosys
 
-        docker build \
+        $NICE docker build \
                 --no-cache \
                 --tag openroad/lsoracle \
                 --file tools/LSOracle/Dockerfile.openroad \
                 tools
 
-        ./tools/OpenROAD/etc/DockerHelper.sh create \
+        $NICE ./tools/OpenROAD/etc/DockerHelper.sh create \
                 -target=builder \
                 -threads=${PROC}
 
@@ -115,7 +115,7 @@ __docker_build()
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
-        docker build --no-cache --tag ${DOCKER_TAG} --file Dockerfile .
+        $NICE docker build --no-cache --tag ${DOCKER_TAG} --file Dockerfile .
         if [ "$COPY_PLATFORMS" == "YES" ]; then
                 mv .dockerignore{.bak,}
         fi
@@ -130,7 +130,7 @@ __local_build()
                 PREFIX=$(pwd)/tools/install/yosys \
                 ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc
 
-        cmake tools/OpenROAD \
+        $NICE cmake tools/OpenROAD \
                 -B tools/OpenROAD/build \
                 -DCMAKE_INSTALL_PREFIX=tools/install/OpenROAD
 
@@ -139,7 +139,7 @@ __local_build()
                 --target install \
                 -j ${PROC}
 
-        cmake tools/LSOracle \
+        $NICE cmake tools/LSOracle \
                 -B tools/LSOracle/build \
                 -D CMAKE_BUILD_TYPE=RELEASE \
                 -D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
