@@ -39,7 +39,7 @@ ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
 
 class AutotunerBase(tune.Trainable):
     '''
-    Atutotuner base class for experiments.
+    Autotuner base class for experiments.
     '''
 
     def setup(self, config):
@@ -225,7 +225,7 @@ class PPAImprov(AxPPA):
         area = percent(100 - reference['final_util'],
                        100 - metrics['final_util'])
 
-        # lower values of ppa are better.
+        # Lower values of PPA are better.
         ppa_upper_bound = (coeff_perform + coeff_power + coeff_area) * 100
         ppa = performance * coeff_perform
         ppa += power * coeff_power
@@ -264,13 +264,13 @@ def read_config(file_name):
     for key, value in data.items():
         if key == '_SDC_FILE_PATH':
             if sdc_file != '':
-                print('[WARNING TUN-0004] Overwritting SDC base file.')
+                print('[WARNING TUN-0004] Overwriting SDC base file.')
             if value != '':
                 sdc_file = read(f'{os.path.dirname(file_name)}/{value}')
             continue
         if key == '_FR_FILE_PATH':
             if fr_file != '':
-                print('[WARNING TUN-0005] Overwritting FastRoute base file.')
+                print('[WARNING TUN-0005] Overwriting FastRoute base file.')
             if value != '':
                 fr_file = read(f'{os.path.dirname(file_name)}/{value}')
             continue
@@ -295,7 +295,7 @@ def read_config(file_name):
 
 def parse_config(config):
     '''
-    Parse config received from tune into make variables.
+    Parse configuration received from tune into make variables.
     '''
     options = ''
     sdc = {}
@@ -322,8 +322,9 @@ def parse_config(config):
 
 def write_sdc(path, variables):
     '''
-    Create a SDC file with paramertes for current tunning iteration.
+    Create a SDC file with parameters for current tuning iteration.
     '''
+    # TODO: handle case where the reference file does not exist
     new_file = SDC_FILE
     for key, value in variables.items():
         if key == 'CLK_PERIOD':
@@ -355,8 +356,9 @@ def write_sdc(path, variables):
 
 def write_fast_route(path, variables):
     '''
-    Create a FastRoute Tcl file with paramertes for current tunning iteration.
+    Create a FastRoute Tcl file with parameters for current tuning iteration.
     '''
+    # TODO: handle case where the reference file does not exist
     layer_cmd = 'set_global_routing_layer_adjustment'
     new_file = FR_FILE
     for key, value in variables.items():
@@ -472,7 +474,7 @@ def run_setup(base):
 
 def parse_arguments():
     '''
-    Parse arguments from commandline.
+    Parse arguments from command line.
     '''
     parser = argparse.ArgumentParser()
 
@@ -553,7 +555,7 @@ def parse_arguments():
     parser.add_argument(
         '--config',
         type=str,
-        default='util/autotuner.json',
+        default='',
         required=False,
         help='Configuration file that sets which knobs to use for Autotuning.')
     parser.add_argument(
@@ -579,7 +581,7 @@ def parse_arguments():
         type=int,
         required=False,
         default=10,
-        help='Number of samples for tunning.')
+        help='Number of samples for tuning.')
     parser.add_argument(
         '--reference',
         type=str,
@@ -677,7 +679,7 @@ def set_algorithm(name):
 
 def set_best_params(platform, design):
     '''
-    Get current known best parametes if it exists.
+    Get current known best parameters if it exists.
     '''
     params = []
     best_param_file = f'designs/{platform}/{design}'
@@ -690,7 +692,7 @@ def set_best_params(platform, design):
 
 def set_training_class(function):
     '''
-    Set tranining class.
+    Set training class.
     '''
     if function == 'default':
         return AutotunerBase
@@ -723,9 +725,10 @@ if __name__ == '__main__':
 
     # Connect to remote Ray server if any, otherwise will run locally
     if args.server is not None:
-        ray.init(f'ray://{args.server}:{args.port}')
         # At GCP we have a NFS folder that is present for all worker nodes.
-        # This allows to build requried binaries once.
+        # This allows to build required binaries once. We clone, build and
+        # store intermediate files at LOCAL_DIR. The RUN variable helps to id
+        # different runs and also continue experiments that crash.
         with open(args.config) as config_file:
             LOCAL_DIR = '/shared-data/autotuner'
             LOCAL_DIR += f'-orfs:{args.git_orfs_branch}'
@@ -735,9 +738,11 @@ if __name__ == '__main__':
                 LOCAL_DIR += '-or:latest'
             RUN = hashlib.md5(config_file.read().encode('utf-8')).hexdigest()
             LOCAL_DIR += f'/{RUN}'
-        # Remote functions return a worker/task id and are non-blocking,
-        # thus we call ray.get() to wait for its completion and get the func
-        # return value.
+        # Connect to ray server before first remote execution.
+        ray.init(f'ray://{args.server}:{args.port}')
+        # Remote functions return a task id and are non-blocking, thus we call
+        # ray.get() to wait for its completion and get the function return
+        # value.
         INSTALL_PATH = ray.get(run_setup.remote(LOCAL_DIR))
         print('[INFO TUN-0001] Done waiting.')
     else:
@@ -760,9 +765,9 @@ if __name__ == '__main__':
         resume=args.resume,
         queue_trials=True
     )
+    ray.shutdown()
     print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
     new_best_path = f'{LOCAL_DIR}/{experiment_name}-{DATE}/autotuner-best.json'
-    with open(new_best_path, 'w') as output_file:
-        json.dump(analysis.best_config, output_file, indent=4)
+    with open(new_best_path, 'w') as new_best_file:
+        json.dump(analysis.best_config, new_best_file, indent=4)
     print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
-    ray.shutdown()
