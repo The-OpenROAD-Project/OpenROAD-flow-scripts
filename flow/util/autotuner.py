@@ -12,13 +12,13 @@ User can decide the input parameter space by modifying 'autotuner.json'.
 import argparse
 import hashlib
 import json
-import math
+from math import floor
 import os
 import re
 import sys
 from datetime import datetime
 from multiprocessing import cpu_count
-import subprocess
+from subprocess import run
 
 import ray
 from ray import tune
@@ -40,9 +40,10 @@ ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
 
 def run_command(cmd, check=True):
     '''
-    Run shell command, control print and exceptions.
+    Wrapper for subprocess.run
+    Allows to run shell command, control print and exceptions.
     '''
-    process = subprocess.run(cmd, capture_output=True, text=True, check=check)
+    process = run(cmd, capture_output=True, text=True, check=check)
     if process.returncode == 0:
         print(process.stdout)
     else:
@@ -630,7 +631,7 @@ def parse_arguments():
         '--jobs',
         type=int,
         required=False,
-        default=math.floor(cpu_count() / 2),
+        default=floor(cpu_count() / 2),
         help='Max number of concurrent jobs.')
     parser.add_argument(
         '--openroad-threads',
