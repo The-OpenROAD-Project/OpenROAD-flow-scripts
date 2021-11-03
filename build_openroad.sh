@@ -21,7 +21,7 @@ INSTALL_PATH="$(pwd)/tools/install"
 
 DOCKER_OVERWIRTE_ARGS="NO"
 DOCKER_USER_ARGS=""
-DOCKER_ARGS="--no-cache"
+DOCKER_ARGS="--no-cache --pull"
 
 YOSYS_OVERWIRTE_ARGS="NO"
 YOSYS_USER_ARGS=""
@@ -235,14 +235,14 @@ fi
 __docker_build()
 {
         ${NICE} docker build \
-                "${DOCKER_ARGS}" \
+                ${DOCKER_ARGS} \
                 --tag openroad/yosys \
                 --file tools/yosys_util/Dockerfile \
                 --target builder \
                 tools/yosys
 
         ${NICE} docker build \
-                "${DOCKER_ARGS}" \
+                ${DOCKER_ARGS} \
                 --tag openroad/lsoracle \
                 --file tools/LSOracle/Dockerfile.openroad \
                 tools
@@ -256,7 +256,7 @@ __docker_build()
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
         ${NICE} docker build \
-                "${DOCKER_ARGS}" \
+                ${DOCKER_ARGS} \
                 --tag "${DOCKER_TAG}" \
                 --file Dockerfile \
                 .
@@ -341,8 +341,8 @@ else
         CLEAN_CMD="-x -d --interactive"
 fi
 if [[ "${CLEAN_BEFORE}" == "YES" ]]; then
-        git clean "${CLEAN_CMD}" tools
-        git submodule foreach --recursive git clean "${CLEAN_CMD}"
+        git clean ${CLEAN_CMD} tools
+        git submodule foreach --recursive git clean ${CLEAN_CMD}
 fi
 
 # Choose install method
