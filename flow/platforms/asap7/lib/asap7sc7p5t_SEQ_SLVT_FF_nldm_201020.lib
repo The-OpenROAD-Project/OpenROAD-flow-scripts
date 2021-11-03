@@ -32,7 +32,6 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 library (asap7sc7p5t_SEQ_SLVT_FF_nldm_201020) {
-  /* Models written by Liberate 18.1.0.293 from Cadence Design Systems, Inc. on Sat Dec  5 06:21:49 MST 2020 */
   comment : "";
   date : "$Date: Sat Dec  5 05:10:10 2020 $";
   revision : "1.0";
