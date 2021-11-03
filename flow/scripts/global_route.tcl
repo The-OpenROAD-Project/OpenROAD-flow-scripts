@@ -1,29 +1,5 @@
-if {![info exists standalone] || $standalone} {
-  # Read lef
-  read_lef $env(TECH_LEF)
-  read_lef $env(SC_LEF)
-  if {[info exist env(ADDITIONAL_LEFS)]} {
-    foreach lef $env(ADDITIONAL_LEFS) {
-      read_lef $lef
-    }
-  }
-
-  # Read liberty files
-  foreach libFile $env(LIB_FILES) {
-    read_liberty $libFile
-  }
-
-  # Read design files
-  # Read SDC and derating files
-  read_def $env(RESULTS_DIR)/4_cts.def
-  read_sdc $env(RESULTS_DIR)/2_floorplan.sdc
-  if [file exists $env(PLATFORM_DIR)/derate_final.tcl] {
-    source $env(PLATFORM_DIR)/derate_final.tcl
-    puts "derate_final.tcl sourced"
-  }
-} else {
-  puts "Starting global routing"
-}
+source $::env(SCRIPTS_DIR)/load.tcl
+load_design 4_cts.odb 4_cts.sdc "Starting global routing"
 
 if {[info exist env(PRE_GLOBAL_ROUTE)]} {
   source $env(PRE_GLOBAL_ROUTE)

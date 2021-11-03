@@ -1,34 +1,5 @@
-if {![info exists standalone] || $standalone} {
-  # Read lef
-  read_lef $::env(TECH_LEF)
-  read_lef $::env(SC_LEF)
-  if {[info exist ::env(ADDITIONAL_LEFS)]} {
-    foreach lef $::env(ADDITIONAL_LEFS) {
-      read_lef $lef
-    }
-  }
-
-  # Read liberty files
-  foreach libFile $::env(LIB_FILES) {
-    read_liberty $libFile
-  }
-  
-  # Read design files
-  if {[info exists ::env(RTLMP_FLOW)]} {
-    puts "RTLMP flow.. read verilog and floorplan def"
-    read_verilog $::env(RESULTS_DIR)/1_synth.v
-    link_design $::env(DESIGN_NAME)
-    read_def $::env(FLOORPLAN_DEF) -floorplan_initialize
-  } else {
-    read_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def
-  }
-  read_sdc $::env(RESULTS_DIR)/1_synth.sdc
-  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
-    source $::env(PLATFORM_DIR)/derate.tcl
-  }
-} else {
-  puts "Starting macro placement"
-}
+source $::env(SCRIPTS_DIR)/load.tcl
+load_design 2_3_floorplan_tdms.odb 1_synth.sdc "Starting macro placement"
 
 proc find_macros {} {
   set macros ""
@@ -108,6 +79,6 @@ if {[find_macros] != ""} {
 }
 
 if {![info exists standalone] || $standalone} {
-  write_def $::env(RESULTS_DIR)/2_4_floorplan_macro.def
+  write_db $::env(RESULTS_DIR)/2_4_floorplan_macro.odb
   exit
 }
