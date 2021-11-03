@@ -79,11 +79,11 @@ while (( "$#" )); do
                         exit
                         ;;
                 --or_branch)
-                        OR_BRANCH=$2
+                        OR_BRANCH="$2"
                         shift 2
                         ;;
                 --or_repo)
-                        OR_REPO=$2
+                        OR_REPO="$2"
                         shift 2
                         ;;
                 -l|--latest)
@@ -91,7 +91,7 @@ while (( "$#" )); do
                         shift
                         ;;
                 -t|--threads)
-                        PROC=$2
+                        PROC="$2"
                         shift 2
                         ;;
                 -n|--nice)
