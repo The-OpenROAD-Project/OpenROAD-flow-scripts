@@ -227,10 +227,8 @@ __local_build()
         ${NICE} cmake --build tools/LSOracle/build --target install -j "${PROC}"
 }
 
-__change_openroad_app_repo()
+__update_openroad_app_remote()
 (
-        base_url=$(dirname "${OPENROAD_APP_GIT_URL}")
-        [[ ${base_url##*/} = $base_url ]] && CURRENT_REMOTE=${base_url##*:} || CURRENT_REMOTE=${base_url##*/}
         cd tools/OpenROAD
         remotes=$(git remote)
         SAVEIFS=$IFS
@@ -242,10 +240,21 @@ __change_openroad_app_repo()
         fi
 )
 
+__change_openroad_app_remote()
+{
+        base_url=$(dirname "${OPENROAD_APP_GIT_URL}")
+        if [[ ${base_url##*/} = $base_url ]]; then
+                CURRENT_REMOTE=${base_url##*:}
+        else
+                CURRENT_REMOTE=${base_url##*/}
+        fi
+        __update_openroad_app_remote
+}
+
 __update_openroad_app_latest()
 (
         cd tools/OpenROAD
-        git fetch "${CURRENT_REMOTE}" "${OPENROAD_APP_BRANCH}"
+        git fetch "${CURRENT_REMOTE}"
         git checkout "${CURRENT_REMOTE}/${OPENROAD_APP_BRANCH}"
         git pull "${CURRENT_REMOTE}" "${OPENROAD_APP_BRANCH}"
         git submodule update --init --recursive
@@ -259,7 +268,7 @@ __common_setup()
         fi
 
         if [ ! -z "${OPENROAD_APP_GIT_URL+x}" ]; then
-                __change_openroad_app_repo
+                __change_openroad_app_remote
         fi
 
         if [ ! -z "${USE_OPENROAD_APP_MASTER+x}" ] || [ ! -z "${OPENROAD_APP_BRANCH+x}" ]; then
