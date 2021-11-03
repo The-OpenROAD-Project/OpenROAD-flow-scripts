@@ -1,44 +1,16 @@
 #!/bin/bash
-# This script builds the OpenROAD tools locally
+# This script builds the OpenROAD Flow tools locally or in a Docker image.
 
 # Exit on first error, do not allow unbound variables
 set -eu
 
+# Make sure we are on the correct folder before beginning
 cd "$(dirname $(readlink -f $0))"
 
-function usage() {
-        cat << EOF
-
-Usage: $0 [-h|--help] [-o|--local] [-l|--latest] [--or_branch BRANCH]
-          [--or_repo REPO-URL] [-n|--nice] [-t|--threads N]
-          [-c|--copy-platforms]
-
-Options:
-    -h, --help              Print this help message.
-
-    -o, --local             Build locally instead of building a Docker image.
-
-    -l, --latest            Use the head of branch --or_branch or 'master'
-                            by default for tools/OpenROAD.
-    --or_branch BRANCH      Use the head of branch BRANCH for tools/OpenROAD.
-    --or_repo REPO-URL      Use a fork at REPO-URL (https/ssh) for tools/OpenROAD.
-    --no_init               Skip initializing submodules.
-    -n, --nice              Use all cpus but nice the jobs.
-    -t, --threads N         Use N cpus when compiling software.
-
-Options valid only for Docker builds:
-    -c, --copy-platforms    Copy platforms to inside docker image.
-
-    This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
-    By default, the tools will be built from the linked submodule hashes.
-
-EOF
-}
-
-# defaults
+# Defaults variable values
 NICE=""
 PROC=$(nproc --all)
-COPY_PLATFORMS="NO"
+DOCKER_COPY_PLATFORMS="NO"
 DOCKER_TAG="openroad/flow-scripts"
 OPENROAD_APP_REMOTE="origin"
 OPENROAD_APP_BRANCH="master"
@@ -59,12 +31,94 @@ OPENROAD_APP_OVERWIRTE_ARGS="NO"
 LSORACLE_OVERWIRTE_ARGS="NO"
 LSORACLE_USER_ARGS=""
 
+function usage() {
+        cat << EOF
+
+Usage: $0 [-h|--help] [-o|--local] [-l|--latest]
+          [--or_branch BRANCH_NAME] [--or_repo REPO_URL] [--no_init]
+          [-n|--nice] [-t|--threads N]
+          [--yosys-args-overwrite] [--yosys-args STRING]
+          [--openroad-args-overwrite] [--openroad-args STRING]
+          [--lsoracle-args-overwrite] [--lsoracle-args STRING]
+          [--install-path PATH] [--clean] [--clean-force]
+
+          [-c|--copy-platforms]
+          [--docker-args-overwrite] [--docker-args STRING]
+
+Options:
+    -h, --help              Print this help message.
+
+    -o, --local             Build locally instead of building a Docker image.
+
+    -l, --latest            Use the head of branch --or_branch or 'master'
+                            by default for tools/OpenROAD.
+
+    --or_branch BRANCH_NAME Use the head of branch BRANCH for tools/OpenROAD.
+
+    --or_repo REPO_URL      Use a fork at REPO-URL (https/ssh) for tools/OpenROAD.
+
+    --no_init               Skip initializing submodules.
+
+    -t, --threads N         Use N cpus when compiling software.
+
+    -n, --nice              Nice all jobs. Use all cpus unless --threads is
+                            also given, then use N threads.
+
+    --yosys-args-overwrite  Do not use default flags set by this scrip during
+                            Yosys comilation.
+
+    --yosys-args STRING      Aditional compilation flags for Yosys compilation.
+
+    --openroad-args-overwrite
+                            Do not use default flags set by this scrip during
+                            OpenROAD app compilation.
+
+    --openroad-args STRING  Aditional compilation flags for OpenROAD app
+                            compilation.
+
+    --lsoracle-args-overwrite
+                            Do not use default flags set by this scrip during
+                            LSOracle compilation.
+
+    --lsoracle-args STRING    Aditional compilation flags for LSOracle
+                            compilation.
+
+    --install-path PATH     Path to install tools. Default is ${INSTALL_PATH}.
+
+    --clean                 Call git clean interactively before compile.
+                            Useful to remove old build files.
+
+    --clean-force           Call git clean before compile. WARNING: this option
+                            will not ask for confirmation. Useful to remove
+                            old build files.
+
+
+Options valid only for Docker builds:
+    -c, --copy-platforms    Copy platforms to inside docker image.
+
+    --docker-args-overwrite Do not use default flags set by this scrip for
+                            Docker builds.
+
+    --docker-args STRING    Aditional compilation flags for Docker build.
+
+    This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
+    By default, the tools will be built from the linked submodule hashes.
+
+EOF
+}
+
 # Parse arguments
 while (( "$#" )); do
         case "$1" in
                 -h|--help)
                         usage 2> /dev/null
                         exit
+                        ;;
+                -o|--local)
+                        BUILD_METHOD="LOCAL"
+                        ;;
+                -l|--latest)
+                        USE_OPENROAD_APP_MASTER=1
                         ;;
                 --or_branch)
                         OPENROAD_APP_BRANCH="$2"
@@ -74,8 +128,8 @@ while (( "$#" )); do
                         OPENROAD_APP_GIT_URL="$2"
                         shift
                         ;;
-                -l|--latest)
-                        USE_OPENROAD_APP_MASTER=1
+                --no_init)
+                        OPENROAD_FLOW_NO_GIT_INIT=1
                         ;;
                 -t|--threads)
                         PROC="$2"
@@ -84,14 +138,8 @@ while (( "$#" )); do
                 -n|--nice)
                         NICE="nice"
                         ;;
-                -o|--local)
-                        BUILD_METHOD="LOCAL"
-                        ;;
-                --no_init)
-                        OPENROAD_FLOW_NO_GIT_INIT=1
-                        ;;
                 -c|--copy-platforms)
-                        COPY_PLATFORMS="YES"
+                        DOCKER_COPY_PLATFORMS="YES"
                         ;;
                 --docker-args-overwrite)
                         DOCKER_OVERWIRTE_ARGS="YES"
@@ -129,6 +177,7 @@ while (( "$#" )); do
                         CLEAN_BEFORE="YES"
                         ;;
                 --clean-force)
+                        CLEAN_BEFORE="YES"
                         CLEAN_FORCE="YES"
                         ;;
                 -*|--*) # unsupported flags
@@ -202,7 +251,7 @@ __docker_build()
                 -target=builder \
                 -threads=${PROC}
 
-        if [ "${COPY_PLATFORMS}" == "YES" ]; then
+        if [ "${DOCKER_COPY_PLATFORMS}" == "YES" ]; then
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
@@ -211,7 +260,7 @@ __docker_build()
                 --tag "${DOCKER_TAG}" \
                 --file Dockerfile \
                 .
-        if [ "${COPY_PLATFORMS}" == "YES" ]; then
+        if [ "${DOCKER_COPY_PLATFORMS}" == "YES" ]; then
                 mv .dockerignore{.bak,}
         fi
 }
