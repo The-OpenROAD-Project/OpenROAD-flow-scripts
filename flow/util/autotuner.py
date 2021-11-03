@@ -18,6 +18,7 @@ import re
 import sys
 from datetime import datetime
 from multiprocessing import cpu_count
+import subprocess
 
 import ray
 from ray import tune
@@ -36,6 +37,18 @@ from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
+
+
+def run_command(cmd, check=True):
+    '''
+    Run shell command, control print and exceptions.
+    '''
+    process = subprocess.run(cmd, capture_output=True, text=True, check=check)
+    if process.returncode == 0:
+        print(process.stdout)
+    else:
+        print(process.stderr)
+    return process
 
 
 class AutotunerBase(tune.Trainable):
@@ -412,8 +425,12 @@ def run_openroad(repo_dir, flow_variant, parameters):
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
     make_command += f' NPROC={args.openroad_threads}'
-    make_command += ' 2>> error-make-finish.log >> make-finish-stdout.log'
-    os.system(make_command)
+    # check=False -> does not raise expetion so that Ray does not stop.
+    process = run_command(make_command, check=False)
+    with open('error-make-finish.log', 'w+') as file:
+        file.write(f'\n{process.stderr}')
+    with open('make-finish-stdout.log', 'w+') as file:
+        file.write(f'\n{process.stdout}')
 
     metrics_file = os.path.join(os.getcwd(), 'metrics.json')
     metrics_command = export_command
@@ -422,8 +439,12 @@ def run_openroad(repo_dir, flow_variant, parameters):
     metrics_command += f' -d {args.design}'
     metrics_command += f' -p {args.platform}'
     metrics_command += f' -o {metrics_file}'
-    metrics_command += ' 2>> error-metrics.log >> metrics-stdout.log '
-    os.system(metrics_command)
+    # check=False -> does not raise expetion so that Ray does not stop.
+    process = run_command(metrics_command, check=False)
+    with open('error-metrics.log', 'w+') as file:
+        file.write(f'\n{process.stderr}')
+    with open('metrics-stdout.log', 'w+') as file:
+        file.write(f'\n{process.stdout}')
 
     return metrics_file
 
@@ -433,14 +454,14 @@ def clone(path):
     Clone base repo in the remote machine. Only used for Kubernetes at GCP.
     '''
     if args.git_clone:
-        os.system(f'rm -rf {path}/orfs')
+        run_command(f'rm -rf {path}/orfs')
     if not os.path.isdir(f'{path}/orfs/.git'):
         git_command = 'git clone --depth 1 --recursive --single-branch'
         git_command += f' {args.git_clone_args}'
         if args.git_orfs_branch != '':
             git_command += f' --branch {args.git_orfs_branch}'
         git_command += f' {args.git_url} {path}/orfs'
-        os.system(git_command)
+        run_command(git_command)
 
 
 def build(base, install):
@@ -462,7 +483,7 @@ def build(base, install):
         if args.git_latest:
             build_command += ' --latest'
         build_command += f' {args.build_args}'
-    os.system(build_command)
+    run_command(build_command)
 
 
 @ray.remote
@@ -472,7 +493,7 @@ def run_setup(base):
     '''
     print(f'[INFO TUN-0000] Remote folder: {base}')
     if not os.path.isdir(base):
-        os.system(f'mkdir -p {base}')
+        run_command(f'mkdir -p {base}')
     install = f'{base}/orfs/tools/install'
     if args.server is not None:
         clone(base)
