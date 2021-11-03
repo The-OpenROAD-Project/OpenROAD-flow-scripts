@@ -272,8 +272,8 @@ __common_setup()
         fi
 
         if [ ! -z "${USE_OPENROAD_APP_MASTER+x}" ] || [ ! -z "${OPENROAD_APP_BRANCH+x}" ]; then
-                echo -n "[INFO FLW-0005] Updating OpenROAD tool"
-                echo " to the HEAD of ${OPENROAD_APP_BRANCH}."
+                echo -n "[INFO FLW-0005] Updating OpenROAD app to the HEAD"
+                echo "  of ${CURRENT_REMOTE}/${OPENROAD_APP_BRANCH}."
                 __update_openroad_app_latest
         fi
 }
