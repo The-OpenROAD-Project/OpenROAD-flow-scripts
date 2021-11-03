@@ -94,9 +94,23 @@ done
 
 __docker_build()
 {
-        docker build --tag openroad/yosys --file tools/yosys_util/Dockerfile --target builder tools/yosys
-        docker build --tag openroad/lsoracle --file tools/LSOracle/Dockerfile.openroad tools
-        ./tools/OpenROAD/etc/DockerHelper.sh create -target=builder -threads=${PROC}
+        docker build \
+                --no-cache \
+                --tag openroad/yosys \
+                --file tools/yosys_util/Dockerfile \
+                --target builder \
+                tools/yosys
+
+        docker build \
+                --no-cache \
+                --tag openroad/lsoracle \
+                --file tools/LSOracle/Dockerfile.openroad \
+                tools
+
+        ./tools/OpenROAD/etc/DockerHelper.sh create \
+                -target=builder \
+                -threads=${PROC}
+
         if [ "$COPY_PLATFORMS" == "YES" ]; then
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
@@ -109,19 +123,31 @@ __docker_build()
 
 __local_build()
 {
-        $NICE make install -C tools/yosys -j${PROC} PREFIX=$(pwd)/tools/install/yosys CONFIG=gcc ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc
+        $NICE make install \
+                -C tools/yosys \
+                -j ${PROC} \
+                CONFIG=gcc \
+                PREFIX=$(pwd)/tools/install/yosys \
+                ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc
 
-        cmake -B tools/OpenROAD/build tools/OpenROAD -DCMAKE_INSTALL_PREFIX=tools/install/OpenROAD
-        $NICE cmake --build tools/OpenROAD/build --target install -j${PROC}
+        cmake tools/OpenROAD \
+                -B tools/OpenROAD/build \
+                -DCMAKE_INSTALL_PREFIX=tools/install/OpenROAD
 
-        cmake -B tools/LSOracle/build tools/LSOracle \
+        $NICE cmake \
+                --build tools/OpenROAD/build \
+                --target install \
+                -j ${PROC}
+
+        cmake tools/LSOracle \
+                -B tools/LSOracle/build \
                 -D CMAKE_BUILD_TYPE=RELEASE \
                 -D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
                 -D YOSYS_PLUGIN=ON \
                 -D YOSYS_SHARE_DIR=$(pwd)/tools/install/yosys/share/yosys \
                 -D CMAKE_INSTALL_PREFIX=$(pwd)/tools/install/LSOracle
 
-        $NICE cmake --build tools/LSOracle/build -j${PROC} --target install
+        $NICE cmake --build tools/LSOracle/build -j ${PROC} --target install
 }
 
 __common_setup()
@@ -140,10 +166,10 @@ __common_setup()
                 remotes=($remotes)
                 IFS=$SAVEIFS
                 if [[ ! " ${remotes[@]} " =~ " ${CURRENT_REMOTE} " ]]; then
-                        git --git-dir tools/OpenROAD/.git remote add $CURRENT_REMOTE $OR_REPO
+                        git --git-dir tools/OpenROAD/.git \
+                                remote add $CURRENT_REMOTE $OR_REPO
                 fi
         fi
-
 
         if [ ! -z ${UPDATE_OR+x} ]; then
                 echo "[INFO FLW-0005] Updating OpenROAD tool to the latest."
