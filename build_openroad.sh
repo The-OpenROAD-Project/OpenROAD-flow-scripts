@@ -179,9 +179,11 @@ __common_setup()
 __common_setup
 # Choose install method
 if [ -z ${BUILD_METHOD+x} ] && command -v docker &> /dev/null; then
-        echo "[INFO FLW-0000] Using docker build method. This will create a docker image tagged '${DOCKER_TAG}'."
+        echo -n "[INFO FLW-0000] Using docker build method."
+        echo " This will create a docker image tagged '${DOCKER_TAG}'."
         __docker_build
 else
-        echo "[INFO FLW-0000] Using local build method. This will create binaries at 'tools/install/..'."
+        echo -n "[INFO FLW-0000] Using local build method."
+        echo " This will create binaries at 'tools/install unless overwritten."
         __local_build
 fi
