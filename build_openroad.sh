@@ -35,7 +35,7 @@ EOF
 
 # defaults
 NICE=""
-PROC=$(nproc)
+PROC=$(nproc --all)
 COPY_PLATFORMS="NO"
 DOCKER_TAG="openroad/flow-scripts"
 CURRENT_REMOTE="origin"
@@ -66,7 +66,6 @@ while (( "$#" )); do
                         ;;
                 -n|--nice)
                         NICE="nice"
-                        PROC=$(nproc --all)
                         shift
                         ;;
                 -o|--local)
