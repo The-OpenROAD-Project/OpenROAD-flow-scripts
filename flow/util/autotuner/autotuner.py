@@ -10,13 +10,14 @@ User can decide the input parameter space by modifying 'autotuner.json'.
 '''
 
 import argparse
-import os
-import json
 import hashlib
-import multiprocessing
+import json
 import math
+import os
+import re
 import sys
 from datetime import datetime
+from multiprocessing import cpu_count
 
 import ray
 from ray import tune
@@ -29,13 +30,13 @@ from ray.tune.suggest.hyperopt import HyperOptSearch
 from ray.tune.suggest.nevergrad import NevergradSearch
 from ray.tune.suggest.optuna import OptunaSearch
 
-import nevergrad as ng
+from nevergrad.optimizers import registry as NevergradRegistry
 from ax.service.ax_client import AxClient
 
-BUILD_CPUS = 16
-CPUS = 12
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
+SDC_FILE = ''
+FR_FILE = ''
 
 
 class AutotunerBase(tune.Trainable):
@@ -47,11 +48,19 @@ class AutotunerBase(tune.Trainable):
         '''
         Setup current experiment step.
         '''
+        repo_dir = os.getcwd() + '/../../../../'
         if args.server is not None:
-            self.run_dir = os.path.abspath(os.getcwd() + '/../../../../')
+            repo_dir += 'orfs'
         else:
-            self.run_dir = os.path.abspath(os.getcwd() + '/../')
-        self.parameters = parse_config(config)
+            repo_dir += '/../../'
+        self.repo_dir = os.path.abspath(repo_dir)
+        self.parameters, sdc, fast_route = parse_config(config)
+        if bool(sdc):
+            sdc_file_path = write_sdc(os.getcwd(), sdc)
+            self.parameters += f' SDC_FILE={sdc_file_path}'
+        if bool(fast_route):
+            fast_route_file_path = write_fast_route(os.getcwd(), fast_route)
+            self.parameters += f' FASTROUTE_TCL={fast_route_file_path}'
         self.flow_variant = get_flow_variant(self.parameters)
         self.step_ = 0
 
@@ -59,7 +68,7 @@ class AutotunerBase(tune.Trainable):
         '''
         Run step experiment and compute its score.
         '''
-        metrics_file = run_openroad(self.run_dir,
+        metrics_file = run_openroad(self.repo_dir,
                                     self.flow_variant,
                                     self.parameters)
         self.step_ += 1
@@ -245,10 +254,26 @@ def read_config(file_name):
     step value is used for quantized type (e.g., quniform). Otherwise, write 0.
     When min==max, it means the constant value
     '''
+    def read(path):
+        with open(os.path.abspath(path), 'r') as file:
+            ret = file.read()
+        return ret
     with open(file_name) as file:
         data = json.load(file)
+    sdc_file = SDC_FILE
+    fr_file = FR_FILE
     config = {}
     for key, value in data.items():
+        if key == '_SDC_FILE_PATH':
+            if sdc_file != '':
+                print('[WARNING TUN-0004] Overwritting SDC base file.')
+            sdc_file = read(f'{os.path.dirname(file_name)}/{value}')
+            continue
+        if key == '_FR_FILE_PATH':
+            if fr_file != '':
+                print('[WARNING TUN-0005] Overwritting FastRoute base file.')
+            fr_file = read(f'{os.path.dirname(file_name)}/{value}')
+            continue
         type_ = value.get('type')
         step = value.get('step')
         min_, max_ = value.get('minmax')
@@ -272,9 +297,82 @@ def parse_config(config):
     Parse config received from tune into make variables.
     '''
     options = ''
+    sdc = {}
+    fast_route = {}
     for key, value in config.items():
-        options += f' {key}={value}'
-    return options
+        # Keys that begin with underscore need special handling.
+        if key.startswith('_'):
+            # Variables to be injected into fastroute.tcl
+            if key.startswith('_FR_'):
+                fast_route[key.replace('_FR_', '', 1)] = value
+            # Variables to be injected into constraints.sdc
+            elif key.startswith('_SDC_'):
+                sdc[key.replace('_SDC_', '', 1)] = value
+            # Special substitution cases
+            elif key == "_PINS_DISTANCE":
+                options += f' PLACE_PINS_ARGS="-min_distance {value}"'
+            elif key == "_SYNTH_FLATTEN" and value == 1:
+                options += ' SYNTH_ARGS=""'
+        # Default case is VAR=VALUE
+        else:
+            options += f' {key}={value}'
+    return options, sdc, fast_route
+
+
+def write_sdc(path, variables):
+    '''
+    Create a SDC file with paramertes for current tunning iteration.
+    '''
+    new_file = SDC_FILE
+    for key, value in variables.items():
+        if key == 'CLK_PERIOD':
+            new_file = re.sub(r'-period [0-9\.]+ (.*)',
+                              f'-period {value} \\1',
+                              new_file)
+            new_file = re.sub(r'-waveform [{}\s0-9\.]+[\s|\n]',
+                              '',
+                              new_file)
+        elif key == 'UNCERTAINTY':
+            if new_file.find('set uncertainty') != -1:
+                new_file = re.sub(r'set uncertainty .*\n(.*)',
+                                  f'set uncertainty {value}\n\\1',
+                                  new_file)
+            else:
+                new_file += f'\nset uncertainty {value}\n'
+        elif key == "IO_DELAY":
+            if new_file.find('set io_delay') != -1:
+                new_file = re.sub(r'set io_delay .*\n(.*)',
+                                  f'set io_delay {value}\n\\1',
+                                  new_file)
+            else:
+                new_file += f'\nset io_delay {value}\n'
+    file_name = path + '/constraints.sdc'
+    with open(file_name, 'w') as file:
+        file.write(new_file)
+    return file_name
+
+
+def write_fast_route(path, variables):
+    '''
+    Create a FastRoute Tcl file with paramertes for current tunning iteration.
+    '''
+    layer_cmd = 'set_global_routing_layer_adjustment'
+    new_file = FR_FILE
+    for key, value in variables.items():
+        if key.startswith('LAYER_ADJUST'):
+            layer = key.lstrip('LAYER_ADJUST')
+            if re.search(f'{layer_cmd}.*{layer}', new_file):
+                new_file = re.sub(f'({layer_cmd}.*{layer}).*\n(.*)',
+                                  f'\\1 {value}\n\\2',
+                                  new_file)
+            else:
+                new_file += f'\n{layer_cmd} {layer} {value}\n'
+        elif key == 'GR_SEED':
+            new_file += f'\nset_global_routing_random -seed {value}\n'
+    file_name = path + '/fastroute.tcl'
+    with open(file_name, 'w') as file:
+        file.write(new_file)
+    return file_name
 
 
 def get_flow_variant(parameters):
@@ -288,71 +386,93 @@ def get_flow_variant(parameters):
     return f'{args.experiment}/variant-{variant_hash}'
 
 
-def run_openroad(run_dir, flow_variant, parameters):
+def run_openroad(repo_dir, flow_variant, parameters):
     '''
     Run OpenROAD-flow-scripts with a given set of parameters.
     '''
 
-    if args.server is not None:
-        install_path = f'{run_dir}/orfs/tools/install'
-        export_command = f'export PATH={install_path}/OpenROAD/bin'
-        export_command += f':{install_path}/yosys/bin'
-        export_command += f':{install_path}/LSOracle/bin:$PATH'
-        export_command += ' && '
-    else:
-        export_command = ''
+    export_command = f'export PATH={INSTALL_PATH}/OpenROAD/bin'
+    export_command += f':{INSTALL_PATH}/yosys/bin'
+    export_command += f':{INSTALL_PATH}/LSOracle/bin:$PATH'
+    export_command += ' && '
 
     make_command = export_command
-    make_command += f'make -C {run_dir}/orfs/flow DESIGN_CONFIG=designs/'
+    make_command += f'make -C {repo_dir}/flow DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
-    make_command += f' NPROC={CPUS}'
-    make_command += ' > make-finish-stdout.log 2> make-finish-stderr.log'
+    make_command += f' NPROC={args.openroad_threads}'
+    # make_command += ' 2> error-make-finish.log {pipe} make-finish-stdout.log'
     os.system(make_command)
 
     metrics_file = os.path.join(os.getcwd(), 'metrics.json')
     metrics_command = export_command
-    metrics_command += f'{run_dir}/orfs/flow/util/genMetrics.py -x'
+    metrics_command += f'{repo_dir}/flow/util/genMetrics.py -x'
     metrics_command += f' -v {flow_variant}'
     metrics_command += f' -d {args.design}'
     metrics_command += f' -p {args.platform}'
     metrics_command += f' -o {metrics_file}'
-    metrics_command += ' > metrics-stdout.log 2> metrics-stderr.log'
+    # metrics_command += ' 2> error-metrics.log {pipe} metrics-stdout.log '
     os.system(metrics_command)
 
     return metrics_file
 
 
-@ray.remote
-def nfs_setup(path):
+def clone(path):
     '''
-    Clone ORFS repo and compile binaries inside a NFS shared folder.
+    Clone base repo in the remote machine. Only used for Kubernetes at GCP.
     '''
-    git_command = f'echo "Remote folder: {path}"'
-    git_command += f' && mkdir -p {path}'
     if args.git_clone:
-        git_command += f' && rm -rf {path}/orfs'
+        os.system(f'rm -rf {path}/orfs')
     if not os.path.isdir(f'{path}/orfs/.git'):
-        git_command += ' && git clone --depth 1 --recursive --single-branch'
+        git_command = 'git clone --depth 1 --recursive --single-branch'
         git_command += f' {args.git_clone_args}'
         if args.git_orfs_branch != '':
             git_command += f' --branch {args.git_orfs_branch}'
         git_command += f' {args.git_url} {path}/orfs'
-    git_command += f' && cd {path}/orfs'
+        os.system(git_command)
+
+
+def build(base, install):
+    '''
+    Build OpenROAD, Yosys and other dependencies.
+    '''
+    build_command = f'cd {base}/orfs'
     if args.git_clean:
-        git_command += ' && git clean -xdf tools'
-        git_command += ' && git submodule foreach --recursive git clean -xdf'
-    if not os.path.isfile(f'{path}/orfs/tools/install/OpenROAD/bin/openroad'):
-        build_command = './build_openroad.sh --local --threads {BUILD_CPUS}'
+        build_command += ' && git clean -xdf tools'
+        build_command += ' && git submodule foreach --recursive git clean -xdf'
+    if args.git_clean \
+            or not os.path.isfile(f'{install}/OpenROAD/bin/openroad') \
+            or not os.path.isfile(f'{install}/yosys/bin/yosys') \
+            or not os.path.isfile(f'{install}/LSOracle/bin/lsoracle'):
+        build_command += ' && ./build_openroad.sh'
+        # Some GCP machines have 200+ cores. Let's be reasonable...
+        # build_command += f' --local --nice --threads {min(cpu_count(), 60)}'
+        build_command += f' --local --nice --threads {cpu_count()})'
         if args.git_latest:
             build_command += ' --latest'
         build_command += f' {args.build_args}'
-        git_command += f' && bash -ic "{build_command}"'
-    print(f'[INFO TUN-0000] Git command: {git_command}')
-    os.system(git_command)
+    os.system(build_command)
 
 
-if __name__ == '__main__':
+@ray.remote
+def run_setup(base):
+    '''
+    Clone ORFS repository and compile binaries.
+    '''
+    print(f'[INFO TUN-0000] Remote folder: {base}')
+    if not os.path.isdir(base):
+        os.system(f'mkdir -p {base}')
+    install = f'{base}/orfs/tools/install'
+    if args.server is not None:
+        clone(base)
+    build(base, install)
+    return install
+
+
+def parse_arguments():
+    '''
+    Parse arguments from commandline.
+    '''
     parser = argparse.ArgumentParser()
 
     # Setup
@@ -361,19 +481,19 @@ if __name__ == '__main__':
         action='store_true',
         help='Clean binaries and build files.'
              ' WARNING: may lose previous data.'
-             ' Use carfully.')
+             ' Use carefully.')
     parser.add_argument(
         '--git-clone',
         action='store_true',
         help='Force new git clone.'
              ' WARNING: may lose previous data.'
-             ' Use carfully.')
+             ' Use carefully.')
     parser.add_argument(
         '--git-clone-args',
         type=str,
         required=False,
         default='',
-        help='Additional git clone arugments.')
+        help='Additional git clone arguments.')
     parser.add_argument(
         '--git-latest',
         action='store_true',
@@ -401,7 +521,11 @@ if __name__ == '__main__':
         type=str,
         required=False,
         default='',
-        help='Additional arguments givent to ./build_openroad.sh.')
+        help='Additional arguments given to ./build_openroad.sh.')
+    parser.add_argument(
+        '--quiet',
+        action='store_true',
+        help='Do not print openroad to stdout, only save into log file.')
 
     # DUT
     parser.add_argument(
@@ -479,8 +603,14 @@ if __name__ == '__main__':
         '--jobs',
         type=int,
         required=False,
-        default=math.floor(multiprocessing.cpu_count() / 2),
+        default=math.floor(cpu_count() / 2),
         help='Max number of concurrent jobs.')
+    parser.add_argument(
+        '--openroad-threads',
+        type=int,
+        required=False,
+        default=16,
+        help='Max number of threads openroad can use.')
     parser.add_argument(
         '--server',
         type=str,
@@ -494,105 +624,144 @@ if __name__ == '__main__':
         required=False,
         help='The port of Ray server to connect.')
 
-    args = parser.parse_args()
-    args.algorithm = args.algorithm.lower()
+    arguments = parser.parse_args()
+    arguments.algorithm = arguments.algorithm.lower()
+    return arguments
 
-    # Connect to remote Ray server if any, otherwise will run locally
-    if args.server is not None:
-        ray.init(f'ray://{args.server}:{args.port}')
-        # use a nfs mount to run experiment
-        with open(args.config) as config_file:
-            RUN = hashlib.md5(config_file.read().encode('utf-8')).hexdigest()
-            local_dir = f'/shared-data/autotuner-{RUN}'
-        results = [nfs_setup.remote(local_dir)]
-        # Use ray.get() to wait for nfs_setup().
-        _ = ray.get(results)
-        print('[INFO TUN-0001] Done waiting.')
-    else:
-        # on local run, use traditional logs folder
-        local_dir = 'logs'
 
-    best_param_file = f'designs/{args.platform}/{args.design}/autotuner.json'
-    if os.path.isfile(best_param_file):
-        with open(best_param_file) as f:
-            best_params = json.load(f)
-    else:
-        best_params = []
-
-    config_dict = read_config(args.config)
-
+def set_algorithm(name):
+    '''
+    Configure search algorithm.
+    '''
     if args.algorithm == 'hyperopt':
-        search_algo = HyperOptSearch(points_to_evaluate=best_params)
+        algorithm = HyperOptSearch(points_to_evaluate=best_params)
     elif args.algorithm == 'axppa':
-        ax = AxClient(enforce_sequential_optimization=False)
+        ax_client = AxClient(enforce_sequential_optimization=False)
         # TODO need to fix config_dict format
-        ax.create_experiment(
-            name=f'{args.platform}/{args.design}/{args.experiment}',
+        ax_client.create_experiment(
+            name=name,
             parameters=config_dict,
             objective_name="minimum",
             minimize=True
         )
-        search_algo = AxSearch(ax_client=ax,
-                               points_to_evaluate=best_params,
-                               max_concurrent=args.jobs)
+        algorithm = AxSearch(ax_client=ax_client,
+                             points_to_evaluate=best_params,
+                             max_concurrent=args.jobs)
     elif args.algorithm == 'nevergrad':
         # TODO need to fix Lower bound issue
-        search_algo = NevergradSearch(
+        algorithm = NevergradSearch(
             points_to_evaluate=best_params,
-            optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"])
+            optimizer=NevergradRegistry["PortfolioDiscreteOnePlusOne"]
+        )
     elif args.algorithm == 'optuna':
-        search_algo = OptunaSearch(points_to_evaluate=best_params,
-                                   seed=args.seed)
+        algorithm = OptunaSearch(points_to_evaluate=best_params,
+                                 seed=args.seed)
     elif args.algorithm == 'pbt':
         # TODO need to fix config_dict format
-        search_algo = PopulationBasedTraining(
+        algorithm = PopulationBasedTraining(
             time_attr="training_iteration",
             perturbation_interval=args.perturbation,
             hyperparam_mutations=config_dict,
             synch=False
         )
     elif args.algorithm == 'random':
-        search_algo = BasicVariantGenerator(max_concurrent=args.jobs)
+        algorithm = BasicVariantGenerator(max_concurrent=args.jobs)
     else:
-        print(f'[ERROR TUN-0007] Invalid search algorithm: {args.algorithm}')
+        print('[ERROR TUN-0006] Invalid search algorithm: {args.algorithm}')
         sys.exit(1)
-
-    if args.eval == 'default':
-        TrainClass = AutotunerBase
-    elif args.eval == 'eff-clk-period':
-        TrainClass = EffClkPeriod
-    elif args.eval == 'ppa':
-        TrainClass = PPA
-    elif args.eval == 'ppa-improv':
-        TrainClass = PPAImprov
-        if args.reference is None:
-            print('''
-                  [ERROR TUN-0009] --eval ppa-improv requries --reference flag
-                  ''')
-            sys.exit(1)
-        reference = PPAImprov.read_metrics(args.reference)
-    elif args.eval == 'ax-ppa':
-        TrainClass = AxPPA
-    else:
-        print(f'[ERROR TUN-0008] Invalid evaluate function: {args.eval}')
-        sys.exit(1)
-
     if args.algorithm != 'random':
-        search_algo = ConcurrencyLimiter(search_algo, max_concurrent=args.jobs)
+        algorithm = ConcurrencyLimiter(algorithm, max_concurrent=args.jobs)
+    return algorithm
+
+
+def set_best_params(platform, design):
+    '''
+    Get current known best parametes if it exists.
+    '''
+    params = []
+    best_param_file = f'designs/{platform}/{design}'
+    best_param_file += '/autotuner.json'
+    if os.path.isfile(best_param_file):
+        with open(best_param_file) as file:
+            params = json.load(file)
+    return params
+
+
+def set_training_class(function):
+    '''
+    Set tranining class.
+    '''
+    if function == 'default':
+        return AutotunerBase
+    if function == 'eff-clk-period':
+        return EffClkPeriod
+    if function == 'ppa':
+        return PPA
+    if function == 'ppa-improv':
+        if args.reference is None:
+            print('[ERROR TUN-0007] The argument "--eval ppa-improv"'
+                  ' requries that "--reference <FILE>" is also given.')
+            sys.exit(1)
+        return PPAImprov
+    if function == 'ax-ppa':
+        return AxPPA
+    print(f'[ERROR TUN-0008] Invalid evaluate function: {function}')
+    sys.exit(1)
+
+
+if __name__ == '__main__':
+    args = parse_arguments()
+    experiment_name = f'{args.platform}/{args.design}/{args.experiment}'
+    config_dict = read_config(os.path.abspath(args.config))
+    best_params = set_best_params(args.platform, args.design)
+    search_algo = set_algorithm(experiment_name)
+    TrainClass = set_training_class(args.eval)
+    # PPAImprov requires a reference metrics file to compute training scores.
+    if args.eval == 'ppa-improv':
+        reference = PPAImprov.read_metrics(args.reference)
+
+    # Connect to remote Ray server if any, otherwise will run locally
+    if args.server is not None:
+        ray.init(f'ray://{args.server}:{args.port}')
+        # At GCP we have a NFS folder that is present for all worker nodes.
+        # This allows to build requried binaries once.
+        with open(args.config) as config_file:
+            LOCAL_DIR = '/shared-data/autotuner'
+            LOCAL_DIR += f'-orfs:{args.git_orfs_branch}'
+            if args.git_or_branch != '':
+                LOCAL_DIR += f'-or:{args.git_or_branch}'
+            if args.git_latest != '':
+                LOCAL_DIR += '-or:latest'
+            RUN = hashlib.md5(config_file.read().encode('utf-8')).hexdigest()
+            LOCAL_DIR += f'/{RUN}'
+        # Remote functions return a worker/task id and are non-blocking,
+        # thus we call ray.get() to wait for its completion and get the func
+        # return value.
+        INSTALL_PATH = ray.get(run_setup.remote(LOCAL_DIR))
+        print('[INFO TUN-0001] Done waiting.')
+    else:
+        # For local runs, use the same folder as other ORFS utilities.
+        os.chdir(os.path.dirname(os.path.abspath(__file__)) + '/../')
+        LOCAL_DIR = 'logs'
+        INSTALL_PATH = '../tools/install'
 
     analysis = tune.run(
         TrainClass,
         metric='minimum',
         mode='min',
         search_alg=search_algo,
-        name=f'{args.platform}/{args.design}/{args.experiment}-{DATE}',
+        name=f'{experiment_name}-{DATE}',
         scheduler=AsyncHyperBandScheduler(),
         num_samples=args.samples,
         config=config_dict,
         fail_fast=True,
-        local_dir=local_dir,
+        local_dir=LOCAL_DIR,
         resume=args.resume,
         queue_trials=True
     )
     print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
+    new_best_path = f'{LOCAL_DIR}/{experiment_name}-{DATE}/autotuner-best.json'
+    with open(new_best_path, 'w') as output_file:
+        json.dump(analysis.best_config, output_file, indent=4)
+    print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
     ray.shutdown()
