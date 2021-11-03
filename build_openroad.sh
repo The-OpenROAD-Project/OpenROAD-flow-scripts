@@ -21,7 +21,7 @@ INSTALL_PATH="$(pwd)/tools/install"
 
 DOCKER_OVERWIRTE_ARGS="NO"
 DOCKER_USER_ARGS=""
-DOCKER_ARGS="--no-cache --pull"
+DOCKER_ARGS="--no-cache"
 
 YOSYS_OVERWIRTE_ARGS="NO"
 YOSYS_USER_ARGS=""
@@ -234,6 +234,7 @@ fi
 
 __docker_build()
 {
+        docker pull "openroad/yosys-dev"
         ${NICE} docker build \
                 ${DOCKER_ARGS} \
                 --tag openroad/yosys \
@@ -241,6 +242,7 @@ __docker_build()
                 --target builder \
                 tools/yosys
 
+        docker pull "openroad/centos7-dev"
         ${NICE} docker build \
                 ${DOCKER_ARGS} \
                 --tag openroad/lsoracle \
@@ -255,6 +257,7 @@ __docker_build()
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
+        docker pull "openroad/flow-runtime"
         ${NICE} docker build \
                 ${DOCKER_ARGS} \
                 --tag "${DOCKER_TAG}" \
