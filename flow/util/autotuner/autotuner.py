@@ -30,7 +30,7 @@ from ray.tune.suggest.hyperopt import HyperOptSearch
 from ray.tune.suggest.nevergrad import NevergradSearch
 from ray.tune.suggest.optuna import OptunaSearch
 
-from nevergrad.optimizers import registry as NevergradRegistry
+import nevergrad as ng
 from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -364,7 +364,14 @@ def write_fast_route(path, variables):
     for key, value in variables.items():
         if key.startswith('LAYER_ADJUST'):
             layer = key.lstrip('LAYER_ADJUST')
-            if re.search(f'{layer_cmd}.*{layer}', new_file):
+            # If there is no suffix (i.e., layer name) apply adjust to all
+            # layers.
+            if layer == '':
+                new_file += '\nset_global_routing_layer_adjustment'
+                new_file += ' $::env(MIN_ROUTING_LAYER)'
+                new_file += '-$::env(MAX_ROUTING_LAYER)'
+                new_file += f' {value}'
+            elif re.search(f'{layer_cmd}.*{layer}', new_file):
                 new_file = re.sub(f'({layer_cmd}.*{layer}).*\n(.*)',
                                   f'\\1 {value}\n\\2',
                                   new_file)
@@ -404,7 +411,7 @@ def run_openroad(repo_dir, flow_variant, parameters):
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
     make_command += f' NPROC={args.openroad_threads}'
-    # make_command += ' 2> error-make-finish.log {pipe} make-finish-stdout.log'
+    make_command += ' 2>> error-make-finish.log >> make-finish-stdout.log'
     os.system(make_command)
 
     metrics_file = os.path.join(os.getcwd(), 'metrics.json')
@@ -414,7 +421,7 @@ def run_openroad(repo_dir, flow_variant, parameters):
     metrics_command += f' -d {args.design}'
     metrics_command += f' -p {args.platform}'
     metrics_command += f' -o {metrics_file}'
-    # metrics_command += ' 2> error-metrics.log {pipe} metrics-stdout.log '
+    metrics_command += ' 2>> error-metrics.log >> metrics-stdout.log '
     os.system(metrics_command)
 
     return metrics_file
@@ -654,7 +661,7 @@ def set_algorithm(name):
         # TODO need to fix Lower bound issue
         algorithm = NevergradSearch(
             points_to_evaluate=best_params,
-            optimizer=NevergradRegistry["PortfolioDiscreteOnePlusOne"]
+            optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"]
         )
     elif args.algorithm == 'optuna':
         algorithm = OptunaSearch(points_to_evaluate=best_params,
