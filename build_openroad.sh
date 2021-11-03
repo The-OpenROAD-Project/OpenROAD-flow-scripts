@@ -81,7 +81,7 @@ while (( "$#" )); do
                         COPY_PLATFORMS="YES"
                         shift
                         ;;
-                -*|--*=) # unsupported flags
+                -*|--*) # unsupported flags
                         echo "[ERROR FLW-0004] Unsupported flag $1." >&2
                         exit 1
                         ;;
