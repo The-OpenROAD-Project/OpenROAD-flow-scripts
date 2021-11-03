@@ -83,11 +83,8 @@ while (( "$#" )); do
                         ;;
                 -*|--*) # unsupported flags
                         echo "[ERROR FLW-0004] Unsupported flag $1." >&2
+                        usage 2> /dev/null
                         exit 1
-                        ;;
-                *) # preserve positional arguments
-                        PARAMS="$PARAMS $1"
-                        shift
                         ;;
         esac
 done
