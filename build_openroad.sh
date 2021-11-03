@@ -40,7 +40,7 @@ NICE=""
 PROC=$(nproc --all)
 COPY_PLATFORMS="NO"
 DOCKER_TAG="openroad/flow-scripts"
-CURRENT_REMOTE="origin"
+OPENROAD_APP_REMOTE="origin"
 OPENROAD_APP_BRANCH="master"
 CLEAN_BEFORE="NO"
 CLEAN_FORCE="NO"
@@ -235,8 +235,8 @@ __update_openroad_app_remote()
         IFS=$'\n'
         remotes=($remotes)
         IFS=$SAVEIFS
-        if [[ ! " ${remotes[@]} " =~ " ${CURRENT_REMOTE} " ]]; then
-                git remote add "${CURRENT_REMOTE}" "${OPENROAD_APP_GIT_URL}"
+        if [[ ! " ${remotes[@]} " =~ " ${OPENROAD_APP_REMOTE} " ]]; then
+                git remote add "${OPENROAD_APP_REMOTE}" "${OPENROAD_APP_GIT_URL}"
         fi
 )
 
@@ -244,9 +244,9 @@ __change_openroad_app_remote()
 {
         base_url=$(dirname "${OPENROAD_APP_GIT_URL}")
         if [[ ${base_url##*/} = $base_url ]]; then
-                CURRENT_REMOTE=${base_url##*:}
+                OPENROAD_APP_REMOTE=${base_url##*:}
         else
-                CURRENT_REMOTE=${base_url##*/}
+                OPENROAD_APP_REMOTE=${base_url##*/}
         fi
         __update_openroad_app_remote
 }
@@ -254,9 +254,9 @@ __change_openroad_app_remote()
 __update_openroad_app_latest()
 (
         cd tools/OpenROAD
-        git fetch "${CURRENT_REMOTE}"
-        git checkout "${CURRENT_REMOTE}/${OPENROAD_APP_BRANCH}"
-        git pull "${CURRENT_REMOTE}" "${OPENROAD_APP_BRANCH}"
+        git fetch "${OPENROAD_APP_REMOTE}"
+        git checkout "${OPENROAD_APP_REMOTE}/${OPENROAD_APP_BRANCH}"
+        git pull "${OPENROAD_APP_REMOTE}" "${OPENROAD_APP_BRANCH}"
         git submodule update --init --recursive
 )
 
@@ -273,7 +273,7 @@ __common_setup()
 
         if [ ! -z "${USE_OPENROAD_APP_MASTER+x}" ] || [ ! -z "${OPENROAD_APP_BRANCH+x}" ]; then
                 echo -n "[INFO FLW-0005] Updating OpenROAD app to the HEAD"
-                echo "  of ${CURRENT_REMOTE}/${OPENROAD_APP_BRANCH}."
+                echo "  of ${OPENROAD_APP_REMOTE}/${OPENROAD_APP_BRANCH}."
                 __update_openroad_app_latest
         fi
 }
