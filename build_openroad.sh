@@ -119,6 +119,10 @@ while (( "$#" )); do
                         LSORACLE_USER_ARGS="$2"
                         shift
                         ;;
+                --install-path)
+                        INSTALL_PATH="$2"
+                        shift
+                        ;;
                 -*|--*) # unsupported flags
                         echo "[ERROR FLW-0004] Unsupported flag $1." >&2
                         usage 2> /dev/null
