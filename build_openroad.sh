@@ -41,7 +41,7 @@ PROC=$(nproc --all)
 COPY_PLATFORMS="NO"
 DOCKER_TAG="openroad/flow-scripts"
 CURRENT_REMOTE="origin"
-OPENROAD_BRANCH="master"
+OPENROAD_APP_BRANCH="master"
 
 INSTALL_PATH="$(pwd)/tools/install"
 
@@ -52,7 +52,7 @@ DOCKER_ARGS="--no-cache"
 YOSYS_OVERWIRTE_ARGS="NO"
 YOSYS_USER_ARGS=""
 
-OPENROAD_OVERWIRTE_ARGS="NO"
+OPENROAD_APP_OVERWIRTE_ARGS="NO"
 
 LSORACLE_OVERWIRTE_ARGS="NO"
 LSORACLE_USER_ARGS=""
@@ -65,15 +65,15 @@ while (( "$#" )); do
                         exit
                         ;;
                 --or_branch)
-                        OR_BRANCH="$2"
+                        OPENROAD_APP_BRANCH="$2"
                         shift
                         ;;
                 --or_repo)
-                        OPENROAD_GIT_URL="$2"
+                        OPENROAD_APP_GIT_URL="$2"
                         shift
                         ;;
                 -l|--latest)
-                        USE_OPENROAD_MASTER=1
+                        USE_OPENROAD_APP_MASTER=1
                         ;;
                 -t|--threads)
                         PROC="$2"
@@ -106,10 +106,10 @@ while (( "$#" )); do
                         shift
                         ;;
                 --openroad-args-overwrite)
-                        OPENROAD_OVERWIRTE_ARGS="YES"
+                        OPENROAD_APP_OVERWIRTE_ARGS="YES"
                         ;;
                 --openroad-args)
-                        OPENROAD_USER_ARGS="$2"
+                        OPENROAD_APP_USER_ARGS="$2"
                         shift
                         ;;
                 --lsoracle-args-overwrite)
@@ -149,14 +149,14 @@ else
         YOSYS_ARGS="${YOSYS_ARGS} ${YOSYS_USER_ARGS}"
 fi
 
-OPENROAD_USER_ARGS=""
-OPENROAD_ARGS="\
+OPENROAD_APP_USER_ARGS=""
+OPENROAD_APP_ARGS="\
 -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/OpenROAD \
 "
-if [[ "${OPENROAD_OVERWIRTE_ARGS}" == "YES" ]]; then
-        OPENROAD_ARGS="${OPENROAD_USER_ARGS}"
+if [[ "${OPENROAD_APP_OVERWIRTE_ARGS}" == "YES" ]]; then
+        OPENROAD_APP_ARGS="${OPENROAD_APP_USER_ARGS}"
 else
-        OPENROAD_ARGS="${OPENROAD_ARGS} ${OPENROAD_USER_ARGS}"
+        OPENROAD_APP_ARGS="${OPENROAD_APP_ARGS} ${OPENROAD_APP_USER_ARGS}"
 fi
 
 LSORACLE_ARGS="\
@@ -211,7 +211,7 @@ __local_build()
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
         # build openroad
-        ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/build ${OPENROAD_ARGS}
+        ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/build ${OPENROAD_APP_ARGS}
         ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
 
         # build lsoracle
@@ -219,9 +219,9 @@ __local_build()
         ${NICE} cmake --build tools/LSOracle/build --target install -j "${PROC}"
 }
 
-__change_or_repo()
+__change_openroad_app_repo()
 (
-        base_url=$(dirname "${OPENROAD_GIT_URL}")
+        base_url=$(dirname "${OPENROAD_APP_GIT_URL}")
         [[ ${base_url##*/} = $base_url ]] && CURRENT_REMOTE=${base_url##*:} || CURRENT_REMOTE=${base_url##*/}
         cd tools/OpenROAD
         remotes=$(git remote)
@@ -230,16 +230,16 @@ __change_or_repo()
         remotes=($remotes)
         IFS=$SAVEIFS
         if [[ ! " ${remotes[@]} " =~ " ${CURRENT_REMOTE} " ]]; then
-                git remote add "${CURRENT_REMOTE}" "${OPENROAD_GIT_URL}"
+                git remote add "${CURRENT_REMOTE}" "${OPENROAD_APP_GIT_URL}"
         fi
 )
 
-__update_or_latest()
+__update_openroad_app_latest()
 (
         cd tools/OpenROAD
-        git fetch "${CURRENT_REMOTE}" "${OPENROAD_BRANCH}"
-        git checkout "${CURRENT_REMOTE}/${OPENROAD_BRANCH}"
-        git pull "${CURRENT_REMOTE}" "${OPENROAD_BRANCH}"
+        git fetch "${CURRENT_REMOTE}" "${OPENROAD_APP_BRANCH}"
+        git checkout "${CURRENT_REMOTE}/${OPENROAD_APP_BRANCH}"
+        git pull "${CURRENT_REMOTE}" "${OPENROAD_APP_BRANCH}"
         git submodule update --init --recursive
 )
 
@@ -250,13 +250,14 @@ __common_setup()
                 git submodule update --init --recursive
         fi
 
-        if [ ! -z "${OPENROAD_GIT_URL+x}" ]; then
-                __change_or_repo
+        if [ ! -z "${OPENROAD_APP_GIT_URL+x}" ]; then
+                __change_openroad_app_repo
         fi
 
-        if [ ! -z "${USE_OPENROAD_MASTER+x}" ]; then
-                echo "[INFO FLW-0005] Updating OpenROAD tool to the latest."
-                __update_or_latest
+        if [ ! -z "${USE_OPENROAD_APP_MASTER+x}" ] || [ ! -z "${OPENROAD_APP_BRANCH+x}" ]; then
+                echo -n "[INFO FLW-0005] Updating OpenROAD tool"
+                echo " to the HEAD of ${OPENROAD_APP_BRANCH}."
+                __update_openroad_app_latest
         fi
 }
 
