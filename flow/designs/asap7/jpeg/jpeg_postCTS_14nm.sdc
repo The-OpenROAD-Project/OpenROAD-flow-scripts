@@ -1,9 +1,3 @@
-# ####################################################################
-
-#  Created by Genus(TM) Synthesis Solution 18.11-s009_1 on Wed Jan 06 17:57:53 MST 2021
-
-# ####################################################################
-
 set sdc_version 2.0
 
 set_units -capacitance 1.0fF
@@ -71,11 +65,11 @@ set_max_delay 500 -from [list \
   [get_ports {qnt_cnt[4]}]  \
   [get_ports {qnt_cnt[5]}] ]
 set_min_delay 500 \
- 	    -from [list \
-	      [get_ports ena] \
-	      [get_ports rst] ] \
-	   -to [list \
-	      [get_clocks tclk] ] 
+                -from [list \
+                [get_ports ena] \
+                [get_ports rst] ] \
+                -to [list \
+                [get_clocks tclk] ]
 
 group_path -weight 1.000000 -name cg_enable_group_tclk -through [list \
   [get_pins qnr_RC_CG_HIER_INST3/enable]  \
@@ -100,10 +94,10 @@ group_path -weight 1.000000 -name cg_enable_group_tclk -through [list \
   [get_pins rle_rz3_RC_CG_HIER_INST138/enable]  \
   [get_pins rle_rz4_RC_CG_HIER_INST140/enable]  \
   [get_pins RC_CG_DECLONE_HIER_INST/enable] ]
-set_clock_gating_check -setup 0.0 
+set_clock_gating_check -setup 0.0
 
-set_input_delay 100 -clock tclk 	      [get_ports ena] 
-set_input_delay 100 -clock tclk 	      [get_ports rst]  
+set_input_delay 100 -clock tclk 	      [get_ports ena]
+set_input_delay 100 -clock tclk 	      [get_ports rst]
 
 set_input_delay 100 -clock tclk  [get_ports {qnt_val[0]}]
 set_input_delay 100 -clock tclk  [get_ports {qnt_val[1]}]
