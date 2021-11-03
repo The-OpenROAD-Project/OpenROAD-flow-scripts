@@ -30,7 +30,6 @@ from ray.tune.suggest.basic_variant import BasicVariantGenerator
 from ray.tune.suggest.hyperopt import HyperOptSearch
 from ray.tune.suggest.nevergrad import NevergradSearch
 from ray.tune.suggest.optuna import OptunaSearch
-# from ray.autoscaler.sdk import request_resources
 
 import nevergrad as ng
 from ax.service.ax_client import AxClient
@@ -780,7 +779,6 @@ if __name__ == '__main__':
         LOCAL_DIR = 'logs'
         INSTALL_PATH = '../tools/install'
 
-    # request_resources(num_cpus=min(args.jobs, args.samples))
     analysis = tune.run(
         TrainClass,
         metric='minimum',
@@ -795,15 +793,7 @@ if __name__ == '__main__':
         resume=args.resume,
         stop={"training_iteration": 1},
         queue_trials=True
-        # resources_per_trial=tune.PlacementGroupFactory([{"CPU": 1}]),
-        # resources_per_trial={"cpu": args.openroad_threads},
-        # resources_per_trial=tune.PlacementGroupFactory([
-        #              {"CPU": 1},
-        #              {"CPU": 1},
-        #              {"CPU": args.openroad_threads}
-        # ]),
     )
-    # request_resources(num_cpus=0)
     ray.shutdown()
     print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
     new_best_path = f'{LOCAL_DIR}/{experiment_name}-{DATE}/autotuner-best.json'
