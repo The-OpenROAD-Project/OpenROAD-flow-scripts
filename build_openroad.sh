@@ -43,18 +43,26 @@ OR_BRANCH="master"
 
 INSTALL_PATH="$(pwd)/tools/install"
 
+DOCKER_OVERWIRTE_ARGS="NO"
+DOCKER_USER_ARGS=""
 DOCKER_ARGS="--no-cache"
 
+YOSYS_OVERWIRTE_ARGS="NO"
+YOSYS_USER_ARGS=""
 YOSYS_ARGS="\
 CONFIG=gcc \
 PREFIX=$INSTALL_PATH/yosys \
 ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc \
 "
 
+OPENROAD_OVERWIRTE_ARGS="NO"
+OPENROAD_USER_ARGS=""
 OPENROAD_ARGS="\
 -D CMAKE_INSTALL_PREFIX=$INSTALL_PATH/OpenROAD \
 "
 
+LSORACLE_OVERWIRTE_ARGS="NO"
+LSORACLE_USER_ARGS=""
 LSORACLE_ARGS="\
 -D CMAKE_BUILD_TYPE=RELEASE \
 -D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
@@ -102,6 +110,34 @@ while (( "$#" )); do
                         COPY_PLATFORMS="YES"
                         shift
                         ;;
+                --docker-args-overwrite)
+                        DOCKER_OVERWIRTE_ARGS="YES"
+                        ;;
+                --docker-args)
+                        DOCKER_USER_ARGS="$2"
+                        shift 2
+                        ;;
+                --yosys-args-overwrite)
+                        YOSYS_OVERWIRTE_ARGS="YES"
+                        ;;
+                --yosys-args)
+                        YOSYS_USER_ARGS="$2"
+                        shift 2
+                        ;;
+                --openroad-args-overwrite)
+                        OPENROAD_OVERWIRTE_ARGS="YES"
+                        ;;
+                --openroad-args)
+                        OPENROAD_USER_ARGS="$2"
+                        shift 2
+                        ;;
+                --lsoracle-args-overwrite)
+                        LSORACLE_OVERWIRTE_ARGS="YES"
+                        ;;
+                --lsoracle-args)
+                        LSORACLE_USER_ARGS="$2"
+                        shift 2
+                        ;;
                 -*|--*) # unsupported flags
                         echo "[ERROR FLW-0004] Unsupported flag $1." >&2
                         usage 2> /dev/null
@@ -109,6 +145,30 @@ while (( "$#" )); do
                         ;;
         esac
 done
+
+if [[ "${DOCKER_OVERWIRTE_ARGS}" == "YES" ]]; then
+        DOCKER_ARGS="${DOCKER_USER_ARGS}"
+else
+        DOCKER_ARGS="${DOCKER_ARGS} ${DOCKER_USER_ARGS}"
+fi
+
+if [[ "${YOSYS_OVERWIRTE_ARGS}" == "YES" ]]; then
+        YOSYS_ARGS="${YOSYS_USER_ARGS}"
+else
+        YOSYS_ARGS="${YOSYS_ARGS} ${YOSYS_USER_ARGS}"
+fi
+
+if [[ "${OPENROAD_OVERWIRTE_ARGS}" == "YES" ]]; then
+        OPENROAD_ARGS="${OPENROAD_USER_ARGS}"
+else
+        OPENROAD_ARGS="${OPENROAD_ARGS} ${OPENROAD_USER_ARGS}"
+fi
+
+if [[ "${LSORACLE_OVERWIRTE_ARGS}" == "YES" ]]; then
+        LSORACLE_ARGS="${LSORACLE_USER_ARGS}"
+else
+        LSORACLE_ARGS="${LSORACLE_ARGS} ${LSORACLE_USER_ARGS}"
+fi
 
 __docker_build()
 {
