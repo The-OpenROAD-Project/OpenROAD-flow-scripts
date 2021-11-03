@@ -146,6 +146,15 @@ __local_build()
         $NICE cmake --build tools/LSOracle/build -j ${PROC} --target install
 }
 
+__update_or_latest()
+(
+        cd tools/OpenROAD
+        git fetch $CURRENT_REMOTE $OR_BRANCH
+        git checkout $CURRENT_REMOTE/$OR_BRANCH
+        git pull $CURRENT_REMOTE $OR_BRANCH
+        git submodule update --init --recursive
+)
+
 __common_setup()
 {
         # Clone repositories
@@ -169,10 +178,7 @@ __common_setup()
 
         if [ ! -z ${UPDATE_OR+x} ]; then
                 echo "[INFO FLW-0005] Updating OpenROAD tool to the latest."
-                (cd tools/OpenROAD && git fetch $CURRENT_REMOTE $OR_BRANCH \
-                        && git checkout $CURRENT_REMOTE/$OR_BRANCH \
-                        && git pull $CURRENT_REMOTE $OR_BRANCH \
-                        && git submodule update --init --recursive)
+                __update_or_latest
         fi
 }
 
