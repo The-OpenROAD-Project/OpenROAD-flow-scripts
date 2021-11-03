@@ -41,6 +41,28 @@ DOCKER_TAG="openroad/flow-scripts"
 CURRENT_REMOTE="origin"
 OR_BRANCH="master"
 
+INSTALL_PATH="$(pwd)/tools/install"
+
+DOCKER_ARGS="--no-cache"
+
+YOSYS_ARGS="\
+CONFIG=gcc \
+PREFIX=$INSTALL_PATH/yosys \
+ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc \
+"
+
+OPENROAD_ARGS="\
+-D CMAKE_INSTALL_PREFIX=$INSTALL_PATH/OpenROAD \
+"
+
+LSORACLE_ARGS="\
+-D CMAKE_BUILD_TYPE=RELEASE \
+-D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
+-D YOSYS_PLUGIN=ON \
+-D YOSYS_SHARE_DIR=$INSTALL_PATH/yosys/share/yosys \
+-D CMAKE_INSTALL_PREFIX=$INSTALL_PATH/LSOracle \
+"
+
 # Parse arguments
 while (( "$#" )); do
         case "$1" in
@@ -91,14 +113,14 @@ done
 __docker_build()
 {
         $NICE docker build \
-                --no-cache \
+                "${DOCKER_ARGS}" \
                 --tag openroad/yosys \
                 --file tools/yosys_util/Dockerfile \
                 --target builder \
                 tools/yosys
 
         $NICE docker build \
-                --no-cache \
+                "${DOCKER_ARGS}" \
                 --tag openroad/lsoracle \
                 --file tools/LSOracle/Dockerfile.openroad \
                 tools
@@ -111,7 +133,11 @@ __docker_build()
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
-        $NICE docker build --no-cache --tag ${DOCKER_TAG} --file Dockerfile .
+        $NICE docker build \
+                "${DOCKER_ARGS}" \
+                --tag ${DOCKER_TAG} \
+                --file Dockerfile \
+                .
         if [ "$COPY_PLATFORMS" == "YES" ]; then
                 mv .dockerignore{.bak,}
         fi
@@ -119,31 +145,16 @@ __docker_build()
 
 __local_build()
 {
-        $NICE make install \
-                -C tools/yosys \
-                -j ${PROC} \
-                CONFIG=gcc \
-                PREFIX=$(pwd)/tools/install/yosys \
-                ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc
+        # build yosys
+        $NICE make install -C tools/yosys -j ${PROC} "${YOSYS_ARGS}"
 
-        $NICE cmake tools/OpenROAD \
-                -B tools/OpenROAD/build \
-                -DCMAKE_INSTALL_PREFIX=tools/install/OpenROAD
+        # build openroad
+        $NICE cmake tools/OpenROAD -B tools/OpenROAD/build "${OPENROAD_ARGS}"
+        $NICE cmake --build tools/OpenROAD/build --target install -j ${PROC}
 
-        $NICE cmake \
-                --build tools/OpenROAD/build \
-                --target install \
-                -j ${PROC}
-
-        $NICE cmake tools/LSOracle \
-                -B tools/LSOracle/build \
-                -D CMAKE_BUILD_TYPE=RELEASE \
-                -D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
-                -D YOSYS_PLUGIN=ON \
-                -D YOSYS_SHARE_DIR=$(pwd)/tools/install/yosys/share/yosys \
-                -D CMAKE_INSTALL_PREFIX=$(pwd)/tools/install/LSOracle
-
-        $NICE cmake --build tools/LSOracle/build -j ${PROC} --target install
+        # build lsoracle
+        $NICE cmake tools/LSOracle -B tools/LSOracle/build "${LSORACLE_ARGS}"
+        $NICE cmake --build tools/LSOracle/build --target install -j ${PROC}
 }
 
 __change_or_repo()
