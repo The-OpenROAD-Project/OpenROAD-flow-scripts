@@ -80,63 +80,58 @@ while (( "$#" )); do
                         ;;
                 --or_branch)
                         OR_BRANCH="$2"
-                        shift 2
+                        shift
                         ;;
                 --or_repo)
                         OR_REPO="$2"
-                        shift 2
+                        shift
                         ;;
                 -l|--latest)
                         UPDATE_OR=1
-                        shift
                         ;;
                 -t|--threads)
                         PROC="$2"
-                        shift 2
+                        shift
                         ;;
                 -n|--nice)
                         NICE="nice"
-                        shift
                         ;;
                 -o|--local)
                         BUILD_METHOD="LOCAL"
-                        shift
                         ;;
                 --no_init)
                         OPENROAD_FLOW_NO_GIT_INIT=1
-                        shift
                         ;;
                 -c|--copy-platforms)
                         COPY_PLATFORMS="YES"
-                        shift
                         ;;
                 --docker-args-overwrite)
                         DOCKER_OVERWIRTE_ARGS="YES"
                         ;;
                 --docker-args)
                         DOCKER_USER_ARGS="$2"
-                        shift 2
+                        shift
                         ;;
                 --yosys-args-overwrite)
                         YOSYS_OVERWIRTE_ARGS="YES"
                         ;;
                 --yosys-args)
                         YOSYS_USER_ARGS="$2"
-                        shift 2
+                        shift
                         ;;
                 --openroad-args-overwrite)
                         OPENROAD_OVERWIRTE_ARGS="YES"
                         ;;
                 --openroad-args)
                         OPENROAD_USER_ARGS="$2"
-                        shift 2
+                        shift
                         ;;
                 --lsoracle-args-overwrite)
                         LSORACLE_OVERWIRTE_ARGS="YES"
                         ;;
                 --lsoracle-args)
                         LSORACLE_USER_ARGS="$2"
-                        shift 2
+                        shift
                         ;;
                 -*|--*) # unsupported flags
                         echo "[ERROR FLW-0004] Unsupported flag $1." >&2
@@ -144,6 +139,7 @@ while (( "$#" )); do
                         exit 1
                         ;;
         esac
+        shift
 done
 
 if [[ "${DOCKER_OVERWIRTE_ARGS}" == "YES" ]]; then
