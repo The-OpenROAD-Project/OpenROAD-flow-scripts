@@ -1,8 +1,8 @@
 #!/bin/bash
 # This script builds the OpenROAD tools locally
 
-# Exit on first error
-set -e
+# Exit on first error, do not allow unbound variables
+set -eu
 
 cd "$(dirname $(readlink -f $0))"
 
