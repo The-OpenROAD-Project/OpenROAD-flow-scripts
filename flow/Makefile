@@ -155,7 +155,7 @@ export ABC_AREA ?= 0
 export SYNTH_ARGS ?= -flatten
 
 # Global setting for Floorplan
-export PLACE_PINS_ARGS ?=
+export PLACE_PINS_ARGS
 
 export FLOW_VARIANT ?= base
 
