@@ -59,10 +59,10 @@ if {[find_macros] != ""} {
                     -report_directory $env(RTLMP_RPT_DIR) \
                     -report_file $env(RTLMP_RPT_FILE)
  
-    set flag [rtl_macro_placer -config_file $env(RTLMP_CONFIG_FILE) \
-                                -macro_blockage_file $env(RTLMP_BLOCKAGE_FILE) \
-                                -report_directory $env(RTLMP_RPT_DIR) \
-                                -report_file $env(RTLMP_RPT_FILE)]
+    rtl_macro_placer -config_file $env(RTLMP_CONFIG_FILE) \
+                     -macro_blockage_file $env(RTLMP_BLOCKAGE_FILE) \
+                     -report_directory $env(RTLMP_RPT_DIR) \
+                     -report_file $env(RTLMP_RPT_FILE)]
     puts "Delete buffers for RTLMP flow..."
     remove_buffers
   } else {
