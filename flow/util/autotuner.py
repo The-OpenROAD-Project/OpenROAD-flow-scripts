@@ -758,6 +758,17 @@ def set_training_class(function):
         return AxPPA
 
 
+@ray.remote
+def save_best(config):
+    '''
+    Save best configuration of parameters found.
+    '''
+    new_best_path = f'{LOCAL_DIR}/{experiment_name}-{DATE}/{AUTOTUNER_BEST}'
+    with open(new_best_path, 'w') as new_best_file:
+        json.dump(config, new_best_file, indent=4)
+    print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
+
+
 if __name__ == '__main__':
     args = parse_arguments()
     experiment_name = f'{args.platform}/{args.design}/{args.experiment}'
@@ -812,9 +823,6 @@ if __name__ == '__main__':
         stop={"training_iteration": args.iterations},
         queue_trials=True
     )
-    ray.shutdown()
+    task_id = save_best.remote(analysis.best_config)
+    _ = ray.get(task_id)
     print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
-    new_best_path = f'{LOCAL_DIR}/{experiment_name}-{DATE}/{AUTOTUNER_BEST}'
-    with open(new_best_path, 'w') as new_best_file:
-        json.dump(analysis.best_config, new_best_file, indent=4)
-    print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
