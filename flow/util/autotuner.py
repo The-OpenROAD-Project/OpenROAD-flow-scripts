@@ -417,11 +417,11 @@ def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
     '''
     process = run(cmd, capture_output=True, text=True, check=False, shell=True)
     if stderr_file is not None:
-        with open(stderr_file, 'w+') as file:
-            file.write(f'\n{process.stderr}')
+        with open(stderr_file, 'a') as file:
+            file.write(f'\n\n{cmd}\n{process.stderr}')
     if stdout_file is not None:
-        with open(stdout_file, 'w+') as file:
-            file.write(f'\n{process.stdout}')
+        with open(stdout_file, 'a') as file:
+            file.write(f'\n\n{cmd}\n{process.stdout}')
     if args.verbose >= 1:
         print(process.stderr)
     if args.verbose >= 2:
