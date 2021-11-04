@@ -37,6 +37,13 @@ from ax.service.ax_client import AxClient
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
 AUTOTUNER_BEST = 'autotuner-best.json'
+VALID_ALGORITHMS = ['hyperopt',
+                    'axppa',
+                    'nevergrad',
+                    'optuna',
+                    'pbt',
+                    'random']
+VALID_EVAL_FN = ['default', 'eff-clk-period', 'ppa', 'ppa-improv', 'ax-ppa']
 
 
 def run_command(cmd, check=True):
@@ -44,11 +51,11 @@ def run_command(cmd, check=True):
     Wrapper for subprocess.run
     Allows to run shell command, control print and exceptions.
     '''
-    process = run(cmd, capture_output=True, text=True, check=check)
-    if process.returncode == 0:
-        print(process.stdout)
-    else:
+    process = run(cmd, capture_output=True, text=True, check=check, shell=True)
+    if args.verbose >= 1:
         print(process.stderr)
+    if args.verbose >= 2:
+        print(process.stdout)
     return process
 
 
@@ -504,6 +511,39 @@ def parse_arguments():
     '''
     parser = argparse.ArgumentParser()
 
+    # DUT
+    parser.add_argument(
+        '--design',
+        type=str,
+        metavar='<gcd,jpeg,ibex,aes,...>',
+        required=True,
+        help='Name of the design for Autotuning.')
+    parser.add_argument(
+        '--platform',
+        type=str,
+        metavar='<sky130hd,sky130hs,asap7,...>',
+        required=True,
+        help='Name of the platform for Autotuning.')
+
+    # Experiment Setup
+    parser.add_argument(
+        '--config',
+        type=str,
+        metavar='<path>',
+        required=True,
+        help='Configuration file that sets which knobs to use for Autotuning.')
+    parser.add_argument(
+        '--resume',
+        action='store_true',
+        help='Resume previous run.')
+    parser.add_argument(
+        '--experiment',
+        type=str,
+        metavar='<str>',
+        default='test-hyperopt',
+        help='Experiment name. This parameter is used to prefix the'
+        ' FLOW_VARIANT and to set the Ray log destination.')
+
     # Setup
     parser.add_argument(
         '--git-clean',
@@ -520,7 +560,7 @@ def parse_arguments():
     parser.add_argument(
         '--git-clone-args',
         type=str,
-        required=False,
+        metavar='<str>',
         default='',
         help='Additional git clone arguments.')
     parser.add_argument(
@@ -530,128 +570,104 @@ def parse_arguments():
     parser.add_argument(
         '--git-or-branch',
         type=str,
-        required=False,
+        metavar='<str>',
         default='',
         help='OpenROAD app branch to use.')
     parser.add_argument(
         '--git-orfs-branch',
         type=str,
-        required=False,
+        metavar='<str>',
         default='master',
         help='OpenROAD-flow-scripts branch to use.')
     parser.add_argument(
         '--git-url',
         type=str,
-        required=False,
+        metavar='<url>',
         default=ORFS_URL,
         help='OpenROAD-flow-scripts repo URL to use.')
     parser.add_argument(
         '--build-args',
         type=str,
-        required=False,
+        metavar='<str>',
         default='',
         help='Additional arguments given to ./build_openroad.sh.')
-    parser.add_argument(
-        '--quiet',
-        action='store_true',
-        help='Do not print openroad to stdout, only save into log file.')
-
-    # DUT
-    parser.add_argument(
-        '--design',
-        type=str,
-        required=False,
-        default='gcd',
-        help='Name of the design for Autotuning.')
-    parser.add_argument(
-        '--platform',
-        type=str,
-        required=False,
-        default='sky130hd',
-        help='Name of the platform for Autotuning.')
-
-    # Experiment Setup
-    parser.add_argument(
-        '--experiment',
-        type=str,
-        required=False,
-        default='test-hyperopt',
-        help='Experiment name. This parameter is used to prefix the'
-        ' FLOW_VARIANT and to set the Ray log destination.')
-    parser.add_argument(
-        '--config',
-        type=str,
-        default='',
-        required=False,
-        help='Configuration file that sets which knobs to use for Autotuning.')
-    parser.add_argument(
-        '--resume',
-        action='store_true',
-        help='Resume previous run.')
 
     # ML
     parser.add_argument(
         '--algorithm',
         type=str,
+        metavar=f'<{", ".join(VALID_ALGORITHMS)}>',
         default='hyperopt',
-        required=False,
         help='Search algorithm to use for Autotuning.')
     parser.add_argument(
         '--eval',
         type=str,
+        metavar=f'<{", ".join(VALID_EVAL_FN)}>',
         default='default',
-        required=False,
         help='Evaluate function to use with search algorithm.')
     parser.add_argument(
         '--samples',
         type=int,
-        required=False,
+        metavar='<int>',
         default=10,
         help='Number of samples for tuning.')
     parser.add_argument(
+        '--iterations',
+        type=int,
+        metavar='<int>',
+        default=1,
+        help='Number of iterations for tuning.')
+    parser.add_argument(
         '--reference',
         type=str,
+        metavar='<path>',
         default=None,
-        required=False,
         help='Reference file for use with PPAImprov.')
     parser.add_argument(
         '--perturbation',
         type=int,
+        metavar='<int>',
         default=25,
-        required=False,
         help='Perturbation interval for PopulationBasedTraining.')
     parser.add_argument(
         '--seed',
         type=int,
+        metavar='<int>',
         default=42,
-        required=False,
         help='Random seed.')
 
     # Workload
     parser.add_argument(
         '--jobs',
         type=int,
-        required=False,
+        metavar='<int>',
         default=floor(cpu_count() / 2),
         help='Max number of concurrent jobs.')
     parser.add_argument(
         '--openroad-threads',
         type=int,
-        required=False,
+        metavar='<int>',
         default=16,
         help='Max number of threads openroad can use.')
     parser.add_argument(
         '--server',
         type=str,
+        metavar='<ip|servername>',
         default=None,
-        required=False,
         help='The address of Ray server to connect.')
     parser.add_argument(
         '--port',
         type=int,
+        metavar='<int>',
         default=10001,
-        required=False,
         help='The port of Ray server to connect.')
+
+    parser.add_argument(
+        '-v', '--verbose',
+        action='count',
+        default=0,
+        help='Verbosity level.\n\t0: only print Ray status\n\t1: also print'
+        ' training stderr\n\t2: also print training stdout.')
 
     arguments = parser.parse_args()
     arguments.algorithm = arguments.algorithm.lower()
@@ -662,6 +678,10 @@ def set_algorithm(name):
     '''
     Configure search algorithm.
     '''
+    if args.algorithm not in VALID_ALGORITHMS:
+        print(f'[ERROR TUN-0006] Invalid search algorithm: {args.algorithm}.'
+              f' Choose one of {VALID_ALGORITHMS}.')
+        sys.exit(1)
     if args.algorithm == 'hyperopt':
         algorithm = HyperOptSearch(points_to_evaluate=best_params)
     elif args.algorithm == 'axppa':
@@ -695,9 +715,6 @@ def set_algorithm(name):
         )
     elif args.algorithm == 'random':
         algorithm = BasicVariantGenerator(max_concurrent=args.jobs)
-    else:
-        print('[ERROR TUN-0006] Invalid search algorithm: {args.algorithm}')
-        sys.exit(1)
     if args.algorithm != 'random':
         algorithm = ConcurrencyLimiter(algorithm, max_concurrent=args.jobs)
     return algorithm
@@ -720,6 +737,10 @@ def set_training_class(function):
     '''
     Set training class.
     '''
+    if function not in VALID_EVAL_FN:
+        print(f'[ERROR TUN-0008] Invalid evaluate function: {function}.'
+              f' Choose one of {VALID_EVAL_FN}.')
+        sys.exit(1)
     if function == 'default':
         return AutotunerBase
     if function == 'eff-clk-period':
@@ -734,8 +755,6 @@ def set_training_class(function):
         return PPAImprov
     if function == 'ax-ppa':
         return AxPPA
-    print(f'[ERROR TUN-0008] Invalid evaluate function: {function}')
-    sys.exit(1)
 
 
 if __name__ == '__main__':
@@ -789,7 +808,7 @@ if __name__ == '__main__':
         fail_fast=True,
         local_dir=LOCAL_DIR,
         resume=args.resume,
-        stop={"training_iteration": 1},
+        stop={"training_iteration": args.iterations},
         queue_trials=True
     )
     ray.shutdown()
