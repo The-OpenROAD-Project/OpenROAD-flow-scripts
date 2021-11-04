@@ -10,27 +10,29 @@ cd "$(dirname $(readlink -f $0))"
 # Defaults variable values
 NICE=""
 PROC=$(nproc --all)
-DOCKER_COPY_PLATFORMS="NO"
 DOCKER_TAG="openroad/flow-scripts"
 OPENROAD_APP_REMOTE="origin"
-OPENROAD_APP_BRANCH="master"
-CLEAN_BEFORE="NO"
-CLEAN_FORCE="NO"
 
 INSTALL_PATH="$(pwd)/tools/install"
 
-DOCKER_OVERWIRTE_ARGS="NO"
 DOCKER_USER_ARGS=""
 DOCKER_ARGS="--no-cache"
 
-YOSYS_OVERWIRTE_ARGS="NO"
 YOSYS_USER_ARGS=""
+YOSYS_ARGS="\
+CONFIG=gcc \
+ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc \
+"
 
-OPENROAD_APP_OVERWIRTE_ARGS="NO"
 OPENROAD_APP_USER_ARGS=""
+OPENROAD_APP_ARGS=""
 
-LSORACLE_OVERWIRTE_ARGS="NO"
 LSORACLE_USER_ARGS=""
+LSORACLE_ARGS="\
+-D CMAKE_BUILD_TYPE=RELEASE \
+-D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
+-D YOSYS_PLUGIN=ON \
+"
 
 function usage() {
         cat << EOF
@@ -116,10 +118,10 @@ while (( "$#" )); do
                         exit
                         ;;
                 -o|--local)
-                        BUILD_METHOD="LOCAL"
+                        LOCAL_BUILD=1
                         ;;
                 -l|--latest)
-                        USE_OPENROAD_APP_MASTER=1
+                        USE_OPENROAD_APP_LATEST=1
                         ;;
                 --or_branch)
                         OPENROAD_APP_BRANCH="$2"
@@ -140,31 +142,31 @@ while (( "$#" )); do
                         NICE="nice"
                         ;;
                 -c|--copy-platforms)
-                        DOCKER_COPY_PLATFORMS="YES"
+                        DOCKER_COPY_PLATFORMS=1
                         ;;
                 --docker-args-overwrite)
-                        DOCKER_OVERWIRTE_ARGS="YES"
+                        DOCKER_OVERWIRTE_ARGS=1
                         ;;
                 --docker-args)
                         DOCKER_USER_ARGS="$2"
                         shift
                         ;;
                 --yosys-args-overwrite)
-                        YOSYS_OVERWIRTE_ARGS="YES"
+                        YOSYS_OVERWIRTE_ARGS=1
                         ;;
                 --yosys-args)
                         YOSYS_USER_ARGS="$2"
                         shift
                         ;;
                 --openroad-args-overwrite)
-                        OPENROAD_APP_OVERWIRTE_ARGS="YES"
+                        OPENROAD_APP_OVERWIRTE_ARGS=1
                         ;;
                 --openroad-args)
                         OPENROAD_APP_USER_ARGS="$2"
                         shift
                         ;;
                 --lsoracle-args-overwrite)
-                        LSORACLE_OVERWIRTE_ARGS="YES"
+                        LSORACLE_OVERWIRTE_ARGS=1
                         ;;
                 --lsoracle-args)
                         LSORACLE_USER_ARGS="$2"
@@ -175,11 +177,11 @@ while (( "$#" )); do
                         shift
                         ;;
                 --clean)
-                        CLEAN_BEFORE="YES"
+                        CLEAN_BEFORE=1
                         ;;
                 --clean-force)
-                        CLEAN_BEFORE="YES"
-                        CLEAN_FORCE="YES"
+                        CLEAN_BEFORE=1
+                        CLEAN_FORCE=1
                         ;;
                 -*|--*) # unsupported flags
                         echo "[ERROR FLW-0005] Unsupported flag $1." >&2
@@ -190,46 +192,40 @@ while (( "$#" )); do
         shift
 done
 
-if [[ "${DOCKER_OVERWIRTE_ARGS}" == "YES" ]]; then
-        DOCKER_ARGS="${DOCKER_USER_ARGS}"
-else
-        DOCKER_ARGS="${DOCKER_ARGS} ${DOCKER_USER_ARGS}"
-fi
-
-YOSYS_ARGS="\
-CONFIG=gcc \
-PREFIX=${INSTALL_PATH}/yosys \
-ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc \
-"
-if [[ "${YOSYS_OVERWIRTE_ARGS}" == "YES" ]]; then
-        echo "[INFO FLW-0013] Overwriting Yosys compilation flags."
-        YOSYS_ARGS="${YOSYS_USER_ARGS}"
-else
-        YOSYS_ARGS="${YOSYS_ARGS} ${YOSYS_USER_ARGS}"
-fi
-
-OPENROAD_APP_ARGS="\
--D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/OpenROAD \
-"
-if [[ "${OPENROAD_APP_OVERWIRTE_ARGS}" == "YES" ]]; then
-        echo "[INFO FLW-0014] Overwriting OpenROAD app compilation flags."
-        OPENROAD_APP_ARGS="${OPENROAD_APP_USER_ARGS}"
-else
-        OPENROAD_APP_ARGS="${OPENROAD_APP_ARGS} ${OPENROAD_APP_USER_ARGS}"
-fi
-
-LSORACLE_ARGS="\
--D CMAKE_BUILD_TYPE=RELEASE \
--D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
--D YOSYS_PLUGIN=ON \
+# Only add install prefix variables after parsing arguments.
+YOSYS_ARGS+=" PREFIX=${INSTALL_PATH}/yosys"
+OPENROAD_APP_ARGS+=" -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/OpenROAD"
+LSORACLE_ARGS+=" \
 -D YOSYS_SHARE_DIR=${INSTALL_PATH}/yosys/share/yosys \
 -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/LSOracle \
 "
-if [[ "${LSORACLE_OVERWIRTE_ARGS}" == "YES" ]]; then
+
+if [ ! -z "${DOCKER_OVERWIRTE_ARGS+x}" ]; then
+        echo "[INFO FLW-0015] Overwriting Docker build flags."
+        DOCKER_ARGS="${DOCKER_USER_ARGS}"
+else
+        DOCKER_ARGS+=" ${DOCKER_USER_ARGS}"
+fi
+
+if [ ! -z "${YOSYS_OVERWIRTE_ARGS+x}" ]; then
+        echo "[INFO FLW-0013] Overwriting Yosys compilation flags."
+        YOSYS_ARGS="${YOSYS_USER_ARGS}"
+else
+        YOSYS_ARGS+=" ${YOSYS_USER_ARGS}"
+fi
+
+if [ ! -z "${OPENROAD_APP_OVERWIRTE_ARGS+x}" ]; then
+        echo "[INFO FLW-0014] Overwriting OpenROAD app compilation flags."
+        OPENROAD_APP_ARGS="${OPENROAD_APP_USER_ARGS}"
+else
+        OPENROAD_APP_ARGS+=" ${OPENROAD_APP_USER_ARGS}"
+fi
+
+if [ ! -z "${LSORACLE_OVERWIRTE_ARGS+x}" ]; then
         echo "[INFO FLW-0013] Overwriting LSOracle compilation flags."
         LSORACLE_ARGS="${LSORACLE_USER_ARGS}"
 else
-        LSORACLE_ARGS="${LSORACLE_ARGS} ${LSORACLE_USER_ARGS}"
+        LSORACLE_ARGS+=" ${LSORACLE_USER_ARGS}"
 fi
 
 __docker_build()
@@ -253,7 +249,7 @@ __docker_build()
                 -target=builder \
                 -threads=${PROC}
 
-        if [ "${DOCKER_COPY_PLATFORMS}" == "YES" ]; then
+        if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
@@ -263,7 +259,7 @@ __docker_build()
                 --tag "${DOCKER_TAG}" \
                 --file Dockerfile \
                 .
-        if [ "${DOCKER_COPY_PLATFORMS}" == "YES" ]; then
+        if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 mv .dockerignore{.bak,}
         fi
 }
@@ -329,7 +325,7 @@ __common_setup()
                 __change_openroad_app_remote
         fi
 
-        if [ ! -z "${USE_OPENROAD_APP_MASTER+x}" ] || [ ! -z "${OPENROAD_APP_BRANCH+x}" ]; then
+        if [ ! -z "${USE_OPENROAD_APP_LATEST+x}" ] || [ ! -z "${OPENROAD_APP_BRANCH+x}" ]; then
                 echo -n "[INFO FLW-0004] Updating OpenROAD app to the HEAD"
                 echo "  of ${OPENROAD_APP_REMOTE}/${OPENROAD_APP_BRANCH}."
                 __update_openroad_app_latest
@@ -338,18 +334,18 @@ __common_setup()
 
 __common_setup
 
-if [[ "${CLEAN_FORCE}" == "YES" ]]; then
+if [ ! -z "${CLEAN_FORCE+x}" ]; then
         CLEAN_CMD="-x -d --force"
 else
         CLEAN_CMD="-x -d --interactive"
 fi
-if [[ "${CLEAN_BEFORE}" == "YES" ]]; then
+if [ ! -z "${CLEAN_BEFORE+x}" ]; then
         git clean ${CLEAN_CMD} tools
         git submodule foreach --recursive git clean ${CLEAN_CMD}
 fi
 
 # Choose install method
-if [ -z "${BUILD_METHOD+x}" ] && command -v docker &> /dev/null; then
+if [ -z "${LOCAL_BUILD+x}" ] && command -v docker &> /dev/null; then
         echo -n "[INFO FLW-0000] Using docker build method."
         echo " This will create a docker image tagged '${DOCKER_TAG}'."
         __docker_build
