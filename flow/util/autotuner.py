@@ -55,10 +55,19 @@ class AutotunerBase(tune.Trainable):
         '''
         Setup current experiment step.
         '''
+        # Independent if running locally or on GCP setup, Ray creates the
+        # following directory structure:
+        # <cwd>/<platform>/<design>/<experiment>-DATE/<single_run_params>/
         repo_dir = os.getcwd() + '/../../../../'
         if args.server is not None:
+            # At GCP we use a shared NFS mount, thus <cwd> is
+            # <nfs>/autotuner-orfs-<branch>-[or-<branch>]/<config_id>.
+            # Then we just need to append "orfs" which is where we clone
+            # the OpenROAD-flow-scripts repo into.
             repo_dir += 'orfs'
         else:
+            # For local runs, <cwd> is <git_root>/flow/logs. So to get to the
+            # git root we need to go up two aditional levels.
             repo_dir += '/../../'
         self.repo_dir = os.path.abspath(repo_dir)
         self.parameters, sdc, fast_route = parse_config(config)
