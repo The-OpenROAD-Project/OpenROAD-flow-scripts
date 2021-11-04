@@ -46,19 +46,6 @@ VALID_ALGORITHMS = ['hyperopt',
 VALID_EVAL_FN = ['default', 'eff-clk-period', 'ppa', 'ppa-improv', 'ax-ppa']
 
 
-def run_command(cmd, check=True):
-    '''
-    Wrapper for subprocess.run
-    Allows to run shell command, control print and exceptions.
-    '''
-    process = run(cmd, capture_output=True, text=True, check=check, shell=True)
-    if args.verbose >= 1:
-        print(process.stderr)
-    if args.verbose >= 2:
-        print(process.stdout)
-    return process
-
-
 class AutotunerBase(tune.Trainable):
     '''
     Autotuner base class for experiments.
@@ -414,6 +401,27 @@ def get_flow_variant(parameters):
     return f'{args.experiment}/variant-{variant_hash}'
 
 
+def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
+    '''
+    Wrapper for subprocess.run
+    Allows to run shell command, control print and exceptions.
+    '''
+    process = run(cmd, capture_output=True, text=True, check=False, shell=True)
+    if stderr_file is not None:
+        with open(stderr_file, 'w+') as file:
+            file.write(f'\n{process.stderr}')
+    if stdout_file is not None:
+        with open(stdout_file, 'w+') as file:
+            file.write(f'\n{process.stdout}')
+    if args.verbose >= 1:
+        print(process.stderr)
+    if args.verbose >= 2:
+        print(process.stdout)
+
+    if fail_fast and process.returncode != 0:
+        raise RuntimeError
+
+
 def run_openroad(repo_dir, flow_variant, parameters):
     '''
     Run OpenROAD-flow-scripts with a given set of parameters.
@@ -429,12 +437,9 @@ def run_openroad(repo_dir, flow_variant, parameters):
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
     make_command += f' NPROC={args.openroad_threads}'
-    # check=False -> does not raise expetion so that Ray does not stop.
-    process = run_command(make_command, check=False)
-    with open('error-make-finish.log', 'w+') as file:
-        file.write(f'\n{process.stderr}')
-    with open('make-finish-stdout.log', 'w+') as file:
-        file.write(f'\n{process.stdout}')
+    run_command(make_command,
+                stderr_file='error-make-finish.log',
+                stdout_file='make-finish-stdout.log')
 
     metrics_file = os.path.join(os.getcwd(), 'metrics.json')
     metrics_command = export_command
@@ -443,12 +448,9 @@ def run_openroad(repo_dir, flow_variant, parameters):
     metrics_command += f' -d {args.design}'
     metrics_command += f' -p {args.platform}'
     metrics_command += f' -o {metrics_file}'
-    # check=False -> does not raise expetion so that Ray does not stop.
-    process = run_command(metrics_command, check=False)
-    with open('error-metrics.log', 'w+') as file:
-        file.write(f'\n{process.stderr}')
-    with open('metrics-stdout.log', 'w+') as file:
-        file.write(f'\n{process.stdout}')
+    run_command(metrics_command,
+                stderr_file='error-metrics.log',
+                stdout_file='metrics-stdout.log')
 
     return metrics_file
 
@@ -458,14 +460,14 @@ def clone(path):
     Clone base repo in the remote machine. Only used for Kubernetes at GCP.
     '''
     if args.git_clone:
-        run_command(f'rm -rf {path}/orfs')
+        os.system(f'rm -rf {path}/orfs')
     if not os.path.isdir(f'{path}/orfs/.git'):
         git_command = 'git clone --depth 1 --recursive --single-branch'
         git_command += f' {args.git_clone_args}'
         if args.git_orfs_branch != '':
             git_command += f' --branch {args.git_orfs_branch}'
         git_command += f' {args.git_url} {path}/orfs'
-        run_command(git_command)
+        os.system(git_command)
 
 
 def build(base, install):
@@ -497,7 +499,7 @@ def run_setup(base):
     '''
     print(f'[INFO TUN-0000] Remote folder: {base}')
     if not os.path.isdir(base):
-        run_command(f'mkdir -p {base}')
+        os.system(f'mkdir -p {base}')
     install = f'{base}/orfs/tools/install'
     if args.server is not None:
         clone(base)
