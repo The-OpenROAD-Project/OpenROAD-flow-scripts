@@ -474,7 +474,7 @@ def build(base, install):
     '''
     Build OpenROAD, Yosys and other dependencies.
     '''
-    build_command = f'cd {base}/orfs'
+    build_command = f'cd "{base}/orfs"'
     if args.git_clean:
         build_command += ' && git clean -xdf tools'
         build_command += ' && git submodule foreach --recursive git clean -xdf'
@@ -482,14 +482,13 @@ def build(base, install):
             or not os.path.isfile(f'{install}/OpenROAD/bin/openroad') \
             or not os.path.isfile(f'{install}/yosys/bin/yosys') \
             or not os.path.isfile(f'{install}/LSOracle/bin/lsoracle'):
-        build_command += ' && ./build_openroad.sh'
+        build_command += ' && bash -ic "./build_openroad.sh'
         # Some GCP machines have 200+ cores. Let's be reasonable...
-        # build_command += f' --local --nice --threads {min(cpu_count(), 60)}'
-        build_command += f' --local --nice --threads {cpu_count()})'
+        build_command += f' --local --nice --threads {min(32, cpu_count())}'
         if args.git_latest:
             build_command += ' --latest'
-        build_command += f' {args.build_args}'
-    run_command(build_command)
+        build_command += f' {args.build_args}"'
+    os.system(build_command)
 
 
 @ray.remote
@@ -778,11 +777,11 @@ if __name__ == '__main__':
         # different runs and also continue experiments that crash.
         with open(args.config) as config_file:
             LOCAL_DIR = '/shared-data/autotuner'
-            LOCAL_DIR += f'-orfs:{args.git_orfs_branch}'
+            LOCAL_DIR += f'-orfs-{args.git_orfs_branch}'
             if args.git_or_branch != '':
-                LOCAL_DIR += f'-or:{args.git_or_branch}'
-            if args.git_latest != '':
-                LOCAL_DIR += '-or:latest'
+                LOCAL_DIR += f'-or-{args.git_or_branch}'
+            if args.git_latest:
+                LOCAL_DIR += '-or-latest'
             RUN = hashlib.md5(config_file.read().encode('utf-8')).hexdigest()
             LOCAL_DIR += f'/{RUN}'
         # Connect to ray server before first remote execution.
