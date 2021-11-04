@@ -46,8 +46,25 @@ proc find_macros {} {
   return $macros
 }
 
-
 if {[find_macros] != ""} {
+# If wrappers defined replace macros with their wrapped version
+# # ----------------------------------------------------------------------------
+  if {[info exists ::env(MACRO_WRAPPERS)]} {
+    source $::env(MACRO_WRAPPERS)
+
+    set wrapped_macros [dict keys [dict get $wrapper around]]
+    set db [ord::get_db]
+    set block [ord::get_db_block]
+
+    foreach inst [$block getInsts] {
+      if {[lsearch -exact $wrapped_macros [[$inst getMaster] getName]] > -1} {
+        set new_master [dict get $wrapper around [[$inst getMaster] getName]]
+        puts "Replacing [[$inst getMaster] getName] with $new_master for [$inst getName]"
+        $inst swapMaster [$db findMaster $new_master]
+      }
+    }
+  }
+
   if {[info exists ::env(RTLMP_FLOW)]} {
     puts "RTLMP Flow enabled..."
     partition_design -max_num_inst $env(RTLMP_MAX_INST) \
@@ -74,24 +91,6 @@ if {[find_macros] != ""} {
       macro_placement \
         -halo $::env(MACRO_PLACE_HALO) \
         -channel $::env(MACRO_PLACE_CHANNEL)
-    }
-  }
-
-# If wrappers defined replace macros with their wrapped version
-# # ----------------------------------------------------------------------------
-  if {[info exists ::env(MACRO_WRAPPERS)]} {
-    source $::env(MACRO_WRAPPERS)
-
-    set wrapped_macros [dict keys [dict get $wrapper around]]
-    set db [ord::get_db]
-    set block [ord::get_db_block]
-
-    foreach inst [$block getInsts] {
-      if {[lsearch -exact $wrapped_macros [[$inst getMaster] getName]] > -1} {
-        set new_master [dict get $wrapper around [[$inst getMaster] getName]]
-        puts "Replacing [[$inst getMaster] getName] with $new_master for [$inst getName]"
-        $inst swapMaster [$db findMaster $new_master]
-      }
     }
   }
 
