@@ -772,7 +772,7 @@ def save_best(config):
     '''
     Save best configuration of parameters found.
     '''
-    new_best_path = f'{LOCAL_DIR}/{experiment_name}-{DATE}/{AUTOTUNER_BEST}'
+    new_best_path = f'{LOCAL_DIR}/{experiment_name}/{AUTOTUNER_BEST}'
     with open(new_best_path, 'w') as new_best_file:
         json.dump(config, new_best_file, indent=4)
     print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
@@ -780,7 +780,7 @@ def save_best(config):
 
 if __name__ == '__main__':
     args = parse_arguments()
-    experiment_name = f'{args.platform}/{args.design}/{args.experiment}'
+    experiment_name = f'{args.platform}/{args.design}/{args.experiment}-{DATE}'
     config_dict, SDC_FILE, FR_FILE = read_config(os.path.abspath(args.config))
     best_params = set_best_params(args.platform, args.design)
     search_algo = set_algorithm(experiment_name)
@@ -822,7 +822,7 @@ if __name__ == '__main__':
         metric='minimum',
         mode='min',
         search_alg=search_algo,
-        name=f'{experiment_name}-{DATE}',
+        name=f'{experiment_name}',
         scheduler=AsyncHyperBandScheduler(),
         num_samples=args.samples,
         config=config_dict,
@@ -830,7 +830,7 @@ if __name__ == '__main__':
         local_dir=LOCAL_DIR,
         resume=args.resume,
         stop={"training_iteration": args.iterations},
-        queue_trials=True
+        queue_trials=True,
     )
     task_id = save_best.remote(analysis.best_config)
     _ = ray.get(task_id)
