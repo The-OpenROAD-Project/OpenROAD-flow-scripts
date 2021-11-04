@@ -802,8 +802,6 @@ if __name__ == '__main__':
                 LOCAL_DIR += f'-or-{args.git_or_branch}'
             if args.git_latest:
                 LOCAL_DIR += '-or-latest'
-            RUN = hashlib.md5(config_file.read().encode('utf-8')).hexdigest()
-            LOCAL_DIR += f'/{RUN}'
         # Connect to ray server before first remote execution.
         ray.init(f'ray://{args.server}:{args.port}')
         # Remote functions return a task id and are non-blocking, thus we call
