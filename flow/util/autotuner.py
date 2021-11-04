@@ -501,7 +501,7 @@ def build(base, install):
 
 
 @ray.remote
-def run_setup(base):
+def setup_repo(base):
     '''
     Clone ORFS repository and compile binaries.
     '''
@@ -809,7 +809,7 @@ if __name__ == '__main__':
         # Remote functions return a task id and are non-blocking, thus we call
         # ray.get() to wait for its completion and get the function return
         # value.
-        INSTALL_PATH = ray.get(run_setup.remote(LOCAL_DIR))
+        INSTALL_PATH = ray.get(setup_repo.remote(LOCAL_DIR))
         print('[INFO TUN-0001] Done waiting.')
     else:
         # For local runs, use the same folder as other ORFS utilities.
