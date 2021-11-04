@@ -230,6 +230,7 @@ fi
 
 __docker_build()
 {
+        echo "[INFO FLW-0020] Building docker image for Yosys."
         docker pull "openroad/yosys-dev"
         ${NICE} docker build \
                 ${DOCKER_ARGS} \
@@ -238,6 +239,7 @@ __docker_build()
                 --target builder \
                 tools/yosys
 
+        echo "[INFO FLW-0021] Building docker image for LSOracle."
         docker pull "openroad/centos7-dev"
         ${NICE} docker build \
                 ${DOCKER_ARGS} \
@@ -245,10 +247,12 @@ __docker_build()
                 --file tools/LSOracle/Dockerfile.openroad \
                 tools
 
+        echo "[INFO FLW-0022] Building docker image for OpenROAD app."
         ${NICE} ./tools/OpenROAD/etc/DockerHelper.sh create \
                 -target=builder \
                 -threads=${PROC}
 
+        echo "[INFO FLW-0023] Building docker image for OpenROAD Flow."
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
@@ -266,14 +270,14 @@ __docker_build()
 
 __local_build()
 {
-        # Build Yosys
+        echo "[INFO FLW-0017] Compiling Yosys."
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
-        # Build OpenROAD app
+        echo "[INFO FLW-0018] Compiling OpenROAD."
         ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/build ${OPENROAD_APP_ARGS}
         ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
 
-        # Build LSOracle
+        echo "[INFO FLW-0019] Compiling LSOracle."
         ${NICE} cmake tools/LSOracle -B tools/LSOracle/build ${LSORACLE_ARGS}
         ${NICE} cmake --build tools/LSOracle/build --target install -j "${PROC}"
 }
@@ -340,6 +344,7 @@ else
         CLEAN_CMD="-x -d --interactive"
 fi
 if [ ! -z "${CLEAN_BEFORE+x}" ]; then
+        echo "[INFO FLW-0016] Cleaning up previous binaries and build files."
         git clean ${CLEAN_CMD} tools
         git submodule foreach --recursive git clean ${CLEAN_CMD}
 fi
