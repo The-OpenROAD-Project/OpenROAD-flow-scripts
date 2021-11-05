@@ -34,8 +34,9 @@ export WRAP_LIBS = $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_128X32M2_FB1
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 1400 1400 
 export CORE_AREA   = 10 10 1390 1390 
-export PLACE_PINS_ARGS = -exclude left:0-800 exclude left: 1350-1400 -exclude right:* -exclude top:* -exclude bottom:*
+#export PLACE_PINS_ARGS = -exclude left:0-800 exclude left: 1350-1400 -exclude right:* -exclude top:* -exclude bottom:*
 
 export MACRO_WRAPPERS = $(dir $(DESIGN_CONFIG))/wrappers.tcl
+export MACRO_BLOCKAGE_HALO = 25
 
 export DESIGN_TYPE = CELL
