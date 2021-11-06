@@ -12,6 +12,7 @@ NICE=""
 PROC=$(nproc --all)
 DOCKER_TAG="openroad/flow-scripts"
 OPENROAD_APP_REMOTE="origin"
+OPENROAD_APP_BRANCH="master"
 
 INSTALL_PATH="$(pwd)/tools/install"
 
@@ -329,7 +330,7 @@ __common_setup()
                 __change_openroad_app_remote
         fi
 
-        if [ ! -z "${USE_OPENROAD_APP_LATEST+x}" ] || [ ! -z "${OPENROAD_APP_BRANCH+x}" ]; then
+        if [ ! -z "${USE_OPENROAD_APP_LATEST+x}" ] || [ "${OPENROAD_APP_BRANCH}" != "master" ]; then
                 echo -n "[INFO FLW-0004] Updating OpenROAD app to the HEAD"
                 echo "  of ${OPENROAD_APP_REMOTE}/${OPENROAD_APP_BRANCH}."
                 __update_openroad_app_latest
