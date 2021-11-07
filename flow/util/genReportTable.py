@@ -237,6 +237,23 @@ table th {
 .main-table td:nth-child(3n+1) {
   border-right: solid 2px;
 }
+div.gallery {
+  margin: 5px;
+  border: 1px solid #ccc;
+  float: left;
+  width: 180px;
+}
+div.gallery:hover {
+  border: 1px solid #777;
+}
+div.gallery img {
+  width: 100%;
+  height: auto;
+}
+div.desc {
+  padding: 15px;
+  text-align: center;
+}
 '''
 
 with open(cssOutput, 'w') as f:
@@ -256,6 +273,38 @@ head = '''<!DOCTYPE html>
 tail = '''</body>
 </html>
 '''
+
+
+def add_image(path):
+    platform, design = path.split(os.sep)[1:3]
+    return f'''
+  <div class="gallery">
+    <div class="desc">
+      Final stage<br>
+      {platform}/{design}
+    </div>
+    <a target="_blank" href="{path}">
+      <img src="{path}"  alt="{platform}/{design}" width="600" height="400">
+    </a>
+  </div>
+'''
+
+
+image_list = list()
+for reportDir, dirs, files in sorted(os.walk('reports', topdown=False)):
+    for file in files:
+        if file.startswith('final'):
+            path = os.path.join(reportDir, file).replace('reports', '.')
+            image_list.append(path)
+
+htmlGallery = 'reports/report-gallery.html'
+with open(htmlGallery, 'w') as f:
+    gallery = '  <h1>Image Gallery</h1>\n'
+    for image in image_list:
+        gallery += add_image(image)
+    html = head + gallery + tail
+    f.writelines(html)
+
 
 subColumns = ['Gold', 'Current', 'Diff (%)']
 
