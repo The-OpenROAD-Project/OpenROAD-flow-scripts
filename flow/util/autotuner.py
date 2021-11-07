@@ -681,6 +681,25 @@ def parse_arguments():
 
     arguments = parser.parse_args()
     arguments.algorithm = arguments.algorithm.lower()
+
+    # Validation of arguments
+    if arguments.algorithm not in VALID_ALGORITHMS:
+        print(f'[ERROR TUN-0006] Invalid search algorithm:'
+              f' {arguments.algorithm}. Choose one of {VALID_ALGORITHMS}.')
+        sys.exit(6)
+    if arguments.eval not in VALID_EVAL_FN:
+        print(f'[ERROR TUN-0008] Invalid evaluate function: {arguments.eval}.'
+              f' Choose one of {VALID_EVAL_FN}.')
+        sys.exit(8)
+    if arguments.mode not in VALID_MODES:
+        print(f'[ERROR TUN-0009] Invalid mode: {arguments.mode}.'
+              f' Choose one of {VALID_MODES}.')
+        sys.exit(9)
+    if arguments.eval == 'ppa-improv' and arguments.reference is None:
+        print('[ERROR TUN-0007] The argument "--eval ppa-improv"'
+              ' requries that "--reference <FILE>" is also given.')
+        sys.exit(7)
+
     return arguments
 
 
@@ -688,10 +707,6 @@ def set_algorithm(name):
     '''
     Configure search algorithm.
     '''
-    if args.algorithm not in VALID_ALGORITHMS:
-        print(f'[ERROR TUN-0006] Invalid search algorithm: {args.algorithm}.'
-              f' Choose one of {VALID_ALGORITHMS}.')
-        sys.exit(1)
     if args.algorithm == 'hyperopt':
         algorithm = HyperOptSearch(points_to_evaluate=best_params)
     elif args.algorithm == 'axppa':
@@ -747,10 +762,6 @@ def set_training_class(function):
     '''
     Set training class.
     '''
-    if function not in VALID_EVAL_FN:
-        print(f'[ERROR TUN-0008] Invalid evaluate function: {function}.'
-              f' Choose one of {VALID_EVAL_FN}.')
-        sys.exit(1)
     if function == 'default':
         return AutotunerBase
     if function == 'eff-clk-period':
@@ -758,13 +769,10 @@ def set_training_class(function):
     if function == 'ppa':
         return PPA
     if function == 'ppa-improv':
-        if args.reference is None:
-            print('[ERROR TUN-0007] The argument "--eval ppa-improv"'
-                  ' requries that "--reference <FILE>" is also given.')
-            sys.exit(1)
         return PPAImprov
     if function == 'ax-ppa':
         return AxPPA
+    return None
 
 
 @ray.remote
