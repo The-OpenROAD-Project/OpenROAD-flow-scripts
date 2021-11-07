@@ -1,0 +1,24 @@
+# Job to submit a Ray program from a pod outside a running Ray cluster.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ray-test-job
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: ray
+          image: gcr.io/foss-fpga-tools-ext-openroad/ray
+          imagePullPolicy: Always
+          command: [ "/bin/bash", "-c", "--" ]
+          args:
+            - "
+              git clone --recursive --depth 1 --single-branch --branch autotuner-gcp https://github.com/vvbandeira/openroad-flow-scripts orfs
+              && cd orfs/flow
+              && python ./util/autotuner.py --platform sky130hd --design gcd --config ./designs/sky130hd/gcd/autotuner.json --server autotuner-ray-head --samples 10 --jobs 5 --algorithm optuna
+              "
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi

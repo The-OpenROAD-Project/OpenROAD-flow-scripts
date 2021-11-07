@@ -10,13 +10,17 @@ Note: the order of the parameters matter. Arguments --design, --platform and
 
 Autotuner:
     python3 autotuner.py tune -h
-    python3 autotuner.py --design gcd --platform sky130hd --config ../designs/sky130hd/gcd/autotuner.json tune
+    python3 autotuner.py --design gcd --platform sky130hd \
+                         --config ../designs/sky130hd/gcd/autotuner.json \
+                         tune
     Example:
 
 Parameter sweeping:
     python3 autotuner.py sweep -h
     Example:
-    python3 autotuner.py --design gcd --platform sky130hd --config autotuner-sweep.json sweep
+    python3 autotuner.py --design gcd --platform sky130hd \
+                         --config autotuner-sweep.json \
+                         sweep
 '''
 
 import argparse
@@ -104,11 +108,11 @@ class AutotunerBase(tune.Trainable):
         '''
         with open(file_name) as file:
             data = json.load(file)
-        for key, value in data.items():
-            if key == 'detailedroute':
+        for stage, value in data.items():
+            if stage == 'detailedroute':
                 num_drc = value['route__drc_errors__count']
                 wirelength = value['route__wirelength']
-            if key == 'finish':
+            if stage == 'finish':
                 worst_slack = value['timing__setup__ws']
         ret = {
             'worst_slack': worst_slack,
@@ -136,15 +140,15 @@ class AxPPA(AutotunerBase):
         total_power = 'ERR'
         core_util = 'ERR'
         final_util = 'ERR'
-        for key, value in data.items():
-            if key == 'constraints' and len(value['clocks__details']) > 0:
+        for stage, value in data.items():
+            if stage == 'constraints' and len(value['clocks__details']) > 0:
                 clk_period = float(value['clocks__details'][0].split()[1])
-            if key == 'floorplan':
+            if stage == 'floorplan':
                 core_util = value['design__instance__design__util']
-            if key == 'detailedroute':
+            if stage == 'detailedroute':
                 num_drc = value['route__drc_errors__count']
                 wirelength = value['route__wirelength']
-            if key == 'finish':
+            if stage == 'finish':
                 worst_slack = value['timing__setup__ws']
                 total_power = value['power__total']
                 final_util = value['design__instance__utilization']
@@ -261,6 +265,24 @@ def read_config(file_name):
         with open(abspath(path), 'r') as file:
             ret = file.read()
         return ret
+
+    def read_sweep(this):
+        return [*this['minmax'], this['step']]
+
+    def read_tune(this):
+        min_, max_ = this['minmax']
+        if min_ == max_:
+            return min_
+        if this['type'] == 'int':
+            if this['step'] == 1:
+                return tune.randint(min_, max_)
+            return tune.qrandint(min_, max_, this['step'])
+        if this['type'] == 'float':
+            if this['step'] == 0:
+                return tune.uniform(min_, max_)
+            return tune.quniform(min_, max_, this['step'])
+        return None
+
     with open(file_name) as file:
         data = json.load(file)
     sdc_file = ''
@@ -279,23 +301,10 @@ def read_config(file_name):
             continue
         if not isinstance(value, dict):
             config[key] = value
-            continue
-        min_, max_ = value['minmax']
-        if args.mode == 'sweep':
-            config[key] = [min_, max_, value['step']]
-            continue
-        if min_ == max_:
-            config[key] = min_
-        elif value['type'] == 'int':
-            if value['step'] == 1:
-                config[key] = tune.randint(min_, max_)
-            else:
-                config[key] = tune.qrandint(min_, max_, value['step'])
-        elif value['type'] == 'float':
-            if value['step'] == 0:
-                config[key] = tune.uniform(min_, max_)
-            else:
-                config[key] = tune.quniform(min_, max_, value['step'])
+        elif args.mode == 'sweep':
+            config[key] = read_sweep(value)
+        elif args.mode == 'tune':
+            config[key] = read_tune(value)
     # Copy back to global variables
     return config, sdc_file, fr_file
 
@@ -432,12 +441,12 @@ def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
 
 
 @ray.remote
-def openroad_distributed(*args, **kwargs):
+def openroad_distributed(*args_, **kwargs_):
     ''' Simple wrapper to run openroad distributed with Ray. '''
-    openroad(*args, **kwargs)
+    openroad(*args_, **kwargs_)
 
 
-def openroad(repo_dir, parameters, path=''):
+def openroad(base_dir, parameters, path=''):
     '''
     Run OpenROAD-flow-scripts with a given set of parameters.
     '''
@@ -457,7 +466,7 @@ def openroad(repo_dir, parameters, path=''):
     export_command += ' && '
 
     make_command = export_command
-    make_command += f'make -C {repo_dir}/flow DESIGN_CONFIG=designs/'
+    make_command += f'make -C {base_dir}/flow DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
     make_command += f' NPROC={args.openroad_threads}'
@@ -467,7 +476,7 @@ def openroad(repo_dir, parameters, path=''):
 
     metrics_file = os.path.join(report_path, 'metrics.json')
     metrics_command = export_command
-    metrics_command += f'{repo_dir}/flow/util/genMetrics.py -x'
+    metrics_command += f'{base_dir}/flow/util/genMetrics.py -x'
     metrics_command += f' -v {flow_variant}'
     metrics_command += f' -d {args.design}'
     metrics_command += f' -p {args.platform}'
@@ -716,7 +725,7 @@ def parse_arguments():
     return arguments
 
 
-def set_algorithm(name):
+def set_algorithm(experiment_name):
     '''
     Configure search algorithm.
     '''
@@ -726,7 +735,7 @@ def set_algorithm(name):
         ax_client = AxClient(enforce_sequential_optimization=False)
         # TODO need to fix config_dict format
         ax_client.create_experiment(
-            name=name,
+            name=experiment_name,
             parameters=config_dict,
             objective_name="minimum",
             minimize=True
@@ -788,14 +797,40 @@ def set_training_class(function):
 
 
 @ray.remote
-def save_best(config):
+def save_best(best_config):
     '''
     Save best configuration of parameters found.
     '''
     new_best_path = f'{LOCAL_DIR}/{args.experiment}/{AUTOTUNER_BEST}'
     with open(new_best_path, 'w') as new_best_file:
-        json.dump(config, new_best_file, indent=4)
+        json.dump(best_config, new_best_file, indent=4)
     print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
+
+
+def sweep():
+    ''' Run sweep of parameters '''
+    workers = list()
+    if args.server is not None:
+        # For remote sweep we create the following directory structure:
+        #      1/     2/         3/       4/
+        # <repo>/<logs>/<platform>/<design>/
+        repo_dir = abspath(LOCAL_DIR + '/../' * 4)
+    else:
+        repo_dir = abspath('../')
+    print(f'[INFO TUN-0012] Log dir {LOCAL_DIR}.')
+    for name, content in config_dict.items():
+        if not isinstance(content, list):
+            continue
+        print(f'[INFO TUN-0007] Scheduling runs for parameter {name}.')
+        for i in np.arange(*content):
+            config_dict[name] = i
+            config = parse_config(config_dict)
+            workers.append(openroad_distributed.remote(repo_dir, config,
+                                                       path=LOCAL_DIR))
+        print(f'[INFO TUN-0008] Finish scheduling for parameter {name}.')
+    print('[INFO TUN-0009] Waiting for results.')
+    _ = ray.get(workers)
+    print('[INFO TUN-0010] Sweep complete.')
 
 
 if __name__ == '__main__':
@@ -859,25 +894,4 @@ if __name__ == '__main__':
         _ = ray.get(task_id)
         print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
     elif args.mode == 'sweep':
-        workers = list()
-        if args.server is not None:
-            # For remote sweep we create the following directory structure:
-            #      1/     2/         3/       4/
-            # <repo>/<logs>/<platform>/<design>/
-            repo_dir = abspath(LOCAL_DIR + '/../' * 4)
-        else:
-            repo_dir = abspath('../')
-        print(f'[INFO TUN-0012] Log dir {LOCAL_DIR}.')
-        for key, value in config_dict.items():
-            if not isinstance(value, list):
-                continue
-            print(f'[INFO TUN-0007] Scheduling runs for parameter {key}.')
-            for i in np.arange(*value):
-                config_dict[key] = i
-                config = parse_config(config_dict)
-                workers.append(openroad_distributed.remote(repo_dir, config,
-                                                           path=LOCAL_DIR))
-            print(f'[INFO TUN-0008] Finish scheduling for parameter {key}.')
-        print('[INFO TUN-0009] Waiting for results.')
-        retuls = ray.get(workers)
-        print('[INFO TUN-0010] Sweep complete.')
+        sweep()
