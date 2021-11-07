@@ -12,13 +12,14 @@ User can decide the input parameter space by modifying 'autotuner.json'.
 import argparse
 import hashlib
 import json
-from math import floor
 import os
+from os.path import abspath
 import re
 import sys
 from datetime import datetime
 from multiprocessing import cpu_count
 from subprocess import run
+import numpy as np
 
 import ray
 from ray import tune
@@ -44,6 +45,8 @@ VALID_ALGORITHMS = ['hyperopt',
                     'pbt',
                     'random']
 VALID_EVAL_FN = ['default', 'eff-clk-period', 'ppa', 'ppa-improv', 'ax-ppa']
+FASTROUTE_TCL = 'fastroute.tcl'
+CONSTRAINTS_SDC = 'constraints.sdc'
 
 
 class AutotunerBase(tune.Trainable):
@@ -69,24 +72,15 @@ class AutotunerBase(tune.Trainable):
             # For local runs, <cwd> is <git_root>/flow/logs. So to get to the
             # git root we need to go up two aditional levels.
             repo_dir += '/../../'
-        self.repo_dir = os.path.abspath(repo_dir)
-        self.parameters, sdc, fast_route = parse_config(config)
-        if bool(sdc):
-            sdc_file_path = write_sdc(os.getcwd(), sdc)
-            self.parameters += f' SDC_FILE={sdc_file_path}'
-        if bool(fast_route):
-            fast_route_file_path = write_fast_route(os.getcwd(), fast_route)
-            self.parameters += f' FASTROUTE_TCL={fast_route_file_path}'
-        self.flow_variant = get_flow_variant(self.parameters)
+        self.repo_dir = abspath(repo_dir)
+        self.parameters = parse_config(config)
         self.step_ = 0
 
     def step(self):
         '''
         Run step experiment and compute its score.
         '''
-        metrics_file = run_openroad(self.repo_dir,
-                                    self.flow_variant,
-                                    self.parameters)
+        metrics_file = run_openroad(self.repo_dir, self.parameters)
         self.step_ += 1
         score = self.evaluate(self.read_metrics(metrics_file))
         # Feed the score back back to Tune.
@@ -271,7 +265,7 @@ def read_config(file_name):
     When min==max, it means the constant value
     '''
     def read(path):
-        with open(os.path.abspath(path), 'r') as file:
+        with open(abspath(path), 'r') as file:
             ret = file.read()
         return ret
     with open(file_name) as file:
@@ -307,7 +301,7 @@ def read_config(file_name):
     return config, sdc_file, fr_file
 
 
-def parse_config(config):
+def parse_config(config, path=os.getcwd()):
     '''
     Parse configuration received from tune into make variables.
     '''
@@ -331,10 +325,16 @@ def parse_config(config):
         # Default case is VAR=VALUE
         else:
             options += f' {key}={value}'
-    return options, sdc, fast_route
+    if bool(sdc):
+        write_sdc(sdc, path)
+        options += f' SDC_FILE={path}/{CONSTRAINTS_SDC}'
+    if bool(fast_route):
+        write_fast_route(fast_route, path)
+        options += f' FASTROUTE_TCL={path}/{FASTROUTE_TCL}'
+    return options
 
 
-def write_sdc(path, variables):
+def write_sdc(variables, path):
     '''
     Create a SDC file with parameters for current tuning iteration.
     '''
@@ -362,13 +362,13 @@ def write_sdc(path, variables):
                                   new_file)
             else:
                 new_file += f'\nset io_delay {value}\n'
-    file_name = path + '/constraints.sdc'
+    file_name = path + '/{CONSTRAINTS_SDC}'
     with open(file_name, 'w') as file:
         file.write(new_file)
     return file_name
 
 
-def write_fast_route(path, variables):
+def write_fast_route(variables, path):
     '''
     Create a FastRoute Tcl file with parameters for current tuning iteration.
     '''
@@ -393,18 +393,18 @@ def write_fast_route(path, variables):
                 new_file += f'\n{layer_cmd} {layer} {value}\n'
         elif key == 'GR_SEED':
             new_file += f'\nset_global_routing_random -seed {value}\n'
-    file_name = path + '/fastroute.tcl'
+    file_name = path + f'/{FASTROUTE_TCL}'
     with open(file_name, 'w') as file:
         file.write(new_file)
     return file_name
 
 
-def get_flow_variant(parameters):
+def get_flow_variant(param):
     '''
     Create a hash based on the parameters. This way we don't need to re-run
     experiments with the same configuration.
     '''
-    variant_hash = hashlib.md5(parameters.encode('utf-8')).hexdigest()
+    variant_hash = hashlib.md5(f"{param}".encode('utf-8')).hexdigest()
     with open(os.path.join(os.getcwd() + '/variant_hash.txt'), 'w') as file:
         file.write(variant_hash)
     return f'{args.experiment}/variant-{variant_hash}'
@@ -431,10 +431,12 @@ def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
         raise RuntimeError
 
 
-def run_openroad(repo_dir, flow_variant, parameters):
+def run_openroad(repo_dir, parameters):
     '''
     Run OpenROAD-flow-scripts with a given set of parameters.
     '''
+
+    flow_variant = get_flow_variant(parameters)
 
     export_command = f'export PATH={INSTALL_PATH}/OpenROAD/bin'
     export_command += f':{INSTALL_PATH}/yosys/bin'
@@ -550,7 +552,7 @@ def parse_arguments():
         '--experiment',
         type=str,
         metavar='<str>',
-        default='test-hyperopt',
+        default='test-autotuner',
         help='Experiment name. This parameter is used to prefix the'
         ' FLOW_VARIANT and to set the Ray log destination.')
 
@@ -651,7 +653,7 @@ def parse_arguments():
         '--jobs',
         type=int,
         metavar='<int>',
-        default=floor(cpu_count() / 2),
+        default=int(np.floor(cpu_count() / 2)),
         help='Max number of concurrent jobs.')
     parser.add_argument(
         '--openroad-threads',
@@ -750,8 +752,7 @@ def set_best_params(platform, design):
     Get current known best parameters if it exists.
     '''
     params = []
-    best_param_file = f'designs/{platform}/{design}'
-    best_param_file += '/{AUTOTUNER_BEST}'
+    best_param_file = f'designs/{platform}/{design}/{AUTOTUNER_BEST}'
     if os.path.isfile(best_param_file):
         with open(best_param_file) as file:
             params = json.load(file)
@@ -789,13 +790,14 @@ def save_best(config):
 if __name__ == '__main__':
     args = parse_arguments()
     experiment_name = f'{args.platform}/{args.design}/{args.experiment}-{DATE}'
-    config_dict, SDC_FILE, FR_FILE = read_config(os.path.abspath(args.config))
     best_params = set_best_params(args.platform, args.design)
     search_algo = set_algorithm(experiment_name)
     TrainClass = set_training_class(args.eval)
     # PPAImprov requires a reference metrics file to compute training scores.
     if args.eval == 'ppa-improv':
         reference = PPAImprov.read_metrics(args.reference)
+
+    config_dict, SDC_FILE, FR_FILE = read_config(abspath(args.config))
 
     # Connect to remote Ray server if any, otherwise will run locally
     if args.server is not None:
@@ -819,7 +821,7 @@ if __name__ == '__main__':
         print('[INFO TUN-0001] Done waiting.')
     else:
         # For local runs, use the same folder as other ORFS utilities.
-        os.chdir(os.path.dirname(os.path.abspath(__file__)) + '/../')
+        os.chdir(os.path.dirname(abspath(__file__)) + '/../')
         LOCAL_DIR = 'logs'
         INSTALL_PATH = '../tools/install'
 
