@@ -1,12 +1,22 @@
-#!/usr/bin/env python3
-
 '''
-This scripts automatically tuning the input parameters. The user should
-install python Ray and Tune package and corresponding searching algorithms.
-Ray and Tune installation instruction can be found in below URL.
-https://docs.ray.io/en/master/installation.html
+This scripts handles sweeping and tuning of OpenROAD-flow-scripts parameters.
+Dependencies are documented in pip format at autotuner-requirements.txt
 
-User can decide the input parameter space by modifying 'autotuner.json'.
+For both sweep and tune modes:
+    python3 autotuner.py -h
+
+Note: the order of the parameters matter. Arguments --design, --platform and
+--config are always required and should preceed the <mode>.
+
+Autotuner:
+    python3 autotuner.py tune -h
+    python3 autotuner.py --design gcd --platform sky130hd --config ../designs/sky130hd/gcd/autotuner.json tune
+    Example:
+
+Parameter sweeping:
+    python3 autotuner.py sweep -h
+    Example:
+    python3 autotuner.py --design gcd --platform sky130hd --config autotuner-sweep.json sweep
 '''
 
 import argparse
