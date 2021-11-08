@@ -1,26 +1,26 @@
 '''
 This scripts handles sweeping and tuning of OpenROAD-flow-scripts parameters.
-Dependencies are documented in pip format at autotuner-requirements.txt
+Dependencies are documented in pip format at distributed-requirements.txt
 
 For both sweep and tune modes:
-    python3 autotuner.py -h
+    python3 distributed.py -h
 
 Note: the order of the parameters matter. Arguments --design, --platform and
 --config are always required and should preceed the <mode>.
 
 Autotuner:
-    python3 autotuner.py tune -h
-    python3 autotuner.py --design gcd --platform sky130hd \
-                         --config ../designs/sky130hd/gcd/autotuner.json \
-                         tune
+    python3 distributed.py tune -h
+    python3 distributed.py --design gcd --platform sky130hd \
+                           --config ../designs/sky130hd/gcd/autotuner.json \
+                           tune
     Example:
 
 Parameter sweeping:
-    python3 autotuner.py sweep -h
+    python3 distributed.py sweep -h
     Example:
-    python3 autotuner.py --design gcd --platform sky130hd \
-                         --config autotuner-sweep.json \
-                         sweep
+    python3 distributed.py --design gcd --platform sky130hd \
+                           --config distributed-sweep-example.json \
+                           sweep
 '''
 
 import argparse

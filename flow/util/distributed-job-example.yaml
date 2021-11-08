@@ -13,11 +13,7 @@ spec:
           imagePullPolicy: Always
           command: [ "/bin/bash", "-c", "--" ]
           args:
-            - "
-              git clone --recursive --depth 1 --single-branch --branch autotuner-gcp https://github.com/vvbandeira/openroad-flow-scripts orfs
-              && cd orfs/flow
-              && python ./util/autotuner.py --platform sky130hd --design gcd --config ./designs/sky130hd/gcd/autotuner.json --server autotuner-ray-head --samples 10 --jobs 5 --algorithm optuna
-              "
+            - "echo <CMD>"
           resources:
             requests:
               cpu: 100m
