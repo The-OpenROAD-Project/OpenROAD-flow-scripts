@@ -224,6 +224,7 @@ table tbody tr.active-row {
 }
 table th,
 table td:nth-child(1),
+.image-table td,
 .summary-table td {
   border-right: solid 2px;
   border-left: solid 2px;
@@ -239,7 +240,6 @@ table th {
 }
 div.gallery {
   margin: 5px;
-  border: 1px solid #ccc;
   float: left;
   height: 300px;
 }
@@ -275,33 +275,56 @@ tail = '''</body>
 '''
 
 
-def add_image(path):
-    platform, design = path.split(os.sep)[1:3]
-    return f'''
+def add_image(path, platform, design):
+    return f'''<td>
   <div class="gallery">
     <div class="desc">
       Final stage<br>
       {platform}/{design}
     </div>
     <a target="_blank" href="{path}">
-      <img src="{path}"  alt="{platform}/{design}" width="600" height="400">
+      <img src="{path}" alt="{platform}/{design}">
     </a>
   </div>
+</td>
 '''
 
 
-image_list = list()
-for reportDir, dirs, files in sorted(os.walk('reports', topdown=False)):
+rows = set()
+cols = set()
+image_list = dict()
+for parents, dirs, files in sorted(os.walk('reports', topdown=False)):
     for file in files:
         if file.startswith('final'):
-            path = os.path.join(reportDir, file).replace('reports', '.')
-            image_list.append(path)
+            path = os.path.join(parents, file).replace('reports', '.')
+            platform, design = path.split(os.sep)[1:3]
+            rows.add(design)
+            cols.add(platform)
+            if design not in image_list.keys():
+                image_list[design] = dict()
+            image_list[design][platform] = path
+
+rows = sorted(rows)
+cols = sorted(cols)
 
 htmlGallery = 'reports/report-gallery.html'
 with open(htmlGallery, 'w') as f:
     gallery = '  <h1>Image Gallery</h1>\n'
-    for image in image_list:
-        gallery += add_image(image)
+    gallery += '<table class="image-table">\n'
+    gallery += '<tr>\n'
+    for key in cols:
+        gallery += f'<th>{key}</th>\n'
+    gallery += '</tr>\n'
+    for design in rows:
+        gallery += '<tr>\n'
+        for platform in cols:
+            if platform in image_list[design].keys():
+                gallery += add_image(image_list[design][platform],
+                                     design, platform)
+            else:
+                gallery += '<td>\n</td>\n'
+        gallery += '</tr>\n'
+    gallery += '</table>\n'
     html = head + gallery + tail
     f.writelines(html)
 
