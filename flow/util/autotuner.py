@@ -608,13 +608,13 @@ def parse_arguments():
     parser.add_argument(
         '--algorithm',
         type=str,
-        metavar=f'<{", ".join(VALID_ALGORITHMS)}>',
+        choices=VALID_ALGORITHMS,
         default='hyperopt',
         help='Search algorithm to use for Autotuning.')
     parser.add_argument(
         '--eval',
         type=str,
-        metavar=f'<{", ".join(VALID_EVAL_FN)}>',
+        choices=VALID_EVAL_FN,
         default='default',
         help='Evaluate function to use with search algorithm.')
     parser.add_argument(
@@ -685,18 +685,6 @@ def parse_arguments():
     arguments.algorithm = arguments.algorithm.lower()
 
     # Validation of arguments
-    if arguments.algorithm not in VALID_ALGORITHMS:
-        print(f'[ERROR TUN-0006] Invalid search algorithm:'
-              f' {arguments.algorithm}. Choose one of {VALID_ALGORITHMS}.')
-        sys.exit(6)
-    if arguments.eval not in VALID_EVAL_FN:
-        print(f'[ERROR TUN-0008] Invalid evaluate function: {arguments.eval}.'
-              f' Choose one of {VALID_EVAL_FN}.')
-        sys.exit(8)
-    if arguments.mode not in VALID_MODES:
-        print(f'[ERROR TUN-0009] Invalid mode: {arguments.mode}.'
-              f' Choose one of {VALID_MODES}.')
-        sys.exit(9)
     if arguments.eval == 'ppa-improv' and arguments.reference is None:
         print('[ERROR TUN-0007] The argument "--eval ppa-improv"'
               ' requries that "--reference <FILE>" is also given.')
