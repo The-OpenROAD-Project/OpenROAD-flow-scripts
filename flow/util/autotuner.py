@@ -58,20 +58,10 @@ class AutotunerBase(tune.Trainable):
         '''
         Setup current experiment step.
         '''
-        # Independent if running locally or on GCP setup, Ray creates the
-        # following directory structure:
-        # <cwd>/<platform>/<design>/<experiment>-DATE/<single_run_params>/
-        repo_dir = os.getcwd() + '/../../../../'
-        if args.server is not None:
-            # At GCP we use a shared NFS mount, thus <cwd> is
-            # <nfs>/autotuner-orfs-<branch>-[or-<branch>]/<config_id>.
-            # Then we just need to append "orfs" which is where we clone
-            # the OpenROAD-flow-scripts repo into.
-            repo_dir += 'orfs'
-        else:
-            # For local runs, <cwd> is <git_root>/flow/logs. So to get to the
-            # git root we need to go up two aditional levels.
-            repo_dir += '/../../'
+        # We create the following directory structure:
+        #      1/     2/         3/       4/                5/   6/
+        # <repo>/<logs>/<platform>/<design>/<experiment>-DATE/<id>/<cwd>
+        repo_dir = os.getcwd() + '/../' * 6
         self.repo_dir = abspath(repo_dir)
         self.parameters = parse_config(config)
         self.step_ = 0
@@ -80,7 +70,7 @@ class AutotunerBase(tune.Trainable):
         '''
         Run step experiment and compute its score.
         '''
-        metrics_file = run_openroad(self.repo_dir, self.parameters)
+        metrics_file = openroad(self.repo_dir, self.parameters)
         self.step_ += 1
         score = self.evaluate(self.read_metrics(metrics_file))
         # Feed the score back back to Tune.
@@ -284,7 +274,13 @@ def read_config(file_name):
                 print('[WARNING TUN-0005] Overwriting FastRoute base file.')
             fr_file = read(f'{os.path.dirname(file_name)}/{value}')
             continue
+        if not isinstance(value, dict):
+            config[key] = value
+            continue
         min_, max_ = value['minmax']
+        if args.mode == 'sweep':
+            config[key] = [min_, max_, value['step']]
+            continue
         if min_ == max_:
             config[key] = min_
         elif value['type'] == 'int':
@@ -339,7 +335,7 @@ def write_sdc(variables, path):
     Create a SDC file with parameters for current tuning iteration.
     '''
     # TODO: handle case where the reference file does not exist
-    new_file = SDC_FILE
+    new_file = SDC_ORIGINAL
     for key, value in variables.items():
         if key == 'CLK_PERIOD':
             new_file = re.sub(r'-period [0-9\.]+ (.*)',
@@ -374,7 +370,7 @@ def write_fast_route(variables, path):
     '''
     # TODO: handle case where the reference file does not exist
     layer_cmd = 'set_global_routing_layer_adjustment'
-    new_file = FR_FILE
+    new_file = FR_ORIGINAL
     for key, value in variables.items():
         if key.startswith('LAYER_ADJUST'):
             layer = key.lstrip('LAYER_ADJUST')
@@ -431,10 +427,19 @@ def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
         raise RuntimeError
 
 
-def run_openroad(repo_dir, parameters):
+@ray.remote
+def openroad_distributed(*args, **kwargs):
+    ''' Simple wrapper to run openroad distributed with Ray. '''
+    openroad(*args, **kwargs)
+
+
+def openroad(repo_dir, parameters, path=''):
     '''
     Run OpenROAD-flow-scripts with a given set of parameters.
     '''
+    # Make sure path ends in a slash, i.e., is a folder
+    if path != '' and path[-1] != '/':
+        path += '/'
 
     flow_variant = get_flow_variant(parameters)
 
@@ -449,8 +454,8 @@ def run_openroad(repo_dir, parameters):
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
     make_command += f' NPROC={args.openroad_threads}'
     run_command(make_command,
-                stderr_file='error-make-finish.log',
-                stdout_file='make-finish-stdout.log')
+                stderr_file=f'{path}error-make-finish.log',
+                stdout_file=f'{path}make-finish-stdout.log')
 
     metrics_file = os.path.join(os.getcwd(), 'metrics.json')
     metrics_command = export_command
@@ -460,8 +465,8 @@ def run_openroad(repo_dir, parameters):
     metrics_command += f' -p {args.platform}'
     metrics_command += f' -o {metrics_file}'
     run_command(metrics_command,
-                stderr_file='error-metrics.log',
-                stdout_file='metrics-stdout.log')
+                stderr_file=f'{path}error-metrics.log',
+                stdout_file=f'{path}metrics-stdout.log')
 
     return metrics_file
 
@@ -471,13 +476,12 @@ def clone(path):
     Clone base repo in the remote machine. Only used for Kubernetes at GCP.
     '''
     if args.git_clone:
-        os.system(f'rm -rf {path}/orfs')
-    if not os.path.isdir(f'{path}/orfs/.git'):
+        os.system(f'rm -rf {path}')
+    if not os.path.isdir(f'{path}/.git'):
         git_command = 'git clone --depth 1 --recursive --single-branch'
         git_command += f' {args.git_clone_args}'
-        if args.git_orfs_branch != '':
-            git_command += f' --branch {args.git_orfs_branch}'
-        git_command += f' {args.git_url} {path}/orfs'
+        git_command += f' --branch {args.git_orfs_branch}'
+        git_command += f' {args.git_url} {path}'
         os.system(git_command)
 
 
@@ -485,7 +489,7 @@ def build(base, install):
     '''
     Build OpenROAD, Yosys and other dependencies.
     '''
-    build_command = f'cd "{base}/orfs"'
+    build_command = f'cd "{base}"'
     if args.git_clean:
         build_command += ' && git clean -xdf tools'
         build_command += ' && git submodule foreach --recursive git clean -xdf'
@@ -508,9 +512,7 @@ def setup_repo(base):
     Clone ORFS repository and compile binaries.
     '''
     print(f'[INFO TUN-0000] Remote folder: {base}')
-    if not os.path.isdir(base):
-        os.system(f'mkdir -p {base}')
-    install = f'{base}/orfs/tools/install'
+    install = f'{base}/tools/install'
     if args.server is not None:
         clone(base)
     build(base, install)
@@ -522,6 +524,12 @@ def parse_arguments():
     Parse arguments from command line.
     '''
     parser = argparse.ArgumentParser()
+
+    subparsers = parser.add_subparsers(help='mode of execution',
+                                       dest='mode',
+                                       required=True)
+    tune_parser = subparsers.add_parser("tune")
+    sweep_parser = subparsers.add_parser("sweep")
 
     # DUT
     parser.add_argument(
@@ -545,16 +553,16 @@ def parse_arguments():
         required=True,
         help='Configuration file that sets which knobs to use for Autotuning.')
     parser.add_argument(
-        '--resume',
-        action='store_true',
-        help='Resume previous run.')
-    parser.add_argument(
         '--experiment',
         type=str,
         metavar='<str>',
-        default='test-autotuner',
+        default='test',
         help='Experiment name. This parameter is used to prefix the'
         ' FLOW_VARIANT and to set the Ray log destination.')
+    tune_parser.add_argument(
+        '--resume',
+        action='store_true',
+        help='Resume previous run.')
 
     # Setup
     parser.add_argument(
@@ -605,43 +613,43 @@ def parse_arguments():
         help='Additional arguments given to ./build_openroad.sh.')
 
     # ML
-    parser.add_argument(
+    tune_parser.add_argument(
         '--algorithm',
         type=str,
         choices=VALID_ALGORITHMS,
         default='hyperopt',
         help='Search algorithm to use for Autotuning.')
-    parser.add_argument(
+    tune_parser.add_argument(
         '--eval',
         type=str,
         choices=VALID_EVAL_FN,
         default='default',
         help='Evaluate function to use with search algorithm.')
-    parser.add_argument(
+    tune_parser.add_argument(
         '--samples',
         type=int,
         metavar='<int>',
         default=10,
         help='Number of samples for tuning.')
-    parser.add_argument(
+    tune_parser.add_argument(
         '--iterations',
         type=int,
         metavar='<int>',
         default=1,
         help='Number of iterations for tuning.')
-    parser.add_argument(
+    tune_parser.add_argument(
         '--reference',
         type=str,
         metavar='<path>',
         default=None,
         help='Reference file for use with PPAImprov.')
-    parser.add_argument(
+    tune_parser.add_argument(
         '--perturbation',
         type=int,
         metavar='<int>',
         default=25,
         help='Perturbation interval for PopulationBasedTraining.')
-    parser.add_argument(
+    tune_parser.add_argument(
         '--seed',
         type=int,
         metavar='<int>',
@@ -682,13 +690,15 @@ def parse_arguments():
         ' training stderr\n\t2: also print training stdout.')
 
     arguments = parser.parse_args()
-    arguments.algorithm = arguments.algorithm.lower()
+    if arguments.mode == 'tune':
+        arguments.algorithm = arguments.algorithm.lower()
+        # Validation of arguments
+        if arguments.eval == 'ppa-improv' and arguments.reference is None:
+            print('[ERROR TUN-0006] The argument "--eval ppa-improv"'
+                ' requries that "--reference <FILE>" is also given.')
+            sys.exit(7)
 
-    # Validation of arguments
-    if arguments.eval == 'ppa-improv' and arguments.reference is None:
-        print('[ERROR TUN-0007] The argument "--eval ppa-improv"'
-              ' requries that "--reference <FILE>" is also given.')
-        sys.exit(7)
+    arguments.experiment += f'-{arguments.mode}-{DATE}'
 
     return arguments
 
@@ -769,7 +779,7 @@ def save_best(config):
     '''
     Save best configuration of parameters found.
     '''
-    new_best_path = f'{LOCAL_DIR}/{experiment_name}/{AUTOTUNER_BEST}'
+    new_best_path = f'{LOCAL_DIR}/{args.experiment}/{AUTOTUNER_BEST}'
     with open(new_best_path, 'w') as new_best_file:
         json.dump(config, new_best_file, indent=4)
     print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
@@ -777,22 +787,24 @@ def save_best(config):
 
 if __name__ == '__main__':
     args = parse_arguments()
-    experiment_name = f'{args.platform}/{args.design}/{args.experiment}-{DATE}'
-    best_params = set_best_params(args.platform, args.design)
-    search_algo = set_algorithm(experiment_name)
-    TrainClass = set_training_class(args.eval)
-    # PPAImprov requires a reference metrics file to compute training scores.
-    if args.eval == 'ppa-improv':
-        reference = PPAImprov.read_metrics(args.reference)
 
-    config_dict, SDC_FILE, FR_FILE = read_config(abspath(args.config))
+    if args.mode == 'tune':
+        best_params = set_best_params(args.platform, args.design)
+        search_algo = set_algorithm(args.experiment)
+        TrainClass = set_training_class(args.eval)
+        # PPAImprov requires a reference file to compute training scores.
+        if args.eval == 'ppa-improv':
+            reference = PPAImprov.read_metrics(args.reference)
+
+    # Read config and original files before handling where to run in case we
+    # need to upload the files.
+    config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(abspath(args.config))
 
     # Connect to remote Ray server if any, otherwise will run locally
     if args.server is not None:
         # At GCP we have a NFS folder that is present for all worker nodes.
         # This allows to build required binaries once. We clone, build and
-        # store intermediate files at LOCAL_DIR. The RUN variable helps to id
-        # different runs and also continue experiments that crash.
+        # store intermediate files at LOCAL_DIR.
         with open(args.config) as config_file:
             LOCAL_DIR = '/shared-data/autotuner'
             LOCAL_DIR += f'-orfs-{args.git_orfs_branch}'
@@ -802,32 +814,51 @@ if __name__ == '__main__':
                 LOCAL_DIR += '-or-latest'
         # Connect to ray server before first remote execution.
         ray.init(f'ray://{args.server}:{args.port}')
-        # Remote functions return a task id and are non-blocking, thus we call
-        # ray.get() to wait for its completion and get the function return
-        # value.
+        # Remote functions return a task id and are non-blocking. Since we
+        # need the setup repo to be do to contune we call ray.get() to wait
+        # for its completion.
         INSTALL_PATH = ray.get(setup_repo.remote(LOCAL_DIR))
-        print('[INFO TUN-0001] Done waiting.')
+        LOCAL_DIR += f'/flow/logs/{args.platform}/{args.design}'
+        print('[INFO TUN-0001] NFS setup completed.')
     else:
         # For local runs, use the same folder as other ORFS utilities.
         os.chdir(os.path.dirname(abspath(__file__)) + '/../')
-        LOCAL_DIR = 'logs'
-        INSTALL_PATH = '../tools/install'
+        LOCAL_DIR = f'logs/{args.platform}/{args.design}'
+        INSTALL_PATH = abspath('../tools/install')
 
-    analysis = tune.run(
-        TrainClass,
-        metric='minimum',
-        mode='min',
-        search_alg=search_algo,
-        name=f'{experiment_name}',
-        scheduler=AsyncHyperBandScheduler(),
-        num_samples=args.samples,
-        config=config_dict,
-        fail_fast=True,
-        local_dir=LOCAL_DIR,
-        resume=args.resume,
-        stop={"training_iteration": args.iterations},
-        queue_trials=True,
-    )
-    task_id = save_best.remote(analysis.best_config)
-    _ = ray.get(task_id)
-    print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
+    if args.mode == 'tune':
+        analysis = tune.run(
+            TrainClass,
+            metric='minimum',
+            mode='min',
+            search_alg=search_algo,
+            name=f'{args.experiment}',
+            scheduler=AsyncHyperBandScheduler(),
+            num_samples=args.samples,
+            config=config_dict,
+            fail_fast=True,
+            local_dir=LOCAL_DIR,
+            resume=args.resume,
+            stop={"training_iteration": args.iterations},
+            queue_trials=True,
+        )
+        task_id = save_best.remote(analysis.best_config)
+        _ = ray.get(task_id)
+        print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
+    elif args.mode == 'sweep':
+        workers = list()
+        repo_dir = abspath('../')
+        LOCAL_DIR = os.path.join(LOCAL_DIR, args.experiment)
+        for key, value in config_dict.items():
+            if not isinstance(value, list):
+                continue
+            print(f'[INFO TUN-0007] Scheduling runs for parameter {key}.')
+            for i in np.arange(*value):
+                config_dict[key] = i
+                config = parse_config(config_dict)
+                workers.append(openroad_distributed.remote(repo_dir, config,
+                                                           path=LOCAL_DIR))
+            print(f'[INFO TUN-0008] Finish scheduling for parameter {key}.')
+        print('[INFO TUN-0009] Waiting for results.')
+        retuls = ray.get(workers)
+        print('[INFO TUN-0010] Sweep complete.')

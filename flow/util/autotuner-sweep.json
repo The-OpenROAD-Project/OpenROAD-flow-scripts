@@ -1,0 +1,10 @@
+{
+    "CORE_UTILIZATION": {
+        "type": "int",
+        "minmax": [
+            30,
+            99
+        ],
+        "step": 1
+    }
+}
