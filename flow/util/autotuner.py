@@ -48,13 +48,6 @@ from ax.service.ax_client import AxClient
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
 AUTOTUNER_BEST = 'autotuner-best.json'
-VALID_ALGORITHMS = ['hyperopt',
-                    'axppa',
-                    'nevergrad',
-                    'optuna',
-                    'pbt',
-                    'random']
-VALID_EVAL_FN = ['default', 'eff-clk-period', 'ppa', 'ppa-improv', 'ax-ppa']
 FASTROUTE_TCL = 'fastroute.tcl'
 CONSTRAINTS_SDC = 'constraints.sdc'
 
@@ -411,8 +404,9 @@ def get_flow_variant(param):
     experiments with the same configuration.
     '''
     variant_hash = hashlib.md5(f"{param}".encode('utf-8')).hexdigest()
-    with open(os.path.join(os.getcwd() + '/variant_hash.txt'), 'w') as file:
-        file.write(variant_hash)
+    if args.mode == 'tune':
+        with open(os.path.join(os.getcwd(), 'variant_hash.txt'), 'w') as file:
+            file.write(variant_hash)
     return f'{args.experiment}/variant-{variant_hash}'
 
 
@@ -422,10 +416,10 @@ def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
     Allows to run shell command, control print and exceptions.
     '''
     process = run(cmd, capture_output=True, text=True, check=False, shell=True)
-    if stderr_file is not None:
+    if stderr_file is not None and process.stderr != '':
         with open(stderr_file, 'a') as file:
             file.write(f'\n\n{cmd}\n{process.stderr}')
-    if stdout_file is not None:
+    if stdout_file is not None and process.stdout != '':
         with open(stdout_file, 'a') as file:
             file.write(f'\n\n{cmd}\n{process.stdout}')
     if args.verbose >= 1:
@@ -448,10 +442,14 @@ def openroad(repo_dir, parameters, path=''):
     Run OpenROAD-flow-scripts with a given set of parameters.
     '''
     # Make sure path ends in a slash, i.e., is a folder
-    if path != '' and path[-1] != '/':
-        path += '/'
-
     flow_variant = get_flow_variant(parameters)
+    if path != '':
+        log_path = f'{path}/{flow_variant}/'
+        report_path = log_path.replace('logs', 'reports')
+        os.system(f'mkdir -p {log_path}')
+        os.system(f'mkdir -p {report_path}')
+    else:
+        log_path = report_path = os.getcwd() + '/'
 
     export_command = f'export PATH={INSTALL_PATH}/OpenROAD/bin'
     export_command += f':{INSTALL_PATH}/yosys/bin'
@@ -464,10 +462,10 @@ def openroad(repo_dir, parameters, path=''):
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
     make_command += f' NPROC={args.openroad_threads}'
     run_command(make_command,
-                stderr_file=f'{path}error-make-finish.log',
-                stdout_file=f'{path}make-finish-stdout.log')
+                stderr_file=f'{log_path}error-make-finish.log',
+                stdout_file=f'{log_path}make-finish-stdout.log')
 
-    metrics_file = os.path.join(os.getcwd(), 'metrics.json')
+    metrics_file = os.path.join(report_path, 'metrics.json')
     metrics_command = export_command
     metrics_command += f'{repo_dir}/flow/util/genMetrics.py -x'
     metrics_command += f' -v {flow_variant}'
@@ -475,8 +473,8 @@ def openroad(repo_dir, parameters, path=''):
     metrics_command += f' -p {args.platform}'
     metrics_command += f' -o {metrics_file}'
     run_command(metrics_command,
-                stderr_file=f'{path}error-metrics.log',
-                stdout_file=f'{path}metrics-stdout.log')
+                stderr_file=f'{log_path}error-metrics.log',
+                stdout_file=f'{log_path}metrics-stdout.log')
 
     return metrics_file
 
@@ -626,13 +624,18 @@ def parse_arguments():
     tune_parser.add_argument(
         '--algorithm',
         type=str,
-        choices=VALID_ALGORITHMS,
+        choices=['hyperopt',
+                 'axppa',
+                 'nevergrad',
+                 'optuna',
+                 'pbt',
+                 'random'],
         default='hyperopt',
         help='Search algorithm to use for Autotuning.')
     tune_parser.add_argument(
         '--eval',
         type=str,
-        choices=VALID_EVAL_FN,
+        choices=['default', 'eff-clk-period', 'ppa', 'ppa-improv', 'ax-ppa'],
         default='default',
         help='Evaluate function to use with search algorithm.')
     tune_parser.add_argument(
@@ -705,7 +708,7 @@ def parse_arguments():
         # Validation of arguments
         if arguments.eval == 'ppa-improv' and arguments.reference is None:
             print('[ERROR TUN-0006] The argument "--eval ppa-improv"'
-                ' requries that "--reference <FILE>" is also given.')
+                  ' requries that "--reference <FILE>" is also given.')
             sys.exit(7)
 
     arguments.experiment += f'-{arguments.mode}-{DATE}'
@@ -857,8 +860,14 @@ if __name__ == '__main__':
         print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
     elif args.mode == 'sweep':
         workers = list()
-        repo_dir = abspath('../')
-        LOCAL_DIR = os.path.join(LOCAL_DIR, args.experiment)
+        if args.server is not None:
+            # For remote sweep we create the following directory structure:
+            #      1/     2/         3/       4/
+            # <repo>/<logs>/<platform>/<design>/
+            repo_dir = abspath(LOCAL_DIR + '/../' * 4)
+        else:
+            repo_dir = abspath('../')
+        print(f'[INFO TUN-0012] Log dir {LOCAL_DIR}.')
         for key, value in config_dict.items():
             if not isinstance(value, list):
                 continue

@@ -1,9 +1,9 @@
 {
-    "CORE_UTILIZATION": {
+    "CTS_CLUSTER_SIZE": {
         "type": "int",
         "minmax": [
-            30,
-            99
+            50,
+            60
         ],
         "step": 1
     }
