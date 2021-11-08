@@ -241,17 +241,17 @@ div.gallery {
   margin: 5px;
   border: 1px solid #ccc;
   float: left;
-  width: 180px;
+  height: 300px;
 }
 div.gallery:hover {
   border: 1px solid #777;
 }
 div.gallery img {
-  width: 100%;
-  height: auto;
+  max-height: 200px;
+  width: auto;
 }
 div.desc {
-  padding: 15px;
+  padding: 10px;
   text-align: center;
 }
 '''
