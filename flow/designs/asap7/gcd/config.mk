@@ -15,7 +15,6 @@ export SDC_FILE               = $(DESIGN_DIR)/constraint.sdc
 export CORNER                ?= BC
 
 export LIB_FILES             += $($(CORNER)_LIB_FILES)
-export DFF_LIB_FILE           = $($(CORNER)_DFF_LIB_FILE)
 export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
 export DB_FILES              += $($(CORNER)_DB_FILES)
 export DB_DIRS               += $($(CORNER)_DB_DIRS)
