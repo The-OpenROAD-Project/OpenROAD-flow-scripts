@@ -58,8 +58,8 @@ if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_h
   set out_script_ptr [open $::env(OBJECTS_DIR)/mark_hier_stop_modules.tcl w]
   puts $out_script_ptr "hierarchy -check -top $::env(DESIGN_NAME)"
   foreach module $module_list {
-    tee -o $::env(REPORTS_DIR)/synth_hier_stat_$module.txt stat -top "$module" {*}$stat_libs
-    set fptr1 [open $::env(REPORTS_DIR)/synth_hier_stat_$module.txt r]
+    tee -o $::env(REPORTS_DIR)/synth_hier_stat_temp_module.txt stat -top "$module" {*}$stat_libs
+    set fptr1 [open $::env(REPORTS_DIR)/synth_hier_stat_temp_module.txt r]
     set contents1 [read -nonewline $fptr1]
     close $fptr1
     set split_cont1 [split $contents1 "\n"]
@@ -74,6 +74,7 @@ if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_h
         }
       }
     }
+    file delete -force $::env(REPORTS_DIR)/synth_hier_stat_temp_module.txt
   }
   close $out_script_ptr
 }
