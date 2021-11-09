@@ -368,12 +368,12 @@ pipeline {
       sh "flow/util/genReport.py -vvv --file --no-print";
       publishHTML([
           allowMissing: true,
-          alwaysLinkToLastBuild: false,
+          alwaysLinkToLastBuild: true,
           keepAll: true,
-          reportDir: "flow/reports",
-          reportFiles: "report-table.html",
           reportName: "Report",
-          reportTitles: "Flow Report"
+          reportDir: "flow/reports",
+          reportFiles: "report-table.html,report-gallery.html",
+          reportTitles: "Flow Report,Gallery"
       ]);
     }
     failure {

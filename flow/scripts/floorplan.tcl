@@ -69,24 +69,6 @@ if {[info exists ::env(FOOTPRINT_TCL)]} {
   initialize_padring
 }
 
-# If wrappers defined replace macros with their wrapped version
-# # ----------------------------------------------------------------------------
-if {[info exists ::env(MACRO_WRAPPERS)]} {
-  source $::env(MACRO_WRAPPERS)
-
-  set wrapped_macros [dict keys [dict get $wrapper around]]
-  set db [ord::get_db]
-  set block [ord::get_db_block]
-
-  foreach inst [$block getInsts] {
-    if {[lsearch -exact $wrapped_macros [[$inst getMaster] getName]] > -1} {
-      set new_master [dict get $wrapper around [[$inst getMaster] getName]]
-      puts "Replacing [[$inst getMaster] getName] with $new_master for [$inst getName]"
-      $inst swapMaster [$db findMaster $new_master]
-    }
-  }
-}
-
 # remove buffers inserted by yosys/abc
 remove_buffers
 

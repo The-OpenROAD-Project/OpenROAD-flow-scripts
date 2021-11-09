@@ -2,7 +2,7 @@ export DESIGN_NAME = ariane
 export PLATFORM    = tsmc65lp
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/ariane.sv2v.v \
-						./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
+                       ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
