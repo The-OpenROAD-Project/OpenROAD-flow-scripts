@@ -67,6 +67,10 @@ if {[find_macros] != ""} {
 
   if {[info exists ::env(RTLMP_FLOW)]} {
     puts "RTLMP Flow enabled..."
+    set additional_args ""
+    if { [info exists ::env(RTLMP_BLOCKAGE_FILE)]} {
+        append additional_args " -macro_blockage_file $env(RTLMP_BLOCKAGE_FILE)"
+    }
     partition_design -max_num_inst $env(RTLMP_MAX_INST) \
                     -min_num_inst $env(RTLMP_MIN_INST) \
                     -max_num_macro $env(RTLMP_MAX_MACRO) \
@@ -77,9 +81,10 @@ if {[find_macros] != ""} {
                     -report_file $env(RTLMP_RPT_FILE)
  
     rtl_macro_placer -config_file $env(RTLMP_CONFIG_FILE) \
-                     -macro_blockage_file $env(RTLMP_BLOCKAGE_FILE) \
                      -report_directory $env(RTLMP_RPT_DIR) \
-                     -report_file $env(RTLMP_RPT_FILE)
+                     -report_file $env(RTLMP_RPT_FILE) \
+                     {*}$additional_args
+                     
     puts "Delete buffers for RTLMP flow..."
     remove_buffers
   } else {

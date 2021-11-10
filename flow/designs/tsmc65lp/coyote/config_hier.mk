@@ -3,7 +3,7 @@ include $(dir $(DESIGN_CONFIG))/config.mk
 #export FLOW_VARIANT = hier
 export FLOW_VARIANT = hier_rtlmp
 export SYNTH_HIERARCHICAL = 1
-export MAX_UNGROUP_SIZE = 100
+export MAX_UNGROUP_SIZE = 1000
 export RTLMP_FLOW = True
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_hier.sdc
@@ -15,13 +15,13 @@ export RTLMP_MAX_INST = 20000
 export RTLMP_MIN_INST = 4000
 export RTLMP_MAX_MACRO = 10
 export RTLMP_MIN_MACRO = 5 
-export RTLMP_RPT_DIR = $(OBJECTS_DIR)/rtl_mp
+export RTLMP_RPT_DIR = $(OBJECTS_DIR)/rtlmp
 export RTLMP_RPT_FILE = partition.txt
 export RTLMP_CONFIG_FILE = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/rtlmp_config.txt
-export RTLMP_BLOCKAGE_FILE = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macro_blockage.txt
+export RTLMP_BLOCKAGE_FILE = $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
 
-export DIE_AREA = 0 0 2510 2310
-export CORE_AREA = 5 5 2505 2505
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-700 -exclude right:1500-2510 -exclude top:* -exclude bottom:*
+export DIE_AREA = 0 0 2310 2310
+export CORE_AREA = 5 5 2305 2305
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-700 -exclude right:1500-2310 -exclude top:* -exclude bottom:*
 
 export PLACE_DENSITY         = 0.70
