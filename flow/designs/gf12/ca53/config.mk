@@ -39,4 +39,7 @@ export CORE_AREA   = 10 10 1390 1390
 export MACRO_WRAPPERS = $(dir $(DESIGN_CONFIG))/wrappers.tcl
 export MACRO_BLOCKAGE_HALO = 25
 
+#export MAX_ROUTING_LAYER = H2 
+export FASTROUTE_TCL = $(dir $(DESIGN_CONFIG))/fastroute.tcl
+#
 export DESIGN_TYPE = CELL
