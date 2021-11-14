@@ -8,7 +8,7 @@ For both sweep and tune modes:
 Note: the order of the parameters matter. Arguments --design, --platform and
 --config are always required and should preceed the <mode>.
 
-Autotuner:
+AutoTuner:
     python3 distributed.py tune -h
     python3 distributed.py --design gcd --platform sky130hd \
                            --config ../designs/sky130hd/gcd/autotuner.json \
@@ -56,9 +56,9 @@ FASTROUTE_TCL = 'fastroute.tcl'
 CONSTRAINTS_SDC = 'constraints.sdc'
 
 
-class AutotunerBase(tune.Trainable):
+class AutoTunerBase(tune.Trainable):
     '''
-    Autotuner base class for experiments.
+    AutoTuner base class for experiments.
     '''
 
     def setup(self, config):
@@ -80,7 +80,7 @@ class AutotunerBase(tune.Trainable):
         metrics_file = openroad(self.repo_dir, self.parameters)
         self.step_ += 1
         score = self.evaluate(self.read_metrics(metrics_file))
-        # Feed the score back back to Tune.
+        # Feed the score back to Tune.
         # return must match 'metric' used in tune.run()
         return {"minimum": score}
 
@@ -122,7 +122,7 @@ class AutotunerBase(tune.Trainable):
         return ret
 
 
-class AxPPA(AutotunerBase):
+class AxPPA(AutoTunerBase):
     '''
     AxPPA
     '''
@@ -784,7 +784,7 @@ def set_training_class(function):
     Set training class.
     '''
     if function == 'default':
-        return AutotunerBase
+        return AutoTunerBase
     if function == 'eff-clk-period':
         return EffClkPeriod
     if function == 'ppa':
