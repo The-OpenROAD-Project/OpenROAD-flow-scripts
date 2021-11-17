@@ -1,10 +1,8 @@
-$(info [INFO-FLOW] SHA3 Design)
-
 export PLATFORM               = asap7
 export CORNER                ?= BC
 
 export DESIGN_NAME            = sha3
-export DESIGN_NICKNAME        = sha3
+export DESIGN_NICKNAME        = $(DESIGN_NAME)
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
@@ -19,11 +17,4 @@ else
   export CORE_AREA              = 5.08 5.08 80 80
 endif
 
-#####Dont modify below lines
-export LIB_FILES             += $($(CORNER)_LIB_FILES)
-export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
-export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
 export DFF_LIB_FILE           = $($(CORNER)_DFF_LIB_FILE)
-
-export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
-#####

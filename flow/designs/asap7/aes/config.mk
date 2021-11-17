@@ -1,5 +1,3 @@
-$(info [INFO-FLOW] AES Design)
-
 export PLATFORM               = asap7
 
 #User can modify below variables as per design requirement
@@ -25,14 +23,3 @@ ifeq ($(USE_4X),1)
   export DIE_AREA    = 0 0 800 800
   export CORE_AREA   = 4 4 796 796
 endif
-#####Dont modify below lines######
-export LIB_FILES             += $($(CORNER)_LIB_FILES)
-export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
-#export DB_FILES              += $($(CORNER)_DB_FILES)
-#export DB_DIRS               += $($(CORNER)_DB_DIRS)
-##export WRAP_LIBS             += $(WRAP_$(CORNER)_LIBS)
-##export WRAP_LEFS             += $(WRAP_$(CORNER)_LEFS)
-#export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
-
-export DONT_USE_SC_LIB         = $(OBJECTS_DIR)/lib/merged.lib
-#####
