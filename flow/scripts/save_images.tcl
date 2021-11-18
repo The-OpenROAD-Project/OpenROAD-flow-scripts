@@ -37,12 +37,12 @@ save_image -resolution $resolution $::env(REPORTS_DIR)/final_clocks.webp
 gui::clear_selections
 
 # The resizer view: all instances created by the resizer grouped
-select -name "hold*" -type Inst -highlight 0
-select -name "input*" -type Inst -highlight 1
-select -name "output*" -type Inst -highlight 2
-select -name "repeater*" -type Inst -highlight 3
-select -name "rebuffer*" -type Inst -highlight 4
-select -name "split*" -type Inst -highlight 5
+select -name "hold*" -type Inst -highlight 0       ;# green
+select -name "input*" -type Inst -highlight 1      ;# yellow
+select -name "output*" -type Inst -highlight 2     ;# cyan
+select -name "repeater*" -type Inst -highlight 3   ;# magenta
+select -name "rebuffer*" -type Inst -highlight 4   ;# red
+select -name "split*" -type Inst -highlight 5      ;# dark green
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_resizer.webp
 for {set i 0} {$i <= 5} {incr i} {
     gui::clear_highlights $i
