@@ -60,9 +60,7 @@ report_metrics "finish"
 
 # Save a final image if openroad is compiled with the gui
 if {[expr [llength [info procs save_image]] > 0]} {
-    set height [[[ord::get_db_block] getBBox] getDY]
-    set height [ord::dbu_to_microns $height]
-    save_image -resolution [expr $height / 1000] $::env(REPORTS_DIR)/final.webp
+    gui::show "source $::env(SCRIPTS_DIR)/save_images.tcl" false
 }
 
 if {![info exists standalone] || $standalone} {
