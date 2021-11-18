@@ -239,7 +239,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 
     metrics_dict = defaultdict(dict)
     metrics_dict['run__flow__generate_date'] = now.strftime('%Y-%m-%d %H:%M')
-    metrics_dict['run__flow__metrics_version'] = 'Metrics_2.1-V2'
+    metrics_dict['run__flow__metrics_version'] = 'Metrics_2.1.2'
     cmdOutput = check_output(['openroad', '-version'])
     cmdFields = [x.decode('utf-8') for x in cmdOutput.split()]
     metrics_dict['run__flow__openroad_version'] = str(cmdFields[0])
@@ -419,7 +419,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         '^Design area .* (\S+)% utilization'),
                        logPath + '/3_3_resizer.log')
 
-    extractTagFromFile('placeopt__timing__drv__slew',
+    extractTagFromFile('placeopt__timing__drv__max_slew',
                        metrics_dict,
                        baseRegEx.format('resizer max_slew_violation_count',
                                         'max slew violation count (\S+)'),
@@ -497,7 +497,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         'tns (\S+)'),
                        logPath + '/4_1_cts.log')
 
-    extractTagFromFile('cts__timing__drv__slew__pre_repair',
+    extractTagFromFile('cts__timing__drv__max_slew__pre_repair',
                        metrics_dict,
                        baseRegEx.format(
                            'cts pre-repair max_slew_violation_count',
@@ -536,7 +536,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         'worst slack (\S+)'),
                        logPath + '/4_1_cts.log')
 
-    extractTagFromFile('cts__timing__drv__slew__post_repair',
+    extractTagFromFile('cts__timing__drv__max_slew__post_repair',
                        metrics_dict,
                        baseRegEx.format(
                            'cts post-repair max_slew_violation_count',
@@ -568,7 +568,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         'worst slack (\S+)'),
                        logPath + '/4_1_cts.log')
 
-    extractTagFromFile('cts__timing__drv__slew',
+    extractTagFromFile('cts__timing__drv__max_slew',
                        metrics_dict,
                        baseRegEx.format('cts final max_slew_violation_count',
                                         'max slew violation count (\S+)'),
@@ -607,7 +607,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         'worst slack (\S+)'),
                        logPath + '/5_1_fastroute.log')
 
-    extractTagFromFile('globalroute__timing__drv__slew',
+    extractTagFromFile('globalroute__timing__drv__max_slew',
                        metrics_dict,
                        baseRegEx.format(
                            'global route max_slew_violation_count',
@@ -679,7 +679,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         'worst slack (\S+)'),
                        logPath + '/6_report.log')
 
-    extractTagFromFile('finish__timing__drv__slew',
+    extractTagFromFile('finish__timing__drv__max_slew',
                        metrics_dict,
                        baseRegEx.format('finish max_slew_violation_count',
                                         'max slew violation count (\S+)'),
