@@ -1,7 +1,7 @@
 {
     "rules": [
         {
-            "field": "synth__design__instance__stdcell__area",
+            "field": "synth__design__instance__area__stdcell",
             "value": 174094,
             "compare": "<="
         },
@@ -11,52 +11,52 @@
             "compare": "=="
         },
         {
-            "field": "placeopt__design__instance__design__area",
-            "value": 213955,
+            "field": "placeopt__design__instance__area",
+            "value": 214062,
             "compare": "<="
         },
         {
-            "field": "placeopt__design__instance__stdcell__count",
-            "value": 27907,
+            "field": "placeopt__design__instance__count__stdcell",
+            "value": 27914,
             "compare": "<="
         },
         {
-            "field": "detailedplace__design__violations__count",
+            "field": "detailedplace__design__violations",
             "value": 0,
             "compare": "=="
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -0.54,
+            "value": -0.55,
             "compare": ">="
         },
         {
-            "field": "cts__timing__setup__ws__prerepair",
-            "value": -2.33,
+            "field": "cts__timing__setup__ws__pre_repair",
+            "value": -2.0,
             "compare": ">="
         },
         {
-            "field": "cts__timing__setup__ws__postrepair",
-            "value": -2.33,
+            "field": "cts__timing__setup__ws__post_repair",
+            "value": -2.0,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.43,
+            "value": -0.45,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -0.43,
+            "value": -0.46,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 1205455,
+            "value": 1207016,
             "compare": "<="
         },
         {
-            "field": "detailedroute__route__drc_errors__count",
+            "field": "detailedroute__route__drc_errors",
             "value": 0,
             "compare": "<="
         },
@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 215679,
+            "value": 215760,
             "compare": "<="
         }
     ]

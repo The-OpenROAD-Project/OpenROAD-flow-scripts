@@ -1,7 +1,7 @@
 {
     "rules": [
         {
-            "field": "synth__design__instance__stdcell__area",
+            "field": "synth__design__instance__area__stdcell",
             "value": 2931,
             "compare": "<="
         },
@@ -11,58 +11,58 @@
             "compare": "=="
         },
         {
-            "field": "placeopt__design__instance__design__area",
-            "value": 3045,
+            "field": "placeopt__design__instance__area",
+            "value": 3064,
             "compare": "<="
         },
         {
-            "field": "placeopt__design__instance__stdcell__count",
-            "value": 24991,
+            "field": "placeopt__design__instance__count__stdcell",
+            "value": 25065,
             "compare": "<="
         },
         {
-            "field": "detailedplace__design__violations__count",
+            "field": "detailedplace__design__violations",
             "value": 0,
             "compare": "=="
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -172.58,
+            "value": -112.66,
             "compare": ">="
         },
         {
-            "field": "cts__timing__setup__ws__prerepair",
-            "value": -161.69,
+            "field": "cts__timing__setup__ws__pre_repair",
+            "value": -108.93,
             "compare": ">="
         },
         {
-            "field": "cts__timing__setup__ws__postrepair",
-            "value": -161.69,
+            "field": "cts__timing__setup__ws__post_repair",
+            "value": -108.93,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -150.49,
+            "value": -70.9,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -150.49,
+            "value": -70.9,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 137318,
+            "value": 135488,
             "compare": "<="
         },
         {
-            "field": "detailedroute__route__drc_errors__count",
+            "field": "detailedroute__route__drc_errors",
             "value": 0,
             "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -13.39,
+            "value": 0.0,
             "compare": ">="
         },
         {

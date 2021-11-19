@@ -35,7 +35,7 @@ else:
 # },
 metrics = {
     # synth
-    'synth__design__instance__stdcell__area': {
+    'synth__design__instance__area__stdcell': {
         'usePeriod': False,
         'padding': 15,
         'roundValue': True,
@@ -52,21 +52,21 @@ metrics = {
     },
     # floorplan
     # place
-    'placeopt__design__instance__design__area': {
+    'placeopt__design__instance__area': {
         'usePeriod': False,
         'padding': 15,
         'roundValue': True,
         'customThreshold': 0,
         'compare': '<=',
     },
-    'placeopt__design__instance__stdcell__count': {
+    'placeopt__design__instance__count__stdcell': {
         'usePeriod': False,
         'padding': 15,
         'roundValue': True,
         'customThreshold': 0,
         'compare': '<=',
     },
-    'detailedplace__design__violations__count': {
+    'detailedplace__design__violations': {
         'usePeriod': False,
         'padding': 0,
         'roundValue': True,
@@ -81,14 +81,14 @@ metrics = {
         'customThreshold': 0,
         'compare': '>=',
     },
-    'cts__timing__setup__ws__prerepair': {
+    'cts__timing__setup__ws__pre_repair': {
         'usePeriod': True,
         'padding': 10,
         'roundValue': False,
         'customThreshold': 0,
         'compare': '>=',
     },
-    'cts__timing__setup__ws__postrepair': {
+    'cts__timing__setup__ws__post_repair': {
         'usePeriod': True,
         'padding': 10,
         'roundValue': False,
@@ -117,7 +117,7 @@ metrics = {
         'customThreshold': 0,
         'compare': '<=',
     },
-    'detailedroute__route__drc_errors__count': {
+    'detailedroute__route__drc_errors': {
         'usePeriod': False,
         'padding': 0,
         'roundValue': True,
