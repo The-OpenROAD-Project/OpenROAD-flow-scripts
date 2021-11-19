@@ -98,7 +98,6 @@ if {[find_macros] != ""} {
     if { [info exists ::env(RTLMP_BLOCKAGE_FILE)]} {
         append additional_args " -macro_blockage_file $env(RTLMP_BLOCKAGE_FILE)"
     }
-    puts "additional args for rtlmp: $additional_args"
     partition_design -max_num_inst $env(RTLMP_MAX_INST) \
                     -min_num_inst $env(RTLMP_MIN_INST) \
                     -max_num_macro $env(RTLMP_MAX_MACRO) \
