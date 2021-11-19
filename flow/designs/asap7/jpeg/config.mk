@@ -1,5 +1,4 @@
 export PLATFORM               = asap7
-export CORNER                ?= BC
 
 export DESIGN_NAME            = jpeg_encoder
 export DESIGN_NICKNAME        = jpeg

@@ -1,5 +1,4 @@
 export PLATFORM               = asap7
-export CORNER                ?= BC
 
 export DESIGN_NICKNAME        = ibex
 export DESIGN_NAME            = ibex_core
