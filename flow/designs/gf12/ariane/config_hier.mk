@@ -14,12 +14,12 @@ export RTLMP_MAX_INST = 5000
 export RTLMP_MIN_INST = 1000
 export RTLMP_MAX_MACRO = 12
 export RTLMP_MIN_MACRO = 4
+#
 export RTLMP_RPT_DIR = $(OBJECTS_DIR)/rtlmp
 export RTLMP_RPT_FILE = partition.txt
-export RTLMP_CONFIG_FILE = ./designs/$(PLATFORM)/$(DESIGN_NAME)/rtlmp_config.txt
 export RTLMP_BLOCKAGE_FILE = $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
 
 # These values must be multiples of placement site
-export DIE_AREA    = 0 0 700 660 
-export CORE_AREA   = 10 10 690 650 
-export PLACE_PINS_ARGS = -exclude left:0-300 -exclude left:400-700 -exclude right:* -exclude top:* -exclude bottom:*
+export DIE_AREA    = 0 0 760 710 
+export CORE_AREA   = 10 10 750 700 
+export PLACE_PINS_ARGS = -exclude left:0-300 -exclude left:400-760 -exclude right:* -exclude top:* -exclude bottom:*
