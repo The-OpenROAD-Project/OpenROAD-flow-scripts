@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 
 import sys
+from os import chdir
 from os.path import isfile, abspath
 from re import sub
 import json
 
-if len(sys.argv) != 2:
-    print('usage:', sys.argv[0], '<DIR>')
+if len(sys.argv) != 3:
+    print('usage:', sys.argv[0], '<DIR> <VARIANT>')
     sys.exit(1)
-else:
-    from os import chdir
-    chdir(sys.argv[1])
 
-okFile = 'metadata-base-ok.json'
-outFile = 'rules.json'
+chdir(sys.argv[1])
+variant = sys.argv[2]
+okFile = f'metadata-{variant}-ok.json'
+outFile = f'rules-{variant}.json'
 rules = list()
 
 if isfile(okFile):
