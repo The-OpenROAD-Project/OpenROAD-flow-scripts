@@ -6,4 +6,7 @@ set_global_routing_layer_adjustment met2 0.4
 set_global_routing_layer_adjustment met1 0.4
 
 set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
-set_macro_extension 1
+
+if {[info exist env(MACRO_EXTENSION)]} {
+  set_macro_extension $::env(MACRO_EXTENSION)
+}
