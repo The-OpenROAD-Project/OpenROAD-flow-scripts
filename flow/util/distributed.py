@@ -53,7 +53,7 @@ DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
 AUTOTUNER_BEST = 'autotuner-best.json'
 FASTROUTE_TCL = 'fastroute.tcl'
-CONSTRAINTS_SDC = 'constraints.sdc'
+CONSTRAINTS_SDC = 'constraint.sdc'
 
 
 class AutoTunerBase(tune.Trainable):
@@ -110,7 +110,7 @@ class AutoTunerBase(tune.Trainable):
             data = json.load(file)
         for stage, value in data.items():
             if stage == 'detailedroute':
-                num_drc = value['route__drc_errors__count']
+                num_drc = value['route__drc_errors']
                 wirelength = value['route__wirelength']
             if stage == 'finish':
                 worst_slack = value['timing__setup__ws']
@@ -144,9 +144,9 @@ class AxPPA(AutoTunerBase):
             if stage == 'constraints' and len(value['clocks__details']) > 0:
                 clk_period = float(value['clocks__details'][0].split()[1])
             if stage == 'floorplan':
-                core_util = value['design__instance__design__util']
+                core_util = value['design__instance__utilization']
             if stage == 'detailedroute':
-                num_drc = value['route__drc_errors__count']
+                num_drc = value['route__drc_errors']
                 wirelength = value['route__wirelength']
             if stage == 'finish':
                 worst_slack = value['timing__setup__ws']
@@ -370,7 +370,7 @@ def write_sdc(variables, path):
                                   new_file)
             else:
                 new_file += f'\nset io_delay {value}\n'
-    file_name = path + '/{CONSTRAINTS_SDC}'
+    file_name = path + f'/{CONSTRAINTS_SDC}'
     with open(file_name, 'w') as file:
         file.write(new_file)
     return file_name
@@ -634,7 +634,7 @@ def parse_arguments():
         '--algorithm',
         type=str,
         choices=['hyperopt',
-                 'axppa',
+                 'ax',
                  'nevergrad',
                  'optuna',
                  'pbt',
@@ -731,7 +731,7 @@ def set_algorithm(experiment_name):
     '''
     if args.algorithm == 'hyperopt':
         algorithm = HyperOptSearch(points_to_evaluate=best_params)
-    elif args.algorithm == 'axppa':
+    elif args.algorithm == 'ax':
         ax_client = AxClient(enforce_sequential_optimization=False)
         # TODO need to fix config_dict format
         ax_client.create_experiment(
