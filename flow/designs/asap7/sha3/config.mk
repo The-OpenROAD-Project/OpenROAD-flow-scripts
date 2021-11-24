@@ -1,14 +1,13 @@
 export PLATFORM               = asap7
 
-export DESIGN_NAME            = aes_cipher_top
-export DESIGN_NICKNAME        = aes
+export DESIGN_NAME            = sha3
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export ABC_AREA               = 1
-
-export CORE_UTILIZATION       = 30
-export CORE_ASPECT_RATIO      = 1
-export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.60
+
+export DIE_AREA               = 0 0 90 90
+export CORE_AREA              = 5.08 5.08 80 80
+
+export DFF_LIB_FILE           = $($(CORNER)_DFF_LIB_FILE)
