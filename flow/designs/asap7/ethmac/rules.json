@@ -1,7 +1,7 @@
 {
     "rules": [
         {
-            "field": "synth__design__instance__stdcell__area",
+            "field": "synth__design__instance__area__stdcell",
             "value": 9236,
             "compare": "<="
         },
@@ -11,17 +11,17 @@
             "compare": "=="
         },
         {
-            "field": "placeopt__design__instance__design__area",
-            "value": 9505,
+            "field": "placeopt__design__instance__area",
+            "value": 9569,
             "compare": "<="
         },
         {
-            "field": "placeopt__design__instance__stdcell__count",
-            "value": 75424,
+            "field": "placeopt__design__instance__count__stdcell",
+            "value": 75641,
             "compare": "<="
         },
         {
-            "field": "detailedplace__design__violations__count",
+            "field": "detailedplace__design__violations",
             "value": 0,
             "compare": "=="
         },
@@ -31,32 +31,32 @@
             "compare": ">="
         },
         {
-            "field": "cts__timing__setup__ws__prerepair",
+            "field": "cts__timing__setup__ws__pre_repair",
             "value": 0.0,
             "compare": ">="
         },
         {
-            "field": "cts__timing__setup__ws__postrepair",
+            "field": "cts__timing__setup__ws__post_repair",
             "value": 0.0,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -68.02,
+            "value": -9.01,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -68.02,
+            "value": -9.0,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 308701,
+            "value": 305196,
             "compare": "<="
         },
         {
-            "field": "detailedroute__route__drc_errors__count",
+            "field": "detailedroute__route__drc_errors",
             "value": 0,
             "compare": "<="
         },
