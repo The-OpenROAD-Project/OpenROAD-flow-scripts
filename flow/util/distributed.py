@@ -53,7 +53,7 @@ DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
 AUTOTUNER_BEST = 'autotuner-best.json'
 FASTROUTE_TCL = 'fastroute.tcl'
-CONSTRAINTS_SDC = 'constraints.sdc'
+CONSTRAINTS_SDC = 'constraint.sdc'
 
 
 class AutoTunerBase(tune.Trainable):
@@ -88,44 +88,17 @@ class AutoTunerBase(tune.Trainable):
         '''
         User-defined evaluation function.
         It can change in any form to minimize the score (return value).
+        Default evaluation function optimizes effective clock period.
         '''
         error = 'ERR' in metrics.values()
         not_found = 'N/A' in metrics.values()
         if error or not_found:
             return (99999999999) * (self.step_ / 100)**(-1)
-        alpha = -(metrics['wirelength'] / 100)
-        beta = 1
-        gamma = (metrics['wirelength'] / 10)
-        term_1 = alpha * metrics['worst_slack'] + beta * metrics['wirelength']
-        term_2 = (self.step_ / 100)**(-1)
-        term_3 = gamma * metrics['num_drc']
-        return term_1 * term_2 + term_3
+        gamma = (metrics['clk_period'] - metrics['worst_slack']) / 10
+        score = metrics['clk_period'] - metrics['worst_slack']
+        score = (self.step_ / 100)**(-1) + gamma * metrics['num_drc']
+        return score
 
-    @classmethod
-    def read_metrics(cls, file_name):
-        '''
-        Collects metrics to evaluate the user-defined objective function.
-        '''
-        with open(file_name) as file:
-            data = json.load(file)
-        for stage, value in data.items():
-            if stage == 'detailedroute':
-                num_drc = value['route__drc_errors__count']
-                wirelength = value['route__wirelength']
-            if stage == 'finish':
-                worst_slack = value['timing__setup__ws']
-        ret = {
-            'worst_slack': worst_slack,
-            'wirelength': wirelength,
-            'num_drc': num_drc
-        }
-        return ret
-
-
-class AxPPA(AutoTunerBase):
-    '''
-    AxPPA
-    '''
     @classmethod
     def read_metrics(cls, file_name):
         '''
@@ -144,9 +117,9 @@ class AxPPA(AutoTunerBase):
             if stage == 'constraints' and len(value['clocks__details']) > 0:
                 clk_period = float(value['clocks__details'][0].split()[1])
             if stage == 'floorplan':
-                core_util = value['design__instance__design__util']
+                core_util = value['design__instance__utilization']
             if stage == 'detailedroute':
-                num_drc = value['route__drc_errors__count']
+                num_drc = value['route__drc_errors']
                 wirelength = value['route__wirelength']
             if stage == 'finish':
                 worst_slack = value['timing__setup__ws']
@@ -164,48 +137,8 @@ class AxPPA(AutoTunerBase):
         return ret
 
 
-class EffClkPeriod(AxPPA):
-    '''
-    EffClkPeriod
-    '''
 
-    def evaluate(self, metrics):
-        error = 'ERR' in metrics.values()
-        not_found = 'N/A' in metrics.values()
-        if error or not_found:
-            return (99999999999) * (self.step_ / 100)**(-1)
-        gamma = (metrics['clk_period'] - metrics['worst_slack']) / 10
-        score = metrics['clk_period'] - metrics['worst_slack']
-        score = (self.step_ / 100)**(-1) + gamma * metrics['num_drc']
-        return score
-
-
-class PPA(AxPPA):
-    '''
-    PPA
-    '''
-
-    def evaluate(self, metrics):
-        error = 'ERR' in metrics.values()
-        not_found = 'N/A' in metrics.values()
-        if error or not_found:
-            return (99999999999) * (self.step_ / 100)**(-1)
-        # eff_clk_period -100~100 -> multiply 100
-        # area (100/metrics['final_util']), 0~100 -> multiply 1
-        # metrics['total_power'] 0~ about 0.1 -> muliply 1
-        if metrics['worst_slack'] > 0:
-            eff_clk_period = metrics['clk_period']
-        else:
-            eff_clk_period = (metrics['clk_period'] - metrics['worst_slack'])
-        ppa = 100 / metrics['final_util'] + (metrics['total_power'] * 10)
-        ppa += 100
-        ppa *= eff_clk_period
-        gamma = ppa / 10
-        score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['num_drc'])
-        return score
-
-
-class PPAImprov(AxPPA):
+class PPAImprov(AutoTunerBase):
     '''
     PPAImprov
     '''
@@ -370,7 +303,7 @@ def write_sdc(variables, path):
                                   new_file)
             else:
                 new_file += f'\nset io_delay {value}\n'
-    file_name = path + '/{CONSTRAINTS_SDC}'
+    file_name = path + f'/{CONSTRAINTS_SDC}'
     with open(file_name, 'w') as file:
         file.write(new_file)
     return file_name
@@ -634,7 +567,7 @@ def parse_arguments():
         '--algorithm',
         type=str,
         choices=['hyperopt',
-                 'axppa',
+                 'ax',
                  'nevergrad',
                  'optuna',
                  'pbt',
@@ -644,7 +577,7 @@ def parse_arguments():
     tune_parser.add_argument(
         '--eval',
         type=str,
-        choices=['default', 'eff-clk-period', 'ppa', 'ppa-improv', 'ax-ppa'],
+        choices=['default', 'ppa-improv'],
         default='default',
         help='Evaluate function to use with search algorithm.')
     tune_parser.add_argument(
@@ -731,7 +664,7 @@ def set_algorithm(experiment_name):
     '''
     if args.algorithm == 'hyperopt':
         algorithm = HyperOptSearch(points_to_evaluate=best_params)
-    elif args.algorithm == 'axppa':
+    elif args.algorithm == 'ax':
         ax_client = AxClient(enforce_sequential_optimization=False)
         # TODO need to fix config_dict format
         ax_client.create_experiment(
@@ -785,14 +718,8 @@ def set_training_class(function):
     '''
     if function == 'default':
         return AutoTunerBase
-    if function == 'eff-clk-period':
-        return EffClkPeriod
-    if function == 'ppa':
-        return PPA
     if function == 'ppa-improv':
         return PPAImprov
-    if function == 'ax-ppa':
-        return AxPPA
     return None
 
 
