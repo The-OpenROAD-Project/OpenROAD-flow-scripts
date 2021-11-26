@@ -300,6 +300,84 @@ pipeline {
             }
           }
         }
+	stage("sky130 hd bp_fe") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh bp_fe sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+	stage("sky130 hd tinyRocket") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh tinyRocket sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+	stage("sky130 hd bsg_manycore_tile_compute_mesh_real") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh bsg_manycore_tile_compute_mesh_real sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+	stage("sky130 hd bsg_manycore_tile_compute_mesh_fakeram") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh bsg_manycore_tile_compute_mesh_fakeram sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+	stage("sky130 hd bsg_manycore_proc_vanilla_real") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh bsg_manycore_proc_vanilla_real sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+	stage("sky130 hd bsg_manycore_proc_vanilla_fakeram") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh bsg_manycore_proc_vanilla_fakeram sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("sky130 hs aes") {
           agent any;
           steps {

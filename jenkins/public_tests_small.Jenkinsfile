@@ -215,7 +215,33 @@ pipeline {
             }
           }
         }
-        stage("sky130 hs aes") {
+        stage("sky130 hd bp_fe") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh bp_fe sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+	stage("sky130 hd tinyRocket") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh tinyRocket sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+	stage("sky130 hs aes") {
           agent any;
           steps {
             unstash "install";
