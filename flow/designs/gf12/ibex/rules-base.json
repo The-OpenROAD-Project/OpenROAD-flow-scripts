@@ -27,7 +27,7 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -7.42,
+            "value": -9.45,
             "compare": ">="
         },
         {
@@ -52,7 +52,7 @@
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 180458,
+            "value": 180376,
             "compare": "<="
         },
         {
@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 8776,
+            "value": 8774,
             "compare": "<="
         }
     ]

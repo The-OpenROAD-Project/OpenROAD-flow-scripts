@@ -62,7 +62,7 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -3.62,
+            "value": -3.33,
             "compare": ">="
         },
         {
