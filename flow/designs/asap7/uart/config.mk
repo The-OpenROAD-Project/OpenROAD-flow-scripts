@@ -7,5 +7,5 @@ export VERILOG_FILES          = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAM
 export SDC_FILE               = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export PLACE_DENSITY          = 0.70
-export DIE_AREA               = 0 0 15 15
-export CORE_AREA              = 1.08 1.08 14 14
+export DIE_AREA               = 0 0 17 17
+export CORE_AREA              = 1.08 1.08 16 16

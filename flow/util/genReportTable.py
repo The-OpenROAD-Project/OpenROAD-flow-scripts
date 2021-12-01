@@ -11,7 +11,6 @@ os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 goldFilename = 'metadata-base-ok.json'
 runFilename = 'metadata-base.json'
-rulesFilename = 'rules.json'
 htmlOutput = 'reports/report-table.html'
 cssOutput = 'reports/table.css'
 designPathFile = 'design-dir.txt'
@@ -114,7 +113,8 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     # basic info about test design
     platform = dirList[1]
     design = dirList[2]
-    test = '{} {}'.format(platform, design)
+    variant = dirList[3]
+    test = '{} {} {}'.format(platform, design, variant)
     reportDir = logDir.replace('logs', 'reports')
     errors = 0
 
@@ -144,6 +144,7 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     else:
         runKeys = run.keys()
 
+    rulesFilename = f'rules-{variant}.json'
     rules = readMetrics(os.path.join(designDir, rulesFilename), justLoad=True)
     if rules is None:
         errors += 1
