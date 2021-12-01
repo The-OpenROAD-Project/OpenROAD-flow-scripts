@@ -15,7 +15,7 @@ update_metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
 
 update_rules:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR)
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) $(FLOW_VARIANT)
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
 	echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
@@ -24,7 +24,7 @@ $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
 		-v $(FLOW_VARIANT) \
 		-o $@ 2>&1 | tee $(REPORTS_DIR)/gen-metrics-$(FLOW_VARIANT)-check.log
 
-RULES_DESIGN = $(dir $(DESIGN_CONFIG))rules.json
+RULES_DESIGN = $(dir $(DESIGN_CONFIG))rules-$(FLOW_VARIANT).json
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 	$(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) 2>&1 | tee $@
