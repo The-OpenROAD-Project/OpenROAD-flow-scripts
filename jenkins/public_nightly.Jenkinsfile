@@ -68,6 +68,19 @@ pipeline {
             }
           }
         }
+        stage("asap7 ethmac") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh ethmac asap7";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("asap7 gcd") {
           agent any;
           steps {
@@ -99,6 +112,32 @@ pipeline {
           steps {
             unstash "install";
             sh "flow/test/test_helper.sh jpeg asap7";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("asap7 sha3") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh sha3 asap7";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("asap7 uart") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh uart asap7";
           }
           post {
             always {
@@ -328,6 +367,19 @@ pipeline {
             }
           }
         }
+        stage("sky130 hd riscv32i") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh riscv32i sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("sky130 hs aes") {
           agent any;
           steps {
@@ -372,6 +424,19 @@ pipeline {
           steps {
             unstash "install";
             sh "flow/test/test_helper.sh jpeg sky130hs";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("sky130 hs riscv32i") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh riscv32i sky130hs";
           }
           post {
             always {
