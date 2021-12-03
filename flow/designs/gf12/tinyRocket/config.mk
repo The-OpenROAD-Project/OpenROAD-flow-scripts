@@ -32,8 +32,6 @@ export PLACE_DENSITY = 0.20
 
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
-export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.cfg
-
 # TODO: replace this with max(CHANNEL_WIDTH_[HV]) from IP_global.cfg
 export MACRO_BLOCKAGE_HALO = 25
 
