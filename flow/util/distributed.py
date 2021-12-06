@@ -116,7 +116,8 @@ class AutoTunerBase(tune.Trainable):
         for stage, value in data.items():
             if stage == 'constraints' and len(value['clocks__details']) > 0:
                 clk_period = float(value['clocks__details'][0].split()[1])
-            if stage == 'floorplan' and 'design__instance__utilization' in value:
+            if stage == 'floorplan' \
+                    and 'design__instance__utilization' in value:
                 core_util = value['design__instance__utilization']
             if stage == 'detailedroute' and 'route__drc_errors' in value:
                 num_drc = value['route__drc_errors']
@@ -138,7 +139,6 @@ class AutoTunerBase(tune.Trainable):
             "final_util": final_util
         }
         return ret
-
 
 
 class PPAImprov(AutoTunerBase):
@@ -213,7 +213,8 @@ def read_config(file_name):
             return tune.choice([min_])
         if this['type'] == 'int':
             if min_ == 0 and args.algorithm == 'nevergrad':
-                print('[WARNING TUN-0011] NevergradSearch may not work with lowerbound value 0.')
+                print('[WARNING TUN-0011] NevergradSearch may not work '
+                      'with lowerbound value 0.')
             if this['step'] == 1:
                 return tune.randint(min_, max_)
             return tune.qrandint(min_, max_, this['step'])
@@ -412,10 +413,10 @@ def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
 
 
 @ray.remote
-def openroad_distributed(repo_dir, config_dict, path):
+def openroad_distributed(repo_dir, config, path):
     ''' Simple wrapper to run openroad distributed with Ray. '''
-    config = parse_config(config_dict)
-    openroad(repo_dir, config_dict, path=path)
+    config = parse_config(config)
+    openroad(repo_dir, config, path=path)
 
 
 def openroad(base_dir, parameters, path=''):
@@ -697,7 +698,7 @@ def parse_arguments():
     return arguments
 
 
-def set_algorithm(experiment_name, config_dict):
+def set_algorithm(experiment_name, config):
     '''
     Configure search algorithm.
     '''
@@ -707,7 +708,7 @@ def set_algorithm(experiment_name, config_dict):
         ax_client = AxClient(enforce_sequential_optimization=False)
         ax_client.create_experiment(
             name=experiment_name,
-            parameters=config_dict,
+            parameters=config,
             objective_name="minimum",
             minimize=True
         )
@@ -726,7 +727,7 @@ def set_algorithm(experiment_name, config_dict):
         algorithm = PopulationBasedTraining(
             time_attr="training_iteration",
             perturbation_interval=args.perturbation,
-            hyperparam_mutations=config_dict,
+            hyperparam_mutations=config,
             synch=False
         )
     elif args.algorithm == 'random':
@@ -849,7 +850,7 @@ if __name__ == '__main__':
             queue_trials=True,
         )
         if args.algorithm == 'pbt':
-            tune_args['scheduler']  = search_algo
+            tune_args['scheduler'] = search_algo
         else:
             tune_args['search_alg'] = search_algo
             tune_args['scheduler'] = AsyncHyperBandScheduler()
