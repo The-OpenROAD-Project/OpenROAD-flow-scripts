@@ -210,6 +210,8 @@ def read_config(file_name):
         if min_ == max_:
             return min_
         if this['type'] == 'int':
+            if min_ == 0 and args.algorithm == 'nevergrad':
+                print('[WARNING TUN-0011] NevergradSearch may not work with lowerbound value 0.')
             if this['step'] == 1:
                 return tune.randint(min_, max_)
             return tune.qrandint(min_, max_, this['step'])
@@ -681,7 +683,6 @@ def set_algorithm(experiment_name):
                              points_to_evaluate=best_params,
                              max_concurrent=args.jobs)
     elif args.algorithm == 'nevergrad':
-        # TODO need to fix Lower bound issue
         algorithm = NevergradSearch(
             points_to_evaluate=best_params,
             optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"]
