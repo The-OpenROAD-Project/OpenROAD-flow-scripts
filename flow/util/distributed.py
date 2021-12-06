@@ -223,11 +223,40 @@ def read_config(file_name):
             return tune.quniform(min_, max_, this['step'])
         return None
 
+    def read_tune_ax(name, this):
+        dict_ = dict(name=name)
+        min_, max_ = this['minmax']
+        if min_ == max_:
+            dict_["type"] = "fixed"
+            dict_["value"] = min_
+        elif this['type'] == 'int':
+            if this['step'] == 1:
+                dict_["type"] = "range"
+                dict_["bounds"] = [min_, max_]
+                dict_["value_type"] = "int"
+            else:
+                dict_["type"] = "choice"
+                dict_["values"] = tune.randint(min_, max_, this['step'])
+                dict_["value_type"] = "int"
+        elif this['type'] == 'float':
+            if this['step'] == 1:
+                dict_["type"] = "choice"
+                dict_["values"] = tune.quniform(min_, max_, this['step'])
+                dict_["value_type"] = "float"
+            else:
+                dict_["type"] = "range"
+                dict_["bounds"] = [min_, max_]
+                dict_["value_type"] = "float"
+        return dict_
+
     with open(file_name) as file:
         data = json.load(file)
     sdc_file = ''
     fr_file = ''
-    config = {}
+    if args.algorithm == 'ax':
+        config = list()
+    else:
+        config = dict()
     for key, value in data.items():
         if key == '_SDC_FILE_PATH' and value != '':
             if sdc_file != '':
@@ -243,8 +272,10 @@ def read_config(file_name):
             config[key] = value
         elif args.mode == 'sweep':
             config[key] = read_sweep(value)
-        elif args.mode == 'tune':
+        elif args.mode == 'tune' and args.algorithm != 'ax':
             config[key] = read_tune(value)
+        elif args.mode == 'tune' and args.algorithm == 'ax':
+            config.append(read_tune_ax(key, value))
     # Copy back to global variables
     return config, sdc_file, fr_file
 
@@ -674,7 +705,6 @@ def set_algorithm(experiment_name, config_dict):
         algorithm = HyperOptSearch(points_to_evaluate=best_params)
     elif args.algorithm == 'ax':
         ax_client = AxClient(enforce_sequential_optimization=False)
-        # TODO need to fix config_dict format
         ax_client.create_experiment(
             name=experiment_name,
             parameters=config_dict,
@@ -812,24 +842,20 @@ if __name__ == '__main__':
             metric='minimum',
             mode='min',
             num_samples=args.samples,
-            config=config_dict,
             fail_fast=True,
             local_dir=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
             queue_trials=True,
         )
-
         if args.algorithm == 'pbt':
             tune_args['scheduler']  = search_algo
         else:
             tune_args['search_alg'] = search_algo
             tune_args['scheduler'] = AsyncHyperBandScheduler()
-
-        analysis = tune.run(
-            TrainClass,
-            **tune_args
-        )
+        if args.algorithm != 'ax':
+            tune_args['config'] = config_dict
+        analysis = tune.run(TrainClass, **tune_args)
 
         task_id = save_best.remote(analysis.best_config)
         _ = ray.get(task_id)
