@@ -766,14 +766,6 @@ def sweep():
 if __name__ == '__main__':
     args = parse_arguments()
 
-    if args.mode == 'tune':
-        best_params = set_best_params(args.platform, args.design)
-        search_algo = set_algorithm(args.experiment)
-        TrainClass = set_training_class(args.eval)
-        # PPAImprov requires a reference file to compute training scores.
-        if args.eval == 'ppa-improv':
-            reference = PPAImprov.read_metrics(args.reference)
-
     # Read config and original files before handling where to run in case we
     # need to upload the files.
     config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(abspath(args.config))
@@ -805,6 +797,14 @@ if __name__ == '__main__':
         INSTALL_PATH = abspath('../tools/install')
 
     if args.mode == 'tune':
+
+        best_params = set_best_params(args.platform, args.design)
+        search_algo = set_algorithm(args.experiment)
+        TrainClass = set_training_class(args.eval)
+        # PPAImprov requires a reference file to compute training scores.
+        if args.eval == 'ppa-improv':
+            reference = PPAImprov.read_metrics(args.reference)
+
         analysis = tune.run(
             TrainClass,
             metric='minimum',
