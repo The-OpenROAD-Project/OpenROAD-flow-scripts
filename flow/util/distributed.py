@@ -70,7 +70,7 @@ class AutoTunerBase(tune.Trainable):
         # <repo>/<logs>/<platform>/<design>/<experiment>-DATE/<id>/<cwd>
         repo_dir = os.getcwd() + '/../' * 6
         self.repo_dir = abspath(repo_dir)
-        self.parameters = parse_config(config)
+        self.parameters = parse_config(config, path=os.getcwd())
         self.step_ = 0
 
     def step(self):
@@ -377,9 +377,10 @@ def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
 
 
 @ray.remote
-def openroad_distributed(*args_, **kwargs_):
+def openroad_distributed(repo_dir, config_dict, path):
     ''' Simple wrapper to run openroad distributed with Ray. '''
-    openroad(*args_, **kwargs_)
+    config = parse_config(config_dict)
+    openroad(repo_dir, config_dict, path=path)
 
 
 def openroad(base_dir, parameters, path=''):
@@ -754,9 +755,8 @@ def sweep():
         print(f'[INFO TUN-0007] Scheduling runs for parameter {name}.')
         for i in np.arange(*content):
             config_dict[name] = i
-            config = parse_config(config_dict)
-            workers.append(openroad_distributed.remote(repo_dir, config,
-                                                       path=LOCAL_DIR))
+            workers.append(openroad_distributed.remote(repo_dir, config_dict,
+                                                       LOCAL_DIR))
         print(f'[INFO TUN-0008] Finish scheduling for parameter {name}.')
     print('[INFO TUN-0009] Waiting for results.')
     _ = ray.get(workers)
