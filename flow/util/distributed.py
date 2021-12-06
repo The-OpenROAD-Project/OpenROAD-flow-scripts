@@ -116,14 +116,17 @@ class AutoTunerBase(tune.Trainable):
         for stage, value in data.items():
             if stage == 'constraints' and len(value['clocks__details']) > 0:
                 clk_period = float(value['clocks__details'][0].split()[1])
-            if stage == 'floorplan':
+            if stage == 'floorplan' and 'design__instance__utilization' in value:
                 core_util = value['design__instance__utilization']
-            if stage == 'detailedroute':
+            if stage == 'detailedroute' and 'route__drc_errors' in value:
                 num_drc = value['route__drc_errors']
+            if stage == 'detailedroute' and 'route__wirelength' in value:
                 wirelength = value['route__wirelength']
-            if stage == 'finish':
+            if stage == 'finish' and 'timing__setup__ws' in value:
                 worst_slack = value['timing__setup__ws']
+            if stage == 'finish' and 'power__total' in value:
                 total_power = value['power__total']
+            if stage == 'finish' and 'design__instance__utilization' in value:
                 final_util = value['design__instance__utilization']
         ret = {
             "clk_period": clk_period,
