@@ -208,7 +208,9 @@ def read_config(file_name):
     def read_tune(this):
         min_, max_ = this['minmax']
         if min_ == max_:
-            return min_
+            # Returning a choice of a single element allow pbt algorithm to
+            # work. pbt does not accept single values as tunable.
+            return tune.choice([min_])
         if this['type'] == 'int':
             if min_ == 0 and args.algorithm == 'nevergrad':
                 print('[WARNING TUN-0011] NevergradSearch may not work with lowerbound value 0.')
@@ -664,7 +666,7 @@ def parse_arguments():
     return arguments
 
 
-def set_algorithm(experiment_name):
+def set_algorithm(experiment_name, config_dict):
     '''
     Configure search algorithm.
     '''
@@ -691,7 +693,6 @@ def set_algorithm(experiment_name):
         algorithm = OptunaSearch(points_to_evaluate=best_params,
                                  seed=args.seed)
     elif args.algorithm == 'pbt':
-        # TODO need to fix config_dict format
         algorithm = PopulationBasedTraining(
             time_attr="training_iteration",
             perturbation_interval=args.perturbation,
@@ -700,7 +701,7 @@ def set_algorithm(experiment_name):
         )
     elif args.algorithm == 'random':
         algorithm = BasicVariantGenerator(max_concurrent=args.jobs)
-    if args.algorithm != 'random':
+    if args.algorithm not in ['random', 'pbt']:
         algorithm = ConcurrencyLimiter(algorithm, max_concurrent=args.jobs)
     return algorithm
 
@@ -800,19 +801,16 @@ if __name__ == '__main__':
     if args.mode == 'tune':
 
         best_params = set_best_params(args.platform, args.design)
-        search_algo = set_algorithm(args.experiment)
+        search_algo = set_algorithm(args.experiment, config_dict)
         TrainClass = set_training_class(args.eval)
         # PPAImprov requires a reference file to compute training scores.
         if args.eval == 'ppa-improv':
             reference = PPAImprov.read_metrics(args.reference)
 
-        analysis = tune.run(
-            TrainClass,
+        tune_args = dict(
+            name=f'{args.experiment}',
             metric='minimum',
             mode='min',
-            search_alg=search_algo,
-            name=f'{args.experiment}',
-            scheduler=AsyncHyperBandScheduler(),
             num_samples=args.samples,
             config=config_dict,
             fail_fast=True,
@@ -821,6 +819,18 @@ if __name__ == '__main__':
             stop={"training_iteration": args.iterations},
             queue_trials=True,
         )
+
+        if args.algorithm == 'pbt':
+            tune_args['scheduler']  = search_algo
+        else:
+            tune_args['search_alg'] = search_algo
+            tune_args['scheduler'] = AsyncHyperBandScheduler()
+
+        analysis = tune.run(
+            TrainClass,
+            **tune_args
+        )
+
         task_id = save_best.remote(analysis.best_config)
         _ = ray.get(task_id)
         print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
