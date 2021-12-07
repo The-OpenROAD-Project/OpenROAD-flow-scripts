@@ -70,7 +70,7 @@ class AutoTunerBase(tune.Trainable):
         # <repo>/<logs>/<platform>/<design>/<experiment>-DATE/<id>/<cwd>
         repo_dir = os.getcwd() + '/../' * 6
         self.repo_dir = abspath(repo_dir)
-        self.parameters = parse_config(config)
+        self.parameters = parse_config(config, path=os.getcwd())
         self.step_ = 0
 
     def step(self):
@@ -116,14 +116,18 @@ class AutoTunerBase(tune.Trainable):
         for stage, value in data.items():
             if stage == 'constraints' and len(value['clocks__details']) > 0:
                 clk_period = float(value['clocks__details'][0].split()[1])
-            if stage == 'floorplan':
+            if stage == 'floorplan' \
+                    and 'design__instance__utilization' in value:
                 core_util = value['design__instance__utilization']
-            if stage == 'detailedroute':
+            if stage == 'detailedroute' and 'route__drc_errors' in value:
                 num_drc = value['route__drc_errors']
+            if stage == 'detailedroute' and 'route__wirelength' in value:
                 wirelength = value['route__wirelength']
-            if stage == 'finish':
+            if stage == 'finish' and 'timing__setup__ws' in value:
                 worst_slack = value['timing__setup__ws']
+            if stage == 'finish' and 'power__total' in value:
                 total_power = value['power__total']
+            if stage == 'finish' and 'design__instance__utilization' in value:
                 final_util = value['design__instance__utilization']
         ret = {
             "clk_period": clk_period,
@@ -135,7 +139,6 @@ class AutoTunerBase(tune.Trainable):
             "final_util": final_util
         }
         return ret
-
 
 
 class PPAImprov(AutoTunerBase):
@@ -205,8 +208,13 @@ def read_config(file_name):
     def read_tune(this):
         min_, max_ = this['minmax']
         if min_ == max_:
-            return min_
+            # Returning a choice of a single element allow pbt algorithm to
+            # work. pbt does not accept single values as tunable.
+            return tune.choice([min_])
         if this['type'] == 'int':
+            if min_ == 0 and args.algorithm == 'nevergrad':
+                print('[WARNING TUN-0011] NevergradSearch may not work '
+                      'with lowerbound value 0.')
             if this['step'] == 1:
                 return tune.randint(min_, max_)
             return tune.qrandint(min_, max_, this['step'])
@@ -216,11 +224,40 @@ def read_config(file_name):
             return tune.quniform(min_, max_, this['step'])
         return None
 
+    def read_tune_ax(name, this):
+        dict_ = dict(name=name)
+        min_, max_ = this['minmax']
+        if min_ == max_:
+            dict_["type"] = "fixed"
+            dict_["value"] = min_
+        elif this['type'] == 'int':
+            if this['step'] == 1:
+                dict_["type"] = "range"
+                dict_["bounds"] = [min_, max_]
+                dict_["value_type"] = "int"
+            else:
+                dict_["type"] = "choice"
+                dict_["values"] = tune.randint(min_, max_, this['step'])
+                dict_["value_type"] = "int"
+        elif this['type'] == 'float':
+            if this['step'] == 1:
+                dict_["type"] = "choice"
+                dict_["values"] = tune.quniform(min_, max_, this['step'])
+                dict_["value_type"] = "float"
+            else:
+                dict_["type"] = "range"
+                dict_["bounds"] = [min_, max_]
+                dict_["value_type"] = "float"
+        return dict_
+
     with open(file_name) as file:
         data = json.load(file)
     sdc_file = ''
     fr_file = ''
-    config = {}
+    if args.algorithm == 'ax':
+        config = list()
+    else:
+        config = dict()
     for key, value in data.items():
         if key == '_SDC_FILE_PATH' and value != '':
             if sdc_file != '':
@@ -236,8 +273,10 @@ def read_config(file_name):
             config[key] = value
         elif args.mode == 'sweep':
             config[key] = read_sweep(value)
-        elif args.mode == 'tune':
+        elif args.mode == 'tune' and args.algorithm != 'ax':
             config[key] = read_tune(value)
+        elif args.mode == 'tune' and args.algorithm == 'ax':
+            config.append(read_tune_ax(key, value))
     # Copy back to global variables
     return config, sdc_file, fr_file
 
@@ -374,9 +413,10 @@ def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
 
 
 @ray.remote
-def openroad_distributed(*args_, **kwargs_):
+def openroad_distributed(repo_dir, config, path):
     ''' Simple wrapper to run openroad distributed with Ray. '''
-    openroad(*args_, **kwargs_)
+    config = parse_config(config)
+    openroad(repo_dir, config, path=path)
 
 
 def openroad(base_dir, parameters, path=''):
@@ -658,7 +698,7 @@ def parse_arguments():
     return arguments
 
 
-def set_algorithm(experiment_name):
+def set_algorithm(experiment_name, config):
     '''
     Configure search algorithm.
     '''
@@ -666,10 +706,9 @@ def set_algorithm(experiment_name):
         algorithm = HyperOptSearch(points_to_evaluate=best_params)
     elif args.algorithm == 'ax':
         ax_client = AxClient(enforce_sequential_optimization=False)
-        # TODO need to fix config_dict format
         ax_client.create_experiment(
             name=experiment_name,
-            parameters=config_dict,
+            parameters=config,
             objective_name="minimum",
             minimize=True
         )
@@ -677,7 +716,6 @@ def set_algorithm(experiment_name):
                              points_to_evaluate=best_params,
                              max_concurrent=args.jobs)
     elif args.algorithm == 'nevergrad':
-        # TODO need to fix Lower bound issue
         algorithm = NevergradSearch(
             points_to_evaluate=best_params,
             optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"]
@@ -686,16 +724,15 @@ def set_algorithm(experiment_name):
         algorithm = OptunaSearch(points_to_evaluate=best_params,
                                  seed=args.seed)
     elif args.algorithm == 'pbt':
-        # TODO need to fix config_dict format
         algorithm = PopulationBasedTraining(
             time_attr="training_iteration",
             perturbation_interval=args.perturbation,
-            hyperparam_mutations=config_dict,
+            hyperparam_mutations=config,
             synch=False
         )
     elif args.algorithm == 'random':
         algorithm = BasicVariantGenerator(max_concurrent=args.jobs)
-    if args.algorithm != 'random':
+    if args.algorithm not in ['random', 'pbt']:
         algorithm = ConcurrencyLimiter(algorithm, max_concurrent=args.jobs)
     return algorithm
 
@@ -751,9 +788,8 @@ def sweep():
         print(f'[INFO TUN-0007] Scheduling runs for parameter {name}.')
         for i in np.arange(*content):
             config_dict[name] = i
-            config = parse_config(config_dict)
-            workers.append(openroad_distributed.remote(repo_dir, config,
-                                                       path=LOCAL_DIR))
+            workers.append(openroad_distributed.remote(repo_dir, config_dict,
+                                                       LOCAL_DIR))
         print(f'[INFO TUN-0008] Finish scheduling for parameter {name}.')
     print('[INFO TUN-0009] Waiting for results.')
     _ = ray.get(workers)
@@ -762,14 +798,6 @@ def sweep():
 
 if __name__ == '__main__':
     args = parse_arguments()
-
-    if args.mode == 'tune':
-        best_params = set_best_params(args.platform, args.design)
-        search_algo = set_algorithm(args.experiment)
-        TrainClass = set_training_class(args.eval)
-        # PPAImprov requires a reference file to compute training scores.
-        if args.eval == 'ppa-improv':
-            reference = PPAImprov.read_metrics(args.reference)
 
     # Read config and original files before handling where to run in case we
     # need to upload the files.
@@ -802,21 +830,34 @@ if __name__ == '__main__':
         INSTALL_PATH = abspath('../tools/install')
 
     if args.mode == 'tune':
-        analysis = tune.run(
-            TrainClass,
+
+        best_params = set_best_params(args.platform, args.design)
+        search_algo = set_algorithm(args.experiment, config_dict)
+        TrainClass = set_training_class(args.eval)
+        # PPAImprov requires a reference file to compute training scores.
+        if args.eval == 'ppa-improv':
+            reference = PPAImprov.read_metrics(args.reference)
+
+        tune_args = dict(
+            name=f'{args.experiment}',
             metric='minimum',
             mode='min',
-            search_alg=search_algo,
-            name=f'{args.experiment}',
-            scheduler=AsyncHyperBandScheduler(),
             num_samples=args.samples,
-            config=config_dict,
             fail_fast=True,
             local_dir=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
             queue_trials=True,
         )
+        if args.algorithm == 'pbt':
+            tune_args['scheduler'] = search_algo
+        else:
+            tune_args['search_alg'] = search_algo
+            tune_args['scheduler'] = AsyncHyperBandScheduler()
+        if args.algorithm != 'ax':
+            tune_args['config'] = config_dict
+        analysis = tune.run(TrainClass, **tune_args)
+
         task_id = save_best.remote(analysis.best_config)
         _ = ray.get(task_id)
         print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
