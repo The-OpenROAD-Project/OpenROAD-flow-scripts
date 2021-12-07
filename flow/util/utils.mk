@@ -55,15 +55,23 @@ ISSUE_CP_DESIGN_FILE_VARS = SDC_FILE VERILOG_FILES CACHED_NETLIST \
                             FOOTPRINT_TCL FOOTPRINT SIG_MAP_FILE \
                             IO_CONSTRAINTS MACRO_PLACEMENT
 
-ISSUE_CP_PLATFORM_FILE_VARS = LIB_FILES SC_LEF TECH_LEF ADDIONAL_LEFS \
-                              CLKGATE_MAP_FILE LATCH_MAP_FILE ADDER_MAP_FILE \
-                              TRACKS_INFO_FILE TAPCELL_TCL \
-                              PDN_CFG PDN_TCL \
-                              FASTROUTE_TCL
+ISSUE_CP_PLATFORM_FILE_VARS = LIB_FILES \
+                              SC_LEF \
+                              TECH_LEF \
+                              ADDITIONAL_LEFS \
+                              CLKGATE_MAP_FILE \
+                              ADDER_MAP_FILE \
+                              LATCH_MAP_FILE \
+                              TAPCELL_TCL \
+                              PDN_CFG \
+                              PDN_TCL \
+                              FASTROUTE_TCL \
+                              RCX_RULES
 
 ISSUE_CP_FILE_VARS = $(ISSUE_CP_DESIGN_FILE_VARS)
 ifndef EXCLUDE_PLATFORM
 ISSUE_CP_FILE_VARS += $(ISSUE_CP_PLATFORM_FILE_VARS)
+ISSUE_CP_FILES_PLATFORM = $(PLATFORM_DIR)/*.tcl $(PLATFORM_DIR)/*.cfg
 endif
 
 VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT)
@@ -111,7 +119,9 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	    $(REPORTS_DIR) \
 	    $(RESULTS_DIR) \
 	    $(SCRIPTS_DIR) \
+	    $(UTILS_DIR)/def2stream.py \
 	    $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
+	    $(ISSUE_CP_FILES_PLATFORM) \
 	    $(RUN_ME_SCRIPT) \
 	    $(VARS_BASENAME).sh \
 	    $(VARS_BASENAME).tcl \
