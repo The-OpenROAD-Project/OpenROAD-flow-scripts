@@ -9,7 +9,7 @@ DESIGN_NAME=${1:-gcd}
 PLATFORM=${2:-nangate45}
 CONFIG_MK=${3:-config.mk}
 if [ $# -eq 4 ]; then
-  FLOW_VARIANT=${4:-base}
+  FLOW_VARIANT=$4
 fi
 DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_NAME/$CONFIG_MK
 LOG_FILE=./logs/$PLATFORM/$DESIGN_NAME.log
