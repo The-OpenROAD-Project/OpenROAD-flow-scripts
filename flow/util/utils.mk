@@ -80,7 +80,7 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
 	@$(foreach V, $(.VARIABLES), \
 	    $(if $(filter-out environment% default automatic, $(origin $V)), \
-	      echo export $V=\""$($V)\"" >> $(VARS_BASENAME).sh ; \
+	      echo export $V="'$($V)'" >> $(VARS_BASENAME).sh ; \
 	     ) \
 	)
 	@$(foreach V, $(.VARIABLES), \
