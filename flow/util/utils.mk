@@ -51,9 +51,16 @@ clean_test:
 #-------------------------------------------------------------------------------
 ISSUE_TAG ?= $(DESIGN_NICKNAME)_$(PLATFORM)_$(FLOW_VARIANT)_$(shell date +"%Y-%m-%d_%H-%M")
 ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(sort $(wildcard $(SCRIPTS_DIR)/*.tcl))))
-ISSUE_CP_DESIGN_FILE_VARS = SDC_FILE VERILOG_FILES CACHED_NETLIST \
-                            FOOTPRINT_TCL FOOTPRINT SIG_MAP_FILE \
-                            IO_CONSTRAINTS MACRO_PLACEMENT
+ISSUE_CP_DESIGN_FILE_VARS = SDC_FILE \
+                            VERILOG_FILES \
+                            CACHED_NETLIST \
+                            FOOTPRINT_TCL \
+                            FOOTPRINT \
+                            SIG_MAP_FILE \
+                            IO_CONSTRAINTS \
+                            MACRO_PLACEMENT \
+                            RTLMP_CONFIG_FILE \
+                            DFF_LIB_FILE
 
 ISSUE_CP_PLATFORM_FILE_VARS = LIB_FILES \
                               SC_LEF \
@@ -62,11 +69,19 @@ ISSUE_CP_PLATFORM_FILE_VARS = LIB_FILES \
                               CLKGATE_MAP_FILE \
                               ADDER_MAP_FILE \
                               LATCH_MAP_FILE \
+                              CDL_FILE \
+                              MAKE_TRACKS \
+                              POST_FLOORPLAN_TCL \
                               TAPCELL_TCL \
                               PDN_CFG \
                               PDN_TCL \
+                              POST_PDN_TCL \
+                              POST_CTS_TCL \
+                              PRE_GLOBAL_ROUTE \
                               FASTROUTE_TCL \
-                              RCX_RULES
+                              POST_DETAIL_ROUTE_TCL \
+                              RCX_RULES \
+                              FILL_CONFIG
 
 ISSUE_CP_FILE_VARS = $(ISSUE_CP_DESIGN_FILE_VARS)
 ifndef EXCLUDE_PLATFORM
