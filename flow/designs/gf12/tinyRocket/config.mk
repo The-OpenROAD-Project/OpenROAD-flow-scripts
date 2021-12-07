@@ -36,3 +36,7 @@ export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 export MACRO_BLOCKAGE_HALO = 25
 
 export DESIGN_TYPE = CELL
+
+# Useblock level PDN grid
+export PDN_CFG = ${PLATFORM_DIR}/cfg/pdn_grid_strategy_13m_9T.block.cfg
+
