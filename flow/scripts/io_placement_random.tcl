@@ -28,5 +28,4 @@ place_pins -hor_layer $::env(IO_PLACER_H) \
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/2_2_floorplan_io.def
-  exit
 }

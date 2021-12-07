@@ -110,5 +110,4 @@ if {![info exists standalone] || $standalone} {
   if { [info exists ::env(POST_CTS_TCL)] } {
     source $::env(POST_CTS_TCL)
   }
-  exit
 }

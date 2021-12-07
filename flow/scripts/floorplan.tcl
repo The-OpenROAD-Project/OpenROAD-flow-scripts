@@ -153,5 +153,4 @@ if {![info exists standalone] || $standalone} {
   if { [info exists ::env(POST_FLOORPLAN_TCL)] } {
     source $::env(POST_FLOORPLAN_TCL)
   }
-  exit
 }

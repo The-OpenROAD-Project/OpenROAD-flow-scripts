@@ -35,6 +35,4 @@ if {![info exists standalone] || $standalone} {
   if {[info exists ::env(POST_PDN_TCL)] && [file exists $::env(POST_PDN_TCL)]} {
     source $::env(POST_PDN_TCL)
   }
-
-  exit
 }
