@@ -97,6 +97,10 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	@sed -i -e '/export \./d' $(VARS_BASENAME).sh
 	@sed -i -e '/set env(\./d' $(VARS_BASENAME).tcl
 	@sed -i -e '/set env \./d' $(VARS_BASENAME).gdb
+	# remove non portable commands
+	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).sh
+	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).tcl
+	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).gdb
 
 # This requires gnu-tar to support --xform
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
