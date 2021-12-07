@@ -112,7 +112,7 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 
 # This requires gnu-tar to support --xform
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
-	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
+	@tar --ignore-failed-read -czhf $*_$(ISSUE_TAG).tar.gz \
 	    --xform='s|^|$*_$(ISSUE_TAG)/|S' \
 	    $(LOG_DIR) \
 	    $(OBJECTS_DIR) \
