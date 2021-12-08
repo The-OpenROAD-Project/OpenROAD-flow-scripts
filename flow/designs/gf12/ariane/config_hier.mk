@@ -20,6 +20,8 @@ export RTLMP_RPT_FILE = partition.txt
 export RTLMP_BLOCKAGE_FILE = $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
 
 # These values must be multiples of placement site
-export DIE_AREA    = 0 0 760 710 
-export CORE_AREA   = 10 10 750 700 
-export PLACE_PINS_ARGS = -exclude left:0-300 -exclude left:400-760 -exclude right:* -exclude top:* -exclude bottom:*
+export DIE_AREA    = 0 0 700 700 
+export CORE_AREA   = 10 10 690 690 
+export PLACE_PINS_ARGS = -exclude left:0-300 -exclude left:400-700 -exclude right:* -exclude top:* -exclude bottom:*
+
+export PLACE_DENSITY = 0.55

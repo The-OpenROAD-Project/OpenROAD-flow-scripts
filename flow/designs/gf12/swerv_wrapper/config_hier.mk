@@ -26,6 +26,8 @@ export RTLMP_MACRO_BLOCKAGE_WT = 50.0
 export RTLMP_LOCATION_WT = 100.0
 export RTLMP_NOTCH_WT = 100.0
 
-export DIE_AREA    = 0 0 700 550
-export CORE_AREA   = 10 10 690 540
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:400-700
+export DIE_AREA    = 0 0 650 500
+export CORE_AREA   = 10 10 640 490
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:400-650
+
+export PLACE_DENSITY = 0.55
