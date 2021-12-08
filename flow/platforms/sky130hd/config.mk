@@ -53,7 +53,12 @@ export DONT_USE_CELLS += \
     sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_4 \
     sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_1 \
     sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_2 \
-    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_4
+    sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_4 \
+    sky130_fd_sc_hd__clkbuf_1 \
+    sky130_fd_sc_hd__clkbuf_2 \
+    sky130_fd_sc_hd__clkbuf_4 \
+    sky130_fd_sc_hd__clkbuf_8 \
+    sky130_fd_sc_hd__clkbuf_16
 #
 # Define fill cells
 export FILL_CELLS = sky130_fd_sc_hd__fill_1 sky130_fd_sc_hd__fill_2 sky130_fd_sc_hd__fill_4 sky130_fd_sc_hd__fill_8
@@ -128,7 +133,7 @@ export CELL_PAD_IN_SITES = 4
 #  CTS
 #  -------------------------------------------------------
 # TritonCTS options
-export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
+export CTS_BUF_CELL   = sky130_fd_sc_hd__clkbuf_1
 export CTS_MAX_SLEW   = 1.5e-9
 export CTS_MAX_CAP    = .1532e-12
 

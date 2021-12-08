@@ -14,7 +14,12 @@ export GDS_FILES = $(wildcard $(PLATFORM_DIR)/gds/*.gds) \
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
-export DONT_USE_CELLS += 
+export DONT_USE_CELLS += \
+  sky130_fd_sc_hs__clkbuf_1 \
+  sky130_fd_sc_hs__clkbuf_2 \
+  sky130_fd_sc_hs__clkbuf_4 \
+  sky130_fd_sc_hs__clkbuf_8 \
+  sky130_fd_sc_hs__clkbuf_16
 
 # Define fill cells
 export FILL_CELLS = sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc_hs__fill_4 sky130_fd_sc_hs__fill_8
@@ -87,7 +92,7 @@ export PLACE_DENSITY ?= 0.50
 #  CTS
 #  -------------------------------------------------------
 # TritonCTS options
-export CTS_BUF_CELL   = sky130_fd_sc_hs__buf_1
+export CTS_BUF_CELL   = sky130_fd_sc_hs__clkbuf_1
 
 # ---------------------------------------------------------
 #  Route
