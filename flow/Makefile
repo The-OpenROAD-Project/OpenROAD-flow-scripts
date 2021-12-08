@@ -182,6 +182,9 @@ ifdef BLOCKS
   export GDS_FILES += $(BLOCK_GDS)
 endif
 
+export RTLMP_RPT_DIR ?= $(OBJECTS_DIR)/rtlmp
+export RTLMP_RPT_FILE ?= partition.txt
+
 #-------------------------------------------------------------------------------
 ifeq (, $(strip $(NPROC)))
   # Linux (utility program)
