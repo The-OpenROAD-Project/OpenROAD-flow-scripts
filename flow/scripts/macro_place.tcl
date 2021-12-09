@@ -96,14 +96,25 @@ if {[find_macros] != ""} {
     if { [info exists ::env(RTLMP_BLOCKAGE_FILE)]} {
         append additional_args " -macro_blockage_file $env(RTLMP_BLOCKAGE_FILE)"
     }
-    partition_design -max_num_inst $env(RTLMP_MAX_INST) \
-                    -min_num_inst $env(RTLMP_MIN_INST) \
-                    -max_num_macro $env(RTLMP_MAX_MACRO) \
-                    -min_num_macro $env(RTLMP_MIN_MACRO) \
-                    -net_threshold 5 -virtual_weight 500 \
-                    -num_hop 5 -timing_weight 1 \
-                    -report_directory $env(RTLMP_RPT_DIR) \
-                    -report_file $env(RTLMP_RPT_FILE)
+    if { [info exists ::env(RTLMP_MAX_INST)]} {
+        append additional_args " -max_num_inst $env(RTLMP_MAX_INST)"
+    }
+    if { [info exists ::env(RTLMP_MIN_INST)]} {
+        append additional_args " -min_num_inst $env(RTLMP_MIN_INST)"
+    }
+    if { [info exists ::env(RTLMP_MAX_MACRO)]} {
+        append additional_args " -max_num_macro $env(RTLMP_MAX_MACRO)"
+    }
+    if { [info exists ::env(RTLMP_MIN_MACRO)]} {
+        append additional_args " -min_num_macro $env(RTLMP_MIN_MACRO)"
+    }
+
+    partition_design -net_threshold 5 \
+                     -virtual_weight 500 \
+                     -num_hop 5 \
+                     -timing_weight 1 \
+                     -report_directory $env(RTLMP_RPT_DIR) \
+                     -report_file $env(RTLMP_RPT_FILE)
  
     rtl_macro_placer -report_directory $env(RTLMP_RPT_DIR) \
                      {*}$additional_args
