@@ -4,7 +4,7 @@ The Nangate Open Cell Library is a generic open-source, standard-cell
 library provided for the purposes of research, testing, and exploring EDA
 flows. This library is purposely non-manufacturable.
 
-Version: PDKv1_3_v2010_12
+Version: PDKv1.3_v2010_12.Apache.CCL
 
 # Source
 
