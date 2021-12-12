@@ -7,6 +7,8 @@ export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE = 100
 export RTLMP_FLOW = True
 
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint_hier.sdc
+
 export FLOORPLAN_DEF = ./results/$(PLATFORM)/$(DESIGN_NAME)/$(FLOW_VARIANT)/2_2_floorplan_io.def
 #
 # RTL_MP Settings
