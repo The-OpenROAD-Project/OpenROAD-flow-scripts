@@ -9,6 +9,7 @@ os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)) , '..'))
 
 reportFilename = 'report.log'
 singleReportFilename = 'reports/' + reportFilename
+summaryFilename = 'reports/report-summary.log'
 drcFilename = '5_route_drc.rpt'
 lastExpectedLog = '6_report.log'
 metricsLogFmt = 'gen-metrics-{}-check.log'
@@ -76,6 +77,9 @@ def finish(output, outputFile='', summary=False):
         output += '\nGenerated report file: ' + outputFile + '\n'
     if generateSingleFile:
         if summary:
+            with open(summaryFilename, 'w+') as f:
+                f.write(output.strip())
+            output += '\nGenerated report summary: ' + summaryFilename
             with open(singleReportFilename, 'r+') as f:
                 content = f.read()
                 f.seek(0, 0)
@@ -100,6 +104,7 @@ designsWithError = list()
 designsRed = list()
 designsWithViolations = list()
 designCount = 0
+designsGreen = list()
 
 for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     dirList = logDir.split(os.sep)
@@ -160,6 +165,8 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
         designsWithError.append(currentRun)
     if numMetricsErrors != 0:
         designsRed.append(currentRun)
+    else:
+        designsGreen.append(currentRun)
     if len(drcList) != 0:
         designsWithViolations.append(currentRun)
 
@@ -254,28 +261,30 @@ output = '''
 ============================================================
 
 Number of designs: {}.
-
 '''.format(designCount)
-if len(designsWithError) == 0:
-    output += 'All designs logs are clean.\n'
-else:
-    output += 'List of designs with at least one error in their logs:\n'
-    for design in designsWithError:
+if len(designsGreen) != 0:
+    output += f'\nGreen designs ({len(designsGreen)}):\n'
+    for design in designsGreen:
         output += '  ' + design + '\n'
 
-if len(designsRed) == 0:
-    output += '\nAll designs are green.\n'
-else:
-    output += '\nList of red designs:\n'
+if len(designsRed) != 0:
+    output += f'\nRed designs ({len(designsRed)}):\n'
     for design in designsRed:
         output += '  ' + design + '\n'
 
 if len(designsWithViolations) == 0:
     output += '\nAll designs have zero violations.\n'
 else:
-    output += '\nList of designs with violations:'
+    output += '\nDesigns with violations:'
     for design in designsWithViolations:
         output += '\n  ' + design
+
+if len(designsWithError) == 0:
+    output += '\nAll designs logs are clean.\n'
+else:
+    output += '\nDesigns with at least one error in their logs:\n'
+    for design in designsWithError:
+        output += '  ' + design + '\n'
 
 finish(output, summary=True)
 
