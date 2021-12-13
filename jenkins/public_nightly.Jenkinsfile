@@ -495,7 +495,10 @@ pipeline {
             to: "$EMAIL_TO",
             replyTo: "$EMAIL_TO",
             subject: '$DEFAULT_SUBJECT',
-            body: '$DEFAULT_CONTENT',
+            body: '''
+$DEFAULT_CONTENT
+${FILE,path="flow/reports/report-summary.log"}
+            ''',
             )
       }
     }
