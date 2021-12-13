@@ -8,11 +8,17 @@ cd "$(dirname $(readlink -f $0))/../"
 DESIGN_NAME=${1:-gcd}
 PLATFORM=${2:-nangate45}
 CONFIG_MK=${3:-config.mk}
-FLOW_VARIANT=${4:-base}
+if [ $# -eq 4 ]; then
+  FLOW_VARIANT=$4
+fi
 DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_NAME/$CONFIG_MK
 LOG_FILE=./logs/$PLATFORM/$DESIGN_NAME.log
 mkdir -p ./logs/$PLATFORM
-__make="make DESIGN_CONFIG=$DESIGN_CONFIG FLOW_VARIANT=$FLOW_VARIANT"
+
+__make="make DESIGN_CONFIG=$DESIGN_CONFIG"
+if [ ! -z "${FLOW_VARIANT+x}" ]; then
+  __make+=" FLOW_VARIANT=$FLOW_VARIANT"
+fi
 
 source ../setup_env.sh
 
