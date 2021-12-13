@@ -18,8 +18,8 @@ export RTLMP_MAX_MACRO = 12
 export RTLMP_MIN_MACRO = 4
 
 # These values must be multiples of placement site
-export DIE_AREA    = 0 0 700 700 
-export CORE_AREA   = 10 10 690 690 
+export DIE_AREA    = 0 0 700 700
+export CORE_AREA   = 10 10 690 690
 export PLACE_PINS_ARGS = -exclude left:0-300 -exclude left:400-700 -exclude right:* -exclude top:* -exclude bottom:*
 
 export PLACE_DENSITY = 0.55

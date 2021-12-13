@@ -10,7 +10,7 @@ if {![info exists standalone] || $standalone} {
 
   # Read liberty files
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
-  
+
   # Read design files
   if {[info exists ::env(RTLMP_FLOW)]} {
     puts "RTLMP flow.. read verilog and floorplan def"
@@ -118,10 +118,10 @@ if {[find_macros] != ""} {
                      -report_directory $env(RTLMP_RPT_DIR) \
                      -report_file $env(RTLMP_RPT_FILE) \
                      {*}$additional_partition_args
- 
+
     rtl_macro_placer -report_directory $env(RTLMP_RPT_DIR) \
                      {*}$additional_rtlmp_args
-                     
+
     puts "Delete buffers for RTLMP flow..."
     remove_buffers
   } else {
@@ -146,5 +146,4 @@ if {[find_macros] != ""} {
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/2_4_floorplan_macro.def
-  exit
 }

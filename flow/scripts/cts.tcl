@@ -105,10 +105,9 @@ if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/4_1_cts.def
   write_verilog $::env(RESULTS_DIR)/4_cts.v
   write_sdc $::env(RESULTS_DIR)/4_cts.sdc
+}
 
-  # post CTS user TCL script hook
-  if { [info exists ::env(POST_CTS_TCL)] } {
-    source $::env(POST_CTS_TCL)
-  }
-  exit
+# post CTS user TCL script hook
+if { [info exists ::env(POST_CTS_TCL)] } {
+  source $::env(POST_CTS_TCL)
 }

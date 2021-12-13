@@ -38,5 +38,4 @@ report_metrics "detailed place"
 if {![info exists standalone] || $standalone} {
   # write output
   write_def $::env(RESULTS_DIR)/3_4_place_dp.def
-  exit
 }

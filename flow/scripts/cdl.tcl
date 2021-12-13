@@ -19,7 +19,3 @@ if {![info exists standalone] || $standalone} {
 
 cdl read_masters $::env(CDL_FILE)
 cdl out $::env(RESULTS_DIR)/6_final.cdl
-
-if {![info exists standalone] || $standalone} {
-  exit
-}

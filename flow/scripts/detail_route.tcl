@@ -63,7 +63,3 @@ write_def $::env(RESULTS_DIR)/5_route.def
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
 }
-
-if {![info exists standalone] || $standalone} {
-  exit
-}

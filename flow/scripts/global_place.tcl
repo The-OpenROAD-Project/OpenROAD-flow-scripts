@@ -66,5 +66,4 @@ report_metrics "global place" false
 
 if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/3_1_place_gp.def
-  exit
 }
