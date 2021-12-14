@@ -120,8 +120,6 @@ for i in main_layout.each_cell():
   if i.cell_index() != top_cell_index:
     if not i.name.startswith("VIA_"):
       i.clear()
-    else:
-      print("[INFO] ... preserving '{0}'".format(i.name))
 
 # Load in the gds to merge
 print("[INFO] Merging GDS/OAS files...")
