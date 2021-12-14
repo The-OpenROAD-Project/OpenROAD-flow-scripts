@@ -59,7 +59,15 @@ proc report_metrics { when {include_erc true} } {
   puts "\n=========================================================================="
   puts "$when report_power"
   puts "--------------------------------------------------------------------------"
-  report_power
+  if {[info exists ::env(CORNERS)]} {
+    foreach corner $::env(CORNERS) {
+      puts "Corner: $corner"
+      report_power -corner $corner
+    }
+    unset corner
+  } else {
+    report_power
+  }
 
   puts "\n=========================================================================="
   puts "$when report_design_area"

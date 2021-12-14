@@ -1,9 +1,7 @@
 proc load_design {design_file sdc_file msg} {
   if {![info exists standalone] || $standalone} {
     # Read liberty files
-    foreach libFile $::env(LIB_FILES) {
-      read_liberty $libFile
-    }
+    source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
     # Read design files
     set ext [file extension $design_file]

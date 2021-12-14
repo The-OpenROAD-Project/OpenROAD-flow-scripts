@@ -45,7 +45,3 @@ write_db $::env(RESULTS_DIR)/5_route.odb
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
 }
-
-if {![info exists standalone] || $standalone} {
-  exit
-}

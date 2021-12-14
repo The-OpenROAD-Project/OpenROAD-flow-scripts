@@ -62,7 +62,3 @@ report_metrics "finish"
 if {[expr [llength [info procs save_image]] > 0]} {
     gui::show "source $::env(SCRIPTS_DIR)/save_images.tcl" false
 }
-
-if {![info exists standalone] || $standalone} {
-  exit
-}

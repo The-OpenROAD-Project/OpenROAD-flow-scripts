@@ -18,5 +18,4 @@ report_metrics "detailed place"
 if {![info exists standalone] || $standalone} {
   # write output
   write_db $::env(RESULTS_DIR)/3_4_place_dp.odb
-  exit
 }

@@ -36,5 +36,4 @@ if {[find_macros] != ""} {
 
 if {![info exists standalone] || $standalone} {
   write_db $::env(RESULTS_DIR)/2_3_floorplan_tdms.odb
-  exit
 }

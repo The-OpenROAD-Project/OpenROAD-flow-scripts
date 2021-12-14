@@ -45,5 +45,4 @@ report_metrics "global place" false
 
 if {![info exists standalone] || $standalone} {
   write_db $::env(RESULTS_DIR)/3_1_place_gp.odb
-  exit
 }

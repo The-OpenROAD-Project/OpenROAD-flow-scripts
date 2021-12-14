@@ -13,11 +13,9 @@ export RTLMP_MAX_INST = 5000
 export RTLMP_MIN_INST = 1000
 export RTLMP_MAX_MACRO = 12
 export RTLMP_MIN_MACRO = 4
-export RTLMP_RPT_DIR = $(OBJECTS_DIR)/rtlmp
-export RTLMP_RPT_FILE = partition.txt
-export RTLMP_CONFIG_FILE = ./designs/$(PLATFORM)/$(DESIGN_NAME)/rtlmp_config.txt
-export RTLMP_BLOCKAGE_FILE = $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
 
-export DIE_AREA    = 0 0 1610 1410
-export CORE_AREA   = 5 5 1605 1405
+export DIE_AREA    = 0 0 1610 1360
+export CORE_AREA   = 5 5 1605 1355
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-300 -exclude bottom:1300-1600
+
+export PLACE_DENSITY = .75

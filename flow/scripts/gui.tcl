@@ -1,7 +1,5 @@
 # Read liberty files
-foreach libFile $::env(LIB_FILES) {
-  read_liberty $libFile
-}
+source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
 # Read def
 if {[info exist ::env(DEF_FILE)]} {

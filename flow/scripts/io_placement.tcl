@@ -11,5 +11,4 @@ place_pins -hor_layer $::env(IO_PLACER_H) \
 if {![info exists standalone] || $standalone} {
   # write output
   write_db $::env(RESULTS_DIR)/3_2_place_iop.odb
-  exit
 }

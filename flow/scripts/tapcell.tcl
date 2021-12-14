@@ -8,5 +8,4 @@ if {[info exist ::env(TAPCELL_TCL)]} {
 if {![info exists standalone] || $standalone} {
   # write output
   write_db $::env(RESULTS_DIR)/2_5_floorplan_tapcell.odb
-  exit
 }

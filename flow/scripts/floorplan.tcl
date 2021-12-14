@@ -100,11 +100,11 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   write_verilog $::env(RESULTS_DIR)/2_pre_abc.v
 
   set tielo_cell_name [lindex $env(TIELO_CELL_AND_PORT) 0]
-  set tielo_lib_name [get_name [get_property [get_lib_cell $tielo_cell_name] library]]
+  set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
   set tielo_port $tielo_lib_name/$tielo_cell_name/[lindex $env(TIELO_CELL_AND_PORT) 1]
 
   set tiehi_cell_name [lindex $env(TIEHI_CELL_AND_PORT) 0]
-  set tiehi_lib_name [get_name [get_property [get_lib_cell $tiehi_cell_name] library]]
+  set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
   set tiehi_port $tiehi_lib_name/$tiehi_cell_name/[lindex $env(TIEHI_CELL_AND_PORT) 1]
 
   restructure -liberty_file $::env(DONT_USE_SC_LIB) -target "area" \
@@ -127,10 +127,9 @@ if {![info exists standalone] || $standalone} {
   write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
   write_verilog $::env(RESULTS_DIR)/2_floorplan.v
   write_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
+}
 
-  # post floorplan user TCL script hook
-  if { [info exists ::env(POST_FLOORPLAN_TCL)] } {
-    source $::env(POST_FLOORPLAN_TCL)
-  }
-  exit
+# post floorplan user TCL script hook
+if { [info exists ::env(POST_FLOORPLAN_TCL)] } {
+  source $::env(POST_FLOORPLAN_TCL)
 }

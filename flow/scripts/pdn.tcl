@@ -15,10 +15,8 @@ if {[info exist ::env(PDN_TCL)]} {
 if {![info exists standalone] || $standalone} {
   # write output
   write_db $::env(RESULTS_DIR)/2_6_floorplan_pdn.odb
+}
 
-  if {[info exists ::env(POST_PDN_TCL)] && [file exists $::env(POST_PDN_TCL)]} {
-    source $::env(POST_PDN_TCL)
-  }
-
-  exit
+if {[info exists ::env(POST_PDN_TCL)] && [file exists $::env(POST_PDN_TCL)]} {
+  source $::env(POST_PDN_TCL)
 }
