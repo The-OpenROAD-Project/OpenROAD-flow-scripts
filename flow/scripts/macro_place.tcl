@@ -144,6 +144,6 @@ if {[find_macros] != ""} {
   puts "No macros found: Skipping macro_placement"
 }
 
-if {![info exists standalone] || $standalone} {
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/2_4_floorplan_macro.def
 }

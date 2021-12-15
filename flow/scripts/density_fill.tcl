@@ -20,7 +20,7 @@ deleteRoutingObstructions
 
 density_fill -rules $::env(FILL_CONFIG)
 
-if {![info exists standalone] || $standalone} {
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/6_1_fill.def
   write_verilog $::env(RESULTS_DIR)/6_1_fill.v
 }

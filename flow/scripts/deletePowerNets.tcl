@@ -24,5 +24,6 @@ proc deleteNetByName {name} {
 deleteNetByName VDD
 deleteNetByName VSS
 
-write_def $::env(RESULTS_DIR)/6_final_no_power.def
-exit
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_def $::env(RESULTS_DIR)/6_final_no_power.def
+}

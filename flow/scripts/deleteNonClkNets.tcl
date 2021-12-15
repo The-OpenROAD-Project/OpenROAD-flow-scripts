@@ -34,4 +34,7 @@ foreach inst $insts {
     odb::dbInst_destroy $inst
   }
 }
-write_def $::env(RESULTS_DIR)/6_final_only_clk.def
+
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_def $::env(RESULTS_DIR)/6_final_only_clk.def
+}

@@ -35,7 +35,6 @@ estimate_parasitics -placement
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "detailed place"
 
-if {![info exists standalone] || $standalone} {
-  # write output
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/3_4_place_dp.def
 }

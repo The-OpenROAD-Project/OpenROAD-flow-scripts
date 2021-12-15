@@ -17,4 +17,6 @@ if {![info exists standalone] || $standalone} {
   puts "Starting CDL"
 }
 
-write_cdl -masters $::env(CDL_FILE) $::env(RESULTS_DIR)/6_final.cdl
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_cdl -masters $::env(CDL_FILE) $::env(RESULTS_DIR)/6_final.cdl
+}
