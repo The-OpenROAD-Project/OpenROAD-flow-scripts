@@ -2,6 +2,9 @@ import pya
 import re
 import json
 import copy
+import sys
+
+errors = 0
 
 # Expand layers in json
 def expand_cfg_layers(cfg):
@@ -17,7 +20,7 @@ def expand_cfg_layers(cfg):
       new_layer['layer'] = num
       layers[name] = new_layer
     del layers[layer]
-    
+
 def read_cfg():
   print('INFO: Reading config file: ' + config_file)
   with open(config_file, 'r') as f:
@@ -51,7 +54,7 @@ rect_pat = re.compile(r'''
   (?P<opc>                      # OPC, None if absent
   \s+\+\ OPC
   )?
-  \s+RECT\ 
+  \s+RECT\
    \(\ (?P<xlo>\d+)\ (?P<ylo>\d+)\ \)\   # rect lower-left pt
   \(\ (?P<xhi>\d+)\ (?P<yhi>\d+)\ \)\ ; # rect upper-right pt
   ''',
@@ -142,6 +145,7 @@ for i in top_only_layout.each_cell():
   if i.is_empty():
     missing_cell = True
     print("[ERROR] LEF Cell '{0}' has no matching GDS/OAS cell. Cell will be empty".format(i.name))
+    errors += 1
 
 if not missing_cell:
   print("[INFO] All LEF cells have matching GDS/OAS cells")
@@ -152,6 +156,7 @@ for i in top_only_layout.each_cell():
   if i.name != design_name and i.parent_cells() == 0:
     orphan_cell = True
     print("[ERROR] Found orphan cell '{0}'".format(i.name))
+    errors += 1
 
 if not orphan_cell:
   print("[INFO] No orphan cells")
@@ -173,3 +178,5 @@ if seal_file:
 # Write out the GDS
 print("[INFO] Writing out GDS/OAS '{0}'".format(out_file))
 top_only_layout.write(out_file)
+
+sys.exit(errors)
