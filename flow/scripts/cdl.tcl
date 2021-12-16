@@ -17,5 +17,4 @@ if {![info exists standalone] || $standalone} {
   puts "Starting CDL"
 }
 
-cdl read_masters $::env(CDL_FILE)
-cdl out $::env(RESULTS_DIR)/6_final.cdl
+write_cdl -masters $::env(CDL_FILE) $::env(RESULTS_DIR)/6_final.cdl
