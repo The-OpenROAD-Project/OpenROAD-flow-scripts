@@ -3,6 +3,7 @@ import re
 import json
 import copy
 import sys
+import os
 
 errors = 0
 
@@ -141,11 +142,19 @@ read_fills(top)
 
 print("[INFO] Checking for missing cell from GDS/OAS...")
 missing_cell = False
+regex = None
+if 'GDS_ALLOW_EMPTY' in os.environ:
+    print("[INFO] Found GDS_ALLOW_EMPTY variable.")
+    regex = os.getenv('GDS_ALLOW_EMPTY')
 for i in top_only_layout.each_cell():
   if i.is_empty():
     missing_cell = True
-    print("[ERROR] LEF Cell '{0}' has no matching GDS/OAS cell. Cell will be empty".format(i.name))
-    errors += 1
+    if regex is not None and re.match(regex, i.name):
+        print("[WARNING] LEF Cell '{0}' ignored. Matches GDS_ALLOW_EMPTY.".format(i.name))
+    else:
+        print("[ERROR] LEF Cell '{0}' has no matching GDS/OAS cell."
+              " Cell will be empty.".format(i.name))
+        errors += 1
 
 if not missing_cell:
   print("[INFO] All LEF cells have matching GDS/OAS cells")
