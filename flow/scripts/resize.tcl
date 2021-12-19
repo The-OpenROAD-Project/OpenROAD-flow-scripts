@@ -86,6 +86,7 @@ report_metrics "resizer"
 
 print_banner "instance_count"
 puts [sta::network_leaf_instance_count]
+utl::metric_integer "placeopt__design__instance__count__stdcell" [sta::network_leaf_instance_count]
 
 print_banner "pin_count"
 puts [sta::network_leaf_pin_count]
