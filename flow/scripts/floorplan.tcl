@@ -119,7 +119,7 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   set num_instances [llength [get_cells -hier *]]
   puts "number instances before restructure is $num_instances"
   puts "Design Area before restructure"
-  report_design_area
+  report_design_area -json_util "floorplan__design__instance__area__stdcell__pre_restruct"  -json_area "floorplan__design__instance__area__stdcell__pre_restruct"
 
   if {![info exists save_checkpoint] || $save_checkpoint} {
     write_verilog $::env(RESULTS_DIR)/2_pre_abc.v
@@ -147,7 +147,7 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   set num_instances [llength [get_cells -hier *]]
   puts "number instances after restructure is $num_instances"
   puts "Design Area after restructure"
-  report_design_area
+  report_design_area -json_util "floorplan__design__instance__area__stdcell__post_restruct"  -json_area "floorplan__design__instance__area__stdcell__post_restruct"
 }
 
 if { [info exists ::env(POST_FLOORPLAN_TCL)] } {

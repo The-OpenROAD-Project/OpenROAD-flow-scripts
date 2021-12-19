@@ -1,4 +1,4 @@
-proc report_metrics { when {include_erc true} } {
+proc report_metrics { when {include_erc true}} {
   puts "\n=========================================================================="
   puts "$when report_checks -path_delay min"
   puts "--------------------------------------------------------------------------"
@@ -23,17 +23,23 @@ proc report_metrics { when {include_erc true} } {
     puts "\n=========================================================================="
     puts "$when max_slew_violation_count"
     puts "--------------------------------------------------------------------------"
-    puts "max slew violation count [sta::max_slew_violation_count]"
+    set max_slew_violation_count [sta::max_slew_violation_count]
+    puts "max slew violation count $max_slew_violation_count"
+    utl::metric [map_when_to_json_key $when "timing__drv__max_slew"] $max_slew_violation_count
 
     puts "\n=========================================================================="
     puts "$when max_fanout_violation_count"
     puts "--------------------------------------------------------------------------"
-    puts "max fanout violation count [sta::max_fanout_violation_count]"
+    set max_fanout_violation_count [sta::max_fanout_violation_count]
+    puts "max fanout violation count $max_fanout_violation_count"
+    utl::metric [map_when_to_json_key $when "timing__drv__max_fanout"] $max_slew_violation_count
 
     puts "\n=========================================================================="
     puts "$when max_cap_violation_count"
     puts "--------------------------------------------------------------------------"
-    puts "max cap violation count [sta::max_capacitance_violation_count]"
+    set max_capacitance_violation_count [sta::max_capacitance_violation_count]
+    puts "max cap violation count $max_capacitance_violation_count"
+    utl::metric [map_when_to_json_key $when "timing__drv__max_cap"] $max_capacitance_violation_count
 
     puts "\n=========================================================================="
     puts "$when setup_violation_count"
@@ -49,7 +55,7 @@ proc report_metrics { when {include_erc true} } {
   puts "\n=========================================================================="
   puts "$when report_tns"
   puts "--------------------------------------------------------------------------"
-  report_tns
+  report_tns -json [map_when_to_json_key $when "timing__setup__tns"]
 
   puts "\n=========================================================================="
   puts "$when report_wns"
@@ -59,7 +65,7 @@ proc report_metrics { when {include_erc true} } {
   puts "\n=========================================================================="
   puts "$when report_worst_slack"
   puts "--------------------------------------------------------------------------"
-  report_worst_slack
+  report_worst_slack -json [map_when_to_json_key $when "timing__setup__ws"]
 
   puts "\n=========================================================================="
   puts "$when report_clock_skew"
@@ -82,7 +88,40 @@ proc report_metrics { when {include_erc true} } {
   puts "\n=========================================================================="
   puts "$when report_design_area"
   puts "--------------------------------------------------------------------------"
-  report_design_area
+  report_design_area -json_area [map_when_to_json_key $when "design__instance__area__stdcell"] -json_util [map_when_to_json_key $when "design__instance__utilization"]
 
   puts ""
+}
+
+# Ex. report_class = "timing__setup__tns"
+proc map_when_to_json_key {when report_class} {
+  switch $when {
+    "floorplan final" {
+      return "floorplan__${report_class}"
+    }
+    "global place" {
+      return "globalplace__${report_class}"
+    }
+    "resizer" {
+      return "placeopt__${report_class}"
+    }
+    "detailed place" {
+      return "detailedplace__${report_class}"
+    }
+    "cts pre-repair" {
+      return "cts__${report_class}__pre_repair"
+    }
+    "cts post-repair" {
+      return "cts__${report_class}__post_repair"
+    }
+    "cts final" {
+      return "cts__${report_class}"
+    }
+    "global route" {
+      return "cts__${report_class}"
+    }
+    "finish" {
+      return "cts__${report_class}"
+    }
+  }
 }
