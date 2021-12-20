@@ -35,6 +35,4 @@ foreach inst $insts {
   }
 }
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_def $::env(RESULTS_DIR)/6_final_only_clk.def
-}
+write_def $::env(RESULTS_DIR)/6_final_only_clk.def

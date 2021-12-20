@@ -1,9 +1,6 @@
 # Performs RTL-to-GDS in a single script
-# No checkpointing is performed, only save final files
 
 set standalone 0
-# disable checkpoints
-set save_checkpoint 0
 
 # Synthesis
 source -verbose $::env(SCRIPTS_DIR)/yosys.tcl
@@ -60,8 +57,6 @@ if {[info exists ::env(USE_FILL)]} {
 }
 
 # Finishing
-# make sure to save final files
-set save_checkpoint 1
 source -verbose $::env(SCRIPTS_DIR)/final_report.tcl
 source -verbose $::env(SCRIPTS_DIR)/klayout.tcl
 

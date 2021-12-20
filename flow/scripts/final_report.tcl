@@ -80,10 +80,8 @@ if {[info exist ::env(RCX_RULES)]} {
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "finish"
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_def $::env(RESULTS_DIR)/6_final.def
-  write_verilog $::env(RESULTS_DIR)/6_final.v
-}
+write_def $::env(RESULTS_DIR)/6_final.def
+write_verilog $::env(RESULTS_DIR)/6_final.v
 
 # Save a final image if openroad is compiled with the gui
 if {[expr [llength [info procs save_image]] > 0]} {
