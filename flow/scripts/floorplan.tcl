@@ -148,10 +148,9 @@ if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/2_1_floorplan.def
   write_verilog $::env(RESULTS_DIR)/2_floorplan.v
   write_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
+}
 
-  # post floorplan user TCL script hook
-  if { [info exists ::env(POST_FLOORPLAN_TCL)] } {
-    source $::env(POST_FLOORPLAN_TCL)
-  }
-  exit
+# post floorplan user TCL script hook
+if { [info exists ::env(POST_FLOORPLAN_TCL)] } {
+  source $::env(POST_FLOORPLAN_TCL)
 }

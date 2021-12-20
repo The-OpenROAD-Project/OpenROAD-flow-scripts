@@ -51,19 +51,42 @@ clean_test:
 #-------------------------------------------------------------------------------
 ISSUE_TAG ?= $(DESIGN_NICKNAME)_$(PLATFORM)_$(FLOW_VARIANT)_$(shell date +"%Y-%m-%d_%H-%M")
 ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(sort $(wildcard $(SCRIPTS_DIR)/*.tcl))))
-ISSUE_CP_DESIGN_FILE_VARS = SDC_FILE VERILOG_FILES CACHED_NETLIST \
-                            FOOTPRINT_TCL FOOTPRINT SIG_MAP_FILE \
-                            IO_CONSTRAINTS MACRO_PLACEMENT
+ISSUE_CP_DESIGN_FILE_VARS = SDC_FILE \
+                            VERILOG_FILES \
+                            CACHED_NETLIST \
+                            FOOTPRINT_TCL \
+                            FOOTPRINT \
+                            SIG_MAP_FILE \
+                            IO_CONSTRAINTS \
+                            MACRO_PLACEMENT \
+                            RTLMP_CONFIG_FILE \
+                            DFF_LIB_FILE
 
-ISSUE_CP_PLATFORM_FILE_VARS = LIB_FILES SC_LEF TECH_LEF ADDIONAL_LEFS \
-                              CLKGATE_MAP_FILE LATCH_MAP_FILE ADDER_MAP_FILE \
-                              TRACKS_INFO_FILE TAPCELL_TCL \
-                              PDN_CFG PDN_TCL \
-                              FASTROUTE_TCL
+ISSUE_CP_PLATFORM_FILE_VARS = LIB_FILES \
+                              SC_LEF \
+                              TECH_LEF \
+                              ADDITIONAL_LEFS \
+                              CLKGATE_MAP_FILE \
+                              ADDER_MAP_FILE \
+                              LATCH_MAP_FILE \
+                              CDL_FILE \
+                              MAKE_TRACKS \
+                              POST_FLOORPLAN_TCL \
+                              TAPCELL_TCL \
+                              PDN_CFG \
+                              PDN_TCL \
+                              POST_PDN_TCL \
+                              POST_CTS_TCL \
+                              PRE_GLOBAL_ROUTE \
+                              FASTROUTE_TCL \
+                              POST_DETAIL_ROUTE_TCL \
+                              RCX_RULES \
+                              FILL_CONFIG
 
 ISSUE_CP_FILE_VARS = $(ISSUE_CP_DESIGN_FILE_VARS)
 ifndef EXCLUDE_PLATFORM
 ISSUE_CP_FILE_VARS += $(ISSUE_CP_PLATFORM_FILE_VARS)
+ISSUE_CP_FILES_PLATFORM = $(PLATFORM_DIR)/*.tcl $(PLATFORM_DIR)/*.cfg
 endif
 
 VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT)
@@ -80,7 +103,7 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	-@rm -f $(VARS_BASENAME).sh $(VARS_BASENAME).tcl $(VARS_BASENAME).gdb
 	@$(foreach V, $(.VARIABLES), \
 	    $(if $(filter-out environment% default automatic, $(origin $V)), \
-	      echo export $V=\""$($V)\"" >> $(VARS_BASENAME).sh ; \
+	      echo export $V="'$($V)'" >> $(VARS_BASENAME).sh ; \
 	     ) \
 	)
 	@$(foreach V, $(.VARIABLES), \
@@ -97,17 +120,23 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	@sed -i -e '/export \./d' $(VARS_BASENAME).sh
 	@sed -i -e '/set env(\./d' $(VARS_BASENAME).tcl
 	@sed -i -e '/set env \./d' $(VARS_BASENAME).gdb
+	# remove non portable commands
+	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).sh
+	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).tcl
+	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).gdb
 
 # This requires gnu-tar to support --xform
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
-	@tar -czhf $*_$(ISSUE_TAG).tar.gz \
+	@tar --ignore-failed-read -czhf $*_$(ISSUE_TAG).tar.gz \
 	    --xform='s|^|$*_$(ISSUE_TAG)/|S' \
 	    $(LOG_DIR) \
 	    $(OBJECTS_DIR) \
 	    $(REPORTS_DIR) \
 	    $(RESULTS_DIR) \
 	    $(SCRIPTS_DIR) \
+	    $(UTILS_DIR)/def2stream.py \
 	    $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
+	    $(ISSUE_CP_FILES_PLATFORM) \
 	    $(RUN_ME_SCRIPT) \
 	    $(VARS_BASENAME).sh \
 	    $(VARS_BASENAME).tcl \

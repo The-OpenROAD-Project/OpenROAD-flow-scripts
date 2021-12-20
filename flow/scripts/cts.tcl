@@ -84,7 +84,7 @@ if { [info exists ::env(SETUP_SLACK_MARGIN)] && $::env(SETUP_SLACK_MARGIN) > 0.0
   puts "Setup repair with slack margin $::env(SETUP_SLACK_MARGIN)"
   append additional_args " -slack_margin $::env(SETUP_SLACK_MARGIN)"
 }
-repair_timing -setup {*}$additional_args
+eval repair_timing -setup $additional_args
 
 puts "Repair hold violations..."
 # process user settings
@@ -105,10 +105,9 @@ if {![info exists standalone] || $standalone} {
   write_def $::env(RESULTS_DIR)/4_1_cts.def
   write_verilog $::env(RESULTS_DIR)/4_cts.v
   write_sdc $::env(RESULTS_DIR)/4_cts.sdc
+}
 
-  # post CTS user TCL script hook
-  if { [info exists ::env(POST_CTS_TCL)] } {
-    source $::env(POST_CTS_TCL)
-  }
-  exit
+# post CTS user TCL script hook
+if { [info exists ::env(POST_CTS_TCL)] } {
+  source $::env(POST_CTS_TCL)
 }

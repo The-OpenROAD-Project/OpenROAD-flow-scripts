@@ -8,6 +8,7 @@ export SDC_FILE      = $(PLATFORM_DIR)/$(DESIGN_NAME)/sdc/ca53_cpu.sdc
 
 export ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/sc9mcpp84_12lp_base_lvt_c14.lef
 export ADDITIONAL_LIBS += $(PLATFORM_DIR)/lib/sc9mcpp84_12lp_base_lvt_c14_tt_nominal_max_0p80v_25c.lib
+export ADDITIONAL_GDS  += $(PLATFORM_DIR)/gds/sc9mcpp84_12lp_base_lvt_c14.gds2
 
 export WRAP_LEFS = $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_128X32M2_FB1FS1SB0PG1.lef \
                    $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_160X118M2_FB1FS2SB0PG1.lef \

@@ -12,7 +12,7 @@ Footprint library {
     vddio_hvc vddio_hvc_power_pad 
     vddio_lvc vddio_lvc_power_pad 
     vssio_hvc vssio_hvc_ground_pad
-    vssio_lvc vssio_hvc_ground_pad
+    vssio_lvc vssio_lvc_ground_pad
     corner sky130_ef_io__corner_pad
     fill {sky130_ef_io__com_bus_slice_20um sky130_ef_io__com_bus_slice_10um sky130_ef_io__com_bus_slice_5um sky130_ef_io__com_bus_slice_1um}
   }

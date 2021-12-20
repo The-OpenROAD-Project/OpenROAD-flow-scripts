@@ -328,6 +328,19 @@ pipeline {
             }
           }
         }
+        stage("sky130 hd chameleon_hier") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh chameleon_hier sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("sky130 hd gcd") {
           agent any;
           steps {
@@ -482,7 +495,10 @@ pipeline {
             to: "$EMAIL_TO",
             replyTo: "$EMAIL_TO",
             subject: '$DEFAULT_SUBJECT',
-            body: '$DEFAULT_CONTENT',
+            body: '''
+$DEFAULT_CONTENT
+${FILE,path="flow/reports/report-summary.log"}
+            ''',
             )
       }
     }
