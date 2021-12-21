@@ -629,7 +629,7 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	        -rd seal_file="" \
 	        -rd out_file=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
-	        -rm $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
+	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
@@ -643,7 +643,7 @@ $(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSO
 	        -rd seal_file="$(SEAL_GDSOAS)" \
 	        -rd out_file=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
 $(RESULTS_DIR)/6_final.v: $(LOG_DIR)/6_report.log
 
