@@ -49,12 +49,12 @@ if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
 }
 
 if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
-global_placement -routability_driven -density $place_density \
+global_placement -routability_driven  -timing_driven -density $place_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     $::env(GLOBAL_PLACEMENT_ARGS)
 } else {
-global_placement -routability_driven -density $place_density \
+global_placement -routability_driven -timing_driven -density $place_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 }
