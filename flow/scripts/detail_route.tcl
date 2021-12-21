@@ -44,10 +44,10 @@ if { [info exists ::env(MAX_ROUTING_LAYER)]} {
   append additional_args " -top_routing_layer $::env(MAX_ROUTING_LAYER)"
 }
 if { [info exists ::env(VIA_IN_PIN_MIN_LAYER)]} {
-  append additional_args " -droute_via_in_pin_bottom_layer_num $::env(VIA_IN_PIN_MIN_LAYER)"
+  append additional_args " -via_in_pin_bottom_layer $::env(VIA_IN_PIN_MIN_LAYER)"
 }
 if { [info exists ::env(VIA_IN_PIN_MAX_LAYER)]} {
-  append additional_args " -droute_via_in_pin_top_layer_num $::env(VIA_IN_PIN_MAX_LAYER)"
+  append additional_args " -via_in_pin_top_layer $::env(VIA_IN_PIN_MAX_LAYER)"
 }
 
 
