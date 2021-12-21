@@ -20,7 +20,5 @@ deleteRoutingObstructions
 
 density_fill -rules $::env(FILL_CONFIG)
 
-if {![info exists standalone] || $standalone} {
-  write_def $::env(RESULTS_DIR)/6_1_fill.def
-  write_verilog $::env(RESULTS_DIR)/6_1_fill.v
-}
+write_def $::env(RESULTS_DIR)/6_1_fill.def
+write_verilog $::env(RESULTS_DIR)/6_1_fill.v

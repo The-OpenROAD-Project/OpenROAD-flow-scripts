@@ -57,9 +57,10 @@ detailed_route -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
                -verbose 1 \
                {*}$additional_args
 
-write_def $::env(RESULTS_DIR)/5_route.def
-
-# post routing user TCL script hook
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
+}
+
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_def $::env(RESULTS_DIR)/5_route.def
 }

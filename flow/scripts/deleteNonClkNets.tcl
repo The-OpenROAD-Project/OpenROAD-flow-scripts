@@ -34,4 +34,5 @@ foreach inst $insts {
     odb::dbInst_destroy $inst
   }
 }
+
 write_def $::env(RESULTS_DIR)/6_final_only_clk.def
