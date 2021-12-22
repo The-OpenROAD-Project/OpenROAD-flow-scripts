@@ -49,6 +49,9 @@ if { [info exists ::env(VIA_IN_PIN_MIN_LAYER)]} {
 if { [info exists ::env(VIA_IN_PIN_MAX_LAYER)]} {
   append additional_args " -via_in_pin_top_layer $::env(VIA_IN_PIN_MAX_LAYER)"
 }
+if { [info exists ::env(DISABLE_VIA_GEN)]} {
+  append additional_args " -disable_via_gen"
+}
 
 
 detailed_route -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
