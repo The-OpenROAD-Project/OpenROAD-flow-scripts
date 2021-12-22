@@ -162,6 +162,9 @@ export PLACE_PINS_ARGS
 
 export FLOW_VARIANT ?= base
 
+export GPL_TIMING_DRIVEN ?= 1
+export GPL_ROUTABILITY_DRIVEN ?= 1
+
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
