@@ -48,16 +48,19 @@ if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
   set place_density $::env(PLACE_DENSITY)
 }
 
-if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
-global_placement -routability_driven  -timing_driven -density $place_density \
+set global_placement_args ""
+if {$::env(GPL_ROUTABILITY_DRIVEN)} {
+    append global_placement_args " -routability_driven"
+}
+if {$::env(GPL_TIMING_DRIVEN)} {
+    append global_placement_args " -timing_driven"
+}
+
+puts "gpl args: $global_placement_args"
+global_placement -density $place_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-    $::env(GLOBAL_PLACEMENT_ARGS)
-} else {
-global_placement -routability_driven -timing_driven -density $place_density \
-    -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-    -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
-}
+    {*}$global_placement_args
 
 estimate_parasitics -placement
 
