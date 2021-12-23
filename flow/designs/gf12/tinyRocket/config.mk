@@ -33,6 +33,6 @@ export PLACE_DENSITY = 0.20
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
 # TODO: replace this with max(CHANNEL_WIDTH_[HV]) from IP_global.cfg
-export MACRO_BLOCKAGE_HALO = 25
+export MACRO_BLOCKAGE_HALO = 10
 
 export DESIGN_TYPE = CELL
