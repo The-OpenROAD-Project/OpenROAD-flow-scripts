@@ -254,7 +254,7 @@ def read_config(file_name):
         data = json.load(file)
     sdc_file = ''
     fr_file = ''
-    if args.algorithm == 'ax':
+    if args.mode == 'tune' and args.algorithm == 'ax':
         config = list()
     else:
         config = dict()
@@ -847,7 +847,6 @@ if __name__ == '__main__':
             local_dir=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
-            queue_trials=True,
         )
         if args.algorithm == 'pbt':
             tune_args['scheduler'] = search_algo
