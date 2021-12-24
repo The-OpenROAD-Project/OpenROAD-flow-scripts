@@ -29,7 +29,6 @@ export PLACE_DENSITY = 0.35
 
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
-export MACRO_BLOCKAGE_HALO = 10
 export DIE_AREA    = 0 0 752 752
 export CORE_AREA   = 2 2 750 750
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:450-750
