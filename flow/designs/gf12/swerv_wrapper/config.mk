@@ -21,8 +21,6 @@ export DIE_AREA    = 0 0 702 542
 export CORE_AREA   = 2 2 700 540 
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-10 -exclude bottom:400-700
 
-export MACRO_PLACE_CHANNEL = 20.16 20.16
-
 export PLACE_DENSITY = 0.40
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
