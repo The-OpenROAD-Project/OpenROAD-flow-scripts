@@ -29,8 +29,6 @@ export TIELO_CELL_AND_PORT = LOGIC0_X1 Z
 # Used in synthesis
 export MIN_BUF_CELL_AND_PORTS = BUF_X1 A Z
 
-# Used in synthesis
-export MAX_FANOUT = 100
 
 # Yosys mapping files
 export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch.v
@@ -52,7 +50,7 @@ export ABC_LOAD_IN_FF = 3.898
 export PLACE_SITE = FreePDK45_38x28_10R_NP_162NW_34O
 #
 # IO Pin fix margin
-export IO_PIN_MARGIN = 70
+export IO_PIN_MARGIN ?= 70
 #
 # IO Placer pin layers
 export IO_PLACER_H = metal3
@@ -77,8 +75,6 @@ export WIRE_RC_LAYER = metal3
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
 #
-# resizer repair_long_wires -max_length
-export MAX_WIRE_LENGTH = 1000
 
 export PLACE_DENSITY ?= 0.30
 

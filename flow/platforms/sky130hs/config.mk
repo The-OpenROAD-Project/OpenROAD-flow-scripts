@@ -30,8 +30,6 @@ export TIELO_CELL_AND_PORT = sky130_fd_sc_hs__conb_1 LO
 # Used in synthesis
 export MIN_BUF_CELL_AND_PORTS = sky130_fd_sc_hs__buf_4 A X
 
-# Used in synthesis
-export MAX_FANOUT ?= 100
 
 # Yosys mapping files
 export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch_hs.v
@@ -41,7 +39,8 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hs.v
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
 export ABC_LOAD_IN_FF = 5
-export ABC_CLOCK_PERIOD_IN_PS = 10
+# Set yosys-abc clock period to first "-period" found in sdc file
+export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_FILE) | awk '{print $$2}')
 
 #--------------------------------------------------------
 # Floorplan
@@ -52,7 +51,7 @@ export ABC_CLOCK_PERIOD_IN_PS = 10
 export PLACE_SITE = unit
 
 # IO Pin fix margin
-export IO_PIN_MARGIN = 70
+export IO_PIN_MARGIN ?= 70
 #
 # IO Placer pin layers
 export IO_PLACER_H = met3
@@ -78,8 +77,6 @@ export WIRE_RC_LAYER = met3
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 4
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 2
 #
-# resizer repair_long_wires -max_length
-export MAX_WIRE_LENGTH = 21000
 
 export PLACE_DENSITY ?= 0.50
 #
