@@ -66,7 +66,8 @@ endif
 # Verbosity
 OPTS += -v
 
-export SHELL := /bin/bash
+SHELL ?= /bin/bash
+export SHELL
 export SHELLOPTS := pipefail
 
 %.ok: configs/%.py | $(OPENRAM_COMPILER) $(SKY130_FD_PR)
