@@ -69,6 +69,11 @@ if {[find_macros] != ""} {
   set channel_max [expr max($channel_x, $channel_y)]
   set blockage_width [expr max($halo_max, $channel_max/2)]
 
+  
+  if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
+    set blockage_width $::env(MACRO_BLOCKAGE_HALO)
+  }
+
   if {[info exists ::env(RTLMP_FLOW)]} {
     puts "RTLMP Flow enabled..."
     set additional_partition_args ""

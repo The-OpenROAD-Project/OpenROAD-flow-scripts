@@ -55,6 +55,8 @@ export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 #export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_bp_single.macro_placment.cfg
 export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_fence2_bp_single.macro_placment.cfg
 
+export MACRO_BLOCKAGE_HALO = 25
+
 export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.cfg
 
 export DESIGN_TYPE = CHIP
