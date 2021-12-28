@@ -43,7 +43,7 @@ export ADDITIONAL_GDS  += $(PLATFORM_DIR)/$(DESIGN_NAME)/gds2/RFSPHD_A53_HS_128X
 export DIE_AREA    = 0 0 1400 1400 
 export CORE_AREA   = 10 10 1390 1390 
 export PLACE_DENSITY_LB_ADDON = 0.05
-export PLACE_PINS_ARGS = -exclude left:0-600 exclude left: 1350-1400 -exclude right:* -exclude top:* -exclude bottom:*
+export PLACE_PINS_ARGS = -exclude left:0-600 -exclude left:1350-1400 -exclude right:* -exclude top:* -exclude bottom:*
 
 export MACRO_WRAPPERS = $(dir $(DESIGN_CONFIG))/wrappers.tcl
 export MACRO_BLOCKAGE_HALO = 25
