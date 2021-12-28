@@ -113,8 +113,8 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 export WIRE_RC_LAYER = met3
 #
 # default cell padding for cells 
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 4
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 2
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 1
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
 #
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 21000
