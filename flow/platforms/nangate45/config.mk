@@ -74,8 +74,8 @@ export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 export WIRE_RC_LAYER = metal3
 
 # Cell padding in SITE widths to ease rout-ability.  Applied to both sides
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 2
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 1
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
 #
 # resizer repair_long_wires -max_length
 export MAX_WIRE_LENGTH = 1000
@@ -109,6 +109,9 @@ export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/FreePDK45.lydrc
 
 # KLayout LVS ruledeck
 export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/FreePDK45.lylvs
+
+# Allow empty GDS cell
+export GDS_ALLOW_EMPTY = fakeram.*
 
 export CDL_FILE = $(PLATFORM_DIR)/cdl/NangateOpenCellLibrary.cdl
 

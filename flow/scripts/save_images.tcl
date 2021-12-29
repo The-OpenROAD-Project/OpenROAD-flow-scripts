@@ -1,3 +1,5 @@
+gui::save_display_controls
+
 set height [[[ord::get_db_block] getBBox] getDY]
 set height [ord::dbu_to_microns $height]
 set resolution [expr $height / 1000]
@@ -48,3 +50,5 @@ for {set i 0} {$i <= 5} {incr i} {
     gui::clear_highlights $i
 }
 gui::clear_selections
+
+gui::restore_display_controls

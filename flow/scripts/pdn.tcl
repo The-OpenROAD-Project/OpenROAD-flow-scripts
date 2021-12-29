@@ -24,17 +24,10 @@ if {[info exist ::env(PDN_TCL)]} {
   pdngen $::env(PDN_CFG) -verbose
 }
 
-#foreach net_name [concat $::power_nets $::ground_nets] {
-#  check_power_grid -net $net_name
-#}
+if { [info exists ::env(POST_PDN_TCL)] && [file exists $::env(POST_PDN_TCL)] } {
+  source $::env(POST_PDN_TCL)
+}
 
-if {![info exists standalone] || $standalone} {
-  # write output
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/2_6_floorplan_pdn.def
-
-  if {[info exists ::env(POST_PDN_TCL)] && [file exists $::env(POST_PDN_TCL)]} {
-    source $::env(POST_PDN_TCL)
-  }
-
-  exit
 }

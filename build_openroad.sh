@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script builds the OpenROAD Flow tools locally or in a Docker image.
 
 # Exit on first error, do not allow unbound variables

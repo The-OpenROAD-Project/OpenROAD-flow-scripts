@@ -44,10 +44,13 @@ if { [info exists ::env(MAX_ROUTING_LAYER)]} {
   append additional_args " -top_routing_layer $::env(MAX_ROUTING_LAYER)"
 }
 if { [info exists ::env(VIA_IN_PIN_MIN_LAYER)]} {
-  append additional_args " -droute_via_in_pin_bottom_layer_num $::env(VIA_IN_PIN_MIN_LAYER)"
+  append additional_args " -via_in_pin_bottom_layer $::env(VIA_IN_PIN_MIN_LAYER)"
 }
 if { [info exists ::env(VIA_IN_PIN_MAX_LAYER)]} {
-  append additional_args " -droute_via_in_pin_top_layer_num $::env(VIA_IN_PIN_MAX_LAYER)"
+  append additional_args " -via_in_pin_top_layer $::env(VIA_IN_PIN_MAX_LAYER)"
+}
+if { [info exists ::env(DISABLE_VIA_GEN)]} {
+  append additional_args " -disable_via_gen"
 }
 
 
@@ -57,13 +60,10 @@ detailed_route -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
                -verbose 1 \
                {*}$additional_args
 
-write_def $::env(RESULTS_DIR)/5_route.def
-
-# post routing user TCL script hook
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
 }
 
-if {![info exists standalone] || $standalone} {
-  exit
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_def $::env(RESULTS_DIR)/5_route.def
 }

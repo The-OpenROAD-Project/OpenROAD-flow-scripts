@@ -33,11 +33,50 @@ pipeline {
             }
           }
         }
+        stage("asap7 ethmac") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh ethmac asap7";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("asap7 gcd") {
           agent any;
           steps {
             unstash "install";
             sh "flow/test/test_helper.sh gcd asap7";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("asap7 sha3") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh sha3 asap7";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("asap7 uart") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh uart asap7";
           }
           post {
             always {
@@ -215,11 +254,11 @@ pipeline {
             }
           }
         }
-        stage("sky130 hd bp_fe") {
+        stage("sky130 hd riscv32i") {
           agent any;
           steps {
             unstash "install";
-            sh "flow/test/test_helper.sh bp_fe sky130hd";
+            sh "flow/test/test_helper.sh riscv32i sky130hd";
           }
           post {
             always {
@@ -228,20 +267,7 @@ pipeline {
             }
           }
         }
-	stage("sky130 hd tinyRocket") {
-          agent any;
-          steps {
-            unstash "install";
-            sh "flow/test/test_helper.sh tinyRocket sky130hd";
-          }
-          post {
-            always {
-              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/*tar.gz";
-            }
-          }
-        }
-	stage("sky130 hs aes") {
+        stage("sky130 hs aes") {
           agent any;
           steps {
             unstash "install";
@@ -285,6 +311,19 @@ pipeline {
           steps {
             unstash "install";
             sh "flow/test/test_helper.sh jpeg sky130hs";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
+        stage("sky130 hs riscv32i") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh riscv32i sky130hs";
           }
           post {
             always {
@@ -339,7 +378,10 @@ pipeline {
             to: "$EMAIL_TO",
             replyTo: "$REPLY_TO",
             subject: '$DEFAULT_SUBJECT',
-            body: '$DEFAULT_CONTENT',
+            body: '''
+$DEFAULT_CONTENT
+${FILE,path="flow/reports/report-summary.log"}
+            ''',
             )
       }
     }

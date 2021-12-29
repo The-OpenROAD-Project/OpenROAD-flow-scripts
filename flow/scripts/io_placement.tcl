@@ -24,8 +24,6 @@ place_pins -hor_layer $::env(IO_PLACER_H) \
            -ver_layer $::env(IO_PLACER_V) \
            {*}$::env(PLACE_PINS_ARGS)
 
-if {![info exists standalone] || $standalone} {
-  # write output
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/3_2_place_iop.def
-  exit
 }

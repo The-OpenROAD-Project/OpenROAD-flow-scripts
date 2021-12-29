@@ -18,9 +18,4 @@ if {![info exists standalone] || $standalone} {
 }
 
 puts "Starting generation of abstract views"
-source scripts/generate_lef.tcl 
-
-
-if {![info exists standalone] || $standalone} {
-  exit
-}
+source scripts/generate_lef.tcl

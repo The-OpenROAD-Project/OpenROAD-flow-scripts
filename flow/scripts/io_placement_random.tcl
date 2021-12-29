@@ -25,8 +25,6 @@ place_pins -hor_layer $::env(IO_PLACER_H) \
            -random \
            {*}$::env(PLACE_PINS_ARGS)
 
-if {![info exists standalone] || $standalone} {
-  # write output
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/2_2_floorplan_io.def
-  exit
 }
