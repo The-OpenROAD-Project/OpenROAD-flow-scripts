@@ -79,7 +79,7 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hd.v
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
 export ABC_LOAD_IN_FF = 5
 # Set yosys-abc clock period to first "-period" found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_FILE) | awk '{print $$2}')
+#export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_FILE) | awk '{print $$2}')
 
 #--------------------------------------------------------
 # Floorplan
@@ -89,9 +89,6 @@ export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_
 # This can be found in the technology lef
 export PLACE_SITE = unithd
 
-# IO Pin fix margin
-export IO_PIN_MARGIN ?= 70
-#
 # IO Placer pin layers
 export IO_PLACER_H = met3
 export IO_PLACER_V = met2

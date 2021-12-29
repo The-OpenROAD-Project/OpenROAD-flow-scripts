@@ -48,10 +48,7 @@ export ABC_LOAD_IN_FF = 3.898
 # Placement site for core cells
 # This can be found in the technology lef
 export PLACE_SITE = FreePDK45_38x28_10R_NP_162NW_34O
-#
-# IO Pin fix margin
-export IO_PIN_MARGIN ?= 70
-#
+
 # IO Placer pin layers
 export IO_PLACER_H = metal3
 export IO_PLACER_V = metal2

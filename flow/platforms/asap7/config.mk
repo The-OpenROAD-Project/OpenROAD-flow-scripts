@@ -73,9 +73,6 @@ export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_R A Y
 # This can be found in the technology lef
 export PLACE_SITE              = asap7sc7p5t
 
-# IO Pin fix margin
-export IO_PIN_MARGIN          ?= 70
-
 export MAKE_TRACKS             = $(PLATFORM_DIR)/openRoad/make_tracks.tcl
 
 # Define default PDN config

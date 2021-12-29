@@ -50,9 +50,6 @@ export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_
 # This can be found in the technology lef
 export PLACE_SITE = unit
 
-# IO Pin fix margin
-export IO_PIN_MARGIN ?= 70
-#
 # IO Placer pin layers
 export IO_PLACER_H = met3
 export IO_PLACER_V = met2
