@@ -25,6 +25,9 @@ if { [llength $clks] == 0 } {
     # Undo the set_propagated_clock so SDC at beginning of flow uses ideal clocks.
     unset_propagated_clock [all_clocks]
     write_sdc [file join $env(RESULTS_DIR) "updated_clks.sdc"]
+    # Reset
+    create_clock -name $clk_name -period $period $sources
+    set_propagated_clock [all_clocks]
   } else {
     utl::warn "FLW" 10 "more than one clock found. Skipping sdc update."
   }
