@@ -16,20 +16,4 @@ export CORE_MARGIN = 2
 
 export PLACE_DENSITY = uniform
 
-export CORNER                ?= BC
-
-export LIB_FILES             += $($(CORNER)_LIB_FILES)
-export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
-export DB_FILES              += $($(CORNER)_DB_FILES)
-export DB_DIRS               += $($(CORNER)_DB_DIRS)
-export WRAP_LIBS             += $(WRAP_$(CORNER)_LIBS)
-export WRAP_LEFS             += $(WRAP_$(CORNER)_LEFS)
-export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
-
 export ABC_CLOCK_PERIOD_IN_PS = 3800
-
-export DESIGN_POWER           = VDD
-export DESIGN_GROUND          = VSS
-
-export PDN_CFG                = $(FOUNDRY_DIR)/openRoad/pdn/grid_strategy-M1-M7-2.cfg
-
