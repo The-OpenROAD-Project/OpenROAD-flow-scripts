@@ -124,6 +124,10 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).sh
 	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).tcl
 	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).gdb
+	# remove QT variable
+	@sed -i '/QT_QPA_PLATFORM/d' $(VARS_BASENAME).sh
+	@sed -i '/QT_QPA_PLATFORM/d' $(VARS_BASENAME).tcl
+	@sed -i '/QT_QPA_PLATFORM/d' $(VARS_BASENAME).gdb
 
 # This requires gnu-tar to support --xform
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz
