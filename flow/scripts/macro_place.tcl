@@ -92,7 +92,7 @@ if {[find_macros] != ""} {
 
     set additional_rtlmp_args ""
     
-    append additional_rtmp_args " -macro_halo $halo_max"
+    append additional_rtlmp_args " -macro_halo $halo_max"
 
     if { [info exists ::env(RTLMP_AREA_WT)]} {
         append additional_rtlmp_args " -area_weight $env(RTLMP_AREA_WT)"
