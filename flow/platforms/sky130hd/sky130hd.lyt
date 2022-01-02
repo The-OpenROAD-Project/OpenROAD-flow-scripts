@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <technology>
- <name>sky130</name>
- <description/>
+ <name>sky130A</name>
+ <description>SkyWater 130nm technology</description>
+ <group/>
  <dbu>0.001</dbu>
  <base-path>./platforms/sky130hd/</base-path>
  <original-base-path>.klayout/tech/sky130</original-base-path>
@@ -93,6 +94,16 @@
    <create-other-layers>true</create-other-layers>
    <keep-layer-names>false</keep-layer-names>
   </cif>
+  <mag>
+   <lambda>1</lambda>
+   <dbu>0.001</dbu>
+   <layer-map>layer_map()</layer-map>
+   <create-other-layers>true</create-other-layers>
+   <keep-layer-names>false</keep-layer-names>
+   <merge>true</merge>
+   <lib-paths>
+   </lib-paths>
+  </mag>
  </reader-options>
  <writer-options>
   <gds2>
@@ -101,6 +112,7 @@
    <write-file-properties>false</write-file-properties>
    <no-zero-length-paths>false</no-zero-length-paths>
    <multi-xy-records>false</multi-xy-records>
+   <resolve-skew-arrays>false</resolve-skew-arrays>
    <max-vertex-count>8000</max-vertex-count>
    <max-cellname-length>32000</max-cellname-length>
    <libname>LIB</libname>
@@ -120,7 +132,27 @@
    <dummy-calls>false</dummy-calls>
    <blank-separator>false</blank-separator>
   </cif>
+  <mag>
+   <lambda>0</lambda>
+   <tech/>
+   <write-timestamp>true</write-timestamp>
+  </mag>
  </writer-options>
  <connectivity>
+  <connection>li1,mcon,met1</connection>
+  <connection>met1,via,met2</connection>
+  <connection>met2,via2,met3</connection>
+  <connection>met3,via3,met4</connection>
+  <connection>met4,via4,met5</connection>
+  <symbols>li1='67/20+67/16'</symbols>
+  <symbols>met1='68/20+68/16'</symbols>
+  <symbols>met2='69/20+69/16'</symbols>
+  <symbols>met3='70/20+70/16'</symbols>
+  <symbols>met4='71/20+71/16'</symbols>
+  <symbols>met5='72/20-72/15+72/16'</symbols>
+  <symbols>via='68/44'</symbols>
+  <symbols>via2='69/44'</symbols>
+  <symbols>via3='70/44'</symbols>
+  <symbols>via4='71/44'</symbols>
  </connectivity>
 </technology>
