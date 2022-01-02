@@ -27,30 +27,49 @@
    <net-property-name>#1</net-property-name>
    <produce-inst-names>true</produce-inst-names>
    <inst-property-name>#1</inst-property-name>
+   <produce-pin-names>false</produce-pin-names>
+   <pin-property-name>#1</pin-property-name>
    <produce-cell-outlines>true</produce-cell-outlines>
-   <cell-outline-layer>OUTLINE</cell-outline-layer>
+   <cell-outline-layer>prBoundary.boundary</cell-outline-layer>
    <produce-placement-blockages>true</produce-placement-blockages>
    <placement-blockage-layer>PLACEMENT_BLK</placement-blockage-layer>
    <produce-regions>true</produce-regions>
    <region-layer>REGIONS</region-layer>
    <produce-via-geometry>true</produce-via-geometry>
-   <via-geometry-suffix>.drawing</via-geometry-suffix>
-   <via-geometry-datatype>0</via-geometry-datatype>
+   <special-via_geometry-suffix-string>.drawing</special-via_geometry-suffix-string>
+   <special-via_geometry-datatype-string>44</special-via_geometry-datatype-string>
    <produce-pins>true</produce-pins>
-   <pins-suffix>.pin</pins-suffix>
-   <pins-datatype>2</pins-datatype>
-   <produce-obstructions>true</produce-obstructions>
+   <special-pins-suffix-string>.pin</special-pins-suffix-string>
+   <special-pins-datatype-string>16</special-pins-datatype-string>
+   <produce-lef-pins>true</produce-lef-pins>
+   <special-lef_pins-suffix-string>.pin</special-lef_pins-suffix-string>
+   <special-lef_pins-datatype-string>16</special-lef_pins-datatype-string>
+   <produce-fills>false</produce-fills>
+   <special-fills-suffix-string>.FILL</special-fills-suffix-string>
+   <special-fills-datatype-string>5</special-fills-datatype-string>
+   <produce-obstructions>false</produce-obstructions>
    <obstructions-suffix>.blockage</obstructions-suffix>
-   <obstructions-datatype>3</obstructions-datatype>
+   <obstructions-datatype>10</obstructions-datatype>
    <produce-blockages>true</produce-blockages>
    <blockages-suffix>.blockage</blockages-suffix>
-   <blockages-datatype>4</blockages-datatype>
+   <blockages-datatype>10</blockages-datatype>
    <produce-labels>true</produce-labels>
    <labels-suffix>.label</labels-suffix>
-   <labels-datatype>1</labels-datatype>
+   <labels-datatype>5</labels-datatype>
+   <produce-lef-labels>true</produce-lef-labels>
+   <lef-labels-suffix>.label</lef-labels-suffix>
+   <lef-labels-datatype>5</lef-labels-datatype>
    <produce-routing>true</produce-routing>
-   <routing-suffix>.drawing</routing-suffix>
-   <routing-datatype>0</routing-datatype>
+   <special-routing-suffix-string>.drawing</special-routing-suffix-string>
+   <special-routing-datatype-string>20</special-routing-datatype-string>
+   <produce-special-routing>true</produce-special-routing>
+   <routing-suffix-string>.drawing</routing-suffix-string>
+   <routing-datatype-string>20</routing-datatype-string>
+   <via-cellname-prefix>VIA_</via-cellname-prefix>
+   <read-lef-with-def>true</read-lef-with-def>
+   <macro-resolution-mode>default</macro-resolution-mode>
+   <separate-groups>false</separate-groups>
+   <map-file/>
    <lef-files>merged.lef</lef-files>
   </lefdef>
   <dxf>
