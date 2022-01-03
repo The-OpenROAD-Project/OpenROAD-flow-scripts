@@ -18,4 +18,8 @@ export RTLMP_MIN_MACRO = 4
 export DIE_AREA    = 0 0 1950 1560
 export CORE_AREA   = 10 12 1940 1550
 export PLACE_PINS_ARGS = -exclude left:0-400 -exclude left:900-1560 -exclude right:* -exclude top:* -exclude bottom:*
+
+export MACRO_PLACE_HALO = 10 10
+export MACRO_PLACE_CHANNEL = 20 20
+
 export PLACE_DENSITY = .70

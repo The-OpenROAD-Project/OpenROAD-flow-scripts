@@ -24,5 +24,8 @@ export RTLMP_NOTCH_WT = 100.0
 export DIE_AREA    = 0 0 650 500
 export CORE_AREA   = 10 10 640 490
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:400-650
+#
+export MACRO_PLACE_HALO = 5 5
+export MACRO_PLACE_CHANNEL = 10 10
 
 export PLACE_DENSITY = 0.55
