@@ -22,4 +22,7 @@ export DIE_AREA    = 0 0 700 700
 export CORE_AREA   = 10 10 690 690
 export PLACE_PINS_ARGS = -exclude left:0-300 -exclude left:400-700 -exclude right:* -exclude top:* -exclude bottom:*
 
+export MACRO_PLACE_HALO = 5 5
+export MACRO_PLACE_CHANNEL = 10 10
+
 export PLACE_DENSITY = 0.55
