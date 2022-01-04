@@ -70,7 +70,11 @@ proc report_metrics { when {include_erc true}} {
   puts "\n=========================================================================="
   puts "$when report_clock_skew"
   puts "--------------------------------------------------------------------------"
-  report_clock_skew
+  report_clock_skew -json {
+    [map_when_to_json_key $when "clock__skew__worst"] 
+    [map_when_to_json_key $when "clock__latency__min"] 
+    [map_when_to_json_key $when "clock__latency__max"] 
+  }
 
   puts "\n=========================================================================="
   puts "$when report_power"
@@ -118,10 +122,10 @@ proc map_when_to_json_key {when report_class} {
       return "cts__${report_class}"
     }
     "global route" {
-      return "cts__${report_class}"
+      return "globalroute__${report_class}"
     }
     "finish" {
-      return "cts__${report_class}"
+      return "finish__${report_class}"
     }
   }
 }
