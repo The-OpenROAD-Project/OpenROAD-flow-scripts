@@ -25,14 +25,14 @@ proc report_metrics { when {include_erc true}} {
     puts "--------------------------------------------------------------------------"
     set max_slew_violation_count [sta::max_slew_violation_count]
     puts "max slew violation count $max_slew_violation_count"
-    utl::metric_integer [map_when_to_json_key $when "timing__drv__max_slew"] $max_slew_violation_count
+    utl::metric_integer [map_when_to_json_key "$when" "timing__drv__max_slew"] $max_slew_violation_count
 
     puts "\n=========================================================================="
     puts "$when max_fanout_violation_count"
     puts "--------------------------------------------------------------------------"
     set max_fanout_violation_count [sta::max_fanout_violation_count]
     puts "max fanout violation count $max_fanout_violation_count"
-    utl::metric_integer [map_when_to_json_key $when "timing__drv__max_fanout"] $max_slew_violation_count
+    utl::metric_integer [map_when_to_json_key "$when" "timing__drv__max_fanout"] $max_slew_violation_count
 
     puts "\n=========================================================================="
     puts "$when max_cap_violation_count"
@@ -55,7 +55,7 @@ proc report_metrics { when {include_erc true}} {
   puts "\n=========================================================================="
   puts "$when report_tns"
   puts "--------------------------------------------------------------------------"
-  report_tns -json [map_when_to_json_key $when "timing__setup__tns"]
+  report_tns -json [map_when_to_json_key "$when" "timing__setup__tns"]
 
   puts "\n=========================================================================="
   puts "$when report_wns"
@@ -65,15 +65,15 @@ proc report_metrics { when {include_erc true}} {
   puts "\n=========================================================================="
   puts "$when report_worst_slack"
   puts "--------------------------------------------------------------------------"
-  report_worst_slack -json [map_when_to_json_key $when "timing__setup__ws"]
+  report_worst_slack -json [map_when_to_json_key "$when" "timing__setup__ws"]
 
   puts "\n=========================================================================="
   puts "$when report_clock_skew"
   puts "--------------------------------------------------------------------------"
   report_clock_skew -json {
-    [map_when_to_json_key $when "clock__skew__worst"] 
-    [map_when_to_json_key $when "clock__latency__min"] 
-    [map_when_to_json_key $when "clock__latency__max"] 
+    [map_when_to_json_key "$when" "clock__skew__worst"] 
+    [map_when_to_json_key "$when" "clock__latency__min"] 
+    [map_when_to_json_key "$when" "clock__latency__max"] 
   }
 
   puts "\n=========================================================================="
@@ -92,7 +92,7 @@ proc report_metrics { when {include_erc true}} {
   puts "\n=========================================================================="
   puts "$when report_design_area"
   puts "--------------------------------------------------------------------------"
-  report_design_area -json_area [map_when_to_json_key $when "design__instance__area__stdcell"] -json_util [map_when_to_json_key $when "design__instance__utilization"]
+  report_design_area -json_area [map_when_to_json_key "$when" "design__instance__area__stdcell"] -json_util [map_when_to_json_key "$when" "design__instance__utilization"]
 
   puts ""
 }
