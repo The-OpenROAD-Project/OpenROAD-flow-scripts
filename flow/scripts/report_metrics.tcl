@@ -25,14 +25,14 @@ proc report_metrics { when {include_erc true}} {
     puts "--------------------------------------------------------------------------"
     set max_slew_violation_count [sta::max_slew_violation_count]
     puts "max slew violation count $max_slew_violation_count"
-    utl::metric [map_when_to_json_key $when "timing__drv__max_slew"] $max_slew_violation_count
+    utl::metric_integer [map_when_to_json_key $when "timing__drv__max_slew"] $max_slew_violation_count
 
     puts "\n=========================================================================="
     puts "$when max_fanout_violation_count"
     puts "--------------------------------------------------------------------------"
     set max_fanout_violation_count [sta::max_fanout_violation_count]
     puts "max fanout violation count $max_fanout_violation_count"
-    utl::metric [map_when_to_json_key $when "timing__drv__max_fanout"] $max_slew_violation_count
+    utl::metric_integer [map_when_to_json_key $when "timing__drv__max_fanout"] $max_slew_violation_count
 
     puts "\n=========================================================================="
     puts "$when max_cap_violation_count"
