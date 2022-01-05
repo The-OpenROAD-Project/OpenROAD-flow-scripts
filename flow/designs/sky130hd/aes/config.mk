@@ -5,7 +5,7 @@ export PLATFORM    = sky130hd
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export ABC_CLOCK_PERIOD_IN_PS = 10
+export ABC_CLOCK_PERIOD_IN_PS = 3700
 
 export CORE_UTILIZATION = 20 
 export CORE_ASPECT_RATIO = 1

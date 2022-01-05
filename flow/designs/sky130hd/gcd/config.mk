@@ -3,6 +3,7 @@ export PLATFORM    = sky130hd
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/gcd.v
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export ABC_CLOCK_PERIOD_IN_PS = 4300
 
 # Adders degrade GCD
 export ADDER_MAP_FILE :=
