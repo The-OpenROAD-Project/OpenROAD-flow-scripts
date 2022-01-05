@@ -1,15 +1,19 @@
-###############################################################################
-# Created by write_sdc
-# Wed May  5 18:10:00 2021
-###############################################################################
 current_design jpeg_encoder
-###############################################################################
-# Timing Constraints
-###############################################################################
-create_clock -name clk -period 6.3874 -waveform {0.0000 3.1937} [get_ports {clk}]
-###############################################################################
-# Environment
-###############################################################################
-###############################################################################
-# Design Rules
-###############################################################################
+
+set clk_name  clk
+set clk_port_name clk
+set clk_period 6.1 
+set clk_port [get_ports $clk_port_name]
+
+create_clock -name $clk_name -period $clk_period $clk_port
+
+set non_clock_inputs [list]
+foreach input [all_inputs] {
+    if {$clk_port != $input} {
+        lappend $non_clock_inputs $input
+    }
+}
+
+
+set_input_delay  [expr $clk_period * 0.2] -clock $clk_name $non_clock_inputs 
+set_output_delay [expr $clk_period * 0.2] -clock $clk_name [all_outputs]

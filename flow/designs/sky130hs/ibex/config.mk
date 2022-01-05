@@ -40,6 +40,7 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
 						./designs/src/$(DESIGN_NICKNAME)/prim_secded_72_64_enc.v \
 						./designs/src/$(DESIGN_NICKNAME)/prim_xilinx_clock_gating.v
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export ABC_CLOCK_PERIOD_IN_PS = 11000
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4
