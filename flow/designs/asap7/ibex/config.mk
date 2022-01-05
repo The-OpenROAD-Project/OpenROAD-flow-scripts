@@ -5,6 +5,7 @@ export DESIGN_NAME            = ibex_core
 
 export VERILOG_FILES         = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE              = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export ABC_CLOCK_PERIOD_IN_PS = 2000
 
 export CORE_UTILIZATION       = 25 
 export CORE_ASPECT_RATIO      = 1
