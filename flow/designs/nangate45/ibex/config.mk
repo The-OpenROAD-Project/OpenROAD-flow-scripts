@@ -46,6 +46,7 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
 
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export ABC_CLOCK_PERIOD_IN_PS = 5340
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4
