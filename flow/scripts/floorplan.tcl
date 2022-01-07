@@ -115,8 +115,9 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
 
   set num_instances [llength [get_cells -hier *]]
   puts "number instances before restructure is $num_instances"
+  utl::metric_integer "floorplan__design__instance__count__stdcell__pre_restruct" $num_instances
   puts "Design Area before restructure"
-  report_design_area -json_util "floorplan__design__instance__area__stdcell__pre_restruct"  -json_area "floorplan__design__instance__area__stdcell__pre_restruct"
+  report_design_area -json_area "floorplan__design__instance__area__stdcell__pre_restruct"
 
   write_verilog $::env(RESULTS_DIR)/2_pre_abc.v
 
@@ -139,8 +140,9 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   write_verilog $::env(RESULTS_DIR)/2_post_abc.v
   set num_instances [llength [get_cells -hier *]]
   puts "number instances after restructure is $num_instances"
+  utl::metric_integer "floorplan__design__instance__count__stdcell__post_restruct" $num_instances
   puts "Design Area after restructure"
-  report_design_area -json_util "floorplan__design__instance__area__stdcell__post_restruct"  -json_area "floorplan__design__instance__area__stdcell__post_restruct"
+  report_design_area -json_area "floorplan__design__instance__area__stdcell__post_restruct"
 }
 
 if {![info exists standalone] || $standalone} {
