@@ -4,7 +4,6 @@ export PLATFORM    = nangate45
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
-export ABC_CLOCK_PERIOD_IN_PS = 810
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4

@@ -5,7 +5,6 @@ export DESIGN_NICKNAME        = aes
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
-export ABC_CLOCK_PERIOD_IN_PS = 540
 
 export ABC_AREA               = 1
 

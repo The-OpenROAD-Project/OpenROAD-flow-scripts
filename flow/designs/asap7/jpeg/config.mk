@@ -6,7 +6,6 @@ export DESIGN_NICKNAME        = jpeg
 export VERILOG_FILES          = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export VERILOG_INCLUDE_DIRS   = ./designs/src/$(DESIGN_NICKNAME)/include
 export SDC_FILE               = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_7nm.sdc
-export ABC_CLOCK_PERIOD_IN_PS = 1200
 export ABC_AREA               = 1
 
 export CORE_UTILIZATION       = 30
