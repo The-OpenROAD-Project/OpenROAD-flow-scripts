@@ -55,7 +55,7 @@ export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders.v
 export BLACKBOX_MAP_TCL        = $(PLATFORM_DIR)/yoSys/blackbox_map.tcl
 
 # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
+export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_R
 
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
