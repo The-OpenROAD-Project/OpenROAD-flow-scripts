@@ -40,8 +40,7 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hs.v
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
 export ABC_LOAD_IN_FF = 5
 # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "set\s+clk_period\s+\S+" $(SDC_FILE) | awk '{print $$3*1000}')
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_FILE) | awk '{print $$2*1000}')
+export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 
 #--------------------------------------------------------
 # Floorplan
