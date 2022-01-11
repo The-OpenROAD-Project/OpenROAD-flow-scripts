@@ -1,10 +1,6 @@
 if {![info exists standalone] || $standalone} {
   # Read lef
-  if [info exists ::env(GENERIC_TECH_LEF)] {
-    read_lef $::env(GENERIC_TECH_LEF)
-  } else {
-    read_lef $::env(TECH_LEF)
-  }
+  read_lef $::env(TECH_LEF)
   read_lef $::env(SC_LEF)
   if {[info exist ::env(ADDITIONAL_LEFS)]} {
     foreach lef $::env(ADDITIONAL_LEFS) {

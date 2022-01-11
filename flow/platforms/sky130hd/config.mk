@@ -69,8 +69,6 @@ export TIELO_CELL_AND_PORT = sky130_fd_sc_hd__conb_1 LO
 # Used in synthesis
 export MIN_BUF_CELL_AND_PORTS = sky130_fd_sc_hd__buf_4 A X
 
-# Used in synthesis
-export MAX_FANOUT = 5
 
 # Yosys mapping files
 export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch_hd.v
@@ -80,7 +78,6 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hd.v
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
 export ABC_LOAD_IN_FF = 5
-#export ABC_CLOCK_PERIOD_IN_PS = 10
 
 #--------------------------------------------------------
 # Floorplan
@@ -90,9 +87,6 @@ export ABC_LOAD_IN_FF = 5
 # This can be found in the technology lef
 export PLACE_SITE = unithd
 
-# IO Pin fix margin
-export IO_PIN_MARGIN = 70
-#
 # IO Placer pin layers
 export IO_PLACER_H = met3
 export IO_PLACER_V = met2
@@ -103,7 +97,7 @@ export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
 # Endcap and Welltie cells
 export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
 
-export MACRO_PLACE_HALO ?= 1 1
+export MACRO_PLACE_HALO ?= 40 40
 export MACRO_PLACE_CHANNEL ?= 80 80
 
 #---------------------------------------------------------
@@ -116,21 +110,17 @@ export WIRE_RC_LAYER = met3
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 1
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
 #
-# resizer repair_long_wires -max_length
-export MAX_WIRE_LENGTH = 21000
 
 export PLACE_DENSITY ?= 0.60
 
 # Cell padding in SITE widths to ease rout-ability
-export CELL_PAD_IN_SITES = 4
+export CELL_PAD_IN_SITES ?= 4
 # 
 # --------------------------------------------------------
 #  CTS
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   = sky130_fd_sc_hd__buf_1
-export CTS_MAX_SLEW   = 1.5e-9
-export CTS_MAX_CAP    = .1532e-12
 
 # ---------------------------------------------------------
 #  Route
