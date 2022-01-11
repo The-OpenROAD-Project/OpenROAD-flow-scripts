@@ -67,6 +67,7 @@ if {$::env(ABC_AREA)} {
 # Technology mapping for cells
 # ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
 if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
+  puts "\[FLOW\] Set ABC_CLOCK_PERIOD_IN_PS to: $::env(ABC_CLOCK_PERIOD_IN_PS)"
   abc -D [expr $::env(ABC_CLOCK_PERIOD_IN_PS)] \
       -script $abc_script \
       -liberty $::env(DONT_USE_SC_LIB) \
