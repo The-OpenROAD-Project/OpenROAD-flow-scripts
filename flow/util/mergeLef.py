@@ -6,7 +6,7 @@ import argparse  # argument parsing
 
 # WARNING: this script expects the tech lef first
 
-def mergeLef(inputLef,outputLef) :
+def mergeLef(inputLef, outputLef):
   print(os.path.basename(__file__),": Merging LEFs")
 
   f = open(inputLef[0])
@@ -85,4 +85,4 @@ if __name__ == "__main__" :
   parser.add_argument('--outputLef', '-o', required=True,
                       help='Output Lef')
   args = parser.parse_args()
-  mergeLef(args.inputLef,args.outputLef)
+  mergeLef(args.inputLef, args.outputLef)
