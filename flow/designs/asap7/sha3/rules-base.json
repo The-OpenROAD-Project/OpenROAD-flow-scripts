@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 2655,
+            "value": 2656,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 19923,
+            "value": 19927,
             "compare": "<="
         },
         {
@@ -27,32 +27,32 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -214.37,
+            "value": -67.55,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -496.68,
+            "value": -222.83,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -496.68,
+            "value": -222.83,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -227.9,
+            "value": -86.37,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -227.9,
+            "value": -86.37,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 81994,
+            "value": 81290,
             "compare": "<="
         },
         {
@@ -62,7 +62,7 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -207.53,
+            "value": -40.01,
             "compare": ">="
         },
         {
