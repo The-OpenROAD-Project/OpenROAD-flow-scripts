@@ -22,24 +22,3 @@ make_tracks M2  -x_offset [expr 0.009 * $multiplier] -x_pitch [expr 0.036 * $mul
 make_tracks M2  -x_offset [expr 0.009 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr (0.270 - 0.000) * $multiplier] -y_pitch [expr 0.270 * $multiplier]
 
 make_tracks M1  -x_offset [expr 0.009 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.009 * $multiplier] -y_pitch [expr 0.036 * $multiplier]
-
-# innovus
-#make_tracks Pad -x_offset [expr 0.116 * $multiplier] -x_pitch [expr 0.08  * $multiplier] -y_offset [expr 0.116 * $multiplier] -y_pitch [expr 0.08 * $multiplier]
-#make_tracks M9  -x_offset [expr 0.116 * $multiplier] -x_pitch [expr 0.08  * $multiplier] -y_offset [expr 0.116 * $multiplier] -y_pitch [expr 0.08 * $multiplier]
-#make_tracks M8  -x_offset [expr 0.116 * $multiplier] -x_pitch [expr 0.08  * $multiplier] -y_offset [expr 0.116 * $multiplier] -y_pitch [expr 0.08 * $multiplier]
-#make_tracks M7  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.064 * $multiplier] -y_offset [expr 0.036 * $multiplier] -y_pitch [expr 0.064 * $multiplier]
-#make_tracks M6  -x_offset [expr 0.048 * $multiplier] -x_pitch [expr 0.048 * $multiplier] -y_offset [expr 0.036 * $multiplier] -y_pitch [expr 0.064 * $multiplier]
-#make_tracks M5  -x_offset [expr 0.048 * $multiplier] -x_pitch [expr 0.048 * $multiplier] -y_offset [expr 0.027 * $multiplier] -y_pitch [expr 0.048 * $multiplier]
-#make_tracks M4  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.027 * $multiplier] -y_pitch [expr 0.048 * $multiplier]
-#make_tracks M3  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.036 * $multiplier] -y_pitch [expr 0.036 * $multiplier]
-#
-#make_tracks M2  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.045 * $multiplier] -y_pitch [expr 0.270 * $multiplier]
-#make_tracks M2  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.081 * $multiplier] -y_pitch [expr 0.270 * $multiplier]
-#make_tracks M2  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.117 * $multiplier] -y_pitch [expr 0.270 * $multiplier]
-#make_tracks M2  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.153 * $multiplier] -y_pitch [expr 0.270 * $multiplier]
-#make_tracks M2  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.189 * $multiplier] -y_pitch [expr 0.270 * $multiplier]
-#make_tracks M2  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.225 * $multiplier] -y_pitch [expr 0.270 * $multiplier]
-#make_tracks M2  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.000 * $multiplier] -y_pitch [expr 0.270 * $multiplier]
-#
-#make_tracks M1  -x_offset [expr 0.036 * $multiplier] -x_pitch [expr 0.036 * $multiplier] -y_offset [expr 0.036 * $multiplier] -y_pitch [expr 0.036 * $multiplier]
-
