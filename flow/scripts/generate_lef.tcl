@@ -11,8 +11,8 @@ set llx [expr [$BBOX  xMin] / $defUnits]
 set width [expr [$BBOX getDX] / $defUnits]
 set height [expr [$BBOX getDY] / $defUnits]
 
-set data "VERSION 5.7 ;\n  NOWIREEXTENSIONATPIN ON ;\n  DIVIDERCHAR \"/\" ;\n  BUSBITCHARS \"\[\]\" ;\n  USEMINSPACING OBS OFF ;\
-\nMACRO $BName \n  CLASS BLOCK ; \n  FOREIGN $BName ; \n  ORIGIN $llx $lly ; \n  SIZE  $width BY $height ; "
+set data "VERSION 5.7 ;\n  NOWIREEXTENSIONATPIN ON ;\n  DIVIDERCHAR \"/\" ;\n  BUSBITCHARS \"\[\]\" ;\nMACRO $BName \
+\n  CLASS BLOCK ; \n  FOREIGN $BName ; \n  ORIGIN $llx $lly ; \n  SIZE  $width BY $height ; "
 
 foreach PIN [$block getBTerms] {
   set data "$data \n  PIN [$PIN getName] "
