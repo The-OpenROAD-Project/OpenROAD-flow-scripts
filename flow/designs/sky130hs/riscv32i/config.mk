@@ -4,6 +4,8 @@ export PLATFORM    = sky130hs
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export ABC_CLOCK_PERIOD_IN_PS = 4000
+
 
 # These values must be multiples of placement site
 #export DIE_AREA    = 0 0 380 380.8

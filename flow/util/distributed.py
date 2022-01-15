@@ -96,7 +96,7 @@ class AutoTunerBase(tune.Trainable):
             return (99999999999) * (self.step_ / 100)**(-1)
         gamma = (metrics['clk_period'] - metrics['worst_slack']) / 10
         score = metrics['clk_period'] - metrics['worst_slack']
-        score = (self.step_ / 100)**(-1) + gamma * metrics['num_drc']
+        score = score * (self.step_ / 100)**(-1) + gamma * metrics['num_drc']
         return score
 
     @classmethod
