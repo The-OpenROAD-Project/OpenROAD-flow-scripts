@@ -126,8 +126,8 @@ if {[find_macros] != ""} {
     }
 
     partition_design -net_threshold 5 \
-                     -virtual_weight 500 \
-                     -num_hop 5 \
+                     -virtual_weight 1 \
+                     -num_hop 3 \
                      -timing_weight 1 \
                      -report_directory $env(RTLMP_RPT_DIR) \
                      -report_file $env(RTLMP_RPT_FILE) \
