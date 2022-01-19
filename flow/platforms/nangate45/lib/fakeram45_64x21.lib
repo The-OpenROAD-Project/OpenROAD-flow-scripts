@@ -2,7 +2,7 @@ library(fakeram45_64x21) {
     technology (cmos);
     delay_model : table_lookup;
     revision : 1.0;
-    date : "2021-12-21 23:29:17Z";
+    date : "2022-01-19 15:53:18Z";
     comment : "SRAM";
     time_unit : "1ns";
     voltage_unit : "1V";
