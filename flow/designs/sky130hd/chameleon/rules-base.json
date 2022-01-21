@@ -57,7 +57,7 @@
         },
         {
             "field": "detailedroute__route__drc_errors",
-            "value": 0,
+            "value": 10,
             "compare": "<="
         },
         {
