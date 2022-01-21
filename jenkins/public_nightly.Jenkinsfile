@@ -315,6 +315,7 @@ pipeline {
             }
           }
         }
+/*
         stage("sky130 hd chameleon") {
           agent any;
           steps {
@@ -328,6 +329,7 @@ pipeline {
             }
           }
         }
+*/
         stage("sky130 hd chameleon_hier") {
           agent any;
           steps {

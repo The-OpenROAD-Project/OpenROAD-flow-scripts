@@ -202,6 +202,7 @@ pipeline {
             }
           }
         }
+/*
         stage("sky130 hd chameleon") {
           agent any;
           steps {
@@ -215,6 +216,7 @@ pipeline {
             }
           }
         }
+*/
         stage("sky130 hd gcd") {
           agent any;
           steps {
