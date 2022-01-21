@@ -124,4 +124,6 @@ proc map_when_to_json_key {when report_class} {
       return "finish__${report_class}"
     }
   }
+  puts "Unhandled report class: $when"
+  return $when
 }

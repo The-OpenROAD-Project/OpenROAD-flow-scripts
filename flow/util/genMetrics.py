@@ -230,10 +230,11 @@ def is_git_repo(folder=None):
         return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w')) == 0
 
 def merge_jsons(root_path, output):
-    paths = glob(os.path.join(root_path, "/*.json"))
+    paths = glob(os.path.join(root_path, "*.json"))
+    print(root_path, paths)
     for path in paths:
         file = open(path, "r")
-        data = json.load(f)
+        data = json.load(file)
         output.update(data)
         file.close()
 
@@ -277,7 +278,6 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
         cmdOutput = 'N/A'
     metrics_dict['run__flow__platform_commit'] = cmdOutput
     metrics_dict['run__flow__variant'] = flow_variant
-
 
     merge_jsons(logPath, metrics_dict)
 
