@@ -18,10 +18,10 @@ The directory `TutorialScripts` contains a few scripts used by the  `Flow tutori
 The tutorial uses sample test scripts already part of OpenROAD `test`.
 
 ### OpenROAD GUI Test Case
-View [load_lef.tcl](./TutorialScripts/gui/load_lef.tcl) example tcl script that shows a 
+View [load_lef.tcl](./scripts/gui/load_lef.tcl) example tcl script that shows a 
 simple user defined GUI customization to add `sky130` technology `.lef` file.
 
 ### Detail Routing Test Case
-View [drt_issue.tcl](./TutorialScripts/drt/drt_issue.tcl) example tcl script to trace a simple DRC violation.
+View [drt_issue.tcl](./scripts/drt/drt_issue.tcl) example tcl script to trace a simple DRC violation.
 
-View [drc_fix.tcl](./TutorialScripts/drt/drt_fix.tcl) example tcl script to fix the DRC violation.
+View [drc_fix.tcl](./scripts/drt/drt_fix.tcl) example tcl script to fix the DRC violation.

@@ -1,8 +1,8 @@
 source "helpers.tcl"
 
 read_lef ../../../platforms/sky130hd/lef/sky130_fd_sc_hd.tlef
-read_lef ../../../platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
-read_def ./gcd/drc_cts.def
+read_lef ../../../platformms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
+read_def ./gcd/4_cts.def
 read_sdc ./gcd/gcd.sdc
 
 #global_route
@@ -19,7 +19,8 @@ set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
 
 #detail_route
-set_thread_count 32
+#2 CORES enough to run this design, change if needed
+set_thread_count 2
 set drc_rpt [make_result_file 5_route_drc.rpt]
 set guide_mod [make_result_file output_guide.mod]
 set maze_log [make_result_file maze.log]
