@@ -30,7 +30,12 @@ detailed_placement
 optimize_mirroring
 set violations [check_placement -verbose]
 utl::info FLW 12 "Placement violations $violations."
-utl::metric "detailedplace__design__violations" $violations
+
+if {[string is double $violations]} {
+  utl::metric_integer "detailedplace__design__violations" $violations
+} else {
+    utl::metric_integer "detailedplace__design__violations" 0
+}
 
 estimate_parasitics -placement
 

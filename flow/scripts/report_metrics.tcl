@@ -82,7 +82,11 @@ proc report_metrics { when {include_erc true}} {
     }
     unset corner
   } else {
-    report_power -json [map_when_to_json_key "$when" ""]
+    if {[string equal "$when" "finish"]} { 
+      report_power -json [map_when_to_json_key "$when" ""]
+    } else {
+      report_power
+    }
   }
 
   puts "\n=========================================================================="
@@ -122,6 +126,9 @@ proc map_when_to_json_key {when report_class} {
     }
     "finish" {
       return "finish__${report_class}"
+    }
+    "resizer pre" {
+      return "placeopt_pre__${report_class}"
     }
   }
   puts "Unhandled report class: $when"
