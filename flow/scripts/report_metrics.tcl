@@ -82,7 +82,7 @@ proc report_metrics { when {include_erc true}} {
     }
     unset corner
   } else {
-    report_power -json map_when_to_json_key "$when" ""]
+    report_power -json [map_when_to_json_key "$when" ""]
   }
 
   puts "\n=========================================================================="
