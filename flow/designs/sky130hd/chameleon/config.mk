@@ -29,8 +29,8 @@ export ABC_AREA = 1
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export DIE_AREA   = 0 0 2920 3520
-export CORE_AREA  = 20 20 2900 3500
+export DIE_AREA   = 0 0 3920 4520
+export CORE_AREA  = 20 20 3900 4500
 
 export chameleon_DIR = $(PLATFORM_DIR)/chameleon
 
