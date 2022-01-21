@@ -125,6 +125,27 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False,
         jsonFile[jsonTag] = 'ERR'
 
 
+def extractGnuTime(prefix, jsonFile, file):
+
+    extractTagFromFile(
+        prefix +
+        '__runtime__total',
+        jsonFile,
+        '^Elapsed time: (\S+)\[h:\]min:sec.*',
+        file)
+    extractTagFromFile(
+        prefix +
+        '__cpu__total',
+        jsonFile,
+        '^Elapsed time:.*CPU time: user (\S+) .*',
+        file)
+    extractTagFromFile(
+        prefix +
+        '__mem__peak',
+        jsonFile,
+        '^Elapsed time:.*Peak memory: (\S+)KB.',
+        file)
+
 #
 # Extract Clock Latency, Skew numbers
 # Need to extract these from native json
@@ -209,7 +230,7 @@ def is_git_repo(folder=None):
         return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w')) == 0
 
 def merge_jsons(root_path, output):
-    paths = glob(os.path.join(root_path, "/*.json");
+    paths = glob(os.path.join(root_path, "/*.json"))
     for path in paths:
         file = open(path, "r")
         data = json.load(f)
@@ -258,7 +279,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     metrics_dict['run__flow__variant'] = flow_variant
 
 
-    merge_jsons(logPath, mertrics_dict)
+    merge_jsons(logPath, metrics_dict)
 
     # Synthesis
     # =========================================================================
