@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 76891,
+            "value": 88891,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 10950,
+            "value": 12000,
             "compare": "<="
         },
         {
