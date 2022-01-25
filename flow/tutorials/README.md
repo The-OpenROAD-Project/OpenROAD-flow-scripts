@@ -23,8 +23,8 @@ View [load_lef.tcl](./scripts/gui/load_lef.tcl) example Tcl script that shows
 a simple user defined GUI customization to add `sky130` technology LEF file.
 
 ### Detail Routing Test Case
-View [drt_issue.tcl](./scripts/drt/drt_issue.tcl) example Tcl script to
+View [drc_issue.tcl](./scripts/drt/drc_issue.tcl) example Tcl script to
 trace a simple DRC violation.
 
-View [drc_fix.tcl](./scripts/drt/drt_fix.tcl) example Tcl script to fix
+View [drc_fix.tcl](./scripts/drt/drc_fix.tcl) example Tcl script to fix
 the DRC violation.
