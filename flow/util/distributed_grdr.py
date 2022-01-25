@@ -109,7 +109,7 @@ class AutoTunerBase(tune.Trainable):
         '''
         Collects metrics to evaluate the user-defined objective function.
         '''
-
+        r2 = 0
         if os.path.exists(csv_file):
             list_grt_wirelength = []
             list_drt_wirelength = []
@@ -171,7 +171,10 @@ class AutoTunerBase(tune.Trainable):
             "core_util": core_util,
             "final_util": final_util
         }
-        return ret, r2
+        if r2 is not None:
+            return ret, r2
+        if r2 is None:
+            return ret, 0
 
 
 class PPAImprov(AutoTunerBase):
@@ -465,18 +468,18 @@ def openroad(base_dir, parameters, path=''):
         os.system(f'mkdir -p {report_path}')
     else:
         log_path = report_path = os.getcwd() + '/'
-        #parpath = abspath('../../')
-        #result_path = parpath.replace('logs', 'results')
-        #reporting_path = parpath.replace('logs', 'reports')
-        #object_path = parpath.replace('logs', 'objects')
-        #os.system(f'mkdir -p {result_path}/{flow_variant}')
-        #os.system(f'mkdir -p {parpath}/{flow_variant}')
-        #os.system(f'mkdir -p {reporting_path}/{flow_variant}')
-        #os.system(f'mkdir -p {object_path}/{flow_variant}')
-        #os.system(f'cp  {base_dir}/flow/results/{args.platform}/{args.design}/base/* {result_path}/{flow_variant}/')
-        #os.system(f'cp  {base_dir}/flow/logs/{args.platform}/{args.design}/base/* {parpath}/{flow_variant}/')
-        #os.system(f'cp  {base_dir}/flow/reports/{args.platform}/{args.design}/base/* {reporting_path}/{flow_variant}/')
-        #os.system(f'cp -r {base_dir}/flow/objects/{args.platform}/{args.design}/base/* {object_path}/{flow_variant}/')
+        parpath = abspath('../../')
+        result_path = parpath.replace('logs', 'results')
+        reporting_path = parpath.replace('logs', 'reports')
+        object_path = parpath.replace('logs', 'objects')
+        os.system(f'mkdir -p {result_path}/{flow_variant}')
+        os.system(f'mkdir -p {parpath}/{flow_variant}')
+        os.system(f'mkdir -p {reporting_path}/{flow_variant}')
+        os.system(f'mkdir -p {object_path}/{flow_variant}')
+        os.system(f'cp  {base_dir}/flow/results/{args.platform}/{args.design}/base/* {result_path}/{flow_variant}/')
+        os.system(f'cp  {base_dir}/flow/logs/{args.platform}/{args.design}/base/* {parpath}/{flow_variant}/')
+        os.system(f'cp  {base_dir}/flow/reports/{args.platform}/{args.design}/base/* {reporting_path}/{flow_variant}/')
+        os.system(f'cp -r {base_dir}/flow/objects/{args.platform}/{args.design}/base/* {object_path}/{flow_variant}/')
 
     export_command = f'export PATH={INSTALL_PATH}/OpenROAD/bin'
     export_command += f':{INSTALL_PATH}/yosys/bin'
