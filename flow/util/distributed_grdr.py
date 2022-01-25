@@ -117,7 +117,7 @@ class AutoTunerBase(tune.Trainable):
         error = 'ERR' in metrics.values()
         not_found = 'N/A' in metrics.values()
         if error or not_found:
-            return (99999999999) * (self.step_ / 100)**(-1)
+            return (0) * (self.step_ / 100)**(-1)
         gamma = (r2) / 10
         score = r2 * (self.step_ / 100)**(-1) - gamma * metrics['num_drc']
         return score
@@ -205,7 +205,7 @@ class PPAImprov(AutoTunerBase):
         error = 'ERR' in metrics.values() or 'ERR' in reference.values()
         not_found = 'N/A' in metrics.values() or 'N/A' in reference.values()
         if error or not_found:
-            return (99999999999) * (self.step_ / 100)**(-1)
+            return (0) * (self.step_ / 100)**(-1)
         ppa = self.get_ppa(metrics)
         gamma = ppa / 10
         score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['num_drc'])
