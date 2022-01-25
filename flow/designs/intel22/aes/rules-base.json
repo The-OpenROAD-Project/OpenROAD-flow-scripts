@@ -32,22 +32,22 @@
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -96.27,
+            "value": -230.00,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -96.27,
+            "value": -230.00,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -197.02,
+            "value": -350.00,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -197.02,
+            "value": -350.00,
             "compare": ">="
         },
         {
