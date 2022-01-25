@@ -1,0 +1,83 @@
+{
+    "_FR_LAYER_ADJUST_metal2": {
+        "type": "float",
+        "minmax": [
+            0,
+            0.9
+        ],
+        "step": 0.01
+    },
+    "_FR_LAYER_ADJUST_metal3": {
+        "type": "float",
+        "minmax": [
+            0,
+            0.9
+        ],
+        "step": 0.01
+    },
+    "_FR_LAYER_ADJUST_metal4": {
+        "type": "float",
+        "minmax": [
+            0,
+            0.9
+        ],
+        "step": 0.01
+    },
+    "_FR_LAYER_ADJUST_metal5": {
+        "type": "float",
+        "minmax": [
+            0,
+            0.9
+        ],
+        "step": 0.01
+    },
+    "_FR_LAYER_ADJUST_metal6": {
+        "type": "float",
+        "minmax": [
+            0,
+            0.9
+        ],
+        "step": 0.01
+    },
+    "_FR_LAYER_ADJUST_metal7": {
+        "type": "float",
+        "minmax": [
+            0,
+            0.9
+        ],
+        "step": 0.01
+    },
+    "_FR_LAYER_ADJUST_metal8": {
+        "type": "float",
+        "minmax": [
+            0,
+            0.9
+        ],
+        "step": 0.01
+    },
+    "_FR_LAYER_ADJUST_metal9": {
+        "type": "float",
+        "minmax": [
+            0,
+            0.9
+        ],
+        "step": 0.01
+    },
+    "_FR_LAYER_ADJUST_metal10": {
+        "type": "float",
+        "minmax": [
+            0,
+            0.9
+        ],
+        "step": 0.01
+    },
+    "_FR_FILE_PATH": "../../../platforms/nangate45/fastroute.tcl",
+    "_FR_GR_OVERFLOW": {
+        "type": "int",
+        "minmax": [
+            1,
+            1
+        ],
+        "step": 0
+    }
+}
