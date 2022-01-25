@@ -82,36 +82,18 @@ class AutoTunerBase(tune.Trainable):
         '''
         metrics_file, csv_file = openroad(self.repo_dir, self.parameters)
         self.step_ += 1
-        score = self.evaluate(self.read_metrics(metrics_file), csv_file)
+        ret, r2 = self.read_metrics(metrics_file, csv_file)
+        score = self.evaluate(ret, r2)
         # Feed the score back to Tune.
         # return must match 'metric' used in tune.run()
         return {"maximum": score}
 
-    def evaluate(self, metrics, csv_file):
+    def evaluate(self, metrics, r2):
         '''
         User-defined evaluation function.
         It can change in any form to minimize the score (return value).
         Default evaluation function optimizes effective clock period.
         '''
-        if os.path.exists(csv_file):
-            list_grt_wirelength = []
-            list_drt_wirelength = []
-            with open(csv_file) as file:
-                data = csv.reader(file, delimiter=' ')
-                for line in data:
-                    if line[0]=="grt:":
-                        net_name = line[1]
-                        grt_wirelength = line[2]
-                        list_grt_wirelength.append(float(grt_wirelength))
-                    if line[0]=="drt:":
-                        drt_wirelength = line[2]
-                        list_drt_wirelength.append(float(drt_wirelength))
-                        #temp_list = [net_name, grt_wirelength, drt_wirelength]
-                        #list_grdr_wirelength.append(temp_list)
-            r2 = r2_score(list_drt_wirelength, list_grt_wirelength)
-            #print(list_grt_wirelength)
-            #print(list_drt_wirelength)
-            print(f'[INFO TUN-0012] r2 score: {r2}')
 	        
 
         error = 'ERR' in metrics.values()
@@ -123,11 +105,38 @@ class AutoTunerBase(tune.Trainable):
         return score
 
     @classmethod
-    def read_metrics(cls, file_name):
+    def read_metrics(cls, file_name, csv_file):
         '''
         Collects metrics to evaluate the user-defined objective function.
         '''
 
+        if os.path.exists(csv_file):
+            list_grt_wirelength = []
+            list_drt_wirelength = []
+            #file_csv = open(csv_file, 'r')
+            with open(csv_file) as file:
+                data = csv.reader(file, delimiter=' ')
+                #file_csv.close()
+                for line in data:
+                    if line[0]=="grt:":
+                        grt_net_name = line[1]
+                        grt_wirelength = line[2]
+                    if line[0]=="drt:":
+                        drt_net_name = line[1]
+                        drt_wirelength = line[2]
+                        if grt_net_name != drt_net_name:
+                            continue
+                        list_grt_wirelength.append(float(grt_wirelength))
+                        list_drt_wirelength.append(float(drt_wirelength))
+                        #temp_list = [grt_net_name, grt_wirelength, drt_wirelength]
+                        #list_grdr_wirelength.append(temp_list)
+            if len(list_drt_wirelength)==len(list_grt_wirelength) and len(list_drt_wirelength) !=0:
+                r2 = r2_score(list_drt_wirelength, list_grt_wirelength)
+            else:
+                r2 = 0
+            #print(list_grt_wirelength)
+            #print(list_drt_wirelength)
+            print(f'[INFO TUN-0012] r2 score: {r2}')
         with open(file_name) as file:
             data = json.load(file)
         clk_period = 9999999
@@ -162,7 +171,7 @@ class AutoTunerBase(tune.Trainable):
             "core_util": core_util,
             "final_util": final_util
         }
-        return ret
+        return ret, r2
 
 
 class PPAImprov(AutoTunerBase):
@@ -454,23 +463,20 @@ def openroad(base_dir, parameters, path=''):
         report_path = log_path.replace('logs', 'reports')
         os.system(f'mkdir -p {log_path}')
         os.system(f'mkdir -p {report_path}')
-        result_path = log_path.replace('logs', 'results')
-        os.system(f'mkdir -p {result_path}')
-        os.system(f'cp {base_dir}/flow/results/{args.platform}/{args.design}/base/* {result_path}/')
     else:
         log_path = report_path = os.getcwd() + '/'
-        parpath = abspath('../../')
-        result_path = parpath.replace('logs', 'results')
-        report_path = parpath.replace('logs', 'reports')
-        object_path = parpath.replace('logs', 'objects')
-        os.system(f'mkdir -p {result_path}/{flow_variant}')
-        os.system(f'mkdir -p {parpath}/{flow_variant}')
-        os.system(f'mkdir -p {report_path}/{flow_variant}')
-        os.system(f'mkdir -p {object_path}/{flow_variant}')
-        os.system(f'cp {base_dir}/flow/results/{args.platform}/{args.design}/base/* {result_path}/{flow_variant}/')
-        os.system(f'cp {base_dir}/flow/logs/{args.platform}/{args.design}/base/* {parpath}/{flow_variant}/')
-        os.system(f'cp {base_dir}/flow/reports/{args.platform}/{args.design}/base/* {report_path}/{flow_variant}/')
-        os.system(f'cp -r {base_dir}/flow/objects/{args.platform}/{args.design}/base/* {object_path}/{flow_variant}/')
+        #parpath = abspath('../../')
+        #result_path = parpath.replace('logs', 'results')
+        #reporting_path = parpath.replace('logs', 'reports')
+        #object_path = parpath.replace('logs', 'objects')
+        #os.system(f'mkdir -p {result_path}/{flow_variant}')
+        #os.system(f'mkdir -p {parpath}/{flow_variant}')
+        #os.system(f'mkdir -p {reporting_path}/{flow_variant}')
+        #os.system(f'mkdir -p {object_path}/{flow_variant}')
+        #os.system(f'cp  {base_dir}/flow/results/{args.platform}/{args.design}/base/* {result_path}/{flow_variant}/')
+        #os.system(f'cp  {base_dir}/flow/logs/{args.platform}/{args.design}/base/* {parpath}/{flow_variant}/')
+        #os.system(f'cp  {base_dir}/flow/reports/{args.platform}/{args.design}/base/* {reporting_path}/{flow_variant}/')
+        #os.system(f'cp -r {base_dir}/flow/objects/{args.platform}/{args.design}/base/* {object_path}/{flow_variant}/')
 
     export_command = f'export PATH={INSTALL_PATH}/OpenROAD/bin'
     export_command += f':{INSTALL_PATH}/yosys/bin'
