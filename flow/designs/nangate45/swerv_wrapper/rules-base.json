@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 597768,
+            "value": 684000,
             "compare": "<="
         }
     ]
