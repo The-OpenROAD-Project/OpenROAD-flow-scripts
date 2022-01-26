@@ -9,9 +9,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read liberty files
-  foreach libFile $::env(LIB_FILES) {
-    read_liberty $libFile
-  }
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
   read_def $::env(RESULTS_DIR)/2_floorplan.def
@@ -50,23 +48,33 @@ if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
   set place_density $::env(PLACE_DENSITY)
 }
 
+set global_placement_args ""
+if {$::env(GPL_ROUTABILITY_DRIVEN)} {
+    append global_placement_args " -routability_driven"
+}
+if {$::env(GPL_TIMING_DRIVEN)} {
+    append global_placement_args " -timing_driven"
+}
+
+
 if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
-global_placement -routability_driven -density $place_density \
+global_placement -density $place_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+    {*}$global_placement_args \
     $::env(GLOBAL_PLACEMENT_ARGS)
 } else {
-global_placement -routability_driven -density $place_density \
+global_placement -density $place_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-    -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
+    -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+    {*}$global_placement_args
 }
 
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "global place"
+report_metrics "global place" false
 
-if {![info exists standalone] || $standalone} {
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/3_1_place_gp.def
-  exit
 }

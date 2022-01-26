@@ -19,11 +19,9 @@ Footprint definition {
   pad_pin_name "%s"
 
   padcell {
-    sig0     {type sig       cell {origin {x  280.000 y 210.965}}}
     sig1     {type sig       cell {origin {x  360.000 y 210.965}}}
     vzz_0    {type vssio_hvc cell {origin {x  440.000 y 197.965}}}
     v18_0    {type vddio_hvc cell {origin {x  520.000 y 197.965}}}
-    sig2     {type sig       cell {origin {x  600.000 y 210.965}}}
     sig3     {type sig       cell {origin {x  680.000 y 210.965}}}
     sig4     {type sig       cell {origin {x  760.000 y 210.965}}}
     sig5     {type sig       cell {origin {x  840.000 y 210.965}}}
@@ -230,18 +228,10 @@ Footprint definition {
     sig152   {type sig       cell {origin {x  210.965 y 1420.000}}}
     sig153   {type sig       cell {origin {x  210.965 y 1340.000}}}
     sig154   {type sig       cell {origin {x  210.965 y 1260.000}}}
-    sig155   {type sig       cell {origin {x  210.965 y 1180.000}}}
-    sig156   {type sig       cell {origin {x  210.965 y 1100.000}}}
-    sig157   {type sig       cell {origin {x  210.965 y 1020.000}}}
-    sig158   {type sig       cell {origin {x  210.965 y  940.000}}}
-    sig159   {type sig       cell {origin {x  210.965 y  860.000}}}
     vdd_8    {type vccd_hvc  cell {origin {x  197.965 y  780.000}}}
     vss_8    {type vssd_hvc  cell {origin {x  197.965 y  700.000}}}
     vzz_20   {type vssio_hvc cell {origin {x  197.965 y  620.000}}}
     v18_20   {type vddio_hvc cell {origin {x  197.965 y  540.000}}}
-    sig160   {type sig       cell {origin {x  210.965 y  460.000}}}
-    sig161   {type sig       cell {origin {x  210.965 y  380.000}}}
-    sig162   {type sig       cell {origin {x  210.965 y  300.000}}}
     sig163   {type sig       cell {origin {x  210.965 y  220.000}}}
   }
 }                                                             

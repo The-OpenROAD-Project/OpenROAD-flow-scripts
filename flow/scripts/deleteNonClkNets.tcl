@@ -7,9 +7,8 @@ if {[info exist ::env(ADDITIONAL_LEFS)]} {
 }
 
 # Read liberty files
-foreach libFile $::env(LIB_FILES) {
-  read_liberty $libFile
-}
+source $::env(SCRIPTS_DIR)/read_liberty.tcl
+
 # Read def and sdc
 read_def $::env(RESULTS_DIR)/6_final.def
 
@@ -35,4 +34,5 @@ foreach inst $insts {
     odb::dbInst_destroy $inst
   }
 }
+
 write_def $::env(RESULTS_DIR)/6_final_only_clk.def

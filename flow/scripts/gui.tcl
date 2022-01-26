@@ -8,9 +8,7 @@ if {[info exist ::env(ADDITIONAL_LEFS)]} {
 }
 
 # Read liberty files
-foreach libFile $::env(LIB_FILES) {
-  read_liberty $libFile
-}
+source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
 # Determine design stage (1 ... 6)
 set design_stage [lindex [split [file tail $::env(DEF_FILE)] "_"] 0]

@@ -9,9 +9,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read liberty files
-  foreach libFile $::env(LIB_FILES) {
-    read_liberty $libFile
-  }
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read def and sdc
   # Use -order_wires to build wire graph
@@ -30,3 +28,4 @@ if {[info exist ::env(CDL_FILES)]} {
 if {![info exists standalone] || $standalone} {
   exit
 }
+
