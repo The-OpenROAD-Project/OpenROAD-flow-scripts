@@ -32,12 +32,12 @@
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -8.59,
+            "value": -9.59,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -8.59,
+            "value": -9.59,
             "compare": ">="
         },
         {
