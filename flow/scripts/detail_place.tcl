@@ -9,9 +9,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read liberty files
-  foreach libFile $::env(LIB_FILES) {
-    read_liberty $libFile
-  }
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
   read_def $::env(RESULTS_DIR)/3_3_place_resized.def
@@ -30,15 +28,13 @@ set_placement_padding -global \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 detailed_placement
 optimize_mirroring
-check_placement -verbose
+utl::info FLW 12 "Placement violations [check_placement -verbose]."
 
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "detailed place"
 
-if {![info exists standalone] || $standalone} {
-  # write output
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/3_4_place_dp.def
-  exit
 }

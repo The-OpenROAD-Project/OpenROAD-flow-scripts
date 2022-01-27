@@ -9,9 +9,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read liberty files
-  foreach libFile $env(LIB_FILES) {
-    read_liberty $libFile
-  }
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
   # Read SDC and derating files
@@ -38,8 +36,8 @@ if {[info exist env(FASTROUTE_TCL)]} {
 }
 
 global_route -guide_file $env(RESULTS_DIR)/route.guide \
-               -overflow_iterations 100 \
-               -verbose 2
+               -congestion_iterations 100 \
+               -verbose
 
 # Set res and cap
 if [file exists $env(PLATFORM_DIR)/setRC.tcl] {

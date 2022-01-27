@@ -29,7 +29,7 @@ library(fakeram45_256x95) {
     default_input_pin_cap : 0.0;
     default_output_pin_cap : 0.0;
     default_input_pin_cap : 0.0;
-    default_max_transition : 0.0;
+    default_max_transition : 0.198535;
 
     default_operating_conditions : tt_1.0_25.0;
     default_leakage_power_density : 0.0;
@@ -115,7 +115,7 @@ cell(fakeram45_256x95) {
     bus(rd_out)   {
         bus_type : fakeram45_256x95_DATA;
         direction : output;
-        max_capacitance : 0.002;
+        max_capacitance : 60.577400;
         memory_read() {
             address : addr_in;
         }

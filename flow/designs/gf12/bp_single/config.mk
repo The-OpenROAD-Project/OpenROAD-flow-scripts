@@ -2,13 +2,9 @@ export DESIGN_NICKNAME = bp_single
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 
-export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.sv2v.v \
-                       $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
-
-# export CACHED_NETLIST    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/dc/results/bsg_chip.mapped.flat.v
-export CACHED_NETLIST    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth.v
-export CACHED_REPORTS    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_stat.txt \
-                           $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_check.txt
+# export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.sv2v.v
+export VERILOG_FILES =  $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_don_abc_script.v \
+                        $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
 export SDC_FILE      = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.elab.v.sdc
 
@@ -59,9 +55,12 @@ export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 #export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_bp_single.macro_placment.cfg
 export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_fence2_bp_single.macro_placment.cfg
 
-export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.cfg
-
-# TODO: replace this with max(CHANNEL_WIDTH_[HV]) from IP_global.cfg
 export MACRO_BLOCKAGE_HALO = 25
 
+export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.cfg
+
 export DESIGN_TYPE = CHIP
+
+# enable slack margin for setup and hold fix after CTS
+export SETUP_SLACK_MARGIN ?= 100
+export HOLD_SLACK_MARGIN  ?= 300

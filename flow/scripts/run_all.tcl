@@ -1,5 +1,4 @@
 # Performs RTL-to-GDS in a single script
-# No checkpointing is performed
 
 set standalone 0
 
@@ -17,9 +16,7 @@ if {[info exist ::env(ADDITIONAL_LEFS)]} {
 }
 
 # Read liberty files
-foreach libFile $::env(LIB_FILES) {
-  read_liberty $libFile
-}
+source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
 read_verilog $::env(RESULTS_DIR)/1_1_yosys.v
 link_design $::env(DESIGN_NAME)

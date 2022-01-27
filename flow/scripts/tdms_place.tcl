@@ -9,9 +9,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read liberty files
-  foreach libFile $::env(LIB_FILES) {
-    read_liberty $libFile
-  }
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
   read_def $::env(RESULTS_DIR)/2_2_floorplan_io.def
@@ -43,18 +41,18 @@ proc find_macros {} {
 source $::env(PLATFORM_DIR)/setRC.tcl
 set_dont_use $::env(DONT_USE_CELLS)
 
-if {[info exists ::env(MACRO_PLACEMENT)]} {
-    puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
-} elseif {[find_macros] != ""} {
+if {[find_macros] != ""} {
+  if {[info exists ::env(RTLMP_FLOW)]} {
+    puts "RTLMP flow enabled. Skipping tdms place."
+  } else {
     global_placement -density $::env(PLACE_DENSITY) \
-                     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-                     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
+                   -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+                   -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
+  }
 } else {
-    puts "No macros found: Skipping global_placement"
+  puts "No macros found: Skipping global_placement"
 }
 
-
-if {![info exists standalone] || $standalone} {
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/2_3_floorplan_tdms.def
-  exit
 }

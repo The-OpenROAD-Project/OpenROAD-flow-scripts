@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # This script is sourced from Brown (with slight modifications). It merges
 # several timing libraries into one.

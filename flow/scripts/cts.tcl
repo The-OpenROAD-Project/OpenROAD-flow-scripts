@@ -9,9 +9,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read liberty files
-  foreach libFile $::env(LIB_FILES) {
-    read_liberty $libFile
-  }
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
   read_def $::env(RESULTS_DIR)/3_place.def
@@ -79,24 +77,35 @@ detailed_placement
 
 estimate_parasitics -placement
 
-puts "Repair hold violations..."
-if { [catch {repair_timing -hold }]} {
-  puts "hold utilization limit caught, continuing"
-}
 puts "Repair setup violations..."
-if { [catch {repair_timing -setup }]} {
-  puts "setup utilization limit caught, continuing"
+# process user settings
+set additional_args ""
+if { [info exists ::env(SETUP_SLACK_MARGIN)] && $::env(SETUP_SLACK_MARGIN) > 0.0} {
+  puts "Setup repair with slack margin $::env(SETUP_SLACK_MARGIN)"
+  append additional_args " -slack_margin $::env(SETUP_SLACK_MARGIN)"
 }
+eval repair_timing -setup $additional_args
+
+puts "Repair hold violations..."
+# process user settings
+set additional_args ""
+if { [info exists ::env(HOLD_SLACK_MARGIN)] && $::env(HOLD_SLACK_MARGIN) > 0.0} {
+  puts "Hold repair with slack margin $::env(HOLD_SLACK_MARGIN)"
+  append additional_args " -slack_margin $::env(HOLD_SLACK_MARGIN)"
+}
+repair_timing -hold {*}$additional_args
 
 detailed_placement
-check_placement
+check_placement -verbose
 
 report_metrics "cts final"
 
-if {![info exists standalone] || $standalone} {
-  # write output
+if { [info exists ::env(POST_CTS_TCL)] } {
+  source $::env(POST_CTS_TCL)
+}
+
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/4_1_cts.def
   write_verilog $::env(RESULTS_DIR)/4_cts.v
   write_sdc $::env(RESULTS_DIR)/4_cts.sdc
-  exit
 }

@@ -1,12 +1,15 @@
-# ####################################################################
-
-#  Created by Genus(TM) Synthesis Solution 18.11-s009_1 on Wed Jan 06 17:57:53 MST 2021
-
-# ####################################################################
-
-set sdc_version 2.0
-
-# Set the current design
 current_design jpeg_encoder
 
-create_clock -name "clk" -period 4000.0 -waveform {0.0 2000.0} [get_ports clk]
+set clk_name  clk 
+set clk_port_name clk
+set clk_period 1200 
+set clk_io_pct 0.2
+
+set clk_port [get_ports $clk_port_name]
+
+create_clock -name $clk_name -period $clk_period $clk_port
+
+set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
+
+set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs 
+set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]

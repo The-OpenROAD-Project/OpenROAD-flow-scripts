@@ -1,21 +1,22 @@
-set_layer_rc -layer M1 -capacitance 0.000227856 -resistance 0.002160583
-set_layer_rc -layer M2 -capacitance 0.00022864  -resistance 0.001832146
-set_layer_rc -layer M3 -capacitance 0.000228541 -resistance 0.001832146
-set_layer_rc -layer M4 -capacitance 0.000228674 -resistance 0.001832146
-set_layer_rc -layer M5 -capacitance 0.000228622 -resistance 0.001832146
-set_layer_rc -layer M6 -capacitance 0.000228624 -resistance 0.001832146
-set_layer_rc -layer M7 -capacitance 0.000230714 -resistance 0.001832146
-set_layer_rc -layer M8 -capacitance 0.000362444 -resistance 0.000065401
-set_layer_rc -layer M9 -capacitance 0.000355205 -resistance 0.000065401
+# Liberty units are fF,kOhm
+set_layer_rc -layer M1 -capacitance 1.1368e-01 -resistance 1.3889e-01
+set_layer_rc -layer M2 -capacitance 1.3426e-01 -resistance 2.4222e-02
+set_layer_rc -layer M3 -capacitance 1.2918e-01 -resistance 2.4222e-02
+set_layer_rc -layer M4 -capacitance 1.1396e-01 -resistance 1.6778e-02
+set_layer_rc -layer M5 -capacitance 1.3323e-01 -resistance 1.4677e-02
+set_layer_rc -layer M6 -capacitance 1.1575e-01 -resistance 1.0371e-02
+set_layer_rc -layer M7 -capacitance 1.3293e-01 -resistance 9.6720e-03
+set_layer_rc -layer M8 -capacitance 1.1822e-01 -resistance 7.4310e-03
+set_layer_rc -layer M9 -capacitance 1.3497e-01 -resistance 6.8740e-03
 
-set_layer_rc -via V1 -resistance 10E-3
-set_layer_rc -via V2 -resistance 10E-3
-set_layer_rc -via V3 -resistance 10E-3
-set_layer_rc -via V4 -resistance 10E-3
-set_layer_rc -via V5 -resistance 10E-3
-set_layer_rc -via V6 -resistance 10E-3
-set_layer_rc -via V7 -resistance 10E-3
-set_layer_rc -via V8 -resistance 10E-3
-set_layer_rc -via V9 -resistance 10E-3
+set_layer_rc -via V1 -resistance 1.00E-02
+set_layer_rc -via V2 -resistance 1.00E-02
+set_layer_rc -via V3 -resistance 1.00E-02
+set_layer_rc -via V4 -resistance 1.00E-02
+set_layer_rc -via V5 -resistance 1.00E-02
+set_layer_rc -via V6 -resistance 1.00E-02
+set_layer_rc -via V7 -resistance 1.00E-02
+set_layer_rc -via V8 -resistance 1.00E-02
+set_layer_rc -via V9 -resistance 1.00E-02
 
 set_wire_rc -layer M3

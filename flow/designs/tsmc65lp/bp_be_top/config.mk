@@ -19,3 +19,5 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/tsmc65lp_1rf_lg6_w16_bit.gds2 \
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 1200 1000.8
 export CORE_AREA   = 10 12 1190 991.2
+
+export PLACE_DENSITY = 0.50

@@ -9,9 +9,7 @@ if {![info exists standalone] || $standalone} {
   }
 
   # Read liberty files
-  foreach libFile $::env(LIB_FILES) {
-    read_liberty $libFile
-  }
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
   read_def $::env(RESULTS_DIR)/3_1_place_gp.def
@@ -19,17 +17,13 @@ if {![info exists standalone] || $standalone} {
   puts "Starting io placement"
 }
 
-if {![info exists ::env(FOOTPRINT)]} {
-  if {[info exists ::env(IO_CONSTRAINTS)]} {
-    source $::env(IO_CONSTRAINTS)
-  }
-  place_pins -hor_layer $::env(IO_PLACER_H) \
-             -ver_layer $::env(IO_PLACER_V) \
-             {*}$::env(PLACE_PINS_ARGS)
+if {[info exists ::env(IO_CONSTRAINTS)]} {
+  source $::env(IO_CONSTRAINTS)
 }
+place_pins -hor_layer $::env(IO_PLACER_H) \
+           -ver_layer $::env(IO_PLACER_V) \
+           {*}$::env(PLACE_PINS_ARGS)
 
-if {![info exists standalone] || $standalone} {
-  # write output
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/3_2_place_iop.def
-  exit
 }
