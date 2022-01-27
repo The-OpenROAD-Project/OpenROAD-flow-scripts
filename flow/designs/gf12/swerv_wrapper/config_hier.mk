@@ -15,11 +15,11 @@ export RTLMP_MAX_MACRO = 12
 export RTLMP_MIN_MACRO = 4
 
 
-export DIE_AREA    = 0 0 610 500
-export CORE_AREA   = 10 10 600 490
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:400-610
+export DIE_AREA    = 0 0 630 500
+export CORE_AREA   = 10 10 620 490
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:400-630
 #
-export MACRO_PLACE_HALO = 5 5
-export MACRO_PLACE_CHANNEL = 10 10
+export MACRO_PLACE_HALO = 7 7 
+export MACRO_PLACE_CHANNEL = 14 14 
 
-export PLACE_DENSITY = 0.52
+export PLACE_DENSITY = 0.55
