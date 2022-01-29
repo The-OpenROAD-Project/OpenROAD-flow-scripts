@@ -462,35 +462,51 @@ clean_floorplan:
 place: $(RESULTS_DIR)/3_place.def \
        $(RESULTS_DIR)/3_place.sdc
 # ==============================================================================
-
-# STEP 1: Global placement + IO placement (not random)
+# STEP 1: Erase IO placements and save into tmp file. 
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_1_place_gp.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_1_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
+$(RESULTS_DIR)/3_1_erase_io.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/erase_io.tcl -metrics $(LOG_DIR)/3_1_erase_io.json) 2>&1 | tee $(LOG_DIR)/3_1_erase_io.log
 
-# STEP 2: IO placement (non-random)
+$(RESULTS_DIR)/3_1_erase_io_tmp.txt: $(RESULTS_DIR)/3_1_erase_io.def
+
+# STEP 2: Global placement + IO placement (not random)
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_2_place_iop.def: $(RESULTS_DIR)/3_1_place_gp.def $(IO_CONSTRAINTS)
+$(RESULTS_DIR)/3_2_place_gp.def: $(RESULTS_DIR)/3_1_erase_io.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place_empty_io.tcl -metrics $(LOG_DIR)/3_2_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_2_place_gp.log
+
+# STEP 3: Revert IO placements from step 1
+#-------------------------------------------------------------------------------
+$(RESULTS_DIR)/3_3_restore_io.def: $(RESULTS_DIR)/3_2_place_gp.def $(RESULTS_DIR)/3_1_erase_io_tmp.txt $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/restore_io.tcl -metrics $(LOG_DIR)/3_3_restore_io.json) 2>&1 | tee $(LOG_DIR)/3_3_restore_io.log
+
+# STEP 4: IO placement (non-random)
+#-------------------------------------------------------------------------------
+$(RESULTS_DIR)/3_4_place_iop.def: $(RESULTS_DIR)/3_3_restore_io.def $(IO_CONSTRAINTS)
 ifndef IS_CHIP
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_4_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_4_place_iop.log
 else
 	cp $< $@
 endif
 
-# STEP 3: Resizing & Buffering
+# STEP 5: Run TD/RD global placements 
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_3_place_resized.def: $(RESULTS_DIR)/3_2_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_3_resizer.json) 2>&1 | tee $(LOG_DIR)/3_3_resizer.log
+$(RESULTS_DIR)/3_5_place_gp.def: $(RESULTS_DIR)/3_4_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_5_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_5_place_gp.log
+
+# STEP 6: Resizing & Buffering
+#-------------------------------------------------------------------------------
+$(RESULTS_DIR)/3_6_place_resized.def: $(RESULTS_DIR)/3_5_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_6_resizer.json) 2>&1 | tee $(LOG_DIR)/3_6_resizer.log
 
 clean_resize:
-	rm -f $(RESULTS_DIR)/3_3_place_resized.def
+	rm -f $(RESULTS_DIR)/3_6_place_resized.def
 
-# STEP 4: Detail placement
+# STEP 7: Detail placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_4_place_dp.def: $(RESULTS_DIR)/3_3_place_resized.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_4_opendp.json) 2>&1 | tee $(LOG_DIR)/3_4_opendp.log
+$(RESULTS_DIR)/3_7_place_dp.def: $(RESULTS_DIR)/3_6_place_resized.def
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_7_opendp.json) 2>&1 | tee $(LOG_DIR)/3_4_opendp.log
 
-$(RESULTS_DIR)/3_place.def: $(RESULTS_DIR)/3_4_place_dp.def
+$(RESULTS_DIR)/3_place.def: $(RESULTS_DIR)/3_7_place_dp.def
 	cp $< $@
 
 $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
@@ -500,6 +516,8 @@ $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
 #-------------------------------------------------------------------------------
 clean_place:
 	rm -f $(RESULTS_DIR)/3_*place*.def
+	rm -f $(RESULTS_DIR)/3_*io*.def
+	rm -f $(RESULTS_DIR)/3_*io*.txt
 	rm -f $(RESULTS_DIR)/3_place.sdc
 	rm -f $(REPORTS_DIR)/3_*
 	rm -f $(LOG_DIR)/3_*

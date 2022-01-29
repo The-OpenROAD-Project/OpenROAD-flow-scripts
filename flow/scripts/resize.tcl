@@ -12,7 +12,7 @@ if {![info exists standalone] || $standalone} {
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read def and sdc
-  read_def $::env(RESULTS_DIR)/3_2_place_iop.def
+  read_def $::env(RESULTS_DIR)/3_5_place_gp.def
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
   if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
     source $::env(PLATFORM_DIR)/derate.tcl
@@ -93,5 +93,5 @@ puts [sta::network_leaf_pin_count]
 puts ""
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_def $::env(RESULTS_DIR)/3_3_place_resized.def
+  write_def $::env(RESULTS_DIR)/3_6_place_resized.def
 }

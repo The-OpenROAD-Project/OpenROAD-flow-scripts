@@ -12,7 +12,7 @@ if {![info exists standalone] || $standalone} {
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
-  read_def $::env(RESULTS_DIR)/3_1_place_gp.def
+  read_def $::env(RESULTS_DIR)/3_3_restore_io.def
 } else {
   puts "Starting io placement"
 }
@@ -25,5 +25,5 @@ place_pins -hor_layer $::env(IO_PLACER_H) \
            {*}$::env(PLACE_PINS_ARGS)
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_def $::env(RESULTS_DIR)/3_2_place_iop.def
+  write_def $::env(RESULTS_DIR)/3_4_place_iop.def
 }
