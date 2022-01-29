@@ -504,7 +504,7 @@ clean_resize:
 # STEP 7: Detail placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_7_place_dp.def: $(RESULTS_DIR)/3_6_place_resized.def
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_7_opendp.json) 2>&1 | tee $(LOG_DIR)/3_4_opendp.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_7_opendp.json) 2>&1 | tee $(LOG_DIR)/3_7_opendp.log
 
 $(RESULTS_DIR)/3_place.def: $(RESULTS_DIR)/3_7_place_dp.def
 	cp $< $@
