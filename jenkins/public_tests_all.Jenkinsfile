@@ -437,8 +437,8 @@ pipeline {
           keepAll: true,
           reportName: "Report",
           reportDir: "flow/reports",
-          reportFiles: "report-table.html,report-gallery.html",
-          reportTitles: "Flow Report,Gallery"
+          reportFiles: "report-table.html,report-gallery*.html",
+          reportTitles: "Flow Report"
       ]);
     }
     failure {
