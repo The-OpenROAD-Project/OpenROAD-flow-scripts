@@ -27,7 +27,7 @@ gui::set_display_controls "Misc/Highlight selected" visible true
 gui::set_display_controls "Misc/Detailed view" visible true
 
 # The routing view
-save_image -resolution $resolution $::env(REPORTS_DIR)/final.webp
+save_image -resolution $resolution $::env(REPORTS_DIR)/final_routing.webp
 
 # The placement view without routing
 gui::set_display_controls "Layers/*" visible false
