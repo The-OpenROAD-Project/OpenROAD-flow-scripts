@@ -287,19 +287,19 @@ pipeline {
             }
           }
         }
-        // stage("sky130 hd chameleon") {
-        //   agent any;
-        //   steps {
-        //     unstash "install";
-        //     sh "flow/test/test_helper.sh chameleon sky130hd";
-        //   }
-        //   post {
-        //     always {
-        //       archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-        //       archiveArtifacts artifacts: "flow/*tar.gz";
-        //     }
-        //   }
-        // }
+        stage("sky130 hd chameleon") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh chameleon sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("sky130 hd gcd") {
           agent any;
           steps {
@@ -437,8 +437,8 @@ pipeline {
           keepAll: true,
           reportName: "Report",
           reportDir: "flow/reports",
-          reportFiles: "report-table.html,report-gallery.html",
-          reportTitles: "Flow Report,Gallery"
+          reportFiles: "report-table.html,report-gallery*.html",
+          reportTitles: "Flow Report"
       ]);
     }
     failure {
