@@ -2,7 +2,7 @@
     "rules": [
         {
             "field": "synth__design__instance__area__stdcell",
-            "value": 474093,
+            "value": 490093,
             "compare": "<="
         },
         {
@@ -12,7 +12,7 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 515652,
+            "value": 530652,
             "compare": "<="
         },
         {
@@ -52,7 +52,7 @@
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 5648834,
+            "value": 5808834,
             "compare": "<="
         },
         {
@@ -62,12 +62,12 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -5.0,
+            "value": -5.5,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 551857,
+            "value": 552857,
             "compare": "<="
         }
     ]
