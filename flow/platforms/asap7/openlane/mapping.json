@@ -1,0 +1,57 @@
+{
+    "liberty": {
+        "pdk": "flow/platforms/asap7/lib",
+        "openlane": "libs.ref/asap7sc7p5t/lib",
+        "files": ["*RVT*.lib"]
+    },
+    "techlef": {
+        "pdk": "flow/platforms/asap7/lef",
+        "openlane": "libs.ref/asap7sc7p5t/techlef",
+        "files": ["asap7_tech_1x_201209.lef"]
+    },
+    "lef": {
+        "pdk": "flow/platforms/asap7/lef",
+        "openlane": "libs.ref/asap7sc7p5t/lef",
+        "files": ["asap7sc7p5t_27_R_1x_201211.lef"]
+    },
+    "gds": {
+        "pdk": "flow/platforms/asap7/gds",
+        "openlane": "libs.ref/asap7sc7p5t/gds",
+        "files": ["asap7sc7p5t_27_R_1x_201211.gds"]
+    },
+    "klayout": {
+        "pdk": "flow/platforms/asap7/KLayout",
+        "openlane": "libs.tech/klayout",
+        "files": ["*.lyp", "*.lyt"]
+    },
+    "rcx": {
+        "pdk": "flow/platforms/asap7",
+        "openlane": "libs.tech/openlane",
+        "files": ["*.rules"]
+    },
+    "config-platform": {
+        "pdk": "flow/platforms/asap7/openlane",
+        "openlane": "libs.tech/openlane",
+        "files": ["config.tcl"]
+    },
+    "config-stdcells": {
+        "pdk": "flow/platforms/asap7/openlane/asap7sc7p5t",
+        "openlane": "libs.tech/openlane/asap7sc7p5t",
+        "files": ["config.tcl"]
+    },
+    "pdn": {
+        "pdk": "flow/platforms/asap7/openRoad/pdn",
+        "openlane": "libs.tech/openlane/asap7sc7p5t",
+        "files": ["grid_strategy-M2-M5-M7.cfg"]
+    },
+    "tracks": {
+        "pdk": "flow/platforms/asap7/openRoad",
+        "openlane": "libs.tech/openlane/asap7sc7p5t",
+        "files": ["make_tracks.tcl"]
+    },
+    "dont-use": {
+        "pdk": "flow/platforms/asap7/openlane/asap7sc7p5t",
+        "openlane": "libs.tech/openlane/asap7sc7p5t",
+        "files": ["no_synth.cells"]
+    }
+}
