@@ -18,11 +18,8 @@ export CORE_UTILIZATION  = 35
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN       = 4
 
-export PLACE_DENSITY     = 0.70
+export PLACE_DENSITY     = 0.50
 
 export DESIGN_TYPE       = CELL
-
-#export DIE_AREA    = 0 0 800 800
-#export CORE_AREA   = 1 1 799 799
 
 export ABC_CLOCK_PERIOD_IN_PS = 2300

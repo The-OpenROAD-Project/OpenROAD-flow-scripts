@@ -748,5 +748,5 @@ print-%  : ; @echo $* = $($*)
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
-export PRIVATE_DIR = ../../private_tool_scripts
+export PRIVATE_DIR ?= ../../private_tool_scripts
 -include $(PRIVATE_DIR)/private.mk

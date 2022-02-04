@@ -65,3 +65,5 @@ flow/private
 # core dumps
 core
 core.*
+
+*~

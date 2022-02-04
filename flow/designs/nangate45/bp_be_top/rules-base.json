@@ -2,7 +2,7 @@
     "rules": [
         {
             "field": "synth__design__instance__area__stdcell",
-            "value": 227244,
+            "value": 229000,
             "compare": "<="
         },
         {
