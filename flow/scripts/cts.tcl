@@ -63,11 +63,13 @@ set_dont_use $::env(DONT_USE_CELLS)
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
 estimate_parasitics -placement
+utl::set_metrics_stage cts__{}__pre_repair
 report_metrics "cts pre-repair"
 
 repair_clock_nets
 
 estimate_parasitics -placement
+utl::set_metrics_stage cts__{}__post_repair
 report_metrics "cts post-repair"
 
 set_placement_padding -global \
@@ -98,6 +100,7 @@ repair_timing -hold {*}$additional_args
 detailed_placement
 check_placement -verbose
 
+utl::set_metrics_stage cts__{}
 report_metrics "cts final"
 
 if {![info exists standalone] || $standalone} {

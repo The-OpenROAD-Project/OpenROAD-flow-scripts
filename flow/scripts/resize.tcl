@@ -33,6 +33,7 @@ source $::env(PLATFORM_DIR)/setRC.tcl
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
+utl::set_metrics_stage "placeopt_pre__{}"
 report_metrics "resizer pre" false
 
 print_banner "instance_count"
@@ -82,6 +83,7 @@ print_banner "report_floating_nets"
 report_floating_nets
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
+utl::set_metrics_stage "placeopt__{}"
 report_metrics "resizer"
 
 print_banner "instance_count"

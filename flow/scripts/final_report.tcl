@@ -80,7 +80,9 @@ if {[info exist ::env(RCX_RULES)]} {
   puts "OpenRCX is not enabled for this platform."
 }
 
+
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
+utl::set_metrics_stage "finish__{}"
 report_metrics "finish"
 
 # Save a final image if openroad is compiled with the gui

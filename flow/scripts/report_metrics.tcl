@@ -72,17 +72,13 @@ proc report_metrics { when {include_erc true}} {
     }
     unset corner
   } else {
-    if {[string equal "$when" "finish"]} { 
-      report_power -json [map_when_to_json_key "$when" ""]
-    } else {
-      report_power
-    }
+    report_power
   }
 
   puts "\n=========================================================================="
   puts "$when report_design_area"
   puts "--------------------------------------------------------------------------"
-  report_design_area -json_area [map_when_to_json_key "$when" "design__instance__area__stdcell"] -json_util [map_when_to_json_key "$when" "design__instance__utilization"]
+  report_design_area
 
   puts ""
 }

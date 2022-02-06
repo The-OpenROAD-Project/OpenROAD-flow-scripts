@@ -40,6 +40,7 @@ if {[string is double $violations]} {
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
+utl::set_metrics_stage "detailedplace__{}"
 report_metrics "detailed place"
 
 if {![info exists standalone] || $standalone} {

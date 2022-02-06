@@ -109,6 +109,7 @@ if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER
 puts "Default units for flow"
 report_units
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
+utl::set_metrics_stage "floorplan__{}"
 report_metrics "floorplan final" false
 
 if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) == 1 } {
@@ -117,7 +118,8 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   puts "number instances before restructure is $num_instances"
   utl::metric_integer "floorplan__design__instance__count__stdcell__pre_restruct" $num_instances
   puts "Design Area before restructure"
-  report_design_area -json_area "floorplan__design__instance__area__stdcell__pre_restruct"
+  utl::push_metrics_stage "floorplan__{}__pre_restruct"
+  report_design_area
 
   write_verilog $::env(RESULTS_DIR)/2_pre_abc.v
 
@@ -142,7 +144,11 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   puts "number instances after restructure is $num_instances"
   utl::metric_integer "floorplan__design__instance__count__stdcell__post_restruct" $num_instances
   puts "Design Area after restructure"
-  report_design_area -json_area "floorplan__design__instance__area__stdcell__post_restruct"
+  utl::set_metrics_stage "floorplan__{}__post_restruct"
+  report_design_area
+  
+  utl::pop_metrics_stage
+  report_design_area
 }
 
 if {![info exists standalone] || $standalone} {
