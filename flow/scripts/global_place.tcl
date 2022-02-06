@@ -73,6 +73,8 @@ global_placement -density $place_density \
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
+
+utl::set_metrics_stage "globalplace__{}"
 report_metrics "global place" false
 
 if {![info exists save_checkpoint] || $save_checkpoint} {

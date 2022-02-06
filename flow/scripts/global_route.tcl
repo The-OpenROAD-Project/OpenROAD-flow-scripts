@@ -48,6 +48,7 @@ set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
 
 source $env(SCRIPTS_DIR)/report_metrics.tcl
+utl::set_metrics_stage "globalroute__{}"
 report_metrics "global route"
 
 puts "\n=========================================================================="
