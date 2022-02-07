@@ -10,8 +10,6 @@ from collections import defaultdict
 # make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-goldFilename = 'metadata-base-ok.json'
-runFilename = 'metadata-base.json'
 htmlOutput = 'reports/report-table.html'
 cssOutput = 'reports/table.css'
 designPathFile = 'design-dir.txt'
@@ -40,8 +38,14 @@ Creates a HTML table with metric comparison between golden and current run
 for each design.
 '''
 parser = argparse.ArgumentParser(description=helpText)
+parser.add_argument(
+    "--variant",
+    default="base"
+)
 args = parser.parse_args()
 
+goldFilename = f'metadata-{args.variant}-ok.json'
+runFilename = f'metadata-{args.variant}.json'
 
 def readMetrics(fname, justLoad=False):
     global tableDict
