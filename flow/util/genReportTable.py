@@ -234,6 +234,26 @@ table td:nth-child(1),
 table th {
   border-top: solid 2px;
 }
+.main-table th {
+  position: sticky;
+  top: 0;
+  background-color: #727272;
+  color: #e0e0e0;
+}
+.main-table th:nth-child(1),
+.main-table td:nth-child(1) {
+  position: sticky;
+  left: 0;
+}
+.main-table th:nth-child(1){
+  z-index: 2;
+}
+.main-table tr:nth-of-type(even) td:nth-child(1) {
+  background-color: #f3f3f3;
+}
+.main-table tr:nth-of-type(odd) td:nth-child(1) {
+  background-color: #ffffff;
+}
 .main-table td:nth-child(3n+4) {
   border-left: dotted 1px;
 }
