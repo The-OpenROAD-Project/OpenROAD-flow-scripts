@@ -244,6 +244,20 @@ table th {
   background-color: #727272;
   color: #e0e0e0;
 }
+.main-table tr:nth-of-type(even) td:nth-child(1) {
+  background-color: #f3f3f3;
+}
+.main-table tr:nth-of-type(odd) td:nth-child(1) {
+  background-color: #ffffff;
+}
+.main-table tr:nth-child(2),
+.main-table tr:nth-child(2) td:nth-child(1) {
+  position: sticky;
+  top: 44px;
+  background-color: #727272;
+  color: #e0e0e0;
+  z-index: 2;
+}
 .main-table th:nth-child(1),
 .main-table td:nth-child(1) {
   position: sticky;
@@ -251,12 +265,6 @@ table th {
 }
 .main-table th:nth-child(1){
   z-index: 2;
-}
-.main-table tr:nth-of-type(even) td:nth-child(1) {
-  background-color: #f3f3f3;
-}
-.main-table tr:nth-of-type(odd) td:nth-child(1) {
-  background-color: #ffffff;
 }
 .main-table td:nth-child(3n+4) {
   border-left: dotted 1px;
