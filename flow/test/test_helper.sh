@@ -42,15 +42,15 @@ if [ -z "${PRIVATE_DIR+x}" ]; then
   PRIVATE_DIR="../../private_tool_scripts"
 fi
 
+if [ -f "$PRIVATE_DIR/openRoad/private.mk" ] && [ ! -z ${SAVE_TO_DB+x} ]; then
+  $__make save_to_metrics_db
+fi
+
 if [ -f "$PRIVATE_DIR/util/utils.mk" ] && [ ! -z ${RUN_CALIBRE+x} ]; then
   $__make calibre_drc
   if [ ! -z ${SAVE_TO_DB+x} ]; then
     $__make save_to_drc_db
   fi
-fi
-
-if [ -f "$PRIVATE_DIR/openRoad/private.mk" ] && [ ! -z ${SAVE_TO_DB+x} ]; then
-  $__make save_to_metrics_db
 fi
 
 exit $ret
