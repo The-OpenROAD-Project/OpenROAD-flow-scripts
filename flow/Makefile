@@ -737,6 +737,9 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): kl
 
 gui_final: gui_6_final.def
 
+$(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
+	DEF_FILE=$(RESULTS_DIR)/$* $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/gui.tcl
+
 $(foreach file,$(RESULTS_ODB),gui_$(file)): gui_%:
 	ODB_FILE=$(RESULTS_DIR)/$* $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/gui.tcl
 
