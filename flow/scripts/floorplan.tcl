@@ -129,18 +129,11 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   report_design_area
 }
 
-<<<<<<< HEAD
-if {![info exists standalone] || $standalone} {
-  # write output
-  write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
-=======
 if { [info exists ::env(POST_FLOORPLAN_TCL)] } {
   source $::env(POST_FLOORPLAN_TCL)
 }
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_def $::env(RESULTS_DIR)/2_1_floorplan.def
->>>>>>> master
-  write_verilog $::env(RESULTS_DIR)/2_floorplan.v
+  write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
   write_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
 }
