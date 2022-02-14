@@ -36,6 +36,17 @@ if {[find_macros] != ""} {
     }
   }
 
+  lassign $::env(MACRO_PLACE_HALO) halo_x halo_y
+  lassign $::env(MACRO_PLACE_CHANNEL) channel_x channel_y
+  set halo_max [expr max($halo_x, $halo_y)]
+  set channel_max [expr max($channel_x, $channel_y)]
+  set blockage_width [expr max($halo_max, $channel_max/2)]
+
+  
+  if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
+    set blockage_width $::env(MACRO_BLOCKAGE_HALO)
+  }
+
   if {[info exists ::env(RTLMP_FLOW)]} {
     puts "RTLMP Flow enabled..."
     set additional_partition_args ""
@@ -53,6 +64,9 @@ if {[find_macros] != ""} {
     }
 
     set additional_rtlmp_args ""
+    
+    append additional_rtlmp_args " -macro_halo $halo_max"
+
     if { [info exists ::env(RTLMP_AREA_WT)]} {
         append additional_rtlmp_args " -area_weight $env(RTLMP_AREA_WT)"
     }
@@ -85,8 +99,8 @@ if {[find_macros] != ""} {
     }
 
     partition_design -net_threshold 5 \
-                     -virtual_weight 500 \
-                     -num_hop 5 \
+                     -virtual_weight 1 \
+                     -num_hop 3 \
                      -timing_weight 1 \
                      -report_directory $env(RTLMP_RPT_DIR) \
                      -report_file $env(RTLMP_RPT_FILE) \
@@ -109,14 +123,12 @@ if {[find_macros] != ""} {
     }
   }
 
-  if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
-    source $::env(SCRIPTS_DIR)/placement_blockages.tcl
-    block_channels $::env(MACRO_BLOCKAGE_HALO)
-  }
+  source $::env(SCRIPTS_DIR)/placement_blockages.tcl
+  block_channels $blockage_width 
 } else {
   puts "No macros found: Skipping macro_placement"
 }
 
-if {![info exists standalone] || $standalone} {
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_db $::env(RESULTS_DIR)/2_4_floorplan_macro.odb
 }

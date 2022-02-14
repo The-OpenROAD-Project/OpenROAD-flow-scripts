@@ -78,14 +78,11 @@ check_placement -verbose
 
 report_metrics "cts final"
 
-if {![info exists standalone] || $standalone} {
-  # write output
-  write_db $::env(RESULTS_DIR)/4_1_cts.odb
-  write_verilog $::env(RESULTS_DIR)/4_cts.v
-  write_sdc $::env(RESULTS_DIR)/4_cts.sdc
-}
-
-# post CTS user TCL script hook
 if { [info exists ::env(POST_CTS_TCL)] } {
   source $::env(POST_CTS_TCL)
+}
+
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_db $::env(RESULTS_DIR)/4_1_cts.odb
+  write_sdc $::env(RESULTS_DIR)/4_cts.sdc
 }

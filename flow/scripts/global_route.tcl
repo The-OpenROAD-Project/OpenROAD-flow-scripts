@@ -15,7 +15,7 @@ if {[info exist env(FASTROUTE_TCL)]} {
 
 global_route -guide_file $env(RESULTS_DIR)/route.guide \
                -congestion_iterations 100 \
-               -verbose 2
+               -verbose
 
 # Set res and cap
 if [file exists $env(PLATFORM_DIR)/setRC.tcl] {

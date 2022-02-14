@@ -1,5 +1,4 @@
 # Performs RTL-to-GDS in a single script
-# No checkpointing is performed
 
 set standalone 0
 

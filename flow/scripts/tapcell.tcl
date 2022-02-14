@@ -5,7 +5,6 @@ if {[info exist ::env(TAPCELL_TCL)]} {
   source $::env(TAPCELL_TCL)
 }
 
-if {![info exists standalone] || $standalone} {
-  # write output
+if {![info exists save_checkpoint] || $save_checkpoint} {
   write_db $::env(RESULTS_DIR)/2_5_floorplan_tapcell.odb
 }

@@ -29,8 +29,6 @@ export TIELO_CELL_AND_PORT = LOGIC0_X1 Z
 # Used in synthesis
 export MIN_BUF_CELL_AND_PORTS = BUF_X1 A Z
 
-# Used in synthesis
-export MAX_FANOUT = 100
 
 # Yosys mapping files
 export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch.v
@@ -38,7 +36,7 @@ export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
 export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders.v
 #
 # Set yosys-abc clock period to first "-period" found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell grep -E -o -m 1 "\-period\s+\S+" $(SDC_FILE) | awk '{print $$2*1000}')
+export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 export ABC_DRIVER_CELL = BUF_X1
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
 export ABC_LOAD_IN_FF = 3.898
@@ -50,10 +48,7 @@ export ABC_LOAD_IN_FF = 3.898
 # Placement site for core cells
 # This can be found in the technology lef
 export PLACE_SITE = FreePDK45_38x28_10R_NP_162NW_34O
-#
-# IO Pin fix margin
-export IO_PIN_MARGIN = 70
-#
+
 # IO Placer pin layers
 export IO_PLACER_H = metal3
 export IO_PLACER_V = metal2
@@ -74,11 +69,9 @@ export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 export WIRE_RC_LAYER = metal3
 
 # Cell padding in SITE widths to ease rout-ability.  Applied to both sides
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 2
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 1
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
 #
-# resizer repair_long_wires -max_length
-export MAX_WIRE_LENGTH = 1000
 
 export PLACE_DENSITY ?= 0.30
 
@@ -109,6 +102,9 @@ export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/FreePDK45.lydrc
 
 # KLayout LVS ruledeck
 export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/FreePDK45.lylvs
+
+# Allow empty GDS cell
+export GDS_ALLOW_EMPTY = fakeram.*
 
 export CDL_FILE = $(PLATFORM_DIR)/cdl/NangateOpenCellLibrary.cdl
 

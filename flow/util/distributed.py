@@ -96,7 +96,7 @@ class AutoTunerBase(tune.Trainable):
             return (99999999999) * (self.step_ / 100)**(-1)
         gamma = (metrics['clk_period'] - metrics['worst_slack']) / 10
         score = metrics['clk_period'] - metrics['worst_slack']
-        score = (self.step_ / 100)**(-1) + gamma * metrics['num_drc']
+        score = score * (self.step_ / 100)**(-1) + gamma * metrics['num_drc']
         return score
 
     @classmethod
@@ -254,7 +254,7 @@ def read_config(file_name):
         data = json.load(file)
     sdc_file = ''
     fr_file = ''
-    if args.algorithm == 'ax':
+    if args.mode == 'tune' and args.algorithm == 'ax':
         config = list()
     else:
         config = dict()
@@ -847,7 +847,6 @@ if __name__ == '__main__':
             local_dir=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
-            queue_trials=True,
         )
         if args.algorithm == 'pbt':
             tune_args['scheduler'] = search_algo

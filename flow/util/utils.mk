@@ -94,7 +94,7 @@ RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT).sh
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	# Creating $(RUN_ME_SCRIPT) script
-	@echo "#!/bin/bash"                             >  $(RUN_ME_SCRIPT)
+	@echo "#!/usr/bin/env bash"                     >  $(RUN_ME_SCRIPT)
 	@echo "source $(VARS_BASENAME).sh"              >> $(RUN_ME_SCRIPT)
 	@echo "openroad -no_init $(SCRIPTS_DIR)/$*.tcl" >> $(RUN_ME_SCRIPT)
 	@chmod +x $(RUN_ME_SCRIPT)
@@ -124,6 +124,10 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).sh
 	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).tcl
 	@sed -i '/TIME_CMD/d' $(VARS_BASENAME).gdb
+	# remove QT variable
+	@sed -i '/QT_QPA_PLATFORM/d' $(VARS_BASENAME).sh
+	@sed -i '/QT_QPA_PLATFORM/d' $(VARS_BASENAME).tcl
+	@sed -i '/QT_QPA_PLATFORM/d' $(VARS_BASENAME).gdb
 
 # This requires gnu-tar to support --xform
 	# Archiving issue to $*_$(ISSUE_TAG).tar.gz

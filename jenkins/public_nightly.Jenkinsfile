@@ -4,7 +4,7 @@ pipeline {
     MAKE_ISSUE = 1;
   }
   options {
-    timeout(time: 6, unit: "HOURS");
+    timeout(time: 12, unit: "HOURS");
     copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME);
   }
   stages {
@@ -478,8 +478,8 @@ pipeline {
           keepAll: true,
           reportName: "Report",
           reportDir: "flow/reports",
-          reportFiles: "report-table.html,report-gallery.html",
-          reportTitles: "Flow Report,Gallery"
+          reportFiles: "report-table.html,report-gallery*.html",
+          reportTitles: "Flow Report"
       ]);
     }
     failure {

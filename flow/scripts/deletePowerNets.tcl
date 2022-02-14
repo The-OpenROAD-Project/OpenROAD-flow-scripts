@@ -25,4 +25,3 @@ deleteNetByName VDD
 deleteNetByName VSS
 
 write_def $::env(RESULTS_DIR)/6_final_no_power.def
-exit
