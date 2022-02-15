@@ -18,8 +18,8 @@ if { [llength $clks] == 0 } {
     set ref_period [expr ($period - $slack) * (1.0 - $margin/100.0)]
     utl::info "FLW" 8 "Clock $clk_name period [format %.3f $ref_period]"
     utl::info "FLW" 9 "Clock $clk_name slack [format %.3f $slack]"
-    utl::metrics "timing__clock__slack" $slack
-    utl::metrics "timing__clock__period" $slack
+    utl::metric_float "timing__clock__slack" $slack
+    utl::metric_float "timing__clock__period" $slack
 
     set sources [$clk sources]
     # Redefine clock with updated period.
