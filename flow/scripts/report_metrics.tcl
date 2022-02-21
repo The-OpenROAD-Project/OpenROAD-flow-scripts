@@ -34,6 +34,16 @@ proc report_metrics { when {include_erc true} } {
     puts "$when max_cap_violation_count"
     puts "--------------------------------------------------------------------------"
     puts "max cap violation count [sta::max_capacitance_violation_count]"
+
+    puts "\n=========================================================================="
+    puts "$when setup_violation_count"
+    puts "--------------------------------------------------------------------------"
+    puts "setup violation count [llength [find_timing_paths -path_delay min -slack_max 0]]"
+
+    puts "\n=========================================================================="
+    puts "$when hold_violation_count"
+    puts "--------------------------------------------------------------------------"
+    puts "hold violation count [llength [find_timing_paths -path_delay max -slack_max 0]]"
   }
 
   puts "\n=========================================================================="

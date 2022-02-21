@@ -139,6 +139,41 @@ metrics = {
         'customThreshold': 0,
         'compare': '<=',
     },
+    'finish__timing__drv__max_slew': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'customThreshold': 0,
+        'compare': '<=',
+    },
+    'finish__timing__drv__max_fanout': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'customThreshold': 0,
+        'compare': '<=',
+    },
+    'finish__timing__drv__max_cap': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'customThreshold': 0,
+        'compare': '<=',
+    },
+    'finish__timing__drv__setup_violation_count': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'customThreshold': 0,
+        'compare': '<=',
+    },
+    'finish__timing__drv__hold_violation_count': {
+        'usePeriod': False,
+        'padding': 0,
+        'roundValue': True,
+        'customThreshold': 0,
+        'compare': '<=',
+    },
 }
 
 periodList = list()
