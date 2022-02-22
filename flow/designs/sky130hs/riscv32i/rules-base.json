@@ -41,6 +41,11 @@
             "compare": ">="
         },
         {
+            "field": "cts__design__instance__count__hold_buffer",
+            "value": 981.0,
+            "compare": "<="
+        },
+        {
             "field": "globalroute__timing__clock__slack",
             "value": -0.62,
             "compare": ">="

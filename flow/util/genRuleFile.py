@@ -5,6 +5,7 @@ from os import chdir
 from os.path import isfile, abspath
 from re import sub
 import json
+from math import ceil
 
 if len(sys.argv) != 3:
     print('usage:', sys.argv[0], '<DIR> <VARIANT>')
@@ -82,6 +83,12 @@ metrics = {
         'padding': 10,
         'roundValue': False,
         'compare': '>=',
+    },
+    'cts__design__instance__count__hold_buffer': {
+        'usePeriod': False,
+        'padding': 10,
+        'roundValue': False,
+        'compare': '<=',
     },
     # route
     'globalroute__timing__clock__slack': {
@@ -182,6 +189,9 @@ for field, option in metrics.items():
             value = min(value, 0)
         else:
             value += value * option['padding'] / 100
+
+    if field == 'cts__design__instance__count__hold_buffer' and value == 0:
+        value = ceil(data['placeopt__design__instance__count__stdcell'] * 0.1)
 
     newRule = dict()
     newRule['field'] = field

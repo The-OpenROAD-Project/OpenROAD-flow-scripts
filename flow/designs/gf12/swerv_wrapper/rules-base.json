@@ -41,6 +41,11 @@
             "compare": ">="
         },
         {
+            "field": "cts__design__instance__count__hold_buffer",
+            "value": 15336.2,
+            "compare": "<="
+        },
+        {
             "field": "globalroute__timing__setup__ws",
             "value": -43.6,
             "compare": ">="
