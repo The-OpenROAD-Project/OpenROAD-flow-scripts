@@ -42,22 +42,22 @@
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 32637.0,
+            "value": 32639.2,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -3.15,
+            "value": -3.13,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -3.15,
+            "value": -3.13,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 11247451,
+            "value": 11248193,
             "compare": "<="
         },
         {
@@ -67,12 +67,12 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -3.09,
+            "value": -3.07,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 796618,
+            "value": 796619,
             "compare": "<="
         },
         {
@@ -87,7 +87,7 @@
         },
         {
             "field": "finish__timing__drv__max_cap",
-            "value": 49,
+            "value": 51,
             "compare": "<="
         },
         {

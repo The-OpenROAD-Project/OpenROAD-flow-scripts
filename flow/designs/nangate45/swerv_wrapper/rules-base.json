@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 763033,
+            "value": 762948,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 108182,
+            "value": 108168,
             "compare": "<="
         },
         {
@@ -27,37 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -0.13,
+            "value": -0.11,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -0.12,
+            "value": -0.1,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -0.12,
+            "value": -0.1,
             "compare": ">="
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 5.5,
+            "value": 4.4,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.0,
+            "value": -0.02,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": 0.0,
+            "value": -0.02,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 5693011,
+            "value": 5687354,
             "compare": "<="
         },
         {
@@ -67,12 +67,12 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -0.13,
+            "value": -0.16,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 764574,
+            "value": 764522,
             "compare": "<="
         },
         {
@@ -87,7 +87,7 @@
         },
         {
             "field": "finish__timing__drv__max_cap",
-            "value": 292,
+            "value": 309,
             "compare": "<="
         },
         {
