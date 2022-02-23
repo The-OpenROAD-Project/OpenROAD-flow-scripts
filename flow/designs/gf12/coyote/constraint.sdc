@@ -8,7 +8,8 @@ current_design bsg_rocket_node_client_rocc
 ###############################################################################
 create_clock -name core_clk -period 4000 -waveform {0.0000 2000} [get_ports {clk_i}]
 set_clock_transition 59.0000 [get_clocks {core_clk}]
-set_clock_uncertainty 200.0000 core_clk
+set_clock_uncertainty -setup 200.0000 core_clk
+set_clock_uncertainty -hold 20.0000 core_clk
 set_clock_latency -source 0.0000 [get_clocks {core_clk}]
 set_input_delay 2000 -clock [get_clocks {core_clk}] -add_delay [get_ports {en_i}]
 set_input_delay 2000 -clock [get_clocks {core_clk}] -add_delay [get_ports {fsb_node_data_i[0]}]
