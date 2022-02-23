@@ -2,7 +2,7 @@
     "rules": [
         {
             "field": "synth__design__instance__area__stdcell",
-            "value": 174094,
+            "value": 172552,
             "compare": "<="
         },
         {
@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 214062,
+            "value": 211545,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 27914,
+            "value": 27663,
             "compare": "<="
         },
         {
@@ -27,32 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -0.55,
+            "value": -0.47,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -2.0,
+            "value": -1.49,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -2.0,
+            "value": -1.49,
             "compare": ">="
         },
         {
+            "field": "cts__design__instance__count__hold_buffer",
+            "value": 102.3,
+            "compare": "<="
+        },
+        {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.45,
+            "value": -0.2,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -0.46,
+            "value": -0.2,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 1216915,
+            "value": 1181071,
             "compare": "<="
         },
         {
@@ -67,7 +72,32 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 215760,
+            "value": 213348,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_slew",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_fanout",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_cap",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__setup_violation_count",
+            "value": 1,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__hold_violation_count",
+            "value": 0,
             "compare": "<="
         }
     ]

@@ -2,7 +2,7 @@
     "rules": [
         {
             "field": "synth__design__instance__area__stdcell",
-            "value": 27179,
+            "value": 28094,
             "compare": "<="
         },
         {
@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 19466903,
+            "value": 19458757,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 376654,
+            "value": 376135,
             "compare": "<="
         },
         {
@@ -27,32 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -3.17,
+            "value": -1.55,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -3.06,
+            "value": -2.08,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -3.21,
+            "value": -2.16,
             "compare": ">="
         },
         {
+            "field": "cts__design__instance__count__hold_buffer",
+            "value": 171.6,
+            "compare": "<="
+        },
+        {
             "field": "globalroute__timing__clock__slack",
-            "value": -2.32,
+            "value": -0.87,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -2.32,
+            "value": -0.87,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 2536441,
+            "value": 1842462,
             "compare": "<="
         },
         {
@@ -62,12 +67,37 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -1.59,
+            "value": -1.0,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 19468976,
+            "value": 19462225,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_slew",
+            "value": 158,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_fanout",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_cap",
+            "value": 14,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__setup_violation_count",
+            "value": 1,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__hold_violation_count",
+            "value": 1,
             "compare": "<="
         }
     ]
