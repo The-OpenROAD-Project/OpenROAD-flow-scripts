@@ -77,7 +77,7 @@
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 0,
+            "value": 80,
             "compare": "<="
         },
         {
