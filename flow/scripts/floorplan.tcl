@@ -1,3 +1,5 @@
+utl::set_metrics_stage "floorplan__{}"
+
 if {![info exists standalone] || $standalone} {
   # Read lef
   read_lef $::env(TECH_LEF)
@@ -70,6 +72,7 @@ if {[info exists ::env(FOOTPRINT_TCL)]} {
 # remove buffers inserted by yosys/abc
 remove_buffers
 
+
 ##### Restructure for timing #########
 if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER) == 1 } {
   repair_design
@@ -112,7 +115,6 @@ if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER
 puts "Default units for flow"
 report_units
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-utl::set_metrics_stage "floorplan__{}"
 report_metrics "floorplan final" false
 
 if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) == 1 } {
