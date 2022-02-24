@@ -5,8 +5,6 @@ load_design 3_place.odb 3_place.sdc "Starting CTS"
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
 
-source $::env(PLATFORM_DIR)/setRC.tcl
-
 # Run CTS
 if {[info exist ::env(CTS_CLUSTER_SIZE)]} {
   set cluster_size "$::env(CTS_CLUSTER_SIZE)"

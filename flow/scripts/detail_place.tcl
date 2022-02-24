@@ -1,8 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 3_3_place_resized.odb 2_floorplan.sdc "Starting detailed placement"
 
-source $::env(PLATFORM_DIR)/setRC.tcl
-
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)

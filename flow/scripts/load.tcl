@@ -27,6 +27,8 @@ proc load_design {design_file sdc_file msg} {
     if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
       source $::env(PLATFORM_DIR)/derate.tcl
     }
+
+    source $::env(PLATFORM_DIR)/setRC.tcl
   } else {
     puts $msg
   }

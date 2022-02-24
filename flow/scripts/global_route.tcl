@@ -17,11 +17,6 @@ global_route -guide_file $env(RESULTS_DIR)/route.guide \
                -congestion_iterations 100 \
                -verbose
 
-# Set res and cap
-if [file exists $env(PLATFORM_DIR)/setRC.tcl] {
-  source $env(PLATFORM_DIR)/setRC.tcl
-}
-
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
 

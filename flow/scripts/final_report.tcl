@@ -19,9 +19,6 @@ if {[info exist ::env(RCX_RULES)]} {
     set rc_corner $::env(RCX_RC_CORNER)
   }
 
-  # Set via resistances
-  source $::env(PLATFORM_DIR)/setRC.tcl
-
   # RCX section
   define_process_corner -ext_model_index 0 X
   extract_parasitics -ext_model_file $::env(RCX_RULES)

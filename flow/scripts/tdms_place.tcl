@@ -17,8 +17,6 @@ proc find_macros {} {
   return $macros
 }
 
-# Set res and cap
-source $::env(PLATFORM_DIR)/setRC.tcl
 set_dont_use $::env(DONT_USE_CELLS)
 
 if {[find_macros] != ""} {

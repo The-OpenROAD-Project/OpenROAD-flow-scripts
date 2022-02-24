@@ -1,8 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 2_floorplan.odb 2_floorplan.sdc "Starting global placement"
 
-# Set res and cap
-source $::env(PLATFORM_DIR)/setRC.tcl
 set_dont_use $::env(DONT_USE_CELLS)
 
 # set fastroute layer reduction

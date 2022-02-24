@@ -7,9 +7,6 @@ proc print_banner {header} {
   puts "--------------------------------------------------------------------------"
 }
 
-# Set res and cap
-source $::env(PLATFORM_DIR)/setRC.tcl
-
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
