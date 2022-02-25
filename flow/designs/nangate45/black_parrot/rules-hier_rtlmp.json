@@ -1,0 +1,49 @@
+{
+    "rules": [
+        {
+            "field": "synth__design__instance__area__stdcell",
+            "value": 7000,
+            "compare": "<="
+        },
+        {
+            "field": "constraints__clocks__count",
+            "value": 1,
+            "compare": "=="
+        },
+        {
+            "field": "placeopt__design__instance__area",
+            "value": 1100873,
+            "compare": "<="
+        },
+        {
+            "field": "placeopt__design__instance__count__stdcell",
+            "value": 561329,
+            "compare": "<="
+        },
+        {
+            "field": "detailedplace__design__violations",
+            "value": 0,
+            "compare": "=="
+        },
+        {
+            "field": "cts__timing__setup__ws",
+            "value": -0.68,
+            "compare": ">="
+        },
+        {
+            "field": "cts__timing__setup__ws__pre_repair",
+            "value": -2.12,
+            "compare": ">="
+        },
+        {
+            "field": "cts__timing__setup__ws__post_repair",
+            "value": -2.12,
+            "compare": ">="
+        },
+        {
+            "field": "cts__design__instance__count__hold_buffer",
+            "value": 35530.0,
+            "compare": "<="
+        }
+    ]
+}
