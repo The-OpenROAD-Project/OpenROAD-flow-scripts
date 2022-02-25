@@ -63,4 +63,3 @@ export DESIGN_TYPE = CHIP
 
 # enable slack margin for setup and hold fix after CTS
 export SETUP_SLACK_MARGIN ?= 100
-export HOLD_SLACK_MARGIN  ?= 300
