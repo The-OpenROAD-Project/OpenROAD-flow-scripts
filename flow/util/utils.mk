@@ -29,6 +29,25 @@ RULES_DESIGN = $(dir $(DESIGN_CONFIG))rules-$(FLOW_VARIANT).json
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 	$(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) 2>&1 | tee $@
 
+#-------------------------------------------------------------------------------
+
+write_net_caps: $(RESULTS_DIR)/6_net_caps.csv
+
+$(RESULTS_DIR)/6_net_caps.csv: $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/6_final.spef
+	($(TIME_CMD) $(OPENROAD_CMD) $(UTILS_DIR)/write_net_caps_script.tcl) 2>&1 | tee $(LOG_DIR)/6_write_net_caps.log
+
+correlate_rc: $(RESULTS_DIR)/6_net_caps.csv
+	$(UTILS_DIR)/correlateRC.py --capFile $(RESULTS_DIR)/6_net_caps.csv
+
+# TODO Make always wants to redo designs with this rule, regardless of which variations are tried.
+#	$(MAKE) DESIGN_CONFIG=$$config write_net_caps; \
+#$(foreach config,$(wildcard designs/$(PLATFORM)/*/config.mk),$(MAKE) DESIGN_CONFIG=$(config) write_net_caps; )
+correlate_platform_rc:
+	for config in designs/$(PLATFORM)/*/config.mk; do \
+	  design=$$(basename $$(dirname $$config)); \
+	  make DESIGN_CONFIG=$$config results/$(PLATFORM)/$$design/base/6_net_caps.csv; \
+	done
+	$(UTILS_DIR)/correlateRC.py --capFile $$(find results/$(PLATFORM)/*/$(FLOW_VARIANT) -name 6_net_caps.csv)
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------
