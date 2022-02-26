@@ -82,7 +82,7 @@
         },
         {
             "field": "finish__timing__drv__max_fanout",
-            "value": 1835,
+            "value": 1927,
             "compare": "<="
         },
         {

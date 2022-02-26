@@ -77,12 +77,12 @@
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 1062,
+            "value": 1115,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_fanout",
-            "value": 1894,
+            "value": 1989,
             "compare": "<="
         },
         {
