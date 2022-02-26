@@ -87,7 +87,7 @@
         },
         {
             "field": "finish__timing__drv__max_cap",
-            "value": 54,
+            "value": 70,
             "compare": "<="
         },
         {
