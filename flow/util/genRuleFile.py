@@ -130,19 +130,19 @@ metrics = {
     },
     'finish__timing__drv__max_slew': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 5,
         'roundValue': True,
         'compare': '<=',
     },
     'finish__timing__drv__max_fanout': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 5,
         'roundValue': True,
         'compare': '<=',
     },
     'finish__timing__drv__max_cap': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 5,
         'roundValue': True,
         'compare': '<=',
     },
