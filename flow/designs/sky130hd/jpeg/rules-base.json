@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 601181,
+            "value": 601230,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 89514,
+            "value": 89507,
             "compare": "<="
         },
         {
@@ -27,37 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -0.46,
+            "value": -0.56,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -0.43,
+            "value": -0.55,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -0.43,
+            "value": -0.55,
             "compare": ">="
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 267.3,
+            "value": 194.7,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.53,
+            "value": -0.63,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -0.52,
+            "value": -0.63,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 1465405,
+            "value": 1466847,
             "compare": "<="
         },
         {
@@ -72,12 +72,12 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 605727,
+            "value": 605132,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 60,
+            "value": 21,
             "compare": "<="
         },
         {
@@ -87,7 +87,7 @@
         },
         {
             "field": "finish__timing__drv__max_cap",
-            "value": 2,
+            "value": 1,
             "compare": "<="
         },
         {
