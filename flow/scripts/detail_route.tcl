@@ -61,7 +61,11 @@ if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
 }
 
 read_guides "$::env(RESULTS_DIR)/route.guide"
+if { [info exists ::env(AUTOTUNER_REPORTS_DIR)] } {
 report_wire_length -net * -global_route -detailed_route -verbose -file "$::env(AUTOTUNER_REPORTS_DIR)/wirelengthpernet.csv"
+} else {
+report_wire_length -net * -global_route -detailed_route -verbose -file "$::env(RESULTS_DIR)/wirelengthpernet.csv"
+}
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/5_route.def

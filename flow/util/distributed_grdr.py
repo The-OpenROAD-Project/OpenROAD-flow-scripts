@@ -156,6 +156,8 @@ class AutoTunerBase(tune.Trainable):
                 num_drc = value['route__drc_errors']
             if stage == 'detailedroute' and 'route__wirelength' in value:
                 wirelength = value['route__wirelength']
+            if stage == 'finish' and 'timing__setup__tns' in value:
+                total_negative_slack = value['timing__setup__tns']
             if stage == 'finish' and 'timing__setup__ws' in value:
                 worst_slack = value['timing__setup__ws']
             if stage == 'finish' and 'power__total' in value:
@@ -164,6 +166,7 @@ class AutoTunerBase(tune.Trainable):
                 final_util = value['design__instance__utilization']
         ret = {
             "clk_period": clk_period,
+            "total_negative_slack": total_negative_slack,
             "worst_slack": worst_slack,
             "wirelength": wirelength,
             "num_drc": num_drc,
@@ -183,44 +186,43 @@ class PPAImprov(AutoTunerBase):
     '''
 
     @classmethod
-    def get_ppa(cls, metrics):
+    def get_ppa(cls, metrics, r2):
         '''
         Compute PPA term for evaluate.
         '''
-        coeff_perform, coeff_power, coeff_area = 10000, 100, 100
+        coeff_wirelength, coeff_worstslack, coeff_totnegslack, coeff_r2 = 10000, 0, 0, 0
 
-        eff_clk_period = metrics['clk_period']
-        if metrics['worst_slack'] < 0:
-            eff_clk_period -= metrics['worst_slack']
+        eff_wirelength = metrics['wirelength']
 
-        eff_clk_period_ref = reference['clk_period']
-        if reference['worst_slack'] < 0:
-            eff_clk_period_ref -= reference['worst_slack']
+        eff_wirelength_ref = reference['wirelength']
 
         def percent(x_1, x_2):
             return (x_1 - x_2) / x_1 * 100
 
-        performance = percent(eff_clk_period_ref, eff_clk_period)
-        power = percent(reference['total_power'],
-                        metrics['total_power'])
-        area = percent(100 - reference['final_util'],
-                       100 - metrics['final_util'])
+        wirelength_improv = percent(eff_wirelength_ref, eff_wirelength)
+        worstslack_improv = percent(reference['worst_slack'],
+                        metrics['worst_slack'])
+        totnegslack_improv = percent(reference['total_negative_slack'],
+                       metrics['total_negative_slack'])
+        r2_improv = percent(r2_ref, r2)
 
-        # Lower values of PPA are better.
-        ppa_upper_bound = (coeff_perform + coeff_power + coeff_area) * 100
-        ppa = performance * coeff_perform
-        ppa += power * coeff_power
-        ppa += area * coeff_area
-        return ppa_upper_bound - ppa
+        ppa = wirelength_improv * coeff_wirelength
+        ppa -= worstslack_improv * coeff_worstslack
+        ppa -= totnegslack_improv * coeff_totnegslack
+        ppa -= r2_improv * coeff_r2
+        print(wirelength_improv, worstslack_improv, totnegslack_improv, r2_improv)
+        print(r2_ref, r2)
+        print("ppa: %s"%ppa)
+        return ppa
 
-    def evaluate(self, metrics):
+    def evaluate(self, metrics, r2):
         error = 'ERR' in metrics.values() or 'ERR' in reference.values()
         not_found = 'N/A' in metrics.values() or 'N/A' in reference.values()
         if error or not_found:
             return (0) * (self.step_ / 100)**(-1)
-        ppa = self.get_ppa(metrics)
-        gamma = ppa / 10
-        score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['num_drc'])
+        ppa = self.get_ppa(metrics, r2)
+        gamma = ppa / 20
+        score = ppa * (self.step_ / 100)**(-1) - (gamma * metrics['num_drc'])
         return score
 
 
@@ -476,10 +478,10 @@ def openroad(base_dir, parameters, path=''):
         os.system(f'mkdir -p {parpath}/{flow_variant}')
         os.system(f'mkdir -p {reporting_path}/{flow_variant}')
         os.system(f'mkdir -p {object_path}/{flow_variant}')
-        os.system(f'cp  {base_dir}/flow/results/{args.platform}/{args.design}/base/* {result_path}/{flow_variant}/')
-        os.system(f'cp  {base_dir}/flow/logs/{args.platform}/{args.design}/base/* {parpath}/{flow_variant}/')
-        os.system(f'cp  {base_dir}/flow/reports/{args.platform}/{args.design}/base/* {reporting_path}/{flow_variant}/')
-        os.system(f'cp -r {base_dir}/flow/objects/{args.platform}/{args.design}/base/* {object_path}/{flow_variant}/')
+        os.system(f'cp -p {base_dir}/flow/results/{args.platform}/{args.design}/base/* {result_path}/{flow_variant}/')
+        os.system(f'cp -p {base_dir}/flow/logs/{args.platform}/{args.design}/base/* {parpath}/{flow_variant}/')
+        os.system(f'cp -p {base_dir}/flow/reports/{args.platform}/{args.design}/base/* {reporting_path}/{flow_variant}/')
+        os.system(f'cp -rp {base_dir}/flow/objects/{args.platform}/{args.design}/base/* {object_path}/{flow_variant}/')
 
     export_command = f'export PATH={INSTALL_PATH}/OpenROAD/bin'
     export_command += f':{INSTALL_PATH}/yosys/bin'
@@ -709,7 +711,7 @@ def parse_arguments():
         default=int(np.floor(cpu_count() / 2)),
         help='Max number of concurrent jobs.')
     parser.add_argument(
-        '--openroad-threads',
+        '--openroad_threads',
         type=int,
         metavar='<int>',
         default=16,
@@ -886,7 +888,8 @@ if __name__ == '__main__':
         TrainClass = set_training_class(args.eval)
         # PPAImprov requires a reference file to compute training scores.
         if args.eval == 'ppa-improv':
-            reference = PPAImprov.read_metrics(args.reference)
+            csv_file_ref = f'results/{args.platform}/{args.design}/base/wirelengthpernet.csv'
+            reference, r2_ref = PPAImprov.read_metrics(args.reference, csv_file_ref)
 
         tune_args = dict(
             name=f'{args.experiment}',
