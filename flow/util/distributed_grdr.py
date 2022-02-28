@@ -197,13 +197,20 @@ class PPAImprov(AutoTunerBase):
         eff_wirelength_ref = reference['wirelength']
 
         def percent(x_1, x_2):
-            return (x_1 - x_2) / x_1 * 100
+            return (x_2 - x_1) / abs(x_1) * 100
 
         wirelength_improv = percent(eff_wirelength_ref, eff_wirelength)
-        worstslack_improv = percent(reference['worst_slack'],
-                        metrics['worst_slack'])
-        totnegslack_improv = percent(reference['total_negative_slack'],
-                       metrics['total_negative_slack'])
+
+        if reference['worst_slack'] == 0:
+            worstslack_improv = percent(-0.01, metrics['worst_slack'])
+        else:
+            worstslack_improv = percent(reference['worst_slack'],
+                            metrics['worst_slack'])
+        if reference['total_negative_slack'] == 0:
+            totnegslack_improv = percent(-1, metrics['total_negative_slack'])
+        else:
+            totnegslack_improv = percent(reference['total_negative_slack'],
+                           metrics['total_negative_slack'])
         r2_improv = percent(r2_ref, r2)
 
         ppa = wirelength_improv * coeff_wirelength
