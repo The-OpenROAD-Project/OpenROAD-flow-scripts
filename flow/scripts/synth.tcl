@@ -41,11 +41,6 @@ if {[info exist ::env(LATCH_MAP_FILE)]} {
   techmap -map $::env(LATCH_MAP_FILE)
 }
 
-# rename registers to have the verilog register name in its name
-# of the form \regName$_DFF_P_. We should fix yosys to make it the reg name.
-# At least this is predictable.
-renames -wire
-
 # Technology mapping of flip-flops
 # dfflibmap only supports one liberty file
 if {[info exist ::env(DFF_LIB_FILE)]} {
@@ -55,6 +50,10 @@ if {[info exist ::env(DFF_LIB_FILE)]} {
 }
 opt
 
+# rename registers to have the verilog register name in its name
+# of the form \regName$_DFF_P_. We should fix yosys to make it the reg name.
+# At least this is predictable. Must happen right after dfflibmap.
+renames -wire
 
 set constr [open $::env(OBJECTS_DIR)/abc.constr w]
 puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
