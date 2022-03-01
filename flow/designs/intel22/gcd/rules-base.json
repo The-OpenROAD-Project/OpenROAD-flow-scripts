@@ -2,7 +2,7 @@
     "rules": [
         {
             "field": "synth__design__instance__area__stdcell",
-            "value": 200,
+            "value": 195,
             "compare": "<="
         },
         {
@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 259,
+            "value": 266,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 542,
+            "value": 513,
             "compare": "<="
         },
         {
@@ -41,6 +41,11 @@
             "compare": ">="
         },
         {
+            "field": "cts__design__instance__count__hold_buffer",
+            "value": 45.0,
+            "compare": "<="
+        },
+        {
             "field": "globalroute__timing__clock__slack",
             "value": 0.0,
             "compare": ">="
@@ -52,7 +57,7 @@
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 3654,
+            "value": 3838,
             "compare": "<="
         },
         {
@@ -67,7 +72,32 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 262,
+            "value": 269,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_slew",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_fanout",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_cap",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__setup_violation_count",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__hold_violation_count",
+            "value": 0,
             "compare": "<="
         }
     ]

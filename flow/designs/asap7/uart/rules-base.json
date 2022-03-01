@@ -27,7 +27,7 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -14.69,
+            "value": -14.76,
             "compare": ">="
         },
         {
@@ -41,13 +41,18 @@
             "compare": ">="
         },
         {
+            "field": "cts__design__instance__count__hold_buffer",
+            "value": 4.4,
+            "compare": "<="
+        },
+        {
             "field": "globalroute__timing__clock__slack",
-            "value": -3.72,
+            "value": -2.45,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -3.72,
+            "value": -2.45,
             "compare": ">="
         },
         {
@@ -68,6 +73,31 @@
         {
             "field": "finish__design__instance__area",
             "value": 254,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_slew",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_fanout",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_cap",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__setup_violation_count",
+            "value": 0,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__hold_violation_count",
+            "value": 0,
             "compare": "<="
         }
     ]
