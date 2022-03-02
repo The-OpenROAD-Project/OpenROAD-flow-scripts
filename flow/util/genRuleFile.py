@@ -89,7 +89,7 @@ metrics = {
         'usePeriod': False,
         'padding': 10,
         'fixed': 10,
-        'roundValue': False,
+        'roundValue': True,
         'compare': '<=',
     },
     # route

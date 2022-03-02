@@ -42,7 +42,7 @@
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 7011.4,
+            "value": 7011,
             "compare": "<="
         },
         {
