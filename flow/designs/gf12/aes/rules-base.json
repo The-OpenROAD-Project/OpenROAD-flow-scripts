@@ -42,7 +42,7 @@
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 2012.0,
+            "value": 10.0,
             "compare": "<="
         },
         {
@@ -77,27 +77,27 @@
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 0,
+            "value": 10,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_fanout",
-            "value": 0,
+            "value": 10,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_cap",
-            "value": 0,
+            "value": 10,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__setup_violation_count",
-            "value": 0,
+            "value": 10,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__hold_violation_count",
-            "value": 0,
+            "value": 10,
             "compare": "<="
         }
     ]
