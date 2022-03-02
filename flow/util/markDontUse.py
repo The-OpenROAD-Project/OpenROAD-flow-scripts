@@ -22,10 +22,10 @@ patternList = args.patterns.replace('*','.*').split()
 
 # Read input file
 print("Opening file for replace:",args.inputFile)
-if args.inputFile.endswith(".gz"):
-    f = gzip.open(args.inputFile, 'rt')
+if args.inputFile.endswith(".gz") or args.inputFile.endswith(".GZ"):
+    f = gzip.open(args.inputFile, 'rt', encoding="ascii")
 else:
-    f = open(args.inputFile)
+    f = open(args.inputFile, encoding="ascii")
 content = f.read()
 f.close()
 
@@ -44,6 +44,12 @@ pattern = r"(.*original_pin.*)"
 replace = r"/* \1 */;"
 content, count = re.subn(pattern, replace, content)
 print("Commented", count, "lines containing \"original_pin\"")
+
+# Yosys, does not like properties that start with : !, without quotes
+pattern = r":\s+(!.*)\s+;"
+replace = r': "\1" ;'
+content, count = re.subn(pattern, replace, content)
+print("Replaced malformed functions", count)
 
 # Write output file
 print("Writing replaced file:",args.outputFile)
