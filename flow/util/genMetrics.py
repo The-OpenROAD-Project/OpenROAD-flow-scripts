@@ -697,6 +697,18 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         'max cap violation count (\S+)'),
                        logPath + '/6_report.log')
 
+    extractTagFromFile('finish__timing__drv__setup_violation_count',
+                       metrics_dict,
+                       baseRegEx.format('finish setup_violation_count',
+                                        'setup violation count (\S+)'),
+                       logPath + '/6_report.log')
+
+    extractTagFromFile('finish__timing__drv__hold_violation_count',
+                       metrics_dict,
+                       baseRegEx.format('finish hold_violation_count',
+                                        'hold violation count (\S+)'),
+                       logPath + '/6_report.log')
+
     extractTagFromFile('finish__power__internal__total',
                        metrics_dict,
                        'Total +(\S+) +\S+ +\S+ +\S+ +\S+',

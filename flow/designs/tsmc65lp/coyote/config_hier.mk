@@ -23,4 +23,4 @@ export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-700 -exclude right:150
 export MACRO_PLACE_HALO = 10 10
 export MACRO_PLACE_CHANNEL = 20 20
 
-export PLACE_DENSITY         = 0.75
+export PLACE_DENSITY         = 0.60
