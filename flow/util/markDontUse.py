@@ -23,10 +23,10 @@ patternList = args.patterns.replace('*','.*').split()
 # Read input file
 print("Opening file for replace:",args.inputFile)
 if args.inputFile.endswith(".gz") or args.inputFile.endswith(".GZ"):
-    f = gzip.open(args.inputFile, 'rt', encoding="ascii")
+    f = gzip.open(args.inputFile, 'rt', encoding="utf-8")
 else:
-    f = open(args.inputFile, encoding="ascii")
-content = f.read()
+    f = open(args.inputFile, encoding="utf-8")
+content = f.read().encode("ascii", "ignore").decode("ascii")
 f.close()
 
 # Pattern to match a cell header
