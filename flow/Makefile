@@ -262,8 +262,8 @@ WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_m
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
-export DONT_USE_LIBS   = $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES)))
-export DONT_USE_SC_LIB ?= $(OBJECTS_DIR)/lib/$(notdir $(firstword $(LIB_FILES)))
+export DONT_USE_LIBS   = $(patsubst %.lib.gz, %.lib, $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES))))
+export DONT_USE_SC_LIB ?= $(firstword $(DONT_USE_LIBS))
 
 # Stream system used for final result (GDS is default): GDS, GSDII, GDS2, OASIS, or OAS
 STREAM_SYSTEM ?= GDS
@@ -304,7 +304,7 @@ versions.txt:
 # Create temporary Liberty files which have the proper dont_use properties set
 # For use with Yosys and ABC
 .SECONDEXPANSION:
-$(DONT_USE_LIBS): $$(filter %$$(@F),$(LIB_FILES))
+$(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
 	@mkdir -p $(OBJECTS_DIR)/lib
 	$(UTILS_DIR)/markDontUse.py -p "$(DONT_USE_CELLS)" -i $^ -o $@
 
