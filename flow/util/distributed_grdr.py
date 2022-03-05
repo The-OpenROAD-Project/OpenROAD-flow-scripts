@@ -213,10 +213,10 @@ class PPAImprov(AutoTunerBase):
                            metrics['total_negative_slack'])
         r2_improv = percent(r2_ref, r2)
 
-        ppa = wirelength_improv * coeff_wirelength
-        ppa -= worstslack_improv * coeff_worstslack
-        ppa -= totnegslack_improv * coeff_totnegslack
-        ppa -= r2_improv * coeff_r2
+        ppa = worstslack_improv * coeff_worstslack
+        ppa -= wirelength_improv * coeff_wirelength
+        ppa += totnegslack_improv * coeff_totnegslack
+        ppa += r2_improv * coeff_r2
         print(wirelength_improv, worstslack_improv, totnegslack_improv, r2_improv)
         print(r2_ref, r2)
         print("ppa: %s"%ppa)
