@@ -22,4 +22,4 @@ export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclud
 export MACRO_PLACE_HALO = 5 5
 export MACRO_PLACE_CHANNEL = 10 10
 
-export PLACE_DENSITY = 0.55
+export PLACE_DENSITY = 0.50
