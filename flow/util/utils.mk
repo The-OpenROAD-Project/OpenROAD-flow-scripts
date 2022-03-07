@@ -45,9 +45,9 @@ correlate_rc: $(RESULTS_DIR)/6_net_caps.csv
 correlate_platform_rc:
 	for config in designs/$(PLATFORM)/*/config.mk; do \
 	  design=$$(basename $$(dirname $$config)); \
-	  make DESIGN_CONFIG=$$config results/$(PLATFORM)/$$design/base/6_net_caps.csv; \
+	  make DESIGN_CONFIG=./$$config results/$(PLATFORM)/$$design/base/6_net_caps.csv; \
 	done
-	$(UTILS_DIR)/correlateRC.py --capFile $$(find results/$(PLATFORM)/*/$(FLOW_VARIANT) -name 6_net_caps.csv)
+	$(UTILS_DIR)/correlateRC.py --capFile $$(find results/$(PLATFORM)/*/base -name 6_net_caps.csv)
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------

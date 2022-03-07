@@ -2,7 +2,7 @@
     "rules": [
         {
             "field": "synth__design__instance__area__stdcell",
-            "value": 27399,
+            "value": 89,
             "compare": "<="
         },
         {
@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 6531767,
+            "value": 800352,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 70351,
+            "value": 121560,
             "compare": "<="
         },
         {
@@ -27,37 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -5.3,
+            "value": -0.18,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -2.95,
+            "value": -0.18,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -3.32,
+            "value": -0.18,
             "compare": ">="
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 235,
+            "value": 16,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -5.08,
+            "value": -0.06,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -5.08,
+            "value": -0.06,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 1054133,
+            "value": 6035239,
             "compare": "<="
         },
         {
@@ -67,17 +67,17 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -5.59,
+            "value": 0.0,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 6534868,
+            "value": 801905,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 44,
+            "value": 10,
             "compare": "<="
         },
         {
@@ -87,17 +87,17 @@
         },
         {
             "field": "finish__timing__drv__max_cap",
-            "value": 24,
+            "value": 16,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__setup_violation_count",
-            "value": 12,
+            "value": 11,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__hold_violation_count",
-            "value": 11,
+            "value": 10,
             "compare": "<="
         }
     ]
