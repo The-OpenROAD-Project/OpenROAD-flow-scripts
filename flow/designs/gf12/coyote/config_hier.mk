@@ -16,8 +16,8 @@ export RTLMP_MIN_INST = 4000
 export RTLMP_MAX_MACRO = 10
 export RTLMP_MIN_MACRO = 5 
 
-export DIE_AREA    = 0 0 900 900
-export CORE_AREA   = 2 2 898 898 
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:0-350 -exclude top:650-900 -exclude bottom:*
+export DIE_AREA    = 0 0 950 950
+export CORE_AREA   = 2 2 948 848 
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:0-350 -exclude top:650-950 -exclude bottom:*
 
-export PLACE_DENSITY = 0.40
+export PLACE_DENSITY = 0.38
