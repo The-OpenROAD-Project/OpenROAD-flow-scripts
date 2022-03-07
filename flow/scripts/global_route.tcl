@@ -35,6 +35,8 @@ if {[info exist env(FASTROUTE_TCL)]} {
   set_macro_extension 2
 }
 
+pin_access -bottom_routing_layer $env(MIN_ROUTING_LAYER) -top_routing_layer $env(MAX_ROUTING_LAYER) -verbose 0
+
 global_route -guide_file $env(RESULTS_DIR)/route.guide \
                -congestion_iterations 100 \
                -verbose
