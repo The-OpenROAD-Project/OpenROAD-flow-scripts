@@ -1,7 +1,4 @@
-source $::env(UTILS_DIR)/compare_rc.tcl
-
-set golden_spef ""
-set sta_report_default_digits 4
+source $::env(UTILS_DIR)/write_net_caps.tcl
 
 # Read lef
 read_lef $::env(TECH_LEF)
