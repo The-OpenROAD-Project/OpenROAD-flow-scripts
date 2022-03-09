@@ -12,7 +12,7 @@ if {![info exists standalone] || $standalone} {
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
-  read_def $::env(RESULTS_DIR)/3_1_place_gp.def
+  read_def $::env(RESULTS_DIR)/3_1_place_gp_skip_io.def
 } else {
   puts "Starting io placement"
 }
