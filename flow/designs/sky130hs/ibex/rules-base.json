@@ -42,17 +42,17 @@
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 2506,
+            "value": 3200,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -1.0,
+            "value": -1.5,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -1.0,
+            "value": -1.5,
             "compare": ">="
         },
         {
