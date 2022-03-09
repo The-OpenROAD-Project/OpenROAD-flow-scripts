@@ -38,11 +38,6 @@ global_placement -skip_io -density $place_density \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 }
 
-estimate_parasitics -placement
-
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "global place skip io" false
-
 if {![info exists save_checkpoint] || $save_checkpoint} {
   write_def $::env(RESULTS_DIR)/3_1_place_gp_skip_io.def
 }

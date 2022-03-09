@@ -12,20 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-<<<<<<< HEAD
-            "value": 404411,
-=======
             "value": 405140,
->>>>>>> origin/master
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-<<<<<<< HEAD
             "value": 622055,
-=======
-            "value": 621998,
->>>>>>> origin/master
             "compare": "<="
         },
         {
@@ -35,65 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-<<<<<<< HEAD
-            "value": -327.8,
-=======
             "value": -752.14,
->>>>>>> origin/master
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-<<<<<<< HEAD
-            "value": -328.05,
-=======
             "value": -726.99,
->>>>>>> origin/master
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-<<<<<<< HEAD
-            "value": -320.59,
-=======
             "value": -747.1,
->>>>>>> origin/master
             "compare": ">="
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-<<<<<<< HEAD
             "value": 5849,
-=======
-            "value": 5201,
->>>>>>> origin/master
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-<<<<<<< HEAD
-            "value": -190.73,
-=======
             "value": -580.43,
->>>>>>> origin/master
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-<<<<<<< HEAD
-            "value": -190.73,
-=======
             "value": -580.43,
->>>>>>> origin/master
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-<<<<<<< HEAD
-            "value": 18467153,
-=======
             "value": 18615650,
->>>>>>> origin/master
             "compare": "<="
         },
         {
@@ -108,20 +72,12 @@
         },
         {
             "field": "finish__design__instance__area",
-<<<<<<< HEAD
-            "value": 414353,
-=======
             "value": 414739,
->>>>>>> origin/master
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew",
-<<<<<<< HEAD
-            "value": 72,
-=======
             "value": 154,
->>>>>>> origin/master
             "compare": "<="
         },
         {
