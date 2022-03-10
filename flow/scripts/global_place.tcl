@@ -12,7 +12,7 @@ if {![info exists standalone] || $standalone} {
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
-  read_def $::env(RESULTS_DIR)/2_floorplan.def
+  read_def $::env(RESULTS_DIR)/3_2_place_iop.def
   read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
   if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
     source $::env(PLATFORM_DIR)/derate.tcl
@@ -76,5 +76,5 @@ source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "global place" false
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_def $::env(RESULTS_DIR)/3_1_place_gp.def
+  write_def $::env(RESULTS_DIR)/3_3_place_gp.def
 }

@@ -17,7 +17,7 @@
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 621998,
+            "value": 622055,
             "compare": "<="
         },
         {
@@ -42,7 +42,7 @@
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 5201,
+            "value": 5849,
             "compare": "<="
         },
         {

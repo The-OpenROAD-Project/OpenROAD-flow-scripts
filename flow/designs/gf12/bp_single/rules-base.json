@@ -27,7 +27,7 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -921.49,
+            "value": -920.91,
             "compare": ">="
         },
         {
@@ -42,37 +42,37 @@
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 3703,
+            "value": 3708,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -375.46,
+            "value": -375.27,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 8846424,
+            "value": 8846661,
             "compare": "<="
         },
         {
             "field": "detailedroute__route__drc_errors",
-            "value": 0,
+            "value": 1,
             "compare": "<="
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -113.67,
+            "value": -113.61,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 537819,
+            "value": 537822,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 121,
+            "value": 127,
             "compare": "<="
         },
         {
