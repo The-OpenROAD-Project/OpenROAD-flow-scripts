@@ -45,6 +45,7 @@ from ray.tune.suggest.basic_variant import BasicVariantGenerator
 from ray.tune.suggest.hyperopt import HyperOptSearch
 from ray.tune.suggest.nevergrad import NevergradSearch
 from ray.tune.suggest.optuna import OptunaSearch
+from ray.util.queue import Queue
 
 import nevergrad as ng
 from ax.service.ax_client import AxClient
@@ -442,7 +443,7 @@ def openroad(base_dir, parameters, path=''):
     make_command += f'make -C {base_dir}/flow DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
-    make_command += f' NPROC={args.openroad_threads}'
+    make_command += f' NPROC={args.openroad_threads} SHELL=bash'
     run_command(make_command,
                 stderr_file=f'{log_path}error-make-finish.log',
                 stdout_file=f'{log_path}make-finish-stdout.log')
@@ -771,9 +772,19 @@ def save_best(best_config):
     print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
 
 
+@ray.remote
+def consumer(queue):
+    ''' consumer '''
+    while not queue.empty():
+        next_item = queue.get()
+        name = next_item[1]
+        print(f'[INFO TUN-0007] Scheduling run for parameter {name}.')
+        ray.get(openroad_distributed.remote(*next_item))
+        print(f'[INFO TUN-0008] Finished run for parameter {name}.')
+
+
 def sweep():
     ''' Run sweep of parameters '''
-    workers = list()
     if args.server is not None:
         # For remote sweep we create the following directory structure:
         #      1/     2/         3/       4/
@@ -782,17 +793,16 @@ def sweep():
     else:
         repo_dir = abspath('../')
     print(f'[INFO TUN-0012] Log dir {LOCAL_DIR}.')
+    queue = Queue()
     for name, content in config_dict.items():
         if not isinstance(content, list):
             continue
-        print(f'[INFO TUN-0007] Scheduling runs for parameter {name}.')
         for i in np.arange(*content):
             config_dict[name] = i
-            workers.append(openroad_distributed.remote(repo_dir, config_dict,
-                                                       LOCAL_DIR))
-        print(f'[INFO TUN-0008] Finish scheduling for parameter {name}.')
+            queue.put([repo_dir, config_dict, LOCAL_DIR])
+    workers = [consumer.remote(queue) for _ in range(args.jobs)]
     print('[INFO TUN-0009] Waiting for results.')
-    _ = ray.get(workers)
+    ray.get(workers)
     print('[INFO TUN-0010] Sweep complete.')
 
 
