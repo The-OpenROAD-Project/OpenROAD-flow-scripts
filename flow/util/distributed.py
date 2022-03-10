@@ -678,6 +678,12 @@ def parse_arguments():
         default=1,
         help='Number of iterations for tuning.')
     tune_parser.add_argument(
+        '--resources-per-trial',
+        type=int,
+        metavar='<int>',
+        default=1,
+        help='Number of CPUs to request for each tunning job.')
+    tune_parser.add_argument(
         '--reference',
         type=str,
         metavar='<path>',
@@ -900,6 +906,7 @@ if __name__ == '__main__':
             local_dir=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
+            resources_per_trial={'cpu': args.resources_per_trial},
         )
         if args.algorithm == 'pbt':
             os.environ["TUNE_MAX_PENDING_TRIALS_PG"] = str(args.jobs)
