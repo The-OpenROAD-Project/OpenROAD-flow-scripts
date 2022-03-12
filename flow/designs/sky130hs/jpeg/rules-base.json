@@ -42,17 +42,17 @@
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 280,
+            "value": 400,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": 0.0,
+            "value": -0.4,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": 0.0,
+            "value": -0.4,
             "compare": ">="
         },
         {
@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -0.01,
+            "value": -0.25,
             "compare": ">="
         },
         {
@@ -77,7 +77,7 @@
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 35,
+            "value": 50,
             "compare": "<="
         },
         {
