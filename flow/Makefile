@@ -262,8 +262,8 @@ WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_m
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
-export DONT_USE_LIBS   = $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES)))
-export DONT_USE_SC_LIB ?= $(OBJECTS_DIR)/lib/$(notdir $(firstword $(LIB_FILES)))
+export DONT_USE_LIBS   = $(patsubst %.lib.gz, %.lib, $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES))))
+export DONT_USE_SC_LIB ?= $(firstword $(DONT_USE_LIBS))
 
 # Stream system used for final result (GDS is default): GDS, GSDII, GDS2, OASIS, or OAS
 STREAM_SYSTEM ?= GDS
@@ -304,7 +304,7 @@ versions.txt:
 # Create temporary Liberty files which have the proper dont_use properties set
 # For use with Yosys and ABC
 .SECONDEXPANSION:
-$(DONT_USE_LIBS): $$(filter %$$(@F),$(LIB_FILES))
+$(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
 	@mkdir -p $(OBJECTS_DIR)/lib
 	$(UTILS_DIR)/markDontUse.py -p "$(DONT_USE_CELLS)" -i $^ -o $@
 
@@ -462,35 +462,39 @@ clean_floorplan:
 place: $(RESULTS_DIR)/3_place.odb \
        $(RESULTS_DIR)/3_place.sdc
 # ==============================================================================
-
-# STEP 1: Global placement + IO placement (not random)
+# STEP 1: Global placement without placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_1_place_gp.odb: $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_1_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_1_place_gp.log
+$(RESULTS_DIR)/3_1_place_gp_skip_io.def: $(RESULTS_DIR)/2_floorplan.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place_skip_io.tcl -metrics $(LOG_DIR)/3_1_place_gp_skip_io.json) 2>&1 | tee $(LOG_DIR)/3_1_place_gp_skip_io.log
 
 # STEP 2: IO placement (non-random)
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_2_place_iop.odb: $(RESULTS_DIR)/3_1_place_gp.odb $(IO_CONSTRAINTS)
+$(RESULTS_DIR)/3_2_place_iop.def: $(RESULTS_DIR)/3_1_place_gp_skip_io.def $(IO_CONSTRAINTS)
 ifndef IS_CHIP
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
 else
 	cp $< $@
 endif
 
-# STEP 3: Resizing & Buffering
+# STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_3_place_resized.odb: $(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_3_resizer.json) 2>&1 | tee $(LOG_DIR)/3_3_resizer.log
+$(RESULTS_DIR)/3_3_place_gp.def: $(RESULTS_DIR)/3_2_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_3_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_3_place_gp.log
+
+# STEP 4: Resizing & Buffering
+#-------------------------------------------------------------------------------
+$(RESULTS_DIR)/3_4_place_resized.def: $(RESULTS_DIR)/3_3_place_gp.def $(RESULTS_DIR)/2_floorplan.sdc
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_4_resizer.json) 2>&1 | tee $(LOG_DIR)/3_4_resizer.log
 
 clean_resize:
-	rm -f $(RESULTS_DIR)/3_3_place_resized.odb
+	rm -f $(RESULTS_DIR)/3_4_place_resized.def
 
-# STEP 4: Detail placement
+# STEP 5: Detail placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_4_place_dp.odb: $(RESULTS_DIR)/3_3_place_resized.odb
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_4_opendp.json) 2>&1 | tee $(LOG_DIR)/3_4_opendp.log
+$(RESULTS_DIR)/3_5_place_dp.def: $(RESULTS_DIR)/3_4_place_resized.def
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_5_opendp.json) 2>&1 | tee $(LOG_DIR)/3_5_opendp.log
 
-$(RESULTS_DIR)/3_place.odb: $(RESULTS_DIR)/3_4_place_dp.odb
+$(RESULTS_DIR)/3_place.def: $(RESULTS_DIR)/3_5_place_dp.def
 	cp $< $@
 
 $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc

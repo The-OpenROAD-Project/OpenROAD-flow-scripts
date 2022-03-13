@@ -28,6 +28,7 @@ else:
 # 'metric__name': {
 #     'usePeriod': <bool>, use a percentage of the clock period as padding
 #     'padding': <float>, percentage of padding to use
+#     'fixed': <float>, fixed margin for padding
 #     'roundValue': <bool>, use the rounded value for the rule
 # },
 metrics = {
@@ -87,7 +88,8 @@ metrics = {
     'cts__design__instance__count__hold_buffer': {
         'usePeriod': False,
         'padding': 10,
-        'roundValue': False,
+        'fixed': 10,
+        'roundValue': True,
         'compare': '<=',
     },
     # route
@@ -130,31 +132,36 @@ metrics = {
     },
     'finish__timing__drv__max_slew': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 20,
+        'fixed': 10,
         'roundValue': True,
         'compare': '<=',
     },
     'finish__timing__drv__max_fanout': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 20,
+        'fixed': 10,
         'roundValue': True,
         'compare': '<=',
     },
     'finish__timing__drv__max_cap': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 20,
+        'fixed': 10,
         'roundValue': True,
         'compare': '<=',
     },
     'finish__timing__drv__setup_violation_count': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 20,
+        'fixed': 10,
         'roundValue': True,
         'compare': '<=',
     },
     'finish__timing__drv__hold_violation_count': {
         'usePeriod': False,
-        'padding': 0,
+        'padding': 20,
+        'fixed': 10,
         'roundValue': True,
         'compare': '<=',
     },
@@ -187,6 +194,10 @@ for field, option in metrics.items():
         if option['usePeriod']:
             value -= period * option['padding'] / 100
             value = min(value, 0)
+        elif 'fixed' in option.keys():
+            temp_1 = value + option['fixed']
+            temp_2 = value * (1 + option['padding'] / 100)
+            value = max(temp_1, temp_2)
         else:
             value += value * option['padding'] / 100
 

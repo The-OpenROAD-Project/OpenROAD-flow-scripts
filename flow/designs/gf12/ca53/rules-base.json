@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 404222,
+            "value": 405140,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 620988,
+            "value": 622055,
             "compare": "<="
         },
         {
@@ -27,37 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -816.91,
+            "value": -752.14,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -887.49,
+            "value": -726.99,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -867.72,
+            "value": -747.1,
             "compare": ">="
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 5249.2,
+            "value": 5849,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -612.39,
+            "value": -580.43,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -612.39,
+            "value": -580.43,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 18398734,
+            "value": 18615650,
             "compare": "<="
         },
         {
@@ -67,37 +67,37 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -22.63,
+            "value": -34.08,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 413732,
+            "value": 414739,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 151,
+            "value": 154,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_fanout",
-            "value": 0,
+            "value": 10,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_cap",
-            "value": 1,
+            "value": 10,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__setup_violation_count",
-            "value": 1,
+            "value": 12,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__hold_violation_count",
-            "value": 0,
+            "value": 10,
             "compare": "<="
         }
     ]
