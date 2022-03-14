@@ -111,6 +111,14 @@ endif
 VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT)
 RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT).sh
 
+ISSUE_CP_FILES = $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
+                 $(ISSUE_CP_FILES_PLATFORM) \
+                 $(UTILS_DIR)/def2stream.py \
+                 $(RUN_ME_SCRIPT) \
+                 $(VARS_BASENAME).sh \
+                 $(VARS_BASENAME).tcl \
+                 $(VARS_BASENAME).gdb
+
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	# Creating $(RUN_ME_SCRIPT) script
 	@echo "#!/usr/bin/env bash"                     >  $(RUN_ME_SCRIPT)
@@ -157,13 +165,7 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	    $(REPORTS_DIR) \
 	    $(RESULTS_DIR) \
 	    $(SCRIPTS_DIR) \
-	    $(UTILS_DIR)/def2stream.py \
-	    $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
-	    $(ISSUE_CP_FILES_PLATFORM) \
-	    $(RUN_ME_SCRIPT) \
-	    $(VARS_BASENAME).sh \
-	    $(VARS_BASENAME).tcl \
-	    $(VARS_BASENAME).gdb \
+	    $(shell for f in $(ISSUE_CP_FILES); do echo $$f; done | sort | uniq) \
 	    $^
 
 ifdef EXCLUDE_PLATFORM
