@@ -1,25 +1,5 @@
-if {![info exists standalone] || $standalone} {
-  # Read lef
-  read_lef $::env(TECH_LEF)
-  read_lef $::env(SC_LEF)
-  if {[info exist ::env(ADDITIONAL_LEFS)]} {
-    foreach lef $::env(ADDITIONAL_LEFS) {
-      read_lef $lef
-    }
-  }
-
-  # Read liberty files
-  source $::env(SCRIPTS_DIR)/read_liberty.tcl
-
-  # Read design files
-  read_def $::env(RESULTS_DIR)/3_4_place_resized.def
-  read_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
-  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
-    source $::env(PLATFORM_DIR)/derate.tcl
-  }
-} else {
-  puts "Starting detailed placement"
-}
+source $::env(SCRIPTS_DIR)/load.tcl
+load_design 3_4_place_resized.odb 2_floorplan.sdc "Starting detailed placement"
 
 source $::env(PLATFORM_DIR)/setRC.tcl
 
@@ -36,5 +16,5 @@ source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "detailed place"
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_def $::env(RESULTS_DIR)/3_5_place_dp.def
+  write_db $::env(RESULTS_DIR)/3_5_place_dp.odb
 }

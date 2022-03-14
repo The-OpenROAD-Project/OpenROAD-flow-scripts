@@ -1,21 +1,5 @@
-if {![info exists standalone] || $standalone} {
-  # Read lef
-  read_lef $::env(TECH_LEF)
-  read_lef $::env(SC_LEF)
-  if {[info exist ::env(ADDITIONAL_LEFS)]} {
-    foreach lef $::env(ADDITIONAL_LEFS) {
-      read_lef $lef
-    }
-  }
-
-  # Read liberty files
-  source $::env(SCRIPTS_DIR)/read_liberty.tcl
-
-  # Read design files
-  read_def $::env(RESULTS_DIR)/3_1_place_gp_skip_io.def
-} else {
-  puts "Starting io placement"
-}
+source $::env(SCRIPTS_DIR)/load.tcl
+load_design 3_1_place_gp_skip_io.odb 2_floorplan.sdc "Starting io placement"
 
 if {[info exists ::env(IO_CONSTRAINTS)]} {
   source $::env(IO_CONSTRAINTS)
