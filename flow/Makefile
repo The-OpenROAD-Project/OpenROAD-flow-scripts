@@ -162,6 +162,8 @@ export PLACE_PINS_ARGS
 
 export FLOW_VARIANT ?= base
 
+#export DREAM_PLACE ?= 1
+
 export GPL_TIMING_DRIVEN ?= 1
 export GPL_ROUTABILITY_DRIVEN ?= 1
 
@@ -481,8 +483,13 @@ endif
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
+ifneq ($(DREAM_PLACE),)
+$(RESULTS_DIR)/3_3_place_gp.def: $(RESULTS_DIR)/3_2_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
+	tcsh $(SCRIPTS_DIR)/prep_and_run_dream_place.sh | tee $(LOG_DIR)/3_3_dream_place_gp.log
+else
 $(RESULTS_DIR)/3_3_place_gp.def: $(RESULTS_DIR)/3_2_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_3_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_3_place_gp.log
+endif
 
 # STEP 4: Resizing & Buffering
 #-------------------------------------------------------------------------------
