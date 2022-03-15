@@ -459,6 +459,9 @@ clean_floorplan:
 # |  __/| |___ / ___ \ |___| |___
 # |_|   |_____/_/   \_\____|_____|
 #
+dream_place: $(RESULTS_DIR)/3_2_place_iop.def $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
+	tcsh $(SCRIPTS_DIR)/prep_and_run_dream_place.sh | tee $(LOG_DIR)/3_3_dream_place_gp.log
+
 place: $(RESULTS_DIR)/3_place.def \
        $(RESULTS_DIR)/3_place.sdc
 # ==============================================================================
