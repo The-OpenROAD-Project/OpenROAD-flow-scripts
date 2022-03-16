@@ -205,6 +205,23 @@ def read_config(file_name):
 
     def read_sweep(this):
         return [*this['minmax'], this['step']]
+    
+    def apply_condition(config, data):
+        # TODO: tune.sample_from only supports 'random' search algorithm. 
+        # To make conditional paraeter for the other algorithms, different 
+        # algorithms should take different methods.
+        if args.algorithm == 'random':
+            gppad = config['CELL_PAD_IN_SITES_GLOBAL_PLACEMENT']
+            config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']
+            dppad_min, dppad_max = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax']
+            dppad_step = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['step']
+            if dppad_step==1:
+                config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']= tune.sample_from(lambda spec: tune.randint(dppad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT+1))
+            if dppad_step>1:
+                config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']= tune.sample_from(lambda spec: tune.choice(np.adarray.tolist(np.arange(dppad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT+1, dppad_step))))
+        return config
+            
+            
 
     def read_tune(this):
         min_, max_ = this['minmax']
@@ -278,7 +295,8 @@ def read_config(file_name):
             config[key] = read_tune(value)
         elif args.mode == 'tune' and args.algorithm == 'ax':
             config.append(read_tune_ax(key, value))
-    # Copy back to global variables
+    if args.mode == 'tune'
+        config = apply_condition(config, data)
     return config, sdc_file, fr_file
 
 
