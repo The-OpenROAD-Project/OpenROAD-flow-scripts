@@ -1,20 +1,25 @@
-# Read lef
-read_lef $::env(TECH_LEF)
-read_lef $::env(SC_LEF)
-if {[info exist ::env(ADDITIONAL_LEFS)]} {
-  foreach lef $::env(ADDITIONAL_LEFS) {
-    read_lef $lef
-  }
-}
-
 # Read liberty files
 source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
-# Determine design stage (1 ... 6)
-set design_stage [lindex [split [file tail $::env(DEF_FILE)] "_"] 0]
-
 # Read def
-read_def $::env(DEF_FILE)
+if {[info exist ::env(DEF_FILE)]} {
+    # Read lef
+    read_lef $::env(TECH_LEF)
+    read_lef $::env(SC_LEF)
+    if {[info exist ::env(ADDITIONAL_LEFS)]} {
+      foreach lef $::env(ADDITIONAL_LEFS) {
+        read_lef $lef
+      }
+    }
+    set input_file $::env(DEF_FILE)
+    read_def $input_file
+} else {
+    set input_file $::env(ODB_FILE)
+    read_db $input_file
+}
+
+# Determine design stage (1 ... 6)
+set design_stage [lindex [split [file tail $input_file] "_"] 0]
 
 # Read SDC, first try to find the most recent SDC file for the stage
 set sdc_file ""

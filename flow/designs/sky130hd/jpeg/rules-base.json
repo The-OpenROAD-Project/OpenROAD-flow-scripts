@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 601466,
+            "value": 602017,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 89507,
+            "value": 89502,
             "compare": "<="
         },
         {
@@ -27,37 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -0.24,
+            "value": 0.0,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -0.19,
+            "value": 0.0,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -0.19,
+            "value": 0.0,
             "compare": ">="
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 255,
+            "value": 62,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.3,
+            "value": 0.0,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -0.3,
+            "value": 0.0,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 1469786,
+            "value": 1426789,
             "compare": "<="
         },
         {
@@ -72,12 +72,12 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 605928,
+            "value": 605868,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 100,
+            "value": 18,
             "compare": "<="
         },
         {
@@ -92,7 +92,7 @@
         },
         {
             "field": "finish__timing__drv__setup_violation_count",
-            "value": 12,
+            "value": 10,
             "compare": "<="
         },
         {
