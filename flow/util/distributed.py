@@ -295,7 +295,7 @@ def read_config(file_name):
             config[key] = read_tune(value)
         elif args.mode == 'tune' and args.algorithm == 'ax':
             config.append(read_tune_ax(key, value))
-    if args.mode == 'tune'
+    if args.mode == 'tune':
         config = apply_condition(config, data)
     return config, sdc_file, fr_file
 
