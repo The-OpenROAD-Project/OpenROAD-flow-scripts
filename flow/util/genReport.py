@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-
 import argparse
 import os
 import re
 
 # make sure the working dir is flow/
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)) , '..'))
+os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 reportFilename = 'report.log'
 singleReportFilename = 'reports/' + reportFilename
@@ -14,8 +13,8 @@ drcFilename = '5_route_drc.rpt'
 lastExpectedLog = '6_report.log'
 metricsLogFmt = 'gen-metrics-{}-check.log'
 metricsCheckFmt = 'metadata-{}-check.log'
-regexError = re.compile(r"^\[?err", re.IGNORECASE)
-regexWarning = re.compile(r"^\[?warn", re.IGNORECASE)
+regexError = re.compile(r"^\[err", re.IGNORECASE)
+regexWarning = re.compile(r"^\[warn", re.IGNORECASE)
 
 helpText = '''
 Scans "./logs" and "./reports" folders for errors and warnings.
@@ -262,29 +261,37 @@ output = '''
 
 Number of designs: {}.
 '''.format(designCount)
+
+if len(designsGreen) == designCount:
+    output += '\nCI is green. All metrics check passed.\n'
+else:
+    output += "\nCI is red. At least one design's metrics check failed.\n"
+
 if len(designsGreen) != 0:
-    output += f'\nGreen designs ({len(designsGreen)}):\n'
+    output += f'\nDesigns that pass metrics check ({len(designsGreen)}):\n'
     for design in designsGreen:
         output += '  ' + design + '\n'
 
 if len(designsRed) != 0:
-    output += f'\nRed designs ({len(designsRed)}):\n'
+    output += f'\nDesigns that fail metrics check ({len(designsRed)}):\n'
     for design in designsRed:
         output += '  ' + design + '\n'
 
 if len(designsWithViolations) == 0:
     output += '\nAll designs have zero violations.\n'
 else:
-    output += '\nDesigns with violations:'
+    output += '\nDesigns with at least one DRC violation:'
     for design in designsWithViolations:
         output += '\n  ' + design
+    output += '\n'
 
 if len(designsWithError) == 0:
     output += '\nAll designs logs are clean.\n'
 else:
-    output += '\nDesigns with at least one error in their logs:\n'
+    output += '\nDesigns with at least one error message in their logs:\n'
     for design in designsWithError:
         output += '  ' + design + '\n'
+    output += '\n'
 
 finish(output, summary=True)
 
