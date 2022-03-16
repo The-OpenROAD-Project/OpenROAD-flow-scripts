@@ -1,18 +1,7 @@
-if {![info exists standalone] || $standalone} {
-  # Read lef
-  read_lef $::env(TECH_LEF)
-  read_lef $::env(SC_LEF)
-  if {[info exist ::env(ADDITIONAL_LEFS)]} {
-    foreach lef $::env(ADDITIONAL_LEFS) {
-      read_lef $lef
-    }
-  }
+source $::env(SCRIPTS_DIR)/load.tcl
+load_design 5_route.odb 5_route.sdc "Starting density fill"
 
-  # Read def
-  read_def $::env(RESULTS_DIR)/5_route.def
-} else {
-  puts "Starting density fill"
-}
+set_propagated_clock [all_clocks]
 
 # Delete routing obstructions for final DEF
 source $::env(SCRIPTS_DIR)/deleteRoutingObstructions.tcl
@@ -20,5 +9,5 @@ deleteRoutingObstructions
 
 density_fill -rules $::env(FILL_CONFIG)
 
-write_def $::env(RESULTS_DIR)/6_1_fill.def
+write_db $::env(RESULTS_DIR)/6_1_fill.odb
 write_verilog $::env(RESULTS_DIR)/6_1_fill.v
