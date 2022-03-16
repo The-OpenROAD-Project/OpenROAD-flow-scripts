@@ -1,33 +1,9 @@
-if {![info exists standalone] || $standalone} {
-  # Read lef
-  read_lef $::env(TECH_LEF)
-  read_lef $::env(SC_LEF)
-  if {[info exist ::env(ADDITIONAL_LEFS)]} {
-    foreach lef $::env(ADDITIONAL_LEFS) {
-      read_lef $lef
-    }
-  }
-
-  # Read liberty files
-  source $::env(SCRIPTS_DIR)/read_liberty.tcl
-
-  # Read design files
-  read_def $::env(RESULTS_DIR)/3_place.def
-
-  # Read SDC file
-  read_sdc $::env(RESULTS_DIR)/3_place.sdc
-  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
-    source $::env(PLATFORM_DIR)/derate.tcl
-  }
-} else {
-  puts "Starting CTS"
-}
+source $::env(SCRIPTS_DIR)/load.tcl
+load_design 3_place.odb 3_place.sdc "Starting CTS"
 
 # Clone clock tree inverters next to register loads
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
-
-source $::env(PLATFORM_DIR)/setRC.tcl
 
 # Run CTS
 if {[info exist ::env(CTS_CLUSTER_SIZE)]} {
@@ -105,7 +81,6 @@ if { [info exists ::env(POST_CTS_TCL)] } {
 }
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_def $::env(RESULTS_DIR)/4_1_cts.def
-  write_verilog $::env(RESULTS_DIR)/4_cts.v
+  write_db $::env(RESULTS_DIR)/4_1_cts.odb
   write_sdc $::env(RESULTS_DIR)/4_cts.sdc
 }

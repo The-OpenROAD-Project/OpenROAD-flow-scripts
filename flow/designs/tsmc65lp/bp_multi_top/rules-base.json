@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 1378983,
+            "value": 1380669,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 98335,
+            "value": 98353,
             "compare": "<="
         },
         {
@@ -27,37 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -1.3,
+            "value": -1.56,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -2.4,
+            "value": -2.56,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -2.4,
+            "value": -2.33,
             "compare": ">="
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 9846,
+            "value": 10065,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -1.18,
+            "value": -1.47,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -1.18,
+            "value": -1.47,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 7230627,
+            "value": 7237964,
             "compare": "<="
         },
         {
@@ -67,17 +67,17 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -0.84,
+            "value": -0.71,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 1455912,
+            "value": 1458405,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 10,
+            "value": 85,
             "compare": "<="
         },
         {
