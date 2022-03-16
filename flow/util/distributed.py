@@ -732,8 +732,7 @@ def set_algorithm(experiment_name, config):
             minimize=True
         )
         algorithm = AxSearch(ax_client=ax_client,
-                             points_to_evaluate=best_params,
-                             max_concurrent=args.jobs)
+                             points_to_evaluate=best_params)
     elif args.algorithm == 'nevergrad':
         algorithm = NevergradSearch(
             points_to_evaluate=best_params,
