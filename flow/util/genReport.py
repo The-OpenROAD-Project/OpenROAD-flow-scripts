@@ -14,8 +14,8 @@ drcFilename = '5_route_drc.rpt'
 lastExpectedLog = '6_report.log'
 metricsLogFmt = 'gen-metrics-{}-check.log'
 metricsCheckFmt = 'metadata-{}-check.log'
-regexError = re.compile(r"^\[?err", re.IGNORECASE)
-regexWarning = re.compile(r"^\[?warn", re.IGNORECASE)
+regexError = re.compile(r"^\[err", re.IGNORECASE)
+regexWarning = re.compile(r"^\[warn", re.IGNORECASE)
 
 helpText = '''
 Scans "./logs" and "./reports" folders for errors and warnings.
