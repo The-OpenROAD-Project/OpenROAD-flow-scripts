@@ -217,7 +217,7 @@ def read_config(file_name):
                 print('[WARNING TUN-0011] NevergradSearch may not work '
                       'with lowerbound value 0.')
             if this['step'] == 1:
-                return tune.randint(min_, max_+1)
+                return tune.randint(min_, max_)
             return tune.choice(np.adarray.tolist(np.arange(config_min, config_max, config_step)))
         if this['type'] == 'float':
             if this['step'] == 0:
@@ -243,7 +243,7 @@ def read_config(file_name):
         elif this['type'] == 'float':
             if this['step'] == 1:
                 dict_["type"] = "choice"
-                dict_["values"] = tune.quniform(min_, max_, this['step'])
+                dict_["values"] = tune.choice(np.adarray.tolist(np.arange(config_min, config_max, config_step)))
                 dict_["value_type"] = "float"
             else:
                 dict_["type"] = "range"
