@@ -217,12 +217,12 @@ def read_config(file_name):
                 print('[WARNING TUN-0011] NevergradSearch may not work '
                       'with lowerbound value 0.')
             if this['step'] == 1:
-                return tune.randint(min_, max_)
-            return tune.qrandint(min_, max_, this['step'])
+                return tune.randint(min_, max_+1)
+            return tune.choice(np.adarray.tolist(np.arange(config_min, config_max, config_step)))
         if this['type'] == 'float':
             if this['step'] == 0:
                 return tune.uniform(min_, max_)
-            return tune.quniform(min_, max_, this['step'])
+            return tune.choice(np.adarray.tolist(np.arange(config_min, config_max, config_step)))
         return None
 
     def read_tune_ax(name, this):
