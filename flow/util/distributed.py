@@ -207,9 +207,9 @@ def read_config(file_name):
         return [*this['minmax'], this['step']]
     
     def apply_condition(config, data):
-        # TODO: tune.sample_from only supports 'random' search algorithm. 
-        # To make conditional paraeter for the other algorithms, different 
-        # algorithms should take different methods.
+        # TODO: tune.sample_from only supports random search algorithm. 
+        # To make conditional parameter for the other algorithms, different 
+        # algorithms should take different methods (will be added)
         if args.algorithm == 'random':
             gppad = config['CELL_PAD_IN_SITES_GLOBAL_PLACEMENT']
             config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']
@@ -746,7 +746,7 @@ def set_algorithm(experiment_name, config):
             time_attr="training_iteration",
             perturbation_interval=args.perturbation,
             hyperparam_mutations=config,
-            synch=False
+            synch=True
         )
     elif args.algorithm == 'random':
         algorithm = BasicVariantGenerator(max_concurrent=args.jobs)
@@ -876,6 +876,7 @@ if __name__ == '__main__':
             stop={"training_iteration": args.iterations},
         )
         if args.algorithm == 'pbt':
+            os.environ["TUNE_MAX_PENDING_TRIALS_PG"] = str(args.jobs)
             tune_args['scheduler'] = search_algo
         else:
             tune_args['search_alg'] = search_algo
