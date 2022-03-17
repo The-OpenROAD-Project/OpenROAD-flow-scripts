@@ -205,23 +205,28 @@ def read_config(file_name):
 
     def read_sweep(this):
         return [*this['minmax'], this['step']]
-    
+
     def apply_condition(config, data):
-        # TODO: tune.sample_from only supports random search algorithm. 
-        # To make conditional parameter for the other algorithms, different 
+        # TODO: tune.sample_from only supports random search algorithm.
+        # To make conditional parameter for the other algorithms, different
         # algorithms should take different methods (will be added)
         if args.algorithm == 'random':
-            gppad = config['CELL_PAD_IN_SITES_GLOBAL_PLACEMENT']
-            config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']
-            dppad_min, dppad_max = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax']
-            dppad_step = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['step']
-            if dppad_step==1:
-                config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']= tune.sample_from(lambda spec: tune.randint(dppad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT+1))
-            if dppad_step>1:
-                config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']= tune.sample_from(lambda spec: tune.choice(np.adarray.tolist(np.arange(dppad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT+1, dppad_step))))
+            dp_pad_min, dp_pad_max = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax']
+            dp_pad_step = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['step']
+            if dp_pad_step == 1:
+                config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
+                    lambda spec: tune.randint(
+                        dp_pad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1))
+            if dp_pad_step > 1:
+                config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
+                    lambda spec: tune.choice(
+                        np.adarray.tolist(
+                            np.arange(
+                                dp_pad_min,
+                                spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT +
+                                1,
+                                dp_pad_step))))
         return config
-            
-            
 
     def read_tune(this):
         min_, max_ = this['minmax']
@@ -235,11 +240,21 @@ def read_config(file_name):
                       'with lowerbound value 0.')
             if this['step'] == 1:
                 return tune.randint(min_, max_)
-            return tune.choice(np.adarray.tolist(np.arange(config_min, config_max, config_step)))
+            return tune.choice(
+                np.adarray.tolist(
+                    np.arange(
+                        config_min,
+                        config_max,
+                        config_step)))
         if this['type'] == 'float':
             if this['step'] == 0:
                 return tune.uniform(min_, max_)
-            return tune.choice(np.adarray.tolist(np.arange(config_min, config_max, config_step)))
+            return tune.choice(
+                np.adarray.tolist(
+                    np.arange(
+                        config_min,
+                        config_max,
+                        config_step)))
         return None
 
     def read_tune_ax(name, this):
@@ -260,7 +275,12 @@ def read_config(file_name):
         elif this['type'] == 'float':
             if this['step'] == 1:
                 dict_["type"] = "choice"
-                dict_["values"] = tune.choice(np.adarray.tolist(np.arange(config_min, config_max, config_step)))
+                dict_["values"] = tune.choice(
+                    np.adarray.tolist(
+                        np.arange(
+                            config_min,
+                            config_max,
+                            config_step)))
                 dict_["value_type"] = "float"
             else:
                 dict_["type"] = "range"
