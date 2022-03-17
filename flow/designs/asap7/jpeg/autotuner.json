@@ -19,7 +19,7 @@
     "CORE_ASPECT_RATIO": {
         "type": "float",
         "minmax": [
-            0.1,
+            0.5,
             2.0
         ],
         "step": 0
