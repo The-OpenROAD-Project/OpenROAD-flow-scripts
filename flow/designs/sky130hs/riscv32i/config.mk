@@ -16,4 +16,4 @@ export CORE_MARGIN = 2
 #
 export PLACE_DENSITY = 0.75
 # many east pins cause global routing congestion
-export PLACE_PINS_ARGS=-min_distance 4 -min_distance_in_tracks
+export PLACE_PINS_ARGS=-min_distance 6 -min_distance_in_tracks
