@@ -8,6 +8,15 @@ sed -i "s@xx_input_def_xx@${RESULTS_DIR}/2_DREAMPlace_input.def@" ${RESULTS_DIR}
 sed -i "s@xx_result_dir_xx@${RESULTS_DIR}@" ${RESULTS_DIR}/DREAMPlace.json
 sed -i "s@xx_place_density_xx@${PLACE_DENSITY}@" ${RESULTS_DIR}/DREAMPlace.json
 
+set additional_lefs = ""
+set dq = '"'
+foreach additional_lef (`echo "${ADDITIONAL_LEFS}"`)
+    set additional_lefs = "${additional_lefs},${dq}${additional_lef}${dq}"
+end
+set design_list = ""
+
+sed -i "s@xx_additional_lef_xx@$additional_lefs@" ${RESULTS_DIR}/DREAMPlace.json
+
 set host_name = `hostname`
 if ( $host_name == "dfm.ucsd.edu" ) then
     set isGpu = "1"

@@ -1,5 +1,5 @@
 {
-"lef_input" : ["xx_tech_lef_xx", "xx_sc_lef_xx"],
+"lef_input" : ["xx_tech_lef_xx", "xx_sc_lef_xx" xx_additional_lef_xx],
 "def_input" : "xx_input_def_xx",
 "gpu" : xx_isGpu_xx,
 "num_bins_x" : 128,
