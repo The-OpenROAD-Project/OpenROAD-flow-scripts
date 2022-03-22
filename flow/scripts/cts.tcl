@@ -50,7 +50,7 @@ set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 detailed_placement
-improve_placement
+#improve_placement
 
 estimate_parasitics -placement
 
