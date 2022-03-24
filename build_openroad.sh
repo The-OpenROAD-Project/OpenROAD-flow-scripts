@@ -80,6 +80,9 @@ Options:
     --openroad-args STRING  Aditional compilation flags for OpenROAD app
                             compilation.
 
+    --lsoracle-enable       Compile LSOracle. Disable by default as it is not
+                            currently used on the flow.
+
     --lsoracle-args-overwrite
                             Do not use default flags set by this scrip during
                             LSOracle compilation.
@@ -165,6 +168,9 @@ while (( "$#" )); do
                 --openroad-args)
                         OPENROAD_APP_USER_ARGS="$2"
                         shift
+                        ;;
+                --lsoracle-enable)
+                        LSORACLE_ENABLE=1
                         ;;
                 --lsoracle-args-overwrite)
                         LSORACLE_OVERWIRTE_ARGS=1
@@ -278,9 +284,11 @@ __local_build()
         ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/build ${OPENROAD_APP_ARGS}
         ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
 
-        echo "[INFO FLW-0019] Compiling LSOracle."
-        ${NICE} cmake tools/LSOracle -B tools/LSOracle/build ${LSORACLE_ARGS}
-        ${NICE} cmake --build tools/LSOracle/build --target install -j "${PROC}"
+        if [ ! -z "${LSORACLE_ENABLE+x}" ]; then
+                echo "[INFO FLW-0019] Compiling LSOracle."
+                ${NICE} cmake tools/LSOracle -B tools/LSOracle/build ${LSORACLE_ARGS}
+                ${NICE} cmake --build tools/LSOracle/build --target install -j "${PROC}"
+        fi
 }
 
 __update_openroad_app_remote()
