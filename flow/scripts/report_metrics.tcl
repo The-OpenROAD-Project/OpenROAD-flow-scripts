@@ -39,7 +39,7 @@ proc report_metrics { when {include_erc true}} {
     puts "--------------------------------------------------------------------------"
     set max_capacitance_violation_count [sta::max_capacitance_violation_count]
     puts "max cap violation count $max_capacitance_violation_count"
-    utl::metric_integer [map_when_to_json_key $when "timing__drv__max_cap"] $max_capacitance_violation_count
+    utl::metric_integer "timing__drv__max_cap" $max_capacitance_violation_count
 
     puts "\n=========================================================================="
     puts "$when setup_violation_count"
