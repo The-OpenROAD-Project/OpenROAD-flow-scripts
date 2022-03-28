@@ -13,7 +13,7 @@ export RTLMP_MIN_INST = 1000
 export RTLMP_MAX_MACRO = 12
 export RTLMP_MIN_MACRO = 4
 
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:1000-1555
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-500 -exclude bottom:1110-1555
 
 export MACRO_PLACE_HALO = 5 5
 export MACRO_PLACE_CHANNEL = 10 10

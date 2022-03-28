@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 273074,
+            "value": 273575,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 542399,
+            "value": 543938,
             "compare": "<="
         },
         {
@@ -27,37 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -336.76,
+            "value": -331.67,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -324.1,
+            "value": -318.64,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -324.1,
+            "value": -317.17,
             "compare": ">="
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 1868,
+            "value": 1460,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -227.78,
+            "value": -273.18,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -227.78,
+            "value": -273.18,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 5784050,
+            "value": 5868563,
             "compare": "<="
         },
         {
@@ -72,12 +72,12 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 275648,
+            "value": 276037,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 10,
+            "value": 1127,
             "compare": "<="
         },
         {
