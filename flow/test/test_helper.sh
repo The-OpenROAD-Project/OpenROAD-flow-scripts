@@ -34,10 +34,6 @@ $__make finish metadata 2>&1 | tee -a $LOG_FILE
 ret=$?
 set -e
 
-if [ ! -z ${MAKE_ISSUE+x} ]; then
-  $__make final_report_issue 2>&1 | tee -a $LOG_FILE
-fi
-
 if [ -z "${PRIVATE_DIR+x}" ]; then
   PRIVATE_DIR="../../private_tool_scripts"
 fi
@@ -51,6 +47,10 @@ if [ -f "$PRIVATE_DIR/util/utils.mk" ] && [ ! -z ${RUN_CALIBRE+x} ]; then
   if [ ! -z ${SAVE_TO_DB+x} ]; then
     $__make save_to_drc_db
   fi
+fi
+
+if [ ! -z ${MAKE_ISSUE+x} ]; then
+  $__make final_report_issue 2>&1 | tee -a $LOG_FILE
 fi
 
 exit $ret
