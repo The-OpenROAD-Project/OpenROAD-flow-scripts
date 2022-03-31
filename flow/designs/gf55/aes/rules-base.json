@@ -27,22 +27,22 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -0.53,
+            "value": -0.46,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -1.69,
+            "value": -1.56,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -1.68,
+            "value": -1.99,
             "compare": ">="
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 177,
+            "value": 200,
             "compare": "<="
         },
         {
@@ -57,7 +57,7 @@
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 737655,
+            "value": 725314,
             "compare": "<="
         },
         {
@@ -72,7 +72,7 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 167569,
+            "value": 169677,
             "compare": "<="
         },
         {

@@ -11,4 +11,6 @@ export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.60
 
+export ENABLE_DPO = 0
+
 export DFF_LIB_FILE           = $($(CORNER)_DFF_LIB_FILE)
