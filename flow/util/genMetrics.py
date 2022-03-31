@@ -380,108 +380,108 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     extractTagFromFile('globalplace__route__wirelength__estimated',
                        metrics_dict,
                        'Total wirelength: (\S+)',
-                       logPath + '/3_1_place_gp.log')
+                       logPath + '/3_3_place_gp.log')
 
     extractTagFromFile('globalplace__timing__setup__tns',
                        metrics_dict,
                        baseRegEx.format('global place report_tns',
                                         'tns (\S+)'),
-                       logPath + '/3_1_place_gp.log')
+                       logPath + '/3_3_place_gp.log')
 
     extractTagFromFile('globalplace__timing__setup__ws',
                        metrics_dict,
                        baseRegEx.format('global place report_worst_slack',
                                         'worst slack (\S+)'),
-                       logPath + '/3_1_place_gp.log')
+                       logPath + '/3_3_place_gp.log')
 
-    extractGnuTime('globalplace', metrics_dict, logPath + '/3_1_place_gp.log')
+    extractGnuTime('globalplace', metrics_dict, logPath + '/3_3_place_gp.log')
 
     extractTagFromFile('placeopt__timing__setup__tns',
                        metrics_dict,
                        baseRegEx.format('resizer report_tns', 'tns (\S+)'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__timing__setup__ws',
                        metrics_dict,
                        baseRegEx.format('resizer report_worst_slack',
                                         'worst slack (\S+)'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__design__instance__area',
                        metrics_dict,
                        baseRegEx.format('resizer report_design_area',
                                         '^Design area (\S+) u\^2'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__design__instance__utilization',
                        metrics_dict,
                        baseRegEx.format('resizer report_design_area',
                                         '^Design area .* (\S+)% utilization'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__timing__drv__max_slew',
                        metrics_dict,
                        baseRegEx.format('resizer max_slew_violation_count',
                                         'max slew violation count (\S+)'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__timing__drv__max_fanout',
                        metrics_dict,
                        baseRegEx.format('resizer max_fanout_violation_count',
                                         'max fanout violation count (\S+)'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__timing__drv__max_cap',
                        metrics_dict,
                        baseRegEx.format('resizer max_cap_violation_count',
                                         'max cap violation count (\S+)'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__design__instance__count__stdcell',
                        metrics_dict,
                        '^instance_count\n-*\n^(\S+)',
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
-    extractGnuTime('placeopt', metrics_dict, logPath + '/3_3_resizer.log')
+    extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_resizer.log')
 
     extractTagFromFile('detailedplace__design__violations',
                        metrics_dict,
                        '^\[INFO FLW-0012\] Placement violations (\S+).',
-                       logPath + '/3_4_opendp.log', defaultNotFound=0)
+                       logPath + '/3_5_opendp.log', defaultNotFound=0)
 
     extractTagFromFile('detailedplace__timing__setup__tns',
                        metrics_dict,
                        baseRegEx.format('detailed place report_tns',
                                         'tns (\S+)'),
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
     extractTagFromFile('detailedplace__timing__setup__ws',
                        metrics_dict,
                        baseRegEx.format('detailed place report_worst_slack',
                                         'worst slack (\S+)'),
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
     extractTagFromFile('detailedplace__design__instance__displacement__total',
                        metrics_dict,
                        'total displacement +(\d*\.?\d*)',
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
     extractTagFromFile('detailedplace__design__instance__displacement__mean',
                        metrics_dict,
                        'average displacement +(\d*\.?\d*)',
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
     extractTagFromFile('detailedplace__desgin__instance__displacement__max',
                        metrics_dict,
                        'max displacement +(\d*\.?\d*)',
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
     extractTagFromFile('detailedplace__route__wirelength__estimated',
                        metrics_dict,
                        'legalized HPWL +(\d*\.?\d*)',
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
-    extractGnuTime('detailedplace', metrics_dict, logPath + '/3_4_opendp.log')
+    extractGnuTime('detailedplace', metrics_dict, logPath + '/3_5_opendp.log')
 
     # CTS
     # =========================================================================

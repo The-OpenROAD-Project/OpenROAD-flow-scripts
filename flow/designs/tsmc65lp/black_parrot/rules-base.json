@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 1757054,
+            "value": 1736756,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 143345,
+            "value": 142525,
             "compare": "<="
         },
         {
@@ -27,37 +27,37 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -1.76,
+            "value": -2.06,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -2.46,
+            "value": -3.48,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -2.3,
+            "value": -3.21,
             "compare": ">="
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 10490,
+            "value": 11476,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -1.43,
+            "value": -1.8,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -1.43,
+            "value": -1.8,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 10480699,
+            "value": 9230881,
             "compare": "<="
         },
         {
@@ -67,17 +67,17 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -0.81,
+            "value": -0.93,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 1839220,
+            "value": 1825724,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 164,
+            "value": 10,
             "compare": "<="
         },
         {

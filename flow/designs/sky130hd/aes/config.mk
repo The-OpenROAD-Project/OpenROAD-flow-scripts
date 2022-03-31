@@ -11,6 +11,10 @@ export CORE_MARGIN = 2
 
 export PLACE_DENSITY = 0.65
 
+# Temporarily disable until routability can be fixed (OR-1371)
+export GPL_ROUTABILITY_DRIVEN = 0
+export ENABLE_DPO = 0
+
 # IR drop estimation supply net name to be analyzed and supply voltage variable
 # For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
 export PWR_NETS_VOLTAGES  = "VDD 1.8"
