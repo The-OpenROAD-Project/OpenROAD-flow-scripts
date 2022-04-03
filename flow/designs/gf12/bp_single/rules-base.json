@@ -47,7 +47,7 @@
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -375.27,
+            "value": -450,
             "compare": ">="
         },
         {
