@@ -47,12 +47,12 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -1.01,
+            "value": -1.5,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -1.01,
+            "value": -1.5,
             "compare": ">="
         },
         {
