@@ -754,6 +754,8 @@ $(foreach file,$(RESULTS_ODB),gui_$(file)): gui_%:
 $(foreach file,$(RESULTS_ODB),$(file).def): %.def:
 	ODB_FILE=$(RESULTS_DIR)/$* DEF_FILE=$(RESULTS_DIR)/$@ $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_def.tcl
 
+all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)
+
 print-%  : ; @echo $* = $($*)
 
 # Utilities
