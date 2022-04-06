@@ -767,6 +767,9 @@ print-%  : ; @echo $* = $($*)
 
 # Utilities
 #-------------------------------------------------------------------------------
+$(RESULTS_DIR)/%.def : $(RESULTS_DIR)/%.odb
+	DEF_FILE=$@ ODB_FILE=$(RESULTS_DIR)/$*.odb VERILOG_FILE=$(RESULTS_DIR)/$*.v $(OPENROAD_CMD) $(SCRIPTS_DIR)/odb2files.tcl
+
 include $(UTILS_DIR)/utils.mk
 export PRIVATE_DIR ?= ../../private_tool_scripts
 -include $(PRIVATE_DIR)/private.mk
