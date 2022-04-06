@@ -206,6 +206,28 @@ def read_config(file_name):
     def read_sweep(this):
         return [*this['minmax'], this['step']]
 
+    def apply_condition(config, data):
+        # TODO: tune.sample_from only supports random search algorithm.
+        # To make conditional parameter for the other algorithms, different
+        # algorithms should take different methods (will be added)
+        if args.algorithm == 'random':
+            dp_pad_min, dp_pad_max = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax']
+            dp_pad_step = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['step']
+            if dp_pad_step == 1:
+                config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
+                    lambda spec: tune.randint(
+                        dp_pad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1))
+            if dp_pad_step > 1:
+                config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
+                    lambda spec: tune.choice(
+                        np.adarray.tolist(
+                            np.arange(
+                                dp_pad_min,
+                                spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT +
+                                1,
+                                dp_pad_step))))
+        return config
+
     def read_tune(this):
         min_, max_ = this['minmax']
         if min_ == max_:
@@ -218,11 +240,21 @@ def read_config(file_name):
                       'with lowerbound value 0.')
             if this['step'] == 1:
                 return tune.randint(min_, max_)
-            return tune.qrandint(min_, max_, this['step'])
+            return tune.choice(
+                np.adarray.tolist(
+                    np.arange(
+                        config_min,
+                        config_max,
+                        config_step)))
         if this['type'] == 'float':
             if this['step'] == 0:
                 return tune.uniform(min_, max_)
-            return tune.quniform(min_, max_, this['step'])
+            return tune.choice(
+                np.adarray.tolist(
+                    np.arange(
+                        config_min,
+                        config_max,
+                        config_step)))
         return None
 
     def read_tune_ax(name, this):
@@ -243,7 +275,12 @@ def read_config(file_name):
         elif this['type'] == 'float':
             if this['step'] == 1:
                 dict_["type"] = "choice"
-                dict_["values"] = tune.quniform(min_, max_, this['step'])
+                dict_["values"] = tune.choice(
+                    np.adarray.tolist(
+                        np.arange(
+                            config_min,
+                            config_max,
+                            config_step)))
                 dict_["value_type"] = "float"
             else:
                 dict_["type"] = "range"
@@ -278,7 +315,8 @@ def read_config(file_name):
             config[key] = read_tune(value)
         elif args.mode == 'tune' and args.algorithm == 'ax':
             config.append(read_tune_ax(key, value))
-    # Copy back to global variables
+    if args.mode == 'tune':
+        config = apply_condition(config, data)
     return config, sdc_file, fr_file
 
 
@@ -714,8 +752,7 @@ def set_algorithm(experiment_name, config):
             minimize=True
         )
         algorithm = AxSearch(ax_client=ax_client,
-                             points_to_evaluate=best_params,
-                             max_concurrent=args.jobs)
+                             points_to_evaluate=best_params)
     elif args.algorithm == 'nevergrad':
         algorithm = NevergradSearch(
             points_to_evaluate=best_params,
@@ -729,7 +766,7 @@ def set_algorithm(experiment_name, config):
             time_attr="training_iteration",
             perturbation_interval=args.perturbation,
             hyperparam_mutations=config,
-            synch=False
+            synch=True
         )
     elif args.algorithm == 'random':
         algorithm = BasicVariantGenerator(max_concurrent=args.jobs)
@@ -859,6 +896,7 @@ if __name__ == '__main__':
             stop={"training_iteration": args.iterations},
         )
         if args.algorithm == 'pbt':
+            os.environ["TUNE_MAX_PENDING_TRIALS_PG"] = str(args.jobs)
             tune_args['scheduler'] = search_algo
         else:
             tune_args['search_alg'] = search_algo
