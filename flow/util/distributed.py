@@ -361,10 +361,15 @@ def write_sdc(variables, path):
     new_file = SDC_ORIGINAL
     for key, value in variables.items():
         if key == 'CLK_PERIOD':
-            new_file = re.sub(r'-period [0-9\.]+ (.*)',
+            if new_file.find('set clk_period') != -1:
+                new_file = re.sub(r'set clk_period .*\n(.*)',
+                                  f'set clk_period {value}\n\\1',
+                                  new_file)
+            else:
+                new_file = re.sub(r'-period [0-9\.]+ (.*)',
                               f'-period {value} \\1',
                               new_file)
-            new_file = re.sub(r'-waveform [{}\s0-9\.]+[\s|\n]',
+                new_file = re.sub(r'-waveform [{}\s0-9\.]+[\s|\n]',
                               '',
                               new_file)
         elif key == 'UNCERTAINTY':
