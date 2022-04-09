@@ -39,12 +39,15 @@ fi
 
 if [ -f "$PRIVATE_DIR/openRoad/private.mk" ] && [ ! -z ${SAVE_TO_DB+x} ]; then
   $__make save_to_metrics_db
+  ret=$(( ret + $? ))
 fi
 
 if [ -f "$PRIVATE_DIR/util/utils.mk" ] && [ ! -z ${RUN_CALIBRE+x} ]; then
   $__make calibre_drc
+  ret=$(( ret + $? ))
   if [ ! -z ${SAVE_TO_DB+x} ]; then
     $__make save_to_drc_db
+    ret=$(( ret + $? ))
   fi
 fi
 
