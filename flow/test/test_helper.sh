@@ -32,7 +32,6 @@ $__make finish metadata 2>&1 | tee -a $LOG_FILE
 # Save the return code to return as the overall status after we package
 # the results
 ret=$?
-set -e
 
 if [ -z "${PRIVATE_DIR+x}" ]; then
   PRIVATE_DIR="../../private_tool_scripts"
@@ -48,6 +47,9 @@ if [ -f "$PRIVATE_DIR/util/utils.mk" ] && [ ! -z ${RUN_CALIBRE+x} ]; then
     $__make save_to_drc_db
   fi
 fi
+
+# Only enabled abort on error at the end to allow script to reach make issue
+set -e
 
 if [ ! -z ${MAKE_ISSUE+x} ]; then
   $__make final_report_issue 2>&1 | tee -a $LOG_FILE
