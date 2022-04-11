@@ -64,14 +64,6 @@
         ],
         "step": 0
     },
-    "_SYNTH_FLATTEN": {
-        "type": "int",
-        "minmax": [
-            0,
-            2
-        ],
-        "step": 1
-    },
     "_PINS_DISTANCE": {
         "type": "int",
         "minmax": [
