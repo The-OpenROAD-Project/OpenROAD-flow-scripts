@@ -339,8 +339,9 @@ def parse_config(config, path=os.getcwd()):
             # Special substitution cases
             elif key == "_PINS_DISTANCE":
                 options += f' PLACE_PINS_ARGS="-min_distance {value}"'
-            elif key == "_SYNTH_FLATTEN" and value == 1:
-                options += ' SYNTH_ARGS=""'
+            elif key == "_SYNTH_FLATTEN":
+                print('[WARNING TUN-0013] Non-flatten the designs are not '
+                      'fully supported, ignoring _SYNTH_FLATTEN parameter.')
         # Default case is VAR=VALUE
         else:
             options += f' {key}={value}'
