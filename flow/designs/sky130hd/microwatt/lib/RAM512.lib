@@ -1,0 +1,250 @@
+library (RAM512_lib) {
+    delay_model : "table_lookup";
+    time_unit : "1ns";
+    voltage_unit : "1V";
+    current_unit : "1mA";
+    pulling_resistance_unit : "1kohm";
+    leakage_power_unit : "1nW";
+    capacitive_load_unit (1.0, pf);
+
+    input_threshold_pct_fall : 50;
+    output_threshold_pct_fall : 50;
+    input_threshold_pct_rise : 50;
+    output_threshold_pct_rise : 50;
+    slew_derate_from_library : 1.0;
+    slew_lower_threshold_pct_fall : 20;
+    slew_lower_threshold_pct_rise : 20;
+    slew_upper_threshold_pct_fall : 80;
+    slew_upper_threshold_pct_rise : 80;
+
+    default_max_transition : 1.5;
+    default_cell_leakage_power : 0.0;
+    default_fanout_load : 1.0;
+    default_inout_pin_cap : 0.0;
+    default_input_pin_cap : 0.0;
+    default_output_pin_cap : 0.0;
+
+    nom_process : 1.0;
+    nom_temperature : 25.0;
+    nom_voltage : 1.8;
+
+    default_operating_conditions : "tt_025C_1v80";
+    operating_conditions ("tt_025C_1v80") {
+        voltage : 1.8;
+        process : 1.0;
+        temperature : 25.0;
+        tree_type : "balanced_tree";
+    }
+
+    type (bits_64) {
+        base_type : array;
+        data_type : bit;
+        bit_width : 64;
+        bit_from : 63;
+        bit_to : 0;
+    }
+
+    type (bits_8) {
+        base_type : array;
+        data_type : bit;
+        bit_width : 8;
+        bit_from : 7;
+        bit_to : 0;
+    }
+
+    type (bits_9) {
+        base_type : array;
+        data_type : bit;
+        bit_width : 9;
+        bit_from : 8;
+        bit_to : 0;
+    }
+
+    cell (RAM512) {
+        interface_timing : true;
+
+        pg_pin ("VPWR") {
+            pg_type : "primary_power";
+            voltage_name : "VPWR";
+        }
+
+        pg_pin ("VGND") {
+            pg_type : "primary_ground";
+            voltage_name : "VGND";
+        }
+
+        pin(EN0) {
+            direction : input;
+            related_ground_pin : "VGND";
+            related_power_pin : "VPWR";
+
+            /* sky130_fd_sc_hd__buf_1 */
+            capacitance : 0.0021030000;
+            rise_capacitance : 0.0021910000;
+            fall_capacitance : 0.0020150000;
+            max_transition : 1.5;
+
+            timing() {
+                timing_type : setup_rising;
+                related_pin : "CLK";
+                rise_constraint(scalar) {
+                    values("-3.55");
+                }
+                fall_constraint(scalar) {
+                    values("-3.55");
+                }
+            }
+            timing() {
+                timing_type : hold_rising;
+                related_pin : "CLK";
+                rise_constraint(scalar) {
+                    values("3.75");
+                }
+                fall_constraint(scalar) {
+                    values("3.75");
+                }
+            }
+        }
+
+        bus(WE0) {
+            bus_type : bits_8;
+            direction : input;
+            related_ground_pin : "VGND";
+            related_power_pin : "VPWR";
+
+            /* sky130_fd_sc_hd__buf_1 */
+            capacitance : 0.0021030000;
+            rise_capacitance : 0.0021910000;
+            fall_capacitance : 0.0020150000;
+            max_transition : 1.5;
+
+            timing() {
+                timing_type : setup_rising;
+                related_pin : "CLK";
+                rise_constraint(scalar) {
+                    values("-3.55");
+                }
+                fall_constraint(scalar) {
+                    values("-3.55");
+                }
+            }
+            timing() {
+                timing_type : hold_rising;
+                related_pin : "CLK";
+                rise_constraint(scalar) {
+                    values("3.75");
+                }
+                fall_constraint(scalar) {
+                    values("3.75");
+                }
+            }
+        }
+        bus(Di0) {
+            bus_type : bits_64;
+            direction : input;
+
+            /* sky130_fd_sc_hd__buf_1 */
+            capacitance : 0.0021030000;
+            rise_capacitance : 0.0021910000;
+            fall_capacitance : 0.0020150000;
+            max_transition : 1.5;
+
+            timing() {
+                timing_type : setup_rising;
+                related_pin : "CLK";
+                rise_constraint(scalar) {
+                    values("-3.55");
+                }
+                fall_constraint(scalar) {
+                    values("-3.55");
+                }
+            }
+            timing() {
+                timing_type : hold_rising;
+                related_pin : "CLK";
+                rise_constraint(scalar) {
+                    values("3.75");
+                }
+                fall_constraint(scalar) {
+                    values("3.75");
+                }
+            }
+        }
+
+        bus(A0) {
+            bus_type : bits_9;
+            direction : input;
+            related_ground_pin : "VGND";
+            related_power_pin : "VPWR";
+
+            /* sky130_fd_sc_hd__buf_1 */
+            capacitance : 0.0021030000;
+            rise_capacitance : 0.0021910000;
+            fall_capacitance : 0.0020150000;
+            max_transition : 1.5;
+
+            timing() {
+                timing_type : setup_rising;
+                related_pin : "CLK";
+                rise_constraint(scalar) {
+                    values("-3.55");
+                }
+                fall_constraint(scalar) {
+                    values("-3.55");
+                }
+            }
+            timing() {
+                timing_type : hold_rising;
+                related_pin : "CLK";
+                rise_constraint(scalar) {
+                    values("3.75");
+                }
+                fall_constraint(scalar) {
+                    values("3.75");
+                }
+            }
+        }
+
+        bus(Do0) {
+            bus_type : bits_64;
+            direction : output;
+            related_ground_pin : "VGND";
+            related_power_pin : "VPWR";
+
+            /* sky130_fd_sc_hd__buf_1 */
+            max_capacitance : 0.1300150000;
+            max_transition : 1.5061030000;
+
+            timing() {
+                related_pin : "CLK";
+                timing_sense : non_unate
+                timing_type : rising_edge
+                cell_rise(scalar) {
+                    values("11.25");
+                }
+                cell_fall(scalar) {
+                    values("11.25");
+                }
+                rise_transition(scalar) {
+                    values("0.75");
+                }
+                fall_transition(scalar) {
+                    values("0.75");
+                }
+            }
+        }
+    
+        pin(CLK) {
+            clock : true;
+            direction : input;
+            related_ground_pin : "VGND";
+            related_power_pin : "VPWR";
+
+            /* sky130_fd_sc_hd__buf_1 */
+            capacitance : 0.0021030000;
+            rise_capacitance : 0.0021910000;
+            fall_capacitance : 0.0020150000;
+            max_transition : 1.5;
+        }
+    }
+}
