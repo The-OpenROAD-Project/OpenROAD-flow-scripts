@@ -13,7 +13,7 @@ export CORE_AREA  = 10 10 2910 3510
 
 export PLACE_DENSITY ?= 0.20
 
-export ABC_CLOCK_PERIOD_IN_PS = 40000
+export ABC_CLOCK_PERIOD_IN_PS = 25000
 
 export microwatt_DIR = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)
 

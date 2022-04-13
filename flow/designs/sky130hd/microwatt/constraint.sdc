@@ -2,7 +2,7 @@ current_design microwatt
 
 set clk_name ext_clk
 set clk_port_name ext_clk
-set clk_period 40.0
+set clk_period 25.0
 set clk_io_pct 0.2
 
 set clk_port [get_ports $clk_port_name]
