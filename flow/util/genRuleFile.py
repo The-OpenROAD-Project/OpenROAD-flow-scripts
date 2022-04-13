@@ -5,7 +5,7 @@ from os import chdir
 from os.path import isfile, abspath
 from re import sub
 import json
-from math import ceil
+from math import ceil, isinf
 
 if len(sys.argv) != 3:
     print('usage:', sys.argv[0], '<DIR> <VARIANT>')
@@ -130,21 +130,21 @@ metrics = {
         'roundValue': True,
         'compare': '<=',
     },
-    'finish__timing__drv__max_slew': {
+    'finish__timing__drv__max_slew_limit': {
         'usePeriod': False,
         'padding': 20,
         'fixed': 10,
         'roundValue': True,
         'compare': '<=',
     },
-    'finish__timing__drv__max_fanout': {
+    'finish__timing__drv__max_fanout_limit': {
         'usePeriod': False,
         'padding': 20,
         'fixed': 10,
         'roundValue': True,
         'compare': '<=',
     },
-    'finish__timing__drv__max_cap': {
+    'finish__timing__drv__max_cap_limit': {
         'usePeriod': False,
         'padding': 20,
         'fixed': 10,
@@ -206,7 +206,7 @@ for field, option in metrics.items():
 
     newRule = dict()
     newRule['field'] = field
-    if option['roundValue']:
+    if option['roundValue'] and not isinf(value):
         newRule['value'] = round(value)
     else:
         newRule['value'] = float('{:.2f}'.format(value))

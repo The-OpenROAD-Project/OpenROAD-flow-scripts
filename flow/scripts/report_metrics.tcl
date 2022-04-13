@@ -20,6 +20,27 @@ proc report_metrics { when {include_erc true} } {
     puts "--------------------------------------------------------------------------"
     report_check_types -max_slew -max_capacitance -max_fanout -violators
 
+    if {[sta::max_slew_check_limit] < 1e30} {
+      puts "\n=========================================================================="
+      puts "$when max_slew_check_slack_limit"
+      puts "--------------------------------------------------------------------------"
+      puts [format "%.2f" [sta::max_slew_check_slack_limit]]
+    }
+
+    if {[sta::max_fanout_check_limit] < 1e30} {
+      puts "\n=========================================================================="
+      puts "$when max_fanout_check_slack_limit"
+      puts "--------------------------------------------------------------------------"
+      puts [format "%.2f" [sta::max_fanout_check_slack_limit]]
+    }
+
+    if {[sta::max_capacitance_check_limit] < 1e30} {
+      puts "\n=========================================================================="
+      puts "$when max_capacitance_check_slack_limit"
+      puts "--------------------------------------------------------------------------"
+      puts [format "%.2f" [sta::max_capacitance_check_slack_limit]]
+    }
+
     puts "\n=========================================================================="
     puts "$when max_slew_violation_count"
     puts "--------------------------------------------------------------------------"
