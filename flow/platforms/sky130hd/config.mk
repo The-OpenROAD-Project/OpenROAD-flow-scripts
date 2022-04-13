@@ -93,7 +93,7 @@ export IO_PLACER_H = met3
 export IO_PLACER_V = met2
 
 # Define default PDN config
-export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
+export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # Endcap and Welltie cells
 export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
