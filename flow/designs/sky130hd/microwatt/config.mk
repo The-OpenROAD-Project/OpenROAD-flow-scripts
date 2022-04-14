@@ -27,9 +27,9 @@ export MACRO_PLACEMENT = $(microwatt_DIR)/microwatt.macro_placement.cfg
 
 # CTS tuning
 export CTS_BUF_CELL = sky130_fd_sc_hd__clkbuf_8
-export CTS_BUF_DISTANCE = 1000
-export CTS_CLUSTER_DIAMETER = 200
-export CTS_CLUSTER_SIZE = 25
+export CTS_BUF_DISTANCE = 600
+export CTS_CLUSTER_DIAMETER = 100
+export CTS_CLUSTER_SIZE = 30
 
 export export SETUP_SLACK_MARGIN = 0.2
 
