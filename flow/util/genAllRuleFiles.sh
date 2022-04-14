@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 cd "$(dirname $(readlink -f $0))/../"
 
 for variant in base hier_rtlmp
