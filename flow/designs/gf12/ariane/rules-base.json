@@ -47,17 +47,17 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -323.66,
+            "value": -294.6,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -323.66,
+            "value": -294.6,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 3445559,
+            "value": 3445935,
             "compare": "<="
         },
         {
@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -159.67,
+            "value": -159.72,
             "compare": ">="
         },
         {
@@ -77,7 +77,7 @@
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 41,
+            "value": 58,
             "compare": "<="
         },
         {
