@@ -189,19 +189,6 @@ pipeline {
             }
           }
         }
-        stage("sky130 hd aes") {
-          agent any;
-          steps {
-            unstash "install";
-            sh "flow/test/test_helper.sh aes sky130hd";
-          }
-          post {
-            always {
-              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/*tar.gz";
-            }
-          }
-        }
         stage("sky130 hd chameleon") {
           agent any;
           steps {
