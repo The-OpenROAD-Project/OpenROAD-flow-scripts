@@ -12,12 +12,12 @@
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 161589,
+            "value": 167480,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 25915,
+            "value": 25949,
             "compare": "<="
         },
         {
@@ -42,22 +42,22 @@
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 101,
+            "value": 293,
             "compare": "<="
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.97,
+            "value": -0.33,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -0.98,
+            "value": -0.32,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 849235,
+            "value": 915245,
             "compare": "<="
         },
         {
@@ -67,17 +67,17 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -0.59,
+            "value": -0.19,
             "compare": ">="
         },
         {
             "field": "finish__design__instance__area",
-            "value": 162815,
+            "value": 171358,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew",
-            "value": 3128,
+            "value": 4302,
             "compare": "<="
         },
         {
@@ -87,7 +87,7 @@
         },
         {
             "field": "finish__timing__drv__max_cap",
-            "value": 31,
+            "value": 38,
             "compare": "<="
         },
         {
@@ -97,7 +97,7 @@
         },
         {
             "field": "finish__timing__drv__hold_violation_count",
-            "value": 11,
+            "value": 10,
             "compare": "<="
         }
     ]
