@@ -25,7 +25,6 @@ Parameter sweeping:
 '''
 
 import argparse
-import hashlib
 import json
 import os
 from os.path import abspath
@@ -35,6 +34,7 @@ from datetime import datetime
 from multiprocessing import cpu_count
 from subprocess import run
 from itertools import product
+from uuid import uuid4 as uuid
 
 import numpy as np
 
@@ -55,9 +55,9 @@ from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
-AUTOTUNER_BEST = 'autotuner-best.json'
 FASTROUTE_TCL = 'fastroute.tcl'
 CONSTRAINTS_SDC = 'constraint.sdc'
+METRIC = 'minimum'
 
 
 class AutoTunerBase(tune.Trainable):
@@ -76,17 +76,18 @@ class AutoTunerBase(tune.Trainable):
         self.repo_dir = abspath(repo_dir)
         self.parameters = parse_config(config, path=os.getcwd())
         self.step_ = 0
+        self.variant = f'variant-{self.__class__.__name__}-{self.trial_id}-or'
 
     def step(self):
         '''
         Run step experiment and compute its score.
         '''
-        metrics_file = openroad(self.repo_dir, self.parameters)
+        metrics_file = openroad(self.repo_dir, self.parameters, self.variant)
         self.step_ += 1
         score = self.evaluate(self.read_metrics(metrics_file))
         # Feed the score back to Tune.
         # return must match 'metric' used in tune.run()
-        return {"minimum": score}
+        return {METRIC: score}
 
     def evaluate(self, metrics):
         '''
@@ -299,6 +300,8 @@ def read_config(file_name):
     else:
         config = dict()
     for key, value in data.items():
+        if key == 'best_result':
+            continue
         if key == '_SDC_FILE_PATH' and value != '':
             if sdc_file != '':
                 print('[WARNING TUN-0004] Overwriting SDC base file.')
@@ -426,18 +429,6 @@ def write_fast_route(variables, path):
     return file_name
 
 
-def get_flow_variant(param):
-    '''
-    Create a hash based on the parameters. This way we don't need to re-run
-    experiments with the same configuration.
-    '''
-    variant_hash = hashlib.md5(f"{param}".encode('utf-8')).hexdigest()
-    if args.mode == 'tune':
-        with open(os.path.join(os.getcwd(), 'variant_hash.txt'), 'w') as file:
-            file.write(variant_hash)
-    return f'{args.experiment}/variant-{variant_hash}'
-
-
 def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
     '''
     Wrapper for subprocess.run
@@ -463,15 +454,15 @@ def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
 def openroad_distributed(repo_dir, config, path):
     ''' Simple wrapper to run openroad distributed with Ray. '''
     config = parse_config(config)
-    openroad(repo_dir, config, path=path)
+    openroad(repo_dir, config, str(uuid()), path=path)
 
 
-def openroad(base_dir, parameters, path=''):
+def openroad(base_dir, parameters, flow_variant, path=''):
     '''
     Run OpenROAD-flow-scripts with a given set of parameters.
     '''
     # Make sure path ends in a slash, i.e., is a folder
-    flow_variant = get_flow_variant(parameters)
+    flow_variant = f'{args.experiment}/{flow_variant}'
     if path != '':
         log_path = f'{path}/{flow_variant}/'
         report_path = log_path.replace('logs', 'reports')
@@ -762,7 +753,7 @@ def set_algorithm(experiment_name, config):
         ax_client.create_experiment(
             name=experiment_name,
             parameters=config,
-            objective_name="minimum",
+            objective_name=METRIC,
             minimize=True
         )
         algorithm = AxSearch(ax_client=ax_client,
@@ -794,7 +785,7 @@ def set_best_params(platform, design):
     Get current known best parameters if it exists.
     '''
     params = []
-    best_param_file = f'designs/{platform}/{design}/{AUTOTUNER_BEST}'
+    best_param_file = f'designs/{platform}/{design}/autotuner.json'
     if os.path.isfile(best_param_file):
         with open(best_param_file) as file:
             params = json.load(file)
@@ -813,11 +804,15 @@ def set_training_class(function):
 
 
 @ray.remote
-def save_best(best_config):
+def save_best(results):
     '''
     Save best configuration of parameters found.
     '''
-    new_best_path = f'{LOCAL_DIR}/{args.experiment}/{AUTOTUNER_BEST}'
+    best_config = results.best_config
+    best_config['best_result'] = results.best_result[METRIC]
+    trial_id = results.best_trial.trial_id
+    new_best_path = f'{LOCAL_DIR}/{args.experiment}/'
+    new_best_path += f'autotuner-best-{trial_id}.json'
     with open(new_best_path, 'w') as new_best_file:
         json.dump(best_config, new_best_file, indent=4)
     print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
@@ -910,8 +905,8 @@ if __name__ == '__main__':
             reference = PPAImprov.read_metrics(args.reference)
 
         tune_args = dict(
-            name=f'{args.experiment}',
-            metric='minimum',
+            name=args.experiment,
+            metric=METRIC,
             mode='min',
             num_samples=args.samples,
             fail_fast=True,
@@ -919,6 +914,9 @@ if __name__ == '__main__':
             resume=args.resume,
             stop={"training_iteration": args.iterations},
             resources_per_trial={'cpu': args.resources_per_trial},
+            log_to_file=['trail-out.log', 'trail-err.log'],
+            trial_name_creator=lambda x: f'variant-{x.trainable_name}-{x.trial_id}-ray',
+            trial_dirname_creator=lambda x: f'variant-{x.trainable_name}-{x.trial_id}-ray',
         )
         if args.algorithm == 'pbt':
             os.environ["TUNE_MAX_PENDING_TRIALS_PG"] = str(args.jobs)
@@ -930,7 +928,7 @@ if __name__ == '__main__':
             tune_args['config'] = config_dict
         analysis = tune.run(TrainClass, **tune_args)
 
-        task_id = save_best.remote(analysis.best_config)
+        task_id = save_best.remote(analysis)
         _ = ray.get(task_id)
         print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
     elif args.mode == 'sweep':
