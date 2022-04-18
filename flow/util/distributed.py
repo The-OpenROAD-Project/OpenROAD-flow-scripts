@@ -34,6 +34,7 @@ from datetime import datetime
 from multiprocessing import cpu_count
 from subprocess import run
 import numpy as np
+from itertools import product
 
 import ray
 from ray import tune
@@ -843,6 +844,7 @@ def sweep():
         repo_dir = abspath('../')
     print(f'[INFO TUN-0012] Log dir {LOCAL_DIR}.')
     queue = Queue()
+    parameter_list = list()
     for name, content in config_dict.items():
         if not isinstance(content, list):
             print(f'[ERROR TUN-0015] {name} sweep is not supported.')
@@ -850,9 +852,14 @@ def sweep():
         if content[-1] == 0:
             print('[ERROR TUN-0014] Sweep does not support step value zero.')
             sys.exit(1)
-        for i in np.arange(*content):
-            config_dict[name] = i
-            queue.put([repo_dir, config_dict, LOCAL_DIR])
+        parameter_list.append([{name: i} for i in np.arange(*content)])
+    parameter_list = list(product(*parameter_list))
+    for parameter in parameter_list:
+        temp = dict()
+        for value in parameter:
+            temp.update(value)
+        print(temp)
+        queue.put([repo_dir, temp, LOCAL_DIR])
     workers = [consumer.remote(queue) for _ in range(args.jobs)]
     print('[INFO TUN-0009] Waiting for results.')
     ray.get(workers)
