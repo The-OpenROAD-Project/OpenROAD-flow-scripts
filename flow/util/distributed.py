@@ -601,47 +601,47 @@ def parse_arguments():
 
     # Setup
     parser.add_argument(
-        '--git-clean',
+        '--git_clean',
         action='store_true',
         help='Clean binaries and build files.'
              ' WARNING: may lose previous data.'
              ' Use carefully.')
     parser.add_argument(
-        '--git-clone',
+        '--git_clone',
         action='store_true',
         help='Force new git clone.'
              ' WARNING: may lose previous data.'
              ' Use carefully.')
     parser.add_argument(
-        '--git-clone-args',
+        '--git_clone_args',
         type=str,
         metavar='<str>',
         default='',
         help='Additional git clone arguments.')
     parser.add_argument(
-        '--git-latest',
+        '--git_latest',
         action='store_true',
         help='Use latest version of OpenROAD app.')
     parser.add_argument(
-        '--git-or-branch',
+        '--git_or_branch',
         type=str,
         metavar='<str>',
         default='',
         help='OpenROAD app branch to use.')
     parser.add_argument(
-        '--git-orfs-branch',
+        '--git_orfs_branch',
         type=str,
         metavar='<str>',
         default='master',
         help='OpenROAD-flow-scripts branch to use.')
     parser.add_argument(
-        '--git-url',
+        '--git_url',
         type=str,
         metavar='<url>',
         default=ORFS_URL,
         help='OpenROAD-flow-scripts repo URL to use.')
     parser.add_argument(
-        '--build-args',
+        '--build_args',
         type=str,
         metavar='<str>',
         default='',
@@ -678,7 +678,7 @@ def parse_arguments():
         default=1,
         help='Number of iterations for tuning.')
     tune_parser.add_argument(
-        '--resources-per-trial',
+        '--resources_per_trial',
         type=int,
         metavar='<int>',
         default=1,
@@ -710,7 +710,7 @@ def parse_arguments():
         default=int(np.floor(cpu_count() / 2)),
         help='Max number of concurrent jobs.')
     parser.add_argument(
-        '--openroad-threads',
+        '--openroad_threads',
         type=int,
         metavar='<int>',
         default=16,
