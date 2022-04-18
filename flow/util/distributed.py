@@ -532,8 +532,7 @@ def build(base, install):
         build_command += ' && git submodule foreach --recursive git clean -xdf'
     if args.git_clean \
             or not os.path.isfile(f'{install}/OpenROAD/bin/openroad') \
-            or not os.path.isfile(f'{install}/yosys/bin/yosys') \
-            or not os.path.isfile(f'{install}/LSOracle/bin/lsoracle'):
+            or not os.path.isfile(f'{install}/yosys/bin/yosys'):
         build_command += ' && bash -ic "./build_openroad.sh'
         # Some GCP machines have 200+ cores. Let's be reasonable...
         build_command += f' --local --nice --threads {min(32, cpu_count())}'
