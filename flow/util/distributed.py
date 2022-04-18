@@ -34,8 +34,9 @@ import sys
 from datetime import datetime
 from multiprocessing import cpu_count
 from subprocess import run
-import numpy as np
 from itertools import product
+
+import numpy as np
 
 import ray
 from ray import tune
@@ -212,22 +213,25 @@ def read_config(file_name):
         # TODO: tune.sample_from only supports random search algorithm.
         # To make conditional parameter for the other algorithms, different
         # algorithms should take different methods (will be added)
-        if args.algorithm == 'random':
-            dp_pad_min, dp_pad_max = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax']
-            dp_pad_step = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['step']
-            if dp_pad_step == 1:
-                config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
-                    lambda spec: tune.randint(
-                        dp_pad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1))
-            if dp_pad_step > 1:
-                config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
-                    lambda spec: tune.choice(
-                        np.adarray.tolist(
-                            np.arange(
-                                dp_pad_min,
-                                spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT +
-                                1,
-                                dp_pad_step))))
+        if args.algorithm != 'random':
+            return config
+        dp_pad_min = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax'][0]
+        # dp_pad_max = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax'][1]
+        dp_pad_step = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['step']
+        if dp_pad_step == 1:
+            config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
+                lambda spec: tune.randint(
+                    dp_pad_min,
+                    spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1))
+        if dp_pad_step > 1:
+            config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
+                lambda spec: tune.choice(
+                    np.adarray.tolist(
+                        np.arange(
+                            dp_pad_min,
+                            spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT +
+                            1,
+                            dp_pad_step))))
         return config
 
     def read_tune(this):
@@ -244,19 +248,17 @@ def read_config(file_name):
                 return tune.randint(min_, max_)
             return tune.choice(
                 np.adarray.tolist(
-                    np.arange(
-                        config_min,
-                        config_max,
-                        config_step)))
+                    np.arange(min_,
+                              max_,
+                              this['step'])))
         if this['type'] == 'float':
             if this['step'] == 0:
                 return tune.uniform(min_, max_)
             return tune.choice(
                 np.adarray.tolist(
-                    np.arange(
-                        config_min,
-                        config_max,
-                        config_step)))
+                    np.arange(min_,
+                              max_,
+                              this['step'])))
         return None
 
     def read_tune_ax(name, this):
@@ -277,12 +279,10 @@ def read_config(file_name):
         elif this['type'] == 'float':
             if this['step'] == 1:
                 dict_["type"] = "choice"
-                dict_["values"] = tune.choice(
-                    np.adarray.tolist(
-                        np.arange(
-                            config_min,
-                            config_max,
-                            config_step)))
+                dict_["values"] = tune.choice(np.adarray.tolist(
+                    np.arange(min_,
+                              max_,
+                              this['step'])))
                 dict_["value_type"] = "float"
             else:
                 dict_["type"] = "range"
@@ -370,11 +370,11 @@ def write_sdc(variables, path):
                                   new_file)
             else:
                 new_file = re.sub(r'-period [0-9\.]+ (.*)',
-                              f'-period {value} \\1',
-                              new_file)
+                                  f'-period {value} \\1',
+                                  new_file)
                 new_file = re.sub(r'-waveform [{}\s0-9\.]+[\s|\n]',
-                              '',
-                              new_file)
+                                  '',
+                                  new_file)
         elif key == 'UNCERTAINTY':
             if new_file.find('set uncertainty') != -1:
                 new_file = re.sub(r'set uncertainty .*\n(.*)',
