@@ -893,6 +893,7 @@ if __name__ == '__main__':
         # For local runs, use the same folder as other ORFS utilities.
         os.chdir(os.path.dirname(abspath(__file__)) + '/../')
         LOCAL_DIR = f'logs/{args.platform}/{args.design}'
+        LOCAL_DIR = abspath(LOCAL_DIR)
         INSTALL_PATH = abspath('../tools/install')
 
     if args.mode == 'tune':
