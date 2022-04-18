@@ -566,7 +566,7 @@ def parse_arguments():
                                        dest='mode',
                                        required=True)
     tune_parser = subparsers.add_parser("tune")
-    sweep_parser = subparsers.add_parser("sweep")
+    _ = subparsers.add_parser("sweep")
 
     # DUT
     parser.add_argument(
