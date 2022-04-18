@@ -1,17 +1,24 @@
 # AutoTuner with Ray cluster at GCP
 
+This documentation shows how to create a Ray cluster on Google Cloud
+Kubernetes Engine (i.e., GKE) and the required support infrastructure to
+enable AutoTuner to work properly. The documentation is intended to users
+with some familiarity with Google Cloud or other cloud services. For
+more details on how to use AutoTuner see the main documentation page
+[here](https://openroad.readthedocs.io/en/latest/user/InstructionsForAutoTuner.html).
+
 ## Enable GKE
 
 Follow the Google quickstart guide up to the section "Create a GKE cluster"
 [here](https://cloud.google.com/kubernetes-engine/docs/quickstart). The
-quickstart guide will show how to enable GKE (Google's Kubernetes Engine)
+quickstart guide instructs how to enable GKE (Google's Kubernetes Engine)
 start a CLI interface and get the settings for your project.
 
 ## Create a Kubernetes cluster
 
-Create GKE cluster using the following `gcloud` command as a guide.
-Note that each argument defines a characteristic of the cluster, further
-the cluster and node pool will allocate resources that cost money, so be
+Create a GKE cluster using the following `gcloud` command as a guide. Note
+that each argument defines a characteristic of the cluster. Furthermore,
+the cluster and node pool allocate resources that cost money. Hence, be
 mindful when choosing the configuration. For additional information see:
 
 ```bash
@@ -39,9 +46,9 @@ gcloud components install kubectl
 gcloud container clusters get-credentials autotuner
 ```
 
-Create a new node pool. This step is optional, but recommended. The new pool
-will use preemptive nodes which are cheaper, but also has a more powerful
-CPU and have more disk space.
+Create a new node pool. This step is optional, however, recommended. The
+new pool uses preemptive nodes which are not only cheaper, but also have
+a more powerful CPU and have more disk space.
 
 ```bash
 gcloud beta container node-pools create "worker-pool" \
@@ -61,9 +68,9 @@ gcloud beta container node-pools create "worker-pool" \
 
 NOTE: This tutorial requires a working NFS server.
 
-To access the NFS mount point in the Ray cluster we use a NFS helm chart. You
-need to modify the helm chart with the information about your server IP
-and mount point path.
+To access the NFS mount point in the Ray cluster, we use a NFS helm
+chart. You need to modify the helm chart with the information about your
+server IP and mount point path.
 
 ### Install NFS Kubernetes provisioner
 
@@ -98,9 +105,9 @@ helm-chart/templates/raycluster.yaml
 helm-chart/values.yaml
 ```
 
-To restrict to a specific node pool, replace POOL_NAME with the name
-of the pool you created on the previous step. For this tutorial we use
-`worker-pool`.
+You can restrict the node pool your AutoTuner jobs will use. To create
+this policy, replace POOL_NAME with the name of the pool you created on
+the previous step. For this tutorial we use `worker-pool`.
 
 ```yaml
 nodeSelector:
@@ -118,7 +125,7 @@ helm install autotuner ./helm-chart
 ### Upgrade deployment
 
 After the initial deployment, if you change the values inside `./helm-chart`
-you will need to upgrade the configuration stored at the Kubernetes cluster.
+you need to upgrade the configuration stored at the Kubernetes cluster.
 
 ```bash
 helm upgrade autotuner ./helm-chart
@@ -161,6 +168,8 @@ helm uninstall autotuner
 ```
 
 ## Running Ray programs with Ray Client
+
+Currently there are three different ways to launch a job on the GKE cluster.
 
 ### Using port forwarding
 
