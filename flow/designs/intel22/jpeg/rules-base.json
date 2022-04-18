@@ -57,12 +57,12 @@
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 901671,
+            "value": 901718,
             "compare": "<="
         },
         {
             "field": "detailedroute__route__drc_errors",
-            "value": 16,
+            "value": 3,
             "compare": "<="
         },
         {
