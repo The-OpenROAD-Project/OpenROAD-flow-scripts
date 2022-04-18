@@ -785,7 +785,7 @@ def set_best_params(platform, design):
     Get current known best parameters if it exists.
     '''
     params = []
-    best_param_file = f'designs/{platform}/{design}/autotuner.json'
+    best_param_file = f'designs/{platform}/{design}/autotuner-best.json'
     if os.path.isfile(best_param_file):
         with open(best_param_file) as file:
             params = json.load(file)
