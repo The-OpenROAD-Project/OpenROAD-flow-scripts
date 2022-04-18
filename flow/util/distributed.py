@@ -7,7 +7,7 @@ For both sweep and tune modes:
 
 Note: the order of the parameters matter.
 Arguments --design, --platform and --config are always required and should
-preceed the <mode>.
+precede the <mode>.
 
 AutoTuner:
     python3 distributed.py tune -h
@@ -244,7 +244,7 @@ def read_config(file_name):
         if this['type'] == 'int':
             if min_ == 0 and args.algorithm == 'nevergrad':
                 print('[WARNING TUN-0011] NevergradSearch may not work '
-                      'with lowerbound value 0.')
+                      'with lower bound value 0.')
             if this['step'] == 1:
                 return tune.randint(min_, max_)
             return tune.choice(
@@ -734,7 +734,7 @@ def parse_arguments():
         # Validation of arguments
         if arguments.eval == 'ppa-improv' and arguments.reference is None:
             print('[ERROR TUN-0006] The argument "--eval ppa-improv"'
-                  ' requries that "--reference <FILE>" is also given.')
+                  ' requires that "--reference <FILE>" is also given.')
             sys.exit(7)
 
     arguments.experiment += f'-{arguments.mode}-{DATE}'
@@ -838,7 +838,7 @@ def sweep():
         repo_dir = abspath(LOCAL_DIR + '/../' * 4)
     else:
         repo_dir = abspath('../')
-    print(f'[INFO TUN-0012] Log dir {LOCAL_DIR}.')
+    print(f'[INFO TUN-0012] Log folder {LOCAL_DIR}.')
     queue = Queue()
     parameter_list = list()
     for name, content in config_dict.items():
@@ -884,7 +884,7 @@ if __name__ == '__main__':
         # Connect to ray server before first remote execution.
         ray.init(f'ray://{args.server}:{args.port}')
         # Remote functions return a task id and are non-blocking. Since we
-        # need the setup repo to be do to contune we call ray.get() to wait
+        # need the setup repo before continuing, we call ray.get() to wait
         # for its completion.
         INSTALL_PATH = ray.get(setup_repo.remote(LOCAL_DIR))
         LOCAL_DIR += f'/flow/logs/{args.platform}/{args.design}'
