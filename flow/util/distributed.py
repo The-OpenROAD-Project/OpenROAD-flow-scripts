@@ -5,8 +5,9 @@ Dependencies are documented in pip format at distributed-requirements.txt
 For both sweep and tune modes:
     python3 distributed.py -h
 
-Note: the order of the parameters matter. Arguments --design, --platform and
---config are always required and should preceed the <mode>.
+Note: the order of the parameters matter.
+Arguments --design, --platform and --config are always required and should
+preceed the <mode>.
 
 AutoTuner:
     python3 distributed.py tune -h
