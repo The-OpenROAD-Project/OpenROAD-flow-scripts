@@ -845,7 +845,11 @@ def sweep():
     queue = Queue()
     for name, content in config_dict.items():
         if not isinstance(content, list):
-            continue
+            print(f'[ERROR TUN-0015] {name} sweep is not supported.')
+            sys.exit(1)
+        if content[-1] == 0:
+            print('[ERROR TUN-0014] Sweep does not support step value zero.')
+            sys.exit(1)
         for i in np.arange(*content):
             config_dict[name] = i
             queue.put([repo_dir, config_dict, LOCAL_DIR])
