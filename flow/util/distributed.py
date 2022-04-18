@@ -429,12 +429,20 @@ def write_fast_route(variables, path):
     return file_name
 
 
-def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
+def run_command(cmd, timeout=None,
+                stderr_file=None,
+                stdout_file=None,
+                fail_fast=False):
     '''
     Wrapper for subprocess.run
     Allows to run shell command, control print and exceptions.
     '''
-    process = run(cmd, capture_output=True, text=True, check=False, shell=True)
+    process = run(cmd,
+                  timeout=timeout,
+                  capture_output=True,
+                  text=True,
+                  check=False,
+                  shell=True)
     if stderr_file is not None and process.stderr != '':
         with open(stderr_file, 'a') as file:
             file.write(f'\n\n{cmd}\n{process.stderr}')
@@ -466,8 +474,8 @@ def openroad(base_dir, parameters, flow_variant, path=''):
     if path != '':
         log_path = f'{path}/{flow_variant}/'
         report_path = log_path.replace('logs', 'reports')
-        os.system(f'mkdir -p {log_path}')
-        os.system(f'mkdir -p {report_path}')
+        run_command(f'mkdir -p {log_path}')
+        run_command(f'mkdir -p {report_path}')
     else:
         log_path = report_path = os.getcwd() + '/'
 
@@ -482,6 +490,7 @@ def openroad(base_dir, parameters, flow_variant, path=''):
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
     make_command += f' NPROC={args.openroad_threads} SHELL=bash'
     run_command(make_command,
+                timeout=args.timeout,
                 stderr_file=f'{log_path}error-make-finish.log',
                 stdout_file=f'{log_path}make-finish-stdout.log')
 
@@ -504,13 +513,13 @@ def clone(path):
     Clone base repo in the remote machine. Only used for Kubernetes at GCP.
     '''
     if args.git_clone:
-        os.system(f'rm -rf {path}')
+        run_command(f'rm -rf {path}')
     if not os.path.isdir(f'{path}/.git'):
         git_command = 'git clone --depth 1 --recursive --single-branch'
         git_command += f' {args.git_clone_args}'
         git_command += f' --branch {args.git_orfs_branch}'
         git_command += f' {args.git_url} {path}'
-        os.system(git_command)
+        run_command(git_command)
 
 
 def build(base, install):
@@ -531,7 +540,7 @@ def build(base, install):
         if args.git_latest:
             build_command += ' --latest'
         build_command += f' {args.build_args}"'
-    os.system(build_command)
+    run_command(build_command)
 
 
 @ray.remote
@@ -587,6 +596,12 @@ def parse_arguments():
         default='test',
         help='Experiment name. This parameter is used to prefix the'
         ' FLOW_VARIANT and to set the Ray log destination.')
+    parser.add_argument(
+        '--timeout',
+        type=float,
+        metavar='<float>',
+        default=None,
+        help='Time limit (in hours) for each trial run. Default is no limit.')
     tune_parser.add_argument(
         '--resume',
         action='store_true',
@@ -738,6 +753,8 @@ def parse_arguments():
             sys.exit(7)
 
     arguments.experiment += f'-{arguments.mode}-{DATE}'
+
+    arguments.timeout = round(arguments.timeout*3600)
 
     return arguments
 
@@ -910,7 +927,7 @@ if __name__ == '__main__':
             metric=METRIC,
             mode='min',
             num_samples=args.samples,
-            fail_fast=True,
+            fail_fast=False,
             local_dir=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
