@@ -7,6 +7,30 @@ with some familiarity with Google Cloud or other cloud services. For
 more details on how to use AutoTuner see the main documentation page
 [here](https://openroad.readthedocs.io/en/latest/user/InstructionsForAutoTuner.html).
 
+## How to use this document
+
+If you want to create a new cluster, follow the document from begin to end.
+
+If you want to run experiments on an existing cluster, make sure you have
+all the [Prerequisites](#prerequisites) and then you can jump to [Running
+Ray programs with Ray Client](#running-ray-programs-with-ray-client).
+
+## Prerequisites
+
+-   Google Cloud CLI installed, see instructions [here](https://cloud.google.com/sdk/docs/install).
+-   Access to an existing Google Cloud project with "Editor" permissions to
+    create the cluster. To use an existing cluster contact the person who
+    created the cluster.
+-   `kubectl` installed and available on your PATH. See instructions bellow.
+
+
+Configure `gcloud` to use the Kubernetes credentials of the newly created
+cluster. The credentials allow the use of `kubectl` locally.
+
+```bash
+gcloud components install kubectl
+```
+
 ## Enable GKE
 
 Follow the Google quickstart guide up to the section "Create a GKE cluster"
@@ -42,7 +66,6 @@ Configure `gcloud` to use the Kubernetes credentials of the newly created
 cluster. The credentials allow the use of `kubectl` locally.
 
 ```bash
-gcloud components install kubectl
 gcloud container clusters get-credentials autotuner
 ```
 
@@ -170,6 +193,14 @@ helm uninstall autotuner
 ## Running Ray programs with Ray Client
 
 Currently there are three different ways to launch a job on the GKE cluster.
+All three methods depend on having `kubectl` installed and correctly setup.
+
+To configure `gcloud` to use the Kubernetes credentials of a existing cluster.
+
+```bash
+gcloud components install kubectl
+gcloud container clusters get-credentials autotuner
+```
 
 ### Using port forwarding
 
