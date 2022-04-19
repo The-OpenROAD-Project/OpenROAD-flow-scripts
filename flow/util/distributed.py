@@ -753,7 +753,8 @@ def parse_arguments():
 
     arguments.experiment += f'-{arguments.mode}-{DATE}'
 
-    arguments.timeout = round(arguments.timeout*3600)
+    if arguments.timeout is not None:
+        arguments.timeout = round(arguments.timeout*3600)
 
     return arguments
 
