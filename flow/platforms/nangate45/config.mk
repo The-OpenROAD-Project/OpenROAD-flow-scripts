@@ -80,6 +80,7 @@ export PLACE_DENSITY ?= 0.30
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   = BUF_X4
+export CTS_BUF_LIST   = CLKBUF_X1 CLKBUF_X2 CLKBUF_X3
 export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTS
 
 

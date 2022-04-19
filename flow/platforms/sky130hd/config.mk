@@ -122,6 +122,7 @@ export CELL_PAD_IN_SITES ?= 4
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   ?= sky130_fd_sc_hd__clkbuf_4
+export CTS_BUF_LIST   = sky130_fd_sc_hd__clkbuf_1 sky130_fd_sc_hd__clkbuf_16 sky130_fd_sc_hd__clkbuf_2 sky130_fd_sc_hd__clkbuf_4 sky130_fd_sc_hd__clkbuf_8
 
 # ---------------------------------------------------------
 #  Route

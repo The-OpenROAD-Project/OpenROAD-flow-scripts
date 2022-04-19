@@ -82,6 +82,7 @@ export PLACE_DENSITY ?= 0.50
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   ?= sky130_fd_sc_hs__clkbuf_4
+export CTS_BUF_LIST   = sky130_fd_sc_hs__clkbuf_1 sky130_fd_sc_hs__clkbuf_2 sky130_fd_sc_hs__clkbuf_4 sky130_fd_sc_hs__clkbuf_8
 
 # ---------------------------------------------------------
 #  Route

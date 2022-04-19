@@ -99,7 +99,7 @@ export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
 
 # TritonCTS options
 export CTS_BUF_CELL            = BUFx4_ASAP7_75t_R
-
+export CTS_BUF_LIST   		   = BUFx4_ASAP7_75t_R BUFx10_ASAP7_75t_R BUFx12_ASAP7_75t_R BUFx12f_ASAP7_75t_R BUFx16f_ASAP7_75t_R BUFx24_ASAP7_75t_R BUFx2_ASAP7_75t_R BUFx3_ASAP7_75t_R BUFx4f_ASAP7_75t_R BUFx5_ASAP7_75t_R BUFx6f_ASAP7_75t_R BUFx8_ASAP7_75t_R
 export CTS_BUF_DISTANCE        = 60
 
 # Fill cells used in fill cell insertion
