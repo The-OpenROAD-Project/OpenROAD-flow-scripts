@@ -2,7 +2,7 @@
     "rules": [
         {
             "field": "synth__design__instance__area__stdcell",
-            "value": 1725171,
+            "value": 1725170,
             "compare": "<="
         },
         {
@@ -47,17 +47,17 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -1.4,
+            "value": -1.36,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -1.4,
+            "value": -1.36,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 9328427,
+            "value": 9329050,
             "compare": "<="
         },
         {
@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -0.91,
+            "value": -0.9,
             "compare": ">="
         },
         {
@@ -76,19 +76,14 @@
             "compare": "<="
         },
         {
-            "field": "finish__timing__drv__max_slew",
-            "value": 48,
-            "compare": "<="
+            "field": "finish__timing__drv__max_slew_limit",
+            "value": -0.38,
+            "compare": ">="
         },
         {
-            "field": "finish__timing__drv__max_fanout",
-            "value": 10,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__drv__max_cap",
-            "value": 10,
-            "compare": "<="
+            "field": "finish__timing__drv__max_cap_limit",
+            "value": -0.2,
+            "compare": ">="
         },
         {
             "field": "finish__timing__drv__setup_violation_count",
