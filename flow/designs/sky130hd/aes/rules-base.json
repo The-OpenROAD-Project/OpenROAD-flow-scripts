@@ -47,7 +47,7 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -0.33,
+            "value": -0.32,
             "compare": ">="
         },
         {
@@ -76,19 +76,14 @@
             "compare": "<="
         },
         {
-            "field": "finish__timing__drv__max_slew",
-            "value": 4302,
-            "compare": "<="
+            "field": "finish__timing__drv__max_slew_limit",
+            "value": -0.36,
+            "compare": ">="
         },
         {
-            "field": "finish__timing__drv__max_fanout",
-            "value": 10,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__drv__max_cap",
-            "value": 38,
-            "compare": "<="
+            "field": "finish__timing__drv__max_cap_limit",
+            "value": -0.31,
+            "compare": ">="
         },
         {
             "field": "finish__timing__drv__setup_violation_count",

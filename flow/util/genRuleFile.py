@@ -5,7 +5,7 @@ from os import chdir
 from os.path import isfile, abspath
 from re import sub
 import json
-from math import ceil
+from math import ceil, isinf
 
 if len(sys.argv) != 3:
     print('usage:', sys.argv[0], '<DIR> <VARIANT>')
@@ -28,7 +28,8 @@ else:
 # 'metric__name': {
 #     'usePeriod': <bool>, use a percentage of the clock period as padding
 #     'padding': <float>, percentage of padding to use
-#     'fixed': <float>, fixed margin for padding
+#     'padding_fixed': <float>, fixed margin for padding
+#     'fixed': <float>, sum this number instead of using % padding
 #     'roundValue': <bool>, use the rounded value for the rule
 # },
 metrics = {
@@ -88,7 +89,7 @@ metrics = {
     'cts__design__instance__count__hold_buffer': {
         'usePeriod': False,
         'padding': 10,
-        'fixed': 10,
+        'padding_fixed': 10,
         'roundValue': True,
         'compare': '<=',
     },
@@ -130,38 +131,35 @@ metrics = {
         'roundValue': True,
         'compare': '<=',
     },
-    'finish__timing__drv__max_slew': {
+    'finish__timing__drv__max_slew_limit': {
         'usePeriod': False,
-        'padding': 20,
-        'fixed': 10,
-        'roundValue': True,
-        'compare': '<=',
+        'fixed': -0.20,
+        'roundValue': False,
+        'compare': '>=',
     },
-    'finish__timing__drv__max_fanout': {
+    'finish__timing__drv__max_fanout_limit': {
         'usePeriod': False,
-        'padding': 20,
-        'fixed': 10,
-        'roundValue': True,
-        'compare': '<=',
+        'fixed': -0.20,
+        'roundValue': False,
+        'compare': '>=',
     },
-    'finish__timing__drv__max_cap': {
+    'finish__timing__drv__max_cap_limit': {
         'usePeriod': False,
-        'padding': 20,
-        'fixed': 10,
-        'roundValue': True,
-        'compare': '<=',
+        'fixed': -0.20,
+        'roundValue': False,
+        'compare': '>=',
     },
     'finish__timing__drv__setup_violation_count': {
         'usePeriod': False,
         'padding': 20,
-        'fixed': 10,
+        'padding_fixed': 10,
         'roundValue': True,
         'compare': '<=',
     },
     'finish__timing__drv__hold_violation_count': {
         'usePeriod': False,
         'padding': 20,
-        'fixed': 10,
+        'padding_fixed': 10,
         'roundValue': True,
         'compare': '<=',
     },
@@ -190,23 +188,25 @@ for field, option in metrics.items():
         print('[WARNING] Skipping clock slack until multiple clocks support.')
         continue
 
-    if option['padding'] != 0:
+    if 'padding' in option.keys() and option['padding'] != 0:
         if option['usePeriod']:
             value -= period * option['padding'] / 100
             value = min(value, 0)
-        elif 'fixed' in option.keys():
-            temp_1 = value + option['fixed']
+        elif 'padding_fixed' in option.keys():
+            temp_1 = value + option['padding_fixed']
             temp_2 = value * (1 + option['padding'] / 100)
             value = max(temp_1, temp_2)
         else:
             value += value * option['padding'] / 100
+    elif 'fixed' in option.keys():
+        value = min(option['fixed'], value + option['fixed'])
 
     if field == 'cts__design__instance__count__hold_buffer' and value == 0:
         value = ceil(data['placeopt__design__instance__count__stdcell'] * 0.1)
 
     newRule = dict()
     newRule['field'] = field
-    if option['roundValue']:
+    if option['roundValue'] and not isinf(value):
         newRule['value'] = round(value)
     else:
         newRule['value'] = float('{:.2f}'.format(value))
