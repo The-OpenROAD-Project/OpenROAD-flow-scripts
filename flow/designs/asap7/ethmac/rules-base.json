@@ -76,9 +76,14 @@
             "compare": "<="
         },
         {
-            "field": "finish__timing__drv__max_slew_limit",
-            "value": -0.2,
-            "compare": ">="
+            "field": "finish__timing__drv__max_slew",
+            "value": 200,
+            "compare": "<="
+        },
+        {
+            "field": "finish__timing__drv__max_fanout",
+            "value": 10,
+            "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_cap_limit",

@@ -32,12 +32,12 @@
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -337.78,
+            "value": -370,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -337.77,
+            "value": -370,
             "compare": ">="
         },
         {
@@ -47,12 +47,12 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -257.46,
+            "value": -300,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -257.46,
+            "value": -300,
             "compare": ">="
         },
         {
@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -191.5,
+            "value": -240,
             "compare": ">="
         },
         {
