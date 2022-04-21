@@ -380,6 +380,19 @@ pipeline {
             }
           }
         }
+        stage("sky130 hd microwatt") {
+          agent any;
+          steps {
+            unstash "install";
+            sh "flow/test/test_helper.sh microwatt sky130hd";
+          }
+          post {
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+            }
+          }
+        }
         stage("sky130 hd riscv32i") {
           agent any;
           steps {
