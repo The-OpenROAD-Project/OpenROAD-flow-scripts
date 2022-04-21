@@ -2,22 +2,22 @@
     "rules": [
         {
             "field": "synth__design__instance__area__stdcell",
-            "value": 240898,
+            "value": 634496,
             "compare": "<="
         },
         {
             "field": "constraints__clocks__count",
-            "value": 1,
+            "value": 2,
             "compare": "=="
         },
         {
             "field": "placeopt__design__instance__area",
-            "value": 258600,
+            "value": 5428390,
             "compare": "<="
         },
         {
             "field": "placeopt__design__instance__count__stdcell",
-            "value": 40374,
+            "value": 167870,
             "compare": "<="
         },
         {
@@ -42,13 +42,8 @@
         },
         {
             "field": "cts__design__instance__count__hold_buffer",
-            "value": 10,
+            "value": 6765,
             "compare": "<="
-        },
-        {
-            "field": "globalroute__timing__clock__slack",
-            "value": 0.0,
-            "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
@@ -57,7 +52,7 @@
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 1850452,
+            "value": 8957847,
             "compare": "<="
         },
         {
@@ -72,22 +67,27 @@
         },
         {
             "field": "finish__design__instance__area",
-            "value": 259112,
+            "value": 5519860,
             "compare": "<="
         },
         {
             "field": "finish__timing__drv__max_slew_limit",
+            "value": -1.46,
+            "compare": ">="
+        },
+        {
+            "field": "finish__timing__drv__max_fanout_limit",
             "value": -0.2,
             "compare": ">="
         },
         {
             "field": "finish__timing__drv__max_cap_limit",
-            "value": -0.79,
+            "value": -1.55,
             "compare": ">="
         },
         {
             "field": "finish__timing__drv__setup_violation_count",
-            "value": 10,
+            "value": 11,
             "compare": "<="
         },
         {
