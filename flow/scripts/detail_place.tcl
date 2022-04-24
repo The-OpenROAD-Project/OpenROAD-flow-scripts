@@ -1,5 +1,8 @@
+utl::set_metrics_stage "detailedplace__{}"
+
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 3_4_place_resized.odb 2_floorplan.sdc "Starting detailed placement"
+
 
 source $::env(PLATFORM_DIR)/setRC.tcl
 
@@ -28,7 +31,6 @@ if {$violations eq ""} {
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-utl::set_metrics_stage "detailedplace__{}"
 report_metrics "detailed place"
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
