@@ -24,6 +24,7 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/tsmc65lp_1rf_lg6_w80_bit.gds2 \
 #export DIE_AREA = 0 0 3080 3100
 export DIE_AREA = 0 0 1810 1810
 export CORE_AREA = 5 5 1805 1805
+export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-500 -exclude right:1500-2000 -exclude top:* -exclude bottom:*
 
 export PLACE_DENSITY         = 0.65

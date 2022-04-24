@@ -19,6 +19,7 @@ export ADDITIONAL_GDS = $(PLATFORM_DIR)/gds/gf12_1rf_lg11_w40_all.gds2 \
 
 export DIE_AREA    = 0 0 702 542 
 export CORE_AREA   = 2 2 700 540 
+export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-10 -exclude bottom:400-700
 
 export PLACE_DENSITY = 0.40

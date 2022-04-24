@@ -15,7 +15,7 @@ export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_
 				 $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_FF_nldm_201020.lib \
 				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib \
 				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib \
-         			 $(ADDITIONAL_LIBS)
+				 $(ADDITIONAL_LIBS)
 
 export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib
 
@@ -24,7 +24,7 @@ export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_SS_nldm_2
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_SS_nldm_201020.lib \
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib \
-       				$(ADDITIONAL_LIBS)
+				$(ADDITIONAL_LIBS)
 
 export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
 
@@ -33,7 +33,7 @@ export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_2
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_TT_nldm_201020.lib \
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib \
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_TT_nldm_201020.lib \
-        			$(ADDITIONAL_LIBS)
+				$(ADDITIONAL_LIBS)
 
 export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib \
 
@@ -76,7 +76,7 @@ export PLACE_SITE              = asap7sc7p5t
 export MAKE_TRACKS             = $(PLATFORM_DIR)/openRoad/make_tracks.tcl
 
 # Define default PDN config
-export PDN_CFG ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M2-M5-M7.cfg
+export PDN_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M2-M5-M7.tcl
 
 # IO Placer pin layers
 export IO_PLACER_H             = M4
@@ -131,29 +131,29 @@ endif
 ifdef ($(ASAP7_USELVT))
    export TIEHI_CELL_AND_PORT     = TIEHIx1_ASAP7_75t_L H
    export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_L L
-   
+
    export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_L A Y
-   
+
    export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_L
-   
+
    export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_FF_nldm_201020.lib \
-   			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_201020.lib \
-   			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_201020.lib \
-   			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib \
-   			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib
-   
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_201020.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_201020.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib
+
    export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_SS_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_SS_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib
-   
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_SS_nldm_201020.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib
+
    export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_TT_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_TT_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_TT_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_TT_nldm_201020.lib
-   
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_TT_nldm_201020.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_TT_nldm_201020.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_201020.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_TT_nldm_201020.lib
+
 endif
 
 #Dont use SC library based on CORNER selection

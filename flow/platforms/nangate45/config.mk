@@ -54,7 +54,7 @@ export IO_PLACER_H = metal3
 export IO_PLACER_V = metal2
 
 # Define default PDN config
-export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
+export PDN_TCL ?= $(PLATFORM_DIR)/grid_strategy-M1-M4-M7.tcl
 
 # Endcap and Welltie cells
 export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl

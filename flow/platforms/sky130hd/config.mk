@@ -93,7 +93,7 @@ export IO_PLACER_H = met3
 export IO_PLACER_V = met2
 
 # Define default PDN config
-export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
+export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # Endcap and Welltie cells
 export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
@@ -121,7 +121,7 @@ export CELL_PAD_IN_SITES ?= 4
 #  CTS
 #  -------------------------------------------------------
 # TritonCTS options
-export CTS_BUF_CELL   = sky130_fd_sc_hd__clkbuf_4
+export CTS_BUF_CELL   ?= sky130_fd_sc_hd__clkbuf_4
 
 # ---------------------------------------------------------
 #  Route
