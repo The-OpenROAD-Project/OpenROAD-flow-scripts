@@ -27,7 +27,7 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -180,
+            "value": -151.65,
             "compare": ">="
         },
         {
@@ -47,12 +47,12 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -200,
+            "value": -116.91,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -200,
+            "value": -116.91,
             "compare": ">="
         },
         {
@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -100,
+            "value": -39.62,
             "compare": ">="
         },
         {
