@@ -47,17 +47,17 @@
         },
         {
             "field": "globalroute__timing__clock__slack",
-            "value": -294.6,
+            "value": -347.57,
             "compare": ">="
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -294.6,
+            "value": -347.57,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 3445935,
+            "value": 3445661,
             "compare": "<="
         },
         {
@@ -67,7 +67,7 @@
         },
         {
             "field": "finish__timing__setup__ws",
-            "value": -159.72,
+            "value": -167.83,
             "compare": ">="
         },
         {
@@ -76,19 +76,14 @@
             "compare": "<="
         },
         {
-            "field": "finish__timing__drv__max_slew",
-            "value": 58,
-            "compare": "<="
+            "field": "finish__timing__drv__max_slew_limit",
+            "value": -0.2,
+            "compare": ">="
         },
         {
-            "field": "finish__timing__drv__max_fanout",
-            "value": 10,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__drv__max_cap",
-            "value": 10,
-            "compare": "<="
+            "field": "finish__timing__drv__max_cap_limit",
+            "value": -0.2,
+            "compare": ">="
         },
         {
             "field": "finish__timing__drv__setup_violation_count",

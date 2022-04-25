@@ -52,12 +52,12 @@
         },
         {
             "field": "globalroute__timing__setup__ws",
-            "value": -2.14,
+            "value": -2.15,
             "compare": ">="
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 9133447,
+            "value": 9134679,
             "compare": "<="
         },
         {
@@ -76,19 +76,14 @@
             "compare": "<="
         },
         {
-            "field": "finish__timing__drv__max_slew",
-            "value": 32,
-            "compare": "<="
+            "field": "finish__timing__drv__max_slew_limit",
+            "value": -0.24,
+            "compare": ">="
         },
         {
-            "field": "finish__timing__drv__max_fanout",
-            "value": 10,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__drv__max_cap",
-            "value": 10,
-            "compare": "<="
+            "field": "finish__timing__drv__max_cap_limit",
+            "value": -0.2,
+            "compare": ">="
         },
         {
             "field": "finish__timing__drv__setup_violation_count",
