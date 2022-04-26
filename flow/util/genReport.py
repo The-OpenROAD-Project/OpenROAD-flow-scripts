@@ -100,7 +100,8 @@ if generateSingleFile:
         os.remove(singleReportFilename)
 
 designsWithError = list()
-designsRed = list()
+designsFailMetrics = list()
+designsFailCalibre = list()
 designsWithViolations = list()
 designCount = 0
 designsGreen = list()
@@ -142,6 +143,16 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     numMetricsErrors = len(metricsErrors)
     numMetricsWarnings = len(metricsWarnings)
 
+    # check if calibre was run and if drc check passed
+    calibreCheckFile = os.path.join(logDir, 'calibre/save-to-drc-db.log')
+    if os.path.isfile(calibreCheckFile):
+        calibreErrors, calibreWarnings = parseMessages(calibreCheckFile)
+        numCalibreErrors = len(calibreErrors)
+        numCalibreWarnings = len(calibreWarnings)
+    else:
+        numCalibreErrors = 0
+        numCalibreWarnings = 0
+
     # check if there were drc violations
     drcReportFile = os.path.join(reportDir, drcFilename)
     try:
@@ -156,6 +167,7 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     totalNumErrors = numLogErrors
     totalNumErrors += numMetricsErrors
     totalNumErrors += numMetricsLogErrors
+    totalNumErrors += numCalibreErrors
     totalNumErrors += len(drcList)
 
     currentRun = '{} {} ({})'.format(platform, design, variant)
@@ -163,7 +175,9 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     if totalNumErrors != 0:
         designsWithError.append(currentRun)
     if numMetricsErrors != 0:
-        designsRed.append(currentRun)
+        designsFailMetrics.append(currentRun)
+    elif numCalibreErrors != 0:
+        designsFailCalibre.append(currentRun)
     else:
         designsGreen.append(currentRun)
     if len(drcList) != 0:
@@ -263,18 +277,23 @@ Number of designs: {}.
 '''.format(designCount)
 
 if len(designsGreen) == designCount:
-    output += '\nCI is green. All metrics check passed.\n'
+    output += '\nCI is green. All designs passed.\n'
 else:
-    output += "\nCI is red. At least one design's metrics check failed.\n"
+    output += "\nCI is red. At least one design failed.\n"
 
 if len(designsGreen) != 0:
     output += f'\nDesigns that pass metrics check ({len(designsGreen)}):\n'
     for design in designsGreen:
         output += '  ' + design + '\n'
 
-if len(designsRed) != 0:
-    output += f'\nDesigns that fail metrics check ({len(designsRed)}):\n'
-    for design in designsRed:
+if len(designsFailCalibre) != 0:
+    output += f'\nDesigns that fail Calibre check ({len(designsFailCalibre)}):\n'
+    for design in designsFailCalibre:
+        output += '  ' + design + '\n'
+
+if len(designsFailMetrics) != 0:
+    output += f'\nDesigns that fail metrics check ({len(designsFailMetrics)}):\n'
+    for design in designsFailMetrics:
         output += '  ' + design + '\n'
 
 if len(designsWithViolations) == 0:
