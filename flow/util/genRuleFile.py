@@ -70,19 +70,19 @@ metrics = {
     # cts
     'cts__timing__setup__ws': {
         'usePeriod': True,
-        'padding': 10,
+        'padding': 25,
         'roundValue': False,
         'compare': '>=',
     },
     'cts__timing__setup__ws__pre_repair': {
         'usePeriod': True,
-        'padding': 10,
+        'padding': 25,
         'roundValue': False,
         'compare': '>=',
     },
     'cts__timing__setup__ws__post_repair': {
         'usePeriod': True,
-        'padding': 10,
+        'padding': 25,
         'roundValue': False,
         'compare': '>=',
     },
