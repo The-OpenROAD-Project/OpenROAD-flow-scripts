@@ -27,17 +27,17 @@
         },
         {
             "field": "cts__timing__setup__ws",
-            "value": -110.91,
+            "value": -290.91,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__pre_repair",
-            "value": -175.16,
+            "value": -355.16,
             "compare": ">="
         },
         {
             "field": "cts__timing__setup__ws__post_repair",
-            "value": -175.16,
+            "value": -355.16,
             "compare": ">="
         },
         {
