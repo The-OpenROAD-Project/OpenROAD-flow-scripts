@@ -365,6 +365,6 @@ if [ -z "${LOCAL_BUILD+x}" ] && command -v docker &> /dev/null; then
         __docker_build
 else
         echo -n "[INFO FLW-0001] Using local build method."
-        echo " This will create binaries at 'tools/install unless overwritten."
+        echo " This will create binaries at 'tools/install' unless overwritten."
         __local_build
 fi
