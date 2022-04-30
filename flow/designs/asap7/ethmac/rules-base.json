@@ -57,7 +57,7 @@
         },
         {
             "field": "detailedroute__route__wirelength",
-            "value": 293538,
+            "value": 293893,
             "compare": "<="
         },
         {
@@ -77,7 +77,7 @@
         },
         {
             "field": "finish__timing__drv__max_slew_limit",
-            "value": -0.47,
+            "value": -0.94,
             "compare": ">="
         },
         {
