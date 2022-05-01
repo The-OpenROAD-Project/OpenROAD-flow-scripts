@@ -10,6 +10,6 @@ export CORE_UTILIZATION = 40
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 
-export PLACE_DENSITY = 0.80
+export PLACE_DENSITY ?= 0.80
 
 export DESIGN_TYPE = CELL

@@ -18,7 +18,7 @@ import pandas as pd
 import re
 
 # make sure the working dir is flow/
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)) , '..'))
+# os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)) , '..'))
 
 # Parse and validate arguments
 # =============================================================================
@@ -800,7 +800,7 @@ now = datetime.now()
 
 if args.design == 'all_designs':
     print('List of designs')
-    rootdir = './logs'
+    rootdir = args.flowPath+'/logs'
 
     all_df = pd.DataFrame()
     all_d = []
@@ -831,6 +831,7 @@ if args.design == 'all_designs':
 
     with open('metrics.html', 'w') as f:
         f.write(all_df.to_html())
+    all_df.to_csv('metrics.csv', index = False)
 else:
     metrics_dict, metrics_df = extract_metrics(args.flowPath, args.platform,
                                                args.design, args.flowVariant,
