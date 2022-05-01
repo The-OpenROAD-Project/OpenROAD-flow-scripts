@@ -170,6 +170,9 @@ export DREAM_PLACE_INSTALL ?= xx/DREAMPlace/install/
 export GPL_TIMING_DRIVEN ?= 1
 export GPL_ROUTABILITY_DRIVEN ?= 1
 
+export ENABLE_DPO ?= 1
+export DPO_MAX_DISPLACEMENT ?= 5 1
+
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
@@ -754,7 +757,7 @@ RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
-gui_final: gui_6_final.def
+gui_final: gui_6_final.odb
 
 $(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
 	DEF_FILE=$(RESULTS_DIR)/$* $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/gui.tcl
@@ -765,6 +768,8 @@ $(foreach file,$(RESULTS_ODB),gui_$(file)): gui_%:
 # Write a def for the corresponding odb
 $(foreach file,$(RESULTS_ODB),$(file).def): %.def:
 	ODB_FILE=$(RESULTS_DIR)/$* DEF_FILE=$(RESULTS_DIR)/$@ $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_def.tcl
+
+all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)
 
 print-%  : ; @echo $* = $($*)
 
