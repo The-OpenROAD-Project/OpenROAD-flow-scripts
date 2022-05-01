@@ -1,0 +1,7 @@
+1. Please follow the link and install/build DREAMPlace
+    https://github.com/limbo018/DREAMPlace
+2. Build OpenROAD following the README.md 
+3. In flow/Makefile update the below variables to run with DREAMPlace. (b) and (c) variables are used in "flow/scripts/prep_and_run_dream_place.sh"
+    a. DREAM_PLACE set to 1 to run global place using DREAMPlace.
+    b. PYTHON_CMD is the python path. Set it to DREAMPlace compatible python environment.
+    c. DREAM_PLACE_INSTALL is the DREAMPlace install directory path.
