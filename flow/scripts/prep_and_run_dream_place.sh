@@ -7,13 +7,14 @@ sed -i "/+ PORT/d" ${RESULTS_DIR}/2_DREAMPlace_input.def
 sed -i "s@xx_input_def_xx@${RESULTS_DIR}/2_DREAMPlace_input.def@" ${RESULTS_DIR}/DREAMPlace.json
 sed -i "s@xx_result_dir_xx@${RESULTS_DIR}@" ${RESULTS_DIR}/DREAMPlace.json
 
-sed -i "s@xx_place_density_xx@${PLACE_DENSITY}@" ${RESULTS_DIR}/DREAMPlace.json
+set isNumber = `echo "${PLACE_DENSITY}" | grep -E '[0-9,\.]+' | wc -l`
 
-#if (! $?DREAM_PLACE_DENSITY ) then
-#    sed -i "/xx_place_density_xx/d" ${RESULTS_DIR}/DREAMPlace.json
-#else
-#    sed -i "s@xx_place_density_xx@${DREAM_PLACE_DENSITY}@" ${RESULTS_DIR}/DREAMPlace.json
-#endif
+# If place density is set to some value then only it sets that
+if ( $isNumber == 1 ) then
+    sed -i "s@xx_place_density_xx@${PLACE_DENSITY}@" ${RESULTS_DIR}/DREAMPlace.json
+else
+    sed -i "/xx_place_density_xx/d" ${RESULTS_DIR}/DREAMPlace.json
+endif
 
 set additional_lefs = ""
 set dq = '"'

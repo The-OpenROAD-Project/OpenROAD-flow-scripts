@@ -164,8 +164,10 @@ export FLOW_VARIANT ?= base
 
 # Env variable for DREAMPlace
 export DREAM_PLACE ?= 0
-export PYTHON_CMD ?= python
-export DREAM_PLACE_INSTALL ?= xx/DREAMPlace/install/
+export PYTHON_CMD ?= python 
+export DREAM_PLACE_INSTALL ?= $(abspath $(FLOW_HOME)/../tools/DREAMPlace)
+export DREAM_PLACE_EXE ?= $(DREAM_PLACE_INSTALL)/dreamplace/Placer.py
+export DREAM_PLACE_ARGS 
 
 export GPL_TIMING_DRIVEN ?= 1
 export GPL_ROUTABILITY_DRIVEN ?= 1
@@ -490,10 +492,10 @@ endif
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
 ifeq ($(DREAM_PLACE),1)
-$(RESULTS_DIR)/3_3_place_gp.odb: $(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/odb2def.tcl) 2>&1 | tee $(LOG_DIR)/3_3_place_dream_palce_gp_odb2def.log
+$(RESULTS_DIR)/2_DREAMPlace_input.def: $(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES) $(RESULTS_DIR)/3_2_place_iop.def
 	tcsh $(SCRIPTS_DIR)/prep_and_run_dream_place.sh | tee $(LOG_DIR)/3_3_dream_place_gp.log
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/def2odb.tcl) 2>&1 | tee $(LOG_DIR)/3_3_place_dream_palce_gp_def2odb.log
+$(RESULTS_DIR)/3_3_place_gp.odb: $(RESULTS_DIR)/2_DREAMPlace_input.def
+	(DEF_FILE=2_DREAMPlace_input.def ODB_FILE=3_3_place_gp.odb $(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/def2odb.tcl) 2>&1 | tee $(LOG_DIR)/3_3_place_dream_palce_gp_def2odb.log
 else
 $(RESULTS_DIR)/3_3_place_gp.odb: $(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_3_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_3_place_gp.log

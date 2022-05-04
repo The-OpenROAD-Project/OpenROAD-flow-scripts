@@ -17,9 +17,6 @@ import json
 import pandas as pd
 import re
 
-# make sure the working dir is flow/
-# os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)) , '..'))
-
 # Parse and validate arguments
 # =============================================================================
 
@@ -800,13 +797,13 @@ now = datetime.now()
 
 if args.design == 'all_designs':
     print('List of designs')
-    rootdir = args.flowPath+'/logs'
+    rootdir = args.flowPath + '/logs'
 
     all_df = pd.DataFrame()
     all_d = []
     flow_variants = args.flowVariant.split()
 
-    cwd = os.getcwd()
+    cwd = args.flowPath
     for platform_it in os.scandir(rootdir):
         if not platform_it.is_dir():
             continue
