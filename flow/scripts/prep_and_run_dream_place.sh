@@ -33,7 +33,3 @@ else
 endif
 
 sed -i "s@xx_isGpu_xx@${isGpu}@" ${RESULTS_DIR}/DREAMPlace.json
-
-${PYTHON_CMD} ${DREAM_PLACE_INSTALL}/dreamplace/Placer.py ${RESULTS_DIR}/DREAMPlace.json
-
-cp ${RESULTS_DIR}/2_DREAMPlace_input/2_DREAMPlace_input.gp.def ${RESULTS_DIR}/3_3_place_gp.def

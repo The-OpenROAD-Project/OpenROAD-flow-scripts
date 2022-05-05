@@ -8,8 +8,7 @@ if {[info exist ::env(ADDITIONAL_LEFS)]} {
   }
 }
 
-if {[info exist ::env(DEF_FILE)]} {
-  read_def $::env(RESULTS_DIR)/$::env(DEF_FILE)
-  write_db $::env(RESULTS_DIR)/$::env(ODB_FILE)
-}
+read_def $::env(RESULTS_DIR)/$::env(DEF_FILE)
+write_db $::env(RESULTS_DIR)/$::env(ODB_FILE)
+
 exit
