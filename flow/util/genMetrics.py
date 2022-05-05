@@ -647,6 +647,12 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                            'max cap violation count (\S+)'),
                        logPath + '/4_1_cts.log')
 
+    extractTagFromFile('cts__design__instance__count__setup_buffer',
+                       metrics_dict,
+                       'Inserted (\d+) buffers',
+                       logPath + '/4_1_cts.log',
+                       defaultNotFound=0)
+
     extractTagFromFile('cts__design__instance__count__hold_buffer',
                        metrics_dict,
                        'Inserted (\d+) hold buffers',
