@@ -23,12 +23,12 @@ proc report_metrics { when {include_erc true}} {
     puts "\n=========================================================================="
     puts "$when max_slew_check_slack"
     puts "--------------------------------------------------------------------------"
-    sta::max_slew_check_slack
+    puts "[sta::max_slew_check_slack]"
 
     puts "\n=========================================================================="
     puts "$when max_slew_check_limit"
     puts "--------------------------------------------------------------------------"
-    sta::max_slew_check_limit
+    puts "[sta::max_slew_check_limit]"
 
     if {[sta::max_slew_check_limit] < 1e30} {
       puts "\n=========================================================================="
@@ -40,12 +40,12 @@ proc report_metrics { when {include_erc true}} {
     puts "\n=========================================================================="
     puts "$when max_fanout_check_slack"
     puts "--------------------------------------------------------------------------"
-    sta::max_fanout_check_slack
+    puts "[sta::max_fanout_check_slack]"
 
     puts "\n=========================================================================="
     puts "$when max_fanout_check_limit"
     puts "--------------------------------------------------------------------------"
-    sta::max_fanout_check_limit
+    puts "[sta::max_fanout_check_limit]"
 
     if {[sta::max_fanout_check_limit] < 1e30} {
       puts "\n=========================================================================="
@@ -57,12 +57,12 @@ proc report_metrics { when {include_erc true}} {
     puts "\n=========================================================================="
     puts "$when max_capacitance_check_slack"
     puts "--------------------------------------------------------------------------"
-    sta::max_capacitance_check_slack
+    puts "[sta::max_capacitance_check_slack]"
 
     puts "\n=========================================================================="
     puts "$when max_capacitance_check_limit"
     puts "--------------------------------------------------------------------------"
-    sta::max_capacitance_check_limit
+    puts "[sta::max_capacitance_check_limit]"
 
     if {[sta::max_capacitance_check_limit] < 1e30} {
       puts "\n=========================================================================="

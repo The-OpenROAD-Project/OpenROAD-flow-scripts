@@ -1,0 +1,20 @@
+# Job to submit a Ray program from a pod outside a running Ray cluster.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ray-test-job
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: ray
+          image: openroad/ray
+          imagePullPolicy: Always
+          command: [ "/bin/bash", "-c", "--" ]
+          args:
+            - "wget https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD-flow-scripts/master/tools/AutoTuner/kubernetes/run.py && python run.py"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
