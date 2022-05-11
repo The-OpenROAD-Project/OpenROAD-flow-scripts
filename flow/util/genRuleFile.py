@@ -47,7 +47,7 @@ chdir(args.dir)
 metrics_file = f"metadata-{args.variant}-ok.json"
 old_rules_file = f"rules-{args.variant}.json"
 new_rules_file = f"rules-{args.variant}.json"
-rules = list()
+rules = dict()
 
 if isfile(metrics_file):
     with open(metrics_file, 'r') as f:
@@ -58,12 +58,10 @@ else:
 
 if isfile(old_rules_file):
     with open(old_rules_file, 'r') as f:
-        old_rules = dict()
-        for rule in json.load(f)['rules']:
-            field = rule['field']
-            old_rules[field] = rule
+        old_rules = json.load(f)
 else:
     print(f"[WARNING] File not found {abspath(old_rules_file)}")
+    old_rules = None
 
 # dict format
 # 'metric_name': {
@@ -237,66 +235,61 @@ for field, option in rules_dict.items():
         print('[WARNING] Skipping clock slack until multiple clocks support.')
         continue
 
-    new_rule = dict()
-    new_rule['field'] = field
-
     if 'padding' in option.keys() and option['padding'] != 0:
         if option['use_period']:
-            new_rule['value'] = metrics[field] - period * option['padding'] / 100
-            new_rule['value'] = min(new_rule['value'], 0)
+            new_rule_value = metrics[field] - period * option['padding'] / 100
+            new_rule_value = min(new_rule_value, 0)
         elif 'padding_fixed' in option.keys():
             temp_1 = metrics[field] + option['padding_fixed']
             temp_2 = metrics[field] * (1 + option['padding'] / 100)
-            new_rule['value'] = max(temp_1, temp_2)
+            new_rule_value = max(temp_1, temp_2)
         else:
-            new_rule['value'] = metrics[field] * (1 + option['padding'] / 100)
+            new_rule_value = metrics[field] * (1 + option['padding'] / 100)
     elif 'fixed' in option.keys():
-        new_rule['value'] = min(option['fixed'], metrics[field] + option['fixed'])
-    else:  # TODO: check below
-        new_rule['value'] = metrics[field]
+        new_rule_value = min(option['fixed'], metrics[field] + option['fixed'])
+    else:
+        new_rule_value = metrics[field]
 
     if field == 'cts__design__instance__count__hold_buffer' \
-            and new_rule['value'] == 0:
-        new_rule['value'] = ceil(
+            and new_rule_value == 0:
+        new_rule_value = ceil(
             metrics['placeopt__design__instance__count__stdcell'] * 0.1)
 
-    if option['round_value'] and not isinf(new_rule['value']):
-        new_rule['value'] = int(round(new_rule['value']))
+    if option['round_value'] and not isinf(new_rule_value):
+        new_rule_value = int(round(new_rule_value))
     else:
-        new_rule['value'] = float(f"{new_rule['value']:.2f}")
+        new_rule_value = float(f"{new_rule_value:.2f}")
 
-    compare = ops[option['compare']]
-    old_rule = old_rules[field]
-    if old_rule['compare'] != option['compare']:
-        print('[WARNING] Compare operator changed since last update.')
-    new_rule['compare'] = option['compare']
+    if old_rules is not None:
+        old_rule = old_rules[field]
+        if old_rule['compare'] != option['compare']:
+            print('[WARNING] Compare operator changed since last update.')
 
-    UPDATE = False
-    if args.tighten \
-            and new_rule['value'] != old_rule['value'] \
-            and compare(new_rule['value'], old_rule['value']):
-        UPDATE = True
-        print(f"[INFO] Tightening rule {field} "
-              f"from {old_rule['value']} to {new_rule['value']}.")
+        compare = ops[option['compare']]
 
-    if args.failing and \
-            not compare(metrics[field], old_rule['value']):
-        UPDATE = True
-        print(f"[INFO] Updating failing rule {field} "
-              f"from {old_rule['value']} to {new_rule['value']}.")
+        UPDATE = False
+        if args.tighten \
+                and new_rule_value != old_rule['value'] \
+                and compare(new_rule_value, old_rule['value']):
+            UPDATE = True
+            print(f"[INFO] Tightening rule {field} "
+                  f"from {old_rule['value']} to {new_rule_value}.")
 
-    if args.update:
-        UPDATE = True
-        print(f"[INFO] Updating rule {field} "
-              f"from {old_rule['value']} to {new_rule['value']}.")
+        if args.failing and not compare(metrics[field], old_rule['value']):
+            UPDATE = True
+            print(f"[INFO] Updating failing rule {field} "
+                  f"from {old_rule['value']} to {new_rule_value}.")
 
-    if not UPDATE:
-        new_rule['value'] = old_rule['value']
+        if args.update:
+            UPDATE = True
+            print(f"[INFO] Updating rule {field} "
+                  f"from {old_rule['value']} to {new_rule_value}.")
 
-    rules.append(new_rule)
+        if not UPDATE:
+            new_rule_value = old_rule['value']
 
-# final_rules = dict()
-# final_rules['rules'] = rules
-# with open(new_rules_file, 'w') as f:
-#     print('[INFO] writing', abspath(new_rules_file))
-#     json.dump(final_rules, f, indent=4)
+    rules[field] = dict(value=new_rule_value, compare=option['compare'])
+
+with open(new_rules_file, 'w') as f:
+    print('[INFO] writing', abspath(new_rules_file))
+    json.dump(rules, f, indent=4)
