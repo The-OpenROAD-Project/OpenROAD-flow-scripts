@@ -1,9 +1,8 @@
 include $(dir $(DESIGN_CONFIG))/config.mk
 
-#export FLOW_VARIANT = hier
-export FLOW_VARIANT = hier_rtlmp
+export FLOW_VARIANT ?= hier_rtlmp
 export SYNTH_HIERARCHICAL = 1
-export MAX_UNGROUP_SIZE = 1000
+export MAX_UNGROUP_SIZE ?= 1000
 export RTLMP_FLOW = True
 
 export SDC_FILE        = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_hier.sdc

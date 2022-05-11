@@ -1,8 +1,8 @@
 include $(dir $(DESIGN_CONFIG))/config.mk
 
-export FLOW_VARIANT = hier_rtlmp
+export FLOW_VARIANT ?= hier_rtlmp
 export SYNTH_HIERARCHICAL = 1
-export MAX_UNGROUP_SIZE = 100
+export MAX_UNGROUP_SIZE ?= 100
 export RTLMP_FLOW = True
 
 export FLOORPLAN_DEF = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)/2_2_floorplan_io.def
