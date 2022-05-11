@@ -73,8 +73,7 @@ ops = {
 
 ERRORS = 0
 
-for _, rule in rules.items():
-    field = rule['field']
+for field, rule in rules.items():
     compare = rule['compare']
     op = ops[compare]
     rule_value = try_number(rule['value'])
@@ -85,7 +84,7 @@ for _, rule in rules.items():
         formatError.append('rule_value')
     if not isinstance(build_value, float):
         formatError.append('build_value')
-    if len(formatError) == 0:
+    if len(formatError) != 0:
         print(f"Error: field {field}, has invalid float format for "
               f"{', '.join(formatError)}")
         ERRORS += 1
