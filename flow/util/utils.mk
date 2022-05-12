@@ -15,7 +15,7 @@ update_metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
 
 update_rules:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) $(FLOW_VARIANT)
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
 	echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
