@@ -45,8 +45,7 @@ if not args.update and not args.tighten and not args.failing:
 
 chdir(args.dir)
 metrics_file = f"metadata-{args.variant}-ok.json"
-old_rules_file = f"rules-{args.variant}.json"
-new_rules_file = f"rules-{args.variant}.json"
+rules_file = f"rules-{args.variant}.json"
 rules = dict()
 
 if isfile(metrics_file):
@@ -56,12 +55,12 @@ else:
     print(f"[ERROR] File not found {abspath(metrics_file)}")
     sys.exit(1)
 
-if isfile(old_rules_file):
-    with open(old_rules_file, 'r') as f:
-        old_rules = json.load(f)
+if isfile(rules_file):
+    with open(rules_file, 'r') as f:
+        OLD_RULES = json.load(f)
 else:
-    print(f"[WARNING] File not found {abspath(old_rules_file)}")
-    old_rules = None
+    print(f"[WARNING] File not found {abspath(rules_file)}")
+    OLD_RULES = None
 
 # dict format
 # 'metric_name': {
@@ -260,8 +259,8 @@ for field, option in rules_dict.items():
     else:
         new_rule_value = float(f"{new_rule_value:.2f}")
 
-    if old_rules is not None:
-        old_rule = old_rules[field]
+    if OLD_RULES is not None:
+        old_rule = OLD_RULES[field]
         if old_rule['compare'] != option['compare']:
             print('[WARNING] Compare operator changed since last update.')
 
@@ -290,6 +289,6 @@ for field, option in rules_dict.items():
 
     rules[field] = dict(value=new_rule_value, compare=option['compare'])
 
-with open(new_rules_file, 'w') as f:
-    print('[INFO] writing', abspath(new_rules_file))
+with open(rules_file, 'w') as f:
+    print('[INFO] writing', abspath(rules_file))
     json.dump(rules, f, indent=4)
