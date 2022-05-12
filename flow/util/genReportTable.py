@@ -91,8 +91,8 @@ def getDiff(metric, gold, run, rules):
             style = 'green' if re.search(higherIsBetter, metric) else 'orange'
         elif gold > run:
             style = 'orange' if re.search(higherIsBetter, metric) else 'green'
-        for rule in rules:
-            if metric != rule['field']:
+        for field, rule in rules.items():
+            if metric != field:
                 continue
             op = ops[rule['compare']]
             value = rule['value']
@@ -153,8 +153,6 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     rules = readMetrics(os.path.join(designDir, rulesFilename), justLoad=True)
     if rules is None:
         errors += 1
-    else:
-        rules = rules['rules']
 
     testList.append(test)
     if test not in status.keys():
