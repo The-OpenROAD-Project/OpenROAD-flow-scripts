@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 4802,
+        "value": 4400,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
@@ -60,7 +60,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
-        "value": -0.2,
+        "value": -2.2,
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
