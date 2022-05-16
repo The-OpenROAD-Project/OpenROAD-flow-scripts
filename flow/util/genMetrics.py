@@ -647,6 +647,12 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                            'max cap violation count (\S+)'),
                        logPath + '/4_1_cts.log')
 
+    extractTagFromFile('cts__design__instance__count__setup_buffer',
+                       metrics_dict,
+                       'Inserted (\d+) buffers',
+                       logPath + '/4_1_cts.log',
+                       defaultNotFound=0)
+
     extractTagFromFile('cts__design__instance__count__hold_buffer',
                        metrics_dict,
                        'Inserted (\d+) hold buffers',
@@ -812,6 +818,18 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                        metrics_dict,
                        baseRegEx.format('finish hold_violation_count',
                                         'hold violation count (\S+)'),
+                       logPath + '/6_report.log')
+
+    extractTagFromFile('finish__timing__cp_delay',
+                       metrics_dict,
+                       baseRegEx.format('finish critical path delay',
+                                        '(\S+)'),
+                       logPath + '/6_report.log')
+
+    extractTagFromFile('finish__timing__cp_slack_per_delay',
+                       metrics_dict,
+                       baseRegEx.format('finish slack div critical path delay',
+                                        '(\S+)'),
                        logPath + '/6_report.log')
 
     extractTagFromFile('finish__power__internal__total',
