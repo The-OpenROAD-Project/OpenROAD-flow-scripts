@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 23135,
+        "value": 23133,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -31,16 +31,20 @@
         "value": -78.87,
         "compare": ">="
     },
+    "cts__design__instance__count__setup_buffer": {
+        "value": 10,
+        "compare": "<="
+    },
     "cts__design__instance__count__hold_buffer": {
         "value": 10,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -6.6,
+        "value": -6.35,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -6.6,
+        "value": -6.35,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -74,5 +78,9 @@
     "finish__timing__drv__hold_violation_count": {
         "value": 10,
         "compare": "<="
+    },
+    "finish__timing__cp_slack_per_delay": {
+        "value": -10.0,
+        "compare": ">="
     }
 }

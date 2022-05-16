@@ -31,8 +31,12 @@
         "value": -572.65,
         "compare": ">="
     },
+    "cts__design__instance__count__setup_buffer": {
+        "value": 11,
+        "compare": "<="
+    },
     "cts__design__instance__count__hold_buffer": {
-        "value": 5012,
+        "value": 2465,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
@@ -56,7 +60,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 425513,
+        "value": 425238,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
@@ -74,5 +78,9 @@
     "finish__timing__drv__hold_violation_count": {
         "value": 10,
         "compare": "<="
+    },
+    "finish__timing__cp_slack_per_delay": {
+        "value": -10.0,
+        "compare": ">="
     }
 }

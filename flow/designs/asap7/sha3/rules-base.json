@@ -31,6 +31,10 @@
         "value": -575.55,
         "compare": ">="
     },
+    "cts__design__instance__count__setup_buffer": {
+        "value": 109,
+        "compare": "<="
+    },
     "cts__design__instance__count__hold_buffer": {
         "value": 156,
         "compare": "<="
@@ -52,15 +56,15 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -70.57,
+        "value": -35.68,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 6438,
+        "value": 2711,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -1.02,
+        "value": -0.81,
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
@@ -74,5 +78,9 @@
     "finish__timing__drv__hold_violation_count": {
         "value": 11,
         "compare": "<="
+    },
+    "finish__timing__cp_slack_per_delay": {
+        "value": -10.32,
+        "compare": ">="
     }
 }

@@ -31,6 +31,10 @@
         "value": -1.18,
         "compare": ">="
     },
+    "cts__design__instance__count__setup_buffer": {
+        "value": 10,
+        "compare": "<="
+    },
     "cts__design__instance__count__hold_buffer": {
         "value": 10,
         "compare": "<="
@@ -60,11 +64,11 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.38,
+        "value": -0.32,
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.34,
+        "value": -0.31,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
@@ -74,5 +78,9 @@
     "finish__timing__drv__hold_violation_count": {
         "value": 10,
         "compare": "<="
+    },
+    "finish__timing__cp_slack_per_delay": {
+        "value": -10.0,
+        "compare": ">="
     }
 }
