@@ -36,7 +36,7 @@ export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
 export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders.v
 #
 # Set yosys-abc clock period to first "-period" found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
+export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 export ABC_DRIVER_CELL = BUF_X1
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
 export ABC_LOAD_IN_FF = 3.898
@@ -80,8 +80,6 @@ export PLACE_DENSITY ?= 0.30
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   = BUF_X4
-export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTS
-
 
 # ---------------------------------------------------------
 #  Route
@@ -92,7 +90,6 @@ export MAX_ROUTING_LAYER = metal10
 
 # Define fastRoute tcl
 export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute.tcl
-
 
 # KLayout technology file
 export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/FreePDK45.lyt
