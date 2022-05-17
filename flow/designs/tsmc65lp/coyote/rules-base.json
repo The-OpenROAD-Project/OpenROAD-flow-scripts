@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 300263,
+        "value": 298073,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -31,8 +31,12 @@
         "value": -2.61,
         "compare": ">="
     },
+    "cts__design__instance__count__setup_buffer": {
+        "value": 12,
+        "compare": "<="
+    },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1426,
+        "value": 1096,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
@@ -78,5 +82,9 @@
     "finish__timing__drv__hold_violation_count": {
         "value": 10,
         "compare": "<="
+    },
+    "finish__timing__wns_percent_delay": {
+        "value": -10.0,
+        "compare": ">="
     }
 }

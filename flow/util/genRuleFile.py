@@ -64,142 +64,169 @@ else:
 
 # dict format
 # 'metric_name': {
-#     'use_period': <bool>, use a percentage of the clock period as padding
 #     'padding': <float>, percentage of padding to use
-#     'padding_fixed': <float>, fixed margin for padding
 #     'fixed': <float>, sum this number instead of using % padding
 #     'round_value': <bool>, use the rounded value for the rule
-# },
+# }
+
 rules_dict = {
     # synth
     'synth__design__instance__area__stdcell': {
-        'use_period': False,
+        'mode': 'padding',
         'padding': 15,
         'round_value': True,
         'compare': '<=',
     },
     # clock
     'constraints__clocks__count': {
-        'use_period': False,
-        'padding': 0,
+        'mode': 'direct',
         'round_value': True,
         'compare': '==',
     },
     # floorplan
     # place
     'placeopt__design__instance__area': {
-        'use_period': False,
+        'mode': 'padding',
         'padding': 15,
         'round_value': True,
         'compare': '<=',
     },
     'placeopt__design__instance__count__stdcell': {
-        'use_period': False,
+        'mode': 'padding',
         'padding': 15,
         'round_value': True,
         'compare': '<=',
     },
     'detailedplace__design__violations': {
-        'use_period': False,
-        'padding': 0,
+        'mode': 'direct',
         'round_value': True,
         'compare': '==',
     },
     # cts
     'cts__timing__setup__ws': {
-        'use_period': True,
+        'mode': 'period',
         'padding': 25,
+        'min_max': min,
+        'min_max_direct': 0,
         'round_value': False,
         'compare': '>=',
     },
     'cts__timing__setup__ws__pre_repair': {
-        'use_period': True,
+        'mode': 'period',
         'padding': 25,
+        'min_max': min,
+        'min_max_direct': 0,
         'round_value': False,
         'compare': '>=',
     },
     'cts__timing__setup__ws__post_repair': {
-        'use_period': True,
+        'mode': 'period',
         'padding': 25,
+        'min_max': min,
+        'min_max_direct': 0,
         'round_value': False,
         'compare': '>=',
     },
-    'cts__design__instance__count__hold_buffer': {
-        'use_period': False,
+    'cts__design__instance__count__setup_buffer': {
+        'mode': 'padding',
         'padding': 10,
-        'padding_fixed': 10,
+        'min_max': max,
+        'min_max_sum': 10,
+        'round_value': True,
+        'compare': '<=',
+    },
+    'cts__design__instance__count__hold_buffer': {
+        'mode': 'padding',
+        'padding': 10,
+        'min_max': max,
+        'min_max_sum': 10,
         'round_value': True,
         'compare': '<=',
     },
     # route
     'globalroute__timing__clock__slack': {
-        'use_period': True,
+        'mode': 'period',
         'padding': 5,
         'round_value': False,
         'compare': '>=',
     },
     'globalroute__timing__setup__ws': {
-        'use_period': True,
+        'mode': 'period',
         'padding': 5,
         'round_value': False,
         'compare': '>=',
     },
     'detailedroute__route__wirelength': {
-        'use_period': False,
+        'mode': 'padding',
         'padding': 15,
         'round_value': True,
         'compare': '<=',
     },
     'detailedroute__route__drc_errors': {
-        'use_period': False,
-        'padding': 0,
+        'mode': 'direct',
         'round_value': True,
         'compare': '<=',
     },
     # finish
     'finish__timing__setup__ws': {
-        'use_period': True,
+        'mode': 'period',
         'padding': 5,
         'round_value': False,
         'compare': '>=',
     },
     'finish__design__instance__area': {
-        'use_period': False,
+        'mode': 'padding',
         'padding': 15,
         'round_value': True,
         'compare': '<=',
     },
     'finish__timing__drv__max_slew_limit': {
-        'use_period': False,
-        'fixed': -0.20,
+        'mode': 'sum_fixed',
+        'padding': -0.20,
+        'min_max': min,
+        'min_max_direct': -0.20,
         'round_value': False,
         'compare': '>=',
     },
     'finish__timing__drv__max_fanout_limit': {
-        'use_period': False,
-        'fixed': -0.20,
+        'mode': 'sum_fixed',
+        'padding': -0.20,
+        'min_max': min,
+        'min_max_direct': -0.20,
         'round_value': False,
         'compare': '>=',
     },
     'finish__timing__drv__max_cap_limit': {
-        'use_period': False,
-        'fixed': -0.20,
+        'mode': 'sum_fixed',
+        'padding': -0.20,
+        'min_max': min,
+        'min_max_direct': -0.20,
         'round_value': False,
         'compare': '>=',
     },
     'finish__timing__drv__setup_violation_count': {
-        'use_period': False,
+        'mode': 'padding',
         'padding': 20,
-        'padding_fixed': 10,
+        'min_max': max,
+        'min_max_sum': 10,
         'round_value': True,
         'compare': '<=',
     },
     'finish__timing__drv__hold_violation_count': {
-        'use_period': False,
+        'mode': 'padding',
         'padding': 20,
-        'padding_fixed': 10,
+        'min_max': max,
+        'min_max_sum': 10,
         'round_value': True,
         'compare': '<=',
+    },
+    'finish__timing__wns_percent_delay': {
+        'mode': 'padding',
+        'padding': 20,
+        'min_max': min,
+        'min_max_sum': -10,
+        'round_value': False,
+        'compare': '>=',
     },
 }
 
@@ -234,32 +261,48 @@ for field, option in rules_dict.items():
         print('[WARNING] Skipping clock slack until multiple clocks support.')
         continue
 
-    if 'padding' in option.keys() and option['padding'] != 0:
-        if option['use_period']:
-            new_rule_value = metrics[field] - period * option['padding'] / 100
-            new_rule_value = min(new_rule_value, 0)
-        elif 'padding_fixed' in option.keys():
-            temp_1 = metrics[field] + option['padding_fixed']
-            temp_2 = metrics[field] * (1 + option['padding'] / 100)
-            new_rule_value = max(temp_1, temp_2)
-        else:
-            new_rule_value = metrics[field] * (1 + option['padding'] / 100)
-    elif 'fixed' in option.keys():
-        new_rule_value = min(option['fixed'], metrics[field] + option['fixed'])
-    else:
-        new_rule_value = metrics[field]
+    rule_value = None
+    if option['mode'] == 'direct':
+        rule_value = metrics[field]
 
-    if field == 'cts__design__instance__count__hold_buffer' \
-            and new_rule_value == 0:
-        new_rule_value = ceil(
+    elif option['mode'] == 'sum_fixed':
+        rule_value = metrics[field] + option['padding']
+
+    elif option['mode'] == 'period':
+        rule_value = metrics[field] - period * option['padding'] / 100
+        rule_value = min(rule_value, 0)
+
+    elif option['mode'] == 'padding':
+        rule_value = metrics[field] * (1 + option['padding'] / 100)
+
+    if 'min_max' in option.keys():
+        if 'min_max_direct' in option.keys():
+            rule_value = option['min_max'](
+                rule_value, option['min_max_direct'])
+        elif 'min_max_sum' in option.keys():
+            rule_value = option['min_max'](
+                rule_value + option['min_max_sum'], option['min_max_sum'])
+        else:
+            print(f"[ERROR] Metric {field} has 'min_max' field but no "
+                  "'min_max_direct' or 'min_max_sum' field.")
+            sys.exit(1)
+
+    if rule_value is None:
+        print(f"[ERROR] Metric {field} has invalid mode {option['mode']}.")
+        sys.exit(1)
+
+    if rule_value == 0 and \
+            (field == 'cts__design__instance__count__setup_buffer'
+             or field == 'cts__design__instance__count__hold_buffer'):
+        rule_value = ceil(
             metrics['placeopt__design__instance__count__stdcell'] * 0.1)
 
-    if option['round_value'] and not isinf(new_rule_value):
-        new_rule_value = int(round(new_rule_value))
+    if option['round_value'] and not isinf(rule_value):
+        rule_value = int(round(rule_value))
     else:
-        new_rule_value = float(f"{new_rule_value:.2f}")
+        rule_value = float(f"{rule_value:.2f}")
 
-    if OLD_RULES is not None:
+    if OLD_RULES is not None and field in OLD_RULES.keys():
         old_rule = OLD_RULES[field]
         if old_rule['compare'] != option['compare']:
             print('[WARNING] Compare operator changed since last update.')
@@ -268,26 +311,26 @@ for field, option in rules_dict.items():
 
         UPDATE = False
         if args.tighten \
-                and new_rule_value != old_rule['value'] \
-                and compare(new_rule_value, old_rule['value']):
+                and rule_value != old_rule['value'] \
+                and compare(rule_value, old_rule['value']):
             UPDATE = True
             print(f"[INFO] Tightening rule {field} "
-                  f"from {old_rule['value']} to {new_rule_value}.")
+                  f"from {old_rule['value']} to {rule_value}.")
 
         if args.failing and not compare(metrics[field], old_rule['value']):
             UPDATE = True
             print(f"[INFO] Updating failing rule {field} "
-                  f"from {old_rule['value']} to {new_rule_value}.")
+                  f"from {old_rule['value']} to {rule_value}.")
 
-        if args.update:
+        if args.update and old_rule['value'] != rule_value:
             UPDATE = True
             print(f"[INFO] Updating rule {field} "
-                  f"from {old_rule['value']} to {new_rule_value}.")
+                  f"from {old_rule['value']} to {rule_value}.")
 
         if not UPDATE:
-            new_rule_value = old_rule['value']
+            rule_value = old_rule['value']
 
-    rules[field] = dict(value=new_rule_value, compare=option['compare'])
+    rules[field] = dict(value=rule_value, compare=option['compare'])
 
 with open(rules_file, 'w') as f:
     print('[INFO] writing', abspath(rules_file))
