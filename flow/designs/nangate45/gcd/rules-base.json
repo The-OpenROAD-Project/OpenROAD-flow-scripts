@@ -79,7 +79,7 @@
         "value": 11,
         "compare": "<="
     },
-    "finish__timing__cp_slack_per_delay": {
+    "finish__timing__wns_percent_delay": {
         "value": -30.22,
         "compare": ">="
     }

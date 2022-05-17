@@ -220,7 +220,7 @@ rules_dict = {
         'round_value': True,
         'compare': '<=',
     },
-    'finish__timing__cp_slack_per_delay': {
+    'finish__timing__wns_percent_delay': {
         'mode': 'padding',
         'padding': 20,
         'min_max': min,

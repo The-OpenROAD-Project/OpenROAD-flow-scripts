@@ -133,7 +133,7 @@
   "finish__timing__drv__setup_violation_count": 3.0,
   "finish__timing__drv__hold_violation_count": 2.0,
   "finish__timing__cp_delay": 1876.92,
-  "finish__timing__cp_slack_per_delay": -2.12,
+  "finish__timing__wns_percent_delay": -2.12,
   "finish__power__internal__total": 0.32,
   "finish__power__switchng__total": 0.12,
   "finish__power__leakage__total": 0.0,

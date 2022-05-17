@@ -826,7 +826,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         '(\S+)'),
                        logPath + '/6_report.log')
 
-    extractTagFromFile('finish__timing__cp_slack_per_delay',
+    extractTagFromFile('finish__timing__wns_percent_delay',
                        metrics_dict,
                        baseRegEx.format('finish slack div critical path delay',
                                         '(\S+)'),
