@@ -31,6 +31,10 @@
         "value": -1.34,
         "compare": ">="
     },
+    "cts__design__instance__count__setup_buffer": {
+        "value": 11,
+        "compare": "<="
+    },
     "cts__design__instance__count__hold_buffer": {
         "value": 41,
         "compare": "<="
@@ -74,5 +78,9 @@
     "finish__timing__drv__hold_violation_count": {
         "value": 10,
         "compare": "<="
+    },
+    "finish__timing__wns_percent_delay": {
+        "value": -10.0,
+        "compare": ">="
     }
 }
