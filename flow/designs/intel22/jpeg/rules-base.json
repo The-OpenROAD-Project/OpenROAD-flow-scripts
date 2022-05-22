@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 11,
+        "value": 30,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -52,7 +52,7 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 3,
+        "value": 7,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
