@@ -14,4 +14,8 @@ export CORE_MARGIN = 2
 
 export PLACE_DENSITY = 0.75
 
+ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CELL
+else
+export DESIGN_TYPE = CELL_NODEN
+endif

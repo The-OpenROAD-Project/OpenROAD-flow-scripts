@@ -60,7 +60,11 @@ export MACRO_BLOCKAGE_HALO = 25
 
 export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
+ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CHIP
+else
+export DESIGN_TYPE = CHIP_NODEN
+endif
 
 # enable slack margin for setup and hold fix after CTS
 export SETUP_SLACK_MARGIN ?= 100

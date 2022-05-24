@@ -25,4 +25,8 @@ export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclud
 export PLACE_DENSITY = 0.40
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
+ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CELL
+else
+export DESIGN_TYPE = CELL_NODEN
+endif
