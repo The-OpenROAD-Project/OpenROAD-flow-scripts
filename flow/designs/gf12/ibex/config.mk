@@ -51,7 +51,11 @@ export CORE_MARGIN = 2
 
 export PLACE_DENSITY = 0.70
 
+ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CELL
+else
+export DESIGN_TYPE = CELL_NODEN
+endif
 
 # slack margin to address WC corner
 export SETUP_SLACK_MARGIN ?= 180

@@ -59,6 +59,12 @@ export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
 export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
+ifneq ($(USE_FILL),)
+export DESIGN_TYPE = CHIP
+else
+export DESIGN_TYPE = CHIP_NODEN
+endif
+
 # Define macro halo and channel spacings
 export MACRO_PLACE_HALO = 0 0
 export MACRO_PLACE_CHANNEL = 30.24 30.24

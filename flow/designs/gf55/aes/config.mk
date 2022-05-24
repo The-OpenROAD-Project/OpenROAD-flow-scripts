@@ -20,6 +20,10 @@ export CORE_MARGIN       = 4
 
 export PLACE_DENSITY     = 0.50
 
-export DESIGN_TYPE       = CELL
+ifneq ($(USE_FILL),)
+export DESIGN_TYPE = CELL
+else
+export DESIGN_TYPE = CELL_NODEN
+endif
 
 export ABC_CLOCK_PERIOD_IN_PS = 2300
