@@ -1,3 +1,4 @@
+
 library (multiply_add_64x64_lib) {
     delay_model : "table_lookup";
     time_unit : "1ns";
@@ -66,136 +67,142 @@ library (multiply_add_64x64_lib) {
         }
 
         pin(rst) {
+            clock : false;
             direction : input;
             related_ground_pin : "VGND";
             related_power_pin : "VPWR";
 
-            /* sky130_fd_sc_hd__buf_1 */
-            capacitance : 0.0021030000;
-            rise_capacitance : 0.0021910000;
-            fall_capacitance : 0.0020150000;
+            capacitance : 0.002103;
+            rise_capacitance : 0.002191;
+            fall_capacitance : 0.002015;
             max_transition : 1.5;
-
             timing() {
                 timing_type : setup_rising;
                 related_pin : "clk";
                 rise_constraint(scalar) {
-                    values("-1.8");
+                    values("5.6000");
                 }
                 fall_constraint(scalar) {
-                    values("-1.8");
+                    values("5.6000");
                 }
             }
+
             timing() {
                 timing_type : hold_rising;
                 related_pin : "clk";
                 rise_constraint(scalar) {
-                    values("2.0");
+                    values("1.4000");
                 }
                 fall_constraint(scalar) {
-                    values("2.0");
+                    values("1.4000");
                 }
             }
+
         }
 
         bus(a) {
             bus_type : bits_64;
+            clock : false;
             direction : input;
             related_ground_pin : "VGND";
             related_power_pin : "VPWR";
 
-            /* sky130_fd_sc_hd__buf_1 */
-            capacitance : 0.0021030000;
-            rise_capacitance : 0.0021910000;
-            fall_capacitance : 0.0020150000;
+            capacitance : 0.002103;
+            rise_capacitance : 0.002191;
+            fall_capacitance : 0.002015;
             max_transition : 1.5;
-
             timing() {
                 timing_type : setup_rising;
                 related_pin : "clk";
                 rise_constraint(scalar) {
-                    values("-1.8");
+                    values("5.6000");
                 }
                 fall_constraint(scalar) {
-                    values("-1.8");
+                    values("5.6000");
                 }
             }
+
             timing() {
                 timing_type : hold_rising;
                 related_pin : "clk";
                 rise_constraint(scalar) {
-                    values("2.0");
+                    values("1.4000");
                 }
                 fall_constraint(scalar) {
-                    values("2.0");
+                    values("1.4000");
                 }
             }
+
         }
 
         bus(b) {
             bus_type : bits_64;
-            direction : input;
-
-            /* sky130_fd_sc_hd__buf_1 */
-            capacitance : 0.0021030000;
-            rise_capacitance : 0.0021910000;
-            fall_capacitance : 0.0020150000;
-            max_transition : 1.5;
-
-            timing() {
-                timing_type : setup_rising;
-                related_pin : "clk";
-                rise_constraint(scalar) {
-                    values("-1.8");
-                }
-                fall_constraint(scalar) {
-                    values("-1.8");
-                }
-            }
-            timing() {
-                timing_type : hold_rising;
-                related_pin : "clk";
-                rise_constraint(scalar) {
-                    values("2.0");
-                }
-                fall_constraint(scalar) {
-                    values("2.0");
-                }
-            }
-        }
-
-        bus(c) {
-            bus_type : bits_128;
+            clock : false;
             direction : input;
             related_ground_pin : "VGND";
             related_power_pin : "VPWR";
 
-            /* sky130_fd_sc_hd__buf_1 */
-            capacitance : 0.0021030000;
-            rise_capacitance : 0.0021910000;
-            fall_capacitance : 0.0020150000;
+            capacitance : 0.002103;
+            rise_capacitance : 0.002191;
+            fall_capacitance : 0.002015;
             max_transition : 1.5;
-
             timing() {
                 timing_type : setup_rising;
                 related_pin : "clk";
                 rise_constraint(scalar) {
-                    values("-1.8");
+                    values("5.6000");
                 }
                 fall_constraint(scalar) {
-                    values("-1.8");
+                    values("5.6000");
                 }
             }
+
             timing() {
                 timing_type : hold_rising;
                 related_pin : "clk";
                 rise_constraint(scalar) {
-                    values("2.0");
+                    values("1.4000");
                 }
                 fall_constraint(scalar) {
-                    values("2.0");
+                    values("1.4000");
                 }
             }
+
+        }
+
+        bus(c) {
+            bus_type : bits_128;
+            clock : false;
+            direction : input;
+            related_ground_pin : "VGND";
+            related_power_pin : "VPWR";
+
+            capacitance : 0.002103;
+            rise_capacitance : 0.002191;
+            fall_capacitance : 0.002015;
+            max_transition : 1.5;
+            timing() {
+                timing_type : setup_rising;
+                related_pin : "clk";
+                rise_constraint(scalar) {
+                    values("5.6000");
+                }
+                fall_constraint(scalar) {
+                    values("5.6000");
+                }
+            }
+
+            timing() {
+                timing_type : hold_rising;
+                related_pin : "clk";
+                rise_constraint(scalar) {
+                    values("1.4000");
+                }
+                fall_constraint(scalar) {
+                    values("1.4000");
+                }
+            }
+
         }
 
         bus(o) {
@@ -204,39 +211,37 @@ library (multiply_add_64x64_lib) {
             related_ground_pin : "VGND";
             related_power_pin : "VPWR";
 
-            /* sky130_fd_sc_hd__buf_1 */
-            max_capacitance : 0.1300150000;
-            max_transition : 1.5061030000;
-
+            max_capacitance : 0.130015;
+            max_transition : 1.5;
             timing() {
                 related_pin : "clk";
                 timing_sense : non_unate
                 timing_type : rising_edge
                 cell_rise(scalar) {
-                    values("8.0");
+                    values("5.6000");
                 }
                 cell_fall(scalar) {
-                    values("8.0");
+                    values("5.6000");
                 }
                 rise_transition(scalar) {
-                    values("0.75");
+                    values("0.7500");
                 }
                 fall_transition(scalar) {
-                    values("0.75");
+                    values("0.7500");
                 }
             }
+
         }
-    
+
         pin(clk) {
             clock : true;
             direction : input;
             related_ground_pin : "VGND";
             related_power_pin : "VPWR";
 
-            /* sky130_fd_sc_hd__buf_1 */
-            capacitance : 0.0021030000;
-            rise_capacitance : 0.0021910000;
-            fall_capacitance : 0.0020150000;
+            capacitance : 0.002103;
+            rise_capacitance : 0.002191;
+            fall_capacitance : 0.002015;
             max_transition : 1.5;
         }
     }
