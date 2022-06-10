@@ -15,7 +15,10 @@ update_metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
 
 update_rules:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) $(FLOW_VARIANT)
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing --tighten
+
+update_rules_force:
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
 	echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
@@ -31,23 +34,24 @@ $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log: $(REPORTS_DIR)/metadata-$(FLO
 
 #-------------------------------------------------------------------------------
 
-write_net_caps: $(RESULTS_DIR)/6_net_caps.csv
+write_net_rc: $(RESULTS_DIR)/6_net_rc.csv
 
-$(RESULTS_DIR)/6_net_caps.csv: $(RESULTS_DIR)/4_cts.def $(RESULTS_DIR)/6_final.spef
-	($(TIME_CMD) $(OPENROAD_CMD) $(UTILS_DIR)/write_net_caps_script.tcl) 2>&1 | tee $(LOG_DIR)/6_write_net_caps.log
+#$(RESULTS_DIR)/6_net_rc.csv: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/6_final.spef
+$(RESULTS_DIR)/6_net_rc.csv:
+	($(TIME_CMD) $(OPENROAD_CMD) $(UTILS_DIR)/write_net_rc_script.tcl) 2>&1 | tee $(LOG_DIR)/6_write_net_rc.log
 
-correlate_rc: $(RESULTS_DIR)/6_net_caps.csv
-	$(UTILS_DIR)/correlateRC.py --capFile $(RESULTS_DIR)/6_net_caps.csv
+correlate_rc: $(RESULTS_DIR)/6_net_rc.csv
+	$(UTILS_DIR)/correlateRC.py $(RESULTS_DIR)/6_net_rc.csv
 
 # TODO Make always wants to redo designs with this rule, regardless of which variations are tried.
-#	$(MAKE) DESIGN_CONFIG=$$config write_net_caps; \
-#$(foreach config,$(wildcard designs/$(PLATFORM)/*/config.mk),$(MAKE) DESIGN_CONFIG=$(config) write_net_caps; )
+#	$(MAKE) DESIGN_CONFIG=$$config write_net_rc; \
+#$(foreach config,$(wildcard designs/$(PLATFORM)/*/config.mk),$(MAKE) DESIGN_CONFIG=$(config) write_net_rc; )
 correlate_platform_rc:
 	for config in designs/$(PLATFORM)/*/config.mk; do \
 	  design=$$(basename $$(dirname $$config)); \
-	  make DESIGN_CONFIG=./$$config results/$(PLATFORM)/$$design/base/6_net_caps.csv; \
+	  make DESIGN_CONFIG=./$$config results/$(PLATFORM)/$$design/base/6_net_rc.csv; \
 	done
-	$(UTILS_DIR)/correlateRC.py --capFile $$(find results/$(PLATFORM)/*/base -name 6_net_caps.csv)
+	$(UTILS_DIR)/correlateRC.py $$(find results/$(PLATFORM)/*/base -name 6_net_rc.csv)
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------

@@ -361,10 +361,12 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         '^Design area .* (\S+)% utilization'),
                        logPath + '/2_1_floorplan.log')
 
-    extractTagFromFile('floorplan__design__io',
-                       metrics_dict,
-                       'Number of I/O +(\d+)',
-                       logPath + '/3_2_place_iop.log')
+    if os.environ.get('DESIGN_TYPE') is None \
+            or 'CHIP' not in os.environ.get('DESIGN_TYPE'):
+        extractTagFromFile('floorplan__design__io',
+                           metrics_dict,
+                           'Number of I/O +(\d+)',
+                           logPath + '/3_2_place_iop.log')
 
     extractTagFromFile('floorplan__design__instance__count__macros',
                        metrics_dict,
@@ -646,6 +648,12 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                            'cts final max_cap_violation_count',
                            'max cap violation count (\S+)'),
                        logPath + '/4_1_cts.log')
+
+    extractTagFromFile('cts__design__instance__count__setup_buffer',
+                       metrics_dict,
+                       'Inserted (\d+) buffers',
+                       logPath + '/4_1_cts.log',
+                       defaultNotFound=0)
 
     extractTagFromFile('cts__design__instance__count__hold_buffer',
                        metrics_dict,

@@ -18,7 +18,7 @@ gui::set_display_controls "Nets/*" visible true
 gui::set_display_controls "Instances/*" visible false
 gui::set_display_controls "Instances/StdCells/*" visible true
 gui::set_display_controls "Instances/Macro" visible true
-gui::set_display_controls "Instances/Pad" visible true
+gui::set_display_controls "Instances/Pads/*" visible true
 gui::set_display_controls "Instances/Physical/*" visible true
 gui::set_display_controls "Pin Markers" visible true
 gui::set_display_controls "Misc/Instances/names" visible true

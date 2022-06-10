@@ -1,35 +1,33 @@
 #!/usr/bin/env python3
 
-# This scripts checks the metadata.json against a set of rules for allowed
-# values.  This allows degradation in results to be flagged as an error
-# in the build.
-#
-# The rules file has the form
-# {
-#    "rules": [
-#        {
-#            "field" : "<name>",
-#            "value" : <numeric_value>,
-#            "compare": "<operator>"
-#        }, ...
-#    ]
-# }
-#
-# field is the name of a field in the metadata file
-# value is the reference value to compare to
-# operator can be one of "<", ">", "<=", ">=", "==", "!=".
-# The value is converted to a float for comparison if possible
-#
-#-------------------------------------------------------------------------------
+'''
+This scripts checks the metadata.json against a set of rules for allowed
+values.  This allows degradation in results to be flagged as an error
+in the build.
 
+The rules file has the form
+{
+   "rules": [
+       {
+           "field" : "<name>",
+           "value" : <numeric_value>,
+           "compare": "<operator>"
+       }, ...
+   ]
+}
+
+field is the name of a field in the metadata file
+value is the reference value to compare to
+operator can be one of "<", ">", "<=", ">=", "==", "!=".
+The value is converted to a float for comparison if possible
+'''
+
+from os.path import isfile
 import argparse
 import json
-from sys import exit
 import operator
-from os.path import isfile
+import sys
 
-# Parse and validate arguments
-# ==============================================================================
 parser = argparse.ArgumentParser(
     description='Checks metadata from OpenROAD flow against a set of rules')
 parser.add_argument('--metadata', '-m', required=True,
@@ -45,39 +43,37 @@ rules = dict()
 for filePath in args.rules:
     if isfile(filePath):
         with open(filePath) as rulesFile:
-            for rule in json.load(rulesFile)['rules']:
-                field = rule['field']
-                if field in rules.keys():
-                    print('[WARN] rule for field {} = {}'.format(
-                        field, rules[field]['value']), end='')
-                    print(' was overwritten by design rule = {}'.format(
-                        rule['value']))
-                rules[field] = rule
+            rules.update(json.load(rulesFile))
     else:
-        print('[WARN] File {} not found'.format(filePath))
+        print(f"[WARN] File {filePath} not found")
+
 if len(rules) == 0:
     print('No rules')
-    exit(1)
+    sys.exit(1)
 
-# Convert to a float if possible
-def try_number(s):
+
+def try_number(string):
+    '''
+    Convert to a float if possible
+    '''
     try:
-        return float(s)
+        return float(string)
     except ValueError:
-        return s
+        return string
 
-ops = { "<" : operator.lt,
-        ">" : operator.gt,
-        "<=": operator.le,
-        ">=": operator.ge,
-        "==": operator.eq,
-        "!=": operator.ne,
-      }
 
-errors = 0
+ops = {
+    '<': operator.lt,
+    '>': operator.gt,
+    '<=': operator.le,
+    '>=': operator.ge,
+    '==': operator.eq,
+    '!=': operator.ne,
+}
 
-for _, rule in rules.items():
-    field = rule['field']
+ERRORS = 0
+
+for field, rule in rules.items():
     compare = rule['compare']
     op = ops[compare]
     rule_value = try_number(rule['value'])
@@ -88,24 +84,24 @@ for _, rule in rules.items():
         formatError.append('rule_value')
     if not isinstance(build_value, float):
         formatError.append('build_value')
-    if len(formatError):
-        print('Error: field {}, has invalid float format for {}'.format(
-            field, ', '.join(formatError)))
-        errors += 1
+    if len(formatError) != 0:
+        print(f"Error: field {field}, has invalid float format for "
+              f"{', '.join(formatError)}")
+        ERRORS += 1
         continue
 
     if op(build_value, rule_value):
-        pre = '[INFO]'
-        check = 'pass'
+        PRE = '[INFO]'
+        CHECK = 'pass'
     else:
-        pre = '[ERROR]'
-        check = 'fail'
-        errors += 1
-    print(pre, field, check, 'test:', build_value, compare, rule_value)
+        PRE = '[ERROR]'
+        CHECK = 'fail'
+        ERRORS += 1
+    print(PRE, field, CHECK, 'test:', build_value, compare, rule_value)
 
-if errors == 0:
-    print('All metadata rules passed ({} rules)'.format(len(rules)))
+if ERRORS == 0:
+    print(f"All metadata rules passed ({len(rules)} rules)")
 else:
-    print('Failed metadata checks: {} out of {}'.format(errors, len(rules)))
+    print(f"Failed metadata checks: {ERRORS} out of {len(rules)}")
 
-exit(1 if errors else 0)
+sys.exit(1 if ERRORS else 0)

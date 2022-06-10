@@ -19,4 +19,8 @@ export PLACE_PINS_ARGS = -exclude left:0-300 -exclude left:400-700 -exclude righ
 
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
+ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CELL
+else
+export DESIGN_TYPE = CELL_NODEN
+endif
