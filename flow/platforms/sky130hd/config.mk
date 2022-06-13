@@ -104,9 +104,6 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 #---------------------------------------------------------
 # Place
 # --------------------------------------------------------
-# Layer to use for parasitics estimations
-export WIRE_RC_LAYER = met3
-#
 # default cell padding for cells 
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 1
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0

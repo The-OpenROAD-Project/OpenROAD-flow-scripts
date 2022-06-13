@@ -91,9 +91,6 @@ export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 1
 
 export PLACE_DENSITY ?= 0.60
 
-# Layer to use for parasitics estimations
-export WIRE_RC_LAYER           = M3
-
 # Endcap and Welltie cells
 export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
 

@@ -65,9 +65,6 @@ export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 #---------------------------------------------------------
 # Place
 # --------------------------------------------------------
-# Layer to use for parasitics estimations
-export WIRE_RC_LAYER = metal3
-
 # Cell padding in SITE widths to ease rout-ability.  Applied to both sides
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
