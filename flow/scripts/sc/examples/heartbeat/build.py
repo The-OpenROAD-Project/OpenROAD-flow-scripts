@@ -1,17 +1,14 @@
 import os
 import shutil
-import siliconcompiler                            # import python package
+import siliconcompiler
 
-openroad_dir = os.path.abspath('../../../../..')
+openroad_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '..'))
 
 def main():
     ll = 'INFO'
     chip = siliconcompiler.Chip('heartbeat', loglevel=ll)      # create chip object
     chip.set('input', 'verilog', os.path.abspath('heartbeat.v'))   # define list of source files
     chip.set('input', 'sdc', os.path.abspath('heartbeat.sdc'))     # set constraints file
-    #chip = siliconcompiler.Chip('gcd', loglevel=ll)      # create chip object
-    #chip.set('input', 'verilog', os.path.abspath('gcd.v'))   # define list of source files
-    #chip.set('input', 'sdc', os.path.abspath('constraint.sdc'))     # set constraints file
 
     # Load PDK, flow, and libs.
     chip.load_pdk('freepdk45_orflow')
@@ -70,7 +67,7 @@ def main():
     shutil.copy(os.path.join(jdir, '2_floorplan.sdc'), os.path.join(jdir, '3_place.sdc'))
 
     # Step 4: CTS / Fill
-    chip.set('option', 'steplist', ['cts', 'fillcells'])
+    chip.set('option', 'steplist', ['clock_tree_syn', 'fillcells'])
     chip.run()
     shutil.copy(os.path.join(jdir, '4_2_cts_fillcell.odb'), os.path.join(jdir, '4_cts.odb'))
     shutil.copy(os.path.join(jdir, '4_cts.sdc'), os.path.join(jdir, '5_route.sdc'))
