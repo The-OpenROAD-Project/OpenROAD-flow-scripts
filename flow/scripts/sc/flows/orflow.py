@@ -51,7 +51,7 @@ def setup(chip, flowname='orflow'):
         'global_place': ['openroad', 'global_place.tcl'],
         'resize': ['openroad', 'resize.tcl'],
         'detail_place': ['openroad', 'detail_place.tcl'],
-        'cts': ['openroad', 'cts.tcl'],
+        'clock_tree_syn': ['openroad', 'cts.tcl'],
         'fillcells': ['openroad', 'fillcell.tcl'],
         'global_route': ['openroad', 'global_route.tcl'],
         'detail_route': ['openroad', 'detail_route.tcl'],
@@ -67,6 +67,7 @@ def setup(chip, flowname='orflow'):
         if v[1]:
             chip.set('tool', v[0], 'script', k, '0',
                      os.path.abspath(os.path.join(openroad_dir, 'flow', 'scripts', v[1])))
+            chip.set('tool', v[0], 'refdir', k, '0', os.path.join('tools', v[0]))
         last_step = k
 
     # TODO: Place these in a target file for nangate45/orfs, if it's too verbose/PDK-specific?
