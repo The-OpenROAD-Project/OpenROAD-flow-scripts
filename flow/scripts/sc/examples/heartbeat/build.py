@@ -89,7 +89,7 @@ def main():
     tool = 'klayout'
     base_lyt = chip.get('pdk', process, 'layermap', tool, 'def', 'gds', stackup)[0]
     base_lyp = chip.get('pdk', process, 'display', tool, stackup)[0]
-    tlef = chip.get('pdk', process, 'aprtech', tool, stackup, libtype, 'lef')[0]
+    tlef = chip.get('library', 'nangate45', 'model', 'layout', 'lef', stackup)[0]
     shutil.copy(base_lyp, os.path.join(jdir, 'klayout.lyp'))
     with open(base_lyt, 'r') as rf:
         with open(os.path.join(jdir, 'klayout.lyt'), 'w') as wf:
