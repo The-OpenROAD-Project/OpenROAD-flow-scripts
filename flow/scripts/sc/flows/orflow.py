@@ -80,6 +80,7 @@ def setup(chip, flowname='orflow'):
         'GDS_FILES': os.path.join(openroad_dir, 'flow', 'platforms', 'nangate45', 'gds', 'NangateOpenCellLibrary.gds'),
         'GDSOAS_FILES': os.path.join(openroad_dir, 'flow', 'platforms', 'nangate45', 'gds', 'NangateOpenCellLibrary.gds'),
         'WRAPPED_GDSOAS': '',
+        'GDS_LAYER_MAP': '',
         'STREAM_SYSTEM_EXT': 'gds',
         'TAPCELL_TCL': os.path.join(openroad_dir, 'flow', 'platforms', 'nangate45', 'tapcell.tcl'),
         'FASTROUTE_TCL': os.path.join(openroad_dir, 'flow', 'platforms', 'nangate45', 'fastroute.tcl'),
