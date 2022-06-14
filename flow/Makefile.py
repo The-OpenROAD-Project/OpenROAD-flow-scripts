@@ -15,32 +15,25 @@ def main():
     args = vars(parser.parse_args())
 
     # Parse values out of provided "config.mk" file
-    # TODO: filled this out based on ./designs/nangate45/gcd/config.mk
-    # There are more possible variables and likely more complex possible values
-    # (such as multiple Verilog files)
     config = parse_config_mk.parse(args['DESIGN_CONFIG'])
     design = config['DESIGN_NAME']
-    verilog_path = config['VERILOG_FILES']
-    sdc_path = config['SDC_FILE']
-    core_left, core_bottom, core_right, core_top = config['CORE_AREA'].split(' ')
-    die_left, die_bottom, die_right, die_top = config['DIE_AREA'].split(' ')
-    platform = config['PLATFORM']
 
-    # Currently unused: ADDER_MAP_FILE (blank for gcd), ABC_AREA (not sure meaning?)
     print(config)
 
     chip = siliconcompiler.Chip(design)
     chip.set('option', 'scpath', scdir)
 
-    chip.set('input', 'verilog', verilog_path)
-    chip.set('input', 'sdc', sdc_path)
-    chip.set('asic', 'diearea', [(die_left, die_bottom), (die_right, die_top)])
-    chip.set('asic', 'corearea', [(core_left, core_bottom), (core_right, core_top)])
+    # TODO: should we actually fill out stuff in the schema, or just pass
+    # everything through?
+    for key, val in config.items():
+        chip.set('option', 'env', key, val)
 
-    # TODO: create OR specific targets
+    # TODO: should we create OR specific targets that then load associated PDKs/libs?
+    #platform = config['PLATFORM']
     #chip.load_target(f'{platform}_or')
 
-    # For testing, TODO: put in run logic
+    # For testing
+    # TODO: put in run logic
     chip.write_manifest(f'{design}.json')
 
 if __name__ == '__main__':
