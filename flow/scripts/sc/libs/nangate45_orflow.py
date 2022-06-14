@@ -20,7 +20,7 @@ def setup(chip):
     corner = 'typical'
     objectives = ['setup']
 
-    libdir = os.path.join('..', '..', '..', '..', 'platforms', 'nangate45')
+    libdir = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'platforms', 'nangate45')
     chip.logger.info(os.path.abspath(libdir))
 
 

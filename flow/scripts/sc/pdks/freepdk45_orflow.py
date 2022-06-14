@@ -60,7 +60,7 @@ def setup(chip):
     edgemargin = 2
     d0 = 1.25
 
-    pdkdir = os.path.join('..', '..', '..', '..', 'platforms', 'nangate45')
+    pdkdir = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'platforms', 'nangate45')
 
     # If you got here,  you are in asic mode
     chip.set('option', 'mode', 'asic', clobber=True)

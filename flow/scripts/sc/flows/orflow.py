@@ -2,7 +2,7 @@ import os
 import siliconcompiler
 import re
 
-openroad_dir = os.path.abspath('../../../../..')
+openroad_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
 
 def make_docs():
     # TODO: Docs
@@ -126,11 +126,11 @@ def setup(chip, flowname='orflow'):
         'OBJECTS_DIR': os.path.abspath(os.path.join(chip.get('option', 'builddir'), chip.get('design'), chip.get('option', 'jobname'))),
         'REPORTS_DIR': os.path.abspath(os.path.join(chip.get('option', 'builddir'), chip.get('design'), chip.get('option', 'jobname'))),
         'RESULTS_DIR': os.path.abspath(os.path.join(chip.get('option', 'builddir'), chip.get('design'), chip.get('option', 'jobname'))),
-        #'DONT_USE_LIBS': ' '.join(chip.get('library', 'nangate45', 'model', 'timing', 'nldm', 'typical')),
-        #'DONT_USE_SC_LIB': ' '.join(chip.get('library', 'nangate45', 'model', 'timing', 'nldm', 'typical')),
+        'DONT_USE_LIBS': ' '.join(chip.get('library', 'nangate45', 'model', 'timing', 'nldm', 'typical')),
+        'DONT_USE_SC_LIB': ' '.join(chip.get('library', 'nangate45', 'model', 'timing', 'nldm', 'typical')),
         # TODO: Run Python script to create these libs during import step.
-        'DONT_USE_LIBS': os.path.abspath('NangateOpenCellLibrary_typical.lib'),
-        'DONT_USE_SC_LIB': os.path.abspath('NangateOpenCellLibrary_typical.lib'),
+        #'DONT_USE_LIBS': os.path.abspath('NangateOpenCellLibrary_typical.lib'),
+        #'DONT_USE_SC_LIB': os.path.abspath('NangateOpenCellLibrary_typical.lib'),
         # Project-specific
         # TODO: Set areas from chip.get die/corearea, align to placement sites
         'DIE_AREA': '0 0 300 300',
