@@ -18,11 +18,25 @@ def main():
     # Parse values out of provided "config.mk" file
     config = parse_config_mk.parse(args['DESIGN_CONFIG'])
     design = config['DESIGN_NAME']
+
+    # Perform variable substitution where required.
+    repls = {}
+    # Set DESIGN_NICKNAME = DESIGN if not already set.
     if not 'DESIGN_NICKNAME' in config:
-        # Re-parse the variables with $DESIGN_NICKNAME=$DESIGN.
-        os.environ['DESIGN_NICKNAME'] = design
+        repls['DESIGN_NICKNAME'] = design
+    # Set PLATFORM_DIR if not already set.
+    if not 'PLATFORM_DIR' in config:
+        repls['PLATFORM_DIR'] = os.path.abspath(os.path.join(mydir, 'platforms', config['PLATFORM']))
+
+    if repls:
+        # Set replacement value in os.environ so that the Makefile parser uses it.
+        for k, v in repls.items():
+            os.environ[k] = v
+        # Re-parse the Makefile
         config = parse_config_mk.parse(args['DESIGN_CONFIG'])
-        config['DESIGN_NICKNAME'] = design
+        # Update 'config' dictionary with the substitutions used to generate it.
+        for k, v in repls.items():
+            config[k] = v
 
     chip = siliconcompiler.Chip(design)
     chip.set('option', 'scpath', scdir)
