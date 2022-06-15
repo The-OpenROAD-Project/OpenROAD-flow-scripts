@@ -17,14 +17,20 @@ def main():
 
     # Parse values out of provided "config.mk" file
     config = parse_config_mk.parse(args['DESIGN_CONFIG'])
-    design = config.pop('DESIGN_NAME')
+    design = config['DESIGN_NAME']
+    if not 'DESIGN_NICKNAME' in config:
+        # Re-parse the variables with $DESIGN_NICKNAME=$DESIGN.
+        os.environ['DESIGN_NICKNAME'] = design
+        config = parse_config_mk.parse(args['DESIGN_CONFIG'])
+        config['DESIGN_NICKNAME'] = design
 
     chip = siliconcompiler.Chip(design)
     chip.set('option', 'scpath', scdir)
 
+    # Extract sources, and convert to absolute paths b/c sc commands run in a different build dir.
     if 'SDC_FILE' in config.keys():
-        sdc_in = config.pop('SDC_FILE')
-        chip.set('input', 'sdc', os.path.abspath(sdc_in))
+        sdc_in = os.path.abspath(config.pop('SDC_FILE'))
+        chip.set('input', 'sdc', sdc_in)
     if 'VERILOG_FILES' in config.keys():
         v_in_list = [os.path.abspath(vf) for vf in config.pop('VERILOG_FILES').split()]
         chip.set('input', 'verilog', v_in_list)
@@ -33,37 +39,66 @@ def main():
         config['VERILOG_INCLUDE_DIRS'] = ' '.join(v_inc_dirs)
 
     # Load PDK, flow, and libs.
-    chip.load_pdk('freepdk45_orflow')
-    chip.load_lib('nangate45_orflow')
-    chip.set('option', 'pdk', 'freepdk45')
-    chip.set('asic', 'logiclib', 'nangate45')
+    platform = config['PLATFORM']
+    if platform == 'nangate45':
+        chip.load_pdk('freepdk45_orflow')
+        chip.load_lib('nangate45_orflow')
+        chip.set('option', 'pdk', 'freepdk45')
+        chip.set('asic', 'logiclib', 'nangate45')
+        chip.load_flow('nangate45_orflow')
+        chip.set('option', 'flow', 'nangate45_orflow')
 
-    # Set project-specific values
-    chip.set('asic', 'stackup', '10M')
-    chip.set('asic', 'delaymodel', 'nldm')
-    chip.set('asic', 'minlayer', "m1")
-    chip.set('asic', 'maxlayer', "m10")
-    chip.set('asic', 'maxfanout', 64)
-    chip.set('asic', 'maxlength', 1000)
-    chip.set('asic', 'maxslew', 0.2e-9)
-    chip.set('asic', 'maxcap', 0.2e-12)
-    chip.set('asic', 'rclayer', 'clk', "m5")
-    chip.set('asic', 'rclayer', 'data',"m3")
-    chip.set('asic', 'hpinlayer', "m3")
-    chip.set('asic', 'vpinlayer', "m2")
-    chip.set('asic', 'density', 10)
-    chip.set('asic', 'aspectratio', 1)
-    chip.set('asic', 'coremargin', 1.9)
-    # Set timing corners.
-    corner = 'typical'
-    chip.set('constraint','worst','libcorner', corner)
-    chip.set('constraint','worst','pexcorner', corner)
-    chip.set('constraint','worst','mode', 'func')
-    chip.set('constraint','worst','check', ['setup','hold'])
+        # Set project-specific values
+        chip.set('asic', 'stackup', '10M')
+        chip.set('asic', 'delaymodel', 'nldm')
+        chip.set('asic', 'minlayer', "m1")
+        chip.set('asic', 'maxlayer', "m10")
+        chip.set('asic', 'maxfanout', 64)
+        chip.set('asic', 'maxlength', 1000)
+        chip.set('asic', 'maxslew', 0.2e-9)
+        chip.set('asic', 'maxcap', 0.2e-12)
+        chip.set('asic', 'rclayer', 'clk', "m5")
+        chip.set('asic', 'rclayer', 'data',"m3")
+        chip.set('asic', 'hpinlayer', "m3")
+        chip.set('asic', 'vpinlayer', "m2")
+        chip.set('asic', 'density', 10)
+        chip.set('asic', 'aspectratio', 1)
+        chip.set('asic', 'coremargin', 1.9)
+        # Set timing corners.
+        corner = 'typical'
+        chip.set('constraint','worst','libcorner', corner)
+        chip.set('constraint','worst','pexcorner', corner)
+        chip.set('constraint','worst','mode', 'func')
+        chip.set('constraint','worst','check', ['setup','hold'])
+    elif platform == 'sky130hd':
+        chip.load_pdk('sky130hd_orflow')
+        chip.load_lib('sky130hd_orflow')
+        chip.set('option', 'pdk', 'skywater130')
+        chip.set('asic', 'logiclib', 'sky130hd')
+        chip.load_flow('sky130hd_orflow')
+        chip.set('option', 'flow', 'sky130hd_orflow')
 
-    # Load the flow.
-    chip.load_flow('orflow')
-    chip.set('option', 'flow', 'orflow')
+        chip.set('asic', 'logiclib', 'sky130hd')
+        chip.set('asic', 'delaymodel', 'nldm')
+        chip.set('asic', 'stackup', '5M1LI')
+        chip.set('asic', 'minlayer', "m1")
+        chip.set('asic', 'maxlayer', "m5")
+        chip.set('asic', 'maxfanout', 5) # TODO: fix this
+        chip.set('asic', 'maxlength', 21000)
+        chip.set('asic', 'maxslew', 1.5e-9)
+        chip.set('asic', 'maxcap', .1532e-12)
+        chip.set('asic', 'rclayer', 'clk', 'm5')
+        chip.set('asic', 'rclayer', 'data', 'm3')
+        chip.set('asic', 'hpinlayer', "m3")
+        chip.set('asic', 'vpinlayer', "m2")
+        chip.set('asic', 'density', 10)
+        chip.set('asic', 'aspectratio', 1)
+        chip.set('asic', 'coremargin', 62.56)
+        corner = 'typical'
+        chip.set('constraint', 'worst', 'libcorner', corner)
+        chip.set('constraint', 'worst', 'pexcorner', corner)
+        chip.set('constraint', 'worst', 'mode', 'func')
+        chip.add('constraint', 'worst', 'check', ['setup','hold'])
 
     print(config)
 
@@ -113,14 +148,14 @@ def main():
     shutil.copy(os.path.join(jdir, '5_route.sdc'), os.path.join(jdir, '6_1_fill.sdc'))
 
     # Step 6: Export
-    process = chip.get('asic', 'pdk')
+    process = chip.get('option', 'pdk')
     # KLayout tech LEF needs modifying. TODO: Also add equivalent of $ADDITIONAL_LEFS (macros)
     stackup = chip.get('pdk', process, 'stackup')[0]
     libtype = '10t' # TODO: Where to get this in schema?
     tool = 'klayout'
     base_lyt = chip.get('pdk', process, 'layermap', tool, 'def', 'gds', stackup)[0]
     base_lyp = chip.get('pdk', process, 'display', tool, stackup)[0]
-    tlef = chip.get('library', 'nangate45', 'model', 'layout', 'lef', stackup)[0]
+    tlef = chip.get('library', platform, 'model', 'layout', 'lef', stackup)[0]
     shutil.copy(base_lyp, os.path.join(jdir, 'klayout.lyp'))
     with open(base_lyt, 'r') as rf:
         with open(os.path.join(jdir, 'klayout.lyt'), 'w') as wf:
