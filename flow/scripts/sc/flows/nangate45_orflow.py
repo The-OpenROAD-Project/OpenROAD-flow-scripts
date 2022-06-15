@@ -8,7 +8,7 @@ def make_docs():
     # TODO: Docs
 
     chip = siliconcompiler.Chip('<topmodule>')
-    chip.set('option', 'flow', 'orflow')
+    chip.set('option', 'flow', 'nangate45_orflow')
     setup(chip)
 
     return chip
@@ -16,7 +16,7 @@ def make_docs():
 ###########################################################################
 # Flowgraph Setup
 ############################################################################
-def setup(chip, flowname='orflow'):
+def setup(chip, flowname='nangate45_orflow'):
     '''
     Setup function for 'orflow' implementation of the OpenROAD-flow-scripts build process.
 
@@ -36,7 +36,7 @@ def setup(chip, flowname='orflow'):
     # Setup empty 'import' stage with a single-node OpenROAD task to run 'run_all.tcl'
     # TODO: Use the 'import' step to parse config.mk file env vars.
     # TODO: Split up individual TCL scripts into sc tasks?
-    flow = 'orflow'
+    flow = 'nangate45_orflow'
     flowpipe = {
         'import': ['nop', ''],
         'syn': ['openroad', 'yosys.tcl'], # (synthesis is done via OpenROAD TCL that calls yosys)

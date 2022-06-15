@@ -40,8 +40,8 @@ def main():
     chip.set('constraint','worst','check', ['setup','hold'])
 
     # Load the flow.
-    chip.load_flow('orflow')
-    chip.set('option', 'flow', 'orflow')
+    chip.load_flow('nangate45_orflow')
+    chip.set('option', 'flow', 'nangate45_orflow')
 
     # Set 'run_all.tcl' as the script to run in the OpenROAD step.
     #chip.set('tool', 'openroad', 'script', 'orflow', '0',
