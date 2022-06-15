@@ -142,6 +142,7 @@ endif
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
 include $(PLATFORM_DIR)/config.mk
 
+export GALLERY_REPORT ?= 0
 # Enables hierarchical yosys
 export SYNTH_HIERARCHICAL ?= 0
 export SYNTH_STOP_MODULE_SCRIPT = $(OBJECTS_DIR)/mark_hier_stop_modules.tcl
@@ -451,7 +452,7 @@ $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
 
 clean_floorplan:
-	rm -f $(RESULTS_DIR)/2_*floorplan*.odb $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/2_floorplan.v
+	rm -f $(RESULTS_DIR)/2_*floorplan*.odb $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_*floorplan.def
 	rm -f $(REPORTS_DIR)/2_*
 	rm -f $(LOG_DIR)/2_*
 
@@ -539,7 +540,7 @@ $(RESULTS_DIR)/4_cts.odb: $(RESULTS_DIR)/4_2_cts_fillcell.odb
 	cp $< $@
 
 clean_cts:
-	rm -rf $(RESULTS_DIR)/4_*cts*.odb $(RESULTS_DIR)/4_cts.sdc $(RESULTS_DIR)/4_cts.v
+	rm -rf $(RESULTS_DIR)/4_*cts*.odb $(RESULTS_DIR)/4_cts.sdc $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_*cts.def
 	rm -f  $(REPORTS_DIR)/4_*
 	rm -f  $(LOG_DIR)/4_*
 
