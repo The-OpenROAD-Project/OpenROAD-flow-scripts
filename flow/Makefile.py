@@ -51,6 +51,16 @@ def main():
     if 'VERILOG_INCLUDE_DIRS' in config.keys():
         v_inc_dirs = [os.path.abspath(vf) for vf in config['VERILOG_INCLUDE_DIRS'].split()]
         config['VERILOG_INCLUDE_DIRS'] = ' '.join(v_inc_dirs)
+    # TODO: Set lef/libs in schema
+    if 'ADDITIONAL_LEFS' in config.keys():
+        lef_in_list = [os.path.abspath(lf) for lf in config['ADDITIONAL_LEFS'].split()]
+        config['ADDITIONAL_LEFS'] = ' '.join(lef_in_list)
+    if 'ADDITIONAL_LIBS' in config.keys():
+        lib_in_list = [os.path.abspath(lf) for lf in config['ADDITIONAL_LIBS'].split()]
+        config['ADDITIONAL_LIBS'] = ' '.join(lib_in_list)
+    if 'ADDITIONAL_GDS_FILES' in config.keys():
+        gds_in_list = [os.path.abspath(gf) for gf in config['ADDITIONAL_GDS_FILES'].split()]
+        config['ADDITIONAL_GDS_FILES'] = ' '.join(gds_in_list)
 
     # Load PDK, flow, and libs.
     platform = config['PLATFORM']
@@ -74,6 +84,9 @@ def main():
     # For testing
     # TODO: put in run logic
     #chip.write_manifest(f'{design}.json')
+    jdir = os.path.join(chip.get('option', 'builddir'),
+                        chip.get('design'),
+                        chip.get('option', 'jobname'))
 
     # Step 1: Import / Synthesis
     # TODO: Is there a better way to copy/rename files mid-flow?
@@ -84,12 +97,9 @@ def main():
     shutil.copy(chip.get('input', 'sdc')[0], os.path.join(jdir, '1_synth.sdc'))
 
     # ORFS pre-processing steps (Done after 'import' to ensure dir structure exists)
-    jdir = os.path.join(chip.get('option', 'builddir'),
-                        chip.get('design'),
-                        chip.get('option', 'jobname'))
     process = chip.get('option', 'pdk')
     stackup = chip.get('pdk', process, 'stackup')[0]
-    # KLayout tech LEF needs modifying. TODO: Also add equivalent of $ADDITIONAL_LEFS (macros)
+    # KLayout tech LEF needs modifying.
     tool = 'klayout'
     base_lyt = chip.get('pdk', process, 'layermap', tool, 'def', 'gds', stackup)[0]
     base_lyp = chip.get('pdk', process, 'display', tool, stackup)[0]
@@ -102,10 +112,25 @@ def main():
                     wf.write(l)
                 else:
                     wf.write(f'   <lef-files>{tlef}</lef-files>\n')
+                    if 'ADDITIONAL_LEFS' in config.keys():
+                        for lef in config['ADDITIONAL_LEFS']:
+                            wf.write(f'   <lef-files>{lef}</lef-files>\n')
 
     # Step 2: Floorplan
     chip.set('option', 'steplist',
-             ['init_floorplan', 'io_place_rand', 'tdms_place', 'macro_place', 'tapcell', 'pdn'])
+             ['init_floorplan', 'io_place_rand'])
+    chip.run()
+
+    # 'tdms_place' step is replaced by later use of a macro place .cfg file, only if one is defined.
+    if not 'MACRO_PLACEMENT' in config.keys():
+        chip.set('option', 'steplist', ['tdms_place'])
+        chip.run()
+    else:
+        shutil.copy(os.path.join(jdir, '2_2_floorplan_io.odb'),
+                    os.path.join(jdir, '2_3_floorplan_tdms.odb'))
+
+    chip.set('option', 'steplist',
+             ['macro_place', 'tapcell', 'pdn'])
     chip.run()
     shutil.copy(os.path.join(jdir, '2_6_floorplan_pdn.odb'), os.path.join(jdir, '2_floorplan.odb'))
 
