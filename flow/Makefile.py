@@ -55,64 +55,9 @@ def main():
     # Load PDK, flow, and libs.
     platform = config['PLATFORM']
     if platform == 'nangate45':
-        chip.load_pdk('freepdk45_orflow')
-        chip.load_lib('nangate45_orflow')
-        chip.set('option', 'pdk', 'freepdk45')
-        chip.set('asic', 'logiclib', 'nangate45')
-        chip.load_flow('nangate45_orflow')
-        chip.set('option', 'flow', 'nangate45_orflow')
-
-        # Set project-specific values
-        chip.set('asic', 'stackup', '10M')
-        chip.set('asic', 'delaymodel', 'nldm')
-        chip.set('asic', 'minlayer', "m1")
-        chip.set('asic', 'maxlayer', "m10")
-        chip.set('asic', 'maxfanout', 64)
-        chip.set('asic', 'maxlength', 1000)
-        chip.set('asic', 'maxslew', 0.2e-9)
-        chip.set('asic', 'maxcap', 0.2e-12)
-        chip.set('asic', 'rclayer', 'clk', "m5")
-        chip.set('asic', 'rclayer', 'data',"m3")
-        chip.set('asic', 'hpinlayer', "m3")
-        chip.set('asic', 'vpinlayer', "m2")
-        chip.set('asic', 'density', 10)
-        chip.set('asic', 'aspectratio', 1)
-        chip.set('asic', 'coremargin', 1.9)
-        # Set timing corners.
-        corner = 'typical'
-        chip.set('constraint','worst','libcorner', corner)
-        chip.set('constraint','worst','pexcorner', corner)
-        chip.set('constraint','worst','mode', 'func')
-        chip.set('constraint','worst','check', ['setup','hold'])
+        chip.load_target('nangate45_orflow')
     elif platform == 'sky130hd':
-        chip.load_pdk('sky130hd_orflow')
-        chip.load_lib('sky130hd_orflow')
-        chip.set('option', 'pdk', 'skywater130')
-        chip.set('asic', 'logiclib', 'sky130hd')
-        chip.load_flow('sky130hd_orflow')
-        chip.set('option', 'flow', 'sky130hd_orflow')
-
-        chip.set('asic', 'logiclib', 'sky130hd')
-        chip.set('asic', 'delaymodel', 'nldm')
-        chip.set('asic', 'stackup', '5M1LI')
-        chip.set('asic', 'minlayer', "m1")
-        chip.set('asic', 'maxlayer', "m5")
-        chip.set('asic', 'maxfanout', 5) # TODO: fix this
-        chip.set('asic', 'maxlength', 21000)
-        chip.set('asic', 'maxslew', 1.5e-9)
-        chip.set('asic', 'maxcap', .1532e-12)
-        chip.set('asic', 'rclayer', 'clk', 'm5')
-        chip.set('asic', 'rclayer', 'data', 'm3')
-        chip.set('asic', 'hpinlayer', "m3")
-        chip.set('asic', 'vpinlayer', "m2")
-        chip.set('asic', 'density', 10)
-        chip.set('asic', 'aspectratio', 1)
-        chip.set('asic', 'coremargin', 62.56)
-        corner = 'typical'
-        chip.set('constraint', 'worst', 'libcorner', corner)
-        chip.set('constraint', 'worst', 'pexcorner', corner)
-        chip.set('constraint', 'worst', 'mode', 'func')
-        chip.add('constraint', 'worst', 'check', ['setup','hold'])
+        chip.load_target('sky130hd_orflow')
 
     print(config)
 

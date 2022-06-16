@@ -1,76 +1,54 @@
 import os
 import siliconcompiler
-import re
 
 openroad_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
 
 def make_docs():
     # TODO: Docs
-
-    chip = siliconcompiler.Chip('<topmodule>')
-    chip.set('option', 'flow', 'nangate45_orflow')
+    chip = siliconcompiler.Chip('<design>')
     setup(chip)
-
     return chip
 
-###########################################################################
-# Flowgraph Setup
-############################################################################
-def setup(chip, flowname='nangate45_orflow'):
-    '''
-    Setup function for 'orflow' implementation of the OpenROAD-flow-scripts build process.
+####################################################
+# PDK and Flow Setup
+####################################################
+def setup(chip):
+    # Set the target name.
+    chip.set('option', 'target', 'nangate45_orflow')
 
-    Args:
-        chip (object): SC Chip object
+    # Load PDK, flow, and libs.
+    chip.load_pdk('freepdk45_orflow')
+    chip.load_flow('orflow')
+    chip.load_lib('nangate45_orflow')
 
-    TODO: Fully support all environment variables used by the scripts
-    '''
+    # Set Chip object to use the loaded flow, pdk, lib.
+    chip.set('option', 'flow', 'orflow')
+    chip.set('option', 'pdk', 'freepdk45')
+    chip.set('asic', 'logiclib', 'nangate45')
 
-    # Set mandatory mode
-    chip.set('option', 'mode', 'asic')
+    # Set project-specific values
+    chip.set('asic', 'stackup', '10M')
+    chip.set('asic', 'delaymodel', 'nldm')
+    chip.set('asic', 'minlayer', "m1")
+    chip.set('asic', 'maxlayer', "m10")
+    chip.set('asic', 'maxfanout', 64)
+    chip.set('asic', 'maxlength', 1000)
+    chip.set('asic', 'maxslew', 0.2e-9)
+    chip.set('asic', 'maxcap', 0.2e-12)
+    chip.set('asic', 'rclayer', 'clk', "m5")
+    chip.set('asic', 'rclayer', 'data',"m3")
+    chip.set('asic', 'hpinlayer', "m3")
+    chip.set('asic', 'vpinlayer', "m2")
+    chip.set('asic', 'density', 10)
+    chip.set('asic', 'aspectratio', 1)
+    chip.set('asic', 'coremargin', 1.9)
+    # Set timing corners.
+    corner = 'typical'
+    chip.set('constraint','worst','libcorner', corner)
+    chip.set('constraint','worst','pexcorner', corner)
+    chip.set('constraint','worst','mode', 'func')
+    chip.set('constraint','worst','check', ['setup','hold'])
 
-    # Set showtools for sc-show
-    chip.set('option', 'showtool', 'def', 'klayout')
-    chip.set('option', 'showtool', 'gds', 'klayout')
-
-    # Setup empty 'import' stage with a single-node OpenROAD task to run 'run_all.tcl'
-    # TODO: Use the 'import' step to parse config.mk file env vars.
-    # TODO: Split up individual TCL scripts into sc tasks?
-    flow = 'nangate45_orflow'
-    flowpipe = {
-        'import': ['nop', ''],
-        'syn': ['openroad', 'yosys.tcl'], # (synthesis is done via OpenROAD TCL that calls yosys)
-        'init_floorplan': ['openroad', 'floorplan.tcl'],
-        'io_place_rand': ['openroad', 'io_placement_random.tcl'],
-        'tdms_place': ['openroad', 'tdms_place.tcl'],
-        'macro_place': ['openroad', 'macro_place.tcl'],
-        'tapcell': ['openroad', 'tapcell.tcl'],
-        'pdn': ['openroad', 'pdn.tcl'],
-        'gp_skip_io': ['openroad', 'global_place_skip_io.tcl'],
-        'io_place': ['openroad', 'io_placement.tcl'],
-        'global_place': ['openroad', 'global_place.tcl'],
-        'resize': ['openroad', 'resize.tcl'],
-        'detail_place': ['openroad', 'detail_place.tcl'],
-        'clock_tree_syn': ['openroad', 'cts.tcl'],
-        'fillcells': ['openroad', 'fillcell.tcl'],
-        'global_route': ['openroad', 'global_route.tcl'],
-        'detail_route': ['openroad', 'detail_route.tcl'],
-        'final_report': ['openroad', 'final_report.tcl'],
-        # Like yosys, KLayout GDS-streaming script is run through an OpenROAD tcl script
-        'export': ['openroad', 'klayout.tcl'],
-    }
-    last_step = ''
-    for k,v in flowpipe.items():
-        chip.node(flow, k, v[0])
-        if last_step:
-            chip.edge(flow, last_step, k)
-        if v[1]:
-            chip.set('tool', v[0], 'script', k, '0',
-                     os.path.abspath(os.path.join(openroad_dir, 'flow', 'scripts', v[1])))
-            chip.set('tool', v[0], 'refdir', k, '0', os.path.join('tools', v[0]))
-        last_step = k
-
-    # TODO: Place these in a target file for nangate45/orfs, if it's too verbose/PDK-specific?
     # TODO: Add an 'objects' directory in the task dirs? Use 'outputs/' for now.
     env_vars = {
         # Defaults
@@ -140,10 +118,11 @@ def setup(chip, flowname='nangate45_orflow'):
         'VERILOG_FILES': ' '.join(chip.get('input', 'verilog')),
         'SDC_FILE': ' '.join(chip.get('input', 'sdc')),
     }
-    for k, v in flowpipe.items():
+    for k in chip.getkeys('flowgraph', 'orflow'):
         for key, val in env_vars.items():
             chip.set('tool', 'openroad', 'env', k, '0', key, val)
 
-    # Set default goal
-    for step in chip.getkeys('flowgraph', flow):
-        chip.set('flowgraph', flow, step, '0', 'goal', 'errors', 0)
+
+#########################
+if __name__ == "__main__":
+    chip = make_docs()
