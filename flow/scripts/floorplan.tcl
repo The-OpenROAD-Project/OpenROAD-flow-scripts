@@ -134,6 +134,9 @@ if { [info exists ::env(POST_FLOORPLAN_TCL)] } {
 }
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
+  if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
+      write_def $::env(RESULTS_DIR)/2_1_floorplan.def
+  }
   write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
   write_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
 }
