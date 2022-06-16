@@ -75,7 +75,15 @@ def main():
     # TODO: put in run logic
     #chip.write_manifest(f'{design}.json')
 
-    # ORFS pre-processing steps
+    # Step 1: Import / Synthesis
+    # TODO: Is there a better way to copy/rename files mid-flow?
+    chip.set('option', 'steplist',
+             ['import', 'syn'])
+    chip.run()
+    shutil.copy(os.path.join(jdir, '1_1_yosys.v'), os.path.join(jdir, '1_synth.v'))
+    shutil.copy(chip.get('input', 'sdc')[0], os.path.join(jdir, '1_synth.sdc'))
+
+    # ORFS pre-processing steps (Done after 'import' to ensure dir structure exists)
     jdir = os.path.join(chip.get('option', 'builddir'),
                         chip.get('design'),
                         chip.get('option', 'jobname'))
@@ -94,14 +102,6 @@ def main():
                     wf.write(l)
                 else:
                     wf.write(f'   <lef-files>{tlef}</lef-files>\n')
-
-    # Step 1: Import / Synthesis
-    # TODO: Is there a better way to copy/rename files mid-flow?
-    chip.set('option', 'steplist',
-             ['import', 'syn'])
-    chip.run()
-    shutil.copy(os.path.join(jdir, '1_1_yosys.v'), os.path.join(jdir, '1_synth.v'))
-    shutil.copy(chip.get('input', 'sdc')[0], os.path.join(jdir, '1_synth.sdc'))
 
     # Step 2: Floorplan
     chip.set('option', 'steplist',
