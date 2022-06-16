@@ -75,42 +75,13 @@ def main():
     # TODO: put in run logic
     #chip.write_manifest(f'{design}.json')
 
-    # Step 1: Import / Synthesis
-    # TODO: Is there a better way to copy/rename files mid-flow?
-    jdir = os.path.join(chip.get('option', 'builddir'), chip.get('design'), chip.get('option', 'jobname'))
-    chip.set('option', 'steplist', ['import', 'syn'])
-    chip.run()
-    shutil.copy(os.path.join(jdir, '1_1_yosys.v'), os.path.join(jdir, '1_synth.v'))
-    shutil.copy(chip.get('input', 'sdc')[0], os.path.join(jdir, '1_synth.sdc'))
-
-    # Step 2: Floorplan
-    chip.set('option', 'steplist', ['init_floorplan', 'io_place_rand', 'tdms_place', 'macro_place', 'tapcell', 'pdn'])
-    chip.run()
-    shutil.copy(os.path.join(jdir, '2_6_floorplan_pdn.odb'), os.path.join(jdir, '2_floorplan.odb'))
-
-    # Step 3: Placement
-    chip.set('option', 'steplist', ['gp_skip_io', 'io_place', 'global_place', 'resize', 'detail_place'])
-    chip.run()
-    shutil.copy(os.path.join(jdir, '3_5_place_dp.odb'), os.path.join(jdir, '3_place.odb'))
-    shutil.copy(os.path.join(jdir, '2_floorplan.sdc'), os.path.join(jdir, '3_place.sdc'))
-
-    # Step 4: CTS / Fill
-    chip.set('option', 'steplist', ['clock_tree_syn', 'fillcells'])
-    chip.run()
-    shutil.copy(os.path.join(jdir, '4_2_cts_fillcell.odb'), os.path.join(jdir, '4_cts.odb'))
-    shutil.copy(os.path.join(jdir, '4_cts.sdc'), os.path.join(jdir, '5_route.sdc'))
-
-    # Step 5: Route
-    chip.set('option', 'steplist', ['global_route', 'detail_route'])
-    chip.run()
-    shutil.copy(os.path.join(jdir, '5_route.odb'), os.path.join(jdir, '6_1_fill.odb'))
-    shutil.copy(os.path.join(jdir, '5_route.sdc'), os.path.join(jdir, '6_1_fill.sdc'))
-
-    # Step 6: Export
+    # ORFS pre-processing steps
+    jdir = os.path.join(chip.get('option', 'builddir'),
+                        chip.get('design'),
+                        chip.get('option', 'jobname'))
     process = chip.get('option', 'pdk')
-    # KLayout tech LEF needs modifying. TODO: Also add equivalent of $ADDITIONAL_LEFS (macros)
     stackup = chip.get('pdk', process, 'stackup')[0]
-    libtype = '10t' # TODO: Where to get this in schema?
+    # KLayout tech LEF needs modifying. TODO: Also add equivalent of $ADDITIONAL_LEFS (macros)
     tool = 'klayout'
     base_lyt = chip.get('pdk', process, 'layermap', tool, 'def', 'gds', stackup)[0]
     base_lyp = chip.get('pdk', process, 'display', tool, stackup)[0]
@@ -123,7 +94,45 @@ def main():
                     wf.write(l)
                 else:
                     wf.write(f'   <lef-files>{tlef}</lef-files>\n')
-    chip.set('option', 'steplist', ['final_report', 'export'])
+
+    # Step 1: Import / Synthesis
+    # TODO: Is there a better way to copy/rename files mid-flow?
+    chip.set('option', 'steplist',
+             ['import', 'syn'])
+    chip.run()
+    shutil.copy(os.path.join(jdir, '1_1_yosys.v'), os.path.join(jdir, '1_synth.v'))
+    shutil.copy(chip.get('input', 'sdc')[0], os.path.join(jdir, '1_synth.sdc'))
+
+    # Step 2: Floorplan
+    chip.set('option', 'steplist',
+             ['init_floorplan', 'io_place_rand', 'tdms_place', 'macro_place', 'tapcell', 'pdn'])
+    chip.run()
+    shutil.copy(os.path.join(jdir, '2_6_floorplan_pdn.odb'), os.path.join(jdir, '2_floorplan.odb'))
+
+    # Step 3: Placement
+    chip.set('option', 'steplist',
+             ['gp_skip_io', 'io_place', 'global_place', 'resize', 'detail_place'])
+    chip.run()
+    shutil.copy(os.path.join(jdir, '3_5_place_dp.odb'), os.path.join(jdir, '3_place.odb'))
+    shutil.copy(os.path.join(jdir, '2_floorplan.sdc'), os.path.join(jdir, '3_place.sdc'))
+
+    # Step 4: CTS / Fill
+    chip.set('option', 'steplist',
+             ['clock_tree_syn', 'fillcells'])
+    chip.run()
+    shutil.copy(os.path.join(jdir, '4_2_cts_fillcell.odb'), os.path.join(jdir, '4_cts.odb'))
+    shutil.copy(os.path.join(jdir, '4_cts.sdc'), os.path.join(jdir, '5_route.sdc'))
+
+    # Step 5: Route
+    chip.set('option', 'steplist',
+             ['global_route', 'detail_route'])
+    chip.run()
+    shutil.copy(os.path.join(jdir, '5_route.odb'), os.path.join(jdir, '6_1_fill.odb'))
+    shutil.copy(os.path.join(jdir, '5_route.sdc'), os.path.join(jdir, '6_1_fill.sdc'))
+
+    # Step 6: Export
+    chip.set('option', 'steplist',
+             ['final_report', 'export'])
     chip.run()
 
     chip.summary()                                # print results summary
