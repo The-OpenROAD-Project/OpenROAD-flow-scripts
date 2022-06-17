@@ -88,13 +88,25 @@ def main():
                         chip.get('design'),
                         chip.get('option', 'jobname'))
 
+    WORKDIR_NAME = 'or_work'
+    flow = chip.get('option', 'flow')
+    for step in chip.getkeys('flowgraph', flow):
+        for index in chip.getkeys('flowgraph', flow, step):
+            tool = chip.get('flowgraph', flow, step, index, 'tool')
+            if tool != 'openroad':
+                continue
+            taskdir = chip._getworkdir(step=step)
+            chip.set('tool', 'openroad', 'env', step, '0', 'RESULTS_DIR', os.path.join(taskdir, WORKDIR_NAME))
+            # TODO: set up objects directory
+
     # Step 1: Import / Synthesis
     # TODO: Is there a better way to copy/rename files mid-flow?
     chip.set('option', 'steplist',
-             ['import', 'syn'])
+             ['import', 'or_yosys'])
     chip.run()
-    shutil.copy(os.path.join(jdir, '1_1_yosys.v'), os.path.join(jdir, '1_synth.v'))
-    shutil.copy(chip.get('input', 'sdc')[0], os.path.join(jdir, '1_synth.sdc'))
+    outdir = os.path.join(chip._getworkdir(step='or_yosys'), 'outputs')
+    shutil.copy(os.path.join(outdir, '1_1_yosys.v'), os.path.join(outdir, '1_synth.v'))
+    shutil.copy(chip.get('input', 'sdc')[0], os.path.join(outdir, '1_synth.sdc'))
 
     # ORFS pre-processing steps (Done after 'import' to ensure dir structure exists)
     process = chip.get('option', 'pdk')
@@ -118,46 +130,59 @@ def main():
 
     # Step 2: Floorplan
     chip.set('option', 'steplist',
-             ['init_floorplan', 'io_place_rand'])
+             ['or_floorplan', 'or_io_placement_random'])
     chip.run()
 
     # 'tdms_place' step is replaced by later use of a macro place .cfg file, only if one is defined.
     if not 'MACRO_PLACEMENT' in config.keys():
-        chip.set('option', 'steplist', ['tdms_place'])
+        # TODO: this logic needs to go in the flow itself, otherwise SC throws an error:
+        # "or_macro_place0 relies on or_tdms_place0, but this task has not been run and is not in the current steplist."
+        chip.set('option', 'steplist', ['or_tdms_place'])
         chip.run()
     else:
         shutil.copy(os.path.join(jdir, '2_2_floorplan_io.odb'),
                     os.path.join(jdir, '2_3_floorplan_tdms.odb'))
 
     chip.set('option', 'steplist',
-             ['macro_place', 'tapcell', 'pdn'])
+             ['or_macro_place', 'or_tapcell', 'or_pdn'])
     chip.run()
-    shutil.copy(os.path.join(jdir, '2_6_floorplan_pdn.odb'), os.path.join(jdir, '2_floorplan.odb'))
+    outdir = os.path.join(chip._getworkdir(step='or_pdn'), 'outputs')
+    shutil.copy(os.path.join(outdir, '2_6_floorplan_pdn.odb'), os.path.join(outdir, '2_floorplan.odb'))
 
     # Step 3: Placement
     chip.set('option', 'steplist',
-             ['gp_skip_io', 'io_place', 'global_place', 'resize', 'detail_place'])
+             ['or_global_place_skip_io', 'or_io_placement', 'or_global_place', 'or_resize', 'or_detail_place'])
     chip.run()
-    shutil.copy(os.path.join(jdir, '3_5_place_dp.odb'), os.path.join(jdir, '3_place.odb'))
-    shutil.copy(os.path.join(jdir, '2_floorplan.sdc'), os.path.join(jdir, '3_place.sdc'))
+    outdir = os.path.join(chip._getworkdir(step='or_detail_place'), 'outputs')
+    shutil.copy(os.path.join(outdir, '3_5_place_dp.odb'), os.path.join(outdir, '3_place.odb'))
+
+    fp_sdc_dir = os.path.join(chip._getworkdir(step='or_floorplan'), 'outputs')
+    place_sdc_dir = os.path.join(chip._getworkdir(step='or_global_place_skip_io'), 'outputs')
+    shutil.copy(os.path.join(fp_sdc_dir, '2_floorplan.sdc'), os.path.join(place_sdc_dir, '3_place.sdc'))
 
     # Step 4: CTS / Fill
     chip.set('option', 'steplist',
-             ['clock_tree_syn', 'fillcells'])
+             ['or_cts', 'or_fillcell'])
     chip.run()
-    shutil.copy(os.path.join(jdir, '4_2_cts_fillcell.odb'), os.path.join(jdir, '4_cts.odb'))
-    shutil.copy(os.path.join(jdir, '4_cts.sdc'), os.path.join(jdir, '5_route.sdc'))
+    outdir = os.path.join(chip._getworkdir(step='or_fillcell'), 'outputs')
+    shutil.copy(os.path.join(outdir, '4_2_cts_fillcell.odb'), os.path.join(outdir, '4_cts.odb'))
 
     # Step 5: Route
     chip.set('option', 'steplist',
-             ['global_route', 'detail_route'])
+             ['or_global_route', 'or_detail_route'])
     chip.run()
-    shutil.copy(os.path.join(jdir, '5_route.odb'), os.path.join(jdir, '6_1_fill.odb'))
-    shutil.copy(os.path.join(jdir, '5_route.sdc'), os.path.join(jdir, '6_1_fill.sdc'))
+    outdir = os.path.join(chip._getworkdir(step='or_detail_route'), 'outputs')
+    shutil.copy(os.path.join(outdir, '5_route.odb'), os.path.join(outdir, '6_1_fill.odb'))
+
+    cts_sdc_dir = os.path.join(chip._getworkdir(step='or_cts'), 'outputs')
+    route_sdc_dir = os.path.join(chip._getworkdir(step='or_global_route'), 'outputs')
+    finish_sdc_dir = os.path.join(chip._getworkdir(step='or_detail_route'), 'outputs')
+    shutil.copy(os.path.join(cts_sdc_dir, '4_cts.sdc'), os.path.join(route_sdc_dir, '5_route.sdc'))
+    shutil.copy(os.path.join(route_sdc_dir, '5_route.sdc'), os.path.join(finish_sdc_dir, '6_1_fill.sdc'))
 
     # Step 6: Export
     chip.set('option', 'steplist',
-             ['final_report', 'export'])
+             ['or_final_report', 'export'])
     chip.run()
 
     chip.summary()                                # print results summary
