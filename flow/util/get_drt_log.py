@@ -35,7 +35,7 @@ benchmark_list = ['ispd18_test1',
                   'ispd19_test8', 
                   'ispd19_test9' ]
 benchmark_list = ['ispd19_test10']
-benchmark_list = ['sky130hd_ibex']
+benchmark_list = ['sky130hd_ibex_base']
 
 ### worker from worker log
 def make_worker(curr_iter, logfile):
@@ -144,7 +144,10 @@ def build_gif(basename):
     writer.append_data(image)
 
 for benchmark in benchmark_list:  
-  logfile = './%s_dr.log'%benchmark
+  platform = benchmark.split('_')[0]
+  design = benchmark.split('_')[1]
+  variant = benchmark.split('_')[2]
+  logfile = './logs/%s/%s/%s/5_2_TritonRoute.log'%(platform, design, variant)
   outlog = 'drt_figs/%s/%s.log'%(benchmark,benchmark)
   if not os.path.exists('drt_figs'):
     os.makedirs('drt_figs')
@@ -166,7 +169,7 @@ for benchmark in benchmark_list:
   data_worker_num = []
   data_zerotiles_num = []
   data_runtime = []
-  for rpt_path in glob.glob('./reports/%s/5_route_drc.rpt-*'%(benchmark)):
+  for rpt_path in glob.glob('./reports/%s/%s/%s/5_route_drc.rpt-*'%(platform,design,variant)):
     rpt_name = os.path.basename(rpt_path)
     iter_num = re.search('-(.*).rpt', rpt_name).group(1)
     #iter_num_list.append(iter_num)
