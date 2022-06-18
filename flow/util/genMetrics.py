@@ -83,7 +83,7 @@ def parse_args():
 # of the pattern.
 
 def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False,
-                       occurrence=-1, defaultNotFound='N/A', t=str,
+                       occurrence=-1, defaultNotFound='N/A', roundPrecision=2,
                        required=True):
     if jsonTag in jsonFile:
         print('[WARN] Overwriting Tag', jsonTag)
@@ -110,7 +110,7 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False,
                 value = parsedMetrics[occurrence]
                 value = value.strip()
                 try:
-                    jsonFile[jsonTag] = float(value)
+                    jsonFile[jsonTag] = round(float(value), roundPrecision)
                 except BaseException:
                     jsonFile[jsonTag] = str(value)
         else:
@@ -361,10 +361,12 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         '^Design area .* (\S+)% utilization'),
                        logPath + '/2_1_floorplan.log')
 
-    extractTagFromFile('floorplan__design__io',
-                       metrics_dict,
-                       'Number of I/O +(\d+)',
-                       logPath + '/3_2_place_iop.log')
+    if os.environ.get('DESIGN_TYPE') is None \
+            or 'CHIP' not in os.environ.get('DESIGN_TYPE'):
+        extractTagFromFile('floorplan__design__io',
+                           metrics_dict,
+                           'Number of I/O +(\d+)',
+                           logPath + '/3_2_place_iop.log')
 
     extractTagFromFile('floorplan__design__instance__count__macros',
                        metrics_dict,
@@ -380,108 +382,126 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     extractTagFromFile('globalplace__route__wirelength__estimated',
                        metrics_dict,
                        'Total wirelength: (\S+)',
-                       logPath + '/3_1_place_gp.log')
+                       logPath + '/3_3_place_gp.log')
 
     extractTagFromFile('globalplace__timing__setup__tns',
                        metrics_dict,
                        baseRegEx.format('global place report_tns',
                                         'tns (\S+)'),
-                       logPath + '/3_1_place_gp.log')
+                       logPath + '/3_3_place_gp.log')
 
     extractTagFromFile('globalplace__timing__setup__ws',
                        metrics_dict,
                        baseRegEx.format('global place report_worst_slack',
                                         'worst slack (\S+)'),
-                       logPath + '/3_1_place_gp.log')
+                       logPath + '/3_3_place_gp.log')
 
-    extractGnuTime('globalplace', metrics_dict, logPath + '/3_1_place_gp.log')
+    extractGnuTime('globalplace', metrics_dict, logPath + '/3_3_place_gp.log')
 
     extractTagFromFile('placeopt__timing__setup__tns',
                        metrics_dict,
                        baseRegEx.format('resizer report_tns', 'tns (\S+)'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__timing__setup__ws',
                        metrics_dict,
                        baseRegEx.format('resizer report_worst_slack',
                                         'worst slack (\S+)'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__design__instance__area',
                        metrics_dict,
                        baseRegEx.format('resizer report_design_area',
                                         '^Design area (\S+) u\^2'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__design__instance__utilization',
                        metrics_dict,
                        baseRegEx.format('resizer report_design_area',
                                         '^Design area .* (\S+)% utilization'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
+
+    extractTagFromFile('placeopt__timing__drv__max_slew_limit',
+                       metrics_dict,
+                       baseRegEx.format('resizer max_slew_check_slack_limit',
+                                        '(\S+)'),
+                       logPath + '/3_4_resizer.log', defaultNotFound='NoLimit')
+
+    extractTagFromFile('placeopt__timing__drv__max_fanout_limit',
+                       metrics_dict,
+                       baseRegEx.format('resizer max_fanout_check_slack_limit',
+                                        '(\S+)'),
+                       logPath + '/3_4_resizer.log', defaultNotFound='NoLimit')
+
+    extractTagFromFile('placeopt__timing__drv__max_cap_limit',
+                       metrics_dict,
+                       baseRegEx.format('resizer max_capacitance_check_slack_limit',
+                                        '(\S+)'),
+                       logPath + '/3_4_resizer.log', defaultNotFound='NoLimit')
 
     extractTagFromFile('placeopt__timing__drv__max_slew',
                        metrics_dict,
                        baseRegEx.format('resizer max_slew_violation_count',
                                         'max slew violation count (\S+)'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__timing__drv__max_fanout',
                        metrics_dict,
                        baseRegEx.format('resizer max_fanout_violation_count',
                                         'max fanout violation count (\S+)'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__timing__drv__max_cap',
                        metrics_dict,
                        baseRegEx.format('resizer max_cap_violation_count',
                                         'max cap violation count (\S+)'),
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
     extractTagFromFile('placeopt__design__instance__count__stdcell',
                        metrics_dict,
                        '^instance_count\n-*\n^(\S+)',
-                       logPath + '/3_3_resizer.log')
+                       logPath + '/3_4_resizer.log')
 
-    extractGnuTime('placeopt', metrics_dict, logPath + '/3_3_resizer.log')
+    extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_resizer.log')
 
     extractTagFromFile('detailedplace__design__violations',
                        metrics_dict,
                        '^\[INFO FLW-0012\] Placement violations (\S+).',
-                       logPath + '/3_4_opendp.log', defaultNotFound=0)
+                       logPath + '/3_5_opendp.log', defaultNotFound=0)
 
     extractTagFromFile('detailedplace__timing__setup__tns',
                        metrics_dict,
                        baseRegEx.format('detailed place report_tns',
                                         'tns (\S+)'),
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
     extractTagFromFile('detailedplace__timing__setup__ws',
                        metrics_dict,
                        baseRegEx.format('detailed place report_worst_slack',
                                         'worst slack (\S+)'),
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
     extractTagFromFile('detailedplace__design__instance__displacement__total',
                        metrics_dict,
                        'total displacement +(\d*\.?\d*)',
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
     extractTagFromFile('detailedplace__design__instance__displacement__mean',
                        metrics_dict,
                        'average displacement +(\d*\.?\d*)',
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
     extractTagFromFile('detailedplace__desgin__instance__displacement__max',
                        metrics_dict,
                        'max displacement +(\d*\.?\d*)',
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
     extractTagFromFile('detailedplace__route__wirelength__estimated',
                        metrics_dict,
                        'legalized HPWL +(\d*\.?\d*)',
-                       logPath + '/3_4_opendp.log')
+                       logPath + '/3_5_opendp.log')
 
-    extractGnuTime('detailedplace', metrics_dict, logPath + '/3_4_opendp.log')
+    extractGnuTime('detailedplace', metrics_dict, logPath + '/3_5_opendp.log')
 
     # CTS
     # =========================================================================
@@ -496,6 +516,27 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                        baseRegEx.format('cts pre-repair report_tns',
                                         'tns (\S+)'),
                        logPath + '/4_1_cts.log')
+
+    extractTagFromFile('cts__timing__drv__max_slew_limit__pre_repair',
+                       metrics_dict,
+                       baseRegEx.format(
+                           'cts pre-repair max_slew_check_slack_limit',
+                           '(\S+)'),
+                       logPath + '/4_1_cts.log', defaultNotFound='NoLimit')
+
+    extractTagFromFile('cts__timing__drv__max_fanout_limit__pre_repair',
+                       metrics_dict,
+                       baseRegEx.format(
+                           'cts pre-repair max_fanout_check_slack_limit',
+                           '(\S+)'),
+                       logPath + '/4_1_cts.log', defaultNotFound='NoLimit')
+
+    extractTagFromFile('cts__timing__drv__max_cap_limit__pre_repair',
+                       metrics_dict,
+                       baseRegEx.format(
+                           'cts pre-repair max_capacitance_check_slack_limit',
+                           '(\S+)'),
+                       logPath + '/4_1_cts.log', defaultNotFound='NoLimit')
 
     extractTagFromFile('cts__timing__drv__max_slew__pre_repair',
                        metrics_dict,
@@ -536,6 +577,27 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         'worst slack (\S+)'),
                        logPath + '/4_1_cts.log')
 
+    extractTagFromFile('cts__timing__drv__max_slew_limit__post_repair',
+                       metrics_dict,
+                       baseRegEx.format(
+                           'cts post-repair max_slew_check_slack_limit',
+                           '(\S+)'),
+                       logPath + '/4_1_cts.log', defaultNotFound='NoLimit')
+
+    extractTagFromFile('cts__timing__drv__max_fanout_limit__post_repair',
+                       metrics_dict,
+                       baseRegEx.format(
+                           'cts post-repair max_fanout_check_slack_limit',
+                           '(\S+)'),
+                       logPath + '/4_1_cts.log', defaultNotFound='NoLimit')
+
+    extractTagFromFile('cts__timing__drv__max_cap_limit__post_repair',
+                       metrics_dict,
+                       baseRegEx.format(
+                           'cts post-repair max_capacitance_check_slack_limit',
+                           '(\S+)'),
+                       logPath + '/4_1_cts.log', defaultNotFound='NoLimit')
+
     extractTagFromFile('cts__timing__drv__max_slew__post_repair',
                        metrics_dict,
                        baseRegEx.format(
@@ -543,7 +605,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                            'max slew violation count (\S+)'),
                        logPath + '/4_1_cts.log')
 
-    extractTagFromFile('cts__timing__drv__max_fanout___post_repair',
+    extractTagFromFile('cts__timing__drv__max_fanout__post_repair',
                        metrics_dict,
                        baseRegEx.format(
                            'cts post-repair max_fanout_violation_count',
@@ -580,6 +642,19 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         'max fanout violation count (\S+)'),
                        logPath + '/4_1_cts.log')
 
+    extractTagFromFile('cts__timing__drv__max_cap',
+                       metrics_dict,
+                       baseRegEx.format(
+                           'cts final max_cap_violation_count',
+                           'max cap violation count (\S+)'),
+                       logPath + '/4_1_cts.log')
+
+    extractTagFromFile('cts__design__instance__count__setup_buffer',
+                       metrics_dict,
+                       'Inserted (\d+) buffers',
+                       logPath + '/4_1_cts.log',
+                       defaultNotFound=0)
+
     extractTagFromFile('cts__design__instance__count__hold_buffer',
                        metrics_dict,
                        'Inserted (\d+) hold buffers',
@@ -606,6 +681,26 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                        baseRegEx.format('global route report_worst_slack',
                                         'worst slack (\S+)'),
                        logPath + '/5_1_fastroute.log')
+
+    extractTagFromFile('globalroute__timing__drv__max_slew_limit',
+                       metrics_dict,
+                       baseRegEx.format(
+                           'global route max_slew_check_slack_limit',
+                           '(\S+)'),
+                       logPath + '/5_1_fastroute.log', defaultNotFound='NoLimit')
+
+    extractTagFromFile('globalroute__timing__drv__max_fanout_limit',
+                       metrics_dict,
+                       baseRegEx.format(
+                           'global route max_fanout_check_slack_limit',
+                           '(\S+)'),
+                       logPath + '/5_1_fastroute.log', defaultNotFound='NoLimit')
+
+    extractTagFromFile('globalroute__timing__drv__max_cap_limit',
+                       metrics_dict,
+                       baseRegEx.format('global route max_capacitance_check_slack_limit',
+                                        '(\S+)'),
+                       logPath + '/5_1_fastroute.log', defaultNotFound='NoLimit')
 
     extractTagFromFile('globalroute__timing__drv__max_slew',
                        metrics_dict,
@@ -679,6 +774,24 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                                         'worst slack (\S+)'),
                        logPath + '/6_report.log')
 
+    extractTagFromFile('finish__timing__drv__max_slew_limit',
+                       metrics_dict,
+                       baseRegEx.format('finish max_slew_check_slack_limit',
+                                        '(\S+)'),
+                       logPath + '/6_report.log', defaultNotFound='NoLimit')
+
+    extractTagFromFile('finish__timing__drv__max_fanout_limit',
+                       metrics_dict,
+                       baseRegEx.format('finish max_fanout_check_slack_limit',
+                                        '(\S+)'),
+                       logPath + '/6_report.log', defaultNotFound='NoLimit')
+
+    extractTagFromFile('finish__timing__drv__max_cap_limit',
+                       metrics_dict,
+                       baseRegEx.format('finish max_capacitance_check_slack_limit',
+                                        '(\S+)'),
+                       logPath + '/6_report.log', defaultNotFound='NoLimit')
+
     extractTagFromFile('finish__timing__drv__max_slew',
                        metrics_dict,
                        baseRegEx.format('finish max_slew_violation_count',
@@ -695,6 +808,30 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                        metrics_dict,
                        baseRegEx.format('finish max_cap_violation_count',
                                         'max cap violation count (\S+)'),
+                       logPath + '/6_report.log')
+
+    extractTagFromFile('finish__timing__drv__setup_violation_count',
+                       metrics_dict,
+                       baseRegEx.format('finish setup_violation_count',
+                                        'setup violation count (\S+)'),
+                       logPath + '/6_report.log')
+
+    extractTagFromFile('finish__timing__drv__hold_violation_count',
+                       metrics_dict,
+                       baseRegEx.format('finish hold_violation_count',
+                                        'hold violation count (\S+)'),
+                       logPath + '/6_report.log')
+
+    extractTagFromFile('finish__timing__cp_delay',
+                       metrics_dict,
+                       baseRegEx.format('finish critical path delay',
+                                        '(\S+)'),
+                       logPath + '/6_report.log')
+
+    extractTagFromFile('finish__timing__wns_percent_delay',
+                       metrics_dict,
+                       baseRegEx.format('finish slack div critical path delay',
+                                        '(\S+)'),
                        logPath + '/6_report.log')
 
     extractTagFromFile('finish__power__internal__total',

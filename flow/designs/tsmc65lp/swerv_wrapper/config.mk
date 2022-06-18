@@ -19,6 +19,7 @@ export REMOVE_BUFFER_TREE     = 1
 
 export DIE_AREA    = 0 0 1610 1410
 export CORE_AREA   = 5 5 1605 1405
+export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-300 -exclude bottom:1300-1600
 
 export PLACE_DENSITY = .60

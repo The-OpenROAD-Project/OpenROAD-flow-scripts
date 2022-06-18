@@ -32,18 +32,30 @@ $__make finish metadata 2>&1 | tee -a $LOG_FILE
 # Save the return code to return as the overall status after we package
 # the results
 ret=$?
-set -e
-
-if [ ! -z ${MAKE_ISSUE+x} ]; then
-  $__make final_report_issue 2>&1 | tee -a $LOG_FILE
-fi
 
 if [ -z "${PRIVATE_DIR+x}" ]; then
   PRIVATE_DIR="../../private_tool_scripts"
 fi
 
-if [ -f "$PRIVATE_DIR/util/utils.mk" ]; then
+if [ -f "$PRIVATE_DIR/openRoad/private.mk" ] && [ ! -z ${SAVE_TO_DB+x} ]; then
+  $__make save_to_metrics_db
+  ret=$(( ret + $? ))
+fi
+
+if [ -f "$PRIVATE_DIR/util/utils.mk" ] && [ ! -z ${RUN_CALIBRE+x} ]; then
   $__make calibre_drc
+  ret=$(( ret + $? ))
+  if [ ! -z ${SAVE_TO_DB+x} ]; then
+    $__make save_to_drc_db
+    ret=$(( ret + $? ))
+  fi
+fi
+
+# Only enabled abort on error at the end to allow script to reach make issue
+set -e
+
+if [ ! -z ${MAKE_ISSUE+x} ]; then
+  $__make final_report_issue 2>&1 | tee -a $LOG_FILE
 fi
 
 exit $ret

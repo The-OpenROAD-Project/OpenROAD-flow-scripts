@@ -1,3 +1,5 @@
+*~
+
 # Build working directories
 tools/install
 
@@ -65,3 +67,5 @@ flow/private
 # core dumps
 core
 core.*
+
+*~

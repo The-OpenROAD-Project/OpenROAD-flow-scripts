@@ -15,7 +15,10 @@ update_metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
 
 update_rules:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) $(FLOW_VARIANT)
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing --tighten
+
+update_rules_force:
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
 	echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
@@ -29,6 +32,26 @@ RULES_DESIGN = $(dir $(DESIGN_CONFIG))rules-$(FLOW_VARIANT).json
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 	$(UTILS_DIR)/checkMetadata.py -m $< -r $(RULES_DESIGN) 2>&1 | tee $@
 
+#-------------------------------------------------------------------------------
+
+write_net_rc: $(RESULTS_DIR)/6_net_rc.csv
+
+#$(RESULTS_DIR)/6_net_rc.csv: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/6_final.spef
+$(RESULTS_DIR)/6_net_rc.csv:
+	($(TIME_CMD) $(OPENROAD_CMD) $(UTILS_DIR)/write_net_rc_script.tcl) 2>&1 | tee $(LOG_DIR)/6_write_net_rc.log
+
+correlate_rc: $(RESULTS_DIR)/6_net_rc.csv
+	$(UTILS_DIR)/correlateRC.py $(RESULTS_DIR)/6_net_rc.csv
+
+# TODO Make always wants to redo designs with this rule, regardless of which variations are tried.
+#	$(MAKE) DESIGN_CONFIG=$$config write_net_rc; \
+#$(foreach config,$(wildcard designs/$(PLATFORM)/*/config.mk),$(MAKE) DESIGN_CONFIG=$(config) write_net_rc; )
+correlate_platform_rc:
+	for config in designs/$(PLATFORM)/*/config.mk; do \
+	  design=$$(basename $$(dirname $$config)); \
+	  make DESIGN_CONFIG=./$$config results/$(PLATFORM)/$$design/base/6_net_rc.csv; \
+	done
+	$(UTILS_DIR)/correlateRC.py $$(find results/$(PLATFORM)/*/base -name 6_net_rc.csv)
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------
@@ -92,6 +115,14 @@ endif
 VARS_BASENAME = vars-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT)
 RUN_ME_SCRIPT = run-me-$(DESIGN_NICKNAME)-$(PLATFORM)-$(FLOW_VARIANT).sh
 
+ISSUE_CP_FILES = $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
+                 $(ISSUE_CP_FILES_PLATFORM) \
+                 $(UTILS_DIR)/def2stream.py \
+                 $(RUN_ME_SCRIPT) \
+                 $(VARS_BASENAME).sh \
+                 $(VARS_BASENAME).tcl \
+                 $(VARS_BASENAME).gdb
+
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	# Creating $(RUN_ME_SCRIPT) script
 	@echo "#!/usr/bin/env bash"                     >  $(RUN_ME_SCRIPT)
@@ -138,13 +169,7 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	    $(REPORTS_DIR) \
 	    $(RESULTS_DIR) \
 	    $(SCRIPTS_DIR) \
-	    $(UTILS_DIR)/def2stream.py \
-	    $(foreach var,$(ISSUE_CP_FILE_VARS),$($(var))) \
-	    $(ISSUE_CP_FILES_PLATFORM) \
-	    $(RUN_ME_SCRIPT) \
-	    $(VARS_BASENAME).sh \
-	    $(VARS_BASENAME).tcl \
-	    $(VARS_BASENAME).gdb \
+	    $(shell for f in $(ISSUE_CP_FILES); do echo $$f; done | sort | uniq) \
 	    $^
 
 ifdef EXCLUDE_PLATFORM

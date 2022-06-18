@@ -40,11 +40,16 @@ export VERILOG_FILES = \
   ./designs/src/$(DESIGN_NICKNAME)/rtl/soc_core.v \
   $(VERILOG_FILES_BLACKBOX)
 
+export HAS_IO_CONSTRAINTS = 1
+export ENABLE_DPO = 0
 export MACRO_PLACE_CHANNEL  = 160 160
 export MACRO_PLACE_HALO = 2 2
 export DIE_AREA    = 0.0 0.0 6800 6800
 export CORE_AREA   = 200 200 6600 6600
 export SDC_FILE          = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export RCX_RULES     = $(PLATFORM_DIR)/rcx_patterns.rules
+
+export PDN_CFG = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/pdn.cfg
 
 export FP_PDN_RAIL_WIDTH = 0.48
 export FP_PDN_RAIL_OFFSET = 0

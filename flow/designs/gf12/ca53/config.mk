@@ -51,4 +51,8 @@ export MACRO_BLOCKAGE_HALO = 25
 #export MAX_ROUTING_LAYER = H2 
 export FASTROUTE_TCL = $(dir $(DESIGN_CONFIG))/fastroute.tcl
 #
+ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CELL
+else
+export DESIGN_TYPE = CELL_NODEN
+endif

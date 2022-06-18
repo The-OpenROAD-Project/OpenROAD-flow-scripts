@@ -1,21 +1,5 @@
-if {![info exists standalone] || $standalone} {
-  # Read lef
-  read_lef $::env(TECH_LEF)
-  read_lef $::env(SC_LEF)
-  if {[info exist ::env(ADDITIONAL_LEFS)]} {
-    foreach lef $::env(ADDITIONAL_LEFS) {
-      read_lef $lef
-    }
-  }
-
-  # Read liberty files
-  source $::env(SCRIPTS_DIR)/read_liberty.tcl
-
-  # Read design files
-  read_def $::env(RESULTS_DIR)/2_5_floorplan_tapcell.def
-} else {
-  puts "Starting PDN generation"
-}
+source $::env(SCRIPTS_DIR)/load.tcl
+load_design 2_5_floorplan_tapcell.odb 1_synth.sdc "Starting PDN generation"
 
 if {[info exist ::env(PDN_TCL)]} {
   source $::env(PDN_TCL)
@@ -40,5 +24,8 @@ foreach net [$block getNets] {
 }
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_def $::env(RESULTS_DIR)/2_6_floorplan_pdn.def
+  if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
+    write_def $::env(RESULTS_DIR)/2_floorplan.def
+  }
+  write_db $::env(RESULTS_DIR)/2_6_floorplan_pdn.odb
 }

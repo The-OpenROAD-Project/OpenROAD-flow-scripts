@@ -5,12 +5,11 @@ import argparse
 import os
 import json
 import operator
+from collections import defaultdict
 
 # make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-goldFilename = 'metadata-base-ok.json'
-runFilename = 'metadata-base.json'
 htmlOutput = 'reports/report-table.html'
 cssOutput = 'reports/table.css'
 designPathFile = 'design-dir.txt'
@@ -39,8 +38,14 @@ Creates a HTML table with metric comparison between golden and current run
 for each design.
 '''
 parser = argparse.ArgumentParser(description=helpText)
+parser.add_argument(
+    "--variant",
+    default="base"
+)
 args = parser.parse_args()
 
+goldFilename = f'metadata-{args.variant}-ok.json'
+runFilename = f'metadata-{args.variant}.json'
 
 def readMetrics(fname, justLoad=False):
     global tableDict
@@ -86,8 +91,8 @@ def getDiff(metric, gold, run, rules):
             style = 'green' if re.search(higherIsBetter, metric) else 'orange'
         elif gold > run:
             style = 'orange' if re.search(higherIsBetter, metric) else 'green'
-        for rule in rules:
-            if metric != rule['field']:
+        for field, rule in rules.items():
+            if metric != field:
                 continue
             op = ops[rule['compare']]
             value = rule['value']
@@ -148,8 +153,6 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     rules = readMetrics(os.path.join(designDir, rulesFilename), justLoad=True)
     if rules is None:
         errors += 1
-    else:
-        rules = rules['rules']
 
     testList.append(test)
     if test not in status.keys():
@@ -233,6 +236,34 @@ table td:nth-child(1),
 table th {
   border-top: solid 2px;
 }
+.main-table th {
+  position: sticky;
+  top: 0;
+  background-color: #727272;
+  color: #e0e0e0;
+}
+.main-table tr:nth-of-type(even) td:nth-child(1) {
+  background-color: #f3f3f3;
+}
+.main-table tr:nth-of-type(odd) td:nth-child(1) {
+  background-color: #ffffff;
+}
+.main-table tr:nth-child(2),
+.main-table tr:nth-child(2) td:nth-child(1) {
+  position: sticky;
+  top: 44px;
+  background-color: #727272;
+  color: #e0e0e0;
+  z-index: 2;
+}
+.main-table th:nth-child(1),
+.main-table td:nth-child(1) {
+  position: sticky;
+  left: 0;
+}
+.main-table th:nth-child(1){
+  z-index: 2;
+}
 .main-table td:nth-child(3n+4) {
   border-left: dotted 1px;
 }
@@ -248,7 +279,7 @@ div.gallery:hover {
   border: 1px solid #777;
 }
 div.gallery img {
-  max-height: 200px;
+  max-height: 300px;
   width: auto;
 }
 div.desc {
@@ -276,59 +307,64 @@ tail = '''</body>
 '''
 
 
-def add_image(path, platform, design):
+def add_image(path, platform, view):
     return f'''<td>
   <div class="gallery">
     <div class="desc">
-      Final stage<br>
-      {platform}/{design}
+      {platform} - {view}
     </div>
     <a target="_blank" href="{path}">
-      <img src="{path}" alt="{platform}/{design}">
+      <img src="{path}" alt="{platform}/{view}">
     </a>
   </div>
 </td>
 '''
 
 
-rows = set()
-cols = set()
-image_list = dict()
+platforms = set()
+designs = set()
+views = set()
+images = defaultdict(lambda: defaultdict(dict))
 for parents, dirs, files in sorted(os.walk('reports', topdown=False)):
     for file in files:
-        if file.startswith('final'):
+        if file.endswith('.webp'):
             path = os.path.join(parents, file).replace('reports', '.')
             platform, design = path.split(os.sep)[1:3]
-            rows.add(design)
-            cols.add(platform)
-            if design not in image_list.keys():
-                image_list[design] = dict()
-            image_list[design][platform] = path
+            view = file[:-5]
+            designs.add(design)
+            platforms.add(platform)
+            views.add(view)
+            images[design][platform][view] = path
 
-rows = sorted(rows)
-cols = sorted(cols)
+platforms = sorted(platforms)
+designs = sorted(designs)
+view = sorted(views)
 
-htmlGallery = 'reports/report-gallery.html'
-with open(htmlGallery, 'w') as f:
-    gallery = '  <h1>Image Gallery</h1>\n'
-    gallery += '<table class="image-table">\n'
-    gallery += '<tr>\n'
-    for key in cols:
-        gallery += f'<th>{key}</th>\n'
-    gallery += '</tr>\n'
-    for design in rows:
+def write_gallery(design, platforms, views):
+    htmlGallery = f'reports/report-gallery-{design}.html'
+    with open(htmlGallery, 'w') as f:
+        gallery = '  <h1>Image Gallery</h1>\n'
+        gallery += '<table class="image-table">\n'
         gallery += '<tr>\n'
-        for platform in cols:
-            if platform in image_list[design].keys():
-                gallery += add_image(image_list[design][platform],
-                                     design, platform)
-            else:
-                gallery += '<td>\n</td>\n'
+        for key in platforms:
+            gallery += f'<th>{key}</th>\n'
         gallery += '</tr>\n'
-    gallery += '</table>\n'
-    html = head + gallery + tail
-    f.writelines(html)
+        for view in views:
+            gallery += '<tr>\n'
+            for platform in platforms:
+                if platform in images[design] and \
+                   view in images[design][platform]:
+                    gallery += add_image(images[design][platform][view],
+                                         platform, view)
+                else:
+                    gallery += '<td>\n</td>\n'
+            gallery += '</tr>\n'
+        gallery += '</table>\n'
+        html = head + gallery + tail
+        f.writelines(html)
 
+for design in designs:
+    write_gallery(design, platforms, views)
 
 subColumns = ['Gold', 'Current', 'Diff (%)']
 

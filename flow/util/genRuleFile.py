@@ -1,197 +1,337 @@
 #!/usr/bin/env python3
 
-import sys
+from math import ceil, isinf
 from os import chdir
 from os.path import isfile, abspath
 from re import sub
+import argparse
 import json
+import operator
+import sys
 
-if len(sys.argv) != 3:
-    print('usage:', sys.argv[0], '<DIR> <VARIANT>')
+parser = argparse.ArgumentParser(
+    description='Generates or updates rules file for CI.')
+parser.add_argument('dir', help='Path to the design directory.')
+parser.add_argument(
+    '-v',
+    '--variant',
+    default='base',
+    help='Flow variant [default="base"].')
+parser.add_argument(
+    '-u',
+    '--update',
+    action='store_true',
+    default=False,
+    help='Update all rules independent of previous values.')
+parser.add_argument(
+    '-t',
+    '--tighten',
+    action='store_true',
+    default=False,
+    help='Update passing rules if they became tighter')
+parser.add_argument(
+    '-f',
+    '--failing',
+    action='store_true',
+    default=False,
+    help='Update failing rules.')
+args = parser.parse_args()
+
+if not args.update and not args.tighten and not args.failing:
+    print('[ERROR] Please select at least one of '
+          '-u/--update, -t/--tighten, -f/--failing.')
+    parser.print_help()
     sys.exit(1)
 
-chdir(sys.argv[1])
-variant = sys.argv[2]
-okFile = f'metadata-{variant}-ok.json'
-outFile = f'rules-{variant}.json'
-rules = list()
+chdir(args.dir)
+metrics_file = f"metadata-{args.variant}-ok.json"
+rules_file = f"rules-{args.variant}.json"
+rules = dict()
 
-if isfile(okFile):
-    with open(okFile, 'r') as f:
-        data = json.load(f)
+if isfile(metrics_file):
+    with open(metrics_file, 'r') as f:
+        metrics = json.load(f)
 else:
-    print('Not found', abspath(okFile))
+    print(f"[ERROR] File not found {abspath(metrics_file)}")
     sys.exit(1)
+
+if isfile(rules_file):
+    with open(rules_file, 'r') as f:
+        OLD_RULES = json.load(f)
+else:
+    print(f"[WARNING] File not found {abspath(rules_file)}")
+    OLD_RULES = None
 
 # dict format
-# 'metric__name': {
-#     'usePeriod': <bool>, use a percentage of the clock period as padding
+# 'metric_name': {
 #     'padding': <float>, percentage of padding to use
-#     'roundValue': <bool>, use the rounded value for the rule
-#     'customThreshold': <float>, value if the current gold metric is zero
-#                    OR [<float>, <float>] this will check if the gold metric
-#                    is <= to first <float>, if trye the rule value will be the
-#                    second <float>
-# },
-metrics = {
+#     'fixed': <float>, sum this number instead of using % padding
+#     'round_value': <bool>, use the rounded value for the rule
+# }
+
+rules_dict = {
     # synth
     'synth__design__instance__area__stdcell': {
-        'usePeriod': False,
+        'mode': 'padding',
         'padding': 15,
-        'roundValue': True,
-        'customThreshold': 0,
+        'round_value': True,
         'compare': '<=',
     },
     # clock
     'constraints__clocks__count': {
-        'usePeriod': False,
-        'padding': 0,
-        'roundValue': True,
-        'customThreshold': 0,
+        'mode': 'direct',
+        'round_value': True,
         'compare': '==',
     },
     # floorplan
     # place
     'placeopt__design__instance__area': {
-        'usePeriod': False,
+        'mode': 'padding',
         'padding': 15,
-        'roundValue': True,
-        'customThreshold': 0,
+        'round_value': True,
         'compare': '<=',
     },
     'placeopt__design__instance__count__stdcell': {
-        'usePeriod': False,
+        'mode': 'padding',
         'padding': 15,
-        'roundValue': True,
-        'customThreshold': 0,
+        'round_value': True,
         'compare': '<=',
     },
     'detailedplace__design__violations': {
-        'usePeriod': False,
-        'padding': 0,
-        'roundValue': True,
-        'customThreshold': 0,
+        'mode': 'direct',
+        'round_value': True,
         'compare': '==',
     },
     # cts
     'cts__timing__setup__ws': {
-        'usePeriod': True,
-        'padding': 10,
-        'roundValue': False,
-        'customThreshold': 0,
+        'mode': 'period',
+        'padding': 25,
+        'min_max': min,
+        'min_max_direct': 0,
+        'round_value': False,
         'compare': '>=',
     },
     'cts__timing__setup__ws__pre_repair': {
-        'usePeriod': True,
-        'padding': 10,
-        'roundValue': False,
-        'customThreshold': 0,
+        'mode': 'period',
+        'padding': 25,
+        'min_max': min,
+        'min_max_direct': 0,
+        'round_value': False,
         'compare': '>=',
     },
     'cts__timing__setup__ws__post_repair': {
-        'usePeriod': True,
-        'padding': 10,
-        'roundValue': False,
-        'customThreshold': 0,
+        'mode': 'period',
+        'padding': 25,
+        'min_max': min,
+        'min_max_direct': 0,
+        'round_value': False,
         'compare': '>=',
+    },
+    'cts__design__instance__count__setup_buffer': {
+        'mode': 'padding',
+        'padding': 10,
+        'min_max': max,
+        'min_max_sum': 10,
+        'round_value': True,
+        'compare': '<=',
+    },
+    'cts__design__instance__count__hold_buffer': {
+        'mode': 'padding',
+        'padding': 10,
+        'min_max': max,
+        'min_max_sum': 10,
+        'round_value': True,
+        'compare': '<=',
     },
     # route
     'globalroute__timing__clock__slack': {
-        'usePeriod': True,
+        'mode': 'period',
         'padding': 5,
-        'roundValue': False,
-        'customThreshold': 0,
+        'round_value': False,
         'compare': '>=',
     },
     'globalroute__timing__setup__ws': {
-        'usePeriod': True,
+        'mode': 'period',
         'padding': 5,
-        'roundValue': False,
-        'customThreshold': 0,
+        'round_value': False,
         'compare': '>=',
     },
     'detailedroute__route__wirelength': {
-        'usePeriod': False,
+        'mode': 'padding',
         'padding': 15,
-        'roundValue': True,
-        'customThreshold': 0,
+        'round_value': True,
         'compare': '<=',
     },
     'detailedroute__route__drc_errors': {
-        'usePeriod': False,
-        'padding': 0,
-        'roundValue': True,
-        'customThreshold': 0,
+        'mode': 'direct',
+        'round_value': True,
         'compare': '<=',
     },
     # finish
     'finish__timing__setup__ws': {
-        'usePeriod': True,
+        'mode': 'period',
         'padding': 5,
-        'roundValue': False,
-        'customThreshold': 0,
+        'round_value': False,
         'compare': '>=',
     },
     'finish__design__instance__area': {
-        'usePeriod': False,
+        'mode': 'padding',
         'padding': 15,
-        'roundValue': True,
-        'customThreshold': 0,
+        'round_value': True,
         'compare': '<=',
+    },
+    'finish__timing__drv__max_slew_limit': {
+        'mode': 'sum_fixed',
+        'padding': -0.20,
+        'min_max': min,
+        'min_max_direct': -0.20,
+        'round_value': False,
+        'compare': '>=',
+    },
+    'finish__timing__drv__max_fanout_limit': {
+        'mode': 'sum_fixed',
+        'padding': -0.20,
+        'min_max': min,
+        'min_max_direct': -0.20,
+        'round_value': False,
+        'compare': '>=',
+    },
+    'finish__timing__drv__max_cap_limit': {
+        'mode': 'sum_fixed',
+        'padding': -0.20,
+        'min_max': min,
+        'min_max_direct': -0.20,
+        'round_value': False,
+        'compare': '>=',
+    },
+    'finish__timing__drv__setup_violation_count': {
+        'mode': 'padding',
+        'padding': 20,
+        'min_max': max,
+        'min_max_sum': 10,
+        'round_value': True,
+        'compare': '<=',
+    },
+    'finish__timing__drv__hold_violation_count': {
+        'mode': 'padding',
+        'padding': 20,
+        'min_max': max,
+        'min_max_sum': 10,
+        'round_value': True,
+        'compare': '<=',
+    },
+    'finish__timing__wns_percent_delay': {
+        'mode': 'padding',
+        'padding': 20,
+        'min_max': min,
+        'min_max_sum': -10,
+        'round_value': False,
+        'compare': '>=',
     },
 }
 
-periodList = list()
-for entry in data['constraints__clocks__details']:
-    periodList.append(float(sub(r'^.*: ', '', entry)))
+ops = {
+    '<': operator.lt,
+    '>': operator.gt,
+    '<=': operator.le,
+    '>=': operator.ge,
+    '==': operator.eq,
+    '!=': operator.ne,
+}
 
-if len(periodList) != 1:
+period_list = list()
+for entry in metrics['constraints__clocks__details']:
+    period_list.append(float(sub(r'^.*: ', '', entry)))
+
+if len(period_list) != 1:
     print('[WARNING] Multiple clocks not supported. Will use first clock.')
-period = periodList[0]
+period = period_list[0]
 
-for field, option in metrics.items():
-    if field not in data.keys():
-        print(f'[ERROR] Metric {field} not found in metrics file: {okFile}.')
+for field, option in rules_dict.items():
+    if field not in metrics.keys():
+        print(f"[ERROR] Metric {field} not found in "
+              f"metrics file: {metrics_file}.")
         sys.exit(1)
 
-    value = data[field]
-
-    if isinstance(value, str):
-        print('[WARNING] Skipping string field {} = {}'.format(field, value))
+    if isinstance(metrics[field], str):
+        print(f"[WARNING] Skipping string field {field} = {metrics[field]}")
         continue
 
-    if len(periodList) != 1 and field == 'globalroute__timing__clock__slack':
+    if len(period_list) != 1 and field == 'globalroute__timing__clock__slack':
         print('[WARNING] Skipping clock slack until multiple clocks support.')
         continue
 
-    if option['padding'] != 0:
-        if isinstance(option['customThreshold'], list):
-            customThreshold, customValue = option['customThreshold']
-        else:
-            customThreshold = 0
-            customValue = option['customThreshold']
-        if option['usePeriod']:
-            value -= period * option['padding'] / 100
-            value = min(value, 0)
-        elif value <= customThreshold:
-            value = customValue
-        else:
-            value += value * option['padding'] / 100
+    rule_value = None
+    if option['mode'] == 'direct':
+        rule_value = metrics[field]
 
-    if 'timing' in field and 'count' not in field and value > 0:
-        value = 0
+    elif option['mode'] == 'sum_fixed':
+        rule_value = metrics[field] + option['padding']
 
-    newRule = dict()
-    newRule['field'] = field
-    if option['roundValue']:
-        newRule['value'] = round(value)
+    elif option['mode'] == 'period':
+        rule_value = metrics[field] - period * option['padding'] / 100
+        rule_value = min(rule_value, 0)
+
+    elif option['mode'] == 'padding':
+        rule_value = metrics[field] * (1 + option['padding'] / 100)
+
+    if 'min_max' in option.keys():
+        if 'min_max_direct' in option.keys():
+            rule_value = option['min_max'](
+                rule_value, option['min_max_direct'])
+        elif 'min_max_sum' in option.keys():
+            rule_value = option['min_max'](
+                rule_value + option['min_max_sum'], option['min_max_sum'])
+        else:
+            print(f"[ERROR] Metric {field} has 'min_max' field but no "
+                  "'min_max_direct' or 'min_max_sum' field.")
+            sys.exit(1)
+
+    if rule_value is None:
+        print(f"[ERROR] Metric {field} has invalid mode {option['mode']}.")
+        sys.exit(1)
+
+    if rule_value == 0 and \
+            (field == 'cts__design__instance__count__setup_buffer'
+             or field == 'cts__design__instance__count__hold_buffer'):
+        rule_value = ceil(
+            metrics['placeopt__design__instance__count__stdcell'] * 0.1)
+
+    if option['round_value'] and not isinf(rule_value):
+        rule_value = int(round(rule_value))
     else:
-        newRule['value'] = float('{:.2f}'.format(value))
-    newRule['compare'] = option['compare']
-    rules.append(newRule)
+        rule_value = float(f"{rule_value:.2f}")
 
-finalRules = dict()
-finalRules['rules'] = rules
-with open(outFile, 'w') as f:
-    print('[INFO] writing', abspath(outFile))
-    json.dump(finalRules, f, indent=4)
+    if OLD_RULES is not None and field in OLD_RULES.keys():
+        old_rule = OLD_RULES[field]
+        if old_rule['compare'] != option['compare']:
+            print('[WARNING] Compare operator changed since last update.')
+
+        compare = ops[option['compare']]
+
+        UPDATE = False
+        if args.tighten \
+                and rule_value != old_rule['value'] \
+                and compare(rule_value, old_rule['value']):
+            UPDATE = True
+            print(f"[INFO] Tightening rule {field} "
+                  f"from {old_rule['value']} to {rule_value}.")
+
+        if args.failing and not compare(metrics[field], old_rule['value']):
+            UPDATE = True
+            print(f"[INFO] Updating failing rule {field} "
+                  f"from {old_rule['value']} to {rule_value}.")
+
+        if args.update and old_rule['value'] != rule_value:
+            UPDATE = True
+            print(f"[INFO] Updating rule {field} "
+                  f"from {old_rule['value']} to {rule_value}.")
+
+        if not UPDATE:
+            rule_value = old_rule['value']
+
+    rules[field] = dict(value=rule_value, compare=option['compare'])
+
+with open(rules_file, 'w') as f:
+    print('[INFO] writing', abspath(rules_file))
+    json.dump(rules, f, indent=4)

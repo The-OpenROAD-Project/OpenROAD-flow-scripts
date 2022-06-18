@@ -64,11 +64,11 @@ if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_h
     close $fptr1
     set split_cont1 [split $contents1 "\n"]
     foreach line $split_cont1 {
-      if {[regexp { +Chip area for top module '\\(\S+)': (.*)} $line -> module_name area]} {
+      if {[regexp { +Chip area for top module '(\S+)': (.*)} $line -> module_name area]} {
         puts "Area of module $module_name is $area"
         if {[expr $area > $ungroup_threshold]} {
            puts "Preserving hierarchical module: $module_name"
-           puts $out_script_ptr "select -module $module_name"
+           puts $out_script_ptr "select -module {$module_name}"
            puts $out_script_ptr "setattr -mod -set keep_hierarchy 1"
            puts $out_script_ptr "select -clear"
         }

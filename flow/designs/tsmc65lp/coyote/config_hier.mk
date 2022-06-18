@@ -1,9 +1,8 @@
 include $(dir $(DESIGN_CONFIG))/config.mk
 
-#export FLOW_VARIANT = hier
-export FLOW_VARIANT = hier_rtlmp
+export FLOW_VARIANT ?= hier_rtlmp
 export SYNTH_HIERARCHICAL = 1
-export MAX_UNGROUP_SIZE = 1000
+export MAX_UNGROUP_SIZE ?= 10000
 export RTLMP_FLOW = True
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_hier.sdc
@@ -23,4 +22,4 @@ export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-700 -exclude right:150
 export MACRO_PLACE_HALO = 10 10
 export MACRO_PLACE_CHANNEL = 20 20
 
-export PLACE_DENSITY         = 0.75
+export PLACE_DENSITY         = 0.60

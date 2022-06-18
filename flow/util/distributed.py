@@ -5,8 +5,9 @@ Dependencies are documented in pip format at distributed-requirements.txt
 For both sweep and tune modes:
     python3 distributed.py -h
 
-Note: the order of the parameters matter. Arguments --design, --platform and
---config are always required and should preceed the <mode>.
+Note: the order of the parameters matter.
+Arguments --design, --platform and --config are always required and should
+precede the <mode>.
 
 AutoTuner:
     python3 distributed.py tune -h
@@ -24,7 +25,6 @@ Parameter sweeping:
 '''
 
 import argparse
-import hashlib
 import json
 import os
 from os.path import abspath
@@ -33,6 +33,9 @@ import sys
 from datetime import datetime
 from multiprocessing import cpu_count
 from subprocess import run
+from itertools import product
+from uuid import uuid4 as uuid
+
 import numpy as np
 
 import ray
@@ -45,15 +48,16 @@ from ray.tune.suggest.basic_variant import BasicVariantGenerator
 from ray.tune.suggest.hyperopt import HyperOptSearch
 from ray.tune.suggest.nevergrad import NevergradSearch
 from ray.tune.suggest.optuna import OptunaSearch
+from ray.util.queue import Queue
 
 import nevergrad as ng
 from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
-AUTOTUNER_BEST = 'autotuner-best.json'
 FASTROUTE_TCL = 'fastroute.tcl'
 CONSTRAINTS_SDC = 'constraint.sdc'
+METRIC = 'minimum'
 
 
 class AutoTunerBase(tune.Trainable):
@@ -72,17 +76,18 @@ class AutoTunerBase(tune.Trainable):
         self.repo_dir = abspath(repo_dir)
         self.parameters = parse_config(config, path=os.getcwd())
         self.step_ = 0
+        self.variant = f'variant-{self.__class__.__name__}-{self.trial_id}-or'
 
     def step(self):
         '''
         Run step experiment and compute its score.
         '''
-        metrics_file = openroad(self.repo_dir, self.parameters)
+        metrics_file = openroad(self.repo_dir, self.parameters, self.variant)
         self.step_ += 1
         score = self.evaluate(self.read_metrics(metrics_file))
         # Feed the score back to Tune.
         # return must match 'metric' used in tune.run()
-        return {"minimum": score}
+        return {METRIC: score}
 
     def evaluate(self, metrics):
         '''
@@ -205,6 +210,31 @@ def read_config(file_name):
     def read_sweep(this):
         return [*this['minmax'], this['step']]
 
+    def apply_condition(config, data):
+        # TODO: tune.sample_from only supports random search algorithm.
+        # To make conditional parameter for the other algorithms, different
+        # algorithms should take different methods (will be added)
+        if args.algorithm != 'random':
+            return config
+        dp_pad_min = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax'][0]
+        # dp_pad_max = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax'][1]
+        dp_pad_step = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['step']
+        if dp_pad_step == 1:
+            config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
+                lambda spec: tune.randint(
+                    dp_pad_min,
+                    spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1))
+        if dp_pad_step > 1:
+            config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
+                lambda spec: tune.choice(
+                    np.adarray.tolist(
+                        np.arange(
+                            dp_pad_min,
+                            spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT +
+                            1,
+                            dp_pad_step))))
+        return config
+
     def read_tune(this):
         min_, max_ = this['minmax']
         if min_ == max_:
@@ -214,14 +244,22 @@ def read_config(file_name):
         if this['type'] == 'int':
             if min_ == 0 and args.algorithm == 'nevergrad':
                 print('[WARNING TUN-0011] NevergradSearch may not work '
-                      'with lowerbound value 0.')
+                      'with lower bound value 0.')
             if this['step'] == 1:
                 return tune.randint(min_, max_)
-            return tune.qrandint(min_, max_, this['step'])
+            return tune.choice(
+                np.adarray.tolist(
+                    np.arange(min_,
+                              max_,
+                              this['step'])))
         if this['type'] == 'float':
             if this['step'] == 0:
                 return tune.uniform(min_, max_)
-            return tune.quniform(min_, max_, this['step'])
+            return tune.choice(
+                np.adarray.tolist(
+                    np.arange(min_,
+                              max_,
+                              this['step'])))
         return None
 
     def read_tune_ax(name, this):
@@ -242,7 +280,10 @@ def read_config(file_name):
         elif this['type'] == 'float':
             if this['step'] == 1:
                 dict_["type"] = "choice"
-                dict_["values"] = tune.quniform(min_, max_, this['step'])
+                dict_["values"] = tune.choice(np.adarray.tolist(
+                    np.arange(min_,
+                              max_,
+                              this['step'])))
                 dict_["value_type"] = "float"
             else:
                 dict_["type"] = "range"
@@ -259,6 +300,8 @@ def read_config(file_name):
     else:
         config = dict()
     for key, value in data.items():
+        if key == 'best_result':
+            continue
         if key == '_SDC_FILE_PATH' and value != '':
             if sdc_file != '':
                 print('[WARNING TUN-0004] Overwriting SDC base file.')
@@ -277,7 +320,8 @@ def read_config(file_name):
             config[key] = read_tune(value)
         elif args.mode == 'tune' and args.algorithm == 'ax':
             config.append(read_tune_ax(key, value))
-    # Copy back to global variables
+    if args.mode == 'tune':
+        config = apply_condition(config, data)
     return config, sdc_file, fr_file
 
 
@@ -300,8 +344,9 @@ def parse_config(config, path=os.getcwd()):
             # Special substitution cases
             elif key == "_PINS_DISTANCE":
                 options += f' PLACE_PINS_ARGS="-min_distance {value}"'
-            elif key == "_SYNTH_FLATTEN" and value == 1:
-                options += ' SYNTH_ARGS=""'
+            elif key == "_SYNTH_FLATTEN":
+                print('[WARNING TUN-0013] Non-flatten the designs are not '
+                      'fully supported, ignoring _SYNTH_FLATTEN parameter.')
         # Default case is VAR=VALUE
         else:
             options += f' {key}={value}'
@@ -322,12 +367,17 @@ def write_sdc(variables, path):
     new_file = SDC_ORIGINAL
     for key, value in variables.items():
         if key == 'CLK_PERIOD':
-            new_file = re.sub(r'-period [0-9\.]+ (.*)',
-                              f'-period {value} \\1',
-                              new_file)
-            new_file = re.sub(r'-waveform [{}\s0-9\.]+[\s|\n]',
-                              '',
-                              new_file)
+            if new_file.find('set clk_period') != -1:
+                new_file = re.sub(r'set clk_period .*\n(.*)',
+                                  f'set clk_period {value}\n\\1',
+                                  new_file)
+            else:
+                new_file = re.sub(r'-period [0-9\.]+ (.*)',
+                                  f'-period {value} \\1',
+                                  new_file)
+                new_file = re.sub(r'-waveform [{}\s0-9\.]+[\s|\n]',
+                                  '',
+                                  new_file)
         elif key == 'UNCERTAINTY':
             if new_file.find('set uncertainty') != -1:
                 new_file = re.sub(r'set uncertainty .*\n(.*)',
@@ -379,24 +429,20 @@ def write_fast_route(variables, path):
     return file_name
 
 
-def get_flow_variant(param):
-    '''
-    Create a hash based on the parameters. This way we don't need to re-run
-    experiments with the same configuration.
-    '''
-    variant_hash = hashlib.md5(f"{param}".encode('utf-8')).hexdigest()
-    if args.mode == 'tune':
-        with open(os.path.join(os.getcwd(), 'variant_hash.txt'), 'w') as file:
-            file.write(variant_hash)
-    return f'{args.experiment}/variant-{variant_hash}'
-
-
-def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
+def run_command(cmd, timeout=None,
+                stderr_file=None,
+                stdout_file=None,
+                fail_fast=False):
     '''
     Wrapper for subprocess.run
     Allows to run shell command, control print and exceptions.
     '''
-    process = run(cmd, capture_output=True, text=True, check=False, shell=True)
+    process = run(cmd,
+                  timeout=timeout,
+                  capture_output=True,
+                  text=True,
+                  check=False,
+                  shell=True)
     if stderr_file is not None and process.stderr != '':
         with open(stderr_file, 'a') as file:
             file.write(f'\n\n{cmd}\n{process.stderr}')
@@ -416,20 +462,20 @@ def run_command(cmd, stderr_file=None, stdout_file=None, fail_fast=False):
 def openroad_distributed(repo_dir, config, path):
     ''' Simple wrapper to run openroad distributed with Ray. '''
     config = parse_config(config)
-    openroad(repo_dir, config, path=path)
+    openroad(repo_dir, config, str(uuid()), path=path)
 
 
-def openroad(base_dir, parameters, path=''):
+def openroad(base_dir, parameters, flow_variant, path=''):
     '''
     Run OpenROAD-flow-scripts with a given set of parameters.
     '''
     # Make sure path ends in a slash, i.e., is a folder
-    flow_variant = get_flow_variant(parameters)
+    flow_variant = f'{args.experiment}/{flow_variant}'
     if path != '':
         log_path = f'{path}/{flow_variant}/'
         report_path = log_path.replace('logs', 'reports')
-        os.system(f'mkdir -p {log_path}')
-        os.system(f'mkdir -p {report_path}')
+        run_command(f'mkdir -p {log_path}')
+        run_command(f'mkdir -p {report_path}')
     else:
         log_path = report_path = os.getcwd() + '/'
 
@@ -442,8 +488,9 @@ def openroad(base_dir, parameters, path=''):
     make_command += f'make -C {base_dir}/flow DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
-    make_command += f' NPROC={args.openroad_threads}'
+    make_command += f' NPROC={args.openroad_threads} SHELL=bash'
     run_command(make_command,
+                timeout=args.timeout,
                 stderr_file=f'{log_path}error-make-finish.log',
                 stdout_file=f'{log_path}make-finish-stdout.log')
 
@@ -466,13 +513,13 @@ def clone(path):
     Clone base repo in the remote machine. Only used for Kubernetes at GCP.
     '''
     if args.git_clone:
-        os.system(f'rm -rf {path}')
+        run_command(f'rm -rf {path}')
     if not os.path.isdir(f'{path}/.git'):
         git_command = 'git clone --depth 1 --recursive --single-branch'
         git_command += f' {args.git_clone_args}'
         git_command += f' --branch {args.git_orfs_branch}'
         git_command += f' {args.git_url} {path}'
-        os.system(git_command)
+        run_command(git_command)
 
 
 def build(base, install):
@@ -485,15 +532,14 @@ def build(base, install):
         build_command += ' && git submodule foreach --recursive git clean -xdf'
     if args.git_clean \
             or not os.path.isfile(f'{install}/OpenROAD/bin/openroad') \
-            or not os.path.isfile(f'{install}/yosys/bin/yosys') \
-            or not os.path.isfile(f'{install}/LSOracle/bin/lsoracle'):
+            or not os.path.isfile(f'{install}/yosys/bin/yosys'):
         build_command += ' && bash -ic "./build_openroad.sh'
         # Some GCP machines have 200+ cores. Let's be reasonable...
         build_command += f' --local --nice --threads {min(32, cpu_count())}'
         if args.git_latest:
             build_command += ' --latest'
         build_command += f' {args.build_args}"'
-    os.system(build_command)
+    run_command(build_command)
 
 
 @ray.remote
@@ -519,7 +565,7 @@ def parse_arguments():
                                        dest='mode',
                                        required=True)
     tune_parser = subparsers.add_parser("tune")
-    sweep_parser = subparsers.add_parser("sweep")
+    _ = subparsers.add_parser("sweep")
 
     # DUT
     parser.add_argument(
@@ -549,6 +595,12 @@ def parse_arguments():
         default='test',
         help='Experiment name. This parameter is used to prefix the'
         ' FLOW_VARIANT and to set the Ray log destination.')
+    parser.add_argument(
+        '--timeout',
+        type=float,
+        metavar='<float>',
+        default=None,
+        help='Time limit (in hours) for each trial run. Default is no limit.')
     tune_parser.add_argument(
         '--resume',
         action='store_true',
@@ -556,47 +608,47 @@ def parse_arguments():
 
     # Setup
     parser.add_argument(
-        '--git-clean',
+        '--git_clean',
         action='store_true',
         help='Clean binaries and build files.'
              ' WARNING: may lose previous data.'
              ' Use carefully.')
     parser.add_argument(
-        '--git-clone',
+        '--git_clone',
         action='store_true',
         help='Force new git clone.'
              ' WARNING: may lose previous data.'
              ' Use carefully.')
     parser.add_argument(
-        '--git-clone-args',
+        '--git_clone_args',
         type=str,
         metavar='<str>',
         default='',
         help='Additional git clone arguments.')
     parser.add_argument(
-        '--git-latest',
+        '--git_latest',
         action='store_true',
         help='Use latest version of OpenROAD app.')
     parser.add_argument(
-        '--git-or-branch',
+        '--git_or_branch',
         type=str,
         metavar='<str>',
         default='',
         help='OpenROAD app branch to use.')
     parser.add_argument(
-        '--git-orfs-branch',
+        '--git_orfs_branch',
         type=str,
         metavar='<str>',
         default='master',
         help='OpenROAD-flow-scripts branch to use.')
     parser.add_argument(
-        '--git-url',
+        '--git_url',
         type=str,
         metavar='<url>',
         default=ORFS_URL,
         help='OpenROAD-flow-scripts repo URL to use.')
     parser.add_argument(
-        '--build-args',
+        '--build_args',
         type=str,
         metavar='<str>',
         default='',
@@ -633,6 +685,12 @@ def parse_arguments():
         default=1,
         help='Number of iterations for tuning.')
     tune_parser.add_argument(
+        '--resources_per_trial',
+        type=int,
+        metavar='<int>',
+        default=1,
+        help='Number of CPUs to request for each tunning job.')
+    tune_parser.add_argument(
         '--reference',
         type=str,
         metavar='<path>',
@@ -659,7 +717,7 @@ def parse_arguments():
         default=int(np.floor(cpu_count() / 2)),
         help='Max number of concurrent jobs.')
     parser.add_argument(
-        '--openroad-threads',
+        '--openroad_threads',
         type=int,
         metavar='<int>',
         default=16,
@@ -690,10 +748,13 @@ def parse_arguments():
         # Validation of arguments
         if arguments.eval == 'ppa-improv' and arguments.reference is None:
             print('[ERROR TUN-0006] The argument "--eval ppa-improv"'
-                  ' requries that "--reference <FILE>" is also given.')
+                  ' requires that "--reference <FILE>" is also given.')
             sys.exit(7)
 
     arguments.experiment += f'-{arguments.mode}-{DATE}'
+
+    if arguments.timeout is not None:
+        arguments.timeout = round(arguments.timeout*3600)
 
     return arguments
 
@@ -709,12 +770,11 @@ def set_algorithm(experiment_name, config):
         ax_client.create_experiment(
             name=experiment_name,
             parameters=config,
-            objective_name="minimum",
+            objective_name=METRIC,
             minimize=True
         )
         algorithm = AxSearch(ax_client=ax_client,
-                             points_to_evaluate=best_params,
-                             max_concurrent=args.jobs)
+                             points_to_evaluate=best_params)
     elif args.algorithm == 'nevergrad':
         algorithm = NevergradSearch(
             points_to_evaluate=best_params,
@@ -728,7 +788,7 @@ def set_algorithm(experiment_name, config):
             time_attr="training_iteration",
             perturbation_interval=args.perturbation,
             hyperparam_mutations=config,
-            synch=False
+            synch=True
         )
     elif args.algorithm == 'random':
         algorithm = BasicVariantGenerator(max_concurrent=args.jobs)
@@ -742,7 +802,7 @@ def set_best_params(platform, design):
     Get current known best parameters if it exists.
     '''
     params = []
-    best_param_file = f'designs/{platform}/{design}/{AUTOTUNER_BEST}'
+    best_param_file = f'designs/{platform}/{design}/autotuner-best.json'
     if os.path.isfile(best_param_file):
         with open(best_param_file) as file:
             params = json.load(file)
@@ -761,19 +821,33 @@ def set_training_class(function):
 
 
 @ray.remote
-def save_best(best_config):
+def save_best(results):
     '''
     Save best configuration of parameters found.
     '''
-    new_best_path = f'{LOCAL_DIR}/{args.experiment}/{AUTOTUNER_BEST}'
+    best_config = results.best_config
+    best_config['best_result'] = results.best_result[METRIC]
+    trial_id = results.best_trial.trial_id
+    new_best_path = f'{LOCAL_DIR}/{args.experiment}/'
+    new_best_path += f'autotuner-best-{trial_id}.json'
     with open(new_best_path, 'w') as new_best_file:
         json.dump(best_config, new_best_file, indent=4)
     print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
 
 
+@ray.remote
+def consumer(queue):
+    ''' consumer '''
+    while not queue.empty():
+        next_item = queue.get()
+        name = next_item[1]
+        print(f'[INFO TUN-0007] Scheduling run for parameter {name}.')
+        ray.get(openroad_distributed.remote(*next_item))
+        print(f'[INFO TUN-0008] Finished run for parameter {name}.')
+
+
 def sweep():
     ''' Run sweep of parameters '''
-    workers = list()
     if args.server is not None:
         # For remote sweep we create the following directory structure:
         #      1/     2/         3/       4/
@@ -781,18 +855,27 @@ def sweep():
         repo_dir = abspath(LOCAL_DIR + '/../' * 4)
     else:
         repo_dir = abspath('../')
-    print(f'[INFO TUN-0012] Log dir {LOCAL_DIR}.')
+    print(f'[INFO TUN-0012] Log folder {LOCAL_DIR}.')
+    queue = Queue()
+    parameter_list = list()
     for name, content in config_dict.items():
         if not isinstance(content, list):
-            continue
-        print(f'[INFO TUN-0007] Scheduling runs for parameter {name}.')
-        for i in np.arange(*content):
-            config_dict[name] = i
-            workers.append(openroad_distributed.remote(repo_dir, config_dict,
-                                                       LOCAL_DIR))
-        print(f'[INFO TUN-0008] Finish scheduling for parameter {name}.')
+            print(f'[ERROR TUN-0015] {name} sweep is not supported.')
+            sys.exit(1)
+        if content[-1] == 0:
+            print('[ERROR TUN-0014] Sweep does not support step value zero.')
+            sys.exit(1)
+        parameter_list.append([{name: i} for i in np.arange(*content)])
+    parameter_list = list(product(*parameter_list))
+    for parameter in parameter_list:
+        temp = dict()
+        for value in parameter:
+            temp.update(value)
+        print(temp)
+        queue.put([repo_dir, temp, LOCAL_DIR])
+    workers = [consumer.remote(queue) for _ in range(args.jobs)]
     print('[INFO TUN-0009] Waiting for results.')
-    _ = ray.get(workers)
+    ray.get(workers)
     print('[INFO TUN-0010] Sweep complete.')
 
 
@@ -818,7 +901,7 @@ if __name__ == '__main__':
         # Connect to ray server before first remote execution.
         ray.init(f'ray://{args.server}:{args.port}')
         # Remote functions return a task id and are non-blocking. Since we
-        # need the setup repo to be do to contune we call ray.get() to wait
+        # need the setup repo before continuing, we call ray.get() to wait
         # for its completion.
         INSTALL_PATH = ray.get(setup_repo.remote(LOCAL_DIR))
         LOCAL_DIR += f'/flow/logs/{args.platform}/{args.design}'
@@ -827,6 +910,7 @@ if __name__ == '__main__':
         # For local runs, use the same folder as other ORFS utilities.
         os.chdir(os.path.dirname(abspath(__file__)) + '/../')
         LOCAL_DIR = f'logs/{args.platform}/{args.design}'
+        LOCAL_DIR = abspath(LOCAL_DIR)
         INSTALL_PATH = abspath('../tools/install')
 
     if args.mode == 'tune':
@@ -839,16 +923,21 @@ if __name__ == '__main__':
             reference = PPAImprov.read_metrics(args.reference)
 
         tune_args = dict(
-            name=f'{args.experiment}',
-            metric='minimum',
+            name=args.experiment,
+            metric=METRIC,
             mode='min',
             num_samples=args.samples,
-            fail_fast=True,
+            fail_fast=False,
             local_dir=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
+            resources_per_trial={'cpu': args.resources_per_trial},
+            log_to_file=['trail-out.log', 'trail-err.log'],
+            trial_name_creator=lambda x: f'variant-{x.trainable_name}-{x.trial_id}-ray',
+            trial_dirname_creator=lambda x: f'variant-{x.trainable_name}-{x.trial_id}-ray',
         )
         if args.algorithm == 'pbt':
+            os.environ["TUNE_MAX_PENDING_TRIALS_PG"] = str(args.jobs)
             tune_args['scheduler'] = search_algo
         else:
             tune_args['search_alg'] = search_algo
@@ -857,7 +946,7 @@ if __name__ == '__main__':
             tune_args['config'] = config_dict
         analysis = tune.run(TrainClass, **tune_args)
 
-        task_id = save_best.remote(analysis.best_config)
+        task_id = save_best.remote(analysis)
         _ = ray.get(task_id)
         print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
     elif args.mode == 'sweep':

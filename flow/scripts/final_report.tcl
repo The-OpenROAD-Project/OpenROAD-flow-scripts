@@ -1,37 +1,13 @@
-if {![info exists standalone] || $standalone} {
-  # Read lef
-  read_lef $::env(TECH_LEF)
-  read_lef $::env(SC_LEF)
-  if {[info exist ::env(ADDITIONAL_LEFS)]} {
-    foreach lef $::env(ADDITIONAL_LEFS) {
-      read_lef $lef
-    }
-  }
+source $::env(SCRIPTS_DIR)/load.tcl
+load_design 6_1_fill.odb 6_1_fill.sdc "Starting final report"
 
-  # Read liberty files
-  source $::env(SCRIPTS_DIR)/read_liberty.tcl
-
-  # Read def and sdc
-  # Use -order_wires to build wire graph
-  # for antenna checker read_def -order_wires $::env(RESULTS_DIR)/6_1_fill.def
-  # -order_wires flag is REQUIRED to run RCX
-  if {[info exist ::env(RCX_RULES)]} {
-    read_def -order_wires $::env(RESULTS_DIR)/6_1_fill.def
-  } else {
-    read_def $::env(RESULTS_DIR)/6_1_fill.def
-  }
-  read_sdc $::env(RESULTS_DIR)/6_1_fill.sdc
-
-  set_propagated_clock [all_clocks]
-} else {
-  puts "Starting final report"
-}
-
+set_propagated_clock [all_clocks]
 
 # Delete routing obstructions for final DEF
 source $::env(SCRIPTS_DIR)/deleteRoutingObstructions.tcl
 deleteRoutingObstructions
 
+write_db $::env(RESULTS_DIR)/6_final.odb
 write_def $::env(RESULTS_DIR)/6_final.def
 write_verilog $::env(RESULTS_DIR)/6_final.v
 
@@ -43,9 +19,6 @@ if {[info exist ::env(RCX_RULES)]} {
   if {[info exist ::env(RCX_RC_CORNER)]} {
     set rc_corner $::env(RCX_RC_CORNER)
   }
-
-  # Set via resistances
-  source $::env(PLATFORM_DIR)/setRC.tcl
 
   # RCX section
   define_process_corner -ext_model_index 0 X

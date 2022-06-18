@@ -1,74 +1,86 @@
 {
-    "rules": [
-        {
-            "field": "synth__design__instance__area__stdcell",
-            "value": 25625,
-            "compare": "<="
-        },
-        {
-            "field": "constraints__clocks__count",
-            "value": 1,
-            "compare": "=="
-        },
-        {
-            "field": "placeopt__design__instance__area",
-            "value": 28940,
-            "compare": "<="
-        },
-        {
-            "field": "placeopt__design__instance__count__stdcell",
-            "value": 13452,
-            "compare": "<="
-        },
-        {
-            "field": "detailedplace__design__violations",
-            "value": 0,
-            "compare": "=="
-        },
-        {
-            "field": "cts__timing__setup__ws",
-            "value": -0.62,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__setup__ws__pre_repair",
-            "value": -0.61,
-            "compare": ">="
-        },
-        {
-            "field": "cts__timing__setup__ws__post_repair",
-            "value": -0.61,
-            "compare": ">="
-        },
-        {
-            "field": "globalroute__timing__clock__slack",
-            "value": -0.26,
-            "compare": ">="
-        },
-        {
-            "field": "globalroute__timing__setup__ws",
-            "value": -0.26,
-            "compare": ">="
-        },
-        {
-            "field": "detailedroute__route__wirelength",
-            "value": 430053,
-            "compare": "<="
-        },
-        {
-            "field": "detailedroute__route__drc_errors",
-            "value": 0,
-            "compare": "<="
-        },
-        {
-            "field": "finish__timing__setup__ws",
-            "value": -0.24,
-            "compare": ">="
-        },
-        {
-            "field": "finish__design__instance__area",
-            "value": 29140,
-            "compare": "<="
-        }
-    ]
+    "synth__design__instance__area__stdcell": {
+        "value": 25671,
+        "compare": "<="
+    },
+    "constraints__clocks__count": {
+        "value": 1,
+        "compare": "=="
+    },
+    "placeopt__design__instance__area": {
+        "value": 28614,
+        "compare": "<="
+    },
+    "placeopt__design__instance__count__stdcell": {
+        "value": 13519,
+        "compare": "<="
+    },
+    "detailedplace__design__violations": {
+        "value": 0,
+        "compare": "=="
+    },
+    "cts__timing__setup__ws": {
+        "value": -1.49,
+        "compare": ">="
+    },
+    "cts__timing__setup__ws__pre_repair": {
+        "value": -1.49,
+        "compare": ">="
+    },
+    "cts__timing__setup__ws__post_repair": {
+        "value": -1.49,
+        "compare": ">="
+    },
+    "cts__design__instance__count__setup_buffer": {
+        "value": 10,
+        "compare": "<="
+    },
+    "cts__design__instance__count__hold_buffer": {
+        "value": 10,
+        "compare": "<="
+    },
+    "globalroute__timing__clock__slack": {
+        "value": -0.16,
+        "compare": ">="
+    },
+    "globalroute__timing__setup__ws": {
+        "value": -0.16,
+        "compare": ">="
+    },
+    "detailedroute__route__wirelength": {
+        "value": 331644,
+        "compare": "<="
+    },
+    "detailedroute__route__drc_errors": {
+        "value": 0,
+        "compare": "<="
+    },
+    "finish__timing__setup__ws": {
+        "value": -0.15,
+        "compare": ">="
+    },
+    "finish__design__instance__area": {
+        "value": 28828,
+        "compare": "<="
+    },
+    "finish__timing__drv__max_slew_limit": {
+        "value": -0.2,
+        "compare": ">="
+    },
+    "finish__timing__drv__max_cap_limit": {
+        "value": -0.26,
+        "compare": ">="
+    },
+    "finish__timing__drv__setup_violation_count": {
+        "value": 10,
+        "compare": "<="
+    },
+    "finish__timing__drv__hold_violation_count": {
+        "value": 10,
+        "compare": "<="
+    },
+    "finish__timing__wns_percent_delay": {
+        "value": -10.0,
+        "compare": ">="
+    }
 }
