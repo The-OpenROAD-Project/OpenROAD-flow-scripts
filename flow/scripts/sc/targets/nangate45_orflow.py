@@ -78,6 +78,8 @@ def setup(chip):
         'TIEHI_CELL_AND_PORT': 'LOGIC1_X1 Z',
         'TIELO_CELL_AND_PORT': 'LOGIC0_X1 Z',
         'MIN_BUF_CELL_AND_PORTS': 'BUF_X1 A Z',
+        'MACRO_PLACE_HALO': '22.4 15.12',
+        'MACRO_PLACE_CHANNEL': '18.8 19.95',
         'FILL_CELLS': 'FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32',
         'DONT_USE_CELLS': 'TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1',
         'CTS_BUF_CELL': 'BUF_X4',
@@ -96,6 +98,7 @@ def setup(chip):
         'MAX_ROUTING_LAYER': 'metal10',
         'PLACE_PINS_ARGS': '',
         'PLACE_DENSITY': '0.30',
+        'GDS_ALLOW_EMPTY': 'fakeram.*',
         'NUM_CORES': '4', # TODO: Use nproc
         'LIB_FILES': ' '.join(chip.get('library', 'nangate45', 'model', 'timing', 'nldm', 'typical')),
         # TODO: chip.get stackup, libtype

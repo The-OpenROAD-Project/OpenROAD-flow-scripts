@@ -78,7 +78,7 @@ if {$sc_step == "or_yosys"} {
     foreach f $inputs {
         puts $f
     }
-    file copy -force outputs/2_2_floorplan_io.odb outputs/2_3_floorplan_tdms.odb
+    file copy -force inputs/2_2_floorplan_io.odb outputs/2_3_floorplan_tdms.odb
 } elseif {$sc_step == "or_pdn"} {
     # Last floorplan step: copy .odb file.
     file copy -force outputs/2_6_floorplan_pdn.odb outputs/2_floorplan.odb

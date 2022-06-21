@@ -71,6 +71,17 @@ def main():
     elif platform == 'sky130hd':
         chip.load_target('sky130hd_orflow')
 
+    for k in chip.getkeys('tool', 'openroad', 'env'):
+        for key in chip.getkeys('tool', 'openroad', 'env', k, '0'):
+            # Some env vars should be appended to.
+            if (key in ['DONT_USE_LIBS', 'LIB_FILES']) and ('ADDITIONAL_LIBS' in config):
+                val = chip.get('tool', 'openroad', 'env', k, '0', key)
+                chip.set('tool', 'openroad', 'env', k, '0', key, f'{val} {config["ADDITIONAL_LIBS"]}')
+        for key, val in config.items():
+            # Some env vars should be appended to.
+            if not key in ['DONT_USE_LIBS', 'LIB_FILES']:
+                chip.set('tool', 'openroad', 'env', k, '0', key, val)
+
     chip.logger.debug(config)
 
     # For testing

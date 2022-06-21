@@ -77,6 +77,8 @@ def setup(chip):
         'TIEHI_CELL_AND_PORT': 'sky130_fd_sc_hd__conb_1 HI',
         'TIELO_CELL_AND_PORT': 'sky130_fd_sc_hd__conb_1 LO',
         'MIN_BUF_CELL_AND_PORTS': 'sky130_fd_sc_hd__buf_4 A X',
+        'MACRO_PLACE_HALO': '40 40',
+        'MACRO_PLACE_CHANNEL': '80 80',
         'FILL_CELLS': 'sky130_fd_sc_hd__fill_1 sky130_fd_sc_hd__fill_2 sky130_fd_sc_hd__fill_4 sky130_fd_sc_hd__fill_8',
         'DONT_USE_CELLS': 'sky130_fd_sc_hd__probe_p_8 sky130_fd_sc_hd__probec_p_8 \
 sky130_fd_sc_hd__lpflow_bleeder_1 \
