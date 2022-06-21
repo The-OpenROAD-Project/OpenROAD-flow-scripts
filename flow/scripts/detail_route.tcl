@@ -7,7 +7,7 @@ set_thread_count $::env(NUM_CORES)
 
 set additional_args ""
 if { ![info exists ::env(USE_WXL)]} {
-  append additional_args " -guide $::env(RESULTS_DIR)/route.guide"
+  read_guides $::env(RESULTS_DIR)/route.guide
 }
 if { [info exists ::env(dbProcessNode)]} {
   append additional_args " -db_process_node $::env(dbProcessNode)"
@@ -37,8 +37,8 @@ if { [info exists ::env(DISABLE_VIA_GEN)]} {
 
 
 detailed_route -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
-               -output_guide $::env(RESULTS_DIR)/output_guide.mod \
                -output_maze $::env(RESULTS_DIR)/maze.log \
+               -save_guide_updates \
                -verbose 1 \
                {*}$additional_args
 
