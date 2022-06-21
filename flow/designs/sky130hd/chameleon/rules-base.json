@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 6529483,
+        "value": 6529431,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 70327,
+        "value": 70325,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -60,15 +60,15 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 6531668,
+        "value": 6531627,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.2,
+        "value": -0.63,
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.2,
+        "value": -0.66,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
