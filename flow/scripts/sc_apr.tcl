@@ -4,6 +4,7 @@ set sc_tool "openroad"
 set sc_step [dict get $sc_cfg arg step]
 set sc_index [dict get $sc_cfg arg index]
 set sc_refdir [dict get $sc_cfg tool $sc_tool refdir $sc_step $sc_index]
+set sc_design [dict get $sc_cfg design]
 
 set results_dir $::env(RESULTS_DIR)
 set inputs [list]
@@ -12,6 +13,11 @@ set inputs [list]
 if {$sc_step == "import"} {
     # Import: Create macro wrappers if necessary.
     # TODO: It looks like this step only applies to gf12 designs, so we cannot adequately test it atm.
+} elseif {$sc_step == "or_yosys"} {
+    # Mark dont-use cells in liberty files, and merge them.
+    foreach f [split $::env(LIB_FILES)] {
+        exec $::env(UTILS_DIR)/markDontUse.py -p $::env(DONT_USE_CELLS) -i $f -o "../../[file tail $f]-mod.lib"
+    }
 } elseif {$sc_step == "export"} {
     # Export: Generate KLayout tech file.
     set sc_process [dict get $sc_cfg option pdk]
@@ -105,4 +111,7 @@ if {$sc_step == "or_yosys"} {
             file copy -force "inputs/$f" outputs/6_1_fill.sdc
         }
     }
+} elseif {$sc_step == "export"} {
+    # Symlink '6_final.gds' to '<design>.gds'.
+    file link -symbolic outputs/$sc_design.gds [file normalize outputs/6_final.gds]
 }

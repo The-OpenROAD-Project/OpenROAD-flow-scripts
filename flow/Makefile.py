@@ -1,4 +1,5 @@
 import argparse
+import glob
 import os
 import shutil
 import sys
@@ -46,8 +47,23 @@ def main():
         sdc_in = os.path.abspath(config.pop('SDC_FILE'))
         chip.set('input', 'sdc', sdc_in)
     if 'VERILOG_FILES' in config.keys():
-        v_in_list = [os.path.abspath(vf) for vf in config.pop('VERILOG_FILES').split()]
+        v_in_list = []
+        for vf in config.pop('VERILOG_FILES').split():
+            if '*' in vf:
+                for gf in glob.glob(vf):
+                    v_in_list.append(os.path.abspath(gf))
+            else:
+                v_in_list.append(os.path.abspath(vf))
         chip.set('input', 'verilog', v_in_list)
+    if 'VERILOG_FILES_BLACKBOX' in config.keys():
+        v_in_list = []
+        for vf in config.pop('VERILOG_FILES_BLACKBOX').split():
+            if '*' in vf:
+                for gf in glob.glob(vf):
+                    v_in_list.append(os.path.abspath(gf))
+            else:
+                v_in_list.append(os.path.abspath(vf))
+        config['VERILOG_FILES_BLACKBOX'] = ' '.join(v_in_list)
     if 'VERILOG_INCLUDE_DIRS' in config.keys():
         v_inc_dirs = [os.path.abspath(vf) for vf in config['VERILOG_INCLUDE_DIRS'].split()]
         config['VERILOG_INCLUDE_DIRS'] = ' '.join(v_inc_dirs)
@@ -73,13 +89,30 @@ def main():
 
     for k in chip.getkeys('tool', 'openroad', 'env'):
         for key in chip.getkeys('tool', 'openroad', 'env', k, '0'):
-            # Some env vars should be appended to.
-            if (key in ['DONT_USE_LIBS', 'LIB_FILES']) and ('ADDITIONAL_LIBS' in config):
+            # Some env vars should be appended to and/or modified.
+            if (key == 'LIB_FILES') and ('ADDITIONAL_LIBS' in config):
                 val = chip.get('tool', 'openroad', 'env', k, '0', key)
+                # Liberty files get pre-processed to
                 chip.set('tool', 'openroad', 'env', k, '0', key, f'{val} {config["ADDITIONAL_LIBS"]}')
+            elif (key == 'DONT_USE_LIBS'):
+                # "Don't use" libraries get pre-processed. TODO: Currently placed in build dir root.
+                # Also, 'markDontUse.py' is called from TCL; might be easier to do that pp here.
+                mod_lib_base = os.path.abspath(os.path.join(chip.get('option', 'builddir'),
+                                                            chip.get('design'),
+                                                            chip.get('option', 'jobname')))
+                libs = [chip.get('tool', 'openroad', 'env', k, '0', key)]
+                if 'ADDITIONAL_LIBS' in config:
+                    libs = libs + config['ADDITIONAL_LIBS'].split()
+                dontuse_l = []
+                for lf in libs:
+                    dontuse_l.append(os.path.join(mod_lib_base, f'{os.path.split(lf)[1]}-mod.lib'))
+                dontuse = ' '.join(dontuse_l)
+                chip.set('tool', 'openroad', 'env', k, '0', key, dontuse)
+                #chip.set('tool', 'openroad', 'env', k, '0', 'LIB_FILES', dontuse)
+                chip.set('tool', 'openroad', 'env', k, '0', 'DONT_USE_SC_LIB', dontuse_l[0])
         for key, val in config.items():
             # Some env vars should be appended to.
-            if not key in ['DONT_USE_LIBS', 'LIB_FILES']:
+            if not key in ['DONT_USE_LIBS', 'LIB_FILES', 'DONT_USE_SC_LIB']:
                 chip.set('tool', 'openroad', 'env', k, '0', key, val)
 
     chip.logger.debug(config)
