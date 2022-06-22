@@ -75,8 +75,6 @@ def setup(chip):
         'PLATFORM': 'nangate45',
         'PROCESS': '45',
         'SYNTH_ARGS': '-flatten',
-        # TODO: 'ABC_CLOCK_PERIOD_IN_PS' should be set by reading the SDC file's first clock signal.
-        'ABC_CLOCK_PERIOD_IN_PS': '6.84',
         'ABC_DRIVER_CELL': 'BUF_X1',
         'ABC_LOAD_IN_FF': '3.898',
         'ABC_AREA': '1',
