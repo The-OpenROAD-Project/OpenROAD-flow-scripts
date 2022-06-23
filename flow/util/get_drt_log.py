@@ -35,7 +35,8 @@ benchmark_list = ['ispd18_test1',
                   'ispd19_test8', 
                   'ispd19_test9' ]
 benchmark_list = ['ispd19_test10']
-benchmark_list = ['sky130hd_ibex_base']
+#benchmark_list = ['sky130hd_ibex_base']
+benchmark_list = ['sky130hd_aes_base']
 
 ### worker from worker log
 def make_worker(curr_iter, logfile):
@@ -149,11 +150,13 @@ for benchmark in benchmark_list:
   variant = benchmark.split('_')[2]
   logfile = './logs/%s/%s/%s/5_2_TritonRoute.log'%(platform, design, variant)
   outlog = 'drt_figs/%s/%s.log'%(benchmark,benchmark)
+  outstubborn = 'drt_figs/%s/%s_stubborn.log'%(benchmark,benchmark)
   if not os.path.exists('drt_figs'):
     os.makedirs('drt_figs')
   if not os.path.exists('drt_figs/%s'%benchmark):
     os.makedirs('drt_figs/%s'%benchmark)
   fo = open(outlog, 'w')
+  fostubborn = open(outstubborn, 'w')
   filenames = sorted(glob.glob('./drt_figs/%s/drc_dist*'%(benchmark)))
   for filename in filenames:
     if os.path.exists(filename):
@@ -181,13 +184,14 @@ for benchmark in benchmark_list:
     worker_list, worker_num, drvs_num, xlim_left, ylim_left, xlim_right, ylim_right = make_worker(iter_num, logfile)
     #print(worker_list, worker_num)
     #print('worker_num: %s'%worker_num)
-    fo.write('Curr_iter: %s #wokers (#tiles): %s \n'%(iter_num, worker_num))
+    fo.write('- Curr_iter: %s #wokers (#tiles): %s \n'%(iter_num, worker_num))
     worker_list = worker_list[worker_list[:,1].argsort()]
     worker_list = worker_list[worker_list[:,0].argsort(kind='mergesort')]
     #print(worker_list)
     zerotiles_num = 0
     count = 0
     iter_obj = itertools.cycle(worker_list)
+    stubborn_tiles = []
     while count < len(worker_list):
       is_new_zerotile = 0
       worker=next(iter_obj)
@@ -203,9 +207,31 @@ for benchmark in benchmark_list:
       data_x_grid.append(float(worker[0]))
       data_y_grid.append(float(worker[1]))
       #data_runtime_temp.append(float(worker[4]))
+      if int(iter_num)>=10 and int(worker[6])>0:
+        stubborn_tile_temp = "worker x_ll: %f y_ll: %f x_ur: %f y_ur: %f time: %f prev_drv: %i curr_drv: %i \n"%(worker[0], worker[1], worker[2], worker[3], worker[4], int(worker[5]), int(worker[6]))
+        stubborn_tiles.append(stubborn_tile_temp)
+        
     data_runtime.append(data_runtime_temp)
-    print('iter: %i #DRVs: %i, worker_num: %i #new_zerotiles: %i'%(int(iter_num), int(drvs_num), int(worker_num), int(zerotiles_num)))
-    fo.write('iter: %i #DRVs: %i, worker_num: %i #new_zerotiles: %i \n'%(int(iter_num), int(drvs_num), int(worker_num), int(zerotiles_num)))
+    print('-- Stubborn tiles\n')
+    fo.write('-- Stubborn tiles\n')
+    if len(stubborn_tiles)>0:
+      for tile in stubborn_tiles:
+        print(tile)
+        fo.write(tile)
+
+    print('-- iter: %i #DRVs: %i, worker_num: %i #new_zerotiles: %i'%(int(iter_num), int(drvs_num), int(worker_num), int(zerotiles_num)))
+    fo.write('-- iter: %i #DRVs: %i, worker_num: %i #new_zerotiles: %i \n'%(int(iter_num), int(drvs_num), int(worker_num), int(zerotiles_num)))
+    fo.write('\n')
+    fostubborn.write('- Curr_iter: %i #DRVs: %i, worker_num: %i #new_zerotiles: %i \n'%(int(iter_num), int(drvs_num), int(worker_num), int(zerotiles_num)))
+    fostubborn.write('-- Stubborn tiles\n')
+    if len(stubborn_tiles)>0:
+      for tile in stubborn_tiles:
+        fostubborn.write(tile)
+      fostubborn.write('-- DRC report\n')
+      with open(rpt_path) as file_dr_rpt:
+        for line in file_dr_rpt:
+          fostubborn.write(line)
+    fostubborn.write('\n')
     data_iter.append(int(iter_num))
     data_drvs_num.append(int(drvs_num))
     data_worker_num.append(int(worker_num))
@@ -268,6 +294,7 @@ for benchmark in benchmark_list:
 
     
   fo.close()
+  fostubborn.close()
     
   ## #new_zerotiles vs. iteration ##
   fig = plt.figure(figsize=(8, 6))
