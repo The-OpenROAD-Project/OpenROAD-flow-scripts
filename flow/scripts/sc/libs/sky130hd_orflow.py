@@ -55,7 +55,7 @@ def setup(chip):
     lib.set('asic', 'pgmetal', 'm1')
 
     # clock buffers
-    lib.add('asic', 'cells', 'clkbuf', 'sky130_fd_sc_hd__clkbuf_1')
+    lib.add('asic', 'cells', 'clkbuf', 'sky130_fd_sc_hd__clkbuf_4')
 
     # hold cells
     lib.add('asic', 'cells', 'hold', 'sky130_fd_sc_hd__buf_1')
@@ -115,14 +115,14 @@ def setup(chip):
     # TODO: should probably fill these in, but they're currently unused by
     # OpenROAD flow
     #driver
-    lib.add('asic', 'cells', 'driver', '')
+    lib.add('asic', 'cells', 'driver', 'sky130_fd_sc_hd__buf_1')
 
     # buffer cell
-    lib.add('asic', 'cells', 'buf', ['sky130_fd_sc_hd__buf_4/A/X'])
+    lib.add('asic', 'cells', 'buf', ['sky130_fd_sc_hd__buf_4 A X'])
 
     # tie cells
-    lib.add('asic', 'cells', 'tie', ['sky130_fd_sc_hd__conb_1/HI',
-                                      'sky130_fd_sc_hd__conb_1/LO'])
+    lib.add('asic', 'cells', 'tie', ['sky130_fd_sc_hd__conb_1 HI',
+                                      'sky130_fd_sc_hd__conb_1 LO'])
 
     chip.import_library(lib)
 

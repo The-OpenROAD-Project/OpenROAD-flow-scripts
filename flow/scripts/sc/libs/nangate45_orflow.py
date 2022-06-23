@@ -62,17 +62,17 @@ def setup(chip):
 
 
     # driver
-    lib.add('asic', 'cells','driver', "BUF_X4")
+    lib.add('asic', 'cells','driver', "BUF_X1")
 
     # clock buffers
     lib.add('asic', 'cells','clkbuf', "BUF_X4")
 
     # tie cells
-    lib.add('asic', 'cells','tie', ["LOGIC1_X1/Z",
-                                    "LOGIC0_X1/Z"])
+    lib.add('asic', 'cells','tie', ["LOGIC1_X1 Z",
+                                    "LOGIC0_X1 Z"])
 
     # buffer cell
-    lib.add('asic', 'cells', 'buf', ['BUF_X1/A/Z'])
+    lib.add('asic', 'cells', 'buf', ['BUF_X1 A Z'])
 
     # hold cells
     lib.add('asic', 'cells', 'hold', "BUF_X1")
@@ -85,8 +85,10 @@ def setup(chip):
                                         "FILLCELL_X16",
                                         "FILLCELL_X32"])
 
-    # Stupid small cells
-    lib.add('asic', 'cells', 'ignore', ["AOI211_X1",
+    # Mark small cells as dontuse, to ease routing congestion.
+    lib.add('asic', 'cells', 'ignore', ["TAPCELL_X1",
+                                        "FILLCELL_X1",
+                                        "AOI211_X1",
                                         "OAI211_X1"])
 
     # Tapcell
