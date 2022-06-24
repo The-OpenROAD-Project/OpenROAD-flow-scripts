@@ -34,6 +34,14 @@ pipeline {
             sh "flow/test/test_helper.sh aes asap7";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*aes_asap7*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*aes_asap7*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -47,6 +55,14 @@ pipeline {
             sh "flow/test/test_helper.sh ethmac asap7";
           }
           post {
+           success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*ethmac_asap7*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*ethmac_asap7*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -60,6 +76,14 @@ pipeline {
             sh "flow/test/test_helper.sh gcd asap7";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*gcd_asap7*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*gcd_asap7*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -73,6 +97,14 @@ pipeline {
             sh "flow/test/test_helper.sh ibex asap7";
           }
           post {
+           success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*ibex_asap7*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*ibex_asap7*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -86,6 +118,14 @@ pipeline {
             sh "flow/test/test_helper.sh jpeg asap7";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*jpeg_asap7*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*jpeg_asap7*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -99,6 +139,14 @@ pipeline {
             sh "flow/test/test_helper.sh sha3 asap7";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*sha3_asap7*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*sha3_asap7*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -112,6 +160,14 @@ pipeline {
             sh "flow/test/test_helper.sh uart asap7";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*uart_asap7*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*uart_asap7*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
