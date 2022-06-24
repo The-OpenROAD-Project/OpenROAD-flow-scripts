@@ -34,9 +34,17 @@ pipeline {
             sh "flow/test/test_helper.sh aes asap7";
           }
           post {
-            always {
+            success {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
+              sh "mkdir flow/success";
+              sh "mv flow/*aes_asap7*tar.gz flow/success";
+            }
+            failure {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
+              sh "mkdir flow/failure";
+              sh "mv flow/*aes_asap7*tar.gz flow/failure";
             }
           }
         }
