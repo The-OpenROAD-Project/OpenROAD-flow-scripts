@@ -40,7 +40,7 @@ def setup(chip, flowname='orflow'):
 
     flow_groups = {
         'synthesis': [
-            ('or_yosys', 'openroad'), # (synthesis is done via OpenROAD TCL that calls yosys)
+            ('or_yosys', 'yosys'), # (synthesis is done via OpenROAD TCL that calls yosys)
         ],
         'floorplan': [
             ('or_floorplan', 'openroad'),
@@ -68,7 +68,7 @@ def setup(chip, flowname='orflow'):
         'finish': [
             ('or_final_report', 'openroad'),
             # Like yosys, KLayout GDS-streaming script is run through an OpenROAD tcl script
-            ('export', 'openroad')
+            ('or_export', 'klayout')
         ]
     }
     flowpipe = ['synthesis', 'floorplan', 'place', 'cts', 'route', 'finish']
@@ -95,8 +95,12 @@ def setup(chip, flowname='orflow'):
 
             last_step = step
 
-            chip.set('tool', tool, 'script', step, '0', 'sc_apr.tcl')
-            chip.set('tool', tool, 'refdir', step, '0', os.path.join(openroad_dir, 'flow', 'scripts'))
+            if step == 'or_export':
+                chip.set('tool', tool, 'script', step, '0', 'def2stream.py')
+                chip.set('tool', tool, 'refdir', step, '0', os.path.join(openroad_dir, 'flow', 'util'))
+            else:
+                chip.set('tool', tool, 'script', step, '0', 'sc_apr.tcl')
+                chip.set('tool', tool, 'refdir', step, '0', os.path.join(openroad_dir, 'flow', 'scripts', 'sc', 'tools', 'openroad'))
 
         # Each step in a flow group relies on an SDC produced by (or copied
         # into) the first step of the previous flow group.

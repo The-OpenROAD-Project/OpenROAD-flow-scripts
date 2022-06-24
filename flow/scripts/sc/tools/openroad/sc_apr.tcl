@@ -1,8 +1,23 @@
+#########################################################################
+# "sc_apr.tcl"
+# This is a wrapper script which sits between SiliconCompiler and the
+# TCL scripts which get called by the OpenROAD-flow-scripts Makefile.
+#
+# This wrapper script simplifies the implementation of some pre-
+# and post-processing steps, such as copying files between steps
+# or modifying default liberty/tech/etc files.
+#
+# Although it is located in 'scripts/sc/tools/openroad', this script is
+# also run through yosys during the synthesis step.
+#########################################################################
+
+# Populate $sc_cfg value with the current sc manifest.
 source sc_manifest.tcl
 
-set sc_tool "openroad"
+# Set widely-used variables related to the current task.
 set sc_step [dict get $sc_cfg arg step]
 set sc_index [dict get $sc_cfg arg index]
+set sc_tool [dict get $sc_cfg flowgraph orflow $sc_step $sc_index tool]
 set sc_refdir [dict get $sc_cfg tool $sc_tool refdir $sc_step $sc_index]
 set sc_design [dict get $sc_cfg design]
 
@@ -10,16 +25,13 @@ set results_dir $::env(RESULTS_DIR)
 set inputs [list]
 
 # Step-specific pre-processing step(s)
-if {$sc_step == "import"} {
-    # Import: Create macro wrappers if necessary.
-    # TODO: It looks like this step only applies to gf12 designs, so we cannot adequately test it atm.
-} elseif {$sc_step == "or_yosys"} {
-    # Mark dont-use cells in liberty files, and merge them.
+if {$sc_step == "or_yosys"} {
+    # Synthesis: mark dont-use cells in liberty files, and merge them.
     foreach f [split $::env(LIB_FILES)] {
         exec $::env(UTILS_DIR)/markDontUse.py -p $::env(DONT_USE_CELLS) -i $f -o "../../[file tail $f]-mod.lib"
     }
-} elseif {$sc_step == "export"} {
-    # Export: Generate KLayout tech file.
+} elseif {$sc_step == "or_detail_route"} {
+    # Pre-export: Generate KLayout tech file with references to all LEFs in the design..
     set sc_process [dict get $sc_cfg option pdk]
     set sc_stackup [dict get $sc_cfg pdk $sc_process stackup]
     set base_lyt [dict get $sc_cfg pdk $sc_process layermap klayout def gds $sc_stackup]
@@ -32,14 +44,14 @@ if {$sc_step == "import"} {
         }
     }
 
-    # Put KLayout tech files in job dir root to avoid modifying klayout.tcl
+    # Put KLayout tech files in job dir root to avoid modifying original tech file.
     # klayout.lyt = base_lyt w/ lef-files tag replaced.
     exec sed "s,<lef-files>.*</lef-files>,$replace_str,g" $base_lyt > ../../klayout.lyt
     # klayout.lyp = base_lyp
     file copy -force $base_lyp ../../klayout.lyp
 }
 
-# Copy from inputs/ into OpenROAD work directory
+# Pre-run: copy from inputs/ into OpenROAD work directory
 file mkdir $results_dir
 foreach f [glob -directory inputs/ -tails -nocomplain *] {
     file copy -force inputs/$f $results_dir
@@ -47,23 +59,23 @@ foreach f [glob -directory inputs/ -tails -nocomplain *] {
 }
 
 # Determine OR script name based on step name
-if {$sc_step == "export"} {
-    # export is special case
-    set script "klayout.tcl"
+if {$sc_step == "or_yosys"} {
+    # Synthesis is a special case; we don't want to use the possibly-deprecated 'yosys.tcl' file.
+    set script ../../../synth.tcl
 } elseif {$sc_step == "or_tdms_place" && [info exists ::env(MACRO_PLACEMENT)]} {
     # Skip TDMS placement step if MACRO_PLACEMENT is set.
     set script ""
 } else {
-    # strip or_ prefix
-    set script [string replace $sc_step 0 2 ""].tcl
+    # Strip or_ prefix to get the name of the script to run.
+    set script ../../../[string replace $sc_step 0 2 ""].tcl
 }
 
-# Run script
+# Run the script for this step.
 if {$script != ""} {
     source $sc_refdir/$script
 }
 
-# Copy anything from work dir that was not an input into outputs/
+# Post-run: copy anything from work dir that was not an input into outputs/
 foreach f [glob -directory $results_dir -tails -nocomplain *] {
     if {[lsearch $inputs $f] == -1} {
         file copy -force $results_dir/$f outputs/
@@ -72,7 +84,7 @@ foreach f [glob -directory $results_dir -tails -nocomplain *] {
 
 # Step-specific post-processing step(s)
 if {$sc_step == "or_yosys"} {
-    # Synthesis: Copy RTL/SDC files
+    # Synthesis: Copy/rename RTL/SDC files
     file copy -force outputs/1_1_yosys.v outputs/1_synth.v
     foreach f $inputs {
         if {[string last ".sdc" $f] == [expr [string length $f] - 4]} {
@@ -111,7 +123,4 @@ if {$sc_step == "or_yosys"} {
             file copy -force "inputs/$f" outputs/6_1_fill.sdc
         }
     }
-} elseif {$sc_step == "export"} {
-    # Symlink '6_final.gds' to '<design>.gds'.
-    file link -symbolic outputs/$sc_design.gds [file normalize outputs/6_final.gds]
 }

@@ -67,6 +67,7 @@ def setup(chip):
         'WRAPPED_GDSOAS': '',
         'GDS_LAYER_MAP': '',
         'STREAM_SYSTEM_EXT': 'gds',
+        'FILL_CONFIG': '',
         'CL_FILE': os.path.join(platform_dir, 'cdl', 'NangateOpenCellLibrary.cdl'),
         'TEMPLATE_PGA_CFG': os.path.join(platform_dir, 'template_pga.cfg'),
         'RCX_RULES': os.path.join(platform_dir, 'rcx_patterns.rules'),
@@ -83,8 +84,8 @@ def setup(chip):
         'TIEHI_CELL_AND_PORT': chip.get('library', libname, 'asic', 'cells', 'tie')[0],
         'TIELO_CELL_AND_PORT': chip.get('library', libname, 'asic', 'cells', 'tie')[1],
         'MIN_BUF_CELL_AND_PORTS': ' '.join(chip.get('library', libname, 'asic', 'cells', 'buf')),
-        'MACRO_PLACE_HALO': ' '.join(chip.get('pdk', process, 'var', 'openroad', stackup, 'macro_place_halo')[0]),
-        'MACRO_PLACE_CHANNEL': ' '.join(chip.get('pdk', process, 'var', 'openroad', stackup, 'macro_place_channel')[0]),
+        'MACRO_PLACE_HALO': ' '.join(chip.get('pdk', process, 'var', 'openroad', stackup, 'macro_place_halo')),
+        'MACRO_PLACE_CHANNEL': ' '.join(chip.get('pdk', process, 'var', 'openroad', stackup, 'macro_place_channel')),
         'FILL_CELLS': ' '.join(chip.get('library', libname, 'asic', 'cells', 'filler')),
         'DONT_USE_CELLS': ' '.join(chip.get('library', libname, 'asic', 'cells', 'ignore')),
         'CTS_BUF_CELL': ' '.join(chip.get('library', libname, 'asic', 'cells', 'clkbuf')),
@@ -116,6 +117,7 @@ def setup(chip):
         'GPL_TIMING_DRIVEN': '1',
         'PLACE_PINS_ARGS': '',
         'GDS_ALLOW_EMPTY': 'fakeram.*',
+        'SEAL_GDS': '',
         'NUM_CORES': '4', # TODO: Use nproc
         'DIE_AREA': '0 0 300 300',
         'CORE_AREA': '10 10 290 290',
@@ -134,7 +136,12 @@ def setup(chip):
     # Set default environment variables for every step in the flow.
     for k in chip.getkeys('flowgraph', 'orflow'):
         for key, val in env_vars.items():
-            chip.set('tool', 'openroad', 'env', k, '0', key, val)
+            if k == 'or_yosys':
+                chip.set('tool', 'yosys', 'env', k, '0', key, val)
+            elif k == 'or_export':
+                chip.set('tool', 'klayout', 'env', k, '0', key, val)
+            else:
+                chip.set('tool', 'openroad', 'env', k, '0', key, val)
 
 
 #########################
