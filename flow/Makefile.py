@@ -87,6 +87,22 @@ def main():
     elif platform == 'sky130hd':
         chip.load_target('sky130hd_orflow')
 
+    # Calculate clock period to use for yosys abc. Should be first clock entry in the constraints file.
+    if (not 'ABC_CLOCK_PERIOD_IN_PS' in config) and (os.path.isfile(chip.get('input', 'sdc')[0])):
+        with open(chip.get('input', 'sdc')[0], 'r') as sdcf:
+            for l in sdcf.readlines():
+                if l.startswith('set clk_period '):
+                    # "set clk_period x.yz \n": extract "x.yz" as float
+                    p = float(l[len('set clk_period ') : ].strip())
+                    config['ABC_CLOCK_PERIOD_IN_PS'] = f'{p * 1000}'
+                    break
+                elif '-period ' in l:
+                    # "create_clock ... -period  x.yz ... \n": extract "x.yz" as float.
+                    lv = l.split()
+                    p = float(lv[lv.index('-period') + 1])
+                    config['ABC_CLOCK_PERIOD_IN_PS'] = f'{p * 1000}'
+                    break
+
     tools = ['yosys', 'openroad', 'klayout']
     for tool in tools:
         for k in chip.getkeys('tool', tool, 'env'):
@@ -137,22 +153,6 @@ def main():
                        '-rd', f'layer_map={layermap}',
                        '-rm']
     chip.set('tool', tool, 'option', step, '0', klayout_options)
-
-    # Calculate clock period to use for yosys abc. Should be first clock entry in the constraints file.
-    if (not 'ABC_CLOCK_PERIOD_IN_PS' in config) and (os.path.isfile(chip.get('input', 'sdc')[0])):
-        with open(chip.get('input', 'sdc')[0], 'r') as sdcf:
-            for l in sdcf.readlines():
-                if l.startswith('set clk_period '):
-                    # "set clk_period x.yz \n": extract "x.yz" as float
-                    p = float(l[len('set clk_period ') : ].strip())
-                    config['ABC_CLOCK_PERIOD_IN_PS'] = f'{p * 1000}'
-                    break
-                elif '-period ' in l:
-                    # "create_clock ... -period  x.yz ... \n": extract "x.yz" as float.
-                    lv = l.split()
-                    p = float(lv[lv.index('-period') + 1])
-                    config['ABC_CLOCK_PERIOD_IN_PS'] = f'{p * 1000}'
-                    break
 
     chip.logger.debug(config)
 
