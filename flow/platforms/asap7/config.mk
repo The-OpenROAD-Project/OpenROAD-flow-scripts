@@ -43,7 +43,7 @@ export WC_TEMPERATURE          = 100C
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
-export DONT_USE_CELLS          = *x1_ASAP7* *x1p*_ASAP7* *xp*_ASAP7*
+export DONT_USE_CELLS          = *x1p*_ASAP7* *xp*_ASAP7*
 export DONT_USE_CELLS          += SDF* ICG* DFFH*
 
 # Yosys mapping files
