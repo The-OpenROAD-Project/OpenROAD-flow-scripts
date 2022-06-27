@@ -25,18 +25,26 @@ set results_dir $::env(RESULTS_DIR)
 set inputs [list]
 
 # Step-specific pre-processing step(s)
-if {$sc_step == "or_yosys"} {
-    # Synthesis: mark dont-use cells in liberty files, and merge them.
+#if {$sc_step == "or_synth_hier_report"} {
+if {$sc_step == "or_synth"} {
+    # Pre-synthesis: mark dont-use cells in liberty files, and merge them.
     foreach f [split $::env(LIB_FILES)] {
         exec $::env(UTILS_DIR)/markDontUse.py -p $::env(DONT_USE_CELLS) -i $f -o "../../[file tail $f]-mod.lib"
     }
+    set merge_cmd $::env(UTILS_DIR)/mergeLib.pl
+    lappend merge_cmd $::env(PLATFORM)_merged
+    foreach ff [regexp -all -inline {\S+} $::env(DONT_USE_LIBS)] {
+        lappend merge_cmd $ff
+    }
+    exec {*}$merge_cmd > ../../merged.lib
 } elseif {$sc_step == "or_detail_route"} {
     # Pre-export: Generate KLayout tech file with references to all LEFs in the design..
     set sc_process [dict get $sc_cfg option pdk]
     set sc_stackup [dict get $sc_cfg pdk $sc_process stackup]
     set base_lyt [dict get $sc_cfg pdk $sc_process layermap klayout def gds $sc_stackup]
     set base_lyp [dict get $sc_cfg pdk $sc_process display klayout $sc_stackup]
-    set tlef [dict get $sc_cfg library $::env(PLATFORM) model layout lef $sc_stackup]
+    set llib [dict get $sc_cfg asic logiclib]
+    set tlef [dict get $sc_cfg library $llib model layout lef $sc_stackup]
     set replace_str "<lef-files>$tlef</lef-files>"
     if {[info exists ::env(ADDITIONAL_LEFS)]} {
         foreach f $::env(ADDITIONAL_LEFS) {
@@ -59,10 +67,7 @@ foreach f [glob -directory inputs/ -tails -nocomplain *] {
 }
 
 # Determine OR script name based on step name
-if {$sc_step == "or_yosys"} {
-    # Synthesis is a special case; we don't want to use the possibly-deprecated 'yosys.tcl' file.
-    set script ../../../synth.tcl
-} elseif {$sc_step == "or_tdms_place" && [info exists ::env(MACRO_PLACEMENT)]} {
+if {$sc_step == "or_tdms_place" && [info exists ::env(MACRO_PLACEMENT)]} {
     # Skip TDMS placement step if MACRO_PLACEMENT is set.
     set script ""
 } else {
@@ -83,7 +88,12 @@ foreach f [glob -directory $results_dir -tails -nocomplain *] {
 }
 
 # Step-specific post-processing step(s)
-if {$sc_step == "or_yosys"} {
+if {$sc_step == "or_synth_hier_report"} {
+    # Copy inputs forward.
+    foreach f $inputs {
+        file copy -force "inputs/$f" "outputs/$f"
+    }
+} elseif {$sc_step == "or_synth"} {
     # Synthesis: Copy/rename RTL/SDC files
     file copy -force outputs/1_1_yosys.v outputs/1_synth.v
     foreach f $inputs {
@@ -93,9 +103,6 @@ if {$sc_step == "or_yosys"} {
     }
 } elseif {$sc_step == "or_tdms_place" && [info exists ::env(MACRO_PLACEMENT)]} {
     # TDMS Placement: copy .odb input if this step was skipped.
-    foreach f $inputs {
-        puts $f
-    }
     file copy -force inputs/2_2_floorplan_io.odb outputs/2_3_floorplan_tdms.odb
 } elseif {$sc_step == "or_pdn"} {
     # Last floorplan step: copy .odb file.

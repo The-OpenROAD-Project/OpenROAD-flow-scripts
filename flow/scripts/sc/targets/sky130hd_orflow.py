@@ -105,7 +105,7 @@ def setup(chip):
         'PROCESS': '130',
         'SYNTH_ARGS': '-flatten',
         'ABC_LOAD_IN_FF': '5',
-        'ABC_AREA': '1',
+        'ABC_AREA': '0',
         'DPO_MAX_DISPLACEMENT': '5 1',
         'FLOW_VARIANT': 'base',
         'CELL_PAD_IN_SITES': '4',
@@ -129,16 +129,13 @@ def setup(chip):
         'OBJECTS_DIR': os.path.abspath(job_dir),
         'REPORTS_DIR': os.path.abspath(job_dir),
         'RESULTS_DIR': os.path.abspath(job_dir),
+        'SYNTH_STOP_MODULE_SCRIPT': os.path.join(job_dir, 'mark_hier_stop_modules.tcl'),
     }
-    for k in chip.getkeys('flowgraph', 'orflow'):
+    for step in chip.getkeys('flowgraph', 'orflow'):
+        index = '0'
         for key, val in env_vars.items():
-            if k == 'or_yosys':
-                chip.set('tool', 'yosys', 'env', k, '0', key, val)
-            elif k == 'or_export':
-                chip.set('tool', 'klayout', 'env', k, '0', key, val)
-            else:
-                chip.set('tool', 'openroad', 'env', k, '0', key, val)
-
+            tool = chip.get('flowgraph', 'orflow', step, index, 'tool')
+            chip.set('tool', tool, 'env', step, index, key, val)
 
 #########################
 if __name__ == "__main__":

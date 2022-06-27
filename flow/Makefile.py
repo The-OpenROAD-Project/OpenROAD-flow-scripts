@@ -28,8 +28,21 @@ def main():
     # Set PLATFORM_DIR if not already set.
     if not 'PLATFORM_DIR' in config:
         repls['PLATFORM_DIR'] = os.path.abspath(os.path.join(mydir, 'platforms', config['PLATFORM']))
+    if not 'CORNER' in config:
+        if config['PLATFORM'] == 'asap7':
+            repls['CORNER'] = 'BC'
+        else:
+            repls['CORNER'] = 'typical'
+
+    # Setup timing corner libraries if supported for preprocessing. TODO: Kind of hack-y.
+    if config['PLATFORM'] == 'asap7':
+        corners = {'BC': 'FF', 'WC': 'SS', 'TC': 'TT'}
+        post = 'nldm_201020.lib'
+        for corner, abrv in corners.items():
+            os.environ[f'{corner}_DFF_LIB_FILE'] = os.path.abspath(os.path.join('platforms', 'asap7', 'lib', f'asap7sc7p5t_SEQ_RVT_{abrv}_{post}'))
 
     if repls:
+        # Set default platform values.
         # Set replacement value in os.environ so that the Makefile parser uses it.
         for k, v in repls.items():
             os.environ[k] = v
@@ -84,8 +97,23 @@ def main():
     platform = config['PLATFORM']
     if platform == 'nangate45':
         chip.load_target('nangate45_orflow')
+        corner = 'typical'
+        ps_scale = 1000
     elif platform == 'sky130hd':
         chip.load_target('sky130hd_orflow')
+        corner = 'typical'
+        ps_scale = 1000
+    elif platform == 'asap7':
+        chip.load_target('asap7_orflow')
+        ps_scale = 1
+        # Set base 'LIB_FILES' value based on timing corner.
+        corner = 'BC' if not 'CORNER' in config else config['CORNER']
+        tools = ['yosys', 'openroad', 'klayout']
+        for tool in tools:
+            for k in chip.getkeys('tool', tool, 'env'):
+                for env in ['DONT_USE_LIBS', 'LIB_FILES', 'TEMPERATURE']:
+                    config[env] = chip.get('tool', tool, 'env', k, '0', f'{corner}_{env}')
+                    chip.set('tool', tool, 'env', k, '0', env, config[env])
 
     # Calculate clock period to use for yosys abc. Should be first clock entry in the constraints file.
     if (not 'ABC_CLOCK_PERIOD_IN_PS' in config) and (os.path.isfile(chip.get('input', 'sdc')[0])):
@@ -94,13 +122,13 @@ def main():
                 if l.startswith('set clk_period '):
                     # "set clk_period x.yz \n": extract "x.yz" as float
                     p = float(l[len('set clk_period ') : ].strip())
-                    config['ABC_CLOCK_PERIOD_IN_PS'] = f'{p * 1000}'
+                    config['ABC_CLOCK_PERIOD_IN_PS'] = f'{p * ps_scale}'
                     break
                 elif '-period ' in l:
                     # "create_clock ... -period  x.yz ... \n": extract "x.yz" as float.
                     lv = l.split()
                     p = float(lv[lv.index('-period') + 1])
-                    config['ABC_CLOCK_PERIOD_IN_PS'] = f'{p * 1000}'
+                    config['ABC_CLOCK_PERIOD_IN_PS'] = f'{p * ps_scale}'
                     break
 
     tools = ['yosys', 'openroad', 'klayout']
@@ -110,7 +138,7 @@ def main():
                 # Some env vars should be appended to and/or modified.
                 if (key == 'LIB_FILES') and ('ADDITIONAL_LIBS' in config):
                     val = chip.get('tool', tool, 'env', k, '0', key)
-                    # Liberty files get pre-processed to
+                    # Liberty files get pre-processed too.
                     chip.set('tool', tool, 'env', k, '0', key, f'{val} {config["ADDITIONAL_LIBS"]}')
                 elif (key == 'DONT_USE_LIBS'):
                     # "Don't use" libraries get pre-processed. TODO: Currently placed in build dir root.
@@ -118,7 +146,7 @@ def main():
                     mod_lib_base = os.path.abspath(os.path.join(chip.get('option', 'builddir'),
                                                                 chip.get('design'),
                                                                 chip.get('option', 'jobname')))
-                    libs = [chip.get('tool', tool, 'env', k, '0', key)]
+                    libs = chip.get('tool', tool, 'env', k, '0', key).split()
                     if 'ADDITIONAL_LIBS' in config:
                         libs = libs + config['ADDITIONAL_LIBS'].split()
                     dontuse_l = []
@@ -126,7 +154,7 @@ def main():
                         dontuse_l.append(os.path.join(mod_lib_base, f'{os.path.split(lf)[1]}-mod.lib'))
                     dontuse = ' '.join(dontuse_l)
                     chip.set('tool', tool, 'env', k, '0', key, dontuse)
-                    chip.set('tool', tool, 'env', k, '0', 'DONT_USE_SC_LIB', dontuse_l[0])
+                    chip.set('tool', tool, 'env', k, '0', 'DONT_USE_SC_LIB', os.path.join('..', '..', 'merged.lib'))
             for key, val in config.items():
                 # Some env vars should be appended to.
                 if not key in ['DONT_USE_LIBS', 'LIB_FILES', 'DONT_USE_SC_LIB']:

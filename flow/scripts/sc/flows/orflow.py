@@ -39,8 +39,11 @@ def setup(chip, flowname='orflow'):
     flow = 'orflow'
 
     flow_groups = {
+        #'presynth': [
+        #    ('or_synth_hier_report', 'yosys'),
+        #],
         'synthesis': [
-            ('or_yosys', 'yosys'), # (synthesis is done via OpenROAD TCL that calls yosys)
+            ('or_synth', 'yosys'), # (synthesis is done via OpenROAD TCL that calls yosys)
         ],
         'floorplan': [
             ('or_floorplan', 'openroad'),
@@ -71,6 +74,7 @@ def setup(chip, flowname='orflow'):
             ('or_export', 'klayout')
         ]
     }
+    #flowpipe = ['presynth', 'synthesis', 'floorplan', 'place', 'cts', 'route', 'finish']
     flowpipe = ['synthesis', 'floorplan', 'place', 'cts', 'route', 'finish']
 
     # Additional dependencies defined here
