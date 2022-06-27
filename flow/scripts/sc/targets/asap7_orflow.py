@@ -118,7 +118,7 @@ def setup(chip):
         'PLACE_PINS_ARGS': '',
         'SEAL_GDS': '',
         'CTS_BUF_DISTANCE': '60',
-        'NUM_CORES': '4', # TODO: Use nproc
+        'NUM_CORES': f'{len(os.sched_getaffinity(0))}',
         'DIE_AREA': '0 0 300 300',
         'CORE_AREA': '10 10 290 290',
 

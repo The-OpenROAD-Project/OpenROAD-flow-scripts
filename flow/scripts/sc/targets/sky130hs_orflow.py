@@ -14,73 +14,70 @@ def make_docs():
 ####################################################
 def setup(chip):
     # Set the target name.
-    chip.set('option', 'target', 'nangate45_orflow')
+    chip.set('option', 'target', 'sky130hs_orflow')
 
     # Load PDK, flow, and libs.
-    chip.load_pdk('freepdk45_orflow')
+    chip.load_pdk('sky130hs_orflow')
     chip.load_flow('orflow')
-    chip.load_lib('nangate45_orflow')
+    chip.load_lib('sky130hs_orflow')
 
     # Set Chip object to use the loaded flow, pdk, lib.
-    process = 'freepdk45'
-    stackup = '10M'
-    libtype = '10t'
-    libname = 'nangate45'
+    process = 'skywater130'
+    stackup = '5M1LI'
+    libname = 'sky130hs'
+    libtype = 'unit'
     chip.set('option', 'flow', 'orflow')
     chip.set('option', 'pdk', process)
     chip.set('asic', 'logiclib', libname)
 
-    # Set project-specific values
-    chip.set('asic', 'stackup', stackup)
     chip.set('asic', 'delaymodel', 'nldm')
-    chip.set('asic', 'minlayer', "metal2")
-    chip.set('asic', 'maxlayer', "metal10")
-    chip.set('asic', 'maxfanout', 64)
-    chip.set('asic', 'maxlength', 1000)
-    chip.set('asic', 'maxslew', 0.2e-9)
-    chip.set('asic', 'maxcap', 0.2e-12)
-    chip.set('asic', 'rclayer', 'clk', "metal5")
-    chip.set('asic', 'rclayer', 'data',"metal3")
-    chip.set('asic', 'hpinlayer', "metal3")
-    chip.set('asic', 'vpinlayer', "metal2")
+    chip.set('asic', 'stackup', stackup)
+    chip.set('asic', 'minlayer', "met1")
+    chip.set('asic', 'maxlayer', "met5")
+    chip.set('asic', 'maxfanout', 5) # TODO: fix this
+    chip.set('asic', 'maxlength', 21000)
+    chip.set('asic', 'maxslew', 1.5e-9)
+    chip.set('asic', 'maxcap', .1532e-12)
+    chip.set('asic', 'rclayer', 'clk', 'met5')
+    chip.set('asic', 'rclayer', 'data', 'met3')
+    chip.set('asic', 'hpinlayer', "met3")
+    chip.set('asic', 'vpinlayer', "met2")
     chip.set('asic', 'density', 10)
     chip.set('asic', 'aspectratio', 1)
-    chip.set('asic', 'coremargin', 1.9)
-    # Set timing corners.
+    chip.set('asic', 'coremargin', 62.56)
     corner = 'typical'
-    chip.set('constraint','worst','libcorner', corner)
-    chip.set('constraint','worst','pexcorner', corner)
-    chip.set('constraint','worst','mode', 'func')
-    chip.set('constraint','worst','check', ['setup','hold'])
+    chip.set('constraint', 'worst', 'libcorner', corner)
+    chip.set('constraint', 'worst', 'pexcorner', corner)
+    chip.set('constraint', 'worst', 'mode', 'func')
+    chip.add('constraint', 'worst', 'check', ['setup','hold'])
 
-    # Set default environment variables for the OpenROAD flow (nangate45 platform).
-    platform_dir = os.path.join(openroad_dir, 'flow', 'platforms', 'nangate45')
+    # Set default environment variables for the OpenROAD flow (sky130hs platform).
+    platform_dir = os.path.join(openroad_dir, 'flow', 'platforms', 'sky130hs')
     job_dir = os.path.join(chip.get('option', 'builddir'),
                            chip.get('design'),
                            chip.get('option', 'jobname'))
     env_vars = {
+        # Defaults
         'SCRIPTS_DIR': os.path.join(openroad_dir, 'flow', 'scripts'),
         'UTILS_DIR': os.path.join(openroad_dir, 'flow', 'util'),
         'PLATFORM_DIR': platform_dir,
-        'GDS_FILES': os.path.join(platform_dir, 'gds', 'NangateOpenCellLibrary.gds'),
-        'GDSOAS_FILES': os.path.join(platform_dir, 'gds', 'NangateOpenCellLibrary.gds'),
+        # TODO: Many of these options could be driven by the schema once the poc is functional
+        'GDS_FILES': os.path.join(platform_dir, 'gds', 'sky130_fd_sc_hs.gds'),
+        'GDSOAS_FILES': os.path.join(platform_dir, 'gds', 'sky130_fd_sc_hs.gds'),
         'WRAPPED_GDSOAS': '',
         'GDS_LAYER_MAP': '',
         'STREAM_SYSTEM_EXT': 'gds',
-        'FILL_CONFIG': '',
-        'CDL_FILE': os.path.join(platform_dir, 'cdl', 'NangateOpenCellLibrary.cdl'),
+        'FILL_CONFIG': os.path.join(platform_dir, 'fill.json'),
         'TEMPLATE_PGA_CFG': os.path.join(platform_dir, 'template_pga.cfg'),
         'RCX_RULES': os.path.join(platform_dir, 'rcx_patterns.rules'),
         'TAPCELL_TCL': os.path.join(platform_dir, 'tapcell.tcl'),
         'FASTROUTE_TCL': os.path.join(platform_dir, 'fastroute.tcl'),
-        'CLKGATE_MAP_FILE': os.path.join(platform_dir, 'cells_clkgate.v'),
-        'LATCH_MAP_FILE': os.path.join(platform_dir, 'cells_latch.v'),
-        'ADDER_MAP_FILE': os.path.join(platform_dir, 'cells_adders.v'),
-        'PDN_TCL': os.path.join(platform_dir, 'grid_strategy-M1-M4-M7.tcl'),
-        'KLAYOUT_LVS_FILE': os.path.join(platform_dir, 'lvs', 'FreePDK45.lylvs'),
-        'KLAYOUT_DRC_FILE': os.path.join(platform_dir, 'drc', 'FreePDK45.lydrc'),
+        'CLKGATE_MAP_FILE': os.path.join(platform_dir, 'cells_clkgate_hs.v'),
+        'LATCH_MAP_FILE': os.path.join(platform_dir, 'cells_latch_hs.v'),
+        'ADDER_MAP_FILE': os.path.join(platform_dir, 'cells_adders_hs.v'),
+        'PDN_TCL': os.path.join(platform_dir, 'pdn.tcl'),
         'ABC_DRIVER_CELL': ' '.join(chip.get('library', libname, 'asic', 'cells', 'driver')),
-        'PLACE_SITE': chip.getkeys('library', libname, 'asic', 'footprint')[0],
+        'PLACE_SITE': chip.get('library', libname, 'asic', 'libarch'),
         'TIEHI_CELL_AND_PORT': chip.get('library', libname, 'asic', 'cells', 'tie')[0],
         'TIELO_CELL_AND_PORT': chip.get('library', libname, 'asic', 'cells', 'tie')[1],
         'MIN_BUF_CELL_AND_PORTS': ' '.join(chip.get('library', libname, 'asic', 'cells', 'buf')),
@@ -102,21 +99,20 @@ def setup(chip):
         'SC_LEF': ' '.join(chip.get('library', libname, 'model', 'layout', 'lef', stackup)),
         'DONT_USE_LIBS': ' '.join(chip.get('library', libname, 'model', 'timing', 'nldm', 'typical')),
         'DONT_USE_SC_LIB': ' '.join(chip.get('library', libname, 'model', 'timing', 'nldm', 'typical')),
-
         'PLATFORM': libname,
-        'PROCESS': '45',
+        'PROCESS': '130',
         'SYNTH_ARGS': '-flatten',
-        'ABC_LOAD_IN_FF': '3.898',
+        'ABC_LOAD_IN_FF': '5',
         'ABC_AREA': '0',
         'DPO_MAX_DISPLACEMENT': '5 1',
         'FLOW_VARIANT': 'base',
+        'CELL_PAD_IN_SITES': '4',
         'RESYNTH_AREA_RECOVER': '0',
         'RESYNTH_TIMING_RECOVER': '0',
         'SYNTH_HIERARCHICAL': '0',
         'GPL_ROUTABILITY_DRIVEN': '1',
         'GPL_TIMING_DRIVEN': '1',
         'PLACE_PINS_ARGS': '',
-        'GDS_ALLOW_EMPTY': 'fakeram.*',
         'SEAL_GDS': '',
         'NUM_CORES': f'{len(os.sched_getaffinity(0))}',
         'DIE_AREA': '0 0 300 300',
@@ -133,14 +129,11 @@ def setup(chip):
         'RESULTS_DIR': os.path.abspath(job_dir),
         'SYNTH_STOP_MODULE_SCRIPT': os.path.join(job_dir, 'mark_hier_stop_modules.tcl'),
     }
-
-    # Set default environment variables for every step in the flow.
     for step in chip.getkeys('flowgraph', 'orflow'):
         index = '0'
         for key, val in env_vars.items():
             tool = chip.get('flowgraph', 'orflow', step, index, 'tool')
             chip.set('tool', tool, 'env', step, index, key, val)
-
 
 #########################
 if __name__ == "__main__":

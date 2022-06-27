@@ -103,6 +103,10 @@ def main():
         chip.load_target('sky130hd_orflow')
         corner = 'typical'
         ps_scale = 1000
+    elif platform == 'sky130hs':
+        chip.load_target('sky130hs_orflow')
+        corner = 'typical'
+        ps_scale = 1000
     elif platform == 'asap7':
         chip.load_target('asap7_orflow')
         ps_scale = 1

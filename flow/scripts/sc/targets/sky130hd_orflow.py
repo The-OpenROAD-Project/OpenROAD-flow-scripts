@@ -116,7 +116,7 @@ def setup(chip):
         'GPL_TIMING_DRIVEN': '1',
         'PLACE_PINS_ARGS': '',
         'SEAL_GDS': '',
-        'NUM_CORES': '4', # TODO: Use nproc
+        'NUM_CORES': f'{len(os.sched_getaffinity(0))}',
         'DIE_AREA': '0 0 300 300',
         'CORE_AREA': '10 10 290 290',
 
