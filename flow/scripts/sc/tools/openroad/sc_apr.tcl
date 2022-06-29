@@ -83,7 +83,7 @@ if {$script != ""} {
 # Post-run: copy anything from work dir that was not an input into outputs/
 foreach f [glob -directory $results_dir -tails -nocomplain *] {
     if {[lsearch $inputs $f] == -1} {
-        file copy -force $results_dir/$f outputs/
+        file copy -force $results_dir/$f outputs/$f
     }
 }
 
