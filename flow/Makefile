@@ -746,6 +746,10 @@ RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
+gui_floorplan: gui_2_floorplan.odb
+gui_place: gui_3_place.odb
+gui_cts: gui_4_cts.odb
+gui_route: gui_5_route.odb
 gui_final: gui_6_final.odb
 
 $(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
