@@ -184,20 +184,3 @@ plt.ylim(0, outline_height)
 plt.axis("scaled")
 plt.show()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
