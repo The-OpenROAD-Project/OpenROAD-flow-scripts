@@ -5,9 +5,6 @@ export PLATFORM    = gf12
 export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.sv2v.v \
                        $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
-# export CACHED_NETLIST    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/dc/results/bsg_chip.mapped.flat.v
-#export CACHED_NETLIST    = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth.v
-
 export SDC_FILE      = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.elab.v.sdc
 
 export WRAP_LEFS       = $(PLATFORM_DIR)/lef/gf12_1r1w_d32_w64_m1.lef \
@@ -44,18 +41,11 @@ export SEAL_GDS        = $(PLATFORM_DIR)/gds/crackstop_3x3.gds
 export FOOTPRINT    = $(PLATFORM_DIR)/bp/bsg_bp_dual.package.strategy
 export SIG_MAP_FILE = $(PLATFORM_DIR)/bp/soc_bsg_black_parrot.sigmap
 
-# These values must be multiples of placement site
-# export DIE_AREA    =
-# export CORE_AREA   =
-
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
 export PLACE_DENSITY = 0.20
 
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
-#export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/bp_single.macro_placment.cfg
-#export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_bp_single.macro_placment.cfg
-#export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_fence2_bp_single.macro_placment.cfg
 
 export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
