@@ -3,7 +3,6 @@ export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 export FLOW_VARIANT = hier
 export SYNTH_HIERARCHICAL = 1
-#export MAX_UNGROUP_SIZE ?= 10000
 
 export RTLMP_FLOW = True
 export FLOORPLAN_DEF = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)/2_2_floorplan_io.def
