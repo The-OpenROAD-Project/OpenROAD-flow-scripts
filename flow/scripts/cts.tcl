@@ -53,23 +53,20 @@ detailed_placement
 
 estimate_parasitics -placement
 
-puts "Repair setup violations..."
+puts "Repair setup and hold violations..."
+
 # process user settings
 set additional_args ""
 if { [info exists ::env(SETUP_SLACK_MARGIN)] && $::env(SETUP_SLACK_MARGIN) > 0.0} {
-  puts "Setup repair with slack margin $::env(SETUP_SLACK_MARGIN)"
-  append additional_args " -slack_margin $::env(SETUP_SLACK_MARGIN)"
+  puts "Setup slack margin $::env(SETUP_SLACK_MARGIN)"
+  append additional_args " -setup_margin $::env(SETUP_SLACK_MARGIN)"
 }
-eval repair_timing -setup $additional_args
-
-puts "Repair hold violations..."
-# process user settings
-set additional_args ""
 if { [info exists ::env(HOLD_SLACK_MARGIN)] && $::env(HOLD_SLACK_MARGIN) > 0.0} {
-  puts "Hold repair with slack margin $::env(HOLD_SLACK_MARGIN)"
-  append additional_args " -slack_margin $::env(HOLD_SLACK_MARGIN)"
+  puts "Hold slack margin $::env(HOLD_SLACK_MARGIN)"
+  append additional_args " -hold_margin $::env(HOLD_SLACK_MARGIN)"
 }
-repair_timing -hold {*}$additional_args
+
+repair_timing {*}$additional_args
 
 detailed_placement
 check_placement -verbose
