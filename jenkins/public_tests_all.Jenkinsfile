@@ -181,6 +181,14 @@ pipeline {
             sh "flow/test/test_helper.sh aes nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*aes_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*aes_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -207,6 +215,14 @@ pipeline {
             sh "flow/test/test_helper.sh bp_be_top nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*bp_be_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*bp_be_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -220,6 +236,14 @@ pipeline {
             sh "flow/test/test_helper.sh bp_fe_top nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*bp_fe_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*bp_fe_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -233,6 +257,14 @@ pipeline {
             sh "flow/test/test_helper.sh bp_multi_top nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*bp_multi_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*bp_multi_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -246,6 +278,14 @@ pipeline {
             sh "flow/test/test_helper.sh dynamic_node nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*dynamic_node_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*dynamic_node_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -259,6 +299,14 @@ pipeline {
             sh "flow/test/test_helper.sh gcd nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*gcd_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*gcd_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -272,6 +320,14 @@ pipeline {
             sh "flow/test/test_helper.sh ibex nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*ibex_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*ibex_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -285,6 +341,14 @@ pipeline {
             sh "flow/test/test_helper.sh jpeg nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*jpeg_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*jpeg_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -298,6 +362,14 @@ pipeline {
             sh "flow/test/test_helper.sh swerv nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*swerv_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*swerv_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -311,6 +383,14 @@ pipeline {
             sh "flow/test/test_helper.sh swerv_wrapper nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*swerv_wrapper_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*swerv_wrapper_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -324,6 +404,14 @@ pipeline {
             sh "flow/test/test_helper.sh tinyRocket nangate45";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*tinyRocket_nangate45*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*tinyRocket_nangate45*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -337,6 +425,14 @@ pipeline {
             sh "flow/test/test_helper.sh aes sky130hd";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*aes_sky130hd*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*aes_sky130hd*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -350,6 +446,14 @@ pipeline {
             sh "flow/test/test_helper.sh chameleon sky130hd";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*chameleon_sky130hd*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*chameleon_sky130hd*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -363,6 +467,14 @@ pipeline {
             sh "flow/test/test_helper.sh gcd sky130hd";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*gcd_sky130hd*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*gcd_sky130hd*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -376,6 +488,14 @@ pipeline {
             sh "flow/test/test_helper.sh ibex sky130hd";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*ibex_sky130hd*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*ibex_sky130hd*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -389,6 +509,14 @@ pipeline {
             sh "flow/test/test_helper.sh jpeg sky130hd";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*jpeg_sky130hd*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*jpeg_sky130hd*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -402,6 +530,14 @@ pipeline {
             sh "flow/test/test_helper.sh microwatt sky130hd";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*microwatt_sky130hd*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*microwatt_sky130hd*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -415,6 +551,14 @@ pipeline {
             sh "flow/test/test_helper.sh riscv32i sky130hd";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*riscv32i_sky130hd*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*riscv32i_sky130hd*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -428,6 +572,14 @@ pipeline {
             sh "flow/test/test_helper.sh aes sky130hs";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*aes_sky130hs*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*aes_sky130hs*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -441,6 +593,14 @@ pipeline {
             sh "flow/test/test_helper.sh gcd sky130hs";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*gcd_sky130hs*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*gcd_sky130hs*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -454,6 +614,14 @@ pipeline {
             sh "flow/test/test_helper.sh ibex sky130hs";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*ibex_sky130hs*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*ibex_sky130hs*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -467,6 +635,14 @@ pipeline {
             sh "flow/test/test_helper.sh jpeg sky130hs";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*jpeg_sky130hs*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*jpeg_sky130hs*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
@@ -480,6 +656,14 @@ pipeline {
             sh "flow/test/test_helper.sh riscv32i sky130hs";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/*riscv32i_sky130hs*tar.gz flow/success";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/*riscv32i_sky130hs*tar.gz flow/failure";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
               archiveArtifacts artifacts: "flow/*tar.gz";
