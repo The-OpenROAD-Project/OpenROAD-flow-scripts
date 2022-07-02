@@ -36,11 +36,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*aes_asap7*tar.gz flow/success";
+              sh "mv flow/final_report_aes_asap7*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*aes_asap7*tar.gz flow/failure";
+              sh "mv flow/final_report_final_report_aes_asap7*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -57,11 +57,11 @@ pipeline {
           post {
            success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*ethmac_asap7*tar.gz flow/success";
+              sh "mv flow/final_report_ethmac_asap7*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*ethmac_asap7*tar.gz flow/failure";
+              sh "mv flow/final_report_ethmac_asap7*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -78,11 +78,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*gcd_asap7*tar.gz flow/success";
+              sh "mv flow/final_report_gcd_asap7*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*gcd_asap7*tar.gz flow/failure";
+              sh "mv flow/final_report_gcd_asap7*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -99,11 +99,11 @@ pipeline {
           post {
            success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*ibex_asap7*tar.gz flow/success";
+              sh "mv flow/final_report_ibex_asap7*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*ibex_asap7*tar.gz flow/failure";
+              sh "mv flow/final_report_ibex_asap7*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -120,11 +120,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*jpeg_asap7*tar.gz flow/success";
+              sh "mv flow/final_report_jpeg_asap7*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*jpeg_asap7*tar.gz flow/failure";
+              sh "mv flow/final_report_jpeg_asap7*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -141,11 +141,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*sha3_asap7*tar.gz flow/success";
+              sh "mv flow/final_report_sha3_asap7*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*sha3_asap7*tar.gz flow/failure";
+              sh "mv flow/final_report_sha3_asap7*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -162,11 +162,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*uart_asap7*tar.gz flow/success";
+              sh "mv flow/final_report_uart_asap7*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*uart_asap7*tar.gz flow/failure";
+              sh "mv flow/final_report_uart_asap7*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -183,11 +183,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*aes_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_aes_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*aes_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_aes_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -217,11 +217,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*bp_be_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_bp_be_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*bp_be_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_bp_be_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -238,11 +238,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*bp_fe_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_bp_fe_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*bp_fe_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_bp_fe_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -259,11 +259,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*bp_multi_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_bp_multi_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*bp_multi_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_bp_multi_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -280,11 +280,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*dynamic_node_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_dynamic_node_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*dynamic_node_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_dynamic_node_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -301,11 +301,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*gcd_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_gcd_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*gcd_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_gcd_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -322,11 +322,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*ibex_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_ibex_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*ibex_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_ibex_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -343,11 +343,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*jpeg_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_jpeg_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*jpeg_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_jpeg_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -364,11 +364,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*swerv_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_swerv_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*swerv_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_swerv_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -385,11 +385,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*swerv_wrapper_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_swerv_wrapper_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*swerv_wrapper_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_swerv_wrapper_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -406,11 +406,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*tinyRocket_nangate45*tar.gz flow/success";
+              sh "mv flow/final_report_tinyRocket_nangate45*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*tinyRocket_nangate45*tar.gz flow/failure";
+              sh "mv flow/final_report_tinyRocket_nangate45*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -427,11 +427,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*aes_sky130hd*tar.gz flow/success";
+              sh "mv flow/final_report_aes_sky130hd*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*aes_sky130hd*tar.gz flow/failure";
+              sh "mv flow/final_report_aes_sky130hd*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -448,11 +448,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*chameleon_sky130hd*tar.gz flow/success";
+              sh "mv flow/final_report_chameleon_sky130hd*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*chameleon_sky130hd*tar.gz flow/failure";
+              sh "mv flow/final_report_chameleon_sky130hd*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -469,11 +469,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*gcd_sky130hd*tar.gz flow/success";
+              sh "mv flow/final_report_gcd_sky130hd*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*gcd_sky130hd*tar.gz flow/failure";
+              sh "mv flow/final_report_gcd_sky130hd*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -490,11 +490,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*ibex_sky130hd*tar.gz flow/success";
+              sh "mv flow/final_report_ibex_sky130hd*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*ibex_sky130hd*tar.gz flow/failure";
+              sh "mv flow/final_report_ibex_sky130hd*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -511,11 +511,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*jpeg_sky130hd*tar.gz flow/success";
+              sh "mv flow/final_report_jpeg_sky130hd*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*jpeg_sky130hd*tar.gz flow/failure";
+              sh "mv flow/final_report_jpeg_sky130hd*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -532,11 +532,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*microwatt_sky130hd*tar.gz flow/success";
+              sh "mv flow/final_report_microwatt_sky130hd*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*microwatt_sky130hd*tar.gz flow/failure";
+              sh "mv flow/final_report_microwatt_sky130hd*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -553,11 +553,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*riscv32i_sky130hd*tar.gz flow/success";
+              sh "mv flow/final_report_riscv32i_sky130hd*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*riscv32i_sky130hd*tar.gz flow/failure";
+              sh "mv flow/final_report_riscv32i_sky130hd*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -574,11 +574,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*aes_sky130hs*tar.gz flow/success";
+              sh "mv flow/final_report_aes_sky130hs*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*aes_sky130hs*tar.gz flow/failure";
+              sh "mv flow/final_report_aes_sky130hs*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -595,11 +595,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*gcd_sky130hs*tar.gz flow/success";
+              sh "mv flow/final_report_gcd_sky130hs*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*gcd_sky130hs*tar.gz flow/failure";
+              sh "mv flow/final_report_gcd_sky130hs*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -616,11 +616,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*ibex_sky130hs*tar.gz flow/success";
+              sh "mv flow/final_report_ibex_sky130hs*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*ibex_sky130hs*tar.gz flow/failure";
+              sh "mv flow/final_report_ibex_sky130hs*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -637,11 +637,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*jpeg_sky130hs*tar.gz flow/success";
+              sh "mv flow/final_report_jpeg_sky130hs*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*jpeg_sky130hs*tar.gz flow/failure";
+              sh "mv flow/final_report_jpeg_sky130hs*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
@@ -658,11 +658,11 @@ pipeline {
           post {
             success {
               sh "mkdir -p flow/success";
-              sh "mv flow/*riscv32i_sky130hs*tar.gz flow/success";
+              sh "mv flow/final_report_riscv32i_sky130hs*tar.gz flow/success";
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/*riscv32i_sky130hs*tar.gz flow/failure";
+              sh "mv flow/final_report_riscv32i_sky130hs*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
