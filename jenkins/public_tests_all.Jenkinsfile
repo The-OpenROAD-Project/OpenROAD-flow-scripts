@@ -40,7 +40,7 @@ pipeline {
             }
             failure {
               sh "mkdir -p flow/failure";
-              sh "mv flow/final_report_final_report_aes_asap7*tar.gz flow/failure";
+              sh "mv flow/final_report_aes_asap7*tar.gz flow/failure";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
