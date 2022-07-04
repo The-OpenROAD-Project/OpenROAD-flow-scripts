@@ -177,6 +177,7 @@ export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VAR
 export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export EXPORT_DIR  = $(WORK_HOME)/exports/$(PLATFORM)-$(DESIGN_NICKNAME)-$(FLOW_VARIANT)-$(shell date +"%Y_%m_%d_%H_%M")
 
 ifdef BLOCKS
   $(info [INFO][FLOW] Invoked hierarchical flow.)
@@ -736,6 +737,12 @@ nuke: clean_test clean_issues
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
 	rm -rf versions.txt
 
+export_all: 
+	@echo "Exporting to $(EXPORT_DIR)"
+	mkdir -p $(EXPORT_DIR)/results $(EXPORT_DIR)/logs $(EXPORT_DIR)/reports
+	cp -raf -t $(EXPORT_DIR)/results $(RESULTS_DIR)
+	cp -raf -t $(EXPORT_DIR)/logs $(LOG_DIR)
+	cp -raf -t $(EXPORT_DIR)/reports $(REPORTS_DIR)
 
 # DEF/GDS/OAS viewer shortcuts
 #-------------------------------------------------------------------------------
