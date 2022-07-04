@@ -61,6 +61,13 @@ flow/platforms/*
 !flow/platforms/sky130ram
 flow/private
 
+# Exports
+exports
+
+# Other editor specific config
+.vscode
+.metals
+
 # network
 .nfs*
 
