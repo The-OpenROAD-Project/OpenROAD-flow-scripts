@@ -60,17 +60,16 @@ pipeline {
            success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_ethmac_asap7*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_ethmac_asap7*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -84,17 +83,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_gcd_asap7*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_gcd_asap7*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -108,17 +106,16 @@ pipeline {
            success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_ibex_asap7*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_ibex_asap7*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -132,17 +129,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_jpeg_asap7*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_jpeg_asap7*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -156,17 +152,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_sha3_asap7*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_sha3_asap7*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -180,17 +175,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_uart_asap7*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_uart_asap7*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -204,17 +198,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_aes_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_aes_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -227,10 +220,7 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -244,17 +234,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_bp_be_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_bp_be_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -268,17 +257,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_bp_fe_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_bp_fe_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+
             }
           }
         }
@@ -292,17 +280,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_bp_multi_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_bp_multi_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -316,17 +303,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_dynamic_node_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_dynamic_node_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -340,17 +326,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_gcd_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_gcd_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -364,17 +349,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_ibex_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_ibex_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -388,17 +372,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_jpeg_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_jpeg_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -412,17 +395,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_swerv_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_swerv_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -436,17 +418,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_swerv_wrapper_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_swerv_wrapper_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -460,17 +441,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_tinyRocket_nangate45*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_tinyRocket_nangate45*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -484,17 +464,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_aes_sky130hd*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_aes_sky130hd*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -508,17 +487,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_chameleon_sky130hd*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_chameleon_sky130hd*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -532,17 +510,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_gcd_sky130hd*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_gcd_sky130hd*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -556,17 +533,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_ibex_sky130hd*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_ibex_sky130hd*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -580,17 +556,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_jpeg_sky130hd*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_jpeg_sky130hd*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -604,17 +579,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_microwatt_sky130hd*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_microwatt_sky130hd*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -628,17 +602,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_riscv32i_sky130hd*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_riscv32i_sky130hd*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -652,17 +625,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_aes_sky130hs*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_aes_sky130hs*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -676,17 +648,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_gcd_sky130hs*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_gcd_sky130hs*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -700,17 +671,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_ibex_sky130hs*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_ibex_sky130hs*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -724,17 +694,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_jpeg_sky130hs*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_jpeg_sky130hs*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
@@ -748,17 +717,16 @@ pipeline {
             success {
               sh "mkdir -p flow/success";
               sh "mv flow/final_report_riscv32i_sky130hs*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
             }
             failure {
               sh "mkdir -p flow/failure";
               sh "mv flow/final_report_riscv32i_sky130hs*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz",
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
