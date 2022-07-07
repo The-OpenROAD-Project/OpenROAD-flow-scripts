@@ -44,8 +44,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -66,8 +68,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -88,8 +92,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -110,8 +116,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -132,8 +140,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -154,8 +164,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -176,8 +188,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -198,8 +212,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -212,8 +228,10 @@ pipeline {
           post {
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -234,8 +252,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -256,8 +276,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -278,8 +300,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -300,8 +324,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -322,8 +348,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -344,8 +372,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -366,8 +396,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -388,8 +420,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -410,8 +444,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -432,8 +468,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -454,8 +492,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -476,8 +516,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -498,8 +540,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -520,8 +564,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -542,8 +588,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -564,8 +612,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -586,8 +636,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -608,8 +660,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -630,8 +684,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -652,8 +708,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -674,8 +732,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
@@ -696,8 +756,10 @@ pipeline {
             }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/success/*tar.gz";
-              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+              archiveArtifacts artifacts: "flow/success/*tar.gz",
+                                  onlyIfSuccessful: true;
+              archiveArtifacts artifacts: "flow/failure/*tar.gz",
+                                  onlyIfSuccessful: false;
             }
           }
         }
