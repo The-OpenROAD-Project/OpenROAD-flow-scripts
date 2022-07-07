@@ -34,20 +34,19 @@ pipeline {
             sh "flow/test/test_helper.sh aes asap7";
           }
           post {
+            success {
+              sh "mkdir -p flow/success";
+              sh "mv flow/final_report_aes_asap7*tar.gz flow/success";
+              archiveArtifacts artifacts: "flow/success/*tar.gz";
+            }
+            failure {
+              sh "mkdir -p flow/failure";
+              sh "mv flow/final_report_aes_asap7*tar.gz flow/failure";
+              archiveArtifacts artifacts: "flow/failure/*tar.gz";
+            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              sh "mkdir -p flow/success",
-                onlyIfSuccessful: true;
-              sh "mv flow/final_report_aes_asap7*tar.gz flow/success",
-                onlyIfSuccessful: true;
-              sh "mkdir -p flow/failure",
-                onlyIfSuccessful: false;
-              sh "mv flow/final_report_aes_asap7*tar.gz flow/failure",
-                onlyIfSuccessful: false;
-              archiveArtifacts artifacts: "flow/success/*tar.gz", 
-                                  onlyIfSuccessful: true;
-              archiveArtifacts artifacts: "flow/failure/*tar.gz",
-                                  onlyIfSuccessful: false;
+              
             }
           }
         }
