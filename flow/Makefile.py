@@ -1,6 +1,7 @@
 import argparse
 import glob
 import os
+import re
 import shutil
 import sys
 
@@ -18,159 +19,39 @@ def main():
 
     # Parse values out of provided "config.mk" file
     config = parse_config_mk.parse(args['DESIGN_CONFIG'])
-    design = config['DESIGN_NAME']
+    # We'll use 'design' for finding the config.mk file in the target setup method, and
+    # there is inconsistency between whether that corresponds to 'DESIGN_NAME' or 'DESIGN_NICKNAME'.
+    # So, set design name based on file path.
+    design_name_match = re.search(f'\/[a-zA-Z0-9_]+\/config.mk', args['DESIGN_CONFIG']).group(0)
+    design = design_name_match[1:-len('/config.mk')]
+    platform = config['PLATFORM']
 
-    # Perform variable substitution where required.
-    repls = {}
-    # Set DESIGN_NICKNAME = DESIGN if not already set.
-    if not 'DESIGN_NICKNAME' in config:
-        repls['DESIGN_NICKNAME'] = design
-    # Set PLATFORM_DIR if not already set.
-    if not 'PLATFORM_DIR' in config:
-        repls['PLATFORM_DIR'] = os.path.abspath(os.path.join(mydir, 'platforms', config['PLATFORM']))
-    if not 'CORNER' in config:
-        if config['PLATFORM'] == 'asap7':
-            repls['CORNER'] = 'BC'
-        else:
-            repls['CORNER'] = 'typical'
-
-    # Setup timing corner libraries if supported for preprocessing. TODO: Kind of hack-y.
-    if config['PLATFORM'] == 'asap7':
-        corners = {'BC': 'FF', 'WC': 'SS', 'TC': 'TT'}
-        post = 'nldm_201020.lib'
-        for corner, abrv in corners.items():
-            os.environ[f'{corner}_DFF_LIB_FILE'] = os.path.abspath(os.path.join('platforms', 'asap7', 'lib', f'asap7sc7p5t_SEQ_RVT_{abrv}_{post}'))
-
-    if repls:
-        # Set default platform values.
-        # Set replacement value in os.environ so that the Makefile parser uses it.
-        for k, v in repls.items():
-            os.environ[k] = v
-        # Re-parse the Makefile
-        config = parse_config_mk.parse(args['DESIGN_CONFIG'])
-        # Update 'config' dictionary with the substitutions used to generate it.
-        for k, v in repls.items():
-            config[k] = v
-
+    # Create a Chip object.
     chip = siliconcompiler.Chip(design)
     chip.set('option', 'scpath', scdir)
 
-    # Extract sources, and convert to absolute paths b/c sc commands run in a different build dir.
-    if 'SDC_FILE' in config.keys():
-        sdc_in = os.path.abspath(config.pop('SDC_FILE'))
-        chip.set('input', 'sdc', sdc_in)
-    if 'VERILOG_FILES' in config.keys():
-        v_in_list = []
-        for vf in config.pop('VERILOG_FILES').split():
-            if '*' in vf:
-                for gf in glob.glob(vf):
-                    v_in_list.append(os.path.abspath(gf))
-            else:
-                v_in_list.append(os.path.abspath(vf))
-        chip.set('input', 'verilog', v_in_list)
-    if 'VERILOG_FILES_BLACKBOX' in config.keys():
-        v_in_list = []
-        for vf in config.pop('VERILOG_FILES_BLACKBOX').split():
-            if '*' in vf:
-                for gf in glob.glob(vf):
-                    v_in_list.append(os.path.abspath(gf))
-            else:
-                v_in_list.append(os.path.abspath(vf))
-        config['VERILOG_FILES_BLACKBOX'] = ' '.join(v_in_list)
-    if 'VERILOG_INCLUDE_DIRS' in config.keys():
-        v_inc_dirs = [os.path.abspath(vf) for vf in config['VERILOG_INCLUDE_DIRS'].split()]
-        config['VERILOG_INCLUDE_DIRS'] = ' '.join(v_inc_dirs)
-    # TODO: Set lef/libs in schema
-    if 'ADDITIONAL_LEFS' in config.keys():
-        lef_in_list = [os.path.abspath(lf) for lf in config['ADDITIONAL_LEFS'].split()]
-        config['ADDITIONAL_LEFS'] = ' '.join(lef_in_list)
-    if 'ADDITIONAL_LIBS' in config.keys():
-        lib_in_list = [os.path.abspath(lf) for lf in config['ADDITIONAL_LIBS'].split()]
-        config['ADDITIONAL_LIBS'] = ' '.join(lib_in_list)
-    if 'ADDITIONAL_GDS_FILES' in config.keys():
-        gds_in_list = [os.path.abspath(gf) for gf in config['ADDITIONAL_GDS_FILES'].split()]
-        config['ADDITIONAL_GDS_FILES'] = ' '.join(gds_in_list)
-    if 'MACRO_PLACEMENT' in config.keys():
-        config['MACRO_PLACEMENT'] = os.path.abspath(config['MACRO_PLACEMENT'])
-
     # Load PDK, flow, and libs.
-    platform = config['PLATFORM']
     if platform == 'nangate45':
         chip.load_target('nangate45_orflow')
-        corner = 'typical'
-        ps_scale = 1000
     elif platform == 'sky130hd':
         chip.load_target('sky130hd_orflow')
-        corner = 'typical'
-        ps_scale = 1000
     elif platform == 'sky130hs':
         chip.load_target('sky130hs_orflow')
-        corner = 'typical'
-        ps_scale = 1000
     elif platform == 'asap7':
         chip.load_target('asap7_orflow')
-        ps_scale = 1
-        # Set base 'LIB_FILES' value based on timing corner.
-        corner = 'BC' if not 'CORNER' in config else config['CORNER']
-        tools = ['yosys', 'openroad', 'klayout']
-        for tool in tools:
-            for k in chip.getkeys('tool', tool, 'env'):
-                for env in ['DONT_USE_LIBS', 'LIB_FILES', 'TEMPERATURE']:
-                    config[env] = chip.get('tool', tool, 'env', k, '0', f'{corner}_{env}')
-                    chip.set('tool', tool, 'env', k, '0', env, config[env])
-
-    # Calculate clock period to use for yosys abc. Should be first clock entry in the constraints file.
-    if (not 'ABC_CLOCK_PERIOD_IN_PS' in config) and (os.path.isfile(chip.get('input', 'sdc')[0])):
-        with open(chip.get('input', 'sdc')[0], 'r') as sdcf:
-            for l in sdcf.readlines():
-                if l.startswith('set clk_period '):
-                    # "set clk_period x.yz \n": extract "x.yz" as float
-                    p = float(l[len('set clk_period ') : ].strip())
-                    config['ABC_CLOCK_PERIOD_IN_PS'] = f'{p * ps_scale}'
-                    break
-                elif '-period ' in l:
-                    # "create_clock ... -period  x.yz ... \n": extract "x.yz" as float.
-                    lv = l.split()
-                    p = float(lv[lv.index('-period') + 1])
-                    config['ABC_CLOCK_PERIOD_IN_PS'] = f'{p * ps_scale}'
-                    break
-
-    tools = ['yosys', 'openroad', 'klayout']
-    for tool in tools:
-        for k in chip.getkeys('tool', tool, 'env'):
-            for key in chip.getkeys('tool', tool, 'env', k, '0'):
-                # Some env vars should be appended to and/or modified.
-                if (key == 'LIB_FILES') and ('ADDITIONAL_LIBS' in config):
-                    val = chip.get('tool', tool, 'env', k, '0', key)
-                    # Liberty files get pre-processed too.
-                    chip.set('tool', tool, 'env', k, '0', key, f'{val} {config["ADDITIONAL_LIBS"]}')
-                elif (key == 'DONT_USE_LIBS'):
-                    # "Don't use" libraries get pre-processed. TODO: Currently placed in build dir root.
-                    # Also, 'markDontUse.py' is called from TCL; might be easier to do that pp here.
-                    mod_lib_base = os.path.abspath(os.path.join(chip.get('option', 'builddir'),
-                                                                chip.get('design'),
-                                                                chip.get('option', 'jobname')))
-                    libs = chip.get('tool', tool, 'env', k, '0', key).split()
-                    if 'ADDITIONAL_LIBS' in config:
-                        libs = libs + config['ADDITIONAL_LIBS'].split()
-                    dontuse_l = []
-                    for lf in libs:
-                        dontuse_l.append(os.path.join(mod_lib_base, f'{os.path.split(lf)[1]}-mod.lib'))
-                    dontuse = ' '.join(dontuse_l)
-                    chip.set('tool', tool, 'env', k, '0', key, dontuse)
-                    chip.set('tool', tool, 'env', k, '0', 'DONT_USE_SC_LIB', os.path.join('..', '..', 'merged.lib'))
-            for key, val in config.items():
-                # Some env vars should be appended to.
-                if not key in ['DONT_USE_LIBS', 'LIB_FILES', 'DONT_USE_SC_LIB']:
-                    chip.set('tool', tool, 'env', k, '0', key, val)
 
     # Set KLayout export options.
     tool = 'klayout'
     step = 'or_export'
-    fill_cfg = chip.get('tool', tool, 'env', step, '0', 'FILL_CONFIG')
-    seal_gds = chip.get('tool', tool, 'env', step, '0', 'SEAL_GDS')
-    gdsoas_in = ' '.join([chip.get('tool', tool, 'env', step, '0', 'GDSOAS_FILES'),
-                          chip.get('tool', tool, 'env', step, '0', 'WRAPPED_GDSOAS')])
+    if 'FILL_CONFIG' in chip.getkeys('tool', tool, 'env', step, '0'):
+        fill_cfg = chip.get('tool', tool, 'env', step, '0', 'FILL_CONFIG')
+    else:
+        fill_cfg = ''
+    if 'SEAL_GDS' in chip.getkeys('tool', tool, 'env', step, '0'):
+        seal_gds = chip.get('tool', tool, 'env', step, '0', 'SEAL_GDS')
+    else:
+        seal_gds = ''
+    gdsoas_in = ' '.join([chip.get('tool', tool, 'env', step, '0', 'GDS_FILES')])
     out_file = os.path.join('outputs', f'{chip.get("design")}.{chip.get("tool", tool, "env", step, "0", "STREAM_SYSTEM_EXT")}')
     techf = '../../klayout.lyt' # TODO: objects_dir is currently top-level build root dir.
     layermap = chip.get('tool', tool, 'env', step, '0', 'GDS_LAYER_MAP')
@@ -185,8 +66,6 @@ def main():
                        '-rd', f'layer_map={layermap}',
                        '-rm']
     chip.set('tool', tool, 'option', step, '0', klayout_options)
-
-    chip.logger.debug(config)
 
     # For testing
     # TODO: put in run logic

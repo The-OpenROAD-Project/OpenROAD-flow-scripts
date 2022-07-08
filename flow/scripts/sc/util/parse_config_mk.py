@@ -19,8 +19,9 @@ def parse(path):
     new_envvars = {}
     assignments = output.split('\n')
     for assignment in assignments:
-        if not assignment:
+        if (not assignment) or (not '=' in assignment):
             # skip blank lines
+            # only process lines with an assignment. (Ignore lines produced by e.g. `$(info [...])`)
             continue
 
         var, val = assignment.split('=', 1)
