@@ -32,10 +32,10 @@ proc report_var_caps { var_name count } {
   }
 }
 
-proc write_caps_csv { filename } {
-  upvar 1 gpl cap_var1
-  upvar 1 grt cap_var2
-  upvar 1 rcx cap_var3
+proc write_rc_csv { filename } {
+  upvar 1 gpl rc_var1
+  upvar 1 grt rc_var2
+  upvar 1 rcx rc_var3
 
   set max_layer_name $::env(MAX_ROUTING_LAYER)
   set max_layer [[[ord::get_db_tech] findLayer $max_layer_name] getRoutingLevel]
@@ -44,10 +44,10 @@ proc write_caps_csv { filename } {
   set stream [open $filename "w"]
   foreach net [get_nets *] {
     set net_name [get_full_name $net]
-    set wire_cap1 $cap_var1($net_name)
-    set wire_cap2 $cap_var2($net_name)
-    set wire_cap3 $cap_var3($net_name)
-    puts -nonewline $stream "[get_full_name $net],[format %.3e $wire_cap1],[format %.3e $wire_cap2],[format %.3e $wire_cap3]"
+    lassign $rc_var1($net_name) wire_res1 wire_cap1
+    lassign $rc_var2($net_name) wire_res2 wire_cap2
+    lassign $rc_var3($net_name) wire_res3 wire_cap3
+    puts -nonewline $stream "[get_full_name $net],[format %.3e $wire_res1],[format %.3e $wire_cap1],[format %.3e $wire_res2],[format %.3e $wire_cap2],[format %.3e $wire_res3],[format %.3e $wire_cap3]"
     set db_net [sta::sta_to_db_net $net]
     set layer_lengths [grt::route_layer_lengths $db_net]
     for {set layer $min_layer} {$layer <= $max_layer} {incr layer} {
@@ -60,12 +60,31 @@ proc write_caps_csv { filename } {
   close $stream
 }
 
-proc record_wire_caps { var_name } {
+proc record_wire_rc { var_name } {
   upvar 1 $var_name var
 
   foreach net [get_nets *] {
     set net_name [get_full_name $net]
-    set var($net_name) [net_wire_cap $net]
+    set wire_res [net_wire_res $net]
+    set wire_cap [net_wire_cap $net]
+    set var($net_name) [list $wire_res $wire_cap]
+  }
+}
+
+# Only works or makes sense for 2 pin nets.
+proc net_wire_res { net } {
+  set pins [get_pins -of_object $net]
+  if { [llength $pins] == 2 } {
+    lassign $pins pin1 pin2
+    if { [$pin1 is_driver] } {
+      set drvr $pin1
+    } else {
+      set drvr $pin2
+    }
+    lassign [sta::find_pi_elmore $drvr rise max] c2 rpi c1
+    return $rpi
+  } else {
+    return 0.0
   }
 }
 
@@ -87,58 +106,75 @@ proc net_var_cap_less { net1 net2 } {
 
   set net_name1 [get_full_name $net1]
   set net_name2 [get_full_name $net2]
-  expr $cap_var($net_name1) < $cap_var($net_name2)
+  lassign $cap_var($net_name1) res1 cap1
+  lassign $cap_var($net_name2) res2 cap2
+  expr $cap1 < $cap2
 }
 
-proc compare_wire_caps { count cap_var_name ref_var_name } {
+proc compare_wire_rc { count var_name ref_var_name } {
   global var_cap_less_name
 
   set i 0
   # implicit arg to net_var_cap_less
   set var_cap_less_name $ref_var_name
   set nets [lsort -command net_var_cap_less [get_nets *]]
-  puts "net               fanout   [format %5s $cap_var_name] [format %5s $ref_var_name]  wire total"
-  puts "                            wire  wire delta delta"
-  set wire_sum 0.0
-  set total_sum 0.0
+  puts "net                 fanout    [format %5s $var_name]    [format %5s $ref_var_name]  wire total   [format %5s $var_name]    [format %5s $ref_var_name]"
+  puts "                                cap      cap delta delta     res      res delta"
+  set res_sum 0.0
+  set res_count 0
+  set cap_sum 0.0
+  set total_cap_sum 0.0
   foreach net $nets {
-    lassign [compare_wire_caps1 $net $cap_var_name $ref_var_name $wire_sum $total_sum] \
-      wire_sum total_sum
+    lassign [compare_wire_rc1 $net $var_name $ref_var_name] \
+      res_delta res_count cap_delta total_delta
+    set res_sum [expr $res_sum + $res_delta]
+    set res_count [expr $res_count + $res_count]
+    set cap_sum [expr $cap_sum + $cap_delta]
+    set total_cap_sum [expr $total_cap_sum + $total_delta]
     if { $i >= $count } {
       break
     }
     incr i
   }
-  set wire_avg [expr $wire_sum / $count]
-  set total_avg [expr $total_sum / $count]
-  puts "                                       ----- -----"
-  puts "                                       [format %+4.0f $wire_avg]% [format %+4.0f $total_avg]%"
+  set res_avg [expr $res_sum / $count]
+  set cap_avg [expr $cap_sum / $count]
+  set total_cap_avg [expr $total_cap_sum / $count]
+  puts "                                             ----- -----                  -----"
+  puts "                                             [format %+4.0f $cap_avg]% [format %+4.0f $total_cap_avg]%                  [format %+4.0f $res_avg]%"
 }
 
-proc compare_net_wire_caps { net_name cap_var_name ref_var_name } {
-  upvar 1 $cap_var_name cap_var
+proc compare_net_wire_rc { net_name var_name ref_var_name } {
+  upvar 1 $var_name cap_var
   upvar 1 $ref_var_name ref_var
   global var_cap_less_name
 
-  puts "net               fanout   [format %5s $cap_var_name] [format %5s $ref_var_name]  wire total"
-  puts "                            wire  wire delta delta"
-  compare_wire_caps1 [get_net $net_name] $cap_var_name $ref_var_name 0.0 0.0
+  puts "net                 fanout    [format %5s $var_name]    [format %5s $ref_var_name]  wire total"
+  puts "                                cap      cap delta delta"
+  compare_wire_rc1 [get_net $net_name] $var_name $ref_var_name
 }
 
-proc compare_wire_caps1 { net cap_var_name ref_var_name wire_sum total_sum f } {
-  upvar 2 $cap_var_name cap_var
+proc compare_wire_rc1 { net var_name ref_var_name } {
+  upvar 2 $var_name rc_var
   upvar 2 $ref_var_name ref_var
 
   set net_name [get_full_name $net]
   set pin_cap [net_pin_cap $net]
-  set wire_cap $cap_var($net_name)
-  set wire_cap_ref $ref_var($net_name)
-  if { $wire_cap_ref != 0.0 } {
-    set wire_delta [expr ($wire_cap - $wire_cap_ref) / $wire_cap_ref * 100]
+  lassign $rc_var($net_name) res wire_cap
+  lassign $ref_var($net_name) res_ref wire_cap_ref
+
+  if { $res != 0.0 } {
+    set res_delta [expr ($res - $res_ref) / $res_ref * 100]
+    set res_count 1
   } else {
-    set wire_delta 0.0
+    set res_delta 0.0
+    set res_count 0
   }
-  set wire_sum [expr $wire_sum + $wire_delta]
+
+  if { $wire_cap_ref != 0.0 } {
+    set cap_delta [expr ($wire_cap - $wire_cap_ref) / $wire_cap_ref * 100]
+  } else {
+    set cap_delta 0.0
+  }
   
   set total_cap [expr $pin_cap + $wire_cap]
   set total_cap_ref [expr $pin_cap + $wire_cap_ref]
@@ -147,11 +183,16 @@ proc compare_wire_caps1 { net cap_var_name ref_var_name wire_sum total_sum f } {
   } else {
     set total_delta 0.0
   }
-  set total_sum [expr $total_sum + $total_delta]
   
   set fanout [llength [get_pins -of $net -filter "direction == input"]]
-  puts $f "$net_name,$fanout,$wire_cap,$wire_cap_ref,$wire_delta%,$total_delta%"
-  return [list $wire_sum $total_sum]
+
+  puts -nonewline "[format %-20s $net_name] [format %5d $fanout] [format %8s [sta::format_capacitance $wire_cap 3]] [format %8s [sta::format_capacitance $wire_cap_ref 3]] [format %4.0f $cap_delta]% [format %4.0f $total_delta]%"
+  if { $res > 0.0 } {
+    puts "[format %8s [sta::format_resistance $res 3]] [format %8s [sta::format_resistance $res_ref 3]] [format %4.0f $res_delta]%"
+  } else {
+    puts ""
+  }
+  return [list $res_delta $res_count $cap_delta $total_delta]
 }
 
 # adjustment is percent to adjust (ie, 10 for +10%).
