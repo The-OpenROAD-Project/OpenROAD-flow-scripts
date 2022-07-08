@@ -2,7 +2,7 @@
 
 # Read grt/rcx capacitance/wire length files for multiple designs and
 # use linear regression to fit layer capacitances to rcx net capacitances.
-# Use ORFS 'make write_net_caps' to write cap files.
+# Use ORFS 'make write_net_rc' to write cap files.
 
 import os
 from sys import exit
