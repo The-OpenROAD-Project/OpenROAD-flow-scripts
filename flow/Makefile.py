@@ -13,6 +13,36 @@ sys.path.append(os.path.join(scdir, 'util'))
 import parse_config_mk
 
 def main():
+    '''
+    SiliconCompiler-based implementation of the OpenROAD build flow.
+
+    This script mimics the Makefile-based build flow, running a series of TCL scripts and
+    minor pre/post-processing based on platform and design parameters defined in 'config.mk' files.
+
+    This script orchestrates the process of parsing config files, configuring a siliconcompiler.Chip
+    object, and running the OpenROAD flow scripts.
+    The 'siliconcompiler' Python module must be installed for this script to work:
+
+        pip3 install siliconcompiler
+
+    To build a design, run this file with the -DESIGN_CONFIG parameter set to
+    the desired 'config.mk' file. Example:
+
+        export SCPATH=./scripts/sc
+        python Makefile.py -DESIGN_CONFIG=./designs/nangate45/gcd/config.mk
+
+    Results and artifacts will be stored under 'build/[design]/', and the final GDS can be viewed with:
+
+        sc-show -design [design]
+
+    The following modules implement helper functions for this process, all under the `scripts/sc` dir:
+
+    * `flows/orflow.py`:              Define the tasks which make up the flow (syn->floorplan->...)
+    * `targets/[platform]_orflow.py`: Parse config.mk files, and set default values in the Chip object.
+    ** `util/parse_*.py`:             Helper functions to parse platform/design config.mk fragments.
+    * `tools/openroad/sc_apr.tcl`:    Wrapper TCL script to handle task-specific pre/post-processing.
+    '''
+
     parser = argparse.ArgumentParser(description='Run OR flow through SiliconCompiler.')
     parser.add_argument('-DESIGN_CONFIG', required=True, help='Path to config.mk file configuring design')
     args = vars(parser.parse_args())
@@ -95,4 +125,5 @@ def main():
     os.symlink(or_export_dir, export_dir)
 
 if __name__ == '__main__':
+    # Usage: python Makefile.py -DESIGN_CONFIG=designs/[platform]/[design]/config.mk
     main()
