@@ -69,3 +69,6 @@ core
 core.*
 
 *~
+
+# Python bytecode
+__pycache__/
