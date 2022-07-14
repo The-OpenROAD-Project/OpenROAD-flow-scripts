@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 415961,
+        "value": 412996,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 622768,
+        "value": 617459,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -52,7 +52,7 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 1,
+        "value": 0,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
@@ -60,11 +60,11 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 425238,
+        "value": 422403,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.81,
+        "value": -0.4,
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
@@ -72,7 +72,7 @@
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 12,
+        "value": 11,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {

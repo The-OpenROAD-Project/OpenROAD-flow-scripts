@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -1.2,
+        "value": -1.15,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
@@ -40,11 +40,11 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -1.08,
+        "value": -0.87,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -1.08,
+        "value": -0.87,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
