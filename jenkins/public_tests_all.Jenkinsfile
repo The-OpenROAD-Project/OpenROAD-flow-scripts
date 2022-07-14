@@ -39,7 +39,7 @@ pipeline {
           }
         }
         stage ("${TEST}") {
-          ageny any;
+          agent any;
           steps {
               unstash "install"
               sh "flow/test/test_helper.sh ${TEST}";
