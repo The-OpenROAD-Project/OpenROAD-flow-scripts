@@ -119,8 +119,6 @@ export KLAYOUT_TECH_FILE       = $(PLATFORM_DIR)/KLayout/asap7.lyt
 # OpenRCX extRules
 export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules
 
-# XS - defining function for selecting different timing library set
-
 # XS - defining function for using LVT
 ifeq ($(ASAP7_USELVT), 1)
    export TIEHI_CELL_AND_PORT     = TIEHIx1_ASAP7_75t_L H
