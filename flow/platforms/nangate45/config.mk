@@ -76,7 +76,7 @@ export PLACE_DENSITY ?= 0.30
 #  CTS
 #  -------------------------------------------------------
 # TritonCTS options
-export CTS_BUF_CELL   = BUF_X4
+export CTS_BUF_CELL   ?= BUF_X4
 
 # ---------------------------------------------------------
 #  Route
