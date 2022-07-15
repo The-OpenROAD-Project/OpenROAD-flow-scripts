@@ -65,6 +65,16 @@ pipeline {
                 sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
               }
             }
+            stage("axis") {
+              agent none;
+              steps {
+                script{
+                  stage("${TEST}") {
+                    print "${TEST}"
+                  }
+                }
+              }
+            }
             stage ("Test") {
               agent any;
               steps {
