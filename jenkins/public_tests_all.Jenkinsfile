@@ -45,18 +45,9 @@ pipeline {
               sh "flow/test/test_helper.sh ${TEST}";
           }
           post {
-            success {
-                sh "mkdir -p flow/sucess";
-                sh "mv flow/final_report_${TEST// /_}*tar.gz flow/success";
-                archiveArtifacts artifacts: "flow/success/*tar.gz";
-            }
-            failure {
-                sh "mkdir -p flow/failure";
-                sh "mv flow/final_report_${TEST// /_}}*tar.gz flow/failure";
-                archiveArtifacts artifacts: "flow/failure/*tar.gz";
-            }
             always {
               archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts: "flow/*tar.gz";
             }
           }
         }
