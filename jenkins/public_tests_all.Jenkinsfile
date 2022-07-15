@@ -86,7 +86,7 @@ pipeline {
         }
       }
     }
-  }
+  
   post {
     always {
       copyArtifacts filter: "flow/logs/**/*",
