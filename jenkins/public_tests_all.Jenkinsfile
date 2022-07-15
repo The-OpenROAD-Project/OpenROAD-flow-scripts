@@ -15,39 +15,71 @@ pipeline {
             axes {
                 axis {
                   name 'TEST'
-                  values 'aes asap7', 'ethmac asap7', 'gcd asap7', 'ibex asap7', 'jpeg asap7', 'sha3 asap7', 'uart asap7', 'aes nangate 45', 'black_parrot nangate45', 'bp_be_top nangate45', 'bp_fe_top nangate45', 'bp_multi_top nangate45', 'dynamic_node nangate45', 'gcd nangate 45', 'ibex nangate45', 'swerv nangate45', 'swerv_wrapper nangate45', 'tinyRocket nangate45', 'aes sky130hd', 'chameleon sky130hd', 'gcd sky130hd', 'ibex sky130hd', 'jpeg sky130hd', 'microwatt sky130hd', 'riscv32i sky130hd', 'aes sky130hd', 'gcd sky130hd', 'ibex sky130hs', 'jpeg sky130hs', 'riscv32i sky130hs'
+                  values 'aes asap7', 
+                  'ethmac asap7', 
+                  'gcd asap7', 
+                  'ibex asap7', 
+                  'jpeg asap7', 
+                  'sha3 asap7', 
+                  'uart asap7', 
+                  'aes nangate 45', 
+                  'black_parrot nangate45', 
+                  'bp_be_top nangate45', 
+                  'bp_fe_top nangate45', 
+                  'bp_multi_top nangate45', 
+                  'dynamic_node nangate45', 
+                  'gcd nangate 45', 
+                  'ibex nangate45', 
+                  'jpeg nangate45',
+                  'swerv nangate45', 
+                  'swerv_wrapper nangate45', 
+                  'tinyRocket nangate45', 
+                  'aes sky130hd', 
+                  'chameleon sky130hd', 
+                  'gcd sky130hd', 
+                  'ibex sky130hd', 
+                  'jpeg sky130hd', 
+                  'microwatt sky130hd', 
+                  'riscv32i sky130hd', 
+                  'aes sky130hs', 
+                  'gcd sky130hs', 
+                  'ibex sky130hs', 
+                  'jpeg sky130hs', 
+                  'riscv32i sky130hs';
                 }
             }
-        }
-    }
-    stage("Build") {
-      environment {
-        OPENROAD_FLOW_NO_GIT_INIT = 1;
-      }
-      steps {
-        sh "./build_openroad.sh --local";
-        stash name: "install", includes: "tools/install/**";
-      }
-    }
-    stage("Test") {
-      parallel {
-        stage("Docker") {
-          agent any;
+        
+    
+        stage("Build") {
+          environment {
+            OPENROAD_FLOW_NO_GIT_INIT = 1;
+          }
           steps {
-            sh "./build_openroad.sh";
-            sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
+            sh "./build_openroad.sh --local";
+            stash name: "install", includes: "tools/install/**";
           }
         }
-        stage ("${TEST}") {
-          agent any;
-          steps {
-              unstash "install"
-              sh "flow/test/test_helper.sh ${TEST}";
-          }
-          post {
-            always {
-              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts: "flow/*tar.gz";
+        stage("Test") {
+          parallel {
+            stage("Docker") {
+              agent any;
+              steps {
+                sh "./build_openroad.sh";
+                sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
+              }
+            }
+            stage ("${TEST}") {
+              agent any;
+              steps {
+                  unstash "install"
+                  sh "flow/test/test_helper.sh ${TEST}";
+              }
+              post {
+                always {
+                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+                  archiveArtifacts artifacts: "flow/*tar.gz";
+                }
+              }
             }
           }
         }
