@@ -311,10 +311,10 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     # Place
     # =========================================================================
 
-    extractGnuTime('placeopt', metrics_dict, logPath + '/3_3_resizer.log')
+    extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_resizer.log')
 
    
-    extractGnuTime('detailedplace', metrics_dict, logPath + '/3_4_opendp.log')
+    extractGnuTime('detailedplace', metrics_dict, logPath + '/3_5_opendp.log')
 
 
 
