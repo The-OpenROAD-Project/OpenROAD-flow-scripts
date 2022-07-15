@@ -42,27 +42,28 @@ pipeline {
                   'riscv32i sky130hs';
           }
         }
-      
-        stage("Build") {
-          environment {
-            OPENROAD_FLOW_NO_GIT_INIT = 1;
+        stages{
+          stage("Build") {
+            environment {
+              OPENROAD_FLOW_NO_GIT_INIT = 1;
+            }
+            steps {
+              sh "./build_openroad.sh --local";
+              stash name: "install", includes: "tools/install/**";
+            }
           }
-          steps {
-            sh "./build_openroad.sh --local";
-            stash name: "install", includes: "tools/install/**";
-          }
-        }
-        stage("Test") {
-          parallel {
-            stage("${TEST}") {
-              agent any;
-              steps {
-                unstash "install";
-                sh "flow/test/test_jelper.sh ${TEST}"
-              }
-              always {
-                archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-                archiveArtifacts artifacts "flow/*tar.gz";
+          stage("Test") {
+            parallel {
+              stage("${TEST}") {
+                agent any;
+                steps {
+                  unstash "install";
+                  sh "flow/test/test_jelper.sh ${TEST}"
+                }
+                always {
+                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+                  archiveArtifacts artifacts "flow/*tar.gz";
+                }
               }
             }
           }
