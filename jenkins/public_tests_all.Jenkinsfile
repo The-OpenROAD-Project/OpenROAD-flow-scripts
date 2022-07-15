@@ -58,16 +58,6 @@ pipeline {
                 stash name: "install", includes: "tools/install/**";
               }
             }
-            stage("axis") {
-              agent none;
-              steps {
-                script {
-                  stage("${TEST}") {
-                    print "${TEST}"
-                  }
-                }
-              }
-            }
             stage("Test") {
               stage("Docker") {
                 agent any;
