@@ -78,7 +78,7 @@ pipeline {
             stage ("Test") {
               agent any;
               steps {
-                  unstash "install"
+                  unstash "install";
                   sh "flow/test/test_helper.sh ${TEST}";
               }
               post {

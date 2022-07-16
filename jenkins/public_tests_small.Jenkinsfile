@@ -52,19 +52,25 @@ pipeline {
               stash name: "install", includes: "tools/install/**";
             }
           }
-          stage("Test") {
-            parallel {
-              stage("${TEST}") {
-                agent any;
-                steps {
-                  unstash "install";
-                  sh "flow/test/test_jelper.sh ${TEST}"
-                }
-                always {
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-                  archiveArtifacts artifacts "flow/*tar.gz";
+          stage("axis") {
+            agent none;
+            steps {
+              script {
+                stage("${TEST}") {
+                  print"${TEST}"
                 }
               }
+            }
+          }
+          stage("Test") {
+            agent any;
+            steps {
+              unstash "install";
+              sh "flow/test/test_helper.sh ${TEST}";
+            }
+            always {
+              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+              archiveArtifacts artifacts "flow/*tar.gz";
             }
           }
         }

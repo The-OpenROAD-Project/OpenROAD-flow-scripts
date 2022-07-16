@@ -87,27 +87,33 @@ pipeline {
               stash name: "install", includes: "tools/install/**";
             }
           }
-          stage("Test") {
-            parallel {
-              stage("Docker") {
-                agent any;
-                steps {
-                  sh "./build_openroad.sh";
-                  sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
-                }
-              }
-              stage("${TEST}") {
-                agent any;
-                steps {
-                  unstash "install"
-                  sh "flow/test/test_helper.sh ${TEST}";
-                }
-                post {
-                  always {
-                    archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-                    archiveArtifacts artifacts: "flow/*tar.gz";
+          stage("Docker") {
+            agent any;
+            steps {
+              sh "./build_openroad.sh";
+              sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
+            }
+          }
+          stage("axis") {
+              agent none;
+              steps {
+                script{
+                  stage("${TEST}") {
+                    print "${TEST}"
                   }
                 }
+              }
+            }
+          stage("Test") {
+            agent any;
+            steps {
+              unstash "install";
+              sh "flow/test/test_helper.sh ${TEST}";
+            }
+            post {
+              always {
+                archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+                archiveArtifacts artifacts: "flow/*tar.gz";
               }
             }
           }
