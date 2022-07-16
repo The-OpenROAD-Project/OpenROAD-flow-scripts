@@ -616,10 +616,10 @@ finish: $(LOG_DIR)/6_report.log \
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
-$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_2_route.odb $(FILL_CONFIG)
+$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb $(FILL_CONFIG)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_density_fill.json) 2>&1 | tee $(LOG_DIR)/6_density_fill.log
 else
-$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_2_route.odb
+$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb
 	cp $< $@
 endif
 
