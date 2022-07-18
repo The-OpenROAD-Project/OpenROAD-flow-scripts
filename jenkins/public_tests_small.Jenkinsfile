@@ -9,6 +9,15 @@ pipeline {
     copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME);
   }
   stages {
+     stage("Build") {
+      environment {
+        OPENROAD_FLOW_NO_GIT_INIT = 1;
+      }
+      steps {
+        sh "./build_openroad.sh --local";
+        stash name: "install", includes: "tools/install/**";
+      }
+    }
     stage('BuildAndTest') {
       matrix {
         agent any;
@@ -61,15 +70,6 @@ pipeline {
               }
             }
           }
-        }
-      }
-      stage("Build") {
-        environment {
-          OPENROAD_FLOW_NO_GIT_INIT = 1;
-        }
-        steps {
-          sh "./build_openroad.sh --local";
-          stash name: "install", includes: "tools/install/**";
         }
       }
     }

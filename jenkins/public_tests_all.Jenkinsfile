@@ -9,6 +9,22 @@ pipeline {
     copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME);
   }
   stages {
+    stage("Build") {
+      environment {
+        OPENROAD_FLOW_NO_GIT_INIT = 1;
+      }
+      steps {
+        sh "./build_openroad.sh --local";
+        stash name: "install", includes: "tools/install/**";
+      }
+    }
+    stage("Docker") {
+      agent any;
+      steps {
+        sh "./build_openroad.sh";
+        sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
+      }
+    }
     stage ('BuildAndTest') {
         matrix {
           agent any;
@@ -49,7 +65,7 @@ pipeline {
               }
           }
           stages{
-            stage("axis") {j
+            stage("axis") {
               agent none;
               steps {
                 script{
@@ -71,22 +87,7 @@ pipeline {
             }
           }
         }
-        stage("Build") {
-          environment {
-            OPENROAD_FLOW_NO_GIT_INIT = 1;
-          }
-          steps {
-            sh "./build_openroad.sh --local";
-            stash name: "install", includes: "tools/install/**";
-          }
-        }
-        stage("Docker") {
-          agent any;
-          steps {
-            sh "./build_openroad.sh";
-            sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
-          }
-        }
+        
       }
     }
   
