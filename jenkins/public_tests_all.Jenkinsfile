@@ -49,45 +49,42 @@ pipeline {
               }
           }
           stages{
-            stage("Build") {
-              environment {
-                OPENROAD_FLOW_NO_GIT_INIT = 1;
-              }
-              steps {
-                sh "./build_openroad.sh --local";
-                stash name: "install", includes: "tools/install/**";
-              }
-            }
-            stage("Docker") {
-              agent any;
-              steps {
-                sh "./build_openroad.sh";
-                sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
-              }
-            }
-            stage("axis") {
+            stage("axis") {j
               agent none;
               steps {
                 script{
                   stage("${TEST}") {
-                    print "${TEST}"
+                    agent any;
+                    steps {
+                        unstash "install";
+                        sh "flow/test/test_helper.sh ${TEST}";
+                    }
+                    post {
+                      always {
+                        archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+                        archiveArtifacts artifacts: "flow/*tar.gz";
+                      }
+                    }
                   }
                 }
               }
             }
-            stage ("Test") {
-              agent any;
-              steps {
-                  unstash "install";
-                  sh "flow/test/test_helper.sh ${TEST}";
-              }
-              post {
-                always {
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-                  archiveArtifacts artifacts: "flow/*tar.gz";
-                }
-              }
-            }
+          }
+        }
+        stage("Build") {
+          environment {
+            OPENROAD_FLOW_NO_GIT_INIT = 1;
+          }
+          steps {
+            sh "./build_openroad.sh --local";
+            stash name: "install", includes: "tools/install/**";
+          }
+        }
+        stage("Docker") {
+          agent any;
+          steps {
+            sh "./build_openroad.sh";
+            sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
           }
         }
       }

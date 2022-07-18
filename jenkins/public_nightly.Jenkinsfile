@@ -49,74 +49,72 @@ pipeline {
           }
         }
         stages{
-          stage("Checkout master branch") {
-            steps {
-              checkout([$class: "GitSCM",
-                    branches: [[name: "*/master"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [
-                      [
-                        $class: "SubmoduleOption",
-                        disableSubmodules: false,
-                        parentCredentials: true,
-                        recursiveSubmodules: true,
-                        reference: "",
-                        trackingSubmodules: false
-                      ],
-                      [
-                        $class: "RelativeTargetDirectory",
-                        relativeTargetDir: "tools/OpenROAD"
-                      ]
-                    ],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [
-                      [
-                      credentialsId: "openroad-ci",
-                      url: "https://github.com/The-OpenROAD-Project/OpenROAD"
-                      ]
-                    ]
-                  ])
-            }
-          }
-          stage("Build") {
-            environment {
-              OPENROAD_FLOW_NO_GIT_INIT = 1;
-            }
-            steps {
-              sh "./build_openroad.sh --local";
-              stash name: "install", includes: "tools/install/**";
-            }
-          }
-          stage("Docker") {
-            agent any;
-            steps {
-              sh "./build_openroad.sh";
-              sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
-            }
-          }
+          
           stage("axis") {
               agent none;
               steps {
                 script{
                   stage("${TEST}") {
-                    print "${TEST}"
+                    agent any;
+                    steps {
+                      unstash "install";
+                      sh "flow/test/test_helper.sh ${TEST}";
+                    }
+                    post {
+                      always {
+                        archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+                        archiveArtifacts artifacts: "flow/*tar.gz";
+                      }
+                    }
                   }
                 }
               }
             }
-          stage("Test") {
-            agent any;
-            steps {
-              unstash "install";
-              sh "flow/test/test_helper.sh ${TEST}";
-            }
-            post {
-              always {
-                archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-                archiveArtifacts artifacts: "flow/*tar.gz";
-              }
-            }
-          }
+        }
+      }
+      stage("Checkout master branch") {
+        steps {
+          checkout([$class: "GitSCM",
+                branches: [[name: "*/master"]],
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [
+                  [
+                    $class: "SubmoduleOption",
+                    disableSubmodules: false,
+                    parentCredentials: true,
+                    recursiveSubmodules: true,
+                    reference: "",
+                    trackingSubmodules: false
+                  ],
+                  [
+                    $class: "RelativeTargetDirectory",
+                    relativeTargetDir: "tools/OpenROAD"
+                  ]
+                ],
+                submoduleCfg: [],
+                userRemoteConfigs: [
+                  [
+                  credentialsId: "openroad-ci",
+                  url: "https://github.com/The-OpenROAD-Project/OpenROAD"
+                  ]
+                ]
+              ])
+        }
+      }
+      stage("Build") {
+        environment {
+          OPENROAD_FLOW_NO_GIT_INIT = 1;
+        }
+        steps {
+          sh "./build_openroad.sh --local";
+          stash name: "install", includes: "tools/install/**";
+        }
+      }
+      stage("Docker") {
+        agent any;
+        steps {
+          sh "./build_openroad.sh";
+          sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
         }
       }
     }

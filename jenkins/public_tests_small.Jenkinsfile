@@ -43,36 +43,33 @@ pipeline {
           }
         }
         stages{
-          stage("Build") {
-            environment {
-              OPENROAD_FLOW_NO_GIT_INIT = 1;
-            }
-            steps {
-              sh "./build_openroad.sh --local";
-              stash name: "install", includes: "tools/install/**";
-            }
-          }
           stage("axis") {
             agent none;
             steps {
               script {
                 stage("${TEST}") {
-                  print"${TEST}"
+                  agent any;
+                  steps {
+                    unstash "install";
+                    sh "flow/test/test_helper.sh ${TEST}";
+                  }
+                  always {
+                    archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+                    archiveArtifacts artifacts "flow/*tar.gz";
+                  }
                 }
               }
             }
           }
-          stage("Test") {
-            agent any;
-            steps {
-              unstash "install";
-              sh "flow/test/test_helper.sh ${TEST}";
-            }
-            always {
-              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-              archiveArtifacts artifacts "flow/*tar.gz";
-            }
-          }
+        }
+      }
+      stage("Build") {
+        environment {
+          OPENROAD_FLOW_NO_GIT_INIT = 1;
+        }
+        steps {
+          sh "./build_openroad.sh --local";
+          stash name: "install", includes: "tools/install/**";
         }
       }
     }
