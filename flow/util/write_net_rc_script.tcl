@@ -3,7 +3,6 @@ source $::env(SCRIPTS_DIR)/load.tcl
 load_design 4_1_cts.odb 4_cts.sdc ""
 
 source $::env(UTILS_DIR)/write_net_rc.tcl
-source $::env(PLATFORM_DIR)/setRC.tcl
 
 estimate_parasitics -placement
 record_wire_rc gpl
@@ -16,7 +15,7 @@ if {[info exist env(FASTROUTE_TCL)]} {
   set_macro_extension 2
 }
 
-global_route
+global_route -congestion_iterations 100
 
 estimate_parasitics -global_routing
 record_wire_rc grt
