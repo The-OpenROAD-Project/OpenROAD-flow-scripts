@@ -29,6 +29,9 @@ version
 # all other metrics are considered better if they decrease in value
 higherIsBetter = re.compile(r'''
 __ws |
+__wns |
+__drv__max.*_limit |
+__clock__slack |
 __tns
 ''', re.VERBOSE | re.IGNORECASE)
 
@@ -46,6 +49,7 @@ args = parser.parse_args()
 
 goldFilename = f'metadata-{args.variant}-ok.json'
 runFilename = f'metadata-{args.variant}.json'
+
 
 def readMetrics(fname, justLoad=False):
     global tableDict
@@ -340,6 +344,7 @@ platforms = sorted(platforms)
 designs = sorted(designs)
 view = sorted(views)
 
+
 def write_gallery(design, platforms, views):
     htmlGallery = f'reports/report-gallery-{design}.html'
     with open(htmlGallery, 'w') as f:
@@ -362,6 +367,7 @@ def write_gallery(design, platforms, views):
         gallery += '</table>\n'
         html = head + gallery + tail
         f.writelines(html)
+
 
 for design in designs:
     write_gallery(design, platforms, views)
@@ -510,7 +516,6 @@ with open(htmlOutput, 'w') as f:
         for col in subColumns:
             table += '    <td>{}</td>\n'.format(col)
     table += '  </tr>\n'
-
 
     # Main table rows
     for metric, entry in tableDict.items():
