@@ -64,11 +64,11 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -1.88,
+        "value": -2.35,
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -1.28,
+        "value": -1.23,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
