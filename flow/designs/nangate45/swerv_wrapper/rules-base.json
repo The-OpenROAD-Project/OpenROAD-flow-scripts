@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 761472,
+        "value": 760961,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 107906,
+        "value": 107819,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,15 +20,15 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -0.59,
+        "value": -0.58,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -0.58,
+        "value": -0.57,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -0.58,
+        "value": -0.57,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -48,7 +48,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 5167975,
+        "value": 5155020,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -60,7 +60,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 762757,
+        "value": 762257,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
@@ -68,7 +68,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.50,
+        "value": -0.5,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
