@@ -24,13 +24,11 @@ set_thread_count 2
 set drc_rpt [make_result_file 5_route_drc.rpt]
 set guide_mod [make_result_file output_guide.mod]
 set maze_log [make_result_file maze.log]
-detailed_route -guide $route_guide \
-	       -output_drc $drc_rpt \
-               -output_guide $guide_mod \
+detailed_route -output_drc $drc_rpt \
                -output_maze $maze_log \
-	       -bottom_routing_layer met1 \
-	       -top_routing_layer met5 \
-               -verbose 1 
+               -bottom_routing_layer met1 \
+               -top_routing_layer met5 \
+               -verbose 1
 set route_def [make_result_file 5_route.def]
 write_def $route_def
 puts "Number of DRC Violations = [detailed_route_num_drvs]"
