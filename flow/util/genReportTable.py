@@ -30,7 +30,7 @@ version
 higherIsBetter = re.compile(r'''
 __ws |
 __wns |
-__drv__max |
+__drv__max.*_limit |
 __clock__slack |
 __tns
 ''', re.VERBOSE | re.IGNORECASE)
