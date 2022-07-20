@@ -44,9 +44,8 @@ def parseMessages(filename):
         with open(filename, 'r') as f:
             lines = f.readlines()
     except Exception as e:
-        msg = f"Failed to open {filename}. Check to see if design finished."
-        print(msg)
-        return [msg], [msg]
+        print(f"Failed to open {filename}. Check to see if design finished.")
+        return None, None
     for line in lines:
         if re.search(regexError, line):
             errors.append(line.strip())
