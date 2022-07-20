@@ -1,6 +1,6 @@
 export DESIGN_NICKNAME = ariane136
 export DESIGN_NAME = ariane
-export PLATFORM    = SKY130HD_FS
+export PLATFORM    = sky130hd_fakestack
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ariane.sv2v.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v

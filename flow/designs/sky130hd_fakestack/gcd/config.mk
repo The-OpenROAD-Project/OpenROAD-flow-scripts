@@ -1,5 +1,5 @@
 export DESIGN_NAME = gcd
-export PLATFORM    = SKY130HD_FS
+export PLATFORM    = sky130hd_fakestack
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/gcd.v
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
