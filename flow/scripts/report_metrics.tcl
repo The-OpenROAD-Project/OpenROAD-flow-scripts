@@ -116,13 +116,19 @@ proc report_metrics { when {include_erc true} } {
     puts "--------------------------------------------------------------------------"
     puts "hold violation count [llength [find_timing_paths -path_delay max -slack_max 0]]"
 
-    set path_delay [sta::format_time [[[lindex [find_timing_paths -sort_by_slack] 0] path] arrival] 4]
+    set critical_path [lindex [find_timing_paths -sort_by_slack] 0]
+    if {$critical_path != ""} {
+      set path_delay [sta::format_time [[$critical_path path] arrival] 4]
+      set path_slack [sta::format_time [[$critical_path path] slack] 4]
+    } else {
+      set path_delay -1
+      set path_slack 0
+    }
     puts "\n=========================================================================="
     puts "$when critical path delay"
     puts "--------------------------------------------------------------------------"
     puts "$path_delay"
 
-    set path_slack [sta::format_time [[[lindex [find_timing_paths -sort_by_slack] 0] path] slack] 4]
     puts "\n=========================================================================="
     puts "$when critical path slack"
     puts "--------------------------------------------------------------------------"
@@ -132,7 +138,6 @@ proc report_metrics { when {include_erc true} } {
     puts "$when slack div critical path delay"
     puts "--------------------------------------------------------------------------"
     puts "[format "%4f" [expr $path_slack / $path_delay * 100]]"
-
   }
 
   puts "\n=========================================================================="
