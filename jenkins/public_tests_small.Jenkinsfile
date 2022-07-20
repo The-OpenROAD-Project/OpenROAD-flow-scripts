@@ -343,9 +343,9 @@ pipeline {
       copyArtifacts filter: "flow/reports/**/*",
                     projectName: '${JOB_NAME}',
                     selector: specific('${BUILD_NUMBER}');
-      sh "flow/util/genReport.py -vv --single --file --no-print";
       sh "flow/util/genReportTable.py";
-      sh "flow/util/genReport.py -vvv --file --no-print";
+      sh "flow/util/genReport.py -vvq";
+      sh "flow/util/genReport.py -s";
       publishHTML([
           allowMissing: true,
           alwaysLinkToLastBuild: true,
