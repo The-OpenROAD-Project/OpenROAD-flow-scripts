@@ -1,7 +1,7 @@
 source "helpers.tcl"
 
 read_lef ../../../platforms/sky130hd/lef/sky130_fd_sc_hd.tlef
-read_lef ../../../platformms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
+read_lef ../../../platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
 read_def ./gcd/4_cts.def
 read_sdc ./gcd/gcd.sdc
 
