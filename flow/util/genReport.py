@@ -73,13 +73,9 @@ def gen_report(name, data):
         if args.verbose:
             output += f"  Found {len(data['logErrors'])} error(s) in the log files.\n"
         if args.verbose >= 1:
-            for key, errorList in data['logErrors'].items():
-                if len(errorList) == 0:
-                    continue
-                output += f"    File {key} has {len(errorList)} error(s).\n"
+            for error in data['logErrors']:
                 if args.verbose >= 2:
-                    for error in errorList:
-                        output += f"      {error}\n"
+                    output += f"      {error}\n"
 
     if len(data['logWarnings']) == 0:
         if args.verbose:
@@ -88,13 +84,9 @@ def gen_report(name, data):
         if args.verbose:
             output += f"  Found {len(data['logWarnings'])} warning(s) in the log files.\n"
         if args.verbose >= 1:
-            for key, warningList in data['logWarnings'].items():
-                if len(warningList) == 0:
-                    continue
-                output += f"    File {key} has {len(warningList)} warning(s).\n"
+            for warning in data['logWarnings']:
                 if args.verbose >= 2:
-                    for warning in warningList:
-                        output += f"      {warning}\n"
+                    output += f"      {warning}\n"
 
     if len(data['metricsLogsErrors']) == 0:
         if args.verbose:
@@ -144,6 +136,7 @@ def gen_report(name, data):
             output += '  Design has the following violations over the allowed limit: '
         for drc, count in data['drcList'].items():
             output += f"{drc} ({count}) "
+        output += '\n'
 
     return output.strip()
 
@@ -153,20 +146,22 @@ def write_report(path, content):
     with open(path, 'w') as f:
         f.write(content)
     if args.verbose:
-        content += f"\nGenerated report file: {path}"
+        content += f"\nGenerated report file: {path}\n"
     with open(singleReportFilename, 'a') as f:
         f.write(content)
-        f.write('\n\n')
+        f.write('\n')
+    if not args.quiet and content != '':
+        print(content)
+
+
+if os.path.isfile(singleReportFilename):
     if not args.quiet:
-        print(content.strip())
-
-
-if not args.quiet and os.path.isfile(singleReportFilename):
-    print(f"Overwriting report {singleReportFilename}.")
+        print(f"Overwriting report {singleReportFilename}.")
     os.remove(singleReportFilename)
 
-if not args.quiet and os.path.isfile(summaryFilename):
-    print(f"Overwriting report summary {summaryFilename}.")
+if os.path.isfile(summaryFilename):
+    if not args.quiet:
+        print(f"Overwriting report summary {summaryFilename}.")
     os.remove(summaryFilename)
 
 designList = dict()
@@ -241,7 +236,8 @@ summary += '-' * 30 + '\n'
 for name, data in designList.items():
     if data['status'] == 'green':
         content = gen_report(name, data)
-        summary += content + '\n'
+        if content != '':
+            summary += content + '\n'
         if args.verbose:  # add empty line for readability
             summary += '\n'
         write_report(data['outputFile'], content)
@@ -258,8 +254,9 @@ for name, data in designList.items():
             summary += '\n'
         write_report(data['outputFile'], content)
 
-if not args.quiet:
+if not args.quiet and summary != '':
     print(summary)
+
 with open(summaryFilename, 'a') as summaryFile:
     summaryFile.write(summary)
 
