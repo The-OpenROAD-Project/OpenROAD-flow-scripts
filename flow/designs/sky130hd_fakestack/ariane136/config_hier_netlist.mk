@@ -1,4 +1,4 @@
-include $(dir $(DESIGN_CONFIG))/config_hier.mk
+include $(dir $(DESIGN_CONFIG))/config.mk
 
 export FLOW_VARIANT = hier_netlist
 
