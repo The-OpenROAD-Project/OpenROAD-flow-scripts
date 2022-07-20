@@ -34,6 +34,10 @@ parser.add_argument('--quiet', '-q',
                     required=False, default=False, action='store_true',
                     help='Do not print report to stdout.')
 
+parser.add_argument('--summary', '-s',
+                    required=False, default=False, action='store_true',
+                    help='Only write summary file.')
+
 args = parser.parse_args()
 
 
@@ -240,7 +244,8 @@ for name, data in designList.items():
             summary += content + '\n'
         if args.verbose:  # add empty line for readability
             summary += '\n'
-        write_report(data['outputFile'], content)
+        if not args.summary:
+            write_report(data['outputFile'], content)
 
 summary += '\n' + '-' * 30 + '\n'
 summary += ' ' * 7 + 'Failing designs\n'
