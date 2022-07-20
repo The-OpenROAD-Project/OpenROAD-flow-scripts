@@ -484,7 +484,7 @@ pipeline {
                     selector: specific('${BUILD_NUMBER}');
       sh "flow/util/genReportTable.py";
       sh "flow/util/genReport.py -vvq";
-      sh "flow/util/genReport.py";
+      sh "flow/util/genReport.py -s";
       publishHTML([
           allowMissing: true,
           alwaysLinkToLastBuild: true,
