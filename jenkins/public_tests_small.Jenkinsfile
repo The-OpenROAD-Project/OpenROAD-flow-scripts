@@ -15,12 +15,12 @@ pipeline {
             "LOCAL": {
               sh "./build_openroad.sh --local --no_init";
               stash name: "install", includes: "tools/install/**";
-            }
+            },
             "DOCKER": {
               sh "./build_openroad.sh";
               sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
             }
-          )
+          );
         }
       }
     }
@@ -116,7 +116,7 @@ pipeline {
                   reportTitles: "Flow Report"
               ]);
             }
-          )
+          );
         }
       }
     }
