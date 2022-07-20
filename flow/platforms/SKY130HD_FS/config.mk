@@ -125,7 +125,7 @@ export CTS_BUF_CELL   ?= sky130_fd_sc_hd__clkbuf_4
 # ---------------------------------------------------------
 # FastRoute options
 export MIN_ROUTING_LAYER = met1
-export MAX_ROUTING_LAYER = met5
+export MAX_ROUTING_LAYER = met9
 #
 # Define fastRoute tcl
 export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
