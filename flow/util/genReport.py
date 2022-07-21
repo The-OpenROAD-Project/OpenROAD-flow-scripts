@@ -47,14 +47,13 @@ def parseMessages(filename):
     try:
         with open(filename, 'r') as f:
             lines = f.readlines()
+        for line in lines:
+            if re.search(regexError, line):
+                errors.append(line.strip())
+            elif re.search(regexWarning, line):
+                warnings.append(line.strip())
     except Exception as e:
         print(f"Failed to open {filename}. Check to see if design finished.")
-        return None, None
-    for line in lines:
-        if re.search(regexError, line):
-            errors.append(line.strip())
-        elif re.search(regexWarning, line):
-            warnings.append(line.strip())
     return errors, warnings
 
 
@@ -199,11 +198,7 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
 
     # check if calibre was run and if drc check passed
     calibreCheckFile = os.path.join(logDir, 'calibre/save-to-drc-db.log')
-    if os.path.isfile(calibreCheckFile):
-        d['calibreErrors'], d['calibreWarnings'] = parseMessages(calibreCheckFile)
-    else:
-        d['calibreErrors'] = None
-        d['calibreWarnings'] = None
+    d['calibreErrors'], d['calibreWarnings'] = parseMessages(calibreCheckFile)
 
     # check if there were drc violations
     drcReportFile = os.path.join(reportDir, drcFilename)
