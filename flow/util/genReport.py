@@ -7,7 +7,7 @@ import re
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 reportFilename = 'report.log'
-singleReportFilename = 'reports/' + reportFilename
+singleReportFilename = f"reports/{reportFilename}"
 summaryFilename = 'reports/report-summary.log'
 drcFilename = '5_route_drc.rpt'
 lastExpectedLog = '6_report.log'
@@ -30,23 +30,15 @@ parser.add_argument('--verbose', '-v',
                     required=False, default=0, action='count',
                     help=helpText)
 
-parser.add_argument('--file', '-f',
-                    required=False, default=False, action='store_true',
-                    help='Generate final report file.')
-
-parser.add_argument('--no-print', '-q',
+parser.add_argument('--quiet', '-q',
                     required=False, default=False, action='store_true',
                     help='Do not print report to stdout.')
 
-parser.add_argument('--single', '-s',
+parser.add_argument('--summary', '-s',
                     required=False, default=False, action='store_true',
-                    help='Generate aggregated file with all reports.')
+                    help='Only write summary file.')
 
 args = parser.parse_args()
-verbose = args.verbose
-generateSingleFile = args.single
-generateFile = args.file
-printOutput = not args.no_print
 
 
 def parseMessages(filename):
@@ -55,264 +47,219 @@ def parseMessages(filename):
     try:
         with open(filename, 'r') as f:
             lines = f.readlines()
+        for line in lines:
+            if re.search(regexError, line):
+                errors.append(line.strip())
+            elif re.search(regexWarning, line):
+                warnings.append(line.strip())
     except Exception as e:
-        msg = 'Failed to open ' + filename + '.'
-        msg += ' Check to see if design finished.'
-        print(msg)
-        return [msg], [msg]
-    for line in lines:
-        if re.search(regexError, line):
-            errors.append(line.strip())
-        elif re.search(regexWarning, line):
-            warnings.append(line.strip())
+        print(f"Failed to open {filename}. Check to see if design finished.")
     return errors, warnings
 
 
-def finish(output, outputFile='', summary=False):
-    output = output.strip()
-    if generateFile and not summary and outputFile != '':
-        with open(outputFile, 'w') as f:
-            f.write(output)
-        output += '\nGenerated report file: ' + outputFile + '\n'
-    if generateSingleFile:
-        if summary:
-            with open(summaryFilename, 'w+') as f:
-                f.write(output.strip())
-            output += '\nGenerated report summary: ' + summaryFilename
-            with open(singleReportFilename, 'r+') as f:
-                content = f.read()
-                f.seek(0, 0)
-                content = output + '\n\n' + '=' * 60 + '\n\n' + content
-                f.write(content.strip())
+def gen_report(name, data):
+    if args.verbose or data['drcList'] or data['status'] is not 'green':
+        output = f"{name}\n"
+    else:
+        output = ""
+
+    if args.verbose:
+        if data['finished']:
+            output += '  Flow reached last stage.\n'
         else:
-            with open(singleReportFilename, 'a') as f:
-                f.write(output)
-                f.write('\n\n')
-    if printOutput or summary:
-        print(output)
-    if verbose != 0 and printOutput:
-        print()
+            output += f"  Last log file {data['lastLog']}\n"
+
+    if len(data['logErrors']) == 0:
+        if args.verbose:
+            output += '  No error found in the log files.\n'
+    else:
+        if args.verbose:
+            output += f"  Found {len(data['logErrors'])} error(s) in the log files.\n"
+        if args.verbose >= 1:
+            for error in data['logErrors']:
+                if args.verbose >= 2:
+                    output += f"      {error}\n"
+
+    if len(data['logWarnings']) == 0:
+        if args.verbose:
+            output += '  No warning found in the log files.\n'
+    else:
+        if args.verbose:
+            output += f"  Found {len(data['logWarnings'])} warning(s) in the log files.\n"
+        if args.verbose >= 1:
+            for warning in data['logWarnings']:
+                if args.verbose >= 2:
+                    output += f"      {warning}\n"
+
+    if len(data['metricsLogsErrors']) == 0:
+        if args.verbose:
+            output += '  No error found while generating the metrics file.\n'
+    else:
+        if args.verbose:
+            output += f"  Found {len(data['metricsLogsErrors'])} error(s) while generating the metrics file.\n"
+        for e in data['metricsLogsErrors']:
+            output += f"    {e}\n"
+
+    if len(data['metricsLogsWarnings']) == 0:
+        if args.verbose:
+            output += '  No warning found while generating the metrics file.\n'
+    else:
+        if args.verbose:
+            output += f"  Found {len(data['metricsLogsWarnings'])} warning(s) while generating the metrics file.\n"
+        if args.verbose >= 2:
+            for e in data['metricsLogsWarnings']:
+                output += f"    {e}\n"
+
+    if len(data['metricsErrors']) == 0:
+        if args.verbose:
+            output += '  No metrics check failed.\n'
+    else:
+        if args.verbose:
+            output += f"  Found {len(data['metricsErrors'])} failures during metrics check.\n"
+        for e in data['metricsErrors']:
+            output += f"    {e}\n"
+
+    if len(data['metricsWarnings']) == 0:
+        if args.verbose:
+            output += '  No warning found during metrics check.\n'
+    else:
+        if args.verbose:
+            output += f"  Found {len(data['metricsWarnings'])} warning(s) during metrics check.\n"
+        if args.verbose >= 2:
+            for e in data['metricsWarnings']:
+                output += f"    {e}\n"
+
+    if len(data['drcList']) == 0:
+        if args.verbose:
+            output += '  No violations found.'
+    else:
+        if data['status'] == 'green':
+            output += '  Design has the following violations under the allowed limit: '
+        else:
+            output += '  Design has the following violations over the allowed limit: '
+        for drc, count in data['drcList'].items():
+            output += f"{drc} ({count}) "
+        output += '\n'
+
+    return output.strip()
 
 
-if generateSingleFile:
-    if os.path.isfile(singleReportFilename):
-        print('Overwrtting report {}.'.format(singleReportFilename))
-        os.remove(singleReportFilename)
+def write_report(path, content):
+    content = content.strip()
+    with open(path, 'w') as f:
+        f.write(content)
+    if args.verbose:
+        content += f"\nGenerated report file: {path}\n"
+    with open(singleReportFilename, 'a') as f:
+        f.write(content)
+        f.write('\n')
+    if not args.quiet and content != '':
+        print(content)
 
-designsWithError = list()
-designsFailMetrics = list()
-designsFailCalibre = list()
-designsWithViolations = list()
-designCount = 0
-designsGreen = list()
+
+if os.path.isfile(singleReportFilename):
+    if not args.quiet:
+        print(f"Overwriting report {singleReportFilename}.")
+    os.remove(singleReportFilename)
+
+if os.path.isfile(summaryFilename):
+    if not args.quiet:
+        print(f"Overwriting report summary {summaryFilename}.")
+    os.remove(summaryFilename)
+
+designList = dict()
 
 for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     dirList = logDir.split(os.sep)
     if len(dirList) != 4:
         continue
-    designCount += 1
     reportDir = logDir.replace('logs', 'reports')
-    outputFile = os.path.join(reportDir, reportFilename)
 
     # basic info about current design
     platform, design, variant = dirList[1:]
+    d = dict()
+    d['outputFile'] = os.path.join(reportDir, reportFilename)
 
     # check if design ran to completion without errors or warnings
-    logErrors = dict()
-    logWarnings = dict()
-    numLogErrors = 0
-    numLogWarnings = 0
     for name in sorted(files):
         filename = os.path.join(logDir, name)
-        logErrors[name], logWarnings[name] = parseMessages(filename)
-        numLogErrors += len(logErrors[name])
-        numLogWarnings += len(logWarnings[name])
+        d['logErrors'], d['logWarnings'] = parseMessages(filename)
         if name.endswith('.log'):
-            lastLog = name
-    finished = (lastLog == lastExpectedLog)
+            d['lastLog'] = name
+    d['finished'] = (d['lastLog'] == lastExpectedLog)
 
     # check if metrics generation had issues
     metricsLogFile = os.path.join(reportDir, metricsLogFmt.format(variant))
-    metricsLogErrors, metricsLogWarnings = parseMessages(metricsLogFile)
-    numMetricsLogErrors = len(metricsLogErrors)
-    numMetricsLogWarnings = len(metricsLogWarnings)
+    d['metricsLogsErrors'], d['metricsLogsWarnings'] = parseMessages(metricsLogFile)
 
     # check if metrics passed
     metricsCheckFile = os.path.join(reportDir, metricsCheckFmt.format(variant))
-    metricsErrors, metricsWarnings = parseMessages(metricsCheckFile)
-    numMetricsErrors = len(metricsErrors)
-    numMetricsWarnings = len(metricsWarnings)
+    d['metricsErrors'], d['metricsWarnings'] = parseMessages(metricsCheckFile)
 
     # check if calibre was run and if drc check passed
     calibreCheckFile = os.path.join(logDir, 'calibre/save-to-drc-db.log')
-    if os.path.isfile(calibreCheckFile):
-        calibreErrors, calibreWarnings = parseMessages(calibreCheckFile)
-        numCalibreErrors = len(calibreErrors)
-        numCalibreWarnings = len(calibreWarnings)
-    else:
-        numCalibreErrors = 0
-        numCalibreWarnings = 0
+    d['calibreErrors'], d['calibreWarnings'] = parseMessages(calibreCheckFile)
 
     # check if there were drc violations
     drcReportFile = os.path.join(reportDir, drcFilename)
+    d['drcList'] = dict()
     try:
         with open(drcReportFile, 'r') as f:
-            drcList = [l.strip() for l in f.readlines()]
+            for l in f.readlines():
+                if 'violation type:' in l:
+                    type_ = l.strip('violation type:').strip()
+                    if type_ in d['drcList'].keys():
+                        d['drcList'][type_] += 1
+                    else:
+                        d['drcList'][type_] = 1
     except Exception as e:
-        msg = 'Failed to open ' + drcFilename + '.'
-        msg += ' DRT probablye did not finished'
-        print(msg)
-        drcList = [msg]
+        print(f"Failed to open {drcFilename}. DRT probably did not finished.")
 
-    totalNumErrors = numLogErrors
-    totalNumErrors += numMetricsErrors
-    totalNumErrors += numMetricsLogErrors
-    totalNumErrors += numCalibreErrors
-    totalNumErrors += len(drcList)
-
-    currentRun = '{} {} ({})'.format(platform, design, variant)
-
-    if totalNumErrors != 0:
-        designsWithError.append(currentRun)
-    if numMetricsErrors != 0:
-        designsFailMetrics.append(currentRun)
-    elif numCalibreErrors != 0:
-        designsFailCalibre.append(currentRun)
+    if d['metricsErrors'] or d['calibreErrors']:
+        d['status'] = 'red'
     else:
-        designsGreen.append(currentRun)
-    if len(drcList) != 0:
-        designsWithViolations.append(currentRun)
+        d['status'] = 'green'
 
-    output = currentRun + '\n'
-    currentRun = 'Parsing files for ' + currentRun
-    # check if should print without errors
-    if verbose == 0 and totalNumErrors == 0:
-        finish(currentRun)
-        continue
-    elif verbose == 0:
-        finish(currentRun)
-        continue
+    designList[f"{platform} {design} ({variant})"] = d
 
-    if finished:
-        output += '  Flow reached last stage.\n'
-    else:
-        output += '  Last log file {}\n'.format(lastLog)
+# write summary and individual report files with data on designList
 
-    if numLogErrors == 0:
-        output += '  No error found in the log files.\n'
-    else:
-        output += '  Found {} error(s) in the log files.\n'.format(numLogErrors)
-        if verbose >= 2:
-            for key, errorList in logErrors.items():
-                if len(errorList) == 0:
-                    continue
-                output += '    File {}'.format(key)
-                output += ' has {} error(s).\n'.format(len(errorList))
-                if verbose >= 3:
-                    for error in errorList:
-                        output += '      {}\n'.format(error)
-    if numLogWarnings == 0:
-        output += '  No warning found in the log files.\n'
-    else:
-        output += '  Found {}'.format(numLogWarnings)
-        output += ' warning(s) in the log files.\n'
-        if verbose >= 2:
-            for key, warningList in logWarnings.items():
-                if len(warningList) == 0:
-                    continue
-                output += '    File {}'.format(key)
-                output += ' has {} warning(s).\n'.format(len(warningList))
-                if verbose >= 3:
-                    for warning in warningList:
-                        output += '      {}\n'.format(warning)
+summary = '=' * 60 + '\n'
+summary += ' ' * 26 + 'SUMMARY\n'
+summary += '=' * 60 + '\n'
+summary += f"\nNumber of designs: {len(designList.keys())}\n\n"
+summary += '-' * 30 + '\n'
+summary += ' ' * 7 + 'Passing designs\n'
+summary += '-' * 30 + '\n'
 
-    if numMetricsLogErrors == 0:
-        output += '  No error found while generating the metrics file.\n'
-    else:
-        output += '  Found {} '.format(numMetricsLogErrors)
-        output += 'error(s) while generating the metrics file.\n'
-        for e in metricsLogErrors:
-            output += '    {}\n'.format(e)
-    if numMetricsLogWarnings == 0:
-        output += '  No warning found while generating the metrics file.\n'
-    else:
-        output += '  Found {}'.format(numMetricsLogWarnings)
-        output += ' warning(s) while generating the metrics file.\n'
-        if verbose >= 3:
-            for e in metricsLogWarnings:
-                output += '    {}\n'.format(e)
+for name, data in designList.items():
+    if data['status'] == 'green':
+        content = gen_report(name, data)
+        if content != '':
+            summary += content + '\n'
+        if args.verbose:  # add empty line for readability
+            summary += '\n'
+        if not args.summary:
+            write_report(data['outputFile'], content)
 
-    if numMetricsErrors == 0:
-        output += '  No metrics check failed.\n'
-    else:
-        output += '  Found {}'.format(numMetricsErrors)
-        output += ' failures during metrics check.\n'
-        for e in metricsErrors:
-            output += '    {}\n'.format(e)
-    if numMetricsWarnings == 0:
-        output += '  No warning found during metrics check.\n'
-    else:
-        output += '  Found {}'.format(numMetricsWarnings)
-        output += ' warning(s) during metrics check.\n'
-        if verbose >= 3:
-            for e in metricsWarnings:
-                output += '    {}\n'.format(e)
+summary += '\n' + '-' * 30 + '\n'
+summary += ' ' * 7 + 'Failing designs\n'
+summary += '-' * 30 + '\n\n'
 
-    if len(drcList) == 0:
-        output += '  No violations found.'
-    else:
-        output += '  Found the following violations:'
-        for drc in drcList:
-            output += '\n    {}'.format(drc)
+for name, data in designList.items():
+    if data['status'] == 'red':
+        content = gen_report(name, data)
+        summary += content + '\n'
+        if args.verbose:  # add empty line for readability
+            summary += '\n'
+        write_report(data['outputFile'], content)
 
-    finish(output, outputFile)
+if not args.quiet and summary != '':
+    print(summary)
 
+with open(summaryFilename, 'a') as summaryFile:
+    summaryFile.write(summary)
 
-output = '''
-============================================================
-                          SUMMARY
-============================================================
-
-Number of designs: {}.
-'''.format(designCount)
-
-if len(designsGreen) == designCount:
-    output += '\nCI is green. All designs passed.\n'
-else:
-    output += "\nCI is red. At least one design failed.\n"
-
-if len(designsGreen) != 0:
-    output += f'\nDesigns that pass metrics check ({len(designsGreen)}):\n'
-    for design in designsGreen:
-        output += '  ' + design + '\n'
-
-if len(designsFailCalibre) != 0:
-    output += f'\nDesigns that fail Calibre check ({len(designsFailCalibre)}):\n'
-    for design in designsFailCalibre:
-        output += '  ' + design + '\n'
-
-if len(designsFailMetrics) != 0:
-    output += f'\nDesigns that fail metrics check ({len(designsFailMetrics)}):\n'
-    for design in designsFailMetrics:
-        output += '  ' + design + '\n'
-
-if len(designsWithViolations) == 0:
-    output += '\nAll designs have zero violations.\n'
-else:
-    output += '\nDesigns with at least one DRC violation:'
-    for design in designsWithViolations:
-        output += '\n  ' + design
-    output += '\n'
-
-if len(designsWithError) == 0:
-    output += '\nAll designs logs are clean.\n'
-else:
-    output += '\nDesigns with at least one error message in their logs:\n'
-    for design in designsWithError:
-        output += '  ' + design + '\n'
-    output += '\n'
-
-finish(output, summary=True)
-
-if generateSingleFile:
-    print('Generated aggregated file:', singleReportFilename)
+if not args.quiet and args.verbose:
+    print('Generated report file:', singleReportFilename)
+    print('Generated report summary file:', singleReportFilename)

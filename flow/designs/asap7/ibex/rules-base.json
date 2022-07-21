@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -499.37,
+        "value": -497.9,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 548,
+        "value": 492,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
@@ -60,7 +60,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 3368,
+        "value": 3343,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {

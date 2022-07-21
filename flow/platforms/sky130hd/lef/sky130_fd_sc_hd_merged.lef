@@ -21877,7 +21877,7 @@ END sky130_fd_sc_hd__dfxtp_4
 #--------EOF---------
 
 MACRO sky130_fd_sc_hd__diode_2
-  CLASS CORE ;
+  CLASS CORE ANTENNACELL ;
   FOREIGN sky130_fd_sc_hd__diode_2 ;
   ORIGIN  0.000000  0.000000 ;
   SIZE  0.920000 BY  2.720000 ;
@@ -21885,7 +21885,6 @@ MACRO sky130_fd_sc_hd__diode_2
   SITE unithd ;
   PIN DIODE
     ANTENNADIFFAREA  0.434700 ;
-    ANTENNAGATEAREA  0.434700 ;
     DIRECTION INPUT ;
     USE SIGNAL ;
     PORT

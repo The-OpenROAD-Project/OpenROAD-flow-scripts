@@ -60,7 +60,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 6228,
+        "value": 6227,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
