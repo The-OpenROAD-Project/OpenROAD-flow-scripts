@@ -136,7 +136,8 @@ pipeline {
                       selector: specific('${BUILD_NUMBER}');
         script {
           parallel(
-            "Full report": { sh "flow/util/genReport.py -vv ; flow/util/genReport.py -s"; },
+            "Summary report": { sh "flow/util/genReport.py -s"; },
+            "Full report": { sh "flow/util/genReport.py -vv"; },
             "HTML Report": {
               sh "flow/util/genReportTable.py";
               publishHTML([

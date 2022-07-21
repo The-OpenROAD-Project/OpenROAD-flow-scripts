@@ -3,7 +3,6 @@ import argparse
 import os
 import re
 
-# make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 REPORT_FILENAME = 'report.log'
@@ -15,6 +14,8 @@ METRICS_LOG_FMT = 'gen-metrics-{}-check.log'
 METRICS_CHECK_FMT = 'metadata-{}-check.log'
 REGEX_ERROR = re.compile(r"^\[err", re.IGNORECASE)
 REGEX_WARNING = re.compile(r"^\[warn", re.IGNORECASE)
+STATUS_GREEN = 'Passing'
+STATUS_RED = 'Failing'
 
 HELP_TEXT = '''
 Scans "./logs" and "./reports" folders for errors and warnings.
@@ -41,7 +42,7 @@ parser.add_argument('--summary', '-s',
 args = parser.parse_args()
 
 
-def parse_messages(filename):
+def parse_messages(filename, print_missing=True):
     '''
     TODO: docs
     '''
@@ -56,7 +57,8 @@ def parse_messages(filename):
             elif re.search(REGEX_WARNING, line):
                 warnings.append(line.strip())
     except Exception as e:
-        print(f"Failed to open {filename}. Check to see if design finished.")
+        if print_missing:
+            print(f"Failed to open {filename}. Check to see if design finished.")
     return errors, warnings
 
 
@@ -64,7 +66,8 @@ def gen_report(name, data):
     '''
     TODO: docs
     '''
-    if args.verbose or data['drcList'] or data['status'] is not 'green':
+
+    if args.verbose or data['drcList'] or data['status'] != STATUS_GREEN:
         output = f"{name}\n"
     else:
         output = ""
@@ -77,8 +80,8 @@ def gen_report(name, data):
 
     if args.verbose:
         output += f"  Found {len(data['logErrors'])} error(s) in the log files.\n"
-        for error in data['logErrors']:
-            output += f"      {error}\n"
+    for error in data['logErrors']:
+        output += f"      {error}\n"
 
     if args.verbose:
         output += f"  Found {len(data['logWarnings'])} warning(s) in the log files.\n"
@@ -89,32 +92,33 @@ def gen_report(name, data):
     if args.verbose:
         output += f"  Found {len(data['metricsLogsErrors'])} error(s) while generating the metrics file.\n"
     for error in data['metricsLogsErrors']:
-        output += f"    {error}\n"
+        output += f"      {error}\n"
 
     if args.verbose:
         output += f"  Found {len(data['metricsLogsWarnings'])} warning(s) while generating the metrics file.\n"
     if args.verbose >= 2:
         for warning in data['metricsLogsWarnings']:
-            output += f"    {warning}\n"
+            output += f"      {warning}\n"
 
     if args.verbose:
         output += f"  Found {len(data['metricsErrors'])} failures during metrics check.\n"
     for error in data['metricsErrors']:
-        output += f"    {error}\n"
+        output += f"      {error}\n"
 
     if args.verbose:
         output += f"  Found {len(data['metricsWarnings'])} warning(s) during metrics check.\n"
     if args.verbose >= 2:
         for warning in data['metricsWarnings']:
-            output += f"    {warning}\n"
+            output += f"      {warning}\n"
 
-    if data['status'] == 'green':
-        output += '  Design has the following violations under the allowed limit: '
-    else:
-        output += '  Design has the following violations over the allowed limit: '
-    for drc, count in data['drcList'].items():
-        output += f"{drc} ({count}) "
-    output += '\n'
+    if d['drcList']:
+        if data['status'] == STATUS_GREEN:
+            output += '  Design has the following violations under the allowed limit: '
+        else:
+            output += '  Design has the following violations over the allowed limit: '
+        for drc, count in data['drcList'].items():
+            output += f"{drc} ({count}) "
+        output += '\n'
 
     return output.strip()
 
@@ -161,8 +165,8 @@ def write_summary():
     summary += '=' * 60 + '\n'
     summary += f"\nNumber of designs: {len(designList.keys())}\n\n"
 
-    summary = get_summary('green', summary)
-    summary = get_summary('red', summary)
+    summary = get_summary(STATUS_GREEN, summary)
+    summary = get_summary(STATUS_RED, summary)
 
     if summary != '':
         if not args.quiet:
@@ -207,20 +211,20 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
 
     # check if metrics generation had issues
     metricsLogFile = os.path.join(reportDir, METRICS_LOG_FMT.format(variant))
-    d['metricsLogsErrors'], d['metricsLogsWarnings'] = parse_messages(metricsLogFile)
+    d['metricsLogsErrors'], d['metricsLogsWarnings'] = parse_messages(metricsLogFile, print_missing=d['finished'])
 
     # check if metrics passed
     metricsCheckFile = os.path.join(reportDir, METRICS_CHECK_FMT.format(variant))
-    d['metricsErrors'], d['metricsWarnings'] = parse_messages(metricsCheckFile)
+    d['metricsErrors'], d['metricsWarnings'] = parse_messages(metricsCheckFile, print_missing=d['finished'])
 
     # check if calibre was run and if drc check passed
     calibreCheckFile = os.path.join(logDir, 'calibre/save-to-drc-db.log')
-    d['calibreErrors'], d['calibreWarnings'] = parse_messages(calibreCheckFile)
+    d['calibreErrors'], d['calibreWarnings'] = parse_messages(calibreCheckFile, print_missing=False)
 
     # check if there were drc violations
-    drcReportFile = os.path.join(reportDir, DRC_FILENAME)
     d['drcList'] = dict()
     try:
+        drcReportFile = os.path.join(reportDir, DRC_FILENAME)
         with open(drcReportFile, 'r') as file:
             for line in file.readlines():
                 if 'violation type:' in line:
@@ -230,12 +234,13 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
                     else:
                         d['drcList'][type_] = 1
     except Exception as e:
-        print(f"Failed to open {DRC_FILENAME}. DRT probably did not finished.")
+        if d['finished']:
+            print(f"Failed to open {DRC_FILENAME}.")
 
-    if d['metricsErrors'] or d['calibreErrors']:
-        d['status'] = 'red'
+    if d['logErrors'] or d['metricsErrors'] or d['calibreErrors']:
+        d['status'] = STATUS_RED
     else:
-        d['status'] = 'green'
+        d['status'] = STATUS_GREEN
 
     designList[f"{platform} {design} ({variant})"] = d
 
