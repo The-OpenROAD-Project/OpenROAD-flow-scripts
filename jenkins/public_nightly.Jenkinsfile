@@ -134,23 +134,23 @@ pipeline {
         copyArtifacts filter: "flow/reports/**/*",
                       projectName: '${JOB_NAME}',
                       selector: specific('${BUILD_NUMBER}');
-        script {
-          parallel(
-            "Summary report": { sh "flow/util/genReport.py -s"; },
-            "Full report": { sh "flow/util/genReport.py -vv"; },
-            "HTML Report": {
-              sh "flow/util/genReportTable.py";
-              publishHTML([
-                  allowMissing: true,
-                  alwaysLinkToLastBuild: true,
-                  keepAll: true,
-                  reportName: "Report",
-                  reportDir: "flow/reports",
-                  reportFiles: "report-table.html,report-gallery*.html",
-                  reportTitles: "Flow Report"
-              ]);
-            }
-          );
+        sh label: "Short Summary report",  script: "flow/util/genReport.py -sv";
+        sh label: "Summary report",  script: "flow/util/genReport.py -svv";
+        sh label: "Full report",  script: "flow/util/genReport.py -vvvv";
+        sh label: "HTML Report", script: "flow/util/genReportTable.py";
+        publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportName: "Report",
+            reportDir: "flow/reports",
+            reportFiles: "report-table.html,report-gallery*.html",
+            reportTitles: "Flow Report"
+        ]);
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: "flow/reports/**/report*.log";
         }
       }
     }
@@ -159,6 +159,9 @@ pipeline {
 
   post {
     failure {
+      copyArtifacts filter: "flow/reports/report-summary.log",
+                    projectName: '${JOB_NAME}',
+                    selector: specific('${BUILD_NUMBER}');
       script {
         try {
           COMMIT_AUTHOR_EMAIL = sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
