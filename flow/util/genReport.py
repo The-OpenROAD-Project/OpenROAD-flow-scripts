@@ -26,9 +26,10 @@ Scans "./logs" and "./reports" folders for errors and warnings.
 parser = argparse.ArgumentParser(description=HELP_TEXT)
 
 HELP_TEXT = '''
-Level 0: only report fail/pass (default).
-Level 1: report count per file.
-Level 2: report full messages.
+Level 0: report error message id and drc types.
+Level 1: report full error messages.
+Level 2: report full error messages and warning messages id.
+Level 3: report full error messages and full warning messages.
 '''
 parser.add_argument('--verbose', '-v',
                     required=False, default=0, action='count',
@@ -59,10 +60,39 @@ def parse_messages(filename, print_missing=True):
                 errors.append(line.strip())
             elif re.search(REGEX_WARNING, line):
                 warnings.append(line.strip())
-    except:
+    except BaseException:
         if print_missing:
             print(f"Failed to open {filename}.")
     return errors, warnings
+
+
+def append_text(list_, text, sup, regex, verbose):
+    '''
+    TODO
+    '''
+    if len(list_) == 0:
+        return text
+    text += f"  Found {len(list_)} {sup}.\n"
+    if verbose >= 1:  # print full message
+        for item in list_:
+            text += f"      {item}\n"
+    else:  # only print the id
+        set_ = set()
+        long_set = set()
+        for item in list_:
+            message = re.match(regex, item).group(1)
+            if message is None:
+                message = item
+            if len(message) > 10:  # considering a std msg id XYZ-0000
+                long_set.add(message)
+            else:
+                set_.add(message)
+        set_ = sorted(set_, reverse=True)
+        if set_:
+            text += f"      {', '.join(set_)}\n"
+        for item in long_set:
+            text += f"      {item}\n"
+    return text
 
 
 def gen_report(name, data):
@@ -70,53 +100,24 @@ def gen_report(name, data):
     TODO: docs
     '''
 
-    if args.verbose or data['drcs'] or data['status'] != STATUS_GREEN:
+    if args.verbose >= 2 or data['drcs'] or data['status'] != STATUS_GREEN:
         output = f"{name}\n"
+        if data['status'] == STATUS_RED:
+            if data['finished']:
+                output += '  Flow reached last stage.\n'
+            else:
+                output += f"  Last log file {data['last_log']}\n"
     else:
         output = ""
 
-    if args.verbose:
-        if data['finished']:
-            output += '  Flow reached last stage.\n'
-        else:
-            output += f"  Last log file {data['last_log']}\n"
+    output = append_text(data['log_errors'], output, 'errors in the logs', REGEX_ERROR, args.verbose)
+    output = append_text(data['metrics_logs_errors'], output, 'errors in the metrics logs', REGEX_ERROR, args.verbose)
+    output = append_text(data['metrics_errors'], output, 'metrics failures', REGEX_ERROR, args.verbose)
 
-    if args.verbose and len(data['log_errors']):
-        output += f"  Found {len(data['log_errors'])} errors in the logs.\n"
-    for error in data['log_errors']:
-        output += f"      {error}\n"
-
-    if args.verbose and len(data['log_warnings']):
-        output += f"  Found {len(data['log_warnings'])} warnings"
-        output += " in the logs.\n"
     if args.verbose >= 2:
-        for warning in data['log_warnings']:
-            output += f"      {warning}\n"
-
-    if args.verbose and len(data['metrics_logs_errors']):
-        output += f"  Found {len(data['metrics_logs_errors'])} errors in"
-        output += " the metrics logs.\n"
-    for error in data['metrics_logs_errors']:
-        output += f"      {error}\n"
-
-    if args.verbose and len(data['metrics_logs_warnings']):
-        output += f"  Found {len(data['metrics_logs_warnings'])} warnings in"
-        output += " the metrics logs.\n"
-    if args.verbose >= 2:
-        for warning in data['metrics_logs_warnings']:
-            output += f"      {warning}\n"
-
-    if args.verbose and len(data['metrics_errors']):
-        output += f"  Found {len(data['metrics_errors'])} metrics failures.\n"
-    for error in data['metrics_errors']:
-        output += f"      {error}\n"
-
-    if args.verbose and len(data['metrics_warnings']):
-        output += f"  Found {len(data['metrics_warnings'])}"
-        output += " metrics warnings.\n"
-    if args.verbose >= 2:
-        for warning in data['metrics_warnings']:
-            output += f"      {warning}\n"
+        output = append_text(data['log_warnings'], output, 'warnings in the logs', REGEX_WARNING, args.verbose-2)
+        output = append_text(data['metrics_logs_warnings'], output, 'warnings in the metrics logs', REGEX_WARNING, args.verbose-2)
+        output = append_text(data['metrics_warnings'], output, 'metrics warnings', REGEX_WARNING, args.verbose-2)
 
     if d['drcs']:
         if data['status'] == STATUS_GREEN:
@@ -158,7 +159,8 @@ def get_summary(status, text):
             content = gen_report(name, data)
             if content != '':
                 text += content + '\n'
-                if args.verbose:  # add empty line for readability
+                # add empty line for readability
+                if args.verbose >= 2 or status == STATUS_RED:
                     text += '\n'
     return text
 
@@ -173,6 +175,7 @@ def write_summary():
     summary += f"\nNumber of designs: {len(design_list.keys())}\n\n"
 
     summary = get_summary(STATUS_GREEN, summary)
+    summary += '\n'
     summary = get_summary(STATUS_RED, summary)
 
     if summary != '':
@@ -209,9 +212,12 @@ for log_dir, dirs, files in sorted(os.walk('logs', topdown=False)):
     d['output_file'] = os.path.join(report_dir, REPORT_FILENAME)
 
     # check if design ran to completion without errors or warnings
+    d['log_errors'] = list()
+    d['log_warnings'] = list()
     for name_ in sorted(files):
-        d['log_errors'], d['log_warnings'] = parse_messages(
-            os.path.join(log_dir, name_))
+        temp_e, temp_w = parse_messages(os.path.join(log_dir, name_))
+        d['log_errors'] += temp_e
+        d['log_warnings'] += temp_w
         if name_.endswith('.log'):
             d['last_log'] = name_
     d['finished'] = (d['last_log'] == LAST_EXPECTED_LOG)
@@ -243,7 +249,7 @@ for log_dir, dirs, files in sorted(os.walk('logs', topdown=False)):
                         d['drcs'][type_] += 1
                     else:
                         d['drcs'][type_] = 1
-    except:
+    except BaseException:
         if d['finished']:
             print(f"Failed to open {DRC_FILENAME}.")
 
