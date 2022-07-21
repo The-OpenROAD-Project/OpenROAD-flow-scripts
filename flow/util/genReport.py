@@ -15,8 +15,8 @@ DRC_FILENAME = '5_route_drc.rpt'
 LAST_EXPECTED_LOG = '6_report.log'
 METRICS_LOG_FMT = 'gen-metrics-{}-check.log'
 METRICS_CHECK_FMT = '{}/metadata-{}-check.log'
-REGEX_ERROR = re.compile(r"^\[err", re.IGNORECASE)
-REGEX_WARNING = re.compile(r"^\[warn", re.IGNORECASE)
+REGEX_ERROR = re.compile(r"^\[error ?(\w+-\d+)?\]", re.IGNORECASE)
+REGEX_WARNING = re.compile(r"^\[warning ?(\w+-\d+)?\]", re.IGNORECASE)
 STATUS_GREEN = 'Passing'
 STATUS_RED = 'Failing'
 
