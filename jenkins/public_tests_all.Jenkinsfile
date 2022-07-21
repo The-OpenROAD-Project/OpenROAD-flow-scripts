@@ -96,7 +96,7 @@ pipeline {
       }
     }
 
-    stage("Reports") {
+    stage("Report Short Summary") {
       steps {
         copyArtifacts filter: "flow/logs/**/*",
                       projectName: '${JOB_NAME}',
@@ -104,10 +104,35 @@ pipeline {
         copyArtifacts filter: "flow/reports/**/*",
                       projectName: '${JOB_NAME}',
                       selector: specific('${BUILD_NUMBER}');
-        sh label: "Short Summary report",  script: "flow/util/genReport.py -sv";
-        sh label: "Summary report",  script: "flow/util/genReport.py -svv";
-        sh label: "Full report",  script: "flow/util/genReport.py -vvvv";
-        sh label: "HTML Report", script: "flow/util/genReportTable.py";
+        sh "flow/util/genReport.py -sv";
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: "flow/reports/report-summary.log";
+        }
+      }
+    }
+
+    stage("Report Summary") {
+      steps {
+        sh "flow/util/genReport.py -svv";
+      }
+    }
+
+    stage("Report Full") {
+      steps {
+        sh "flow/util/genReport.py -vvvv";
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: "flow/reports/**/report*.log";
+        }
+      }
+    }
+
+    stage("Report HTML Table") {
+      steps {
+        sh "flow/util/genReportTable.py";
         publishHTML([
             allowMissing: true,
             alwaysLinkToLastBuild: true,
@@ -117,11 +142,6 @@ pipeline {
             reportFiles: "report-table.html,report-gallery*.html",
             reportTitles: "Flow Report"
         ]);
-      }
-      post {
-        always {
-          archiveArtifacts artifacts: "flow/reports/**/report*.log";
-        }
       }
     }
 
