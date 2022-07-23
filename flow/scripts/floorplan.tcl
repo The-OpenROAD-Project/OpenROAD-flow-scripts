@@ -92,8 +92,10 @@ if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER
 
 
 puts "Default units for flow"
+report_units
 report_units_metric
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
+report_design_area_metrics
 report_metrics "floorplan final" false
 
 if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) == 1 } {
