@@ -38,8 +38,10 @@ if {[info exists ::env(FOOTPRINT)]} {
 
 if { [info exists ::env(MAKE_TRACKS)] } {
   source $::env(MAKE_TRACKS)
-} else {
+} elseif {[file exists $::env(PLATFORM_DIR)/make_tracks.tcl]} {
   source $::env(PLATFORM_DIR)/make_tracks.tcl
+} else {
+  make_tracks
 }
 
 if {[info exists ::env(FOOTPRINT_TCL)]} {

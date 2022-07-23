@@ -552,7 +552,7 @@ clean_cts:
 # |  _ <| |_| | |_| | | |  | || |\  | |_| |
 # |_| \_\\___/ \___/  |_| |___|_| \_|\____|
 #
-route: $(RESULTS_DIR)/5_2_route.odb \
+route: $(RESULTS_DIR)/5_route.odb \
        $(RESULTS_DIR)/5_route.sdc
 # ==============================================================================
 
@@ -572,6 +572,9 @@ $(RESULTS_DIR)/5_2_route.odb: $(RESULTS_DIR)/4_cts.odb
 endif
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_route.tcl -metrics $(LOG_DIR)/5_2_TritonRoute.json) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 
+$(RESULTS_DIR)/5_route.odb: $(RESULTS_DIR)/5_2_route.odb
+	cp $< $@
+
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
 	cp $< $@
 
@@ -579,7 +582,7 @@ clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
 	rm -rf *.gdid *.log *.met *.sav *.res.dmp
 	rm -rf $(RESULTS_DIR)/route.guide $(RESULTS_DIR)/output_guide.mod $(RESULTS_DIR)/updated_clks.sdc
-	rm -rf $(RESULTS_DIR)/5_2_route.odb $(RESULTS_DIR)/5_1_grt.odb $(RESULTS_DIR)/5_route.sdc
+	rm -rf $(RESULTS_DIR)/5_*.odb $(RESULTS_DIR)/5_route.sdc
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
@@ -613,10 +616,10 @@ finish: $(LOG_DIR)/6_report.log \
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
-$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_2_route.odb $(FILL_CONFIG)
+$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb $(FILL_CONFIG)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_density_fill.json) 2>&1 | tee $(LOG_DIR)/6_density_fill.log
 else
-$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_2_route.odb
+$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb
 	cp $< $@
 endif
 

@@ -1,5 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 5_2_route.odb 5_route.sdc "Starting density fill"
+load_design 5_route.odb 5_route.sdc "Starting density fill"
 
 set_propagated_clock [all_clocks]
 
