@@ -1,3 +1,4 @@
+utl::set_metrics_stage "finish__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 6_1_fill.odb 6_1_fill.sdc "Starting final report"
 
@@ -53,10 +54,8 @@ if {[info exist ::env(RCX_RULES)]} {
   puts "OpenRCX is not enabled for this platform."
 }
 
-utl::push_metrics_stage "finsh__{}"
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "finish"
-utl::pop_metrics_stage
 
 # Save a final image if openroad is compiled with the gui
 if {[expr [llength [info procs save_image]] > 0]} {
