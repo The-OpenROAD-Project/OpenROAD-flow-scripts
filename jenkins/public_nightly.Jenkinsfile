@@ -126,7 +126,7 @@ pipeline {
       }
     }
 
-    stage("Reports") {
+    stage("Report Short Summary") {
       steps {
         copyArtifacts filter: "flow/logs/**/*",
                       projectName: '${JOB_NAME}',
@@ -134,23 +134,44 @@ pipeline {
         copyArtifacts filter: "flow/reports/**/*",
                       projectName: '${JOB_NAME}',
                       selector: specific('${BUILD_NUMBER}');
-        script {
-          parallel(
-            "Full report": { sh "flow/util/genReport.py -vv ; flow/util/genReport.py -s"; },
-            "HTML Report": {
-              sh "flow/util/genReportTable.py";
-              publishHTML([
-                  allowMissing: true,
-                  alwaysLinkToLastBuild: true,
-                  keepAll: true,
-                  reportName: "Report",
-                  reportDir: "flow/reports",
-                  reportFiles: "report-table.html,report-gallery*.html",
-                  reportTitles: "Flow Report"
-              ]);
-            }
-          );
+        sh "flow/util/genReport.py -sv";
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: "flow/reports/report-summary.log";
         }
+      }
+    }
+
+    stage("Report Summary") {
+      steps {
+        sh "flow/util/genReport.py -svv";
+      }
+    }
+
+    stage("Report Full") {
+      steps {
+        sh "flow/util/genReport.py -vvvv";
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: "flow/reports/**/report*.log";
+        }
+      }
+    }
+
+    stage("Report HTML Table") {
+      steps {
+        sh "flow/util/genReportTable.py";
+        publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportName: "Report",
+            reportDir: "flow/reports",
+            reportFiles: "report-table.html,report-gallery*.html",
+            reportTitles: "Flow Report"
+        ]);
       }
     }
 
@@ -158,6 +179,9 @@ pipeline {
 
   post {
     failure {
+      copyArtifacts filter: "flow/reports/report-summary.log",
+                    projectName: '${JOB_NAME}',
+                    selector: specific('${BUILD_NUMBER}');
       script {
         try {
           COMMIT_AUTHOR_EMAIL = sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
