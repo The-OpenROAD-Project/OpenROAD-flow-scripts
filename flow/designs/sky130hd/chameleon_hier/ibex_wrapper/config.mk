@@ -54,9 +54,3 @@ export CORE_AREA    = 0.46 2.720 899.54 1197.28
 
 export MIN_ROUTING_LAYER 2
 export MAX_ROUTING_LAYER 5
-
-
-# IR drop estimation supply net name to be analyzed and supply voltage variable
-# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
-export PWR_NETS_VOLTAGES  = "VDD 1.8"
-export GND_NETS_VOLTAGES  = "VSS 0.0"

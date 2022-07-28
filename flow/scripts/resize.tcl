@@ -1,3 +1,4 @@
+utl::set_metrics_stage "placeopt__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 3_3_place_gp.odb 2_floorplan.sdc "Starting resizer"
 
@@ -9,8 +10,11 @@ proc print_banner {header} {
 
 estimate_parasitics -placement
 
+
+utl::push_metrics_stage "placeopt__{}__pre_opt"
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "resizer pre" false
+utl::pop_metrics_stage
 
 print_banner "instance_count"
 puts [sta::network_leaf_instance_count]

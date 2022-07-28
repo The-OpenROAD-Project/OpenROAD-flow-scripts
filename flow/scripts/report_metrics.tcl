@@ -3,6 +3,7 @@ proc report_metrics { when {include_erc true} } {
   puts "$when report_tns"
   puts "--------------------------------------------------------------------------"
   report_tns
+  report_tns_metric
 
   puts "\n=========================================================================="
   puts "$when report_wns"
@@ -13,6 +14,7 @@ proc report_metrics { when {include_erc true} } {
   puts "$when report_worst_slack"
   puts "--------------------------------------------------------------------------"
   report_worst_slack
+  report_worst_slack_metric
 
   puts "\n=========================================================================="
   puts "$when report_clock_skew"
@@ -39,6 +41,7 @@ proc report_metrics { when {include_erc true} } {
     puts "$when report_check_types -max_slew -max_cap -max_fanout -violators"
     puts "--------------------------------------------------------------------------"
     report_check_types -max_slew -max_capacitance -max_fanout -violators
+    report_erc_metrics
 
     puts "\n=========================================================================="
     puts "$when max_slew_check_slack"
@@ -157,6 +160,7 @@ proc report_metrics { when {include_erc true} } {
   puts "$when report_design_area"
   puts "--------------------------------------------------------------------------"
   report_design_area
+  report_design_area_metrics
 
   puts ""
 }
