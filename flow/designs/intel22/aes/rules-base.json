@@ -24,11 +24,11 @@
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -881.61,
+        "value": -829.81,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -881.61,
+        "value": -829.81,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 256,
+        "value": 421,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
