@@ -41,6 +41,10 @@ export BC_TEMPERATURE          = 25C
 export TC_TEMPERATURE          = 0C
 export WC_TEMPERATURE          = 100C
 
+export BC_VOLTAGE          = 0.77
+export TC_VOLTAGE          = 0.70
+export WC_VOLTAGE          = 0.63
+
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS          = *x1p*_ASAP7* *xp*_ASAP7*
@@ -160,11 +164,21 @@ ifeq ($(CORNER),)
    export LIB_FILES             += $($(CORNER)_LIB_FILES)
    export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
    export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
+   export VOLTAGE                = $($(CORNER)_VOLTAGE)
    export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 else
    $(info User PVT selection: $(CORNER))
    export LIB_FILES             += $($(CORNER)_LIB_FILES)
    export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
    export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
+   export VOLTAGE                = $($(CORNER)_VOLTAGE)
    export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 endif
+# ---------------------------------------------------------
+#  IR Drop
+# ---------------------------------------------------------
+
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  ?= "VDD $(VOLTAGE)"
+export GND_NETS_VOLTAGES  ?= "VSS 0.0"
