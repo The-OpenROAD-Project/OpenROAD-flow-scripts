@@ -1,3 +1,4 @@
+utl::set_metrics_stage "detailedroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 if { [info exists ::env(USE_WXL)]} {
   set db_file 4_cts.odb

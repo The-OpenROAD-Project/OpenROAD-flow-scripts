@@ -1,3 +1,4 @@
+utl::set_metrics_stage "globalplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 3_2_place_iop.odb 2_floorplan.sdc "Starting global placement"
 

@@ -1,3 +1,4 @@
+utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 3_place.odb 3_place.sdc "Starting CTS"
 
@@ -36,15 +37,19 @@ set_propagated_clock [all_clocks]
 
 set_dont_use $::env(DONT_USE_CELLS)
 
+utl::push_metrics_stage "cts__{}__pre_repair"
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
 estimate_parasitics -placement
 report_metrics "cts pre-repair"
+utl::pop_metrics_stage
 
 repair_clock_nets
 
+utl::push_metrics_stage "cts__{}__post_repair"
 estimate_parasitics -placement
 report_metrics "cts post-repair"
+utl::pop_metrics_stage
 
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
