@@ -101,9 +101,16 @@ pipeline {
         copyArtifacts filter: "flow/logs/**/*",
                       projectName: '${JOB_NAME}',
                       selector: specific('${BUILD_NUMBER}');
+        copyArtifacts filter: "flow/logs/**/*",
+                      projectName: '${JOB_NAME}',
+                      selector: specific('lastBuild');
         copyArtifacts filter: "flow/reports/**/*",
                       projectName: '${JOB_NAME}',
                       selector: specific('${BUILD_NUMBER}');
+        copyArtifacts filter: "flow/reports/**/*",
+                      projectName: '${JOB_NAME}',
+                      selector: specific('lastBuild');
+        
         sh "flow/util/genReport.py -sv";
       }
       post {
