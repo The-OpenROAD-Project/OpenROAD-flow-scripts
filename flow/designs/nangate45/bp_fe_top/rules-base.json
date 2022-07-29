@@ -48,7 +48,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 1849469,
+        "value": 1848612,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -60,7 +60,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 258949,
+        "value": 258947,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
@@ -68,7 +68,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.36,
+        "value": -0.73,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {

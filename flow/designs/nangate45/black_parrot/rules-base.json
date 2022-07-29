@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 16,
+        "value": 31,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -40,11 +40,11 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -4.16,
+        "value": -3.07,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -4.16,
+        "value": -3.07,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -56,7 +56,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -4.04,
+        "value": -3.07,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -68,7 +68,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.55,
+        "value": -0.45,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {

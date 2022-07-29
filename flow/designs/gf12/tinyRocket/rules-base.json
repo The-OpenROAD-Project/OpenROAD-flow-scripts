@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -253.23,
+        "value": -247.08,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 250,
+        "value": 294,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -56,7 +56,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -11.9,
+        "value": -54.15,
         "compare": ">="
     },
     "finish__design__instance__area": {
