@@ -36,6 +36,7 @@ save_image -resolution $resolution $::env(REPORTS_DIR)/final_placement.webp
 
 if {[info exist ::env(PWR_NETS_VOLTAGES)]} {
   gui::set_display_controls "Heat Maps/IR Drop" visible true
+  gui::set_heatmap IRDrop Layer $::env(IR_DROP_LAYER)
   save_image -resolution $resolution $::env(REPORTS_DIR)/final_ir_drop.webp
   gui::set_display_controls "Heat Maps/IR Drop" visible false
 }

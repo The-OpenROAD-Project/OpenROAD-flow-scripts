@@ -115,3 +115,4 @@ export RCX_RULES                           = ./platforms/$(PLATFORM)/rcx_pattern
 # For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
 export PWR_NETS_VOLTAGES  ?= "VDD 1.1"
 export GND_NETS_VOLTAGES  ?= "VSS 0.0"
+export IR_DROP_LAYER ?= metal1
