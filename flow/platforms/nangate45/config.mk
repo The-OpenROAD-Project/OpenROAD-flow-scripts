@@ -106,7 +106,7 @@ export CDL_FILE = $(PLATFORM_DIR)/cdl/NangateOpenCellLibrary.cdl
 export TEMPLATE_PGA_CFG ?= $(PLATFORM_DIR)/template_pga.cfg
 
 # OpenRCX extRules
-export RCX_RULES                           = ./platforms/$(PLATFORM)/rcx_patterns.rules
+export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules
 # ---------------------------------------------------------
 #  IR Drop
 # ---------------------------------------------------------
