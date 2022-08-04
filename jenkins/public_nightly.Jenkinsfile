@@ -30,7 +30,7 @@ pipeline {
               submoduleCfg: [],
               userRemoteConfigs: [
                 [
-                credentialsId: "openroad-ci",
+                credentialsId: "GitHub OpenROAD CI",
                 url: "https://github.com/The-OpenROAD-Project/OpenROAD"
                 ]
               ]
