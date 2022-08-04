@@ -8,9 +8,11 @@ import re
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
+LOGS_FOLDER = 'logs'
+REPORTS_FOLDER = 'reports'
 REPORT_FILENAME = 'report.log'
-SINGLE_REPORT_FILENAME = "reports/report.log"
-SUMMARY_FILENAME = 'reports/report-summary.log'
+SINGLE_REPORT_FILENAME = f"{REPORTS_FOLDER}/report.log"
+SUMMARY_FILENAME = f"{REPORTS_FOLDER}/report-summary.log"
 DRC_FILENAME = '5_route_drc.rpt'
 LAST_EXPECTED_LOG = '6_report.log'
 METRICS_LOG_FMT = 'gen-metrics-{}-check.log'
@@ -178,33 +180,23 @@ def write_summary():
     summary += '\n'
     summary = get_summary(STATUS_RED, summary)
 
-    if summary != '':
-        if not args.quiet:
-            print(summary)
-        with open(SUMMARY_FILENAME, 'a') as file:
-            file.write(summary)
-        if not args.quiet and args.verbose:
-            print('Generated report file:', SINGLE_REPORT_FILENAME)
-            print('Generated report summary file:', SINGLE_REPORT_FILENAME)
-
-
-if os.path.isfile(SINGLE_REPORT_FILENAME):
     if not args.quiet:
-        print(f"Overwriting report {SINGLE_REPORT_FILENAME}.")
-    os.remove(SINGLE_REPORT_FILENAME)
+        if os.path.isfile(SUMMARY_FILENAME):
+            print(f"Overwriting report summary {SUMMARY_FILENAME}.")
+        print(summary)
+    with open(SUMMARY_FILENAME, 'w') as file:
+        file.write(summary)
+    if not args.quiet and args.verbose:
+        print('Generated report summary file:', SUMMARY_FILENAME)
 
-if os.path.isfile(SUMMARY_FILENAME):
-    if not args.quiet:
-        print(f"Overwriting report summary {SUMMARY_FILENAME}.")
-    os.remove(SUMMARY_FILENAME)
 
 design_list = dict()
 
-for log_dir, dirs, files in sorted(os.walk('logs', topdown=False)):
+for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
     dir_list = log_dir.split(os.sep)
     if len(dir_list) != 4:
         continue
-    report_dir = log_dir.replace('logs', 'reports')
+    report_dir = log_dir.replace(LOGS_FOLDER, REPORTS_FOLDER)
 
     # basic info about current design
     platform, design, variant = dir_list[1:]
@@ -260,8 +252,15 @@ for log_dir, dirs, files in sorted(os.walk('logs', topdown=False)):
 
     design_list[f"{platform} {design} ({variant})"] = d
 
+if not os.path.isdir(REPORTS_FOLDER):
+    os.mkdir(REPORTS_FOLDER)
+
 if args.summary:
     write_summary()
 else:
+    if os.path.isfile(SINGLE_REPORT_FILENAME):
+        if not args.quiet:
+            print(f"Overwriting report {SINGLE_REPORT_FILENAME}.")
+        os.remove(SINGLE_REPORT_FILENAME)
     for name_, data_ in design_list.items():
         write_report(data_['output_file'], gen_report(name_, data_))
