@@ -372,7 +372,7 @@ def write_gallery(design, platforms, views):
 for design in designs:
     write_gallery(design, platforms, views)
 
-subColumns = ['Gold', 'Current', 'Diff (%)']
+subColumns = ['Gold', 'Current', 'Diff (%)', 'Gold', 'Previous', 'Diff (%)', 'Previous', 'Current', 'Diff (%)']
 
 table = ''
 with open(htmlOutput, 'w') as f:
