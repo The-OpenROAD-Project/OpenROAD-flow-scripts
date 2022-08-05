@@ -26,34 +26,22 @@ pipeline {
                   $class: "RelativeTargetDirectory",
                   relativeTargetDir: "tools/OpenROAD"
                 ]
-              ],
-              submoduleCfg: [],
-              userRemoteConfigs: [
-                [
-                credentialsId: "GitHub OpenROAD CI",
-                url: "https://github.com/The-OpenROAD-Project/OpenROAD"
-                ]
               ]
             ])
       }
     }
 
-    stage('Build') {
-      parallel {
-        stage('Local') {
-          agent any;
-          steps {
-            sh "./build_openroad.sh --local --no_init";
-            stash name: "install", includes: "tools/install/**";
-          }
-        }
-        stage('Docker') {
-          agent any;
-          steps {
-            sh "./build_openroad.sh --no_init";
-            sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
-          }
-        }
+    stage('Build Local') {
+      steps {
+        sh "./build_openroad.sh --local --no_init";
+        stash name: "install", includes: "tools/install/**";
+      }
+    }
+
+    stage('Build Docker') {
+      steps {
+        sh "./build_openroad.sh --no_init";
+        sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
       }
     }
 
