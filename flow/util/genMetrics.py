@@ -229,14 +229,15 @@ def is_git_repo(folder=None):
     else:
         return call(cmd, stderr=STDOUT, stdout=open(os.devnull, 'w')) == 0
 
-def merge_jsons(root_path, output):
-    paths = glob(os.path.join(root_path, "*.json"))
-    print(root_path, paths)
+def merge_jsons(root_path, output, files):
+    paths = sorted(glob(os.path.join(root_path, files)))
+    #print(root_path, paths)
     for path in paths:
         file = open(path, "r")
         data = json.load(file)
         output.update(data)
         file.close()
+    #[print(key,':',value) for key, value in output.items()]
 
 
 def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
@@ -279,7 +280,6 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     metrics_dict['run__flow__platform_commit'] = cmdOutput
     metrics_dict['run__flow__variant'] = flow_variant
 
-    merge_jsons(logPath, metrics_dict)
 
     # Synthesis
     # =========================================================================
@@ -305,24 +305,21 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 
     # Floorplan
     # =========================================================================
+    merge_jsons(logPath, metrics_dict, "2_*.json")
 
     extractGnuTime('floorplan', metrics_dict, logPath + '/2_4_mplace.log')
 
     # Place
     # =========================================================================
 
+    merge_jsons(logPath, metrics_dict, "3_*.json")
     extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_resizer.log')
-    extractTagFromFile('detailedplace__design__violations',
-                       metrics_dict,
-                       '^\[INFO FLW-0012\] Placement violations (\S+).',
-                       logPath + '/3_5_opendp.log', defaultNotFound=0)
-
-   
     extractGnuTime('detailedplace', metrics_dict, logPath + '/3_5_opendp.log')
 
     # CTS
     # =======================================================================
 
+    merge_jsons(logPath, metrics_dict, "4_*.json")
     extractTagFromFile('cts__design__instance__count__setup_buffer',
                        metrics_dict,
                        'Inserted (\d+) buffers',
@@ -337,6 +334,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     # Global Route
     # =========================================================================
 
+    merge_jsons(logPath, metrics_dict, "5_*.json")
     extractTagFromFile('globalroute__timing__clock__slack',
                        metrics_dict,
                        '^\[INFO FLW-....\] Clock .* slack (\S+)',
@@ -345,16 +343,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     # Finish
     # =========================================================================
 
-    extractTagFromFile('finish__timing__drv__setup_violation_count',
-                       metrics_dict,
-                       baseRegEx.format('finish setup_violation_count',
-                                        'setup violation count (\S+)'),
-                       logPath + '/6_report.log')
-    extractTagFromFile('finish__timing__drv__hold_violation_count',
-                       metrics_dict,
-                       baseRegEx.format('finish hold_violation_count',
-                                        'hold violation count (\S+)'),
-                       logPath + '/6_report.log')
+    merge_jsons(logPath, metrics_dict, "6_*.json")
     extractTagFromFile('finish__timing__wns_percent_delay',
                        metrics_dict,
                        baseRegEx.format('finish slack div critical path delay',
@@ -417,14 +406,15 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 
 args = parse_args()
 now = datetime.now()
+flow_variants = args.flowVariant.split()
+all_designs =  True if args.design == 'all_designs' else False
 
-if args.design == 'all_designs':
-    print('List of designs')
+designs = args.design.split()
+if all_designs or len(designs) > 1 or len(flow_variants) > 1:
     rootdir = './logs'
 
     all_df = pd.DataFrame()
     all_d = []
-    flow_variants = args.flowVariant.split()
 
     cwd = os.getcwd()
     for platform_it in os.scandir(rootdir):
@@ -434,9 +424,14 @@ if args.design == 'all_designs':
         for design_it in os.scandir(platform_it.path):
             if not design_it.is_dir():
                 continue
+            des = design_it.name
+            if not (all_designs or des in designs):
+                continue
             for variant in flow_variants:
-                des = design_it.name
-                print(plt, des, variant)
+                ddd = os.path.join(cwd, 'reports', plt, des, variant)
+                if not os.path.isdir(ddd):
+                    continue
+                print(f'Extract Metrics for {plt}, {des}, {variant}')
                 file = '/'.join(['reports', plt, des, variant, 'metrics.json'])
                 metrics, df = extract_metrics(cwd, plt, des, variant,
                                               file, args.hier)
