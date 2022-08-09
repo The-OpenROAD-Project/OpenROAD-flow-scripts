@@ -231,13 +231,11 @@ def is_git_repo(folder=None):
 
 def merge_jsons(root_path, output, files):
     paths = sorted(glob(os.path.join(root_path, files)))
-    #print(root_path, paths)
     for path in paths:
         file = open(path, "r")
         data = json.load(file)
         output.update(data)
         file.close()
-    #[print(key,':',value) for key, value in output.items()]
 
 
 def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
@@ -443,8 +441,8 @@ if all_designs or len(designs) > 1 or len(flow_variants) > 1:
             if not (all_designs or des in designs):
                 continue
             for variant in flow_variants:
-                ddd = os.path.join(cwd, 'reports', plt, des, variant)
-                if not os.path.isdir(ddd):
+                design_dir = os.path.join(cwd, 'reports', plt, des, variant)
+                if not os.path.isdir(design_dir):
                     continue
                 print(f'Extract Metrics for {plt}, {des}, {variant}')
                 file = '/'.join(['reports', plt, des, variant, 'metrics.json'])
