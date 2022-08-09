@@ -314,6 +314,11 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 
     merge_jsons(logPath, metrics_dict, "3_*.json")
     extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_resizer.log')
+    extractTagFromFile('detailedplace__design__violations',
+                       metrics_dict,
+                       '^\[INFO FLW-0012\] Placement violations (\S+).',
+                       logPath + '/3_5_opendp.log', defaultNotFound=0)
+
     extractGnuTime('detailedplace', metrics_dict, logPath + '/3_5_opendp.log')
 
     # CTS
