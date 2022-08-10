@@ -1,3 +1,4 @@
+utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 4_1_cts.odb 3_place.sdc "Starting fill cell"
 
