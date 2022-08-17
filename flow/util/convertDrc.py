@@ -40,6 +40,21 @@ for category in rdb.each_category():
             {"x": value.edge().p1.x, "y": value.edge().p1.y},
             {"x": value.edge().p2.x, "y": value.edge().p2.y}]
           })
+      elif (value.is_edge_pair()):
+        edge = value.edge_pair().first
+        violations_shapes.append({
+          "type": "edge",
+          "shape": [
+            {"x": edge.p1.x, "y": edge.p1.y},
+            {"x": edge.p2.x, "y": edge.p2.y}]
+          })
+        edge = value.edge_pair().second
+        violations_shapes.append({
+          "type": "edge",
+          "shape": [
+            {"x": edge.p1.x, "y": edge.p1.y},
+            {"x": edge.p2.x, "y": edge.p2.y}]
+          })
       elif (value.is_polygon()):
         points = []
         for edge in value.polygon().each_edge():
@@ -50,7 +65,7 @@ for category in rdb.each_category():
           "shape": points
           })
       else:
-        print("Unknown violation shape:", item)
+        print("Unknown violation shape:", value)
   
   violations.append({
     "name": category.name(),
