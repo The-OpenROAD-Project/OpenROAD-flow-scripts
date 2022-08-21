@@ -111,7 +111,11 @@ export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
 
 # Route options
 export MIN_ROUTING_LAYER       = M2
+export MIN_CLOCK_ROUTING_LAYER = M4
 export MAX_ROUTING_LAYER       = M7
+
+# Define fastRoute tcl
+export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 
 # KLayout technology file
 export KLAYOUT_TECH_FILE       = $(PLATFORM_DIR)/KLayout/asap7.lyt
