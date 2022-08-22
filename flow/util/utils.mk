@@ -219,9 +219,9 @@ OPENROAD_EXE := valgrind $(VALGRIND_ARGS) $(OPENROAD_EXE)
 endif
 
 ## Convert RVE DRC database to JSON
-convert_rve: $(OBJECTS_DIR)/drc.json
+convert_rve: $(REPORTS_DIR)/drc.json
 
-$(OBJECTS_DIR)/drc.json: $(DRC_FILE)
+$(REPORTS_DIR)/drc.json: $(DRC_FILE)
 ifneq ($(DRC_FILE),)
 	$(KLAYOUT_CMD) -z -rd in_drc="$<" \
 	        -rd out_file="$@" \
