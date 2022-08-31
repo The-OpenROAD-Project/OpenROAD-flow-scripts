@@ -147,46 +147,6 @@ def extractGnuTime(prefix, jsonFile, file):
         file)
 
 #
-# Extract Clock Latency, Skew numbers
-# Need to extract these from native json
-#
-def get_skew_latency(file_name):
-    f = None
-    try:
-        f = open(file_name, 'r')
-    except IOError:
-        print('[WARN] Failed to open file:', file_name)
-        return ('ERR', 'ERR', 'ERR')
-
-    lines = f.readlines()
-    f.close()
-
-    latency_section = False
-    latency_max = latency_min = skew = 0.0
-    worst_latency_max = worst_latency_min = worst_skew = 0.0
-
-    for line in lines:
-        if len(line.split()) < 1:
-            continue
-        if line.startswith('Latency'):
-            latency_section = True
-            continue
-        if latency_section and len(line.split()) == 1:
-            latency_max = float(line.split()[0])
-            continue
-        if latency_section and len(line.split()) > 2:
-            latency_min = float(line.split()[0])
-            skew = float(line.split()[2])
-            if skew > worst_skew:
-                worst_skew = skew
-                worst_latency_max = latency_max
-                worst_latency_min = latency_min
-            latency_section = False
-
-    return(worst_latency_max, worst_latency_min, worst_skew)
-
-
-#
 #  Extract clock info from sdc file
 #
 def read_sdc(file_name):
