@@ -372,7 +372,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
         metrics_dict = hier_dict
 
     with open(output, 'w') as resultSpecfile:
-        json.dump(metrics_dict, resultSpecfile, indent=2)
+        json.dump(metrics_dict, resultSpecfile, indent=2, sort_keys=True)
 
     return metrics_dict, metrics_df
 
