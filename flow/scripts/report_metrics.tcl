@@ -20,6 +20,7 @@ proc report_metrics { when {include_erc true} } {
   puts "$when report_clock_skew"
   puts "--------------------------------------------------------------------------"
   report_clock_skew
+  report_clock_skew_metric
 
   puts "\n=========================================================================="
   puts "$when report_checks -path_delay min"
