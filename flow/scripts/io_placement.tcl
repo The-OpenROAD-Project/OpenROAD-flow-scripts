@@ -2,7 +2,7 @@ source $::env(SCRIPTS_DIR)/load.tcl
 load_design 3_1_place_gp_skip_io.odb 2_floorplan.sdc "Starting io placement"
 
 if {[info exists ::env(FLOORPLAN_DEF)]} {
-    puts "Use DEF in to initialization floorplan, Skip io placement."
+    puts "Skipping IO placement as DEF file was used to initialize floorplan."
 } else {
   if {[info exists ::env(IO_CONSTRAINTS)]} {
     source $::env(IO_CONSTRAINTS)
