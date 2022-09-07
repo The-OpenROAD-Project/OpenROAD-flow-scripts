@@ -48,7 +48,7 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.34,
+        "value": -0.33,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {

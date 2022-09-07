@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -4.52,
+        "value": -4.51,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {

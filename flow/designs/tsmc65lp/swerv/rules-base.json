@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -4.36,
+        "value": -4.35,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {

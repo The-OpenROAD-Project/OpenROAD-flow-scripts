@@ -28,15 +28,15 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.45,
+        "value": -0.44,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -0.46,
+        "value": -0.45,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -0.46,
+        "value": -0.45,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {

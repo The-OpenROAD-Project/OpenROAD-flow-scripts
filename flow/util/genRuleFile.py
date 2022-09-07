@@ -315,7 +315,7 @@ for field, option in rules_dict.items():
     if option['round_value'] and not isinf(rule_value):
         rule_value = int(round(rule_value))
     else:
-        rule_value = float(f"{rule_value:.2f}")
+        rule_value = ceil(rule_value * 100) / 100.0
 
     if OLD_RULES is not None and field in OLD_RULES.keys():
         old_rule = OLD_RULES[field]

@@ -28,11 +28,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -1.15,
+        "value": -1.14,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -2.26,
+        "value": -2.25,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {

@@ -28,7 +28,7 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -2.18,
+        "value": -2.17,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
@@ -80,7 +80,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.78,
+        "value": -0.77,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
