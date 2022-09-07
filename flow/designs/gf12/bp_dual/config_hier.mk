@@ -6,7 +6,6 @@ export SYNTH_HIERARCHICAL = 1
 FLOW_VARIANT ?= hier
 #
 export RTLMP_FLOW = True
-export FLOORPLAN_DEF = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)/2_2_floorplan_io.def
 # RTL_MP Settings
 export RTLMP_MAX_INST = 30000
 export RTLMP_MIN_INST = 10000

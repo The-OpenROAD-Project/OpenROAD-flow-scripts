@@ -5,8 +5,6 @@ export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 100
 export RTLMP_FLOW = True
 
-export FLOORPLAN_DEF = ./results/$(PLATFORM)/$(DESIGN_NAME)/$(FLOW_VARIANT)/2_2_floorplan_io.def
-
 # RTL_MP Settings
 export RTLMP_MAX_INST = 5000
 export RTLMP_MIN_INST = 1000
