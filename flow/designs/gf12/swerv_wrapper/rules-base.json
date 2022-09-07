@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 118495,
+        "value": 118375,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -32,11 +32,11 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 44,
+        "value": 42,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 8325,
+        "value": 8264,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
@@ -56,11 +56,15 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 184528,
+        "value": 184490,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.57,
+        "value": -0.24,
+        "compare": ">="
+    },
+    "finish__timing__drv__max_fanout_limit": {
+        "value": -0.2,
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {

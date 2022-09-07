@@ -20,15 +20,15 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -0.58,
+        "value": -0.53,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -0.57,
+        "value": -0.53,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -0.57,
+        "value": -0.53,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -64,6 +64,10 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
+        "value": -0.2,
+        "compare": ">="
+    },
+    "finish__timing__drv__max_fanout_limit": {
         "value": -0.2,
         "compare": ">="
     },

@@ -60,15 +60,19 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 290872,
+        "value": 290857,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
         "value": -0.2,
         "compare": ">="
     },
+    "finish__timing__drv__max_fanout_limit": {
+        "value": -0.2,
+        "compare": ">="
+    },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.28,
+        "value": -0.27,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {

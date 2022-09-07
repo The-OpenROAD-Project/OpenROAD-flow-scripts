@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 297027,
+        "value": 296927,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,15 +20,15 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -2.29,
+        "value": -2.14,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -2.21,
+        "value": -2.08,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -2.21,
+        "value": -2.08,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1224,
+        "value": 1161,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -9.61,
+        "value": -9.33,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {

@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 70325,
+        "value": 70318,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -64,11 +64,15 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.63,
+        "value": -0.39,
+        "compare": ">="
+    },
+    "finish__timing__drv__max_fanout_limit": {
+        "value": -0.2,
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.66,
+        "value": -0.39,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {

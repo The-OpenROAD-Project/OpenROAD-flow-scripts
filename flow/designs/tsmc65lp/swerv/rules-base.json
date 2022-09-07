@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 720515,
+        "value": 720275,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 92420,
+        "value": 92393,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -24,15 +24,15 @@
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -4.39,
+        "value": -4.36,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -4.33,
+        "value": -4.3,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 233,
+        "value": 157,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -64,6 +64,10 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
+        "value": -0.2,
+        "compare": ">="
+    },
+    "finish__timing__drv__max_fanout_limit": {
         "value": -0.2,
         "compare": ">="
     },

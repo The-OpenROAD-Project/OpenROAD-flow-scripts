@@ -67,6 +67,10 @@
         "value": -0.2,
         "compare": ">="
     },
+    "finish__timing__drv__max_fanout_limit": {
+        "value": -0.2,
+        "compare": ">="
+    },
     "finish__timing__drv__max_cap_limit": {
         "value": -0.2,
         "compare": ">="
