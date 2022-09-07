@@ -19,6 +19,14 @@
         "value": 0,
         "compare": "=="
     },
+    "cts__clock__skew__setup": {
+        "value": 76.95,
+        "compare": "<="
+    },
+    "cts__clock__skew__hold": {
+        "value": 76.95,
+        "compare": "<="
+    },
     "cts__timing__setup__ws": {
         "value": -273.78,
         "compare": ">="

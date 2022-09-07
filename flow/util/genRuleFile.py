@@ -103,6 +103,18 @@ rules_dict = {
         'compare': '==',
     },
     # cts
+    'cts__clock__skew__setup': {
+        'mode': 'abs_padding',
+        'padding': 25,
+        'round_value': False,
+        'compare': '<=',
+    },
+    'cts__clock__skew__hold': {
+        'mode': 'abs_padding',
+        'padding': 25,
+        'round_value': False,
+        'compare': '<=',
+    },
     'cts__timing__setup__ws': {
         'mode': 'period',
         'padding': 25,
@@ -274,6 +286,9 @@ for field, option in rules_dict.items():
 
     elif option['mode'] == 'padding':
         rule_value = metrics[field] * (1 + option['padding'] / 100)
+
+    elif option['mode'] == 'abs_padding':
+        rule_value = abs(metrics[field]) * (1 + option['padding'] / 100)
 
     if 'min_max' in option.keys():
         if 'min_max_direct' in option.keys():
