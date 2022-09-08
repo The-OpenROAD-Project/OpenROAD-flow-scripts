@@ -57,6 +57,7 @@ remove_buffers
 
 ##### Restructure for timing #########
 if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER) == 1 } {
+  set_dont_use $::env(DONT_USE_CELLS)
   repair_design
   repair_timing
   # pre restructure area/timing report (ideal clocks)
