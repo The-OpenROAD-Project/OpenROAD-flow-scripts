@@ -53,7 +53,6 @@ pipeline {
                    "tinyRocket nangate45",
                    "aes sky130hd",
                    "chameleon sky130hd",
-                   "chameleon_hier sky130hd",
                    "gcd sky130hd",
                    "ibex sky130hd",
                    "jpeg sky130hd",
