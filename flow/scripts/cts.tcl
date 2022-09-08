@@ -2,6 +2,8 @@ utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 3_place.odb 3_place.sdc "Starting CTS"
 
+set_dont_use $::env(DONT_USE_CELLS)
+
 # Clone clock tree inverters next to register loads
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
@@ -34,8 +36,6 @@ clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_
 
 
 set_propagated_clock [all_clocks]
-
-set_dont_use $::env(DONT_USE_CELLS)
 
 utl::push_metrics_stage "cts__{}__pre_repair"
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
