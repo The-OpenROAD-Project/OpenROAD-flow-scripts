@@ -48,7 +48,7 @@ export WC_VOLTAGE          = 0.63
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS          = *x1p*_ASAP7* *xp*_ASAP7*
-export DONT_USE_CELLS          += SDF* ICG* DFFH*
+export DONT_USE_CELLS          += SDF* DFFH*
 
 # Yosys mapping files
 # Blackbox - list all standard cells and cells yosys should treat as blackboxes
