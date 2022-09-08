@@ -104,6 +104,7 @@ export CTS_BUF_DISTANCE        ?= 60
 # Fill cells used in fill cell insertion
 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_R"
 
+export TAP_CELL_NAME					 = TAPCELL_ASAP7_75t_R
 
 export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
 
