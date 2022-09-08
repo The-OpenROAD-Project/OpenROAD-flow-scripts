@@ -5,37 +5,37 @@ export PROCESS                 = 7
 
 #Library Setup variable
 export TECH_LEF                = $(PLATFORM_DIR)/lef/asap7_tech_1x_201209.lef
-export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_27_R_1x_201211.lef
+export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_R_1x_220121a.lef
 
-export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_27_R_1x_201211.gds \
+export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_R_1x_220121.gds \
                                  $(ADDITIONAL_GDS)
 
-export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_201020.lib \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_FF_nldm_201020.lib \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_FF_nldm_201020.lib \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib \
+export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib \
 				 $(ADDITIONAL_LIBS)
 
-export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib
+export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib
 
-export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_SS_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_SS_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_SS_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib \
+export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_SS_nldm_211120.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_SS_nldm_220122.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_SS_nldm_211120.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_220123.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_SS_nldm_211120.lib \
 				$(ADDITIONAL_LIBS)
 
-export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib
+export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_220123.lib
 
-export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_TT_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_TT_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_TT_nldm_201020.lib \
+export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_211120.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_TT_nldm_220122.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_TT_nldm_211120.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_TT_nldm_211120.lib \
 				$(ADDITIONAL_LIBS)
 
-export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib
+export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib
 
 export BC_TEMPERATURE          = 25C
 export TC_TEMPERATURE          = 0C
@@ -137,23 +137,51 @@ ifdef ($(ASAP7_USELVT))
 
    export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_L
 
-   export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_FF_nldm_201020.lib \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_201020.lib \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_201020.lib \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib
+   export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_220122.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_211120.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_FF_nldm_211120.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
 
-   export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_SS_nldm_201020.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_SS_nldm_201020.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib
+   export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_SS_nldm_211120.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_SS_nldm_220122.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_SS_nldm_211120.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_220123.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_SS_nldm_211120.lib
 
-   export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_TT_nldm_201020.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_TT_nldm_201020.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_TT_nldm_201020.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_201020.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_TT_nldm_201020.lib
+   export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_TT_nldm_211120.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_TT_nldm_220122.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_TT_nldm_211120.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_220123.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_TT_nldm_211120.lib
+
+endif
+
+ifdef ($(ASAP7_USESLVT))
+   export TIEHI_CELL_AND_PORT     = TIEHIx1_ASAP7_75t_SL H
+   export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_SL L
+
+   export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_SL A Y
+
+   export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_SL
+
+   export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_FF_nldm_211120.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_FF_nldm_220122.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_FF_nldm_211120.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_211120.lib \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
+
+   export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_SS_nldm_211120.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_SS_nldm_220122.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_SS_nldm_211120.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_SS_nldm_220123.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_211120.lib
+
+   export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_TT_nldm_211120.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_TT_nldm_220122.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_TT_nldm_211120.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_TT_nldm_220123.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_TT_nldm_211120.lib
 
 endif
 
