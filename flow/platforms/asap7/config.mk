@@ -109,6 +109,7 @@ export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
 
 # Route options
 export MIN_ROUTING_LAYER       = M2
+export MIN_CLOCK_ROUTING_LAYER = M4
 export MAX_ROUTING_LAYER       = M7
 
 # KLayout technology file
