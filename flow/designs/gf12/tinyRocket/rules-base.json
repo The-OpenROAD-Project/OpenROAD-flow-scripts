@@ -12,12 +12,20 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 32577,
+        "value": 32556,
         "compare": "<="
     },
     "detailedplace__design__violations": {
         "value": 0,
         "compare": "=="
+    },
+    "cts__clock__skew__setup": {
+        "value": 61.23,
+        "compare": "<="
+    },
+    "cts__clock__skew__hold": {
+        "value": 18.63,
+        "compare": "<="
     },
     "cts__timing__setup__ws": {
         "value": -247.08,
@@ -64,6 +72,10 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
+        "value": -0.2,
+        "compare": ">="
+    },
+    "finish__timing__drv__max_fanout_limit": {
         "value": -0.2,
         "compare": ">="
     },
