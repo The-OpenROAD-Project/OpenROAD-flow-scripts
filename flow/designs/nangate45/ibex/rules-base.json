@@ -19,16 +19,24 @@
         "value": 0,
         "compare": "=="
     },
+    "cts__clock__skew__setup": {
+        "value": 0.35,
+        "compare": "<="
+    },
+    "cts__clock__skew__hold": {
+        "value": 0.35,
+        "compare": "<="
+    },
     "cts__timing__setup__ws": {
-        "value": -0.45,
+        "value": -0.44,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -0.46,
+        "value": -0.45,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -0.46,
+        "value": -0.45,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -72,7 +80,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -1.11,
+        "value": -0.68,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
