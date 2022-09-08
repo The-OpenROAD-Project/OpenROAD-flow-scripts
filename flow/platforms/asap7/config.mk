@@ -52,11 +52,9 @@ export DONT_USE_CELLS          += SDF* ICG* DFFH*
 
 # Yosys mapping files
 # Blackbox - list all standard cells and cells yosys should treat as blackboxes
-export BLACKBOX_V_FILE         = $(PLATFORM_DIR)/yoSys/asap7sc7p5t.blackbox.v
 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch.v
 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate.v
 export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders.v
-export BLACKBOX_MAP_TCL        = $(PLATFORM_DIR)/yoSys/blackbox_map.tcl
 
 # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
 export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
