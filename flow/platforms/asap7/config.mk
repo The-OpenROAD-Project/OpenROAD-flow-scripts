@@ -7,7 +7,7 @@ export PROCESS                 = 7
 export TECH_LEF                = $(PLATFORM_DIR)/lef/asap7_tech_1x_201209.lef
 export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_R_1x_220121a.lef
 
-export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_R_1x_220121.gds \
+export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_R_220121a.gds \
                                  $(ADDITIONAL_GDS)
 
 export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib \
@@ -97,7 +97,7 @@ export PLACE_DENSITY ?= 0.60
 export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
 
 # TritonCTS options
-export CTS_BUF_CELL            ?= BUFx4_ASAP7_75t_R
+export CTS_BUF_CELL            = BUFx12_ASAP7_75t_R BUFx10_ASAP7_75t_R BUFx8_ASAP7_75t_R BUFx4_ASAP7_75t_R BUFx2_ASAP7_75t_R
 
 export CTS_BUF_DISTANCE        ?= 60
 
@@ -140,6 +140,17 @@ ifdef ($(ASAP7_USELVT))
 
    export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_L
 
+	 export CTS_BUF_CELL            = BUFx12_ASAP7_75t_L BUFx10_ASAP7_75t_L BUFx8_ASAP7_75t_L BUFx4_ASAP7_75t_L BUFx2_ASAP7_75t_L
+
+	 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_L"
+
+	 export TAP_CELL_NAME					  = TAPCELL_ASAP7_75t_L
+
+	 export GDS_FILES                = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_L_220121a.gds \
+																	  $(ADDITIONAL_GDS)
+
+	 export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_L_1x_220121a.lef
+
    export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib \
 			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_220122.lib \
 			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_211120.lib \
@@ -167,6 +178,17 @@ ifdef ($(ASAP7_USESLVT))
    export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_SL A Y
 
    export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_SL
+
+	 export CTS_BUF_CELL            = BUFx12_ASAP7_75t_SL BUFx10_ASAP7_75t_SL BUFx8_ASAP7_75t_SL BUFx4_ASAP7_75t_SL BUFx2_ASAP7_75t_SL
+
+	 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_SL"
+
+	 export TAP_CELL_NAME					  = TAPCELL_ASAP7_75t_SL
+
+	 export GDS_FILES                = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_SL_220121a.gds \
+																	 $(ADDITIONAL_GDS)
+
+	 export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_SL_1x_220121a.lef
 
    export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_FF_nldm_211120.lib \
 			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_FF_nldm_220122.lib \
