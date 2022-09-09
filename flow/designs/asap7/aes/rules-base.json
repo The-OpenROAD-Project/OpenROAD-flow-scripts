@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 2576,
+        "value": 1918,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 2879,
+        "value": 2057,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 25423,
+        "value": 17932,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,27 +20,27 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 17.46,
+        "value": 14.06,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 17.46,
+        "value": 14.06,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -124.94,
+        "value": -124.68,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -166.4,
+        "value": -366.18,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -166.4,
+        "value": -366.18,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 386,
+        "value": 311,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -48,15 +48,15 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -35.7,
+        "value": -63.19,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -35.7,
+        "value": -63.19,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 116087,
+        "value": 80674,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -64,15 +64,15 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": 0.0,
+        "value": -31.82,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 3035,
+        "value": 2213,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.48,
+        "value": -0.2,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {

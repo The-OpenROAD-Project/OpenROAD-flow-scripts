@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 7265,
+        "value": 7234,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 7580,
+        "value": 7541,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 63238,
+        "value": 62735,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,15 +20,15 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 76.95,
+        "value": 69.51,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 76.95,
+        "value": 69.51,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -273.77,
+        "value": -273.51,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
@@ -40,7 +40,7 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 79,
+        "value": 158,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -71.37,
+        "value": -255.43,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -71.37,
+        "value": -255.43,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -64,11 +64,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": 0.0,
+        "value": -290.5,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 7608,
+        "value": 7578,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
@@ -92,7 +92,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -10.0,
+        "value": -28.65,
         "compare": ">="
     }
 }
