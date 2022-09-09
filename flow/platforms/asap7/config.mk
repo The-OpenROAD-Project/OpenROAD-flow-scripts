@@ -96,7 +96,7 @@ export PLACE_DENSITY ?= 0.60
 export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
 
 # TritonCTS options
-export CTS_BUF_CELL            = BUFx12_ASAP7_75t_R BUFx10_ASAP7_75t_R BUFx8_ASAP7_75t_R BUFx4_ASAP7_75t_R BUFx2_ASAP7_75t_R
+export CTS_BUF_CELL            = BUFx4_ASAP7_75t_R
 
 export CTS_BUF_DISTANCE        ?= 60
 
@@ -141,7 +141,7 @@ ifeq ($(ASAP7_USELVT), 1)
 
 	 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_L
 
-	 export CTS_BUF_CELL            = BUFx12_ASAP7_75t_L BUFx10_ASAP7_75t_L BUFx8_ASAP7_75t_L BUFx4_ASAP7_75t_L BUFx2_ASAP7_75t_L
+	 export CTS_BUF_CELL            = BUFx4_ASAP7_75t_L
 
 	 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_L"
 
@@ -192,7 +192,7 @@ ifeq ($(ASAP7_USESLVT), 1)
 
 	 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_SL
 
-	 export CTS_BUF_CELL            = BUFx12_ASAP7_75t_SL BUFx10_ASAP7_75t_SL BUFx8_ASAP7_75t_SL BUFx4_ASAP7_75t_SL BUFx2_ASAP7_75t_SL
+	 export CTS_BUF_CELL            = BUFx4_ASAP7_75t_SL
 
 	 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_SL"
 
