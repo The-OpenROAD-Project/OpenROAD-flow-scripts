@@ -59,6 +59,7 @@ def main():
     # Create a Chip object.
     chip = siliconcompiler.Chip(design)
     chip.set('option', 'scpath', scdir)
+    chip.set('option', 'jobname', f'{design}_{platform}')
 
     # Load PDK, flow, and libs.
     if platform == 'nangate45':
@@ -81,14 +82,14 @@ def main():
         seal_gds = chip.get('tool', tool, 'env', step, '0', 'SEAL_GDS')
     else:
         seal_gds = ''
-    gdsoas_in = ' '.join([chip.get('tool', tool, 'env', step, '0', 'GDS_FILES')])
+    gdsoas_in = ' '.join([os.path.abspath(gdsf) for gdsf in chip.get('tool', tool, 'env', step, '0', 'GDS_FILES').split()])
     out_file = os.path.join('outputs', f'{chip.get("design")}.{chip.get("tool", tool, "env", step, "0", "STREAM_SYSTEM_EXT")}')
     techf = '../../klayout.lyt' # TODO: objects_dir is currently top-level build root dir.
     layermap = chip.get('tool', tool, 'env', step, '0', 'GDS_LAYER_MAP')
     klayout_options = ['-zz',
                        '-rd', f'design_name={chip.get("design")}',
                        '-rd', 'in_def=inputs/6_final.def',
-                       '-rd', f'in_files={gdsoas_in}',
+                       '-rd', f'in_files="{gdsoas_in}"',
                        '-rd', f'config_file={fill_cfg}',
                        '-rd', f'seal_file={seal_gds}',
                        '-rd', f'out_file={out_file}',

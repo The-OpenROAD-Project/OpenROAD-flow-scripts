@@ -25,7 +25,7 @@ def parse(chip, platform):
         repls['DESIGN_NICKNAME'] = config['DESIGN_NAME']
     # Set PLATFORM_DIR if not already set.
     if not 'PLATFORM_DIR' in config:
-        repls['PLATFORM_DIR'] = os.path.abspath(os.path.join(mydir, 'platforms', config['PLATFORM']))
+        repls['PLATFORM_DIR'] = os.path.join(platforms_root, config['PLATFORM'])
     if not 'CORNER' in config:
         if config['PLATFORM'] == 'asap7':
             repls['CORNER'] = 'BC'
