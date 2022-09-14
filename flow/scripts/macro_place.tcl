@@ -88,6 +88,9 @@ if {[find_macros] != ""} {
     if { [info exists ::env(RTLMP_NOTCH_WT)]} {
         append additional_rtlmp_args " -notch_weight $env(RTLMP_NOTCH_WT)"
     }
+    if { [info exists ::env(RTLMP_DEAD_SPACE)]} {
+        append additional_rtlmp_args " -dead_space $env(RTLMP_DEAD_SPACE)"
+    }
     if { [info exists ::env(RTLMP_CONFIG_FILE)]} {
         append additional_rtlmp_args " -config_file $env(RTLMP_CONFIG_FILE)"
     }
@@ -98,13 +101,24 @@ if {[find_macros] != ""} {
         append additional_rtlmp_args " -macro_blockage_file $env(RTLMP_BLOCKAGE_FILE)"
     }
 
-    partition_design -net_threshold 5 \
+    if { [info exists ::env(RTLMP_KEEPIN)]} {
+        partition_design -net_threshold 5 \
+                     -virtual_weight 1 \
+                     -num_hop 3 \
+                     -timing_weight 1 \
+                     -report_directory $env(RTLMP_RPT_DIR) \
+                     -report_file $env(RTLMP_RPT_FILE) \
+                     -keepin $env(RTLMP_KEEPIN) \
+                     {*}$additional_partition_args
+    } else {
+        partition_design -net_threshold 5 \
                      -virtual_weight 1 \
                      -num_hop 3 \
                      -timing_weight 1 \
                      -report_directory $env(RTLMP_RPT_DIR) \
                      -report_file $env(RTLMP_RPT_FILE) \
                      {*}$additional_partition_args
+    }
 
     rtl_macro_placer -report_directory $env(RTLMP_RPT_DIR) \
                      {*}$additional_rtlmp_args

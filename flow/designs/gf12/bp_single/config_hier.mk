@@ -3,22 +3,20 @@ export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1
-FLOW_VARIANT ?= hier
 export RTLMP_FLOW = True
-
 #
 # RTL_MP Settings
 export RTLMP_MAX_INST = 30000
 export RTLMP_MIN_INST = 10000
 export RTLMP_MAX_MACRO = 24 
 export RTLMP_MIN_MACRO = 4
-#
+export RTLMP_DEAD_SPACE = 0.10
 export RTLMP_KEEPIN = 900 1000 2350 2200
 
 #netlist
+export VERILOG_FILES =  $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/bp_single_hier_yosys_netlist.v \
+                        $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 export CACHED_NETLIST = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/bp_single_hier_yosys_netlist.v
-#export VERILOG_FILES =  $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/bp_single_hier_yosys_netlist.v \
-#                        $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
 
 export SDC_FILE      = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.elab.v.sdc
 
