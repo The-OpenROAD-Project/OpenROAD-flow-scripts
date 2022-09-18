@@ -28,3 +28,7 @@ trace a simple DRC violation.
 
 View [drc_fix.tcl](./scripts/drt/drc_fix.tcl) example Tcl script to fix
 the DRC violation.
+
+### Metal Fill Test Case
+View [metal_fill.tcl](./scripts/metal_fill/metal_fill.tcl) example Tcl scrit
+to add metal fill.
