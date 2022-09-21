@@ -152,10 +152,12 @@ proc report_metrics { when {include_erc true} } {
     foreach corner $::env(CORNERS) {
       puts "Corner: $corner"
       report_power -corner $corner
+      report_power_metric -corner $corner
     }
     unset corner
   } else {
     report_power
+    report_power_metric
   }
 
   puts "\n=========================================================================="
