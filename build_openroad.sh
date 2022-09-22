@@ -9,7 +9,17 @@ cd "$(dirname $(readlink -f $0))"
 
 # Defaults variable values
 NICE=""
-PROC=$(nproc --all)
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  PROC=$(nproc --all)
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  PROC=$(sysctl -n hw.ncpu)
+else
+  cat << EOF
+[WARNING FLW-0025] Unsupported OSTYPE: cannot determine number of host CPUs"
+  Defaulting to 2 threads. Use --threads N to use N threads"
+EOF
+  PROC=2
+fi
 DOCKER_TAG="openroad/flow-scripts"
 OPENROAD_APP_REMOTE="origin"
 OPENROAD_APP_BRANCH="master"
@@ -277,6 +287,9 @@ __docker_build()
 
 __local_build()
 {
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+          export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$(brew --prefix tcl-tk)/bin:$PATH"
+        fi
         echo "[INFO FLW-0017] Compiling Yosys."
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
