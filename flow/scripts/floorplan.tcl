@@ -98,7 +98,7 @@ puts "Default units for flow"
 report_units
 report_units_metric
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "floorplan final" false
+report_metrics "floorplan final" false false
 
 if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) == 1 } {
 
