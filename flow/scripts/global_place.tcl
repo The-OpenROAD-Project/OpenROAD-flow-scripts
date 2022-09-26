@@ -40,7 +40,7 @@ global_placement -density $place_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     {*}$global_placement_args \
-    $::env(GLOBAL_PLACEMENT_ARGS)
+    {*}$::env(GLOBAL_PLACEMENT_ARGS)
 } else {
 global_placement -density $place_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
