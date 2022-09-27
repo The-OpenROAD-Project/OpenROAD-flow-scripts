@@ -102,6 +102,24 @@ endif
 SHELL          ?= /bin/bash
 .SHELLFLAGS    = -o pipefail -c
 
+# Test that the shell works. Otherwise, warn user and fall back to bash. Note
+# that Make does not inherit $SHELL from the parent environment (See 5.3.2 of
+# GNU Make documentation).
+$(shell echo "" &> /dev/null)
+ifneq ($(.SHELLSTATUS),0)
+  define shell_warn_msg
+[WARNING][FLOW] Shell '$(SHELL)' returned an error on a simple test. Attempting\
+to fall back to '/bin/bash'.
+To fix this warning, try:
+  1) Ubuntu/WSL users: run 'sudo dpkg-reconfigure dash' and select 'No'
+  2) Run 'chsh' and change your shell path to '/bin/bash' or another shell
+  3) Invoke make with 'make SHELL=/bin/bash'
+
+endef
+  $(warning $(shell_warn_msg))
+  SHELL := /bin/bash
+endif
+
 #-------------------------------------------------------------------------------
 # Setup variables to point to root / head of the OpenROAD directory
 # - the following settings allowed user to point OpenROAD binaries to different
