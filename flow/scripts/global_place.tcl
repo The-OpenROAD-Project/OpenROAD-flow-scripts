@@ -40,7 +40,7 @@ global_placement -density $place_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     {*}$global_placement_args \
-    $::env(GLOBAL_PLACEMENT_ARGS)
+    {*}$::env(GLOBAL_PLACEMENT_ARGS)
 } else {
 global_placement -density $place_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
@@ -51,7 +51,7 @@ global_placement -density $place_density \
 estimate_parasitics -placement
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "global place" false
+report_metrics "global place" false false
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
   write_db $::env(RESULTS_DIR)/3_3_place_gp.odb

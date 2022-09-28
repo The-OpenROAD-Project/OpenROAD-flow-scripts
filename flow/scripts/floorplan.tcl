@@ -5,10 +5,14 @@ load_design 1_synth.v 1_synth.sdc "Starting floorplan"
 set num_instances [llength [get_cells -hier *]]
 puts "number instances in verilog is $num_instances"
 
+# Initialize floorplan by reading in floorplan DEF
+# ---------------------------------------------------------------------------
+if {[info exists ::env(FLOORPLAN_DEF)]} {
+    puts "Read in Floorplan DEF to initialize floorplan:  $env(FLOORPLAN_DEF)"
+    read_def -floorplan_initialize $env(FLOORPLAN_DEF)
 # Initialize floorplan using ICeWall FOOTPRINT
 # ----------------------------------------------------------------------------
-
-if {[info exists ::env(FOOTPRINT)]} {
+} elseif {[info exists ::env(FOOTPRINT)]} {
 
   ICeWall load_footprint $env(FOOTPRINT)
 
@@ -18,7 +22,6 @@ if {[info exists ::env(FOOTPRINT)]} {
     -site      $::env(PLACE_SITE)
 
   ICeWall init_footprint $env(SIG_MAP_FILE)
-
 
 # Initialize floorplan using CORE_UTILIZATION
 # ----------------------------------------------------------------------------
@@ -95,7 +98,7 @@ puts "Default units for flow"
 report_units
 report_units_metric
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "floorplan final" false
+report_metrics "floorplan final" false false
 
 if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) == 1 } {
 

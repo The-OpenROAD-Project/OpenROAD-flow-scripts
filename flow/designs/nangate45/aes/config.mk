@@ -7,6 +7,7 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4
+export FLOORPLAN_DEF = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/aes_ng45_fp.def
 export DIE_AREA    = 0 0 249.85 250.6 
 export CORE_AREA   = 10.07 11.2 239.97 240.8 
 

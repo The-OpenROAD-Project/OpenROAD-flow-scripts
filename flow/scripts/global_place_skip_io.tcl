@@ -1,7 +1,7 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 2_floorplan.odb 2_floorplan.sdc "Starting global placement"
 
-if {[info exists ::env(HAS_IO_CONSTRAINTS)] && $::env(HAS_IO_CONSTRAINTS) != 0} {
+if {[info exists ::env(FLOORPLAN_DEF)] || ([info exists ::env(HAS_IO_CONSTRAINTS)] && $::env(HAS_IO_CONSTRAINTS) != 0)} {
   puts "Has top down IO Constraints. Skip global placement without IOs"
 } else {
 # check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists
@@ -21,7 +21,7 @@ if {[info exists ::env(HAS_IO_CONSTRAINTS)] && $::env(HAS_IO_CONSTRAINTS) != 0} 
   global_placement -skip_io -density $place_density \
       -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
       -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-      $::env(GLOBAL_PLACEMENT_ARGS)
+      {*}$::env(GLOBAL_PLACEMENT_ARGS)
   } else {
   global_placement -skip_io -density $place_density \
       -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \

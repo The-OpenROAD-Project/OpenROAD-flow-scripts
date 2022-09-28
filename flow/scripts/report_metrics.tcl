@@ -1,4 +1,4 @@
-proc report_metrics { when {include_erc true} } {
+proc report_metrics { when {include_erc true} {include_clock_skew true} } {
   puts "\n=========================================================================="
   puts "$when report_tns"
   puts "--------------------------------------------------------------------------"
@@ -16,11 +16,15 @@ proc report_metrics { when {include_erc true} } {
   report_worst_slack
   report_worst_slack_metric
 
-  puts "\n=========================================================================="
-  puts "$when report_clock_skew"
-  puts "--------------------------------------------------------------------------"
-  report_clock_skew
-
+  if {$include_clock_skew} {
+    puts "\n=========================================================================="
+    puts "$when report_clock_skew"
+    puts "--------------------------------------------------------------------------"
+    report_clock_skew
+    report_clock_skew_metric
+    report_clock_skew_metric -hold
+  }
+  
   puts "\n=========================================================================="
   puts "$when report_checks -path_delay min"
   puts "--------------------------------------------------------------------------"
@@ -150,10 +154,12 @@ proc report_metrics { when {include_erc true} } {
     foreach corner $::env(CORNERS) {
       puts "Corner: $corner"
       report_power -corner $corner
+      report_power_metric -corner $corner
     }
     unset corner
   } else {
     report_power
+    report_power_metric
   }
 
   puts "\n=========================================================================="

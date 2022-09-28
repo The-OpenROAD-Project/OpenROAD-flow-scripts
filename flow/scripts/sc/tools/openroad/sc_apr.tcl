@@ -96,11 +96,7 @@ if {$sc_step == "or_synth_hier_report"} {
 } elseif {$sc_step == "or_synth"} {
     # Synthesis: Copy/rename RTL/SDC files
     file copy -force outputs/1_1_yosys.v outputs/1_synth.v
-    foreach f $inputs {
-        if {[string last ".sdc" $f] == [expr [string length $f] - 4]} {
-            file copy -force "inputs/$f" outputs/1_synth.sdc
-        }
-    }
+    file copy -force [lindex [dict get $sc_cfg input sdc] 0] outputs/1_synth.sdc
 } elseif {$sc_step == "or_tdms_place" && [info exists ::env(MACRO_PLACEMENT)]} {
     # TDMS Placement: copy .odb input if this step was skipped.
     file copy -force inputs/2_2_floorplan_io.odb outputs/2_3_floorplan_tdms.odb
@@ -123,7 +119,7 @@ if {$sc_step == "or_synth_hier_report"} {
     file copy -force outputs/4_2_cts_fillcell.odb outputs/4_cts.odb
 } elseif {$sc_step == "or_detail_route"} {
     # Last routing step: copy .odb and .sdc files.
-    file copy -force outputs/5_route.odb outputs/6_1_fill.odb
+    file copy -force outputs/5_2_route.odb outputs/6_1_fill.odb
     foreach f $inputs {
         if {[string last ".sdc" $f] == [expr [string length $f] - 4]} {
             file copy -force "inputs/$f" outputs/5_route.sdc

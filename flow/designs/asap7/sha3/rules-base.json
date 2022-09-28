@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 2517,
+        "value": 2393,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 2600,
+        "value": 2490,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -19,36 +19,44 @@
         "value": 0,
         "compare": "=="
     },
+    "cts__clock__skew__setup": {
+        "value": 48.68,
+        "compare": "<="
+    },
+    "cts__clock__skew__hold": {
+        "value": 48.68,
+        "compare": "<="
+    },
     "cts__timing__setup__ws": {
-        "value": -166.12,
+        "value": -160.16,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -512.71,
+        "value": -498.77,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -512.71,
+        "value": -498.77,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 109,
+        "value": 61,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 185,
+        "value": 158,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -81.55,
+        "value": -60.42,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -81.55,
+        "value": -60.42,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 75952,
+        "value": 72254,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -56,15 +64,19 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -143.28,
+        "value": -38.72,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 2696,
+        "value": 2578,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -1.09,
+        "value": -0.51,
+        "compare": ">="
+    },
+    "finish__timing__drv__max_fanout_limit": {
+        "value": -0.2,
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
@@ -80,7 +92,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -28.18,
+        "value": -11.26,
         "compare": ">="
     }
 }

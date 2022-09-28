@@ -103,6 +103,18 @@ rules_dict = {
         'compare': '==',
     },
     # cts
+    'cts__clock__skew__setup': {
+        'mode': 'abs_padding',
+        'padding': 25,
+        'round_value': False,
+        'compare': '<=',
+    },
+    'cts__clock__skew__hold': {
+        'mode': 'abs_padding',
+        'padding': 25,
+        'round_value': False,
+        'compare': '<=',
+    },
     'cts__timing__setup__ws': {
         'mode': 'period',
         'padding': 25,
@@ -275,6 +287,9 @@ for field, option in rules_dict.items():
     elif option['mode'] == 'padding':
         rule_value = metrics[field] * (1 + option['padding'] / 100)
 
+    elif option['mode'] == 'abs_padding':
+        rule_value = abs(metrics[field]) * (1 + option['padding'] / 100)
+
     if 'min_max' in option.keys():
         if 'min_max_direct' in option.keys():
             rule_value = option['min_max'](
@@ -300,7 +315,7 @@ for field, option in rules_dict.items():
     if option['round_value'] and not isinf(rule_value):
         rule_value = int(round(rule_value))
     else:
-        rule_value = float(f"{rule_value:.2f}")
+        rule_value = ceil(rule_value * 100) / 100.0
 
     if OLD_RULES is not None and field in OLD_RULES.keys():
         old_rule = OLD_RULES[field]
