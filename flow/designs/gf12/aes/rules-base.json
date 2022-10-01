@@ -20,11 +20,11 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 17.03,
+        "value": 31.75,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 3.49,
+        "value": 9.98,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -40,7 +40,7 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 10,
+        "value": 24,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {

@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 126681,
+        "value": 126516,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -20,11 +20,11 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 0.25,
+        "value": 0.4,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 0.25,
+        "value": 0.4,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -40,11 +40,11 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 19,
+        "value": 66,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 317,
+        "value": 406,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
