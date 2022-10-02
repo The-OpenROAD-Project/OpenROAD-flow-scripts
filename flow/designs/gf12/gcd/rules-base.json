@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 5.22,
+        "value": 3.93,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
@@ -32,15 +32,15 @@
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -150.24,
+        "value": -149.05,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -150.24,
+        "value": -149.05,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 28,
+        "value": 17,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -68,7 +68,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 507,
+        "value": 502,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {

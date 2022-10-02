@@ -20,11 +20,11 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 2.9,
+        "value": 5.18,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 2.9,
+        "value": 5.18,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -56,7 +56,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 3260,
+        "value": 3107,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {

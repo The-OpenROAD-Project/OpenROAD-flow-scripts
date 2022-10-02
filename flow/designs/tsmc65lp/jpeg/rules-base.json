@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 74108,
+        "value": 74106,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,23 +20,23 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 0.58,
+        "value": 0.42,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 0.58,
+        "value": 0.42,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -1.08,
+        "value": -0.82,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -1.03,
+        "value": -0.8,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -1.03,
+        "value": -0.8,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -44,15 +44,15 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 41,
+        "value": 32,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.19,
+        "value": 0.0,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.19,
+        "value": 0.0,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {

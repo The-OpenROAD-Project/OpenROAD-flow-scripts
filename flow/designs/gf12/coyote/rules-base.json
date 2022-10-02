@@ -24,7 +24,7 @@
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 4.53,
+        "value": 3.95,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -40,11 +40,11 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 30,
+        "value": 29,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 647,
+        "value": 635,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
