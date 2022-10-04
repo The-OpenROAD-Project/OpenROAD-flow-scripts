@@ -20,11 +20,11 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 1.87,
+        "value": 4.08,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 1.87,
+        "value": 4.08,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -32,15 +32,15 @@
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -141.79,
+        "value": -141.63,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -141.79,
+        "value": -141.63,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 18,
+        "value": 17,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
