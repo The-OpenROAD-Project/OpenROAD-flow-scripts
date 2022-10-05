@@ -48,7 +48,7 @@ pipeline {
                    "gcd nangate45",
                    "ibex nangate45",
                    "jpeg nangate45",
-                   "swerv nangate45",
+                   /* "swerv nangate45", */
                    "swerv_wrapper nangate45",
                    "tinyRocket nangate45",
                    "aes sky130hd",
