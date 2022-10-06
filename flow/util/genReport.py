@@ -115,11 +115,13 @@ def gen_report(name, data):
     output = append_text(data['log_errors'], output, 'errors in the logs', REGEX_ERROR, args.verbose)
     output = append_text(data['metrics_logs_errors'], output, 'errors in the metrics logs', REGEX_ERROR, args.verbose)
     output = append_text(data['metrics_errors'], output, 'metrics failures', REGEX_ERROR, args.verbose)
+    output = append_text(data['calibre_errors'], output, 'calibre failures', REGEX_ERROR, args.verbose)
 
     if args.verbose >= 2:
         output = append_text(data['log_warnings'], output, 'warnings in the logs', REGEX_WARNING, args.verbose-2)
         output = append_text(data['metrics_logs_warnings'], output, 'warnings in the metrics logs', REGEX_WARNING, args.verbose-2)
         output = append_text(data['metrics_warnings'], output, 'metrics warnings', REGEX_WARNING, args.verbose-2)
+        output = append_text(data['calibre_warnings'], output, 'calibre warnings', REGEX_WARNING, args.verbose-2)
 
     if d['drcs']:
         if data['status'] == STATUS_GREEN:

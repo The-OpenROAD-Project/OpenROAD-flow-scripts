@@ -20,23 +20,23 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 0.83,
+        "value": 0.68,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 0.83,
+        "value": 0.68,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -2.87,
+        "value": -2.78,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -4.54,
+        "value": -4.25,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -4.26,
+        "value": -3.98,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -1.55,
+        "value": -0.95,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -72,7 +72,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.44,
+        "value": -0.2,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -92,7 +92,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -19.02,
+        "value": -18.07,
         "compare": ">="
     }
 }

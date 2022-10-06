@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 0.51,
+        "value": 0.68,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
@@ -68,7 +68,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -2.37,
+        "value": -1.58,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -76,7 +76,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -1.85,
+        "value": -2.5,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
