@@ -44,7 +44,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1161,
+        "value": 1394,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
@@ -72,7 +72,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -9.16,
+        "value": -9.12,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
