@@ -582,6 +582,10 @@ $(RESULTS_DIR)/5_route.odb: $(RESULTS_DIR)/5_2_route.odb
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
 	cp $< $@
 
+$(RESULTS_DIR)/5_route.v:
+	@export OR_DB=5_route ;\
+	$(OPENROAD_CMD) ./scripts/write_verilog.tcl
+
 clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
 	rm -rf *.gdid *.log *.met *.sav *.res.dmp
