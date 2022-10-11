@@ -50,8 +50,8 @@ export ABC_LOAD_IN_FF = 3.898
 export PLACE_SITE = FreePDK45_38x28_10R_NP_162NW_34O
 
 # IO Placer pin layers
-export IO_PLACER_H = metal3
-export IO_PLACER_V = metal2
+export IO_PLACER_H = metal5
+export IO_PLACER_V = metal6
 
 # Define default PDN config
 export PDN_TCL ?= $(PLATFORM_DIR)/grid_strategy-M1-M4-M7.tcl
