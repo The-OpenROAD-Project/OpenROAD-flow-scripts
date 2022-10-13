@@ -20,11 +20,11 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 0.15,
+        "value": 0.12,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 0.15,
+        "value": 0.12,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -80,7 +80,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.26,
+        "value": -0.79,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
