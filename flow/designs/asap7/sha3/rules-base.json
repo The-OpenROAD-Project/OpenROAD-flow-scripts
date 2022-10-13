@@ -20,23 +20,23 @@
         "compare": "=="
     },
     "cts__clock__skew__setup": {
-        "value": 62.26,
+        "value": 54.49,
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 62.26,
+        "value": 54.49,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -160.16,
+        "value": -153.0,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -439.0,
+        "value": -381.97,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -439.0,
+        "value": -381.97,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -18.82,
+        "value": -58.55,
         "compare": ">="
     },
     "finish__design__instance__area": {
