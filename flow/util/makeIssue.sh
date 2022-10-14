@@ -13,7 +13,7 @@ ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \
                            IO_CONSTRAINTS \
                            MACRO_PLACEMENT \
                            RTLMP_CONFIG_FILE \
-                           DFF_LIB_FILE"
+                           DFF_LIB_FILE"        
 ISSUE_CP_PLATFORM_FILE_VARS="LIB_FILES \
                              SC_LEF \
                              TECH_LEF \
@@ -39,11 +39,10 @@ ISSUE_CP_FILE_VARS=$ISSUE_CP_DESIGN_FILE_VARS
 ISSUE_CP_FILES_PLATFORM=""
 if [[ ! -v EXCLUDE_PLATFORM ]]; then
     ISSUE_CP_FILE_VARS+=$ISSUE_CP_PLATFORM_FILE_VARS
-    COUNT=$(ls -1 $PLATFORM_DIR/*.cfg 2>/dev/null | wc -l)
-    if [[ $COUNT != 0 ]]; then
-        ISSUE_CP_FILES_PLATFORM=$PLATFORM_DIR/*.tcl
-    else
+    if [ -e $PLATFORM_DIR/*.cfg ]; then
         ISSUE_CP_FILES_PLATFORM="$PLATFORM_DIR/*.tcl $PLATFORM_DIR/*.cfg"
+    else
+        ISSUE_CP_FILES_PLATFORM="$PLATFORM_DIR/*.tcl"
     fi
 fi
 
