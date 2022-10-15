@@ -24,7 +24,7 @@
         "compare": "<="
     },
     "cts__clock__skew__hold": {
-        "value": 3.74,
+        "value": 3.24,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -32,15 +32,15 @@
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -681.42,
+        "value": -655.64,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -681.21,
+        "value": -655.64,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 131,
+        "value": 193,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -68,7 +68,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.65,
+        "value": -0.2,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
