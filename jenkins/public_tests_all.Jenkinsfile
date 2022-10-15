@@ -58,39 +58,38 @@ pipeline {
         }
 
         stages {
-          parallel {
-            stage('Docker') {
-              agent any;
-              steps {
-                sh "./build_openroad.sh";
-              }
+          stage('Test') {
+            options {
+              timeout(time: 6, unit: "HOURS");
             }
-            stage('Test') {
-              options {
-                timeout(time: 6, unit: "HOURS");
-              }
-              agent any;
-              steps {
-                unstash "install";
-                script {
-                  stage("${TEST_SLUG}") {
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                      sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
-                    }
+            agent any;
+            steps {
+              unstash "install";
+              script {
+                stage("${TEST_SLUG}") {
+                  catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
                   }
                 }
               }
-              post {
-                always {
-                  catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    archiveArtifacts artifacts: "flow/*tar.gz";
-                    archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-                  }
+            }
+            post {
+              always {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                  archiveArtifacts artifacts: "flow/*tar.gz";
+                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
                 }
               }
             }
           }
         }
+      }
+    }
+
+    stage('Docker Build') {
+      agent any;
+      steps {
+        sh "./build_openroad.sh";
       }
     }
 
