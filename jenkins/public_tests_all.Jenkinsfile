@@ -8,13 +8,11 @@ pipeline {
   }
   stages {
 
-    stage('Build') {
-      stage('Local') {
-        agent any;
-        steps {
-          sh "./build_openroad.sh --local";
-          stash name: "install", includes: "tools/install/**";
-        }
+    stage('Local Build') {
+      agent any;
+      steps {
+        sh "./build_openroad.sh --local";
+        stash name: "install", includes: "tools/install/**";
       }
     }
 
