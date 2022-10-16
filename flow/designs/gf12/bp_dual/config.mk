@@ -47,7 +47,7 @@ export PLACE_DENSITY = 0.20
 
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
-export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
+export PDN_TCL ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
 ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CHIP
