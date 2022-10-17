@@ -16,78 +16,81 @@ pipeline {
       }
     }
 
-    stage('Tests') {
-      matrix {
-        axes {
-          axis {
-            name 'TEST_SLUG';
-            values "aes asap7",
-                   "ethmac asap7",
-                   "gcd asap7",
-                   "ibex asap7",
-                   "jpeg asap7",
-                   "sha3 asap7",
-                   "uart asap7",
-                   "aes nangate45",
-                   "black_parrot nangate45",
-                   "bp_be_top nangate45",
-                   "bp_fe_top nangate45",
-                   "bp_multi_top nangate45",
-                   "dynamic_node nangate45",
-                   "gcd nangate45",
-                   "ibex nangate45",
-                   "jpeg nangate45",
-                   "swerv nangate45",
-                   "swerv_wrapper nangate45",
-                   "tinyRocket nangate45",
-                   "aes sky130hd",
-                   "chameleon sky130hd",
-                   "gcd sky130hd",
-                   "ibex sky130hd",
-                   "jpeg sky130hd",
-                   "microwatt sky130hd",
-                   "riscv32i sky130hd",
-                   "aes sky130hs",
-                   "gcd sky130hs",
-                   "ibex sky130hs",
-                   "jpeg sky130hs",
-                   "riscv32i sky130hs";
-          }
-        }
+    stage('Testing'){
+      parallel{
+          stage('Tests') {
+            matrix {
+              axes {
+                axis {
+                  name 'TEST_SLUG';
+                  values "aes asap7",
+                        "ethmac asap7",
+                        "gcd asap7",
+                        "ibex asap7",
+                        "jpeg asap7",
+                        "sha3 asap7",
+                        "uart asap7",
+                        "aes nangate45",
+                        "black_parrot nangate45",
+                        "bp_be_top nangate45",
+                        "bp_fe_top nangate45",
+                        "bp_multi_top nangate45",
+                        "dynamic_node nangate45",
+                        "gcd nangate45",
+                        "ibex nangate45",
+                        "jpeg nangate45",
+                        "swerv nangate45",
+                        "swerv_wrapper nangate45",
+                        "tinyRocket nangate45",
+                        "aes sky130hd",
+                        "chameleon sky130hd",
+                        "gcd sky130hd",
+                        "ibex sky130hd",
+                        "jpeg sky130hd",
+                        "microwatt sky130hd",
+                        "riscv32i sky130hd",
+                        "aes sky130hs",
+                        "gcd sky130hs",
+                        "ibex sky130hs",
+                        "jpeg sky130hs",
+                        "riscv32i sky130hs";
+                }
+              }
 
-        stages {
-          stage('Test') {
-            options {
-              timeout(time: 6, unit: "HOURS");
-            }
-            agent any;
-            steps {
-              unstash "install";
-              script {
-                stage("${TEST_SLUG}") {
-                  catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+              stages {
+                stage('Test') {
+                  options {
+                    timeout(time: 6, unit: "HOURS");
+                  }
+                  agent any;
+                  steps {
+                    unstash "install";
+                    script {
+                      stage("${TEST_SLUG}") {
+                        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                          sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+                        }
+                      }
+                    }
+                  }
+                  post {
+                    always {
+                      catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                        archiveArtifacts artifacts: "flow/*tar.gz";
+                        archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+                      }
+                    }
                   }
                 }
               }
             }
-            post {
-              always {
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "flow/*tar.gz";
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-                }
-              }
+          }
+          stage('Docker Build') {
+            agent any;
+            steps {
+              sh "./build_openroad.sh";
             }
           }
-        }
-      }
-    }
-
-    stage('Docker Build') {
-      agent any;
-      steps {
-        sh "./build_openroad.sh";
       }
     }
 
