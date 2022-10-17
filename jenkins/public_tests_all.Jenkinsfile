@@ -21,7 +21,8 @@ pipeline {
         axes {
           axis {
             name 'TEST_SLUG';
-            values "aes asap7",
+            values "docker build" 
+                  "aes asap7",
                   "ethmac asap7",
                   "gcd asap7",
                   "ibex asap7",
@@ -56,12 +57,6 @@ pipeline {
         }
 
         stages {
-          stage('Docker Build') {
-            agent any;
-            steps {
-              sh "./build_openroad.sh";
-            }
-          }
           stage('Test') {
             options {
               timeout(time: 6, unit: "HOURS");
@@ -72,7 +67,11 @@ pipeline {
               script {
                 stage("${TEST_SLUG}") {
                   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+                    if ("${TEST_SLUG}" == 'docker build'){
+                      sh "./build_openroad.sh";
+                    } else {
+                      sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+                    }
                   }
                 }
               }
