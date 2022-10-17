@@ -67,7 +67,7 @@ export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
 export MACRO_BLOCKAGE_HALO = 25
 
-export PDN_CFG ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
+export PDN_TCL ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
 export DESIGN_TYPE = CHIP
 
