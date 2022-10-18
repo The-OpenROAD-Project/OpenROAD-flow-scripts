@@ -79,10 +79,8 @@ pipeline {
             post {
               always {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  if ("${TEST_SLUG}" != 'docker build'){
-                    archiveArtifacts artifacts: "flow/*tar.gz";
-                    archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
-                  }
+                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true;
+                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true;
                 }
               }
             }
