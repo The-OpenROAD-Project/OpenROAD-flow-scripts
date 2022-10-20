@@ -8,22 +8,11 @@ pipeline {
   }
   stages {
 
-    stage('Build') {
-      parallel {
-        stage('Local') {
-          agent any;
-          steps {
-            sh "./build_openroad.sh --local";
-            stash name: "install", includes: "tools/install/**";
-          }
-        }
-        stage('Docker') {
-          agent any;
-          steps {
-            sh "./build_openroad.sh";
-            sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
-          }
-        }
+    stage('Local Build') {
+      agent any;
+      steps {
+        sh "./build_openroad.sh --local";
+        stash name: "install", includes: "tools/install/**";
       }
     }
 
@@ -32,37 +21,38 @@ pipeline {
         axes {
           axis {
             name 'TEST_SLUG';
-            values "aes asap7",
-                   "ethmac asap7",
-                   "gcd asap7",
-                   "ibex asap7",
-                   "jpeg asap7",
-                   "sha3 asap7",
-                   "uart asap7",
-                   "aes nangate45",
-                   "black_parrot nangate45",
-                   "bp_be_top nangate45",
-                   "bp_fe_top nangate45",
-                   "bp_multi_top nangate45",
-                   "dynamic_node nangate45",
-                   "gcd nangate45",
-                   "ibex nangate45",
-                   "jpeg nangate45",
-                   "swerv nangate45",
-                   "swerv_wrapper nangate45",
-                   "tinyRocket nangate45",
-                   "aes sky130hd",
-                   "chameleon sky130hd",
-                   "gcd sky130hd",
-                   "ibex sky130hd",
-                   "jpeg sky130hd",
-                   "microwatt sky130hd",
-                   "riscv32i sky130hd",
-                   "aes sky130hs",
-                   "gcd sky130hs",
-                   "ibex sky130hs",
-                   "jpeg sky130hs",
-                   "riscv32i sky130hs";
+            values "docker build", 
+                  "aes asap7",
+                  "ethmac asap7",
+                  "gcd asap7",
+                  "ibex asap7",
+                  "jpeg asap7",
+                  "sha3 asap7",
+                  "uart asap7",
+                  "aes nangate45",
+                  "black_parrot nangate45",
+                  "bp_be_top nangate45",
+                  "bp_fe_top nangate45",
+                  "bp_multi_top nangate45",
+                  "dynamic_node nangate45",
+                  "gcd nangate45",
+                  "ibex nangate45",
+                  "jpeg nangate45",
+                  "swerv nangate45",
+                  "swerv_wrapper nangate45",
+                  "tinyRocket nangate45",
+                  "aes sky130hd",
+                  "chameleon sky130hd",
+                  "gcd sky130hd",
+                  "ibex sky130hd",
+                  "jpeg sky130hd",
+                  "microwatt sky130hd",
+                  "riscv32i sky130hd",
+                  "aes sky130hs",
+                  "gcd sky130hs",
+                  "ibex sky130hs",
+                  "jpeg sky130hs",
+                  "riscv32i sky130hs";
           }
         }
 
@@ -77,7 +67,11 @@ pipeline {
               script {
                 stage("${TEST_SLUG}") {
                   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+                    if ("${TEST_SLUG}" == 'docker build'){
+                      sh "./build_openroad.sh";
+                    } else {
+                      sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+                    }
                   }
                 }
               }
@@ -85,8 +79,8 @@ pipeline {
             post {
               always {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "flow/*tar.gz";
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true;
+                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true;
                 }
               }
             }
