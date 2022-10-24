@@ -14,6 +14,11 @@ pipeline {
         sh "./build_openroad.sh --local";
         stash name: "install", includes: "tools/install/**";
       }
+      post {
+        success {
+          sh "mkdir failures"
+        }
+      }
     }
 
     stage('Tests') {
@@ -78,11 +83,13 @@ pipeline {
               }
             }
             post {
-              always {
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true;
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true;
-                }
+              success {
+                archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true;
+                archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true;
+              }
+              failure {
+                sh "[ -f 'flow/*tar.gz' ] && cp flow/*tar.gz failures/."
+                archiveArtifacts artifacts: "failures/**/*", allowEmptyArchive: true;
               }
             }
           }

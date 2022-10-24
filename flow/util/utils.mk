@@ -7,15 +7,25 @@ clean_metadata:
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 
-.PHONY: update_metadata update_rules update_ok
+.PHONY: update_metadata update_rules update_ok 
 update_ok: update_metadata update_rules
 
-update_metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
-	cp -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
-	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
+update_all_ok:
+	for f in ${FAILURES_DIR}/*.tar.gz; do tar -xvf $$f --directory ${FAILURES_DIR}; done
+	$(eval RUN_ME_SCRIPTS := $(wildcard ${FAILURES_DIR}/**/vars*.sh))
+	for script in $(RUN_ME_SCRIPTS); do \
+	  PREFIX:=$(shell awk '{ sub(/\/vars-.*/, ""); print }' <<< $$script); \
+	  chmod +x $$script; \
+	  $$script; \
+	  $(MAKE) update_ok; \
+	done
+
+update_metadata: $(PREFIX)/$(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
+	cp -f $(PREFIX)/$(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
+	      $(PREFIX)/$(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
 
 update_rules:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing --tighten
+	$(UTILS_DIR)/genRuleFile.py $(PREFIX)/$(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing --tighten
 
 update_rules_force:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
