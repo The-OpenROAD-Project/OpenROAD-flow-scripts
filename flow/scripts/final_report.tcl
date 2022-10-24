@@ -4,6 +4,9 @@ load_design 6_1_fill.odb 6_1_fill.sdc "Starting final report"
 
 set_propagated_clock [all_clocks]
 
+# Ensure all OR created (rsz/cts) instances are connected
+global_connect
+
 # Delete routing obstructions for final DEF
 source $::env(SCRIPTS_DIR)/deleteRoutingObstructions.tcl
 deleteRoutingObstructions
