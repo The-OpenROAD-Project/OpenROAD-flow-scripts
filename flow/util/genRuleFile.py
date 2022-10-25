@@ -103,18 +103,6 @@ rules_dict = {
         'compare': '==',
     },
     # cts
-    'cts__clock__skew__setup': {
-        'mode': 'abs_padding',
-        'padding': 25,
-        'round_value': False,
-        'compare': '<=',
-    },
-    'cts__clock__skew__hold': {
-        'mode': 'abs_padding',
-        'padding': 25,
-        'round_value': False,
-        'compare': '<=',
-    },
     'cts__timing__setup__ws': {
         'mode': 'period',
         'padding': 25,
