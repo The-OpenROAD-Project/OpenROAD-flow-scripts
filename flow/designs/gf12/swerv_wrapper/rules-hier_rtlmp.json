@@ -32,11 +32,11 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 193,
+        "value": 5710,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 8513,
+        "value": 8542,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
