@@ -16,7 +16,7 @@ jobs:
       - name: Pull changes in OpenROAD submodule
         id: remote-update
         run: |
-          git submodule update --allow-unrelated-histories --remote --merge tools/OpenROAD
+          git submodule update --remote --merge tools/OpenROAD --allow-unrelated-histories 
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           echo "::set-output name=has_update=$(git diff-index --name-only HEAD)"
