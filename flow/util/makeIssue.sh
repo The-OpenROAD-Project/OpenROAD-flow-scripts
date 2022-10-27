@@ -13,7 +13,7 @@ ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \
                            IO_CONSTRAINTS \
                            MACRO_PLACEMENT \
                            RTLMP_CONFIG_FILE \
-                           DFF_LIB_FILE"        
+                           DFF_LIB_FILE"
 ISSUE_CP_PLATFORM_FILE_VARS="LIB_FILES \
                              SC_LEF \
                              TECH_LEF \
@@ -50,18 +50,18 @@ VARS_BASENAME=vars-$DESIGN_NICKNAME-$PLATFORM-$FLOW_VARIANT
 RUN_ME_SCRIPT=run-me-$DESIGN_NICKNAME-$PLATFORM-$FLOW_VARIANT.sh
 
 for i in $ISSUE_CP_FILE_VARS ; do
-  if [ -v ${i} ]; then
-    filename=$i
-    ISSUE_CP_FILES+="${!filename} "
-  fi
+    if [ -v ${i} ]; then
+        filename=$i
+        ISSUE_CP_FILES+="${!filename} "
+    fi
 done
 
 ISSUE_CP_FILES+="${ISSUE_CP_FILES_PLATFORM} \
-                $UTILS_DIR/def2stream.py \
-                ${RUN_ME_SCRIPT} \
-                $VARS_BASENAME.sh \
-                $VARS_BASENAME.tcl \
-                $VARS_BASENAME.gdb"
+    $UTILS_DIR/def2stream.py \
+    ${RUN_ME_SCRIPT} \
+    $VARS_BASENAME.sh \
+    $VARS_BASENAME.tcl \
+    $VARS_BASENAME.gdb"
 
 echo "Creating ${RUN_ME_SCRIPT} script"
 echo "#!/usr/bin/env bash"                     >  ${RUN_ME_SCRIPT}
@@ -102,14 +102,13 @@ tar --ignore-failed-read -czhf $1_${ISSUE_TAG}.tar.gz \
     $(for f in $ISSUE_CP_FILES; do echo $f; done | sort | uniq)
 
 if [ -v EXCLUDE_PLATFORM ]; then
-	# Remove liberty and lef files from tar file
-	gunzip -f $1_${ISSUE_TAG}.tar.gz
-	tar --list --file $1_${ISSUE_TAG}.tar | grep -iE "*.(lib|lef|tlef)$$" | xargs -r tar --delete --file $1_${ISSUE_TAG}.tar
-	gzip $1_${ISSUE_TAG}.tar
+    # Remove liberty and lef files from tar file
+    gunzip -f $1_${ISSUE_TAG}.tar.gz
+    tar --list --file $1_${ISSUE_TAG}.tar | grep -iE "*.(lib|lef|tlef)$$" | xargs -r tar --delete --file $1_${ISSUE_TAG}.tar
+    gzip $1_${ISSUE_TAG}.tar
 fi
 
-if [ ! -z $${COPY_ISSUE+x} ]; then
-    mkdir -p $${COPY_ISSUE} ;
-    cp $1_${ISSUE_TAG}.tar.gz $${COPY_ISSUE} ;
+if [ ! -z ${COPY_ISSUE+x} ]; then
+    mkdir -p ${COPY_ISSUE} ;
+    cp $1_${ISSUE_TAG}.tar.gz ${COPY_ISSUE} ;
 fi
-
