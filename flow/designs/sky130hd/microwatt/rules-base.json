@@ -19,14 +19,6 @@
         "value": 0,
         "compare": "=="
     },
-    "cts__clock__skew__setup": {
-        "value": 1.08,
-        "compare": "<="
-    },
-    "cts__clock__skew__hold": {
-        "value": 0.61,
-        "compare": "<="
-    },
     "cts__timing__setup__ws": {
         "value": 0.0,
         "compare": ">="
@@ -40,11 +32,11 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 11,
+        "value": 7558,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 4400,
+        "value": 7558,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
