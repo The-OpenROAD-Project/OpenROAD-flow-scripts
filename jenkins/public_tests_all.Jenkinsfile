@@ -89,6 +89,7 @@ pipeline {
               }
               failure {
                 sh "[ -f 'flow/*tar.gz' ] && cp flow/*tar.gz failures/."
+                sh "echo ${TEST_SLUG} | tr ' ' '-' >> failures/failed-designs.txt"
                 archiveArtifacts artifacts: "failures/**/*", allowEmptyArchive: true;
               }
             }
