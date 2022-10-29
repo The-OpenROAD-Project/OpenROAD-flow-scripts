@@ -22,9 +22,8 @@ jobs:
           git config pull.rebase false
           git fetch --all
           git reset --hard origin/master
-          git pull origin master --allow-unrelated-histories
-          echo "::set-output name=has_update=$(git diff-index --name-only HEAD)"
-      - if: ${{ steps.remote-update.outputs.has_update }}
+          echo "::set-output name=has_update=$(git --no-pager diff origin/master master --name-only)"
+      - if: ${{   steps.remote-update.outputs.has_update != '' }}
         name: Create Draft PR
         uses: peter-evans/create-pull-request@v4
         with:
