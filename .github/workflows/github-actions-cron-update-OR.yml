@@ -21,8 +21,8 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config pull.rebase false
           git fetch --all
-          git reset --hard origin/master
           echo "::set-output name=has_update=$(git --no-pager diff origin/master master --name-only)"
+          git reset --hard origin/master
       - if: ${{   steps.remote-update.outputs.has_update != '' }}
         name: Create Draft PR
         uses: peter-evans/create-pull-request@v4
