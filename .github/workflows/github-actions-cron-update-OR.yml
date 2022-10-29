@@ -31,8 +31,7 @@ jobs:
           delete-branch: true
           title: 'Update OpenROAD submodule'
           reviewers: |
-            vvbandeira
-            maliberty
+            habibayassin
           draft: true
           branch: update-openroad
 
