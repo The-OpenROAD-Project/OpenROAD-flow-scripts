@@ -19,10 +19,10 @@ jobs:
           cd tools/OpenROAD
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          echo "has_update=$(git --no-pager diff --name-only origin/master..HEAD)\n" >> $GITHUB_OUTPUT
+          echo "::set-output name=has_update::$(git --no-pager diff --name-only origin/master..HEAD)"
           git checkout master
           git pull
-      - if: ${{ steps.remote-update.outputs.has_update }} != ''"
+      - if: "steps.remote-update.outputs.has_update != ''"
         name: Create Draft PR
         uses: peter-evans/create-pull-request@v4
         with:
