@@ -22,7 +22,7 @@ jobs:
           echo "has_update=$(git --no-pager diff --name-only origin/master..HEAD)\n" >> $GITHUB_OUTPUT
           git checkout master
           git pull
-      - if: "steps.remote-update.outputs.has_update != ''"
+      - if: ${{ steps.remote-update.outputs.has_update }} != ''"
         name: Create Draft PR
         uses: peter-evans/create-pull-request@v4
         with:
