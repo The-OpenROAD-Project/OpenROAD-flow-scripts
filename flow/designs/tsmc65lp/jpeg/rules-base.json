@@ -19,14 +19,6 @@
         "value": 0,
         "compare": "=="
     },
-    "cts__clock__skew__setup": {
-        "value": 0.42,
-        "compare": "<="
-    },
-    "cts__clock__skew__hold": {
-        "value": 0.42,
-        "compare": "<="
-    },
     "cts__timing__setup__ws": {
         "value": -0.82,
         "compare": ">="
@@ -48,11 +40,11 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.2,
+        "value": 0.0,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.2,
+        "value": 0.0,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {

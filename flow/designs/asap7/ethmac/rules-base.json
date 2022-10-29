@@ -19,14 +19,6 @@
         "value": 0,
         "compare": "=="
     },
-    "cts__clock__skew__setup": {
-        "value": 240.05,
-        "compare": "<="
-    },
-    "cts__clock__skew__hold": {
-        "value": 240.05,
-        "compare": "<="
-    },
     "cts__timing__setup__ws": {
         "value": 0.0,
         "compare": ">="
@@ -72,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -1.5,
+        "value": -0.79,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
