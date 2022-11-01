@@ -39,7 +39,7 @@ ISSUE_CP_FILE_VARS=$ISSUE_CP_DESIGN_FILE_VARS
 ISSUE_CP_FILES_PLATFORM=""
 if [[ ! -v EXCLUDE_PLATFORM ]]; then
     ISSUE_CP_FILE_VARS+=$ISSUE_CP_PLATFORM_FILE_VARS
-    if [ -e $PLATFORM_DIR/*.cfg ]; then
+    if [[ -e $PLATFORM_DIR/*.cfg ]]; then
         ISSUE_CP_FILES_PLATFORM="$PLATFORM_DIR/*.tcl $PLATFORM_DIR/*.cfg"
     else
         ISSUE_CP_FILES_PLATFORM="$PLATFORM_DIR/*.tcl"
@@ -71,15 +71,17 @@ chmod +x ${RUN_ME_SCRIPT}
 
 echo "Creating ${VARS_BASENAME}.sh/tcl script"
 rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true
-for V in $(printenv)
+
+printenv | while read V;
 do
-    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* ]] ; then
-        echo ${V}
-        echo export "${V%=*}"=\'"${V#*=}"\' >> ${VARS_BASENAME}.sh ;
-        echo set env\("${V%=*}"\) \""${V#*=}\"" >> ${VARS_BASENAME}.tcl ;
-        echo set env "${V%=*}" "${V#*=}" >> ${VARS_BASENAME}.gdb ;
+    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} ]] ; then
+        rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
+        echo "export "${V%=*}"='"${rhs}"'" >> ${VARS_BASENAME}.sh ;
+        echo "set env("${V%=*}") \""${rhs}\""" >> ${VARS_BASENAME}.tcl ;
+        echo "set env "${V%=*}" "${rhs}"" >> ${VARS_BASENAME}.gdb ;
     fi
 done
+
 
 # remove variables starting with a dot
 sed -i -e '/export \./d' ${VARS_BASENAME}.sh
