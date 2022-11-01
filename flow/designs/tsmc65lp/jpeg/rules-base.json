@@ -32,19 +32,19 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 3222,
+        "value": 10,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 3222,
+        "value": 32,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": 0.0,
+        "value": -0.25,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": 0.0,
+        "value": -0.26,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {

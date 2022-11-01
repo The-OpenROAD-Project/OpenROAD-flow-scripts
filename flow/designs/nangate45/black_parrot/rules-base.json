@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 8976,
+        "value": 50,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {

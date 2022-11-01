@@ -32,11 +32,11 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 1415,
+        "value": 220,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1415,
+        "value": 190,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {

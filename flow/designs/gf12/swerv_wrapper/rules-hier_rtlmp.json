@@ -32,11 +32,11 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 5710,
+        "value": 193,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 8542,
+        "value": 8513,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
@@ -60,7 +60,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.2,
+        "value": -0.48,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {

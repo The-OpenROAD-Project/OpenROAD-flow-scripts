@@ -21,7 +21,7 @@ pipeline {
         axes {
           axis {
             name 'TEST_SLUG';
-            values "docker build", 
+            values "docker build",
                   "aes asap7",
                   "ethmac asap7",
                   "gcd asap7",
