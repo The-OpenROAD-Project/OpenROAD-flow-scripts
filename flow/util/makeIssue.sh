@@ -73,9 +73,12 @@ echo "Creating ${VARS_BASENAME}.sh/tcl script"
 rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true
 for V in $(printenv)
 do
-    echo export "${V#=*}"=\'"${V#*=}"\' >> ${VARS_BASENAME}.sh ;
-    echo set env\("${V#=*}"\) \""${V#*=}\"" >> ${VARS_BASENAME}.tcl ;
-    echo set env "${V#=*}" "${V#*=}" >> ${VARS_BASENAME}.gdb ;
+    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* ]] ; then
+        echo ${V}
+        echo export "${V%=*}"=\'"${V#*=}"\' >> ${VARS_BASENAME}.sh ;
+        echo set env\("${V%=*}"\) \""${V#*=}\"" >> ${VARS_BASENAME}.tcl ;
+        echo set env "${V%=*}" "${V#*=}" >> ${VARS_BASENAME}.gdb ;
+    fi
 done
 
 # remove variables starting with a dot
