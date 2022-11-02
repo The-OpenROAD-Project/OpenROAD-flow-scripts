@@ -74,7 +74,7 @@ rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true
 
 printenv | while read V;
 do
-    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} ]] ; then
+    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} && ${V%=*} != *"MAKE"* ]] ; then
         rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
         echo "export "${V%=*}"='"${rhs}"'" >> ${VARS_BASENAME}.sh ;
         echo "set env("${V%=*}") \""${rhs}\""" >> ${VARS_BASENAME}.tcl ;
