@@ -72,9 +72,10 @@ chmod +x ${RUN_ME_SCRIPT}
 echo "Creating ${VARS_BASENAME}.sh/tcl script"
 rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true
 
+EXCLUDED_VARS="MAKE|PYTHONPATH|PKG_CONFIG_PATH|PERL5LIB|PCP_DIR|PATH|MANPATH|LD_LIBRARY_PATH|INFOPATH|HOME|PWD|MAIL"
 printenv | while read V;
 do
-    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} && ${V%=*} != *"MAKE"* ]] ; then
+    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} && ${V%=*} != *"MAKE"* && ! ${V%=*} =~ ^(${EXCLUDED_VARS})$ ]] ; then
         rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
         echo "export "${V%=*}"='"${rhs}"'" >> ${VARS_BASENAME}.sh ;
         echo "set env("${V%=*}") \""${rhs}\""" >> ${VARS_BASENAME}.tcl ;
