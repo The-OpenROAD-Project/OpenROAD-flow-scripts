@@ -119,13 +119,6 @@ export KLAYOUT_TECH_FILE       = $(PLATFORM_DIR)/KLayout/asap7.lyt
 export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules
 
 # XS - defining function for selecting different timing library set
-# XS - defining function for 4x sizing
-ifdef ($(ASAP7_USE4X))
-   export 4X                      = 1
-   export TECH_LEF                = $(PLATFORM_DIR)/lef/asap7_tech_4x_201209.lef
-   export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_27_R_4x_201211.lef
-   export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_27_R_4x_201211.gds
-endif
 
 # XS - defining function for using LVT
 ifeq ($(ASAP7_USELVT), 1)
