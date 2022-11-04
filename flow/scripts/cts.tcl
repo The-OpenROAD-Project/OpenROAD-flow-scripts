@@ -2,8 +2,6 @@ utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 3_place.odb 3_place.sdc "Starting CTS"
 
-set_dont_use $::env(DONT_USE_CELLS)
-
 # Clone clock tree inverters next to register loads
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters

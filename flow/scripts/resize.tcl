@@ -24,8 +24,6 @@ puts [sta::network_leaf_pin_count]
 
 puts ""
 
-set_dont_use $::env(DONT_USE_CELLS)
-
 # Do not buffer chip-level designs
 if {![info exists ::env(FOOTPRINT)]} {
   puts "Perform port buffering..."

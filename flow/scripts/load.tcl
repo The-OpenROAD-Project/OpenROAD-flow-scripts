@@ -29,6 +29,8 @@ proc load_design {design_file sdc_file msg} {
     }
 
     source $::env(PLATFORM_DIR)/setRC.tcl
+
+    set_dont_use $::env(DONT_USE_CELLS)
   } else {
     puts $msg
   }

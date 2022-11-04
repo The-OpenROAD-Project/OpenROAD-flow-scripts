@@ -17,8 +17,6 @@ proc find_macros {} {
   return $macros
 }
 
-set_dont_use $::env(DONT_USE_CELLS)
-
 if {[find_macros] != ""} {
   if {[info exists ::env(RTLMP_FLOW)]} {
     puts "RTLMP flow enabled. Skipping tdms place."
