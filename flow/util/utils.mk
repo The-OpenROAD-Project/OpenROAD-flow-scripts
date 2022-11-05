@@ -7,12 +7,12 @@ clean_metadata:
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 
-.PHONY: update_metadata update_rules update_ok 
+.PHONY: update_metadata update_rules update_ok update_all_ok
 update_ok: update_metadata update_rules
 
 update_all_ok:
 	for f in ${FAILURES_DIR}/*.tar.gz; do tar -xvf $$f --strip 1; done
-	$(eval file := $(shell cat ./failed-designs.txt))
+	$(eval file := $(shell cat ${FAILURES_DIR}/failed-designs.txt))
 	for line in $(file); do \
 		chmod +x ./vars-$$line-$(FLOW_VARIANT).sh; \
 		./vars-$$line-$(FLOW_VARIANT).sh; \
