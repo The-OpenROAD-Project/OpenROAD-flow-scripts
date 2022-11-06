@@ -29,7 +29,8 @@ jobs:
           delete-branch: true
           title: 'Update yosys submodule'
           reviewers: |
-            habibayassin
+            vvbandeira
+            maliberty
           draft: true
           branch: update-yosys
 
