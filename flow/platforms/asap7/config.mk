@@ -96,14 +96,14 @@ export PLACE_DENSITY ?= 0.60
 export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
 
 # TritonCTS options
-export CTS_BUF_CELL            = BUFx4_ASAP7_75t_R
+export CTS_BUF_CELL            ?= BUFx4_ASAP7_75t_R
 
 export CTS_BUF_DISTANCE        ?= 60
 
 # Fill cells used in fill cell insertion
 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_R"
 
-export TAP_CELL_NAME					 = TAPCELL_ASAP7_75t_R
+export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_R
 
 export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
 
@@ -135,9 +135,9 @@ ifeq ($(ASAP7_USELVT), 1)
 
 	 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_L"
 
-	 export TAP_CELL_NAME					  = TAPCELL_ASAP7_75t_L
+	 export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_L
 
-	 export GDS_FILES                = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_L_220121a.gds \
+	 export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_L_220121a.gds \
 																	  $(ADDITIONAL_GDS)
 
 	 export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_L_1x_220121a.lef
