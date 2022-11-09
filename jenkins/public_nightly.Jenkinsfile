@@ -33,7 +33,7 @@ pipeline {
 
     stage('Build Local') {
       steps {
-        sh "./build_openroad.sh --local --no_init";
+        sh "./build_openroad.sh --local --no_init --latest";
         stash name: "install", includes: "tools/install/**";
       }
     }
