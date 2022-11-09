@@ -103,18 +103,6 @@ rules_dict = {
         'compare': '==',
     },
     # cts
-    'cts__clock__skew__setup': {
-        'mode': 'abs_padding',
-        'padding': 25,
-        'round_value': False,
-        'compare': '<=',
-    },
-    'cts__clock__skew__hold': {
-        'mode': 'abs_padding',
-        'padding': 25,
-        'round_value': False,
-        'compare': '<=',
-    },
     'cts__timing__setup__ws': {
         'mode': 'period',
         'padding': 25,
@@ -140,18 +128,16 @@ rules_dict = {
         'compare': '>=',
     },
     'cts__design__instance__count__setup_buffer': {
-        'mode': 'padding',
-        'padding': 10,
-        'min_max': max,
-        'min_max_sum': 10,
+        'mode': 'metric',
+        'padding': 5,
+        'metric': 'placeopt__design__instance__count__stdcell',
         'round_value': True,
         'compare': '<=',
     },
     'cts__design__instance__count__hold_buffer': {
-        'mode': 'padding',
-        'padding': 10,
-        'min_max': max,
-        'min_max_sum': 10,
+        'mode': 'metric',
+        'padding': 5,
+        'metric': 'placeopt__design__instance__count__stdcell',
         'round_value': True,
         'compare': '<=',
     },
@@ -290,6 +276,13 @@ for field, option in rules_dict.items():
     elif option['mode'] == 'abs_padding':
         rule_value = abs(metrics[field]) * (1 + option['padding'] / 100)
 
+    elif option['mode'] == 'metric':
+        rule_value = metrics[option['metric']] * option['padding'] / 100
+
+    if (field == 'cts__design__instance__count__setup_buffer'
+            or field == 'cts__design__instance__count__hold_buffer'):
+        rule_value = max(rule_value, metrics[field] * 1.1)
+
     if 'min_max' in option.keys():
         if 'min_max_direct' in option.keys():
             rule_value = option['min_max'](
@@ -305,12 +298,6 @@ for field, option in rules_dict.items():
     if rule_value is None:
         print(f"[ERROR] Metric {field} has invalid mode {option['mode']}.")
         sys.exit(1)
-
-    if rule_value == 0 and \
-            (field == 'cts__design__instance__count__setup_buffer'
-             or field == 'cts__design__instance__count__hold_buffer'):
-        rule_value = ceil(
-            metrics['placeopt__design__instance__count__stdcell'] * 0.1)
 
     if option['round_value'] and not isinf(rule_value):
         rule_value = int(round(rule_value))

@@ -8,43 +8,35 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 12266,
+        "value": 12255,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 19405,
+        "value": 19402,
         "compare": "<="
     },
     "detailedplace__design__violations": {
         "value": 0,
         "compare": "=="
     },
-    "cts__clock__skew__setup": {
-        "value": 721.94,
-        "compare": "<="
-    },
-    "cts__clock__skew__hold": {
-        "value": 721.94,
-        "compare": "<="
-    },
     "cts__timing__setup__ws": {
         "value": -76.4,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -1931.74,
+        "value": -1862.49,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -1931.74,
+        "value": -1862.49,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 1040,
+        "value": 1034,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 382,
+        "value": 844,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {

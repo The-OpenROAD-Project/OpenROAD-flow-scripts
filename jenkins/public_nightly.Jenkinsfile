@@ -33,15 +33,8 @@ pipeline {
 
     stage('Build Local') {
       steps {
-        sh "./build_openroad.sh --local --no_init";
+        sh "./build_openroad.sh --local --no_init --latest";
         stash name: "install", includes: "tools/install/**";
-      }
-    }
-
-    stage('Build Docker') {
-      steps {
-        sh "./build_openroad.sh --no_init";
-        sh 'docker run -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts flow/test/test_helper.sh';
       }
     }
 
@@ -50,7 +43,8 @@ pipeline {
         axes {
           axis {
             name 'TEST_SLUG';
-            values "aes asap7",
+            values "docker build",
+                   "aes asap7",
                    "ethmac asap7",
                    "gcd asap7",
                    "ibex asap7",
@@ -66,7 +60,7 @@ pipeline {
                    "gcd nangate45",
                    "ibex nangate45",
                    "jpeg nangate45",
-                   /* "swerv nangate45", */
+                   "swerv nangate45",
                    "swerv_wrapper nangate45",
                    "tinyRocket nangate45",
                    "aes sky130hd",
@@ -95,7 +89,11 @@ pipeline {
               script {
                 stage("${TEST_SLUG}") {
                   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+                    if ("${TEST_SLUG}" == 'docker build'){
+                      sh "./build_openroad.sh --no_init";
+                    } else {
+                      sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+                    }
                   }
                 }
               }
@@ -103,8 +101,8 @@ pipeline {
             post {
               always {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "flow/*tar.gz";
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*";
+                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true;
+                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true;
                 }
               }
             }

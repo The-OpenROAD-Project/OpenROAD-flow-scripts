@@ -19,14 +19,6 @@
         "value": 0,
         "compare": "=="
     },
-    "cts__clock__skew__setup": {
-        "value": 9.19,
-        "compare": "<="
-    },
-    "cts__clock__skew__hold": {
-        "value": 1.78,
-        "compare": "<="
-    },
     "cts__timing__setup__ws": {
         "value": -2.5,
         "compare": ">="
@@ -40,19 +32,19 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 514,
+        "value": 6661,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1622,
+        "value": 6661,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -1.32,
+        "value": -1.72,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -1.32,
+        "value": -1.73,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {

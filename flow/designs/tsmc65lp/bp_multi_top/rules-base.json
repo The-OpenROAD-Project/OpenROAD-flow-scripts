@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 1375269,
+        "value": 1374876,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -19,44 +19,36 @@
         "value": 0,
         "compare": "=="
     },
-    "cts__clock__skew__setup": {
-        "value": 0.78,
-        "compare": "<="
-    },
-    "cts__clock__skew__hold": {
-        "value": 0.78,
-        "compare": "<="
-    },
     "cts__timing__setup__ws": {
         "value": -2.19,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -3.59,
+        "value": -3.47,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -3.34,
+        "value": -3.3,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 35,
+        "value": 4264,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 8391,
+        "value": 8400,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -1.75,
+        "value": -2.21,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -1.75,
+        "value": -2.21,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 7116896,
+        "value": 7073895,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -64,15 +56,15 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.96,
+        "value": -1.91,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 1441369,
+        "value": 1437689,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.2,
+        "value": -0.87,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -92,7 +84,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -12.3,
+        "value": -36.39,
         "compare": ">="
     }
 }
