@@ -2,6 +2,14 @@
 
 set -euo pipefail
 
+printenv | while read V;
+do  
+    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} ]] ; then
+        rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
+        export "${V%=*}"="${rhs}"
+    fi
+done
+
 currentDate=$(date +"%Y-%m-%d_%H-%M")
 ISSUE_TAG=${ISSUE_TAG:-"${DESIGN_NICKNAME}_${PLATFORM}_${FLOW_VARIANT}_${currentDate}"}
 ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \

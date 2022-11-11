@@ -1,5 +1,6 @@
 # Utilities
 #===============================================================================
+.EXPORT_ALL_VARIABLES:
 
 metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
 
