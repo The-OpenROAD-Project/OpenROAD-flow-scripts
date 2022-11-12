@@ -22,7 +22,7 @@ jobs:
           echo "::set-output name=has_update::$(git --no-pager diff --name-only origin/master..HEAD)"
           git fetch --all --tags
           latesttag=$(git describe --tags)
-          git checkout ${latesttag}
+          git checkout tags/${latesttag} -b update-yosys
       - if: "steps.remote-update.outputs.has_update != ''"
         name: Create Draft PR
         uses: peter-evans/create-pull-request@v4
