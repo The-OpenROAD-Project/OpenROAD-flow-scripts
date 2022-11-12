@@ -22,8 +22,8 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --get remote.origin.fetch
           echo "::set-output name=has_update::$(git --no-pager diff --name-only origin/master..HEAD)"
-          git fetch --tags
-          latesttag=$(git describe --tags)
+          git fetch --all --tags
+          latesttag=$(git describe --tags `git rev-list --tags --max-count=1`)
           git checkout ${latesttag}
       - if: "steps.remote-update.outputs.has_update != ''"
         name: Create Draft PR
