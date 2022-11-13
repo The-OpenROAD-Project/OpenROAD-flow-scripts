@@ -2,7 +2,7 @@ export DESIGN_NAME = gcd
 export PLATFORM    = nangate45
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/gcd.v
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdcc
 export ABC_AREA      = 1
 
 # Adders degrade GCD
