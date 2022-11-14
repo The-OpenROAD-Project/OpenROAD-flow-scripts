@@ -74,22 +74,22 @@ pipeline {
                         sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
                       }
                       currentBuild.result = 'SUCCESS'
+                      stageResults."${TEST_SLUG}" = "SUCCESS"
                   } catch (err) {
                       echo "Caught: ${err}"
+                      sh "mkdir -p flow/results/failures"
+                      sh "cp flow/*tar.gz flow/results/failures/."
+                      sh "echo ${TEST_SLUG} | tr ' ' '-' >> flow/results/failures/failed-designs.txt"
                       currentBuild.result = 'FAILURE'
+                      stageResults."${TEST_SLUG}" = "FAILURE"
                   }
                 }
               }
             }
             post {
-              success {
+              always {
                 archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true;
                 archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true;
-              }
-              failure {
-                sh "mkdir -p flow/results/failures"
-                sh "cp flow/*tar.gz flow/results/failures/."
-                sh "echo ${TEST_SLUG} | tr ' ' '-' >> flow/results/failures/failed-designs.txt"
                 archiveArtifacts artifacts: "flow/results/failures/**/*", allowEmptyArchive: true;
               }
             }
