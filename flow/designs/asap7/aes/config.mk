@@ -4,7 +4,7 @@ export DESIGN_NAME            = aes_cipher_top
 export DESIGN_NICKNAME        = aes
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdcc
 
 export ABC_AREA               = 1
 
