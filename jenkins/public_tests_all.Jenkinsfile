@@ -67,12 +67,16 @@ pipeline {
               unstash "install";
               script {
                 stage("${TEST_SLUG}") {
-                  catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    if ("${TEST_SLUG}" == 'docker build'){
-                      sh "./build_openroad.sh";
-                    } else {
-                      sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
-                    }
+                  try {
+                      if ("${TEST_SLUG}" == 'docker build'){
+                        sh "./build_openroad.sh";
+                      } else {
+                        sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+                      }
+                      currentBuild.result = 'SUCCESS'
+                  } catch (err) {
+                      echo "Caught: ${err}"
+                      currentBuild.result = 'FAILURE'
                   }
                 }
               }
