@@ -74,14 +74,12 @@ pipeline {
                         sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
                       }
                       currentBuild.result = 'SUCCESS'
-                      stageResults.${TEST_SLUG} = "SUCCESS"
                   } catch (err) {
                       error(${err})
                       sh "mkdir -p flow/results/failures"
                       sh "cp flow/*tar.gz flow/results/failures/."
                       sh "echo ${TEST_SLUG} | tr ' ' '-' >> flow/results/failures/failed-designs.txt"
                       currentBuild.result = 'FAILURE'
-                      stageResults.${TEST_SLUG} = "FAILURE"
                   }
                 }
               }
