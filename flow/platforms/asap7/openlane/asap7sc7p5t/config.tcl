@@ -10,16 +10,29 @@ set ::env(LIB_TYPICAL) ""
 set ::env(LIB_SLOWEST) ""
 
 set lib_path "$libs_ref/lib"
-foreach lib {"AO" "INVBUF" "OA" "SEQ" "SIMPLE"} {
-    append ::env(LIB_FASTEST) "$lib_path/asap7sc7p5t_${lib}_RVT_FF_nldm_201020.lib "
-    append ::env(LIB_TYPICAL) "$lib_path/asap7sc7p5t_${lib}_RVT_TT_nldm_201020.lib "
-    append ::env(LIB_SLOWEST) "$lib_path/asap7sc7p5t_${lib}_RVT_SS_nldm_201020.lib "
-}
+
+append ::env(LIB_FASTEST) "$lib_path/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib "
+append ::env(LIB_FASTEST) "$lib_path/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib "
+append ::env(LIB_FASTEST) "$lib_path/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib "
+append ::env(LIB_FASTEST) "$lib_path/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib "
+append ::env(LIB_FASTEST) "$lib_path/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib "
+
+append ::env(LIB_SLOWEST) "$lib_path/asap7sc7p5t_AO_RVT_SS_nldm_211120.lib "
+append ::env(LIB_SLOWEST) "$lib_path/asap7sc7p5t_INVBUF_RVT_SS_nldm_220122.lib "
+append ::env(LIB_SLOWEST) "$lib_path/asap7sc7p5t_OA_RVT_SS_nldm_211120.lib "
+append ::env(LIB_SLOWEST) "$lib_path/asap7sc7p5t_SEQ_RVT_SS_nldm_220123.lib "
+append ::env(LIB_SLOWEST) "$lib_path/asap7sc7p5t_SIMPLE_RVT_SS_nldm_211120.lib "
+
+append ::env(LIB_TYPICAL) "$lib_path/asap7sc7p5t_AO_RVT_TT_nldm_211120.lib "
+append ::env(LIB_TYPICAL) "$lib_path/asap7sc7p5t_INVBUF_RVT_TT_nldm_220122.lib "
+append ::env(LIB_TYPICAL) "$lib_path/asap7sc7p5t_OA_RVT_TT_nldm_211120.lib "
+append ::env(LIB_TYPICAL) "$lib_path/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib "
+append ::env(LIB_TYPICAL) "$lib_path/asap7sc7p5t_SIMPLE_RVT_TT_nldm_211120.lib "
 
 set ::env(LIB_SYNTH) $::env(LIB_TYPICAL)
 set ::env(LIB_RESIZER_OPT) $::env(LIB_SYNTH)
 
-set ::env(DFF_LIB_SYNTH) "$lib_path/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib"
+set ::env(DFF_LIB_SYNTH) "$lib_path/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib"
 
 set ::env(LIB_CTS) $::env(LIB_TYPICAL)
 

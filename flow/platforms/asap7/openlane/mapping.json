@@ -12,12 +12,12 @@
     "lef": {
         "pdk": "flow/platforms/asap7/lef",
         "openlane": "libs.ref/asap7sc7p5t/lef",
-        "files": ["asap7sc7p5t_27_R_1x_201211.lef"]
+        "files": ["asap7sc7p5t_28_R_1x_220121a.lef"]
     },
     "gds": {
         "pdk": "flow/platforms/asap7/gds",
         "openlane": "libs.ref/asap7sc7p5t/gds",
-        "files": ["asap7sc7p5t_27_R_1x_201211.gds"]
+        "files": ["asap7sc7p5t_28_R_220121a.gds"]
     },
     "klayout": {
         "pdk": "flow/platforms/asap7/KLayout",
