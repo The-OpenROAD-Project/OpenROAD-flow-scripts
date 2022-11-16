@@ -11,11 +11,17 @@ clean_metadata:
 update_ok: update_metadata update_rules
 
 update_all_ok:
-	for f in ${FAILURES_DIR}/*.tar.gz; do tar -xvf $$f --strip 1; done
+	-@for f in ${FAILURES_DIR}/*.tar.gz; do \
+		subName=$${f##*/}; \
+		subName=$${subName/final_report_/''}; \
+		subName=$${subName//_[0-9]*/}; \
+		echo $${subName/_/-} >> ${FAILURES_DIR}/failed-designs.txt; \
+		tar -xvf $$f --strip 1; \
+	done
 	$(eval file := $(shell cat ${FAILURES_DIR}/failed-designs.txt))
 	for line in $(file); do \
-		chmod +x ./vars-$$line-$(FLOW_VARIANT).sh; \
-		./vars-$$line-$(FLOW_VARIANT).sh; \
+		chmod +x ./vars-$$line.sh; \
+		./vars-$$line.sh; \
 		$(MAKE) update_ok; \
 	done
 
