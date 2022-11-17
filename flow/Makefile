@@ -75,6 +75,8 @@
 
 # DESIGN_CONFIG=./designs/intel22/gcd/config.mk
 # DESIGN_CONFIG=./designs/intel22/aes/config.mk
+
+# DESIGN_CONFIG=./designs/gf180/aes/config.mk
 #
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
