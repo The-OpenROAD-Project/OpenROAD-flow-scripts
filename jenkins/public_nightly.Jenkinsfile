@@ -74,7 +74,8 @@ pipeline {
                    "gcd sky130hs",
                    "ibex sky130hs",
                    "jpeg sky130hs",
-                   "riscv32i sky130hs";
+                   "riscv32i sky130hs",
+                   "aes gf180";
           }
         }
 
