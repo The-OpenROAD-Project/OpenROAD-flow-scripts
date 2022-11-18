@@ -77,9 +77,8 @@ pipeline {
                   } catch (err) {
                       sh "mkdir -p flow/results/failures"
                       sh "cp flow/*tar.gz flow/results/failures/."
-                      sh "echo ${TEST_SLUG} | tr ' ' '-' >> flow/results/failures/failed-designs.txt"
                       currentBuild.result = 'FAILURE'
-                      error("Test failed")
+                      error("${err}")
                   }
                 }
               }
