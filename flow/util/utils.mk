@@ -10,16 +10,12 @@ clean_metadata:
 .PHONY: update_metadata update_rules update_ok update_all_ok
 update_ok: update_metadata update_rules
 
+FAILURES_DIR = $(RESULTS_DIR)
+
 update_all_ok:
-	-@for f in ${FAILURES_DIR}/*.tar.gz; do \
-		subName=$${f##*/}; \
-		subName=$${subName/final_report_/''}; \
-		subName=$${subName//_[0-9]*/}; \
-		echo $${subName/_/-} >> ${FAILURES_DIR}/failed-designs.txt; \
-		tar -xvf $$f --strip 1; \
-	done
-	$(eval file := $(shell cat ${FAILURES_DIR}/failed-designs.txt))
-	for line in $(file); do \
+	for f in ${FAILURES_DIR}/*.tar.gz; do tar -xvf $$f --strip 1; done
+	$(eval FAILED_DESIGNS := $(shell for f in ${FAILURES_DIR}/*.tar.gz; do subName=$${f##*/}; subName=$${subName/final_report_/''}; subName=$${subName//_[0-9]*/}; subName=`echo $${subName} | tr _ -`; TEMP+="$${subName} "; done; echo $${TEMP}))
+	for line in $(FAILED_DESIGNS); do \
 		chmod +x ./vars-$$line.sh; \
 		./vars-$$line.sh; \
 		$(MAKE) update_ok; \
