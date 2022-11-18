@@ -1,7 +1,5 @@
 # Utilities
 #===============================================================================
-.EXPORT_ALL_VARIABLES:
-
 metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
 
 clean_metadata:
@@ -74,6 +72,11 @@ clean_test:
 # Set the ISSUE_TAG variable to rename the generated tar file
 #-------------------------------------------------------------------------------
 ISSUE_SCRIPTS = $(patsubst %.tcl,%,$(notdir $(sort $(wildcard $(SCRIPTS_DIR)/*.tcl))))
+define \n
+
+
+endef
+export ISSUE_VARIABLES := $(foreach V, $(.VARIABLES),$(if $(filter-out environment% default automatic, $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD%, $(V)),$V=$($V))${\n}))
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	$(UTILS_DIR)/makeIssue.sh $*
