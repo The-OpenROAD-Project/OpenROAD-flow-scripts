@@ -75,6 +75,8 @@
 
 # DESIGN_CONFIG=./designs/intel22/gcd/config.mk
 # DESIGN_CONFIG=./designs/intel22/aes/config.mk
+
+# DESIGN_CONFIG=./designs/gf180/aes/config.mk
 #
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
@@ -581,6 +583,10 @@ $(RESULTS_DIR)/5_route.odb: $(RESULTS_DIR)/5_2_route.odb
 
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
 	cp $< $@
+
+$(RESULTS_DIR)/5_route.v:
+	@export OR_DB=5_route ;\
+	$(OPENROAD_CMD) ./scripts/write_verilog.tcl
 
 clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
