@@ -67,18 +67,20 @@ pipeline {
               unstash "install";
               script {
                 stage("${TEST_SLUG}") {
-                  try {
-                      if ("${TEST_SLUG}" == 'docker build'){
-                        sh "./build_openroad.sh";
-                      } else {
+                  if ("${TEST_SLUG}" == 'docker build'){
+                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                      sh "./build_openroad.sh";
+                    }
+                  } else {
+                    try {
                         sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
-                      }
-                      currentBuild.result = 'SUCCESS'
-                  } catch (err) {
-                      sh "mkdir -p flow/results/failures"
-                      sh "cp flow/*tar.gz flow/results/failures/."
-                      currentBuild.result = 'FAILURE'
-                      error("${err}")
+                        currentBuild.result = 'SUCCESS';
+                    } catch (err) {
+                        sh "mkdir -p flow/results/failures";
+                        sh "cp flow/*tar.gz flow/results/failures/.";
+                        currentBuild.result = 'FAILURE';
+                        error("${err}");
+                    }
                   }
                 }
               }
