@@ -6,16 +6,28 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report! It helps us more quickly track, narrow down, and address bugs.
-  - type: markdown
+  - type: dropdown
+    id: version
     attributes:
-      value: |
-        ---
-        #### Please include any tags in the below description that apply to this issue:
-        * [Toolname] for runtime issues (e.g. [RePlAce], [FastRoute])
-        * [Documentation] for documentation errors
-        * [Build] for compilation-related issues
-        * [Flow] for any util, flow Makefile, or flow script issues
-        * [Design] for example design issues (i.e. the design does not pass functional validation, etc.)
+      label: Subject
+      description: Choose the category that best fits your bug/problem.
+      options:
+        - "[Documentation] for documentation errors."
+        - "[Build] for compilation-related issues."
+        - "[Flow] for any util, flow Makefile, or flow script issues."
+        - "[Design] for example design issues (i.e. the design does not pass functional validation, etc.)"
+        - "[Stage]: Synthesis."
+        - "[Stage]: Floorplaning."
+        - "[Stage]: I/O Placement."
+        - "[Stage]: CTS."
+        - "[Stage]: Global Placement."
+        - "[Stage]: Detail Placement."
+        - "[Stage]: Global Router."
+        - "[Stage]: Detail Router."
+        - "[Stage]: GDS generation."
+        - "[Stage]: Other. Please describe below."
+    validations:
+      required: true
   - type: textarea
     id: description
     attributes:
