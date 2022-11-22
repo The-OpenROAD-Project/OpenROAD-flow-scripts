@@ -38,6 +38,5 @@ jobs:
             maliberty
           draft: true
           branch: update-yosys
-
-
-        
+          commit-message: |
+              [BOT] Update yosys submodule
