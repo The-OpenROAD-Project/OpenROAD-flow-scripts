@@ -35,6 +35,5 @@ jobs:
             maliberty
           draft: true
           branch: update-openroad
-
-
-        
+          commit-message: |
+              [BOT] Update OpenROAD submodule
