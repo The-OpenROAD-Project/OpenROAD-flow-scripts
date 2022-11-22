@@ -10,7 +10,7 @@ clean_metadata:
 .PHONY: update_metadata update_rules update_ok update_all_ok
 update_ok: update_metadata update_rules
 
-FAILURES_DIR = $(RESULTS_DIR)
+FAILURES_DIR = $(RESULTS_DIR)/failures
 
 update_all_ok:
 	for f in ${FAILURES_DIR}/*.tar.gz; do tar -xvf $$f --strip 1; done

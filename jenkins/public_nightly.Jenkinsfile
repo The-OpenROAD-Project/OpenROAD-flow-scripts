@@ -89,11 +89,19 @@ pipeline {
               unstash "install";
               script {
                 stage("${TEST_SLUG}") {
-                  catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    if ("${TEST_SLUG}" == 'docker build'){
-                      sh "./build_openroad.sh --no_init";
-                    } else {
-                      sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+                  if ("${TEST_SLUG}" == 'docker build'){
+                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                      sh "./build_openroad.sh";
+                    }
+                  } else {
+                    try {
+                        sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
+                        currentBuild.result = 'SUCCESS';
+                    } catch (err) {
+                        sh "mkdir -p flow/results/failures";
+                        sh "cp flow/*tar.gz flow/results/failures/.";
+                        currentBuild.result = 'FAILURE';
+                        error("${err}");
                     }
                   }
                 }
@@ -101,10 +109,9 @@ pipeline {
             }
             post {
               always {
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true;
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true;
-                }
+                archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true;
+                archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true;
+                archiveArtifacts artifacts: "flow/results/failures/**/*", allowEmptyArchive: true;
               }
             }
           }
