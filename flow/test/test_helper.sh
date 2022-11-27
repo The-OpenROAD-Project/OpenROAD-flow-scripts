@@ -5,14 +5,14 @@ set -eoux pipefail
 cd "$(dirname $(readlink -f $0))/../"
 
 # Setting args (and setting default values for testing)
-DESIGN_NAME=${1:-gcd}
+DESIGN_TOP_NAME=${1:-gcd}
 PLATFORM=${2:-nangate45}
 CONFIG_MK=${3:-config.mk}
 if [ $# -eq 4 ]; then
   FLOW_VARIANT=$4
 fi
-DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_NAME/$CONFIG_MK
-LOG_FILE=./logs/$PLATFORM/$DESIGN_NAME.log
+DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_TOP_NAME/$CONFIG_MK
+LOG_FILE=./logs/$PLATFORM/$DESIGN_TOP_NAME.log
 mkdir -p ./logs/$PLATFORM
 
 __make="make DESIGN_CONFIG=$DESIGN_CONFIG"

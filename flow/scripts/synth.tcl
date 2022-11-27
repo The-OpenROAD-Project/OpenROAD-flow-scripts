@@ -6,7 +6,7 @@ if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 &
 }
 
 # Generic synthesis
-synth  -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS)
+synth  -top $::env(DESIGN_TOP_NAME) {*}$::env(SYNTH_ARGS)
 
 if { [info exists ::env(USE_LSORACLE)] } {
     set lso_script [open $::env(OBJECTS_DIR)/lso.script w]

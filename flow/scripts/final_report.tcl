@@ -30,7 +30,7 @@ if {[info exist ::env(RCX_RULES)]} {
 
   # Write Spef
   write_spef $::env(RESULTS_DIR)/6_final.spef
-  file delete $::env(DESIGN_NAME).totCap
+  file delete $::env(DESIGN_TOP_NAME).totCap
 
   # Read Spef for OpenSTA
   read_spef $::env(RESULTS_DIR)/6_final.spef

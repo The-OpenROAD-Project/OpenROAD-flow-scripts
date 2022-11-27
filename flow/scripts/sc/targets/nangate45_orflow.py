@@ -70,7 +70,7 @@ def setup(chip):
         'NUM_CORES': f'{len(os.sched_getaffinity(0))}',
 
         # Project-specific
-        'DESIGN_NAME': chip.get('design'),
+        'DESIGN_TOP_NAME': chip.get('design'),
         'VERILOG_FILES': ' '.join(chip.get('input', 'verilog')),
         'SDC_FILE': ' '.join(chip.get('input', 'sdc')),
 

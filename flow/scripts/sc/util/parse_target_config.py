@@ -22,7 +22,7 @@ def parse(chip, platform):
     repls = {}
     # Set DESIGN_NICKNAME = DESIGN if not already set.
     if not 'DESIGN_NICKNAME' in config:
-        repls['DESIGN_NICKNAME'] = config['DESIGN_NAME']
+        repls['DESIGN_NICKNAME'] = config['DESIGN_TOP_NAME']
     # Set PLATFORM_DIR if not already set.
     if not 'PLATFORM_DIR' in config:
         repls['PLATFORM_DIR'] = os.path.join(platforms_root, config['PLATFORM'])
@@ -130,7 +130,7 @@ def parse(chip, platform):
         # "Don't use" libraries get pre-processed. TODO: Currently placed in build dir root.
         # Also, 'markDontUse.py' is called from TCL; might be easier to do that pp here.
         mod_lib_base = os.path.abspath(os.path.join(chip.get('option', 'builddir'),
-                                                    config['DESIGN_NAME'],
+                                                    config['DESIGN_TOP_NAME'],
                                                     chip.get('option', 'jobname')))
         libs = merged_config['LIB_FILES'].split()
         dontuse_l = []
@@ -158,7 +158,7 @@ def parse(chip, platform):
 
     # TODO: Update remaining PDK/lib values from environment variables in the Chip manifest.
     chip.set('option', 'mode', 'asic')
-    chip.set('design', merged_config['DESIGN_NAME'])
+    chip.set('design', merged_config['DESIGN_TOP_NAME'])
     stackup = chip.get('asic', 'stackup')
     libtype = chip.get('asic', 'libarch')
     process = chip.get('option', 'pdk')

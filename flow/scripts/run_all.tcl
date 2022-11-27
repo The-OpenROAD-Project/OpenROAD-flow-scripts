@@ -19,7 +19,7 @@ if {[info exist ::env(ADDITIONAL_LEFS)]} {
 source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
 read_verilog $::env(RESULTS_DIR)/1_1_yosys.v
-link_design $::env(DESIGN_NAME)
+link_design $::env(DESIGN_TOP_NAME)
 read_sdc $::env(SDC_FILE)
 if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
   source $::env(PLATFORM_DIR)/derate.tcl

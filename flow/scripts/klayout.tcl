@@ -10,7 +10,7 @@ if {[info exists ::env(SEAL_GDS)]} {
     set seal_gds ""
 }
 
-exec klayout -zz -rd design_name=$::env(DESIGN_NAME) \
+exec klayout -zz -rd design_name=$::env(DESIGN_TOP_NAME) \
            -rd in_def=$::env(RESULTS_DIR)/6_final.def \
            -rd in_files="$::env(GDSOAS_FILES) $::env(WRAPPED_GDSOAS)" \
            -rd config_file=$fill_config \

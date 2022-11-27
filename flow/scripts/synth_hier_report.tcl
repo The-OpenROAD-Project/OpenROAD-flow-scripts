@@ -6,7 +6,7 @@ puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
 close $constr
 
 # Hierarchical synthesis
-synth  -top $::env(DESIGN_NAME)
+synth  -top $::env(DESIGN_TOP_NAME)
 if { [info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)] } {
   techmap -map $::env(ADDER_MAP_FILE)
 }
@@ -32,7 +32,7 @@ if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_h
     set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
     puts "Ungroup modules of size $ungroup_threshold"
   }
-  hierarchy -check -top $::env(DESIGN_NAME)
+  hierarchy -check -top $::env(DESIGN_TOP_NAME)
   set fptr [open $::env(REPORTS_DIR)/synth_hier_stat.txt r]
   set contents [read -nonewline $fptr]
   close $fptr
@@ -56,7 +56,7 @@ if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_h
     }
   }
   set out_script_ptr [open $::env(OBJECTS_DIR)/mark_hier_stop_modules.tcl w]
-  puts $out_script_ptr "hierarchy -check -top $::env(DESIGN_NAME)"
+  puts $out_script_ptr "hierarchy -check -top $::env(DESIGN_TOP_NAME)"
   foreach module $module_list {
     tee -o $::env(REPORTS_DIR)/synth_hier_stat_temp_module.txt stat -top "$module" {*}$stat_libs
     set fptr1 [open $::env(REPORTS_DIR)/synth_hier_stat_temp_module.txt r]

@@ -14,7 +14,7 @@ proc load_design {design_file sdc_file msg} {
         }
       }
       read_verilog $::env(RESULTS_DIR)/$design_file
-      link_design $::env(DESIGN_NAME)
+      link_design $::env(DESIGN_TOP_NAME)
     } elseif {$ext == ".odb"} {
       read_db $::env(RESULTS_DIR)/$design_file
     } else {
