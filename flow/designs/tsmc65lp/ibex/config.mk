@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = ibex
-export DESIGN_NAME = ibex_core
+export DESIGN_TOP_NAME = ibex_core
 export PLATFORM    = tsmc65lp
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \

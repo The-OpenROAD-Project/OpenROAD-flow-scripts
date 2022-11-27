@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = aes
-export DESIGN_NAME = aes_cipher_top
+export DESIGN_TOP_NAME = aes_cipher_top
 export PLATFORM    = tsmc65lp
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))

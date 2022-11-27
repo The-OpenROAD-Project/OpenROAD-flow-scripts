@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = coyote_tc
-export DESIGN_NAME = coyote_tc
+export DESIGN_TOP_NAME = coyote_tc
 
 export PLATFORM    = sky130hd
 # Clone Skywater library:

@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = microwatt
-export DESIGN_NAME = microwatt
+export DESIGN_TOP_NAME = microwatt
 export PLATFORM    = sky130hd
 
 export VERILOG_FILES_BLACKBOX = ./designs/src/$(DESIGN_NICKNAME)/IPs/*.v

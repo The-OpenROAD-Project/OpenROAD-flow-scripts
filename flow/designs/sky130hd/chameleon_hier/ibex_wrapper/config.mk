@@ -6,8 +6,8 @@ undefine DONT_USE_SC_LIB
 export TOP_NICKNAME = chameleon_hier
 export TOP_DIR = ./designs/$(PLATFORM)/${TOP_NICKNAME}
 
-export DESIGN_NAME = ibex_wrapper
-export DESIGN_NICKNAME = ${TOP_NICKNAME}_${DESIGN_NAME}
+export DESIGN_TOP_NAME = ibex_wrapper
+export DESIGN_NICKNAME = ${TOP_NICKNAME}_${DESIGN_TOP_NAME}
 export PLATFORM    = sky130hd
 export RTL_DIR  = ./designs/src/${TOP_NICKNAME}/rtl
 
@@ -38,9 +38,9 @@ export VERILOG_FILES = \
                          ${RTL_DIR}/ibex/ibex_fetch_fifo.v\
                          ${RTL_DIR}/ibex/ibex_wrapper.v
 
-export SDC_FILE          = ${TOP_DIR}/${DESIGN_NAME}/constraint.sdc
+export SDC_FILE          = ${TOP_DIR}/${DESIGN_TOP_NAME}/constraint.sdc
 
-export PDN_CFG = ${TOP_DIR}/${DESIGN_NAME}/pdn.cfg
+export PDN_CFG = ${TOP_DIR}/${DESIGN_TOP_NAME}/pdn.cfg
 
 export ABC_CLOCK_PERIOD_IN_PS = 10000
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1

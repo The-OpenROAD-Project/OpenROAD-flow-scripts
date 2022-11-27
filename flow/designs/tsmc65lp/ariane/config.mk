@@ -1,10 +1,10 @@
-export DESIGN_NAME = ariane
+export DESIGN_TOP_NAME = ariane
 export PLATFORM    = tsmc65lp
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/ariane.sv2v.v \
-                       ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
+export VERILOG_FILES = ./designs/src/$(DESIGN_TOP_NAME)/ariane.sv2v.v \
+                       ./designs/$(PLATFORM)/$(DESIGN_TOP_NAME)/macros.v
 
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_TOP_NAME)/constraint.sdc
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/tsmc65lp_1rf_lg8_w64_byte.lef
 export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/tsmc65lp_1rf_lg8_w64_byte_ss_1p08v_1p08v_125c.lib

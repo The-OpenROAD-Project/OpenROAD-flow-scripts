@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = ibex
-export DESIGN_NAME = ibex_core
+export DESIGN_TOP_NAME = ibex_core
 export PLATFORM    = sky130hd
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \

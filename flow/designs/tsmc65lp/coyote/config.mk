@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = coyote
-export DESIGN_NAME = bsg_rocket_node_client_rocc
+export DESIGN_TOP_NAME = bsg_rocket_node_client_rocc
 export PLATFORM    = tsmc65lp
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \

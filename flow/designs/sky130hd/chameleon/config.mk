@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = chameleon
-export DESIGN_NAME     = soc_core
+export DESIGN_TOP_NAME     = soc_core
 export PLATFORM        = sky130hd
 
 export VERILOG_FILES_BLACKBOX = ./designs/src/$(DESIGN_NICKNAME)/ibex/*.v \

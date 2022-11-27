@@ -1,8 +1,8 @@
-export DESIGN_NAME = gcd
+export DESIGN_TOP_NAME = gcd
 export PLATFORM    = tsmc65lp
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/gcd.v
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
+export VERILOG_FILES = ./designs/src/$(DESIGN_TOP_NAME)/gcd.v
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_TOP_NAME)/constraint.sdc
 export ABC_AREA      = 1
 
 # These values must be multiples of placement site

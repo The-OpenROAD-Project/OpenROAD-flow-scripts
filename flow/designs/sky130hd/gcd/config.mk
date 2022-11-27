@@ -1,4 +1,4 @@
-export DESIGN_NAME = gcd
+export DESIGN_TOP_NAME = gcd
 export PLATFORM    = sky130hd
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/gcd.v

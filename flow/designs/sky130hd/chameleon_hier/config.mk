@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = chameleon_hier
-export DESIGN_NAME = soc_core
+export DESIGN_TOP_NAME = soc_core
 export PLATFORM    = sky130hd
 
 export SKY130_IO_VERSION ?= v0.2.0

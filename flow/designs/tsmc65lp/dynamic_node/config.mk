@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = dynamic_node
-export DESIGN_NAME = dynamic_node_top_wrap
+export DESIGN_TOP_NAME = dynamic_node_top_wrap
 export PLATFORM    = tsmc65lp
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/dynamic_node.pickle.v

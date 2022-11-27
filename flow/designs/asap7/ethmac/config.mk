@@ -1,6 +1,6 @@
 export PLATFORM               = asap7
 
-export DESIGN_NAME            = ethmac
+export DESIGN_TOP_NAME            = ethmac
 
 export VERILOG_FILES         = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE              = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc

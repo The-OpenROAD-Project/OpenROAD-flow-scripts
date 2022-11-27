@@ -1,7 +1,7 @@
 export PLATFORM               = asap7
 export CORNER                 = TC
 
-export DESIGN_NAME            = uart
+export DESIGN_TOP_NAME            = uart
 
 export VERILOG_FILES          = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE               = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
