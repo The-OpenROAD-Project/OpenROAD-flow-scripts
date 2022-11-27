@@ -1,4 +1,4 @@
-export DESIGN_NAME ?= SPECIFY_DESIGN_NAME
+export DESIGN_TOP_NAME ?= SPECIFY_DESIGN_TOP_NAME
 export PLATFORM    = nangate45
 
 export VERILOG_FILES = ./designs/src/harness/*.v

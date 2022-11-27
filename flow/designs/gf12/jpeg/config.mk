@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = jpeg
-export DESIGN_NAME = jpeg_encoder
+export DESIGN_TOP_NAME = jpeg_encoder
 export PLATFORM    = gf12
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))

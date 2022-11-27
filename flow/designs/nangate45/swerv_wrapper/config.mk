@@ -1,4 +1,4 @@
-export DESIGN_NAME = swerv_wrapper
+export DESIGN_TOP_NAME = swerv_wrapper
 export PLATFORM    = nangate45
 
 export VERILOG_FILES = ./designs/src/swerv/swerv_wrapper.sv2v.v \

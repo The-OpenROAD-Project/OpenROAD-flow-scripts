@@ -5,7 +5,7 @@ export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 100
 export RTLMP_FLOW = True
 
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint_hier.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_TOP_NAME)/constraint_hier.sdc
 
 #
 # RTL_MP Settings

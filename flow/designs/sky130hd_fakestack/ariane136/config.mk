@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = ariane136
-export DESIGN_NAME = ariane
+export DESIGN_TOP_NAME = ariane
 export PLATFORM    = sky130hd_fakestack
 
 export SYNTH_HIERARCHICAL = 1

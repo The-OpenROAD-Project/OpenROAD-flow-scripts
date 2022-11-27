@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = riscv32i
-export DESIGN_NAME = riscv
+export DESIGN_TOP_NAME = riscv
 export PLATFORM    = sky130hs
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))

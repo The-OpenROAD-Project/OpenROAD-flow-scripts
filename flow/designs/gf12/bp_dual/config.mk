@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = bp_dual
-export DESIGN_NAME = bsg_chip
+export DESIGN_TOP_NAME = bsg_chip
 export PLATFORM    = gf12
 
 export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.sv2v.v \

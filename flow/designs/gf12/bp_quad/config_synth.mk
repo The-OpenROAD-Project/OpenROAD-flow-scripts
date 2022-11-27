@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = bp_quad
-export DESIGN_NAME = bsg_chip
+export DESIGN_TOP_NAME = bsg_chip
 export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1

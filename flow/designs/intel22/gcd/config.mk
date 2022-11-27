@@ -2,7 +2,7 @@ $(info [INFO-FLOW] GCD Design)
 DESIGN_DIR                   := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 DESIGN_PDK_HOME              := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-export DESIGN_NAME            = gcd
+export DESIGN_TOP_NAME        = gcd
 export DESIGN_NICKNAME        = gcd
 export DESIGN                 = gcd
 
