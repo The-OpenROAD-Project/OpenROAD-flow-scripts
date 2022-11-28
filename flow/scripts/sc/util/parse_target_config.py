@@ -20,9 +20,9 @@ def parse(chip, platform):
     config = parse_config_mk.parse(design_cfg)
     # Substitutions for some values which may not be set.
     repls = {}
-    # Set DESIGN_NICKNAME = DESIGN if not already set.
-    if not 'DESIGN_NICKNAME' in config:
-        repls['DESIGN_NICKNAME'] = config['DESIGN_TOP_NAME']
+    # Set DESIGN_NAME = DESIGN if not already set.
+    if not 'DESIGN_NAME' in config:
+        repls['DESIGN_NAME'] = config['DESIGN_TOP_NAME']
     # Set PLATFORM_DIR if not already set.
     if not 'PLATFORM_DIR' in config:
         repls['PLATFORM_DIR'] = os.path.join(platforms_root, config['PLATFORM'])

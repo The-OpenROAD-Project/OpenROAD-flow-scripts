@@ -3,7 +3,7 @@
 set -euo pipefail
 
 currentDate=$(date +"%Y-%m-%d_%H-%M")
-ISSUE_TAG=${ISSUE_TAG:-"${DESIGN_NICKNAME}_${PLATFORM}_${FLOW_VARIANT}_${currentDate}"}
+ISSUE_TAG=${ISSUE_TAG:-"${DESIGN_NAME}_${PLATFORM}_${FLOW_VARIANT}_${currentDate}"}
 ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \
                            VERILOG_FILES \
                            CACHED_NETLIST \
@@ -46,8 +46,8 @@ if [[ ! -v EXCLUDE_PLATFORM ]]; then
     fi
 fi
 
-VARS_BASENAME=vars-$DESIGN_NICKNAME-$PLATFORM-$FLOW_VARIANT
-RUN_ME_SCRIPT=run-me-$DESIGN_NICKNAME-$PLATFORM-$FLOW_VARIANT.sh
+VARS_BASENAME=vars-$DESIGN_NAME-$PLATFORM-$FLOW_VARIANT
+RUN_ME_SCRIPT=run-me-$DESIGN_NAME-$PLATFORM-$FLOW_VARIANT.sh
 
 for i in $ISSUE_CP_FILE_VARS ; do
     if [ -v ${i} ]; then

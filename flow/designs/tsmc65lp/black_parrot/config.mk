@@ -1,4 +1,4 @@
-export DESIGN_NICKNAME = bp
+export DESIGN_NAME = bp
 export DESIGN_TOP_NAME = black_parrot
 export PLATFORM    = tsmc65lp
 

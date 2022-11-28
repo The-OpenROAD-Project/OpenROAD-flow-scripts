@@ -1,4 +1,4 @@
-export DESIGN_NICKNAME = vanilla5
+export DESIGN_NAME = vanilla5
 export DESIGN_TOP_NAME = bsg_manycore_tile
 export PLATFORM    = tsmc65lp
 

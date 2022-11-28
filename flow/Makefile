@@ -172,21 +172,21 @@ export ENABLE_DPO ?= 1
 export DPO_MAX_DISPLACEMENT ?= 5 1
 
 # Setup working directories
-export DESIGN_NICKNAME ?= $(DESIGN_TOP_NAME)
+export DESIGN_NAME ?= $(DESIGN_TOP_NAME)
 
 export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
-export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NAME)/$(FLOW_VARIANT)
+export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NAME)/$(FLOW_VARIANT)
+export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NAME)/$(FLOW_VARIANT)
+export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NAME)/$(FLOW_VARIANT)
 
 ifdef BLOCKS
   $(info [INFO][FLOW] Invoked hierarchical flow.)
   $(foreach block,$(BLOCKS),$(info Block ${block} needs to be hardened.))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(block)/config.mk))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NAME)/$(block)/config.mk))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)/$(DESIGN_NAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
   export ADDITIONAL_LEFS += $(BLOCK_LEFS)
   export ADDITIONAL_GDS += $(BLOCK_GDS)
   export GDS_FILES += $(BLOCK_GDS)
@@ -294,8 +294,8 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 # Targets to harden Blocks in case of hierarchical flow is triggered
 build_macros: $(BLOCK_LEFS)
 
-$(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef: ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/${block}/config.mk))
-$(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+$(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NAME)_$(block)/$(FLOW_VARIANT)/${block}.lef: ./designs/$(PLATFORM)/$(DESIGN_NAME)/${block}/config.mk))
+$(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: ./results/$(PLATFORM)/$(DESIGN_NAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
 
 $(BLOCK_LEFS):
 	$(MAKE) DESIGN_CONFIG=$< generate_abstract

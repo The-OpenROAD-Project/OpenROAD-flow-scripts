@@ -21,7 +21,7 @@ update_rules_force:
 
 $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
 	echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
-	$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
+	$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NAME) \
 		-p $(PLATFORM) \
 		-v $(FLOW_VARIANT) \
 		-o $@ 2>&1 | tee $(REPORTS_DIR)/gen-metrics-$(FLOW_VARIANT)-check.log

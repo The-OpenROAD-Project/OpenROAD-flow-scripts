@@ -1,4 +1,4 @@
-export DESIGN_NICKNAME = bp_fe
+export DESIGN_NAME = bp_fe
 export DESIGN_TOP_NAME = bp_fe_top
 export PLATFORM    = nangate45
 

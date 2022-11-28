@@ -3,7 +3,7 @@ DESIGN_DIR                   := $(realpath $(shell dirname $(realpath $(lastword
 DESIGN_PDK_HOME              := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
 export DESIGN_TOP_NAME        = gcd
-export DESIGN_NICKNAME        = gcd
+export DESIGN_NAME        = gcd
 export DESIGN                 = gcd
 
 export PLATFORM               = intel22

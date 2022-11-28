@@ -2,11 +2,11 @@ $(info [INFO-FLOW] AES Design)
 DESIGN_DIR                   := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 DESIGN_PDK_HOME              := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
-export DESIGN_NICKNAME = aes
+export DESIGN_NAME = aes
 export DESIGN_TOP_NAME = aes_cipher_top
 export PLATFORM    = intel22
 
-export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*.v))
+export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NAME)/*.v))
 export SDC_FILE      = $(DESIGN_DIR)/constraint.sdc
 
 # These values must be multiples of placement site

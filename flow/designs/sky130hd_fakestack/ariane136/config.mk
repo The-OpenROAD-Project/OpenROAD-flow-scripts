@@ -1,4 +1,4 @@
-export DESIGN_NICKNAME = ariane136
+export DESIGN_NAME = ariane136
 export DESIGN_TOP_NAME = ariane
 export PLATFORM    = sky130hd_fakestack
 
@@ -6,12 +6,12 @@ export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE = 10000
 export RTLMP_FLOW = True
 
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
 export ABC_CLOCK_PERIOD_IN_PS = 4000
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ariane.sv2v.v \
-                       ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
+export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/ariane.sv2v.v \
+                       ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram130_256x16.lef
 export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram130_256x16.lib

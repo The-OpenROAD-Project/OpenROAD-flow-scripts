@@ -50,7 +50,7 @@ def main():
     # Parse values out of provided "config.mk" file
     config = parse_config_mk.parse(args['DESIGN_CONFIG'])
     # We'll use 'design' for finding the config.mk file in the target setup method, and
-    # there is inconsistency between whether that corresponds to 'DESIGN_TOP_NAME' or 'DESIGN_NICKNAME'.
+    # there is inconsistency between whether that corresponds to 'DESIGN_TOP_NAME' or 'DESIGN_NAME'.
     # So, set design name based on file path.
     design_top_name_match = re.search(f'\/[a-zA-Z0-9_]+\/config.mk', args['DESIGN_CONFIG']).group(0)
     design = design_top_name_match[1:-len('/config.mk')]

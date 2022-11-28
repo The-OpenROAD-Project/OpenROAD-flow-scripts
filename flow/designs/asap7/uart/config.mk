@@ -3,8 +3,8 @@ export CORNER                 = TC
 
 export DESIGN_TOP_NAME            = uart
 
-export VERILOG_FILES          = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
-export SDC_FILE               = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export VERILOG_FILES          = $(sort $(wildcard ./designs/src/$(DESIGN_NAME)/*.v))
+export SDC_FILE               = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
 export PLACE_DENSITY          = 0.70
 export DIE_AREA               = 0 0 17 17

@@ -1,10 +1,10 @@
-export DESIGN_NICKNAME = jpeg
+export DESIGN_NAME = jpeg
 export DESIGN_TOP_NAME = jpeg_encoder
 export PLATFORM    = nangate45
 
-export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
-export VERILOG_INCLUDE_DIRS = ./designs/src/$(DESIGN_NICKNAME)/include
-export SDC_FILE = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NAME)/*.v))
+export VERILOG_INCLUDE_DIRS = ./designs/src/$(DESIGN_NAME)/include
+export SDC_FILE = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 export ABC_AREA = 1
 
 # These values must be multiples of placement site
