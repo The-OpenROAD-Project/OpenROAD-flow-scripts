@@ -50,10 +50,10 @@ def main():
     # Parse values out of provided "config.mk" file
     config = parse_config_mk.parse(args['DESIGN_CONFIG'])
     # We'll use 'design' for finding the config.mk file in the target setup method, and
-    # there is inconsistency between whether that corresponds to 'DESIGN_NAME' or 'DESIGN_NICKNAME'.
+    # there is inconsistency between whether that corresponds to 'DESIGN_TOP_NAME' or 'DESIGN_NICKNAME'.
     # So, set design name based on file path.
-    design_name_match = re.search(f'\/[a-zA-Z0-9_]+\/config.mk', args['DESIGN_CONFIG']).group(0)
-    design = design_name_match[1:-len('/config.mk')]
+    design_top_name_match = re.search(f'\/[a-zA-Z0-9_]+\/config.mk', args['DESIGN_CONFIG']).group(0)
+    design = design_top_name_match[1:-len('/config.mk')]
     platform = config['PLATFORM']
 
     # Create a Chip object.
@@ -87,7 +87,7 @@ def main():
     techf = '../../klayout.lyt' # TODO: objects_dir is currently top-level build root dir.
     layermap = chip.get('tool', tool, 'env', step, '0', 'GDS_LAYER_MAP')
     klayout_options = ['-zz',
-                       '-rd', f'design_name={chip.get("design")}',
+                       '-rd', f'design_top_name={chip.get("design")}',
                        '-rd', 'in_def=inputs/6_final.def',
                        '-rd', f'in_files="{gdsoas_in}"',
                        '-rd', f'config_file={fill_cfg}',

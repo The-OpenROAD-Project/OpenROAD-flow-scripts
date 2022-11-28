@@ -117,7 +117,7 @@ main_layout.read(in_def, layoutOptions)
 #  print("[INFO] '{0}'".format(i.name))
 
 # Clear cells
-top_cell_index = main_layout.cell(design_name).cell_index()
+top_cell_index = main_layout.cell(design_top_name).cell_index()
 
 # remove orphan cell BUT preserve cell with VIA_
 #  - KLayout is prepending VIA_ when reading DEF that instantiates LEF's via
@@ -134,11 +134,11 @@ for fil in in_files.split():
   main_layout.read(fil)
 
 # Copy the top level only to a new layout
-print("[INFO] Copying toplevel cell '{0}'".format(design_name))
+print("[INFO] Copying toplevel cell '{0}'".format(design_top_name))
 top_only_layout = pya.Layout()
 top_only_layout.dbu = main_layout.dbu
-top = top_only_layout.create_cell(design_name)
-top.copy_tree(main_layout.cell(design_name))
+top = top_only_layout.create_cell(design_top_name)
+top.copy_tree(main_layout.cell(design_top_name))
 
 read_fills(top)
 
@@ -164,7 +164,7 @@ if not missing_cell:
 print("[INFO] Checking for orphan cell in the final layout...")
 orphan_cell = False
 for i in top_only_layout.each_cell():
-  if i.name != design_name and i.parent_cells() == 0:
+  if i.name != design_top_name and i.parent_cells() == 0:
     orphan_cell = True
     print("[ERROR] Found orphan cell '{0}'".format(i.name))
     errors += 1

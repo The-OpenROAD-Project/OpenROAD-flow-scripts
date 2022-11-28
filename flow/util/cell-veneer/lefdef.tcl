@@ -888,12 +888,12 @@ namespace eval def {
         out "END DESIGN"
     }
 
-    proc new_design {design_name units {die_area {0 0 0 0}}} {
+    proc new_design {design_top_name units {die_area {0 0 0 0}}} {
         variable designs
         variable current_design
-        set current_design $design_name
+        set current_design $design_top_name
 
-        dict set designs $current_design [list name $design_name units $units die_area $die_area]
+        dict set designs $current_design [list name $design_top_name units $units die_area $die_area]
     }
 
     proc add_component {inst_name cell_name x y orientation status} {
