@@ -1,4 +1,4 @@
-export DESIGN_NICKNAME = bp_single
+export DESIGN_NAME = bp_single
 export DESIGN_TOP_NAME = bsg_chip
 export PLATFORM    = gf12
 

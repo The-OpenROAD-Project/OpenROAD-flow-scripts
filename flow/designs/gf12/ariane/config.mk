@@ -17,7 +17,7 @@ export DIE_AREA    = 0 0 700 700
 export CORE_AREA   = 10 10 690 690 
 export PLACE_PINS_ARGS = -exclude left:0-300 -exclude left:400-700 -exclude right:* -exclude top:* -exclude bottom:*
 
-export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
+export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NAME)/wrappers.tcl
 
 ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CELL

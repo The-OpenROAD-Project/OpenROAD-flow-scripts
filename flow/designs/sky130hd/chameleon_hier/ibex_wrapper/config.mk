@@ -7,7 +7,7 @@ export TOP_NICKNAME = chameleon_hier
 export TOP_DIR = ./designs/$(PLATFORM)/${TOP_NICKNAME}
 
 export DESIGN_TOP_NAME = ibex_wrapper
-export DESIGN_NICKNAME = ${TOP_NICKNAME}_${DESIGN_TOP_NAME}
+export DESIGN_NAME = ${TOP_NICKNAME}_${DESIGN_TOP_NAME}
 export PLATFORM    = sky130hd
 export RTL_DIR  = ./designs/src/${TOP_NICKNAME}/rtl
 

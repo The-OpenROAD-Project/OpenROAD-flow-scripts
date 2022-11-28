@@ -1,15 +1,15 @@
-export DESIGN_NICKNAME = tinyRocket
+export DESIGN_NAME = tinyRocket
 export DESIGN_TOP_NAME = RocketTile
 export PLATFORM    = gf12
 
-export VERILOG_FILES  = ./designs/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
-                        ./designs/src/$(DESIGN_NICKNAME)/ClockDivider2.v \
-                        ./designs/src/$(DESIGN_NICKNAME)/ClockDivider3.v \
-                        ./designs/src/$(DESIGN_NICKNAME)/plusarg_reader.v \
-                        ./designs/src/$(DESIGN_NICKNAME)/freechips.rocketchip.system.TinyConfig.v \
-                        ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
+export VERILOG_FILES  = ./designs/src/$(DESIGN_NAME)/AsyncResetReg.v \
+                        ./designs/src/$(DESIGN_NAME)/ClockDivider2.v \
+                        ./designs/src/$(DESIGN_NAME)/ClockDivider3.v \
+                        ./designs/src/$(DESIGN_NAME)/plusarg_reader.v \
+                        ./designs/src/$(DESIGN_NAME)/freechips.rocketchip.system.TinyConfig.v \
+                        ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
 
-export SDC_FILE       = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE       = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
 export WRAP_LEFS      = $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w32_all.lef \
                         $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w32_byte.lef
@@ -30,7 +30,7 @@ export ABC_CLOCK_PERIOD_IN_PS = 1250
 
 export PLACE_DENSITY = 0.20
 
-export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
+export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NAME)/wrappers.tcl
 
 ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CELL

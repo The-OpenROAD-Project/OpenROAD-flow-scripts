@@ -1,9 +1,9 @@
-export DESIGN_NICKNAME = riscv32i
+export DESIGN_NAME = riscv32i
 export DESIGN_TOP_NAME = riscv
 export PLATFORM    = sky130hd
 
-export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NAME)/*.v))
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
 export CORE_UTILIZATION = 40
 export CORE_ASPECT_RATIO = 1

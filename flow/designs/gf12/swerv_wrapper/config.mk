@@ -23,7 +23,7 @@ export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-10 -exclude bottom:400-700
 
 export PLACE_DENSITY = 0.40
-export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
+export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NAME)/wrappers.tcl
 
 ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CELL

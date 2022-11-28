@@ -1,4 +1,4 @@
-export DESIGN_NICKNAME = bp_quad
+export DESIGN_NAME = bp_quad
 export DESIGN_TOP_NAME = bsg_chip
 export PLATFORM    = gf12
 export FLOW_VARIANT = synth
