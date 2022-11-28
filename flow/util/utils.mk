@@ -14,7 +14,7 @@ FAILURES_DIR = $(RESULTS_DIR)/failures
 
 update_all_ok:
 	for f in ${FAILURES_DIR}/*.tar.gz; do tar -xvf $$f --strip 1; done
-	$(eval FAILED_DESIGNS := $(shell for f in ${FAILURES_DIR}/*.tar.gz; do subName=$${f##*/}; subName=$${subName/final_report_/''}; subName=$${subName//_[0-9]*/}; subName=`echo $${subName} | tr _ -`; TEMP+="$${subName} "; done; echo $${TEMP}))
+	$(eval FAILED_DESIGNS := $(shell for f in ${FAILURES_DIR}/*.tar.gz; do subName=$${f##*/}; subName=$${subName/final-report-/''}; TEMP+="$${subName} "; done; echo $${TEMP}))
 	for line in $(FAILED_DESIGNS); do \
 		chmod +x ./vars-$$line.sh; \
 		./vars-$$line.sh; \

@@ -77,7 +77,8 @@ pipeline {
                         currentBuild.result = 'SUCCESS';
                     } catch (err) {
                         sh "mkdir -p flow/results/failures";
-                        sh "cp flow/*tar.gz flow/results/failures/.";
+                        env.NAME=sh(script: "echo ${TEST_SLUG} | tr '-' ' '", returnStdout: true);
+                        sh "cp flow/*tar.gz flow/results/failures/final-report-${env.NAME}-base-${env.BUILD_ID}.tar.gz";
                         currentBuild.result = 'FAILURE';
                         error("${err}");
                     }
