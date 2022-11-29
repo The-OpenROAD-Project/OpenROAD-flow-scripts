@@ -157,3 +157,7 @@ export TC_TEMPERATURE                         = 25c
 export TEMPERATURE                           = $($(CORNER)_TEMPERATURE)
 export LIB_FILES                             = $($(CORNER)_LIB_FILES) \
                                                $(ADDITIONAL_LIBS)
+
+# For proprietary tool enablements that are not public
+export GF180_PRIVATE_DIR ?= ../../gf180-private
+-include $(GF180_PRIVATE_DIR)/private.mk

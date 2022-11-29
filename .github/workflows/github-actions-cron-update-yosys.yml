@@ -1,0 +1,42 @@
+name: Create draft PR for updated YOSYS submodule
+on:
+  schedule:
+  - cron: "0 8 * * MON"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code recursively
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - name: Pull changes in yosys submodule
+        id: remote-update
+        run: |
+          cd tools/yosys
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git config --get remote.origin.fetch
+          git fetch --all --tags
+          latesttag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "::set-output name=has_update::$(git --no-pager diff --name-only ${latesttag}..HEAD)"
+          git checkout ${latesttag}
+      - if: "steps.remote-update.outputs.has_update != ''"
+        name: Create Draft PR
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ github.token }}
+          signoff: true
+          delete-branch: true
+          title: 'Update yosys submodule'
+          reviewers: |
+            vvbandeira
+            maliberty
+          draft: true
+          branch: update-yosys
+          commit-message: |
+              [BOT] Update yosys submodule
