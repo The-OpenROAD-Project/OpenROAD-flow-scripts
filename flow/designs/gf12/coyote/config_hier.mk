@@ -13,7 +13,7 @@ export RTLMP_MIN_INST = 4000
 export RTLMP_MAX_MACRO = 10
 export RTLMP_MIN_MACRO = 5 
 
-export DIE_AREA    = 0 0 950 950
+export DIE_AREA    = 0 0 950 850
 export CORE_AREA   = 2 2 948 848 
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:0-350 -exclude top:650-950 -exclude bottom:*
 
