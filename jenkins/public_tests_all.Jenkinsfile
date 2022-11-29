@@ -77,9 +77,9 @@ pipeline {
                         currentBuild.result = 'SUCCESS';
                     } catch (err) {
                         sh "mkdir -p flow/results/failures";
-                        env.NAME=sh(script: "echo ${TEST_SLUG} | tr ' ' '-' | xargs", returnStdout: true);
-                        env.CURRENT_DATE=sh(script: "date '+%Y_%m_%d-%H_%M' | xargs", returnStdout: true);
-                        sh "cp flow/*tar.gz flow/results/failures/final-report-${env.NAME}-base-${env.CURRENT_DATE}.tar.gz";
+                        env.NAME=sh(script: "echo ${TEST_SLUG} | tr ' ' '-'", returnStdout: true);
+                        env.CURRENT_DATE=sh(script: "date '+%Y_%m_%d-%H_%M'", returnStdout: true);
+                        sh "cp flow/*tar.gz flow/results/failures/final-report-${env.NAME.trim()}-base-${env.CURRENT_DATE.trim()}.tar.gz";
                         currentBuild.result = 'FAILURE';
                         error("${err}");
                     }
