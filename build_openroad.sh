@@ -339,7 +339,7 @@ __update_openroad_app_latest()
 )
 
 __common_setup()
-{       
+{
         # Clone repositories
         if [ -z "${OPENROAD_FLOW_NO_GIT_INIT+x}" ]; then
                 echo "[INFO FLW-0002] Updating git submodules."
@@ -359,6 +359,13 @@ __common_setup()
         fi
 }
 
+__logging()
+{
+        mkdir -p "${buildDir}"
+        exec > >(tee -i ${buildDir}/build-$(date +%s).log)
+        exec 2>&1
+}
+
 __common_setup
 
 if [ ! -z "${CLEAN_FORCE+x}" ]; then
@@ -371,12 +378,9 @@ if [ ! -z "${CLEAN_BEFORE+x}" ]; then
         echo "[INFO FLW-0016] Cleaning up previous binaries and build files."
         git clean ${CLEAN_CMD} tools
         git submodule foreach --recursive git clean ${CLEAN_CMD}
-        rm -rf "${buildDir}"
 fi
 
-mkdir -p "${buildDir}"
-exec > >(tee -i ${buildDir}/build-$(date +%s).log)
-exec 2>&1
+__logging
 
 # Choose install method
 if [ -z "${LOCAL_BUILD+x}" ] && command -v docker &> /dev/null; then
