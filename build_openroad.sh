@@ -8,6 +8,7 @@ set -eu
 cd "$(dirname $(readlink -f $0))"
 
 # Defaults variable values
+buildDir="build"
 NICE=""
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   PROC=$(nproc --all)
@@ -338,7 +339,7 @@ __update_openroad_app_latest()
 )
 
 __common_setup()
-{
+{       
         # Clone repositories
         if [ -z "${OPENROAD_FLOW_NO_GIT_INIT+x}" ]; then
                 echo "[INFO FLW-0002] Updating git submodules."
@@ -365,11 +366,17 @@ if [ ! -z "${CLEAN_FORCE+x}" ]; then
 else
         CLEAN_CMD="-x -d --interactive"
 fi
+
 if [ ! -z "${CLEAN_BEFORE+x}" ]; then
         echo "[INFO FLW-0016] Cleaning up previous binaries and build files."
         git clean ${CLEAN_CMD} tools
         git submodule foreach --recursive git clean ${CLEAN_CMD}
+        rm -rf "${buildDir}"
 fi
+
+mkdir -p "${buildDir}"
+exec > >(tee -i ${buildDir}/build-$(date +%s).log)
+exec 2>&1
 
 # Choose install method
 if [ -z "${LOCAL_BUILD+x}" ] && command -v docker &> /dev/null; then

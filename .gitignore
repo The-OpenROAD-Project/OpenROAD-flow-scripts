@@ -3,6 +3,9 @@
 # Build working directories
 tools/install
 
+# Build files
+build
+
 # Test working directories
 flow/results
 flow/logs
