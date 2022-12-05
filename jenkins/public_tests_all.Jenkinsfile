@@ -17,7 +17,7 @@ pipeline {
       post {
         always {
           catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-            archiveArtifacts artifacts: "build/*.log";
+            archiveArtifacts artifacts: "build_openroad.log";
           }
         }
       }
