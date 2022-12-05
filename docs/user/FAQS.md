@@ -4,10 +4,9 @@ If you cannot find your question/answer here, please file a GitHub issue to
 the appropriate repository or start a discussion.
 
 -   Issues and bugs:
-    -   OpenROAD: <https://github.com/The-OpenROAD-Project/OpenROAD/issues>
     -   OpenROAD Flow: <https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/issues>
+    -   OpenROAD with OpenROAD Flow Scripts: <https://github.com/The-OpenROAD-Project/OpenROAD/issues/>
 -   Discussions:
-    -   OpenROAD: <https://github.com/The-OpenROAD-Project/OpenROAD/discussions>
     -   OpenROAD Flow: <https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/discussions>
 
 ## How can I contribute?
