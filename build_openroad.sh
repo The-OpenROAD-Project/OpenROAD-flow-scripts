@@ -8,7 +8,6 @@ set -eu
 cd "$(dirname $(readlink -f $0))"
 
 # Defaults variable values
-buildDir="build"
 NICE=""
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   PROC=$(nproc --all)
@@ -126,6 +125,7 @@ EOF
 }
 
 # Parse arguments
+__CMD="$0 $@"
 while (( "$#" )); do
         case "$1" in
                 -h|--help)
@@ -218,33 +218,35 @@ LSORACLE_ARGS+=" \
 -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/LSOracle \
 "
 
-if [ ! -z "${DOCKER_OVERWIRTE_ARGS+x}" ]; then
-        echo "[INFO FLW-0015] Overwriting Docker build flags."
-        DOCKER_ARGS="${DOCKER_USER_ARGS}"
-else
-        DOCKER_ARGS+=" ${DOCKER_USER_ARGS}"
-fi
+__args_setup() {
+        if [ ! -z "${DOCKER_OVERWIRTE_ARGS+x}" ]; then
+                echo "[INFO FLW-0013] Overwriting Docker build flags."
+                DOCKER_ARGS="${DOCKER_USER_ARGS}"
+        else
+                DOCKER_ARGS+=" ${DOCKER_USER_ARGS}"
+        fi
 
-if [ ! -z "${YOSYS_OVERWIRTE_ARGS+x}" ]; then
-        echo "[INFO FLW-0013] Overwriting Yosys compilation flags."
-        YOSYS_ARGS="${YOSYS_USER_ARGS}"
-else
-        YOSYS_ARGS+=" ${YOSYS_USER_ARGS}"
-fi
+        if [ ! -z "${YOSYS_OVERWIRTE_ARGS+x}" ]; then
+                echo "[INFO FLW-0014] Overwriting Yosys compilation flags."
+                YOSYS_ARGS="${YOSYS_USER_ARGS}"
+        else
+                YOSYS_ARGS+=" ${YOSYS_USER_ARGS}"
+        fi
 
-if [ ! -z "${OPENROAD_APP_OVERWIRTE_ARGS+x}" ]; then
-        echo "[INFO FLW-0014] Overwriting OpenROAD app compilation flags."
-        OPENROAD_APP_ARGS="${OPENROAD_APP_USER_ARGS}"
-else
-        OPENROAD_APP_ARGS+=" ${OPENROAD_APP_USER_ARGS}"
-fi
+        if [ ! -z "${OPENROAD_APP_OVERWIRTE_ARGS+x}" ]; then
+                echo "[INFO FLW-0015] Overwriting OpenROAD app compilation flags."
+                OPENROAD_APP_ARGS="${OPENROAD_APP_USER_ARGS}"
+        else
+                OPENROAD_APP_ARGS+=" ${OPENROAD_APP_USER_ARGS}"
+        fi
 
-if [ ! -z "${LSORACLE_OVERWIRTE_ARGS+x}" ]; then
-        echo "[INFO FLW-0013] Overwriting LSOracle compilation flags."
-        LSORACLE_ARGS="${LSORACLE_USER_ARGS}"
-else
-        LSORACLE_ARGS+=" ${LSORACLE_USER_ARGS}"
-fi
+        if [ ! -z "${LSORACLE_OVERWIRTE_ARGS+x}" ]; then
+                echo "[INFO FLW-0016] Overwriting LSOracle compilation flags."
+                LSORACLE_ARGS="${LSORACLE_USER_ARGS}"
+        else
+                LSORACLE_ARGS+=" ${LSORACLE_USER_ARGS}"
+        fi
+}
 
 __docker_build()
 {
@@ -361,26 +363,29 @@ __common_setup()
 
 __logging()
 {
-        mkdir -p "${buildDir}"
-        exec > >(tee -i ${buildDir}/build-$(date +%s).log)
+        local log_file="build_openroad.log"
+        echo "[INFO FLW-0027] Saving logs to ${log_file}"
+        echo "[INFO FLW-0028] $__CMD"
+        exec > >(tee -i "${log_file}")
         exec 2>&1
 }
 
-__common_setup
-
-if [ ! -z "${CLEAN_FORCE+x}" ]; then
-        CLEAN_CMD="-x -d --force"
-else
-        CLEAN_CMD="-x -d --interactive"
-fi
-
-if [ ! -z "${CLEAN_BEFORE+x}" ]; then
-        echo "[INFO FLW-0016] Cleaning up previous binaries and build files."
+__cleanup()
+{
+        if [ ! -z "${CLEAN_FORCE+x}" ]; then
+                CLEAN_CMD="-x -d --force"
+        else
+                CLEAN_CMD="-x -d --interactive"
+        fi
+        echo "[INFO FLW-0026] Cleaning up previous binaries and build files."
         git clean ${CLEAN_CMD} tools
         git submodule foreach --recursive git clean ${CLEAN_CMD}
-fi
+}
 
+__cleanup
 __logging
+__args_setup
+__common_setup
 
 # Choose install method
 if [ -z "${LOCAL_BUILD+x}" ] && command -v docker &> /dev/null; then

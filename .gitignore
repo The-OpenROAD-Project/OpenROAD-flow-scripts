@@ -4,7 +4,7 @@
 tools/install
 
 # Build files
-build
+build_openroad.log
 
 # Test working directories
 flow/results
