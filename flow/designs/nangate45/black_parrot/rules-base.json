@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 748261,
+        "value": 745104,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 19384,
+        "value": 8976,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
@@ -60,7 +60,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 779564,
+        "value": 749336,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
@@ -80,7 +80,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 11,
+        "value": 10,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
