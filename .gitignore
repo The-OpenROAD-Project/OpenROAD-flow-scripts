@@ -3,6 +3,9 @@
 # Build working directories
 tools/install
 
+# Build files
+build_openroad.log
+
 # Test working directories
 flow/results
 flow/logs
