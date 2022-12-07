@@ -2,6 +2,9 @@
 tools
 !tools/OpenROAD/etc/DependencyInstaller.sh
 
+# Build files
+build_openroad.log
+
 # Test working directories
 flow/results
 flow/logs
