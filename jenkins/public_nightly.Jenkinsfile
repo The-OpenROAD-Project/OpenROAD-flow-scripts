@@ -36,6 +36,13 @@ pipeline {
         sh "./build_openroad.sh --local --no_init --latest";
         stash name: "install", includes: "tools/install/**";
       }
+      post {
+        always {
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            archiveArtifacts artifacts: "build_openroad.log";
+          }
+        }
+      }
     }
 
     stage('Tests') {
