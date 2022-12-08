@@ -19,17 +19,20 @@ if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
 }
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
-clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" \
+                     -buf_list "$::env(CTS_BUF_CELL)" \
                      -sink_clustering_enable \
                      -sink_clustering_size $cluster_size \
                      -sink_clustering_max_diameter $cluster_diameter \
+                     -post_cts_disable \
                      -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
 } else {
-clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" \
+                     -buf_list "$::env(CTS_BUF_CELL)" \
                      -sink_clustering_enable \
                      -sink_clustering_size $cluster_size \
-                     -sink_clustering_max_diameter $cluster_diameter \
-
+                     -post_cts_disable \
+                     -sink_clustering_max_diameter $cluster_diameter
 }
 
 
