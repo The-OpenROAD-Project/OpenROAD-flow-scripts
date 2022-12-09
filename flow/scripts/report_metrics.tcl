@@ -1,5 +1,10 @@
 proc report_metrics { when {include_erc true} {include_clock_skew true} } {
   puts "\n=========================================================================="
+  puts "$when check_setup"
+  puts "--------------------------------------------------------------------------"
+  check_setup
+
+  puts "\n=========================================================================="
   puts "$when report_tns"
   puts "--------------------------------------------------------------------------"
   report_tns
@@ -116,12 +121,12 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
     puts "\n=========================================================================="
     puts "$when setup_violation_count"
     puts "--------------------------------------------------------------------------"
-    puts "setup violation count [llength [find_timing_paths -path_delay min -slack_max 0]]"
+    puts "setup violation count [llength [find_timing_paths -path_delay max -slack_max 0]]"
 
     puts "\n=========================================================================="
     puts "$when hold_violation_count"
     puts "--------------------------------------------------------------------------"
-    puts "hold violation count [llength [find_timing_paths -path_delay max -slack_max 0]]"
+    puts "hold violation count [llength [find_timing_paths -path_delay min -slack_max 0]]"
 
     set critical_path [lindex [find_timing_paths -sort_by_slack] 0]
     if {$critical_path != ""} {
