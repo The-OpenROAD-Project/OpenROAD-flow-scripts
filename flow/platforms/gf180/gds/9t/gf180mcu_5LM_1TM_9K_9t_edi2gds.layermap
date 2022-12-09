@@ -1,0 +1,120 @@
+#-----------------------------------------------------------------------------
+#EDI Layer Name   EDI Layer Type   GDS Layer Number   GDS Layer Type
+#==============   ==============   ================   ==============
+
+Metal1		NET		34		0
+Metal1		SPNET		34		0
+Metal1		PIN		34		0
+Metal1		LEFPIN		34		0
+Metal1		FILL		34		0
+Metal1		FILLOPC		34		0
+Metal1		VIA		34		0
+Metal1		VIAFILL		34		0
+Metal1		VIAFILLOPC	34		0
+Metal1		LEFOBS		34		0
+NAME		Metal1/PIN	34		10
+NAME            Metal1/SPNET     34         10
+NAME		Metal1/TEXT	34		10
+
+Via1		PIN		35		0
+Via1		LEFPIN		35		0
+Via1		FILL		35		0
+Via1		FILLOPC		35		0
+Via1		VIA		35		0
+Via1		VIAFILL		35		0
+Via1		VIAFILLOPC	35		0
+
+
+Via1		VIA:SIZE:0.260x0.260	35	0
+
+Metal2		NET		36		0
+Metal2		SPNET		36		0
+Metal2		PIN		36		0
+Metal2		LEFPIN		36		0
+Metal2		FILL		36		0
+Metal2		FILLOPC		36		0
+Metal2		VIA		36		0
+Metal2		VIAFILL		36		0
+Metal2		VIAFILLOPC	36		0
+Metal2		LEFOBS		36		0
+NAME		Metal2/PIN	36		10
+NAME            Metal2/SPNET     36         10
+NAME		Metal2/TEXT	36		10
+
+Via2		PIN		38		0
+Via2		LEFPIN		38		0
+Via2		FILL		38		0
+Via2		FILLOPC		38		0
+Via2		VIA		38		0
+Via2		VIAFILL		38		0
+Via2		VIAFILLOPC	38		0
+
+
+Via2		VIA:SIZE:0.260x0.260	38	0
+
+Metal3		NET		42		0
+Metal3		SPNET		42		0
+Metal3		PIN		42		0
+Metal3		LEFPIN		42		0
+Metal3		FILL		42		0
+Metal3		FILLOPC		42		0
+Metal3		VIA		42		0
+Metal3		VIAFILL		42		0
+Metal3		VIAFILLOPC	42		0
+Metal3		LEFOBS		42		0
+NAME		Metal3/PIN	42		10
+NAME            Metal3/SPNET     42         10
+NAME		Metal3/TEXT	42		10
+
+Via3		PIN		40		0
+Via3		LEFPIN		40		0
+Via3		FILL		40		0
+Via3		FILLOPC		40		0
+Via3		VIA		40		0
+Via3		VIAFILL		40		0
+Via3		VIAFILLOPC	40		0
+
+
+Via3		VIA:SIZE:0.260x0.260	40	0
+
+Metal4		NET		46		0
+Metal4		SPNET		46		0
+Metal4		PIN		46		0
+Metal4		LEFPIN		46		0
+Metal4		FILL		46		0
+Metal4		FILLOPC		46		0
+Metal4		VIA		46		0
+Metal4		VIAFILL		46		0
+Metal4		VIAFILLOPC	46		0
+Metal4		LEFOBS		46		0
+NAME		Metal4/PIN	46		10
+NAME            Metal4/SPNET     46         10
+NAME		Metal4/TEXT	46		10
+
+Via4		PIN		41		0
+Via4		LEFPIN		41		0
+Via4		FILL		41		0
+Via4		FILLOPC		41		0
+Via4		VIA		41		0
+Via4		VIAFILL		41		0
+Via4		VIAFILLOPC	41		0
+
+
+Via4		VIA:SIZE:0.260x0.260	41	0
+
+Metal5		NET		81		0
+Metal5		SPNET		81		0
+Metal5		PIN		81		0
+Metal5		LEFPIN		81		0
+Metal5		FILL		81		0
+Metal5		FILLOPC		81		0
+Metal5		VIA		81		0
+Metal5		VIAFILL		81		0
+Metal5		VIAFILLOPC	81		0
+Metal5		LEFOBS		81		0
+NAME		Metal5/PIN	81		10
+NAME            Metal5/SPNET     81         10
+NAME		Metal5/TEXT	81		10
+
+
+PR_bndry        ALL              0               0
