@@ -39,7 +39,7 @@ linked [here](https://theopenroadproject.org/publications/).
 
 ## Code of conduct
 
-Please read our code of conduct [here](../CODE_OF_CONDUCT.md).
+Please read our code of conduct [here](./contrib/CODE_OF_CONDUCT.md).
 
 ## Documentation
 

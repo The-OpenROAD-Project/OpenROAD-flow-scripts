@@ -3,14 +3,11 @@
 Thank you for taking the time to read this document and to contribute.
 The OpenROAD project will not reach all of its objectives without help!
 
-Possible ways to contribute:
+Possible ways to contribute in the scope of OpenROAD Flow:
 
 - Open-source PDK information
 - Open-source Designs
 - Useful scripts
-- Tool improvements
-- New tools
-- Improvements to documentation, including this document
 - Star our project and repos so we can see the number of people
     who are interested
 

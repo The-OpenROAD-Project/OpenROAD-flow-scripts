@@ -4,4 +4,6 @@
 
 Instructions for building are available [here](../user/GettingStarted.md).
 
-James Cherry, Dec 2019
+## Logger
+
+Instructions for logging are available on [OpenROAD documentation](https://openroad.readthedocs.io/en/latest/contrib/Logger.html).
