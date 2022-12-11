@@ -342,7 +342,7 @@ routing. The second command, `set_routing_layers`, sets the minimum and
 maximum routing layers for signal nets by using the `-signal` option.
 
 More customization can be done to increase the efficiency of global and
-detail route. Refer to the [FastRoute documentation](../main/src/grt/README.md)
+detail route. Refer to the [FastRoute documentation](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/grt/README.md)
 
 ### Metal Tracks Configuration
 
@@ -408,12 +408,12 @@ PDN is a utility that simplifies adding a power grid into the floorplan. With
 specifications given in the PDN configuration file, like which layer to use,
 stripe width and spacing, the utility can generate the metal straps used
 for the power grid. To create and configure a power grid, refer to the
-[PDN documentation](../main/src/pdn/doc/PDN.md).
+[PDN documentation](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pdn/README.md).
 
 ### Tapcell Configuration
 
 The tapcell configuration file is used to insert tapcells and endcaps into
-the design. Refer to the [Tapcell](../main/src/tap/README.md) documentation
+the design. Refer to the [Tapcell](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/tap) documentation
 on how to construct this file.
 
 ### setRC Configuration

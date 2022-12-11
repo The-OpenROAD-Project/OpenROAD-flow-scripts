@@ -1,16 +1,10 @@
 # Build from sources locally
 
-## Prerequisites
+## Prerequisites & Dependencies
 
 ### OpenROAD
 
-Dependencies for OpenROAD app are documented in the script below.
-During initial setup or if you have a new machine, run this script:
-
-``` shell
-# either run as root or use sudo
-./etc/DependencyInstaller.sh -dev
-```
+Instructions for installing OpenROAD are available [here](https://openroad.readthedocs.io/en/latest/main/README.html#install-dependencies)
 
 ### KLayout
 
