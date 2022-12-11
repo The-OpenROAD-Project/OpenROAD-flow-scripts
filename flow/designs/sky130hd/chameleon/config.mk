@@ -45,7 +45,6 @@ export ADDITIONAL_LEFS  = $(chameleon_DIR)/lef/apb_sys_0.lef \
                           $(chameleon_DIR)/lef/ibex_wrapper.lef
 
 export MACRO_PLACEMENT = $(chameleon_DIR)/chameleon.macro_placment.cfg
-export MACRO_EXTENSION = 1
 
 export FP_PDN_RAIL_WIDTH = 0.48
 export FP_PDN_RAIL_OFFSET = 0
