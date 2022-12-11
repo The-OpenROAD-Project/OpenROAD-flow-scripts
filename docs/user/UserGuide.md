@@ -40,5 +40,5 @@ flow and how to run designs through the flow.
 
 ## Using the OpenROAD App
 
-See the documentation [here](../main/README.md) for details about the app and
+See the documentation [here](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/README.md) for details about the app and
 the available features and commands.

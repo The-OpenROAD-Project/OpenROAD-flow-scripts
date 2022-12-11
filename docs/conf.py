@@ -74,11 +74,7 @@ exclude_patterns = [
     '**/LICENSE',
     '**/LICENSE.md',
     'README.md',
-    'misc/NewToolDocExample.md',
     'docs/releases/PostAlpha2.1BranchMethodology.md',
-    'main/src/odb/src/def/README.md',
-    'main/src/odb/src/def/doc/README.md',
-    'main/src/odb/src/lef/README.md',
     'main/docs',
 ]
 
