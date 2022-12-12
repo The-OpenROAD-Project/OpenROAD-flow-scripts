@@ -20,15 +20,15 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -1424.54,
+        "value": -1173.26,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -1926.43,
+        "value": -1292.75,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -1924.49,
+        "value": -1288.55,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -40,27 +40,27 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -616.35,
+        "value": -510.85,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 8724163,
+        "value": 8702681,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 0,
+        "value": 4,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -130.79,
+        "value": -129.72,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 539546,
+        "value": 539048,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.31,
+        "value": -0.35,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -72,7 +72,7 @@
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 13,
+        "value": 12,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
@@ -80,7 +80,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -11.97,
+        "value": -11.89,
         "compare": ">="
     }
 }

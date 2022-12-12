@@ -14,6 +14,13 @@ pipeline {
         sh "./build_openroad.sh --local";
         stash name: "install", includes: "tools/install/**";
       }
+      post {
+        always {
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            archiveArtifacts artifacts: "build_openroad.log";
+          }
+        }
+      }
     }
 
     stage('Tests') {
@@ -52,7 +59,8 @@ pipeline {
                    "gcd sky130hs",
                    "ibex sky130hs",
                    "jpeg sky130hs",
-                   "riscv32i sky130hs";
+                   "riscv32i sky130hs",
+                   "aes gf180";
           }
         }
 

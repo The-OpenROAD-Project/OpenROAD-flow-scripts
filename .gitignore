@@ -3,6 +3,9 @@
 # Build working directories
 tools/install
 
+# Build files
+build_openroad.log
+
 # Test working directories
 flow/results
 flow/logs
@@ -59,6 +62,7 @@ flow/platforms/*
 !flow/platforms/sky130hs
 !flow/platforms/sky130io
 !flow/platforms/sky130ram
+!flow/platforms/gf180
 flow/private
 
 # network

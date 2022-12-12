@@ -1,0 +1,39 @@
+name: Create draft PR for updated OpenROAD submodule
+on:
+  schedule:
+  - cron: "0 8 * * *"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code recursively
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Pull changes in OpenROAD submodule
+        id: remote-update
+        run: |
+          cd tools/OpenROAD
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          echo "::set-output name=has_update::$(git --no-pager diff --name-only origin/master..HEAD)"
+          git checkout master
+          git pull
+      - if: "steps.remote-update.outputs.has_update != ''"
+        name: Create Draft PR
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ github.token }}
+          signoff: true
+          delete-branch: true
+          title: 'Update OpenROAD submodule'
+          reviewers: |
+            vvbandeira
+            maliberty
+          draft: true
+          branch: update-openroad
+          commit-message: |
+              [BOT] Update OpenROAD submodule
