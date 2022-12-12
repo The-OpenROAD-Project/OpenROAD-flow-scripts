@@ -77,11 +77,7 @@ define \n
 
 endef
 
-ifneq ($(shell command -v klayout),)
-  export ISSUE_VARIABLES := $(foreach V, $(.VARIABLES),$(if $(filter-out environment% default automatic, $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD%, $(V)),$V=$($V))${\n}))
-else
-  export ISSUE_VARIABLES = 
-endif
+export ISSUE_VARIABLES := $(foreach V, $(.VARIABLES),$(if $(filter-out environment% default automatic, $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT%, $(V)),$V=$($V))${\n}))
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	$(UTILS_DIR)/makeIssue.sh $*
