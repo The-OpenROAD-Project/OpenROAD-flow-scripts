@@ -3,6 +3,7 @@
 set -euo pipefail
 
 _installORDependencies() {
+    # how to count for relative path
     ../tools/OpenROAD/etc/DependencyInstaller.sh -dev
 }
 
@@ -25,7 +26,8 @@ _installCommon() {
         md5sum -c <(echo "${klayoutChecksum}  klayout-${klayoutVersion}.tar.gz") || exit 1
         tar hzxvf klayout-${klayoutVersion}.tar.gz
         cd klayout-${klayoutVersion}
-        ./build.sh
+        echo $(pwd)
+        ./build.sh -without-qtbinding
     fi
 
     cd "$lastDir"
@@ -44,7 +46,8 @@ _installCentosPackages() {
         tcl \
         time \
         ruby \
-        ruby-devel
+        ruby-devel \
+        tcl-devel
 }
 
 _installUbuntuCleanUp() {
@@ -56,12 +59,14 @@ _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
     apt-get -y install \
-        libffi-devel \
+        libffi-dev \
         tcl \
+        tcl-dev \
         time \
         ruby \
         ruby-dev \
-        libz-dev
+        libz-dev \
+        python3-pip
 }
 
 _installDebianCleanUp() {
@@ -73,12 +78,14 @@ _installDebianPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
     apt-get -y install \
-        libffi-devel \
+        libffi-dev \
         tcl \
+        tcl-dev \
         time \
         ruby \
         ruby-dev \
-        libz-dev
+        libz-dev \
+        python3-pip
 }
 
 _installRHELCleanUp() {
