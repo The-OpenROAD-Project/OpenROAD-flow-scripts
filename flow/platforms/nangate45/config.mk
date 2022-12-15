@@ -21,6 +21,8 @@ export FILL_CELLS = FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16
 # -----------------------------------------------------
 #  Yosys
 #  ----------------------------------------------------
+# Ungroup size for hierarchical synthesis
+export MAX_UNGROUP_SIZE ?= 100000
 # Set the TIEHI/TIELO cells
 # These are used in yosys synthesis to avoid logical 1/0's in the netlist
 export TIEHI_CELL_AND_PORT = LOGIC1_X1 Z
