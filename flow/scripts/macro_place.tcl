@@ -66,6 +66,9 @@ if {[find_macros] != ""} {
     
     append additional_rtlmp_args " -halo_width $halo_max"
 
+    if { [info exists ::env(RTLMP_MIN_AR)]} {
+        append additional_rtlmp_args " -min_ar $env(RTLMP_MIN_AR)"
+    }
     if { [info exists ::env(RTLMP_AREA_WT)]} {
         append additional_rtlmp_args " -area_weight $env(RTLMP_AREA_WT)"
     }
