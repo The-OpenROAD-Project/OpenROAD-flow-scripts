@@ -45,6 +45,14 @@ Please read our code of conduct [here](./contrib/CODE_OF_CONDUCT.md).
 
 The OpenROAD Project has two releases:
 
+### [Application](https://github.com/The-OpenROAD-Project/OpenROAD)
+
+The application is a standalone binary capable of performing RTL-to-GDSII SoC design,
+from logic synthesis and floorplanning through detailed routing with metal fill insertion,
+signoff parasitic extraction and timing analysis.
+
+See documentation for the application [here](https://openroad.readthedocs.io/en/latest/).
+
 ### [Flow](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts)
 
 The flow is a set of integrated scripts that allow for RTL-to-GDSII flow

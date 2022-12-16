@@ -1,67 +1,5 @@
 # OpenROAD Flow Scripts Tutorial
 
-## Table of Contents
-
-- [Table of Contents](#Table-of-Contents)
-- [Introduction](#Introduction)
-- [User Guide](#User-Guide)
-- [Getting Started](#Getting-Started)
-  - [Setting Up The Environment](#Setting-Up-The-Environment)
-    - [Building OpenROAD Locally](#Building-OpenROAD-Locally)
-- [Configuring The Design](#Configuring-The-Design)
-  - [Platform Configuration](#Platform-Configuration)
-  - [Design Configuration](#Design-Configuration)
-  - [Timing Constraints](#Timing-Constraints)
-  - [Design Input Verilog](#Design-Input-Verilog)
-- [Running The Automated RTL-to-GDS Flow](#Running-The-Automated-RTL-to-GDS-Flow)
-  - [Design Goals](#Design-Goals)
-  - [Viewing ORFS Directory Structure And Results](#Viewing-ORFS-Directory-Structure-And-Results)
-- [Viewing Results And Logs](#Viewing-Results-And-Logs)
-  - [Area](#Area)
-  - [Timing](#Timing)
-  - [Power](#Power)
-- [OpenROAD GUI](#OpenROAD-GUI)
-  - [Viewing Layout Results](#Viewing-Layout-Results)
-  - [Visualizing Design Objects And Connectivity](#Visualizing-Design-objects-And-Connectivity)
-  - [Tracing The Clock Tree](#Tracing-The-Clock-Tree)
-  - [Using Heat Maps](#Using-Heat-Maps)
-  - [Viewing Timing Report](#Viewing-Timing-Report)
-  - [Using Rulers](#Using-Rulers)
-  - [DRC Viewer](#DRC-Viewer)
-  - [Tcl Command Interface](#Tcl-Command-Interface)
-  - [Customizing The GUI](#Customizing-The-GUI)
-- [Understanding and Analyzing OpenROAD Flow Stages and Results](#Understanding-and-Analyzing-OpenROAD-Flow-Stages-and-Results)
-  - [Synthesis Explorations](#Synthesis-Explorations)
-    - [Area And Timing Optimization](#Area-And-Timing-Optimization)
-  - [Floorplanning](#Floorplanning)
-    - [Floorplan Initialization Based On Core And Die Area](#Floorplan-Initialization-Based-On-Core-And-Die-Area)
-    - [Floorplan Based On Core Utilization](#Floorplan-Based-On-Core-Utilization)
-  - [IO Pin Placement](#IO-Pin-Placement)
-  - [Chip Level IO Pad Placement](#Chip-Level-IO-Pad-Placement)
-  - [Power Planning And Analysis](#Power-Planning-And-Analysis)
-  - [Macro or Cell Placement](#Macro-or-Cell-Placement)
-    - [Macro Placement](#Macro-Placement)
-      - [Macro Placement With Halo Spacing](#Macro-Placement-With-Halo-Spacing)
-      - [Macro placement With Channel Spacing](#Macro-Placement-With-Channel-Spacing)
-    - [Defining Placement Density](#Defining-Placement-Density)
-  - [Timing Optimizations](#Timing-Optimizations)
-    - [Timing Optimization Using repair_design](#Timing-Optimization-Using-repair_design)
-    - [Timing Optimization Using repair_timing](#Timing-Optimization-Using-repair_timing)
-    - [Timing Optimization Based On Multiple Corners](#Timing-Optimization-Based-On-Multiple-Corners)
-    - [Fixing Setup Violations](#Fixing-Setup-Violations)
-    - [Fixing Hold Violations](#Fixing-Hold-Violations)
-  - [Clock Tree Synthesis](#Clock-Tree-Synthesis)
-    - [Reporting Clock Skews](#Reporting-Clock-Skews)
-    - [Reporting CTS Metrics](#Reporting-CTS-Metrics)
-  - [Adding Filler Cells](#Adding-Filler-Cells)
-  - [Global Routing](#Global-Routing)
-  - [Antenna Checker](#Antenna-Checker)
-  - [Detail Routing](#Detail-Routing)
-  - [Metal Fill](#Metal-Fill)
-  - [Parasitics Extraction](#Parasitics-Extraction)
-- [Troubleshooting Problems](#Troubleshooting-Problems)
-  - [Debugging Problems in Global Routing](#Debugging-Problems-in-Global-Routing)
-
 ## Introduction
 
 This document describes a tutorial to run the complete
@@ -110,7 +48,7 @@ pipeline.
 Use the `bash` shell to run commands and scripts.
 
 Install OpenROAD Flow Scripts. Refer to the [Getting Started with
-OpenROAD Flow](../user/GettingStarted.md#Setup) documentation.
+OpenROAD Flow](getting:started:setup) documentation.
 
 If ORFS is already installed but needs updating, run the
 following commands:
@@ -235,24 +173,24 @@ stages, respective tools and the corresponding `README.md` for tool commands,
 configuration examples using the Tcl interface and other such details.
 
 -   [Synthesis](https://github.com/The-OpenROAD-Project/yosys/blob/master/README.md)
--   [Database](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/odb)
--   [Floorplanning](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/ifp)
--   [Pin Placement](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/ppl)
--   [Chip-level Connections](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/pad)
--   [Macro Placement](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/mpl)
--   [Tapcell insertion](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/tap)
--   [PDN Analysis](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/pdn)
--   [IR Drop Analysis](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/psm)
--   [Global Placement](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/gpl)
--   [Timing Analysis](https://github.com/The-OpenROAD-Project/OpenSTA/blob/master/README.md)
--   [Detailed Placement](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/dpl)
--   [Timing Optimization using Resizer](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/rsz)
--   [Clock Tree Synthesis](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/cts)
--   [Global Routing](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/grt)
--   [Antenna Rule Checker](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/ant)
--   [Detail Routing](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/drt)
--   [Metall Fill](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/fin)
--   [Parasitics Extraction](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/rcx)
+-   [Database](https://openroad.readthedocs.io/en/latest/main/src/odb/README.html)
+-   [Floorplanning](https://openroad.readthedocs.io/en/latest/main/src/ifp/README.html)
+-   [Pin Placement](https://openroad.readthedocs.io/en/latest/main/src/ppl/README.html)
+-   [Chip-level Connections](https://openroad.readthedocs.io/en/latest/main/src/pad/README.html)
+-   [Macro Placement](https://openroad.readthedocs.io/en/latest/main/src/mpl/README.html)
+-   [Tapcell insertion](https://openroad.readthedocs.io/en/latest/main/src/tap/README.html)
+-   [PDN Analysis](https://openroad.readthedocs.io/en/latest/main/src/pdn/README.html)
+-   [IR Drop Analysis](https://openroad.readthedocs.io/en/latest/main/src/psm/README.html)
+-   [Global Placement](https://openroad.readthedocs.io/en/latest/main/src/gpl/README.html)
+-   [Timing Analysis](https://openroad.readthedocs.io/en/latest/main/src/sta/README.html)
+-   [Detailed Placement](https://openroad.readthedocs.io/en/latest/main/src/dpl/README.html)
+-   [Timing Optimization using Resizer](https://openroad.readthedocs.io/en/latest/main/src/rsz/README.html)
+-   [Clock Tree Synthesis](https://openroad.readthedocs.io/en/latest/main/src/cts/README.html)
+-   [Global Routing](https://openroad.readthedocs.io/en/latest/main/src/grt/README.html)
+-   [Antenna Rule Checker](https://openroad.readthedocs.io/en/latest/main/src/ant/README.html)
+-   [Detail Routing](https://openroad.readthedocs.io/en/latest/main/src/drt/README.html)
+-   [Metall Fill](https://openroad.readthedocs.io/en/latest/main/src/fin/README.html)
+-   [Parasitics Extraction](https://openroad.readthedocs.io/en/latest/main/src/rcx/README.html)
 -   [Layout Generation](https://www.klayout.de/)
 
 ### Design Goals
@@ -566,6 +504,7 @@ View clock tree structure below, the user needs to disable the metal
 From the top Toolbar, click on the `Windows` menu to select/hide different
 view options of Scripting, Display control, etc.
 
+(content:heat:maps)=
 ### Using Heat Maps
 
 From the Menu Bar, Click on `Tools` -> `Heat Maps` -> `Placement Density` to view
@@ -847,7 +786,7 @@ Run the following commands in the terminal in OpenROAD tool root directory to bu
 floorplan.
 
 ```
-cd src/ifp/test/
+cd ./tools/OpenROAD/src/ifp/test/
 openroad -gui
 ```
 
@@ -871,7 +810,7 @@ Run the following commands in the terminal in OpenROAD tool root directory to vi
 initialized:
 
 ```
-cd src/ifp/test/
+cd ./tools/OpenROAD/src/ifp/test/
 openroad -gui
 ```
 
@@ -901,7 +840,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Launch openroad GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/pad/test/
+cd ./tools/OpenROAD/src/pad/test/
 openroad -gui
 ```
 
@@ -945,7 +884,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Launch openroad GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/pad/test/
+cd ./tools/OpenROAD/src/pad/test/
 openroad -gui
 ```
 
@@ -974,19 +913,23 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Launch openroad GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/pdn/test
+cd ./tools/OpenROAD/src/pdn/test
 openroad -gui
 ```
 
-<!-- Run [test_gcd.api.tcl](../../src/pdn/test/test_gcd.api.tcl)
+Run [test_gcd.api.tcl](../../src/pdn/test/test_gcd.api.tcl)
 to generate power grid for `gcd` design.
+
+:::{warning}
+The refernced script is not currently avaiable, it will be addressed in a future pull request
+:::
 
 ```
 source test_gcd.api.tcl
 ```
 View the resulting power plan for `gcd` design:
 
-![gcd PDN GUI](./images/gcd_pdn_gui.png) -->
+![gcd PDN GUI](./images/gcd_pdn_gui.png)
 
 #### IR Drop Analysis
 IR drop is the voltage drop in the metal wires constituting the power
@@ -1009,7 +952,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Launch openroad by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/psm/test
+cd ./tools/OpenROAD/src/psm/test
 openroad
 ```
 
@@ -1063,7 +1006,7 @@ to learn about Tap/endcap cell insertion.
 To view this in OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/tap/test/
+cd ./tools/OpenROAD/src/tap/test/
 openroad -gui
 ```
 
@@ -1090,7 +1033,7 @@ to learn about Tie cell insertion.
 To check this in OpenROAD tool root directory:
 
 ```
-cd src/ifp/test/
+cd ./tools/OpenROAD/src/ifp/test/
 openroad
 source tiecells.tcl
 ```
@@ -1127,7 +1070,7 @@ Placement density impacts how widely standard cells are placed in the
 core area. To view this in OpenROAD GUI run the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/gpl/test/
+cd ./tools/OpenROAD/src/gpl/test/
 openroad -gui
 ```
 
@@ -1162,12 +1105,16 @@ Zoomed view of cell placement:
 
 ##### Macro Placement With Halo Spacing
 
-<!-- Explore macro placement with halo spacing, refer to the example
-[here](../../src/mpl/test/gcd_mem1_02.tcl). -->
+Explore macro placement with halo spacing, refer to the example
+[here](../../src/mpl/test/gcd_mem1_02.tcl).
+
+:::{warning}
+The refernced script is not currently avaiable, it will be addressed in a future pull request
+:::
 
 Launch GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 ```
-cd src/mpl/test
+cd ./tools/OpenROAD/src/mpl/test
 openroad -gui
 ```
 
@@ -1214,13 +1161,17 @@ View the resulting DEF file as shown below
 
 Now we will study how macro placement with channel spacing works.
 
-<!-- If the design has more than one macro, it is important to provide halo and
+If the design has more than one macro, it is important to provide halo and
 channel spacing to provide enough space for routing. Refer to the
-following example [here](../../src/mpl/test/gcd_mem3_03.tcl). -->
+following example [here](../../src/mpl/test/gcd_mem3_03.tcl).
+
+:::{warning}
+The refernced script is not currently avaiable, it will be addressed in a future pull request
+:::
 
 To view macro placement with channel spacing in OpenROAD GUI run the following command(s) in the terminal in OpenROAD tool root directory:
 ```
-cd src/mpl/test/
+cd ./tools/OpenROAD/src/mpl/test/
 openroad -gui
 ```
 
@@ -1319,7 +1270,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/rsz/test/
+cd ./tools/OpenROAD/src/rsz/test/
 openroad -gui
 ```
 
@@ -1430,7 +1381,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD in an interactive mode by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/rsz/test/
+cd ./tools/OpenROAD/src/rsz/test/
 openroad
 ```
 
@@ -1572,7 +1523,7 @@ Check hold violation post-global routing using the following Tcl
 commands. Run below steps in terminal in OpenROAD tool root directory:
 
 ```
-cd src/rsz/test/
+cd ./tools/OpenROAD/src/rsz/test/
 openroad -gui
 ```
 
@@ -1639,7 +1590,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/cts/test/
+cd ./tools/OpenROAD/src/cts/test/
 openroad -gui
 ```
 
@@ -1676,7 +1627,7 @@ creation of a well-balanced clock tree.
 Launch OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/cts/test/
+cd ./tools/OpenROAD/src/cts/test/
 openroad -gui
 ```
 
@@ -1778,7 +1729,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Run these Tcl commands in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/cts/test/
+cd ./tools/OpenROAD/src/cts/test/
 openroad
 source post_cts_opt.tcl
 report_cts
@@ -1810,7 +1761,7 @@ to learn about filler cell insertion.
 To view this in OpenROAD GUI run the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/grt/test/
+cd ./tools/OpenROAD/src/grt/test/
 openroad -gui
 ```
 
@@ -1855,7 +1806,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/grt/test/
+cd ./tools/OpenROAD/src/grt/test/
 openroad -gui
 ```
 
@@ -1911,7 +1862,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/drt/test/
+cd ./tools/OpenROAD/src/drt/test/
 openroad -gui
 ```
 
@@ -1987,7 +1938,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/ant/test/
+cd ./tools/OpenROAD/src/ant/test/
 openroad
 ```
 
@@ -2066,7 +2017,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD tool by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/rcx/test/
+cd ./tools/OpenROAD/src/rcx/test/
 openroad
 ```
 
@@ -2120,7 +2071,7 @@ The global router has a few useful functionalities to understand
 high congestion issues in the designs.
 
 Congestion heatmap can be used on any design, whether it has 
-congestion or not. Viewing congestion explained [here](#Using-Heat-Maps).
+congestion or not. Viewing congestion explained [here](content:heat:maps).
 If the design has congestion issue, it ends with the error;
 ```
 [ERROR GRT-0118] Routing congestion too high.
@@ -2131,7 +2082,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd src/grt/test/
+cd ./tools/OpenROAD/src/grt/test/
 openroad -gui
 ```
 

@@ -1,34 +1,5 @@
 # Guide to Integrate a New Platform into the OpenROAD Flow
 
-## Table of Contents
-
-- [Table of Contents](#table-of-contents)
-- [Overview](#Overview)
-- [Prerequisites](#Prerequisites)
-- [Adding a new Platform to OpenROAD](#adding-a-new-platform-to-openroad)
-  - [Setup](#Setup)
-    - [Makefile](#Makefile)
-    - [Platform Directory](#platform-directory)
-    - [Design Directory](#design-directory)
-  - [Platform Configuration](#platform-configuration)
-  - [Design Configuration](#design-configuration)
-    - [`config.mk`](#config-mk)
-    - [`constraint.sdc`](#constraint-sdc)
-    - [Liberty, LEF, and GDS Files](#liberty-lef-and-gds-files)
-  - [Behavioral Models](#behavioral-models)
-    - [Gated Clock](#gated-clock)
-    - [Latch](#latch)
-  - [FastRoute Configuration](#fastroute-configuration)
-  - [Metal Tracks Configuration](#metal-tracks-configuration)
-  - [PDN Configuration](#pdn-configuration)
-  - [Tapcell Configuration](#tapcell-configuration)
-  - [`setRC` Configuration](#setrc-configuration)
-  - [KLayout](#klayout)
-    - [KLayout properties file](#klayout-properties-file)
-    - [KLayout tech file](#klayout-tech-file)
-- [Validating the New Platform](#validating-the-new-platform)
-- [Authors/Contributors](#authors-contributors)
-
 ## Overview
 
 This document is a guide for foundry and third party IP providers to
@@ -105,7 +76,7 @@ DESIGN_CONFIG=./designs/MyNewPlatform/gcd/config.mk
 ```
 
 The `config.mk` file will be generated later in the [Design
-Directory](#design-directory) section of this document.
+Directory](content:design:directory) section of this document.
 
 ### Platform Directory
 
@@ -115,7 +86,7 @@ the necessary files for the OpenROAD flow.
 ```
 $ mkdir flow/platforms/MyNewPlatform
 ```
-
+(content:design:directory)=
 ### Design Directory
 
 The design directory contains the configuration files for all the designs of
@@ -172,7 +143,7 @@ For Example:
 
 Alternatively, `DIE_AREA` and `CORE_AREA` can be specified instead of
 `CORE_UTILIZATION`, `CORE_ASPECT_RATIO`, and `CORE_MARGIN`. For a complete
-descriptor of all variables see [here](TODO).
+descriptor of all variables see [here](../user/FlowVariables.md).
 
 Following is a sample `config.mk` file for the `gcd` design:
 
