@@ -14,6 +14,13 @@ pipeline {
         sh "./build_openroad.sh --local";
         stash name: "install", includes: "tools/install/**";
       }
+      post {
+        always {
+          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            archiveArtifacts artifacts: "build_openroad.log";
+          }
+        }
+      }
     }
 
     stage('Tests') {

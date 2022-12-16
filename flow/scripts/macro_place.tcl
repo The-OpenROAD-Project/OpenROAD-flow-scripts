@@ -48,24 +48,23 @@ if {[find_macros] != ""} {
   }
 
   if {[info exists ::env(RTLMP_FLOW)]} {
-    puts "RTLMP Flow enabled..."
+    puts "HierRTLMP Flow enabled..."
     set additional_partition_args ""
+    set additional_rtlmp_args ""
     if { [info exists ::env(RTLMP_MAX_INST)]} {
-        append additional_partition_args " -max_num_inst $env(RTLMP_MAX_INST)"
+        append additional_rtlmp_args " -max_num_inst $env(RTLMP_MAX_INST)"
     }
     if { [info exists ::env(RTLMP_MIN_INST)]} {
-        append additional_partition_args " -min_num_inst $env(RTLMP_MIN_INST)"
+        append additional_rtlmp_args " -min_num_inst $env(RTLMP_MIN_INST)"
     }
     if { [info exists ::env(RTLMP_MAX_MACRO)]} {
-        append additional_partition_args " -max_num_macro $env(RTLMP_MAX_MACRO)"
+        append additional_rtlmp_args " -max_num_macro $env(RTLMP_MAX_MACRO)"
     }
     if { [info exists ::env(RTLMP_MIN_MACRO)]} {
-        append additional_partition_args " -min_num_macro $env(RTLMP_MIN_MACRO)"
+        append additional_rtlmp_args " -min_num_macro $env(RTLMP_MIN_MACRO)"
     }
-
-    set additional_rtlmp_args ""
     
-    append additional_rtlmp_args " -macro_halo $halo_max"
+    append additional_rtlmp_args " -halo_width $halo_max"
 
     if { [info exists ::env(RTLMP_AREA_WT)]} {
         append additional_rtlmp_args " -area_weight $env(RTLMP_AREA_WT)"
@@ -79,49 +78,26 @@ if {[find_macros] != ""} {
     if { [info exists ::env(RTLMP_BOUNDARY_WT)]} {
         append additional_rtlmp_args " -boundary_weight $env(RTLMP_BOUNDARY_WT)"
     }
-    if { [info exists ::env(RTLMP_MACRO_BLOCKAGE_WT)]} {
-        append additional_rtlmp_args " -macro_blockage_weight $env(RTLMP_MACRO_BLOCKAGE_WT)"
-    }
-    if { [info exists ::env(RTLMP_LOCATION_WEIGHT)]} {
-        append additional_rtlmp_args " -location_weight $env(RTLMP_LOCATION_WEIGHT)"
-    }
+
     if { [info exists ::env(RTLMP_NOTCH_WT)]} {
         append additional_rtlmp_args " -notch_weight $env(RTLMP_NOTCH_WT)"
     }
+
     if { [info exists ::env(RTLMP_DEAD_SPACE)]} {
         append additional_rtlmp_args " -dead_space $env(RTLMP_DEAD_SPACE)"
     }
     if { [info exists ::env(RTLMP_CONFIG_FILE)]} {
         append additional_rtlmp_args " -config_file $env(RTLMP_CONFIG_FILE)"
     }
-    if { [info exists ::env(RTLMP_RPT_FILE)]} {
-        append additional_rtlmp_args " -report_file $env(RTLMP_RPT_FILE)"
-    }
-    if { [info exists ::env(RTLMP_BLOCKAGE_FILE)]} {
-        append additional_rtlmp_args " -macro_blockage_file $env(RTLMP_BLOCKAGE_FILE)"
+    if { [info exists ::env(RTLMP_RPT_DIR)]} {
+        append additional_rtlmp_args " -report_directory $env(RTLMP_RPT_DIR)"
     }
 
-    if { [info exists ::env(RTLMP_KEEPIN)]} {
-        partition_design -net_threshold 5 \
-                     -virtual_weight 1 \
-                     -num_hop 3 \
-                     -timing_weight 1 \
-                     -report_directory $env(RTLMP_RPT_DIR) \
-                     -report_file $env(RTLMP_RPT_FILE) \
-                     -keepin $env(RTLMP_KEEPIN) \
-                     {*}$additional_partition_args
-    } else {
-        partition_design -net_threshold 5 \
-                     -virtual_weight 1 \
-                     -num_hop 3 \
-                     -timing_weight 1 \
-                     -report_directory $env(RTLMP_RPT_DIR) \
-                     -report_file $env(RTLMP_RPT_FILE) \
-                     {*}$additional_partition_args
-    }
 
-    rtl_macro_placer -report_directory $env(RTLMP_RPT_DIR) \
-                     {*}$additional_rtlmp_args
+    puts "Call Macro Placer $additional_rtlmp_args"
+
+    rtl_macro_placer \
+                 {*}$additional_rtlmp_args
 
     puts "Delete buffers for RTLMP flow..."
     remove_buffers
