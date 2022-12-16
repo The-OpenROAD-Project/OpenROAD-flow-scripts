@@ -49,8 +49,10 @@ if {[find_macros] != ""} {
 
   if {[info exists ::env(RTLMP_FLOW)]} {
     puts "HierRTLMP Flow enabled..."
-    set additional_partition_args ""
     set additional_rtlmp_args ""
+    if { [info exists ::env(RTLMP_MAX_LEVEL)]} {
+        append additional_rtlmp_args " -max_num_level $env(RTLMP_MAX_LEVEL)"
+    }
     if { [info exists ::env(RTLMP_MAX_INST)]} {
         append additional_rtlmp_args " -max_num_inst $env(RTLMP_MAX_INST)"
     }
