@@ -23,13 +23,14 @@ clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_
                      -sink_clustering_enable \
                      -sink_clustering_size $cluster_size \
                      -sink_clustering_max_diameter $cluster_diameter \
-                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
+                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)" \
+                     -balance_levels
 } else {
 clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
                      -sink_clustering_enable \
                      -sink_clustering_size $cluster_size \
                      -sink_clustering_max_diameter $cluster_diameter \
-
+                     -balance_levels
 }
 
 

@@ -382,7 +382,9 @@ __cleanup()
         git submodule foreach --recursive git clean ${CLEAN_CMD}
 }
 
-__cleanup
+if [ ! -z "${CLEAN_BEFORE+x}" ]; then
+        __cleanup
+fi
 __logging
 __args_setup
 __common_setup
