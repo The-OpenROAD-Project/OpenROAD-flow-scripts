@@ -142,10 +142,10 @@ _installDebianPackages() {
     klayoutVersion=0.27.10
     if [[ $1 == 10 ]]; then
         klayoutChecksum=8076dadfb1b790b75d284fdc9c90f70b
-        version=20.04
+        version=20
     else
         klayoutChecksum=2fb355f0e19d69be8535722185f983cc
-        version=22.04
+        version=22
     fi
     wget https://www.klayout.org/downloads/Ubuntu-${version}/klayout_${klayoutVersion}-1_amd64.deb
     md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
@@ -157,6 +157,11 @@ _installDebianPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
+    brew install python
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    python3 get-pip.py
+    pip3 install --user pandas
+    brew install --cask klayout@0.27.10
 }
 
 platform="$(uname -s)"
@@ -198,7 +203,6 @@ case "${os}" in
         ;;
     "Darwin" )
         _installDarwinPackages
-        _installCommon
         ;;
     *)
         echo "unsupported system: ${os}" >&2
