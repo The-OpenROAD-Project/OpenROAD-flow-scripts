@@ -21,6 +21,8 @@ export FILL_CELLS = FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16
 # -----------------------------------------------------
 #  Yosys
 #  ----------------------------------------------------
+# Ungroup size for hierarchical synthesis
+export MAX_UNGROUP_SIZE ?= 100000
 # Set the TIEHI/TIELO cells
 # These are used in yosys synthesis to avoid logical 1/0's in the netlist
 export TIEHI_CELL_AND_PORT = LOGIC1_X1 Z
@@ -111,8 +113,13 @@ export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules
 #  IR Drop
 # ---------------------------------------------------------
 
+# Temporarily disable due to bp_be_top pdn issue
+ifneq ($(DESIGN_NAME),bp_be_top)
+
 # IR drop estimation supply net name to be analyzed and supply voltage variable
 # For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
 export PWR_NETS_VOLTAGES  ?= "VDD 1.1"
 export GND_NETS_VOLTAGES  ?= "VSS 0.0"
 export IR_DROP_LAYER ?= metal1
+
+endif
