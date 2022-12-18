@@ -161,7 +161,7 @@ _installDarwinPackages() {
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     python3 get-pip.py
     pip3 install --user pandas
-    brew install --cask klayout@0.27.10
+    brew install --cask klayout
 }
 
 platform="$(uname -s)"
