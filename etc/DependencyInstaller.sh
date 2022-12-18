@@ -2,9 +2,11 @@
 
 set -euo pipefail
 
+# Make sure we are on the correct folder before beginning
+cd "$(dirname $(readlink -f $0))/../"
+
 _installORDependencies() {
-    # how to count for relative path
-    ../tools/OpenROAD/etc/DependencyInstaller.sh -dev
+    ./tools/OpenROAD/etc/DependencyInstaller.sh -dev
 }
 
 _installCommon() {
@@ -18,7 +20,7 @@ _installCommon() {
     mkdir -p "${baseDir}"
     
     # install KLayout
-    klayoutVersion=0.28
+    klayoutVersion=0.27.10
     klayoutChecksum=ff4fb9c597d0e3d7f6dfb49d40d2d167
     if [[ -z $(command -v klayout) ]]; then
         cd "${baseDir}"
@@ -47,7 +49,10 @@ _installCentosPackages() {
         time \
         ruby \
         ruby-devel \
-        tcl-devel
+        tcl-devel 
+
+    pip3 install --user pandas
+    yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-0.27.10-0.x86_64.rpm
 }
 
 _installUbuntuCleanUp() {
@@ -66,7 +71,37 @@ _installUbuntuPackages() {
         ruby \
         ruby-dev \
         libz-dev \
-        python3-pip
+        python3-pip \
+        qttools5-dev \
+        libqt5xmlpatterns5-dev \
+        qtmultimedia5-dev \
+        libqt5multimediawidgets5 \
+        libqt5svg5-dev
+
+    apt --fix-broken install
+    lastDir="$(pwd)"
+
+    # install pandas
+    pip3 install --user pandas
+
+    # temp dir to download and compile
+    baseDir=/tmp/installers
+    mkdir -p "${baseDir}"
+    cd ${baseDir}
+
+    # install KLayout
+    klayoutVersion=0.27.10
+    if [[ $1 == 20.04 ]]; then
+        klayoutChecksum=8076dadfb1b790b75d284fdc9c90f70b
+    else
+        klayoutChecksum=2fb355f0e19d69be8535722185f983cc
+    fi
+    wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
+    md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
+    dpkg -i klayout_${klayoutVersion}-1_amd64.deb
+
+    cd ${lastDir}
+    rm -rf "${baseDir}"
 }
 
 _installDebianCleanUp() {
@@ -85,22 +120,39 @@ _installDebianPackages() {
         ruby \
         ruby-dev \
         libz-dev \
-        python3-pip
-}
+        python3-pip \
+        qttools5-dev \
+        libqt5xmlpatterns5-dev \
+        qtmultimedia5-dev \
+        libqt5multimediawidgets5 \
+        libqt5svg5-dev
 
-_installRHELCleanUp() {
-    yum clean -y all
-    rm -rf /var/lib/apt/lists/*
-}
+    apt --fix-broken install
+    lastDir="$(pwd)"
 
-_installRHELPackages() {
-    yum update -y
-    yum install -y \
-        libffi-devel \
-        tcl \
-        time \
-        ruby \
-        ruby-devel
+    # install pandas
+    pip3 install --user pandas
+
+    # temp dir to download and compile
+    baseDir=/tmp/installers
+    mkdir -p "${baseDir}"
+    cd ${baseDir}
+
+    # install KLayout
+    klayoutVersion=0.27.10
+    if [[ $1 == 10 ]]; then
+        klayoutChecksum=8076dadfb1b790b75d284fdc9c90f70b
+        version=20.04
+    else
+        klayoutChecksum=2fb355f0e19d69be8535722185f983cc
+        version=22.04
+    fi
+    wget https://www.klayout.org/downloads/Ubuntu-${version}/klayout_${klayoutVersion}-1_amd64.deb
+    md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
+    dpkg -i klayout_${klayoutVersion}-1_amd64.deb
+
+    cd ${lastDir}
+    rm -rf "${baseDir}"
 }
 
 _installDarwinPackages() {
@@ -130,25 +182,18 @@ case "${os}" in
     "CentOS Linux" )
         _installORDependencies
         _installCentosPackages
-        _installCommon
         _installCentosCleanUp
         ;;
     "Ubuntu" )
+        version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
         _installORDependencies
-        _installUbuntuPackages
-        _installCommon
+        _installUbuntuPackages "${version}"
         _installUbuntuCleanUp
         ;;
-    "Red Hat Enterprise Linux")
-        _installORDependencies
-        _installRHELPackages
-        _installCommon
-        _installRHELCleanUp
-        ;;
     "Debian GNU/Linux" )
+        version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
         _installORDependencies
-        _installDebianPackages
-        _installCommon
+        _installDebianPackages "${version}"
         _installDebianCleanUp
         ;;
     "Darwin" )
