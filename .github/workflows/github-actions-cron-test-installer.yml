@@ -43,12 +43,12 @@ jobs:
       - name: Runs installer
         run: |
           ./etc/DependencyInstaller.sh
+      - name: Build project
+        run: |
           if [ "${{ matrix.os }}" == "centos:centos7" ]; then
             . /opt/rh/llvm-toolset-7.0/enable
             . /opt/rh/devtoolset-8/enable
-          fi
-      - name: Build project
-        run: |
+          fi        
           ./build_openroad.sh --local
       - name: Test build
         run: |
@@ -76,6 +76,8 @@ jobs:
           ./etc/DependencyInstaller.sh
       - name: Build project
         run: |
+          export PATH="$(brew --prefix bison)/bin:$PATH"
+          echo $OSTYPE
           ./build_openroad.sh --local
       - name: Test build
         run: |

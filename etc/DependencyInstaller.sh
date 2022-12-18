@@ -122,10 +122,28 @@ _installDebianPackages() {
         libz-dev \
         python3-pip \
         qttools5-dev \
-        libqt5xmlpatterns5-dev \
         qtmultimedia5-dev \
+        libc6 \
+        libgcc-s1 \
+        libgcc-s2 \
+        libgcc-s4 \
+        libpython3.10 \
+        libqt5core5a \
+        libqt5designer5 \
+        libqt5gui5 \
+        libqt5multimedia5 \
         libqt5multimediawidgets5 \
-        libqt5svg5-dev
+        libqt5network5 \
+        libqt5printsupport5 \
+        libqt5sql5 \
+        libqt5svg5 \
+        libqt5widgets5 \
+        libqt5xml5 \
+        libqt5xmlpatterns5 \
+        libruby3.0 \
+        libruby3.1 \
+        libstdc++6 \
+        zlib1g
 
     apt --fix-broken install
     lastDir="$(pwd)"
