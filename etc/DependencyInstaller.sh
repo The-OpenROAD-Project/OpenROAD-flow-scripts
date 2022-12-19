@@ -104,75 +104,6 @@ _installUbuntuPackages() {
     rm -rf "${baseDir}"
 }
 
-_installDebianCleanUp() {
-    apt-get autoclean -y
-    apt-get autoremove -y
-}
-
-_installDebianPackages() {
-    export DEBIAN_FRONTEND="noninteractive"
-    apt-get -y update
-    apt-get -y install \
-        libffi-dev \
-        tcl \
-        tcl-dev \
-        time \
-        ruby \
-        ruby-dev \
-        libz-dev \
-        python3-pip \
-        qttools5-dev \
-        qtmultimedia5-dev \
-        libc6 \
-        libgcc-s1 \
-        libgcc-s2 \
-        libgcc-s4 \
-        libpython3.10 \
-        libqt5core5a \
-        libqt5designer5 \
-        libqt5gui5 \
-        libqt5multimedia5 \
-        libqt5multimediawidgets5 \
-        libqt5network5 \
-        libqt5printsupport5 \
-        libqt5sql5 \
-        libqt5svg5 \
-        libqt5widgets5 \
-        libqt5xml5 \
-        libqt5xmlpatterns5 \
-        libruby3.0 \
-        libruby3.1 \
-        libstdc++6 \
-        zlib1g
-
-    apt --fix-broken install
-    lastDir="$(pwd)"
-
-    # install pandas
-    pip3 install --user pandas
-
-    # temp dir to download and compile
-    baseDir=/tmp/installers
-    mkdir -p "${baseDir}"
-    cd ${baseDir}
-
-    # install KLayout
-    klayoutVersion=0.27.10
-    if [[ $1 == 10 ]]; then
-        klayoutChecksum=8076dadfb1b790b75d284fdc9c90f70b
-        version=20
-    else
-        klayoutChecksum=2fb355f0e19d69be8535722185f983cc
-        version=22
-    fi
-    wget https://www.klayout.org/downloads/Ubuntu-${version}/klayout_${klayoutVersion}-1_amd64.deb
-    md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
-    dpkg -i klayout_${klayoutVersion}-1_amd64.deb
-
-    cd ${lastDir}
-    rm -rf "${baseDir}"
-}
-
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
     brew install python
@@ -212,12 +143,6 @@ case "${os}" in
         _installORDependencies
         _installUbuntuPackages "${version}"
         _installUbuntuCleanUp
-        ;;
-    "Debian GNU/Linux" )
-        version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
-        _installORDependencies
-        _installDebianPackages "${version}"
-        _installDebianCleanUp
         ;;
     "Darwin" )
         _installDarwinPackages
