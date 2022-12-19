@@ -19,8 +19,7 @@
 #
 ############################
 
-# optionnal for a batch launch :   klayout -b -rd input=my_layout.gds -rd report=my_report.lyrdb -rd schematic=reference_netlist.cir -rd target_netlist=extracted_netlist.cir -r sky130.lvs
-# optionnal for a batch launch :   klayout -b -rd in_gds=my_layout.gds -rd report_file=my_report.lyrdb -rd cdl_file=reference_netlist.cir -rd target_netlist=extracted_netlist.cir -r sky130.lvs
+# optionnal for a batch launch :   klayout -b -rd in_gds=my_layout.gds -rd report_file=my_report.lyrdb -rd cdl_file=reference_netlist.cir -rd target_netlist=extracted_netlist.cir -r sky130.lylvs
 if $in_gds
   source($in_gds)
 end

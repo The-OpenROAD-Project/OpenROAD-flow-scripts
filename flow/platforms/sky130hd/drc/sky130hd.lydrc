@@ -26,7 +26,6 @@
 #
 ##########################################################################################
 
-# optionnal for a batch launch :   klayout -b -rd input=my_layout.gds -rd report=sky130_drc.txt -r drc_sky130.drc
 # optionnal for a batch launch :   klayout -b -rd in_gds=my_layout.gds -rd report_file=6_drc_count.rpt -r drc_sky130.drc
 if $in_gds
   source($in_gds)
