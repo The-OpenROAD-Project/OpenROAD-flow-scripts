@@ -133,7 +133,7 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   if {![info exists save_checkpoint] || $save_checkpoint} {
     write_verilog $::env(RESULTS_DIR)/2_post_abc.v
   }
-  utl::push_metrics_stage "floorplan__{}__post_restruct
+  utl::push_metrics_stage "floorplan__{}__post_restruct"
   set num_instances [llength [get_cells -hier *]]
   puts "number instances after restructure is $num_instances"
   puts "Design Area after restructure"
