@@ -1,4 +1,8 @@
-modroot="$(dirname $(readlink -f "$0"))/tools"
+#!/bin/bash
+
+set -euo pipefail
+
+modroot="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/tools"
 
 if [ ! -d "${modroot}" ]; then
   echo "Module path does not exist: ${modroot}"
