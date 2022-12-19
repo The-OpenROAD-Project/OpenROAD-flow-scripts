@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu:20.04", "ubuntu:22.04", "centos:centos7", "debian:buster", "debian:bullseye"]
+        os: ["ubuntu:20.04", "ubuntu:22.04", "centos:centos7"]
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.os }}
