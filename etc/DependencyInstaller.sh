@@ -78,7 +78,6 @@ _installUbuntuPackages() {
         libqt5multimediawidgets5 \
         libqt5svg5-dev
 
-    apt --fix-broken install
     lastDir="$(pwd)"
 
     # install pandas
