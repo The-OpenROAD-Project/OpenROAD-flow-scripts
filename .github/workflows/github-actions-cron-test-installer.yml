@@ -76,16 +76,18 @@ jobs:
         with:
           submodules: 'recursive'
       - name: Runs installer
+        shell: bash
         run: |
-          ./etc/DependencyInstaller.sh
+          sudo ./etc/DependencyInstaller.sh
       - name: Build project
+        shell: bash
         run: |
-          ./build_openroad.sh --local
+          sudo ./build_openroad.sh --local
       - name: Test build
         shell: bash
         run: |
-          source ./setup_env.sh
+          sudo source ./setup_env.sh
           yosys -help
           openroad -help
           cd flow
-          make
+          sudo make
