@@ -291,9 +291,9 @@ __docker_build()
 __local_build()
 {
         if [[ "$OSTYPE" == "darwin"* ]]; then
-          export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$(brew --prefix tcl-tk)/bin:$PATH"
+          export PATH="$(brew --prefix bison):$(brew --prefix flex)/bin:$(brew --prefix tcl-tk)/bin:$PATH"
           echo $PATH
-          $(brew --prefix bison)/bin -V
+          $(brew --prefix bison) -V
           which bison
         fi
         echo "[INFO FLW-0017] Compiling Yosys."

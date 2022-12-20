@@ -46,6 +46,8 @@ jobs:
           git submodule update --init
       - name: Runs installer
         run: |
+          chsh -s /bin/bash
+          source ./setup_env.sh || true
           ./etc/DependencyInstaller.sh
       - name: Build project
         run: |
@@ -56,7 +58,7 @@ jobs:
           ./build_openroad.sh --local
       - name: Test build
         run: |
-          . ./setup_env.sh
+          source ./setup_env.sh
           yosys -help
           openroad -help
           cd flow
