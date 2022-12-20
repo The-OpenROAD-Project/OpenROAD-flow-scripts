@@ -144,6 +144,7 @@ case "${os}" in
         _installUbuntuCleanUp
         ;;
     "Darwin" )
+        _installORDependencies
         _installDarwinPackages
         ;;
     *)

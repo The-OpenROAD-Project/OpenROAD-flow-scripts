@@ -46,17 +46,16 @@ jobs:
           git submodule update --init
       - name: Runs installer
         run: |
-          chsh -s /bin/bash
-          source ./setup_env.sh || true
           ./etc/DependencyInstaller.sh
       - name: Build project
         run: |
           if [ "${{ matrix.os }}" == "centos:centos7" ]; then
             . /opt/rh/llvm-toolset-7.0/enable
             . /opt/rh/devtoolset-8/enable
-          fi        
+          fi
           ./build_openroad.sh --local
       - name: Test build
+        shell: bash
         run: |
           source ./setup_env.sh
           yosys -help
@@ -83,8 +82,9 @@ jobs:
         run: |
           ./build_openroad.sh --local
       - name: Test build
+        shell: bash
         run: |
-          . ./setup_env.sh
+          source ./setup_env.sh
           yosys -help
           openroad -help
           cd flow

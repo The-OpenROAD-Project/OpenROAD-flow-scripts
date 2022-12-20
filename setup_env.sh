@@ -1,5 +1,3 @@
-#!/bin/bash
-
 modroot="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/tools"
 
 if [ ! -d "${modroot}" ]; then
