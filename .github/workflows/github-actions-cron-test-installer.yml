@@ -77,7 +77,9 @@ jobs:
           submodules: 'recursive'
       - name: Set access
         shell: bash
-        run: chmod -R 777 .
+        run: |
+          sudo chmod -R 777 .
+          chmod -R 777 /opt
       - name: Runs installer
         shell: bash
         run: |
