@@ -78,7 +78,7 @@ jobs:
       - name: Runs installer
         shell: bash
         run: |
-          sudo ./etc/DependencyInstaller.sh
+          ./etc/DependencyInstaller.sh
       - name: Build project
         shell: bash
         run: |
