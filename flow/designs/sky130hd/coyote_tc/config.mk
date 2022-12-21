@@ -76,8 +76,3 @@ export MIN_ROUTING_LAYER met1
 export MAX_ROUTING_LAYER met5
 
 export FASTROUTE_TCL $(PLATFORM_DIR)/fastroute.tcl
-
-# IR drop estimation supply net name to be analyzed and supply voltage variable
-# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
-export PWR_NETS_VOLTAGES  = "VDD 1.8"
-export GND_NETS_VOLTAGES  = "VSS 0.0"

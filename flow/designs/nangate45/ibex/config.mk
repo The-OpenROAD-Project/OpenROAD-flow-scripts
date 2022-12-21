@@ -49,6 +49,7 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4
-export DIE_AREA    = 0 0 600.08 599.8
-export CORE_AREA   = 10.07 11.2 590.01 590
+export DIE_AREA    = 0 0 300.01 299.6 
+export CORE_AREA   = 10.07 11.2 289.94 289.8 
 
+export PLACE_DENSITY_LB_ADDON = 0.20

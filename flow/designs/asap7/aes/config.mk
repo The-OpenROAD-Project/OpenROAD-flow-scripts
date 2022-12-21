@@ -8,7 +8,7 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export ABC_AREA               = 1
 
-export CORE_UTILIZATION       = 30
+export CORE_UTILIZATION       = 40 
 export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
-export PLACE_DENSITY          = 0.60
+export PLACE_DENSITY         = 0.65

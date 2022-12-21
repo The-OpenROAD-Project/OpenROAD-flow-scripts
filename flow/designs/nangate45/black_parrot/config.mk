@@ -2,6 +2,15 @@ export DESIGN_NICKNAME = bp
 export DESIGN_NAME = black_parrot
 export PLATFORM    = nangate45
 
+export SYNTH_HIERARCHICAL = 1
+export RTLMP_FLOW = True
+#
+# RTL_MP Settings
+export RTLMP_MAX_INST = 30000
+export RTLMP_MIN_INST = 5000
+export RTLMP_MAX_MACRO = 12
+export RTLMP_MIN_MACRO = 4 
+
 export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/pickled.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
 
@@ -20,4 +29,5 @@ export CORE_AREA   = 10.07 11.2 2189.94 2189.6
 
 export PLACE_DENSITY = 0.15
 
-export MACRO_PLACE_HALO ?= 25.4 18.12
+export MACRO_PLACE_HALO = 5 5
+export MACRO_PLACE_CHANNEL = 10 10

@@ -21,6 +21,8 @@ export FILL_CELLS = FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16
 # -----------------------------------------------------
 #  Yosys
 #  ----------------------------------------------------
+# Ungroup size for hierarchical synthesis
+export MAX_UNGROUP_SIZE ?= 100000
 # Set the TIEHI/TIELO cells
 # These are used in yosys synthesis to avoid logical 1/0's in the netlist
 export TIEHI_CELL_AND_PORT = LOGIC1_X1 Z
@@ -36,7 +38,7 @@ export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
 export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders.v
 #
 # Set yosys-abc clock period to first "-period" found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
+export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 export ABC_DRIVER_CELL = BUF_X1
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
 export ABC_LOAD_IN_FF = 3.898
@@ -50,11 +52,11 @@ export ABC_LOAD_IN_FF = 3.898
 export PLACE_SITE = FreePDK45_38x28_10R_NP_162NW_34O
 
 # IO Placer pin layers
-export IO_PLACER_H = metal3
-export IO_PLACER_V = metal2
+export IO_PLACER_H = metal5
+export IO_PLACER_V = metal6
 
 # Define default PDN config
-export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
+export PDN_TCL ?= $(PLATFORM_DIR)/grid_strategy-M1-M4-M7.tcl
 
 # Endcap and Welltie cells
 export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
@@ -65,9 +67,6 @@ export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 #---------------------------------------------------------
 # Place
 # --------------------------------------------------------
-# Layer to use for parasitics estimations
-export WIRE_RC_LAYER = metal3
-
 # Cell padding in SITE widths to ease rout-ability.  Applied to both sides
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
@@ -79,9 +78,7 @@ export PLACE_DENSITY ?= 0.30
 #  CTS
 #  -------------------------------------------------------
 # TritonCTS options
-export CTS_BUF_CELL   = BUF_X4
-export CTS_TECH_DIR   = $(PLATFORM_DIR)/tritonCTS
-
+export CTS_BUF_CELL   ?= BUF_X4
 
 # ---------------------------------------------------------
 #  Route
@@ -92,7 +89,6 @@ export MAX_ROUTING_LAYER = metal10
 
 # Define fastRoute tcl
 export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute.tcl
-
 
 # KLayout technology file
 export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/FreePDK45.lyt
@@ -112,4 +108,13 @@ export CDL_FILE = $(PLATFORM_DIR)/cdl/NangateOpenCellLibrary.cdl
 export TEMPLATE_PGA_CFG ?= $(PLATFORM_DIR)/template_pga.cfg
 
 # OpenRCX extRules
-export RCX_RULES                           = ./platforms/$(PLATFORM)/rcx_patterns.rules
+export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules
+# ---------------------------------------------------------
+#  IR Drop
+# ---------------------------------------------------------
+
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  ?= "VDD 1.1"
+export GND_NETS_VOLTAGES  ?= "VSS 0.0"
+export IR_DROP_LAYER ?= metal1

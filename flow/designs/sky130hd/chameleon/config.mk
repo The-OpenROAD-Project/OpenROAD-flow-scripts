@@ -45,12 +45,6 @@ export ADDITIONAL_LEFS  = $(chameleon_DIR)/lef/apb_sys_0.lef \
                           $(chameleon_DIR)/lef/ibex_wrapper.lef
 
 export MACRO_PLACEMENT = $(chameleon_DIR)/chameleon.macro_placment.cfg
-export MACRO_EXTENSION = 1
 
 export FP_PDN_RAIL_WIDTH = 0.48
 export FP_PDN_RAIL_OFFSET = 0
-
-# IR drop estimation supply net name to be analyzed and supply voltage variable
-# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
-export PWR_NETS_VOLTAGES  = "VDD 1.8"
-export GND_NETS_VOLTAGES  = "VSS 0.0"

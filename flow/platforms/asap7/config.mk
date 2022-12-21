@@ -5,54 +5,56 @@ export PROCESS                 = 7
 
 #Library Setup variable
 export TECH_LEF                = $(PLATFORM_DIR)/lef/asap7_tech_1x_201209.lef
-export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_27_R_1x_201211.lef
+export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_R_1x_220121a.lef
 
-export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_27_R_1x_201211.gds \
+export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_R_220121a.gds \
                                  $(ADDITIONAL_GDS)
 
-export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_201020.lib \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_FF_nldm_201020.lib \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_FF_nldm_201020.lib \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib \
-         			 $(ADDITIONAL_LIBS)
+export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib \
+				 $(ADDITIONAL_LIBS)
 
-export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib
+export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib
 
-export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_SS_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_SS_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_SS_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib \
-       				$(ADDITIONAL_LIBS)
+export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_SS_nldm_211120.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_SS_nldm_220122.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_SS_nldm_211120.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_220123.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_SS_nldm_211120.lib.gz \
+				$(ADDITIONAL_LIBS)
 
-export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
+export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_220123.lib
 
-export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_TT_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_TT_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_TT_nldm_201020.lib \
-        			$(ADDITIONAL_LIBS)
+export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_211120.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_TT_nldm_220122.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_TT_nldm_211120.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_TT_nldm_211120.lib.gz \
+				$(ADDITIONAL_LIBS)
 
-export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_201020.lib \
+export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib
 
 export BC_TEMPERATURE          = 25C
 export TC_TEMPERATURE          = 0C
 export WC_TEMPERATURE          = 100C
 
+export BC_VOLTAGE          = 0.77
+export TC_VOLTAGE          = 0.70
+export WC_VOLTAGE          = 0.63
+
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
-export DONT_USE_CELLS          = *x1_ASAP7* *x1p*_ASAP7* *xp*_ASAP7*
+export DONT_USE_CELLS          = *x1p*_ASAP7* *xp*_ASAP7*
 export DONT_USE_CELLS          += SDF* ICG* DFFH*
+#export DONT_USE_CELLS          += SDF* DFFH*
 
 # Yosys mapping files
-# Blackbox - list all standard cells and cells yosys should treat as blackboxes
-export BLACKBOX_V_FILE         = $(PLATFORM_DIR)/yoSys/asap7sc7p5t.blackbox.v
-export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch.v
-export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate.v
-export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders.v
-export BLACKBOX_MAP_TCL        = $(PLATFORM_DIR)/yoSys/blackbox_map.tcl
+export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_R.v
+export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_R.v
+export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_R.v
 
 # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
 export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
@@ -76,7 +78,7 @@ export PLACE_SITE              = asap7sc7p5t
 export MAKE_TRACKS             = $(PLATFORM_DIR)/openRoad/make_tracks.tcl
 
 # Define default PDN config
-export PDN_CFG ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M2-M5-M7.cfg
+export PDN_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M2-M5-M7.tcl
 
 # IO Placer pin layers
 export IO_PLACER_H             = M4
@@ -91,25 +93,24 @@ export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 1
 
 export PLACE_DENSITY ?= 0.60
 
-# Layer to use for parasitics estimations
-export WIRE_RC_LAYER           = M3
-
 # Endcap and Welltie cells
 export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
 
 # TritonCTS options
-export CTS_BUF_CELL            = BUFx4_ASAP7_75t_R
+export CTS_BUF_CELL            ?= BUFx4_ASAP7_75t_R
 
-export CTS_BUF_DISTANCE        = 60
+export CTS_BUF_DISTANCE        ?= 60
 
 # Fill cells used in fill cell insertion
 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_R"
 
+export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_R
 
 export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
 
 # Route options
 export MIN_ROUTING_LAYER       = M2
+#export MIN_CLOCK_ROUTING_LAYER = M4
 export MAX_ROUTING_LAYER       = M7
 
 # KLayout technology file
@@ -119,41 +120,108 @@ export KLAYOUT_TECH_FILE       = $(PLATFORM_DIR)/KLayout/asap7.lyt
 export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules
 
 # XS - defining function for selecting different timing library set
-# XS - defining function for 4x sizing
-ifdef ($(ASAP7_USE4X))
-   export 4X                      = 1
-   export TECH_LEF                = $(PLATFORM_DIR)/lef/asap7_tech_4x_201209.lef
-   export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_27_R_4x_201211.lef
-   export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_27_R_4x_201211.gds
-endif
 
 # XS - defining function for using LVT
-ifdef ($(ASAP7_USELVT))
+ifeq ($(ASAP7_USELVT), 1)
    export TIEHI_CELL_AND_PORT     = TIEHIx1_ASAP7_75t_L H
    export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_L L
-   
+
    export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_L A Y
-   
+
    export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_L
-   
-   export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_FF_nldm_201020.lib \
-   			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_201020.lib \
-   			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_201020.lib \
-   			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib \
-   			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib
-   
-   export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_SS_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_SS_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib
-   
-   export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_TT_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_TT_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_TT_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_201020.lib \
-   				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_TT_nldm_201020.lib
-   
+
+	 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_L
+
+	 export CTS_BUF_CELL            = BUFx4_ASAP7_75t_L
+
+	 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_L"
+
+	 export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_L
+
+	 export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_L_220121a.gds \
+																	  $(ADDITIONAL_GDS)
+
+	 export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_L_1x_220121a.lef
+
+	 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_L.v
+	 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_L.v
+	 export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_L.v
+
+	 export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
+
+   export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib.gz \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_220122.lib.gz \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_211120.lib.gz \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_FF_nldm_211120.lib.gz \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
+
+	 export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_220123.lib
+
+   export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_SS_nldm_211120.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_SS_nldm_220122.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_SS_nldm_211120.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_220123.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_SS_nldm_211120.lib.gz
+
+	 export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_220123.lib
+
+   export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_TT_nldm_211120.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_TT_nldm_220122.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_TT_nldm_211120.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_220123.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_TT_nldm_211120.lib.gz
+
+endif
+
+ifeq ($(ASAP7_USESLVT), 1)
+   export TIEHI_CELL_AND_PORT     = TIEHIx1_ASAP7_75t_SL H
+   export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_SL L
+
+   export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_SL A Y
+
+   export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_SL
+
+	 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_SL
+
+	 export CTS_BUF_CELL            = BUFx4_ASAP7_75t_SL
+
+	 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_SL"
+
+	 export TAP_CELL_NAME					  = TAPCELL_ASAP7_75t_SL
+
+	 export GDS_FILES                = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_SL_220121a.gds \
+																	 $(ADDITIONAL_GDS)
+
+	 export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_SL_1x_220121a.lef
+
+	 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_SL.v
+	 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_SL.v
+	 export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_SL.v
+
+	 export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
+
+   export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_FF_nldm_211120.lib.gz \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_FF_nldm_220122.lib.gz \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_FF_nldm_211120.lib.gz \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_211120.lib.gz \
+			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
+
+	 export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_SS_nldm_220123.lib
+
+   export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_SS_nldm_211120.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_SS_nldm_220122.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_SS_nldm_211120.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_SS_nldm_220123.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_211120.lib.gz
+
+	 export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_TT_nldm_220123.lib
+
+   export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_TT_nldm_211120.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_TT_nldm_220122.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_TT_nldm_211120.lib.gz \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_TT_nldm_220123.lib \
+				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_TT_nldm_211120.lib.gz
+
 endif
 
 #Dont use SC library based on CORNER selection
@@ -163,11 +231,22 @@ ifeq ($(CORNER),)
    export LIB_FILES             += $($(CORNER)_LIB_FILES)
    export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
    export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
+   export VOLTAGE                = $($(CORNER)_VOLTAGE)
    export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 else
    $(info User PVT selection: $(CORNER))
    export LIB_FILES             += $($(CORNER)_LIB_FILES)
    export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
    export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
+   export VOLTAGE                = $($(CORNER)_VOLTAGE)
    export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 endif
+# ---------------------------------------------------------
+#  IR Drop
+# ---------------------------------------------------------
+
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  ?= "VDD $(VOLTAGE)"
+export GND_NETS_VOLTAGES  ?= "VSS 0.0"
+export IR_DROP_LAYER ?= M1

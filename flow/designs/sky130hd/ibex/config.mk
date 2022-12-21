@@ -45,13 +45,10 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 # Adders degrade ibex setup repair
 export ADDER_MAP_FILE :=
 
-export CORE_UTILIZATION = 20 
+export CORE_UTILIZATION = 40
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 
-export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute_base.tcl
+export PLACE_DENSITY_LB_ADDON = 0.2
 
-# IR drop estimation supply net name to be analyzed and supply voltage variable
-# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
-export PWR_NETS_VOLTAGES  = "VDD 1.8"
-export GND_NETS_VOLTAGES  = "VSS 0.0"
+export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute_base.tcl

@@ -1,0 +1,163 @@
+#-----------------------------------------------------
+# Tech/Libs
+#   TRACK_OPTION - 9t 7t
+#   METAL_OPTION - 5LM_1TM
+#----------------------------------------------------
+export TRACK_OPTION                          ?= 9t
+export METAL_OPTION                          ?= 5LM_1TM
+export KVALUE                                ?= 9
+export POWER_OPTION                          ?= 5v0
+export CORNER                                ?= BC
+export PROCESS                                = 180
+
+#----------------------------------------------------
+# OpenROAD
+#----------------------------------------------------
+export TECH_LEF                               = $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_tech.lef
+
+export SC_LEF                                 = $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_sc.lef
+
+export GDS_FILES                              = $(wildcard $(PLATFORM_DIR)/gds/$(TRACK_OPTION)/*.gds) \
+                                                $(ADDITIONAL_GDS)
+
+# Dont use cells 
+export DONT_USE_CELLS                         = *_1
+
+# Fill cells used in fill cell insertion
+export FILL_CELLS                             = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_64 \
+                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_32 \
+                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_16 \
+                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_8 \
+                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_4 \
+                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_2 \
+                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_1
+
+export TIE_CELL                               = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__filltie
+export ENDCAP_CELL                            = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__endcap
+export RC_FILE                                = $(PLATFORM_DIR)/setRC.tcl
+
+#-----------------------------------------------------
+# Yosys
+#-----------------------------------------------------
+
+# set the TIEHI/TIELO cells
+export TIEHI_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tieh Z
+export TIELO_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tiel Z
+
+# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
+export ABC_CLOCK_PERIOD_IN_PS                ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
+export ABC_DRIVER_CELL                        = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__buf_4
+export ABC_LOAD_IN_FF                         = 0.01343
+
+# hold buffer cell
+export MIN_BUF_CELL_AND_PORTS                 = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__dlya_4 I Z
+
+# Used in synthesis
+export MAX_FANOUT                             = 20
+
+#--------------------------------------------------------
+# Floorplan
+#-------------------------------------------------------
+# Placement site for core cells
+ifeq ($(TRACK_OPTION),9t) 
+export PLACE_SITE                             = GF018hv5v_green_sc9
+else
+export PLACE_SITE                             = GF018hv5v_mcu_sc7
+endif
+
+# IO Pin fix margin
+export IO_PIN_MARGIN                         ?= 25
+
+# IO Placer pin layers
+export IO_PLACER_H                           ?= Metal3
+export IO_PLACER_V                           ?= Metal4
+
+# Define default PDN config
+export PDN_TCL                               ?= $(PLATFORM_DIR)/openROAD/pdn/pdn_grid_strategy_$(TRACK_OPTION)_6M.cfg
+
+# Endcap and Welltie cells
+export TAPCELL_TCL                            = $(PLATFORM_DIR)/openROAD/tapcell.tcl
+
+# macro planning
+export MACRO_PLACE_HALO                      ?= 10 10
+export MACRO_PLACE_CHANNEL                   ?= 20.16 20.16
+
+#---------------------------------------------------------
+# Place
+#--------------------------------------------------------
+# Cell padding in SITE widths to ease rout-ability.  Applied to both sides
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT    ?= 2
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT    ?= 1
+
+# resizer repair_long_wires -max_length
+export MAX_WIRE_LENGTH                        = 150
+
+# global placement density
+export PLACE_DENSITY                         ?= 0.40
+
+# adjustment parameter for placer and global router's routability-driven loop
+#
+# if routing resources are highly reduced in global router (e.g. higher value in below)
+# placer will bloat lots of cells in each RD iteration and cause unstableness.
+#
+# will be used in script/global_place.tcl
+export REPLACE_FASTROUTE_RESOURCE_ADJ_23      = 0.7
+export REPLACE_FASTROUTE_RESOURCE_ADJ_OTHER   = 0.4
+
+#--------------------------------------------------------
+# CTS
+#--------------------------------------------------------
+export CTS_BUF_CELL                           = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__clkbuf_8
+export CTS_BUF_DISTANCE                       = 100
+
+#---------------------------------------------------------
+# Route
+#---------------------------------------------------------
+# FastRoute options
+export MIN_ROUTING_LAYER                     ?= Metal2
+export MAX_ROUTING_LAYER                     ?= Metal5
+export VIA_IN_PIN_MIN_LAYER                  ?= Metal1
+export VIA_IN_PIN_MAX_LAYER                  ?= Metal1
+export DISABLE_VIA_GEN                       ?= 1
+
+# KLayout layer properties
+export KLAYOUT_TECH_FILE                      = $(PLATFORM_DIR)/KLayout/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION).lyt
+export KLAYOUT_LEF_FILE                       = $(PLATFORM_DIR)/KLayout/tech_$(TRACK_OPTION)_$(METAL_OPTION).lef
+export GDS_LAYER_MAP                          = $(abspath $(PLATFORM_DIR)/gds/$(TRACK_OPTION)/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_edi2gds.layermap)
+
+# For RCX
+export BC_RCX_RULES                           = $(PLATFORM_DIR)/openROAD/rcx/gf180mcu_1p5m_1tm_9k_sp_smim_OPTB_bst.rules
+export WC_RCX_RULES                           = $(PLATFORM_DIR)/openROAD/rcx/gf180mcu_1p5m_1tm_9k_sp_smim_OPTB_wst.rules
+export TC_RCX_RULES                           = $(PLATFORM_DIR)/openROAD/rcx/gf180mcu_1p5m_1tm_9k_sp_smim_OPTB_typ.rules
+
+export BC_RCX_RC_CORNER                       = FuncRCmin
+export WC_RCX_RC_CORNER                       = FuncRCmax
+export TC_RCX_RC_CORNER                       = FuncRCtyp
+
+export RCX_RULES                              = $($(CORNER)_RCX_RULES)
+export RCX_RC_CORNER                          = $($(CORNER)_RCX_RC_CORNER)
+
+#----------------------------------------------------------------------------------------------------
+# define libraries - corner dependant setting
+#----------------------------------------------------------------------------------------------------
+# standard cell section
+#----------------------------------------------------------------------------------------------------
+export BC_LIB_FILES                           = $(abspath $(PLATFORM_DIR)/lib/gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__ff_n40C_5v50.lib.gz)
+export BC_TEMPERATURE                         = -40c
+
+export WC_LIB_FILES                           = $(abspath $(PLATFORM_DIR)/lib/gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__ss_125C_4v50.lib.gz)
+export WC_TEMPERATURE                         = 125c
+
+export TC_LIB_FILES                           = $(abspath $(PLATFORM_DIR)/lib/gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tt_025C_5v00.lib.gz)
+export TC_TEMPERATURE                         = 25c
+
+# ----------------------------------------------------------------------------------------------------
+# now, set files from user setting CORNER
+# ----------------------------------------------------------------------------------------------------
+export TEMPERATURE                           = $($(CORNER)_TEMPERATURE)
+export LIB_FILES                             = $($(CORNER)_LIB_FILES) \
+                                               $(ADDITIONAL_LIBS)
+
+# For proprietary tool enablements that are not public
+export GF180_PRIVATE_DIR ?= ../../gf180-private
+-include $(GF180_PRIVATE_DIR)/private.mk

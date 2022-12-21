@@ -1,14 +1,11 @@
 include $(dir $(DESIGN_CONFIG))/config.mk
 
-#export FLOW_VARIANT = hier
-export FLOW_VARIANT = hier_rtlmp
+export FLOW_VARIANT ?= hier_rtlmp
 export SYNTH_HIERARCHICAL = 1
-export MAX_UNGROUP_SIZE = 1000
+export MAX_UNGROUP_SIZE ?= 10000
 export RTLMP_FLOW = True
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_hier.sdc
-
-export FLOORPLAN_DEF = ./results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)/2_2_floorplan_io.def
 
 # RTL_MP Settings
 export RTLMP_MAX_INST = 20000

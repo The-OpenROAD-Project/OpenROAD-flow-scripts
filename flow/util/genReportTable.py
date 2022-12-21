@@ -29,6 +29,9 @@ version
 # all other metrics are considered better if they decrease in value
 higherIsBetter = re.compile(r'''
 __ws |
+__wns |
+__drv__max.*_limit |
+__clock__slack |
 __tns
 ''', re.VERBOSE | re.IGNORECASE)
 
@@ -46,6 +49,7 @@ args = parser.parse_args()
 
 goldFilename = f'metadata-{args.variant}-ok.json'
 runFilename = f'metadata-{args.variant}.json'
+
 
 def readMetrics(fname, justLoad=False):
     global tableDict
@@ -91,8 +95,8 @@ def getDiff(metric, gold, run, rules):
             style = 'green' if re.search(higherIsBetter, metric) else 'orange'
         elif gold > run:
             style = 'orange' if re.search(higherIsBetter, metric) else 'green'
-        for rule in rules:
-            if metric != rule['field']:
+        for field, rule in rules.items():
+            if metric != field:
                 continue
             op = ops[rule['compare']]
             value = rule['value']
@@ -153,8 +157,6 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     rules = readMetrics(os.path.join(designDir, rulesFilename), justLoad=True)
     if rules is None:
         errors += 1
-    else:
-        rules = rules['rules']
 
     testList.append(test)
     if test not in status.keys():
@@ -342,6 +344,7 @@ platforms = sorted(platforms)
 designs = sorted(designs)
 view = sorted(views)
 
+
 def write_gallery(design, platforms, views):
     htmlGallery = f'reports/report-gallery-{design}.html'
     with open(htmlGallery, 'w') as f:
@@ -364,6 +367,7 @@ def write_gallery(design, platforms, views):
         gallery += '</table>\n'
         html = head + gallery + tail
         f.writelines(html)
+
 
 for design in designs:
     write_gallery(design, platforms, views)
@@ -512,7 +516,6 @@ with open(htmlOutput, 'w') as f:
         for col in subColumns:
             table += '    <td>{}</td>\n'.format(col)
     table += '  </tr>\n'
-
 
     # Main table rows
     for metric, entry in tableDict.items():

@@ -40,8 +40,7 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hs.v
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
 export ABC_LOAD_IN_FF = 5
 # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
-
+export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 #--------------------------------------------------------
 # Floorplan
 # -------------------------------------------------------
@@ -55,7 +54,7 @@ export IO_PLACER_H = met3
 export IO_PLACER_V = met2
 
 # Define default PDN config
-export PDN_CFG ?= $(PLATFORM_DIR)/pdn.cfg
+export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # Endcap and Welltie cells
 export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
@@ -66,9 +65,6 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 #---------------------------------------------------------
 # Place
 # --------------------------------------------------------
-# Layer to use for parasitics estimations
-export WIRE_RC_LAYER = met3
-
 # Cell padding in SITE widths to ease rout-ability
 #
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 1
@@ -81,7 +77,7 @@ export PLACE_DENSITY ?= 0.50
 #  CTS
 #  -------------------------------------------------------
 # TritonCTS options
-export CTS_BUF_CELL   = sky130_fd_sc_hs__clkbuf_4
+export CTS_BUF_CELL   ?= sky130_fd_sc_hs__clkbuf_4
 
 # ---------------------------------------------------------
 #  Route
@@ -105,3 +101,12 @@ export TEMPLATE_PGA_CFG ?= $(PLATFORM_DIR)/template_pga.cfg
 
 # OpenRCX extRules
 export RCX_RULES = $(PLATFORM_DIR)/rcx_patterns.rules
+# ---------------------------------------------------------
+#  IR Drop
+# ---------------------------------------------------------
+
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  ?= "VDD 1.8"
+export GND_NETS_VOLTAGES  ?= "VSS 0.0"
+export IR_DROP_LAYER ?= met1
