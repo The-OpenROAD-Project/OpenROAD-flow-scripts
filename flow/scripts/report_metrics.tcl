@@ -1,3 +1,16 @@
+proc count_violating_endpoints { minmax } {
+    set count 0
+    foreach pin [sta::endpoints] {
+        foreach vertex [$pin vertices] {
+            set slack [ $vertex slack $minmax ]
+            if [ expr $slack < 0 ] {
+                set count [expr $count + 1]
+            }
+        }
+    }
+    return $count;
+}
+
 proc report_metrics { when {include_erc true} {include_clock_skew true} } {
   puts "\n=========================================================================="
   puts "$when check_setup"
@@ -121,12 +134,12 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
     puts "\n=========================================================================="
     puts "$when setup_violation_count"
     puts "--------------------------------------------------------------------------"
-    puts "setup violation count [llength [find_timing_paths -path_delay max -slack_max 0]]"
+    puts "setup violation count [count_violating_endpoints max]"
 
     puts "\n=========================================================================="
     puts "$when hold_violation_count"
     puts "--------------------------------------------------------------------------"
-    puts "hold violation count [llength [find_timing_paths -path_delay min -slack_max 0]]"
+    puts "hold violation count [count_violating_endpoints min]"
 
     set critical_path [lindex [find_timing_paths -sort_by_slack] 0]
     if {$critical_path != ""} {
