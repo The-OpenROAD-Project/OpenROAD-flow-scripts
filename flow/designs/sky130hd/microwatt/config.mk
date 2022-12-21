@@ -17,7 +17,7 @@ export ABC_CLOCK_PERIOD_IN_PS = 25000
 
 export microwatt_DIR = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)
 
-export ADDITIONAL_GDS_FILES  = $(wildcard $(microwatt_DIR)/gds/*.gds.gz)
+export ADDITIONAL_GDS  = $(wildcard $(microwatt_DIR)/gds/*.gds.gz)
 
 export ADDITIONAL_LEFS  = $(wildcard $(microwatt_DIR)/lef/*.lef)
 
