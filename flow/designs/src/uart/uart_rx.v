@@ -29,18 +29,14 @@ THE SOFTWARE.
 /*
  * AXI4-Stream UART
  */
-module uart_rx #
-(
-    parameter DATA_WIDTH = 8
-)
-(
+module uart_rx(
     input  wire                   clk,
     input  wire                   rst,
 
     /*
      * AXI output
      */
-    output wire [DATA_WIDTH-1:0]  m_axis_tdata,
+    output wire [8-1:0]  m_axis_tdata,
     output wire                   m_axis_tvalid,
     input  wire                   m_axis_tready,
 
@@ -63,7 +59,7 @@ module uart_rx #
 
 );
 
-reg [DATA_WIDTH-1:0] m_axis_tdata_reg = 0;
+reg [8-1:0] m_axis_tdata_reg = 0;
 reg m_axis_tvalid_reg = 0;
 
 reg rxd_reg = 1;
@@ -72,7 +68,7 @@ reg busy_reg = 0;
 reg overrun_error_reg = 0;
 reg frame_error_reg = 0;
 
-reg [DATA_WIDTH-1:0] data_reg = 0;
+reg [8-1:0] data_reg = 0;
 reg [18:0] prescale_reg = 0;
 reg [3:0] bit_cnt = 0;
 
@@ -105,7 +101,7 @@ always @(posedge clk) begin
         if (prescale_reg > 0) begin
             prescale_reg <= prescale_reg - 1;
         end else if (bit_cnt > 0) begin
-            if (bit_cnt > DATA_WIDTH+1) begin
+            if (bit_cnt > 8+1) begin
                 if (!rxd_reg) begin
                     bit_cnt <= bit_cnt - 1;
                     prescale_reg <= (prescale << 3)-1;
@@ -116,7 +112,7 @@ always @(posedge clk) begin
             end else if (bit_cnt > 1) begin
                 bit_cnt <= bit_cnt - 1;
                 prescale_reg <= (prescale << 3)-1;
-                data_reg <= {rxd_reg, data_reg[DATA_WIDTH-1:1]};
+                data_reg <= {rxd_reg, data_reg[8-1:1]};
             end else if (bit_cnt == 1) begin
                 bit_cnt <= bit_cnt - 1;
                 if (rxd_reg) begin
@@ -131,7 +127,7 @@ always @(posedge clk) begin
             busy_reg <= 0;
             if (!rxd_reg) begin
                 prescale_reg <= (prescale << 2)-2;
-                bit_cnt <= DATA_WIDTH+2;
+                bit_cnt <= 8+2;
                 data_reg <= 0;
                 busy_reg <= 1;
             end

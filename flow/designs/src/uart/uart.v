@@ -29,25 +29,21 @@ THE SOFTWARE.
 /*
  * AXI4-Stream UART
  */
-module uart #
-(
-    parameter DATA_WIDTH = 8
-)
-(
+module uart(
     input  wire                   clk,
     input  wire                   rst,
 
     /*
      * AXI input
      */
-    input  wire [DATA_WIDTH-1:0]  s_axis_tdata,
+    input  wire [8-1:0]  s_axis_tdata,
     input  wire                   s_axis_tvalid,
     output wire                   s_axis_tready,
 
     /*
      * AXI output
      */
-    output wire [DATA_WIDTH-1:0]  m_axis_tdata,
+    output wire [8-1:0]  m_axis_tdata,
     output wire                   m_axis_tvalid,
     input  wire                   m_axis_tready,
 
@@ -72,10 +68,7 @@ module uart #
 
 );
 
-uart_tx #(
-    .DATA_WIDTH(DATA_WIDTH)
-)
-uart_tx_inst (
+uart_tx uart_tx_inst (
     .clk(clk),
     .rst(rst),
     // axi input
@@ -90,10 +83,7 @@ uart_tx_inst (
     .prescale(prescale)
 );
 
-uart_rx #(
-    .DATA_WIDTH(DATA_WIDTH)
-)
-uart_rx_inst (
+uart_rx uart_rx_inst (
     .clk(clk),
     .rst(rst),
     // axi output

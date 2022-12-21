@@ -29,18 +29,14 @@ THE SOFTWARE.
 /*
  * AXI4-Stream UART
  */
-module uart_tx #
-(
-    parameter DATA_WIDTH = 8
-)
-(
+module uart_tx(
     input  wire                   clk,
     input  wire                   rst,
 
     /*
      * AXI input
      */
-    input  wire [DATA_WIDTH-1:0]  s_axis_tdata,
+    input  wire [8-1:0]  s_axis_tdata,
     input  wire                   s_axis_tvalid,
     output wire                   s_axis_tready,
 
@@ -66,7 +62,7 @@ reg txd_reg = 1;
 
 reg busy_reg = 0;
 
-reg [DATA_WIDTH:0] data_reg = 0;
+reg [8:0] data_reg = 0;
 reg [18:0] prescale_reg = 0;
 reg [3:0] bit_cnt = 0;
 
@@ -93,7 +89,7 @@ always @(posedge clk) begin
             if (s_axis_tvalid) begin
                 s_axis_tready_reg <= !s_axis_tready_reg;
                 prescale_reg <= (prescale << 3)-1;
-                bit_cnt <= DATA_WIDTH+1;
+                bit_cnt <= 8+1;
                 data_reg <= {1'b1, s_axis_tdata};
                 txd_reg <= 0;
                 busy_reg <= 1;

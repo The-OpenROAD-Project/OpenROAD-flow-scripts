@@ -12,7 +12,10 @@ export VERILOG_FILES_BLACKBOX = ./designs/src/$(DESIGN_NICKNAME)/sha3core.v
 
 export ABC_CLOCK_PERIOD_IN_PS = 9000
 
-export CORE_UTILIZATION       = 30
-export CORE_ASPECT_RATIO      = 1
-export CORE_MARGIN            = 2
-export PLACE_DENSITY          = 0.30
+#export CORE_UTILIZATION       = 10
+#export CORE_ASPECT_RATIO      = 1
+#export CORE_MARGIN            = 2
+#export PLACE_DENSITY          = 0.30
+
+export MACRO_PLACE_CHANNEL  = 160 160
+export MACRO_PLACE_HALO = 2 2
