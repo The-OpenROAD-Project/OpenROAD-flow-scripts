@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 270698,
+        "value": 266866,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 20963,
+        "value": 20254,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,35 +20,35 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -2.17,
+        "value": -1.55,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -2.04,
+        "value": -1.53,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -2.04,
+        "value": -1.53,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 911,
+        "value": 881,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 911,
+        "value": 881,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.28,
+        "value": 0.0,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.28,
+        "value": 0.0,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 913989,
+        "value": 862200,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -56,15 +56,15 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.28,
+        "value": 0.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 276610,
+        "value": 269406,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.65,
+        "value": -0.64,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -72,11 +72,11 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.77,
+        "value": -0.56,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 11,
+        "value": 10,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
