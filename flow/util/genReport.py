@@ -178,9 +178,9 @@ def write_summary():
     summary += '=' * 60 + '\n'
     summary += f"\nNumber of designs: {len(design_list.keys())}\n\n"
 
-    summary = get_summary(STATUS_GREEN, summary)
-    summary += '\n'
     summary = get_summary(STATUS_RED, summary)
+    summary += '\n'
+    summary = get_summary(STATUS_GREEN, summary)
 
     if not args.quiet:
         if os.path.isfile(SUMMARY_FILENAME):
