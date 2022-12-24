@@ -45,10 +45,5 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 # Adders degrade ibex setup repair
 export ADDER_MAP_FILE :=
 
-export CORE_UTILIZATION = 40
-export CORE_ASPECT_RATIO = 1
-export CORE_MARGIN = 2
-
+export CORE_UTILIZATION = 45
 export PLACE_DENSITY_LB_ADDON = 0.2
-
-export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute_base.tcl

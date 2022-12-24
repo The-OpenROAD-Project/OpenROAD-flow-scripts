@@ -30,7 +30,7 @@ if {[info exists ::env(FLOORPLAN_DEF)]} {
   if {[info exists ::env(CORE_ASPECT_RATIO)] && $::env(CORE_ASPECT_RATIO) != ""} {
     set aspect_ratio $::env(CORE_ASPECT_RATIO)
   }
-  set core_margin "1.0"
+  set core_margin 1.0
   if {[info exists ::env(CORE_MARGIN)] && $::env(CORE_MARGIN) != ""} {
     set core_margin $::env(CORE_MARGIN)
   }
