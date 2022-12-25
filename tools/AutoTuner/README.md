@@ -210,6 +210,7 @@ local machine has at least Python 3.7.x before continuing.
 
 ```bash
 pip3 install -U --user 'ray[default,tune]==1.11.0' ax-platform hyperopt nevergrad optuna pandas
+pip3 install -U --user colorama==0.4.4 bayesian-optimization==1.4.0
 ```
 
 Start the port forwarding:
