@@ -78,7 +78,7 @@ _installUbuntuPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
-    brew install python
+    brew install python libomp
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     python3 get-pip.py
     pip3 install --user pandas
