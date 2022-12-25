@@ -9,33 +9,6 @@ _installORDependencies() {
     ./tools/OpenROAD/etc/DependencyInstaller.sh -dev
 }
 
-_installCommon() {
-    lastDir="$(pwd)"
-
-    # install pandas
-    pip3 install --user pandas
-
-    # temp dir to download and compile
-    baseDir=/tmp/installers
-    mkdir -p "${baseDir}"
-    
-    # install KLayout
-    klayoutVersion=0.27.10
-    klayoutChecksum=ff4fb9c597d0e3d7f6dfb49d40d2d167
-    if [[ -z $(command -v klayout) ]]; then
-        cd "${baseDir}"
-        wget https://www.klayout.org/downloads/source/klayout-${klayoutVersion}.tar.gz
-        md5sum -c <(echo "${klayoutChecksum}  klayout-${klayoutVersion}.tar.gz") || exit 1
-        tar hzxvf klayout-${klayoutVersion}.tar.gz
-        cd klayout-${klayoutVersion}
-        echo $(pwd)
-        ./build.sh -without-qtbinding
-    fi
-
-    cd "$lastDir"
-    rm -rf "${baseDir}"
-}
-
 _installCentosCleanUp() {
     yum clean -y all
     rm -rf /var/lib/apt/lists/*

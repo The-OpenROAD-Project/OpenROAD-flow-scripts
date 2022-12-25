@@ -79,7 +79,7 @@ jobs:
         shell: bash
         run: |
           sudo chmod -R 777 .
-          chmod -R 777 /opt
+          sudo chmod -R 777 /opt
       - name: Runs installer
         shell: bash
         run: |
