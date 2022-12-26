@@ -40,11 +40,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Checkout repository code with submodules
-        run: |
-          git config --global --add safe.directory '*'
-          git submodule update --init
-      - name: Runs installer
+          submodules: recursive
+      - name: Run installer
         run: |
           ./etc/DependencyInstaller.sh
       - name: Build project
@@ -62,7 +59,7 @@ jobs:
           openroad -help
           cd flow
           make
-  testinstaller-macos:
+  testInstaller-macos:
     strategy:
       fail-fast: false
     runs-on: macos-latest
@@ -80,7 +77,7 @@ jobs:
         run: |
           sudo chmod -R 777 .
           sudo chmod -R 777 /opt
-      - name: Runs installer
+      - name: Run installer
         shell: bash
         run: |
           ./etc/DependencyInstaller.sh

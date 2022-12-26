@@ -9,6 +9,11 @@ _installORDependencies() {
     ./tools/OpenROAD/etc/DependencyInstaller.sh -dev
 }
 
+_installCommon() {
+    # install pandas
+    pip3 install -U --user pandas
+}
+
 _installCentosCleanUp() {
     yum clean -y all
     rm -rf /var/lib/apt/lists/*
@@ -24,7 +29,6 @@ _installCentosPackages() {
         ruby-devel \
         tcl-devel 
 
-    pip3 install --user pandas
     yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-0.27.10-0.x86_64.rpm
 }
 
@@ -53,9 +57,6 @@ _installUbuntuPackages() {
 
     lastDir="$(pwd)"
 
-    # install pandas
-    pip3 install --user pandas
-
     # temp dir to download and compile
     baseDir=/tmp/installers
     mkdir -p "${baseDir}"
@@ -79,9 +80,7 @@ _installUbuntuPackages() {
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
     brew install python libomp
-    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-    python3 get-pip.py
-    pip3 install --user pandas
+    brew link --force libomp
     brew install --cask klayout
 }
 
@@ -107,22 +106,25 @@ esac
 case "${os}" in
     "CentOS Linux" )
         _installORDependencies
+        _installCommon
         _installCentosPackages
         _installCentosCleanUp
         ;;
     "Ubuntu" )
         version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
         _installORDependencies
+        _installCommon
         _installUbuntuPackages "${version}"
         _installUbuntuCleanUp
         ;;
     "Darwin" )
         _installORDependencies
+        _installCommon
         _installDarwinPackages
         ;;
     *)
         echo "unsupported system: ${os}" >&2
-        echo "supported systems are CentOS 7, Ubuntu 20.04, Ubuntu 22.04, RHEL 8, Debian 10 and Debian 11" >&2
+        echo "supported systems are CentOS 7, Ubuntu 20.04 and Ubuntu 22.04" >&2
         _help
         ;;
 esac
