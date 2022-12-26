@@ -106,21 +106,21 @@ esac
 case "${os}" in
     "CentOS Linux" )
         _installORDependencies
-        _installCommon
         _installCentosPackages
+        _installCommon
         _installCentosCleanUp
         ;;
     "Ubuntu" )
         version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
         _installORDependencies
-        _installCommon
         _installUbuntuPackages "${version}"
+        _installCommon
         _installUbuntuCleanUp
         ;;
     "Darwin" )
         _installORDependencies
-        _installCommon
         _installDarwinPackages
+        _installCommon
         ;;
     *)
         echo "unsupported system: ${os}" >&2
