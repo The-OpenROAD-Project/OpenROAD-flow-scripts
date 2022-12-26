@@ -627,6 +627,9 @@ finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
         $(GDS_FINAL_FILE)
+	@printf "%-25s %10s\n" Log "Elapsed seconds"
+	@grep Elapsed $(abspath $(LOG_DIR))/*.log | awk -F'[:. ]' '{sub(".*+/","",$$1); sub(".log:","",$$1); sub("\\:","",$$1); printf "%-25s %10s\n", $$1, $$6 * 60 +$$7}'
+
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
