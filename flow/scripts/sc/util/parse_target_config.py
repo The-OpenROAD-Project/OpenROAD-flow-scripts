@@ -72,7 +72,7 @@ def parse(chip, platform):
 
     # Convert source files to absolute paths b/c sc commands run in a different build dir.
     abs_sources = ['VERILOG_INCLUDE_DIRS', 'ADDITIONAL_LEFS', 'ADDITIONAL_LIBS',
-                   'LIB_FILES', 'ADDITIONAL_GDS_FILES', 'MACRO_PLACEMENT']
+                   'LIB_FILES', 'ADDITIONAL_GDS', 'MACRO_PLACEMENT']
     for skey in abs_sources:
         if skey in config.keys():
             src_list = [os.path.abspath(vf) for vf in config[skey].split()]
