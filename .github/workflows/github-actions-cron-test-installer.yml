@@ -40,7 +40,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          submodules: recursive
+      - name: Checkout repository code with submodules
+        run: |
+          git config --global --add safe.directory '*'
+          git submodule update --init
       - name: Run installer
         run: |
           ./etc/DependencyInstaller.sh
