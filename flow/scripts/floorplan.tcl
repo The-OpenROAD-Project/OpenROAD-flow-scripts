@@ -26,9 +26,17 @@ if {[info exists ::env(FLOORPLAN_DEF)]} {
 # Initialize floorplan using CORE_UTILIZATION
 # ----------------------------------------------------------------------------
 } elseif {[info exists ::env(CORE_UTILIZATION)] && $::env(CORE_UTILIZATION) != "" } {
+  set aspect_ratio 1.0
+  if {[info exists ::env(CORE_ASPECT_RATIO)] && $::env(CORE_ASPECT_RATIO) != ""} {
+    set aspect_ratio $::env(CORE_ASPECT_RATIO)
+  }
+  set core_margin 1.0
+  if {[info exists ::env(CORE_MARGIN)] && $::env(CORE_MARGIN) != ""} {
+    set core_margin $::env(CORE_MARGIN)
+  }
   initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
-                       -aspect_ratio $::env(CORE_ASPECT_RATIO) \
-                       -core_space $::env(CORE_MARGIN) \
+                       -aspect_ratio $aspect_ratio \
+                       -core_space $core_margin \
                        -site $::env(PLACE_SITE)
 
 # Initialize floorplan using DIE_AREA/CORE_AREA
