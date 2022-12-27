@@ -7,6 +7,5 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 # Adders degrade GCD
 export ADDER_MAP_FILE :=
 
-# These values must be multiples of placement site
-export DIE_AREA    = 0 0 279.96 280.128
-export CORE_AREA   = 9.996 10.08 269.964 270.048
+export CORE_UTILIZATION = 40
+export PLACE_DENISTY_LB_ADDON = 0.1

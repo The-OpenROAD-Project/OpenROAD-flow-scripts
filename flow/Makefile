@@ -295,7 +295,15 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 define GENERATE_ABSTRACT_RULE
 # Single rule, two targets, hence the "&:", syntax
 $(1) $(2) &: $(3)
-	$(MAKE) "DESIGN_CONFIG=$(3)" generate_abstract
+	# Make sure environment variables modified in this Makefile do not leak into the sub-build
+	bash -c " \
+	unset BLOCKS && \
+	unset ADDITIONAL_LEFS && \
+	unset ADDITIONAL_GDS && \
+	unset ADDITIONAL_LIBS && \
+	unset DONT_USE_SC_LIB && \
+	unset LIB_FILES && \
+	$(MAKE) \"DESIGN_CONFIG=$(3)\" generate_abstract"
 endef
 
 # Targets to harden Blocks in case of hierarchical flow is triggered
@@ -627,6 +635,9 @@ finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
         $(GDS_FINAL_FILE)
+	@printf "%-25s %10s\n" Log "Elapsed seconds"
+	@grep Elapsed $(abspath $(LOG_DIR))/*.log | awk -F'[:. ]' '{sub(".*+/","",$$1); sub(".log:","",$$1); sub("\\:","",$$1); printf "%-25s %10s\n", $$1, $$6 * 60 +$$7}'
+
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
