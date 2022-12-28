@@ -40,15 +40,15 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": 0.0,
+        "value": -0.36,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": 0.0,
+        "value": -0.37,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 6946,
+        "value": 6849,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
