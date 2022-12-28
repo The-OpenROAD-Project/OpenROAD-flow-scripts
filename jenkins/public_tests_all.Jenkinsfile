@@ -58,6 +58,7 @@ pipeline {
                   "aes sky130hs",
                   "gcd sky130hs",
                   "ibex sky130hs",
+                  "small-memory asap7",
                   "jpeg sky130hs",
                   "riscv32i sky130hs",
                   "aes gf180",
