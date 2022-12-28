@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 73838,
+        "value": 73836,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -72,7 +72,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.47,
+        "value": -0.35,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
