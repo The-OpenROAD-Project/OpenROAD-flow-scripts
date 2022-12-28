@@ -61,7 +61,8 @@ pipeline {
                   "jpeg sky130hs",
                   "riscv32i sky130hs",
                   "aes gf180",
-                  "uart-blocks asap7";
+                  "uart-blocks asap7",
+                  "uart-blocks-large-filler asap7";
           }
         }
 
