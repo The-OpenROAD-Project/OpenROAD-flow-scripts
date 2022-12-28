@@ -303,6 +303,7 @@ $(1) $(2) &: $(3)
 	unset ADDITIONAL_LIBS && \
 	unset DONT_USE_SC_LIB && \
 	unset LIB_FILES && \
+	unset MACRO_PLACEMENT && \
 	$(MAKE) \"DESIGN_CONFIG=$(3)\" generate_abstract"
 endef
 
