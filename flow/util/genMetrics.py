@@ -271,6 +271,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     # =========================================================================
 
     merge_jsons(logPath, metrics_dict, "3_*.json")
+    extractGnuTime('globalplace', metrics_dict, logPath + '/3_4_resizer.log')
     extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_resizer.log')
     extractTagFromFile('detailedplace__design__violations',
                        metrics_dict,
@@ -381,8 +382,9 @@ args = parse_args()
 now = datetime.now()
 flow_variants = args.flowVariant.split()
 all_designs =  True if args.design == 'all_designs' else False
-
 designs = args.design.split()
+platforms = args.platform.split()
+
 if all_designs or len(designs) > 1 or len(flow_variants) > 1:
     rootdir = './logs'
 
@@ -394,6 +396,8 @@ if all_designs or len(designs) > 1 or len(flow_variants) > 1:
         if not platform_it.is_dir():
             continue
         plt = platform_it.name
+        if not plt in platforms:
+            continue
         for design_it in os.scandir(platform_it.path):
             if not design_it.is_dir():
                 continue
@@ -401,8 +405,11 @@ if all_designs or len(designs) > 1 or len(flow_variants) > 1:
             if not (all_designs or des in designs):
                 continue
             for variant in flow_variants:
-                design_dir = os.path.join(cwd, 'reports', plt, des, variant)
-                if not os.path.isdir(design_dir):
+                log_dir = os.path.join(cwd, 'logs', plt, des, variant)
+                if not os.path.isdir(log_dir):
+                    continue
+                if not os.path.isfile(os.path.join(log_dir, '6_report.json')):
+                    print(f'Skip extracting metrics for {plt}, {des}, {variant} as run did not complete')
                     continue
                 print(f'Extract Metrics for {plt}, {des}, {variant}')
                 file = '/'.join(['reports', plt, des, variant, 'metrics.json'])
