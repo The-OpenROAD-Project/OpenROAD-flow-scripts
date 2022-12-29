@@ -1,8 +1,3 @@
-undefine BLOCKS
-undefine ADDITIONAL_LEFS
-undefine ADDITIONAL_GDS
-undefine DONT_USE_SC_LIB
-
 export TOP_NICKNAME = chameleon_hier
 export TOP_DIR = ./designs/$(PLATFORM)/${TOP_NICKNAME}
 
