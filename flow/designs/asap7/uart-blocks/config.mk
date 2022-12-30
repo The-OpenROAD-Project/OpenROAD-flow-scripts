@@ -10,8 +10,6 @@ export BLOCKS = uart_rx
 
 export VERILOG_FILES_BLACKBOX = ./designs/src/uart-no-param/uart_rx.v
 
-export ABC_CLOCK_PERIOD_IN_PS = 300000
-
 export CORE_UTILIZATION       = 10
 export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
