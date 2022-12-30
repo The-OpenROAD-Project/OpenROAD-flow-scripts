@@ -60,7 +60,6 @@ export ADDITIONAL_LEFS = $(IO_DIR)/lef/sky130_ef_io__gpiov2_pad_wrapped.lef \
 export DIE_AREA    = 0.0 0.0 5200 4609.14
 export CORE_AREA   = 210 210 4990 4389.14
 
-export ABC_CLOCK_PERIOD_IN_PS = 10000
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
 export ABC_LOAD_IN_FF = 3
 
