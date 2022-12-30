@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 7891,
+        "value": 7887,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 16632,
+        "value": 16619,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -36,15 +36,15 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1891,
+        "value": 1672,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -130.21,
+        "value": -98.01,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -130.22,
+        "value": -98.02,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
