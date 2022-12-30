@@ -3,7 +3,7 @@ export DESIGN_NAME = bp_be_top
 export PLATFORM    = nangate45
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
+#export RTLMP_FLOW = True
 #
 # RTL_MP Settings
 export RTLMP_MAX_INST = 30000
@@ -25,7 +25,7 @@ export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/
 export DIE_AREA    = 0 0 1000 800 
 export CORE_AREA   = 10.07 11.2 990 790 
 
-export MACRO_PLACE_HALO = 5 5
-export MACRO_PLACE_CHANNEL = 10 10
+#export MACRO_PLACE_HALO = 5 5
+#export MACRO_PLACE_CHANNEL = 10 10
 
-export PLACE_DENSITY = 0.15
+export PLACE_DENSITY = 0.25
