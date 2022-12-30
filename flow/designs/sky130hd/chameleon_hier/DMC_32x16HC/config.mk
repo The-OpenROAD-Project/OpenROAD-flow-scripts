@@ -1,8 +1,3 @@
-undefine BLOCKS
-undefine ADDITIONAL_LEFS
-undefine ADDITIONAL_GDS
-undefine DONT_USE_SC_LIB
-
 export TOP_NICKNAME = chameleon_hier
 export TOP_DIR = ./designs/$(PLATFORM)/${TOP_NICKNAME}
 
@@ -20,7 +15,6 @@ export SDC_FILE = ${TOP_DIR}/${DESIGN_NAME}/constraint.sdc
 
 export PDN_CFG = ${TOP_DIR}/${DESIGN_NAME}/pdn.cfg
 
-export ABC_CLOCK_PERIOD_IN_PS = 10000
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
 export ABC_LOAD_IN_FF = 3
 

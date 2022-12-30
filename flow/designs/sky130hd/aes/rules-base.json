@@ -40,11 +40,11 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.62,
+        "value": -0.51,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.62,
+        "value": -0.52,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -56,11 +56,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.64,
+        "value": -0.39,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 171122,
+        "value": 169719,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
