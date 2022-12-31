@@ -1,0 +1,14 @@
+source $::env(SCRIPTS_DIR)/read_liberty.tcl
+
+read_lef $::env(TECH_LEF)
+read_lef $::env(SC_LEF)
+if {[info exist ::env(ADDITIONAL_LEFS)]} {
+  foreach lef $::env(ADDITIONAL_LEFS) {
+    read_lef $lef
+  }
+}
+
+read_def $::env(RESULTS_DIR)/$::env(DEF_FILE)
+write_db $::env(RESULTS_DIR)/$::env(ODB_FILE)
+
+exit

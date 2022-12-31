@@ -18,9 +18,6 @@ import pandas as pd
 import re
 from glob import glob
 
-# make sure the working dir is flow/
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)) , '..'))
-
 # Parse and validate arguments
 # =============================================================================
 
@@ -386,12 +383,12 @@ designs = args.design.split()
 platforms = args.platform.split()
 
 if all_designs or len(designs) > 1 or len(flow_variants) > 1:
-    rootdir = './logs'
+    rootdir = args.flowPath + '/logs'
 
     all_df = pd.DataFrame()
     all_d = []
 
-    cwd = os.getcwd()
+    cwd = args.flowPath
     for platform_it in os.scandir(rootdir):
         if not platform_it.is_dir():
             continue
@@ -426,6 +423,7 @@ if all_designs or len(designs) > 1 or len(flow_variants) > 1:
 
     with open('metrics.html', 'w') as f:
         f.write(all_df.to_html())
+    all_df.to_csv('metrics.csv', index = False)
 else:
     metrics_dict, metrics_df = extract_metrics(args.flowPath, args.platform,
                                                args.design, args.flowVariant,
