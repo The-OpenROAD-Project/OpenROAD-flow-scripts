@@ -53,7 +53,8 @@ _installUbuntuPackages() {
         libqt5xmlpatterns5-dev \
         qtmultimedia5-dev \
         libqt5multimediawidgets5 \
-        libqt5svg5-dev
+        libqt5svg5-dev \
+        gawk
 
     lastDir="$(pwd)"
 
@@ -79,7 +80,7 @@ _installUbuntuPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
-    brew install python libomp
+    brew install python libomp gawk
     brew link --force libomp
     brew install --cask klayout
 }
