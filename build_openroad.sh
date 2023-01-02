@@ -8,6 +8,7 @@ set -eu
 cd "$(dirname $(readlink -f $0))"
 
 # Defaults variable values
+UBUNTU_22_BUILD=0
 NICE=""
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   PROC=$(nproc --all)
@@ -134,6 +135,9 @@ while (( "$#" )); do
                         ;;
                 -o|--local)
                         LOCAL_BUILD=1
+                        ;;
+                -o|--ubuntu-22)
+                        UBUNTU_22_BUILD=1
                         ;;
                 -l|--latest)
                         USE_OPENROAD_APP_LATEST=1
@@ -394,6 +398,19 @@ if [ -z "${LOCAL_BUILD+x}" ] && command -v docker &> /dev/null; then
         echo -n "[INFO FLW-0000] Using docker build method."
         echo " This will create a docker image tagged '${DOCKER_TAG}'."
         __docker_build
+elif [ "${UBUNTU_22_BUILD}" -eq 1 ]; then
+        echo -n "[INFO FLW-0006] Local build using Ubuntu 22 docker image."
+        echo " This will create binaries at 'tools/install' unless overwritten."
+        ${NICE} docker build \
+                --tag openroad/ubuntu-22-dev \
+                --file docker/Dockerfile-ubuntu-22.dev .
+        docker run -u $(id -u ${USER}):$(id -g ${USER}) \
+        -v `pwd`:`pwd` \
+        openroad/ubuntu-22-dev:latest \
+        bash -c "set -ex
+        cd `pwd`
+        ./build_openroad.sh --local
+        "
 else
         echo -n "[INFO FLW-0001] Using local build method."
         echo " This will create binaries at 'tools/install' unless overwritten."

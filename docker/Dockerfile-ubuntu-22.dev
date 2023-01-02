@@ -1,0 +1,41 @@
+FROM ubuntu:22.04
+
+RUN export DEBIAN_FRONTEND=noninteractive; \
+    export DEBCONF_NONINTERACTIVE_SEEN=true; \
+    echo 'tzdata tzdata/Areas select Etc' | debconf-set-selections; \
+    echo 'tzdata tzdata/Zones/Etc select UTC' | debconf-set-selections; \
+    apt-get update && \
+    apt-get install -y tzdata && \
+    apt-get install -y \
+    g++ \
+    build-essential \
+    git \
+    binutils \
+    libgomp1 \
+    libpython3.11 \
+    libtclcl1-dev \
+    qt6-image-formats-plugins \
+    tcl-tclreadline \
+    wget \
+    qt6-base-dev \
+    qtchooser \
+    qmake6 \
+    qt6-base-dev-tools \
+    tcl-dev \
+    libreadline-dev \
+    libffi-dev \
+    cmake \
+    ninja-build \
+    python3-dev \
+    pkg-config \
+    libspdlog-dev \
+    libboost-all-dev \
+    bison \
+    doxygen \
+    flex && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY tools/OpenROAD/etc/DependencyInstaller.sh /tmp
+
+RUN tmp/DependencyInstaller.sh -development
+
