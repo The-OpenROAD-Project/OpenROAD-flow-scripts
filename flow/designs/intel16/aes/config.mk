@@ -16,5 +16,3 @@ export CORE_AREA   = 1.26 1.89 248 248
 
 
 export PLACE_DENSITY = uniform
-
-export ABC_CLOCK_PERIOD_IN_PS = 2600
