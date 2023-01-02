@@ -185,9 +185,11 @@ ifdef BLOCKS
   $(foreach block,$(BLOCKS),$(info Block ${block} needs to be hardened.))
   $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(block)/config.mk))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
   $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
   $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
   export ADDITIONAL_LEFS += $(BLOCK_LEFS)
+  export ADDITIONAL_LIBS += $(BLOCK_LIBS)
   export ADDITIONAL_GDS += $(BLOCK_GDS)
   export GDS_FILES += $(BLOCK_GDS)
   ifdef CDL_FILES
@@ -290,15 +292,26 @@ else
 endif
 export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
 
+define GENERATE_ABSTRACT_RULE
+# Single rule, two targets, hence the "&:", syntax
+$(1) $(2) &: $(3)
+	# Make sure environment variables modified in this Makefile do not leak into the sub-build
+	bash -c " \
+	unset BLOCKS && \
+	unset ADDITIONAL_LEFS && \
+	unset ADDITIONAL_GDS && \
+	unset ADDITIONAL_LIBS && \
+	unset DONT_USE_SC_LIB && \
+	unset LIB_FILES && \
+	unset MACRO_PLACEMENT && \
+	$(MAKE) \"DESIGN_CONFIG=$(3)\" generate_abstract"
+endef
 
 # Targets to harden Blocks in case of hierarchical flow is triggered
-build_macros: $(BLOCK_LEFS)
+build_macros: $(BLOCK_LEFS) $(BLOCK_LIBS)
 
-$(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef: ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/${block}/config.mk))
+$(foreach block,$(BLOCKS),$(eval $(call GENERATE_ABSTRACT_RULE,./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef,./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib,./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/${block}/config.mk)))
 $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
-
-$(BLOCK_LEFS):
-	$(MAKE) DESIGN_CONFIG=$< generate_abstract
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
@@ -623,6 +636,9 @@ finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
         $(GDS_FINAL_FILE)
+	@printf "%-25s %10s\n" Log "Elapsed seconds"
+	@grep Elapsed $(abspath $(LOG_DIR))/*.log | awk 'match($$0, /[a-zA-Z_0-9/]+\/([a-zA-Z_0-9]+)\.log:Elapsed time: ([0-9]+:)?([0-9]+):([0-9]+)/ , arr) { printf "%-25s %10d\n", arr[1], arr[2]*3600 + arr[3] * 60 + arr[4] }'
+
 # ==============================================================================
 
 ifneq ($(USE_FILL),)

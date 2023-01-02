@@ -49,8 +49,10 @@ if {[find_macros] != ""} {
 
   if {[info exists ::env(RTLMP_FLOW)]} {
     puts "HierRTLMP Flow enabled..."
-    set additional_partition_args ""
     set additional_rtlmp_args ""
+    if { [info exists ::env(RTLMP_MAX_LEVEL)]} {
+        append additional_rtlmp_args " -max_num_level $env(RTLMP_MAX_LEVEL)"
+    }
     if { [info exists ::env(RTLMP_MAX_INST)]} {
         append additional_rtlmp_args " -max_num_inst $env(RTLMP_MAX_INST)"
     }
@@ -66,6 +68,9 @@ if {[find_macros] != ""} {
     
     append additional_rtlmp_args " -halo_width $halo_max"
 
+    if { [info exists ::env(RTLMP_MIN_AR)]} {
+        append additional_rtlmp_args " -min_ar $env(RTLMP_MIN_AR)"
+    }
     if { [info exists ::env(RTLMP_AREA_WT)]} {
         append additional_rtlmp_args " -area_weight $env(RTLMP_AREA_WT)"
     }

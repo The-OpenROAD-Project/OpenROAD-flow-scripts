@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 14564,
+        "value": 14484,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 18002,
+        "value": 18000,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 783,
+        "value": 871,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {

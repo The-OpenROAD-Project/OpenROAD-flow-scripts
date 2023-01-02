@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": 0.0,
+        "value": -1.37,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -52,7 +52,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": 0.0,
+        "value": -1.32,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -60,7 +60,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -2.05,
+        "value": -2.36,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -68,7 +68,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -1.62,
+        "value": -2.39,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {

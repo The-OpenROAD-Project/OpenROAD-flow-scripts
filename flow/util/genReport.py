@@ -14,7 +14,7 @@ REPORT_FILENAME = 'report.log'
 SINGLE_REPORT_FILENAME = f"{REPORTS_FOLDER}/report.log"
 SUMMARY_FILENAME = f"{REPORTS_FOLDER}/report-summary.log"
 DRC_FILENAME = '5_route_drc.rpt'
-LAST_EXPECTED_LOG = '6_report.log'
+LAST_EXPECTED_LOG = ['6_report.log', 'generate_abstract.log']
 METRICS_LOG_FMT = 'gen-metrics-{}-check.log'
 METRICS_CHECK_FMT = '{}/metadata-{}-check.log'
 REGEX_ERROR = re.compile(r"^\[error ?(\w+-\d+)?\]", re.IGNORECASE)
@@ -112,16 +112,56 @@ def gen_report(name, data):
     else:
         output = ""
 
-    output = append_text(data['log_errors'], output, 'errors in the logs', REGEX_ERROR, args.verbose)
-    output = append_text(data['metrics_logs_errors'], output, 'errors in the metrics logs', REGEX_ERROR, args.verbose)
-    output = append_text(data['metrics_errors'], output, 'metrics failures', REGEX_ERROR, args.verbose)
-    output = append_text(data['calibre_errors'], output, 'calibre failures', REGEX_ERROR, args.verbose)
+    output = append_text(
+        data['log_errors'],
+        output,
+        'errors in the logs',
+        REGEX_ERROR,
+        args.verbose)
+    output = append_text(
+        data['metrics_logs_errors'],
+        output,
+        'errors in the metrics logs',
+        REGEX_ERROR,
+        args.verbose)
+    output = append_text(
+        data['metrics_errors'],
+        output,
+        'metrics failures',
+        REGEX_ERROR,
+        args.verbose)
+    output = append_text(
+        data['calibre_errors'],
+        output,
+        'calibre failures',
+        REGEX_ERROR,
+        args.verbose)
 
     if args.verbose >= 2:
-        output = append_text(data['log_warnings'], output, 'warnings in the logs', REGEX_WARNING, args.verbose-2)
-        output = append_text(data['metrics_logs_warnings'], output, 'warnings in the metrics logs', REGEX_WARNING, args.verbose-2)
-        output = append_text(data['metrics_warnings'], output, 'metrics warnings', REGEX_WARNING, args.verbose-2)
-        output = append_text(data['calibre_warnings'], output, 'calibre warnings', REGEX_WARNING, args.verbose-2)
+        output = append_text(
+            data['log_warnings'],
+            output,
+            'warnings in the logs',
+            REGEX_WARNING,
+            args.verbose - 2)
+        output = append_text(
+            data['metrics_logs_warnings'],
+            output,
+            'warnings in the metrics logs',
+            REGEX_WARNING,
+            args.verbose - 2)
+        output = append_text(
+            data['metrics_warnings'],
+            output,
+            'metrics warnings',
+            REGEX_WARNING,
+            args.verbose - 2)
+        output = append_text(
+            data['calibre_warnings'],
+            output,
+            'calibre warnings',
+            REGEX_WARNING,
+            args.verbose - 2)
 
     if d['drcs']:
         if data['status'] == STATUS_GREEN:
@@ -178,9 +218,9 @@ def write_summary():
     summary += '=' * 60 + '\n'
     summary += f"\nNumber of designs: {len(design_list.keys())}\n\n"
 
-    summary = get_summary(STATUS_GREEN, summary)
-    summary += '\n'
     summary = get_summary(STATUS_RED, summary)
+    summary += '\n'
+    summary = get_summary(STATUS_GREEN, summary)
 
     if not args.quiet:
         if os.path.isfile(SUMMARY_FILENAME):
@@ -214,7 +254,7 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
         d['log_warnings'] += temp_w
         if name_.endswith('.log'):
             d['last_log'] = name_
-    d['finished'] = (d['last_log'] == LAST_EXPECTED_LOG)
+    d['finished'] = (d['last_log'] in LAST_EXPECTED_LOG)
 
     # check if metrics generation had issues
     d['metrics_logs_errors'], d['metrics_logs_warnings'] = parse_messages(
@@ -250,7 +290,17 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
     if d['log_errors'] or d['metrics_errors'] or d['calibre_errors']:
         d['status'] = STATUS_RED
     else:
-        d['status'] = STATUS_GREEN
+        if not d['finished']:
+            d['status'] = STATUS_RED
+            last_lines = 'Could not find last lines of the log file.'
+            with open(os.path.join(log_dir, d['last_log']), 'r') as last_file:
+                last_lines = last_file.readlines()[-10:]
+                last_lines = '          '.join(last_lines)
+            message = '[ERROR CI-0000] No error message found. '
+            message += 'Here are the last 10 lines of the log.\n'
+            d['log_errors'] = [message + last_lines]
+        else:
+            d['status'] = STATUS_GREEN
 
     design_list[f"{platform} {design} ({variant})"] = d
 

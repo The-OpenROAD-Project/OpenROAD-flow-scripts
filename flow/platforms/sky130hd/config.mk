@@ -10,7 +10,7 @@ export SC_LEF = $(PLATFORM_DIR)/lef/sky130_fd_sc_hd_merged.lef
 export LIB_FILES = $(PLATFORM_DIR)/lib/sky130_fd_sc_hd__tt_025C_1v80.lib \
                      $(ADDITIONAL_LIBS)
 export GDS_FILES = $(wildcard $(PLATFORM_DIR)/gds/*.gds) \
-                     $(ADDITIONAL_GDS_FILES)
+                     $(ADDITIONAL_GDS)
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none

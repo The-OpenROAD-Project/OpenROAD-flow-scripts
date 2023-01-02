@@ -8,8 +8,6 @@ export RTLMP_FLOW = True
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export ABC_CLOCK_PERIOD_IN_PS = 4000
-
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ariane.sv2v.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
 

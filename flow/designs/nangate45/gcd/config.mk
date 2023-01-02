@@ -8,9 +8,5 @@ export ABC_AREA      = 1
 # Adders degrade GCD
 export ADDER_MAP_FILE :=
 
-# These values must be multiples of placement site
-# x=0.19 y=1.4
-export DIE_AREA    = 0 0 70.11 70 
-export CORE_AREA   = 10.07 11.2 60.04 60.2 
-
+export CORE_UTILIZATION ?= 55
 export PLACE_DENSITY_LB_ADDON = 0.20

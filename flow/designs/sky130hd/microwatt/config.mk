@@ -13,11 +13,9 @@ export CORE_AREA  = 10 10 2910 3510
 
 export PLACE_DENSITY ?= 0.20
 
-export ABC_CLOCK_PERIOD_IN_PS = 25000
-
 export microwatt_DIR = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)
 
-export ADDITIONAL_GDS_FILES  = $(wildcard $(microwatt_DIR)/gds/*.gds.gz)
+export ADDITIONAL_GDS  = $(wildcard $(microwatt_DIR)/gds/*.gds.gz)
 
 export ADDITIONAL_LEFS  = $(wildcard $(microwatt_DIR)/lef/*.lef)
 
