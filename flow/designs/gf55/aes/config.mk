@@ -25,5 +25,3 @@ export DESIGN_TYPE = CELL
 else
 export DESIGN_TYPE = CELL_NODEN
 endif
-
-export ABC_CLOCK_PERIOD_IN_PS = 2300
