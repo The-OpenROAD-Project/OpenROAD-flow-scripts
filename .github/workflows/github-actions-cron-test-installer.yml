@@ -5,12 +5,14 @@ on:
   push:
     paths:
       - 'etc/DependencyInstaller.sh'
+      - 'etc/DockerHelper.sh'
       - '.github/workflows/github-actions-cron-test-installer.yml'
       - 'build_openroad.sh'
       - 'setup_env.sh'
   pull_request:
     paths:
       - 'etc/DependencyInstaller.sh'
+      - 'etc/DockerHelper.sh'
       - '.github/workflows/github-actions-cron-test-installer.yml'
       - 'build_openroad.sh'
       - 'setup_env.sh'
@@ -24,44 +26,34 @@ jobs:
       matrix:
         os: ["ubuntu:20.04", "ubuntu:22.04", "centos:centos7"]
     runs-on: ubuntu-latest
-    container:
-      image: ${{ matrix.os }}
     steps:
-      - name: Setup
-        run: |
-          if [ "${{ matrix.os }}" != "centos:centos7" ]; then 
-            apt-get update
-            apt-get -y install git
-          else
-            yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
-            yum -y install git
-          fi
       - name: Check out repository code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-      - name: Checkout repository code with submodules
+          fetch-depth: 1
+          submodules: recursive
+      - name: Network Setup
         run: |
-          git config --global --add safe.directory '*'
-          git submodule update --init
+          sudo apt-get update
+          sudo apt-get install -y bridge-utils
+          sudo pkill docker
+          sudo iptables -t nat -F
+          sudo ifconfig docker0 down
+          sudo brctl delbr docker0
+          sudo service docker restart
       - name: Run installer
         run: |
-          ./etc/DependencyInstaller.sh
+          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }}
       - name: Build project
         run: |
-          if [ "${{ matrix.os }}" == "centos:centos7" ]; then
-            . /opt/rh/llvm-toolset-7.0/enable
-            . /opt/rh/devtoolset-8/enable
-          fi
-          ./build_openroad.sh --local
+          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }}
       - name: Test build
-        shell: bash
         run: |
-          source ./setup_env.sh
-          yosys -help
-          openroad -help
-          cd flow
-          make
+          if [[ ${{ matrix.os }} == "centos7" ]]; then
+            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source /opt/rh/llvm-toolset-7.0/enable; source /opt/rh/devtoolset-8/enable; source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
+          else
+            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
+          fi
   testInstaller-macos:
     strategy:
       fail-fast: false

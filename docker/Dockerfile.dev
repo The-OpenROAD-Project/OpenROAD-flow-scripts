@@ -1,9 +1,11 @@
-# Target with dependencies to build all flow tools from their sources.
-# i.e., "./build_openroad.sh --local" from inside a docker container
-FROM openroad/centos7-dev
-RUN yum update -y \
-    && yum group install -y "Development Tools" \
-    && yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-0.27.1-0.x86_64.rpm \
-    && yum install -y time tcl-devel \
-    && pip3 install pandas \
-    && yum install -y libffi-devel
+# create image with dependencies needed to compile openroad app and run openroad flow scripts
+# NOTE: don't use this file directly unless you know what you are doing,
+# instead use etc/DockerHelper.sh
+ARG fromImage=centos:centos7
+
+FROM $fromImage
+
+COPY etc/DependencyInstaller.sh /tmp/.
+COPY tools/OpenROAD/etc/DependencyInstaller.sh tools/OpenROAD/etc/DependencyInstaller.sh 
+
+RUN /tmp/DependencyInstaller.sh && rm -f /tmp/DependencyInstaller.sh && rm -f tools/OpenROAD/etc/DependencyInstaller.sh
