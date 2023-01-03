@@ -26,8 +26,6 @@ export ADDITIONAL_GDS = $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w32_all.gds2 \
 export DIE_AREA    = 0 0 400.008 399.84
 export CORE_AREA   = 19.992 20.16 380.016 380.16
 
-export ABC_CLOCK_PERIOD_IN_PS = 1250
-
 export PLACE_DENSITY = 0.20
 
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
