@@ -23,8 +23,6 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w80_bit.gds2 \
                          $(PLATFORM_DIR)/gds/gf12_2rf_lg6_w44_bit.gds2 \
                          $(PLATFORM_DIR)/gds/gf12_2rf_lg8_w64_bit.gds2
 
-export ABC_CLOCK_PERIOD_IN_PS = 1250
-
 export PLACE_DENSITY = 0.35
 
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl

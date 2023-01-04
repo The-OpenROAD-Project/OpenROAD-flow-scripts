@@ -16,7 +16,7 @@ import re
 
 # -- Project information -----------------------------------------------------
 
-project = 'OpenROAD'
+project = 'OpenROAD Flow'
 copyright = 'The Regents of the University of California, 2021'
 author = 'OpenROAD Team'
 
