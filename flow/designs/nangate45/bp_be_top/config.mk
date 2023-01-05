@@ -3,7 +3,6 @@ export DESIGN_NAME = bp_be_top
 export PLATFORM    = nangate45
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
 #
 # RTL_MP Settings
 export RTLMP_MAX_INST = 30000
