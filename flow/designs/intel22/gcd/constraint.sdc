@@ -1,5 +1,5 @@
 set clk_name clk
-set clk_period 2000
+set clk_period 880 
 #
 create_clock [get_ports clk]  -name $clk_name  -period $clk_period
 #

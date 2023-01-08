@@ -24,10 +24,12 @@ export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/
 
 # These values must be multiples of placement site
 # x=0.19 y=1.4
-export DIE_AREA    = 0 0 2200.01 2199.4
-export CORE_AREA   = 10.07 11.2 2189.94 2189.6
+export DIE_AREA    = 0 0 1500 1400 
+export CORE_AREA   = 10.07 11.2 1490 1390 
 
-export PLACE_DENSITY = 0.15
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-50 -exclude bottom:1500-1600
 
-export MACRO_PLACE_HALO = 5 5
-export MACRO_PLACE_CHANNEL = 10 10
+export PLACE_DENSITY_LB_ADDON = 0.10
+
+export MACRO_PLACE_HALO = 10 10
+export MACRO_PLACE_CHANNEL = 20 20

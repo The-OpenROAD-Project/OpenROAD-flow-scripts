@@ -10,9 +10,9 @@ with 24-hour turnaround time.
 ## Using the Flow
 
 - See the OpenROAD [documentation here](https://openroad.readthedocs.io/en/latest/).
-- How to [start using OpenROAD flow here](https://openroad.readthedocs.io/en/latest/user/GettingStarted.html).
-- Our [user guide here](https://openroad.readthedocs.io/en/latest/user/UserGuide.html).
-- Our [Flow Tutorial here](https://openroad.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
+- How to [start using OpenROAD flow here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html).
+- Our [user guide here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/UserGuide.html).
+- Our [Flow Tutorial here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
 
 ## Citing this Work
 
