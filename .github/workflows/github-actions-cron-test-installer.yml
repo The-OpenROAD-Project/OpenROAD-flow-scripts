@@ -9,6 +9,7 @@ on:
       - '.github/workflows/github-actions-cron-test-installer.yml'
       - 'build_openroad.sh'
       - 'setup_env.sh'
+      - 'flow/Makefile'
   pull_request:
     paths:
       - 'etc/DependencyInstaller.sh'
@@ -16,6 +17,7 @@ on:
       - '.github/workflows/github-actions-cron-test-installer.yml'
       - 'build_openroad.sh'
       - 'setup_env.sh'
+      - 'flow/Makefile'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
