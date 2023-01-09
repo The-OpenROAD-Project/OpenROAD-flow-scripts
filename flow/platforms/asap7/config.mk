@@ -102,7 +102,14 @@ export CTS_BUF_CELL            ?= BUFx4_ASAP7_75t_R
 export CTS_BUF_DISTANCE        ?= 60
 
 # Fill cells used in fill cell insertion
-export FILL_CELLS              = "FILLERxp5_ASAP7_75t_R"
+export FILL_CELLS              = \
+         FILLERxp5_ASAP7_75t_R \
+         FILLER_ASAP7_75t_R \
+         DECAPx1_ASAP7_75t_R \
+         DECAPx2_ASAP7_75t_R \
+         DECAPx4_ASAP7_75t_R \
+         DECAPx6_ASAP7_75t_R \
+         DECAPx10_ASAP7_75t_R
 
 export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_R
 
