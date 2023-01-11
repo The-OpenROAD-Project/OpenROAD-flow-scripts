@@ -85,7 +85,7 @@ jobs:
           openroad -help
           cd flow
           make
-   testInstaller-self-hosted-macos:
+  testInstaller-self-hosted-macos:
     strategy:
       fail-fast: false
     runs-on: self-hosted-mac
