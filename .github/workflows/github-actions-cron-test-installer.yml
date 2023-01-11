@@ -94,6 +94,7 @@ jobs:
         run: |
           echo "Cleaning up previous run: ${{ github.workspace }}"
           brew cleanup
+          brew unpin cmake && brew upgrade cmake
           rm -rf "${{ github.workspace }}"
           mkdir -p "${{ github.workspace }}"
       - name: Check out repository code
