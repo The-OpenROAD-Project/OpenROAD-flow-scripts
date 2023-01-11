@@ -3,7 +3,11 @@
 set -euo pipefail
 
 # Make sure we are on the correct folder before beginning
-cd "$(dirname $(readlink -f $0))/../"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    cd "$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' $0))/../"
+else
+    cd "$(dirname $(readlink -f $0))/../"
+fi
 
 _installORDependencies() {
     ./tools/OpenROAD/etc/DependencyInstaller.sh
