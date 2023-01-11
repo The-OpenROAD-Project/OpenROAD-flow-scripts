@@ -1,4 +1,8 @@
-modroot="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/tools"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  modroot="$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"))/tools"
+else
+  modroot="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/tools"
+fi
 
 if [ ! -d "${modroot}" ]; then
   echo "Module path does not exist: ${modroot}"
