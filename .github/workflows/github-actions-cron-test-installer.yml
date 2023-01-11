@@ -69,11 +69,36 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: 'recursive'
-      - name: Set access
+      - name: Run installer
         shell: bash
         run: |
-          sudo chmod -R 777 .
-          sudo chmod -R 777 /opt
+          ./etc/DependencyInstaller.sh
+      - name: Build project
+        shell: bash
+        run: |
+          ./build_openroad.sh --local
+      - name: Test build
+        shell: bash
+        run: |
+          source ./setup_env.sh
+          yosys -help
+          openroad -help
+          cd flow
+          make
+   testInstaller-self-hosted-macos:
+    strategy:
+      fail-fast: false
+    runs-on: self-hosted-mac
+    steps:
+      - name: Clean runner workspace path
+        run: |
+          echo "Cleaning up previous run: ${{ github.workspace }}"
+          rm -rf "${{ github.workspace }}"
+          mkdir -p "${{ github.workspace }}"
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
       - name: Run installer
         shell: bash
         run: |

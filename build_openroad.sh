@@ -300,8 +300,6 @@ __local_build()
             source /opt/rh/devtoolset-8/enable
             set -u
         fi
-        export CC="$(command -v gcc)"
-        export CXX="$(command -v g++)"
         
         echo "[INFO FLW-0017] Compiling Yosys."
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}

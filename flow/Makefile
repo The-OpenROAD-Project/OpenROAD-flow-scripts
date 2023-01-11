@@ -637,7 +637,7 @@ finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.sdc \
         $(GDS_FINAL_FILE)
 	@printf "%-25s %10s\n" Log "Elapsed seconds"
-	@python-c "import pathlib; import os; [print('%-25s %10s' % (os.path.splitext(os.path.basename(str(f)))[0],  [int(line.strip().replace('Elapsed time: ', '').split('[h:]', 1)[0].replace('.',':').split(':', 2)[0])*3600+ int(line.strip().replace('Elapsed time: ', '').split('[h:]', 1)[0].replace('.',':').split(':', 2)[1])*60+ int(line.strip().replace('Elapsed time: ', '').split('[h:]', 1)[0].replace('.',':').split(':', 2)[2]) for line in open(str(f)) if 'Elapsed time' in line][0])) for f in list(pathlib.Path('$$LOG_DIR').glob('**/[0-9]_*.log'))]"
+	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
 
 # ==============================================================================
 

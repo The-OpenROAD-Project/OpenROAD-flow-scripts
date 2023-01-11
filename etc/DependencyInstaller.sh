@@ -6,7 +6,7 @@ set -euo pipefail
 cd "$(dirname $(readlink -f $0))/../"
 
 _installORDependencies() {
-    ./tools/OpenROAD/etc/DependencyInstaller.sh -dev
+    ./tools/OpenROAD/etc/DependencyInstaller.sh
 }
 
 _installCommon() {
@@ -53,8 +53,7 @@ _installUbuntuPackages() {
         libqt5xmlpatterns5-dev \
         qtmultimedia5-dev \
         libqt5multimediawidgets5 \
-        libqt5svg5-dev \
-        gawk
+        libqt5svg5-dev
 
     lastDir="$(pwd)"
 
@@ -80,7 +79,7 @@ _installUbuntuPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
-    brew install python libomp gawk
+    brew install python libomp
     brew link --force libomp
     brew install --cask klayout
 }
@@ -99,7 +98,6 @@ case "${platform}" in
         ;;
     *)
         echo "${platform} is not supported" >&2
-        echo "We only officially support Linux at the moment." >&2
         _help
         ;;
 esac
@@ -125,7 +123,6 @@ case "${os}" in
         ;;
     *)
         echo "unsupported system: ${os}" >&2
-        echo "supported systems are CentOS 7, Ubuntu 20.04 and Ubuntu 22.04" >&2
         _help
         ;;
 esac
