@@ -95,6 +95,7 @@ jobs:
           echo "Cleaning up previous run: ${{ github.workspace }}"
           rm -rf "${{ github.workspace }}"
           mkdir -p "${{ github.workspace }}"
+          brew cleanup
       - name: Check out repository code
         uses: actions/checkout@v3
         with:
