@@ -20,13 +20,11 @@ export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/
 export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lib))
 
 
-# These values must be multiples of placement site
-# x=0.19 y=1.4
-export DIE_AREA    = 0 0 1200 1100 
-export CORE_AREA   = 10.07 9.8 1189.9 1089.6
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:*
+export DIE_AREA    = 0 0 1100 1100 
+export CORE_AREA   = 10.07 9.8 1090 1090
+export PLACE_PINS_ARGS = -exclude left:300-1100 -exclude right:300-1100 -exclude top:*
 
-export MACRO_PLACE_HALO = 5 5
-export MACRO_PLACE_CHANNEL = 10 10
+export MACRO_PLACE_HALO = 10 10
+export MACRO_PLACE_CHANNEL = 20 20
 
-export PLACE_DENSITY_LB_ADDON = 0.02
+export PLACE_DENSITY_LB_ADDON = 0.05
