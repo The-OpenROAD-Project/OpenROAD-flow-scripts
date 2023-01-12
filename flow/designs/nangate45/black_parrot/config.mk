@@ -22,8 +22,6 @@ export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/
 export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lib))
 
 
-# These values must be multiples of placement site
-# x=0.19 y=1.4
 export DIE_AREA    = 0 0 1500 1400 
 export CORE_AREA   = 10.07 11.2 1490 1390 
 

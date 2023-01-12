@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 722341,
+        "value": 177102,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -48,7 +48,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 4639429,
+        "value": 5410267,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
