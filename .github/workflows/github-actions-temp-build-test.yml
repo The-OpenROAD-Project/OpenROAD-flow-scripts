@@ -1,0 +1,58 @@
+name: Mix Both Builds
+on:
+  push:
+    paths:
+      - '.github/workflows/github-actions-temp-build-test.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/github-actions-temp-build-test.yml'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:     
+  testInstaller:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          submodules: recursive
+      - name: Network Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bridge-utils
+          sudo pkill docker
+          sudo iptables -t nat -F
+          sudo ifconfig docker0 down
+          sudo brctl delbr docker0
+          sudo service docker restart
+      - name: Run installer locally
+        shell: bash
+        run: |
+          ./etc/DependencyInstaller.sh
+      - name: Build project locally
+        shell: bash
+        run: |
+          ./build_openroad.sh --local
+      - name: Test build locally
+        shell: bash
+        run: |
+          source ./setup_env.sh
+          yosys -help
+          openroad -help
+          cd flow
+          make
+      - name: Run installer using docker
+        run: |
+          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }}
+      - name: Build project using docker
+        run: |
+          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }}
+      - name: Test build using docker
+        run: |
+          if [[ ${{ matrix.os }} == "centos7" ]]; then
+            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source /opt/rh/llvm-toolset-7.0/enable; source /opt/rh/devtoolset-8/enable; source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
+          else
+            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
+          fi
