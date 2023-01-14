@@ -30,19 +30,19 @@ jobs:
       - name: Run installer locally
         shell: bash
         run: |
-          ./etc/DependencyInstaller.sh
+          sudo ./etc/DependencyInstaller.sh
       - name: Build project locally
         shell: bash
         run: |
-          ./build_openroad.sh --local
+          sudo ./build_openroad.sh --local
       - name: Test build locally
         shell: bash
         run: |
-          source ./setup_env.sh
+          sudo source ./setup_env.sh
           yosys -help
           openroad -help
           cd flow
-          make
+          sudo make
       - name: Run installer using docker
         run: |
           ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }}
