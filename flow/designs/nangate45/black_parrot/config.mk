@@ -22,12 +22,12 @@ export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/
 export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lib))
 
 
-export DIE_AREA    = 0 0 1500 1400 
-export CORE_AREA   = 10.07 11.2 1490 1390 
+export DIE_AREA    = 0 0 1350 1300 
+export CORE_AREA   = 10.07 11.2 1340 1290 
 
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-50 -exclude bottom:1500-1600
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-100 -exclude bottom:1200-1350
 
-export PLACE_DENSITY_LB_ADDON = 0.10
+export PLACE_DENSITY_LB_ADDON = 0.05
 
 export MACRO_PLACE_HALO = 10 10
 export MACRO_PLACE_CHANNEL = 20 20
