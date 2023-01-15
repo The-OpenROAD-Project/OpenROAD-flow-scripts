@@ -21,7 +21,7 @@ To build the binaries and run `gcd` through the flow:
 Larger designs may require better hardware.
 
 ---
-
+(getting:started:setup:build)=
 ### Building and Installing the Software
 
 **WARNING**
