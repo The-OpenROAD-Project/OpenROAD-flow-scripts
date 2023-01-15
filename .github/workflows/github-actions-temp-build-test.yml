@@ -38,7 +38,7 @@ jobs:
       - name: Test build locally
         shell: bash
         run: |
-          sudo source ./setup_env.sh
+          source ./setup_env.sh
           yosys -help
           openroad -help
           cd flow
