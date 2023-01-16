@@ -45,14 +45,11 @@ jobs:
           sudo make
       - name: Run installer using docker
         run: |
-          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }}
+          ./etc/DockerHelper.sh create -target=dev -os=ubuntu22
       - name: Build project using docker
         run: |
-          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }}
+          ./etc/DockerHelper.sh create -target=builder -os=ubuntu22
       - name: Test build using docker
         run: |
-          if [[ ${{ matrix.os }} == "centos7" ]]; then
-            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source /opt/rh/llvm-toolset-7.0/enable; source /opt/rh/devtoolset-8/enable; source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
-          else
-            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
-          fi
+          docker run openroad/flow-ubuntu22-builder /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
+
