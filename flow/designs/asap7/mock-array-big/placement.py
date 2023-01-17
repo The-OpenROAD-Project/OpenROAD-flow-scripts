@@ -1,6 +1,6 @@
-y_pitch = 25
-x_pitch = 25
-offset = 10
+y_pitch = 40
+x_pitch = 40
+offset = 20
 
 rows = 8
 cols = 8

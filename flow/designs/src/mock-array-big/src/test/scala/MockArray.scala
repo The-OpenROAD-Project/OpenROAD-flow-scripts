@@ -15,7 +15,7 @@ class MockArray extends Module {
 
   val width = 8
   val height = 8
-  val singleElementWidth = 8
+  val singleElementWidth = 64
 
   val io = IO(new Bundle {
     val insHorizontal = Input(Vec(2, Vec(width, UInt(singleElementWidth.W))))

@@ -8,7 +8,7 @@ proc pin2 {fmt p q} {
     return $result
 }
 
-set data_width 8
+set data_width 64
 set rows 8
 set cols 8
 

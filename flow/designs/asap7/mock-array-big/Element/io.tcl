@@ -6,7 +6,7 @@ proc pin1 {fmt p} {
     return $result
 }
 
-set data_width 8
+set data_width 64
 set assignments [list \
     top bottom \
     [list [ concat \
