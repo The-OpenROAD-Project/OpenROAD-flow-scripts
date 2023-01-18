@@ -44,7 +44,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.28,
+        "value": -0.62,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
