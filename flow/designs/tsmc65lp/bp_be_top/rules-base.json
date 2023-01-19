@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 564087,
+        "value": 11451,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -24,11 +24,11 @@
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -4.8,
+        "value": -4.26,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -4.81,
+        "value": -4.3,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 5894,
+        "value": 4998,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
@@ -76,7 +76,7 @@
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 11,
+        "value": 10,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {

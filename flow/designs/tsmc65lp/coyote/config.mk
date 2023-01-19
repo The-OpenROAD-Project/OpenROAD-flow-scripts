@@ -2,9 +2,21 @@ export DESIGN_NICKNAME = coyote
 export DESIGN_NAME = bsg_rocket_node_client_rocc
 export PLATFORM    = tsmc65lp
 
+export SYNTH_HIERARCHICAL = 1
+export MAX_UNGROUP_SIZE ?= 100000
+export RTLMP_FLOW = True
+
+
+# RTL_MP Settings
+export RTLMP_MAX_INST = 30000
+export RTLMP_MIN_INST = 5000
+export RTLMP_MAX_MACRO = 10
+export RTLMP_MIN_MACRO = 5 
+
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+#export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_hier.sdc
 export ABC_AREA      = 1
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/tsmc65lp_1rf_lg6_w80_bit.lef \
@@ -20,12 +32,13 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/tsmc65lp_1rf_lg6_w80_bit.gds2 \
                          $(PLATFORM_DIR)/gds/tsmc65lp_2rf_lg6_w44_bit.gds2 \
                          $(PLATFORM_DIR)/gds/tsmc65lp_2rf_lg8_w64_bit.gds2
 
-# These values must be multiples of placement site
-#export DIE_AREA = 0 0 3080 3100
-export DIE_AREA = 0 0 1810 1810
-export CORE_AREA = 5 5 1805 1805
-export HAS_IO_CONSTRAINTS = 1
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-500 -exclude right:1500-2000 -exclude top:* -exclude bottom:*
+export DIE_AREA = 0 0 2250 2250
+export CORE_AREA = 5 5 2245 2245
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-700 -exclude right:1500-2250 -exclude top:* -exclude bottom:*
 
-export PLACE_DENSITY         = 0.65
+export MACRO_PLACE_HALO = 10 10
+export MACRO_PLACE_CHANNEL = 20 20
+
+#export PLACE_DENSITY         = 0.60
+export PLACE_DENSITY_LB_ADDON = 0.10 
 export REMOVE_BUFFER_TREE     = 1

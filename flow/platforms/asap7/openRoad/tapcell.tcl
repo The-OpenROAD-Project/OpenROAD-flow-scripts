@@ -1,7 +1,5 @@
 set multiplier 1
-if { [info exists ::env(4X)] } {
-  set multiplier 4
-}
+
 puts "\[INFO-FLOW\] Tap and End Cap cell insertion"
 puts "\[INFO-FLOW\]   TAP Cell          : $::env(TAP_CELL_NAME)"
 puts "\[INFO-FLOW\]   ENDCAP Cell       : $::env(TAP_CELL_NAME)"

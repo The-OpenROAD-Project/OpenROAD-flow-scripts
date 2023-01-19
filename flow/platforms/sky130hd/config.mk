@@ -151,3 +151,10 @@ export RCX_RULES = $(PLATFORM_DIR)/rcx_patterns.rules
 export PWR_NETS_VOLTAGES  ?= "VDD 1.8"
 export GND_NETS_VOLTAGES  ?= "VSS 0.0"
 export IR_DROP_LAYER ?= met1
+
+# DRC Check
+export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/$(PLATFORM).lydrc
+
+#LVS Check
+export CDL_FILE = $(PLATFORM_DIR)/cdl/$(PLATFORM).cdl
+export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/$(PLATFORM).lylvs
