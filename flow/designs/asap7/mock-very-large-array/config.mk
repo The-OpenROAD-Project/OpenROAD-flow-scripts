@@ -11,7 +11,7 @@ export PLATFORM               = asap7
 export PLACE_DENSITY          = 0.30
 
 export CORE_UTILIZATION       = 20
-export CORE_ASPECT_RATIO      = 1
+export CORE_ASPECT_RATIO      = 0.5
 export CORE_MARGIN            = 2
 
 BLOCKS = Element

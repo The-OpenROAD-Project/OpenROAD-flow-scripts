@@ -13,8 +13,8 @@ import chisel3.experimental._
 
 class MockArray extends Module {
 
-  val width = 16
-  val height = 16
+  val width = 128
+  val height = 64
   val singleElementWidth = 8
 
   val io = IO(new Bundle {
@@ -34,7 +34,7 @@ class MockArray extends Module {
     io.outs := io.ins.reverse.map(RegNext(_))
   }
 
-  val ces = Seq.fill(height)(Seq.fill(height)(Module(new Element())))
+  val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
 
   io.lsbs := ces.flatten.map(_.io.outs.head(0))
 

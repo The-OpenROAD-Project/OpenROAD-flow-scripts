@@ -2,8 +2,8 @@ y_pitch = 25
 x_pitch = 25
 offset = 10
 
-rows = 16
-cols = 16
+rows = 64
+cols = 128
 
 for row in range(rows):
     for col in range(cols):
