@@ -22,7 +22,7 @@ class MockArray extends Module {
     val outsHorizontal = Output(Vec(2, Vec(height, UInt(singleElementWidth.W))))
     val insVertical = Input(Vec(2, Vec(height, UInt(singleElementWidth.W))))
     val outsVertical = Output(Vec(2, Vec(height, UInt(singleElementWidth.W))))
-    val lsbs = Output(Vec(width * height, Bool()))
+    //val lsbs = Output(Vec(width * height, Bool()))
   })
 
   class Element extends Module {
@@ -36,7 +36,7 @@ class MockArray extends Module {
 
   val ces = Seq.fill(height)(Seq.fill(height)(Module(new Element())))
 
-  io.lsbs := DontCare //ces.flatten.map(_.io.outs.head(0))
+  //io.lsbs := DontCare //ces.flatten.map(_.io.outs.head(0))
 
   // 0 top
   // 1 right
