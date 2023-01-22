@@ -7,8 +7,7 @@ For this method you only need to install
 
 ---
 
-**WARNING**
-
+:::{warning}
 The `build_openroad.sh` will use the host number of CPUs to compile `openroad`.
 
 Please check your Docker daemon setup to make sure all host CPUs are
@@ -28,8 +27,7 @@ You can restrict the number of CPUs with the `-t|--threads N` argument:
 ``` shell
 ./build_openroad.sh --threads N
 ```
-
----
+:::
 
 ## Clone and Build
 
@@ -38,31 +36,6 @@ git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scri
 cd OpenROAD-flow-scripts
 ./build_openroad.sh
 ```
-Options for `./build_openroad.sh` script
-| Argument                      | Description                                                                           |
-|-------------------------------|---------------------------------------------------------------------------------------|
-| `-h` or `--help`              | Print help message.                                                                   |
-| `-o` or  `--local`            | Build locally instead of building a Docker image.                                     |
-| `-l` or  `--latest`           | Use the head of branch --or_branch or 'master' by default for tools/OpenROAD.         |
-| `--or_branch BRANCH_NAME`     | Use the head of branch BRANCH for tools/OpenROAD.                                     |
-| `--or_repo REPO_URL`          | Use a fork at REPO-URL (https/ssh) for tools/OpenROAD.                                |
-| `--no_init`                   | Skip initializing submodules.                                                         |
-| `-t N` or `--threads N`       | Use N cpus when compiling software.                                                   |
-| `-n` or `--nice`              | Nice all jobs. Use all cpus unless `--threads` is also given, then use N threads.     |
-| `--yosys-args-overwrite`      | Do not use default flags set by this scrip during Yosys compilation.                  |
-| `--yosys-args STRING`         | Aditional compilation flags for Yosys compilation.                                    |
-| `--openroad-args-overwrite`   | Do not use default flags set by this script during OpenROAD app compilation.          |
-| `--openroad-args STRING`      | Aditional compilation flags for OpenROAD app compilation.                             |
-| `--lsoracle-enable`           | Compile LSOracle. Disable by default as it is not currently used on the flow.         |
-| `--lsoracle-args-overwrite`   | Do not use default flags set by this scrip during LSOracle compilation.               |
-| `--lsoracle-args STRING`      | Aditional compilation flags for LSOracle compilation.                                 |
-| `--install-path PATH`         | Path to install tools. Default is `${INSTALL_PATH}`.                                  |
-| `--clean`                     | Call git clean interactively before compile. Useful to remove old build files.        |
-| `--clean-force`               | Call git clean before compile. WARNING: this option will not ask for confirmation. Useful to remove old build files. |
-| `-c` or `--copy-platforms`    | Copy platforms to inside docker image.                                                |
-| `--docker-args-overwrite`     | Do not use default flags set by this script for Docker builds.                        |
-| `--docker-args STRING`        | Aditional compilation flags for Docker build.                                         |
-
 
 ## Verify Installation
 
