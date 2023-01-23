@@ -3,6 +3,7 @@
 # ==============================================================================
 
 # DESIGN_CONFIG=./designs/nangate45/aes/config.mk
+# DESIGN_CONFIG=./designs/nangate45/ariane136/config_hier.mk
 # DESIGN_CONFIG=./designs/nangate45/black_parrot/config.mk
 # DESIGN_CONFIG=./designs/nangate45/bp_be_top/config.mk
 # DESIGN_CONFIG=./designs/nangate45/bp_fe_top/config.mk
