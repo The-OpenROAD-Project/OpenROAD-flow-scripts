@@ -1,17 +1,16 @@
 # Build OpenROAD Flow
 
-:::{warning}
-On CentOS 7 you need to manually make sure the PATH variable includes at
-least one of the new version of GCC/Clang. To enable GCC-8 or Clang-7 you
-need to run:
-
-```shell
-# to enable gcc-8
-source /opt/rh/devtoolset-8/enable
-# or to enable clang-7
-source /opt/rh/llvm-toolset-7.0/enable
-```
-:::
+> **Warning:**
+> On CentOS 7 you need to manually make sure the PATH variable includes at
+> least one of the new version of GCC/Clang. To enable GCC-8 or Clang-7 you
+> need to run:
+>
+> ```shell
+> # to enable gcc-8
+> source /opt/rh/devtoolset-8/enable
+> # or to enable clang-7
+> source /opt/rh/llvm-toolset-7.0/enable
+> ```
 
 ## Build Command and options
 
