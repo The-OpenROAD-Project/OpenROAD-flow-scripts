@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -1048.79,
+        "value": -622.02,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
@@ -40,11 +40,11 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -628.63,
+        "value": -109.68,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -628.64,
+        "value": -109.68,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -1.74,
+        "value": -1.27,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {

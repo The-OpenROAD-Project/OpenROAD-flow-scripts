@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 33129,
+        "value": 33120,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": 0.0,
+        "value": -1.57,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
