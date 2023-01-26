@@ -9,13 +9,16 @@ else
     cd "$(dirname $(readlink -f $0))/../"
 fi
 
+# package versions
+klayoutVersion=0.27.10
+
 _installORDependencies() {
-    ./tools/OpenROAD/etc/DependencyInstaller.sh
+    ./tools/OpenROAD/etc/DependencyInstaller.sh ${OR_INSTALLER_ARGS}
 }
 
 _installCommon() {
     # install pandas
-    pip3 install -U --user pandas
+    pip3 install pandas
 }
 
 _installCentosCleanUp() {
@@ -33,7 +36,7 @@ _installCentosPackages() {
         ruby-devel \
         tcl-devel 
 
-    yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-0.27.10-0.x86_64.rpm
+    yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
 }
 
 _installUbuntuCleanUp() {
@@ -67,7 +70,6 @@ _installUbuntuPackages() {
     cd ${baseDir}
 
     # install KLayout
-    klayoutVersion=0.27.10
     if [[ $1 == 20.04 ]]; then
         klayoutChecksum=8076dadfb1b790b75d284fdc9c90f70b
     else
@@ -85,8 +87,68 @@ _installDarwinPackages() {
     brew install libffi tcl-tk ruby
     brew install python libomp
     brew link --force libomp
-    brew install --cask klayout
+    brew install --cask klayout@${klayoutVersion}
 }
+
+_help() {
+    cat <<EOF
+
+All arguments and flags are only applicable for OpenROAD dependencies
+Usage: $0
+                                # Installs all of OpenROAD's dependencies no
+                                #     need to run -base or -common. Requires
+                                #     privileged access.
+                                #
+       $0 -base
+                                # Installs OpenROAD's dependencies using
+                                #     package managers (-common must be
+                                #     executed in another command).
+       $0 -common
+                                # Installs OpenROAD's common dependencies
+                                #     (-base must be executed in another
+                                #     command).
+       $0 -prefix=DIR
+                                # Installs common dependencies in an existing
+                                #     user-specified directory. Only used
+                                #     with -common. This flag cannot be used
+                                #     with sudo or with root access.
+       $0 -local
+                                # Installs common dependencies in
+                                #    "$HOME/.local". Only used with
+                                #    -common. This flag cannot be used with
+                                #    sudo or with root access.
+EOF
+    exit "${1:-1}"
+}
+
+# default args
+OR_INSTALLER_ARGS=""
+
+# default values, can be overwritten by cmdline args
+while [ "$#" -gt 0 ]; do
+    case "${1}" in
+        -h|-help)
+            _help 0
+            ;;
+        -base)
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -base"
+            ;;
+        -common)
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -common"
+            ;;
+        -local)
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
+            ;;
+        -prefix=*)
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
+            ;;
+        *)
+            echo "unknown option: ${1}" >&2
+            _help
+            ;;
+    esac
+    shift 1
+done
 
 platform="$(uname -s)"
 case "${platform}" in

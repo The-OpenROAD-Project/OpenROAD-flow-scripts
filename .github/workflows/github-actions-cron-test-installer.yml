@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu20", "ubuntu22", "centos7"]
+        os: ["ubuntu20.04", "ubuntu22.04", "centos7"]
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
