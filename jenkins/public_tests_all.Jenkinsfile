@@ -36,6 +36,8 @@ pipeline {
                   "jpeg asap7",
                   "sha3 asap7",
                   "uart asap7",
+                  "uart-blocks asap7",
+                  "mock-array-big asap7",
                   "aes nangate45",
                   "black_parrot nangate45",
                   "bp_be_top nangate45",
@@ -60,8 +62,7 @@ pipeline {
                   "ibex sky130hs",
                   "jpeg sky130hs",
                   "riscv32i sky130hs",
-                  "aes gf180",
-                  "uart-blocks asap7";
+                  "aes gf180";
           }
         }
 
