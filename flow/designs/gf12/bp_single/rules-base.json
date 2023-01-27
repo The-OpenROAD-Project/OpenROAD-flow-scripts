@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -510.85,
+        "value": -450.39,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -56,11 +56,11 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 537578,
+        "value": 537443,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.35,
+        "value": -0.2,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {

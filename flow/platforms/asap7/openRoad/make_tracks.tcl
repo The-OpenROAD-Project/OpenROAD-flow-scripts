@@ -1,8 +1,5 @@
 
 set multiplier 1
-if { [info exists ::env(4X)] } {
-  set multiplier 4
-}
 
 make_tracks Pad -x_offset [expr 0.116 * $multiplier] -x_pitch [expr 0.08  * $multiplier] -y_offset [expr 0.116 * $multiplier] -y_pitch [expr 0.08 * $multiplier]
 make_tracks M9  -x_offset [expr 0.116 * $multiplier] -x_pitch [expr 0.08  * $multiplier] -y_offset [expr 0.116 * $multiplier] -y_pitch [expr 0.08 * $multiplier]

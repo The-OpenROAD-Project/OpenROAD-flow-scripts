@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 122909,
+        "value": 122822,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 15686,
+        "value": 15685,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -1.78,
+        "value": -1.75,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {

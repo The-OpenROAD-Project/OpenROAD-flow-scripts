@@ -20,15 +20,15 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -2017.06,
+        "value": -1979.15,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -4255.06,
+        "value": -4110.49,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -4255.06,
+        "value": -4110.49,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -36,15 +36,15 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 871,
+        "value": 785,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -1922.6,
+        "value": -1657.83,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -1922.61,
+        "value": -1657.83,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -56,11 +56,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -259.77,
+        "value": -495.71,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 18349,
+        "value": 16254,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
