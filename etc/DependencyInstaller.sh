@@ -87,7 +87,7 @@ _installDarwinPackages() {
     brew install libffi tcl-tk ruby
     brew install python libomp
     brew link --force libomp
-    brew install --cask klayout@${klayoutVersion}
+    brew install --cask klayout
 }
 
 _help() {
