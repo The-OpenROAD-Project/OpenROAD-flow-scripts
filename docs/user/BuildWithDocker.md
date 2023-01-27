@@ -5,8 +5,6 @@
 For this method you only need to install
 [Docker](https://docs.docker.com/engine/install) on your machine.
 
----
-
 > **Warning:**
 > The `build_openroad.sh` will use the host number of CPUs to compile `openroad`.
 > 
@@ -21,13 +19,12 @@ For this method you only need to install
 > # <IMAGE> can be any commonly used OS, e.g., 'centos:centos7'
 > docker run centos:centos7 nproc
 > ```
-
-You can restrict the number of CPUs with the `-t|--threads N` argument:
-
-``` shell
-./build_openroad.sh --threads N
-```
-:::
+>
+> You can restrict the number of CPUs with the `-t|--threads N` argument:
+> 
+> ``` shell
+> ./build_openroad.sh --threads N
+> ```
 
 ## Clone and Build
 
