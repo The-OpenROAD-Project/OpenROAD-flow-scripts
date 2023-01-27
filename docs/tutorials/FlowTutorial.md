@@ -920,9 +920,8 @@ openroad -gui
 Run [test_gcd.api.tcl](../../src/pdn/test/test_gcd.api.tcl)
 to generate power grid for `gcd` design.
 
-:::{warning}
-The refernced script is not currently avaiable, it will be addressed in a future pull request
-:::
+> **Warning:**
+> The refernced script is not currently avaiable, it will be addressed in a future pull request
 
 ```
 source test_gcd.api.tcl
@@ -1108,9 +1107,8 @@ Zoomed view of cell placement:
 Explore macro placement with halo spacing, refer to the example
 [here](../../src/mpl/test/gcd_mem1_02.tcl).
 
-:::{warning}
-The refernced script is not currently avaiable, it will be addressed in a future pull request
-:::
+> **Warning:**
+> The refernced script is not currently avaiable, it will be addressed in a future pull request
 
 Launch GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 ```
@@ -1165,9 +1163,8 @@ If the design has more than one macro, it is important to provide halo and
 channel spacing to provide enough space for routing. Refer to the
 following example [here](../../src/mpl/test/gcd_mem3_03.tcl).
 
-:::{warning}
-The refernced script is not currently avaiable, it will be addressed in a future pull request
-:::
+> **Warning:**
+> The refernced script is not currently avaiable, it will be addressed in a future pull request
 
 To view macro placement with channel spacing in OpenROAD GUI run the following command(s) in the terminal in OpenROAD tool root directory:
 ```

@@ -2,7 +2,7 @@
 
 ## Building
 
-Instructions for building are available [here](../user/GettingStarted.md).
+Instructions for building are available [here](./Build.md).
 
 ## Logger
 
