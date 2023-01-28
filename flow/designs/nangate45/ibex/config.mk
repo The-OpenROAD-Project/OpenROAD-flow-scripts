@@ -1,10 +1,10 @@
-export DESIGN_NICKNAME = ibex
-export DESIGN_NAME = ibex_core
-export PLATFORM    = nangate45
+export DESIGN_NICKNAME ?= ibex
+export DESIGN_NAME ?= ibex_core
+export PLATFORM    ?= nangate45
 
 
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
+export VERILOG_FILES ?= ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
                        ./designs/src/$(DESIGN_NICKNAME)/ibex_branch_predict.v \
                        ./designs/src/$(DESIGN_NICKNAME)/ibex_compressed_decoder.v \
                        ./designs/src/$(DESIGN_NICKNAME)/ibex_controller.v \
@@ -45,7 +45,7 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
 
 
 
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE      ?= ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export CORE_UTILIZATION ?= 50
-export PLACE_DENSITY_LB_ADDON = 0.20
+export PLACE_DENSITY_LB_ADDON ?= 0.20

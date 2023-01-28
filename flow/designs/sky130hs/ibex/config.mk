@@ -1,8 +1,8 @@
-export DESIGN_NICKNAME = ibex
-export DESIGN_NAME = ibex_core
-export PLATFORM    = sky130hs
+export DESIGN_NICKNAME ?= ibex
+export DESIGN_NAME ?= ibex_core
+export PLATFORM    ?= sky130hs
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
+export VERILOG_FILES ?= ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
 						./designs/src/$(DESIGN_NICKNAME)/ibex_branch_predict.v \
 						./designs/src/$(DESIGN_NICKNAME)/ibex_compressed_decoder.v \
 						./designs/src/$(DESIGN_NICKNAME)/ibex_controller.v \
@@ -39,7 +39,7 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ibex_alu.v \
 						./designs/src/$(DESIGN_NICKNAME)/prim_secded_72_64_dec.v \
 						./designs/src/$(DESIGN_NICKNAME)/prim_secded_72_64_enc.v \
 						./designs/src/$(DESIGN_NICKNAME)/prim_xilinx_clock_gating.v
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE      ?= ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export CORE_UTILIZATION = 45
-export PLACE_DENSITY_LB_ADDON = 0.2
+export CORE_UTILIZATION ?= 45
+export PLACE_DENSITY_LB_ADDON ?= 0.2
