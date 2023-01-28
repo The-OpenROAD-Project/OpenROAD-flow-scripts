@@ -1,0 +1,56 @@
+name: Mix Both Builds
+on:
+  push:
+    paths:
+      - '.github/workflows/github-actions-temp-build-test.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/github-actions-temp-build-test.yml'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:     
+  testInstaller:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          submodules: recursive
+      - name: Network Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bridge-utils
+          sudo pkill docker
+          sudo iptables -t nat -F
+          sudo ifconfig docker0 down
+          sudo brctl delbr docker0
+          sudo service docker restart
+      - name: Run installer locally
+        shell: bash
+        run: |
+          sudo ./etc/DependencyInstaller.sh
+      - name: Build project locally
+        shell: bash
+        run: |
+          sudo mkdir -p ./tools/local_install
+          sudo ./build_openroad.sh --local --install-path ./tools/local_install
+          echo "tools/local_install" >> .dockerignore
+      - name: Test build locally
+        shell: bash
+        run: |
+          source ./setup_env.sh
+          yosys -help
+          openroad -help
+          cd flow
+          sudo make
+      - name: Run installer using docker
+        run: |
+          ./etc/DockerHelper.sh create -target=dev -os=ubuntu22
+      - name: Build project using docker
+        run: |
+          ./etc/DockerHelper.sh create -target=builder -os=ubuntu22
+      - name: Test build using docker
+        run: |
+          docker run openroad/flow-ubuntu22-builder /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
