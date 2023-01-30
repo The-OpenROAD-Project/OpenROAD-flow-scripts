@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -1.99,
+        "value": -1.97,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {

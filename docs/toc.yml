@@ -17,6 +17,8 @@ entries:
 - file: user/GettingStarted
   title: Getting Started with OpenROAD Flow
   entries:
+  - file: user/Build
+    title: Build OpenROAD Flow
   - file: user/BuildWithDocker
     title: Build With Docker
   - file: user/BuildLocally
