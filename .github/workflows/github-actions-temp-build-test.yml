@@ -43,10 +43,12 @@ jobs:
           openroad -help
           cd flow
           sudo make
-      - name: Build with docker
+      - name: Run installer using docker
         run: |
-          ./build_openroad.sh
+          ./etc/DockerHelper.sh create -target=dev -os=ubuntu22
+      - name: Build project using docker
+        run: |
+          ./etc/DockerHelper.sh create -target=builder -os=ubuntu22
       - name: Test build using docker
-        shell: bash
         run: |
-          docker run -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
+          docker run openroad/flow-ubuntu22-builder /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
