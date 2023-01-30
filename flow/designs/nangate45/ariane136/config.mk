@@ -6,8 +6,6 @@ export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 1000
 export RTLMP_FLOW = True
 
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint_hier.sdc
-
 # RTL_MP Settings
 export RTLMP_MAX_INST = 500000
 export RTLMP_MIN_INST = 1000
@@ -17,7 +15,7 @@ export RTLMP_MIN_MACRO = 4
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ariane.sv2v.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
 
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_hier.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram45_256x16.lef
 
