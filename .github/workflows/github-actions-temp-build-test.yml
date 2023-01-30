@@ -1,0 +1,52 @@
+name: Mix Both Builds
+on:
+  push:
+    paths:
+      - '.github/workflows/github-actions-temp-build-test.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/github-actions-temp-build-test.yml'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:     
+  testInstaller:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          submodules: recursive
+      - name: Network Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bridge-utils
+          sudo pkill docker
+          sudo iptables -t nat -F
+          sudo ifconfig docker0 down
+          sudo brctl delbr docker0
+          sudo service docker restart
+      - name: Run installer locally
+        shell: bash
+        run: |
+          sudo ./etc/DependencyInstaller.sh
+      - name: Build project locally
+        shell: bash
+        run: |
+          sudo ./build_openroad.sh --local --dir local-build
+      - name: Test build locally
+        shell: bash
+        run: |
+          source ./setup_env.sh
+          yosys -help
+          openroad -help
+          cd flow
+          sudo make
+      - name: Build with docker
+        run: |
+          ./build_openroad.sh
+      - name: Test build using docker
+        shell: bash
+        run: |
+          docker run -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"

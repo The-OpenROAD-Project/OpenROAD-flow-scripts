@@ -8,6 +8,7 @@ set -eu
 cd "$(dirname $(readlink -f $0))"
 
 # Defaults variable values
+buildDir="build"
 NICE=""
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   PROC=$(nproc --all)
@@ -66,7 +67,10 @@ Options:
 
     -l, --latest            Use the head of branch --or_branch or 'master'
                             by default for tools/OpenROAD.
-
+    
+    --dir PATH              Path to store build files in submodules.
+                            Default: "build"
+    
     --or_branch BRANCH_NAME Use the head of branch BRANCH for tools/OpenROAD.
 
     --or_repo REPO_URL      Use a fork at REPO-URL (https/ssh) for tools/OpenROAD.
@@ -201,6 +205,10 @@ while (( "$#" )); do
                         CLEAN_BEFORE=1
                         CLEAN_FORCE=1
                         ;;
+                --dir)
+                        buildDir="$2"
+                        shift
+                        ;;
                 -*|--*) # unsupported flags
                         echo "[ERROR FLW-0005] Unsupported flag $1." >&2
                         usage 2> /dev/null
@@ -297,13 +305,15 @@ __local_build()
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
         echo "[INFO FLW-0018] Compiling OpenROAD."
-        ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/build ${OPENROAD_APP_ARGS}
-        ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
+        mkdir -p "tools/OpenROAD/${buildDir}"
+        ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/${buildDir} ${OPENROAD_APP_ARGS}
+        ${NICE} cmake --build tools/OpenROAD/${buildDir} --target install -j "${PROC}"
 
         if [ ! -z "${LSORACLE_ENABLE+x}" ]; then
                 echo "[INFO FLW-0019] Compiling LSOracle."
-                ${NICE} cmake tools/LSOracle -B tools/LSOracle/build ${LSORACLE_ARGS}
-                ${NICE} cmake --build tools/LSOracle/build --target install -j "${PROC}"
+                mkdir -p "tools/LSOracle/${buildDir}"
+                ${NICE} cmake tools/LSOracle -B tools/LSOracle/${buildDir} ${LSORACLE_ARGS}
+                ${NICE} cmake --build tools/LSOracle/${buildDir} --target install -j "${PROC}"
         fi
 }
 
