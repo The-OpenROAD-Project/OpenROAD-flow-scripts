@@ -58,6 +58,7 @@ pipeline {
                    "jpeg asap7",
                    "sha3 asap7",
                    "uart asap7",
+                   "mock-array-big asap7",
                    "aes nangate45",
                    "black_parrot nangate45",
                    "bp_be_top nangate45",
