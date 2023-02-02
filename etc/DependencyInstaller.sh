@@ -17,8 +17,11 @@ _installORDependencies() {
 }
 
 _installCommon() {
-    # install pandas
-    pip3 install pandas
+    if [[ $(id -u) == 0 ]]; then
+        pip3 install -U pandas
+    else
+        pip3 install --user -U pandas
+    fi
 }
 
 _installCentosCleanUp() {
