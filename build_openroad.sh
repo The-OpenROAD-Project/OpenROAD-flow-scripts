@@ -79,7 +79,7 @@ Options:
                             also given, then use N threads.
 
     --yosys-args-overwrite  Do not use default flags set by this scrip during
-                            Yosys comilation.
+                            Yosys compilation.
 
     --yosys-args STRING      Aditional compilation flags for Yosys compilation.
 
@@ -94,7 +94,7 @@ Options:
                             currently used on the flow.
 
     --lsoracle-args-overwrite
-                            Do not use default flags set by this scrip during
+                            Do not use default flags set by this script during
                             LSOracle compilation.
 
     --lsoracle-args STRING    Aditional compilation flags for LSOracle
