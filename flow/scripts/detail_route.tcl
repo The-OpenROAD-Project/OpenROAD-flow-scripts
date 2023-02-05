@@ -40,11 +40,19 @@ if { [info exists ::env(REPAIR_PDN_VIA_LAYER)]} {
   append additional_args " -repair_pdn_vias $::env(REPAIR_PDN_VIA_LAYER)"
 }
 
+append additional_args " -save_guide_updates -verbose 1"
+
+# DETAILED_ROUTE_ARGS is used when debugging detailed, route, e.g. append
+# "-droute_end_iter 5" to look at routing violations after only 5 iterations,
+# speeding up iterations on a problem where detailed routing doesn't converge
+# or converges slower than expected.
+set arguments [expr {[info exists ::env(DETAILED_ROUTE_ARGS)] ? $::env(DETAILED_ROUTE_ARGS) : $additional_args}]
+
+puts "detailed_route arguments: $arguments"
+
 detailed_route -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
                -output_maze $::env(RESULTS_DIR)/maze.log \
-               -save_guide_updates \
-               -verbose 1 \
-               {*}$additional_args
+               {*}$arguments
 
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
