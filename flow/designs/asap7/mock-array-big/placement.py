@@ -7,7 +7,7 @@ x_pitch = lowest_common_grid_denominator * 43
 offset = lowest_common_grid_denominator * 17
 
 rows = 8
-cols = 8
+cols = 16
 
 def manufcaturing_grid(num):
     return f'{num:.3f}'

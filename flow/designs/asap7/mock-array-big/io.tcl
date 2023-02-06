@@ -10,7 +10,7 @@ proc pin2 {fmt p q} {
 
 set data_width 8
 set rows 8
-set cols 8
+set cols 16
 
 set assignments [list \
     top \

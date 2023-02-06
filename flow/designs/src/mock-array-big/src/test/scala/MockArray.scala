@@ -13,7 +13,7 @@ import chisel3.experimental._
 
 class MockArray extends Module {
 
-  val width = 8
+  val width = 16
   val height = 8
   val singleElementWidth = 8
 
