@@ -101,6 +101,7 @@ pipeline {
                   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     if ("${TEST_SLUG}" == 'docker build'){
                       sh "./build_openroad.sh --no_init";
+                      sh "docker run --rm openroad/flow-scripts:latest tools/install/OpenROAD/bin/openroad -help -exit";
                     } else {
                       sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
                     }
