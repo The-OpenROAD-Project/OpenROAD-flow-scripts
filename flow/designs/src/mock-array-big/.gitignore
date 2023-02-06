@@ -2,3 +2,6 @@ MockArray.anno.json
 MockArray.fir
 project/
 target/
+.metals/
+.vscode/
+.bloop/
