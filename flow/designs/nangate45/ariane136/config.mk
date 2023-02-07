@@ -23,9 +23,6 @@ export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_256x16.lib
 
 export DIE_AREA    = 0 0 1500 1500
 export CORE_AREA   = 10 12 1448 1448
-export PLACE_PINS_ARGS = -exclude left:0-250 -exclude left:400-550 -exclude right:* -exclude top:* -exclude bottom:*
 
-export MACRO_PLACE_HALO = 20 20
-export MACRO_PLACE_CHANNEL = 20 20
-
-export PLACE_DENSITY_LB_ADDON = 0.20
+export MACRO_PLACE_HALO = 15 15
+export MACRO_PLACE_CHANNEL = 15 15
