@@ -58,6 +58,8 @@ pipeline {
                    "jpeg asap7",
                    "sha3 asap7",
                    "uart asap7",
+                   "uart-blocks asap7",
+                   "mock-array-big asap7",
                    "aes nangate45",
                    "ariane136 nangate45",
                    "black_parrot nangate45",
@@ -100,6 +102,7 @@ pipeline {
                   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     if ("${TEST_SLUG}" == 'docker build'){
                       sh "./build_openroad.sh --no_init";
+                      sh "docker run --rm openroad/flow-scripts:latest tools/install/OpenROAD/bin/openroad -help -exit";
                     } else {
                       sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
                     }
