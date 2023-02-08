@@ -8,6 +8,18 @@ baseDir="$(pwd)"
 # docker hub organization/user from where to pull/push images
 org=openroad
 
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    numThreads=$(nproc --all)
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    numThreads=$(sysctl -n hw.ncpu)
+else
+    numThreads=2
+    cat << EOF
+[WARNING] Unsupported OSTYPE: cannot determine number of host CPUs"
+  Defaulting to 2 threads. Use --threads N to use N threads"
+EOF
+fi
+
 _help() {
     cat <<EOF
 usage: $0 [CMD] [OPTIONS]
@@ -17,14 +29,14 @@ usage: $0 [CMD] [OPTIONS]
   test                          Test the docker image
   push                          Push the docker image to Docker Hub
 
-  OPTIONS:                                  
+  OPTIONS:
   -os=OS_NAME                   Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
   -target=TARGET                Choose target fo the Docker image:
                                   'dev': os + packages to compile app
                                   'builder': os + packages to compile app +
                                              copy source code and build app
   -threads                      Max number of threads to use if compiling.
-                                  Default = \$(nproc)
+                                  Default = ${numThreads}.
   -sha                          Use git commit sha as the tag image. Default is
                                   'latest'.
   -h -help                      Show this message and exits
@@ -102,7 +114,7 @@ _push() {
                 for os in ${OS_LIST}; do
                     echo [DRY-RUN] docker push openroad/flow-${os}-dev:latest
                     echo [DRY-RUN] docker push openroad/flow-${os}-dev:${commitSha}
-                done          
+                done
 
             else
                 echo "Will not push."
