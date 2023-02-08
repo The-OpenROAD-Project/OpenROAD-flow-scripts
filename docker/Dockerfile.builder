@@ -12,4 +12,3 @@ COPY . /OpenROAD-flow-scripts
 WORKDIR /OpenROAD-flow-scripts
 
 RUN ./build_openroad.sh --no_init --local --threads ${numThreads}
-
