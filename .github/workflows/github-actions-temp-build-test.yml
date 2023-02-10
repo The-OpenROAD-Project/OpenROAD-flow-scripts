@@ -45,10 +45,10 @@ jobs:
           sudo make
       - name: Run installer using docker
         run: |
-          ./etc/DockerHelper.sh create -target=dev -os=ubuntu22
+          ./etc/DockerHelper.sh create -target=dev -os=ubuntu22.04
       - name: Build project using docker
         run: |
-          ./etc/DockerHelper.sh create -target=builder -os=ubuntu22
+          ./etc/DockerHelper.sh create -target=builder -os=ubuntu22.04
       - name: Test build using docker
         run: |
           docker run openroad/flow-ubuntu22-builder /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
