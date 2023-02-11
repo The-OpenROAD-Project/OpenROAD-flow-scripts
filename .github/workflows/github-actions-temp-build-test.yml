@@ -51,4 +51,4 @@ jobs:
           ./etc/DockerHelper.sh create -target=builder -os=ubuntu22.04
       - name: Test build using docker
         run: |
-          docker run openroad/flow-ubuntu22-builder /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
+          docker run openroad/flow-ubuntu22.04-builder /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
