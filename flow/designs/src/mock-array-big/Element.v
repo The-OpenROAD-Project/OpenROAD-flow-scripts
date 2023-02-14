@@ -7,7 +7,23 @@ module Element(
   output [7:0] io_outs_0,
   output [7:0] io_outs_1,
   output [7:0] io_outs_2,
-  output [7:0] io_outs_3
+  output [7:0] io_outs_3,
+  input        io_lsbIn_0,
+  input        io_lsbIn_1,
+  input        io_lsbIn_2,
+  input        io_lsbIn_3,
+  input        io_lsbIn_4,
+  input        io_lsbIn_5,
+  input        io_lsbIn_6,
+  input        io_lsbIn_7,
+  output       io_lsbOut_0,
+  output       io_lsbOut_1,
+  output       io_lsbOut_2,
+  output       io_lsbOut_3,
+  output       io_lsbOut_4,
+  output       io_lsbOut_5,
+  output       io_lsbOut_6,
+  output       io_lsbOut_7
 );
 `ifdef RANDOMIZE_REG_INIT
   reg [31:0] _RAND_0;
@@ -15,19 +31,27 @@ module Element(
   reg [31:0] _RAND_2;
   reg [31:0] _RAND_3;
 `endif // RANDOMIZE_REG_INIT
-  reg [7:0] REG; // @[MockArray.scala 33:42]
-  reg [7:0] REG_1; // @[MockArray.scala 33:42]
-  reg [7:0] REG_2; // @[MockArray.scala 33:42]
-  reg [7:0] REG_3; // @[MockArray.scala 33:42]
-  assign io_outs_0 = REG; // @[MockArray.scala 33:13]
-  assign io_outs_1 = REG_1; // @[MockArray.scala 33:13]
-  assign io_outs_2 = REG_2; // @[MockArray.scala 33:13]
-  assign io_outs_3 = REG_3; // @[MockArray.scala 33:13]
+  reg [7:0] REG; // @[MockArray.scala 36:42]
+  reg [7:0] REG_1; // @[MockArray.scala 36:42]
+  reg [7:0] REG_2; // @[MockArray.scala 36:42]
+  reg [7:0] REG_3; // @[MockArray.scala 36:42]
+  assign io_outs_0 = REG; // @[MockArray.scala 36:13]
+  assign io_outs_1 = REG_1; // @[MockArray.scala 36:13]
+  assign io_outs_2 = REG_2; // @[MockArray.scala 36:13]
+  assign io_outs_3 = REG_3; // @[MockArray.scala 36:13]
+  assign io_lsbOut_0 = io_lsbIn_1; // @[MockArray.scala 40:15]
+  assign io_lsbOut_1 = io_lsbIn_2; // @[MockArray.scala 40:15]
+  assign io_lsbOut_2 = io_lsbIn_3; // @[MockArray.scala 40:15]
+  assign io_lsbOut_3 = io_lsbIn_4; // @[MockArray.scala 40:15]
+  assign io_lsbOut_4 = io_lsbIn_5; // @[MockArray.scala 40:15]
+  assign io_lsbOut_5 = io_lsbIn_6; // @[MockArray.scala 40:15]
+  assign io_lsbOut_6 = io_lsbIn_7; // @[MockArray.scala 40:15]
+  assign io_lsbOut_7 = io_outs_0[0]; // @[MockArray.scala 40:54]
   always @(posedge clock) begin
-    REG <= io_ins_3; // @[MockArray.scala 33:42]
-    REG_1 <= io_ins_2; // @[MockArray.scala 33:42]
-    REG_2 <= io_ins_1; // @[MockArray.scala 33:42]
-    REG_3 <= io_ins_0; // @[MockArray.scala 33:42]
+    REG <= io_ins_3; // @[MockArray.scala 36:42]
+    REG_1 <= io_ins_2; // @[MockArray.scala 36:42]
+    REG_2 <= io_ins_1; // @[MockArray.scala 36:42]
+    REG_3 <= io_ins_0; // @[MockArray.scala 36:42]
   end
 // Register and memory initialization
 `ifdef RANDOMIZE_GARBAGE_ASSIGN

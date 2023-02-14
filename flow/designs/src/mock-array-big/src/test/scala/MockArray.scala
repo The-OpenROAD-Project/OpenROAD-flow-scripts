@@ -29,13 +29,26 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
       IO(new Bundle {
         val ins = Input(Vec(4, UInt(singleElementWidth.W)))
         val outs = Output(Vec(4, UInt(singleElementWidth.W)))
+        val lsbIn = Input(Vec(width, Bool()))
+        val lsbOut = Output(Vec(width, Bool()))
       })
+    // simple registered logic
     io.outs := io.ins.reverse.map(RegNext(_))
+
+    dontTouch(io.lsbIn)
+    // a simple combinational path through the macro
+    io.lsbOut := io.lsbIn.drop(1) ++ Seq(io.outs.head(0)(0))
   }
 
   val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
 
-  io.lsbs := ces.flatten.map(_.io.outs.head(0))
+  ces.foreach{row =>
+    row.head.io.lsbIn := DontCare  
+    row.sliding(2, 1).foreach{pair =>
+      pair(1).io.lsbIn := pair(0).io.lsbOut
+  }}
+
+  io.lsbs := ces.map(_.last.io.lsbOut).flatten
 
   // 0 top
   // 1 right

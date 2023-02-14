@@ -7,6 +7,7 @@ proc pin1 {fmt p} {
 }
 
 set data_width [expr {[info exists ::env(MOCK_ARRAY_DATAWIDTH)] ? $::env(MOCK_ARRAY_DATAWIDTH) : 8}]
+set cols [expr {[info exists ::env(MOCK_ARRAY_WIDTH)] ? $::env(MOCK_ARRAY_WIDTH) : 8}]
 
 set assignments [list \
     top bottom \
@@ -26,6 +27,13 @@ set assignments [list \
     [ concat \
         {*}[pin1 {io_outs_1[%d]} $data_width] \
         {*}[pin1 {io_ins_1[%d]} $data_width] \
+    ]] \
+    left right \
+    [list [ concat \
+        {*}[pin1 {io_lsbIn_%d} $cols] \
+    ] \
+    [ concat \
+        {*}[pin1 {io_lsbOut_%d} $cols] \
     ]] \
 ]
 

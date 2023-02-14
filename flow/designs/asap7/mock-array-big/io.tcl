@@ -8,6 +8,14 @@ proc pin2 {fmt p q} {
     return $result
 }
 
+proc pin1 {fmt p} {
+    set result [list]
+    for {set m 0} {$m < $p} {incr m} {
+        lappend result [format $fmt $m]
+    }
+    return $result
+}
+
 set data_width [expr {[info exists ::env(MOCK_ARRAY_DATAWIDTH)] ? $::env(MOCK_ARRAY_DATAWIDTH) : 8}]
 set rows [expr {[info exists ::env(MOCK_ARRAY_HEIGHT)] ? $::env(MOCK_ARRAY_HEIGHT) : 8}]
 set cols [expr {[info exists ::env(MOCK_ARRAY_WIDTH)] ? $::env(MOCK_ARRAY_WIDTH) : 8}]
@@ -32,6 +40,7 @@ set assignments [list \
     [ concat \
         {*}[pin2 {io_insVertical_0_%d[%d]} $rows $data_width] \
         {*}[pin2 {io_outsVertical_0_%d[%d]} $rows $data_width] \
+        {*}[pin1 {io_lsbs_%d} $cols] \       
     ] \
 ]
 
