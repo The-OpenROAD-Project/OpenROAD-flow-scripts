@@ -73,13 +73,19 @@ echo "Creating ${VARS_BASENAME}.sh/tcl script"
 rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true
 
 EXCLUDED_VARS="MAKE|PYTHONPATH|PKG_CONFIG_PATH|PERL5LIB|PCP_DIR|PATH|MANPATH|LD_LIBRARY_PATH|INFOPATH|HOME|PWD|MAIL"
+
+printf '%s\n' "$ISSUE_VARIABLES"
 printf '%s\n' "$ISSUE_VARIABLES" | while read -r V;
 do
     if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} && ${V%=*} != *"MAKE"* && ! ${V%=*} =~ ^(${EXCLUDED_VARS})$ ]] ; then
         rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
-        echo "export "${V%=*}"='"${rhs}"'" >> ${VARS_BASENAME}.sh ;
-        echo "set env("${V%=*}") \""${rhs}\""" >> ${VARS_BASENAME}.tcl ;
-        echo "set env "${V%=*}" "${rhs}"" >> ${VARS_BASENAME}.gdb ;
+        if [[ "${V%=*}" == "GND_NETS_VOLTAGES" || "${V%=*}" == "PWR_NETS_VOLTAGES" ]]; then
+            echo "export "${V%=*}"='"\"${rhs}"\"'" >> ${VARS_BASENAME}.sh;
+        else
+            echo "export "${V%=*}"='"${rhs}"'" >> ${VARS_BASENAME}.sh;
+        fi
+        echo "set env("${V%=*}") \""${rhs}\""" >> ${VARS_BASENAME}.tcl;
+        echo "set env "${V%=*}" "${rhs}"" >> ${VARS_BASENAME}.gdb;
     fi
 done
 
