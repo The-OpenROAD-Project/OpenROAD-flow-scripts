@@ -89,7 +89,7 @@ LAYER M1
  PITCH 0.036 ;
  WIDTH 0.018 ;
  SPACING 0.018 ;
- AREA 0.002664 ; # Min Area # This should ideally be 16x not 4x as each dimension is scaled up by 4.0
+ AREA 0.000666 ; # Min Area
                                     # we only allow landing on pins (set in router) so area should not matter
  SPACING 0.018 RANGE 0.036 1.0 ; # This rule is redundant with the SPACING rule
 
@@ -119,7 +119,7 @@ LAYER M2
   #  MINSIZE 0.112 0.072 ; 
   # area is adjusted to match this (Nanoroute requires both AREA and MINSIZE)
 
- AREA 0.002664 ;
+ AREA 0.000666 ;
  MINSIZE 0.037 0.018 ;
 
  PITCH 0.045 0.036 ;
@@ -184,7 +184,7 @@ LAYER M3
   #  MINSIZE 0.112 0.072 ; 
   # area is adjusted to match this (Nanoroute requires both AREA and MINSIZE)
 
- AREA 0.002664 ;
+ AREA 0.000666 ;
  MINSIZE 0.037 0.018 ;
 
  PROPERTY LEF58_SPACING
@@ -261,7 +261,7 @@ LAYER M4
 
  OFFSET 0.003 ;
 
- AREA 0.008 ;
+ AREA 0.002 ;
 
  PROPERTY LEF58_SPACING "
  SPACING 0.024 ENDOFLINE 0.025 WITHIN 0.04 ENDTOEND 0.04 ; " ;
@@ -343,7 +343,7 @@ LAYER M5
  SPACING 0.024 ;
  OFFSET 0.0 ;
 
- AREA 0.008 ;
+ AREA 0.002 ;
 
  PROPERTY LEF58_SPACING "
  SPACING 0.024 ENDOFLINE 0.025 WITHIN 0.04 ENDTOEND 0.04 ; " ;
@@ -430,7 +430,7 @@ LAYER M6
  WIDTH 0.032 ;
  SPACING 0.032 ;
 
- AREA 0.00875 ; # Areas still need tweaking
+ AREA 0.0021875 ; # Areas still need tweaking
 
  PROPERTY LEF58_SPACING
  " SPACING 0.032 ENDOFLINE 0.0375 WITHIN 0.04 ENDTOEND 0.04 ; " ;
@@ -503,7 +503,7 @@ LAYER M7
  WIDTH 0.032 ;
  SPACING 0.032 ;
 
- AREA 0.00875 ; # Areas still need tweaking
+ AREA 0.0021875 ; # Areas still need tweaking
 
  PROPERTY LEF58_SPACING
  " SPACING 0.03 ENDOFLINE 0.0375 WITHIN 0.04 ENDTOEND 0.04 ; " ;
@@ -549,7 +549,7 @@ LAYER M8
   DIRECTION HORIZONTAL ;
  PITCH 0.08 0.08 ;
  WIDTH 0.04 ;
- AREA 7.52 ;
+ AREA 0.03008 ;
 
   SPACINGTABLE
  PARALLELRUNLENGTH 0.0 0.39975 1.19975 1.79975
@@ -578,7 +578,7 @@ LAYER M9
   DIRECTION VERTICAL ;
  PITCH 0.08 0.08 ;
  WIDTH 0.04 ;
- AREA 7.52 ;
+ AREA 0.03008 ;
 
   SPACINGTABLE
  PARALLELRUNLENGTH 0.0 0.39975 1.19975 1.79975

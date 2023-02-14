@@ -6,7 +6,8 @@ proc pin1 {fmt p} {
     return $result
 }
 
-set data_width 8
+set data_width [expr {[info exists ::env(MOCK_ARRAY_DATAWIDTH)] ? $::env(MOCK_ARRAY_DATAWIDTH) : 8}]
+
 set assignments [list \
     top bottom \
     [list [ concat \
@@ -44,3 +45,5 @@ foreach {direction direction2 names} $assignments {
     set_io_pin_constraint -region $direction2:* -pin_names [lindex $names 1]
     set_io_pin_constraint -mirrored_pins $mirrored
 }
+
+set_io_pin_constraint -region top:* -pin_names clock
