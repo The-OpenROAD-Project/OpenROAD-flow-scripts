@@ -10,16 +10,15 @@ import chisel3.dontTouch
 import chisel3.util._
 import chisel3.stage._
 import chisel3.experimental._
+import scopt.OParser
+import System.err
+import scopt.RenderingMode
 
-class MockArray extends Module {
-
-  val width = 8
-  val height = 8
-  val singleElementWidth = 8
+class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
 
   val io = IO(new Bundle {
     val insHorizontal = Input(Vec(2, Vec(width, UInt(singleElementWidth.W))))
-    val outsHorizontal = Output(Vec(2, Vec(height, UInt(singleElementWidth.W))))
+    val outsHorizontal = Output(Vec(2, Vec(width, UInt(singleElementWidth.W))))
     val insVertical = Input(Vec(2, Vec(height, UInt(singleElementWidth.W))))
     val outsVertical = Output(Vec(2, Vec(height, UInt(singleElementWidth.W))))
     val lsbs = Output(Vec(width * height, Bool()))
@@ -34,7 +33,7 @@ class MockArray extends Module {
     io.outs := io.ins.reverse.map(RegNext(_))
   }
 
-  val ces = Seq.fill(height)(Seq.fill(height)(Module(new Element())))
+  val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
 
   io.lsbs := ces.flatten.map(_.io.outs.head(0))
 
@@ -65,8 +64,46 @@ class MockArray extends Module {
   }
 }
 
+case class ArrayConfig(width: Int = 8, height: Int = 8, dataWidth: Int = 8, remainingArgs: Seq[String] = Seq.empty)
+
 object GenerateMockArray extends App {
 
-  new ChiselStage()
-    .execute(args, Seq(ChiselGeneratorAnnotation(() => new MockArray())))
+
+  val builder = OParser.builder[ArrayConfig]
+  val parser = {
+    import builder._
+    OParser.sequence(
+      programName("my-program"),
+      opt[Int]('w', "width")
+        .required()
+        .valueName("Array width")
+        .action((width, c) => c.copy(width = width))
+        .text("input file is required"),
+      opt[Int]('h', "height")
+        .required()
+        .valueName("height")
+        .action((height, c) => c.copy(height = height))
+        .text("Array height"),
+      opt[Int]('d', "dataWidth")
+        .required()
+        .valueName("dataWidth")
+        .action((dataWidth, c) => c.copy(dataWidth = dataWidth))
+        .text("data path width")
+    )
+  }
+
+  val (configArgs, afterDelimiter) = args.span(_ != "--")
+  val chiselArgs = afterDelimiter.drop(1)
+
+  OParser.parse(parser, configArgs, ArrayConfig()) match {
+    case Some(c) =>
+
+    new ChiselStage()
+      .execute(chiselArgs, Seq(ChiselGeneratorAnnotation(() => new MockArray(c.width, c.height, c.dataWidth))))
+
+    case _ =>
+      // arguments are invalid
+      OParser.usage(parser, RenderingMode.TwoColumns)
+      sys.exit(1)
+  }
 }

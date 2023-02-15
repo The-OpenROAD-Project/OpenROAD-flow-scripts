@@ -8,9 +8,9 @@ proc pin2 {fmt p q} {
     return $result
 }
 
-set data_width 8
-set rows 8
-set cols 8
+set data_width [expr {[info exists ::env(MOCK_ARRAY_DATAWIDTH)] ? $::env(MOCK_ARRAY_DATAWIDTH) : 8}]
+set rows [expr {[info exists ::env(MOCK_ARRAY_HEIGHT)] ? $::env(MOCK_ARRAY_HEIGHT) : 8}]
+set cols [expr {[info exists ::env(MOCK_ARRAY_WIDTH)] ? $::env(MOCK_ARRAY_WIDTH) : 8}]
 
 set assignments [list \
     top \
