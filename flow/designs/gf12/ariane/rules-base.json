@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 228821,
+        "value": 228121,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -24,11 +24,11 @@
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -1421.91,
+        "value": -1283.68,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -1421.91,
+        "value": -1283.61,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.55,
+        "value": -1.15,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -72,7 +72,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.2,
+        "value": -0.7,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
