@@ -260,16 +260,7 @@ __docker_build()
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
-<<<<<<< Updated upstream
-        docker pull "openroad/flow-dev"
-        ${NICE} docker build \
-                ${DOCKER_ARGS} \
-                --tag "${DOCKER_TAG}" \
-                --file Dockerfile \
-                .
-=======
         ./etc/DockerHelper.sh create -target=builder -os="${OS_NAME}"
->>>>>>> Stashed changes
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 mv .dockerignore{.bak,}
         fi
