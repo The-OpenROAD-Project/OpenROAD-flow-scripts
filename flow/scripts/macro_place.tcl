@@ -107,7 +107,10 @@ if {[find_macros] != ""} {
     puts "Delete buffers for RTLMP flow..."
     remove_buffers
   } else {
-    if {[info exists ::env(MACRO_PLACEMENT)]} {
+    if {[info exists ::env(MACRO_PLACEMENT_TCL)]} {
+      source $::env(MACRO_PLACEMENT_TCL)
+      puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT_TCL)"
+    } elseif {[info exists ::env(MACRO_PLACEMENT)]} {
       source $::env(SCRIPTS_DIR)/read_macro_placement.tcl
       puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
       read_macro_placement $::env(MACRO_PLACEMENT)
