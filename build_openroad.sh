@@ -44,6 +44,7 @@ LSORACLE_ARGS="\
 -D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
 -D YOSYS_PLUGIN=ON \
 "
+OS_NAME="centos7"
 
 function usage() {
         cat << EOF
@@ -108,6 +109,7 @@ Options:
     --clean-force           Call git clean before compile. WARNING: this option
                             will not ask for confirmation. Useful to remove
                             old build files.
+    --os=OS_NAME            Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
 
 
 Options valid only for Docker builds:
@@ -201,6 +203,9 @@ while (( "$#" )); do
                         CLEAN_BEFORE=1
                         CLEAN_FORCE=1
                         ;;
+                --os=* )
+                        OS_NAME="${1#*=}"
+                        ;;
                 -*|--*) # unsupported flags
                         echo "[ERROR FLW-0005] Unsupported flag $1." >&2
                         usage 2> /dev/null
@@ -250,39 +255,21 @@ __args_setup() {
 
 __docker_build()
 {
-        echo "[INFO FLW-0020] Building docker image for Yosys."
-        docker pull "openroad/yosys-dev"
-        ${NICE} docker build \
-                ${DOCKER_ARGS} \
-                --tag openroad/yosys \
-                --file tools/yosys_util/Dockerfile \
-                --target builder \
-                tools/yosys
-
-        echo "[INFO FLW-0021] Building docker image for LSOracle."
-        docker pull "openroad/centos7-dev"
-        ${NICE} docker build \
-                ${DOCKER_ARGS} \
-                --tag openroad/lsoracle \
-                --file tools/LSOracle/Dockerfile.openroad \
-                tools
-
-        echo "[INFO FLW-0022] Building docker image for OpenROAD app."
-        ${NICE} ./tools/OpenROAD/etc/DockerHelper.sh create \
-                -target=builder \
-                -threads=${PROC}
-
-        echo "[INFO FLW-0023] Building docker image for OpenROAD Flow."
+        echo "[INFO FLW-0020] Building docker image for OpenROAD Flow."
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
+<<<<<<< Updated upstream
         docker pull "openroad/flow-dev"
         ${NICE} docker build \
                 ${DOCKER_ARGS} \
                 --tag "${DOCKER_TAG}" \
                 --file Dockerfile \
                 .
+=======
+        ./etc/DockerHelper.sh create -target=builder -os="${OS_NAME}"
+>>>>>>> Stashed changes
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 mv .dockerignore{.bak,}
         fi
