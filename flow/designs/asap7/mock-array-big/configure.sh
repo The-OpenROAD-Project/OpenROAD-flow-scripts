@@ -7,8 +7,6 @@ BASE=$DIR/../..
 
 cd $DIR
 
-python3 placement.py >macro-placement.cfg
-
 cd ../../src/mock-array-big
 
 sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \

@@ -17,7 +17,7 @@ BLOCKS = Element
 
 export GDS_ALLOW_EMPTY = Element
 
-export MACRO_PLACEMENT = ./designs/asap7/mock-array-big/macro-placement.cfg
+export MACRO_PLACEMENT_TCL = ./designs/asap7/mock-array-big/macro-placement.tcl
 
 export IO_CONSTRAINTS = designs/asap7/mock-array-big/io.tcl
 
