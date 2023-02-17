@@ -3,7 +3,6 @@ export DESIGN_NICKNAME = ariane136
 export PLATFORM    = nangate45
 
 export SYNTH_HIERARCHICAL = 1
-export MAX_UNGROUP_SIZE ?= 10000
 export RTLMP_FLOW = True
 
 # RTL_MP Settings
