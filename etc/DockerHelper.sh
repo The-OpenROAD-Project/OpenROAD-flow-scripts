@@ -76,7 +76,8 @@ _setup() {
             ;;
         "dev" )
             fromImage="${FROM_IMAGE_OVERRIDE:-$osBaseImage}"
-            context="."
+            cp tools/OpenROAD/etc/DependencyInstaller.sh etc/InstallerOpenROAD.sh
+            context="etc"
             buildArgs=""
             ;;
         *)
@@ -92,6 +93,7 @@ _setup() {
 _create() {
     echo "Create docker image ${imagePath} using ${file}"
     docker build --file "${file}" --tag "${imagePath}" ${buildArgs} "${context}"
+    rm -f etc/InstallerOpenROAD.sh
 }
 
 _push() {

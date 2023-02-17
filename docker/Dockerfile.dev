@@ -5,9 +5,12 @@ ARG fromImage=centos:centos7
 
 FROM $fromImage
 
-COPY etc/DependencyInstaller.sh /tmp/.
-COPY tools/OpenROAD/etc/DependencyInstaller.sh /tmp/tools/OpenROAD/etc/DependencyInstaller.sh
+WORKDIR /tmp/installer/etc
 
-RUN /tmp/DependencyInstaller.sh \
-      && rm -f /tmp/DependencyInstaller.sh \
-      && rm -f /tmp/tools/OpenROAD/etc/DependencyInstaller.sh
+COPY DependencyInstaller.sh .
+
+COPY InstallerOpenROAD.sh \
+       /tmp/installer/tools/OpenROAD/etc/DependencyInstaller.sh
+
+RUN ./DependencyInstaller.sh \
+      && rm -rf /tmp/installer
