@@ -17,8 +17,8 @@ export SDC_FILE      = ./designs/$(PLATFORM)/swerv/constraint.sdc
 export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/swerv/*.lef))
 export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/swerv/*.lib))
 
-export DIE_AREA    = 0 0 1500 1300
-export CORE_AREA   = 10.07 11.2 1490 1290 
+export DIE_AREA    = 0 0 1500 1100
+export CORE_AREA   = 10.07 11.2 1490 1090 
 
 export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:*

@@ -1,4 +1,4 @@
-create_clock [get_ports clk_i]  -name core_clock  -period 30  -waveform {0 15}
+create_clock [get_ports clk_i]  -name core_clock  -period 6  -waveform {0 3}
 set_input_delay -clock core_clock  0  [get_ports clk_i]
 set_input_delay -clock core_clock  0  [get_ports rst_ni]
 set_input_delay -clock core_clock  0  [get_ports {boot_addr_i[63]}]
