@@ -1,5 +1,5 @@
 # Target with dependencies and the binaries to run the complete flow
-FROM openroad/flow-runtime
+FROM openroad/flow-dev
 
 WORKDIR /OpenROAD-flow-scripts
 

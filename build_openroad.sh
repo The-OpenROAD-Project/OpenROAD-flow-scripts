@@ -277,7 +277,7 @@ __docker_build()
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
-        docker pull "openroad/flow-runtime"
+        docker pull "openroad/flow-dev"
         ${NICE} docker build \
                 ${DOCKER_ARGS} \
                 --tag "${DOCKER_TAG}" \
