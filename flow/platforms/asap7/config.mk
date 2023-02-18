@@ -102,14 +102,13 @@ export CTS_BUF_CELL            ?= BUFx4_ASAP7_75t_R
 export CTS_BUF_DISTANCE        ?= 60
 
 # Fill cells used in fill cell insertion
-export FILL_CELLS              = \
-         FILLERxp5_ASAP7_75t_R \
-         FILLER_ASAP7_75t_R \
-         DECAPx1_ASAP7_75t_R \
-         DECAPx2_ASAP7_75t_R \
-         DECAPx4_ASAP7_75t_R \
-         DECAPx6_ASAP7_75t_R \
-         DECAPx10_ASAP7_75t_R
+export FILL_CELLS              = FILLERxp5_ASAP7_75t_R \
+                                 FILLER_ASAP7_75t_R \
+                                 DECAPx1_ASAP7_75t_R \
+                                 DECAPx2_ASAP7_75t_R \
+                                 DECAPx4_ASAP7_75t_R \
+                                 DECAPx6_ASAP7_75t_R \
+                                 DECAPx10_ASAP7_75t_R
 
 export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_R
 
@@ -135,46 +134,46 @@ ifeq ($(ASAP7_USELVT), 1)
 
    export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_L
 
-	 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_L
+   export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_L
+   
+   export CTS_BUF_CELL            = BUFx4_ASAP7_75t_L
+   
+   export FILL_CELLS              = "FILLERxp5_ASAP7_75t_L"
+   
+   export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_L
+   
+   export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_L_220121a.gds \
+                                     $(ADDITIONAL_GDS)
+   
+   export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_L_1x_220121a.lef
+   
+   export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_L.v
+   export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_L.v
+   export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_L.v
+   
+   export BC_DFF_LIB_FILE         = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
 
-	 export CTS_BUF_CELL            = BUFx4_ASAP7_75t_L
+   export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib.gz \
+			            $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_220122.lib.gz \
+			            $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_211120.lib.gz \
+			            $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_FF_nldm_211120.lib.gz \
+			            $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
 
-	 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_L"
+   export WC_DFF_LIB_FILE         = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_220123.lib
 
-	 export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_L
+   export WC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_SS_nldm_211120.lib.gz \
+				    $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_SS_nldm_220122.lib.gz \
+				    $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_SS_nldm_211120.lib.gz \
+				    $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_220123.lib \
+				    $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_SS_nldm_211120.lib.gz
 
-	 export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_L_220121a.gds \
-																	  $(ADDITIONAL_GDS)
+   export TC_DFF_LIB_FILE         = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_220123.lib
 
-	 export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_L_1x_220121a.lef
-
-	 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_L.v
-	 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_L.v
-	 export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_L.v
-
-	 export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
-
-   export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib.gz \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_220122.lib.gz \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_211120.lib.gz \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_FF_nldm_211120.lib.gz \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
-
-	 export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_220123.lib
-
-   export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_SS_nldm_211120.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_SS_nldm_220122.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_SS_nldm_211120.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_220123.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_SS_nldm_211120.lib.gz
-
-	 export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_220123.lib
-
-   export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_TT_nldm_211120.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_TT_nldm_220122.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_TT_nldm_211120.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_220123.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_TT_nldm_211120.lib.gz
+   export TC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_TT_nldm_211120.lib.gz \
+				    $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_TT_nldm_220122.lib.gz \
+				    $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_TT_nldm_211120.lib.gz \
+				    $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_220123.lib \
+				    $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_TT_nldm_211120.lib.gz
 
 endif
 
@@ -186,24 +185,24 @@ ifeq ($(ASAP7_USESLVT), 1)
 
    export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_SL
 
-	 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_SL
-
-	 export CTS_BUF_CELL            = BUFx4_ASAP7_75t_SL
-
-	 export FILL_CELLS              = "FILLERxp5_ASAP7_75t_SL"
-
-	 export TAP_CELL_NAME					  = TAPCELL_ASAP7_75t_SL
-
-	 export GDS_FILES                = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_SL_220121a.gds \
-																	 $(ADDITIONAL_GDS)
-
-	 export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_SL_1x_220121a.lef
-
-	 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_SL.v
-	 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_SL.v
-	 export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_SL.v
-
-	 export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
+   export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_SL
+  
+   export CTS_BUF_CELL            = BUFx4_ASAP7_75t_SL
+  
+   export FILL_CELLS              = "FILLERxp5_ASAP7_75t_SL"
+  
+   export TAP_CELL_NAME		  = TAPCELL_ASAP7_75t_SL
+  
+   export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_SL_220121a.gds \
+  				    $(ADDITIONAL_GDS)
+  
+   export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_SL_1x_220121a.lef
+  
+   export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_SL.v
+   export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_SL.v
+   export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_SL.v
+  
+   export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
 
    export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_FF_nldm_211120.lib.gz \
 			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_FF_nldm_220122.lib.gz \
@@ -211,7 +210,7 @@ ifeq ($(ASAP7_USESLVT), 1)
 			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_211120.lib.gz \
 			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
 
-	 export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_SS_nldm_220123.lib
+   export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_SS_nldm_220123.lib
 
    export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_SS_nldm_211120.lib.gz \
 				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_SS_nldm_220122.lib.gz \
@@ -219,7 +218,7 @@ ifeq ($(ASAP7_USESLVT), 1)
 				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_SS_nldm_220123.lib \
 				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_211120.lib.gz
 
-	 export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_TT_nldm_220123.lib
+   export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_TT_nldm_220123.lib
 
    export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_TT_nldm_211120.lib.gz \
 				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_TT_nldm_220122.lib.gz \
