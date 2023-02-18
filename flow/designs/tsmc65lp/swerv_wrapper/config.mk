@@ -2,7 +2,6 @@ export DESIGN_NAME = swerv_wrapper
 export PLATFORM    = tsmc65lp
 
 export SYNTH_HIERARCHICAL = 1
-export MAX_UNGROUP_SIZE ?= 100000
 export RTLMP_FLOW = True
 
 # RTL_MP Settings
@@ -35,5 +34,4 @@ export HAS_IO_CONSTRAINTS = 1
 export MACRO_PLACE_HALO = 10 10 
 export MACRO_PLACE_CHANNEL = 20 20
 
-#export PLACE_DENSITY = .72
 export PLACE_DENSITY_LB_ADDON = 0.10 
