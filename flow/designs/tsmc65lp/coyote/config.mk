@@ -3,7 +3,6 @@ export DESIGN_NAME = bsg_rocket_node_client_rocc
 export PLATFORM    = tsmc65lp
 
 export SYNTH_HIERARCHICAL = 1
-export MAX_UNGROUP_SIZE ?= 100000
 export RTLMP_FLOW = True
 
 
@@ -39,6 +38,5 @@ export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-700 -exclude right:150
 export MACRO_PLACE_HALO = 10 10
 export MACRO_PLACE_CHANNEL = 20 20
 
-#export PLACE_DENSITY         = 0.60
 export PLACE_DENSITY_LB_ADDON = 0.10 
 export REMOVE_BUFFER_TREE     = 1
