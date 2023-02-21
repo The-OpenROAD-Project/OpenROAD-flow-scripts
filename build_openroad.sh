@@ -260,6 +260,7 @@ __docker_build()
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
+        ./etc/DockerHelper.sh create -target=dev -os="${OS_NAME}"
         ./etc/DockerHelper.sh create -target=builder -os="${OS_NAME}"
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 mv .dockerignore{.bak,}
