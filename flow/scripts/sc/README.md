@@ -29,7 +29,7 @@ You can view a completed design in KLayout with the appropriate platform's layer
 Build:
 
     cd [OpenROAD-flow-scripts]/flow
-    python3 Makefile.py -DESIGN_CONFIG=./designs/nangate45/gcd/config.mki
+    python3 Makefile.py -DESIGN_CONFIG=./designs/nangate45/gcd/config.mk
 
 View:
 
