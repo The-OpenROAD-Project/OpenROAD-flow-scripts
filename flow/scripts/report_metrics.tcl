@@ -155,8 +155,8 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
   puts "\n=========================================================================="
   puts "$when report_power"
   puts "--------------------------------------------------------------------------"
-  if {[info exists ::env(CORNERS)]} {
-    foreach corner $::env(CORNERS) {
+  if {[info exists ::env(CORNER)]} {
+    foreach corner $::env(CORNER) {
       puts "Corner: $corner"
       report_power -corner $corner
       report_power_metric -corner $corner
