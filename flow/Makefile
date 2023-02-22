@@ -472,7 +472,7 @@ $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
 
 clean_floorplan:
-	rm -f $(RESULTS_DIR)/2_*floorplan*.odb $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/2_floorplan.v $(RESULTS_DIR)/2_*floorplan.def
+	rm -f $(RESULTS_DIR)/2_*floorplan*.odb $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/2_*.v $(RESULTS_DIR)/2_*.def
 	rm -f $(REPORTS_DIR)/2_*
 	rm -f $(LOG_DIR)/2_*
 
@@ -529,6 +529,7 @@ $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
 clean_place:
 	rm -f $(RESULTS_DIR)/3_*place*.odb
 	rm -f $(RESULTS_DIR)/3_place.sdc
+	rm -f $(RESULTS_DIR)/3_*.def $(RESULTS_DIR)/3_*.v
 	rm -f $(REPORTS_DIR)/3_*
 	rm -f $(LOG_DIR)/3_*
 
@@ -560,7 +561,7 @@ $(RESULTS_DIR)/4_cts.odb: $(RESULTS_DIR)/4_2_cts_fillcell.odb
 	cp $< $@
 
 clean_cts:
-	rm -rf $(RESULTS_DIR)/4_*cts*.odb $(RESULTS_DIR)/4_cts.sdc $(RESULTS_DIR)/4_cts.v $(RESULTS_DIR)/4_*cts.def
+	rm -rf $(RESULTS_DIR)/4_*cts*.odb $(RESULTS_DIR)/4_cts.sdc $(RESULTS_DIR)/4_*.v $(RESULTS_DIR)/4_*.def
 	rm -f  $(REPORTS_DIR)/4_*
 	rm -f  $(LOG_DIR)/4_*
 
@@ -606,7 +607,7 @@ clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
 	rm -rf *.gdid *.log *.met *.sav *.res.dmp
 	rm -rf $(RESULTS_DIR)/route.guide $(RESULTS_DIR)/output_guide.mod $(RESULTS_DIR)/updated_clks.sdc
-	rm -rf $(RESULTS_DIR)/5_*.odb $(RESULTS_DIR)/5_route.sdc
+	rm -rf $(RESULTS_DIR)/5_*.odb $(RESULTS_DIR)/5_route.sdc $(RESULTS_DIR)/5_*.def $(RESULTS_DIR)/5_*.v
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
@@ -732,7 +733,7 @@ else
 endif
 
 clean_finish:
-	rm -rf $(RESULTS_DIR)/6_*.gds $(RESULTS_DIR)/6_*.oas $(RESULTS_DIR)/6_*.odb $(RESULTS_DIR)/6_*.v $(RESULTS_DIR)/6_*.sdc $(RESULTS_DIR)/6_*.spef
+	rm -rf $(RESULTS_DIR)/6_*.gds $(RESULTS_DIR)/6_*.oas $(RESULTS_DIR)/6_*.odb $(RESULTS_DIR)/6_*.v $(RESULTS_DIR)/6_*.def $(RESULTS_DIR)/6_*.sdc $(RESULTS_DIR)/6_*.spef
 	rm -rf $(REPORTS_DIR)/6_*.rpt
 	rm -f  $(LOG_DIR)/6_*
 
@@ -791,8 +792,15 @@ $(foreach file,$(RESULTS_ODB),gui_$(file)): gui_%:
 # Write a def for the corresponding odb
 $(foreach file,$(RESULTS_ODB),$(file).def): %.def:
 	ODB_FILE=$(RESULTS_DIR)/$* DEF_FILE=$(RESULTS_DIR)/$@ $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_def.tcl
+#
+# Write a verilog for the corresponding odb
+$(foreach file,$(RESULTS_ODB),$(file).v): %.v:
+	ODB_FILE=$(RESULTS_DIR)/$* VERILOG_FILE=$(RESULTS_DIR)/$@ $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_verilog.tcl
 
 all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)
+all_verilog : $(foreach file,$(RESULTS_ODB),$(file).v)
+
+handoff : all_defs all_verilog
 
 print-%  : ; @echo $* = $($*)
 
