@@ -1,8 +1,8 @@
-if {[info exists ::env(CORNER)]} {
+if {[info exists ::env(CORNERS)]} {
   # corners
-  define_corners {*}$::env(CORNER)
-  foreach corner $::env(CORNER) {
-    set LIBKEY "[string toupper $corner]_LIB_FILES"
+  define_corners {*}$::env(CORNERS)
+  foreach corner $::env(CORNERS) {
+    set LIBKEY "LIB_FILES_[string toupper $corner]"
     foreach libFile $::env($LIBKEY) {
     read_liberty -corner $corner $libFile
     }
