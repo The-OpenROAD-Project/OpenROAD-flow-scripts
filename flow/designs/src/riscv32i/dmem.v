@@ -46,14 +46,6 @@ module dmem (clk, r_w, mem_addr, mem_data, mem_out);
    
  fakeram7_256x32 dmem3(.clk (clk), .wd_in(mem_data), .ce_in (ce_mem[3]), .we_in (we_mem[3]), .rd_out (inter_dmem3), .addr_in (mem_addr[31:24]));
    
- //  sram_asap7_32x256_1rw dmem0(.clk (clk), .wd_in(mem_data),  .ce_in (ce_mem[0]), .we_in (we_mem[0]), .rd_out (inter_dmem0), .addr_in (mem_addr[7:0]));
-   
- //  sram_asap7_32x256_1rw dmem1(.clk (clk), .wd_in(mem_data), .ce_in (ce_mem[1]), .we_in (we_mem[1]), .rd_out (inter_dmem1), .addr_in (mem_addr[15:8]));
-
- //  sram_asap7_32x256_1rw dmem2(.clk (clk), .wd_in(mem_data), .ce_in (ce_mem[2]), .we_in (we_mem[2]), .rd_out (inter_dmem2), .addr_in (mem_addr[23:16]));
-   
- //  sram_asap7_32x256_1rw dmem3(.clk (clk), .wd_in(mem_data), .ce_in (ce_mem[3]), .we_in (we_mem[3]), .rd_out (inter_dmem3), .addr_in (mem_addr[31:24]));
-
    assign sel_mem = (mem_addr[31] == 1) ? 2'b11 :
 		    (mem_addr[23] == 1) ? 2'b10 :
 		    (mem_addr[15] == 1) ? 2'b01 :
