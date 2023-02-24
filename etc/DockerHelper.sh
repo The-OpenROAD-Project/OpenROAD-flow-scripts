@@ -92,7 +92,7 @@ _setup() {
 
 _create() {
     echo "Create docker image ${imagePath} using ${file}"
-    docker build --file "${file}" --tag "${imagePath}" ${buildArgs} "${context}" --pull
+    docker build --file "${file}" --tag "${imagePath}" ${buildArgs} "${context}"
     rm -f etc/InstallerOpenROAD.sh
 }
 
