@@ -1,0 +1,920 @@
+VERSION 5.7 ;
+BUSBITCHARS "[]" ;
+MACRO fakeram7_256x34
+  FOREIGN fakeram7_256x34 0 0 ;
+  SYMMETRY X Y R90 ;
+  SIZE 4.560 BY 67.200 ;
+  CLASS BLOCK ;
+  PIN rd_out[0]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 0.048 0.024 0.072 ;
+    END
+  END rd_out[0]
+  PIN rd_out[1]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 0.864 0.024 0.888 ;
+    END
+  END rd_out[1]
+  PIN rd_out[2]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 1.680 0.024 1.704 ;
+    END
+  END rd_out[2]
+  PIN rd_out[3]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 2.496 0.024 2.520 ;
+    END
+  END rd_out[3]
+  PIN rd_out[4]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 3.312 0.024 3.336 ;
+    END
+  END rd_out[4]
+  PIN rd_out[5]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 4.128 0.024 4.152 ;
+    END
+  END rd_out[5]
+  PIN rd_out[6]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 4.944 0.024 4.968 ;
+    END
+  END rd_out[6]
+  PIN rd_out[7]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 5.760 0.024 5.784 ;
+    END
+  END rd_out[7]
+  PIN rd_out[8]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 6.576 0.024 6.600 ;
+    END
+  END rd_out[8]
+  PIN rd_out[9]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 7.392 0.024 7.416 ;
+    END
+  END rd_out[9]
+  PIN rd_out[10]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 8.208 0.024 8.232 ;
+    END
+  END rd_out[10]
+  PIN rd_out[11]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 9.024 0.024 9.048 ;
+    END
+  END rd_out[11]
+  PIN rd_out[12]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 9.840 0.024 9.864 ;
+    END
+  END rd_out[12]
+  PIN rd_out[13]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 10.656 0.024 10.680 ;
+    END
+  END rd_out[13]
+  PIN rd_out[14]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 11.472 0.024 11.496 ;
+    END
+  END rd_out[14]
+  PIN rd_out[15]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 12.288 0.024 12.312 ;
+    END
+  END rd_out[15]
+  PIN rd_out[16]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 13.104 0.024 13.128 ;
+    END
+  END rd_out[16]
+  PIN rd_out[17]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 13.920 0.024 13.944 ;
+    END
+  END rd_out[17]
+  PIN rd_out[18]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 14.736 0.024 14.760 ;
+    END
+  END rd_out[18]
+  PIN rd_out[19]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 15.552 0.024 15.576 ;
+    END
+  END rd_out[19]
+  PIN rd_out[20]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 16.368 0.024 16.392 ;
+    END
+  END rd_out[20]
+  PIN rd_out[21]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 17.184 0.024 17.208 ;
+    END
+  END rd_out[21]
+  PIN rd_out[22]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 18.000 0.024 18.024 ;
+    END
+  END rd_out[22]
+  PIN rd_out[23]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 18.816 0.024 18.840 ;
+    END
+  END rd_out[23]
+  PIN rd_out[24]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 19.632 0.024 19.656 ;
+    END
+  END rd_out[24]
+  PIN rd_out[25]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 20.448 0.024 20.472 ;
+    END
+  END rd_out[25]
+  PIN rd_out[26]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 21.264 0.024 21.288 ;
+    END
+  END rd_out[26]
+  PIN rd_out[27]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 22.080 0.024 22.104 ;
+    END
+  END rd_out[27]
+  PIN rd_out[28]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 22.896 0.024 22.920 ;
+    END
+  END rd_out[28]
+  PIN rd_out[29]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 23.712 0.024 23.736 ;
+    END
+  END rd_out[29]
+  PIN rd_out[30]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 24.528 0.024 24.552 ;
+    END
+  END rd_out[30]
+  PIN rd_out[31]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 25.344 0.024 25.368 ;
+    END
+  END rd_out[31]
+  PIN rd_out[32]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 26.160 0.024 26.184 ;
+    END
+  END rd_out[32]
+  PIN rd_out[33]
+    DIRECTION OUTPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 26.976 0.024 27.000 ;
+    END
+  END rd_out[33]
+  PIN wd_in[0]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 27.600 0.024 27.624 ;
+    END
+  END wd_in[0]
+  PIN wd_in[1]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 28.416 0.024 28.440 ;
+    END
+  END wd_in[1]
+  PIN wd_in[2]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 29.232 0.024 29.256 ;
+    END
+  END wd_in[2]
+  PIN wd_in[3]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 30.048 0.024 30.072 ;
+    END
+  END wd_in[3]
+  PIN wd_in[4]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 30.864 0.024 30.888 ;
+    END
+  END wd_in[4]
+  PIN wd_in[5]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 31.680 0.024 31.704 ;
+    END
+  END wd_in[5]
+  PIN wd_in[6]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 32.496 0.024 32.520 ;
+    END
+  END wd_in[6]
+  PIN wd_in[7]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 33.312 0.024 33.336 ;
+    END
+  END wd_in[7]
+  PIN wd_in[8]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 34.128 0.024 34.152 ;
+    END
+  END wd_in[8]
+  PIN wd_in[9]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 34.944 0.024 34.968 ;
+    END
+  END wd_in[9]
+  PIN wd_in[10]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 35.760 0.024 35.784 ;
+    END
+  END wd_in[10]
+  PIN wd_in[11]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 36.576 0.024 36.600 ;
+    END
+  END wd_in[11]
+  PIN wd_in[12]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 37.392 0.024 37.416 ;
+    END
+  END wd_in[12]
+  PIN wd_in[13]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 38.208 0.024 38.232 ;
+    END
+  END wd_in[13]
+  PIN wd_in[14]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 39.024 0.024 39.048 ;
+    END
+  END wd_in[14]
+  PIN wd_in[15]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 39.840 0.024 39.864 ;
+    END
+  END wd_in[15]
+  PIN wd_in[16]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 40.656 0.024 40.680 ;
+    END
+  END wd_in[16]
+  PIN wd_in[17]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 41.472 0.024 41.496 ;
+    END
+  END wd_in[17]
+  PIN wd_in[18]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 42.288 0.024 42.312 ;
+    END
+  END wd_in[18]
+  PIN wd_in[19]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 43.104 0.024 43.128 ;
+    END
+  END wd_in[19]
+  PIN wd_in[20]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 43.920 0.024 43.944 ;
+    END
+  END wd_in[20]
+  PIN wd_in[21]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 44.736 0.024 44.760 ;
+    END
+  END wd_in[21]
+  PIN wd_in[22]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 45.552 0.024 45.576 ;
+    END
+  END wd_in[22]
+  PIN wd_in[23]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 46.368 0.024 46.392 ;
+    END
+  END wd_in[23]
+  PIN wd_in[24]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 47.184 0.024 47.208 ;
+    END
+  END wd_in[24]
+  PIN wd_in[25]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 48.000 0.024 48.024 ;
+    END
+  END wd_in[25]
+  PIN wd_in[26]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 48.816 0.024 48.840 ;
+    END
+  END wd_in[26]
+  PIN wd_in[27]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 49.632 0.024 49.656 ;
+    END
+  END wd_in[27]
+  PIN wd_in[28]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 50.448 0.024 50.472 ;
+    END
+  END wd_in[28]
+  PIN wd_in[29]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 51.264 0.024 51.288 ;
+    END
+  END wd_in[29]
+  PIN wd_in[30]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 52.080 0.024 52.104 ;
+    END
+  END wd_in[30]
+  PIN wd_in[31]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 52.896 0.024 52.920 ;
+    END
+  END wd_in[31]
+  PIN wd_in[32]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 53.712 0.024 53.736 ;
+    END
+  END wd_in[32]
+  PIN wd_in[33]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 54.528 0.024 54.552 ;
+    END
+  END wd_in[33]
+  PIN addr_in[0]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 55.152 0.024 55.176 ;
+    END
+  END addr_in[0]
+  PIN addr_in[1]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 55.968 0.024 55.992 ;
+    END
+  END addr_in[1]
+  PIN addr_in[2]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 56.784 0.024 56.808 ;
+    END
+  END addr_in[2]
+  PIN addr_in[3]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 57.600 0.024 57.624 ;
+    END
+  END addr_in[3]
+  PIN addr_in[4]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 58.416 0.024 58.440 ;
+    END
+  END addr_in[4]
+  PIN addr_in[5]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 59.232 0.024 59.256 ;
+    END
+  END addr_in[5]
+  PIN addr_in[6]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 60.048 0.024 60.072 ;
+    END
+  END addr_in[6]
+  PIN addr_in[7]
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 60.864 0.024 60.888 ;
+    END
+  END addr_in[7]
+  PIN we_in
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 61.488 0.024 61.512 ;
+    END
+  END we_in
+  PIN ce_in
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 62.304 0.024 62.328 ;
+    END
+  END ce_in
+  PIN clk
+    DIRECTION INPUT ;
+    USE SIGNAL ;
+    SHAPE ABUTMENT ;
+    PORT
+      LAYER M4 ;
+      RECT 0.000 63.120 0.024 63.144 ;
+    END
+  END clk
+  PIN VSS
+    DIRECTION INOUT ;
+    USE GROUND ;
+    PORT
+      LAYER M4 ;
+      RECT 0.048 0.000 4.512 0.096 ;
+      RECT 0.048 0.768 4.512 0.864 ;
+      RECT 0.048 1.536 4.512 1.632 ;
+      RECT 0.048 2.304 4.512 2.400 ;
+      RECT 0.048 3.072 4.512 3.168 ;
+      RECT 0.048 3.840 4.512 3.936 ;
+      RECT 0.048 4.608 4.512 4.704 ;
+      RECT 0.048 5.376 4.512 5.472 ;
+      RECT 0.048 6.144 4.512 6.240 ;
+      RECT 0.048 6.912 4.512 7.008 ;
+      RECT 0.048 7.680 4.512 7.776 ;
+      RECT 0.048 8.448 4.512 8.544 ;
+      RECT 0.048 9.216 4.512 9.312 ;
+      RECT 0.048 9.984 4.512 10.080 ;
+      RECT 0.048 10.752 4.512 10.848 ;
+      RECT 0.048 11.520 4.512 11.616 ;
+      RECT 0.048 12.288 4.512 12.384 ;
+      RECT 0.048 13.056 4.512 13.152 ;
+      RECT 0.048 13.824 4.512 13.920 ;
+      RECT 0.048 14.592 4.512 14.688 ;
+      RECT 0.048 15.360 4.512 15.456 ;
+      RECT 0.048 16.128 4.512 16.224 ;
+      RECT 0.048 16.896 4.512 16.992 ;
+      RECT 0.048 17.664 4.512 17.760 ;
+      RECT 0.048 18.432 4.512 18.528 ;
+      RECT 0.048 19.200 4.512 19.296 ;
+      RECT 0.048 19.968 4.512 20.064 ;
+      RECT 0.048 20.736 4.512 20.832 ;
+      RECT 0.048 21.504 4.512 21.600 ;
+      RECT 0.048 22.272 4.512 22.368 ;
+      RECT 0.048 23.040 4.512 23.136 ;
+      RECT 0.048 23.808 4.512 23.904 ;
+      RECT 0.048 24.576 4.512 24.672 ;
+      RECT 0.048 25.344 4.512 25.440 ;
+      RECT 0.048 26.112 4.512 26.208 ;
+      RECT 0.048 26.880 4.512 26.976 ;
+      RECT 0.048 27.648 4.512 27.744 ;
+      RECT 0.048 28.416 4.512 28.512 ;
+      RECT 0.048 29.184 4.512 29.280 ;
+      RECT 0.048 29.952 4.512 30.048 ;
+      RECT 0.048 30.720 4.512 30.816 ;
+      RECT 0.048 31.488 4.512 31.584 ;
+      RECT 0.048 32.256 4.512 32.352 ;
+      RECT 0.048 33.024 4.512 33.120 ;
+      RECT 0.048 33.792 4.512 33.888 ;
+      RECT 0.048 34.560 4.512 34.656 ;
+      RECT 0.048 35.328 4.512 35.424 ;
+      RECT 0.048 36.096 4.512 36.192 ;
+      RECT 0.048 36.864 4.512 36.960 ;
+      RECT 0.048 37.632 4.512 37.728 ;
+      RECT 0.048 38.400 4.512 38.496 ;
+      RECT 0.048 39.168 4.512 39.264 ;
+      RECT 0.048 39.936 4.512 40.032 ;
+      RECT 0.048 40.704 4.512 40.800 ;
+      RECT 0.048 41.472 4.512 41.568 ;
+      RECT 0.048 42.240 4.512 42.336 ;
+      RECT 0.048 43.008 4.512 43.104 ;
+      RECT 0.048 43.776 4.512 43.872 ;
+      RECT 0.048 44.544 4.512 44.640 ;
+      RECT 0.048 45.312 4.512 45.408 ;
+      RECT 0.048 46.080 4.512 46.176 ;
+      RECT 0.048 46.848 4.512 46.944 ;
+      RECT 0.048 47.616 4.512 47.712 ;
+      RECT 0.048 48.384 4.512 48.480 ;
+      RECT 0.048 49.152 4.512 49.248 ;
+      RECT 0.048 49.920 4.512 50.016 ;
+      RECT 0.048 50.688 4.512 50.784 ;
+      RECT 0.048 51.456 4.512 51.552 ;
+      RECT 0.048 52.224 4.512 52.320 ;
+      RECT 0.048 52.992 4.512 53.088 ;
+      RECT 0.048 53.760 4.512 53.856 ;
+      RECT 0.048 54.528 4.512 54.624 ;
+      RECT 0.048 55.296 4.512 55.392 ;
+      RECT 0.048 56.064 4.512 56.160 ;
+      RECT 0.048 56.832 4.512 56.928 ;
+      RECT 0.048 57.600 4.512 57.696 ;
+      RECT 0.048 58.368 4.512 58.464 ;
+      RECT 0.048 59.136 4.512 59.232 ;
+      RECT 0.048 59.904 4.512 60.000 ;
+      RECT 0.048 60.672 4.512 60.768 ;
+      RECT 0.048 61.440 4.512 61.536 ;
+      RECT 0.048 62.208 4.512 62.304 ;
+      RECT 0.048 62.976 4.512 63.072 ;
+      RECT 0.048 63.744 4.512 63.840 ;
+      RECT 0.048 64.512 4.512 64.608 ;
+      RECT 0.048 65.280 4.512 65.376 ;
+      RECT 0.048 66.048 4.512 66.144 ;
+      RECT 0.048 66.816 4.512 66.912 ;
+    END
+  END VSS
+  PIN VDD
+    DIRECTION INOUT ;
+    USE POWER ;
+    PORT
+      LAYER M4 ;
+      RECT 0.048 0.384 4.512 0.480 ;
+      RECT 0.048 1.152 4.512 1.248 ;
+      RECT 0.048 1.920 4.512 2.016 ;
+      RECT 0.048 2.688 4.512 2.784 ;
+      RECT 0.048 3.456 4.512 3.552 ;
+      RECT 0.048 4.224 4.512 4.320 ;
+      RECT 0.048 4.992 4.512 5.088 ;
+      RECT 0.048 5.760 4.512 5.856 ;
+      RECT 0.048 6.528 4.512 6.624 ;
+      RECT 0.048 7.296 4.512 7.392 ;
+      RECT 0.048 8.064 4.512 8.160 ;
+      RECT 0.048 8.832 4.512 8.928 ;
+      RECT 0.048 9.600 4.512 9.696 ;
+      RECT 0.048 10.368 4.512 10.464 ;
+      RECT 0.048 11.136 4.512 11.232 ;
+      RECT 0.048 11.904 4.512 12.000 ;
+      RECT 0.048 12.672 4.512 12.768 ;
+      RECT 0.048 13.440 4.512 13.536 ;
+      RECT 0.048 14.208 4.512 14.304 ;
+      RECT 0.048 14.976 4.512 15.072 ;
+      RECT 0.048 15.744 4.512 15.840 ;
+      RECT 0.048 16.512 4.512 16.608 ;
+      RECT 0.048 17.280 4.512 17.376 ;
+      RECT 0.048 18.048 4.512 18.144 ;
+      RECT 0.048 18.816 4.512 18.912 ;
+      RECT 0.048 19.584 4.512 19.680 ;
+      RECT 0.048 20.352 4.512 20.448 ;
+      RECT 0.048 21.120 4.512 21.216 ;
+      RECT 0.048 21.888 4.512 21.984 ;
+      RECT 0.048 22.656 4.512 22.752 ;
+      RECT 0.048 23.424 4.512 23.520 ;
+      RECT 0.048 24.192 4.512 24.288 ;
+      RECT 0.048 24.960 4.512 25.056 ;
+      RECT 0.048 25.728 4.512 25.824 ;
+      RECT 0.048 26.496 4.512 26.592 ;
+      RECT 0.048 27.264 4.512 27.360 ;
+      RECT 0.048 28.032 4.512 28.128 ;
+      RECT 0.048 28.800 4.512 28.896 ;
+      RECT 0.048 29.568 4.512 29.664 ;
+      RECT 0.048 30.336 4.512 30.432 ;
+      RECT 0.048 31.104 4.512 31.200 ;
+      RECT 0.048 31.872 4.512 31.968 ;
+      RECT 0.048 32.640 4.512 32.736 ;
+      RECT 0.048 33.408 4.512 33.504 ;
+      RECT 0.048 34.176 4.512 34.272 ;
+      RECT 0.048 34.944 4.512 35.040 ;
+      RECT 0.048 35.712 4.512 35.808 ;
+      RECT 0.048 36.480 4.512 36.576 ;
+      RECT 0.048 37.248 4.512 37.344 ;
+      RECT 0.048 38.016 4.512 38.112 ;
+      RECT 0.048 38.784 4.512 38.880 ;
+      RECT 0.048 39.552 4.512 39.648 ;
+      RECT 0.048 40.320 4.512 40.416 ;
+      RECT 0.048 41.088 4.512 41.184 ;
+      RECT 0.048 41.856 4.512 41.952 ;
+      RECT 0.048 42.624 4.512 42.720 ;
+      RECT 0.048 43.392 4.512 43.488 ;
+      RECT 0.048 44.160 4.512 44.256 ;
+      RECT 0.048 44.928 4.512 45.024 ;
+      RECT 0.048 45.696 4.512 45.792 ;
+      RECT 0.048 46.464 4.512 46.560 ;
+      RECT 0.048 47.232 4.512 47.328 ;
+      RECT 0.048 48.000 4.512 48.096 ;
+      RECT 0.048 48.768 4.512 48.864 ;
+      RECT 0.048 49.536 4.512 49.632 ;
+      RECT 0.048 50.304 4.512 50.400 ;
+      RECT 0.048 51.072 4.512 51.168 ;
+      RECT 0.048 51.840 4.512 51.936 ;
+      RECT 0.048 52.608 4.512 52.704 ;
+      RECT 0.048 53.376 4.512 53.472 ;
+      RECT 0.048 54.144 4.512 54.240 ;
+      RECT 0.048 54.912 4.512 55.008 ;
+      RECT 0.048 55.680 4.512 55.776 ;
+      RECT 0.048 56.448 4.512 56.544 ;
+      RECT 0.048 57.216 4.512 57.312 ;
+      RECT 0.048 57.984 4.512 58.080 ;
+      RECT 0.048 58.752 4.512 58.848 ;
+      RECT 0.048 59.520 4.512 59.616 ;
+      RECT 0.048 60.288 4.512 60.384 ;
+      RECT 0.048 61.056 4.512 61.152 ;
+      RECT 0.048 61.824 4.512 61.920 ;
+      RECT 0.048 62.592 4.512 62.688 ;
+      RECT 0.048 63.360 4.512 63.456 ;
+      RECT 0.048 64.128 4.512 64.224 ;
+      RECT 0.048 64.896 4.512 64.992 ;
+      RECT 0.048 65.664 4.512 65.760 ;
+      RECT 0.048 66.432 4.512 66.528 ;
+    END
+  END VDD
+  OBS
+    LAYER M1 ;
+    RECT 0 0 4.560 67.200 ;
+    LAYER M2 ;
+    RECT 0 0 4.560 67.200 ;
+    LAYER M3 ;
+    RECT 0 0 4.560 67.200 ;
+    LAYER M4 ;
+    RECT 0 0 4.560 67.200 ;
+  END
+END fakeram7_256x34
+
+END LIBRARY
