@@ -56,6 +56,7 @@ pipeline {
                    "gcd asap7",
                    "ibex asap7",
                    "jpeg asap7",
+                   "riscv32i asap7",
                    "sha3 asap7",
                    "uart asap7",
                    "uart-blocks asap7",
