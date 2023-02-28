@@ -254,3 +254,6 @@ endif
 export PWR_NETS_VOLTAGES  ?= "VDD $(VOLTAGE)"
 export GND_NETS_VOLTAGES  ?= "VSS 0.0"
 export IR_DROP_LAYER ?= M1
+
+# Allow empty GDS cell
+export GDS_ALLOW_EMPTY = fakeram.*
