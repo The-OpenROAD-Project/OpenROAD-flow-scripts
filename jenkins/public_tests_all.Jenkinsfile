@@ -159,6 +159,20 @@ pipeline {
       }
     }
 
+    stage('Upload Metadata') {
+      steps {
+        withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
+          sh """
+            python3 flow/util/uploadMetadata.py \
+              --buildID ${env.BUILD_ID} \
+              --branchName ${env.BRANCH_NAME} \
+              --commitSHA ${env.GIT_COMMIT} \
+              --pipelineID ${env.BUILD_TAG} \
+            """ + '--cred ${db_cred}'
+        }
+      }
+    }
+
   }
 
   post {
