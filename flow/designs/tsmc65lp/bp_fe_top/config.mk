@@ -4,12 +4,6 @@ export PLATFORM    = tsmc65lp
 
 export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = True
-#
-# RTL_MP Settings
-export RTLMP_MAX_INST = 10000
-export RTLMP_MIN_INST = 1000
-export RTLMP_MAX_MACRO = 12
-export RTLMP_MIN_MACRO = 4 
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/pickled.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
