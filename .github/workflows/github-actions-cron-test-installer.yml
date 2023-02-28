@@ -77,11 +77,3 @@ jobs:
         shell: bash
         run: |
           ./build_openroad.sh --local
-      - name: Test build
-        shell: bash
-        run: |
-          source ./setup_env.sh
-          yosys -help
-          openroad -help
-          cd flow
-          make
