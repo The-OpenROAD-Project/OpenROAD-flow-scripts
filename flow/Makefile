@@ -74,6 +74,7 @@
 # DESIGN_CONFIG=./designs/asap7/uart/config.mk
 # DESIGN_CONFIG=./designs/asap7/sha3/config.mk
 # DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
+# DESIGN_CONFIG=./designs/asap7/swerv_wrapper/config.mk
 
 # DESIGN_CONFIG=./designs/intel22/gcd/config.mk
 # DESIGN_CONFIG=./designs/intel22/aes/config.mk
