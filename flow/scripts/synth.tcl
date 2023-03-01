@@ -5,6 +5,8 @@ if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 &
   source $::env(SYNTH_STOP_MODULE_SCRIPT)
 }
 
+puts "HACK HACK HACK Arya was here!!!!!11one HACK HACK HACK"
+
 # Generic synthesis
 synth  -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS)
 
