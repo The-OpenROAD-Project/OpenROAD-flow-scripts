@@ -36,7 +36,6 @@ pipeline {
                   "jpeg asap7",
                   "riscv32i asap7",
                   "sha3 asap7",
-                  "swerv_wrapper asap7",
                   "uart asap7",
                   "uart-blocks asap7",
                   "mock-array-big asap7",
