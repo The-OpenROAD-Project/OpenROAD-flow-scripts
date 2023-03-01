@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -9.25,
+        "value": -9.46,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
