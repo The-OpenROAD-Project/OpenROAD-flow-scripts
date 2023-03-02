@@ -9,25 +9,11 @@ cd "$(dirname $(readlink -f $0))"
 
 # Defaults variable values
 NICE=""
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  PROC=$(nproc --all)
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-  PROC=$(sysctl -n hw.ncpu)
-else
-  cat << EOF
-[WARNING FLW-0025] Unsupported OSTYPE: cannot determine number of host CPUs"
-  Defaulting to 2 threads. Use --threads N to use N threads"
-EOF
-  PROC=2
-fi
-DOCKER_TAG="openroad/flow-scripts"
+
 OPENROAD_APP_REMOTE="origin"
 OPENROAD_APP_BRANCH="master"
 
 INSTALL_PATH="$(pwd)/tools/install"
-
-DOCKER_USER_ARGS=""
-DOCKER_ARGS="--no-cache"
 
 YOSYS_USER_ARGS=""
 YOSYS_ARGS="\
@@ -44,7 +30,9 @@ LSORACLE_ARGS="\
 -D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
 -D YOSYS_PLUGIN=ON \
 "
-OS_NAME="centos7"
+
+DOCKER_OS_NAME="centos7"
+PROC=-1
 
 function usage() {
         cat << EOF
@@ -58,7 +46,6 @@ Usage: $0 [-h|--help] [-o|--local] [-l|--latest]
           [--install-path PATH] [--clean] [--clean-force]
 
           [-c|--copy-platforms]
-          [--docker-args-overwrite] [--docker-args STRING]
 
 Options:
     -h, --help              Print this help message.
@@ -109,16 +96,12 @@ Options:
     --clean-force           Call git clean before compile. WARNING: this option
                             will not ask for confirmation. Useful to remove
                             old build files.
-    --os=OS_NAME            Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
 
 
 Options valid only for Docker builds:
     -c, --copy-platforms    Copy platforms to inside docker image.
 
-    --docker-args-overwrite Do not use default flags set by this scrip for
-                            Docker builds.
-
-    --docker-args STRING    Aditional compilation flags for Docker build.
+    --os=DOCKER_OS_NAME     Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
 
     This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
     By default, the tools will be built from the linked submodule hashes.
@@ -161,13 +144,6 @@ while (( "$#" )); do
                 -c|--copy-platforms)
                         DOCKER_COPY_PLATFORMS=1
                         ;;
-                --docker-args-overwrite)
-                        DOCKER_OVERWIRTE_ARGS=1
-                        ;;
-                --docker-args)
-                        DOCKER_USER_ARGS="$2"
-                        shift
-                        ;;
                 --yosys-args-overwrite)
                         YOSYS_OVERWIRTE_ARGS=1
                         ;;
@@ -204,7 +180,7 @@ while (( "$#" )); do
                         CLEAN_FORCE=1
                         ;;
                 --os=* )
-                        OS_NAME="${1#*=}"
+                        DOCKER_OS_NAME="${1#*=}"
                         ;;
                 -*|--*) # unsupported flags
                         echo "[ERROR FLW-0005] Unsupported flag $1." >&2
@@ -215,6 +191,20 @@ while (( "$#" )); do
         shift
 done
 
+if [[ "$PROC" == "-1" ]]; then
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+                PROC=$(nproc --all)
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+                PROC=$(sysctl -n hw.ncpu)
+        else
+                cat << EOF
+[WARNING FLW-0025] Unsupported OSTYPE: cannot determine number of host CPUs"
+  Defaulting to 2 threads. Use --threads N to use N threads"
+EOF
+  PROC=2
+        fi
+fi
+
 # Only add install prefix variables after parsing arguments.
 YOSYS_ARGS+=" PREFIX=${INSTALL_PATH}/yosys"
 OPENROAD_APP_ARGS+=" -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/OpenROAD"
@@ -224,13 +214,6 @@ LSORACLE_ARGS+=" \
 "
 
 __args_setup() {
-        if [ ! -z "${DOCKER_OVERWIRTE_ARGS+x}" ]; then
-                echo "[INFO FLW-0013] Overwriting Docker build flags."
-                DOCKER_ARGS="${DOCKER_USER_ARGS}"
-        else
-                DOCKER_ARGS+=" ${DOCKER_USER_ARGS}"
-        fi
-
         if [ ! -z "${YOSYS_OVERWIRTE_ARGS+x}" ]; then
                 echo "[INFO FLW-0014] Overwriting Yosys compilation flags."
                 YOSYS_ARGS="${YOSYS_USER_ARGS}"
@@ -260,8 +243,8 @@ __docker_build()
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
-        ./etc/DockerHelper.sh create -target=dev -os="${OS_NAME}"
-        ./etc/DockerHelper.sh create -target=builder -os="${OS_NAME}"
+        ./etc/DockerHelper.sh create -target=dev -os="${DOCKER_OS_NAME}"
+        ./etc/DockerHelper.sh create -target=builder -os="${DOCKER_OS_NAME}"
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 mv .dockerignore{.bak,}
         fi
@@ -379,7 +362,6 @@ __common_setup
 # Choose install method
 if [ -z "${LOCAL_BUILD+x}" ] && command -v docker &> /dev/null; then
         echo -n "[INFO FLW-0000] Using docker build method."
-        echo " This will create a docker image tagged '${DOCKER_TAG}'."
         __docker_build
 else
         echo -n "[INFO FLW-0001] Using local build method."

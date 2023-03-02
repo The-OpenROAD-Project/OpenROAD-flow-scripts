@@ -8,18 +8,6 @@ baseDir="$(pwd)"
 # docker hub organization/user from where to pull/push images
 org=openroad
 
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    numThreads=$(nproc --all)
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-    numThreads=$(sysctl -n hw.ncpu)
-else
-    numThreads=2
-    cat << EOF
-[WARNING] Unsupported OSTYPE: cannot determine number of host CPUs"
-  Defaulting to 2 threads. Use --threads N to use N threads"
-EOF
-fi
-
 _help() {
     cat <<EOF
 usage: $0 [CMD] [OPTIONS]
@@ -36,7 +24,6 @@ usage: $0 [CMD] [OPTIONS]
                                   'builder': os + packages to compile app +
                                              copy source code and build app
   -threads                      Max number of threads to use if compiling.
-                                  Default = ${numThreads}.
   -sha                          Use git commit sha as the tag image. Default is
                                   'latest'.
   -h -help                      Show this message and exits
@@ -139,6 +126,10 @@ if [[ $# -lt 1 ]]; then
     _help
 fi
 
+if [[ "$1" == "-h" || "$1" == "-help" ]]; then
+    _help 0
+fi
+
 _rule="_${1}"
 shift 1
 
@@ -152,17 +143,7 @@ fi
 os="centos7"
 target="dev"
 useCommitSha="no"
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  numThreads=$(nproc --all)
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-  numThreads=$(sysctl -n hw.ncpu)
-else
-  cat << EOF
-[WARNING] Unsupported OSTYPE: cannot determine number of host CPUs"
-  Defaulting to 2 threads. Use --threads N to use N threads"
-EOF
-  numThreads=2
-fi
+numThreads="-1"
 
 while [ "$#" -gt 0 ]; do
     case "${1}" in
@@ -192,6 +173,20 @@ while [ "$#" -gt 0 ]; do
     esac
     shift 1
 done
+
+if [[ "${numThreads}" == "-1" ]]; then
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        numThreads=$(nproc --all)
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        numThreads=$(sysctl -n hw.ncpu)
+    else
+        numThreads=2
+        cat << EOF
+[WARNING] Unsupported OSTYPE: cannot determine number of host CPUs"
+  Defaulting to 2 threads. Use --threads N to use N threads"
+EOF
+    fi
+fi
 
 _setup
 

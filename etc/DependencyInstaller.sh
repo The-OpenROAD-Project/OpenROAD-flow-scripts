@@ -37,7 +37,7 @@ _installCentosPackages() {
         time \
         ruby \
         ruby-devel \
-        tcl-devel 
+        tcl-devel
 
     yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
 }
