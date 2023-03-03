@@ -9,25 +9,11 @@ cd "$(dirname $(readlink -f $0))"
 
 # Defaults variable values
 NICE=""
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  PROC=$(nproc --all)
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-  PROC=$(sysctl -n hw.ncpu)
-else
-  cat << EOF
-[WARNING FLW-0025] Unsupported OSTYPE: cannot determine number of host CPUs"
-  Defaulting to 2 threads. Use --threads N to use N threads"
-EOF
-  PROC=2
-fi
-DOCKER_TAG="openroad/flow-scripts"
+
 OPENROAD_APP_REMOTE="origin"
 OPENROAD_APP_BRANCH="master"
 
 INSTALL_PATH="$(pwd)/tools/install"
-
-DOCKER_USER_ARGS=""
-DOCKER_ARGS="--no-cache"
 
 YOSYS_USER_ARGS=""
 YOSYS_ARGS="\
@@ -45,6 +31,9 @@ LSORACLE_ARGS="\
 -D YOSYS_PLUGIN=ON \
 "
 
+DOCKER_OS_NAME="centos7"
+PROC=-1
+
 function usage() {
         cat << EOF
 
@@ -57,7 +46,6 @@ Usage: $0 [-h|--help] [-o|--local] [-l|--latest]
           [--install-path PATH] [--clean] [--clean-force]
 
           [-c|--copy-platforms]
-          [--docker-args-overwrite] [--docker-args STRING]
 
 Options:
     -h, --help              Print this help message.
@@ -113,10 +101,7 @@ Options:
 Options valid only for Docker builds:
     -c, --copy-platforms    Copy platforms to inside docker image.
 
-    --docker-args-overwrite Do not use default flags set by this scrip for
-                            Docker builds.
-
-    --docker-args STRING    Aditional compilation flags for Docker build.
+    --os=DOCKER_OS_NAME     Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
 
     This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
     By default, the tools will be built from the linked submodule hashes.
@@ -159,13 +144,6 @@ while (( "$#" )); do
                 -c|--copy-platforms)
                         DOCKER_COPY_PLATFORMS=1
                         ;;
-                --docker-args-overwrite)
-                        DOCKER_OVERWIRTE_ARGS=1
-                        ;;
-                --docker-args)
-                        DOCKER_USER_ARGS="$2"
-                        shift
-                        ;;
                 --yosys-args-overwrite)
                         YOSYS_OVERWIRTE_ARGS=1
                         ;;
@@ -201,6 +179,9 @@ while (( "$#" )); do
                         CLEAN_BEFORE=1
                         CLEAN_FORCE=1
                         ;;
+                --os=* )
+                        DOCKER_OS_NAME="${1#*=}"
+                        ;;
                 -*|--*) # unsupported flags
                         echo "[ERROR FLW-0005] Unsupported flag $1." >&2
                         usage 2> /dev/null
@@ -209,6 +190,20 @@ while (( "$#" )); do
         esac
         shift
 done
+
+if [[ "$PROC" == "-1" ]]; then
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+                PROC=$(nproc --all)
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+                PROC=$(sysctl -n hw.ncpu)
+        else
+                cat << EOF
+[WARNING FLW-0025] Unsupported OSTYPE: cannot determine number of host CPUs"
+  Defaulting to 2 threads. Use --threads N to use N threads"
+EOF
+  PROC=2
+        fi
+fi
 
 # Only add install prefix variables after parsing arguments.
 YOSYS_ARGS+=" PREFIX=${INSTALL_PATH}/yosys"
@@ -219,13 +214,6 @@ LSORACLE_ARGS+=" \
 "
 
 __args_setup() {
-        if [ ! -z "${DOCKER_OVERWIRTE_ARGS+x}" ]; then
-                echo "[INFO FLW-0013] Overwriting Docker build flags."
-                DOCKER_ARGS="${DOCKER_USER_ARGS}"
-        else
-                DOCKER_ARGS+=" ${DOCKER_USER_ARGS}"
-        fi
-
         if [ ! -z "${YOSYS_OVERWIRTE_ARGS+x}" ]; then
                 echo "[INFO FLW-0014] Overwriting Yosys compilation flags."
                 YOSYS_ARGS="${YOSYS_USER_ARGS}"
@@ -250,39 +238,13 @@ __args_setup() {
 
 __docker_build()
 {
-        echo "[INFO FLW-0020] Building docker image for Yosys."
-        docker pull "openroad/yosys-dev"
-        ${NICE} docker build \
-                ${DOCKER_ARGS} \
-                --tag openroad/yosys \
-                --file tools/yosys_util/Dockerfile \
-                --target builder \
-                tools/yosys
-
-        echo "[INFO FLW-0021] Building docker image for LSOracle."
-        docker pull "openroad/centos7-dev"
-        ${NICE} docker build \
-                ${DOCKER_ARGS} \
-                --tag openroad/lsoracle \
-                --file tools/LSOracle/Dockerfile.openroad \
-                tools
-
-        echo "[INFO FLW-0022] Building docker image for OpenROAD app."
-        ${NICE} ./tools/OpenROAD/etc/DockerHelper.sh create \
-                -target=builder \
-                -threads=${PROC}
-
-        echo "[INFO FLW-0023] Building docker image for OpenROAD Flow."
+        echo "[INFO FLW-0020] Building docker image for OpenROAD Flow."
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
-        docker pull "openroad/flow-dev"
-        ${NICE} docker build \
-                ${DOCKER_ARGS} \
-                --tag "${DOCKER_TAG}" \
-                --file Dockerfile \
-                .
+        ./etc/DockerHelper.sh create -target=dev -os="${DOCKER_OS_NAME}"
+        ./etc/DockerHelper.sh create -target=builder -os="${DOCKER_OS_NAME}"
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 mv .dockerignore{.bak,}
         fi
@@ -292,7 +254,15 @@ __local_build()
 {
         if [[ "$OSTYPE" == "darwin"* ]]; then
           export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$(brew --prefix tcl-tk)/bin:$PATH"
+          export CMAKE_PREFIX_PATH=$(brew --prefix or-tools)
         fi
+        if [[ -f "/opt/rh/devtoolset-8/enable" ]]; then
+            # the scl script has unbound variables
+            set +u
+            source /opt/rh/devtoolset-8/enable
+            set -u
+        fi
+
         echo "[INFO FLW-0017] Compiling Yosys."
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
@@ -392,7 +362,6 @@ __common_setup
 # Choose install method
 if [ -z "${LOCAL_BUILD+x}" ] && command -v docker &> /dev/null; then
         echo -n "[INFO FLW-0000] Using docker build method."
-        echo " This will create a docker image tagged '${DOCKER_TAG}'."
         __docker_build
 else
         echo -n "[INFO FLW-0001] Using local build method."

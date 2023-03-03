@@ -1,6 +1,4 @@
 # Build working directories
-tools
-!tools/OpenROAD/etc/DependencyInstaller.sh
 
 # Build files
 build_openroad.log
@@ -24,7 +22,6 @@ flow/versions.txt
 flow/*.log
 
 # Platforms
-flow/platforms
 
 # network
 .nfs*
