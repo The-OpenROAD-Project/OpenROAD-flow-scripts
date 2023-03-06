@@ -1260,7 +1260,7 @@ The `repair_design` command inserts buffers on nets to repair `max
 slew, max capacitance and max fanout` violations and on long wires to
 reduce RC delay. It also resizes gates to normalize slews. Use
 `estimate_parasitics -placement` before `repair_design` to account
-for estimated post-routing parasitics.
+for estimated post-placement parasitics.
 
 Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/rsz/test/repair_slew1.tcl).
 
