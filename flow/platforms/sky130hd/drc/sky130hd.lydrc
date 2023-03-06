@@ -67,22 +67,22 @@ verbose(true)
 ########################
 
 # all except purpose (datatype) 5 -- label and 44 -- via
-li_wildcard = "67/0-4,6-43,45-*"
+li_wildcard = "67/0-4,6-43"
 mcon_wildcard = "67/44"
 
-m1_wildcard = "68/0-4,6-43,45-*"
+m1_wildcard = "68/0-4,6-43"
 via_wildcard = "68/44"
 
-m2_wildcard = "69/0-4,6-43,45-*"
+m2_wildcard = "69/0-4,6-43"
 via2_wildcard = "69/44"
 
-m3_wildcard = "70/0-4,6-43,45-*"
+m3_wildcard = "70/0-4,6-43"
 via3_wildcard = "70/44"
 
-m4_wildcard = "71/0-4,6-43,45-*"
+m4_wildcard = "71/0-4,6-43"
 via4_wildcard = "71/44"
 
-m5_wildcard = "72/0-4,6-43,45-*"
+m5_wildcard = "72/0-4,6-43"
 
 diff = input(65, 20)
 tap = polygons(65, 44)
