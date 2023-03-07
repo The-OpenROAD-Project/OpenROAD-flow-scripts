@@ -28,6 +28,23 @@ For this method you only need to install
 
 ## Clone and Build
 
+### Build image generally
+
+The following instructions build the docker image with a parameterizied OS in two stages. 
+Dev stage for installing all the dependencies and packages that are needed to run OpenRoad and OpenRoad Flow Scripts.
+Build stage actually builds all of the binaries needed to run flows.
+
+``` shell
+git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
+cd OpenROAD-flow-scripts
+./etc/DockerHelper.sh create -target=dev -os=$OS_NAME
+./etc/DockerHelper.sh create -target=builder -os=$OS_NAME
+```
+
+### Build image with default values
+
+The following instructions build the docker image with Centos 7 as base OS:
+
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
@@ -40,7 +57,7 @@ The binaries are only available from inside the Docker container, thus to
 start one use:
 
 ``` shell
-docker run -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow/platforms:/OpenROAD-flow-scripts/flow/platforms:ro openroad/flow-scripts
+docker run -it -u $(id -u ${USER}):$(id -g ${USER}) openroad/flow-$OS_NAME-builder
 ```
 
 Then, inside docker:
