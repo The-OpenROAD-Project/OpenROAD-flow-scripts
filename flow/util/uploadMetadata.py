@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from datetime import datetime
 import json
 import argparse
 import re
@@ -30,12 +31,13 @@ def upload_data(datafile, platform, design, variant, args):
 
     # Set the document data
     key = args.commitSHA + '-' + platform + '-' + design + '-' + variant
-    doc_ref = db.collection('collection_name').document(key)
+    doc_ref = db.collection('build_metrics').document(key)
     doc_ref.set({
         'build_id': args.buildID,
         'branch_name': args.branchName,
         'pipeline_id': args.pipelineID,
         'commit_sha': args.commitSHA,
+        'golden': True,
     })
 
     # Load JSON data from file
@@ -44,9 +46,20 @@ def upload_data(datafile, platform, design, variant, args):
 
     # Replace the character ':' in the keys
     new_data = {}
+    stages = []
+    excludes = ["run", "commit", "total_time", "constraints"]
     for k, v in data.items():
         new_key = re.sub(':', '__', k)  # replace ':' with '__'
         new_data[new_key] = v
+        stage_name = k.split('__')[0]
+        if stage_name not in excludes:
+            stages.append(stage_name)
+        if k == 'run__flow__generate_date':
+            # Convert string to datetime
+            gen_date = datetime.strptime(v, '%Y-%m-%d %H:%M')
+            new_data[k] = gen_date
+    stages = set(stages)
+    new_data['stages'] = stages
 
     # Set the data to the document in Firestore
     doc_ref.update(new_data)
