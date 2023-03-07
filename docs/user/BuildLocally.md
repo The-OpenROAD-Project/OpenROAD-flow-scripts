@@ -1,8 +1,8 @@
 # Build from sources locally
 
-## Clona and Install Dependencies
+## Clone and Install Dependencies
 
-The DependencyInstaller script installs all of the dependencies including OpenROAD dependencies if they are not already installed.
+The `DependencyInstaller.sh` script installs all of the dependencies, including OpenROAD dependencies, if they are not already installed.
 
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
