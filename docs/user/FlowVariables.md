@@ -134,7 +134,6 @@ Note:
 | `MAKE_TRACKS`         | Tcl file that defines add routing tracks to a floorplan.                                                                                                                         |
 | `IO_PLACER_H`         | The metal layer on which to place the I/O pins horizontally (top and bottom of the die).                                                                                         |
 | `IO_PLACER_V`         | The metal layer on which to place the I/O pins vertically (sides of the die).                                                                                                    |
-| `GALLERY_REPORT`      | Enables to dump layout in .def extension. Default disabled.                                                                                                                      |
 | `GUI_NO_TIMING`       | Skip loading timing for a faster GUI load.                                                                                                                                       |
 
 
@@ -148,11 +147,11 @@ Note:
 | `CELL_PAD_IN_SITES_DETAIL_PLACEMENT` | Cell padding on both sides in site widths to ease routability in detail placement.			                                       |
 | `PLACE_DENSITY`                      | The desired placement density of cells. It reflects how spread the cells would be on the core area. 1.0 = closely dense. 0.0 = widely spread. |
 | `PLACE_DENSITY_LB_ADDON`             | Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.                                                    |
-| `REPAIR_PDN_VIA_LAYER`               | To remove vias which generate DRC violations after detailed placement and routing.                                                            |
+| `REPAIR_PDN_VIA_LAYER`               | Remove power grid vias which generate DRC violations after detailed routing.                                                                  |
 | `GLOBAL_PLACEMENT_ARGS`              | Use additional tuning parameters during global placement other than default args defined in gloabl_place.tcl.                                 |
 | `ENABLE_DPO`                         | Enable detail placement with improve_placement feature.                                                                                       |
-| `DPO_MAX_DISPLACEMENT`               | Specifies how far an instance can be moved when finding a site where it can be placed.                                                        |
-| `GPL_TIMING_DRIVEN`                  | Specifies whether the placer should use time driven placement.                                                                                |
+| `DPO_MAX_DISPLACEMENT`               | Specifies how far an instance can be moved when optimizing.                                                                                   |
+| `GPL_TIMING_DRIVEN`                  | Specifies whether the placer should use timing driven placement.                                                                              |
 | `GPL_ROUTABILITY_DRIVEN`             | Specifies whether the placer should use routability driven placement.                                                                         |
 
 
