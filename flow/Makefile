@@ -73,8 +73,15 @@
 # DESIGN_CONFIG=./designs/asap7/ethmac/config.mk
 # DESIGN_CONFIG=./designs/asap7/uart/config.mk
 # DESIGN_CONFIG=./designs/asap7/sha3/config.mk
-# DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
+DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
+# DESIGN_CONFIG=./designs/asap7/riscv32i_datapath/config.mk   # 1129
+# DESIGN_CONFIG=./designs/asap7/riscv32i_controller/config.mk    9
+# DESIGN_CONFIG=./designs/asap7/riscv32i_regfile/config.mk
 # DESIGN_CONFIG=./designs/asap7/swerv_wrapper/config.mk
+
+# DESIGN_CONFIG=./designs/asap7/mock-array-big/config.mk
+
+# DESIGN_CONFIG = ./designs/asap7/mock-array-big/Element/config.mk
 
 # DESIGN_CONFIG=./designs/intel22/gcd/config.mk
 # DESIGN_CONFIG=./designs/intel22/aes/config.mk
@@ -82,7 +89,7 @@
 # DESIGN_CONFIG=./designs/gf180/aes/config.mk
 #
 # Default design
-DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
+# DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY
@@ -166,7 +173,7 @@ export SYNTH_ARGS ?= -flatten
 # Global setting for Floorplan
 export PLACE_PINS_ARGS
 
-export FLOW_VARIANT ?= base
+export FLOW_VARIANT ?= b_regfile
 
 export GPL_TIMING_DRIVEN ?= 1
 export GPL_ROUTABILITY_DRIVEN ?= 1
@@ -175,7 +182,7 @@ export ENABLE_DPO ?= 1
 export DPO_MAX_DISPLACEMENT ?= 5 1
 
 # Setup working directories
-export DESIGN_NICKNAME ?= $(DESIGN_NAME)
+# export DESIGN_NICKNAME = $(DESIGN_NAME)
 
 export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
 export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
