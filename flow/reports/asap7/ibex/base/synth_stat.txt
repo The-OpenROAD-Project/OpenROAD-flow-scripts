@@ -1,0 +1,64 @@
+
+60. Printing statistics.
+
+=== ibex_core ===
+
+   Number of wires:              18570
+   Number of wire bits:          18804
+   Number of public wires:         180
+   Number of public wire bits:     414
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:              17974
+     AND2x2_ASAP7_75t_R            665
+     AND3x1_ASAP7_75t_R            368
+     AND4x1_ASAP7_75t_R            104
+     AND5x1_ASAP7_75t_R             46
+     AO211x2_ASAP7_75t_R            12
+     AO21x1_ASAP7_75t_R           2200
+     AO221x1_ASAP7_75t_R           216
+     AO222x2_ASAP7_75t_R            47
+     AO22x1_ASAP7_75t_R            112
+     AO31x2_ASAP7_75t_R              8
+     AO32x1_ASAP7_75t_R            112
+     AO33x2_ASAP7_75t_R             10
+     AOI211x1_ASAP7_75t_R           33
+     AOI21x1_ASAP7_75t_R           367
+     AOI221x1_ASAP7_75t_R           32
+     AOI22x1_ASAP7_75t_R           120
+     BUFx2_ASAP7_75t_R            1632
+     BUFx3_ASAP7_75t_R               4
+     BUFx4_ASAP7_75t_R               2
+     DFFASRHQNx1_ASAP7_75t_R      1658
+     DFFHQNx1_ASAP7_75t_R          273
+     DLLx1_ASAP7_75t_R               1
+     FAx1_ASAP7_75t_R              353
+     HAxp5_ASAP7_75t_R             319
+     INVx1_ASAP7_75t_R            1887
+     MAJx2_ASAP7_75t_R               2
+     NAND2x1_ASAP7_75t_R          1908
+     NAND3x1_ASAP7_75t_R            21
+     NOR2x1_ASAP7_75t_R           1319
+     NOR3x1_ASAP7_75t_R             17
+     OA211x2_ASAP7_75t_R          1372
+     OA21x2_ASAP7_75t_R            895
+     OA221x2_ASAP7_75t_R             2
+     OA222x2_ASAP7_75t_R           102
+     OA22x2_ASAP7_75t_R             85
+     OA31x2_ASAP7_75t_R             32
+     OA33x2_ASAP7_75t_R             17
+     OAI21x1_ASAP7_75t_R           244
+     OAI22x1_ASAP7_75t_R           221
+     OR2x2_ASAP7_75t_R             190
+     OR2x4_ASAP7_75t_R               5
+     OR3x1_ASAP7_75t_R             722
+     OR4x1_ASAP7_75t_R              85
+     OR5x1_ASAP7_75t_R              47
+     TIEHIx1_ASAP7_75t_R             1
+     TIELOx1_ASAP7_75t_R             1
+     XNOR2x2_ASAP7_75t_R            71
+     XOR2x2_ASAP7_75t_R             34
+
+   Chip area for module '\ibex_core': 2221.671240
+
