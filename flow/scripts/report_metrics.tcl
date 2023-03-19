@@ -8,7 +8,9 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
   puts "$when report_tns"
   puts "--------------------------------------------------------------------------"
   report_tns
+  if {$when != "synthesis"} {
   report_tns_metric
+  }
 
   puts "\n=========================================================================="
   puts "$when report_wns"
@@ -19,15 +21,19 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
   puts "$when report_worst_slack"
   puts "--------------------------------------------------------------------------"
   report_worst_slack
+  if {$when != "synthesis"} {
   report_worst_slack_metric
+  }
 
   if {$include_clock_skew} {
     puts "\n=========================================================================="
     puts "$when report_clock_skew"
     puts "--------------------------------------------------------------------------"
     report_clock_skew
+    if {$when != "synthesis"} {
     report_clock_skew_metric
     report_clock_skew_metric -hold
+    }
   }
   
   puts "\n=========================================================================="
@@ -50,8 +56,9 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
     puts "$when report_check_types -max_slew -max_cap -max_fanout -violators"
     puts "--------------------------------------------------------------------------"
     report_check_types -max_slew -max_capacitance -max_fanout -violators
+    if {$when != "synthesis"} {
     report_erc_metrics
-
+    }
     puts "\n=========================================================================="
     puts "$when max_slew_check_slack"
     puts "--------------------------------------------------------------------------"
@@ -164,14 +171,19 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
     unset corner
   } else {
     report_power
+    if {$when != "synthesis"} {
     report_power_metric
+    }
   }
 
+  if {$when != "synthesis"} {
   puts "\n=========================================================================="
   puts "$when report_design_area"
   puts "--------------------------------------------------------------------------"
+  
   report_design_area
   report_design_area_metrics
 
   puts ""
+  }
 }
