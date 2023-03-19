@@ -5,37 +5,37 @@ export PROCESS                 = 7
 
 #Library Setup variable
 export TECH_LEF                = $(PLATFORM_DIR)/lef/asap7_tech_1x_201209.lef
-export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_R_1x_220121a.lef
+export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_SL_1x_220121a.lef
 
-export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_R_220121a.gds \
+export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_SL_220121a.gds \
                                  $(ADDITIONAL_GDS)
 
-export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz \
-				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib \
+export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_FF_nldm_211120.lib.gz \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_FF_nldm_220122.lib.gz \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_FF_nldm_211120.lib.gz \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_211120.lib.gz \
+				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib \
 				 $(ADDITIONAL_LIBS)
 
-export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib
+export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
 
-export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_SS_nldm_211120.lib.gz \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_SS_nldm_220122.lib.gz \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_SS_nldm_211120.lib.gz \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_220123.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_SS_nldm_211120.lib.gz \
+export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_SS_nldm_211120.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_SS_nldm_220122.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_SS_nldm_211120.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_SS_nldm_220123.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_211120.lib.gz \
 				$(ADDITIONAL_LIBS)
 
-export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_220123.lib
+export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_SS_nldm_220123.lib
 
-export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_211120.lib.gz \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_RVT_TT_nldm_220122.lib.gz \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_TT_nldm_211120.lib.gz \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib \
-				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_TT_nldm_211120.lib.gz \
+export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_TT_nldm_211120.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_TT_nldm_220122.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_TT_nldm_211120.lib.gz \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_TT_nldm_220123.lib \
+				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_TT_nldm_211120.lib.gz \
 				$(ADDITIONAL_LIBS)
 
-export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib
+export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_TT_nldm_220123.lib
 
 export BC_TEMPERATURE          = 25C
 export TC_TEMPERATURE          = 0C
@@ -52,24 +52,24 @@ export DONT_USE_CELLS          += SDF* ICG* DFFH*
 #export DONT_USE_CELLS          += SDF* DFFH*
 
 # Yosys mapping files
-export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_R.v
-export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_R.v
-export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_R.v
+export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_SL.v
+export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_SL.v
+export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_SL.v
 
 # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
 export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
-export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_R
+export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_SL
 
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
 export ABC_LOAD_IN_FF          = 3.898
 
 # Set the TIEHI/TIELO cells
 # These are used in yosys synthesis to avoid logical 1/0's in the netlist
-export TIEHI_CELL_AND_PORT     = TIEHIx1_ASAP7_75t_R H
-export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_R L
+export TIEHI_CELL_AND_PORT     = TIEHIx1_ASAP7_75t_SL H
+export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_SL L
 
 # Used in synthesis
-export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_R A Y
+export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_SL A Y
 
 # Placement site for core cells
 # This can be found in the technology lef
@@ -82,7 +82,7 @@ export PDN_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M2-M5-M7.tcl
 
 # IO Placer pin layers
 export IO_PLACER_H             = M4
-export IO_PLACER_V             = M5
+export IO_PLACER_V             = M7
 
 export MACRO_PLACE_HALO ?= 10 10
 export MACRO_PLACE_CHANNEL ?= 12 12
@@ -97,136 +97,33 @@ export PLACE_DENSITY ?= 0.60
 export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
 
 # TritonCTS options
-export CTS_BUF_CELL            ?= BUFx4_ASAP7_75t_R
+export CTS_BUF_CELL            ?= BUFx4_ASAP7_75t_SL
 
-export CTS_BUF_DISTANCE        ?= 60
+#export CTS_BUF_DISTANCE        ?= 60
 
 # Fill cells used in fill cell insertion
-export FILL_CELLS              = FILLERxp5_ASAP7_75t_R \
-                                 FILLER_ASAP7_75t_R \
-                                 DECAPx1_ASAP7_75t_R \
-                                 DECAPx2_ASAP7_75t_R \
-                                 DECAPx4_ASAP7_75t_R \
-                                 DECAPx6_ASAP7_75t_R \
-                                 DECAPx10_ASAP7_75t_R
+export FILL_CELLS              = FILLERxp5_ASAP7_75t_SL \
+                                 FILLER_ASAP7_75t_SL \
+                                 DECAPx1_ASAP7_75t_SL \
+                                 DECAPx2_ASAP7_75t_SL \
+                                 DECAPx4_ASAP7_75t_SL \
+                                 DECAPx6_ASAP7_75t_SL \
+                                 DECAPx10_ASAP7_75t_SL
 
-export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_R
+export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_SL
 
 export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
 
-# Route options
+# Route options MAX default was M7
 export MIN_ROUTING_LAYER       = M2
 #export MIN_CLOCK_ROUTING_LAYER = M4
-export MAX_ROUTING_LAYER       = M7
+export MAX_ROUTING_LAYER       = M8
 
 # KLayout technology file
 export KLAYOUT_TECH_FILE       = $(PLATFORM_DIR)/KLayout/asap7.lyt
 
 # OpenRCX extRules
 export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules
-
-# XS - defining function for using LVT
-ifeq ($(ASAP7_USELVT), 1)
-   export TIEHI_CELL_AND_PORT     = TIEHIx1_ASAP7_75t_L H
-   export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_L L
-
-   export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_L A Y
-
-   export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_L
-
-   export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_L
-   
-   export CTS_BUF_CELL            = BUFx4_ASAP7_75t_L
-   
-   export FILL_CELLS              = "FILLERxp5_ASAP7_75t_L"
-   
-   export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_L
-   
-   export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_L_220121a.gds \
-                                     $(ADDITIONAL_GDS)
-   
-   export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_L_1x_220121a.lef
-   
-   export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_L.v
-   export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_L.v
-   export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_L.v
-   
-   export BC_DFF_LIB_FILE         = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
-
-   export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib.gz \
-			            $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_FF_nldm_220122.lib.gz \
-			            $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_FF_nldm_211120.lib.gz \
-			            $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_FF_nldm_211120.lib.gz \
-			            $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
-
-   export WC_DFF_LIB_FILE         = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_220123.lib
-
-   export WC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_SS_nldm_211120.lib.gz \
-				    $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_SS_nldm_220122.lib.gz \
-				    $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_SS_nldm_211120.lib.gz \
-				    $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_SS_nldm_220123.lib \
-				    $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_SS_nldm_211120.lib.gz
-
-   export TC_DFF_LIB_FILE         = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_220123.lib
-
-   export TC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_LVT_TT_nldm_211120.lib.gz \
-				    $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_LVT_TT_nldm_220122.lib.gz \
-				    $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_LVT_TT_nldm_211120.lib.gz \
-				    $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_LVT_TT_nldm_220123.lib \
-				    $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_LVT_TT_nldm_211120.lib.gz
-
-endif
-
-ifeq ($(ASAP7_USESLVT), 1)
-   export TIEHI_CELL_AND_PORT     = TIEHIx1_ASAP7_75t_SL H
-   export TIELO_CELL_AND_PORT     = TIELOx1_ASAP7_75t_SL L
-
-   export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_SL A Y
-
-   export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_SL
-
-   export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_SL
-  
-   export CTS_BUF_CELL            = BUFx4_ASAP7_75t_SL
-  
-   export FILL_CELLS              = "FILLERxp5_ASAP7_75t_SL"
-  
-   export TAP_CELL_NAME		  = TAPCELL_ASAP7_75t_SL
-  
-   export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_SL_220121a.gds \
-  				    $(ADDITIONAL_GDS)
-  
-   export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_SL_1x_220121a.lef
-  
-   export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_SL.v
-   export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_SL.v
-   export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_SL.v
-  
-   export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
-
-   export BC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_FF_nldm_211120.lib.gz \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_FF_nldm_220122.lib.gz \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_FF_nldm_211120.lib.gz \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_211120.lib.gz \
-			           $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
-
-   export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_SS_nldm_220123.lib
-
-   export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_SS_nldm_211120.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_SS_nldm_220122.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_SS_nldm_211120.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_SS_nldm_220123.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_211120.lib.gz
-
-   export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_TT_nldm_220123.lib
-
-   export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_SLVT_TT_nldm_211120.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_INVBUF_SLVT_TT_nldm_220122.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_SLVT_TT_nldm_211120.lib.gz \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_SLVT_TT_nldm_220123.lib \
-				   $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_SLVT_TT_nldm_211120.lib.gz
-
-endif
 
 #Dont use SC library based on CORNER selection
 ifeq ($(CORNER),)
@@ -257,3 +154,4 @@ export IR_DROP_LAYER ?= M1
 
 # Allow empty GDS cell
 export GDS_ALLOW_EMPTY = fakeram.*
+

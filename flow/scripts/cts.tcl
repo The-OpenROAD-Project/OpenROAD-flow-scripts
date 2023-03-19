@@ -6,32 +6,41 @@ load_design 3_place.odb 3_place.sdc "Starting CTS"
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
 
-# Run CTS
-if {[info exist ::env(CTS_CLUSTER_SIZE)]} {
-  set cluster_size "$::env(CTS_CLUSTER_SIZE)"
-} else {
-  set cluster_size 30
-}
-if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
-  set cluster_diameter "$::env(CTS_CLUSTER_DIAMETER)"
-} else {
-  set cluster_diameter 100
-}
+set_routing_layers -clock M3-M5
+#set_wire_rc -clock -layer M7
+#set_wire_rc -clock -layer M6
+set_wire_rc -clock -layer M5
+set_wire_rc -clock -layer M4
+set_wire_rc -clock -layer M3
 
-if {[info exist ::env(CTS_BUF_DISTANCE)]} {
-clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+remove_buffers
+repair_design
+
+# Run CTS
+#set CTS_BUF_CELL {CKINVDCx10_ASAP7_75t_R CKINVDCx11_ASAP7_75t_R CKINVDCx12_ASAP7_75t_R CKINVDCx16_ASAP7_75t_R CKINVDCx20_ASAP7_75t_R CKINVDCx6p67_ASAP7_75t_R}
+#set CTS_BUF_CELL {CKINVDCx5p33_ASAP7_75t_SL CKINVDCx6p67_ASAP7_75t_SL CKINVDCx8_ASAP7_75t_SL CKINVDCx9p33_ASAP7_75t_SL}
+#set CTS_BUF_CELL {CKINVDCx5p33_ASAP7_75t_SL CKINVDCx6p67_ASAP7_75t_SL CKINVDCx8_ASAP7_75t_SL CKINVDCx9p33_ASAP7_75t_SL CKINVDCx10_ASAP7_75t_SL CKINVDCx11_ASAP7_75t_SL CKINVDCx12_ASAP7_75t_SL CKINVDCx14_ASAP7_75t_SL CKINVDCx16_ASAP7_75t_SL CKINVDCx20_ASAP7_75t_SL}
+#set CTS_BUF_CELL {CKINVDCx12_ASAP7_75t_SL CKINVDCx5p33_ASAP7_75t_SL CKINVDCx6p67_ASAP7_75t_SL}
+set CTS_BUF_CELL {CKINVDCx12_ASAP7_75t_SL CKINVDCx5p33_ASAP7_75t_SL CKINVDCx6p67_ASAP7_75t_SL}
+#set CTS_BUF_CELL CKINVDCx6p67_ASAP7_75t_SL
+#set CTS_BUF_CELL CKINVDCx12_ASAP7_75t_SL
+#set CTS_BUF_CELL CKINVDCx11_ASAP7_75t_SL
+set ROOT_BUF CKINVDCx20_ASAP7_75t_SL
+#set ROOT_BUF CKINVDCx20_ASAP7_75t_R
+set cluster_size 10
+set cluster_diameter 30
+
+#clock_tree_synthesis -root_buf $ROOT_BUF -buf_list $CTS_BUF_CELL \
+#                     -sink_clustering_enable \
+#                     -sink_clustering_size $cluster_size \
+#                     -sink_clustering_max_diameter $cluster_diameter \
+#                     -balance_levels
+#
+clock_tree_synthesis -root_buf $ROOT_BUF -buf_list $CTS_BUF_CELL \
                      -sink_clustering_enable \
                      -sink_clustering_size $cluster_size \
                      -sink_clustering_max_diameter $cluster_diameter \
-                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)" \
-                     -balance_levels
-} else {
-clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
-                     -sink_clustering_enable \
-                     -sink_clustering_size $cluster_size \
-                     -sink_clustering_max_diameter $cluster_diameter \
-                     -balance_levels
-}
+		     -balance_levels
 
 
 set_propagated_clock [all_clocks]
@@ -41,11 +50,13 @@ set_dont_use $::env(DONT_USE_CELLS)
 utl::push_metrics_stage "cts__{}__pre_repair"
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
+repair_design
 estimate_parasitics -placement
 report_metrics "cts pre-repair"
 utl::pop_metrics_stage
 
 repair_clock_nets
+repair_design
 
 utl::push_metrics_stage "cts__{}__post_repair"
 estimate_parasitics -placement
@@ -58,6 +69,7 @@ set_placement_padding -global \
 detailed_placement
 
 estimate_parasitics -placement
+repair_design
 
 puts "Repair setup and hold violations..."
 
@@ -72,7 +84,17 @@ if { [info exists ::env(HOLD_SLACK_MARGIN)] && $::env(HOLD_SLACK_MARGIN) > 0.0} 
   append additional_args " -hold_margin $::env(HOLD_SLACK_MARGIN)"
 }
 
+############ Modified to number of violating paths to repair ###############
+
+if { [info exists ::env(REPAIR_TNS)] && $::env(REPAIR_TNS) > 0.0 } {
+	puts "Total percentage of violating paths to repair repair $::env(REPAIR_TNS)"
+	append additional_args " -repair_tns $::env(REPAIR_TNS)"
+}
+
+############################################################################
+
 repair_timing {*}$additional_args
+repair_design
 
 detailed_placement
 check_placement -verbose
@@ -90,3 +112,4 @@ if {![info exists save_checkpoint] || $save_checkpoint} {
   write_db $::env(RESULTS_DIR)/4_1_cts.odb
   write_sdc $::env(RESULTS_DIR)/4_cts.sdc
 }
+

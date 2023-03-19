@@ -21,3 +21,8 @@ export RTLMP_MAX_MACRO = 4
 export RTLMP_MIN_MACRO = 1
 export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:*
+export REPAIR_TNS  = 100
+export REMOVE_BUFFER_TREE = 1
+export SETUP_SLACK_MARGIN =100
+export HOLD_SLACK_MARGIN  =100
+
