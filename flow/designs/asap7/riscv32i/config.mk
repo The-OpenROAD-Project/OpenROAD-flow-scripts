@@ -13,7 +13,7 @@ export CORE_AREA = 5 5 110 110
 export PLACE_DENSITY = 0.65
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
+#export RTLMP_FLOW = True
 # RTL_MP Settings
 export RTLMP_MAX_INST = 10000
 export RTLMP_MIN_INST = 5000
@@ -21,3 +21,5 @@ export RTLMP_MAX_MACRO = 4
 export RTLMP_MIN_MACRO = 1
 export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:*
+export MACRO_PLACEMENT_TCL = ./custom_macro/custom_macro_place.tcl
+

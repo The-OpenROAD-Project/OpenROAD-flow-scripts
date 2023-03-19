@@ -22,3 +22,10 @@ add_pdn_stripe -grid {top} -layer {M6} -width {0.288} -spacing {0.096} -pitch {1
 add_pdn_connect -grid {top} -layers {M1 M2}
 add_pdn_connect -grid {top} -layers {M2 M5}
 add_pdn_connect -grid {top} -layers {M5 M6}
+
+#################### Macro Power Via Connection################################
+ define_pdn_grid -name {core_macro} -voltage_domains {CORE} -macro -orient {R0 R180 MX MY} -halo {2.0 2.0 2.0 2.0} -default -grid_over_boundary
+ add_pdn_connect -grid {core_macro} -layers {M4 M5}
+#################done by Ishmam############################
+
+

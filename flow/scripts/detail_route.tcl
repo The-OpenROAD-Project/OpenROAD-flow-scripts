@@ -61,3 +61,30 @@ if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
 if {![info exists save_checkpoint] || $save_checkpoint} {
   write_db $::env(RESULTS_DIR)/5_2_route.odb
 }
+
+set inputs {}
+foreach aa [all_inputs] {
+set inputs [lsearch -inline -all -not -exact [all_inputs] [all_clocks]]
+}
+
+group_path -name in2reg -from $inputs -to [all_registers]
+
+
+
+group_path -from [all_register] -to [all_register] -name reg2reg
+
+group_path -name in2reg -from $inputs -to [all_registers]
+
+group_path -name reg2out -from [all_registers] -to [all_outputs]
+
+
+
+report_checks -path_groups reg2reg -path_delay max
+report_checks -path_groups reg2out -path_delay max
+report_checks -path_groups in2reg -path_delay max
+
+
+report_checks -path_groups reg2reg -path_delay min
+report_checks -path_groups reg2out -path_delay min
+report_checks -path_groups in2reg -path_delay min
+
