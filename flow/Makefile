@@ -17,6 +17,8 @@
 # DESIGN_CONFIG=./designs/nangate45/tiny-tests/config.mk
 # DESIGN_CONFIG=./designs/nangate45/tinyRocket/config.mk
 
+# DESIGN_CONFIG=./designs/nangate45_fakelvt/jpeg/config.mk
+
 # DESIGN_CONFIG=./designs/tsmc65lp/aes/config.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/ariane/config.mk
 # DESIGN_CONFIG=./designs/tsmc65lp/black_parrot/config.mk
