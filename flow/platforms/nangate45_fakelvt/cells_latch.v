@@ -1,0 +1,1 @@
+../nangate45/cells_latch.v
