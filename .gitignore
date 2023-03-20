@@ -59,6 +59,7 @@ flow/*.opennet
 flow/platforms/*
 !flow/platforms/asap7
 !flow/platforms/nangate45
+!flow/platforms/nangate45_fakelvt
 !flow/platforms/sky130hd
 !flow/platforms/sky130hs
 !flow/platforms/sky130io
