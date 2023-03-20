@@ -10,7 +10,7 @@ export ADDITIONAL_LIBS = ./platforms/$(PLATFORM)/lib/fakeram7_256x32.lib
 export DIE_AREA = 0 0 120 120
 export CORE_AREA = 5 5 110 110
 
-export PLACE_DENSITY = 0.65
+export PLACE_DENSITY = 0.75
 
 export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = True
