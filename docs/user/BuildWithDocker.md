@@ -56,6 +56,22 @@ make
 exit
 ```
 
+## Enable GUI support
+
+To use the GUI feature you will need to start the docker with the following command:
+
+```
+docker run --rm -it \
+           -u $(id -u ${USER}):$(id -g ${USER}) \
+           -v $(pwd)/flow:/OpenROAD-flow-scripts/flow \
+           -e DISPLAY=${DISPLAY} \
+           -v /tmp/.X11-unix:/tmp/.X11-unix \
+           -v ${HOME}/.Xauthority:/.Xauthority \
+           --network host \
+           --security-opt seccomp=unconfined \
+           openroad/flow-$OS_NAME-builder
+```
+
 ## Build Docker Image for Different OS
 
 The following instructions build the docker image with a parameterized OS
