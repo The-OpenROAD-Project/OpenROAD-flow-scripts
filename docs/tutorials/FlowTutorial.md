@@ -14,7 +14,7 @@ This is intended for:
 
 -   Beginners or new users with some understanding of basic VLSI
     design flow. Users will learn the basics of installation to use
-    [OpenROAD-flow-scripts](https://openroad.readthedocs.io/en/latest/user/GettingStarted.html)
+    [OpenROAD-flow-scripts](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html)
     for the complete RTL-to-GDS flow.
 -   Users already familiar with the OpenROAD application and flow but would
     like to learn more about specific features and commands.
@@ -48,7 +48,7 @@ pipeline.
 Use the `bash` shell to run commands and scripts.
 
 Install OpenROAD Flow Scripts. Refer to the [Getting Started with
-OpenROAD Flow](getting:started:setup) documentation.
+OpenROAD Flow](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html) documentation.
 
 If ORFS is already installed but needs updating, run the
 following commands:

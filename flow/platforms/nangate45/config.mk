@@ -100,7 +100,7 @@ export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/FreePDK45.lydrc
 export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/FreePDK45.lylvs
 
 # Allow empty GDS cell
-export GDS_ALLOW_EMPTY = fakeram.*
+export GDS_ALLOW_EMPTY ?= fakeram.*
 
 export CDL_FILE = $(PLATFORM_DIR)/cdl/NangateOpenCellLibrary.cdl
 
