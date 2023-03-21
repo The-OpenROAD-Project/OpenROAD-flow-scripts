@@ -231,7 +231,7 @@ make DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 As the flow executes, check out the ORFS directory contents and their
 significance.
 
-If you started running a design and the terminal in which you initiated the run had some errors for some reason, you may want to delete all partially generated files and start a fresh run(`ibex` in this case). You can accomplish this task by:
+ORFS can generally restart from a previous partial run.  If you have errors which prevent restarting for some reason, you can delete all partially generated files and start a fresh run(`ibex` in this case).  This could happen if the tool crashed or was killed in the middle of writing a file.  You can accomplish this task by:
 
 ```
 make clean_all DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
