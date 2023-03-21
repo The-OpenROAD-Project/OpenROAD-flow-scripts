@@ -60,7 +60,7 @@ exit
 
 The following instructions build the docker image with a parameterized OS
 in two stages. These are for CI and developers that wish to use an OS other
-than CentOS 7, regular users should use the steps from previous sections.
+than CentOS 7; regular users should use the steps from previous sections.
 Dev stage for installing all the dependencies and packages that are needed
 to run OpenROAD and OpenROAD Flow Scripts. The build stage actually builds
 all of the binaries needed to run flow (i.e., `openroad` and `yosys`).
