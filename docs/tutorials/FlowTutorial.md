@@ -239,7 +239,6 @@ make clean_all DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 
 You can also delete files related to individual stages of RTL to GDSII conversion like synthesis, floorplanning, macro placement, clock-tree synthesis,  routing and layout generation `clear_all` by `clean_synth`, `clean_floorplan`, `clean_place`, `clean_cts`, `clean_route`, `clean_finish` respectively.
 
-ORFS can generally restart from a previous partial run, so in that case these clear instructions can be ignored.
 
 ### Viewing ORFS Directory Structure And Results
 
