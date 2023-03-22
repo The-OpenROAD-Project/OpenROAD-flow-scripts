@@ -231,13 +231,13 @@ make DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 As the flow executes, check out the ORFS directory contents and their
 significance.
 
-ORFS can generally restart from a previous partial run.  If you have errors which prevent restarting for some reason, you can delete all partially generated files and start a fresh run(`ibex` in this case).  This could happen if the tool crashed or was killed in the middle of writing a file.  You can accomplish this task by the command:
+ORFS can generally restart from a previous partial run. If you have errors which prevent restarting the flow, you may try deleting all generated files and start a fresh run. Errors can occur if a tool crashes or is killed while writing a file. The files for `sky130hd/ibex` as an example can be deleted with:
 
 ```
 make clean_all DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 ```
 
-You can also delete files related to individual stages of RTL to GDSII conversion like synthesis, floorplanning, macro placement, clock-tree synthesis,  routing and layout generation `clear_all` by `clean_synth`, `clean_floorplan`, `clean_place`, `clean_cts`, `clean_route`, `clean_finish` respectively.
+You can also delete files related to individual stages of RTL to GDSII conversion like synthesis, floorplanning, macro placement, clock tree synthesis, routing and layout generation with `clean_synth`, `clean_floorplan`, `clean_place`, `clean_cts`, `clean_route`, and `clean_finish`, respectively.
 
 
 ### Viewing ORFS Directory Structure And Results
