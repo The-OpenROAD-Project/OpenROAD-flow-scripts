@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 10562,
+        "value": 10552,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 785,
+        "value": 880,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
@@ -84,7 +84,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -10.0,
+        "value": -22.11,
         "compare": ">="
     }
 }

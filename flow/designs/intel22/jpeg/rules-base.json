@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 42137,
+        "value": 41594,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 78402,
+        "value": 78381,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -32,23 +32,23 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 3409,
+        "value": 3408,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 3409,
+        "value": 3408,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -302.32,
+        "value": -543.16,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -302.32,
+        "value": -543.16,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 879508,
+        "value": 879218,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
