@@ -1,6 +1,6 @@
 import config
 
-x = config.margin
-y = config.margin
+x = config.core_offset_x
+y = config.core_offset_y
 
-print(f'{y} {x} {x+config.width} {y+config.height}')
+print(f'{x} {y} {x+config.core_width} {y+config.core_height}')
