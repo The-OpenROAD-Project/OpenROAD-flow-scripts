@@ -78,9 +78,7 @@ EXCLUDED_VARS+="|LD_LIBRARY_PATH|INFOPATH|HOME|PWD|MAIL|TIME_CMD|QT_QPA_PLATFORM
 
 printf '%s\n' "$ISSUE_VARIABLES" | while read -r V;
 do
-    echo "VAR ${V}";
     if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} && ${V%=*} != *"MAKEFILE"* && ! ${V%=*} =~ ^(${EXCLUDED_VARS})$ ]] ; then
-        echo "VAR2 ${V}";
         rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
         # handle special case where the variable needs to be splitted in Tcl code
         if [[ "${V%=*}" == "GND_NETS_VOLTAGES" || "${V%=*}" == "PWR_NETS_VOLTAGES" ]]; then
