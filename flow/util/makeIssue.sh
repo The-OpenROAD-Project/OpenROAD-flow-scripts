@@ -13,7 +13,7 @@ ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \
                            IO_CONSTRAINTS \
                            MACRO_PLACEMENT \
                            RTLMP_CONFIG_FILE \
-                           DFF_LIB_FILE"
+                           DFF_LIB_FILE "
 ISSUE_CP_PLATFORM_FILE_VARS="LIB_FILES \
                              SC_LEF \
                              TECH_LEF \
@@ -33,7 +33,7 @@ ISSUE_CP_PLATFORM_FILE_VARS="LIB_FILES \
                              FASTROUTE_TCL \
                              POST_DETAIL_ROUTE_TCL \
                              RCX_RULES \
-                             FILL_CONFIG"
+                             FILL_CONFIG "
 ISSUE_CP_FILE_VARS=$ISSUE_CP_DESIGN_FILE_VARS
 
 ISSUE_CP_FILES_PLATFORM=""
@@ -78,7 +78,7 @@ EXCLUDED_VARS+="|LD_LIBRARY_PATH|INFOPATH|HOME|PWD|MAIL|TIME_CMD|QT_QPA_PLATFORM
 
 printf '%s\n' "$ISSUE_VARIABLES" | while read -r V;
 do
-    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} && ${V%=*} != *"MAKE"* && ! ${V%=*} =~ ^(${EXCLUDED_VARS})$ ]] ; then
+    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} && ${V%=*} != *"MAKEFILE"* && ! ${V%=*} =~ ^(${EXCLUDED_VARS})$ ]] ; then
         rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
         # handle special case where the variable needs to be splitted in Tcl code
         if [[ "${V%=*}" == "GND_NETS_VOLTAGES" || "${V%=*}" == "PWR_NETS_VOLTAGES" ]]; then

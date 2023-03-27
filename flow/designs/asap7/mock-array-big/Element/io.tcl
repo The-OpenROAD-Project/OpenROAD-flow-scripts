@@ -41,7 +41,8 @@ proc zip {list1 list2} {
 
 foreach {direction direction2 names} $assignments {
     set mirrored [zip {*}$names]
-    set_io_pin_constraint -region $direction:* -pin_names [lindex $names 0] -group -order
+    set_io_pin_constraint -region $direction:* -pin_names [lindex $names 0]
+    set_io_pin_constraint -group -order -pin_names [lindex $names 0]
     set_io_pin_constraint -mirrored_pins $mirrored
 }
 
