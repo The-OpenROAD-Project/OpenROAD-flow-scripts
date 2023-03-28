@@ -7,16 +7,9 @@ load_design 3_place.odb 3_place.sdc "Starting CTS"
 repair_clock_inverters
 
 # Run CTS
-if {[info exist ::env(CTS_CLUSTER_SIZE)]} {
-  set cluster_size "$::env(CTS_CLUSTER_SIZE)"
-} else {
-  set cluster_size 30
-}
-if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
-  set cluster_diameter "$::env(CTS_CLUSTER_DIAMETER)"
-} else {
-  set cluster_diameter 100
-}
+#change ifelse to :?
+set cluster_size [expr {[info exists :: env(CTS_CLUSTER_SIZE)] ? $::env(CTS_CLUSTER_SIZE) : 30}]
+set cluster_diameter [expr {[info exists :: env(CTS_CLUSTER_DIAMETER)] ? $::env(CTS_CLUSTER_DIAMETER) : 100}]
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
 clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
