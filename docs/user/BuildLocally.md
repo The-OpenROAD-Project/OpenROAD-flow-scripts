@@ -2,12 +2,12 @@
 
 ## Clone and Install Dependencies
 
-The `DependencyInstaller.sh` script installs all of the dependencies, including OpenROAD dependencies, if they are not already installed.
+The `setup.sh` script installs all of the dependencies, including OpenROAD dependencies, if they are not already installed.
 
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
-./etc/DependencyInstaller.sh
+sudo ./setup.sh
 ```
 
 ## Build
@@ -27,4 +27,15 @@ source ./setup_env.sh
 yosys -help
 openroad -help
 exit
+```
+
+## Compiling and debugging in Visual Studio Code
+
+Set up environment variables to point to tools that CMake from within
+Visual Studio Code will need, then start Visual Studio Code as usual
+and hit F7, assuming you have CMake plugins installed.
+
+``` shell
+. ./dev_env.sh
+code tools/OpenROAD/
 ```

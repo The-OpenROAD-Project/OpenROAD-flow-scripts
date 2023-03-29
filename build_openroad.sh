@@ -7,6 +7,10 @@ set -eu
 # Make sure we are on the correct folder before beginning
 cd "$(dirname $(readlink -f $0))"
 
+# Set up paths to dependencies, such as cmake and boost. Safe no-op
+# if tools were set up elsewhere in the path.
+. dev_env.sh
+
 # Defaults variable values
 NICE=""
 
