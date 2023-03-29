@@ -28,3 +28,8 @@ yosys -help
 openroad -help
 exit
 ```
+
+> **Note:** For WSL based Ubuntu22.04 install `xterm` to access OpenROAD GUI.
+ ```
+ sudo apt update && sudo apt upgrade && sudo apt-get install xterm
+ ```
