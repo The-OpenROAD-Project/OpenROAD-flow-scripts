@@ -8,8 +8,8 @@ repair_clock_inverters
 
 # Run CTS
 #change ifelse to :?
-set cluster_size [expr {[info exists :: env(CTS_CLUSTER_SIZE)] ? $::env(CTS_CLUSTER_SIZE) : 30}]
-set cluster_diameter [expr {[info exists :: env(CTS_CLUSTER_DIAMETER)] ? $::env(CTS_CLUSTER_DIAMETER) : 100}]
+set cluster_size [expr {[info exists ::env(CTS_CLUSTER_SIZE)] ? $::env(CTS_CLUSTER_SIZE) : 30}]
+set cluster_diameter [expr {[info exists ::env(CTS_CLUSTER_DIAMETER)] ? $::env(CTS_CLUSTER_DIAMETER) : 100}]
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
 clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
