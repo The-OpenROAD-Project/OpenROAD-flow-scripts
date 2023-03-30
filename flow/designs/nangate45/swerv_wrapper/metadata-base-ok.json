@@ -307,7 +307,7 @@
   "run__flow__uuid": "e685ba8c-de2d-4798-90c3-4a650aa2de6f",
   "run__flow__variant": "base",
   "synth__cpu__total": 647.69,
-  "synth__design__instance__area__stdcell": 11680.592,
+  "synth__design__instance__area__stdcell": 639482.354,
   "synth__design__instance__count__stdcell": 94585.0,
   "synth__mem__peak": 1413216.0,
   "synth__runtime__total": "10:59.10",

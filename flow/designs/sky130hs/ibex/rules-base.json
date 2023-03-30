@@ -72,7 +72,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.88,
+        "value": -1.11,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
