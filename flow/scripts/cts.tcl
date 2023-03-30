@@ -7,7 +7,6 @@ load_design 3_place.odb 3_place.sdc "Starting CTS"
 repair_clock_inverters
 
 # Run CTS
-#change ifelse to :?
 set cluster_size [expr {[info exists ::env(CTS_CLUSTER_SIZE)] ? $::env(CTS_CLUSTER_SIZE) : 30}]
 set cluster_diameter [expr {[info exists ::env(CTS_CLUSTER_DIAMETER)] ? $::env(CTS_CLUSTER_DIAMETER) : 100}]
 
