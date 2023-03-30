@@ -56,13 +56,8 @@ puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
 puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
 close $constr
 
-if {$::env(ABC_AREA)} {
-  puts "Using ABC area script."
-  set abc_script $::env(SCRIPTS_DIR)/abc_area.script
-} else {
-  puts "Using ABC speed script."
-  set abc_script $::env(SCRIPTS_DIR)/abc_speed.script
-}
+set abc_script $::env(SCRIPTS_DIR)/abc_area.script[expr{[$::env(ABC_AREA)]? $::puts"Using ABC area scripts.":"Uing ABCspeed scripts."}]
+
 
 # Technology mapping for cells
 # ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
