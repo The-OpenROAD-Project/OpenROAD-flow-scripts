@@ -171,13 +171,12 @@ make DESIGN_CONFIG=./designs/sky130hd/gcd/config.mk synth
 
 To run Floorplan for the same design, run below
 
-make DESIGN_CONFIG=./designs/sky130hd/gcd/config.mk floorplan
+
 
 Similarly, we can run place, cts, route, finish
 
 Now, in OpenROAD design contest, we are supposed to optimize the OpenROAD runtime and scripts to improve the performance. So, if we made any changes in any config file or any other code/scripts/tools in the ORFS design, hoping to see the changes in the parameters after running the same design to see the improvement. We can try running the same scrips above to see improvements or changes in each stage manually or we can run complete RTL to GDS2 flow (as per user's preference). For eg. To check the improvements in Floorplan of a design, we can run the same command.
 
-make DESIGN_CONFIG=./designs/sky130hd/gcd/config.mk floorplan
 
 However, it may throw an make error as below.
 
