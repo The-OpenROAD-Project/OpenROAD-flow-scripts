@@ -27,3 +27,5 @@ export PDN_TCL = designs/asap7/mock-array-big/pdn.tcl
 
 # Avoid global routing too close to macros
 export MACRO_EXTENSION = 2
+
+export PRIVATE_DIR = ./designs/$(PLATFORM)/${DESIGN_NICKNAME}

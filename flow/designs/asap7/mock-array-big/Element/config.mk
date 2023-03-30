@@ -13,3 +13,5 @@ export DIE_AREA = $(shell python3 designs/asap7/mock-array-big/ce_die_area.py)
 export IO_CONSTRAINTS = designs/asap7/mock-array-big/Element/io.tcl
 
 export MACRO_PLACE_HALO = 1 1
+
+export PRIVATE_DIR = ./designs/$(PLATFORM)/mock-array-big
