@@ -664,23 +664,31 @@ $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
-# To speed up turnaround times when composing
-# macros to a higher level design, such as doing floorplanning,
-# or tweaking options for detailed routing, it can be useful to quickly
-# generate a mock abstract.
-#
-# This mock abstract has the same
-# interface(pins in the same places, blockages, etc.) as the final abstract,
-# but it is essentially an eviscerated macro.
-#
-# At a higher level, it is then possible to take the designs all
-# the way through "make route" (detailed route), but beyond that a .gds file is
-# needed, which the mock abstract does not contain.
-generate_mock_abstract: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
-	(ABSTRACT_FROM=3_place $(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json ) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
+# Skipping CTS can be useful to smoketest later stages.
+skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
+	# mock all intermediate results
+	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_1_cts.odb
+	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_2_cts_fillcell.odb
+	cp $(RESULTS_DIR)/3_place.sdc $(RESULTS_DIR)/4_cts.sdc
+	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_cts.odb
 
+# Skipping route can be useful to create a mock abstract
+skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
+	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_1_grt.odb
+	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_2_route.odb
+	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/6_1_fill.odb
+	touch $(RESULTS_DIR)/6_final.spef
+	$(MAKE) $(LOG_DIR)/6_report.log
+	$(MAKE) finish
+
+# To create a mock abstract quickly, good enough to iterate quickly on
+# floorplanning and detailed route at higher levels, run:
+#
+# make skip_cts
+# make skip_route
+# make generate_abstract
 generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
-	(ABSTRACT_FROM=6_1_fill $(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
 
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
