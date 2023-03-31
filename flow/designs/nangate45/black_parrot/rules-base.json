@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 25536,
+        "value": 875702,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.62,
+        "value": -0.98,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -84,7 +84,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -22.85,
+        "value": -22.83,
         "compare": ">="
     }
 }

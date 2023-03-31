@@ -14,7 +14,7 @@ This is intended for:
 
 -   Beginners or new users with some understanding of basic VLSI
     design flow. Users will learn the basics of installation to use
-    [OpenROAD-flow-scripts](https://openroad.readthedocs.io/en/latest/user/GettingStarted.html)
+    [OpenROAD-flow-scripts](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html)
     for the complete RTL-to-GDS flow.
 -   Users already familiar with the OpenROAD application and flow but would
     like to learn more about specific features and commands.
@@ -48,7 +48,7 @@ pipeline.
 Use the `bash` shell to run commands and scripts.
 
 Install OpenROAD Flow Scripts. Refer to the [Getting Started with
-OpenROAD Flow](getting:started:setup) documentation.
+OpenROAD Flow](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html) documentation.
 
 If ORFS is already installed but needs updating, run the
 following commands:
@@ -230,6 +230,15 @@ make DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 
 As the flow executes, check out the ORFS directory contents and their
 significance.
+
+ORFS can generally restart from a previous partial run. If you have errors which prevent restarting the flow, you may try deleting all generated files and start a fresh run. Errors can occur if a tool crashes or is killed while writing a file. The files for `sky130hd/ibex` as an example can be deleted with:
+
+```
+make clean_all DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
+```
+
+You can also delete files related to individual stages of RTL to GDSII conversion like synthesis, floorplanning, macro placement, clock tree synthesis, routing and layout generation with `clean_synth`, `clean_floorplan`, `clean_place`, `clean_cts`, `clean_route`, and `clean_finish`, respectively.
+
 
 ### Viewing ORFS Directory Structure And Results
 
