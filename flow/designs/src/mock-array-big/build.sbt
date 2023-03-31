@@ -8,8 +8,8 @@ scalaVersion := "2.13.6"
 scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked", "-language:reflectiveCalls")
 
 val defaultVersions = Map(
-  "chisel3" -> "3.5.5",
-  "chiseltest" -> "0.5.5"
+  "chisel3" -> "3.6.0-RC2",
+  "chiseltest" -> "0.6.0-RC2"
 )
 
 libraryDependencies ++= (Seq("chisel3", "chiseltest").map { dep: String =>
@@ -17,9 +17,7 @@ libraryDependencies ++= (Seq("chisel3", "chiseltest").map { dep: String =>
     .getOrElse(dep + "Version", defaultVersions(dep)) withSources () withJavadoc ()
 })
 
-addCompilerPlugin("edu.berkeley.cs" % "chisel3-plugin" % "3.5.5" cross CrossVersion.full)
-
-libraryDependencies += "com.sifive" %% "chisel-circt" % "0.7.0"
+addCompilerPlugin("edu.berkeley.cs" % "chisel3-plugin" % "3.6.0-RC2" cross CrossVersion.full)
 
 libraryDependencies += "com.github.scopt" %% "scopt" % "4.0.0"
 

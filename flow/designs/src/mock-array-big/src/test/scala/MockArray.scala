@@ -1,5 +1,5 @@
 // to generate code, run:
-// sbt "test:runMain GenerateMockArray --emit-modules verilog --target-dir ."
+// ../../asap7/mock-array-big/configure.sh
 
 import chisel3._
 
@@ -13,8 +13,29 @@ import chisel3.experimental._
 import scopt.OParser
 import System.err
 import scopt.RenderingMode
+import scala.collection.immutable.SeqMap
+
+
+class VecWithNames[T <: Data](names: () => SeqMap[String, T]) extends Record {
+  lazy val elements = names()
+
+  def asSeq: Seq[T] = elements.map(_._2).toSeq
+}
+
+object Routes extends Enumeration {
+  type Routes = Value
+
+  val LEFT, UP, RIGHT, DOWN = Value
+}
 
 class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
+
+  val routes = (() => {
+    SeqMap(Routes.values.toSeq.map { bus =>
+      bus.toString().toLowerCase() -> UInt(singleElementWidth.W)
+    }: _*)
+  })
+
 
   val io = IO(new Bundle {
     val insHorizontal = Input(Vec(2, Vec(width, UInt(singleElementWidth.W))))
@@ -27,40 +48,40 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
   class Element extends Module {
     val io =
       IO(new Bundle {
-        val ins = Input(Vec(4, UInt(singleElementWidth.W)))
-        val outs = Output(Vec(4, UInt(singleElementWidth.W)))
+        val ins = Input(new VecWithNames(routes))
+        val outs = Output(new VecWithNames(routes))
       })
-    io.outs := io.ins.reverse.map(RegNext(_))
+    (io.outs.asSeq zip io.ins.asSeq.reverse.map(RegNext(_))).foreach{case (a, b) => a := b}
   }
 
   val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
 
-  io.lsbs := ces.flatten.map(_.io.outs.head(0))
+  io.lsbs := ces.flatten.map(_.io.outs.asSeq.head(0))
 
   // 0 top
   // 1 right
   // 2 bottom
   // 3 left
-  (ces(0).map(_.io.ins(0)) zip io.insHorizontal(0)).foreach { case (a, b)        => a := b }
-  (ces.map(_.last).map(_.io.ins(1)) zip io.insVertical(0)).foreach { case (a, b) => a := b }
-  (ces.last.map(_.io.ins(2)) zip io.insHorizontal(1)).foreach { case (a, b)      => a := b }
-  (ces.map(_.head).map(_.io.ins(3)) zip io.insVertical(1)).foreach { case (a, b) => a := b }
+  (ces(0).map(_.io.ins.asSeq(0)) zip io.insHorizontal(0)).foreach { case (a, b)        => a := b }
+  (ces.map(_.last).map(_.io.ins.asSeq(1)) zip io.insVertical(0)).foreach { case (a, b) => a := b }
+  (ces.last.map(_.io.ins.asSeq(2)) zip io.insHorizontal(1)).foreach { case (a, b)      => a := b }
+  (ces.map(_.head).map(_.io.ins.asSeq(3)) zip io.insVertical(1)).foreach { case (a, b) => a := b }
 
-  (ces(0).map(_.io.outs(0)) zip io.outsHorizontal(0)).foreach { case (a, b)        => b := a }
-  (ces.map(_.last).map(_.io.outs(1)) zip io.outsVertical(0)).foreach { case (a, b) => b := a }
-  (ces.last.map(_.io.outs(2)) zip io.outsHorizontal(1)).foreach { case (a, b)      => b := a }
-  (ces.map(_.head).map(_.io.outs(3)) zip io.outsVertical(1)).foreach { case (a, b) => b := a }
+  (ces(0).map(_.io.outs.asSeq(0)) zip io.outsHorizontal(0)).foreach { case (a, b)        => b := a }
+  (ces.map(_.last).map(_.io.outs.asSeq(1)) zip io.outsVertical(0)).foreach { case (a, b) => b := a }
+  (ces.last.map(_.io.outs.asSeq(2)) zip io.outsHorizontal(1)).foreach { case (a, b)      => b := a }
+  (ces.map(_.head).map(_.io.outs.asSeq(3)) zip io.outsVertical(1)).foreach { case (a, b) => b := a }
 
   (ces.flatten zip ces.drop(1).flatten).foreach {
     case (a, b) =>
-      a.io.ins(2) := b.io.outs(0)
-      b.io.ins(0) := a.io.outs(2)
+      a.io.ins.asSeq(2) := b.io.outs.asSeq(0)
+      b.io.ins.asSeq(0) := a.io.outs.asSeq(2)
   }
 
   (ces.transpose.flatten zip ces.transpose.drop(1).flatten).foreach {
     case (a, b) =>
-      a.io.ins(1) := b.io.outs(3)
-      b.io.ins(3) := a.io.outs(1)
+      a.io.ins.asSeq(1) := b.io.outs.asSeq(3)
+      b.io.ins.asSeq(3) := a.io.outs.asSeq(1)
   }
 }
 
