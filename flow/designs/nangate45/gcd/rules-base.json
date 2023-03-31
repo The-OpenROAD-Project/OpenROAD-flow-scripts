@@ -20,15 +20,15 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -0.19,
+        "value": -0.18,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -0.25,
+        "value": -0.24,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -0.25,
+        "value": -0.24,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -84,7 +84,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -30.22,
+        "value": -30.02,
         "compare": ">="
     }
 }

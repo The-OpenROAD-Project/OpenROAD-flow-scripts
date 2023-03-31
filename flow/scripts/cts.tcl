@@ -71,6 +71,10 @@ if { [info exists ::env(HOLD_SLACK_MARGIN)] && $::env(HOLD_SLACK_MARGIN) > 0.0} 
   puts "Hold slack margin $::env(HOLD_SLACK_MARGIN)"
   append additional_args " -hold_margin $::env(HOLD_SLACK_MARGIN)"
 }
+if { [info exists ::env(TNS_END_PERCENT)] && $::env(TNS_END_PERCENT) > 0.0} {
+  puts "TNS end percent $::env(TNS_END_PERCENT)"
+  append additional_args " -repair_tns $::env(TNS_END_PERCENT)"
+}
 
 repair_timing {*}$additional_args
 
