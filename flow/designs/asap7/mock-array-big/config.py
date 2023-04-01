@@ -3,23 +3,25 @@ import os
 
 rows = int(os.environ.get("MOCK_ARRAY_HEIGHT", "8"))
 cols = int(os.environ.get("MOCK_ARRAY_WIDTH", "8"))
-pitch_scale = int(os.environ.get("MOCK_ARRAY_PITCH_SCALE", "10"))
+pitch_scale = int(os.environ.get("MOCK_ARRAY_PITCH_SCALE", "2"))
 
+# Routing pitches for relevant metal layers.
+#  For x, this is M5; for y, this is M4.
+#  Pitches are specified in OpenROAD-flow-scripts/flow/platforms/asap7/lef/asap7_tech_1x_201209.lef.
+#  For asap7, x and y pitch is the same.
+routing_pitch = 0.048
 
-# from platforms/asap7/openRoad/make_tracks.tcl, smallest common x_pitch and y_pitch
-# denominator
-lowest_common_grid_denominator = 0.576
+# 0.048 * 125 = 6, which is a nice round number to work with
+pitch = routing_pitch * 125 * pitch_scale
+margin = routing_pitch * 125 * 2
+core_offset_x = margin
+core_offset_y = margin
+die_offset_x = core_offset_x + margin
+die_offset_y = core_offset_y + margin
 
-power_x_pitch = 4 * lowest_common_grid_denominator
-power_y_pitch = 4 * lowest_common_grid_denominator
-y_pitch = (power_y_pitch * pitch_scale)
-x_pitch = (power_x_pitch * pitch_scale)
-offset_x = power_x_pitch * 4
-offset_y = power_y_pitch * 4
-margin = 4 * lowest_common_grid_denominator
+pitch_and_margin = pitch + margin
 
-element_width = x_pitch - power_x_pitch * 4
-element_height = y_pitch - power_y_pitch * 4
-
-height = rows * y_pitch + offset_y
-width = cols * x_pitch + offset_x
+core_width = cols * pitch_and_margin + core_offset_x
+core_height = rows * pitch_and_margin + core_offset_y
+die_width = core_width + margin * 2
+die_height = core_height + margin * 2
