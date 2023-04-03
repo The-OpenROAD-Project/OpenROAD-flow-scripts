@@ -678,8 +678,6 @@ skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_2_route.odb
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/6_1_fill.odb
 	touch $(RESULTS_DIR)/6_final.spef
-	$(MAKE) $(LOG_DIR)/6_report.log
-	$(MAKE) finish
 
 # To create a mock abstract quickly, good enough to iterate quickly on
 # floorplanning and detailed route at higher levels, run:
