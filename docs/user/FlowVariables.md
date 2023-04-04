@@ -74,15 +74,16 @@ Note:
 | `WIRE_RC_LAYER`                      | =            | =            | =             | =         | =         |
 | Clock Tree Synthesis                 |              |              |               |           |           |
 | `CTS_BUF_CELL`                       | =            | =            | =             | =         | =         |
-| `FILL_CELLS`                         | =            | =            | =             | =         | =         |
 | `CTS_BUF_DISTANCE`                   | N/A          | N/A          | N/A           | =         | =         |
+| `FILL_CELLS`                         | =            | =            | =             | =         | =         |
+| `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
-| `MIN_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
-| `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
 | `FASTROUTE_TCL`                      | ?=           | ?=           | ?=            | N/A       | N/A       |
-| `RCX_RULES`                          | =            | =            | =             | =         | =         |
-| `KLAYOUT_TECH_FILE`                  | =            | =            | =             | =         | =         |
 | `FILL_CONFIG`                        | =            | =            | N/A           | N/A       | N/A       |
+| `KLAYOUT_TECH_FILE`                  | =            | =            | =             | =         | =         |
+| `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
+| `MIN_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
+| `RCX_RULES`                          | =            | =            | =             | =         | =         |
 
 
 ### Library Setup
@@ -162,9 +163,9 @@ Note:
 |-----------------------|--------------------------------------------------------------------------------------------------------------|
 | `CTS_BUF_CELL`        | The buffer cell used in the clock tree.                                                                      |
 | `FILL_CELLS`          | Fill cells are used to fill empty sites.    								       |
-| `SETUP_SLACK_MARGIN`  | Specifies a time margin for the slack when fixing setup violations.                                          |
 | `HOLD_SLACK_MARGIN`   | Specifies a time margin for the slack when fixing hold violations. This option allow you to overfix.         |
-| `FILL_CELLS`          | Fill cells are used to fill empty sites.								       |
+| `SETUP_SLACK_MARGIN`  | Specifies a time margin for the slack when fixing setup violations.                                          |
+| `TNS_END_PERCENT`     | Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed                |
 
 
 ### Routing
