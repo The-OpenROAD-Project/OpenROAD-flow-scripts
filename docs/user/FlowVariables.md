@@ -165,7 +165,8 @@ Note:
 | `FILL_CELLS`          | Fill cells are used to fill empty sites.    								       |
 | `HOLD_SLACK_MARGIN`   | Specifies a time margin for the slack when fixing hold violations. This option allow you to overfix.         |
 | `SETUP_SLACK_MARGIN`  | Specifies a time margin for the slack when fixing setup violations.                                          |
-| 'TNS_END_PERCENT'     | Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed                |
+| `TNS_END_PERCENT`     | Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed                |
+
 
 ### Routing
 
