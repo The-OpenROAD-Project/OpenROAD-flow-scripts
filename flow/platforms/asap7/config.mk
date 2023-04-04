@@ -122,6 +122,9 @@ export MAX_ROUTING_LAYER       = M7
 # KLayout technology file
 export KLAYOUT_TECH_FILE       = $(PLATFORM_DIR)/KLayout/asap7.lyt
 
+# KLayout DRC ruledeck
+export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/asap7.lydrc
+
 # OpenRCX extRules
 export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules
 
