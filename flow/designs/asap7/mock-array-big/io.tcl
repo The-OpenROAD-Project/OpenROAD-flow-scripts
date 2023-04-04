@@ -1,3 +1,11 @@
+proc pin1 {fmt p} {
+    set result [list]
+    for {set m 0} {$m < $p} {incr m} {
+        lappend result [format $fmt $m]
+    }
+    return $result
+}
+
 proc pin2 {fmt p q} {
     set result [list]
     for {set m 0} {$m < $p} {incr m} {
@@ -32,6 +40,7 @@ set assignments [list \
     [ concat \
         {*}[pin2 {io_insLeft_%d[%d]} $rows $data_width] \
         {*}[pin2 {io_outsRight_%d[%d]} $rows $data_width] \
+        {*}[pin1 {io_lsbs_%d} $cols] \
     ] \
 ]
 

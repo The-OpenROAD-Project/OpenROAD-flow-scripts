@@ -46,6 +46,7 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
     val outsUp = Output(Vec(width, UInt(singleElementWidth.W)))
     val outsRight = Output(Vec(width, UInt(singleElementWidth.W)))
     val outsDown = Output(Vec(width, UInt(singleElementWidth.W)))
+
     val lsbs = Output(Vec(width * height, Bool()))
   })
 
@@ -54,16 +55,31 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
       IO(new Bundle {
         val ins = Input(new VecWithNames(routes))
         val outs = Output(new VecWithNames(routes))
+
+        val lsbIns = Input(Vec(width, Bool()))
+        val lsbOuts = Output(Vec(width, Bool()))
       })
+
     // Registered routing paths
     //  left <-> down
     //  up <-> right
     (io.outs.asSeq zip io.ins.asSeq.reverse.map(RegNext(_))).foreach{case (a, b) => a := b}
+
+    // Combinational logic
+    //  Ensure no bits are excluded during optimization
+    dontTouch(io.lsbIns)
+    io.lsbOuts := io.lsbIns.drop(1) ++ Seq(io.outs.asSeq.head(0)(0))
   }
 
   val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
 
-  io.lsbs := ces.flatten.map(_.io.outs.asSeq.head(0))
+  ces.foreach{row =>
+    row.head.io.lsbIns := DontCare
+    row.sliding(2, 1).foreach{pair =>
+      pair(1).io.lsbIns := pair(0).io.lsbOuts
+  }}
+
+  io.lsbs := ces.map(_.last.io.lsbOuts).flatten
 
   // Connect inputs to edge element buses
   (ces.map(_.head).map(_.io.ins.asSeq(Routes.RIGHT.id)) zip io.insRight).foreach { case (a, b) => a := b }
