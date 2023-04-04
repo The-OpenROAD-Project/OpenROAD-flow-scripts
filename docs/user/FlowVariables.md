@@ -76,7 +76,7 @@ Note:
 | `CTS_BUF_CELL`                       | =            | =            | =             | =         | =         |
 | `CTS_BUF_DISTANCE`                   | N/A          | N/A          | N/A           | =         | =         |
 | `FILL_CELLS`                         | =            | =            | =             | =         | =         |
-| 'TNS_END_PERCENT'                    | ?=           | ?=           |               | ?=        | ?=        |
+| `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
 | `FASTROUTE_TCL`                      | ?=           | ?=           | ?=            | N/A       | N/A       |
 | `FILL_CONFIG`                        | =            | =            | N/A           | N/A       | N/A       |
