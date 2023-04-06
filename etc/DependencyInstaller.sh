@@ -126,6 +126,8 @@ EOF
 
 # default args
 OR_INSTALLER_ARGS=""
+#default option
+option="all"
 
 # default values, can be overwritten by cmdline args
 while [ "$#" -gt 0 ]; do
@@ -135,9 +137,17 @@ while [ "$#" -gt 0 ]; do
             ;;
         -base)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -base"
+            if [[ "${option}" != "all" ]]; then
+                echo "WARNING: previous argument -${option} will be overwritten with -base." >&2
+            fi
+            option="base"
             ;;
         -common)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -common"
+            if [[ "${option}" != "all" ]]; then
+                echo "WARNING: previous argument -${option} will be overwritten with -common." >&2
+            fi
+            option="common"
             ;;
         -local)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
@@ -178,21 +188,33 @@ esac
 case "${os}" in
     "CentOS Linux" )
         _installORDependencies
-        _installCentosPackages
-        _installCommon
-        _installCentosCleanUp
+        if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+            _installCentosPackages
+            _installCentosCleanUp
+        fi
+        if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+            _installCommon
+        fi        
         ;;
     "Ubuntu" )
         version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
         _installORDependencies
-        _installUbuntuPackages "${version}"
-        _installCommon
-        _installUbuntuCleanUp
+        if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+            _installUbuntuPackages "${version}"
+            _installUbuntuCleanUp
+        fi
+        if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+            _installCommon
+        fi
         ;;
     "Darwin" )
         _installORDependencies
-        _installDarwinPackages
-        _installCommon
+        if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+            _installDarwinPackages
+        fi
+        if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+            _installCommon
+        fi
         ;;
     *)
         echo "unsupported system: ${os}" >&2
