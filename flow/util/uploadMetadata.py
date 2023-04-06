@@ -7,6 +7,9 @@ import argparse
 import re
 import os
 
+# make sure the working dir is flow/
+os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+
 # Create the argument parser
 parser = argparse.ArgumentParser(description='Process some integers.')
 
@@ -21,14 +24,7 @@ parser.add_argument("--variant", type=str, default="base")
 # Parse the arguments
 args = parser.parse_args()
 
-def upload_data(datafile, platform, design, variant, args):
-    # Initialize Firebase Admin SDK with service account credentials
-    cred = credentials.Certificate(args.keyFile)
-    firebase_admin.initialize_app(cred)
-
-    # Initialize Firestore client
-    db = firestore.client()
-
+def upload_data(db, datafile, platform, design, variant, args):
     # Set the document data
     key = args.commitSHA + '-' + platform + '-' + design + '-' + variant
     doc_ref = db.collection('build_metrics').document(key)
@@ -37,7 +33,6 @@ def upload_data(datafile, platform, design, variant, args):
         'branch_name': args.branchName,
         'pipeline_id': args.pipelineID,
         'commit_sha': args.commitSHA,
-        'golden': True,
     })
 
     # Load JSON data from file
@@ -64,6 +59,13 @@ def upload_data(datafile, platform, design, variant, args):
     # Set the data to the document in Firestore
     doc_ref.update(new_data)
 
+
+# Initialize Firebase Admin SDK with service account credentials
+cred = credentials.Certificate(args.keyFile)
+firebase_admin.initialize_app(cred)
+# Initialize Firestore client
+db = firestore.client()
+
 runFilename = f'metadata-{args.variant}.json'
 
 for reportDir, dirs, files in sorted(os.walk('reports', topdown=False)):
@@ -78,4 +80,5 @@ for reportDir, dirs, files in sorted(os.walk('reports', topdown=False)):
     test = '{} {} {}'.format(platform, design, variant)
     print(test)
     dataFile = os.path.join(reportDir, runFilename)
-    upload_data(dataFile, platform, design, variant, args)
+    if design != 'mock-array-big_Element':
+        upload_data(db, dataFile, platform, design, variant, args)

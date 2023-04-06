@@ -172,6 +172,14 @@ pipeline {
       }
     }
 
+    stage('Upload Metadata') {
+      steps {
+        withCredentials([googleServiceAccount(credentialsId: 'firebase-admin-svc', projectId: 'foss-fpga-tools-ext-openroad')]) {
+          sh "python flow/util/uploadMetadata.py --build-id ${env.BUILD_ID} --branch-name ${env.BRANCH_NAME} --commit-sha ${env.GIT_COMMIT} --pipeline-id ${env.BUILD_TAG} --keyfile $GOOGLE_APPLICATION_CREDENTIALS"
+        }
+      }
+    }
+    
   }
 
   post {
