@@ -42,7 +42,7 @@
     "pdn": {
         "pdk": "flow/platforms/asap7/openRoad/pdn",
         "openlane": "libs.tech/openlane/asap7sc7p5t",
-        "files": ["grid_strategy-M2-M5-M7.cfg"]
+        "files": ["grid_strategy-M1-M2-M5-M6.cfg"]
     },
     "tracks": {
         "pdk": "flow/platforms/asap7/openRoad",
