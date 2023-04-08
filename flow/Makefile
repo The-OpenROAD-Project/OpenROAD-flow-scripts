@@ -640,8 +640,11 @@ finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
         $(GDS_FINAL_FILE)
+	$(MAKE) elapsed
+
+elapsed:
 	@printf "%-25s %10s\n" Log "Elapsed seconds"
-	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
+	@grep Elapsed $(abspath $(LOG_DIR))/*.log | awk 'match($$0, /[a-zA-Z_0-9/]+\/([a-zA-Z_0-9]+)\.log:Elapsed time: ([0-9]+:)?([0-9]+):([0-9]+)/ , arr) { printf "%-25s %10d\n", arr[1], arr[2]*3600 + arr[3] * 60 + arr[4] }'
 
 # ==============================================================================
 
@@ -687,6 +690,7 @@ skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
 # make generate_abstract
 generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
+	$(MAKE) elapsed
 
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
