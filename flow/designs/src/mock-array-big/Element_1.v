@@ -1,4 +1,4 @@
-module Element(
+module Element_1(
   input        clock,
   input  [7:0] io_ins_0,
   input  [7:0] io_ins_1,
@@ -16,17 +16,13 @@ module Element(
   reg [31:0] _RAND_3;
 `endif // RANDOMIZE_REG_INIT
   reg [7:0] REG; // @[MockArray.scala 33:45]
-  wire [8:0] _T = {{1'd0}, REG}; // @[MockArray.scala 33:49]
   reg [7:0] REG_1; // @[MockArray.scala 33:45]
-  wire [8:0] _T_2 = {{1'd0}, REG_1}; // @[MockArray.scala 33:49]
   reg [7:0] REG_2; // @[MockArray.scala 33:45]
-  wire [8:0] _T_4 = {{1'd0}, REG_2}; // @[MockArray.scala 33:49]
   reg [7:0] REG_3; // @[MockArray.scala 33:45]
-  wire [8:0] _T_6 = {{1'd0}, REG_3}; // @[MockArray.scala 33:49]
-  assign io_outs_0 = _T[7:0]; // @[MockArray.scala 33:49]
-  assign io_outs_1 = _T_2[7:0]; // @[MockArray.scala 33:49]
-  assign io_outs_2 = _T_4[7:0]; // @[MockArray.scala 33:49]
-  assign io_outs_3 = _T_6[7:0]; // @[MockArray.scala 33:49]
+  assign io_outs_0 = REG + 8'h1; // @[MockArray.scala 33:49]
+  assign io_outs_1 = REG_1 + 8'h1; // @[MockArray.scala 33:49]
+  assign io_outs_2 = REG_2 + 8'h1; // @[MockArray.scala 33:49]
+  assign io_outs_3 = REG_3 + 8'h1; // @[MockArray.scala 33:49]
   always @(posedge clock) begin
     REG <= io_ins_3; // @[MockArray.scala 33:45]
     REG_1 <= io_ins_2; // @[MockArray.scala 33:45]

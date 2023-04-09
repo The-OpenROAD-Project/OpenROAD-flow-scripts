@@ -24,16 +24,16 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
     val lsbs = Output(Vec(width * height, Bool()))
   })
 
-  class Element extends Module {
+  class Element(num:Int) extends Module {
     val io =
       IO(new Bundle {
         val ins = Input(Vec(4, UInt(singleElementWidth.W)))
         val outs = Output(Vec(4, UInt(singleElementWidth.W)))
       })
-    io.outs := io.ins.reverse.map(RegNext(_))
+    io.outs := io.ins.reverse.map(a=>RegNext(a) + (num%2).U)
   }
 
-  val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
+  val ces = Seq.fill(height)(Seq.tabulate(width)(i=>Module(new Element(i))))
 
   io.lsbs := ces.flatten.map(_.io.outs.head(0))
 
