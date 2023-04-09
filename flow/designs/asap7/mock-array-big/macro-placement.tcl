@@ -9,7 +9,7 @@ for {set row 0} {$row < $rows} {incr row} {
   for {set col 0} {$col < $cols} {incr col} {
     set inst [$block findInst [format "ces_%d_%d" $row $col]]
     $inst setOrient R0
-    set x [expr round([expr {$die_offset_x + $col * $pitch_and_margin}] * $units)]
+    set x [expr round([expr {$die_offset_x}] * $units)]
     set y [expr round([expr {$die_offset_y + $row * $pitch_and_margin}] * $units)]
 
     $inst setOrigin $x $y
