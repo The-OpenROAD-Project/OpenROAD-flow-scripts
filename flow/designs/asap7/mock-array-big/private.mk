@@ -1,0 +1,3 @@
+# Skip analyze_power_grid
+undefine PWR_NETS_VOLTAGES
+undefine GND_NETS_VOLTAGES

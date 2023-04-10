@@ -13,8 +13,11 @@ export GPL_ROUTABILITY_DRIVEN = 0
 export CORE_AREA = $(shell python3 designs/asap7/mock-array-big/ce_core_area.py)
 export DIE_AREA = $(shell python3 designs/asap7/mock-array-big/ce_die_area.py)
 
-export IO_CONSTRAINTS = designs/asap7/mock-array-big/Element/io.tcl
+#export IO_CONSTRAINTS = designs/asap7/mock-array-big/Element/io.tcl
 
 export MACRO_PLACE_HALO = 1 1
 
 export PDN_TCL = designs/asap7/mock-array-big/Element/pdn.tcl
+
+export PRIVATE_DIR = ./designs/$(PLATFORM)/mock-array-big/
+
