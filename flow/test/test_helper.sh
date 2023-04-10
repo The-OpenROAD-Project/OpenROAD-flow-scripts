@@ -20,7 +20,7 @@ if [ ! -z "${FLOW_VARIANT+x}" ]; then
   __make+=" FLOW_VARIANT=$FLOW_VARIANT"
 fi
 
-source ../setup_env.sh
+source ../env.sh
 
 $__make clean_all clean_metadata 2>&1 | tee $LOG_FILE
 

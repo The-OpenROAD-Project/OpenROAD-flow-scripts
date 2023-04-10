@@ -13,7 +13,7 @@ COPY --from=openroad/lsoracle /LSOracle/build/yosys-plugin/oracle.so /OpenROAD-f
 COPY --from=openroad/centos7-builder-gcc /OpenROAD/build/src/openroad ./tools/install/OpenROAD/bin/openroad
 
 # flow files
-COPY ./setup_env.sh .
+COPY ./env.sh .
 COPY ./flow ./flow
 
 # avoid issues with permissions
