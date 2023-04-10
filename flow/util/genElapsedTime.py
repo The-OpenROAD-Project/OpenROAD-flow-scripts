@@ -23,7 +23,7 @@ if not args.logDir:
     sys.exit(1)
 
 # Loop on all log files in the directory
-for f in list(pathlib.Path(args.logDir).glob('**/[0-9]_*.log')):
+for f in sorted(pathlib.Path(args.logDir).glob('**/[0-9]_*.log')):
     # Extract Elapsed Time line from log file
     for line in open(str(f)):
         elapsedTime = 0
