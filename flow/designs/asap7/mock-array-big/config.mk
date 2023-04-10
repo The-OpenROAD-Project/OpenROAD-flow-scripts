@@ -27,3 +27,6 @@ export MACRO_PLACE_HALO = 1 1
 
 # Avoid global routing too close to macros
 export MACRO_EXTENSION = 2
+
+#export SYNTH_HIERARCHICAL = 1
+export RTLMP_FLOW = True
