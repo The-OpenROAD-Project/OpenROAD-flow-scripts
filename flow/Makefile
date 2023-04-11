@@ -311,6 +311,7 @@ $(1) $(2) &: $(3)
 endef
 
 # Targets to harden Blocks in case of hierarchical flow is triggered
+.PHONY: build_macros
 build_macros: $(BLOCK_LEFS) $(BLOCK_LIBS)
 
 $(foreach block,$(BLOCKS),$(eval $(call GENERATE_ABSTRACT_RULE,./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef,./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib,./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/${block}/config.mk)))
@@ -416,6 +417,7 @@ clean_synth:
 # |  _| | |__| |_| | |_| |  _ <|  __/| |___ / ___ \| |\  |
 # |_|   |_____\___/ \___/|_| \_\_|   |_____/_/   \_\_| \_|
 #
+.PHONY: floorplan
 floorplan: $(RESULTS_DIR)/2_floorplan.odb \
            $(RESULTS_DIR)/2_floorplan.sdc
 # ==============================================================================
@@ -473,6 +475,7 @@ $(RESULTS_DIR)/2_floorplan.odb: $(RESULTS_DIR)/2_6_floorplan_pdn.odb
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
 
+.PHONY: clean_floorplan
 clean_floorplan:
 	rm -f $(RESULTS_DIR)/2_*floorplan*.odb $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/2_*.v $(RESULTS_DIR)/2_*.def
 	rm -f $(REPORTS_DIR)/2_*
@@ -485,6 +488,7 @@ clean_floorplan:
 # |  __/| |___ / ___ \ |___| |___
 # |_|   |_____/_/   \_\____|_____|
 #
+.PHONY: place
 place: $(RESULTS_DIR)/3_place.odb \
        $(RESULTS_DIR)/3_place.sdc
 # ==============================================================================
@@ -512,6 +516,7 @@ $(RESULTS_DIR)/3_3_place_gp.odb: $(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)
 $(RESULTS_DIR)/3_4_place_resized.odb: $(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/2_floorplan.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_4_resizer.json) 2>&1 | tee $(LOG_DIR)/3_4_resizer.log
 
+.PHONY: clean_resize
 clean_resize:
 	rm -f $(RESULTS_DIR)/3_4_place_resized.odb
 
@@ -528,6 +533,7 @@ $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
 
 # Clean Targets
 #-------------------------------------------------------------------------------
+.PHONY: clean_place
 clean_place:
 	rm -f $(RESULTS_DIR)/3_*place*.odb
 	rm -f $(RESULTS_DIR)/3_place.sdc
@@ -543,6 +549,7 @@ clean_place:
 # | |___  | |  ___) |
 #  \____| |_| |____/
 #
+.PHONY: cts
 cts: $(RESULTS_DIR)/4_cts.odb \
      $(RESULTS_DIR)/4_cts.sdc
 # ==============================================================================
@@ -562,6 +569,7 @@ $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.odb
 $(RESULTS_DIR)/4_cts.odb: $(RESULTS_DIR)/4_2_cts_fillcell.odb
 	cp $< $@
 
+.PHONY: clean_cts
 clean_cts:
 	rm -rf $(RESULTS_DIR)/4_*cts*.odb $(RESULTS_DIR)/4_cts.sdc $(RESULTS_DIR)/4_*.v $(RESULTS_DIR)/4_*.def
 	rm -f  $(REPORTS_DIR)/4_*
@@ -575,6 +583,7 @@ clean_cts:
 # |  _ <| |_| | |_| | | |  | || |\  | |_| |
 # |_| \_\\___/ \___/  |_| |___|_| \_|\____|
 #
+.PHONY: route
 route: $(RESULTS_DIR)/5_route.odb \
        $(RESULTS_DIR)/5_route.sdc
 # ==============================================================================
@@ -605,6 +614,7 @@ $(RESULTS_DIR)/5_route.v:
 	@export OR_DB=5_route ;\
 	$(OPENROAD_CMD) ./scripts/write_verilog.tcl
 
+.PHONY: clean_route
 clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
 	rm -rf *.gdid *.log *.met *.sav *.res.dmp
@@ -613,6 +623,7 @@ clean_route:
 	rm -f  $(REPORTS_DIR)/5_*
 	rm -f  $(LOG_DIR)/5_*
 
+.PHONY: klayout_tr_rpt
 klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 	$(call KLAYOUT_FOUND)
 	$(KLAYOUT_CMD) -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
@@ -620,6 +631,7 @@ klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/viewDrc.py
 
+.PHONY: klayout_guides
 klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 	$(call KLAYOUT_FOUND)
 	$(KLAYOUT_CMD) -rd in_guide="$(RESULTS_DIR)/route.guide" \
@@ -636,6 +648,7 @@ klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 # |_|   |___|_| \_|___|____/|_| |_|___|_| \_|\____|
 #
 GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
+.PHONY: finish
 finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
@@ -665,6 +678,7 @@ $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
 # Skipping CTS can be useful to smoketest later stages.
+.PHONY: skip_cts
 skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
 	# mock all intermediate results
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_1_cts.odb
@@ -673,6 +687,7 @@ skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_cts.odb
 
 # Skipping route can be useful to create a mock abstract
+.PHONY: skip_route
 skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_1_grt.odb
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_2_route.odb
@@ -685,6 +700,7 @@ skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
 # make skip_cts
 # make skip_route
 # make generate_abstract
+.PHONY: generate_abstract
 generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
 
@@ -722,6 +738,7 @@ $(RESULTS_DIR)/6_final.v: $(LOG_DIR)/6_report.log
 $(GDS_FINAL_FILE): $(GDS_MERGED_FILE)
 	cp $^ $@
 
+.PHONY: drc
 drc: $(REPORTS_DIR)/6_drc.lyrdb
 
 $(REPORTS_DIR)/6_drc.lyrdb: $(GDS_FINAL_FILE) $(KLAYOUT_DRC_FILE)
@@ -742,6 +759,7 @@ $(RESULTS_DIR)/6_final.cdl: $(RESULTS_DIR)/6_final.v
 $(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
 	cat $^ > $@
 
+.PHONY: lvs
 lvs: $(RESULTS_DIR)/6_lvs.lvsdb
 
 $(RESULTS_DIR)/6_lvs.lvsdb: $(GDS_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
@@ -755,6 +773,7 @@ else
 	echo "LVS not supported on this platform" > $@
 endif
 
+.PHONY: clean_finish
 clean_finish:
 	rm -rf $(RESULTS_DIR)/6_*.gds $(RESULTS_DIR)/6_*.oas $(RESULTS_DIR)/6_*.odb $(RESULTS_DIR)/6_*.v $(RESULTS_DIR)/6_*.def $(RESULTS_DIR)/6_*.sdc $(RESULTS_DIR)/6_*.spef
 	rm -rf $(REPORTS_DIR)/6_*.rpt
@@ -770,10 +789,12 @@ clean_finish:
 #
 # ==============================================================================
 
+.PHONY: all
 all: $(SDC_FILE) $(WRAPPED_LIBS) $(DONT_USE_LIBS) $(OBJECTS_DIR)/klayout.lyt $(WRAPPED_GDSOAS) $(DONT_USE_SC_LIB)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/run_all.tcl -metrics $(LOG_DIR)/run_all.json) 2>&1 | tee $(LOG_DIR)/run_all.log
 
+.PHONY: clean
 clean:
 	@echo
 	@echo "Make clean disabled."
@@ -781,9 +802,11 @@ clean:
 	@echo "  clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish"
 	@echo
 
+.PHONY: clean_all
 clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish clean_metadata
 	rm -rf $(OBJECTS_DIR)
 
+.PHONY: nuke
 nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide
@@ -800,10 +823,15 @@ RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
+.PHONY: gui_floorplan
 gui_floorplan: gui_2_floorplan.odb
+.PHONY: gui_place
 gui_place: gui_3_place.odb
+.PHONY: gui_cts
 gui_cts: gui_4_cts.odb
+.PHONY: gui_route
 gui_route: gui_5_route.odb
+.PHONY: gui_final
 gui_final: gui_6_final.odb
 
 $(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
@@ -820,9 +848,12 @@ $(foreach file,$(RESULTS_ODB),$(file).def): %.def:
 $(foreach file,$(RESULTS_ODB),$(file).v): %.v:
 	ODB_FILE=$(RESULTS_DIR)/$* VERILOG_FILE=$(RESULTS_DIR)/$@ $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_verilog.tcl
 
+.PHONY: all_defs
 all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)
+.PHONY: all_verilog
 all_verilog : $(foreach file,$(RESULTS_ODB),$(file).v)
 
+.PHONY: handoff
 handoff : all_defs all_verilog
 
 print-%  : ; @echo $* = $($*)
