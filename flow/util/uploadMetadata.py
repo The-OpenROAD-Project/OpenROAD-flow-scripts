@@ -80,5 +80,5 @@ for reportDir, dirs, files in sorted(os.walk('reports', topdown=False)):
     test = '{} {} {}'.format(platform, design, variant)
     print(test)
     dataFile = os.path.join(reportDir, runFilename)
-    if design != 'mock-array-big_Element':
+    if os.path.exists(dataFile) and (platform != 'sky130hd_fakestack' or platform != 'src')::
         upload_data(db, dataFile, platform, design, variant, args)
