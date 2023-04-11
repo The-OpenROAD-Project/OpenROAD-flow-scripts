@@ -15,28 +15,23 @@ import System.err
 import scopt.RenderingMode
 import scala.collection.immutable.SeqMap
 
-
-class VecWithNames[T <: Data](names: () => SeqMap[String, T]) extends Record {
-  lazy val elements = names()
-
-  def asSeq: Seq[T] = elements.map(_._2).toSeq
-}
-
 object Routes extends Enumeration {
   type Routes = Value
 
   val LEFT, UP, RIGHT, DOWN = Value
 }
 
+class RoutesVec(singleElementWidth:Int) extends Record {
+  val routes = SeqMap(Routes.values.toSeq.map { bus =>
+    bus -> UInt(singleElementWidth.W)
+  }: _*)
+  val elements = routes.map { case (a, b) => a.toString().toLowerCase() -> b }
+
+  def asMap: SeqMap[Routes.Value, UInt] = routes
+  def asSeq: Seq[UInt] = routes.map(_._2).toSeq
+}
+
 class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
-
-  val routes = (() => {
-    SeqMap(Routes.values.toSeq.map { bus =>
-      bus.toString().toLowerCase() -> UInt(singleElementWidth.W)
-    }: _*)
-  })
-
-
   val io = IO(new Bundle {
     val insLeft = Input(Vec(width, UInt(singleElementWidth.W)))
     val insUp = Input(Vec(width, UInt(singleElementWidth.W)))
@@ -53,8 +48,8 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
   class Element extends Module {
     val io =
       IO(new Bundle {
-        val ins = Input(new VecWithNames(routes))
-        val outs = Output(new VecWithNames(routes))
+        val ins = Input(new RoutesVec(singleElementWidth))
+        val outs = Output(new RoutesVec(singleElementWidth))
 
         val lsbIns = Input(Vec(width, Bool()))
         val lsbOuts = Output(Vec(width, Bool()))
@@ -82,29 +77,29 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
   io.lsbs := ces.map(_.last.io.lsbOuts).flatten
 
   // Connect inputs to edge element buses
-  (ces.map(_.head).map(_.io.ins.asSeq(Routes.RIGHT.id)) zip io.insRight).foreach { case (a, b) => a := b }
-  (ces.last.map(_.io.ins.asSeq(Routes.DOWN.id)) zip io.insDown).foreach { case (a, b) => a := b }
-  (ces.map(_.last).map(_.io.ins.asSeq(Routes.LEFT.id)) zip io.insLeft).foreach { case (a, b) => a := b }
-  (ces.head.map(_.io.ins.asSeq(Routes.UP.id)) zip io.insUp).foreach { case (a, b) => a := b }
+  (ces.map(_.head).map(_.io.ins.asMap(Routes.RIGHT)) zip io.insRight).foreach { case (a, b) => a := b }
+  (ces.last.map(_.io.ins.asMap(Routes.DOWN)) zip io.insDown).foreach { case (a, b) => a := b }
+  (ces.map(_.last).map(_.io.ins.asMap(Routes.LEFT)) zip io.insLeft).foreach { case (a, b) => a := b }
+  (ces.head.map(_.io.ins.asMap(Routes.UP)) zip io.insUp).foreach { case (a, b) => a := b }
 
   // Connect edge element buses to outputs
-  (ces.map(_.head).map(_.io.outs.asSeq(Routes.LEFT.id)) zip io.outsLeft).foreach { case (a, b) => b := a }
-  (ces.last.map(_.io.outs.asSeq(Routes.UP.id)) zip io.outsUp).foreach { case (a, b) => b := a }
-  (ces.map(_.last).map(_.io.outs.asSeq(Routes.RIGHT.id)) zip io.outsRight).foreach { case (a, b) => b := a }
-  (ces.head.map(_.io.outs.asSeq(Routes.DOWN.id)) zip io.outsDown).foreach { case (a, b) => b := a }
+  (ces.map(_.head).map(_.io.outs.asMap(Routes.LEFT)) zip io.outsLeft).foreach { case (a, b) => b := a }
+  (ces.last.map(_.io.outs.asMap(Routes.UP)) zip io.outsUp).foreach { case (a, b) => b := a }
+  (ces.map(_.last).map(_.io.outs.asMap(Routes.RIGHT)) zip io.outsRight).foreach { case (a, b) => b := a }
+  (ces.head.map(_.io.outs.asMap(Routes.DOWN)) zip io.outsDown).foreach { case (a, b) => b := a }
 
   // Connect neighboring left/right element buses
   (ces.transpose.flatten zip ces.transpose.drop(1).flatten).foreach {
     case (a, b) =>
-      a.io.ins.asSeq(Routes.LEFT.id) := b.io.outs.asSeq(Routes.LEFT.id)
-      b.io.ins.asSeq(Routes.RIGHT.id) := a.io.outs.asSeq(Routes.RIGHT.id)
+      a.io.ins.asMap(Routes.LEFT) := b.io.outs.asMap(Routes.LEFT)
+      b.io.ins.asMap(Routes.RIGHT) := a.io.outs.asMap(Routes.RIGHT)
   }
 
   // Connect neighboring up/down element buses
   (ces.flatten zip ces.drop(1).flatten).foreach {
     case (a, b) =>
-      a.io.ins.asSeq(Routes.DOWN.id) := b.io.outs.asSeq(Routes.DOWN.id)
-      b.io.ins.asSeq(Routes.UP.id) := a.io.outs.asSeq(Routes.UP.id)
+      a.io.ins.asMap(Routes.DOWN) := b.io.outs.asMap(Routes.DOWN)
+      b.io.ins.asMap(Routes.UP) := a.io.outs.asMap(Routes.UP)
   }
 }
 
