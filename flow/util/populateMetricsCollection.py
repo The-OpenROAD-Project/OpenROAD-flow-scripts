@@ -69,7 +69,7 @@ repo_owner = 'The-OpenROAD-Project'
 repo_name = 'OpenROAD-flow-scripts'
 
 # Set up GitHub API request headers
-headers = {'Authorization': 'Bearer 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'}
+headers = {'Authorization': 'Bearer <token>'}
 
 # Define the time range for commits (3 months ago until now)
 end_time = datetime.now()
