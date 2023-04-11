@@ -1,7 +1,9 @@
 # Utilities
 #===============================================================================
+.PHONY: metadata
 metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
 
+.PHONY: clean_metadata
 clean_metadata:
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
@@ -16,6 +18,7 @@ update_metadata: $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 update_rules:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing --tighten
 
+.PHONY: update_rules_force
 update_rules_force:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
 
@@ -33,18 +36,21 @@ $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log: $(REPORTS_DIR)/metadata-$(FLO
 
 #-------------------------------------------------------------------------------
 
+.PHONY: write_net_rc
 write_net_rc: $(RESULTS_DIR)/6_net_rc.csv
 
 #$(RESULTS_DIR)/6_net_rc.csv: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/6_final.spef
 $(RESULTS_DIR)/6_net_rc.csv:
 	($(TIME_CMD) $(OPENROAD_CMD) $(UTILS_DIR)/write_net_rc_script.tcl) 2>&1 | tee $(LOG_DIR)/6_write_net_rc.log
 
+.PHONY: correlate_rc
 correlate_rc: $(RESULTS_DIR)/6_net_rc.csv
 	$(UTILS_DIR)/correlateRC.py $(RESULTS_DIR)/6_net_rc.csv
 
 # TODO Make always wants to redo designs with this rule, regardless of which variations are tried.
 #	$(MAKE) DESIGN_CONFIG=$$config write_net_rc; \
 #$(foreach config,$(wildcard designs/$(PLATFORM)/*/config.mk),$(MAKE) DESIGN_CONFIG=$(config) write_net_rc; )
+.PHONY: correlate_platform_rc
 correlate_platform_rc:
 	for config in designs/$(PLATFORM)/*/config.mk; do \
 	  design=$$(basename $$(dirname $$config)); \
@@ -55,12 +61,14 @@ correlate_platform_rc:
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------
 TEST_SCRIPT ?= $(TEST_DIR)/core_tests.sh
+.PHONY: run_test
 run_test:
 	parallel --sshloginfile $(TEST_DIR)/nodes.txt \
 	         --timeout 21600 \
 	         --workdir `pwd` < $(TEST_SCRIPT) \
 	         --joblog $(TEST_DIR)/parallel.log
 
+.PHONY: clean_test
 clean_test:
 	rm -rf $(TEST_DIR)/logs
 	rm -rf $(TEST_DIR)/parallel.log
@@ -82,6 +90,7 @@ export ISSUE_VARIABLES := $(foreach V, $(.VARIABLES),$(if $(filter-out environme
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	$(UTILS_DIR)/makeIssue.sh $*
 
+.PHONY: clean_issues
 clean_issues:
 	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
 	rm -rf $(VARS_BASENAME).sh $(RUN_ME_SCRIPT)
@@ -93,16 +102,19 @@ $(RESULTS_DIR)/6_final_no_power.def: $(RESULTS_DIR)/6_final.def
 	$(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/deletePowerNets.tcl
 
 
+.PHONY: gallery
 gallery: $(RESULTS_DIR)/6_final_no_power.def $(RESULTS_DIR)/6_final_only_clk.def
 	($(TIME_CMD) klayout -z -nc -rx -rd gallery_json=util/gallery.json \
 	        -rd results_path=$(RESULTS_DIR) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/createGallery.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
+.PHONY: view_cells
 view_cells:
 	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/view_cells.tcl
 
 ## Quick access to command line
+.PHONY: command
 command:
 	$(OPENROAD_NO_EXIT_CMD)
 
@@ -117,6 +129,7 @@ OPENROAD_EXE := valgrind $(VALGRIND_ARGS) $(OPENROAD_EXE)
 endif
 
 ## Convert RVE DRC database to JSON
+.PHONY: convert_rve
 convert_rve: $(REPORTS_DIR)/drc.json
 
 $(REPORTS_DIR)/drc.json: $(DRC_FILE)
@@ -130,5 +143,6 @@ endif
 
 # Update the clock period sdc based on the worst slack reported by the final
 # (post global route) timing.
+.PHONY: update_sdc_clocks
 update_sdc_clocks: $(RESULTS_DIR)/route.guide
 	cp $(RESULTS_DIR)/updated_clks.sdc $(SDC_FILE)
