@@ -14,3 +14,5 @@ export PLACE_DENSITY_LB_ADDON  = 0.20
 export ENABLE_DPO = 0
 
 export DFF_LIB_FILE           = $($(CORNER)_DFF_LIB_FILE)
+
+export CTS_BUF_CELL  = BUFx8_ASAP7_75t_R
