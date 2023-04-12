@@ -4,6 +4,9 @@
 
 The `setup.sh` script installs all of the dependencies, including OpenROAD dependencies, if they are not already installed.
 
+Supported configurations are: CentOS 7, Ubuntu 20.04, Ubuntu 22.04, RHEL 8,
+Debian 10 and Debian 11.
+
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
