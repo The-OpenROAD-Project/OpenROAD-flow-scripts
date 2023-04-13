@@ -16,3 +16,4 @@ export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.12
 
 export CORNER                 = TC
+export PDN_TCL = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/BLOCKS_grid_strategy.tcl
