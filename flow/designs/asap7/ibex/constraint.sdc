@@ -1,11 +1,6 @@
-###############################################################################
-# Created by write_sdc
-# Sat Apr  8 14:02:27 2023
-###############################################################################
+
 current_design ibex_core
-###############################################################################
-# Timing Constraints
-###############################################################################
+
 create_clock -name core_clock -period 1760.0000 [get_ports {clk_i}]
 set_input_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {boot_addr_i[0]}]
 set_input_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {boot_addr_i[10]}]
@@ -163,7 +158,11 @@ set_input_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports 
 set_input_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {irq_software_i}]
 set_input_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {irq_timer_i}]
 set_input_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {test_en_i}]
+set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {alert_major_o}]
+set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {alert_minor_o}]
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {core_sleep_o}]
+set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {data_addr_o[0]}]
+set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {data_addr_o[1]}]
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {data_addr_o[10]}]
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {data_addr_o[11]}]
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {data_addr_o[12]}]
@@ -232,6 +231,8 @@ set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {data_wdata_o[8]}]
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {data_wdata_o[9]}]
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {data_we_o}]
+set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {instr_addr_o[0]}]
+set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {instr_addr_o[1]}]
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {instr_addr_o[10]}]
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {instr_addr_o[11]}]
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {instr_addr_o[12]}]
@@ -265,20 +266,3 @@ set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports
 set_output_delay 264.0000 -clock [get_clocks {core_clock}] -add_delay [get_ports {instr_req_o}]
 
 set_false_path -from [get_ports {rst_ni}]
-
-set_false_path -to [get_ports {alert_major_o}]
-set_false_path -to [get_ports {alert_minor_o}]
-
-set_false_path -to [get_ports {data_addr_o[0]}]
-set_false_path -to [get_ports {data_addr_o[1]}]
-set_false_path -to [get_ports {instr_addr_o[0]}]
-set_false_path -to [get_ports {instr_addr_o[1]}]
-
-set_false_path -from [get_pins _36182_/CLK]
-set_false_path -from [get_pins _36313_/CLK]
-###############################################################################
-# Environment
-###############################################################################
-###############################################################################
-# Design Rules
-###############################################################################
