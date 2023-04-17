@@ -67,4 +67,4 @@ set ::env(FP_PDN_RAIL_WIDTH) 0.48
 set ::env(CTS_MAX_CAP) 1474.56
 set ::env(DEFAULT_MAX_TRAN) 320
 
-set ::env(PDN_CFG) "$::env(PDK_ROOT)/$::env(PDK)/libs.tech/openlane/$::env(STD_CELL_LIBRARY)/grid_strategy-M2-M5-M7.cfg"
+set ::env(PDN_CFG) "$::env(PDK_ROOT)/$::env(PDK)/libs.tech/openlane/$::env(STD_CELL_LIBRARY)/grid_strategy-M1-M2-M5-M6.cfg"
