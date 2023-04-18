@@ -48,7 +48,7 @@ docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROA
 Then, inside docker:
 
 ``` shell
-source ./setup_env.sh
+source ./env.sh
 yosys -help
 openroad -help
 cd flow

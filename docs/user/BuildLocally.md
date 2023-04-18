@@ -26,7 +26,7 @@ The binaries should be available on your `$PATH` after setting up the
 environment.
 
 ``` shell
-source ./setup_env.sh
+source ./env.sh
 yosys -help
 openroad -help
 exit

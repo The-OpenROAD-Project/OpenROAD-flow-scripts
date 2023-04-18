@@ -70,7 +70,7 @@ to [Build With Docker](../user/BuildWithDocker.md) documentation.
 
 ```
 ./build_openroad.sh --local
-source setup_env.sh
+source env.sh
 ```
 
 You will see the following message:

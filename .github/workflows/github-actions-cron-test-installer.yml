@@ -8,7 +8,7 @@ on:
       - 'etc/DockerHelper.sh'
       - '.github/workflows/github-actions-cron-test-installer.yml'
       - 'build_openroad.sh'
-      - 'setup_env.sh'
+      - 'env.sh'
       - 'flow/Makefile'
   pull_request:
     paths:
@@ -16,7 +16,7 @@ on:
       - 'etc/DockerHelper.sh'
       - '.github/workflows/github-actions-cron-test-installer.yml'
       - 'build_openroad.sh'
-      - 'setup_env.sh'
+      - 'env.sh'
       - 'flow/Makefile'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -52,9 +52,9 @@ jobs:
       - name: Test build
         run: |
           if [[ ${{ matrix.os }} == "centos7" ]]; then
-            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source /opt/rh/llvm-toolset-7.0/enable; source /opt/rh/devtoolset-8/enable; source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
+            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source /opt/rh/llvm-toolset-7.0/enable; source /opt/rh/devtoolset-8/enable; source ./env.sh; yosys -help; openroad -help; cd flow; make;"
           else
-            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source ./setup_env.sh; yosys -help; openroad -help; cd flow; make;"
+            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source ./env.sh; yosys -help; openroad -help; cd flow; make;"
           fi
   testInstaller-macos:
     strategy:
