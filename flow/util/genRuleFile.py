@@ -74,7 +74,7 @@ rules_dict = {
     'synth__design__instance__area__stdcell': {
         'mode': 'padding',
         'padding': 15,
-        'round_value': True,
+        'round_value': False,
         'compare': '<=',
     },
     # clock
