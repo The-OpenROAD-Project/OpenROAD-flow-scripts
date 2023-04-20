@@ -1,3 +1,11 @@
+proc pin1 {fmt p} {
+    set result [list]
+    for {set m 0} {$m < $p} {incr m} {
+        lappend result [format $fmt $m]
+    }
+    return $result
+}
+
 proc pin2 {fmt p q} {
     set result [list]
     for {set m 0} {$m < $p} {incr m} {
@@ -15,23 +23,24 @@ set cols [expr {[info exists ::env(MOCK_ARRAY_WIDTH)] ? $::env(MOCK_ARRAY_WIDTH)
 set assignments [list \
     top \
     [ concat \
-        {*}[pin2 {io_insHorizontal_1_%d[%d]} $cols $data_width] \
-        {*}[pin2 {io_outsHorizontal_1_%d[%d]} $cols $data_width] \
+        {*}[pin2 {io_insDown_%d[%d]} $cols $data_width] \
+        {*}[pin2 {io_outsUp_%d[%d]} $cols $data_width] \
     ] \
     bottom \
     [ concat \
-        {*}[pin2 {io_insHorizontal_0_%d[%d]} $cols $data_width] \
-        {*}[pin2 {io_outsHorizontal_0_%d[%d]} $cols $data_width] \
+        {*}[pin2 {io_insUp_%d[%d]} $cols $data_width] \
+        {*}[pin2 {io_outsDown_%d[%d]} $cols $data_width] \
     ] \
     left \
     [ concat \
-        {*}[pin2 {io_insVertical_1_%d[%d]} $rows $data_width] \
-        {*}[pin2 {io_outsVertical_1_%d[%d]} $rows $data_width] \
+        {*}[pin2 {io_insRight_%d[%d]} $rows $data_width] \
+        {*}[pin2 {io_outsLeft_%d[%d]} $rows $data_width] \
     ] \
     right \
     [ concat \
-        {*}[pin2 {io_insVertical_0_%d[%d]} $rows $data_width] \
-        {*}[pin2 {io_outsVertical_0_%d[%d]} $rows $data_width] \
+        {*}[pin2 {io_insLeft_%d[%d]} $rows $data_width] \
+        {*}[pin2 {io_outsRight_%d[%d]} $rows $data_width] \
+        {*}[pin1 {io_lsbs_%d} $cols] \
     ] \
 ]
 
