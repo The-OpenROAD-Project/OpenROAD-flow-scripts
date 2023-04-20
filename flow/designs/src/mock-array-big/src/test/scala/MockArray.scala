@@ -14,7 +14,7 @@ import scopt.OParser
 import System.err
 import scopt.RenderingMode
 
-class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
+class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module with RequireAsyncReset {
 
   val io = IO(new Bundle {
     val insHorizontal = Input(Vec(2, Vec(width, UInt(singleElementWidth.W))))
@@ -22,6 +22,7 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
     val insVertical = Input(Vec(2, Vec(height, UInt(singleElementWidth.W))))
     val outsVertical = Output(Vec(2, Vec(height, UInt(singleElementWidth.W))))
     val lsbs = Output(Vec(width * height, Bool()))
+    val softReset = Input(Bool())
   })
 
   class Element extends Module {
@@ -29,11 +30,22 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
       IO(new Bundle {
         val ins = Input(Vec(4, UInt(singleElementWidth.W)))
         val outs = Output(Vec(4, UInt(singleElementWidth.W)))
+        val softReset = Input(Bool())
       })
-    io.outs := io.ins.reverse.map(RegNext(_))
+    val counter2 = Reg(UInt(singleElementWidth.W))
+    counter2 := counter2 + 1.U
+    when (io.softReset) {
+      counter2 := 1234.U
+    }
+    val counter = RegInit(UInt(singleElementWidth.W), 42.U)
+    counter := counter + 1.U
+    io.outs := io.ins.reverse.map(value => RegNext(value + counter + counter2))
+    val softReset = Input(Reset())
   }
 
   val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
+
+  ces.flatten.map(_.io.softReset).foreach(_:=io.softReset)
 
   io.lsbs := ces.flatten.map(_.io.outs.head(0))
 

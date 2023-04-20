@@ -128,586 +128,716 @@ module MockArray(
   output       io_lsbs_60,
   output       io_lsbs_61,
   output       io_lsbs_62,
-  output       io_lsbs_63
+  output       io_lsbs_63,
+  input        io_softReset
 );
-  wire  ces_0_0_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_0_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_0_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_0_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_0_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_0_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_0_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_0_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_0_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_0_1_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_1_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_1_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_1_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_1_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_1_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_1_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_1_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_1_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_0_2_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_2_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_2_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_2_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_2_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_2_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_2_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_2_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_2_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_0_3_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_3_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_3_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_3_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_3_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_3_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_3_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_3_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_3_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_0_4_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_4_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_4_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_4_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_4_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_4_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_4_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_4_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_4_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_0_5_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_5_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_5_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_5_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_5_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_5_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_5_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_5_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_5_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_0_6_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_6_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_6_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_6_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_6_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_6_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_6_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_6_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_6_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_0_7_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_7_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_7_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_7_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_7_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_7_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_7_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_7_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_0_7_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_1_0_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_0_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_0_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_0_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_0_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_0_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_0_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_0_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_0_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_1_1_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_1_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_1_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_1_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_1_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_1_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_1_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_1_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_1_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_1_2_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_2_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_2_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_2_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_2_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_2_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_2_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_2_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_2_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_1_3_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_3_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_3_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_3_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_3_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_3_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_3_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_3_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_3_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_1_4_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_4_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_4_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_4_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_4_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_4_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_4_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_4_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_4_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_1_5_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_5_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_5_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_5_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_5_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_5_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_5_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_5_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_5_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_1_6_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_6_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_6_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_6_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_6_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_6_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_6_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_6_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_6_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_1_7_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_7_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_7_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_7_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_7_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_7_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_7_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_7_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_1_7_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_2_0_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_0_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_0_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_0_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_0_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_0_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_0_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_0_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_0_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_2_1_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_1_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_1_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_1_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_1_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_1_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_1_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_1_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_1_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_2_2_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_2_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_2_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_2_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_2_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_2_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_2_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_2_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_2_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_2_3_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_3_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_3_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_3_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_3_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_3_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_3_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_3_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_3_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_2_4_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_4_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_4_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_4_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_4_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_4_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_4_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_4_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_4_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_2_5_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_5_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_5_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_5_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_5_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_5_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_5_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_5_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_5_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_2_6_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_6_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_6_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_6_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_6_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_6_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_6_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_6_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_6_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_2_7_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_7_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_7_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_7_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_7_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_7_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_7_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_7_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_2_7_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_3_0_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_0_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_0_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_0_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_0_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_0_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_0_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_0_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_0_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_3_1_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_1_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_1_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_1_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_1_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_1_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_1_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_1_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_1_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_3_2_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_2_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_2_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_2_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_2_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_2_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_2_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_2_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_2_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_3_3_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_3_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_3_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_3_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_3_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_3_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_3_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_3_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_3_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_3_4_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_4_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_4_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_4_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_4_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_4_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_4_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_4_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_4_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_3_5_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_5_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_5_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_5_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_5_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_5_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_5_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_5_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_5_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_3_6_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_6_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_6_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_6_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_6_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_6_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_6_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_6_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_6_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_3_7_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_7_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_7_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_7_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_7_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_7_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_7_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_7_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_3_7_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_4_0_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_0_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_0_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_0_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_0_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_0_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_0_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_0_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_0_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_4_1_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_1_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_1_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_1_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_1_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_1_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_1_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_1_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_1_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_4_2_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_2_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_2_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_2_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_2_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_2_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_2_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_2_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_2_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_4_3_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_3_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_3_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_3_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_3_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_3_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_3_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_3_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_3_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_4_4_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_4_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_4_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_4_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_4_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_4_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_4_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_4_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_4_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_4_5_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_5_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_5_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_5_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_5_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_5_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_5_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_5_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_5_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_4_6_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_6_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_6_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_6_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_6_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_6_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_6_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_6_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_6_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_4_7_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_7_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_7_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_7_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_7_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_7_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_7_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_7_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_4_7_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_5_0_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_0_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_0_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_0_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_0_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_0_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_0_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_0_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_0_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_5_1_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_1_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_1_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_1_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_1_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_1_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_1_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_1_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_1_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_5_2_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_2_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_2_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_2_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_2_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_2_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_2_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_2_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_2_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_5_3_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_3_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_3_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_3_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_3_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_3_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_3_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_3_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_3_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_5_4_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_4_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_4_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_4_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_4_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_4_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_4_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_4_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_4_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_5_5_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_5_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_5_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_5_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_5_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_5_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_5_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_5_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_5_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_5_6_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_6_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_6_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_6_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_6_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_6_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_6_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_6_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_6_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_5_7_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_7_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_7_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_7_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_7_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_7_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_7_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_7_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_5_7_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_6_0_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_0_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_0_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_0_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_0_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_0_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_0_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_0_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_0_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_6_1_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_1_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_1_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_1_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_1_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_1_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_1_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_1_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_1_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_6_2_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_2_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_2_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_2_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_2_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_2_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_2_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_2_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_2_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_6_3_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_3_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_3_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_3_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_3_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_3_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_3_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_3_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_3_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_6_4_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_4_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_4_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_4_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_4_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_4_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_4_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_4_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_4_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_6_5_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_5_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_5_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_5_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_5_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_5_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_5_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_5_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_5_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_6_6_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_6_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_6_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_6_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_6_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_6_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_6_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_6_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_6_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_6_7_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_7_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_7_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_7_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_7_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_7_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_7_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_7_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_6_7_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_7_0_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_0_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_0_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_0_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_0_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_0_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_0_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_0_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_0_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_7_1_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_1_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_1_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_1_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_1_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_1_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_1_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_1_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_1_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_7_2_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_2_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_2_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_2_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_2_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_2_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_2_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_2_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_2_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_7_3_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_3_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_3_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_3_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_3_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_3_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_3_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_3_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_3_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_7_4_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_4_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_4_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_4_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_4_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_4_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_4_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_4_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_4_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_7_5_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_5_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_5_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_5_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_5_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_5_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_5_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_5_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_5_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_7_6_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_6_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_6_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_6_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_6_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_6_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_6_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_6_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_6_io_outs_3; // @[MockArray.scala 36:52]
-  wire  ces_7_7_clock; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_7_io_ins_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_7_io_ins_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_7_io_ins_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_7_io_ins_3; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_7_io_outs_0; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_7_io_outs_1; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_7_io_outs_2; // @[MockArray.scala 36:52]
-  wire [7:0] ces_7_7_io_outs_3; // @[MockArray.scala 36:52]
-  Element ces_0_0 ( // @[MockArray.scala 36:52]
+  wire  ces_0_0_clock; // @[MockArray.scala 46:52]
+  wire  ces_0_0_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_0_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_0_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_0_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_0_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_0_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_0_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_0_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_0_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_0_0_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_0_1_clock; // @[MockArray.scala 46:52]
+  wire  ces_0_1_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_1_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_1_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_1_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_1_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_1_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_1_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_1_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_1_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_0_1_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_0_2_clock; // @[MockArray.scala 46:52]
+  wire  ces_0_2_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_2_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_2_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_2_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_2_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_2_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_2_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_2_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_2_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_0_2_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_0_3_clock; // @[MockArray.scala 46:52]
+  wire  ces_0_3_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_3_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_3_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_3_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_3_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_3_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_3_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_3_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_3_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_0_3_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_0_4_clock; // @[MockArray.scala 46:52]
+  wire  ces_0_4_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_4_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_4_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_4_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_4_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_4_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_4_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_4_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_4_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_0_4_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_0_5_clock; // @[MockArray.scala 46:52]
+  wire  ces_0_5_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_5_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_5_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_5_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_5_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_5_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_5_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_5_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_5_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_0_5_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_0_6_clock; // @[MockArray.scala 46:52]
+  wire  ces_0_6_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_6_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_6_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_6_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_6_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_6_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_6_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_6_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_6_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_0_6_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_0_7_clock; // @[MockArray.scala 46:52]
+  wire  ces_0_7_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_7_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_7_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_7_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_7_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_7_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_7_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_7_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_0_7_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_0_7_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_1_0_clock; // @[MockArray.scala 46:52]
+  wire  ces_1_0_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_0_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_0_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_0_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_0_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_0_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_0_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_0_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_0_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_1_0_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_1_1_clock; // @[MockArray.scala 46:52]
+  wire  ces_1_1_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_1_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_1_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_1_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_1_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_1_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_1_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_1_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_1_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_1_1_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_1_2_clock; // @[MockArray.scala 46:52]
+  wire  ces_1_2_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_2_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_2_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_2_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_2_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_2_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_2_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_2_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_2_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_1_2_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_1_3_clock; // @[MockArray.scala 46:52]
+  wire  ces_1_3_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_3_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_3_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_3_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_3_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_3_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_3_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_3_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_3_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_1_3_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_1_4_clock; // @[MockArray.scala 46:52]
+  wire  ces_1_4_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_4_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_4_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_4_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_4_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_4_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_4_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_4_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_4_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_1_4_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_1_5_clock; // @[MockArray.scala 46:52]
+  wire  ces_1_5_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_5_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_5_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_5_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_5_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_5_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_5_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_5_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_5_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_1_5_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_1_6_clock; // @[MockArray.scala 46:52]
+  wire  ces_1_6_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_6_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_6_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_6_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_6_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_6_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_6_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_6_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_6_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_1_6_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_1_7_clock; // @[MockArray.scala 46:52]
+  wire  ces_1_7_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_7_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_7_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_7_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_7_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_7_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_7_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_7_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_1_7_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_1_7_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_2_0_clock; // @[MockArray.scala 46:52]
+  wire  ces_2_0_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_0_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_0_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_0_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_0_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_0_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_0_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_0_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_0_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_2_0_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_2_1_clock; // @[MockArray.scala 46:52]
+  wire  ces_2_1_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_1_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_1_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_1_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_1_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_1_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_1_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_1_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_1_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_2_1_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_2_2_clock; // @[MockArray.scala 46:52]
+  wire  ces_2_2_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_2_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_2_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_2_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_2_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_2_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_2_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_2_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_2_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_2_2_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_2_3_clock; // @[MockArray.scala 46:52]
+  wire  ces_2_3_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_3_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_3_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_3_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_3_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_3_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_3_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_3_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_3_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_2_3_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_2_4_clock; // @[MockArray.scala 46:52]
+  wire  ces_2_4_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_4_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_4_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_4_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_4_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_4_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_4_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_4_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_4_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_2_4_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_2_5_clock; // @[MockArray.scala 46:52]
+  wire  ces_2_5_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_5_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_5_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_5_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_5_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_5_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_5_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_5_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_5_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_2_5_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_2_6_clock; // @[MockArray.scala 46:52]
+  wire  ces_2_6_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_6_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_6_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_6_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_6_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_6_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_6_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_6_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_6_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_2_6_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_2_7_clock; // @[MockArray.scala 46:52]
+  wire  ces_2_7_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_7_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_7_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_7_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_7_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_7_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_7_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_7_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_2_7_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_2_7_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_3_0_clock; // @[MockArray.scala 46:52]
+  wire  ces_3_0_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_0_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_0_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_0_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_0_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_0_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_0_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_0_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_0_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_3_0_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_3_1_clock; // @[MockArray.scala 46:52]
+  wire  ces_3_1_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_1_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_1_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_1_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_1_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_1_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_1_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_1_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_1_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_3_1_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_3_2_clock; // @[MockArray.scala 46:52]
+  wire  ces_3_2_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_2_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_2_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_2_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_2_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_2_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_2_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_2_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_2_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_3_2_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_3_3_clock; // @[MockArray.scala 46:52]
+  wire  ces_3_3_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_3_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_3_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_3_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_3_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_3_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_3_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_3_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_3_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_3_3_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_3_4_clock; // @[MockArray.scala 46:52]
+  wire  ces_3_4_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_4_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_4_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_4_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_4_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_4_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_4_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_4_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_4_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_3_4_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_3_5_clock; // @[MockArray.scala 46:52]
+  wire  ces_3_5_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_5_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_5_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_5_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_5_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_5_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_5_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_5_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_5_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_3_5_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_3_6_clock; // @[MockArray.scala 46:52]
+  wire  ces_3_6_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_6_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_6_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_6_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_6_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_6_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_6_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_6_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_6_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_3_6_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_3_7_clock; // @[MockArray.scala 46:52]
+  wire  ces_3_7_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_7_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_7_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_7_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_7_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_7_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_7_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_7_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_3_7_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_3_7_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_4_0_clock; // @[MockArray.scala 46:52]
+  wire  ces_4_0_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_0_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_0_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_0_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_0_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_0_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_0_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_0_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_0_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_4_0_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_4_1_clock; // @[MockArray.scala 46:52]
+  wire  ces_4_1_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_1_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_1_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_1_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_1_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_1_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_1_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_1_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_1_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_4_1_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_4_2_clock; // @[MockArray.scala 46:52]
+  wire  ces_4_2_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_2_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_2_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_2_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_2_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_2_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_2_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_2_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_2_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_4_2_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_4_3_clock; // @[MockArray.scala 46:52]
+  wire  ces_4_3_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_3_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_3_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_3_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_3_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_3_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_3_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_3_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_3_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_4_3_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_4_4_clock; // @[MockArray.scala 46:52]
+  wire  ces_4_4_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_4_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_4_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_4_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_4_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_4_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_4_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_4_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_4_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_4_4_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_4_5_clock; // @[MockArray.scala 46:52]
+  wire  ces_4_5_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_5_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_5_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_5_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_5_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_5_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_5_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_5_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_5_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_4_5_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_4_6_clock; // @[MockArray.scala 46:52]
+  wire  ces_4_6_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_6_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_6_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_6_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_6_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_6_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_6_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_6_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_6_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_4_6_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_4_7_clock; // @[MockArray.scala 46:52]
+  wire  ces_4_7_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_7_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_7_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_7_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_7_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_7_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_7_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_7_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_4_7_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_4_7_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_5_0_clock; // @[MockArray.scala 46:52]
+  wire  ces_5_0_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_0_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_0_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_0_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_0_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_0_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_0_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_0_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_0_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_5_0_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_5_1_clock; // @[MockArray.scala 46:52]
+  wire  ces_5_1_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_1_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_1_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_1_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_1_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_1_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_1_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_1_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_1_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_5_1_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_5_2_clock; // @[MockArray.scala 46:52]
+  wire  ces_5_2_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_2_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_2_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_2_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_2_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_2_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_2_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_2_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_2_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_5_2_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_5_3_clock; // @[MockArray.scala 46:52]
+  wire  ces_5_3_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_3_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_3_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_3_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_3_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_3_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_3_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_3_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_3_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_5_3_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_5_4_clock; // @[MockArray.scala 46:52]
+  wire  ces_5_4_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_4_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_4_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_4_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_4_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_4_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_4_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_4_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_4_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_5_4_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_5_5_clock; // @[MockArray.scala 46:52]
+  wire  ces_5_5_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_5_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_5_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_5_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_5_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_5_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_5_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_5_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_5_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_5_5_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_5_6_clock; // @[MockArray.scala 46:52]
+  wire  ces_5_6_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_6_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_6_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_6_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_6_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_6_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_6_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_6_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_6_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_5_6_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_5_7_clock; // @[MockArray.scala 46:52]
+  wire  ces_5_7_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_7_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_7_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_7_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_7_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_7_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_7_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_7_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_5_7_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_5_7_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_6_0_clock; // @[MockArray.scala 46:52]
+  wire  ces_6_0_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_0_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_0_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_0_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_0_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_0_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_0_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_0_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_0_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_6_0_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_6_1_clock; // @[MockArray.scala 46:52]
+  wire  ces_6_1_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_1_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_1_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_1_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_1_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_1_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_1_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_1_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_1_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_6_1_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_6_2_clock; // @[MockArray.scala 46:52]
+  wire  ces_6_2_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_2_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_2_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_2_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_2_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_2_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_2_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_2_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_2_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_6_2_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_6_3_clock; // @[MockArray.scala 46:52]
+  wire  ces_6_3_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_3_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_3_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_3_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_3_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_3_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_3_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_3_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_3_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_6_3_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_6_4_clock; // @[MockArray.scala 46:52]
+  wire  ces_6_4_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_4_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_4_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_4_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_4_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_4_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_4_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_4_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_4_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_6_4_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_6_5_clock; // @[MockArray.scala 46:52]
+  wire  ces_6_5_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_5_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_5_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_5_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_5_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_5_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_5_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_5_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_5_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_6_5_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_6_6_clock; // @[MockArray.scala 46:52]
+  wire  ces_6_6_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_6_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_6_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_6_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_6_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_6_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_6_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_6_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_6_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_6_6_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_6_7_clock; // @[MockArray.scala 46:52]
+  wire  ces_6_7_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_7_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_7_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_7_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_7_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_7_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_7_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_7_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_6_7_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_6_7_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_7_0_clock; // @[MockArray.scala 46:52]
+  wire  ces_7_0_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_0_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_0_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_0_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_0_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_0_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_0_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_0_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_0_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_7_0_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_7_1_clock; // @[MockArray.scala 46:52]
+  wire  ces_7_1_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_1_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_1_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_1_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_1_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_1_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_1_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_1_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_1_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_7_1_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_7_2_clock; // @[MockArray.scala 46:52]
+  wire  ces_7_2_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_2_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_2_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_2_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_2_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_2_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_2_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_2_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_2_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_7_2_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_7_3_clock; // @[MockArray.scala 46:52]
+  wire  ces_7_3_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_3_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_3_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_3_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_3_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_3_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_3_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_3_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_3_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_7_3_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_7_4_clock; // @[MockArray.scala 46:52]
+  wire  ces_7_4_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_4_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_4_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_4_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_4_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_4_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_4_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_4_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_4_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_7_4_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_7_5_clock; // @[MockArray.scala 46:52]
+  wire  ces_7_5_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_5_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_5_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_5_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_5_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_5_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_5_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_5_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_5_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_7_5_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_7_6_clock; // @[MockArray.scala 46:52]
+  wire  ces_7_6_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_6_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_6_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_6_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_6_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_6_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_6_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_6_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_6_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_7_6_io_softReset; // @[MockArray.scala 46:52]
+  wire  ces_7_7_clock; // @[MockArray.scala 46:52]
+  wire  ces_7_7_reset; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_7_io_ins_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_7_io_ins_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_7_io_ins_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_7_io_ins_3; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_7_io_outs_0; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_7_io_outs_1; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_7_io_outs_2; // @[MockArray.scala 46:52]
+  wire [7:0] ces_7_7_io_outs_3; // @[MockArray.scala 46:52]
+  wire  ces_7_7_io_softReset; // @[MockArray.scala 46:52]
+  Element ces_0_0 ( // @[MockArray.scala 46:52]
     .clock(ces_0_0_clock),
+    .reset(ces_0_0_reset),
     .io_ins_0(ces_0_0_io_ins_0),
     .io_ins_1(ces_0_0_io_ins_1),
     .io_ins_2(ces_0_0_io_ins_2),
@@ -715,10 +845,12 @@ module MockArray(
     .io_outs_0(ces_0_0_io_outs_0),
     .io_outs_1(ces_0_0_io_outs_1),
     .io_outs_2(ces_0_0_io_outs_2),
-    .io_outs_3(ces_0_0_io_outs_3)
+    .io_outs_3(ces_0_0_io_outs_3),
+    .io_softReset(ces_0_0_io_softReset)
   );
-  Element ces_0_1 ( // @[MockArray.scala 36:52]
+  Element ces_0_1 ( // @[MockArray.scala 46:52]
     .clock(ces_0_1_clock),
+    .reset(ces_0_1_reset),
     .io_ins_0(ces_0_1_io_ins_0),
     .io_ins_1(ces_0_1_io_ins_1),
     .io_ins_2(ces_0_1_io_ins_2),
@@ -726,10 +858,12 @@ module MockArray(
     .io_outs_0(ces_0_1_io_outs_0),
     .io_outs_1(ces_0_1_io_outs_1),
     .io_outs_2(ces_0_1_io_outs_2),
-    .io_outs_3(ces_0_1_io_outs_3)
+    .io_outs_3(ces_0_1_io_outs_3),
+    .io_softReset(ces_0_1_io_softReset)
   );
-  Element ces_0_2 ( // @[MockArray.scala 36:52]
+  Element ces_0_2 ( // @[MockArray.scala 46:52]
     .clock(ces_0_2_clock),
+    .reset(ces_0_2_reset),
     .io_ins_0(ces_0_2_io_ins_0),
     .io_ins_1(ces_0_2_io_ins_1),
     .io_ins_2(ces_0_2_io_ins_2),
@@ -737,10 +871,12 @@ module MockArray(
     .io_outs_0(ces_0_2_io_outs_0),
     .io_outs_1(ces_0_2_io_outs_1),
     .io_outs_2(ces_0_2_io_outs_2),
-    .io_outs_3(ces_0_2_io_outs_3)
+    .io_outs_3(ces_0_2_io_outs_3),
+    .io_softReset(ces_0_2_io_softReset)
   );
-  Element ces_0_3 ( // @[MockArray.scala 36:52]
+  Element ces_0_3 ( // @[MockArray.scala 46:52]
     .clock(ces_0_3_clock),
+    .reset(ces_0_3_reset),
     .io_ins_0(ces_0_3_io_ins_0),
     .io_ins_1(ces_0_3_io_ins_1),
     .io_ins_2(ces_0_3_io_ins_2),
@@ -748,10 +884,12 @@ module MockArray(
     .io_outs_0(ces_0_3_io_outs_0),
     .io_outs_1(ces_0_3_io_outs_1),
     .io_outs_2(ces_0_3_io_outs_2),
-    .io_outs_3(ces_0_3_io_outs_3)
+    .io_outs_3(ces_0_3_io_outs_3),
+    .io_softReset(ces_0_3_io_softReset)
   );
-  Element ces_0_4 ( // @[MockArray.scala 36:52]
+  Element ces_0_4 ( // @[MockArray.scala 46:52]
     .clock(ces_0_4_clock),
+    .reset(ces_0_4_reset),
     .io_ins_0(ces_0_4_io_ins_0),
     .io_ins_1(ces_0_4_io_ins_1),
     .io_ins_2(ces_0_4_io_ins_2),
@@ -759,10 +897,12 @@ module MockArray(
     .io_outs_0(ces_0_4_io_outs_0),
     .io_outs_1(ces_0_4_io_outs_1),
     .io_outs_2(ces_0_4_io_outs_2),
-    .io_outs_3(ces_0_4_io_outs_3)
+    .io_outs_3(ces_0_4_io_outs_3),
+    .io_softReset(ces_0_4_io_softReset)
   );
-  Element ces_0_5 ( // @[MockArray.scala 36:52]
+  Element ces_0_5 ( // @[MockArray.scala 46:52]
     .clock(ces_0_5_clock),
+    .reset(ces_0_5_reset),
     .io_ins_0(ces_0_5_io_ins_0),
     .io_ins_1(ces_0_5_io_ins_1),
     .io_ins_2(ces_0_5_io_ins_2),
@@ -770,10 +910,12 @@ module MockArray(
     .io_outs_0(ces_0_5_io_outs_0),
     .io_outs_1(ces_0_5_io_outs_1),
     .io_outs_2(ces_0_5_io_outs_2),
-    .io_outs_3(ces_0_5_io_outs_3)
+    .io_outs_3(ces_0_5_io_outs_3),
+    .io_softReset(ces_0_5_io_softReset)
   );
-  Element ces_0_6 ( // @[MockArray.scala 36:52]
+  Element ces_0_6 ( // @[MockArray.scala 46:52]
     .clock(ces_0_6_clock),
+    .reset(ces_0_6_reset),
     .io_ins_0(ces_0_6_io_ins_0),
     .io_ins_1(ces_0_6_io_ins_1),
     .io_ins_2(ces_0_6_io_ins_2),
@@ -781,10 +923,12 @@ module MockArray(
     .io_outs_0(ces_0_6_io_outs_0),
     .io_outs_1(ces_0_6_io_outs_1),
     .io_outs_2(ces_0_6_io_outs_2),
-    .io_outs_3(ces_0_6_io_outs_3)
+    .io_outs_3(ces_0_6_io_outs_3),
+    .io_softReset(ces_0_6_io_softReset)
   );
-  Element ces_0_7 ( // @[MockArray.scala 36:52]
+  Element ces_0_7 ( // @[MockArray.scala 46:52]
     .clock(ces_0_7_clock),
+    .reset(ces_0_7_reset),
     .io_ins_0(ces_0_7_io_ins_0),
     .io_ins_1(ces_0_7_io_ins_1),
     .io_ins_2(ces_0_7_io_ins_2),
@@ -792,10 +936,12 @@ module MockArray(
     .io_outs_0(ces_0_7_io_outs_0),
     .io_outs_1(ces_0_7_io_outs_1),
     .io_outs_2(ces_0_7_io_outs_2),
-    .io_outs_3(ces_0_7_io_outs_3)
+    .io_outs_3(ces_0_7_io_outs_3),
+    .io_softReset(ces_0_7_io_softReset)
   );
-  Element ces_1_0 ( // @[MockArray.scala 36:52]
+  Element ces_1_0 ( // @[MockArray.scala 46:52]
     .clock(ces_1_0_clock),
+    .reset(ces_1_0_reset),
     .io_ins_0(ces_1_0_io_ins_0),
     .io_ins_1(ces_1_0_io_ins_1),
     .io_ins_2(ces_1_0_io_ins_2),
@@ -803,10 +949,12 @@ module MockArray(
     .io_outs_0(ces_1_0_io_outs_0),
     .io_outs_1(ces_1_0_io_outs_1),
     .io_outs_2(ces_1_0_io_outs_2),
-    .io_outs_3(ces_1_0_io_outs_3)
+    .io_outs_3(ces_1_0_io_outs_3),
+    .io_softReset(ces_1_0_io_softReset)
   );
-  Element ces_1_1 ( // @[MockArray.scala 36:52]
+  Element ces_1_1 ( // @[MockArray.scala 46:52]
     .clock(ces_1_1_clock),
+    .reset(ces_1_1_reset),
     .io_ins_0(ces_1_1_io_ins_0),
     .io_ins_1(ces_1_1_io_ins_1),
     .io_ins_2(ces_1_1_io_ins_2),
@@ -814,10 +962,12 @@ module MockArray(
     .io_outs_0(ces_1_1_io_outs_0),
     .io_outs_1(ces_1_1_io_outs_1),
     .io_outs_2(ces_1_1_io_outs_2),
-    .io_outs_3(ces_1_1_io_outs_3)
+    .io_outs_3(ces_1_1_io_outs_3),
+    .io_softReset(ces_1_1_io_softReset)
   );
-  Element ces_1_2 ( // @[MockArray.scala 36:52]
+  Element ces_1_2 ( // @[MockArray.scala 46:52]
     .clock(ces_1_2_clock),
+    .reset(ces_1_2_reset),
     .io_ins_0(ces_1_2_io_ins_0),
     .io_ins_1(ces_1_2_io_ins_1),
     .io_ins_2(ces_1_2_io_ins_2),
@@ -825,10 +975,12 @@ module MockArray(
     .io_outs_0(ces_1_2_io_outs_0),
     .io_outs_1(ces_1_2_io_outs_1),
     .io_outs_2(ces_1_2_io_outs_2),
-    .io_outs_3(ces_1_2_io_outs_3)
+    .io_outs_3(ces_1_2_io_outs_3),
+    .io_softReset(ces_1_2_io_softReset)
   );
-  Element ces_1_3 ( // @[MockArray.scala 36:52]
+  Element ces_1_3 ( // @[MockArray.scala 46:52]
     .clock(ces_1_3_clock),
+    .reset(ces_1_3_reset),
     .io_ins_0(ces_1_3_io_ins_0),
     .io_ins_1(ces_1_3_io_ins_1),
     .io_ins_2(ces_1_3_io_ins_2),
@@ -836,10 +988,12 @@ module MockArray(
     .io_outs_0(ces_1_3_io_outs_0),
     .io_outs_1(ces_1_3_io_outs_1),
     .io_outs_2(ces_1_3_io_outs_2),
-    .io_outs_3(ces_1_3_io_outs_3)
+    .io_outs_3(ces_1_3_io_outs_3),
+    .io_softReset(ces_1_3_io_softReset)
   );
-  Element ces_1_4 ( // @[MockArray.scala 36:52]
+  Element ces_1_4 ( // @[MockArray.scala 46:52]
     .clock(ces_1_4_clock),
+    .reset(ces_1_4_reset),
     .io_ins_0(ces_1_4_io_ins_0),
     .io_ins_1(ces_1_4_io_ins_1),
     .io_ins_2(ces_1_4_io_ins_2),
@@ -847,10 +1001,12 @@ module MockArray(
     .io_outs_0(ces_1_4_io_outs_0),
     .io_outs_1(ces_1_4_io_outs_1),
     .io_outs_2(ces_1_4_io_outs_2),
-    .io_outs_3(ces_1_4_io_outs_3)
+    .io_outs_3(ces_1_4_io_outs_3),
+    .io_softReset(ces_1_4_io_softReset)
   );
-  Element ces_1_5 ( // @[MockArray.scala 36:52]
+  Element ces_1_5 ( // @[MockArray.scala 46:52]
     .clock(ces_1_5_clock),
+    .reset(ces_1_5_reset),
     .io_ins_0(ces_1_5_io_ins_0),
     .io_ins_1(ces_1_5_io_ins_1),
     .io_ins_2(ces_1_5_io_ins_2),
@@ -858,10 +1014,12 @@ module MockArray(
     .io_outs_0(ces_1_5_io_outs_0),
     .io_outs_1(ces_1_5_io_outs_1),
     .io_outs_2(ces_1_5_io_outs_2),
-    .io_outs_3(ces_1_5_io_outs_3)
+    .io_outs_3(ces_1_5_io_outs_3),
+    .io_softReset(ces_1_5_io_softReset)
   );
-  Element ces_1_6 ( // @[MockArray.scala 36:52]
+  Element ces_1_6 ( // @[MockArray.scala 46:52]
     .clock(ces_1_6_clock),
+    .reset(ces_1_6_reset),
     .io_ins_0(ces_1_6_io_ins_0),
     .io_ins_1(ces_1_6_io_ins_1),
     .io_ins_2(ces_1_6_io_ins_2),
@@ -869,10 +1027,12 @@ module MockArray(
     .io_outs_0(ces_1_6_io_outs_0),
     .io_outs_1(ces_1_6_io_outs_1),
     .io_outs_2(ces_1_6_io_outs_2),
-    .io_outs_3(ces_1_6_io_outs_3)
+    .io_outs_3(ces_1_6_io_outs_3),
+    .io_softReset(ces_1_6_io_softReset)
   );
-  Element ces_1_7 ( // @[MockArray.scala 36:52]
+  Element ces_1_7 ( // @[MockArray.scala 46:52]
     .clock(ces_1_7_clock),
+    .reset(ces_1_7_reset),
     .io_ins_0(ces_1_7_io_ins_0),
     .io_ins_1(ces_1_7_io_ins_1),
     .io_ins_2(ces_1_7_io_ins_2),
@@ -880,10 +1040,12 @@ module MockArray(
     .io_outs_0(ces_1_7_io_outs_0),
     .io_outs_1(ces_1_7_io_outs_1),
     .io_outs_2(ces_1_7_io_outs_2),
-    .io_outs_3(ces_1_7_io_outs_3)
+    .io_outs_3(ces_1_7_io_outs_3),
+    .io_softReset(ces_1_7_io_softReset)
   );
-  Element ces_2_0 ( // @[MockArray.scala 36:52]
+  Element ces_2_0 ( // @[MockArray.scala 46:52]
     .clock(ces_2_0_clock),
+    .reset(ces_2_0_reset),
     .io_ins_0(ces_2_0_io_ins_0),
     .io_ins_1(ces_2_0_io_ins_1),
     .io_ins_2(ces_2_0_io_ins_2),
@@ -891,10 +1053,12 @@ module MockArray(
     .io_outs_0(ces_2_0_io_outs_0),
     .io_outs_1(ces_2_0_io_outs_1),
     .io_outs_2(ces_2_0_io_outs_2),
-    .io_outs_3(ces_2_0_io_outs_3)
+    .io_outs_3(ces_2_0_io_outs_3),
+    .io_softReset(ces_2_0_io_softReset)
   );
-  Element ces_2_1 ( // @[MockArray.scala 36:52]
+  Element ces_2_1 ( // @[MockArray.scala 46:52]
     .clock(ces_2_1_clock),
+    .reset(ces_2_1_reset),
     .io_ins_0(ces_2_1_io_ins_0),
     .io_ins_1(ces_2_1_io_ins_1),
     .io_ins_2(ces_2_1_io_ins_2),
@@ -902,10 +1066,12 @@ module MockArray(
     .io_outs_0(ces_2_1_io_outs_0),
     .io_outs_1(ces_2_1_io_outs_1),
     .io_outs_2(ces_2_1_io_outs_2),
-    .io_outs_3(ces_2_1_io_outs_3)
+    .io_outs_3(ces_2_1_io_outs_3),
+    .io_softReset(ces_2_1_io_softReset)
   );
-  Element ces_2_2 ( // @[MockArray.scala 36:52]
+  Element ces_2_2 ( // @[MockArray.scala 46:52]
     .clock(ces_2_2_clock),
+    .reset(ces_2_2_reset),
     .io_ins_0(ces_2_2_io_ins_0),
     .io_ins_1(ces_2_2_io_ins_1),
     .io_ins_2(ces_2_2_io_ins_2),
@@ -913,10 +1079,12 @@ module MockArray(
     .io_outs_0(ces_2_2_io_outs_0),
     .io_outs_1(ces_2_2_io_outs_1),
     .io_outs_2(ces_2_2_io_outs_2),
-    .io_outs_3(ces_2_2_io_outs_3)
+    .io_outs_3(ces_2_2_io_outs_3),
+    .io_softReset(ces_2_2_io_softReset)
   );
-  Element ces_2_3 ( // @[MockArray.scala 36:52]
+  Element ces_2_3 ( // @[MockArray.scala 46:52]
     .clock(ces_2_3_clock),
+    .reset(ces_2_3_reset),
     .io_ins_0(ces_2_3_io_ins_0),
     .io_ins_1(ces_2_3_io_ins_1),
     .io_ins_2(ces_2_3_io_ins_2),
@@ -924,10 +1092,12 @@ module MockArray(
     .io_outs_0(ces_2_3_io_outs_0),
     .io_outs_1(ces_2_3_io_outs_1),
     .io_outs_2(ces_2_3_io_outs_2),
-    .io_outs_3(ces_2_3_io_outs_3)
+    .io_outs_3(ces_2_3_io_outs_3),
+    .io_softReset(ces_2_3_io_softReset)
   );
-  Element ces_2_4 ( // @[MockArray.scala 36:52]
+  Element ces_2_4 ( // @[MockArray.scala 46:52]
     .clock(ces_2_4_clock),
+    .reset(ces_2_4_reset),
     .io_ins_0(ces_2_4_io_ins_0),
     .io_ins_1(ces_2_4_io_ins_1),
     .io_ins_2(ces_2_4_io_ins_2),
@@ -935,10 +1105,12 @@ module MockArray(
     .io_outs_0(ces_2_4_io_outs_0),
     .io_outs_1(ces_2_4_io_outs_1),
     .io_outs_2(ces_2_4_io_outs_2),
-    .io_outs_3(ces_2_4_io_outs_3)
+    .io_outs_3(ces_2_4_io_outs_3),
+    .io_softReset(ces_2_4_io_softReset)
   );
-  Element ces_2_5 ( // @[MockArray.scala 36:52]
+  Element ces_2_5 ( // @[MockArray.scala 46:52]
     .clock(ces_2_5_clock),
+    .reset(ces_2_5_reset),
     .io_ins_0(ces_2_5_io_ins_0),
     .io_ins_1(ces_2_5_io_ins_1),
     .io_ins_2(ces_2_5_io_ins_2),
@@ -946,10 +1118,12 @@ module MockArray(
     .io_outs_0(ces_2_5_io_outs_0),
     .io_outs_1(ces_2_5_io_outs_1),
     .io_outs_2(ces_2_5_io_outs_2),
-    .io_outs_3(ces_2_5_io_outs_3)
+    .io_outs_3(ces_2_5_io_outs_3),
+    .io_softReset(ces_2_5_io_softReset)
   );
-  Element ces_2_6 ( // @[MockArray.scala 36:52]
+  Element ces_2_6 ( // @[MockArray.scala 46:52]
     .clock(ces_2_6_clock),
+    .reset(ces_2_6_reset),
     .io_ins_0(ces_2_6_io_ins_0),
     .io_ins_1(ces_2_6_io_ins_1),
     .io_ins_2(ces_2_6_io_ins_2),
@@ -957,10 +1131,12 @@ module MockArray(
     .io_outs_0(ces_2_6_io_outs_0),
     .io_outs_1(ces_2_6_io_outs_1),
     .io_outs_2(ces_2_6_io_outs_2),
-    .io_outs_3(ces_2_6_io_outs_3)
+    .io_outs_3(ces_2_6_io_outs_3),
+    .io_softReset(ces_2_6_io_softReset)
   );
-  Element ces_2_7 ( // @[MockArray.scala 36:52]
+  Element ces_2_7 ( // @[MockArray.scala 46:52]
     .clock(ces_2_7_clock),
+    .reset(ces_2_7_reset),
     .io_ins_0(ces_2_7_io_ins_0),
     .io_ins_1(ces_2_7_io_ins_1),
     .io_ins_2(ces_2_7_io_ins_2),
@@ -968,10 +1144,12 @@ module MockArray(
     .io_outs_0(ces_2_7_io_outs_0),
     .io_outs_1(ces_2_7_io_outs_1),
     .io_outs_2(ces_2_7_io_outs_2),
-    .io_outs_3(ces_2_7_io_outs_3)
+    .io_outs_3(ces_2_7_io_outs_3),
+    .io_softReset(ces_2_7_io_softReset)
   );
-  Element ces_3_0 ( // @[MockArray.scala 36:52]
+  Element ces_3_0 ( // @[MockArray.scala 46:52]
     .clock(ces_3_0_clock),
+    .reset(ces_3_0_reset),
     .io_ins_0(ces_3_0_io_ins_0),
     .io_ins_1(ces_3_0_io_ins_1),
     .io_ins_2(ces_3_0_io_ins_2),
@@ -979,10 +1157,12 @@ module MockArray(
     .io_outs_0(ces_3_0_io_outs_0),
     .io_outs_1(ces_3_0_io_outs_1),
     .io_outs_2(ces_3_0_io_outs_2),
-    .io_outs_3(ces_3_0_io_outs_3)
+    .io_outs_3(ces_3_0_io_outs_3),
+    .io_softReset(ces_3_0_io_softReset)
   );
-  Element ces_3_1 ( // @[MockArray.scala 36:52]
+  Element ces_3_1 ( // @[MockArray.scala 46:52]
     .clock(ces_3_1_clock),
+    .reset(ces_3_1_reset),
     .io_ins_0(ces_3_1_io_ins_0),
     .io_ins_1(ces_3_1_io_ins_1),
     .io_ins_2(ces_3_1_io_ins_2),
@@ -990,10 +1170,12 @@ module MockArray(
     .io_outs_0(ces_3_1_io_outs_0),
     .io_outs_1(ces_3_1_io_outs_1),
     .io_outs_2(ces_3_1_io_outs_2),
-    .io_outs_3(ces_3_1_io_outs_3)
+    .io_outs_3(ces_3_1_io_outs_3),
+    .io_softReset(ces_3_1_io_softReset)
   );
-  Element ces_3_2 ( // @[MockArray.scala 36:52]
+  Element ces_3_2 ( // @[MockArray.scala 46:52]
     .clock(ces_3_2_clock),
+    .reset(ces_3_2_reset),
     .io_ins_0(ces_3_2_io_ins_0),
     .io_ins_1(ces_3_2_io_ins_1),
     .io_ins_2(ces_3_2_io_ins_2),
@@ -1001,10 +1183,12 @@ module MockArray(
     .io_outs_0(ces_3_2_io_outs_0),
     .io_outs_1(ces_3_2_io_outs_1),
     .io_outs_2(ces_3_2_io_outs_2),
-    .io_outs_3(ces_3_2_io_outs_3)
+    .io_outs_3(ces_3_2_io_outs_3),
+    .io_softReset(ces_3_2_io_softReset)
   );
-  Element ces_3_3 ( // @[MockArray.scala 36:52]
+  Element ces_3_3 ( // @[MockArray.scala 46:52]
     .clock(ces_3_3_clock),
+    .reset(ces_3_3_reset),
     .io_ins_0(ces_3_3_io_ins_0),
     .io_ins_1(ces_3_3_io_ins_1),
     .io_ins_2(ces_3_3_io_ins_2),
@@ -1012,10 +1196,12 @@ module MockArray(
     .io_outs_0(ces_3_3_io_outs_0),
     .io_outs_1(ces_3_3_io_outs_1),
     .io_outs_2(ces_3_3_io_outs_2),
-    .io_outs_3(ces_3_3_io_outs_3)
+    .io_outs_3(ces_3_3_io_outs_3),
+    .io_softReset(ces_3_3_io_softReset)
   );
-  Element ces_3_4 ( // @[MockArray.scala 36:52]
+  Element ces_3_4 ( // @[MockArray.scala 46:52]
     .clock(ces_3_4_clock),
+    .reset(ces_3_4_reset),
     .io_ins_0(ces_3_4_io_ins_0),
     .io_ins_1(ces_3_4_io_ins_1),
     .io_ins_2(ces_3_4_io_ins_2),
@@ -1023,10 +1209,12 @@ module MockArray(
     .io_outs_0(ces_3_4_io_outs_0),
     .io_outs_1(ces_3_4_io_outs_1),
     .io_outs_2(ces_3_4_io_outs_2),
-    .io_outs_3(ces_3_4_io_outs_3)
+    .io_outs_3(ces_3_4_io_outs_3),
+    .io_softReset(ces_3_4_io_softReset)
   );
-  Element ces_3_5 ( // @[MockArray.scala 36:52]
+  Element ces_3_5 ( // @[MockArray.scala 46:52]
     .clock(ces_3_5_clock),
+    .reset(ces_3_5_reset),
     .io_ins_0(ces_3_5_io_ins_0),
     .io_ins_1(ces_3_5_io_ins_1),
     .io_ins_2(ces_3_5_io_ins_2),
@@ -1034,10 +1222,12 @@ module MockArray(
     .io_outs_0(ces_3_5_io_outs_0),
     .io_outs_1(ces_3_5_io_outs_1),
     .io_outs_2(ces_3_5_io_outs_2),
-    .io_outs_3(ces_3_5_io_outs_3)
+    .io_outs_3(ces_3_5_io_outs_3),
+    .io_softReset(ces_3_5_io_softReset)
   );
-  Element ces_3_6 ( // @[MockArray.scala 36:52]
+  Element ces_3_6 ( // @[MockArray.scala 46:52]
     .clock(ces_3_6_clock),
+    .reset(ces_3_6_reset),
     .io_ins_0(ces_3_6_io_ins_0),
     .io_ins_1(ces_3_6_io_ins_1),
     .io_ins_2(ces_3_6_io_ins_2),
@@ -1045,10 +1235,12 @@ module MockArray(
     .io_outs_0(ces_3_6_io_outs_0),
     .io_outs_1(ces_3_6_io_outs_1),
     .io_outs_2(ces_3_6_io_outs_2),
-    .io_outs_3(ces_3_6_io_outs_3)
+    .io_outs_3(ces_3_6_io_outs_3),
+    .io_softReset(ces_3_6_io_softReset)
   );
-  Element ces_3_7 ( // @[MockArray.scala 36:52]
+  Element ces_3_7 ( // @[MockArray.scala 46:52]
     .clock(ces_3_7_clock),
+    .reset(ces_3_7_reset),
     .io_ins_0(ces_3_7_io_ins_0),
     .io_ins_1(ces_3_7_io_ins_1),
     .io_ins_2(ces_3_7_io_ins_2),
@@ -1056,10 +1248,12 @@ module MockArray(
     .io_outs_0(ces_3_7_io_outs_0),
     .io_outs_1(ces_3_7_io_outs_1),
     .io_outs_2(ces_3_7_io_outs_2),
-    .io_outs_3(ces_3_7_io_outs_3)
+    .io_outs_3(ces_3_7_io_outs_3),
+    .io_softReset(ces_3_7_io_softReset)
   );
-  Element ces_4_0 ( // @[MockArray.scala 36:52]
+  Element ces_4_0 ( // @[MockArray.scala 46:52]
     .clock(ces_4_0_clock),
+    .reset(ces_4_0_reset),
     .io_ins_0(ces_4_0_io_ins_0),
     .io_ins_1(ces_4_0_io_ins_1),
     .io_ins_2(ces_4_0_io_ins_2),
@@ -1067,10 +1261,12 @@ module MockArray(
     .io_outs_0(ces_4_0_io_outs_0),
     .io_outs_1(ces_4_0_io_outs_1),
     .io_outs_2(ces_4_0_io_outs_2),
-    .io_outs_3(ces_4_0_io_outs_3)
+    .io_outs_3(ces_4_0_io_outs_3),
+    .io_softReset(ces_4_0_io_softReset)
   );
-  Element ces_4_1 ( // @[MockArray.scala 36:52]
+  Element ces_4_1 ( // @[MockArray.scala 46:52]
     .clock(ces_4_1_clock),
+    .reset(ces_4_1_reset),
     .io_ins_0(ces_4_1_io_ins_0),
     .io_ins_1(ces_4_1_io_ins_1),
     .io_ins_2(ces_4_1_io_ins_2),
@@ -1078,10 +1274,12 @@ module MockArray(
     .io_outs_0(ces_4_1_io_outs_0),
     .io_outs_1(ces_4_1_io_outs_1),
     .io_outs_2(ces_4_1_io_outs_2),
-    .io_outs_3(ces_4_1_io_outs_3)
+    .io_outs_3(ces_4_1_io_outs_3),
+    .io_softReset(ces_4_1_io_softReset)
   );
-  Element ces_4_2 ( // @[MockArray.scala 36:52]
+  Element ces_4_2 ( // @[MockArray.scala 46:52]
     .clock(ces_4_2_clock),
+    .reset(ces_4_2_reset),
     .io_ins_0(ces_4_2_io_ins_0),
     .io_ins_1(ces_4_2_io_ins_1),
     .io_ins_2(ces_4_2_io_ins_2),
@@ -1089,10 +1287,12 @@ module MockArray(
     .io_outs_0(ces_4_2_io_outs_0),
     .io_outs_1(ces_4_2_io_outs_1),
     .io_outs_2(ces_4_2_io_outs_2),
-    .io_outs_3(ces_4_2_io_outs_3)
+    .io_outs_3(ces_4_2_io_outs_3),
+    .io_softReset(ces_4_2_io_softReset)
   );
-  Element ces_4_3 ( // @[MockArray.scala 36:52]
+  Element ces_4_3 ( // @[MockArray.scala 46:52]
     .clock(ces_4_3_clock),
+    .reset(ces_4_3_reset),
     .io_ins_0(ces_4_3_io_ins_0),
     .io_ins_1(ces_4_3_io_ins_1),
     .io_ins_2(ces_4_3_io_ins_2),
@@ -1100,10 +1300,12 @@ module MockArray(
     .io_outs_0(ces_4_3_io_outs_0),
     .io_outs_1(ces_4_3_io_outs_1),
     .io_outs_2(ces_4_3_io_outs_2),
-    .io_outs_3(ces_4_3_io_outs_3)
+    .io_outs_3(ces_4_3_io_outs_3),
+    .io_softReset(ces_4_3_io_softReset)
   );
-  Element ces_4_4 ( // @[MockArray.scala 36:52]
+  Element ces_4_4 ( // @[MockArray.scala 46:52]
     .clock(ces_4_4_clock),
+    .reset(ces_4_4_reset),
     .io_ins_0(ces_4_4_io_ins_0),
     .io_ins_1(ces_4_4_io_ins_1),
     .io_ins_2(ces_4_4_io_ins_2),
@@ -1111,10 +1313,12 @@ module MockArray(
     .io_outs_0(ces_4_4_io_outs_0),
     .io_outs_1(ces_4_4_io_outs_1),
     .io_outs_2(ces_4_4_io_outs_2),
-    .io_outs_3(ces_4_4_io_outs_3)
+    .io_outs_3(ces_4_4_io_outs_3),
+    .io_softReset(ces_4_4_io_softReset)
   );
-  Element ces_4_5 ( // @[MockArray.scala 36:52]
+  Element ces_4_5 ( // @[MockArray.scala 46:52]
     .clock(ces_4_5_clock),
+    .reset(ces_4_5_reset),
     .io_ins_0(ces_4_5_io_ins_0),
     .io_ins_1(ces_4_5_io_ins_1),
     .io_ins_2(ces_4_5_io_ins_2),
@@ -1122,10 +1326,12 @@ module MockArray(
     .io_outs_0(ces_4_5_io_outs_0),
     .io_outs_1(ces_4_5_io_outs_1),
     .io_outs_2(ces_4_5_io_outs_2),
-    .io_outs_3(ces_4_5_io_outs_3)
+    .io_outs_3(ces_4_5_io_outs_3),
+    .io_softReset(ces_4_5_io_softReset)
   );
-  Element ces_4_6 ( // @[MockArray.scala 36:52]
+  Element ces_4_6 ( // @[MockArray.scala 46:52]
     .clock(ces_4_6_clock),
+    .reset(ces_4_6_reset),
     .io_ins_0(ces_4_6_io_ins_0),
     .io_ins_1(ces_4_6_io_ins_1),
     .io_ins_2(ces_4_6_io_ins_2),
@@ -1133,10 +1339,12 @@ module MockArray(
     .io_outs_0(ces_4_6_io_outs_0),
     .io_outs_1(ces_4_6_io_outs_1),
     .io_outs_2(ces_4_6_io_outs_2),
-    .io_outs_3(ces_4_6_io_outs_3)
+    .io_outs_3(ces_4_6_io_outs_3),
+    .io_softReset(ces_4_6_io_softReset)
   );
-  Element ces_4_7 ( // @[MockArray.scala 36:52]
+  Element ces_4_7 ( // @[MockArray.scala 46:52]
     .clock(ces_4_7_clock),
+    .reset(ces_4_7_reset),
     .io_ins_0(ces_4_7_io_ins_0),
     .io_ins_1(ces_4_7_io_ins_1),
     .io_ins_2(ces_4_7_io_ins_2),
@@ -1144,10 +1352,12 @@ module MockArray(
     .io_outs_0(ces_4_7_io_outs_0),
     .io_outs_1(ces_4_7_io_outs_1),
     .io_outs_2(ces_4_7_io_outs_2),
-    .io_outs_3(ces_4_7_io_outs_3)
+    .io_outs_3(ces_4_7_io_outs_3),
+    .io_softReset(ces_4_7_io_softReset)
   );
-  Element ces_5_0 ( // @[MockArray.scala 36:52]
+  Element ces_5_0 ( // @[MockArray.scala 46:52]
     .clock(ces_5_0_clock),
+    .reset(ces_5_0_reset),
     .io_ins_0(ces_5_0_io_ins_0),
     .io_ins_1(ces_5_0_io_ins_1),
     .io_ins_2(ces_5_0_io_ins_2),
@@ -1155,10 +1365,12 @@ module MockArray(
     .io_outs_0(ces_5_0_io_outs_0),
     .io_outs_1(ces_5_0_io_outs_1),
     .io_outs_2(ces_5_0_io_outs_2),
-    .io_outs_3(ces_5_0_io_outs_3)
+    .io_outs_3(ces_5_0_io_outs_3),
+    .io_softReset(ces_5_0_io_softReset)
   );
-  Element ces_5_1 ( // @[MockArray.scala 36:52]
+  Element ces_5_1 ( // @[MockArray.scala 46:52]
     .clock(ces_5_1_clock),
+    .reset(ces_5_1_reset),
     .io_ins_0(ces_5_1_io_ins_0),
     .io_ins_1(ces_5_1_io_ins_1),
     .io_ins_2(ces_5_1_io_ins_2),
@@ -1166,10 +1378,12 @@ module MockArray(
     .io_outs_0(ces_5_1_io_outs_0),
     .io_outs_1(ces_5_1_io_outs_1),
     .io_outs_2(ces_5_1_io_outs_2),
-    .io_outs_3(ces_5_1_io_outs_3)
+    .io_outs_3(ces_5_1_io_outs_3),
+    .io_softReset(ces_5_1_io_softReset)
   );
-  Element ces_5_2 ( // @[MockArray.scala 36:52]
+  Element ces_5_2 ( // @[MockArray.scala 46:52]
     .clock(ces_5_2_clock),
+    .reset(ces_5_2_reset),
     .io_ins_0(ces_5_2_io_ins_0),
     .io_ins_1(ces_5_2_io_ins_1),
     .io_ins_2(ces_5_2_io_ins_2),
@@ -1177,10 +1391,12 @@ module MockArray(
     .io_outs_0(ces_5_2_io_outs_0),
     .io_outs_1(ces_5_2_io_outs_1),
     .io_outs_2(ces_5_2_io_outs_2),
-    .io_outs_3(ces_5_2_io_outs_3)
+    .io_outs_3(ces_5_2_io_outs_3),
+    .io_softReset(ces_5_2_io_softReset)
   );
-  Element ces_5_3 ( // @[MockArray.scala 36:52]
+  Element ces_5_3 ( // @[MockArray.scala 46:52]
     .clock(ces_5_3_clock),
+    .reset(ces_5_3_reset),
     .io_ins_0(ces_5_3_io_ins_0),
     .io_ins_1(ces_5_3_io_ins_1),
     .io_ins_2(ces_5_3_io_ins_2),
@@ -1188,10 +1404,12 @@ module MockArray(
     .io_outs_0(ces_5_3_io_outs_0),
     .io_outs_1(ces_5_3_io_outs_1),
     .io_outs_2(ces_5_3_io_outs_2),
-    .io_outs_3(ces_5_3_io_outs_3)
+    .io_outs_3(ces_5_3_io_outs_3),
+    .io_softReset(ces_5_3_io_softReset)
   );
-  Element ces_5_4 ( // @[MockArray.scala 36:52]
+  Element ces_5_4 ( // @[MockArray.scala 46:52]
     .clock(ces_5_4_clock),
+    .reset(ces_5_4_reset),
     .io_ins_0(ces_5_4_io_ins_0),
     .io_ins_1(ces_5_4_io_ins_1),
     .io_ins_2(ces_5_4_io_ins_2),
@@ -1199,10 +1417,12 @@ module MockArray(
     .io_outs_0(ces_5_4_io_outs_0),
     .io_outs_1(ces_5_4_io_outs_1),
     .io_outs_2(ces_5_4_io_outs_2),
-    .io_outs_3(ces_5_4_io_outs_3)
+    .io_outs_3(ces_5_4_io_outs_3),
+    .io_softReset(ces_5_4_io_softReset)
   );
-  Element ces_5_5 ( // @[MockArray.scala 36:52]
+  Element ces_5_5 ( // @[MockArray.scala 46:52]
     .clock(ces_5_5_clock),
+    .reset(ces_5_5_reset),
     .io_ins_0(ces_5_5_io_ins_0),
     .io_ins_1(ces_5_5_io_ins_1),
     .io_ins_2(ces_5_5_io_ins_2),
@@ -1210,10 +1430,12 @@ module MockArray(
     .io_outs_0(ces_5_5_io_outs_0),
     .io_outs_1(ces_5_5_io_outs_1),
     .io_outs_2(ces_5_5_io_outs_2),
-    .io_outs_3(ces_5_5_io_outs_3)
+    .io_outs_3(ces_5_5_io_outs_3),
+    .io_softReset(ces_5_5_io_softReset)
   );
-  Element ces_5_6 ( // @[MockArray.scala 36:52]
+  Element ces_5_6 ( // @[MockArray.scala 46:52]
     .clock(ces_5_6_clock),
+    .reset(ces_5_6_reset),
     .io_ins_0(ces_5_6_io_ins_0),
     .io_ins_1(ces_5_6_io_ins_1),
     .io_ins_2(ces_5_6_io_ins_2),
@@ -1221,10 +1443,12 @@ module MockArray(
     .io_outs_0(ces_5_6_io_outs_0),
     .io_outs_1(ces_5_6_io_outs_1),
     .io_outs_2(ces_5_6_io_outs_2),
-    .io_outs_3(ces_5_6_io_outs_3)
+    .io_outs_3(ces_5_6_io_outs_3),
+    .io_softReset(ces_5_6_io_softReset)
   );
-  Element ces_5_7 ( // @[MockArray.scala 36:52]
+  Element ces_5_7 ( // @[MockArray.scala 46:52]
     .clock(ces_5_7_clock),
+    .reset(ces_5_7_reset),
     .io_ins_0(ces_5_7_io_ins_0),
     .io_ins_1(ces_5_7_io_ins_1),
     .io_ins_2(ces_5_7_io_ins_2),
@@ -1232,10 +1456,12 @@ module MockArray(
     .io_outs_0(ces_5_7_io_outs_0),
     .io_outs_1(ces_5_7_io_outs_1),
     .io_outs_2(ces_5_7_io_outs_2),
-    .io_outs_3(ces_5_7_io_outs_3)
+    .io_outs_3(ces_5_7_io_outs_3),
+    .io_softReset(ces_5_7_io_softReset)
   );
-  Element ces_6_0 ( // @[MockArray.scala 36:52]
+  Element ces_6_0 ( // @[MockArray.scala 46:52]
     .clock(ces_6_0_clock),
+    .reset(ces_6_0_reset),
     .io_ins_0(ces_6_0_io_ins_0),
     .io_ins_1(ces_6_0_io_ins_1),
     .io_ins_2(ces_6_0_io_ins_2),
@@ -1243,10 +1469,12 @@ module MockArray(
     .io_outs_0(ces_6_0_io_outs_0),
     .io_outs_1(ces_6_0_io_outs_1),
     .io_outs_2(ces_6_0_io_outs_2),
-    .io_outs_3(ces_6_0_io_outs_3)
+    .io_outs_3(ces_6_0_io_outs_3),
+    .io_softReset(ces_6_0_io_softReset)
   );
-  Element ces_6_1 ( // @[MockArray.scala 36:52]
+  Element ces_6_1 ( // @[MockArray.scala 46:52]
     .clock(ces_6_1_clock),
+    .reset(ces_6_1_reset),
     .io_ins_0(ces_6_1_io_ins_0),
     .io_ins_1(ces_6_1_io_ins_1),
     .io_ins_2(ces_6_1_io_ins_2),
@@ -1254,10 +1482,12 @@ module MockArray(
     .io_outs_0(ces_6_1_io_outs_0),
     .io_outs_1(ces_6_1_io_outs_1),
     .io_outs_2(ces_6_1_io_outs_2),
-    .io_outs_3(ces_6_1_io_outs_3)
+    .io_outs_3(ces_6_1_io_outs_3),
+    .io_softReset(ces_6_1_io_softReset)
   );
-  Element ces_6_2 ( // @[MockArray.scala 36:52]
+  Element ces_6_2 ( // @[MockArray.scala 46:52]
     .clock(ces_6_2_clock),
+    .reset(ces_6_2_reset),
     .io_ins_0(ces_6_2_io_ins_0),
     .io_ins_1(ces_6_2_io_ins_1),
     .io_ins_2(ces_6_2_io_ins_2),
@@ -1265,10 +1495,12 @@ module MockArray(
     .io_outs_0(ces_6_2_io_outs_0),
     .io_outs_1(ces_6_2_io_outs_1),
     .io_outs_2(ces_6_2_io_outs_2),
-    .io_outs_3(ces_6_2_io_outs_3)
+    .io_outs_3(ces_6_2_io_outs_3),
+    .io_softReset(ces_6_2_io_softReset)
   );
-  Element ces_6_3 ( // @[MockArray.scala 36:52]
+  Element ces_6_3 ( // @[MockArray.scala 46:52]
     .clock(ces_6_3_clock),
+    .reset(ces_6_3_reset),
     .io_ins_0(ces_6_3_io_ins_0),
     .io_ins_1(ces_6_3_io_ins_1),
     .io_ins_2(ces_6_3_io_ins_2),
@@ -1276,10 +1508,12 @@ module MockArray(
     .io_outs_0(ces_6_3_io_outs_0),
     .io_outs_1(ces_6_3_io_outs_1),
     .io_outs_2(ces_6_3_io_outs_2),
-    .io_outs_3(ces_6_3_io_outs_3)
+    .io_outs_3(ces_6_3_io_outs_3),
+    .io_softReset(ces_6_3_io_softReset)
   );
-  Element ces_6_4 ( // @[MockArray.scala 36:52]
+  Element ces_6_4 ( // @[MockArray.scala 46:52]
     .clock(ces_6_4_clock),
+    .reset(ces_6_4_reset),
     .io_ins_0(ces_6_4_io_ins_0),
     .io_ins_1(ces_6_4_io_ins_1),
     .io_ins_2(ces_6_4_io_ins_2),
@@ -1287,10 +1521,12 @@ module MockArray(
     .io_outs_0(ces_6_4_io_outs_0),
     .io_outs_1(ces_6_4_io_outs_1),
     .io_outs_2(ces_6_4_io_outs_2),
-    .io_outs_3(ces_6_4_io_outs_3)
+    .io_outs_3(ces_6_4_io_outs_3),
+    .io_softReset(ces_6_4_io_softReset)
   );
-  Element ces_6_5 ( // @[MockArray.scala 36:52]
+  Element ces_6_5 ( // @[MockArray.scala 46:52]
     .clock(ces_6_5_clock),
+    .reset(ces_6_5_reset),
     .io_ins_0(ces_6_5_io_ins_0),
     .io_ins_1(ces_6_5_io_ins_1),
     .io_ins_2(ces_6_5_io_ins_2),
@@ -1298,10 +1534,12 @@ module MockArray(
     .io_outs_0(ces_6_5_io_outs_0),
     .io_outs_1(ces_6_5_io_outs_1),
     .io_outs_2(ces_6_5_io_outs_2),
-    .io_outs_3(ces_6_5_io_outs_3)
+    .io_outs_3(ces_6_5_io_outs_3),
+    .io_softReset(ces_6_5_io_softReset)
   );
-  Element ces_6_6 ( // @[MockArray.scala 36:52]
+  Element ces_6_6 ( // @[MockArray.scala 46:52]
     .clock(ces_6_6_clock),
+    .reset(ces_6_6_reset),
     .io_ins_0(ces_6_6_io_ins_0),
     .io_ins_1(ces_6_6_io_ins_1),
     .io_ins_2(ces_6_6_io_ins_2),
@@ -1309,10 +1547,12 @@ module MockArray(
     .io_outs_0(ces_6_6_io_outs_0),
     .io_outs_1(ces_6_6_io_outs_1),
     .io_outs_2(ces_6_6_io_outs_2),
-    .io_outs_3(ces_6_6_io_outs_3)
+    .io_outs_3(ces_6_6_io_outs_3),
+    .io_softReset(ces_6_6_io_softReset)
   );
-  Element ces_6_7 ( // @[MockArray.scala 36:52]
+  Element ces_6_7 ( // @[MockArray.scala 46:52]
     .clock(ces_6_7_clock),
+    .reset(ces_6_7_reset),
     .io_ins_0(ces_6_7_io_ins_0),
     .io_ins_1(ces_6_7_io_ins_1),
     .io_ins_2(ces_6_7_io_ins_2),
@@ -1320,10 +1560,12 @@ module MockArray(
     .io_outs_0(ces_6_7_io_outs_0),
     .io_outs_1(ces_6_7_io_outs_1),
     .io_outs_2(ces_6_7_io_outs_2),
-    .io_outs_3(ces_6_7_io_outs_3)
+    .io_outs_3(ces_6_7_io_outs_3),
+    .io_softReset(ces_6_7_io_softReset)
   );
-  Element ces_7_0 ( // @[MockArray.scala 36:52]
+  Element ces_7_0 ( // @[MockArray.scala 46:52]
     .clock(ces_7_0_clock),
+    .reset(ces_7_0_reset),
     .io_ins_0(ces_7_0_io_ins_0),
     .io_ins_1(ces_7_0_io_ins_1),
     .io_ins_2(ces_7_0_io_ins_2),
@@ -1331,10 +1573,12 @@ module MockArray(
     .io_outs_0(ces_7_0_io_outs_0),
     .io_outs_1(ces_7_0_io_outs_1),
     .io_outs_2(ces_7_0_io_outs_2),
-    .io_outs_3(ces_7_0_io_outs_3)
+    .io_outs_3(ces_7_0_io_outs_3),
+    .io_softReset(ces_7_0_io_softReset)
   );
-  Element ces_7_1 ( // @[MockArray.scala 36:52]
+  Element ces_7_1 ( // @[MockArray.scala 46:52]
     .clock(ces_7_1_clock),
+    .reset(ces_7_1_reset),
     .io_ins_0(ces_7_1_io_ins_0),
     .io_ins_1(ces_7_1_io_ins_1),
     .io_ins_2(ces_7_1_io_ins_2),
@@ -1342,10 +1586,12 @@ module MockArray(
     .io_outs_0(ces_7_1_io_outs_0),
     .io_outs_1(ces_7_1_io_outs_1),
     .io_outs_2(ces_7_1_io_outs_2),
-    .io_outs_3(ces_7_1_io_outs_3)
+    .io_outs_3(ces_7_1_io_outs_3),
+    .io_softReset(ces_7_1_io_softReset)
   );
-  Element ces_7_2 ( // @[MockArray.scala 36:52]
+  Element ces_7_2 ( // @[MockArray.scala 46:52]
     .clock(ces_7_2_clock),
+    .reset(ces_7_2_reset),
     .io_ins_0(ces_7_2_io_ins_0),
     .io_ins_1(ces_7_2_io_ins_1),
     .io_ins_2(ces_7_2_io_ins_2),
@@ -1353,10 +1599,12 @@ module MockArray(
     .io_outs_0(ces_7_2_io_outs_0),
     .io_outs_1(ces_7_2_io_outs_1),
     .io_outs_2(ces_7_2_io_outs_2),
-    .io_outs_3(ces_7_2_io_outs_3)
+    .io_outs_3(ces_7_2_io_outs_3),
+    .io_softReset(ces_7_2_io_softReset)
   );
-  Element ces_7_3 ( // @[MockArray.scala 36:52]
+  Element ces_7_3 ( // @[MockArray.scala 46:52]
     .clock(ces_7_3_clock),
+    .reset(ces_7_3_reset),
     .io_ins_0(ces_7_3_io_ins_0),
     .io_ins_1(ces_7_3_io_ins_1),
     .io_ins_2(ces_7_3_io_ins_2),
@@ -1364,10 +1612,12 @@ module MockArray(
     .io_outs_0(ces_7_3_io_outs_0),
     .io_outs_1(ces_7_3_io_outs_1),
     .io_outs_2(ces_7_3_io_outs_2),
-    .io_outs_3(ces_7_3_io_outs_3)
+    .io_outs_3(ces_7_3_io_outs_3),
+    .io_softReset(ces_7_3_io_softReset)
   );
-  Element ces_7_4 ( // @[MockArray.scala 36:52]
+  Element ces_7_4 ( // @[MockArray.scala 46:52]
     .clock(ces_7_4_clock),
+    .reset(ces_7_4_reset),
     .io_ins_0(ces_7_4_io_ins_0),
     .io_ins_1(ces_7_4_io_ins_1),
     .io_ins_2(ces_7_4_io_ins_2),
@@ -1375,10 +1625,12 @@ module MockArray(
     .io_outs_0(ces_7_4_io_outs_0),
     .io_outs_1(ces_7_4_io_outs_1),
     .io_outs_2(ces_7_4_io_outs_2),
-    .io_outs_3(ces_7_4_io_outs_3)
+    .io_outs_3(ces_7_4_io_outs_3),
+    .io_softReset(ces_7_4_io_softReset)
   );
-  Element ces_7_5 ( // @[MockArray.scala 36:52]
+  Element ces_7_5 ( // @[MockArray.scala 46:52]
     .clock(ces_7_5_clock),
+    .reset(ces_7_5_reset),
     .io_ins_0(ces_7_5_io_ins_0),
     .io_ins_1(ces_7_5_io_ins_1),
     .io_ins_2(ces_7_5_io_ins_2),
@@ -1386,10 +1638,12 @@ module MockArray(
     .io_outs_0(ces_7_5_io_outs_0),
     .io_outs_1(ces_7_5_io_outs_1),
     .io_outs_2(ces_7_5_io_outs_2),
-    .io_outs_3(ces_7_5_io_outs_3)
+    .io_outs_3(ces_7_5_io_outs_3),
+    .io_softReset(ces_7_5_io_softReset)
   );
-  Element ces_7_6 ( // @[MockArray.scala 36:52]
+  Element ces_7_6 ( // @[MockArray.scala 46:52]
     .clock(ces_7_6_clock),
+    .reset(ces_7_6_reset),
     .io_ins_0(ces_7_6_io_ins_0),
     .io_ins_1(ces_7_6_io_ins_1),
     .io_ins_2(ces_7_6_io_ins_2),
@@ -1397,10 +1651,12 @@ module MockArray(
     .io_outs_0(ces_7_6_io_outs_0),
     .io_outs_1(ces_7_6_io_outs_1),
     .io_outs_2(ces_7_6_io_outs_2),
-    .io_outs_3(ces_7_6_io_outs_3)
+    .io_outs_3(ces_7_6_io_outs_3),
+    .io_softReset(ces_7_6_io_softReset)
   );
-  Element ces_7_7 ( // @[MockArray.scala 36:52]
+  Element ces_7_7 ( // @[MockArray.scala 46:52]
     .clock(ces_7_7_clock),
+    .reset(ces_7_7_reset),
     .io_ins_0(ces_7_7_io_ins_0),
     .io_ins_1(ces_7_7_io_ins_1),
     .io_ins_2(ces_7_7_io_ins_2),
@@ -1408,422 +1664,551 @@ module MockArray(
     .io_outs_0(ces_7_7_io_outs_0),
     .io_outs_1(ces_7_7_io_outs_1),
     .io_outs_2(ces_7_7_io_outs_2),
-    .io_outs_3(ces_7_7_io_outs_3)
+    .io_outs_3(ces_7_7_io_outs_3),
+    .io_softReset(ces_7_7_io_softReset)
   );
-  assign io_outsHorizontal_0_0 = ces_0_0_io_outs_0; // @[MockArray.scala 49:89]
-  assign io_outsHorizontal_0_1 = ces_0_1_io_outs_0; // @[MockArray.scala 49:89]
-  assign io_outsHorizontal_0_2 = ces_0_2_io_outs_0; // @[MockArray.scala 49:89]
-  assign io_outsHorizontal_0_3 = ces_0_3_io_outs_0; // @[MockArray.scala 49:89]
-  assign io_outsHorizontal_0_4 = ces_0_4_io_outs_0; // @[MockArray.scala 49:89]
-  assign io_outsHorizontal_0_5 = ces_0_5_io_outs_0; // @[MockArray.scala 49:89]
-  assign io_outsHorizontal_0_6 = ces_0_6_io_outs_0; // @[MockArray.scala 49:89]
-  assign io_outsHorizontal_0_7 = ces_0_7_io_outs_0; // @[MockArray.scala 49:89]
-  assign io_outsHorizontal_1_0 = ces_7_0_io_outs_2; // @[MockArray.scala 51:89]
-  assign io_outsHorizontal_1_1 = ces_7_1_io_outs_2; // @[MockArray.scala 51:89]
-  assign io_outsHorizontal_1_2 = ces_7_2_io_outs_2; // @[MockArray.scala 51:89]
-  assign io_outsHorizontal_1_3 = ces_7_3_io_outs_2; // @[MockArray.scala 51:89]
-  assign io_outsHorizontal_1_4 = ces_7_4_io_outs_2; // @[MockArray.scala 51:89]
-  assign io_outsHorizontal_1_5 = ces_7_5_io_outs_2; // @[MockArray.scala 51:89]
-  assign io_outsHorizontal_1_6 = ces_7_6_io_outs_2; // @[MockArray.scala 51:89]
-  assign io_outsHorizontal_1_7 = ces_7_7_io_outs_2; // @[MockArray.scala 51:89]
-  assign io_outsVertical_0_0 = ces_0_7_io_outs_1; // @[MockArray.scala 50:89]
-  assign io_outsVertical_0_1 = ces_1_7_io_outs_1; // @[MockArray.scala 50:89]
-  assign io_outsVertical_0_2 = ces_2_7_io_outs_1; // @[MockArray.scala 50:89]
-  assign io_outsVertical_0_3 = ces_3_7_io_outs_1; // @[MockArray.scala 50:89]
-  assign io_outsVertical_0_4 = ces_4_7_io_outs_1; // @[MockArray.scala 50:89]
-  assign io_outsVertical_0_5 = ces_5_7_io_outs_1; // @[MockArray.scala 50:89]
-  assign io_outsVertical_0_6 = ces_6_7_io_outs_1; // @[MockArray.scala 50:89]
-  assign io_outsVertical_0_7 = ces_7_7_io_outs_1; // @[MockArray.scala 50:89]
-  assign io_outsVertical_1_0 = ces_0_0_io_outs_3; // @[MockArray.scala 52:89]
-  assign io_outsVertical_1_1 = ces_1_0_io_outs_3; // @[MockArray.scala 52:89]
-  assign io_outsVertical_1_2 = ces_2_0_io_outs_3; // @[MockArray.scala 52:89]
-  assign io_outsVertical_1_3 = ces_3_0_io_outs_3; // @[MockArray.scala 52:89]
-  assign io_outsVertical_1_4 = ces_4_0_io_outs_3; // @[MockArray.scala 52:89]
-  assign io_outsVertical_1_5 = ces_5_0_io_outs_3; // @[MockArray.scala 52:89]
-  assign io_outsVertical_1_6 = ces_6_0_io_outs_3; // @[MockArray.scala 52:89]
-  assign io_outsVertical_1_7 = ces_7_0_io_outs_3; // @[MockArray.scala 52:89]
-  assign io_lsbs_0 = ces_0_0_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_1 = ces_0_1_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_2 = ces_0_2_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_3 = ces_0_3_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_4 = ces_0_4_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_5 = ces_0_5_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_6 = ces_0_6_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_7 = ces_0_7_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_8 = ces_1_0_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_9 = ces_1_1_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_10 = ces_1_2_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_11 = ces_1_3_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_12 = ces_1_4_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_13 = ces_1_5_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_14 = ces_1_6_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_15 = ces_1_7_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_16 = ces_2_0_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_17 = ces_2_1_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_18 = ces_2_2_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_19 = ces_2_3_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_20 = ces_2_4_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_21 = ces_2_5_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_22 = ces_2_6_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_23 = ces_2_7_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_24 = ces_3_0_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_25 = ces_3_1_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_26 = ces_3_2_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_27 = ces_3_3_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_28 = ces_3_4_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_29 = ces_3_5_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_30 = ces_3_6_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_31 = ces_3_7_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_32 = ces_4_0_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_33 = ces_4_1_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_34 = ces_4_2_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_35 = ces_4_3_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_36 = ces_4_4_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_37 = ces_4_5_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_38 = ces_4_6_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_39 = ces_4_7_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_40 = ces_5_0_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_41 = ces_5_1_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_42 = ces_5_2_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_43 = ces_5_3_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_44 = ces_5_4_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_45 = ces_5_5_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_46 = ces_5_6_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_47 = ces_5_7_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_48 = ces_6_0_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_49 = ces_6_1_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_50 = ces_6_2_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_51 = ces_6_3_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_52 = ces_6_4_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_53 = ces_6_5_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_54 = ces_6_6_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_55 = ces_6_7_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_56 = ces_7_0_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_57 = ces_7_1_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_58 = ces_7_2_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_59 = ces_7_3_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_60 = ces_7_4_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_61 = ces_7_5_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_62 = ces_7_6_io_outs_0[0]; // @[MockArray.scala 38:44]
-  assign io_lsbs_63 = ces_7_7_io_outs_0[0]; // @[MockArray.scala 38:44]
+  assign io_outsHorizontal_0_0 = ces_0_0_io_outs_0; // @[MockArray.scala 61:89]
+  assign io_outsHorizontal_0_1 = ces_0_1_io_outs_0; // @[MockArray.scala 61:89]
+  assign io_outsHorizontal_0_2 = ces_0_2_io_outs_0; // @[MockArray.scala 61:89]
+  assign io_outsHorizontal_0_3 = ces_0_3_io_outs_0; // @[MockArray.scala 61:89]
+  assign io_outsHorizontal_0_4 = ces_0_4_io_outs_0; // @[MockArray.scala 61:89]
+  assign io_outsHorizontal_0_5 = ces_0_5_io_outs_0; // @[MockArray.scala 61:89]
+  assign io_outsHorizontal_0_6 = ces_0_6_io_outs_0; // @[MockArray.scala 61:89]
+  assign io_outsHorizontal_0_7 = ces_0_7_io_outs_0; // @[MockArray.scala 61:89]
+  assign io_outsHorizontal_1_0 = ces_7_0_io_outs_2; // @[MockArray.scala 63:89]
+  assign io_outsHorizontal_1_1 = ces_7_1_io_outs_2; // @[MockArray.scala 63:89]
+  assign io_outsHorizontal_1_2 = ces_7_2_io_outs_2; // @[MockArray.scala 63:89]
+  assign io_outsHorizontal_1_3 = ces_7_3_io_outs_2; // @[MockArray.scala 63:89]
+  assign io_outsHorizontal_1_4 = ces_7_4_io_outs_2; // @[MockArray.scala 63:89]
+  assign io_outsHorizontal_1_5 = ces_7_5_io_outs_2; // @[MockArray.scala 63:89]
+  assign io_outsHorizontal_1_6 = ces_7_6_io_outs_2; // @[MockArray.scala 63:89]
+  assign io_outsHorizontal_1_7 = ces_7_7_io_outs_2; // @[MockArray.scala 63:89]
+  assign io_outsVertical_0_0 = ces_0_7_io_outs_1; // @[MockArray.scala 62:89]
+  assign io_outsVertical_0_1 = ces_1_7_io_outs_1; // @[MockArray.scala 62:89]
+  assign io_outsVertical_0_2 = ces_2_7_io_outs_1; // @[MockArray.scala 62:89]
+  assign io_outsVertical_0_3 = ces_3_7_io_outs_1; // @[MockArray.scala 62:89]
+  assign io_outsVertical_0_4 = ces_4_7_io_outs_1; // @[MockArray.scala 62:89]
+  assign io_outsVertical_0_5 = ces_5_7_io_outs_1; // @[MockArray.scala 62:89]
+  assign io_outsVertical_0_6 = ces_6_7_io_outs_1; // @[MockArray.scala 62:89]
+  assign io_outsVertical_0_7 = ces_7_7_io_outs_1; // @[MockArray.scala 62:89]
+  assign io_outsVertical_1_0 = ces_0_0_io_outs_3; // @[MockArray.scala 64:89]
+  assign io_outsVertical_1_1 = ces_1_0_io_outs_3; // @[MockArray.scala 64:89]
+  assign io_outsVertical_1_2 = ces_2_0_io_outs_3; // @[MockArray.scala 64:89]
+  assign io_outsVertical_1_3 = ces_3_0_io_outs_3; // @[MockArray.scala 64:89]
+  assign io_outsVertical_1_4 = ces_4_0_io_outs_3; // @[MockArray.scala 64:89]
+  assign io_outsVertical_1_5 = ces_5_0_io_outs_3; // @[MockArray.scala 64:89]
+  assign io_outsVertical_1_6 = ces_6_0_io_outs_3; // @[MockArray.scala 64:89]
+  assign io_outsVertical_1_7 = ces_7_0_io_outs_3; // @[MockArray.scala 64:89]
+  assign io_lsbs_0 = ces_0_0_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_1 = ces_0_1_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_2 = ces_0_2_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_3 = ces_0_3_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_4 = ces_0_4_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_5 = ces_0_5_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_6 = ces_0_6_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_7 = ces_0_7_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_8 = ces_1_0_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_9 = ces_1_1_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_10 = ces_1_2_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_11 = ces_1_3_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_12 = ces_1_4_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_13 = ces_1_5_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_14 = ces_1_6_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_15 = ces_1_7_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_16 = ces_2_0_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_17 = ces_2_1_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_18 = ces_2_2_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_19 = ces_2_3_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_20 = ces_2_4_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_21 = ces_2_5_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_22 = ces_2_6_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_23 = ces_2_7_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_24 = ces_3_0_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_25 = ces_3_1_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_26 = ces_3_2_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_27 = ces_3_3_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_28 = ces_3_4_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_29 = ces_3_5_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_30 = ces_3_6_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_31 = ces_3_7_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_32 = ces_4_0_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_33 = ces_4_1_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_34 = ces_4_2_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_35 = ces_4_3_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_36 = ces_4_4_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_37 = ces_4_5_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_38 = ces_4_6_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_39 = ces_4_7_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_40 = ces_5_0_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_41 = ces_5_1_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_42 = ces_5_2_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_43 = ces_5_3_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_44 = ces_5_4_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_45 = ces_5_5_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_46 = ces_5_6_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_47 = ces_5_7_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_48 = ces_6_0_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_49 = ces_6_1_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_50 = ces_6_2_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_51 = ces_6_3_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_52 = ces_6_4_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_53 = ces_6_5_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_54 = ces_6_6_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_55 = ces_6_7_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_56 = ces_7_0_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_57 = ces_7_1_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_58 = ces_7_2_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_59 = ces_7_3_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_60 = ces_7_4_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_61 = ces_7_5_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_62 = ces_7_6_io_outs_0[0]; // @[MockArray.scala 50:44]
+  assign io_lsbs_63 = ces_7_7_io_outs_0[0]; // @[MockArray.scala 50:44]
   assign ces_0_0_clock = clock;
-  assign ces_0_0_io_ins_0 = io_insHorizontal_0_0; // @[MockArray.scala 44:87]
-  assign ces_0_0_io_ins_1 = ces_0_1_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_0_0_io_ins_2 = ces_1_0_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_0_0_io_ins_3 = io_insVertical_1_0; // @[MockArray.scala 47:87]
+  assign ces_0_0_reset = reset;
+  assign ces_0_0_io_ins_0 = io_insHorizontal_0_0; // @[MockArray.scala 56:87]
+  assign ces_0_0_io_ins_1 = ces_0_1_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_0_0_io_ins_2 = ces_1_0_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_0_0_io_ins_3 = io_insVertical_1_0; // @[MockArray.scala 59:87]
+  assign ces_0_0_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_0_1_clock = clock;
-  assign ces_0_1_io_ins_0 = io_insHorizontal_0_1; // @[MockArray.scala 44:87]
-  assign ces_0_1_io_ins_1 = ces_0_2_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_0_1_io_ins_2 = ces_1_1_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_0_1_io_ins_3 = ces_0_0_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_0_1_reset = reset;
+  assign ces_0_1_io_ins_0 = io_insHorizontal_0_1; // @[MockArray.scala 56:87]
+  assign ces_0_1_io_ins_1 = ces_0_2_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_0_1_io_ins_2 = ces_1_1_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_0_1_io_ins_3 = ces_0_0_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_0_1_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_0_2_clock = clock;
-  assign ces_0_2_io_ins_0 = io_insHorizontal_0_2; // @[MockArray.scala 44:87]
-  assign ces_0_2_io_ins_1 = ces_0_3_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_0_2_io_ins_2 = ces_1_2_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_0_2_io_ins_3 = ces_0_1_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_0_2_reset = reset;
+  assign ces_0_2_io_ins_0 = io_insHorizontal_0_2; // @[MockArray.scala 56:87]
+  assign ces_0_2_io_ins_1 = ces_0_3_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_0_2_io_ins_2 = ces_1_2_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_0_2_io_ins_3 = ces_0_1_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_0_2_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_0_3_clock = clock;
-  assign ces_0_3_io_ins_0 = io_insHorizontal_0_3; // @[MockArray.scala 44:87]
-  assign ces_0_3_io_ins_1 = ces_0_4_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_0_3_io_ins_2 = ces_1_3_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_0_3_io_ins_3 = ces_0_2_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_0_3_reset = reset;
+  assign ces_0_3_io_ins_0 = io_insHorizontal_0_3; // @[MockArray.scala 56:87]
+  assign ces_0_3_io_ins_1 = ces_0_4_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_0_3_io_ins_2 = ces_1_3_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_0_3_io_ins_3 = ces_0_2_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_0_3_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_0_4_clock = clock;
-  assign ces_0_4_io_ins_0 = io_insHorizontal_0_4; // @[MockArray.scala 44:87]
-  assign ces_0_4_io_ins_1 = ces_0_5_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_0_4_io_ins_2 = ces_1_4_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_0_4_io_ins_3 = ces_0_3_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_0_4_reset = reset;
+  assign ces_0_4_io_ins_0 = io_insHorizontal_0_4; // @[MockArray.scala 56:87]
+  assign ces_0_4_io_ins_1 = ces_0_5_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_0_4_io_ins_2 = ces_1_4_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_0_4_io_ins_3 = ces_0_3_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_0_4_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_0_5_clock = clock;
-  assign ces_0_5_io_ins_0 = io_insHorizontal_0_5; // @[MockArray.scala 44:87]
-  assign ces_0_5_io_ins_1 = ces_0_6_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_0_5_io_ins_2 = ces_1_5_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_0_5_io_ins_3 = ces_0_4_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_0_5_reset = reset;
+  assign ces_0_5_io_ins_0 = io_insHorizontal_0_5; // @[MockArray.scala 56:87]
+  assign ces_0_5_io_ins_1 = ces_0_6_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_0_5_io_ins_2 = ces_1_5_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_0_5_io_ins_3 = ces_0_4_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_0_5_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_0_6_clock = clock;
-  assign ces_0_6_io_ins_0 = io_insHorizontal_0_6; // @[MockArray.scala 44:87]
-  assign ces_0_6_io_ins_1 = ces_0_7_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_0_6_io_ins_2 = ces_1_6_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_0_6_io_ins_3 = ces_0_5_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_0_6_reset = reset;
+  assign ces_0_6_io_ins_0 = io_insHorizontal_0_6; // @[MockArray.scala 56:87]
+  assign ces_0_6_io_ins_1 = ces_0_7_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_0_6_io_ins_2 = ces_1_6_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_0_6_io_ins_3 = ces_0_5_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_0_6_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_0_7_clock = clock;
-  assign ces_0_7_io_ins_0 = io_insHorizontal_0_7; // @[MockArray.scala 44:87]
-  assign ces_0_7_io_ins_1 = io_insVertical_0_0; // @[MockArray.scala 45:87]
-  assign ces_0_7_io_ins_2 = ces_1_7_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_0_7_io_ins_3 = ces_0_6_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_0_7_reset = reset;
+  assign ces_0_7_io_ins_0 = io_insHorizontal_0_7; // @[MockArray.scala 56:87]
+  assign ces_0_7_io_ins_1 = io_insVertical_0_0; // @[MockArray.scala 57:87]
+  assign ces_0_7_io_ins_2 = ces_1_7_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_0_7_io_ins_3 = ces_0_6_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_0_7_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_1_0_clock = clock;
-  assign ces_1_0_io_ins_0 = ces_0_0_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_1_0_io_ins_1 = ces_1_1_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_1_0_io_ins_2 = ces_2_0_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_1_0_io_ins_3 = io_insVertical_1_1; // @[MockArray.scala 47:87]
+  assign ces_1_0_reset = reset;
+  assign ces_1_0_io_ins_0 = ces_0_0_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_1_0_io_ins_1 = ces_1_1_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_1_0_io_ins_2 = ces_2_0_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_1_0_io_ins_3 = io_insVertical_1_1; // @[MockArray.scala 59:87]
+  assign ces_1_0_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_1_1_clock = clock;
-  assign ces_1_1_io_ins_0 = ces_0_1_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_1_1_io_ins_1 = ces_1_2_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_1_1_io_ins_2 = ces_2_1_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_1_1_io_ins_3 = ces_1_0_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_1_1_reset = reset;
+  assign ces_1_1_io_ins_0 = ces_0_1_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_1_1_io_ins_1 = ces_1_2_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_1_1_io_ins_2 = ces_2_1_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_1_1_io_ins_3 = ces_1_0_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_1_1_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_1_2_clock = clock;
-  assign ces_1_2_io_ins_0 = ces_0_2_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_1_2_io_ins_1 = ces_1_3_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_1_2_io_ins_2 = ces_2_2_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_1_2_io_ins_3 = ces_1_1_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_1_2_reset = reset;
+  assign ces_1_2_io_ins_0 = ces_0_2_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_1_2_io_ins_1 = ces_1_3_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_1_2_io_ins_2 = ces_2_2_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_1_2_io_ins_3 = ces_1_1_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_1_2_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_1_3_clock = clock;
-  assign ces_1_3_io_ins_0 = ces_0_3_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_1_3_io_ins_1 = ces_1_4_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_1_3_io_ins_2 = ces_2_3_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_1_3_io_ins_3 = ces_1_2_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_1_3_reset = reset;
+  assign ces_1_3_io_ins_0 = ces_0_3_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_1_3_io_ins_1 = ces_1_4_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_1_3_io_ins_2 = ces_2_3_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_1_3_io_ins_3 = ces_1_2_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_1_3_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_1_4_clock = clock;
-  assign ces_1_4_io_ins_0 = ces_0_4_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_1_4_io_ins_1 = ces_1_5_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_1_4_io_ins_2 = ces_2_4_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_1_4_io_ins_3 = ces_1_3_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_1_4_reset = reset;
+  assign ces_1_4_io_ins_0 = ces_0_4_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_1_4_io_ins_1 = ces_1_5_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_1_4_io_ins_2 = ces_2_4_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_1_4_io_ins_3 = ces_1_3_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_1_4_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_1_5_clock = clock;
-  assign ces_1_5_io_ins_0 = ces_0_5_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_1_5_io_ins_1 = ces_1_6_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_1_5_io_ins_2 = ces_2_5_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_1_5_io_ins_3 = ces_1_4_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_1_5_reset = reset;
+  assign ces_1_5_io_ins_0 = ces_0_5_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_1_5_io_ins_1 = ces_1_6_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_1_5_io_ins_2 = ces_2_5_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_1_5_io_ins_3 = ces_1_4_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_1_5_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_1_6_clock = clock;
-  assign ces_1_6_io_ins_0 = ces_0_6_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_1_6_io_ins_1 = ces_1_7_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_1_6_io_ins_2 = ces_2_6_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_1_6_io_ins_3 = ces_1_5_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_1_6_reset = reset;
+  assign ces_1_6_io_ins_0 = ces_0_6_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_1_6_io_ins_1 = ces_1_7_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_1_6_io_ins_2 = ces_2_6_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_1_6_io_ins_3 = ces_1_5_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_1_6_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_1_7_clock = clock;
-  assign ces_1_7_io_ins_0 = ces_0_7_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_1_7_io_ins_1 = io_insVertical_0_1; // @[MockArray.scala 45:87]
-  assign ces_1_7_io_ins_2 = ces_2_7_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_1_7_io_ins_3 = ces_1_6_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_1_7_reset = reset;
+  assign ces_1_7_io_ins_0 = ces_0_7_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_1_7_io_ins_1 = io_insVertical_0_1; // @[MockArray.scala 57:87]
+  assign ces_1_7_io_ins_2 = ces_2_7_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_1_7_io_ins_3 = ces_1_6_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_1_7_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_2_0_clock = clock;
-  assign ces_2_0_io_ins_0 = ces_1_0_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_2_0_io_ins_1 = ces_2_1_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_2_0_io_ins_2 = ces_3_0_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_2_0_io_ins_3 = io_insVertical_1_2; // @[MockArray.scala 47:87]
+  assign ces_2_0_reset = reset;
+  assign ces_2_0_io_ins_0 = ces_1_0_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_2_0_io_ins_1 = ces_2_1_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_2_0_io_ins_2 = ces_3_0_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_2_0_io_ins_3 = io_insVertical_1_2; // @[MockArray.scala 59:87]
+  assign ces_2_0_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_2_1_clock = clock;
-  assign ces_2_1_io_ins_0 = ces_1_1_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_2_1_io_ins_1 = ces_2_2_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_2_1_io_ins_2 = ces_3_1_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_2_1_io_ins_3 = ces_2_0_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_2_1_reset = reset;
+  assign ces_2_1_io_ins_0 = ces_1_1_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_2_1_io_ins_1 = ces_2_2_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_2_1_io_ins_2 = ces_3_1_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_2_1_io_ins_3 = ces_2_0_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_2_1_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_2_2_clock = clock;
-  assign ces_2_2_io_ins_0 = ces_1_2_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_2_2_io_ins_1 = ces_2_3_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_2_2_io_ins_2 = ces_3_2_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_2_2_io_ins_3 = ces_2_1_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_2_2_reset = reset;
+  assign ces_2_2_io_ins_0 = ces_1_2_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_2_2_io_ins_1 = ces_2_3_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_2_2_io_ins_2 = ces_3_2_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_2_2_io_ins_3 = ces_2_1_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_2_2_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_2_3_clock = clock;
-  assign ces_2_3_io_ins_0 = ces_1_3_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_2_3_io_ins_1 = ces_2_4_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_2_3_io_ins_2 = ces_3_3_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_2_3_io_ins_3 = ces_2_2_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_2_3_reset = reset;
+  assign ces_2_3_io_ins_0 = ces_1_3_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_2_3_io_ins_1 = ces_2_4_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_2_3_io_ins_2 = ces_3_3_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_2_3_io_ins_3 = ces_2_2_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_2_3_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_2_4_clock = clock;
-  assign ces_2_4_io_ins_0 = ces_1_4_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_2_4_io_ins_1 = ces_2_5_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_2_4_io_ins_2 = ces_3_4_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_2_4_io_ins_3 = ces_2_3_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_2_4_reset = reset;
+  assign ces_2_4_io_ins_0 = ces_1_4_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_2_4_io_ins_1 = ces_2_5_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_2_4_io_ins_2 = ces_3_4_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_2_4_io_ins_3 = ces_2_3_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_2_4_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_2_5_clock = clock;
-  assign ces_2_5_io_ins_0 = ces_1_5_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_2_5_io_ins_1 = ces_2_6_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_2_5_io_ins_2 = ces_3_5_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_2_5_io_ins_3 = ces_2_4_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_2_5_reset = reset;
+  assign ces_2_5_io_ins_0 = ces_1_5_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_2_5_io_ins_1 = ces_2_6_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_2_5_io_ins_2 = ces_3_5_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_2_5_io_ins_3 = ces_2_4_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_2_5_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_2_6_clock = clock;
-  assign ces_2_6_io_ins_0 = ces_1_6_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_2_6_io_ins_1 = ces_2_7_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_2_6_io_ins_2 = ces_3_6_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_2_6_io_ins_3 = ces_2_5_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_2_6_reset = reset;
+  assign ces_2_6_io_ins_0 = ces_1_6_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_2_6_io_ins_1 = ces_2_7_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_2_6_io_ins_2 = ces_3_6_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_2_6_io_ins_3 = ces_2_5_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_2_6_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_2_7_clock = clock;
-  assign ces_2_7_io_ins_0 = ces_1_7_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_2_7_io_ins_1 = io_insVertical_0_2; // @[MockArray.scala 45:87]
-  assign ces_2_7_io_ins_2 = ces_3_7_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_2_7_io_ins_3 = ces_2_6_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_2_7_reset = reset;
+  assign ces_2_7_io_ins_0 = ces_1_7_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_2_7_io_ins_1 = io_insVertical_0_2; // @[MockArray.scala 57:87]
+  assign ces_2_7_io_ins_2 = ces_3_7_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_2_7_io_ins_3 = ces_2_6_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_2_7_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_3_0_clock = clock;
-  assign ces_3_0_io_ins_0 = ces_2_0_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_3_0_io_ins_1 = ces_3_1_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_3_0_io_ins_2 = ces_4_0_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_3_0_io_ins_3 = io_insVertical_1_3; // @[MockArray.scala 47:87]
+  assign ces_3_0_reset = reset;
+  assign ces_3_0_io_ins_0 = ces_2_0_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_3_0_io_ins_1 = ces_3_1_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_3_0_io_ins_2 = ces_4_0_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_3_0_io_ins_3 = io_insVertical_1_3; // @[MockArray.scala 59:87]
+  assign ces_3_0_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_3_1_clock = clock;
-  assign ces_3_1_io_ins_0 = ces_2_1_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_3_1_io_ins_1 = ces_3_2_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_3_1_io_ins_2 = ces_4_1_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_3_1_io_ins_3 = ces_3_0_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_3_1_reset = reset;
+  assign ces_3_1_io_ins_0 = ces_2_1_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_3_1_io_ins_1 = ces_3_2_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_3_1_io_ins_2 = ces_4_1_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_3_1_io_ins_3 = ces_3_0_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_3_1_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_3_2_clock = clock;
-  assign ces_3_2_io_ins_0 = ces_2_2_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_3_2_io_ins_1 = ces_3_3_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_3_2_io_ins_2 = ces_4_2_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_3_2_io_ins_3 = ces_3_1_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_3_2_reset = reset;
+  assign ces_3_2_io_ins_0 = ces_2_2_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_3_2_io_ins_1 = ces_3_3_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_3_2_io_ins_2 = ces_4_2_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_3_2_io_ins_3 = ces_3_1_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_3_2_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_3_3_clock = clock;
-  assign ces_3_3_io_ins_0 = ces_2_3_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_3_3_io_ins_1 = ces_3_4_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_3_3_io_ins_2 = ces_4_3_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_3_3_io_ins_3 = ces_3_2_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_3_3_reset = reset;
+  assign ces_3_3_io_ins_0 = ces_2_3_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_3_3_io_ins_1 = ces_3_4_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_3_3_io_ins_2 = ces_4_3_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_3_3_io_ins_3 = ces_3_2_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_3_3_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_3_4_clock = clock;
-  assign ces_3_4_io_ins_0 = ces_2_4_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_3_4_io_ins_1 = ces_3_5_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_3_4_io_ins_2 = ces_4_4_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_3_4_io_ins_3 = ces_3_3_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_3_4_reset = reset;
+  assign ces_3_4_io_ins_0 = ces_2_4_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_3_4_io_ins_1 = ces_3_5_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_3_4_io_ins_2 = ces_4_4_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_3_4_io_ins_3 = ces_3_3_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_3_4_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_3_5_clock = clock;
-  assign ces_3_5_io_ins_0 = ces_2_5_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_3_5_io_ins_1 = ces_3_6_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_3_5_io_ins_2 = ces_4_5_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_3_5_io_ins_3 = ces_3_4_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_3_5_reset = reset;
+  assign ces_3_5_io_ins_0 = ces_2_5_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_3_5_io_ins_1 = ces_3_6_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_3_5_io_ins_2 = ces_4_5_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_3_5_io_ins_3 = ces_3_4_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_3_5_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_3_6_clock = clock;
-  assign ces_3_6_io_ins_0 = ces_2_6_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_3_6_io_ins_1 = ces_3_7_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_3_6_io_ins_2 = ces_4_6_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_3_6_io_ins_3 = ces_3_5_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_3_6_reset = reset;
+  assign ces_3_6_io_ins_0 = ces_2_6_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_3_6_io_ins_1 = ces_3_7_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_3_6_io_ins_2 = ces_4_6_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_3_6_io_ins_3 = ces_3_5_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_3_6_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_3_7_clock = clock;
-  assign ces_3_7_io_ins_0 = ces_2_7_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_3_7_io_ins_1 = io_insVertical_0_3; // @[MockArray.scala 45:87]
-  assign ces_3_7_io_ins_2 = ces_4_7_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_3_7_io_ins_3 = ces_3_6_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_3_7_reset = reset;
+  assign ces_3_7_io_ins_0 = ces_2_7_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_3_7_io_ins_1 = io_insVertical_0_3; // @[MockArray.scala 57:87]
+  assign ces_3_7_io_ins_2 = ces_4_7_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_3_7_io_ins_3 = ces_3_6_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_3_7_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_4_0_clock = clock;
-  assign ces_4_0_io_ins_0 = ces_3_0_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_4_0_io_ins_1 = ces_4_1_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_4_0_io_ins_2 = ces_5_0_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_4_0_io_ins_3 = io_insVertical_1_4; // @[MockArray.scala 47:87]
+  assign ces_4_0_reset = reset;
+  assign ces_4_0_io_ins_0 = ces_3_0_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_4_0_io_ins_1 = ces_4_1_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_4_0_io_ins_2 = ces_5_0_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_4_0_io_ins_3 = io_insVertical_1_4; // @[MockArray.scala 59:87]
+  assign ces_4_0_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_4_1_clock = clock;
-  assign ces_4_1_io_ins_0 = ces_3_1_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_4_1_io_ins_1 = ces_4_2_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_4_1_io_ins_2 = ces_5_1_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_4_1_io_ins_3 = ces_4_0_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_4_1_reset = reset;
+  assign ces_4_1_io_ins_0 = ces_3_1_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_4_1_io_ins_1 = ces_4_2_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_4_1_io_ins_2 = ces_5_1_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_4_1_io_ins_3 = ces_4_0_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_4_1_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_4_2_clock = clock;
-  assign ces_4_2_io_ins_0 = ces_3_2_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_4_2_io_ins_1 = ces_4_3_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_4_2_io_ins_2 = ces_5_2_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_4_2_io_ins_3 = ces_4_1_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_4_2_reset = reset;
+  assign ces_4_2_io_ins_0 = ces_3_2_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_4_2_io_ins_1 = ces_4_3_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_4_2_io_ins_2 = ces_5_2_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_4_2_io_ins_3 = ces_4_1_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_4_2_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_4_3_clock = clock;
-  assign ces_4_3_io_ins_0 = ces_3_3_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_4_3_io_ins_1 = ces_4_4_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_4_3_io_ins_2 = ces_5_3_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_4_3_io_ins_3 = ces_4_2_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_4_3_reset = reset;
+  assign ces_4_3_io_ins_0 = ces_3_3_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_4_3_io_ins_1 = ces_4_4_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_4_3_io_ins_2 = ces_5_3_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_4_3_io_ins_3 = ces_4_2_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_4_3_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_4_4_clock = clock;
-  assign ces_4_4_io_ins_0 = ces_3_4_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_4_4_io_ins_1 = ces_4_5_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_4_4_io_ins_2 = ces_5_4_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_4_4_io_ins_3 = ces_4_3_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_4_4_reset = reset;
+  assign ces_4_4_io_ins_0 = ces_3_4_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_4_4_io_ins_1 = ces_4_5_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_4_4_io_ins_2 = ces_5_4_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_4_4_io_ins_3 = ces_4_3_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_4_4_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_4_5_clock = clock;
-  assign ces_4_5_io_ins_0 = ces_3_5_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_4_5_io_ins_1 = ces_4_6_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_4_5_io_ins_2 = ces_5_5_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_4_5_io_ins_3 = ces_4_4_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_4_5_reset = reset;
+  assign ces_4_5_io_ins_0 = ces_3_5_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_4_5_io_ins_1 = ces_4_6_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_4_5_io_ins_2 = ces_5_5_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_4_5_io_ins_3 = ces_4_4_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_4_5_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_4_6_clock = clock;
-  assign ces_4_6_io_ins_0 = ces_3_6_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_4_6_io_ins_1 = ces_4_7_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_4_6_io_ins_2 = ces_5_6_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_4_6_io_ins_3 = ces_4_5_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_4_6_reset = reset;
+  assign ces_4_6_io_ins_0 = ces_3_6_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_4_6_io_ins_1 = ces_4_7_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_4_6_io_ins_2 = ces_5_6_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_4_6_io_ins_3 = ces_4_5_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_4_6_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_4_7_clock = clock;
-  assign ces_4_7_io_ins_0 = ces_3_7_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_4_7_io_ins_1 = io_insVertical_0_4; // @[MockArray.scala 45:87]
-  assign ces_4_7_io_ins_2 = ces_5_7_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_4_7_io_ins_3 = ces_4_6_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_4_7_reset = reset;
+  assign ces_4_7_io_ins_0 = ces_3_7_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_4_7_io_ins_1 = io_insVertical_0_4; // @[MockArray.scala 57:87]
+  assign ces_4_7_io_ins_2 = ces_5_7_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_4_7_io_ins_3 = ces_4_6_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_4_7_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_5_0_clock = clock;
-  assign ces_5_0_io_ins_0 = ces_4_0_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_5_0_io_ins_1 = ces_5_1_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_5_0_io_ins_2 = ces_6_0_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_5_0_io_ins_3 = io_insVertical_1_5; // @[MockArray.scala 47:87]
+  assign ces_5_0_reset = reset;
+  assign ces_5_0_io_ins_0 = ces_4_0_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_5_0_io_ins_1 = ces_5_1_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_5_0_io_ins_2 = ces_6_0_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_5_0_io_ins_3 = io_insVertical_1_5; // @[MockArray.scala 59:87]
+  assign ces_5_0_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_5_1_clock = clock;
-  assign ces_5_1_io_ins_0 = ces_4_1_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_5_1_io_ins_1 = ces_5_2_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_5_1_io_ins_2 = ces_6_1_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_5_1_io_ins_3 = ces_5_0_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_5_1_reset = reset;
+  assign ces_5_1_io_ins_0 = ces_4_1_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_5_1_io_ins_1 = ces_5_2_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_5_1_io_ins_2 = ces_6_1_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_5_1_io_ins_3 = ces_5_0_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_5_1_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_5_2_clock = clock;
-  assign ces_5_2_io_ins_0 = ces_4_2_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_5_2_io_ins_1 = ces_5_3_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_5_2_io_ins_2 = ces_6_2_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_5_2_io_ins_3 = ces_5_1_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_5_2_reset = reset;
+  assign ces_5_2_io_ins_0 = ces_4_2_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_5_2_io_ins_1 = ces_5_3_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_5_2_io_ins_2 = ces_6_2_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_5_2_io_ins_3 = ces_5_1_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_5_2_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_5_3_clock = clock;
-  assign ces_5_3_io_ins_0 = ces_4_3_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_5_3_io_ins_1 = ces_5_4_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_5_3_io_ins_2 = ces_6_3_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_5_3_io_ins_3 = ces_5_2_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_5_3_reset = reset;
+  assign ces_5_3_io_ins_0 = ces_4_3_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_5_3_io_ins_1 = ces_5_4_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_5_3_io_ins_2 = ces_6_3_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_5_3_io_ins_3 = ces_5_2_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_5_3_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_5_4_clock = clock;
-  assign ces_5_4_io_ins_0 = ces_4_4_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_5_4_io_ins_1 = ces_5_5_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_5_4_io_ins_2 = ces_6_4_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_5_4_io_ins_3 = ces_5_3_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_5_4_reset = reset;
+  assign ces_5_4_io_ins_0 = ces_4_4_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_5_4_io_ins_1 = ces_5_5_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_5_4_io_ins_2 = ces_6_4_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_5_4_io_ins_3 = ces_5_3_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_5_4_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_5_5_clock = clock;
-  assign ces_5_5_io_ins_0 = ces_4_5_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_5_5_io_ins_1 = ces_5_6_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_5_5_io_ins_2 = ces_6_5_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_5_5_io_ins_3 = ces_5_4_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_5_5_reset = reset;
+  assign ces_5_5_io_ins_0 = ces_4_5_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_5_5_io_ins_1 = ces_5_6_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_5_5_io_ins_2 = ces_6_5_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_5_5_io_ins_3 = ces_5_4_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_5_5_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_5_6_clock = clock;
-  assign ces_5_6_io_ins_0 = ces_4_6_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_5_6_io_ins_1 = ces_5_7_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_5_6_io_ins_2 = ces_6_6_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_5_6_io_ins_3 = ces_5_5_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_5_6_reset = reset;
+  assign ces_5_6_io_ins_0 = ces_4_6_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_5_6_io_ins_1 = ces_5_7_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_5_6_io_ins_2 = ces_6_6_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_5_6_io_ins_3 = ces_5_5_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_5_6_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_5_7_clock = clock;
-  assign ces_5_7_io_ins_0 = ces_4_7_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_5_7_io_ins_1 = io_insVertical_0_5; // @[MockArray.scala 45:87]
-  assign ces_5_7_io_ins_2 = ces_6_7_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_5_7_io_ins_3 = ces_5_6_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_5_7_reset = reset;
+  assign ces_5_7_io_ins_0 = ces_4_7_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_5_7_io_ins_1 = io_insVertical_0_5; // @[MockArray.scala 57:87]
+  assign ces_5_7_io_ins_2 = ces_6_7_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_5_7_io_ins_3 = ces_5_6_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_5_7_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_6_0_clock = clock;
-  assign ces_6_0_io_ins_0 = ces_5_0_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_6_0_io_ins_1 = ces_6_1_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_6_0_io_ins_2 = ces_7_0_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_6_0_io_ins_3 = io_insVertical_1_6; // @[MockArray.scala 47:87]
+  assign ces_6_0_reset = reset;
+  assign ces_6_0_io_ins_0 = ces_5_0_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_6_0_io_ins_1 = ces_6_1_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_6_0_io_ins_2 = ces_7_0_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_6_0_io_ins_3 = io_insVertical_1_6; // @[MockArray.scala 59:87]
+  assign ces_6_0_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_6_1_clock = clock;
-  assign ces_6_1_io_ins_0 = ces_5_1_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_6_1_io_ins_1 = ces_6_2_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_6_1_io_ins_2 = ces_7_1_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_6_1_io_ins_3 = ces_6_0_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_6_1_reset = reset;
+  assign ces_6_1_io_ins_0 = ces_5_1_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_6_1_io_ins_1 = ces_6_2_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_6_1_io_ins_2 = ces_7_1_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_6_1_io_ins_3 = ces_6_0_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_6_1_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_6_2_clock = clock;
-  assign ces_6_2_io_ins_0 = ces_5_2_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_6_2_io_ins_1 = ces_6_3_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_6_2_io_ins_2 = ces_7_2_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_6_2_io_ins_3 = ces_6_1_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_6_2_reset = reset;
+  assign ces_6_2_io_ins_0 = ces_5_2_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_6_2_io_ins_1 = ces_6_3_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_6_2_io_ins_2 = ces_7_2_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_6_2_io_ins_3 = ces_6_1_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_6_2_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_6_3_clock = clock;
-  assign ces_6_3_io_ins_0 = ces_5_3_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_6_3_io_ins_1 = ces_6_4_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_6_3_io_ins_2 = ces_7_3_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_6_3_io_ins_3 = ces_6_2_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_6_3_reset = reset;
+  assign ces_6_3_io_ins_0 = ces_5_3_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_6_3_io_ins_1 = ces_6_4_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_6_3_io_ins_2 = ces_7_3_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_6_3_io_ins_3 = ces_6_2_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_6_3_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_6_4_clock = clock;
-  assign ces_6_4_io_ins_0 = ces_5_4_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_6_4_io_ins_1 = ces_6_5_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_6_4_io_ins_2 = ces_7_4_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_6_4_io_ins_3 = ces_6_3_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_6_4_reset = reset;
+  assign ces_6_4_io_ins_0 = ces_5_4_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_6_4_io_ins_1 = ces_6_5_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_6_4_io_ins_2 = ces_7_4_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_6_4_io_ins_3 = ces_6_3_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_6_4_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_6_5_clock = clock;
-  assign ces_6_5_io_ins_0 = ces_5_5_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_6_5_io_ins_1 = ces_6_6_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_6_5_io_ins_2 = ces_7_5_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_6_5_io_ins_3 = ces_6_4_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_6_5_reset = reset;
+  assign ces_6_5_io_ins_0 = ces_5_5_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_6_5_io_ins_1 = ces_6_6_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_6_5_io_ins_2 = ces_7_5_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_6_5_io_ins_3 = ces_6_4_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_6_5_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_6_6_clock = clock;
-  assign ces_6_6_io_ins_0 = ces_5_6_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_6_6_io_ins_1 = ces_6_7_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_6_6_io_ins_2 = ces_7_6_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_6_6_io_ins_3 = ces_6_5_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_6_6_reset = reset;
+  assign ces_6_6_io_ins_0 = ces_5_6_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_6_6_io_ins_1 = ces_6_7_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_6_6_io_ins_2 = ces_7_6_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_6_6_io_ins_3 = ces_6_5_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_6_6_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_6_7_clock = clock;
-  assign ces_6_7_io_ins_0 = ces_5_7_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_6_7_io_ins_1 = io_insVertical_0_6; // @[MockArray.scala 45:87]
-  assign ces_6_7_io_ins_2 = ces_7_7_io_outs_0; // @[MockArray.scala 56:19]
-  assign ces_6_7_io_ins_3 = ces_6_6_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_6_7_reset = reset;
+  assign ces_6_7_io_ins_0 = ces_5_7_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_6_7_io_ins_1 = io_insVertical_0_6; // @[MockArray.scala 57:87]
+  assign ces_6_7_io_ins_2 = ces_7_7_io_outs_0; // @[MockArray.scala 68:19]
+  assign ces_6_7_io_ins_3 = ces_6_6_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_6_7_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_7_0_clock = clock;
-  assign ces_7_0_io_ins_0 = ces_6_0_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_7_0_io_ins_1 = ces_7_1_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_7_0_io_ins_2 = io_insHorizontal_1_0; // @[MockArray.scala 46:87]
-  assign ces_7_0_io_ins_3 = io_insVertical_1_7; // @[MockArray.scala 47:87]
+  assign ces_7_0_reset = reset;
+  assign ces_7_0_io_ins_0 = ces_6_0_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_7_0_io_ins_1 = ces_7_1_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_7_0_io_ins_2 = io_insHorizontal_1_0; // @[MockArray.scala 58:87]
+  assign ces_7_0_io_ins_3 = io_insVertical_1_7; // @[MockArray.scala 59:87]
+  assign ces_7_0_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_7_1_clock = clock;
-  assign ces_7_1_io_ins_0 = ces_6_1_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_7_1_io_ins_1 = ces_7_2_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_7_1_io_ins_2 = io_insHorizontal_1_1; // @[MockArray.scala 46:87]
-  assign ces_7_1_io_ins_3 = ces_7_0_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_7_1_reset = reset;
+  assign ces_7_1_io_ins_0 = ces_6_1_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_7_1_io_ins_1 = ces_7_2_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_7_1_io_ins_2 = io_insHorizontal_1_1; // @[MockArray.scala 58:87]
+  assign ces_7_1_io_ins_3 = ces_7_0_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_7_1_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_7_2_clock = clock;
-  assign ces_7_2_io_ins_0 = ces_6_2_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_7_2_io_ins_1 = ces_7_3_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_7_2_io_ins_2 = io_insHorizontal_1_2; // @[MockArray.scala 46:87]
-  assign ces_7_2_io_ins_3 = ces_7_1_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_7_2_reset = reset;
+  assign ces_7_2_io_ins_0 = ces_6_2_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_7_2_io_ins_1 = ces_7_3_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_7_2_io_ins_2 = io_insHorizontal_1_2; // @[MockArray.scala 58:87]
+  assign ces_7_2_io_ins_3 = ces_7_1_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_7_2_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_7_3_clock = clock;
-  assign ces_7_3_io_ins_0 = ces_6_3_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_7_3_io_ins_1 = ces_7_4_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_7_3_io_ins_2 = io_insHorizontal_1_3; // @[MockArray.scala 46:87]
-  assign ces_7_3_io_ins_3 = ces_7_2_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_7_3_reset = reset;
+  assign ces_7_3_io_ins_0 = ces_6_3_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_7_3_io_ins_1 = ces_7_4_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_7_3_io_ins_2 = io_insHorizontal_1_3; // @[MockArray.scala 58:87]
+  assign ces_7_3_io_ins_3 = ces_7_2_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_7_3_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_7_4_clock = clock;
-  assign ces_7_4_io_ins_0 = ces_6_4_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_7_4_io_ins_1 = ces_7_5_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_7_4_io_ins_2 = io_insHorizontal_1_4; // @[MockArray.scala 46:87]
-  assign ces_7_4_io_ins_3 = ces_7_3_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_7_4_reset = reset;
+  assign ces_7_4_io_ins_0 = ces_6_4_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_7_4_io_ins_1 = ces_7_5_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_7_4_io_ins_2 = io_insHorizontal_1_4; // @[MockArray.scala 58:87]
+  assign ces_7_4_io_ins_3 = ces_7_3_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_7_4_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_7_5_clock = clock;
-  assign ces_7_5_io_ins_0 = ces_6_5_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_7_5_io_ins_1 = ces_7_6_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_7_5_io_ins_2 = io_insHorizontal_1_5; // @[MockArray.scala 46:87]
-  assign ces_7_5_io_ins_3 = ces_7_4_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_7_5_reset = reset;
+  assign ces_7_5_io_ins_0 = ces_6_5_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_7_5_io_ins_1 = ces_7_6_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_7_5_io_ins_2 = io_insHorizontal_1_5; // @[MockArray.scala 58:87]
+  assign ces_7_5_io_ins_3 = ces_7_4_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_7_5_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_7_6_clock = clock;
-  assign ces_7_6_io_ins_0 = ces_6_6_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_7_6_io_ins_1 = ces_7_7_io_outs_3; // @[MockArray.scala 62:19]
-  assign ces_7_6_io_ins_2 = io_insHorizontal_1_6; // @[MockArray.scala 46:87]
-  assign ces_7_6_io_ins_3 = ces_7_5_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_7_6_reset = reset;
+  assign ces_7_6_io_ins_0 = ces_6_6_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_7_6_io_ins_1 = ces_7_7_io_outs_3; // @[MockArray.scala 74:19]
+  assign ces_7_6_io_ins_2 = io_insHorizontal_1_6; // @[MockArray.scala 58:87]
+  assign ces_7_6_io_ins_3 = ces_7_5_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_7_6_io_softReset = io_softReset; // @[MockArray.scala 48:44]
   assign ces_7_7_clock = clock;
-  assign ces_7_7_io_ins_0 = ces_6_7_io_outs_2; // @[MockArray.scala 57:19]
-  assign ces_7_7_io_ins_1 = io_insVertical_0_7; // @[MockArray.scala 45:87]
-  assign ces_7_7_io_ins_2 = io_insHorizontal_1_7; // @[MockArray.scala 46:87]
-  assign ces_7_7_io_ins_3 = ces_7_6_io_outs_1; // @[MockArray.scala 63:19]
+  assign ces_7_7_reset = reset;
+  assign ces_7_7_io_ins_0 = ces_6_7_io_outs_2; // @[MockArray.scala 69:19]
+  assign ces_7_7_io_ins_1 = io_insVertical_0_7; // @[MockArray.scala 57:87]
+  assign ces_7_7_io_ins_2 = io_insHorizontal_1_7; // @[MockArray.scala 58:87]
+  assign ces_7_7_io_ins_3 = ces_7_6_io_outs_1; // @[MockArray.scala 75:19]
+  assign ces_7_7_io_softReset = io_softReset; // @[MockArray.scala 48:44]
 endmodule
