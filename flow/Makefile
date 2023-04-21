@@ -677,6 +677,12 @@ $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
+
+# Skipping resize can be useful for mock abstracts
+.PHONY: skip_resize
+skip_resize: $(RESULTS_DIR)/3_3_place_gp.odb
+	cp $(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/3_4_place_resized.odb
+
 # Skipping CTS can be useful to smoketest later stages.
 .PHONY: skip_cts
 skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
@@ -697,9 +703,7 @@ skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
 # To create a mock abstract quickly, good enough to iterate quickly on
 # floorplanning and detailed route at higher levels, run:
 #
-# make skip_cts
-# make skip_route
-# make generate_abstract
+# make skip_resize skip_cts skip_route generate_abstract
 .PHONY: generate_abstract
 generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
