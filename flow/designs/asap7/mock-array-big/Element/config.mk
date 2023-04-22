@@ -2,7 +2,7 @@ export DESIGN_NAME = Element
 export DESIGN_NICKNAME = mock-array-big_Element
 
 export VERILOG_FILES = designs/src/mock-array-big/*.v
-export SDC_FILE      = designs/asap7/mock-array-big/constraints.sdc
+export SDC_FILE      = designs/asap7/mock-array-big/Element/constraints.sdc
 
 export PLATFORM               = asap7
 
