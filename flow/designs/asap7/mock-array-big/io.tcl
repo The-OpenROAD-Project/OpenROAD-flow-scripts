@@ -1,46 +1,32 @@
-proc pin1 {fmt p} {
-    set result [list]
-    for {set m 0} {$m < $p} {incr m} {
-        lappend result [format $fmt $m]
+proc match_pins { regex } {
+    set pins {}
+    foreach pin [get_ports -regexp $regex] {
+        lappend pins [get_property $pin name]
     }
-    return $result
+    return $pins
 }
-
-proc pin2 {fmt p q} {
-    set result [list]
-    for {set m 0} {$m < $p} {incr m} {
-        for {set n 0} {$n < $q} {incr n} {
-            lappend result [format $fmt $m $n]
-        }
-    }
-    return $result
-}
-
-set data_width [expr {[info exists ::env(MOCK_ARRAY_DATAWIDTH)] ? $::env(MOCK_ARRAY_DATAWIDTH) : 8}]
-set rows [expr {[info exists ::env(MOCK_ARRAY_HEIGHT)] ? $::env(MOCK_ARRAY_HEIGHT) : 8}]
-set cols [expr {[info exists ::env(MOCK_ARRAY_WIDTH)] ? $::env(MOCK_ARRAY_WIDTH) : 8}]
 
 set assignments [list \
     top \
     [ concat \
-        {*}[pin2 {io_insDown_%d[%d]} $cols $data_width] \
-        {*}[pin2 {io_outsUp_%d[%d]} $cols $data_width] \
+        {*}[match_pins io_insDown_.*] \
+        {*}[match_pins io_outsUp_.*] \
     ] \
     bottom \
     [ concat \
-        {*}[pin2 {io_insUp_%d[%d]} $cols $data_width] \
-        {*}[pin2 {io_outsDown_%d[%d]} $cols $data_width] \
+        {*}[match_pins io_insUp_.*] \
+        {*}[match_pins io_outsDown_.*] \
     ] \
     left \
     [ concat \
-        {*}[pin2 {io_insRight_%d[%d]} $rows $data_width] \
-        {*}[pin2 {io_outsLeft_%d[%d]} $rows $data_width] \
+        {*}[match_pins io_insRight_.*] \
+        {*}[match_pins io_outsLeft_.*] \
     ] \
     right \
     [ concat \
-        {*}[pin2 {io_insLeft_%d[%d]} $rows $data_width] \
-        {*}[pin2 {io_outsRight_%d[%d]} $rows $data_width] \
-        {*}[pin1 {io_lsbs_%d} $cols] \
+        {*}[match_pins io_insLeft_.*] \
+        {*}[match_pins io_outsRight_.*] \
+        {*}[match_pins io_lsbs_.*] \
     ] \
 ]
 
