@@ -8,10 +8,11 @@ import re
 import os
 import requests
 from dateutil.relativedelta import relativedelta
+from datetime import datetime, timedelta
+import subprocess
+import pathlib
 import base64
-
-# make sure the working dir is flow/
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+from git import Repo
 
 # Create the argument parser
 parser = argparse.ArgumentParser(description='Process some integers.')
@@ -27,7 +28,7 @@ firebase_admin.initialize_app(cred)
 # Initialize Firestore client
 db = firestore.client()
 
-def upload_data(db, commitSHA, data, platform, design, variant):
+def upload_data(db, commitSHA, datafile, platform, design, variant):
     # Set the document data
     key = commitSHA + '-' + platform + '-' + design + '-' + variant
     doc_ref = db.collection('metadata').document(key)
@@ -41,6 +42,10 @@ def upload_data(db, commitSHA, data, platform, design, variant):
         'branch_name': "master",
         'commit_sha': commitSHA,
     })
+
+    # Load JSON data from file
+    with open(dataFile) as f:
+        data = json.load(f)
 
     # Replace the character ':' in the keys
     new_data = {}
@@ -62,59 +67,84 @@ def upload_data(db, commitSHA, data, platform, design, variant):
     # Set the data to the document in Firestore
     doc_ref.update(new_data)
 
-runFilename = f'metadata-base-ok.json'
+runFilename = f'metadata-base.json'
 
-# Define the repository name and owner
-repo_owner = 'The-OpenROAD-Project'
-repo_name = 'OpenROAD-flow-scripts'
 
-# Set up GitHub API request headers
-headers = {'Authorization': 'Bearer <token>'}
+# Clone the repository
+print("Cloning Repo with submodules...")
+repo = Repo.clone_from('https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git', 'local_repo', recursive=True)
+# repo = Repo('.')
 
-# Define the time range for commits (3 months ago until now)
-end_time = datetime.now()
-start_time = end_time - relativedelta(months=3)
+# make sure the working dir is flow/
+os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'local_repo'))
 
-# Get the list of commits in the time range
-commits_url = f'https://api.github.com/repos/{repo_owner}/{repo_name}/commits'
+# Get all the commits of the past year
+start_date = datetime.now() - timedelta(days=365)
+end_date = datetime.now()
+# commits = list(repo.iter_items('--since={}'.format(start_date), '--until={}'.format(end_date)))
 
-for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
-    dirList = designsDir.split(os.sep)
-    if len(dirList) != 3:
-        continue
+# Iterate over the commits and upload the JSON file to Firestore
+print("Iterating over the commits...")
+for commit in repo.iter_commits():
+    commit_date = datetime.fromtimestamp(commit.committed_date)
+    if start_date > commit_date  or  commit_date > end_date:
+        exit(0)
+    # Checkout the commit
+    commit_sha = commit.hexsha
+    repo.git.checkout(commit_sha)
+    os.chdir('flow')
 
-    # basic info about test design
-    platform = dirList[1]
-    design = dirList[2]
-    test = '{} {}'.format(platform, design)
-    print(test)
-    print("dir list", dirList)
-    # Define the path to the JSON file in the repository
-    json_path = os.path.join(designsDir, runFilename)
-    if os.path.exists(json_path) and (platform != 'sky130hd_fakestack' or platform != 'src'):
-        json_path = os.path.join('flow',json_path)
-        commits_params = {'path': json_path, 'since': start_time.isoformat(), 'until': end_time.isoformat()}
-        try:
-            commits_response = requests.get(commits_url, headers=headers, params=commits_params)
-            commits_response.raise_for_status()
-            if commits_response.status_code == 200:
-                commits = commits_response.json()
-                commit_url = F'https://api.github.com/repos/{repo_owner}/{repo_name}/contents/{json_path}'
-                # Iterate over the commits and upload the JSON file to Firestore
-                for commit in commits:
-                    commit_sha = commit['sha']
-                    commit_params = {'ref': commit_sha}
-                    try:
-                        response = requests.get(commit_url, headers=headers, params=commit_params)
-                        response.raise_for_status()
-                        if response.status_code == 200:
-                            content = json.loads(response.content)
-                            json_data = json.loads(base64.b64decode(content['content']).decode('utf-8'))
-                            upload_data(db, commit_sha, json_data, platform, design, "base")
-                    except requests.exceptions.HTTPError as e:
-                        if e.response.status_code == 404:
-                            print(f'The file path {json_path} does not exist in the {repo_name} repository in commit {commit_sha}')
-                        else:
-                            print("error in making request", e.response.text)
-        except requests.exceptions.HTTPError as err:
-            print("error in making request", err.response.text)
+    # # Build the repo
+    # result = subprocess.run(['../build_openroad.sh', '--local'], capture_output=True)
+
+    # if result.returncode != 0:
+    #     print("cannot build the project for commit", commit.hexsha)
+    #     pass
+    # result = subprocess.run(['.', '../setup_env.sh'], capture_output=True)
+
+    # Run the flow for all designs
+    for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
+        dirList = designsDir.split(os.sep)
+        if len(dirList) != 3:
+            continue
+
+        # basic info about test design
+        platform = dirList[1]
+        design = dirList[2]
+        test = '{} {}'.format(platform, design)
+        print(test)
+        print("dir list", dirList)
+        # Define the path to the JSON file in the repository
+        config_path = os.path.join(designsDir, 'config.mk')
+        if os.path.exists(config_path) and (platform != 'sky130hd_fakestack' or platform != 'src'):
+            print("Making flow of ", config_path)
+            # res = subprocess.run(['export', "FLOW_HOME=", str(pathlib.Path().resolve())], shell=True, capture_output=True)
+            # result = subprocess.run(['export', "FLOW_HOME=", str(pathlib.Path().resolve()), "&&", 'make', 'DESIGN_CONFIG=', config_path, "FLOW_HOME=", str(pathlib.Path().resolve())], shell=True,capture_output=True)
+            # Create the first subprocess and capture its output
+            p1 = subprocess.Popen(['export', "FLOW_HOME=", str(pathlib.Path().resolve())], shell=True, stdout=subprocess.PIPE)
+
+            p2 = subprocess.Popen(['export', "DESIGN_CONFIG=", str(config_path)], stdin=p1.stdout,shell=True, stdout=subprocess.PIPE)
+            p1.stdout.close()
+            # Create the second subprocess and capture its output
+            env_vars = {'DESIGN_CONFIG': config_path, 'FLOW_HOME': str(pathlib.Path().resolve())}
+
+            p3 = subprocess.Popen(['make', 'DESIGN_CONFIG=', config_path], stdin=p2.stdout, shell=True, stdout=subprocess.PIPE, env=env_vars)
+            p2.stdout.close()
+            # Wait for both processes to finish and capture their output
+            # output1, _ = p1.communicate()
+            output2, _ = p3.communicate()
+
+            # Decode the output from byte strings to regular strings
+            # output1_str = output1.decode('utf-8')
+            output2_str = output2.decode('utf-8')
+
+            # Print the output
+            # print(output1_str)
+            print(output2_str)
+            # If the command was successful, upload the resulting JSON data to Firestore
+            if p3.returncode == 0:
+                reportDir = os.path.join('reports', platform, design, 'base')
+                dataFile = os.path.join(reportDir, runFilename)
+                upload_data(db, commit_sha, dataFile, platform, design, "base")
+
+repo.git.clear_cache()
