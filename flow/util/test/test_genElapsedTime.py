@@ -18,7 +18,6 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 class TestElapsedTime(unittest.TestCase):
-
     def setUp(self):
         self.tmp_dir = tempfile.TemporaryDirectory()
         self.log_file = os.path.join(self.tmp_dir.name, "1_test.log")

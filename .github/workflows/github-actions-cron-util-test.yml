@@ -4,12 +4,12 @@ on:
   - cron: "0 8 * * SUN"
   push:
     paths:
-      - 'flow/util/'
-      - 'flow/util/test'
+      - 'flow/util/**.py'
+      - 'flow/util/test/**.py'
   pull_request:
     paths:
-      - 'flow/util/'
-      - 'flow/util/test'
+      - 'flow/util/**.py'
+      - 'flow/util/test/**.py'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
