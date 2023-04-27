@@ -11,7 +11,7 @@ pipeline {
     stage('Local Build') {
       agent any;
       steps {
-        sh "./build_openroad.sh --local";
+        sh "./build_openroad.sh --local --openroad-args -DCMAKE_CXX_FLAGS=-fsanitize=undefined";
         stash name: "install", includes: "tools/install/**";
       }
       post {
