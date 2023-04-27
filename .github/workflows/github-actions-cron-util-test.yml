@@ -5,11 +5,11 @@ on:
   push:
     paths:
       - 'flow/util/**.py'
-      - 'flow/util/test/**.py'
+      - 'flow/test/**.py'
   pull_request:
     paths:
       - 'flow/util/**.py'
-      - 'flow/util/test/**.py'
+      - 'flow/test/**.py'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -30,7 +30,7 @@ jobs:
           sudo apt install -y python3-pip
       - name: Run Tests
         run: |
-          cd flow/util/test
+          cd flow/test
           for file in *.py; do
               python "$file"
           done
