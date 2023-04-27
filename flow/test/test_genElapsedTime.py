@@ -4,18 +4,14 @@ import unittest
 from unittest.mock import patch
 from unittest.mock import MagicMock
 from io import StringIO
-import io
 import sys
 import os
 import tempfile
-from datetime import datetime
-import argparse  # argument parsing
-from pathlib import Path
 import importlib  # module reloading
 
 # make sure the working dir is flow/
-sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'util'))
+os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__))))
 
 class TestElapsedTime(unittest.TestCase):
     def setUp(self):
