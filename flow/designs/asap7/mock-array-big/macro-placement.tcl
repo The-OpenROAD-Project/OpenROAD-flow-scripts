@@ -1,5 +1,5 @@
 # fish out values from single source of truth: config.py
-set vals [regexp -all -inline {\S+} [exec sh -c {cd designs/asap7/mock-array-big && python3 -c "import config;print(f'{config.rows} {config.cols} {config.pitch_and_margin} {config.die_offset_x} {config.die_offset_y}')"}]]
+set vals [regexp -all -inline {\S+} [exec sh -c {cd designs/asap7/mock-array-big && python3 -c "import config;print(f'{config.rows} {config.cols} {config.pitch_and_margin} {config.die_offset_x} {config.die_offset_y}')"}]]
 lassign $vals rows cols pitch_and_margin die_offset_x die_offset_y
 
 set block [ord::get_db_block]

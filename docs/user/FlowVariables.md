@@ -128,8 +128,8 @@ Note:
 | `RTLMP_FLOW`          | Enable the Hierarchical RTLMP flow. By default it is disabled.                                                                                                                   |
 | `MACRO_PLACEMENT`     | Specifies the path of a file on how to place certain macros manually using read_macro_placement.                                                                                 |
 | `MACRO_PLACEMENT_TCL` | Specifies the path of a TCL file on how to place certain macros manually.                                                                                                        |
-| `MACRO_PLACE_HALO`    | horizontal/vertical halo around macros (microns).                                                                                                                                |
-| `MACRO_PLACE_CHANNEL` | horizontal/vertical channel width between macros (microns).                                                                                                                      |
+| `MACRO_PLACE_HALO`    | horizontal/vertical halo around macros (microns). Used by automatic macro placement.                                                                               |
+| `MACRO_PLACE_CHANNEL` | horizontal/vertical channel width between macros (microns). Used by automatic macro placement when `RTLMP_FLOW` is disabled. Imagine channel=10 and halo=5. Then macros must be 10 apart but standard cells must be 5 away from a macro.|
 | `MACRO_BLOCKAGE_HALO` | Blockage width overridden from default calculation.                                                                                                                              |
 | `PDN_CFG`             | File path which has a set of power grid policies used by `pdn` to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps. |
 | `MAKE_TRACKS`         | Tcl file that defines add routing tracks to a floorplan.                                                                                                                         |
