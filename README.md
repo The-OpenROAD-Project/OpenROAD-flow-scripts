@@ -3,16 +3,94 @@
 [![Build Status](https://jenkins.openroad.tools/buildStatus/icon?job=OpenROAD-flow-scripts-Public%2Fpublic_tests_all%2Fmaster)](https://jenkins.openroad.tools/view/Public/job/OpenROAD-flow-scripts-Public/job/public_tests_all/job/master/)
 [![Docs](https://readthedocs.org/projects/openroad-flow-scripts/badge/?version=latest)](https://openroad-flow-scripts.readthedocs.io/en/latest/?badge=latest)
 
-OpenROAD Flow is a full RTL-to-GDS flow built entirely on open-source tools.
-The project aims for automated, no-human-in-the-loop digital circuit design
-with 24-hour turnaround time.
+OpenROAD-flow-scripts(ORFS) is a fully autonomous, RTL-GDSII flow
+for rapid architecture and design space exploration, early prediction
+of QoR and detailed physical design implementation. However,  ORFS
+also enables manual intervention for finer user control of individual
+flow stages through tcl commands and python APIs.
+
+![ORFS_Flow.webp](./docs/images/ORFS_Flow.webp)
+
+## Tool Installation
+
+### Local Installation
+
+To install OpenROAD-flow-scripts locally in CentOS 7, Ubuntu 20.04,
+Ubuntu 22.04, RHEL 8, Debian 10 and Debian 11. Following steps will
+clone the ORFS repo, install required dependencies and build the flow.
+
+#### Clone ORFS repo
+
+```
+git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
+```
+
+#### Install Dependencies
+
+```
+cd OpenROAD-flow-scripts
+sudo ./setup.sh
+```
+
+#### Build the Flow
+
+```
+./build_openroad.sh --local
+```
+
+Document for local installation found [here](./docs/user/BuildLocally.md).
+
+### Docker Based Installation
+To ease dependency installation issues, ORFS uses docker images.
+Docker image includes ORFS binaries, applications as well as all
+required dependencies. All of the flow tools are encapsulated
+inside the container image.
+
+If `Docker` is not installed already, refer to the document
+[here](./docs/user/DockerInstall.md) on how to install and how to
+manage docker as non-root user.
+
+### Build ORFS with Docker
+
+#### Clone ORFS repo
+
+```
+git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
+```
+
+#### Build the Flow
+
+```
+cd OpenROAD-flow-scripts
+./build_openroad.sh
+```
+
+Document for Docker based installation found [here](./docs/user/BuildWithDocker.md)
+
+### Verify Local Installation
+To verify installation run default `gcd/nangate45` design with 
+following steps,
+
+```
+source env.sh
+cd flow
+make
+```
+
+Above steps run from synthesis to GDSII generation and you can view final layout with OpenROAD GUI as,
+
+```
+make gui_final
+```
+
+![gcd_final.webp](./docs/images/gcd_final.webp)
 
 ## Using the Flow
 
 - See the OpenROAD [documentation here](https://openroad.readthedocs.io/en/latest/).
 - How to [start using OpenROAD flow here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html).
-- Our [user guide here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/UserGuide.html).
-- Our [Flow Tutorial here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
+- Our ORFS [user guide here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/UserGuide.html).
+- Our ORFS [Flow Tutorial here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
 
 ## Citing this Work
 
