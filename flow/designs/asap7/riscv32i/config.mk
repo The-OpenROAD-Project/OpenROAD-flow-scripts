@@ -20,4 +20,5 @@ export RTLMP_MIN_INST = 5000
 export RTLMP_MAX_MACRO = 4
 export RTLMP_MIN_MACRO = 1
 export HAS_IO_CONSTRAINTS = 1
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:*
+export PLACE_PINS_ARGS    = -exclude left:* -exclude right:* -exclude top:*
+export TNS_END_PERCENT   ?= 100
