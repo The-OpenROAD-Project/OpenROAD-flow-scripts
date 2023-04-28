@@ -15,8 +15,8 @@ flow stages through tcl commands and python APIs.
 
 ### Local Installation
 
-To install OpenROAD-flow-scripts locally in CentOS 7, Ubuntu 20.04,
-Ubuntu 22.04, RHEL 8, Debian 10 and Debian 11. Following steps will
+To install OpenROAD-flow-scripts locally in CentOS 7/8, Ubuntu 
+20.04/22.04, RHEL 8, Debian 10/11. Following steps will
 clone the ORFS repo, install required dependencies and build the flow.
 
 #### Clone ORFS repo
@@ -38,7 +38,7 @@ sudo ./setup.sh
 ./build_openroad.sh --local
 ```
 
-Document for local installation found [here](./docs/user/BuildLocally.md).
+Document for detailed local installation steps found [here](./docs/user/BuildLocally.md).
 
 ### Docker Based Installation
 To ease dependency installation issues, ORFS uses docker images.
@@ -65,7 +65,8 @@ cd OpenROAD-flow-scripts
 ./build_openroad.sh
 ```
 
-Document for Docker based installation found [here](./docs/user/BuildWithDocker.md)
+Document for detailed steps on docker based installation found
+[here](./docs/user/BuildWithDocker.md)
 
 ### Verify Local Installation
 To verify installation run default `gcd/nangate45` design with 
