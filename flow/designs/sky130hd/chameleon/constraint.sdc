@@ -1,6 +1,6 @@
 set clk_name core_clock 
 set clk_port_name HCLK 
-set clk_period 8.2 
+set clk_period 7.0 
 set clk_io_pct 0.1
 
 set clk_port [get_ports $clk_port_name]
