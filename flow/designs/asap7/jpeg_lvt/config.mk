@@ -1,4 +1,5 @@
 export PLATFORM               = asap7
+export ASAP7_USELVT           = 1
 
 export DESIGN_NAME            = jpeg_encoder
 export DESIGN_NICKNAME        = jpeg_lvt
