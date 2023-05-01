@@ -824,6 +824,7 @@ RESULTS_ODB = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.odb)))
 RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
 RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
 RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
+.PHONY: $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
@@ -838,9 +839,11 @@ gui_route: gui_5_route.odb
 .PHONY: gui_final
 gui_final: gui_6_final.odb
 
+.PHONY: $(foreach file,$(RESULTS_DEF),gui_$(file))
 $(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
 	DEF_FILE=$(RESULTS_DIR)/$* $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/gui.tcl
 
+.PHONY: $(foreach file,$(RESULTS_ODB),gui_$(file))
 $(foreach file,$(RESULTS_ODB),gui_$(file)): gui_%:
 	ODB_FILE=$(RESULTS_DIR)/$* $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/gui.tcl
 
