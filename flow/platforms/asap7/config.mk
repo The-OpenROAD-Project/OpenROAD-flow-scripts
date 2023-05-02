@@ -81,8 +81,8 @@ export MAKE_TRACKS             = $(PLATFORM_DIR)/openRoad/make_tracks.tcl
 export PDN_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M1-M2-M5-M6.tcl
 
 # IO Placer pin layers
-export IO_PLACER_H             = M4
-export IO_PLACER_V             = M5
+export IO_PLACER_H             ?= M4
+export IO_PLACER_V             ?= M5
 
 export MACRO_PLACE_HALO ?= 10 10
 export MACRO_PLACE_CHANNEL ?= 12 12
