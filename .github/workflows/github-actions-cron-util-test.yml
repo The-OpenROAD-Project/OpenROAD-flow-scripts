@@ -4,12 +4,12 @@ on:
   - cron: "0 8 * * SUN"
   push:
     paths:
-      - 'flow/util/**.py'
-      - 'flow/test/**.py'
+      - 'flow/util/genElapsedTime.py'
+      - 'flow/test/test_genElapsedTime.py'
   pull_request:
     paths:
-      - 'flow/util/**.py'
-      - 'flow/test/**.py'
+      - 'flow/util/genElapsedTime.py'
+      - 'flow/test/test_genElapsedTime.py'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
