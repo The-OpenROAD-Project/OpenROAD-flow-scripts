@@ -66,7 +66,7 @@ cd OpenROAD-flow-scripts
 ```
 
 Document for detailed steps on docker based installation found
-[here](./docs/user/BuildWithDocker.md)
+[here](./docs/user/BuildWithDocker.md).
 
 ### Verify Local Installation
 To verify installation run default `gcd/nangate45` design with 
@@ -90,8 +90,8 @@ make gui_final
 
 - See the OpenROAD [documentation here](https://openroad.readthedocs.io/en/latest/).
 - How to [start using OpenROAD flow here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html).
-- Our ORFS [user guide here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/UserGuide.html).
-- Our ORFS [Flow Tutorial here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
+- See ORFS [user guide here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/UserGuide.html).
+- See ORFS [Flow Tutorial here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
 
 ## Citing this Work
 
