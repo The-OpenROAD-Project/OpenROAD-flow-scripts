@@ -27,3 +27,4 @@ export PLACE_PINS_ARGS = -exclude left:0-500 -exclude left:1000-1500: -exclude r
 
 export MACRO_PLACE_HALO = 10 10
 export MACRO_PLACE_CHANNEL = 20 20
+export TNS_END_PERCENT ?= 100
