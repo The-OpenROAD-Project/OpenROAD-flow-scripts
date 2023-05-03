@@ -743,7 +743,7 @@ $(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSO
 $(RESULTS_DIR)/6_final.v: $(LOG_DIR)/6_report.log
 
 $(GDS_FINAL_FILE): $(GDS_MERGED_FILE)
-	cp $^ $@
+	cp $< $@
 
 .PHONY: drc
 drc: $(REPORTS_DIR)/6_drc.lyrdb
