@@ -15,32 +15,10 @@ flow stages through tcl commands and python APIs.
 
 ### Local Installation
 
-To install OpenROAD-flow-scripts locally in CentOS 7/8, Ubuntu 
-20.04/22.04, RHEL 8, Debian 10/11. Following steps will
-clone the ORFS repo, install required dependencies and build the flow.
-
-#### Clone ORFS repo
-
-```
-git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
-```
-
-#### Install Dependencies
-
-```
-cd OpenROAD-flow-scripts
-sudo ./setup.sh
-```
-
-#### Build the Flow
-
-```
-./build_openroad.sh --local
-```
-
 Document for detailed local installation steps found [here](./docs/user/BuildLocally.md).
 
 ### Docker Based Installation
+
 To ease dependency installation issues, ORFS uses docker images.
 Docker image includes ORFS binaries, applications as well as all
 required dependencies. All of the flow tools are encapsulated
@@ -50,20 +28,7 @@ If `Docker` is not installed already, refer to the document
 [here](./docs/user/DockerInstall.md) on how to install and how to
 manage docker as non-root user.
 
-### Build ORFS with Docker
-
-#### Clone ORFS repo
-
-```
-git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
-```
-
-#### Build the Flow
-
-```
-cd OpenROAD-flow-scripts
-./build_openroad.sh
-```
+#### Build ORFS with Docker
 
 Document for detailed steps on docker based installation found
 [here](./docs/user/BuildWithDocker.md).
@@ -78,7 +43,8 @@ cd flow
 make
 ```
 
-Above steps run from synthesis to GDSII generation and you can view final layout with OpenROAD GUI as,
+Above steps run from RTL-GDSII generation and you can view final
+layout with OpenROAD GUI as,
 
 ```
 make gui_final
