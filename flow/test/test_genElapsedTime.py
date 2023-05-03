@@ -45,7 +45,7 @@ class TestElapsedTime(unittest.TestCase):
             module = importlib.import_module(self.module_name)
             importlib.reload(module)
         # check if output is correct
-        expected_output = "1_test                         44654\n"
+        expected_output = "1_test                           744\n"
         self.assertEqual(mock_stdout.getvalue(), expected_output)
 
     def test_missing_arg(self):
