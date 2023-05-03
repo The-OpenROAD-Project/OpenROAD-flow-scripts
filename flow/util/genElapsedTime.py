@@ -26,28 +26,30 @@ if not args.logDir:
 # Loop on all log files in the directory
 for f in sorted(pathlib.Path(args.logDir).glob('**/[0-9]_*.log')):
     # Extract Elapsed Time line from log file
-    for line in open(str(f)):
-        elapsedTime = 0
-        
-        if 'Elapsed time' in line:
-            # Extract the portion that has the time
-            timePor = line.strip().replace('Elapsed time: ', '')
-            # Remove the units from the time portion
-            timePor = timePor.split('[h:]', 1)[0]
-            # Ensure that hours, min and seconds are separated by ':' not '.'
-            timePor = timePor.replace('.',':')
-            # Calculate elapsed time that has this format 'h:m:s'
-            timeList = timePor.split(':')
-            if len(timeList) == 2:
-                # Only minutes and seconds are present
-                elapsedTime = int(timeList[0])*60 + int(timeList[1])
-            elif len(timeList) == 3:
-                # Hours, minutes, and seconds are present
-                elapsedTime = int(timeList[0])*3600 + int(timeList[1])*60 + int(timeList[2])
-    if elapsedTime == 0:
-        print('No elapsed time found in',  str(f), file=sys.stderr)
+    with open(str(f)) as logfile:
+        for line in logfile:
+            elapsedTime = 0
+            
+            if 'Elapsed time' in line:
+                # Extract the portion that has the time
+                timePor = line.strip().replace('Elapsed time: ', '')
+                # Remove the units from the time portion
+                timePor = timePor.split('[h:]', 1)[0]
+                # Remove any fraction of a second
+                timePor = timePor.split('.', 1)[0]
+                # Calculate elapsed time that has this format 'h:m:s'
+                timeList = timePor.split(':')
+                if len(timeList) == 2:
+                    # Only minutes and seconds are present
+                    elapsedTime = int(timeList[0])*60 + int(timeList[1])
+                elif len(timeList) == 3:
+                    # Hours, minutes, and seconds are present
+                    elapsedTime = int(timeList[0])*3600 + int(timeList[1])*60 + int(timeList[2])
+        if elapsedTime == 0:
+            print('No elapsed time found in',  str(f), file=sys.stderr)
     
     # Print the name of the step and the corresponding elapsed time
-    print('%-25s %10s' % (os.path.splitext(os.path.basename(str(f)))[0], elapsedTime))
+    if elapsedTime != 0:
+        print('%-25s %10s' % (os.path.splitext(os.path.basename(str(f)))[0], elapsedTime))
 
 

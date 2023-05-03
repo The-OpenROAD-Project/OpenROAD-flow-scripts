@@ -1,0 +1,36 @@
+name: Test Util Scripts
+on:
+  schedule:
+  - cron: "0 8 * * SUN"
+  push:
+    paths:
+      - 'flow/util/genElapsedTime.py'
+      - 'flow/test/test_genElapsedTime.py'
+  pull_request:
+    paths:
+      - 'flow/util/genElapsedTime.py'
+      - 'flow/test/test_genElapsedTime.py'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:     
+  testUtilScripts:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          submodules: recursive
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip
+      - name: Run Tests
+        run: |
+          cd flow/test
+          for file in *.py; do
+              python "$file"
+          done
