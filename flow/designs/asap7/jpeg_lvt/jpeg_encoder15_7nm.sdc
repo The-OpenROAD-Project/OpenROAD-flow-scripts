@@ -1,7 +1,9 @@
-set clk_name core_clock 
-set clk_port_name HCLK 
-set clk_period 7.0 
-set clk_io_pct 0.1
+current_design jpeg_encoder
+
+set clk_name  clk 
+set clk_port_name clk
+set clk_period 1100
+set clk_io_pct 0.2
 
 set clk_port [get_ports $clk_port_name]
 

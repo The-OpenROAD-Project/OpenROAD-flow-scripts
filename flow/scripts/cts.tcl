@@ -78,6 +78,10 @@ if { [info exists ::env(TNS_END_PERCENT)] && $::env(TNS_END_PERCENT) > 0.0} {
   puts "Default TNS end percent 5"
   append additional_args " -repair_tns 5"
 }
+if { [info exists ::env(SKIP_PIN_SWAP)] } {
+  puts "Skipping pin swapping during optimization"
+  append additional_args " -skip_pin_swap"
+}
 
 repair_timing {*}$additional_args
 
