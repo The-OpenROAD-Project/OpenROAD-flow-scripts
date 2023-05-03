@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 580682,
+        "value": 580681.63,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -36,19 +36,19 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 2838,
+        "value": 2186,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.99,
+        "value": -1.45,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.99,
+        "value": -1.45,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 4028434,
+        "value": 3427209,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -56,11 +56,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.26,
+        "value": -0.74,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 704382,
+        "value": 682263,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
@@ -84,7 +84,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -10.0,
+        "value": -22.14,
         "compare": ">="
     }
 }
