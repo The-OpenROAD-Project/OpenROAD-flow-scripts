@@ -74,6 +74,9 @@ if { [info exists ::env(HOLD_SLACK_MARGIN)] && $::env(HOLD_SLACK_MARGIN) > 0.0} 
 if { [info exists ::env(TNS_END_PERCENT)] && $::env(TNS_END_PERCENT) > 0.0} {
   puts "TNS end percent $::env(TNS_END_PERCENT)"
   append additional_args " -repair_tns $::env(TNS_END_PERCENT)"
+} else {
+  puts "Default TNS end percent 5"
+  append additional_args " -repair_tns 5"
 }
 
 repair_timing {*}$additional_args
