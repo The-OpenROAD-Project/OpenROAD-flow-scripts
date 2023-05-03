@@ -34,8 +34,8 @@ for f in sorted(pathlib.Path(args.logDir).glob('**/[0-9]_*.log')):
             timePor = line.strip().replace('Elapsed time: ', '')
             # Remove the units from the time portion
             timePor = timePor.split('[h:]', 1)[0]
-            # Ensure that hours, min and seconds are separated by ':' not '.'
-            timePor = timePor.replace('.',':')
+            # Remove any fraction of a second
+            timePor = timePor.split('.', 1)[0]
             # Calculate elapsed time that has this format 'h:m:s'
             timeList = timePor.split(':')
             if len(timeList) == 2:
