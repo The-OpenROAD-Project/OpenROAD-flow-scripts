@@ -42,10 +42,10 @@ export RC_FILE                                = $(PLATFORM_DIR)/setRC.tcl
 
 # set the TIEHI/TIELO cells
 export TIEHI_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tieh Z
-export TIELO_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tiel Z
+export TIELO_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tiel ZN
 
 # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS                ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
+export ABC_CLOCK_PERIOD_IN_PS                ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 export ABC_DRIVER_CELL                        = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__buf_4
 export ABC_LOAD_IN_FF                         = 0.01343
 
@@ -64,9 +64,6 @@ export PLACE_SITE                             = GF018hv5v_green_sc9
 else
 export PLACE_SITE                             = GF018hv5v_mcu_sc7
 endif
-
-# IO Pin fix margin
-export IO_PIN_MARGIN                         ?= 25
 
 # IO Placer pin layers
 export IO_PLACER_H                           ?= Metal3
@@ -89,20 +86,8 @@ export MACRO_PLACE_CHANNEL                   ?= 20.16 20.16
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT    ?= 2
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT    ?= 1
 
-# resizer repair_long_wires -max_length
-export MAX_WIRE_LENGTH                        = 150
-
 # global placement density
 export PLACE_DENSITY                         ?= 0.40
-
-# adjustment parameter for placer and global router's routability-driven loop
-#
-# if routing resources are highly reduced in global router (e.g. higher value in below)
-# placer will bloat lots of cells in each RD iteration and cause unstableness.
-#
-# will be used in script/global_place.tcl
-export REPLACE_FASTROUTE_RESOURCE_ADJ_23      = 0.7
-export REPLACE_FASTROUTE_RESOURCE_ADJ_OTHER   = 0.4
 
 #--------------------------------------------------------
 # CTS
