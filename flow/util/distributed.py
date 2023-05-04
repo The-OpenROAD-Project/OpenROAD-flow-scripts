@@ -455,7 +455,7 @@ def run_command(cmd, timeout=None,
         print(process.stdout)
 
     if fail_fast and process.returncode != 0:
-        raise RuntimeError
+        raise RuntimeError("process failed with returncode code " + str(process.returncode))
 
 
 @ray.remote
