@@ -72,7 +72,7 @@ class AutoTunerBase(tune.Trainable):
         # We create the following directory structure:
         #      1/     2/         3/       4/                5/   6/
         # <repo>/<logs>/<platform>/<design>/<experiment>-DATE/<id>/<cwd>
-        repo_dir = os.getcwd() + '/../' * 6
+        repo_dir = os.path.normpath(os.getcwd() + '/../' * 6)
         self.repo_dir = abspath(repo_dir)
         self.parameters = parse_config(config, path=os.getcwd())
         self.step_ = 0
