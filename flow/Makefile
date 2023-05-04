@@ -84,6 +84,9 @@
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
+# Default TNS_END_PERCENT value
+export TNS_END_PERCENT ?=5
+
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY
 export QT_QPA_PLATFORM ?= offscreen

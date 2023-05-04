@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 7642,
+        "value": 7641.73,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 1034,
+        "value": 1186,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -40,11 +40,11 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -419.99,
+        "value": -419.5,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -419.99,
+        "value": -419.5,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {

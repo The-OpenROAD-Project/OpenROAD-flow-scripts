@@ -36,19 +36,19 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 2186,
+        "value": 5022,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -1.45,
+        "value": -1.29,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -1.45,
+        "value": -1.29,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 3427209,
+        "value": 4120636,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -56,7 +56,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.74,
+        "value": -0.38,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -84,7 +84,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -22.14,
+        "value": -12.79,
         "compare": ">="
     }
 }
