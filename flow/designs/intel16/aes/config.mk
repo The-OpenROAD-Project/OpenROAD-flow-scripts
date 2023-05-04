@@ -16,3 +16,4 @@ export CORE_AREA   = 1.26 1.89 248 248
 
 
 export PLACE_DENSITY = uniform
+export SKIP_PIN_SWAP = 1

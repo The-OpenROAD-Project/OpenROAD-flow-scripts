@@ -14,5 +14,5 @@ export SDC_FILE      = $(DESIGN_DIR)/constraint.sdc
 export DIE_AREA    = 0 0 250 250
 export CORE_AREA   = 1.26 1.89 248 248
 
-
 export PLACE_DENSITY = uniform
+export SKIP_PIN_SWAP = 1
