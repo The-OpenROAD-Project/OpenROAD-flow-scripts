@@ -3,11 +3,11 @@
 [![Build Status](https://jenkins.openroad.tools/buildStatus/icon?job=OpenROAD-flow-scripts-Public%2Fpublic_tests_all%2Fmaster)](https://jenkins.openroad.tools/view/Public/job/OpenROAD-flow-scripts-Public/job/public_tests_all/job/master/)
 [![Docs](https://readthedocs.org/projects/openroad-flow-scripts/badge/?version=latest)](https://openroad-flow-scripts.readthedocs.io/en/latest/?badge=latest)
 
-OpenROAD-flow-scripts(ORFS) is a fully autonomous, RTL-GDSII flow
+OpenROAD-flow-scripts (ORFS) is a fully autonomous, RTL-GDSII flow
 for rapid architecture and design space exploration, early prediction
-of QoR and detailed physical design implementation. However,  ORFS
+of QoR and detailed physical design implementation. However, ORFS
 also enables manual intervention for finer user control of individual
-flow stages through tcl commands and python APIs.
+flow stages through Tcl commands and Python APIs.
 
 ![ORFS_Flow.webp](./docs/images/ORFS_Flow.webp)
 
@@ -24,40 +24,25 @@ Docker image includes ORFS binaries, applications as well as all
 required dependencies. All of the flow tools are encapsulated
 inside the container image.
 
-If `Docker` is not installed already, refer to the document
-[here](./docs/user/DockerInstall.md) on how to install and how to
-manage docker as non-root user.
+If `Docker` is not installed already, install latest docker tool
+based on OS from [here](https://docs.docker.com/engine/install/)
+
+To manage docker as non-root user and verify that you can run `docker`
+commands without `sudo` must complete steps from [here](https://docs.docker.com/engine/install/linux-postinstall/).
 
 #### Build ORFS with Docker
 
 Document for detailed steps on docker based installation found
 [here](./docs/user/BuildWithDocker.md).
 
-### Verify Local Installation
-To verify installation run default `gcd/nangate45` design with 
-following steps,
-
-```
-source env.sh
-cd flow
-make
-```
-
-Above steps run from RTL-GDSII generation and you can view final
-layout with OpenROAD GUI as,
-
-```
-make gui_final
-```
-
-![gcd_final.webp](./docs/images/gcd_final.webp)
-
 ## Using the Flow
 
-- See the OpenROAD [documentation here](https://openroad.readthedocs.io/en/latest/).
-- How to [start using OpenROAD flow here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html).
-- See ORFS [user guide here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/UserGuide.html).
-- See ORFS [Flow Tutorial here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
+- For details about the OpenROAD and the available features and
+  individual flows commands, see the documentation [here](https://openroad.readthedocs.io/en/latest/).
+- For details about automated flow setup, see ORFS docs [here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html).
+- Flow tutorial to run the complete OpenROAD based flow from
+  RTL-GDSII, see the tutorial [here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
+- To watch ORFS flow tuotial videos, check [here](https://theopenroadproject.org/video).
 
 ## Citing this Work
 

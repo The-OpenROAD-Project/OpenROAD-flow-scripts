@@ -22,15 +22,26 @@ sudo ./setup.sh
 
 ## Verify Installation
 
-The binaries should be available on your `$PATH` after setting up the
-environment.
+The binaries should be available on your `$PATH` after setting
+up the environment.
 
 ``` shell
 source ./env.sh
 yosys -help
 openroad -help
-exit
+cd flow
+make
 ```
+
+Above `make` command run from RTL-GDSII generation for default
+design `gcd` with `nangate45` pdk. You can view final layout with
+OpenROAD GUI as,
+
+```
+make gui_final
+```
+
+![gcd_final.webp](../images/gcd_final.webp)
 
 ## Compiling and debugging in Visual Studio Code
 
