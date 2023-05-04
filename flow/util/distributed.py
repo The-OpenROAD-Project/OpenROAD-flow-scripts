@@ -485,8 +485,9 @@ def openroad(base_dir, parameters, flow_variant, path=''):
     export_command += ' && '
 
     make_command = export_command
-    make_command += f'make -C {base_dir}/flow DESIGN_CONFIG=designs/'
+    make_command += f'make -C {MAKE_FOLDER} -f {ORFS_FLOW}/Makefile DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
+    make_command += f' FLOW_HOME={ORFS_FLOW}'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
     make_command += f' NPROC={args.openroad_threads} SHELL=bash'
     run_command(make_command,
@@ -496,7 +497,7 @@ def openroad(base_dir, parameters, flow_variant, path=''):
 
     metrics_file = os.path.join(report_path, 'metrics.json')
     metrics_command = export_command
-    metrics_command += f'{base_dir}/flow/util/genMetrics.py -x'
+    metrics_command += f'{ORFS_FLOW}/util/genMetrics.py -x'
     metrics_command += f' -v {flow_variant}'
     metrics_command += f' -d {args.design}'
     metrics_command += f' -p {args.platform}'
@@ -573,7 +574,14 @@ def parse_arguments():
         type=str,
         metavar='<gcd,jpeg,ibex,aes,...>',
         required=True,
-        help='Name of the design for Autotuning.')
+        help='Folder under design/platformname/ of config.mk for Autotuning')
+    parser.add_argument(
+        '--design-nickname',
+        type=str,
+        metavar='<e.g. logs/foldername>',
+        required=False,
+        default=None,
+        help='Name of folder for logs, results, etc. which can differ from the design name.')
     parser.add_argument(
         '--platform',
         type=str,
@@ -743,6 +751,10 @@ def parse_arguments():
         ' training stderr\n\t2: also print training stdout.')
 
     arguments = parser.parse_args()
+
+    if arguments.design_nickname is None:
+        arguments.design_nickname = arguments.design
+
     if arguments.mode == 'tune':
         arguments.algorithm = arguments.algorithm.lower()
         # Validation of arguments
@@ -854,7 +866,7 @@ def sweep():
         # <repo>/<logs>/<platform>/<design>/
         repo_dir = abspath(LOCAL_DIR + '/../' * 4)
     else:
-        repo_dir = abspath('../')
+        repo_dir = abspath(ORFS_FLOW)
     print(f'[INFO TUN-0012] Log folder {LOCAL_DIR}.')
     queue = Queue()
     parameter_list = list()
@@ -903,15 +915,26 @@ if __name__ == '__main__':
         # Remote functions return a task id and are non-blocking. Since we
         # need the setup repo before continuing, we call ray.get() to wait
         # for its completion.
+        MAKE_FOLDER = os.getcwd()
+        ORFS_FLOW = os.getcwd()
         INSTALL_PATH = ray.get(setup_repo.remote(LOCAL_DIR))
-        LOCAL_DIR += f'/flow/logs/{args.platform}/{args.design}'
+        LOCAL_DIR += f'/flow/logs/{args.platform}/{args.design_nickname}'
         print('[INFO TUN-0001] NFS setup completed.')
     else:
-        # For local runs, use the same folder as other ORFS utilities.
-        os.chdir(os.path.dirname(abspath(__file__)) + '/../')
-        LOCAL_DIR = f'logs/{args.platform}/{args.design}'
-        LOCAL_DIR = abspath(LOCAL_DIR)
-        INSTALL_PATH = abspath('../tools/install')
+        if args.samples == 1:
+            # This makes debugging easier as everything is in-process. Running
+            # locally is useful to weed out simple problems in the configuration
+            # quickly.
+            #
+            # DANGER! use only with --samples 1, or you get infinite recursion
+            ray.init(local_mode=True)
+
+        # For local runs, we could be building in a folder other than
+        # ORFS/flow, so don't change current working directory here.
+        MAKE_FOLDER = os.getcwd()
+        ORFS_FLOW = os.path.normpath(os.path.dirname(abspath(__file__)) + '/../')
+        LOCAL_DIR = abspath(f'logs/{args.platform}/{args.design_nickname}')
+        INSTALL_PATH = abspath(os.path.join(ORFS_FLOW, '../tools/install'))
 
     if args.mode == 'tune':
 
