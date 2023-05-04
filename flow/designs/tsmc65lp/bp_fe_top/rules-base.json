@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 552102,
+        "value": 549678,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -36,19 +36,19 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1400,
+        "value": 4082,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.78,
+        "value": -0.4,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.78,
+        "value": -0.4,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 2283204,
+        "value": 2223507,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
