@@ -38,7 +38,7 @@ export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
 export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders.v
 #
 # Set yosys-abc clock period to first "-period" found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
+export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 export ABC_DRIVER_CELL = BUF_X1
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
 export ABC_LOAD_IN_FF = 3.898
