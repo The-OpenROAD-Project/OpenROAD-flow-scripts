@@ -399,11 +399,11 @@ $(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) 
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 clean_synth:
 	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
@@ -443,7 +443,7 @@ $(RESULTS_DIR)/2_2_floorplan_io.odb: $(RESULTS_DIR)/2_1_floorplan.odb $(IO_CONST
 ifndef IS_CHIP
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement_random.tcl -metrics $(LOG_DIR)/2_2_floorplan_io.json) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
 else
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 endif
 
 # STEP 3: Timing Driven Mixed Sized Placement
@@ -453,7 +453,7 @@ ifeq ($(MACRO_PLACEMENT),)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tdms_place.tcl -metrics $(LOG_DIR)/2_3_tdms.json) 2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
 else
 	$(info [INFO][FLOW] Using manual macro placement file $(MACRO_PLACEMENT))
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 endif
 
 # STEP 4: Macro Placement
@@ -473,7 +473,7 @@ $(RESULTS_DIR)/2_6_floorplan_pdn.odb: $(RESULTS_DIR)/2_5_floorplan_tapcell.odb $
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/pdn.tcl -metrics $(LOG_DIR)/2_6_pdn.json) 2>&1 | tee $(LOG_DIR)/2_6_pdn.log
 
 $(RESULTS_DIR)/2_floorplan.odb: $(RESULTS_DIR)/2_6_floorplan_pdn.odb
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
@@ -506,7 +506,7 @@ $(RESULTS_DIR)/3_2_place_iop.odb: $(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_C
 ifndef IS_CHIP
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
 else
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 endif
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
@@ -529,10 +529,10 @@ $(RESULTS_DIR)/3_5_place_dp.odb: $(RESULTS_DIR)/3_4_place_resized.odb
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_5_opendp.json) 2>&1 | tee $(LOG_DIR)/3_5_opendp.log
 
 $(RESULTS_DIR)/3_place.odb: $(RESULTS_DIR)/3_5_place_dp.odb
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 # Clean Targets
 #-------------------------------------------------------------------------------
@@ -570,7 +570,7 @@ $(RESULTS_DIR)/4_2_cts_fillcell.odb: $(RESULTS_DIR)/4_1_cts.odb
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.odb
 
 $(RESULTS_DIR)/4_cts.odb: $(RESULTS_DIR)/4_2_cts_fillcell.odb
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 .PHONY: clean_cts
 clean_cts:
@@ -608,10 +608,10 @@ endif
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_route.tcl -metrics $(LOG_DIR)/5_2_TritonRoute.json) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 
 $(RESULTS_DIR)/5_route.odb: $(RESULTS_DIR)/5_2_route.odb
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 $(RESULTS_DIR)/5_route.v:
 	@export OR_DB=5_route ;\
@@ -670,14 +670,14 @@ $(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb $(FILL_CONFIG)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_density_fill.json) 2>&1 | tee $(LOG_DIR)/6_density_fill.log
 else
 $(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 endif
 
 $(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 $(RESULTS_DIR)/6_final.sdc: $(RESULTS_DIR)/5_route.sdc
-	cp $< $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
@@ -694,17 +694,17 @@ skip_resize: $(RESULTS_DIR)/3_3_place_gp.odb
 .PHONY: skip_cts
 skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
 	# mock all intermediate results
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_1_cts.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_2_cts_fillcell.odb
-	cp $(RESULTS_DIR)/3_place.sdc $(RESULTS_DIR)/4_cts.sdc
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_cts.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 4_1_cts.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 4_2_cts_fillcell.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.sdc 4_cts.sdc
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 4_cts.odb
 
 # Skipping route can be useful to create a mock abstract
 .PHONY: skip_route
 skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_1_grt.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_2_route.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/6_1_fill.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 5_1_grt.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 5_2_route.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 6_1_fill.odb
 	touch $(RESULTS_DIR)/6_final.spef
 
 # To create a mock abstract quickly, good enough to iterate quickly on
@@ -747,7 +747,7 @@ $(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSO
 $(RESULTS_DIR)/6_final.v: $(LOG_DIR)/6_report.log
 
 $(GDS_FINAL_FILE): $(GDS_MERGED_FILE)
-	cp $^ $@
+	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 .PHONY: drc
 drc: $(REPORTS_DIR)/6_drc.lyrdb
