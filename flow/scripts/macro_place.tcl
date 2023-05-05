@@ -98,6 +98,19 @@ if {[find_macros] != ""} {
         append additional_rtlmp_args " -report_directory $env(RTLMP_RPT_DIR)"
     }
 
+    if { [info exists ::env(RTLMP_FENCE_LX)]} {
+        append additional_rtlmp_args " -fence_lx $env(RTLMP_FENCE_LX)"
+    }
+    if { [info exists ::env(RTLMP_FENCE_LY)]} {
+        append additional_rtlmp_args " -fence_ly $env(RTLMP_FENCE_LY)"
+    }
+    if { [info exists ::env(RTLMP_FENCE_UX)]} {
+        append additional_rtlmp_args " -fence_ux $env(RTLMP_FENCE_UX)"
+    }
+    if { [info exists ::env(RTLMP_FENCE_UY)]} {
+        append additional_rtlmp_args " -fence_uy $env(RTLMP_FENCE_UY)"
+    }
+
 
     puts "Call Macro Placer $additional_rtlmp_args"
 
