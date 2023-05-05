@@ -17,15 +17,13 @@ import json
 import pandas as pd
 import re
 from glob import glob
-
-# make sure the working dir is flow/
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)) , '..'))
+import sys
 
 # Parse and validate arguments
 # =============================================================================
 
 
-def parse_args():
+def parse_args(cmd_args):
     parser = argparse.ArgumentParser(
         description='Generates metadata from OpenROAD flow')
     parser.add_argument('--flowPath',
@@ -62,7 +60,7 @@ def parse_args():
                         '-x',
                         action='store_true',
                         help='Hierarchical JSON')
-    args = parser.parse_args()
+    args = parser.parse_args(cmd_args)
 
     if not os.path.isdir(args.flowPath):
         print('[ERROR] flowPath does not exist')
@@ -385,55 +383,62 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     return metrics_dict, metrics_df
 
 
-args = parse_args()
-now = datetime.now()
-flow_variants = args.flowVariant.split()
-all_designs =  True if args.design == 'all_designs' else False
-designs = args.design.split()
-platforms = args.platform.split()
+def run(args):
+    args = parse_args(args)
+    now = datetime.now()
+    flow_variants = args.flowVariant.split()
+    all_designs =  True if args.design == 'all_designs' else False
+    designs = args.design.split()
+    platforms = args.platform.split()
 
-if all_designs or len(designs) > 1 or len(flow_variants) > 1:
-    rootdir = './logs'
+    if all_designs or len(designs) > 1 or len(flow_variants) > 1:
+        rootdir = './logs'
 
-    all_df = pd.DataFrame()
-    all_d = []
+        all_df = pd.DataFrame()
+        all_d = []
 
-    cwd = os.getcwd()
-    for platform_it in os.scandir(rootdir):
-        if not platform_it.is_dir():
-            continue
-        plt = platform_it.name
-        if not plt in platforms:
-            continue
-        for design_it in os.scandir(platform_it.path):
-            if not design_it.is_dir():
+        cwd = os.getcwd()
+        for platform_it in os.scandir(rootdir):
+            if not platform_it.is_dir():
                 continue
-            des = design_it.name
-            if not (all_designs or des in designs):
+            plt = platform_it.name
+            if not plt in platforms:
                 continue
-            for variant in flow_variants:
-                log_dir = os.path.join(cwd, 'logs', plt, des, variant)
-                if not os.path.isdir(log_dir):
+            for design_it in os.scandir(platform_it.path):
+                if not design_it.is_dir():
                     continue
-                if not os.path.isfile(os.path.join(log_dir, '6_report.json')):
-                    print(f'Skip extracting metrics for {plt}, {des}, {variant} as run did not complete')
+                des = design_it.name
+                if not (all_designs or des in designs):
                     continue
-                print(f'Extract Metrics for {plt}, {des}, {variant}')
-                file = '/'.join(['reports', plt, des, variant, 'metrics.json'])
-                metrics, df = extract_metrics(cwd, plt, des, variant,
-                                              file, args.hier)
-                all_d.append(metrics)
-                if all_df.shape[0] == 0:
-                    all_df = df
-                else:
-                    all_df = all_df.merge(df, on='Metrics', how='inner')
+                for variant in flow_variants:
+                    log_dir = os.path.join(cwd, 'logs', plt, des, variant)
+                    if not os.path.isdir(log_dir):
+                        continue
+                    if not os.path.isfile(os.path.join(log_dir, '6_report.json')):
+                        print(f'Skip extracting metrics for {plt}, {des}, {variant} as run did not complete')
+                        continue
+                    print(f'Extract Metrics for {plt}, {des}, {variant}')
+                    file = '/'.join(['reports', plt, des, variant, 'metrics.json'])
+                    metrics, df = extract_metrics(cwd, plt, des, variant,
+                                                file, args.hier)
+                    all_d.append(metrics)
+                    if all_df.shape[0] == 0:
+                        all_df = df
+                    else:
+                        all_df = all_df.merge(df, on='Metrics', how='inner')
 
-    with open('metrics.json', 'w') as outFile:
-        json.dump(all_d, outFile, indent=2)
+        with open('metrics.json', 'w') as outFile:
+            json.dump(all_d, outFile, indent=2)
 
-    with open('metrics.html', 'w') as f:
-        f.write(all_df.to_html())
-else:
-    metrics_dict, metrics_df = extract_metrics(args.flowPath, args.platform,
-                                               args.design, args.flowVariant,
-                                               args.output, args.hier)
+        with open('metrics.html', 'w') as f:
+            f.write(all_df.to_html())
+    else:
+        metrics_dict, metrics_df = extract_metrics(args.flowPath, args.platform,
+                                                args.design, args.flowVariant,
+                                                args.output, args.hier)
+
+if __name__ == '__main__':
+    # make sure the working dir is flow/
+    os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)) , '..'))
+
+    run(sys.argv[1:])

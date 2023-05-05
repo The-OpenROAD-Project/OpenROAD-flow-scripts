@@ -24,6 +24,7 @@ Parameter sweeping:
                            sweep
 '''
 
+import genMetrics
 import argparse
 import json
 import os
@@ -497,14 +498,26 @@ def openroad(base_dir, parameters, flow_variant, path=''):
 
     metrics_file = os.path.join(report_path, 'metrics.json')
     metrics_command = export_command
-    metrics_command += f'{ORFS_FLOW}/util/genMetrics.py -x'
-    metrics_command += f' -v {flow_variant}'
-    metrics_command += f' -d {args.design}'
-    metrics_command += f' -p {args.platform}'
-    metrics_command += f' -o {metrics_file}'
-    run_command(metrics_command,
-                stderr_file=f'{log_path}error-metrics.log',
-                stdout_file=f'{log_path}metrics-stdout.log')
+
+    metrics_args = [f'-x',
+    f'-v',
+    f'{flow_variant}',
+    f'-d',
+    f'{args.design}',
+    f'-p',
+    f'{args.platform}',
+    f'-o',
+    f'{metrics_file}']
+
+    if sys.gettrace():
+        # Step into the code
+        genMetrics.run(metrics_args)
+    else:
+        metrics_command += f'{ORFS_FLOW}/util/genMetrics.py'
+        metrics_command += ' ' + ' '.join(metrics_args)
+        run_command(metrics_command,
+                    stderr_file=f'{log_path}error-metrics.log',
+                    stdout_file=f'{log_path}metrics-stdout.log')
 
     return metrics_file
 
