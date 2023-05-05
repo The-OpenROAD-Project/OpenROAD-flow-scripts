@@ -3,7 +3,7 @@ import os
 
 rows = int(os.environ.get("MOCK_ARRAY_HEIGHT", "8"))
 cols = int(os.environ.get("MOCK_ARRAY_WIDTH", "8"))
-pitch_scale = int(os.environ.get("MOCK_ARRAY_PITCH_SCALE", "2"))
+pitch_scale = int(os.environ.get("MOCK_ARRAY_PITCH_SCALE", "20"))
 
 # Routing pitches for relevant metal layers.
 #  For x, this is M5; for y, this is M4.
