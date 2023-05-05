@@ -51,4 +51,4 @@ foreach {direction direction2 names} $assignments {
     set_io_pin_constraint -mirrored_pins $mirrored
 }
 
-set_io_pin_constraint -region top:* -pin_names clock
+set_io_pin_constraint -region top:{0 0 3 0} -pin_names clock
