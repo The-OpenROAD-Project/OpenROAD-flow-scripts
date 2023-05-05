@@ -34,6 +34,19 @@ class TestElapsedTime(unittest.TestCase):
         self.assertEqual(mock_stdout.getvalue(), expected_output)
 
     @patch("sys.stdout", new_callable=StringIO)
+    def test_zero_time(self, mock_stdout):
+        # create a log file with elapsed time
+        with open(self.log_file, "w") as f:
+            f.write("Some log entry\n")
+            f.write("Elapsed time: 00:00:74[h:]min:sec.\n")
+        # call the script with the test log file
+        sys.argv = ["./genElapsedTime.py", "--logDir", str(self.tmp_dir.name)]
+        with patch.object(sys, 'argv', sys.argv):
+            module = importlib.import_module(self.module_name)
+        # check if output is correct
+        self.assertEqual(mock_stdout.getvalue(), "")
+
+    @patch("sys.stdout", new_callable=StringIO)
     def test_elapsed_time_longer_duration(self, mock_stdout):
         # create a log file with elapsed time
         with open(self.log_file, "w") as f:

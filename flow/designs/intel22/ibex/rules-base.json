@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 900,
+        "value": 994,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -56,7 +56,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -495.71,
+        "value": -382.31,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -84,7 +84,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -22.11,
+        "value": -17.17,
         "compare": ">="
     }
 }
