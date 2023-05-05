@@ -227,7 +227,7 @@ def read_config(file_name):
         if dp_pad_step > 1:
             config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
                 lambda spec: tune.choice(
-                    np.adarray.tolist(
+                    np.ndarray.tolist(
                         np.arange(
                             dp_pad_min,
                             spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT +
@@ -248,7 +248,7 @@ def read_config(file_name):
             if this['step'] == 1:
                 return tune.randint(min_, max_)
             return tune.choice(
-                np.adarray.tolist(
+                np.ndarray.tolist(
                     np.arange(min_,
                               max_,
                               this['step'])))
@@ -256,7 +256,7 @@ def read_config(file_name):
             if this['step'] == 0:
                 return tune.uniform(min_, max_)
             return tune.choice(
-                np.adarray.tolist(
+                np.ndarray.tolist(
                     np.arange(min_,
                               max_,
                               this['step'])))
@@ -280,7 +280,7 @@ def read_config(file_name):
         elif this['type'] == 'float':
             if this['step'] == 1:
                 dict_["type"] = "choice"
-                dict_["values"] = tune.choice(np.adarray.tolist(
+                dict_["values"] = tune.choice(np.ndarray.tolist(
                     np.arange(min_,
                               max_,
                               this['step'])))
