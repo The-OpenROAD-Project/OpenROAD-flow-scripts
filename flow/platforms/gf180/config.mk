@@ -55,6 +55,10 @@ export MIN_BUF_CELL_AND_PORTS                 = gf180mcu_fd_sc_mcu$(TRACK_OPTION
 # Used in synthesis
 export MAX_FANOUT                             = 20
 
+# Yosys mapping files
+export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch.v
+export ADDER_MAP_FILE = $(PLATFORM_DIR)/cells_adders.v
+
 #--------------------------------------------------------
 # Floorplan
 #-------------------------------------------------------
