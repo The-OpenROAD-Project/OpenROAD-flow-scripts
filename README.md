@@ -9,7 +9,7 @@ of QoR and detailed physical design implementation. However, ORFS
 also enables manual intervention for finer user control of individual
 flow stages through Tcl commands and Python APIs.
 
-![ORFS_Flow.webp](./docs/images/ORFS_Flow.webp)
+![ORFS_Flow](./docs/images/ORFS_Flow.svg)
 
 ## Tool Installation
 
@@ -25,7 +25,7 @@ required dependencies. All of the flow tools are encapsulated
 inside the container image.
 
 If `Docker` is not installed already, install latest docker tool
-based on OS from [here](https://docs.docker.com/engine/install/)
+based on OS from [here](https://docs.docker.com/engine/install/).
 
 To manage docker as non-root user and verify that you can run `docker`
 commands without `sudo` must complete steps from [here](https://docs.docker.com/engine/install/linux-postinstall/).
