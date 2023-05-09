@@ -656,11 +656,10 @@ finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
         $(GDS_FINAL_FILE)
-	$(MAKE) elapsed
-	
+	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
+
 .PHONY:
 elapsed:
-	@printf "%-25s %10s\n" Log "Elapsed seconds"
 	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
 
 # ==============================================================================
