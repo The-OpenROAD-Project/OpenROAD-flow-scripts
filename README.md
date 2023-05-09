@@ -42,7 +42,7 @@ Document for detailed steps on docker based installation found
 - For details about automated flow setup, see ORFS docs [here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html).
 - Flow tutorial to run the complete OpenROAD based flow from
   RTL-GDSII, see the tutorial [here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
-- To watch ORFS flow tuotial videos, check [here](https://theopenroadproject.org/video).
+- To watch ORFS flow tutorial videos, check [here](https://theopenroadproject.org/video).
 
 ## Citing this Work
 

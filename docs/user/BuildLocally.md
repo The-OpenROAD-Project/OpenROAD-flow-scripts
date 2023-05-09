@@ -43,6 +43,37 @@ make gui_final
 
 ![gcd_final.webp](../images/gcd_final.webp)
 
+## Using Pre-built Binaries
+
+You can download pre-built binaries with self contained dependencies
+included from the Precision Innovations github repository
+[here](https://github.com/Precision-Innovations/OpenROAD/actions/workflows/github-actions-build-deb-package.yml).
+
+The following platform are supported currently:
+- Ubuntu 20.04/22.04
+- Debian 10/11
+
+Use following steps to download:
+
+Step 1: Click on the [link](https://github.com/Precision-Innovations/OpenROAD/actions/workflows/github-actions-build-deb-package.yml)
+
+Step 2: Select the latest build with a green check `Build debian package`
+
+![debian_package](../images/debian_package.webp)
+
+Step 3: At the bottom of the page download the artifacts for your
+        distribution.
+
+![select_artifacts](../images/select_artifacts.webp)
+
+Step 4: Extract the files and based on platform use package installer.
+        For example Ubuntu platform use
+```
+sudo dpkg -i openroad_2.0_amd64-ubuntu20.04.deb
+```
+
+You can install these binaries within docker as well.
+
 ## Compiling and debugging in Visual Studio Code
 
 Set up environment variables to point to tools that CMake from within
