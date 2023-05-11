@@ -80,6 +80,8 @@
 # DESIGN_CONFIG=./designs/intel22/aes/config.mk
 
 # DESIGN_CONFIG=./designs/gf180/aes/config.mk
+# DESIGN_CONFIG=./designs/gf180/ibex/config.mk
+# DESIGN_CONFIG=./designs/gf180/jpeg/config.mk
 #
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
