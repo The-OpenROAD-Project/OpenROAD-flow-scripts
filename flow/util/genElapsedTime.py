@@ -15,6 +15,8 @@ parser = argparse.ArgumentParser(
     description='Print elapsed time for every step in the flow')
 parser.add_argument('--logDir', '-d', required=True,
                     help='Log files directory')
+parser.add_argument('--noHeader', action='store_true',
+                    help='Skip the header')
 args = parser.parse_args()
 
 if not args.logDir:
@@ -57,7 +59,7 @@ for f in sorted(pathlib.Path(args.logDir).glob('**/[0-9]_*.log')):
     
     # Print the name of the step and the corresponding elapsed time
     if elapsedTime != 0:
-        if first:
+        if first and not args.noHeader:
             print("%-25s %10s" % ("Log", "Elapsed seconds"))
             first = False
         print('%-25s %10s' % (os.path.splitext(os.path.basename(str(f)))[0], elapsedTime))
