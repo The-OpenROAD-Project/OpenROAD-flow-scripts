@@ -46,5 +46,5 @@ export ABC_LOAD_IN_FF = 3
 export DIE_AREA    = 0 0 900 1200
 export CORE_AREA    = 0.46 2.720 899.54 1197.28
 
-export MIN_ROUTING_LAYER 2
-export MAX_ROUTING_LAYER 5
+export MIN_ROUTING_LAYER = met1
+export MAX_ROUTING_LAYER = met4
