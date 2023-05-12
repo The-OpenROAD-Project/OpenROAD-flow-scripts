@@ -1,27 +1,44 @@
-# see flow/platforms/asap7/openRoad/pdn/grid_strategy-M2-M5-M7.tcl
 import os
 
+# number of Elements in row and column, user can set via environment variable
 rows = int(os.environ.get("MOCK_ARRAY_HEIGHT", "8"))
 cols = int(os.environ.get("MOCK_ARRAY_WIDTH", "8"))
+
+# must be 8x8
+if (rows * cols) < 64:
+  print("ERROR: number of elements row and columns must add up to 64.")
+  print("         {} {} revert to 8 x 8".format(rows, cols))
+  exit
+
+# Element placement pitch can be control by user
 pitch_scale = int(os.environ.get("MOCK_ARRAY_PITCH_SCALE", "2"))
 
-# Routing pitches for relevant metal layers.
-#  For x, this is M5; for y, this is M4.
-#  Pitches are specified in OpenROAD-flow-scripts/flow/platforms/asap7/lef/asap7_tech_1x_201209.lef.
-#  For asap7, x and y pitch is the same.
-routing_pitch = 0.048
+# must be > 1
+if pitch_scale < 1:
+  print("ERROR: Element placement pitch must be greater than 1")
+  exit
 
-# 0.048 * 125 = 6, which is a nice round number to work with
-pitch = routing_pitch * 125 * pitch_scale
-margin = routing_pitch * 125 * 2
-core_offset_x = margin
-core_offset_y = margin
-die_offset_x = core_offset_x + margin
-die_offset_y = core_offset_y + margin
+# routing pitch for M4, M5 and M6 tied to placement grid at 2.16
+# therefore, the Element size should be multiple of 2.16 and
+# placement of Element should be multiple of 2.16
+placement_grid_x = 0.054
+placement_grid_y = 0.27
 
-pitch_and_margin = pitch + margin
+# Element size is set to multiple of 2.16
+ce_width    = 12.96
+ce_height   = 12.96
 
-core_width = cols * pitch_and_margin + core_offset_x
-core_height = rows * pitch_and_margin + core_offset_y
-die_width = core_width + margin * 2
-die_height = core_height + margin * 2
+# Element placement, can be controled by user
+ce_pitch_x  = ce_width  * pitch_scale
+ce_pitch_y  = ce_height * pitch_scale
+
+# top level core offset 
+margin_x    = 2.16
+margin_y    = 2.16
+
+# top level core size
+core_width  = (ce_pitch_x * (cols + 0.5))
+core_height = (ce_pitch_y * (rows + 0.5))
+
+die_width = core_width + (2 * margin_x)
+die_height = core_height + (2 * margin_y)
