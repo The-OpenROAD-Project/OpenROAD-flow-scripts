@@ -1,18 +1,38 @@
 # fish out values from single source of truth: config.py
-set vals [regexp -all -inline {\S+} [exec sh -c {cd designs/asap7/mock-array-big && python3 -c "import config;print(f'{config.rows} {config.cols} {config.pitch_and_margin} {config.die_offset_x} {config.die_offset_y}')"}]]
-lassign $vals rows cols pitch_and_margin die_offset_x die_offset_y
+set vals [regexp -all -inline {\S+} [exec sh -c {cd designs/asap7/mock-array-big && python3 -c "import config;print(f'{config.rows} {config.cols} {config.ce_pitch_x} {config.ce_pitch_y} {config.margin_x} {config.margin_y} {config.placement_grid_x} {config.placement_grid_y}')"}]]
+lassign $vals rows cols ce_pitch_x ce_pitch_y margin_x margin_y placement_grid_x placement_grid_y
 
 set block [ord::get_db_block]
 set units [$block getDefUnits]
 
+set x [expr ($margin_x + ($ce_pitch_x / 2)) * $units]
+set y [expr ($margin_y + ($ce_pitch_y / 2)) * $units]
+
+set instList [list]
+for {set i 0} {$i < 8} {incr i} {
+  for {set j 0} {$j < 8} {incr j} {
+    lappend instList [format "ces_%d_%d" $i $j]
+  }
+}
+
+set i 0
 for {set row 0} {$row < $rows} {incr row} {
   for {set col 0} {$col < $cols} {incr col} {
-    set inst [$block findInst [format "ces_%d_%d" $row $col]]
+    set inst [$block findInst [lindex $instList $i]]
     $inst setOrient R0
-    set x [expr round([expr {$die_offset_x + $col * $pitch_and_margin}] * $units)]
-    set y [expr round([expr {$die_offset_y + $row * $pitch_and_margin}] * $units)]
 
-    $inst setOrigin $x $y
+    $inst setOrigin [expr int($x)] [expr int($y)]
     $inst setPlacementStatus FIRM
+
+    set x [expr $x + ($ce_pitch_x * $units)]
+    incr i
+    if { $i == 64 } {
+      break
+    }
   }
+  if { $i == 64 } {
+    break
+  }
+  set y [expr $y + ($ce_pitch_y * $units)]
+  set x [expr ($margin_x + ($ce_pitch_x / 2)) * $units]
 }
