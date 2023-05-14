@@ -1,11 +1,11 @@
 import os
 
 # number of Elements in row and column, user can set via environment variable
-rows = int(os.environ.get("MOCK_ARRAY_HEIGHT", "8"))
-cols = int(os.environ.get("MOCK_ARRAY_WIDTH", "8"))
+rows = int(os.environ.get("MOCK_ARRAY_HEIGHT"))
+cols = int(os.environ.get("MOCK_ARRAY_WIDTH"))
 
 # Element placement pitch can be control by user
-pitch_scale = int(os.environ.get("MOCK_ARRAY_PITCH_SCALE", "2"))
+pitch_scale = int(os.environ.get("MOCK_ARRAY_PITCH_SCALE"))
 
 if pitch_scale < 1:
   raise Exception("Element placement pitch must be greater than 1")
