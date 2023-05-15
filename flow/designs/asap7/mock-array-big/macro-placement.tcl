@@ -8,30 +8,15 @@ set units [$block getDefUnits]
 set x [expr ($margin_x + ($ce_pitch_x / 2)) * $units]
 set y [expr ($margin_y + ($ce_pitch_y / 2)) * $units]
 
-set instList [list]
-for {set i 0} {$i < 8} {incr i} {
-  for {set j 0} {$j < 8} {incr j} {
-    lappend instList [format "ces_%d_%d" $i $j]
-  }
-}
-
-set i 0
 for {set row 0} {$row < $rows} {incr row} {
   for {set col 0} {$col < $cols} {incr col} {
-    set inst [$block findInst [lindex $instList $i]]
+    set inst [$block findInst [format "ces_%d_%d" $row $col]]
     $inst setOrient R0
 
     $inst setOrigin [expr int($x)] [expr int($y)]
     $inst setPlacementStatus FIRM
 
     set x [expr $x + ($ce_pitch_x * $units)]
-    incr i
-    if { $i == 64 } {
-      break
-    }
-  }
-  if { $i == 64 } {
-    break
   }
   set y [expr $y + ($ce_pitch_y * $units)]
   set x [expr ($margin_x + ($ce_pitch_x / 2)) * $units]
