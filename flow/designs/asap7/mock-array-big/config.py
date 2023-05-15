@@ -4,19 +4,11 @@ import os
 rows = int(os.environ.get("MOCK_ARRAY_HEIGHT", "8"))
 cols = int(os.environ.get("MOCK_ARRAY_WIDTH", "8"))
 
-# must be 8x8
-if (rows * cols) < 64:
-  print("ERROR: number of elements row and columns must add up to 64.")
-  print("         {} {} revert to 8 x 8".format(rows, cols))
-  exit
-
 # Element placement pitch can be control by user
 pitch_scale = int(os.environ.get("MOCK_ARRAY_PITCH_SCALE", "2"))
 
-# must be > 1
 if pitch_scale < 1:
-  print("ERROR: Element placement pitch must be greater than 1")
-  exit
+  raise Exception("Element placement pitch must be greater than 1")
 
 # routing pitch for M4, M5 and M6 tied to placement grid at 2.16
 # therefore, the Element size should be multiple of 2.16 and
