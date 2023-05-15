@@ -40,7 +40,7 @@ module _tech_fa (A, B, C, X, Y);
       end
       else begin
         gf180mcu_fd_sc_mcu9t5v0__addf_1 fulladder (
-            .A(A[i]), .B(B[i]), .CIN(C[i]), .CO(X[i]), .S(Y[i])
+            .A(A[i]), .B(B[i]), .CI(C[i]), .CO(X[i]), .S(Y[i])
           );
       end
     end endgenerate

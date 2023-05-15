@@ -1,10 +1,4 @@
-proc match_pins { regex } {
-    set pins {}
-    foreach pin [get_ports -regexp $regex] {
-        lappend pins [get_property $pin name]
-    }
-    return $pins
-}
+source designs/asap7/mock-array-big/util.tcl
 
 set assignments [list \
     top \

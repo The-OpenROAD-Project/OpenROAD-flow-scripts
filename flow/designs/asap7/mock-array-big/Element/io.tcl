@@ -1,10 +1,4 @@
-proc match_pins { regex } {
-    set pins {}
-    foreach pin [get_ports -regexp $regex] {
-        lappend pins [get_property $pin name]
-    }
-    return $pins
-}
+source designs/asap7/mock-array-big/util.tcl
 
 set assignments [list \
     top bottom \
@@ -37,8 +31,9 @@ set assignments [list \
 proc zip {list1 list2} {
     set result {}
     set length [llength $list1]
+    set skip [expr [llength $list2] - [llength $list1]]
     for {set i 0} {$i < $length} {incr i} {
-        lappend result [lindex $list1 $i] [lindex $list2 $i]
+        lappend result [lindex $list2 [expr $skip + $i]] [lindex $list1 $i]
     }
     return $result
 }
@@ -46,8 +41,8 @@ proc zip {list1 list2} {
 
 foreach {direction direction2 names} $assignments {
     set mirrored [zip {*}$names]
-    set_io_pin_constraint -region $direction:* -pin_names [lindex $names 0]
-    set_io_pin_constraint -group -order -pin_names [lindex $names 0]
+    set_io_pin_constraint -region $direction2:* -pin_names [lindex $names 1]
+    set_io_pin_constraint -group -order -pin_names [lindex $names 1]
     set_io_pin_constraint -mirrored_pins $mirrored
 }
 
