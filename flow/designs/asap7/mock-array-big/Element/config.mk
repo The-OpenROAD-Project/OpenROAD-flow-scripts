@@ -16,3 +16,7 @@ export DIE_AREA = $(shell python3 designs/asap7/mock-array-big/ce_die_area.py)
 export IO_CONSTRAINTS = designs/asap7/mock-array-big/Element/io.tcl
 
 export PDN_TCL = designs/asap7/mock-array-big/Element/pdn.tcl
+
+# max routing layer need to be set to M5, since M6 is needed for next level up to connect
+# to the ring and stipe
+export MAX_ROUTING_LAYER = M5
