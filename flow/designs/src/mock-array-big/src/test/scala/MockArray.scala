@@ -6,7 +6,6 @@ import chisel3._
 import org.scalatest._
 
 import chisel3._
-import chisel3.dontTouch
 import chisel3.util._
 import chisel3.stage._
 import chisel3.experimental._
@@ -61,8 +60,6 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
     (io.outs.asSeq zip io.ins.asSeq.reverse.map(RegNext(_))).foreach{case (a, b) => a := b}
 
     // Combinational logic
-    //  Ensure no bits are excluded during optimization
-    dontTouch(io.lsbIns)
     io.lsbOuts := io.lsbIns.drop(1) ++ Seq(io.outs.asSeq.head(0)(0))
   }
 
