@@ -10,6 +10,10 @@ if [ $EUID -ne 0 ]; then
   exit 1
 fi
 
+if git submodule status --recursive | grep -q "^-"; then
+  git submodule update --init --recursive
+fi
+
 "$DIR/etc/DependencyInstaller.sh" -base
 "$DIR/tools/OpenROAD/etc/DependencyInstaller.sh" -base
 

@@ -80,6 +80,8 @@
 # DESIGN_CONFIG=./designs/intel22/aes/config.mk
 
 # DESIGN_CONFIG=./designs/gf180/aes/config.mk
+# DESIGN_CONFIG=./designs/gf180/ibex/config.mk
+# DESIGN_CONFIG=./designs/gf180/jpeg/config.mk
 #
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
@@ -399,11 +401,11 @@ $(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) 
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
+	cp $< $@
 
 $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
+	cp $< $@
 
 clean_synth:
 	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
@@ -532,7 +534,7 @@ $(RESULTS_DIR)/3_place.odb: $(RESULTS_DIR)/3_5_place_dp.odb
 	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 $(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
-	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
+	cp $< $@
 
 # Clean Targets
 #-------------------------------------------------------------------------------
@@ -611,7 +613,7 @@ $(RESULTS_DIR)/5_route.odb: $(RESULTS_DIR)/5_2_route.odb
 	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
 
 $(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
-	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
+	cp $< $@
 
 $(RESULTS_DIR)/5_route.v:
 	@export OR_DB=5_route ;\
@@ -656,11 +658,10 @@ finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
         $(GDS_FINAL_FILE)
-	$(MAKE) elapsed
-	
+	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
+
 .PHONY:
 elapsed:
-	@printf "%-25s %10s\n" Log "Elapsed seconds"
 	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
 
 # ==============================================================================
@@ -674,10 +675,10 @@ $(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb
 endif
 
 $(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
-	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
+	cp $< $@
 
 $(RESULTS_DIR)/6_final.sdc: $(RESULTS_DIR)/5_route.sdc
-	ln -sf $(shell realpath --relative-to=$(dir $@) $<) $@
+	cp $< $@
 
 $(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
