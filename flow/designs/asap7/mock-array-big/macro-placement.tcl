@@ -5,19 +5,15 @@ lassign $vals rows cols ce_pitch_x ce_pitch_y margin_x margin_y placement_grid_x
 set block [ord::get_db_block]
 set units [$block getDefUnits]
 
-set x [expr ($margin_x + ($ce_pitch_x / 2)) * $units]
-set y [expr ($margin_y + ($ce_pitch_y / 2)) * $units]
-
 for {set row 0} {$row < $rows} {incr row} {
   for {set col 0} {$col < $cols} {incr col} {
     set inst [$block findInst [format "ces_%d_%d" $row $col]]
+
+    set x [expr int(($margin_x + ($ce_pitch_x / 2) + ($ce_pitch_x * $col)) * $units)]
+    set y [expr int(($margin_y + ($ce_pitch_y / 2) + ($ce_pitch_y * $row)) * $units)]
+
     $inst setOrient R0
-
-    $inst setOrigin [expr int($x)] [expr int($y)]
+    $inst setOrigin $x $y
     $inst setPlacementStatus FIRM
-
-    set x [expr $x + ($ce_pitch_x * $units)]
   }
-  set y [expr $y + ($ce_pitch_y * $units)]
-  set x [expr ($margin_x + ($ce_pitch_x / 2)) * $units]
 }
