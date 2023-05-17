@@ -49,8 +49,9 @@ make gui_final
 ## Using Pre-built Binaries
 
 You can download pre-built binaries with self contained dependencies
-included from the Precision Innovations github repository
+included from the Precision Innovations github repository.
 [here](https://github.com/Precision-Innovations/OpenROAD/actions/workflows/github-actions-build-deb-package.yml).
+Thanks to [Precision Innovations](http://www.precisioninno.com) for hosting and maintaining these binaries.
 
 The following platform are supported currently:
 - Ubuntu 20.04/22.04
@@ -58,7 +59,7 @@ The following platform are supported currently:
 
 Use following steps to download:
 
-Step 1: Click on the [link](https://github.com/Precision-Innovations/OpenROAD/releases).
+Step 1: Click on the [Precision Innovations Github releases link](https://github.com/Precision-Innovations/OpenROAD/releases).
 
 Step 2: Download the artifacts for your distribution.
 
