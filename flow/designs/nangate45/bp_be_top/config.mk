@@ -18,9 +18,6 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lef))
 export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lib))
 
-
-#export DIE_AREA    = 0 0 900 800 
-#export CORE_AREA   = 10.07 11.2 890 790 
 export DIE_AREA    = 0 0 800 700 
 export CORE_AREA   = 10.07 11.2 790 690 
 
