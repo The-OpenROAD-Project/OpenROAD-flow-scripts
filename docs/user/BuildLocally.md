@@ -18,7 +18,10 @@ sudo ./setup.sh
 ``` shell
 ./build_openroad.sh --local
 ```
-> **Note:** There is a `build_openroad.log` file that is generated with every build in the main directory. In case of filing issues, it can be uploaded in the "Relevant log output" section of OpenROAD-flow-scripts repo [issue form](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/issues/new?assignees=&labels=&template=bug_report_with_orfs.yml).
+> **Note:** There is a `build_openroad.log` file that is generated with every
+> build in the main directory. In case of filing issues, it can be uploaded
+> in the "Relevant log output" section of OpenROAD-flow-scripts repo
+> [issue form](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/issues/new?assignees=&labels=&template=bug_report_with_orfs.yml).
 
 ## Verify Installation
 
@@ -55,24 +58,20 @@ The following platform are supported currently:
 
 Use following steps to download:
 
-Step 1: Click on the [link](https://github.com/Precision-Innovations/OpenROAD/actions/workflows/github-actions-build-deb-package.yml)
+Step 1: Click on the [link](https://github.com/Precision-Innovations/OpenROAD/releases).
 
-Step 2: Select the latest build with a green check `Build debian package`
+Step 2: Download the artifacts for your distribution.
 
-![debian_package](../images/debian_package.webp)
-
-Step 3: At the bottom of the page download the artifacts for your
-        distribution.
-
-![select_artifacts](../images/select_artifacts.webp)
-
-Step 4: Extract the files and based on platform use package installer.
-        For example Ubuntu platform use
-```
-sudo dpkg -i openroad_2.0_amd64-ubuntu20.04.deb
+Step 3: Run the install command based on platform use package installer.
+        For example Ubuntu 20.04 use:
+```shell
+sudo apt install ./openroad_2.0_amd64-ubuntu20.04.deb
 ```
 
 You can install these binaries within docker as well.
+
+> **Thanks** to Precision Innovations (www.precisioninno.com) for providing
+> and supporting this daily release of pre built installers to the community.
 
 ## Compiling and debugging in Visual Studio Code
 

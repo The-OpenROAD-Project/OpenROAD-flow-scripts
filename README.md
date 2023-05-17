@@ -27,8 +27,9 @@ inside the container image.
 If `Docker` is not installed already, install latest docker tool
 based on OS from [here](https://docs.docker.com/engine/install/).
 
-To manage docker as non-root user and verify that you can run `docker`
-commands without `sudo` must complete steps from [here](https://docs.docker.com/engine/install/linux-postinstall/).
+To manage docker as non-root user and verify that you can run
+`docker` commands without `sudo` must complete steps from
+[here](https://docs.docker.com/engine/install/linux-postinstall/).
 
 #### Build ORFS with Docker
 
@@ -38,11 +39,15 @@ Document for detailed steps on docker based installation found
 ## Using the Flow
 
 - For details about the OpenROAD and the available features and
-  individual flows commands, see the documentation [here](https://openroad.readthedocs.io/en/latest/).
-- For details about automated flow setup, see ORFS docs [here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html).
+  individual flows commands, see the documentation
+  [here](https://openroad.readthedocs.io/en/latest/).
+- For details about automated flow setup, see ORFS docs
+  [here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html).
 - Flow tutorial to run the complete OpenROAD based flow from
-  RTL-GDSII, see the tutorial [here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
-- To watch ORFS flow tutorial videos, check [here](https://theopenroadproject.org/video).
+  RTL-GDSII, see the tutorial
+  [here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
+- To watch ORFS flow tutorial videos, check
+  [here](https://theopenroadproject.org/video).
 
 ## Citing this Work
 
