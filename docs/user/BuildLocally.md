@@ -54,7 +54,7 @@ included from the Precision Innovations github repository
 
 Thanks to [Precision Innovations](http://www.precisioninno.com) for hosting and maintaining these binaries.
 
-The following platform are supported currently:
+The following platforms are supported currently:
 - Ubuntu 20.04/22.04
 - Debian 10/11
 
