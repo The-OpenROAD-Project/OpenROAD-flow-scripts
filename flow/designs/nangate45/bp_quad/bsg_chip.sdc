@@ -4,13 +4,13 @@ set sdc_version 2.0
 current_design bsg_chip
 
 create_clock -name "tag_clk" -period 5.2 -waveform {0.0 2.6} [get_ports p_bsg_tag_clk_i]
-create_clock -name "bp_clk" -period 1.3 -waveform {0.0 0.65} [get_ports p_clk_A_i]
-create_clock -name "io_master_clk" -period 1.3 -waveform {0.0 0.65} [get_ports p_clk_B_i]
-create_clock -name "router_clk" -period 1.3 -waveform {0.0 0.65} [get_ports p_clk_C_i]
-create_clock -name "sdi_a_clk" -period 2.6 -waveform {0.0 1.3} [get_ports p_ci_clk_i]
-create_clock -name "sdo_a_tkn_clk" -period 2.6 -waveform {0.0 1.3} [get_ports p_ci2_tkn_i]
-create_clock -name "sdi_b_clk" -period 2.6 -waveform {0.0 1.3} [get_ports p_co_clk_i]
-create_clock -name "sdo_b_tkn_clk" -period 2.6 -waveform {0.0 1.3} [get_ports p_co2_tkn_i]
+create_clock -name "bp_clk" -period 2.6 -waveform {0.0 1.3} [get_ports p_clk_A_i]
+create_clock -name "io_master_clk" -period 2.6 -waveform {0.0 1.3} [get_ports p_clk_B_i]
+create_clock -name "router_clk" -period 2.6 -waveform {0.0 1.3} [get_ports p_clk_C_i]
+create_clock -name "sdi_a_clk" -period 5.2 -waveform {0.0 2.6} [get_ports p_ci_clk_i]
+create_clock -name "sdo_a_tkn_clk" -period 5.2 -waveform {0.0 2.6} [get_ports p_ci2_tkn_i]
+create_clock -name "sdi_b_clk" -period 5.2 -waveform {0.0 2.6} [get_ports p_co_clk_i]
+create_clock -name "sdo_b_tkn_clk" -period 5.2 -waveform {0.0 2.6} [get_ports p_co2_tkn_i]
 set_false_path -from [list \
   [get_clocks router_clk]  \
   [get_clocks tag_clk] ] -to [get_clocks bp_clk]
