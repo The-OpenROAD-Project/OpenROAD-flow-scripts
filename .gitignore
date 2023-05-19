@@ -79,3 +79,5 @@ core.*
 __pycache__/
 
 dependencies/
+.vscode/
+.metals/
