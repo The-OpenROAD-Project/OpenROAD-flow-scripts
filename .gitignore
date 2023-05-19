@@ -81,3 +81,5 @@ __pycache__/
 dependencies/
 .vscode/
 .metals/
+perf.data
+perf.data.old
