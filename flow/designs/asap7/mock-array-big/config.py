@@ -17,10 +17,10 @@ placement_grid_x = 0.054
 placement_grid_y = 0.27
 
 # Element size is set to multiple of 2.16
-ce_width    = 12.96
-ce_height   = 12.96
+ce_width    = (3 * 2.16) * pitch_scale
+ce_height   = (3 * 2.16) * pitch_scale
 
-# Element placement, can be controled by user
+# Element placement, can be controlled by user
 ce_pitch_x  = ce_width  * pitch_scale
 ce_pitch_y  = ce_height * pitch_scale
 
