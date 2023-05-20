@@ -32,13 +32,13 @@ class RoutesVec(singleElementWidth:Int) extends Record {
 
 class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
   val io = IO(new Bundle {
-    val insLeft = Input(Vec(width, UInt(singleElementWidth.W)))
+    val insLeft = Input(Vec(height, UInt(singleElementWidth.W)))
     val insUp = Input(Vec(width, UInt(singleElementWidth.W)))
-    val insRight = Input(Vec(width, UInt(singleElementWidth.W)))
+    val insRight = Input(Vec(height, UInt(singleElementWidth.W)))
     val insDown = Input(Vec(width, UInt(singleElementWidth.W)))
-    val outsLeft = Output(Vec(width, UInt(singleElementWidth.W)))
+    val outsLeft = Output(Vec(height, UInt(singleElementWidth.W)))
     val outsUp = Output(Vec(width, UInt(singleElementWidth.W)))
-    val outsRight = Output(Vec(width, UInt(singleElementWidth.W)))
+    val outsRight = Output(Vec(height, UInt(singleElementWidth.W)))
     val outsDown = Output(Vec(width, UInt(singleElementWidth.W)))
 
     val lsbs = Output(Vec(width * height, Bool()))
@@ -67,8 +67,10 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
 
   ces.foreach{row =>
     row.head.io.lsbIns := DontCare
-    row.sliding(2, 1).foreach{pair =>
-      pair(1).io.lsbIns := pair(0).io.lsbOuts
+    if (row.length > 1) {
+      row.sliding(2, 1).foreach{pair =>
+        pair(1).io.lsbIns := pair(0).io.lsbOuts
+    }
   }}
 
   io.lsbs := ces.map(_.last.io.lsbOuts).flatten
