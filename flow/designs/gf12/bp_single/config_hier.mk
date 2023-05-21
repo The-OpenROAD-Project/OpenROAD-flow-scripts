@@ -1,6 +1,7 @@
 export DESIGN_NICKNAME = bp_single
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
+export FLOW_VARIANT ?=  h1
 
 export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = True
@@ -10,8 +11,11 @@ export RTLMP_MAX_INST = 30000
 export RTLMP_MIN_INST = 10000
 export RTLMP_MAX_MACRO = 24 
 export RTLMP_MIN_MACRO = 4
-export RTLMP_DEAD_SPACE = 0.10
 export RTLMP_KEEPIN = 900 1000 2350 2200
+export RTLMP_FENCE_LX ?= 900
+export RTLMP_FENCE_LY ?= 1300
+export RTLMP_FENCE_UX ?= 2350
+export RTLMP_FENCE_UY ?= 2500
 
 #netlist
 export VERILOG_FILES =  $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/bp_single_hier_yosys_netlist.v \

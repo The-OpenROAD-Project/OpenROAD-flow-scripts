@@ -2,6 +2,8 @@ export DESIGN_NICKNAME = bp_dual
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 
+export FLOW_VARIANT ?= h1
+
 export SYNTH_HIERARCHICAL = 1
 #
 export RTLMP_FLOW = True
@@ -10,8 +12,11 @@ export RTLMP_MAX_INST = 30000
 export RTLMP_MIN_INST = 10000
 export RTLMP_MAX_MACRO = 24 
 export RTLMP_MIN_MACRO = 4
-export RTLMP_DEAD_SPACE 0.10
-export RTLMP_KEEPIN = 700 700 2350 2200
+#
+export RTLMP_FENCE_LX ?= 700
+export RTLMP_FENCE_LY ?= 700
+export RTLMP_FENCE_UX ?= 2350
+export RTLMP_FENCE_UY ?= 2200
 
 export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.sv2v.v \
                        $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
