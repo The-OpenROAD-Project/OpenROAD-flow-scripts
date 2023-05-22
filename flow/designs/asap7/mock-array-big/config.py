@@ -26,9 +26,11 @@ ce_margin_y = placement_grid_y * 2
 margin_x    = 2.16
 margin_y    = 2.16
 
+channel = 12 # int(os.environ.get("MACRO_PLACE_CHANNEL").split()[0])
+
 # Element placement, can be controlled by user
-ce_pitch_x  = ce_width + 2 * margin_x
-ce_pitch_y  = ce_height + 2 * margin_y
+ce_pitch_x  = ce_width + int((channel * 2) / placement_grid_x) * placement_grid_x
+ce_pitch_y  = ce_height + int((channel * 2) / placement_grid_y) * placement_grid_y
 
 # top level core size
 core_width  = ce_pitch_x * cols + ce_width
