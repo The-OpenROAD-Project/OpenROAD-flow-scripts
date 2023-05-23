@@ -26,12 +26,27 @@ class TestElapsedTime(unittest.TestCase):
             f.write("Some log entry\n")
             f.write("Elapsed time: 01:30:00[h:]min:sec.\n")
         # call the script with the test log file
-        sys.argv = ["./genElapsedTime.py", "--logDir", str(self.tmp_dir.name)]
+        sys.argv = ["./genElapsedTime.py", "--logDir", str(self.tmp_dir.name),
+                    "--noHeader"]
         with patch.object(sys, 'argv', sys.argv):
             module = importlib.import_module(self.module_name)
         # check if output is correct
         expected_output = "1_test                          5400\n"
         self.assertEqual(mock_stdout.getvalue(), expected_output)
+
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_zero_time(self, mock_stdout):
+        # create a log file with elapsed time
+        with open(self.log_file, "w") as f:
+            f.write("Some log entry\n")
+            f.write("Elapsed time: 00:00:74[h:]min:sec.\n")
+        # call the script with the test log file
+        sys.argv = ["./genElapsedTime.py", "--logDir", str(self.tmp_dir.name),
+                    "--noHeader"]
+        with patch.object(sys, 'argv', sys.argv):
+            module = importlib.import_module(self.module_name)
+        # check if output is correct
+        self.assertEqual(mock_stdout.getvalue(), "")
 
     @patch("sys.stdout", new_callable=StringIO)
     def test_elapsed_time_longer_duration(self, mock_stdout):
@@ -40,7 +55,8 @@ class TestElapsedTime(unittest.TestCase):
             f.write("Some log entry\n")
             f.write("Elapsed time: 12:24.14[h:]min:sec. CPU time: user 5081.82 sys 170.18 (705%). Peak memory: 9667132KB.\n")
         # call the script with the test log file
-        sys.argv = ["util/genElapsedTime.py", "--logDir", str(self.tmp_dir.name)]
+        sys.argv = ["util/genElapsedTime.py", "--logDir", str(self.tmp_dir.name),
+                    "--noHeader"]
         with patch.object(sys, 'argv', sys.argv):
             module = importlib.import_module(self.module_name)
             importlib.reload(module)
@@ -59,7 +75,9 @@ class TestElapsedTime(unittest.TestCase):
     def test_no_elapsed_time(self):
         with open(self.log_file, "w") as f:
             f.write('Other log message')
-        with patch('sys.argv', ["util/genElapsedTime.py", "--logDir", str(self.tmp_dir.name)]):
+        with patch('sys.argv', ["util/genElapsedTime.py",
+                                "--logDir", str(self.tmp_dir.name),
+                                "--noHeader"]):
             with patch('sys.stderr', new=StringIO()) as fake_err_output:
                 module = importlib.import_module(self.module_name)
                 importlib.reload(module)

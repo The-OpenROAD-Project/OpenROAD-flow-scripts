@@ -442,6 +442,14 @@ on how to use the [GUI](https://openroad.readthedocs.io/en/latest/main/README.ht
 aside from the layout are docking windows that can be undocked.  Also it
 can be close and reopened from the Windows menu.
 
+
+Note:  When you are using remote access, you will need to include -Y (or -X) option in your command to 
+enable X11 applications to function properly over the network. By using the command "ssh -Y" followed 
+by the remote servers' address or hostname, you can establish a secure connection and activate X11 forwarding. 
+This feature enables you to run graphical programs on the remote server and have their windows display 
+on your local machines desktop environment. 
+
+
 In this section, learn how to:
 
 1. Visualize design hierarchy

@@ -15,6 +15,8 @@ parser = argparse.ArgumentParser(
     description='Print elapsed time for every step in the flow')
 parser.add_argument('--logDir', '-d', required=True,
                     help='Log files directory')
+parser.add_argument('--noHeader', action='store_true',
+                    help='Skip the header')
 args = parser.parse_args()
 
 if not args.logDir:
@@ -23,14 +25,18 @@ if not args.logDir:
     parser.print_help()
     sys.exit(1)
 
+first = True
+    
 # Loop on all log files in the directory
 for f in sorted(pathlib.Path(args.logDir).glob('**/[0-9]_*.log')):
     # Extract Elapsed Time line from log file
     with open(str(f)) as logfile:
+        found = False
         for line in logfile:
             elapsedTime = 0
             
             if 'Elapsed time' in line:
+                found = True
                 # Extract the portion that has the time
                 timePor = line.strip().replace('Elapsed time: ', '')
                 # Remove the units from the time portion
@@ -45,11 +51,15 @@ for f in sorted(pathlib.Path(args.logDir).glob('**/[0-9]_*.log')):
                 elif len(timeList) == 3:
                     # Hours, minutes, and seconds are present
                     elapsedTime = int(timeList[0])*3600 + int(timeList[1])*60 + int(timeList[2])
-        if elapsedTime == 0:
+                else:
+                    print('Elapsed time not understood in',  str(line), file=sys.stderr)
+
+        if not found:
             print('No elapsed time found in',  str(f), file=sys.stderr)
     
     # Print the name of the step and the corresponding elapsed time
     if elapsedTime != 0:
+        if first and not args.noHeader:
+            print("%-25s %10s" % ("Log", "Elapsed seconds"))
+            first = False
         print('%-25s %10s' % (os.path.splitext(os.path.basename(str(f)))[0], elapsedTime))
-
-

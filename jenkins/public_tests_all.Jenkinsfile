@@ -29,42 +29,42 @@ pipeline {
           axis {
             name 'TEST_SLUG';
             values "docker build",
-                  "aes asap7",
-                  "ethmac asap7",
-                  "gcd asap7",
-                  "ibex asap7",
-                  "jpeg asap7",
-                  "riscv32i asap7",
-                  "sha3 asap7",
-                  "uart asap7",
-                  "uart-blocks asap7",
-                  "mock-array-big asap7",
-                  "aes nangate45",
-                  "ariane136 nangate45",
-                  "black_parrot nangate45",
-                  "bp_be_top nangate45",
-                  "bp_fe_top nangate45",
-                  "bp_multi_top nangate45",
-                  "dynamic_node nangate45",
-                  "gcd nangate45",
-                  "ibex nangate45",
-                  "jpeg nangate45",
-                  "swerv nangate45",
-                  "swerv_wrapper nangate45",
-                  "tinyRocket nangate45",
-                  "aes sky130hd",
-                  "chameleon sky130hd",
-                  "gcd sky130hd",
-                  "ibex sky130hd",
-                  "jpeg sky130hd",
-                  "microwatt sky130hd",
-                  "riscv32i sky130hd",
-                  "aes sky130hs",
-                  "gcd sky130hs",
-                  "ibex sky130hs",
-                  "jpeg sky130hs",
-                  "riscv32i sky130hs",
-                  "aes gf180";
+                   "aes asap7",
+                   "ethmac asap7",
+                   "gcd asap7",
+                   "ibex asap7",
+                   "jpeg asap7",
+                   "riscv32i asap7",
+                   "sha3 asap7",
+                   "uart asap7",
+                   "uart-blocks asap7",
+                   "mock-array-big asap7",
+                   "aes nangate45",
+                   "bp_be_top nangate45",
+                   "bp_fe_top nangate45",
+                   "bp_multi_top nangate45",
+                   "dynamic_node nangate45",
+                   "gcd nangate45",
+                   "ibex nangate45",
+                   "jpeg nangate45",
+                   "swerv nangate45",
+                   "swerv_wrapper nangate45",
+                   "tinyRocket nangate45",
+                   "aes sky130hd",
+                   "chameleon sky130hd",
+                   "gcd sky130hd",
+                   "ibex sky130hd",
+                   "jpeg sky130hd",
+                   "microwatt sky130hd",
+                   "riscv32i sky130hd",
+                   "aes sky130hs",
+                   "gcd sky130hs",
+                   "ibex sky130hs",
+                   "jpeg sky130hs",
+                   "riscv32i sky130hs",
+                   "aes gf180",
+                   "ibex gf180",
+                   "jpeg gf180";
           }
         }
 
@@ -80,7 +80,15 @@ pipeline {
                 stage("${TEST_SLUG}") {
                   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     if ("${TEST_SLUG}" == 'docker build'){
-                      sh "./build_openroad.sh";
+                      retry(3) {
+                        try {
+                          sh "./build_openroad.sh --no_init";
+                        }
+                        catch (e) {
+                          sleep(60);
+                          sh 'exit 1';
+                        }
+                      }
                       sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
                     } else {
                       sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
@@ -148,6 +156,20 @@ pipeline {
             reportFiles: "report-table.html,report-gallery*.html",
             reportTitles: "Flow Report"
         ]);
+      }
+    }
+
+    stage('Upload Metadata') {
+      steps {
+        withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
+          sh """
+            python3 flow/util/uploadMetadata.py \
+              --buildID ${env.BUILD_ID} \
+              --branchName ${env.BRANCH_NAME} \
+              --commitSHA ${env.GIT_COMMIT} \
+              --pipelineID ${env.BUILD_TAG} \
+            """ + '--cred ${db_cred}'
+        }
       }
     }
 

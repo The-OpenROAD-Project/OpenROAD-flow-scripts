@@ -10,6 +10,10 @@ set_propagated_clock [all_clocks]
 
 set_thread_count $::env(NUM_CORES)
 
+if { [info exists ::env(PRE_DETAIL_ROUTE_TCL)] } {
+  source $::env(PRE_DETAIL_ROUTE_TCL)
+}
+
 set additional_args ""
 if { [info exists ::env(dbProcessNode)]} {
   append additional_args " -db_process_node $::env(dbProcessNode)"

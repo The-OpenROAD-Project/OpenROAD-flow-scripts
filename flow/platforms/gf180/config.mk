@@ -45,7 +45,7 @@ export TIEHI_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION
 export TIELO_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tiel ZN
 
 # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS                ?= $(shell sed -nr "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
+export ABC_CLOCK_PERIOD_IN_PS                ?= $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 export ABC_DRIVER_CELL                        = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__buf_4
 export ABC_LOAD_IN_FF                         = 0.01343
 
@@ -54,6 +54,10 @@ export MIN_BUF_CELL_AND_PORTS                 = gf180mcu_fd_sc_mcu$(TRACK_OPTION
 
 # Used in synthesis
 export MAX_FANOUT                             = 20
+
+# Yosys mapping files
+export LATCH_MAP_FILE ?= $(PLATFORM_DIR)/cells_latch.v
+export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders.v
 
 #--------------------------------------------------------
 # Floorplan

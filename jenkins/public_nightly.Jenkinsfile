@@ -87,7 +87,9 @@ pipeline {
                    "ibex sky130hs",
                    "jpeg sky130hs",
                    "riscv32i sky130hs",
-                   "aes gf180";
+                   "aes gf180",
+                   "ibex gf180",
+                   "jpeg gf180";
           }
         }
 
@@ -103,7 +105,15 @@ pipeline {
                 stage("${TEST_SLUG}") {
                   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     if ("${TEST_SLUG}" == 'docker build'){
-                      sh "./build_openroad.sh --no_init";
+                      retry(3) {
+                        try {
+                          sh "./build_openroad.sh --no_init";
+                        }
+                        catch (e) {
+                          sleep(60);
+                          sh 'exit 1';
+                        }
+                      }
                       sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
                     } else {
                       sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
@@ -171,6 +181,20 @@ pipeline {
             reportFiles: "report-table.html,report-gallery*.html",
             reportTitles: "Flow Report"
         ]);
+      }
+    }
+
+    stage('Upload Metadata') {
+      steps {
+        withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
+          sh """
+            python3 flow/util/uploadMetadata.py \
+              --buildID ${env.BUILD_ID} \
+              --branchName ${env.BRANCH_NAME} \
+              --commitSHA ${env.GIT_COMMIT} \
+              --pipelineID ${env.BUILD_TAG} \
+            """ + '--cred ${db_cred}'
+        }
       }
     }
 

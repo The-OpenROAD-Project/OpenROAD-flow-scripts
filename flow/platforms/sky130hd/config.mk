@@ -69,17 +69,16 @@ export TIELO_CELL_AND_PORT = sky130_fd_sc_hd__conb_1 LO
 # Used in synthesis
 export MIN_BUF_CELL_AND_PORTS = sky130_fd_sc_hd__buf_4 A X
 
-
 # Yosys mapping files
 export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch_hd.v
 export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate_hd.v
 export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hd.v
-#
+
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
 export ABC_LOAD_IN_FF = 5
 # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nr "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
+export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 #--------------------------------------------------------
 # Floorplan
 # -------------------------------------------------------
@@ -107,13 +106,9 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 # default cell padding for cells 
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 1
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
-#
 
 export PLACE_DENSITY ?= 0.60
 
-# Cell padding in SITE widths to ease rout-ability
-export CELL_PAD_IN_SITES ?= 4
-# 
 # --------------------------------------------------------
 #  CTS
 #  -------------------------------------------------------
@@ -124,8 +119,8 @@ export CTS_BUF_CELL   ?= sky130_fd_sc_hd__clkbuf_4
 #  Route
 # ---------------------------------------------------------
 # FastRoute options
-export MIN_ROUTING_LAYER = met1
-export MAX_ROUTING_LAYER = met5
+export MIN_ROUTING_LAYER ?= met1
+export MAX_ROUTING_LAYER ?= met5
 #
 # Define fastRoute tcl
 export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl

@@ -1,50 +1,49 @@
 module Element(
   input        clock,
-  input  [7:0] io_ins_down, // @[src/test/scala/MockArray.scala 50:9]
-  input  [7:0] io_ins_right, // @[src/test/scala/MockArray.scala 50:9]
-  input  [7:0] io_ins_up, // @[src/test/scala/MockArray.scala 50:9]
-  input  [7:0] io_ins_left, // @[src/test/scala/MockArray.scala 50:9]
-  output [7:0] io_outs_down, // @[src/test/scala/MockArray.scala 50:9]
-  output [7:0] io_outs_right, // @[src/test/scala/MockArray.scala 50:9]
-  output [7:0] io_outs_up, // @[src/test/scala/MockArray.scala 50:9]
-  output [7:0] io_outs_left, // @[src/test/scala/MockArray.scala 50:9]
-  input        io_lsbIns_0, // @[src/test/scala/MockArray.scala 50:9]
-  input        io_lsbIns_1, // @[src/test/scala/MockArray.scala 50:9]
-  input        io_lsbIns_2, // @[src/test/scala/MockArray.scala 50:9]
-  input        io_lsbIns_3, // @[src/test/scala/MockArray.scala 50:9]
-  input        io_lsbIns_4, // @[src/test/scala/MockArray.scala 50:9]
-  input        io_lsbIns_5, // @[src/test/scala/MockArray.scala 50:9]
-  input        io_lsbIns_6, // @[src/test/scala/MockArray.scala 50:9]
-  input        io_lsbIns_7, // @[src/test/scala/MockArray.scala 50:9]
-  output       io_lsbOuts_0, // @[src/test/scala/MockArray.scala 50:9]
-  output       io_lsbOuts_1, // @[src/test/scala/MockArray.scala 50:9]
-  output       io_lsbOuts_2, // @[src/test/scala/MockArray.scala 50:9]
-  output       io_lsbOuts_3, // @[src/test/scala/MockArray.scala 50:9]
-  output       io_lsbOuts_4, // @[src/test/scala/MockArray.scala 50:9]
-  output       io_lsbOuts_5, // @[src/test/scala/MockArray.scala 50:9]
-  output       io_lsbOuts_6, // @[src/test/scala/MockArray.scala 50:9]
-  output       io_lsbOuts_7 // @[src/test/scala/MockArray.scala 50:9]
+  input  [7:0] io_ins_down,
+  input  [7:0] io_ins_right,
+  input  [7:0] io_ins_up,
+  input  [7:0] io_ins_left,
+  output [7:0] io_outs_down,
+  output [7:0] io_outs_right,
+  output [7:0] io_outs_up,
+  output [7:0] io_outs_left,
+  input        io_lsbIns_1,
+  input        io_lsbIns_2,
+  input        io_lsbIns_3,
+  input        io_lsbIns_4,
+  input        io_lsbIns_5,
+  input        io_lsbIns_6,
+  input        io_lsbIns_7,
+  output       io_lsbOuts_0,
+  output       io_lsbOuts_1,
+  output       io_lsbOuts_2,
+  output       io_lsbOuts_3,
+  output       io_lsbOuts_4,
+  output       io_lsbOuts_5,
+  output       io_lsbOuts_6,
+  output       io_lsbOuts_7
 );
-  reg [7:0] REG; // @[src/test/scala/MockArray.scala 61:56]
-  reg [7:0] REG_1; // @[src/test/scala/MockArray.scala 61:56]
-  reg [7:0] REG_2; // @[src/test/scala/MockArray.scala 61:56]
-  reg [7:0] REG_3; // @[src/test/scala/MockArray.scala 61:56]
-  assign io_outs_down = REG_3; // @[src/test/scala/MockArray.scala 61:87]
-  assign io_outs_right = REG_2; // @[src/test/scala/MockArray.scala 61:87]
-  assign io_outs_up = REG_1; // @[src/test/scala/MockArray.scala 61:87]
-  assign io_outs_left = REG; // @[src/test/scala/MockArray.scala 61:87]
-  assign io_lsbOuts_0 = io_lsbIns_1; // @[src/test/scala/MockArray.scala 66:16]
-  assign io_lsbOuts_1 = io_lsbIns_2; // @[src/test/scala/MockArray.scala 66:16]
-  assign io_lsbOuts_2 = io_lsbIns_3; // @[src/test/scala/MockArray.scala 66:16]
-  assign io_lsbOuts_3 = io_lsbIns_4; // @[src/test/scala/MockArray.scala 66:16]
-  assign io_lsbOuts_4 = io_lsbIns_5; // @[src/test/scala/MockArray.scala 66:16]
-  assign io_lsbOuts_5 = io_lsbIns_6; // @[src/test/scala/MockArray.scala 66:16]
-  assign io_lsbOuts_6 = io_lsbIns_7; // @[src/test/scala/MockArray.scala 66:16]
-  assign io_lsbOuts_7 = io_outs_left[0]; // @[src/test/scala/MockArray.scala 66:62]
+  reg [7:0] REG;
+  reg [7:0] REG_1;
+  reg [7:0] REG_2;
+  reg [7:0] REG_3;
+  assign io_outs_down = REG_3;
+  assign io_outs_right = REG_2;
+  assign io_outs_up = REG_1;
+  assign io_outs_left = REG;
+  assign io_lsbOuts_0 = io_lsbIns_1;
+  assign io_lsbOuts_1 = io_lsbIns_2;
+  assign io_lsbOuts_2 = io_lsbIns_3;
+  assign io_lsbOuts_3 = io_lsbIns_4;
+  assign io_lsbOuts_4 = io_lsbIns_5;
+  assign io_lsbOuts_5 = io_lsbIns_6;
+  assign io_lsbOuts_6 = io_lsbIns_7;
+  assign io_lsbOuts_7 = io_outs_left[0];
   always @(posedge clock) begin
-    REG <= io_ins_down; // @[src/test/scala/MockArray.scala 61:56]
-    REG_1 <= io_ins_right; // @[src/test/scala/MockArray.scala 61:56]
-    REG_2 <= io_ins_up; // @[src/test/scala/MockArray.scala 61:56]
-    REG_3 <= io_ins_left; // @[src/test/scala/MockArray.scala 61:56]
+    REG <= io_ins_down;
+    REG_1 <= io_ins_right;
+    REG_2 <= io_ins_up;
+    REG_3 <= io_ins_left;
   end
 endmodule
