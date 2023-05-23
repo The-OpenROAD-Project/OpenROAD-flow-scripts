@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 8662,
+        "value": 8646.86,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -47.32,
+        "value": -80.54,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -52,15 +52,15 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -56.14,
+        "value": -16.05,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 8803,
+        "value": 8799,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -1.67,
+        "value": -0.88,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
