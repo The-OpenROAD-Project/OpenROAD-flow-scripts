@@ -11,4 +11,4 @@ export DIE_AREA               = 0 0 90 90
 export CORE_AREA              = 5.08 5.08 80 80
 
 export DFF_LIB_FILE           = $($(CORNER)_DFF_LIB_FILE)
-export TNS_END_PERCENT ?= 100
+export TNS_END_PERCENT = 100
