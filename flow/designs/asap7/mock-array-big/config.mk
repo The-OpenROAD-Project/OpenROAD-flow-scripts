@@ -24,6 +24,6 @@ export MACRO_PLACEMENT_TCL = ./designs/asap7/mock-array-big/macro-placement.tcl
 export IO_CONSTRAINTS = designs/asap7/mock-array-big/io.tcl
 
 export PDN_TCL = designs/asap7/mock-array-big/pdn.tcl
-export TNS_END_PERCENT       ?= 100
+export TNS_END_PERCENT       = 100
 
 export PRIVATE_DIR=designs/asap7/mock-array-big
