@@ -13,6 +13,8 @@ if test -t 0; then
     DOCKER_INTERACTIVE=-ti
 fi
 
+# Most of these options below has to do with allowing to
+# run the OpenROAD GUI from within Docker.
 docker run -u $(id -u ${USER}):$(id -g ${USER}) \
  -e LIBGL_ALWAYS_SOFTWARE=1 \
  -e "QT_X11_NO_MITSHM=1" \
@@ -26,10 +28,10 @@ docker run -u $(id -u ${USER}):$(id -g ${USER}) \
  -e MAKEFILES=/OpenROAD-flow-scripts/flow/Makefile \
  -v $WORKSPACE:`pwd` \
  $DOCKER_INTERACTIVE \
- openroad/flow-centos7-builder:latest \
+ ${OR_IMAGE:-openroad/flow-centos7-builder:latest} \
  bash -c "set -ex
  mkdir /tmp/xdg-run
  . ./env.sh
- cd $DIR
+ cd $WORKSPACE
  $ARGUMENTS
 "
