@@ -9,3 +9,4 @@ export CORE_UTILIZATION = 45
 export PLACE_DENSITY_LB_ADDON = 0.2
 # many east pins cause global routing congestion
 export PLACE_PINS_ARGS=-min_distance 6 -min_distance_in_tracks
+export TNS_END_PERCENT = 100
