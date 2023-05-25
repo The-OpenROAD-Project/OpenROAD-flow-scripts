@@ -19,6 +19,8 @@ placement_grid_y = 0.27
 # Element size is set to multiple of 2.16
 ce_width    = (3 * 2.16) * pitch_scale
 ce_height   = (3 * 2.16) * pitch_scale
+ce_margin_x = placement_grid_x * 8
+ce_margin_y = placement_grid_y * 2
 
 # top level core offset 
 margin_x    = 2.16
