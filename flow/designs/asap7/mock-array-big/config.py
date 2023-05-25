@@ -31,8 +31,8 @@ ce_pitch_x  = ce_width + 2 * margin_x
 ce_pitch_y  = ce_height + 2 * margin_y
 
 # top level core size
-core_width  = (ce_pitch_x * (cols + 1))
-core_height = (ce_pitch_y * (rows + 1))
+core_width  = ce_pitch_x * cols + ce_width
+core_height = ce_pitch_y * rows + ce_height
 
 die_width = core_width + (2 * margin_x)
 die_height = core_height + (2 * margin_y)
