@@ -9,8 +9,8 @@ for {set row 0} {$row < $rows} {incr row} {
   for {set col 0} {$col < $cols} {incr col} {
     set inst [$block findInst [format "ces_%d_%d" $row $col]]
 
-    set x [expr int(($margin_x + ($ce_pitch_x / 2) + ($ce_pitch_x * $col)) * $units)]
-    set y [expr int(($margin_y + ($ce_pitch_y / 2) + ($ce_pitch_y * $row)) * $units)]
+    set x [expr int(int(($margin_x + ($ce_pitch_x / 2) + ($ce_pitch_x * $col)) / $placement_grid_x) * $placement_grid_x * $units)]
+    set y [expr int(int(($margin_y + ($ce_pitch_y / 2) + ($ce_pitch_y * $row)) / $placement_grid_y) * $placement_grid_y * $units)]
 
     $inst setOrient R0
     $inst setOrigin $x $y
