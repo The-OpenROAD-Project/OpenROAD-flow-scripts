@@ -19,4 +19,4 @@ export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NICKNA
 # x=0.19 y=1.4
 export DIE_AREA    = 0 0 924.92 799.4
 export CORE_AREA   = 10.07 9.8 914.85 789.6
-
+export TNS_END_PERCENT        = 100

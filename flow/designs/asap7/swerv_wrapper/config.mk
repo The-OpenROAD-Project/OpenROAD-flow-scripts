@@ -32,3 +32,4 @@ export FASTROUTE_TCL = ./designs/$(PLATFORM)/swerv_wrapper/fastroute.tcl
 #Temporary until sta bug is fixed
 export PWR_NETS_VOLTAGES  = ""
 export GND_NETS_VOLTAGES  = ""
+export TNS_END_PERCENT        = 100
