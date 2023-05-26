@@ -9,3 +9,4 @@ export ADDER_MAP_FILE :=
 
 export CORE_UTILIZATION = 40
 export PLACE_DENISTY_LB_ADDON = 0.1
+export TNS_END_PERCENT = 100

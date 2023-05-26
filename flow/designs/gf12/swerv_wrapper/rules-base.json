@@ -40,11 +40,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -33.75,
+        "value": -32.63,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 2247155,
+        "value": 2135986,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {

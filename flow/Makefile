@@ -1,3 +1,7 @@
+# settings.mk is not under source control. Put variables into this
+# file to avoid having to adding the to the make command line.
+-include settings.mk
+
 # ==============================================================================
 # Uncomment or add the design to run
 # ==============================================================================
@@ -425,6 +429,12 @@ clean_synth:
 .PHONY: floorplan
 floorplan: $(RESULTS_DIR)/2_floorplan.odb \
            $(RESULTS_DIR)/2_floorplan.sdc
+
+.PHONY: floorplan_info
+floorplan_info:
+	@echo DIE_AREA=$(DIE_AREA)
+	@echo CORE_AREA=$(CORE_AREA)
+
 # ==============================================================================
 
 ifneq ($(FOOTPRINT),)
@@ -471,7 +481,7 @@ $(RESULTS_DIR)/2_5_floorplan_tapcell.odb: $(RESULTS_DIR)/2_4_floorplan_macro.odb
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_6_floorplan_pdn.odb: $(RESULTS_DIR)/2_5_floorplan_tapcell.odb $(PDN_CFG) $(PDN_TCL)
+$(RESULTS_DIR)/2_6_floorplan_pdn.odb: $(RESULTS_DIR)/2_5_floorplan_tapcell.odb $(PDN_TCL)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/pdn.tcl -metrics $(LOG_DIR)/2_6_pdn.json) 2>&1 | tee $(LOG_DIR)/2_6_pdn.log
 
 $(RESULTS_DIR)/2_floorplan.odb: $(RESULTS_DIR)/2_6_floorplan_pdn.odb

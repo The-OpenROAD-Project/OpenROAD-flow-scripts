@@ -18,9 +18,8 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lef))
 export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lib))
 
-
-export DIE_AREA    = 0 0 900 700 
-export CORE_AREA   = 10 10 890 690 
+export DIE_AREA    = 0 0 800 600 
+export CORE_AREA   = 10 10 790 590 
 
 export PLACE_PINS_ARGS = -exclude left:400-700 -exclude right:400-700 -exclude top:*
 
@@ -30,3 +29,4 @@ export MACRO_PLACE_CHANNEL = 20 20
 
 export PLACE_DENSITY_LB_ADDON = 0.10
 export PLACE_DENSITY_MAX_POST_HOLD = 0.12
+export TNS_END_PERCENT        = 100

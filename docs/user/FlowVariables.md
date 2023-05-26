@@ -64,7 +64,7 @@ Note:
 | `TAPCELL_TCL`                        | =            | =            | =             | =         | =         |
 | `MACRO_PLACE_HALO`                   | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `MACRO_PLACE_CHANNEL`                | ?=           | ?=           | ?=            | ?=        | ?=        |
-| `PDN_CFG`                            | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `PDN_TCL`                            | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `IO_PLACER_H`                        | =            | =            | =             | =         | ?=        |
 | `IO_PLACER_V`                        | =            | =            | =             | =         | ?=        |
 | Placement                            |              |              |               |           |           |
@@ -131,7 +131,7 @@ Note:
 | `MACRO_PLACE_HALO`    | horizontal/vertical halo around macros (microns). Used by automatic macro placement.                                                                               |
 | `MACRO_PLACE_CHANNEL` | horizontal/vertical channel width between macros (microns). Used by automatic macro placement when `RTLMP_FLOW` is disabled. Imagine channel=10 and halo=5. Then macros must be 10 apart but standard cells must be 5 away from a macro.|
 | `MACRO_BLOCKAGE_HALO` | Blockage width overridden from default calculation.                                                                                                                              |
-| `PDN_CFG`             | File path which has a set of power grid policies used by `pdn` to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps. |
+| `PDN_TCL`             | File path which has a set of power grid policies used by `pdn` to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps. |
 | `MAKE_TRACKS`         | Tcl file that defines add routing tracks to a floorplan.                                                                                                                         |
 | `IO_PLACER_H`         | The metal layer on which to place the I/O pins horizontally (top and bottom of the die).                                                                                         |
 | `IO_PLACER_V`         | The metal layer on which to place the I/O pins vertically (sides of the die).                                                                                                    |

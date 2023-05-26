@@ -17,14 +17,14 @@ export SDC_FILE      = ./designs/$(PLATFORM)/swerv/constraint.sdc
 export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/swerv/*.lef))
 export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/swerv/*.lib))
 
-export DIE_AREA    = 0 0 1500 1100
-export CORE_AREA   = 10.07 11.2 1490 1090 
+export DIE_AREA    = 0 0 1100 1000
+export CORE_AREA   = 10.07 11.2 1090 990 
 
 export HAS_IO_CONSTRAINTS = 1
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:*
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-200 -exclude bottom:1000-1100
 
-export MACRO_PLACE_HALO = 7 7
-export MACRO_PLACE_CHANNEL = 14 14
+export MACRO_PLACE_HALO = 10 10
+export MACRO_PLACE_CHANNEL = 20 20
 
 export PLACE_DENSITY_LB_ADDON = 0.10
-export TNS_END_PERCENT       ?= 100
+export TNS_END_PERCENT        = 100

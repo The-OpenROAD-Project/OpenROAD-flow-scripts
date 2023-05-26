@@ -13,7 +13,7 @@ export VERILOG_FILES = \
 
 export SDC_FILE          = ${TOP_DIR}/${DESIGN_NAME}/constraint.sdc
 
-export PDN_CFG = ${TOP_DIR}/${DESIGN_NAME}/pdn.cfg
+export PDN_TCL = ${TOP_DIR}/BLOCKS_pdn.tcl
 
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
 export ABC_LOAD_IN_FF = 3
@@ -21,5 +21,5 @@ export ABC_LOAD_IN_FF = 3
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 1925 2450
 export CORE_AREA    = 0.46 2.720 1924.54 2447.28
-export MIN_ROUTING_LAYER 2
-export MAX_ROUTING_LAYER 5
+export MIN_ROUTING_LAYER = met1
+export MAX_ROUTING_LAYER = met4
