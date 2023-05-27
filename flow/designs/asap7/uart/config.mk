@@ -9,3 +9,4 @@ export SDC_FILE               = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constra
 export PLACE_DENSITY          = 0.70
 export DIE_AREA               = 0 0 17 17
 export CORE_AREA              = 1.08 1.08 16 16
+export TNS_END_PERCENT = 100
