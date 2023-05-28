@@ -10,7 +10,7 @@ else
 fi
 
 # package versions
-klayoutVersion=0.27.10
+klayoutVersion=0.28.8
 
 _installORDependencies() {
     ./tools/OpenROAD/etc/DependencyInstaller.sh ${OR_INSTALLER_ARGS}
