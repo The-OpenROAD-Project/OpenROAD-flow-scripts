@@ -74,9 +74,9 @@ _installUbuntuPackages() {
 
     # install KLayout
     if [[ $1 == 20.04 ]]; then
-        klayoutChecksum=8076dadfb1b790b75d284fdc9c90f70b
+        klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
     else
-        klayoutChecksum=2fb355f0e19d69be8535722185f983cc
+        klayoutChecksum=db751264399706a23d20455bb7624264
     fi
     wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
     md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
