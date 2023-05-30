@@ -39,7 +39,21 @@ _installCentosPackages() {
         ruby-devel \
         tcl-devel
 
-    yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
+    if ! [ -x "$(command -v klayout)" ]; then
+      yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
+    else
+      currentver="$(klayout -v)"
+      currentver=$(echo $currentver | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+      currentver=$(echo $currentver | tr -d '.')
+      requiredver=$(echo $klayoutVersion | tr -d '.')
+      if [ "$currentver" -ge "$requiredver" ]; then
+        echo "KLayout version greater than or equal to ${klayoutVersion}"
+      else
+        echo "KLayout version less than ${klayoutVersion}"
+        sudo yum remove -y klayout
+        yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
+      fi 
+    fi
 }
 
 _installUbuntuCleanUp() {
