@@ -699,23 +699,23 @@ $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 # Skipping resize can be useful for mock abstracts
 .PHONY: skip_resize
 skip_resize: $(RESULTS_DIR)/3_3_place_gp.odb
-	cp $(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/3_4_place_resized.odb
+	cd $(RESULTS_DIR) && ln -sf 3_3_place_gp.odb 3_4_place_resized.odb && touch 3_4_place_resized.odb
 
 # Skipping CTS can be useful to smoketest later stages.
 .PHONY: skip_cts
 skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
 	# mock all intermediate results
-	cd $(RESULTS_DIR) && ln -sf 3_place.odb 4_1_cts.odb
-	cd $(RESULTS_DIR) && ln -sf 3_place.odb 4_2_cts_fillcell.odb
-	cd $(RESULTS_DIR) && ln -sf 3_place.sdc 4_cts.sdc
-	cd $(RESULTS_DIR) && ln -sf 3_place.odb 4_cts.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 4_1_cts.odb && touch 4_1_cts.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 4_2_cts_fillcell.odb && touch 4_2_cts_fillcell.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.sdc 4_cts.sdc && touch 4_cts.sdc
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 4_cts.odb && touch 4_cts.odb
 
 # Skipping route can be useful to create a mock abstract
 .PHONY: skip_route
 skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
-	cd $(RESULTS_DIR) && ln -sf 3_place.odb 5_1_grt.odb
-	cd $(RESULTS_DIR) && ln -sf 3_place.odb 5_2_route.odb
-	cd $(RESULTS_DIR) && ln -sf 3_place.odb 6_1_fill.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 5_1_grt.odb && touch 5_1_grt.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 5_2_route.odb && touch 5_2_route.odb
+	cd $(RESULTS_DIR) && ln -sf 3_place.odb 6_1_fill.odb && touch 6_1_fill.odb
 	touch $(RESULTS_DIR)/6_final.spef
 
 # To create a mock abstract quickly, good enough to iterate quickly on
