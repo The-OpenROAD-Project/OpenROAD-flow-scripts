@@ -39,7 +39,8 @@ if {[info exist ::env(RCX_RULES)]} {
   if {[info exist ::env(PWR_NETS_VOLTAGES)]} {
     dict for {pwrNetName pwrNetVoltage}  {*}$::env(PWR_NETS_VOLTAGES) {
         set_pdnsim_net_voltage -net ${pwrNetName} -voltage ${pwrNetVoltage}
-        analyze_power_grid -net ${pwrNetName}
+        analyze_power_grid -net ${pwrNetName} \
+            -error_file $::env(REPORTS_DIR)/${pwrNetName}.rpt
     }
   } else {
     puts "IR drop analysis for power nets is skipped because PWR_NETS_VOLTAGES is undefined"
@@ -47,7 +48,8 @@ if {[info exist ::env(RCX_RULES)]} {
   if {[info exist ::env(GND_NETS_VOLTAGES)]} {
     dict for {gndNetName gndNetVoltage}  {*}$::env(GND_NETS_VOLTAGES) {
         set_pdnsim_net_voltage -net ${gndNetName} -voltage ${gndNetVoltage}
-        analyze_power_grid -net ${gndNetName}
+        analyze_power_grid -net ${gndNetName} \
+            -error_file $::env(REPORTS_DIR)/${gndNetName}.rpt
     }
   } else {
     puts "IR drop analysis for ground nets is skipped because GND_NETS_VOLTAGES is undefined"

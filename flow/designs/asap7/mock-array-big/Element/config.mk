@@ -24,3 +24,8 @@ export PDN_TCL = designs/asap7/mock-array-big/Element/pdn.tcl
 export MAX_ROUTING_LAYER = M5
 
 export PRIVATE_DIR=designs/asap7/mock-array-big
+
+# If this design isn't quickly done in detailed routing, something is wrong.
+# At time of adding this option, only 3 iterations were needed for 0
+# violations.
+export DETAILED_ROUTE_ARGS=-droute_end_iter 10
