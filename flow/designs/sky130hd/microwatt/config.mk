@@ -30,3 +30,5 @@ export CTS_CLUSTER_DIAMETER = 100
 export CTS_CLUSTER_SIZE = 30
 
 export export SETUP_SLACK_MARGIN = 0.2
+
+export GLOBAL_ROUTE_ARGS=-congestion_iterations 100 -verbose
