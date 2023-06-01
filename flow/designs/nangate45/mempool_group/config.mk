@@ -6,9 +6,7 @@ export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW ?= True
 
 export TEMP_DESIGN_DIR = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)
-export FLOORPLAN_DEF ?= ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(DESIGN_NAME)_fp.def
 export VERILOG_FILES = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(DESIGN_NAME).v
-export CACHED_NETLIST = $(TEMP_DESIGN_DIR)/$(DESIGN_NAME)_genus.v
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(DESIGN_NAME).sdc
 
