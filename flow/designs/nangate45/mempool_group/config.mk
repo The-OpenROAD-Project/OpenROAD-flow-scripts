@@ -12,15 +12,15 @@ export CACHED_NETLIST = $(TEMP_DESIGN_DIR)/$(DESIGN_NAME)_genus.v
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(DESIGN_NAME).sdc
 
-export ADDITIONAL_LEFS = $(TEMP_DESIGN_DIR)/lef/fakeram45_256x32.lef \
-                         $(TEMP_DESIGN_DIR)/lef/fakeram45_64x64.lef \
-                         $(TEMP_DESIGN_DIR)/lef/fakeram45_128x32.lef \
-                         $(TEMP_DESIGN_DIR)/lef/fakeram45_128x256.lef
+export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram45_256x32.lef \
+                         $(PLATFORM_DIR)/lef/fakeram45_64x64.lef \
+                         $(PLATFORM_DIR)/lef/fakeram45_128x32.lef \
+                         $(PLATFORM_DIR)/lef/fakeram45_128x256.lef
 
-export ADDITIONAL_LIBS = $(TEMP_DESIGN_DIR)/lib/fakeram45_256x32.lib \
-                         $(TEMP_DESIGN_DIR)/lib/fakeram45_128x32.lib \
-                         $(TEMP_DESIGN_DIR)/lib/fakeram45_64x64.lib \
-                         $(TEMP_DESIGN_DIR)/lib/fakeram45_128x256.lib
+export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_256x32.lib \
+                         $(PLATFORM_DIR)/lib/fakeram45_128x32.lib \
+                         $(PLATFORM_DIR)/lib/fakeram45_64x64.lib \
+                         $(PLATFORM_DIR)/lib/fakeram45_128x256.lib
 
 export DIE_AREA    = 0 0 4400 4400
 export CORE_AREA   = 10 12 4390 4390
