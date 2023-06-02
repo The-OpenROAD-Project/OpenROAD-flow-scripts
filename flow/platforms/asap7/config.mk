@@ -15,7 +15,7 @@ export BC_LIB_FILES            = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_
 				 $(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz \
 				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz \
 				 $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib \
-				 $(ADDITIONAL_LIBS)
+				 $(BC_ADDITIONAL_LIBS)
 
 export BC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib
 
@@ -24,7 +24,7 @@ export WC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_SS_nldm_2
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_SS_nldm_211120.lib.gz \
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_220123.lib \
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_SS_nldm_211120.lib.gz \
-				$(ADDITIONAL_LIBS)
+				$(WC_ADDITIONAL_LIBS)
 
 export WC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_SS_nldm_220123.lib
 
@@ -33,7 +33,7 @@ export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_2
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_OA_RVT_TT_nldm_211120.lib.gz \
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib \
 				$(PLATFORM_DIR)/lib/asap7sc7p5t_SIMPLE_RVT_TT_nldm_211120.lib.gz \
-				$(ADDITIONAL_LIBS)
+				$(TC_ADDITIONAL_LIBS)
 
 export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib
 
