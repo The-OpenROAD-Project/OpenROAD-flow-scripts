@@ -2,8 +2,23 @@ export DESIGN_NICKNAME = bp_dual
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 
+export SYNTH_HIERARCHICAL = 1
+#
+export RTLMP_FLOW = True
+# RTL_MP Settings
+export RTLMP_MAX_INST = 30000
+export RTLMP_MIN_INST = 10000
+export RTLMP_MAX_MACRO = 24 
+export RTLMP_MIN_MACRO = 4
+#
+export RTLMP_FENCE_LX ?= 700
+export RTLMP_FENCE_LY ?= 700
+export RTLMP_FENCE_UX ?= 2450
+export RTLMP_FENCE_UY ?= 2300
+
 export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.sv2v.v \
                        $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
+export CACHED_NETLIST = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/yosys/bp_dual_hier_yosys_netlist.v
 
 export SDC_FILE      = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.elab.v.sdc
 
@@ -38,23 +53,19 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1r1w_d32_w64_m1.gds2 \
 export SEAL_GDS        = $(PLATFORM_DIR)/gds/crackstop_3x3.gds
 
 
+#Package Strategy for pad placement
 export FOOTPRINT    = $(PLATFORM_DIR)/bp/bsg_bp_dual.package.strategy
 export SIG_MAP_FILE = $(PLATFORM_DIR)/bp/soc_bsg_black_parrot.sigmap
 
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
-export PLACE_DENSITY = 0.20
+export TNS_END_PERCENT = 0
+export PLACE_DENSITY = 0.55
 
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
-export PDN_TCL ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
-
-ifneq ($(USE_FILL),)
-export DESIGN_TYPE = CHIP
-else
-export DESIGN_TYPE = CHIP_NODEN
-endif
+export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
 # Define macro halo and channel spacings
-export MACRO_PLACE_HALO = 0 0
-export MACRO_PLACE_CHANNEL = 30.24 30.24
+export MACRO_PLACE_HALO = 7 7
+export MACRO_PLACE_CHANNEL = 14 14
