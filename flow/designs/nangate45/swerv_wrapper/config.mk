@@ -14,8 +14,12 @@ export VERILOG_FILES = ./designs/src/swerv/swerv_wrapper.sv2v.v \
                        ./designs/$(PLATFORM)/swerv/macros.v
 export SDC_FILE      = ./designs/$(PLATFORM)/swerv/constraint.sdc
 
-export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/swerv/*.lef))
-export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/swerv/*.lib))
+export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram45_2048x39.lef \
+                         $(PLATFORM_DIR)/lef/fakeram45_256x34.lef \
+                         $(PLATFORM_DIR)/lef/fakeram45_64x21.lef
+export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_2048x39.lib \
+                         $(PLATFORM_DIR)/lib/fakeram45_256x34.lib \
+                         $(PLATFORM_DIR)/lib/fakeram45_64x21.lib
 
 export DIE_AREA    = 0 0 1100 1000
 export CORE_AREA   = 10.07 11.2 1090 990 
