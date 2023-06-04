@@ -15,9 +15,6 @@ export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/pickled.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
-config.mk       fakeram45_512x64.lef  fakeram45_64x7.lef  fakeram45_64x96.lef  fakeram.cfg  metadata-base-ok.json
-constraint.sdc  fakeram45_512x64.lib  fakeram45_64x7.lib  fakeram45_64x96.lib  macros.v     rules-base.json
-
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram45_512x64.lef \
                          $(PLATFORM_DIR)/lef/fakeram45_64x7.lef \
                          $(PLATFORM_DIR)/lef/fakeram45_64x96.lef
