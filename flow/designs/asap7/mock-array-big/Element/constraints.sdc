@@ -8,6 +8,8 @@ set clk_period 8000
 
 set clk_port [get_ports $clk_port_name]
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name $clk_name $clk_port
+set_clock_uncertainty -setup 20.0 [get_clocks $clk_name]
+set_clock_uncertainty -hold 20.0 [get_clocks $clk_name]
 
 # io_ins_x -> REG_x
 set_input_delay -clock $clk_name -min [expr $clk_period / 2] [get_ports {io_ins_*}]
