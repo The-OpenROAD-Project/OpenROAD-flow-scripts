@@ -86,6 +86,8 @@
 # DESIGN_CONFIG=./designs/gf180/aes/config.mk
 # DESIGN_CONFIG=./designs/gf180/ibex/config.mk
 # DESIGN_CONFIG=./designs/gf180/jpeg/config.mk
+# DESIGN_CONFIG=./designs/gf180/riscv32i/config.mk
+# DESIGN_CONFIG=./designs/gf180/sha3/config.mk
 #
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
