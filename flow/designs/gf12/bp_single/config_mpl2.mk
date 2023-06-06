@@ -10,8 +10,11 @@ export RTLMP_MAX_INST = 30000
 export RTLMP_MIN_INST = 10000
 export RTLMP_MAX_MACRO = 24 
 export RTLMP_MIN_MACRO = 4
-export RTLMP_DEAD_SPACE = 0.10
-export RTLMP_KEEPIN = 900 1000 2350 2200
+#
+export RTLMP_FENCE_LX ?= 900
+export RTLMP_FENCE_LY ?= 1300
+export RTLMP_FENCE_UX ?= 2350
+export RTLMP_FENCE_UY ?= 2500
 
 #netlist
 export VERILOG_FILES =  $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/bp_single_hier_yosys_netlist.v \
@@ -54,20 +57,18 @@ export SEAL_GDS        = $(PLATFORM_DIR)/gds/crackstop_3x3.gds
 export FOOTPRINT    ?= $(PLATFORM_DIR)/bp/bsg_bp_single.package.strategy
 export SIG_MAP_FILE = $(PLATFORM_DIR)/bp/soc_bsg_black_parrot.sigmap
 
-# These values must be multiples of placement site
-# export DIE_AREA    =
-# export CORE_AREA   =
-
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
-export PLACE_DENSITY = 0.40
+export PLACE_DENSITY = 0.55
+export TNS_END_PERCENT = 0
 
 export HAS_IO_CONSTRAINTS = 1
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
-export MACRO_BLOCKAGE_HALO = 25
-
 export PDN_TCL ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
+
+export MACRO_PLACE_HALO = 7 7
+export MACRO_PLACE_CHANNEL = 14 14
 
 export DESIGN_TYPE = CHIP
 
