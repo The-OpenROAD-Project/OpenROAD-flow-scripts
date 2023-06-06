@@ -33,7 +33,17 @@ if {![info exists ::env(FOOTPRINT)]} {
 }
 
 puts "Perform buffer insertion..."
-repair_design
+set additional_args ""
+if { [info exists ::env(CAP_MARGIN)] && $::env(CAP_MARGIN) > 0.0} {
+  puts "Cap margin $::env(CAP_MARGIN)"
+  append additional_args " -cap_margin $::env(CAP_MARGIN)"
+}
+if { [info exists ::env(SLEW_MARGIN)] && $::env(SLEW_MARGIN) > 0.0} {
+  puts "Slew margin $::env(SLEW_MARGIN)"
+  append additional_args " -slew_margin $::env(SLEW_MARGIN)"
+}
+
+repair_design {*}$additional_args
 
 if { [info exists env(TIE_SEPARATION)] } {
   set tie_separation $env(TIE_SEPARATION)
