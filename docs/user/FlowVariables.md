@@ -154,6 +154,8 @@ Note:
 | `DPO_MAX_DISPLACEMENT`               | Specifies how far an instance can be moved when optimizing.                                                                                   |
 | `GPL_TIMING_DRIVEN`                  | Specifies whether the placer should use timing driven placement.                                                                              |
 | `GPL_ROUTABILITY_DRIVEN`             | Specifies whether the placer should use routability driven placement.                                                                         |
+| `CAP_MARGIN`                         | Specifies a capacitance margin when fixing max capacitance violations. This option allow you to overfix.                                      |
+| `SLEW_MARGIN`                        | Specifies a slew margin when fixing max slew violations. This option allow you to overfix.                                                    |
 
 
 ### Clock Tree Synthesis(CTS)
