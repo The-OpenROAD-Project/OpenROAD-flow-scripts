@@ -31,9 +31,8 @@ export PDN_TCL = designs/asap7/mock-array-big/Element/pdn.tcl
 
 # max routing layer need to be set to M5, since M6 is needed for next level up to connect
 # to the ring and stipe
-export MAX_ROUTING_LAYER = M5
-
+#
 # If this design isn't quickly done in detailed routing, something is wrong.
 # At time of adding this option, only 3 iterations were needed for 0
 # violations.
-export DETAILED_ROUTE_ARGS=-droute_end_iter 10
+export DETAILED_ROUTE_ARGS=-bottom_routing_layer M2 -top_routing_layer M5 -save_guide_updates -verbose 1 -droute_end_iter 10
