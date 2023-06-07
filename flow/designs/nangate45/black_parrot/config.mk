@@ -18,8 +18,16 @@ export ABC_AREA = 1
 
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
-export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lef))
-export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/$(DESIGN_NAME)/*.lib))
+export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram45_512x64.lef \
+                         $(PLATFORM_DIR)/lef/fakeram45_256x95.lef \
+                         $(PLATFORM_DIR)/lef/fakeram45_64x7.lef \
+                         $(PLATFORM_DIR)/lef/fakeram45_64x15.lef \
+                         $(PLATFORM_DIR)/lef/fakeram45_64x96.lef
+export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_512x64.lib \
+                         $(PLATFORM_DIR)/lib/fakeram45_256x95.lib \
+                         $(PLATFORM_DIR)/lib/fakeram45_64x7.lib \
+                         $(PLATFORM_DIR)/lib/fakeram45_64x15.lib \
+                         $(PLATFORM_DIR)/lib/fakeram45_64x96.lib
 
 
 export DIE_AREA    = 0 0 1350 1300 
