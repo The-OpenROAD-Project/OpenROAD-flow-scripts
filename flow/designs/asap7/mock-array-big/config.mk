@@ -26,7 +26,10 @@ export IO_CONSTRAINTS = designs/asap7/mock-array-big/io.tcl
 export PDN_TCL = designs/asap7/mock-array-big/pdn.tcl
 export TNS_END_PERCENT       = 100
 
-export PRIVATE_DIR=designs/asap7/mock-array-big
+# Target to force generation of Verilog per user settings
+#   MOCK_ARRAY_WIDTH and MOCK_ARRAY_HEIGHT
+verilog:
+	./designs/asap7/mock-array-big/verilog.sh
 
 # If this design isn't quickly done in detailed routing, something is wrong.
 # At time of adding this option, only 3 iterations were needed for 0
