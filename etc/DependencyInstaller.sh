@@ -12,6 +12,12 @@ fi
 # package versions
 klayoutVersion=0.28.8
 
+_versionCompare(){
+   local a b IFS=. ; set -f
+   printf -v a %08d $1; printf -v b %08d $3
+   test $a "$2" $b
+}
+
 _installORDependencies() {
     ./tools/OpenROAD/etc/DependencyInstaller.sh ${OR_INSTALLER_ARGS}
 }
@@ -42,11 +48,10 @@ _installCentosPackages() {
     if ! [ -x "$(command -v klayout)" ]; then
       yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
     else
-      currentver="$(klayout -v)"
-      currentver=$(echo $currentver | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-      currentver=$(echo $currentver | tr -d '.')
-      requiredver=$(echo $klayoutVersion | tr -d '.')
-      if [ "$currentver" -ge "$requiredver" ]; then
+      currentVersion="$(klayout -v)"
+      currentVersion=$(echo $currentVersion | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+      requiredVersion=$(echo $klayoutVersion)
+      if _versionCompare $currentVersion -ge $requiredVersion; then
         echo "KLayout version greater than or equal to ${klayoutVersion}"
       else
         echo "KLayout version less than ${klayoutVersion}"
