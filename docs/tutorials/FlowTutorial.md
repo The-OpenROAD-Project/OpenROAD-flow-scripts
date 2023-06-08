@@ -120,6 +120,10 @@ less ./designs/sky130hd/ibex/config.mk
 You can view `ibex` design `config.mk`
 [here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/ibex/config.mk).
 
+### Adding a New Design
+
+To add a new design to the `flow`, refer to the document [here](../user/AddingNewDesign.md).
+
 Note: The following design-specific configuration variables are required
 to specify main design inputs such as platform, top-level design name and
 constraints. We will use default configuration variables for this tutorial.
