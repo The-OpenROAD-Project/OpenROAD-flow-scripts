@@ -7,12 +7,11 @@ The following design example is based on the design `spm` that
 implements a Single-port memory using `gf180` platform. This 
 procedure  applies to any design for a given platform you choose.
 
-**Note** 
-The commands refer to the base directory as `OpenROAD-flow-scripts/flow`
-as the starting point for the flow.
+**Note:** The commands refer to the base directory as
+`OpenROAD-flow-scripts/flow` as the starting point for the flow.
 
-**Step 1:** Create verilog source files directory based on the top
-module name.
+**Step 1:** Create the Verilog source files directory based on
+the top module name.
 
 ```
 cd designs/src
@@ -36,21 +35,21 @@ vi config.mk
 **Step 3:** Define key design parameters in `config.mk`.
 
 ```
-export PLATFORM               = gf180
+export PLATFORM         = gf180
 
-export DESIGN_NAME            = spm
+export DESIGN_NAME      = spm
 
-export VERILOG_FILES          = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
-export SDC_FILE               = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export VERILOG_FILES    = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
+export SDC_FILE         = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export CORE_UTILIZATION = 40
-export PLACE_DENSITY          = 0.60
+export PLACE_DENSITY    = 0.60
 
-export TNS_END_PERCENT = 100
+export TNS_END_PERCENT  = 100
 ```
 
-To customize or add new variables to `config.mk` refer to other
-built-in design examples or the flow variables list [here](./FlowVariables.md).
+To customize or add new variables to the `config.mk` refer to the
+other built-in design examples or the flow variables list [here](./FlowVariables.md).
 
 **Step 4:** Define SDC constraints.
 
@@ -59,8 +58,7 @@ cd designs/gf180/spm
 vi constraint.sdc
 ```
 
-Define design constraints with a minimum set of required constraints
-in the `constraint.sdc` file.
+Edit as required to define design constraints.
 
 ```
 current_design spm
@@ -81,11 +79,11 @@ set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
 ```
 
 Update only `current_design`, `clk_port_name` and `clk_period` as
-per design requirements. Dont modify the remaining values for the
+per design requirements. Do not modify the remaining values for the
 default template.
 
 **Step 5:** Add the design name to `Makefile` to run the flow
-with `make` command.
+with the `make` command.
 
 ```
 vi Makefile
@@ -93,19 +91,19 @@ vi Makefile
 
 Comment (#) any `DESIGN_CONFIG` if already enabled.
 
-Add following lines to `Makefile` and save the changes.
+Add the following lines to `Makefile` and save the changes.
 
 ```
 DESIGN_CONFIG=./designs/gf180/spm/config.mk
 ```
 
-Run make command to run the flow from RTL to GDSII generation.
+Run `make` command to run the flow from RTL to GDSII generation.
 
 ```
 make
 ```
 
-If you dont want to change `Makefile`, you can simply run,
+If you do not want to change `Makefile`, you can simply run,
 
 ```
 make DESIGN_CONFIG=./designs/gf180/spm/config.mk
