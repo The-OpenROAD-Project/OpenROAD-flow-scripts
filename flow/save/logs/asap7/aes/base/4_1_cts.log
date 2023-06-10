@@ -1,0 +1,1844 @@
+OpenROAD v2.0-8453-g93fdf28ec 
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO CTS-0049] Characterization buffer is: BUFx4_ASAP7_75t_R.
+[INFO CTS-0039] Number of created patterns = 12240.
+[INFO CTS-0084] Compiling LUT.
+Min. len    Max. len    Min. cap    Max. cap    Min. slew   Max. slew
+2           8           1           34          1           12          
+[WARNING CTS-0043] 1632 wires are pure wire and no slew degradation.
+TritonCTS forced slew degradation on these wires.
+[INFO CTS-0046]     Number of wire segments: 12240.
+[INFO CTS-0047]     Number of keys in characterization LUT: 1456.
+[INFO CTS-0048]     Actual min input cap: 1.
+[INFO CTS-0007] Net "clk" found for clock "clk".
+[INFO CTS-0010]  Clock net "clk" has 530 sinks.
+[WARNING CTS-0041] Net "net935" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net934" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net933" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net932" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net931" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net930" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net929" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net928" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net927" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net926" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net925" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net924" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net923" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net922" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net921" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net920" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net919" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net918" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net917" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net916" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net915" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net914" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net913" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net912" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net911" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net910" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net909" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net908" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net907" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net906" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net905" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net904" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net903" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net902" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net901" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net900" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net899" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net898" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net897" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net896" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net895" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net894" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net893" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net892" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net891" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net890" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net889" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net888" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net887" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net886" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net885" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net884" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net883" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net882" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net881" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net880" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net879" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net878" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net877" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net876" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net875" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net874" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net873" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net872" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net871" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net870" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net869" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net868" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net867" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net866" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net865" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net864" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net863" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net862" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net861" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net860" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net859" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net858" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net857" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net856" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net855" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net854" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net853" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net852" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net851" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net850" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net849" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net848" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net847" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net846" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net845" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net844" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net843" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net842" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net841" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net840" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net839" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net838" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net837" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net836" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net835" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net834" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net833" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net832" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net831" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net830" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net829" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net828" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net827" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net826" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net825" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net824" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net823" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net822" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net821" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net820" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net819" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net818" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net817" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net816" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net815" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net814" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net813" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net812" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net811" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net810" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net809" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net808" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net807" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net806" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net805" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net804" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net803" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net802" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net801" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net800" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net799" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net798" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net797" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net796" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net795" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net794" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net793" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net792" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net791" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net790" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net789" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net788" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net787" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net786" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net785" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net784" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net783" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net782" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net781" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net780" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net779" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net778" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net777" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net776" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net775" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net774" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net773" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net772" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net771" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net770" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net769" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net768" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net767" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net766" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net765" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net764" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net763" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net762" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net761" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net760" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net759" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net758" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net757" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net756" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net755" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net754" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net753" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net752" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net751" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net750" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net749" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net748" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net747" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net746" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net745" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net744" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net743" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net742" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net741" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net740" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net739" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net738" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net737" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net736" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net735" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net734" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net733" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net732" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net731" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net730" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net729" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net728" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net727" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net726" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net725" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net724" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net723" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net722" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net721" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net720" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net719" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net718" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net717" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net716" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net715" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net714" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net713" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net712" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net711" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net710" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net709" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net708" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net707" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net706" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net705" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net704" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net703" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net702" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net701" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net700" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net699" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net698" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net697" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net696" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net695" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net694" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net693" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net692" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net691" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net690" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net689" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net688" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net687" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net686" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net685" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net684" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net683" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net682" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net681" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net680" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net679" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net678" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net677" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net676" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net675" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net674" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net673" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net672" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net671" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net670" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net669" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net668" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net667" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net666" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net665" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net664" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net663" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net662" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net661" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net660" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net659" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net658" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net657" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net656" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net655" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net654" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net653" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net652" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net651" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net650" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net649" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net648" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net647" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net646" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net645" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net644" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net643" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net642" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net641" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net640" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net639" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net638" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net637" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net636" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net635" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net634" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net633" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net632" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net631" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net630" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net629" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net628" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net627" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net626" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net625" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net624" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net623" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net622" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net621" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net620" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net619" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net618" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net617" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net616" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net615" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net614" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net613" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net612" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net611" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net610" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net609" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net608" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net607" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net606" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net605" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net604" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net603" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net602" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net601" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net600" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net599" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net598" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net597" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net596" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net595" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net594" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net593" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net592" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net591" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net590" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net589" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net588" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net587" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net586" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net585" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net584" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net583" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net582" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net581" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net580" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net579" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net578" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net577" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net576" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net575" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net574" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net573" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net572" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net571" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net570" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net569" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net568" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net567" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net566" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net565" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net564" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net563" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net562" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net561" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net560" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net559" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net558" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net557" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net556" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net555" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net554" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net553" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net552" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net551" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net550" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net549" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net548" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net547" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net546" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net545" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net544" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net543" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net542" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net541" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net540" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net539" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net538" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net537" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net536" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net535" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net534" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net533" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net532" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net531" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net530" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net529" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net528" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net527" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net526" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net525" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net524" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net523" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net522" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net521" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net520" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net519" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net518" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net517" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net516" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net515" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net514" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net513" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net512" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net511" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net510" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net509" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net508" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net507" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net506" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net505" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net504" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net503" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net502" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net501" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net500" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net499" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net498" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net497" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net496" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net495" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net494" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net493" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net492" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net491" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net490" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net489" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net488" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net487" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net486" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net485" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net484" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net483" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net482" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net481" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net480" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net479" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net478" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net477" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net476" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net475" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net474" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net473" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net472" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net471" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net470" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net469" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net468" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net467" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net466" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net465" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net464" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net463" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net462" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net461" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net460" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net459" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net458" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net457" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net456" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net455" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net454" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net453" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net452" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net451" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net450" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net449" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net448" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net447" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net446" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net445" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net444" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net443" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net442" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net441" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net440" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net439" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net438" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net437" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net436" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net435" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net434" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net433" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net432" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net431" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net430" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net429" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net428" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net427" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net426" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net425" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net424" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net423" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net422" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net421" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net420" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net419" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net418" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net417" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net416" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net415" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net414" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net413" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net412" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net411" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net410" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net409" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net408" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net407" has 1 sinks. Skipping...
+[WARNING CTS-0041] Net "net406" has 1 sinks. Skipping...
+[INFO CTS-0008] TritonCTS found 1 clock nets.
+[INFO CTS-0097] Characterization used 1 buffer(s) types.
+[INFO CTS-0027] Generating H-Tree topology for net clk.
+[INFO CTS-0028]  Total number of sinks: 530.
+[INFO CTS-0029]  Sinks will be clustered in groups of up to 30 and with maximum cluster diameter of 100.0 um.
+[INFO CTS-0030]  Number of static layers: 0.
+[INFO CTS-0020]  Wire segment unit: 1000  dbu (1 um).
+[INFO CTS-0021]  Distance between buffers: 30 units (60 um).
+[INFO CTS-0019]  Total number of sinks after clustering: 18.
+[INFO CTS-0024]  Normalized sink region: [(4.8193, 6.696), (71.551, 74.619)].
+[INFO CTS-0025]     Width:  66.7317.
+[INFO CTS-0026]     Height: 67.9230.
+ Level 1
+    Direction: Vertical
+    Sinks per sub-region: 9
+    Sub-region size: 66.7317 X 33.9615
+[INFO CTS-0034]     Segment length (rounded): 16.
+    Key: 348 inSlew: 1 inCap: 1 outSlew: 2 load: 1 length: 8 delay: 1
+    Key: 348 inSlew: 1 inCap: 1 outSlew: 2 load: 1 length: 8 delay: 1
+[INFO CTS-0032]  Stop criterion found. Max number of sinks is 15.
+[INFO CTS-0035]  Number of sinks covered: 18.
+[INFO CTS-0018]     Created 21 clock buffers.
+[INFO CTS-0012]     Minimum number of buffers in the clock path: 3.
+[INFO CTS-0013]     Maximum number of buffers in the clock path: 3.
+[INFO CTS-0015]     Created 21 clock nets.
+[INFO CTS-0016]     Fanout distribution for the current clock = 8:1, 10:1, 20:1, 30:17..
+[INFO CTS-0017]     Max level of the clock tree: 1.
+[INFO CTS-0098] Clock net "clk"
+[INFO CTS-0099]  Sinks 530
+[INFO CTS-0100]  Leaf buffers 18
+[INFO CTS-0101]  Average sink wire length 114.91 um
+[INFO CTS-0102]  Path depth 3 - 3
+
+==========================================================================
+cts pre-repair check_setup
+--------------------------------------------------------------------------
+
+==========================================================================
+cts pre-repair report_tns
+--------------------------------------------------------------------------
+tns -25805.07
+
+==========================================================================
+cts pre-repair report_wns
+--------------------------------------------------------------------------
+wns -154.55
+
+==========================================================================
+cts pre-repair report_worst_slack
+--------------------------------------------------------------------------
+worst slack -154.55
+
+==========================================================================
+cts pre-repair report_clock_skew
+--------------------------------------------------------------------------
+Clock clk
+Latency      CRPR       Skew
+_44208_/CLK v
+ 130.81
+_44088_/CLK v
+ 114.63      0.00      16.18
+
+
+==========================================================================
+cts pre-repair report_checks -path_delay min
+--------------------------------------------------------------------------
+Startpoint: text_in[8] (input port clocked by clk)
+Endpoint: _43829_ (falling edge-triggered flip-flop clocked by clk')
+Path Group: clk
+Path Type: min
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock clk (rise edge)
+                          0.00    0.00   clock network delay (propagated)
+                         80.00   80.00 ^ input external delay
+                  0.00    0.00   80.00 ^ text_in[8] (in)
+     1    0.91                           text_in[8] (net)
+                  0.10    0.03   80.03 ^ input247/A (BUFx2_ASAP7_75t_R)
+                  5.30   10.08   90.11 ^ input247/Y (BUFx2_ASAP7_75t_R)
+     1    0.67                           net247 (net)
+                  5.30    0.00   90.12 ^ _43507_/A2 (AO21x1_ASAP7_75t_R)
+                  6.64   12.44  102.56 ^ _43507_/Y (AO21x1_ASAP7_75t_R)
+     1    0.71                           _00938_ (net)
+                  6.64    0.01  102.57 ^ _43829_/D (DFFLQNx2_ASAP7_75t_R)
+                                102.57   data arrival time
+
+                          0.00    0.00   clock clk' (fall edge)
+                          0.00    0.00   clock source latency
+                  0.00    0.00    0.00 ^ clk (in)
+     1    8.81                           clk (net)
+                 15.94    5.03    5.03 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.67   23.30   28.32 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.22                           clknet_0_clk (net)
+                 13.79    0.70   29.02 ^ clkbuf_1_1__f_clk/A (BUFx4_ASAP7_75t_R)
+                 44.25   34.14   63.16 ^ clkbuf_1_1__f_clk/Y (BUFx4_ASAP7_75t_R)
+    10   23.81                           clknet_1_1__leaf_clk (net)
+                 45.30    3.79   66.96 ^ clkbuf_leaf_4_clk/A (BUFx4_ASAP7_75t_R)
+                 56.88   47.58  114.54 ^ clkbuf_leaf_4_clk/Y (BUFx4_ASAP7_75t_R)
+    30   31.51                           clknet_leaf_4_clk (net)
+                 58.92    5.84  120.38 ^ _498_514/A (INVx1_ASAP7_75t_R)
+                 12.83    9.45  129.83 v _498_514/Y (INVx1_ASAP7_75t_R)
+     1    0.56                           net919 (net)
+                 12.83    0.00  129.83 v _43829_/CLK (DFFLQNx2_ASAP7_75t_R)
+                          0.00  129.83   clock reconvergence pessimism
+                         11.80  141.63   library hold time
+                                141.63   data required time
+-----------------------------------------------------------------------------
+                                141.63   data required time
+                               -102.57   data arrival time
+-----------------------------------------------------------------------------
+                                -39.06   slack (VIOLATED)
+
+
+
+==========================================================================
+cts pre-repair report_checks -path_delay max
+--------------------------------------------------------------------------
+Startpoint: _44161_ (falling edge-triggered flip-flop clocked by clk')
+Endpoint: _44089_ (falling edge-triggered flip-flop clocked by clk')
+Path Group: clk
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock clk' (fall edge)
+                          0.00    0.00   clock source latency
+                  0.00    0.00    0.00 ^ clk (in)
+     1    8.81                           clk (net)
+                 15.94    5.03    5.03 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.67   23.30   28.32 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.22                           clknet_0_clk (net)
+                 13.82    0.78   29.10 ^ clkbuf_1_0__f_clk/A (BUFx4_ASAP7_75t_R)
+                 38.87   32.60   61.70 ^ clkbuf_1_0__f_clk/Y (BUFx4_ASAP7_75t_R)
+     8   20.50                           clknet_1_0__leaf_clk (net)
+                 40.31    4.05   65.75 ^ clkbuf_leaf_12_clk/A (BUFx4_ASAP7_75t_R)
+                 52.39   45.78  111.53 ^ clkbuf_leaf_12_clk/Y (BUFx4_ASAP7_75t_R)
+    30   29.21                           clknet_leaf_12_clk (net)
+                 52.96    3.08  114.61 ^ _148_182/A (INVx1_ASAP7_75t_R)
+                 12.15    9.15  123.76 v _148_182/Y (INVx1_ASAP7_75t_R)
+     1    0.56                           net587 (net)
+                 12.15    0.00  123.76 v _44161_/CLK (DFFLQNx2_ASAP7_75t_R)
+                148.36  113.94  237.70 v _44161_/QN (DFFLQNx2_ASAP7_75t_R)
+    27   52.31                           _00575_ (net)
+                148.55    3.15  240.86 v _39532_/A (NAND2x2_ASAP7_75t_R)
+                100.70   81.05  321.91 ^ _39532_/Y (NAND2x2_ASAP7_75t_R)
+     9   17.96                           _10310_ (net)
+                100.75    1.31  323.22 ^ _39590_/A (INVx4_ASAP7_75t_R)
+                 31.07   21.57  344.79 v _39590_/Y (INVx4_ASAP7_75t_R)
+     4    8.92                           _10374_ (net)
+                 31.07    0.11  344.90 v _39621_/B (NAND2x2_ASAP7_75t_R)
+                 93.61   43.64  388.54 ^ _39621_/Y (NAND2x2_ASAP7_75t_R)
+    18   19.77                           _10408_ (net)
+                 93.66    1.30  389.84 ^ _41042_/A (INVx2_ASAP7_75t_R)
+                 30.11   21.07  410.92 v _41042_/Y (INVx2_ASAP7_75t_R)
+     4    4.51                           _11967_ (net)
+                 30.11    0.20  411.12 v _42682_/A1 (OA21x2_ASAP7_75t_R)
+                 13.51   24.97  436.09 v _42682_/Y (OA21x2_ASAP7_75t_R)
+     2    3.31                           _13765_ (net)
+                 13.55    0.43  436.52 v _42749_/A (NOR3x1_ASAP7_75t_R)
+                 17.96   11.51  448.03 ^ _42749_/Y (NOR3x1_ASAP7_75t_R)
+     1    1.21                           _13838_ (net)
+                 17.96    0.03  448.06 ^ _42750_/B (NAND2x1_ASAP7_75t_R)
+                 16.73   13.15  461.22 v _42750_/Y (NAND2x1_ASAP7_75t_R)
+     1    2.27                           _13839_ (net)
+                 16.73    0.03  461.25 v _42751_/B (NOR2x2_ASAP7_75t_R)
+                 17.10   13.22  474.47 ^ _42751_/Y (NOR2x2_ASAP7_75t_R)
+     1    3.20                           _13840_ (net)
+                 17.15    0.51  474.98 ^ _42752_/B (NAND2x2_ASAP7_75t_R)
+                 15.15   11.62  486.61 v _42752_/Y (NAND2x2_ASAP7_75t_R)
+     1    3.64                           _13841_ (net)
+                 15.28    0.79  487.40 v _42753_/B (NOR2x2_ASAP7_75t_R)
+                 70.95   31.21  518.61 ^ _42753_/Y (NOR2x2_ASAP7_75t_R)
+    11   17.64                           _13842_ (net)
+                 72.82    6.40  525.01 ^ _42779_/B (OAI21x1_ASAP7_75t_R)
+                 36.03   27.60  552.61 v _42779_/Y (OAI21x1_ASAP7_75t_R)
+     3    4.11                           _13869_ (net)
+                 36.03    0.01  552.62 v _42780_/A (INVx1_ASAP7_75t_R)
+                 16.49   13.81  566.43 ^ _42780_/Y (INVx1_ASAP7_75t_R)
+     1    1.28                           _13870_ (net)
+                 16.49    0.01  566.44 ^ _42782_/A1 (OAI21x1_ASAP7_75t_R)
+                 22.35   10.43  576.87 v _42782_/Y (OAI21x1_ASAP7_75t_R)
+     1    2.05                           _13872_ (net)
+                 22.35    0.02  576.90 v _42795_/A (NAND2x2_ASAP7_75t_R)
+                 22.88   19.36  596.26 ^ _42795_/Y (NAND2x2_ASAP7_75t_R)
+     3    4.32                           _13887_ (net)
+                 22.89    0.27  596.53 ^ _42977_/B (OAI21x1_ASAP7_75t_R)
+                 17.16   13.90  610.42 v _42977_/Y (OAI21x1_ASAP7_75t_R)
+     2    2.13                           _14079_ (net)
+                 17.16    0.06  610.49 v _42978_/A (INVx1_ASAP7_75t_R)
+                 11.55    9.68  620.17 ^ _42978_/Y (INVx1_ASAP7_75t_R)
+     1    1.15                           _14080_ (net)
+                 11.55    0.02  620.19 ^ _42979_/A2 (OAI21x1_ASAP7_75t_R)
+                 13.77    8.15  628.33 v _42979_/Y (OAI21x1_ASAP7_75t_R)
+     1    1.12                           _14081_ (net)
+                 13.77    0.01  628.34 v _42980_/A2 (AOI21x1_ASAP7_75t_R)
+                 27.09   13.16  641.50 ^ _42980_/Y (AOI21x1_ASAP7_75t_R)
+     1    2.09                           _14082_ (net)
+                 27.09    0.03  641.53 ^ _42986_/A (NOR2x2_ASAP7_75t_R)
+                 19.85   17.49  659.02 v _42986_/Y (NOR2x2_ASAP7_75t_R)
+     1    3.96                           _00034_ (net)
+                 20.21    1.42  660.44 v _44089_/D (DFFLQNx2_ASAP7_75t_R)
+                                660.44   data arrival time
+
+                        400.00  400.00   clock clk' (fall edge)
+                          0.00  400.00   clock source latency
+                  0.00    0.00  400.00 ^ clk (in)
+     1    8.81                           clk (net)
+                 15.94    5.03  405.03 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.67   23.30  428.32 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.22                           clknet_0_clk (net)
+                 13.82    0.78  429.10 ^ clkbuf_1_0__f_clk/A (BUFx4_ASAP7_75t_R)
+                 38.87   32.60  461.70 ^ clkbuf_1_0__f_clk/Y (BUFx4_ASAP7_75t_R)
+     8   20.50                           clknet_1_0__leaf_clk (net)
+                 39.74    3.22  464.91 ^ clkbuf_leaf_17_clk/A (BUFx4_ASAP7_75t_R)
+                 40.88   40.75  505.67 ^ clkbuf_leaf_17_clk/Y (BUFx4_ASAP7_75t_R)
+    20   21.75                           clknet_leaf_17_clk (net)
+                 40.90    0.60  506.26 ^ _248_254/A (INVx1_ASAP7_75t_R)
+                 10.77    8.56  514.82 v _248_254/Y (INVx1_ASAP7_75t_R)
+     1    0.56                           net659 (net)
+                 10.77    0.00  514.82 v _44089_/CLK (DFFLQNx2_ASAP7_75t_R)
+                          0.00  514.82   clock reconvergence pessimism
+                         -8.93  505.89   library setup time
+                                505.89   data required time
+-----------------------------------------------------------------------------
+                                505.89   data required time
+                               -660.44   data arrival time
+-----------------------------------------------------------------------------
+                               -154.55   slack (VIOLATED)
+
+
+
+==========================================================================
+cts pre-repair report_checks -unconstrained
+--------------------------------------------------------------------------
+Startpoint: _44161_ (falling edge-triggered flip-flop clocked by clk')
+Endpoint: _44089_ (falling edge-triggered flip-flop clocked by clk')
+Path Group: clk
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock clk' (fall edge)
+                          0.00    0.00   clock source latency
+                  0.00    0.00    0.00 ^ clk (in)
+     1    8.81                           clk (net)
+                 15.94    5.03    5.03 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.67   23.30   28.32 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.22                           clknet_0_clk (net)
+                 13.82    0.78   29.10 ^ clkbuf_1_0__f_clk/A (BUFx4_ASAP7_75t_R)
+                 38.87   32.60   61.70 ^ clkbuf_1_0__f_clk/Y (BUFx4_ASAP7_75t_R)
+     8   20.50                           clknet_1_0__leaf_clk (net)
+                 40.31    4.05   65.75 ^ clkbuf_leaf_12_clk/A (BUFx4_ASAP7_75t_R)
+                 52.39   45.78  111.53 ^ clkbuf_leaf_12_clk/Y (BUFx4_ASAP7_75t_R)
+    30   29.21                           clknet_leaf_12_clk (net)
+                 52.96    3.08  114.61 ^ _148_182/A (INVx1_ASAP7_75t_R)
+                 12.15    9.15  123.76 v _148_182/Y (INVx1_ASAP7_75t_R)
+     1    0.56                           net587 (net)
+                 12.15    0.00  123.76 v _44161_/CLK (DFFLQNx2_ASAP7_75t_R)
+                148.36  113.94  237.70 v _44161_/QN (DFFLQNx2_ASAP7_75t_R)
+    27   52.31                           _00575_ (net)
+                148.55    3.15  240.86 v _39532_/A (NAND2x2_ASAP7_75t_R)
+                100.70   81.05  321.91 ^ _39532_/Y (NAND2x2_ASAP7_75t_R)
+     9   17.96                           _10310_ (net)
+                100.75    1.31  323.22 ^ _39590_/A (INVx4_ASAP7_75t_R)
+                 31.07   21.57  344.79 v _39590_/Y (INVx4_ASAP7_75t_R)
+     4    8.92                           _10374_ (net)
+                 31.07    0.11  344.90 v _39621_/B (NAND2x2_ASAP7_75t_R)
+                 93.61   43.64  388.54 ^ _39621_/Y (NAND2x2_ASAP7_75t_R)
+    18   19.77                           _10408_ (net)
+                 93.66    1.30  389.84 ^ _41042_/A (INVx2_ASAP7_75t_R)
+                 30.11   21.07  410.92 v _41042_/Y (INVx2_ASAP7_75t_R)
+     4    4.51                           _11967_ (net)
+                 30.11    0.20  411.12 v _42682_/A1 (OA21x2_ASAP7_75t_R)
+                 13.51   24.97  436.09 v _42682_/Y (OA21x2_ASAP7_75t_R)
+     2    3.31                           _13765_ (net)
+                 13.55    0.43  436.52 v _42749_/A (NOR3x1_ASAP7_75t_R)
+                 17.96   11.51  448.03 ^ _42749_/Y (NOR3x1_ASAP7_75t_R)
+     1    1.21                           _13838_ (net)
+                 17.96    0.03  448.06 ^ _42750_/B (NAND2x1_ASAP7_75t_R)
+                 16.73   13.15  461.22 v _42750_/Y (NAND2x1_ASAP7_75t_R)
+     1    2.27                           _13839_ (net)
+                 16.73    0.03  461.25 v _42751_/B (NOR2x2_ASAP7_75t_R)
+                 17.10   13.22  474.47 ^ _42751_/Y (NOR2x2_ASAP7_75t_R)
+     1    3.20                           _13840_ (net)
+                 17.15    0.51  474.98 ^ _42752_/B (NAND2x2_ASAP7_75t_R)
+                 15.15   11.62  486.61 v _42752_/Y (NAND2x2_ASAP7_75t_R)
+     1    3.64                           _13841_ (net)
+                 15.28    0.79  487.40 v _42753_/B (NOR2x2_ASAP7_75t_R)
+                 70.95   31.21  518.61 ^ _42753_/Y (NOR2x2_ASAP7_75t_R)
+    11   17.64                           _13842_ (net)
+                 72.82    6.40  525.01 ^ _42779_/B (OAI21x1_ASAP7_75t_R)
+                 36.03   27.60  552.61 v _42779_/Y (OAI21x1_ASAP7_75t_R)
+     3    4.11                           _13869_ (net)
+                 36.03    0.01  552.62 v _42780_/A (INVx1_ASAP7_75t_R)
+                 16.49   13.81  566.43 ^ _42780_/Y (INVx1_ASAP7_75t_R)
+     1    1.28                           _13870_ (net)
+                 16.49    0.01  566.44 ^ _42782_/A1 (OAI21x1_ASAP7_75t_R)
+                 22.35   10.43  576.87 v _42782_/Y (OAI21x1_ASAP7_75t_R)
+     1    2.05                           _13872_ (net)
+                 22.35    0.02  576.90 v _42795_/A (NAND2x2_ASAP7_75t_R)
+                 22.88   19.36  596.26 ^ _42795_/Y (NAND2x2_ASAP7_75t_R)
+     3    4.32                           _13887_ (net)
+                 22.89    0.27  596.53 ^ _42977_/B (OAI21x1_ASAP7_75t_R)
+                 17.16   13.90  610.42 v _42977_/Y (OAI21x1_ASAP7_75t_R)
+     2    2.13                           _14079_ (net)
+                 17.16    0.06  610.49 v _42978_/A (INVx1_ASAP7_75t_R)
+                 11.55    9.68  620.17 ^ _42978_/Y (INVx1_ASAP7_75t_R)
+     1    1.15                           _14080_ (net)
+                 11.55    0.02  620.19 ^ _42979_/A2 (OAI21x1_ASAP7_75t_R)
+                 13.77    8.15  628.33 v _42979_/Y (OAI21x1_ASAP7_75t_R)
+     1    1.12                           _14081_ (net)
+                 13.77    0.01  628.34 v _42980_/A2 (AOI21x1_ASAP7_75t_R)
+                 27.09   13.16  641.50 ^ _42980_/Y (AOI21x1_ASAP7_75t_R)
+     1    2.09                           _14082_ (net)
+                 27.09    0.03  641.53 ^ _42986_/A (NOR2x2_ASAP7_75t_R)
+                 19.85   17.49  659.02 v _42986_/Y (NOR2x2_ASAP7_75t_R)
+     1    3.96                           _00034_ (net)
+                 20.21    1.42  660.44 v _44089_/D (DFFLQNx2_ASAP7_75t_R)
+                                660.44   data arrival time
+
+                        400.00  400.00   clock clk' (fall edge)
+                          0.00  400.00   clock source latency
+                  0.00    0.00  400.00 ^ clk (in)
+     1    8.81                           clk (net)
+                 15.94    5.03  405.03 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.67   23.30  428.32 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.22                           clknet_0_clk (net)
+                 13.82    0.78  429.10 ^ clkbuf_1_0__f_clk/A (BUFx4_ASAP7_75t_R)
+                 38.87   32.60  461.70 ^ clkbuf_1_0__f_clk/Y (BUFx4_ASAP7_75t_R)
+     8   20.50                           clknet_1_0__leaf_clk (net)
+                 39.74    3.22  464.91 ^ clkbuf_leaf_17_clk/A (BUFx4_ASAP7_75t_R)
+                 40.88   40.75  505.67 ^ clkbuf_leaf_17_clk/Y (BUFx4_ASAP7_75t_R)
+    20   21.75                           clknet_leaf_17_clk (net)
+                 40.90    0.60  506.26 ^ _248_254/A (INVx1_ASAP7_75t_R)
+                 10.77    8.56  514.82 v _248_254/Y (INVx1_ASAP7_75t_R)
+     1    0.56                           net659 (net)
+                 10.77    0.00  514.82 v _44089_/CLK (DFFLQNx2_ASAP7_75t_R)
+                          0.00  514.82   clock reconvergence pessimism
+                         -8.93  505.89   library setup time
+                                505.89   data required time
+-----------------------------------------------------------------------------
+                                505.89   data required time
+                               -660.44   data arrival time
+-----------------------------------------------------------------------------
+                               -154.55   slack (VIOLATED)
+
+
+
+==========================================================================
+cts pre-repair report_check_types -max_slew -max_cap -max_fanout -violators
+--------------------------------------------------------------------------
+
+==========================================================================
+cts pre-repair max_slew_check_slack
+--------------------------------------------------------------------------
+126.87663269042969
+
+==========================================================================
+cts pre-repair max_slew_check_limit
+--------------------------------------------------------------------------
+320.0
+
+==========================================================================
+cts pre-repair max_slew_check_slack_limit
+--------------------------------------------------------------------------
+0.3965
+
+==========================================================================
+cts pre-repair max_fanout_check_slack
+--------------------------------------------------------------------------
+1.0000000150474662e+30
+
+==========================================================================
+cts pre-repair max_fanout_check_limit
+--------------------------------------------------------------------------
+1.0000000150474662e+30
+
+==========================================================================
+cts pre-repair max_capacitance_check_slack
+--------------------------------------------------------------------------
+16.143049240112305
+
+==========================================================================
+cts pre-repair max_capacitance_check_limit
+--------------------------------------------------------------------------
+23.040000915527344
+
+==========================================================================
+cts pre-repair max_capacitance_check_slack_limit
+--------------------------------------------------------------------------
+0.7007
+
+==========================================================================
+cts pre-repair max_slew_violation_count
+--------------------------------------------------------------------------
+max slew violation count 0
+
+==========================================================================
+cts pre-repair max_fanout_violation_count
+--------------------------------------------------------------------------
+max fanout violation count 0
+
+==========================================================================
+cts pre-repair max_cap_violation_count
+--------------------------------------------------------------------------
+max cap violation count 0
+
+==========================================================================
+cts pre-repair setup_violation_count
+--------------------------------------------------------------------------
+setup violation count 1
+
+==========================================================================
+cts pre-repair hold_violation_count
+--------------------------------------------------------------------------
+hold violation count 1
+
+==========================================================================
+cts pre-repair critical path delay
+--------------------------------------------------------------------------
+660.4434
+
+==========================================================================
+cts pre-repair critical path slack
+--------------------------------------------------------------------------
+-154.5542
+
+==========================================================================
+cts pre-repair slack div critical path delay
+--------------------------------------------------------------------------
+-23.401581
+
+==========================================================================
+cts pre-repair report_design_area
+--------------------------------------------------------------------------
+Design area 2522 u^2 45% utilization.
+
+[INFO RSZ-0058] Using max wire length 162um.
+
+==========================================================================
+cts post-repair check_setup
+--------------------------------------------------------------------------
+
+==========================================================================
+cts post-repair report_tns
+--------------------------------------------------------------------------
+tns -25805.07
+
+==========================================================================
+cts post-repair report_wns
+--------------------------------------------------------------------------
+wns -154.55
+
+==========================================================================
+cts post-repair report_worst_slack
+--------------------------------------------------------------------------
+worst slack -154.55
+
+==========================================================================
+cts post-repair report_clock_skew
+--------------------------------------------------------------------------
+Clock clk
+Latency      CRPR       Skew
+_44208_/CLK v
+ 130.81
+_44088_/CLK v
+ 114.63      0.00      16.18
+
+
+==========================================================================
+cts post-repair report_checks -path_delay min
+--------------------------------------------------------------------------
+Startpoint: text_in[8] (input port clocked by clk)
+Endpoint: _43829_ (falling edge-triggered flip-flop clocked by clk')
+Path Group: clk
+Path Type: min
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock clk (rise edge)
+                          0.00    0.00   clock network delay (propagated)
+                         80.00   80.00 ^ input external delay
+                  0.00    0.00   80.00 ^ text_in[8] (in)
+     1    0.91                           text_in[8] (net)
+                  0.10    0.03   80.03 ^ input247/A (BUFx2_ASAP7_75t_R)
+                  5.30   10.08   90.11 ^ input247/Y (BUFx2_ASAP7_75t_R)
+     1    0.67                           net247 (net)
+                  5.30    0.00   90.12 ^ _43507_/A2 (AO21x1_ASAP7_75t_R)
+                  6.64   12.44  102.56 ^ _43507_/Y (AO21x1_ASAP7_75t_R)
+     1    0.71                           _00938_ (net)
+                  6.64    0.01  102.57 ^ _43829_/D (DFFLQNx2_ASAP7_75t_R)
+                                102.57   data arrival time
+
+                          0.00    0.00   clock clk' (fall edge)
+                          0.00    0.00   clock source latency
+                  0.00    0.00    0.00 ^ clk (in)
+     1    8.81                           clk (net)
+                 15.94    5.03    5.03 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.67   23.30   28.32 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.22                           clknet_0_clk (net)
+                 13.79    0.70   29.02 ^ clkbuf_1_1__f_clk/A (BUFx4_ASAP7_75t_R)
+                 44.25   34.14   63.16 ^ clkbuf_1_1__f_clk/Y (BUFx4_ASAP7_75t_R)
+    10   23.81                           clknet_1_1__leaf_clk (net)
+                 45.30    3.79   66.96 ^ clkbuf_leaf_4_clk/A (BUFx4_ASAP7_75t_R)
+                 56.88   47.58  114.54 ^ clkbuf_leaf_4_clk/Y (BUFx4_ASAP7_75t_R)
+    30   31.51                           clknet_leaf_4_clk (net)
+                 58.92    5.84  120.38 ^ _498_514/A (INVx1_ASAP7_75t_R)
+                 12.83    9.45  129.83 v _498_514/Y (INVx1_ASAP7_75t_R)
+     1    0.56                           net919 (net)
+                 12.83    0.00  129.83 v _43829_/CLK (DFFLQNx2_ASAP7_75t_R)
+                          0.00  129.83   clock reconvergence pessimism
+                         11.80  141.63   library hold time
+                                141.63   data required time
+-----------------------------------------------------------------------------
+                                141.63   data required time
+                               -102.57   data arrival time
+-----------------------------------------------------------------------------
+                                -39.06   slack (VIOLATED)
+
+
+
+==========================================================================
+cts post-repair report_checks -path_delay max
+--------------------------------------------------------------------------
+Startpoint: _44161_ (falling edge-triggered flip-flop clocked by clk')
+Endpoint: _44089_ (falling edge-triggered flip-flop clocked by clk')
+Path Group: clk
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock clk' (fall edge)
+                          0.00    0.00   clock source latency
+                  0.00    0.00    0.00 ^ clk (in)
+     1    8.81                           clk (net)
+                 15.94    5.03    5.03 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.67   23.30   28.32 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.22                           clknet_0_clk (net)
+                 13.82    0.78   29.10 ^ clkbuf_1_0__f_clk/A (BUFx4_ASAP7_75t_R)
+                 38.87   32.60   61.70 ^ clkbuf_1_0__f_clk/Y (BUFx4_ASAP7_75t_R)
+     8   20.50                           clknet_1_0__leaf_clk (net)
+                 40.31    4.05   65.75 ^ clkbuf_leaf_12_clk/A (BUFx4_ASAP7_75t_R)
+                 52.39   45.78  111.53 ^ clkbuf_leaf_12_clk/Y (BUFx4_ASAP7_75t_R)
+    30   29.21                           clknet_leaf_12_clk (net)
+                 52.96    3.08  114.61 ^ _148_182/A (INVx1_ASAP7_75t_R)
+                 12.15    9.15  123.76 v _148_182/Y (INVx1_ASAP7_75t_R)
+     1    0.56                           net587 (net)
+                 12.15    0.00  123.76 v _44161_/CLK (DFFLQNx2_ASAP7_75t_R)
+                148.36  113.94  237.70 v _44161_/QN (DFFLQNx2_ASAP7_75t_R)
+    27   52.31                           _00575_ (net)
+                148.55    3.15  240.86 v _39532_/A (NAND2x2_ASAP7_75t_R)
+                100.70   81.05  321.91 ^ _39532_/Y (NAND2x2_ASAP7_75t_R)
+     9   17.96                           _10310_ (net)
+                100.75    1.31  323.22 ^ _39590_/A (INVx4_ASAP7_75t_R)
+                 31.07   21.57  344.79 v _39590_/Y (INVx4_ASAP7_75t_R)
+     4    8.92                           _10374_ (net)
+                 31.07    0.11  344.90 v _39621_/B (NAND2x2_ASAP7_75t_R)
+                 93.61   43.64  388.54 ^ _39621_/Y (NAND2x2_ASAP7_75t_R)
+    18   19.77                           _10408_ (net)
+                 93.66    1.30  389.84 ^ _41042_/A (INVx2_ASAP7_75t_R)
+                 30.11   21.07  410.92 v _41042_/Y (INVx2_ASAP7_75t_R)
+     4    4.51                           _11967_ (net)
+                 30.11    0.20  411.12 v _42682_/A1 (OA21x2_ASAP7_75t_R)
+                 13.51   24.97  436.09 v _42682_/Y (OA21x2_ASAP7_75t_R)
+     2    3.31                           _13765_ (net)
+                 13.55    0.43  436.52 v _42749_/A (NOR3x1_ASAP7_75t_R)
+                 17.96   11.51  448.03 ^ _42749_/Y (NOR3x1_ASAP7_75t_R)
+     1    1.21                           _13838_ (net)
+                 17.96    0.03  448.06 ^ _42750_/B (NAND2x1_ASAP7_75t_R)
+                 16.73   13.15  461.22 v _42750_/Y (NAND2x1_ASAP7_75t_R)
+     1    2.27                           _13839_ (net)
+                 16.73    0.03  461.25 v _42751_/B (NOR2x2_ASAP7_75t_R)
+                 17.10   13.22  474.47 ^ _42751_/Y (NOR2x2_ASAP7_75t_R)
+     1    3.20                           _13840_ (net)
+                 17.15    0.51  474.98 ^ _42752_/B (NAND2x2_ASAP7_75t_R)
+                 15.15   11.62  486.61 v _42752_/Y (NAND2x2_ASAP7_75t_R)
+     1    3.64                           _13841_ (net)
+                 15.28    0.79  487.40 v _42753_/B (NOR2x2_ASAP7_75t_R)
+                 70.95   31.21  518.61 ^ _42753_/Y (NOR2x2_ASAP7_75t_R)
+    11   17.64                           _13842_ (net)
+                 72.82    6.40  525.01 ^ _42779_/B (OAI21x1_ASAP7_75t_R)
+                 36.03   27.60  552.61 v _42779_/Y (OAI21x1_ASAP7_75t_R)
+     3    4.11                           _13869_ (net)
+                 36.03    0.01  552.62 v _42780_/A (INVx1_ASAP7_75t_R)
+                 16.49   13.81  566.43 ^ _42780_/Y (INVx1_ASAP7_75t_R)
+     1    1.28                           _13870_ (net)
+                 16.49    0.01  566.44 ^ _42782_/A1 (OAI21x1_ASAP7_75t_R)
+                 22.35   10.43  576.87 v _42782_/Y (OAI21x1_ASAP7_75t_R)
+     1    2.05                           _13872_ (net)
+                 22.35    0.02  576.90 v _42795_/A (NAND2x2_ASAP7_75t_R)
+                 22.88   19.36  596.26 ^ _42795_/Y (NAND2x2_ASAP7_75t_R)
+     3    4.32                           _13887_ (net)
+                 22.89    0.27  596.53 ^ _42977_/B (OAI21x1_ASAP7_75t_R)
+                 17.16   13.90  610.42 v _42977_/Y (OAI21x1_ASAP7_75t_R)
+     2    2.13                           _14079_ (net)
+                 17.16    0.06  610.49 v _42978_/A (INVx1_ASAP7_75t_R)
+                 11.55    9.68  620.17 ^ _42978_/Y (INVx1_ASAP7_75t_R)
+     1    1.15                           _14080_ (net)
+                 11.55    0.02  620.19 ^ _42979_/A2 (OAI21x1_ASAP7_75t_R)
+                 13.77    8.15  628.33 v _42979_/Y (OAI21x1_ASAP7_75t_R)
+     1    1.12                           _14081_ (net)
+                 13.77    0.01  628.34 v _42980_/A2 (AOI21x1_ASAP7_75t_R)
+                 27.09   13.16  641.50 ^ _42980_/Y (AOI21x1_ASAP7_75t_R)
+     1    2.09                           _14082_ (net)
+                 27.09    0.03  641.53 ^ _42986_/A (NOR2x2_ASAP7_75t_R)
+                 19.85   17.49  659.02 v _42986_/Y (NOR2x2_ASAP7_75t_R)
+     1    3.96                           _00034_ (net)
+                 20.21    1.42  660.44 v _44089_/D (DFFLQNx2_ASAP7_75t_R)
+                                660.44   data arrival time
+
+                        400.00  400.00   clock clk' (fall edge)
+                          0.00  400.00   clock source latency
+                  0.00    0.00  400.00 ^ clk (in)
+     1    8.81                           clk (net)
+                 15.94    5.03  405.03 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.67   23.30  428.32 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.22                           clknet_0_clk (net)
+                 13.82    0.78  429.10 ^ clkbuf_1_0__f_clk/A (BUFx4_ASAP7_75t_R)
+                 38.87   32.60  461.70 ^ clkbuf_1_0__f_clk/Y (BUFx4_ASAP7_75t_R)
+     8   20.50                           clknet_1_0__leaf_clk (net)
+                 39.74    3.22  464.91 ^ clkbuf_leaf_17_clk/A (BUFx4_ASAP7_75t_R)
+                 40.88   40.75  505.67 ^ clkbuf_leaf_17_clk/Y (BUFx4_ASAP7_75t_R)
+    20   21.75                           clknet_leaf_17_clk (net)
+                 40.90    0.60  506.26 ^ _248_254/A (INVx1_ASAP7_75t_R)
+                 10.77    8.56  514.82 v _248_254/Y (INVx1_ASAP7_75t_R)
+     1    0.56                           net659 (net)
+                 10.77    0.00  514.82 v _44089_/CLK (DFFLQNx2_ASAP7_75t_R)
+                          0.00  514.82   clock reconvergence pessimism
+                         -8.93  505.89   library setup time
+                                505.89   data required time
+-----------------------------------------------------------------------------
+                                505.89   data required time
+                               -660.44   data arrival time
+-----------------------------------------------------------------------------
+                               -154.55   slack (VIOLATED)
+
+
+
+==========================================================================
+cts post-repair report_checks -unconstrained
+--------------------------------------------------------------------------
+Startpoint: _44161_ (falling edge-triggered flip-flop clocked by clk')
+Endpoint: _44089_ (falling edge-triggered flip-flop clocked by clk')
+Path Group: clk
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock clk' (fall edge)
+                          0.00    0.00   clock source latency
+                  0.00    0.00    0.00 ^ clk (in)
+     1    8.81                           clk (net)
+                 15.94    5.03    5.03 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.67   23.30   28.32 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.22                           clknet_0_clk (net)
+                 13.82    0.78   29.10 ^ clkbuf_1_0__f_clk/A (BUFx4_ASAP7_75t_R)
+                 38.87   32.60   61.70 ^ clkbuf_1_0__f_clk/Y (BUFx4_ASAP7_75t_R)
+     8   20.50                           clknet_1_0__leaf_clk (net)
+                 40.31    4.05   65.75 ^ clkbuf_leaf_12_clk/A (BUFx4_ASAP7_75t_R)
+                 52.39   45.78  111.53 ^ clkbuf_leaf_12_clk/Y (BUFx4_ASAP7_75t_R)
+    30   29.21                           clknet_leaf_12_clk (net)
+                 52.96    3.08  114.61 ^ _148_182/A (INVx1_ASAP7_75t_R)
+                 12.15    9.15  123.76 v _148_182/Y (INVx1_ASAP7_75t_R)
+     1    0.56                           net587 (net)
+                 12.15    0.00  123.76 v _44161_/CLK (DFFLQNx2_ASAP7_75t_R)
+                148.36  113.94  237.70 v _44161_/QN (DFFLQNx2_ASAP7_75t_R)
+    27   52.31                           _00575_ (net)
+                148.55    3.15  240.86 v _39532_/A (NAND2x2_ASAP7_75t_R)
+                100.70   81.05  321.91 ^ _39532_/Y (NAND2x2_ASAP7_75t_R)
+     9   17.96                           _10310_ (net)
+                100.75    1.31  323.22 ^ _39590_/A (INVx4_ASAP7_75t_R)
+                 31.07   21.57  344.79 v _39590_/Y (INVx4_ASAP7_75t_R)
+     4    8.92                           _10374_ (net)
+                 31.07    0.11  344.90 v _39621_/B (NAND2x2_ASAP7_75t_R)
+                 93.61   43.64  388.54 ^ _39621_/Y (NAND2x2_ASAP7_75t_R)
+    18   19.77                           _10408_ (net)
+                 93.66    1.30  389.84 ^ _41042_/A (INVx2_ASAP7_75t_R)
+                 30.11   21.07  410.92 v _41042_/Y (INVx2_ASAP7_75t_R)
+     4    4.51                           _11967_ (net)
+                 30.11    0.20  411.12 v _42682_/A1 (OA21x2_ASAP7_75t_R)
+                 13.51   24.97  436.09 v _42682_/Y (OA21x2_ASAP7_75t_R)
+     2    3.31                           _13765_ (net)
+                 13.55    0.43  436.52 v _42749_/A (NOR3x1_ASAP7_75t_R)
+                 17.96   11.51  448.03 ^ _42749_/Y (NOR3x1_ASAP7_75t_R)
+     1    1.21                           _13838_ (net)
+                 17.96    0.03  448.06 ^ _42750_/B (NAND2x1_ASAP7_75t_R)
+                 16.73   13.15  461.22 v _42750_/Y (NAND2x1_ASAP7_75t_R)
+     1    2.27                           _13839_ (net)
+                 16.73    0.03  461.25 v _42751_/B (NOR2x2_ASAP7_75t_R)
+                 17.10   13.22  474.47 ^ _42751_/Y (NOR2x2_ASAP7_75t_R)
+     1    3.20                           _13840_ (net)
+                 17.15    0.51  474.98 ^ _42752_/B (NAND2x2_ASAP7_75t_R)
+                 15.15   11.62  486.61 v _42752_/Y (NAND2x2_ASAP7_75t_R)
+     1    3.64                           _13841_ (net)
+                 15.28    0.79  487.40 v _42753_/B (NOR2x2_ASAP7_75t_R)
+                 70.95   31.21  518.61 ^ _42753_/Y (NOR2x2_ASAP7_75t_R)
+    11   17.64                           _13842_ (net)
+                 72.82    6.40  525.01 ^ _42779_/B (OAI21x1_ASAP7_75t_R)
+                 36.03   27.60  552.61 v _42779_/Y (OAI21x1_ASAP7_75t_R)
+     3    4.11                           _13869_ (net)
+                 36.03    0.01  552.62 v _42780_/A (INVx1_ASAP7_75t_R)
+                 16.49   13.81  566.43 ^ _42780_/Y (INVx1_ASAP7_75t_R)
+     1    1.28                           _13870_ (net)
+                 16.49    0.01  566.44 ^ _42782_/A1 (OAI21x1_ASAP7_75t_R)
+                 22.35   10.43  576.87 v _42782_/Y (OAI21x1_ASAP7_75t_R)
+     1    2.05                           _13872_ (net)
+                 22.35    0.02  576.90 v _42795_/A (NAND2x2_ASAP7_75t_R)
+                 22.88   19.36  596.26 ^ _42795_/Y (NAND2x2_ASAP7_75t_R)
+     3    4.32                           _13887_ (net)
+                 22.89    0.27  596.53 ^ _42977_/B (OAI21x1_ASAP7_75t_R)
+                 17.16   13.90  610.42 v _42977_/Y (OAI21x1_ASAP7_75t_R)
+     2    2.13                           _14079_ (net)
+                 17.16    0.06  610.49 v _42978_/A (INVx1_ASAP7_75t_R)
+                 11.55    9.68  620.17 ^ _42978_/Y (INVx1_ASAP7_75t_R)
+     1    1.15                           _14080_ (net)
+                 11.55    0.02  620.19 ^ _42979_/A2 (OAI21x1_ASAP7_75t_R)
+                 13.77    8.15  628.33 v _42979_/Y (OAI21x1_ASAP7_75t_R)
+     1    1.12                           _14081_ (net)
+                 13.77    0.01  628.34 v _42980_/A2 (AOI21x1_ASAP7_75t_R)
+                 27.09   13.16  641.50 ^ _42980_/Y (AOI21x1_ASAP7_75t_R)
+     1    2.09                           _14082_ (net)
+                 27.09    0.03  641.53 ^ _42986_/A (NOR2x2_ASAP7_75t_R)
+                 19.85   17.49  659.02 v _42986_/Y (NOR2x2_ASAP7_75t_R)
+     1    3.96                           _00034_ (net)
+                 20.21    1.42  660.44 v _44089_/D (DFFLQNx2_ASAP7_75t_R)
+                                660.44   data arrival time
+
+                        400.00  400.00   clock clk' (fall edge)
+                          0.00  400.00   clock source latency
+                  0.00    0.00  400.00 ^ clk (in)
+     1    8.81                           clk (net)
+                 15.94    5.03  405.03 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.67   23.30  428.32 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.22                           clknet_0_clk (net)
+                 13.82    0.78  429.10 ^ clkbuf_1_0__f_clk/A (BUFx4_ASAP7_75t_R)
+                 38.87   32.60  461.70 ^ clkbuf_1_0__f_clk/Y (BUFx4_ASAP7_75t_R)
+     8   20.50                           clknet_1_0__leaf_clk (net)
+                 39.74    3.22  464.91 ^ clkbuf_leaf_17_clk/A (BUFx4_ASAP7_75t_R)
+                 40.88   40.75  505.67 ^ clkbuf_leaf_17_clk/Y (BUFx4_ASAP7_75t_R)
+    20   21.75                           clknet_leaf_17_clk (net)
+                 40.90    0.60  506.26 ^ _248_254/A (INVx1_ASAP7_75t_R)
+                 10.77    8.56  514.82 v _248_254/Y (INVx1_ASAP7_75t_R)
+     1    0.56                           net659 (net)
+                 10.77    0.00  514.82 v _44089_/CLK (DFFLQNx2_ASAP7_75t_R)
+                          0.00  514.82   clock reconvergence pessimism
+                         -8.93  505.89   library setup time
+                                505.89   data required time
+-----------------------------------------------------------------------------
+                                505.89   data required time
+                               -660.44   data arrival time
+-----------------------------------------------------------------------------
+                               -154.55   slack (VIOLATED)
+
+
+
+==========================================================================
+cts post-repair report_check_types -max_slew -max_cap -max_fanout -violators
+--------------------------------------------------------------------------
+
+==========================================================================
+cts post-repair max_slew_check_slack
+--------------------------------------------------------------------------
+126.87663269042969
+
+==========================================================================
+cts post-repair max_slew_check_limit
+--------------------------------------------------------------------------
+320.0
+
+==========================================================================
+cts post-repair max_slew_check_slack_limit
+--------------------------------------------------------------------------
+0.3965
+
+==========================================================================
+cts post-repair max_fanout_check_slack
+--------------------------------------------------------------------------
+1.0000000150474662e+30
+
+==========================================================================
+cts post-repair max_fanout_check_limit
+--------------------------------------------------------------------------
+1.0000000150474662e+30
+
+==========================================================================
+cts post-repair max_capacitance_check_slack
+--------------------------------------------------------------------------
+16.143049240112305
+
+==========================================================================
+cts post-repair max_capacitance_check_limit
+--------------------------------------------------------------------------
+23.040000915527344
+
+==========================================================================
+cts post-repair max_capacitance_check_slack_limit
+--------------------------------------------------------------------------
+0.7007
+
+==========================================================================
+cts post-repair max_slew_violation_count
+--------------------------------------------------------------------------
+max slew violation count 0
+
+==========================================================================
+cts post-repair max_fanout_violation_count
+--------------------------------------------------------------------------
+max fanout violation count 0
+
+==========================================================================
+cts post-repair max_cap_violation_count
+--------------------------------------------------------------------------
+max cap violation count 0
+
+==========================================================================
+cts post-repair setup_violation_count
+--------------------------------------------------------------------------
+setup violation count 1
+
+==========================================================================
+cts post-repair hold_violation_count
+--------------------------------------------------------------------------
+hold violation count 1
+
+==========================================================================
+cts post-repair critical path delay
+--------------------------------------------------------------------------
+660.4434
+
+==========================================================================
+cts post-repair critical path slack
+--------------------------------------------------------------------------
+-154.5542
+
+==========================================================================
+cts post-repair slack div critical path delay
+--------------------------------------------------------------------------
+-23.401581
+
+==========================================================================
+cts post-repair report_design_area
+--------------------------------------------------------------------------
+Design area 2522 u^2 45% utilization.
+
+Placement Analysis
+---------------------------------
+total displacement        254.7 u
+average displacement        0.0 u
+max displacement            3.7 u
+original HPWL           72763.8 u
+legalized HPWL          74140.8 u
+delta HPWL                    2 %
+
+Repair setup and hold violations...
+TNS end percent 100
+[INFO RSZ-0040] Inserted 2598 buffers.
+[INFO RSZ-0041] Resized 537 instances.
+[INFO RSZ-0043] Swapped pins on 572 instances.
+[WARNING RSZ-0062] Unable to repair all setup violations.
+[INFO RSZ-0046] Found 260 endpoints with hold violations.
+[INFO RSZ-0032] Inserted 671 hold buffers.
+Placement Analysis
+---------------------------------
+total displacement       5329.0 u
+average displacement        0.2 u
+max displacement            9.1 u
+original HPWL           86646.1 u
+legalized HPWL          91242.7 u
+delta HPWL                    5 %
+
+
+==========================================================================
+cts final check_setup
+--------------------------------------------------------------------------
+
+==========================================================================
+cts final report_tns
+--------------------------------------------------------------------------
+tns -1899.22
+
+==========================================================================
+cts final report_wns
+--------------------------------------------------------------------------
+wns -31.35
+
+==========================================================================
+cts final report_worst_slack
+--------------------------------------------------------------------------
+worst slack -31.35
+
+==========================================================================
+cts final report_clock_skew
+--------------------------------------------------------------------------
+Clock clk
+Latency      CRPR       Skew
+_44089_/CLK v
+ 114.94
+_44190_/CLK v
+ 130.48      0.00     -15.53
+
+
+==========================================================================
+cts final report_checks -path_delay min
+--------------------------------------------------------------------------
+Startpoint: text_in[44] (input port clocked by clk)
+Endpoint: _43865_ (falling edge-triggered flip-flop clocked by clk')
+Path Group: clk
+Path Type: min
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock clk (rise edge)
+                          0.00    0.00   clock network delay (propagated)
+                         80.00   80.00 ^ input external delay
+                  0.00    0.00   80.00 ^ text_in[44] (in)
+     1    0.89                           text_in[44] (net)
+                  0.09    0.03   80.03 ^ hold3230/A (BUFx2_ASAP7_75t_R)
+                  5.22   10.03   90.06 ^ hold3230/Y (BUFx2_ASAP7_75t_R)
+     1    0.64                           net3635 (net)
+                  5.22    0.01   90.07 ^ input197/A (BUFx2_ASAP7_75t_R)
+                  5.22   11.61  101.68 ^ input197/Y (BUFx2_ASAP7_75t_R)
+     1    0.63                           net197 (net)
+                  5.22    0.01  101.68 ^ hold3231/A (BUFx2_ASAP7_75t_R)
+                  5.55   11.80  113.48 ^ hold3231/Y (BUFx2_ASAP7_75t_R)
+     1    0.76                           net3636 (net)
+                  5.55    0.02  113.50 ^ _43587_/A2 (AO21x1_ASAP7_75t_R)
+                  6.18   12.12  125.62 ^ _43587_/Y (AO21x1_ASAP7_75t_R)
+     1    0.59                           _00974_ (net)
+                  6.18    0.00  125.62 ^ hold3232/A (BUFx2_ASAP7_75t_R)
+                  5.34   11.97  137.59 ^ hold3232/Y (BUFx2_ASAP7_75t_R)
+     1    0.68                           net3637 (net)
+                  5.34    0.01  137.60 ^ _43865_/D (DFFLQNx2_ASAP7_75t_R)
+                                137.60   data arrival time
+
+                          0.00    0.00   clock clk' (fall edge)
+                          0.00    0.00   clock source latency
+                  0.00    0.00    0.00 ^ clk (in)
+     1    8.79                           clk (net)
+                 15.85    5.00    5.00 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.68   23.28   28.28 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.23                           clknet_0_clk (net)
+                 13.79    0.69   28.97 ^ clkbuf_1_1__f_clk/A (BUFx4_ASAP7_75t_R)
+                 44.09   34.09   63.06 ^ clkbuf_1_1__f_clk/Y (BUFx4_ASAP7_75t_R)
+    10   23.71                           clknet_1_1__leaf_clk (net)
+                 46.90    5.94   69.00 ^ clkbuf_leaf_10_clk/A (BUFx4_ASAP7_75t_R)
+                 47.30   45.78  114.78 ^ clkbuf_leaf_10_clk/Y (BUFx4_ASAP7_75t_R)
+    30   26.41                           clknet_leaf_10_clk (net)
+                 47.41    1.34  116.12 ^ _448_478/A (INVx1_ASAP7_75t_R)
+                 12.49    9.69  125.81 v _448_478/Y (INVx1_ASAP7_75t_R)
+     1    0.71                           net883 (net)
+                 12.49    0.02  125.83 v _43865_/CLK (DFFLQNx2_ASAP7_75t_R)
+                          0.00  125.83   clock reconvergence pessimism
+                         11.76  137.60   library hold time
+                                137.60   data required time
+-----------------------------------------------------------------------------
+                                137.60   data required time
+                               -137.60   data arrival time
+-----------------------------------------------------------------------------
+                                  0.00   slack (MET)
+
+
+
+==========================================================================
+cts final report_checks -path_delay max
+--------------------------------------------------------------------------
+Startpoint: _44193_ (falling edge-triggered flip-flop clocked by clk')
+Endpoint: _44121_ (falling edge-triggered flip-flop clocked by clk')
+Path Group: clk
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock clk' (fall edge)
+                          0.00    0.00   clock source latency
+                  0.00    0.00    0.00 ^ clk (in)
+     1    8.79                           clk (net)
+                 15.85    5.00    5.00 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.68   23.28   28.28 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.23                           clknet_0_clk (net)
+                 13.79    0.69   28.97 ^ clkbuf_1_1__f_clk/A (BUFx4_ASAP7_75t_R)
+                 44.09   34.09   63.06 ^ clkbuf_1_1__f_clk/Y (BUFx4_ASAP7_75t_R)
+    10   23.71                           clknet_1_1__leaf_clk (net)
+                 46.66    5.70   68.76 ^ clkbuf_leaf_2_clk/A (BUFx4_ASAP7_75t_R)
+                 51.74   45.94  114.70 ^ clkbuf_leaf_2_clk/Y (BUFx4_ASAP7_75t_R)
+    30   28.41                           clknet_leaf_2_clk (net)
+                 51.74    0.03  114.73 ^ _148_150/A (INVx1_ASAP7_75t_R)
+                 12.13    9.20  123.93 v _148_150/Y (INVx1_ASAP7_75t_R)
+     1    0.58                           net555 (net)
+                 12.13    0.01  123.93 v _44193_/CLK (DFFLQNx3_ASAP7_75t_R)
+                 20.81   52.36  176.30 v _44193_/QN (DFFLQNx3_ASAP7_75t_R)
+     1    2.62                           _00543_ (net)
+                 20.81    0.01  176.31 v rebuffer816/A (BUFx12f_ASAP7_75t_R)
+                 15.03   17.48  193.79 v rebuffer816/Y (BUFx12f_ASAP7_75t_R)
+     3   18.70                           net1221 (net)
+                 27.95    7.65  201.44 v rebuffer820/A (BUFx12f_ASAP7_75t_R)
+                  9.38   19.45  220.89 v rebuffer820/Y (BUFx12f_ASAP7_75t_R)
+     7    9.40                           net1225 (net)
+                  9.45    0.45  221.34 v _35344_/A (NOR2x2_ASAP7_75t_R)
+                 14.71   11.28  232.62 ^ _35344_/Y (NOR2x2_ASAP7_75t_R)
+     3    2.77                           _05737_ (net)
+                 14.71    0.01  232.63 ^ rebuffer2334/A (BUFx6f_ASAP7_75t_R)
+                 11.62   16.57  249.20 ^ rebuffer2334/Y (BUFx6f_ASAP7_75t_R)
+     4    7.86                           net2739 (net)
+                 11.66    0.38  249.57 ^ rebuffer557/A (BUFx6f_ASAP7_75t_R)
+                  8.84   14.64  264.21 ^ rebuffer557/Y (BUFx6f_ASAP7_75t_R)
+     2    5.43                           net962 (net)
+                  8.84    0.06  264.27 ^ _35353_/A (NAND2x2_ASAP7_75t_R)
+                 26.40   12.46  276.73 v _35353_/Y (NAND2x2_ASAP7_75t_R)
+     6    5.90                           _05747_ (net)
+                 26.42    0.40  277.13 v _35358_/A2 (AO21x1_ASAP7_75t_R)
+                 12.42   21.63  298.76 v _35358_/Y (AO21x1_ASAP7_75t_R)
+     2    1.73                           _05753_ (net)
+                 12.42    0.03  298.79 v _35367_/A (NAND2x1_ASAP7_75t_R)
+                 23.26   16.91  315.71 ^ _35367_/Y (NAND2x1_ASAP7_75t_R)
+     1    2.51                           _05763_ (net)
+                 23.26    0.14  315.85 ^ _35385_/B (NOR2x2_ASAP7_75t_R)
+                 15.34   13.68  329.52 v _35385_/Y (NOR2x2_ASAP7_75t_R)
+     1    2.91                           _05783_ (net)
+                 15.34    0.04  329.56 v _35393_/A (NAND3x2_ASAP7_75t_R)
+                 32.59   16.35  345.91 ^ _35393_/Y (NAND3x2_ASAP7_75t_R)
+     2    4.13                           _05791_ (net)
+                 32.60    0.13  346.04 ^ _35394_/B (NOR2x1_ASAP7_75t_R)
+                 22.94   18.37  364.41 v _35394_/Y (NOR2x1_ASAP7_75t_R)
+     1    2.26                           _05792_ (net)
+                 22.94    0.03  364.45 v _35395_/B (NAND2x2_ASAP7_75t_R)
+                 44.94   24.52  388.97 ^ _35395_/Y (NAND2x2_ASAP7_75t_R)
+     3    8.90                           _05794_ (net)
+                 45.16    1.75  390.72 ^ rebuffer1573/A (BUFx12f_ASAP7_75t_R)
+                 11.98   20.67  411.39 ^ rebuffer1573/Y (BUFx12f_ASAP7_75t_R)
+     5   10.77                           net1978 (net)
+                 13.40    2.16  413.55 ^ _38438_/A1 (AOI21x1_ASAP7_75t_R)
+                 19.08   11.52  425.07 v _38438_/Y (AOI21x1_ASAP7_75t_R)
+     2    2.12                           _09131_ (net)
+                 19.08    0.03  425.10 v _38439_/A (INVx1_ASAP7_75t_R)
+                 17.28   13.36  438.46 ^ _38439_/Y (INVx1_ASAP7_75t_R)
+     1    2.11                           _09132_ (net)
+                 17.28    0.02  438.48 ^ _38441_/A (NAND2x2_ASAP7_75t_R)
+                 33.38   20.05  458.53 v _38441_/Y (NAND2x2_ASAP7_75t_R)
+     6   10.82                           _09134_ (net)
+                 33.41    0.57  459.10 v _38598_/A (XOR2x1_ASAP7_75t_R)
+                 15.75   26.53  485.63 v _38598_/Y (XOR2x1_ASAP7_75t_R)
+     1    1.09                           _09299_ (net)
+                 15.75    0.01  485.65 v _38599_/A (NAND2x1_ASAP7_75t_R)
+                 15.14   14.00  499.65 ^ _38599_/Y (NAND2x1_ASAP7_75t_R)
+     1    1.18                           _09300_ (net)
+                 15.14    0.02  499.67 ^ _38600_/A2 (AOI21x1_ASAP7_75t_R)
+                 30.56    8.62  508.28 v _38600_/Y (AOI21x1_ASAP7_75t_R)
+     1    1.15                           _09301_ (net)
+                 30.56    0.02  508.30 v _38602_/A2 (OAI21x1_ASAP7_75t_R)
+                 21.69   16.81  525.11 ^ _38602_/Y (OAI21x1_ASAP7_75t_R)
+     1    2.22                           _09303_ (net)
+                 21.69    0.02  525.13 ^ _38620_/B (NAND2x2_ASAP7_75t_R)
+                 20.74   14.73  539.85 v _38620_/Y (NAND2x2_ASAP7_75t_R)
+     1    5.37                           _00042_ (net)
+                 21.93    2.60  542.45 v _44121_/D (DFFLQNx3_ASAP7_75t_R)
+                                542.45   data arrival time
+
+                        400.00  400.00   clock clk' (fall edge)
+                          0.00  400.00   clock source latency
+                  0.00    0.00  400.00 ^ clk (in)
+     1    8.79                           clk (net)
+                 15.85    5.00  405.00 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.68   23.28  428.28 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.23                           clknet_0_clk (net)
+                 13.83    0.78  429.07 ^ clkbuf_1_0__f_clk/A (BUFx4_ASAP7_75t_R)
+                 38.53   32.48  461.54 ^ clkbuf_1_0__f_clk/Y (BUFx4_ASAP7_75t_R)
+     8   20.30                           clknet_1_0__leaf_clk (net)
+                 38.59    0.93  462.48 ^ clkbuf_leaf_15_clk/A (BUFx4_ASAP7_75t_R)
+                 50.73   45.70  508.18 ^ clkbuf_leaf_15_clk/Y (BUFx4_ASAP7_75t_R)
+    30   28.70                           clknet_leaf_15_clk (net)
+                 51.00    2.08  510.26 ^ _198_222/A (INVx1_ASAP7_75t_R)
+                 12.18    9.28  519.54 v _198_222/Y (INVx1_ASAP7_75t_R)
+     1    0.60                           net627 (net)
+                 12.18    0.01  519.55 v _44121_/CLK (DFFLQNx3_ASAP7_75t_R)
+                          0.00  519.55   clock reconvergence pessimism
+                         -8.44  511.11   library setup time
+                                511.11   data required time
+-----------------------------------------------------------------------------
+                                511.11   data required time
+                               -542.45   data arrival time
+-----------------------------------------------------------------------------
+                                -31.35   slack (VIOLATED)
+
+
+
+==========================================================================
+cts final report_checks -unconstrained
+--------------------------------------------------------------------------
+Startpoint: _44193_ (falling edge-triggered flip-flop clocked by clk')
+Endpoint: _44121_ (falling edge-triggered flip-flop clocked by clk')
+Path Group: clk
+Path Type: max
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock clk' (fall edge)
+                          0.00    0.00   clock source latency
+                  0.00    0.00    0.00 ^ clk (in)
+     1    8.79                           clk (net)
+                 15.85    5.00    5.00 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.68   23.28   28.28 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.23                           clknet_0_clk (net)
+                 13.79    0.69   28.97 ^ clkbuf_1_1__f_clk/A (BUFx4_ASAP7_75t_R)
+                 44.09   34.09   63.06 ^ clkbuf_1_1__f_clk/Y (BUFx4_ASAP7_75t_R)
+    10   23.71                           clknet_1_1__leaf_clk (net)
+                 46.66    5.70   68.76 ^ clkbuf_leaf_2_clk/A (BUFx4_ASAP7_75t_R)
+                 51.74   45.94  114.70 ^ clkbuf_leaf_2_clk/Y (BUFx4_ASAP7_75t_R)
+    30   28.41                           clknet_leaf_2_clk (net)
+                 51.74    0.03  114.73 ^ _148_150/A (INVx1_ASAP7_75t_R)
+                 12.13    9.20  123.93 v _148_150/Y (INVx1_ASAP7_75t_R)
+     1    0.58                           net555 (net)
+                 12.13    0.01  123.93 v _44193_/CLK (DFFLQNx3_ASAP7_75t_R)
+                 20.81   52.36  176.30 v _44193_/QN (DFFLQNx3_ASAP7_75t_R)
+     1    2.62                           _00543_ (net)
+                 20.81    0.01  176.31 v rebuffer816/A (BUFx12f_ASAP7_75t_R)
+                 15.03   17.48  193.79 v rebuffer816/Y (BUFx12f_ASAP7_75t_R)
+     3   18.70                           net1221 (net)
+                 27.95    7.65  201.44 v rebuffer820/A (BUFx12f_ASAP7_75t_R)
+                  9.38   19.45  220.89 v rebuffer820/Y (BUFx12f_ASAP7_75t_R)
+     7    9.40                           net1225 (net)
+                  9.45    0.45  221.34 v _35344_/A (NOR2x2_ASAP7_75t_R)
+                 14.71   11.28  232.62 ^ _35344_/Y (NOR2x2_ASAP7_75t_R)
+     3    2.77                           _05737_ (net)
+                 14.71    0.01  232.63 ^ rebuffer2334/A (BUFx6f_ASAP7_75t_R)
+                 11.62   16.57  249.20 ^ rebuffer2334/Y (BUFx6f_ASAP7_75t_R)
+     4    7.86                           net2739 (net)
+                 11.66    0.38  249.57 ^ rebuffer557/A (BUFx6f_ASAP7_75t_R)
+                  8.84   14.64  264.21 ^ rebuffer557/Y (BUFx6f_ASAP7_75t_R)
+     2    5.43                           net962 (net)
+                  8.84    0.06  264.27 ^ _35353_/A (NAND2x2_ASAP7_75t_R)
+                 26.40   12.46  276.73 v _35353_/Y (NAND2x2_ASAP7_75t_R)
+     6    5.90                           _05747_ (net)
+                 26.42    0.40  277.13 v _35358_/A2 (AO21x1_ASAP7_75t_R)
+                 12.42   21.63  298.76 v _35358_/Y (AO21x1_ASAP7_75t_R)
+     2    1.73                           _05753_ (net)
+                 12.42    0.03  298.79 v _35367_/A (NAND2x1_ASAP7_75t_R)
+                 23.26   16.91  315.71 ^ _35367_/Y (NAND2x1_ASAP7_75t_R)
+     1    2.51                           _05763_ (net)
+                 23.26    0.14  315.85 ^ _35385_/B (NOR2x2_ASAP7_75t_R)
+                 15.34   13.68  329.52 v _35385_/Y (NOR2x2_ASAP7_75t_R)
+     1    2.91                           _05783_ (net)
+                 15.34    0.04  329.56 v _35393_/A (NAND3x2_ASAP7_75t_R)
+                 32.59   16.35  345.91 ^ _35393_/Y (NAND3x2_ASAP7_75t_R)
+     2    4.13                           _05791_ (net)
+                 32.60    0.13  346.04 ^ _35394_/B (NOR2x1_ASAP7_75t_R)
+                 22.94   18.37  364.41 v _35394_/Y (NOR2x1_ASAP7_75t_R)
+     1    2.26                           _05792_ (net)
+                 22.94    0.03  364.45 v _35395_/B (NAND2x2_ASAP7_75t_R)
+                 44.94   24.52  388.97 ^ _35395_/Y (NAND2x2_ASAP7_75t_R)
+     3    8.90                           _05794_ (net)
+                 45.16    1.75  390.72 ^ rebuffer1573/A (BUFx12f_ASAP7_75t_R)
+                 11.98   20.67  411.39 ^ rebuffer1573/Y (BUFx12f_ASAP7_75t_R)
+     5   10.77                           net1978 (net)
+                 13.40    2.16  413.55 ^ _38438_/A1 (AOI21x1_ASAP7_75t_R)
+                 19.08   11.52  425.07 v _38438_/Y (AOI21x1_ASAP7_75t_R)
+     2    2.12                           _09131_ (net)
+                 19.08    0.03  425.10 v _38439_/A (INVx1_ASAP7_75t_R)
+                 17.28   13.36  438.46 ^ _38439_/Y (INVx1_ASAP7_75t_R)
+     1    2.11                           _09132_ (net)
+                 17.28    0.02  438.48 ^ _38441_/A (NAND2x2_ASAP7_75t_R)
+                 33.38   20.05  458.53 v _38441_/Y (NAND2x2_ASAP7_75t_R)
+     6   10.82                           _09134_ (net)
+                 33.41    0.57  459.10 v _38598_/A (XOR2x1_ASAP7_75t_R)
+                 15.75   26.53  485.63 v _38598_/Y (XOR2x1_ASAP7_75t_R)
+     1    1.09                           _09299_ (net)
+                 15.75    0.01  485.65 v _38599_/A (NAND2x1_ASAP7_75t_R)
+                 15.14   14.00  499.65 ^ _38599_/Y (NAND2x1_ASAP7_75t_R)
+     1    1.18                           _09300_ (net)
+                 15.14    0.02  499.67 ^ _38600_/A2 (AOI21x1_ASAP7_75t_R)
+                 30.56    8.62  508.28 v _38600_/Y (AOI21x1_ASAP7_75t_R)
+     1    1.15                           _09301_ (net)
+                 30.56    0.02  508.30 v _38602_/A2 (OAI21x1_ASAP7_75t_R)
+                 21.69   16.81  525.11 ^ _38602_/Y (OAI21x1_ASAP7_75t_R)
+     1    2.22                           _09303_ (net)
+                 21.69    0.02  525.13 ^ _38620_/B (NAND2x2_ASAP7_75t_R)
+                 20.74   14.73  539.85 v _38620_/Y (NAND2x2_ASAP7_75t_R)
+     1    5.37                           _00042_ (net)
+                 21.93    2.60  542.45 v _44121_/D (DFFLQNx3_ASAP7_75t_R)
+                                542.45   data arrival time
+
+                        400.00  400.00   clock clk' (fall edge)
+                          0.00  400.00   clock source latency
+                  0.00    0.00  400.00 ^ clk (in)
+     1    8.79                           clk (net)
+                 15.85    5.00  405.00 ^ clkbuf_0_clk/A (BUFx4_ASAP7_75t_R)
+                 13.68   23.28  428.28 ^ clkbuf_0_clk/Y (BUFx4_ASAP7_75t_R)
+     2    5.23                           clknet_0_clk (net)
+                 13.83    0.78  429.07 ^ clkbuf_1_0__f_clk/A (BUFx4_ASAP7_75t_R)
+                 38.53   32.48  461.54 ^ clkbuf_1_0__f_clk/Y (BUFx4_ASAP7_75t_R)
+     8   20.30                           clknet_1_0__leaf_clk (net)
+                 38.59    0.93  462.48 ^ clkbuf_leaf_15_clk/A (BUFx4_ASAP7_75t_R)
+                 50.73   45.70  508.18 ^ clkbuf_leaf_15_clk/Y (BUFx4_ASAP7_75t_R)
+    30   28.70                           clknet_leaf_15_clk (net)
+                 51.00    2.08  510.26 ^ _198_222/A (INVx1_ASAP7_75t_R)
+                 12.18    9.28  519.54 v _198_222/Y (INVx1_ASAP7_75t_R)
+     1    0.60                           net627 (net)
+                 12.18    0.01  519.55 v _44121_/CLK (DFFLQNx3_ASAP7_75t_R)
+                          0.00  519.55   clock reconvergence pessimism
+                         -8.44  511.11   library setup time
+                                511.11   data required time
+-----------------------------------------------------------------------------
+                                511.11   data required time
+                               -542.45   data arrival time
+-----------------------------------------------------------------------------
+                                -31.35   slack (VIOLATED)
+
+
+
+==========================================================================
+cts final report_check_types -max_slew -max_cap -max_fanout -violators
+--------------------------------------------------------------------------
+
+==========================================================================
+cts final max_slew_check_slack
+--------------------------------------------------------------------------
+141.40316772460938
+
+==========================================================================
+cts final max_slew_check_limit
+--------------------------------------------------------------------------
+320.0
+
+==========================================================================
+cts final max_slew_check_slack_limit
+--------------------------------------------------------------------------
+0.4419
+
+==========================================================================
+cts final max_fanout_check_slack
+--------------------------------------------------------------------------
+1.0000000150474662e+30
+
+==========================================================================
+cts final max_fanout_check_limit
+--------------------------------------------------------------------------
+1.0000000150474662e+30
+
+==========================================================================
+cts final max_capacitance_check_slack
+--------------------------------------------------------------------------
+16.128324508666992
+
+==========================================================================
+cts final max_capacitance_check_limit
+--------------------------------------------------------------------------
+23.040000915527344
+
+==========================================================================
+cts final max_capacitance_check_slack_limit
+--------------------------------------------------------------------------
+0.7000
+
+==========================================================================
+cts final max_slew_violation_count
+--------------------------------------------------------------------------
+max slew violation count 0
+
+==========================================================================
+cts final max_fanout_violation_count
+--------------------------------------------------------------------------
+max fanout violation count 0
+
+==========================================================================
+cts final max_cap_violation_count
+--------------------------------------------------------------------------
+max cap violation count 0
+
+==========================================================================
+cts final setup_violation_count
+--------------------------------------------------------------------------
+setup violation count 1
+
+==========================================================================
+cts final hold_violation_count
+--------------------------------------------------------------------------
+hold violation count 0
+
+==========================================================================
+cts final critical path delay
+--------------------------------------------------------------------------
+542.4547
+
+==========================================================================
+cts final critical path slack
+--------------------------------------------------------------------------
+-31.3465
+
+==========================================================================
+cts final slack div critical path delay
+--------------------------------------------------------------------------
+-5.778639
+
+==========================================================================
+cts final report_design_area
+--------------------------------------------------------------------------
+Design area 2844 u^2 51% utilization.
+
+Elapsed time: 1:16.86[h:]min:sec. CPU time: user 76.78 sys 0.06 (99%). Peak memory: 335980KB.

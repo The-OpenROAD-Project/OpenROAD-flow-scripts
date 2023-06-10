@@ -1,0 +1,22 @@
+{
+	"run__flow__platform__time_units": "1ps",
+	"run__flow__platform__capacitance_units": "1fF",
+	"run__flow__platform__resistance_units": "1kohm",
+	"run__flow__platform__voltage_units": "1v",
+	"run__flow__platform__current_units": "1mA",
+	"run__flow__platform__power_units": "1pW",
+	"run__flow__platform__distance_units": "1um",
+	"floorplan__timing__setup__tns": -210064,
+	"floorplan__timing__setup__ws": -1777.33,
+	"floorplan__design__io": 388,
+	"floorplan__design__die__area": 6214.96,
+	"floorplan__design__core__area": 5569.33,
+	"floorplan__design__instance__count": 20872,
+	"floorplan__design__instance__area": 2128.42,
+	"floorplan__design__instance__count__stdcell": 20872,
+	"floorplan__design__instance__area__stdcell": 2128.42,
+	"floorplan__design__instance__count__macros": 0,
+	"floorplan__design__instance__area__macros": 0,
+	"floorplan__design__instance__utilization": 0.382168,
+	"floorplan__design__instance__utilization__stdcell": 0.382168
+}

@@ -22,6 +22,9 @@ if { [info exists ::env(USE_LSORACLE)] } {
     techmap
 }
 
+# Rename cells based on net names to create reasonable register names
+renames -wire
+
 # Optimize the design
 opt -purge
 
