@@ -53,8 +53,7 @@ design first to validate your flow and tool setup.
 
 ### Adding a New Design
 
-To add a new design, we recommend looking at the included designs for
-examples of how to set one up.
+To add a new design to the `flow`, refer to the document [here](AddingNewDesign.md).
 
 ## Platforms
 
