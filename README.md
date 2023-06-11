@@ -13,10 +13,6 @@ flow stages through Tcl commands and Python APIs.
 
 ## Tool Installation
 
-### Local Installation
-
-Document for detailed local installation steps found [here](./docs/user/BuildLocally.md).
-
 ### Docker Based Installation
 
 To ease dependency installation issues, ORFS uses docker images.
@@ -35,6 +31,13 @@ To manage docker as non-root user and verify that you can run
 
 Document for detailed steps on docker based installation found
 [here](./docs/user/BuildWithDocker.md).
+
+### Prebuilt Binaries
+Document for installing prebuilt binaries courtesy of Precision Innovations found [here](./docs/user/BuildWithPrebuilt.md).
+
+### Local Installation
+
+Document for detailed local installation steps found [here](./docs/user/BuildLocally.md).
 
 ## Using the Flow
 

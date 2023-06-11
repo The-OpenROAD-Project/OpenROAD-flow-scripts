@@ -21,6 +21,8 @@ entries:
     title: Build OpenROAD Flow
   - file: user/BuildWithDocker
     title: Build With Docker
+  - file: user/BuildWithPrebuilt
+    title: Build With Prebuilt Binaries
   - file: user/BuildLocally
     title: Build Locally
   - file: user/UserGuide
