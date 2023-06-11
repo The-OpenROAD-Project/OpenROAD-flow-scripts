@@ -87,7 +87,7 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_symbiflow_theme"
+html_theme = "sphinx_book_theme"
 
 html_theme_options = {
     # Repository integration
@@ -125,8 +125,6 @@ html_theme_options = {
     #(Default: indigo)
     'color_accent': 'blue',
 
-    # Hide the symbiflow links
-    'hide_symbiflow_links': True,
 
     "html_minify": False,
     "html_prettify": True,
