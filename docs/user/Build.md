@@ -1,5 +1,8 @@
 # Build OpenROAD Flow
 
+We support three major ways of installation. They are: [Docker](./BuildWithDocker.md), [Prebuilt Binaries](./BuildWithPrebuilt.md), and finally [local installation](./BuildLocally.md). You may also choose to follow this script to customise your build process. 
+
+
 > **Warning:**
 > On CentOS 7 you need to manually make sure the PATH variable includes at
 > least one of the new version of GCC/Clang. To enable GCC-8 or Clang-7 you
@@ -43,11 +46,3 @@ Options for `./build_openroad.sh` script
 | `--docker-args-overwrite`     | Only applicable for docker builds. Do not use default flags set by this script for Docker builds.  |
 | `--docker-args STRING`        | Only applicable for docker builds. Additional compilation flags for Docker build.     |
 
-
-## Build from sources locally
-
-Build from sources locally, [instructions here](./BuildLocally.md).
-
-## Build from sources using Docker
-
-Build from sources using Docker, [instructions here](./BuildWithDocker.md).
