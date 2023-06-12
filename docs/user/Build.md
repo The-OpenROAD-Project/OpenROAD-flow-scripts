@@ -1,7 +1,12 @@
 # Build OpenROAD Flow
 
-We support three major ways of installation. They are: [Docker](./BuildWithDocker.md), [Prebuilt Binaries](./BuildWithPrebuilt.md), and finally [local installation](./BuildLocally.md). You may also choose to follow this script to customise your build process. 
+We support three major ways of installation.
 
+- [Docker](./BuildWithDocker.md)
+- [Prebuilt Binaries](./BuildWithPrebuilt.md)
+- [Local Installation](./BuildLocally.md) 
+
+You may also choose to follow this script to customise your build process. 
 
 > **Warning:**
 > On CentOS 7 you need to manually make sure the PATH variable includes at
