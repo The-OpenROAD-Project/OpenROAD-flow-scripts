@@ -48,9 +48,8 @@ make gui_final
 
 ## Compiling and debugging in Visual Studio Code
 
-Set up environment variables using this script, then start Visual Studio Code. Please ensure [CMake plugins](https://code.visualstudio.com/docs/cpp/cmake-linux) are installed.
+Set up environment variables using `dev_env.sh`, then start Visual Studio Code. Please ensure [CMake plugins](https://code.visualstudio.com/docs/cpp/cmake-linux) are installed.
 
 ``` shell
 . ./dev_env.sh
-code tools/OpenROAD/
 ```
