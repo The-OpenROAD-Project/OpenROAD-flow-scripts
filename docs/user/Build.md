@@ -1,6 +1,6 @@
 # Build OpenROAD Flow
 
-We support three major ways of installation.
+We support three major ways of installation:
 
 - [Docker](./BuildWithDocker.md)
 - [Prebuilt Binaries](./BuildWithPrebuilt.md)
