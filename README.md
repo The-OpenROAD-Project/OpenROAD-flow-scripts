@@ -32,7 +32,7 @@ To manage docker as non-root user and verify that you can run
 Document for detailed steps on docker based installation found
 [here](./docs/user/BuildWithDocker.md).
 
-### Prebuilt Binaries
+### Pre-built Binaries
 There are several third-party vendors that distribute pre-built versions of the applications required by ORFS including the OpenROAD application, Yosys and Klayout. Note that the version you will install from a third-party other than [Precision Innovations](https://precisioninno.com/) is not guaranteed to work with any version of ORFS. See instructions [here](./docs/user/BuildWithPrebuilt.md).
 
 ### Local Installation

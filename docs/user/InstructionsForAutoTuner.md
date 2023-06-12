@@ -1,9 +1,9 @@
 # Instructions for AutoTuner with Ray
 
-_AutoTuner_ is a "no-human-in-loop" parameter tuning framework for commercial and academic RTL-to-GDS flows. 
-AutoTuner provides a generic interface where users can define parameter configuration as JSON objects. 
-This enables AutoTuner to easily support various tools and flows. AutoTuner also utilizes [METRICS2.1](https://github.com/ieee-ceda-datc/datc-rdf-Metrics4ML) to capture PPA 
-of individual search trials. With the abundant features of METRICS2.1, users can explore various reward functions that steer the flow autotuning to different PPA goals. 
+_AutoTuner_ is a "no-human-in-loop" parameter tuning framework for commercial and academic RTL-to-GDS flows.
+AutoTuner provides a generic interface where users can define parameter configuration as JSON objects.
+This enables AutoTuner to easily support various tools and flows. AutoTuner also utilizes [METRICS2.1](https://github.com/ieee-ceda-datc/datc-rdf-Metrics4ML) to capture PPA
+of individual search trials. With the abundant features of METRICS2.1, users can explore various reward functions that steer the flow autotuning to different PPA goals.
 
 AutoTuner provides two main functionalities as follows.
 * Automatic hyperparameter tuning framework for OpenROAD-flow-script (ORFS)
@@ -11,9 +11,9 @@ AutoTuner provides two main functionalities as follows.
 
 
 AutoTuner contains top-level Python script for ORFS, each of which implements a different search algorithm. Current supported search algorithms are as follows.
-* Random/Grid Search 
+* Random/Grid Search
 * Population Based Training ([PBT](https://deepmind.com/blog/article/population-based-training-neural-networks))
-* Tree Parzen Estimator ([HyperOpt](http://hyperopt.github.io/hyperopt))
+* Tree Parzen Estimator ([HyperOpt](https://hyperopt.github.io/hyperopt))
 * Bayesian + Multi-Armed Bandit ([AxSearch](https://ax.dev/))
 * Tree Parzen Estimator + Covariance Matrix Adaptation Evolution Strategy ([Optuna](https://optuna.org/))
 * Evolutionary Algorithm ([Nevergrad](https://github.com/facebookresearch/nevergrad))
@@ -28,27 +28,27 @@ Sample JSON file for sky130hd aes design: [[link]](https://github.com/The-OpenRO
 Simple Example:
 ```json
 {
-    "_SDC_FILE_PATH": "constraint.sdc",     
-    "_SDC_CLK_PERIOD": {                    
-        "type": "float",                    
-        "minmax": [                         
-            1.0,                            
+    "_SDC_FILE_PATH": "constraint.sdc",
+    "_SDC_CLK_PERIOD": {
+        "type": "float",
+        "minmax": [
+            1.0,
             3.7439
         ],
-        "step": 0                           
+        "step": 0
     },
-    "CORE_MARGIN": {                        
+    "CORE_MARGIN": {
         "type": "int",
         "minmax": [
             2,
             2
         ],
-        "step": 0                           
+        "step": 0
     },
 }
 ```
 
-* `"_SDC_FILE_PATH"`, `"_SDC_CLK_PERIOD"`, `"CORE_MARGIN"`: Parameter names for sweeping/tuning. 
+* `"_SDC_FILE_PATH"`, `"_SDC_CLK_PERIOD"`, `"CORE_MARGIN"`: Parameter names for sweeping/tuning.
 * `"type"`: Parameter type ("float" or "int") for sweeping/tuning
 * `"minmax"`: Min-to-max range for sweeping/tuning. The unit follows the default value of each technology std cell library.
 * `"step"`: Parameter step within the minmax range. Step 0 for type "float" means continuous step for sweeping/tuning. Step 0 for type "int" means the constant parameter.
@@ -90,30 +90,30 @@ For FastRoute you can use:
 ### General Information
 
 `distributed.py` scripts handles sweeping and tuning of ORFS parameters.
- 
+
 For both sweep and tune modes <mode>:
 ```shell
 python3 distributed.py -h
 ```
- 
+
 Note: the order of the parameters matter. Arguments `--design`, `--platform` and
 `--config` are always required and should precede <mode>.
- 
+
 * AutoTuner: `python3 distributed.py tune -h`
-    
+
 Example:
-  
+
 ```shell
 python3 distributed.py --design gcd --platform sky130hd \
                        --config ../designs/sky130hd/gcd/autotuner.json \
                        tune
 ```
-    
- 
+
+
 * Parameter sweeping: `python3 distributed.py sweep -h`
-  
+
 Example:
-  
+
 ```shell
 python3 distributed.py --design gcd --platform sky130hd \
                        --config distributed-sweep-example.json \
@@ -127,7 +127,7 @@ GCP Setup Tutorial coming soon.
 
 
 ### List of input arguments
-    
+
 * Target design
     - --design
         - Name of the design for autotuning
@@ -142,7 +142,7 @@ GCP Setup Tutorial coming soon.
         - Resume previous run
 * Git setup
     - --git-clean
-        - Clean binaries and build files 
+        - Clean binaries and build files
     - --git-clone
         - Force new git clone
     - --git-clone-args
@@ -187,14 +187,14 @@ GCP Setup Tutorial coming soon.
             - 1: also print training stderr
             - 2: also print training stdout
 
-    
-### GUI 
 
-Basically, progress is displayed at the terminal where you run, and when all runs are finished, the results are displayed. 
+### GUI
+
+Basically, progress is displayed at the terminal where you run, and when all runs are finished, the results are displayed.
 You could find the "Best config found" on the screen.
 
-To use TensorBoard GUI, run `tensorboard --logdir=./<logpath>`. While TensorBoard is running, you can open the webpage http://localhost:6006/ to see the GUI.
-    
+To use TensorBoard GUI, run `tensorboard --logdir=./<logpath>`. While TensorBoard is running, you can open the webpage `http://localhost:6006/` to see the GUI.
+
 ## Citation
 
 Please cite the following paper.
@@ -202,5 +202,5 @@ Please cite the following paper.
 * J. Jung, A. B. Kahng, S. Kim and R. Varadarajan, "METRICS2.1 and Flow Tuning in the IEEE CEDA Robust Design Flow and OpenROAD", [(.pdf)](https://vlsicad.ucsd.edu/Publications/Conferences/388/c388.pdf), [(.pptx)](https://vlsicad.ucsd.edu/Publications/Conferences/388/c388.pptx), [(.mp4)](https://vlsicad.ucsd.edu/Publications/Conferences/388/c388.mp4), Proc. ACM/IEEE International Conference on Computer-Aided Design, 2021.
 
 ## Acknowledgments
-   
+
 AutoTuner has been developed by UCSD with the OpenROAD Project.

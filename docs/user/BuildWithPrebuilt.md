@@ -5,14 +5,14 @@ Please ensure the Klayout version (denoted with `klayoutVersion` variable) is co
 
 Instructions for building:
 - [Klayout>=0.28.8](https://www.klayout.de/build.html)
-- [Yosys>=0.21](https://github.com/YosysHQ/oss-cad-suite-build#installation)
+- [Yosys>=0.21](https://github.com/YosysHQ/oss-cad-suite-build#Installation)
 
 ## Install OpenROAD
 Download pre-built binaries with self-contained dependencies
 included from the Precision Innovations' Github releases
 [here](https://github.com/Precision-Innovations/OpenROAD/actions/workflows/github-actions-build-deb-package.yml).
 
-Thanks to [Precision Innovations](http://www.precisioninno.com) for hosting and maintaining these binaries.
+Thanks to [Precision Innovations](https://precisioninno.com/) for hosting and maintaining these binaries.
 
 The following platforms are supported currently:
 - Ubuntu 20.04/22.04

@@ -73,7 +73,9 @@ docker run --rm -it \
 ```
 
 ## Docker Shell Utility
-Alternatively, use `docker_shell` to automate the above commands using the user's parameters. Do refer to the documentation [here](./DockerShell.md).
+
+Alternatively, use `docker_shell` to automate the above commands using the
+user's parameters. Do refer to the documentation [here](./DockerShell.md).
 
 ## Build Docker Image for Different OS
 
