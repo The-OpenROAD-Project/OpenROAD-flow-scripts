@@ -22,7 +22,7 @@ sudo apt install ./openroad_2.0_amd64-ubuntu20.04.deb
 
 You can install these binaries within docker as well.
 
-> **Thanks** to Precision Innovations (www.precisioninno.com) for providing
+> **Thanks** to [Precision Innovations](https://www.precisioninno.com) for providing
 > and supporting this daily release of pre built installers to the community.
 
 
