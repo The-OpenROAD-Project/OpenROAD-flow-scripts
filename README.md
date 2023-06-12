@@ -33,7 +33,7 @@ Document for detailed steps on docker based installation found
 [here](./docs/user/BuildWithDocker.md).
 
 ### Prebuilt Binaries
-There are third-party vendors that distribute prebuilt binary versions of the applications required by ORFS. OpenROAD app, Yosys and Klayout. Note that the version you will install from a third party is not guaranteed to work with any version of ORFS. See instructions [here](./docs/user/BuildWithPrebuilt.md).
+There are several third-party vendors that distribute pre-built versions of the applications required by ORFS including the OpenROAD application, Yosys and Klayout. Note that the version you will install from a third-party other than [Precision Innovations](https://precisioninno.com/) is not guaranteed to work with any version of ORFS. See instructions [here](./docs/user/BuildWithPrebuilt.md).
 
 ### Local Installation
 
