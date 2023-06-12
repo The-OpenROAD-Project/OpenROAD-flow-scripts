@@ -52,4 +52,5 @@ Set up environment variables using `dev_env.sh`, then start Visual Studio Code. 
 
 ``` shell
 . ./dev_env.sh
+code tools/OpenROAD/
 ```

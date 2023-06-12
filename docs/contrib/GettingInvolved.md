@@ -77,9 +77,9 @@ dependencies which are not necessary are less likely to be integrated.
 
 If you want to add Tcl code to define a new tool command, look at pdngen
 as an example of how to do so. Take a look at the
-[cmake file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/CMakeLists.txt)
+[CMake file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/CMakeLists.txt)
 which automatically sources the Tcl code and the
-[Tcl file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pdn/src/PdnGen.tcl)
+[Tcl file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/drt/src/TritonRoute.tcl)
 itself.
 
 To accept contributions, we require each commit to be made with a DCO (Developer

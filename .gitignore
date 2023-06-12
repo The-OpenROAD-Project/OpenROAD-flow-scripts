@@ -83,3 +83,6 @@ dependencies/
 .metals/
 perf.data
 perf.data.old
+
+docs/main
+docs/build
