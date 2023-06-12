@@ -33,7 +33,19 @@ Document for detailed steps on docker based installation found
 [here](./docs/user/BuildWithDocker.md).
 
 ### Pre-built Binaries
-There are several third-party vendors that distribute pre-built versions of the applications required by ORFS including the OpenROAD application, Yosys and Klayout. Note that the version you will install from a third-party other than [Precision Innovations](https://precisioninno.com/) is not guaranteed to work with any version of ORFS. See instructions [here](./docs/user/BuildWithPrebuilt.md).
+
+You can download, set up and run ORFS easily with pre-built
+binaries, including OpenROAD, Yosys and Klayout. See instructions
+[here](./docs/user/BuildWithPrebuilt.md).
+
+> **Thanks** to [Precision Innovations](https://precisioninno.com/) for
+> providing and supporting OpenROAD based binaries.
+
+> **Note** Only the latest version of OpenROAD is guaranteed to work with
+> the latest version of ORFS.
+
+> **Disclaimer** The versions of OpenROAD, Yosys and Klayout provided by
+> other third-party vendors are not guaranteed to work with ORFS.
 
 ### Local Installation
 
