@@ -127,67 +127,35 @@ GCP Setup Tutorial coming soon.
 
 
 ### List of input arguments
-
-* Target design
-    - --design
-        - Name of the design for autotuning
-    - --platform
-        - Name of the platform for autotuning
-* Experiment setup
-    - --config
-        - Configuration file that sets which knobs to use for autotuning
-    - --experiment
-        - Experiment name. This parameter is used to prefix the `FLOW_VARIANT` and to set the Ray log destination
-    - --resume
-        - Resume previous run
-* Git setup
-    - --git-clean
-        - Clean binaries and build files
-    - --git-clone
-        - Force new git clone
-    - --git-clone-args
-        - Additional git clone arguments
-    - --git-latest
-        - Use the latest version of OR app
-    - --git-or-branch
-        - OR app branch to use
-    - --git-orfs-branch
-        - ORFS branch to use
-    - --git-url
-        - ORFS repo URL to use
-    - --build-args
-        - Additional arguments given to `./build_openroad.sh`
-* For AutoTuner
-    - --algorithm
-        - Search algorithm to use for autotuning
-    - --eval
-        - Evaluate function to use with search algorithm
-    - --samples
-        - Number of samples for autotuning
-    - --iterations
-        - Number of iterations for autotuning
-    - --reference
-        - Reference file for use with "PPAImprov" evaluation function
-    - --perturbation
-        - Perturbation interval for PopulationBasedTraining
-    - --seed
-        - Random seed for parameter selection during autotuning
-* Workload
-    - --jobs
-        - Max number of concurrent jobs
-    - --openroad-threads
-        - Max number of threads OR app can use
-    - --server
-        - The address of Ray server to connect
-    - --port
-        - The port of Ray server to connect
-    - -v, --verbose
-        - Verbosity level
-            - 0: only print Ray status
-            - 1: also print training stderr
-            - 2: also print training stdout
-
-
+| Argument                      | Description                                                                                           |
+|-------------------------------|-------------------------------------------------------------------------------------------------------|
+| `--design`                    | Name of the design for Autotuning.                                                                    |
+| `--platform`                  | Name of the platform for Autotuning.                                                                  |
+| `--config`                    | Configuration file that sets which knobs to use for Autotuning.                                       |
+| `--experiment`                | Experiment name. This parameter is used to prefix the FLOW_VARIANT and to set the Ray log destination.|
+| `--resume`                    | Resume previous run.                                                                                  |
+| `--git_clean`                 | Clean binaries and build files. **WARNING**: may lose previous data.                                  |
+| `--git_clone`                 | Force new git clone. **WARNING**: may lose previous data.                                             |
+| `--git_clone_args`            | Additional git clone arguments.                                                                       |
+| `--git_latest`                | Use latest version of OpenROAD app.                                                                   |
+| `--git_or_branch`             | OpenROAD app branch to use.                                                                           |
+| `--git_orfs_branch`           | OpenROAD-flow-scripts branch to use.                                                                  |
+| `--git_url`                   | OpenROAD-flow-scripts repo URL to use.                                                                |
+| `--build_args`                | Additional arguments given to ./build_openroad.sh                                                     |
+| `--algorithm`                 | Search algorithm to use for Autotuning.                                                               |
+| `--eval`                      | Evalaute function to use with search algorithm.  \                                                    |
+| `--samples`                   | Number of samples for tuning.                                                                         |
+| `--iterations`                | Number of iterations for tuning.                                                                      |
+| `--resources_per_trial`       | Number of CPUs to request for each tuning job.                                                        |
+| `--reference`                 | Reference file for use with PPAImprov.                                                                |
+| `--perturbation`              | Perturbation interval for PopulationBasedTraining                                                     |
+| `--seed`                      | Random seed.                                                                                          |
+| `--jobs`                      | Max number of concurrent jobs.                                                                        |
+| `--openroad_threads`          | Max number of threads usable.                                                                         |
+| `--server`                    | The address of Ray server to connect.                                                                 |
+| `--port`                      | Tbe port of Ray server to connect.                                                                    |
+| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: also print training stdout                  |
+|                               |                                                                                                       |
 ### GUI
 
 Basically, progress is displayed at the terminal where you run, and when all runs are finished, the results are displayed.

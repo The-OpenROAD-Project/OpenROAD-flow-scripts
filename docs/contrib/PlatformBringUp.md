@@ -40,7 +40,7 @@ They include :
 Adding a new platform additionally requires the following:
 
 *   A validated installation of the OpenROAD flow scripts is available. See
-    instructions [here](../user/GettingStarted.md).
+    instructions [here](../user/FlowVariables.md).
 *   A general knowledge of VLSI design and RTL to GDS flows.  OpenROAD
     implements a fully-automated RTL-GDSII but it requires familiarity with
     the OpenROAD flow scripts to debug problems.

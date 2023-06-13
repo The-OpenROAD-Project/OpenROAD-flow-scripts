@@ -31,11 +31,11 @@ The two main directories are:
 
 ## Setup
 
-See [Getting Started](GettingStarted.md) guide.
+See [Getting Started](../index.md#getting-started-with-openroad-flow-scripts) guide.
 
 ## Using the OpenROAD Flow
 
-See the documentation [here](GettingStarted.md) for details about the
+See the documentation [here](../tutorials/FlowTutorial.md) for details about the
 flow and how to run designs through the flow.
 
 ## Using the OpenROAD App

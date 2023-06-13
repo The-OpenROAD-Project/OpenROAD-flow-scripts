@@ -127,11 +127,11 @@ flows. The two main functionalities that AutoTuner provides are:
 - Automatic hyperparameter tuning framework for OpenROAD-flow-scripts
 - Parametric sweeping experiments for OpenROAD-flow-scripts
 
-Refer to the detailed [instructions here](./user/InstructionsForAutoTuner.md) for AutoTuner.
+> **Tip**: Refer to the detailed [instructions here](./user/InstructionsForAutoTuner.md) for AutoTuner.
 
 ### Adding a Design
 
-To add a new design to the `flow`, refer to the document [here](./user/AddingNewDesign.md).
+To add a new design to the `flow` directory, refer to the document [here](./user/AddingNewDesign.md).
 
 ### Platforms
 
@@ -173,7 +173,7 @@ at `flow/results/{platform}/{design_name}/6_final.gds`
 
 ### Miscellaneous
 
-#### smoke-test harness for top-level Verilog designs
+#### Smoke-test harness for top-level Verilog designs
 
 1. Drop your Verilog files into `designs/src/harness`
 2. Start the workflow:
