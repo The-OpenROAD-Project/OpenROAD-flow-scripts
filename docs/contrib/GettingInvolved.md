@@ -75,9 +75,9 @@ project like OpenROAD with many application subcomponents, the software
 architecture can quickly get out of control. Changes with lots of new
 dependencies which are not necessary are less likely to be integrated.
 
-If you want to add Tcl code to define a new tool command, look at pdngen
+If you want to add Tcl code to define a new tool command, look at [pdngen](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/pdn)
 as an example of how to do so. Take a look at the
-[CMake file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/CMakeLists.txt)
+[CMakeLists file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/CMakeLists.txt)
 which automatically sources the Tcl code and the
 [Tcl file](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/drt/src/TritonRoute.tcl)
 itself.

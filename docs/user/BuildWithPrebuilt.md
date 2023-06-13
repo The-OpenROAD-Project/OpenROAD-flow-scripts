@@ -5,7 +5,7 @@ Please ensure the Klayout version (denoted with `klayoutVersion` variable) is co
 
 Instructions for building:
 - [Klayout>=0.28.8](https://www.klayout.de/build.html)
-- [Yosys>=0.21](https://github.com/YosysHQ/oss-cad-suite-build#Installation)
+- [Yosys>=0.21](https://github.com/YosysHQ/oss-cad-suite-build/blob/master/README.md#installation)
 
 ## Install OpenROAD
 Download pre-built binaries with self-contained dependencies

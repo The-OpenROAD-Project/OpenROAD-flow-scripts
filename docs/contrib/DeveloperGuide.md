@@ -2,7 +2,7 @@
 
 ## Building
 
-Instructions for building are available [here](../index.md#build).
+Instructions for building are available [here](../index.md#getting-started-with-openroad-flow-scripts).
 
 ## Logger
 
