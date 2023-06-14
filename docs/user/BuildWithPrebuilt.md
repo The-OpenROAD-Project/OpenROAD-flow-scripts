@@ -3,7 +3,7 @@
 ## Install Klayout and Yosys
 Please ensure the Klayout version (denoted with `klayoutVersion` variable) is consistent with the one used in [DependencyInstaller script](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/etc/DependencyInstaller.sh). 
 
-Instructions for building:
+Instructions for installing:
 - [Klayout>=0.28.8](https://www.klayout.de/build.html)
 - [Yosys>=0.21](https://github.com/YosysHQ/oss-cad-suite-build/blob/master/README.md#installation)
 
