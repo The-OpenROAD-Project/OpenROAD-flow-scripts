@@ -1,38 +1,42 @@
 root: index
 entries:
 
-- file: contrib/CODE_OF_CONDUCT
-  title: Code of Conduct
-- file: contrib/GettingInvolved
+- file: /dev/null
+  title: ORFS Documentation
+  entries:
+  - file: user/BuildWithDocker
+    title: Build With Docker
+    entries:
+    - file: user/DockerShell.md
+      title: Docker Shell utility
+  - file: user/BuildWithPrebuilt.md
+    title: Build With Pre-built Binaries
+  - file: user/BuildLocally.md
+    title: Build Locally
+  - file: user/UserGuide.md
+    title: User Guide
+  - file: user/FlowVariables.md
+    title: Flow Variables
+  - file: contrib/Metrics.md
+    title: Metrics
+  - file: user/InstructionsForAutoTuner.md
+    title: AutoTuner
+
+- file: contrib/GettingInvolved.md
   title: Getting Involved
 
 - file: contrib/DeveloperGuide.md
   title: Developer Guide
   entries:
-  - file: contrib/PlatformBringUp
+  - file: contrib/PlatformBringUp.md
     title: Guide to Integrate a New Platform into the OpenROAD Flow
-  - file: contrib/CI
+  - file: contrib/CI.md
     title: CI
 
-- file: user/GettingStarted
-  title: Getting Started with OpenROAD Flow
-  entries:
-  - file: user/Build
-    title: Build OpenROAD Flow
-  - file: user/BuildWithDocker
-    title: Build With Docker
-  - file: user/BuildLocally
-    title: Build Locally
-  - file: user/UserGuide
-    title: User Guide
-  - file: user/FlowVariables
-    title: Flow Variables
-  - file: contrib/Metrics
-    title: Metrics
-  - file: user/InstructionsForAutoTuner
-    title: AutoTuner
+- file: contrib/CODE_OF_CONDUCT.md
+  title: Code of Conduct
 
-- file: user/FAQS
+- file: user/FAQS.md
   title: FAQs
 
 - file: tutorials/FlowTutorial

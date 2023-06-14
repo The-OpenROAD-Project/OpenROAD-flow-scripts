@@ -72,6 +72,11 @@ docker run --rm -it \
            openroad/flow-$OS_NAME-builder
 ```
 
+## Docker Shell Utility
+
+Alternatively, use `docker_shell` to automate the above commands using the
+user's parameters. Do refer to the documentation [here](./DockerShell.md).
+
 ## Build Docker Image for Different OS
 
 The following instructions build the docker image with a parameterized OS

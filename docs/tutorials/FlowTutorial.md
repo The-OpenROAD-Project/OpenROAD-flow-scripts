@@ -120,17 +120,9 @@ less ./designs/sky130hd/ibex/config.mk
 You can view `ibex` design `config.mk`
 [here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/ibex/config.mk).
 
-### Adding a New Design
-
-**Note:** This step is for advanced users. If you are a beginner,
-first understand the flow by completing this tutorial and come 
-back to this step later to add a new design.
-
-To add a new design to the `flow`, refer to the document [here](../user/AddingNewDesign.md).
-
-Note: The following design-specific configuration variables are required
-to specify main design inputs such as platform, top-level design name and
-constraints. We will use default configuration variables for this tutorial.
+> **Note** The following design-specific configuration variables are required
+> to specify main design inputs such as platform, top-level design name and
+> constraints. We will use default configuration variables for this tutorial.
 
 | Variable Name      | Description                                                                                                                              |
 |--------------------|------------------------------------------------------------------------------------------------------------------------------------------|
@@ -140,6 +132,11 @@ constraints. We will use default configuration variables for this tutorial.
 | `SDC_FILE`         | The path to design `.sdc` file                                                                                                           |
 | `CORE_UTILIZATION` | The core utilization percentage.                                                                                                         |
 | `PLACE_DENSITY`    | The desired placement density of cells. It reflects how spread the cells would be on the core area. 1 = closely dense. 0 = widely spread |
+
+> **Note** To add a new design to the `flow`, refer to the document
+> [here](../user/AddingNewDesign.md). This step is for advanced users.
+> If you are a beginner, first understand the flow by completing this
+> tutorial and come back to this step later to add a new design.
 
 ### Timing Constraints
 
@@ -204,7 +201,7 @@ configuration examples using the Tcl interface and other such details.
 ### Design Goals
 
 Run the `ibex` design in ORFS automated flow from RTL-to-GDS using `sky130hd`.
-Find `ibex` design details  
+Find `ibex` design details
 [here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md)
 and the design goals are:
 
@@ -451,11 +448,11 @@ aside from the layout are docking windows that can be undocked.  Also it
 can be close and reopened from the Windows menu.
 
 
-Note:  When you are using remote access, you will need to include -Y (or -X) option in your command to 
-enable X11 applications to function properly over the network. By using the command "ssh -Y" followed 
-by the remote servers' address or hostname, you can establish a secure connection and activate X11 forwarding. 
-This feature enables you to run graphical programs on the remote server and have their windows display 
-on your local machines desktop environment. 
+Note:  When you are using remote access, you will need to include -Y (or -X) option in your command to
+enable X11 applications to function properly over the network. By using the command "ssh -Y" followed
+by the remote servers' address or hostname, you can establish a secure connection and activate X11 forwarding.
+This feature enables you to run graphical programs on the remote server and have their windows display
+on your local machines desktop environment.
 
 
 In this section, learn how to:
@@ -913,13 +910,13 @@ cd ./tools/OpenROAD/src/pad/test/
 openroad -gui
 ```
 
-Run [coyote_tc_sky130.tcl](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pad/test/coyote_tc_sky130.tcl) script
+Run [skywater130_coyote_tc.tcl](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pad/test/skywater130_coyote_tc.tcl) script
 to view IO pad placement.
 
 From the GUI `Tcl commands` section:
 
 ```
-source coyote_tc_sky130.tcl
+source skywater130_coyote_tc.tcl
 ```
 
 View the resulting IO pad ring in GUI:
@@ -1012,7 +1009,7 @@ This stage is called the pre-placement stage. Tap cells are placed in a
 regular interval in each row of placement. The maximum distance between
 the tap cells must be as per the DRC rule of that particular technology library.
 
-The figures below show two examples of tapcell insertion. When only the 
+The figures below show two examples of tapcell insertion. When only the
 `-tapcell_master` and `-endcap_master` masters are given, the tapcell placement
 is similar to Figure 1. When the remaining masters are give, the tapcell
 placement is similar to Figure 2.
@@ -1769,7 +1766,7 @@ CTS metrics are as follows for the current design.
 ### Adding Filler Cells
 
 Filler cells fills gaps between detail-placed instances to connect the
-power and ground rails in the rows. Filler cells have no logical 
+power and ground rails in the rows. Filler cells have no logical
 connectivity. These cells are provided continuity in the rows for VDD
 and VSS nets and it also contains substrate nwell connection to improve
 substrate biasing.
@@ -1818,9 +1815,9 @@ Filler cells removed with `remove_fillers` command.
 ### Global Routing
 
 The global router analyzes available routing resources and automatically
-allocates them to avoid any  H/V  overflow violations for optimal routing.  
-It generates a congestion report for GCells showing total resources, demand, 
-utilization, location and the H/V violation status. If there are no violations 
+allocates them to avoid any  H/V  overflow violations for optimal routing. 
+It generates a congestion report for GCells showing total resources, demand,
+utilization, location and the H/V violation status. If there are no violations
 reported then the design can proceed to detail routing.
 
 Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/grt/test/gcd.tcl).
@@ -1876,7 +1873,7 @@ View the resulting global routing in GUI as follows:
 ### Detail Routing
 
 TritonRoute is an open-source detailed router for modern industrial designs.
-The router consists of several main building blocks, including pin access 
+The router consists of several main building blocks, including pin access
 analysis, track assignment, initial detailed routing, search and repair, and a DRC engine.
 
 Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/drt/test/gcd_nangate45.tcl).
@@ -1899,11 +1896,11 @@ read_guides gcd_nangate45.route_guide
 set_thread_count [expr [exec getconf _NPROCESSORS_ONLN] / 4]
 detailed_route -output_drc results/gcd_nangate45.output.drc.rpt \
                -output_maze results/gcd_nangate45.output.maze.log \
-               -verbose 1 
+               -verbose 1
 write_db gcd_nangate45.odb
 ```
 
-For successful routing, DRT will end with 0 violations. 
+For successful routing, DRT will end with 0 violations.
 
 Log as follows:
 
@@ -1948,7 +1945,7 @@ View the resulting detail routing in GUI as follows:
 
 ### Antenna Checker
 
-Antenna Violation occurs when the antenna ratio exceeds a value specified 
+Antenna Violation occurs when the antenna ratio exceeds a value specified
 in a Process Design Kit (PDK). The antenna ratio is the ratio of the gate
 area to the gate oxide area. The amount of charge collection is determined
 by the area/size of the conductor (gate area).
@@ -1994,7 +1991,7 @@ and high yield. It involves filling the empty or white spaces near the
 design with metal polygons to ensure regular planarization of the wafer.
 
 This module inserts floating metal fill shapes to meet metal density
-design rules while obeying DRC constraints. It is driven by a json 
+design rules while obeying DRC constraints. It is driven by a json
 configuration file.
 
 Command used as follows:
@@ -2092,7 +2089,7 @@ with the flow or any of the underlying application tools.
 The global router has a few useful functionalities to understand
 high congestion issues in the designs.
 
-Congestion heatmap can be used on any design, whether it has 
+Congestion heatmap can be used on any design, whether it has
 congestion or not. Viewing congestion explained [here](content:heat:maps).
 If the design has congestion issue, it ends with the error;
 ```
@@ -2124,7 +2121,7 @@ In the GUI, you can go under `Heat Maps` and mark the
 
 #### Dump congestion information to a text file
 
-You can create a text file with the congestion information of the 
+You can create a text file with the congestion information of the
 GCells for further investigation on the GUI. To do that, add the
 `-congestion_report_file file_name` to the `global_route` command, as shown below:
 ```
@@ -2133,7 +2130,7 @@ global_route -guide_file out.guide -congestion_report_file congest.rpt
 
 #### Visualization of overflowing GCells as markers
 
-With the file created with the command described above, you can see more 
+With the file created with the command described above, you can see more
 details about the congested GCell, like the total resources, utilization,
 location, etc. You can load the file following these steps:
 

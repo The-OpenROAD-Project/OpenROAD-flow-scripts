@@ -4,7 +4,7 @@ This section explains how to add  verilog designs to ORFS
 repository for a full RTL-GDS flow execution.
 
 The following design example is based on the design `spm` that
-implements a Single-port memory using `gf180` platform. This 
+implements a Single-port memory using `gf180` platform. This
 procedure  applies to any design for a given platform you choose.
 
 **Note:** The commands refer to the base directory as
@@ -74,7 +74,7 @@ create_clock -name $clk_name -period $clk_period  $clk_port
 
 set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
 
-set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs 
+set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs
 set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
 ```
 
