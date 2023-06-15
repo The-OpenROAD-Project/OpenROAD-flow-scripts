@@ -80,7 +80,7 @@ if { [info exists ::env(SKIP_PIN_SWAP)] } {
   append additional_args " -skip_pin_swap"
 }
 
-repair_timing {*}$additional_args
+repair_timing -skip_gate_cloning {*}$additional_args
 
 detailed_placement
 check_placement -verbose
