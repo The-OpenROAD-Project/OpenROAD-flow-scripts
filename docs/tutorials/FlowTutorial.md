@@ -50,16 +50,6 @@ Use the `bash` shell to run commands and scripts.
 Install OpenROAD Flow Scripts. Refer to the [Getting Started with
 OpenROAD Flow](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html) documentation.
 
-If ORFS is already installed but needs updating, run the
-following commands:
-
-```
-cd OpenROAD-flow-scripts
-git checkout master
-git pull
-git submodule update
-```
-
 #### Building OpenROAD Locally
 
 Only the ` --local` build option is used in the tutorial. For further

@@ -14,6 +14,22 @@ the appropriate repository or start a discussion.
 Thank you for your willingness to contribute. Please see the
 [Getting Involved](../contrib/GettingInvolved) guide.
 
+## How do I update OpenROAD-flow scripts?
+
+If ORFS is already installed but needs updating, run the following commands:
+
+```
+cd OpenROAD-flow-scripts
+git checkout master
+git pull
+git submodule update
+```
+
+> **TIP**: If any of the submodules are updated, please re-build the entire flow using `./build_openroad.sh`
+
+
+
+
 ## How do I update the design reference files?
 
 See how to update the Metrics [here](../contrib/Metrics.md).
