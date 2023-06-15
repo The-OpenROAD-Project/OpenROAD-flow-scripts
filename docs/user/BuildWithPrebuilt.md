@@ -1,0 +1,48 @@
+# Using Pre-built Binaries
+
+## Install Klayout and Yosys
+Please ensure the Klayout version (denoted with `klayoutVersion` variable) is consistent with the one used in [DependencyInstaller script](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/etc/DependencyInstaller.sh). 
+
+Instructions for installing:
+- [Klayout>=0.28.8](https://www.klayout.de/build.html)
+- [Yosys>=0.21](https://github.com/YosysHQ/oss-cad-suite-build/blob/master/README.md#installation)
+
+## Install OpenROAD
+Download pre-built binaries with self-contained dependencies
+included from the Precision Innovations' Github releases
+[here](https://github.com/Precision-Innovations/OpenROAD/actions/workflows/github-actions-build-deb-package.yml).
+
+Thanks to [Precision Innovations](https://precisioninno.com/) for hosting and maintaining these binaries.
+
+The following platforms are supported currently:
+- Ubuntu 20.04/22.04
+- Debian 10/11
+
+Use the following steps to download:
+
+Step 1: Click on the [Precision Innovations Github releases link](https://github.com/Precision-Innovations/OpenROAD/releases).
+
+Step 2: Download the artifacts for your distribution.
+
+Step 3: Run the install command based on platform use package installer.
+        For example Ubuntu 20.04 use:
+```shell
+sudo apt install ./openroad_2.0_amd64-ubuntu20.04.deb
+```
+You can install these binaries within docker as well.
+
+
+## Verify Installation
+You may clone the OpenROAD-flow-scripts repository non-recursively. 
+```
+git clone https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
+```
+Export path variables accordingly.
+```
+export PATH="<extracted_location>/oss-cad-suite/bin:$PATH" #yosys
+yosys -help
+openroad -help
+cd flow
+make
+make gui_final
+```
