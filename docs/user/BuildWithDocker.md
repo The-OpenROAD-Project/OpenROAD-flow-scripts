@@ -42,7 +42,7 @@ The binaries are only available from inside the Docker container, thus to
 start one use:
 
 ``` shell
-docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-$OS_NAME-builder
+docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-centos7-builder
 ```
 
 Then, inside docker:

@@ -24,11 +24,7 @@ git checkout master
 git pull
 git submodule update
 ```
-
 > **TIP**: If any of the submodules are updated, please re-build the entire flow using `./build_openroad.sh`
-
-
-
 
 ## How do I update the design reference files?
 
