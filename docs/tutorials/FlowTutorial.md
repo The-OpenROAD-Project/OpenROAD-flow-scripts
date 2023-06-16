@@ -3,23 +3,23 @@
 ## Introduction
 
 This document describes a tutorial to run the complete
-OpenROAD based flow from RTL-to-GDS using [OpenROAD Flow
+OpenROAD flow from RTL-to-GDS using [OpenROAD Flow
 Scripts](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts).
-This tutorial also includes examples of useful design explorations and
-manual usage in key flow stages to help users gain a good understanding of
-the [OpenROAD](https://openroad.readthedocs.io/en/latest/main/README.html)
+It includes examples of useful design and manual usage in key flow
+stages to help users gain a good understanding of the
+[OpenROAD](https://openroad.readthedocs.io/en/latest/main/README.html)
 application flow, data organization, GUI and commands.
 
 This is intended for:
 
 -   Beginners or new users with some understanding of basic VLSI
     design flow. Users will learn the basics of installation to use
-    [OpenROAD-flow-scripts](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html)
+    [OpenROAD-flow-scripts](https://openroad-flow-scripts.readthedocs.io/en/latest/#getting-started-with-openroad-flow-scripts)
     for the complete RTL-to-GDS flow.
 -   Users already familiar with the OpenROAD application and flow but would
     like to learn more about specific features and commands.
 
-## User Guide
+## User Guidelines
 
 -   This tutorial requires a specific directory structure built by
     OpenROAD-flow-scripts (ORFS). Do not modify this structure or
@@ -47,45 +47,81 @@ pipeline.
 
 Use the `bash` shell to run commands and scripts.
 
-Install OpenROAD Flow Scripts. Refer to the [Getting Started with
-OpenROAD Flow](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html) documentation.
+#### ORFS Installation
 
-If ORFS is already installed but needs updating, run the
-following commands:
+To install `OpenROAD-flow-scripts,  refer to the 
+[Build or installing ORFS  Dependencies](https://openroad-flow-scripts.readthedocs.io/en/latest/#build-or-installing-orfs-dependencies)
+documentation.
+
+In general, we recommend using `Docker` for an efficient user
+experience. Install ORFS using a docker as described here
+[Build from sources using Docker](../user/BuildWithDocker.md).
+
+If you need to update an existing docker based installation, then
+run the following commands:
 
 ```
 cd OpenROAD-flow-scripts
 git checkout master
 git pull
-git submodule update
-```
-
-#### Building OpenROAD Locally
-
-Only the ` --local` build option is used in the tutorial. For further
-details refer to the [Build Locally](../user/BuildLocally.md) documentation.
-
-Alternatively, the user may build using the docker installation by referring
-to [Build With Docker](../user/BuildWithDocker.md) documentation.
-
-```
-./build_openroad.sh --local
-source env.sh
-```
-
-You will see the following message:
-
-```
-OPENROAD: <path>/OpenROAD-flow-scripts/tools/OpenROAD
+./build_openroad.sh
 ```
 
 ORFS installation is complete.
+
+#### Running ORFS inside the Docker
+
+Launch the docker with the `OpenROAD-flow-scripts` container as
+follows:
+
+```
+export OS_NAME=centos7
+docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-$OS_NAME-builder
+```
+**Optional:** To launch OpenROAD gui inside the docker, use command
+from [here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/BuildWithDocker.html#enable-gui-support).
+
+Once you are entered into ORFS container run:
+
+```
+source env.sh
+```
+
+If your installation is  successful, you will see the following message:
+
+```
+OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
+```
+
+####Verifying the Docker based  Installation
+
+To verify the installation run the built-in example design as follows:
+
+```
+cd flow
+make
+```
+
+A successful run end with the log:
+
+```
+[INFO] Writing out GDS/OAS 'results/nangate45/gcd/base/6_1_merged.gds'
+Elapsed time: 0:10.44[h:]min:sec. CPU time: user 2.17 sys 0.54 (26%). Peak memory: 274184KB.
+cp results/nangate45/gcd/base/6_1_merged.gds results/nangate45/gcd/base/6_final.gds
+Log                       Elapsed seconds
+1_1_yosys                          2
+3_3_place_gp                       1
+4_1_cts                            8
+5_2_TritonRoute                   10
+6_1_merge                         10
+6_report                           3
+```
 
 ## Configuring The Design
 
 This section shows how to set up the necessary platform and design
 configuration files to run the complete RTL-to-GDS flow using
-`OpenROAD-flow-scripts`.
+`OpenROAD-flow-scripts` for `ibex` design.
 
 ```
 cd flow
@@ -314,11 +350,12 @@ abc.constr klayout.lyt klayout_tech.lef lib
 
 
 -   `reports/sky130hd/ibex/base`
-    Reports directory, which contains DRC report, design statistics and
-    antenna log for reference.
+    Reports directory, which contains congestion report, DRC 
+    report, design statistics and antenna log for reference.
 
 | `reports`         |                     |                        |
 |-------------------|---------------------|------------------------|
+| `congestion.rpt`  | `VDD.rpt`           | `VSS.rpt`              |
 | `5_route_drc.rpt` | `final_clocks.webp` | `final_placement.webp` |
 | `antenna.log`     | `final_clocks.webp` | `final.webp`           |
 | `synth_stat.txt`  | `synth_check.txt`   | `final_resizer.webp`   |
@@ -327,12 +364,13 @@ The table below briefly describes the reports directory files.
 
 | File Name              | Description                                              |
 |------------------------|----------------------------------------------------------|
-| `5_route_drc.rpt`      | DRC violations if occurred                               |
+| `congestion.rpt`       | Gloabl routing congestion if occurred.                   |
+| `5_route_drc.rpt`      | DRC violations if occurred.                              |
 | `final_clocks.webp`    | OR extracted image reference after clock tree synthesis. |
 | `final_resizer.webp`   | OR extracted image reference after resizer.              |
-| `synth_check.txt`      | Synthesis warning/error messages                         |
-| `antenna.log`          | Antenna check log report                                 |
-| `final_placement.webp` | Extracted image after final placement                    |
+| `synth_check.txt`      | Synthesis warning/error messages.                        |
+| `antenna.log`          | Antenna check log report.                                |
+| `final_placement.webp` | Extracted image after final placement.                   |
 | `final.webp`           | Extracted image after routing.                           |
 | `synth_stat.txt`       | Post synthesis design statistics log saved here.         |
 
@@ -808,7 +846,7 @@ Run the following commands in the terminal in OpenROAD tool root directory to bu
 floorplan.
 
 ```
-cd ./tools/OpenROAD/src/ifp/test/
+cd ../tools/OpenROAD/src/ifp/test/
 openroad -gui
 ```
 
@@ -832,7 +870,7 @@ Run the following commands in the terminal in OpenROAD tool root directory to vi
 initialized:
 
 ```
-cd ./tools/OpenROAD/src/ifp/test/
+cd ../tools/OpenROAD/src/ifp/test/
 openroad -gui
 ```
 
@@ -862,7 +900,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Launch openroad GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/pad/test/
+cd ../tools/OpenROAD/src/pad/test/
 openroad -gui
 ```
 
@@ -906,7 +944,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Launch openroad GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/pad/test/
+cd ../tools/OpenROAD/src/pad/test/
 openroad -gui
 ```
 
@@ -921,7 +959,7 @@ source skywater130_coyote_tc.tcl
 
 View the resulting IO pad ring in GUI:
 
-![coyote pad ring](./images/coyote_pad_ring.png)
+![coyote pad ring](./images/coyote_pad_ring.web)
 
 ### Power Planning And Analysis
 
@@ -935,22 +973,19 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Launch openroad GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/pdn/test
+cd ../tools/OpenROAD/src/pdn/test
 openroad -gui
 ```
 
-Run [test_gcd.api.tcl](../../src/pdn/test/test_gcd.api.tcl)
+Run [core_grid_snap.tcl](../../src/pdn/test/core_grid_snap.tcl)
 to generate power grid for `gcd` design.
 
-> **Warning:**
-> The refernced script is not currently avaiable, it will be addressed in a future pull request
-
 ```
-source test_gcd.api.tcl
+source core_grid_snap.tcl
 ```
 View the resulting power plan for `gcd` design:
 
-![gcd PDN GUI](./images/gcd_pdn_gui.png)
+![gcd PDN GUI](./images/gcd_pdn_gui.webp)
 
 #### IR Drop Analysis
 IR drop is the voltage drop in the metal wires constituting the power
@@ -973,7 +1008,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Launch openroad by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/psm/test
+cd ../tools/OpenROAD/src/psm/test
 openroad
 ```
 
@@ -1027,7 +1062,7 @@ to learn about Tap/endcap cell insertion.
 To view this in OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/tap/test/
+cd ../tools/OpenROAD/src/tap/test/
 openroad -gui
 ```
 
@@ -1054,7 +1089,7 @@ to learn about Tie cell insertion.
 To check this in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/ifp/test/
+cd ../tools/OpenROAD/src/ifp/test/
 openroad
 source tiecells.tcl
 ```
@@ -1077,7 +1112,7 @@ based on library(This is Nangate45 specific):
 [INFO IFP-0030] Inserted 1 tiecells using LOGIC1_X1/Z.
 ```
 
-### Macro or Cell Placement
+### Macro or Standard Cell Placement
 
 #### Macro Placement
 
@@ -1091,7 +1126,7 @@ Placement density impacts how widely standard cells are placed in the
 core area. To view this in OpenROAD GUI run the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/gpl/test/
+cd ../tools/OpenROAD/src/gpl/test/
 openroad -gui
 ```
 
@@ -1127,14 +1162,11 @@ Zoomed view of cell placement:
 ##### Macro Placement With Halo Spacing
 
 Explore macro placement with halo spacing, refer to the example
-[here](../../src/mpl/test/gcd_mem1_02.tcl).
-
-> **Warning:**
-> The refernced script is not currently avaiable, it will be addressed in a future pull request
+[here](../../src/mpl/test/).
 
 Launch GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 ```
-cd ./tools/OpenROAD/src/mpl/test
+cd ../tools/OpenROAD/src/mpl/test
 openroad -gui
 ```
 
@@ -1142,92 +1174,25 @@ In the `Tcl Commands` section of GUI:
 
 ```
 source helpers.tcl
-read_liberty Nangate45/Nangate45_typ.lib
-read_liberty Nangate45/fakeram45_64x7.lib
-read_lef Nangate45/Nangate45.lef
-read_lef Nangate45/fakeram45_64x7.lef
-read_def gcd_mem1.def
-read_sdc gcd.sdc
+source level3.tcl
+global_placement
 ```
 
 DEF file without halo spacing
 
-![gcd without halo spacing](./images/without_halo.png)
+![gcd without halo spacing](./images/without_halo.webp)
 
 Now increase the halo width for better routing resources.
 
 In the `Tcl Commands` section of GUI:
 
 ```
-macro_placement -halo {2.0 2.0}
+macro_placement -halo {0.5 0.5}
 ```
 
-DEF file with macro moved 2.0 micron from the left side of the core edge.
+Overlapping macros placed `0.5` micron H/V halo around macros.
 
 ![gcd with halo spacing](./images/with_halo.png)
-
-Run `global_placement` to align standard cells and macros with updated
-macro spacing.
-
-```
-global_placement
-```
-
-View the resulting DEF file as shown below
-
-![Aligned view](./images/halo_aligned.png)
-
-##### Macro Placement With Channel Spacing
-
-Now we will study how macro placement with channel spacing works.
-
-If the design has more than one macro, it is important to provide halo and
-channel spacing to provide enough space for routing. Refer to the
-following example [here](../../src/mpl/test/gcd_mem3_03.tcl).
-
-> **Warning:**
-> The refernced script is not currently avaiable, it will be addressed in a future pull request
-
-To view macro placement with channel spacing in OpenROAD GUI run the following command(s) in the terminal in OpenROAD tool root directory:
-```
-cd ./tools/OpenROAD/src/mpl/test/
-openroad -gui
-```
-
-Copy and paste the following `Tcl commands` in the GUI Tcl prompt.
-
-```
-source helpers.tcl
-read_liberty Nangate45/Nangate45_typ.lib
-read_liberty Nangate45/fakeram45_64x7.lib
-read_lef Nangate45/Nangate45.lef
-read_lef Nangate45/fakeram45_64x7.lef
-read_def gcd_mem3.def
-read_sdc gcd.sdc
-```
-
-View the resulting macro placement as shown below:
-
-![gcd Macro placement without channel](./images/without_channel.png)
-
-Observe the ruler distance between each macro. To place each macro with
-2-micron channel spacing use below command in `Tcl Commands` section
-of GUI:
-
-```
-macro_placement -style corner_min_wl -channel {2.0 2.0}
-```
-
-View the resulting macro placement with channel spacing as shown below:
-
-![gcd Macro placement with channel Spacing](./images/with_channel.png)
-
-The macros are placed with 2-micron channel spacing with a core corner
-that has minimum wire length. Try different `-style` options to study
-the effect on macro placement.
-
-Run `global_placement` to align standard cells and macros with updated
-macro spacing.
 
 #### Defining Placement Density
 
@@ -1289,7 +1254,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/rsz/test/
+cd ../tools/OpenROAD/src/rsz/test/
 openroad -gui
 ```
 
@@ -1400,7 +1365,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD in an interactive mode by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/rsz/test/
+cd ../tools/OpenROAD/src/rsz/test/
 openroad
 ```
 
@@ -1542,7 +1507,7 @@ Check hold violation post-global routing using the following Tcl
 commands. Run below steps in terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/rsz/test/
+cd ../tools/OpenROAD/src/rsz/test/
 openroad -gui
 ```
 
@@ -1609,7 +1574,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/cts/test/
+cd ../tools/OpenROAD/src/cts/test/
 openroad -gui
 ```
 
@@ -1646,7 +1611,7 @@ creation of a well-balanced clock tree.
 Launch OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/cts/test/
+cd ../tools/OpenROAD/src/cts/test/
 openroad -gui
 ```
 
@@ -1748,7 +1713,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Run these Tcl commands in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/cts/test/
+cd ../tools/OpenROAD/src/cts/test/
 openroad
 source post_cts_opt.tcl
 report_cts
@@ -1780,7 +1745,7 @@ to learn about filler cell insertion.
 To view this in OpenROAD GUI run the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/grt/test/
+cd ../tools/OpenROAD/src/grt/test/
 openroad -gui
 ```
 
@@ -1825,7 +1790,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/grt/test/
+cd ../tools/OpenROAD/src/grt/test/
 openroad -gui
 ```
 
@@ -1881,7 +1846,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/drt/test/
+cd ../tools/OpenROAD/src/drt/test/
 openroad -gui
 ```
 
@@ -1957,7 +1922,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/ant/test/
+cd ../tools/OpenROAD/src/ant/test/
 openroad
 ```
 
@@ -2036,7 +2001,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD tool by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/rcx/test/
+cd ../tools/OpenROAD/src/rcx/test/
 openroad
 ```
 
@@ -2101,7 +2066,7 @@ Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/Ope
 Launch OpenROAD GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```
-cd ./tools/OpenROAD/src/grt/test/
+cd ../tools/OpenROAD/src/grt/test/
 openroad -gui
 ```
 
