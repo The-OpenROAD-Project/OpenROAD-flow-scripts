@@ -80,7 +80,12 @@ if { [info exists ::env(SKIP_PIN_SWAP)] } {
   append additional_args " -skip_pin_swap"
 }
 
-repair_timing -skip_gate_cloning {*}$additional_args
+if { [info exists ::env(ENABLE_GATE_CLONING)] } {
+  puts "Enable gate cloning during optimization"
+  append additional_args " -enable_gate_cloning"
+}
+
+repair_timing {*}$additional_args
 
 detailed_placement
 check_placement -verbose
