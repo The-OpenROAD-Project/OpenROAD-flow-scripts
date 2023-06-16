@@ -38,11 +38,11 @@ cd OpenROAD-flow-scripts
 
 ## Verify Installation
 
-The binaries are only available from inside the Docker container, thus to
-start one use:
+The binaries are only available from inside the Docker container. Here is an example of starting one use of `centos7` image. 
 
 ``` shell
-docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-centos7-builder
+export OS_NAME=centos7
+docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-$OS_NAME-builder
 ```
 
 Then, inside docker:
