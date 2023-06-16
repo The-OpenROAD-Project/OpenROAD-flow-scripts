@@ -1,0 +1,38 @@
+# Build with WSL
+Windows Subsystem for Linux, or WSL for short is a way for you to mount a Linux-based OS onto your Windows machine, allowing you to build OpenROAD-flow-scripts both locally and via Docker. 
+
+## Install WSL
+Instructions to install WSL can be found [here](https://learn.microsoft.com/en-us/windows/wsl/install). You may use any kernel supported, such as: CentOS 7, Ubuntu 20.04, Ubuntu 22.04, RHEL 8, Debian 10 and Debian 11.
+
+We recommend that users follow the Docker build by continuing onto the guide below. However, if you wish to install locally, you may follow the build locally instructions [here](./BuildLocally.md).
+
+> **TIP**: You may delete your WSL kernel using this [guide](https://pureinfotech.com/remove-linux-distro-wsl/).
+
+
+## Docker
+This section assumes you have set up Docker for Windows already. If not, please refer to the Docker official website for instructions [here](https://docs.Docker.com/desktop/install/windows-install/).
+
+You need to enable the following option to allow WSL to use Docker. 
+
+> Insert pic 1 here
+
+> Insert pic 2 here
+
+## Accessing WSL
+On the windows bar, there should be an icon named "Ubuntu 22.04 LTS" Click on it, and it should bring you to a terminal like this. 
+
+> Insert pic 3 here
+
+Run the following
+```
+sudo apt-get update; sudo apt-get upgrade; sudo apt install -y build-essential python3 python3-venv python3-pip make
+```
+Verify if Docker is running
+```
+docker run hello-world
+```
+You should see:
+
+> insert pic 4 here
+
+If everything is successful up to this point, congratulations! You are now ready to follow the [Docker guide](./BuildWithDocker.md) as you have configured a Linux system with necessary dependencies. 

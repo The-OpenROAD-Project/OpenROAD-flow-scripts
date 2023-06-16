@@ -53,10 +53,11 @@ To build the binaries and run `gcd` through the flow:
 
 #### Build or Installing ORFS Dependencies
 
-We support three major ways of installation:
+We support four major ways of installation:
 
 - [Docker](./user/BuildWithDocker.md)
 - [Pre-built Binaries](./user/BuildWithPrebuilt.md)
+- [Windows Subsystem for Linnux (WSL)](./user/BuildWithWSL.md)
 - [Local Installation](./user/BuildLocally.md)
 
 You may also choose use the build script to customise your build process.
