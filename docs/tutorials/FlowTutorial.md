@@ -855,7 +855,7 @@ source init_floorplan1.tcl
 View the resulting die area "0 0 1000 1000" and core area "100 100 900 900"
 in microns shown below:
 
-![Absolute Floorplan](./images/absolute_diesize.webp)
+![Absolute Floorplan](./images/absolute_die.webp)
 
 #### Floorplan Based On Core Utilization
 
@@ -1212,9 +1212,7 @@ View `ibex` design `config.mk`
 
 ```
 export CORE_UTILIZATION = 40
-export CORE_ASPECT_RATIO = 1
-export CORE_MARGIN = 2
-export PLACE_DENSITY = 0.50
+export PLACE_DENSITY_LB_ADDON = 0.1
 ```
 
 Re-run the `ibex` design with the below command:
@@ -1787,15 +1785,7 @@ To run the global routing, run the following commands in `Tcl Commands` of
 GUI:
 
 ```
-source "helpers.tcl"
-read_lef "Nangate45/Nangate45.lef"
-read_def "gcd.def"
-
-set guide_file [make_result_file gcd.guide]
-
-global_route -verbose
-
-write_guides $guide_file
+source gcd.tcl
 ```
 
 Routing resource and congestion analysis done with below log:
@@ -1803,20 +1793,20 @@ Routing resource and congestion analysis done with below log:
 [INFO GRT-0096] Final congestion report:
 Layer         Resource        Demand        Usage (%)    Max H / Max V / Total Overflow
 ---------------------------------------------------------------------------------------
-metal1           32148          1743            5.42%             0 /  0 /  0
-metal2           24581          1642            6.68%             0 /  0 /  0
-metal3           33028             0            0.00%             0 /  0 /  0
+metal1           31235          1651            5.29%             0 /  0 /  0
+metal2           24628          1652            6.71%             0 /  0 /  0
+metal3           33120            40            0.12%             0 /  0 /  0
 metal4           15698             0            0.00%             0 /  0 /  0
-metal5           15410             0            0.00%             0 /  0 /  0
-metal6           15698             0            0.00%             0 /  0 /  0
-metal7            4370             0            0.00%             0 /  0 /  0
+metal5           15404             0            0.00%             0 /  0 /  0
+metal6           15642             0            0.00%             0 /  0 /  0
+metal7            4416             0            0.00%             0 /  0 /  0
 metal8            4512             0            0.00%             0 /  0 /  0
-metal9            2162             0            0.00%             0 /  0 /  0
-metal10           2209             0            0.00%             0 /  0 /  0
+metal9            2208             0            0.00%             0 /  0 /  0
+metal10           2256             0            0.00%             0 /  0 /  0
 ---------------------------------------------------------------------------------------
-Total           149816          3385            2.26%             0 /  0 /  0
+Total           149119          3343            2.24%             0 /  0 /  0
 
-[INFO GRT-0018] Total wirelength: 10306 um
+[INFO GRT-0018] Total wirelength: 10598 um
 [INFO GRT-0014] Routed nets: 563
 ```
 
