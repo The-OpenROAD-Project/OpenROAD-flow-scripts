@@ -1,9 +1,13 @@
 # Developer Guide
 
-## Building
+## Integrate a new platform to OpenROAD Flow
+Please follow the guide [here](./PlatformBringUp.md).
 
-Instructions for building are available [here](../index.md#getting-started-with-openroad-flow-scripts).
+## Adding a new design
+Please follow the guide [here](../user/AddingNewDesign.md).
 
-## Logger
+## Continuous Integration
+Please follow the guide [here](./CI.md).
 
-Instructions for logging are available on [OpenROAD documentation](https://openroad.readthedocs.io/en/latest/contrib/Logger.html).
+## How do I update the codebase?
+There are different ways to update your codebase depending on the method you installed it. We provide detailed instructions in this [guide](../user/FAQS.md).

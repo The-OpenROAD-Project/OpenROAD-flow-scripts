@@ -9,7 +9,7 @@ We recommend that users follow the Docker build by continuing onto the guide bel
 > **TIP**: You may delete your WSL kernel using this [guide](https://pureinfotech.com/remove-linux-distro-wsl/).
 
 
-## Docker
+## Docker configuration
 This section assumes you have set up Docker for Windows already. If not, please refer to the Docker official website for instructions [here](https://docs.Docker.com/desktop/install/windows-install/).
 
 You need to enable the following option to allow WSL to use Docker. 
