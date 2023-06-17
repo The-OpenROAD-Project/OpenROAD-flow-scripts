@@ -1202,7 +1202,7 @@ read_lef ./platforms/sky130hd/lef/sky130_fd_sc_hd.tlef
 read_lef ./platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
 read_def ./results/sky130hd/ibex/base/3_place.def
 ```
-![ibex placement density 60](./images/ibex_pl_60.png)
+![ibex placement density 60](./images/ibex_pl_60.webp)
 
 Change `CORE_UTILIZATION` and `PLACE_DENSITY` for the `ibex` design
 `config.mk` as follows.
@@ -1225,7 +1225,7 @@ make DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 
 View the `ibex` design placement density heat map as shown below:
 
-![ibex placement density 50](./images/ibex_pl_50.png)
+![ibex placement density 50](./images/ibex_pl_50.webp)
 
 So from above, GUI understood that change in `CORE_UTILIZATION` from 20
 to 40 and placement density default 0.60 to 0.50 changes standard cell
@@ -1586,11 +1586,11 @@ clock_tree_synthesis -root_buf CLKBUF_X3 \
 
 Layout view before CTS as follows:
 
-![Layout before CTS](./images/Layout_before_CTS.png)
+![Layout before CTS](./images/Layout_before_CTS.webp)
 
-Layout view after CTS can be viewed via `Find` -> `Find Object`.
+Layout view after CTS can be viewed with `Update` option.
 
-![Layout after CTS](./images/Layout_after_CTS.png)
+![Layout after CTS](./images/Layout_after_CTS.webp)
 
 Here we explore how clock tree buffers are inserted to balance the clock
 tree structure.
@@ -1895,7 +1895,7 @@ Up-via summary (total 2223):.
 
 View the resulting detail routing in GUI as follows:
 
-![Detail Routing](./images/detail_route_gcd.webp)
+![Detail Routing](./images/sky130_gcd_route.webp)
 
 ### Antenna Checker
 
