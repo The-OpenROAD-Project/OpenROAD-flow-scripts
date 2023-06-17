@@ -14,8 +14,8 @@ This is intended for:
 
 -   Beginners or new users with some understanding of basic VLSI
     design flow. Users will learn the basics of installation to use
-    [OpenROAD-flow-scripts](https://openroad-flow-scripts.readthedocs.io/en/latest/#getting-started-with-openroad-flow-scripts)
-    for the complete RTL-to-GDS flow.
+    `OpenROAD-flow-scripts` for the complete RTL-to-GDS flow from
+    [here](https://openroad-flow-scripts.readthedocs.io/en/latest/#getting-started-with-openroad-flow-scripts).
 -   Users already familiar with the OpenROAD application and flow but would
     like to learn more about specific features and commands.
 
@@ -49,7 +49,7 @@ Use the `bash` shell to run commands and scripts.
 
 #### ORFS Installation
 
-To install `OpenROAD-flow-scripts,  refer to the 
+To install OpenROAD-flow-scripts,  refer to the 
 [Build or installing ORFS  Dependencies](https://openroad-flow-scripts.readthedocs.io/en/latest/#build-or-installing-orfs-dependencies)
 documentation.
 
@@ -57,15 +57,13 @@ In general, we recommend using `Docker` for an efficient user
 experience. Install ORFS using a docker as described here
 [Build from sources using Docker](../user/BuildWithDocker.md).
 
-If you need to update an existing docker based installation, then
-run the following commands:
-
-```
-cd OpenROAD-flow-scripts
-git checkout master
-git pull
-./build_openroad.sh
-```
+> **Note:**
+> If you need to update an existing docker based installation, then
+> run the following commands:
+> cd OpenROAD-flow-scripts
+> git checkout master
+> git pull
+> ./build_openroad.sh
 
 ORFS installation is complete.
 
@@ -78,8 +76,8 @@ follows:
 export OS_NAME=centos7
 docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-$OS_NAME-builder
 ```
-**Optional:** To launch OpenROAD gui inside the docker, use command
-from [here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/BuildWithDocker.html#enable-gui-support).
+> **Optional:** To launch OpenROAD gui inside the docker, use command
+> from [here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/BuildWithDocker.html#enable-gui-support).
 
 Once you are entered into ORFS container run:
 
@@ -93,7 +91,7 @@ If your installation is  successful, you will see the following message:
 OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
 ```
 
-####Verifying the Docker based  Installation
+#### Verifying the Docker based  Installation
 
 To verify the installation run the built-in example design as follows:
 
@@ -531,7 +529,7 @@ GUI in these steps:
 
 The figure below shows the post-routed DEF for the `ibex` design.
 
-![ibex_final_def](./images/ibex_final_def.webp)
+![ibex_final_db](./images/ibex_final_db.webp)
 
 ### Visualizing Design Objects And Connectivity
 
@@ -548,13 +546,12 @@ the display control window and observing their impact on the display.
 ### Tracing The Clock Tree
 
 View the synthesized clock tree for `ibex` design:
--   From the top Toolbar Click `View` -> `Find`
--   In the Dialog Box `Find Object ` search the clock net using a keyword
-    as follows:
+-   From the top Toolbar Click `Windows` -> `Clock Tree Viewer`
 
-![cts_find_obect](./images/cts_find_object.webp)
+![cts_viewer](./images/CTV_update.webp)
 
-Click `Ok` to view the synthesized clock tree of your design.
+On RHS, click `Clock Tree Viewer` and top right corner, click
+`Update` to view the synthesized clock tree of your design.
 
 View clock tree structure below, the user needs to disable the metal
 `Layers` section on LHS as shown below.
@@ -564,7 +561,6 @@ View clock tree structure below, the user needs to disable the metal
 From the top Toolbar, click on the `Windows` menu to select/hide different
 view options of Scripting, Display control, etc.
 
-(content:heat:maps)=
 ### Using Heat Maps
 
 From the Menu Bar, Click on `Tools` -> `Heat Maps` -> `Placement Density` to view
@@ -588,7 +584,7 @@ follows:
 From `Display Control`, select `Heat Maps` -> `Power Density` as
 follows:
 
-![power_heat_map](./images/power_heatmap.png)
+![power_heat_map](./images/power_heatmap.webp)
 
 ### Viewing Timing Report
 
@@ -596,7 +592,7 @@ Click `Timing` -> `Options` to view and traverse specific timing paths.
 From Toolbar, click on the `Timing` icon, View `Timing Report` window added
 at the right side (RHS) of GUI as shown below.
 
-![Timing report option](./images/ibex_final_def.webp)
+![Timing report option](./images/ibex_final_db.webp)
 
 In `Timing Report` Select `Paths` -> `Update`, `Paths` should be integer
 numbers. The number of timing paths should be displayed in the current
@@ -668,7 +664,7 @@ in the design:
 Based on `DRC Viewer` steps load `results/5_route_drc.rpt`. GUI as
 follows
 
-![gcd DRC issue load](./images/gcd_drc_issue.png)
+![gcd DRC issue load](./images/gcd_drc_issue.webp)
 
 `X mark` in the design highlights DRC violations.
 
@@ -677,7 +673,7 @@ From `DRC Viewer` on RHS `expand` -> `Short`
 This shows the number of `violations` in the design. Zoom the design
 for a clean view of the violation:
 
-![View DRC Violation](./images/view_violation.png)
+![View DRC Violation](./images/view_violation.webp)
 
 `output53` has overlaps and this causes the `short violation`.
 
@@ -751,7 +747,7 @@ specified `.lef` files.
 openroad -gui
 ```
 
-![Default GUI](./images/default_gui.png)
+![Default GUI](./images/default_gui.webp)
 
 To view `load_lef.tcl`, run the command:
 
@@ -777,13 +773,13 @@ source load_lef.tcl
 
 `Load_LEF` toolbar button added as follows:
 
-![Load LEF toolbar button](./images/Load_LEF_button.png)
+![Load LEF toolbar button](./images/Load_LEF_button.webp)
 
 From Toolbar menus, Click on `Load_LEF.` This loads the specified `sky130`
 technology `.tlef` and `merged.lef` file in the current OpenROAD GUI
 as follows:
 
-![sky130 LEF file load](./images/sky130_lef_load.png)
+![sky130 LEF file load](./images/sky130_lef_load.webp)
 
 ## Understanding and Analyzing OpenROAD Flow Stages and Results
 
@@ -859,7 +855,7 @@ source init_floorplan1.tcl
 View the resulting die area "0 0 1000 1000" and core area "100 100 900 900"
 in microns shown below:
 
-![Absolute Floorplan](./images/absolute_diesize.png)
+![Absolute Floorplan](./images/absolute_diesize.webp)
 
 #### Floorplan Based On Core Utilization
 
@@ -882,7 +878,7 @@ source init_floorplan2.tcl
 
 View the resulting core utilization of 30 created following floorplan:
 
-![Relative Floorplan](./images/core_util.png)
+![Relative Floorplan](./images/core_util.webp)
 
 ### IO Pin Placement
 
@@ -959,7 +955,7 @@ source skywater130_coyote_tc.tcl
 
 View the resulting IO pad ring in GUI:
 
-![coyote pad ring](./images/coyote_pad_ring.web)
+![coyote pad ring](./images/coyote_pad_ring.webp)
 
 ### Power Planning And Analysis
 
@@ -1138,11 +1134,9 @@ source macro01.tcl
 
 Read the resulting macro placement with a complete core view:
 
-![Macro Placement full view](./images/macro_place_full_view.png)
-
-Zoomed view of cell placement:
-
-![Macro Placement Zoomed view](./images/macro_place_close_view.png)
+| <img src="./images/macro_place_full_view.webp" width=450px> | <img src="./images/macro_place_close_view.webp" width=450px> |
+|:--:|:--:|
+| Figure 1: With density 0.7 | Figure 2: Zoomed view of macro and std cell placement|
 
 Reduce the placement density and observe the impact on placement, by
 running below command in `Tcl Commands` section of GUI:
@@ -1153,11 +1147,9 @@ global_placement -density 0.6
 
 Read the resulting macro placement with a complete core view:
 
-![Placement Density 60](./images/placement_density_06_full.png)
-
-Zoomed view of cell placement:
-
-![Placement density zoomed](./images/placement_density_06_zoomed.png)
+| <img src="./images/placement_density_06_full.webp" width=450px> | <img src="./images/placement_density_06_zoomed.webp" width=450px> |
+|:--:|:--:|
+| Figure 1: With density 0.6 | Figure 2: Zoomed view of macro and std cell placement |
 
 ##### Macro Placement With Halo Spacing
 
@@ -1192,7 +1184,7 @@ macro_placement -halo {0.5 0.5}
 
 Overlapping macros placed `0.5` micron H/V halo around macros.
 
-![gcd with halo spacing](./images/with_halo.png)
+![gcd with halo spacing](./images/with_halo.webp)
 
 #### Defining Placement Density
 
@@ -1618,12 +1610,19 @@ openroad -gui
 Use the following commands in the `TCL commands` section of GUI:
 
 ```
-source balance_levels.tcl
+source "helpers.tcl"
+source "cts-helpers.tcl"
+read_liberty Nangate45/Nangate45_typ.lib
+read_lef Nangate45/Nangate45.lef
+set block [make_array 300 200000 200000 150]
+sta::db_network_defined
+create_clock -period 5 clk
+set_wire_rc -clock -layer metal5
 ```
 
 The clock tree structure is as follows with unbalanced mode.
 
-![Unbalanced Clock tree](./images/unbalanced_clock_tree.png)
+![Unbalanced Clock tree](./images/unbalanced_clock_tree.webp)
 
 Use the `clock_tree_synthesis` command to balance this clock tree structure
 with buffers. See the format as follows.
@@ -1641,18 +1640,12 @@ clock_tree_synthesis -root_buf CLKBUF_X3 \
                      -num_static_layers 1
 ```
 
-To view the balanced clock tree after CTS, in GUI Toolbar, select.
+To view the balanced clock tree after CTS, in GUI Toolbar, select
 
-```
-Find -> Find Object
-Find: clk*
-Type: Net
-Press OK
-```
+`Clock Tree Viewer` and click `Update` to view the resulting clock
+tree in GUI as follows:
 
-View the resulting clock tree in GUI as follows:
-
-![Balanced Clock Tree](./images/balanced_clock_tree.png)
+![Balanced Clock Tree](./images/balanced_clock_tree.webp)
 
 #### Reporting Clock Skews
 
@@ -1770,10 +1763,6 @@ filler_placement $filler_master
 View the resulting fill cell insertion as follows:
 
 ![Fill_Cell_Insertion](./images/fillcell_insertion.webp)
-
-Zoomed view of filler cells:
-
-![Zoom_Fill_Cell_Insertion](./images/fillcell_insertion_zoom.webp)
 
 Filler cells removed with `remove_fillers` command.
 
@@ -1983,9 +1972,7 @@ density_fill -rules ../../../platforms/sky130hd/fill.json
 Layout after adding metal fill insertion is as follows:
 ![Metal Fill](./images/metal_fill_view.webp)
 
-Metal fill  view circled with `pink` color.
-![Metal Fill Zoomed](./images/metal_fill_view_zoom.webp)
-
+Metal fill view can enabled with `Misc` and enable `Fills` check box.
 
 ### Parasitics Extraction
 
