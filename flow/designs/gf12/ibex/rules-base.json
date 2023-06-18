@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 6242,
+        "value": 6241.99,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -56,11 +56,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -22.63,
+        "value": -108.53,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 8616,
+        "value": 8615,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
