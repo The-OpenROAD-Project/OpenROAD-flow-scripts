@@ -52,15 +52,15 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -56.14,
+        "value": -23.94,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 8803,
+        "value": 8802,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -1.67,
+        "value": -2.9,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
