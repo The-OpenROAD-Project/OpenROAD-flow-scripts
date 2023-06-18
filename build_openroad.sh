@@ -275,7 +275,7 @@ __local_build()
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
         echo "[INFO FLW-0018] Compiling OpenROAD."
-        ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/build "${OPENROAD_APP_ARGS}"
+        eval ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/build ${OPENROAD_APP_ARGS}
         ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
 
         if [ ! -z "${LSORACLE_ENABLE+x}" ]; then
