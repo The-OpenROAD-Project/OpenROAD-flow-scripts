@@ -12,8 +12,8 @@ export PLATFORM               = asap7
 
 export PLACE_DENSITY          = 0.30
 
-export CORE_AREA = $(shell export MOCK_ARRAY_ELEMENT_SIZE="$(MOCK_ARRAY_ELEMENT_SIZE)" && export MOCK_ARRAY_ELEMENT_PITCH="$(MOCK_ARRAY_ELEMENT_PITCH)" && export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && python3 designs/asap7/mock-array-big/core_area.py)
-export DIE_AREA  = $(shell export MOCK_ARRAY_ELEMENT_SIZE="$(MOCK_ARRAY_ELEMENT_SIZE)" && export MOCK_ARRAY_ELEMENT_PITCH="$(MOCK_ARRAY_ELEMENT_PITCH)" && export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && python3 designs/asap7/mock-array-big/die_area.py)
+export CORE_AREA = $(shell export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && python3 designs/asap7/mock-array-big/core_area.py)
+export DIE_AREA  = $(shell export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && python3 designs/asap7/mock-array-big/die_area.py)
 
 BLOCKS                       = Element
 
