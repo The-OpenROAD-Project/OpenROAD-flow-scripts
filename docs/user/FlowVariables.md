@@ -75,7 +75,9 @@ Note:
 | Clock Tree Synthesis                 |              |              |               |           |           |
 | `CTS_BUF_CELL`                       | =            | =            | =             | =         | =         |
 | `CTS_BUF_DISTANCE`                   | N/A          | N/A          | N/A           | =         | =         |
+| `ENABLE_GATE_CLONING`                | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `FILL_CELLS`                         | =            | =            | =             | =         | =         |
+| `SKIP_PIN_SWAP`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
 | `FASTROUTE_TCL`                      | ?=           | ?=           | ?=            | N/A       | N/A       |
@@ -164,9 +166,11 @@ Note:
 | Variable              | Description                                                                                                  |
 |-----------------------|--------------------------------------------------------------------------------------------------------------|
 | `CTS_BUF_CELL`        | The buffer cell used in the clock tree.                                                                      |
-| `FILL_CELLS`          | Fill cells are used to fill empty sites.    								       |
+| `ENABLE_GATE_CLONING` | Use gate cloning transform to fix timing violations when appropriate (default: do not use cloning)           |
+| `FILL_CELLS`          | Fill cells are used to fill empty sites.    								                                   |
 | `HOLD_SLACK_MARGIN`   | Specifies a time margin for the slack when fixing hold violations. This option allow you to overfix.         |
 | `SETUP_SLACK_MARGIN`  | Specifies a time margin for the slack when fixing setup violations.                                          |
+| `SKIP_PIN_SWAP`       | Do not use pin swapping as a transform to fix timing violations (default: use pin swapping)                  |
 | `TNS_END_PERCENT`     | Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed                |
 
 
