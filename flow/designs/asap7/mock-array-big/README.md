@@ -71,7 +71,7 @@ Instead, a choice has to made and each choice has it's pros and cons.
 It is relatively easy to set up a maximum input/output delay for paths
 that start or end in a register, so this case is not discussed here.
 
-It is the combinational(unregistered)
+It is the combinational(unregistered) in -> out
 paths that are tricky to create constraints for.
 
 - Strategy used as of writing: mark non-registered/combinational paths through
