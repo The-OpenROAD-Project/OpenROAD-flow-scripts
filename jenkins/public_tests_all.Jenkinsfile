@@ -38,7 +38,7 @@ pipeline {
                    "sha3 asap7",
                    "uart asap7",
                    "uart-blocks asap7",
-                   "mock-array-big asap7",
+                   "mock-array asap7",
                    "aes nangate45",
                    "bp_be_top nangate45",
                    "bp_fe_top nangate45",
