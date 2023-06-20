@@ -59,7 +59,7 @@ of architectural exploration is to ensure that the design can operate on a
 sufficiently high frequency, then specifying minimum input delays during
 exploration is premature. Minimum input delay is a constraint that belongs at
 the end the development cycle when the design is well established and won't change
-and the concern is to lock down the macro for it's specific operating frequency.
+and the concern is to lock down the macro for its specific operating frequency.
 
 Choosing a strategy for Element/constraint.sdc combinational paths
 ------------------------------------------------------------------
