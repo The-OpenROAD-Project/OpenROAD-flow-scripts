@@ -261,7 +261,7 @@
   "placeopt__timing__setup__tns__pre_opt": 0,
   "placeopt__timing__setup__ws": 5972.01,
   "placeopt__timing__setup__ws__pre_opt": 5986.15,
-  "run__flow__design": "mock-array-big",
+  "run__flow__design": "mock-array",
   "run__flow__generate_date": "2023-06-07 20:04",
   "run__flow__metrics_version": "Metrics_2.1.2",
   "run__flow__openroad_commit": "N/A",

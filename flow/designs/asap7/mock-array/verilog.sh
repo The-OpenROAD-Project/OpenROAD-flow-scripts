@@ -7,7 +7,7 @@ BASE=$DIR/../..
 
 cd $DIR
 
-cd ../../src/mock-array-big
+cd ../../src/mock-array
 
 sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \
      "test:runMain GenerateMockArray --width ${MOCK_ARRAY_WIDTH} --height ${MOCK_ARRAY_HEIGHT} --dataWidth ${MOCK_ARRAY_DATAWIDTH} -- --emit-modules verilog --emission-options disableMemRandomization,disableRegisterRandomization --target-dir ."

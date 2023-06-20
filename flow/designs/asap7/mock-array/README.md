@@ -18,10 +18,10 @@ export FLOW_VARIANT=small
 #export MOCK_ARRAY_HEIGHT=16
 #export MOCK_ARRAY_DATAWIDTH=64
 #export FLOW_VARIANT=giant
-export DESIGN_CONFIG=designs/asap7/mock-array-big/config.mk
+export DESIGN_CONFIG=designs/asap7/mock-array/config.mk
 ```
 
-Now run configure, which a custom target in mock-array-big, that runs Chisel to
+Now run configure, which a custom target in mock-array, that runs Chisel to
 regenerate the Verilog code for the above configuration:
 
 ```
