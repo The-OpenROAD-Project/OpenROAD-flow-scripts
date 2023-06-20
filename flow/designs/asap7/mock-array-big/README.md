@@ -52,7 +52,7 @@ Taking a step back, it is also worth considering what level of detail is
 appropriate for the Element's constraint.sdc file.
 
 In the beginning of a project, during exploration, the .sdc file does not
-need to be particularly detailed. In fact, details can be counterproductive.
+need to be particularly detailed. In fact, details can be counterproductive, as they tend to be inaccurate and cause the tools to spend time solving potential non-issues.
 
 Consider minimum input delay, which relates to hold times. If the main concern
 of architectural exploration is to ensure that the design can operate on a
