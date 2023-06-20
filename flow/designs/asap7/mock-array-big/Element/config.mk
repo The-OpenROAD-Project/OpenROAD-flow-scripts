@@ -26,10 +26,6 @@ export IO_CONSTRAINTS         = designs/asap7/mock-array-big/Element/io.tcl
 
 export PDN_TCL                = designs/asap7/mock-array-big/Element/pdn.tcl
 
-# max routing layer need to be set to M5, since M6 is needed for next level up to connect
-# to the ring and stipe
-export MAX_ROUTING_LAYER      = M5
-
 # If this design isn't quickly done in detailed routing, something is wrong.
 # At time of adding this option, only 3 iterations were needed for 0
 # violations.
@@ -37,3 +33,8 @@ export DETAILED_ROUTE_ARGS=-bottom_routing_layer M2 -top_routing_layer M5 -save_
 
 export MOCK_ARRAY_ROWS        = $(word 1, $(MOCK_ARRAY_TABLE))
 export MOCK_ARRAY_COLS        = $(word 2, $(MOCK_ARRAY_TABLE))
+
+# since we are specifying DETAILED_ROUTE_ARGS, we need to communicate the
+# same information to other stages in the flow.
+export MIN_ROUTING_LAYER = M2
+export MAX_ROUTING_LAYER = M5

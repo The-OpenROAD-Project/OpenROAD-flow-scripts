@@ -42,4 +42,10 @@ verilog:
 # If this design isn't quickly done in detailed routing, something is wrong.
 # At time of adding this option, only 12 iterations were needed for 0
 # violations.
-export DETAILED_ROUTE_ARGS   = -bottom_routing_layer M2 -top_routing_layer M7 -save_guide_updates -verbose 1 -droute_end_iter 15
+
+export DETAILED_ROUTE_ARGS=-bottom_routing_layer M2 -top_routing_layer M7 -save_guide_updates -verbose 1 -droute_end_iter 15
+
+# since we are specifying DETAILED_ROUTE_ARGS, we need to communicate the
+# same information to other stages in the flow.
+export MIN_ROUTING_LAYER = M2
+export MAX_ROUTING_LAYER = M7
