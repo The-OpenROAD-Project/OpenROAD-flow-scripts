@@ -37,6 +37,29 @@ make
 Element/constraint.sdc
 ----------------------
 
+A relatively simple constraint.sdc is adequate for the Element as
+timing is exported when the Element macro is made and checked at the
+mock-array-big level.
+
+Note that a failure on timing at the Element level is
+not a problem, as long as timing is met at the mock-array-big level.
+
+The purpose of the constraint.sdc file at the Element level is to
+be able to iterate on the Element during development and work on,
+for instance, maximum operating frequency changes in the Verilog,
+but also to give the tools some guidance on how to optimize the
+macro.
+
+Optimizing Element/constraint.sdc
+---------------------------------
+
+Before considering the various strategies to articulate an Element/constraint.sdc
+file below, note that no tests have been run to verify that these
+different constraint.sdc changes below have any effects on the quality
+of results at the mock-array-big level. If there are no substantial
+differences in quality of results and timing is met, then the differences
+between the strategies below are inconsequential.
+
 A single macro is made for all the elements in the array, though strictly
 speaking each macro is unique in that the timing constraints of each element
 in the array is different.
@@ -52,7 +75,8 @@ Taking a step back, it is also worth considering what level of detail is
 appropriate for the Element's constraint.sdc file.
 
 In the beginning of a project, during exploration, the .sdc file does not
-need to be particularly detailed. In fact, details can be counterproductive, as they tend to be inaccurate and cause the tools to spend time solving potential non-issues.
+need to be particularly detailed. In fact, details can be counterproductive,
+as they tend to be inaccurate and cause the tools to spend time solving potential non-issues.
 
 Consider minimum input delay, which relates to hold times. If the main concern
 of architectural exploration is to ensure that the design can operate on a
