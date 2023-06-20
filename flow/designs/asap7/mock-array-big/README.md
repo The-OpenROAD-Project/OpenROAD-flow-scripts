@@ -83,7 +83,7 @@ paths that are tricky to create constraints for.
   information, even for false paths.
 - Use `set_max_delay` for combinational paths. This will make the tool try
   to optimize the combinational path and there will be timing information available.
-  However, path segmentation could occur with OpenSTA: https://docs.xilinx.com/r/2020.2-English/ug906-vivado-design-analysis/TIMING-13-Timing-Paths-Ignored-Due-to-Path-Segmentation
+  However, path segmentation could occur with OpenSTA. Refer [here](https://docs.xilinx.com/r/2020.2-English/ug906-vivado-design-analysis/TIMING-13-Timing-Paths-Ignored-Due-to-Path-Segmentation).
 - Overconstrain: set up a maximum input/output path for the element and ignore
   timing violations at the Element level for combinational paths.
   The timing violations for the combinational paths are not real violations,
