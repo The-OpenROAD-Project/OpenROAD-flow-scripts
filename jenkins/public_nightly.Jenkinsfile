@@ -61,7 +61,7 @@ pipeline {
                    "swerv_wrapper asap7",
                    "uart asap7",
                    "uart-blocks asap7",
-                   "mock-array-big asap7",
+                   "mock-array asap7",
                    "aes nangate45",
                    "ariane136 nangate45",
                    "black_parrot nangate45",
@@ -91,7 +91,8 @@ pipeline {
                    "ibex gf180",
                    "jpeg gf180",
                    "riscv32i gf180",
-                   "sha3 gf180";
+                   "sha3 gf180",
+                   "uart-blocks gf180";
           }
         }
 

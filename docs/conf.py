@@ -75,7 +75,7 @@ exclude_patterns = [
     '**/LICENSE.md',
     'README.md',
     'docs/releases/PostAlpha2.1BranchMethodology.md',
-    'main/docs',
+    'main',
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
