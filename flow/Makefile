@@ -76,6 +76,7 @@
 # DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
 # DESIGN_CONFIG=./designs/asap7/ethmac/config.mk
 # DESIGN_CONFIG=./designs/asap7/uart/config.mk
+# DESIGN_CONFIG=./designs/asap7/uart-blocks/config.mk
 # DESIGN_CONFIG=./designs/asap7/sha3/config.mk
 # DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
 # DESIGN_CONFIG=./designs/asap7/swerv_wrapper/config.mk
@@ -88,6 +89,7 @@
 # DESIGN_CONFIG=./designs/gf180/jpeg/config.mk
 # DESIGN_CONFIG=./designs/gf180/riscv32i/config.mk
 # DESIGN_CONFIG=./designs/gf180/sha3/config.mk
+# DESIGN_CONFIG=./designs/gf180/uart-blocks/config.mk
 #
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
