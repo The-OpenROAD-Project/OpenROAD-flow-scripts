@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 currentDate=$(date +"%Y-%m-%d_%H-%M")
 ISSUE_TAG=${ISSUE_TAG:-"${DESIGN_NICKNAME}_${PLATFORM}_${FLOW_VARIANT}_${currentDate}"}
@@ -72,29 +73,7 @@ chmod +x ${RUN_ME_SCRIPT}
 echo "Creating ${VARS_BASENAME}.sh/tcl script"
 rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true
 
-# exclude system and CI variables
-EXCLUDED_VARS="MAKE|PYTHONPATH|PKG_CONFIG_PATH|PERL5LIB|PCP_DIR|PATH|MANPATH"
-EXCLUDED_VARS+="|LD_LIBRARY_PATH|INFOPATH|HOME|PWD|MAIL|TIME_CMD|QT_QPA_PLATFORM"
-
-printf '%s\n' "$ISSUE_VARIABLES" | while read -r V;
-do
-    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} && ${V%=*} != *"MAKEFILE"* && ! ${V%=*} =~ ^(${EXCLUDED_VARS})$ ]] ; then
-        rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
-        # handle special case where the variable needs to be splitted in Tcl code
-        if [[ "${V%=*}" == "GND_NETS_VOLTAGES" || "${V%=*}" == "PWR_NETS_VOLTAGES" ]]; then
-            echo "export "${V%=*}"='"\"${rhs}"\"'" >> ${VARS_BASENAME}.sh;
-        else
-            echo "export "${V%=*}"='"${rhs}"'" >> ${VARS_BASENAME}.sh;
-        fi
-        echo "set env("${V%=*}") \""${rhs}\""" >> ${VARS_BASENAME}.tcl;
-        echo "set env "${V%=*}" "${rhs}"" >> ${VARS_BASENAME}.gdb;
-    fi
-done
-
-# remove variables starting with a dot
-sed -i -e '/export \./d' ${VARS_BASENAME}.sh
-sed -i -e '/set env(\./d' ${VARS_BASENAME}.tcl
-sed -i -e '/set env \./d' ${VARS_BASENAME}.gdb
+$DIR/generate-vars.sh ${VARS_BASENAME}
 
 echo "Archiving issue to $1_${ISSUE_TAG}.tar.gz"
 tar --ignore-failed-read -czhf $1_${ISSUE_TAG}.tar.gz \

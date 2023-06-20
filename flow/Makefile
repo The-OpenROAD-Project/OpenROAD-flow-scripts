@@ -846,6 +846,9 @@ nuke: clean_test clean_issues
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
 	rm -rf versions.txt
 
+.PHONY: vars
+vars:
+	$(UTILS_DIR)/generate-vars.sh vars
 
 # DEF/GDS/OAS viewer shortcuts
 #-------------------------------------------------------------------------------
