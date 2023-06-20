@@ -36,3 +36,8 @@ export PDN_TCL = designs/asap7/mock-array-big/Element/pdn.tcl
 # At time of adding this option, only 3 iterations were needed for 0
 # violations.
 export DETAILED_ROUTE_ARGS=-bottom_routing_layer M2 -top_routing_layer M5 -save_guide_updates -verbose 1 -droute_end_iter 10
+
+# since we are specifying DETAILED_ROUTE_ARGS, we need to communicate the
+# same information to other stages in the flow.
+export MIN_ROUTING_LAYER = M2
+export MAX_ROUTING_LAYER = M5
