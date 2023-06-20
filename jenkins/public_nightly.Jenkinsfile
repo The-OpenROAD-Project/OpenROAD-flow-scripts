@@ -91,7 +91,8 @@ pipeline {
                    "ibex gf180",
                    "jpeg gf180",
                    "riscv32i gf180",
-                   "sha3 gf180";
+                   "sha3 gf180",
+                   "uart-blocks gf180";
           }
         }
 

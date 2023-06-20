@@ -231,7 +231,10 @@ ifeq ($(ASAP7_USESLVT), 1)
 
 endif
 
-#Dont use SC library based on CORNER selection
+# Dont use SC library based on CORNER selection
+#
+# BC - Best case, fastest
+# WC - Worst case, slowest
 ifeq ($(CORNER),)
    export CORNER = BC
    $(info Default PVT selection: $(CORNER))
