@@ -235,6 +235,7 @@ endif
 #
 # BC - Best case, fastest
 # WC - Worst case, slowest
+# TC - Typical case
 ifeq ($(CORNER),)
    export CORNER = BC
    $(info Default PVT selection: $(CORNER))
