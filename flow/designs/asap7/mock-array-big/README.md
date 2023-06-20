@@ -66,7 +66,7 @@ Choosing a strategy for Element/constraint.sdc combinational paths
 
 It isn't possible to articulate a single .sdc file that exactly captures the
 constraints of an Element as each element is used in unique circumstances.
-Instead, a choice has to made and each choice has it's pros and cons.
+Instead, a choice has to made and each choice has its pros and cons.
 
 It is relatively easy to set up a maximum input/output delay for paths
 that start or end in a register, so this case is not discussed here.
