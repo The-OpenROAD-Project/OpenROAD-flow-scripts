@@ -89,7 +89,7 @@ paths that are tricky to create constraints for.
   The timing violations for the combinational paths are not real violations,
   because the maximum input and output paths can not occur at the same time
   in the array. The leftmost Element has the shortest maximum input path and
-  and the rightmost the longestm aximum input path for
+  and the rightmost the longest maximum input path for
   `assign io_lsbOuts_0 = io_lsbIns_1;`. The OpenROAD tool could put too much
   emphasis on optimising the combinational path in this case, which could
   lead to less than optimal results and/or inflated run times.
