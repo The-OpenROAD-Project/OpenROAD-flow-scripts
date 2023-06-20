@@ -83,8 +83,8 @@ Directory](content:design:directory) section of this document.
 Create a directory for the new technology inside `flow/platforms` to contain
 the necessary files for the OpenROAD flow.
 
-```
-$ mkdir flow/platforms/MyNewPlatform
+``` shell
+mkdir flow/platforms/MyNewPlatform
 ```
 (content:design:directory)=
 ### Design Directory
@@ -98,10 +98,11 @@ and `constraint.sdc` files.
 Follow the steps below to create the necessary directories and files.
 **NOTE: gcd is just an example and not a required name.**:
 
-```
-$ mkdir -p flow/designs/MyNewPlatform/gcd
-$ touch flow/designs/MyNewPlatform/gcd/config.mk
-$ touch flow/designs/MyNewPlatform/gcd/constraint.sdc
+``` shell
+# Run these in OpenROAD-flow-designs/
+mkdir -p flow/designs/MyNewPlatform/gcd
+touch flow/designs/MyNewPlatform/gcd/config.mk
+touch flow/designs/MyNewPlatform/gcd/constraint.sdc
 ```
 
 This creates two directories MyNewPlatform and `gcd` and two empty files
@@ -147,9 +148,8 @@ descriptor of all variables see [here](../user/FlowVariables.md).
 
 Following is a sample `config.mk` file for the `gcd` design:
 
-```
-#config.mk
-###########################
+```{code-block} shell
+:caption: config.mk
 export DESIGN_NAME     = gcd
 export PLATFORM        = sky130hd
 
@@ -172,9 +172,8 @@ need to be consistent with the liberty time units. Here’s an example of
 a `constraint.sdc` file which defines a clock `clk` with a period of 8.4
 nanoseconds (nanoseconds being consistent with the liberty time units).
 
-```
-#constraint.sdc
-############################
+```{code-block} tcl
+:caption: constraint.sdc
 create_clock [get_ports clk] -period 8.4  #Units are in nanoseconds
 ```
 
@@ -191,10 +190,10 @@ have all relevant files in one localized directory. The `.lib`, `.lef`, and
 `.gds` reside in directories named respectively for the specific technology.
 
 For example:
-```
-$ mdkir flow/platforms/MyNewPlatform/lib
-$ mdkir flow/platforms/MyNewPlatform/lef
-$ mdkir flow/platforms/MyNewPlatform/gds
+``` shell
+mdkir flow/platforms/MyNewPlatform/lib
+mdkir flow/platforms/MyNewPlatform/lef
+mdkir flow/platforms/MyNewPlatform/gds
 ```
 
 A merged GDS file may be used instead of adding every individual `.gds`
@@ -219,9 +218,8 @@ design.
 To create this module, a gated clock standard cell is required. This standard
 cell is used to create the generic module `OPENROAD_CLKGATE`, as shown below.
 
-```
-// cells_clkgate.v
-//////////////////////////
+```{code-block} verilog
+:caption: cells_clkgate.v
 module OPENROAD_CLKGATE (CK, E, GCK);
   input  CK;
   input  E;
@@ -233,10 +231,9 @@ endmodule
 
 An example instantiation of this module in a user design is shown below.
 
-```
-// buffer.v
+```{code-block} verilog
+:caption: buffer.v
 // This is not a platform file, this is an example user design
-//////////////////////////
 
 module buffer (clk, enable, in, out);
 
@@ -268,9 +265,8 @@ level-sensitive latch.
 
 This file is only required if you want to infer latches for your design.
 
-```
-// cells_latch.v
-//////////////////////////
+```{code-block} verilog
+:caption: cells_latch.v
 module $_DLATCH_P_(input E, input D, output Q);
   <d_latch_std_cell> _TECHMAP_REPLACE_ (
     .D (D),
@@ -296,11 +292,9 @@ layer resources, set which routing heuristic to use when routing, etc. It’s
 recommended to use the default `fastroute.tcl` due to its simplicity and
 effectiveness. Following is the default FastRoute configuration file.
 
-```
-# fastroute.tcl
-#####################
+```{code-block} tcl
+:caption: fastroute.tcl
 set_global_routing_layer_adjustment $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) 0.5
-
 set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
 ```
 
@@ -324,9 +318,8 @@ to the `LAYER` definition section for each metal in the tech LEF. Following
 is a generalized metal tracks configuration file with five metal tracks
 defined. **Units are in microns**.
 
-```
-# make_tracks.tcl
-###############################
+```{code-block} tcl
+:caption: make_tracks.tcl
 make_tracks metal1 -x_offset 0.24 -x_pitch 0.82 -y_offset 0.24 -y_pitch 0.82
 make_tracks metal2 -x_offset 0.28 -x_pitch 0.82 -y_offset 0.28 -y_pitch 0.82
 make_tracks metal3 -x_offset 0.28 -x_pitch 0.82 -y_offset 0.28 -y_pitch 0.82
@@ -336,7 +329,7 @@ make_tracks metal5 -x_offset 0.28 -x_pitch 0.82 -y_offset 0.28 -y_pitch 0.82
 
 Following is the `LAYER` definition for `metal1` in the `sky130hd` tech LEF.
 
-```
+``` 
 LAYER met1
   TYPE ROUTING ;
   DIRECTION HORIZONTAL ;
@@ -398,9 +391,8 @@ values. Often, per-unit-length values are available in the PDK user guide. For
 of a `setRC` configuration file which sets the resistance and capacitance
 of five metal layers, four vias, one signal wire, and one clock wire.
 
-```
-# setRC.tcl
-#######################
+```{code-block} tcl
+:caption: setRC.tcl
 set_layer_rc -layer M1 -capacitance 1.449e-04 -resistance 8.929e-04
 set_layer_rc -layer M2 -capacitance 1.331e-04 -resistance 8.929e-04
 set_layer_rc -layer M3 -capacitance 1.464e-04 -resistance 1.567e-04

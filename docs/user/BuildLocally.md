@@ -18,10 +18,12 @@ sudo ./setup.sh
 ``` shell
 ./build_openroad.sh --local
 ```
-> **Note:** There is a `build_openroad.log` file that is generated with every
-> build in the main directory. In case of filing issues, it can be uploaded
-> in the "Relevant log output" section of OpenROAD-flow-scripts repo
-> [issue form](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/issues/new?assignees=&labels=&template=bug_report_with_orfs.yml).
+:::{Note}
+There is a `build_openroad.log` file that is generated with every
+build in the main directory. In case of filing issues, it can be uploaded
+in the "Relevant log output" section of OpenROAD-flow-scripts repo
+[issue form](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/issues/new?assignees=&labels=&template=bug_report_with_orfs.yml).
+:::
 
 ## Verify Installation
 
@@ -72,9 +74,10 @@ sudo apt install ./openroad_2.0_amd64-ubuntu20.04.deb
 
 You can install these binaries within docker as well.
 
-> **Thanks** to Precision Innovations (www.precisioninno.com) for providing
-> and supporting this daily release of pre built installers to the community.
-
+:::{seealso}
+**Thanks** to Precision Innovations (www.precisioninno.com) for providing
+and supporting this daily release of pre built installers to the community.
+:::
 ## Compiling and debugging in Visual Studio Code
 
 Set up environment variables to point to tools that CMake from within

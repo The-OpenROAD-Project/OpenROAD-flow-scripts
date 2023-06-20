@@ -13,7 +13,7 @@ procedure  applies to any design for a given platform you choose.
 **Step 1:** Create the Verilog source files directory based on
 the top module name.
 
-```
+``` shell
 cd designs/src
 mkdir spm
 cd spm
@@ -25,7 +25,7 @@ verilog code into spm.v.
 
 **Step 2:** Create `config.mk` to define design configuration.
 
-```
+``` shell
 cd designs/gf180
 mkdir spm
 cd spm
@@ -53,7 +53,7 @@ other built-in design examples or the flow variables list [here](./FlowVariables
 
 **Step 4:** Define SDC constraints.
 
-```
+``` shell
 cd designs/gf180/spm
 vi constraint.sdc
 ```
@@ -85,7 +85,7 @@ default template.
 **Step 5:** Add the design name to `Makefile` to run the flow
 with the `make` command.
 
-```
+``` shell
 vi Makefile
 ```
 
@@ -93,18 +93,18 @@ Comment (#) any `DESIGN_CONFIG` if already enabled.
 
 Add the following lines to `Makefile` and save the changes.
 
-```
+``` 
 DESIGN_CONFIG=./designs/gf180/spm/config.mk
 ```
 
 Run `make` command to run the flow from RTL to GDSII generation.
 
-```
+``` shell
 make
 ```
 
 If you do not want to change `Makefile`, you can simply run,
 
-```
+``` shell
 make DESIGN_CONFIG=./designs/gf180/spm/config.mk
 ```
