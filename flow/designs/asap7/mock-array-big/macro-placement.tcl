@@ -3,7 +3,7 @@ set vals [regexp -all -inline {\S+} [exec sh -c {cd designs/asap7/mock-array-big
 lassign $vals rows cols pitch_x pitch_y margin_x margin_y placement_grid_x placement_grid_y
 
 set block [ord::get_db_block]
-set units [expr [$block getDefUnits] * 1.0]
+set units [$block getDefUnits]
 
 for {set row 0} {$row < $rows} {incr row} {
   for {set col 0} {$col < $cols} {incr col} {

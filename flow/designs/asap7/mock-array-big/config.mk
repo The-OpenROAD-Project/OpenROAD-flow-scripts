@@ -12,8 +12,15 @@ export PLATFORM               = asap7
 
 export PLACE_DENSITY          = 0.30
 
-export CORE_AREA = $(shell export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && python3 designs/asap7/mock-array-big/core_area.py)
-export DIE_AREA  = $(shell export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && python3 designs/asap7/mock-array-big/die_area.py)
+export CORE_AREA = $(shell \
+  export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)"  && \
+  cd $(dir $(DESIGN_CONFIG)) && \
+  python3 -c "import config ; print(f'{config.margin_x} {config.margin_y} {config.core_width + config.margin_x} {config.core_height + config.margin_y}')")
+
+export DIE_AREA  = $(shell \
+  export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && \
+  cd $(dir $(DESIGN_CONFIG)) && \
+  python3 -c "import config; print(f'{0} {0} {config.die_width} {config.die_height}')")
 
 BLOCKS                       = Element
 
@@ -33,6 +40,6 @@ verilog:
 	./designs/asap7/mock-array-big/verilog.sh
 
 # If this design isn't quickly done in detailed routing, something is wrong.
-# At time of adding this option, only 3 iterations were needed for 0
+# At time of adding this option, only 12 iterations were needed for 0
 # violations.
-export DETAILED_ROUTE_ARGS   = -droute_end_iter 10
+export DETAILED_ROUTE_ARGS   = -bottom_routing_layer M2 -top_routing_layer M7 -save_guide_updates -verbose 1 -droute_end_iter 15

@@ -22,6 +22,10 @@ ce_height   = ce_y * placement_grid_y
 margin_x    = placement_grid_x
 margin_y    = placement_grid_y
 
+# Element core margin
+ce_margin_x = placement_grid_x * 0.5
+ce_margin_y = placement_grid_y * 0.5
+
 # top level core and die size
 core_width  = ((placement_grid_x * pitch_x) * (cols + 1)) + (ce_width  * cols)
 core_height = ((placement_grid_y * pitch_y) * (rows + 1)) + (ce_height * rows)
