@@ -18,10 +18,10 @@ export FLOW_VARIANT=small
 #export MOCK_ARRAY_HEIGHT=16
 #export MOCK_ARRAY_DATAWIDTH=64
 #export FLOW_VARIANT=giant
-export DESIGN_CONFIG=designs/asap7/mock-array-big/config.mk
+export DESIGN_CONFIG=designs/asap7/mock-array/config.mk
 ```
 
-Now run configure, which a custom target in mock-array-big, that runs Chisel to
+Now run configure, which a custom target in mock-array, that runs Chisel to
 regenerate the Verilog code for the above configuration:
 
 ```
@@ -39,10 +39,10 @@ Element/constraint.sdc
 
 A relatively simple constraint.sdc is adequate for the Element as
 timing is exported when the Element macro is made and checked at the
-mock-array-big level.
+mock-array level.
 
 Note that a failure on timing at the Element level is
-not a problem, as long as timing is met at the mock-array-big level.
+not a problem, as long as timing is met at the mock-array level.
 
 The purpose of the constraint.sdc file at the Element level is to
 be able to iterate on the Element during development and work on,
@@ -56,7 +56,7 @@ Optimizing Element/constraint.sdc
 Before considering the various strategies to articulate an Element/constraint.sdc
 file below, note that no tests have been run to verify that these
 different constraint.sdc changes below have any effects on the quality
-of results at the mock-array-big level. If there are no substantial
+of results at the mock-array level. If there are no substantial
 differences in quality of results and timing is met, then the differences
 between the strategies below are inconsequential.
 

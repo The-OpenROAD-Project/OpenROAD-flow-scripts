@@ -1,5 +1,5 @@
 // to generate code, run:
-// ../../asap7/mock-array-big/configure.sh
+// ../../asap7/mock-array/configure.sh
 
 import chisel3._
 
