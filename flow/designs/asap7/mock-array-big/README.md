@@ -92,4 +92,4 @@ paths that are tricky to create constraints for.
   and the rightmost the longestm aximum input path for
   `assign io_lsbOuts_0 = io_lsbIns_1;`. The OpenROAD tool could put too much
   emphasis on optimising the combinational path in this case, which could
-  lead to less than optimal results.
+  lead to less than optimal results and/or inflated run times.
