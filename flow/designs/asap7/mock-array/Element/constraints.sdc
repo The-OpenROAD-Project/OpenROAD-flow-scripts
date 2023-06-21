@@ -1,6 +1,6 @@
 set sdc_version 2.0
 
-set cols [expr {[info exists ::env(MOCK_ARRAY_WIDTH)] ? $::env(MOCK_ARRAY_WIDTH) : 8}]
+set cols [expr {[info exists ::env(MOCK_ARRAY_COLS)] ? $::env(MOCK_ARRAY_COLS) : 8}]
 
 set clk_name clock
 set clk_port_name clock

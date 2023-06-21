@@ -4,20 +4,22 @@ Mock array big
 A mock array that can be configured in different sizes to generate
 interesting test-cases.
 
-By default, the array is 8x8 elements and has an 8 bit datapath.
+By default, the array is 8x8 elements, has an 8 bit datapath with 
+Element size of 4x4 unit and Element placement pitch of 6,6 - x,y direction.
 
-To create a 4x4 element array with 4 bit datapath, first create a settings.mk file:
+export MOCK_ARRAY_TABLE         ?= 8 8 4 4 6 6
+
+# Element'd data width
+export MOCK_ARRAY_DATAWIDTH     ?= 8
+
+To create a 4x4 element array with 4 bit datapath with element size of 5x6 and
+placement pitch of 8x6, set the user control variable MOCK_ARRAY_TABLE
 
 ```
-export MOCK_ARRAY_WIDTH=4
-export MOCK_ARRAY_HEIGHT=4
+export MOCK_ARRAY_TABLE="4 4 5 6 8 6"
 export MOCK_ARRAY_DATAWIDTH=4
 export FLOW_VARIANT=small
-# use a different folder for each combination of parameters
-#export MOCK_ARRAY_WIDTH=16
-#export MOCK_ARRAY_HEIGHT=16
-#export MOCK_ARRAY_DATAWIDTH=64
-#export FLOW_VARIANT=giant
+
 export DESIGN_CONFIG=designs/asap7/mock-array/config.mk
 ```
 
