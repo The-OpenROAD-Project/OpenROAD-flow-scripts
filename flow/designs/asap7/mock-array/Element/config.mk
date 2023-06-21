@@ -1,10 +1,10 @@
-include designs/asap7/mock-array-big/defaults.mk
+include designs/asap7/mock-array/defaults.mk
 
 export DESIGN_NAME            = Element
-export DESIGN_NICKNAME        = mock-array-big_Element
+export DESIGN_NICKNAME        = mock-array_Element
 
-export VERILOG_FILES          = designs/src/mock-array-big/*.v
-export SDC_FILE               = designs/asap7/mock-array-big/Element/constraints.sdc
+export VERILOG_FILES          = designs/src/mock-array/*.v
+export SDC_FILE               = designs/asap7/mock-array/Element/constraints.sdc
 
 export PLATFORM               = asap7
 
@@ -22,9 +22,9 @@ export DIE_AREA = $(shell \
   cd $(dir $(DESIGN_CONFIG))/../ && \
   python3 -c "import config; print(f'0 0 {config.ce_width} {config.ce_height}')")
 
-export IO_CONSTRAINTS         = designs/asap7/mock-array-big/Element/io.tcl
+export IO_CONSTRAINTS         = designs/asap7/mock-array/Element/io.tcl
 
-export PDN_TCL                = designs/asap7/mock-array-big/Element/pdn.tcl
+export PDN_TCL                = designs/asap7/mock-array/Element/pdn.tcl
 
 # max routing layer need to be set to M5, since M6 is needed for next level up to connect
 # to the ring and stipe
@@ -37,3 +37,8 @@ export DETAILED_ROUTE_ARGS=-bottom_routing_layer M2 -top_routing_layer M5 -save_
 
 export MOCK_ARRAY_ROWS        = $(word 1, $(MOCK_ARRAY_TABLE))
 export MOCK_ARRAY_COLS        = $(word 2, $(MOCK_ARRAY_TABLE))
+
+# since we are specifying DETAILED_ROUTE_ARGS, we need to communicate the
+# same information to other stages in the flow.
+export MIN_ROUTING_LAYER = M2
+export MAX_ROUTING_LAYER = M5

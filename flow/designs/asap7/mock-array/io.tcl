@@ -1,4 +1,4 @@
-source designs/asap7/mock-array-big/util.tcl
+source designs/asap7/mock-array/util.tcl
 
 set assignments [list \
     top \
