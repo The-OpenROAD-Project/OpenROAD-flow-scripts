@@ -449,9 +449,9 @@ floorplan_info:
 # ==============================================================================
 
 ifneq ($(FOOTPRINT),)
-IS_CHIP = 1
+export IS_CHIP = 1
 else ifneq ($(FOOTPRINT_TCL),)
-IS_CHIP = 1
+export IS_CHIP = 1
 endif
 
 # STEP 1: Translate verilog to odb

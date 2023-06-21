@@ -1,4 +1,4 @@
-if {![info exists ::env(IS_CHIP)]} {
+if {[info exists ::env(IS_CHIP)]} {
   file copy -force $::env(RESULTS_DIR)/2_1_floorplan.odb $::env(RESULTS_DIR)/2_2_floorplan_io.odb
   # Ouch! The file date is copied by Tcl, but the precision is seconds, so
   # this means that a copied file can be *older* than the source, or
