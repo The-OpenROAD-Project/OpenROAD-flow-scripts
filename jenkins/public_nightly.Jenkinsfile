@@ -193,8 +193,9 @@ pipeline {
           sh """
             python3 flow/util/uploadMetadata.py \
               --buildID ${env.BUILD_ID} \
-              --branchName ${env.BRANCH_NAME} \
-              --commitSHA ${env.GIT_COMMIT} \
+              --branchName nightly \
+              --commitSHA ${env.GIT_COMMIT}-dirty \
+              --jenkinsURL ${env.RUN_DISPLAY_URL} \
               --pipelineID ${env.BUILD_TAG} \
             """ + '--cred ${db_cred}'
         }

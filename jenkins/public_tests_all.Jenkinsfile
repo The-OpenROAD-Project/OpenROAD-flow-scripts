@@ -167,6 +167,7 @@ pipeline {
               --buildID ${env.BUILD_ID} \
               --branchName ${env.BRANCH_NAME} \
               --commitSHA ${env.GIT_COMMIT} \
+              --jenkinsURL ${env.RUN_DISPLAY_URL} \
               --pipelineID ${env.BUILD_TAG} \
             """ + '--cred ${db_cred}'
         }
