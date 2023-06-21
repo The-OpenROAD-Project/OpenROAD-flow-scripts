@@ -26,10 +26,6 @@ export IO_CONSTRAINTS         = designs/asap7/mock-array/Element/io.tcl
 
 export PDN_TCL                = designs/asap7/mock-array/Element/pdn.tcl
 
-# max routing layer need to be set to M5, since M6 is needed for next level up to connect
-# to the ring and stipe
-export MAX_ROUTING_LAYER      = M5
-
 # If this design isn't quickly done in detailed routing, something is wrong.
 # At time of adding this option, only 3 iterations were needed for 0
 # violations.
