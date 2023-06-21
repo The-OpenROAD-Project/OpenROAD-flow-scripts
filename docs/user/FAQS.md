@@ -25,13 +25,11 @@ git pull
 ```
 For WSL/docker based installation, run:
 ```
-git submodule update
 ./build_openroad.sh
 ```
 
 For local installation, run:
 ```
-got submodule update 
 ./build_openroad.sh --local
 ```
 
