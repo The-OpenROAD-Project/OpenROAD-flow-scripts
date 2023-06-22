@@ -58,7 +58,10 @@ exit
 
 ## Enable GUI support
 
-To use the GUI feature you will need to start the docker with the following command:
+To use the GUI feature you will need to start the docker with the
+following command,
+
+For Ubuntu/Centos/Debian OS users:
 
 ```
 docker run --rm -it \
@@ -70,6 +73,14 @@ docker run --rm -it \
            --network host \
            --security-opt seccomp=unconfined \
            openroad/flow-$OS_NAME-builder
+```
+
+Running GUI with Docker on Mac OS X users, refer [here](https://cntnr.io/running-guis-with-docker-on-mac-os-x-a14df6a76efc).
+
+Then use:
+
+```
+docker run --rm -it -e DISPLAY=<IP_LIKE_FROM_TUTORIAL>:0 --network host --privileged <IMAGE_NAME>
 ```
 
 ## Docker Shell Utility
