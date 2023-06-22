@@ -12,16 +12,18 @@ We recommend that users follow the Docker build by continuing onto the guide bel
 ## Docker configuration
 This section assumes you have set up Docker for Windows already. If not, please refer to the Docker official website for instructions [here](https://docs.Docker.com/desktop/install/windows-install/).
 
-You need to enable the following option to allow WSL to use Docker. 
+You need to enable the following options to allow WSL to use Docker. 
 
-> Insert pic 1 here
+General > Use the WSL 2 Based engine (should be default selection)
+![WSL1](../images/wsl_1.png)
 
-> Insert pic 2 here
+Resources > WSL integration > Enable integration with my default WSL distro and select "Ubuntu-22.04", or the distribution you installed.  
+![WSL2](../images/wsl_2.png)
 
 ## Accessing WSL
 On the windows bar, there should be an icon named "Ubuntu 22.04 LTS" Click on it, and it should bring you to a terminal like this. 
 
-> Insert pic 3 here
+![WSL3](../images/wsl_3.png)
 
 Run the following
 ```
@@ -33,6 +35,6 @@ docker run hello-world
 ```
 You should see:
 
-> insert pic 4 here
+![WSL4](../images/wsl_4.png)
 
 If everything is successful up to this point, congratulations! You are now ready to follow the [Docker guide](./BuildWithDocker.md) as you have configured a Linux system with necessary dependencies. 
