@@ -21,11 +21,7 @@ Resources > WSL integration > Enable integration with my default WSL distro and 
 ![WSL2](../images/wsl_2.PNG)
 
 ## Accessing WSL
-On the windows bar, there should be an icon named "Ubuntu 22.04 LTS" Click on it, and it should bring you to a terminal like this. 
-
-![WSL3](../images/wsl_3.PNG)
-
-Run the following
+You may access WSL from the app named "Ubuntu 22.04 LTS". Run the following:
 ```
 sudo apt-get update; sudo apt-get upgrade; sudo apt install -y build-essential python3 python3-venv python3-pip make
 ```
@@ -35,6 +31,9 @@ docker run hello-world
 ```
 You should see:
 
-![WSL4](../images/wsl_4.PNG)
+```
+Hello from Docker!
+`his message shows that your installation appears to be working correctly.
+```
 
 If everything is successful up to this point, congratulations! You are now ready to follow the [Docker guide](./BuildWithDocker.md) as you have configured a Linux system with necessary dependencies. 

@@ -23,17 +23,20 @@ cd OpenROAD-flow-scripts
 git checkout master
 git pull
 ```
+
+Now your local copy of ORFS should be up-to-date. The next step is to build it again with the following command: 
+
 For WSL/docker based installation, run:
 ```
-./build_openroad.sh
+./build_openroad.sh --clean
 ```
 
 For local installation, run:
 ```
-./build_openroad.sh --local
+./build_openroad.sh --local --clean
 ```
 
-For prebuilt binaries, you can run the flow after `git pull` is done.
+For pre-built binaries, you can run the flow after `git pull` is done.
 
 > **TIP**: For development purposes, it is a good practice to work on branches and leave master untouched. 
 > To update your branch, simply run `git checkout <BRANCH>; git merge master`
