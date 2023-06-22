@@ -968,7 +968,7 @@ cd ../tools/OpenROAD/src/pdn/test
 openroad -gui
 ```
 
-Run [core_grid_snap.tcl](../../src/pdn/test/core_grid_snap.tcl)
+Run [core_grid_snap.tcl](.(https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pdn/test/core_grid_snap.tcl)
 to generate power grid for `gcd` design.
 
 ```
@@ -1149,7 +1149,7 @@ Read the resulting macro placement with a complete core view:
 ##### Macro Placement With Halo Spacing
 
 Explore macro placement with halo spacing, refer to the example
-[here](../../src/mpl/test/).
+[here]((https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/mpl/test/).
 
 Launch GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 ```
