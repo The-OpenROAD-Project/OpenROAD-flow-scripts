@@ -14,8 +14,8 @@ This is intended for:
 
 -   Beginners or new users with some understanding of basic VLSI
     design flow. Users will learn the basics of installation to use
-    `OpenROAD-flow-scripts` for the complete RTL-to-GDS flow from
-    [here](https://openroad-flow-scripts.readthedocs.io/en/latest/#getting-started-with-openroad-flow-scripts).
+    OpenROAD-flow-scripts for the complete RTL-to-GDS flow from
+    [here](../index.md#getting-started-with-openroad-flow-scripts).
 -   Users already familiar with the OpenROAD application and flow but would
     like to learn more about specific features and commands.
 
@@ -36,9 +36,9 @@ Note: Please submit any problem found under Issues in the GitHub repository
 
 ## Getting Started
 
-This section describes the environment setup to build ORFS and get ready
-to execute the RTL-to-GDS flow of the open-source design `ibex` using the
-`sky130hd` technology.
+This section describes the environment setup to build OpenROAD-flow-scripts
+and get ready to execute the RTL-to-GDS flow of the open-source
+design `ibex` using the `sky130hd` technology.
 
 `ibex` is a 32 bit RISC-V CPU core (`RV32IMC/EMC`) with a two-stage
 pipeline.
@@ -47,39 +47,35 @@ pipeline.
 
 Use the `bash` shell to run commands and scripts.
 
-#### ORFS Installation
+#### OpenROAD-flow-scripts Installation
 
 To install OpenROAD-flow-scripts,  refer to the 
 [Build or installing ORFS  Dependencies](https://openroad-flow-scripts.readthedocs.io/en/latest/#build-or-installing-orfs-dependencies)
 documentation.
 
 In general, we recommend using `Docker` for an efficient user
-experience. Install ORFS using a docker as described here
-[Build from sources using Docker](../user/BuildWithDocker.md).
+experience. Install OpenROAD-flow-scripts using a docker as described
+here [Build from sources using Docker](../user/BuildWithDocker.md).
 
 > **Note:**
-> If you need to update an existing docker based installation, then
-> run the following commands:
-> cd OpenROAD-flow-scripts
-> git checkout master
-> git pull
-> ./build_openroad.sh
+> If you need to update an existing OpenROAD-flow-scripts installation,
+> follow instructions based on installation from [here](../user/FAQs.md#how-do-i-update-openroad-flow-scripts).
 
-ORFS installation is complete.
+OpenROAD-flow-scripts installation is complete.
 
-#### Running ORFS inside the Docker
+#### Running OpenROAD-flow-scripts inside the Docker
 
-Launch the docker with the `OpenROAD-flow-scripts` container as
-follows:
+Launch the docker with OpenROAD-flow-scripts container as follows:
 
 ```
 export OS_NAME=centos7
 docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-$OS_NAME-builder
 ```
-> **Optional:** To launch OpenROAD gui inside the docker, use command
-> from [here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/BuildWithDocker.html#enable-gui-support).
 
-Once you are entered into ORFS container run:
+> **Optional:** To launch OpenROAD gui inside the docker, based on
+>  the OS, use the command from [here](../user/BuildWithDocker.md#enable-gui-support).
+
+Once you are entered into OpenROAD-flow-scripts container run:
 
 ```
 source env.sh
@@ -119,7 +115,7 @@ Log                       Elapsed seconds
 
 This section shows how to set up the necessary platform and design
 configuration files to run the complete RTL-to-GDS flow using
-`OpenROAD-flow-scripts` for `ibex` design.
+OpenROAD-flow-scripts for `ibex` design.
 
 ```
 cd flow
@@ -137,7 +133,7 @@ less ./platforms/sky130hd/config.mk
 The `config.mk` file has all the required variables for the `sky130`
 platform and hence it is not recommended to change any variable
 definition here. You can view the `sky130hd` platform configuration
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/platforms/sky130hd/config.mk).
+[here](../../flow/platforms/sky130hd/config.mk).
 
 Refer to the [Flow variables](../user/FlowVariables.md) document for
 details on how to use platform and design specific environment variables
@@ -152,7 +148,7 @@ less ./designs/sky130hd/ibex/config.mk
 ```
 
 You can view `ibex` design `config.mk`
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/ibex/config.mk).
+[here](../../flow/designs/sky130hd/ibex/config.mk).
 
 > **Note** The following design-specific configuration variables are required
 > to specify main design inputs such as platform, top-level design name and
@@ -175,7 +171,7 @@ You can view `ibex` design `config.mk`
 ### Timing Constraints
 
 View timing constraints specified in the `.sdc` file
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/ibex/constraint.sdc).
+[here](../../flow/designs/sky130hd/ibex/constraint.sdc).
 
 ```
 less ./designs/sky130hd/ibex/constraint.sdc
@@ -193,10 +189,10 @@ create_clock -name core_clock -period 17.4 [get_ports {clk_i}]
 The Verilog input files are located in `./designs/src/ibex/`
 
 The design is defined in `ibex_core.v` available
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/ibex_core.v).
+[here](../../flow/designs/src/ibex/ibex_core.v).
 
 Refer to the `ibex` design `README.md`
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md).
+[here](../../flow/designs/src/ibex/README.md).
 
 ## Running The Automated RTL-to-GDS Flow
 
@@ -234,9 +230,9 @@ configuration examples using the Tcl interface and other such details.
 
 ### Design Goals
 
-Run the `ibex` design in ORFS automated flow from RTL-to-GDS using `sky130hd`.
-Find `ibex` design details
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md)
+Run the `ibex` design in OpenROAD-flow-scripts automated flow from
+RTL-to-GDS using `sky130hd`. Find `ibex` design details
+[here](../../flow/designs/src/ibex/README.md)
 and the design goals are:
 
 -   Area
@@ -267,10 +263,10 @@ Run the complete flow with:
 make DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 ```
 
-As the flow executes, check out the ORFS directory contents and their
+As the flow executes, check out the OpenROAD-flow-scripts directory contents and their
 significance.
 
-ORFS can generally restart from a previous partial run. If you have errors which prevent restarting the flow, you may try deleting all generated files and start a fresh run. Errors can occur if a tool crashes or is killed while writing a file. The files for `sky130hd/ibex` as an example can be deleted with:
+OpenROAD-flow-scripts can generally restart from a previous partial run. If you have errors which prevent restarting the flow, you may try deleting all generated files and start a fresh run. Errors can occur if a tool crashes or is killed while writing a file. The files for `sky130hd/ibex` as an example can be deleted with:
 
 ```
 make clean_all DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
@@ -279,7 +275,7 @@ make clean_all DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 You can also delete files related to individual stages of RTL to GDSII conversion like synthesis, floorplanning, macro placement, clock tree synthesis, routing and layout generation with `clean_synth`, `clean_floorplan`, `clean_place`, `clean_cts`, `clean_route`, and `clean_finish`, respectively.
 
 
-### Viewing ORFS Directory Structure And Results
+### Viewing OpenROAD-flow-scripts Directory Structure And Results
 
 Open a new tab in the terminal and explore the directory structure in
 `flow` by typing `ls` command to view its contents:
@@ -383,7 +379,7 @@ results/sky130hd/ibex/base/6_final.gds
 
 ## Viewing Results And Logs
 
-ORFS prepends a prefix to each flow stage, as shown below, to
+OpenROAD-flow-scripts prepends a prefix to each flow stage, as shown below, to
 indicate the position in the RTL-GDS flow. This makes it easier to
 understand and debug each flow stage in case of failure.
 
@@ -505,8 +501,7 @@ If you have completed the RTL-GDS flow, then proceed to view the final
 GDS file under results directory `./results/sky130hd/ibex/base/`
 
 For the `ibex` design uncomment the `DESIGN_CONFIG`
-variable in the `Makefile` available
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/Makefile).
+variable in the `Makefile` available [here](../../flow/Makefile).
 
 ```
 # DESIGN_CONFIG=./designs/sky130hd/gcd/config.mk
@@ -715,9 +710,10 @@ Routing completed with 0 violations.
 
 ### Tcl Command Interface
 
-Execute ORFS Tcl commands from the GUI. Type `help` to view Tcl
-Commands available. In OpenROAD GUI, at the bottom, `TCL commands` executable
-space is available to run the commands. For example
+Execute OpenROAD-flow-scripts Tcl commands from the GUI. Type `help`
+to view Tcl Commands available. In OpenROAD GUI, at the bottom,
+`TCL commands` executable space is available to run the commands.
+For example
 
 View `design area`:
 
@@ -799,8 +795,7 @@ Explore optimization options using synthesis options: `ABC_AREA` and `ABC_SPEED`
 Set `ABC_AREA=1` for area optimization and `ABC_SPEED=1` for timing optimization.
 Update design `config.mk` for each case and re-run the flow to view impact.
 
-To view `ibex` design
-[config.mk](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/ibex/config.mk).
+To view `ibex` design [config.mk](../../flow/designs/sky130hd/ibex/config.mk).
 
 ```
 #Synthesis strategies
@@ -830,8 +825,8 @@ increase the area to meet timing regardless of the netlist produced earlier.
 
 ### Floorplanning
 
-This section describes ORFS floorplanning and placement functions using
-the GUI.
+This section describes OpenROAD-flow-scripts floorplanning and
+placement functions using the GUI.
 
 #### Floorplan Initialization Based On Core And Die Area
 
@@ -1555,7 +1550,7 @@ the resizer.
 ### Clock Tree Synthesis
 
 To perform clock tree synthesis `clock_tree_synthesis` flow command used.
-The ORFS automatically generates a well-balanced clock tree post-placement.
+The OpenROAD-flow-scripts automatically generates a well-balanced clock tree post-placement.
 In this section, you will learn details about the building and visualize the
 clock tree.
 
@@ -1647,7 +1642,7 @@ tree in GUI as follows:
 
 #### Reporting Clock Skews
 
-The ORFS flow automatically fixes any skew issues that could potentially
+The OpenROAD-flow-scripts flow automatically fixes any skew issues that could potentially
 cause hold violations downstream in the timing path.
 
 ```
