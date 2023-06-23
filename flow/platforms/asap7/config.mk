@@ -231,27 +231,25 @@ ifeq ($(ASAP7_USESLVT), 1)
 
 endif
 
-#Dont use SC library based on CORNER selection
+# Dont use SC library based on CORNER selection
+#
+# BC - Best case, fastest
+# WC - Worst case, slowest
+# TC - Typical case
 ifeq ($(CORNER),)
    export CORNER = BC
    $(info Default PVT selection: $(CORNER))
-   export LIB_FILES             += $($(CORNER)_LIB_FILES)
-   export LIB_FILES             += $(ADDITIONAL_LIBS)
-   export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
-   export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
-   export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
-   export VOLTAGE                = $($(CORNER)_VOLTAGE)
-   export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 else
    $(info User PVT selection: $(CORNER))
-   export LIB_FILES             += $($(CORNER)_LIB_FILES)
-   export LIB_FILES             += $(ADDITIONAL_LIBS)
-   export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
-   export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
-   export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
-   export VOLTAGE                = $($(CORNER)_VOLTAGE)
-   export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 endif
+export LIB_FILES             += $($(CORNER)_LIB_FILES)
+export LIB_FILES             += $(ADDITIONAL_LIBS)
+export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
+export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
+export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
+export VOLTAGE                = $($(CORNER)_VOLTAGE)
+export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
+
 # ---------------------------------------------------------
 #  IR Drop
 # ---------------------------------------------------------
