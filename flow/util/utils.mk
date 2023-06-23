@@ -120,12 +120,12 @@ command:
 
 ## Provide easy access to debugging
 ifdef GDB
-OPENROAD_EXE := gdb --args $(OPENROAD_EXE)
+export OPENROAD_EXE := gdb --args $(OPENROAD_EXE)
 endif
 
 ## Provide easy way to run valgrind
 ifdef VALGRIND
-OPENROAD_EXE := valgrind $(VALGRIND_ARGS) $(OPENROAD_EXE)
+export OPENROAD_EXE := valgrind $(VALGRIND_ARGS) $(OPENROAD_EXE)
 endif
 
 ## Convert RVE DRC database to JSON
