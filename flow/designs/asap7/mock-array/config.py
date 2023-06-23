@@ -30,9 +30,15 @@ margin_y    = placement_grid_y
 ce_margin_x = placement_grid_x * 0.5
 ce_margin_y = placement_grid_y * 0.5
 
+array_spacing_x = margin_x * 3
+array_spacing_y = margin_y * 3
+
+array_offset_x = array_spacing_x + margin_x
+array_offset_y = array_spacing_y + margin_y
+
 # top level core and die size
-core_width  = ((placement_grid_x * pitch_x) * (cols + 1)) + (ce_width  * cols)
-core_height = ((placement_grid_y * pitch_y) * (rows + 1)) + (ce_height * rows)
+core_width  = 2 * array_spacing_x + ((placement_grid_x * pitch_x) * (cols - 1)) + ce_width
+core_height = 2 * array_spacing_y + ((placement_grid_y * pitch_y) * (rows - 1)) + ce_height
 
 die_width  = core_width  + (margin_x * 2)
 die_height = core_height + (margin_y * 2)
