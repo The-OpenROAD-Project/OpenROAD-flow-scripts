@@ -30,8 +30,9 @@ margin_y    = placement_grid_y
 ce_margin_x = placement_grid_x * 0.5
 ce_margin_y = placement_grid_y * 0.5
 
-array_spacing_x = margin_x * 3
-array_spacing_y = margin_y * 3
+# PDN problems if it is smaller. Not investigated.
+array_spacing_x = margin_x * 2
+array_spacing_y = margin_y * 2
 
 array_offset_x = array_spacing_x + margin_x
 array_offset_y = array_spacing_y + margin_y
