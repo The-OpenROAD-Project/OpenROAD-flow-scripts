@@ -208,7 +208,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     metrics_dict = defaultdict(dict)
     metrics_dict['run__flow__generate_date'] = now.strftime('%Y-%m-%d %H:%M')
     metrics_dict['run__flow__metrics_version'] = 'Metrics_2.1.2'
-    cmdOutput = check_output(['openroad', '-version'])
+    cmdOutput = check_output([os.environ.get('OPENROAD_EXE', 'openroad'), '-version'])
     cmdFields = [x.decode('utf-8') for x in cmdOutput.split()]
     metrics_dict['run__flow__openroad_version'] = str(cmdFields[0])
     if len(cmdFields) > 1:
