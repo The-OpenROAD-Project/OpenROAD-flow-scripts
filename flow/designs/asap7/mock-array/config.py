@@ -10,6 +10,10 @@ placement_grid_y     = 2.16
 # MOCK_ARRAY_TABLE (rows, cols, width, height, pitch_x, pitch_y)
 #  rows, cols       - number of Element in rows, cols
 #  width, height    - width and height of each Element
+#
+# When the pitch is equal to the width/height, we have routing by abutment
+# https://en.wikipedia.org/wiki/Pitch#Linear_measurement
+#
 #  pitch_x, pitch_y - placement pitch for each Element, in x and y direction
 # specification are in unit of placement grid
 rows, cols, ce_x, ce_y, pitch_x, pitch_y = map(int, os.environ.get("MOCK_ARRAY_TABLE").split())
