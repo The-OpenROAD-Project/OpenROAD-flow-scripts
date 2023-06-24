@@ -59,7 +59,7 @@ here [Build from sources using Docker](../user/BuildWithDocker.md).
 
 > **Note:**
 > If you need to update an existing OpenROAD-flow-scripts installation,
-> follow instructions based on installation from [here](../user/FAQs.md#how-do-i-update-openroad-flow-scripts).
+> follow instructions based on installation from [here](../user/FAQS.md#how-do-i-update-openroad-flow-scripts).
 
 OpenROAD-flow-scripts installation is complete.
 
@@ -133,7 +133,7 @@ less ./platforms/sky130hd/config.mk
 The `config.mk` file has all the required variables for the `sky130`
 platform and hence it is not recommended to change any variable
 definition here. You can view the `sky130hd` platform configuration
-[here](../../flow/platforms/sky130hd/config.mk).
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/platforms/sky130hd/config.mk).
 
 Refer to the [Flow variables](../user/FlowVariables.md) document for
 details on how to use platform and design specific environment variables
@@ -148,7 +148,7 @@ less ./designs/sky130hd/ibex/config.mk
 ```
 
 You can view `ibex` design `config.mk`
-[here](../../flow/designs/sky130hd/ibex/config.mk).
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/ibex/config.mk).
 
 > **Note** The following design-specific configuration variables are required
 > to specify main design inputs such as platform, top-level design name and
@@ -171,7 +171,7 @@ You can view `ibex` design `config.mk`
 ### Timing Constraints
 
 View timing constraints specified in the `.sdc` file
-[here](../../flow/designs/sky130hd/ibex/constraint.sdc).
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/ibex/constraint.sdc).
 
 ```
 less ./designs/sky130hd/ibex/constraint.sdc
@@ -189,10 +189,10 @@ create_clock -name core_clock -period 17.4 [get_ports {clk_i}]
 The Verilog input files are located in `./designs/src/ibex/`
 
 The design is defined in `ibex_core.v` available
-[here](../../flow/designs/src/ibex/ibex_core.v).
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/ibex_core.v).
 
 Refer to the `ibex` design `README.md`
-[here](../../flow/designs/src/ibex/README.md).
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md).
 
 ## Running The Automated RTL-to-GDS Flow
 
@@ -232,7 +232,7 @@ configuration examples using the Tcl interface and other such details.
 
 Run the `ibex` design in OpenROAD-flow-scripts automated flow from
 RTL-to-GDS using `sky130hd`. Find `ibex` design details
-[here](../../flow/designs/src/ibex/README.md)
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md)
 and the design goals are:
 
 -   Area
@@ -501,7 +501,7 @@ If you have completed the RTL-GDS flow, then proceed to view the final
 GDS file under results directory `./results/sky130hd/ibex/base/`
 
 For the `ibex` design uncomment the `DESIGN_CONFIG`
-variable in the `Makefile` available [here](../../flow/Makefile).
+variable in the `Makefile` available [here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/Makefile).
 
 ```
 # DESIGN_CONFIG=./designs/sky130hd/gcd/config.mk
@@ -795,7 +795,7 @@ Explore optimization options using synthesis options: `ABC_AREA` and `ABC_SPEED`
 Set `ABC_AREA=1` for area optimization and `ABC_SPEED=1` for timing optimization.
 Update design `config.mk` for each case and re-run the flow to view impact.
 
-To view `ibex` design [config.mk](../../flow/designs/sky130hd/ibex/config.mk).
+To view `ibex` design [config.mk](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/ibex/config.mk).
 
 ```
 #Synthesis strategies
