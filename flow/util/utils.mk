@@ -85,7 +85,7 @@ define \n
 
 endef
 
-export ISSUE_VARIABLES := $(foreach V, $(.VARIABLES),$(if $(filter-out environment% default automatic, $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT% GENERATE_ABSTRACT_RULE%, $(V)),$V=$($V))${\n}))
+export ISSUE_VARIABLES := $(foreach V, $(.VARIABLES),$(if $(filter-out environment% default automatic, $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT% GENERATE_ABSTRACT_RULE%, $(V)), $(if $($V),$V=$($V),$V=''))${\n}))
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	$(UTILS_DIR)/makeIssue.sh $*
@@ -120,12 +120,12 @@ command:
 
 ## Provide easy access to debugging
 ifdef GDB
-OPENROAD_EXE := gdb --args $(OPENROAD_EXE)
+export OPENROAD_EXE := gdb --args $(OPENROAD_EXE)
 endif
 
 ## Provide easy way to run valgrind
 ifdef VALGRIND
-OPENROAD_EXE := valgrind $(VALGRIND_ARGS) $(OPENROAD_EXE)
+export OPENROAD_EXE := valgrind $(VALGRIND_ARGS) $(OPENROAD_EXE)
 endif
 
 ## Convert RVE DRC database to JSON

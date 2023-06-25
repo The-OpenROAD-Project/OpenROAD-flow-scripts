@@ -13,10 +13,6 @@ flow stages through Tcl commands and Python APIs.
 
 ## Tool Installation
 
-### Local Installation
-
-Document for detailed local installation steps found [here](./docs/user/BuildLocally.md).
-
 ### Docker Based Installation
 
 To ease dependency installation issues, ORFS uses docker images.
@@ -35,6 +31,25 @@ To manage docker as non-root user and verify that you can run
 
 Document for detailed steps on docker based installation found
 [here](./docs/user/BuildWithDocker.md).
+
+### Pre-built Binaries
+
+You can download, set up and run ORFS easily with pre-built
+binaries, including OpenROAD, Yosys and Klayout. See instructions
+[here](./docs/user/BuildWithPrebuilt.md).
+
+> **Thanks** to [Precision Innovations](https://precisioninno.com/) for
+> providing and supporting OpenROAD based binaries.
+
+> **Note** Only the latest version of OpenROAD is guaranteed to work with
+> the latest version of ORFS.
+
+> **Disclaimer** The versions of OpenROAD, Yosys and Klayout provided by
+> other third-party vendors are not guaranteed to work with ORFS.
+
+### Local Installation
+
+Document for detailed local installation steps found [here](./docs/user/BuildLocally.md).
 
 ## Using the Flow
 
