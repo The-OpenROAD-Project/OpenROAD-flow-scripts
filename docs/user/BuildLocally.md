@@ -28,7 +28,7 @@ in the "Relevant log output" section of OpenROAD-flow-scripts repo
 ## Verify Installation
 
 The binaries should be available on your `$PATH` after setting
-up the environment. The `make` command run from RTL-GDSII generation for default design `gcd` with `nangate45` PDK.  
+up the environment. The `make` command runs from RTL-GDSII generation for default design `gcd` with `nangate45` PDK. 
 
 ``` shell
 source ./env.sh

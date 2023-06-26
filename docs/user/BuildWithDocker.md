@@ -14,6 +14,7 @@ the output number is different from the number of CPUs from your machine,
 then is recommended that you restrict the number of CPUs used by the scripts
 (see instructions below).
 :::
+
 ``` shell
 docker run <IMAGE> nproc
 # <IMAGE> can be any commonly used OS, e.g., 'centos:centos7'

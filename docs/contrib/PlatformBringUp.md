@@ -95,18 +95,18 @@ to contain the relevant files and directories for all the designs for the
 flow in that specific platform. Each design requires its own `config.mk`
 and `constraint.sdc` files.
 
+:::{tip}
 Follow the steps below to create the necessary directories and files.
-**NOTE: gcd is just an example and not a required name.**:
+Note gcd is just an example and not a required name.
 
 ``` shell
-# Run these in OpenROAD-flow-designs/
 mkdir -p flow/designs/MyNewPlatform/gcd
 touch flow/designs/MyNewPlatform/gcd/config.mk
 touch flow/designs/MyNewPlatform/gcd/constraint.sdc
 ```
-
 This creates two directories MyNewPlatform and `gcd` and two empty files
 `config.mk` and `constraint.sdc` in `flow/designs/MyNewPlatform/gcd`.
+:::
 
 ### Platform Configuration
 
@@ -327,7 +327,6 @@ make_tracks metal5 -x_offset 0.28 -x_pitch 0.82 -y_offset 0.28 -y_pitch 0.82
 ```
 
 Following is the `LAYER` definition for `metal1` in the `sky130hd` tech LEF.
-
 ``` 
 LAYER met1
   TYPE ROUTING ;

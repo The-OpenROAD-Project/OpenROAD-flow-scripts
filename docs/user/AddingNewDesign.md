@@ -92,7 +92,6 @@ vi Makefile
 Comment (#) any `DESIGN_CONFIG` if already enabled.
 
 Add the following lines to `Makefile` and save the changes.
-
 ``` 
 DESIGN_CONFIG=./designs/gf180/spm/config.mk
 ```
