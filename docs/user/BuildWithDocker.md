@@ -16,9 +16,7 @@ then is recommended that you restrict the number of CPUs used by the scripts
 :::
 
 ``` shell
-docker run <IMAGE> nproc
-# <IMAGE> can be any commonly used OS, e.g., 'centos:centos7'
-docker run centos:centos7 nproc
+docker run --rm ubuntu:22.04 nproc
 ```
 
 You can restrict the number of CPUs with the `-t|--threads N` argument:

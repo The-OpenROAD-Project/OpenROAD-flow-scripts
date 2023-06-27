@@ -58,7 +58,7 @@ each other unless otherwise stated.
 Make the following edits  to the Makefile (located in `flow/Makefile`)
 so that OpenROAD can run the flow on a design using the new platform.
 
-At  the beginning of the Makefile, there is a block of `DESIGN_CONFIG`
+At the beginning of the Makefile, there is a block of `DESIGN_CONFIG`
 variables that are commented out. These variables tell OpenROAD which
 design to run and on what platform. `DESIGN_CONFIG` specifically points
 to a `config.mk` file located in the designs directory for the respective
@@ -70,8 +70,8 @@ already made which can be used with any platform (see `flow/designs/src`
 for a list of usable designs). For example, a `DESIGN_CONFIG` variable
 using the `gcd` design on a new platform would look as follows:
 
-```
-#Makefile
+```{code-block} Makefile
+:caption: Makefile
 DESIGN_CONFIG=./designs/MyNewPlatform/gcd/config.mk
 ```
 
