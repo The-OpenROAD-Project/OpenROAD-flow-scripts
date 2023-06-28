@@ -84,8 +84,8 @@ export PDN_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M1-M2-M5-M6.tcl
 export IO_PLACER_H             ?= M4
 export IO_PLACER_V             ?= M5
 
-export MACRO_PLACE_HALO        ?= 4 4
-export MACRO_PLACE_CHANNEL     ?= 6 6
+export MACRO_PLACE_HALO        ?= 10 10
+export MACRO_PLACE_CHANNEL     ?= 12 12
 
 # the followings create a keep out / halo between
 # macro and core rows
