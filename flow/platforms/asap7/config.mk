@@ -89,8 +89,8 @@ export MACRO_PLACE_CHANNEL     ?= 6 6
 
 # the followings create a keep out / halo between
 # macro and core rows
-export MACRO_HALO_X            ?= 0.5
-export MACRO_HALO_Y            ?= 0.5
+export MACRO_HALO_X            ?= 2
+export MACRO_HALO_Y            ?= 2
 
 # Cell padding in SITE widths to ease rout-ability.  Applied to both sides
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 2
