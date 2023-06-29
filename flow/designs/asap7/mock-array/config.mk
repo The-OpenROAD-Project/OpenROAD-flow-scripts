@@ -32,6 +32,9 @@ export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
 export MACRO_PLACE_HALO      = 0.5 0.5 
 export MACRO_PLACE_CHANNEL   = 0.5 0.5 
 
+export MACRO_HALO_X          = 0.5
+export MACRO_HALO_Y          = 0.5
+
 export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
 
 export PDN_TCL               = designs/asap7/mock-array/pdn.tcl
