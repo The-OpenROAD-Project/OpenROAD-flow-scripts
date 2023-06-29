@@ -36,5 +36,9 @@ export MOCK_ARRAY_COLS        = $(word 2, $(MOCK_ARRAY_TABLE))
 
 # since we are specifying DETAILED_ROUTE_ARGS, we need to communicate the
 # same information to other stages in the flow.
-export MIN_ROUTING_LAYER = M2
-export MAX_ROUTING_LAYER = M5
+export MIN_ROUTING_LAYER      = M2
+export MAX_ROUTING_LAYER      = M5
+
+# make sure block level pins are not on the highest allowable routing layer
+export IO_PLACER_H            = M4
+export IO_PLACER_V            = M3
