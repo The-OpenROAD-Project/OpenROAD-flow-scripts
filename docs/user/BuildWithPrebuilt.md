@@ -7,6 +7,8 @@ Instructions for installing:
 - [Klayout>=0.28.8](https://www.klayout.de/build.html)
 - [Yosys>=0.21](https://github.com/YosysHQ/oss-cad-suite-build/blob/master/README.md#installation)
 
+> **TIP**: Unfortunately KLayout maintainers do not provide Debian 10/11 compatible packages. You can follow the build-from-sources instruction (Version >=0.25) and Ubuntu 22 instructions [here](https://www.klayout.de/build.html#:~:text=Building%20KLayout%20on%20Linux%20(Version%20%3E%3D%200.25)). 
+
 ## Install OpenROAD
 Download pre-built binaries with self-contained dependencies
 included from the Precision Innovations' Github releases
@@ -39,7 +41,10 @@ git clone https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
 ```
 Export path variables accordingly.
 ```
-export PATH="<extracted_location>/oss-cad-suite/bin:$PATH" #yosys
+export PATH="<yosys_location>/bin:$PATH" 
+export PATH="<klayout_location>/bin:$PATH" # only if built from source
+export LD_LIBRARY_PATH="<klayout_location>/bin:$PATH" # only if built from source
+
 yosys -help
 openroad -help
 cd flow

@@ -269,9 +269,9 @@ endif
 # Priority is given to
 #       1 user include path to the executable prior to running make
 #       2 user explicit set with variable in Makefile or command line
-OPENROAD_EXE            ?= $(shell command -v openroad)
+export OPENROAD_EXE            ?= $(shell command -v openroad)
 ifeq ($(OPENROAD_EXE),)
-  OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+  export OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
 endif
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)

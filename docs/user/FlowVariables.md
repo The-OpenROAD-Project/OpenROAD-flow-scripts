@@ -62,6 +62,8 @@ Note:
 | `PLACE_SITE`                         | =            | =            | =             | =         | =         |
 | `MAKE_TRACKS`                        | =            | =            | =             | =         | =         |
 | `TAPCELL_TCL`                        | =            | =            | =             | =         | =         |
+| `MACRO_HALO_X`                       | NA           | NA           | NA            | ?=        | NA        |
+| `MACRO_HALO_Y`                       | NA           | NA           | NA            | ?=        | NA        |
 | `MACRO_PLACE_HALO`                   | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `MACRO_PLACE_CHANNEL`                | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `PDN_TCL`                            | ?=           | ?=           | ?=            | ?=        | ?=        |
@@ -128,6 +130,7 @@ Note:
 | `PLACE_SITE`          | Placement site for core cells defined in the technology LEF file.                                                                                                                |
 | `TAPCELL_TCL`         | Path to Endcap and Welltie cells file.                                                                                                                                           |
 | `RTLMP_FLOW`          | Enable the Hierarchical RTLMP flow. By default it is disabled.                                                                                                                   |
+| `MACRO_HALO`          | Specifies keep out distance from macro, in X and Y, to standard cell row.                                                                                                        |
 | `MACRO_PLACEMENT`     | Specifies the path of a file on how to place certain macros manually using read_macro_placement.                                                                                 |
 | `MACRO_PLACEMENT_TCL` | Specifies the path of a TCL file on how to place certain macros manually.                                                                                                        |
 | `MACRO_PLACE_HALO`    | horizontal/vertical halo around macros (microns). Used by automatic macro placement.                                                                               |
