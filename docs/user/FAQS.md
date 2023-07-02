@@ -47,3 +47,11 @@ For development purposes, it is a good practice to work on branches and leave ma
 ## How do I update the design reference files?
 
 See how to update using the Metrics [guide](../contrib/Metrics.md).
+
+## How do I get better search results?
+
+As quoted from [ReadTheDocs](https://docs.readthedocs.io/en/stable/server-side-search/syntax.html#special-queries), this documentation is powered by [Simple Query String](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#) from Elastisearch. Here are some helpful patterns:
+
+- Exact phrase search: `"global_route"`
+- Prefix query: `GRT-*`, `BUF*`, `report_*`
+- Fuzziness: `~N` (tilde followed by a number) after a word indicates edit distance. Helpful if the exact spelling is unknown. For example: `test~2`, `reportfilename~2`
