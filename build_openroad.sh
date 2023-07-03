@@ -357,6 +357,11 @@ __cleanup()
         fi
         echo "[INFO FLW-0026] Cleaning up previous binaries and build files."
         git clean ${CLEAN_CMD} tools
+        YOSYS_ABC_PATH="tools/yosys/abc"
+        if [[ -d "${YOSYS_ABC_PATH}" ]]; then
+                echo "Entering '${YOSYS_ABC_PATH}'"
+                git --work-tree=${YOSYS_ABC_PATH} --git-dir=${YOSYS_ABC_PATH}/.git clean ${CLEAN_CMD}
+        fi
         git submodule foreach --recursive git clean ${CLEAN_CMD}
 }
 
