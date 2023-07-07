@@ -318,16 +318,7 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 define GENERATE_ABSTRACT_RULE
 # Single rule, two targets, hence the "&:", syntax
 $(1) $(2) &: $(3)
-	# Make sure environment variables modified in this Makefile do not leak into the sub-build
-	bash -c " \
-	unset BLOCKS && \
-	unset ADDITIONAL_LEFS && \
-	unset ADDITIONAL_GDS && \
-	unset ADDITIONAL_LIBS && \
-	unset DONT_USE_SC_LIB && \
-	unset LIB_FILES && \
-	unset MACRO_PLACEMENT && \
-	$(MAKE) \"DESIGN_CONFIG=$(3)\" generate_abstract"
+	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$(3) generate_abstract
 endef
 
 # Targets to harden Blocks in case of hierarchical flow is triggered
@@ -453,6 +444,8 @@ IS_CHIP = 1
 else ifneq ($(FOOTPRINT_TCL),)
 IS_CHIP = 1
 endif
+
+UNSET_AND_MAKE = @bash -c 'for var in $(ISSUE_VARIABLES_NAMES); do unset $$var; done; echo $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@; $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
 
 # STEP 1: Translate verilog to odb
 #-------------------------------------------------------------------------------
@@ -679,7 +672,7 @@ finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
         $(GDS_FINAL_FILE)
-	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
+	$(UNSET_AND_MAKE) elapsed
 
 .PHONY:
 elapsed:
