@@ -14,11 +14,13 @@ export PLACE_DENSITY          = 0.30
 
 export CORE_AREA = $(shell \
   export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)"  && \
+  export MOCK_ARRAY_SCALE="$(MOCK_ARRAY_SCALE)" && \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config ; print(f'{config.margin_x} {config.margin_y} {config.core_width + config.margin_x} {config.core_height + config.margin_y}')")
 
 export DIE_AREA  = $(shell \
   export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && \
+  export MOCK_ARRAY_SCALE="$(MOCK_ARRAY_SCALE)" && \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config; print(f'{0} {0} {config.die_width} {config.die_height}')")
 

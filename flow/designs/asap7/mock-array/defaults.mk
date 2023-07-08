@@ -10,3 +10,5 @@ export MOCK_ARRAY_DATAWIDTH     ?= 64
 
 # Must be zero for routing by abutment
 export MACRO_BLOCKAGE_HALO      ?= 0.5
+
+export MOCK_ARRAY_SCALE         ?= 45

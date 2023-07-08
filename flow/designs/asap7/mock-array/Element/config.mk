@@ -14,11 +14,13 @@ export GPL_ROUTABILITY_DRIVEN = 0
 
 export CORE_AREA = $(shell \
   export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && \
+  export MOCK_ARRAY_SCALE="$(MOCK_ARRAY_SCALE)" && \
   cd $(dir $(DESIGN_CONFIG))/../ && \
   python3 -c "import config; print(f'{config.ce_margin_x} {config.ce_margin_y} {config.ce_width - config.ce_margin_x} {config.ce_height - config.ce_margin_y}')")
 
 export DIE_AREA = $(shell \
   export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && \
+  export MOCK_ARRAY_SCALE="$(MOCK_ARRAY_SCALE)" && \
   cd $(dir $(DESIGN_CONFIG))/../ && \
   python3 -c "import config; print(f'0 0 {config.ce_width} {config.ce_height}')")
 
