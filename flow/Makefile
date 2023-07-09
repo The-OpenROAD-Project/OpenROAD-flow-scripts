@@ -447,14 +447,31 @@ endif
 
 UNSET_AND_MAKE = @bash -c 'for var in $(ISSUE_VARIABLES_NAMES); do unset $$var; done; echo $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@; $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
 
+# Separate dependency checking and doing a step. This can
+# be useful to retest a stage without having to delete the
+# target, or when building a wafer thin layer on top of
+# ORFS using CMake, Ninja, Bazel, etc. where makefile
+# dependecy checking only gets in the way.
+#
+# Note that there is no "do-synth" step as it is a special
+# first step that for usecases such as Bazel where it should
+# always be built when invoked. Latter stages in the build process
+# are conditionally built by the Bazel implementation.
+#
+# A "do-synth" step would be welcomed, but it isn't strictly necessary
+# for the Bazel use-case.
+define do-step
+$(RESULTS_DIR)/$(1).odb: $(2)
+	$$(UNSET_AND_MAKE) do-$(1)
+
+.PHONY: do-$(1)
+do-$(1):
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json) 2>&1 | tee $(LOG_DIR)/$(1).log
+endef
+
 # STEP 1: Translate verilog to odb
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_1_floorplan.odb: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL)
-	$(UNSET_AND_MAKE) do-2_1_floorplan.odb
-
-.PHONY: do-2_1_floorplan.odb
-do-2_1_floorplan.odb:
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl -metrics $(LOG_DIR)/2_1_floorplan.json) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
+$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL),floorplan))
 
 # STEP 2: IO Placement (random)
 #-------------------------------------------------------------------------------
