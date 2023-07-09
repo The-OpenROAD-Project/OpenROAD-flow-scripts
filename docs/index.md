@@ -46,17 +46,18 @@ with 24-hour turnaround time.
 To build the binaries and run `gcd` through the flow:
 
 - Minimum: 1 CPU core and 8GB RAM.
-- Recommend: 4 CPU cores and 16GB of RAM.
+- Recommended: 4 CPU cores and 16GB of RAM.
 
 > **Note** `gcd` is a small design, and thus requires less computational power.
 > Larger designs may require better hardware.
 
 #### Build or Installing ORFS Dependencies
 
-We support three major ways of installation:
+We support four major ways of installation:
 
 - [Docker](./user/BuildWithDocker.md)
 - [Pre-built Binaries](./user/BuildWithPrebuilt.md)
+- [Windows Subsystem for Linux (WSL)](./user/BuildWithWSL.md)
 - [Local Installation](./user/BuildLocally.md)
 
 You may also choose use the build script to customise your build process.

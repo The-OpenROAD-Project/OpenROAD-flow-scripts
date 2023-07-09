@@ -84,8 +84,13 @@ export PDN_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M1-M2-M5-M6.tcl
 export IO_PLACER_H             ?= M4
 export IO_PLACER_V             ?= M5
 
-export MACRO_PLACE_HALO ?= 10 10
-export MACRO_PLACE_CHANNEL ?= 12 12
+export MACRO_PLACE_HALO        ?= 10 10
+export MACRO_PLACE_CHANNEL     ?= 12 12
+
+# the followings create a keep out / halo between
+# macro and core rows
+export MACRO_HALO_X            ?= 2
+export MACRO_HALO_Y            ?= 2
 
 # Cell padding in SITE widths to ease rout-ability.  Applied to both sides
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 2
@@ -231,27 +236,25 @@ ifeq ($(ASAP7_USESLVT), 1)
 
 endif
 
-#Dont use SC library based on CORNER selection
+# Dont use SC library based on CORNER selection
+#
+# BC - Best case, fastest
+# WC - Worst case, slowest
+# TC - Typical case
 ifeq ($(CORNER),)
    export CORNER = BC
    $(info Default PVT selection: $(CORNER))
-   export LIB_FILES             += $($(CORNER)_LIB_FILES)
-   export LIB_FILES             += $(ADDITIONAL_LIBS)
-   export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
-   export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
-   export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
-   export VOLTAGE                = $($(CORNER)_VOLTAGE)
-   export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 else
    $(info User PVT selection: $(CORNER))
-   export LIB_FILES             += $($(CORNER)_LIB_FILES)
-   export LIB_FILES             += $(ADDITIONAL_LIBS)
-   export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
-   export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
-   export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
-   export VOLTAGE                = $($(CORNER)_VOLTAGE)
-   export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 endif
+export LIB_FILES             += $($(CORNER)_LIB_FILES)
+export LIB_FILES             += $(ADDITIONAL_LIBS)
+export LIB_DIRS              += $($(CORNER)_LIB_DIRS)
+export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
+export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
+export VOLTAGE                = $($(CORNER)_VOLTAGE)
+export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
+
 # ---------------------------------------------------------
 #  IR Drop
 # ---------------------------------------------------------

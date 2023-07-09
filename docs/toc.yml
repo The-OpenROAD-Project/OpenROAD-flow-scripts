@@ -26,12 +26,7 @@ entries:
   title: Getting Involved
 
 - file: contrib/DeveloperGuide.md
-  title: Developer Guide
-  entries:
-  - file: contrib/PlatformBringUp.md
-    title: Guide to Integrate a New Platform into the OpenROAD Flow
-  - file: contrib/CI.md
-    title: CI
+  title: Developer's Guide
 
 - file: contrib/CODE_OF_CONDUCT.md
   title: Code of Conduct
