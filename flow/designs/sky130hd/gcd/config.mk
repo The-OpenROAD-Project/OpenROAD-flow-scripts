@@ -8,5 +8,5 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 export ADDER_MAP_FILE :=
 
 export CORE_UTILIZATION = 40
-export PLACE_DENISTY_LB_ADDON = 0.1
+export PLACE_DENSITY_LB_ADDON = 0.1
 export TNS_END_PERCENT = 100
