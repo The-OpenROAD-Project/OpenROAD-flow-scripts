@@ -86,7 +86,7 @@ define \n
 endef
 
 export ISSUE_VARIABLES_NAMES := $(foreach V, $(.VARIABLES),$(if $(filter-out environment% default automatic, $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT% GENERATE_ABSTRACT_RULE%, $(V)), $V$ )))
-export ISSUE_VARIABLES := $(foreach V, $(ISSUE_VARIABLES_NAMES), $(if $($V),$V=$($V),$V=''))${\n}))
+export ISSUE_VARIABLES := $(foreach V, $(ISSUE_VARIABLES_NAMES), $(if $($V),$V=$($V),$V='')${\n})
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	$(UTILS_DIR)/makeIssue.sh $*
