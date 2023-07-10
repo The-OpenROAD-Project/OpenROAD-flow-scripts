@@ -39,6 +39,10 @@ OpenROAD Flow is a full RTL-to-GDS flow built entirely on open-source tools.
 The project aims for automated, no-human-in-the-loop digital circuit design
 with 24-hour turnaround time.
 
+```{tip}
+See these [tips](user/FAQS.md) to help improve your search results.
+```
+
 ### Setup
 
 #### System Requirements
@@ -48,9 +52,11 @@ To build the binaries and run `gcd` through the flow:
 - Minimum: 1 CPU core and 8GB RAM.
 - Recommended: 4 CPU cores and 16GB of RAM.
 
-> **Note** `gcd` is a small design, and thus requires less computational power.
-> Larger designs may require better hardware.
+```{note}
+`gcd` is a small design, and thus requires less computational power.
+Larger designs may require better hardware.
 
+```
 #### Build or Installing ORFS Dependencies
 
 We support four major ways of installation:
@@ -128,7 +134,10 @@ flows. The two main functionalities that AutoTuner provides are:
 - Automatic hyperparameter tuning framework for OpenROAD-flow-scripts
 - Parametric sweeping experiments for OpenROAD-flow-scripts
 
-> **Tip**: Refer to the detailed [instructions here](./user/InstructionsForAutoTuner.md) for AutoTuner.
+```{tip}
+Refer to the detailed [instructions here](./user/InstructionsForAutoTuner.md) for AutoTuner.
+
+```
 
 ### Adding a Design
 
@@ -179,8 +188,9 @@ at `flow/results/{platform}/{design_name}/6_final.gds`
 1. Drop your Verilog files into `designs/src/harness`
 2. Start the workflow:
 
-> **TIP!**
-> Start with a very small submodule in your design that has only a few pins.
+```{tip}
+Start with a very small submodule in your design that has only a few pins.
+```
 
 ```shell
 make DESIGN_NAME=TopLevelName DESIGN_CONFIG=$(pwd)/designs/harness.mk

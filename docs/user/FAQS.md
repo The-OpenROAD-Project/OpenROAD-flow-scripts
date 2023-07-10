@@ -40,8 +40,8 @@ For pre-built binaries, you can run the flow after `git pull` is done.
 
 :::{tip} 
 For development purposes, it is a good practice to work on branches and leave master untouched. 
-- Branch already exists: `git checkout <BRANCH> && git merge master`
-- Branch does not exist: `git checkout -b <BRANCH> && git merge master` 
+- If the branch already exists: `git checkout <BRANCH> && git merge master`
+- If the branch does not exist: `git checkout -b <BRANCH> && git merge master` 
 :::
 
 ## How do I update the design reference files?
