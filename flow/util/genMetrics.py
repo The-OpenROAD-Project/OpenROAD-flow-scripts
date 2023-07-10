@@ -283,9 +283,9 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     extractTagFromFile('detailedplace__design__violations',
                        metrics_dict,
                        '^\[INFO FLW-0012\] Placement violations (\S+).',
-                       logPath + '/3_5_opendp.log', defaultNotFound=0)
+                       logPath + '/3_5_place_dp.log', defaultNotFound=0)
 
-    extractGnuTime('detailedplace', metrics_dict, logPath + '/3_5_opendp.log')
+    extractGnuTime('detailedplace', metrics_dict, logPath + '/3_5_place_dp.log')
 
     # CTS
     # =======================================================================
