@@ -780,7 +780,7 @@ else
 endif
 
 $(RESULTS_DIR)/6_final.cdl: $(RESULTS_DIR)/6_final.v
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cdl.tcl) 2>&1 | tee $(LOG_DIR)/6_final.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cdl.tcl) 2>&1 | tee $(LOG_DIR)/6_cdl.log
 
 $(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
 	cat $^ > $@
