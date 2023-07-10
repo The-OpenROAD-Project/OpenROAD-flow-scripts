@@ -1,4 +1,4 @@
-module fakeram_33554432x8
+module fakeregfile_64x64
 (
    rd_out,
    addr_in,
@@ -7,9 +7,9 @@ module fakeram_33554432x8
    clk,
    ce_in
 );
-   parameter BITS = 8;
-   parameter WORD_DEPTH = 33554432;
-   parameter ADDR_WIDTH = 25;
+   parameter BITS = 64;
+   parameter WORD_DEPTH = 64;
+   parameter ADDR_WIDTH = 6;
    parameter corrupt_mem_on_X_p = 1;
 
    output reg [BITS-1:0]    rd_out;
@@ -35,7 +35,7 @@ module fakeram_33554432x8
             // WEN or ADDR is unknown, so corrupt entire array (using unsynthesizeable for loop)
             for (j = 0; j < WORD_DEPTH; j = j + 1)
                mem[j] <= 'x;
-            $display("warning: ce_in=1, we_in is %b, addr_in = %x in fakeram_33554432x8", we_in, addr_in);
+            $display("warning: ce_in=1, we_in is %b, addr_in = %x in fakeregfile_64x64", we_in, addr_in);
          end
          else if (we_in)
          begin

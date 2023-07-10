@@ -530,7 +530,7 @@ MACRO fakeram7_64x21
     LAYER M3 ;
     RECT 0 0 2.850 16.800 ;
     LAYER M4 ;
-    RECT 0 0 2.850 16.800 ;
+    RECT 0.1 0 2.750 16.800 ;
   END
 END fakeram7_64x21
 

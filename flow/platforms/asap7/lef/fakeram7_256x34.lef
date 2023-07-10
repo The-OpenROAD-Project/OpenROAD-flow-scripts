@@ -913,7 +913,7 @@ MACRO fakeram7_256x34
     LAYER M3 ;
     RECT 0 0 4.560 67.200 ;
     LAYER M4 ;
-    RECT 0 0 4.560 67.200 ;
+    RECT 0.1 0 4.460 67.200 ;
   END
 END fakeram7_256x34
 
