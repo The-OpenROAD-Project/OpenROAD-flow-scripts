@@ -272,14 +272,14 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     # =========================================================================
     merge_jsons(logPath, metrics_dict, "2_*.json")
 
-    extractGnuTime('floorplan', metrics_dict, logPath + '/2_4_mplace.log')
+    extractGnuTime('floorplan', metrics_dict, logPath + '/2_4_floorplan_macro.log')
 
     # Place
     # =========================================================================
 
     merge_jsons(logPath, metrics_dict, "3_*.json")
-    extractGnuTime('globalplace', metrics_dict, logPath + '/3_4_resizer.log')
-    extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_resizer.log')
+    extractGnuTime('globalplace', metrics_dict, logPath + '/3_4_place_resized.log')
+    extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_place_resized.log')
     extractTagFromFile('detailedplace__design__violations',
                        metrics_dict,
                        '^\[INFO FLW-0012\] Placement violations (\S+).',
@@ -309,7 +309,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     extractTagFromFile('globalroute__timing__clock__slack',
                        metrics_dict,
                        '^\[INFO FLW-....\] Clock .* slack (\S+)',
-                       logPath + '/5_1_fastroute.log')
+                       logPath + '/5_1_grt.log')
 
     # Finish
     # =========================================================================
