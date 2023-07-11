@@ -688,8 +688,7 @@ elapsed:
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
-$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb $(FILL_CONFIG)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_1_fill.json) 2>&1 | tee $(LOG_DIR)/6_1_fill.log
+$(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(FILL_CONFIG),density_fill))
 else
 $(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb
 	cp $< $@
