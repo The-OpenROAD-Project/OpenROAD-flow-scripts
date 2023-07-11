@@ -39,20 +39,10 @@ def run():
                     print("Skipping variant, doesn't compile: " + variant)
         result = subprocess.check_output(test_design + " elapsed", shell=True, env=env).decode('utf-8')
 
+        # Modify pattern to capture the stage of interest
         # Log                       Elapsed seconds
-        # 2_6_pdn                           40
-        # 3_1_place_gp_skip_io               1
-        # 3_2_place_iop                      1
-        # 3_3_place_gp                       5
-        # 3_4_resizer                        2
-        # 3_5_opendp                         3
-        # 4_1_cts                            5
-        # 4_2_cts_fillcell                   3
-        # 5_1_fastroute                      5
-        # 5_2_TritonRoute                  297
-        # 6_1_merge                          3
-        # 6_report                          67
-        pattern = r'^5_2_TritonRoute\s+(\d+)$'
+        # logname                            40
+        pattern = r'^5_2_route\s+(\d+)$'
         match = re.search(pattern, result, re.MULTILINE)
         if match is None:
             print("Variant skipped: " + variant)
