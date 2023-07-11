@@ -620,18 +620,15 @@ route: $(RESULTS_DIR)/5_route.odb \
 
 # STEP 1: Run global route
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/5_1_grt.odb: $(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_route.tcl -metrics $(LOG_DIR)/5_1_grt.json) 2>&1 | tee $(LOG_DIR)/5_1_grt.log
-
+$(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE),global_route))
 
 # STEP 2: Run detailed route
 #-------------------------------------------------------------------------------
 ifeq ($(USE_WXL),)
-$(RESULTS_DIR)/5_2_route.odb: $(RESULTS_DIR)/5_1_grt.odb
+$(eval $(call do-step,5_2_route,$(RESULTS_DIR)/5_1_grt.odb,detail_route))
 else
-$(RESULTS_DIR)/5_2_route.odb: $(RESULTS_DIR)/4_cts.odb
+$(eval $(call do-step,5_2_route,$(RESULTS_DIR)/4_cts.odb,detail_route))
 endif
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_route.tcl -metrics $(LOG_DIR)/5_2_route.json) 2>&1 | tee $(LOG_DIR)/5_2_route.log
 
 $(RESULTS_DIR)/5_route.odb: $(RESULTS_DIR)/5_2_route.odb
 	cp $< $@
