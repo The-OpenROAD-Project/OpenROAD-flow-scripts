@@ -106,7 +106,7 @@ Log                       Elapsed seconds
 1_1_yosys                          2
 3_3_place_gp                       1
 4_1_cts                            8
-5_2_TritonRoute                   10
+5_2_route                   10
 6_1_merge                         10
 6_report                           3
 ```
@@ -315,13 +315,13 @@ abc.constr klayout.lyt klayout_tech.lef lib
 
 | `logs`                 |                        |                       |
 |------------------------|------------------------|-----------------------|
-| `1_1_yosys.log`        | `3_1_place_gp.log`     | `5_2_TritonRoute.log` |
+| `1_1_yosys.log`        | `3_1_place_gp.log`     | `5_2_route.log` |
 | `2_1_floorplan.log`    | `3_2_place_iop.log`    | `6_1_merge.log`       |
 | `2_2_floorplan_io.log` | `3_3_resizer.log`      | `6_report.log`        |
 | `2_3_tdms_place.log`   | `3_4_opendp.log`       |                       |
-| `2_4_mplace.log`       | `4_1_cts.log`          |                       |
-| `2_5_tapcell.log`      | `4_2_cts_fillcell.log` |                       |
-| `2_6_pdn.log`          | `5_1_fastroute.log`    |                       |
+| `2_4_floorplan_macro.log`       | `4_1_cts.log`          |                       |
+| `2_5_floorplan_tapcell.log`      | `4_2_cts_fillcell.log` |                       |
+| `2_6_floorplan_pdn.log`          | `5_1_grt.log`    |                       |
 
 
 -   `results/sky130hd/ibex/base`
@@ -393,13 +393,13 @@ The log structure is as follows:
 
 | `logs`                 |                        |                       |
 |------------------------|------------------------|-----------------------|
-| `1_1_yosys.log`        | `3_1_place_gp.log`     | `5_2_TritonRoute.log` |
+| `1_1_yosys.log`        | `3_1_place_gp.log`     | `5_2_route.log` |
 | `2_1_floorplan.log`    | `3_2_place_iop.log`    | `6_1_merge.log`       |
 | `2_2_floorplan_io.log` | `3_3_resizer.log`      | `6_report.log`        |
 | `2_3_tdms_place.log`   | `3_4_opendp.log`       |                       |
-| `2_4_mplace.log`       | `4_1_cts.log`          |                       |
-| `2_5_tapcell.log`      | `4_2_cts_fillcell.log` |                       |
-| `2_6_pdn.log`          | `5_1_fastroute.log`    |                       |
+| `2_4_floorplan_macro.log`       | `4_1_cts.log`          |                       |
+| `2_5_floorplan_tapcell.log`      | `4_2_cts_fillcell.log` |                       |
+| `2_6_floorplan_pdn.log`          | `5_1_grt.log`    |                       |
 
 ### Area
 
