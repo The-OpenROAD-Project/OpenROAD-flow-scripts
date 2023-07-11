@@ -51,3 +51,6 @@ export DETAILED_ROUTE_ARGS   = -bottom_routing_layer M2 -top_routing_layer M7 -s
 # same information to other stages in the flow.
 export MIN_ROUTING_LAYER = M2
 export MAX_ROUTING_LAYER = M7
+
+# works with 28 or more iterations as of writing, so give it a few more.
+export GLOBAL_ROUTE_ARGS=-congestion_iterations 40 -verbose
