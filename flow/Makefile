@@ -499,13 +499,13 @@ $(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb 
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_5_floorplan_tapcell.odb: $(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_tapcell.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_floorplan_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_floorplan_tapcell.log
 
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/2_6_floorplan_pdn.odb: $(RESULTS_DIR)/2_5_floorplan_tapcell.odb $(PDN_TCL)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/pdn.tcl -metrics $(LOG_DIR)/2_6_pdn.json) 2>&1 | tee $(LOG_DIR)/2_6_pdn.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/pdn.tcl -metrics $(LOG_DIR)/2_6_floorplan_pdn.json) 2>&1 | tee $(LOG_DIR)/2_6_floorplan_pdn.log
 
 $(RESULTS_DIR)/2_floorplan.odb: $(RESULTS_DIR)/2_6_floorplan_pdn.odb
 	cp $< $@
@@ -552,7 +552,7 @@ $(RESULTS_DIR)/3_3_place_gp.odb: $(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)
 # STEP 4: Resizing & Buffering
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_4_place_resized.odb: $(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/2_floorplan.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_4_resizer.json) 2>&1 | tee $(LOG_DIR)/3_4_resizer.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_4_place_resized.json) 2>&1 | tee $(LOG_DIR)/3_4_place_resized.log
 
 .PHONY: clean_resize
 clean_resize:
@@ -561,7 +561,7 @@ clean_resize:
 # STEP 5: Detail placement
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/3_5_place_dp.odb: $(RESULTS_DIR)/3_4_place_resized.odb
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_5_opendp.json) 2>&1 | tee $(LOG_DIR)/3_5_opendp.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_5_place_dp.json) 2>&1 | tee $(LOG_DIR)/3_5_place_dp.log
 
 $(RESULTS_DIR)/3_place.odb: $(RESULTS_DIR)/3_5_place_dp.odb
 	cp $< $@
@@ -630,7 +630,7 @@ route: $(RESULTS_DIR)/5_route.odb \
 # STEP 1: Run global route
 #-------------------------------------------------------------------------------
 $(RESULTS_DIR)/5_1_grt.odb: $(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_route.tcl -metrics $(LOG_DIR)/5_1_fastroute.json) 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_route.tcl -metrics $(LOG_DIR)/5_1_grt.json) 2>&1 | tee $(LOG_DIR)/5_1_grt.log
 
 
 # STEP 2: Run detailed route
@@ -640,7 +640,7 @@ $(RESULTS_DIR)/5_2_route.odb: $(RESULTS_DIR)/5_1_grt.odb
 else
 $(RESULTS_DIR)/5_2_route.odb: $(RESULTS_DIR)/4_cts.odb
 endif
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_route.tcl -metrics $(LOG_DIR)/5_2_TritonRoute.json) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_route.tcl -metrics $(LOG_DIR)/5_2_route.json) 2>&1 | tee $(LOG_DIR)/5_2_route.log
 
 $(RESULTS_DIR)/5_route.odb: $(RESULTS_DIR)/5_2_route.odb
 	cp $< $@
@@ -701,7 +701,7 @@ elapsed:
 
 ifneq ($(USE_FILL),)
 $(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb $(FILL_CONFIG)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_density_fill.json) 2>&1 | tee $(LOG_DIR)/6_density_fill.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_1_fill.json) 2>&1 | tee $(LOG_DIR)/6_1_fill.log
 else
 $(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb
 	cp $< $@
