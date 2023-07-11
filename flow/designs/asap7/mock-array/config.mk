@@ -56,5 +56,5 @@ export MAX_ROUTING_LAYER = M7
 export GLOBAL_ROUTE_ARGS=-congestion_iterations 40 -verbose
 
 # ensure we have some rows, so we don't get a bad clock skew.
-export MACRO_HALO_X            = 1
-export MACRO_HALO_Y            = 1
+export MACRO_HALO_X            = 0.5
+export MACRO_HALO_Y            = 0.5
