@@ -498,14 +498,11 @@ $(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb 
 
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_5_floorplan_tapcell.odb: $(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_floorplan_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_floorplan_tapcell.log
-
+$(eval $(call do-step,2_5_floorplan_tapcell,$(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL),tapcell))
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_6_floorplan_pdn.odb: $(RESULTS_DIR)/2_5_floorplan_tapcell.odb $(PDN_TCL)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/pdn.tcl -metrics $(LOG_DIR)/2_6_floorplan_pdn.json) 2>&1 | tee $(LOG_DIR)/2_6_floorplan_pdn.log
+$(eval $(call do-step,2_6_floorplan_pdn,$(RESULTS_DIR)/2_5_floorplan_tapcell.odb $(PDN_TCL),pdn))
 
 $(RESULTS_DIR)/2_floorplan.odb: $(RESULTS_DIR)/2_6_floorplan_pdn.odb
 	cp $< $@
