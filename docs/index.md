@@ -40,7 +40,7 @@ The project aims for automated, no-human-in-the-loop digital circuit design
 with 24-hour turnaround time.
 
 ```{tip}
-See these [tips](user/FAQS.md) to help improve your search results.
+See these [tips](user/FAQS.md#how-do-i-get-better-search-results) to help improve your search results.
 ```
 
 ### Setup

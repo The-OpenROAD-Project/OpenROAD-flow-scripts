@@ -133,7 +133,8 @@ html_theme_options = {
 
 def get_file_from_url(url, fname):
     r = requests.get(url)
-    open(fname, 'wb').write(r.content)
+    with open(fname, 'wb') as f:
+        f.write(r.content)
 
 def setup(app):
     if not os.path.exists('main'):

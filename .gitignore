@@ -6,8 +6,6 @@ tools/install
 # Build files
 build_openroad.log
 etc/InstallerOpenROAD.sh
-docs/build
-docs/main
 
 # Test working directories
 flow/results
