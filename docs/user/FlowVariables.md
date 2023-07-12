@@ -41,54 +41,58 @@ Note:
 | **Configuration Variable**           | **sky130hd** | **sky130hs** | **nangate45** | **asap7** | **gf180** |
 |--------------------------------------|--------------|--------------|---------------|-----------|-----------|
 | **Library Setup**                    |              |              |               |           |           |
-| `PROCESS`                            | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `CORNER`                             | ❌           | ❌           | ❌            | ✔️         | ✔️         |
-| `TECH_LEF`                           | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `SC_LEF`                             | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `LIB_FILES`                          | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `GDS_FILES`                          | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `DONT_USE_CELLS`                     | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
+| `PROCESS`                            | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `CORNER`                             | ❌           | ❌          | ❌            | ✔️       | ✔️        |
+| `TECH_LEF`                           | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `SC_LEF`                             | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `LIB_FILES`                          | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `GDS_FILES`                          | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `DONT_USE_CELLS`                     | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
 | **Synthesis**                        |              |              |               |           |           |
-| `LATCH_MAP_FILE`                     | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `CLKGATE_MAP_FILE`                   | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `ADDER_MAP_FILE`                     | ✔️            | ✔️            | ✔️             | ✔️         | ✔️         |
-| `TIEHI_CELL_AND_PORT`                | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `TIELO_CELL_AND_PORT`                | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `MIN_BUF_CELL_AND_PORTS`             | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `ABC_CLOCK_PERIOD_IN_PS`             | ✔️            | ✔️            | ✔️             | ✔️         | ✔️         |
-| `ABC_DRIVER_CELL`                    | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `ABC_LOAD_IN_FF`                     | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
+| `LATCH_MAP_FILE`                     | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `CLKGATE_MAP_FILE`                   | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `ADDER_MAP_FILE`                     | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| `TIEHI_CELL_AND_PORT`                | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `TIELO_CELL_AND_PORT`                | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `MIN_BUF_CELL_AND_PORTS`             | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `ABC_CLOCK_PERIOD_IN_PS`             | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| `ABC_DRIVER_CELL`                    | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `ABC_LOAD_IN_FF`                     | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `MAX_UNGROUP_SIZE`                   | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
 | **Floorplan**                        |              |              |               |           |           |
-| `PLACE_SITE`                         | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `MAKE_TRACKS`                        | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `TAPCELL_TCL`                        | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `MACRO_PLACE_HALO`                   | ✔️            | ✔️            | ✔️             | ✔️         | ✔️         |
-| `MACRO_PLACE_CHANNEL`                | ✔️            | ✔️            | ✔️             | ✔️         | ✔️         |
-| `PDN_TCL`                            | ✔️            | ✔️            | ✔️             | ✔️         | ✔️         |
-| `IO_PLACER_H`                        | ☑️            | ☑️            | ☑️             | ☑️         | ✔️         |
-| `IO_PLACER_V`                        | ☑️            | ☑️            | ☑️             | ☑️         | ✔️         |
-| `CONNECT_GRIDS`                      | ☑️            | ❌           | ❌            | ❌        | ❌        |
+| `PLACE_SITE`                         | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `MAKE_TRACKS`                        | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `TAPCELL_TCL`                        | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `MACRO_PLACE_HALO`                   | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| `MACRO_PLACE_CHANNEL`                | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| `PDN_TCL`                            | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| `IO_PLACER_H`                        | ☑️           | ☑️          | ☑️            | ☑️       | ✔️        |
+| `IO_PLACER_V`                        | ☑️           | ☑️          | ☑️            | ☑️       | ✔️        |
+| `CONNECT_GRIDS`                      | ☑️           | ❌          | ❌            | ❌       | ❌        |
+| `ENDCAP_CELL`                        | ❌           | ❌          | ❌            | ☑️       | ☑️        |
+| `GALLERY_REPORT`                     | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        | 
 | **Placement**                        |              |              |               |           |           |
-| `CELL_PAD_IN_SITES_GLOBAL_PLACEMENT` | ✔️            | ✔️            | ✔️             | ✔️         | ✔️         |
-| `CELL_PAD_IN_SITES_DETAIL_PLACEMENT` | ✔️            | ✔️            | ✔️             | ✔️         | ✔️         |
-| `PLACE_DENSITY`                      | ✔️            | ✔️            | ✔️             | ✔️         | ✔️         |
-| `WIRE_RC_LAYER`                      | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
+| `CELL_PAD_IN_SITES_GLOBAL_PLACEMENT` | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| `CELL_PAD_IN_SITES_DETAIL_PLACEMENT` | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| `PLACE_DENSITY`                      | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| `WIRE_RC_LAYER`                      | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
 | **Clock Tree Synthesis**             |              |              |               |           |           |
-| `CTS_BUF_CELL`                       | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `CTS_BUF_DISTANCE`                   | ❌           | ❌           | ❌            | ☑️         | ☑️         |
-| `CTS_CLUSTER_DIAMETER`               | ✔️            | ❌           | ❌            | ✔️         | ✔️         |
-| `ENABLE_GATE_CLONING`                | ✔️            | ✔️            | ✔️             | ✔️         | ✔️         |
-| `FILL_CELLS`                         | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `SKIP_PIN_SWAP`                      | ✔️            | ✔️            | ✔️             | ✔️         | ✔️         |
-| `TNS_END_PERCENT`                    | ✔️            | ✔️            |               | ✔️         | ✔️         |
+| `CTS_BUF_CELL`                       | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `CTS_BUF_DISTANCE`                   | ❌           | ❌          | ❌            | ☑️       | ☑️        |
+| `CTS_CLUSTER_DIAMETER`               | ✔️           | ❌          | ❌            | ✔️       | ✔️        |
+| `CTS_CLUSTER_SIZE`                   | ✔️           | ❌          | ❌            | ✔️       | ✔️        |
+| `ENABLE_GATE_CLONING`                | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| `FILL_CELLS`                         | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `SKIP_PIN_SWAP`                      | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| `TNS_END_PERCENT`                    | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
 | **Routing**                          |              |              |               |           |           |
-| `FASTROUTE_TCL`                      | ✔️            | ✔️            | ✔️             | ❌        | ❌        |
-| `FILL_CONFIG`                        | ☑️            | ☑️            | ❌            | ❌        | ❌        |
-| `KLAYOUT_TECH_FILE`                  | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-| `MAX_ROUTING_LAYER`                  | ☑️            | ☑️            | ☑️             | ☑️         | ✔️         |
-| `MIN_ROUTING_LAYER`                  | ☑️            | ☑️            | ☑️             | ☑️         | ✔️         | 
-| `RCX_RULES`                          | ☑️            | ☑️            | ☑️             | ☑️         | ☑️         |
-
+| `FASTROUTE_TCL`                      | ✔️           | ✔️          | ✔️            | ❌       | ❌        |
+| `FILL_CONFIG`                        | ☑️           | ☑️          | ❌            | ❌       | ❌        |
+| `KLAYOUT_TECH_FILE`                  | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `MAX_ROUTING_LAYER`                  | ☑️           | ☑️          | ☑️            | ☑️       | ✔️        |
+| `MIN_ROUTING_LAYER`                  | ☑️           | ☑️          | ☑️            | ☑️       | ✔️        | 
+| `RCX_RULES`                          | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
+| `GLOBAL_ROUTE_ARGS`                  | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
 
 ### Library Setup
 
@@ -119,6 +123,7 @@ Note:
 | `ABC_CLOCK_PERIOD_IN_PS` | Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`. |
 | `ABC_DRIVER_CELL`        | Default driver cell used during ABC synthesis.                                             |
 | `ABC_LOAD_IN_FF`         | During synthesis set_load value used.                                                      |
+| `MAX_UNGROUP_SIZE`       | For hierarchical synthesis, we ungroup modules of size given by this variable.             |
 
 
 ### Floorplan
@@ -242,6 +247,11 @@ configuration file.
 | `GND_NETS_VOLTAGES`      | Used for IR Drop calculation.                                                                      |
 | `BLOCKS`                 | Blocks passed as blackbox into yosys. Do note that you have to specify block-specific inputs file in the directory mentioned by [Makefile](../main/flow/Makefile) |
 | `CDL_FILES`              | Insert additional Circuit Description Language (`.cdl`) netlist files 
+| `DFF_LIB_FILES`          | Technology mapping liberty files for flip-flops                                                    |
+| `DONT_USE_LIBS`          | Set liberty files as `dont_use`                                                                    |
+| `PRESERVE_CELLS`         | Mark modules to keep from getting removed in flattening.                                           |
+| `SYNTH_ARGS`             | Optional synthesis variables for yosys.                                                            |
+| `VERILOG_TOP_PARAMS`     | Apply toplevel params (if exist)                                                                   |
 
 
 #### Floorplan
@@ -254,4 +264,13 @@ configuration file.
 | `CORE_MARGIN`         | The margin between the core area and die area, in multiples of SITE heights. The margin is applied to each side. This variable is ignored if `CORE_UTILIZATION` is undefined.                                                              |
 | `DIE_AREA`            | The die area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2). This variable is ignored if `CORE_UTILIZATION` and `CORE_ASPECT_RATIO` are defined.                                                       |
 | `CORE_AREA`           | The core area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2). This variable is ignored if `CORE_UTILIZATION` and `CORE_ASPECT_RATIO` are defined.                                                      |
+| `RESYNTH_AREA_RECOVER` | Enable re-synthesis for area reclaim. |
+| `RESYNTH_TIMING_RECOVER` | Enable re-synthesis for timing optimization. | 
 
+
+## Placement
+
+
+| Variable                 | Description                                                                                        |
+|--------------------------|----------------------------------------------------------------------------------------------------|
+| `MACRO_WRAPPERS`         | The wrapper file that replace existing macros with their wrapped version.                          |
