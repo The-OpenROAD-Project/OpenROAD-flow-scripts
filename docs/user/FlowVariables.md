@@ -40,59 +40,55 @@ Note:
 
 | **Configuration Variable**           | **sky130hd** | **sky130hs** | **nangate45** | **asap7** | **gf180** |
 |--------------------------------------|--------------|--------------|---------------|-----------|-----------|
-| **Library Setup**                    |              |              |               |           |           |
-| `PROCESS`                            | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `CORNER`                             | ❌           | ❌          | ❌            | ✔️       | ✔️        |
-| `TECH_LEF`                           | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `SC_LEF`                             | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `LIB_FILES`                          | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `GDS_FILES`                          | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `DONT_USE_CELLS`                     | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| **Synthesis**                        |              |              |               |           |           |
-| `LATCH_MAP_FILE`                     | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `CLKGATE_MAP_FILE`                   | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `ADDER_MAP_FILE`                     | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| `TIEHI_CELL_AND_PORT`                | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `TIELO_CELL_AND_PORT`                | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `MIN_BUF_CELL_AND_PORTS`             | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `ABC_CLOCK_PERIOD_IN_PS`             | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| `ABC_DRIVER_CELL`                    | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `ABC_LOAD_IN_FF`                     | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `MAX_UNGROUP_SIZE`                   | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| **Floorplan**                        |              |              |               |           |           |
-| `PLACE_SITE`                         | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `MAKE_TRACKS`                        | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `TAPCELL_TCL`                        | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `MACRO_PLACE_HALO`                   | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| `MACRO_PLACE_CHANNEL`                | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| `PDN_TCL`                            | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| `IO_PLACER_H`                        | ☑️           | ☑️          | ☑️            | ☑️       | ✔️        |
-| `IO_PLACER_V`                        | ☑️           | ☑️          | ☑️            | ☑️       | ✔️        |
-| `CONNECT_GRIDS`                      | ☑️           | ❌          | ❌            | ❌       | ❌        |
-| `ENDCAP_CELL`                        | ❌           | ❌          | ❌            | ☑️       | ☑️        |
-| `GALLERY_REPORT`                     | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        | 
-| **Placement**                        |              |              |               |           |           |
-| `CELL_PAD_IN_SITES_GLOBAL_PLACEMENT` | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| `CELL_PAD_IN_SITES_DETAIL_PLACEMENT` | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| `PLACE_DENSITY`                      | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| `WIRE_RC_LAYER`                      | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| **Clock Tree Synthesis**             |              |              |               |           |           |
-| `CTS_BUF_CELL`                       | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `CTS_BUF_DISTANCE`                   | ❌           | ❌          | ❌            | ☑️       | ☑️        |
-| `CTS_CLUSTER_DIAMETER`               | ✔️           | ❌          | ❌            | ✔️       | ✔️        |
-| `CTS_CLUSTER_SIZE`                   | ✔️           | ❌          | ❌            | ✔️       | ✔️        |
-| `ENABLE_GATE_CLONING`                | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| `FILL_CELLS`                         | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `SKIP_PIN_SWAP`                      | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| `TNS_END_PERCENT`                    | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
-| **Routing**                          |              |              |               |           |           |
-| `FASTROUTE_TCL`                      | ✔️           | ✔️          | ✔️            | ❌       | ❌        |
-| `FILL_CONFIG`                        | ☑️           | ☑️          | ❌            | ❌       | ❌        |
-| `KLAYOUT_TECH_FILE`                  | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `MAX_ROUTING_LAYER`                  | ☑️           | ☑️          | ☑️            | ☑️       | ✔️        |
-| `MIN_ROUTING_LAYER`                  | ☑️           | ☑️          | ☑️            | ☑️       | ✔️        | 
-| `RCX_RULES`                          | ☑️           | ☑️          | ☑️            | ☑️       | ☑️        |
-| `GLOBAL_ROUTE_ARGS`                  | ✔️           | ✔️          | ✔️            | ✔️       | ✔️        |
+| Library Setup                        |              |              |               |           |           |
+| `PROCESS`                            | =            | =            | =             | =         | =         |
+| `CORNER`                             | N/A          | N/A          | N/A           | ?=        | ?=        |
+| `TECH_LEF`                           | =            | =            | =             | =         | =         |
+| `SC_LEF`                             | =            | =            | =             | =         | =         |
+| `LIB_FILES`                          | =            | =            | =             | =         | =         |
+| `GDS_FILES`                          | =            | =            | =             | =         | =         |
+| `DONT_USE_CELLS`                     | =            | =            | =             | =         | =         |
+| Synthesis                            |              |              |               |           |           |
+| `LATCH_MAP_FILE`                     | =            | =            | =             | =         | =         |
+| `CLKGATE_MAP_FILE`                   | =            | =            | =             | =         | =         |
+| `ADDER_MAP_FILE`                     | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `TIEHI_CELL_AND_PORT`                | =            | =            | =             | =         | =         |
+| `TIELO_CELL_AND_PORT`                | =            | =            | =             | =         | =         |
+| `MIN_BUF_CELL_AND_PORTS`             | =            | =            | =             | =         | =         |
+| `ABC_CLOCK_PERIOD_IN_PS`             | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `ABC_DRIVER_CELL`                    | =            | =            | =             | =         | =         |
+| `ABC_LOAD_IN_FF`                     | =            | =            | =             | =         | =         |
+| Floorplan                            |              |              |               |           |           |
+| `PLACE_SITE`                         | =            | =            | =             | =         | =         |
+| `MAKE_TRACKS`                        | =            | =            | =             | =         | =         |
+| `TAPCELL_TCL`                        | =            | =            | =             | =         | =         |
+| `MACRO_HALO_X`                       | NA           | NA           | NA            | ?=        | NA        |
+| `MACRO_HALO_Y`                       | NA           | NA           | NA            | ?=        | NA        |
+| `MACRO_PLACE_HALO`                   | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `MACRO_PLACE_CHANNEL`                | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `PDN_TCL`                            | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `IO_PLACER_H`                        | =            | =            | =             | =         | ?=        |
+| `IO_PLACER_V`                        | =            | =            | =             | =         | ?=        |
+| Placement                            |              |              |               |           |           |
+| `CELL_PAD_IN_SITES_GLOBAL_PLACEMENT` | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `CELL_PAD_IN_SITES_DETAIL_PLACEMENT` | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `PLACE_DENSITY`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `WIRE_RC_LAYER`                      | =            | =            | =             | =         | =         |
+| Clock Tree Synthesis                 |              |              |               |           |           |
+| `CTS_BUF_CELL`                       | =            | =            | =             | =         | =         |
+| `CTS_BUF_DISTANCE`                   | N/A          | N/A          | N/A           | =         | =         |
+| `ENABLE_GATE_CLONING`                | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `FILL_CELLS`                         | =            | =            | =             | =         | =         |
+| `SKIP_PIN_SWAP`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
+| Routing                              |              |              |               |           |           |
+| `FASTROUTE_TCL`                      | ?=           | ?=           | ?=            | N/A       | N/A       |
+| `FILL_CONFIG`                        | =            | =            | N/A           | N/A       | N/A       |
+| `KLAYOUT_TECH_FILE`                  | =            | =            | =             | =         | =         |
+| `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
+| `MIN_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
+| `RCX_RULES`                          | =            | =            | =             | =         | =         |
+
 
 ### Library Setup
 
