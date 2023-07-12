@@ -461,7 +461,7 @@ UNSET_AND_MAKE = @bash -c 'for var in $(ISSUE_VARIABLES_NAMES); do unset $$var; 
 # A "do-synth" step would be welcomed, but it isn't strictly necessary
 # for the Bazel use-case.
 define do-step
-$(RESULTS_DIR)/$(1).odb: $(2)
+$(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
 
 .PHONY: do-$(1)
@@ -700,8 +700,7 @@ $(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
 $(RESULTS_DIR)/6_final.sdc: $(RESULTS_DIR)/5_route.sdc
 	cp $< $@
 
-$(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
+$(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc,final_report,.log,$(LOG_DIR)))
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
