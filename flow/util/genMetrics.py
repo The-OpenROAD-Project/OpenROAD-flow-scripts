@@ -315,16 +315,6 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     # =========================================================================
 
     merge_jsons(logPath, metrics_dict, "6_*.json")
-    extractTagFromFile('finish__timing__drv__setup_violation_count',
-                       metrics_dict,
-                       baseRegEx.format('finish setup_violation_count',
-                                        'setup violation count (\S+)'),
-                       logPath + '/6_report.log')
-    extractTagFromFile('finish__timing__drv__hold_violation_count',
-                       metrics_dict,
-                       baseRegEx.format('finish hold_violation_count',
-                                        'hold violation count (\S+)'),
-                       logPath + '/6_report.log')
     extractTagFromFile('finish__timing__wns_percent_delay',
                        metrics_dict,
                        baseRegEx.format('finish slack div critical path delay',
