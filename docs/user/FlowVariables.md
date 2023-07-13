@@ -29,20 +29,18 @@ variable. For OpenROAD Flow Scripts we have the following public platforms:
 
 
 The table below lists the complete set of variables used in each of the
-public platforms supported by the OpenROAD flow.
+public platforms supported by the OpenROAD flow. 
 
 
 Note:
 -   = indicates default definition assigned by the tool
 -   ?= indicates that the variable value may be reassigned with design `config.mk`
--   N/A indicates that the variable/files is not supported currently.
 
 
 | **Configuration Variable**           | **sky130hd** | **sky130hs** | **nangate45** | **asap7** | **gf180** |
 |--------------------------------------|--------------|--------------|---------------|-----------|-----------|
 | Library Setup                        |              |              |               |           |           |
 | `PROCESS`                            | =            | =            | =             | =         | =         |
-| `CORNER`                             | N/A          | N/A          | N/A           | ?=        | ?=        |
 | `TECH_LEF`                           | =            | =            | =             | =         | =         |
 | `SC_LEF`                             | =            | =            | =             | =         | =         |
 | `LIB_FILES`                          | =            | =            | =             | =         | =         |
@@ -62,8 +60,6 @@ Note:
 | `PLACE_SITE`                         | =            | =            | =             | =         | =         |
 | `MAKE_TRACKS`                        | =            | =            | =             | =         | =         |
 | `TAPCELL_TCL`                        | =            | =            | =             | =         | =         |
-| `MACRO_HALO_X`                       | NA           | NA           | NA            | ?=        | NA        |
-| `MACRO_HALO_Y`                       | NA           | NA           | NA            | ?=        | NA        |
 | `MACRO_PLACE_HALO`                   | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `MACRO_PLACE_CHANNEL`                | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `PDN_TCL`                            | ?=           | ?=           | ?=            | ?=        | ?=        |
@@ -76,14 +72,11 @@ Note:
 | `WIRE_RC_LAYER`                      | =            | =            | =             | =         | =         |
 | Clock Tree Synthesis                 |              |              |               |           |           |
 | `CTS_BUF_CELL`                       | =            | =            | =             | =         | =         |
-| `CTS_BUF_DISTANCE`                   | N/A          | N/A          | N/A           | =         | =         |
 | `ENABLE_GATE_CLONING`                | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `FILL_CELLS`                         | =            | =            | =             | =         | =         |
 | `SKIP_PIN_SWAP`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
-| `FASTROUTE_TCL`                      | ?=           | ?=           | ?=            | N/A       | N/A       |
-| `FILL_CONFIG`                        | =            | =            | N/A           | N/A       | N/A       |
 | `KLAYOUT_TECH_FILE`                  | =            | =            | =             | =         | =         |
 | `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
 | `MIN_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
@@ -236,7 +229,7 @@ configuration file.
 | `ADDITIONAL_LIBS`        | Hardened macro library files listed here.                                                          |
 | `ADDITIONAL_GDS`         | Hardened macro GDS files listed here.                                                              |
 | `VERILOG_INCLUDE_DIRS`   | Specifies the include directories for the Verilog input files.                                     |
-| `CORNER`                 | PVT corner library selection.                                                                      |
+| `CORNER`                 | PVT corner library selection. Only available for ASAP7 and GF180 PDK.                              |
 | `DESIGN_NICKNAME`        | DESIGN_NICKNAME just changes the directory name that ORFS outputs to be DESIGN_NICKNAME instead of DESIGN_NAME in case DESIGN_NAME is unwieldy or conflicts with a difference design.                                                                                    |
 | `ABC_AREA`               | Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.                                 |
 | `PWR_NETS_VOLTAGES`      | Used for IR Drop calculation.                                                                      |
@@ -262,6 +255,8 @@ configuration file.
 | `CORE_AREA`           | The core area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2). This variable is ignored if `CORE_UTILIZATION` and `CORE_ASPECT_RATIO` are defined.                                                      |
 | `RESYNTH_AREA_RECOVER` | Enable re-synthesis for area reclaim. |
 | `RESYNTH_TIMING_RECOVER` | Enable re-synthesis for timing optimization. | 
+| `MACRO_HALO_X`         | Set macro halo for x-direction. Only available for ASAP7 PDK. |
+| `MACRO_HALO_Y`         | Set macro halo for y-direction. Only available for ASAP7 PDK. |
 
 
 ## Placement
@@ -270,3 +265,19 @@ configuration file.
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
 | `MACRO_WRAPPERS`         | The wrapper file that replace existing macros with their wrapped version.                          |
+
+
+## Clock Tree Synthesis
+
+
+| Variable                 | Description                                                                                        |
+|--------------------------|----------------------------------------------------------------------------------------------------|
+| `CTS_BUF_DISTANCE`       | Distance (in microns) between buffers                                                              |
+| `CTS_CLUSTER_DIAMETER`   | Maximum diameter (in microns) of sink cluster. Default 20.                                         |
+| `CTS_CLUSTER_SIZE`       | Maximum number of sinks per cluster. Default 50.
+
+
+## Routing
+| Variable                 | Description                                                                                        |
+|--------------------------|----------------------------------------------------------------------------------------------------|
+| `FASTROUTE_TCL`          | Specifies a Tcl scripts with commands to run before FastRoute                                      |
