@@ -690,15 +690,12 @@ elapsed:
 ifneq ($(USE_FILL),)
 $(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(FILL_CONFIG),density_fill))
 else
-$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb
-	cp $< $@
+$(eval $(call do-copy,6_1_fill,5_route.odb))
 endif
 
-$(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
-	cp $< $@
+$(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
 
-$(RESULTS_DIR)/6_final.sdc: $(RESULTS_DIR)/5_route.sdc
-	cp $< $@
+$(eval $(call do-copy,6_final,5_route.sdc,,.sdc))
 
 $(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc,final_report,.log,$(LOG_DIR)))
 
