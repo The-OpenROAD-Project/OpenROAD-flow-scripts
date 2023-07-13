@@ -632,11 +632,9 @@ else
 $(eval $(call do-step,5_2_route,$(RESULTS_DIR)/4_cts.odb,detail_route))
 endif
 
-$(RESULTS_DIR)/5_route.odb: $(RESULTS_DIR)/5_2_route.odb
-	cp $< $@
+$(eval $(call do-copy,5_route,5_2_route.odb))
 
-$(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
-	cp $< $@
+$(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
 
 $(RESULTS_DIR)/5_route.v:
 	@export OR_DB=5_route ;\
