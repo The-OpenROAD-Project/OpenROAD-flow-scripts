@@ -542,8 +542,7 @@ $(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESU
 ifndef IS_CHIP
 $(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS),io_placement))
 else
-$(RESULTS_DIR)/3_2_place_iop.odb: $(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS)
-	cp $< $@
+$(eval $(call do-copy,3_2_place_iop,3_1_place_gp_skip_io.odb,$(IO_CONSTRAINTS)))
 endif
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
@@ -562,11 +561,9 @@ clean_resize:
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,3_5_place_dp,$(RESULTS_DIR)/3_4_place_resized.odb,detail_place))
 
-$(RESULTS_DIR)/3_place.odb: $(RESULTS_DIR)/3_5_place_dp.odb
-	cp $< $@
+$(eval $(call do-copy,3_place,3_5_place_dp.odb,))
 
-$(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
-	cp $< $@
+$(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
 
 # Clean Targets
 #-------------------------------------------------------------------------------
