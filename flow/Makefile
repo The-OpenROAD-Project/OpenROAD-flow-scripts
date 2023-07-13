@@ -460,6 +460,12 @@ UNSET_AND_MAKE = @bash -c 'for var in $(ISSUE_VARIABLES_NAMES); do unset $$var; 
 #
 # A "do-synth" step would be welcomed, but it isn't strictly necessary
 # for the Bazel use-case.
+#
+# do-floorplan, do-place, do-cts, do-route, do-finish are the
+# supported interface to execute those stages without checking
+# for dependencies.
+#
+# The do- substeps of each of these stages are subject to change.
 define do-step
 $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
@@ -471,10 +477,10 @@ endef
 
 define do-copy
 $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb): $(RESULTS_DIR)/$(2) $(3)
-	$$(UNSET_AND_MAKE) do-$(1)$(if $(4),$(4),.odb)
+	$$(UNSET_AND_MAKE) do-$(1)$(if $(4),$(4),)
 
-.PHONY: do-$(1)$(if $(4),$(4),.odb)
-do-$(1)$(if $(4),$(4),.odb):
+.PHONY: do-$(1)$(if $(4),$(4),)
+do-$(1)$(if $(4),$(4),):
 	cp $(RESULTS_DIR)/$(2) $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb)
 endef
 
@@ -515,6 +521,9 @@ $(eval $(call do-copy,2_floorplan,2_6_floorplan_pdn.odb,))
 
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
+.PHONY: do-floorplan
+do-floorplan:
+	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_io do-2_3_floorplan_tdms do-2_4_floorplan_macro do-2_5_floorplan_tapcell do-2_6_floorplan_pdn do-2_floorplan
 
 .PHONY: clean_floorplan
 clean_floorplan:
@@ -565,6 +574,10 @@ $(eval $(call do-copy,3_place,3_5_place_dp.odb,))
 
 $(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
 
+.PHONY: do-place
+do-place:
+	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place do-3_place.sdc
+
 # Clean Targets
 #-------------------------------------------------------------------------------
 .PHONY: clean_place
@@ -599,6 +612,10 @@ $(eval $(call do-step,4_2_cts_fillcell,$(RESULTS_DIR)/4_1_cts.odb,fillcell))
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.odb
 
 $(eval $(call do-copy,4_cts,4_2_cts_fillcell.odb))
+
+.PHONY: do-cts
+do-cts:
+	$(UNSET_AND_MAKE) do-4_1_cts do-4_2_cts_fillcell do-4_cts
 
 .PHONY: clean_cts
 clean_cts:
@@ -635,6 +652,10 @@ endif
 $(eval $(call do-copy,5_route,5_2_route.odb))
 
 $(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
+
+.PHONY: do-route
+do-route:
+	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_route do-5_route.sdc
 
 $(RESULTS_DIR)/5_route.v:
 	@export OR_DB=5_route ;\
@@ -701,6 +722,10 @@ $(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fi
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
+# NOTE! No GDS file for now
+.PHONY: do-finish
+do-finish:
+	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report elapsed
 
 # Skipping resize can be useful for mock abstracts
 .PHONY: skip_resize
