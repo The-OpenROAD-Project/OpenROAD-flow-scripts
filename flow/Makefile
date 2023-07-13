@@ -471,10 +471,10 @@ endef
 
 define do-copy
 $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb): $(RESULTS_DIR)/$(2) $(3)
-	$$(UNSET_AND_MAKE) do-$(1)
+	$$(UNSET_AND_MAKE) do-$(1)$(if $(4),$(4),.odb)
 
-.PHONY: do-$(1)
-do-$(1):
+.PHONY: do-$(1)$(if $(4),$(4),.odb)
+do-$(1)$(if $(4),$(4),.odb):
 	cp $(RESULTS_DIR)/$(2) $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb)
 endef
 
@@ -598,8 +598,7 @@ $(eval $(call do-step,4_2_cts_fillcell,$(RESULTS_DIR)/4_1_cts.odb,fillcell))
 
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.odb
 
-$(RESULTS_DIR)/4_cts.odb: $(RESULTS_DIR)/4_2_cts_fillcell.odb
-	cp $< $@
+$(eval $(call do-copy,4_cts,4_2_cts_fillcell.odb))
 
 .PHONY: clean_cts
 clean_cts:
