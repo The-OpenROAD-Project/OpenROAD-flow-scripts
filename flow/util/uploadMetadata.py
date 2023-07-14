@@ -3,7 +3,7 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 import argparse
 import re
@@ -20,6 +20,7 @@ parser.add_argument('--buildID', type=str, help='Build ID from jenkins')
 parser.add_argument('--branchName', type=str, help='Current Branch Name')
 parser.add_argument('--pipelineID', type=str, help='Jenkins pipeline ID')
 parser.add_argument('--commitSHA', type=str, help='Current commit sha')
+parser.add_argument('--jenkinsURL', type=str, help='Jenkins Report URL')
 parser.add_argument('--cred', type=str, help='Service account credentials file')
 parser.add_argument('--variant', type=str, default='base')
 
@@ -27,7 +28,7 @@ parser.add_argument('--variant', type=str, default='base')
 args = parser.parse_args()
 
 
-def upload_data(db, datafile, platform, design, variant, args):
+def upload_data(db, datafile, platform, design, variant, args, rules):
     # Set the document data
     key = args.commitSHA + '-' + platform + '-' + design + '-' + variant
     doc_ref = db.collection('build_metrics').document(key)
@@ -36,6 +37,8 @@ def upload_data(db, datafile, platform, design, variant, args):
         'branch_name': args.branchName,
         'pipeline_id': args.pipelineID,
         'commit_sha': args.commitSHA,
+        'jenkins_url': args.jenkinsURL,
+        'rules': rules,
     })
 
     # Load JSON data from file
@@ -46,6 +49,7 @@ def upload_data(db, datafile, platform, design, variant, args):
     new_data = {}
     stages = []
     excludes = ["run", "commit", "total_time", "constraints"]
+    gen_date = datetime.now()
     for k, v in data.items():
         new_key = re.sub(':', '__', k)  # replace ':' with '__'
         new_data[new_key] = v
@@ -62,6 +66,58 @@ def upload_data(db, datafile, platform, design, variant, args):
     # Set the data to the document in Firestore
     doc_ref.update(new_data)
 
+    branch_doc_ref = db.collection('branches').document(args.branchName)
+    # check if date is greater than the one in the document if it exists
+    if branch_doc_ref.get().exists:
+        current_date = branch_doc_ref.get().to_dict().get('run__flow__generate_date')
+        current_date = current_date.replace(tzinfo=timezone.utc)
+        gen_date = gen_date.replace(tzinfo=timezone.utc)
+        if current_date is not None and gen_date > current_date:
+            branch_doc_ref.update({
+                'run__flow__generate_date': gen_date,
+                'jenkins_url': args.jenkinsURL,
+            })
+        else:
+            branch_doc_ref.update({
+                'jenkins_url': args.jenkinsURL,
+            })
+    else:
+        branch_doc_ref.set({
+                'name': args.branchName,
+                'run__flow__generate_date': gen_date,
+                'jenkins_url': args.jenkinsURL,
+            })
+
+    commit_doc_ref = db.collection('commits').document(args.commitSHA)
+    if commit_doc_ref.get().exists:
+        current_date = commit_doc_ref.get().to_dict().get('run__flow__generate_date')
+        current_date = current_date.replace(tzinfo=timezone.utc)
+        gen_date = gen_date.replace(tzinfo=timezone.utc)
+        if current_date is not None and gen_date > current_date:
+            commit_doc_ref.update({
+                'run__flow__generate_date': gen_date,
+                'jenkins_url': args.jenkinsURL,
+            })
+        else:
+            commit_doc_ref.update({
+                'jenkins_url': args.jenkinsURL,
+            })
+    else:
+        commit_doc_ref.set({
+            'sha': args.commitSHA,
+            'run__flow__generate_date': gen_date,
+            'jenkins_url': args.jenkinsURL,
+        })
+    
+def get_rules(platform, design, variant):
+    runFilename = f'rules-{variant}.json'
+    dataFile = os.path.join('designs', platform, design, runFilename)
+    data = {}
+    if os.path.exists(dataFile):
+        with open(dataFile) as f:
+            data = json.load(f)
+    
+    return data
 
 # Initialize Firebase Admin SDK with service account credentials
 firebase_admin.initialize_app(credentials.Certificate(args.cred))
@@ -86,5 +142,7 @@ for reportDir, dirs, files in sorted(os.walk('reports', topdown=False)):
     if platform == 'sky130hd_fakestack' or platform == 'src':
         print(f'[WARN] Skiping upload {platform} {design} {variant}.')
         continue
+    print(f'[INFO] Get rules for {platform} {design} {variant}.')
+    rules = get_rules(platform, design, variant)
     print(f'[INFO] Upload data for {platform} {design} {variant}.')
-    upload_data(db, dataFile, platform, design, variant, args)
+    upload_data(db, dataFile, platform, design, variant, args, rules)
