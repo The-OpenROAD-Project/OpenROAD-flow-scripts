@@ -7,7 +7,7 @@ easily integrate and test a new technology in to the OpenROAD RTL to GDS
 flow. OpenROAD allows you to integrate any PDK (Process Design Kit) for any
 feature size and implement a fully open-sourced RTL-GDSII flow (synthesizable
 Verilog to merged GDSII). The OpenROAD flow has been validated for feature
-sizes down to 7nm and used to design and tapeout over 100 ASIC and SoCs
+sizes down to 7nm and used to design and tapeout over 600 ASIC and SoCs
 to date.
 
 ## Prerequisites

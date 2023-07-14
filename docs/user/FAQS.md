@@ -14,7 +14,7 @@ the appropriate repository or start a discussion.
 Thank you for your willingness to contribute. Please see the
 [Getting Involved](../contrib/GettingInvolved) guide.
 
-## How do I update OpenROAD-flow scripts?
+## How do I update OpenROAD-flow-scripts?
 
 Depending on how you installed OpenROAD-flow-scripts, there are different ways of updating. Regardless, here are the common first steps:
 
@@ -50,7 +50,7 @@ See how to update using the Metrics [guide](../contrib/Metrics.md).
 
 ## How do I get better search results?
 
-As quoted from [ReadTheDocs](https://docs.readthedocs.io/en/stable/server-side-search/syntax.html#special-queries), this documentation is powered by [Simple Query String](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#) from Elastisearch. Here are some helpful patterns:
+As quoted from [ReadTheDocs](https://docs.readthedocs.io/en/stable/server-side-search/syntax.html#special-queries), this documentation is powered by [Simple Query String](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#) from [Elasticsearch](https://www.elastic.co/elasticsearch/). Here are some helpful patterns:
 
 - Exact phrase search: `"global_route"`
 - Prefix query: `GRT-*`, `BUF*`, `report_*`

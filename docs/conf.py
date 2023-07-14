@@ -152,3 +152,11 @@ def setup(app):
     url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/9409c25c95c5f91a3ad7ba293c4529f39822ea57/docs/contrib/GitGuide.md"
     get_file_from_url(url, 'contrib/GitGuide.md') 
 
+    with open('contrib/GitGuide.md', 'r') as f:
+        content = f.read()
+
+    content = content.replace('user/Build.md', '../index.md#build-or-installing-orfs-dependencies')
+    content = content.replace('OpenROAD', 'OpenROAD-flow-scripts')
+    content = content.replace('The-OpenROAD-flow-scripts', 'The-OpenROAD')
+    with open('contrib/GitGuide.md', 'w') as f:
+        f.write(content)

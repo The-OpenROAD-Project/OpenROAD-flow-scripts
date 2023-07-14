@@ -21,12 +21,10 @@ navigate Jenkins to access these features are available
 
 -   OpenROAD-flow-script-Public [folder]
     -   `public_tests_all`
-        -   Description: runs flow tests except RTLMP designs. Should finish in
-            less than three hours.
+        -   Description: runs flow tests that finish in less than three hours.
         -   Target: master branch.
     -   `public_tests_all-pr`
-        -   Description: runs flow tests except RTLMP designs. Should finish in
-            less than three hours.
+        -   Description: runs flow tests that finish in less than three hours.
         -   Target: all open PRs.
     -   `publish-results-to-dashboard`
         -   Description: uploads metrics to dashboard website.
@@ -36,8 +34,7 @@ navigate Jenkins to access these features are available
     -   Target: master branch.
 -   OpenROAD-flow-scripts-Private [folder]
     -   `public_tests_small`
-        -   Description: runs fast flow tests, does not include RTLMP designs.
-            Should finish in less than one hour.
+        -   Description: runs fast flow tests that finish in less than one hour.
         -   Target: all branches that are not filed as PR. CI will run for PR
             branches on the public side after "Ready to Sync Public" workflow.
 -   OpenROAD-flow-scripts-All-Tests-Private
