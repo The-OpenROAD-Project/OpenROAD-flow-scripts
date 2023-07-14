@@ -10,7 +10,7 @@ We recommend that users follow the Docker build by continuing onto the guide bel
 
 
 ## Docker configuration
-This section assumes you have set up Docker for Windows already. If not, please refer to the Docker official website for instructions [here](https://docs.Docker.com/desktop/install/windows-install/).
+This section assumes you have set up Docker for Windows already. If not, please refer to the Docker official website for instructions [here](https://docs.docker.com/desktop/install/windows-install/).
 
 You need to enable the following options to allow WSL to use Docker. 
 

@@ -4,20 +4,18 @@ set cols [expr {[info exists ::env(MOCK_ARRAY_COLS)] ? $::env(MOCK_ARRAY_COLS) :
 
 set clk_name clock
 set clk_port_name clock
-set clk_period 8000
+set clk_period 1000
 
 set clk_port [get_ports $clk_port_name]
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name $clk_name $clk_port
 set_clock_uncertainty -setup 20.0 [get_clocks $clk_name]
 set_clock_uncertainty -hold 20.0 [get_clocks $clk_name]
 
-# io_ins_x -> REG_x
-set_input_delay -clock $clk_name -min [expr $clk_period / 2] [get_ports {io_ins_*}]
-set_input_delay -clock $clk_name -max [expr $clk_period / 2] [get_ports {io_ins_*}]
+# io_ins_x -> REG_x in neighbouring element or just outside of the array
+set_input_delay -clock $clk_name [expr $clk_period * 0.05] [get_ports {io_ins_*}]
 
-# REG_x -> io_outs_x
-set_output_delay -clock $clk_name -min [expr $clk_period / 2] [get_ports {io_outs_*}]
-set_output_delay -clock $clk_name -max [expr $clk_period / 2] [get_ports {io_outs_*}]
+# REG_x in neighbouring element or just outside of the array -> io_outs_x
+set_output_delay -clock $clk_name [expr $clk_period * 0.05 ] [get_ports {io_outs_*}]
 
 # For combinational buses routed through the elements, IO delays need to be set to accomodate requirements
 #  for each instance's position across the entire array. For simplicity, we budget the clock period evenly
