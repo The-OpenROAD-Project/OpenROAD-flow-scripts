@@ -136,6 +136,8 @@ def get_file_from_url(url, fname):
     with open(fname, 'wb') as f:
         f.write(r.content)
 
+def 
+
 def setup(app):
     if not os.path.exists('main'):
         os.symlink('..', 'main')
@@ -152,6 +154,7 @@ def setup(app):
     url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/9409c25c95c5f91a3ad7ba293c4529f39822ea57/docs/contrib/GitGuide.md"
     get_file_from_url(url, 'contrib/GitGuide.md') 
 
+    # edit OpenROAD to OpenROAD-flow-scripts for GitGuide
     with open('contrib/GitGuide.md', 'r') as f:
         content = f.read()
 
