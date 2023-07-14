@@ -38,5 +38,5 @@ navigate Jenkins to access these features are available
         -   Target: all branches that are not filed as PR. CI will run for PR
             branches on the public side after "Ready to Sync Public" workflow.
 -   OpenROAD-flow-scripts-All-Tests-Private
-    -   Description: runs flow tests, does not include RTLMP designs.
+    -   Description: runs flow tests for private PDK designs.
     -   Target: secure branches.
