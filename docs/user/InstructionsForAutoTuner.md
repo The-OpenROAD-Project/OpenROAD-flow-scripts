@@ -12,7 +12,7 @@ AutoTuner provides two main functionalities as follows.
 
 AutoTuner contains top-level Python script for ORFS, each of which implements a different search algorithm. Current supported search algorithms are as follows.
 * Random/Grid Search
-* Population Based Training ([PBT](https://deepmind.com/blog/article/population-based-training-neural-networks))
+* Population Based Training ([PBT](https://www.deepmind.com/blog/population-based-training-of-neural-networks))
 * Tree Parzen Estimator ([HyperOpt](https://hyperopt.github.io/hyperopt))
 * Bayesian + Multi-Armed Bandit ([AxSearch](https://ax.dev/))
 * Tree Parzen Estimator + Covariance Matrix Adaptation Evolution Strategy ([Optuna](https://optuna.org/))
