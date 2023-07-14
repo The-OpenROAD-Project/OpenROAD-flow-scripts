@@ -136,8 +136,6 @@ def get_file_from_url(url, fname):
     with open(fname, 'wb') as f:
         f.write(r.content)
 
-def 
-
 def setup(app):
     if not os.path.exists('main'):
         os.symlink('..', 'main')
