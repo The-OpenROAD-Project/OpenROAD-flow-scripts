@@ -147,9 +147,7 @@ def setup(app):
     with open('index.md', 'wt') as f:
         f.write(lines)
 
-    # placeholder 
-    # actual url: https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/docs/contrib/GitGuide.md
-    url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/9409c25c95c5f91a3ad7ba293c4529f39822ea57/docs/contrib/GitGuide.md"
+    url = 'https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/docs/contrib/GitGuide.md'
     get_file_from_url(url, 'contrib/GitGuide.md') 
 
     # edit OpenROAD to OpenROAD-flow-scripts for GitGuide
