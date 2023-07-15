@@ -280,28 +280,13 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     merge_jsons(logPath, metrics_dict, "3_*.json")
     extractGnuTime('globalplace', metrics_dict, logPath + '/3_4_place_resized.log')
     extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_place_resized.log')
-    extractTagFromFile('detailedplace__design__violations',
-                       metrics_dict,
-                       '^\[INFO FLW-0012\] Placement violations (\S+).',
-                       logPath + '/3_5_place_dp.log', defaultNotFound=0)
-
     extractGnuTime('detailedplace', metrics_dict, logPath + '/3_5_place_dp.log')
 
     # CTS
     # =======================================================================
 
     merge_jsons(logPath, metrics_dict, "4_*.json")
-    extractTagFromFile('cts__design__instance__count__setup_buffer',
-                       metrics_dict,
-                       'Inserted (\d+) buffers',
-                       logPath + '/4_1_cts.log',
-                       defaultNotFound=0)
 
-    extractTagFromFile('cts__design__instance__count__hold_buffer',
-                       metrics_dict,
-                       'Inserted (\d+) hold buffers',
-                       logPath + '/4_1_cts.log',
-                       defaultNotFound=0)
     # Global Route
     # =========================================================================
 
@@ -313,18 +298,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 
     # Finish
     # =========================================================================
-
     merge_jsons(logPath, metrics_dict, "6_*.json")
-    extractTagFromFile('finish__timing__drv__setup_violation_count',
-                       metrics_dict,
-                       baseRegEx.format('finish setup_violation_count',
-                                        'setup violation count (\S+)'),
-                       logPath + '/6_report.log')
-    extractTagFromFile('finish__timing__drv__hold_violation_count',
-                       metrics_dict,
-                       baseRegEx.format('finish hold_violation_count',
-                                        'hold violation count (\S+)'),
-                       logPath + '/6_report.log')
     extractTagFromFile('finish__timing__wns_percent_delay',
                        metrics_dict,
                        baseRegEx.format('finish slack div critical path delay',
