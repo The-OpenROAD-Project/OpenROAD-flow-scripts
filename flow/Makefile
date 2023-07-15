@@ -279,8 +279,15 @@ OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
 YOSYS_CMD               ?= $(shell command -v yosys)
-ifeq ($(YOSYS_CMD),)
+YOSYS_VER               := $(shell $(YOSYS_CMD) -V | sed -n 's/^Yosys \([0-9]*\.[0-9]*\).*/\1/p')
+
+# Semantic Versioning Comparison
+VERSION_GTEQ            := $(shell echo -e "$(YOSYS_VER)\n0.13" | sort -V | head -n1)
+ifeq ($(VERSION_GTEQ),0.13)
+  $(info Using Yosys $(YOSYS_VER) found in path, it is newer or equal to 0.13)
+else
   YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+  $(info Using $(YOSYS_CMD) instead of $(YOSYS_VER) found in path, minimum Yosys 0.13)
 endif
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)
