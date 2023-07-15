@@ -11,14 +11,17 @@ export SYNTH_SDC_FILE         = $(SDC_FILE)
 
 export PLACE_DENSITY_LB_ADDON = 0.05
 
-export IO_CONSTRAINTS         = $(dir $(DESIGN_CONFIG))/io.tcl
-export MACRO_PLACEMENT_TCL    = $(dir $(DESIGN_CONFIG))/macro-placement.tcl
-
 export PDN_TCL                = $(dir $(DESIGN_CONFIG))/pdn.tcl
 
+# pre set CORE and DIE to avoid MPL
+# add IO and MACRO pre placement
 export CORE_AREA              = 2.5 2.5 1397.5 1397.5
 export DIE_AREA               = 0 0 1400 1400
 
+export IO_CONSTRAINTS         = $(dir $(DESIGN_CONFIG))/io.tcl
+export MACRO_PLACEMENT_TCL    = $(dir $(DESIGN_CONFIG))/macro-placement.tcl
+
+# LIB and LEF files for memories and register files used
 export BC_ADDITIONAL_LIBS    += $(PLATFORM_DIR)/lib/fakeram_256x128.lib \
                                 $(PLATFORM_DIR)/lib/fakeram_256x64.lib \
                                 $(PLATFORM_DIR)/lib/fakeram_32x46.lib \
@@ -40,10 +43,9 @@ export ADDITIONAL_LEFS       += $(PLATFORM_DIR)/lef/fakeram_256x128.lef \
                                 $(PLATFORM_DIR)/lef/fakeregfile_128x64.lef 
 
 
-#export CACHED_NETLIST         = $(realpath ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/MegaBoom.v)
+export SYNTH_ARGS            ?= -noshare
 
-export SYNTH_ARGS=-noshare
-
-
-export MIN_ROUTING_LAYER = M2
-export MAX_ROUTING_LAYER = M9
+# since this will be either top level macro or chip itself, allow routing to top of the 
+# metal stack
+export MIN_ROUTING_LAYER      = M2
+export MAX_ROUTING_LAYER      = M9
