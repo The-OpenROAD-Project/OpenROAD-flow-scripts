@@ -35,18 +35,7 @@ add_pdn_connect -grid {top} -layers {M8 M9}
 
 ####################################
 # macro grid
-# fakeram_256x128
-# fakeram_256x64
-# fakeram_64x20
-# fakeram_64x22
-# fakeregfile_128x64
-# fakeregfile_32x46
-# fakeregfile_64x64
 ####################################
-#define_pdn_grid -name {CORE_macro_grid_1} -voltage_domains {CORE} -macro -orient {R0 R180 MX MY} -cells {.*}
-#add_pdn_connect -grid {CORE_macro_grid_1} -layers {M4 M5}
-#
-#
 # The halo around the macro prevents pdn from blocking pin access
 define_pdn_grid -name {fakeram} -macro -cells {fake.*} -halo "3.0 3.0 3.0 3.0" -voltage_domains {CORE}
 add_pdn_connect -grid {fakeram} -layers {M4 M5}

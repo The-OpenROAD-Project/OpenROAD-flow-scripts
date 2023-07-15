@@ -1,26 +1,22 @@
-set block [ord::get_db_block]
-set units [$block getDefUnits]
+# pre place all macro
+# 
+set block    [ord::get_db_block]
+set units    [$block getDefUnits]
 
 set coreArea [$block getCoreArea]
-set xMin [$coreArea xMin]
-set yMin [$coreArea yMin]
+set xMin     [$coreArea xMin]
+set yMin     [$coreArea yMin]
 
-foreach uname [list \
-                    ] {
-
-  set inst [$block findInst $uname]
-
-  #$inst setOrient R0
-  #$inst setOrigin x y
-  #$inst setPlacementStatus FIRM
-}
-
-set x $xMin
-set y $yMin
+# macro pins on M4 starts with an offset of 0.012 from the bottom
+# of the macro; then, will need to adjust the placement of the macro
+# such that the pins will be on M4 grid
 set y [expr $yMin - int(0.012 * $units)]
+
+# the algorithm is to place macro such what if 2 macros are side by side,
+# the macro should be flip alternately
 set orientList [list R0 MY]
 set flag 1
-foreach uname [list \
+foreach instName [list \
                     coreplex/RocketTile/frontend/icache/_T_850/_T_850_ext/u_ram \
                     coreplex/RocketTile/frontend/icache/_T_869/_T_850_ext/u_ram \
                     coreplex/RocketTile/frontend/icache/_T_888/_T_850_ext/u_ram \
@@ -47,7 +43,7 @@ foreach uname [list \
                     coreplex/RocketTile/core/bpd_stage/br_predictor/brob/entries_info/u_entries_info_ext/u_regfile \
               ] {
   set orient [lindex $orientList $flag]
-  set inst   [$block findInst $uname]
+  set inst   [$block findInst $instName]
 
   set bbox   [$inst getBBox]
   set w      [$bbox getDX]
@@ -67,8 +63,5 @@ foreach uname [list \
   set bx2 [expr $y]
   set by2 [expr $y + $h]
 
-#  set b [odb::dbBlockage_create $block $bx1 $by1 $bx2 $by2] 
-
   set flag   [expr {! $flag}]
 }
-
