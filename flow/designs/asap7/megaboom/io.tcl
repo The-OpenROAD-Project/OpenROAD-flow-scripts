@@ -52,36 +52,50 @@ set m5pitch 0.048
 # 	<pin>
 array set pinGroups [list]
 set pinGroups(top) [list \
-  "pitch [expr $m5pitch * 8]" \
+  "pitch [expr $m5pitch * 2]" \
   "start 500" \
   "io_debug_req" \
+  "break 10" \
   "io_debug_resp" \
+  "break 10" \
   "io_interrupts" \
 ]
 
 set pinGroups(left) [ list \
-  "pitch [expr $m4pitch * 8]" \
+  "pitch [expr $m4pitch * 2]" \
   "start 200" \
   "io_l2_axi4_0_ar" \
+  "break 10" \
   "io_l2_axi4_0_aw" \
+  "break 10" \
   "io_l2_axi4_0_b" \
+  "break 10" \
   "io_l2_axi4_0_r" \
+  "break 10" \
   "io_l2_axi4_0_w" \
 ]
 
 set pinGroups(right) [ list \
-  "pitch [expr $m4pitch * 8]" \
+  "pitch [expr $m4pitch * 2]" \
   "start 200" \
   "io_mem_axi4_0_ar" \
+  "break 10" \
   "io_mem_axi4_0_aw" \
+  "break 10" \
   "io_mem_axi4_0_b" \
+  "break 10" \
   "io_mem_axi4_0_r" \
+  "break 10" \
   "io_mem_axi4_0_w" \
   "break 50" \
   "io_mmio_axi4_0_ar" \
+  "break 10" \
   "io_mmio_axi4_0_aw" \
+  "break 10" \
   "io_mmio_axi4_0_b" \
+  "break 10" \
   "io_mmio_axi4_0_r" \
+  "break 10" \
   "io_mmio_axi4_0_w" \
 ]
 
@@ -93,22 +107,23 @@ foreach side [array names pinGroups] {
   set pStop  0
   set pitch  0
   foreach ex $pinGroups($side) {
-  if { [regexp {pitch (\S+)} $ex - number] } {
-    set pitch $number
-    continue
-  }
-  if { [regexp {start (\d+)} $ex - number] } {
-    set pStart $number
-    set pStop  $number
-    continue
-  }
-  if { [regexp {break (\d+)} $ex - number] } {
-    set pStart [expr $pStart + $number]
-    continue
-  }
-  set pins  [match_pins ${ex}.*]
-  set pStop [expr $pStart + ($pitch * [llength $pins])]
-  set_io_pin_constraint -region ${side}:${pStart}-${pStop} -pin_names $pins
+    if { [regexp {pitch (\S+)} $ex - number] } {
+      set pitch $number
+      continue
+    }
+    if { [regexp {start (\d+)} $ex - number] } {
+      set pStart $number
+      set pStop  $number
+      continue
+    }
+    if { [regexp {break (\d+)} $ex - number] } {
+      set pStart [expr $pStart + $number]
+      continue
+    }
+    set pins  [match_pins ${ex}.*]
+    set pStop [expr $pStart + (($pitch) * [llength $pins])]
+    set_io_pin_constraint -region ${side}:${pStart}-${pStop} -pin_names $pins
+    set pStart [expr $pStop + $pitch]
   }
 }
 
