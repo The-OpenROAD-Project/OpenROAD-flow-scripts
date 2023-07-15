@@ -64,6 +64,10 @@ set pinGroups(top) [list \
 set pinGroups(left) [ list \
   "pitch [expr $m4pitch * 2]" \
   "start 200" \
+  "reset" \
+  "break 10" \
+  "clock" \
+  "break 10" \
   "io_l2_axi4_0_ar" \
   "break 10" \
   "io_l2_axi4_0_aw" \
