@@ -10,6 +10,7 @@ set yMin     [$coreArea yMin]
 # macro pins on M4 starts with an offset of 0.012 from the bottom
 # of the macro; then, will need to adjust the placement of the macro
 # such that the pins will be on M4 grid
+set x $xMin
 set y [expr $yMin - int(0.012 * $units)]
 
 # the algorithm is to place macro such what if 2 macros are side by side,
