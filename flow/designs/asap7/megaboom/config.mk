@@ -15,7 +15,7 @@ export PDN_TCL                = $(dir $(DESIGN_CONFIG))/pdn.tcl
 
 # pre set CORE and DIE to avoid MPL
 # add IO and MACRO pre placement
-export CORE_AREA              = 2.5 2.5 1397.5 1397.5
+export CORE_AREA              = 2.538 2.700 1397.466 1397.250
 export DIE_AREA               = 0 0 1400 1400
 
 export IO_CONSTRAINTS         = $(dir $(DESIGN_CONFIG))/io.tcl
