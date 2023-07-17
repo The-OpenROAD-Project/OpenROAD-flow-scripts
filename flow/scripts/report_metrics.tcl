@@ -121,7 +121,7 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
     puts "\n=========================================================================="
     puts "$when setup_violation_count"
     puts "--------------------------------------------------------------------------"
-    puts "setup violation count [sta::endpoint_violation_count min]"
+    puts "setup violation count [sta::endpoint_violation_count max]"
 
     puts "\n=========================================================================="
     puts "$when hold_violation_count"
