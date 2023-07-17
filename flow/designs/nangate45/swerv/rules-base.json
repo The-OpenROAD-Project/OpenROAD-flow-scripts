@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 175523.28,
+        "value": 55557.26,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 199047,
+        "value": 60306,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 93692,
+        "value": 29637,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,23 +20,23 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -0.4,
+        "value": -0.28,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -0.39,
+        "value": -0.28,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -0.39,
+        "value": -0.28,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 4074,
+        "value": 1289,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 4074,
+        "value": 1289,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
@@ -48,7 +48,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 2686146,
+        "value": 669467,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -60,11 +60,11 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 199962,
+        "value": 60640,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.37,
+        "value": -0.2,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -72,7 +72,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -1.64,
+        "value": -0.24,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
