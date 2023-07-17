@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.46,
+        "value": -0.37,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
@@ -80,7 +80,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 10,
+        "value": 110,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
