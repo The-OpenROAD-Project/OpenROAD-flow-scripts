@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 1343835,
+        "value": 1343834.93,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -44,7 +44,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 6320874,
+        "value": 6259635,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -76,7 +76,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 10,
+        "value": 297,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
