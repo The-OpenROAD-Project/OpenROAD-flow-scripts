@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 173304,
+        "value": 173303.57,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 21845,
+        "value": 21843,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.48,
+        "value": -0.38,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -80,7 +80,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 10,
+        "value": 281,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {

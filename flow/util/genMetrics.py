@@ -127,6 +127,8 @@ def extractTagFromFile(jsonTag, jsonFile, pattern, file, count=False,
 
 def extractGnuTime(prefix, jsonFile, file):
 
+    if not os.path.isfile(file):
+        return
     extractTagFromFile(
         prefix +
         '__runtime__total',
@@ -249,7 +251,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 
     hierarchicalSynth = os.environ.get('SYNTH_HIERARCHICAL')
 
-    if hierarchicalSynth == '1': 
+    if hierarchicalSynth == '1':
         extractTagFromFile('synth__design__instance__area__stdcell',
                             metrics_dict,
                             'Chip area for top module.*: +(\S+)',
@@ -259,11 +261,9 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                             metrics_dict,
                             'Chip area for module.*: +(\S+)',
                             rptPath + '/synth_stat.txt')
-    extractGnuTime('synth', metrics_dict, logPath + '/1_1_yosys.log')
 
     # Clocks
     # =========================================================================
-
     clk_list = read_sdc(resultPath + '/2_floorplan.sdc')
     metrics_dict['constraints__clocks__count'] = len(clk_list)
     metrics_dict['constraints__clocks__details'] = clk_list
@@ -272,59 +272,25 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     # =========================================================================
     merge_jsons(logPath, metrics_dict, "2_*.json")
 
-    extractGnuTime('floorplan', metrics_dict, logPath + '/2_4_mplace.log')
-
     # Place
     # =========================================================================
-
     merge_jsons(logPath, metrics_dict, "3_*.json")
-    extractGnuTime('globalplace', metrics_dict, logPath + '/3_4_resizer.log')
-    extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_resizer.log')
-    extractTagFromFile('detailedplace__design__violations',
-                       metrics_dict,
-                       '^\[INFO FLW-0012\] Placement violations (\S+).',
-                       logPath + '/3_5_opendp.log', defaultNotFound=0)
-
-    extractGnuTime('detailedplace', metrics_dict, logPath + '/3_5_opendp.log')
 
     # CTS
     # =======================================================================
-
     merge_jsons(logPath, metrics_dict, "4_*.json")
-    extractTagFromFile('cts__design__instance__count__setup_buffer',
-                       metrics_dict,
-                       'Inserted (\d+) buffers',
-                       logPath + '/4_1_cts.log',
-                       defaultNotFound=0)
 
-    extractTagFromFile('cts__design__instance__count__hold_buffer',
-                       metrics_dict,
-                       'Inserted (\d+) hold buffers',
-                       logPath + '/4_1_cts.log',
-                       defaultNotFound=0)
     # Global Route
     # =========================================================================
-
     merge_jsons(logPath, metrics_dict, "5_*.json")
     extractTagFromFile('globalroute__timing__clock__slack',
                        metrics_dict,
                        '^\[INFO FLW-....\] Clock .* slack (\S+)',
-                       logPath + '/5_1_fastroute.log')
+                       logPath + '/5_1_grt.log')
 
     # Finish
     # =========================================================================
-
     merge_jsons(logPath, metrics_dict, "6_*.json")
-    extractTagFromFile('finish__timing__drv__setup_violation_count',
-                       metrics_dict,
-                       baseRegEx.format('finish setup_violation_count',
-                                        'setup violation count (\S+)'),
-                       logPath + '/6_report.log')
-    extractTagFromFile('finish__timing__drv__hold_violation_count',
-                       metrics_dict,
-                       baseRegEx.format('finish hold_violation_count',
-                                        'hold violation count (\S+)'),
-                       logPath + '/6_report.log')
     extractTagFromFile('finish__timing__wns_percent_delay',
                        metrics_dict,
                        baseRegEx.format('finish slack div critical path delay',
@@ -335,6 +301,25 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 
     # Accumulate time
     # =========================================================================
+
+    extractGnuTime('synth', metrics_dict, logPath + '/1_1_yosys.log')
+    extractGnuTime('floorplan', metrics_dict, logPath + '/2_1_floorplan.log')
+    extractGnuTime('floorplan_io', metrics_dict, logPath + '/2_2_floorplan_io.log')
+    extractGnuTime('floorplan_tdms', metrics_dict, logPath + '/2_3_floorplan_tdms.log')
+    extractGnuTime('floorplan_macro', metrics_dict, logPath + '/2_4_floorplan_macro.log')
+    extractGnuTime('floorplan_tap', metrics_dict, logPath + '/2_5_floorplan_tapcell.log')
+    extractGnuTime('floorplan_pdn', metrics_dict, logPath + '/2_6_floorplan_pdn.log')
+    extractGnuTime('globalplace_skip_io', metrics_dict, logPath + '/3_1_place_gp_skip_io.log')
+    extractGnuTime('globalplace_io', metrics_dict, logPath + '/3_2_place_iop.log')
+    extractGnuTime('globalplace', metrics_dict, logPath + '/3_3_place_gp.log')
+    extractGnuTime('placeopt', metrics_dict, logPath + '/3_4_place_resized.log')
+    extractGnuTime('detailedplace', metrics_dict, logPath + '/3_5_place_dp.log')
+    extractGnuTime('cts', metrics_dict, logPath + '/4_1_cts.log')
+    extractGnuTime('cts_fill', metrics_dict, logPath + '/4_2_cts_fillcell.log')
+    extractGnuTime('globalroute', metrics_dict, logPath + '/5_1_grt.log')
+    extractGnuTime('detailedroute', metrics_dict, logPath + '/5_2_route.log')
+    extractGnuTime('finish_merge', metrics_dict, logPath + '/6_1_merge.log')
+    extractGnuTime('finish', metrics_dict, logPath + '/6_report.log')
 
     failed = False
     total = timedelta()
