@@ -466,6 +466,12 @@ UNSET_AND_MAKE = @bash -c 'for var in $(ISSUE_VARIABLES_NAMES); do unset $$var; 
 # for dependencies.
 #
 # The do- substeps of each of these stages are subject to change.
+#
+# $(1) stem, e.g. 2_1_floorplan
+# $(2) dependencies
+# $(3) tcl script step
+# $(4) extension of result, default .odb
+# $(5) folder of target, default $(RESULTS_DIR)
 define do-step
 $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
