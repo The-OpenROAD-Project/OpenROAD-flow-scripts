@@ -432,11 +432,6 @@ clean_synth:
 floorplan: $(RESULTS_DIR)/2_floorplan.odb \
            $(RESULTS_DIR)/2_floorplan.sdc
 
-.PHONY: floorplan_info
-floorplan_info:
-	@echo DIE_AREA=$(DIE_AREA)
-	@echo CORE_AREA=$(CORE_AREA)
-
 # ==============================================================================
 
 ifneq ($(FOOTPRINT),)
@@ -445,7 +440,7 @@ else ifneq ($(FOOTPRINT_TCL),)
 IS_CHIP = 1
 endif
 
-UNSET_AND_MAKE = @bash -c 'for var in $(ISSUE_VARIABLES_NAMES); do unset $$var; done; echo $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@; $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
+UNSET_AND_MAKE = @bash -c 'for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done; echo $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@; $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
 
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the
@@ -858,6 +853,10 @@ RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
+.PHONY: gui_synth
+gui_synth:
+	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
+
 .PHONY: gui_floorplan
 gui_floorplan: gui_2_floorplan.odb
 .PHONY: gui_place
@@ -885,6 +884,18 @@ $(foreach file,$(RESULTS_ODB),$(file).def): %.def:
 $(foreach file,$(RESULTS_ODB),$(file).v): %.v:
 	ODB_FILE=$(RESULTS_DIR)/$* VERILOG_FILE=$(RESULTS_DIR)/$@ $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_verilog.tcl
 
+# Drop into yosys with all environment variables, useful to for instance
+# debug synthesis, or run other commands aftewards, such as "show" to
+# generate a .dot file of the design to visualize designs.
+.PHONY: yosys
+yosys:
+	$(YOSYS_CMD)
+
+# Drop into a bash shell with all environment variables, useful for debugging
+.PHONY: bash
+bash:
+	bash
+
 .PHONY: all_defs
 all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)
 .PHONY: all_verilog
@@ -894,7 +905,11 @@ all_verilog : $(foreach file,$(RESULTS_ODB),$(file).v)
 handoff : all_defs all_verilog
 
 .PHONY: print-%
-print-%: ; @echo $* = $($*)
+# Print any variable, for instance: make print-DIE_AREA
+print-%  : ; @echo $* = $($*)
+
+.PHONY: test-unset-and-make-%
+test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 
 # Utilities
 #-------------------------------------------------------------------------------
