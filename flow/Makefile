@@ -432,11 +432,6 @@ clean_synth:
 floorplan: $(RESULTS_DIR)/2_floorplan.odb \
            $(RESULTS_DIR)/2_floorplan.sdc
 
-.PHONY: floorplan_info
-floorplan_info:
-	@echo DIE_AREA=$(DIE_AREA)
-	@echo CORE_AREA=$(CORE_AREA)
-
 # ==============================================================================
 
 ifneq ($(FOOTPRINT),)
@@ -893,6 +888,7 @@ all_verilog : $(foreach file,$(RESULTS_ODB),$(file).v)
 .PHONY: handoff
 handoff : all_defs all_verilog
 
+# Print any variable, for instance: make print-DIE_AREA
 print-%  : ; @echo $* = $($*)
 
 # Utilities
