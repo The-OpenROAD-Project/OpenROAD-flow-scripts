@@ -7,9 +7,10 @@ set sdc_version 2.0
 
 lassign [split $::env(MOCK_ARRAY_TABLE)] width height
 
-set clk_period 1000
+set clk_period 666
 
-set clk_io_pct 0.2
+set clk_io_in_pct 0.20
+set clk_io_out_pct 0.05
 
 for {set row 0} {$row < $height} {incr row} {
   set clk_name  "io_clocks_$row"
@@ -22,17 +23,17 @@ for {set row 0} {$row < $height} {incr row} {
   set row_inputs [list io_insLeft_$row io_insRight_$row]
   set row_outputs [list io_outsLeft_$row io_outsRight_$row]
 
-  set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $row_inputs
-  set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name $row_outputs
+  set_input_delay  [expr $clk_period * $clk_io_in_pct] -clock $clk_name $row_inputs
+  set_output_delay [expr $clk_period * $clk_io_out_pct] -clock $clk_name $row_outputs
   for {set column 0} {$column < $width} {incr column} {
-    set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name io_lsbs_[expr $row * $width + $column]
+    set_output_delay [expr $clk_period * $clk_io_out_pct] -clock $clk_name io_lsbs_[expr $row * $width + $column]
   }
 }
 
 # top
-set_input_delay [expr $clk_period * $clk_io_pct] -clock io_clocks_[expr $height - 1] [concat [get_ports io_insDown*]]
-set_output_delay [expr $clk_period * $clk_io_pct] -clock io_clocks_[expr $height - 1] [concat [get_ports io_outsUp*]]
+set_input_delay [expr $clk_period * $clk_io_in_pct] -clock io_clocks_[expr $height - 1] [concat [get_ports io_insDown*]]
+set_output_delay [expr $clk_period * $clk_io_out_pct] -clock io_clocks_[expr $height - 1] [concat [get_ports io_outsUp*]]
 
 # bottom
-set_input_delay [expr $clk_period * $clk_io_pct] -clock io_clocks_0 [concat [get_ports io_insUp*]]
-set_output_delay [expr $clk_period * $clk_io_pct] -clock io_clocks_0 [concat [get_ports io_outsDown*]]
+set_input_delay [expr $clk_period * $clk_io_in_pct] -clock io_clocks_0 [concat [get_ports io_insUp*]]
+set_output_delay [expr $clk_period * $clk_io_out_pct] -clock io_clocks_0 [concat [get_ports io_outsDown*]]

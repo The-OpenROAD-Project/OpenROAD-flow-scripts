@@ -4,7 +4,7 @@ set cols [expr {[info exists ::env(MOCK_ARRAY_COLS)] ? $::env(MOCK_ARRAY_COLS) :
 
 set clk_name clock
 set clk_port_name clock
-set clk_period 1000
+set clk_period 666
 
 set clk_port [get_ports $clk_port_name]
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name $clk_name $clk_port
