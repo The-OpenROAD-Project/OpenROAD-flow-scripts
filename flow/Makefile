@@ -893,7 +893,8 @@ all_verilog : $(foreach file,$(RESULTS_ODB),$(file).v)
 .PHONY: handoff
 handoff : all_defs all_verilog
 
-print-%  : ; @echo $* = $($*)
+.PHONY: print-%
+print-%: ; @echo $* = $($*)
 
 # Utilities
 #-------------------------------------------------------------------------------
