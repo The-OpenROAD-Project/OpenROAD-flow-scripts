@@ -892,6 +892,11 @@ $(foreach file,$(RESULTS_ODB),$(file).v): %.v:
 yosys:
 	$(YOSYS_CMD)
 
+# Drop into a bash shell with all environment variables, useful for debugging
+.PHONY: bash
+bash:
+	bash
+
 .PHONY: all_defs
 all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)
 .PHONY: all_verilog
