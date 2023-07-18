@@ -885,6 +885,13 @@ $(foreach file,$(RESULTS_ODB),$(file).def): %.def:
 $(foreach file,$(RESULTS_ODB),$(file).v): %.v:
 	ODB_FILE=$(RESULTS_DIR)/$* VERILOG_FILE=$(RESULTS_DIR)/$@ $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_verilog.tcl
 
+# Drop into yosys with all environment variables, useful to for instance
+# debug synthesis, or run other commands aftewards, such as "show" to
+# generate a .dot file of the design to visualize designs.
+.PHONY: yosys
+yosys:
+	$(YOSYS_CMD)
+
 .PHONY: all_defs
 all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)
 .PHONY: all_verilog
