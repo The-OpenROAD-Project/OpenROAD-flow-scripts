@@ -895,6 +895,9 @@ handoff : all_defs all_verilog
 
 print-%  : ; @echo $* = $($*)
 
+.PHONY: test-unset-and-make-%
+test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
+
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
