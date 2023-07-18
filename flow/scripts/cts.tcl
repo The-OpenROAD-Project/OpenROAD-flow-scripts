@@ -86,6 +86,7 @@ if { [info exists ::env(ENABLE_GATE_CLONING)] } {
 }
 
 repair_timing {*}$additional_args
+repair_timing -recover_power
 
 detailed_placement
 check_placement -verbose
