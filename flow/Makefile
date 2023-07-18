@@ -481,6 +481,15 @@ do-$(1):
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json) 2>&1 | tee $(LOG_DIR)/$(1).log
 endef
 
+# generate make rules to copy a file, if a dependency change and
+# a do- sibling rule that copies the file unconditionally.
+#
+# The file is copied within the $(RESULTS_DIR)
+#
+# $(1) stem of target, e.g. 2_2_floorplan_io
+# $(2) basename of file to be copied
+# $(3) further dependencies
+# $(4) target extension, default .odb
 define do-copy
 $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb): $(RESULTS_DIR)/$(2) $(3)
 	$$(UNSET_AND_MAKE) do-$(1)$(if $(4),$(4),)
