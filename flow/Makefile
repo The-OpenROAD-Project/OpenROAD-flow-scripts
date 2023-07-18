@@ -858,6 +858,10 @@ RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
+.PHONY: gui_synth
+gui_synth:
+	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
+
 .PHONY: gui_floorplan
 gui_floorplan: gui_2_floorplan.odb
 .PHONY: gui_place
