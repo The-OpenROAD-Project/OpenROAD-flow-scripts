@@ -13,6 +13,7 @@
 import docutils
 import os
 import re
+import requests
 
 # -- Project information -----------------------------------------------------
 
@@ -33,6 +34,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.todo',
     'sphinx_external_toc',
+    'sphinx_copybutton',
     'myst_parser',
 ]
 
@@ -87,62 +89,54 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_symbiflow_theme"
+html_theme = "sphinx_book_theme"
 
 html_theme_options = {
-    # Repository integration
-    # Set the repo url for the link to appear
-    'github_url': 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts',
-    # The name of the repo. If must be set if github_url is set
-    'repo_name': 'OpenROAD Flow',
-    # Must be one of github, gitlab or bitbucket
-    'repo_type': 'github',
+    "repository_url": "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts",
+    "repository_branch": "master",
+    "use_download_button": True,
 
-    # Set the name to appear in the left sidebar/header. If not provided, uses
-    # html_short_title if defined, or html_title
-    'nav_title': "OpenROAD Flow",
-
-    # A list of dictionaries where each has three keys:
-    #   href: The URL or pagename (str)
-    #   title: The title to appear (str)
-    #   internal: Flag indicating to use pathto (bool)
-    'nav_links': [
-        {"title": "Home", "href": "index", "internal": True},
-        {"title": "The OpenROAD Project", "href": "https://theopenroadproject.org", "internal": False},
-    ],
-
-    # Customize css colors.
-    # For details see link.
-    # https://getmdl.io/customize/index.html
-    #
-    # Primary colors:
-    # red, pink, purple, deep-purple, indigo, blue, light-blue, cyan,
-    # teal, green, light-green, lime, yellow, amber, orange, deep-orange,
-    # brown, grey, blue-grey, white
-    # (Default: deep-purple)
-    'color_primary': 'indigo',
-    # Values: Same as color_primary. 
-    #(Default: indigo)
-    'color_accent': 'blue',
-
-    # Hide the symbiflow links
-    'hide_symbiflow_links': True,
-
-    "html_minify": False,
-    "html_prettify": True,
-    "css_minify": True,
-    "globaltoc_depth": 2,
-    "table_classes": ["plain"],
-    "master_doc": False,
+    # list for more fine-grained ordering of icons
+    "icon_links": [
+        {
+            "name": "The OpenROAD Project",
+            "url": "https://theopenroadproject.org/",
+            "icon": "fa-solid fa-globe",
+        },
+        {
+            "name": "Twitter",
+            "url": "https://twitter.com/OpenROAD_EDA",
+            "icon": "fa-brands fa-twitter",
+        },
+        {
+            "name": "Email",
+            "url": "mailto:openroad@eng.ucsd.edu",
+            "icon": "fa-solid fa-envelope",
+        },
+        {
+            "name": "GitHub",
+            "url": "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts",
+            "icon": "fa-brands fa-github",
+        },
+        {
+            "name": "Stars",
+            "url": "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/stargazers",
+            "icon": "https://img.shields.io/github/stars/The-OpenROAD-Project/OpenROAD-flow-scripts",
+            "type": "url",
+        },
+   ],
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['_static']
+
+def get_file_from_url(url, fname):
+    r = requests.get(url)
+    with open(fname, 'wb') as f:
+        f.write(r.content)
 
 def setup(app):
-    import os
     if not os.path.exists('main'):
         os.symlink('..', 'main')
     prefix = '(../'
@@ -152,3 +146,16 @@ def setup(app):
     lines = lines.replace(prefix, newPath)
     with open('index.md', 'wt') as f:
         f.write(lines)
+
+    url = 'https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/docs/contrib/GitGuide.md'
+    get_file_from_url(url, 'contrib/GitGuide.md') 
+
+    # edit OpenROAD to OpenROAD-flow-scripts for GitGuide
+    with open('contrib/GitGuide.md', 'r') as f:
+        content = f.read()
+
+    content = content.replace('user/Build.md', '../index.md#build-or-installing-orfs-dependencies')
+    content = content.replace('OpenROAD', 'OpenROAD-flow-scripts')
+    content = content.replace('The-OpenROAD-flow-scripts', 'The-OpenROAD')
+    with open('contrib/GitGuide.md', 'w') as f:
+        f.write(content)

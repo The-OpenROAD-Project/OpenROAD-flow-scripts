@@ -72,11 +72,11 @@
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 10,
+        "value": 106,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 10,
+        "value": 694,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {

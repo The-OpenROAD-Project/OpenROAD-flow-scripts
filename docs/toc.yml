@@ -27,6 +27,9 @@ entries:
 
 - file: contrib/DeveloperGuide.md
   title: Developer's Guide
+  entries:
+  - file: contrib/GitGuide.md
+    title: Git Quickstart
 
 - file: contrib/CODE_OF_CONDUCT.md
   title: Code of Conduct
