@@ -445,7 +445,7 @@ else ifneq ($(FOOTPRINT_TCL),)
 IS_CHIP = 1
 endif
 
-UNSET_AND_MAKE = @bash -c 'for var in $(ISSUE_VARIABLES_NAMES); do unset $$var; done; echo $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@; $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
+UNSET_AND_MAKE = @bash -c 'for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done; echo $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@; $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
 
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the

@@ -5,7 +5,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # exclude system and CI variables
 EXCLUDED_VARS="MAKE|PYTHONPATH|PKG_CONFIG_PATH|PERL5LIB|PCP_DIR|PATH|MANPATH"
 EXCLUDED_VARS+="|LD_LIBRARY_PATH|INFOPATH|HOME|PWD|MAIL|TIME_CMD|QT_QPA_PLATFORM"
-EXCLUDED_VARS+="|do-step"
+EXCLUDED_VARS+="|do-step|get_variables"
 
 printf '%s\n' "$ISSUE_VARIABLES" | while read -r V;
 do
