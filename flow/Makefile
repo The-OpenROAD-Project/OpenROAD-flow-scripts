@@ -904,6 +904,7 @@ all_verilog : $(foreach file,$(RESULTS_ODB),$(file).v)
 .PHONY: handoff
 handoff : all_defs all_verilog
 
+.PHONY: print-%
 # Print any variable, for instance: make print-DIE_AREA
 print-%  : ; @echo $* = $($*)
 
