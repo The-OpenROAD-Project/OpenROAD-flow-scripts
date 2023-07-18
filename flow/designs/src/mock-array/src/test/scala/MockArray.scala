@@ -30,8 +30,9 @@ class RoutesVec(singleElementWidth:Int) extends Record {
   def asSeq: Seq[UInt] = routes.map(_._2).toSeq
 }
 
-class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
+class MockArray(width:Int, height:Int, singleElementWidth:Int) extends RawModule {
   val io = IO(new Bundle {
+    val clocks = Input(Vec(height, Clock()))
     val insLeft = Input(Vec(height, UInt(singleElementWidth.W)))
     val insUp = Input(Vec(width, UInt(singleElementWidth.W)))
     val insRight = Input(Vec(height, UInt(singleElementWidth.W)))
@@ -63,9 +64,11 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
     io.lsbOuts := io.lsbIns.drop(1) ++ Seq(io.outs.asSeq.head(0)(0))
   }
 
-  val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
+  val ces = Seq.tabulate(height){row =>
+      Seq.fill(width)(withClockAndReset(io.clocks(row), false.B) {Module(new Element())})
+  }
 
-  ces.foreach{row =>
+  ces.foreach{case row =>
     row.head.io.lsbIns := DontCare
     if (row.length > 1) {
       row.sliding(2, 1).foreach{pair =>

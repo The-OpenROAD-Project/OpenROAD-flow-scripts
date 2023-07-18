@@ -27,3 +27,5 @@ set assignments [list \
 foreach {direction names} $assignments {
     set_io_pin_constraint -region $direction:* -pin_names $names
 }
+
+set_io_pin_constraint -region left:* -pin_names [match_pins io_clocks.*]
