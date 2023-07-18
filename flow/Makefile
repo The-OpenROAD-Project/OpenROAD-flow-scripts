@@ -462,7 +462,11 @@ UNSET_AND_MAKE = @bash -c 'for var in $(ISSUE_VARIABLES_NAMES); do unset $$var; 
 # for the Bazel use-case.
 define do-step
 $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
+ifneq ($(BLOCKS),)
 	$$(UNSET_AND_MAKE) do-$(1)
+else
+	$(MAKE) do-$(1)
+endif
 
 .PHONY: do-$(1)
 do-$(1):
