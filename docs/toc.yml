@@ -1,7 +1,7 @@
 root: index
 entries:
 
-- file: /dev/null
+- file: user/UserGuide.md
   title: ORFS Documentation
   entries:
   - file: user/BuildWithDocker
@@ -13,8 +13,8 @@ entries:
     title: Build With Pre-built Binaries
   - file: user/BuildLocally.md
     title: Build Locally
-  - file: user/UserGuide.md
-    title: User Guide
+  - file: user/BuildWithWSL.md
+    title: Build With Windows Subsystem for Linux
   - file: user/FlowVariables.md
     title: Flow Variables
   - file: contrib/Metrics.md
