@@ -2,7 +2,7 @@ root: index
 entries:
 
 - file: user/UserGuide.md
-  title: ORFS Documentation
+  title: User Guide
   entries:
   - file: user/BuildWithDocker
     title: Build With Docker
@@ -14,7 +14,7 @@ entries:
   - file: user/BuildLocally.md
     title: Build Locally
   - file: user/BuildWithWSL.md
-    title: Build With Windows Subsystem for Linux
+    title: Build With WSL
   - file: user/FlowVariables.md
     title: Flow Variables
   - file: contrib/Metrics.md
