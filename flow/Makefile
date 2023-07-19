@@ -734,6 +734,10 @@ generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESU
 do-generate_abstract:
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
 
+.PHONY: clean_abstract
+clean_abstract:
+	rm -f $(RESULTS_DIR)/$(DESIGN_NAME).lib $(RESULTS_DIR)/$(DESIGN_NAME).lef
+
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
 $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
@@ -833,7 +837,7 @@ clean:
 	@echo
 
 .PHONY: clean_all
-clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish clean_metadata
+clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish clean_metadata clean_abstract
 	rm -rf $(OBJECTS_DIR)
 
 .PHONY: nuke
