@@ -59,8 +59,6 @@ templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-#
-# source_suffix = ['.rst', '.md']
 source_suffix = ['.md']
 
 # The master toctree document.
@@ -94,6 +92,10 @@ html_theme = "sphinx_book_theme"
 html_theme_options = {
     "repository_url": "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts",
     "repository_branch": "master",
+    "show_navbar_depth": 2,
+    "use_edit_page_button": True,
+    "use_source_button": True,
+    "use_issues_button": True,
     "use_download_button": True,
 
     # list for more fine-grained ordering of icons
