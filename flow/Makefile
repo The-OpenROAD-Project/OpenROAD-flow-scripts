@@ -267,21 +267,16 @@ endif
 
 # The following determine the executable location for each tool used by this flow.
 # Priority is given to
-#       1 user include path to the executable prior to running make
-#       2 user explicit set with variable in Makefile or command line
-export OPENROAD_EXE            ?= $(shell command -v openroad)
-ifeq ($(OPENROAD_EXE),)
-  export OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
-endif
+#       1 user explicit set with variable in Makefile or command line, for instance setting OPENROAD_EXE
+#       2 ORFS compiled tools: openroad, yosys
+export OPENROAD_EXE      ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
-YOSYS_CMD               ?= $(shell command -v yosys)
-ifeq ($(YOSYS_CMD),)
-  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
-endif
+YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)
 
