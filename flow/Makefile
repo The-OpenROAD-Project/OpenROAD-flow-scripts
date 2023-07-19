@@ -383,6 +383,7 @@ $(WRAPPED_LIBS):
 #  ___) || | | |\  | | | |  _  | |___ ___) | | ___) |
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
+.PHONY: synth
 synth: versions.txt \
        $(RESULTS_DIR)/1_synth.v \
        $(RESULTS_DIR)/1_synth.sdc
@@ -416,6 +417,7 @@ $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	cp $< $@
 
+.PHONY: clean_synth
 clean_synth:
 	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
 	rm -f  $(REPORTS_DIR)/synth_*
@@ -679,7 +681,7 @@ finish: $(LOG_DIR)/6_report.log \
         $(GDS_FINAL_FILE)
 	$(UNSET_AND_MAKE) elapsed
 
-.PHONY:
+.PHONY: elapsed
 elapsed:
 	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
 
