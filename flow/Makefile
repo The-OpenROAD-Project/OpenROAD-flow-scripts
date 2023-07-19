@@ -450,6 +450,18 @@ UNSET_AND_MAKE = @bash -c 'for var in $(UNSET_VARIABLES_NAMES); do unset $$var; 
 #
 # A "do-synth" step would be welcomed, but it isn't strictly necessary
 # for the Bazel use-case.
+#
+# do-floorplan, do-place, do-cts, do-route, do-finish are the
+# supported interface to execute those stages without checking
+# for dependencies.
+#
+# The do- substeps of each of these stages are subject to change.
+#
+# $(1) stem, e.g. 2_1_floorplan
+# $(2) dependencies
+# $(3) tcl script step
+# $(4) extension of result, default .odb
+# $(5) folder of target, default $(RESULTS_DIR)
 define do-step
 $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
@@ -458,6 +470,25 @@ $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 do-$(1):
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json) 2>&1 | tee $(LOG_DIR)/$(1).log
 endef
+
+# generate make rules to copy a file, if a dependency change and
+# a do- sibling rule that copies the file unconditionally.
+#
+# The file is copied within the $(RESULTS_DIR)
+#
+# $(1) stem of target, e.g. 2_2_floorplan_io
+# $(2) basename of file to be copied
+# $(3) further dependencies
+# $(4) target extension, default .odb
+define do-copy
+$(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb): $(RESULTS_DIR)/$(2) $(3)
+	$$(UNSET_AND_MAKE) do-$(1)$(if $(4),$(4),)
+
+.PHONY: do-$(1)$(if $(4),$(4),)
+do-$(1)$(if $(4),$(4),):
+	cp $(RESULTS_DIR)/$(2) $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb)
+endef
+
 
 # STEP 1: Translate verilog to odb
 #-------------------------------------------------------------------------------
@@ -468,8 +499,7 @@ $(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_sy
 ifndef IS_CHIP
 $(eval $(call do-step,2_2_floorplan_io,$(RESULTS_DIR)/2_1_floorplan.odb $(IO_CONSTRAINTS),io_placement_random))
 else
-$(RESULTS_DIR)/2_2_floorplan_io.odb: $(RESULTS_DIR)/2_1_floorplan.odb $(IO_CONSTRAINTS)
-	cp $< $@
+$(eval $(call do-copy,2_2_floorplan_io,2_1_floorplan.odb,$(IO_CONSTRAINTS)))
 endif
 
 # STEP 3: Timing Driven Mixed Sized Placement
@@ -477,9 +507,7 @@ endif
 ifeq ($(MACRO_PLACEMENT),)
 $(eval $(call do-step,2_3_floorplan_tdms,$(RESULTS_DIR)/2_2_floorplan_io.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES),tdms_place))
 else
-$(RESULTS_DIR)/2_3_floorplan_tdms.odb: $(RESULTS_DIR)/2_2_floorplan_io.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES)
-	$(info [INFO][FLOW] Using manual macro placement file $(MACRO_PLACEMENT))
-	cp $< $@
+$(eval $(call do-copy,2_3_floorplan_tdms,2_2_floorplan_io.odb,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES)))
 endif
 
 # STEP 4: Macro Placement
@@ -494,11 +522,13 @@ $(eval $(call do-step,2_5_floorplan_tapcell,$(RESULTS_DIR)/2_4_floorplan_macro.o
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,2_6_floorplan_pdn,$(RESULTS_DIR)/2_5_floorplan_tapcell.odb $(PDN_TCL),pdn))
 
-$(RESULTS_DIR)/2_floorplan.odb: $(RESULTS_DIR)/2_6_floorplan_pdn.odb
-	cp $< $@
+$(eval $(call do-copy,2_floorplan,2_6_floorplan_pdn.odb,))
 
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
+.PHONY: do-floorplan
+do-floorplan:
+	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_io do-2_3_floorplan_tdms do-2_4_floorplan_macro do-2_5_floorplan_tapcell do-2_6_floorplan_pdn do-2_floorplan
 
 .PHONY: clean_floorplan
 clean_floorplan:
@@ -526,8 +556,7 @@ $(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESU
 ifndef IS_CHIP
 $(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS),io_placement))
 else
-$(RESULTS_DIR)/3_2_place_iop.odb: $(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS)
-	cp $< $@
+$(eval $(call do-copy,3_2_place_iop,3_1_place_gp_skip_io.odb,$(IO_CONSTRAINTS)))
 endif
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
@@ -546,11 +575,13 @@ clean_resize:
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,3_5_place_dp,$(RESULTS_DIR)/3_4_place_resized.odb,detail_place))
 
-$(RESULTS_DIR)/3_place.odb: $(RESULTS_DIR)/3_5_place_dp.odb
-	cp $< $@
+$(eval $(call do-copy,3_place,3_5_place_dp.odb,))
 
-$(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
-	cp $< $@
+$(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
+
+.PHONY: do-place
+do-place:
+	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place do-3_place.sdc
 
 # Clean Targets
 #-------------------------------------------------------------------------------
@@ -585,8 +616,11 @@ $(eval $(call do-step,4_2_cts_fillcell,$(RESULTS_DIR)/4_1_cts.odb,fillcell))
 
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.odb
 
-$(RESULTS_DIR)/4_cts.odb: $(RESULTS_DIR)/4_2_cts_fillcell.odb
-	cp $< $@
+$(eval $(call do-copy,4_cts,4_2_cts_fillcell.odb))
+
+.PHONY: do-cts
+do-cts:
+	$(UNSET_AND_MAKE) do-4_1_cts do-4_2_cts_fillcell do-4_cts
 
 .PHONY: clean_cts
 clean_cts:
@@ -620,11 +654,13 @@ else
 $(eval $(call do-step,5_2_route,$(RESULTS_DIR)/4_cts.odb,detail_route))
 endif
 
-$(RESULTS_DIR)/5_route.odb: $(RESULTS_DIR)/5_2_route.odb
-	cp $< $@
+$(eval $(call do-copy,5_route,5_2_route.odb))
 
-$(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
-	cp $< $@
+$(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
+
+.PHONY: do-route
+do-route:
+	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_route do-5_route.sdc
 
 $(RESULTS_DIR)/5_route.v:
 	@export OR_DB=5_route ;\
@@ -680,20 +716,21 @@ elapsed:
 ifneq ($(USE_FILL),)
 $(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(FILL_CONFIG),density_fill))
 else
-$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb
-	cp $< $@
+$(eval $(call do-copy,6_1_fill,5_route.odb))
 endif
 
-$(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
-	cp $< $@
+$(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
 
-$(RESULTS_DIR)/6_final.sdc: $(RESULTS_DIR)/5_route.sdc
-	cp $< $@
+$(eval $(call do-copy,6_final,5_route.sdc,,.sdc))
 
 $(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc,final_report,.log,$(LOG_DIR)))
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
+# NOTE! No GDS file for now
+.PHONY: do-finish
+do-finish:
+	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report elapsed
 
 # Skipping resize can be useful for mock abstracts
 .PHONY: skip_resize
