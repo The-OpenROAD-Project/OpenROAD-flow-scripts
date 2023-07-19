@@ -268,30 +268,14 @@ endif
 # The following determine the executable location for each tool used by this flow.
 # Priority is given to
 #       1 user explicit set with variable in Makefile or command line, for instance setting OPENROAD_EXE
-#       2 user include PATH to the executable prior to running make
-#       3 ORFS compiled tools: openroad, yosys
-export OPENROAD_EXE            ?= $(shell command -v openroad)
-ifeq ($(OPENROAD_EXE),)
-  export OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
-endif
+#       2 ORFS compiled tools: openroad, yosys
+export OPENROAD_EXE      ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
-YOSYS_OLDEST_VERSION	= 0.13
-YOSYS_CMD               ?= $(shell command -v yosys)
-ifneq ($(YOSYS_CMD),)
-  YOSYS_VER               := $(shell $(YOSYS_CMD) -V | sed -n 's/^Yosys \([0-9]*\.[0-9]*\).*/\1/p')
-  # Semantic Versioning Comparison
-  VERSION_GTEQ            := $(shell echo -e "$(YOSYS_VER)\n$(YOSYS_OLDEST_VERSION)" | sort -V | head -n1)
-  ifeq ($(VERSION_GTEQ),$(YOSYS_OLDEST_VERSION))
-    $(info Using Yosys $(YOSYS_VER) found in path, it is newer or equal to $(YOSYS_OLDEST_VERSION))
-  else
-    $(info Yosys $(YOSYS_VER) is too old, using $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys))
-    undefine YOSYS_CMD
-  endif
-endif
 YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)
