@@ -386,6 +386,12 @@ $(WRAPPED_LIBS):
 synth: versions.txt \
        $(RESULTS_DIR)/1_synth.v \
        $(RESULTS_DIR)/1_synth.sdc
+	$(UNSET_AND_MAKE) do-synth-report
+
+.PHONY: do-synth-report
+do-synth-report:
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
+
 # ==============================================================================
 
 
@@ -405,7 +411,6 @@ $(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.sdc &: $(DONT_USE_LIBS) $(WRAP
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
