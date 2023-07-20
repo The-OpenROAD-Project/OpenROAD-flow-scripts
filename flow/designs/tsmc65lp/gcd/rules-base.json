@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 26,
+        "value": 31,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -76,7 +76,7 @@
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 30,
+        "value": 29,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {

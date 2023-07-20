@@ -1,0 +1,53 @@
+asap7/: (13/14)
+aes                               OK
+ethmac                            OK
+gcd                               OK
+ibex                              OK
+jpeg                              OK
+jpeg_lvt                          OK
+megaboom                          SKIP
+mock-array                        OK
+mock-array-big                    SKIP
+riscv32i                          OK
+sha3                              OK
+swerv_wrapper                     R
+uart                              OK
+uart-blocks                       OK
+#=============================================================================
+nangate45/: (0/16)
+aes                               OK
+ariane133                         R
+ariane136                         R
+black_parrot                      R
+bp_be_top			  R
+bp_fe_top			  R
+bp_multi_top
+bp_quad
+dynamic_node
+gcd
+ibex
+jpeg
+mempool_group
+swerv
+swerv_wrapper
+tinyRocket
+#=============================================================================
+sky130hd/: (0/9)
+aes
+chameleon
+chameleon_hier
+coyote_tc
+gcd
+ibex
+jpeg
+microwatt
+riscv32i
+#=============================================================================
+sky130hs/: (0/6)
+aes
+coyote_tc
+gcd
+ibex
+jpeg
+riscv32i
+#=============================================================================
