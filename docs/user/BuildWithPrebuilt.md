@@ -9,6 +9,7 @@ Instructions for installing:
 
 ```{tip} Unfortunately KLayout maintainers do not provide Debian 10/11 compatible packages. You can follow the build-from-sources instruction (Version >=0.25) and Ubuntu 22 instructions [here](https://www.klayout.de/build.html#:~:text=Building%20KLayout%20on%20Linux%20(Version%20%3E%3D%200.25)). 
 ```
+
 ## Install OpenROAD
 Download pre-built binaries with self-contained dependencies
 included from the Precision Innovations' Github releases
@@ -28,22 +29,30 @@ Step 2: Download the artifacts for your distribution.
 
 Step 3: Run the install command based on platform use package installer.
         For example Ubuntu 20.04 use:
+        
 ```shell
 sudo apt install ./openroad_2.0_amd64-ubuntu20.04.deb
 ```
+
 You can install these binaries within docker as well.
 
 
 ## Verify Installation
 You may clone the OpenROAD-flow-scripts repository non-recursively. 
+
 ```
 git clone https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
 ```
+
 Export path variables accordingly.
+
 ```
-export PATH="<yosys_location>/bin:$PATH" 
-export PATH="<klayout_location>/bin:$PATH" # only if built from source
-export LD_LIBRARY_PATH="<klayout_location>/bin:$PATH" # only if built from source
+# these variables are used in flow/Makefile. Do make sure the yosys path is sourced.
+export OPENROAD_EXE=$(command -v openroad)
+export YOSYS_CMD=$(shell command -v yosys)
+
+# only if KLayout is built from source
+export LD_LIBRARY_PATH="<klayout_location>/bin:$PATH" 
 
 yosys -help
 openroad -help
