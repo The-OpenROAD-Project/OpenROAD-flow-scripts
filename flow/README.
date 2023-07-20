@@ -1,9 +1,0 @@
-asap7 aes      : has cloning yay !: problems as well. 
-asap7/riscv32i : 3 instances cloned. Yay !
-asap7/ethmac   : 1 instance cloned triple yay !
-=====================================================
-
-Recover power testing
-
-asap7/ethmac
-asap7/riscv32i
