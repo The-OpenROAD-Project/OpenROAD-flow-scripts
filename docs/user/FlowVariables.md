@@ -235,12 +235,12 @@ configuration file.
 | `PWR_NETS_VOLTAGES`      | Used for IR Drop calculation.                                                                      |
 | `GND_NETS_VOLTAGES`      | Used for IR Drop calculation.                                                                      |
 | `BLOCKS`                 | Blocks passed as blackbox into yosys. Do note that you have to specify block-specific inputs file in the directory mentioned by [Makefile](../main/flow/Makefile) |
-| `CDL_FILES`              | Insert additional Circuit Description Language (`.cdl`) netlist files 
-| `DFF_LIB_FILES`          | Technology mapping liberty files for flip-flops                                                    |
-| `DONT_USE_LIBS`          | Set liberty files as `dont_use`                                                                    |
+| `CDL_FILES`              | Insert additional Circuit Description Language (`.cdl`) netlist files.                             | 
+| `DFF_LIB_FILES`          | Technology mapping liberty files for flip-flops.                                                   |
+| `DONT_USE_LIBS`          | Set liberty files as `dont_use`.                                                                   |
 | `PRESERVE_CELLS`         | Mark modules to keep from getting removed in flattening.                                           |
 | `SYNTH_ARGS`             | Optional synthesis variables for yosys.                                                            |
-| `VERILOG_TOP_PARAMS`     | Apply toplevel params (if exist)                                                                   |
+| `VERILOG_TOP_PARAMS`     | Apply toplevel params (if exist).                                                                  |
 
 
 #### Floorplan
@@ -272,7 +272,7 @@ configuration file.
 
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
-| `CTS_BUF_DISTANCE`       | Distance (in microns) between buffers                                                              |
+| `CTS_BUF_DISTANCE`       | Distance (in microns) between buffers.                                                              |
 | `CTS_CLUSTER_DIAMETER`   | Maximum diameter (in microns) of sink cluster. Default 20.                                         |
 | `CTS_CLUSTER_SIZE`       | Maximum number of sinks per cluster. Default 50.
 
@@ -280,4 +280,4 @@ configuration file.
 ## Routing
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
-| `FASTROUTE_TCL`          | Specifies a Tcl scripts with commands to run before FastRoute                                      |
+| `FASTROUTE_TCL`          | Specifies a Tcl scripts with commands to run before FastRoute.                                      |
