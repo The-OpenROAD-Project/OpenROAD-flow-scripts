@@ -31,6 +31,10 @@
         "value": -1.16,
         "compare": ">="
     },
+    "cts__design__instance__count__setup_buffer": {
+        "value": 12918,
+        "compare": "<="
+    },
     "cts__design__instance__count__hold_buffer": {
         "value": 12918,
         "compare": "<="
