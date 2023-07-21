@@ -25,6 +25,7 @@
   "cts__design__instance__count__macros__pre_repair": 15,
   "cts__design__instance__count__post_repair": 413330,
   "cts__design__instance__count__pre_repair": 413327,
+  "cts__design__instance__count__setup_buffer": 3.0,
   "cts__design__instance__count__stdcell": 414213,
   "cts__design__instance__count__stdcell__post_repair": 413315,
   "cts__design__instance__count__stdcell__pre_repair": 413312,
