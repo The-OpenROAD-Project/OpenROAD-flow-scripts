@@ -387,6 +387,9 @@ $(WRAPPED_LIBS):
 synth: versions.txt \
        $(RESULTS_DIR)/1_synth.v \
        $(RESULTS_DIR)/1_synth.sdc
+
+.PHONY: synth-report
+synth-report: synth
 	$(UNSET_AND_MAKE) do-synth-report
 
 .PHONY: do-synth-report
