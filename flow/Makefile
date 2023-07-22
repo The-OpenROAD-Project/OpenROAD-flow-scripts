@@ -378,9 +378,19 @@ $(WRAPPED_LIBS):
 #  ___) || | | |\  | | | |  _  | |___ ___) | | ___) |
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
+.PHONY: synth
 synth: versions.txt \
        $(RESULTS_DIR)/1_synth.v \
        $(RESULTS_DIR)/1_synth.sdc
+
+.PHONY: synth-report
+synth-report: synth
+	$(UNSET_AND_MAKE) do-synth-report
+
+.PHONY: do-synth-report
+do-synth-report:
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
+
 # ==============================================================================
 
 
@@ -396,18 +406,16 @@ ifeq ($(SYNTH_HIERARCHICAL), 1)
 $(RESULTS_DIR)/1_1_yosys.v: $(SYNTH_STOP_MODULE_SCRIPT)
 endif
 
-$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
+$(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.sdc &: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	cp $< $@
 
-$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	cp $< $@
-
+.PHONY: clean_synth
 clean_synth:
 	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
 	rm -f  $(REPORTS_DIR)/synth_*
@@ -707,7 +715,7 @@ finish: $(LOG_DIR)/6_report.log \
         $(GDS_FINAL_FILE)
 	$(UNSET_AND_MAKE) elapsed
 
-.PHONY:
+.PHONY: elapsed
 elapsed:
 	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
 
