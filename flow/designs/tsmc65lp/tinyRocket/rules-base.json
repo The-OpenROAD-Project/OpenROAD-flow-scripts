@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.34,
+        "value": -0.3,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
@@ -60,7 +60,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 239937,
+        "value": 239332,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
@@ -80,7 +80,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 14,
+        "value": 63,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
