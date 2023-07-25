@@ -73,7 +73,7 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
     }
   }}
 
-  io.lsbs := ces.map(_.last.io.lsbOuts).flatten
+  io.lsbs := RegNext(VecInit(ces.map(_.last.io.lsbOuts).flatten))
 
   // Connect inputs to edge element buses
   (ces.map(_.head).map(_.io.ins.asMap(Routes.RIGHT)) zip io.insRight).foreach { case (a, b) => a := b }
