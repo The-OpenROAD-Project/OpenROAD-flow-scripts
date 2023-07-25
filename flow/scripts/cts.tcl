@@ -87,7 +87,15 @@ if { [info exists ::env(ENABLE_GATE_CLONING)] } {
 
 repair_timing {*}$additional_args
 
-detailed_placement
+set result [catch {detailed_placement} msg]
+if {$result != 0} {
+  puts "Detailed placement failed in CTS: $msg"
+  puts "Run 'make gui_4_1_error.odb' to load failed snapshot"
+  write_db $::env(RESULTS_DIR)/4_1_error.odb
+  write_sdc $::env(RESULTS_DIR)/4_1_error.sdc
+  return -code $result
+}
+
 check_placement -verbose
 
 report_metrics "cts final"
