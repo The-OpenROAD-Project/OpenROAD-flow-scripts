@@ -1,7 +1,8 @@
 set sdc_version 2.0
 
-set clk_period 1000
+set clk_period 666
 create_clock [get_ports clock] -period $clk_period -waveform [list 0 [expr $clk_period/2]]
+set_clock_latency -source -300 [get_ports clock]
 
 set clk_name  clock
 set clk_port_name clock
