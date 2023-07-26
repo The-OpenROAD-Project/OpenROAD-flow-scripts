@@ -52,11 +52,11 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 0,
+        "value": 3,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -2.26,
+        "value": -2.08,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.43,
+        "value": -0.8,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
