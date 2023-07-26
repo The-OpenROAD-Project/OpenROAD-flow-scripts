@@ -22,7 +22,8 @@ update_rules:
 update_rules_force:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
 
-$(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
+$(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json: $(wildcard $(LOG_DIR)/*.json) \
+  $(wildcard $(LOG_DIR)/*.log) $(REPORTS_DIR)/synth_stat.txt
 	echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
 	$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
 		-p $(PLATFORM) \
