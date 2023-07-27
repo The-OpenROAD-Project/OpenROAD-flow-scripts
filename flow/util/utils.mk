@@ -87,7 +87,7 @@ define \n
 endef
 
 define get_variables
-$(foreach V, $(.VARIABLES),$(if $(filter-out $(1), $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT% GENERATE_ABSTRACT_RULE%, $(V)), $V$ )))
+$(foreach V, $(.VARIABLES),$(if $(filter-out $(1), $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT% GENERATE_ABSTRACT_RULE% do-step% do-copy%, $(V)), $V$ )))
 endef
 
 export UNSET_VARIABLES_NAMES := $(call get_variables,command% line environment% default automatic)
