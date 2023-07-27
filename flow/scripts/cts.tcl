@@ -18,21 +18,30 @@ if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
   set cluster_diameter 100
 }
 
-if {[info exist ::env(CTS_BUF_DISTANCE)]} {
-clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
-                     -sink_clustering_enable \
-                     -sink_clustering_size $cluster_size \
-                     -sink_clustering_max_diameter $cluster_diameter \
-                     -distance_between_buffers "$::env(CTS_BUF_DISTANCE)" \
-                     -balance_levels
-} else {
-clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
-                     -sink_clustering_enable \
-                     -sink_clustering_size $cluster_size \
-                     -sink_clustering_max_diameter $cluster_diameter \
-                     -balance_levels
+proc save_progress {stage} {
+  puts "Run 'make gui_$stage.odb' to load progress snapshot"
+  write_db $::env(RESULTS_DIR)/$stage.odb
+  write_sdc $::env(RESULTS_DIR)/$stage.sdc
 }
 
+if {[info exist ::env(CTS_BUF_DISTANCE)]} {
+  clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+                      -sink_clustering_enable \
+                      -sink_clustering_size $cluster_size \
+                      -sink_clustering_max_diameter $cluster_diameter \
+                      -distance_between_buffers "$::env(CTS_BUF_DISTANCE)" \
+                      -balance_levels
+} else {
+  clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+                      -sink_clustering_enable \
+                      -sink_clustering_size $cluster_size \
+                      -sink_clustering_max_diameter $cluster_diameter \
+                      -balance_levels
+}
+
+if {[info exist ::env(CTS_SNAPSHOTS)]} {
+  save_progress 4_1_pre_repair_clock_nets
+}
 
 set_propagated_clock [all_clocks]
 
@@ -58,6 +67,10 @@ set_placement_padding -global \
 detailed_placement
 
 estimate_parasitics -placement
+
+if {[info exist ::env(CTS_SNAPSHOTS)]} {
+  save_progress 4_1_pre_repair_hold_setup
+}
 
 puts "Repair setup and hold violations..."
 
@@ -89,10 +102,8 @@ repair_timing {*}$additional_args
 
 set result [catch {detailed_placement} msg]
 if {$result != 0} {
+  save_progress 4_1_error
   puts "Detailed placement failed in CTS: $msg"
-  puts "Run 'make gui_4_1_error.odb' to load failed snapshot"
-  write_db $::env(RESULTS_DIR)/4_1_error.odb
-  write_sdc $::env(RESULTS_DIR)/4_1_error.sdc
   return -code $result
 }
 
