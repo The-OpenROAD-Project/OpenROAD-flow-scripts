@@ -1,70 +1,70 @@
 module MockArray(
   input         clock,
   input         reset,
-  input  [63:0] io_insLeft_0,
-  input  [63:0] io_insLeft_1,
-  input  [63:0] io_insLeft_2,
-  input  [63:0] io_insLeft_3,
-  input  [63:0] io_insLeft_4,
-  input  [63:0] io_insLeft_5,
-  input  [63:0] io_insLeft_6,
-  input  [63:0] io_insLeft_7,
-  input  [63:0] io_insUp_0,
-  input  [63:0] io_insUp_1,
-  input  [63:0] io_insUp_2,
-  input  [63:0] io_insUp_3,
-  input  [63:0] io_insUp_4,
-  input  [63:0] io_insUp_5,
-  input  [63:0] io_insUp_6,
-  input  [63:0] io_insUp_7,
-  input  [63:0] io_insRight_0,
-  input  [63:0] io_insRight_1,
-  input  [63:0] io_insRight_2,
-  input  [63:0] io_insRight_3,
-  input  [63:0] io_insRight_4,
-  input  [63:0] io_insRight_5,
-  input  [63:0] io_insRight_6,
-  input  [63:0] io_insRight_7,
-  input  [63:0] io_insDown_0,
-  input  [63:0] io_insDown_1,
-  input  [63:0] io_insDown_2,
-  input  [63:0] io_insDown_3,
-  input  [63:0] io_insDown_4,
-  input  [63:0] io_insDown_5,
-  input  [63:0] io_insDown_6,
-  input  [63:0] io_insDown_7,
-  output [63:0] io_outsLeft_0,
-  output [63:0] io_outsLeft_1,
-  output [63:0] io_outsLeft_2,
-  output [63:0] io_outsLeft_3,
-  output [63:0] io_outsLeft_4,
-  output [63:0] io_outsLeft_5,
-  output [63:0] io_outsLeft_6,
-  output [63:0] io_outsLeft_7,
-  output [63:0] io_outsUp_0,
-  output [63:0] io_outsUp_1,
-  output [63:0] io_outsUp_2,
-  output [63:0] io_outsUp_3,
-  output [63:0] io_outsUp_4,
-  output [63:0] io_outsUp_5,
-  output [63:0] io_outsUp_6,
-  output [63:0] io_outsUp_7,
-  output [63:0] io_outsRight_0,
-  output [63:0] io_outsRight_1,
-  output [63:0] io_outsRight_2,
-  output [63:0] io_outsRight_3,
-  output [63:0] io_outsRight_4,
-  output [63:0] io_outsRight_5,
-  output [63:0] io_outsRight_6,
-  output [63:0] io_outsRight_7,
-  output [63:0] io_outsDown_0,
-  output [63:0] io_outsDown_1,
-  output [63:0] io_outsDown_2,
-  output [63:0] io_outsDown_3,
-  output [63:0] io_outsDown_4,
-  output [63:0] io_outsDown_5,
-  output [63:0] io_outsDown_6,
-  output [63:0] io_outsDown_7,
+  input  [63:0] io_ins_down_0,
+  input  [63:0] io_ins_down_1,
+  input  [63:0] io_ins_down_2,
+  input  [63:0] io_ins_down_3,
+  input  [63:0] io_ins_down_4,
+  input  [63:0] io_ins_down_5,
+  input  [63:0] io_ins_down_6,
+  input  [63:0] io_ins_down_7,
+  input  [63:0] io_ins_up_0,
+  input  [63:0] io_ins_up_1,
+  input  [63:0] io_ins_up_2,
+  input  [63:0] io_ins_up_3,
+  input  [63:0] io_ins_up_4,
+  input  [63:0] io_ins_up_5,
+  input  [63:0] io_ins_up_6,
+  input  [63:0] io_ins_up_7,
+  input  [63:0] io_ins_right_0,
+  input  [63:0] io_ins_right_1,
+  input  [63:0] io_ins_right_2,
+  input  [63:0] io_ins_right_3,
+  input  [63:0] io_ins_right_4,
+  input  [63:0] io_ins_right_5,
+  input  [63:0] io_ins_right_6,
+  input  [63:0] io_ins_right_7,
+  input  [63:0] io_ins_left_0,
+  input  [63:0] io_ins_left_1,
+  input  [63:0] io_ins_left_2,
+  input  [63:0] io_ins_left_3,
+  input  [63:0] io_ins_left_4,
+  input  [63:0] io_ins_left_5,
+  input  [63:0] io_ins_left_6,
+  input  [63:0] io_ins_left_7,
+  output [63:0] io_outs_down_0,
+  output [63:0] io_outs_down_1,
+  output [63:0] io_outs_down_2,
+  output [63:0] io_outs_down_3,
+  output [63:0] io_outs_down_4,
+  output [63:0] io_outs_down_5,
+  output [63:0] io_outs_down_6,
+  output [63:0] io_outs_down_7,
+  output [63:0] io_outs_up_0,
+  output [63:0] io_outs_up_1,
+  output [63:0] io_outs_up_2,
+  output [63:0] io_outs_up_3,
+  output [63:0] io_outs_up_4,
+  output [63:0] io_outs_up_5,
+  output [63:0] io_outs_up_6,
+  output [63:0] io_outs_up_7,
+  output [63:0] io_outs_right_0,
+  output [63:0] io_outs_right_1,
+  output [63:0] io_outs_right_2,
+  output [63:0] io_outs_right_3,
+  output [63:0] io_outs_right_4,
+  output [63:0] io_outs_right_5,
+  output [63:0] io_outs_right_6,
+  output [63:0] io_outs_right_7,
+  output [63:0] io_outs_left_0,
+  output [63:0] io_outs_left_1,
+  output [63:0] io_outs_left_2,
+  output [63:0] io_outs_left_3,
+  output [63:0] io_outs_left_4,
+  output [63:0] io_outs_left_5,
+  output [63:0] io_outs_left_6,
+  output [63:0] io_outs_left_7,
   output        io_lsbs_0,
   output        io_lsbs_1,
   output        io_lsbs_2,
@@ -3394,38 +3394,38 @@ module MockArray(
     .io_lsbOuts_6(ces_7_7_io_lsbOuts_6),
     .io_lsbOuts_7(ces_7_7_io_lsbOuts_7)
   );
-  assign io_outsLeft_0 = ces_0_0_io_outs_left;
-  assign io_outsLeft_1 = ces_1_0_io_outs_left;
-  assign io_outsLeft_2 = ces_2_0_io_outs_left;
-  assign io_outsLeft_3 = ces_3_0_io_outs_left;
-  assign io_outsLeft_4 = ces_4_0_io_outs_left;
-  assign io_outsLeft_5 = ces_5_0_io_outs_left;
-  assign io_outsLeft_6 = ces_6_0_io_outs_left;
-  assign io_outsLeft_7 = ces_7_0_io_outs_left;
-  assign io_outsUp_0 = ces_7_0_io_outs_up;
-  assign io_outsUp_1 = ces_7_1_io_outs_up;
-  assign io_outsUp_2 = ces_7_2_io_outs_up;
-  assign io_outsUp_3 = ces_7_3_io_outs_up;
-  assign io_outsUp_4 = ces_7_4_io_outs_up;
-  assign io_outsUp_5 = ces_7_5_io_outs_up;
-  assign io_outsUp_6 = ces_7_6_io_outs_up;
-  assign io_outsUp_7 = ces_7_7_io_outs_up;
-  assign io_outsRight_0 = ces_0_7_io_outs_right;
-  assign io_outsRight_1 = ces_1_7_io_outs_right;
-  assign io_outsRight_2 = ces_2_7_io_outs_right;
-  assign io_outsRight_3 = ces_3_7_io_outs_right;
-  assign io_outsRight_4 = ces_4_7_io_outs_right;
-  assign io_outsRight_5 = ces_5_7_io_outs_right;
-  assign io_outsRight_6 = ces_6_7_io_outs_right;
-  assign io_outsRight_7 = ces_7_7_io_outs_right;
-  assign io_outsDown_0 = ces_0_0_io_outs_down;
-  assign io_outsDown_1 = ces_0_1_io_outs_down;
-  assign io_outsDown_2 = ces_0_2_io_outs_down;
-  assign io_outsDown_3 = ces_0_3_io_outs_down;
-  assign io_outsDown_4 = ces_0_4_io_outs_down;
-  assign io_outsDown_5 = ces_0_5_io_outs_down;
-  assign io_outsDown_6 = ces_0_6_io_outs_down;
-  assign io_outsDown_7 = ces_0_7_io_outs_down;
+  assign io_outs_down_0 = ces_0_0_io_outs_down;
+  assign io_outs_down_1 = ces_0_1_io_outs_down;
+  assign io_outs_down_2 = ces_0_2_io_outs_down;
+  assign io_outs_down_3 = ces_0_3_io_outs_down;
+  assign io_outs_down_4 = ces_0_4_io_outs_down;
+  assign io_outs_down_5 = ces_0_5_io_outs_down;
+  assign io_outs_down_6 = ces_0_6_io_outs_down;
+  assign io_outs_down_7 = ces_0_7_io_outs_down;
+  assign io_outs_up_0 = ces_7_0_io_outs_up;
+  assign io_outs_up_1 = ces_7_1_io_outs_up;
+  assign io_outs_up_2 = ces_7_2_io_outs_up;
+  assign io_outs_up_3 = ces_7_3_io_outs_up;
+  assign io_outs_up_4 = ces_7_4_io_outs_up;
+  assign io_outs_up_5 = ces_7_5_io_outs_up;
+  assign io_outs_up_6 = ces_7_6_io_outs_up;
+  assign io_outs_up_7 = ces_7_7_io_outs_up;
+  assign io_outs_right_0 = ces_0_7_io_outs_right;
+  assign io_outs_right_1 = ces_1_7_io_outs_right;
+  assign io_outs_right_2 = ces_2_7_io_outs_right;
+  assign io_outs_right_3 = ces_3_7_io_outs_right;
+  assign io_outs_right_4 = ces_4_7_io_outs_right;
+  assign io_outs_right_5 = ces_5_7_io_outs_right;
+  assign io_outs_right_6 = ces_6_7_io_outs_right;
+  assign io_outs_right_7 = ces_7_7_io_outs_right;
+  assign io_outs_left_0 = ces_0_0_io_outs_left;
+  assign io_outs_left_1 = ces_1_0_io_outs_left;
+  assign io_outs_left_2 = ces_2_0_io_outs_left;
+  assign io_outs_left_3 = ces_3_0_io_outs_left;
+  assign io_outs_left_4 = ces_4_0_io_outs_left;
+  assign io_outs_left_5 = ces_5_0_io_outs_left;
+  assign io_outs_left_6 = ces_6_0_io_outs_left;
+  assign io_outs_left_7 = ces_7_0_io_outs_left;
   assign io_lsbs_0 = REG_0;
   assign io_lsbs_1 = REG_1;
   assign io_lsbs_2 = REG_2;
@@ -3492,8 +3492,8 @@ module MockArray(
   assign io_lsbs_63 = REG_63;
   assign ces_0_0_clock = clock;
   assign ces_0_0_io_ins_down = ces_1_0_io_outs_down;
-  assign ces_0_0_io_ins_right = io_insRight_0;
-  assign ces_0_0_io_ins_up = io_insUp_0;
+  assign ces_0_0_io_ins_right = io_ins_right_0;
+  assign ces_0_0_io_ins_up = io_ins_up_0;
   assign ces_0_0_io_ins_left = ces_0_1_io_outs_left;
   assign ces_0_0_io_lsbIns_1 = 1'h0;
   assign ces_0_0_io_lsbIns_2 = 1'h0;
@@ -3505,7 +3505,7 @@ module MockArray(
   assign ces_0_1_clock = clock;
   assign ces_0_1_io_ins_down = ces_1_1_io_outs_down;
   assign ces_0_1_io_ins_right = ces_0_0_io_outs_right;
-  assign ces_0_1_io_ins_up = io_insUp_1;
+  assign ces_0_1_io_ins_up = io_ins_up_1;
   assign ces_0_1_io_ins_left = ces_0_2_io_outs_left;
   assign ces_0_1_io_lsbIns_1 = ces_0_0_io_lsbOuts_1;
   assign ces_0_1_io_lsbIns_2 = ces_0_0_io_lsbOuts_2;
@@ -3517,7 +3517,7 @@ module MockArray(
   assign ces_0_2_clock = clock;
   assign ces_0_2_io_ins_down = ces_1_2_io_outs_down;
   assign ces_0_2_io_ins_right = ces_0_1_io_outs_right;
-  assign ces_0_2_io_ins_up = io_insUp_2;
+  assign ces_0_2_io_ins_up = io_ins_up_2;
   assign ces_0_2_io_ins_left = ces_0_3_io_outs_left;
   assign ces_0_2_io_lsbIns_1 = ces_0_1_io_lsbOuts_1;
   assign ces_0_2_io_lsbIns_2 = ces_0_1_io_lsbOuts_2;
@@ -3529,7 +3529,7 @@ module MockArray(
   assign ces_0_3_clock = clock;
   assign ces_0_3_io_ins_down = ces_1_3_io_outs_down;
   assign ces_0_3_io_ins_right = ces_0_2_io_outs_right;
-  assign ces_0_3_io_ins_up = io_insUp_3;
+  assign ces_0_3_io_ins_up = io_ins_up_3;
   assign ces_0_3_io_ins_left = ces_0_4_io_outs_left;
   assign ces_0_3_io_lsbIns_1 = ces_0_2_io_lsbOuts_1;
   assign ces_0_3_io_lsbIns_2 = ces_0_2_io_lsbOuts_2;
@@ -3541,7 +3541,7 @@ module MockArray(
   assign ces_0_4_clock = clock;
   assign ces_0_4_io_ins_down = ces_1_4_io_outs_down;
   assign ces_0_4_io_ins_right = ces_0_3_io_outs_right;
-  assign ces_0_4_io_ins_up = io_insUp_4;
+  assign ces_0_4_io_ins_up = io_ins_up_4;
   assign ces_0_4_io_ins_left = ces_0_5_io_outs_left;
   assign ces_0_4_io_lsbIns_1 = ces_0_3_io_lsbOuts_1;
   assign ces_0_4_io_lsbIns_2 = ces_0_3_io_lsbOuts_2;
@@ -3553,7 +3553,7 @@ module MockArray(
   assign ces_0_5_clock = clock;
   assign ces_0_5_io_ins_down = ces_1_5_io_outs_down;
   assign ces_0_5_io_ins_right = ces_0_4_io_outs_right;
-  assign ces_0_5_io_ins_up = io_insUp_5;
+  assign ces_0_5_io_ins_up = io_ins_up_5;
   assign ces_0_5_io_ins_left = ces_0_6_io_outs_left;
   assign ces_0_5_io_lsbIns_1 = ces_0_4_io_lsbOuts_1;
   assign ces_0_5_io_lsbIns_2 = ces_0_4_io_lsbOuts_2;
@@ -3565,7 +3565,7 @@ module MockArray(
   assign ces_0_6_clock = clock;
   assign ces_0_6_io_ins_down = ces_1_6_io_outs_down;
   assign ces_0_6_io_ins_right = ces_0_5_io_outs_right;
-  assign ces_0_6_io_ins_up = io_insUp_6;
+  assign ces_0_6_io_ins_up = io_ins_up_6;
   assign ces_0_6_io_ins_left = ces_0_7_io_outs_left;
   assign ces_0_6_io_lsbIns_1 = ces_0_5_io_lsbOuts_1;
   assign ces_0_6_io_lsbIns_2 = ces_0_5_io_lsbOuts_2;
@@ -3577,8 +3577,8 @@ module MockArray(
   assign ces_0_7_clock = clock;
   assign ces_0_7_io_ins_down = ces_1_7_io_outs_down;
   assign ces_0_7_io_ins_right = ces_0_6_io_outs_right;
-  assign ces_0_7_io_ins_up = io_insUp_7;
-  assign ces_0_7_io_ins_left = io_insLeft_0;
+  assign ces_0_7_io_ins_up = io_ins_up_7;
+  assign ces_0_7_io_ins_left = io_ins_left_0;
   assign ces_0_7_io_lsbIns_1 = ces_0_6_io_lsbOuts_1;
   assign ces_0_7_io_lsbIns_2 = ces_0_6_io_lsbOuts_2;
   assign ces_0_7_io_lsbIns_3 = ces_0_6_io_lsbOuts_3;
@@ -3588,7 +3588,7 @@ module MockArray(
   assign ces_0_7_io_lsbIns_7 = ces_0_6_io_lsbOuts_7;
   assign ces_1_0_clock = clock;
   assign ces_1_0_io_ins_down = ces_2_0_io_outs_down;
-  assign ces_1_0_io_ins_right = io_insRight_1;
+  assign ces_1_0_io_ins_right = io_ins_right_1;
   assign ces_1_0_io_ins_up = ces_0_0_io_outs_up;
   assign ces_1_0_io_ins_left = ces_1_1_io_outs_left;
   assign ces_1_0_io_lsbIns_1 = 1'h0;
@@ -3674,7 +3674,7 @@ module MockArray(
   assign ces_1_7_io_ins_down = ces_2_7_io_outs_down;
   assign ces_1_7_io_ins_right = ces_1_6_io_outs_right;
   assign ces_1_7_io_ins_up = ces_0_7_io_outs_up;
-  assign ces_1_7_io_ins_left = io_insLeft_1;
+  assign ces_1_7_io_ins_left = io_ins_left_1;
   assign ces_1_7_io_lsbIns_1 = ces_1_6_io_lsbOuts_1;
   assign ces_1_7_io_lsbIns_2 = ces_1_6_io_lsbOuts_2;
   assign ces_1_7_io_lsbIns_3 = ces_1_6_io_lsbOuts_3;
@@ -3684,7 +3684,7 @@ module MockArray(
   assign ces_1_7_io_lsbIns_7 = ces_1_6_io_lsbOuts_7;
   assign ces_2_0_clock = clock;
   assign ces_2_0_io_ins_down = ces_3_0_io_outs_down;
-  assign ces_2_0_io_ins_right = io_insRight_2;
+  assign ces_2_0_io_ins_right = io_ins_right_2;
   assign ces_2_0_io_ins_up = ces_1_0_io_outs_up;
   assign ces_2_0_io_ins_left = ces_2_1_io_outs_left;
   assign ces_2_0_io_lsbIns_1 = 1'h0;
@@ -3770,7 +3770,7 @@ module MockArray(
   assign ces_2_7_io_ins_down = ces_3_7_io_outs_down;
   assign ces_2_7_io_ins_right = ces_2_6_io_outs_right;
   assign ces_2_7_io_ins_up = ces_1_7_io_outs_up;
-  assign ces_2_7_io_ins_left = io_insLeft_2;
+  assign ces_2_7_io_ins_left = io_ins_left_2;
   assign ces_2_7_io_lsbIns_1 = ces_2_6_io_lsbOuts_1;
   assign ces_2_7_io_lsbIns_2 = ces_2_6_io_lsbOuts_2;
   assign ces_2_7_io_lsbIns_3 = ces_2_6_io_lsbOuts_3;
@@ -3780,7 +3780,7 @@ module MockArray(
   assign ces_2_7_io_lsbIns_7 = ces_2_6_io_lsbOuts_7;
   assign ces_3_0_clock = clock;
   assign ces_3_0_io_ins_down = ces_4_0_io_outs_down;
-  assign ces_3_0_io_ins_right = io_insRight_3;
+  assign ces_3_0_io_ins_right = io_ins_right_3;
   assign ces_3_0_io_ins_up = ces_2_0_io_outs_up;
   assign ces_3_0_io_ins_left = ces_3_1_io_outs_left;
   assign ces_3_0_io_lsbIns_1 = 1'h0;
@@ -3866,7 +3866,7 @@ module MockArray(
   assign ces_3_7_io_ins_down = ces_4_7_io_outs_down;
   assign ces_3_7_io_ins_right = ces_3_6_io_outs_right;
   assign ces_3_7_io_ins_up = ces_2_7_io_outs_up;
-  assign ces_3_7_io_ins_left = io_insLeft_3;
+  assign ces_3_7_io_ins_left = io_ins_left_3;
   assign ces_3_7_io_lsbIns_1 = ces_3_6_io_lsbOuts_1;
   assign ces_3_7_io_lsbIns_2 = ces_3_6_io_lsbOuts_2;
   assign ces_3_7_io_lsbIns_3 = ces_3_6_io_lsbOuts_3;
@@ -3876,7 +3876,7 @@ module MockArray(
   assign ces_3_7_io_lsbIns_7 = ces_3_6_io_lsbOuts_7;
   assign ces_4_0_clock = clock;
   assign ces_4_0_io_ins_down = ces_5_0_io_outs_down;
-  assign ces_4_0_io_ins_right = io_insRight_4;
+  assign ces_4_0_io_ins_right = io_ins_right_4;
   assign ces_4_0_io_ins_up = ces_3_0_io_outs_up;
   assign ces_4_0_io_ins_left = ces_4_1_io_outs_left;
   assign ces_4_0_io_lsbIns_1 = 1'h0;
@@ -3962,7 +3962,7 @@ module MockArray(
   assign ces_4_7_io_ins_down = ces_5_7_io_outs_down;
   assign ces_4_7_io_ins_right = ces_4_6_io_outs_right;
   assign ces_4_7_io_ins_up = ces_3_7_io_outs_up;
-  assign ces_4_7_io_ins_left = io_insLeft_4;
+  assign ces_4_7_io_ins_left = io_ins_left_4;
   assign ces_4_7_io_lsbIns_1 = ces_4_6_io_lsbOuts_1;
   assign ces_4_7_io_lsbIns_2 = ces_4_6_io_lsbOuts_2;
   assign ces_4_7_io_lsbIns_3 = ces_4_6_io_lsbOuts_3;
@@ -3972,7 +3972,7 @@ module MockArray(
   assign ces_4_7_io_lsbIns_7 = ces_4_6_io_lsbOuts_7;
   assign ces_5_0_clock = clock;
   assign ces_5_0_io_ins_down = ces_6_0_io_outs_down;
-  assign ces_5_0_io_ins_right = io_insRight_5;
+  assign ces_5_0_io_ins_right = io_ins_right_5;
   assign ces_5_0_io_ins_up = ces_4_0_io_outs_up;
   assign ces_5_0_io_ins_left = ces_5_1_io_outs_left;
   assign ces_5_0_io_lsbIns_1 = 1'h0;
@@ -4058,7 +4058,7 @@ module MockArray(
   assign ces_5_7_io_ins_down = ces_6_7_io_outs_down;
   assign ces_5_7_io_ins_right = ces_5_6_io_outs_right;
   assign ces_5_7_io_ins_up = ces_4_7_io_outs_up;
-  assign ces_5_7_io_ins_left = io_insLeft_5;
+  assign ces_5_7_io_ins_left = io_ins_left_5;
   assign ces_5_7_io_lsbIns_1 = ces_5_6_io_lsbOuts_1;
   assign ces_5_7_io_lsbIns_2 = ces_5_6_io_lsbOuts_2;
   assign ces_5_7_io_lsbIns_3 = ces_5_6_io_lsbOuts_3;
@@ -4068,7 +4068,7 @@ module MockArray(
   assign ces_5_7_io_lsbIns_7 = ces_5_6_io_lsbOuts_7;
   assign ces_6_0_clock = clock;
   assign ces_6_0_io_ins_down = ces_7_0_io_outs_down;
-  assign ces_6_0_io_ins_right = io_insRight_6;
+  assign ces_6_0_io_ins_right = io_ins_right_6;
   assign ces_6_0_io_ins_up = ces_5_0_io_outs_up;
   assign ces_6_0_io_ins_left = ces_6_1_io_outs_left;
   assign ces_6_0_io_lsbIns_1 = 1'h0;
@@ -4154,7 +4154,7 @@ module MockArray(
   assign ces_6_7_io_ins_down = ces_7_7_io_outs_down;
   assign ces_6_7_io_ins_right = ces_6_6_io_outs_right;
   assign ces_6_7_io_ins_up = ces_5_7_io_outs_up;
-  assign ces_6_7_io_ins_left = io_insLeft_6;
+  assign ces_6_7_io_ins_left = io_ins_left_6;
   assign ces_6_7_io_lsbIns_1 = ces_6_6_io_lsbOuts_1;
   assign ces_6_7_io_lsbIns_2 = ces_6_6_io_lsbOuts_2;
   assign ces_6_7_io_lsbIns_3 = ces_6_6_io_lsbOuts_3;
@@ -4163,8 +4163,8 @@ module MockArray(
   assign ces_6_7_io_lsbIns_6 = ces_6_6_io_lsbOuts_6;
   assign ces_6_7_io_lsbIns_7 = ces_6_6_io_lsbOuts_7;
   assign ces_7_0_clock = clock;
-  assign ces_7_0_io_ins_down = io_insDown_0;
-  assign ces_7_0_io_ins_right = io_insRight_7;
+  assign ces_7_0_io_ins_down = io_ins_down_0;
+  assign ces_7_0_io_ins_right = io_ins_right_7;
   assign ces_7_0_io_ins_up = ces_6_0_io_outs_up;
   assign ces_7_0_io_ins_left = ces_7_1_io_outs_left;
   assign ces_7_0_io_lsbIns_1 = 1'h0;
@@ -4175,7 +4175,7 @@ module MockArray(
   assign ces_7_0_io_lsbIns_6 = 1'h0;
   assign ces_7_0_io_lsbIns_7 = 1'h0;
   assign ces_7_1_clock = clock;
-  assign ces_7_1_io_ins_down = io_insDown_1;
+  assign ces_7_1_io_ins_down = io_ins_down_1;
   assign ces_7_1_io_ins_right = ces_7_0_io_outs_right;
   assign ces_7_1_io_ins_up = ces_6_1_io_outs_up;
   assign ces_7_1_io_ins_left = ces_7_2_io_outs_left;
@@ -4187,7 +4187,7 @@ module MockArray(
   assign ces_7_1_io_lsbIns_6 = ces_7_0_io_lsbOuts_6;
   assign ces_7_1_io_lsbIns_7 = ces_7_0_io_lsbOuts_7;
   assign ces_7_2_clock = clock;
-  assign ces_7_2_io_ins_down = io_insDown_2;
+  assign ces_7_2_io_ins_down = io_ins_down_2;
   assign ces_7_2_io_ins_right = ces_7_1_io_outs_right;
   assign ces_7_2_io_ins_up = ces_6_2_io_outs_up;
   assign ces_7_2_io_ins_left = ces_7_3_io_outs_left;
@@ -4199,7 +4199,7 @@ module MockArray(
   assign ces_7_2_io_lsbIns_6 = ces_7_1_io_lsbOuts_6;
   assign ces_7_2_io_lsbIns_7 = ces_7_1_io_lsbOuts_7;
   assign ces_7_3_clock = clock;
-  assign ces_7_3_io_ins_down = io_insDown_3;
+  assign ces_7_3_io_ins_down = io_ins_down_3;
   assign ces_7_3_io_ins_right = ces_7_2_io_outs_right;
   assign ces_7_3_io_ins_up = ces_6_3_io_outs_up;
   assign ces_7_3_io_ins_left = ces_7_4_io_outs_left;
@@ -4211,7 +4211,7 @@ module MockArray(
   assign ces_7_3_io_lsbIns_6 = ces_7_2_io_lsbOuts_6;
   assign ces_7_3_io_lsbIns_7 = ces_7_2_io_lsbOuts_7;
   assign ces_7_4_clock = clock;
-  assign ces_7_4_io_ins_down = io_insDown_4;
+  assign ces_7_4_io_ins_down = io_ins_down_4;
   assign ces_7_4_io_ins_right = ces_7_3_io_outs_right;
   assign ces_7_4_io_ins_up = ces_6_4_io_outs_up;
   assign ces_7_4_io_ins_left = ces_7_5_io_outs_left;
@@ -4223,7 +4223,7 @@ module MockArray(
   assign ces_7_4_io_lsbIns_6 = ces_7_3_io_lsbOuts_6;
   assign ces_7_4_io_lsbIns_7 = ces_7_3_io_lsbOuts_7;
   assign ces_7_5_clock = clock;
-  assign ces_7_5_io_ins_down = io_insDown_5;
+  assign ces_7_5_io_ins_down = io_ins_down_5;
   assign ces_7_5_io_ins_right = ces_7_4_io_outs_right;
   assign ces_7_5_io_ins_up = ces_6_5_io_outs_up;
   assign ces_7_5_io_ins_left = ces_7_6_io_outs_left;
@@ -4235,7 +4235,7 @@ module MockArray(
   assign ces_7_5_io_lsbIns_6 = ces_7_4_io_lsbOuts_6;
   assign ces_7_5_io_lsbIns_7 = ces_7_4_io_lsbOuts_7;
   assign ces_7_6_clock = clock;
-  assign ces_7_6_io_ins_down = io_insDown_6;
+  assign ces_7_6_io_ins_down = io_ins_down_6;
   assign ces_7_6_io_ins_right = ces_7_5_io_outs_right;
   assign ces_7_6_io_ins_up = ces_6_6_io_outs_up;
   assign ces_7_6_io_ins_left = ces_7_7_io_outs_left;
@@ -4247,10 +4247,10 @@ module MockArray(
   assign ces_7_6_io_lsbIns_6 = ces_7_5_io_lsbOuts_6;
   assign ces_7_6_io_lsbIns_7 = ces_7_5_io_lsbOuts_7;
   assign ces_7_7_clock = clock;
-  assign ces_7_7_io_ins_down = io_insDown_7;
+  assign ces_7_7_io_ins_down = io_ins_down_7;
   assign ces_7_7_io_ins_right = ces_7_6_io_outs_right;
   assign ces_7_7_io_ins_up = ces_6_7_io_outs_up;
-  assign ces_7_7_io_ins_left = io_insLeft_7;
+  assign ces_7_7_io_ins_left = io_ins_left_7;
   assign ces_7_7_io_lsbIns_1 = ces_7_6_io_lsbOuts_1;
   assign ces_7_7_io_lsbIns_2 = ces_7_6_io_lsbOuts_2;
   assign ces_7_7_io_lsbIns_3 = ces_7_6_io_lsbOuts_3;
