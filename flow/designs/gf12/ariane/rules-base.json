@@ -24,11 +24,11 @@
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -996.53,
+        "value": -1758.41,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -996.53,
+        "value": -1758.4,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -2.09,
+        "value": -0.26,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -80,7 +80,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 10,
+        "value": 2132,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {

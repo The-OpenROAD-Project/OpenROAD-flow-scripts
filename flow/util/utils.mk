@@ -22,7 +22,8 @@ update_rules:
 update_rules_force:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
 
-$(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json:
+$(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json: $(wildcard $(LOG_DIR)/*.json) \
+  $(wildcard $(LOG_DIR)/*.log) $(REPORTS_DIR)/synth_stat.txt
 	echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
 	$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
 		-p $(PLATFORM) \
@@ -85,7 +86,12 @@ define \n
 
 endef
 
-export ISSUE_VARIABLES_NAMES := $(foreach V, $(.VARIABLES),$(if $(filter-out environment% default automatic, $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT% GENERATE_ABSTRACT_RULE%, $(V)), $V$ )))
+define get_variables
+$(foreach V, $(.VARIABLES),$(if $(filter-out $(1), $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT% GENERATE_ABSTRACT_RULE% do-step% do-copy%, $(V)), $V$ )))
+endef
+
+export UNSET_VARIABLES_NAMES := $(call get_variables,command% line environment% default automatic)
+export ISSUE_VARIABLES_NAMES := $(call get_variables,environment% default automatic)
 export ISSUE_VARIABLES := $(foreach V, $(ISSUE_VARIABLES_NAMES), $(if $($V),$V=$($V),$V='')${\n})
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
