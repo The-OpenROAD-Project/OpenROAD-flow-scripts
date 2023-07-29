@@ -30,16 +30,23 @@ class RoutesVec(singleElementWidth:Int) extends Record {
   def asSeq: Seq[UInt] = routes.map(_._2).toSeq
 }
 
+class BusesVec(singleElementWidth:Int, width:Int, height:Int) extends Record {
+  val routes = SeqMap(Routes.LEFT -> Vec(height, UInt(singleElementWidth.W)),
+    Routes.RIGHT -> Vec(height, UInt(singleElementWidth.W)),
+    Routes.UP -> Vec(width, UInt(singleElementWidth.W)),
+    Routes.DOWN -> Vec(width, UInt(singleElementWidth.W)),
+  )
+  val elements = routes.map { case (a, b) => a.toString().toLowerCase() -> b }
+
+  def asMap: SeqMap[Routes.Value, Vec[UInt]] = routes
+  def asSeq: Seq[Vec[UInt]] = routes.map(_._2).toSeq
+}
+
+
 class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
   val io = IO(new Bundle {
-    val insLeft = Input(Vec(height, UInt(singleElementWidth.W)))
-    val insUp = Input(Vec(width, UInt(singleElementWidth.W)))
-    val insRight = Input(Vec(height, UInt(singleElementWidth.W)))
-    val insDown = Input(Vec(width, UInt(singleElementWidth.W)))
-    val outsLeft = Output(Vec(height, UInt(singleElementWidth.W)))
-    val outsUp = Output(Vec(width, UInt(singleElementWidth.W)))
-    val outsRight = Output(Vec(height, UInt(singleElementWidth.W)))
-    val outsDown = Output(Vec(width, UInt(singleElementWidth.W)))
+    val ins = Input(new BusesVec(singleElementWidth, width, height))
+    val outs = Output(new BusesVec(singleElementWidth, width, height))
 
     val lsbs = Output(Vec(width * height, Bool()))
   })
@@ -76,16 +83,16 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
   io.lsbs := RegNext(VecInit(ces.map(_.last.io.lsbOuts).flatten))
 
   // Connect inputs to edge element buses
-  (ces.map(_.head).map(_.io.ins.asMap(Routes.RIGHT)) zip io.insRight).foreach { case (a, b) => a := b }
-  (ces.last.map(_.io.ins.asMap(Routes.DOWN)) zip io.insDown).foreach { case (a, b) => a := b }
-  (ces.map(_.last).map(_.io.ins.asMap(Routes.LEFT)) zip io.insLeft).foreach { case (a, b) => a := b }
-  (ces.head.map(_.io.ins.asMap(Routes.UP)) zip io.insUp).foreach { case (a, b) => a := b }
+  (ces.map(_.head).map(_.io.ins.asMap(Routes.RIGHT)) zip io.ins.asMap(Routes.RIGHT)).foreach { case (a, b) => a := b }
+  (ces.last.map(_.io.ins.asMap(Routes.DOWN)) zip io.ins.asMap(Routes.DOWN)).foreach { case (a, b) => a := b }
+  (ces.map(_.last).map(_.io.ins.asMap(Routes.LEFT)) zip io.ins.asMap(Routes.LEFT)).foreach { case (a, b) => a := b }
+  (ces.head.map(_.io.ins.asMap(Routes.UP)) zip io.ins.asMap(Routes.UP)).foreach { case (a, b) => a := b }
 
   // Connect edge element buses to outputs
-  (ces.map(_.head).map(_.io.outs.asMap(Routes.LEFT)) zip io.outsLeft).foreach { case (a, b) => b := a }
-  (ces.last.map(_.io.outs.asMap(Routes.UP)) zip io.outsUp).foreach { case (a, b) => b := a }
-  (ces.map(_.last).map(_.io.outs.asMap(Routes.RIGHT)) zip io.outsRight).foreach { case (a, b) => b := a }
-  (ces.head.map(_.io.outs.asMap(Routes.DOWN)) zip io.outsDown).foreach { case (a, b) => b := a }
+  (ces.map(_.head).map(_.io.outs.asMap(Routes.LEFT)) zip io.outs.asMap(Routes.LEFT)).foreach { case (a, b) => b := a }
+  (ces.last.map(_.io.outs.asMap(Routes.UP)) zip io.outs.asMap(Routes.UP)).foreach { case (a, b) => b := a }
+  (ces.map(_.last).map(_.io.outs.asMap(Routes.RIGHT)) zip io.outs.asMap(Routes.RIGHT)).foreach { case (a, b) => b := a }
+  (ces.head.map(_.io.outs.asMap(Routes.DOWN)) zip io.outs.asMap(Routes.DOWN)).foreach { case (a, b) => b := a }
 
   // Connect neighboring left/right element buses
   (ces.transpose.flatten zip ces.transpose.drop(1).flatten).foreach {
