@@ -234,7 +234,7 @@ configuration file.
 | `ABC_AREA`               | Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.                                 |
 | `PWR_NETS_VOLTAGES`      | Used for IR Drop calculation.                                                                      |
 | `GND_NETS_VOLTAGES`      | Used for IR Drop calculation.                                                                      |
-| `BLOCKS`                 | Blocks passed as blackbox into yosys. Do note that you have to specify block-specific inputs file in the directory mentioned by [Makefile](../main/flow/Makefile) |
+| `BLOCKS`                 | Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by [Makefile](../main/flow/Makefile) |
 | `CDL_FILES`              | Insert additional Circuit Description Language (`.cdl`) netlist files.                             | 
 | `DFF_LIB_FILES`          | Technology mapping liberty files for flip-flops.                                                   |
 | `DONT_USE_LIBS`          | Set liberty files as `dont_use`.                                                                   |
