@@ -1,9 +1,9 @@
 export PLATFORM               = asap7
 
-export DESIGN_NAME            = regfile_64x22
-export DESIGN_NICKNAME        = regfile_64x22
+export DESIGN_NAME            = regfile_64x88
+export DESIGN_NICKNAME        = regfile_64x88
 
-export VERILOG_FILES          = $(realpath ./designs/src/$(DESIGN_NICKNAME)/regfile_64x22.v)
+export VERILOG_FILES          = $(realpath ./designs/src/$(DESIGN_NICKNAME)/regfile_64x88.v)
 
 export SDC_FILE               = $(realpath ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc)
 export SYNTH_SDC_FILE         = $(SDC_FILE)

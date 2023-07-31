@@ -1,5 +1,5 @@
 
-module regfile_64x22(
+module regfile_64x88(
   input W0_clk,
   input [5:0] W0_addr,
   input W0_en,
