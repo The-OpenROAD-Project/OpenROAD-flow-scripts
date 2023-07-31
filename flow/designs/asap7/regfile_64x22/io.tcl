@@ -48,6 +48,11 @@ set block [ord::get_db_block]
 set pinGroups(right) [ list \
   "pitch $::env(PLACE_PIN_PITCH)" \
   "start 15" \
+  "R0_data" \
+]
+set pinGroups(left) [ list \
+  "pitch $::env(PLACE_PIN_PITCH)" \
+  "start 15" \
   "W0_clk" \
   "break 1" \
   "W0_en" \
@@ -62,8 +67,6 @@ set pinGroups(right) [ list \
   "R0_en" \
   "break 1" \
   "R0_addr" \
-  "break 1" \
-  "R0_data" \
 ]
 
 
