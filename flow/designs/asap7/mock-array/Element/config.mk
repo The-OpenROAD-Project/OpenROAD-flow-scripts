@@ -9,8 +9,6 @@ export SDC_FILE               = designs/asap7/mock-array/Element/constraints.sdc
 export PLATFORM               = asap7
 
 export PLACE_DENSITY          = 0.50
-export GPL_TIMING_DRIVEN      = 0
-export GPL_ROUTABILITY_DRIVEN = 0
 
 export CORE_AREA = $(shell \
   export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && \

@@ -3,23 +3,23 @@ source designs/asap7/mock-array/util.tcl
 set assignments [list \
     top \
     [ concat \
-        {*}[match_pins io_insDown_.*] \
-        {*}[match_pins io_outsUp_.*] \
+        {*}[match_pins io_ins_down_.*] \
+        {*}[match_pins io_outs_up_.*] \
     ] \
     bottom \
     [ concat \
-        {*}[match_pins io_insUp_.*] \
-        {*}[match_pins io_outsDown_.*] \
+        {*}[match_pins io_ins_up_.*] \
+        {*}[match_pins io_outs_down_.*] \
     ] \
     left \
     [ concat \
-        {*}[match_pins io_insRight_.*] \
-        {*}[match_pins io_outsLeft_.*] \
+        {*}[match_pins io_ins_right_.*] \
+        {*}[match_pins io_outs_left_.*] \
     ] \
     right \
     [ concat \
-        {*}[match_pins io_insLeft_.*] \
-        {*}[match_pins io_outsRight_.*] \
+        {*}[match_pins io_ins_left_.*] \
+        {*}[match_pins io_outs_right_.*] \
         {*}[match_pins io_lsbs_.*] \
     ] \
 ]
