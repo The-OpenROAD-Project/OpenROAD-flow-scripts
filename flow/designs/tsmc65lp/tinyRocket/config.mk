@@ -2,6 +2,10 @@ export DESIGN_NICKNAME = tinyRocket
 export DESIGN_NAME = RocketTile
 export PLATFORM    = tsmc65lp
 
+export SYNTH_HIERARCHICAL = 1
+export MAX_UNGROUP_SIZE ?= 5000
+export RTLMP_FLOW = True
+
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
                        ./designs/src/$(DESIGN_NICKNAME)/ClockDivider2.v \
                        ./designs/src/$(DESIGN_NICKNAME)/ClockDivider3.v \
