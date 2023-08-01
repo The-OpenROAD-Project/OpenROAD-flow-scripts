@@ -2,7 +2,8 @@ set sdc_version 2.0
 
 # Clock definition
 set clk_period    500 
-set clk_io_pct    0.2
+set clk_in_pct    0.70   ;# Not adding hold buffers 
+set clk_out_pct   0.20   ;# read access takes almost a cycle including clock latency   
 
 set rclk_name      R0_clk
 set rclk_port_name R0_clk
@@ -15,6 +16,17 @@ set_clock_uncertainty 20 $rclk_name
 create_clock -name $wclk_name -period $clk_period -waveform [list 0 [expr $clk_period/2]] [get_ports $wclk_port_name] 
 set_clock_uncertainty 20 $wclk_name
 
+
+# Create corresponding virtual clocks
+create_clock -name ${rclk_name}_vir -period $clk_period
+set_clock_uncertainty 20 ${rclk_name}_vir
+set_clock_latency 100 [get_clocks ${rclk_name}_vir]
+
+create_clock -name ${wclk_name}_vir -period $clk_period
+set_clock_uncertainty 20 ${wclk_name}_vir
+set_clock_latency 100 [get_clocks ${wclk_name}_vir]
+
+
 # Transition
 set_max_transition 300 [current_design]
 set_max_transition 100 -clock_path [all_clocks]
@@ -26,9 +38,9 @@ set wr_inputs  "W0_en W0_addr W0_data W0_mask"
 set rd_inputs  "R0_en R0_addr"
 set rd_outputs "R0_data"
 
-set_input_delay  [expr $clk_period * $clk_io_pct] -clock $wclk_name $wr_inputs 
-set_input_delay  [expr $clk_period * $clk_io_pct] -clock $rclk_name $rd_inputs 
-set_output_delay [expr $clk_period * $clk_io_pct] -clock $rclk_name $rd_outputs
+set_input_delay  [expr $clk_period * $clk_in_pct]  -clock ${wclk_name}_vir $wr_inputs 
+set_input_delay  [expr $clk_period * $clk_in_pct]  -clock ${rclk_name}_vir $rd_inputs 
+set_output_delay [expr $clk_period * $clk_out_pct] -clock ${rclk_name}_vir $rd_outputs
 
 # Input/Output
 set_max_fanout 1 $non_clock_inputs
