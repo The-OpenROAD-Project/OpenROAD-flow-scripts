@@ -18,7 +18,7 @@ if {[info exists ::env(ENABLE_DPO)] && $::env(ENABLE_DPO)} {
 }
 optimize_mirroring
 
-utl::info FLW 12 "Placement violations [check_placement -verbose -disallow_one_site_gaps -report_file_name 'report_file_path.json']."
+utl::info FLW 12 "Placement violations [check_placement -verbose -report_file_name 'report_file_path.json']."
 
 estimate_parasitics -placement
 
