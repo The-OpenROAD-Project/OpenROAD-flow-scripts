@@ -8,6 +8,7 @@ EXCLUDED_VARS+="|LD_LIBRARY_PATH|INFOPATH|HOME|PWD|MAIL|QT_QPA_PLATFORM"
 EXCLUDED_VARS+="|OPENROAD_CMD|OPENROAD_GUI_CMD|OPENROAD_NO_EXIT_CMD"
 EXCLUDED_VARS+="|LSORACLE_CMD|YOSYS_CMD|TIME_CMD|STDBUF_CMD"
 EXCLUDED_VARS+="|SHELL|OPENROAD_EXE|YOSYS_EXE"
+EXCLUDED_VARS+="|NPROC|NUM_CORES|PUBLIC|CURDIR|ISSUE_SCRIPTS|MAKEFLAGS"
 EXCLUDED_VARS+="|UNSET_VARIABLES_NAMES|do-step|get_variables|do-copy"
 
 # get the root directory of the Git repository
@@ -19,6 +20,10 @@ do
         continue
     fi
     rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
+    if [[ "${rhs}" == "''" ]]; then
+        echo "Skiping empty variable ${V}"
+        continue
+    fi
     # handle absolute paths
     if [[ "${rhs}" == /* ]]; then
         if [[ ! -e "${rhs}" ]]; then
