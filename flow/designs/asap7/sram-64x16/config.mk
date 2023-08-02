@@ -10,13 +10,15 @@ export PLATFORM               = asap7
 
 export PLACE_DENSITY          = 0.30
 
+# match SRAM
+export CORNER = WC
+
 # Pins location, obstruction settings
   export ADDITIONAL_LEFS = designs/asap7/sram-64x16/lef/SRAM2RW16x32_x4.lef
 # voltage, and temperature (PVT) corner for setup and hold timing analysis
 # contain descriptions of what each pin does, the delays depending on the load given in tables, and power information
 # choose one 'corner'
 export ADDITIONAL_LIBS = designs/asap7/sram-64x16/lib/SRAM2RW16x32_lib/SRAM2RW16x32_PVT_0P63V_100C.lib
-# lib/SRAM2RW16x32_lib/SRAM2RW16x32_PVT_0P77V_0C.lib
 # Entire detailed layout
 export ADDITIONAL_GDS  = designs/asap7/sram-64x16/gds/SRAM2RW16x32_x4.gds
 
