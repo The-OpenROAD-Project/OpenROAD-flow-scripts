@@ -14,10 +14,10 @@ set_clock_uncertainty -hold 20.0 [get_clocks $clk_name]
 set clock_network_latency 100
 
 # io_ins_x -> REG_x in neighbouring element or just outside of the array
-set_input_delay -clock $clk_name [expr $clock_network_latency + $clk_period * 0.05] [get_ports {io_ins_* io_lsbIns_4}]
+set_input_delay -clock $clk_name [expr $clock_network_latency + $clk_period * 0.05] [get_ports {io_ins_*}]
 
 # REG_x in neighbouring element or just outside of the array -> io_outs_x
-set_output_delay -clock $clk_name [expr -$clock_network_latency + $clk_period * 0.05 ] [concat [get_ports {io_lsbOuts_7}] [get_ports {io_outs_*}]]
+set_output_delay -clock $clk_name [expr -$clock_network_latency + $clk_period * 0.05 ] [concat [get_ports {io_lsbOuts_7 io_outs_*}]]
 
 # All remaining non-clock IOs are only connected to one another without going through any
 #  registers (in -> out paths). Such paths should not be checked for setup/hold violations
