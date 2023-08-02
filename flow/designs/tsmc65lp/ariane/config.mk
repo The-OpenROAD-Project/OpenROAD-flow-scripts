@@ -19,3 +19,6 @@ export CORE_AREA   = 10 12 1990 1550.4
 export PLACE_PINS_ARGS = -exclude left:0-500 -exclude left:800-1560 -exclude right:* -exclude top:* -exclude bottom:*
 
 export PLACE_DENSITY_LB_ADDON = 0.10
+export SKIP_PIN_SWAP          = 1
+
+
