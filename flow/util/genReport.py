@@ -102,7 +102,7 @@ def gen_report(name, data):
     TODO: docs
     '''
 
-    if args.verbose >= 2 and data['status'] != STATUS_GREEN:
+    if args.verbose >= 2 or data['status'] != STATUS_GREEN:
         output = f"{name}\n"
         if data['finished']:
             output += '  Flow reached last stage.\n'
