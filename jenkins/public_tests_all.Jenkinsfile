@@ -36,10 +36,13 @@ pipeline {
                    "jpeg asap7",
                    "riscv32i asap7",
                    "sha3 asap7",
+                   "swerv_wrapper asap7",
                    "uart asap7",
                    "uart-blocks asap7",
                    "mock-array asap7",
                    "aes nangate45",
+                   "ariane136 nangate45",
+                   "black_parrot nangate45",
                    "bp_be_top nangate45",
                    "bp_fe_top nangate45",
                    "bp_multi_top nangate45",
@@ -64,7 +67,10 @@ pipeline {
                    "riscv32i sky130hs",
                    "aes gf180",
                    "ibex gf180",
-                   "jpeg gf180";
+                   "jpeg gf180",
+                   "riscv32i gf180",
+                   "sha3 gf180",
+                   "uart-blocks gf180";
           }
         }
 
