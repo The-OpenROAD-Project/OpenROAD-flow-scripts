@@ -1,7 +1,8 @@
+#####################################################
 set sdc_version 2.0
 
 # Clock definition
-set clk_period    500 
+set clk_period    500    ;# Relax clock period did not bring down -200ps slack accodingly; use 750 period at next level up
 set clk_in_pct    0.70   ;# Not adding hold buffers 
 set clk_out_pct   0.20   ;# read access takes almost a cycle including clock latency   
 
