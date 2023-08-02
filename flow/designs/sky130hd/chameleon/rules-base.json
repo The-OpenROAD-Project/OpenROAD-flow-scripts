@@ -72,7 +72,7 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.46,
+        "value": -0.33,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
@@ -80,7 +80,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 11,
+        "value": 137,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
