@@ -16,7 +16,6 @@ set_clock_uncertainty 20 $rclk_name
 create_clock -name $wclk_name -period $clk_period -waveform [list 0 [expr $clk_period/2]] [get_ports $wclk_port_name] 
 set_clock_uncertainty 20 $wclk_name
 
-
 # Create corresponding virtual clocks
 create_clock -name ${rclk_name}_vir -period $clk_period
 set_clock_uncertainty 20 ${rclk_name}_vir
