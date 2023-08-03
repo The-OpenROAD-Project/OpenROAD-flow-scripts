@@ -1,6 +1,7 @@
 export PLATFORM               = asap7
 
-export DESIGN_NAME            = ethmac_lvt
+export DESIGN_NAME            = ethmac
+export DESIGN_NICKNAME        = ethmac_lvt
 
 export VERILOG_FILES         = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE              = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
@@ -22,4 +23,5 @@ export ADDITIONAL_LIBS        = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_2
 
 export ADDITIONAL_GDS         = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_R_220121a.gds
 export ADDITIONAL_LEFS        = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_R_1x_220121a.lef
+export RECOVER_POWER          = 1
 

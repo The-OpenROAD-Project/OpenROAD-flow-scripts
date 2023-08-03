@@ -1,5 +1,5 @@
 set top_clk_name wb_clk_i
-set clk_period 1500
+set clk_period 1700
 set clk_io_pct 0.2
 set clk_port [get_ports $top_clk_name]
 create_clock -name $top_clk_name -period $clk_period $clk_port
