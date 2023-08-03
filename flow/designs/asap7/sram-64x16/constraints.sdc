@@ -12,3 +12,9 @@ set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
 
 set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs 
 set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
+
+# 50 is just picked out the hat, there were slew for the clock on the SRAM
+# of >100 if this is not present.
+#
+# setting it to 10 causes resizing to run for a long time.
+set_max_transition 50 [current_design]
