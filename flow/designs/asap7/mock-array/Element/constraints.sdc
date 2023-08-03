@@ -4,7 +4,7 @@ set clk_period 500
 
 set clk_name  clock
 set clk_port_name clock
-set clk_in_pct 0.25
+set clk_in_pct 0.15
 set clk_o1_pct 0.2
 set clk_o2_pct 0.75
 

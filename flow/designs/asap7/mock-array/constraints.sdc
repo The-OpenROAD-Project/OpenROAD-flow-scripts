@@ -6,7 +6,7 @@ set clk_name  clock
 set clk_port_name clock
 set clk_in_pct 0.75
 set clk_o1_pct 0.2
-set clk_o2_pct 0.75
+set clk_o2_pct 0.50
 
 create_clock -name $clk_name       -period $clk_period -waveform [list 0 [expr $clk_period/2]] [get_ports $clk_port_name]
 set_clock_uncertainty 20 [get_clocks $clk_name]
