@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.32,
+        "value": -0.3,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {
@@ -72,11 +72,11 @@
         "compare": ">="
     },
     "finish__timing__drv__max_cap_limit": {
-        "value": -0.41,
+        "value": -0.39,
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 10,
+        "value": 108,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {

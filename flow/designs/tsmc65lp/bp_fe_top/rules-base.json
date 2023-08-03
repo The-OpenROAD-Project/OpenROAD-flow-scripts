@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 32194,
+        "value": 32055,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -32,11 +32,11 @@
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 1400,
+        "value": 1394,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 4082,
+        "value": 1394,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
