@@ -25,10 +25,11 @@ estimate_parasitics -global_routing
 
 if { [info exists ::env(RECOVER_POWER)] } {
   puts "Downsizing/switching to higher Vt  for non critical gates for power recovery"
+  puts "Percent of paths optimized $::env(RECOVER_POWER)"  
   report_tns
   report_wns
   report_power
-  repair_timing -recover_power
+  repair_timing -recover_power $::env(RECOVER_POWER)
   report_tns
   report_wns
   report_power
