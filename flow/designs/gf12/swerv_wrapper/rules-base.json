@@ -36,11 +36,11 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 13868,
+        "value": 13781,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -114.78,
+        "value": -77.99,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -76,7 +76,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 10,
+        "value": 1478,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {

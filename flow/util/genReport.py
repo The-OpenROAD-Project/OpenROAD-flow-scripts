@@ -102,13 +102,12 @@ def gen_report(name, data):
     TODO: docs
     '''
 
-    if args.verbose >= 2 or data['drcs'] or data['status'] != STATUS_GREEN:
+    if args.verbose >= 2 or data['status'] != STATUS_GREEN:
         output = f"{name}\n"
-        if data['status'] == STATUS_RED:
-            if data['finished']:
-                output += '  Flow reached last stage.\n'
-            else:
-                output += f"  Last log file {data['last_log']}\n"
+        if data['finished']:
+            output += '  Flow reached last stage.\n'
+        else:
+            output += f"  Last log file {data['last_log']}\n"
     else:
         output = ""
 
@@ -163,7 +162,7 @@ def gen_report(name, data):
             REGEX_WARNING,
             args.verbose - 2)
 
-    if d['drcs']:
+    if len(d['drcs'].keys()) > 0:
         if data['status'] == STATUS_GREEN:
             output += '  Design has the violations under the allowed limit: '
         else:

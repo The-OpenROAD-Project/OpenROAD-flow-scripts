@@ -84,5 +84,7 @@ dependencies/
 perf.data
 perf.data.old
 
+# documentation specific
 docs/main
 docs/build
+GitGuide.md

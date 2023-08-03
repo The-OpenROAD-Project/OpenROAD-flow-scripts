@@ -29,7 +29,7 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
     report_clock_skew_metric
     report_clock_skew_metric -hold
   }
-  
+
   puts "\n=========================================================================="
   puts "$when report_checks -path_delay min"
   puts "--------------------------------------------------------------------------"
@@ -121,12 +121,12 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
     puts "\n=========================================================================="
     puts "$when setup_violation_count"
     puts "--------------------------------------------------------------------------"
-    puts "setup violation count [llength [find_timing_paths -path_delay max -slack_max 0]]"
+    puts "setup violation count [sta::endpoint_violation_count max]"
 
     puts "\n=========================================================================="
     puts "$when hold_violation_count"
     puts "--------------------------------------------------------------------------"
-    puts "hold violation count [llength [find_timing_paths -path_delay min -slack_max 0]]"
+    puts "hold violation count [sta::endpoint_violation_count min]"
 
     set critical_path [lindex [find_timing_paths -sort_by_slack] 0]
     if {$critical_path != ""} {
@@ -150,6 +150,21 @@ proc report_metrics { when {include_erc true} {include_clock_skew true} } {
     puts "$when slack div critical path delay"
     puts "--------------------------------------------------------------------------"
     puts "[format "%4f" [expr $path_slack / $path_delay * 100]]"
+  }
+
+  puts "\n=========================================================================="
+  puts "$when report_power"
+  puts "--------------------------------------------------------------------------"
+  if {[info exists ::env(CORNERS)]} {
+    foreach corner $::env(CORNERS) {
+      puts "Corner: $corner"
+      report_power -corner $corner
+      report_power_metric -corner $corner
+    }
+    unset corner
+  } else {
+    report_power
+    report_power_metric
   }
 
   puts "\n=========================================================================="

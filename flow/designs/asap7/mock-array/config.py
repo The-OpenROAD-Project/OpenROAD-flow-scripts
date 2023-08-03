@@ -1,10 +1,15 @@
 import os
 
-# routing pitch for M4, M5 and M6 tied to placement grid at 2.16
-# therefore, the optimal placement and Element size should be multiple of 2.16
-# set grid x and y
-placement_grid_x     = 2.16
-placement_grid_y     = 2.16
+# Routing pitches for relevant metal layers.
+#  For x, this is M5; for y, this is M4.
+#  Pitches are specified in OpenROAD-flow-scripts/flow/platforms/asap7/lef/asap7_tech_1x_201209.lef.
+#  For asap7, x and y pitch is the same.
+#
+# make_tracks M5 -x_offset 0.012 -x_pitch 0.048 -y_offset 0.012 -y_pitch 0.048
+#
+# the macro needs to be on a multiple of the track pattern
+placement_grid_x     = 0.048 * int(os.environ.get("MOCK_ARRAY_SCALE"))
+placement_grid_y     = 0.048 * int(os.environ.get("MOCK_ARRAY_SCALE"))
 
 # number of Elements in row and column, can be control by user via environment variable 
 # MOCK_ARRAY_TABLE (rows, cols, width, height, pitch_x, pitch_y)

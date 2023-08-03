@@ -77,7 +77,12 @@ for field, rule in rules.items():
     compare = rule['compare']
     op = ops[compare]
     rule_value = try_number(rule['value'])
-    build_value = try_number(metadata[field])
+
+    if field in metadata.keys():
+        build_value = try_number(metadata[field])
+    else:
+        print(f"[ERROR] Value not found for {field}.")
+        sys.exit(1)
 
     formatError = list()
     if not isinstance(rule_value, float):

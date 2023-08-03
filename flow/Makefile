@@ -267,21 +267,16 @@ endif
 
 # The following determine the executable location for each tool used by this flow.
 # Priority is given to
-#       1 user include path to the executable prior to running make
-#       2 user explicit set with variable in Makefile or command line
-export OPENROAD_EXE            ?= $(shell command -v openroad)
-ifeq ($(OPENROAD_EXE),)
-  export OPENROAD_EXE           = $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
-endif
+#       1 user explicit set with variable in Makefile or command line, for instance setting OPENROAD_EXE
+#       2 ORFS compiled tools: openroad, yosys
+export OPENROAD_EXE      ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
-YOSYS_CMD               ?= $(shell command -v yosys)
-ifeq ($(YOSYS_CMD),)
-  YOSYS_CMD              = $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
-endif
+YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)
 
@@ -318,16 +313,7 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 define GENERATE_ABSTRACT_RULE
 # Single rule, two targets, hence the "&:", syntax
 $(1) $(2) &: $(3)
-	# Make sure environment variables modified in this Makefile do not leak into the sub-build
-	bash -c " \
-	unset BLOCKS && \
-	unset ADDITIONAL_LEFS && \
-	unset ADDITIONAL_GDS && \
-	unset ADDITIONAL_LIBS && \
-	unset DONT_USE_SC_LIB && \
-	unset LIB_FILES && \
-	unset MACRO_PLACEMENT && \
-	$(MAKE) \"DESIGN_CONFIG=$(3)\" generate_abstract"
+	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$(3) generate_abstract
 endef
 
 # Targets to harden Blocks in case of hierarchical flow is triggered
@@ -392,9 +378,19 @@ $(WRAPPED_LIBS):
 #  ___) || | | |\  | | | |  _  | |___ ___) | | ___) |
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
+.PHONY: synth
 synth: versions.txt \
        $(RESULTS_DIR)/1_synth.v \
        $(RESULTS_DIR)/1_synth.sdc
+
+.PHONY: synth-report
+synth-report: synth
+	$(UNSET_AND_MAKE) do-synth-report
+
+.PHONY: do-synth-report
+do-synth-report:
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
+
 # ==============================================================================
 
 
@@ -410,18 +406,16 @@ ifeq ($(SYNTH_HIERARCHICAL), 1)
 $(RESULTS_DIR)/1_1_yosys.v: $(SYNTH_STOP_MODULE_SCRIPT)
 endif
 
-$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
+$(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.sdc &: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	cp $< $@
 
-$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	cp $< $@
-
+.PHONY: clean_synth
 clean_synth:
 	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
 	rm -f  $(REPORTS_DIR)/synth_*
@@ -441,11 +435,6 @@ clean_synth:
 floorplan: $(RESULTS_DIR)/2_floorplan.odb \
            $(RESULTS_DIR)/2_floorplan.sdc
 
-.PHONY: floorplan_info
-floorplan_info:
-	@echo DIE_AREA=$(DIE_AREA)
-	@echo CORE_AREA=$(CORE_AREA)
-
 # ==============================================================================
 
 ifneq ($(FOOTPRINT),)
@@ -454,52 +443,100 @@ else ifneq ($(FOOTPRINT_TCL),)
 IS_CHIP = 1
 endif
 
+UNSET_AND_MAKE = @bash -c 'for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done; echo $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@; $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
+
+# Separate dependency checking and doing a step. This can
+# be useful to retest a stage without having to delete the
+# target, or when building a wafer thin layer on top of
+# ORFS using CMake, Ninja, Bazel, etc. where makefile
+# dependecy checking only gets in the way.
+#
+# Note that there is no "do-synth" step as it is a special
+# first step that for usecases such as Bazel where it should
+# always be built when invoked. Latter stages in the build process
+# are conditionally built by the Bazel implementation.
+#
+# A "do-synth" step would be welcomed, but it isn't strictly necessary
+# for the Bazel use-case.
+#
+# do-floorplan, do-place, do-cts, do-route, do-finish are the
+# supported interface to execute those stages without checking
+# for dependencies.
+#
+# The do- substeps of each of these stages are subject to change.
+#
+# $(1) stem, e.g. 2_1_floorplan
+# $(2) dependencies
+# $(3) tcl script step
+# $(4) extension of result, default .odb
+# $(5) folder of target, default $(RESULTS_DIR)
+define do-step
+$(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
+	$$(UNSET_AND_MAKE) do-$(1)
+
+.PHONY: do-$(1)
+do-$(1):
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json) 2>&1 | tee $(LOG_DIR)/$(1).log
+endef
+
+# generate make rules to copy a file, if a dependency change and
+# a do- sibling rule that copies the file unconditionally.
+#
+# The file is copied within the $(RESULTS_DIR)
+#
+# $(1) stem of target, e.g. 2_2_floorplan_io
+# $(2) basename of file to be copied
+# $(3) further dependencies
+# $(4) target extension, default .odb
+define do-copy
+$(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb): $(RESULTS_DIR)/$(2) $(3)
+	$$(UNSET_AND_MAKE) do-$(1)$(if $(4),$(4),)
+
+.PHONY: do-$(1)$(if $(4),$(4),)
+do-$(1)$(if $(4),$(4),):
+	cp $(RESULTS_DIR)/$(2) $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb)
+endef
+
+
 # STEP 1: Translate verilog to odb
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_1_floorplan.odb: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/floorplan.tcl -metrics $(LOG_DIR)/2_1_floorplan.json) 2>&1 | tee $(LOG_DIR)/2_1_floorplan.log
-
+$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL),floorplan))
 
 # STEP 2: IO Placement (random)
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_2_floorplan_io.odb: $(RESULTS_DIR)/2_1_floorplan.odb $(IO_CONSTRAINTS)
 ifndef IS_CHIP
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement_random.tcl -metrics $(LOG_DIR)/2_2_floorplan_io.json) 2>&1 | tee $(LOG_DIR)/2_2_floorplan_io.log
+$(eval $(call do-step,2_2_floorplan_io,$(RESULTS_DIR)/2_1_floorplan.odb $(IO_CONSTRAINTS),io_placement_random))
 else
-	cp $< $@
+$(eval $(call do-copy,2_2_floorplan_io,2_1_floorplan.odb,$(IO_CONSTRAINTS)))
 endif
 
 # STEP 3: Timing Driven Mixed Sized Placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_3_floorplan_tdms.odb: $(RESULTS_DIR)/2_2_floorplan_io.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES)
 ifeq ($(MACRO_PLACEMENT),)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tdms_place.tcl -metrics $(LOG_DIR)/2_3_tdms.json) 2>&1 | tee $(LOG_DIR)/2_3_tdms_place.log
+$(eval $(call do-step,2_3_floorplan_tdms,$(RESULTS_DIR)/2_2_floorplan_io.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES),tdms_place))
 else
-	$(info [INFO][FLOW] Using manual macro placement file $(MACRO_PLACEMENT))
-	cp $< $@
+$(eval $(call do-copy,2_3_floorplan_tdms,2_2_floorplan_io.odb,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES)))
 endif
 
 # STEP 4: Macro Placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_4_floorplan_macro.odb: $(RESULTS_DIR)/2_3_floorplan_tdms.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/macro_place.tcl -metrics $(LOG_DIR)/2_4_mplace.json) 2>&1 | tee $(LOG_DIR)/2_4_mplace.log
+$(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),macro_place))
 
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_5_floorplan_tapcell.odb: $(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/tapcell.tcl -metrics $(LOG_DIR)/2_5_tapcell.json) 2>&1 | tee $(LOG_DIR)/2_5_tapcell.log
-
+$(eval $(call do-step,2_5_floorplan_tapcell,$(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL),tapcell))
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/2_6_floorplan_pdn.odb: $(RESULTS_DIR)/2_5_floorplan_tapcell.odb $(PDN_TCL)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/pdn.tcl -metrics $(LOG_DIR)/2_6_pdn.json) 2>&1 | tee $(LOG_DIR)/2_6_pdn.log
+$(eval $(call do-step,2_6_floorplan_pdn,$(RESULTS_DIR)/2_5_floorplan_tapcell.odb $(PDN_TCL),pdn))
 
-$(RESULTS_DIR)/2_floorplan.odb: $(RESULTS_DIR)/2_6_floorplan_pdn.odb
-	cp $< $@
+$(eval $(call do-copy,2_floorplan,2_6_floorplan_pdn.odb,))
 
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
+.PHONY: do-floorplan
+do-floorplan:
+	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_io do-2_3_floorplan_tdms do-2_4_floorplan_macro do-2_5_floorplan_tapcell do-2_6_floorplan_pdn do-2_floorplan
 
 .PHONY: clean_floorplan
 clean_floorplan:
@@ -520,27 +557,23 @@ place: $(RESULTS_DIR)/3_place.odb \
 # ==============================================================================
 # STEP 1: Global placement without placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_1_place_gp_skip_io.odb: $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place_skip_io.tcl -metrics $(LOG_DIR)/3_1_place_gp_skip_io.json) 2>&1 | tee $(LOG_DIR)/3_1_place_gp_skip_io.log
+$(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place_skip_io))
 
 # STEP 2: IO placement (non-random)
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_2_place_iop.odb: $(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS)
 ifndef IS_CHIP
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/io_placement.tcl -metrics $(LOG_DIR)/3_2_place_iop.json) 2>&1 | tee $(LOG_DIR)/3_2_place_iop.log
+$(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS),io_placement))
 else
-	cp $< $@
+$(eval $(call do-copy,3_2_place_iop,3_1_place_gp_skip_io.odb,$(IO_CONSTRAINTS)))
 endif
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_3_place_gp.odb: $(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_place.tcl -metrics $(LOG_DIR)/3_3_place_gp.json) 2>&1 | tee $(LOG_DIR)/3_3_place_gp.log
+$(eval $(call do-step,3_3_place_gp,$(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place))
 
 # STEP 4: Resizing & Buffering
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_4_place_resized.odb: $(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/2_floorplan.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/resize.tcl -metrics $(LOG_DIR)/3_4_resizer.json) 2>&1 | tee $(LOG_DIR)/3_4_resizer.log
+$(eval $(call do-step,3_4_place_resized,$(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/2_floorplan.sdc,resize))
 
 .PHONY: clean_resize
 clean_resize:
@@ -548,14 +581,15 @@ clean_resize:
 
 # STEP 5: Detail placement
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/3_5_place_dp.odb: $(RESULTS_DIR)/3_4_place_resized.odb
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_place.tcl -metrics $(LOG_DIR)/3_5_opendp.json) 2>&1 | tee $(LOG_DIR)/3_5_opendp.log
+$(eval $(call do-step,3_5_place_dp,$(RESULTS_DIR)/3_4_place_resized.odb,detail_place))
 
-$(RESULTS_DIR)/3_place.odb: $(RESULTS_DIR)/3_5_place_dp.odb
-	cp $< $@
+$(eval $(call do-copy,3_place,3_5_place_dp.odb,))
 
-$(RESULTS_DIR)/3_place.sdc: $(RESULTS_DIR)/2_floorplan.sdc
-	cp $< $@
+$(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
+
+.PHONY: do-place
+do-place:
+	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place do-3_place.sdc
 
 # Clean Targets
 #-------------------------------------------------------------------------------
@@ -582,18 +616,19 @@ cts: $(RESULTS_DIR)/4_cts.odb \
 
 # Run TritonCTS
 # ------------------------------------------------------------------------------
-$(RESULTS_DIR)/4_1_cts.odb: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cts.tcl -metrics $(LOG_DIR)/4_1_cts.json) 2>&1 | tee $(LOG_DIR)/4_1_cts.log
+$(eval $(call do-step,4_1_cts,$(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc,cts))
 
 # Filler cell insertion
 # ------------------------------------------------------------------------------
-$(RESULTS_DIR)/4_2_cts_fillcell.odb: $(RESULTS_DIR)/4_1_cts.odb
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/fillcell.tcl -metrics $(LOG_DIR)/4_2_cts_fillcell.json) 2>&1 | tee $(LOG_DIR)/4_2_cts_fillcell.log
+$(eval $(call do-step,4_2_cts_fillcell,$(RESULTS_DIR)/4_1_cts.odb,fillcell))
 
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.odb
 
-$(RESULTS_DIR)/4_cts.odb: $(RESULTS_DIR)/4_2_cts_fillcell.odb
-	cp $< $@
+$(eval $(call do-copy,4_cts,4_2_cts_fillcell.odb))
+
+.PHONY: do-cts
+do-cts:
+	$(UNSET_AND_MAKE) do-4_1_cts do-4_2_cts_fillcell do-4_cts
 
 .PHONY: clean_cts
 clean_cts:
@@ -617,24 +652,23 @@ route: $(RESULTS_DIR)/5_route.odb \
 
 # STEP 1: Run global route
 #-------------------------------------------------------------------------------
-$(RESULTS_DIR)/5_1_grt.odb: $(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/global_route.tcl -metrics $(LOG_DIR)/5_1_fastroute.json) 2>&1 | tee $(LOG_DIR)/5_1_fastroute.log
-
+$(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE),global_route))
 
 # STEP 2: Run detailed route
 #-------------------------------------------------------------------------------
 ifeq ($(USE_WXL),)
-$(RESULTS_DIR)/5_2_route.odb: $(RESULTS_DIR)/5_1_grt.odb
+$(eval $(call do-step,5_2_route,$(RESULTS_DIR)/5_1_grt.odb,detail_route))
 else
-$(RESULTS_DIR)/5_2_route.odb: $(RESULTS_DIR)/4_cts.odb
+$(eval $(call do-step,5_2_route,$(RESULTS_DIR)/4_cts.odb,detail_route))
 endif
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/detail_route.tcl -metrics $(LOG_DIR)/5_2_TritonRoute.json) 2>&1 | tee $(LOG_DIR)/5_2_TritonRoute.log
 
-$(RESULTS_DIR)/5_route.odb: $(RESULTS_DIR)/5_2_route.odb
-	cp $< $@
+$(eval $(call do-copy,5_route,5_2_route.odb))
 
-$(RESULTS_DIR)/5_route.sdc: $(RESULTS_DIR)/4_cts.sdc
-	cp $< $@
+$(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
+
+.PHONY: do-route
+do-route:
+	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_route do-5_route.sdc
 
 $(RESULTS_DIR)/5_route.v:
 	@export OR_DB=5_route ;\
@@ -679,33 +713,32 @@ finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
         $(RESULTS_DIR)/6_final.sdc \
         $(GDS_FINAL_FILE)
-	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
+	$(UNSET_AND_MAKE) elapsed
 
-.PHONY:
+.PHONY: elapsed
 elapsed:
 	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
 
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
-$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb $(FILL_CONFIG)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/density_fill.tcl -metrics $(LOG_DIR)/6_density_fill.json) 2>&1 | tee $(LOG_DIR)/6_density_fill.log
+$(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(RESULTS_DIR)/5_route.sdc $(FILL_CONFIG),density_fill))
 else
-$(RESULTS_DIR)/6_1_fill.odb: $(RESULTS_DIR)/5_route.odb
-	cp $< $@
+$(eval $(call do-copy,6_1_fill,5_route.odb))
 endif
 
-$(RESULTS_DIR)/6_1_fill.sdc: $(RESULTS_DIR)/5_route.sdc
-	cp $< $@
+$(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
 
-$(RESULTS_DIR)/6_final.sdc: $(RESULTS_DIR)/5_route.sdc
-	cp $< $@
+$(eval $(call do-copy,6_final,5_route.sdc,,.sdc))
 
-$(LOG_DIR)/6_report.log: $(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/final_report.tcl -metrics $(LOG_DIR)/6_report.json) 2>&1 | tee $(LOG_DIR)/6_report.log
+$(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc,final_report,.log,$(LOG_DIR)))
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
+# NOTE! No GDS file for now
+.PHONY: do-finish
+do-finish:
+	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report elapsed
 
 # Skipping resize can be useful for mock abstracts
 .PHONY: skip_resize
@@ -734,8 +767,16 @@ skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
 #
 # make skip_resize skip_cts skip_route generate_abstract
 .PHONY: generate_abstract
-generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v
+generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v $(RESULTS_DIR)/6_final.sdc
+	$(UNSET_AND_MAKE) do-generate_abstract
+
+.PHONY: do-generate_abstract
+do-generate_abstract:
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
+
+.PHONY: clean_abstract
+clean_abstract:
+	rm -f $(RESULTS_DIR)/$(DESIGN_NAME).lib $(RESULTS_DIR)/$(DESIGN_NAME).lef
 
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
@@ -836,7 +877,7 @@ clean:
 	@echo
 
 .PHONY: clean_all
-clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish clean_metadata
+clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish clean_metadata clean_abstract
 	rm -rf $(OBJECTS_DIR)
 
 .PHONY: nuke
@@ -859,6 +900,10 @@ RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 .PHONY: $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
+
+.PHONY: gui_synth
+gui_synth:
+	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
 
 .PHONY: gui_floorplan
 gui_floorplan: gui_2_floorplan.odb
@@ -887,6 +932,18 @@ $(foreach file,$(RESULTS_ODB),$(file).def): %.def:
 $(foreach file,$(RESULTS_ODB),$(file).v): %.v:
 	ODB_FILE=$(RESULTS_DIR)/$* VERILOG_FILE=$(RESULTS_DIR)/$@ $(OPENROAD_CMD) $(SCRIPTS_DIR)/write_verilog.tcl
 
+# Drop into yosys with all environment variables, useful to for instance
+# debug synthesis, or run other commands aftewards, such as "show" to
+# generate a .dot file of the design to visualize designs.
+.PHONY: yosys
+yosys:
+	$(YOSYS_CMD)
+
+# Drop into a bash shell with all environment variables, useful for debugging
+.PHONY: bash
+bash:
+	bash
+
 .PHONY: all_defs
 all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)
 .PHONY: all_verilog
@@ -895,7 +952,12 @@ all_verilog : $(foreach file,$(RESULTS_ODB),$(file).v)
 .PHONY: handoff
 handoff : all_defs all_verilog
 
+.PHONY: print-%
+# Print any variable, for instance: make print-DIE_AREA
 print-%  : ; @echo $* = $($*)
+
+.PHONY: test-unset-and-make-%
+test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 
 # Utilities
 #-------------------------------------------------------------------------------

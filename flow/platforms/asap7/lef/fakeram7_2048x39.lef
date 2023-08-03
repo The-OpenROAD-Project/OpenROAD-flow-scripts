@@ -2241,7 +2241,7 @@ MACRO fakeram7_2048x39
     LAYER M3 ;
     RECT 0 0 5.130 532.000 ;
     LAYER M4 ;
-    RECT 0 0 5.130 532.000 ;
+    RECT 0.1 0 5.030 532.000 ;
   END
 END fakeram7_2048x39
 

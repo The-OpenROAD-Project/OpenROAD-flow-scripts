@@ -14,11 +14,13 @@ export PLACE_DENSITY          = 0.30
 
 export CORE_AREA = $(shell \
   export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)"  && \
+  export MOCK_ARRAY_SCALE="$(MOCK_ARRAY_SCALE)" && \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config ; print(f'{config.margin_x} {config.margin_y} {config.core_width + config.margin_x} {config.core_height + config.margin_y}')")
 
 export DIE_AREA  = $(shell \
   export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && \
+  export MOCK_ARRAY_SCALE="$(MOCK_ARRAY_SCALE)" && \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config; print(f'{0} {0} {config.die_width} {config.die_height}')")
 
@@ -49,3 +51,11 @@ export DETAILED_ROUTE_ARGS   = -bottom_routing_layer M2 -top_routing_layer M7 -s
 # same information to other stages in the flow.
 export MIN_ROUTING_LAYER = M2
 export MAX_ROUTING_LAYER = M7
+
+# works with 28 or more iterations as of writing, so give it a few more.
+export GLOBAL_ROUTE_ARGS=-congestion_iterations 40 -verbose
+export FASTROUTE_TCL = ./designs/$(PLATFORM)/mock-array/fastroute.tcl
+
+# ensure we have some rows, so we don't get a bad clock skew.
+export MACRO_HALO_X            = 0.5
+export MACRO_HALO_Y            = 0.5
