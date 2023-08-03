@@ -40,11 +40,11 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.62,
+        "value": -0.86,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.62,
+        "value": -0.86,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
