@@ -13,7 +13,7 @@ set_clock_uncertainty 20 [get_clocks $clk_name]
 
 create_clock -name ${clk_name}_vir -period $clk_period -waveform [list 0 [expr $clk_period/2]]
 set_clock_uncertainty  20 [get_clocks ${clk_name}_vir]
-set_clock_latency     250 [get_clocks ${clk_name}_vir]       ;# Matching real clock latency
+set_clock_latency     300 [get_clocks ${clk_name}_vir]       ;# Matching real clock latency
 
 set clk_port [get_ports $clk_port_name]
 set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]

@@ -1,47 +1,41 @@
 set sdc_version 2.0
 
-set cols [expr {[info exists ::env(MOCK_ARRAY_COLS)] ? $::env(MOCK_ARRAY_COLS) : 8}]
+set clk_period 500
 
-set clk_name clock
+set clk_name  clock
 set clk_port_name clock
-set clk_period 1000
+set clk_in_pct 0.50
+set clk_o1_pct 0.2
+set clk_o2_pct 0.75
+
+create_clock -name $clk_name       -period $clk_period -waveform [list 0 [expr $clk_period/2]] [get_ports $clk_port_name]
+set_clock_uncertainty 20 [get_clocks $clk_name]
+
+create_clock -name ${clk_name}_vir -period $clk_period -waveform [list 0 [expr $clk_period/2]]
+set_clock_uncertainty  20 [get_clocks ${clk_name}_vir]
+set_clock_latency     100 [get_clocks ${clk_name}_vir]       ;# Matching real clock latency
 
 set clk_port [get_ports $clk_port_name]
-create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name $clk_name $clk_port
-set_clock_uncertainty -setup 20.0 [get_clocks $clk_name]
-set_clock_uncertainty -hold 20.0 [get_clocks $clk_name]
+set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
+set lsb_register_out [concat [get_ports io_lsbOuts_4] [get_ports io_lsbOuts_7]]
+set all_lsb_outs [get_ports io_lsbOuts_*]
 
-# io_ins_x -> REG_x in neighbouring element or just outside of the array
-set_input_delay -clock $clk_name [expr $clk_period * 0.05] [get_ports {io_ins_*}]
+proc subtract {a b} {
+    set result {}
+    foreach item $a {
+        if {[lsearch $b $item] == -1} {
+            lappend result $item
+        }
+    }
+    return $result
+}
 
-# REG_x in neighbouring element or just outside of the array -> io_outs_x
-set_output_delay -clock $clk_name [expr $clk_period * 0.05 ] [get_ports {io_outs_*}]
+set non_reg_outputs [subtract $all_lsb_outs $lsb_register_out]
+set reg_outputs [subtract [all_outputs] $non_reg_outputs]
 
-# For combinational buses routed through the elements, IO delays need to be set to accomodate requirements
-#  for each instance's position across the entire array. For simplicity, we budget the clock period evenly
-#  between all elements (with some headroom).
-set budget_per_element [expr $clk_period / $cols]
-set headroom [expr $budget_per_element * .2]
-# For in -> reg and reg -> out paths, min delay captures the case where a signal hasn't flowed through any
-#  other element before this one
-set min_delay $headroom
-# For in -> reg and reg -> out paths, max delay captures the case where a signal has flowed through all
-#  other elements before this one
-set max_delay [expr $budget_per_element * ($cols - 1) + $headroom]
+set_input_delay  [expr $clk_period * $clk_in_pct] -clock ${clk_name}_vir $non_clock_inputs 
+set_output_delay [expr $clk_period * $clk_o1_pct] -clock ${clk_name}_vir $non_reg_outputs
+set_output_delay [expr $clk_period * $clk_o2_pct] -clock ${clk_name}_vir $reg_outputs
 
-# REG[0] (io_outs_left[0] in the source) -> io_lsbOuts_7
-set_output_delay -clock $clk_name -min $min_delay [get_ports {io_lsbOuts_7}]
-set_output_delay -clock $clk_name -max $max_delay [get_ports {io_lsbOuts_7}]
-
-# All remaining non-clock IOs are only connected to one another without going through any
-#  registers (in -> out paths). Such paths should not be checked for setup/hold violations
-#  and do not need to be constrained.
-set non_clk_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
-set_false_path -from $non_clk_inputs -to [all_outputs]
-
-# Set driving cell and load capacitance explicitly to ensure timing results are sufficiently pessimistic
-set_driving_cell [all_inputs] -lib_cell BUFx2_ASAP7_75t_R
-# Assuming the load on each output is a BUFx2_ASAP7_75t_R, we pessimistically use 3 times the highest input
-#  pin capacitance for this cell, which is 0.577042.
-#  See platforms/asap7/lib/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz, line 1223.
-set_load -pin_load 1.731126 [all_outputs]
+set_max_transition 50 [current_design]
+set_max_transition 50 -clock_path [all_clocks]
