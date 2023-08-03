@@ -39,6 +39,7 @@ pipeline {
                    "uart asap7",
                    "uart-blocks asap7",
                    "mock-array asap7",
+                   "sram-64x16 asap7",
                    "aes nangate45",
                    "bp_be_top nangate45",
                    "bp_fe_top nangate45",
