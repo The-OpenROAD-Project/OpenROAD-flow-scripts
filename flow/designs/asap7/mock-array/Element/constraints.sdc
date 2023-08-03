@@ -4,7 +4,7 @@ set clk_period 500
 
 set clk_name  clock
 set clk_port_name clock
-set clk_in_pct 0.50
+set clk_in_pct 0.25
 set clk_o1_pct 0.2
 set clk_o2_pct 0.75
 
@@ -13,7 +13,9 @@ set_clock_uncertainty 20 [get_clocks $clk_name]
 
 create_clock -name ${clk_name}_vir -period $clk_period -waveform [list 0 [expr $clk_period/2]]
 set_clock_uncertainty  20 [get_clocks ${clk_name}_vir]
-set_clock_latency     100 [get_clocks ${clk_name}_vir]       ;# Matching real clock latency
+# There clock tree of mock-array needs to account for clock network latency
+# of Element before we can increase this to match the clock network latency
+set_clock_latency       0 [get_clocks ${clk_name}_vir]
 
 set clk_port [get_ports $clk_port_name]
 set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
@@ -37,5 +39,5 @@ set_input_delay  [expr $clk_period * $clk_in_pct] -clock ${clk_name}_vir $non_cl
 set_output_delay [expr $clk_period * $clk_o1_pct] -clock ${clk_name}_vir $non_reg_outputs
 set_output_delay [expr $clk_period * $clk_o2_pct] -clock ${clk_name}_vir $reg_outputs
 
-set_max_transition 50 [current_design]
-set_max_transition 50 -clock_path [all_clocks]
+set_max_transition 300 [current_design]
+set_max_transition 100 -clock_path [all_clocks]
