@@ -18,14 +18,15 @@ AutoTuner contains top-level Python script for ORFS, each of which implements a 
 * Tree Parzen Estimator + Covariance Matrix Adaptation Evolution Strategy ([Optuna](https://optuna.org/))
 * Evolutionary Algorithm ([Nevergrad](https://github.com/facebookresearch/nevergrad))
 
-User-settable coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) of three objectives to set the direction of tuning are written in the script. Each coefficient is expressed as a global variable at the `get_ppa` function in `PPAImprov` class in the script (`coeff_perform`, `coeff_power`, `coeff_area`). Efforts to optimize each of the objectives are proportional to the specified coefficients.
+User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) of three objectives to set the direction of tuning are written in the script. Each coefficient is expressed as a global variable at the `get_ppa` function in `PPAImprov` class in the script (`coeff_perform`, `coeff_power`, `coeff_area`). Efforts to optimize each of the objectives are proportional to the specified coefficients.
 
 
 ## Input JSON structure
 
-Sample JSON file for sky130hd aes design: [[link]](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/aes/autotuner.json)
+Sample JSON [file](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/aes/autotuner.json) for Sky130HD `aes` design:  
 
-Simple Example:
+Alternatively, here is a minimal example to get started:
+
 ```json
 {
     "_SDC_FILE_PATH": "constraint.sdc",
@@ -71,7 +72,7 @@ For SDC you can use:
 
 
 
-For FastRoute you can use:
+For Global Routing (FastRoute) you can use:
 
 * `_FR_FILE_PATH`
   - Path relative to the current JSON file to the `fastroute.tcl` file.
@@ -91,13 +92,19 @@ For FastRoute you can use:
 
 `distributed.py` scripts handles sweeping and tuning of ORFS parameters.
 
-For both sweep and tune modes <mode>:
-```shell
-python3 distributed.py -h
+In the sweeping mode, we manually specify the parameters search space
+in the `json`; whereas in the tuning mode - we will use Ray's Tune 
+feature to automatically optimise hyperparameters using one of the 
+algorithms listed above with autotuner `json` file. These two files 
+are of very different format, and you may refer to the examples below
+for more information. 
+
+```{note}
+The order of the parameters matter. Arguments `--design`, `--platform` and
+`--config` are always required and should precede <mode>.
 ```
 
-Note: the order of the parameters matter. Arguments `--design`, `--platform` and
-`--config` are always required and should precede <mode>.
+#### Tune only 
 
 * AutoTuner: `python3 distributed.py tune -h`
 
@@ -108,7 +115,7 @@ python3 distributed.py --design gcd --platform sky130hd \
                        --config ../designs/sky130hd/gcd/autotuner.json \
                        tune
 ```
-
+#### Sweep only 
 
 * Parameter sweeping: `python3 distributed.py sweep -h`
 
@@ -119,12 +126,6 @@ python3 distributed.py --design gcd --platform sky130hd \
                        --config distributed-sweep-example.json \
                        sweep
 ```
-
-
-### Google Cloud Platform (GCP) distribution with Ray.
-
-GCP Setup Tutorial coming soon.
-
 
 ### List of input arguments
 | Argument                      | Description                                                                                           |
@@ -153,8 +154,8 @@ GCP Setup Tutorial coming soon.
 | `--jobs`                      | Max number of concurrent jobs.                                                                        |
 | `--openroad_threads`          | Max number of threads usable.                                                                         |
 | `--server`                    | The address of Ray server to connect.                                                                 |
-| `--port`                      | Tbe port of Ray server to connect.                                                                    |
-| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: also print training stdout                  |
+| `--port`                      | The port of Ray server to connect.                                                                    |
+| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: also print training stdout.                  |
 |                               |                                                                                                       |
 ### GUI
 
