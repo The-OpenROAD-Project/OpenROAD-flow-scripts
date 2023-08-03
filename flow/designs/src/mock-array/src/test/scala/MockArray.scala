@@ -70,8 +70,22 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
       case (a, b) => a := b
     }
 
-    // Combinational logic
-    io.lsbOuts := io.lsbIns.drop(1) ++ Seq(io.outs.asSeq.head(0)(0))
+    // Combinational logic, but a maximum flight path of 4 elements
+    val MAX_FLIGHT = 4
+    io.lsbOuts := (io.lsbIns
+      .drop(1)
+      .reverse
+      .sliding(MAX_FLIGHT, MAX_FLIGHT)
+      .map { lsbs =>
+        if (lsbs.length < MAX_FLIGHT) {
+          lsbs
+        } else {
+          lsbs.dropRight(1) ++ Seq(RegNext(lsbs.last))
+        }
+      })
+      .flatten
+      .toSeq
+      .reverse ++ Seq(io.outs.asSeq.head(0)(0))
   }
 
   val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
