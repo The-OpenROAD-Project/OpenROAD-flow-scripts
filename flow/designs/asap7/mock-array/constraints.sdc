@@ -25,4 +25,3 @@ set_output_delay [expr $clk_period * $clk_o2_pct] -clock ${clk_name}_vir [get_po
 
 set_max_transition 300 [current_design]
 set_max_transition 100 -clock_path [all_clocks]
-
