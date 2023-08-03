@@ -23,6 +23,17 @@ global_route -guide_file $env(RESULTS_DIR)/route.guide \
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
 
+if { [info exists ::env(RECOVER_POWER)] } {
+  puts "Downsizing/switching to higher Vt  for non critical gates for power recovery"
+  report_tns
+  report_wns
+  report_power
+  repair_timing -recover_power
+  report_tns
+  report_wns
+  report_power
+}
+
 source $env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "global route"
 

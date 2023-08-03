@@ -99,7 +99,6 @@ if { [info exists ::env(ENABLE_GATE_CLONING)] } {
 }
 
 repair_timing {*}$additional_args
-repair_timing -recover_power
 
 set result [catch {detailed_placement} msg]
 if {$result != 0} {
