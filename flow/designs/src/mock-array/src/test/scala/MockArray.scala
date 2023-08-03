@@ -20,7 +20,7 @@ object Routes extends Enumeration {
   val LEFT, UP, RIGHT, DOWN = Value
 }
 
-class RoutesVec(singleElementWidth:Int) extends Record {
+class RoutesVec(singleElementWidth: Int) extends Record {
   val routes = SeqMap(Routes.values.toSeq.map { bus =>
     bus -> UInt(singleElementWidth.W)
   }: _*)
@@ -30,16 +30,25 @@ class RoutesVec(singleElementWidth:Int) extends Record {
   def asSeq: Seq[UInt] = routes.map(_._2).toSeq
 }
 
-class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
+class BusesVec(singleElementWidth: Int, width: Int, height: Int)
+    extends Record {
+  val routes = SeqMap(
+    Routes.LEFT -> Vec(height, UInt(singleElementWidth.W)),
+    Routes.RIGHT -> Vec(height, UInt(singleElementWidth.W)),
+    Routes.UP -> Vec(width, UInt(singleElementWidth.W)),
+    Routes.DOWN -> Vec(width, UInt(singleElementWidth.W))
+  )
+  val elements = routes.map { case (a, b) => a.toString().toLowerCase() -> b }
+
+  def asMap: SeqMap[Routes.Value, Vec[UInt]] = routes
+  def asSeq: Seq[Vec[UInt]] = routes.map(_._2).toSeq
+}
+
+class MockArray(width: Int, height: Int, singleElementWidth: Int)
+    extends Module {
   val io = IO(new Bundle {
-    val insLeft = Input(Vec(height, UInt(singleElementWidth.W)))
-    val insUp = Input(Vec(width, UInt(singleElementWidth.W)))
-    val insRight = Input(Vec(height, UInt(singleElementWidth.W)))
-    val insDown = Input(Vec(width, UInt(singleElementWidth.W)))
-    val outsLeft = Output(Vec(height, UInt(singleElementWidth.W)))
-    val outsUp = Output(Vec(width, UInt(singleElementWidth.W)))
-    val outsRight = Output(Vec(height, UInt(singleElementWidth.W)))
-    val outsDown = Output(Vec(width, UInt(singleElementWidth.W)))
+    val ins = Input(new BusesVec(singleElementWidth, width, height))
+    val outs = Output(new BusesVec(singleElementWidth, width, height))
 
     val lsbs = Output(Vec(width * height, Bool()))
   })
@@ -57,35 +66,64 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
     // Registered routing paths
     //  left <-> down
     //  up <-> right
-    (io.outs.asSeq zip io.ins.asSeq.reverse.map(RegNext(_))).foreach{case (a, b) => a := b}
+    (io.outs.asSeq zip io.ins.asSeq.reverse.map(RegNext(_))).foreach {
+      case (a, b) => a := b
+    }
 
-    // Combinational logic
-    io.lsbOuts := io.lsbIns.drop(1) ++ Seq(io.outs.asSeq.head(0)(0))
+    // Combinational logic, but a maximum flight path of 4 elements
+    val MAX_FLIGHT = 4
+    io.lsbOuts := (io.lsbIns
+      .drop(1)
+      .reverse
+      .sliding(MAX_FLIGHT, MAX_FLIGHT)
+      .map { lsbs =>
+        if (lsbs.length < MAX_FLIGHT) {
+          lsbs
+        } else {
+          lsbs.dropRight(1) ++ Seq(RegNext(lsbs.last))
+        }
+      })
+      .flatten
+      .toSeq
+      .reverse ++ Seq(io.outs.asSeq.head(0)(0))
   }
 
   val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
 
-  ces.foreach{row =>
+  ces.foreach { row =>
     row.head.io.lsbIns := DontCare
     if (row.length > 1) {
-      row.sliding(2, 1).foreach{pair =>
+      row.sliding(2, 1).foreach { pair =>
         pair(1).io.lsbIns := pair(0).io.lsbOuts
+      }
     }
-  }}
+  }
 
-  io.lsbs := ces.map(_.last.io.lsbOuts).flatten
+  io.lsbs := RegNext(VecInit(ces.map(_.last.io.lsbOuts).flatten))
 
   // Connect inputs to edge element buses
-  (ces.map(_.head).map(_.io.ins.asMap(Routes.RIGHT)) zip io.insRight).foreach { case (a, b) => a := b }
-  (ces.last.map(_.io.ins.asMap(Routes.DOWN)) zip io.insDown).foreach { case (a, b) => a := b }
-  (ces.map(_.last).map(_.io.ins.asMap(Routes.LEFT)) zip io.insLeft).foreach { case (a, b) => a := b }
-  (ces.head.map(_.io.ins.asMap(Routes.UP)) zip io.insUp).foreach { case (a, b) => a := b }
+  (ces.map(_.head).map(_.io.ins.asMap(Routes.RIGHT)) zip io.ins.asMap(
+    Routes.RIGHT
+  )).foreach { case (a, b) => a := b }
+  (ces.last.map(_.io.ins.asMap(Routes.DOWN)) zip io.ins.asMap(Routes.DOWN))
+    .foreach { case (a, b) => a := b }
+  (ces.map(_.last).map(_.io.ins.asMap(Routes.LEFT)) zip io.ins.asMap(
+    Routes.LEFT
+  )).foreach { case (a, b) => a := b }
+  (ces.head.map(_.io.ins.asMap(Routes.UP)) zip io.ins.asMap(Routes.UP))
+    .foreach { case (a, b) => a := b }
 
   // Connect edge element buses to outputs
-  (ces.map(_.head).map(_.io.outs.asMap(Routes.LEFT)) zip io.outsLeft).foreach { case (a, b) => b := a }
-  (ces.last.map(_.io.outs.asMap(Routes.UP)) zip io.outsUp).foreach { case (a, b) => b := a }
-  (ces.map(_.last).map(_.io.outs.asMap(Routes.RIGHT)) zip io.outsRight).foreach { case (a, b) => b := a }
-  (ces.head.map(_.io.outs.asMap(Routes.DOWN)) zip io.outsDown).foreach { case (a, b) => b := a }
+  (ces.map(_.head).map(_.io.outs.asMap(Routes.LEFT)) zip io.outs.asMap(
+    Routes.LEFT
+  )).foreach { case (a, b) => b := a }
+  (ces.last.map(_.io.outs.asMap(Routes.UP)) zip io.outs.asMap(Routes.UP))
+    .foreach { case (a, b) => b := a }
+  (ces.map(_.last).map(_.io.outs.asMap(Routes.RIGHT)) zip io.outs.asMap(
+    Routes.RIGHT
+  )).foreach { case (a, b) => b := a }
+  (ces.head.map(_.io.outs.asMap(Routes.DOWN)) zip io.outs.asMap(Routes.DOWN))
+    .foreach { case (a, b) => b := a }
 
   // Connect neighboring left/right element buses
   (ces.transpose.flatten zip ces.transpose.drop(1).flatten).foreach {
@@ -95,17 +133,20 @@ class MockArray(width:Int, height:Int, singleElementWidth:Int) extends Module {
   }
 
   // Connect neighboring up/down element buses
-  (ces.flatten zip ces.drop(1).flatten).foreach {
-    case (a, b) =>
-      a.io.ins.asMap(Routes.DOWN) := b.io.outs.asMap(Routes.DOWN)
-      b.io.ins.asMap(Routes.UP) := a.io.outs.asMap(Routes.UP)
+  (ces.flatten zip ces.drop(1).flatten).foreach { case (a, b) =>
+    a.io.ins.asMap(Routes.DOWN) := b.io.outs.asMap(Routes.DOWN)
+    b.io.ins.asMap(Routes.UP) := a.io.outs.asMap(Routes.UP)
   }
 }
 
-case class ArrayConfig(width: Int = 8, height: Int = 8, dataWidth: Int = 8, remainingArgs: Seq[String] = Seq.empty)
+case class ArrayConfig(
+    width: Int = 8,
+    height: Int = 8,
+    dataWidth: Int = 8,
+    remainingArgs: Seq[String] = Seq.empty
+)
 
 object GenerateMockArray extends App {
-
 
   val builder = OParser.builder[ArrayConfig]
   val parser = {
@@ -135,9 +176,15 @@ object GenerateMockArray extends App {
 
   OParser.parse(parser, configArgs, ArrayConfig()) match {
     case Some(c) =>
-
-    new ChiselStage()
-      .execute(chiselArgs, Seq(ChiselGeneratorAnnotation(() => new MockArray(c.width, c.height, c.dataWidth))))
+      new ChiselStage()
+        .execute(
+          chiselArgs,
+          Seq(
+            ChiselGeneratorAnnotation(() =>
+              new MockArray(c.width, c.height, c.dataWidth)
+            )
+          )
+        )
 
     case _ =>
       // arguments are invalid

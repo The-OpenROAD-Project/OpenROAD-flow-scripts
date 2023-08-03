@@ -75,8 +75,10 @@ for {set i 0} {$i <= 5} {incr i} {
 gui::clear_selections
 
 foreach clock [get_clocks *] {
-  set clock_name [get_name $clock]
-  gui::save_clocktree_image $::env(REPORTS_DIR)/cts_$clock_name.webp $clock_name
+  if { [llength [get_property $clock sources]] > 0 } {
+    set clock_name [get_name $clock]
+    gui::save_clocktree_image $::env(REPORTS_DIR)/cts_$clock_name.webp $clock_name
+  }
 }
 
 gui::restore_display_controls
