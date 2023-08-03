@@ -29,4 +29,5 @@ add_pdn_connect -grid {top} -layers {M5 M6}
 ####################################
 # The halo around the macro prevents pdn from blocking pin access
 define_pdn_grid -macro -cells Element -halo "0.25 0.25 0.25 0.25" -voltage_domains {CORE} -name ElementGrid
+
 add_pdn_connect -grid {ElementGrid} -layers {M5 M6}
