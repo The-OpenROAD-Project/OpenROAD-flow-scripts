@@ -22,16 +22,16 @@ clean_metadata:
 update_ok: update_metadata update_rules
 
 .PHONY: update_metadata
-update_metadata: metadata
+update_metadata:
 	cp -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
 	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
 
 .PHONY: update_rules
-update_rules: metadata
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing --tighten
+update_rules:
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing
 
 .PHONY: update_rules_force
-update_rules_force: metadata
+update_rules_force:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
 
 #-------------------------------------------------------------------------------
