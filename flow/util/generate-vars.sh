@@ -10,36 +10,19 @@ EXCLUDED_VARS+="|LSORACLE_CMD|YOSYS_CMD|TIME_CMD|STDBUF_CMD"
 EXCLUDED_VARS+="|SHELL|OPENROAD_EXE|YOSYS_EXE"
 EXCLUDED_VARS+="|UNSET_VARIABLES_NAMES|do-step|get_variables|do-copy"
 
-# get the root directory of the Git repository
-GIT_ROOT=$(git rev-parse --show-toplevel)
-FLOW_ROOT=${GIT_ROOT}/flow
 printf '%s\n' "$ISSUE_VARIABLES" | while read -r V;
 do
-    if [[ ${V%=*} =~ ^[[:digit:]] || ${V} != *"="* || -z ${V#*=} || ${V%=*} == *"MAKEFILE"* || ${V%=*} =~ ^(${EXCLUDED_VARS})$  ]] ; then
-        continue
-    fi
-    rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
-    # handle absolute paths
-    if [[ "${rhs}" == /* ]]; then
-        if [[ ! -e "${rhs}" ]]; then
-            echo "Skiping path not found ${V}"
-            continue
+    if [[ ! ${V%=*} =~ ^[[:digit:]] && ${V} == *"="* && ! -z ${V#*=} && ${V%=*} != *"MAKEFILE"* && ! ${V%=*} =~ ^(${EXCLUDED_VARS})$ ]] ; then
+        rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
+        # handle special case where the variable needs to be splitted in Tcl code
+        if [[ "${V%=*}" == "GND_NETS_VOLTAGES" || "${V%=*}" == "PWR_NETS_VOLTAGES" ]]; then
+            echo "export "${V%=*}"='"\"${rhs}"\"'" >> $1.sh;
+        else
+            echo "export "${V%=*}"='"${rhs}"'" >> $1.sh;
         fi
-        if [[ "${rhs}" != "${GIT_ROOT}"* ]]; then
-            echo "Skiping file outside git ${V}"
-            continue
-        fi
-        # convert the absolute path to a path relative to the flow dir
-        rhs=$(realpath --relative-to="$FLOW_ROOT" "$rhs")
+        echo "set env("${V%=*}") \""${rhs}\""" >> $1.tcl;
+        echo "set env "${V%=*}" "${rhs}"" >> $1.gdb;
     fi
-    # handle special case where the variable needs to be splitted in Tcl code
-    if [[ "${V%=*}" == "GND_NETS_VOLTAGES" || "${V%=*}" == "PWR_NETS_VOLTAGES" ]]; then
-        echo "export "${V%=*}"='"\"${rhs}"\"'" >> $1.sh;
-    else
-        echo "export "${V%=*}"='"${rhs}"'" >> $1.sh;
-    fi
-    echo "set env("${V%=*}") \""${rhs}\""" >> $1.tcl;
-    echo "set env "${V%=*}" "${rhs}"" >> $1.gdb;
 done
 
 # remove variables starting with a dot
