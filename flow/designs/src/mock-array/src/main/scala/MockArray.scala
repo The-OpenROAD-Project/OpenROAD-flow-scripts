@@ -53,7 +53,7 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
     val lsbs = Output(Vec(width * height, Bool()))
   })
 
-  class Element extends Module {
+  class Element(shift: Int) extends Module {
     val io =
       IO(new Bundle {
         val ins = Input(new RoutesVec(singleElementWidth))
@@ -63,11 +63,12 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
         val lsbOuts = Output(Vec(width, Bool()))
       })
 
-    // Registered routing paths
-    //  left <-> down
-    //  up <-> right
-    (io.outs.asSeq zip io.ins.asSeq.reverse.map(RegNext(_))).foreach {
-      case (a, b) => a := b
+    val inputs = io.ins.asSeq
+    val length = inputs.length
+    val rotated =
+      inputs.drop(shift % length) ++ inputs.take(shift % length)
+    (io.outs.asSeq zip rotated.map(RegNext(_))).foreach { case (a, b) =>
+      a := b
     }
 
     // Combinational logic, but a maximum flight path of 4 elements
@@ -88,7 +89,16 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
       .reverse ++ Seq(io.outs.asSeq.head(0)(0))
   }
 
-  val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
+  val ces =
+    Seq.tabulate(height) { y =>
+      Seq.tabulate(width) { x =>
+        Module(
+          new Element(
+            (x + y) % 2
+          )
+        )
+      }
+    }
 
   ces.foreach { row =>
     row.head.io.lsbIns := DontCare

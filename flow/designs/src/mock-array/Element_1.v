@@ -1,4 +1,4 @@
-module Element(
+module Element_1(
   input         clock,
   input  [63:0] io_ins_down,
   input  [63:0] io_ins_right,
@@ -42,10 +42,10 @@ module Element(
   assign io_lsbOuts_6 = io_lsbIns_7;
   assign io_lsbOuts_7 = io_outs_left[0];
   always @(posedge clock) begin
-    REG <= io_ins_left;
-    REG_1 <= io_ins_up;
-    REG_2 <= io_ins_right;
-    REG_3 <= io_ins_down;
+    REG <= io_ins_up;
+    REG_1 <= io_ins_right;
+    REG_2 <= io_ins_down;
+    REG_3 <= io_ins_left;
     REG_4 <= io_lsbIns_4;
   end
 endmodule
