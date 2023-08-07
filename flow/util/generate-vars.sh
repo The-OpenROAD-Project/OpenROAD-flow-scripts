@@ -3,47 +3,55 @@ set -euo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # exclude system and CI variables
-EXCLUDED_VARS="MAKE|PYTHONPATH|PKG_CONFIG_PATH|PERL5LIB|PCP_DIR|PATH|MANPATH"
-EXCLUDED_VARS+="|LD_LIBRARY_PATH|INFOPATH|HOME|PWD|MAIL|QT_QPA_PLATFORM"
-EXCLUDED_VARS+="|OPENROAD_CMD|OPENROAD_GUI_CMD|OPENROAD_NO_EXIT_CMD"
-EXCLUDED_VARS+="|LSORACLE_CMD|YOSYS_CMD|TIME_CMD|STDBUF_CMD"
-EXCLUDED_VARS+="|SHELL|OPENROAD_EXE|YOSYS_EXE"
-EXCLUDED_VARS+="|NPROC|NUM_CORES|PUBLIC|CURDIR|ISSUE_SCRIPTS|MAKEFLAGS"
+EXCLUDED_VARS="MAKE|PERL5LIB"
+EXCLUDED_VARS+="|HOME|PWD|MAIL|QT_QPA_PLATFORM"
+EXCLUDED_VARS+="|SHELL|OPENROAD_EXE|YOSYS_EXE|RESULTS_ODB"
+EXCLUDED_VARS+="|NPROC|NUM_CORES|PUBLIC|ISSUE_SCRIPTS|MAKEFLAGS"
 EXCLUDED_VARS+="|UNSET_VARIABLES_NAMES|do-step|get_variables|do-copy"
 
-# get the root directory of the Git repository
-GIT_ROOT=$(git rev-parse --show-toplevel)
-FLOW_ROOT=${GIT_ROOT}/flow
-printf '%s\n' "$ISSUE_VARIABLES" | while read -r V;
-do
-    if [[ ${V%=*} =~ ^[[:digit:]] || ${V} != *"="* || -z ${V#*=} || ${V%=*} == *"MAKEFILE"* || ${V%=*} =~ ^(${EXCLUDED_VARS})$  ]] ; then
+EXCLUDED_PATTERNS="_EXE$|PATH$|_DIR$|_CMD$|^\."
+
+while read -r VAR; do
+    if [[ ${VAR} != *"="* ]] ; then
+        # skip variables that do not have an equal sign
+        # they are invalid in shell
         continue
     fi
-    rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
-    # handle absolute paths
-    if [[ "${rhs}" == /* ]]; then
-        if [[ ! -e "${rhs}" ]]; then
-            echo "Skiping path not found ${V}"
-            continue
-        fi
-        if [[ "${rhs}" != "${GIT_ROOT}"* ]]; then
-            echo "Skiping file outside git ${V}"
-            continue
-        fi
-        # convert the absolute path to a path relative to the flow dir
-        rhs=$(realpath --relative-to="$FLOW_ROOT" "$rhs")
+    name="${VAR%=*}"
+    value="${VAR#*=}"
+    if [[ "${name}" =~ ^[[:digit:]] ]] ; then
+        # skip if the name starts with a number
+        # they are invalid in shell
+        continue
+    fi
+    if [[ "${value}" == "''" ]]; then
+        # avoid exporting empty variables as var=''''
+        # instead export as var=''
+        value=
+    fi
+    if [[ "${name}" == *"MAKEFILE"* ]] ; then
+        # skip make variables
+        continue
+    fi
+    if [[ "${name}" =~ ^(${EXCLUDED_VARS})$  ]] ; then
+        # skip variables from the exclude list
+        continue
+    fi
+    if [[ "${name}" =~ ${EXCLUDED_PATTERNS}  ]] ; then
+        # skip variables that match the exclude patterns
+        continue
+    fi
+    if [[ ${value} == *"\""* ]]; then
+        # remove double quotes from value to avoid syntax issues on final
+        # generated script
+        value=$(sed -e 's/^"//' -e 's/"$//' <<< "${value}")
     fi
     # handle special case where the variable needs to be splitted in Tcl code
-    if [[ "${V%=*}" == "GND_NETS_VOLTAGES" || "${V%=*}" == "PWR_NETS_VOLTAGES" ]]; then
-        echo "export "${V%=*}"='"\"${rhs}"\"'" >> $1.sh;
+    if [[ "${name}" == "GND_NETS_VOLTAGES" || "${name}" == "PWR_NETS_VOLTAGES" ]]; then
+        echo "export ${name}='\"${value}\"'" >> $1.sh;
     else
-        echo "export "${V%=*}"='"${rhs}"'" >> $1.sh;
+        echo "export ${name}=\"${value}\"" >> $1.sh;
     fi
-    echo "set env("${V%=*}") \""${rhs}\""" >> $1.tcl;
-    echo "set env "${V%=*}" "${rhs}"" >> $1.gdb;
-done
-
-# remove variables starting with a dot
-sed -i -e '/export \./d' $1.sh
-sed -i -e '/set env(\./d' $1.tcl
-sed -i -e '/set env \./d' $1.gdb
+    echo "set env(${name}) \"${value}\"" >> $1.tcl;
+    echo "set env ${name} ${value}" >> $1.gdb;
+done <<< "$ISSUE_VARIABLES"
