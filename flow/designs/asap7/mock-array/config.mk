@@ -3,7 +3,7 @@ include designs/asap7/mock-array/defaults.mk
 export DESIGN_NAME            = MockArray
 export DESIGN_NICKNAME        = mock-array
 
-export VERILOG_FILES_BLACKBOX = designs/src/mock-array/Element.v
+export VERILOG_FILES_BLACKBOX = designs/src/mock-array/Element.v designs/src/mock-array/Element_1.v
 export VERILOG_FILES          = designs/src/mock-array/*.v
 
 export SDC_FILE               = designs/asap7/mock-array/constraints.sdc
@@ -24,9 +24,9 @@ export DIE_AREA  = $(shell \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config; print(f'{0} {0} {config.die_width} {config.die_height}')")
 
-BLOCKS                       = Element
+BLOCKS                       = Element Element_1
 
-export GDS_ALLOW_EMPTY       = Element
+export GDS_ALLOW_EMPTY       = Element Element_1
 
 export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
 
