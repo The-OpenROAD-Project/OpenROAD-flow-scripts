@@ -9,7 +9,7 @@ of QoR and detailed physical design implementation. However, ORFS
 also enables manual intervention for finer user control of individual
 flow stages through Tcl commands and Python APIs.
 
-```{mermaid}
+```mermaid
 :align: center
 
 %%{init: { 'logLevel': 'debug', 'theme': 'dark'
