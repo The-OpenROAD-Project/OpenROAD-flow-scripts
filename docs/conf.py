@@ -151,7 +151,7 @@ def setup(app):
     
     # symlink does not work for ORFS because of long recursive file links
     shutil.copy('../README.md', 'mainREADME.md')
-    swap_prefix('../README.md', '```mermaid', '```{mermaid}\n:align: center\n')   
+    swap_prefix('mainREADME.md', '```mermaid', '```{mermaid}\n:align: center\n')   
 
     url = 'https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/docs/contrib/GitGuide.md'
     get_file_from_url(url, 'contrib/GitGuide.md') 

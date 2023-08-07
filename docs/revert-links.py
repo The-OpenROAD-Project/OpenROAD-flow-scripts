@@ -8,4 +8,4 @@ def swap_prefix(file, old, new):
         f.write(lines)
 
 
-swap_prefix('../README.md', '```{mermaid}\n:align: center\n', '```mermaid')
+swap_prefix('mainREADME.md', '```{mermaid}\n:align: center\n', '```mermaid')
