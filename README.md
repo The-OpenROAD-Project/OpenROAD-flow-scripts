@@ -10,7 +10,6 @@ also enables manual intervention for finer user control of individual
 flow stages through Tcl commands and Python APIs.
 
 ```mermaid
-:align: center
 
 %%{init: { 'logLevel': 'debug', 'theme': 'dark'
   } }%%
