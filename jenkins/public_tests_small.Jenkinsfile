@@ -37,7 +37,6 @@ pipeline {
                    "riscv32i asap7",
                    "sha3 asap7",
                    "uart asap7",
-                   "uart-blocks asap7",
                    "mock-array asap7",
                    "sram-64x16 asap7",
                    "aes nangate45",
