@@ -16,9 +16,34 @@ if {[info exist env(FASTROUTE_TCL)]} {
   }
 }
 
-global_route -guide_file $env(RESULTS_DIR)/route.guide \
-               -congestion_report_file $env(REPORTS_DIR)/congestion.rpt \
-               {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : {-congestion_iterations 20 -verbose}}]
+# The default behavior if the user didn't specify GLOBAL_ROUTE_ARGS is to
+# first make an attempt with a few iterations, if this is a hard global
+# route, start from scratch, try harder and logging. The goal here is to make
+# ORFS handle the simple cases without fuzz and to make the harder
+# cases more easily debuggable without having to go spelunking in Tcl.
+#
+# If GLOBAL_ROUTE_ARGS is specified, then we do only what the
+# GLOBAL_ROUTE_ARGS specifies.
+set common_args [list -guide_file $env(RESULTS_DIR)/route.guide \
+                      -congestion_report_file $env(REPORTS_DIR)/congestion.rpt]
+if {[info exists ::env(GLOBAL_ROUTE_ARGS)]} {
+  global_route {*}$common_args {*}$::env(GLOBAL_ROUTE_ARGS)
+} else {
+  for {set i 0} {$i < 2} {incr i} {
+    set congestion_args [list -verbose]
+    if {$i == 1} {
+      global_route {*}$common_args {*}$congestion_args -congestion_iterations 20 -congestion_report_iter_step 1
+      break
+    } else {
+      try {
+          global_route {*}$common_args {*}$congestion_args -congestion_iterations 5
+          break
+      } catch {
+          puts "First attempt failed. Retrying, reporting each iteration..."
+      }
+    }
+  }
+}
 
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
