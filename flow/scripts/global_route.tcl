@@ -35,11 +35,13 @@ if {[info exists ::env(GLOBAL_ROUTE_ARGS)]} {
       global_route {*}$common_args {*}$congestion_args -congestion_iterations 20 -congestion_report_iter_step 1
       break
     } else {
-      try {
-          global_route {*}$common_args {*}$congestion_args -congestion_iterations 5
-          break
-      } catch {
-          puts "First attempt failed. Retrying, reporting each iteration..."
+      set result [catch {
+        global_route {*}$common_args {*}$congestion_args -congestion_iterations 5
+        break
+      } errMsg]
+      if {$result} {
+        puts "First attempt failed. Retrying, reporting each iteration..."
+        puts "Error message: $errMsg"
       }
     }
   }
