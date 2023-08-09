@@ -237,13 +237,11 @@ ops = {
     '!=': operator.ne,
 }
 
-period_list = list()
-for entry in metrics['constraints__clocks__details']:
-    period_list.append(float(sub(r'^.*: ', '', entry)))
+period_list = metrics['constraints__clocks__details']
 
+period = float(sub(r'^.*: ', '', period_list[0]))
 if len(period_list) != 1:
-    print('[WARNING] Multiple clocks not supported. Will use first clock.')
-period = period_list[0]
+    print(f'[WARNING] Multiple clocks not supported. Will use first clock: {period_list[0]}.')
 
 for field, option in rules_dict.items():
     if field not in metrics.keys():
