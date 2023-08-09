@@ -20,10 +20,6 @@ do
         continue
     fi
     rhs=`sed -e 's/^"//' -e 's/"$//' <<<"${V#*=}"`
-    if [[ "${rhs}" == "''" ]]; then
-        echo "Skiping empty variable ${V}"
-        continue
-    fi
     # handle absolute paths
     if [[ "${rhs}" == /* ]]; then
         if [[ ! -e "${rhs}" ]]; then
