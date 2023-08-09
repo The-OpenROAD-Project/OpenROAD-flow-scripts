@@ -80,7 +80,6 @@
 # DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
 # DESIGN_CONFIG=./designs/asap7/sha3/config.mk
 # DESIGN_CONFIG=./designs/asap7/swerv_wrapper/config.mk
-# DESIGN_CONFIG=./designs/asap7/uart-blocks/config.mk
 # DESIGN_CONFIG=./designs/asap7/uart/config.mk
 
 # DESIGN_CONFIG=./designs/intel16/aes/config.mk
@@ -350,11 +349,11 @@ $(OBJECTS_DIR)/klayout_tech.lef: $(TECH_LEF)
 	@mkdir -p $(OBJECTS_DIR)
 	sed '/OR_DEFAULT/d' $< > $@
 
- $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $< > $@
+$(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(shell realpath --relative-to=$(RESULTS_DIR) $(file))</lef-files>),g' $< > $@
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(abspath $(file))</lef-files>),g' $< > $@
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(shell realpath --relative-to=$(OBJECTS_DIR)/def $(file))</lef-files>),g' $< > $@
 # Create Macro wrappers (if necessary)
 # ==============================================================================
 WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg

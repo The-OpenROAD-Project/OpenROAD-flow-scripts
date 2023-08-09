@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 10552,
+        "value": 10552.03,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 14484,
+        "value": 14737,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -20,35 +20,35 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -1979.15,
+        "value": -2233.19,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -4110.49,
+        "value": -4218.46,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -4110.49,
+        "value": -4218.46,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 783,
+        "value": 1565,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 846,
+        "value": 1565,
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -1841.0,
+        "value": -2018.47,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -1841.0,
+        "value": -2018.48,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 267502,
+        "value": 310760,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -56,11 +56,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -321.55,
+        "value": -431.17,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 16035,
+        "value": 16523,
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
@@ -76,7 +76,7 @@
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 15,
+        "value": 783,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
@@ -84,7 +84,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -15.29,
+        "value": -18.63,
         "compare": ">="
     }
 }

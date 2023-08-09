@@ -50,7 +50,18 @@ append additional_args " -save_guide_updates -verbose 1"
 # "-droute_end_iter 5" to look at routing violations after only 5 iterations,
 # speeding up iterations on a problem where detailed routing doesn't converge
 # or converges slower than expected.
-set arguments [expr {[info exists ::env(DETAILED_ROUTE_ARGS)] ? $::env(DETAILED_ROUTE_ARGS) : $additional_args}]
+#
+# If DETAILED_ROUTE_ARGS is not specified, save out progress report a
+# few iterations after the first two iterations. The first couple of
+# iterations would produce very large .drc reports without interesting
+# information for the user.
+#
+# The idea is to have a policy that gives progress information soon without
+# having to go spelunking in Tcl or modify configuration scripts, while
+# not having to wait too long or generating large useless reports.
+
+set arguments [expr {[info exists ::env(DETAILED_ROUTE_ARGS)] ? $::env(DETAILED_ROUTE_ARGS) : \
+ [concat $additional_args {-drc_report_iter_step 5}]}]
 
 puts "detailed_route arguments: $arguments"
 
