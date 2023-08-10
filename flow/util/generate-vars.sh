@@ -1,15 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+FLOW_ROOT=$(realpath "${FLOW_HOME}")
+ORFS_ROOT=$(realpath "${FLOW_HOME}/../")
 
 # exclude system and CI variables
-EXCLUDED_VARS="MAKE|PERL5LIB"
-EXCLUDED_VARS+="|HOME|PWD|MAIL|QT_QPA_PLATFORM"
-EXCLUDED_VARS+="|SHELL|OPENROAD_EXE|YOSYS_EXE|RESULTS_ODB"
-EXCLUDED_VARS+="|NPROC|NUM_CORES|PUBLIC|ISSUE_SCRIPTS|MAKEFLAGS"
+EXCLUDED_VARS="MAKE|MAKEFLAGS|PERL5LIB|QT_QPA_PLATFORM"
+EXCLUDED_VARS+="|RESULTS_ODB|PUBLIC|ISSUE_SCRIPTS"
+EXCLUDED_VARS+="|HOME|PWD|MAIL|SHELL|NPROC|NUM_CORES"
 EXCLUDED_VARS+="|UNSET_VARIABLES_NAMES|do-step|get_variables|do-copy"
 
-EXCLUDED_PATTERNS="_EXE$|PATH$|_DIR$|_CMD$|^\."
+EXCLUDED_PATTERNS="_EXE$|PATH$|_CMD$|\."
 
 while read -r VAR; do
     if [[ ${VAR} != *"="* ]] ; then
@@ -41,14 +42,14 @@ while read -r VAR; do
         # skip variables that match the exclude patterns
         continue
     fi
-    if [[ ${value} == *"\""* ]]; then
-        # remove double quotes from value to avoid syntax issues on final
-        # generated script
-        value=$(sed -e 's/^"//' -e 's/"$//' <<< "${value}")
+    if [[ ${value} == /* ]]; then
+        # convert absolute paths if possible to use FLOW_HOME variable
+        value=$(sed -e "s,${FLOW_ROOT},\${FLOW_HOME},g" <<< "${value}")
+        value=$(sed -e "s,${ORFS_ROOT},\${FLOW_HOME}/\.\.,g" <<< "${value}")
     fi
     # handle special case where the variable needs to be splitted in Tcl code
     if [[ "${name}" == "GND_NETS_VOLTAGES" || "${name}" == "PWR_NETS_VOLTAGES" ]]; then
-        echo "export ${name}='\"${value}\"'" >> $1.sh;
+        echo "export ${name}='${value}'" >> $1.sh;
     else
         echo "export ${name}=\"${value}\"" >> $1.sh;
     fi
