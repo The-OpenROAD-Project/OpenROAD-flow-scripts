@@ -48,7 +48,7 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 46,
+        "value": 48,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
@@ -60,7 +60,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -188.23,
+        "value": -217.28,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {

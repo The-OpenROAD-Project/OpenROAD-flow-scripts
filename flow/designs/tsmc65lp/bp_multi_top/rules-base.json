@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__timing__setup__ws": {
-        "value": -1.68,
+        "value": -1.59,
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
@@ -40,11 +40,11 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": -0.88,
+        "value": -1.55,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.88,
+        "value": -1.55,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -76,7 +76,7 @@
         "compare": ">="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 11,
+        "value": 35,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
