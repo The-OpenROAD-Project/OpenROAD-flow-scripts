@@ -1,5 +1,5 @@
-MockArray.anno.json
-MockArray.fir
+*.anno.json
+*.fir
 project/
 target/
 .metals/
