@@ -77,8 +77,8 @@ Note:
 | Clock Tree Synthesis                 |              |              |               |           |           |
 | `CTS_BUF_CELL`                       | =            | =            | =             | =         | =         |
 | `CTS_BUF_DISTANCE`                   | N/A          | N/A          | N/A           | =         | =         |
-| `ENABLE_GATE_CLONING`                | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `FILL_CELLS`                         | =            | =            | =             | =         | =         |
+| `SKIP_GATE_CLONING`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `SKIP_PIN_SWAP`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
@@ -88,6 +88,7 @@ Note:
 | `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
 | `MIN_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
 | `RCX_RULES`                          | =            | =            | =             | =         | =         |
+| `RECOVER_POWER`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
 
 
 ### Library Setup
@@ -169,10 +170,10 @@ Note:
 | Variable              | Description                                                                                                  |
 |-----------------------|--------------------------------------------------------------------------------------------------------------|
 | `CTS_BUF_CELL`        | The buffer cell used in the clock tree.                                                                      |
-| `ENABLE_GATE_CLONING` | Use gate cloning transform to fix timing violations when appropriate (default: do not use cloning)           |
 | `FILL_CELLS`          | Fill cells are used to fill empty sites.    								                                   |
 | `HOLD_SLACK_MARGIN`   | Specifies a time margin for the slack when fixing hold violations. This option allow you to overfix.         |
 | `SETUP_SLACK_MARGIN`  | Specifies a time margin for the slack when fixing setup violations.                                          |
+| `SKIP_GATE_CLONING`   | Do not use gate cloning transform to fix timing violations (default: use gate cloning)                       |
 | `SKIP_PIN_SWAP`       | Do not use pin swapping as a transform to fix timing violations (default: use pin swapping)                  |
 | `TNS_END_PERCENT`     | Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed                |
 
@@ -181,11 +182,12 @@ Note:
 
 
 | Variable              | Description                                                             |
-|-----------------------|-------------------------------------------------------------------------|
-| `MIN_ROUTING_LAYER`   | The lowest metal layer name to be used in routing.                      |
-| `MAX_ROUTING_LAYER`   | The highest metal layer name to be used in routing.                     |
-| `DETAILED_ROUTE_ARGS` | Add additional arguments for debugging purpose during detail route.     |
-| `MACRO_EXTENSION`     | Sets the number of GCells added to the blockages boundaries from macros.|
+|-----------------------|---------------------------------------------------------------------------------------------------|
+| `MIN_ROUTING_LAYER`   | The lowest metal layer name to be used in routing.                                                |
+| `MAX_ROUTING_LAYER`   | The highest metal layer name to be used in routing.                                               |
+| `DETAILED_ROUTE_ARGS` | Add additional arguments for debugging purpose during detail route.                               |
+| `MACRO_EXTENSION`     | Sets the number of GCells added to the blockages boundaries from macros.                          |
+| `RECOVER_POWER`       | Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100]. |
 
 
 ### Extraction
