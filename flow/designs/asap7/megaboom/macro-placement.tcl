@@ -44,7 +44,11 @@ foreach instName [list \
                     coreplex/RocketTile/core/bpd_stage/br_predictor/brob/entries_info/u_entries_info_ext/u_regfile \
               ] {
   set orient [lindex $orientList $flag]
+  puts "====> instance $instName"
   set inst   [$block findInst $instName]
+  if {$inst == "NULL"} {
+    puts "ERROR ====> instance $instName"
+  }
 
   set bbox   [$inst getBBox]
   set w      [$bbox getDX]
