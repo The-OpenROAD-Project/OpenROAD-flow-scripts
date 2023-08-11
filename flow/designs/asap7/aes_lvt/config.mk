@@ -13,7 +13,6 @@ export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.65
 export TNS_END_PERCENT        = 100
-export ENABLE_GATE_CLONING    = 1
 
 export ASAP7_USELVT           = 1
 export ADDITIONAL_LIBS        = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz \
