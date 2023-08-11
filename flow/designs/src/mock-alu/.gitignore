@@ -1,0 +1,7 @@
+*.anno.json
+*.fir
+project/
+target/
+.metals/
+.vscode/
+.bloop/
