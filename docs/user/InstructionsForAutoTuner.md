@@ -21,6 +21,23 @@ AutoTuner contains top-level Python script for ORFS, each of which implements a 
 User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) of three objectives to set the direction of tuning are written in the script. Each coefficient is expressed as a global variable at the `get_ppa` function in `PPAImprov` class in the script (`coeff_perform`, `coeff_power`, `coeff_area`). Efforts to optimize each of the objectives are proportional to the specified coefficients.
 
 
+## Setting up AutoTuner
+
+To setup AutoTuner, make sure you have a virtual environment set up with
+Python 3.7.X. There are plenty of ways to do this, we recommend using 
+[Miniconda](https://docs.conda.io/en/latest/miniconda.html),
+which is a free minimal installer for the package manager `conda`. 
+
+```shell
+# set up conda environment
+conda create -n autotuner_env python=3.7
+conda activate autotuner_env
+
+# install requirements
+cd <PATH_TO_ORFS_ROOT>/tools/AutoTuner
+pip install -r requirements.txt
+```
+
 ## Input JSON structure
 
 Sample JSON [file](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/aes/autotuner.json) for Sky130HD `aes` design:  
