@@ -88,7 +88,6 @@ For SDC you can use:
   - I/O delay. This will create a copy of `_SDC_FILE_PATH` and modify the I/O delay.
 
 
-
 For Global Routing (FastRoute) you can use:
 
 * `_FR_FILE_PATH`
@@ -99,8 +98,6 @@ For Global Routing (FastRoute) you can use:
   - Layer adjustment for layer NAME. This will create a copy of `_FR_FILE_PATH` and modify the layer adjustment only for the layer NAME.
 * `_FR_GR_SEED`
   - Global route random seed. This will create a copy of `_FR_FILE_PATH` and modify the global route random seed.
-
-
 
 
 ## How to use
