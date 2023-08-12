@@ -29,18 +29,20 @@ variable. For OpenROAD Flow Scripts we have the following public platforms:
 
 
 The table below lists the complete set of variables used in each of the
-public platforms supported by the OpenROAD flow. 
+public platforms supported by the OpenROAD flow.
 
 
 Note:
 -   = indicates default definition assigned by the tool
 -   ?= indicates that the variable value may be reassigned with design `config.mk`
+-   N/A indicates that the variable/files is not supported currently.
 
 
 | **Configuration Variable**           | **sky130hd** | **sky130hs** | **nangate45** | **asap7** | **gf180** |
 |--------------------------------------|--------------|--------------|---------------|-----------|-----------|
 | Library Setup                        |              |              |               |           |           |
 | `PROCESS`                            | =            | =            | =             | =         | =         |
+| `CORNER`                             | N/A          | N/A          | N/A           | ?=        | ?=        |
 | `TECH_LEF`                           | =            | =            | =             | =         | =         |
 | `SC_LEF`                             | =            | =            | =             | =         | =         |
 | `LIB_FILES`                          | =            | =            | =             | =         | =         |
@@ -60,6 +62,8 @@ Note:
 | `PLACE_SITE`                         | =            | =            | =             | =         | =         |
 | `MAKE_TRACKS`                        | =            | =            | =             | =         | =         |
 | `TAPCELL_TCL`                        | =            | =            | =             | =         | =         |
+| `MACRO_HALO_X`                       | NA           | NA           | NA            | ?=        | NA        |
+| `MACRO_HALO_Y`                       | NA           | NA           | NA            | ?=        | NA        |
 | `MACRO_PLACE_HALO`                   | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `MACRO_PLACE_CHANNEL`                | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `PDN_TCL`                            | ?=           | ?=           | ?=            | ?=        | ?=        |
@@ -72,15 +76,19 @@ Note:
 | `WIRE_RC_LAYER`                      | =            | =            | =             | =         | =         |
 | Clock Tree Synthesis                 |              |              |               |           |           |
 | `CTS_BUF_CELL`                       | =            | =            | =             | =         | =         |
-| `ENABLE_GATE_CLONING`                | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `CTS_BUF_DISTANCE`                   | N/A          | N/A          | N/A           | =         | =         |
 | `FILL_CELLS`                         | =            | =            | =             | =         | =         |
+| `SKIP_GATE_CLONING`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `SKIP_PIN_SWAP`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
+| `FASTROUTE_TCL`                      | ?=           | ?=           | ?=            | N/A       | N/A       |
+| `FILL_CONFIG`                        | =            | =            | N/A           | N/A       | N/A       |
 | `KLAYOUT_TECH_FILE`                  | =            | =            | =             | =         | =         |
 | `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
 | `MIN_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
 | `RCX_RULES`                          | =            | =            | =             | =         | =         |
+| `RECOVER_POWER`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
 
 
 ### Library Setup
@@ -112,7 +120,6 @@ Note:
 | `ABC_CLOCK_PERIOD_IN_PS` | Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`. |
 | `ABC_DRIVER_CELL`        | Default driver cell used during ABC synthesis.                                             |
 | `ABC_LOAD_IN_FF`         | During synthesis set_load value used.                                                      |
-| `MAX_UNGROUP_SIZE`       | For hierarchical synthesis, we ungroup modules of size given by this variable.             |
 
 
 ### Floorplan
@@ -124,6 +131,7 @@ Note:
 | `PLACE_SITE`          | Placement site for core cells defined in the technology LEF file.                                                                                                                |
 | `TAPCELL_TCL`         | Path to Endcap and Welltie cells file.                                                                                                                                           |
 | `RTLMP_FLOW`          | Enable the Hierarchical RTLMP flow. By default it is disabled.                                                                                                                   |
+| `MACRO_HALO`          | Specifies keep out distance from macro, in X and Y, to standard cell row.                                                                                                        |
 | `MACRO_PLACEMENT`     | Specifies the path of a file on how to place certain macros manually using read_macro_placement.                                                                                 |
 | `MACRO_PLACEMENT_TCL` | Specifies the path of a TCL file on how to place certain macros manually.                                                                                                        |
 | `MACRO_PLACE_HALO`    | horizontal/vertical halo around macros (microns). Used by automatic macro placement.                                                                               |
@@ -162,10 +170,10 @@ Note:
 | Variable              | Description                                                                                                  |
 |-----------------------|--------------------------------------------------------------------------------------------------------------|
 | `CTS_BUF_CELL`        | The buffer cell used in the clock tree.                                                                      |
-| `ENABLE_GATE_CLONING` | Use gate cloning transform to fix timing violations when appropriate (default: do not use cloning)           |
 | `FILL_CELLS`          | Fill cells are used to fill empty sites.    								                                   |
 | `HOLD_SLACK_MARGIN`   | Specifies a time margin for the slack when fixing hold violations. This option allow you to overfix.         |
 | `SETUP_SLACK_MARGIN`  | Specifies a time margin for the slack when fixing setup violations.                                          |
+| `SKIP_GATE_CLONING`   | Do not use gate cloning transform to fix timing violations (default: use gate cloning)                       |
 | `SKIP_PIN_SWAP`       | Do not use pin swapping as a transform to fix timing violations (default: use pin swapping)                  |
 | `TNS_END_PERCENT`     | Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed                |
 
@@ -174,11 +182,12 @@ Note:
 
 
 | Variable              | Description                                                             |
-|-----------------------|-------------------------------------------------------------------------|
-| `MIN_ROUTING_LAYER`   | The lowest metal layer name to be used in routing.                      |
-| `MAX_ROUTING_LAYER`   | The highest metal layer name to be used in routing.                     |
-| `DETAILED_ROUTE_ARGS` | Add additional arguments for debugging purpose during detail route.     |
-| `MACRO_EXTENSION`     | Sets the number of GCells added to the blockages boundaries from macros.|
+|-----------------------|---------------------------------------------------------------------------------------------------|
+| `MIN_ROUTING_LAYER`   | The lowest metal layer name to be used in routing.                                                |
+| `MAX_ROUTING_LAYER`   | The highest metal layer name to be used in routing.                                               |
+| `DETAILED_ROUTE_ARGS` | Add additional arguments for debugging purpose during detail route.                               |
+| `MACRO_EXTENSION`     | Sets the number of GCells added to the blockages boundaries from macros.                          |
+| `RECOVER_POWER`       | Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100]. |
 
 
 ### Extraction
@@ -229,18 +238,11 @@ configuration file.
 | `ADDITIONAL_LIBS`        | Hardened macro library files listed here.                                                          |
 | `ADDITIONAL_GDS`         | Hardened macro GDS files listed here.                                                              |
 | `VERILOG_INCLUDE_DIRS`   | Specifies the include directories for the Verilog input files.                                     |
-| `CORNER`                 | PVT corner library selection. Only available for ASAP7 and GF180 PDK.                              |
+| `CORNER`                 | PVT corner library selection.                                                                      |
 | `DESIGN_NICKNAME`        | DESIGN_NICKNAME just changes the directory name that ORFS outputs to be DESIGN_NICKNAME instead of DESIGN_NAME in case DESIGN_NAME is unwieldy or conflicts with a difference design.                                                                                    |
 | `ABC_AREA`               | Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.                                 |
 | `PWR_NETS_VOLTAGES`      | Used for IR Drop calculation.                                                                      |
 | `GND_NETS_VOLTAGES`      | Used for IR Drop calculation.                                                                      |
-| `BLOCKS`                 | Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by [Makefile](../main/flow/Makefile) |
-| `CDL_FILES`              | Insert additional Circuit Description Language (`.cdl`) netlist files.                             | 
-| `DFF_LIB_FILES`          | Technology mapping liberty files for flip-flops.                                                   |
-| `DONT_USE_LIBS`          | Set liberty files as `dont_use`.                                                                   |
-| `PRESERVE_CELLS`         | Mark modules to keep from getting removed in flattening.                                           |
-| `SYNTH_ARGS`             | Optional synthesis variables for yosys.                                                            |
-| `VERILOG_TOP_PARAMS`     | Apply toplevel params (if exist).                                                                  |
 
 
 #### Floorplan
@@ -253,31 +255,4 @@ configuration file.
 | `CORE_MARGIN`         | The margin between the core area and die area, in multiples of SITE heights. The margin is applied to each side. This variable is ignored if `CORE_UTILIZATION` is undefined.                                                              |
 | `DIE_AREA`            | The die area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2). This variable is ignored if `CORE_UTILIZATION` and `CORE_ASPECT_RATIO` are defined.                                                       |
 | `CORE_AREA`           | The core area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2). This variable is ignored if `CORE_UTILIZATION` and `CORE_ASPECT_RATIO` are defined.                                                      |
-| `RESYNTH_AREA_RECOVER` | Enable re-synthesis for area reclaim. |
-| `RESYNTH_TIMING_RECOVER` | Enable re-synthesis for timing optimization. | 
-| `MACRO_HALO_X`         | Set macro halo for x-direction. Only available for ASAP7 PDK. |
-| `MACRO_HALO_Y`         | Set macro halo for y-direction. Only available for ASAP7 PDK. |
 
-
-## Placement
-
-
-| Variable                 | Description                                                                                        |
-|--------------------------|----------------------------------------------------------------------------------------------------|
-| `MACRO_WRAPPERS`         | The wrapper file that replace existing macros with their wrapped version.                          |
-
-
-## Clock Tree Synthesis
-
-
-| Variable                 | Description                                                                                        |
-|--------------------------|----------------------------------------------------------------------------------------------------|
-| `CTS_BUF_DISTANCE`       | Distance (in microns) between buffers.                                                              |
-| `CTS_CLUSTER_DIAMETER`   | Maximum diameter (in microns) of sink cluster. Default 20.                                         |
-| `CTS_CLUSTER_SIZE`       | Maximum number of sinks per cluster. Default 50.
-
-
-## Routing
-| Variable                 | Description                                                                                        |
-|--------------------------|----------------------------------------------------------------------------------------------------|
-| `FASTROUTE_TCL`          | Specifies a Tcl scripts with commands to run before FastRoute.                                      |
