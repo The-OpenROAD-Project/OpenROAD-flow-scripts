@@ -72,6 +72,7 @@ Note:
 | `WIRE_RC_LAYER`                      | =            | =            | =             | =         | =         |
 | Clock Tree Synthesis                 |              |              |               |           |           |
 | `CTS_BUF_CELL`                       | =            | =            | =             | =         | =         |
+| `CTS_BUF_DISTANCE`                   | N/A          | N/A          | N/A           | =         | =         |
 | `FILL_CELLS`                         | =            | =            | =             | =         | =         |
 | `SKIP_GATE_CLONING`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `SKIP_PIN_SWAP`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
