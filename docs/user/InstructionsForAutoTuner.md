@@ -178,6 +178,18 @@ You could find the "Best config found" on the screen.
 
 To use TensorBoard GUI, run `tensorboard --logdir=./<logpath>`. While TensorBoard is running, you can open the webpage `http://localhost:6006/` to see the GUI.
 
+We show three different views possible at the end, namely: `Table View`, `Scatter Plot Matrix View` and `Parallel Coordinate View`.
+
+![Table View](../images/Autotuner_Table_view.webp)
+<p style="text-align: center;">Table View</p>
+
+![Scatter Plot Matrix View](../images/Autotuner_scatter_plot_matrix_view.webp)
+<p style="text-align: center;">Scatter Plot Matrix View</p>
+
+![Parallel Coordinate View](../images/Autotuner_best_parameter_view.webp)
+<p style="text-align: center;">Parallel Coordinate View (best run is in green)</p>
+
+
 ## Citation
 
 Please cite the following paper.
