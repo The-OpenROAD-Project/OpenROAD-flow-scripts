@@ -52,15 +52,19 @@ pipeline {
             name 'TEST_SLUG';
             values "docker build",
                    "aes asap7",
+ 		   "aes_lvt asap7",
                    "ethmac asap7",
+		   "ethmac_lvt asap7",
                    "gcd asap7",
                    "ibex asap7",
                    "jpeg asap7",
+		   "jpeg_lvt asap7",
                    "riscv32i asap7",
                    "sha3 asap7",
                    "swerv_wrapper asap7",
                    "uart asap7",
                    "mock-array asap7",
+                   "mock-alu asap7",
                    "sram-64x16 asap7",
                    "aes nangate45",
                    "ariane136 nangate45",
@@ -212,13 +216,8 @@ pipeline {
       script {
         try {
           COMMIT_AUTHOR_EMAIL = sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
-          if ( env.BRANCH_NAME == "master" ) {
-            echo("Main development branch: report to stakeholders and commit author.");
-            EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
-          } else {
-            echo("Feature development branch: report only to commit author.");
-            EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
-          }
+          echo("Nightly run: report to stakeholders and commit author.");
+          EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
         } catch (Exception e) {
           echo "Exception occurred: " + e.toString();
           EMAIL_TO="\$DEFAULT_RECIPIENTS";
