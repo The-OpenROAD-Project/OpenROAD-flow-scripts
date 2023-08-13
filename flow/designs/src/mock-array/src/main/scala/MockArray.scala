@@ -56,6 +56,7 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
   class Element extends Module {
     val io =
       IO(new Bundle {
+        val clockOutRight = Output(Clock())
         val ins = Input(new RoutesVec(singleElementWidth))
         val outs = Output(new RoutesVec(singleElementWidth))
 
@@ -86,9 +87,20 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
       .flatten
       .toSeq
       .reverse ++ Seq(io.outs.asSeq.head(0)(0))
+
+    io.clockOutRight := clock
   }
 
-  val ces = Seq.fill(height)(Seq.fill(width)(Module(new Element())))
+  val ces = Seq.fill(height) {
+    (0 until width)
+      .foldLeft((clock, Seq.empty[Element])) { case ((clk, acc), _) =>
+        val ce = withClockAndReset(clk, false.B) {
+          Module(new Element())
+        }
+        (ce.io.clockOutRight, acc :+ ce)
+      }
+      ._2
+  }
 
   ces.foreach { row =>
     row.head.io.lsbIns := DontCare
@@ -99,7 +111,9 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
     }
   }
 
-  io.lsbs := RegNext(VecInit(ces.map(_.last.io.lsbOuts).flatten))
+  withClock(ces.head.last.io.clockOutRight) {
+    io.lsbs := RegNext(VecInit(ces.map(_.last.io.lsbOuts).flatten))
+  }
 
   // Connect inputs to edge element buses
   (ces.map(_.head).map(_.io.ins.asMap(Routes.RIGHT)) zip io.ins.asMap(

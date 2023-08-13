@@ -1,5 +1,6 @@
 module Element(
   input         clock,
+  output        io_clockOutRight,
   input  [63:0] io_ins_down,
   input  [63:0] io_ins_right,
   input  [63:0] io_ins_up,
@@ -29,6 +30,7 @@ module Element(
   reg [63:0] REG_2;
   reg [63:0] REG_3;
   reg  REG_4;
+  assign io_clockOutRight = clock;
   assign io_outs_down = REG_3;
   assign io_outs_right = REG_2;
   assign io_outs_up = REG_1;

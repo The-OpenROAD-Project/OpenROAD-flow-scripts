@@ -25,7 +25,9 @@ set assignments [list \
     ] \
     [ concat \
         {*}[match_pins io_lsbOuts_.*] \
-    ]]
+    ]] \
+    left right \
+    [list [list clock] [list io_clockOutRight]] \
 ]
 
 proc zip {list1 list2} {
@@ -45,5 +47,3 @@ foreach {direction direction2 names} $assignments {
     set_io_pin_constraint -group -order -pin_names [lindex $names 1]
     set_io_pin_constraint -mirrored_pins $mirrored
 }
-
-set_io_pin_constraint -region top:* -pin_names clock
