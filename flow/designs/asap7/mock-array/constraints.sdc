@@ -1,6 +1,6 @@
 set sdc_version 2.0
 
-set clk_period 150
+set clk_period 120
 
 set clk_name  clock
 set clk_port_name clock
@@ -13,7 +13,9 @@ set_clock_uncertainty 10 [get_clocks $clk_name]
 
 create_clock -name ${clk_name}_vir -period $clk_period -waveform [list 0 [expr $clk_period/2]]
 set_clock_uncertainty  10 [get_clocks ${clk_name}_vir]
-set_clock_latency     230 [get_clocks ${clk_name}_vir]       ;# Matching real clock latency
+# Matching real clock network latency. There is very nearly no clock network latency
+# at the mock-array level, this is all from within the elements.
+set_clock_latency     115 [get_clocks ${clk_name}_vir]
 
 set clk_port [get_ports $clk_port_name]
 set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]

@@ -57,6 +57,7 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
     val io =
       IO(new Bundle {
         val clockOutRight = Output(Clock())
+        val clockOutLeft = Output(Clock())
         val ins = Input(new RoutesVec(singleElementWidth))
         val outs = Output(new RoutesVec(singleElementWidth))
 
@@ -89,18 +90,24 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
       .reverse ++ Seq(io.outs.asSeq.head(0)(0))
 
     io.clockOutRight := clock
+    io.clockOutLeft := clock
   }
 
-  val ces = Seq.fill(height) {
-    (0 until width)
-      .foldLeft((clock, Seq.empty[Element])) { case ((clk, acc), _) =>
-        val ce = withClockAndReset(clk, false.B) {
-          Module(new Element())
-        }
-        (ce.io.clockOutRight, acc :+ ce)
+  val ces = (0 until height)
+    .foldLeft((clock, Seq.empty[Seq[Element]])) {
+      case ((clkLeftIn, rows), _) => {
+        val row = (0 until width)
+          .foldLeft((clkLeftIn, Seq.empty[Element])) { case ((clk, acc), _) =>
+            val ce = withClockAndReset(clk, false.B) {
+              Module(new Element())
+            }
+            (ce.io.clockOutRight, acc :+ ce)
+          }
+          ._2
+        (row.head.io.clockOutLeft, rows :+ row)
       }
-      ._2
-  }
+    }
+    ._2
 
   ces.foreach { row =>
     row.head.io.lsbIns := DontCare
