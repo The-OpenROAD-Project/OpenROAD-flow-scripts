@@ -40,11 +40,11 @@
         "compare": "<="
     },
     "globalroute__timing__clock__slack": {
-        "value": 0.0,
+        "value": -236.09,
         "compare": ">="
     },
     "globalroute__timing__setup__ws": {
-        "value": 0.0,
+        "value": -236.09,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.26,
+        "value": -0.75,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {

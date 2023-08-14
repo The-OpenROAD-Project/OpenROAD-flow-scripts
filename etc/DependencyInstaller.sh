@@ -82,25 +82,28 @@ _installUbuntuPackages() {
         libqt5multimediawidgets5 \
         libqt5svg5-dev
 
-    lastDir="$(pwd)"
-
-    # temp dir to download and compile
-    baseDir=/tmp/installers
-    mkdir -p "${baseDir}"
-    cd ${baseDir}
 
     # install KLayout
-    if [[ $1 == 20.04 ]]; then
-        klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
+    if _versionCompare $1 -ge 23.04; then
+        apt-get install klayout python3-pandas
     else
-        klayoutChecksum=db751264399706a23d20455bb7624264
-    fi
-    wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
-    md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
-    dpkg -i klayout_${klayoutVersion}-1_amd64.deb
+        if [[ $1 == 20.04 ]]; then
+            klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
+        else
+            klayoutChecksum=db751264399706a23d20455bb7624264
+        fi
+        lastDir="$(pwd)"
+        # temp dir to download and compile
+        baseDir=/tmp/installers
+        mkdir -p "${baseDir}"
+        cd ${baseDir}
 
-    cd ${lastDir}
-    rm -rf "${baseDir}"
+        wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
+        md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
+        dpkg -i klayout_${klayoutVersion}-1_amd64.deb
+        cd ${lastDir}
+        rm -rf "${baseDir}"
+    fi
 }
 
 _installDarwinPackages() {
@@ -221,7 +224,9 @@ case "${os}" in
             _installUbuntuCleanUp
         fi
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-            _installCommon
+            if _versionCompare ${version} -lt 23.04 ; then
+                _installCommon
+            fi
         fi
         ;;
     "Darwin" )

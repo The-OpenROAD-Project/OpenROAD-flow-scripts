@@ -34,8 +34,6 @@ export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
 
 export PDN_TCL               = designs/asap7/mock-array/pdn.tcl
 
-export TNS_END_PERCENT       = 100
-
 # Target to force generation of Verilog per user settings MOCK_ARRAY_TABLE (rows, cols)
 verilog:
 	export MOCK_ARRAY_ROWS=$(word 1, $(MOCK_ARRAY_TABLE)) ; \

@@ -16,12 +16,31 @@ if {[info exist env(FASTROUTE_TCL)]} {
   }
 }
 
+# The default behavior if the user didn't specify GLOBAL_ROUTE_ARGS is to
+# produce a drc report every 5 iterations.
+#
+# If GLOBAL_ROUTE_ARGS is specified, then we do only what the
+# GLOBAL_ROUTE_ARGS specifies.
 global_route -guide_file $env(RESULTS_DIR)/route.guide \
                -congestion_report_file $env(REPORTS_DIR)/congestion.rpt \
-               {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : {-congestion_iterations 20 -verbose}}]
+               {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
+               {-congestion_iterations 20 -congestion_report_iter_step 5 -verbose}}]
+
 
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
+
+if { [info exists ::env(RECOVER_POWER)] } {
+  puts "Downsizing/switching to higher Vt  for non critical gates for power recovery"
+  puts "Percent of paths optimized $::env(RECOVER_POWER)"  
+  report_tns
+  report_wns
+  report_power
+  repair_timing -recover_power $::env(RECOVER_POWER)
+  report_tns
+  report_wns
+  report_power
+}
 
 source $env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "global route"
