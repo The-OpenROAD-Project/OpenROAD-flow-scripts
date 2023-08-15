@@ -28,7 +28,10 @@ BLOCKS                       = Element
 
 export GDS_ALLOW_EMPTY       = Element
 
-export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
+# export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
+
+export SYNTH_HIERARCHICAL = 1
+export RTLMP_FLOW = True
 
 export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
 
@@ -57,3 +60,5 @@ export FASTROUTE_TCL = ./designs/$(PLATFORM)/mock-array/fastroute.tcl
 # ensure we have some rows, so we don't get a bad clock skew.
 export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
+
+export PLACE_PINS_ARGS=-annealing
