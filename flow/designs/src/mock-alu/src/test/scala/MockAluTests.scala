@@ -8,7 +8,8 @@ import chisel3.util.experimental.InlineInstance
 import chisel3.stage._
 import chiseltest._
 import chiseltest.formal._
-import chiseltest.simulator.WriteVcdAnnotation
+import chiseltest.simulator.{WriteVcdAnnotation, VerilatorFlags}
+import chiseltest.internal.CachingAnnotation
 
 import org.scalatest.flatspec.AnyFlatSpec
 
@@ -17,13 +18,40 @@ import System.err
 import scopt.RenderingMode
 import scala.collection.immutable.SeqMap
 
+import java.nio.file.Paths
+
+// Run tests:
+//
+// VERILATOR_ROOT=~/verilator/install/v5.006/verilator sbt "test:testOnly *"
 class MockAluTests extends AnyFlatSpec with ChiselScalatestTester with Formal {
   behavior of "MockAlu"
 
   val bitWidth = 8
-  val annotations = Seq(WriteVcdAnnotation)
+  val annotations =
+    Seq(
+      WriteVcdAnnotation,
+      VerilatorBackendAnnotation,
+      VerilatorFlags(
+        Seq(
+          "-Wno-TIMESCALEMOD",
+          "-I" + Paths.get("src/test/resources").toAbsolutePath.toString,
+          "asap7sc7p5t_AO_RVT_TT_201020.v",
+          "asap7sc7p5t_INVBUF_RVT_TT_201020.v",
+          "asap7sc7p5t_OA_RVT_TT_201020.v",
+          // "asap7sc7p5t_SEQ_RVT_TT_220101.v",
+          "asap7sc7p5t_SIMPLE_RVT_TT_201020.v"
+        )
+      ),
+      CachingAnnotation
+    )
 
-  def testOp(a: Int, b: Int, out: Int, op: ALUOps.Type): Unit = {
+  def testOp(
+      a: Int,
+      b: Int,
+      out: Int,
+      op: ALUOps.Type,
+      pipelineStages: Int = 1
+  ): Unit = {
 
     it should (op.toString + " " + a.toHexString + " " + b.toHexString + "=" + out.toHexString) in {
       test(new MockAlu()(bitWidth, ALUOps.all))
@@ -32,7 +60,9 @@ class MockAluTests extends AnyFlatSpec with ChiselScalatestTester with Formal {
           dut.io.a.poke((a & mask).U)
           dut.io.b.poke((b & mask).U)
           dut.io.op.poke(op)
-          dut.clock.step(1)
+          for (i <- 0 until pipelineStages) {
+            dut.clock.step(1)
+          }
           dut.clock.step(1)
           dut.io.out.expect((out & mask).U)
         }
@@ -62,4 +92,6 @@ class MockAluTests extends AnyFlatSpec with ChiselScalatestTester with Formal {
   testOp(0xff, 4, 0xff, ALUOps.SRA)
   testOp(0xf0, 3, 0xfe, ALUOps.SRA)
   testOp(0x0f, 4, 0xf0, ALUOps.SHL)
+  testOp(21, 2, 42, ALUOps.MULT, 4)
+  testOp(127598, 1235215, 127598 * 1235215, ALUOps.MULT, 4)
 }

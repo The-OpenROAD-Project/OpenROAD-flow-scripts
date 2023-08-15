@@ -11,6 +11,7 @@ import scopt.OParser
 import System.err
 import scopt.RenderingMode
 import scala.collection.immutable.SeqMap
+import os.ResourcePath
 
 object ALUOps extends ChiselEnum {
   val ADD, SUB, AND, OR, XOR, SHL, SHR, SRA, SETCC_EQ, SETCC_NE, SETCC_LT,
@@ -41,6 +42,7 @@ object operation {
   }
 }
 
+// TODO Will synthesis result in a realistic barrel shifter?
 class BarrelShifter(bitWidth: Int) extends Module {
   val io = IO(new Bundle {
     val data = Input(UInt(bitWidth.W))
@@ -69,18 +71,10 @@ class BarrelShifter(bitWidth: Int) extends Module {
   io.out := rotateInput >> rotate
 }
 
-// Pipelined multiplier requires special attention, not easily
-// done in Chisel for ASAP7.
-//
-// Barrel shifter is easily disabled in Verilog when tinkering with
-// addition, so leave it in.
-//
-// Perhaps https://github.com/antonblanchard/vlsiffra ?
-//
-// multiply.v was generated using:
+// multiply.v was generated using https://github.com/antonblanchard/vlsiffra:
 //
 // vlsi-multiplier --bits=64 --algorithm=hancarlson --tech=asap7 --register-post-ppa --register-post-ppg --output=multiply.v
-class multiplier extends BlackBox with HasBlackBoxResource {
+class multiplier extends BlackBox with HasBlackBoxPath {
   val io = IO(new Bundle() {
     val a = Input(UInt(64.W))
     val b = Input(UInt(64.W))
@@ -88,7 +82,7 @@ class multiplier extends BlackBox with HasBlackBoxResource {
     val clk = Input(Clock())
     val rst = Input(Reset())
   })
-  addResource("/multiplier.v")
+  addPath("multiplier.v")
 }
 
 class MockAlu()(implicit bitWidth: Int, supportedOperations: Seq[ALUOps.Type])
