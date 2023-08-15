@@ -5,3 +5,7 @@ target/
 .metals/
 .vscode/
 .bloop/
+test_run_dir/
+*.gtkw
+*.fir
+*.f
