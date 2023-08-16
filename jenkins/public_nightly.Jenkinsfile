@@ -155,6 +155,7 @@ pipeline {
       post {
         always {
           archiveArtifacts artifacts: "flow/reports/report-summary.log";
+          archiveArtifacts artifacts: "flow/reports/**/report*.log";
         }
       }
     }
@@ -168,11 +169,6 @@ pipeline {
     stage("Report Full") {
       steps {
         sh "flow/util/genReport.py -vvvv";
-      }
-      post {
-        always {
-          archiveArtifacts artifacts: "flow/reports/**/report*.log";
-        }
       }
     }
 
