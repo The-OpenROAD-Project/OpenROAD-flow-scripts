@@ -34,8 +34,7 @@ conda create -n autotuner_env python=3.7
 conda activate autotuner_env
 
 # install requirements
-cd <PATH_TO_ORFS_ROOT>/tools/AutoTuner
-pip install -r requirements.txt
+pip install -r ./tools/AutoTuner/requirements.txt
 ```
 
 ## Input JSON structure
@@ -88,7 +87,7 @@ For SDC you can use:
   - I/O delay. This will create a copy of `_SDC_FILE_PATH` and modify the I/O delay.
 
 
-For Global Routing (FastRoute) you can use:
+For Global Routing parameters that are set on `fastroute.tcl` you can use:
 
 * `_FR_FILE_PATH`
   - Path relative to the current JSON file to the `fastroute.tcl` file.
@@ -106,12 +105,16 @@ For Global Routing (FastRoute) you can use:
 
 `distributed.py` scripts handles sweeping and tuning of ORFS parameters.
 
-In the sweeping mode, we manually specify the parameters search space
-in the `json`; whereas in the tuning mode - we will use Ray's Tune 
-feature to automatically optimise hyperparameters using one of the 
-algorithms listed above with autotuner `json` file. These two files 
-are of very different format, and you may refer to the examples below
-for more information. 
+The `distributed.py` script supports two modes of operation: `sweep`,
+where every possible parameter combination in the search space is tested,
+and `tune`, where we use Ray's Tune feature to intelligently search the
+space and optimise hyperparameters using one of the algorithms listed 
+above. The `sweep` mode is useful when we want to isolate or test a 
+single or very few parameters. On the other hand, `tune` is more suitable 
+for finding the best combination of a complex and large number of flow 
+parameters. Both modes rely on user-specified search space that is 
+defined by a `.json` file, they use the same syntax and format, 
+though some features may not be available for sweeping.
 
 ```{note}
 The order of the parameters matter. Arguments `--design`, `--platform` and
