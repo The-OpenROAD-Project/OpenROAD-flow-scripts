@@ -68,7 +68,10 @@ pipeline {
                    "riscv32i sky130hs",
                    "aes gf180",
                    "ibex gf180",
-                   "jpeg gf180";
+                   "jpeg gf180",
+                   "riscv32i gf180",
+                   "sha3 gf180",
+                   "uart-blocks gf180";
           }
         }
 
