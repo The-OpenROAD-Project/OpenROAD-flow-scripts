@@ -1,8 +1,8 @@
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 2_3_floorplan_tdms.odb 1_synth.sdc "Starting macro placement"
+load_design 2_1_floorplan.odb 1_synth.sdc "Debug floorplan"
 
 source $::env(SCRIPTS_DIR)/macro_place_util.tcl
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/2_4_floorplan_macro.odb
+  write_db $::env(RESULTS_DIR)/2_floorplan_debug_macros.odb
 }
