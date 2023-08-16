@@ -279,7 +279,18 @@ YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yos
 
 KLAYOUT_CMD             ?= $(shell command -v klayout)
 
-KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
+MIN_VERSION = 0.28.11
+KLAYOUT_VERSION = $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
+
+IS_VALID = $(shell if [ -z "$(KLAYOUT_VERSION)" ]; then echo "not_found"; elif [ "$(KLAYOUT_VERSION)" \< "$(MIN_VERSION)" ]; then echo "invalid"; else echo "valid"; fi)
+
+ifeq ($(IS_VALID),not_found)
+$(error KLayout not found in PATH)
+else ifeq ($(IS_VALID),invalid)
+$(error KLayout version is below the minimum required $(MIN_VERSION))
+else
+$(info KLayout found. Minimum required version: $(MIN_VERSION). Installed version: $(KLAYOUT_VERSION))
+endif
 
 ifneq ($(shell command -v stdbuf),)
   STDBUF_CMD = stdbuf -o L
