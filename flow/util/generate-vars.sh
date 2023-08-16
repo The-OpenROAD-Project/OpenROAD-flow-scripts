@@ -49,10 +49,10 @@ while read -r VAR; do
     fi
     # handle special case where the variable needs to be splitted in Tcl code
     if [[ "${name}" == "GND_NETS_VOLTAGES" || "${name}" == "PWR_NETS_VOLTAGES" ]]; then
-        echo "export ${name}='${value}'" >> $1.sh;
+        echo "export ${name}='${value}'" >> $1.sh
     else
-        echo "export ${name}=\"${value}\"" >> $1.sh;
+        echo "export ${name}=\"${value}\"" >> $1.sh
     fi
-    echo "set env(${name}) \"${value}\"" >> $1.tcl;
-    echo "set env ${name} ${value}" >> $1.gdb;
+    echo "set env(${name}) \"${value}\"" >> $1.tcl
+    echo "set env ${name} ${value}" >> $1.gdb
 done <<< "$ISSUE_VARIABLES"
