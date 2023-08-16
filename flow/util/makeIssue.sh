@@ -66,6 +66,7 @@ ISSUE_CP_FILES+="${ISSUE_CP_FILES_PLATFORM} \
 
 echo "Creating ${RUN_ME_SCRIPT} script"
 echo "#!/usr/bin/env bash"                     >  ${RUN_ME_SCRIPT}
+echo "export FLOW_HOME=\${FLOW_HOME:-\$(pwd)}" >> ${RUN_ME_SCRIPT}
 echo "source ${VARS_BASENAME}.sh"              >> ${RUN_ME_SCRIPT}
 echo "openroad -no_init ${SCRIPTS_DIR}/$1.tcl" >> ${RUN_ME_SCRIPT}
 chmod +x ${RUN_ME_SCRIPT}
