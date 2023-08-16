@@ -24,11 +24,11 @@
         "compare": ">="
     },
     "cts__timing__setup__ws__pre_repair": {
-        "value": -375.0,
+        "value": -800.68,
         "compare": ">="
     },
     "cts__timing__setup__ws__post_repair": {
-        "value": -375.0,
+        "value": -800.56,
         "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -60,7 +60,7 @@
         "compare": "<="
     },
     "finish__timing__drv__max_slew_limit": {
-        "value": -0.2,
+        "value": -0.71,
         "compare": ">="
     },
     "finish__timing__drv__max_fanout_limit": {

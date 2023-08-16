@@ -9,8 +9,8 @@ export SDC_FILE               = designs/asap7/mock-alu/constraints.sdc
 
 export PLATFORM               = asap7
 
-export PLACE_DENSITY          = 0.60
-export CORE_UTILIZATION       = 40
+export PLACE_DENSITY          = 0.75
+export CORE_UTILIZATION       = 50
 export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 
