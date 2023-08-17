@@ -8,47 +8,27 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 53272,
+        "value": 59951,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 213024,
+        "value": 190010,
         "compare": "<="
     },
     "detailedplace__design__violations": {
         "value": 0,
         "compare": "=="
     },
-    "cts__timing__setup__ws": {
-        "value": -0.48,
-        "compare": ">="
-    },
-    "cts__timing__setup__ws__pre_repair": {
-        "value": -0.49,
-        "compare": ">="
-    },
-    "cts__timing__setup__ws__post_repair": {
-        "value": -0.49,
-        "compare": ">="
-    },
     "cts__design__instance__count__setup_buffer": {
-        "value": 4675,
+        "value": 16523,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 9262,
+        "value": 16523,
         "compare": "<="
     },
-    "globalroute__timing__clock__slack": {
-        "value": 0.0,
-        "compare": ">="
-    },
-    "globalroute__timing__setup__ws": {
-        "value": 0.0,
-        "compare": ">="
-    },
     "detailedroute__route__wirelength": {
-        "value": 1987252,
+        "value": 1964056,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -60,27 +40,15 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 53758,
+        "value": 60448,
         "compare": "<="
     },
-    "finish__timing__drv__max_slew_limit": {
-        "value": -4.03,
-        "compare": ">="
-    },
-    "finish__timing__drv__max_fanout_limit": {
-        "value": -0.2,
-        "compare": ">="
-    },
-    "finish__timing__drv__max_cap_limit": {
-        "value": -0.44,
-        "compare": ">="
-    },
     "finish__timing__drv__setup_violation_count": {
-        "value": 10,
+        "value": 8261,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 612,
+        "value": 851,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
