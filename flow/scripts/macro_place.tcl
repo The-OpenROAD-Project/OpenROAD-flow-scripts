@@ -47,7 +47,14 @@ if {[find_macros] != ""} {
     set blockage_width $::env(MACRO_BLOCKAGE_HALO)
   }
 
-  if {[info exists ::env(RTLMP_FLOW)]} {
+  if {[info exists ::env(MACRO_PLACEMENT_TCL)]} {
+    source $::env(MACRO_PLACEMENT_TCL)
+    puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT_TCL)"
+  } elseif {[info exists ::env(MACRO_PLACEMENT)]} {
+    source $::env(SCRIPTS_DIR)/read_macro_placement.tcl
+    puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
+    read_macro_placement $::env(MACRO_PLACEMENT)
+  } elseif {[info exists ::env(RTLMP_FLOW)]} {
     puts "HierRTLMP Flow enabled..."
     set additional_rtlmp_args ""
     if { [info exists ::env(RTLMP_MAX_LEVEL)]} {
@@ -120,18 +127,9 @@ if {[find_macros] != ""} {
     puts "Delete buffers for RTLMP flow..."
     remove_buffers
   } else {
-    if {[info exists ::env(MACRO_PLACEMENT_TCL)]} {
-      source $::env(MACRO_PLACEMENT_TCL)
-      puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT_TCL)"
-    } elseif {[info exists ::env(MACRO_PLACEMENT)]} {
-      source $::env(SCRIPTS_DIR)/read_macro_placement.tcl
-      puts "\[INFO\]\[FLOW-xxxx\] Using manual macro placement file $::env(MACRO_PLACEMENT)"
-      read_macro_placement $::env(MACRO_PLACEMENT)
-    } else {
-      macro_placement \
-        -halo $::env(MACRO_PLACE_HALO) \
-        -channel $::env(MACRO_PLACE_CHANNEL)
-    }
+    macro_placement \
+      -halo $::env(MACRO_PLACE_HALO) \
+      -channel $::env(MACRO_PLACE_CHANNEL)
   }
 
   source $::env(SCRIPTS_DIR)/placement_blockages.tcl
