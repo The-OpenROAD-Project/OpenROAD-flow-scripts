@@ -103,30 +103,6 @@ rules_dict = {
         'compare': '==',
     },
     # cts
-    'cts__timing__setup__ws': {
-        'mode': 'period',
-        'padding': 25,
-        'min_max': min,
-        'min_max_direct': 0,
-        'round_value': False,
-        'compare': '>=',
-    },
-    'cts__timing__setup__ws__pre_repair': {
-        'mode': 'period',
-        'padding': 25,
-        'min_max': min,
-        'min_max_direct': 0,
-        'round_value': False,
-        'compare': '>=',
-    },
-    'cts__timing__setup__ws__post_repair': {
-        'mode': 'period',
-        'padding': 25,
-        'min_max': min,
-        'min_max_direct': 0,
-        'round_value': False,
-        'compare': '>=',
-    },
     'cts__design__instance__count__setup_buffer': {
         'mode': 'metric',
         'padding': 5,
@@ -142,18 +118,6 @@ rules_dict = {
         'compare': '<=',
     },
     # route
-    'globalroute__timing__clock__slack': {
-        'mode': 'period',
-        'padding': 5,
-        'round_value': False,
-        'compare': '>=',
-    },
-    'globalroute__timing__setup__ws': {
-        'mode': 'period',
-        'padding': 5,
-        'round_value': False,
-        'compare': '>=',
-    },
     'detailedroute__route__wirelength': {
         'mode': 'padding',
         'padding': 15,
