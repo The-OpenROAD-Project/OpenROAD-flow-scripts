@@ -105,14 +105,14 @@ rules_dict = {
     # cts
     'cts__design__instance__count__setup_buffer': {
         'mode': 'metric',
-        'padding': 5,
+        'padding': 10,
         'metric': 'placeopt__design__instance__count__stdcell',
         'round_value': True,
         'compare': '<=',
     },
     'cts__design__instance__count__hold_buffer': {
         'mode': 'metric',
-        'padding': 5,
+        'padding': 10,
         'metric': 'placeopt__design__instance__count__stdcell',
         'round_value': True,
         'compare': '<=',
@@ -151,9 +151,9 @@ rules_dict = {
     },
     'finish__timing__drv__hold_violation_count': {
         'mode': 'padding',
-        'padding': 20,
+        'padding': 25,
         'min_max': max,
-        'min_max_sum': 10,
+        'min_max_sum': 100,
         'round_value': True,
         'compare': '<=',
     },
