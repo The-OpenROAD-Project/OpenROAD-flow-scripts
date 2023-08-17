@@ -92,7 +92,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 10.512 0.024 10.536 ;
+      RECT 0.000 12.000 0.024 12.024 ;
     END
   END wd_in[0]
   PIN wd_in[1]
@@ -101,7 +101,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 12.000 0.024 12.024 ;
+      RECT 0.000 13.488 0.024 13.512 ;
     END
   END wd_in[1]
   PIN wd_in[2]
@@ -110,7 +110,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 13.488 0.024 13.512 ;
+      RECT 0.000 14.976 0.024 15.000 ;
     END
   END wd_in[2]
   PIN wd_in[3]
@@ -119,7 +119,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 14.976 0.024 15.000 ;
+      RECT 0.000 16.464 0.024 16.488 ;
     END
   END wd_in[3]
   PIN wd_in[4]
@@ -128,7 +128,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 16.464 0.024 16.488 ;
+      RECT 0.000 17.952 0.024 17.976 ;
     END
   END wd_in[4]
   PIN wd_in[5]
@@ -137,7 +137,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 17.952 0.024 17.976 ;
+      RECT 0.000 19.440 0.024 19.464 ;
     END
   END wd_in[5]
   PIN wd_in[6]
@@ -146,7 +146,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 19.440 0.024 19.464 ;
+      RECT 0.000 20.928 0.024 20.952 ;
     END
   END wd_in[6]
   PIN wd_in[7]
@@ -155,7 +155,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 20.928 0.024 20.952 ;
+      RECT 0.000 22.416 0.024 22.440 ;
     END
   END wd_in[7]
   PIN addr_in[0]
@@ -164,7 +164,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 20.976 0.024 21.000 ;
+      RECT 0.000 23.952 0.024 23.976 ;
     END
   END addr_in[0]
   PIN addr_in[1]
@@ -173,7 +173,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 22.464 0.024 22.488 ;
+      RECT 0.000 25.440 0.024 25.464 ;
     END
   END addr_in[1]
   PIN addr_in[2]
@@ -182,7 +182,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 23.952 0.024 23.976 ;
+      RECT 0.000 26.928 0.024 26.952 ;
     END
   END addr_in[2]
   PIN addr_in[3]
@@ -191,7 +191,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 25.440 0.024 25.464 ;
+      RECT 0.000 28.416 0.024 28.440 ;
     END
   END addr_in[3]
   PIN addr_in[4]
@@ -200,7 +200,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 26.928 0.024 26.952 ;
+      RECT 0.000 29.904 0.024 29.928 ;
     END
   END addr_in[4]
   PIN addr_in[5]
@@ -209,7 +209,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 28.416 0.024 28.440 ;
+      RECT 0.000 31.392 0.024 31.416 ;
     END
   END addr_in[5]
   PIN addr_in[6]
@@ -218,7 +218,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 29.904 0.024 29.928 ;
+      RECT 0.000 32.880 0.024 32.904 ;
     END
   END addr_in[6]
   PIN addr_in[7]
@@ -227,7 +227,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 31.392 0.024 31.416 ;
+      RECT 0.000 34.368 0.024 34.392 ;
     END
   END addr_in[7]
   PIN addr_in[8]
@@ -236,7 +236,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 32.880 0.024 32.904 ;
+      RECT 0.000 35.856 0.024 35.880 ;
     END
   END addr_in[8]
   PIN we_in
@@ -245,7 +245,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 32.928 0.024 32.952 ;
+      RECT 0.000 37.392 0.024 37.416 ;
     END
   END we_in
   PIN ce_in
@@ -254,7 +254,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 34.416 0.024 34.440 ;
+      RECT 0.000 38.880 0.024 38.904 ;
     END
   END ce_in
   PIN clk
@@ -263,7 +263,7 @@ MACRO fakeram_512x8
     SHAPE ABUTMENT ;
     PORT
       LAYER M4 ;
-      RECT 0.000 35.904 0.024 35.928 ;
+      RECT 0.000 40.368 0.024 40.392 ;
     END
   END clk
   PIN VSS
