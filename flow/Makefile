@@ -273,7 +273,8 @@ export OPENROAD_EXE      ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
-OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
+OPENROAD_GUI_ARGS       ?= -gui
+OPENROAD_GUI_CMD         = $(OPENROAD_EXE) $(OPENROAD_GUI_ARGS) $(OR_ARGS)
 
 YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
