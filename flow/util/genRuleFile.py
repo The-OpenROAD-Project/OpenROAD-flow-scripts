@@ -143,10 +143,9 @@ rules_dict = {
         'compare': '<=',
     },
     'finish__timing__drv__setup_violation_count': {
-        'mode': 'padding',
-        'padding': 20,
-        'min_max': max,
-        'min_max_sum': 10,
+        'mode': 'metric',
+        'padding': 5,
+        'metric': 'placeopt__design__instance__count__stdcell',
         'round_value': True,
         'compare': '<=',
     },
