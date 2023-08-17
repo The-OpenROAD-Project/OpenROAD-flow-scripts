@@ -103,15 +103,16 @@ For Global Routing parameters that are set on `fastroute.tcl` you can use:
 
 ### General Information
 
-`distributed.py` scripts handles sweeping and tuning of ORFS parameters.
-
-The `distributed.py` script supports two modes of operation: `sweep`,
-where every possible parameter combination in the search space is tested,
-and `tune`, where we use Ray's Tune feature to intelligently search the
-space and optimise hyperparameters using one of the algorithms listed 
-above. The `sweep` mode is useful when we want to isolate or test a 
-single or very few parameters. On the other hand, `tune` is more suitable 
-for finding the best combination of a complex and large number of flow 
+The `distributed.py` script uses Ray's job scheduling and management to
+fully utilize available hardware resources from a single server 
+configuration, on-premies or over the cloud with multiple CPUs. 
+The two modes of operation: `sweep`, where every possible parameter
+combination in the search space is tested; and `tune`, where we use
+Ray's Tune feature to intelligently search the space and optimize
+hyperparameters using one of the algorithms listed above. The `sweep`
+mode is useful when we want to isolate or test a single or very few
+parameters. On the other hand, `tune` is more suitable for finding
+the best combination of a complex and large number of flow 
 parameters. Both modes rely on user-specified search space that is 
 defined by a `.json` file, they use the same syntax and format, 
 though some features may not be available for sweeping.
