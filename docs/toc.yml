@@ -39,3 +39,6 @@ entries:
 
 - file: tutorials/FlowTutorial
   title: Flow Tutorial
+  entries:
+  - file: tutorials/Notebooks
+    title: Colab Quickstart
