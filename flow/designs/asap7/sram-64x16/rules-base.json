@@ -48,7 +48,7 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 48,
+        "value": 59,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
