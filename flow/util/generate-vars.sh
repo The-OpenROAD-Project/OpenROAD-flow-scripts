@@ -44,17 +44,19 @@ while read -r VAR; do
         # skip variables that match the exclude patterns
         continue
     fi
+    # handle special case where the variable needs to be splitted in Tcl code
+    if [[ "${name}" == "GND_NETS_VOLTAGES" || "${name}" == "PWR_NETS_VOLTAGES" ]]; then
+        echo "export ${name}='${value}'" >> $1.sh
+        echo "set env(${name}) ${value}" >> $1.tcl
+        echo "set env ${name} ${value}" >> $1.gdb
+        continue
+    fi
     if [[ ${value} == /* ]]; then
         # convert absolute paths if possible to use FLOW_HOME variable
         value=$(sed -e "s,${FLOW_ROOT},\${FLOW_HOME},g" <<< "${value}")
         value=$(sed -e "s,${ORFS_ROOT},\${FLOW_HOME}/\.\.,g" <<< "${value}")
     fi
-    # handle special case where the variable needs to be splitted in Tcl code
-    if [[ "${name}" == "GND_NETS_VOLTAGES" || "${name}" == "PWR_NETS_VOLTAGES" ]]; then
-        echo "export ${name}='${value}'" >> $1.sh
-    else
-        echo "export ${name}=\"${value}\"" >> $1.sh
-    fi
+    echo "export ${name}=\"${value}\"" >> $1.sh
     echo "set env(${name}) \"${value}\"" >> $1.tcl
     echo "set env ${name} ${value}" >> $1.gdb
 done <<< "$ISSUE_VARIABLES"
