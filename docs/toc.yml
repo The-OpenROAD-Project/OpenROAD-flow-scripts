@@ -44,4 +44,4 @@ entries:
   - file: tutorials/FlowTutorial
     title: Flow Tutorial
   - file: tutorials/Notebooks
-    title: Running the OpenROAD flow in Google Colab
+    title: Running the OpenROAD Flow in Google Colab
