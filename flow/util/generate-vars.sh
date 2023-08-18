@@ -57,6 +57,11 @@ while read -r VAR; do
         value=$(sed -e "s,${ORFS_ROOT},\${FLOW_HOME}/\.\.,g" <<< "${value}")
     fi
     echo "export ${name}=\"${value}\"" >> $1.sh
-    echo "set env(${name}) \"${value}\"" >> $1.tcl
-    echo "set env ${name} ${value}" >> $1.gdb
+    if [[ "${value}" == *'$'* ]]; then
+        echo "set env ${name} $(sed -e 's,${FLOW_HOME},getenv("FLOW_HOME"),' <<< ${value})" >> $1.gdb
+        echo "set env(${name}) \"$(sed -e 's,${FLOW_HOME},$::env(FLOW_HOME),' <<< ${value})\"" >> $1.tcl
+    else
+        echo "set env(${name}) \"${value}\"" >> $1.tcl
+        echo "set env ${name} ${value}" >> $1.gdb
+    fi
 done <<< "$ISSUE_VARIABLES"
