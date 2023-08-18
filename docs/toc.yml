@@ -37,8 +37,11 @@ entries:
 - file: user/FAQS.md
   title: FAQs
 
-- file: tutorials/FlowTutorial
-  title: Flow Tutorial
+
+- file: tutorials/TutorialHome
+  title: Tutorials
   entries:
+  - file: tutorials/FlowTutorial
+    title: Flow Tutorial
   - file: tutorials/Notebooks
-    title: Colab Quickstart
+    title: Running the OpenROAD flow in Google Colab
