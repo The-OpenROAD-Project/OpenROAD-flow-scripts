@@ -522,6 +522,8 @@ endif
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),macro_place))
 
+$(eval $(call do-step,2_floorplan_debug_macros,$(RESULTS_DIR)/2_1_floorplan.odb $(RESULTS_DIR)/1_synth.v $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),floorplan_debug_macros))
+
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,2_5_floorplan_tapcell,$(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL),tapcell))
@@ -915,6 +917,18 @@ gui_cts: gui_4_cts.odb
 gui_route: gui_5_route.odb
 .PHONY: gui_final
 gui_final: gui_6_final.odb
+
+.PHONY: preview_macro_placement
+
+ifneq ($(or $(MACRO_PLACEMENT),$(MACRO_PLACEMENT_TCL)),)
+MACRO_PREVIEW_ODB = 2_floorplan_debug_macros.odb
+else
+MACRO_PREVIEW_ODB = 2_4_floorplan_macro.odb
+endif
+
+preview_macro_placement:
+	@$(UNSET_AND_MAKE) $(RESULTS_DIR)/$(MACRO_PREVIEW_ODB)
+	@$(UNSET_AND_MAKE) gui_$(MACRO_PREVIEW_ODB)
 
 .PHONY: $(foreach file,$(RESULTS_DEF),gui_$(file))
 $(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
