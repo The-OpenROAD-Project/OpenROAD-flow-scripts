@@ -39,3 +39,11 @@ entries:
 
 - file: tutorials/FlowTutorial
   title: Flow Tutorial
+
+- file: user/Flow_QoR_CI.md
+  title: Flow QoR and CI Metrics
+  entries:
+  - file: user/QoRDashboard.md
+    title: Using the OpenROAD Dashboard to track and analyze QoR
+  - file: user/Jenkins.md
+    title: Exploring CI Metrics with Jenkins
