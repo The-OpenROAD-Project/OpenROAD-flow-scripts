@@ -511,7 +511,7 @@ endif
 
 # STEP 3: Timing Driven Mixed Sized Placement
 #-------------------------------------------------------------------------------
-ifeq ($(MACRO_PLACEMENT),)
+ifeq ($(MACRO_PLACEMENT)$(MACRO_PLACEMENT_TCL)$(RTLMP_FLOW),)
 $(eval $(call do-step,2_3_floorplan_tdms,$(RESULTS_DIR)/2_2_floorplan_io.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES),tdms_place))
 else
 $(eval $(call do-copy,2_3_floorplan_tdms,2_2_floorplan_io.odb,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES)))

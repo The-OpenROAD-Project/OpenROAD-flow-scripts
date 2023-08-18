@@ -20,13 +20,9 @@ proc find_macros {} {
 set_dont_use $::env(DONT_USE_CELLS)
 
 if {[find_macros] != ""} {
-  if {[info exists ::env(RTLMP_FLOW)]} {
-    puts "RTLMP flow enabled. Skipping tdms place."
-  } else {
-    global_placement -density $::env(PLACE_DENSITY) \
-                   -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-                   -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
-  }
+  global_placement -density $::env(PLACE_DENSITY) \
+                 -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+                 -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 } else {
   puts "No macros found: Skipping global_placement"
 }
