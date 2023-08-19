@@ -1,7 +1,14 @@
 # Colab Quickstart
 
-We provide Google Colab-based notebook packaging for a quickstart to
-OpenROAD-flow-scripts as follows:
+Notebook-based packaging offers three main benefits:
+1. Colab is completely free to use, and can be accessed from any web browser.
+1. Colab notebooks can be easily shared with others, making it a great 
+tool for teams to collaborate and manage OpenROAD design runs. 
+1. The notebook can easily be modified to be used for on-premise servers, or 
+notebook-based cloud providers such as LambdaLabs/ Paperspace. 
+
+We provide two notebooks for a quickstart to OpenROAD-flow-scripts functionality 
+as follows:
 
 ## OpenROAD-flow-scripts Automated RTL-GDSII Flow
 
