@@ -7,10 +7,12 @@ ORFS_ROOT=$(realpath "${FLOW_HOME}/../")
 # exclude system and CI variables
 EXCLUDED_VARS="MAKE|MAKEFLAGS|PERL5LIB|QT_QPA_PLATFORM"
 EXCLUDED_VARS+="|RESULTS_ODB|PUBLIC|ISSUE_SCRIPTS"
-EXCLUDED_VARS+="|HOME|PWD|MAIL|SHELL|NPROC|NUM_CORES"
+EXCLUDED_VARS+="|HOME|PWD|MAIL|SHELL|NPROC|NUM_CORES|FLOW_HOME"
 EXCLUDED_VARS+="|UNSET_VARIABLES_NAMES|do-step|get_variables|do-copy"
 
 EXCLUDED_PATTERNS="_EXE$|PATH$|_CMD$|\."
+
+echo 'export FLOW_HOME=${FLOW_HOME:-$(pwd)}' > $1.sh
 
 while read -r VAR; do
     if [[ ${VAR} != *"="* ]] ; then
@@ -49,10 +51,10 @@ while read -r VAR; do
     fi
     # handle special case where the variable needs to be splitted in Tcl code
     if [[ "${name}" == "GND_NETS_VOLTAGES" || "${name}" == "PWR_NETS_VOLTAGES" ]]; then
-        echo "export ${name}='${value}'" >> $1.sh;
+        echo "export ${name}='${value}'" >> $1.sh
     else
-        echo "export ${name}=\"${value}\"" >> $1.sh;
+        echo "export ${name}=\"${value}\"" >> $1.sh
     fi
-    echo "set env(${name}) \"${value}\"" >> $1.tcl;
-    echo "set env ${name} ${value}" >> $1.gdb;
+    echo "set env(${name}) \"${value}\"" >> $1.tcl
+    echo "set env ${name} ${value}" >> $1.gdb
 done <<< "$ISSUE_VARIABLES"

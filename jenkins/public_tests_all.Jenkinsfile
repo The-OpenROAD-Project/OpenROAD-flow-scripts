@@ -30,13 +30,13 @@ pipeline {
             name 'TEST_SLUG';
             values "docker build",
                    "aes asap7",
- 		   "aes_lvt asap7",
+                   "aes_lvt asap7",
                    "ethmac asap7",
-		   "ethmac_lvt asap7",
+                   "ethmac_lvt asap7",
                    "gcd asap7",
                    "ibex asap7",
                    "jpeg asap7",
-		   "jpeg_lvt asap7",
+                   "jpeg_lvt asap7",
                    "riscv32i asap7",
                    "sha3 asap7",
                    "uart asap7",
@@ -68,7 +68,10 @@ pipeline {
                    "riscv32i sky130hs",
                    "aes gf180",
                    "ibex gf180",
-                   "jpeg gf180";
+                   "jpeg gf180",
+                   "riscv32i gf180",
+                   "sha3 gf180",
+                   "uart-blocks gf180";
           }
         }
 
@@ -127,6 +130,7 @@ pipeline {
       post {
         always {
           archiveArtifacts artifacts: "flow/reports/report-summary.log";
+          archiveArtifacts artifacts: "flow/reports/**/report*.log";
         }
       }
     }
@@ -140,11 +144,6 @@ pipeline {
     stage("Report Full") {
       steps {
         sh "flow/util/genReport.py -vvvv";
-      }
-      post {
-        always {
-          archiveArtifacts artifacts: "flow/reports/**/report*.log";
-        }
       }
     }
 
