@@ -22,4 +22,4 @@ endif
 
 export SKIP_PIN_SWAP     = 1
 export SKIP_GATE_CLONING = 1
-export RECOVER_POWER     = 100
+export RECOVER_POWER     = 50
