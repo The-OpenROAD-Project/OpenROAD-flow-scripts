@@ -1,8 +1,9 @@
 # Using the OpenROAD Dashboard to track and analyze Quality of Results
 
-The metrics dashboard is tailored for RTL-to-GDS flow stages, 
-targeting different designs across various platforms. The dashboard 
-comprises two main pages: the trends page and the comparison page. 
+The metrics dashboard [(https://dashboard.theopenroadproject.org/)](https://dashboard.theopenroadproject.org/)
+is tailored for RTL-to-GDS flow stages, targeting different designs across
+various platforms. The dashboard comprises two main pages: the trends
+page and the comparison page.
 
 ## Trends
 
@@ -15,14 +16,14 @@ fluctuations of metrics over time.
 
 ## Comparison 
 
-The comparison page enables users to compare metrics between branches 
+The comparison page lets users compare metrics between branches 
 or commits for a specific platform and its designs. The comparison is 
-shown in the form of a table that showcases the differences between the 
-base source and the test source. This page also offers deeper insights 
+shown as a table showcasing the differences between the 
+base source and the test source. This page also offers deeper insights, 
 like the platform summary table that presents statistical trends for 
-different designs within a platform. As well as, a summary table that 
+different designs within a platform and a summary table that 
 provides insights for the set of selected designs, with added 
-functionality for filtering. 
+functionality for filtering.
 
 ![Comparison](../images/comparison.webp)
 
