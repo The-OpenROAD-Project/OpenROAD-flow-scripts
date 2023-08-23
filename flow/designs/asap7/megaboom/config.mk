@@ -49,3 +49,6 @@ export SYNTH_ARGS            ?= -noshare
 # metal stack
 export MIN_ROUTING_LAYER      = M2
 export MAX_ROUTING_LAYER      = M9
+
+export GND_NETS_VOLTAGES      = ""
+export PWR_NETS_VOLTAGES      = ""
