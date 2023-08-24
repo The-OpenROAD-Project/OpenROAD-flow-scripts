@@ -5,10 +5,10 @@ FLOW_ROOT=$(realpath "${FLOW_HOME}")
 ORFS_ROOT=$(realpath "${FLOW_HOME}/../")
 
 # exclude system and CI variables
-EXCLUDED_VARS="MAKE|MAKEFLAGS|PERL5LIB|QT_QPA_PLATFORM"
-EXCLUDED_VARS+="|RESULTS_ODB|PUBLIC|ISSUE_SCRIPTS"
-EXCLUDED_VARS+="|HOME|PWD|MAIL|SHELL|NPROC|NUM_CORES|FLOW_HOME"
-EXCLUDED_VARS+="|UNSET_VARIABLES_NAMES|do-step|get_variables|do-copy"
+EXCLUDED_VARS='MAKE|MAKEFLAGS|PERL5LIB|QT_QPA_PLATFORM'
+EXCLUDED_VARS+='|RESULTS_ODB|PUBLIC|ISSUE_SCRIPTS'
+EXCLUDED_VARS+='|HOME|PWD|MAIL|SHELL|NPROC|NUM_CORES|FLOW_HOME|\\n'
+EXCLUDED_VARS+='|UNSET_VARIABLES_NAMES|do-step|get_variables|do-copy'
 
 EXCLUDED_PATTERNS="_EXE$|PATH$|_CMD$|\."
 
@@ -44,17 +44,24 @@ while read -r VAR; do
         # skip variables that match the exclude patterns
         continue
     fi
+    # handle special case where the variable needs to be splitted in Tcl code
+    if [[ "${name}" == "GND_NETS_VOLTAGES" || "${name}" == "PWR_NETS_VOLTAGES" ]]; then
+        echo "export ${name}='${value}'" >> $1.sh
+        echo "set env(${name}) ${value}" >> $1.tcl
+        echo "set env ${name} ${value}" >> $1.gdb
+        continue
+    fi
     if [[ ${value} == /* ]]; then
         # convert absolute paths if possible to use FLOW_HOME variable
         value=$(sed -e "s,${FLOW_ROOT},\${FLOW_HOME},g" <<< "${value}")
         value=$(sed -e "s,${ORFS_ROOT},\${FLOW_HOME}/\.\.,g" <<< "${value}")
     fi
-    # handle special case where the variable needs to be splitted in Tcl code
-    if [[ "${name}" == "GND_NETS_VOLTAGES" || "${name}" == "PWR_NETS_VOLTAGES" ]]; then
-        echo "export ${name}='${value}'" >> $1.sh
+    echo "export ${name}=\"${value}\"" >> $1.sh
+    if [[ "${value}" == *'$'* ]]; then
+        echo "set env ${name} $(sed -e 's,${FLOW_HOME},getenv("FLOW_HOME"),' <<< ${value})" >> $1.gdb
+        echo "set env(${name}) \"$(sed -e 's,${FLOW_HOME},$::env(FLOW_HOME),' <<< ${value})\"" >> $1.tcl
     else
-        echo "export ${name}=\"${value}\"" >> $1.sh
+        echo "set env(${name}) \"${value}\"" >> $1.tcl
+        echo "set env ${name} ${value}" >> $1.gdb
     fi
-    echo "set env(${name}) \"${value}\"" >> $1.tcl
-    echo "set env ${name} ${value}" >> $1.gdb
 done <<< "$ISSUE_VARIABLES"
