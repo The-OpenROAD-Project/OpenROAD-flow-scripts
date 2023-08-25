@@ -9,8 +9,10 @@ cd $DIR
 
 cd ../../src/mock-alu
 
+rm -f *.v
+
 sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \
-     "test:runMain GenerateMockAlu --width ${MOCK_ALU_WIDTH} -- --emit-modules verilog --emission-options disableMemRandomization,disableRegisterRandomization --target-dir ."
+     "test:runMain GenerateMockAlu --width ${MOCK_ALU_WIDTH} --operations ${MOCK_ALU_OPERATIONS} -- --emit-modules verilog --emission-options disableMemRandomization,disableRegisterRandomization --target-dir ."
 
 # reduce git noise as these comments will change if the line numbers in Chisel changes
 find . -name "*.v" -type f -exec sed -i 's/ \/\/.*$//' {} \;

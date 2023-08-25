@@ -522,6 +522,8 @@ endif
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),macro_place))
 
+$(eval $(call do-step,2_floorplan_debug_macros,$(RESULTS_DIR)/2_1_floorplan.odb $(RESULTS_DIR)/1_synth.v $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),floorplan_debug_macros))
+
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,2_5_floorplan_tapcell,$(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL),tapcell))
@@ -901,28 +903,41 @@ RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
-.PHONY: gui_synth
-gui_synth:
-	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
+.PHONY: preview_macro_placement
 
-.PHONY: gui_floorplan
-gui_floorplan: gui_2_floorplan.odb
-.PHONY: gui_place
-gui_place: gui_3_place.odb
-.PHONY: gui_cts
-gui_cts: gui_4_cts.odb
-.PHONY: gui_route
-gui_route: gui_5_route.odb
-.PHONY: gui_final
-gui_final: gui_6_final.odb
+ifneq ($(or $(MACRO_PLACEMENT),$(MACRO_PLACEMENT_TCL)),)
+MACRO_PREVIEW_ODB = 2_floorplan_debug_macros.odb
+else
+MACRO_PREVIEW_ODB = 2_4_floorplan_macro.odb
+endif
 
-.PHONY: $(foreach file,$(RESULTS_DEF),gui_$(file))
-$(foreach file,$(RESULTS_DEF),gui_$(file)): gui_%:
-	DEF_FILE=$(RESULTS_DIR)/$* $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/gui.tcl
+preview_macro_placement:
+	@$(UNSET_AND_MAKE) $(RESULTS_DIR)/$(MACRO_PREVIEW_ODB)
+	@$(UNSET_AND_MAKE) gui_$(MACRO_PREVIEW_ODB)
 
-.PHONY: $(foreach file,$(RESULTS_ODB),gui_$(file))
-$(foreach file,$(RESULTS_ODB),gui_$(file)): gui_%:
-	ODB_FILE=$(RESULTS_DIR)/$* $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/gui.tcl
+define OPEN_GUI_SHORTCUT
+.PHONY: gui_$(1) open_$(1)
+gui_$(1): gui_$(2)
+open_$(1): open_$(2)
+endef
+
+$(eval $(call OPEN_GUI_SHORTCUT,synth,))
+$(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
+$(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))
+$(eval $(call OPEN_GUI_SHORTCUT,cts,4_cts.odb))
+$(eval $(call OPEN_GUI_SHORTCUT,route,5_route.odb))
+$(eval $(call OPEN_GUI_SHORTCUT,final,6_final.odb))
+
+define OPEN_GUI
+.PHONY: $(1)_$(2)
+$(1)_$(2):
+	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
+endef
+
+$(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,gui,$(file),DEF_FILE,$(OPENROAD_GUI_CMD))))
+$(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,gui,$(file),ODB_FILE,$(OPENROAD_GUI_CMD))))
+$(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,open,$(file),DEF_FILE,$(OPENROAD_NO_EXIT_CMD))))
+$(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,open,$(file),ODB_FILE,$(OPENROAD_NO_EXIT_CMD))))
 
 # Write a def for the corresponding odb
 $(foreach file,$(RESULTS_ODB),$(file).def): %.def:

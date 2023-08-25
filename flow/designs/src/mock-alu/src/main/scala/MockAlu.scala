@@ -14,8 +14,25 @@ import scala.collection.immutable.SeqMap
 import os.ResourcePath
 
 object ALUOps extends ChiselEnum {
-  val ADD, SUB, AND, OR, XOR, SHL, SHR, SRA, SETCC_EQ, SETCC_NE, SETCC_LT,
-      SETCC_ULT, SETCC_LE, SETCC_ULE, MULT = Value
+  val ADD, ADD8, ADD16, ADD32, SUB, AND, OR, XOR, SHL, SHR, SRA, SETCC_EQ,
+      SETCC_NE, SETCC_LT, SETCC_ULT, SETCC_LE, SETCC_ULE, MULT, MULT_HANCARLSON,
+      MULT_BRENTKUNG, MAC_BRENTKUNG, MULT_INFERRED, MULT_KOGGESTONE,
+      MULT_RIPPLE, MUX1, MUX2, MUX3, MUX4, MUX5, MUX6, MUX7, MUX8 = Value
+  def multipliers: Seq[ALUOps.Type] = {
+    Seq(
+      ALUOps.MULT,
+      ALUOps.MULT_BRENTKUNG,
+      ALUOps.MULT_HANCARLSON,
+      ALUOps.MULT_INFERRED,
+      ALUOps.MULT_KOGGESTONE,
+      ALUOps.MULT_RIPPLE
+    )
+  }
+  def macs: Seq[ALUOps.Type] = {
+    Seq(
+      ALUOps.MAC_BRENTKUNG
+    )
+  }
 }
 
 class Operands(bitWidth: Int) extends Bundle {
@@ -33,9 +50,11 @@ class Operand(bitWidth: Int, operand: (UInt, UInt) => UInt, name: String)
 
 object operation {
   def apply(a: UInt, b: UInt, op: (UInt, UInt) => UInt, name: String)(implicit
-      bitWidth: Int
+      config: ALUConfig
   ): UInt = {
-    val operand = Module(new Operand(bitWidth, op, name) with InlineInstance)
+    val operand = Module(
+      new Operand(config.width, op, name) with InlineInstance
+    )
     operand.io.a := a
     operand.io.b := b
     operand.io.out
@@ -74,7 +93,9 @@ class BarrelShifter(bitWidth: Int) extends Module {
 // multiply.v was generated using https://github.com/antonblanchard/vlsiffra:
 //
 // vlsi-multiplier --bits=64 --algorithm=hancarlson --tech=asap7 --register-post-ppa --register-post-ppg --output=multiply.v
-class multiplier extends BlackBox with HasBlackBoxPath {
+class multiplier()(implicit config: ALUConfig)
+    extends BlackBox
+    with HasBlackBoxResource {
   val io = IO(new Bundle() {
     val a = Input(UInt(64.W))
     val b = Input(UInt(64.W))
@@ -82,11 +103,44 @@ class multiplier extends BlackBox with HasBlackBoxPath {
     val clk = Input(Clock())
     val rst = Input(Reset())
   })
-  addPath("multiplier.v")
+  val mult = ALUOps.multipliers.intersect(config.operations)(0)
+  val opName = nameLookup(mult).toLowerCase()
+  val algorithm = if (opName == "mult") { "mult_hancarlson" }
+  else { opName }
+
+  addResource("/" + algorithm + ".v")
 }
 
-class MockAlu()(implicit bitWidth: Int, supportedOperations: Seq[ALUOps.Type])
-    extends Module {
+class multiply_adder()(implicit config: ALUConfig)
+    extends BlackBox
+    with HasBlackBoxResource {
+  val io = IO(new Bundle() {
+    val a = Input(UInt(64.W))
+    val b = Input(UInt(64.W))
+    val c = Input(UInt(64.W))
+    val o = Output(UInt(128.W))
+    val clk = Input(Clock())
+    val rst = Input(Reset())
+  })
+  val mult = ALUOps.macs.intersect(config.operations)(0)
+  val algorithm = nameLookup(mult).toLowerCase()
+
+  addResource("/" + algorithm + ".v")
+}
+
+object nameLookup {
+  def apply(op: ALUOps.Type): String = {
+    val map = (ALUOps.all zip ALUOps.allNames).toMap
+    map(op)
+  }
+  def apply(name: String): ALUOps.Type = {
+    val map = (ALUOps.allNames zip ALUOps.all).toMap
+    map(name)
+  }
+}
+
+class MockAlu()(implicit config: ALUConfig) extends Module {
+  val bitWidth = config.width
   val io = IO(new Bundle {
     val op = Input(ALUOps())
     val a = Input(UInt(bitWidth.W))
@@ -100,8 +154,6 @@ class MockAlu()(implicit bitWidth: Int, supportedOperations: Seq[ALUOps.Type])
   val a = RegNext(io.a)
   val b = RegNext(io.b)
 
-  val nameLookup = (ALUOps.all zip ALUOps.allNames).toMap
-
   val isSubtraction =
     Seq(
       ALUOps.SUB,
@@ -111,12 +163,15 @@ class MockAlu()(implicit bitWidth: Int, supportedOperations: Seq[ALUOps.Type])
       ALUOps.SETCC_LE,
       ALUOps.SETCC_ULT,
       ALUOps.SETCC_ULE
-    ).map(op === _).reduce(_ || _)
+    ).filter(config.operations.contains(_))
+      .map(op === _)
+      .reduceLeftOption(_ || _)
+      .getOrElse(false.B)
 
   val modifiedB = Mux(isSubtraction, ~b, b)
 
   val extendedResult =
-    WireInit(UInt(((bitWidth + 1).W)), a +& modifiedB +& isSubtraction.asUInt)
+    WireInit(UInt(((bitWidth + 1).W)), (a +& modifiedB) + isSubtraction.asUInt)
 
   val result = extendedResult(extendedResult.getWidth - 2, 0)
   val carryOut = extendedResult(extendedResult.getWidth - 1)
@@ -129,49 +184,94 @@ class MockAlu()(implicit bitWidth: Int, supportedOperations: Seq[ALUOps.Type])
   barrel.io.shiftAmount := b
   barrel.io.dir := io.op
 
-  val mult = Module(new multiplier())
-  mult.io.clk := clock
-  mult.io.rst := reset
-  mult.io.a := a
-  mult.io.b := b
+  val activeMultipliers =
+    ALUOps.multipliers.filter(config.operations.contains(_))
+  assert(Seq(0, 1).contains(activeMultipliers.length))
+
+  val multResult = if (activeMultipliers.size == 1) {
+    val mult = Module(new multiplier())
+    mult.io.clk := clock
+    mult.io.rst := reset
+    mult.io.a := a
+    mult.io.b := b
+    mult.io.o
+  } else {
+    WireInit(UInt(config.width.W), DontCare)
+  }
+
+  val activeMacs =
+    ALUOps.macs.filter(config.operations.contains(_))
+  val macResult = if (activeMacs.size == 1) {
+    val mult = Module(new multiply_adder())
+    mult.io.clk := clock
+    mult.io.rst := reset
+    mult.io.a := a
+    mult.io.b := b
+    mult.io.c := io.out
+    mult.io.o
+  } else {
+    WireInit(UInt(config.width.W), DontCare)
+  }
+
+  val aluResult = (Seq[(ALUOps.Type, (UInt, UInt) => UInt)](
+    ALUOps.AND -> (_ & _),
+    ALUOps.OR -> (_ | _),
+    ALUOps.XOR -> (_ ^ _)
+  ).map(aluop =>
+    aluop._1 -> operation(
+      a,
+      b,
+      aluop._2,
+      nameLookup(aluop._1)
+    )
+  ) ++ Seq[(ALUOps.Type, UInt)](
+    ALUOps.ADD -> result,
+    ALUOps.ADD8 -> result(7, 0),
+    ALUOps.ADD16 -> result(15, 0),
+    ALUOps.ADD32 -> result(31, 0),
+    ALUOps.SUB -> result,
+    ALUOps.SETCC_EQ -> isTrueZero.asUInt,
+    ALUOps.SETCC_NE -> (~isTrueZero).asUInt,
+    ALUOps.SETCC_LT -> isNegative.asUInt,
+    ALUOps.SETCC_LE -> (isTrueZero || isNegative).asUInt,
+    ALUOps.SETCC_ULT -> (!carryOut).asUInt,
+    ALUOps.SETCC_ULE -> (isTrueZero || (!carryOut)).asUInt,
+    ALUOps.SHL -> barrel.io.out,
+    ALUOps.SHR -> barrel.io.out,
+    ALUOps.SRA -> barrel.io.out,
+    ALUOps.MAC_BRENTKUNG -> macResult
+  ) ++ ALUOps.multipliers.map(op => op -> multResult) ++
+    Seq(
+      ALUOps.MUX1,
+      ALUOps.MUX2,
+      ALUOps.MUX3,
+      ALUOps.MUX4,
+      ALUOps.MUX5,
+      ALUOps.MUX6,
+      ALUOps.MUX7,
+      ALUOps.MUX8
+    ).zipWithIndex.map { case (op, i) =>
+      op -> (io.a >> i)
+    })
+    .filter(a => config.operations.contains(a._1))
+    .map(a => (a._1.asUInt -> a._2))
 
   io.out := RegNext(
-    MuxLookup(
-      op.asUInt,
-      WireInit(chiselTypeOf(io.out), DontCare),
-      (Seq[(ALUOps.Type, (UInt, UInt) => UInt)](
-        ALUOps.AND -> (_ & _),
-        ALUOps.OR -> (_ | _),
-        ALUOps.XOR -> (_ ^ _)
-      ).map(aluop =>
-        aluop._1 -> operation(
-          a,
-          b,
-          aluop._2,
-          nameLookup(aluop._1)
-        )
-      ) ++ Seq[(ALUOps.Type, UInt)](
-        ALUOps.ADD -> result,
-        ALUOps.SUB -> result,
-        ALUOps.SETCC_EQ -> isTrueZero.asUInt,
-        ALUOps.SETCC_NE -> (~isTrueZero).asUInt,
-        ALUOps.SETCC_LT -> isNegative.asUInt,
-        ALUOps.SETCC_LE -> (isTrueZero || isNegative).asUInt,
-        ALUOps.SETCC_ULT -> (!carryOut).asUInt,
-        ALUOps.SETCC_ULE -> (isTrueZero || (!carryOut)).asUInt,
-        ALUOps.SHL -> barrel.io.out,
-        ALUOps.SHR -> barrel.io.out,
-        ALUOps.SRA -> barrel.io.out,
-        ALUOps.MULT -> mult.io.o
-      ))
-        .filter(a => supportedOperations.contains(a._1))
-        .map(a => (a._1.asUInt -> a._2))
-    )
+    if (aluResult.size == 1) {
+      aluResult(0)._2
+    } else {
+      MuxLookup(
+        op.asUInt,
+        WireInit(chiselTypeOf(io.out), DontCare),
+        aluResult
+      )
+    }
   )
 }
 
 case class ALUConfig(
-    width: Int = 64
+    width: Int = 64,
+    operations: Seq[ALUOps.Type] = Seq.empty
 )
 
 object GenerateMockAlu extends App {
@@ -185,7 +285,14 @@ object GenerateMockAlu extends App {
         .required()
         .valueName("data width")
         .action((width, c) => c.copy(width = width))
-        .text("input file is required")
+        .text("input file is required"),
+      opt[Seq[String]]('o', "operations")
+        .optional()
+        .valueName("Operations, any of: " + ALUOps.allNames.mkString(", "))
+        .action((operations, c) =>
+          c.copy(operations = operations.map(nameLookup(_)))
+        )
+        .text("ALU operations")
     )
   }
 
@@ -198,13 +305,7 @@ object GenerateMockAlu extends App {
         .execute(
           chiselArgs,
           Seq(
-            ChiselGeneratorAnnotation(() =>
-              new MockAlu()(
-                c.width,
-                ALUOps.all diff Seq(
-                )
-              )
-            )
+            ChiselGeneratorAnnotation(() => new MockAlu()(c))
           )
         )
 

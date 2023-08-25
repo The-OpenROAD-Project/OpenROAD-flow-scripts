@@ -65,9 +65,15 @@ ISSUE_CP_FILES+="${ISSUE_CP_FILES_PLATFORM} \
     $VARS_BASENAME.gdb"
 
 echo "Creating ${RUN_ME_SCRIPT} script"
-echo "#!/usr/bin/env bash"                     >  ${RUN_ME_SCRIPT}
-echo "source ${VARS_BASENAME}.sh"              >> ${RUN_ME_SCRIPT}
-echo "openroad -no_init ${SCRIPTS_DIR}/$1.tcl" >> ${RUN_ME_SCRIPT}
+cat > ${RUN_ME_SCRIPT} <<EOF
+#!/usr/bin/env bash
+source ${VARS_BASENAME}.sh
+if [[ ! -z \${GDB+x} ]]; then
+    gdb --args openroad -no_init ${SCRIPTS_DIR}/$1.tcl
+else
+    openroad -no_init ${SCRIPTS_DIR}/$1.tcl
+fi
+EOF
 chmod +x ${RUN_ME_SCRIPT}
 
 echo "Creating ${VARS_BASENAME}.sh/tcl script"
