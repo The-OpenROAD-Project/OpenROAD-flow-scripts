@@ -19,20 +19,42 @@ then is recommended that you restrict the number of CPUs used by the scripts
 docker run --rm ubuntu:22.04 nproc
 ```
 
-You can restrict the number of CPUs with the `-t|--threads N` argument:
+### Build Using Docker from pre-built binaries
 
-``` shell
-./build_openroad.sh --threads N
+Courtesy of Precision Innovations, they have released triweekly 
+releases of the OpenROAD binaries in Ubuntu and Debian. This greatly
+helps to reduce the compilation time needed. 
+
+We recommend a setup whereby you install the OS using Docker,
+followed by installing the prebuilt binaries for OpenROAD. 
+First clone the desired Docker image, in this case we use Ubuntu 22.04.
+Then, we can start the container in an interactive mode using 
+`docker run -it`, telling it to start the prompt `sh`. 
+
+```shell
+docker pull ubuntu:22.04
+docker run -it ubuntu:22.04 sh
 ```
 
-## Clone and Build
+Now you are ready to install the prebuilt binaries. 
+Please refer to the instructions for installing prebuilt binaries 
+[here](./BuildWithPrebuilt.md).
+
+### Build Using Docker from sources
+
+Alternatively, if you would like the latest commits from the OpenROAD repositories,
+do follow the instructions below. 
+
+
+#### Clone and Build
 
 The following instructions build the docker image with CentOS 7 as the base OS:
+You can restrict the number of CPUs with the `-t|--threads N` argument:
 
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
-./build_openroad.sh
+./build_openroad.sh --threads N 
 ```
 
 ## Verify Installation

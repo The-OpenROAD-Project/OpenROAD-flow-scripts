@@ -45,6 +45,26 @@ See these [tips](user/FAQS.md#how-do-i-get-better-search-results) to help improv
 
 ### Setup
 
+#### Supported Operating Systems
+
+Note that depending on the installation method, we have varying levels of 
+support for various operating systems. 
+
+Legend:
+- `Y` for supported.
+- `-` for unsupported.
+
+| Operating System | Local Installation | Prebuilt Binaries | Docker Installation | Windows Subsystem for Linux | 
+| --- | --- | --- | --- | --- |
+| Ubuntu 20.04 | `Y` | `Y` | `Y` | `-` |  
+| Ubuntu 22.04 | `Y` | `Y` | `Y` | `-` |
+| CentOS 7     | `Y` | `-` | `Y` | `-` |
+| CentOS 8     | `Y` | `-` | `Y` | `-` |
+| Debian 10    | `Y` | `Y` | `Y` | `-` |
+| Debian 11    | `Y` | `Y` | `Y` | `-` |
+| RHEL         | `Y` | `-` | `-` | `-` |
+| Windows 10 and above | `-` | `-` | `Y` | `Y` |
+
 #### System Requirements
 
 To build the binaries and run `gcd` through the flow:

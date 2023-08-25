@@ -5,16 +5,16 @@ entries:
   title: User Guide
   entries:
   - file: user/BuildWithDocker
-    title: Build With Docker
+    title: Build Using Docker
     entries:
     - file: user/DockerShell.md
       title: Docker Shell utility
   - file: user/BuildWithPrebuilt.md
-    title: Build With Pre-built Binaries
+    title: Build Using Pre-built Binaries
   - file: user/BuildLocally.md
     title: Build Locally
   - file: user/BuildWithWSL.md
-    title: Build With WSL
+    title: Build Using WSL
   - file: user/FlowVariables.md
     title: Flow Variables
   - file: contrib/Metrics.md
