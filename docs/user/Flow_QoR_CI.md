@@ -7,5 +7,6 @@ Quality-of-Results (QoR) over time and describes flow-QoR metrics, such as timin
 
 ## Jenkins CI
 
-We use [Jenkins](Jenkins.md) as our continuous integration (CI) tool.
-You may use it to find out metrics regarding regression tests. 
+We use Jenkins as our continuous integration (CI) tool.
+You may use it to find out metrics regarding regression tests.
+See more about accessing and taking advantage of our CI [here](Jenkins.md).
