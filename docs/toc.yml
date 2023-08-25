@@ -37,7 +37,6 @@ entries:
 - file: user/FAQS.md
   title: FAQs
 
-
 - file: tutorials/TutorialHome
   title: Tutorials
   entries:
@@ -45,3 +44,11 @@ entries:
     title: Flow Tutorial
   - file: tutorials/Notebooks
     title: Running the OpenROAD Flow in Google Colab
+
+- file: user/Flow_QoR_CI.md
+  title: Flow QoR and CI Metrics
+  entries:
+  - file: user/QoRDashboard.md
+    title: Using the OpenROAD Dashboard to track and analyze QoR
+  - file: user/Jenkins.md
+    title: Exploring CI Metrics with Jenkins
