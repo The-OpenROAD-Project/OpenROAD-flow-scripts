@@ -24,13 +24,13 @@ User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) o
 ## Setting up AutoTuner
 
 To setup AutoTuner, make sure you have a virtual environment set up with
-Python 3.7.X. There are plenty of ways to do this, we recommend using 
+Python 3.9.X. There are plenty of ways to do this, we recommend using 
 [Miniconda](https://docs.conda.io/en/latest/miniconda.html),
 which is a free minimal installer for the package manager `conda`. 
 
 ```shell
 # set up conda environment
-conda create -n autotuner_env python=3.7
+conda create -n autotuner_env python=3.9
 conda activate autotuner_env
 
 # install requirements
