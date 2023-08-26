@@ -21,9 +21,10 @@ docker run --rm ubuntu:22.04 nproc
 
 ### Build Using Docker from pre-built binaries
 
-Courtesy of Precision Innovations, they have released triweekly 
-releases of the OpenROAD binaries in Ubuntu and Debian. This greatly
-helps to reduce the compilation time needed. 
+Courtesy of [Precision Innovations](https://precisioninno.com/), 
+they release `.deb` installers of OpenROAD for Ubuntu
+and Debian on a regular basis. 
+This greatly helps to reduce the compilation time needed. 
 
 We recommend a setup whereby you install the OS using Docker,
 followed by installing the prebuilt binaries for OpenROAD. 
@@ -49,12 +50,18 @@ do follow the instructions below.
 #### Clone and Build
 
 The following instructions build the docker image with CentOS 7 as the base OS:
-You can restrict the number of CPUs with the `-t|--threads N` argument:
+
 
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
-./build_openroad.sh --threads N 
+./build_openroad.sh 
+```
+
+You can restrict the number of CPUs with the `-t|--threads N` argument:
+
+``` shell
+./build_openroad.sh --threads N
 ```
 
 ## Verify Installation
