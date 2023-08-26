@@ -6,3 +6,4 @@ optuna
 pandas
 colorama==0.4.4
 bayesian-optimization==1.4.0
+protobuf==3.20.1
