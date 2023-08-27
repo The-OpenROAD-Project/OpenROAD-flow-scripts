@@ -915,13 +915,19 @@ preview_macro_placement:
 	@$(UNSET_AND_MAKE) $(RESULTS_DIR)/$(MACRO_PREVIEW_ODB)
 	@$(UNSET_AND_MAKE) gui_$(MACRO_PREVIEW_ODB)
 
+.PHONY: gui_synth
+gui_synth:
+	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
+.PHONY: open_synth
+open_synth:
+	$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
+
 define OPEN_GUI_SHORTCUT
 .PHONY: gui_$(1) open_$(1)
 gui_$(1): gui_$(2)
 open_$(1): open_$(2)
 endef
 
-$(eval $(call OPEN_GUI_SHORTCUT,synth,))
 $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,cts,4_cts.odb))
