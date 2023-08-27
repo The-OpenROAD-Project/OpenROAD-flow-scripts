@@ -6,6 +6,9 @@ export DESIGN_NICKNAME        = megaboom
 export VERILOG_FILES          = $(realpath ./designs/src/$(DESIGN_NICKNAME)/rocketchip.MegaBoomConfig.v)
 export VERILOG_FILES         += $(realpath ./designs/src/$(DESIGN_NICKNAME)/rocketchip.MegaBoomConfig.behav_srams.v)
 
+# NOTE! Use compressed Verilog or github's file size limit of 100mByte will be execeeded.
+export CACHED_NETLIST         = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/1_synth.v.gz
+
 export SDC_FILE               = $(realpath ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc)
 export SYNTH_SDC_FILE         = $(SDC_FILE)
 
