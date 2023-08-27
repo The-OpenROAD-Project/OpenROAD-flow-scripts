@@ -3,7 +3,7 @@ export PLATFORM               = asap7
 export DESIGN_NAME            = MegaBoom
 export DESIGN_NICKNAME        = megaboom
 
-export VERILOG_FILES          = $(realpath ./designs/src/$(DESIGN_NICKNAME)/rocketchip.MegaBoomConfig.v.gz)
+export VERILOG_FILES          = $(realpath ./designs/src/$(DESIGN_NICKNAME)/rocketchip.MegaBoomConfig.v)
 export VERILOG_FILES         += $(realpath ./designs/src/$(DESIGN_NICKNAME)/rocketchip.MegaBoomConfig.behav_srams.v)
 
 export SDC_FILE               = $(realpath ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc)
