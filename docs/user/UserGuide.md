@@ -4,7 +4,7 @@ The OpenROAD Project uses three tools to perform automated RTL-to-GDS layout gen
 
 1.  [yosys](https://github.com/The-OpenROAD-Project/yosys): Logic
     Synthesis
-2.  [OpenROAD App](https://github.com/The-OpenROAD-Project/OpenROAD):
+2.  [OpenROAD](https://github.com/The-OpenROAD-Project/OpenROAD):
     Floorplanning through Detailed Routing
 3.  [KLayout](https://www.klayout.de/): GDS merge, DRC and LVS (public
     PDKs)
