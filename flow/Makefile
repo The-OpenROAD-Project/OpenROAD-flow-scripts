@@ -309,9 +309,14 @@ endif
 export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
 
 define GENERATE_ABSTRACT_RULE
-# Single rule, two targets, hence the "&:", syntax
+block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
+ifeq ($(wildcard $(3)),)
+$(1) $(2) &:
+	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk generate_abstract
+else
 $(1) $(2) &: $(3)
 	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$(3) generate_abstract
+endif
 endef
 
 # Targets to harden Blocks in case of hierarchical flow is triggered
