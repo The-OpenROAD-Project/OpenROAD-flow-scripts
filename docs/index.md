@@ -64,10 +64,10 @@ Legend:
 | Debian 11    | `Y` | `Y` | `Y` | `-` |
 | RHEL         | `Y` | `-` | `Y` | `-` |
 | Windows 10 and above | `-` | `-` | `Y` | `Y` |
-| macOS*        | `Y` | `-` | `Y` | `-` |
+| macOS        | `Y*` | `-` | `Y` | `-` |
 
 ```{warning}
-For macOS, local compilation for the modules `par` and `mpl2` is not
+For macOS, local compilation for the modules `par` and `mpl2` are not
 fully supported due to an upstream issue with `or-tools`. We recommend
 Docker installation wherever possible.
 ```

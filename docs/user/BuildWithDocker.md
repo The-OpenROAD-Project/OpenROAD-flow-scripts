@@ -26,15 +26,14 @@ they release `.deb` installers of OpenROAD for Ubuntu
 and Debian on a regular basis. 
 This greatly helps to reduce the compilation time needed. 
 
-We recommend a setup whereby you install the OS using Docker,
-followed by installing the prebuilt binaries for OpenROAD. 
-First clone the desired Docker image, in this case we use Ubuntu 22.04.
-Then, we can start the container in an interactive mode using 
-`docker run -it`, telling it to start the prompt `sh`. 
+We recommend to use a Docker image of a supported OS
+and install OpenROAD using the prebuilt binaries from
+Precision Innovations. 
+You can start the container in an interactive mode using 
+the command below. 
 
 ```shell
-docker pull ubuntu:22.04
-docker run -it ubuntu:22.04 sh
+docker run -it ubuntu:22.04
 ```
 
 Now you are ready to install the prebuilt binaries. 
