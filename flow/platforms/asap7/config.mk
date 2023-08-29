@@ -78,7 +78,12 @@ export PLACE_SITE              = asap7sc7p5t
 export MAKE_TRACKS             = $(PLATFORM_DIR)/openRoad/make_tracks.tcl
 
 # Define default PDN config
-export PDN_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M1-M2-M5-M6.tcl
+ifeq ($(BLOCKS),)
+   export PDN_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/grid_strategy-M1-M2-M5-M6.tcl
+else
+   export PDN_TCL ?= $(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl
+endif
+
 
 # IO Placer pin layers
 export IO_PLACER_H             ?= M4
