@@ -98,8 +98,8 @@ $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 
 .PHONY: clean_issues
 clean_issues:
-	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
-	rm -rf $(VARS_BASENAME).sh $(RUN_ME_SCRIPT)
+	rm -f $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
+	rm -f vars*.sh vars*.tcl vars*.gdb run-me*.sh
 
 $(RESULTS_DIR)/6_final_only_clk.def: $(RESULTS_DIR)/6_final.def
 	$(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/deleteNonClkNets.tcl

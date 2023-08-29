@@ -11,3 +11,4 @@ export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 5
 
 export PLACE_DENSITY = 0.70
+export RECOVER_POWER = 100
