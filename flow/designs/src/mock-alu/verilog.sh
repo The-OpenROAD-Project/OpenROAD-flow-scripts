@@ -7,8 +7,6 @@ BASE=$DIR/../..
 
 cd $DIR
 
-cd ../../src/mock-alu
-
 rm -f *.v
 
 sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \
