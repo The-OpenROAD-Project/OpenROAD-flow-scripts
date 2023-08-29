@@ -38,3 +38,5 @@ export MOCK_ARRAY_COLS        = $(word 2, $(MOCK_ARRAY_TABLE))
 # same information to other stages in the flow.
 export MIN_ROUTING_LAYER = M2
 export MAX_ROUTING_LAYER = M5
+
+export PLACE_PINS_ARGS = -annealing
