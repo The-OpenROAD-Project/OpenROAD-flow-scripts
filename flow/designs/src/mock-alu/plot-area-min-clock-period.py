@@ -5,9 +5,9 @@ from matplotlib import pyplot as plt
 import numpy as np
 from matplotlib import cm
 import itertools
+import argparse
 
-
-def run():
+def run(platform):
     test_design = "make DESIGN_CONFIG=designs/asap7/mock-alu/config.mk"
 
     values = {}
@@ -18,26 +18,39 @@ def run():
         "operations": (
             ("MOCK_ALU_OPERATIONS",),
             (
-                "MAC_BRENTKUNG",
-                "MULT_BRENTKUNG",
-                "MULT_HANCARLSON",
-                "MULT_INFERRED",
-                "MULT_KOGGESTONE",
-                "MULT_RIPPLE"
-                # "ADD",
+               "ADD",
+                "ADD_BRENTKUNG",
+                "ADD_HANCARLSON",
+                "ADD_INFERRED",
+                "ADD_KOGGESTONE",
+#                "ADD_RIPPLE",
+               
+                # "MULT_BRENTKUNG",
+                # "MULT_HANCARLSON",
+                # "MULT_INFERRED",
+                # "MULT_KOGGESTONE",
+                # "MULT_RIPPLE",
+                # "MULT_HANCARLSON16",
+                # "MULT_HANCARLSON32",
+                # "MULT_HANCARLSON48",
+                # "MULT_HANCARLSON64",
+                # "MULT_HANCARLSON128",
+ #               "ADD",
+                #"CLAADD",
+                #"KOGGESTONEADD",
                 # "ADD8",
-                # "ADD16",
-                # "ADD32",
-                # "MUX1,MUX2",
+                 #"ADD16",
+#                 "ADD32",
+                #"MUX1,MUX2",
                 # "MUX1,MUX2,MUX3,MUX4",
-                # "MUX1,MUX2,MUX3,MUX4,MUX5,MUX6,MUX7,MUX8",
+                #"MUX1,MUX2,MUX3,MUX4,MUX5,MUX6,MUX7,MUX8",
                 # "ADD",
-                # "AND,OR,XOR",
-                # "OR",
-                # "SHL,SHR,SRA",
-                # "ADD,SUB,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE",
+                #"AND,OR,XOR",
+                #"OR",
+                #"SHL,SHR,SRA",
+                #"ADD,SUB,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE",
                 # "MULT",
-                # "AND,OR,XOR,SHL,SHR,SRA,ADD,SUB,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE",
+                #"AND,OR,XOR,SHL,SHR,SRA,ADD,SUB,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE",
                 # "AND,OR,XOR,SHL,SHR,SRA,ADD,SUB,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE,MULT",
             ),
         ),
@@ -49,7 +62,7 @@ def run():
     ):
         variant = "-".join(map(str, measurement)).replace(" ", "-")
         print(f"testing {variant}")
-        env_change = {"FLOW_VARIANT": variant}
+        env_change = {"FLOW_VARIANT": variant, "PLATFORM":platform}
         for e in itertools.chain(
             *map(
                 lambda measure: map(
@@ -63,7 +76,7 @@ def run():
         env = os.environ.copy()
         env.update(env_change)
 
-        if not os.path.exists(f"results/asap7/mock-alu/{variant}/5_route.odb"):
+        if not os.path.exists(f"results/{platform}/mock-alu/{variant}/5_route.odb"):
             print(f"Measuring {variant}")
             for cmd in (
                 test_design + " verilog",
@@ -103,7 +116,7 @@ def run():
     # Creating the scatter plot
     plt.scatter(x_coords, y_coords, color="red")
 
-    def custom_wrap(text, max_len=30):
+    def custom_wrap(text, max_len=20):
         line, length = "", 0
 
         for part in text.split(","):
@@ -118,18 +131,24 @@ def run():
 
     # Annotating each point with its label
     for i, label in enumerate(labels):
-        plt.annotate("\n".join(custom_wrap(label[0])), (x_coords[i], y_coords[i]))
+        plt.annotate("\n".join(custom_wrap(label[0])), (x_coords[i], y_coords[i]+0), ha='center', va='bottom')
 
     # Displaying the plot
-    plt.xlabel("minimum period/ps")
+    units = {
+        "asap7": "ps",
+        "sky130hd": "ns",
+    }
+
+    plt.xlabel(f"minimum period/{units[platform]}")
     plt.ylabel("area/u^2")
-    plt.title("ALU Operations and minimum period and area")
+    plt.title(f"{platform} ALU Operations and minimum period and area")
     plt.grid(True)
 
-    # plt.gca().invert_xaxis()
-    # plt.gca().invert_yaxis()
     plt.show()
 
 
 if __name__ == "__main__":
-    run()
+   parser = argparse.ArgumentParser(description='Process some arguments.')
+   parser.add_argument('--platform', default='asap7', help='Specify the platform. Default is asap7.')
+   args = parser.parse_args()
+   run(args.platform)
