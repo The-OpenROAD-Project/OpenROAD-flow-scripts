@@ -84,6 +84,7 @@ $DIR/generate-vars.sh ${VARS_BASENAME}
 echo "Archiving issue to $1_${ISSUE_TAG}.tar.gz"
 tar --ignore-failed-read -czhf $1_${ISSUE_TAG}.tar.gz \
     --transform="s|^|$1_${ISSUE_TAG}/|S" \
+    --transform="s|^$1_${ISSUE_TAG}${FLOW_HOME}/|$1_${ISSUE_TAG}/|S" \
     $LOG_DIR \
     $OBJECTS_DIR \
     $REPORTS_DIR \
