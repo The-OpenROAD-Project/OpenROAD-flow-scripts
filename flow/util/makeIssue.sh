@@ -69,9 +69,9 @@ cat > ${RUN_ME_SCRIPT} <<EOF
 #!/usr/bin/env bash
 source ${VARS_BASENAME}.sh
 if [[ ! -z \${GDB+x} ]]; then
-    gdb --args openroad -no_init ${SCRIPTS_DIR}/$1.tcl
+    gdb --args openroad -no_init \${SCRIPTS_DIR}/$1.tcl
 else
-    openroad -no_init ${SCRIPTS_DIR}/$1.tcl
+    openroad -no_init \${SCRIPTS_DIR}/$1.tcl
 fi
 EOF
 chmod +x ${RUN_ME_SCRIPT}
