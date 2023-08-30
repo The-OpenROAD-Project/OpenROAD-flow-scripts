@@ -248,6 +248,13 @@ for field, option in rules_dict.items():
 
         compare = ops[option['compare']]
 
+        if compare(rule_value, metrics[field]) and 'padding' in option.keys():
+            rule_value = metrics[field] * (1 + option['padding'] / 100)
+            if option['round_value'] and not isinf(rule_value):
+                rule_value = int(round(rule_value))
+            else:
+                rule_value = ceil(rule_value * 100) / 100.0
+
         UPDATE = False
         if args.tighten \
                 and rule_value != old_rule['value'] \
