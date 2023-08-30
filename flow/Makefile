@@ -309,13 +309,22 @@ endif
 export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
 
 define GENERATE_ABSTRACT_RULE
-block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
 ifeq ($(wildcard $(3)),)
-$(1) $(2) &:
-	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk generate_abstract
+# There is no unqiue config.mk for this module, use the shared
+# block.mk that, by convention, is in the same folder as config.mk
+# of the parent macro.
+#
+# At an early stage, before refining each of the macros, a shared
+# block.mk file can be useful to run through the flow to explore
+# more global concerns instead of getting mired in the details of
+# each macro.
+block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
+$(1) $(2) &: ./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk
+	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=$$< generate_abstract
 else
+# There is a unqiue config.mk for this Verilog module
 $(1) $(2) &: $(3)
-	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$(3) generate_abstract
+	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$$< generate_abstract
 endif
 endef
 
