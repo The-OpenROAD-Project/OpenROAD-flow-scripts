@@ -37,7 +37,6 @@ docker run -u $(id -u ${USER}):$(id -g ${USER}) \
  ${OR_IMAGE:-openroad/flow-centos7-builder:latest} \
  bash -c "set -ex
  mkdir /tmp/xdg-run
- #. ./env.sh
  cd /OpenROAD-flow-scripts/flow
  $ARGUMENTS
 "
