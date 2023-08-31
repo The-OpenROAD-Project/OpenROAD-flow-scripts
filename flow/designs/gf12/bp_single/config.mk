@@ -2,6 +2,8 @@ export DESIGN_NICKNAME = bp_single
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 
+export SKIP_GATE_CLONING = 1
+
 # export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.sv2v.v
 export VERILOG_FILES =  $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_don_abc_script.v \
                         $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
