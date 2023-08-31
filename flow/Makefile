@@ -78,7 +78,6 @@
 # DESIGN_CONFIG=./designs/asap7/megaboom/config.mk
 # DESIGN_CONFIG=./designs/asap7/mock-array/config.mk
 # DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
-# DESIGN_CONFIG=./designs/asap7/sha3/config.mk
 # DESIGN_CONFIG=./designs/asap7/swerv_wrapper/config.mk
 # DESIGN_CONFIG=./designs/asap7/uart/config.mk
 
@@ -94,7 +93,6 @@
 # DESIGN_CONFIG=./designs/gf180/ibex/config.mk
 # DESIGN_CONFIG=./designs/gf180/jpeg/config.mk
 # DESIGN_CONFIG=./designs/gf180/riscv32i/config.mk
-# DESIGN_CONFIG=./designs/gf180/sha3/config.mk
 # DESIGN_CONFIG=./designs/gf180/uart-blocks/config.mk
 #
 # Default design
