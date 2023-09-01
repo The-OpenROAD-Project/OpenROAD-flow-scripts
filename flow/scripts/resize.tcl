@@ -27,9 +27,11 @@ puts ""
 set_dont_use $::env(DONT_USE_CELLS)
 
 # Do not buffer chip-level designs
-if {![info exists ::env(FOOTPRINT)]} {
-  puts "Perform port buffering..."
-  buffer_ports
+if {![info exists ::env(FOOTPRINT)] } {
+  if { ![info exists ::env(PORTS_BUFFER)] || $::env(PORTS_BUFFER) == 1 } {
+    puts "Perform port buffering..."
+    buffer_ports
+  }
 }
 
 puts "Perform buffer insertion..."
