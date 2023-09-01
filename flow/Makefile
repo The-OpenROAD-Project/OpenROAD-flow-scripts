@@ -163,7 +163,9 @@ else
   $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
 endif
 
+ifeq ($(MAKELEVEL),0)
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
+endif
 include $(PLATFORM_DIR)/config.mk
 
 export GALLERY_REPORT ?= 0
@@ -203,8 +205,10 @@ export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
 ifdef BLOCKS
+ifeq ($(MAKELEVEL),0)
   $(info [INFO][FLOW] Invoked hierarchical flow.)
   $(foreach block,$(BLOCKS),$(info Block ${block} needs to be hardened.))
+endif
   $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(block)/config.mk))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
@@ -443,7 +447,7 @@ else ifneq ($(FOOTPRINT_TCL),)
 IS_CHIP = 1
 endif
 
-UNSET_AND_MAKE = @bash -c 'for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done; echo $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@; $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
+UNSET_AND_MAKE = @bash -c 'for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done; $(MAKE) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
 
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the
