@@ -38,7 +38,6 @@ pipeline {
                    "jpeg asap7",
                    "jpeg_lvt asap7",
                    "riscv32i asap7",
-                   "sha3 asap7",
                    "uart asap7",
                    "mock-array asap7",
                    "mock-alu asap7",
@@ -71,7 +70,6 @@ pipeline {
                    "ibex gf180",
                    "jpeg gf180",
                    "riscv32i gf180",
-                   "sha3 gf180",
                    "uart-blocks gf180";
           }
         }

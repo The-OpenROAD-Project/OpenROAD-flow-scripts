@@ -78,7 +78,6 @@
 # DESIGN_CONFIG=./designs/asap7/megaboom/config.mk
 # DESIGN_CONFIG=./designs/asap7/mock-array/config.mk
 # DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
-# DESIGN_CONFIG=./designs/asap7/sha3/config.mk
 # DESIGN_CONFIG=./designs/asap7/swerv_wrapper/config.mk
 # DESIGN_CONFIG=./designs/asap7/uart/config.mk
 
@@ -94,7 +93,6 @@
 # DESIGN_CONFIG=./designs/gf180/ibex/config.mk
 # DESIGN_CONFIG=./designs/gf180/jpeg/config.mk
 # DESIGN_CONFIG=./designs/gf180/riscv32i/config.mk
-# DESIGN_CONFIG=./designs/gf180/sha3/config.mk
 # DESIGN_CONFIG=./designs/gf180/uart-blocks/config.mk
 #
 # Default design
@@ -163,7 +161,9 @@ else
   $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
 endif
 
+ifeq ($(MAKELEVEL),0)
 $(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
+endif
 include $(PLATFORM_DIR)/config.mk
 
 export GALLERY_REPORT ?= 0
@@ -203,12 +203,15 @@ export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
 ifdef BLOCKS
+ifeq ($(MAKELEVEL),0)
   $(info [INFO][FLOW] Invoked hierarchical flow.)
   $(foreach block,$(BLOCKS),$(info Block ${block} needs to be hardened.))
+endif
   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
   $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
   $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LOG_FOLDERS += ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/))
   export ADDITIONAL_LEFS += $(BLOCK_LEFS)
   export ADDITIONAL_LIBS += $(BLOCK_LIBS)
   export ADDITIONAL_GDS += $(BLOCK_GDS)
@@ -455,7 +458,7 @@ else ifneq ($(FOOTPRINT_TCL),)
 IS_CHIP = 1
 endif
 
-UNSET_AND_MAKE = @bash -c 'for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done; echo $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@; $(MAKE) DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
+UNSET_AND_MAKE = @bash -c 'for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done; $(MAKE) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
 
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the
@@ -732,7 +735,7 @@ finish: $(LOG_DIR)/6_report.log \
 
 .PHONY: elapsed
 elapsed:
-	-@$(UTILS_DIR)/genElapsedTime.py -d "$(LOG_DIR)"
+	-@$(UTILS_DIR)/genElapsedTime.py -d $(BLOCK_LOG_FOLDERS) $(LOG_DIR)
 
 # ==============================================================================
 

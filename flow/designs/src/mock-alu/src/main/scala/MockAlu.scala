@@ -13,28 +13,6 @@ import scopt.RenderingMode
 import scala.collection.immutable.SeqMap
 import os.ResourcePath
 
-object ALUOps extends ChiselEnum {
-  val ADD, ADD8, ADD16, ADD32, SUB, AND, OR, XOR, SHL, SHR, SRA, SETCC_EQ,
-      SETCC_NE, SETCC_LT, SETCC_ULT, SETCC_LE, SETCC_ULE, MULT, MULT_HANCARLSON,
-      MULT_BRENTKUNG, MAC_BRENTKUNG, MULT_INFERRED, MULT_KOGGESTONE,
-      MULT_RIPPLE, MUX1, MUX2, MUX3, MUX4, MUX5, MUX6, MUX7, MUX8 = Value
-  def multipliers: Seq[ALUOps.Type] = {
-    Seq(
-      ALUOps.MULT,
-      ALUOps.MULT_BRENTKUNG,
-      ALUOps.MULT_HANCARLSON,
-      ALUOps.MULT_INFERRED,
-      ALUOps.MULT_KOGGESTONE,
-      ALUOps.MULT_RIPPLE
-    )
-  }
-  def macs: Seq[ALUOps.Type] = {
-    Seq(
-      ALUOps.MAC_BRENTKUNG
-    )
-  }
-}
-
 class Operands(bitWidth: Int) extends Bundle {
   val a = Input(UInt(bitWidth.W))
   val b = Input(UInt(bitWidth.W))
@@ -58,84 +36,6 @@ object operation {
     operand.io.a := a
     operand.io.b := b
     operand.io.out
-  }
-}
-
-// TODO Will synthesis result in a realistic barrel shifter?
-class BarrelShifter(bitWidth: Int) extends Module {
-  val io = IO(new Bundle {
-    val data = Input(UInt(bitWidth.W))
-    val shiftAmount = Input(UInt(log2Ceil(bitWidth).W))
-    val dir = Input(ALUOps())
-    val out = Output(UInt(bitWidth.W))
-  })
-
-  val rotate = Mux(
-    io.dir === ALUOps.SHL,
-    bitWidth.U - io.shiftAmount,
-    io.shiftAmount
-  )
-
-  val rotateInput = MuxLookup(
-    io.dir.asUInt,
-    0.U,
-    Seq(
-      ALUOps.SRA ->
-        Fill(bitWidth, io.data(bitWidth - 1)),
-      ALUOps.SHL -> io.data,
-      ALUOps.SHR -> 0.U
-    ).map(a => (a._1.asUInt, a._2))
-  ) ## Mux(io.dir === ALUOps.SHL, 0.U, io.data)
-
-  io.out := rotateInput >> rotate
-}
-
-// multiply.v was generated using https://github.com/antonblanchard/vlsiffra:
-//
-// vlsi-multiplier --bits=64 --algorithm=hancarlson --tech=asap7 --register-post-ppa --register-post-ppg --output=multiply.v
-class multiplier()(implicit config: ALUConfig)
-    extends BlackBox
-    with HasBlackBoxResource {
-  val io = IO(new Bundle() {
-    val a = Input(UInt(64.W))
-    val b = Input(UInt(64.W))
-    val o = Output(UInt(128.W))
-    val clk = Input(Clock())
-    val rst = Input(Reset())
-  })
-  val mult = ALUOps.multipliers.intersect(config.operations)(0)
-  val opName = nameLookup(mult).toLowerCase()
-  val algorithm = if (opName == "mult") { "mult_hancarlson" }
-  else { opName }
-
-  addResource("/" + algorithm + ".v")
-}
-
-class multiply_adder()(implicit config: ALUConfig)
-    extends BlackBox
-    with HasBlackBoxResource {
-  val io = IO(new Bundle() {
-    val a = Input(UInt(64.W))
-    val b = Input(UInt(64.W))
-    val c = Input(UInt(64.W))
-    val o = Output(UInt(128.W))
-    val clk = Input(Clock())
-    val rst = Input(Reset())
-  })
-  val mult = ALUOps.macs.intersect(config.operations)(0)
-  val algorithm = nameLookup(mult).toLowerCase()
-
-  addResource("/" + algorithm + ".v")
-}
-
-object nameLookup {
-  def apply(op: ALUOps.Type): String = {
-    val map = (ALUOps.all zip ALUOps.allNames).toMap
-    map(op)
-  }
-  def apply(name: String): ALUOps.Type = {
-    val map = (ALUOps.allNames zip ALUOps.all).toMap
-    map(name)
   }
 }
 
@@ -186,7 +86,7 @@ class MockAlu()(implicit config: ALUConfig) extends Module {
 
   val activeMultipliers =
     ALUOps.multipliers.filter(config.operations.contains(_))
-  assert(Seq(0, 1).contains(activeMultipliers.length))
+  require(Seq(0, 1).contains(activeMultipliers.length))
 
   val multResult = if (activeMultipliers.size == 1) {
     val mult = Module(new multiplier())
@@ -195,6 +95,39 @@ class MockAlu()(implicit config: ALUConfig) extends Module {
     mult.io.a := a
     mult.io.b := b
     mult.io.o
+  } else {
+    WireInit(UInt(config.width.W), DontCare)
+  }
+
+  val activeAdders =
+    ALUOps.adders.filter(config.operations.contains(_))
+  require(Seq(0, 1).contains(activeMultipliers.length))
+
+  val adderResult = if (activeAdders.size == 1) {
+    val adder = Module(new adder())
+    adder.io.a := a
+    adder.io.b := b
+    adder.io.o
+  } else {
+    WireInit(UInt(config.width.W), DontCare)
+  }
+
+  val claResult = if (config.operations.contains(ALUOps.CLAADD)) {
+    val cla = Module(new CarryLookAheadAdder(config.width))
+    cla.io.A := a
+    cla.io.B := b
+    cla.io.Cin := isSubtraction
+    cla.io.Cout ## cla.io.SUM
+  } else {
+    WireInit(UInt(config.width.W), DontCare)
+  }
+
+  val koggeStoneResult = if (config.operations.contains(ALUOps.KOGGESTONEADD)) {
+    val cla = Module(new KoggeStoneAdder(config.width))
+    cla.io.A := a
+    cla.io.B := b
+    cla.io.cin := isSubtraction
+    cla.io.cout ## cla.io.sum
   } else {
     WireInit(UInt(config.width.W), DontCare)
   }
@@ -216,7 +149,8 @@ class MockAlu()(implicit config: ALUConfig) extends Module {
   val aluResult = (Seq[(ALUOps.Type, (UInt, UInt) => UInt)](
     ALUOps.AND -> (_ & _),
     ALUOps.OR -> (_ | _),
-    ALUOps.XOR -> (_ ^ _)
+    ALUOps.XOR -> (_ ^ _),
+    ALUOps.ADDYOSYS -> (_ + _)
   ).map(aluop =>
     aluop._1 -> operation(
       a,
@@ -227,8 +161,10 @@ class MockAlu()(implicit config: ALUConfig) extends Module {
   ) ++ Seq[(ALUOps.Type, UInt)](
     ALUOps.ADD -> result,
     ALUOps.ADD8 -> result(7, 0),
-    ALUOps.ADD16 -> result(15, 0),
-    ALUOps.ADD32 -> result(31, 0),
+    ALUOps.ADD16 -> (if (config.width >= 16) { result(15, 0) }
+                     else { 0.U }),
+    ALUOps.ADD32 -> (if (config.width >= 32) { result(31, 0) }
+                     else { 0.U }),
     ALUOps.SUB -> result,
     ALUOps.SETCC_EQ -> isTrueZero.asUInt,
     ALUOps.SETCC_NE -> (~isTrueZero).asUInt,
@@ -239,8 +175,11 @@ class MockAlu()(implicit config: ALUConfig) extends Module {
     ALUOps.SHL -> barrel.io.out,
     ALUOps.SHR -> barrel.io.out,
     ALUOps.SRA -> barrel.io.out,
-    ALUOps.MAC_BRENTKUNG -> macResult
+    ALUOps.MAC_BRENTKUNG -> macResult,
+    ALUOps.CLAADD -> claResult,
+    ALUOps.KOGGESTONEADD -> koggeStoneResult
   ) ++ ALUOps.multipliers.map(op => op -> multResult) ++
+    ALUOps.adders.map(op => op -> adderResult) ++
     Seq(
       ALUOps.MUX1,
       ALUOps.MUX2,
@@ -251,7 +190,7 @@ class MockAlu()(implicit config: ALUConfig) extends Module {
       ALUOps.MUX7,
       ALUOps.MUX8
     ).zipWithIndex.map { case (op, i) =>
-      op -> (io.a >> i)
+      op -> (a >> i)
     })
     .filter(a => config.operations.contains(a._1))
     .map(a => (a._1.asUInt -> a._2))
@@ -271,7 +210,8 @@ class MockAlu()(implicit config: ALUConfig) extends Module {
 
 case class ALUConfig(
     width: Int = 64,
-    operations: Seq[ALUOps.Type] = Seq.empty
+    operations: Seq[ALUOps.Type] = Seq.empty,
+    platform: String = "asap7"
 )
 
 object GenerateMockAlu extends App {
@@ -292,7 +232,14 @@ object GenerateMockAlu extends App {
         .action((operations, c) =>
           c.copy(operations = operations.map(nameLookup(_)))
         )
-        .text("ALU operations")
+        .text("ALU operations"),
+      opt[String]('p', "platform")
+        .optional()
+        .valueName(
+          "Platform, any of: " + Seq("asap7", "sky130hd").mkString(", ")
+        )
+        .action((platform, c) => c.copy(platform = platform))
+        .text("PDK")
     )
   }
 

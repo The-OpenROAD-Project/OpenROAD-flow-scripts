@@ -69,9 +69,9 @@ cat > ${RUN_ME_SCRIPT} <<EOF
 #!/usr/bin/env bash
 source ${VARS_BASENAME}.sh
 if [[ ! -z \${GDB+x} ]]; then
-    gdb --args openroad -no_init ${SCRIPTS_DIR}/$1.tcl
+    gdb --args openroad -no_init \${SCRIPTS_DIR}/$1.tcl
 else
-    openroad -no_init ${SCRIPTS_DIR}/$1.tcl
+    openroad -no_init \${SCRIPTS_DIR}/$1.tcl
 fi
 EOF
 chmod +x ${RUN_ME_SCRIPT}
@@ -84,6 +84,7 @@ $DIR/generate-vars.sh ${VARS_BASENAME}
 echo "Archiving issue to $1_${ISSUE_TAG}.tar.gz"
 tar --ignore-failed-read -czhf $1_${ISSUE_TAG}.tar.gz \
     --transform="s|^|$1_${ISSUE_TAG}/|S" \
+    --transform="s|^$1_${ISSUE_TAG}${FLOW_HOME}/|$1_${ISSUE_TAG}/|S" \
     $LOG_DIR \
     $OBJECTS_DIR \
     $REPORTS_DIR \

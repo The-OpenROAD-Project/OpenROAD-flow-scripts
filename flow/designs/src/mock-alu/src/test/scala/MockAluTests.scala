@@ -54,7 +54,16 @@ class MockAluTests extends AnyFlatSpec with ChiselScalatestTester with Formal {
   ): Unit = {
 
     it should (op.toString + " " + a.toHexString + " " + b.toHexString + "=" + out.toHexString) in {
-      test(new MockAlu()(ALUConfig(bitWidth, ALUOps.all)))
+      test(
+        new MockAlu()(
+          ALUConfig(
+            bitWidth,
+            ALUOps.all.diff(ALUOps.multipliers ++ ALUOps.adders) ++ Seq(
+              ALUOps.MULT
+            )
+          )
+        )
+      )
         .withAnnotations(annotations) { dut =>
           val mask = (1 << bitWidth) - 1
           dut.io.a.poke((a & mask).U)
@@ -68,6 +77,9 @@ class MockAluTests extends AnyFlatSpec with ChiselScalatestTester with Formal {
         }
     }
   }
+  testOp(123, 33, 123 + 33, ALUOps.CLAADD)
+  testOp(123, 33, 123 + 33, ALUOps.KOGGESTONEADD)
+  testOp(0x83, 0x77, (0x77 + 0x83) & 0xff, ALUOps.KOGGESTONEADD)
   testOp(20, 22, 42, ALUOps.ADD)
   testOp(0xff, 0x1, 0, ALUOps.ADD)
   testOp(43, 1, 42, ALUOps.SUB)
