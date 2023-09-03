@@ -327,7 +327,7 @@ $(1) $(2) &:
 else
 # There is a unqiue config.mk for this Verilog module
 $(1) $(2) &:
-	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$$< generate_abstract
+	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$(3) generate_abstract
 endif
 endef
 
