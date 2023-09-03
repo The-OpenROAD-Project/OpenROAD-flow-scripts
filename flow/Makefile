@@ -207,7 +207,6 @@ ifeq ($(MAKELEVEL),0)
   $(info [INFO][FLOW] Invoked hierarchical flow.)
   $(foreach block,$(BLOCKS),$(info Block ${block} needs to be hardened.))
 endif
-  $(foreach block,$(BLOCKS),$(eval BLOCK_CONFIGS += ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(block)/config.mk))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
   $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
@@ -313,9 +312,23 @@ endif
 export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
 
 define GENERATE_ABSTRACT_RULE
-# Single rule, two targets, hence the "&:", syntax
+ifeq ($(wildcard $(3)),)
+# There is no unqiue config.mk for this module, use the shared
+# block.mk that, by convention, is in the same folder as config.mk
+# of the parent macro.
+#
+# At an early stage, before refining each of the macros, a shared
+# block.mk file can be useful to run through the flow to explore
+# more global concerns instead of getting mired in the details of
+# each macro.
+block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
+$(1) $(2) &: ./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk
+	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=$$< generate_abstract
+else
+# There is a unqiue config.mk for this Verilog module
 $(1) $(2) &: $(3)
-	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$(3) generate_abstract
+	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$$< generate_abstract
+endif
 endef
 
 # Targets to harden Blocks in case of hierarchical flow is triggered
