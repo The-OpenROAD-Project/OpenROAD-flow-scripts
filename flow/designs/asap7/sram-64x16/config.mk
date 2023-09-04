@@ -27,7 +27,6 @@ export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.65
 
-export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = True
 
 export DETAILED_ROUTE_ARGS=-bottom_routing_layer M2 -top_routing_layer M7 -save_guide_updates -verbose 1 -drc_report_iter_step 5 -droute_end_iter 30
