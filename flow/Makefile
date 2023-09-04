@@ -363,7 +363,7 @@ $(OBJECTS_DIR)/lib/merged.lib:
 # ==============================================================================
 $(OBJECTS_DIR)/klayout_tech.lef: $(TECH_LEF)
 	@mkdir -p $(OBJECTS_DIR)
-	sed '/OR_DEFAULT/d' $< > $@
+	cp $< $@
 
 $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
 	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(shell realpath --relative-to=$(RESULTS_DIR) $(file))</lef-files>),g' $< > $@
