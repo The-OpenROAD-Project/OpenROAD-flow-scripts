@@ -288,11 +288,6 @@ KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' 
 else
 KLAYOUT_CMD ?= $(shell command -v klayout)
 endif
-
-KLAYOUT_CMD ?= $(if $(wildcard $(KLAYOUT_DIR)/klayout),\
- LD_LIBRARY_PATH=$(KLAYOUT_DIR) $(KLAYOUT_DIR)/klayout,\
- $(shell command -v klayout))
-
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
 ifneq ($(shell command -v stdbuf),)
