@@ -129,7 +129,7 @@ SHELL          := /usr/bin/env bash
 # - the following settings allowed user to point OpenROAD binaries to different
 #   location
 # - default is current install / clone directory
-export FLOW_HOME ?= .
+export FLOW_HOME ?= $(shell pwd)
 
 #-------------------------------------------------------------------------------
 # Setup variables to point to other location for the following sub directory
@@ -372,8 +372,26 @@ $(OBJECTS_DIR)/klayout_tech.lef: $(TECH_LEF)
 	@mkdir -p $(OBJECTS_DIR)
 	cp $< $@
 
+KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
+KLAYOUT_VERSION = $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
+
+KLAYOUT_ENV_VAR_IN_PATH = $(shell \
+	if [ -z "$(KLAYOUT_VERSION)" ]; then \
+		echo "not_found"; \
+	elif [ "$$(echo -e "$(KLAYOUT_VERSION)\n$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" | sort -V | head -n1)" = "$(KLAYOUT_VERSION)" ] && [ "$(KLAYOUT_VERSION)" != "$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" ]; then \
+		echo "invalid"; \
+	else \
+		echo "valid"; \
+	fi)
+
 $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
+ifeq ($(KLAYOUT_ENV_VAR_IN_PATH),valid)
+	SC_LEF_RELATIVE_PATH="$$\(env('FLOW_HOME')\)/$(shell realpath --relative-to=$(FLOW_HOME) $(SC_LEF))"; \
+	OTHER_LEFS_RELATIVE_PATHS=$$(echo "$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(ADDITIONAL_LEFS),<lef-files>$$(realpath --relative-to=$(RESULTS_DIR) $(file))</lef-files>)"); \
+	sed 's,<lef-files>.*</lef-files>,<lef-files>'"$$SC_LEF_RELATIVE_PATH"'</lef-files>'"$$OTHER_LEFS_RELATIVE_PATHS"',g' $< > $@
+else
 	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(shell realpath --relative-to=$(RESULTS_DIR) $(file))</lef-files>),g' $< > $@
+endif
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
 	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(shell realpath --relative-to=$(OBJECTS_DIR)/def $(file))</lef-files>),g' $< > $@
