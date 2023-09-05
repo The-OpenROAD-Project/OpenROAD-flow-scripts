@@ -329,12 +329,12 @@ ifeq ($(wildcard $(3)),)
 # more global concerns instead of getting mired in the details of
 # each macro.
 block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
-$(1) $(2) &: ./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk
-	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=$$< generate_abstract
+$(1) $(2) &:
+	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk generate_abstract
 else
 # There is a unqiue config.mk for this Verilog module
-$(1) $(2) &: $(3)
-	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$$< generate_abstract
+$(1) $(2) &:
+	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$(3) generate_abstract
 endif
 endef
 
