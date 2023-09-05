@@ -279,7 +279,19 @@ OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
 YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
-KLAYOUT_CMD             ?= $(shell command -v klayout)
+# Use locally installed and built klayout if it exists, otherwise use klayout in path
+KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
+KLAYOUT_BIN_FROM_DIR = $(KLAYOUT_DIR)/klayout
+
+ifeq ($(wildcard $(KLAYOUT_BIN_FROM_DIR)), $(KLAYOUT_BIN_FROM_DIR))
+KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
+else
+KLAYOUT_CMD ?= $(shell command -v klayout)
+endif
+
+KLAYOUT_CMD ?= $(if $(wildcard $(KLAYOUT_DIR)/klayout),\
+ LD_LIBRARY_PATH=$(KLAYOUT_DIR) $(KLAYOUT_DIR)/klayout,\
+ $(shell command -v klayout))
 
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
@@ -995,6 +1007,10 @@ print-%  : ; @echo $* = $($*)
 
 .PHONY: test-unset-and-make-%
 test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
+
+.phony: klayout
+klayout:
+	$(KLAYOUT_CMD)
 
 # Utilities
 #-------------------------------------------------------------------------------
