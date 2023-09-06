@@ -7,16 +7,18 @@ BASE=$DIR/../..
 
 cd $DIR
 
-rm -f *.sv *.v
+rm -rf registerfile/
 
 sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \
-     "test:runMain GenerateMockAlu \
-     --width ${MOCK_ALU_WIDTH} \
-     --operations ${MOCK_ALU_OPERATIONS} \
+     "test:runMain GenerateMockRegisterFile \
+     --width ${MOCK_REGISTERFILE_WIDTH} \
+     --read-ports ${MOCK_REGISTERFILE_READ_PORTS} \
+     --write-ports ${MOCK_REGISTERFILE_WRITE_PORTS} \
+     --registers ${MOCK_REGISTERFILE_REGISTERS} \
      --platform ${PLATFORM} \
      -- \
-     generate/"
+     registerfile/"
 
-mv generate/* .
+cd registerfile
 # reduce git noise as these comments will change if the line numbers in Chisel changes
 find . \( -name "*.sv" -o -name "*.v" \) -type f -exec sed -i '/^\/\/.*/d' {} \;
