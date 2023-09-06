@@ -1,0 +1,277 @@
+module MockAluRegisterFile(
+  input         clock,
+                reset,
+  input  [6:0]  io_registerFile_read_0_address,
+                io_registerFile_read_1_address,
+                io_registerFile_read_2_address,
+                io_registerFile_read_3_address,
+                io_registerFile_read_4_address,
+                io_registerFile_read_5_address,
+                io_registerFile_read_6_address,
+                io_registerFile_read_7_address,
+  input         io_registerFile_write_0_write,
+  input  [6:0]  io_registerFile_write_0_address,
+  input  [63:0] io_registerFile_write_0_value,
+  input         io_registerFile_write_0_byteMask_0,
+                io_registerFile_write_0_byteMask_1,
+                io_registerFile_write_0_byteMask_2,
+                io_registerFile_write_0_byteMask_3,
+                io_registerFile_write_0_byteMask_4,
+                io_registerFile_write_0_byteMask_5,
+                io_registerFile_write_0_byteMask_6,
+                io_registerFile_write_0_byteMask_7,
+                io_registerFile_write_1_write,
+  input  [6:0]  io_registerFile_write_1_address,
+  input  [63:0] io_registerFile_write_1_value,
+  input         io_registerFile_write_1_byteMask_0,
+                io_registerFile_write_1_byteMask_1,
+                io_registerFile_write_1_byteMask_2,
+                io_registerFile_write_1_byteMask_3,
+                io_registerFile_write_1_byteMask_4,
+                io_registerFile_write_1_byteMask_5,
+                io_registerFile_write_1_byteMask_6,
+                io_registerFile_write_1_byteMask_7,
+                io_registerFile_write_2_write,
+  input  [6:0]  io_registerFile_write_2_address,
+  input  [63:0] io_registerFile_write_2_value,
+  input         io_registerFile_write_2_byteMask_0,
+                io_registerFile_write_2_byteMask_1,
+                io_registerFile_write_2_byteMask_2,
+                io_registerFile_write_2_byteMask_3,
+                io_registerFile_write_2_byteMask_4,
+                io_registerFile_write_2_byteMask_5,
+                io_registerFile_write_2_byteMask_6,
+                io_registerFile_write_2_byteMask_7,
+                io_registerFile_write_3_write,
+  input  [6:0]  io_registerFile_write_3_address,
+  input  [63:0] io_registerFile_write_3_value,
+  input         io_registerFile_write_3_byteMask_0,
+                io_registerFile_write_3_byteMask_1,
+                io_registerFile_write_3_byteMask_2,
+                io_registerFile_write_3_byteMask_3,
+                io_registerFile_write_3_byteMask_4,
+                io_registerFile_write_3_byteMask_5,
+                io_registerFile_write_3_byteMask_6,
+                io_registerFile_write_3_byteMask_7,
+  input  [5:0]  io_op,
+  output [63:0] io_registerFile_read_0_value,
+                io_registerFile_read_1_value,
+                io_registerFile_read_2_value,
+                io_registerFile_read_3_value,
+                io_registerFile_read_4_value,
+                io_registerFile_read_5_value,
+                io_registerFile_read_6_value,
+                io_registerFile_read_7_value
+);
+
+  wire [63:0] _alu_io_out;
+  wire [63:0] _registerFile_io_read_0_value;
+  wire [63:0] _registerFile_io_read_1_value;
+  wire [63:0] _registerFile_io_read_2_value;
+  wire [63:0] _registerFile_io_read_3_value;
+  wire [63:0] _registerFile_io_read_4_value;
+  wire [63:0] _registerFile_io_read_5_value;
+  wire [63:0] _registerFile_io_read_6_value;
+  wire [63:0] _registerFile_io_read_7_value;
+  reg  [6:0]  registerFile_io_read_0_address_REG;
+  reg  [63:0] io_registerFile_read_0_value_REG;
+  reg  [6:0]  registerFile_io_read_1_address_REG;
+  reg  [63:0] io_registerFile_read_1_value_REG;
+  reg  [6:0]  registerFile_io_read_2_address_REG;
+  reg  [63:0] io_registerFile_read_2_value_REG;
+  reg  [6:0]  registerFile_io_read_3_address_REG;
+  reg  [63:0] io_registerFile_read_3_value_REG;
+  reg  [6:0]  registerFile_io_read_4_address_REG;
+  reg  [63:0] io_registerFile_read_4_value_REG;
+  reg  [6:0]  registerFile_io_read_5_address_REG;
+  reg  [63:0] io_registerFile_read_5_value_REG;
+  reg  [6:0]  registerFile_io_read_6_address_REG;
+  reg  [63:0] io_registerFile_read_6_value_REG;
+  reg  [6:0]  registerFile_io_read_7_address_REG;
+  reg  [63:0] io_registerFile_read_7_value_REG;
+  reg         registerFile_io_write_0_write_REG;
+  reg  [6:0]  registerFile_io_write_0_address_REG;
+  reg         REG_0;
+  reg         REG_1;
+  reg         REG_2;
+  reg         REG_3;
+  reg         REG_4;
+  reg         REG_5;
+  reg         REG_6;
+  reg         REG_7;
+  reg         registerFile_io_write_1_write_REG;
+  reg  [6:0]  registerFile_io_write_1_address_REG;
+  reg         REG_1_0;
+  reg         REG_1_1;
+  reg         REG_1_2;
+  reg         REG_1_3;
+  reg         REG_1_4;
+  reg         REG_1_5;
+  reg         REG_1_6;
+  reg         REG_1_7;
+  reg  [63:0] registerFile_io_write_1_value_REG;
+  reg         registerFile_io_write_2_write_REG;
+  reg  [6:0]  registerFile_io_write_2_address_REG;
+  reg         REG_2_0;
+  reg         REG_2_1;
+  reg         REG_2_2;
+  reg         REG_2_3;
+  reg         REG_2_4;
+  reg         REG_2_5;
+  reg         REG_2_6;
+  reg         REG_2_7;
+  reg  [63:0] registerFile_io_write_2_value_REG;
+  reg         registerFile_io_write_3_write_REG;
+  reg  [6:0]  registerFile_io_write_3_address_REG;
+  reg         REG_3_0;
+  reg         REG_3_1;
+  reg         REG_3_2;
+  reg         REG_3_3;
+  reg         REG_3_4;
+  reg         REG_3_5;
+  reg         REG_3_6;
+  reg         REG_3_7;
+  reg  [63:0] registerFile_io_write_3_value_REG;
+  reg  [63:0] alu_io_a_REG;
+  reg  [63:0] alu_io_b_REG;
+  always @(posedge clock) begin
+    registerFile_io_read_0_address_REG <= io_registerFile_read_0_address;
+    io_registerFile_read_0_value_REG <= _registerFile_io_read_0_value;
+    registerFile_io_read_1_address_REG <= io_registerFile_read_1_address;
+    io_registerFile_read_1_value_REG <= _registerFile_io_read_1_value;
+    registerFile_io_read_2_address_REG <= io_registerFile_read_2_address;
+    io_registerFile_read_2_value_REG <= _registerFile_io_read_2_value;
+    registerFile_io_read_3_address_REG <= io_registerFile_read_3_address;
+    io_registerFile_read_3_value_REG <= _registerFile_io_read_3_value;
+    registerFile_io_read_4_address_REG <= io_registerFile_read_4_address;
+    io_registerFile_read_4_value_REG <= _registerFile_io_read_4_value;
+    registerFile_io_read_5_address_REG <= io_registerFile_read_5_address;
+    io_registerFile_read_5_value_REG <= _registerFile_io_read_5_value;
+    registerFile_io_read_6_address_REG <= io_registerFile_read_6_address;
+    io_registerFile_read_6_value_REG <= _registerFile_io_read_6_value;
+    registerFile_io_read_7_address_REG <= io_registerFile_read_7_address;
+    io_registerFile_read_7_value_REG <= _registerFile_io_read_7_value;
+    registerFile_io_write_0_write_REG <= io_registerFile_write_0_write;
+    registerFile_io_write_0_address_REG <= io_registerFile_write_0_address;
+    REG_0 <= io_registerFile_write_0_byteMask_0;
+    REG_1 <= io_registerFile_write_0_byteMask_1;
+    REG_2 <= io_registerFile_write_0_byteMask_2;
+    REG_3 <= io_registerFile_write_0_byteMask_3;
+    REG_4 <= io_registerFile_write_0_byteMask_4;
+    REG_5 <= io_registerFile_write_0_byteMask_5;
+    REG_6 <= io_registerFile_write_0_byteMask_6;
+    REG_7 <= io_registerFile_write_0_byteMask_7;
+    registerFile_io_write_1_write_REG <= io_registerFile_write_1_write;
+    registerFile_io_write_1_address_REG <= io_registerFile_write_1_address;
+    REG_1_0 <= io_registerFile_write_1_byteMask_0;
+    REG_1_1 <= io_registerFile_write_1_byteMask_1;
+    REG_1_2 <= io_registerFile_write_1_byteMask_2;
+    REG_1_3 <= io_registerFile_write_1_byteMask_3;
+    REG_1_4 <= io_registerFile_write_1_byteMask_4;
+    REG_1_5 <= io_registerFile_write_1_byteMask_5;
+    REG_1_6 <= io_registerFile_write_1_byteMask_6;
+    REG_1_7 <= io_registerFile_write_1_byteMask_7;
+    registerFile_io_write_1_value_REG <= io_registerFile_write_1_value;
+    registerFile_io_write_2_write_REG <= io_registerFile_write_2_write;
+    registerFile_io_write_2_address_REG <= io_registerFile_write_2_address;
+    REG_2_0 <= io_registerFile_write_2_byteMask_0;
+    REG_2_1 <= io_registerFile_write_2_byteMask_1;
+    REG_2_2 <= io_registerFile_write_2_byteMask_2;
+    REG_2_3 <= io_registerFile_write_2_byteMask_3;
+    REG_2_4 <= io_registerFile_write_2_byteMask_4;
+    REG_2_5 <= io_registerFile_write_2_byteMask_5;
+    REG_2_6 <= io_registerFile_write_2_byteMask_6;
+    REG_2_7 <= io_registerFile_write_2_byteMask_7;
+    registerFile_io_write_2_value_REG <= io_registerFile_write_2_value;
+    registerFile_io_write_3_write_REG <= io_registerFile_write_3_write;
+    registerFile_io_write_3_address_REG <= io_registerFile_write_3_address;
+    REG_3_0 <= io_registerFile_write_3_byteMask_0;
+    REG_3_1 <= io_registerFile_write_3_byteMask_1;
+    REG_3_2 <= io_registerFile_write_3_byteMask_2;
+    REG_3_3 <= io_registerFile_write_3_byteMask_3;
+    REG_3_4 <= io_registerFile_write_3_byteMask_4;
+    REG_3_5 <= io_registerFile_write_3_byteMask_5;
+    REG_3_6 <= io_registerFile_write_3_byteMask_6;
+    REG_3_7 <= io_registerFile_write_3_byteMask_7;
+    registerFile_io_write_3_value_REG <= io_registerFile_write_3_value;
+    alu_io_a_REG <= _registerFile_io_read_0_value;
+    alu_io_b_REG <= _registerFile_io_read_1_value;
+  end // always @(posedge)
+  RegisterFile registerFile (
+    .clock                 (clock),
+    .io_read_0_address     (registerFile_io_read_0_address_REG),
+    .io_read_1_address     (registerFile_io_read_1_address_REG),
+    .io_read_2_address     (registerFile_io_read_2_address_REG),
+    .io_read_3_address     (registerFile_io_read_3_address_REG),
+    .io_read_4_address     (registerFile_io_read_4_address_REG),
+    .io_read_5_address     (registerFile_io_read_5_address_REG),
+    .io_read_6_address     (registerFile_io_read_6_address_REG),
+    .io_read_7_address     (registerFile_io_read_7_address_REG),
+    .io_write_0_write      (registerFile_io_write_0_write_REG),
+    .io_write_0_address    (registerFile_io_write_0_address_REG),
+    .io_write_0_value      (_alu_io_out),
+    .io_write_0_byteMask_0 (REG_0),
+    .io_write_0_byteMask_1 (REG_1),
+    .io_write_0_byteMask_2 (REG_2),
+    .io_write_0_byteMask_3 (REG_3),
+    .io_write_0_byteMask_4 (REG_4),
+    .io_write_0_byteMask_5 (REG_5),
+    .io_write_0_byteMask_6 (REG_6),
+    .io_write_0_byteMask_7 (REG_7),
+    .io_write_1_write      (registerFile_io_write_1_write_REG),
+    .io_write_1_address    (registerFile_io_write_1_address_REG),
+    .io_write_1_value      (registerFile_io_write_1_value_REG),
+    .io_write_1_byteMask_0 (REG_1_0),
+    .io_write_1_byteMask_1 (REG_1_1),
+    .io_write_1_byteMask_2 (REG_1_2),
+    .io_write_1_byteMask_3 (REG_1_3),
+    .io_write_1_byteMask_4 (REG_1_4),
+    .io_write_1_byteMask_5 (REG_1_5),
+    .io_write_1_byteMask_6 (REG_1_6),
+    .io_write_1_byteMask_7 (REG_1_7),
+    .io_write_2_write      (registerFile_io_write_2_write_REG),
+    .io_write_2_address    (registerFile_io_write_2_address_REG),
+    .io_write_2_value      (registerFile_io_write_2_value_REG),
+    .io_write_2_byteMask_0 (REG_2_0),
+    .io_write_2_byteMask_1 (REG_2_1),
+    .io_write_2_byteMask_2 (REG_2_2),
+    .io_write_2_byteMask_3 (REG_2_3),
+    .io_write_2_byteMask_4 (REG_2_4),
+    .io_write_2_byteMask_5 (REG_2_5),
+    .io_write_2_byteMask_6 (REG_2_6),
+    .io_write_2_byteMask_7 (REG_2_7),
+    .io_write_3_write      (registerFile_io_write_3_write_REG),
+    .io_write_3_address    (registerFile_io_write_3_address_REG),
+    .io_write_3_value      (registerFile_io_write_3_value_REG),
+    .io_write_3_byteMask_0 (REG_3_0),
+    .io_write_3_byteMask_1 (REG_3_1),
+    .io_write_3_byteMask_2 (REG_3_2),
+    .io_write_3_byteMask_3 (REG_3_3),
+    .io_write_3_byteMask_4 (REG_3_4),
+    .io_write_3_byteMask_5 (REG_3_5),
+    .io_write_3_byteMask_6 (REG_3_6),
+    .io_write_3_byteMask_7 (REG_3_7),
+    .io_read_0_value       (_registerFile_io_read_0_value),
+    .io_read_1_value       (_registerFile_io_read_1_value),
+    .io_read_2_value       (_registerFile_io_read_2_value),
+    .io_read_3_value       (_registerFile_io_read_3_value),
+    .io_read_4_value       (_registerFile_io_read_4_value),
+    .io_read_5_value       (_registerFile_io_read_5_value),
+    .io_read_6_value       (_registerFile_io_read_6_value),
+    .io_read_7_value       (_registerFile_io_read_7_value)
+  );
+  Alu alu (
+    .io_a   (alu_io_a_REG),
+    .io_b   (alu_io_b_REG),
+    .io_out (_alu_io_out)
+  );
+  assign io_registerFile_read_0_value = io_registerFile_read_0_value_REG;
+  assign io_registerFile_read_1_value = io_registerFile_read_1_value_REG;
+  assign io_registerFile_read_2_value = io_registerFile_read_2_value_REG;
+  assign io_registerFile_read_3_value = io_registerFile_read_3_value_REG;
+  assign io_registerFile_read_4_value = io_registerFile_read_4_value_REG;
+  assign io_registerFile_read_5_value = io_registerFile_read_5_value_REG;
+  assign io_registerFile_read_6_value = io_registerFile_read_6_value_REG;
+  assign io_registerFile_read_7_value = io_registerFile_read_7_value_REG;
+endmodule
+

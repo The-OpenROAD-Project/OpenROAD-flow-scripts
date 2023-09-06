@@ -18,9 +18,7 @@ class BarrelShifter(bitWidth: Int) extends Module {
     io.shiftAmount
   )
 
-  val rotateInput = MuxLookup(
-    io.dir.asUInt,
-    0.U,
+  val rotateInput = MuxLookup(io.dir.asUInt, 0.U)(
     Seq(
       ALUOps.SRA ->
         Fill(bitWidth, io.data(bitWidth - 1)),
