@@ -12,29 +12,7 @@ scalacOptions ++= Seq(
   "-language:reflectiveCalls"
 )
 
-val defaultVersions = Map(
-  "chisel3" -> "3.6.0-RC2",
-  "chiseltest" -> "0.6.0-RC2"
-)
-
-libraryDependencies ++= (Seq("chisel3", "chiseltest").map { dep: String =>
-  "edu.berkeley.cs" %% dep % sys.props
-    .getOrElse(
-      dep + "Version",
-      defaultVersions(dep)
-    ) withSources () withJavadoc ()
-})
-
-addCompilerPlugin(
-  "edu.berkeley.cs" % "chisel3-plugin" % "3.6.0-RC2" cross CrossVersion.full
-)
-
-libraryDependencies += "com.github.scopt" %% "scopt" % "4.0.0"
-
-resolvers ++= Seq(
-  Resolver.sonatypeRepo("snapshots"),
-  Resolver.sonatypeRepo("releases")
-)
+val chiselVersion = "5.0.0"
 
 val verilatorRoot = sys.env.get("VERILATOR_ROOT") match {
   case Some(path) => path
@@ -43,25 +21,31 @@ val verilatorRoot = sys.env.get("VERILATOR_ROOT") match {
 
 val verilatorBin = f"$verilatorRoot/bin"
 
-lazy val printVerilatorBin = taskKey[Unit]("Print verilatorBin")
-
-printVerilatorBin := {
-  println("verilatorBin=" + verilatorBin)
-}
-
 val path = sys.env.get("PATH") match {
   case Some(path) => f"$verilatorBin:$path"
   case None       => verilatorBin
 }
-onLoad in Global := {
-  println("verilatorBin=" + verilatorBin)
-  println("path=" + path)
-  (onLoad in Global).value
-}
-
-Test / envVars := Map(
-  "PATH" -> path,
-  "VERILATOR_ROOT" -> verilatorRoot
-)
-
-fork := true
+lazy val root = project
+  .in(file("."))
+  .settings(
+    name := "tse",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := "2.13.10",
+    libraryDependencies ++= Seq(
+      "org.chipsalliance" %% "chisel" % chiselVersion,
+      "edu.berkeley.cs" %% "chiseltest" % chiselVersion
+    ),
+    scalacOptions ++= Seq(
+      "-language:reflectiveCalls",
+      "-deprecation",
+      "-feature",
+      "-Xcheckinit"
+    ),
+    resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
+    addCompilerPlugin("org.chipsalliance" % "chisel-plugin" % chiselVersion cross CrossVersion.full),
+    Test / envVars := Map(
+      "PATH" -> path,
+      "VERILATOR_ROOT" -> verilatorRoot
+    ),
+    Test / fork := true
+  )

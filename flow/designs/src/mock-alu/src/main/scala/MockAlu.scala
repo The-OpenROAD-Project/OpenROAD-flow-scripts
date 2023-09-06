@@ -3,7 +3,8 @@ import chisel3._
 import org.scalatest._
 
 import chisel3._
-import chisel3.util._
+import chisel3.util.log2Ceil
+import chisel3.util.MuxLookup
 import chisel3.util.experimental.InlineInstance
 import chisel3.stage._
 
@@ -39,20 +40,34 @@ object operation {
   }
 }
 
+class AluBundle()(implicit config: ALUConfig) extends Bundle {
+  val op = Input(ALUOps())
+  val a = Input(UInt(config.width.W))
+  val b = Input(UInt(config.width.W))
+  val out = Output(UInt(config.width.W))
+}
+
 class MockAlu()(implicit config: ALUConfig) extends Module {
   val bitWidth = config.width
-  val io = IO(new Bundle {
-    val op = Input(ALUOps())
-    val a = Input(UInt(bitWidth.W))
-    val b = Input(UInt(bitWidth.W))
-    val out = Output(UInt(bitWidth.W))
-  })
+  val io = IO(new AluBundle)
+
+  val alu = Module(new Alu)
+
+  alu.io.a := RegNext(io.a)
+  alu.io.b := RegNext(io.b)
+  alu.io.op := RegNext(io.op)
+  io.out := RegNext(alu.io.out)
+}
+
+class Alu()(implicit config: ALUConfig) extends Module {
+  val bitWidth = config.width
+  val io = IO(new AluBundle)
 
   io.out := 0.U
 
-  val op = RegNext(io.op)
-  val a = RegNext(io.a)
-  val b = RegNext(io.b)
+  val op = io.op
+  val a = io.a
+  val b = io.b
 
   val isSubtraction =
     Seq(
@@ -195,17 +210,13 @@ class MockAlu()(implicit config: ALUConfig) extends Module {
     .filter(a => config.operations.contains(a._1))
     .map(a => (a._1.asUInt -> a._2))
 
-  io.out := RegNext(
-    if (aluResult.size == 1) {
-      aluResult(0)._2
-    } else {
-      MuxLookup(
-        op.asUInt,
-        WireInit(chiselTypeOf(io.out), DontCare),
-        aluResult
-      )
-    }
-  )
+  io.out := (if (aluResult.size == 1) {
+               aluResult(0)._2
+             } else {
+               MuxLookup(op.asUInt, WireInit(chiselTypeOf(io.out), DontCare))(
+                 aluResult
+               )
+             })
 }
 
 case class ALUConfig(
@@ -248,11 +259,25 @@ object GenerateMockAlu extends App {
 
   OParser.parse(parser, configArgs, ALUConfig()) match {
     case Some(c) =>
-      new ChiselStage()
+      new circt.stage.ChiselStage()
         .execute(
-          chiselArgs,
+          chiselArgs.drop(1),
           Seq(
-            ChiselGeneratorAnnotation(() => new MockAlu()(c))
+            ChiselGeneratorAnnotation(() => new MockAlu()(c)),
+            circt.stage.CIRCTTargetAnnotation(
+              circt.stage.CIRCTTarget.SystemVerilog
+            ),
+            circt.stage.FirtoolOption(
+              "--lowering-options=disallowPackedArrays,disallowLocalVariables,noAlwaysComb"
+            ),
+            circt.stage.FirtoolOption("--split-verilog"),
+            circt.stage.FirtoolOption("--dedup"),
+            circt.stage.FirtoolOption("--strip-debug-info"),
+            circt.stage.FirtoolOption("--extract-test-code"),
+            circt.stage.FirtoolOption("--disable-annotation-unknown"),
+            circt.stage.FirtoolOption("--disable-all-randomization"),
+            circt.stage.FirtoolOption("--emit-chisel-asserts-as-sva"),
+            circt.stage.FirtoolOption("-o=" + chiselArgs(0))
           )
         )
 
