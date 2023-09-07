@@ -44,6 +44,9 @@ proc get_verilog_cells_for_design { } {
 
 proc write_eqy_golden_verilog {} {
     write_verilog before.v
+    # Filter out tap cells. 
+    exec cat before.v | grep -v TAPCELL > before.1.v
+    exec mv before.1.v before.v
 }
 
 proc write_eqy_script { } {
@@ -71,7 +74,9 @@ proc write_eqy_script { } {
 }
 
 proc run_equivalence_test {} {
-    write_verilog after.v 
+    write_verilog after.v
+    exec cat after.v | grep -v TAPCELL > after.1.v
+    exec mv after.1.v after.v
     write_eqy_script
     
     exec rm -rf eqy_test    
