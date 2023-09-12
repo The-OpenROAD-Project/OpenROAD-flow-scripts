@@ -24,7 +24,7 @@ if {[info exist env(FASTROUTE_TCL)]} {
 global_route -guide_file $env(RESULTS_DIR)/route.guide \
                -congestion_report_file $env(REPORTS_DIR)/congestion.rpt \
                {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
-               {-congestion_iterations 20 -congestion_report_iter_step 5 -verbose}}]
+               {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]
 
 
 set_propagated_clock [all_clocks]
