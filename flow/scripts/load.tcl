@@ -39,12 +39,17 @@ proc load_design {design_file sdc_file msg} {
 
 proc get_verilog_cells_for_design { } {
     set dir "$::env(PLATFORM_DIR)/work_around_yosys/"
-    set cell_files [glob $dir/*]
+    set cell_files [glob $dir/*.v ]
 }
 
-proc write_eqy_golden_verilog {} {
-    # Filter out tap cells.
-    write_verilog -remove_cells TAPCELL* $::env(RESULTS_DIR)/before.v
+proc write_eqy_verilog {filename} {
+    # Filter out cells with no verilog/not needed for equivalence such
+    # as fillers and tap cells 
+    if {[info exist ::env(REMOVE_CELLS_FOR_EQY)]} {
+	write_verilog -remove_cells $::env(REMOVE_CELLS_FOR_EQY) $::env(RESULTS_DIR)/$filename
+    } else {
+	write_verilog  $::env(RESULTS_DIR)/$filename
+    }
 }
 
 proc write_eqy_script { } {
@@ -70,12 +75,11 @@ proc write_eqy_script { } {
 }
 
 proc run_equivalence_test {} {
-    # Filter out TAP cells
-    write_verilog -remove_cells TAP* $::env(RESULTS_DIR)/after.v
+    write_eqy_verilog after.v
     write_eqy_script
 
     if { [file exists  $::env(LOG_DIR)/4_eqy_output] } {
-	exec "rm -rf $::env(LOG_DIR)/4_eqy_output"
+	exec "/bin/rm -rf $::env(LOG_DIR)/4_eqy_output"
     }
     eval exec eqy -d $::env(LOG_DIR)/4_eqy_output $::env(OBJECTS_DIR)/eqy_test.eqy > $::env(LOG_DIR)/4_equivalence_check.log
     set count [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
