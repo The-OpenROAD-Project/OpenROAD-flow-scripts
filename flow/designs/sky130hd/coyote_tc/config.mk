@@ -73,5 +73,3 @@ export SETRC_FILE = $(PLATFORM_DIR)/setRC.tcl
 
 export MIN_ROUTING_LAYER met1
 export MAX_ROUTING_LAYER met5
-
-export FASTROUTE_TCL $(PLATFORM_DIR)/fastroute.tcl
