@@ -673,7 +673,7 @@ module OAI21_X1 (A, B1, B2, ZN);
    assign ZN = ~(A & B);
 endmodule // OAI21_X1
 
-(* blackbox *) module OAI21_X2 (A, B1, B2, ZN);
+module OAI21_X2 (A, B1, B2, ZN);
    input A;
    input B1;
    input B2;
