@@ -27,8 +27,11 @@ puts ""
 set_dont_use $::env(DONT_USE_CELLS)
 
 # Do not buffer chip-level designs
-if {![info exists ::env(FOOTPRINT)] } {
-  if { ![info exists ::env(PORTS_BUFFER)] || $::env(PORTS_BUFFER) == 1 } {
+# by default, IO ports will be buffered
+# to not buffer IO ports, set environment variable
+# DONT_BUFFER_PORT = 1
+if { ![info exists ::env(FOOTPRINT)] } {
+  if { ![info exists ::env(DONT_BUFFER_PORTS)] || $::env(DONT_BUFFER_PORTS) == 0 } {
     puts "Perform port buffering..."
     buffer_ports
   }
