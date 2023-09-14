@@ -10,10 +10,10 @@ export SKY130_IO_VERSION ?= v0.2.0
 export OPENRAMS_DIR = ./platforms/sky130ram
 export IO_DIR       = ./platforms/sky130io
 
-export VERILOG_FILES = ./designs/src/coyote_tc/coyote_tc.v \
-                       ./designs/src/coyote/coyote.sv2v.v \
-                       ./designs/$(PLATFORM)/coyote_tc/ios.v \
+export VERILOG_FILES = ./designs/$(PLATFORM)/coyote_tc/ios.v \
                        ./designs/$(PLATFORM)/coyote_tc/macros.v \
+                       ./designs/src/coyote_tc/coyote_tc.v \
+                       ./designs/src/coyote/coyote.sv2v.v \
                        $(IO_DIR)/verilog/sky130_io.blackbox.v
 
 export SDC_FILE          = ./designs/$(PLATFORM)/coyote_tc/constraint.sdc
@@ -73,5 +73,3 @@ export SETRC_FILE = $(PLATFORM_DIR)/setRC.tcl
 
 export MIN_ROUTING_LAYER met1
 export MAX_ROUTING_LAYER met5
-
-export FASTROUTE_TCL $(PLATFORM_DIR)/fastroute.tcl
