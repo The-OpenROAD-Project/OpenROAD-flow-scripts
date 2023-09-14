@@ -353,12 +353,12 @@ module DFFR_X1 (CK, D, RN, Q, QN);
    input RN;
    output Q;
    output QN;
-   always @(posedge CK or negedge RN) begin
-     if (RN) Q <= 0;
-     else Q <= D;
-     if (RN) QN <= 1;
-     else QN <= ~D;      
-   end
+   always @(posedge CK or negedge RN)
+     if (RN==1'b0) 
+       Q <= 0;
+     else 
+       Q <= D;   
+   assign QN = ~Q;
 endmodule // DFF_X1
 
 module DFFR_X2 (CK, D, RN, Q, QN);
@@ -367,12 +367,12 @@ module DFFR_X2 (CK, D, RN, Q, QN);
    input RN;
    output Q;
    output QN;
-   always @(posedge CK or negedge RN) begin
-     if (RN) Q <= 0;
-     else Q <= D;
-     if (RN) QN <= 1;
-     else QN <= ~D;      
-   end
+   always @(posedge CK or negedge RN)
+     if (RN==1'b0) 
+       Q <= 0;
+     else 
+       Q <= D;   
+   assign QN = ~Q;
 endmodule // DFF_X2
 
 module DFFS_X1 (D, SN, CK, Q, QN);
@@ -381,12 +381,12 @@ module DFFS_X1 (D, SN, CK, Q, QN);
    input CK;
    output Q;
    output QN;
-   always @(posedge CK or negedge SN) begin
-      if (SN) Q <= 1;
-      else Q <= D;
-      if (SN) QN <= 0;
-      else QN <= ~D;
-   end
+   always @(posedge CK or negedge SN)
+     if (SN==1'b0) 
+       Q <= 1;
+     else 
+       Q <= D;   
+   assign QN = ~Q;
 endmodule
 
 module DFFS_X2 (D, SN, CK, Q, QN);
@@ -395,12 +395,12 @@ module DFFS_X2 (D, SN, CK, Q, QN);
    input CK;
    output Q;
    output QN;
-   always @(posedge CK or negedge SN) begin
-      if (SN) Q <= 1;
-      else Q <= D;
-      if (SN) QN <= 0;
-      else QN <= ~D;            
-   end   
+   always @(posedge CK or negedge SN)
+     if (SN==1'b0) 
+       Q <= 1;
+     else 
+       Q <= D;   
+   assign QN = ~Q;
 endmodule
 
 module HA_X1 (A, B, CO, S);
