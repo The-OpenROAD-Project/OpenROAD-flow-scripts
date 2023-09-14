@@ -385,7 +385,7 @@ module DFFS_X1 (D, SN, CK, Q, QN);
       if (SN) Q <= 1;
       else Q <= D;
       if (SN) QN <= 0;
-      else QN <= ~D;      
+      else QN <= ~D;
    end
 endmodule
 
@@ -396,14 +396,10 @@ module DFFS_X2 (D, SN, CK, Q, QN);
    output Q;
    output QN;
    always @(posedge CK or negedge SN) begin
-      if (SN) begin
-	 Q <= 1;
-	 QN <= 0;
-      end
-      else begin
-	 Q <= D;
-	 QN <= ~D;
-      end
+      if (SN) Q <= 1;
+      else Q <= D;
+      if (SN) QN <= 0;
+      else QN <= ~D;            
    end   
 endmodule
 
