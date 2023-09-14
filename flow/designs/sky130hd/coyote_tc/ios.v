@@ -25,8 +25,8 @@
     .TIE_HI_ESD(tie_hi_esd), \
     .TIE_LO_ESD(tie_lo_esd)
 
-`define INPUT_PAD(PAD,SIGNAL) input_pad u_`SIGNAL (.PAD(`PAD), .y(`SIGNAL), .AMUXBUS_A(analog_a), .AMUXBUS_B(analog_b))
-`define OUTPUT_PAD(PAD,SIGNAL) output_pad u_`SIGNAL (.PAD(`PAD), .a(`SIGNAL), .AMUXBUS_A(analog_a), .AMUXBUS_B(analog_b))
+`define INPUT_PAD(PADX,SIGNAL) input_pad u_``PADX (.PAD(PADX), .y(SIGNAL), .AMUXBUS_A(analog_a), .AMUXBUS_B(analog_b))
+`define OUTPUT_PAD(PADX,SIGNAL) output_pad u_``PADX (.PAD(PADX), .a(SIGNAL), .AMUXBUS_A(analog_a), .AMUXBUS_B(analog_b))
 
 module input_pad (
   input PAD,
