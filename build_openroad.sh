@@ -23,6 +23,7 @@ YOSYS_USER_ARGS=""
 YOSYS_ARGS="\
 CONFIG=gcc \
 ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc \
+LINK_ABC=1 \
 "
 
 OPENROAD_APP_USER_ARGS=""
