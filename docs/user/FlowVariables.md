@@ -79,8 +79,8 @@ Note:
 | `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
 | `KLAYOUT_TECH_FILE`                  | =            | =            | =             | =         | =         |
-| `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
-| `MIN_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
+| `MAX_ROUTING_LAYER`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `MIN_ROUTING_LAYER`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `RCX_RULES`                          | =            | =            | =             | =         | =         |
 | `RECOVER_POWER`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
 
