@@ -2,7 +2,6 @@ pipeline {
   agent any;
   environment {
     MAKE_ISSUE = 1;
-    EQUIVALENCE_CHECK = 1;
   }
   options {
     copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME);
