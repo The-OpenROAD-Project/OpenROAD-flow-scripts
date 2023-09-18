@@ -9,5 +9,5 @@ export CORE_UTILIZATION = 20
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 
-export PLACE_DENSITY = 0.65
+export PLACE_DENSITY = 0.6
 export TNS_END_PERCENT = 100
