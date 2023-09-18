@@ -8,8 +8,6 @@ export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export BLOCKS = uart_rx
 
-export VERILOG_FILES_BLACKBOX = ./designs/src/uart-no-param/uart_rx.v
-
 export DIE_AREA = 0 0 430 430
 export CORE_AREA = 10 10 420 420
 

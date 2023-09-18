@@ -1,3 +1,5 @@
+# Top level PDN for macros using BLOCK_grid_strategy.tcl
+
 ####################################
 # global connections
 ####################################
