@@ -16,11 +16,9 @@ export VERILOG_FILES = ./designs/$(PLATFORM)/coyote_tc/ios.v \
                        ./designs/src/coyote/coyote.sv2v.v \
                        $(IO_DIR)/verilog/sky130_io.blackbox.v
 
-export SDC_FILE          = ./designs/$(PLATFORM)/coyote_tc/constraint.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/coyote_tc/constraint.sdc
 
-export FOOTPRINT         = ./designs/$(PLATFORM)/coyote_tc/coyote_tc.package.strategy
-export SIG_MAP_FILE      = ./designs/$(PLATFORM)/coyote_tc/coyote_tc.sigmap
-export FOOTPRINT_LIBRARY = $(IO_DIR)/library.sky130_fd_io.tcl
+export FOOTPRINT_TCL = ./designs/$(PLATFORM)/coyote_tc/pad.tcl
 
 export ADDITIONAL_LIBS = $(OPENRAMS_DIR)/sky130_sram_1rw1r_80x64_8/sky130_sram_1rw1r_80x64_8_TT_1p8V_25C.lib \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_128x256_8/sky130_sram_1rw1r_128x256_8_TT_1p8V_25C.lib \
