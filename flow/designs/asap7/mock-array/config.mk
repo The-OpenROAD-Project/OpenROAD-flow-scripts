@@ -31,7 +31,7 @@ export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
 
 export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
 
-export PDN_TCL               = designs/asap7/mock-array/pdn.tcl
+export PDN_TCL               = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCKS_grid_strategy.tcl
 
 # Target to force generation of Verilog per user settings MOCK_ARRAY_TABLE (rows, cols)
 verilog:
