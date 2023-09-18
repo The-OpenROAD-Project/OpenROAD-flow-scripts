@@ -1,21 +1,17 @@
-(* noblackbox *) module sky130_ef_sc_hd__decap_12 ();
+//13474:
 
-    
+(* noblackbox *) module sky130_ef_sc_hd__decap_12 ();
     supply1 VPWR;
     supply0 VGND;
     supply1 VPB ;
     supply0 VNB ;
 
     sky130_fd_sc_hs__decap base ();
+endmodule // sky130_ef_sc_hd__decap_12
 
-
-endmodule
 (* noblackbox *) module sky130_ef_sc_hd__fakediode_2 (DIODE);
-
-
     input DIODE;
-
-    
+   
     supply1 VPWR;
     supply0 VGND;
     supply1 VPB ;
@@ -24,91 +20,88 @@ endmodule
     sky130_fd_sc_hs__diode base (
         .DIODE(DIODE)
     );
+endmodule // sky130_ef_sc_hd__fakediode_2
 
-
-endmodule
 (* noblackbox *) module sky130_ef_sc_hd__fill_8 ();
-
-    
     supply1 VPWR;
     supply0 VGND;
     supply1 VPB ;
     supply0 VNB ;
+endmodule // sky130_ef_sc_hd__fill_8
 
-
-endmodule
 (* noblackbox *) module sky130_ef_sc_hd__fill_12 ();
+   supply1 VPWR;
+   supply0 VGND;
+   supply1 VPB ;
+   supply0  VNB ;
+   
+   sky130_fd_sc_hs__fill base ();
+endmodule // sky130_ef_sc_hd__fill_12
 
-
-    
-    supply1 VPWR;
-    supply0 VGND;
-    supply1 VPB ;
-    supply0 VNB ;
-
-    sky130_fd_sc_hs__fill base (
-    );
-
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__udp_dff$NSR (Q,SET,RESET,CLK_N,D);
-output Q;
-input SET;
-input RESET;
-input CLK_N;
-input D;
-reg Q;
-wire AD = SET;
-wire AL = SET | RESET;
-always @(negedge CLK_N or posedge AL)
-  if (AL) Q <= AD;
-  else Q <= D;
-endmodule
+   output Q;
+   input  SET;
+   input  RESET;
+   input  CLK_N;
+   input  D;
+   reg 	  Q;
+   wire   AD = SET;
+   wire   AL = SET | RESET;
+   always @(negedge CLK_N or posedge AL)
+     if (AL) Q <= AD;
+     else Q <= D;
+endmodule // sky130_fd_sc_hs__udp_dff
+
 (* noblackbox *) module sky130_fd_sc_hs__udp_dff$P (Q,D,CLK);
-output Q;
-input D;
-input CLK;
-reg Q;
-always @(posedge CLK) Q <= D;
-endmodule
+   output Q;
+   input  D;
+   input  CLK;
+   reg 	  Q;
+   always @(posedge CLK) Q <= D;
+endmodule // sky130_fd_sc_hs__udp_dff
+
 (* noblackbox *) module sky130_fd_sc_hs__udp_dff$PR (Q,D,CLK,RESET);
-output Q;
-input D;
-input CLK;
-input RESET;
-reg Q;
-always @(posedge CLK or posedge RESET)
-  if (RESET) Q <= 1'b0;
-  else Q <= D;
-endmodule
+   output Q;
+   input  D;
+   input  CLK;
+   input  RESET;
+   reg 	  Q;
+   always @(posedge CLK or posedge RESET)
+     if (RESET) Q <= 1'b0;
+     else Q <= D;
+endmodule // sky130_fd_sc_hs__udp_dff
+
 (* noblackbox *) module sky130_fd_sc_hs__udp_dff$PS (Q,D,CLK,SET);
-output Q;
-input D;
-input CLK;
-input SET;
-reg Q;
-always @(posedge CLK or posedge SET)
-  if (SET) Q <= 1'b1;
-  else Q <= D;
-endmodule
+   output Q;
+   input  D;
+   input  CLK;
+   input  SET;
+   reg 	  Q;
+   always @(posedge CLK or posedge SET)
+     if (SET) Q <= 1'b1;
+     else Q <= D;
+endmodule // sky130_fd_sc_hs__udp_dff
+
 (* noblackbox *) module sky130_fd_sc_hs__udp_dlatch$lP (Q,D,GATE);
-output Q;
-input D;
-input GATE;
-reg Q;
-always @(GATE or D)
-  if (GATE) Q <= D;
-endmodule
+   output Q;
+   input  D;
+   input  GATE;
+   reg 	  Q;
+   always @(GATE or D)
+     if (GATE) Q <= D;
+endmodule // sky130_fd_sc_hs__udp_dlatch
+
 (* noblackbox *) module sky130_fd_sc_hs__udp_dlatch$P (Q,D,GATE);
-output Q;
-input D;
-input GATE;
-reg Q;
-always @(GATE or D)
-  if (GATE) Q <= D;
-endmodule
+   output Q;
+   input  D;
+   input  GATE;
+   reg 	  Q;
+   always @(GATE or D)
+     if (GATE) Q <= D;
+endmodule // sky130_fd_sc_hs__udp_dlatch
+
 (* noblackbox *) module sky130_fd_sc_hs__udp_dlatch$PR (Q,D,GATE,RESET);
-output Q;
+   output Q;
 input D;
 input GATE;
 input RESET;
@@ -195,39 +188,31 @@ output UDP_OUT;
 input UDP_IN;
 input VPWR;
 assign UDP_OUT = UDP_IN;
-endmodule
+endmodule // sky130_fd_sc_hs__udp_pwrgood_pp
+
 (* noblackbox *) module sky130_fd_sc_hs__a2bb2o (X,A1_N,A2_N,B1,B2);
-
-
-    
     output X   ;
     input  A1_N;
     input  A2_N;
     input  B1  ;
     input  B2  ;
-
     
     wire and0_out ;
     wire nor0_out ;
     wire or0_out_X;
-
     
     and and0 (and0_out , B1, B2            );
     nor nor0 (nor0_out , A1_N, A2_N        );
     or  or0  (or0_out_X, nor0_out, and0_out);
     buf buf0 (X        , or0_out_X         );
+endmodule // sky130_fd_sc_hs__a2bb2o
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a2bb2o_1 (X,A1_N,A2_N,B1,B2);
-
-
     output X   ;
     input  A1_N;
     input  A2_N;
     input  B1  ;
     input  B2  ;
-
     
     supply1 VPWR;
     supply0 VGND;
@@ -241,19 +226,15 @@ endmodule
         .B1(B1),
         .B2(B2)
     );
+endmodule // sky130_fd_sc_hs__a2bb2o_1
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a2bb2o_2 (X,A1_N,A2_N,B1,B2);
-
-
     output X   ;
     input  A1_N;
     input  A2_N;
     input  B1  ;
     input  B2  ;
 
-    
     supply1 VPWR;
     supply0 VGND;
     supply1 VPB ;
@@ -266,12 +247,9 @@ endmodule
         .B1(B1),
         .B2(B2)
     );
+endmodule // sky130_fd_sc_hs__a2bb2o_2
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a2bb2o_4 (X,A1_N,A2_N,B1,B2);
-
-
     output X   ;
     input  A1_N;
     input  A2_N;
@@ -291,24 +269,18 @@ endmodule
         .B1(B1),
         .B2(B2)
     );
+endmodule // sky130_fd_sc_hs__a2bb2o_4
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a2bb2oi (Y,A1_N,A2_N,B1,B2);
-
-
-    
     output Y   ;
     input  A1_N;
     input  A2_N;
     input  B1  ;
     input  B2  ;
-
-    
+   
     wire and0_out  ;
     wire nor0_out  ;
     wire nor1_out_Y;
-
     
     and and0 (and0_out  , B1, B2            );
     nor nor0 (nor0_out  , A1_N, A2_N        );
@@ -1979,10 +1951,8 @@ endmodule
 
 
 endmodule
+
 (* noblackbox *) module sky130_fd_sc_hs__a222oi (Y,A1,A2,B1,B2,C1,C2);
-
-
-    
     output Y ;
     input  A1;
     input  A2;
@@ -2005,7 +1975,8 @@ endmodule
     buf  buf0  (Y         , and0_out_Y                     );
 
 
-endmodule
+endmodule // sky130_fd_sc_hs__a222oi
+
 (* noblackbox *) module sky130_fd_sc_hs__a222oi_1 (Y,A1,A2,B1,B2,C1,C2);
 
 
@@ -2032,13 +2003,112 @@ endmodule
         .C1(C1),
         .C2(C2)
     );
+endmodule // sky130_fd_sc_hs__a222oi_1
+
+(* noblackbox *) module sky130_fd_sc_hs__a222oi_2 (Y,A1,A2,B1,B2,C1,C2);
 
 
-endmodule
-(* noblackbox *) module sky130_fd_sc_hs__a311o (X,A1,A2,A3,B1,C1);
-
+    output Y ;
+    input  A1;
+    input  A2;
+    input  B1;
+    input  B2;
+    input  C1;
+    input  C2;
 
     
+    supply1 VPWR;
+    supply0 VGND;
+    supply1 VPB ;
+    supply0 VNB ;
+
+    sky130_fd_sc_hs__a222oi base (
+        .Y(Y),
+        .A1(A1),
+        .A2(A2),
+        .B1(B1),
+        .B2(B2),
+        .C1(C1),
+        .C2(C2)
+    );
+endmodule // sky130_fd_sc_hs__a222oi_2
+
+(* noblackbox *) module sky130_fd_sc_hs__a222oi_4 (Y,A1,A2,B1,B2,C1,C2);
+    output Y ;
+    input  A1;
+    input  A2;
+    input  B1;
+    input  B2;
+    input  C1;
+    input  C2;
+
+    
+    supply1 VPWR;
+    supply0 VGND;
+    supply1 VPB ;
+    supply0 VNB ;
+
+    sky130_fd_sc_hs__a222oi base (
+        .Y(Y),
+        .A1(A1),
+        .A2(A2),
+        .B1(B1),
+        .B2(B2),
+        .C1(C1),
+        .C2(C2)
+    );
+endmodule // sky130_fd_sc_hs__a222oi_4
+
+
+(* noblackbox *) module sky130_fd_sc_hs__a222o (X,A1,A2,B1,B2,C1, C2);
+   output X ;
+   input  A1;
+   input  A2;
+   input  B1;
+   input  B2;
+   input  C1;
+   input  C2;   
+   
+   wire   and0_out ;
+   wire   and1_out ;
+   wire   and2_out ;   
+   wire   or0_out_X;
+   
+   and and0 (and0_out , A1, A2);
+   and and0 (and1_out , B1, B2);
+   and and0 (and2_out , C1, C2);   
+   or  or0  (or0_out_X, and0_out, and1_out, and2_out);
+   buf buf0 (X        , or0_out_X       );
+endmodule // sky130_fd_sc_hs__a222o
+
+
+(* noblackbox *) module sky130_fd_sc_hs__a222o_1 (X,A1,A2,B1,B2,C1, C2);
+   output X ;
+   input  A1;
+   input  A2;
+   input  B1;
+   input  B2;
+   input  C1;
+   input  C2;   
+   
+   sky130_fd_sc_hs__a222oi base (.Y(Y), .A1(A1), .A2(A2), .B1(B1),
+				 .B2(B2), .C1(C1), .C2(C2));
+endmodule // sky130_fd_sc_hs__a222o_1
+
+(* noblackbox *) module sky130_fd_sc_hs__a222o_2 (X,A1,A2,B1,B2,C1, C2);
+   output X ;
+   input  A1;
+   input  A2;
+   input  B1;
+   input  B2;
+   input  C1;
+   input  C2;   
+   
+   sky130_fd_sc_hs__a222oi base (.Y(Y), .A1(A1), .A2(A2), .B1(B1),
+				 .B2(B2), .C1(C1), .C2(C2));
+endmodule // sky130_fd_sc_hs__a222o_2
+
+(* noblackbox *) module sky130_fd_sc_hs__a311o (X,A1,A2,A3,B1,C1);
     output X ;
     input  A1;
     input  A2;
@@ -2046,17 +2116,14 @@ endmodule
     input  B1;
     input  C1;
 
-    
     wire and0_out ;
     wire or0_out_X;
-
     
     and and0 (and0_out , A3, A1, A2      );
     or  or0  (or0_out_X, and0_out, C1, B1);
     buf buf0 (X        , or0_out_X       );
+endmodule // sky130_fd_sc_hs__a311o
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a311o_1 (X,A1,A2,A3,B1,C1);
 
 
@@ -2081,20 +2148,16 @@ endmodule
         .B1(B1),
         .C1(C1)
     );
+endmodule // sky130_fd_sc_hs__a311o_1
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a311o_2 (X,A1,A2,A3,B1,C1);
-
-
     output X ;
     input  A1;
     input  A2;
     input  A3;
     input  B1;
     input  C1;
-
-    
+   
     supply1 VPWR;
     supply0 VGND;
     supply1 VPB ;
@@ -2108,9 +2171,8 @@ endmodule
         .B1(B1),
         .C1(C1)
     );
-
-
 endmodule
+
 (* noblackbox *) module sky130_fd_sc_hs__a311o_4 (X,A1,A2,A3,B1,C1);
 
 
@@ -2139,9 +2201,6 @@ endmodule
 
 endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a311oi (Y,A1,A2,A3,B1,C1);
-
-
-    
     output Y ;
     input  A1;
     input  A2;
@@ -2161,15 +2220,12 @@ endmodule
 
 endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a311oi_1 (Y,A1,A2,A3,B1,C1);
-
-
     output Y ;
     input  A1;
     input  A2;
     input  A3;
     input  B1;
     input  C1;
-
     
     supply1 VPWR;
     supply0 VGND;
@@ -2184,12 +2240,9 @@ endmodule
         .B1(B1),
         .C1(C1)
     );
+endmodule // sky130_fd_sc_hs__a311oi_1
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a311oi_2 (Y,A1,A2,A3,B1,C1);
-
-
     output Y ;
     input  A1;
     input  A2;
@@ -2197,7 +2250,6 @@ endmodule
     input  B1;
     input  C1;
 
-    
     supply1 VPWR;
     supply0 VGND;
     supply1 VPB ;
@@ -2211,20 +2263,16 @@ endmodule
         .B1(B1),
         .C1(C1)
     );
+endmodule // sky130_fd_sc_hs__a311oi_2
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a311oi_4 (Y,A1,A2,A3,B1,C1);
-
-
     output Y ;
     input  A1;
     input  A2;
     input  A3;
     input  B1;
     input  C1;
-
-    
+   
     supply1 VPWR;
     supply0 VGND;
     supply1 VPB ;
@@ -2238,13 +2286,9 @@ endmodule
         .B1(B1),
         .C1(C1)
     );
+endmodule // sky130_fd_sc_hs__a311oi_4
 
-
-endmodule
-(* noblackbox *) module sky130_fd_sc_hs__a2111o (X,A1,A2,B1,C1,D1);
-
-
-    
+(* noblackbox *) module sky130_fd_sc_hs__a2111o (X,A1,A2,B1,C1,D1); 
     output X ;
     input  A1;
     input  A2;
@@ -2252,7 +2296,6 @@ endmodule
     input  C1;
     input  D1;
 
-    
     wire and0_out ;
     wire or0_out_X;
 
@@ -2260,19 +2303,15 @@ endmodule
     and and0 (and0_out , A1, A2              );
     or  or0  (or0_out_X, C1, B1, and0_out, D1);
     buf buf0 (X        , or0_out_X           );
+endmodule // sky130_fd_sc_hs__a2111o
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a2111o_1 (X,A1,A2,B1,C1,D1);
-
-
     output X ;
     input  A1;
     input  A2;
     input  B1;
     input  C1;
     input  D1;
-
     
     supply1 VPWR;
     supply0 VGND;
@@ -2287,19 +2326,15 @@ endmodule
         .C1(C1),
         .D1(D1)
     );
+endmodule // sky130_fd_sc_hs__a2111o_1
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a2111o_2 (X,A1,A2,B1,C1,D1);
-
-
     output X ;
     input  A1;
     input  A2;
     input  B1;
     input  C1;
     input  D1;
-
     
     supply1 VPWR;
     supply0 VGND;
@@ -2314,9 +2349,8 @@ endmodule
         .C1(C1),
         .D1(D1)
     );
+endmodule // sky130_fd_sc_hs__a2111o_2
 
-
-endmodule
 (* noblackbox *) module sky130_fd_sc_hs__a2111o_4 (X,A1,A2,B1,C1,D1);
 
 
