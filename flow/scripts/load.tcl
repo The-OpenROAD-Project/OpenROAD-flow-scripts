@@ -84,9 +84,9 @@ proc run_equivalence_test {} {
     eval exec eqy -d $::env(LOG_DIR)/4_eqy_output $::env(OBJECTS_DIR)/4_eqy_test.eqy > $::env(LOG_DIR)/4_equivalence_check.log
     set count [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
     if { $count == 0 } {
-	error "Repair timing output failed equivalence test"
+      error "Repair timing output failed equivalence test"
     } else {
-	puts "Repair timing output passed equivalence test"
+      puts "Repair timing output passed equivalence test"
     }
 }
 #===========================================================================================
