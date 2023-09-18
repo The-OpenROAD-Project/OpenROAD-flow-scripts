@@ -100,7 +100,7 @@ if { [info exists ::env(SKIP_GATE_CLONING)] } {
 
 
 if { [info exists ::env(EQUIVALENCE_CHECK)] } {
-    write_eqy_verilog before.v
+    write_eqy_verilog 4_before_rsz.v
 }
 
 repair_timing {*}$additional_args

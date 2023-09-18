@@ -55,12 +55,12 @@ proc write_eqy_verilog {filename} {
 proc write_eqy_script { } {
     set top_cell [current_design]
     set cell_files [get_verilog_cells_for_design]
-    set outfile [open "$::env(OBJECTS_DIR)/eqy_test.eqy" w]
+    set outfile [open "$::env(OBJECTS_DIR)/4_eqy_test.eqy" w]
     # Gold netlist
-    puts $outfile "\[gold]\nread_verilog -sv $::env(RESULTS_DIR)/before.v $cell_files\n"
+    puts $outfile "\[gold]\nread_verilog -sv $::env(RESULTS_DIR)/4_before_rsz.v $cell_files\n"
     puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
     # Modified netlist 
-    puts $outfile "\[gate]\nread_verilog -sv $::env(RESULTS_DIR)/after.v $cell_files\n"
+    puts $outfile "\[gate]\nread_verilog -sv $::env(RESULTS_DIR)/4_after_rsz.v $cell_files\n"
     puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
 
     # Recommendation from eqy team on how to speed up a design
@@ -75,13 +75,13 @@ proc write_eqy_script { } {
 }
 
 proc run_equivalence_test {} {
-    write_eqy_verilog after.v
+    write_eqy_verilog 4_after_rsz.v
     write_eqy_script
 
     if { [file exists  $::env(LOG_DIR)/4_eqy_output] } {
-	exec "/bin/rm -rf $::env(LOG_DIR)/4_eqy_output"
+	exec /bin/rm -rf $::env(LOG_DIR)/4_eqy_output
     }
-    eval exec eqy -d $::env(LOG_DIR)/4_eqy_output $::env(OBJECTS_DIR)/eqy_test.eqy > $::env(LOG_DIR)/4_equivalence_check.log
+    eval exec eqy -d $::env(LOG_DIR)/4_eqy_output $::env(OBJECTS_DIR)/4_eqy_test.eqy > $::env(LOG_DIR)/4_equivalence_check.log
     set count [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
     if { $count == 0 } {
 	error "Repair timing output failed equivalence test"
