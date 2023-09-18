@@ -1,3 +1,5 @@
+# macro level counterpart to BLOCKS_grid_strategy.tcl
+
 ####################################
 # global connections
 ####################################
