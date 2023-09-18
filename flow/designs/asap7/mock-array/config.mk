@@ -3,7 +3,6 @@ include designs/asap7/mock-array/defaults.mk
 export DESIGN_NAME            = MockArray
 export DESIGN_NICKNAME        = mock-array
 
-export VERILOG_FILES_BLACKBOX = designs/src/mock-array/Element.v
 export VERILOG_FILES          = designs/src/mock-array/*.v
 
 export SDC_FILE               = designs/asap7/mock-array/constraints.sdc

@@ -1,7 +1,6 @@
 export DESIGN_NAME            = SramBridge
 export DESIGN_NICKNAME        = SramBridge
 
-export VERILOG_FILES_BLACKBOX = designs/src/sram-64x16/SRAM2RW16x32.v
 export VERILOG_FILES = designs/src/sram-64x16/*.sv
 
 export SDC_FILE               = designs/asap7/sram-64x16/constraints.sdc
