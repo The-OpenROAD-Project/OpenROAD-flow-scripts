@@ -20,10 +20,7 @@ OPENROAD_APP_BRANCH="master"
 INSTALL_PATH="$(pwd)/tools/install"
 
 YOSYS_USER_ARGS=""
-YOSYS_ARGS="\
-CONFIG=gcc \
-ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc \
-"
+YOSYS_ARGS="CONFIG=gcc"
 
 OPENROAD_APP_USER_ARGS=""
 OPENROAD_APP_ARGS=""
