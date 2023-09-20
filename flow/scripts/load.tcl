@@ -52,6 +52,35 @@ proc write_eqy_verilog {filename} {
     }
 }
 
+proc write_eqy_script_for_sky130hd {} {
+    error "this routine is not yet implemented"
+    #[gold]
+    #read_verilog -sv ./before.v ./formal_pdk.v
+
+    #[gate]
+    #read_verilog -sv ./after.v ./formal_pdk.v
+
+    #[script]
+    #prep -top aes_cipher_top -flatten
+
+    ## Using `rename -hide` is a better performing choice than nomatch if the signal names have no meaning at all
+    #rename -hide */_*_.*
+
+    ## This removes unused signals before partitioning so no partitions are created for them
+    #opt_clean -purge
+    #memory_map
+
+    #[collect *]
+    ## This groups signals like `some_signal[0]`, `some_signal[1]`, ... that only differ in the index
+    #group *[] \1[]
+
+    #[strategy basic]
+    #use sat
+    #depth 2
+    #}
+}
+
+
 proc write_eqy_script { } {
     set top_cell [current_design]
     set cell_files [get_verilog_cells_for_design]
