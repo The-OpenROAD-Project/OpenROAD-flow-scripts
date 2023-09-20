@@ -246,6 +246,9 @@ place_io_fill -row IO_EAST {*}$iofill
 connect_by_abutment
 
 # The bond pads are integrated into the IO cell in sky130 so none
-# are placed here.
+# are placed here.  We do need to assign the terminals a location
+# that aligns to the bond pad.
+place_io_terminals *u_io/PAD
+place_io_terminals *u_in/PAD
 
 remove_io_rows

@@ -6,6 +6,9 @@ export PLATFORM    = sky130hd
 # git clone git@github.com:google/skywater-pdk.git --recursive
 #
 
+export SYNTH_HIERARCHICAL = 1
+export RTLMP_FLOW = True
+
 export SKY130_IO_VERSION ?= v0.2.0
 export OPENRAMS_DIR = ./platforms/sky130ram
 export IO_DIR       = ./platforms/sky130io
@@ -56,18 +59,10 @@ export ADDITIONAL_LEFS = $(IO_DIR)/lef/sky130_ef_io__gpiov2_pad_wrapped.lef \
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0.0 0.0 5200 4609.14
-export CORE_AREA   = 210 210 4990 4389.14
-
-export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
-export ABC_LOAD_IN_FF = 3
-
-export POST_SYNTHESYS_RENAMING = ./designs/$(PLATFORM)/coyote_tc/post_synthesis_rename.tcl
+export CORE_AREA   = 250 250 4950 4349.14
 
 # Use custom power grid with core rings offset from the pads
-export PDN_CFG = ./designs/$(PLATFORM)/coyote_tc/pdn.cfg
+export PDN_TCL = ./designs/$(PLATFORM)/coyote_tc/pdn.tcl
 
 # Point to the RC file
 export SETRC_FILE = $(PLATFORM_DIR)/setRC.tcl
-
-export MIN_ROUTING_LAYER met1
-export MAX_ROUTING_LAYER met5
