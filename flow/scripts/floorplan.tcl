@@ -63,7 +63,6 @@ if { [info exists ::env(MAKE_TRACKS)] } {
 
 if {[info exists ::env(FOOTPRINT_TCL)]} {
   source $::env(FOOTPRINT_TCL)
-  initialize_padring
 }
 
 # remove buffers inserted by yosys/abc
