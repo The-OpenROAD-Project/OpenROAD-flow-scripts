@@ -57,7 +57,7 @@ jobs:
             cmd="source /opt/rh/llvm-toolset-7.0/enable; ${cmd};"
             cmd="source /opt/rh/rh-python38/enable; ${cmd};"
           fi
-          docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c ${cmd}
+          docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "${cmd}"
   testInstaller-macos:
     strategy:
       fail-fast: false
