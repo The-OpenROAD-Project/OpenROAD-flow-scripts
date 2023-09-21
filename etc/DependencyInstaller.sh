@@ -23,7 +23,7 @@ _installORDependencies() {
 }
 
 _installCommon() {
-    local pkgs="pandas numpy firebase_admin click pyyalm"
+    local pkgs="pandas numpy firebase_admin click pyyaml"
     if [[ $(id -u) == 0 ]]; then
         pip3 install -U $pkgs
     else
