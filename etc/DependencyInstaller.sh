@@ -23,10 +23,11 @@ _installORDependencies() {
 }
 
 _installCommon() {
+    local pkgs="pandas numpy firebase_admin click pyyalm"
     if [[ $(id -u) == 0 ]]; then
-        pip3 install -U pandas
+        pip3 install -U $pkgs
     else
-        pip3 install --user -U pandas
+        pip3 install --user -U $pkgs
     fi
 }
 
@@ -38,12 +39,9 @@ _installCentosCleanUp() {
 _installCentosPackages() {
     yum update -y
     yum install -y \
-        libffi-devel \
-        tcl \
         time \
         ruby \
-        ruby-devel \
-        tcl-devel
+        ruby-devel
 
     if ! [ -x "$(command -v klayout)" ]; then
       yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
@@ -55,7 +53,7 @@ _installCentosPackages() {
         echo "KLayout version less than ${klayoutVersion}"
         sudo yum remove -y klayout
         yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
-      fi 
+      fi
     fi
 }
 
@@ -68,20 +66,16 @@ _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
     apt-get -y install \
-        libffi-dev \
-        tcl \
-        tcl-dev \
-        time \
-        ruby \
-        ruby-dev \
+        libqt5multimediawidgets5 \
+        libqt5svg5-dev \
+        libqt5xmlpatterns5-dev \
         libz-dev \
         python3-pip \
-        qttools5-dev \
-        libqt5xmlpatterns5-dev \
         qtmultimedia5-dev \
-        libqt5multimediawidgets5 \
-        libqt5svg5-dev
-
+        qttools5-dev \
+        ruby \
+        ruby-dev \
+        time
 
     # install KLayout
     if _versionCompare $1 -ge 23.04; then
@@ -97,7 +91,6 @@ _installUbuntuPackages() {
         baseDir=/tmp/installers
         mkdir -p "${baseDir}"
         cd ${baseDir}
-
         wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
         md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
         dpkg -i klayout_${klayoutVersion}-1_amd64.deb
@@ -146,8 +139,12 @@ EOF
 
 # default args
 OR_INSTALLER_ARGS=""
-#default option
+# default prefix
+PREFIX=""
+# default option
 option="all"
+# default isLocal
+isLocal="false"
 
 # default values, can be overwritten by cmdline args
 while [ "$#" -gt 0 ]; do
@@ -214,7 +211,7 @@ case "${os}" in
         fi
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCommon
-        fi        
+        fi
         ;;
     "Ubuntu" )
         version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
