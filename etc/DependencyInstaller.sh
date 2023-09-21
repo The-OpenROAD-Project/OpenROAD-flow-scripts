@@ -23,6 +23,9 @@ _installORDependencies() {
 }
 
 _installCommon() {
+    if [[ -f /opt/rh/rh-python38/enable ]]; then
+        source /opt/rh/rh-python38/enable
+    fi
     local pkgs="pandas numpy firebase_admin click pyyaml"
     if [[ $(id -u) == 0 ]]; then
         pip3 install -U $pkgs
