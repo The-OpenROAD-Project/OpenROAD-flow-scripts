@@ -51,7 +51,7 @@ jobs:
           ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }}
       - name: Test build
         run: |
-          cmd="source ./env.sh; yosys -help; openroad -help; make -C flow;"
+          cmd="yosys -help; openroad -help; make -C flow;"
           if [[ ${{ matrix.os }} == "centos7" ]]; then
             cmd="source /opt/rh/devtoolset-8/enable; ${cmd};"
             cmd="source /opt/rh/llvm-toolset-7.0/enable; ${cmd};"
