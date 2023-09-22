@@ -3,7 +3,7 @@
 The OpenROAD ("Foundations and Realization of Open, Accessible Design")
 project was launched in June 2018 within the DARPA IDEA program. OpenROAD
 aims to bring down the barriers of cost, expertise and unpredictability that
-currently block designers' access to hardware implementation in advanced
+currently block designers access to hardware implementation in advanced
 technologies. The project team (Qualcomm, Arm and multiple universities and
 partners, led by UC San Diego) is developing a fully autonomous, open-source
 tool chain for digital SoC layout generation, focusing on the RTL-to-GDSII
@@ -54,7 +54,7 @@ Legend:
 - `Y` for supported.
 - `-` for unsupported.
 
-| Operating System | Local Installation | Prebuilt Binaries | Docker Installation | Windows Subsystem for Linux | 
+| Operating System | Local Installation | Pre-built Binaries | Docker Installation | Windows Subsystem for Linux | 
 | --- | --- | --- | --- | --- |
 | Ubuntu 20.04 | `Y` | `Y` | `Y` | `-` |  
 | Ubuntu 22.04 | `Y` | `Y` | `Y` | `-` |
@@ -93,7 +93,7 @@ We support four major ways of installation:
 - [Windows Subsystem for Linux (WSL)](./user/BuildWithWSL.md)
 - [Local Installation](./user/BuildLocally.md)
 
-You may also choose use the build script to customise your build process.
+You may also choose and use the build script to customise your build process.
 See more in the next section.
 
 ##### Build Command and options
@@ -177,6 +177,7 @@ OpenROAD-flow-scripts supports Verilog to GDS for the following open platforms:
 - ASAP7
 - Nangate45 / FreePDK45
 - SKY130
+- GF180
 
 These platforms have a permissive license which allows us to
 redistribute the PDK and OpenROAD platform-specific files. The platform
@@ -184,8 +185,11 @@ files and license(s) are located in `platforms/{platform}`.
 
 OpenROAD-flow-scripts also supports the following commercial platforms:
 
+- GF55
 - GF12
-- TSMC65LP
+- Intel22
+- Intel16
+- TSMC65
 
 The PDKs and platform-specific files for these kits cannot be provided
 due to NDA restrictions. However, if you are able to access these

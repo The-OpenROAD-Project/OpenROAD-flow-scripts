@@ -121,7 +121,7 @@ python3 distributed.py --design gcd --platform sky130hd \
 ```
 
 
-### Google Cloud Platform (GCP) distribution with Ray.
+### Google Cloud Platform (GCP) distribution with Ray
 
 GCP Setup Tutorial coming soon.
 
@@ -153,8 +153,8 @@ GCP Setup Tutorial coming soon.
 | `--jobs`                      | Max number of concurrent jobs.                                                                        |
 | `--openroad_threads`          | Max number of threads usable.                                                                         |
 | `--server`                    | The address of Ray server to connect.                                                                 |
-| `--port`                      | Tbe port of Ray server to connect.                                                                    |
-| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: also print training stdout                  |
+| `--port`                      | The port of Ray server to connect.                                                                    |
+| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: print stdout on top of what is in level 0 and 1. ]                  |
 |                               |                                                                                                       |
 ### GUI
 

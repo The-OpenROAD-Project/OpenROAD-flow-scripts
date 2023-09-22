@@ -76,7 +76,7 @@ Note:
 | `FILL_CELLS`                         | =            | =            | =             | =         | =         |
 | `SKIP_GATE_CLONING`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `SKIP_PIN_SWAP`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
-| `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
+| `TNS_END_PERCENT`                    | ?=           | ?=           | ?=            | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
 | `KLAYOUT_TECH_FILE`                  | =            | =            | =             | =         | =         |
 | `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |

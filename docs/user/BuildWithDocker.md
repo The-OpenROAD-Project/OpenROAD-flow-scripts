@@ -30,7 +30,7 @@ and Debian on a regular basis.
 This greatly helps to reduce the compilation time needed. 
 
 We recommend to use a Docker image of a supported OS
-and install OpenROAD using the prebuilt binaries from
+and install OpenROAD using the pre-built binaries from
 Precision Innovations. 
 You can start the container in an interactive mode using 
 the command below. 
