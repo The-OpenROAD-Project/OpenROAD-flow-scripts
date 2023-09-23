@@ -677,7 +677,7 @@ do-cts:
 clean_cts:
 	rm -rf $(RESULTS_DIR)/4_*cts*.odb $(RESULTS_DIR)/4_cts.sdc $(RESULTS_DIR)/4_*.v $(RESULTS_DIR)/4_*.def
 	rm -f  $(REPORTS_DIR)/4_*
-	rm -f  $(LOG_DIR)/4_*
+	rm -rf $(LOG_DIR)/4_*
 
 
 # ==============================================================================
