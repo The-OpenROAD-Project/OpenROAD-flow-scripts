@@ -98,7 +98,16 @@ if { [info exists ::env(SKIP_GATE_CLONING)] } {
   append additional_args " -skip_gate_cloning"
 }
 
+
+if { [info exists ::env(EQUIVALENCE_CHECK)] } {
+    write_eqy_verilog 4_before_rsz.v
+}
+
 repair_timing {*}$additional_args
+
+if { [info exists ::env(EQUIVALENCE_CHECK)] } {
+    run_equivalence_test
+}
 
 set result [catch {detailed_placement} msg]
 if {$result != 0} {

@@ -33,3 +33,86 @@ proc load_design {design_file sdc_file msg} {
     puts $msg
   }
 }
+
+#===========================================================================================
+# Routines to run equivalence tests when they are enabled. 
+
+proc get_verilog_cells_for_design { } {
+    set dir "$::env(PLATFORM_DIR)/work_around_yosys/"
+    set cell_files [glob $dir/*.v ]
+}
+
+proc write_eqy_verilog {filename} {
+    # Filter out cells with no verilog/not needed for equivalence such
+    # as fillers and tap cells 
+    if {[info exist ::env(REMOVE_CELLS_FOR_EQY)]} {
+	write_verilog -remove_cells $::env(REMOVE_CELLS_FOR_EQY) $::env(RESULTS_DIR)/$filename
+    } else {
+	write_verilog  $::env(RESULTS_DIR)/$filename
+    }
+}
+
+proc write_eqy_script_for_sky130hd {} {
+    error "this routine is not yet implemented"
+    #[gold]
+    #read_verilog -sv ./before.v ./formal_pdk.v
+
+    #[gate]
+    #read_verilog -sv ./after.v ./formal_pdk.v
+
+    #[script]
+    #prep -top aes_cipher_top -flatten
+
+    ## Using `rename -hide` is a better performing choice than nomatch if the signal names have no meaning at all
+    #rename -hide */_*_.*
+
+    ## This removes unused signals before partitioning so no partitions are created for them
+    #opt_clean -purge
+    #memory_map
+
+    #[collect *]
+    ## This groups signals like `some_signal[0]`, `some_signal[1]`, ... that only differ in the index
+    #group *[] \1[]
+
+    #[strategy basic]
+    #use sat
+    #depth 2
+}
+
+
+proc write_eqy_script { } {
+    set top_cell [current_design]
+    set cell_files [get_verilog_cells_for_design]
+    set outfile [open "$::env(OBJECTS_DIR)/4_eqy_test.eqy" w]
+    # Gold netlist
+    puts $outfile "\[gold]\nread_verilog -sv $::env(RESULTS_DIR)/4_before_rsz.v $cell_files\n"
+    puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
+    # Modified netlist 
+    puts $outfile "\[gate]\nread_verilog -sv $::env(RESULTS_DIR)/4_after_rsz.v $cell_files\n"
+    puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
+
+    # Recommendation from eqy team on how to speed up a design
+    puts $outfile "\[match *]\ngate-nomatch _*_.*\n\n"
+
+    # Equivalence check recipe 1
+    puts $outfile "\[strategy basic]\nuse sat\ndepth 10\n\n"
+    # Equivalence check recipe 2
+    puts $outfile "\[strategy sby]\nuse sby\ndepth 10\nengine smtbmc bitwuzla\n\n"
+
+    close $outfile
+}
+
+proc run_equivalence_test {} {
+    write_eqy_verilog 4_after_rsz.v
+    write_eqy_script
+
+    file delete -force $::env(LOG_DIR)/4_eqy_output
+    eval exec eqy -d $::env(LOG_DIR)/4_eqy_output $::env(OBJECTS_DIR)/4_eqy_test.eqy > $::env(LOG_DIR)/4_equivalence_check.log
+    set count [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
+    if { $count == 0 } {
+      error "Repair timing output failed equivalence test"
+    } else {
+      puts "Repair timing output passed equivalence test"
+    }
+}
+#===========================================================================================
