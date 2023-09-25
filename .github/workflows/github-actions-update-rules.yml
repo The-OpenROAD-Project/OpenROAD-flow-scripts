@@ -21,7 +21,7 @@ jobs:
         run: |
           pip install firebase-admin
       - name: Execute Python Script
-        run: python flow/util/updateRules.py --keyfile ${{ secrets.CREDS_FILE }}
+        run: python flow/util/updateRules.py --keyFile ${{ secrets.CREDS_FILE }}
       - name: Pull changes in yosys submodule
         id: remote-update
         run: |
