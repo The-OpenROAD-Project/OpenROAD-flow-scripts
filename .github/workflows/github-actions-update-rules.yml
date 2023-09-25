@@ -1,0 +1,45 @@
+name: Create draft PR for updated rules
+on:
+  push:
+  repository_dispatch:
+    types:
+      - set-new-golden
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code recursively
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Execute Python Script
+        run: python flow/util/updateRules.py --keyfile ${{ secrets.CREDS_FILE }}
+      - name: Pull changes in yosys submodule
+        id: remote-update
+        run: |
+          cd tools/yosys
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          echo "::set-output name=has_update::$(git --no-pager diff --name-only origin/master..HEAD)"
+          git add .
+          git commit -m "flow: update rules based on new set golden"
+      - if: "steps.remote-update.outputs.has_update != ''"
+        name: Create Draft PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ github.token }}
+          signoff: true
+          delete-branch: true
+          title: "Update rules"
+          reviewers: |
+            vvbandeira
+            maliberty
+          draft: true
+          branch: update-rules
+          commit-message: |
+            [BOT] Update rules
