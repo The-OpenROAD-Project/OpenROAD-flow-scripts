@@ -115,6 +115,10 @@ endif
 #
 # ==============================================================================
 
+# Disable make's implicit rules
+MAKEFLAGS += --no-builtin-rules
+.SUFFIXES:
+
 #-------------------------------------------------------------------------------
 # Default target when invoking without specific target.
 .DEFAULT_GOAL := finish
