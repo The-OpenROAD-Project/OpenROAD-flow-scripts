@@ -133,7 +133,10 @@ SHELL          := /usr/bin/env bash
 # - the following settings allowed user to point OpenROAD binaries to different
 #   location
 # - default is current install / clone directory
-export FLOW_HOME ?= $(shell pwd)
+ifeq ($(origin FLOW_HOME), undefined)
+FLOW_HOME := $(shell pwd)
+endif
+export FLOW_HOME
 
 #-------------------------------------------------------------------------------
 # Setup variables to point to other location for the following sub directory
