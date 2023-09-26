@@ -131,8 +131,8 @@ pipeline {
             post {
               always {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "4_eqy_output";
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "4_eqy_output";
+                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**";
+                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**";
                 }
               }
             }
