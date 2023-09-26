@@ -382,9 +382,9 @@ $(OBJECTS_DIR)/klayout_tech.lef: $(TECH_LEF)
 	cp $< $@
 
 KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
-KLAYOUT_VERSION = $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
+KLAYOUT_VERSION := $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
 
-KLAYOUT_ENV_VAR_IN_PATH = $(shell \
+KLAYOUT_ENV_VAR_IN_PATH := $(shell \
 	if [ -z "$(KLAYOUT_VERSION)" ]; then \
 		echo "not_found"; \
 	elif [ "$$(echo -e "$(KLAYOUT_VERSION)\n$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" | sort -V | head -n1)" = "$(KLAYOUT_VERSION)" ] && [ "$(KLAYOUT_VERSION)" != "$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" ]; then \
