@@ -287,12 +287,17 @@ YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yos
 KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
 KLAYOUT_BIN_FROM_DIR = $(KLAYOUT_DIR)/klayout
 
+ifeq ($(origin KLAYOUT_CMD), undefined)
 ifeq ($(wildcard $(KLAYOUT_BIN_FROM_DIR)), $(KLAYOUT_BIN_FROM_DIR))
-KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
+KLAYOUT_CMD := sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
 else
-KLAYOUT_CMD ?= $(shell command -v klayout)
+KLAYOUT_CMD := $(shell command -v klayout)
 endif
-KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
+endif
+
+ifeq ($(KLAYOUT_CMD),)
+$(error KLayout not found in PATH))
+endif
 
 ifneq ($(shell command -v stdbuf),)
   STDBUF_CMD = stdbuf -o L
