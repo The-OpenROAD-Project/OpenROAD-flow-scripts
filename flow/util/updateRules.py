@@ -7,6 +7,7 @@ import argparse
 import re
 import os
 import requests
+from genRuleFile import genRuleFileFunc
 
 # make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -15,6 +16,7 @@ os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 parser = argparse.ArgumentParser(description='Process some integers.')
 
 parser.add_argument('--keyFile', type=str, help='Service account credentials key file')
+parser.add_argument('--overwrite', action='store_true', default=False,help='Overwrite the golden metrics')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -36,9 +38,6 @@ def get_golden(platform, design):
             # Parse the JSON response
             data = response.json()
 
-            # Now, you can use the 'data' dictionary in your script
-            # For example, print the response data
-            # print(data)
             return data, None
         else:
             print("API request failed")
@@ -47,37 +46,14 @@ def get_golden(platform, design):
         print(f"An error occurred: {str(e)}")
         return None, f"An error occurred: {str(e)}"
 
-def update_rules(db, dataFile, golden_metrics, platform, design, args):
-    # Create a new document with the folder name as the key
-    doc_ref = db.collection('build').document(platform)
-
-    # Get the current designs array
-    try:
-        designs = doc_ref.get().to_dict()['designs']
-    except:
-        designs = {}
-    
-    # Load JSON data from rules file
-    with open(dataFile) as f:
-        print(f)
-        old_rules = json.load(f)
-
-    # update rules with golden
-    new_rules = old_rules
-    for k in old_rules.keys():
-        new_rules[k]["value"] = golden_metrics[k]
-
-    try:
-        with open(dataFile, "w") as json_file:
-            json.dump(new_rules, json_file, indent=4)
-            print(f"Changes saved to {dataFile}")
-    except Exception as e:
-        print(f"An error occurred while saving changes to {dataFile}: {str(e)}")
-        sys.exit(1)
-
+def update_rules(designDir, variant, golden_metrics, overwrite):
+    # genRuleFileFunc(design_dir, update, tighten, failing, variant, golden_metrics={})
+    if overwrite:
+        genRuleFileFunc(designDir, True, False, False, variant, golden_metrics)
+    else:
+        genRuleFileFunc(designDir, False, True, False, variant, golden_metrics)
 
 runFilename = f'rules-base.json'
-
 
 for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
     dirList = designsDir.split(os.sep)
@@ -87,11 +63,10 @@ for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
     platform = dirList[1]
     design = dirList[2]
     test = '{} {}'.format(platform, design)
-    print(test)
     dataFile = os.path.join(designsDir, runFilename)
     if os.path.exists(dataFile) and (platform != 'sky130hd_fakestack' or platform != 'src'):
         golden_metrics, error_golden_metrics = get_golden(platform, design)
         if error_golden_metrics:
             print("failed to update rule for", platform, design)
             continue
-        update_rules(db, dataFile, golden_metrics, platform, design, args)
+        update_rules(designsDir, "base", golden_metrics, args.overwrite)

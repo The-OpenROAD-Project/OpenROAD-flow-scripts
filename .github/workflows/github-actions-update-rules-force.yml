@@ -1,9 +1,9 @@
-name: Create draft PR for forced updated rules
+name: Create draft PR for updated rules
 on:
   push:
   repository_dispatch:
     types:
-      - set-new-golden-overwrite
+      - set-new-golden
 
 jobs:
   update:
@@ -21,7 +21,7 @@ jobs:
         run: |
           pip install firebase-admin
       - name: Execute Python Script
-        run: python flow/util/updateRules.py --keyFile ${{ secrets.CREDS_FILE }}
+        run: python flow/util/updateRules.py --keyFile ${{ secrets.CREDS_FILE }} --overwrite
       - name: Push updated rules
         id: remote-update
         run: |
