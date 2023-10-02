@@ -22,7 +22,7 @@ parser.add_argument('--overwrite', action='store_true', default=False,help='Over
 args = parser.parse_args()
 
 # Initialize Firebase Admin SDK with service account credentials
-cred = credentials.Certificate(args.keyFile)
+cred = credentials.Certificate(json.loads(args.keyFile))
 firebase_admin.initialize_app(cred)
 # Initialize Firestore client
 db = firestore.client()
