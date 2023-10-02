@@ -1,9 +1,9 @@
-name: Create draft PR for forced updated rules
+name: Create draft PR for updated rules
 on:
   push:
   repository_dispatch:
     types:
-      - set-new-golden-overwrite
+      - set-new-golden
 
 jobs:
   update:
