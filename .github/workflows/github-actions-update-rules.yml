@@ -21,7 +21,9 @@ jobs:
         run: |
           pip install firebase-admin
       - name: Execute Python Script
-        run: python flow/util/updateRules.py --keyFile ${{ secrets.CREDS_FILE }}
+        env:
+          CREDS_FILE: ${{ secrets.CREDS_FILE }}
+        run: python flow/util/updateRules.py --keyFile "${CREDS_FILE}"
       - name: Push updated rules
         id: remote-update
         run: |
