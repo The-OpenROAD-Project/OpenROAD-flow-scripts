@@ -113,7 +113,7 @@ proc run_equivalence_test {} {
   write_eqy_script
 
   file delete -force $::env(LOG_DIR)/4_eqy_output
-  eval exec eqy -d $::env(LOG_DIR)/4_eqy_output $::env(OBJECTS_DIR)/4_eqy_test.eqy > $::env(LOG_DIR)/4_equivalence_check.log
+  eval exec $::env(TIME_CMD) eqy -d $::env(LOG_DIR)/4_eqy_output $::env(OBJECTS_DIR)/4_eqy_test.eqy > $::env(LOG_DIR)/4_equivalence_check.log
   set count [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
   if { $count == 0 } {
     error "Repair timing output failed equivalence test"
