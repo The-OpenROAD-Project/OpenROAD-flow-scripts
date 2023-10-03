@@ -272,6 +272,7 @@ TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
 ifeq (, $(strip $(TIME_TEST)))
   TIME_CMD = /usr/bin/time
 endif
+export TIME_CMD
 
 # The following determine the executable location for each tool used by this flow.
 # Priority is given to
