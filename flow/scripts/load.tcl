@@ -103,6 +103,12 @@ proc write_eqy_script { } {
 }
 
 proc run_equivalence_test {} {
+
+  if {[file executable eqy]} {
+    puts "Could not find 'eqy' in PATH. Skipping equivalence check."
+    return
+  }
+
   write_eqy_verilog 4_after_rsz.v
   write_eqy_script
 
