@@ -895,7 +895,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Launch openroad GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```shell
-cd ../tools/OpenROAD/src/pad/test/
+cd ../tools/OpenROAD/src/ppl/test/
 openroad -gui
 ```
 

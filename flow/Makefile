@@ -115,6 +115,10 @@ endif
 #
 # ==============================================================================
 
+# Disable make's implicit rules
+MAKEFLAGS += --no-builtin-rules
+.SUFFIXES:
+
 #-------------------------------------------------------------------------------
 # Default target when invoking without specific target.
 .DEFAULT_GOAL := finish
@@ -129,7 +133,10 @@ SHELL          := /usr/bin/env bash
 # - the following settings allowed user to point OpenROAD binaries to different
 #   location
 # - default is current install / clone directory
-export FLOW_HOME ?= $(shell pwd)
+ifeq ($(origin FLOW_HOME), undefined)
+FLOW_HOME := $(shell pwd)
+endif
+export FLOW_HOME
 
 #-------------------------------------------------------------------------------
 # Setup variables to point to other location for the following sub directory
@@ -677,7 +684,7 @@ do-cts:
 clean_cts:
 	rm -rf $(RESULTS_DIR)/4_*cts*.odb $(RESULTS_DIR)/4_cts.sdc $(RESULTS_DIR)/4_*.v $(RESULTS_DIR)/4_*.def
 	rm -f  $(REPORTS_DIR)/4_*
-	rm -f  $(LOG_DIR)/4_*
+	rm -rf $(LOG_DIR)/4_*
 
 
 # ==============================================================================
