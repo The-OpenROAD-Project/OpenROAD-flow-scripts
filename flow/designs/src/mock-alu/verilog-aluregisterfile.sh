@@ -17,6 +17,7 @@ sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \
      --write-ports ${MOCK_REGISTERFILE_WRITE_PORTS} \
      --registers ${MOCK_REGISTERFILE_REGISTERS} \
      --platform ${PLATFORM} \
+     --split ${MOCK_REGISTERFILE_SPLIT}
      -- \
      aluregisterfile/"
 

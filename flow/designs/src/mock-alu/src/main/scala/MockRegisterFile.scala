@@ -47,27 +47,42 @@ class MockRegisterFile()(implicit config: Config) extends Module {
   }
 }
 
-class RegisterFile()(implicit config: Config) extends Module {
-  val bitWidth = config.width
+class RegisterSRAM()(implicit config: Config) extends Module {
   val io = IO(new RegisterFileBundle)
 
-  val registers = Mem(config.registers, Vec(config.width / 8, UInt(8.W)))
-  io.write.foreach { w =>
-    val writeAddress = w.address
-    val reg = registers(writeAddress)
-    val writeEnable = w.write
-    when(writeEnable) {
-      val writeValue = w.value.asTypeOf(registers(0))
-      val writeMask = w.byteMask
+  val ram = SyncReadMem(config.bankSize, Vec(config.width / 8, UInt(8.W)))
 
-      registers.write(writeAddress, writeValue, writeMask)
+  io.write.foreach { w =>
+    when(w.write) {
+      ram.write(w.address, w.value.asTypeOf(ram(0)), w.byteMask)
     }
   }
   io.read.foreach { r =>
-    val readAddress = r.address
-    val readValue = registers.read(readAddress)
-    val readValueRegistered = readValue
-    r.value := readValueRegistered.asUInt
+    r.value := ram.read(r.address).asUInt
+  }
+}
+
+class RegisterFile()(implicit config: Config) extends Module {
+  val io = IO(new RegisterFileBundle)
+
+  require(config.registers % config.split == 0)
+  val registers = Seq.fill(config.split)(
+    Module(new RegisterSRAM)
+  )
+
+  (io.write zip registers.map(_.io.write).transpose).foreach { case (w, sram) =>
+    sram.zipWithIndex.foreach { case (sram, i) =>
+      sram <> w
+      sram.write := w.write && (w.address / config.bankSize.U === i.U)
+    }
+  }
+
+  (io.read zip registers.map(_.io.read).transpose).foreach { case (r, srams) =>
+    srams.foreach { _ <> r }
+    r.value := VecInit(
+      srams
+        .map { _.value }
+    )(r.address / config.bankSize.U)
   }
 }
 
@@ -76,8 +91,11 @@ case class Config(
     readPorts: Int = 16,
     writePorts: Int = 8,
     registers: Int = 4,
+    split: Int = 2,
     platform: String = "asap7"
-)
+) {
+  def bankSize = registers / split
+}
 
 object GenerateMockRegisterFile extends App {
 
@@ -94,6 +112,10 @@ object GenerateMockRegisterFile extends App {
         .required()
         .action((registers, c) => c.copy(registers = registers))
         .text("Number of registers"),
+      opt[Int]('s', "split")
+        .required()
+        .action((split, c) => c.copy(split = split))
+        .text("Split registerfile into this many parts"),
       opt[Int]('r', "read-ports")
         .optional()
         .action((readPorts, c) => c.copy(readPorts = readPorts))
@@ -111,8 +133,6 @@ object GenerateMockRegisterFile extends App {
 
   val (configArgs, afterDelimiter) = args.span(_ != "--")
   val chiselArgs = afterDelimiter.drop(1)
-
-  println("asjfsafdj" + chiselArgs(0))
 
   OParser.parse(parser, configArgs, Config()) match {
     case Some(c) =>

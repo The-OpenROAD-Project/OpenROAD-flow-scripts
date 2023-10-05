@@ -68,6 +68,12 @@ object GenerateMockAluRegisterFile extends App {
           c.copy(registerFile = c.registerFile.copy(registers = registers))
         )
         .text("Number of registers"),
+      opt[Int]('s', "split")
+        .required()
+        .action((split, c) =>
+          c.copy(registerFile = c.registerFile.copy(split = split))
+        )
+        .text("Split registerfile into this many parts"),
       opt[Int]('r', "read-ports")
         .optional()
         .action((readPorts, c) =>

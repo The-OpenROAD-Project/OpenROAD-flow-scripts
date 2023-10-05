@@ -2,7 +2,8 @@ export MOCK_REGISTERFILE_WIDTH     ?= 64
 export MOCK_REGISTERFILE_READ_PORTS ?= 8
 export MOCK_REGISTERFILE_WRITE_PORTS ?= 4
 export MOCK_REGISTERFILE_REGISTERS ?= 128
-     
+export MOCK_REGISTERFILE_SPLIT ?= 16
+
 export DESIGN_NAME            = MockRegisterFile
 export DESIGN_NICKNAME        = mock-registerfile
 
