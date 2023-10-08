@@ -8,6 +8,42 @@ import argparse
 import json
 import operator
 import sys
+import requests
+
+def get_golden(platform, design, api_base_url):
+    try:
+        response = requests.get(api_base_url+f"/golden?platform={platform}&design={design}&variant=base")
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200 and "error" not in response.json():
+            # Parse the JSON response
+            data = response.json()
+
+            return data, None
+        else:
+            print("API request failed")
+            return None, "API request failed"
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None, f"An error occurred: {str(e)}"
+
+def update_rules(designDir, variant, golden_metrics, overwrite):
+    if overwrite:
+        genRuleFileFunc(designDir, # design directory
+                        True, # update
+                        False, # tighten
+                        False, # failing
+                        variant, # variant
+                        golden_metrics # metrics needed for update, default is {} in case of file
+                        )
+    else:
+        genRuleFileFunc(designDir, # design directory
+                        False, # update
+                        True, # tighten
+                        False, # failing
+                        variant, # variant
+                        golden_metrics # metrics needed for update, default is {} in case of file
+                        )
 
 def genRuleFileFunc(design_dir, update, tighten, failing, variant, golden_metrics={}):
     original_directory = getcwd()
