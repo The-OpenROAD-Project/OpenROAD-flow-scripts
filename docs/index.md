@@ -182,7 +182,7 @@ These platforms have a permissive license which allows us to
 redistribute the PDK and OpenROAD platform-specific files. The platform
 files and license(s) are located in `platforms/{platform}`.
 
-OpenROAD-flow-scripts also supports the following commercial platforms:
+OpenROAD-flow-scripts also supports the following proprietary platforms:
 
 - GF12
 - TSMC65LP
