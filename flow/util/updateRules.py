@@ -19,17 +19,19 @@ parser = argparse.ArgumentParser(description='Process some integers.')
 
 parser.add_argument('--keyFile', type=str, help='Service account credentials key file')
 parser.add_argument('--overwrite', action='store_true', default=False, help='Overwrite the golden metrics')
+parser.add_argument('--apiURL', type=str, default="http://localhost:80", help='Set API Base URL to get golden metrics')
 
 # Parse the arguments
 args = parser.parse_args()
 
 # Initialize Firebase Admin SDK with service account credentials
 cred = credentials.Certificate(json.loads(args.keyFile))
+
 firebase_admin.initialize_app(cred)
 # Initialize Firestore client
 db = firestore.client()
 
-api_base_url = "http://localhost:80"
+api_base_url = args.apiURL
 
 runFilename = f'rules-base.json'
 

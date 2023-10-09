@@ -23,7 +23,8 @@ jobs:
       - name: Execute Python Script
         env:
           CREDS_FILE: ${{ secrets.CREDS_FILE }}
-        run: python flow/util/updateRules.py --keyFile "${CREDS_FILE}"
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+        run: python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL}
       - name: Push updated rules
         id: remote-update
         run: |
