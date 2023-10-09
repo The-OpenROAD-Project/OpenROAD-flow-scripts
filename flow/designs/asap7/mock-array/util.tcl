@@ -1,5 +1,5 @@
 # Helper function to split a string into a list of strings and numbers
-proc split {str} {
+proc split_strings_and_numbers {str} {
     set result {}
     foreach {all letters numbers} [regexp -all -inline {(\D*)(\d*)} $str] {
         if {$letters ne ""} {
@@ -14,8 +14,8 @@ proc split {str} {
 
 # Custom comparison function
 proc natural_compare {str1 str2} {
-    set list1 [split $str1]
-    set list2 [split $str2]
+    set list1 [split_strings_and_numbers $str1]
+    set list2 [split_strings_and_numbers $str2]
     set len [expr {min([llength $list1], [llength $list2])}]
     for {set i 0} {$i < $len} {incr i} {
         set part1 [lindex $list1 $i]
