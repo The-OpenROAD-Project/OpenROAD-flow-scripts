@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-    if: github.event_name == 'repository_dispatch' && github.event.client_payload.event_type == "set-new-golden-overwrite"
+    if: github.event_name == 'repository_dispatch' && github.event.client_payload.event_type == 'set-new-golden-overwrite'
     steps:
       - name: Check out repository code recursively
         uses: actions/checkout@v3
