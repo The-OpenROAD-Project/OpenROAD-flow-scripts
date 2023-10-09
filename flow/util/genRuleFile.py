@@ -29,7 +29,7 @@ def get_golden(platform, design, api_base_url):
 
 def update_rules(designDir, variant, golden_metrics, overwrite):
     if overwrite:
-        genRuleFileFunc(designDir, # design directory
+        gen_rule_file(designDir, # design directory
                         True, # update
                         False, # tighten
                         False, # failing
@@ -37,7 +37,7 @@ def update_rules(designDir, variant, golden_metrics, overwrite):
                         golden_metrics # metrics needed for update, default is {} in case of file
                         )
     else:
-        genRuleFileFunc(designDir, # design directory
+        gen_rule_file(designDir, # design directory
                         False, # update
                         True, # tighten
                         False, # failing
@@ -45,7 +45,7 @@ def update_rules(designDir, variant, golden_metrics, overwrite):
                         golden_metrics # metrics needed for update, default is {} in case of file
                         )
 
-def genRuleFileFunc(design_dir, update, tighten, failing, variant, golden_metrics={}):
+def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics={}):
     original_directory = getcwd()
     chdir(design_dir)
 

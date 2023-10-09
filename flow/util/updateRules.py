@@ -7,7 +7,6 @@ import argparse
 import re
 import os
 import requests
-from genRuleFile import genRuleFileFunc
 from genRuleFile import get_golden
 from genRuleFile import update_rules
 
