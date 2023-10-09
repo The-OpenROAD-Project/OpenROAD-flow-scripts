@@ -26,3 +26,6 @@ export MAX_ROUTING_LAYER      = M9
 # Ignore power at this exploratory level
 export GND_NETS_VOLTAGES      = ""
 export PWR_NETS_VOLTAGES      = ""
+
+# The macros are very small so use a smaller halo
+export MACRO_PLACE_HALO        ?= 5 5
