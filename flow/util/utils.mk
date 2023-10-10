@@ -28,7 +28,7 @@ update_metadata:
 
 .PHONY: update_rules
 update_rules:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing --tighten
 
 .PHONY: update_rules_force
 update_rules_force:
