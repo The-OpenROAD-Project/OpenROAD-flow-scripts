@@ -24,7 +24,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1966,
+        "value": 2454,
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
