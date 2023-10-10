@@ -1,3 +1,5 @@
+#/usr/bin/env bash
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
   modroot="$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"))/tools"
 else
@@ -13,13 +15,13 @@ if [ -f /opt/rh/rh-python38/enable ]; then
   source /opt/rh/rh-python38/enable
 fi
 
-export OPENROAD=${modroot}/OpenROAD
+export OPENROAD="${modroot}/OpenROAD"
 echo "OPENROAD: ${OPENROAD}"
 
-export PATH=${modroot}/install/OpenROAD/bin:${modroot}/install/yosys/bin:${modroot}/install/LSOracle/bin:$PATH
+export PATH="${modroot}/install/OpenROAD/bin:${PATH}"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  export PATH="/Applications/KLayout/klayout.app/Contents/MacOS:$PATH"
-  export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$(brew --prefix tcl-tk)/bin:$PATH"
+  export PATH="/Applications/KLayout/klayout.app/Contents/MacOS:${PATH}"
+  export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$(brew --prefix tcl-tk)/bin:${PATH}"
   export CMAKE_PREFIX_PATH="$(brew --prefix or-tools)"
 fi
