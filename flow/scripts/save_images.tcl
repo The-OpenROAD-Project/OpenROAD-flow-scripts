@@ -20,7 +20,7 @@ gui::set_display_controls "Instances/StdCells/*" visible true
 gui::set_display_controls "Instances/Macro" visible true
 gui::set_display_controls "Instances/Pads/*" visible true
 gui::set_display_controls "Instances/Physical/*" visible true
-gui::set_display_controls "Pin Markers" visible true
+gui::set_display_controls "Pins" visible true
 gui::set_display_controls "Misc/Instances/names" visible true
 gui::set_display_controls "Misc/Scale bar" visible true
 gui::set_display_controls "Misc/Highlight selected" visible true
