@@ -152,3 +152,10 @@ endif
 .PHONY: update_sdc_clocks
 update_sdc_clocks: $(RESULTS_DIR)/route.guide
 	cp $(RESULTS_DIR)/updated_clks.sdc $(SDC_FILE)
+
+# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
+ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
+   ifneq ($(wildcard $(SDC_FILE)),)
+      export ABC_CLOCK_PERIOD_IN_PS := $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
+   endif
+endif
