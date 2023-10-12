@@ -26,6 +26,10 @@ global_route -guide_file $env(RESULTS_DIR)/route.guide \
                {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
                {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]
 
+
+set_placement_padding -global \
+    -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
+    -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 repair_antennas
 check_placement -verbose
 
