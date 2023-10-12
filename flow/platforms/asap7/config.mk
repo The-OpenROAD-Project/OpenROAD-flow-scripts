@@ -58,8 +58,6 @@ export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_R.v
 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_R.v
 export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_R.v
 
-# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_R
 
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
