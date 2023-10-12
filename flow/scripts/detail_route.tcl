@@ -3,7 +3,7 @@ source $::env(SCRIPTS_DIR)/load.tcl
 if { [info exists ::env(USE_WXL)]} {
   set db_file 4_cts.odb
 } else {
-  set db_file 5_1_grt.odb
+  set db_file 5_2_fillcell.odb
 }
 load_design $db_file 4_cts.sdc "Starting detailed routing"
 set_propagated_clock [all_clocks]
@@ -74,5 +74,5 @@ if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
 }
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/5_2_route.odb
+  write_db $::env(RESULTS_DIR)/5_3_route.odb
 }
