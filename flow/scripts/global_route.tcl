@@ -26,6 +26,9 @@ global_route -guide_file $env(RESULTS_DIR)/route.guide \
                {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
                {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]
 
+repair_antennas
+check_placement -verbose
+
 
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
