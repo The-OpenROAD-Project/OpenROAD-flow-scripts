@@ -78,10 +78,12 @@ def upload_data(db, datafile, platform, design, variant, args, rules):
             branch_doc_ref.update({
                 'run__flow__generate_date': gen_date,
                 'jenkins_url': args.jenkinsURL,
+                'change_branch': args.changeBranch,
             })
         else:
             branch_doc_ref.update({
                 'jenkins_url': args.jenkinsURL,
+                'change_branch': args.changeBranch,
             })
     else:
         branch_doc_ref.set({
