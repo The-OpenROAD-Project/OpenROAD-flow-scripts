@@ -1,0 +1,7 @@
+aes
+bazel-*
+build/
+vars-*
+run-*
+*.tar.gz
+versions.txt

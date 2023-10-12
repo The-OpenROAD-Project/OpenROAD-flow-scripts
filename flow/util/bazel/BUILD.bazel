@@ -1,0 +1,51 @@
+load("//:openroad.bzl", "build_openroad")
+
+build_openroad(
+    name = "aes_rcon",
+    arguments=["generate_abstract"],
+    synth_sources=["constraints.sdc",
+    "aes/aes_rcon.v",
+    "aes/timescale.v",
+    "block.mk",
+    "settings.mk"],
+    post_synth_sources=["block.mk", "settings.mk"],
+    synth_args=['DESIGN_NAME=aes_rcon', 'DESIGN_CONFIG=block.mk'],
+    post_synth_args=['DESIGN_NAME=aes_rcon', 'DESIGN_CONFIG=block.mk']
+    )
+
+build_openroad(
+    name = "aes_sbox",
+    arguments=["generate_abstract"],
+    synth_sources=["constraints.sdc",
+    "aes/aes_sbox.v",
+    "aes/timescale.v",
+    "block.mk",
+    "settings.mk"],
+    post_synth_sources=["block.mk",
+    "settings.mk"],
+    synth_args=['DESIGN_NAME=aes_sbox', 'DESIGN_CONFIG=block.mk'],
+    post_synth_args=['DESIGN_NAME=aes_sbox', 'DESIGN_CONFIG=block.mk']
+    )
+
+build_openroad(
+    name = "aes_cipher_top",
+    arguments=["generate_abstract"],
+    synth_sources=["constraints.sdc",
+    "aes/aes_sbox.v",
+    "aes/aes_cipher_top.v",
+    "aes/aes_inv_cipher_top.v",
+    "aes/aes_inv_sbox.v",
+    "aes/aes_key_expand_128.v",
+    "aes/aes_rcon.v",
+    "aes/timescale.v",
+    "config.mk",
+    ":aes_sbox",
+    ":aes_rcon",
+    "settings.mk"],
+    post_synth_sources=["config.mk",
+    "settings.mk",
+    ":aes_sbox",
+    ":aes_rcon"],
+    synth_args=['DESIGN_NAME=aes_cipher_top', 'DESIGN_CONFIG=config.mk'],
+    post_synth_args=['DESIGN_NAME=aes_cipher_top', 'DESIGN_CONFIG=config.mk']
+    )
