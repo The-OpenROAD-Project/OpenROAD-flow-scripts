@@ -9,6 +9,10 @@ if [ ! -d "${modroot}" ]; then
   return 1
 fi
 
+if [ -f /opt/rh/rh-python38/enable ]; then
+  source /opt/rh/rh-python38/enable
+fi
+
 export OPENROAD=${modroot}/OpenROAD
 echo "OPENROAD: ${OPENROAD}"
 

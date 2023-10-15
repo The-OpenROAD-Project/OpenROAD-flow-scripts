@@ -27,8 +27,6 @@ export PLACE_PINS_ARGS = -exclude left:0-150 -exclude left:450-600 -exclude righ
 export MACRO_PLACE_HALO = 7 7 
 export MACRO_PLACE_CHANNEL = 14 14
 
-export PLACE_DENSITY_LB_ADDON = 0.05
-
 export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
 ifneq ($(USE_FILL),)

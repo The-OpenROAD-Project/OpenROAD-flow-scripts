@@ -24,7 +24,7 @@ export DIE_AREA = $(shell \
 
 export IO_CONSTRAINTS         = designs/asap7/mock-array/Element/io.tcl
 
-export PDN_TCL                = designs/asap7/mock-array/Element/pdn.tcl
+export PDN_TCL                = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCK_grid_strategy.tcl
 
 # If this design isn't quickly done in detailed routing, something is wrong.
 # At time of adding this option, only 3 iterations were needed for 0

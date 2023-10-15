@@ -28,7 +28,7 @@ update_metadata:
 
 .PHONY: update_rules
 update_rules:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing --tighten
 
 .PHONY: update_rules_force
 update_rules_force:
@@ -152,3 +152,10 @@ endif
 .PHONY: update_sdc_clocks
 update_sdc_clocks: $(RESULTS_DIR)/route.guide
 	cp $(RESULTS_DIR)/updated_clks.sdc $(SDC_FILE)
+
+# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
+ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
+   ifneq ($(wildcard $(SDC_FILE)),)
+      export ABC_CLOCK_PERIOD_IN_PS := $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
+   endif
+endif

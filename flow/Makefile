@@ -115,6 +115,10 @@ endif
 #
 # ==============================================================================
 
+# Disable make's implicit rules
+MAKEFLAGS += --no-builtin-rules
+.SUFFIXES:
+
 #-------------------------------------------------------------------------------
 # Default target when invoking without specific target.
 .DEFAULT_GOAL := finish
@@ -129,7 +133,10 @@ SHELL          := /usr/bin/env bash
 # - the following settings allowed user to point OpenROAD binaries to different
 #   location
 # - default is current install / clone directory
-export FLOW_HOME ?= .
+ifeq ($(origin FLOW_HOME), undefined)
+FLOW_HOME := $(shell pwd)
+endif
+export FLOW_HOME
 
 #-------------------------------------------------------------------------------
 # Setup variables to point to other location for the following sub directory
@@ -279,8 +286,15 @@ OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
 YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
-KLAYOUT_CMD             ?= $(shell command -v klayout)
+# Use locally installed and built klayout if it exists, otherwise use klayout in path
+KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
+KLAYOUT_BIN_FROM_DIR = $(KLAYOUT_DIR)/klayout
 
+ifeq ($(wildcard $(KLAYOUT_BIN_FROM_DIR)), $(KLAYOUT_BIN_FROM_DIR))
+KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
+else
+KLAYOUT_CMD ?= $(shell command -v klayout)
+endif
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
 ifneq ($(shell command -v stdbuf),)
@@ -322,12 +336,12 @@ ifeq ($(wildcard $(3)),)
 # more global concerns instead of getting mired in the details of
 # each macro.
 block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
-$(1) $(2) &: ./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk
-	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=$$< generate_abstract
+$(1) $(2) &:
+	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk generate_abstract
 else
 # There is a unqiue config.mk for this Verilog module
-$(1) $(2) &: $(3)
-	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$$< generate_abstract
+$(1) $(2) &:
+	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$(3) generate_abstract
 endif
 endef
 
@@ -362,14 +376,45 @@ $(OBJECTS_DIR)/lib/merged.lib:
 # Pre-process KLayout tech
 # ==============================================================================
 $(OBJECTS_DIR)/klayout_tech.lef: $(TECH_LEF)
+	$(UNSET_AND_MAKE) do-klayout_tech
+
+.PHONY: do-klayout_tech
+do-klayout_tech:
 	@mkdir -p $(OBJECTS_DIR)
-	cp $< $@
+	cp $(TECH_LEF) $(OBJECTS_DIR)/klayout_tech.lef
+
+KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
+KLAYOUT_VERSION = $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
+
+KLAYOUT_ENV_VAR_IN_PATH = $(shell \
+	if [ -z "$(KLAYOUT_VERSION)" ]; then \
+		echo "not_found"; \
+	elif [ "$$(echo -e "$(KLAYOUT_VERSION)\n$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" | sort -V | head -n1)" = "$(KLAYOUT_VERSION)" ] && [ "$(KLAYOUT_VERSION)" != "$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" ]; then \
+		echo "invalid"; \
+	else \
+		echo "valid"; \
+	fi)
 
 $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(shell realpath --relative-to=$(RESULTS_DIR) $(file))</lef-files>),g' $< > $@
+	$(UNSET_AND_MAKE) do-klayout
+
+.PHONY: do-klayout
+do-klayout:
+ifeq ($(KLAYOUT_ENV_VAR_IN_PATH),valid)
+	SC_LEF_RELATIVE_PATH="$$\(env('FLOW_HOME')\)/$(shell realpath --relative-to=$(FLOW_HOME) $(SC_LEF))"; \
+	OTHER_LEFS_RELATIVE_PATHS=$$(echo "$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(ADDITIONAL_LEFS),<lef-files>$$(realpath --relative-to=$(RESULTS_DIR) $(file))</lef-files>)"); \
+	sed 's,<lef-files>.*</lef-files>,<lef-files>'"$$SC_LEF_RELATIVE_PATH"'</lef-files>'"$$OTHER_LEFS_RELATIVE_PATHS"',g' $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
+else
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(shell realpath --relative-to=$(RESULTS_DIR) $(file))</lef-files>),g' $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
+endif
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
-	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(shell realpath --relative-to=$(OBJECTS_DIR)/def $(file))</lef-files>),g' $< > $@
+	$(UNSET_AND_MAKE) do-klayout_wrap
+
+.PHONY: do-klayout_wrap
+do-klayout_wrap:
+	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(shell realpath --relative-to=$(OBJECTS_DIR)/def $(file))</lef-files>),g' $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout_wrap.lyt
+
 # Create Macro wrappers (if necessary)
 # ==============================================================================
 WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
@@ -554,6 +599,7 @@ $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
 .PHONY: do-floorplan
 do-floorplan:
+	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_io do-2_3_floorplan_tdms do-2_4_floorplan_macro do-2_5_floorplan_tapcell do-2_6_floorplan_pdn do-2_floorplan
 
 .PHONY: clean_floorplan
@@ -607,6 +653,7 @@ $(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
 
 .PHONY: do-place
 do-place:
+	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place do-3_place.sdc
 
 # Clean Targets
@@ -652,7 +699,7 @@ do-cts:
 clean_cts:
 	rm -rf $(RESULTS_DIR)/4_*cts*.odb $(RESULTS_DIR)/4_cts.sdc $(RESULTS_DIR)/4_*.v $(RESULTS_DIR)/4_*.def
 	rm -f  $(REPORTS_DIR)/4_*
-	rm -f  $(LOG_DIR)/4_*
+	rm -rf $(LOG_DIR)/4_*
 
 
 # ==============================================================================
@@ -686,6 +733,7 @@ $(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
 
 .PHONY: do-route
 do-route:
+	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_route do-5_route.sdc
 
 $(RESULTS_DIR)/5_route.v:
@@ -753,17 +801,25 @@ $(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fi
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
-# NOTE! No GDS file for now
 .PHONY: do-finish
 do-finish:
-	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report elapsed
+	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
+	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report do-gds elapsed
 
-# Skipping resize can be useful for mock abstracts
+.PHONY: skip_place
+skip_place: $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc
+	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_1_place_gp_skip_io.odb
+	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_2_place_iop.odb
+	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_3_place_gp.odb
+	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_4_place_resized.odb
+	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_5_place_dp.odb
+	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_place.odb
+	cp $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/3_place.sdc
+
 .PHONY: skip_resize
 skip_resize: $(RESULTS_DIR)/3_3_place_gp.odb
 	cp $(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/3_4_place_resized.odb
 
-# Skipping CTS can be useful to smoketest later stages.
 .PHONY: skip_cts
 skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
 	# mock all intermediate results
@@ -772,7 +828,6 @@ skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
 	cp $(RESULTS_DIR)/3_place.sdc $(RESULTS_DIR)/4_cts.sdc
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_cts.odb
 
-# Skipping route can be useful to create a mock abstract
 .PHONY: skip_route
 skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_1_grt.odb
@@ -780,10 +835,17 @@ skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/6_1_fill.odb
 	touch $(RESULTS_DIR)/6_final.spef
 
-# To create a mock abstract quickly, good enough to iterate quickly on
-# floorplanning and detailed route at higher levels, run:
+# A mock abstract is a fully or partially eviscerated macro. A mock
+# abstract can be useful when creating bug reports, previewing
+# macro placement, testing detailed routing, or other quick smoke-tests
+# at the top level.
 #
-# make skip_resize skip_cts skip_route generate_abstract
+# When creating a mock abstract, depending on what needs to be tested,
+# stages can be skipped.
+#
+# Leave out "skip_" targes as approperiate:
+#
+# make skip_place skip_cts skip_route generate_abstract
 .PHONY: generate_abstract
 generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v $(RESULTS_DIR)/6_final.sdc
 	$(UNSET_AND_MAKE) do-generate_abstract
@@ -814,18 +876,27 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 #-------------------------------------------------------------------------------
 GDS_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
 $(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS) $(SEAL_GDSOAS)
+	$(UNSET_AND_MAKE) do-gds-merged
+
+.PHONY: do-gds-merged
+do-gds-merged:
 	$(call KLAYOUT_FOUND)
 	($(TIME_CMD) $(STDBUF_CMD) $(KLAYOUT_CMD) -zz -rd design_name=$(DESIGN_NAME) \
-	        -rd in_def=$< \
+	        -rd in_def=$(RESULTS_DIR)/6_final.def \
 	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
 	        -rd config_file=$(FILL_CONFIG) \
 	        -rd seal_file="$(SEAL_GDSOAS)" \
-	        -rd out_file=$@ \
+	        -rd out_file=$(GDS_MERGED_FILE) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rd layer_map=$(GDS_LAYER_MAP) \
 	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
 
 $(RESULTS_DIR)/6_final.v: $(LOG_DIR)/6_report.log
+
+.PHONY: do-gds
+do-gds:
+	$(UNSET_AND_MAKE) do-klayout_tech do-klayout do-klayout_wrap do-gds-merged
+	cp $(GDS_MERGED_FILE) $(GDS_FINAL_FILE)
 
 $(GDS_FINAL_FILE): $(GDS_MERGED_FILE)
 	cp $< $@
@@ -995,6 +1066,10 @@ print-%  : ; @echo $* = $($*)
 
 .PHONY: test-unset-and-make-%
 test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
+
+.phony: klayout
+klayout:
+	$(KLAYOUT_CMD)
 
 # Utilities
 #-------------------------------------------------------------------------------

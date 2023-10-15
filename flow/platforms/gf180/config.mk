@@ -44,8 +44,6 @@ export RC_FILE                                = $(PLATFORM_DIR)/setRC.tcl
 export TIEHI_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tieh Z
 export TIELO_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tiel ZN
 
-# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS                ?= $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 export ABC_DRIVER_CELL                        = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__buf_4
 export ABC_LOAD_IN_FF                         = 0.01343
 
