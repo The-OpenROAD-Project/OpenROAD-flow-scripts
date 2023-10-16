@@ -30,7 +30,7 @@ global_route -guide_file $env(RESULTS_DIR)/route.guide \
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
-repair_antennas
+repair_antennas -iterations 5
 check_placement -verbose
 
 
