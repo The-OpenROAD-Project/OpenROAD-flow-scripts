@@ -1050,7 +1050,7 @@ yosys:
 # Drop into a bash shell with all environment variables, useful for debugging
 .PHONY: bash
 bash:
-	export MAKEFILE_ENV=1; bash --init-file $(FLOW_HOME)/../env.sh
+	bash --init-file <(echo "PS1='\[\e[32m\]Makefile Environment \[\e[0m\] \w $ '")
 
 .PHONY: all_defs
 all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)

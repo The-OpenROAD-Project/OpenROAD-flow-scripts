@@ -24,7 +24,3 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export CMAKE_PREFIX_PATH="$(brew --prefix or-tools)"
 fi
 
-# For Makefile environment
-if [ -n "\$MAKEFILE_ENV" ]; then
-    PS1='\[\e[32m\]Makefile Environment \[\e[0m\] \w $ '
-fi
