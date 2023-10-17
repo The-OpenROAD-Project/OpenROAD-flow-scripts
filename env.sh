@@ -25,16 +25,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 # For Makefile environment
-BASHRC_FILE=~/.bashrc
-if ! grep -q "MAKEFILE_ENV" "$BASHRC_FILE"; then
-    cat <<EOL >> "$BASHRC_FILE"
 if [ -n "\$MAKEFILE_ENV" ]; then
     PS1='\[\e[32m\]Makefile Environment \[\e[0m\] \w $ '
 fi
-EOL
-    source "$BASHRC_FILE"
-    echo "Bashrc changes applied"
-else
-    echo "Bashrc changes already made"
-fi
-
