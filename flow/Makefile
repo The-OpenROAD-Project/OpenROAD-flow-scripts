@@ -802,6 +802,14 @@ $(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fi
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
+# The final results are called 6_final.*, so it is convenient when scripting
+# to have the names of the artifacts match the name of the target
+.PHONY: do-final
+do-final: do-finish
+
+.PHONY: final
+final: finish
+
 .PHONY: do-finish
 do-finish:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
