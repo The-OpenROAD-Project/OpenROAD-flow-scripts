@@ -693,6 +693,7 @@ $(eval $(call do-copy,4_cts,4_2_cts_fillcell.odb))
 
 .PHONY: do-cts
 do-cts:
+	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-4_1_cts do-4_2_cts_fillcell do-4_cts
 
 .PHONY: clean_cts
@@ -852,6 +853,7 @@ generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESU
 
 .PHONY: do-generate_abstract
 do-generate_abstract:
+	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
 
 .PHONY: clean_abstract
