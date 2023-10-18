@@ -693,6 +693,7 @@ $(eval $(call do-copy,4_cts,4_2_cts_fillcell.odb))
 
 .PHONY: do-cts
 do-cts:
+	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-4_1_cts do-4_2_cts_fillcell do-4_cts
 
 .PHONY: clean_cts
@@ -801,6 +802,14 @@ $(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fi
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
+# The final results are called 6_final.*, so it is convenient when scripting
+# to have the names of the artifacts match the name of the target
+.PHONY: do-final
+do-final: do-finish
+
+.PHONY: final
+final: finish
+
 .PHONY: do-finish
 do-finish:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
@@ -852,6 +861,7 @@ generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESU
 
 .PHONY: do-generate_abstract
 do-generate_abstract:
+	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
 
 .PHONY: clean_abstract
