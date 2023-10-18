@@ -1,0 +1,361 @@
+DESIGN mypadring ;
+UNITS DISTANCE MICRONS 100 ; 
+COMPONENTS 178 ;
+  - FILLER_1 IOPadVdd
+    + PLACED ( 0 202000 )  N ;
+  - FILLER_2 IOPadVdd
+    + PLACED ( 8000 202000 )  N ;
+  - FILLER_3 Filler2000
+    + PLACED ( 16000 202000 )  N ;
+  - FILLER_4 Filler400
+    + PLACED ( 17000 202000 )  N ;
+  - FILLER_5 Filler200
+    + PLACED ( 17200 202000 )  N ;
+  - GPIO[0] IOPadInOut
+    + PLACED ( 17300 202000 )  N ;
+  - FILLER_7 IOPadVdd
+    + PLACED ( 25300 202000 )  N ;
+  - FILLER_8 IOPadVdd
+    + PLACED ( 33300 202000 )  N ;
+  - FILLER_9 Filler2000
+    + PLACED ( 41300 202000 )  N ;
+  - FILLER_10 Filler400
+    + PLACED ( 42300 202000 )  N ;
+  - FILLER_11 Filler200
+    + PLACED ( 42500 202000 )  N ;
+  - GPIO[1] IOPadInOut
+    + PLACED ( 42600 202000 )  N ;
+  - FILLER_13 IOPadVdd
+    + PLACED ( 50600 202000 )  N ;
+  - FILLER_14 IOPadVdd
+    + PLACED ( 58600 202000 )  N ;
+  - FILLER_15 Filler2000
+    + PLACED ( 66600 202000 )  N ;
+  - FILLER_16 Filler400
+    + PLACED ( 67600 202000 )  N ;
+  - FILLER_17 Filler400
+    + PLACED ( 67800 202000 )  N ;
+  - GPIO[2] IOPadInOut
+    + PLACED ( 68000 202000 )  N ;
+  - FILLER_19 IOPadVdd
+    + PLACED ( 76000 202000 )  N ;
+  - FILLER_20 IOPadVdd
+    + PLACED ( 84000 202000 )  N ;
+  - FILLER_21 Filler2000
+    + PLACED ( 92000 202000 )  N ;
+  - FILLER_22 Filler400
+    + PLACED ( 93000 202000 )  N ;
+  - FILLER_23 Filler200
+    + PLACED ( 93200 202000 )  N ;
+  - GPIO[3] IOPadInOut
+    + PLACED ( 93300 202000 )  N ;
+  - FILLER_25 IOPadVdd
+    + PLACED ( 101300 202000 )  N ;
+  - FILLER_26 IOPadVdd
+    + PLACED ( 109300 202000 )  N ;
+  - FILLER_27 Filler2000
+    + PLACED ( 117300 202000 )  N ;
+  - FILLER_28 Filler400
+    + PLACED ( 118300 202000 )  N ;
+  - FILLER_29 Filler200
+    + PLACED ( 118500 202000 )  N ;
+  - GPIO[4] IOPadInOut
+    + PLACED ( 118600 202000 )  S ;
+  - FILLER_31 IOPadVdd
+    + PLACED ( 126600 202000 )  N ;
+  - FILLER_32 IOPadVdd
+    + PLACED ( 134600 202000 )  N ;
+  - FILLER_33 Filler2000
+    + PLACED ( 142600 202000 )  N ;
+  - FILLER_34 Filler400
+    + PLACED ( 143600 202000 )  N ;
+  - FILLER_35 Filler400
+    + PLACED ( 143800 202000 )  N ;
+  - GPIO[5] IOPadInOut
+    + PLACED ( 144000 202000 )  S ;
+  - FILLER_37 IOPadVdd
+    + PLACED ( 152000 202000 )  N ;
+  - FILLER_38 IOPadVdd
+    + PLACED ( 160000 202000 )  N ;
+  - FILLER_39 Filler2000
+    + PLACED ( 168000 202000 )  N ;
+  - FILLER_40 Filler400
+    + PLACED ( 169000 202000 )  N ;
+  - FILLER_41 Filler200
+    + PLACED ( 169200 202000 )  N ;
+  - GPIO[6] IOPadInOut
+    + PLACED ( 169300 202000 )  S ;
+  - FILLER_43 IOPadVdd
+    + PLACED ( 177300 202000 )  N ;
+  - FILLER_44 IOPadVdd
+    + PLACED ( 185300 202000 )  N ;
+  - FILLER_45 Filler2000
+    + PLACED ( 193300 202000 )  N ;
+  - FILLER_46 Filler400
+    + PLACED ( 194300 202000 )  N ;
+  - FILLER_47 Filler200
+    + PLACED ( 194500 202000 )  N ;
+  - GPIO[7] IOPadInOut
+    + PLACED ( 194600 202000 )  S ;
+  - FILLER_49 IOPadVdd
+    + PLACED ( 202600 202000 )  N ;
+  - FILLER_50 IOPadVdd
+    + PLACED ( 210600 202000 )  N ;
+  - FILLER_51 Filler2000
+    + PLACED ( 218600 202000 )  N ;
+  - FILLER_52 Filler400
+    + PLACED ( 219600 202000 )  N ;
+  - FILLER_53 Filler400
+    + PLACED ( 219800 202000 )  N ;
+  - FILLER_54 IOPadVdd
+    + PLACED ( 0 0 )  S ;
+  - FILLER_55 IOPadVdd
+    + PLACED ( 8000 0 )  S ;
+  - FILLER_56 Filler2000
+    + PLACED ( 16000 0 )  S ;
+  - FILLER_57 Filler400
+    + PLACED ( 17000 0 )  S ;
+  - FILLER_58 Filler200
+    + PLACED ( 17200 0 )  S ;
+  - CLK IOPadInOut
+    + PLACED ( 17300 0 )  S ;
+  - FILLER_60 IOPadVdd
+    + PLACED ( 25300 0 )  S ;
+  - FILLER_61 IOPadVdd
+    + PLACED ( 33300 0 )  S ;
+  - FILLER_62 Filler2000
+    + PLACED ( 41300 0 )  S ;
+  - FILLER_63 Filler400
+    + PLACED ( 42300 0 )  S ;
+  - FILLER_64 Filler200
+    + PLACED ( 42500 0 )  S ;
+  - RESET IOPadInOut
+    + PLACED ( 42600 0 )  S ;
+  - FILLER_66 IOPadVdd
+    + PLACED ( 50600 0 )  S ;
+  - FILLER_67 IOPadVdd
+    + PLACED ( 58600 0 )  S ;
+  - FILLER_68 Filler2000
+    + PLACED ( 66600 0 )  S ;
+  - FILLER_69 Filler400
+    + PLACED ( 67600 0 )  S ;
+  - FILLER_70 Filler400
+    + PLACED ( 67800 0 )  S ;
+  - MISO IOPadInOut
+    + PLACED ( 68000 0 )  S ;
+  - FILLER_72 IOPadVdd
+    + PLACED ( 76000 0 )  S ;
+  - FILLER_73 IOPadVdd
+    + PLACED ( 84000 0 )  S ;
+  - FILLER_74 Filler2000
+    + PLACED ( 92000 0 )  S ;
+  - FILLER_75 Filler400
+    + PLACED ( 93000 0 )  S ;
+  - FILLER_76 Filler200
+    + PLACED ( 93200 0 )  S ;
+  - MOSI IOPadInOut
+    + PLACED ( 93300 0 )  S ;
+  - FILLER_78 IOPadVdd
+    + PLACED ( 101300 0 )  S ;
+  - FILLER_79 IOPadVdd
+    + PLACED ( 109300 0 )  S ;
+  - FILLER_80 Filler2000
+    + PLACED ( 117300 0 )  S ;
+  - FILLER_81 Filler400
+    + PLACED ( 118300 0 )  S ;
+  - FILLER_82 Filler200
+    + PLACED ( 118500 0 )  S ;
+  - SCK IOPadInOut
+    + PLACED ( 118600 0 )  S ;
+  - FILLER_84 IOPadVdd
+    + PLACED ( 126600 0 )  S ;
+  - FILLER_85 IOPadVdd
+    + PLACED ( 134600 0 )  S ;
+  - FILLER_86 Filler2000
+    + PLACED ( 142600 0 )  S ;
+  - FILLER_87 Filler400
+    + PLACED ( 143600 0 )  S ;
+  - FILLER_88 Filler400
+    + PLACED ( 143800 0 )  S ;
+  - SPI_CS_N IOPadInOut
+    + PLACED ( 144000 0 )  S ;
+  - FILLER_90 IOPadVdd
+    + PLACED ( 152000 0 )  S ;
+  - FILLER_91 IOPadVdd
+    + PLACED ( 160000 0 )  S ;
+  - FILLER_92 Filler2000
+    + PLACED ( 168000 0 )  S ;
+  - FILLER_93 Filler400
+    + PLACED ( 169000 0 )  S ;
+  - FILLER_94 Filler200
+    + PLACED ( 169200 0 )  S ;
+  - UART_TX IOPadInOut
+    + PLACED ( 169300 0 )  N ;
+  - FILLER_96 IOPadVdd
+    + PLACED ( 177300 0 )  S ;
+  - FILLER_97 IOPadVdd
+    + PLACED ( 185300 0 )  S ;
+  - FILLER_98 Filler2000
+    + PLACED ( 193300 0 )  S ;
+  - FILLER_99 Filler400
+    + PLACED ( 194300 0 )  S ;
+  - FILLER_100 Filler200
+    + PLACED ( 194500 0 )  S ;
+  - UART_RX IOPadInOut
+    + PLACED ( 194600 0 )  N ;
+  - FILLER_102 IOPadVdd
+    + PLACED ( 202600 0 )  S ;
+  - FILLER_103 IOPadVdd
+    + PLACED ( 210600 0 )  S ;
+  - FILLER_104 Filler2000
+    + PLACED ( 218600 0 )  S ;
+  - FILLER_105 Filler400
+    + PLACED ( 219600 0 )  S ;
+  - FILLER_106 Filler400
+    + PLACED ( 219800 0 )  S ;
+  - FILLER_107 Corner
+    + PLACED ( 0 0 )  W ;
+  - FILLER_108 IOPadVdd
+    + PLACED ( 0 18000 )  W ;
+  - FILLER_109 Filler4000
+    + PLACED ( 0 26000 )  W ;
+  - FILLER_110 Filler1000
+    + PLACED ( 0 28000 )  W ;
+  - FILLER_111 Filler200
+    + PLACED ( 0 28500 )  W ;
+  - DAC_0 IOPadInOut
+    + PLACED ( 0 28600 )  W ;
+  - FILLER_113 Corner
+    + PLACED ( 0 36600 )  W ;
+  - FILLER_114 IOPadVdd
+    + PLACED ( 0 54600 )  W ;
+  - FILLER_115 Filler4000
+    + PLACED ( 0 62600 )  W ;
+  - FILLER_116 Filler1000
+    + PLACED ( 0 64600 )  W ;
+  - FILLER_117 Filler400
+    + PLACED ( 0 65100 )  W ;
+  - DAC_1 IOPadInOut
+    + PLACED ( 0 65300 )  W ;
+  - FILLER_119 Corner
+    + PLACED ( 0 73300 )  W ;
+  - FILLER_120 IOPadVdd
+    + PLACED ( 0 91300 )  W ;
+  - FILLER_121 Filler4000
+    + PLACED ( 0 99300 )  W ;
+  - FILLER_122 Filler1000
+    + PLACED ( 0 101300 )  W ;
+  - FILLER_123 Filler400
+    + PLACED ( 0 101800 )  W ;
+  - VDD_2 IOPadVdd
+    + PLACED ( 0 102000 )  W ;
+  - GND_2 IOPadVss
+    + PLACED ( 0 110000 )  W ;
+  - FILLER_126 Corner
+    + PLACED ( 0 118000 )  W ;
+  - FILLER_127 IOPadVdd
+    + PLACED ( 0 136000 )  W ;
+  - FILLER_128 Filler4000
+    + PLACED ( 0 144000 )  W ;
+  - FILLER_129 Filler1000
+    + PLACED ( 0 146000 )  W ;
+  - FILLER_130 Filler200
+    + PLACED ( 0 146500 )  W ;
+  - DAC_2 IOPadInOut
+    + PLACED ( 0 146600 )  E ;
+  - FILLER_132 Corner
+    + PLACED ( 0 154600 )  W ;
+  - FILLER_133 IOPadVdd
+    + PLACED ( 0 172600 )  W ;
+  - FILLER_134 Filler4000
+    + PLACED ( 0 180600 )  W ;
+  - FILLER_135 Filler1000
+    + PLACED ( 0 182600 )  W ;
+  - FILLER_136 Filler400
+    + PLACED ( 0 183100 )  W ;
+  - DAC_3 IOPadInOut
+    + PLACED ( 0 183300 )  E ;
+  - FILLER_138 Corner
+    + PLACED ( 0 191300 )  W ;
+  - FILLER_139 IOPadVdd
+    + PLACED ( 0 209300 )  W ;
+  - FILLER_140 Filler4000
+    + PLACED ( 0 217300 )  W ;
+  - FILLER_141 Filler1000
+    + PLACED ( 0 219300 )  W ;
+  - FILLER_142 Filler400
+    + PLACED ( 0 219800 )  W ;
+  - FILLER_143 Corner
+    + PLACED ( 202000 0 )  E ;
+  - FILLER_144 IOPadVdd
+    + PLACED ( 202000 18000 )  E ;
+  - FILLER_145 Filler4000
+    + PLACED ( 202000 26000 )  E ;
+  - FILLER_146 Filler1000
+    + PLACED ( 202000 28000 )  E ;
+  - FILLER_147 Filler200
+    + PLACED ( 202000 28500 )  E ;
+  - PWM_1 IOPadInOut
+    + PLACED ( 202000 28600 )  E ;
+  - FILLER_149 Corner
+    + PLACED ( 202000 36600 )  E ;
+  - FILLER_150 IOPadVdd
+    + PLACED ( 202000 54600 )  E ;
+  - FILLER_151 Filler4000
+    + PLACED ( 202000 62600 )  E ;
+  - FILLER_152 Filler1000
+    + PLACED ( 202000 64600 )  E ;
+  - FILLER_153 Filler400
+    + PLACED ( 202000 65100 )  E ;
+  - PWM_2 IOPadInOut
+    + PLACED ( 202000 65300 )  E ;
+  - FILLER_155 Corner
+    + PLACED ( 202000 73300 )  E ;
+  - FILLER_156 IOPadVdd
+    + PLACED ( 202000 91300 )  E ;
+  - FILLER_157 Filler4000
+    + PLACED ( 202000 99300 )  E ;
+  - FILLER_158 Filler1000
+    + PLACED ( 202000 101300 )  E ;
+  - FILLER_159 Filler400
+    + PLACED ( 202000 101800 )  E ;
+  - VDD_1 IOPadVdd
+    + PLACED ( 202000 102000 )  E ;
+  - GND_1 IOPadVss
+    + PLACED ( 202000 110000 )  E ;
+  - FILLER_162 Corner
+    + PLACED ( 202000 118000 )  E ;
+  - FILLER_163 IOPadVdd
+    + PLACED ( 202000 136000 )  E ;
+  - FILLER_164 Filler4000
+    + PLACED ( 202000 144000 )  E ;
+  - FILLER_165 Filler1000
+    + PLACED ( 202000 146000 )  E ;
+  - FILLER_166 Filler200
+    + PLACED ( 202000 146500 )  E ;
+  - PWM_3 IOPadInOut
+    + PLACED ( 202000 146600 )  W ;
+  - FILLER_168 Corner
+    + PLACED ( 202000 154600 )  E ;
+  - FILLER_169 IOPadVdd
+    + PLACED ( 202000 172600 )  E ;
+  - FILLER_170 Filler4000
+    + PLACED ( 202000 180600 )  E ;
+  - FILLER_171 Filler1000
+    + PLACED ( 202000 182600 )  E ;
+  - FILLER_172 Filler400
+    + PLACED ( 202000 183100 )  E ;
+  - PWM_4 IOPadInOut
+    + PLACED ( 202000 183300 )  W ;
+  - FILLER_174 Corner
+    + PLACED ( 202000 191300 )  E ;
+  - FILLER_175 IOPadVdd
+    + PLACED ( 202000 209300 )  E ;
+  - FILLER_176 Filler4000
+    + PLACED ( 202000 217300 )  E ;
+  - FILLER_177 Filler1000
+    + PLACED ( 202000 219300 )  E ;
+  - FILLER_178 Filler400
+    + PLACED ( 202000 219800 )  E ;
+END COMPONENTS
+END DESIGN
