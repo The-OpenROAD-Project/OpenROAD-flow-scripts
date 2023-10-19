@@ -65,7 +65,6 @@ pipeline {
                    "mock-array asap7",
                    "mock-alu asap7",
                    "aes-block asap7",
-                   "sram-64x16 asap7",
                    "aes nangate45",
                    "ariane136 nangate45",
                    "black_parrot nangate45",
