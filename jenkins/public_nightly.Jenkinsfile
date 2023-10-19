@@ -195,6 +195,7 @@ pipeline {
               --commitSHA ${env.GIT_COMMIT}-dirty \
               --jenkinsURL ${env.RUN_DISPLAY_URL} \
               --pipelineID ${env.BUILD_TAG} \
+              --changeBranch ${env.CHANGE_BRANCH} \
             """ + '--cred ${db_cred}'
         }
       }
