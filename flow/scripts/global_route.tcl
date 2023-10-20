@@ -33,12 +33,6 @@ set_placement_padding -global \
 repair_antennas -iterations 5
 check_placement -verbose
 
-# Reset padding to zero, as it interfers with recover power and generate
-# overlaps
-set_placement_padding -global \
-    -left 0 \
-    -right 0
-
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
 
