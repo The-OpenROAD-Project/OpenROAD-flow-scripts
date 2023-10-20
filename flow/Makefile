@@ -683,18 +683,14 @@ cts: $(RESULTS_DIR)/4_cts.odb \
 # ------------------------------------------------------------------------------
 $(eval $(call do-step,4_1_cts,$(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc,cts))
 
-# Filler cell insertion
-# ------------------------------------------------------------------------------
-$(eval $(call do-step,4_2_cts_fillcell,$(RESULTS_DIR)/4_1_cts.odb,fillcell))
-
 $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.odb
 
-$(eval $(call do-copy,4_cts,4_2_cts_fillcell.odb))
+$(eval $(call do-copy,4_cts,4_1_cts.odb))
 
 .PHONY: do-cts
 do-cts:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
-	$(UNSET_AND_MAKE) do-4_1_cts do-4_2_cts_fillcell do-4_cts
+	$(UNSET_AND_MAKE) do-4_1_cts do-4_cts
 
 .PHONY: clean_cts
 clean_cts:
@@ -720,22 +716,26 @@ route: $(RESULTS_DIR)/5_route.odb \
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE),global_route))
 
-# STEP 2: Run detailed route
+# SEP 2: Filler cell insertion
+# ------------------------------------------------------------------------------
+$(eval $(call do-step,5_2_fillcell,$(RESULTS_DIR)/5_1_grt.odb,fillcell))
+
+# STEP 3: Run detailed route
 #-------------------------------------------------------------------------------
 ifeq ($(USE_WXL),)
-$(eval $(call do-step,5_2_route,$(RESULTS_DIR)/5_1_grt.odb,detail_route))
+$(eval $(call do-step,5_3_route,$(RESULTS_DIR)/5_2_fillcell.odb,detail_route))
 else
-$(eval $(call do-step,5_2_route,$(RESULTS_DIR)/4_cts.odb,detail_route))
+$(eval $(call do-step,5_3_route,$(RESULTS_DIR)/4_cts.odb,detail_route))
 endif
 
-$(eval $(call do-copy,5_route,5_2_route.odb))
+$(eval $(call do-copy,5_route,5_3_route.odb))
 
 $(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
 
 .PHONY: do-route
 do-route:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
-	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_route do-5_route.sdc
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_fillcell do-5_3_route do-5_route do-5_route.sdc
 
 $(RESULTS_DIR)/5_route.v:
 	@export OR_DB=5_route ;\
