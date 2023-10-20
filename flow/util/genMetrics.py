@@ -317,7 +317,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     extractGnuTime('cts', metrics_dict, logPath + '/4_1_cts.log')
     extractGnuTime('globalroute', metrics_dict, logPath + '/5_1_grt.log')
     extractGnuTime('fillcell', metrics_dict, logPath + '/5_2_fillcell.log')
-    extractGnuTime('detailedroute', metrics_dict, logPath + '/5_2_route.log')
+    extractGnuTime('detailedroute', metrics_dict, logPath + '/5_3_route.log')
     extractGnuTime('finish_merge', metrics_dict, logPath + '/6_1_merge.log')
     extractGnuTime('finish', metrics_dict, logPath + '/6_report.log')
 
