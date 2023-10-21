@@ -76,6 +76,7 @@ exclude_patterns = [
     'README.md',
     'docs/releases/PostAlpha2.1BranchMethodology.md',
     'main',
+    'index.md'
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
