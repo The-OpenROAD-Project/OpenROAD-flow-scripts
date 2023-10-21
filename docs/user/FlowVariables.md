@@ -76,7 +76,9 @@ Note:
 | `FILL_CELLS`                         | =            | =            | =             | =         | =         |
 | `SKIP_GATE_CLONING`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `SKIP_PIN_SWAP`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
-| `TNS_END_PERCENT`                    | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
+| `EQUIVALENCE_CHECK`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
+| `REMOVE_CELLS_FOR_EQY`               | ?=           | ?=           | ?=            | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
 | `KLAYOUT_TECH_FILE`                  | =            | =            | =             | =         | =         |
 | `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
@@ -171,7 +173,8 @@ Note:
 | `SKIP_GATE_CLONING`   | Do not use gate cloning transform to fix timing violations (default: use gate cloning)                       |
 | `SKIP_PIN_SWAP`       | Do not use pin swapping as a transform to fix timing violations (default: use pin swapping)                  |
 | `TNS_END_PERCENT`     | Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed                |
-
+| `EQUIVALENCE_CHECK`   | Enable running equivalence checks with to verify logical correctness of repair_timing                        |
+| `REMOVE_CELLS_FOR_EQY`| String patterns directly passed to write_verilog -remove_cells <> for equivalence checks                     |
 
 ### Routing
 

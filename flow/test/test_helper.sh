@@ -20,8 +20,6 @@ if [ ! -z "${FLOW_VARIANT+x}" ]; then
   __make+=" FLOW_VARIANT=$FLOW_VARIANT"
 fi
 
-source ../env.sh
-
 $__make clean_all clean_metadata 2>&1 | tee $LOG_FILE
 
 # turn off abort on error so we can always capture the result
@@ -47,6 +45,10 @@ if [ -f "$PRIVATE_DIR/util/utils.mk" ] && [ ! -z ${RUN_CALIBRE+x} ]; then
   ret=$(( ret + $? ))
   if [ ! -z ${SAVE_TO_DB+x} ]; then
     $__make save_to_drc_db
+    ret=$(( ret + $? ))
+  fi
+  if [ ! -z ${CHECK_DRC_DB+x} ]; then
+    $__make check_drc_db
     ret=$(( ret + $? ))
   fi
 fi

@@ -42,7 +42,6 @@ pipeline {
                    "mock-array asap7",
                    "mock-alu asap7",
                    "aes-block asap7",
-                   "sram-64x16 asap7",
                    "aes nangate45",
                    "bp_be_top nangate45",
                    "bp_fe_top nangate45",
@@ -106,8 +105,8 @@ pipeline {
             post {
               always {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true;
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true;
+                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**";
+                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**";
                 }
               }
             }
@@ -171,6 +170,7 @@ pipeline {
               --commitSHA ${env.GIT_COMMIT} \
               --jenkinsURL ${env.RUN_DISPLAY_URL} \
               --pipelineID ${env.BUILD_TAG} \
+              --changeBranch ${env.CHANGE_BRANCH} \
             """ + '--cred ${db_cred}'
         }
       }
