@@ -62,7 +62,7 @@ templates_path = ['_templates']
 source_suffix = ['.md']
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'index2'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -147,15 +147,51 @@ def setup(app):
     with open('index.md', 'wt') as f:
         f.write(lines)
 
+    # Grab the reference file from OR
     url = 'https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/docs/contrib/GitGuide.md'
     get_file_from_url(url, 'contrib/GitGuide.md') 
+    
+    # Temporarily using commit number, will change once OR commit merged.
+    url = 'https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/3563176d00daeb613eed2ccf9442137b0ae2cad3/docs/index.md'
+    get_file_from_url(url, 'SupportedOS.md')
 
     # edit OpenROAD to OpenROAD-flow-scripts for GitGuide
     with open('contrib/GitGuide.md', 'r') as f:
         content = f.read()
-
     content = content.replace('user/Build.md', '../index.md#build-or-installing-orfs-dependencies')
     content = content.replace('OpenROAD', 'OpenROAD-flow-scripts')
     content = content.replace('The-OpenROAD-flow-scripts', 'The-OpenROAD')
     with open('contrib/GitGuide.md', 'w') as f:
         f.write(content)
+
+    # Create a copy of the index.md file
+    import shutil
+    shutil.copy('index.md', 'index2.md')
+
+    # Use re to find the desired content 
+    start_pattern = '## Supported Operating Systems'
+    end_pattern = '## Code of conduct'
+    with open('SupportedOS.md', 'r') as f:
+        markdown_content = f.read()
+
+    match = re.search(f'{start_pattern}(.*?){end_pattern}', markdown_content, re.DOTALL)
+    
+    assert match is not None, 'No match found, check the OR Doc pattern on index.md'
+    extracted_content = match.group(1)
+    extracted_content = "\n#### Supported Operating Systems" + extracted_content
+    print(extracted_content)
+    
+    # Find insert position
+    with open('index2.md', 'r') as f:
+        existing_content = f.read()
+    match = re.search(r'### Setup', existing_content)
+    assert match is not None, 'Check search keyword.'
+    with open('index2.md', 'w') as f:
+        insert_position = match.end() + 1
+        before_insert = existing_content[:insert_position]
+        after_insert = existing_content[insert_position:]
+
+        # Combine the parts with the extracted content
+        updated_content = before_insert + extracted_content + after_insert
+    
+        f.write(updated_content)

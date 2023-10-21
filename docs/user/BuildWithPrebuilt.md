@@ -24,10 +24,6 @@ Step 3: Run the install command based on platform use package installer.
 sudo apt install ./openroad_2.0_amd64-ubuntu20.04.deb
 ```
 
-```{note}
-You can install these binaries within docker as well.
-```
-
 ## Install Klayout and Yosys
 Please ensure the Klayout version (denoted with `klayoutVersion` variable) is consistent with the one used in [DependencyInstaller script](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/etc/DependencyInstaller.sh). 
 
