@@ -16,5 +16,5 @@ set_layer_rc -via Via4    -resistance 2.0E-3
 set_layer_rc -via TopVia1 -resistance 0.4E-3
 set_layer_rc -via TopVia2 -resistance 0.22E-3
 
-set_wire_rc -signal -layer Metal1
+set_wire_rc -signal -layer Metal2
 set_wire_rc -clock  -layer Metal5

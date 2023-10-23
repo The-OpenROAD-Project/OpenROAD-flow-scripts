@@ -4,29 +4,15 @@
 add_global_connection -net {VDD} -pin_pattern {^VDD$} -power
 add_global_connection -net {VDD} -pin_pattern {^VDDPE$}
 add_global_connection -net {VDD} -pin_pattern {^VDDCE$}
-#add_global_connection -net {VDD} -pin_pattern {VPWR}
-#add_global_connection -net {VDD} -pin_pattern {VPB}
 add_global_connection -net {VSS} -pin_pattern {^VSS$} -ground
 add_global_connection -net {VSS} -pin_pattern {^VSSE$}
-#add_global_connection -net {VSS} -pin_pattern {VGND}
-#add_global_connection -net {VSS} -pin_pattern {VNB}
 global_connect
-#add_global_connection -net {VDD} -inst_pattern {.*} -pin_pattern {^VDD$} -power
-#add_global_connection -net {VDD} -inst_pattern {.*} -pin_pattern {^VDDPE$}
-#add_global_connection -net {VDD} -inst_pattern {.*} -pin_pattern {^VDDCE$}
-#add_global_connection -net {VDD} -inst_pattern {.*} -pin_pattern {VPWR}
-#add_global_connection -net {VDD} -inst_pattern {.*} -pin_pattern {VPB}
-#add_global_connection -net {VSS} -inst_pattern {.*} -pin_pattern {^VSS$} -ground
-#add_global_connection -net {VSS} -inst_pattern {.*} -pin_pattern {^VSSE$}
-#add_global_connection -net {VSS} -inst_pattern {.*} -pin_pattern {VGND}
-#add_global_connection -net {VSS} -inst_pattern {.*} -pin_pattern {VNB}
-####################################
 ####################################
 # voltage domains
 ####################################
 set_voltage_domain -name {CORE} -power {VDD} -ground {VSS}
-#proc####################################
-# standard c#ell grid
+#####################################
+# standard cell grid
 ####################################
 define_pdn_grid -name {grid} -voltage_domains {CORE}
 add_pdn_ring -grid {grid} -layers {Metal5 TopMetal1} -widths {5.0} -spacings {2.0} -core_offsets {4.5} -connect_to_pads
