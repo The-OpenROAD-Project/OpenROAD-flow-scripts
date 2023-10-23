@@ -24,7 +24,7 @@ if {[info exist env(FASTROUTE_TCL)]} {
 global_route -guide_file $env(RESULTS_DIR)/route.guide \
                -congestion_report_file $env(REPORTS_DIR)/congestion.rpt \
                {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
-               {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]
+               {-congestion_iterations 50 -congestion_report_iter_step 5 -verbose}}]
 
 
 set_placement_padding -global \
@@ -35,6 +35,10 @@ check_placement -verbose
 
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
+
+if {[info exist env(DONT_USE_CELLS)]} {
+  set_dont_use $::env(DONT_USE_CELLS)
+}
 
 if { [info exists ::env(RECOVER_POWER)] } {
   puts "Downsizing/switching to higher Vt  for non critical gates for power recovery"
@@ -49,6 +53,34 @@ if { [info exists ::env(RECOVER_POWER)] } {
 }
 
 source $env(SCRIPTS_DIR)/report_metrics.tcl
+report_metrics "global route pre repair design"
+
+# Repair design using global route parasitics
+repair_design
+report_metrics "global route post repair design"
+
+# Running DPL to fix overlapped instances
+# Run to get modified net by DPL
+global_route -start_incremental
+detailed_placement
+# Route only the modified net by DPL
+global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_design.rpt
+
+# Repair timing using global route parasitics
+estimate_parasitics -global_routing
+repair_timing
+report_metrics "global route post repair timing"
+
+# Running DPL to fix overlapped instances
+# Run to get modified net by DPL
+global_route -start_incremental
+detailed_placement
+# Route only the modified net by DPL
+global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_timing.rpt
+
+set_propagated_clock [all_clocks]
+estimate_parasitics -global_routing
+
 report_metrics "global route"
 
 puts "\n=========================================================================="
