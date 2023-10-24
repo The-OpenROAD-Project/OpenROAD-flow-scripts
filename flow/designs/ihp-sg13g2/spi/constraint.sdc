@@ -1,4 +1,4 @@
-current_design gcd
+current_design spi
 
 set clk_name  core_clock
 set clk_port_name clk

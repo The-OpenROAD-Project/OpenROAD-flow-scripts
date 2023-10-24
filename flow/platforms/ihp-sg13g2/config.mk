@@ -11,7 +11,6 @@ export LIB_FILES = $(PLATFORM_DIR)/lib/sg13g2_stdcell_typ_1p20V_25C.lib \
 	                  $(ADDITIONAL_LIBS)
 export GDS_FILES = $(PLATFORM_DIR)/gds/sg13g2_stdcell.gds \
 	                  $(ADDITIONAL_GDS)
-#                     $(ADDITIONAL_GDS)
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
@@ -21,16 +20,12 @@ export GDS_FILES = $(PLATFORM_DIR)/gds/sg13g2_stdcell.gds \
 # *lpflow* cells are for multi-power domains
 export DONT_USE_CELLS += \
 sg13g2_antennanp \
-sg13g2_decap_4 \
-sg13g2_decap_8 \
 sg13g2_lgcp_1 \
 sg13g2_sighold \
 sg13g2_slgcp_1 \
-sg13g2_dfrbp_2 \
-sg13g2_fill_1 \
-sg13g2_fill_2 \
-sg13g2_fill_4 \
-sg13g2_fill_8 
+sg13g2_dfrbp_2 
+
+
 # Define fill cells
 export FILL_CELLS = sg13g2_fill_1 sg13g2_fill_2 sg13g2_fill_4 sg13g2_fill_8
 # -----------------------------------------------------
@@ -45,9 +40,8 @@ export TIELO_CELL_AND_PORT = sg13g2_tielo LO
 export MIN_BUF_CELL_AND_PORTS = sg13g2_buf_1 A X
 
 # Yosys mapping files
-#export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch.v
+export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch.v
 export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
-#export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders.v
 
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sg13g2_buf_4
@@ -68,8 +62,6 @@ export IO_PLACER_V = Metal3
 
 # Define default PDN config
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
-#export PDN_TCL ?= $(PLATFORM_DIR)/pdn_grid.cfg
-
 
 export MACRO_PLACE_HALO ?= 40 40
 export MACRO_PLACE_CHANNEL ?= 80 80
@@ -80,15 +72,12 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 # default cell padding for cells 
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 2
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 1
-
 export PLACE_DENSITY ?= 0.65
-
 # --------------------------------------------------------
 #  CTS
 #  -------------------------------------------------------
 # TritonCTS options
 export CTS_BUF_CELL   ?= sg13g2_buf_2
-
 # ---------------------------------------------------------
 #  Route
 # ---------------------------------------------------------
@@ -125,7 +114,7 @@ export GND_NETS_VOLTAGES  ?= "VSS 0.0"
 export IR_DROP_LAYER ?= Metal1
 
 # DRC Check
-export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/$(PLATFORM).lydrc
+export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/sg13g2.lydrc
 
 #LVS Check
 export CDL_FILE = $(PLATFORM_DIR)/cdl/sg13g2_stdcell.cdl
