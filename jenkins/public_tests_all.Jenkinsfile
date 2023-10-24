@@ -69,11 +69,11 @@ pipeline {
                    "ibex gf180",
                    "jpeg gf180",
                    "riscv32i gf180",
-                   "uart-blocks gf180";
-                   "aes ihp-sg13g2";
-                   "ibex ihp-sg13g2";
-                   "gcd ihp-sg13g2";
-                   "spi ihp-sg13g2";
+                   "uart-blocks gf180",
+                   "aes ihp-sg13g2",
+                   "ibex ihp-sg13g2",
+                   "gcd ihp-sg13g2",
+                   "spi ihp-sg13g2",
                    "riscv32i ihp-sg13g2";
           }
         }
