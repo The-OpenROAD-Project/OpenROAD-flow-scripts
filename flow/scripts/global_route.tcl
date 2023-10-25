@@ -30,8 +30,6 @@ global_route -guide_file $env(RESULTS_DIR)/route.guide \
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
-repair_antennas -iterations 5
-check_placement -verbose
 
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
@@ -86,6 +84,9 @@ report_metrics "global route"
 puts "\n=========================================================================="
 puts "check_antennas"
 puts "--------------------------------------------------------------------------"
+
+repair_antennas -iterations 5
+check_placement -verbose
 check_antennas -report_file $env(REPORTS_DIR)/antenna.log -report_violating_nets
 
 # Write SDC to results with updated clock periods that are just failing.
