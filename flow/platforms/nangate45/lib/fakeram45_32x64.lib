@@ -2,7 +2,7 @@ library(fakeram45_32x64) {
     technology (cmos);
     delay_model : table_lookup;
     revision : 1.0;
-    date : "2022-02-02 00:20:06Z";
+    date : "2023-10-30 21:40:31Z";
     comment : "SRAM";
     time_unit : "1ns";
     voltage_unit : "1V";
@@ -62,30 +62,30 @@ library(fakeram45_32x64) {
     type (fakeram45_32x64_ADDRESS) {
         base_type : array ;
         data_type : bit ;
-        bit_width : 5;
-        bit_from : 4;
+        bit_width : 6;
+        bit_from : 5;
         bit_to : 0 ;
         downto : true ;
     }
 cell(fakeram45_32x64) {
-    area : 1754.536;
+    area : 3817.100;
     interface_timing : true;
     memory() {
         type : ram;
-        address_width : 5;
+        address_width : 6;
         word_width : 64;
     }
     pin(clk)   {
         direction : input;
         capacitance : 25.000;
         clock : true;
-        min_period           : 0.174 ;
+        min_period           : 0.186 ;
         internal_power(){
             rise_power(scalar) {
-                values ("1498.650")
+                values ("2497.930")
             }
             fall_power(scalar) {
-                values ("1498.650")
+                values ("2497.930")
             }
         }
     }
@@ -102,10 +102,10 @@ cell(fakeram45_32x64) {
             timing_type : rising_edge;
             timing_sense : non_unate;
             cell_rise(scalar) {
-                values ("0.188");
+                values ("0.198");
             }
             cell_fall(scalar) {
-                values ("0.188");
+                values ("0.198");
             }
             rise_transition(fakeram45_32x64_mem_out_slew_template) {
                 index_1 ("5.000, 500.000");
@@ -142,10 +142,10 @@ cell(fakeram45_32x64) {
         }
         internal_power(){
             rise_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
             fall_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
         }
     }
@@ -174,10 +174,10 @@ cell(fakeram45_32x64) {
         }
         internal_power(){
             rise_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
             fall_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
         }
     }
@@ -207,10 +207,10 @@ cell(fakeram45_32x64) {
         }
         internal_power(){
             rise_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
             fall_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
         }
     }
@@ -245,19 +245,19 @@ cell(fakeram45_32x64) {
         internal_power(){
             when : "(! (we_in) )";
             rise_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
             fall_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
         }
         internal_power(){
             when : "(we_in)";
             rise_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
             fall_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
         }
     }
@@ -292,23 +292,23 @@ cell(fakeram45_32x64) {
         internal_power(){
             when : "(! (we_in) )";
             rise_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
             fall_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
         }
         internal_power(){
             when : "(we_in)";
             rise_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
             fall_power(scalar) {
-                values ("14.987");
+                values ("24.979");
             }
         }
     }
-    cell_leakage_power : 78524.900;
+    cell_leakage_power : 187170.000;
 }
 
 }
