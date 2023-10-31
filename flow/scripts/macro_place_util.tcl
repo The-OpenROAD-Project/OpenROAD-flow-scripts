@@ -1,3 +1,5 @@
+set_thread_count $::env(NUM_CORES)
+
 proc find_macros {} {
   set macros ""
 
