@@ -64,7 +64,8 @@ if { [info exists ::env(SLEW_MARGIN)] && $::env(SLEW_MARGIN) > 0.0} {
   puts "Slew margin $::env(SLEW_MARGIN)"
   append repair_design_args " -slew_margin $::env(SLEW_MARGIN)"
 }
-repair_design {*}$repair_design_args
+# repair_design {*}$repair_design_args
+repair_design
 report_metrics "global route post repair design"
 
 # Running DPL to fix overlapped instances
@@ -101,7 +102,8 @@ if { [info exists ::env(SKIP_GATE_CLONING)] } {
   append repair_timing_args " -skip_gate_cloning"
 }
 
-repair_timing {*}$repair_timing_args
+# repair_timing {*}$repair_timing_args
+repair_timing
 report_metrics "global route post repair timing"
 
 # Running DPL to fix overlapped instances
