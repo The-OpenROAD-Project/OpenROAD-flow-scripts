@@ -2,10 +2,18 @@ source $::env(SCRIPTS_DIR)/load.tcl
 
 set stem [expr {[info exists ::env(ABSTRACT_SOURCE)] ? $::env(ABSTRACT_SOURCE) : "6_final"}]
 
+set design_stage [lindex [split [file tail $stem] "_"] 0]
+
 load_design $stem.odb $stem.sdc "Starting generation of abstract views"
 
-if {[file exists $::env(RESULTS_DIR)/$stem.spef]} {
+if {$design_stage >= 6 && [file exists $::env(RESULTS_DIR)/$stem.spef]} {
   read_spef $::env(RESULTS_DIR)/$stem.spef
+} elseif {$design_stage >= 3} {
+  puts "Estimating parasitics"
+  estimate_parasitics -placement
+}
+
+if {$design_stage >= 4} {
   set_propagated_clock [all_clocks]
 }
 
