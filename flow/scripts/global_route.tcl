@@ -38,18 +38,6 @@ if {[info exist env(DONT_USE_CELLS)]} {
   set_dont_use $::env(DONT_USE_CELLS)
 }
 
-if { [info exists ::env(RECOVER_POWER)] } {
-  puts "Downsizing/switching to higher Vt  for non critical gates for power recovery"
-  puts "Percent of paths optimized $::env(RECOVER_POWER)"  
-  report_tns
-  report_wns
-  report_power
-  repair_timing -recover_power $::env(RECOVER_POWER)
-  report_tns
-  report_wns
-  report_power
-}
-
 source $env(SCRIPTS_DIR)/report_metrics.tcl
 
 if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
@@ -81,6 +69,18 @@ if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
   global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_timing.rpt
 }
 
+if { [info exists ::env(RECOVER_POWER)] } {
+  puts "Downsizing/switching to higher Vt  for non critical gates for power recovery"
+  puts "Percent of paths optimized $::env(RECOVER_POWER)"  
+  report_tns
+  report_wns
+  report_power
+  repair_timing -recover_power $::env(RECOVER_POWER)
+  report_tns
+  report_wns
+  report_power
+}
+
 puts "\n=========================================================================="
 puts "check_antennas"
 puts "--------------------------------------------------------------------------"
@@ -89,7 +89,6 @@ repair_antennas -iterations 5
 check_placement -verbose
 check_antennas -report_file $env(REPORTS_DIR)/antenna.log -report_violating_nets
 
-set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
 report_metrics "global route"
 
