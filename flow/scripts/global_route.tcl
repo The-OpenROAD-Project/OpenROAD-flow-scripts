@@ -51,9 +51,10 @@ if { [info exists ::env(RECOVER_POWER)] } {
 }
 
 source $env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "global route pre repair design"
 
 if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
+  report_metrics "global route pre repair design"
+
   # Repair design using global route parasitics
   puts "Perform buffer insertion..."
   repair_design
@@ -80,11 +81,6 @@ if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
   global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_timing.rpt
 }
 
-set_propagated_clock [all_clocks]
-estimate_parasitics -global_routing
-
-report_metrics "global route"
-
 puts "\n=========================================================================="
 puts "check_antennas"
 puts "--------------------------------------------------------------------------"
@@ -92,6 +88,10 @@ puts "--------------------------------------------------------------------------
 repair_antennas -iterations 5
 check_placement -verbose
 check_antennas -report_file $env(REPORTS_DIR)/antenna.log -report_violating_nets
+
+set_propagated_clock [all_clocks]
+estimate_parasitics -global_routing
+report_metrics "global route"
 
 # Write SDC to results with updated clock periods that are just failing.
 # Use make target update_sdc_clock to install the updated sdc.
