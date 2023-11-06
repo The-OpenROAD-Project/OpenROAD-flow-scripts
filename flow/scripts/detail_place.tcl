@@ -7,7 +7,15 @@ source $::env(PLATFORM_DIR)/setRC.tcl
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
-detailed_placement
+if {[info exists env(WRITE_ON_FAIL)] && $::env(WRITE_ON_FAIL)} {
+  set result [catch {detailed_placement} errMsg]
+  if {$result != 0} {
+    write_db $::env(RESULTS_DIR)/3_5_place_dp.odb
+    error $errMsg
+  }
+} else {
+  detailed_placement
+}
 
 if {[info exists ::env(ENABLE_DPO)] && $::env(ENABLE_DPO)} {
   if {[info exist ::env(DPO_MAX_DISPLACEMENT)]} {

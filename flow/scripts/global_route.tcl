@@ -21,11 +21,23 @@ if {[info exist env(FASTROUTE_TCL)]} {
 #
 # If GLOBAL_ROUTE_ARGS is specified, then we do only what the
 # GLOBAL_ROUTE_ARGS specifies.
-global_route -guide_file $env(RESULTS_DIR)/route.guide \
-               -congestion_report_file $env(REPORTS_DIR)/congestion.rpt \
-               {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
-               {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]
 
+proc do_global_route {} {
+  global_route -guide_file $::env(RESULTS_DIR)/route.guide \
+                -congestion_report_file $::env(REPORTS_DIR)/congestion.rpt \
+                {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
+                {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]
+}
+
+if {[info exist env(WRITE_ON_FAIL)] && $::env(WRITE_ON_FAIL)} {
+  set result [catch {do_global_route} errMsg]
+  if {$result != 0} {
+    write_db $::env(RESULTS_DIR)/5_1_grt.odb
+    error $errMsg
+  }
+} else {
+  do_global_route
+}
 
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
