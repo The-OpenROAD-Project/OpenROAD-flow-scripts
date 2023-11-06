@@ -53,65 +53,32 @@ if { [info exists ::env(RECOVER_POWER)] } {
 source $env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "global route pre repair design"
 
-# Repair design using global route parasitics
-puts "Perform buffer insertion..."
-set repair_design_args ""
-if { [info exists ::env(CAP_MARGIN)] && $::env(CAP_MARGIN) > 0.0} {
-  puts "Cap margin $::env(CAP_MARGIN)"
-  append repair_design_args " -cap_margin $::env(CAP_MARGIN)"
+if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
+  # Repair design using global route parasitics
+  puts "Perform buffer insertion..."
+  repair_design
+  report_metrics "global route post repair design"
+
+  # Running DPL to fix overlapped instances
+  # Run to get modified net by DPL
+  global_route -start_incremental
+  detailed_placement
+  # Route only the modified net by DPL
+  global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_design.rpt
+
+  # Repair timing using global route parasitics
+  puts "Repair setup and hold violations..."
+  estimate_parasitics -global_routing
+  repair_timing
+  report_metrics "global route post repair timing"
+
+  # Running DPL to fix overlapped instances
+  # Run to get modified net by DPL
+  global_route -start_incremental
+  detailed_placement
+  # Route only the modified net by DPL
+  global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_timing.rpt
 }
-if { [info exists ::env(SLEW_MARGIN)] && $::env(SLEW_MARGIN) > 0.0} {
-  puts "Slew margin $::env(SLEW_MARGIN)"
-  append repair_design_args " -slew_margin $::env(SLEW_MARGIN)"
-}
-# repair_design {*}$repair_design_args
-repair_design
-report_metrics "global route post repair design"
-
-# Running DPL to fix overlapped instances
-# Run to get modified net by DPL
-global_route -start_incremental
-detailed_placement
-# Route only the modified net by DPL
-global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_design.rpt
-
-# Repair timing using global route parasitics
-puts "Repair setup and hold violations..."
-estimate_parasitics -global_routing
-# process user settings
-set repair_timing_args ""
-if { [info exists ::env(SETUP_SLACK_MARGIN)] && $::env(SETUP_SLACK_MARGIN) > 0.0} {
-  puts "Setup slack margin $::env(SETUP_SLACK_MARGIN)"
-  append repair_timing_args " -setup_margin $::env(SETUP_SLACK_MARGIN)"
-}
-if { [info exists ::env(HOLD_SLACK_MARGIN)] && $::env(HOLD_SLACK_MARGIN) > 0.0} {
-  puts "Hold slack margin $::env(HOLD_SLACK_MARGIN)"
-  append repair_timing_args " -hold_margin $::env(HOLD_SLACK_MARGIN)"
-}
-
-puts "TNS end percent $::env(TNS_END_PERCENT)"
-append repair_timing_args " -repair_tns $::env(TNS_END_PERCENT)"
-
-if { [info exists ::env(SKIP_PIN_SWAP)] } {
-  puts "Skipping pin swapping during optimization"
-  append repair_timing_args " -skip_pin_swap"
-}
-
-if { [info exists ::env(SKIP_GATE_CLONING)] } {
-  puts "Skipping gate cloning during optimization"
-  append repair_timing_args " -skip_gate_cloning"
-}
-
-# repair_timing {*}$repair_timing_args
-repair_timing
-report_metrics "global route post repair timing"
-
-# Running DPL to fix overlapped instances
-# Run to get modified net by DPL
-global_route -start_incremental
-detailed_placement
-# Route only the modified net by DPL
-global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_timing.rpt
 
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
