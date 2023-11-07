@@ -110,12 +110,8 @@ print("[INFO] Reporting cells prior to loading DEF ...")
 for i in main_layout.each_cell():
   print("[INFO] '{0}'".format(i.name))
 
-print("[INFO] Reading DEF  ...")
+print("[INFO] Reading DEF ...")
 main_layout.read(in_def, layoutOptions)
-
-print("[INFO] Reporting cells after loading DEF ...")
-for i in main_layout.each_cell():
-  print("[INFO] '{0}'".format(i.name))
 
 # Clear cells
 top_cell_index = main_layout.cell(design_name).cell_index()
