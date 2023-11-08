@@ -891,7 +891,6 @@ skip_resize: $(RESULTS_DIR)/3_3_place_gp.odb
 skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
 	# mock all intermediate results
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_1_cts.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_2_cts_fillcell.odb
 	cp $(RESULTS_DIR)/3_place.sdc $(RESULTS_DIR)/4_cts.sdc
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_cts.odb
 
@@ -1130,7 +1129,7 @@ handoff : all_defs all_verilog
 
 .PHONY: print-%
 # Print any variable, for instance: make print-DIE_AREA
-print-%  : ; @echo $* = $($*)
+print-%  : ; @echo "$* = $($*)"
 
 .PHONY: test-unset-and-make-%
 test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
