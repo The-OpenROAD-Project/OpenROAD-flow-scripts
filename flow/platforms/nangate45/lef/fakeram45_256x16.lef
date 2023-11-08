@@ -11,7 +11,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 1.400 0.070 1.470 ;
+      RECT 0.000 2.800 0.070 2.870 ;
     END
   END w_mask_in[0]
   PIN w_mask_in[1]
@@ -20,7 +20,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 1.960 0.070 2.030 ;
+      RECT 0.000 3.360 0.070 3.430 ;
     END
   END w_mask_in[1]
   PIN w_mask_in[2]
@@ -29,7 +29,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 2.520 0.070 2.590 ;
+      RECT 0.000 3.920 0.070 3.990 ;
     END
   END w_mask_in[2]
   PIN w_mask_in[3]
@@ -38,7 +38,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 3.080 0.070 3.150 ;
+      RECT 0.000 4.480 0.070 4.550 ;
     END
   END w_mask_in[3]
   PIN w_mask_in[4]
@@ -47,7 +47,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 3.640 0.070 3.710 ;
+      RECT 0.000 5.040 0.070 5.110 ;
     END
   END w_mask_in[4]
   PIN w_mask_in[5]
@@ -56,7 +56,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 4.200 0.070 4.270 ;
+      RECT 0.000 5.600 0.070 5.670 ;
     END
   END w_mask_in[5]
   PIN w_mask_in[6]
@@ -65,7 +65,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 4.760 0.070 4.830 ;
+      RECT 0.000 6.160 0.070 6.230 ;
     END
   END w_mask_in[6]
   PIN w_mask_in[7]
@@ -74,7 +74,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 5.320 0.070 5.390 ;
+      RECT 0.000 6.720 0.070 6.790 ;
     END
   END w_mask_in[7]
   PIN w_mask_in[8]
@@ -83,7 +83,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 5.880 0.070 5.950 ;
+      RECT 0.000 7.280 0.070 7.350 ;
     END
   END w_mask_in[8]
   PIN w_mask_in[9]
@@ -92,7 +92,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 6.440 0.070 6.510 ;
+      RECT 0.000 7.840 0.070 7.910 ;
     END
   END w_mask_in[9]
   PIN w_mask_in[10]
@@ -101,7 +101,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 7.000 0.070 7.070 ;
+      RECT 0.000 8.400 0.070 8.470 ;
     END
   END w_mask_in[10]
   PIN w_mask_in[11]
@@ -110,7 +110,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 7.560 0.070 7.630 ;
+      RECT 0.000 8.960 0.070 9.030 ;
     END
   END w_mask_in[11]
   PIN w_mask_in[12]
@@ -119,7 +119,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 8.120 0.070 8.190 ;
+      RECT 0.000 9.520 0.070 9.590 ;
     END
   END w_mask_in[12]
   PIN w_mask_in[13]
@@ -128,7 +128,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 8.680 0.070 8.750 ;
+      RECT 0.000 10.080 0.070 10.150 ;
     END
   END w_mask_in[13]
   PIN w_mask_in[14]
@@ -137,7 +137,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 9.240 0.070 9.310 ;
+      RECT 0.000 10.640 0.070 10.710 ;
     END
   END w_mask_in[14]
   PIN w_mask_in[15]
@@ -146,7 +146,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 9.800 0.070 9.870 ;
+      RECT 0.000 11.200 0.070 11.270 ;
     END
   END w_mask_in[15]
   PIN rd_out[0]
@@ -155,7 +155,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 10.920 0.070 10.990 ;
+      RECT 0.000 11.480 0.070 11.550 ;
     END
   END rd_out[0]
   PIN rd_out[1]
@@ -164,7 +164,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 11.480 0.070 11.550 ;
+      RECT 0.000 12.040 0.070 12.110 ;
     END
   END rd_out[1]
   PIN rd_out[2]
@@ -173,7 +173,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 12.040 0.070 12.110 ;
+      RECT 0.000 12.600 0.070 12.670 ;
     END
   END rd_out[2]
   PIN rd_out[3]
@@ -182,7 +182,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 12.600 0.070 12.670 ;
+      RECT 0.000 13.160 0.070 13.230 ;
     END
   END rd_out[3]
   PIN rd_out[4]
@@ -191,7 +191,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 13.160 0.070 13.230 ;
+      RECT 0.000 13.720 0.070 13.790 ;
     END
   END rd_out[4]
   PIN rd_out[5]
@@ -200,7 +200,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 13.720 0.070 13.790 ;
+      RECT 0.000 14.280 0.070 14.350 ;
     END
   END rd_out[5]
   PIN rd_out[6]
@@ -209,7 +209,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 14.280 0.070 14.350 ;
+      RECT 0.000 14.840 0.070 14.910 ;
     END
   END rd_out[6]
   PIN rd_out[7]
@@ -218,7 +218,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 14.840 0.070 14.910 ;
+      RECT 0.000 15.400 0.070 15.470 ;
     END
   END rd_out[7]
   PIN rd_out[8]
@@ -227,7 +227,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 15.400 0.070 15.470 ;
+      RECT 0.000 15.960 0.070 16.030 ;
     END
   END rd_out[8]
   PIN rd_out[9]
@@ -236,7 +236,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 15.960 0.070 16.030 ;
+      RECT 0.000 16.520 0.070 16.590 ;
     END
   END rd_out[9]
   PIN rd_out[10]
@@ -245,7 +245,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 16.520 0.070 16.590 ;
+      RECT 0.000 17.080 0.070 17.150 ;
     END
   END rd_out[10]
   PIN rd_out[11]
@@ -254,7 +254,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 17.080 0.070 17.150 ;
+      RECT 0.000 17.640 0.070 17.710 ;
     END
   END rd_out[11]
   PIN rd_out[12]
@@ -263,7 +263,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 17.640 0.070 17.710 ;
+      RECT 0.000 18.200 0.070 18.270 ;
     END
   END rd_out[12]
   PIN rd_out[13]
@@ -272,7 +272,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 18.200 0.070 18.270 ;
+      RECT 0.000 18.760 0.070 18.830 ;
     END
   END rd_out[13]
   PIN rd_out[14]
@@ -281,7 +281,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 18.760 0.070 18.830 ;
+      RECT 0.000 19.320 0.070 19.390 ;
     END
   END rd_out[14]
   PIN rd_out[15]
@@ -290,7 +290,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 19.320 0.070 19.390 ;
+      RECT 0.000 19.880 0.070 19.950 ;
     END
   END rd_out[15]
   PIN wd_in[0]
@@ -299,7 +299,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 20.440 0.070 20.510 ;
+      RECT 0.000 20.160 0.070 20.230 ;
     END
   END wd_in[0]
   PIN wd_in[1]
@@ -308,7 +308,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 21.000 0.070 21.070 ;
+      RECT 0.000 20.720 0.070 20.790 ;
     END
   END wd_in[1]
   PIN wd_in[2]
@@ -317,7 +317,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 21.560 0.070 21.630 ;
+      RECT 0.000 21.280 0.070 21.350 ;
     END
   END wd_in[2]
   PIN wd_in[3]
@@ -326,7 +326,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 22.120 0.070 22.190 ;
+      RECT 0.000 21.840 0.070 21.910 ;
     END
   END wd_in[3]
   PIN wd_in[4]
@@ -335,7 +335,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 22.680 0.070 22.750 ;
+      RECT 0.000 22.400 0.070 22.470 ;
     END
   END wd_in[4]
   PIN wd_in[5]
@@ -344,7 +344,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 23.240 0.070 23.310 ;
+      RECT 0.000 22.960 0.070 23.030 ;
     END
   END wd_in[5]
   PIN wd_in[6]
@@ -353,7 +353,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 23.800 0.070 23.870 ;
+      RECT 0.000 23.520 0.070 23.590 ;
     END
   END wd_in[6]
   PIN wd_in[7]
@@ -362,7 +362,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 24.360 0.070 24.430 ;
+      RECT 0.000 24.080 0.070 24.150 ;
     END
   END wd_in[7]
   PIN wd_in[8]
@@ -371,7 +371,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 24.920 0.070 24.990 ;
+      RECT 0.000 24.640 0.070 24.710 ;
     END
   END wd_in[8]
   PIN wd_in[9]
@@ -380,7 +380,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 25.480 0.070 25.550 ;
+      RECT 0.000 25.200 0.070 25.270 ;
     END
   END wd_in[9]
   PIN wd_in[10]
@@ -389,7 +389,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 26.040 0.070 26.110 ;
+      RECT 0.000 25.760 0.070 25.830 ;
     END
   END wd_in[10]
   PIN wd_in[11]
@@ -398,7 +398,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 26.600 0.070 26.670 ;
+      RECT 0.000 26.320 0.070 26.390 ;
     END
   END wd_in[11]
   PIN wd_in[12]
@@ -407,7 +407,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 27.160 0.070 27.230 ;
+      RECT 0.000 26.880 0.070 26.950 ;
     END
   END wd_in[12]
   PIN wd_in[13]
@@ -416,7 +416,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 27.720 0.070 27.790 ;
+      RECT 0.000 27.440 0.070 27.510 ;
     END
   END wd_in[13]
   PIN wd_in[14]
@@ -425,7 +425,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 28.280 0.070 28.350 ;
+      RECT 0.000 28.000 0.070 28.070 ;
     END
   END wd_in[14]
   PIN wd_in[15]
@@ -434,7 +434,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 28.840 0.070 28.910 ;
+      RECT 0.000 28.560 0.070 28.630 ;
     END
   END wd_in[15]
   PIN addr_in[0]
@@ -443,7 +443,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 29.960 0.070 30.030 ;
+      RECT 0.000 28.840 0.070 28.910 ;
     END
   END addr_in[0]
   PIN addr_in[1]
@@ -452,7 +452,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 30.520 0.070 30.590 ;
+      RECT 0.000 29.400 0.070 29.470 ;
     END
   END addr_in[1]
   PIN addr_in[2]
@@ -461,7 +461,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 31.080 0.070 31.150 ;
+      RECT 0.000 29.960 0.070 30.030 ;
     END
   END addr_in[2]
   PIN addr_in[3]
@@ -470,7 +470,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 31.640 0.070 31.710 ;
+      RECT 0.000 30.520 0.070 30.590 ;
     END
   END addr_in[3]
   PIN addr_in[4]
@@ -479,7 +479,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 32.200 0.070 32.270 ;
+      RECT 0.000 31.080 0.070 31.150 ;
     END
   END addr_in[4]
   PIN addr_in[5]
@@ -488,7 +488,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 32.760 0.070 32.830 ;
+      RECT 0.000 31.640 0.070 31.710 ;
     END
   END addr_in[5]
   PIN addr_in[6]
@@ -497,7 +497,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 33.320 0.070 33.390 ;
+      RECT 0.000 32.200 0.070 32.270 ;
     END
   END addr_in[6]
   PIN addr_in[7]
@@ -506,7 +506,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 33.880 0.070 33.950 ;
+      RECT 0.000 32.760 0.070 32.830 ;
     END
   END addr_in[7]
   PIN we_in
@@ -515,7 +515,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 35.000 0.070 35.070 ;
+      RECT 0.000 33.040 0.070 33.110 ;
     END
   END we_in
   PIN ce_in
@@ -524,7 +524,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 35.560 0.070 35.630 ;
+      RECT 0.000 33.600 0.070 33.670 ;
     END
   END ce_in
   PIN clk
@@ -533,7 +533,7 @@ MACRO fakeram45_256x16
     SHAPE ABUTMENT ;
     PORT
       LAYER metal3 ;
-      RECT 0.000 36.120 0.070 36.190 ;
+      RECT 0.000 34.160 0.070 34.230 ;
     END
   END clk
   PIN VSS
@@ -541,40 +541,23 @@ MACRO fakeram45_256x16
     USE GROUND ;
     PORT
       LAYER metal4 ;
-      RECT 1.260 1.400 1.540 39.200 ;
-      RECT 3.500 1.400 3.780 39.200 ;
-      RECT 5.740 1.400 6.020 39.200 ;
-      RECT 7.980 1.400 8.260 39.200 ;
-      RECT 10.220 1.400 10.500 39.200 ;
-      RECT 12.460 1.400 12.740 39.200 ;
-      RECT 14.700 1.400 14.980 39.200 ;
-      RECT 16.940 1.400 17.220 39.200 ;
-      RECT 19.180 1.400 19.460 39.200 ;
-      RECT 21.420 1.400 21.700 39.200 ;
-      RECT 23.660 1.400 23.940 39.200 ;
-      RECT 25.900 1.400 26.180 39.200 ;
-      RECT 28.140 1.400 28.420 39.200 ;
-      RECT 30.380 1.400 30.660 39.200 ;
-      RECT 32.620 1.400 32.900 39.200 ;
-      RECT 34.860 1.400 35.140 39.200 ;
-      RECT 37.100 1.400 37.380 39.200 ;
-      RECT 39.340 1.400 39.620 39.200 ;
-      RECT 41.580 1.400 41.860 39.200 ;
-      RECT 43.820 1.400 44.100 39.200 ;
-      RECT 46.060 1.400 46.340 39.200 ;
-      RECT 48.300 1.400 48.580 39.200 ;
-      RECT 50.540 1.400 50.820 39.200 ;
-      RECT 52.780 1.400 53.060 39.200 ;
-      RECT 55.020 1.400 55.300 39.200 ;
-      RECT 57.260 1.400 57.540 39.200 ;
-      RECT 59.500 1.400 59.780 39.200 ;
-      RECT 61.740 1.400 62.020 39.200 ;
-      RECT 63.980 1.400 64.260 39.200 ;
-      RECT 66.220 1.400 66.500 39.200 ;
-      RECT 68.460 1.400 68.740 39.200 ;
-      RECT 70.700 1.400 70.980 39.200 ;
-      RECT 72.940 1.400 73.220 39.200 ;
-      RECT 75.180 1.400 75.460 39.200 ;
+      RECT 2.660 2.800 2.940 37.800 ;
+      RECT 7.140 2.800 7.420 37.800 ;
+      RECT 11.620 2.800 11.900 37.800 ;
+      RECT 16.100 2.800 16.380 37.800 ;
+      RECT 20.580 2.800 20.860 37.800 ;
+      RECT 25.060 2.800 25.340 37.800 ;
+      RECT 29.540 2.800 29.820 37.800 ;
+      RECT 34.020 2.800 34.300 37.800 ;
+      RECT 38.500 2.800 38.780 37.800 ;
+      RECT 42.980 2.800 43.260 37.800 ;
+      RECT 47.460 2.800 47.740 37.800 ;
+      RECT 51.940 2.800 52.220 37.800 ;
+      RECT 56.420 2.800 56.700 37.800 ;
+      RECT 60.900 2.800 61.180 37.800 ;
+      RECT 65.380 2.800 65.660 37.800 ;
+      RECT 69.860 2.800 70.140 37.800 ;
+      RECT 74.340 2.800 74.620 37.800 ;
     END
   END VSS
   PIN VDD
@@ -582,39 +565,22 @@ MACRO fakeram45_256x16
     USE POWER ;
     PORT
       LAYER metal4 ;
-      RECT 2.380 1.400 2.660 39.200 ;
-      RECT 4.620 1.400 4.900 39.200 ;
-      RECT 6.860 1.400 7.140 39.200 ;
-      RECT 9.100 1.400 9.380 39.200 ;
-      RECT 11.340 1.400 11.620 39.200 ;
-      RECT 13.580 1.400 13.860 39.200 ;
-      RECT 15.820 1.400 16.100 39.200 ;
-      RECT 18.060 1.400 18.340 39.200 ;
-      RECT 20.300 1.400 20.580 39.200 ;
-      RECT 22.540 1.400 22.820 39.200 ;
-      RECT 24.780 1.400 25.060 39.200 ;
-      RECT 27.020 1.400 27.300 39.200 ;
-      RECT 29.260 1.400 29.540 39.200 ;
-      RECT 31.500 1.400 31.780 39.200 ;
-      RECT 33.740 1.400 34.020 39.200 ;
-      RECT 35.980 1.400 36.260 39.200 ;
-      RECT 38.220 1.400 38.500 39.200 ;
-      RECT 40.460 1.400 40.740 39.200 ;
-      RECT 42.700 1.400 42.980 39.200 ;
-      RECT 44.940 1.400 45.220 39.200 ;
-      RECT 47.180 1.400 47.460 39.200 ;
-      RECT 49.420 1.400 49.700 39.200 ;
-      RECT 51.660 1.400 51.940 39.200 ;
-      RECT 53.900 1.400 54.180 39.200 ;
-      RECT 56.140 1.400 56.420 39.200 ;
-      RECT 58.380 1.400 58.660 39.200 ;
-      RECT 60.620 1.400 60.900 39.200 ;
-      RECT 62.860 1.400 63.140 39.200 ;
-      RECT 65.100 1.400 65.380 39.200 ;
-      RECT 67.340 1.400 67.620 39.200 ;
-      RECT 69.580 1.400 69.860 39.200 ;
-      RECT 71.820 1.400 72.100 39.200 ;
-      RECT 74.060 1.400 74.340 39.200 ;
+      RECT 4.900 2.800 5.180 37.800 ;
+      RECT 9.380 2.800 9.660 37.800 ;
+      RECT 13.860 2.800 14.140 37.800 ;
+      RECT 18.340 2.800 18.620 37.800 ;
+      RECT 22.820 2.800 23.100 37.800 ;
+      RECT 27.300 2.800 27.580 37.800 ;
+      RECT 31.780 2.800 32.060 37.800 ;
+      RECT 36.260 2.800 36.540 37.800 ;
+      RECT 40.740 2.800 41.020 37.800 ;
+      RECT 45.220 2.800 45.500 37.800 ;
+      RECT 49.700 2.800 49.980 37.800 ;
+      RECT 54.180 2.800 54.460 37.800 ;
+      RECT 58.660 2.800 58.940 37.800 ;
+      RECT 63.140 2.800 63.420 37.800 ;
+      RECT 67.620 2.800 67.900 37.800 ;
+      RECT 72.100 2.800 72.380 37.800 ;
     END
   END VDD
   OBS
@@ -624,24 +590,23 @@ MACRO fakeram45_256x16
     RECT 0 0 77.710 40.600 ;
     LAYER metal3 ;
     RECT 0.070 0 77.710 40.600 ;
-    RECT 0 0.000 0.070 1.400 ;
-    RECT 0 1.470 0.070 1.960 ;
-    RECT 0 2.030 0.070 2.520 ;
-    RECT 0 2.590 0.070 3.080 ;
-    RECT 0 3.150 0.070 3.640 ;
-    RECT 0 3.710 0.070 4.200 ;
-    RECT 0 4.270 0.070 4.760 ;
-    RECT 0 4.830 0.070 5.320 ;
-    RECT 0 5.390 0.070 5.880 ;
-    RECT 0 5.950 0.070 6.440 ;
-    RECT 0 6.510 0.070 7.000 ;
-    RECT 0 7.070 0.070 7.560 ;
-    RECT 0 7.630 0.070 8.120 ;
-    RECT 0 8.190 0.070 8.680 ;
-    RECT 0 8.750 0.070 9.240 ;
-    RECT 0 9.310 0.070 9.800 ;
-    RECT 0 9.870 0.070 10.920 ;
-    RECT 0 10.990 0.070 11.480 ;
+    RECT 0 0.000 0.070 2.800 ;
+    RECT 0 2.870 0.070 3.360 ;
+    RECT 0 3.430 0.070 3.920 ;
+    RECT 0 3.990 0.070 4.480 ;
+    RECT 0 4.550 0.070 5.040 ;
+    RECT 0 5.110 0.070 5.600 ;
+    RECT 0 5.670 0.070 6.160 ;
+    RECT 0 6.230 0.070 6.720 ;
+    RECT 0 6.790 0.070 7.280 ;
+    RECT 0 7.350 0.070 7.840 ;
+    RECT 0 7.910 0.070 8.400 ;
+    RECT 0 8.470 0.070 8.960 ;
+    RECT 0 9.030 0.070 9.520 ;
+    RECT 0 9.590 0.070 10.080 ;
+    RECT 0 10.150 0.070 10.640 ;
+    RECT 0 10.710 0.070 11.200 ;
+    RECT 0 11.270 0.070 11.480 ;
     RECT 0 11.550 0.070 12.040 ;
     RECT 0 12.110 0.070 12.600 ;
     RECT 0 12.670 0.070 13.160 ;
@@ -656,105 +621,72 @@ MACRO fakeram45_256x16
     RECT 0 17.710 0.070 18.200 ;
     RECT 0 18.270 0.070 18.760 ;
     RECT 0 18.830 0.070 19.320 ;
-    RECT 0 19.390 0.070 20.440 ;
-    RECT 0 20.510 0.070 21.000 ;
-    RECT 0 21.070 0.070 21.560 ;
-    RECT 0 21.630 0.070 22.120 ;
-    RECT 0 22.190 0.070 22.680 ;
-    RECT 0 22.750 0.070 23.240 ;
-    RECT 0 23.310 0.070 23.800 ;
-    RECT 0 23.870 0.070 24.360 ;
-    RECT 0 24.430 0.070 24.920 ;
-    RECT 0 24.990 0.070 25.480 ;
-    RECT 0 25.550 0.070 26.040 ;
-    RECT 0 26.110 0.070 26.600 ;
-    RECT 0 26.670 0.070 27.160 ;
-    RECT 0 27.230 0.070 27.720 ;
-    RECT 0 27.790 0.070 28.280 ;
-    RECT 0 28.350 0.070 28.840 ;
-    RECT 0 28.910 0.070 29.960 ;
+    RECT 0 19.390 0.070 19.880 ;
+    RECT 0 19.950 0.070 20.160 ;
+    RECT 0 20.230 0.070 20.720 ;
+    RECT 0 20.790 0.070 21.280 ;
+    RECT 0 21.350 0.070 21.840 ;
+    RECT 0 21.910 0.070 22.400 ;
+    RECT 0 22.470 0.070 22.960 ;
+    RECT 0 23.030 0.070 23.520 ;
+    RECT 0 23.590 0.070 24.080 ;
+    RECT 0 24.150 0.070 24.640 ;
+    RECT 0 24.710 0.070 25.200 ;
+    RECT 0 25.270 0.070 25.760 ;
+    RECT 0 25.830 0.070 26.320 ;
+    RECT 0 26.390 0.070 26.880 ;
+    RECT 0 26.950 0.070 27.440 ;
+    RECT 0 27.510 0.070 28.000 ;
+    RECT 0 28.070 0.070 28.560 ;
+    RECT 0 28.630 0.070 28.840 ;
+    RECT 0 28.910 0.070 29.400 ;
+    RECT 0 29.470 0.070 29.960 ;
     RECT 0 30.030 0.070 30.520 ;
     RECT 0 30.590 0.070 31.080 ;
     RECT 0 31.150 0.070 31.640 ;
     RECT 0 31.710 0.070 32.200 ;
     RECT 0 32.270 0.070 32.760 ;
-    RECT 0 32.830 0.070 33.320 ;
-    RECT 0 33.390 0.070 33.880 ;
-    RECT 0 33.950 0.070 35.000 ;
-    RECT 0 35.070 0.070 35.560 ;
-    RECT 0 35.630 0.070 36.120 ;
-    RECT 0 36.190 0.070 40.600 ;
+    RECT 0 32.830 0.070 33.040 ;
+    RECT 0 33.110 0.070 33.600 ;
+    RECT 0 33.670 0.070 34.160 ;
+    RECT 0 34.230 0.070 40.600 ;
     LAYER metal4 ;
-    RECT 0 0 77.710 1.400 ;
-    RECT 0 39.200 77.710 40.600 ;
-    RECT 0.000 1.400 1.260 39.200 ;
-    RECT 1.540 1.400 2.380 39.200 ;
-    RECT 2.660 1.400 3.500 39.200 ;
-    RECT 3.780 1.400 4.620 39.200 ;
-    RECT 4.900 1.400 5.740 39.200 ;
-    RECT 6.020 1.400 6.860 39.200 ;
-    RECT 7.140 1.400 7.980 39.200 ;
-    RECT 8.260 1.400 9.100 39.200 ;
-    RECT 9.380 1.400 10.220 39.200 ;
-    RECT 10.500 1.400 11.340 39.200 ;
-    RECT 11.620 1.400 12.460 39.200 ;
-    RECT 12.740 1.400 13.580 39.200 ;
-    RECT 13.860 1.400 14.700 39.200 ;
-    RECT 14.980 1.400 15.820 39.200 ;
-    RECT 16.100 1.400 16.940 39.200 ;
-    RECT 17.220 1.400 18.060 39.200 ;
-    RECT 18.340 1.400 19.180 39.200 ;
-    RECT 19.460 1.400 20.300 39.200 ;
-    RECT 20.580 1.400 21.420 39.200 ;
-    RECT 21.700 1.400 22.540 39.200 ;
-    RECT 22.820 1.400 23.660 39.200 ;
-    RECT 23.940 1.400 24.780 39.200 ;
-    RECT 25.060 1.400 25.900 39.200 ;
-    RECT 26.180 1.400 27.020 39.200 ;
-    RECT 27.300 1.400 28.140 39.200 ;
-    RECT 28.420 1.400 29.260 39.200 ;
-    RECT 29.540 1.400 30.380 39.200 ;
-    RECT 30.660 1.400 31.500 39.200 ;
-    RECT 31.780 1.400 32.620 39.200 ;
-    RECT 32.900 1.400 33.740 39.200 ;
-    RECT 34.020 1.400 34.860 39.200 ;
-    RECT 35.140 1.400 35.980 39.200 ;
-    RECT 36.260 1.400 37.100 39.200 ;
-    RECT 37.380 1.400 38.220 39.200 ;
-    RECT 38.500 1.400 39.340 39.200 ;
-    RECT 39.620 1.400 40.460 39.200 ;
-    RECT 40.740 1.400 41.580 39.200 ;
-    RECT 41.860 1.400 42.700 39.200 ;
-    RECT 42.980 1.400 43.820 39.200 ;
-    RECT 44.100 1.400 44.940 39.200 ;
-    RECT 45.220 1.400 46.060 39.200 ;
-    RECT 46.340 1.400 47.180 39.200 ;
-    RECT 47.460 1.400 48.300 39.200 ;
-    RECT 48.580 1.400 49.420 39.200 ;
-    RECT 49.700 1.400 50.540 39.200 ;
-    RECT 50.820 1.400 51.660 39.200 ;
-    RECT 51.940 1.400 52.780 39.200 ;
-    RECT 53.060 1.400 53.900 39.200 ;
-    RECT 54.180 1.400 55.020 39.200 ;
-    RECT 55.300 1.400 56.140 39.200 ;
-    RECT 56.420 1.400 57.260 39.200 ;
-    RECT 57.540 1.400 58.380 39.200 ;
-    RECT 58.660 1.400 59.500 39.200 ;
-    RECT 59.780 1.400 60.620 39.200 ;
-    RECT 60.900 1.400 61.740 39.200 ;
-    RECT 62.020 1.400 62.860 39.200 ;
-    RECT 63.140 1.400 63.980 39.200 ;
-    RECT 64.260 1.400 65.100 39.200 ;
-    RECT 65.380 1.400 66.220 39.200 ;
-    RECT 66.500 1.400 67.340 39.200 ;
-    RECT 67.620 1.400 68.460 39.200 ;
-    RECT 68.740 1.400 69.580 39.200 ;
-    RECT 69.860 1.400 70.700 39.200 ;
-    RECT 70.980 1.400 71.820 39.200 ;
-    RECT 72.100 1.400 72.940 39.200 ;
-    RECT 73.220 1.400 74.060 39.200 ;
-    RECT 74.340 1.400 75.180 39.200 ;
-    RECT 75.460 1.400 77.710 39.200 ;
+    RECT 0 0 77.710 2.800 ;
+    RECT 0 37.800 77.710 40.600 ;
+    RECT 0.000 2.800 2.660 37.800 ;
+    RECT 2.940 2.800 4.900 37.800 ;
+    RECT 5.180 2.800 7.140 37.800 ;
+    RECT 7.420 2.800 9.380 37.800 ;
+    RECT 9.660 2.800 11.620 37.800 ;
+    RECT 11.900 2.800 13.860 37.800 ;
+    RECT 14.140 2.800 16.100 37.800 ;
+    RECT 16.380 2.800 18.340 37.800 ;
+    RECT 18.620 2.800 20.580 37.800 ;
+    RECT 20.860 2.800 22.820 37.800 ;
+    RECT 23.100 2.800 25.060 37.800 ;
+    RECT 25.340 2.800 27.300 37.800 ;
+    RECT 27.580 2.800 29.540 37.800 ;
+    RECT 29.820 2.800 31.780 37.800 ;
+    RECT 32.060 2.800 34.020 37.800 ;
+    RECT 34.300 2.800 36.260 37.800 ;
+    RECT 36.540 2.800 38.500 37.800 ;
+    RECT 38.780 2.800 40.740 37.800 ;
+    RECT 41.020 2.800 42.980 37.800 ;
+    RECT 43.260 2.800 45.220 37.800 ;
+    RECT 45.500 2.800 47.460 37.800 ;
+    RECT 47.740 2.800 49.700 37.800 ;
+    RECT 49.980 2.800 51.940 37.800 ;
+    RECT 52.220 2.800 54.180 37.800 ;
+    RECT 54.460 2.800 56.420 37.800 ;
+    RECT 56.700 2.800 58.660 37.800 ;
+    RECT 58.940 2.800 60.900 37.800 ;
+    RECT 61.180 2.800 63.140 37.800 ;
+    RECT 63.420 2.800 65.380 37.800 ;
+    RECT 65.660 2.800 67.620 37.800 ;
+    RECT 67.900 2.800 69.860 37.800 ;
+    RECT 70.140 2.800 72.100 37.800 ;
+    RECT 72.380 2.800 74.340 37.800 ;
+    RECT 74.620 2.800 77.710 37.800 ;
     LAYER OVERLAP ;
     RECT 0 0 77.710 40.600 ;
   END
