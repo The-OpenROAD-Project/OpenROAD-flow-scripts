@@ -30,7 +30,7 @@ def print_log_dir_times(logdir):
     print(logdir)
 
     # Loop on all log files in the directory
-    for f in sorted(pathlib.Path(logdir).glob('**/[0-9]_*.log')):
+    for f in sorted(pathlib.Path(logdir).glob('**/*.log')):
         # Extract Elapsed Time line from log file
         with open(str(f)) as logfile:
             found = False
