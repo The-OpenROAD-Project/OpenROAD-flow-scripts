@@ -1077,7 +1077,7 @@ handoff : all_defs all_verilog
 
 .PHONY: print-%
 # Print any variable, for instance: make print-DIE_AREA
-print-%  : ; @echo $* = $($*)
+print-%  : ; @echo "$* = $($*)"
 
 .PHONY: test-unset-and-make-%
 test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
