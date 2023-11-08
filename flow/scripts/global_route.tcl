@@ -22,8 +22,8 @@ if {[info exist env(FASTROUTE_TCL)]} {
 # If GLOBAL_ROUTE_ARGS is specified, then we do only what the
 # GLOBAL_ROUTE_ARGS specifies.
 proc do_global_route {} {
-  global_route -guide_file $env(RESULTS_DIR)/route.guide \
-                -congestion_report_file $env(REPORTS_DIR)/congestion.rpt \
+  global_route -guide_file $::env(RESULTS_DIR)/route.guide \
+                -congestion_report_file $::env(REPORTS_DIR)/congestion.rpt \
                 {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
                 {-congestion_iterations 50 -congestion_report_iter_step 5 -verbose}}]
 }
