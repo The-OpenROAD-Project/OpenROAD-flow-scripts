@@ -30,11 +30,44 @@ global_route -guide_file $env(RESULTS_DIR)/route.guide \
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
-repair_antennas -iterations 5
-check_placement -verbose
 
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
+
+if {[info exist env(DONT_USE_CELLS)]} {
+  set_dont_use $::env(DONT_USE_CELLS)
+}
+
+source $env(SCRIPTS_DIR)/report_metrics.tcl
+
+if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
+  report_metrics "global route pre repair design"
+
+  # Repair design using global route parasitics
+  puts "Perform buffer insertion..."
+  repair_design
+  report_metrics "global route post repair design"
+
+  # Running DPL to fix overlapped instances
+  # Run to get modified net by DPL
+  global_route -start_incremental
+  detailed_placement
+  # Route only the modified net by DPL
+  global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_design.rpt
+
+  # Repair timing using global route parasitics
+  puts "Repair setup and hold violations..."
+  estimate_parasitics -global_routing
+  repair_timing
+  report_metrics "global route post repair timing"
+
+  # Running DPL to fix overlapped instances
+  # Run to get modified net by DPL
+  global_route -start_incremental
+  detailed_placement
+  # Route only the modified net by DPL
+  global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_timing.rpt
+}
 
 if { [info exists ::env(RECOVER_POWER)] } {
   puts "Downsizing/switching to higher Vt  for non critical gates for power recovery"
@@ -48,13 +81,16 @@ if { [info exists ::env(RECOVER_POWER)] } {
   report_power
 }
 
-source $env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "global route"
-
 puts "\n=========================================================================="
 puts "check_antennas"
 puts "--------------------------------------------------------------------------"
+
+repair_antennas -iterations 5
+check_placement -verbose
 check_antennas -report_file $env(REPORTS_DIR)/antenna.log -report_violating_nets
+
+estimate_parasitics -global_routing
+report_metrics "global route"
 
 # Write SDC to results with updated clock periods that are just failing.
 # Use make target update_sdc_clock to install the updated sdc.
