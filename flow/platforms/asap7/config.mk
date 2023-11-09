@@ -39,6 +39,19 @@ export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_2
 
 export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib
 
+ifdef CLUSTER_FLOPS
+  # Add the multi-bit FF for clustering.  These are single corner libraries.
+  export ADDITIONAL_LIBS     += $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNH2V2X_RVT_TT_nldm_FAKE.lib \
+                                $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNV2X_RVT_TT_nldm_FAKE.lib \
+                                $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNV4X_RVT_TT_nldm_FAKE.lib
+
+  export ADDITIONAL_LEFS     += $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNH2V2X.lef \
+                                $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV2X.lef \
+                                $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV4X.lef
+endif
+
+
+
 export BC_TEMPERATURE          = 25C
 export TC_TEMPERATURE          = 0C
 export WC_TEMPERATURE          = 100C

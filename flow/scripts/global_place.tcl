@@ -63,6 +63,11 @@ if {[info exists ::env(WRITE_ON_FAIL)] && $::env(WRITE_ON_FAIL)} {
 
 estimate_parasitics -placement
 
+if {[info exist ::env(CLUSTER_FLOPS)]} {
+  cluster_flops
+  estimate_parasitics -placement
+}
+
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics "global place" false false
 
