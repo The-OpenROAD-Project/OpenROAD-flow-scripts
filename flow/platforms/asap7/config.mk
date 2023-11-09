@@ -63,8 +63,7 @@ export WC_VOLTAGE          = 0.63
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS          = *x1p*_ASAP7* *xp*_ASAP7*
-export DONT_USE_CELLS          += SDF* ICG* DFFH*
-#export DONT_USE_CELLS          += SDF* DFFH*
+export DONT_USE_CELLS          += SDF* ICG*
 
 # Yosys mapping files
 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_R.v
