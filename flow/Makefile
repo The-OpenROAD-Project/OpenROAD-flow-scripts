@@ -675,6 +675,11 @@ $(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
 .PHONY: do-place
 do-place:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
+	touch $(LOG_DIR)/3_1_place_gp_skip_io.log
+	touch $(LOG_DIR)/3_2_place_iop.log
+	touch $(LOG_DIR)/3_3_place_gp.log
+	touch $(LOG_DIR)/3_4_place_resized.log
+	touch $(LOG_DIR)/3_5_place_dp.log
 	echo >$(RESULTS_DIR)/place.ok 0
 	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop
 	@$(UNSET_VARS); \
@@ -783,6 +788,8 @@ do-route:
 	echo >$(RESULTS_DIR)/route.ok 0
 	touch $(REPORTS_DIR)/congestion.rpt
 	touch $(REPORTS_DIR)/5_route_drc.rpt
+	touch $(LOG_DIR)/5_1_grt.log
+	touch $(LOG_DIR)/5_3_route.log
 	@$(UNSET_VARS); \
 	$(SUB_MAKE) WRITE_ON_FAIL=1 do-5_1_grt ; \
 	if [ $$? -ne 0 ]; then \
