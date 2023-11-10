@@ -544,8 +544,9 @@ $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 
 .PHONY: do-$(1)
 do-$(1):
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json) 2>&1 | tee $(LOG_DIR)/$(1).tmp.log
-	mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log
+	(trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
+	 $(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json) 2>&1 | \
+	 tee $(LOG_DIR)/$(1).tmp.log
 endef
 
 # generate make rules to copy a file, if a dependency change and
