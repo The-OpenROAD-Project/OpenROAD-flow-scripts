@@ -789,6 +789,7 @@ do-route:
 	touch $(REPORTS_DIR)/congestion.rpt
 	touch $(REPORTS_DIR)/5_route_drc.rpt
 	touch $(LOG_DIR)/5_1_grt.log
+	touch $(LOG_DIR)/5_2_fillcell.log
 	touch $(LOG_DIR)/5_3_route.log
 	@$(UNSET_VARS); \
 	$(SUB_MAKE) WRITE_ON_FAIL=1 do-5_1_grt ; \
