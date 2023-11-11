@@ -51,14 +51,10 @@ proc do_placement {place_density global_placement_args} {
   }
 }
 
-if {[info exists ::env(WRITE_ON_FAIL)] && $::env(WRITE_ON_FAIL)} {
-  set result [catch {do_placement $place_density $global_placement_args} errMsg]
-  if {$result != 0} {
-    write_db $::env(RESULTS_DIR)/3_3_place_gp.odb
-    error $errMsg
-  }
-} else {
-  do_placement $place_density $global_placement_args
+set result [catch {do_placement $place_density $global_placement_args} errMsg]
+if {$result != 0} {
+  write_db $::env(RESULTS_DIR)/3_3_place_gp-failed.odb
+  error $errMsg
 }
 
 estimate_parasitics -placement

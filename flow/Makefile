@@ -683,15 +683,15 @@ do-place:
 	echo >$(RESULTS_DIR)/place.ok 0
 	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop
 	@$(UNSET_VARS); \
-	$(SUB_MAKE) WRITE_ON_FAIL=1 do-3_3_place_gp; \
+	$(SUB_MAKE) do-3_3_place_gp; \
 	if [ $$? -ne 0 ]; then \
-		cp $(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/3_place.odb ; \
+		cp $(RESULTS_DIR)/3_3_place_gp-failed.odb $(RESULTS_DIR)/3_place.odb ; \
 		$(SUB_MAKE) do-3_place.sdc ; \
 	else \
 		$(SUB_MAKE) do-3_4_place_resized ; \
-		$(SUB_MAKE) WRITE_ON_FAIL=1 do-3_5_place_dp ; \
+		$(SUB_MAKE) do-3_5_place_dp ; \
 		if [ $$? -ne 0 ]; then \
-			cp $(RESULTS_DIR)/3_5_place_dp.odb $(RESULTS_DIR)/3_place.odb ; \
+			cp $(RESULTS_DIR)/3_5_place_dp-failed.odb $(RESULTS_DIR)/3_place.odb ; \
 			$(SUB_MAKE) do-3_place.sdc ; \
 		else \
 			$(SUB_MAKE) do-3_place do-3_place.sdc ; \
@@ -792,9 +792,9 @@ do-route:
 	touch $(LOG_DIR)/5_2_fillcell.log
 	touch $(LOG_DIR)/5_3_route.log
 	@$(UNSET_VARS); \
-	$(SUB_MAKE) WRITE_ON_FAIL=1 do-5_1_grt ; \
+	$(SUB_MAKE) do-5_1_grt ; \
 	if [ $$? -ne 0 ]; then \
-		cp $(RESULTS_DIR)/5_1_grt.odb $(RESULTS_DIR)/5_route.odb ; \
+		cp $(RESULTS_DIR)/5_1_grt-failed.odb $(RESULTS_DIR)/5_route.odb ; \
 		$(SUB_MAKE) do-5_route.sdc ; \
 	else \
 		$(SUB_MAKE) do-5_2_fillcell do-5_3_route do-5_route.sdc do-5_route ; \

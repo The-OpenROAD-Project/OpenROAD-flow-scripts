@@ -28,14 +28,10 @@ proc do_global_route {} {
                 {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]
 }
 
-if {[info exist env(WRITE_ON_FAIL)] && $::env(WRITE_ON_FAIL)} {
-  set result [catch {do_global_route} errMsg]
-  if {$result != 0} {
-    write_db $::env(RESULTS_DIR)/5_1_grt.odb
-    error $errMsg
-  }
-} else {
-  do_global_route
+set result [catch {do_global_route} errMsg]
+if {$result != 0} {
+  write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
+  error $errMsg
 }
 
 set_placement_padding -global \
