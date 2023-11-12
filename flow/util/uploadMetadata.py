@@ -32,7 +32,7 @@ args = parser.parse_args()
 def upload_data(db, datafile, platform, design, variant, args, rules):
     # Set the document data
     key = args.commitSHA + '-' + platform + '-' + design + '-' + variant
-    doc_ref = db.collection('build_metrics').document(key)
+    doc_ref = db.collection('metadata').document(key)
     doc_ref.set({
         'build_id': args.buildID,
         'branch_name': args.branchName,
@@ -111,6 +111,30 @@ def upload_data(db, datafile, platform, design, variant, args, rules):
             'sha': args.commitSHA,
             'run__flow__generate_date': gen_date,
             'jenkins_url': args.jenkinsURL,
+        })
+
+    platform_doc_ref = db.collection('platforms').document(platform)
+    if platform_doc_ref.get().exists:
+        designs = platform_doc_ref.get().to_dict().get('designs')
+        if design not in designs:
+            design_ref = {
+                "name": design,
+                "rules": rules,
+            }
+            designs[design] = design_ref
+            platform_doc_ref.update({
+                'designs': designs,
+            })          
+    else:
+        designs = {}
+        design_ref = {
+            "name": design,
+            "rules": rules,
+        }
+        designs[design] = design_ref
+        platform_doc_ref.set({
+            'designs': designs,
+            'name': platform,
         })
     
 def get_rules(platform, design, variant):
