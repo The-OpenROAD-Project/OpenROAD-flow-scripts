@@ -32,7 +32,7 @@ args = parser.parse_args()
 def upload_data(db, datafile, platform, design, variant, args, rules):
     # Set the document data
     key = args.commitSHA + '-' + platform + '-' + design + '-' + variant
-    doc_ref = db.collection('metadata').document(key)
+    doc_ref = db.collection('build_metrics').document(key)
     doc_ref.set({
         'build_id': args.buildID,
         'branch_name': args.branchName,
