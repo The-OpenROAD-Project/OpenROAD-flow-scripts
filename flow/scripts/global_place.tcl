@@ -36,18 +36,25 @@ if {$::env(GPL_TIMING_DRIVEN)} {
     append global_placement_args " -timing_driven"
 }
 
+proc do_placement {place_density global_placement_args} {
+  if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
+  global_placement -density $place_density \
+      -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+      -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+      {*}$global_placement_args \
+      {*}$::env(GLOBAL_PLACEMENT_ARGS)
+  } else {
+  global_placement -density $place_density \
+      -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+      -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+      {*}$global_placement_args
+  }
+}
 
-if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
-global_placement -density $place_density \
-    -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-    -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-    {*}$global_placement_args \
-    {*}$::env(GLOBAL_PLACEMENT_ARGS)
-} else {
-global_placement -density $place_density \
-    -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-    -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-    {*}$global_placement_args
+set result [catch {do_placement $place_density $global_placement_args} errMsg]
+if {$result != 0} {
+  write_db $::env(RESULTS_DIR)/3_3_place_gp-failed.odb
+  error $errMsg
 }
 
 estimate_parasitics -placement
