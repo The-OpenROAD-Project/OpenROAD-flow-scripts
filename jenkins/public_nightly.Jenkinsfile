@@ -52,6 +52,7 @@ pipeline {
             name 'TEST_SLUG';
             values "docker build",
                    "aes asap7",
+                   "aes-mbff asap7",
                    "aes_lvt asap7",
                    "ethmac asap7",
                    "ethmac_lvt asap7",

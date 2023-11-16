@@ -42,12 +42,13 @@ export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_
 ifdef CLUSTER_FLOPS
   # Add the multi-bit FF for clustering.  These are single corner libraries.
   export ADDITIONAL_LIBS     += $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNH2V2X_RVT_TT_nldm_FAKE.lib \
-                                $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNV2X_RVT_TT_nldm_FAKE.lib \
-                                $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNV4X_RVT_TT_nldm_FAKE.lib
+                                $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNV2X_RVT_TT_nldm_FAKE.lib
+#                               $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNV4X_RVT_TT_nldm_FAKE.lib
 
   export ADDITIONAL_LEFS     += $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNH2V2X.lef \
-                                $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV2X.lef \
-                                $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV4X.lef
+                                $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV2X.lef
+#                               $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV4X.lef
+  export PLACE_SITE          += asap7sc7p5t_pg
 endif
 
 
@@ -85,7 +86,7 @@ export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_R A Y
 
 # Placement site for core cells
 # This can be found in the technology lef
-export PLACE_SITE              = asap7sc7p5t
+export PLACE_SITE              += asap7sc7p5t
 
 export MAKE_TRACKS             = $(PLATFORM_DIR)/openRoad/make_tracks.tcl
 
