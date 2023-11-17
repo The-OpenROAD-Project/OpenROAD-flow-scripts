@@ -49,6 +49,7 @@ ifdef CLUSTER_FLOPS
                                 $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV2X.lef
 #                               $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV4X.lef
   export PLACE_SITE          += asap7sc7p5t_pg
+  export GDS_ALLOW_EMPTY     ?= DFFHQN[VH][24].*
 endif
 
 
