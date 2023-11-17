@@ -174,9 +174,6 @@ else
   $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
 endif
 
-ifeq ($(MAKELEVEL),0)
-$(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
-endif
 include $(PLATFORM_DIR)/config.mk
 
 export GALLERY_REPORT ?= 0
