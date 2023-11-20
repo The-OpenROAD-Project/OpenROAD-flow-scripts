@@ -162,7 +162,7 @@ export TEST_DIR      ?= $(FLOW_HOME)/test
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
 
-PUBLIC=nangate45 sky130hd sky130hs asap7
+PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
 ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
   export PLATFORM_DIR = $(PLATFORM_HOME)/$(PLATFORM)
