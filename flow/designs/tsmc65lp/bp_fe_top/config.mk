@@ -24,7 +24,7 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/tsmc65lp_1rf_lg6_w8_bit.gds2 \
 
 export DIE_AREA    = 0 0 880 780 
 export CORE_AREA   = 10 12 870 770
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-500 -exclude bottom:*
+export PLACE_PINS_ARGS = -exclude left:* -exclude right:0-400 -exclude bottom:*
 
 export MACRO_PLACE_HALO = 10 10
 export MACRO_PLACE_CHANNEL = 20 20
