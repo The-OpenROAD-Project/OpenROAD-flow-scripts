@@ -4,6 +4,12 @@ export PLATFORM    = asap7
 
 export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = True
+
+export RTLMP_MIN_INST = 1000
+export RTLMP_MAX_INST = 3500
+export RTLMP_MIN_MACRO = 1
+export RTLMP_MAX_MACRO = 5
+
 export MAX_UNGROUP_SIZE ?= 1000
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
