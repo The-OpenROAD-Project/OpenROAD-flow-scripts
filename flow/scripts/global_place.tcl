@@ -65,7 +65,7 @@ if {[info exist ::env(CLUSTER_FLOPS)]} {
 }
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "global place" false false
+report_metrics 5 "global place" false false
 
 if {![info exists save_checkpoint] || $save_checkpoint} {
   write_db $::env(RESULTS_DIR)/3_3_place_gp.odb
