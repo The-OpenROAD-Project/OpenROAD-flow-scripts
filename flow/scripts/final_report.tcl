@@ -37,7 +37,7 @@ if {[info exist ::env(RCX_RULES)]} {
   read_spef $::env(RESULTS_DIR)/6_final.spef
 
   # Static IR drop analysis
-  if {[info exist ::env(PWR_NETS_VOLTAGES)]} {
+  if {[info exist ::env(PWR_NETS_VOLTAGES)] && [string length $::env(PWR_NETS_VOLTAGES)] > 0} {
     dict for {pwrNetName pwrNetVoltage}  {*}$::env(PWR_NETS_VOLTAGES) {
         set_pdnsim_net_voltage -net ${pwrNetName} -voltage ${pwrNetVoltage}
         analyze_power_grid -net ${pwrNetName} \
@@ -46,7 +46,7 @@ if {[info exist ::env(RCX_RULES)]} {
   } else {
     puts "IR drop analysis for power nets is skipped because PWR_NETS_VOLTAGES is undefined"
   }
-  if {[info exist ::env(GND_NETS_VOLTAGES)]} {
+  if {[info exist ::env(GND_NETS_VOLTAGES)] && [string length $::env(GND_NETS_VOLTAGES)] > 0} {
     dict for {gndNetName gndNetVoltage}  {*}$::env(GND_NETS_VOLTAGES) {
         set_pdnsim_net_voltage -net ${gndNetName} -voltage ${gndNetVoltage}
         analyze_power_grid -net ${gndNetName} \
