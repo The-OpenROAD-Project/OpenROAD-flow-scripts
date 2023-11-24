@@ -49,7 +49,7 @@ Export path variables accordingly.
 ```
 # these variables are used in flow/Makefile. Do make sure the yosys path is sourced.
 export OPENROAD_EXE=$(command -v openroad)
-export YOSYS_CMD=$(shell command -v yosys)
+export YOSYS_CMD=$(command -v yosys)
 
 # only if KLayout is built from source
 export LD_LIBRARY_PATH="<klayout_location>/bin:$PATH" 
