@@ -507,7 +507,8 @@ IS_CHIP = 1
 endif
 
 UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
-SUB_MAKE = $(MAKE) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG)
+
+SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo $($V) | sed 's/ /\\ /g'),$V='')) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG)
 UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
 
 # Separate dependency checking and doing a step. This can
