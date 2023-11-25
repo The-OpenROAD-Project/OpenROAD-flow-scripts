@@ -1,4 +1,4 @@
-proc load_design {design_file sdc_file msg} {
+proc load_design {design_file sdc_file} {
   # Read liberty files
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
 

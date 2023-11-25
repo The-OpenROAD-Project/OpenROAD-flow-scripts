@@ -1,5 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 2_1_floorplan.odb 1_synth.sdc "Starting random IO placement"
+load_design 2_1_floorplan.odb 1_synth.sdc
 
 if {[info exists ::env(FLOORPLAN_DEF)]} {
     puts "Skipping IO placement as DEF file was used to initialize floorplan."

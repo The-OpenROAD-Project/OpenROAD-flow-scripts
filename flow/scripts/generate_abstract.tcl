@@ -4,9 +4,7 @@ set stem [expr {[info exists ::env(ABSTRACT_SOURCE)] ? $::env(ABSTRACT_SOURCE) :
 
 set design_stage [lindex [split [file tail $stem] "_"] 0]
 
-set generating_comment "Generating abstract views"
-
-load_design $stem.odb $stem.sdc $generating_comment
+load_design $stem.odb $stem.sdc
 
 if {$design_stage >= 6 && [file exists $::env(RESULTS_DIR)/$stem.spef]} {
   read_spef $::env(RESULTS_DIR)/$stem.spef
@@ -19,7 +17,7 @@ if {$design_stage >= 4} {
   set_propagated_clock [all_clocks]
 }
 
-puts $generating_comment
+puts "Generating abstract views"
 write_timing_model $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lib
 write_abstract_lef -bloat_occupied_layers $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lef
 

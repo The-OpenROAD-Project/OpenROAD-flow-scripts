@@ -1,5 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 2_2_floorplan_io.odb 1_synth.sdc "Starting TDMS placement"
+load_design 2_2_floorplan_io.odb 1_synth.sdc
 
 proc find_macros {} {
   set macros ""
