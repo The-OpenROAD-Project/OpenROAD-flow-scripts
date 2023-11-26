@@ -1,6 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 # Note 6_final.def has wires that prevent global routing.
-load_design 4_1_cts.odb 4_cts.sdc ""
+load_design 4_1_cts.odb 4_cts.sdc
 
 source $::env(UTILS_DIR)/write_net_rc.tcl
 

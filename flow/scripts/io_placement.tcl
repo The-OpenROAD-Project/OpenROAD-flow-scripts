@@ -1,5 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 3_1_place_gp_skip_io.odb 2_floorplan.sdc "Starting io placement"
+load_design 3_1_place_gp_skip_io.odb 2_floorplan.sdc
 
 if {[info exists ::env(FLOORPLAN_DEF)]} {
     puts "Skipping IO placement as DEF file was used to initialize floorplan."

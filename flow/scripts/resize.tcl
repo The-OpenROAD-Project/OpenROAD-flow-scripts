@@ -1,6 +1,6 @@
 utl::set_metrics_stage "placeopt__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 3_3_place_gp.odb 2_floorplan.sdc "Starting resizer"
+load_design 3_3_place_gp.odb 2_floorplan.sdc
 
 proc print_banner {header} {
   puts "\n=========================================================================="
