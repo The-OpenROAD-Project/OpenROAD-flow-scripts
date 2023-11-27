@@ -24,20 +24,23 @@ proc save_progress {stage} {
   write_sdc $::env(RESULTS_DIR)/$stage.sdc
 }
 
+set cts_args [list -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+          -sink_clustering_enable \
+          -sink_clustering_size $cluster_size \
+          -sink_clustering_max_diameter $cluster_diameter \
+          -balance_levels]
+
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
-  clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
-                      -sink_clustering_enable \
-                      -sink_clustering_size $cluster_size \
-                      -sink_clustering_max_diameter $cluster_diameter \
-                      -distance_between_buffers "$::env(CTS_BUF_DISTANCE)" \
-                      -balance_levels
-} else {
-  clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
-                      -sink_clustering_enable \
-                      -sink_clustering_size $cluster_size \
-                      -sink_clustering_max_diameter $cluster_diameter \
-                      -balance_levels
+  lappend cts_args -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
 }
+
+if {[info exist ::env(CTS_ARGS)]} {
+  set cts_args $::env(CTS_ARGS)
+}
+
+puts "clock_tree_synthesis [join $cts_args " "]"
+
+clock_tree_synthesis {*}$cts_args
 
 if {[info exist ::env(CTS_SNAPSHOTS)]} {
   save_progress 4_1_pre_repair_clock_nets
