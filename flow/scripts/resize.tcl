@@ -13,7 +13,7 @@ estimate_parasitics -placement
 
 utl::push_metrics_stage "placeopt__{}__pre_opt"
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "resizer pre" false false
+report_metrics 3 "resizer pre" false false
 utl::pop_metrics_stage
 
 print_banner "instance_count"
@@ -78,7 +78,7 @@ print_banner "report_floating_nets"
 report_floating_nets
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "resizer" true false
+report_metrics 3 "resizer" true false
 
 print_banner "instance_count"
 puts [sta::network_leaf_instance_count]

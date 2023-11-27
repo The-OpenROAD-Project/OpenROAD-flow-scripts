@@ -295,7 +295,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                        metrics_dict,
                        baseRegEx.format('finish slack div critical path delay',
                                         '(\S+)'),
-                       logPath + '/6_report.log')
+                       rptPath + '/6_finish.rpt')
 
     extractGnuTime('finish', metrics_dict, logPath + '/6_report.log')
 

@@ -48,12 +48,12 @@ if {[info exist env(DONT_USE_CELLS)]} {
 source $env(SCRIPTS_DIR)/report_metrics.tcl
 
 if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
-  report_metrics "global route pre repair design"
+  report_metrics 5 "global route pre repair design"
 
   # Repair design using global route parasitics
   puts "Perform buffer insertion..."
   repair_design
-  report_metrics "global route post repair design"
+  report_metrics 5 "global route post repair design"
 
   # Running DPL to fix overlapped instances
   # Run to get modified net by DPL
@@ -66,7 +66,7 @@ if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
   puts "Repair setup and hold violations..."
   estimate_parasitics -global_routing
   repair_timing
-  report_metrics "global route post repair timing"
+  report_metrics 5 "global route post repair timing"
 
   # Running DPL to fix overlapped instances
   # Run to get modified net by DPL
@@ -97,7 +97,7 @@ check_placement -verbose
 check_antennas -report_file $env(REPORTS_DIR)/antenna.log -report_violating_nets
 
 estimate_parasitics -global_routing
-report_metrics "global route"
+report_metrics 5 "global route"
 
 # Write SDC to results with updated clock periods that are just failing.
 # Use make target update_sdc_clock to install the updated sdc.
