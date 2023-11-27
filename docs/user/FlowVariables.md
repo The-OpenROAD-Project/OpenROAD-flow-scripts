@@ -1,4 +1,4 @@
-﻿# Environment Variables for the OpenROAD Flow Scripts
+# Environment Variables for the OpenROAD Flow Scripts
 
 
 Environment variables are used in the OpenROAD flow to define various
