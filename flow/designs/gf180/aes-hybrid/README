@@ -1,0 +1,12 @@
+This is a test of hybrid rows.  In advanced finfet PDKs there may be
+rows of different heights.  GF180 is not such a process but we use it
+as a public proxy for one.  We use 9 and 7 track alternating rows to
+simulate the placement challenges.
+
+One problem with this approach is that the 9t cells have a wider power
+stripe than the 7t cells.  A modified set of 9t cells are used instead
+which have the power rails trimmed to not intefer with the 7t cells in
+adjacent rows.  The update cells are in
+adjusted-gf180mcu_5LM_1TM_9K_9t_sc.lef.  No modified gds or Liberty
+files are have been generated as they aren't essential to the testing
+goal.
