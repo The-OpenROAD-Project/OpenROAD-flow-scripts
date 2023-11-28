@@ -24,7 +24,7 @@ proc save_progress {stage} {
   write_sdc $::env(RESULTS_DIR)/$stage.sdc
 }
 
-set cts_args [list -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+set cts_args [list \
           -sink_clustering_enable \
           -sink_clustering_size $cluster_size \
           -sink_clustering_max_diameter $cluster_diameter \

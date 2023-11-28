@@ -15,3 +15,4 @@ export PLACE_DENSITY          = 0.35
 
 export DIE_AREA               = 0 0 50 50
 export CORE_AREA              = 1.26 1.89 49 49
+export CTS_ARGS               = -sink_buffer_max_cap_derate 0.01
