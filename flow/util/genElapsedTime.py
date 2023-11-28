@@ -27,6 +27,7 @@ if not args.logDir:
 
 def print_log_dir_times(logdir):
     first = True
+    totalElapsed = 0
     print(logdir)
 
     # Loop on all log files in the directory
@@ -65,6 +66,8 @@ def print_log_dir_times(logdir):
                 print("%-25s %10s" % ("Log", "Elapsed seconds"))
                 first = False
             print('%-25s %10s' % (os.path.splitext(os.path.basename(str(f)))[0], elapsedTime))
+        totalElapsed += elapsedTime
+    print("%-25s %10s" % ( "Total", str( totalElapsed ) ))
 
 for log_dir in args.logDir:
     print_log_dir_times(log_dir)
