@@ -166,9 +166,7 @@ wire_load("500k") {
     fanout_length(5, 848.3);
     fanout_length(20, 1527.1);
 }
-
- 
- wire_load_selection ("4_metls_routing") {
+  wire_load_selection ("4_metls_routing") {
     wire_load_from_area (0, 635, 0_1k);
     wire_load_from_area (635, 3175, 0_5k);
     wire_load_from_area (3175, 6350, 1k);
@@ -182,7 +180,6 @@ wire_load("500k") {
     wire_load_from_area (1.27008e+06, 3.1752e+06, 500k);
   }
   default_wire_load : "10k";
-  default_wire_load_mode : top;
   default_operating_conditions : sg13g2_stdcell_typ_1p20V_25C;
   default_wire_load_selection : "4_metls_routing";
   lu_table_template (CONSTRAINT_4x4) {
