@@ -114,7 +114,7 @@ if {[find_macros] != ""} {
       append additional_rtlmp_args " -snap_layer $env(RTLMP_SNAP_LAYER)"
     }
     if { [info exists ::env(RTLMP_BUS_PLANNING_ON)]} {
-      append additional_rtlmp_args " -bus_planning_on $env(RTLMP_BUS_PLANNING_ON)"
+      append additional_rtlmp_args " -bus_planning"
     }
     if { [info exists ::env(RTLMP_REPORT_DIRECTORY)]} {
       append additional_rtlmp_args " -report_directory $env(RTLMP_REPORT_DIRECTORY)"
