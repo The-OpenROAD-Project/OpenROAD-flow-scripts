@@ -28,27 +28,27 @@ if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
   set place_density $::env(PLACE_DENSITY)
 }
 
-set global_placement_args ""
+set global_placement_args {}
 if {$::env(GPL_ROUTABILITY_DRIVEN)} {
-    append global_placement_args " -routability_driven"
+  lappend global_placement_args {-routability_driven}
 }
 if {$::env(GPL_TIMING_DRIVEN)} {
-    append global_placement_args " -timing_driven"
+  lappend global_placement_args {-timing_driven}
 }
 
 proc do_placement {place_density global_placement_args} {
+  set all_args [concat [list -density $place_density \
+    -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+    -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)] \
+    $global_placement_args]
+
   if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
-  global_placement -density $place_density \
-      -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-      -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-      {*}$global_placement_args \
-      {*}$::env(GLOBAL_PLACEMENT_ARGS)
-  } else {
-  global_placement -density $place_density \
-      -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-      -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-      {*}$global_placement_args
+    lappend all_args {*}$::env(GLOBAL_PLACEMENT_ARGS)
   }
+
+  puts "global_placement [join $all_args " "]"
+
+  global_placement {*}$all_args
 }
 
 set result [catch {do_placement $place_density $global_placement_args} errMsg]
