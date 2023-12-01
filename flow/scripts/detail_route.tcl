@@ -63,11 +63,14 @@ append additional_args " -save_guide_updates -verbose 1"
 set arguments [expr {[info exists ::env(DETAILED_ROUTE_ARGS)] ? $::env(DETAILED_ROUTE_ARGS) : \
  [concat $additional_args {-drc_report_iter_step 5}]}]
 
-puts "detailed_route arguments: $arguments"
+set all_args [concat [list \
+  -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
+  -output_maze $::env(RESULTS_DIR)/maze.log] \
+  $arguments]
 
-detailed_route -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
-               -output_maze $::env(RESULTS_DIR)/maze.log \
-               {*}$arguments
+puts "detailed_route [join $all_args " "]"
+
+detailed_route {*}$all_args
 
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
