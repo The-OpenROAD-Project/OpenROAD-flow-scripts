@@ -26,8 +26,6 @@ proc save_progress {stage} {
 
 set cts_args [list \
           -sink_clustering_enable \
-          -sink_clustering_size $cluster_size \
-          -sink_clustering_max_diameter $cluster_diameter \
           -balance_levels]
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {

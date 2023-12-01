@@ -14,4 +14,4 @@ export CORE_MARGIN         = 1
 
 export PLACE_DENSITY = uniform
 
-export CTS_ARGS = -sink_buffer_max_cap_derate 0.01
+export CTS_ARGS = -sink_buffer_max_cap_derate 0.007
