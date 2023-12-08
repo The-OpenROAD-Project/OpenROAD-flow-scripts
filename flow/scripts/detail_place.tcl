@@ -4,6 +4,11 @@ load_design 3_4_place_resized.odb 2_floorplan.sdc
 
 source $::env(PLATFORM_DIR)/setRC.tcl
 
+# Only for use with hybrid rows
+if {[info exists ::env(BALANCE_ROWS)] && $::env(BALANCE_ROWS)} {
+  balance_row_usage
+}
+
 set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
