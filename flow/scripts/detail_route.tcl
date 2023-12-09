@@ -11,6 +11,9 @@ set_propagated_clock [all_clocks]
 set_thread_count $::env(NUM_CORES)
 
 set additional_args ""
+if { [info exists ::env(dbProcessNode)]} {
+  append additional_args " -db_process_node $::env(dbProcessNode)"
+}
 if { [info exists ::env(OR_SEED)]} {
   append additional_args " -or_seed $::env(OR_SEED)"
 }
@@ -32,6 +35,9 @@ if { [info exists ::env(VIA_IN_PIN_MAX_LAYER)]} {
 }
 if { [info exists ::env(DISABLE_VIA_GEN)]} {
   append additional_args " -disable_via_gen"
+}
+if { [info exists ::env(REPAIR_PDN_VIA_LAYER)]} {
+  append additional_args " -repair_pdn_vias $::env(REPAIR_PDN_VIA_LAYER)"
 }
 
 append additional_args " -save_guide_updates -verbose 1"

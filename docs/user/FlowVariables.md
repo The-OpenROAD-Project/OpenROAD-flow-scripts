@@ -151,6 +151,7 @@ Note:
 | `CELL_PAD_IN_SITES_DETAIL_PLACEMENT` | Cell padding on both sides in site widths to ease routability in detail placement.			                                       |
 | `PLACE_DENSITY`                      | The desired placement density of cells. It reflects how spread the cells would be on the core area. 1.0 = closely dense. 0.0 = widely spread. |
 | `PLACE_DENSITY_LB_ADDON`             | Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.                                                    |
+| `REPAIR_PDN_VIA_LAYER`               | Remove power grid vias which generate DRC violations after detailed routing.                                                                  |
 | `GLOBAL_PLACEMENT_ARGS`              | Use additional tuning parameters during global placement other than default args defined in gloabl_place.tcl.                                 |
 | `ENABLE_DPO`                         | Enable detail placement with improve_placement feature.                                                                                       |
 | `DPO_MAX_DISPLACEMENT`               | Specifies how far an instance can be moved when optimizing.                                                                                   |
