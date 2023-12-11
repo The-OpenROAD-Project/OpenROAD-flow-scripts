@@ -62,10 +62,6 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
     report_puts "--------------------------------------------------------------------------"
     report_check_types -max_slew -max_capacitance -max_fanout -violators >> $filename
 
-    puts "\n=========================================================================="
-    puts "$when report_check_types -max_slew -max_cap -max_fanout -violators"
-    puts "--------------------------------------------------------------------------"
-    # TODO should be reported into the filename, but does not support redirection
     report_erc_metrics
 
     report_puts "\n=========================================================================="
