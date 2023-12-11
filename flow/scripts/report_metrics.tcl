@@ -82,7 +82,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
       report_puts "\n=========================================================================="
       report_puts "$when max_slew_check_slack_limit"
       report_puts "--------------------------------------------------------------------------"
-      puts [format "%.4f" [sta::max_slew_check_slack_limit]]
+      report_puts [format "%.4f" [sta::max_slew_check_slack_limit]]
     }
 
     report_puts "\n=========================================================================="
@@ -99,7 +99,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
       report_puts "\n=========================================================================="
       report_puts "$when max_fanout_check_slack_limit"
       report_puts "--------------------------------------------------------------------------"
-      puts [format "%.4f" [sta::max_fanout_check_slack_limit]]
+      report_puts [format "%.4f" [sta::max_fanout_check_slack_limit]]
     }
 
     report_puts "\n=========================================================================="
@@ -116,7 +116,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
       report_puts "\n=========================================================================="
       report_puts "$when max_capacitance_check_slack_limit"
       report_puts "--------------------------------------------------------------------------"
-      puts [format "%.4f" [sta::max_capacitance_check_slack_limit]]
+      report_puts [format "%.4f" [sta::max_capacitance_check_slack_limit]]
     }
 
     report_puts "\n=========================================================================="
