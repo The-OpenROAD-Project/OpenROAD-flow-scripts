@@ -1,0 +1,28 @@
+# Used to introduce the SITEs for hybrid rows
+
+VERSION 5.7 ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+
+UNITS
+    DATABASE MICRONS 2000  ;
+    CAPACITANCE PICOFARADS 1 ;
+    CURRENT MILLIAMPS 1 ;
+    RESISTANCE OHMS 1 ;
+END UNITS
+
+# Copied from gf180mcu_5LM_1TM_9K_7t_tech.lef since we can't read two
+# tech LEFs
+SITE GF018hv5v_mcu_sc7
+  SYMMETRY X Y ;
+  CLASS core ;
+  SIZE 0.56 BY 3.92 ;
+END GF018hv5v_mcu_sc7
+
+# The hybrid site
+SITE sc9sc7
+  SYMMETRY X Y ;
+  CLASS core ;
+  SIZE 0.56 BY 8.96 ;
+  ROWPATTERN GF018hv5v_green_sc9 N GF018hv5v_mcu_sc7 FS ;
+END sc9sc7
