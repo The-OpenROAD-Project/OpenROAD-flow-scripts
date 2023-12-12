@@ -67,6 +67,7 @@ pipeline {
                    "jpeg sky130hs",
                    "riscv32i sky130hs",
                    "aes gf180",
+                   "aes-hybrid gf180",
                    "ibex gf180",
                    "jpeg gf180",
                    "riscv32i gf180",
