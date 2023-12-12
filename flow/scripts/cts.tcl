@@ -28,6 +28,7 @@ set cts_args [list -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CE
           -sink_clustering_enable \
           -sink_clustering_size $cluster_size \
           -sink_clustering_max_diameter $cluster_diameter \
+          -use_dummy_load \
           -balance_levels]
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
