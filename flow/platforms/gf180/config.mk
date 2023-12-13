@@ -15,7 +15,7 @@ export PROCESS                                = 180
 #----------------------------------------------------
 export TECH_LEF                               = $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_tech.lef
 
-export SC_LEF                                 = $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_sc.lef
+export SC_LEF                                ?= $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_sc.lef
 
 export GDS_FILES                              = $(wildcard $(PLATFORM_DIR)/gds/$(TRACK_OPTION)/*.gds) \
                                                 $(ADDITIONAL_GDS)
@@ -62,9 +62,9 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders.v
 #-------------------------------------------------------
 # Placement site for core cells
 ifeq ($(TRACK_OPTION),9t) 
-export PLACE_SITE                             = GF018hv5v_green_sc9
+export PLACE_SITE                             ?= GF018hv5v_green_sc9
 else
-export PLACE_SITE                             = GF018hv5v_mcu_sc7
+export PLACE_SITE                             ?= GF018hv5v_mcu_sc7
 endif
 
 # IO Placer pin layers
@@ -103,8 +103,6 @@ export CTS_BUF_DISTANCE                       = 100
 # FastRoute options
 export MIN_ROUTING_LAYER                     ?= Metal2
 export MAX_ROUTING_LAYER                     ?= Metal5
-export VIA_IN_PIN_MIN_LAYER                  ?= Metal1
-export VIA_IN_PIN_MAX_LAYER                  ?= Metal1
 export DISABLE_VIA_GEN                       ?= 1
 
 # KLayout layer properties
