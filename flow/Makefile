@@ -442,8 +442,7 @@ $(WRAPPED_LIBS):
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
 .PHONY: synth
-synth: versions.txt \
-       $(RESULTS_DIR)/1_synth.v \
+synth: $(RESULTS_DIR)/1_synth.v \
        $(RESULTS_DIR)/1_synth.sdc
 
 .PHONY: synth-report
