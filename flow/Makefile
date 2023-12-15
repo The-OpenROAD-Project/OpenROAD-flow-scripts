@@ -442,9 +442,8 @@ $(WRAPPED_LIBS):
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
 .PHONY: synth
-synth: versions.txt \
-       $(RESULTS_DIR)/1_synth.v \
-       $(RESULTS_DIR)/1_synth.sdc
+synth: versions.txt
+	$(SUB_MAKE) do-1_1_yosys do-1_synth
 
 .PHONY: synth-report
 synth-report: synth
@@ -469,10 +468,20 @@ ifeq ($(SYNTH_HIERARCHICAL), 1)
 $(RESULTS_DIR)/1_1_yosys.v: $(SYNTH_STOP_MODULE_SCRIPT)
 endif
 
-$(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.sdc &: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE)
+$(RESULTS_DIR)/1_1_yosys.v: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+
+.PHONY: do-1_1_yosys
+do-1_1_yosys:
+	$(SUB_MAKE) $(RESULTS_DIR)/1_1_yosys.v
+
+$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
 	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
+
+.PHONY: do-1_synth
+do-1_synth:
+	$(SUB_MAKE) $(RESULTS_DIR)/1_synth.sdc
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
