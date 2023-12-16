@@ -4,7 +4,7 @@
             "layer": 8,
             "datatype": 0,
             "name": "Metal1",
-            "space_to_outline": 60,
+            "space_to_outline": 0,
             "non-opc": {
                 "datatype":             22,
                 "width":                [2.0],
@@ -18,7 +18,7 @@
             "layer": 10,
             "datatype": 0,
             "name": "Metal2",
-            "space_to_outline": 60,
+            "space_to_outline": 0,
             "non-opc": {
                 "datatype":             22,
                 "width":                [5.0],
@@ -32,7 +32,7 @@
             "layer": 30,
             "datatype": 0,
             "name": "Metal3",
-            "space_to_outline": 60,
+            "space_to_outline": 0,
             "non-opc": {
                 "datatype":             22,
                 "width":                [2.0],
@@ -46,7 +46,7 @@
             "layer": 50,
             "datatype": 0,
             "name": "Metal4",
-            "space_to_outline": 60,
+            "space_to_outline": 0,
             "non-opc": {
                 "datatype":             22,
                 "width":                [5.0],
@@ -60,7 +60,7 @@
             "layer": 67,
             "datatype": 0,
             "name": "Metal5",
-            "space_to_outline": 60,
+            "space_to_outline": 0,
             "non-opc": {
                 "datatype":             22,
                 "width":                [2.0],
@@ -74,7 +74,7 @@
             "layer": 126,
             "datatype": 0,
             "name": "TopMetal1",
-            "space_to_outline": 60,
+            "space_to_outline": 0,
             "non-opc": {
                 "datatype":             22,
                 "width":                [10.0],
@@ -88,7 +88,7 @@
             "layer": 134,
             "datatype": 0,
             "name": "TopMetal2",
-            "space_to_outline": 60,
+            "space_to_outline": 0,
             "non-opc": {
                 "datatype":             22,
                 "width":                [ 5.0],
@@ -99,8 +99,8 @@
         }
     },
     "outline" : {
-        "layer": 237,
-        "datatype": 0
+        "layer": 39,
+        "datatype": 4
     }
 }
 
