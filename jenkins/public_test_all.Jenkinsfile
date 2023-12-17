@@ -11,7 +11,6 @@ pipeline {
 
     sharedFunctions.localBuild()
     
-
     stage('Tests') {
       matrix {
         axes {

@@ -1,4 +1,4 @@
-def sharedFunctions = load 'SharedFunctions.groovy'
+def sharedFunctions = load 'shared_functions.groovy'
 
 pipeline {
     agent any
