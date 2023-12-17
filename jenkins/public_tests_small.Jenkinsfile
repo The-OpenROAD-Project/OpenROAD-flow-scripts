@@ -1,27 +1,15 @@
-pipeline {
-  agent any;
-  environment {
-    MAKE_ISSUE = 1;
-  }
-  options {
-    copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME);
-  }
-  stages {
+def sharedFunctions = load 'SharedFunctions.groovy'
 
-    stage('Local Build') {
-      agent any;
-      steps {
-        sh "./build_openroad.sh --local";
-        stash name: "install", includes: "tools/install/**";
-      }
-      post {
-        always {
-          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-            archiveArtifacts artifacts: "build_openroad.log";
-          }
-        }
-      }
+pipeline {
+    agent any
+    environment {
+        MAKE_ISSUE = 1
     }
+    options {
+        copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME)
+    }
+
+    sharedFunctions.localBuild()
 
     stage('Tests') {
       matrix {
@@ -81,124 +69,15 @@ pipeline {
         }
 
         stages {
-          stage('Test') {
-            options {
-              timeout(time: 6, unit: "HOURS");
-            }
-            agent any;
-            steps {
-              unstash "install";
-              script {
-                stage("${TEST_SLUG}") {
-                  catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    if ("${TEST_SLUG}" == 'docker build'){
-                      retry(3) {
-                        try {
-                          sh "./build_openroad.sh --no_init";
-                        }
-                        catch (e) {
-                          sleep(60);
-                          sh 'exit 1';
-                        }
-                      }
-                      sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
-                    } else {
-                      sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
-                    }
-                  }
-                }
-              }
-            }
-            post {
-              always {
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**";
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**";
-                }
-              }
-            }
-          }
+            sharedFunctions.runTests("${TEST_SLUG}")
         }
       }
     }
 
-    stage("Report Short Summary") {
-      steps {
-        copyArtifacts filter: "flow/logs/**/*",
-                      projectName: '${JOB_NAME}',
-                      selector: specific('${BUILD_NUMBER}');
-        copyArtifacts filter: "flow/reports/**/*",
-                      projectName: '${JOB_NAME}',
-                      selector: specific('${BUILD_NUMBER}');
-        sh "flow/util/genReport.py -sv";
-      }
-      post {
-        always {
-          archiveArtifacts artifacts: "flow/reports/report-summary.log";
-          archiveArtifacts artifacts: "flow/reports/**/report*.log";
-        }
-      }
-    }
-
-    stage("Report Summary") {
-      steps {
-        sh "flow/util/genReport.py -svv";
-      }
-    }
-
-    stage("Report Full") {
-      steps {
-        sh "flow/util/genReport.py -vvvv";
-      }
-    }
-
-    stage("Report HTML Table") {
-      steps {
-        sh "flow/util/genReportTable.py";
-        publishHTML([
-            allowMissing: true,
-            alwaysLinkToLastBuild: true,
-            keepAll: true,
-            reportName: "Report",
-            reportDir: "flow/reports",
-            reportFiles: "report-table.html,report-gallery*.html",
-            reportTitles: "Flow Report"
-        ]);
-      }
-    }
-
-  }
-
-  post {
-    failure {
-      copyArtifacts filter: "flow/reports/report-summary.log",
-                    projectName: '${JOB_NAME}',
-                    selector: specific('${BUILD_NUMBER}');
-      script {
-        try {
-          COMMIT_AUTHOR_EMAIL = sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
-          if ( env.BRANCH_NAME == "master" ) {
-            echo("Main development branch: report to stakeholders and commit author.");
-            EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
-          } else {
-            echo("Feature development branch: report only to commit author.");
-            EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
-          }
-        } catch (Exception e) {
-          echo "Exception occurred: " + e.toString();
-          EMAIL_TO="\$DEFAULT_RECIPIENTS";
-        }
-        emailext (
-            to: "$EMAIL_TO",
-            replyTo: "$EMAIL_TO",
-            subject: '$DEFAULT_SUBJECT',
-            body: '''
-$DEFAULT_CONTENT
-${FILE,path="flow/reports/report-summary.log"}
-            ''',
-            )
-      }
-    }
-  }
-
+    sharedFunctions.generateReportShortSummary()
+    sharedFunctions.generateReportSummary()
+    sharedFunctions.generateReportFull()
+    sharedFunctions.generateReportHtmlTable()
+    
+    sharedFunctions.handleFailurePostBuild()
 }
