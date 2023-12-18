@@ -16,8 +16,8 @@ if {[info exist ::env(DFF_LIB_FILE)]} {
 } else {
   dfflibmap -liberty $::env(DONT_USE_SC_LIB)
 }
-abc -liberty $::env(DONT_USE_SC_LIB) \
-    -constr $::env(OBJECTS_DIR)/abc.constr
+puts "abc [join $abc_args " "]"
+abc {*}$abc_args
 
 # Create argument list for stat
 set stat_libs ""

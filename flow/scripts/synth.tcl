@@ -56,27 +56,8 @@ puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
 puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
 close $constr
 
-if {$::env(ABC_AREA)} {
-  puts "Using ABC area script."
-  set abc_script $::env(SCRIPTS_DIR)/abc_area.script
-} else {
-  puts "Using ABC speed script."
-  set abc_script $::env(SCRIPTS_DIR)/abc_speed.script
-}
-
-# Technology mapping for cells
-# ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
-if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
-  puts "\[FLOW\] Set ABC_CLOCK_PERIOD_IN_PS to: $::env(ABC_CLOCK_PERIOD_IN_PS)"
-  abc -D [expr $::env(ABC_CLOCK_PERIOD_IN_PS)] \
-      -script $abc_script \
-      -liberty $::env(DONT_USE_SC_LIB) \
-      -constr $::env(OBJECTS_DIR)/abc.constr
-} else {
-  puts "\[WARN\]\[FLOW\] No clock period constraints detected in design"
-  abc -liberty $::env(DONT_USE_SC_LIB) \
-      -constr $::env(OBJECTS_DIR)/abc.constr
-}
+puts "abc [join $abc_args " "]"
+abc {*}$abc_args
 
 # Replace undef values with defined constants
 setundef -zero
