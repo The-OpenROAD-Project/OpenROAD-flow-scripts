@@ -13,11 +13,15 @@ pipeline {
       stage('Local Build') {
         agent any;
         steps {
+          script{
             sharedFunctions.localBuild()
+          }
         }
         post {
             always {
-                sharedFunctions.postBuildLocalBuild()
+                script {
+                  sharedFunctions.postBuildLocalBuild()
+                }
             }
         }
       }
@@ -81,11 +85,15 @@ pipeline {
           stages {
             stage('Run Tests') {
                 steps {
+                  script{
                     sharedFunctions.runTests("${TEST_SLUG}")
+                  }  
                 }
                 post {
                     always {
+                      script{
                         sharedFunctions.postBuildRunTests("${TEST_SLUG}")
+                      } 
                     }
                 }
             }
@@ -95,36 +103,48 @@ pipeline {
 
       stage("Report Short Summary") {
           steps {
-            sharedFunctions.generateReportShortSummary()
+            script {
+              sharedFunctions.generateReportShortSummary()
+            }
           }
           post {
             always {
-              shared_functions.postBuildReportShortSummary("Report Short Summary")
+              script {
+                shared_functions.postBuildReportShortSummary("Report Short Summary")
+              }
             }
           }
       }
 
       stage("Report Summary") {
         steps {
-          shared_functions.generateReportSummary()
+          script {
+            shared_functions.generateReportSummary()
+          }
         }
       }
 
       stage("Report Full") {
         steps {
-          sharedFunctions.generateReportFull()
+          script {
+            sharedFunctions.generateReportFull()
+          }
         }
       }
 
       stage("Report HTML Table") {
         steps {
-          sharedFunctions.generateReportHtmlTable()
+          script {
+            sharedFunctions.generateReportHtmlTable()
+          }
         }
       }   
 
       stage('Upload Metadata') {
         steps {
-          sharedFunctions.uploadMetadata(${env.BRANCH_NAME}, ${env.BRANCH_NAME})
+          script {
+            sharedFunctions.uploadMetadata(${env.BRANCH_NAME}, ${env.BRANCH_NAME})
+          }
         }
       }   
       
