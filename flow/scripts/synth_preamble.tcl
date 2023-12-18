@@ -63,3 +63,27 @@ if {[info exist ::env(BLOCKS)]} {
   }
 }
 
+if {$::env(ABC_AREA)} {
+  puts "Using ABC area script."
+  set abc_script $::env(SCRIPTS_DIR)/abc_area.script
+} else {
+  puts "Using ABC speed script."
+  set abc_script $::env(SCRIPTS_DIR)/abc_speed.script
+}
+
+# Technology mapping for cells
+# ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
+set abc_args [list -script $abc_script \
+      -liberty $::env(DONT_USE_SC_LIB) \
+      -constr $::env(OBJECTS_DIR)/abc.constr]
+
+if {[info exist ::env(SDC_FILE_CLOCK_PERIOD)] && [file isfile $::env(SDC_FILE_CLOCK_PERIOD)]} {
+  puts "\[FLOW\] Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
+  set fp [open $::env(SDC_FILE_CLOCK_PERIOD) r]
+  set clock_period [string trim [read $fp]]
+  if {$clock_period != ""} {
+    puts "\[FLOW\] Setting clock period to $clock_period"
+    lappend abc_args -D $clock_period
+  }
+  close $fp
+}
