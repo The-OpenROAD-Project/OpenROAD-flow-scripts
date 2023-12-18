@@ -290,3 +290,12 @@ configuration file.
 |--------------------------|----------------------------------------------------------------------------------------------------|
 | `FASTROUTE_TCL`          | Specifies a Tcl scripts with commands to run before FastRoute.                                      |
 
+
+## GDS Streamout
+
+
+| Variable                 | Description                                                                                        |
+|--------------------------|----------------------------------------------------------------------------------------------------|
+| `USE_FILL`               | Whether to perform metal density filling. Default 0 (=off).                                        |
+| `SEAL_GDS`               | Seal macro to place around the design.                                                             |
+
