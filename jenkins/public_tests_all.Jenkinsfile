@@ -4,6 +4,16 @@ node {
   def jobOptions = [
     [$class: 'CopyArtifactPermission', project: "${JOB_NAME},${env.BRANCH_NAME}"]
   ]
+  configure { definition ->
+    // Remove the existing definition element
+    definition.remove(definition / delegate.definition)
+    // Create a new definition element with the class and plugin attributes
+    def myDef = definition / delegate.definition(class: 'org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition', plugin: 'workflow-cps@2.92')
+    // Add a scm element with the class attribute
+    myDef << scm(class: 'hudson.plugins.copyartifact.CopyArtifactPermissionProperty')
+    // Add a project element with the value of the copyArtifactPermission option
+    myDef / scm << project('${JOB_NAME},'+env.BRANCH_NAME)
+  }
 
   try {
     stage('Local Build') {
