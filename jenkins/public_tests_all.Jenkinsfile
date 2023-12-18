@@ -10,8 +10,18 @@ pipeline {
     }
 
     stages {
-      sharedFunctions.localBuild()
-      
+      stage('Local Build') {
+        agent any;
+        steps {
+            sharedFunctions.localBuild()
+        }
+        post {
+            always {
+                sharedFunctions.postBuildLocalBuild()
+            }
+        }
+      }
+
       stage('Tests') {
         matrix {
           axes {
@@ -68,20 +78,63 @@ pipeline {
                     "riscv32i ihp-sg13g2";
             }
           }
-
           stages {
-            sharedFunctions.runTests("${TEST_SLUG}")
-          }
+            stage('Run Tests') {
+                steps {
+                    sharedFunctions.runTests("${TEST_SLUG}")
+                }
+                post {
+                    always {
+                        sharedFunctions.postBuildRunTests("${TEST_SLUG}")
+                    }
+                }
+            }
+        }
         }
       }
 
-      sharedFunctions.generateReportShortSummary()
-      sharedFunctions.generateReportSummary()
-      sharedFunctions.generateReportFull()
-      sharedFunctions.generateReportHtmlTable()
+      stage("Report Short Summary") {
+          steps {
+            sharedFunctions.generateReportShortSummary()
+          }
+          post {
+            always {
+              shared_functions.postBuildReportShortSummary("Report Short Summary")
+            }
+          }
+      }
+
+      stage("Report Summary") {
+        steps {
+          shared_functions.generateReportSummary()
+        }
+      }
+
+      stage("Report Full") {
+        steps {
+          sharedFunctions.generateReportFull()
+        }
+      }
+
+      stage("Report HTML Table") {
+        steps {
+          sharedFunctions.generateReportHtmlTable()
+        }
+      }   
+
+      stage('Upload Metadata') {
+        steps {
+          sharedFunctions.uploadMetadata(${env.BRANCH_NAME}, ${env.BRANCH_NAME})
+        }
+      }   
       
-      sharedFunctions.uploadMetadata(${env.BRANCH_NAME}, ${env.BRANCH_NAME})
     }
 
-    sharedFunctions.handleFailurePostBuild()
+    post {
+        failure {
+            script {
+                sharedFunctions.handleFailurePostBuild()
+            }
+        }
+    }
 }
