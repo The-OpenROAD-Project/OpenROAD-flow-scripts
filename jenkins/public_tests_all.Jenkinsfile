@@ -4,7 +4,7 @@ node {
   def jobOptions = [
     [$class: 'CopyArtifactPermission', project: "${JOB_NAME},${env.BRANCH_NAME}"]
   ]
-  
+
   properties([
     [
         $class: 'CopyArtifactPermissionProperty',
@@ -12,10 +12,15 @@ node {
     ]
   ])
 
+  checkout([$class: 'GitSCM', 
+            branches: [[name: 'refs/heads/${env.BRANCH_NAME}']], 
+            userRemoteConfigs: scm.userRemoteConfigs])
+
   try {
     stage('Local Build') {
       node {
         try {
+            sh "ls"
             sh "./build_openroad.sh --local"
             stash name: "install", includes: "tools/install/**"
         } catch (Exception ex) {
