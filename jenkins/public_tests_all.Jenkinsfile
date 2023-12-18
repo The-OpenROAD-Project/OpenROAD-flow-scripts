@@ -12,9 +12,9 @@ node {
     ]
   ])
 
-  checkout([$class: 'GitSCM', 
-            branches: [[name: 'refs/heads/${env.BRANCH_NAME}']], 
-            userRemoteConfigs: scm.userRemoteConfigs])
+  // checkout([$class: 'GitSCM', 
+  //           branches: [[name: 'refs/heads/${env.BRANCH_NAME}']], 
+  //           userRemoteConfigs: scm.userRemoteConfigs])
 
   try {
     stage('Local Build') {
