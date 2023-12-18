@@ -488,10 +488,11 @@ $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 
 .PHONY: clean_synth
 clean_synth:
-	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
-	rm -f  $(REPORTS_DIR)/synth_*
-	rm -f  $(LOG_DIR)/1_*
-	rm -f  $(SYNTH_STOP_MODULE_SCRIPT)
+	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
+	rm -f $(REPORTS_DIR)/synth_*
+	rm -f $(LOG_DIR)/1_*
+	rm -f $(SYNTH_STOP_MODULE_SCRIPT)
+	rm -f $(SDC_FILE_CLOCK_PERIOD)
 	rm -rf _tmp_yosys-abc-*
 
 
