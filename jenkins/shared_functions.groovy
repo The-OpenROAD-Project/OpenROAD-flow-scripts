@@ -1,28 +1,24 @@
 // Defing shared functions to be used by different pipelines
 
 def checkoutMaster() {
-    stage("Checkout master branch") {
-      steps {
-        checkout([$class: "GitSCM",
-              branches: [[name: "*/master"]],
-              doGenerateSubmoduleConfigurations: false,
-              extensions: [
-                [
-                  $class: "SubmoduleOption",
-                  disableSubmodules: false,
-                  parentCredentials: true,
-                  recursiveSubmodules: true,
-                  reference: "",
-                  trackingSubmodules: false
-                ],
-                [
-                  $class: "RelativeTargetDirectory",
-                  relativeTargetDir: "tools/OpenROAD"
-                ]
-              ]
-            ])
-      }
-    }
+    checkout([$class: "GitSCM",
+        branches: [[name: "*/master"]],
+        doGenerateSubmoduleConfigurations: false,
+        extensions: [
+        [
+            $class: "SubmoduleOption",
+            disableSubmodules: false,
+            parentCredentials: true,
+            recursiveSubmodules: true,
+            reference: "",
+            trackingSubmodules: false
+        ],
+        [
+            $class: "RelativeTargetDirectory",
+            relativeTargetDir: "tools/OpenROAD"
+        ]
+        ]
+    ])
 }
 
 def localBuild(options = "--local") {
