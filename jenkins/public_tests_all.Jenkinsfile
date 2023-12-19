@@ -1,6 +1,3 @@
-properties([
-  copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
-]);
 node {
   def MAKE_ISSUE = 1
 
@@ -17,6 +14,9 @@ node {
   // stage('Checkout'){
   //   checkout scm
   // }
+  properties([
+    copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
+  ]);
 
   try {
     stage('Local Build') {
