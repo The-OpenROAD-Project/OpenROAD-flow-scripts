@@ -11,28 +11,32 @@ node {
   //           branches: [[name: 'refs/heads/${env.BRANCH_NAME}']], 
   //           userRemoteConfigs: scm.userRemoteConfigs])
 
-  // stage('Checkout'){
-  //   checkout scm
-  // }
   properties([
     copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
   ]);
 
+  def shared_functions = load("shared_functions_scripted.groovy")
+
+  stage('Checkout'){
+    checkout scm
+  }
+
   try {
     stage('Local Build') {
       node {
-        try {
-            sh "ls"
-            sh "./build_openroad.sh --local"
-            stash name: "install", includes: "tools/install/**"
-        } catch (Exception ex) {
-            currentBuild.result = 'FAILURE'
-            throw ex
-        } finally {
-            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                archiveArtifacts artifacts: "build_openroad.log"
-            }
-        }
+        // try {
+        //     sh "ls"
+        //     sh "./build_openroad.sh --local"
+        //     stash name: "install", includes: "tools/install/**"
+        // } catch (Exception ex) {
+        //     currentBuild.result = 'FAILURE'
+        //     throw ex
+        // } finally {
+        //     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        //         archiveArtifacts artifacts: "build_openroad.log"
+        //     }
+        // }
+        shared_functions_scripted.localBuild()
       }
     }
 
