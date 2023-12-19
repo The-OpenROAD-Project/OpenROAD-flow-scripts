@@ -1,9 +1,9 @@
 node {
   def MAKE_ISSUE = 1
 
-  def jobOptions = [
-    [$class: 'CopyArtifactPermission', project: "${JOB_NAME},${env.BRANCH_NAME}"]
-  ]
+  // def jobOptions = [
+  //   [$class: 'CopyArtifactPermission', project: "${JOB_NAME},${env.BRANCH_NAME}"]
+  // ]
 
   properties([
     [
@@ -15,6 +15,10 @@ node {
   // checkout([$class: 'GitSCM', 
   //           branches: [[name: 'refs/heads/${env.BRANCH_NAME}']], 
   //           userRemoteConfigs: scm.userRemoteConfigs])
+
+  stage('Checkout'){
+    checkout scm
+  }
 
   try {
     stage('Local Build') {
