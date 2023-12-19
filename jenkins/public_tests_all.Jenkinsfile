@@ -11,14 +11,17 @@ node {
         projectNames: '${JOB_NAME},'+env.BRANCH_NAME
     ]
   ])
+  options {
+    copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME);
+  }
 
   // checkout([$class: 'GitSCM', 
   //           branches: [[name: 'refs/heads/${env.BRANCH_NAME}']], 
   //           userRemoteConfigs: scm.userRemoteConfigs])
 
-  stage('Checkout'){
-    checkout scm
-  }
+  // stage('Checkout'){
+  //   checkout scm
+  // }
 
   try {
     stage('Local Build') {
