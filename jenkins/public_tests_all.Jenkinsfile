@@ -1,15 +1,14 @@
+properties([
+  [
+    copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
+  ]
+]);
 node {
   def MAKE_ISSUE = 1
 
   // def jobOptions = [
   //   [$class: 'CopyArtifactPermission', project: "${JOB_NAME},${env.BRANCH_NAME}"]
   // ]
-
-  properties([
-    [
-      copyArtifactPermission(projectNames: '${JOB_NAME},'+env.BRANCH_NAME),
-    ]
-  ])
 
   // copyArtifacts(projectName: '${JOB_NAME},'+env.BRANCH_NAME)
 
