@@ -7,13 +7,11 @@ node {
 
   properties([
     [
-        $class: 'CopyArtifactPermissionProperty',
-        projectNames: '${JOB_NAME},'+env.BRANCH_NAME
+      copyArtifactPermission(projectNames: '${JOB_NAME},'+env.BRANCH_NAME),
     ]
   ])
-  options {
-    copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME);
-  }
+
+  // copyArtifacts(projectName: '${JOB_NAME},'+env.BRANCH_NAME)
 
   // checkout([$class: 'GitSCM', 
   //           branches: [[name: 'refs/heads/${env.BRANCH_NAME}']], 
