@@ -21,22 +21,25 @@ node {
     checkout scm
   }
 
-  stage('Build and Push Docker Image') {
-    if (changeset ["**/etc/DependencyInstaller.sh", "**/etc/DockerHelper.sh", "**/.github/workflows/github-actions-cron-test-installer.yml", "**/build_openroad.sh", "**/env.sh", "**/flow/Makefile"]) {
-      def osList = ['ubuntu20.04', 'ubuntu22.04', 'centos7']
-      for (int i = 0; i < osList.size(); i++) {
-        def os = osList[i]
-        echo "Building Docker image for OS: ${os}"
-        sh "./etc/DockerHelper.sh create -target=dev -os=${os}"
-        sh "./etc/DockerHelper.sh push -target=dev -os=${os}"
-      }
-    }
-  }
-
-  docker.image('openroad/flow-ubuntu22.04-dev').inside {
+  // stage('Build and Push Docker Image') {
+  //   //if not master push to tagged commit
+  //   if (changeset ["**/etc/DependencyInstaller.sh", "**/etc/DockerHelper.sh", "**/.github/workflows/github-actions-cron-test-installer.yml", "**/build_openroad.sh", "**/env.sh", "**/flow/Makefile"]) {
+  //     def osList = ['ubuntu20.04', 'ubuntu22.04', 'centos7']
+  //     for (int i = 0; i < osList.size(); i++) {
+  //       def os = osList[i]
+  //       echo "Building Docker image for OS: ${os}"
+  //       sh "./etc/DockerHelper.sh create -target=dev -os=${os}"
+  //       sh "./etc/DockerHelper.sh push -target=dev -os=${os}" // add tag to be the commit tag
+  //     }
+  //   }
+  // }
+  // function to check if current build is from master, has logic --> set tag to be latest or commit based on changes in installer script
+  // function should include email target list for different branches
+  // docker.image('openroad/flow-ubuntu22.04-dev').inside {
     try {
       stage('Local Build') {
         node {
+          checkout scm
           try {
               sh "ls"
               sh "./build_openroad.sh --local"
@@ -139,6 +142,7 @@ node {
       }
 
       stage('Report Short Summary') {
+        checkout scm
         try {
           copyArtifacts filter: "flow/logs/**/*",
                         projectName: '${JOB_NAME}',
@@ -147,26 +151,8 @@ node {
                         projectName: '${JOB_NAME}',
                         selector: specific('${BUILD_NUMBER}')
           sh "flow/util/genReport.py -sv"
-        } finally {
-          archiveArtifacts artifacts: "flow/reports/report-summary.log"
-          archiveArtifacts artifacts: "flow/reports/**/report*.log"
-        }
-      }
-
-      stage("Report Summary") {
-        node {
           sh "flow/util/genReport.py -svv"
-        }
-      }
-
-      stage("Report Full") {
-        node {
           sh "flow/util/genReport.py -vvvv"
-        }
-      }
-
-      stage("Report HTML Table") {
-        node {
           sh "flow/util/genReportTable.py"
           publishHTML([
               allowMissing: true,
@@ -177,11 +163,45 @@ node {
               reportFiles: "report-table.html,report-gallery*.html",
               reportTitles: "Flow Report"
           ])
+        } finally {
+          archiveArtifacts artifacts: "flow/reports/report-summary.log"
+          archiveArtifacts artifacts: "flow/reports/**/report*.log"
         }
       }
 
+      // stage("Report Summary") {
+      //   node {
+      //     checkout scm
+      //     sh "flow/util/genReport.py -svv"
+      //   }
+      // }
+
+      // stage("Report Full") {
+      //   node {
+      //     checkout scm
+      //     sh "flow/util/genReport.py -vvvv"
+      //   }
+      // }
+
+      // stage("Report HTML Table") {
+      //   node {
+      //     checkout scm
+      //     sh "flow/util/genReportTable.py"
+      //     publishHTML([
+      //         allowMissing: true,
+      //         alwaysLinkToLastBuild: true,
+      //         keepAll: true,
+      //         reportName: "Report",
+      //         reportDir: "flow/reports",
+      //         reportFiles: "report-table.html,report-gallery*.html",
+      //         reportTitles: "Flow Report"
+      //     ])
+      //   }
+      // }
+
       stage('Upload Metadata') {
         node {
+          checkout scm
           withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
             sh """
               python3 flow/util/uploadMetadata.py \
@@ -230,4 +250,4 @@ node {
       }
     } 
   }
-}
+// }
