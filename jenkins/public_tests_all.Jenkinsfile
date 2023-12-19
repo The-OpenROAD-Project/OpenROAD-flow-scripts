@@ -1,7 +1,5 @@
 properties([
-  [
-    copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
-  ]
+  copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
 ]);
 node {
   def MAKE_ISSUE = 1
