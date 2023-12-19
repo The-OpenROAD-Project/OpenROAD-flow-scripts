@@ -212,6 +212,11 @@ export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
+# BLOCKS is ORFS specific and is used to trigger hierarchical flow,
+# MACROS is a space separated list of macros used in the design,
+# but not necessarily built by ORFS using the BLOCKS mechanism.
+export MACROS ?= $(BLOCKS)
+
 ifdef BLOCKS
 ifeq ($(MAKELEVEL),0)
   $(info [INFO][FLOW] Invoked hierarchical flow.)
