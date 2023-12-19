@@ -22,7 +22,7 @@ node {
   }
 
   stage('Build and Push Docker Image') {
-    if (changeset "**/etc/DependencyInstaller.sh" || changeset "**/etc/DockerHelper.sh" || changeset "**/.github/workflows/github-actions-cron-test-installer.yml" || changeset "**/build_openroad.sh" || changeset "**/env.sh" || changeset "**/flow/Makefile") {
+    if (changeset ["**/etc/DependencyInstaller.sh", "**/etc/DockerHelper.sh", "**/.github/workflows/github-actions-cron-test-installer.yml", "**/build_openroad.sh", "**/env.sh", "**/flow/Makefile"]) {
       def osList = ['ubuntu20.04', 'ubuntu22.04', 'centos7']
       for (int i = 0; i < osList.size(); i++) {
         def os = osList[i]
