@@ -7,6 +7,8 @@ if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 &
 
 if { [info exist ::env(SYNTH_GUT)] && $::env(SYNTH_GUT) == 1 } {
   hierarchy -check -top $::env(DESIGN_NAME)
+  # /deletes all cells at the top level, which will quickly optimize away
+  # everything else, including macros.
   delete $::env(DESIGN_NAME)/c:*
 }
 
