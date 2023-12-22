@@ -5,8 +5,24 @@ if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 &
   source $::env(SYNTH_STOP_MODULE_SCRIPT)
 }
 
+set fast [expr [info exist ::env(SYNTH_FAST)] && $::env(SYNTH_FAST) == 1]
+
+set synth_args $::env(SYNTH_ARGS)
+if {[expr $fast == 1]} {
+  puts "Fast synthesis"
+  lappend synth_args -nofsm -noalumacc -noshare -run :fine
+}
+
 # Generic synthesis
-synth  -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS)
+synth -top $::env(DESIGN_NAME) {*}$synth_args
+
+if {[expr $fast == 1]} {
+  puts "Fast synthesis, replacing yosys synth 'fine' label with minimum stages"
+  memory_map
+  techmap
+  abc -fast
+  synth -top $::env(DESIGN_NAME) -run check:
+}
 
 if { [info exists ::env(USE_LSORACLE)] } {
     set lso_script [open $::env(OBJECTS_DIR)/lso.script w]
@@ -22,8 +38,9 @@ if { [info exists ::env(USE_LSORACLE)] } {
     techmap
 }
 
-# Optimize the design
-opt -purge
+if {[expr $fast == 0]} {
+  opt -purge
+}
 
 # Technology mapping of adders
 if {[info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)]} {
@@ -32,8 +49,10 @@ if {[info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)]} 
   # map full adders
   techmap -map $::env(ADDER_MAP_FILE)
   techmap
-  # Quick optimization
-  opt -fast -purge
+  if {[expr $fast == 0]} {
+    # Quick optimization
+    opt -fast -purge
+  }
 }
 
 # Technology mapping of latches
@@ -48,13 +67,19 @@ if {[info exist ::env(DFF_LIB_FILE)]} {
 } else {
   dfflibmap -liberty $::env(DONT_USE_SC_LIB)
 }
-opt
 
+if {[expr $fast == 0]} {
+  opt
+}
 
 set constr [open $::env(OBJECTS_DIR)/abc.constr w]
 puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
 puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
 close $constr
+
+if {[expr $fast == 1]} {
+  lappend abc_args -fast
+}
 
 puts "abc [join $abc_args " "]"
 abc {*}$abc_args

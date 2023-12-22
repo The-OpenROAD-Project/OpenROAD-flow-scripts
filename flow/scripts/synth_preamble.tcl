@@ -17,14 +17,10 @@ if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
   set vIdirsArgs [join $vIdirsArgs]
 }
 
-
 # Read verilog files
 foreach file $::env(VERILOG_FILES) {
   read_verilog -defer -sv {*}$vIdirsArgs $file
 }
-
-
-
 
 # Read standard cells and macros as blackbox inputs
 # These libs have their dont_use properties set accordingly
