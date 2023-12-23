@@ -17,9 +17,9 @@ node {
 
   // def shared_functions = load("shared_functions_scripted.groovy")
 
-  stage('Checkout'){
-    checkout scm
-  }
+  // stage('Checkout'){
+  //   checkout scm
+  // }
 
   // stage('Build and Push Docker Image') {
   //   //if not master push to tagged commit
@@ -38,8 +38,8 @@ node {
   // docker.image('openroad/flow-ubuntu22.04-dev').inside {
     try {
       stage('Local Build') {
-        node {
-          checkout scm
+        // node {
+          // checkout scm
           try {
               sh "ls"
               sh "./build_openroad.sh --local"
@@ -51,7 +51,7 @@ node {
               catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                   archiveArtifacts artifacts: "build_openroad.log"
               }
-          }
+          // }
           // shared_functions_scripted.localBuild()
         }
       }
@@ -110,7 +110,8 @@ node {
           stage(testSlug) {
             try {
               timeout(time: 6, unit: "HOURS") {
-                node {
+                // node {
+                  // checkout scm
                   unstash "install"
                   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     if (testSlug == 'docker build') {
@@ -128,7 +129,7 @@ node {
                       sh 'nice flow/test/test_helper.sh ${testSlug}'
                     }
                   }
-                }
+                // }
               }
             }
             finally {
@@ -142,7 +143,7 @@ node {
       }
 
       stage('Report Short Summary') {
-        checkout scm
+        // checkout scm
         try {
           copyArtifacts filter: "flow/logs/**/*",
                         projectName: '${JOB_NAME}',
@@ -151,9 +152,9 @@ node {
                         projectName: '${JOB_NAME}',
                         selector: specific('${BUILD_NUMBER}')
           sh "flow/util/genReport.py -sv"
-          sh "flow/util/genReport.py -svv"
-          sh "flow/util/genReport.py -vvvv"
-          sh "flow/util/genReportTable.py"
+          // sh "flow/util/genReport.py -svv"
+          // sh "flow/util/genReport.py -vvvv"
+          // sh "flow/util/genReportTable.py"
           publishHTML([
               allowMissing: true,
               alwaysLinkToLastBuild: true,
@@ -169,38 +170,38 @@ node {
         }
       }
 
-      // stage("Report Summary") {
-      //   node {
-      //     checkout scm
-      //     sh "flow/util/genReport.py -svv"
-      //   }
-      // }
+      stage("Report Summary") {
+        // node {
+          // checkout scm
+        sh "flow/util/genReport.py -svv"
+        // }
+      }
 
-      // stage("Report Full") {
-      //   node {
-      //     checkout scm
-      //     sh "flow/util/genReport.py -vvvv"
-      //   }
-      // }
+      stage("Report Full") {
+        // node {
+          // checkout scm
+          sh "flow/util/genReport.py -vvvv"
+        // }
+      }
 
-      // stage("Report HTML Table") {
-      //   node {
-      //     checkout scm
-      //     sh "flow/util/genReportTable.py"
-      //     publishHTML([
-      //         allowMissing: true,
-      //         alwaysLinkToLastBuild: true,
-      //         keepAll: true,
-      //         reportName: "Report",
-      //         reportDir: "flow/reports",
-      //         reportFiles: "report-table.html,report-gallery*.html",
-      //         reportTitles: "Flow Report"
-      //     ])
-      //   }
-      // }
+      stage("Report HTML Table") {
+        // node {
+          // checkout scm
+          sh "flow/util/genReportTable.py"
+          publishHTML([
+              allowMissing: true,
+              alwaysLinkToLastBuild: true,
+              keepAll: true,
+              reportName: "Report",
+              reportDir: "flow/reports",
+              reportFiles: "report-table.html,report-gallery*.html",
+              reportTitles: "Flow Report"
+          ])
+        // }
+      }
 
       stage('Upload Metadata') {
-        node {
+        // node {
           checkout scm
           withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
             sh """
@@ -213,7 +214,7 @@ node {
                 --changeBranch ${env.CHANGE_BRANCH} \
               """ + '--cred ${db_cred}'
           }
-        }
+        // }
       }
 
     } finally {
