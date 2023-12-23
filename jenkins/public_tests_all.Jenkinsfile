@@ -110,8 +110,8 @@ node {
           stage(testSlug) {
             try {
               timeout(time: 6, unit: "HOURS") {
-                // node {
-                  // checkout scm
+                node {
+                  checkout scm
                   unstash "install"
                   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                     if (testSlug == 'docker build') {
@@ -129,7 +129,7 @@ node {
                       sh 'nice flow/test/test_helper.sh ${testSlug}'
                     }
                   }
-                // }
+                }
               }
             }
             finally {
