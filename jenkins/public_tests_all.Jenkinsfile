@@ -17,9 +17,9 @@ node {
 
   // def shared_functions = load("shared_functions_scripted.groovy")
 
-  // stage('Checkout'){
-  //   checkout scm
-  // }
+  stage('Checkout'){
+    checkout scm
+  }
 
   // stage('Build and Push Docker Image') {
   //   //if not master push to tagged commit
