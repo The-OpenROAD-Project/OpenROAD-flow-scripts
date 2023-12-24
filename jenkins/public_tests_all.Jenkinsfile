@@ -56,8 +56,8 @@ node {
         }
       }
 
-      stage('Tests') {
-        def testSlugs = ["docker build",
+      Map matrix_axes = [
+        TEST_SLUG: ["docker build",
                         "aes asap7",
                         "aes-mbff asap7",
                         "aes_lvt asap7",
@@ -106,40 +106,58 @@ node {
                         "gcd ihp-sg13g2",
                         "spi ihp-sg13g2",
                         "riscv32i ihp-sg13g2"]
-        for (testSlug in testSlugs) {
-          stage(testSlug) {
-            try {
-              timeout(time: 6, unit: "HOURS") {
-                node {
-                  checkout scm
-                  unstash "install"
-                  catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    if (testSlug == 'docker build') {
-                      retry(3) {
+      ]
+
+      List axes = getMatrixAxes(matrix_axes)
+
+      Map tasks = [failFast: false]
+      for(int i = 0; i < axes.size(); i++) {
+          // convert the Axis into valid values for withEnv step
+          Map axis = axes[i]
+          List axisEnv = axis.collect { k, v ->
+              "${k}=${v}"
+          }
+          tasks[axisEnv.join(', ')] = { ->
+              // node {
+                  // checkout scm
+                  withEnv(axisEnv) {
+                      stage("${TEST_SLUG}") {
                         try {
-                          sh "./build_openroad.sh --no_init"
+                          timeout(time: 6, unit: "HOURS") {
+                              unstash "install"
+                              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                                if ("${TEST_SLUG}" == 'docker build') {
+                                  retry(3) {
+                                    try {
+                                      sh "./build_openroad.sh --no_init"
+                                    }
+                                    catch (e) {
+                                      sleep(60)
+                                      sh 'exit 1'
+                                    }
+                                  }
+                                  sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit"
+                                } else {
+                                  sh 'nice flow/test/test_helper.sh ${TEST_SLUG}'
+                                }
+                              }
+                            }
+                          }
                         }
-                        catch (e) {
-                          sleep(60)
-                          sh 'exit 1'
+                        finally {
+                          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                            archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+                            archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+                          }
                         }
                       }
-                      sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit"
-                    } else {
-                      sh 'nice flow/test/test_helper.sh ${testSlug}'
-                    }
-                  }
-                }
+                  // }
               }
-            }
-            finally {
-              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-                archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-              }
-            }
           }
-        }
+      }
+
+      stage('Tests') {
+        parallel(tasks)
       }
 
       stage('Report Short Summary') {
