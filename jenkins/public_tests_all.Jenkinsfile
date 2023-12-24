@@ -118,12 +118,14 @@ node {
             List axisEnv = axis.collect { k, v ->
                 "${k}=${v}"
             }
-            tasks[axisEnv.join(', ')] = { ->
+            def currentSlug = axis.TEST_SLUG
+            tasks["${currentSlug}"] = {
+            // tasks[axisEnv.join(', ')] = { ->
                 // node {
                     // checkout scm
-                    withEnv(axisEnv) {
+                    // withEnv(axisEnv) {
                         stage("${TEST_SLUG}") {
-                          try {
+                          // try {
                             timeout(time: 6, unit: "HOURS") {
                                 unstash "install"
                                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -142,20 +144,23 @@ node {
                                     sh 'nice flow/test/test_helper.sh ${TEST_SLUG}'
                                   }
                                 }
-                              }
-                          }
-                          finally {
-                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                              archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-                              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
                             }
                           }
-                        }
-                      }
+                        // }
+                      // }
                     // }
                 }
             }
-          parallel(tasks)
+
+          try{
+             parallel(tasks)
+          } finally {
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+                archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+              }
+          }
+         
       }
 
       stage('Report Short Summary') {
