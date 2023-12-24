@@ -1,3 +1,17 @@
+@NonCPS
+List getMatrixAxes(Map matrix_axes) {
+    List axes = []
+    matrix_axes.each { axis, values ->
+        List axisList = []
+        values.each { value ->
+            axisList << [(axis): value]
+        }
+        axes << axisList
+    }
+    // calculate cartesian product
+    axes.combinations()*.sum()
+}
+
 node {
   def MAKE_ISSUE = 1
 
@@ -127,7 +141,6 @@ node {
                         stage("${TEST_SLUG}") {
                           // try {
                             timeout(time: 6, unit: "HOURS") {
-                                unstash "install"
                                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                                   if ("${TEST_SLUG}" == 'docker build') {
                                     retry(3) {
@@ -149,18 +162,26 @@ node {
                         // }
                       // }
                     // }
-                }
             }
+          }
+
+          def flow_files = findFiles(glob: 'flow/*tar.gz')
+          def logs_files = findFiles(glob: 'flow/logs/**/*')
+          def reports_files = findFiles(glob: 'flow/reports/**/*')
 
           try{
-             parallel(tasks)
+            unstash "install"
+            parallel(tasks)
           } finally {
-              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+              if(flow_files.length > 0) {
                 archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+              }
+              if(logs_files.length > 0 && reports_files.length > 0) {
                 archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
               }
+            }
           }
-         
       }
 
       stage('Report Short Summary') {
