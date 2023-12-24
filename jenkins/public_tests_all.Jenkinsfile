@@ -1,3 +1,16 @@
+List getMatrixAxes(Map matrix_axes) {
+  List axes = []
+  matrix_axes.each { axis, values ->
+      List axisList = []
+      values.each { value ->
+          axisList << [(axis): value]
+      }
+      axes << axisList
+  }
+  // calculate cartesian product
+  axes.combinations()*.sum()
+}
+
 node {
   def MAKE_ISSUE = 1
 
@@ -109,18 +122,7 @@ node {
                         "riscv32i ihp-sg13g2"]
         ]
 
-        List getMatrixAxes(Map matrix_axes) {
-            List axes = []
-            matrix_axes.each { axis, values ->
-                List axisList = []
-                values.each { value ->
-                    axisList << [(axis): value]
-                }
-                axes << axisList
-            }
-            // calculate cartesian product
-            axes.combinations()*.sum()
-        }
+        
 
         List axes = getMatrixAxes(matrix_axes)
 
