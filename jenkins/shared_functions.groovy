@@ -1,4 +1,17 @@
 // Defing shared functions to be used by different pipelines
+def isMasterBranch(String branchName) {
+    return branchName == 'master'
+} 
+
+def geTag(String branchName) {
+    if (changeset ["**/etc/DependencyInstaller.sh", "**/etc/DockerHelper.sh", "**/.github/workflows/github-actions-cron-test-installer.yml", "**/build_openroad.sh", "**/env.sh", "**/flow/Makefile"]) {
+        return "-sha"
+    } else if (branchName == 'master') {
+        return ""
+    } else {
+        return "-sha"
+    }
+}
 
 def checkoutMaster() {
     checkout([$class: "GitSCM",
