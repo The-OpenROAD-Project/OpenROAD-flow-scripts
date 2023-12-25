@@ -1,16 +1,3 @@
-List getMatrixAxes(Map matrix_axes) {
-  List axes = []
-  matrix_axes.each { axis, values ->
-      List axisList = []
-      values.each { value ->
-          axisList << [(axis): value]
-      }
-      axes << axisList
-  }
-  // calculate cartesian product
-  axes.combinations()*.sum()
-}
-
 node {
   def MAKE_ISSUE = 1
 
@@ -121,25 +108,30 @@ node {
                         "spi ihp-sg13g2",
                         "riscv32i ihp-sg13g2"]
         ]
+        def axes = matrix_axes.TEST_SLUG
 
-        
+        // for (axisValue in axes) {
+        //     tasks["Test_${axisValue}"] = {
+        //         node {
+        //             // Your test logic here
+        //             echo "Running test: ${axisValue}"
+        //         }
+        //     }
+        // }
 
-        List axes = getMatrixAxes(matrix_axes)
+        // List axes = getMatrixAxes(matrix_axes)
 
         Map tasks = [failFast: false]
-        for(int i = 0; i < axes.size(); i++) {
+        for (axisValue in axes) {
             // convert the Axis into valid values for withEnv step
-            Map axis = axes[i]
-            List axisEnv = axis.collect { k, v ->
-                "${k}=${v}"
-            }
-            def currentSlug = axis.TEST_SLUG
+            // Map axis = axisValue
+            def currentSlug = axisValue
             tasks["${currentSlug}"] = {
             // tasks[axisEnv.join(', ')] = { ->
                 // node {
                     // checkout scm
                     // withEnv(axisEnv) {
-                        stage("${TEST_SLUG}") {
+                        // stage("${TEST_SLUG}") {
                           // try {
                             timeout(time: 6, unit: "HOURS") {
                                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -159,7 +151,7 @@ node {
                                   }
                                 }
                             }
-                          }
+                          // }
                         // }
                       // }
                     // }
