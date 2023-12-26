@@ -15,11 +15,11 @@ node {
     copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
   ]);
 
-  def shared_functions = load("shared_functions_scripted.groovy")
-
   stage('Checkout'){
     checkout scm
   }
+
+  def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
 
   // stage('Build and Push Docker Image') {
   //   //if not master push to tagged commit
@@ -54,7 +54,6 @@ node {
         //   // }
           
         // }
-
         shared_functions_scripted.localBuild()
       }
 
@@ -174,75 +173,85 @@ node {
 
       stage('Report Short Summary') {
         // checkout scm
-        try {
-          copyArtifacts filter: "flow/logs/**/*",
-                        projectName: '${JOB_NAME}',
-                        selector: specific('${BUILD_NUMBER}')
-          copyArtifacts filter: "flow/reports/**/*",
-                        projectName: '${JOB_NAME}',
-                        selector: specific('${BUILD_NUMBER}')
-          sh "flow/util/genReport.py -sv"
-          // sh "flow/util/genReport.py -svv"
-          // sh "flow/util/genReport.py -vvvv"
-          // sh "flow/util/genReportTable.py"
-          publishHTML([
-              allowMissing: true,
-              alwaysLinkToLastBuild: true,
-              keepAll: true,
-              reportName: "Report",
-              reportDir: "flow/reports",
-              reportFiles: "report-table.html,report-gallery*.html",
-              reportTitles: "Flow Report"
-          ])
-        } finally {
-          archiveArtifacts artifacts: "flow/reports/report-summary.log"
-          archiveArtifacts artifacts: "flow/reports/**/report*.log"
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          try {
+            copyArtifacts filter: "flow/logs/**/*",
+                          projectName: '${JOB_NAME}',
+                          selector: specific('${BUILD_NUMBER}')
+            copyArtifacts filter: "flow/reports/**/*",
+                          projectName: '${JOB_NAME}',
+                          selector: specific('${BUILD_NUMBER}')
+            sh "flow/util/genReport.py -sv"
+            // sh "flow/util/genReport.py -svv"
+            // sh "flow/util/genReport.py -vvvv"
+            // sh "flow/util/genReportTable.py"
+            publishHTML([
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportName: "Report",
+                reportDir: "flow/reports",
+                reportFiles: "report-table.html,report-gallery*.html",
+                reportTitles: "Flow Report"
+            ])
+          } finally {
+            archiveArtifacts artifacts: "flow/reports/report-summary.log"
+            archiveArtifacts artifacts: "flow/reports/**/report*.log"
+          }
         }
       }
 
       stage("Report Summary") {
         // node {
           // checkout scm
-        sh "flow/util/genReport.py -svv"
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          sh "flow/util/genReport.py -svv"
+        }
         // }
       }
 
       stage("Report Full") {
         // node {
           // checkout scm
-          sh "flow/util/genReport.py -vvvv"
+          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+            sh "flow/util/genReport.py -vvvv"
+          }
         // }
       }
 
       stage("Report HTML Table") {
         // node {
           // checkout scm
-          sh "flow/util/genReportTable.py"
-          publishHTML([
-              allowMissing: true,
-              alwaysLinkToLastBuild: true,
-              keepAll: true,
-              reportName: "Report",
-              reportDir: "flow/reports",
-              reportFiles: "report-table.html,report-gallery*.html",
-              reportTitles: "Flow Report"
-          ])
+          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+            sh "flow/util/genReportTable.py"
+            publishHTML([
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportName: "Report",
+                reportDir: "flow/reports",
+                reportFiles: "report-table.html,report-gallery*.html",
+                reportTitles: "Flow Report"
+            ])
+          }
         // }
       }
 
       stage('Upload Metadata') {
         // node {
-          checkout scm
-          withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
-            sh """
-              python3 flow/util/uploadMetadata.py \
-                --buildID ${env.BUILD_ID} \
-                --branchName ${env.BRANCH_NAME} \
-                --commitSHA ${env.GIT_COMMIT} \
-                --jenkinsURL ${env.RUN_DISPLAY_URL} \
-                --pipelineID ${env.BUILD_TAG} \
-                --changeBranch ${env.CHANGE_BRANCH} \
-              """ + '--cred ${db_cred}'
+          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+            checkout scm
+            withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
+              sh """
+                python3 flow/util/uploadMetadata.py \
+                  --buildID ${env.BUILD_ID} \
+                  --branchName ${env.BRANCH_NAME} \
+                  --commitSHA ${env.GIT_COMMIT} \
+                  --jenkinsURL ${env.RUN_DISPLAY_URL} \
+                  --pipelineID ${env.BUILD_TAG} \
+                  --changeBranch ${env.CHANGE_BRANCH} \
+                """ + '--cred ${db_cred}'
+            }
           }
         // }
       }
