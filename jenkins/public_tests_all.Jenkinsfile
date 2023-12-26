@@ -15,7 +15,7 @@ node {
     copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
   ]);
 
-  // def shared_functions = load("shared_functions_scripted.groovy")
+  def shared_functions = load("shared_functions_scripted.groovy")
 
   stage('Checkout'){
     checkout scm
@@ -40,20 +40,22 @@ node {
       stage('Local Build') {
         // node {
           // checkout scm
-          try {
-              sh "ls"
-              sh "./build_openroad.sh --local"
-              stash name: "install", includes: "tools/install/**"
-          } catch (Exception ex) {
-              currentBuild.result = 'FAILURE'
-              throw ex
-          } finally {
-              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "build_openroad.log"
-              }
-          // }
-          // shared_functions_scripted.localBuild()
-        }
+        //   try {
+        //       sh "ls"
+        //       sh "./build_openroad.sh --local"
+        //       stash name: "install", includes: "tools/install/**"
+        //   } catch (Exception ex) {
+        //       currentBuild.result = 'FAILURE'
+        //       throw ex
+        //   } finally {
+        //       catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        //           archiveArtifacts artifacts: "build_openroad.log"
+        //       }
+        //   // }
+          
+        // }
+
+        shared_functions_scripted.localBuild()
       }
 
       stage('Tests') {
