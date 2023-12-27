@@ -38,23 +38,7 @@ node {
   // docker.image('openroad/flow-ubuntu22.04-dev').inside {
     try {
       stage('Local Build') {
-        // node {
-          // checkout scm
-        //   try {
-        //       sh "ls"
-        //       sh "./build_openroad.sh --local"
-        //       stash name: "install", includes: "tools/install/**"
-        //   } catch (Exception ex) {
-        //       currentBuild.result = 'FAILURE'
-        //       throw ex
-        //   } finally {
-        //       catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        //           archiveArtifacts artifacts: "build_openroad.log"
-        //       }
-        //   // }
-          
-        // }
-        shared_functions_scripted.localBuild()
+        shared_functions.localBuild()
       }
 
       stage('Tests') {
@@ -129,11 +113,11 @@ node {
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {
             // tasks[axisEnv.join(', ')] = { ->
-                // node {
+                node {
                     // checkout scm
                     // withEnv(axisEnv) {
                         // stage("${TEST_SLUG}") {
-                          // try {
+                          try {
                             unstash "install"
                             timeout(time: 6, unit: "HOURS") {
                                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -154,106 +138,116 @@ node {
                                   }
                                 }
                             }
-                          // }
+                            // shared_functions.runTests()
+                          } finally {
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                                archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+                                archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+                            }
+                          }
                         // }
                       // }
                     // }
             }
           }
 
-          try{
+          // try{
             parallel(tasks)
-          } finally {
-            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-                archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-            }
-          }
+          // } finally {
+          //   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+          //       archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+          //       archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+          //   }
+          // }
       }
 
       stage('Report Short Summary') {
         // checkout scm
-        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-          try {
-            copyArtifacts filter: "flow/logs/**/*",
-                          projectName: '${JOB_NAME}',
-                          selector: specific('${BUILD_NUMBER}')
-            copyArtifacts filter: "flow/reports/**/*",
-                          projectName: '${JOB_NAME}',
-                          selector: specific('${BUILD_NUMBER}')
-            sh "flow/util/genReport.py -sv"
-            // sh "flow/util/genReport.py -svv"
-            // sh "flow/util/genReport.py -vvvv"
-            // sh "flow/util/genReportTable.py"
-            publishHTML([
-                allowMissing: true,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportName: "Report",
-                reportDir: "flow/reports",
-                reportFiles: "report-table.html,report-gallery*.html",
-                reportTitles: "Flow Report"
-            ])
-          } finally {
-            archiveArtifacts artifacts: "flow/reports/report-summary.log"
-            archiveArtifacts artifacts: "flow/reports/**/report*.log"
-          }
-        }
+        // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+        //   try {
+        //     copyArtifacts filter: "flow/logs/**/*",
+        //                   projectName: '${JOB_NAME}',
+        //                   selector: specific('${BUILD_NUMBER}')
+        //     copyArtifacts filter: "flow/reports/**/*",
+        //                   projectName: '${JOB_NAME}',
+        //                   selector: specific('${BUILD_NUMBER}')
+        //     sh "flow/util/genReport.py -sv"
+        //     // sh "flow/util/genReport.py -svv"
+        //     // sh "flow/util/genReport.py -vvvv"
+        //     // sh "flow/util/genReportTable.py"
+        //     publishHTML([
+        //         allowMissing: true,
+        //         alwaysLinkToLastBuild: true,
+        //         keepAll: true,
+        //         reportName: "Report",
+        //         reportDir: "flow/reports",
+        //         reportFiles: "report-table.html,report-gallery*.html",
+        //         reportTitles: "Flow Report"
+        //     ])
+        //   } finally {
+        //     archiveArtifacts artifacts: "flow/reports/report-summary.log"
+        //     archiveArtifacts artifacts: "flow/reports/**/report*.log"
+        //   }
+        // }
+        shared_functions.generateReportShortSummary()
       }
 
       stage("Report Summary") {
         // node {
           // checkout scm
-        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-          sh "flow/util/genReport.py -svv"
-        }
+        // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+        //   sh "flow/util/genReport.py -svv"
         // }
+        // }
+        shared_functions.generateReportSummary()
       }
 
       stage("Report Full") {
         // node {
           // checkout scm
-          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            sh "flow/util/genReport.py -vvvv"
-          }
+          // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          //   sh "flow/util/genReport.py -vvvv"
+          // }
         // }
+        shared_functions.generateReportFull()
       }
 
       stage("Report HTML Table") {
         // node {
           // checkout scm
-          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            sh "flow/util/genReportTable.py"
-            publishHTML([
-                allowMissing: true,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportName: "Report",
-                reportDir: "flow/reports",
-                reportFiles: "report-table.html,report-gallery*.html",
-                reportTitles: "Flow Report"
-            ])
-          }
+          // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          //   sh "flow/util/genReportTable.py"
+          //   publishHTML([
+          //       allowMissing: true,
+          //       alwaysLinkToLastBuild: true,
+          //       keepAll: true,
+          //       reportName: "Report",
+          //       reportDir: "flow/reports",
+          //       reportFiles: "report-table.html,report-gallery*.html",
+          //       reportTitles: "Flow Report"
+          //   ])
+          // }
         // }
       }
 
       stage('Upload Metadata') {
         // node {
-          catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            checkout scm
-            withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
-              sh """
-                python3 flow/util/uploadMetadata.py \
-                  --buildID ${env.BUILD_ID} \
-                  --branchName ${env.BRANCH_NAME} \
-                  --commitSHA ${env.GIT_COMMIT} \
-                  --jenkinsURL ${env.RUN_DISPLAY_URL} \
-                  --pipelineID ${env.BUILD_TAG} \
-                  --changeBranch ${env.CHANGE_BRANCH} \
-                """ + '--cred ${db_cred}'
-            }
-          }
+          // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+          //   checkout scm
+          //   withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
+          //     sh """
+          //       python3 flow/util/uploadMetadata.py \
+          //         --buildID ${env.BUILD_ID} \
+          //         --branchName ${env.BRANCH_NAME} \
+          //         --commitSHA ${env.GIT_COMMIT} \
+          //         --jenkinsURL ${env.RUN_DISPLAY_URL} \
+          //         --pipelineID ${env.BUILD_TAG} \
+          //         --changeBranch ${env.CHANGE_BRANCH} \
+          //       """ + '--cred ${db_cred}'
+          //   }
+          // }
         // }
+        shared_functions.uploadMetadata(${env.BRANCH_NAME}, ${env.BRANCH_NAME})
       }
 
     } finally {
@@ -264,15 +258,15 @@ node {
                       selector: specific("${BUILD_NUMBER}")
 
               def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
-              def EMAIL_TO
+              def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME)
 
-              if (env.BRANCH_NAME == "master") {
-                  echo("Main development branch: report to stakeholders and commit author.")
-                  EMAIL_TO = "${COMMIT_AUTHOR_EMAIL}, \$DEFAULT_RECIPIENTS"
-              } else {
-                  echo("Feature development branch: report only to commit author.")
-                  EMAIL_TO = "${COMMIT_AUTHOR_EMAIL}"
-              }
+              // if (env.BRANCH_NAME == "master") {
+              //     echo("Main development branch: report to stakeholders and commit author.")
+              //     EMAIL_TO = "${COMMIT_AUTHOR_EMAIL}, \$DEFAULT_RECIPIENTS"
+              // } else {
+              //     echo("Feature development branch: report only to commit author.")
+              //     EMAIL_TO = "${COMMIT_AUTHOR_EMAIL}"
+              // }
 
               emailext (
                   to: EMAIL_TO,
@@ -289,5 +283,6 @@ node {
           }
       }
     } 
-  }
+    
+    }
 // }
