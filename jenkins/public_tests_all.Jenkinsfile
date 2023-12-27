@@ -117,42 +117,47 @@ node {
                     // checkout scm
                     // withEnv(axisEnv) {
                         // stage("${TEST_SLUG}") {
-                          try {
-                            unstash "install"
-                            timeout(time: 6, unit: "HOURS") {
-                                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                                  if ("${currentSlug}" == 'docker build') {
-                                    retry(3) {
-                                      try {
-                                        sh "./build_openroad.sh --no_init"
-                                      }
-                                      catch (e) {
-                                        sleep(60)
-                                        sh 'exit 1'
-                                      }
-                                    }
-                                    sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit"
-                                  } else {
-                                    echo "${currentSlug}"
-                                    sh "nice flow/test/test_helper.sh ${currentSlug}"
+                      try {
+                        unstash "install"
+                        timeout(time: 6, unit: "HOURS") {
+                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                              if ("${currentSlug}" == 'docker build') {
+                                retry(3) {
+                                  try {
+                                    sh "./build_openroad.sh --no_init"
+                                  }
+                                  catch (e) {
+                                    sleep(60)
+                                    sh 'exit 1'
                                   }
                                 }
+                                sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit"
+                              } else {
+                                echo "${currentSlug}"
+                                sh "nice flow/test/test_helper.sh ${currentSlug}"
+                              }
                             }
-                            // shared_functions.runTests()
-                          } finally {
-                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                                archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-                                archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-                            }
-                          }
+                        }
+                        // shared_functions.runTests()
+                      } finally {
+                        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                            archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+                            archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+                        }
+                      }
+                    // }
+                  // }
+                // }
+                }
+              }
                         // }
                       // }
                     // }
-            }
-          }
+        }
+          
 
           // try{
-            parallel(tasks)
+        parallel(tasks)
           // } finally {
           //   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
           //       archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
