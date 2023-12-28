@@ -23,3 +23,7 @@ if {[info exists ::env(CORNERS)]} {
     read_liberty $libFile
   }
 }
+
+if {[info exists ::env(PLATFORM)] && $::env(PLATFORM) == "asap7"} {
+   unsuppress_message STA 164
+}
