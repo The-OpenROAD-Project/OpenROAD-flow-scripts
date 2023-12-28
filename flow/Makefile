@@ -464,6 +464,7 @@ do-synth-report:
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
+SYNTH_PREVIEW_SCRIPT ?= $(SCRIPTS_DIR)/synth_preview.tcl
 
 $(SYNTH_STOP_MODULE_SCRIPT):
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
@@ -489,6 +490,19 @@ do-yosys: yosys-dependencies
 
 $(RESULTS_DIR)/1_1_yosys.v: $(SDC_FILE_CLOCK_PERIOD)
 	$(UNSET_AND_MAKE) do-yosys
+
+$(RESULTS_DIR)/1_0_preview.v:
+	$(UNSET_AND_MAKE) do-synth-preview
+
+.PHONY: synth-preview
+synth-preview: $(RESULTS_DIR)/1_0_preview.v $(RESULTS_DIR)/1_synth.sdc
+	$(UNSET_AND_MAKE) do-synth-preview
+
+.PHONY: do-synth-preview
+do-synth-preview: yosys-dependencies
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_PREVIEW_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_0_preview.log
+
 
 $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
 	mkdir -p $(REPORTS_DIR)
@@ -1047,6 +1061,14 @@ gui_synth:
 .PHONY: open_synth
 open_synth:
 	$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
+
+.PHONY: gui_synth_preview
+gui_synth_preview:
+	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/load-synth-preview.tcl
+
+.PHONY: open_synth_preview
+open_synth_preview:
+	$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/load-synth-preview.tcl
 
 define OPEN_GUI_SHORTCUT
 .PHONY: gui_$(1) open_$(1)
