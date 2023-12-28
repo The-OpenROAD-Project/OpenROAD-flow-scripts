@@ -114,7 +114,7 @@ node {
             tasks["${currentSlug}"] = {
             // tasks[axisEnv.join(', ')] = { ->
                 node {
-                    // checkout scm
+                    checkout scm
                     // withEnv(axisEnv) {
                         // stage("${TEST_SLUG}") {
                       try {
