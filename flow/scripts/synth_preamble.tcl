@@ -87,3 +87,14 @@ if {[info exist ::env(SDC_FILE_CLOCK_PERIOD)] && [file isfile $::env(SDC_FILE_CL
   }
   close $fp
 }
+
+# Create argument list for stat
+set stat_libs ""
+foreach lib $::env(DONT_USE_LIBS) {
+  append stat_libs "-liberty $lib "
+}
+
+set constr [open $::env(OBJECTS_DIR)/abc.constr w]
+puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
+puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
+close $constr

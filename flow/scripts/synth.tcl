@@ -57,12 +57,6 @@ if {[info exist ::env(DFF_LIB_FILE)]} {
 }
 opt
 
-
-set constr [open $::env(OBJECTS_DIR)/abc.constr w]
-puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
-puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
-close $constr
-
 puts "abc [join $abc_args " "]"
 abc {*}$abc_args
 
@@ -86,11 +80,6 @@ insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
 # Reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check
 
-# Create argument list for stat
-set stat_libs ""
-foreach lib $::env(DONT_USE_LIBS) {
-  append stat_libs "-liberty $lib "
-}
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
 
 # Write synthesized design
