@@ -1,16 +1,6 @@
 node {
   def MAKE_ISSUE = 1
 
-  // def jobOptions = [
-  //   [$class: 'CopyArtifactPermission', project: "${JOB_NAME},${env.BRANCH_NAME}"]
-  // ]
-
-  // copyArtifacts(projectName: '${JOB_NAME},'+env.BRANCH_NAME)
-
-  // checkout([$class: 'GitSCM', 
-  //           branches: [[name: 'refs/heads/${env.BRANCH_NAME}']], 
-  //           userRemoteConfigs: scm.userRemoteConfigs])
-
   properties([
     copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
   ]);
@@ -20,22 +10,22 @@ node {
   }
 
   def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
-
-  // stage('Build and Push Docker Image') {
-  //   //if not master push to tagged commit
-  //   if (changeset ["**/etc/DependencyInstaller.sh", "**/etc/DockerHelper.sh", "**/.github/workflows/github-actions-cron-test-installer.yml", "**/build_openroad.sh", "**/env.sh", "**/flow/Makefile"]) {
-  //     def osList = ['ubuntu20.04', 'ubuntu22.04', 'centos7']
-  //     for (int i = 0; i < osList.size(); i++) {
-  //       def os = osList[i]
-  //       echo "Building Docker image for OS: ${os}"
-  //       sh "./etc/DockerHelper.sh create -target=dev -os=${os}"
-  //       sh "./etc/DockerHelper.sh push -target=dev -os=${os}" // add tag to be the commit tag
-  //     }
-  //   }
-  // }
-  // function to check if current build is from master, has logic --> set tag to be latest or commit based on changes in installer script
-  // function should include email target list for different branches
-  // docker.image('openroad/flow-ubuntu22.04-dev').inside {
+  def DOCKER_IMAGE_TAG
+  stage('Build and Push Docker Image') {
+    //if not master push to tagged commit
+    // def osList = ['ubuntu20.04', 'ubuntu22.04', 'centos7']
+    // for (int i = 0; i < osList.size(); i++) {
+      // def os = osList[i]
+      echo "Building & Pushing Docker images"
+      if(shared_functions.isCommitTag(${env.BRANCH_NAME})) {
+        // sh "./etc/DockerHelper.sh create -target=dev -os=${os} -sha"
+        sh "./etc/DockerHelper.sh push -target=dev -sha"
+        DOCKER_IMAGE_TAG = "${env.GIT_COMMIT}"
+      }
+    // }
+  }
+  
+  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
     try {
       stage('Local Build') {
         shared_functions.localBuild()
@@ -95,164 +85,38 @@ node {
         ]
         def axes = matrix_axes.TEST_SLUG
 
-        // for (axisValue in axes) {
-        //     tasks["Test_${axisValue}"] = {
-        //         node {
-        //             // Your test logic here
-        //             echo "Running test: ${axisValue}"
-        //         }
-        //     }
-        // }
-
-        // List axes = getMatrixAxes(matrix_axes)
-
         Map tasks = [failFast: false]
         for (axisValue in axes) {
-            // convert the Axis into valid values for withEnv step
-            // Map axis = axisValue
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {
-            // tasks[axisEnv.join(', ')] = { ->
                 node {
                     checkout scm
-                    // withEnv(axisEnv) {
-                        // stage("${TEST_SLUG}") {
-                      try {
-                        unstash "install"
-                        timeout(time: 6, unit: "HOURS") {
-                            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                              if ("${currentSlug}" == 'docker build') {
-                                retry(3) {
-                                  try {
-                                    sh "./build_openroad.sh --no_init"
-                                  }
-                                  catch (e) {
-                                    sleep(60)
-                                    sh 'exit 1'
-                                  }
-                                }
-                                sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit"
-                              } else {
-                                echo "${currentSlug}"
-                                sh "nice flow/test/test_helper.sh ${currentSlug}"
-                              }
-                            }
-                        }
-                        // shared_functions.runTests()
-                      } finally {
-                        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                            archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-                            archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-                        }
-                      }
-                    // }
-                  // }
-                // }
+                    shared_functions.runTests(${currentSlug})
                 }
               }
-                        // }
-                      // }
-                    // }
         }
-          
 
-          // try{
         parallel(tasks)
-          // } finally {
-          //   catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-          //       archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-          //       archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-          //   }
-          // }
       }
 
       stage('Report Short Summary') {
-        // checkout scm
-        // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-        //   try {
-        //     copyArtifacts filter: "flow/logs/**/*",
-        //                   projectName: '${JOB_NAME}',
-        //                   selector: specific('${BUILD_NUMBER}')
-        //     copyArtifacts filter: "flow/reports/**/*",
-        //                   projectName: '${JOB_NAME}',
-        //                   selector: specific('${BUILD_NUMBER}')
-        //     sh "flow/util/genReport.py -sv"
-        //     // sh "flow/util/genReport.py -svv"
-        //     // sh "flow/util/genReport.py -vvvv"
-        //     // sh "flow/util/genReportTable.py"
-        //     publishHTML([
-        //         allowMissing: true,
-        //         alwaysLinkToLastBuild: true,
-        //         keepAll: true,
-        //         reportName: "Report",
-        //         reportDir: "flow/reports",
-        //         reportFiles: "report-table.html,report-gallery*.html",
-        //         reportTitles: "Flow Report"
-        //     ])
-        //   } finally {
-        //     archiveArtifacts artifacts: "flow/reports/report-summary.log"
-        //     archiveArtifacts artifacts: "flow/reports/**/report*.log"
-        //   }
-        // }
         shared_functions.generateReportShortSummary()
       }
 
       stage("Report Summary") {
-        // node {
-          // checkout scm
-        // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-        //   sh "flow/util/genReport.py -svv"
-        // }
-        // }
         shared_functions.generateReportSummary()
       }
 
       stage("Report Full") {
-        // node {
-          // checkout scm
-          // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-          //   sh "flow/util/genReport.py -vvvv"
-          // }
-        // }
         shared_functions.generateReportFull()
       }
 
       stage("Report HTML Table") {
-        // node {
-          // checkout scm
-          // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-          //   sh "flow/util/genReportTable.py"
-          //   publishHTML([
-          //       allowMissing: true,
-          //       alwaysLinkToLastBuild: true,
-          //       keepAll: true,
-          //       reportName: "Report",
-          //       reportDir: "flow/reports",
-          //       reportFiles: "report-table.html,report-gallery*.html",
-          //       reportTitles: "Flow Report"
-          //   ])
-          // }
-        // }
+        shared_functions.generateReportHtmlTable()
       }
 
       stage('Upload Metadata') {
-        // node {
-          // catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-          //   checkout scm
-          //   withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
-          //     sh """
-          //       python3 flow/util/uploadMetadata.py \
-          //         --buildID ${env.BUILD_ID} \
-          //         --branchName ${env.BRANCH_NAME} \
-          //         --commitSHA ${env.GIT_COMMIT} \
-          //         --jenkinsURL ${env.RUN_DISPLAY_URL} \
-          //         --pipelineID ${env.BUILD_TAG} \
-          //         --changeBranch ${env.CHANGE_BRANCH} \
-          //       """ + '--cred ${db_cred}'
-          //   }
-          // }
-        // }
-        shared_functions.uploadMetadata(${env.BRANCH_NAME}, ${env.BRANCH_NAME})
+        shared_functions.uploadMetadata(${env.BRANCH_NAME}, ${env.GIT_COMMIT})
       }
 
     } finally {
@@ -263,7 +127,7 @@ node {
                       selector: specific("${BUILD_NUMBER}")
 
               def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
-              def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME)
+              def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME, ${COMMIT_AUTHOR_EMAIL})
 
               // if (env.BRANCH_NAME == "master") {
               //     echo("Main development branch: report to stakeholders and commit author.")
@@ -290,4 +154,4 @@ node {
     } 
     
     }
-// }
+}

@@ -15,26 +15,33 @@ def localBuild(options = "--local") {
     }
 }
 
-def runTests(testSlug) {
-    unstash "install"
-    timeout(time: 6, unit: "HOURS") {
-        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-            if ("${currentSlug}" == 'docker build') {
-            retry(3) {
-                try {
-                sh "./build_openroad.sh --no_init"
+def runTests(currentSlug) {
+    try {
+        unstash "install"
+        timeout(time: 6, unit: "HOURS") {
+            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                if ("${currentSlug}" == 'docker build') {
+                retry(3) {
+                    try {
+                    sh "./build_openroad.sh --no_init"
+                    }
+                    catch (e) {
+                    sleep(60)
+                    sh 'exit 1'
+                    }
                 }
-                catch (e) {
-                sleep(60)
-                sh 'exit 1'
+                sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit"
+                } else {
+                echo "${currentSlug}"
+                sh "nice flow/test/test_helper.sh ${currentSlug}"
                 }
-            }
-            sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit"
-            } else {
-            echo "${currentSlug}"
-            sh "nice flow/test/test_helper.sh ${currentSlug}"
             }
         }
+    } finally {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+        archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
+    }
     }
 }
 
@@ -102,17 +109,17 @@ def isMasterBranch(branchName) {
     return branchName == 'master'
 } 
 
-def geTag(branchName) {
+def isCommitTag(branchName) {
     if (changeset ["**/etc/DependencyInstaller.sh", "**/etc/DockerHelper.sh", "**/.github/workflows/github-actions-cron-test-installer.yml", "**/build_openroad.sh", "**/env.sh", "**/flow/Makefile"]) {
-        return "-sha"
+        return true
     } else if (branchName == 'master') {
-        return ""
+        return false
     } else {
-        return "-sha"
+        return true
     }
 }
 
-def emailDetails(branchName) {
+def emailDetails(branchName, COMMIT_AUTHOR_EMAIL) {
     def EMAIL_TO
     if (env.BRANCH_NAME == "master") {
         echo("Main development branch: report to stakeholders and commit author.")
@@ -127,5 +134,8 @@ def emailDetails(branchName) {
     }
     return $EMAIL_TO
 }
+
+// function to check if current build is from master, has logic --> set tag to be latest or commit based on changes in installer script
+// DONE: function should include email target list for different branches
 
 return this
