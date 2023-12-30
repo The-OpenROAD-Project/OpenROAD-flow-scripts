@@ -16,12 +16,12 @@ node {
     // def osList = ['ubuntu20.04', 'ubuntu22.04', 'centos7']
     // for (int i = 0; i < osList.size(); i++) {
       // def os = osList[i]
-      echo "Building & Pushing Docker images"
-      if(shared_functions.isCommitTag(${env.BRANCH_NAME})) {
-        // sh "./etc/DockerHelper.sh create -target=dev -os=${os} -sha"
-        sh "./etc/DockerHelper.sh push -target=dev -sha"
-        DOCKER_IMAGE_TAG = "${env.GIT_COMMIT}"
-      }
+    echo "Building & Pushing Docker images"
+    if(shared_functions.isCommitTag(env.BRANCH_NAME)) {
+      // sh "./etc/DockerHelper.sh create -target=dev -os=${os} -sha"
+      sh "./etc/DockerHelper.sh push -target=dev -sha"
+      DOCKER_IMAGE_TAG = "${env.GIT_COMMIT}"
+    }
     // }
   }
   
@@ -116,7 +116,7 @@ node {
       }
 
       stage('Upload Metadata') {
-        shared_functions.uploadMetadata(${env.BRANCH_NAME}, ${env.GIT_COMMIT})
+        shared_functions.uploadMetadata(env.BRANCH_NAME, env.GIT_COMMIT)
       }
 
     } finally {
@@ -127,7 +127,7 @@ node {
                       selector: specific("${BUILD_NUMBER}")
 
               def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
-              def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME, ${COMMIT_AUTHOR_EMAIL})
+              def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
 
               // if (env.BRANCH_NAME == "master") {
               //     echo("Main development branch: report to stakeholders and commit author.")

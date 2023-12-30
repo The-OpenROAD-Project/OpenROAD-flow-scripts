@@ -1,6 +1,6 @@
 // Defing shared functions to be used by different pipelines
 
-def localBuild(options = "--local") {
+def localBuild(String options = "--local") {
     try {
         sh "ls"
         sh "./build_openroad.sh $options"
@@ -15,7 +15,7 @@ def localBuild(options = "--local") {
     }
 }
 
-def runTests(currentSlug) {
+def runTests(String currentSlug) {
     try {
         unstash "install"
         timeout(time: 6, unit: "HOURS") {
@@ -89,7 +89,7 @@ def generateReportHtmlTable() {
     }
 }
 
-def uploadMetadata(branchname, commitsha) {
+def uploadMetadata(Stirng branchname, String commitsha) {
     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
         withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
             sh """
@@ -105,12 +105,26 @@ def uploadMetadata(branchname, commitsha) {
     }
 }
 
-def isMasterBranch(branchName) {
-    return branchName == 'master'
+def isMasterBranch(String branchName) {
+    return ${branchName} == 'master'
 } 
 
+// def isCommitTag(String branchName) {
+//     if (changeset ["**/etc/DependencyInstaller.sh", "**/etc/DockerHelper.sh", "**/.github/workflows/github-actions-cron-test-installer.yml", "**/build_openroad.sh", "**/env.sh", "**/flow/Makefile"]) {
+//         return true
+//     } else if (${branchName} == 'master') {
+//         return false
+//     } else {
+//         return true
+//     }
+// }
+
 def isCommitTag(branchName) {
-    if (changeset ["**/etc/DependencyInstaller.sh", "**/etc/DockerHelper.sh", "**/.github/workflows/github-actions-cron-test-installer.yml", "**/build_openroad.sh", "**/env.sh", "**/flow/Makefile"]) {
+    def changedFiles = script {
+        return changelog(['--format=%s'])
+    }
+
+    if (changedFiles.any { it.contains("etc/DependencyInstaller.sh") || it.contains("etc/DockerHelper.sh") || it.contains(".github/workflows/github-actions-cron-test-installer.yml") || it.contains("build_openroad.sh") || it.contains("env.sh") || it.contains("flow/Makefile") }) {
         return true
     } else if (branchName == 'master') {
         return false
@@ -119,7 +133,7 @@ def isCommitTag(branchName) {
     }
 }
 
-def emailDetails(branchName, COMMIT_AUTHOR_EMAIL) {
+def emailDetails(String branchName, String COMMIT_AUTHOR_EMAIL) {
     def EMAIL_TO
     if (env.BRANCH_NAME == "master") {
         echo("Main development branch: report to stakeholders and commit author.")
