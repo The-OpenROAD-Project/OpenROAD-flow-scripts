@@ -114,7 +114,7 @@ set result [catch {detailed_placement} msg]
 if {$result != 0} {
   save_progress 4_1_error
   puts "Detailed placement failed in CTS: $msg"
-  return -code $result
+  exit $result
 }
 
 check_placement -verbose
