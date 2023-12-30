@@ -89,14 +89,14 @@ def generateReportHtmlTable() {
     }
 }
 
-def uploadMetadata(Stirng branchname, String commitsha) {
+def uploadMetadata(String branchName, String commitSha) {
     catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
         withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
             sh """
                 python3 flow/util/uploadMetadata.py \
                 --buildID ${env.BUILD_ID} \
-                --branchName $branchname \
-                --commitSHA $commitsha \
+                --branchName $branchName \
+                --commitSHA $commitSha \
                 --jenkinsURL ${env.RUN_DISPLAY_URL} \
                 --pipelineID ${env.BUILD_TAG} \
                 --changeBranch ${env.CHANGE_BRANCH} \
@@ -119,7 +119,7 @@ def isMasterBranch(String branchName) {
 //     }
 // }
 
-def isCommitTag(branchName) {
+def isCommitTag(String branchName) {
     def changedFiles = script {
         return changelog(['--format=%s'])
     }
@@ -135,18 +135,17 @@ def isCommitTag(branchName) {
 
 def emailDetails(String branchName, String COMMIT_AUTHOR_EMAIL) {
     def EMAIL_TO
-    if (env.BRANCH_NAME == "master") {
+    if (branchName == "master") {
         echo("Main development branch: report to stakeholders and commit author.")
         EMAIL_TO = "$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS"
-    } else if (env.BRANCH_NAME == "nightly") {
-        echo("Nightly run: report to stakeholders and commit author.");
-        EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
-    }
-    else {
+    } else if (branchName == "nightly") {
+        echo("Nightly run: report to stakeholders and commit author.")
+        EMAIL_TO = "$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS"
+    } else {
         echo("Feature development branch: report only to commit author.")
         EMAIL_TO = "$COMMIT_AUTHOR_EMAIL"
     }
-    return $EMAIL_TO
+    return EMAIL_TO
 }
 
 // function to check if current build is from master, has logic --> set tag to be latest or commit based on changes in installer script
