@@ -59,6 +59,7 @@ def print_log_dir_times(logdir):
 
             if not found:
                 print('No elapsed time found in',  str(f), file=sys.stderr)
+                continue
 
         # Print the name of the step and the corresponding elapsed time
         if elapsedTime != 0:

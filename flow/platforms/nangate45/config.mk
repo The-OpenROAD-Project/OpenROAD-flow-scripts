@@ -86,7 +86,7 @@ export MIN_ROUTING_LAYER = metal2
 export MAX_ROUTING_LAYER = metal10
 
 # Define fastRoute tcl
-export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute.tcl
+export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 
 # KLayout technology file
 export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/FreePDK45.lyt

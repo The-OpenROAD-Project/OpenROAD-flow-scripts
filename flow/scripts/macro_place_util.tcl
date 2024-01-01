@@ -125,9 +125,6 @@ if {[find_macros] != ""} {
 
     puts "rtl_macro_placer [join $all_args " "]"
     rtl_macro_placer {*}$all_args
-
-    puts "Delete buffers for RTLMP flow..."
-    remove_buffers
   } else {
     macro_placement \
       -halo $::env(MACRO_PLACE_HALO) \
