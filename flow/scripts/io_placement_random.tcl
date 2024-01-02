@@ -13,6 +13,4 @@ if {[info exists ::env(FLOORPLAN_DEF)]} {
            {*}$::env(PLACE_PINS_ARGS)
 }
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/2_2_floorplan_io.odb
-}
+write_db $::env(RESULTS_DIR)/2_2_floorplan_io.odb

@@ -81,16 +81,12 @@ if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER
   puts "Post synth-opt tns"
   report_tns -digits 3
 
-  if {![info exists save_checkpoint] || $save_checkpoint} {
-    write_verilog $::env(RESULTS_DIR)/2_pre_abc_timing.v
-  }
+  write_verilog $::env(RESULTS_DIR)/2_pre_abc_timing.v
 
   restructure -target timing -liberty_file $::env(DONT_USE_SC_LIB) \
               -work_dir $::env(RESULTS_DIR)
 
-  if {![info exists save_checkpoint] || $save_checkpoint} {
-    write_verilog $::env(RESULTS_DIR)/2_post_abc_timing.v
-  }
+  write_verilog $::env(RESULTS_DIR)/2_post_abc_timing.v
 
   # post restructure area/timing report (ideal clocks)
   remove_buffers
@@ -123,9 +119,7 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   report_design_area_metrics
   utl::pop_metrics_stage
 
-  if {![info exists save_checkpoint] || $save_checkpoint} {
-    write_verilog $::env(RESULTS_DIR)/2_pre_abc.v
-  }
+  write_verilog $::env(RESULTS_DIR)/2_pre_abc.v
 
   set tielo_cell_name [lindex $env(TIELO_CELL_AND_PORT) 0]
   set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
@@ -143,9 +137,7 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   # remove buffers inserted by abc
   remove_buffers
 
-  if {![info exists save_checkpoint] || $save_checkpoint} {
-    write_verilog $::env(RESULTS_DIR)/2_post_abc.v
-  }
+  write_verilog $::env(RESULTS_DIR)/2_post_abc.v
   utl::push_metrics_stage "floorplan__{}__post_restruct"
   set num_instances [llength [get_cells -hier *]]
   puts "number instances after restructure is $num_instances"
@@ -159,10 +151,8 @@ if { [info exists ::env(POST_FLOORPLAN_TCL)] } {
   source $::env(POST_FLOORPLAN_TCL)
 }
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
-      write_def $::env(RESULTS_DIR)/2_1_floorplan.def
-  }
-  write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
-  write_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
+if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
+    write_def $::env(RESULTS_DIR)/2_1_floorplan.def
 }
+write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
+write_sdc $::env(RESULTS_DIR)/2_floorplan.sdc

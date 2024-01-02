@@ -7,6 +7,4 @@ set_propagated_clock [all_clocks]
 filler_placement $::env(FILL_CELLS)
 check_placement
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/5_2_fillcell.odb
-}
+write_db $::env(RESULTS_DIR)/5_2_fillcell.odb
