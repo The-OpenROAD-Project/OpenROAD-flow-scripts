@@ -21,7 +21,7 @@ if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
 proc save_progress {stage} {
   puts "Run 'make gui_$stage.odb' to load progress snapshot"
   write_db $::env(RESULTS_DIR)/$stage.odb
-  write_sdc $::env(RESULTS_DIR)/$stage.sdc
+  write_sdc -no_timestamp $::env(RESULTS_DIR)/$stage.sdc
 }
 
 set cts_args [list \
@@ -130,5 +130,5 @@ if {![info exists save_checkpoint] || $save_checkpoint} {
       write_def $::env(RESULTS_DIR)/4_1_cts.def
   }
   write_db $::env(RESULTS_DIR)/4_1_cts.odb
-  write_sdc $::env(RESULTS_DIR)/4_cts.sdc
+  write_sdc -no_timestamp $::env(RESULTS_DIR)/4_cts.sdc
 }
