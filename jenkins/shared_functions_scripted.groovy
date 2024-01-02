@@ -110,16 +110,34 @@ def isMasterBranch(String branchName) {
 } 
 
 def isCommitTag(String branchName) {
-    def changedFiles = script {
-        return checkout([$class: 'GitSCM', branches: [[name: branchName]]])
-        return changelog(['--format=%s'])
-    }
+    // def changedFiles = script {
+    //     return checkout([$class: 'GitSCM', branches: [[name: branchName]]])
+    //     return changelog(['--format=%s'])
+    // }
 
-    def affectedFiles = changedFiles.collect { entry ->
-        entry.affectedFiles.collect { file -> file.path }
-    }.flatten()
+    // def affectedFiles = changedFiles.collect { entry ->
+    //     entry.affectedFiles.collect { file -> file.path }
+    // }.flatten()
 
-    if (affectedFiles.any { it.contains("etc/DependencyInstaller.sh") || it.contains("etc/DockerHelper.sh") || it.contains(".github/workflows/github-actions-cron-test-installer.yml") || it.contains("build_openroad.sh") || it.contains("env.sh") || it.contains("flow/Makefile") }) {
+    def local_branch = sh(
+        script: "git rev-parse --abbrev-ref HEAD",
+        label: "Getting current branch name",
+        returnStdout: true
+    ).trim()
+    println "Local branch is ${local_branch}"
+
+    def base_branch = 'master'
+    println "Base branch is ${base_branch}"
+
+    sh script: "git fetch origin --no-tags ${base_branch}", label: "Getting base branch"
+
+    def git_diff = sh(
+        script: "git diff --name-only origin/${base_branch}..${local_branch}",
+        returnStdout: true
+    ).trim()
+
+    // if (affectedFiles.any { it.contains("etc/DependencyInstaller.sh") || it.contains("etc/DockerHelper.sh") || it.contains(".github/workflows/github-actions-cron-test-installer.yml") || it.contains("build_openroad.sh") || it.contains("env.sh") || it.contains("flow/Makefile") }) {
+    if (git_diff.contains("etc/DependencyInstaller.sh") || git_diff.contains("etc/DockerHelper.sh") || git_diff.contains(".github/workflows/github-actions-cron-test-installer.yml") || git_diff.contains("build_openroad.sh") || git_diff.contains("env.sh") || git_diff.contains("flow/Makefile")) {
         return true
     } else if (branchName == 'master' || branchName == 'main') {
         return false
