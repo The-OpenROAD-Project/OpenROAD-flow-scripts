@@ -490,9 +490,15 @@ do-yosys: yosys-dependencies
 $(RESULTS_DIR)/1_1_yosys.v: $(SDC_FILE_CLOCK_PERIOD)
 	$(UNSET_AND_MAKE) do-yosys
 
-$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
-	mkdir -p $(REPORTS_DIR)
-	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
+$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE) $(RESULTS_DIR)/1_1_yosys.v
+	$(UNSET_AND_MAKE) do-synth-sdc
+
+.PHONY: do-synth-sdc
+do-synth-sdc:
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	cp $(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.v
+	cp $(SDC_FILE) $(RESULTS_DIR)/1_1_yosys.sdc
+	$(OPENROAD_CMD) $(SCRIPTS_DIR)/write-sdc.tcl
 
 .PHONY: do-synth
 do-synth:
