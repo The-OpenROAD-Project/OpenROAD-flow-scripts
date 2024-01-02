@@ -164,5 +164,5 @@ if {![info exists save_checkpoint] || $save_checkpoint} {
       write_def $::env(RESULTS_DIR)/2_1_floorplan.def
   }
   write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
-  write_sdc $::env(RESULTS_DIR)/2_floorplan.sdc
+  write_sdc -no_timestamp $::env(RESULTS_DIR)/2_floorplan.sdc
 }
