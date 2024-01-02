@@ -12,18 +12,16 @@ node {
   def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
   def DOCKER_IMAGE_TAG
   stage('Build and Push Docker Image') {
-    //if not master push to tagged commit
-    // def osList = ['ubuntu20.04', 'ubuntu22.04', 'centos7']
-    // for (int i = 0; i < osList.size(); i++) {
-      // def os = osList[i]
     echo "Building & Pushing Docker images"
-    if(shared_functions.isCommitTag(env.BRANCH_NAME)) {
-      // sh "./etc/DockerHelper.sh create -target=dev -os=${os} -sha"
-      sh "./etc/DockerHelper.sh push -target=dev -sha"
-      DOCKER_IMAGE_TAG = "${env.GIT_COMMIT}"
+    
+    // Check if it's a commit tag
+    if (shared_functions.isCommitTag(env.BRANCH_NAME)) {
+        // sh "./etc/DockerHelper.sh create -target=dev -os=${os} -sha"
+        sh "./etc/DockerHelper.sh push -target=dev -sha"
+        DOCKER_IMAGE_TAG = env.GIT_COMMIT
     }
-    // }
   }
+
   
   docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
     try {

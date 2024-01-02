@@ -109,24 +109,19 @@ def isMasterBranch(String branchName) {
     return ${branchName} == 'master'
 } 
 
-// def isCommitTag(String branchName) {
-//     if (changeset ["**/etc/DependencyInstaller.sh", "**/etc/DockerHelper.sh", "**/.github/workflows/github-actions-cron-test-installer.yml", "**/build_openroad.sh", "**/env.sh", "**/flow/Makefile"]) {
-//         return true
-//     } else if (${branchName} == 'master') {
-//         return false
-//     } else {
-//         return true
-//     }
-// }
-
 def isCommitTag(String branchName) {
     def changedFiles = script {
+        return checkout([$class: 'GitSCM', branches: [[name: branchName]]])
         return changelog(['--format=%s'])
     }
 
-    if (changedFiles.any { it.contains("etc/DependencyInstaller.sh") || it.contains("etc/DockerHelper.sh") || it.contains(".github/workflows/github-actions-cron-test-installer.yml") || it.contains("build_openroad.sh") || it.contains("env.sh") || it.contains("flow/Makefile") }) {
+    def affectedFiles = changedFiles.collect { entry ->
+        entry.affectedFiles.collect { file -> file.path }
+    }.flatten()
+
+    if (affectedFiles.any { it.contains("etc/DependencyInstaller.sh") || it.contains("etc/DockerHelper.sh") || it.contains(".github/workflows/github-actions-cron-test-installer.yml") || it.contains("build_openroad.sh") || it.contains("env.sh") || it.contains("flow/Makefile") }) {
         return true
-    } else if (branchName == 'master') {
+    } else if (branchName == 'master' || branchName == 'main') {
         return false
     } else {
         return true
