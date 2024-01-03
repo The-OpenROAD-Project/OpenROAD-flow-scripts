@@ -16,6 +16,7 @@ usage: $0 [CMD] [OPTIONS]
   create                        Create a docker image
   test                          Test the docker image
   push                          Push the docker image to Docker Hub
+  pushCI                        Push the docker image to Docker Hub from CI
 
   OPTIONS:
   -os=OS_NAME                   Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
@@ -107,6 +108,28 @@ _push() {
 
             else
                 echo "Will not push."
+            fi
+            ;;
+        *)
+            echo "Target ${target} is not valid candidate for push to DockerHub." >&2
+            _help
+            ;;
+    esac
+}
+
+_pushCI() {
+    case "${target}" in
+        "dev" )
+            mkdir -p build
+
+            if [[ "${useCommitSha}" == "yes" ]]; then
+                ./etc/DockerHelper.sh create -os=${os} -target=dev -sha \
+                    2>&1 | tee build/create-${os}-${commitSha}.log
+                echo [DRY-RUN] docker push openroad/flow-${os}-dev:${commitSha}
+            else
+                ./etc/DockerHelper.sh create -os=${os} -target=dev \
+                    2>&1 | tee build/create-${os}-latest.log
+                echo [DRY-RUN] docker push openroad/flow-${os}-dev:latest
             fi
             ;;
         *)
