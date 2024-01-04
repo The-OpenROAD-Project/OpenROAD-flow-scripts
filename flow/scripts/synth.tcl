@@ -5,8 +5,15 @@ if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 &
   source $::env(SYNTH_STOP_MODULE_SCRIPT)
 }
 
+if { [info exist ::env(SYNTH_GUT)] && $::env(SYNTH_GUT) == 1 } {
+  hierarchy -check -top $::env(DESIGN_NAME)
+  # /deletes all cells at the top level, which will quickly optimize away
+  # everything else, including macros.
+  delete $::env(DESIGN_NAME)/c:*
+}
+
 # Generic synthesis
-synth  -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS)
+synth -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS)
 
 if { [info exists ::env(USE_LSORACLE)] } {
     set lso_script [open $::env(OBJECTS_DIR)/lso.script w]
@@ -50,33 +57,8 @@ if {[info exist ::env(DFF_LIB_FILE)]} {
 }
 opt
 
-
-set constr [open $::env(OBJECTS_DIR)/abc.constr w]
-puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
-puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
-close $constr
-
-if {$::env(ABC_AREA)} {
-  puts "Using ABC area script."
-  set abc_script $::env(SCRIPTS_DIR)/abc_area.script
-} else {
-  puts "Using ABC speed script."
-  set abc_script $::env(SCRIPTS_DIR)/abc_speed.script
-}
-
-# Technology mapping for cells
-# ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
-if {[info exist ::env(ABC_CLOCK_PERIOD_IN_PS)]} {
-  puts "\[FLOW\] Set ABC_CLOCK_PERIOD_IN_PS to: $::env(ABC_CLOCK_PERIOD_IN_PS)"
-  abc -D [expr $::env(ABC_CLOCK_PERIOD_IN_PS)] \
-      -script $abc_script \
-      -liberty $::env(DONT_USE_SC_LIB) \
-      -constr $::env(OBJECTS_DIR)/abc.constr
-} else {
-  puts "\[WARN\]\[FLOW\] No clock period constraints detected in design"
-  abc -liberty $::env(DONT_USE_SC_LIB) \
-      -constr $::env(OBJECTS_DIR)/abc.constr
-}
+puts "abc [join $abc_args " "]"
+abc {*}$abc_args
 
 # Replace undef values with defined constants
 setundef -zero
@@ -98,11 +80,6 @@ insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
 # Reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check
 
-# Create argument list for stat
-set stat_libs ""
-foreach lib $::env(DONT_USE_LIBS) {
-  append stat_libs "-liberty $lib "
-}
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
 
 # Write synthesized design

@@ -23,7 +23,7 @@ export DIE_AREA  = $(shell \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config; print(f'{0} {0} {config.die_width} {config.die_height}')")
 
-BLOCKS                       = Element
+export BLOCKS                       = Element
 
 export GDS_ALLOW_EMPTY       = Element
 

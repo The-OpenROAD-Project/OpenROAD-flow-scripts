@@ -29,6 +29,4 @@ if {[info exists ::env(FLOORPLAN_DEF)] || ([info exists ::env(HAS_IO_CONSTRAINTS
   }
 }
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/3_1_place_gp_skip_io.odb
-}
+write_db $::env(RESULTS_DIR)/3_1_place_gp_skip_io.odb

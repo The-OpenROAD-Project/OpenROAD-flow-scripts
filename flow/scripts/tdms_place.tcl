@@ -27,6 +27,4 @@ if {[find_macros] != ""} {
   puts "No macros found: Skipping global_placement"
 }
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/2_3_floorplan_tdms.odb
-}
+write_db $::env(RESULTS_DIR)/2_3_floorplan_tdms.odb

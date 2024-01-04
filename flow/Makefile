@@ -212,6 +212,11 @@ export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
+# BLOCKS is ORFS specific and is used to trigger hierarchical flow,
+# MACROS is a space separated list of macros used in the design,
+# but not necessarily built by ORFS using the BLOCKS mechanism.
+export MACROS ?= $(BLOCKS)
+
 ifdef BLOCKS
 ifeq ($(MAKELEVEL),0)
   $(info [INFO][FLOW] Invoked hierarchical flow.)
@@ -442,8 +447,7 @@ $(WRAPPED_LIBS):
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
 .PHONY: synth
-synth: versions.txt \
-       $(RESULTS_DIR)/1_synth.v \
+synth: $(RESULTS_DIR)/1_synth.v \
        $(RESULTS_DIR)/1_synth.sdc
 
 .PHONY: synth-report
@@ -466,24 +470,45 @@ $(SYNTH_STOP_MODULE_SCRIPT):
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys_hier_report.log
 
 ifeq ($(SYNTH_HIERARCHICAL), 1)
-$(RESULTS_DIR)/1_1_yosys.v: $(SYNTH_STOP_MODULE_SCRIPT)
+do-yosys: $(SYNTH_STOP_MODULE_SCRIPT)
 endif
 
-$(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.sdc &: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE)
+export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
+
+$(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
+	mkdir -p $(dir $@)
+	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
+
+.PHONY: yosys-dependencies
+yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
+
+.PHONY: do-yosys
+do-yosys: yosys-dependencies
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+
+$(RESULTS_DIR)/1_1_yosys.v: $(SDC_FILE_CLOCK_PERIOD)
+	$(UNSET_AND_MAKE) do-yosys
+
+$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
+	mkdir -p $(REPORTS_DIR)
 	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
 
-$(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
+.PHONY: do-synth
+do-synth:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	cp $< $@
+	cp $(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.v
+
+$(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
+	$(UNSET_AND_MAKE) do-synth
 
 .PHONY: clean_synth
 clean_synth:
-	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
-	rm -f  $(REPORTS_DIR)/synth_*
-	rm -f  $(LOG_DIR)/1_*
-	rm -f  $(SYNTH_STOP_MODULE_SCRIPT)
+	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
+	rm -f $(REPORTS_DIR)/synth_*
+	rm -f $(LOG_DIR)/1_*
+	rm -f $(SYNTH_STOP_MODULE_SCRIPT)
+	rm -f $(SDC_FILE_CLOCK_PERIOD)
 	rm -rf _tmp_yosys-abc-*
 
 
@@ -1064,7 +1089,7 @@ yosys:
 # Drop into a bash shell with all environment variables, useful for debugging
 .PHONY: bash
 bash:
-	bash
+	bash --init-file <(echo "PS1='\[\e[32m\]Makefile Environment \[\e[0m\] \w $ '")
 
 .PHONY: all_defs
 all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)
