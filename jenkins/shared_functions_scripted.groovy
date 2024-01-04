@@ -107,18 +107,9 @@ def uploadMetadata(String branchName, String commitSha) {
 
 def isMasterBranch(String branchName) {
     return ${branchName} == 'master'
-} 
+}
 
-def isCommitTag(String branchName) {
-    // def changedFiles = script {
-    //     return checkout([$class: 'GitSCM', branches: [[name: branchName]]])
-    //     return changelog(['--format=%s'])
-    // }
-
-    // def affectedFiles = changedFiles.collect { entry ->
-    //     entry.affectedFiles.collect { file -> file.path }
-    // }.flatten()
-
+def isDependencyInstallerChanged(String branchName) {
     def local_branch = sh(
         script: "git rev-parse --abbrev-ref HEAD",
         label: "Getting current branch name",
@@ -136,13 +127,18 @@ def isCommitTag(String branchName) {
         returnStdout: true
     ).trim()
 
-    // if (affectedFiles.any { it.contains("etc/DependencyInstaller.sh") || it.contains("etc/DockerHelper.sh") || it.contains(".github/workflows/github-actions-cron-test-installer.yml") || it.contains("build_openroad.sh") || it.contains("env.sh") || it.contains("flow/Makefile") }) {
     if (git_diff.contains("etc/DependencyInstaller.sh") || git_diff.contains("etc/DockerHelper.sh") || git_diff.contains(".github/workflows/github-actions-cron-test-installer.yml") || git_diff.contains("build_openroad.sh") || git_diff.contains("env.sh") || git_diff.contains("flow/Makefile")) {
         return true
-    } else if (branchName == 'master' || branchName == 'main') {
-        return false
     } else {
+        return false
+    }
+}
+
+def isCommitTag(String branchName) {
+    if (isDependencyInstallerChanged(branchName) || branchName != 'master') {
         return true
+    } else {
+        return false
     }
 }
 
@@ -159,6 +155,35 @@ def emailDetails(String branchName, String COMMIT_AUTHOR_EMAIL) {
         EMAIL_TO = "$COMMIT_AUTHOR_EMAIL"
     }
     return EMAIL_TO
+}
+
+def testDependencyInstaller(os) {
+    // def osList = ['ubuntu20.04', 'ubuntu22.04', 'centos7']
+    // for (int i = 0; i < osList.size(); i++) {
+        // def os = osList[i]
+    echo "Building & Testing Docker image for OS: ${os}"
+    def options = ""
+    // if(isCommitTag == true) {
+    //     options = "-sha"
+    // }
+    sh "./etc/DockerHelper.sh create -os=${os} -target=dev"
+    sh "./etc/DockerHelper.sh create -os=${os} -target=builder"
+    def cmd = """
+        yosys -help
+        openroad -help
+        make -C flow
+    """
+
+    if (os == "centos7") {
+        cmd = """
+            source /opt/rh/devtoolset-8/enable
+            source /opt/rh/llvm-toolset-7.0/enable
+            source /opt/rh/rh-python38/enable
+            ${cmd}
+        """
+    }
+    sh "docker run openroad/flow-${os}-builder /bin/bash -c "${cmd}""
+    // }
 }
 
 // function to check if current build is from master, has logic --> set tag to be latest or commit based on changes in installer script

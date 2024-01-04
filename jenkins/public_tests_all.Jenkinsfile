@@ -12,17 +12,8 @@ node {
   def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
   def DOCKER_IMAGE_TAG
   stage('Build and Push Docker Image') {
-    
     // Check if it's a commit tag
     if (shared_functions.isCommitTag(env.BRANCH_NAME)) {
-        // def osList = ['ubuntu20.04', 'ubuntu22.04', 'centos7']
-        // for (int i = 0; i < osList.size(); i++) {
-          // def os = osList[i]
-          // echo "Building & Pushing Docker image for OS: ${os}"
-          // sh "./etc/DockerHelper.sh create -target=dev -os=${os} -sha"
-          // sh "./etc/DockerHelper.sh create -os=${os} -target=dev -sha"
-          // sh "./etc/DockerHelper.sh create -os=${os} -target=builder -sha"
-        // }
       echo "Building & Pushing Docker image for ubuntu22.04"
       sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha"
       DOCKER_IMAGE_TAG = env.GIT_COMMIT
@@ -31,10 +22,32 @@ node {
     }
   }
   
-  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+  // docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
     try {
       stage('Local Build') {
         shared_functions.localBuild()
+      }
+
+      if(shared_functions.isDependencyInstallerChanged(env.BRANCH_NAME)) {
+        stage('Test Dependency Installer') {
+          Map matrix_axes = [
+          OS: ['ubuntu20.04', 'ubuntu22.04', 'centos7']
+          ]
+          def axes = matrix_axes.OS
+
+          Map tasks = [failFast: false]
+          for (axisValue in axes) {
+              def currentOS = axisValue
+              tasks["${currentOS}"] = {
+                  node {
+                      checkout scm
+                      shared_functions.testDependencyInstaller(${currentOS})
+                  }
+                }
+          }
+
+          parallel(tasks)
+        }
       }
 
       stage('Tests') {
@@ -159,5 +172,5 @@ node {
       }
     } 
     
-    }
+    // }
 }
