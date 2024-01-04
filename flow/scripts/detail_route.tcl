@@ -72,6 +72,4 @@ if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
 }
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/5_3_route.odb
-}
+write_db $::env(RESULTS_DIR)/5_3_route.odb
