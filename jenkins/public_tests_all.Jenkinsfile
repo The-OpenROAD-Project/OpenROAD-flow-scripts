@@ -22,7 +22,7 @@ node {
     }
   }
   
-  // docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
     try {
       stage('Local Build') {
         shared_functions.localBuild()
@@ -172,5 +172,5 @@ node {
       }
     } 
     
-    // }
+    }
 }
