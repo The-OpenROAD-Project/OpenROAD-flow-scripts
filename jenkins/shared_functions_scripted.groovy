@@ -120,7 +120,9 @@ def isDependencyInstallerChanged(String branchName) {
     def base_branch = 'master'
     println "Base branch is ${base_branch}"
 
-    sh script: "git fetch origin --no-tags ${base_branch}", label: "Getting base branch"
+    // sh script: "git fetch origin --no-tags ${base_branch}", label: "Getting base branch"
+    sh "git fetch origin --tags" // Fetch all branches and tags from the remote repository
+    sh "git fetch origin ${base_branch}"
     sh script:"git checkout ${base_branch}"
 
     def git_diff = sh(
