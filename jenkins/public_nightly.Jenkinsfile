@@ -5,8 +5,8 @@ node {
     copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
   ]);
 
-  // def shared_functions = load("shared_functions_scripted.groovy")
-
+  def shared_functions = load("shared_functions_scripted.groovy")
+  
   stage('Checkout'){
     checkout([$class: "GitSCM",
         branches: [[name: "*/master"]],
@@ -28,27 +28,25 @@ node {
     ])
   }
 
+  def DOCKER_IMAGE_TAG
+  stage('Build and Push Docker Image') {
+    if (shared_functions.isCommitTag(env.BRANCH_NAME)) {
+      echo "Building & Pushing Docker image for ubuntu22.04"
+      sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha"
+      DOCKER_IMAGE_TAG = env.GIT_COMMIT
+    } else {
+      echo "No changes using latest tag"
+    }
+  }
+
   try {
     stage('Local Build') {
-      node {
-        try {
-            sh "ls"
-            sh "./build_openroad.sh --local --no_init --latest"
-            stash name: "install", includes: "tools/install/**"
-        } catch (Exception ex) {
-            currentBuild.result = 'FAILURE'
-            throw ex
-        } finally {
-            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                archiveArtifacts artifacts: "build_openroad.log"
-            }
-        }
-        // shared_functions_scripted.localBuild()
-      }
+      shared_functions.localBuild("--local --no_init --latest")
     }
 
     stage('Tests') {
-      def testSlugs = ["docker build",
+     Map matrix_axes = [
+        TEST_SLUG: ["docker build",
                    "aes asap7",
                    "aes-mbff asap7",
                    "aes_lvt asap7",
@@ -100,124 +98,66 @@ node {
                    "gcd ihp-sg13g2",
                    "spi ihp-sg13g2",
                    "riscv32i ihp-sg13g2"]
-      for (testSlug in testSlugs) {
-        stage(testSlug) {
-          try {
-            timeout(time: 6, unit: "HOURS") {
+      ]
+      def axes = matrix_axes.TEST_SLUG
+
+      Map tasks = [failFast: false]
+      for (axisValue in axes) {
+          def currentSlug = axisValue
+          tasks["${currentSlug}"] = {
               node {
-                unstash "install"
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  if (testSlug == 'docker build') {
-                    retry(3) {
-                      try {
-                        sh "./build_openroad.sh --no_init"
-                      }
-                      catch (e) {
-                        sleep(60)
-                        sh 'exit 1'
-                      }
-                    }
-                    sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit"
-                  } else {
-                    sh 'nice flow/test/test_helper.sh ${testSlug}'
-                  }
-                }
+                  checkout scm
+                  shared_functions.runTests(${currentSlug})
               }
             }
-          }
-          finally {
-            catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-              archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-              archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**"
-            }
-          }
-        }
       }
+
+      parallel(tasks)
     }
 
     stage('Report Short Summary') {
-      try {
-        copyArtifacts filter: "flow/logs/**/*",
-                      projectName: '${JOB_NAME}',
-                      selector: specific('${BUILD_NUMBER}')
-        copyArtifacts filter: "flow/reports/**/*",
-                      projectName: '${JOB_NAME}',
-                      selector: specific('${BUILD_NUMBER}')
-        sh "flow/util/genReport.py -sv"
-      } finally {
-        archiveArtifacts artifacts: "flow/reports/report-summary.log"
-        archiveArtifacts artifacts: "flow/reports/**/report*.log"
-      }
+      shared_functions.generateReportShortSummary()
     }
 
     stage("Report Summary") {
-      node {
-        sh "flow/util/genReport.py -svv"
-      }
+      shared_functions.generateReportSummary()
     }
 
     stage("Report Full") {
-      node {
-        sh "flow/util/genReport.py -vvvv"
-      }
+      shared_functions.generateReportFull()
     }
 
     stage("Report HTML Table") {
-      node {
-        sh "flow/util/genReportTable.py"
-        publishHTML([
-            allowMissing: true,
-            alwaysLinkToLastBuild: true,
-            keepAll: true,
-            reportName: "Report",
-            reportDir: "flow/reports",
-            reportFiles: "report-table.html,report-gallery*.html",
-            reportTitles: "Flow Report"
-        ])
-      }
+      shared_functions.generateReportHtmlTable()
     }
 
     stage('Upload Metadata') {
-      node {
-        withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
-          sh """
-            python3 flow/util/uploadMetadata.py \
-              --buildID ${env.BUILD_ID} \
-              --branchName nightly \
-              --commitSHA ${env.GIT_COMMIT}-dirty \
-              --jenkinsURL ${env.RUN_DISPLAY_URL} \
-              --pipelineID ${env.BUILD_TAG} \
-              --changeBranch ${env.CHANGE_BRANCH} \
-            """ + '--cred ${db_cred}'
-        }
-      }
+      shared_functions.uploadMetadata("nightly", "${env.GIT_COMMIT}-dirty")
     }
 
   } finally {
-    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        try {
-            copyArtifacts filter: "flow/reports/report-summary.log",
-                    projectName: "${JOB_NAME}",
-                    selector: specific("${BUILD_NUMBER}")
+      catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+          try {
+              copyArtifacts filter: "flow/reports/report-summary.log",
+                      projectName: "${JOB_NAME}",
+                      selector: specific("${BUILD_NUMBER}")
 
-            def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
-            def EMAIL_TO
+              def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
+              def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
 
-            echo("Nightly run: report to stakeholders and commit author.");
-            EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
-            emailext (
-            to: "$EMAIL_TO",
-            replyTo: "$EMAIL_TO",
-            subject: '$DEFAULT_SUBJECT',
-            body: '''
-                  $DEFAULT_CONTENT
-                  ${FILE,path="flow/reports/report-summary.log"}
-                              ''',
-            )
-        } catch (Exception e) {
-            echo "Exception occurred: ${e.toString()}"
-            EMAIL_TO = "\$DEFAULT_RECIPIENTS"
-        }
-    }
-  } 
+              emailext (
+                  to: EMAIL_TO,
+                  replyTo: EMAIL_TO,
+                  subject: '$DEFAULT_SUBJECT',
+                  body: '''
+                      $DEFAULT_CONTENT
+                      ${FILE, path="flow/reports/report-summary.log"}
+                  '''
+              )
+          } catch (Exception e) {
+              echo "Exception occurred: ${e.toString()}"
+              EMAIL_TO = "\$DEFAULT_RECIPIENTS"
+          }
+      }
+    } 
 }
