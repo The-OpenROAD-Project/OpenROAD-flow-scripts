@@ -1,3 +1,5 @@
+@Library('utils@main') _
+
 node {
   def MAKE_ISSUE = 1
 
@@ -9,16 +11,11 @@ node {
     checkout scm
   }
 
-  @Library('utils') _
-  import utils.SharedFunctions
-
-  def shared_functions = new SharedFunctions()
-
   // def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
   def DOCKER_IMAGE_TAG
   stage('Build and Push Docker Image') {
     // Check if it's a commit tag
-    if (shared_functions.isCommitTag(env.BRANCH_NAME)) {
+    if (isCommitTag(env.BRANCH_NAME)) {
       echo "Building & Pushing Docker image for ubuntu22.04"
       sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha"
       DOCKER_IMAGE_TAG = env.GIT_COMMIT
@@ -30,10 +27,10 @@ node {
   docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
     try {
       stage('Local Build') {
-        shared_functions.localBuild()
+        localBuild()
       }
 
-      if(shared_functions.isDependencyInstallerChanged(env.BRANCH_NAME)) {
+      if(isDependencyInstallerChanged(env.BRANCH_NAME)) {
         stage('Test Dependency Installer') {
           Map matrix_axes = [
           OS: ['ubuntu20.04', 'ubuntu22.04', 'centos7']
@@ -46,7 +43,7 @@ node {
               tasks["${currentOS}"] = {
                   node {
                       checkout scm
-                      shared_functions.testDependencyInstaller(${currentOS})
+                      testDependencyInstaller(${currentOS})
                   }
                 }
           }
@@ -115,7 +112,7 @@ node {
             tasks["${currentSlug}"] = {
                 node {
                     checkout scm
-                    shared_functions.runTests(${currentSlug})
+                    runTests(${currentSlug})
                 }
               }
         }
@@ -124,23 +121,23 @@ node {
       }
 
       stage('Report Short Summary') {
-        shared_functions.generateReportShortSummary()
+        generateReportShortSummary()
       }
 
       stage("Report Summary") {
-        shared_functions.generateReportSummary()
+        generateReportSummary()
       }
 
       stage("Report Full") {
-        shared_functions.generateReportFull()
+        generateReportFull()
       }
 
       stage("Report HTML Table") {
-        shared_functions.generateReportHtmlTable()
+        generateReportHtmlTable()
       }
 
       stage('Upload Metadata') {
-        shared_functions.uploadMetadata(env.BRANCH_NAME, env.GIT_COMMIT)
+        uploadMetadata(env.BRANCH_NAME, env.GIT_COMMIT)
       }
 
     } finally {
@@ -151,7 +148,7 @@ node {
                       selector: specific("${BUILD_NUMBER}")
 
               def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
-              def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
+              def EMAIL_TO = emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
 
               // if (env.BRANCH_NAME == "master") {
               //     echo("Main development branch: report to stakeholders and commit author.")
