@@ -9,7 +9,12 @@ node {
     checkout scm
   }
 
-  def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
+  @Library('utils') _
+  import utils.SharedFunctions
+
+  def shared_functions = new SharedFunctions()
+
+  // def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
   def DOCKER_IMAGE_TAG
   stage('Build and Push Docker Image') {
     // Check if it's a commit tag
