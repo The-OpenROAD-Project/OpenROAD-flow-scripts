@@ -29,6 +29,10 @@ node {
       properties([
         copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
       ]);
+
+      stage('Checkout'){
+        checkout scm
+      }
       
       stage('Local Build') {
         localBuild()
