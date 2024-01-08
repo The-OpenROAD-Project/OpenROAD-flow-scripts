@@ -31,7 +31,7 @@ node {
       ]);
       
       stage('Local Build') {
-        localBuild()
+        localBuild("--local")
       }
 
       if(isDependencyInstallerChanged(env.BRANCH_NAME)) {
@@ -116,7 +116,7 @@ node {
             tasks["${currentSlug}"] = {
                 node {
                     checkout scm
-                    runTests(${currentSlug})
+                    runTests(${currentSlug}, "--no_init")
                 }
               }
         }
