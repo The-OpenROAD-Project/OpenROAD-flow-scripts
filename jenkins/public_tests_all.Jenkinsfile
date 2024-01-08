@@ -26,6 +26,10 @@ node {
   
   docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
     try {
+      properties([
+        copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
+      ]);
+      
       stage('Local Build') {
         localBuild()
       }
