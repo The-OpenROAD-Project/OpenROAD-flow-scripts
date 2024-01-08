@@ -119,7 +119,7 @@ pipeline {
                     if ("${TEST_SLUG}" == 'docker build'){
                       retry(3) {
                         try {
-                          sh "./build_openroad.sh --no_init";
+                          sh "./build_openroad.sh --no_init --latest";
                         }
                         catch (e) {
                           sleep(60);
