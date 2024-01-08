@@ -107,7 +107,7 @@ node {
           tasks["${currentSlug}"] = {
               node {
                   checkout scm
-                  shared_functions.runTests(${currentSlug})
+                  shared_functions.runTests(${currentSlug}, "--no_init --latest")
               }
             }
       }
