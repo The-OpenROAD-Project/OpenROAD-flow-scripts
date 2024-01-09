@@ -19,6 +19,7 @@ node {
       // echo "Building & Pushing Docker image for ubuntu22.04"
       // sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha"
       // DOCKER_IMAGE_TAG = env.GIT_COMMIT
+
     // } else {
       echo "No changes using latest tag"
     // }
@@ -31,31 +32,14 @@ node {
       ]);
 
       stage('Checkout'){
-        checkout([$class: "GitSCM",
-            branches: [[name: "*/master"]],
-            doGenerateSubmoduleConfigurations: false,
-            extensions: [
-            [
-                $class: "SubmoduleOption",
-                disableSubmodules: false,
-                parentCredentials: true,
-                recursiveSubmodules: true,
-                reference: "",
-                trackingSubmodules: false
-            ],
-            [
-                $class: "RelativeTargetDirectory",
-                relativeTargetDir: "tools/OpenROAD"
-            ]
-            ]
-        ])
+        checkout scm
       }
       
       stage('Local Build') {
         localBuild()
       }
 
-      if(isDependencyInstallerChanged(env.BRANCH_NAME)) {
+      if(DOCKER_IMAGE_TAG != "latest") {
         stage('Test Dependency Installer') {
           Map matrix_axes = [
           OS: ['ubuntu20.04', 'ubuntu22.04', 'centos7']
