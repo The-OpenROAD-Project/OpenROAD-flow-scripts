@@ -21,13 +21,11 @@ if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
 proc save_progress {stage} {
   puts "Run 'make gui_$stage.odb' to load progress snapshot"
   write_db $::env(RESULTS_DIR)/$stage.odb
-  write_sdc $::env(RESULTS_DIR)/$stage.sdc
+  write_sdc -no_timestamp $::env(RESULTS_DIR)/$stage.sdc
 }
 
-set cts_args [list -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
+set cts_args [list \
           -sink_clustering_enable \
-          -sink_clustering_size $cluster_size \
-          -sink_clustering_max_diameter $cluster_diameter \
           -balance_levels]
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
@@ -116,7 +114,7 @@ set result [catch {detailed_placement} msg]
 if {$result != 0} {
   save_progress 4_1_error
   puts "Detailed placement failed in CTS: $msg"
-  return -code $result
+  exit $result
 }
 
 check_placement -verbose
@@ -127,10 +125,8 @@ if { [info exists ::env(POST_CTS_TCL)] } {
   source $::env(POST_CTS_TCL)
 }
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
-      write_def $::env(RESULTS_DIR)/4_1_cts.def
-  }
-  write_db $::env(RESULTS_DIR)/4_1_cts.odb
-  write_sdc $::env(RESULTS_DIR)/4_cts.sdc
+if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
+  write_def $::env(RESULTS_DIR)/4_1_cts.def
 }
+write_db $::env(RESULTS_DIR)/4_1_cts.odb
+write_sdc -no_timestamp $::env(RESULTS_DIR)/4_cts.sdc

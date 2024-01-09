@@ -88,6 +88,4 @@ puts [sta::network_leaf_pin_count]
 
 puts ""
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/3_4_place_resized.odb
-}
+write_db $::env(RESULTS_DIR)/3_4_place_resized.odb
