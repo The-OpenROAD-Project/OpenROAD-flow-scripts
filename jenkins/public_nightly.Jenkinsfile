@@ -146,8 +146,8 @@ node {
               def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
 
               emailext (
-                  to: EMAIL_TO,
-                  replyTo: EMAIL_TO,
+                  to: "$EMAIL_TO",
+                  replyTo: "$EMAIL_TO",
                   subject: '$DEFAULT_SUBJECT',
                   body: '''
                       $DEFAULT_CONTENT
