@@ -249,12 +249,10 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                        'Number of cells: +(\S+)',
                        rptPath + '/synth_stat.txt')
 
-    hierarchicalSynth = os.environ.get('SYNTH_HIERARCHICAL')
-
     extractTagFromFile('synth__design__instance__area__stdcell',
-                        metrics_dict,
-                        'Chip area for (?:top )?module.*: +(\S+)',
-                        rptPath + '/synth_stat.txt')
+                       metrics_dict,
+                       'Chip area for (?:top )?module.*: +(\S+)',
+                       rptPath + '/synth_stat.txt')
 
     # Clocks
     # =========================================================================
