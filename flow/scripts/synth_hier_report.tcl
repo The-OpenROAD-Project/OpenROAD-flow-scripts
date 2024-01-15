@@ -1,7 +1,20 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
-# Hierarchical synthesis
-synth  -top $::env(DESIGN_NAME)
+# Minimal hierarchical synthesis to get rough area numbers to drive
+# the MAX_UNGROUP_SIZE policy.
+synth -run :coarse -top $::env(DESIGN_NAME)
+# These commands are cherry-picked from the "synth -run coarse:" list
+# of commands in the Yosys manual.
+#
+# 'proc' pass is called 'procs' to avoid conflict with tcl 'proc' command
+procs
+memory -nomap
+memory_map
+techmap
+hierarchy -check
+stat
+check
+
 if { [info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)] } {
   techmap -map $::env(ADDER_MAP_FILE)
 }
