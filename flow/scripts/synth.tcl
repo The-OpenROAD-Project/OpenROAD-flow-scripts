@@ -1,6 +1,28 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
-if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 && [file isfile $::env(SYNTH_STOP_MODULE_SCRIPT)] } {
+if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1} {
+  set ungroup_threshold 0
+  if { [info exist ::env(MAX_UNGROUP_SIZE)] && $::env(MAX_UNGROUP_SIZE) > 0 } {
+    set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
+    puts "Ungroup modules of size $ungroup_threshold"
+  }
+
+  design -save hierarchy_checkpoint
+  # Minimal hierarchical synthesis to use number of cells to drive policy
+  # of whether to flatten a module or not.
+  synth -run :coarse -top $::env(DESIGN_NAME)
+  # These commands are cherry-picked from the "synth -run coarse:" list
+  # of commands in the Yosys manual.
+  #
+  # 'proc' pass is called 'procs' to avoid conflict with tcl 'proc' command
+  procs
+  memory -nomap
+  memory_map
+  json -o $::env(OBJECTS_DIR)/synth.json
+  exec python $::env(SCRIPTS_DIR)/synth_keep.py $::env(OBJECTS_DIR)/synth.json $::env(SYNTH_STOP_MODULE_SCRIPT) $ungroup_threshold
+  design -load hierarchy_checkpoint
+
+  hierarchy -check -top $::env(DESIGN_NAME)
   puts "Sourcing $::env(SYNTH_STOP_MODULE_SCRIPT)"
   source $::env(SYNTH_STOP_MODULE_SCRIPT)
 }

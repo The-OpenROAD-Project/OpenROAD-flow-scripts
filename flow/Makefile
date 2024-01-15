@@ -465,14 +465,6 @@ do-synth-report:
 #-------------------------------------------------------------------------------
 SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 
-$(SYNTH_STOP_MODULE_SCRIPT):
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys_hier_report.log
-
-ifeq ($(SYNTH_HIERARCHICAL), 1)
-do-yosys: $(SYNTH_STOP_MODULE_SCRIPT)
-endif
-
 export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
 $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
