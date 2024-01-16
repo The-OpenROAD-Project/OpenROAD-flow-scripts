@@ -249,18 +249,10 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                        'Number of cells: +(\S+)',
                        rptPath + '/synth_stat.txt')
 
-    hierarchicalSynth = os.environ.get('SYNTH_HIERARCHICAL')
-
-    if hierarchicalSynth == '1':
-        extractTagFromFile('synth__design__instance__area__stdcell',
-                            metrics_dict,
-                            'Chip area for top module.*: +(\S+)',
-                            rptPath + '/synth_stat.txt')
-    else:
-        extractTagFromFile('synth__design__instance__area__stdcell',
-                            metrics_dict,
-                            'Chip area for module.*: +(\S+)',
-                            rptPath + '/synth_stat.txt')
+    extractTagFromFile('synth__design__instance__area__stdcell',
+                       metrics_dict,
+                       'Chip area for (?:top )?module.*: +(\S+)',
+                       rptPath + '/synth_stat.txt')
 
     # Clocks
     # =========================================================================
@@ -295,7 +287,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
                        metrics_dict,
                        baseRegEx.format('finish slack div critical path delay',
                                         '(\S+)'),
-                       logPath + '/6_report.log')
+                       rptPath + '/6_finish.rpt')
 
     extractGnuTime('finish', metrics_dict, logPath + '/6_report.log')
 

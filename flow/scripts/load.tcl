@@ -1,37 +1,33 @@
-proc load_design {design_file sdc_file msg} {
-  if {![info exists standalone] || $standalone} {
-    # Read liberty files
-    source $::env(SCRIPTS_DIR)/read_liberty.tcl
+proc load_design {design_file sdc_file} {
+  # Read liberty files
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
-    # Read design files
-    set ext [file extension $design_file]
-    if {$ext == ".v"} {
-      read_lef $::env(TECH_LEF)
-      read_lef $::env(SC_LEF)
-      if {[info exist ::env(ADDITIONAL_LEFS)]} {
-        foreach lef $::env(ADDITIONAL_LEFS) {
-          read_lef $lef
-        }
+  # Read design files
+  set ext [file extension $design_file]
+  if {$ext == ".v"} {
+    read_lef $::env(TECH_LEF)
+    read_lef $::env(SC_LEF)
+    if {[info exist ::env(ADDITIONAL_LEFS)]} {
+      foreach lef $::env(ADDITIONAL_LEFS) {
+        read_lef $lef
       }
-      read_verilog $::env(RESULTS_DIR)/$design_file
-      link_design $::env(DESIGN_NAME)
-    } elseif {$ext == ".odb"} {
-      read_db $::env(RESULTS_DIR)/$design_file
-    } else {
-      error "Unrecognized input file $design_file"
     }
-
-    # Read SDC file
-    read_sdc $::env(RESULTS_DIR)/$sdc_file
-
-    if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
-      source $::env(PLATFORM_DIR)/derate.tcl
-    }
-
-    source $::env(PLATFORM_DIR)/setRC.tcl
+    read_verilog $::env(RESULTS_DIR)/$design_file
+    link_design $::env(DESIGN_NAME)
+  } elseif {$ext == ".odb"} {
+    read_db $::env(RESULTS_DIR)/$design_file
   } else {
-    puts $msg
+    error "Unrecognized input file $design_file"
   }
+
+  # Read SDC file
+  read_sdc $::env(RESULTS_DIR)/$sdc_file
+
+  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
+    source $::env(PLATFORM_DIR)/derate.tcl
+  }
+
+  source $::env(PLATFORM_DIR)/setRC.tcl
 }
 
 #===========================================================================================
@@ -106,8 +102,11 @@ proc run_equivalence_test {} {
     write_eqy_verilog 4_after_rsz.v
     write_eqy_script
 
-    file delete -force $::env(LOG_DIR)/4_eqy_output
-    eval exec eqy -d $::env(LOG_DIR)/4_eqy_output $::env(OBJECTS_DIR)/4_eqy_test.eqy > $::env(LOG_DIR)/4_equivalence_check.log
+    eval exec eqy -d $::env(LOG_DIR)/4_eqy_output \
+        --force \
+        --jobs $::env(NUM_CORES) \
+        $::env(OBJECTS_DIR)/4_eqy_test.eqy \
+        > $::env(LOG_DIR)/4_equivalence_check.log
     set count [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
     if { $count == 0 } {
       error "Repair timing output failed equivalence test"

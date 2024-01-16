@@ -4,6 +4,12 @@ export PLATFORM    = asap7
 
 export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = True
+
+export RTLMP_MIN_INST = 1000
+export RTLMP_MAX_INST = 3500
+export RTLMP_MIN_MACRO = 1
+export RTLMP_MAX_MACRO = 5
+
 export MAX_UNGROUP_SIZE ?= 1000
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
@@ -18,7 +24,7 @@ export PLACE_DENSITY_LB_ADDON = 0.10
 
 export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS    = -exclude left:* -exclude right:* -exclude top:*
-export MACRO_PLACE_HALO    = 3 3
+export MACRO_PLACE_HALO    = 1 1
 export MACRO_PLACE_CHANNEL = 6 6
 #
 export TNS_END_PERCENT   = 100

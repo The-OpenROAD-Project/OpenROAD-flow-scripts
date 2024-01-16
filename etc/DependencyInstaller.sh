@@ -143,7 +143,7 @@ EOF
 }
 
 # default args
-OR_INSTALLER_ARGS=""
+OR_INSTALLER_ARGS="-eqy"
 # default prefix
 PREFIX=""
 # default option

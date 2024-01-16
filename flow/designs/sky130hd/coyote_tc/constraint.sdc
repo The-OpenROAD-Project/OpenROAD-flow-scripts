@@ -191,7 +191,7 @@ set_max_transition 0.069 [get_ports {fsb_node_data_o_3}]
 set_max_transition 0.069 [get_ports {fsb_node_data_o_2}]
 set_max_transition 0.069 [get_ports {fsb_node_data_o_1}]
 set_max_transition 0.069 [get_ports {fsb_node_data_o_0}]
-create_clock [get_pins u_clk.u_in/IN]  -name core_clk  -period 50  -waveform {0 2.5}
+create_clock [get_pins u_clk_i.u_in/IN]  -name core_clk  -period 50  -waveform {0 2.5}
 set_clock_latency -source 0  [get_clocks core_clk]
 set_clock_uncertainty 0.03  [get_clocks core_clk]
 set_clock_transition -min -fall 0.069 [get_clocks core_clk]

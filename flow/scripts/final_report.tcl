@@ -1,6 +1,6 @@
 utl::set_metrics_stage "finish__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 6_1_fill.odb 6_1_fill.sdc "Starting final report"
+load_design 6_1_fill.odb 6_1_fill.sdc
 
 set_propagated_clock [all_clocks]
 
@@ -37,7 +37,7 @@ if {[info exist ::env(RCX_RULES)]} {
   read_spef $::env(RESULTS_DIR)/6_final.spef
 
   # Static IR drop analysis
-  if {[info exist ::env(PWR_NETS_VOLTAGES)]} {
+  if {[info exist ::env(PWR_NETS_VOLTAGES)] && [string length $::env(PWR_NETS_VOLTAGES)] > 0} {
     dict for {pwrNetName pwrNetVoltage}  {*}$::env(PWR_NETS_VOLTAGES) {
         set_pdnsim_net_voltage -net ${pwrNetName} -voltage ${pwrNetVoltage}
         analyze_power_grid -net ${pwrNetName} \
@@ -46,7 +46,7 @@ if {[info exist ::env(RCX_RULES)]} {
   } else {
     puts "IR drop analysis for power nets is skipped because PWR_NETS_VOLTAGES is undefined"
   }
-  if {[info exist ::env(GND_NETS_VOLTAGES)]} {
+  if {[info exist ::env(GND_NETS_VOLTAGES)] && [string length $::env(GND_NETS_VOLTAGES)] > 0} {
     dict for {gndNetName gndNetVoltage}  {*}$::env(GND_NETS_VOLTAGES) {
         set_pdnsim_net_voltage -net ${gndNetName} -voltage ${gndNetVoltage}
         analyze_power_grid -net ${gndNetName} \
@@ -61,7 +61,7 @@ if {[info exist ::env(RCX_RULES)]} {
 }
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "finish"
+report_metrics 6 "finish"
 
 # Save a final image if openroad is compiled with the gui
 if {[expr [llength [info procs save_image]] > 0]} {

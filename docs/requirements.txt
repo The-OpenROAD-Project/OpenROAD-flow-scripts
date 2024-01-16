@@ -1,6 +1,7 @@
-git+https://github.com/executablebooks/sphinx-external-toc
+git+https://github.com/executablebooks/sphinx-external-toc.git@v0.3.1
 sphinx
 sphinx-autobuild
 myst-parser
 sphinx-book-theme
 sphinx-copybutton
+sphinxcontrib-mermaid

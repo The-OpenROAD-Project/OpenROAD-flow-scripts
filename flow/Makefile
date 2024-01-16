@@ -94,7 +94,13 @@
 # DESIGN_CONFIG=./designs/gf180/jpeg/config.mk
 # DESIGN_CONFIG=./designs/gf180/riscv32i/config.mk
 # DESIGN_CONFIG=./designs/gf180/uart-blocks/config.mk
-#
+
+#DESIGN_CONFIG=./designs/ihp-sg13g2/aes/config.mk
+#DESIGN_CONFIG=./designs/ihp-sg13g2/ibex/config.mk
+#DESIGN_CONFIG=./designs/ihp-sg13g2/gcd/config.mk
+#DESIGN_CONFIG=./designs/ihp-sg13g2/spi/config.mk
+#DESIGN_CONFIG=./designs/ihp-sg13g2/riscv32i/config.mk
+
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
@@ -156,7 +162,7 @@ export TEST_DIR      ?= $(FLOW_HOME)/test
 # Include design and platform configuration
 include $(DESIGN_CONFIG)
 
-PUBLIC=nangate45 sky130hd sky130hs asap7
+PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
 ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
   export PLATFORM_DIR = $(PLATFORM_HOME)/$(PLATFORM)
@@ -168,9 +174,6 @@ else
   $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
 endif
 
-ifeq ($(MAKELEVEL),0)
-$(info [INFO][FLOW] Using platform directory $(PLATFORM_DIR))
-endif
 include $(PLATFORM_DIR)/config.mk
 
 export GALLERY_REPORT ?= 0
@@ -208,6 +211,11 @@ export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VAR
 export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
+
+# BLOCKS is ORFS specific and is used to trigger hierarchical flow,
+# MACROS is a space separated list of macros used in the design,
+# but not necessarily built by ORFS using the BLOCKS mechanism.
+export MACROS ?= $(BLOCKS)
 
 ifdef BLOCKS
 ifeq ($(MAKELEVEL),0)
@@ -439,8 +447,7 @@ $(WRAPPED_LIBS):
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
 .PHONY: synth
-synth: versions.txt \
-       $(RESULTS_DIR)/1_synth.v \
+synth: $(RESULTS_DIR)/1_synth.v \
        $(RESULTS_DIR)/1_synth.sdc
 
 .PHONY: synth-report
@@ -463,24 +470,45 @@ $(SYNTH_STOP_MODULE_SCRIPT):
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys_hier_report.log
 
 ifeq ($(SYNTH_HIERARCHICAL), 1)
-$(RESULTS_DIR)/1_1_yosys.v: $(SYNTH_STOP_MODULE_SCRIPT)
+do-yosys: $(SYNTH_STOP_MODULE_SCRIPT)
 endif
 
-$(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.sdc &: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE)
+export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
+
+$(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
+	mkdir -p $(dir $@)
+	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
+
+.PHONY: yosys-dependencies
+yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
+
+.PHONY: do-yosys
+do-yosys: yosys-dependencies
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+
+$(RESULTS_DIR)/1_1_yosys.v: $(SDC_FILE_CLOCK_PERIOD)
+	$(UNSET_AND_MAKE) do-yosys
+
+$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
+	mkdir -p $(REPORTS_DIR)
 	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
 
-$(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
+.PHONY: do-synth
+do-synth:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	cp $< $@
+	cp $(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.v
+
+$(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
+	$(UNSET_AND_MAKE) do-synth
 
 .PHONY: clean_synth
 clean_synth:
-	rm -f  $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
-	rm -f  $(REPORTS_DIR)/synth_*
-	rm -f  $(LOG_DIR)/1_*
-	rm -f  $(SYNTH_STOP_MODULE_SCRIPT)
+	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
+	rm -f $(REPORTS_DIR)/synth_*
+	rm -f $(LOG_DIR)/1_*
+	rm -f $(SYNTH_STOP_MODULE_SCRIPT)
+	rm -f $(SDC_FILE_CLOCK_PERIOD)
 	rm -rf _tmp_yosys-abc-*
 
 
@@ -503,7 +531,10 @@ else ifneq ($(FOOTPRINT_TCL),)
 IS_CHIP = 1
 endif
 
-UNSET_AND_MAKE = @bash -c 'for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done; $(MAKE) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG) $$@' --
+UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
+
+SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo "$($V)" | $(FLOW_HOME)/scripts/escape.sh),$V='')) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG)
+UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
 
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the
@@ -536,8 +567,9 @@ $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 
 .PHONY: do-$(1)
 do-$(1):
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json) 2>&1 | tee $(LOG_DIR)/$(1).tmp.log
-	mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log
+	(trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
+	 $(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json) 2>&1 | \
+	 tee $(LOG_DIR)/$(1).tmp.log
 endef
 
 # generate make rules to copy a file, if a dependency change and
@@ -833,7 +865,6 @@ skip_resize: $(RESULTS_DIR)/3_3_place_gp.odb
 skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
 	# mock all intermediate results
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_1_cts.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_2_cts_fillcell.odb
 	cp $(RESULTS_DIR)/3_place.sdc $(RESULTS_DIR)/4_cts.sdc
 	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_cts.odb
 
@@ -963,9 +994,7 @@ clean_finish:
 # ==============================================================================
 
 .PHONY: all
-all: $(SDC_FILE) $(WRAPPED_LIBS) $(DONT_USE_LIBS) $(OBJECTS_DIR)/klayout.lyt $(WRAPPED_GDSOAS) $(DONT_USE_SC_LIB)
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/run_all.tcl -metrics $(LOG_DIR)/run_all.json) 2>&1 | tee $(LOG_DIR)/run_all.log
+all: synth floorplan place cts route finish
 
 .PHONY: clean
 clean:
@@ -1060,7 +1089,7 @@ yosys:
 # Drop into a bash shell with all environment variables, useful for debugging
 .PHONY: bash
 bash:
-	bash
+	bash --init-file <(echo "PS1='\[\e[32m\]Makefile Environment \[\e[0m\] \w $ '")
 
 .PHONY: all_defs
 all_defs : $(foreach file,$(RESULTS_ODB),$(file).def)
@@ -1072,7 +1101,7 @@ handoff : all_defs all_verilog
 
 .PHONY: print-%
 # Print any variable, for instance: make print-DIE_AREA
-print-%  : ; @echo $* = $($*)
+print-%  : ; @echo "$* = $($*)"
 
 .PHONY: test-unset-and-make-%
 test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
