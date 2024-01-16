@@ -75,7 +75,7 @@ export IO_PLACER_V                           ?= Metal4
 export PDN_TCL                               ?= $(PLATFORM_DIR)/openROAD/pdn/pdn_grid_strategy_$(TRACK_OPTION)_6M.cfg
 
 # Endcap and Welltie cells
-export TAPCELL_TCL                            = $(PLATFORM_DIR)/openROAD/tapcell.tcl
+export TAPCELL_TCL                           ?= $(PLATFORM_DIR)/openROAD/tapcell.tcl
 
 # macro planning
 export MACRO_PLACE_HALO                      ?= 10 10
