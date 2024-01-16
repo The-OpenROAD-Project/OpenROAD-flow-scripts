@@ -2,7 +2,7 @@
 
 ## Install OpenROAD
 Download pre-built binaries with self-contained dependencies
-included from the Precision Innovations Github releases
+included from the Precision Innovations' GitHub releases
 [here](https://github.com/Precision-Innovations/OpenROAD/releases).
 
 Thanks to [Precision Innovations](https://precisioninno.com/) for hosting and maintaining these binaries.
