@@ -82,7 +82,17 @@ rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true
 $DIR/generate-vars.sh ${VARS_BASENAME}
 
 echo "Archiving issue to $1_${ISSUE_TAG}.tar.gz"
-tar --ignore-failed-read -czhf $1_${ISSUE_TAG}.tar.gz \
+# if pigz is installed, use it instead of gzip
+if command -v pigz &> /dev/null; then
+    COMPRESS=pigz
+else
+    COMPRESS=gzip
+fi
+
+echo "Using $COMPRESS to compress tar file"
+
+tar --use-compress-program=${COMPRESS} \
+    --ignore-failed-read -chf $1_${ISSUE_TAG}.tar.gz \
     --transform="s|^|$1_${ISSUE_TAG}/|S" \
     --transform="s|^$1_${ISSUE_TAG}${FLOW_HOME}/|$1_${ISSUE_TAG}/|S" \
     $LOG_DIR \
