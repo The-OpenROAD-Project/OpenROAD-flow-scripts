@@ -818,6 +818,11 @@ finish: $(LOG_DIR)/6_report.log \
 elapsed:
 	-@$(UTILS_DIR)/genElapsedTime.py -d $(BLOCK_LOG_FOLDERS) $(LOG_DIR)
 
+# Useful when working with macros, see elapsed time for all macros in platform
+.PHONY: elapsed-all
+elapsed-all:
+	@$(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
+
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
