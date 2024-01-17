@@ -15,14 +15,13 @@ node {
   def DOCKER_IMAGE_TAG = "latest"
   stage('Build and Push Docker Image') {
     // Check if it's a commit tag
-    // if (isCommitTag(env.BRANCH_NAME)) {
-      // echo "Building & Pushing Docker image for ubuntu22.04"
-      // sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha"
-      // DOCKER_IMAGE_TAG = env.GIT_COMMIT
-
-    // } else {
+    if (isCommitTag(env.BRANCH_NAME)) {
+      echo "Building & Pushing Docker image for ubuntu22.04"
+      sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha"
+      DOCKER_IMAGE_TAG = env.GIT_COMMIT
+    } else {
       echo "No changes using latest tag"
-    // }
+    }
   }
   
   docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
@@ -32,7 +31,14 @@ node {
       ]);
 
       stage('Checkout'){
-        checkout scm
+        checkout changelog: false, poll: false, scm: [
+            $class: 'GitSCM',
+            branches: [[name: 'refs/pull/${env.CHANGE_ID}/head']],
+            doGenerateSubmoduleConfigurations: false,
+            extensions: [[$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, reference: '', trackingSubmodules: false]],
+            submoduleCfg: [],
+            userRemoteConfigs: [[credentialsId: 'your-credentials-id', url: 'your-repository-url']]
+        ]
       }
       
       stage('Local Build') {
@@ -52,7 +58,7 @@ node {
               tasks["${currentOS}"] = {
                   node {
                       checkout scm
-                      testDependencyInstaller(${currentOS})
+                      testDependencyInstaller(currentOS)
                   }
                 }
           }
@@ -121,7 +127,7 @@ node {
             tasks["${currentSlug}"] = {
                 node {
                     checkout scm
-                    runTests(${currentSlug})
+                    runTests(currentSlug)
                 }
               }
         }
