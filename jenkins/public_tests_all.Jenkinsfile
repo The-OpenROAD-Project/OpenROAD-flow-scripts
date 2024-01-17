@@ -8,7 +8,14 @@ node {
   ]);
 
   stage('Checkout'){
-    checkout scm
+      checkout changelog: false, poll: false, scm: [
+          $class: 'GitSCM',
+          branches: [[name: 'refs/pull/${env.CHANGE_ID}/head']],
+          doGenerateSubmoduleConfigurations: false,
+          extensions: [[$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, reference: '', trackingSubmodules: false]],
+          submoduleCfg: [],
+          userRemoteConfigs: [[credentialsId: 'your-credentials-id', url: 'your-repository-url']]
+      ]
   }
 
   // def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
