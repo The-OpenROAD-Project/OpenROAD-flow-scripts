@@ -14,3 +14,4 @@ export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 
 export PLACE_DENSITY = uniform
+export SKIP_PIN_SWAP = 1

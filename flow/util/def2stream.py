@@ -55,11 +55,12 @@ rect_pat = re.compile(r'''
   (?P<opc>                      # OPC, None if absent
   \s+\+\ OPC
   )?
-  \s+RECT\
-   \(\ (?P<xlo>\d+)\ (?P<ylo>\d+)\ \)\   # rect lower-left pt
-  \(\ (?P<xhi>\d+)\ (?P<yhi>\d+)\ \)\ ; # rect upper-right pt
-  ''',
-                      re.VERBOSE)
+  \s+RECT\s+
+   \(\s+(?P<xlo>\d+)\s+(?P<ylo>\d+)\s+\)\s+   # rect lower-left pt
+   \(\s+(?P<xhi>\d+)\s+(?P<yhi>\d+)\s+\)\s+ ; # rect upper-right pt
+  ''', re.VERBOSE)
+
+
 
 def read_fills(top):
   if config_file == '':
@@ -111,10 +112,6 @@ for i in main_layout.each_cell():
 
 print("[INFO] Reading DEF ...")
 main_layout.read(in_def, layoutOptions)
-
-#print("[INFO] Reporting cells after loading DEF ...")
-#for i in main_layout.each_cell():
-#  print("[INFO] '{0}'".format(i.name))
 
 # Clear cells
 top_cell_index = main_layout.cell(design_name).cell_index()

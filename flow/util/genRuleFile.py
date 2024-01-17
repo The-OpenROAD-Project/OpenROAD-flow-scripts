@@ -103,57 +103,21 @@ rules_dict = {
         'compare': '==',
     },
     # cts
-    'cts__timing__setup__ws': {
-        'mode': 'period',
-        'padding': 25,
-        'min_max': min,
-        'min_max_direct': 0,
-        'round_value': False,
-        'compare': '>=',
-    },
-    'cts__timing__setup__ws__pre_repair': {
-        'mode': 'period',
-        'padding': 25,
-        'min_max': min,
-        'min_max_direct': 0,
-        'round_value': False,
-        'compare': '>=',
-    },
-    'cts__timing__setup__ws__post_repair': {
-        'mode': 'period',
-        'padding': 25,
-        'min_max': min,
-        'min_max_direct': 0,
-        'round_value': False,
-        'compare': '>=',
-    },
     'cts__design__instance__count__setup_buffer': {
         'mode': 'metric',
-        'padding': 5,
+        'padding': 10,
         'metric': 'placeopt__design__instance__count__stdcell',
         'round_value': True,
         'compare': '<=',
     },
     'cts__design__instance__count__hold_buffer': {
         'mode': 'metric',
-        'padding': 5,
+        'padding': 10,
         'metric': 'placeopt__design__instance__count__stdcell',
         'round_value': True,
         'compare': '<=',
     },
     # route
-    'globalroute__timing__clock__slack': {
-        'mode': 'period',
-        'padding': 5,
-        'round_value': False,
-        'compare': '>=',
-    },
-    'globalroute__timing__setup__ws': {
-        'mode': 'period',
-        'padding': 5,
-        'round_value': False,
-        'compare': '>=',
-    },
     'detailedroute__route__wirelength': {
         'mode': 'padding',
         'padding': 15,
@@ -178,43 +142,18 @@ rules_dict = {
         'round_value': True,
         'compare': '<=',
     },
-    'finish__timing__drv__max_slew_limit': {
-        'mode': 'sum_fixed',
-        'padding': -0.20,
-        'min_max': min,
-        'min_max_direct': -0.20,
-        'round_value': False,
-        'compare': '>=',
-    },
-    'finish__timing__drv__max_fanout_limit': {
-        'mode': 'sum_fixed',
-        'padding': -0.20,
-        'min_max': min,
-        'min_max_direct': -0.20,
-        'round_value': False,
-        'compare': '>=',
-    },
-    'finish__timing__drv__max_cap_limit': {
-        'mode': 'sum_fixed',
-        'padding': -0.20,
-        'min_max': min,
-        'min_max_direct': -0.20,
-        'round_value': False,
-        'compare': '>=',
-    },
     'finish__timing__drv__setup_violation_count': {
-        'mode': 'padding',
-        'padding': 20,
-        'min_max': max,
-        'min_max_sum': 10,
+        'mode': 'metric',
+        'padding': 5,
+        'metric': 'placeopt__design__instance__count__stdcell',
         'round_value': True,
         'compare': '<=',
     },
     'finish__timing__drv__hold_violation_count': {
         'mode': 'padding',
-        'padding': 20,
+        'padding': 25,
         'min_max': max,
-        'min_max_sum': 10,
+        'min_max_sum': 100,
         'round_value': True,
         'compare': '<=',
     },
@@ -237,13 +176,11 @@ ops = {
     '!=': operator.ne,
 }
 
-period_list = list()
-for entry in metrics['constraints__clocks__details']:
-    period_list.append(float(sub(r'^.*: ', '', entry)))
+period_list = metrics['constraints__clocks__details']
 
+period = float(sub(r'^.*: ', '', period_list[0]))
 if len(period_list) != 1:
-    print('[WARNING] Multiple clocks not supported. Will use first clock.')
-period = period_list[0]
+    print(f'[WARNING] Multiple clocks not supported. Will use first clock: {period_list[0]}.')
 
 for field, option in rules_dict.items():
     if field not in metrics.keys():
@@ -310,6 +247,13 @@ for field, option in rules_dict.items():
             print('[WARNING] Compare operator changed since last update.')
 
         compare = ops[option['compare']]
+
+        if compare(rule_value, metrics[field]) and 'padding' in option.keys():
+            rule_value = metrics[field] * (1 + option['padding'] / 100)
+            if option['round_value'] and not isinf(rule_value):
+                rule_value = int(round(rule_value))
+            else:
+                rule_value = ceil(rule_value * 100) / 100.0
 
         UPDATE = False
         if args.tighten \

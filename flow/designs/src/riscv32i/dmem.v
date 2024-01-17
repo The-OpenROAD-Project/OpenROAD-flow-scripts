@@ -17,6 +17,10 @@ module dmem (clk, r_w, mem_addr, mem_data, mem_out);
    wire [1:0] 	 sel_mem;
    wire [3:0] 	 ce_mem;
    wire [3:0] 	 we_mem;
+   wire [31:0]   inter_dmem0;
+   wire [31:0]   inter_dmem1;
+   wire [31:0]   inter_dmem2;
+   wire [31:0]   inter_dmem3;
  	 
 
    assign ce_mem = (mem_addr[31] == 1) ? 4'b1000 :

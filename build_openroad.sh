@@ -20,10 +20,7 @@ OPENROAD_APP_BRANCH="master"
 INSTALL_PATH="$(pwd)/tools/install"
 
 YOSYS_USER_ARGS=""
-YOSYS_ARGS="\
-CONFIG=gcc \
-ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc \
-"
+YOSYS_ARGS="CONFIG=gcc"
 
 OPENROAD_APP_USER_ARGS=""
 OPENROAD_APP_ARGS=""
@@ -263,6 +260,11 @@ __local_build()
         if [[ "$OSTYPE" == "darwin"* ]]; then
           export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$(brew --prefix tcl-tk)/bin:$PATH"
           export CMAKE_PREFIX_PATH=$(brew --prefix or-tools)
+        fi
+        if [[ -f "/opt/rh/rh-python38/enable" ]]; then
+            set +u
+            source /opt/rh/rh-python38/enable
+            set -u
         fi
         if [[ -f "/opt/rh/devtoolset-8/enable" ]]; then
             # the scl script has unbound variables

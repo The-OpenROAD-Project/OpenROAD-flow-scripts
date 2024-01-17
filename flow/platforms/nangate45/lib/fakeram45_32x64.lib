@@ -2,7 +2,7 @@ library(fakeram45_32x64) {
     technology (cmos);
     delay_model : table_lookup;
     revision : 1.0;
-    date : "2022-02-02 00:20:06Z";
+    date : "2023-11-08 13:27:50Z";
     comment : "SRAM";
     time_unit : "1ns";
     voltage_unit : "1V";
@@ -68,7 +68,7 @@ library(fakeram45_32x64) {
         downto : true ;
     }
 cell(fakeram45_32x64) {
-    area : 1754.536;
+    area : 2285.320;
     interface_timing : true;
     memory() {
         type : ram;

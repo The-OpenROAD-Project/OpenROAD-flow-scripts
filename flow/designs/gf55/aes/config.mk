@@ -19,6 +19,7 @@ export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN       = 4
 
 export PLACE_DENSITY     = 0.50
+export RECOVER_POWER     = 100
 
 ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CELL

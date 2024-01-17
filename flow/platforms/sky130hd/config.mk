@@ -77,8 +77,6 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hd.v
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
 export ABC_LOAD_IN_FF = 5
-# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 #--------------------------------------------------------
 # Floorplan
 # -------------------------------------------------------
@@ -120,6 +118,7 @@ export CTS_BUF_CELL   ?= sky130_fd_sc_hd__clkbuf_4
 # ---------------------------------------------------------
 # FastRoute options
 export MIN_ROUTING_LAYER ?= met1
+export MIN_CLK_ROUTING_LAYER ?= met3
 export MAX_ROUTING_LAYER ?= met5
 #
 # Define fastRoute tcl

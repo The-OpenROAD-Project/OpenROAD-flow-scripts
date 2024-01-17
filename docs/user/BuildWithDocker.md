@@ -2,8 +2,11 @@
 
 ## Prerequisites
 
-For this method you only need to install
+- For this method you only need to install
 [Docker](https://docs.docker.com/engine/install) on your machine.
+- Ensure that you have sufficient memory allocated to the Virtual Machine (VM) 
+as per our system [requirements](../index.md#system-requirements). Refer to
+this [Docker guide](https://docs.docker.com/config/containers/resource_constraints/) for setting CPU cores and memory limits.
 
 :::{Warning}
 The `build_openroad.sh` will use the host number of CPUs to compile `openroad`.
@@ -19,20 +22,48 @@ then is recommended that you restrict the number of CPUs used by the scripts
 docker run --rm ubuntu:22.04 nproc
 ```
 
-You can restrict the number of CPUs with the `-t|--threads N` argument:
+### Build Using Docker from pre-built binaries
 
-``` shell
-./build_openroad.sh --threads N
+Courtesy of [Precision Innovations](https://precisioninno.com/), 
+they release `.deb` installers of OpenROAD for Ubuntu
+and Debian on a regular basis. 
+This greatly helps to reduce the compilation time needed. 
+
+We recommend to use a Docker image of a supported OS
+and install OpenROAD using the prebuilt binaries from
+Precision Innovations. 
+You can start the container in an interactive mode using 
+the command below. 
+
+```shell
+docker run -it ubuntu:22.04
 ```
 
-## Clone and Build
+Now you are ready to install the prebuilt binaries. 
+Please refer to the instructions for installing prebuilt binaries 
+[here](./BuildWithPrebuilt.md).
+
+### Build Using Docker from sources
+
+Alternatively, if you would like the latest commits from the OpenROAD repositories,
+do follow the instructions below. 
+
+
+#### Clone and Build
 
 The following instructions build the docker image with CentOS 7 as the base OS:
+
 
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
-./build_openroad.sh
+./build_openroad.sh 
+```
+
+You can restrict the number of CPUs with the `-t|--threads N` argument:
+
+``` shell
+./build_openroad.sh --threads N
 ```
 
 ## Verify Installation

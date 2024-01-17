@@ -36,6 +36,7 @@ extensions = [
     'sphinx_external_toc',
     'sphinx_copybutton',
     'myst_parser',
+    'sphinxcontrib.mermaid'
 ]
 
 myst_enable_extensions = [
@@ -93,8 +94,6 @@ html_theme_options = {
     "repository_url": "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts",
     "repository_branch": "master",
     "show_navbar_depth": 2,
-    "use_edit_page_button": True,
-    "use_source_button": True,
     "use_issues_button": True,
     "use_download_button": True,
 
@@ -138,16 +137,19 @@ def get_file_from_url(url, fname):
     with open(fname, 'wb') as f:
         f.write(r.content)
 
-def setup(app):
-    if not os.path.exists('main'):
-        os.symlink('..', 'main')
-    prefix = '(../'
-    newPath = '(./main/'
-    with open('index.md', 'r') as f:
+def swap_prefix(file, old, new):
+    with open(file, 'r') as f:
         lines = f.read()
-    lines = lines.replace(prefix, newPath)
-    with open('index.md', 'wt') as f:
+    lines = lines.replace(old, new)
+    with open(file, 'wt') as f:
         f.write(lines)
+
+def setup(app):
+    import shutil
+    
+    # symlink does not work for ORFS because of long recursive file links
+    shutil.copy('../README.md', 'mainREADME.md')
+    swap_prefix('mainREADME.md', '```mermaid', '```{mermaid}\n:align: center\n')   
 
     url = 'https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/docs/contrib/GitGuide.md'
     get_file_from_url(url, 'contrib/GitGuide.md') 

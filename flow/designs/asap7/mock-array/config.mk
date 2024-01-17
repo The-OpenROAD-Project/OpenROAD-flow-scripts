@@ -3,7 +3,6 @@ include designs/asap7/mock-array/defaults.mk
 export DESIGN_NAME            = MockArray
 export DESIGN_NICKNAME        = mock-array
 
-export VERILOG_FILES_BLACKBOX = designs/src/mock-array/Element.v
 export VERILOG_FILES          = designs/src/mock-array/*.v
 
 export SDC_FILE               = designs/asap7/mock-array/constraints.sdc
@@ -24,7 +23,7 @@ export DIE_AREA  = $(shell \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config; print(f'{0} {0} {config.die_width} {config.die_height}')")
 
-BLOCKS                       = Element
+export BLOCKS                       = Element
 
 export GDS_ALLOW_EMPTY       = Element
 
@@ -32,9 +31,7 @@ export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
 
 export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
 
-export PDN_TCL               = designs/asap7/mock-array/pdn.tcl
-
-export TNS_END_PERCENT       = 100
+export PDN_TCL               = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCKS_grid_strategy.tcl
 
 # Target to force generation of Verilog per user settings MOCK_ARRAY_TABLE (rows, cols)
 verilog:

@@ -22,16 +22,16 @@ clean_metadata:
 update_ok: update_metadata update_rules
 
 .PHONY: update_metadata
-update_metadata: metadata
+update_metadata:
 	cp -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
 	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
 
 .PHONY: update_rules
-update_rules: metadata
+update_rules:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing --tighten
 
 .PHONY: update_rules_force
-update_rules_force: metadata
+update_rules_force:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
 
 #-------------------------------------------------------------------------------
@@ -86,20 +86,22 @@ define \n
 endef
 
 define get_variables
-$(foreach V, $(.VARIABLES),$(if $(filter-out $(1), $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT% GENERATE_ABSTRACT_RULE% do-step% do-copy%, $(V)), $V$ )))
+$(foreach V, $(.VARIABLES),$(if $(filter-out $(1), $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT% GENERATE_ABSTRACT_RULE% do-step% do-copy% OPEN_GUI% OPEN_GUI_SHORTCUT% SUB_MAKE% UNSET_VARS%, $(V)), $V$ )))
 endef
 
 export UNSET_VARIABLES_NAMES := $(call get_variables,command% line environment% default automatic)
 export ISSUE_VARIABLES_NAMES := $(call get_variables,environment% default automatic)
 export ISSUE_VARIABLES := $(foreach V, $(ISSUE_VARIABLES_NAMES), $(if $($V),$V=$($V),$V='')${\n})
 
+export COMMAND_LINE_ARGS := $(foreach V,$(.VARIABLES),$(if $(filter command% line, $(origin $V)),$(V)))
+
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	$(UTILS_DIR)/makeIssue.sh $*
 
 .PHONY: clean_issues
 clean_issues:
-	rm -rf $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
-	rm -rf $(VARS_BASENAME).sh $(RUN_ME_SCRIPT)
+	rm -f $(foreach issue, $(ISSUE_SCRIPTS), $(issue)_*.tar.gz)
+	rm -f vars*.sh vars*.tcl vars*.gdb run-me*.sh
 
 $(RESULTS_DIR)/6_final_only_clk.def: $(RESULTS_DIR)/6_final.def
 	$(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/deleteNonClkNets.tcl
@@ -152,3 +154,10 @@ endif
 .PHONY: update_sdc_clocks
 update_sdc_clocks: $(RESULTS_DIR)/route.guide
 	cp $(RESULTS_DIR)/updated_clks.sdc $(SDC_FILE)
+
+# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
+ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
+   ifneq ($(wildcard $(SDC_FILE)),)
+      export ABC_CLOCK_PERIOD_IN_PS := $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
+   endif
+endif
