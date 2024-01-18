@@ -8,6 +8,11 @@ if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1} 
   }
 
   design -save hierarchy_checkpoint
+  synth -top $::env(DESIGN_NAME)
+  json -o $::env(OBJECTS_DIR)/synth_full.json
+  design -load hierarchy_checkpoint
+
+  design -save hierarchy_checkpoint
   # Minimal hierarchical synthesis to use number of cells to drive policy
   # of whether to flatten a module or not.
   synth -run :coarse -top $::env(DESIGN_NAME)
@@ -18,6 +23,8 @@ if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1} 
   procs
   memory -nomap
   memory_map
+  techmap
+  opt -fast -full -purge
   json -o $::env(OBJECTS_DIR)/synth.json
   exec python $::env(SCRIPTS_DIR)/synth_keep.py $::env(OBJECTS_DIR)/synth.json $::env(SYNTH_STOP_MODULE_SCRIPT) $ungroup_threshold
   design -load hierarchy_checkpoint
