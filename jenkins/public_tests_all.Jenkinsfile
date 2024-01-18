@@ -12,9 +12,20 @@ node {
           $class: 'GitSCM',
           branches: [[name: 'refs/pull/${env.CHANGE_ID}/head']],
           doGenerateSubmoduleConfigurations: false,
-          extensions: [[$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, reference: '', trackingSubmodules: false]],
-          submoduleCfg: [],
-          userRemoteConfigs: [[credentialsId: 'your-credentials-id', url: 'your-repository-url']]
+          extensions: [
+          [
+              $class: 'SubmoduleOption', 
+              disableSubmodules: false, 
+              parentCredentials: true, 
+              recursiveSubmodules: true, 
+              reference: '', 
+              trackingSubmodules: false
+          ],
+          [
+            $class: "RelativeTargetDirectory",
+            relativeTargetDir: "tools/OpenROAD"
+          ]
+          ],
       ]
   }
 
@@ -42,9 +53,20 @@ node {
             $class: 'GitSCM',
             branches: [[name: 'refs/pull/${env.CHANGE_ID}/head']],
             doGenerateSubmoduleConfigurations: false,
-            extensions: [[$class: 'SubmoduleOption', disableSubmodules: false, parentCredentials: true, recursiveSubmodules: true, reference: '', trackingSubmodules: false]],
-            submoduleCfg: [],
-            userRemoteConfigs: [[credentialsId: 'your-credentials-id', url: 'your-repository-url']]
+            extensions: [
+            [
+                $class: 'SubmoduleOption', 
+                disableSubmodules: false, 
+                parentCredentials: true, 
+                recursiveSubmodules: true, 
+                reference: '', 
+                trackingSubmodules: false
+            ],
+            [
+              $class: "RelativeTargetDirectory",
+              relativeTargetDir: "tools/OpenROAD"
+            ]
+            ],
         ]
       }
       
@@ -170,7 +192,7 @@ node {
                       selector: specific("${BUILD_NUMBER}")
 
               def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
-              def EMAIL_TO = emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
+              // def EMAIL_TO = emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
 
               // if (env.BRANCH_NAME == "master") {
               //     echo("Main development branch: report to stakeholders and commit author.")
@@ -179,16 +201,20 @@ node {
               //     echo("Feature development branch: report only to commit author.")
               //     EMAIL_TO = "${COMMIT_AUTHOR_EMAIL}"
               // }
-
-              emailext (
-                  to: "$EMAIL_TO",
-                  replyTo: "$EMAIL_TO",
-                  subject: '$DEFAULT_SUBJECT',
-                  body: '''
+              sendEmail(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL, '''
                       $DEFAULT_CONTENT
                       ${FILE, path="flow/reports/report-summary.log"}
-                  '''
-              )
+                  ''')
+
+              // emailext (
+              //     to: "$EMAIL_TO",
+              //     replyTo: "$EMAIL_TO",
+              //     subject: '$DEFAULT_SUBJECT',
+              //     body: '''
+              //         $DEFAULT_CONTENT
+              //         ${FILE, path="flow/reports/report-summary.log"}
+              //     '''
+              // )
           } catch (Exception e) {
               echo "Exception occurred: ${e.toString()}"
               EMAIL_TO = "\$DEFAULT_RECIPIENTS"

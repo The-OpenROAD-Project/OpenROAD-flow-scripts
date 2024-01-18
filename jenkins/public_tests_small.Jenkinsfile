@@ -118,17 +118,21 @@ node {
                     selector: specific("${BUILD_NUMBER}")
 
             def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
-            def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
+            // def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
 
-            emailext (
-                to: "$EMAIL_TO",
-                replyTo: "$EMAIL_TO",
-                subject: '$DEFAULT_SUBJECT',
-                body: '''
-                    $DEFAULT_CONTENT
-                    ${FILE, path="flow/reports/report-summary.log"}
-                '''
-            )
+            // emailext (
+            //     to: "$EMAIL_TO",
+            //     replyTo: "$EMAIL_TO",
+            //     subject: '$DEFAULT_SUBJECT',
+            //     body: '''
+            //         $DEFAULT_CONTENT
+            //         ${FILE, path="flow/reports/report-summary.log"}
+            //     '''
+            // )
+            sendEmail(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL, '''
+                      $DEFAULT_CONTENT
+                      ${FILE, path="flow/reports/report-summary.log"}
+                  ''')
         } catch (Exception e) {
             echo "Exception occurred: ${e.toString()}"
             EMAIL_TO = "\$DEFAULT_RECIPIENTS"
