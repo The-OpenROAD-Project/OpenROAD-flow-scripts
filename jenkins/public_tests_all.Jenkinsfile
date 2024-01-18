@@ -10,7 +10,7 @@ node {
   stage('Checkout'){
       checkout changelog: false, poll: false, scm: [
           $class: 'GitSCM',
-          branches: [[name: 'refs/pull/${env.CHANGE_ID}/head']],
+          branches: [[name: "refs/pull/${env.CHANGE_ID}/head"]],
           doGenerateSubmoduleConfigurations: false,
           extensions: [
           [
@@ -51,7 +51,7 @@ node {
       stage('Checkout'){
         checkout changelog: false, poll: false, scm: [
             $class: 'GitSCM',
-            branches: [[name: 'refs/pull/${env.CHANGE_ID}/head']],
+            branches: [[name: "refs/pull/${env.CHANGE_ID}/head"]],
             doGenerateSubmoduleConfigurations: false,
             extensions: [
             [
