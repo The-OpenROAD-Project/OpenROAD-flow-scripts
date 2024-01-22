@@ -8,25 +8,34 @@ node {
   ]);
 
   stage('Checkout'){
-      checkout changelog: false, poll: false, scm: [
-          $class: 'GitSCM',
-          branches: [[name: "refs/pull/${env.CHANGE_ID}/head"]],
-          doGenerateSubmoduleConfigurations: false,
-          extensions: [
-          [
-              $class: 'SubmoduleOption', 
-              disableSubmodules: false, 
-              parentCredentials: true, 
-              recursiveSubmodules: true, 
-              reference: '', 
-              trackingSubmodules: false
-          ],
-          [
-            $class: "RelativeTargetDirectory",
-            relativeTargetDir: "tools/OpenROAD"
-          ]
-          ],
-      ]
+      // checkout changelog: false, poll: false, scm: [
+      //     $class: 'GitSCM',
+      //     branches: [[name: "refs/pull/${env.BRANCH_NAME}/head"]],
+      //     doGenerateSubmoduleConfigurations: false,
+      //     extensions: [
+      //     [
+      //         $class: 'SubmoduleOption', 
+      //         disableSubmodules: false, 
+      //         parentCredentials: true, 
+      //         recursiveSubmodules: true, 
+      //         reference: '', 
+      //         trackingSubmodules: false
+      //     ],
+      //     [
+      //       $class: "RelativeTargetDirectory",
+      //       relativeTargetDir: "tools/OpenROAD"
+      //     ]
+      //     ],
+      //     submoduleCfg: [],
+      // ]
+      checkout scm
+      def changedFiles = []
+      for ( changeLogSet in currentBuild.changeSets){
+          for (entry in changeLogSet.getItems()){
+              changedFiles.addAll(entry.affectedPaths)
+          }
+      }
+      sh "echo ${changedFiles}"
   }
 
   // def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
@@ -35,7 +44,9 @@ node {
     // Check if it's a commit tag
     if (isCommitTag(env.BRANCH_NAME)) {
       echo "Building & Pushing Docker image for ubuntu22.04"
-      sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha"
+      withCredentials([usernamePassword(credentialsId: 'docker', dockerUsername: 'USERNAME', dockerPassword: 'PASSWORD')]) {
+        sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha -username=${USERNAME} -password=${PASSWORD}"
+      }
       DOCKER_IMAGE_TAG = env.GIT_COMMIT
     } else {
       echo "No changes using latest tag"
@@ -51,11 +62,11 @@ node {
       stage('Checkout'){
         checkout changelog: false, poll: false, scm: [
             $class: 'GitSCM',
-            branches: [[name: "refs/pull/${env.CHANGE_ID}/head"]],
+            branches: [[name: "refs/pull/${env.BRANCH_NAME}/head"]],
             doGenerateSubmoduleConfigurations: false,
             extensions: [
             [
-                $class: 'SubmoduleOption', 
+                $class: 'SubmoduleOption',
                 disableSubmodules: false, 
                 parentCredentials: true, 
                 recursiveSubmodules: true, 
@@ -67,6 +78,7 @@ node {
               relativeTargetDir: "tools/OpenROAD"
             ]
             ],
+            submoduleCfg: [], 
         ]
       }
       
