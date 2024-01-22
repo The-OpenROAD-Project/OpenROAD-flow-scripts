@@ -8,34 +8,7 @@ node {
   ]);
 
   stage('Checkout'){
-      // checkout changelog: false, poll: false, scm: [
-      //     $class: 'GitSCM',
-      //     branches: [[name: "refs/pull/${env.BRANCH_NAME}/head"]],
-      //     doGenerateSubmoduleConfigurations: false,
-      //     extensions: [
-      //     [
-      //         $class: 'SubmoduleOption', 
-      //         disableSubmodules: false, 
-      //         parentCredentials: true, 
-      //         recursiveSubmodules: true, 
-      //         reference: '', 
-      //         trackingSubmodules: false
-      //     ],
-      //     [
-      //       $class: "RelativeTargetDirectory",
-      //       relativeTargetDir: "tools/OpenROAD"
-      //     ]
-      //     ],
-      //     submoduleCfg: [],
-      // ]
       checkout scm
-      def changedFiles = []
-      for ( changeLogSet in currentBuild.changeSets){
-          for (entry in changeLogSet.getItems()){
-              changedFiles.addAll(entry.affectedPaths)
-          }
-      }
-      sh "echo ${changedFiles}"
   }
 
   // def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
@@ -60,26 +33,7 @@ node {
       ]);
 
       stage('Checkout'){
-        checkout changelog: false, poll: false, scm: [
-            $class: 'GitSCM',
-            branches: [[name: "refs/pull/${env.BRANCH_NAME}/head"]],
-            doGenerateSubmoduleConfigurations: false,
-            extensions: [
-            [
-                $class: 'SubmoduleOption',
-                disableSubmodules: false, 
-                parentCredentials: true, 
-                recursiveSubmodules: true, 
-                reference: '', 
-                trackingSubmodules: false
-            ],
-            [
-              $class: "RelativeTargetDirectory",
-              relativeTargetDir: "tools/OpenROAD"
-            ]
-            ],
-            submoduleCfg: [], 
-        ]
+        checkout scm
       }
       
       stage('Local Build') {
@@ -213,10 +167,7 @@ node {
               //     echo("Feature development branch: report only to commit author.")
               //     EMAIL_TO = "${COMMIT_AUTHOR_EMAIL}"
               // }
-              sendEmail(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL, '''
-                      $DEFAULT_CONTENT
-                      ${FILE, path="flow/reports/report-summary.log"}
-                  ''')
+              sendEmail(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL, '${FILE, path="flow/reports/report-summary.log"}')
 
               // emailext (
               //     to: "$EMAIL_TO",
@@ -229,7 +180,7 @@ node {
               // )
           } catch (Exception e) {
               echo "Exception occurred: ${e.toString()}"
-              EMAIL_TO = "\$DEFAULT_RECIPIENTS"
+              // EMAIL_TO = "\$DEFAULT_RECIPIENTS"
           }
       }
     } 
