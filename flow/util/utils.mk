@@ -112,10 +112,14 @@ $(RESULTS_DIR)/6_final_no_power.def: $(RESULTS_DIR)/6_final.def
 
 .PHONY: gallery
 gallery: $(RESULTS_DIR)/6_final_no_power.def $(RESULTS_DIR)/6_final_only_clk.def
-	($(TIME_CMD) klayout -z -nc -rx -rd gallery_json=util/gallery.json \
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
+	($(TIME_CMD) $(KLAYOUT_CMD) -z -nc -rx -rd gallery_json=util/gallery.json \
 	        -rd results_path=$(RESULTS_DIR) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/createGallery.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+endif # KLAYOUT_SKIP
 
 .PHONY: view_cells
 view_cells:
@@ -142,9 +146,13 @@ convert_rve: $(REPORTS_DIR)/drc.json
 
 $(REPORTS_DIR)/drc.json: $(DRC_FILE)
 ifneq ($(DRC_FILE),)
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
 	$(KLAYOUT_CMD) -z -rd in_drc="$<" \
 	        -rd out_file="$@" \
 	        -rm $(UTILS_DIR)/convertDrc.py
+endif # KLAYOUT_SKIP
 else
 	@echo "No DRC_FILE defined."
 endif

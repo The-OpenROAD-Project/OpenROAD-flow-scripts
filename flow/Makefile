@@ -298,12 +298,22 @@ YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yos
 KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
 KLAYOUT_BIN_FROM_DIR = $(KLAYOUT_DIR)/klayout
 
+ifndef KLAYOUT_SKIP
+ifeq ($(origin KLAYOUT_CMD), undefined)
 ifeq ($(wildcard $(KLAYOUT_BIN_FROM_DIR)), $(KLAYOUT_BIN_FROM_DIR))
-KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
+KLAYOUT_CMD := sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
 else
-KLAYOUT_CMD ?= $(shell command -v klayout)
+KLAYOUT_CMD := $(shell command -v klayout)
 endif
-KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
+endif
+endif # KLAYOUT_SKIP
+
+# Check if KLAYOUT_CMD is empty or not found, and print an error if required
+ifndef KLAYOUT_SKIP
+ifeq ($(strip $(KLAYOUT_CMD)),)
+$(error KLayout not found in PATH, you can skip KLayout steps by setting KLAYOUT_SKIP)
+endif
+endif # KLAYOUT_SKIP
 
 ifneq ($(shell command -v stdbuf),)
   STDBUF_CMD = stdbuf -o L
@@ -364,9 +374,14 @@ $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(bloc
 #-------------------------------------------------------------------------------
 .PHONY: versions.txt
 versions.txt:
-	@$(YOSYS_CMD) -V > $@
-	@echo openroad `$(OPENROAD_EXE) -version` >> $@
+	@$(YOSYS_CMD) -V | tee $@
+	@echo openroad `$(OPENROAD_EXE) -version` | tee -a $@
+ifeq ($(strip $(KLAYOUT_CMD)),)
+	@echo "KLayout not found in PATH" | tee -a $@
+	@echo "Please install KLayout or set KLAYOUT_SKIP to skip steps that depend on it during the flow."
+else
 	@$(KLAYOUT_CMD) -zz -v >> $@
+endif
 
 # Pre-process libraries
 # ==============================================================================
@@ -391,9 +406,9 @@ do-klayout_tech:
 	@mkdir -p $(OBJECTS_DIR)
 	cp $(TECH_LEF) $(OBJECTS_DIR)/klayout_tech.lef
 
+ifndef KLAYOUT_SKIP
 KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
 KLAYOUT_VERSION = $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
-
 KLAYOUT_ENV_VAR_IN_PATH = $(shell \
 	if [ -z "$(KLAYOUT_VERSION)" ]; then \
 		echo "not_found"; \
@@ -402,6 +417,7 @@ KLAYOUT_ENV_VAR_IN_PATH = $(shell \
 	else \
 		echo "valid"; \
 	fi)
+endif # KLAYOUT_SKIP
 
 $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
 	$(UNSET_AND_MAKE) do-klayout
@@ -784,20 +800,26 @@ clean_route:
 
 .PHONY: klayout_tr_rpt
 klayout_tr_rpt: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	$(call KLAYOUT_FOUND)
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
 	$(KLAYOUT_CMD) -rd in_drc="$(REPORTS_DIR)/5_route_drc.rpt" \
 	        -rd in_def="$<" \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/viewDrc.py
+endif # KLAYOUT_SKIP
 
 .PHONY: klayout_guides
 klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
-	$(call KLAYOUT_FOUND)
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
 	$(KLAYOUT_CMD) -rd in_guide="$(RESULTS_DIR)/route.guide" \
 	        -rd in_def="$<" \
 	        -rd net_name=$(GUIDE_NET) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/viewGuide.py
+endif # KLAYOUT_SKIP
 
 # ==============================================================================
 #  _____ ___ _   _ ___ ____  _   _ ___ _   _  ____
@@ -904,10 +926,12 @@ do-generate_abstract:
 clean_abstract:
 	rm -f $(RESULTS_DIR)/$(DESIGN_NAME).lib $(RESULTS_DIR)/$(DESIGN_NAME).lef
 
-# Merge wrapped macros using Klayout
+# Merge wrapped macros using KLayout
 #-------------------------------------------------------------------------------
 $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
-	$(call KLAYOUT_FOUND)
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
 	($(TIME_CMD) $(KLAYOUT_CMD) -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:$(STREAM_SYSTEM_EXT)=def)) \
 	        -rd in_files="$(ADDITIONAL_GDSOAS)" \
@@ -917,8 +941,9 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
 	        -rd layer_map=$(GDS_LAYER_MAP) \
 	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log
+endif # KLAYOUT_SKIP
 
-# Merge GDS using Klayout
+# Merge GDS using KLayout
 #-------------------------------------------------------------------------------
 GDS_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
 $(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS) $(SEAL_GDSOAS)
@@ -926,7 +951,9 @@ $(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSO
 
 .PHONY: do-gds-merged
 do-gds-merged:
-	$(call KLAYOUT_FOUND)
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
 	($(TIME_CMD) $(STDBUF_CMD) $(KLAYOUT_CMD) -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$(RESULTS_DIR)/6_final.def \
 	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
@@ -936,28 +963,40 @@ do-gds-merged:
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rd layer_map=$(GDS_LAYER_MAP) \
 	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+endif # KLAYOUT_SKIP
 
 $(RESULTS_DIR)/6_final.v: $(LOG_DIR)/6_report.log
 
 .PHONY: do-gds
 do-gds:
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
 	$(UNSET_AND_MAKE) do-klayout_tech do-klayout do-klayout_wrap do-gds-merged
 	cp $(GDS_MERGED_FILE) $(GDS_FINAL_FILE)
+endif # KLAYOUT_SKIP
 
 $(GDS_FINAL_FILE): $(GDS_MERGED_FILE)
+ifdef KLAYOUT_SKIP
+	$(info Skipping $@ KLayout)
+else
 	cp $< $@
+endif # KLAYOUT_SKIP
 
 .PHONY: drc
 drc: $(REPORTS_DIR)/6_drc.lyrdb
 
 $(REPORTS_DIR)/6_drc.lyrdb: $(GDS_FINAL_FILE) $(KLAYOUT_DRC_FILE)
 ifneq ($(KLAYOUT_DRC_FILE),)
-	$(call KLAYOUT_FOUND)
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
 	($(TIME_CMD) $(KLAYOUT_CMD) -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_DRC_FILE)) 2>&1 | tee $(LOG_DIR)/6_drc.log
 	# Hacky way of getting DRV count (don't error on no matches)
 	grep -c "<value>" $@ > $(REPORTS_DIR)/6_drc_count.rpt || [[ $$? == 1 ]]
+endif # KLAYOUT_SKIP
 else
 	echo "DRC not supported on this platform" > $@
 endif
@@ -973,11 +1012,14 @@ lvs: $(RESULTS_DIR)/6_lvs.lvsdb
 
 $(RESULTS_DIR)/6_lvs.lvsdb: $(GDS_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
 ifneq ($(KLAYOUT_LVS_FILE),)
-	$(call KLAYOUT_FOUND)
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
 	($(TIME_CMD) $(KLAYOUT_CMD) -b -rd in_gds="$<" \
 	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        -rd report_file=$(abspath $@) \
 	        -r $(KLAYOUT_LVS_FILE)) 2>&1 | tee $(LOG_DIR)/6_lvs.log
+endif # KLAYOUT_SKIP
 else
 	echo "LVS not supported on this platform" > $@
 endif
@@ -1032,7 +1074,11 @@ RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
 RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 .PHONY: $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
+endif # KLAYOUT_SKIP
 
 .PHONY: preview_macro_placement
 
@@ -1113,7 +1159,11 @@ test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 
 .phony: klayout
 klayout:
+ifdef KLAYOUT_SKIP
+	$(info Skipping '$@' due to KLAYOUT_SKIP)
+else
 	$(KLAYOUT_CMD)
+endif # KLAYOUT_SKIP
 
 # Utilities
 #-------------------------------------------------------------------------------
