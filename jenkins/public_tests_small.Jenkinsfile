@@ -41,6 +41,7 @@ pipeline {
                    "riscv32i asap7",
                    "uart asap7",
                    "mock-array asap7",
+                   "mock-cpu asap7",
                    "mock-alu asap7",
                    "aes-block asap7",
                    "aes nangate45",
