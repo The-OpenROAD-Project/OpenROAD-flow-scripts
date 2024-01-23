@@ -95,17 +95,19 @@ tar --use-compress-program=${COMPRESS} \
     --ignore-failed-read -chf $1_${ISSUE_TAG}.tar.gz \
     --transform="s|^|$1_${ISSUE_TAG}/|S" \
     --transform="s|^$1_${ISSUE_TAG}${FLOW_HOME}/|$1_${ISSUE_TAG}/|S" \
+    $DESIGN_DIR \
     $LOG_DIR \
     $OBJECTS_DIR \
     $REPORTS_DIR \
     $RESULTS_DIR \
+    $PLATFORM_DIR \
     $SCRIPTS_DIR \
     $(for f in $ISSUE_CP_FILES; do echo $f; done | sort | uniq)
 
 if [ -v EXCLUDE_PLATFORM ]; then
     # Remove liberty and lef files from tar file
     gunzip -f $1_${ISSUE_TAG}.tar.gz
-    tar --list --file $1_${ISSUE_TAG}.tar | grep -iE "*.(lib|lef|tlef)$$" | xargs -r tar --delete --file $1_${ISSUE_TAG}.tar
+    tar --list --file $1_${ISSUE_TAG}.tar | grep -iE "*.(lib|lef|tlef)$" | xargs -r tar --delete --file $1_${ISSUE_TAG}.tar
     gzip $1_${ISSUE_TAG}.tar
 fi
 
