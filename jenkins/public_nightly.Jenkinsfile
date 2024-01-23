@@ -64,6 +64,8 @@ pipeline {
                    "swerv_wrapper asap7",
                    "uart asap7",
                    "mock-array asap7",
+                   "fifo asap7",
+                   "fifo_oneclock asap7",
                    "mock-alu asap7",
                    "aes-block asap7",
                    "aes nangate45",

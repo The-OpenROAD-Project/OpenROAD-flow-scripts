@@ -14,7 +14,7 @@ export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.65
 
 export BLOCKS = aes_rcon aes_sbox
-export SYNTH_HIERARCHICAL = 1
+#export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = True
 
 export PLACE_PINS_ARGS = -annealing
