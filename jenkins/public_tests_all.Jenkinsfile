@@ -15,7 +15,7 @@ node {
   def DOCKER_IMAGE_TAG = "latest"
   stage('Build and Push Docker Image') {
     // Check if it's a commit tag
-    if (isCommitTag(env.BRANCH_NAME)) {
+    if (isCommitTag(env.BRANCH_NAME) || false) {
       echo "Building & Pushing Docker image for ubuntu22.04"
       withCredentials([usernamePassword(credentialsId: 'docker', dockerUsername: 'USERNAME', dockerPassword: 'PASSWORD')]) {
         sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha -username=${USERNAME} -password=${PASSWORD}"
