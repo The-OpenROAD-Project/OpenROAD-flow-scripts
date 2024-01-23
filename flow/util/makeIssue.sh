@@ -95,12 +95,12 @@ tar --use-compress-program=${COMPRESS} \
     --ignore-failed-read -chf $1_${ISSUE_TAG}.tar.gz \
     --transform="s|^|$1_${ISSUE_TAG}/|S" \
     --transform="s|^$1_${ISSUE_TAG}${FLOW_HOME}/|$1_${ISSUE_TAG}/|S" \
-    $DESIGN_DIR \
+    $DESIGN_DIR/config.mk \
     $LOG_DIR \
     $OBJECTS_DIR \
     $REPORTS_DIR \
     $RESULTS_DIR \
-    $PLATFORM_DIR \
+    $PLATFORM_DIR/config.mk \
     $SCRIPTS_DIR \
     $(for f in $ISSUE_CP_FILES; do echo $f; done | sort | uniq)
 
