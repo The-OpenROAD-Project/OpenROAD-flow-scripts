@@ -11,7 +11,7 @@ create_clock -name $clk1_name -period $clk_period -waveform [list 0 [expr $clk_p
 set_clock_uncertainty 10 [get_clocks $clk1_name]
 
 set_false_path -from [get_ports *rst_n]
-set_false_path -from -to [get_ports *rst_n]
+set_false_path -to [get_ports *rst_n]
 
 # Give the world outside of the FIFO time to operate
 # on the cycle it is reading/writiing to the FIFO
@@ -25,4 +25,4 @@ set_output_delay -clock $clk1_name -max [expr $clk_period * $output_percent] [ge
 set_output_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [get_ports wfull]
 set_output_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [get_ports rempty]
 
-set_multicycle_path -from [all_registers] -setup 2
+set_max_delay -from [all_registers -clock_pins] -to [all_registers -data_pins] 2000
