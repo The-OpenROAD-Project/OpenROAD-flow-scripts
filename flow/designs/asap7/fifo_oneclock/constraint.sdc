@@ -10,17 +10,19 @@ set clk1_name clk
 create_clock -name $clk1_name -period $clk_period -waveform [list 0 [expr $clk_period/2]] [get_ports $clk1_name]
 set_clock_uncertainty 10 [get_clocks $clk1_name]
 
-set_false_path -from [get_ports *rst_n] -to [all_registers]
-set_false_path -from [all_registers] -to [get_ports *rst_n]
+set_false_path -from [get_ports *rst_n]
+set_false_path -from -to [get_ports *rst_n]
 
 # Give the world outside of the FIFO time to operate
 # on the cycle it is reading/writiing to the FIFO
 set input_percent 0.8
 set output_percent 0.8
 
+set_input_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [get_ports w*]
 set_input_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [get_ports r*]
-set_output_delay -clock $clk1_name -max [expr $clk_period * $output_percent] [get_ports r*]
 
-# Don't use false path. More than one clock period, but not so much
-# that unecessary buffers are added.
-set_max_delay -from [all_registers] -to [all_registers] 2000
+set_output_delay -clock $clk1_name -max [expr $clk_period * $output_percent] [get_ports r*]
+set_output_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [get_ports wfull]
+set_output_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [get_ports rempty]
+
+set_multicycle_path -from [all_registers] -setup 2
