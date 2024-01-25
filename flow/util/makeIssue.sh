@@ -92,10 +92,10 @@ fi
 echo "Using $COMPRESS to compress tar file"
 
 # Save all files inside design and platform folders
-if [ -v FULL_ISSUE ]; then
-    DESIGN_PLATFORM_FILES="$DESIGN_DIR $PLATFORM_DIR"
-else
+if [ -v SMALL_ISSUE ]; then
     DESIGN_PLATFORM_FILES="$DESIGN_DIR/config.mk $PLATFORM_DIR/config.mk"
+else
+    DESIGN_PLATFORM_FILES="$DESIGN_DIR $PLATFORM_DIR"
 fi
 
 set -x
