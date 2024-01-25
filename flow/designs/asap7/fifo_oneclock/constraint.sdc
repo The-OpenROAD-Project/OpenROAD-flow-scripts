@@ -2,6 +2,8 @@
 #
 # This fifo is from http://www.sunburst-design.com/papers/CummingsSNUG2002SJ_FIFO1.pdf
 
+source designs/src/mock-array/util.tcl
+
 set sdc_version 2.0
 
 set clk_period 1000
@@ -18,11 +20,7 @@ set_false_path -to [get_ports *rst_n]
 set input_percent 0.8
 set output_percent 0.8
 
-set_input_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [get_ports w*]
-set_input_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [get_ports r*]
-
-set_output_delay -clock $clk1_name -max [expr $clk_period * $output_percent] [get_ports r*]
-set_output_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [get_ports wfull]
-set_output_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [get_ports rempty]
+set_input_delay -clock $clk1_name -max [expr $clk_period * $input_percent] [match_pins .* input 0]
+set_output_delay -clock $clk1_name -max [expr $clk_period * $output_percent] [match_pins .* output 0]
 
 set_max_delay -from [all_registers -clock_pins] -to [all_registers -data_pins] 2000
