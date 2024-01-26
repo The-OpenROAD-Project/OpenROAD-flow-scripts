@@ -1,2 +1,2 @@
-dump.vcd
-fifo_oneclock_tb.vvp
+*.vcd
+*.vvp

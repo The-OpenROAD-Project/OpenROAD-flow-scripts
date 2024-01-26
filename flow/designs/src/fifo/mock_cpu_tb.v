@@ -28,6 +28,7 @@ module fifo_oneclock_tb;
     .wrst_n(wrst_n),
     .rinc(rinc),
     .clk(clk),
+    .clk_uncore(clk),
     .rrst_n(rrst_n)
     );
 
