@@ -2,6 +2,7 @@
 &st
 &dch
 &nf
+&retime
 &put
 &get -n
 &st
@@ -9,6 +10,7 @@
 &if -g -K 6
 &synch2
 &nf
+&retime
 &put
 &get -n
 &st
@@ -16,6 +18,7 @@
 &if -g -K 6
 &synch2
 &nf
+&retime
 &put
 &get -n
 &st
@@ -23,6 +26,7 @@
 &if -g -K 6
 &synch2
 &nf
+&retime
 &put
 &get -n
 &st
@@ -30,6 +34,7 @@
 &if -g -K 6
 &synch2
 &nf
+&retime
 &put
 &get -n
 &st
@@ -37,6 +42,7 @@
 &if -g -K 6
 &synch2
 &nf
+&retime
 &put
 buffer -c
 topo
