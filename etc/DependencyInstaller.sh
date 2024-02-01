@@ -93,11 +93,15 @@ _installUbuntuPackages() {
         mkdir -p "${baseDir}"
         cd "${baseDir}"
         if [[ $arch == "aarch64" ]]; then
+        if [ ! -f /usr/local/bin/klayout ]; then
             echo "Installing KLayout for aarch64 architecture"
             installDir="/usr/local/bin"
             git clone https://github.com/KLayout/klayout.git
             cd klayout
             ./build.sh -bin "${installDir}"
+        else
+            echo "Klayout is already installed"
+        fi
         else
             if [[ $1 == 20.04 ]]; then
                 klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
