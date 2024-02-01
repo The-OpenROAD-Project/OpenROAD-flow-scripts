@@ -86,20 +86,29 @@ _installUbuntuPackages() {
     if _versionCompare $1 -ge 23.04; then
         apt-get install klayout python3-pandas
     else
-        if [[ $1 == 20.04 ]]; then
-            klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
-        else
-            klayoutChecksum=db751264399706a23d20455bb7624264
-        fi
+        arch=$(uname -m)
         lastDir="$(pwd)"
         # temp dir to download and compile
         baseDir=/tmp/installers
         mkdir -p "${baseDir}"
-        cd ${baseDir}
-        wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
-        md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
-        dpkg -i klayout_${klayoutVersion}-1_amd64.deb
-        cd ${lastDir}
+        cd "${baseDir}"
+        if [[ $arch == "aarch64" ]]; then
+            echo "Installing KLayout for aarch64 architecture"
+            installDir="/usr/local/bin"
+            git clone https://github.com/KLayout/klayout.git
+            cd klayout
+            ./build.sh -bin "${installDir}"
+        else
+            if [[ $1 == 20.04 ]]; then
+                klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
+            else
+                klayoutChecksum=db751264399706a23d20455bb7624264
+            fi
+            wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
+            md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
+            dpkg -i klayout_${klayoutVersion}-1_amd64.deb
+        fi
+        cd "${lastDir}"
         rm -rf "${baseDir}"
     fi
 }
