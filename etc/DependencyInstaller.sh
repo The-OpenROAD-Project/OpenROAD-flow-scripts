@@ -67,6 +67,19 @@ _installUbuntuCleanUp() {
     apt-get autoremove -y
 }
 
+_installKlayoutDependenciesUbuntuAarch64() {
+    echo "Updating package lists"
+    sudo apt-get update
+    export DEBIAN_FRONTEND=noninteractive
+    sudo apt-get install -y build-essential
+    sudo apt-get install -y qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev
+    sudo apt-get install -y ruby ruby-dev
+    sudo apt-get install -y python3 python3-dev
+    sudo apt-get install -y libz-dev
+    sudo apt-get install -y libgit2-dev
+    echo "All dependencies installed successfully"
+}
+
 _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
@@ -90,15 +103,16 @@ _installUbuntuPackages() {
         lastDir="$(pwd)"
         # temp dir to download and compile
         baseDir=/tmp/installers
+        klayoutPrefix=${PREFIX:-"/usr/local"}
         mkdir -p "${baseDir}"
         cd "${baseDir}"
         if [[ $arch == "aarch64" ]]; then
-        if [ ! -f /usr/local/bin/klayout ]; then
+        if [ ! -f ${klayoutPrefix}/klayout ]; then
+            _installKlayoutDependenciesUbuntuAarch64
             echo "Installing KLayout for aarch64 architecture"
-            installDir="/usr/local/bin"
             git clone https://github.com/KLayout/klayout.git
             cd klayout
-            ./build.sh -bin "${installDir}"
+            ./build.sh -bin "${klayoutPrefix}"
         else
             echo "Klayout is already installed"
         fi
