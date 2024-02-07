@@ -68,15 +68,15 @@ _installUbuntuCleanUp() {
 }
 
 _installKlayoutDependenciesUbuntuAarch64() {
-    echo "Updating package lists"
-    sudo apt-get update
+    echo "Installing Klayout dependancies"
     export DEBIAN_FRONTEND=noninteractive
-    sudo apt-get install -y build-essential
-    sudo apt-get install -y qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev
-    sudo apt-get install -y ruby ruby-dev
-    sudo apt-get install -y python3 python3-dev
-    sudo apt-get install -y libz-dev
-    sudo apt-get install -y libgit2-dev
+    apt-get -y update
+    apt-get -y install  build-essential \
+                        qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev \
+                        ruby ruby-dev \
+                        python3 python3-dev \
+                        libz-dev\
+                        libgit2-dev
     echo "All dependencies installed successfully"
 }
 
@@ -107,14 +107,14 @@ _installUbuntuPackages() {
         mkdir -p "${baseDir}"
         cd "${baseDir}"
         if [[ $arch == "aarch64" ]]; then
-        if [ ! -f ${klayoutPrefix}/klayout ]; then
-            _installKlayoutDependenciesUbuntuAarch64
-            echo "Installing KLayout for aarch64 architecture"
-            git clone https://github.com/KLayout/klayout.git
-            cd klayout
-            ./build.sh -bin "${klayoutPrefix}"
-        else
-            echo "Klayout is already installed"
+            if [ ! -f ${klayoutPrefix}/klayout ]; then
+                _installKlayoutDependenciesUbuntuAarch64
+                echo "Installing KLayout for aarch64 architecture"
+                git clone https://github.com/KLayout/klayout.git
+                cd klayout
+                ./build.sh -bin "${klayoutPrefix}"
+            else
+                echo "Klayout is already installed"
         fi
         else
             if [[ $1 == 20.04 ]]; then
