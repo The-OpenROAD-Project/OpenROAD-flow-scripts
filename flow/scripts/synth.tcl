@@ -7,9 +7,29 @@ if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1} 
     puts "Ungroup modules of size $ungroup_threshold"
   }
 
+  puts "Finding area"
   design -save hierarchy_checkpoint
-  synth -top $::env(DESIGN_NAME)
+  synth -run :coarse -top $::env(DESIGN_NAME)
+  techmap
+
   json -o $::env(OBJECTS_DIR)/synth_full.json
+
+  # if { [info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)] } {
+  #   techmap -map $::env(ADDER_MAP_FILE)
+  # }
+  # techmap
+  # if {[info exist ::env(DFF_LIB_FILE)]} {
+  #   dfflibmap -liberty $::env(DFF_LIB_FILE)
+  # } else {
+  #   dfflibmap -liberty $::env(DONT_USE_SC_LIB)
+  # }
+  # puts "abc [join $abc_args " "]"
+  # abc {*}$abc_args
+  
+  tee -o $::env(REPORTS_DIR)/synth_cmos.txt stat -json -tech cmos
+  puts "Done finding area"
+  exit 1
+
   design -load hierarchy_checkpoint
 
   design -save hierarchy_checkpoint
