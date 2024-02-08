@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+import synth_keep
 
 # Load the first JSON file
 with open('objects/nangate45/bp_multi/base/synth_full.json', 'r') as file:
@@ -13,11 +14,20 @@ with open('mark_hier_stop_modules.tcl', 'r') as file:
              for line in file.readlines() if line.startswith('Area of module')}
 
 
+for name, module in data_a['modules'].items():
+    area = areas.get(name, 0)
+    cells = synth_keep.count_cells(module, data_a['modules'])
+    if area > 100 and area < 1000 and cells < 100:
+        print(f"{name} {cells} {area}")
+        synth_keep.count_cells(module, data_a['modules'])
+
+
 # Get the cell counts for each module in each file
-cell_counts_a = {name: len(module['cells']) for name, module in data_a['modules'].items()}
+cell_counts_a = {name: synth_keep.count_cells(module, data_a['modules'])
+                 for name, module in data_a['modules'].items()}
 
 # Create a DataFrame from the cell counts and areas
-df = pd.DataFrame(list(zip(cell_counts_a.keys(), cell_counts_a.values())), 
+df = pd.DataFrame(list(zip(cell_counts_a.keys(), cell_counts_a.values())),
                   columns=['name', 'cell count full'])
 df['area'] = df['name'].map(areas)
 

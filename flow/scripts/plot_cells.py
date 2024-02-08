@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+import synth_keep
 
 # Load the first JSON file
 with open('objects/nangate45/bp_multi/base/synth_full.json', 'r') as file:
@@ -12,7 +13,8 @@ with open('objects/nangate45/bp_multi/base/synth.json', 'r') as file:
 
 # Get the cell counts for each module in each file
 cell_counts_a = {name: len(module['cells']) for name, module in data_a['modules'].items()}
-cell_counts_b = {name: len(module['cells']) for name, module in data_b['modules'].items()}
+cell_counts_b = {name: synth_keep.count_cells(module, data_b['modules'])
+                 for name, module in data_b['modules'].items()}
 
 # Create a DataFrame from the cell counts
 df = pd.DataFrame(list(zip(cell_counts_a.keys(), cell_counts_a.values(), cell_counts_b.values())), 
