@@ -10,9 +10,14 @@ if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1} 
   puts "Finding area"
   design -save hierarchy_checkpoint
   synth -run :coarse -top $::env(DESIGN_NAME)
+  opt -fast -full
+  memory_map
+  opt -full
   techmap
+  opt -fast
+  abc -fast
 
-  json -o $::env(OBJECTS_DIR)/synth_full.json
+  #json -o $::env(OBJECTS_DIR)/synth_full.json
 
   # if { [info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)] } {
   #   techmap -map $::env(ADDER_MAP_FILE)

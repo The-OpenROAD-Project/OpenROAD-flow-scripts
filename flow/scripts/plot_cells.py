@@ -50,10 +50,10 @@ MAX_UNGROUP_SIZE = 200
 # 2. where it should not have been flattened
 # 3. where the result is the same in either case
 # 4. flattend in both cases as it should have
-df1 = df[(df['cell count full'] > MAX_UNGROUP_SIZE) & (df['cell count fast'] <= MAX_UNGROUP_SIZE) & (df['cell count full'] <= MAX_PLOT_SIZE)]
-df2 = df[(df['cell count full'] <= MAX_UNGROUP_SIZE) & (df['cell count fast'] > MAX_UNGROUP_SIZE) & (df['cell count full'] <= MAX_PLOT_SIZE) & df['cell count fast'] > 1]
-df3 = df[(df['cell count full'] <= MAX_UNGROUP_SIZE) & (df['cell count fast'] <= MAX_UNGROUP_SIZE) & (df['cell count full'] <= MAX_PLOT_SIZE)]
-df4 = df[(df['cell count full'] > MAX_UNGROUP_SIZE) & (df['cell count fast'] > MAX_UNGROUP_SIZE) & (df['cell count full'] <= MAX_PLOT_SIZE)]
+df1 = df[(df['cell count full'] > MAX_UNGROUP_SIZE) & (df['cell count fast'] <= MAX_UNGROUP_SIZE) & (df['cell count full'] <= MAX_PLOT_SIZE) & (df['cell count fast'] <= MAX_PLOT_SIZE)]
+df2 = df[(df['cell count full'] <= MAX_UNGROUP_SIZE) & (df['cell count fast'] > MAX_UNGROUP_SIZE) & (df['cell count full'] <= MAX_PLOT_SIZE) & (df['cell count fast'] <= MAX_PLOT_SIZE) & df['cell count fast'] > 1]
+df3 = df[(df['cell count full'] <= MAX_UNGROUP_SIZE) & (df['cell count fast'] <= MAX_UNGROUP_SIZE) & (df['cell count full'] <= MAX_PLOT_SIZE) & (df['cell count fast'] <= MAX_PLOT_SIZE)]
+df4 = df[(df['cell count full'] > MAX_UNGROUP_SIZE) & (df['cell count fast'] > MAX_UNGROUP_SIZE) & (df['cell count full'] <= MAX_PLOT_SIZE) & (df['cell count fast'] <= MAX_PLOT_SIZE)]
 
 # plot the data. Use x,y plot
 plt.title("Cell count comparison for MAX_UNGROUP_SIZE=" + str(MAX_UNGROUP_SIZE))
