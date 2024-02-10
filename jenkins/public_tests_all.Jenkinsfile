@@ -12,17 +12,30 @@ node {
   }
 
   // def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
-  def DOCKER_IMAGE_TAG = "latest"
+  // def DOCKER_IMAGE_TAG = "latest"
+  def isChanged = false
   stage('Build and Push Docker Image') {
-    // Check if it's a commit tag
-    if (isCommitTag(env.BRANCH_NAME) || false) {
-      echo "Building & Pushing Docker image for ubuntu22.04"
-      withCredentials([usernamePassword(credentialsId: 'docker', dockerUsername: 'USERNAME', dockerPassword: 'PASSWORD')]) {
-        sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha -username=${USERNAME} -password=${PASSWORD}"
-      }
-      DOCKER_IMAGE_TAG = env.GIT_COMMIT
-    } else {
-      echo "No changes using latest tag"
+    if (isDependencyInstallerChanged(env.BRANCH_NAME)) {
+      // TODO: MAKE AS A SHARED FUNC
+      isChanged = true
+      DOCKER_IMAGE_TAG = pushCIImage(env.BRANCH_NAME, env.GIT_COMMIT)
+      // if (isMasterBranch(env.BRANCH_NAME)) {
+      //   echo "Updating the latest tag"
+      //   withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+      //     sh "./etc/DockerHelper.sh push -os=ubuntu22.04 -target=dev -username=${USERNAME} -password=${PASSWORD}"
+      //   }
+      //   //  push image with date and time 
+      //   withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+      //     sh "./etc/DockerHelper.sh push -os=ubuntu22.04 -target=dev -tag=$(date '+%Y-%m-%d %H:%M:%S') -username=${USERNAME} -password=${PASSWORD}"
+      //   }
+      // } else {
+      //   echo "Building & Pushing Docker image for ubuntu22.04"
+      //   withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+      //     sh "./etc/DockerHelper.sh push -os=ubuntu22.04 -target=dev -sha -username=${USERNAME} -password=${PASSWORD}"
+      //   }
+      //   DOCKER_IMAGE_TAG = env.GIT_COMMIT
+      // }
+    }
     }
   }
   
@@ -39,11 +52,11 @@ node {
       stage('Local Build') {
         localBuild()
       }
-
-      if(DOCKER_IMAGE_TAG != "latest") {
+      // TODO: PARALLELIZE DI TEST WITH OTHERS
+      if(isChanged) {
         stage('Test Dependency Installer') {
           Map matrix_axes = [
-          OS: ['ubuntu20.04', 'ubuntu22.04', 'centos7']
+          OS: ['ubuntu20.04', 'centos7']
           ]
           def axes = matrix_axes.OS
 
@@ -58,7 +71,7 @@ node {
                 }
           }
 
-          parallel(tasks)
+          // parallel(tasks)
         }
       }
 
@@ -116,7 +129,7 @@ node {
         ]
         def axes = matrix_axes.TEST_SLUG
 
-        Map tasks = [failFast: false]
+        // Map tasks = [failFast: false]
         for (axisValue in axes) {
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {

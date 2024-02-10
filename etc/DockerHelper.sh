@@ -16,7 +16,6 @@ usage: $0 [CMD] [OPTIONS]
   create                        Create a docker image
   test                          Test the docker image
   push                          Push the docker image to Docker Hub
-  pushCI                        Push the docker image to Docker Hub from CI
 
   OPTIONS:
   -os=OS_NAME                   Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
@@ -28,6 +27,8 @@ usage: $0 [CMD] [OPTIONS]
   -sha                          Use git commit sha as the tag image. Default is
                                   'latest'.
   -h -help                      Show this message and exits
+  -username                     Docker Username
+  -password                     Docker Password
 
 EOF
     exit "${1:-1}"
@@ -87,49 +88,17 @@ _create() {
 _push() {
     case "${target}" in
         "dev" )
-            read -p "Will push docker image ${imagePath} to DockerHub [y/N]" -n 1 -r
-            echo
-            if [[ $REPLY =~ ^[Yy]$  ]]; then
-                mkdir -p build
-
-                OS_LIST="centos7 ubuntu20.04 ubuntu22.04"
-                # create image with sha and latest tag for all os
-                for os in ${OS_LIST}; do
-                    ./etc/DockerHelper.sh create -target=dev \
-                        2>&1 | tee build/create-${os}-latest.log
-                    ./etc/DockerHelper.sh create -target=dev -sha \
-                        2>&1 | tee build/create-${os}-${commitSha}.log
-                done
-
-                for os in ${OS_LIST}; do
-                    echo [DRY-RUN] docker push openroad/flow-${os}-dev:latest
-                    echo [DRY-RUN] docker push openroad/flow-${os}-dev:${commitSha}
-                done
-
-            else
-                echo "Will not push."
-            fi
-            ;;
-        *)
-            echo "Target ${target} is not valid candidate for push to DockerHub." >&2
-            _help
-            ;;
-    esac
-}
-
-_pushCI() {
-    case "${target}" in
-        "dev" )
             mkdir -p build
-
+            
+            docker login --username ${username} --password ${password}
             if [[ "${useCommitSha}" == "yes" ]]; then
                 ./etc/DockerHelper.sh create -os=${os} -target=dev -sha \
                     2>&1 | tee build/create-${os}-${commitSha}.log
-                echo [DRY-RUN] docker push openroad/flow-${os}-dev:${commitSha}
+                docker push openroad/flow-${os}-dev:${commitSha}
             else
                 ./etc/DockerHelper.sh create -os=${os} -target=dev \
-                    2>&1 | tee build/create-${os}-latest.log
-                echo [DRY-RUN] docker push openroad/flow-${os}-dev:latest
+                    2>&1 | tee build/create-${os}-${tag}.log
+                docker push openroad/flow-${os}-dev:${tag}
             fi
             ;;
         *)
@@ -167,6 +136,7 @@ os="centos7"
 target="dev"
 useCommitSha="no"
 numThreads="-1"
+tag="latest"
 
 while [ "$#" -gt 0 ]; do
     case "${1}" in
@@ -188,6 +158,15 @@ while [ "$#" -gt 0 ]; do
         -os | -target )
             echo "${1} requires an argument" >&2
             _help
+            ;;
+        -username=* )
+            username="${1#*=}"
+            ;;
+        -password=* )
+            password="${1#*=}"
+            ;;
+        -tag=* )
+            tag="${1#*=}"
             ;;
         *)
             echo "unknown option: ${1}" >&2
