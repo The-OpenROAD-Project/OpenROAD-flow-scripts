@@ -1,6 +1,6 @@
 set sdc_version 2.0
 
-set clk_period 250
+set clk_period 180
 
 set clk_name  clock
 set clk_port_name clock
