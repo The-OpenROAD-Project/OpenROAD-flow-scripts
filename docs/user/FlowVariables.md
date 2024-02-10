@@ -248,6 +248,7 @@ configuration file.
 | `DONT_USE_LIBS`          | Set liberty files as `dont_use`.                                                                   |
 | `PRESERVE_CELLS`         | Mark modules to keep from getting removed in flattening.                                           |
 | `SYNTH_ARGS`             | Optional synthesis variables for yosys.                                                            |
+| `SYNTH_INSBUF`           | Invoke Yosys insbuf, default 1. Can be useful to set to 0 in architectural exploration.            |
 | `VERILOG_TOP_PARAMS`     | Apply toplevel params (if exist).                                                                  |
 
 #### Floorplan

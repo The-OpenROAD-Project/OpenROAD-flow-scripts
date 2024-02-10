@@ -191,6 +191,7 @@ export ABC_AREA ?= 0
 
 # Global setting for Synthesis
 export SYNTH_ARGS ?= -flatten
+export SYNTH_INSBUF ?= 1
 
 # Global setting for Floorplan
 export PLACE_PINS_ARGS
