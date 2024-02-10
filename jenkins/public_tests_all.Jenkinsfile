@@ -36,7 +36,6 @@ node {
       //   DOCKER_IMAGE_TAG = env.GIT_COMMIT
       // }
     }
-    }
   }
   
   docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
