@@ -95,7 +95,6 @@ export PLACE_DENSITY                         ?= 0.40
 # CTS
 #--------------------------------------------------------
 export CTS_BUF_CELL                           = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__clkbuf_8
-export CTS_BUF_DISTANCE                       = 100
 
 #---------------------------------------------------------
 # Route
