@@ -18,6 +18,8 @@ node {
     if (isDependencyInstallerChanged(env.BRANCH_NAME)) {
       // TODO: MAKE AS A SHARED FUNC
       def commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true)
+      commitHash = commitHash.replaceAll(/[^a-zA-Z0-9-]/, '')
+
       isChanged = true
       DOCKER_IMAGE_TAG = pushCIImage(env.BRANCH_NAME, commitHash)
       // if (isMasterBranch(env.BRANCH_NAME)) {

@@ -36,6 +36,7 @@ EOF
 
 _setup() {
     commitSha="$(git rev-parse HEAD)"
+    commitSHA=$(echo "$commitSHA" | tr -cd 'a-zA-Z0-9-')
     case "${os}" in
         "centos7")
             osBaseImage="centos:centos7"
