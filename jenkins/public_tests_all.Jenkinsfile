@@ -17,7 +17,7 @@ node {
   stage('Build and Push Docker Image') {
     if (isDependencyInstallerChanged(env.BRANCH_NAME)) {
       // TODO: MAKE AS A SHARED FUNC
-      def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true)
+      def commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true)
       isChanged = true
       DOCKER_IMAGE_TAG = pushCIImage(env.BRANCH_NAME, commitHash)
       // if (isMasterBranch(env.BRANCH_NAME)) {
