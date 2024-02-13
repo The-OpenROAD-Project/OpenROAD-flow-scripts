@@ -56,28 +56,54 @@ node {
       }
       // TODO: PARALLELIZE DI TEST WITH OTHERS
       if(isChanged) {
-        stage('Test Dependency Installer') {
+        // stage('Test Dependency Installer') {
           Map matrix_axes = [
           OS: ['ubuntu20.04', 'centos7']
           ]
           def axes = matrix_axes.OS
 
-          Map tasks = [failFast: false]
+          // Map tasks = [failFast: false]
           for (axisValue in axes) {
               def currentOS = axisValue
               tasks["${currentOS}"] = {
                   node {
                       checkout scm
-                      testDependencyInstaller(currentOS)
+                      withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
+                        testDependencyInstaller(currentOS)
+                      }
                   }
                 }
           }
 
           // parallel(tasks)
-        }
+        // }
       }
 
       stage('Tests') {
+        Map tasks = [failFast: false]
+        if(isChanged) {
+          // stage('Test Dependency Installer') {
+            Map matrix_axes_1 = [
+            OS: ['ubuntu20.04', 'centos7']
+            ]
+            def axes_1 = matrix_axes_1.OS
+
+            // Map tasks = [failFast: false]
+            for (axisValue in axes_1) {
+                def currentOS = axisValue
+                tasks["${currentOS}"] = {
+                    node {
+                        checkout scm
+                        withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
+                          testDependencyInstaller(currentOS)
+                        }
+                    }
+                  }
+            }
+
+            // parallel(tasks)
+          // }
+        }
         Map matrix_axes = [
         TEST_SLUG: ["docker build",
                         "aes asap7",
@@ -131,13 +157,15 @@ node {
         ]
         def axes = matrix_axes.TEST_SLUG
 
-        // Map tasks = [failFast: false]
+        Map tasks = [failFast: false]
         for (axisValue in axes) {
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {
                 node {
                     checkout scm
-                    runTests(currentSlug)
+                    withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
+                      runTests(currentSlug)
+                    }
                 }
               }
         }
