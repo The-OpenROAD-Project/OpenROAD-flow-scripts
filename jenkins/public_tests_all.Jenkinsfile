@@ -54,30 +54,6 @@ node {
       stage('Local Build') {
         localBuild()
       }
-      // TODO: PARALLELIZE DI TEST WITH OTHERS
-      if(isChanged) {
-        // stage('Test Dependency Installer') {
-          Map matrix_axes = [
-          OS: ['ubuntu20.04', 'centos7']
-          ]
-          def axes = matrix_axes.OS
-
-          // Map tasks = [failFast: false]
-          for (axisValue in axes) {
-              def currentOS = axisValue
-              tasks["${currentOS}"] = {
-                  node {
-                      checkout scm
-                      withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
-                        testDependencyInstaller(currentOS)
-                      }
-                  }
-                }
-          }
-
-          // parallel(tasks)
-        // }
-      }
 
       stage('Tests') {
         Map tasks = [failFast: false]
