@@ -157,7 +157,7 @@ node {
         ]
         def axes = matrix_axes.TEST_SLUG
 
-        Map tasks = [failFast: false]
+        // Map tasks = [failFast: false]
         for (axisValue in axes) {
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {
