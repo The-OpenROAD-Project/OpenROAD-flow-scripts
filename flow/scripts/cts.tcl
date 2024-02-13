@@ -25,6 +25,7 @@ proc save_progress {stage} {
 }
 
 set cts_args [list \
+          -insertion_delay \                  
           -sink_clustering_enable \
           -balance_levels]
 
