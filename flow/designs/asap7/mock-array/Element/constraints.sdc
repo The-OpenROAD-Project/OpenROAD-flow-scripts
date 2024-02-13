@@ -5,9 +5,9 @@ set cols [expr {[info exists ::env(MOCK_ARRAY_COLS)] ? $::env(MOCK_ARRAY_COLS) :
 set clk_name clock
 set clk_port_name clock
 set clk_period 300
-set clk_imax_pct 0.75
-set clk_imin_pct 0.10
-set clk_omax_pct 0.80
+set clk_imax_pct 0.20
+set clk_imin_pct 0.20
+set clk_omax_pct 0.20
 set clk_omin_pct 0.10
 
 set clk_port [get_ports $clk_port_name]
@@ -18,7 +18,8 @@ set_clock_uncertainty -hold  20.0 [get_clocks $clk_name]
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name ${clk_name}_vir
 set_clock_uncertainty -setup 20.0 [get_clocks ${clk_name}_vir]
 set_clock_uncertainty -hold 20.0  [get_clocks ${clk_name}_vir]
-set_clock_latency 70 [get_clocks ${clk_name}_vir]
+# Updated by CTS with real clock insertion latency of tree
+set_clock_latency 0 [get_clocks ${clk_name}_vir]
 
 set_max_transition 250 [current_design]
 set_max_transition 100 -clock_path [all_clocks]

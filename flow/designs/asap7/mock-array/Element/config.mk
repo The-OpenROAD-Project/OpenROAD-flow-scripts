@@ -45,3 +45,5 @@ export GND_NETS_VOLTAGES      =
 export PWR_NETS_VOLTAGES      =
 
 export CTS_ARGS = -insertion_delay -sink_clustering_enable -balance_levels -distance_between_buffers 60
+
+export DONT_BUFFER_PORTS = 1

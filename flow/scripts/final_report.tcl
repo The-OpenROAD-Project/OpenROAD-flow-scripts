@@ -67,3 +67,11 @@ report_metrics 6 "finish"
 if {[expr [llength [info procs save_image]] > 0]} {
     gui::show "source $::env(SCRIPTS_DIR)/save_images.tcl" false
 }
+
+
+write_timing_model latency.lib
+# FIXME! How do I find the average clock insertion latency?
+set max_latency [exec bash -c {python -c "import re; print(re.search('max_clock_tree_path.*?cell_fall\(scalar\).*?values\(\"(.*?)\"\)', open('latency.lib').read(), re.DOTALL).group(1))"}]
+# Should we tweak here?
+set_clock_latency [expr $max_latency + 40] [get_clocks {clock_vir}]
+write_sdc -no_timestamp $env(RESULTS_DIR)/6_final.sdc
