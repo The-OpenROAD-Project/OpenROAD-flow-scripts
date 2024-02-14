@@ -73,6 +73,11 @@ if {[info exist ::env(CTS_SNAPSHOTS)]} {
   save_progress 4_1_pre_repair_hold_setup
 }
 
+write_timing_model latency.lib
+# FIXME! How do I find the average clock insertion latency?
+set max_latency [exec bash -c {python -c "import re; print(re.search('max_clock_tree_path.*?cell_fall\(scalar\).*?values\(\"(.*?)\"\)', open('latency.lib').read(), re.DOTALL).group(1))"}]
+set_clock_latency [expr $max_latency] [get_clocks {clock_vir}]
+
 puts "Repair setup and hold violations..."
 
 # process user settings

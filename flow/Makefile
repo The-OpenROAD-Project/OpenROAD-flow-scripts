@@ -748,6 +748,8 @@ route: $(RESULTS_DIR)/5_route.odb \
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE),global_route))
 
+$(RESULTS_DIR)/5_1_grt.sdc: $(RESULTS_DIR)/5_1_grt.odb
+
 # SEP 2: Filler cell insertion
 # ------------------------------------------------------------------------------
 $(eval $(call do-step,5_2_fillcell,$(RESULTS_DIR)/5_1_grt.odb,fillcell))
@@ -762,7 +764,7 @@ endif
 
 $(eval $(call do-copy,5_route,5_3_route.odb))
 
-$(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
+$(eval $(call do-copy,5_route,5_1_grt.sdc,,.sdc))
 
 .PHONY: do-route
 do-route:
@@ -833,7 +835,7 @@ endif
 
 $(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
 
-$(eval $(call do-copy,6_final,5_route.sdc,,.sdc))
+$(RESULTS_DIR)/6_final.sdc: $(RESULTS_DIR)/6_final.odb
 
 $(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc,final_report,.log,$(LOG_DIR)))
 

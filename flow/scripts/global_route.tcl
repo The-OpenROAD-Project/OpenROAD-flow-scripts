@@ -108,3 +108,11 @@ report_metrics 5 "global route"
 source [file join $env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
 
 write_db $env(RESULTS_DIR)/5_1_grt.odb
+
+write_timing_model latency.lib
+# FIXME! How do I find the average clock insertion latency?
+set max_latency [exec bash -c {python -c "import re; print(re.search('max_clock_tree_path.*?cell_fall\(scalar\).*?values\(\"(.*?)\"\)', open('latency.lib').read(), re.DOTALL).group(1))"}]
+# Should we tweak here?
+#set_clock_latency [expr $max_latency] [get_clocks {clock_vir}]
+
+write_sdc -no_timestamp $env(RESULTS_DIR)/5_1_grt.sdc

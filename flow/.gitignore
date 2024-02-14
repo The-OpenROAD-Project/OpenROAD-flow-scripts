@@ -2,3 +2,4 @@ settings.mk
 vars.sh
 vars.gdb
 vars.tcl
+latency.lib
