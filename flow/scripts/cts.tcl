@@ -38,7 +38,7 @@ if {[info exist ::env(CTS_ARGS)]} {
 
 puts "clock_tree_synthesis [join $cts_args " "]"
 
-clock_tree_synthesis -insertion_delay {*}$cts_args
+clock_tree_synthesis {*}$cts_args
 
 if {[info exist ::env(CTS_SNAPSHOTS)]} {
   save_progress 4_1_pre_repair_clock_nets
