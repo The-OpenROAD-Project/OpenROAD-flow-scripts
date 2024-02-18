@@ -56,3 +56,8 @@ export FASTROUTE_TCL = ./designs/$(PLATFORM)/mock-array/fastroute.tcl
 # ensure we have some rows, so we don't get a bad clock skew.
 export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
+
+export GND_NETS_VOLTAGES      =
+export PWR_NETS_VOLTAGES      =
+
+export CTS_ARGS = -insertion_delay -sink_clustering_enable -balance_levels -distance_between_buffers 60

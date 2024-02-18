@@ -1,22 +1,20 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  modroot="$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"))/tools"
+  DIR="$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"))"
 else
-  modroot="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))/tools"
-fi
-
-if [ ! -d "${modroot}" ]; then
-  echo "Module path does not exist: ${modroot}"
-  return 1
+  DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))"
 fi
 
 if [ -f /opt/rh/rh-python38/enable ]; then
   source /opt/rh/rh-python38/enable
 fi
 
-export OPENROAD=${modroot}/OpenROAD
+export OPENROAD=${DIR}/tools/OpenROAD
 echo "OPENROAD: ${OPENROAD}"
 
-export PATH=${modroot}/install/OpenROAD/bin:${modroot}/install/yosys/bin:${modroot}/install/LSOracle/bin:$PATH
+export PATH=${DIR}/tools/install/OpenROAD/bin:$PATH
+export PATH=${DIR}/tools/install/yosys/bin:$PATH
+export PATH=${DIR}/tools/install/LSOracle/bin:$PATH
+export PATH=${DIR}/dependencies/bin:$PATH
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   export PATH="/Applications/KLayout/klayout.app/Contents/MacOS:$PATH"

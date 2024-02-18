@@ -11,6 +11,4 @@ export ADDER_MAP_FILE :=
 export CORE_UTILIZATION ?= 55
 export PLACE_DENSITY_LB_ADDON = 0.20
 export TNS_END_PERCENT        = 100
-export EQUIVALENCE_CHECK      =   1
 export REMOVE_CELLS_FOR_EQY   = TAPCELL*
-

@@ -35,13 +35,19 @@ proc natural_sort {list} {
     return [lsort -command natural_compare $list]
 }
 
-proc match_pins { regex } {
+proc match_pins { regex {direction .*} {is_clock 0}} {
     set pins {}
     # The regex for get_ports is not the tcl regex
     foreach pin [get_ports -regex .*] {
         set input [get_property $pin name]
         # We want the Tcl regex
         if {![regexp $regex $input]} {
+            continue
+        }
+        if {![regexp $direction [get_property $pin direction]]} {
+            continue
+        }
+        if {[expr $is_clock != [sta::is_clock_src [sta::get_port_pin $pin]]]} {
             continue
         }
         lappend pins [get_property $pin name]

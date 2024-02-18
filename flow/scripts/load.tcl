@@ -102,8 +102,11 @@ proc run_equivalence_test {} {
     write_eqy_verilog 4_after_rsz.v
     write_eqy_script
 
-    file delete -force $::env(LOG_DIR)/4_eqy_output
-    eval exec eqy -d $::env(LOG_DIR)/4_eqy_output $::env(OBJECTS_DIR)/4_eqy_test.eqy > $::env(LOG_DIR)/4_equivalence_check.log
+    eval exec eqy -d $::env(LOG_DIR)/4_eqy_output \
+        --force \
+        --jobs $::env(NUM_CORES) \
+        $::env(OBJECTS_DIR)/4_eqy_test.eqy \
+        > $::env(LOG_DIR)/4_equivalence_check.log
     set count [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
     if { $count == 0 } {
       error "Repair timing output failed equivalence test"

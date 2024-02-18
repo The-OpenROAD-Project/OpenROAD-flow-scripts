@@ -1,0 +1,10 @@
+ray[default,tune]==1.11.0
+ax-platform
+hyperopt
+nevergrad
+optuna
+pandas
+colorama==0.4.4
+bayesian-optimization==1.4.0
+tensorboard==2.13.3
+protobuf==3.20.1

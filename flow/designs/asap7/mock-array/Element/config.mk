@@ -40,3 +40,8 @@ export MIN_ROUTING_LAYER = M2
 export MAX_ROUTING_LAYER = M5
 
 export PLACE_PINS_ARGS = -annealing
+
+export GND_NETS_VOLTAGES      =
+export PWR_NETS_VOLTAGES      =
+
+export CTS_ARGS = -insertion_delay -sink_clustering_enable -balance_levels -distance_between_buffers 60

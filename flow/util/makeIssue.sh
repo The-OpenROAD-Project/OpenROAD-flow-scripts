@@ -82,9 +82,28 @@ rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true
 $DIR/generate-vars.sh ${VARS_BASENAME}
 
 echo "Archiving issue to $1_${ISSUE_TAG}.tar.gz"
-tar --ignore-failed-read -czhf $1_${ISSUE_TAG}.tar.gz \
+# if pigz is installed, use it instead of gzip
+if command -v pigz &> /dev/null; then
+    COMPRESS=pigz
+else
+    COMPRESS=gzip
+fi
+
+echo "Using $COMPRESS to compress tar file"
+
+# Save all files inside design and platform folders
+if [ -v FULL_ISSUE ]; then
+    DESIGN_PLATFORM_FILES="$DESIGN_DIR $PLATFORM_DIR"
+else
+    DESIGN_PLATFORM_FILES="$DESIGN_DIR/config.mk $PLATFORM_DIR/config.mk"
+fi
+
+set -x
+tar --use-compress-program=${COMPRESS} \
+    --ignore-failed-read -chf $1_${ISSUE_TAG}.tar.gz \
     --transform="s|^|$1_${ISSUE_TAG}/|S" \
     --transform="s|^$1_${ISSUE_TAG}${FLOW_HOME}/|$1_${ISSUE_TAG}/|S" \
+    $DESIGN_PLATFORM_FILES \
     $LOG_DIR \
     $OBJECTS_DIR \
     $REPORTS_DIR \
@@ -95,7 +114,7 @@ tar --ignore-failed-read -czhf $1_${ISSUE_TAG}.tar.gz \
 if [ -v EXCLUDE_PLATFORM ]; then
     # Remove liberty and lef files from tar file
     gunzip -f $1_${ISSUE_TAG}.tar.gz
-    tar --list --file $1_${ISSUE_TAG}.tar | grep -iE "*.(lib|lef|tlef)$$" | xargs -r tar --delete --file $1_${ISSUE_TAG}.tar
+    tar --list --file $1_${ISSUE_TAG}.tar | grep -iE "*.(lib|lef|tlef)$" | xargs -r tar --delete --file $1_${ISSUE_TAG}.tar
     gzip $1_${ISSUE_TAG}.tar
 fi
 

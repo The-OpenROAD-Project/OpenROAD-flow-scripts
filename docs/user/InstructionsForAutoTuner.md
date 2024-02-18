@@ -18,14 +18,31 @@ AutoTuner contains top-level Python script for ORFS, each of which implements a 
 * Tree Parzen Estimator + Covariance Matrix Adaptation Evolution Strategy ([Optuna](https://optuna.org/))
 * Evolutionary Algorithm ([Nevergrad](https://github.com/facebookresearch/nevergrad))
 
-User-settable coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) of three objectives to set the direction of tuning are written in the script. Each coefficient is expressed as a global variable at the `get_ppa` function in `PPAImprov` class in the script (`coeff_perform`, `coeff_power`, `coeff_area`). Efforts to optimize each of the objectives are proportional to the specified coefficients.
+User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) of three objectives to set the direction of tuning are written in the script. Each coefficient is expressed as a global variable at the `get_ppa` function in `PPAImprov` class in the script (`coeff_perform`, `coeff_power`, `coeff_area`). Efforts to optimize each of the objectives are proportional to the specified coefficients.
 
+
+## Setting up AutoTuner
+
+To setup AutoTuner, make sure you have a virtual environment set up with
+Python 3.9.X. There are plenty of ways to do this, we recommend using 
+[Miniconda](https://docs.conda.io/en/latest/miniconda.html),
+which is a free minimal installer for the package manager `conda`. 
+
+```shell
+# set up conda environment
+conda create -n autotuner_env python=3.9
+conda activate autotuner_env
+
+# install requirements
+pip install -r ./tools/AutoTuner/requirements.txt
+```
 
 ## Input JSON structure
 
-Sample JSON file for sky130hd aes design: [[link]](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/aes/autotuner.json)
+Sample JSON [file](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/aes/autotuner.json) for Sky130HD `aes` design:  
 
-Simple Example:
+Alternatively, here is a minimal example to get started:
+
 ```json
 {
     "_SDC_FILE_PATH": "constraint.sdc",
@@ -70,8 +87,7 @@ For SDC you can use:
   - I/O delay. This will create a copy of `_SDC_FILE_PATH` and modify the I/O delay.
 
 
-
-For FastRoute you can use:
+For Global Routing parameters that are set on `fastroute.tcl` you can use:
 
 * `_FR_FILE_PATH`
   - Path relative to the current JSON file to the `fastroute.tcl` file.
@@ -83,21 +99,30 @@ For FastRoute you can use:
   - Global route random seed. This will create a copy of `_FR_FILE_PATH` and modify the global route random seed.
 
 
-
-
 ## How to use
 
 ### General Information
 
-`distributed.py` scripts handles sweeping and tuning of ORFS parameters.
+The `distributed.py` script uses Ray's job scheduling and management to
+fully utilize available hardware resources from a single server 
+configuration, on-premies or over the cloud with multiple CPUs. 
+The two modes of operation: `sweep`, where every possible parameter
+combination in the search space is tested; and `tune`, where we use
+Ray's Tune feature to intelligently search the space and optimize
+hyperparameters using one of the algorithms listed above. The `sweep`
+mode is useful when we want to isolate or test a single or very few
+parameters. On the other hand, `tune` is more suitable for finding
+the best combination of a complex and large number of flow 
+parameters. Both modes rely on user-specified search space that is 
+defined by a `.json` file, they use the same syntax and format, 
+though some features may not be available for sweeping.
 
-For both sweep and tune modes <mode>:
-```shell
-python3 distributed.py -h
+```{note}
+The order of the parameters matter. Arguments `--design`, `--platform` and
+`--config` are always required and should precede <mode>.
 ```
 
-Note: the order of the parameters matter. Arguments `--design`, `--platform` and
-`--config` are always required and should precede <mode>.
+#### Tune only 
 
 * AutoTuner: `python3 distributed.py tune -h`
 
@@ -108,7 +133,7 @@ python3 distributed.py --design gcd --platform sky130hd \
                        --config ../designs/sky130hd/gcd/autotuner.json \
                        tune
 ```
-
+#### Sweep only 
 
 * Parameter sweeping: `python3 distributed.py sweep -h`
 
@@ -119,12 +144,6 @@ python3 distributed.py --design gcd --platform sky130hd \
                        --config distributed-sweep-example.json \
                        sweep
 ```
-
-
-### Google Cloud Platform (GCP) distribution with Ray.
-
-GCP Setup Tutorial coming soon.
-
 
 ### List of input arguments
 | Argument                      | Description                                                                                           |
@@ -153,8 +172,8 @@ GCP Setup Tutorial coming soon.
 | `--jobs`                      | Max number of concurrent jobs.                                                                        |
 | `--openroad_threads`          | Max number of threads usable.                                                                         |
 | `--server`                    | The address of Ray server to connect.                                                                 |
-| `--port`                      | Tbe port of Ray server to connect.                                                                    |
-| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: also print training stdout                  |
+| `--port`                      | The port of Ray server to connect.                                                                    |
+| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: also print training stdout.                  |
 |                               |                                                                                                       |
 ### GUI
 
@@ -162,6 +181,18 @@ Basically, progress is displayed at the terminal where you run, and when all run
 You could find the "Best config found" on the screen.
 
 To use TensorBoard GUI, run `tensorboard --logdir=./<logpath>`. While TensorBoard is running, you can open the webpage `http://localhost:6006/` to see the GUI.
+
+We show three different views possible at the end, namely: `Table View`, `Scatter Plot Matrix View` and `Parallel Coordinate View`.
+
+![Table View](../images/Autotuner_Table_view.webp)
+<p style="text-align: center;">Table View</p>
+
+![Scatter Plot Matrix View](../images/Autotuner_scatter_plot_matrix_view.webp)
+<p style="text-align: center;">Scatter Plot Matrix View</p>
+
+![Parallel Coordinate View](../images/Autotuner_best_parameter_view.webp)
+<p style="text-align: center;">Parallel Coordinate View (best run is in green)</p>
+
 
 ## Citation
 

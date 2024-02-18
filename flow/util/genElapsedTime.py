@@ -32,6 +32,8 @@ def print_log_dir_times(logdir):
 
     # Loop on all log files in the directory
     for f in sorted(pathlib.Path(logdir).glob('**/*.log')):
+        if "eqy_output" in str(f):
+            continue
         # Extract Elapsed Time line from log file
         with open(str(f)) as logfile:
             found = False
@@ -68,7 +70,7 @@ def print_log_dir_times(logdir):
                 first = False
             print('%-25s %10s' % (os.path.splitext(os.path.basename(str(f)))[0], elapsedTime))
         totalElapsed += elapsedTime
-        
+
     if totalElapsed != 0:
         print("%-25s %10s" % ( "Total", totalElapsed ))
 

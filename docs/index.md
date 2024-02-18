@@ -244,7 +244,7 @@ We maintain the following channels for communication:
   - OpenROAD with OpenROAD Flow Scripts: <https://github.com/The-OpenROAD-Project/OpenROAD/issues/>
 - Discussions:
   - OpenROAD Flow: <https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/discussions>
-- Inquiries: openroad@eng.ucsd.edu
+- Inquiries: openroad@ucsd.edu
 
 See also our [FAQs](user/FAQS.md).
 

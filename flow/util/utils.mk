@@ -92,7 +92,6 @@ endef
 export UNSET_VARIABLES_NAMES := $(call get_variables,command% line environment% default automatic)
 export ISSUE_VARIABLES_NAMES := $(call get_variables,environment% default automatic)
 export ISSUE_VARIABLES := $(foreach V, $(ISSUE_VARIABLES_NAMES), $(if $($V),$V=$($V),$V='')${\n})
-
 export COMMAND_LINE_ARGS := $(foreach V,$(.VARIABLES),$(if $(filter command% line, $(origin $V)),$(V)))
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt

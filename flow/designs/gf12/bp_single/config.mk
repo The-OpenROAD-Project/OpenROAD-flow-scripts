@@ -61,6 +61,7 @@ export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_fence2_bp_single.macro_placment
 export MACRO_BLOCKAGE_HALO = 25
 
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
+export FASTROUTE_TCL = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
 
 ifneq ($(USE_FILL),)
 export DESIGN_TYPE = CHIP

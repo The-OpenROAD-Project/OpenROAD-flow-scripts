@@ -11,6 +11,11 @@ check_setup
 set num_instances [llength [get_cells -hier *]]
 puts "number instances in verilog is $num_instances"
 
+set additional_args ""
+if { [info exists ::env(ADDITIONAL_SITES)]} {
+  append additional_args " -additional_sites $::env(ADDITIONAL_SITES)"
+}
+
 # Initialize floorplan by reading in floorplan DEF
 # ---------------------------------------------------------------------------
 if {[info exists ::env(FLOORPLAN_DEF)]} {
@@ -43,14 +48,16 @@ if {[info exists ::env(FLOORPLAN_DEF)]} {
   initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
                        -aspect_ratio $aspect_ratio \
                        -core_space $core_margin \
-                       -sites $::env(PLACE_SITE)
+                       -site $::env(PLACE_SITE) \
+                       {*}$additional_args
 
 # Initialize floorplan using DIE_AREA/CORE_AREA
 # ----------------------------------------------------------------------------
 } else {
   initialize_floorplan -die_area $::env(DIE_AREA) \
                        -core_area $::env(CORE_AREA) \
-                       -sites $::env(PLACE_SITE)
+                       -site $::env(PLACE_SITE) \
+                       {*}$additional_args
 }
 
 if { [info exists ::env(MAKE_TRACKS)] } {
