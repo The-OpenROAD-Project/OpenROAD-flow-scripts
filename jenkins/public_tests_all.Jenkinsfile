@@ -41,7 +41,7 @@ node {
     }
   }
   
-  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+  // docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
     try {
       properties([
         copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
@@ -129,11 +129,11 @@ node {
                         "ibex ihp-sg13g2",
                         "gcd ihp-sg13g2",
                         "spi ihp-sg13g2",
-                        "riscv32i ihp-sg13g2"]
+                        "riscv32i ihp-sg13g2",
+                        "delta debug"]
         ]
         def axes = matrix_axes.TEST_SLUG
 
-        // Map tasks = [failFast: false]
         for (axisValue in axes) {
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {
@@ -204,5 +204,5 @@ node {
       }
     } 
     
-    }
+    // }
 }

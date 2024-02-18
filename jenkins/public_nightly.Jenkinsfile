@@ -98,7 +98,8 @@ node {
                    "ibex ihp-sg13g2",
                    "gcd ihp-sg13g2",
                    "spi ihp-sg13g2",
-                   "riscv32i ihp-sg13g2"]
+                   "riscv32i ihp-sg13g2",
+                   "delta debug"]
       ]
       def axes = matrix_axes.TEST_SLUG
 
