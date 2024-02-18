@@ -9,7 +9,7 @@ techmap
 if {[info exist ::env(DFF_LIB_FILE)]} {
   dfflibmap -liberty $::env(DFF_LIB_FILE)
 } else {
-  dfflibmap -liberty $::env(DONT_USE_SC_LIB)
+  dfflibmap -liberty $::env(DECOMPRESSED_SC_LIB)
 }
 puts "abc [join $abc_args " "]"
 abc {*}$abc_args

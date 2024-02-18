@@ -27,13 +27,17 @@ set inputs [list]
 # Step-specific pre-processing step(s)
 #if {$sc_step == "or_synth_hier_report"} {
 if {$sc_step == "or_synth"} {
-    # Pre-synthesis: mark dont-use cells in liberty files, and merge them.
+    # Pre-synthesis: decompress liberty files, and merge them.
     foreach f [split $::env(LIB_FILES)] {
-        exec $::env(UTILS_DIR)/markDontUse.py -p $::env(DONT_USE_CELLS) -i $f -o "../../[file tail $f]-mod.lib"
+        if {[file extension $f] == .gz} {
+            exec gunzip -c $f > "../../[file tail $f]-mod.lib"
+        } else {
+            file link -symbolic $f "../../[file tail $f]-mod.lib"
+        }
     }
     set merge_cmd $::env(UTILS_DIR)/mergeLib.pl
     lappend merge_cmd $::env(PLATFORM)_merged
-    foreach ff [regexp -all -inline {\S+} $::env(DONT_USE_LIBS)] {
+    foreach ff [regexp -all -inline {\S+} $::env(DECOMPRESSED_LIBS)] {
         lappend merge_cmd $ff
     }
     exec {*}$merge_cmd > ../../merged.lib
