@@ -138,10 +138,9 @@ node {
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {
                 node {
-                    checkout([
-                        $class: 'GitSCM',
-                        extensions: [[$class: 'SubmoduleOption', recursiveSubmodules: true]]
-                    ])
+                    checkout scm
+                    sh 'ls'
+                    sh 'ls tools/OpenROAD/etc'
                     withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
                       runTests(currentSlug)
                     }
