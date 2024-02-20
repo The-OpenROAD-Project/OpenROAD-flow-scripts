@@ -41,7 +41,7 @@ node {
     }
   }
   
-  // docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
     try {
       properties([
         copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
@@ -68,7 +68,7 @@ node {
             for (axisValue in axes_1) {
                 def currentOS = axisValue
                 tasks["${currentOS}"] = {
-                    node {
+                    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
                         checkout scm
                         withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
                           testDependencyInstaller(currentOS)
@@ -137,7 +137,7 @@ node {
         for (axisValue in axes) {
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {
-                node {
+                docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
                     checkout scm
                     withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
                       runTests(currentSlug)
@@ -204,5 +204,5 @@ node {
       }
     } 
     
-    // }
+    }
 }
