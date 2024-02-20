@@ -45,9 +45,9 @@
    <produce-lef-pins>true</produce-lef-pins>
    <special-lef_pins-suffix-string>.pin</special-lef_pins-suffix-string>
    <special-lef_pins-datatype-string>16</special-lef_pins-datatype-string>
-   <produce-fills>false</produce-fills>
+   <produce-fills>true</produce-fills>
    <special-fills-suffix-string>.FILL</special-fills-suffix-string>
-   <special-fills-datatype-string>5</special-fills-datatype-string>
+   <special-fills-datatype-string>28</special-fills-datatype-string>
    <produce-obstructions>false</produce-obstructions>
    <obstructions-suffix>.blockage</obstructions-suffix>
    <obstructions-datatype>10</obstructions-datatype>
