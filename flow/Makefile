@@ -930,7 +930,6 @@ do-gds-merged:
 	($(TIME_CMD) $(STDBUF_CMD) $(KLAYOUT_CMD) -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$(RESULTS_DIR)/6_final.def \
 	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
-	        -rd config_file=$(FILL_CONFIG) \
 	        -rd seal_file="$(SEAL_GDSOAS)" \
 	        -rd out_file=$(GDS_MERGED_FILE) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
