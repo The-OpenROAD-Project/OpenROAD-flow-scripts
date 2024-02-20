@@ -77,6 +77,13 @@ set abc_args [list -script $abc_script \
       -liberty $::env(DONT_USE_SC_LIB) \
       -constr $::env(OBJECTS_DIR)/abc.constr]
 
+# Exclude dont_use cells
+if {[info exist ::env(DONT_USE_CELLS)] && $::env(DONT_USE_CELLS) != ""} {
+  foreach cell $::env(DONT_USE_CELLS) {
+    lappend abc_args -dont_use $cell
+  }
+}
+
 if {[info exist ::env(SDC_FILE_CLOCK_PERIOD)] && [file isfile $::env(SDC_FILE_CLOCK_PERIOD)]} {
   puts "\[FLOW\] Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
   set fp [open $::env(SDC_FILE_CLOCK_PERIOD) r]
