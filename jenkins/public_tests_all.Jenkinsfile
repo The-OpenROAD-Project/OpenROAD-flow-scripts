@@ -41,18 +41,20 @@ node {
     }
   }
   
-  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+  // docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
     try {
       properties([
         copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
       ]);
 
-      stage('Checkout'){
-        checkout scm
-      }
-      
-      stage('Local Build') {
-        localBuild()
+      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+        stage('Checkout'){
+          checkout scm
+        }
+        
+        stage('Local Build') {
+          localBuild()
+        }
       }
 
       stage('Tests') {
@@ -148,25 +150,30 @@ node {
 
         parallel(tasks)
       }
+      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+        stage('Checkout'){
+          checkout scm
+        }
+        
+        stage('Report Short Summary') {
+          generateReportShortSummary()
+        }
 
-      stage('Report Short Summary') {
-        generateReportShortSummary()
-      }
+        stage("Report Summary") {
+          generateReportSummary()
+        }
 
-      stage("Report Summary") {
-        generateReportSummary()
-      }
+        stage("Report Full") {
+          generateReportFull()
+        }
 
-      stage("Report Full") {
-        generateReportFull()
-      }
+        stage("Report HTML Table") {
+          generateReportHtmlTable()
+        }
 
-      stage("Report HTML Table") {
-        generateReportHtmlTable()
-      }
-
-      stage('Upload Metadata') {
-        uploadMetadata(env.BRANCH_NAME, env.GIT_COMMIT)
+        stage('Upload Metadata') {
+          uploadMetadata(env.BRANCH_NAME, env.GIT_COMMIT)
+        }
       }
 
     } finally {
@@ -204,5 +211,5 @@ node {
       }
     } 
     
-    }
+    // }
 }
