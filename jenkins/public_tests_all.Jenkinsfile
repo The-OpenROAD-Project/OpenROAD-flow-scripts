@@ -75,6 +75,10 @@ node {
                     node {
                       docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
                           checkout scm
+                          sh 'sudo yum install -y yum-utils'
+                          sh 'sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo'
+                          sh 'sudo yum install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin'
+                          sh 'sudo systemctl start docker'
                           withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
                             testDependencyInstaller(currentOS)
                           }
@@ -143,11 +147,13 @@ node {
         for (axisValue in axes) {
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {
-                docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
-                    checkout scm
-                    withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
-                      runTests(currentSlug)
-                    }
+                node{
+                  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+                      checkout scm
+                      withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
+                        runTests(currentSlug)
+                      }
+                  }
                 }
               }
         }
