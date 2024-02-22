@@ -46,16 +46,18 @@ node {
       properties([
         copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
       ]);
-
-      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
-        stage('Checkout'){
-          checkout scm
+  
+      // node {
+        docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+          // stage('Checkout'){
+          //   checkout scm
+          // }
+          
+          stage('Local Build') {
+            localBuild()
+          }
         }
-        
-        stage('Local Build') {
-          localBuild()
-        }
-      }
+      // }
 
       stage('Tests') {
         Map tasks = [failFast: false]
@@ -70,11 +72,13 @@ node {
             for (axisValue in axes_1) {
                 def currentOS = axisValue
                 tasks["${currentOS}"] = {
-                    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
-                        checkout scm
-                        withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
-                          testDependencyInstaller(currentOS)
-                        }
+                    node {
+                      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+                          checkout scm
+                          withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
+                            testDependencyInstaller(currentOS)
+                          }
+                      }
                     }
                   }
             }
@@ -151,9 +155,9 @@ node {
         parallel(tasks)
       }
       docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
-        stage('Checkout'){
-          checkout scm
-        }
+        // stage('Checkout'){
+        //   checkout scm
+        // }
         
         stage('Report Short Summary') {
           generateReportShortSummary()
