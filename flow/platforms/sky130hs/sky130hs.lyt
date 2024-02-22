@@ -52,6 +52,9 @@
    <routing-suffix>.drawing</routing-suffix>
    <routing-datatype>0</routing-datatype>
    <lef-files>merged.lef</lef-files>
+   <produce-fills>true</produce-fills>
+   <special-fills-suffix-string>.FILL</special-fills-suffix-string>
+   <special-fills-datatype-string>28</special-fills-datatype-string>
   </lefdef>
   <dxf>
    <dbu>0.001</dbu>
