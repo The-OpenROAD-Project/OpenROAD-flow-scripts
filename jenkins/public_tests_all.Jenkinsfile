@@ -140,7 +140,8 @@ node {
                         "gcd ihp-sg13g2",
                         "spi ihp-sg13g2",
                         "riscv32i ihp-sg13g2",
-                        "delta debug"]
+                        "delta debug",
+                        "utils"]
         ]
         def axes = matrix_axes.TEST_SLUG
 
