@@ -112,6 +112,30 @@ def upload_data(db, datafile, platform, design, variant, args, rules):
             'run__flow__generate_date': gen_date,
             'jenkins_url': args.jenkinsURL,
         })
+
+    platform_doc_ref = db.collection('platforms').document(platform)
+    if platform_doc_ref.get().exists:
+        designs = platform_doc_ref.get().to_dict().get('designs')
+        if design not in designs:
+            design_ref = {
+                "name": design,
+                "rules": rules,
+            }
+            designs[design] = design_ref
+            platform_doc_ref.update({
+                'designs': designs,
+            })          
+    else:
+        designs = {}
+        design_ref = {
+            "name": design,
+            "rules": rules,
+        }
+        designs[design] = design_ref
+        platform_doc_ref.set({
+            'designs': designs,
+            'name': platform,
+        })
     
 def get_rules(platform, design, variant):
     runFilename = f'rules-{variant}.json'
