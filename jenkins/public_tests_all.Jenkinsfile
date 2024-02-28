@@ -41,6 +41,7 @@ pipeline {
                    "riscv32i asap7",
                    "uart asap7",
                    "mock-array asap7",
+                   "mock-cpu asap7",
                    "mock-alu asap7",
                    "aes-block asap7",
                    "aes nangate45",
@@ -101,8 +102,8 @@ pipeline {
                           sh 'exit 1';
                         }
                       }
-                      sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
-                      sh "docker run --rm openroad/flow-centos7-builder:latest bash -c 'source ./env.sh ; make -C flow'";
+                      sh "docker run --rm openroad/flow-ubuntu22.04-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
+                      sh "docker run --rm openroad/flow-ubuntu22.04-builder:latest bash -c 'source ./env.sh ; make -C flow'";
                     } else {
                       sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
                     }
