@@ -11,6 +11,8 @@ COPY DependencyInstaller.sh .
 
 COPY InstallerOpenROAD.sh \
        /tmp/installer/tools/OpenROAD/etc/DependencyInstaller.sh
+ARG options=""
 
-RUN ./DependencyInstaller.sh \
+RUN echo ${options}
+RUN ./DependencyInstaller.sh $options \
       && rm -rf /tmp/installer

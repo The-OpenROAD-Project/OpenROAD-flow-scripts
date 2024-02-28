@@ -26,6 +26,7 @@ usage: $0 [CMD] [OPTIONS]
   -threads                      Max number of threads to use if compiling.
   -sha                          Use git commit sha as the tag image. Default is
                                   'latest'.
+  -ci                           Install CI tools in image  
   -h -help                      Show this message and exits
   -username                     Docker Username
   -password                     Docker Password
@@ -68,7 +69,7 @@ _setup() {
             fromImage="${FROM_IMAGE_OVERRIDE:-$osBaseImage}"
             cp tools/OpenROAD/etc/DependencyInstaller.sh etc/InstallerOpenROAD.sh
             context="etc"
-            buildArgs=""
+            buildArgs="--build-arg options=${options}"
             ;;
         *)
             echo "Target ${target} not found" >&2
@@ -82,7 +83,8 @@ _setup() {
 
 _create() {
     echo "Create docker image ${imagePath} using ${file}"
-    docker build --file "${file}" --tag "${imagePath}" ${buildArgs} "${context}"
+    echo $buildArgs
+    docker build --file "${file}" --tag "${imagePath}" ${buildArgs} "${context}" --progress plain
     rm -f etc/InstallerOpenROAD.sh
 }
 
@@ -138,6 +140,7 @@ target="dev"
 useCommitSha="no"
 numThreads="-1"
 tag="latest"
+options=""
 
 while [ "$#" -gt 0 ]; do
     case "${1}" in
@@ -155,6 +158,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -sha )
             useCommitSha=yes
+            ;;
+        -ci )
+            options="-ci"
             ;;
         -os | -target )
             echo "${1} requires an argument" >&2
