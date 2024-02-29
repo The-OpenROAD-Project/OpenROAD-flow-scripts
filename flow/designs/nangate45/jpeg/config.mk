@@ -10,3 +10,6 @@ export ABC_AREA = 1
 export CORE_UTILIZATION ?= 45
 export PLACE_DENSITY_LB_ADDON = 0.20
 export TNS_END_PERCENT        = 100
+
+# Temporary
+export SKIP_ANTENNA_REPAIR = 1
