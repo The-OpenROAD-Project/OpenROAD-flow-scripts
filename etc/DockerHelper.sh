@@ -95,11 +95,11 @@ _push() {
             
             docker login --username ${username} --password ${password}
             if [[ "${useCommitSha}" == "yes" ]]; then
-                ./etc/DockerHelper.sh create -os=${os} -target=dev -sha \
+                ./etc/DockerHelper.sh create -os=${os} -ci -target=dev -sha \
                     2>&1 | tee build/create-${os}-${commitSha}.log
                 docker push openroad/flow-${os}-dev:${commitSha}
             else
-                ./etc/DockerHelper.sh create -os=${os} -target=dev \
+                ./etc/DockerHelper.sh create -os=${os} -ci -target=dev \
                     2>&1 | tee build/create-${os}-${tag}.log
                 docker push openroad/flow-${os}-dev:${tag}
             fi

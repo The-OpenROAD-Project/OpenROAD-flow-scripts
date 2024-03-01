@@ -257,6 +257,7 @@ case "${os}" in
     "Ubuntu" )
         version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
         if [[ ${CI} == "yes" ]]; then
+            echo "Installing CI Tools"
             _installCI
         fi
         _installORDependencies

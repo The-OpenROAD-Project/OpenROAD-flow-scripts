@@ -64,7 +64,7 @@ node {
         if(isChanged) {
           // stage('Test Dependency Installer') {
             Map matrix_axes_1 = [
-            OS: ['ubuntu20.04', 'centos7']
+            OS: ['ubuntu20.04']
             ]
             def axes_1 = matrix_axes_1.OS
 
