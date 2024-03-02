@@ -28,8 +28,9 @@ docker run -u $(id -u ${USER}):$(id -g ${USER}) \
  -e FLOW_HOME=/OpenROAD-flow-scripts/flow/ \
  -e MAKEFILES=/OpenROAD-flow-scripts/flow/Makefile \
  -v $WORKSPACE:`pwd` \
+ --network host \
  $DOCKER_INTERACTIVE \
- ${OR_IMAGE:-openroad/flow-centos7-builder:latest} \
+ ${OR_IMAGE:-openroad/flow-ubuntu22.04-builder:latest} \
  bash -c "set -ex
  mkdir /tmp/xdg-run
  . ./env.sh
