@@ -48,7 +48,7 @@ node {
       ]);
   
       // node {
-        docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+        docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user root') {
           // stage('Checkout'){
           //   checkout scm
           // }
@@ -73,7 +73,7 @@ node {
                 def currentOS = axisValue
                 tasks["${currentOS}"] = {
                     node {
-                      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+                      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user root') {
                           checkout scm
                           withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
                             testDependencyInstaller(currentOS)
@@ -145,7 +145,7 @@ node {
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {
                 node{
-                  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+                  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user root') {
                       checkout scm
                       withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
                         runTests(currentSlug)
@@ -157,7 +157,7 @@ node {
 
         parallel(tasks)
       }
-      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside {
+      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user root') {
         // stage('Checkout'){
         //   checkout scm
         // }
