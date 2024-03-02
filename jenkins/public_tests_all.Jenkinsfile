@@ -52,8 +52,8 @@ node {
           // stage('Checkout'){
           //   checkout scm
           // }
-          
           stage('Local Build') {
+            sh "git config --system --add safe.directory '*'"
             localBuild()
           }
         }
@@ -74,6 +74,7 @@ node {
                 tasks["${currentOS}"] = {
                     node {
                       docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user root') {
+                          sh "git config --system --add safe.directory '*'"
                           checkout scm
                           withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
                             testDependencyInstaller(currentOS)
@@ -146,6 +147,7 @@ node {
             tasks["${currentSlug}"] = {
                 node{
                   docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user root') {
+                      sh "git config --system --add safe.directory '*'"
                       checkout scm
                       withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
                         runTests(currentSlug)
@@ -161,7 +163,7 @@ node {
         // stage('Checkout'){
         //   checkout scm
         // }
-        
+        sh "git config --system --add safe.directory '*'"
         stage('Report Short Summary') {
           generateReportShortSummary()
         }
