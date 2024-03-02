@@ -35,4 +35,3 @@ export TNS_END_PERCENT        = 100
 
 export FASTROUTE_TCL = ./designs/$(PLATFORM)/$(DESIGN_NAME)/fastroute.tcl
 
-export SKIP_INCREMENTAL_REPAIR = 1
