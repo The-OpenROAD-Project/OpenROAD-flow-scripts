@@ -41,19 +41,15 @@ for category in rdb.each_category():
             {"x": value.edge().p2.x, "y": value.edge().p2.y}]
           })
       elif (value.is_edge_pair()):
-        edge = value.edge_pair().first
+        edge1 = value.edge_pair().first
+        edge2 = value.edge_pair().second
         violations_shapes.append({
-          "type": "edge",
+          "type": "edge_pair",
           "shape": [
-            {"x": edge.p1.x, "y": edge.p1.y},
-            {"x": edge.p2.x, "y": edge.p2.y}]
-          })
-        edge = value.edge_pair().second
-        violations_shapes.append({
-          "type": "edge",
-          "shape": [
-            {"x": edge.p1.x, "y": edge.p1.y},
-            {"x": edge.p2.x, "y": edge.p2.y}]
+            {"x": edge1.p1.x, "y": edge1.p1.y},
+            {"x": edge1.p2.x, "y": edge1.p2.y},
+            {"x": edge2.p1.x, "y": edge2.p1.y},
+            {"x": edge2.p2.x, "y": edge2.p2.y}]
           })
       elif (value.is_polygon()):
         points = []

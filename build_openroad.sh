@@ -20,10 +20,7 @@ OPENROAD_APP_BRANCH="master"
 INSTALL_PATH="$(pwd)/tools/install"
 
 YOSYS_USER_ARGS=""
-YOSYS_ARGS="\
-CONFIG=gcc \
-ABCREV=bafd2a7 ABCURL=https://github.com/berkeley-abc/abc \
-"
+YOSYS_ARGS="CONFIG=gcc"
 
 OPENROAD_APP_USER_ARGS=""
 OPENROAD_APP_ARGS=""
@@ -35,7 +32,7 @@ LSORACLE_ARGS="\
 -D YOSYS_PLUGIN=ON \
 "
 
-DOCKER_OS_NAME="centos7"
+DOCKER_OS_NAME="ubuntu22.04"
 PROC=-1
 
 function usage() {
@@ -105,7 +102,7 @@ Options:
 Options valid only for Docker builds:
     -c, --copy-platforms    Copy platforms to inside docker image.
 
-    --os=DOCKER_OS_NAME     Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
+    --os=DOCKER_OS_NAME     Choose beween ubuntu22.04 (default), ubuntu20.04.
 
     This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
     By default, the tools will be built from the linked submodule hashes.
@@ -263,6 +260,11 @@ __local_build()
         if [[ "$OSTYPE" == "darwin"* ]]; then
           export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$(brew --prefix tcl-tk)/bin:$PATH"
           export CMAKE_PREFIX_PATH=$(brew --prefix or-tools)
+        fi
+        if [[ -f "/opt/rh/rh-python38/enable" ]]; then
+            set +u
+            source /opt/rh/rh-python38/enable
+            set -u
         fi
         if [[ -f "/opt/rh/devtoolset-8/enable" ]]; then
             # the scl script has unbound variables

@@ -2,8 +2,11 @@
 
 ## Prerequisites
 
-For this method you only need to install
+- For this method you only need to install
 [Docker](https://docs.docker.com/engine/install) on your machine.
+- Ensure that you have sufficient memory allocated to the Virtual Machine (VM)
+as per our system [requirements](../index.md#system-requirements). Refer to
+this [Docker guide](https://docs.docker.com/config/containers/resource_constraints/) for setting CPU cores and memory limits.
 
 :::{Warning}
 The `build_openroad.sh` will use the host number of CPUs to compile `openroad`.
@@ -21,40 +24,40 @@ docker run --rm ubuntu:22.04 nproc
 
 ### Build Using Docker from pre-built binaries
 
-Courtesy of [Precision Innovations](https://precisioninno.com/), 
+Courtesy of [Precision Innovations](https://precisioninno.com/),
 they release `.deb` installers of OpenROAD for Ubuntu
-and Debian on a regular basis. 
-This greatly helps to reduce the compilation time needed. 
+and Debian on a regular basis.
+This greatly helps to reduce the compilation time needed.
 
 We recommend to use a Docker image of a supported OS
 and install OpenROAD using the prebuilt binaries from
-Precision Innovations. 
-You can start the container in an interactive mode using 
-the command below. 
+Precision Innovations.
+You can start the container in an interactive mode using
+the command below.
 
 ```shell
 docker run -it ubuntu:22.04
 ```
 
-Now you are ready to install the prebuilt binaries. 
-Please refer to the instructions for installing prebuilt binaries 
+Now you are ready to install the prebuilt binaries.
+Please refer to the instructions for installing prebuilt binaries
 [here](./BuildWithPrebuilt.md).
 
 ### Build Using Docker from sources
 
 Alternatively, if you would like the latest commits from the OpenROAD repositories,
-do follow the instructions below. 
+do follow the instructions below.
 
 
 #### Clone and Build
 
-The following instructions build the docker image with CentOS 7 as the base OS:
+The following instructions build the docker image with Ubuntu 22.04 as the base OS:
 
 
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
-./build_openroad.sh 
+./build_openroad.sh
 ```
 
 You can restrict the number of CPUs with the `-t|--threads N` argument:
@@ -65,10 +68,10 @@ You can restrict the number of CPUs with the `-t|--threads N` argument:
 
 ## Verify Installation
 
-The binaries are only available from inside a Docker container. Here is an example of starting a container from the created Docker image. 
+The binaries are only available from inside a Docker container. Here is an example of starting a container from the created Docker image.
 
 ``` shell
-docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-centos7-builder
+docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22-builder
 ```
 
 Then, inside docker:
@@ -95,7 +98,7 @@ util/docker_shell make
 To use the GUI feature you will need to start the docker with the
 following command,
 
-For Ubuntu/Centos/Debian OS users:
+For Ubuntu/Debian OS users:
 
 ```
 docker run --rm -it \
@@ -135,7 +138,7 @@ Do refer to the documentation [here](./DockerShell.md).
 
 The following instructions build the docker image with a parameterized OS
 in two stages. These are for CI and developers that wish to use an OS other
-than CentOS 7; regular users should use the steps from previous sections.
+than Ubuntu 22.04; regular users should use the steps from previous sections.
 The dev stage installs all dependencies and packages required to run OpenROAD
 and OpenROAD Flow Scripts. The build stage generates all binaries needed to run
 the flow (i.e., `openroad` and `yosys`).

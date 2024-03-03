@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 set -ex
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -33,8 +34,9 @@ docker run -u $(id -u ${USER}):$(id -g ${USER}) \
  -e OPENROAD_EXE=$OPENROAD_EXE \
  -e KLAYOUT_CMD=$KLAYOUT_CMD \
  -v $WORKSPACE:/OpenROAD-flow-scripts/flow \
+ --network host \
  $DOCKER_INTERACTIVE \
- ${OR_IMAGE:-openroad/flow-centos7-builder:latest} \
+ ${OR_IMAGE:-openroad/flow-ubuntu22.04-builder:latest} \
  bash -c "set -ex
  mkdir /tmp/xdg-run
  cd /OpenROAD-flow-scripts/flow

@@ -5,7 +5,7 @@ Kubernetes Engine (i.e., GKE) and the required support infrastructure to
 enable AutoTuner to work properly. The documentation is intended to users
 with some familiarity with Google Cloud or other cloud services. For
 more details on how to use AutoTuner see the main documentation page
-[here](https://openroad.readthedocs.io/en/latest/user/InstructionsForAutoTuner.html).
+[here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/InstructionsForAutoTuner.html).
 
 ## How to use this document
 

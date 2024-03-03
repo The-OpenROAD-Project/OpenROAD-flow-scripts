@@ -15,7 +15,7 @@ export PROCESS                                = 180
 #----------------------------------------------------
 export TECH_LEF                               = $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_tech.lef
 
-export SC_LEF                                 = $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_sc.lef
+export SC_LEF                                ?= $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_sc.lef
 
 export GDS_FILES                              = $(wildcard $(PLATFORM_DIR)/gds/$(TRACK_OPTION)/*.gds) \
                                                 $(ADDITIONAL_GDS)
@@ -44,8 +44,6 @@ export RC_FILE                                = $(PLATFORM_DIR)/setRC.tcl
 export TIEHI_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tieh Z
 export TIELO_CELL_AND_PORT                    = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tiel ZN
 
-# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS                ?= $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 export ABC_DRIVER_CELL                        = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__buf_4
 export ABC_LOAD_IN_FF                         = 0.01343
 
@@ -64,9 +62,9 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders.v
 #-------------------------------------------------------
 # Placement site for core cells
 ifeq ($(TRACK_OPTION),9t) 
-export PLACE_SITE                             = GF018hv5v_green_sc9
+export PLACE_SITE                             ?= GF018hv5v_green_sc9
 else
-export PLACE_SITE                             = GF018hv5v_mcu_sc7
+export PLACE_SITE                             ?= GF018hv5v_mcu_sc7
 endif
 
 # IO Placer pin layers
@@ -77,7 +75,7 @@ export IO_PLACER_V                           ?= Metal4
 export PDN_TCL                               ?= $(PLATFORM_DIR)/openROAD/pdn/pdn_grid_strategy_$(TRACK_OPTION)_6M.cfg
 
 # Endcap and Welltie cells
-export TAPCELL_TCL                            = $(PLATFORM_DIR)/openROAD/tapcell.tcl
+export TAPCELL_TCL                           ?= $(PLATFORM_DIR)/openROAD/tapcell.tcl
 
 # macro planning
 export MACRO_PLACE_HALO                      ?= 10 10
@@ -97,7 +95,6 @@ export PLACE_DENSITY                         ?= 0.40
 # CTS
 #--------------------------------------------------------
 export CTS_BUF_CELL                           = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__clkbuf_8
-export CTS_BUF_DISTANCE                       = 100
 
 #---------------------------------------------------------
 # Route
@@ -105,8 +102,6 @@ export CTS_BUF_DISTANCE                       = 100
 # FastRoute options
 export MIN_ROUTING_LAYER                     ?= Metal2
 export MAX_ROUTING_LAYER                     ?= Metal5
-export VIA_IN_PIN_MIN_LAYER                  ?= Metal1
-export VIA_IN_PIN_MAX_LAYER                  ?= Metal1
 export DISABLE_VIA_GEN                       ?= 1
 
 # KLayout layer properties

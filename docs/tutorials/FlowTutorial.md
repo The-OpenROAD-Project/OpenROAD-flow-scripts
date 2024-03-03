@@ -49,7 +49,7 @@ Use the `bash` shell to run commands and scripts.
 
 #### OpenROAD-flow-scripts Installation
 
-To install OpenROAD-flow-scripts,  refer to the 
+To install OpenROAD-flow-scripts,  refer to the
 [Build or installing ORFS  Dependencies](https://openroad-flow-scripts.readthedocs.io/en/latest/#build-or-installing-orfs-dependencies)
 documentation.
 
@@ -69,11 +69,10 @@ OpenROAD-flow-scripts installation is complete.
 Launch the docker with OpenROAD-flow-scripts container as follows:
 
 ```shell
-export OS_NAME=centos7
-docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-$OS_NAME-builder
+docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22-builder
 ```
 
-:::{seealso} 
+:::{seealso}
 To launch OpenROAD GUI inside the docker, based on the OS, use the command from [here](../user/BuildWithDocker.md#enable-gui-support).
 :::
 
@@ -93,7 +92,7 @@ OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
 
 To verify the installation run the built-in example design as follows:
 
-```shell 
+```shell
 cd flow
 make
 ```
@@ -348,7 +347,7 @@ abc.constr klayout.lyt klayout_tech.lef lib
 
 
 -   `reports/sky130hd/ibex/base`
-    Reports directory, which contains congestion report, DRC 
+    Reports directory, which contains congestion report, DRC
     report, design statistics and antenna log for reference.
 
 | `reports`         |                     |                        |
@@ -895,7 +894,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 Launch openroad GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 
 ```shell
-cd ../tools/OpenROAD/src/pad/test/
+cd ../tools/OpenROAD/src/ppl/test/
 openroad -gui
 ```
 

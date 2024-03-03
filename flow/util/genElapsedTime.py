@@ -27,10 +27,13 @@ if not args.logDir:
 
 def print_log_dir_times(logdir):
     first = True
+    totalElapsed = 0
     print(logdir)
 
     # Loop on all log files in the directory
-    for f in sorted(pathlib.Path(logdir).glob('**/[0-9]_*.log')):
+    for f in sorted(pathlib.Path(logdir).glob('**/*.log')):
+        if "eqy_output" in str(f):
+            continue
         # Extract Elapsed Time line from log file
         with open(str(f)) as logfile:
             found = False
@@ -58,6 +61,7 @@ def print_log_dir_times(logdir):
 
             if not found:
                 print('No elapsed time found in',  str(f), file=sys.stderr)
+                continue
 
         # Print the name of the step and the corresponding elapsed time
         if elapsedTime != 0:
@@ -65,6 +69,10 @@ def print_log_dir_times(logdir):
                 print("%-25s %10s" % ("Log", "Elapsed seconds"))
                 first = False
             print('%-25s %10s' % (os.path.splitext(os.path.basename(str(f)))[0], elapsedTime))
+        totalElapsed += elapsedTime
+
+    if totalElapsed != 0:
+        print("%-25s %10s" % ( "Total", totalElapsed ))
 
 for log_dir in args.logDir:
     print_log_dir_times(log_dir)

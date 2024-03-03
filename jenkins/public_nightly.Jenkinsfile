@@ -52,6 +52,7 @@ pipeline {
             name 'TEST_SLUG';
             values "docker build",
                    "aes asap7",
+                   "aes-mbff asap7",
                    "aes_lvt asap7",
                    "ethmac asap7",
                    "ethmac_lvt asap7",
@@ -60,12 +61,12 @@ pipeline {
                    "jpeg asap7",
                    "jpeg_lvt asap7",
                    "riscv32i asap7",
-                   "sha3 asap7",
                    "swerv_wrapper asap7",
                    "uart asap7",
                    "mock-array asap7",
+                   "mock-cpu asap7",
                    "mock-alu asap7",
-                   "sram-64x16 asap7",
+                   "aes-block asap7",
                    "aes nangate45",
                    "ariane136 nangate45",
                    "black_parrot nangate45",
@@ -92,11 +93,16 @@ pipeline {
                    "jpeg sky130hs",
                    "riscv32i sky130hs",
                    "aes gf180",
+                   "aes-hybrid gf180",
                    "ibex gf180",
                    "jpeg gf180",
                    "riscv32i gf180",
-                   "sha3 gf180",
-                   "uart-blocks gf180";
+                   "uart-blocks gf180",
+                   "aes ihp-sg13g2",
+                   "ibex ihp-sg13g2",
+                   "gcd ihp-sg13g2",
+                   "spi ihp-sg13g2",
+                   "riscv32i ihp-sg13g2";
           }
         }
 
@@ -114,14 +120,15 @@ pipeline {
                     if ("${TEST_SLUG}" == 'docker build'){
                       retry(3) {
                         try {
-                          sh "./build_openroad.sh --no_init";
+                          sh "./build_openroad.sh --no_init --latest";
                         }
                         catch (e) {
                           sleep(60);
                           sh 'exit 1';
                         }
                       }
-                      sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
+                      sh "docker run --rm openroad/flow-ubuntu22.04-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
+                      sh "docker run --rm openroad/flow-ubuntu22.04-builder:latest bash -c 'source ./env.sh ; make -C flow'";
                     } else {
                       sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
                     }
@@ -132,8 +139,8 @@ pipeline {
             post {
               always {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true;
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true;
+                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**";
+                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**";
                 }
               }
             }
@@ -197,6 +204,7 @@ pipeline {
               --commitSHA ${env.GIT_COMMIT}-dirty \
               --jenkinsURL ${env.RUN_DISPLAY_URL} \
               --pipelineID ${env.BUILD_TAG} \
+              --changeBranch ${env.CHANGE_BRANCH} \
             """ + '--cred ${db_cred}'
         }
       }

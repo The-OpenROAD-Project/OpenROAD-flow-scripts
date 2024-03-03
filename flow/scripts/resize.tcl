@@ -1,6 +1,6 @@
 utl::set_metrics_stage "placeopt__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 3_3_place_gp.odb 2_floorplan.sdc "Starting resizer"
+load_design 3_3_place_gp.odb 2_floorplan.sdc
 
 proc print_banner {header} {
   puts "\n=========================================================================="
@@ -13,7 +13,7 @@ estimate_parasitics -placement
 
 utl::push_metrics_stage "placeopt__{}__pre_opt"
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "resizer pre" false false
+report_metrics 3 "resizer pre" false false
 utl::pop_metrics_stage
 
 print_banner "instance_count"
@@ -27,9 +27,14 @@ puts ""
 set_dont_use $::env(DONT_USE_CELLS)
 
 # Do not buffer chip-level designs
-if {![info exists ::env(FOOTPRINT)]} {
-  puts "Perform port buffering..."
-  buffer_ports
+# by default, IO ports will be buffered
+# to not buffer IO ports, set environment variable
+# DONT_BUFFER_PORT = 1
+if { ![info exists ::env(FOOTPRINT)] } {
+  if { ![info exists ::env(DONT_BUFFER_PORTS)] || $::env(DONT_BUFFER_PORTS) == 0 } {
+    puts "Perform port buffering..."
+    buffer_ports
+  }
 }
 
 puts "Perform buffer insertion..."
@@ -73,7 +78,7 @@ print_banner "report_floating_nets"
 report_floating_nets
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "resizer" true false
+report_metrics 3 "resizer" true false
 
 print_banner "instance_count"
 puts [sta::network_leaf_instance_count]
@@ -83,6 +88,4 @@ puts [sta::network_leaf_pin_count]
 
 puts ""
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/3_4_place_resized.odb
-}
+write_db $::env(RESULTS_DIR)/3_4_place_resized.odb

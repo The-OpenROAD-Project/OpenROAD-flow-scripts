@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 FLOW_ROOT=$(realpath "${FLOW_HOME}")
@@ -10,6 +10,7 @@ EXCLUDED_VARS+='|RESULTS_ODB|PUBLIC|ISSUE_SCRIPTS'
 EXCLUDED_VARS+='|HOME|PWD|MAIL|SHELL|NPROC|NUM_CORES|FLOW_HOME|\\n'
 EXCLUDED_VARS+='|UNSET_VARIABLES_NAMES|do-step|get_variables|do-copy'
 EXCLUDED_VARS+='|CURDIR|OPEN_GUI|OPEN_GUI_SHORTCUT'
+EXCLUDED_VARS+='|COMMAND_LINE_ARGS'
 
 EXCLUDED_PATTERNS="_EXE$|PATH$|_CMD$|\."
 
