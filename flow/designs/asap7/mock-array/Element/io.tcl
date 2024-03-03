@@ -1,4 +1,4 @@
-source designs/asap7/mock-array/util.tcl
+source designs/src/mock-array/util.tcl
 
 set assignments [list \
     top bottom \

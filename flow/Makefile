@@ -818,6 +818,11 @@ finish: $(LOG_DIR)/6_report.log \
 elapsed:
 	-@$(UTILS_DIR)/genElapsedTime.py -d $(BLOCK_LOG_FOLDERS) $(LOG_DIR)
 
+# Useful when working with macros, see elapsed time for all macros in platform
+.PHONY: elapsed-all
+elapsed-all:
+	@$(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
+
 # ==============================================================================
 
 ifneq ($(USE_FILL),)
@@ -925,7 +930,6 @@ do-gds-merged:
 	($(TIME_CMD) $(STDBUF_CMD) $(KLAYOUT_CMD) -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$(RESULTS_DIR)/6_final.def \
 	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
-	        -rd config_file=$(FILL_CONFIG) \
 	        -rd seal_file="$(SEAL_GDSOAS)" \
 	        -rd out_file=$(GDS_MERGED_FILE) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \

@@ -48,7 +48,7 @@ ifdef CLUSTER_FLOPS
   export ADDITIONAL_LEFS     += $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNH2V2X.lef \
                                 $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV2X.lef
 #                               $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV4X.lef
-  export PLACE_SITE          += asap7sc7p5t_pg
+  export ADDITIONAL_SITES    += asap7sc7p5t_pg
   export GDS_ALLOW_EMPTY     ?= DFFHQN[VH][24].*
 endif
 
@@ -88,7 +88,7 @@ export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_R A Y
 
 # Placement site for core cells
 # This can be found in the technology lef
-export PLACE_SITE              += asap7sc7p5t
+export PLACE_SITE              ?= asap7sc7p5t
 
 export MAKE_TRACKS             = $(PLATFORM_DIR)/openRoad/make_tracks.tcl
 
@@ -123,8 +123,6 @@ export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
 
 # TritonCTS options
 export CTS_BUF_CELL            ?= BUFx4_ASAP7_75t_R
-
-export CTS_BUF_DISTANCE        ?= 60
 
 # Fill cells used in fill cell insertion
 export FILL_CELLS              = FILLERxp5_ASAP7_75t_R \
