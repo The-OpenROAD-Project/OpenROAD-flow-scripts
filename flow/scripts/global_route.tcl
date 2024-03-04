@@ -96,9 +96,11 @@ puts "\n========================================================================
 puts "check_antennas"
 puts "--------------------------------------------------------------------------"
 
-repair_antennas -iterations 5
-check_placement -verbose
-check_antennas -report_file $env(REPORTS_DIR)/antenna.log -report_violating_nets
+if {![info exist env(SKIP_ANTENNA_REPAIR)]} {
+  repair_antennas -iterations 5
+  check_placement -verbose
+  check_antennas -report_file $env(REPORTS_DIR)/antenna.log -report_violating_nets
+}
 
 estimate_parasitics -global_routing
 report_metrics 5 "global route"
