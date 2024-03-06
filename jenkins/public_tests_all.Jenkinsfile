@@ -48,7 +48,7 @@ node {
       ]);
   
       // node {
-        docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+        docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
           // stage('Checkout'){
           //   checkout scm
           // }
@@ -73,7 +73,7 @@ node {
                 def currentOS = axisValue
                 tasks["${currentOS}"] = {
                     node {
-                      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+                      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
                           sh "git config --system --add safe.directory '*'"
                           checkout scm
                           withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
@@ -146,7 +146,7 @@ node {
             def currentSlug = axisValue
             tasks["${currentSlug}"] = {
                 node{
-                  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+                  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
                       sh "git config --system --add safe.directory '*'"
                       checkout scm
                       withEnv(["JAVA_TOOL_OPTIONS=-Dorg.jenkinsci.plugins.durabletask.BourneShellScript.LAUNCH_DIAGNOSTICS=true"]) {
@@ -159,7 +159,7 @@ node {
 
         parallel(tasks)
       }
-      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+      docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
         // stage('Checkout'){
         //   checkout scm
         // }
