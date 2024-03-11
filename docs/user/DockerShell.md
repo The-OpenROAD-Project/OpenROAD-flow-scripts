@@ -12,7 +12,6 @@ First build the docker image:
 
 ```
 cd OpenROAD-flow-scripts
-sudo ./setup.sh
 ./build_openroad.sh
 ```
 
