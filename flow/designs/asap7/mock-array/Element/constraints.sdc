@@ -27,8 +27,9 @@ set_max_transition 100 -clock_path [all_clocks]
 set non_clk_inputs  [lsearch -inline -all -not -exact [all_inputs] $clk_port]
 
 # io_ins_x -> REG_x in neighbouring element or just outside of the array
-set_input_delay -max -clock ${clk_name}_vir [expr $clk_period * $clk_imax_pct] [get_ports {io_ins_*}]
-set_input_delay -min -clock ${clk_name}_vir [expr $clk_period * $clk_imin_pct] [get_ports {io_ins_*}]
+set inputs [concat [get_ports io_ins_*] [get_ports io_lsbIns_4]]
+set_input_delay -max -clock ${clk_name}_vir [expr $clk_period * $clk_imax_pct] $inputs
+set_input_delay -min -clock ${clk_name}_vir [expr $clk_period * $clk_imin_pct] $inputs
 
 # REG_x in neighbouring element or just outside of the array -> io_outs_x
 set_output_delay -clock ${clk_name}_vir [expr $clk_period * $clk_omax_pct] [get_ports {io_outs_*}]
