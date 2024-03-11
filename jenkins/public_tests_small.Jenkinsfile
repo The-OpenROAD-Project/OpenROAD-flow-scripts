@@ -9,24 +9,46 @@ node {
     checkout scm
   }
 
-  def shared_functions = load("./jenkins/shared_functions_scripted.groovy")
-  def DOCKER_IMAGE_TAG
+  def isChanged = false
   stage('Build and Push Docker Image') {
-    if (shared_functions.isCommitTag(env.BRANCH_NAME)) {
-      echo "Building & Pushing Docker image for ubuntu22.04"
-      sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha"
-      DOCKER_IMAGE_TAG = env.GIT_COMMIT
-    } else {
-      echo "No changes using latest tag"
+    if (isDependencyInstallerChanged(env.BRANCH_NAME)) {
+      def commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true)
+      commitHash = commitHash.replaceAll(/[^a-zA-Z0-9-]/, '')
+
+      isChanged = true
+      DOCKER_IMAGE_TAG = pushCIImage(env.BRANCH_NAME, commitHash)
     }
   }
 
   try {
-    stage('Local Build') {
-      shared_functions.localBuild()
+    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+      sh "git config --system --add safe.directory '*'"
+      stage('Local Build') {
+        localBuild()
+      }
     }
 
     stage('Tests') {
+      Map tasks = [failFast: false]
+      if(isChanged) {
+          Map matrix_axes_1 = [
+          OS: ['ubuntu20.04']
+          ]
+          def axes_1 = matrix_axes_1.OS
+
+          for (axisValue in axes_1) {
+              def currentOS = axisValue
+              tasks["${currentOS}"] = {
+                  node {
+                    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+                        sh "git config --system --add safe.directory '*'"
+                        checkout scm
+                        testDependencyInstaller(currentOS)
+                    }
+                  }
+                }
+          }
+      }
       Map matrix_axes = [
         TEST_SLUG: ["docker build",
                       "aes asap7",
@@ -81,13 +103,15 @@ node {
       ]
       def axes = matrix_axes.TEST_SLUG
 
-      Map tasks = [failFast: false]
       for (axisValue in axes) {
           def currentSlug = axisValue
           tasks["${currentSlug}"] = {
               node {
-                  checkout scm
-                  shared_functions.runTests(${currentSlug})
+                  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+                    sh "git config --system --add safe.directory '*'"
+                    checkout scm
+                    runTests(currentSlug)
+                  }
               }
             }
       }
@@ -95,20 +119,23 @@ node {
       parallel(tasks)
     }
 
-    stage('Report Short Summary') {
-      shared_functions.generateReportShortSummary()
-    }
+    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+      sh "git config --system --add safe.directory '*'"
+      stage('Report Short Summary') {
+        generateReportShortSummary()
+      }
 
-    stage("Report Summary") {
-      shared_functions.generateReportSummary()
-    }
+      stage("Report Summary") {
+        generateReportSummary()
+      }
 
-    stage("Report Full") {
-      shared_functions.generateReportFull()
-    }
+      stage("Report Full") {
+        generateReportFull()
+      }
 
-    stage("Report HTML Table") {
-      shared_functions.generateReportHtmlTable()
+      stage("Report HTML Table") {
+        generateReportHtmlTable()
+      }
     }
 
   } finally {
@@ -119,7 +146,7 @@ node {
                     selector: specific("${BUILD_NUMBER}")
 
             def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
-            // def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
+            // def EMAIL_TO = emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
 
             // emailext (
             //     to: "$EMAIL_TO",

@@ -28,115 +28,142 @@ node {
     ])
   }
 
-  def DOCKER_IMAGE_TAG
+  def isChanged = false
   stage('Build and Push Docker Image') {
-    if (shared_functions.isCommitTag(env.BRANCH_NAME)) {
-      echo "Building & Pushing Docker image for ubuntu22.04"
-      sh "./etc/DockerHelper.sh pushCI -os=ubuntu22.04 -target=dev -sha"
-      DOCKER_IMAGE_TAG = env.GIT_COMMIT
-    } else {
-      echo "No changes using latest tag"
+    if (isDependencyInstallerChanged(env.BRANCH_NAME)) {
+      def commitHash = sh(script: 'git rev-parse HEAD', returnStdout: true)
+      commitHash = commitHash.replaceAll(/[^a-zA-Z0-9-]/, '')
+
+      isChanged = true
+      DOCKER_IMAGE_TAG = pushCIImage(env.BRANCH_NAME, commitHash)
     }
   }
 
   try {
-    stage('Local Build') {
-      shared_functions.localBuild("--local --no_init --latest")
+    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+      sh "git config --system --add safe.directory '*'"
+      stage('Local Build') {
+        localBuild("--local --no_init --latest")
+      }
     }
 
     stage('Tests') {
-     Map matrix_axes = [
-        TEST_SLUG: ["docker build",
-                   "aes asap7",
-                   "aes-mbff asap7",
-                   "aes_lvt asap7",
-                   "ethmac asap7",
-                   "ethmac_lvt asap7",
-                   "gcd asap7",
-                   "ibex asap7",
-                   "jpeg asap7",
-                   "jpeg_lvt asap7",
-                   "riscv32i asap7",
-                   "swerv_wrapper asap7",
-                   "uart asap7",
-                   "mock-array asap7",
-                   "mock-cpu asap7",
-                   "mock-alu asap7",
-                   "aes-block asap7",
-                   "aes nangate45",
-                   "ariane136 nangate45",
-                   "black_parrot nangate45",
-                   "bp_be_top nangate45",
-                   "bp_fe_top nangate45",
-                   "bp_multi_top nangate45",
-                   "dynamic_node nangate45",
-                   "gcd nangate45",
-                   "ibex nangate45",
-                   "jpeg nangate45",
-                   "swerv nangate45",
-                   "swerv_wrapper nangate45",
-                   "tinyRocket nangate45",
-                   "aes sky130hd",
-                   "chameleon sky130hd",
-                   "gcd sky130hd",
-                   "ibex sky130hd",
-                   "jpeg sky130hd",
-                   "microwatt sky130hd",
-                   "riscv32i sky130hd",
-                   "aes sky130hs",
-                   "gcd sky130hs",
-                   "ibex sky130hs",
-                   "jpeg sky130hs",
-                   "riscv32i sky130hs",
-                   "aes gf180",
-                   "aes-hybrid gf180",
-                   "ibex gf180",
-                   "jpeg gf180",
-                   "riscv32i gf180",
-                   "uart-blocks gf180",
-                   "aes ihp-sg13g2",
-                   "ibex ihp-sg13g2",
-                   "gcd ihp-sg13g2",
-                   "spi ihp-sg13g2",
-                   "riscv32i ihp-sg13g2",
-                   "delta debug"]
+      Map tasks = [failFast: false]
+      if(isChanged) {
+          Map matrix_axes_1 = [
+          OS: ['ubuntu20.04']
+          ]
+          def axes_1 = matrix_axes_1.OS
+
+          for (axisValue in axes_1) {
+              def currentOS = axisValue
+              tasks["${currentOS}"] = {
+                  node {
+                    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+                        sh "git config --system --add safe.directory '*'"
+                        checkout scm
+                        testDependencyInstaller(currentOS)
+                    }
+                  }
+                }
+          }
+      }
+      Map matrix_axes = [
+          TEST_SLUG: ["docker build",
+                    "aes asap7",
+                    "aes-mbff asap7",
+                    "aes_lvt asap7",
+                    "ethmac asap7",
+                    "ethmac_lvt asap7",
+                    "gcd asap7",
+                    "ibex asap7",
+                    "jpeg asap7",
+                    "jpeg_lvt asap7",
+                    "riscv32i asap7",
+                    "swerv_wrapper asap7",
+                    "uart asap7",
+                    "mock-array asap7",
+                    "mock-cpu asap7",
+                    "mock-alu asap7",
+                    "aes-block asap7",
+                    "aes nangate45",
+                    "ariane136 nangate45",
+                    "black_parrot nangate45",
+                    "bp_be_top nangate45",
+                    "bp_fe_top nangate45",
+                    "bp_multi_top nangate45",
+                    "dynamic_node nangate45",
+                    "gcd nangate45",
+                    "ibex nangate45",
+                    "jpeg nangate45",
+                    "swerv nangate45",
+                    "swerv_wrapper nangate45",
+                    "tinyRocket nangate45",
+                    "aes sky130hd",
+                    "chameleon sky130hd",
+                    "gcd sky130hd",
+                    "ibex sky130hd",
+                    "jpeg sky130hd",
+                    "microwatt sky130hd",
+                    "riscv32i sky130hd",
+                    "aes sky130hs",
+                    "gcd sky130hs",
+                    "ibex sky130hs",
+                    "jpeg sky130hs",
+                    "riscv32i sky130hs",
+                    "aes gf180",
+                    "aes-hybrid gf180",
+                    "ibex gf180",
+                    "jpeg gf180",
+                    "riscv32i gf180",
+                    "uart-blocks gf180",
+                    "aes ihp-sg13g2",
+                    "ibex ihp-sg13g2",
+                    "gcd ihp-sg13g2",
+                    "spi ihp-sg13g2",
+                    "riscv32i ihp-sg13g2",
+                    "delta debug"]
       ]
       def axes = matrix_axes.TEST_SLUG
 
-      Map tasks = [failFast: false]
       for (axisValue in axes) {
           def currentSlug = axisValue
           tasks["${currentSlug}"] = {
               node {
-                  checkout scm
-                  shared_functions.runTests(${currentSlug}, "--no_init --latest")
+                  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+                    sh "git config --system --add safe.directory '*'"
+                    checkout scm
+                    runTests(currentSlug, "--no_init --latest")
+                  }
               }
-            }
+          }
       }
 
       parallel(tasks)
     }
+    
+    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+      sh "git config --system --add safe.directory '*'"
+      stage('Report Short Summary') {
+        generateReportShortSummary()
+      }
 
-    stage('Report Short Summary') {
-      shared_functions.generateReportShortSummary()
+      stage("Report Summary") {
+        generateReportSummary()
+      }
+
+      stage("Report Full") {
+        generateReportFull()
+      }
+
+      stage("Report HTML Table") {
+        generateReportHtmlTable()
+      }
+
+      stage('Upload Metadata') {
+        uploadMetadata("nightly", "${env.GIT_COMMIT}-dirty")
+      }
     }
-
-    stage("Report Summary") {
-      shared_functions.generateReportSummary()
-    }
-
-    stage("Report Full") {
-      shared_functions.generateReportFull()
-    }
-
-    stage("Report HTML Table") {
-      shared_functions.generateReportHtmlTable()
-    }
-
-    stage('Upload Metadata') {
-      shared_functions.uploadMetadata("nightly", "${env.GIT_COMMIT}-dirty")
-    }
-
   } finally {
       catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
           try {
@@ -145,17 +172,6 @@ node {
                       selector: specific("${BUILD_NUMBER}")
 
               def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
-              // def EMAIL_TO = shared_functions.emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
-
-              // emailext (
-              //     to: "$EMAIL_TO",
-              //     replyTo: "$EMAIL_TO",
-              //     subject: '$DEFAULT_SUBJECT',
-              //     body: '''
-              //         $DEFAULT_CONTENT
-              //         ${FILE, path="flow/reports/report-summary.log"}
-              //     '''
-              // )
               sendEmail(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL, '''
                       $DEFAULT_CONTENT
                       ${FILE, path="flow/reports/report-summary.log"}

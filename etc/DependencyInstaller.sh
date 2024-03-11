@@ -138,7 +138,10 @@ _installCI() {
     # apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
     # python
-    apt install python3
+    apt install -y python3
+
+    # stdbuf
+    apt-get install -y coreutils
 }
 
 _help() {
