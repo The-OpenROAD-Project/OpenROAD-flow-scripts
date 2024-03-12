@@ -85,6 +85,14 @@ make
 exit
 ```
 
+Alternatively you may also use the `docker_shell` utility as follows.
+It is important that you are in the `flow` directory. 
+
+```shell
+cd flow
+util/docker_shell make
+```
+
 ## Enable GUI support
 
 To use the GUI feature you will need to start the docker with the
@@ -112,10 +120,19 @@ Then use:
 docker run --rm -it -e DISPLAY=<IP_LIKE_FROM_TUTORIAL>:0 --network host --privileged <IMAGE_NAME>
 ```
 
-## Docker Shell Utility
+Alternatively, you may also use the `docker_shell` utility for GUI as follows. 
+It is important that you are in the `flow` directory. 
 
-Alternatively, use `docker_shell` to automate the above commands using the
-user's parameters. Do refer to the documentation [here](./DockerShell.md).
+```shell
+cd flow
+util/docker_shell gui_final
+```
+
+```{note}
+`docker_shell` is a helpful utility to automate the 
+aforementioned Docker commands using the user's parameters. 
+Do refer to the documentation [here](./DockerShell.md).
+```
 
 ## Build Docker Image for Different OS
 
