@@ -27,7 +27,7 @@ node {
       copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
     ]);
 
-    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged -v /var/run/docker.sock:/var/run/docker.sock') {
       stage('Local Build') {
         sh "git config --system --add safe.directory '*'"
         localBuild()
@@ -46,7 +46,7 @@ node {
               def currentOS = axisValue
               tasks["${currentOS}"] = {
                   node {
-                    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+                    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged -v /var/run/docker.sock:/var/run/docker.sock') {
                         sh "git config --system --add safe.directory '*'"
                         checkout scm
                         testDependencyInstaller(currentOS)
@@ -114,7 +114,7 @@ node {
           def currentSlug = axisValue
           tasks["${currentSlug}"] = {
               node{
-                docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+                docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged -v /var/run/docker.sock:/var/run/docker.sock') {
                     sh "git config --system --add safe.directory '*'"
                     checkout scm
                     runTests(currentSlug)
@@ -126,7 +126,7 @@ node {
       parallel(tasks)
     }
     
-    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged -v /var/run/docker.sock:/var/run/docker.sock') {
       sh "git config --system --add safe.directory '*'"
       stage('Report Short Summary') {
         generateReportShortSummary()

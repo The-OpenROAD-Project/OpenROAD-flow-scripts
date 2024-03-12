@@ -21,7 +21,7 @@ node {
   }
 
   try {
-    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged -v /var/run/docker.sock:/var/run/docker.sock') {
       sh "git config --system --add safe.directory '*'"
       stage('Local Build') {
         localBuild()
@@ -40,7 +40,7 @@ node {
               def currentOS = axisValue
               tasks["${currentOS}"] = {
                   node {
-                    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+                    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged -v /var/run/docker.sock:/var/run/docker.sock') {
                         sh "git config --system --add safe.directory '*'"
                         checkout scm
                         testDependencyInstaller(currentOS)
@@ -107,7 +107,7 @@ node {
           def currentSlug = axisValue
           tasks["${currentSlug}"] = {
               node {
-                  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+                  docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged -v /var/run/docker.sock:/var/run/docker.sock') {
                     sh "git config --system --add safe.directory '*'"
                     checkout scm
                     runTests(currentSlug)
@@ -119,7 +119,7 @@ node {
       parallel(tasks)
     }
 
-    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged --rm -v /var/run/docker.sock:/var/run/docker.sock') {
+    docker.image("openroad/flow-ubuntu22.04-dev:${DOCKER_IMAGE_TAG}").inside('--user=root --privileged -v /var/run/docker.sock:/var/run/docker.sock') {
       sh "git config --system --add safe.directory '*'"
       stage('Report Short Summary') {
         generateReportShortSummary()
@@ -146,17 +146,7 @@ node {
                     selector: specific("${BUILD_NUMBER}")
 
             def COMMIT_AUTHOR_EMAIL = sh(script: "git --no-pager show -s --format='%ae'", returnStdout: true).trim()
-            // def EMAIL_TO = emailDetails(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL)
 
-            // emailext (
-            //     to: "$EMAIL_TO",
-            //     replyTo: "$EMAIL_TO",
-            //     subject: '$DEFAULT_SUBJECT',
-            //     body: '''
-            //         $DEFAULT_CONTENT
-            //         ${FILE, path="flow/reports/report-summary.log"}
-            //     '''
-            // )
             sendEmail(env.BRANCH_NAME, COMMIT_AUTHOR_EMAIL, '''
                       $DEFAULT_CONTENT
                       ${FILE, path="flow/reports/report-summary.log"}
