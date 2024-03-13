@@ -20,8 +20,6 @@ export SC_LEF                                ?= $(PLATFORM_DIR)/lef/gf180mcu_$(M
 export GDS_FILES                              = $(wildcard $(PLATFORM_DIR)/gds/$(TRACK_OPTION)/*.gds) \
                                                 $(ADDITIONAL_GDS)
 
-export GDS_ALLOW_EMPTY                        =  gf180mcu_fd_sc_mcu7t5v0__.*
-
 # Dont use cells 
 export DONT_USE_CELLS                         = *_1
 
