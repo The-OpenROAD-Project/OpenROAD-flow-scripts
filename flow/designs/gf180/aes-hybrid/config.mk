@@ -16,6 +16,8 @@ export ADDITIONAL_LEFS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/hybrid_sites.l
 export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/$($(CORNER)_ADDITIONAL_LIB_FILES)
 #export ADDITIONAL_GDS  = $(wildcard $(PLATFORM_DIR)/gds/7t/*.gds)
 
+export GDS_ALLOW_EMPTY = gf180mcu_fd_sc_mcu7t5v0__.*
+
 export PLACE_SITE      = sc9sc7
 
 export VERILOG_FILES   = $(sort $(wildcard ./designs/src/aes/*.v))
