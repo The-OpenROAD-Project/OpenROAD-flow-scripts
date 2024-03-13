@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 34,
+        "value": 40,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -92.39,
+        "value": -84.03,
         "compare": ">="
     },
     "finish__design__instance__area": {
