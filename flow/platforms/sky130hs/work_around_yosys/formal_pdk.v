@@ -5411,10 +5411,100 @@ endmodule
 
 
 endmodule
+(* noblackbox *) module sky130_fd_sc_hs__clkdlyinv3sd1_1 (Y,A);
+
+
+
+    output Y;
+    input  A;
+
+
+    wire not0_out_Y;
+
+    not not0 (not0_out_Y , A             );
+    buf buf0 (Y          , not0_out_Y    );
+
+
+endmodule
+(* noblackbox *) module sky130_fd_sc_hs__clkdlyinv3sd2_1 (Y,A);
+
+
+
+    output Y;
+    input  A;
+
+
+    wire not0_out_Y;
+
+    not not0 (not0_out_Y , A             );
+    buf buf0 (Y          , not0_out_Y    );
+
+
+endmodule
+(* noblackbox *) module sky130_fd_sc_hs__clkdlyinv3sd3_1 (Y,A);
+
+
+
+    output Y;
+    input  A;
+
+
+    wire not0_out_Y;
+
+    not not0 (not0_out_Y , A             );
+    buf buf0 (Y          , not0_out_Y    );
+
+
+endmodule
+(* noblackbox *) module sky130_fd_sc_hs__clkdlyinv5sd1_1 (Y,A);
+
+
+
+    output Y;
+    input  A;
+
+
+    wire not0_out_Y;
+
+    not not0 (not0_out_Y , A             );
+    buf buf0 (Y          , not0_out_Y    );
+
+
+endmodule
+(* noblackbox *) module sky130_fd_sc_hs__clkdlyinv5sd2_1 (Y,A);
+
+
+
+    output Y;
+    input  A;
+
+
+    wire not0_out_Y;
+
+    not not0 (not0_out_Y , A             );
+    buf buf0 (Y          , not0_out_Y    );
+
+
+endmodule
+(* noblackbox *) module sky130_fd_sc_hs__clkdlyinv5sd3_1 (Y,A);
+
+
+
+    output Y;
+    input  A;
+
+
+    wire not0_out_Y;
+
+    not not0 (not0_out_Y , A             );
+    buf buf0 (Y          , not0_out_Y    );
+
+
+endmodule
 (* noblackbox *) module sky130_fd_sc_hs__dlymetal6s2s (X,A);
 
 
-    
+
     output X;
     input  A;
 

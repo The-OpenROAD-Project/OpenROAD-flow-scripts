@@ -1,4 +1,4 @@
-﻿# Environment Variables for the OpenROAD Flow Scripts
+# Environment Variables for the OpenROAD Flow Scripts
 
 
 Environment variables are used in the OpenROAD flow to define various
@@ -166,6 +166,7 @@ Note:
 
 | Variable              | Description                                                                                                  |
 |-----------------------|--------------------------------------------------------------------------------------------------------------|
+| `CTS_ARGS`            | Override `clock_tree_synthesis` arguments                           |
 | `CTS_BUF_CELL`        | The buffer cell used in the clock tree.                                                                      |
 | `FILL_CELLS`          | Fill cells are used to fill empty sites.    								                                   |
 | `HOLD_SLACK_MARGIN`   | Specifies a time margin for the slack when fixing hold violations. This option allow you to overfix.         |
@@ -288,4 +289,13 @@ configuration file.
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
 | `FASTROUTE_TCL`          | Specifies a Tcl scripts with commands to run before FastRoute.                                      |
+
+
+## GDS Streamout
+
+
+| Variable                 | Description                                                                                        |
+|--------------------------|----------------------------------------------------------------------------------------------------|
+| `USE_FILL`               | Whether to perform metal density filling. Default 0 (=off).                                        |
+| `SEAL_GDS`               | Seal macro to place around the design.                                                             |
 

@@ -32,11 +32,11 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 800,
+        "value": 2,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -142.18,
+        "value": -140.33,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 2686,
+        "value": 619,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -12.68,
+        "value": -12.6,
         "compare": ">="
     }
 }

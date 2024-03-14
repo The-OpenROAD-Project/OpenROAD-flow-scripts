@@ -30,6 +30,7 @@ pipeline {
             name 'TEST_SLUG';
             values "docker build",
                    "aes asap7",
+                   "aes-mbff asap7",
                    "aes_lvt asap7",
                    "ethmac asap7",
                    "ethmac_lvt asap7",
@@ -40,9 +41,9 @@ pipeline {
                    "riscv32i asap7",
                    "uart asap7",
                    "mock-array asap7",
+                   "mock-cpu asap7",
                    "mock-alu asap7",
                    "aes-block asap7",
-                   "sram-64x16 asap7",
                    "aes nangate45",
                    "bp_be_top nangate45",
                    "bp_fe_top nangate45",
@@ -67,10 +68,16 @@ pipeline {
                    "jpeg sky130hs",
                    "riscv32i sky130hs",
                    "aes gf180",
+                   "aes-hybrid gf180",
                    "ibex gf180",
                    "jpeg gf180",
                    "riscv32i gf180",
-                   "uart-blocks gf180";
+                   "uart-blocks gf180",
+                   "aes ihp-sg13g2",
+                   "ibex ihp-sg13g2",
+                   "gcd ihp-sg13g2",
+                   "spi ihp-sg13g2",
+                   "riscv32i ihp-sg13g2";
           }
         }
 
@@ -95,7 +102,8 @@ pipeline {
                           sh 'exit 1';
                         }
                       }
-                      sh "docker run --rm openroad/flow-centos7-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
+                      sh "docker run --rm openroad/flow-ubuntu22.04-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
+                      sh "docker run --rm openroad/flow-ubuntu22.04-builder:latest bash -c 'source ./env.sh ; make -C flow'";
                     } else {
                       sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
                     }

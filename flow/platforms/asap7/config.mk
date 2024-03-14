@@ -39,6 +39,21 @@ export TC_LIB_FILES           = $(PLATFORM_DIR)/lib/asap7sc7p5t_AO_RVT_TT_nldm_2
 
 export TC_DFF_LIB_FILE        = $(PLATFORM_DIR)/lib/asap7sc7p5t_SEQ_RVT_TT_nldm_220123.lib
 
+ifdef CLUSTER_FLOPS
+  # Add the multi-bit FF for clustering.  These are single corner libraries.
+  export ADDITIONAL_LIBS     += $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNH2V2X_RVT_TT_nldm_FAKE.lib \
+                                $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNV2X_RVT_TT_nldm_FAKE.lib
+#                               $(PLATFORM_DIR)/lib/asap7sc7p5t_DFFHQNV4X_RVT_TT_nldm_FAKE.lib
+
+  export ADDITIONAL_LEFS     += $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNH2V2X.lef \
+                                $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV2X.lef
+#                               $(PLATFORM_DIR)/lef/asap7sc7p5t_DFFHQNV4X.lef
+  export ADDITIONAL_SITES    += asap7sc7p5t_pg
+  export GDS_ALLOW_EMPTY     ?= DFFHQN[VH][24].*
+endif
+
+
+
 export BC_TEMPERATURE          = 25C
 export TC_TEMPERATURE          = 0C
 export WC_TEMPERATURE          = 100C
@@ -50,16 +65,14 @@ export WC_VOLTAGE          = 0.63
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 export DONT_USE_CELLS          = *x1p*_ASAP7* *xp*_ASAP7*
-export DONT_USE_CELLS          += SDF* ICG* DFFH*
-#export DONT_USE_CELLS          += SDF* DFFH*
+export DONT_USE_CELLS          += SDF* ICG*
 
 # Yosys mapping files
 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_R.v
 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_R.v
 export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_R.v
+export MAX_UNGROUP_SIZE       ?= 100
 
-# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_R
 
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
@@ -75,7 +88,7 @@ export MIN_BUF_CELL_AND_PORTS  = BUFx2_ASAP7_75t_R A Y
 
 # Placement site for core cells
 # This can be found in the technology lef
-export PLACE_SITE              = asap7sc7p5t
+export PLACE_SITE              ?= asap7sc7p5t
 
 export MAKE_TRACKS             = $(PLATFORM_DIR)/openRoad/make_tracks.tcl
 
@@ -110,8 +123,6 @@ export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
 
 # TritonCTS options
 export CTS_BUF_CELL            ?= BUFx4_ASAP7_75t_R
-
-export CTS_BUF_DISTANCE        ?= 60
 
 # Fill cells used in fill cell insertion
 export FILL_CELLS              = FILLERxp5_ASAP7_75t_R \

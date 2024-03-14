@@ -47,6 +47,10 @@ if [ -f "$PRIVATE_DIR/util/utils.mk" ] && [ ! -z ${RUN_CALIBRE+x} ]; then
     $__make save_to_drc_db
     ret=$(( ret + $? ))
   fi
+  if [ ! -z ${CHECK_DRC_DB+x} ]; then
+    $__make check_drc_db
+    ret=$(( ret + $? ))
+  fi
 fi
 
 # Only enabled abort on error at the end to allow script to reach make issue

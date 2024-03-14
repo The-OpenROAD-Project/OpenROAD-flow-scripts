@@ -37,8 +37,6 @@ export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch.v
 export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
 export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders.v
 #
-# Set yosys-abc clock period to first "-period" found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 export ABC_DRIVER_CELL = BUF_X1
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
 export ABC_LOAD_IN_FF = 3.898
@@ -88,7 +86,7 @@ export MIN_ROUTING_LAYER = metal2
 export MAX_ROUTING_LAYER = metal10
 
 # Define fastRoute tcl
-export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute.tcl
+export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 
 # KLayout technology file
 export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/FreePDK45.lyt

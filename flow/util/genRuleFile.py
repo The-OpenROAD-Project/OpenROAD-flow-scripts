@@ -190,6 +190,7 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
     if len(period_list) != 1:
         print(f'[WARNING] Multiple clocks not supported. Will use first clock: {period_list[0]}.')
 
+    change_str = ''
     for field, option in rules_dict.items():
         if field not in metrics.keys():
             print(f"[ERROR] Metric {field} not found in "
@@ -268,25 +269,29 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
                     and rule_value != old_rule['value'] \
                     and compare(rule_value, old_rule['value']):
                 UPDATE = True
-                print(f"[INFO] Tightening rule {field} "
-                    f"from {old_rule['value']} to {rule_value}.")
+                change_str += f"| {field} | {old_rule['value']} | "\
+                    f"{rule_value} | Tighten |\n"
 
             if failing and not compare(metrics[field], old_rule['value']):
                 UPDATE = True
-                print(f"[INFO] Updating failing rule {field} "
-                    f"from {old_rule['value']} to {rule_value}.")
+                change_str += f"| {field} | {old_rule['value']} | " \
+                    f"{rule_value} | Failing |\n"
 
             if update and old_rule['value'] != rule_value:
                 UPDATE = True
-                print(f"[INFO] Updating rule {field} "
-                    f"from {old_rule['value']} to {rule_value}.")
+                change_str += f"| {field} | {old_rule['value']} | "\
+                    f"{rule_value} | Updating |\n"
 
             if not UPDATE:
                 rule_value = old_rule['value']
 
         rules[field] = dict(value=rule_value, compare=option['compare'])
 
-    print("rules", rules)
+    if len(change_str) > 0:
+        print("| Metric | Old | New | Type |")
+        print("| ------ | --- | --- | ---- |")
+        print(change_str)
+
     with open(rules_file, 'w') as f:
         print('[INFO] writing', abspath(rules_file))
         json.dump(rules, f, indent=4)
@@ -327,4 +332,5 @@ if __name__ == "__main__":
             '-u/--update, -t/--tighten, -f/--failing.')
         parser.print_help()
         sys.exit(1)
-    genRuleFileFunc(args.dir, args.update, args.tighten, args.failing, args.variant)
+    
+    gen_rule_file(args.dir, args.update, args.tighten, args.failing, args.variant)

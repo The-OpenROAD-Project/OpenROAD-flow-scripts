@@ -21,6 +21,7 @@ parser.add_argument('--branchName', type=str, help='Current Branch Name')
 parser.add_argument('--pipelineID', type=str, help='Jenkins pipeline ID')
 parser.add_argument('--commitSHA', type=str, help='Current commit sha')
 parser.add_argument('--jenkinsURL', type=str, help='Jenkins Report URL')
+parser.add_argument('--changeBranch', type=str, help='Branch corresponding to change request')
 parser.add_argument('--cred', type=str, help='Service account credentials file')
 parser.add_argument('--variant', type=str, default='base')
 
@@ -36,6 +37,7 @@ def upload_data(db, datafile, platform, design, variant, args, rules):
         'build_id': args.buildID,
         'branch_name': args.branchName,
         'pipeline_id': args.pipelineID,
+        'change_branch': args.changeBranch,
         'commit_sha': args.commitSHA,
         'jenkins_url': args.jenkinsURL,
         'rules': rules,
@@ -76,10 +78,12 @@ def upload_data(db, datafile, platform, design, variant, args, rules):
             branch_doc_ref.update({
                 'run__flow__generate_date': gen_date,
                 'jenkins_url': args.jenkinsURL,
+                'change_branch': args.changeBranch,
             })
         else:
             branch_doc_ref.update({
                 'jenkins_url': args.jenkinsURL,
+                'change_branch': args.changeBranch,
             })
     else:
         branch_doc_ref.set({
@@ -107,6 +111,30 @@ def upload_data(db, datafile, platform, design, variant, args, rules):
             'sha': args.commitSHA,
             'run__flow__generate_date': gen_date,
             'jenkins_url': args.jenkinsURL,
+        })
+
+    platform_doc_ref = db.collection('platforms').document(platform)
+    if platform_doc_ref.get().exists:
+        designs = platform_doc_ref.get().to_dict().get('designs')
+        if design not in designs:
+            design_ref = {
+                "name": design,
+                "rules": rules,
+            }
+            designs[design] = design_ref
+            platform_doc_ref.update({
+                'designs': designs,
+            })          
+    else:
+        designs = {}
+        design_ref = {
+            "name": design,
+            "rules": rules,
+        }
+        designs[design] = design_ref
+        platform_doc_ref.set({
+            'designs': designs,
+            'name': platform,
         })
     
 def get_rules(platform, design, variant):

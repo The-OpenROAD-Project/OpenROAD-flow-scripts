@@ -23,7 +23,7 @@ export DIE_AREA  = $(shell \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config; print(f'{0} {0} {config.die_width} {config.die_height}')")
 
-BLOCKS                       = Element
+export BLOCKS                       = Element
 
 export GDS_ALLOW_EMPTY       = Element
 
@@ -56,3 +56,8 @@ export FASTROUTE_TCL = ./designs/$(PLATFORM)/mock-array/fastroute.tcl
 # ensure we have some rows, so we don't get a bad clock skew.
 export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
+
+export GND_NETS_VOLTAGES      =
+export PWR_NETS_VOLTAGES      =
+
+export CTS_ARGS = -insertion_delay -sink_clustering_enable -balance_levels -distance_between_buffers 60

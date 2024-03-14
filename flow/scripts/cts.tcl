@@ -1,6 +1,6 @@
 utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 3_place.odb 3_place.sdc "Starting CTS"
+load_design 3_place.odb 3_place.sdc
 
 # Clone clock tree inverters next to register loads
 # so cts does not try to buffer the inverted clocks.
@@ -21,23 +21,24 @@ if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
 proc save_progress {stage} {
   puts "Run 'make gui_$stage.odb' to load progress snapshot"
   write_db $::env(RESULTS_DIR)/$stage.odb
-  write_sdc $::env(RESULTS_DIR)/$stage.sdc
+  write_sdc -no_timestamp $::env(RESULTS_DIR)/$stage.sdc
 }
 
+set cts_args [list \
+          -sink_clustering_enable \
+          -balance_levels]
+
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
-  clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
-                      -sink_clustering_enable \
-                      -sink_clustering_size $cluster_size \
-                      -sink_clustering_max_diameter $cluster_diameter \
-                      -distance_between_buffers "$::env(CTS_BUF_DISTANCE)" \
-                      -balance_levels
-} else {
-  clock_tree_synthesis -root_buf "$::env(CTS_BUF_CELL)" -buf_list "$::env(CTS_BUF_CELL)" \
-                      -sink_clustering_enable \
-                      -sink_clustering_size $cluster_size \
-                      -sink_clustering_max_diameter $cluster_diameter \
-                      -balance_levels
+  lappend cts_args -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
 }
+
+if {[info exist ::env(CTS_ARGS)]} {
+  set cts_args $::env(CTS_ARGS)
+}
+
+puts "clock_tree_synthesis [join $cts_args " "]"
+
+clock_tree_synthesis {*}$cts_args
 
 if {[info exist ::env(CTS_SNAPSHOTS)]} {
   save_progress 4_1_pre_repair_clock_nets
@@ -51,14 +52,14 @@ utl::push_metrics_stage "cts__{}__pre_repair"
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
 estimate_parasitics -placement
-report_metrics "cts pre-repair"
+report_metrics 4 "cts pre-repair"
 utl::pop_metrics_stage
 
 repair_clock_nets
 
 utl::push_metrics_stage "cts__{}__post_repair"
 estimate_parasitics -placement
-report_metrics "cts post-repair"
+report_metrics 4 "cts post-repair"
 utl::pop_metrics_stage
 
 set_placement_padding -global \
@@ -113,21 +114,19 @@ set result [catch {detailed_placement} msg]
 if {$result != 0} {
   save_progress 4_1_error
   puts "Detailed placement failed in CTS: $msg"
-  return -code $result
+  exit $result
 }
 
 check_placement -verbose
 
-report_metrics "cts final"
+report_metrics 4 "cts final"
 
 if { [info exists ::env(POST_CTS_TCL)] } {
   source $::env(POST_CTS_TCL)
 }
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
-      write_def $::env(RESULTS_DIR)/4_1_cts.def
-  }
-  write_db $::env(RESULTS_DIR)/4_1_cts.odb
-  write_sdc $::env(RESULTS_DIR)/4_cts.sdc
+if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
+  write_def $::env(RESULTS_DIR)/4_1_cts.def
 }
+write_db $::env(RESULTS_DIR)/4_1_cts.odb
+write_sdc -no_timestamp $::env(RESULTS_DIR)/4_cts.sdc
