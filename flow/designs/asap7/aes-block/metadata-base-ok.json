@@ -195,7 +195,7 @@
   "floorplan__design__instance__utilization": 0.1999,
   "floorplan__design__instance__utilization__stdcell": 0.019432,
   "floorplan__design__io": 388,
-  "floorplan__mem__peak": 180484.0,
+  "floorplan__mem__peak": 180440.0,
   "floorplan__power__internal__total": 0.00290828,
   "floorplan__power__leakage__total": 3.67811e-07,
   "floorplan__power__switching__total": 0.000611309,
