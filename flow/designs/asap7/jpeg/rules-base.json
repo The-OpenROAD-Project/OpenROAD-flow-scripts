@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -497.15,
+        "value": -487.43,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -44,7 +44,7 @@
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 2749,
+        "value": 2921,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
