@@ -90,7 +90,7 @@ if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER
 
   write_verilog $::env(RESULTS_DIR)/2_pre_abc_timing.v
 
-  restructure -target timing -liberty_file $::env(DONT_USE_SC_LIB) \
+  restructure -target timing -liberty_file $::env(DECOMPRESSED_SC_LIB) \
               -work_dir $::env(RESULTS_DIR)
 
   write_verilog $::env(RESULTS_DIR)/2_post_abc_timing.v
@@ -136,7 +136,7 @@ if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) ==
   set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
   set tiehi_port $tiehi_lib_name/$tiehi_cell_name/[lindex $env(TIEHI_CELL_AND_PORT) 1]
 
-  restructure -liberty_file $::env(DONT_USE_SC_LIB) -target "area" \
+  restructure -liberty_file $::env(DECOMPRESSED_SC_LIB) -target "area" \
         -tiehi_port $tiehi_port \
         -tielo_port $tielo_port \
         -work_dir $::env(RESULTS_DIR)

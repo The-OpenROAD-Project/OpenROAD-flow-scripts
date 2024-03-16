@@ -313,10 +313,12 @@ endif
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
-export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
 
-export DONT_USE_LIBS   = $(patsubst %.lib.gz, %.lib, $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES))))
-export DONT_USE_SC_LIB ?= $(firstword $(DONT_USE_LIBS))
+export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
+export DECOMPRESSED_LIBS = $(patsubst %.lib.gz, %.lib, $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES))))
+
+# Assume the first lib file is the standard cell lib
+export DECOMPRESSED_SC_LIB ?= $(firstword $(DECOMPRESSED_LIBS))
 
 # Stream system used for final result (GDS is default): GDS, GSDII, GDS2, OASIS, or OAS
 STREAM_SYSTEM ?= GDS
@@ -371,15 +373,19 @@ versions.txt:
 # Pre-process libraries
 # ==============================================================================
 
-# Create temporary Liberty files which have the proper dont_use properties set
-# For use with Yosys and ABC
+# Unzip any compressed Liberty files
 .SECONDEXPANSION:
-$(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
-	@mkdir -p $(OBJECTS_DIR)/lib
-	$(UTILS_DIR)/markDontUse.py -p "$(DONT_USE_CELLS)" -i $^ -o $@
+$(DECOMPRESSED_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
+	mkdir -p $(OBJECTS_DIR)/lib
+	if [[ $^ == *.gz ]]; then \
+	  gunzip -c $^ > $@; \
+	else \
+	  ln -s $$(realpath --relative-to=$(dir $@) $^) $@; \
+	fi
 
-$(OBJECTS_DIR)/lib/merged.lib:
-	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
+# Create merged Liberty file for use with Yosys and ABC
+$(OBJECTS_DIR)/lib/merged.lib: $(DECOMPRESSED_LIBS)
+	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $^ > $@
 
 # Pre-process KLayout tech
 # ==============================================================================
@@ -480,7 +486,7 @@ $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
 	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
 
 .PHONY: yosys-dependencies
-yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
+yosys-dependencies: $(DECOMPRESSED_LIBS) $(WRAPPED_LIBS) $(DECOMPRESSED_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
 
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
