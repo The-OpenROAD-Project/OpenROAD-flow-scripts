@@ -376,7 +376,7 @@ versions.txt:
 .SECONDEXPANSION:
 $(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
 	@mkdir -p $(OBJECTS_DIR)/lib
-	$(UTILS_DIR)/markDontUse.py -p "$(DONT_USE_CELLS)" -i $^ -o $@
+	$(UTILS_DIR)/preprocessLib.py -i $^ -o $@
 
 $(OBJECTS_DIR)/lib/merged.lib:
 	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
