@@ -14,6 +14,8 @@ if { [info exist ::env(SYNTH_GUT)] && $::env(SYNTH_GUT) == 1 } {
 
 # Generic synthesis
 synth -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS)
+# Get rid of indigestibles
+chformal -remove
 
 if { [info exists ::env(USE_LSORACLE)] } {
     set lso_script [open $::env(OBJECTS_DIR)/lso.script w]
