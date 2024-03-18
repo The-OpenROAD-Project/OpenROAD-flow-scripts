@@ -35,3 +35,17 @@ export SKIP_GATE_CLONING = 1
 export export SETUP_SLACK_MARGIN = 0.2
 
 export GLOBAL_ROUTE_ARGS=-congestion_iterations 100 -verbose
+
+# This design has some large memories that are not hard macros,
+# from "make memory" report:
+#
+# Rows            | Width           | Total bits      | Name
+# ---------------------------------------------------------------------------------------------------------
+# [deleted]
+# 1024            | 41              | 41984           | microwatt.soc0.processor.decode1_0.8052
+# [deleted]
+# 512             | 17              | 8704            | microwatt.soc0.processor.decode1_0.8066
+# [deleted]
+# 1024            | 18              | 18432           | microwatt.soc0.processor.with_fpu.fpu_0.19365
+# [deleted]
+export SYNTH_MEMORY_MAX_BITS = 65536

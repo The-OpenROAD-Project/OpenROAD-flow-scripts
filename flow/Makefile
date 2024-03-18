@@ -458,12 +458,18 @@ synth-report: synth
 do-synth-report:
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
 
+.PHONY: memory
+memory: $(RESULTS_DIR)/mem.json
+	python $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
+
 # ==============================================================================
 
 
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
-SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
+
+export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
+export SYNTH_MEMORY_MAX_BITS ?= 4096
 
 $(SYNTH_STOP_MODULE_SCRIPT):
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
@@ -484,7 +490,7 @@ yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LI
 
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
 $(RESULTS_DIR)/1_1_yosys.v: $(SDC_FILE_CLOCK_PERIOD)
@@ -504,7 +510,7 @@ $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 
 .PHONY: clean_synth
 clean_synth:
-	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
+	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc $(RESULTS_DIR)/mem.json
 	rm -f $(REPORTS_DIR)/synth_*
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STOP_MODULE_SCRIPT)

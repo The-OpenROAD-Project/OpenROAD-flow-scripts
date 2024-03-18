@@ -105,3 +105,12 @@ set constr [open $::env(OBJECTS_DIR)/abc.constr w]
 puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
 puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
 close $constr
+
+proc synthesize_check {synth_args} {
+  # Generic synthesis
+  synth -top $::env(DESIGN_NAME) -run :fine {*}$synth_args
+  json -o $::env(RESULTS_DIR)/mem.json
+  # Run report and check here so as to fail early if this synthesis run is doomed
+  exec -- python $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
+  synth -top $::env(DESIGN_NAME) -run fine: {*}$synth_args
+}

@@ -1,7 +1,7 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
-# Hierarchical synthesis
-synth  -top $::env(DESIGN_NAME)
+synthesize_check {}
+
 if { [info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)] } {
   techmap -map $::env(ADDER_MAP_FILE)
 }
