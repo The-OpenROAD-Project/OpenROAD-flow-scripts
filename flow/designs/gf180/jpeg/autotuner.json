@@ -72,22 +72,6 @@
         ],
         "step": 1
     },
-    "CTS_CLUSTER_SIZE": {
-        "type": "int",
-        "minmax": [
-            10,
-            200
-        ],
-        "step": 1
-    },
-    "CTS_CLUSTER_DIAMETER": {
-        "type": "int",
-        "minmax": [
-            20,
-            400
-        ],
-        "step": 1
-    },
     "_FR_FILE_PATH": "",
     "_FR_GR_OVERFLOW": {
         "type": "int",

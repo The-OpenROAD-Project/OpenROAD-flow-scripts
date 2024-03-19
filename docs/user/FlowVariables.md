@@ -279,8 +279,6 @@ configuration file.
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
 | `CTS_BUF_DISTANCE`       | Distance (in microns) between buffers.                                                              |
-| `CTS_CLUSTER_DIAMETER`   | Maximum diameter (in microns) of sink cluster. Default 20.                                         |
-| `CTS_CLUSTER_SIZE`       | Maximum number of sinks per cluster. Default 50.
 
 
 ## Routing

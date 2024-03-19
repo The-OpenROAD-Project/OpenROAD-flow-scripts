@@ -99,14 +99,6 @@ PLACE_DENSITY_LB_ADDON = []
 
 
 ##################
-# CTS
-##################
-
-# CTS clustering size and diameter (um) (int)
-CTS_CLUSTER_SIZE = []
-CTS_CLUSTER_DIAMETER = []
-
-##################
 # Global Routing
 ##################
 
@@ -156,8 +148,6 @@ SweepingAttributes = {"PLATFORM_DESIGN": PLATFORM_DESIGN,
                       "DP_PAD": DP_PAD,
                       "PD": PLACE_DENSITY,
                       "PD_LB_ADD": PLACE_DENSITY_LB_ADDON,
-                      "CTS_CLUSTER_SIZE": CTS_CLUSTER_SIZE,
-                      "CTS_CLUSTER_DIAMETER": CTS_CLUSTER_DIAMETER,
                       "LAYER_ADJUST": LAYER_ADJUST,
                       "M1": LAYER_ADJUST_M1,
                       "M2": LAYER_ADJUST_M2,
@@ -272,8 +262,6 @@ def writeConfigs(CurAttrs, CurChunkNum):
     CurDpPad = CurAttrs.get('DP_PAD')
     CurPlaceDensity = CurAttrs.get('PD')
     CurPlaceDensityLbAddon = CurAttrs.get('PD_LB_ADD')
-    CurCtsClusterSize = CurAttrs.get('CTS_CLUSTER_SIZE')
-    CurCtsClusterDiameter = CurAttrs.get('CTS_CLUSTER_DIAMETER')
     CurLayerAdjust = CurAttrs.get('LAYER_ADJUST')
     CurLayerAdjustM1 = CurAttrs.get('M1')
     CurLayerAdjustM2 = CurAttrs.get('M2')
@@ -307,7 +295,7 @@ def writeConfigs(CurAttrs, CurChunkNum):
     #print(CurPlatform, CurDesign)
     #print(CurClkPeriod, CurAbcClkPeriod, CurFlatten, CurCoreUtil)
     #print(CurAspectRatio, CurCoreDieMargin, CurGpPad, CurDpPad)
-    #print(CurCtsClusterSize, CurCtsClusterDiameter, CurLayerAdjust)
+    #print(CurLayerAdjust)
     #print(CurLayerAdjustM1, CurLayerAdjustM2, CurLayerAdjustM3)
     #print(CurLayerAdjustM4, CurLayerAdjustM5, CurLayerAdjustM6)
     #print(CurLayerAdjustM7, CurLayerAdjustM8, CurLayerAdjustM9)
@@ -394,10 +382,6 @@ def writeConfigs(CurAttrs, CurChunkNum):
     if CurDpPad != 'empty':
         fo.write('export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = %s\n' % CurDpPad)
 
-    if CurCtsClusterSize != 'empty':
-        fo.write('export CTS_CLUSTER_SIZE = %s\n' % CurCtsClusterSize)
-    if CurCtsClusterDiameter != 'empty':
-        fo.write('export CTS_CLUSTER_DIAMETER = %s\n' % CurCtsClusterDiameter)
     if CurDrSeed != 'empty':
         fo.write('export OR_K = 1.0\n')
         fo.write('export OR_SEED = %s\n' % CurDrSeed)

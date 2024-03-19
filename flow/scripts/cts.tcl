@@ -6,18 +6,6 @@ load_design 3_place.odb 3_place.sdc
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
 
-# Run CTS
-if {[info exist ::env(CTS_CLUSTER_SIZE)]} {
-  set cluster_size "$::env(CTS_CLUSTER_SIZE)"
-} else {
-  set cluster_size 30
-}
-if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
-  set cluster_diameter "$::env(CTS_CLUSTER_DIAMETER)"
-} else {
-  set cluster_diameter 100
-}
-
 proc save_progress {stage} {
   puts "Run 'make gui_$stage.odb' to load progress snapshot"
   write_db $::env(RESULTS_DIR)/$stage.odb
