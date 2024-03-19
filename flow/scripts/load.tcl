@@ -82,9 +82,11 @@ proc write_eqy_script { } {
     set outfile [open "$::env(OBJECTS_DIR)/4_eqy_test.eqy" w]
     # Gold netlist
     puts $outfile "\[gold]\nread_verilog -sv $::env(RESULTS_DIR)/4_before_rsz.v $cell_files\n"
-    puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
     # Modified netlist 
     puts $outfile "\[gate]\nread_verilog -sv $::env(RESULTS_DIR)/4_after_rsz.v $cell_files\n"
+
+    puts $outfile "\[script]\nhierarchy -top $top_cell\ncheck -assert\n\n"
+
     puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
 
     # Recommendation from eqy team on how to speed up a design
