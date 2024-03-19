@@ -73,37 +73,19 @@ if {[info exist ::env(CTS_SNAPSHOTS)]} {
   save_progress 4_1_pre_repair_hold_setup
 }
 
-puts "Repair setup and hold violations..."
-
 # process user settings
 set additional_args ""
-if { [info exists ::env(SETUP_SLACK_MARGIN)] && $::env(SETUP_SLACK_MARGIN) > 0.0} {
-  puts "Setup slack margin $::env(SETUP_SLACK_MARGIN)"
-  append additional_args " -setup_margin $::env(SETUP_SLACK_MARGIN)"
-}
-if { [info exists ::env(HOLD_SLACK_MARGIN)] && $::env(HOLD_SLACK_MARGIN) > 0.0} {
-  puts "Hold slack margin $::env(HOLD_SLACK_MARGIN)"
-  append additional_args " -hold_margin $::env(HOLD_SLACK_MARGIN)"
-}
-
-puts "TNS end percent $::env(TNS_END_PERCENT)"
-append additional_args " -repair_tns $::env(TNS_END_PERCENT)"
-
-if { [info exists ::env(SKIP_PIN_SWAP)] } {
-  puts "Skipping pin swapping during optimization"
-  append additional_args " -skip_pin_swap"
-}
-
-if { [info exists ::env(SKIP_GATE_CLONING)] } {
-  puts "Skipping gate cloning during optimization"
-  append additional_args " -skip_gate_cloning"
-}
-
+append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
+append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
+append_env_var additional_args TNS_END_PERCENT -repair_tns 1
+append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
+append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
 
 if { [info exists ::env(EQUIVALENCE_CHECK)] } {
     write_eqy_verilog 4_before_rsz.v
 }
 
+puts "repair_timing [join $additional_args " "]"
 repair_timing {*}$additional_args
 
 if { [info exists ::env(EQUIVALENCE_CHECK)] } {
