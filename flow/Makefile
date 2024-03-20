@@ -537,7 +537,7 @@ SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo 
 UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
 
 copyright.txt:
-	$(OPENROAD_CMD) -exit
+	$(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl
 	touch copyright.txt
 
 # Separate dependency checking and doing a step. This can
@@ -569,8 +569,8 @@ define do-step
 $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
 
-.PHONY: do-$(1) copyright.txt
-do-$(1):
+.PHONY: do-$(1)
+do-$(1): copyright.txt
 	@echo Running $(3).tcl
 	@(trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
 	 $(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
