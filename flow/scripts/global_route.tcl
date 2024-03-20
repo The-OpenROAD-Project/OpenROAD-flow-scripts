@@ -99,7 +99,7 @@ puts "--------------------------------------------------------------------------
 if {![info exist env(SKIP_ANTENNA_REPAIR)]} {
   repair_antennas -iterations 5
   check_placement -verbose
-  check_antennas -report_file $env(REPORTS_DIR)/antenna.log -report_violating_nets
+  check_antennas -report_file $env(REPORTS_DIR)/antenna.log
 }
 
 estimate_parasitics -global_routing
