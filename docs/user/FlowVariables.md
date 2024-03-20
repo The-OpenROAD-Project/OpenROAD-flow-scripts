@@ -6,6 +6,11 @@ platform, design and tool specific variables to allow finer control and
 user overrides at various flow stages. These are defined in the
 `config.mk` file located in the platform and design specific directories.
 
+### General variables for all stages
+
+| Variable         | Description                                                                        |
+|------------------|------------------------------------------------------------------------------------|
+| `SKIP_METRICS`   | If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds. |
 
 ## Platform
 

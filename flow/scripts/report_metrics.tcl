@@ -7,6 +7,9 @@ proc report_puts { out } {
 }
 
 proc report_metrics { stage when {include_erc true} {include_clock_skew true} } {
+  if {[info exists ::env(SKIP_METRICS)] && $::env(SKIP_METRICS) == 1} {
+    return
+  }
   set filename $::env(REPORTS_DIR)/${stage}_[string map {" " "_"} $when].rpt
   set fileId [open $filename w]
   close $fileId
