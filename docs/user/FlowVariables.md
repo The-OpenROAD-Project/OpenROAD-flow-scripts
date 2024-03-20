@@ -10,7 +10,7 @@ user overrides at various flow stages. These are defined in the
 
 | Variable         | Description                                                                        |
 |------------------|------------------------------------------------------------------------------------|
-| `SKIP_METRICS`   | If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds. |
+| `SKIP_REPORT_METRICS`   | If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds. |
 
 ## Platform
 
