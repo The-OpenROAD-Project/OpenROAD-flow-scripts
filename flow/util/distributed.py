@@ -42,15 +42,15 @@ import ray
 from ray import tune
 from ray.tune.schedulers import AsyncHyperBandScheduler
 from ray.tune.schedulers import PopulationBasedTraining
-from ray.tune.suggest import ConcurrencyLimiter
-from ray.tune.suggest.ax import AxSearch
-from ray.tune.suggest.basic_variant import BasicVariantGenerator
-from ray.tune.suggest.hyperopt import HyperOptSearch
-from ray.tune.suggest.nevergrad import NevergradSearch
-from ray.tune.suggest.optuna import OptunaSearch
+from ray.tune.search import ConcurrencyLimiter
+from ray.tune.search.ax import AxSearch
+from ray.tune.search.basic_variant import BasicVariantGenerator
+from ray.tune.search.hyperopt import HyperOptSearch
+# from ray.tune.search.nevergrad import NevergradSearch
+from ray.tune.search.optuna import OptunaSearch
 from ray.util.queue import Queue
 
-import nevergrad as ng
+# import nevergrad as ng
 from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
