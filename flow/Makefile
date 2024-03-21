@@ -536,6 +536,10 @@ UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
 SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo "$($V)" | $(FLOW_HOME)/scripts/escape.sh),$V='')) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG)
 UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
 
+copyright.txt:
+	@$(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl
+	@touch copyright.txt
+
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the
 # target, or when building a wafer thin layer on top of
@@ -566,10 +570,12 @@ $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
 
 .PHONY: do-$(1)
-do-$(1):
-	(trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
-	 $(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json) 2>&1 | \
-	 tee $(LOG_DIR)/$(1).tmp.log
+do-$(1): copyright.txt
+	@echo Running $(3).tcl
+	@(trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
+	 $(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
+	 $(TIME_CMD) $(OPENROAD_CMD) -no_splash $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json 2>&1 | \
+	 tee -a $(LOG_DIR)/$(1).tmp.log)
 endef
 
 # generate make rules to copy a file, if a dependency change and
@@ -1015,9 +1021,9 @@ clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_f
 .PHONY: nuke
 nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
-	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def dummy.guide
+	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
-	rm -rf versions.txt
+	rm -f versions.txt copyright.txt dummy.guide
 
 .PHONY: vars
 vars:
