@@ -28,8 +28,8 @@ export RTLMP_FLOW = True
 # CTS tuning
 export CTS_BUF_CELL = sky130_fd_sc_hd__clkbuf_8
 export CTS_BUF_DISTANCE = 600
-export CTS_CLUSTER_DIAMETER = 100
-export CTS_CLUSTER_SIZE = 30
+#export CTS_CLUSTER_DIAMETER = 100
+#export CTS_CLUSTER_SIZE = 30
 export SKIP_GATE_CLONING = 1
 
 export export SETUP_SLACK_MARGIN = 0.2
