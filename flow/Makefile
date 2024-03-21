@@ -537,8 +537,8 @@ SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo 
 UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
 
 copyright.txt:
-	$(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl
-	touch copyright.txt
+	@$(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl
+	@touch copyright.txt
 
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the
