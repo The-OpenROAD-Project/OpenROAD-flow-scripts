@@ -30,10 +30,9 @@ if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
 
 set global_placement_args {}
 if {$::env(GPL_ROUTABILITY_DRIVEN)} {
-    lappend global_placement_args {-routability_driven}
-    if {$::env(GPL_TARGET_RC)} {
-	lappend global_placement_args {-routability_target_rc_metric}
-	lappend global_placement_args $::env(GPL_TARGET_RC)
+  lappend global_placement_args {-routability_driven}
+    if { [info exists ::env(GPL_TARGET_RC)] } { 
+      lappend global_placement_args {-routability_target_rc_metric} $::env(GPL_TARGET_RC)
   }
 }
 
