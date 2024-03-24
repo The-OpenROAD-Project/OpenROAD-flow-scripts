@@ -1,5 +1,6 @@
 name: Create draft PR for updated YOSYS submodule
 on:
+  push:
   schedule:
   - cron: "0 8 * * MON"
   # Allows you to run this workflow manually from the Actions tab
