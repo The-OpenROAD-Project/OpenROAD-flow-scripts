@@ -18,15 +18,15 @@ set cts_args [list \
           -balance_levels]
 
 if {[info exist ::env(CTS_BUF_DISTANCE)]} {
-  lappend cts_args -distance_between_buffers "$::env(CTS_BUF_DISTANCE)"
+  lappend cts_args -distance_between_buffers $::env(CTS_BUF_DISTANCE)
 }
 
 if {[info exist ::env(CTS_CLUSTER_SIZE)]} {
-  lappend cts_args -sink_clustering_size "$::env(CTS_CLUSTER_SIZE)"
+  lappend cts_args -sink_clustering_size $::env(CTS_CLUSTER_SIZE)
 }
 
 if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
-  lappend cts_args -sink_clustering_max_diameter "$::env(CTS_CLUSTER_DIAMETER)"
+  lappend cts_args -sink_clustering_max_diameter $::env(CTS_CLUSTER_DIAMETER)
 }
 
 if {[info exist ::env(CTS_ARGS)]} {
