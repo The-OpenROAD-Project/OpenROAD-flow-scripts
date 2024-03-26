@@ -3,3 +3,4 @@ vars.sh
 vars.gdb
 vars.tcl
 copyright.txt
+test_delta_debug/
