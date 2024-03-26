@@ -18,7 +18,7 @@ usage: $0 [CMD] [OPTIONS]
   push                          Push the docker image to Docker Hub
 
   OPTIONS:
-  -os=OS_NAME                   Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
+  -os=OS_NAME                   Choose beween ubuntu22.04 (default), ubuntu20.04 and rhel.
   -target=TARGET                Choose target fo the Docker image:
                                   'dev': os + packages to compile app
                                   'builder': os + packages to compile app +
@@ -43,6 +43,9 @@ _setup() {
             ;;
         "ubuntu22.04")
             osBaseImage="ubuntu:22.04"
+            ;;
+        "rhel")
+            osBaseImage="redhat/ubi9"
             ;;
         *)
             echo "Target OS ${os} not supported" >&2
@@ -140,7 +143,7 @@ if [[ -z $(command -v "${_rule}") ]]; then
 fi
 
 # default values, can be overwritten by cmdline args
-os="centos7"
+os="ubuntu22.04"
 target="dev"
 useCommitSha="no"
 numThreads="-1"

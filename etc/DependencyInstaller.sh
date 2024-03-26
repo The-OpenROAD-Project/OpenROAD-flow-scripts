@@ -62,6 +62,33 @@ _installCentosPackages() {
     fi
 }
 
+_installRHELCleanUp() {
+    yum clean -y all
+    rm -rf /var/lib/apt/lists/*
+}
+
+_installRHELPackages() {
+    klayoutVersion=0.28.17
+    yum update -y
+    yum install -y \
+        time \
+        ruby \
+        ruby-devel
+
+    if ! [ -x "$(command -v klayout)" ]; then
+      yum install -y https://www.klayout.org/downloads/RockyLinux_9/klayout-${klayoutVersion}-0.x86_64.rpm
+    else
+      currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+      if _versionCompare $currentVersion -ge $klayoutVersion; then
+        echo "KLayout version greater than or equal to ${klayoutVersion}"
+      else
+        echo "KLayout version less than ${klayoutVersion}"
+        sudo yum remove -y klayout
+        yum install -y https://www.klayout.org/downloads/RockyLinux_9/klayout-${klayoutVersion}-0.x86_64.rpm
+      fi
+    fi
+}
+
 _installUbuntuCleanUp() {
     apt-get autoclean -y
     apt-get autoremove -y
@@ -213,6 +240,16 @@ case "${os}" in
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installCentosPackages
             _installCentosCleanUp
+        fi
+        if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+            _installCommon
+        fi
+        ;;
+    "Red Hat Enterprise Linux" )
+        _installORDependencies
+        if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+            _installRHELPackages
+            _installRHELCleanUp
         fi
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCommon
