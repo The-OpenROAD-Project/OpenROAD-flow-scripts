@@ -69,7 +69,7 @@ if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
   # Repair timing using global route parasitics
   puts "Repair setup and hold violations..."
   estimate_parasitics -global_routing
-  repair_timing
+  repair_timing -verbose
   report_metrics 5 "global route post repair timing"
 
   # Running DPL to fix overlapped instances
@@ -92,17 +92,16 @@ if { [info exists ::env(RECOVER_POWER)] } {
   report_power
 }
 
-puts "\n=========================================================================="
-puts "check_antennas"
-puts "--------------------------------------------------------------------------"
-
 if {![info exist env(SKIP_ANTENNA_REPAIR)]} {
+  puts "Repair antennas..."
   repair_antennas -iterations 5
   check_placement -verbose
-  check_antennas -report_file $env(REPORTS_DIR)/antenna.log -report_violating_nets
+  check_antennas -report_file $env(REPORTS_DIR)/antenna.log
 }
 
+puts "Estimate parasitics..."
 estimate_parasitics -global_routing
+
 report_metrics 5 "global route"
 
 # Write SDC to results with updated clock periods that are just failing.

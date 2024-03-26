@@ -21,13 +21,15 @@ export ADDITIONAL_LEFS  = $(wildcard $(microwatt_DIR)/lef/*.lef)
 
 export ADDITIONAL_LIBS = $(wildcard $(microwatt_DIR)/lib/*.lib)
 
-export MACRO_PLACEMENT = $(microwatt_DIR)/microwatt.macro_placement.cfg
+export SYNTH_HIERARCHICAL = 1
+
+export RTLMP_FLOW = True
 
 # CTS tuning
 export CTS_BUF_CELL = sky130_fd_sc_hd__clkbuf_8
 export CTS_BUF_DISTANCE = 600
-export CTS_CLUSTER_DIAMETER = 100
-export CTS_CLUSTER_SIZE = 30
+#export CTS_CLUSTER_DIAMETER = 100
+#export CTS_CLUSTER_SIZE = 30
 export SKIP_GATE_CLONING = 1
 
 export export SETUP_SLACK_MARGIN = 0.2

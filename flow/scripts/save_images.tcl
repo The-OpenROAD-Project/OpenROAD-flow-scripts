@@ -78,7 +78,8 @@ gui::clear_selections
 foreach clock [get_clocks *] {
   if { [llength [get_property $clock sources]] > 0 } {
     set clock_name [get_name $clock]
-    gui::save_clocktree_image $::env(REPORTS_DIR)/cts_$clock_name.webp $clock_name
+    save_clocktree_image -clock $clock_name \
+        $::env(REPORTS_DIR)/cts_$clock_name.webp
   }
 }
 

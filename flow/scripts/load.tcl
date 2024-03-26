@@ -114,4 +114,13 @@ proc run_equivalence_test {} {
       puts "Repair timing output passed equivalence test"
     }
 }
-#===========================================================================================
+
+proc append_env_var {list_name var_name prefix has_arg} {
+  upvar $list_name list
+  if {[info exist ::env($var_name)]} {
+    lappend list $prefix
+    if {$has_arg} {
+      lappend list $::env($var_name)
+    }
+  }
+}
