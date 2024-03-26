@@ -69,7 +69,7 @@ if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
   # Repair timing using global route parasitics
   puts "Repair setup and hold violations..."
   estimate_parasitics -global_routing
-  repair_timing
+  repair_timing -verbose
   report_metrics 5 "global route post repair timing"
 
   # Running DPL to fix overlapped instances
