@@ -71,7 +71,7 @@ if {[info exist ::env(CTS_SNAPSHOTS)]} {
 }
 
 # process user settings
-set additional_args ""
+set additional_args "-verbose"
 append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
 append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
 append_env_var additional_args TNS_END_PERCENT -repair_tns 1
