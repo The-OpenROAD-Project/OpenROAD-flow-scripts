@@ -1,0 +1,58 @@
+name: Create draft PR for updated rules
+on:
+  repository_dispatch:
+    types:
+      - set-new-golden
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Check out repository code recursively
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install Python Packages
+        run: |
+          pip install firebase-admin
+      - name: Execute Python Script Update
+        env:
+          CREDS_FILE: ${{ secrets.CREDS_FILE }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+        run: |
+          echo ${{ github.event_name }}
+          echo ${{ github.event.client_payload.type }}
+          if [[ "${{ github.event_name }}" == "repository_dispatch" && "${{ github.event.client_payload.type }}" == "overwrite" ]]; then
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --overwrite
+          else 
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL}
+          fi
+      - name: Push updated rules
+        id: remote-update
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          echo "::set-output name=has_update::$(git --no-pager diff --name-only origin/master..HEAD)"
+          git add .
+          git commit -m "flow: update rules based on new golden reference"
+      - if: "steps.remote-update.outputs.has_update != ''"
+        name: Create Draft PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ github.token }}
+          signoff: true
+          delete-branch: true
+          title: "[BOT] Update rules"
+          reviewers: |
+            vvbandeira
+            maliberty
+          draft: true
+          branch: bot-update-rules
+          commit-message: |
+            [BOT] Update rules
