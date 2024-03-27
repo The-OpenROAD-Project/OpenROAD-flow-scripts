@@ -4,7 +4,7 @@
 
 The `setup.sh` script installs all of the dependencies, including OpenROAD dependencies, if they are not already installed.
 
-Supported configurations are: CentOS 7, Ubuntu 20.04, Ubuntu 22.04, RHEL 8,
+Supported configurations are: CentOS 7, Ubuntu 20.04, Ubuntu 22.04, Ubuntu 22.04(aarch64), RHEL 8,
 Debian 10 and Debian 11.
 
 ``` shell
