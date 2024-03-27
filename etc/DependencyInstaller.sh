@@ -111,6 +111,39 @@ _installDarwinPackages() {
     brew install --cask klayout
 }
 
+_installCI() {
+    apt-get -y update
+
+    #docker
+    apt install -y \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        software-properties-common
+    # apt-get -y install ca-certificates curl
+    # install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+    # curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    # chmod a+r /etc/apt/keyrings/docker.asc
+    # echo \
+    # "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    # $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    # tee /etc/apt/sources.list.d/docker.list > /dev/null
+    echo \
+    "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt-get -y update
+    apt install -y docker-ce docker-ce-cli containerd.io
+    # apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+    # python
+    apt install -y python3
+
+    # stdbuf
+    apt-get install -y coreutils
+}
+
 _help() {
     cat <<EOF
 
@@ -138,6 +171,8 @@ Usage: $0
                                 #    "$HOME/.local". Only used with
                                 #    -common. This flag cannot be used with
                                 #    sudo or with root access.
+       $0 -ci
+                                # Installs CI tools
 EOF
     exit "${1:-1}"
 }
@@ -150,6 +185,7 @@ PREFIX=""
 option="all"
 # default isLocal
 isLocal="false"
+CI="no"
 
 # default values, can be overwritten by cmdline args
 while [ "$#" -gt 0 ]; do
@@ -173,6 +209,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -local)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
+            ;;
+        -ci)
+            CI="yes"
             ;;
         -prefix=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
@@ -220,6 +259,10 @@ case "${os}" in
         ;;
     "Ubuntu" )
         version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
+        if [[ ${CI} == "yes" ]]; then
+            echo "Installing CI Tools"
+            _installCI
+        fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installUbuntuPackages "${version}"
