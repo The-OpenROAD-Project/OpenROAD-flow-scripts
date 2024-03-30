@@ -1,6 +1,5 @@
 name: Create draft PR for updated OpenROAD submodule
 on:
-  push:
   schedule:
   - cron: "0 8 * * *"
   # Allows you to run this workflow manually from the Actions tab
@@ -32,7 +31,8 @@ jobs:
           delete-branch: true
           title: 'Update OpenROAD submodule'
           reviewers: |
-            habibayassin
+            vvbandeira
+            maliberty
           draft: true
           branch: update-openroad
           commit-message: |
