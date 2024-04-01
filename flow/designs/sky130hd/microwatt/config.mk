@@ -22,8 +22,14 @@ export ADDITIONAL_LEFS  = $(wildcard $(microwatt_DIR)/lef/*.lef)
 export ADDITIONAL_LIBS = $(wildcard $(microwatt_DIR)/lib/*.lib)
 
 export SYNTH_HIERARCHICAL = 1
-
 export RTLMP_FLOW = True
+
+export RTLMP_BOUNDARY_WT = 0
+export MACRO_PLACE_HALO = 100 100
+export MACRO_PLACE_CHANNEL = 200 200
+
+# Temporary
+export SKIP_ANTENNA_REPAIR = 1
 
 # CTS tuning
 export CTS_BUF_CELL = sky130_fd_sc_hd__clkbuf_8
