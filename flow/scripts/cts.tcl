@@ -78,14 +78,14 @@ append_env_var additional_args TNS_END_PERCENT -repair_tns 1
 append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
 append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
 
-if { [info exists ::env(EQUIVALENCE_CHECK)] } {
+if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
     write_eqy_verilog 4_before_rsz.v
 }
 
 puts "repair_timing [join $additional_args " "]"
 repair_timing {*}$additional_args
 
-if { [info exists ::env(EQUIVALENCE_CHECK)] } {
+if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
     run_equivalence_test
 }
 

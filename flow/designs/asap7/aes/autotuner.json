@@ -1,4 +1,12 @@
 {
+    "EQUIVALENCE_CHECK": {
+        "type": "int",
+        "minmax": [
+            0,
+            0
+        ],
+        "step": 1
+    },
     "_SDC_FILE_PATH": "constraint.sdc",
     "_SDC_CLK_PERIOD": {
         "type": "float",
@@ -12,7 +20,7 @@
         "type": "int",
         "minmax": [
             30,
-            100
+            40
         ],
         "step": 1
     },
@@ -56,23 +64,7 @@
         ],
         "step": 0
     },
-    "PLACE_DENSITY_LB_ADDON": {
-        "type": "float",
-        "minmax": [
-            0.0,
-            0.99
-        ],
-        "step": 0
-    },
-    "_PINS_DISTANCE": {
-        "type": "int",
-        "minmax": [
-            1,
-            4
-        ],
-        "step": 1
-    },
-    "CTS_CLUSTER_SIZE": {
+   "CTS_CLUSTER_SIZE": {
         "type": "int",
         "minmax": [
             10,
