@@ -38,8 +38,8 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          echo $(git --no-pager diff --name-only origin/master..HEAD)
-          echo "has_update=$(git --no-pager diff --name-only origin/master..HEAD)" >> "$GITHUB_OUTPUT"
+          echo $(git status --porcelain)
+          echo "has_update=$(git status --porcelain)" >> "$GITHUB_OUTPUT"
           git add .
           git commit -m "flow: update rules based on new golden reference"
       - if: "steps.remote-update.outputs.has_update != ''"
