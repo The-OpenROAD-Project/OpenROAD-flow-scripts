@@ -27,7 +27,6 @@ Parameter sweeping:
 import argparse
 import json
 import os
-from os.path import abspath
 import re
 import sys
 from datetime import datetime
@@ -73,7 +72,7 @@ class AutoTunerBase(tune.Trainable):
         #      1/     2/         3/       4/                5/   6/
         # <repo>/<logs>/<platform>/<design>/<experiment>-DATE/<id>/<cwd>
         repo_dir = os.getcwd() + '/../' * 6
-        self.repo_dir = abspath(repo_dir)
+        self.repo_dir = os.path.abspath(repo_dir)
         self.parameters = parse_config(config, path=os.getcwd())
         self.step_ = 0
         self.variant = f'variant-{self.__class__.__name__}-{self.trial_id}-or'
@@ -203,7 +202,7 @@ def read_config(file_name):
     When min==max, it means the constant value
     '''
     def read(path):
-        with open(abspath(path), 'r') as file:
+        with open(os.path.abspath(path), 'r') as file:
             ret = file.read()
         return ret
 
@@ -852,9 +851,9 @@ def sweep():
         # For remote sweep we create the following directory structure:
         #      1/     2/         3/       4/
         # <repo>/<logs>/<platform>/<design>/
-        repo_dir = abspath(LOCAL_DIR + '/../' * 4)
+        repo_dir = os.path.abspath(LOCAL_DIR + '/../' * 4)
     else:
-        repo_dir = abspath('../')
+        repo_dir = os.path.abspath('../')
     print(f'[INFO TUN-0012] Log folder {LOCAL_DIR}.')
     queue = Queue()
     parameter_list = list()
@@ -884,7 +883,7 @@ if __name__ == '__main__':
 
     # Read config and original files before handling where to run in case we
     # need to upload the files.
-    config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(abspath(args.config))
+    config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(os.path.abspath(args.config))
 
     # Connect to remote Ray server if any, otherwise will run locally
     if args.server is not None:
@@ -908,10 +907,11 @@ if __name__ == '__main__':
         print('[INFO TUN-0001] NFS setup completed.')
     else:
         # For local runs, use the same folder as other ORFS utilities.
-        os.chdir(os.path.dirname(abspath(__file__)) + '/../')
+        ORFS_FLOW_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../flow'))
+        os.chdir(ORFS_FLOW_DIR)
         LOCAL_DIR = f'logs/{args.platform}/{args.design}'
-        LOCAL_DIR = abspath(LOCAL_DIR)
-        INSTALL_PATH = abspath('../tools/install')
+        LOCAL_DIR = os.path.abspath(LOCAL_DIR)
+        INSTALL_PATH = os.path.abspath('../tools/install')
 
     if args.mode == 'tune':
 
