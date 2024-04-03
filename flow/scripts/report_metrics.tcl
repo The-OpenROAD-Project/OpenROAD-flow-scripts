@@ -155,12 +155,8 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
 
     set reg_to_reg_critical_path [lindex [find_timing_paths -from [all_registers] -to [all_registers]] 0]
     if {$reg_to_reg_critical_path != ""} {
-      set path_delay [sta::format_time [[$reg_to_reg_critical_path path] arrival] 4]
-      set path_slack [sta::format_time [[$reg_to_reg_critical_path path] slack] 4]
       set target_clock_latency [sta::format_time [$reg_to_reg_critical_path target_clk_delay] 4]
     } else {
-      set path_delay -1
-      set path_slack 0
       set target_clock_latency 0	
     }
 
