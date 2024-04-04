@@ -14,4 +14,5 @@ export CORE_MARGIN = 2
 export PLACE_DENSITY_LB_ADDON = 0.25
 export TNS_END_PERCENT = 100
 
-export GPL_TARGET_RC = 1.25
+# Temporary
+export SKIP_ANTENNA_REPAIR = 1

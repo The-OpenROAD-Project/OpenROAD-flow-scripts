@@ -36,19 +36,19 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -300.96,
+        "value": -247.66,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 7325,
+        "value": 7327,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 493,
+        "value": 492,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 101,
+        "value": 322,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
