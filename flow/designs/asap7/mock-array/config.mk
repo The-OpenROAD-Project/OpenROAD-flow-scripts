@@ -23,15 +23,15 @@ export DIE_AREA  = $(shell \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config; print(f'{0} {0} {config.die_width} {config.die_height}')")
 
-export BLOCKS                       = Element
+export BLOCKS                ?= Element
 
-export GDS_ALLOW_EMPTY       = Element
-
-export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
+ifneq ($(BLOCKS),)
+  export GDS_ALLOW_EMPTY       = Element
+  export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
+  export PDN_TCL               = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCKS_grid_strategy.tcl
+endif
 
 export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
-
-export PDN_TCL               = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCKS_grid_strategy.tcl
 
 # Target to force generation of Verilog per user settings MOCK_ARRAY_TABLE (rows, cols)
 verilog:
