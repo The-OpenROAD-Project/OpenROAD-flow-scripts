@@ -13,7 +13,7 @@ if { [info exist ::env(SYNTH_GUT)] && $::env(SYNTH_GUT) == 1 } {
 }
 
 # Generic synthesis
-synth -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS) -extra-map lcu_kogge_stone.v
+synth -top $::env(DESIGN_NAME) {*}$::env(SYNTH_ARGS)
 # Get rid of indigestibles
 chformal -remove
 
