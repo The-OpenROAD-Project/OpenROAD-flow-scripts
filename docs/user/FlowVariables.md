@@ -181,6 +181,7 @@ Note:
 | `TNS_END_PERCENT`     | Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed                |
 | `EQUIVALENCE_CHECK`   | Enable running equivalence checks with to verify logical correctness of repair_timing                        |
 | `REMOVE_CELLS_FOR_EQY`| String patterns directly passed to write_verilog -remove_cells <> for equivalence checks                     |
+| `SKIP_CTS_REPAIR_TIMING`| Skipping CTS repair, which can take a long time, can be useful in architectural exploration or when getting CI up and running |
 
 ### Routing
 
