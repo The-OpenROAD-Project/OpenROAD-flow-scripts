@@ -290,8 +290,12 @@ def read_config(file_name):
                 dict_["value_type"] = "float"
         return dict_
 
-    with open(file_name) as file:
-        data = json.load(file)
+    # Check file exists and whether it is a valid JSON file.
+    assert os.path.isfile(file_name), f'File {file_name} not found.'
+    try:
+        with open(file_name) as file: data = json.load(file)
+    except json.JSONDecodeError:
+        raise ValueError(f"Invalid JSON file: {file_name}")
     sdc_file = ''
     fr_file = ''
     if args.mode == 'tune' and args.algorithm == 'ax':
