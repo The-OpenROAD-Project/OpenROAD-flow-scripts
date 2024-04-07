@@ -78,25 +78,27 @@ append_env_var additional_args TNS_END_PERCENT -repair_tns 1
 append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
 append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
 
-if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
-    write_eqy_verilog 4_before_rsz.v
+if {[info exists ::env(SKIP_CTS_REPAIR_TIMING)] == 0 || $::env(SKIP_CTS_REPAIR_TIMING) == 0} {
+  if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
+      write_eqy_verilog 4_before_rsz.v
+  }
+
+  puts "repair_timing [join $additional_args " "]"
+  repair_timing {*}$additional_args
+
+  if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
+      run_equivalence_test
+  }
+
+  set result [catch {detailed_placement} msg]
+  if {$result != 0} {
+    save_progress 4_1_error
+    puts "Detailed placement failed in CTS: $msg"
+    exit $result
+  }
+
+  check_placement -verbose
 }
-
-puts "repair_timing [join $additional_args " "]"
-repair_timing {*}$additional_args
-
-if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
-    run_equivalence_test
-}
-
-set result [catch {detailed_placement} msg]
-if {$result != 0} {
-  save_progress 4_1_error
-  puts "Detailed placement failed in CTS: $msg"
-  exit $result
-}
-
-check_placement -verbose
 
 report_metrics 4 "cts final"
 

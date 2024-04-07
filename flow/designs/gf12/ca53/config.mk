@@ -1,10 +1,10 @@
 export DESIGN_NAME = ca53_cpu
 export PLATFORM    = gf12
 
-export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = True
 
-export VERILOG_FILES = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
+export VERILOG_FILES  = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
+export CACHED_NETLIST = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
 
 export SDC_FILE      = $(PLATFORM_DIR)/$(DESIGN_NAME)/sdc/ca53_cpu.sdc
 
@@ -41,6 +41,8 @@ export ADDITIONAL_GDS  += $(PLATFORM_DIR)/$(DESIGN_NAME)/gds2/RFSPHD_A53_HS_128X
                          $(PLATFORM_DIR)/$(DESIGN_NAME)/gds2/RFSPHD_A53_HS_256X32M2_FB1FS1SB0PG1.gds2 \
                          $(PLATFORM_DIR)/$(DESIGN_NAME)/gds2/SRAMSPHD_A53_HS_1024X39M4_FB2FS2SB0PG1.gds2 \
                          $(PLATFORM_DIR)/$(DESIGN_NAME)/gds2/SRAMSPHD_A53_HS_2048X42M4_FB2FS2SB0WM1PG1.gds2
+
+export FILL_CELLS += $(LVT_FILL_CELLS)
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 1400 1400 

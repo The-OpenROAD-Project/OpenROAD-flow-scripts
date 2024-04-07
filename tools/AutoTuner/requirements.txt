@@ -7,4 +7,5 @@ pandas==2.2.1
 colorama==0.4.4
 bayesian-optimization==1.4.0
 tensorboard==2.16.2
-protobuf==3.20.1
+protobuf==3.20.3
+SQLAlchemy==1.4.17
