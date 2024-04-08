@@ -169,12 +169,12 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
     }
       
     report_puts "\n=========================================================================="
-    report_puts "$when critical path target clock latency"
+    report_puts "$when critical path target clock latency max path"
     report_puts "--------------------------------------------------------------------------"
     report_puts "$target_clock_latency_max"
 
     report_puts "\n=========================================================================="
-    report_puts "$when critical path target clock latency"
+    report_puts "$when critical path target clock latency min path"
     report_puts "--------------------------------------------------------------------------"
     report_puts "$target_clock_latency_min"
       
