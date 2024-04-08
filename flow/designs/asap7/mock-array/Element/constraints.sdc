@@ -15,6 +15,14 @@ create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name
 set_clock_uncertainty -setup 20.0 [get_clocks $clk_name]
 set_clock_uncertainty -hold  20.0 [get_clocks $clk_name]
 
+
+# target clock latency derived from flow/reports/asap7/mock-array/base/5_global_route_post_repair_timing.rpt
+# global route post repair timing critical path target clock latency
+# --------------------------------------------------------------------------
+# 247.1500
+
+set_clock_latency 247.15 [get_clocks $clk_name]
+
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name ${clk_name}_vir
 set_clock_uncertainty -setup 20.0 [get_clocks ${clk_name}_vir]
 set_clock_uncertainty -hold 20.0  [get_clocks ${clk_name}_vir]
