@@ -28,12 +28,14 @@ Now your local copy of ORFS should be up-to-date. The next step is to build it a
 
 For WSL/docker based installation, run:
 ```shell
-./build_openroad.sh --clean
+sudo apt-get install pandoc
+./build_openroad.sh --clean --openroad-args " -DBUILD_MAN=ON"
 ```
 
 For local installation, run:
 ```shell
-./build_openroad.sh --local --clean
+sudo apt-get install pandoc
+./build_openroad.sh --local --clean --openroad-args " -DBUILD_MAN=ON"
 ```
 
 For pre-built binaries, you can run the flow after `git pull` is done.
