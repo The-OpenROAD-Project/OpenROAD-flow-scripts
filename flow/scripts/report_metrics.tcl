@@ -152,6 +152,32 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
       set path_delay -1
       set path_slack 0
     }
+
+    set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay max -from [all_inputs] -to [all_registers]] 0]
+    if {$inp_to_reg_critical_path != ""} {
+      set target_clock_latency_max [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
+    } else {
+      set target_clock_latency_max 0	
+    }
+
+
+    set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay min -from [all_inputs] -to [all_registers]] 0]
+    if {$inp_to_reg_critical_path != ""} {
+      set target_clock_latency_min [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
+    } else {
+      set target_clock_latency_min 0	
+    }
+      
+    report_puts "\n=========================================================================="
+    report_puts "$when critical path target clock latency max path"
+    report_puts "--------------------------------------------------------------------------"
+    report_puts "$target_clock_latency_max"
+
+    report_puts "\n=========================================================================="
+    report_puts "$when critical path target clock latency min path"
+    report_puts "--------------------------------------------------------------------------"
+    report_puts "$target_clock_latency_min"
+      
     report_puts "\n=========================================================================="
     report_puts "$when critical path delay"
     report_puts "--------------------------------------------------------------------------"
