@@ -157,11 +157,11 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
     report_puts "\n=========================================================================="
     report_puts "$when report_checks -path_delay max from inputs"
     report_puts "--------------------------------------------------------------------------"
-    report_checks -path_delay max -from [all_inputs] -to [all_registers] -format full_clock_expanded >> $filename    
+    report_checks -path_delay max -from [all_registers] -to [all_registers] -format full_clock_expanded >> $filename    
     report_puts "\n=========================================================================="
     report_puts "$when report_checks -path_delay min from inputs"
     report_puts "--------------------------------------------------------------------------"
-    report_checks -path_delay min -from [all_inputs] -to [all_registers]  -format full_clock_expanded >> $filename         
+    report_checks -path_delay min -from [all_registers] -to [all_registers]  -format full_clock_expanded >> $filename         
 
     set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay max -from [all_inputs] -to [all_registers]] 0]
     if {$inp_to_reg_critical_path != ""} {
