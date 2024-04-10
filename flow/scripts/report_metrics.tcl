@@ -155,11 +155,11 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
 
 
     report_puts "\n=========================================================================="
-    report_puts "$when report_checks -path_delay max from inputs"
+    report_puts "$when report_checks -path_delay max reg to reg"
     report_puts "--------------------------------------------------------------------------"
     report_checks -path_delay max -from [all_registers] -to [all_registers] -format full_clock_expanded >> $filename    
     report_puts "\n=========================================================================="
-    report_puts "$when report_checks -path_delay min from inputs"
+    report_puts "$when report_checks -path_delay min reg to reg"
     report_puts "--------------------------------------------------------------------------"
     report_checks -path_delay min -from [all_registers] -to [all_registers]  -format full_clock_expanded >> $filename         
 
