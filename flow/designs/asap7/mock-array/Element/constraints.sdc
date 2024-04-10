@@ -15,14 +15,14 @@ create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name
 set_clock_uncertainty -setup 20.0 [get_clocks $clk_name]
 set_clock_uncertainty -hold  20.0 [get_clocks $clk_name]
 # From top level run's metrics
-set_clock_latency -source 397.76 [get_clocks $clk_name]
+#set_clock_latency -source 350 [get_clocks $clk_name]
 
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name ${clk_name}_vir
 set_clock_uncertainty -setup 20.0 [get_clocks ${clk_name}_vir]
 set_clock_uncertainty -hold 20.0  [get_clocks ${clk_name}_vir]
 set_clock_latency 70 [get_clocks ${clk_name}_vir]
 # From top level run's metrics
-set_clock_latency -source 380 [get_clocks ${clk_name}_vir]
+#set_clock_latency -source 380 [get_clocks ${clk_name}_vir]
 
 set_max_transition 250 [current_design]
 set_max_transition 100 -clock_path [all_clocks]
