@@ -153,7 +153,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
       set path_slack 0
     }
 
-
+    if { [llength [all_registers]] != 0} {
     report_puts "\n=========================================================================="
     report_puts "$when report_checks -path_delay max reg to reg"
     report_puts "--------------------------------------------------------------------------"
@@ -194,7 +194,10 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
     report_puts "$when critical path source clock latency min path"
     report_puts "--------------------------------------------------------------------------"
     report_puts "$source_clock_latency"
-
+    } else {
+    puts "No registers in design"
+    }
+    # end if all_registers
       
     report_puts "\n=========================================================================="
     report_puts "$when critical path delay"
