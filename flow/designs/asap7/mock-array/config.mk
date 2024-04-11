@@ -27,7 +27,6 @@ export BLOCKS                ?= Element
 
 ifneq ($(BLOCKS),)
   export GDS_ALLOW_EMPTY       = Element
-  export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
   export PDN_TCL               = $(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl
 endif
 
@@ -55,9 +54,13 @@ export GLOBAL_ROUTE_ARGS=-congestion_iterations 40 -verbose
 export FASTROUTE_TCL = ./designs/$(PLATFORM)/mock-array/fastroute.tcl
 
 # ensure we have some rows, so we don't get a bad clock skew.
-export MACRO_HALO_X            = 0.5
-export MACRO_HALO_Y            = 0.5
+export MACRO_HALO_X = 0.5
+export MACRO_HALO_Y = 0.5
+export MACRO_PLACE_HALO = 0 2.1
 
 export CTS_BUF_DISTANCE = 60
 
 export ADDITIONAL_FILES = designs/src/mock-array/util.tcl
+
+export RTLMP_BOUNDARY_WT=0
+export RTLMP_FLOW=True
