@@ -571,7 +571,7 @@ $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 
 .PHONY: do-$(1)
 do-$(1): copyright.txt
-	@echo Running $(3).tcl
+	@echo Running $(3).tcl, stage $(1)
 	@(trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
 	 $(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
 	 $(TIME_CMD) $(OPENROAD_CMD) -no_splash $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json 2>&1 | \
@@ -858,49 +858,11 @@ do-finish:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report do-gds elapsed
 
-.PHONY: skip_place
-skip_place: $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_1_place_gp_skip_io.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_2_place_iop.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_3_place_gp.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_4_place_resized.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_5_place_dp.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_place.odb
-	cp $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/3_place.sdc
-
-.PHONY: skip_resize
-skip_resize: $(RESULTS_DIR)/3_3_place_gp.odb
-	cp $(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/3_4_place_resized.odb
-
-.PHONY: skip_cts
-skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
-	# mock all intermediate results
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_1_cts.odb
-	cp $(RESULTS_DIR)/3_place.sdc $(RESULTS_DIR)/4_cts.sdc
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_cts.odb
-
-.PHONY: skip_route
-skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_1_grt.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_2_route.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/6_1_fill.odb
-	touch $(RESULTS_DIR)/6_final.spef
-
-# A mock abstract is a fully or partially eviscerated macro. A mock
-# abstract can be useful when creating bug reports, previewing
-# macro placement, testing detailed routing, or other quick smoke-tests
-# at the top level.
-#
-# When creating a mock abstract, depending on what needs to be tested,
-# stages can be skipped.
-#
-# Leave out "skip_" targes as approperiate:
-#
-# make skip_place skip_cts skip_route generate_abstract
 .PHONY: generate_abstract
 generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v $(RESULTS_DIR)/6_final.sdc
 	$(UNSET_AND_MAKE) do-generate_abstract
 
+# Set ABSTRACT_SOURCE if you want to create an abstract from another stage than 6_final.
 .PHONY: do-generate_abstract
 do-generate_abstract:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
