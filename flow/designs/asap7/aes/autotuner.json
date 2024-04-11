@@ -1,12 +1,4 @@
 {
-    "EQUIVALENCE_CHECK": {
-        "type": "int",
-        "minmax": [
-            0,
-            0
-        ],
-        "step": 1
-    },
     "_SDC_FILE_PATH": "constraint.sdc",
     "_SDC_CLK_PERIOD": {
         "type": "float",
