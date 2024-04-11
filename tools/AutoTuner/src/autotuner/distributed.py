@@ -487,6 +487,7 @@ def openroad(base_dir, parameters, flow_variant, path=''):
     make_command += f'make -C {base_dir}/flow DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
+    make_command += f' EQUIVALENCE_CHECK=0'
     make_command += f' NPROC={args.openroad_threads} SHELL=bash'
     run_command(make_command,
                 timeout=args.timeout,
