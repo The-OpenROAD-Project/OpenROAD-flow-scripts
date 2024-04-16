@@ -25,6 +25,7 @@ if not args.logDir:
     parser.print_help()
     sys.exit(1)
 
+
 def print_log_dir_times(logdir):
     first = True
     totalElapsed = 0
@@ -55,12 +56,14 @@ def print_log_dir_times(logdir):
                         elapsedTime = int(timeList[0])*60 + int(timeList[1])
                     elif len(timeList) == 3:
                         # Hours, minutes, and seconds are present
-                        elapsedTime = int(timeList[0])*3600 + int(timeList[1])*60 + int(timeList[2])
+                        elapsedTime = (int(timeList[0])*3600 +
+                                       int(timeList[1])*60 + int(timeList[2]))
                     else:
-                        print('Elapsed time not understood in',  str(line), file=sys.stderr)
+                        print('Elapsed time not understood in',
+                              str(line), file=sys.stderr)
 
             if not found:
-                print('No elapsed time found in',  str(f), file=sys.stderr)
+                print('No elapsed time found in', str(f), file=sys.stderr)
                 continue
 
         # Print the name of the step and the corresponding elapsed time
@@ -68,11 +71,13 @@ def print_log_dir_times(logdir):
             if first and not args.noHeader:
                 print("%-25s %10s" % ("Log", "Elapsed seconds"))
                 first = False
-            print('%-25s %10s' % (os.path.splitext(os.path.basename(str(f)))[0], elapsedTime))
+            print('%-25s %10s' % (os.path.splitext(
+                os.path.basename(str(f)))[0], elapsedTime))
         totalElapsed += elapsedTime
 
     if totalElapsed != 0:
-        print("%-25s %10s" % ( "Total", totalElapsed ))
+        print("%-25s %10s" % ("Total", totalElapsed))
+
 
 for log_dir in args.logDir:
     print_log_dir_times(log_dir)
