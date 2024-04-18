@@ -27,7 +27,7 @@ sg13g2_dfrbp_2
 
 
 # Define fill cells
-export FILL_CELLS = sg13g2_fill_1 sg13g2_fill_2 sg13g2_fill_4 sg13g2_fill_8
+export FILL_CELLS = sg13g2_fill_1 sg13g2_fill_2 sg13g2_decap_4 sg13g2_decap_8
 # -----------------------------------------------------
 #  Yosys
 #  ----------------------------------------------------
