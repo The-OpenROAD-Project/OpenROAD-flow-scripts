@@ -16,3 +16,4 @@ verilog:
 	./designs/src/mock-alu/verilog.sh
 
 export PLACE_PINS_ARGS=-annealing
+export HAS_IO_CONSTRAINTS=0

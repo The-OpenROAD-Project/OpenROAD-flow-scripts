@@ -40,7 +40,6 @@ export VERILOG_FILES = \
   ./designs/src/$(DESIGN_NICKNAME)/rtl/soc_core.v \
   $(VERILOG_FILES_BLACKBOX)
 
-export HAS_IO_CONSTRAINTS = 1
 export ENABLE_DPO = 0
 export MACRO_PLACE_CHANNEL  = 160 160
 export MACRO_PLACE_HALO = 160 160
