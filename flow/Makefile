@@ -536,9 +536,10 @@ UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
 SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo "$($V)" | $(FLOW_HOME)/scripts/escape.sh),$V='')) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG)
 UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
 
-copyright.txt:
+$(OBJECTS_DIR)/copyright.txt:
 	@$(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl
-	@touch copyright.txt
+	mkdir -p $(OBJECTS_DIR)
+	@touch $(OBJECTS_DIR)/copyright.txt
 
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the
@@ -570,8 +571,8 @@ $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
 
 .PHONY: do-$(1)
-do-$(1): copyright.txt
-	@echo Running $(3).tcl
+do-$(1): $(OBJECTS_DIR)/copyright.txt
+	@echo Running $(3).tcl, stage $(1)
 	@(trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
 	 $(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
 	 $(TIME_CMD) $(OPENROAD_CMD) -no_splash $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json 2>&1 | \
@@ -858,49 +859,11 @@ do-finish:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report do-gds elapsed
 
-.PHONY: skip_place
-skip_place: $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_1_place_gp_skip_io.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_2_place_iop.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_3_place_gp.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_4_place_resized.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_5_place_dp.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_place.odb
-	cp $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/3_place.sdc
-
-.PHONY: skip_resize
-skip_resize: $(RESULTS_DIR)/3_3_place_gp.odb
-	cp $(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/3_4_place_resized.odb
-
-.PHONY: skip_cts
-skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
-	# mock all intermediate results
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_1_cts.odb
-	cp $(RESULTS_DIR)/3_place.sdc $(RESULTS_DIR)/4_cts.sdc
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_cts.odb
-
-.PHONY: skip_route
-skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_1_grt.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_2_route.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/6_1_fill.odb
-	touch $(RESULTS_DIR)/6_final.spef
-
-# A mock abstract is a fully or partially eviscerated macro. A mock
-# abstract can be useful when creating bug reports, previewing
-# macro placement, testing detailed routing, or other quick smoke-tests
-# at the top level.
-#
-# When creating a mock abstract, depending on what needs to be tested,
-# stages can be skipped.
-#
-# Leave out "skip_" targes as approperiate:
-#
-# make skip_place skip_cts skip_route generate_abstract
 .PHONY: generate_abstract
 generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v $(RESULTS_DIR)/6_final.sdc
 	$(UNSET_AND_MAKE) do-generate_abstract
 
+# Set ABSTRACT_SOURCE if you want to create an abstract from another stage than 6_final.
 .PHONY: do-generate_abstract
 do-generate_abstract:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
@@ -1023,7 +986,7 @@ nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
-	rm -f versions.txt copyright.txt dummy.guide
+	rm -f versions.txt $(OBJECTS_DIR)/copyright.txt dummy.guide
 
 .PHONY: vars
 vars:
