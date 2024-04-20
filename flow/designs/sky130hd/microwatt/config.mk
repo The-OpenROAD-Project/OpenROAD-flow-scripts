@@ -41,3 +41,7 @@ export SKIP_GATE_CLONING = 1
 export export SETUP_SLACK_MARGIN = 0.2
 
 export GLOBAL_ROUTE_ARGS=-congestion_iterations 100 -verbose
+
+# This is high, some SRAMs should probably be converted
+# to real SRAMs and not instantiated as flops
+export SYNTH_MEMORY_MAX_BITS ?= 42000
