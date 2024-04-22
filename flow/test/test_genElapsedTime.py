@@ -31,7 +31,7 @@ class TestElapsedTime(unittest.TestCase):
         genElapsedTime.scan_logs(["--logDir", str(self.tmp_dir.name),
                                   "--noHeader"])
         # check if output is correct
-        expected_output = self.tmp_dir.name + "\n1_test                                    5400        9667132\nTotal                                     5400        9667132\n"
+        expected_output = self.tmp_dir.name + "\n1_test                                    5400           9440\nTotal                                     5400           9440\n"
         self.assertEqual(mock_stdout.getvalue(), expected_output)
 
     @patch("sys.stdout", new_callable=StringIO)
@@ -43,7 +43,7 @@ class TestElapsedTime(unittest.TestCase):
         # call the script with the test log file
         genElapsedTime.scan_logs(["--logDir", str(self.tmp_dir.name),
                                   "--noHeader"])
-        expected_output = self.tmp_dir.name + "\n1_test                                      74        9667132\nTotal                                       74        9667132\n"
+        expected_output = self.tmp_dir.name + "\n1_test                                      74           9440\nTotal                                       74           9440\n"
         self.assertEqual(mock_stdout.getvalue(), expected_output)
 
     @patch("sys.stdout", new_callable=StringIO)
@@ -57,7 +57,7 @@ class TestElapsedTime(unittest.TestCase):
                                   "--noHeader"])
         # check if output is correct
         expected_output = (self.tmp_dir.name +
-                           "\n1_test                                     744        9667132\nTotal                                      744        9667132\n")
+                           "\n1_test                                     744           9440\nTotal                                      744           9440\n")
         self.assertEqual(mock_stdout.getvalue(), expected_output)
 
     def test_missing_arg(self):

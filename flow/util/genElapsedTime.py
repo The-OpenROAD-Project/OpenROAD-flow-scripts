@@ -53,7 +53,7 @@ def print_log_dir_times(logdir, args):
                         print('Elapsed time not understood in',
                               str(line), file=sys.stderr)
                     # Find Peak Memory
-                    peak_memory = line.split('Peak memory: ')[1].split('KB')[0]
+                    peak_memory = int(int(line.split('Peak memory: ')[1].split('KB')[0])/1024)
 
             if not found:
                 print('No elapsed time found in', str(f), file=sys.stderr)
@@ -64,7 +64,7 @@ def print_log_dir_times(logdir, args):
         if elapsedTime is not None and peak_memory is not None:
             if first and not args.noHeader:
                 print(format_str %
-                      ("Log", "Elapsed seconds", "Peak Memory/KB"))
+                      ("Log", "Elapsed seconds", "Peak Memory/MB"))
                 first = False
             print(format_str % (os.path.splitext(
                 os.path.basename(str(f)))[0], elapsedTime, peak_memory))
