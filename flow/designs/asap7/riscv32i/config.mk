@@ -22,7 +22,6 @@ export CORE_AREA = 5 5 75 85
 
 export PLACE_DENSITY_LB_ADDON = 0.10
 
-export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS    = -exclude left:* -exclude right:* -exclude top:*
 export MACRO_PLACE_HALO    = 1 1
 export MACRO_PLACE_CHANNEL = 6 6
