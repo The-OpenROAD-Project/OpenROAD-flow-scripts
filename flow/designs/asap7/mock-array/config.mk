@@ -57,4 +57,4 @@ export FASTROUTE_TCL = ./designs/$(PLATFORM)/mock-array/fastroute.tcl
 export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
 
-export CTS_ARGS = -insertion_delay -sink_clustering_enable -balance_levels -distance_between_buffers 60
+export CTS_ARGS = -sink_clustering_enable -balance_levels -distance_between_buffers 60
