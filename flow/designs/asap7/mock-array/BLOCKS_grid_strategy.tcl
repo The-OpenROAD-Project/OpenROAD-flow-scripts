@@ -30,6 +30,8 @@ add_pdn_connect -grid {top} -layers {M5 M6}
 # Element grid
 ####################################
 # The halo around the macro prevents pdn from blocking pin access
-define_pdn_grid -macro -cells $::env(MACROS) -halo "2.0 2.0 2.0 2.0" -voltage_domains {CORE} -name ElementGrid
+define_pdn_grid -macro -cells $::env(MACROS) \
+    -halo "$::env(MACRO_HALO_X) $::env(MACRO_HALO_Y)" \
+    -voltage_domains {CORE} -name ElementGrid
 
 add_pdn_connect -grid {ElementGrid} -layers {M5 M6}
