@@ -289,8 +289,8 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
         rules[field] = dict(value=rule_value, compare=option['compare'])
 
     if len(change_str) > 0:
-        print(format_str.format('Metric', 'Old', 'New', 'Type'))
-        print(format_str.format('------', '---', '---', '----'))
+        print(format_str.format('Metric', 'Old', 'New', 'Type'), end='')
+        print(format_str.format('------', '---', '---', '----'), end='')
         print(change_str)
 
     with open(rules_file, 'w') as f:
