@@ -364,9 +364,10 @@ $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(bloc
 #-------------------------------------------------------------------------------
 .PHONY: versions.txt
 versions.txt:
-	@$(YOSYS_CMD) -V > $@
-	@echo openroad `$(OPENROAD_EXE) -version` >> $@
-	@$(KLAYOUT_CMD) -zz -v >> $@
+	mkdir -p $(OBJECTS_DIR)
+	@$(YOSYS_CMD) -V > $(OBJECTS_DIR)/$@
+	@echo openroad `$(OPENROAD_EXE) -version` >> $(OBJECTS_DIR)/$@
+	@$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@
 
 # Pre-process libraries
 # ==============================================================================
@@ -992,7 +993,7 @@ nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
-	rm -f versions.txt $(OBJECTS_DIR)/copyright.txt dummy.guide
+	rm -f $(OBJECTS_DIR)/versions.txt $(OBJECTS_DIR)/copyright.txt dummy.guide
 
 .PHONY: vars
 vars:
