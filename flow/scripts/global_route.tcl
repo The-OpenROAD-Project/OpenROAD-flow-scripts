@@ -42,7 +42,10 @@ set_placement_padding -global \
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
-set_propagated_clock [all_clocks]
+if {![info exist ::env(SDC_IDEAL_CLOCK)]} {
+    set_propagated_clock [all_clocks]
+}
+
 estimate_parasitics -global_routing
 
 if {[info exist env(DONT_USE_CELLS)]} {

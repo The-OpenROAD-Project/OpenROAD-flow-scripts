@@ -41,7 +41,9 @@ if {![info exist ::env(GUI_NO_TIMING)]} {
   source $::env(PLATFORM_DIR)/setRC.tcl
   if {$design_stage >= 4} {
     # CTS has run, so propagate clocks
-    set_propagated_clock [all_clocks]
+    if {![info exist ::env(SDC_IDEAL_CLOCK)]} {
+        set_propagated_clock [all_clocks]
+    }
   }
   
   if {$design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef]} {

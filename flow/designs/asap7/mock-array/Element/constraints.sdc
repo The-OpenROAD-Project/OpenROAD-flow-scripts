@@ -14,15 +14,6 @@ set clk_port [get_ports $clk_port_name]
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name $clk_name $clk_port
 set_clock_uncertainty -setup 20.0 [get_clocks $clk_name]
 set_clock_uncertainty -hold  20.0 [get_clocks $clk_name]
-# From top level run's metrics
-#set_clock_latency -source 350 [get_clocks $clk_name]
-
-create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name ${clk_name}_vir
-set_clock_uncertainty -setup 20.0 [get_clocks ${clk_name}_vir]
-set_clock_uncertainty -hold 20.0  [get_clocks ${clk_name}_vir]
-set_clock_latency 70 [get_clocks ${clk_name}_vir]
-# From top level run's metrics
-#set_clock_latency -source 380 [get_clocks ${clk_name}_vir]
 
 set_max_transition 250 [current_design]
 set_max_transition 100 -clock_path [all_clocks]
@@ -32,11 +23,11 @@ set non_clk_inputs  [lsearch -inline -all -not -exact [all_inputs] $clk_port]
 
 # io_ins_x -> REG_x in neighbouring element or just outside of the array
 set inputs [concat [get_ports io_ins_*] [get_ports io_lsbIns_4]]
-set_input_delay -max -clock ${clk_name}_vir [expr $clk_period * $clk_imax_pct] $inputs
-set_input_delay -min -clock ${clk_name}_vir [expr $clk_period * $clk_imin_pct] $inputs
+set_input_delay -max -clock ${clk_name} [expr $clk_period * $clk_imax_pct] $inputs
+set_input_delay -min -clock ${clk_name} [expr $clk_period * $clk_imin_pct] $inputs
 
 # REG_x in neighbouring element or just outside of the array -> io_outs_x
-set_output_delay -clock ${clk_name}_vir [expr $clk_period * $clk_omax_pct] [get_ports {io_outs_*}]
+set_output_delay -clock ${clk_name} [expr $clk_period * $clk_omax_pct] [get_ports {io_outs_*}]
 
 # For combinational buses routed through the elements, IO delays need to be set to accomodate requirements
 #  for each instance's position across the entire array. For simplicity, we budget the clock period evenly
@@ -57,7 +48,7 @@ set max_delay [expr $budget_per_element * 0.8]
 # REG[0] (io_outs_left[0] in the source) -> io_lsbOuts_7
 set reg_lsbOuts {io_lsbOuts_3 io_lsbOuts_7}
 
-set_output_delay -clock ${clk_name}_vir [expr $clk_period * $clk_omax_pct] [get_ports $reg_lsbOuts]
+set_output_delay -clock ${clk_name} [expr $clk_period * $clk_omax_pct] [get_ports $reg_lsbOuts]
 
 # In --> out combinational paths
 set_max_delay $max_delay -from [get_ports {io_lsbIns_*}] -to [get_ports {io_lsbOuts_*}]
@@ -72,3 +63,7 @@ set_driving_cell [all_inputs] -lib_cell BUFx4_ASAP7_75t_R
 #  See platforms/asap7/lib/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz, line 1223.
 #set_load -pin_load 2.731126 [all_outputs]
 set_load -pin_load 10 [all_outputs]
+
+# Use ideal clock in creating the Element. Top level tiing will verify the real timing with propagated clocks
+# this takes advantage of the macro clock skew balancing in CTS.
+unset_propagated_clock [all_clocks]

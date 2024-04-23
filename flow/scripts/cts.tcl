@@ -41,7 +41,10 @@ if {[info exist ::env(CTS_SNAPSHOTS)]} {
   save_progress 4_1_pre_repair_clock_nets
 }
 
-set_propagated_clock [all_clocks]
+
+if {![info exist ::env(SDC_IDEAL_CLOCK)]} {
+    set_propagated_clock [all_clocks]
+}
 
 set_dont_use $::env(DONT_USE_CELLS)
 

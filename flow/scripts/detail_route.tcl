@@ -6,7 +6,9 @@ if { [info exists ::env(USE_WXL)]} {
   set db_file 5_2_fillcell.odb
 }
 load_design $db_file 4_cts.sdc
-set_propagated_clock [all_clocks]
+if {![info exist ::env(SDC_IDEAL_CLOCK)]} {
+    set_propagated_clock [all_clocks]
+}
 
 set_thread_count $::env(NUM_CORES)
 
