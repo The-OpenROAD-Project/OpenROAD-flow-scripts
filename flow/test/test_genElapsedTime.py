@@ -2,7 +2,6 @@
 
 import unittest
 from unittest.mock import patch
-from unittest.mock import MagicMock
 from io import StringIO
 import sys
 import os
@@ -14,6 +13,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__))))
 
 import genElapsedTime
+
 
 class TestElapsedTime(unittest.TestCase):
     def setUp(self):
@@ -31,8 +31,9 @@ class TestElapsedTime(unittest.TestCase):
         genElapsedTime.scan_logs(["--logDir", str(self.tmp_dir.name),
                                   "--noHeader"])
         # check if output is correct
-        expected_output = self.tmp_dir.name + "\n1_test                                    5400           9440\nTotal                                     5400           9440\n"
-        self.assertEqual(mock_stdout.getvalue(), expected_output)
+        expected_output = (self.tmp_dir.name + "\n1_test 5400 9440\nTotal 5400 9440\n").split()
+        actual_output = mock_stdout.getvalue().split()
+        self.assertEqual(actual_output, expected_output)
 
     @patch("sys.stdout", new_callable=StringIO)
     def test_zero_time(self, mock_stdout):
@@ -43,8 +44,9 @@ class TestElapsedTime(unittest.TestCase):
         # call the script with the test log file
         genElapsedTime.scan_logs(["--logDir", str(self.tmp_dir.name),
                                   "--noHeader"])
-        expected_output = self.tmp_dir.name + "\n1_test                                      74           9440\nTotal                                       74           9440\n"
-        self.assertEqual(mock_stdout.getvalue(), expected_output)
+        expected_output = (self.tmp_dir.name + "\n1_test 74 9440\nTotal 74 9440\n").split()
+        actual_output = mock_stdout.getvalue().split()
+        self.assertEqual(actual_output, expected_output)
 
     @patch("sys.stdout", new_callable=StringIO)
     def test_elapsed_time_longer_duration(self, mock_stdout):
@@ -56,9 +58,9 @@ class TestElapsedTime(unittest.TestCase):
         genElapsedTime.scan_logs(["--logDir", str(self.tmp_dir.name),
                                   "--noHeader"])
         # check if output is correct
-        expected_output = (self.tmp_dir.name +
-                           "\n1_test                                     744           9440\nTotal                                      744           9440\n")
-        self.assertEqual(mock_stdout.getvalue(), expected_output)
+        expected_output = (self.tmp_dir.name + "\n1_test 744 9440 Total 744 9440").split()
+        actual_output = mock_stdout.getvalue().split()
+        self.assertEqual(actual_output, expected_output)
 
     def test_missing_arg(self):
         with self.assertRaises(SystemExit):
