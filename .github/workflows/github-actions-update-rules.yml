@@ -31,12 +31,12 @@ jobs:
           echo ${{ github.event_name }}
           echo ${{ github.event.client_payload.type }}
           if [[ "${{ github.event_name }}" == "repository_dispatch" && "${{ github.event.client_payload.type }}" == "overwrite" ]]; then
-            output=$(python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --overwrite)
+            table_output=$(python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --overwrite)
           else 
-            output=$(python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL})
+            table_output=$(python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL})
           fi
-          echo $output
-          echo "pr_body=$output" >> "$GITHUB_OUTPUT"
+          echo $table_output
+          echo "pr_body=$table_output\n" >> "$GITHUB_OUTPUT"
       - name: Push updated rules
         id: remote-update
         run: |
