@@ -35,8 +35,8 @@ jobs:
           else 
             output=$(python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL})
           fi
-          echo ${output}
-          echo "pr_body=${output}" >> "$GITHUB_OUTPUT"
+          echo $output
+          echo "pr_body=$output" >> "$GITHUB_OUTPUT"
       - name: Push updated rules
         id: remote-update
         run: |
