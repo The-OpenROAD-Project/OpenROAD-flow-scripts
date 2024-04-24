@@ -61,7 +61,7 @@ jobs:
             vvbandeira
             maliberty
           draft: true
-          body: steps.execute-script.outputs.pr_body
+          body: ${{ steps.execute-script.outputs.pr_body }}
           branch: bot-update-rules
           commit-message: |
             [BOT] Update rules
