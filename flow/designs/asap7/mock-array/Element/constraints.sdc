@@ -20,7 +20,9 @@ set_clock_uncertainty -hold  20.0 [get_clocks $clk_name]
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name ${clk_name}_vir
 set_clock_uncertainty -setup 20.0 [get_clocks ${clk_name}_vir]
 set_clock_uncertainty -hold 20.0  [get_clocks ${clk_name}_vir]
-set_clock_latency 70 [get_clocks ${clk_name}_vir]
+
+# From top level run's metrics
+#set_clock_latency 70 [get_clocks ${clk_name}_vir]
 # From top level run's metrics
 #set_clock_latency -source 380 [get_clocks ${clk_name}_vir]
 
@@ -62,7 +64,8 @@ set_output_delay -clock ${clk_name}_vir [expr $clk_period * $clk_omax_pct] [get_
 # In --> out combinational paths
 set_max_delay $max_delay -from [get_ports {io_lsbIns_*}] -to [get_ports {io_lsbOuts_*}]
 
-
+# Don't fix hold from inputs since skew at the top level will bebalanced by CTS
+set_false_path -hold -from [all_inputs]
 
 # Set driving cell and load capacitance explicitly to ensure timing results are sufficiently pessimistic
 #set_driving_cell [all_inputs] -lib_cell BUFx2_ASAP7_75t_R
