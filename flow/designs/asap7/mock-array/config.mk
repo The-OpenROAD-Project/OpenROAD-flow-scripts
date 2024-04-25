@@ -28,7 +28,7 @@ export BLOCKS                ?= Element
 ifneq ($(BLOCKS),)
   export GDS_ALLOW_EMPTY       = Element
   export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
-  export PDN_TCL               = designs/asap7/mock-array/BLOCKS_grid_strategy.tcl
+  export PDN_TCL               = $(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl
 endif
 
 export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
