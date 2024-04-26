@@ -190,7 +190,7 @@ export RESYNTH_TIMING_RECOVER ?= 0
 export ABC_AREA ?= 0
 
 # Global setting for Synthesis
-export SYNTH_ARGS ?= -flatten -extra-map $(DESIGN_HOME)/src/lcu/lcu_kogge_stone.v
+export SYNTH_ARGS ?= -flatten -extra-map $(PLATFORM_HOME)/common/lcu_kogge_stone.v
 
 # Global setting for Floorplan
 export PLACE_PINS_ARGS
