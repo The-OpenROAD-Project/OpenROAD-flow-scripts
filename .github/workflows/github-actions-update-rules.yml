@@ -31,12 +31,10 @@ jobs:
           echo ${{ github.event_name }}
           echo ${{ github.event.client_payload.type }}
           if [[ "${{ github.event_name }}" == "repository_dispatch" && "${{ github.event.client_payload.type }}" == "overwrite" ]]; then
-            table_output=$(python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --overwrite)
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --overwrite > table_output.txt 2>&1
           else 
-            table_output=$(python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL})
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} > table_output.txt 2>&1
           fi
-          echo $table_output
-          echo "pr_body="${table_output}"" >> "$GITHUB_OUTPUT"
       - name: Push updated rules
         id: remote-update
         run: |
@@ -61,7 +59,7 @@ jobs:
             vvbandeira
             maliberty
           draft: true
-          body: ${{ steps.execute-script.outputs.pr_body }}
+          body-path: table_output.txt
           branch: bot-update-rules
           commit-message: |
             [BOT] Update rules
