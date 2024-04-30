@@ -10,4 +10,4 @@ export CORE_ASPECT_RATIO = 8
 export PLACE_DENSITY = 0.80
 export MAX_ROUTING_LAYER = M4
 
-export PLACE_PINS_ARGS = -exclude left:* -exclude bottom:* -exclude top:* -min_distance 4 -min_distance_in_tracks
+export PLACE_PINS_ARGS = -exclude left:* -exclude bottom:* -exclude top:* -min_distance 6 -min_distance_in_tracks
