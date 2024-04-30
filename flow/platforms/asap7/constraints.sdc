@@ -54,6 +54,9 @@
 # 
 # Since set_input_delay is not used and set_max_delay is used instead, then
 # no hold cells are inserted, which is what is desired here.
+#
+# Details such as clock uncertainty, max transition time, load, etc.
+# is beyond the scope of this generic constraints.sdc file.
 # 
 # Beware of [path segmentation](https://docs.xilinx.com/r/2020.2-English/ug906-vivado-design-analysis/TIMING-13-Timing-Paths-Ignored-Due-to-Path-Segmentation), which
 # can occur with OpenSTA.
@@ -65,12 +68,7 @@ set sdc_version 2.0
 
 set clk_port [get_ports $clk_port_name]
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name $clk_name $clk_port
-set_clock_uncertainty -setup 20.0 [get_clocks $clk_name]
-set_clock_uncertainty -hold  20.0 [get_clocks $clk_name]
 
-# Optimization target, overconstrain by default.
-set_max_transition 250 [current_design]
-set_max_transition 100 -clock_path [all_clocks]
 set non_clk_inputs  [lsearch -inline -all -not -exact [all_inputs] $clk_port]
 set all_register_outputs [get_pins -of_objects [all_registers] -filter {direction == output}]
 
