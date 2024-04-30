@@ -34,6 +34,7 @@ endif
 export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
 
 # Target to force generation of Verilog per user settings MOCK_ARRAY_TABLE (rows, cols)
+.PHONY: verilog
 verilog:
 	export MOCK_ARRAY_ROWS=$(word 1, $(MOCK_ARRAY_TABLE)) ; \
 	export MOCK_ARRAY_COLS=$(word 2, $(MOCK_ARRAY_TABLE)) ; \
