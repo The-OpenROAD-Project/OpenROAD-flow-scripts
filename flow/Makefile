@@ -190,7 +190,7 @@ export RESYNTH_TIMING_RECOVER ?= 0
 export ABC_AREA ?= 0
 
 # Global setting for Synthesis
-export SYNTH_ARGS ?= -flatten
+export SYNTH_ARGS ?= -flatten -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
 
 # Global setting for Floorplan
 export PLACE_PINS_ARGS
@@ -275,10 +275,11 @@ YOSYS_FLAGS += -v 3
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
-TIME_CMD = /usr/bin/time -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
+export TIME_BIN   ?= /usr/bin/time
+TIME_CMD = $(TIME_BIN) -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
 TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
 ifeq (, $(strip $(TIME_TEST)))
-  TIME_CMD = /usr/bin/time
+  TIME_CMD = $(TIME_BIN)
 endif
 
 # The following determine the executable location for each tool used by this flow.
@@ -364,9 +365,10 @@ $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(bloc
 #-------------------------------------------------------------------------------
 .PHONY: versions.txt
 versions.txt:
-	@$(YOSYS_CMD) -V > $@
-	@echo openroad `$(OPENROAD_EXE) -version` >> $@
-	@$(KLAYOUT_CMD) -zz -v >> $@
+	mkdir -p $(OBJECTS_DIR)
+	@$(YOSYS_CMD) -V > $(OBJECTS_DIR)/$@
+	@echo openroad `$(OPENROAD_EXE) -version` >> $(OBJECTS_DIR)/$@
+	@$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@
 
 # Pre-process libraries
 # ==============================================================================
@@ -458,12 +460,18 @@ synth-report: synth
 do-synth-report:
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
 
+.PHONY: memory
+memory: $(RESULTS_DIR)/mem.json
+	python3 $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
+
 # ==============================================================================
 
 
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
-SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
+
+export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
+export SYNTH_MEMORY_MAX_BITS ?= 4096
 
 $(SYNTH_STOP_MODULE_SCRIPT):
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
@@ -484,7 +492,7 @@ yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LI
 
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
 $(RESULTS_DIR)/1_1_yosys.v: $(SDC_FILE_CLOCK_PERIOD)
@@ -504,7 +512,7 @@ $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 
 .PHONY: clean_synth
 clean_synth:
-	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
+	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc $(RESULTS_DIR)/mem.json
 	rm -f $(REPORTS_DIR)/synth_*
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STOP_MODULE_SCRIPT)
@@ -986,7 +994,7 @@ nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
-	rm -f versions.txt $(OBJECTS_DIR)/copyright.txt dummy.guide
+	rm -f $(OBJECTS_DIR)/versions.txt $(OBJECTS_DIR)/copyright.txt dummy.guide
 
 .PHONY: vars
 vars:

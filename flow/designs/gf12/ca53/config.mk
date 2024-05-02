@@ -49,7 +49,6 @@ export DIE_AREA    = 0 0 1400 1400
 export CORE_AREA   = 10 10 1390 1390 
 export PLACE_DENSITY_LB_ADDON = 0.05
 
-export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:0-600 -exclude left:1350-1400 -exclude right:* -exclude top:* -exclude bottom:*
 
 export MACRO_PLACE_HALO = 7 7
