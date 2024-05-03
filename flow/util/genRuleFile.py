@@ -50,8 +50,6 @@ def update_rules(designDir, variant, golden_metrics, overwrite):
                         True, # update
                         False, # tighten
                         False, # failing
-                        platform, # platform name
-                        design, # design name
                         variant, # variant
                         golden_metrics # metrics needed for update, default is {} in case of file
                         )
@@ -60,13 +58,11 @@ def update_rules(designDir, variant, golden_metrics, overwrite):
                         False, # update
                         True, # tighten
                         False, # failing
-                        platform, # platform name
-                        design, # design name
                         variant, # variant
                         golden_metrics # metrics needed for update, default is {} in case of file
                         )
 
-def gen_rule_file(design_dir, update, tighten, failing, platform, design, variant, golden_metrics={}):
+def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics={}):
     original_directory = getcwd()
     chdir(design_dir)
 
@@ -320,11 +316,19 @@ def gen_rule_file(design_dir, update, tighten, failing, platform, design, varian
         rules[field] = dict(value=rule_value, compare=option['compare'])
 
 
+    path_parts = path.split('/')
+    platform = path_parts[-3]
+    design = path_parts[-2]
+
     if len(change_str) > 0:
+<<<<<<< HEAD
 <<<<<<< HEAD
         print(f'Platform:{platform} Design:{design}')
 =======
 >>>>>>> refs/rewritten/onto
+=======
+        print(f'Platform: {platform}     Design: {design}')
+>>>>>>> f5e0365c (use path to get platform and design)
         print(format_str.format('Metric', 'Old', 'New', 'Type'), end='')
         print(format_str.format('------', '---', '---', '----'), end='')
         print(change_str)
@@ -340,9 +344,9 @@ if __name__ == "__main__":
     parser.add_argument('dir', help='Path to the design directory.')
     parser.add_argument(
         '-v',
-        '--variant',
+        '--platform',
         default='base',
-        help='Flow variant [default="base"].')
+        help='Flow platform [default="asap7"].')
     parser.add_argument(
         '-u',
         '--update',
