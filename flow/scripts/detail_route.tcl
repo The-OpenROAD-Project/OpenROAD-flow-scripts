@@ -8,8 +8,6 @@ if { [info exists ::env(USE_WXL)]} {
 load_design $db_file 4_cts.sdc
 set_propagated_clock [all_clocks]
 
-set_thread_count $::env(NUM_CORES)
-
 set additional_args ""
 if { [info exists ::env(dbProcessNode)]} {
   append additional_args " -db_process_node $::env(dbProcessNode)"
@@ -64,12 +62,12 @@ set all_args [concat [list \
   -output_maze $::env(RESULTS_DIR)/maze.log] \
   $arguments]
 
-puts "detailed_route [join $all_args " "]"
-
-detailed_route {*}$all_args
+log_cmd detailed_route {*}$all_args
 
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
 }
+
+check_antennas -report_file $env(REPORTS_DIR)/drt_antennas.log
 
 write_db $::env(RESULTS_DIR)/5_3_route.odb

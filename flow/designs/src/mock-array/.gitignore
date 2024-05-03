@@ -5,3 +5,7 @@ target/
 .metals/
 .vscode/
 .bloop/
+.bsp/
+test_run_dir/
+MockArrayTestbench.vcd
+obj_dir/

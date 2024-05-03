@@ -80,9 +80,9 @@ binaries, including OpenROAD, Yosys and Klayout. See instructions
 > **Disclaimer** The versions of OpenROAD, Yosys and Klayout provided by
 > other third-party vendors are not guaranteed to work with ORFS.
 
-### Local Installation
+### Build from sources locally
 
-Document for detailed local installation steps found [here](./docs/user/BuildLocally.md).
+Document for detailed local build from sources and installation steps found [here](./docs/user/BuildLocally.md).
 
 ## Using the Flow
 

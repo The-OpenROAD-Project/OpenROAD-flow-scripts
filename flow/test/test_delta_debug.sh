@@ -6,6 +6,7 @@
 # variable names such as $(false), unused variables, etc.
 set -ue -o pipefail
 
+cd flow
 testname=uart
 
 make DESIGN_CONFIG=designs/asap7/$testname/config.mk place
@@ -18,4 +19,4 @@ mkdir -p results/delta-debug/
 cd results/delta-debug/
 tar --strip-components=1 -xzf ../../$latest_file
 sed -i 's/openroad -no_init/openroad -exit -no_init/g' run-me-$testname-asap7-base.sh
-openroad -exit -python ../../../tools/OpenROAD/etc/deltaDebug.py --persistence 3 --use_stdout --error_string "Iter: 100 " --base_db_path results/asap7/$testname/base/3_2_place_iop.odb --step ./run-me-$testname-asap7-base.sh --multiplier 2
+openroad -exit -python ../../../tools/OpenROAD/etc/deltaDebug.py --persistence 3 --use_stdout --error_string "100 overflow" --base_db_path results/asap7/$testname/base/3_2_place_iop.odb --step ./run-me-$testname-asap7-base.sh --multiplier 2

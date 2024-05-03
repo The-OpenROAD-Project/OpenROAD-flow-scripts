@@ -1,4 +1,3 @@
-$(info [INFO-FLOW] AES Design)
 DESIGN_DIR                   := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 DESIGN_PDK_HOME              := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
@@ -16,4 +15,5 @@ export CORE_AREA   = 1.26 1.89 248 248
 
 
 export PLACE_DENSITY = uniform
-export SKIP_PIN_SWAP = 1
+#export SKIP_PIN_SWAP = 1
+export SKIP_GATE_CLONING = 1

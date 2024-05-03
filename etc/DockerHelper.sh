@@ -8,6 +8,8 @@ baseDir="$(pwd)"
 # docker hub organization/user from where to pull/push images
 org=openroad
 
+DOCKER_CMD="docker"
+
 _help() {
     cat <<EOF
 usage: $0 [CMD] [OPTIONS]
@@ -18,14 +20,18 @@ usage: $0 [CMD] [OPTIONS]
   push                          Push the docker image to Docker Hub
 
   OPTIONS:
-  -os=OS_NAME                   Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
-  -target=TARGET                Choose target fo the Docker image:
+  -os=OS_NAME                   Choose between ubuntu20.04 and ubuntu22.04 (default).
+  -target=TARGET                Choose target for the Docker image:
                                   'dev': os + packages to compile app
                                   'builder': os + packages to compile app +
                                              copy source code and build app
-  -threads                      Max number of threads to use if compiling.
-  -sha                          Use git commit sha as the tag image. Default is
-                                  'latest'.
+  -threads=N                    Max number of threads to use if compiling.
+                                  Default = \$(nproc)
+  -tag=TAG                      Use as the image tag. Default is git commit sha.
+  -username=USERNAME            Username to loging at the docker registry.
+  -password=PASSWORD            Password to loging at the docker registry.
+  -ci                           Install CI tools in image
+  -dry-run                      Do not push images to the repository
   -h -help                      Show this message and exits
 
 EOF
@@ -33,11 +39,7 @@ EOF
 }
 
 _setup() {
-    commitSha="$(git rev-parse HEAD)"
     case "${os}" in
-        "centos7")
-            osBaseImage="centos:centos7"
-            ;;
         "ubuntu20.04")
             osBaseImage="ubuntu:20.04"
             ;;
@@ -50,13 +52,13 @@ _setup() {
             ;;
     esac
     imageName="${IMAGE_NAME_OVERRIDE:-"${org}/flow-${os}-${target}"}"
-    if [[ "${useCommitSha}" == "yes" ]]; then
-        imageTag="${commitSha}"
+    if [[ "${tag}" != "" ]]; then
+        imageTag="${tag}"
     else
-        imageTag="latest"
+        imageTag=$(./etc/DockerTag.sh -dev)
     fi
     case "${target}" in
-        "builder" )
+        "builder" | "master")
             fromImage="${FROM_IMAGE_OVERRIDE:-"${org}/flow-${os}-dev"}:${imageTag}"
             context="."
             buildArgs="--build-arg numThreads=${numThreads}"
@@ -65,7 +67,7 @@ _setup() {
             fromImage="${FROM_IMAGE_OVERRIDE:-$osBaseImage}"
             cp tools/OpenROAD/etc/DependencyInstaller.sh etc/InstallerOpenROAD.sh
             context="etc"
-            buildArgs=""
+            buildArgs="--build-arg options=${options}"
             ;;
         *)
             echo "Target ${target} not found" >&2
@@ -79,41 +81,65 @@ _setup() {
 
 _create() {
     echo "Create docker image ${imagePath} using ${file}"
-    docker build --file "${file}" --tag "${imagePath}" ${buildArgs} "${context}"
+    ${DOCKER_CMD} buildx build \
+        --file "${file}" \
+        --tag "${imagePath}" \
+        ${buildArgs} \
+        "${context}"
     rm -f etc/InstallerOpenROAD.sh
 }
 
 _push() {
-    case "${target}" in
-        "dev" )
-            read -p "Will push docker image ${imagePath} to DockerHub [y/N]" -n 1 -r
-            echo
-            if [[ $REPLY =~ ^[Yy]$  ]]; then
-                mkdir -p build
+    if [[ -z ${username+x} ]]; then
+        echo "Missing required -username=<USER> argument"
+        _help
+    fi
+    if [[ -z ${password+x} ]]; then
+        echo "Missing required -password=<PASS> argument"
+        _help
+    fi
+    if [[ "${target}" != "dev" ]] && [[ "${target}" != "master" ]]; then
+        echo "Target ${target} is not valid candidate for push to Docker Hub." >&2
+        _help
+    fi
 
-                OS_LIST="centos7 ubuntu20.04 ubuntu22.04"
-                # create image with sha and latest tag for all os
-                for os in ${OS_LIST}; do
-                    ./etc/DockerHelper.sh create -target=dev \
-                        2>&1 | tee build/create-${os}-latest.log
-                    ./etc/DockerHelper.sh create -target=dev -sha \
-                        2>&1 | tee build/create-${os}-${commitSha}.log
-                done
+    if [[ "${dryRun}" == 1 ]]; then
+        echo "Skipping docker login"
+    else
+        ${DOCKER_CMD} login --username "${username}" --password "${password}"
+    fi
 
-                for os in ${OS_LIST}; do
-                    echo [DRY-RUN] docker push openroad/flow-${os}-dev:latest
-                    echo [DRY-RUN] docker push openroad/flow-${os}-dev:${commitSha}
-                done
+    if [[ "${tag}" == "" ]]; then
+        tag=$(./etc/DockerTag.sh -dev)
+    fi
 
-            else
-                echo "Will not push."
-            fi
-            ;;
-        *)
-            echo "Target ${target} is not valid candidate for push to DockerHub." >&2
-            _help
-            ;;
-    esac
+    mkdir -p build
+
+    if [[ "${target}" == "dev" ]]; then
+        ./etc/DockerHelper.sh create -os=${os} -target=dev -tag=${tag} -ci \
+            2>&1 | tee build/create-${os}-dev-${tag}.log
+
+        if [[ "${dryRun}" != 1 ]]; then
+            ${DOCKER_CMD} push "${org}/flow-${os}-dev:${tag}"
+        fi
+    fi
+
+    if [[ "${target}" == "master" ]]; then
+        tag=$(./etc/DockerTag.sh -master)
+        # Create builder image
+        ./etc/DockerHelper.sh create -os=${os} -target=builder \
+            2>&1 | tee build/create-${os}-${target}-${tag}.log
+
+        builderTag=${org}/flow-${os}-builder:${imageTag}
+        orfsTag=${org}/orfs:${tag}
+        echo "Renaming docker image: ${builderTag} -> ${orfsTag}"
+        ${DOCKER_CMD} tag ${builderTag} ${orfsTag}
+        if [[ "${dryRun}" == 1 ]]; then
+            echo "[DRY-RUN] ${DOCKER_CMD} push ${orfsTag}"
+        else
+            ${DOCKER_CMD} push ${orfsTag}
+        fi
+    fi
 }
 
 #
@@ -139,16 +165,24 @@ if [[ -z $(command -v "${_rule}") ]]; then
     _help
 fi
 
-# default values, can be overwritten by cmdline args
-os="centos7"
+# default values, can be overwritten by command line arguments
+os="ubuntu22.04"
 target="dev"
-useCommitSha="no"
 numThreads="-1"
+tag=""
+options=""
+dryRun=0
 
 while [ "$#" -gt 0 ]; do
     case "${1}" in
         -h|-help)
             _help 0
+            ;;
+        -ci )
+            options="-ci"
+            ;;
+        -dry-run )
+            dryRun=1
             ;;
         -os=* )
             os="${1#*=}"
@@ -159,10 +193,16 @@ while [ "$#" -gt 0 ]; do
         -threads=* )
             numThreads="${1#*=}"
             ;;
-        -sha )
-            useCommitSha=yes
+        -username=* )
+            username="${1#*=}"
             ;;
-        -os | -target )
+        -password=* )
+            password="${1#*=}"
+            ;;
+        -tag=* )
+            tag="${1#*=}"
+            ;;
+        -os | -target | -threads | -username | -password | -tag )
             echo "${1} requires an argument" >&2
             _help
             ;;

@@ -3,6 +3,7 @@ export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 
 export SKIP_GATE_CLONING = 1
+export TNS_END_PERCENT = 5
 
 # export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.sv2v.v
 export VERILOG_FILES =  $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_don_abc_script.v \
@@ -52,7 +53,6 @@ export ABC_CLOCK_PERIOD_IN_PS = 1250
 
 export PLACE_DENSITY = 0.20
 
-export HAS_IO_CONSTRAINTS = 1
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 #export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/bp_single.macro_placment.cfg
 #export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_bp_single.macro_placment.cfg

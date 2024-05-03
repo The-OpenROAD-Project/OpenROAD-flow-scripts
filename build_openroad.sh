@@ -20,17 +20,10 @@ OPENROAD_APP_BRANCH="master"
 INSTALL_PATH="$(pwd)/tools/install"
 
 YOSYS_USER_ARGS=""
-YOSYS_ARGS="CONFIG=gcc"
+YOSYS_ARGS="CONFIG=clang"
 
 OPENROAD_APP_USER_ARGS=""
 OPENROAD_APP_ARGS=""
-
-LSORACLE_USER_ARGS=""
-LSORACLE_ARGS="\
--D CMAKE_BUILD_TYPE=RELEASE \
--D YOSYS_INCLUDE_DIR=$(pwd)/tools/yosys \
--D YOSYS_PLUGIN=ON \
-"
 
 DOCKER_OS_NAME="ubuntu22.04"
 PROC=-1
@@ -43,7 +36,6 @@ Usage: $0 [-h|--help] [-o|--local] [-l|--latest]
           [-n|--nice] [-t|--threads N]
           [--yosys-args-overwrite] [--yosys-args STRING]
           [--openroad-args-overwrite] [--openroad-args STRING]
-          [--lsoracle-args-overwrite] [--lsoracle-args STRING]
           [--install-path PATH] [--clean] [--clean-force]
 
           [-c|--copy-platforms]
@@ -77,16 +69,6 @@ Options:
                             OpenROAD app compilation.
 
     --openroad-args STRING  Aditional compilation flags for OpenROAD app
-                            compilation.
-
-    --lsoracle-enable       Compile LSOracle. Disable by default as it is not
-                            currently used on the flow.
-
-    --lsoracle-args-overwrite
-                            Do not use default flags set by this script during
-                            LSOracle compilation.
-
-    --lsoracle-args STRING    Aditional compilation flags for LSOracle
                             compilation.
 
     --install-path PATH     Path to install tools. Default is ${INSTALL_PATH}.
@@ -159,16 +141,6 @@ while (( "$#" )); do
                         OPENROAD_APP_USER_ARGS="$2"
                         shift
                         ;;
-                --lsoracle-enable)
-                        LSORACLE_ENABLE=1
-                        ;;
-                --lsoracle-args-overwrite)
-                        LSORACLE_OVERWIRTE_ARGS=1
-                        ;;
-                --lsoracle-args)
-                        LSORACLE_USER_ARGS="$2"
-                        shift
-                        ;;
                 --install-path)
                         INSTALL_PATH="$2"
                         shift
@@ -206,6 +178,8 @@ EOF
         fi
 fi
 
+echo "[INFO FLW-0028] Compiling with ${PROC} threads."
+
 # Only add install prefix variables after parsing arguments.
 YOSYS_ARGS+=" PREFIX=${INSTALL_PATH}/yosys"
 OPENROAD_APP_ARGS+=" -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/OpenROAD"
@@ -213,10 +187,6 @@ if [ -n "$CMAKE_INSTALL_RPATH" ]; then
         OPENROAD_APP_ARGS+=" -D CMAKE_INSTALL_RPATH=${CMAKE_INSTALL_RPATH}"
         OPENROAD_APP_ARGS+=" -D CMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE"
 fi
-LSORACLE_ARGS+=" \
--D YOSYS_SHARE_DIR=${INSTALL_PATH}/yosys/share/yosys \
--D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/LSOracle \
-"
 
 __args_setup() {
         if [ ! -z "${YOSYS_OVERWIRTE_ARGS+x}" ]; then
@@ -231,13 +201,6 @@ __args_setup() {
                 OPENROAD_APP_ARGS="${OPENROAD_APP_USER_ARGS}"
         else
                 OPENROAD_APP_ARGS+=" ${OPENROAD_APP_USER_ARGS}"
-        fi
-
-        if [ ! -z "${LSORACLE_OVERWIRTE_ARGS+x}" ]; then
-                echo "[INFO FLW-0016] Overwriting LSOracle compilation flags."
-                LSORACLE_ARGS="${LSORACLE_USER_ARGS}"
-        else
-                LSORACLE_ARGS+=" ${LSORACLE_USER_ARGS}"
         fi
 }
 
@@ -273,18 +236,18 @@ __local_build()
             set -u
         fi
 
+        YOSYS_ABC_PATH=tools/yosys/abc
+        if [[ -d "${YOSYS_ABC_PATH}/.git" ]]; then
+            # update indexes to make sure git diff-index uses correct data
+            git --work-tree=${YOSYS_ABC_PATH} --git-dir=${YOSYS_ABC_PATH}/.git update-index --refresh
+        fi
+
         echo "[INFO FLW-0017] Compiling Yosys."
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
         echo "[INFO FLW-0018] Compiling OpenROAD."
         eval ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/build ${OPENROAD_APP_ARGS}
         ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
-
-        if [ ! -z "${LSORACLE_ENABLE+x}" ]; then
-                echo "[INFO FLW-0019] Compiling LSOracle."
-                ${NICE} cmake tools/LSOracle -B tools/LSOracle/build ${LSORACLE_ARGS}
-                ${NICE} cmake --build tools/LSOracle/build --target install -j "${PROC}"
-        fi
 }
 
 __update_openroad_app_remote()

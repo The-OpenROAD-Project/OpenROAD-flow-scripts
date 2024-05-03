@@ -24,7 +24,6 @@ export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_2048x39.lib \
 export DIE_AREA    = 0 0 1100 1000
 export CORE_AREA   = 10.07 11.2 1090 990 
 
-export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-200 -exclude bottom:1000-1100
 
 export MACRO_PLACE_HALO = 10 10

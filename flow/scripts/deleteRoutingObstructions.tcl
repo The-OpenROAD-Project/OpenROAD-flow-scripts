@@ -7,5 +7,5 @@ proc deleteRoutingObstructions {} {
   foreach obstruction $obstructions {
     odb::dbObstruction_destroy $obstruction
   }
-  puts "\[INFO\] Deleted [llength $obstructions] routing obstructions"
+  puts "Deleted [llength $obstructions] routing obstructions"
 }

@@ -1,16 +1,16 @@
-root: index
+root: index2
 entries:
 
 - file: user/UserGuide.md
   title: User Guide
   entries:
+  - file: user/BuildWithPrebuilt.md
+    title: Build Using Pre-built Binaries
   - file: user/BuildWithDocker
     title: Build Using Docker
     entries:
     - file: user/DockerShell.md
       title: Docker Shell utility
-  - file: user/BuildWithPrebuilt.md
-    title: Build Using Pre-built Binaries
   - file: user/BuildLocally.md
     title: Build Locally
   - file: user/BuildWithWSL.md
@@ -21,6 +21,9 @@ entries:
     title: Metrics
   - file: user/InstructionsForAutoTuner.md
     title: AutoTuner
+
+- file: Manpage.md
+  title: Manpages
 
 - file: contrib/GettingInvolved.md
   title: Getting Involved

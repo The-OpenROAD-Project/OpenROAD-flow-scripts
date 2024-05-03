@@ -4,11 +4,6 @@ load_design 3_3_place_gp.odb 2_floorplan.sdc
 
 estimate_parasitics -placement
 
-utl::push_metrics_stage "placeopt__{}__pre_opt"
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics 3 "resizer pre" false false
-utl::pop_metrics_stage
-
 set instance_count_before [sta::network_leaf_instance_count]
 set pin_count_before [sta::network_leaf_pin_count]
 
@@ -65,7 +60,6 @@ repair_tie_fanout -separation $tie_separation $tiehi_pin
 puts "Floating nets: "
 report_floating_nets
 
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics 3 "resizer" true false
 
 puts "Instance count before $instance_count_before, after [sta::network_leaf_instance_count]"

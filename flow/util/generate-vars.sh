@@ -53,11 +53,14 @@ while read -r VAR; do
         echo "set env ${name} ${value}" >> $1.gdb
         continue
     fi
-    if [[ ${value} == /* ]]; then
-        # convert absolute paths if possible to use FLOW_HOME variable
-        value=$(sed -e "s,${FLOW_ROOT},\${FLOW_HOME},g" <<< "${value}")
-        value=$(sed -e "s,${ORFS_ROOT},\${FLOW_HOME}/\.\.,g" <<< "${value}")
+
+    # convert absolute paths if possible to use FLOW_HOME variable
+    if [[ "${name}" == *"SCRIPTS_DIR"* ]]; then
+        value=$(sed -e "s,${FLOW_ROOT},.,g" <<< "${value}")
     fi
+    value=$(sed -e "s,${FLOW_ROOT},\${FLOW_HOME},g" <<< "${value}")
+    value=$(sed -e "s,${ORFS_ROOT},\${FLOW_HOME}/\.\.,g" <<< "${value}")
+
     echo "export ${name}=\"${value}\"" >> $1.sh
     if [[ "${value}" == *'$'* ]]; then
         echo "set env ${name} $(sed -e 's,${FLOW_HOME},getenv("FLOW_HOME"),' <<< ${value})" >> $1.gdb

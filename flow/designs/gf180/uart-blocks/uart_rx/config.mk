@@ -13,7 +13,6 @@ export PLACE_DENSITY          = 0.60
 
 export PDN_TCL = ./designs/$(PLATFORM)/uart-blocks/BLOCKS_grid_strategy.tcl
 
-export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS    = -exclude bottom:* -exclude top:* -exclude right:*
 
 export MAX_ROUTING_LAYER      = Metal4

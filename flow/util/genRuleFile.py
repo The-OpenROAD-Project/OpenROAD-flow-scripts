@@ -27,7 +27,24 @@ def get_golden(platform, design, api_base_url):
         print(f"An error occurred: {str(e)}")
         return None, f"An error occurred: {str(e)}"
 
-def update_rules(designDir, platform, design, variant, golden_metrics, overwrite):
+def get_metrics(commitSHA, platform, design, api_base_url):
+    try:
+        response = requests.get(api_base_url+f"/commit?commitSHA={commitSHA}&platform={platform}&design={design}&variant=base")
+
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200 and "error" not in response.json():
+            # Parse the JSON response
+            data = response.json()
+
+            return data, None
+        else:
+            print("API request failed")
+            return None, "API request failed"
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return None, f"An error occurred: {str(e)}"
+
+def update_rules(designDir, variant, golden_metrics, overwrite):
     if overwrite:
         gen_rule_file(designDir, # design directory
                         True, # update
@@ -138,6 +155,12 @@ def gen_rule_file(design_dir, update, tighten, failing, platform, design, varian
         },
         'detailedroute__route__drc_errors': {
             'mode': 'direct',
+            'round_value': True,
+            'compare': '<=',
+        },
+        'detailedroute__antenna__violating__nets': {
+            'mode': 'padding',
+            'padding': 30,
             'round_value': True,
             'compare': '<=',
         },
@@ -284,7 +307,11 @@ def gen_rule_file(design_dir, update, tighten, failing, platform, design, varian
 
             if update and old_rule['value'] != rule_value:
                 UPDATE = True
+<<<<<<< HEAD
                 change_str += format.format_str.format(field, old_rule['value'],
+=======
+                change_str += format_str.format(field, old_rule['value'],
+>>>>>>> refs/rewritten/onto
                                                        rule_value, 'Updating')
 
             if not UPDATE:
@@ -294,7 +321,10 @@ def gen_rule_file(design_dir, update, tighten, failing, platform, design, varian
 
 
     if len(change_str) > 0:
+<<<<<<< HEAD
         print(f'Platform:{platform} Design:{design}')
+=======
+>>>>>>> refs/rewritten/onto
         print(format_str.format('Metric', 'Old', 'New', 'Type'), end='')
         print(format_str.format('------', '---', '---', '----'), end='')
         print(change_str)

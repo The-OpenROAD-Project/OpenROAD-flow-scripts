@@ -27,3 +27,5 @@ set_clock_groups -name core_clock -logically_exclusive \
  -group [get_clocks $top_clk_name] \
  -group [get_clocks $tx_clk_name] \
  -group [get_clocks $rx_clk_name]
+
+set_max_fanout 10 [current_design]
