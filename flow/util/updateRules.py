@@ -52,7 +52,9 @@ for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
             print("failed to update rule for", platform, design)
             continue
         update_rules(designsDir, # design directory
-                    "base", # variant
-                    golden_metrics, # metrics needed for update, default is {} in case of file
-                    args.overwrite # overwrite flag, default is false
+                     platform, # platform name
+                     design, # design name
+                     "base", # variant
+                     golden_metrics, # metrics needed for update, default is {} in case of file
+                     args.overwrite # overwrite flag, default is false
                     )
