@@ -27,7 +27,7 @@ def get_golden(platform, design, api_base_url):
         print(f"An error occurred: {str(e)}")
         return None, f"An error occurred: {str(e)}"
 
-def update_rules(designDir, platform, deisgn, variant, golden_metrics, overwrite):
+def update_rules(designDir, platform, design, variant, golden_metrics, overwrite):
     if overwrite:
         gen_rule_file(designDir, # design directory
                         True, # update
