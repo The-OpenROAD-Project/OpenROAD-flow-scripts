@@ -28,16 +28,27 @@ export BLOCKS                ?= Element
 ifneq ($(BLOCKS),)
   export GDS_ALLOW_EMPTY       = Element
   export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
-  export PDN_TCL               = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCKS_grid_strategy.tcl
+  export PDN_TCL               = $(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl
 endif
 
 export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
 
 # Target to force generation of Verilog per user settings MOCK_ARRAY_TABLE (rows, cols)
+.PHONY: verilog
 verilog:
 	export MOCK_ARRAY_ROWS=$(word 1, $(MOCK_ARRAY_TABLE)) ; \
 	export MOCK_ARRAY_COLS=$(word 2, $(MOCK_ARRAY_TABLE)) ; \
 	./designs/asap7/mock-array/verilog.sh
+
+.PHONY: simulate
+simulate:
+	export MOCK_ARRAY_ROWS=$(word 1, $(MOCK_ARRAY_TABLE)) ; \
+	export MOCK_ARRAY_COLS=$(word 2, $(MOCK_ARRAY_TABLE)) ; \
+	./designs/asap7/mock-array/simulate.sh
+
+.PHONY: power
+power:
+	$(OPENSTA_EXE) -no_init -exit designs/asap7/mock-array/power.tcl
 
 # If this design isn't quickly done in detailed routing, something is wrong.
 # At time of adding this option, only 12 iterations were needed for 0
@@ -57,4 +68,6 @@ export FASTROUTE_TCL = ./designs/$(PLATFORM)/mock-array/fastroute.tcl
 export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
 
-export CTS_ARGS = -insertion_delay -sink_clustering_enable -balance_levels -distance_between_buffers 60
+export CTS_BUF_DISTANCE = 60
+
+export ADDITIONAL_FILES = designs/src/mock-array/util.tcl

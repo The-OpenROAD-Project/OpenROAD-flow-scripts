@@ -13,7 +13,6 @@ export BLOCKS = uart_rx
 export DIE_AREA = 0 0 430 430
 export CORE_AREA = 10 10 420 420
 
-export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS    = -exclude bottom:* -exclude top:* -exclude right:*
 
 export MACRO_PLACE_HALO = 20 20

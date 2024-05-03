@@ -30,10 +30,10 @@ and Debian on a regular basis.
 This greatly helps to reduce the compilation time needed.
 
 We recommend to use a Docker image of a supported OS
-and install OpenROAD using the prebuilt binaries from
-Precision Innovations.
-You can start the container in an interactive mode using
-the command below.
+and install OpenROAD using the pre-built binaries from
+Precision Innovations. 
+You can start the container in an interactive mode using 
+the command below. 
 
 ```shell
 docker run -it ubuntu:22.04
@@ -71,7 +71,7 @@ You can restrict the number of CPUs with the `-t|--threads N` argument:
 The binaries are only available from inside a Docker container. Here is an example of starting a container from the created Docker image.
 
 ``` shell
-docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22-builder
+docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22.04-builder
 ```
 
 Then, inside docker:

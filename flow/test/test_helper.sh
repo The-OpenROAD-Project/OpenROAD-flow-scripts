@@ -20,6 +20,7 @@ if [ ! -z "${FLOW_VARIANT+x}" ]; then
   __make+=" FLOW_VARIANT=$FLOW_VARIANT"
 fi
 
+mkdir -p $(dirname $LOG_FILE)
 $__make clean_all clean_metadata 2>&1 | tee $LOG_FILE
 
 # turn off abort on error so we can always capture the result

@@ -39,6 +39,3 @@ export MACRO_PLACE_CHANNEL = 20 20
 
 export PLACE_DENSITY_LB_ADDON = 0.05
 export SKIP_GATE_CLONING      = 1
-
-# Temporary
-export SKIP_ANTENNA_REPAIR = 1

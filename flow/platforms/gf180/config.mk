@@ -84,17 +84,7 @@ export MACRO_PLACE_CHANNEL                   ?= 20.16 20.16
 #---------------------------------------------------------
 # Place
 #--------------------------------------------------------
-# Cell padding in SITE widths to ease rout-ability.  Applied to both sides
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT    ?= 2
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT    ?= 1
-
-# global placement density
 export PLACE_DENSITY                         ?= 0.40
-
-#--------------------------------------------------------
-# CTS
-#--------------------------------------------------------
-export CTS_BUF_CELL                           = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__clkbuf_8
 
 #---------------------------------------------------------
 # Route

@@ -194,17 +194,21 @@ def get_summary(status, text):
     '''
     TODO: docs
     '''
-    text += '-' * 30 + '\n'
-    text += ' ' * 7 + f"{status} designs\n"
-    text += '-' * 30 + '\n'
+    tmp = ''
     for name, data in design_list.items():
         if data['status'] == status:
             content = gen_report(name, data)
             if content != '':
-                text += content + '\n'
+                tmp += content + '\n'
                 # add empty line for readability
                 if args.verbose >= 2 or status == STATUS_RED:
-                    text += '\n'
+                    tmp += '\n'
+    if tmp != '':
+        text += '-' * 30 + '\n'
+        text += ' ' * 7 + f"{status} designs\n"
+        text += '-' * 30 + '\n'
+        text += tmp
+
     return text
 
 
@@ -212,7 +216,8 @@ def write_summary():
     '''
     Write summary and individual report files with data on design_list
     '''
-    summary = '=' * 60 + '\n'
+    summary = '\n'
+    summary += '=' * 60 + '\n'
     summary += ' ' * 26 + 'SUMMARY\n'
     summary += '=' * 60 + '\n'
     summary += f"\nNumber of designs: {len(design_list.keys())}\n\n"

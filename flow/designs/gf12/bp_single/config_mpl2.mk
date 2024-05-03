@@ -2,6 +2,9 @@ export DESIGN_NICKNAME = bp_single
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 
+export SKIP_GATE_CLONING = 1
+export TNS_END_PERCENT = 5
+
 export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = True
 #
@@ -62,7 +65,6 @@ export ABC_CLOCK_PERIOD_IN_PS = 1250
 export PLACE_DENSITY = 0.55
 export TNS_END_PERCENT = 0
 
-export HAS_IO_CONSTRAINTS = 1
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
 export PDN_TCL ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl

@@ -481,14 +481,13 @@ def openroad(base_dir, parameters, flow_variant, path=''):
 
     export_command = f'export PATH={INSTALL_PATH}/OpenROAD/bin'
     export_command += f':{INSTALL_PATH}/yosys/bin'
-    export_command += f':{INSTALL_PATH}/LSOracle/bin:$PATH'
     export_command += ' && '
 
     make_command = export_command
     make_command += f'make -C {base_dir}/flow DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
-    make_command += f' NPROC={args.openroad_threads} SHELL=bash'
+    make_command += f' NUM_PROCS={args.openroad_threads} SHELL=bash'
     run_command(make_command,
                 timeout=args.timeout,
                 stderr_file=f'{log_path}error-make-finish.log',

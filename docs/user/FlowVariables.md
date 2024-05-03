@@ -144,6 +144,8 @@ Note:
 | `IO_PLACER_H`         | The metal layer on which to place the I/O pins horizontally (top and bottom of the die).                                                                                         |
 | `IO_PLACER_V`         | The metal layer on which to place the I/O pins vertically (sides of the die).                                                                                                    |
 | `GUI_NO_TIMING`       | Skip loading timing for a faster GUI load.                                                                                                                                       |
+| `GUI_SOURCE` | Source the script. |
+| `GUI_ARGS` | OpenROAD command line options for gui_ and open_ targets, typically set tup `-exit` in combination with GUI_SOURCE to run a script and exit. |
 
 
 ### Placement
@@ -222,7 +224,7 @@ file for each design located in the OpenROAD-flow-scripts directory of
 |-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `PLATFORM`      | Specifies process design kit or technology node to be used.                                                                                                          |
 | `DESIGN_NAME`   | The name of the top-level module of the design.                                                                                                                      |
-| `VERILOG_FILES` | The path to the design Verilog files.                                                                                                                                |
+| `VERILOG_FILES` | The path to the design Verilog files or JSON files providing a description of modules (check `yosys -h write_json` for more details).                                |
 | `SDC_FILE`      | The path to design constraint (SDC) file.                                                                                                                            |
 
 
@@ -239,8 +241,9 @@ configuration file.
 
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
-| `ADDITIONAL_LEFS`        | Hardened macro LEF view files listed here.                                                         |
-| `ADDITIONAL_LIBS`        | Hardened macro library files listed here.                                                          |
+| `ADDITIONAL_FILES`       | Additional files to be added to `make issue` archive |
+| `ADDITIONAL_LEFS`        | Hardened macro LEF view files listed here. The LEF information of the macros is immutable and used throughout all stages. Stored in the .odb file. |
+| `ADDITIONAL_LIBS`        | Hardened macro library files listed here. The library information is immutable and used throughout all stages. Not stored in the .odb file. |
 | `ADDITIONAL_GDS`         | Hardened macro GDS files listed here.                                                              |
 | `VERILOG_INCLUDE_DIRS`   | Specifies the include directories for the Verilog input files.                                     |
 | `CORNER`                 | PVT corner library selection. Only available for ASAP7 and GF180 PDK.                                                                 |
