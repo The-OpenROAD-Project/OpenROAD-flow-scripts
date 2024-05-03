@@ -316,7 +316,7 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
         rules[field] = dict(value=rule_value, compare=option['compare'])
 
 
-    path_parts = path.split('/')
+    path_parts = abspath(rules_file).split('/')
     platform = path_parts[-3]
     design = path_parts[-2]
 
