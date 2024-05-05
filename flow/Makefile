@@ -258,7 +258,9 @@ ifeq (, $(strip $(NPROC)))
     NPROC := 1
   endif
 endif
-export NUM_CORES := $(NPROC)
+ifeq ($(NUM_CORES),)
+  export NUM_CORES := $(NPROC)
+endif
 
 export LSORACLE_CMD ?= $(shell command -v lsoracle)
 ifeq ($(LSORACLE_CMD),)
