@@ -219,31 +219,27 @@ endmodule
 // type: IOVss
 `timescale 1ns/10ps
 `celldefine
-module sg13g2_IOPadIOVss (pad);
-	inout pad;
+module sg13g2_IOPadIOVss ();
 endmodule
 `endcelldefine
 
 // type: IOVdd
 `timescale 1ns/10ps
 `celldefine
-module sg13g2_IOPadIOVdd (pad);
-	inout pad;
+module sg13g2_IOPadIOVdd ();
 endmodule
 `endcelldefine
 
 // type: Vss
 `timescale 1ns/10ps
 `celldefine
-module sg13g2_IOPadVss (pad);
-	inout pad;
+module sg13g2_IOPadVss ();
 endmodule
 `endcelldefine
 
 // type: Vdd
 `timescale 1ns/10ps
 `celldefine
-module sg13g2_IOPadVdd (pad);
-	inout pad;
+module sg13g2_IOPadVdd ();
 endmodule
 `endcelldefine
