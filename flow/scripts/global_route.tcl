@@ -49,8 +49,6 @@ if {[info exist env(DONT_USE_CELLS)]} {
   set_dont_use $::env(DONT_USE_CELLS)
 }
 
-source $env(SCRIPTS_DIR)/report_metrics.tcl
-
 if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
   if {[info exist ::env(DETAILED_METRICS)]} {
     report_metrics 5 "global route pre repair design"

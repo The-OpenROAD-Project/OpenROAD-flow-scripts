@@ -31,7 +31,6 @@ utl::info FLW 12 "Placement violations [check_placement -verbose]."
 
 estimate_parasitics -placement
 
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics 3 "detailed place" true false
 
 write_db $::env(RESULTS_DIR)/3_5_place_dp.odb
