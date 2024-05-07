@@ -1039,6 +1039,7 @@ $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,cts,4_cts.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,route,5_route.odb))
+$(eval $(call OPEN_GUI_SHORTCUT,grt,5_1_grt.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,final,6_final.odb))
 
 define OPEN_GUI
