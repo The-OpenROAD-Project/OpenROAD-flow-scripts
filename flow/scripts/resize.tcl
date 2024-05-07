@@ -60,7 +60,6 @@ repair_tie_fanout -separation $tie_separation $tiehi_pin
 puts "Floating nets: "
 report_floating_nets
 
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics 3 "resizer" true false
 
 puts "Instance count before $instance_count_before, after [sta::network_leaf_instance_count]"
