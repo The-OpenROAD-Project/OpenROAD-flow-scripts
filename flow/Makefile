@@ -243,7 +243,7 @@ export RTLMP_BLOCKAGE_FILE ?= $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
 #-------------------------------------------------------------------------------
 ifeq (,$(strip $(NUM_CORES)))
   # Linux (utility program)
-  NUM_CORES := $(shell NUM_CORES 2>/dev/null)
+  NUM_CORES := $(shell nproc 2>/dev/null)
 
   ifeq (,$(strip $(NUM_CORES)))
     # Linux (generic)
