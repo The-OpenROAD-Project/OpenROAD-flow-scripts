@@ -245,24 +245,24 @@ export RTLMP_RPT_FILE ?= partition.txt
 export RTLMP_BLOCKAGE_FILE ?= $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
 
 #-------------------------------------------------------------------------------
-ifeq (, $(strip $(NPROC)))
+ifeq (,$(strip $(NUM_CORES)))
   # Linux (utility program)
-  NPROC := $(shell nproc 2>/dev/null)
+  NUM_CORES := $(shell nproc 2>/dev/null)
 
-  ifeq (, $(strip $(NPROC)))
+  ifeq (,$(strip $(NUM_CORES)))
     # Linux (generic)
-    NPROC := $(shell grep -c ^processor /proc/cpuinfo 2>/dev/null)
+    NUM_CORES := $(shell grep -c ^processor /proc/cpuinfo 2>/dev/null)
   endif
-  ifeq (, $(strip $(NPROC)))
+  ifeq (,$(strip $(NUM_CORES)))
     # BSD (at least FreeBSD and Mac OSX)
-    NPROC := $(shell sysctl -n hw.ncpu 2>/dev/null)
+    NUM_CORES := $(shell sysctl -n hw.ncpu 2>/dev/null)
   endif
-  ifeq (, $(strip $(NPROC)))
+  ifeq (,$(strip $(NUM_CORES)))
     # Fallback
-    NPROC := 1
+    NUM_CORES := 1
   endif
 endif
-export NUM_CORES := $(NPROC)
+export NUM_CORES
 
 export LSORACLE_CMD ?= $(shell command -v lsoracle)
 ifeq ($(LSORACLE_CMD),)
@@ -282,7 +282,7 @@ YOSYS_FLAGS += -v 3
 export TIME_BIN   ?= /usr/bin/time
 TIME_CMD = $(TIME_BIN) -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
 TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
-ifeq (, $(strip $(TIME_TEST)))
+ifeq (,$(strip $(TIME_TEST)))
   TIME_CMD = $(TIME_BIN)
 endif
 
@@ -1052,6 +1052,7 @@ $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,cts,4_cts.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,route,5_route.odb))
+$(eval $(call OPEN_GUI_SHORTCUT,grt,5_1_grt.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,final,6_final.odb))
 
 define OPEN_GUI
