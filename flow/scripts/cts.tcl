@@ -46,17 +46,20 @@ set_propagated_clock [all_clocks]
 set_dont_use $::env(DONT_USE_CELLS)
 
 utl::push_metrics_stage "cts__{}__pre_repair"
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
 estimate_parasitics -placement
-report_metrics 4 "cts pre-repair"
+if {[info exist ::env(DETAILED_METRICS)]} {
+  report_metrics 4 "cts pre-repair"
+}
 utl::pop_metrics_stage
 
 repair_clock_nets
 
 utl::push_metrics_stage "cts__{}__post_repair"
 estimate_parasitics -placement
-report_metrics 4 "cts post-repair"
+if {[info exist ::env(DETAILED_METRICS)]} {
+  report_metrics 4 "cts post-repair"
+}
 utl::pop_metrics_stage
 
 set_placement_padding -global \
