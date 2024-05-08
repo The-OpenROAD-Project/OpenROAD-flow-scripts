@@ -9,7 +9,7 @@
 # DESIGN_CONFIG=./designs/nangate45/aes/config.mk
 # DESIGN_CONFIG=./designs/nangate45/ariane133/config.mk
 # DESIGN_CONFIG=./designs/nangate45/ariane136/config.mk
-# DESIGN_CONFIG=./designs/nangate45/black_parrot/config.mk
+DESIGN_CONFIG=./designs/nangate45/black_parrot/config.mk
 # DESIGN_CONFIG=./designs/nangate45/bp_be_top/config.mk
 # DESIGN_CONFIG=./designs/nangate45/bp_fe_top/config.mk
 # DESIGN_CONFIG=./designs/nangate45/bp_multi_top/config.mk
@@ -184,6 +184,10 @@ ifeq ($(SYNTH_HIERARCHICAL), 1)
 export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
 export MAX_UNGROUP_SIZE ?= 0
 endif
+
+# Enables Naja
+export DO_NAJA ?= 0
+
 # Enables Re-synthesis for area reclaim
 export RESYNTH_AREA_RECOVER ?= 0
 export RESYNTH_TIMING_RECOVER ?= 0
@@ -505,7 +509,13 @@ $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
 .PHONY: do-synth
 do-synth:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+ifeq ($(DO_NAJA), 1)
+	export PYTHONPATH=$(NAJA_INSTALL)/lib/python; \
+	($(TIME_CMD) $(NAJA_INSTALL)/bin/naja_edit -f verilog -t verilog -i $(RESULTS_DIR)/1_1_yosys.v -o $(RESULTS_DIR)/1_1_naja.v -a dle -p $(NAJA_INSTALL)/shared/primitives/nangate45.py 2>&1) | tee $(LOG_DIR)/1_naja.log
+	cp $(RESULTS_DIR)/1_1_naja.v $(RESULTS_DIR)/1_synth.v
+else
 	cp $(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.v
+endif
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 	$(UNSET_AND_MAKE) do-synth
@@ -518,6 +528,9 @@ clean_synth:
 	rm -f $(SYNTH_STOP_MODULE_SCRIPT)
 	rm -f $(SDC_FILE_CLOCK_PERIOD)
 	rm -rf _tmp_yosys-abc-*
+
+# ==============================================================================
+
 
 
 # ==============================================================================
