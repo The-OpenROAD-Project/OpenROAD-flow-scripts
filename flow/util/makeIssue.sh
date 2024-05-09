@@ -95,7 +95,7 @@ echo "Using $COMPRESS to compress tar file"
 if [ -v FULL_ISSUE ]; then
     DESIGN_PLATFORM_FILES="$DESIGN_DIR $PLATFORM_DIR"
 else
-    DESIGN_PLATFORM_FILES="$DESIGN_DIR/config.mk $PLATFORM_DIR/config.mk"
+    DESIGN_PLATFORM_FILES="$DESIGN_CONFIG $PLATFORM_DIR/config.mk"
 fi
 
 set -x
