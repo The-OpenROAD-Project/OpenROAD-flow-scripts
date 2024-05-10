@@ -35,8 +35,7 @@ def download_github_file(repo_owner, repo_name, branch, file_path, local_dir):
     
     print(f"File saved to {local_file_path}")
 
-#owner= 'IHP-GmbH'
-owner= 'KrzysztofHerman'
+owner= 'IHP-GmbH'
 repo_name= 'IHP-Open-PDK'
 branch = 'dev'
 
