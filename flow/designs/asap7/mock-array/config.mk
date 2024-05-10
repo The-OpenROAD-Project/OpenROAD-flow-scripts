@@ -59,3 +59,5 @@ export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
 
 export CTS_BUF_DISTANCE = 60
+
+export ADDITIONAL_FILES = designs/src/mock-array/util.tcl
