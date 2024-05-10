@@ -43,3 +43,5 @@ export PLACE_PINS_ARGS = -annealing
 
 export GND_NETS_VOLTAGES      =
 export PWR_NETS_VOLTAGES      =
+
+export ADDITIONAL_FILES = designs/src/mock-array/util.tcl

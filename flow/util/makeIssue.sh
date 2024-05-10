@@ -18,6 +18,7 @@ ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \
 ISSUE_CP_PLATFORM_FILE_VARS="LIB_FILES \
                              SC_LEF \
                              TECH_LEF \
+                             ADDITIONAL_FILES \
                              ADDITIONAL_LEFS \
                              CLKGATE_MAP_FILE \
                              ADDER_MAP_FILE \
