@@ -65,6 +65,14 @@ download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_stdce
 download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_io/verilog/sg13g2_io.v', 'verilog')
 # CDL
 download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_stdcell/cdl/sg13g2_stdcell.cdl', 'cdl')
+download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_io/cdl/sg13g2_iocell.cdl', 'cdl')
+download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_sram/cdl/RM_IHPSG13_1P_1024x64_c2_bm_bist.cdl', 'cdl')
+download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_sram/cdl/RM_IHPSG13_1P_1024x64_c2_bm_bist.cdl', 'cdl')
+download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_sram/cdl/RM_IHPSG13_1P_2048x64_c2_bm_bist.cdl', 'cdl')
+download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_sram/cdl/RM_IHPSG13_1P_256x48_c2_bm_bist.cdl', 'cdl')
+download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_sram/cdl/RM_IHPSG13_1P_256x64_c2_bm_bist.cdl', 'cdl')
+download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_sram/cdl/RM_IHPSG13_1P_512x64_c2_bm_bist.cdl', 'cdl')
+download_github_file(owner, repo_name, branch, 'ihp-sg13g2/libs.ref/sg13g2_sram/cdl/RM_IHPSG13_1P_64x64_c2_bm_bist.cdl', 'cdl')
 
 
 
