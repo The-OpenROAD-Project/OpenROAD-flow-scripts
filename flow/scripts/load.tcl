@@ -33,7 +33,7 @@ proc load_design {design_file sdc_file} {
 
   if { [info exists ::env(LIB_MODEL)] && $::env(LIB_MODEL) == "CCS" } {
     puts "Using CCS delay calculation"
-    sta::set_delay_calculator ccs_sim
+    set_delay_calculator ccs_sim
   }
 }
 
