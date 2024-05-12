@@ -64,6 +64,18 @@ set all_args [concat [list \
 
 log_cmd detailed_route {*}$all_args
 
+set_global_routing_layer_adjustment $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER) 0.5
+set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
+
+while {[check_antennas]} {
+  remove_fillers
+  foreach inst [[ord::get_db_block] getInsts] {
+    $inst setPlacementStatus "FIRM"
+  }
+  repair_antennas
+  detailed_route {*}$all_args
+}
+
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
 }
