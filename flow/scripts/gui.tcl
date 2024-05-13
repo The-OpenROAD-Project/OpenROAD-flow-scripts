@@ -47,8 +47,11 @@ if {![info exist ::env(GUI_NO_TIMING)]} {
   if {$design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef]} {
     puts "Loading spef"
     read_spef $::env(RESULTS_DIR)/6_final.spef
+  } elseif {$design_stage >= 5} {
+    puts "Estimating parasitics -global_routing"
+    estimate_parasitics -global_routing
   } elseif {$design_stage >= 3} {
-    puts "Estimating parasitics"
+    puts "Estimating parasitics -placement"
     estimate_parasitics -placement
   }
   
