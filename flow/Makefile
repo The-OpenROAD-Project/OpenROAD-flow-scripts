@@ -582,7 +582,7 @@ $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 do-$(1): $(OBJECTS_DIR)/copyright.txt
 	@echo Running $(3).tcl, stage $(1)
 	@(trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
-	 $(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
+	 $(OPENROAD_EXE) -exit $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
 	 $(TIME_CMD) $(OPENROAD_CMD) -no_splash $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json 2>&1 | \
 	 tee -a $(LOG_DIR)/$(1).tmp.log)
 endef
