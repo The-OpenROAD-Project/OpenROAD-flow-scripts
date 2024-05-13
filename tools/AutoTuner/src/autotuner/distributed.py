@@ -952,7 +952,7 @@ if __name__ == '__main__':
         print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
         
         # if all runs have failed
-        if analysis.best_result['minimum'] == 9e99:
+        if analysis.best_result['minimum'] == ERROR_METRIC:
             print('[ERROR TUN-0016] No successful runs found.')
             sys.exit(1)
     elif args.mode == 'sweep':
