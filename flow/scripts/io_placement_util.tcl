@@ -7,6 +7,5 @@ if {[info exists ::env(FLOORPLAN_DEF)]} {
   set args [list -hor_layer $::env(IO_PLACER_H) \
            -ver_layer $::env(IO_PLACER_V) \
            {*}$::env(PLACE_PINS_ARGS)]
-  puts "place_pins [join $args " "]"
-  place_pins {*}$args
+  log_cmd place_pins {*}$args
 }

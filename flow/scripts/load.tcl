@@ -1,3 +1,5 @@
+source $::env(SCRIPTS_DIR)/util.tcl
+
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
 proc load_design {design_file sdc_file} {
