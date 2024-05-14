@@ -591,7 +591,10 @@ $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
 
 ifeq ($(if $(4),$(4),.odb),.odb)
-	$(eval $(call OPEN_GUI_SHORTCUT,$(1),$(1).odb))
+.PHONY: $(1)
+$(1): $(RESULTS_DIR)/$(1).odb
+
+$(eval $(call OPEN_GUI_SHORTCUT,$(1),$(1).odb))
 endif
 
 .PHONY: do-$(1)
