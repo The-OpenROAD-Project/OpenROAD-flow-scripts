@@ -549,6 +549,18 @@ $(OBJECTS_DIR)/copyright.txt:
 	mkdir -p $(OBJECTS_DIR)
 	@touch $(OBJECTS_DIR)/copyright.txt
 
+define OPEN_GUI_SHORTCUT
+.PHONY: gui_$(1) open_$(1)
+gui_$(1): gui_$(2)
+open_$(1): open_$(2)
+endef
+
+define OPEN_GUI
+.PHONY: $(1)_$(2)
+$(1)_$(2):
+	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
+endef
+
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the
 # target, or when building a wafer thin layer on top of
@@ -577,6 +589,10 @@ $(OBJECTS_DIR)/copyright.txt:
 define do-step
 $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
+
+ifeq ($(if $(4),$(4),.odb),.odb)
+	$(eval $(call OPEN_GUI_SHORTCUT,$(1),$(1).odb))
+endif
 
 .PHONY: do-$(1)
 do-$(1): $(OBJECTS_DIR)/copyright.txt
@@ -1029,24 +1045,12 @@ gui_synth:
 open_synth:
 	$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
 
-define OPEN_GUI_SHORTCUT
-.PHONY: gui_$(1) open_$(1)
-gui_$(1): gui_$(2)
-open_$(1): open_$(2)
-endef
-
 $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,cts,4_cts.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,route,5_route.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,grt,5_1_grt.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,final,6_final.odb))
-
-define OPEN_GUI
-.PHONY: $(1)_$(2)
-$(1)_$(2):
-	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
-endef
 
 $(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,gui,$(file),DEF_FILE,$(OPENROAD_GUI_CMD))))
 $(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,gui,$(file),ODB_FILE,$(OPENROAD_GUI_CMD))))
