@@ -24,11 +24,11 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1309,
+        "value": 1491,
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 82822,
+        "value": 80385,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -338.86,
+        "value": -311.26,
         "compare": ">="
     },
     "finish__design__instance__area": {
