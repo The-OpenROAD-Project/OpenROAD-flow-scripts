@@ -84,7 +84,7 @@ _installUbuntuPackages() {
 
     # install KLayout
     if _versionCompare $1 -ge 23.04; then
-        apt-get install klayout python3-pandas
+        apt-get install -y klayout python3-pandas
     else
         if [[ $1 == 20.04 ]]; then
             klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
