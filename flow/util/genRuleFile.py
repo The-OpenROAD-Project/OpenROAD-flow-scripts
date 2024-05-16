@@ -190,6 +190,7 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
     if len(period_list) != 1:
         print(f'[WARNING] Multiple clocks not supported. Will use first clock: {period_list[0]}.')
 
+    format_str = '| {:45} | {:8} | {:8} | {:8} |\n'
     change_str = ''
     for field, option in rules_dict.items():
         if field not in metrics.keys():
@@ -269,18 +270,18 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
                     and rule_value != old_rule['value'] \
                     and compare(rule_value, old_rule['value']):
                 UPDATE = True
-                change_str += f"| {field} | {old_rule['value']} | "\
-                    f"{rule_value} | Tighten |\n"
+                change_str += format_str.format(field, old_rule['value'],
+                                                rule_value, 'Tighten')
 
             if failing and not compare(metrics[field], old_rule['value']):
                 UPDATE = True
-                change_str += f"| {field} | {old_rule['value']} | " \
-                    f"{rule_value} | Failing |\n"
+                change_str += format_str.format(field, old_rule['value'],
+                                                rule_value, 'Failing')
 
             if update and old_rule['value'] != rule_value:
                 UPDATE = True
-                change_str += f"| {field} | {old_rule['value']} | "\
-                    f"{rule_value} | Updating |\n"
+                change_str += format.format_str.format(field, old_rule['value'],
+                                                       rule_value, 'Updating')
 
             if not UPDATE:
                 rule_value = old_rule['value']
@@ -288,8 +289,8 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
         rules[field] = dict(value=rule_value, compare=option['compare'])
 
     if len(change_str) > 0:
-        print("| Metric | Old | New | Type |")
-        print("| ------ | --- | --- | ---- |")
+        print(format_str.format('Metric', 'Old', 'New', 'Type'), end='')
+        print(format_str.format('------', '---', '---', '----'), end='')
         print(change_str)
 
     with open(rules_file, 'w') as f:

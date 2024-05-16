@@ -2,6 +2,34 @@ utl::set_metrics_stage "floorplan__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 1_synth.v 1_synth.sdc
 
+proc report_unused_masters {} {
+  set db [ord::get_db]
+  set libs [$db getLibs]
+  set masters ""
+  foreach lib $libs {
+    foreach master [$lib getMasters] {
+      # filter out non-block masters, or you can remove this conditional to detect any unused master
+      if {[$master getType] == "BLOCK"} {
+        lappend masters $master
+      }
+    }
+  }
+
+  set block [ord::get_db_block]
+  set insts [$block getInsts]
+
+  foreach inst $insts {
+    set inst_master [$inst getMaster]
+    set masters [lsearch -all -not -inline $masters $inst_master]
+  }
+
+  foreach master $masters {
+    puts "Master [$master getName] is loaded but not used in the design"
+  }
+}
+
+report_unused_masters
+
 #Run check_setup
 puts "\n=========================================================================="
 puts "Floorplan check_setup"
@@ -113,7 +141,6 @@ if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER
 puts "Default units for flow"
 report_units
 report_units_metric
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics 2 "floorplan final" false false
 
 if { [info exist ::env(RESYNTH_AREA_RECOVER)] && $::env(RESYNTH_AREA_RECOVER) == 1 } {

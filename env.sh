@@ -21,3 +21,5 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$(brew --prefix tcl-tk)/bin:$PATH"
   export CMAKE_PREFIX_PATH="$(brew --prefix or-tools)"
 fi
+
+export FLOW_HOME=$DIR/flow

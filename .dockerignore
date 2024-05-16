@@ -16,7 +16,6 @@ flow/run-me*.sh
 flow/vars*.sh
 flow/vars*.tcl
 flow/vars*.gdb
-flow/versions.txt
 
 # Common temp files
 flow/*.log

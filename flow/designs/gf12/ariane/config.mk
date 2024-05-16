@@ -21,7 +21,6 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12lp_1rf_lg8_w64_byte.gds2
 export DIE_AREA    = 0 0 850 600
 export CORE_AREA   = 5 5 745 595
 
-export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:0-150 -exclude left:450-600 -exclude right:* -exclude top:* -exclude bottom:*
 
 export MACRO_PLACE_HALO = 7 7 

@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 8250,
+        "value": 9564,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 1374,
+        "value": 1198,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -28,7 +28,7 @@
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 287636,
+        "value": 283519,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {

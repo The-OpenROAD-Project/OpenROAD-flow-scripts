@@ -190,7 +190,7 @@ export RESYNTH_TIMING_RECOVER ?= 0
 export ABC_AREA ?= 0
 
 # Global setting for Synthesis
-export SYNTH_ARGS ?= -flatten
+export SYNTH_ARGS ?= -flatten -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
 
 # Global setting for Floorplan
 export PLACE_PINS_ARGS
@@ -241,24 +241,24 @@ export RTLMP_RPT_FILE ?= partition.txt
 export RTLMP_BLOCKAGE_FILE ?= $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
 
 #-------------------------------------------------------------------------------
-ifeq (, $(strip $(NPROC)))
+ifeq (,$(strip $(NUM_CORES)))
   # Linux (utility program)
-  NPROC := $(shell nproc 2>/dev/null)
+  NUM_CORES := $(shell nproc 2>/dev/null)
 
-  ifeq (, $(strip $(NPROC)))
+  ifeq (,$(strip $(NUM_CORES)))
     # Linux (generic)
-    NPROC := $(shell grep -c ^processor /proc/cpuinfo 2>/dev/null)
+    NUM_CORES := $(shell grep -c ^processor /proc/cpuinfo 2>/dev/null)
   endif
-  ifeq (, $(strip $(NPROC)))
+  ifeq (,$(strip $(NUM_CORES)))
     # BSD (at least FreeBSD and Mac OSX)
-    NPROC := $(shell sysctl -n hw.ncpu 2>/dev/null)
+    NUM_CORES := $(shell sysctl -n hw.ncpu 2>/dev/null)
   endif
-  ifeq (, $(strip $(NPROC)))
+  ifeq (,$(strip $(NUM_CORES)))
     # Fallback
-    NPROC := 1
+    NUM_CORES := 1
   endif
 endif
-export NUM_CORES := $(NPROC)
+export NUM_CORES
 
 export LSORACLE_CMD ?= $(shell command -v lsoracle)
 ifeq ($(LSORACLE_CMD),)
@@ -275,10 +275,11 @@ YOSYS_FLAGS += -v 3
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
-TIME_CMD = /usr/bin/time -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
+export TIME_BIN   ?= /usr/bin/time
+TIME_CMD = $(TIME_BIN) -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
 TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
-ifeq (, $(strip $(TIME_TEST)))
-  TIME_CMD = /usr/bin/time
+ifeq (,$(strip $(TIME_TEST)))
+  TIME_CMD = $(TIME_BIN)
 endif
 
 # The following determine the executable location for each tool used by this flow.
@@ -364,9 +365,10 @@ $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(bloc
 #-------------------------------------------------------------------------------
 .PHONY: versions.txt
 versions.txt:
-	@$(YOSYS_CMD) -V > $@
-	@echo openroad `$(OPENROAD_EXE) -version` >> $@
-	@$(KLAYOUT_CMD) -zz -v >> $@
+	mkdir -p $(OBJECTS_DIR)
+	@$(YOSYS_CMD) -V > $(OBJECTS_DIR)/$@
+	@echo openroad `$(OPENROAD_EXE) -version` >> $(OBJECTS_DIR)/$@
+	@$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@
 
 # Pre-process libraries
 # ==============================================================================
@@ -458,12 +460,18 @@ synth-report: synth
 do-synth-report:
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
 
+.PHONY: memory
+memory: $(RESULTS_DIR)/mem.json
+	python3 $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
+
 # ==============================================================================
 
 
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
-SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
+
+export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
+export SYNTH_MEMORY_MAX_BITS ?= 4096
 
 $(SYNTH_STOP_MODULE_SCRIPT):
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
@@ -484,7 +492,7 @@ yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LI
 
 .PHONY: do-yosys
 do-yosys: yosys-dependencies
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
 $(RESULTS_DIR)/1_1_yosys.v: $(SDC_FILE_CLOCK_PERIOD)
@@ -504,7 +512,7 @@ $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 
 .PHONY: clean_synth
 clean_synth:
-	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc
+	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc $(RESULTS_DIR)/mem.json
 	rm -f $(REPORTS_DIR)/synth_*
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STOP_MODULE_SCRIPT)
@@ -536,9 +544,22 @@ UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
 SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo "$($V)" | $(FLOW_HOME)/scripts/escape.sh),$V='')) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG)
 UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
 
-copyright.txt:
+$(OBJECTS_DIR)/copyright.txt:
 	@$(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl
-	@touch copyright.txt
+	mkdir -p $(OBJECTS_DIR)
+	@touch $(OBJECTS_DIR)/copyright.txt
+
+define OPEN_GUI_SHORTCUT
+.PHONY: gui_$(1) open_$(1)
+gui_$(1): gui_$(2)
+open_$(1): open_$(2)
+endef
+
+define OPEN_GUI
+.PHONY: $(1)_$(2)
+$(1)_$(2):
+	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
+endef
 
 # Separate dependency checking and doing a step. This can
 # be useful to retest a stage without having to delete the
@@ -569,11 +590,18 @@ define do-step
 $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
 	$$(UNSET_AND_MAKE) do-$(1)
 
+ifeq ($(if $(4),$(4),.odb),.odb)
+.PHONY: $(1)
+$(1): $(RESULTS_DIR)/$(1).odb
+
+$(eval $(call OPEN_GUI_SHORTCUT,$(1),$(1).odb))
+endif
+
 .PHONY: do-$(1)
-do-$(1): copyright.txt
-	@echo Running $(3).tcl
+do-$(1): $(OBJECTS_DIR)/copyright.txt
+	@echo Running $(3).tcl, stage $(1)
 	@(trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
-	 $(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
+	 $(OPENROAD_EXE) -exit $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
 	 $(TIME_CMD) $(OPENROAD_CMD) -no_splash $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json 2>&1 | \
 	 tee -a $(LOG_DIR)/$(1).tmp.log)
 endef
@@ -858,49 +886,11 @@ do-finish:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report do-gds elapsed
 
-.PHONY: skip_place
-skip_place: $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_1_place_gp_skip_io.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_2_place_iop.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_3_place_gp.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_4_place_resized.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_5_place_dp.odb
-	cp $(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/3_place.odb
-	cp $(RESULTS_DIR)/2_floorplan.sdc $(RESULTS_DIR)/3_place.sdc
-
-.PHONY: skip_resize
-skip_resize: $(RESULTS_DIR)/3_3_place_gp.odb
-	cp $(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/3_4_place_resized.odb
-
-.PHONY: skip_cts
-skip_cts: $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/3_place.sdc
-	# mock all intermediate results
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_1_cts.odb
-	cp $(RESULTS_DIR)/3_place.sdc $(RESULTS_DIR)/4_cts.sdc
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/4_cts.odb
-
-.PHONY: skip_route
-skip_route: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/4_cts.sdc
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_1_grt.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/5_2_route.odb
-	cp $(RESULTS_DIR)/3_place.odb $(RESULTS_DIR)/6_1_fill.odb
-	touch $(RESULTS_DIR)/6_final.spef
-
-# A mock abstract is a fully or partially eviscerated macro. A mock
-# abstract can be useful when creating bug reports, previewing
-# macro placement, testing detailed routing, or other quick smoke-tests
-# at the top level.
-#
-# When creating a mock abstract, depending on what needs to be tested,
-# stages can be skipped.
-#
-# Leave out "skip_" targes as approperiate:
-#
-# make skip_place skip_cts skip_route generate_abstract
 .PHONY: generate_abstract
 generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESULTS_DIR)/6_final.v $(RESULTS_DIR)/6_final.sdc
 	$(UNSET_AND_MAKE) do-generate_abstract
 
+# Set ABSTRACT_SOURCE if you want to create an abstract from another stage than 6_final.
 .PHONY: do-generate_abstract
 do-generate_abstract:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
@@ -1023,7 +1013,7 @@ nuke: clean_test clean_issues
 	rm -rf ./results ./logs ./reports ./objects
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
-	rm -f versions.txt copyright.txt dummy.guide
+	rm -f $(OBJECTS_DIR)/versions.txt $(OBJECTS_DIR)/copyright.txt dummy.guide
 
 .PHONY: vars
 vars:
@@ -1058,23 +1048,12 @@ gui_synth:
 open_synth:
 	$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
 
-define OPEN_GUI_SHORTCUT
-.PHONY: gui_$(1) open_$(1)
-gui_$(1): gui_$(2)
-open_$(1): open_$(2)
-endef
-
 $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,cts,4_cts.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,route,5_route.odb))
+$(eval $(call OPEN_GUI_SHORTCUT,grt,5_1_grt.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,final,6_final.odb))
-
-define OPEN_GUI
-.PHONY: $(1)_$(2)
-$(1)_$(2):
-	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
-endef
 
 $(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,gui,$(file),DEF_FILE,$(OPENROAD_GUI_CMD))))
 $(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,gui,$(file),ODB_FILE,$(OPENROAD_GUI_CMD))))

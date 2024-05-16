@@ -41,8 +41,6 @@ export SEAL_GDS        = $(PLATFORM_DIR)/gds/crackstop_3x3.gds
 export DIE_AREA    = 0 0 1800 1800 
 export CORE_AREA   = 5 5 1795 1795
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-800 -exclude bottom:1200-1800
-export HAS_IO_CONSTRAINTS = 1
-
 
 export PLACE_DENSITY_LB_ADDON = 0.02
 
