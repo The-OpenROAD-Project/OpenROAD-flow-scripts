@@ -55,6 +55,9 @@ while read -r VAR; do
     fi
 
     # convert absolute paths if possible to use FLOW_HOME variable
+    if [[ "${name}" == *"SCRIPTS_DIR"* ]]; then
+        value=$(sed -e "s,${FLOW_ROOT},.,g" <<< "${value}")
+    fi
     value=$(sed -e "s,${FLOW_ROOT},\${FLOW_HOME},g" <<< "${value}")
     value=$(sed -e "s,${ORFS_ROOT},\${FLOW_HOME}/\.\.,g" <<< "${value}")
 
