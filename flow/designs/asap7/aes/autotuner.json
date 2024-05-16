@@ -11,8 +11,8 @@
     "CORE_UTILIZATION": {
         "type": "int",
         "minmax": [
-            30,
-            40
+            10,
+            20
         ],
         "step": 1
     },
@@ -52,9 +52,25 @@
         "type": "float",
         "minmax": [
             0.1,
-            0.7
+            0.3
         ],
         "step": 0
+    },
+    "PLACE_DENSITY_LB_ADDON": {
+        "type": "float",
+        "minmax": [
+            0.0,
+            0.99
+        ],
+        "step": 0
+    },
+    "_PINS_DISTANCE": {
+        "type": "int",
+        "minmax": [
+            1,
+            1
+        ],
+        "step": 1
     },
    "CTS_CLUSTER_SIZE": {
         "type": "int",
