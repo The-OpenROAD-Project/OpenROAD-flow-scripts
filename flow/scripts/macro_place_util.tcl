@@ -123,8 +123,7 @@ if {[find_macros] != ""} {
       set all_args $::env(RTLMP_ARGS)
     }
 
-    puts "rtl_macro_placer [join $all_args " "]"
-    rtl_macro_placer {*}$all_args
+    log_cmd rtl_macro_placer {*}$all_args
   } else {
     macro_placement \
       -halo $::env(MACRO_PLACE_HALO) \
