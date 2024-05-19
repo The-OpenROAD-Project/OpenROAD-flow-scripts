@@ -64,9 +64,7 @@ set all_args [concat [list \
   -output_maze $::env(RESULTS_DIR)/maze.log] \
   $arguments]
 
-puts "detailed_route [join $all_args " "]"
-
-detailed_route {*}$all_args
+log_cmd detailed_route {*}$all_args
 
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)

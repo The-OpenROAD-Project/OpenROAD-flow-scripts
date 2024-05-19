@@ -57,6 +57,7 @@ pipeline {
                    "ethmac asap7",
                    "ethmac_lvt asap7",
                    "gcd asap7",
+                   "gcd-ccs asap7",
                    "ibex asap7",
                    "jpeg asap7",
                    "jpeg_lvt asap7",

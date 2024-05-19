@@ -27,9 +27,7 @@ proc do_global_route {} {
     [expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
      {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]]
 
-  puts "global_route [join $all_args " "]"
-
-  global_route {*}$all_args
+  log_cmd global_route {*}$all_args
 }
 
 set result [catch {do_global_route} errMsg]
