@@ -12,7 +12,7 @@
         "type": "int",
         "minmax": [
             0,
-            30
+            20
         ],
         "step": 1
     },
@@ -21,6 +21,14 @@
         "minmax": [
             2,
             2
+        ],
+        "step": 0
+    },
+    "CORE_ASPECT_RATIO": {
+        "type": "float",
+        "minmax": [
+            0.9,
+            1.1
         ],
         "step": 0
     },
@@ -40,6 +48,14 @@
         ],
         "step": 1
     },
+    "_FR_LAYER_ADJUST": {
+        "type": "float",
+        "minmax": [
+            0.1,
+            0.3
+        ],
+        "step": 0
+    },	
     "PLACE_DENSITY_LB_ADDON": {
         "type": "float",
         "minmax": [
