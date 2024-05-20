@@ -39,6 +39,8 @@ pipeline {
                    "jpeg asap7",
                    "jpeg_lvt asap7",
                    "riscv32i asap7",
+                   "riscv32i-mock-sram asap7",
+                   "riscv32i-mock-sram/fakeram7_256x32 asap7",
                    "uart asap7",
                    "mock-array asap7",
                    "mock-cpu asap7",

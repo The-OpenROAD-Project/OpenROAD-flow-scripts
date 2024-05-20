@@ -27,7 +27,7 @@ sg13g2_dfrbp_2
 
 
 # Define fill cells
-export FILL_CELLS = sg13g2_fill_1 sg13g2_fill_2 sg13g2_fill_4 sg13g2_fill_8
+export FILL_CELLS = sg13g2_fill_1 sg13g2_fill_2 sg13g2_decap_4 sg13g2_decap_8
 # -----------------------------------------------------
 #  Yosys
 #  ----------------------------------------------------
@@ -74,8 +74,8 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 # Place
 # --------------------------------------------------------
 # default cell padding for cells 
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 2
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 1
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
 export PLACE_DENSITY ?= 0.65
 # --------------------------------------------------------
 #  CTS

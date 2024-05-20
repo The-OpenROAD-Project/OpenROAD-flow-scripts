@@ -27,9 +27,7 @@ proc do_global_route {} {
     [expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
      {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]]
 
-  puts "global_route [join $all_args " "]"
-
-  global_route {*}$all_args
+  log_cmd global_route {*}$all_args
 }
 
 set result [catch {do_global_route} errMsg]
@@ -49,15 +47,17 @@ if {[info exist env(DONT_USE_CELLS)]} {
   set_dont_use $::env(DONT_USE_CELLS)
 }
 
-source $env(SCRIPTS_DIR)/report_metrics.tcl
-
 if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
-  report_metrics 5 "global route pre repair design"
+  if {[info exist ::env(DETAILED_METRICS)]} {
+    report_metrics 5 "global route pre repair design"
+  }
 
   # Repair design using global route parasitics
   puts "Perform buffer insertion..."
   repair_design
-  report_metrics 5 "global route post repair design"
+  if {[info exist ::env(DETAILED_METRICS)]} {
+    report_metrics 5 "global route post repair design"
+  }
 
   # Running DPL to fix overlapped instances
   # Run to get modified net by DPL
@@ -70,7 +70,9 @@ if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
   puts "Repair setup and hold violations..."
   estimate_parasitics -global_routing
   repair_timing -verbose
-  report_metrics 5 "global route post repair timing"
+  if {[info exist ::env(DETAILED_METRICS)]} {
+    report_metrics 5 "global route post repair timing"
+  }
 
   # Running DPL to fix overlapped instances
   # Run to get modified net by DPL

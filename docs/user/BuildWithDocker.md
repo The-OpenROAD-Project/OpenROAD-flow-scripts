@@ -71,7 +71,7 @@ You can restrict the number of CPUs with the `-t|--threads N` argument:
 The binaries are only available from inside a Docker container. Here is an example of starting a container from the created Docker image.
 
 ``` shell
-docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22-builder
+docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22.04-builder
 ```
 
 Then, inside docker:

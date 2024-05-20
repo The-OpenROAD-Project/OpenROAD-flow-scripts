@@ -1,7 +1,27 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 2_floorplan.odb 2_floorplan.sdc
 
-if {[info exists ::env(FLOORPLAN_DEF)] || ([info exists ::env(HAS_IO_CONSTRAINTS)] && $::env(HAS_IO_CONSTRAINTS) != 0)} {
+if {
+  [info exists ::env(FLOORPLAN_DEF)] ||
+  (
+    [info exists ::env(HAS_IO_CONSTRAINTS)] &&
+    $::env(HAS_IO_CONSTRAINTS) == 1
+  ) ||
+  (
+    [info exists ::env(IO_CONSTRAINTS)] &&
+    (
+      [info exists ::env(HAS_IO_CONSTRAINTS)] == 0 ||
+      $::env(HAS_IO_CONSTRAINTS) == 1
+    )
+  ) ||
+  (
+    $::env(PLACE_PINS_ARGS) != "" &&
+    (
+      [info exists ::env(HAS_IO_CONSTRAINTS)] == 0 ||
+      $::env(HAS_IO_CONSTRAINTS) == 1
+    )
+  )
+} {
   puts "Has top down IO Constraints. Skip global placement without IOs"
 } else {
 # check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists
