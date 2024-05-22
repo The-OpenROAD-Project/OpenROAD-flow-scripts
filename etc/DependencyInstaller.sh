@@ -29,6 +29,7 @@ _installCommon() {
         set -u
     fi
     local pkgs="pandas numpy firebase_admin click pyyaml"
+    pkgs+=" $(cat "$(dirname "$0")/requirements.txt")"  # Autotuner reqs
     if [[ $(id -u) == 0 ]]; then
         pip3 install -U $pkgs
     else

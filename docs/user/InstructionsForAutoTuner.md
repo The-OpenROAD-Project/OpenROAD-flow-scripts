@@ -23,6 +23,12 @@ User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) o
 
 ## Setting up AutoTuner
 
+```important
+Note that if you have installed OpenROAD via Docker or the build scripts, you can
+safely skip the instructions in this section as the requirements have been installed.
+This is inserted for developers' reference.
+```
+
 To setup AutoTuner, make sure you have a virtual environment set up with
 Python 3.9.X. There are plenty of ways to do this, we recommend using 
 [Miniconda](https://docs.conda.io/en/latest/miniconda.html),
@@ -74,29 +80,19 @@ Alternatively, here is a minimal example to get started:
 
 Tables of parameters that can be swept/tuned in technology platforms supported by ORFS.
 Any variable that can be set from the command line can be used for tune or sweep.
+The following are the ones we have included in the base `autotuner.json` for reference.
 
-For SDC you can use:
-
-* `_SDC_FILE_PATH`
-  - Path relative to the current JSON file to the SDC file.
-* `_SDC_CLK_PERIOD`
-  - Design clock period. This will create a copy of `_SDC_FILE_PATH` and modify the clock period.
-* `_SDC_UNCERTAINTY`
-  - Clock uncertainty. This will create a copy of `_SDC_FILE_PATH` and modify the clock uncertainty.
-* `_SDC_IO_DELAY`
-  - I/O delay. This will create a copy of `_SDC_FILE_PATH` and modify the I/O delay.
-
-
-For Global Routing parameters that are set on `fastroute.tcl` you can use:
-
-* `_FR_FILE_PATH`
-  - Path relative to the current JSON file to the `fastroute.tcl` file.
-* `_FR_LAYER_ADJUST`
-  - Layer adjustment. This will create a copy of `_FR_FILE_PATH` and modify the layer adjustment for all routable layers, i.e., from `$MIN_ROUTING_LAYER` to `$MAX_ROUTING_LAYER`.
-* `_FR_LAYER_ADJUST_NAME`
-  - Layer adjustment for layer NAME. This will create a copy of `_FR_FILE_PATH` and modify the layer adjustment only for the layer NAME.
-* `_FR_GR_SEED`
-  - Global route random seed. This will create a copy of `_FR_FILE_PATH` and modify the global route random seed.
+| Parameters | Description | 
+| ---------- | ----------- |
+| `_SDC_FILE_PATH` | Path relative to the current JSON file to the SDC file. |
+| `_SDC_CLK_PERIOD` | Design clock period. This will create a copy of `_SDC_FILE_PATH` and modify the clock period. |
+| `_SDC_UNCERTAINTY` | Clock uncertainty. This will create a copy of `_SDC_FILE_PATH` and modify the clock uncertainty. |
+| `_SDC_IO_DELAY` | I/O delay. This will create a copy of `_SDC_FILE_PATH` and modify the I/O delay. |
+| `_FR_FILE_PATH` | Path relative to the current JSON file to the `fastroute.tcl` file. |
+| `_FR_LAYER_ADJUST` | Layer adjustment. This will create a copy of `_FR_FILE_PATH` and modify the layer adjustment for all routable layers, i.e., from `$MIN_ROUTING_LAYER` to `$MAX_ROUTING_LAYER`. |
+| `_FR_LAYER_ADJUST_NAME` | Layer adjustment for layer NAME. This will create a copy of `_FR_FILE_PATH` and modify the layer adjustment only for the layer NAME. |
+| `_FR_GR_SEED` |  Global route random seed. This will create a copy of `_FR_FILE_PATH` and modify the global route random seed. |
+| `CORE_UTILIZATION` | 
 
 
 ## How to use

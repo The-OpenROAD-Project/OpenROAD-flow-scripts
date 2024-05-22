@@ -52,6 +52,8 @@ from ray.util.queue import Queue
 # import nevergrad as ng
 from ax.service.ax_client import AxClient
 
+from helpers import parse_flow_variables
+
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
 FASTROUTE_TCL = 'fastroute.tcl'
@@ -332,7 +334,12 @@ def parse_config(config, path=os.getcwd()):
     options = ''
     sdc = {}
     fast_route = {}
+    flow_variables = parse_flow_variables()
     for key, value in config.items():
+        # Sanity check: ignore all flow variables that are not tunable
+        if key not in flow_variables:
+            print(f'[WARNING TUN-0017] Variable {key} is not tunable.')
+            continue
         # Keys that begin with underscore need special handling.
         if key.startswith('_'):
             # Variables to be injected into fastroute.tcl
