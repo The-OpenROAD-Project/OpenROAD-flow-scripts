@@ -63,13 +63,8 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 #---------------------------------------------------------
 # Place
 # --------------------------------------------------------
-# Cell padding in SITE widths to ease rout-ability
-#
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
-#
-
 export PLACE_DENSITY ?= 0.50
+
 #
 # --------------------------------------------------------
 #  CTS

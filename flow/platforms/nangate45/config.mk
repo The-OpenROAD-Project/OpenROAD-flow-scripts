@@ -65,11 +65,6 @@ export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 #---------------------------------------------------------
 # Place
 # --------------------------------------------------------
-# Cell padding in SITE widths to ease rout-ability.  Applied to both sides
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
-#
-
 export PLACE_DENSITY ?= 0.30
 
 # --------------------------------------------------------
