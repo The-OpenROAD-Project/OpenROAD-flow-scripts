@@ -23,9 +23,6 @@ export PLACE_PINS_ARGS = -exclude left:* -exclude right:*
 export PLACE_DENSITY_LB_ADDON = 0.20
 export CTS_BUF_CELL  = BUFx8_ASAP7_75t_R
 
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 0
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
-
 export FASTROUTE_TCL = ./designs/$(PLATFORM)/swerv_wrapper/fastroute.tcl
 
 #Temporary until sta bug is fixed
