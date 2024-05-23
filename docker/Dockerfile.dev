@@ -8,6 +8,7 @@ FROM $fromImage
 WORKDIR /tmp/installer/etc
 
 COPY DependencyInstaller.sh .
+COPY requirements.txt .
 
 COPY InstallerOpenROAD.sh \
        /tmp/installer/tools/OpenROAD/etc/DependencyInstaller.sh

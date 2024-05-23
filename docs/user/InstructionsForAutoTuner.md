@@ -23,9 +23,12 @@ User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) o
 
 ## Setting up AutoTuner
 
-```important
-Note that if you have installed OpenROAD via Docker or the build scripts, you can
-safely skip the instructions in this section as the requirements have been installed.
+```{important}
+Note that if you have installed OpenROAD via Docker or the build scripts, you can access
+the autotuner libraries via venv. 
+
+source autotuner_env/bin/activate
+
 This is inserted for developers' reference.
 ```
 

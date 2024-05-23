@@ -338,8 +338,8 @@ def parse_config(config, path=os.getcwd()):
     for key, value in config.items():
         # Sanity check: ignore all flow variables that are not tunable
         if key not in flow_variables:
-            print(f'[WARNING TUN-0017] Variable {key} is not tunable.')
-            continue
+            print(f'[ERROR TUN-0017] Variable {key} is not tunable.')
+            sys.exit(1)
         # Keys that begin with underscore need special handling.
         if key.startswith('_'):
             # Variables to be injected into fastroute.tcl

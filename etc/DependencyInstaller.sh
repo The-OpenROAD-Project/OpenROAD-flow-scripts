@@ -29,12 +29,19 @@ _installCommon() {
         set -u
     fi
     local pkgs="pandas numpy firebase_admin click pyyaml"
-    pkgs+=" $(cat "$(dirname "$0")/requirements.txt")"  # Autotuner reqs
     if [[ $(id -u) == 0 ]]; then
         pip3 install -U $pkgs
     else
         pip3 install --user -U $pkgs
     fi
+
+    # Autotuner reqs (use venv)
+    local autotuner_pkgs=" $(cat "$(dirname "$0")/requirements.txt")"
+    local venv_name="autotuner_env"
+    python3 -m venv $venv_name
+    source "$venv_name/bin/activate"
+    pip3 install -U $autotuner_pkgs
+    deactivate
 }
 
 _installCentosCleanUp() {
@@ -77,6 +84,7 @@ _installUbuntuPackages() {
         libqt5xmlpatterns5-dev \
         libz-dev \
         python3-pip \
+        python3-venv \
         qtmultimedia5-dev \
         qttools5-dev \
         ruby \
