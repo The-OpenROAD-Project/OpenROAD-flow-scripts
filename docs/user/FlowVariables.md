@@ -239,6 +239,7 @@ configuration file.
 
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
+| `ADDITIONAL_FILES`       | Additional files to be added to `make issue` archive |
 | `ADDITIONAL_LEFS`        | Hardened macro LEF view files listed here.                                                         |
 | `ADDITIONAL_LIBS`        | Hardened macro library files listed here.                                                          |
 | `ADDITIONAL_GDS`         | Hardened macro GDS files listed here.                                                              |

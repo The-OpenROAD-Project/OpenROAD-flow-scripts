@@ -50,9 +50,7 @@ proc do_placement {place_density global_placement_args} {
     lappend all_args {*}$::env(GLOBAL_PLACEMENT_ARGS)
   }
 
-  puts "global_placement [join $all_args " "]"
-
-  global_placement {*}$all_args
+  log_cmd global_placement {*}$all_args
 }
 
 set result [catch {do_placement $place_density $global_placement_args} errMsg]

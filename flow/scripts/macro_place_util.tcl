@@ -72,7 +72,8 @@ if {[find_macros] != ""} {
         append additional_rtlmp_args " -min_num_macro $env(RTLMP_MIN_MACRO)"
     }
     
-    append additional_rtlmp_args " -halo_width $halo_max"
+    append additional_rtlmp_args " -halo_width $halo_x"
+    append additional_rtlmp_args " -halo_height $halo_y"
 
     if { [info exists ::env(RTLMP_MIN_AR)]} {
         append additional_rtlmp_args " -min_ar $env(RTLMP_MIN_AR)"
@@ -123,8 +124,7 @@ if {[find_macros] != ""} {
       set all_args $::env(RTLMP_ARGS)
     }
 
-    puts "rtl_macro_placer [join $all_args " "]"
-    rtl_macro_placer {*}$all_args
+    log_cmd rtl_macro_placer {*}$all_args
   } else {
     macro_placement \
       -halo $::env(MACRO_PLACE_HALO) \
