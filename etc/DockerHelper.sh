@@ -64,7 +64,6 @@ _setup() {
         "dev" )
             fromImage="${FROM_IMAGE_OVERRIDE:-$osBaseImage}"
             cp tools/OpenROAD/etc/DependencyInstaller.sh etc/InstallerOpenROAD.sh
-            cp tools/AutoTuner/requirements.txt etc/requirements.txt
             context="etc"
             buildArgs=""
             ;;

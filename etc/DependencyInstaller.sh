@@ -36,7 +36,7 @@ _installCommon() {
     fi
 
     # Autotuner reqs (use venv)
-    local autotuner_pkgs=" $(cat "$(dirname "$0")/requirements.txt")"
+    local autotuner_pkgs=" $(cat ./etc/requirements.txt)"
     local venv_name="autotuner_env"
     python3 -m venv $venv_name
     source "$venv_name/bin/activate"
@@ -93,7 +93,7 @@ _installUbuntuPackages() {
 
     # install KLayout
     if _versionCompare $1 -ge 23.04; then
-        apt-get install klayout python3-pandas
+        apt-get install -y klayout python3-pandas
     else
         if [[ $1 == 20.04 ]]; then
             klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
