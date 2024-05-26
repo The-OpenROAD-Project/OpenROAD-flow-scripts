@@ -10,5 +10,6 @@ ARG numThreads=$(nproc)
 
 COPY . /OpenROAD-flow-scripts
 WORKDIR /OpenROAD-flow-scripts
+COPY ./etc/requirements.txt .
 
 RUN ./build_openroad.sh --no_init --local --threads ${numThreads}
