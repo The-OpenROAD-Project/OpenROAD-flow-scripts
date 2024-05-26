@@ -7,9 +7,8 @@ FROM $fromImage
 
 WORKDIR /tmp/installer/etc
 
-COPY /tmp/installer/tools/AutoTuner/requirements.txt .
 COPY DependencyInstaller.sh .
-
+COPY requirements.txt .
 
 COPY InstallerOpenROAD.sh \
        /tmp/installer/tools/OpenROAD/etc/DependencyInstaller.sh
