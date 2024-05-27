@@ -45,6 +45,12 @@ jobs:
           sudo service docker restart
       - name: Run installer
         run: |
+          if [[ ${ matrix.os }] == "ubuntu20.04"]]; then
+            sudo rm -rf /usr/share/dotnet
+            sudo rm -rf /opt/ghc
+            sudo rm -rf "/usr/local/share/boost"
+            sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          fi
           ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }}
       - name: Build project
         run: |
