@@ -210,6 +210,7 @@ export DPO_MAX_DISPLACEMENT ?= 5 1
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
+export DESIGN_CONFIG
 export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
 export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
