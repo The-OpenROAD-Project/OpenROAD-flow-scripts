@@ -441,6 +441,17 @@ $(WRAPPED_LIBS):
 	mkdir -p $(OBJECTS_DIR)/lib
 	sed 's/library(\(.*\))/library(\1_mod)/g' $(filter %$(notdir $(@:_mod.lib=.lib)),$(WRAP_LIBS)) | sed 's/cell(\(.*\))/cell(\1_mod)/g' > $@
 
+# Print variables
+.PHONY: printvars
+printvars:
+	@echo "Printing all variables to VARS.txt"
+	@rm -rf VARS.txt
+	@$(foreach v, $(sort $(.VARIABLES)), \
+		$(if $(filter-out environment% default automatic, $(origin $v)), \
+			echo $v >> VARS.txt; \
+		) \
+	)
+
 # ==============================================================================
 #  ______   ___   _ _____ _   _ _____ ____ ___ ____
 # / ___\ \ / / \ | |_   _| | | | ____/ ___|_ _/ ___|

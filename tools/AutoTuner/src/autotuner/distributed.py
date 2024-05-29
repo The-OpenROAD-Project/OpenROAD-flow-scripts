@@ -52,7 +52,7 @@ from ray.util.queue import Queue
 # import nevergrad as ng
 from ax.service.ax_client import AxClient
 
-from helpers import parse_flow_variables
+import misc.helpers
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
@@ -60,6 +60,7 @@ FASTROUTE_TCL = 'fastroute.tcl'
 CONSTRAINTS_SDC = 'constraint.sdc'
 METRIC = 'minimum'
 ERROR_METRIC = 9e99
+ORFS_FLOW_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../flow'))
 
 
 class AutoTunerBase(tune.Trainable):
@@ -334,8 +335,10 @@ def parse_config(config, path=os.getcwd()):
     options = ''
     sdc = {}
     fast_route = {}
-    flow_variables = parse_flow_variables()
+    flow_variables = misc.helpers.parse_flow_variables("docs", False)
     for key, value in config.items():
+        print(key, value)
+        continue
         # Sanity check: ignore all flow variables that are not tunable
         if key not in flow_variables:
             print(f'[ERROR TUN-0017] Variable {key} is not tunable.')
@@ -915,11 +918,12 @@ if __name__ == '__main__':
         print('[INFO TUN-0001] NFS setup completed.')
     else:
         # For local runs, use the same folder as other ORFS utilities.
-        ORFS_FLOW_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../flow'))
         os.chdir(ORFS_FLOW_DIR)
         LOCAL_DIR = f'logs/{args.platform}/{args.design}'
         LOCAL_DIR = os.path.abspath(LOCAL_DIR)
         INSTALL_PATH = os.path.abspath('../tools/install')
+        ray.init(runtime_env={"py_modules": [misc],
+                            "working_dir": "."})
 
     if args.mode == 'tune':
 
