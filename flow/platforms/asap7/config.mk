@@ -126,17 +126,10 @@ export MACRO_PLACE_CHANNEL     ?= 12 12
 export MACRO_HALO_X            ?= 2
 export MACRO_HALO_Y            ?= 2
 
-# Cell padding in SITE widths to ease rout-ability.  Applied to both sides
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
-
 export PLACE_DENSITY ?= 0.60
 
 # Endcap and Welltie cells
 export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
-
-# TritonCTS options
-export CTS_BUF_CELL            ?= BUFx4_ASAP7_75t_R
 
 # Fill cells used in fill cell insertion
 export FILL_CELLS              = FILLERxp5_ASAP7_75t_R \
@@ -175,8 +168,6 @@ ifeq ($(ASAP7_USELVT), 1)
    export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_L
 
    export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_L
-
-   export CTS_BUF_CELL            = BUFx4_ASAP7_75t_L
 
    export FILL_CELLS              = "FILLERxp5_ASAP7_75t_L"
 
@@ -226,8 +217,6 @@ ifeq ($(ASAP7_USESLVT), 1)
    export HOLD_BUF_CELL           = BUFx2_ASAP7_75t_SL
 
    export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_SL
-
-   export CTS_BUF_CELL            = BUFx4_ASAP7_75t_SL
 
    export FILL_CELLS              = "FILLERxp5_ASAP7_75t_SL"
 

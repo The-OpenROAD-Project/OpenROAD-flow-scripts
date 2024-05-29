@@ -31,6 +31,3 @@ core*
 # git
 .git
 .gitignore
-
-# local dependencies
-dependencies/
