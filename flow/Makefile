@@ -189,8 +189,11 @@ export RESYNTH_AREA_RECOVER ?= 0
 export RESYNTH_TIMING_RECOVER ?= 0
 export ABC_AREA ?= 0
 
-# Global setting for Synthesis
-export SYNTH_ARGS ?= -flatten -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
+# User adjustable synthesis arguments
+export SYNTH_ARGS ?= -flatten
+# Not normally adjusted by user
+export SYNTH_OPERATIONS_ARGS ?= -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
+export SYNTH_FULL_ARGS ?= $(SYNTH_ARGS) $(SYNTH_OPERATIONS_ARGS)
 
 # Global setting for Floorplan
 export PLACE_PINS_ARGS
