@@ -3,24 +3,24 @@
     "_SDC_CLK_PERIOD": {
         "type": "float",
         "minmax": [
-            100,
-            600
+            300,
+            400
         ],
         "step": 0
     },
     "CORE_UTILIZATION": {
         "type": "int",
         "minmax": [
-            30,
-            100
+            0,
+            5
         ],
         "step": 1
     },
     "CORE_ASPECT_RATIO": {
         "type": "float",
         "minmax": [
-            0.5,
-            2.0
+            0.9,
+            1.1
         ],
         "step": 0
     },
@@ -35,7 +35,7 @@
     "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT": {
         "type": "int",
         "minmax": [
-            0,
+            1,
             5
         ],
         "step": 1
@@ -43,7 +43,7 @@
     "CELL_PAD_IN_SITES_DETAIL_PLACEMENT": {
         "type": "int",
         "minmax": [
-            0,
+            1,
             5
         ],
         "step": 1
@@ -51,8 +51,8 @@
     "_FR_LAYER_ADJUST": {
         "type": "float",
         "minmax": [
-            0.1,
-            0.7
+            0.0,
+            0.1
         ],
         "step": 0
     },
@@ -60,7 +60,7 @@
         "type": "float",
         "minmax": [
             0.0,
-            0.99
+            0.1
         ],
         "step": 0
     },
@@ -68,11 +68,11 @@
         "type": "int",
         "minmax": [
             1,
-            4
+            1
         ],
         "step": 1
     },
-    "CTS_CLUSTER_SIZE": {
+   "CTS_CLUSTER_SIZE": {
         "type": "int",
         "minmax": [
             10,
@@ -88,13 +88,5 @@
         ],
         "step": 1
     },
-    "_FR_FILE_PATH": "",
-    "_FR_GR_OVERFLOW": {
-        "type": "int",
-        "minmax": [
-            1,
-            1
-        ],
-        "step": 0
-    }
+    "_FR_FILE_PATH": ""
 }
