@@ -193,8 +193,11 @@ export RESYNTH_AREA_RECOVER ?= 0
 export RESYNTH_TIMING_RECOVER ?= 0
 export ABC_AREA ?= 0
 
-# Global setting for Synthesis
-export SYNTH_ARGS ?= -flatten -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
+# User adjustable synthesis arguments
+export SYNTH_ARGS ?= -flatten
+# Not normally adjusted by user
+export SYNTH_OPERATIONS_ARGS ?= -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
+export SYNTH_FULL_ARGS ?= $(SYNTH_ARGS) $(SYNTH_OPERATIONS_ARGS)
 
 # Global setting for Floorplan
 export PLACE_PINS_ARGS
@@ -214,6 +217,7 @@ export DPO_MAX_DISPLACEMENT ?= 5 1
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
+export DESIGN_CONFIG
 export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
 export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
@@ -469,7 +473,7 @@ do-synth-report:
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
 
 .PHONY: memory
-memory: $(RESULTS_DIR)/mem.json
+memory:
 	python3 $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
 
 # ==============================================================================
