@@ -445,7 +445,7 @@ $(WRAPPED_LIBS):
 .PHONY: printvars
 printvars:
 	@echo "Printing all variables to VARS.txt"
-	@rm -rf VARS.txt
+	@rm -f VARS.txt
 	@$(foreach v, $(sort $(.VARIABLES)), \
 		$(if $(filter-out environment% default automatic, $(origin $v)), \
 			echo $v >> VARS.txt; \

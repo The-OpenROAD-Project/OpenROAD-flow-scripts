@@ -29,6 +29,8 @@ import json
 import os
 import re
 import sys
+import warnings
+import glob
 from datetime import datetime
 from multiprocessing import cpu_count
 from subprocess import run
@@ -51,8 +53,6 @@ from ray.util.queue import Queue
 
 # import nevergrad as ng
 from ax.service.ax_client import AxClient
-
-import misc.helpers
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
@@ -327,6 +327,52 @@ def read_config(file_name):
         config = apply_condition(config, data)
     return config, sdc_file, fr_file
 
+def parse_flow_variables(source = 'code'):
+    """
+    Parse the flow variables from one of the following two sources
+    - Docs: ./docs/user/FlowVariables.md
+    - Code: all code in flow/Makefile, scripts/*tcl.
+
+    TODO: Tests.
+
+    Args:
+    - source: source of the flow variables. Must be either 'docs' or 'makefile'.
+
+    Output:
+    - flow_variables: set of flow variables
+    """
+    assert source in ['docs', 'code'],\
+     "Invalid source. Must be either 'docs' or 'code'."
+
+    cur_path = os.path.dirname(os.path.realpath(__file__))
+    if source == 'docs':
+        fv_path = os.path.join(cur_path, "../../../../docs/user/FlowVariables.md")
+        with open(fv_path) as f:
+            # Regex to parse all variables with "``" identifiers that are uppercase.
+            regex = r"`(.+?)`"
+            flow_variables = set(match 
+                                for line in f
+                                for match in re.findall(regex, line)
+                                if match.isupper())
+            for line in f:
+                matches = re.findall(regex, line)
+                for match in matches:
+                    if not match.isupper(): continue
+                    flow_variables.add(match)
+    else:
+        paths = glob.glob(cur_path + "/../../../../flow/scripts/*.tcl")
+        paths.append(os.path.join(cur_path, "../../../../flow/Makefile"))
+        pattern = r"[A-Z_]+"
+        flow_variables = set()
+        for fv_path in paths:
+            with open(fv_path) as f:
+                # Regular expression to match uppercase variables ending with '?=' 
+                matches = re.findall(pattern, f.read())
+                flow_variables.update(s.strip() 
+                                    for match in matches
+                                    for s in match.split('\n') 
+                                    if len(s))
+    return flow_variables
 
 def parse_config(config, path=os.getcwd()):
     '''
@@ -335,14 +381,8 @@ def parse_config(config, path=os.getcwd()):
     options = ''
     sdc = {}
     fast_route = {}
-    flow_variables = misc.helpers.parse_flow_variables("docs", False)
+    flow_variables = parse_flow_variables("code")
     for key, value in config.items():
-        print(key, value)
-        continue
-        # Sanity check: ignore all flow variables that are not tunable
-        if key not in flow_variables:
-            print(f'[ERROR TUN-0017] Variable {key} is not tunable.')
-            sys.exit(1)
         # Keys that begin with underscore need special handling.
         if key.startswith('_'):
             # Variables to be injected into fastroute.tcl
@@ -359,6 +399,10 @@ def parse_config(config, path=os.getcwd()):
                       'fully supported, ignoring _SYNTH_FLATTEN parameter.')
         # Default case is VAR=VALUE
         else:
+            # Sanity check: ignore all flow variables that are not tunable
+            if key not in flow_variables:
+                print(f'[ERROR TUN-0017] Variable {key} is not tunable.')
+                sys.exit(1)
             options += f' {key}={value}'
     if bool(sdc):
         write_sdc(sdc, path)
@@ -922,8 +966,7 @@ if __name__ == '__main__':
         LOCAL_DIR = f'logs/{args.platform}/{args.design}'
         LOCAL_DIR = os.path.abspath(LOCAL_DIR)
         INSTALL_PATH = os.path.abspath('../tools/install')
-        ray.init(runtime_env={"py_modules": [misc],
-                            "working_dir": "."})
+        # config = parse_config(config_dict)
 
     if args.mode == 'tune':
 
