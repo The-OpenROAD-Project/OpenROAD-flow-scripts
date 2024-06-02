@@ -87,6 +87,13 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
         print(f"[WARNING] File not found {abspath(rules_file)}")
         OLD_RULES = None
 
+    path_parts = abspath(rules_file).split('/')
+    platform = path_parts[-3]
+    design = path_parts[-2]
+
+    if platform is in ["intel22", "intel16", "gf12", "gf55", "tsmc65lp"]:
+        pass
+
     # dict format
     # 'metric_name': {
     #     'padding': <float>, percentage of padding to use
@@ -314,11 +321,6 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
                 rule_value = old_rule['value']
 
         rules[field] = dict(value=rule_value, compare=option['compare'])
-
-
-    path_parts = abspath(rules_file).split('/')
-    platform = path_parts[-3]
-    design = path_parts[-2]
 
     if len(change_str) > 0:
 <<<<<<< HEAD
