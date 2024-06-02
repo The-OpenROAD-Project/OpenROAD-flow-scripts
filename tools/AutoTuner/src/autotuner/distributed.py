@@ -948,8 +948,6 @@ def sweep():
 
 if __name__ == "__main__":
     args = parse_arguments()
-    print(args)
-    exit()
 
     # Read config and original files before handling where to run in case we
     # need to upload the files.
