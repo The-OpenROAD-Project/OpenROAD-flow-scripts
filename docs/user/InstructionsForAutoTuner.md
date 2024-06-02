@@ -35,6 +35,10 @@ conda activate autotuner_env
 
 # install requirements
 pip install -r ./tools/AutoTuner/requirements.txt
+
+# for developers/tests: install this package in editable mode
+cd ./tools/Autotuner
+pip install -e .
 ```
 
 ## Input JSON structure
@@ -198,6 +202,9 @@ We show three different views possible at the end, namely: `Table View`, `Scatte
 ![Parallel Coordinate View](../images/Autotuner_best_parameter_view.webp)
 <p style="text-align: center;">Parallel Coordinate View (best run is in green)</p>
 
+## Testing framework
+
+This section is WIP.
 
 ## Citation
 

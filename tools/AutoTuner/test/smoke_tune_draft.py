@@ -28,9 +28,6 @@ class ASAP7TuneSmokeTest(BaseTuneSmokeTest):
         successful = out.returncode == 0
         self.assertTrue(successful)
 
-    def test_sweep(self):
-        self.assertTrue(True)
-
 class SKY130HDTuneSmokeTest(BaseTuneSmokeTest):
     platform = "sky130hd"
     design = "gcd"
@@ -40,9 +37,6 @@ class SKY130HDTuneSmokeTest(BaseTuneSmokeTest):
         # get output code
         successful = out.returncode == 0
         self.assertTrue(successful)
-
-    def test_sweep(self):
-        self.assertTrue(True)
 
 class IHPSG13G2TuneSmokeTest(BaseTuneSmokeTest):
     platform = "ihp-sg13g2"
@@ -54,9 +48,6 @@ class IHPSG13G2TuneSmokeTest(BaseTuneSmokeTest):
         successful = out.returncode == 0
         self.assertTrue(successful)
 
-    def test_sweep(self):
-        self.assertTrue(True)
-
 class GF180TuneSmokeTest(BaseTuneSmokeTest):
     platform = "gf180"
     design = "gcd"
@@ -66,9 +57,6 @@ class GF180TuneSmokeTest(BaseTuneSmokeTest):
         # get output code
         successful = out.returncode == 0
         self.assertTrue(successful)
-
-    def test_sweep(self):
-        self.assertTrue(True)
 
 if __name__ == '__main__':
     unittest.main()
