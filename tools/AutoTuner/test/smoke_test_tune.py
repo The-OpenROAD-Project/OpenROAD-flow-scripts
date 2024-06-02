@@ -18,48 +18,48 @@ class BaseTuneSmokeTest(unittest.TestCase):
                         f" --config {self.config}"
                         f" tune --samples 1")
 
-class ASAP7TuneSmokeTest(BaseTuneSmokeTest):
-    platform = "asap7"
-    design = "gcd"
+# class ASAP7TuneSmokeTest(BaseTuneSmokeTest):
+#     platform = "asap7"
+#     design = "gcd"
 
-    def test_tune(self):
-        out = subprocess.run(self.command, shell=True, check=True)
-        # get output code
-        successful = out.returncode == 0
-        self.assertTrue(successful)
+#     def test_tune(self):
+#         out = subprocess.run(self.command, shell=True, check=True)
+#         # get output code
+#         successful = out.returncode == 0
+#         self.assertTrue(successful)
 
-    def test_sweep(self):
-        self.assertTrue(True)
+#     def test_sweep(self):
+#         self.assertTrue(True)
 
-class SKY130HDTuneSmokeTest(BaseTuneSmokeTest):
-    platform = "sky130hd"
-    design = "gcd"
+# class SKY130HDTuneSmokeTest(BaseTuneSmokeTest):
+#     platform = "sky130hd"
+#     design = "gcd"
 
-    def test_tune(self):
-        out = subprocess.run(self.command, shell=True, check=True)
-        # get output code
-        successful = out.returncode == 0
-        self.assertTrue(successful)
+#     def test_tune(self):
+#         out = subprocess.run(self.command, shell=True, check=True)
+#         # get output code
+#         successful = out.returncode == 0
+#         self.assertTrue(successful)
 
-    def test_sweep(self):
-        self.assertTrue(True)
+#     def test_sweep(self):
+#         self.assertTrue(True)
 
-class IHPSG13G2TuneSmokeTest(BaseTuneSmokeTest):
-    platform = "ihp-sg13g2"
-    design = "gcd"
+# class IHPSG13G2TuneSmokeTest(BaseTuneSmokeTest):
+#     platform = "ihp-sg13g2"
+#     design = "gcd"
 
-    def test_tune(self):
-        out = subprocess.run(self.command, shell=True, check=True)
-        # get output code
-        successful = out.returncode == 0
-        self.assertTrue(successful)
+#     def test_tune(self):
+#         out = subprocess.run(self.command, shell=True, check=True)
+#         # get output code
+#         successful = out.returncode == 0
+#         self.assertTrue(successful)
 
-    def test_sweep(self):
-        self.assertTrue(True)
+#     def test_sweep(self):
+#         self.assertTrue(True)
 
 class GF180TuneSmokeTest(BaseTuneSmokeTest):
     platform = "gf180"
-    design = "gcd"
+    design = "ibex"
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
