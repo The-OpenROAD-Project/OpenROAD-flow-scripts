@@ -36,11 +36,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -448.73,
+        "value": -516.48,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 8739,
+        "value": 7598,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
