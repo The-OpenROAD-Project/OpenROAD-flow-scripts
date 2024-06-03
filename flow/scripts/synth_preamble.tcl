@@ -1,5 +1,7 @@
 yosys -import
 
+source $::env(SCRIPTS_DIR)/util.tcl
+
 if {[info exist ::env(CACHED_NETLIST)]} {
   exec cp $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
   if {[info exist ::env(CACHED_REPORTS)]} {
@@ -108,7 +110,7 @@ close $constr
 
 proc synthesize_check {synth_args} {
   # Generic synthesis
-  synth -top $::env(DESIGN_NAME) -run :fine {*}$synth_args
+  log_cmd synth -top $::env(DESIGN_NAME) -run :fine {*}$synth_args
   json -o $::env(RESULTS_DIR)/mem.json
   # Run report and check here so as to fail early if this synthesis run is doomed
   exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
