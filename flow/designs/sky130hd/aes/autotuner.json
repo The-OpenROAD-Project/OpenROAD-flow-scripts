@@ -3,16 +3,16 @@
     "_SDC_CLK_PERIOD": {
         "type": "float",
         "minmax": [
-            1.0,
-            3.7439
+            5.0,
+            7.0
         ],
         "step": 0
     },
     "CORE_UTILIZATION": {
         "type": "int",
         "minmax": [
-            20,
-            100
+            10,
+            20
         ],
         "step": 1
     },
@@ -52,7 +52,7 @@
         "type": "float",
         "minmax": [
             0.1,
-            0.7
+            0.3
         ],
         "step": 0
     },
