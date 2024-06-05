@@ -35,10 +35,6 @@ conda activate autotuner_env
 
 # install requirements
 pip install -r ./tools/AutoTuner/requirements.txt
-
-# for developers/tests: install this package in editable mode
-cd ./tools/Autotuner
-pip install -e .
 ```
 
 ## Input JSON structure
@@ -204,7 +200,12 @@ We show three different views possible at the end, namely: `Table View`, `Scatte
 
 ## Testing framework
 
-This section is WIP.
+```
+# Smoke test
+cd tools/AutoTuner/tests
+python3 smoke_test_tune.py
+python3 smoke_test_sweep.py
+```
 
 ## Citation
 
