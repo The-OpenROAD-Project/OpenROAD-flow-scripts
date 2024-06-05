@@ -77,4 +77,28 @@ if [ $ret -eq 0 ] && grep -q 'power:' <(echo $TARGETS); then
   ret=$(( ret + $? ))
 fi
 
+# Run Autotuner CI specifically for gcd/selected platforms.
+RUN_AUTOTUNER=0
+case $DESIGN_NAME in
+  "gcd")
+    RUN_AUTOTUNER=1
+    ;;
+esac
+if [ $RUN_AUTOTUNER -eq 1 ]; then
+  case $PLATFORM in
+      "gf12" | "gf55" | "gf180" | "intel16" | "intel22" | "nangate45" | "sky130hd_fakestack" | "sky130hs")
+        RUN_AUTOTUNER=0
+        ;;
+  esac
+fi
+
+if [ $RUN_AUTOTUNER -eq 1 ]; then
+  # change directory to ../
+  cd ..
+  echo "Running Autotuner smoke tune test"
+  python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM^^}TuneSmokeTest.test_tune
+  echo "Running Autotuner smoke sweep test"
+  python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM^^}SweepSmokeTest.test_sweep
+fi
+
 exit $ret
