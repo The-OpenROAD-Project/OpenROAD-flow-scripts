@@ -86,7 +86,7 @@ case $DESIGN_NAME in
 esac
 if [ $RUN_AUTOTUNER -eq 1 ]; then
   case $PLATFORM in
-      "gf12" | "gf55" | "gf180" | "intel16" | "intel22" | "nangate45" | "sky130hd_fakestack" | "sky130hs")
+       "gf180" | "nangate45" | "sky130hd_fakestack" | "sky130hs")
         RUN_AUTOTUNER=0
         ;;
   esac
