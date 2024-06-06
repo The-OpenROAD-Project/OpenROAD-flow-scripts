@@ -95,8 +95,14 @@ fi
 if [ $RUN_AUTOTUNER -eq 1 ]; then
   # change directory to ../
   cd ..
+  echo "Install dependencies in Venv"
+  python3 -m venv .venv
+  source .venv/bin/activate
+  pip install -r tools/AutoTuner/requirements.txt
+
   echo "Running Autotuner smoke tune test"
   python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM^^}TuneSmokeTest.test_tune
+  
   echo "Running Autotuner smoke sweep test"
   python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM^^}SweepSmokeTest.test_sweep
 fi
