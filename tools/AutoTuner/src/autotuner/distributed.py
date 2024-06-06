@@ -971,7 +971,6 @@ if __name__ == '__main__':
         LOCAL_DIR = f'logs/{args.platform}/{args.design}'
         LOCAL_DIR = os.path.abspath(LOCAL_DIR)
         INSTALL_PATH = os.path.abspath('../tools/install')
-        # config = parse_config(config_dict)
 
     if args.mode == 'tune':
 
