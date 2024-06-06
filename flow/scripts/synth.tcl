@@ -92,4 +92,4 @@ tee -o $::env(REPORTS_DIR)/synth_check.txt check
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
 
 # Write synthesized design
-write_verilog -noattr -noexpr -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
+write_verilog -noexpr -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
