@@ -100,6 +100,9 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   source .venv/bin/activate
   pip install -r tools/AutoTuner/requirements.txt
 
+  PLATFORM=${PLATFORM//-/}
+  PLATFORM=${PLATFORM^^}  
+
   echo "Running Autotuner smoke tune test"
   python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM^^}TuneSmokeTest.test_tune
   
