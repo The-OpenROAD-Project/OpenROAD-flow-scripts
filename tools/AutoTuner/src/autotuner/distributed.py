@@ -31,6 +31,7 @@ import re
 import sys
 import warnings
 import glob
+import subprocess
 from datetime import datetime
 from multiprocessing import cpu_count
 from subprocess import run
@@ -335,7 +336,7 @@ def parse_flow_variables(source = 'code'):
     """
     Parse the flow variables from one of the following two sources
     - Docs: ./docs/user/FlowVariables.md
-    - Code: all code in flow/Makefile, scripts/*tcl.
+    - Code: Makefile `vars` target output
 
     TODO: Tests.
 
@@ -348,15 +349,16 @@ def parse_flow_variables(source = 'code'):
     assert source in ['docs', 'code'],\
      "Invalid source. Must be either 'docs' or 'code'."
 
+    DOCS_UPPERCASE_REGEX = r"`(.+?)`"
+
     cur_path = os.path.dirname(os.path.realpath(__file__))
     if source == 'docs':
         fv_path = os.path.join(cur_path, "../../../../docs/user/FlowVariables.md")
         with open(fv_path) as f:
             # Regex to parse all variables with "``" identifiers that are uppercase.
-            regex = r"`(.+?)`"
             flow_variables = set(match 
                                 for line in f
-                                for match in re.findall(regex, line)
+                                for match in re.findall(DOCS_UPPERCASE_REGEX, line)
                                 if match.isupper())
             for line in f:
                 matches = re.findall(regex, line)
@@ -364,18 +366,31 @@ def parse_flow_variables(source = 'code'):
                     if not match.isupper(): continue
                     flow_variables.add(match)
     else:
-        paths = glob.glob(cur_path + "/../../../../flow/scripts/*.tcl")
-        paths.append(os.path.join(cur_path, "../../../../flow/Makefile"))
-        pattern = r"[A-Z_]+"
+        # first, generate vars.tcl
+        makefile_path = os.path.join(cur_path, "../../../../flow/")
+        initial_path = os.path.abspath(os.getcwd())
+        os.chdir(makefile_path)
+        result = subprocess.run(["make", "vars"])
+        if result.returncode != 0:
+            print(f"[ERROR TUN-0018] Makefile failed with error code {result.returncode}.")
+            sys.exit(1)
+        if not os.path.exists("vars.tcl"):
+            print(f"[ERROR TUN-0019] Makefile did not generate vars.tcl.")
+            sys.exit(1)
+        os.chdir(initial_path)
+
+        # for code parsing, you need to parse from both scripts and vars.tcl file.
+        paths = glob.glob(os.path.join(cur_path, "../../../../flow/scripts/*tcl"))
+        paths.append(os.path.join(cur_path, "../../../../flow/vars.tcl"))
+        pattern = r"(?:::)?env\((.*?)\)"
         flow_variables = set()
         for fv_path in paths:
             with open(fv_path) as f:
-                # Regular expression to match uppercase variables ending with '?=' 
                 matches = re.findall(pattern, f.read())
-                flow_variables.update(s.strip() 
+                flow_variables.update(s.strip().upper()
                                     for match in matches
                                     for s in match.split('\n') 
-                                    if len(s))
+                                    if len(s))        
     return flow_variables
 
 def parse_config(config, path=os.getcwd()):
