@@ -45,7 +45,7 @@ from ray.tune.search import ConcurrencyLimiter
 from ray.tune.search.ax import AxSearch
 from ray.tune.search.basic_variant import BasicVariantGenerator
 from ray.tune.search.hyperopt import HyperOptSearch
-# from ray.tune.search.nevergrad import NevergradSearch
+# from ray.tune.search.nevergrad.nevergrad_search import NevergradSearch
 from ray.tune.search.optuna import OptunaSearch
 from ray.util.queue import Queue
 
@@ -185,6 +185,9 @@ class PPAImprov(AutoTunerBase):
     def evaluate(self, metrics):
         error = 'ERR' in metrics.values() or 'ERR' in reference.values()
         not_found = 'N/A' in metrics.values() or 'N/A' in reference.values()
+        print("Metrics", metrics.values())
+        print("Reference", reference.values())
+        print(error, not_found)
         if error or not_found:
             return ERROR_METRIC
         ppa = self.get_ppa(metrics)
