@@ -240,8 +240,8 @@ configuration file.
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
 | `ADDITIONAL_FILES`       | Additional files to be added to `make issue` archive |
-| `ADDITIONAL_LEFS`        | Hardened macro LEF view files listed here.                                                         |
-| `ADDITIONAL_LIBS`        | Hardened macro library files listed here.                                                          |
+| `ADDITIONAL_LEFS`        | Hardened macro LEF view files listed here. The LEF information of the macros is immutable and used throughout all stages. Loaded into the .odb file. |
+| `ADDITIONAL_LIBS`        | Hardened macro library files listed here. The library information is immutable and used throughout all stages. Not loaded into the .odb file. |
 | `ADDITIONAL_GDS`         | Hardened macro GDS files listed here.                                                              |
 | `VERILOG_INCLUDE_DIRS`   | Specifies the include directories for the Verilog input files.                                     |
 | `CORNER`                 | PVT corner library selection. Only available for ASAP7 and GF180 PDK.                                                                 |
