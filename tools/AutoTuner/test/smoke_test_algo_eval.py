@@ -15,10 +15,8 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
         self.experiment = f"smoke-test-algo-eval-{self.platform}"
         self.reference = os.path.join(cur_dir, f"../../../flow/designs/{self.platform}/{self.design}/metadata-base-at.json")
         # note for ppa-improv, you need to also add in reference file (--reference)
-        # _algo = ["hyperopt", "ax", "optuna", "pbt", "random"]
-        _algo = ["random"]
-        # _eval = ["default", "ppa-improv"]
-        _eval = ["ppa-improv"]
+        _algo = ["hyperopt", "ax", "optuna", "pbt", "random"]
+        _eval = ["default", "ppa-improv"]
         self.matrix = [(a, e) for a in _algo for e in _eval]
         self.commands = [
                         f"python3 distributed.py"
@@ -36,6 +34,7 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
         os.chdir(orfs_dir)
         makefile_command_1 = (
             f"make DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk"
+            f" EQUIVALENCE_CHECK=0"
         )
         makefile_command_2 = (
             f"{makefile_command_1} update_metadata_autotuner"
@@ -59,27 +58,31 @@ class ASAP7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
             successful = out.returncode == 0
             self.assertTrue(successful)
 
-# class IHPSG13G2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
-#     platform = "ihp-sg13g2"
-#     design = "gcd"
+class IHPSG13G2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+    platform = "ihp-sg13g2"
+    design = "gcd"
 
-#     def test_algo_eval(self):
-#         for command in self.commands:
-#             print(command)
-#             out = subprocess.run(command, shell=True, check=True)
-#             successful = out.returncode == 0
-#             self.assertTrue(successful)
+    def test_algo_eval(self):
+        # Run `make` to get baseline metrics (metadata-base-ok.json)
+        self.make_base()
+        for command in self.commands:
+            print(command)
+            out = subprocess.run(command, shell=True, check=True)
+            successful = out.returncode == 0
+            self.assertTrue(successful)
 
-# class SKY130HDAlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
-#     platform = "sky130hd"
-#     design = "gcd"
+class SKY130HDAlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+    platform = "sky130hd"
+    design = "gcd"
 
-#     def test_algo_eval(self):
-#         for command in self.commands:
-#             print(command)
-#             out = subprocess.run(command, shell=True, check=True)
-#             successful = out.returncode == 0
-#             self.assertTrue(successful)
+    def test_algo_eval(self):
+        # Run `make` to get baseline metrics (metadata-base-ok.json)
+        self.make_base()
+        for command in self.commands:
+            print(command)
+            out = subprocess.run(command, shell=True, check=True)
+            successful = out.returncode == 0
+            self.assertTrue(successful)
 
 # Disable GF180 tests for now.
 # class GF180AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
@@ -87,11 +90,13 @@ class ASAP7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
 #     design = "gcd"
 # 
 #     def test_algo_eval(self):
-#         for command in self.commands:
-#             print(command)
-#             out = subprocess.run(command, shell=True, check=True)
-#             successful = out.returncode == 0
-#             self.assertTrue(successful)
+#          # Run `make` to get baseline metrics (metadata-base-ok.json)
+#          self.make_base()
+#          for command in self.commands:
+#              print(command)
+#              out = subprocess.run(command, shell=True, check=True)
+#              successful = out.returncode == 0
+#              self.assertTrue(successful)
 
 if __name__ == '__main__':
     unittest.main()
