@@ -249,13 +249,11 @@ def read_config(file_name):
         if min_ == max_:
             # Returning a choice of a single element allow pbt algorithm to
             # work. pbt does not accept single values as tunable.
-            return tune.choice([min_])
+            return tune.choice([min_, max_])
         if this["type"] == "int":
             if min_ == 0 and args.algorithm == "nevergrad":
-                print(
-                    "[WARNING TUN-0011] NevergradSearch may not work "
-                    "with lower bound value 0."
-                )
+                print("[WARNING TUN-0011] NevergradSearch may not work "
+                      "with lower bound value 0.")
             if this["step"] == 1:
                 return tune.randint(min_, max_)
             return tune.choice(np.ndarray.tolist(np.arange(min_, max_, this["step"])))
@@ -304,7 +302,7 @@ def read_config(file_name):
         """
         if 'minmax' not in this: return None
         min_, max_ = this['minmax']
-        if min_ == max_: return [min_]
+        if min_ == max_: return ray.tune.choice([min_, max_])
         if this['type'] == 'int':
             return ray.tune.randint(min_, max_)
         if this['type'] == 'float':
@@ -324,7 +322,6 @@ def read_config(file_name):
     else:
         config = dict()
     for key, value in data.items():
-        print(key, value)
         if key == "best_result":
             continue
         if key == "_SDC_FILE_PATH" and value != "":
@@ -355,9 +352,6 @@ def read_config(file_name):
             config[key] = read_tune_pbt(key, value)
         elif args.mode == "tune":
             config[key] = read_tune(value)
-        
-    print("Dictionary", config)
-
     if args.mode == "tune":
         config = apply_condition(config, data)
     return config, sdc_file, fr_file
@@ -865,7 +859,6 @@ def set_algorithm(experiment_name, config):
     """
     Configure search algorithm.
     """
-    print("Hyperparma mutation", config)
     if args.algorithm == 'hyperopt':
         algorithm = HyperOptSearch(points_to_evaluate=best_params)
     elif args.algorithm == "ax":
