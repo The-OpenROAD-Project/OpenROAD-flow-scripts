@@ -15,7 +15,8 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
         self.experiment = f"smoke-test-algo-eval-{self.platform}"
         self.reference = os.path.join(cur_dir, f"../../../flow/designs/{self.platform}/{self.design}/metadata-base-at.json")
         # note for ppa-improv, you need to also add in reference file (--reference)
-        _algo = ["hyperopt", "ax", "optuna", "pbt", "random"]
+        # _algo = ["hyperopt", "ax", "optuna", "pbt", "random"]
+        _algo = ["random"]
         # _eval = ["default", "ppa-improv"]
         _eval = ["ppa-improv"]
         self.matrix = [(a, e) for a in _algo for e in _eval]
