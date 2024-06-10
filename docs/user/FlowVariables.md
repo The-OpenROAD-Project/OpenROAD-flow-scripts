@@ -253,6 +253,7 @@ configuration file.
 | `CDL_FILES`              | Insert additional Circuit Description Language (`.cdl`) netlist files.                             | 
 | `DFF_LIB_FILES`          | Technology mapping liberty files for flip-flops.                                                   |
 | `DONT_USE_LIBS`          | Set liberty files as `dont_use`.                                                                   |
+| `MACROS`                 | Marked as black box during synthesis, defaults to `BLOCKS` |
 | `PRESERVE_CELLS`         | Mark modules to keep from getting removed in flattening.                                           |
 | `SYNTH_ARGS`             | Optional synthesis variables for yosys.                                                            |
 | `VERILOG_TOP_PARAMS`     | Apply toplevel params (if exist).                                                                  |

@@ -57,9 +57,9 @@ if {[info exist ::env(PRESERVE_CELLS)]} {
 
 
 
-if {[info exist ::env(BLOCKS)]} {
+if {[info exist ::env(MACROS)]} {
   hierarchy -check -top $::env(DESIGN_NAME)
-  foreach block $::env(BLOCKS) {
+  foreach block $::env(MACROS) {
     blackbox $block
     puts "blackboxing $block"
   }
