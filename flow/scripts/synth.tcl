@@ -12,7 +12,7 @@ if { [info exist ::env(SYNTH_GUT)] && $::env(SYNTH_GUT) == 1 } {
   delete $::env(DESIGN_NAME)/c:*
 }
 
-synthesize_check $::env(SYNTH_ARGS)
+synthesize_check $::env(SYNTH_FULL_ARGS)
 
 if { [info exists ::env(USE_LSORACLE)] } {
     set lso_script [open $::env(OBJECTS_DIR)/lso.script w]
@@ -92,4 +92,4 @@ tee -o $::env(REPORTS_DIR)/synth_check.txt check
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
 
 # Write synthesized design
-write_verilog -noattr -noexpr -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
+write_verilog -noexpr -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v

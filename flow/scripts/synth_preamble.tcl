@@ -1,5 +1,7 @@
 yosys -import
 
+source $::env(SCRIPTS_DIR)/util.tcl
+
 if {[info exist ::env(CACHED_NETLIST)]} {
   exec cp $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
   if {[info exist ::env(CACHED_REPORTS)]} {
@@ -53,16 +55,6 @@ if {[info exist ::env(PRESERVE_CELLS)]} {
   }
 }
 
-
-
-if {[info exist ::env(BLOCKS)]} {
-  hierarchy -check -top $::env(DESIGN_NAME)
-  foreach block $::env(BLOCKS) {
-    blackbox $block
-    puts "blackboxing $block"
-  }
-}
-
 if {$::env(ABC_AREA)} {
   puts "Using ABC area script."
   set abc_script $::env(SCRIPTS_DIR)/abc_area.script
@@ -77,7 +69,8 @@ set abc_args [list -script $abc_script \
       -liberty $::env(DONT_USE_SC_LIB) \
       -constr $::env(OBJECTS_DIR)/abc.constr]
 
-# Exclude dont_use cells
+# Exclude dont_use cells. This includes macros that are specified via
+# LIB_FILES and ADDITIONAL_LIBS that are included in LIB_FILES.
 if {[info exist ::env(DONT_USE_CELLS)] && $::env(DONT_USE_CELLS) != ""} {
   foreach cell $::env(DONT_USE_CELLS) {
     lappend abc_args -dont_use $cell
@@ -108,7 +101,7 @@ close $constr
 
 proc synthesize_check {synth_args} {
   # Generic synthesis
-  synth -top $::env(DESIGN_NAME) -run :fine {*}$synth_args
+  log_cmd synth -top $::env(DESIGN_NAME) -run :fine {*}$synth_args
   json -o $::env(RESULTS_DIR)/mem.json
   # Run report and check here so as to fail early if this synthesis run is doomed
   exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json

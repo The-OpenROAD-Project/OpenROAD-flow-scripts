@@ -273,6 +273,12 @@ __local_build()
             set -u
         fi
 
+        YOSYS_ABC_PATH=tools/yosys/abc
+        if [[ -d "${YOSYS_ABC_PATH}/.git" ]]; then
+            # update indexes to make sure git diff-index uses correct data
+            git --work-tree=${YOSYS_ABC_PATH} --git-dir=${YOSYS_ABC_PATH}/.git update-index --refresh
+        fi
+
         echo "[INFO FLW-0017] Compiling Yosys."
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 

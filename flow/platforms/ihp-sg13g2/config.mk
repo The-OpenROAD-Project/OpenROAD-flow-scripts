@@ -73,15 +73,8 @@ export MACRO_PLACE_CHANNEL ?= 80 80
 #---------------------------------------------------------
 # Place
 # --------------------------------------------------------
-# default cell padding for cells 
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
 export PLACE_DENSITY ?= 0.65
-# --------------------------------------------------------
-#  CTS
-#  -------------------------------------------------------
-# TritonCTS options
-export CTS_BUF_CELL   ?= sg13g2_buf_2
+
 # ---------------------------------------------------------
 #  Route
 # ---------------------------------------------------------

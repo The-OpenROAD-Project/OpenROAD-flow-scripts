@@ -72,7 +72,8 @@ if {[find_macros] != ""} {
         append additional_rtlmp_args " -min_num_macro $env(RTLMP_MIN_MACRO)"
     }
     
-    append additional_rtlmp_args " -halo_width $halo_max"
+    append additional_rtlmp_args " -halo_width $halo_x"
+    append additional_rtlmp_args " -halo_height $halo_y"
 
     if { [info exists ::env(RTLMP_MIN_AR)]} {
         append additional_rtlmp_args " -min_ar $env(RTLMP_MIN_AR)"
