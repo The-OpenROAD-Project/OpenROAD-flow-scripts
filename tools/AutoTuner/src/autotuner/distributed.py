@@ -47,11 +47,9 @@ from ray.tune.search import ConcurrencyLimiter
 from ray.tune.search.ax import AxSearch
 from ray.tune.search.basic_variant import BasicVariantGenerator
 from ray.tune.search.hyperopt import HyperOptSearch
-# from ray.tune.search.nevergrad.nevergrad_search import NevergradSearch
 from ray.tune.search.optuna import OptunaSearch
 from ray.util.queue import Queue
 
-# import nevergrad as ng
 from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -244,9 +242,6 @@ def read_config(file_name):
             # work. pbt does not accept single values as tunable.
             return tune.choice([min_, max_])
         if this['type'] == 'int':
-            if min_ == 0 and args.algorithm == 'nevergrad':
-                print('[WARNING TUN-0011] NevergradSearch may not work '
-                      'with lower bound value 0.')
             if this['step'] == 1:
                 return tune.randint(min_, max_)
             return tune.choice(
@@ -694,7 +689,6 @@ def parse_arguments():
         type=str,
         choices=['hyperopt',
                  'ax',
-                 'nevergrad',
                  'optuna',
                  'pbt',
                  'random'],
@@ -809,11 +803,6 @@ def set_algorithm(experiment_name, config):
         )
         algorithm = AxSearch(ax_client=ax_client,
                              points_to_evaluate=best_params)
-    elif args.algorithm == 'nevergrad':
-        algorithm = NevergradSearch(
-            points_to_evaluate=best_params,
-            optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"]
-        )
     elif args.algorithm == 'optuna':
         algorithm = OptunaSearch(points_to_evaluate=best_params,
                                  seed=args.seed)
