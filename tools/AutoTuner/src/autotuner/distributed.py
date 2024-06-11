@@ -49,12 +49,9 @@ from ray.tune.search import ConcurrencyLimiter
 from ray.tune.search.ax import AxSearch
 from ray.tune.search.basic_variant import BasicVariantGenerator
 from ray.tune.search.hyperopt import HyperOptSearch
-
-# from ray.tune.search.nevergrad import NevergradSearch
 from ray.tune.search.optuna import OptunaSearch
 from ray.util.queue import Queue
 
-# import nevergrad as ng
 from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -251,9 +248,6 @@ def read_config(file_name):
             # work. pbt does not accept single values as tunable.
             return tune.choice([min_, max_])
         if this["type"] == "int":
-            if min_ == 0 and args.algorithm == "nevergrad":
-                print("[WARNING TUN-0011] NevergradSearch may not work "
-                      "with lower bound value 0.")
             if this["step"] == 1:
                 return tune.randint(min_, max_)
             return tune.choice(np.ndarray.tolist(np.arange(min_, max_, this["step"])))
@@ -747,10 +741,13 @@ def parse_arguments():
     tune_parser.add_argument(
         "--algorithm",
         type=str,
-        choices=["hyperopt", "ax", "nevergrad", "optuna", "pbt", "random"],
+        choices=["hyperopt",
+                 "ax",
+                 "optuna",
+                 "pbt",
+                 "random"],
         default="hyperopt",
-        help="Search algorithm to use for Autotuning.",
-    )
+        help="Search algorithm to use for Autotuning.")
     tune_parser.add_argument(
         "--eval",
         type=str,
@@ -869,14 +866,11 @@ def set_algorithm(experiment_name, config):
             parameters=config,
             objectives={METRIC: AxClientMetric(minimize=True)},
         )
-        algorithm = AxSearch(ax_client=ax_client, points_to_evaluate=best_params)
-    elif args.algorithm == "nevergrad":
-        algorithm = NevergradSearch(
-            points_to_evaluate=best_params,
-            optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"],
-        )
+        algorithm = AxSearch(ax_client=ax_client,
+                             points_to_evaluate=best_params)
     elif args.algorithm == "optuna":
-        algorithm = OptunaSearch(points_to_evaluate=best_params, seed=args.seed)
+        algorithm = OptunaSearch(points_to_evaluate=best_params,
+                                 seed=args.seed)
     elif args.algorithm == "pbt":
         algorithm = PopulationBasedTraining(
             time_attr="training_iteration",
