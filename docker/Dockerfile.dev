@@ -12,7 +12,9 @@ COPY DependencyInstaller.sh .
 COPY InstallerOpenROAD.sh \
        /tmp/installer/tools/OpenROAD/etc/DependencyInstaller.sh
 
-RUN ./DependencyInstaller.sh \
+ARG options=""
+
+RUN ./DependencyInstaller.sh $options \
       && rm -rf /tmp/installer
 
 ARG fromImage

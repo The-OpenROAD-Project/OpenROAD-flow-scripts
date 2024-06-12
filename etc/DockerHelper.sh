@@ -26,7 +26,10 @@ usage: $0 [CMD] [OPTIONS]
   -threads                      Max number of threads to use if compiling.
   -sha                          Use git commit sha as the tag image. Default is
                                   'latest'.
+  -ci                           Install CI tools in image
   -h -help                      Show this message and exits
+  -username                     Docker Username
+  -password                     Docker Password
 
 EOF
     exit "${1:-1}"
@@ -34,6 +37,7 @@ EOF
 
 _setup() {
     commitSha="$(git rev-parse HEAD)"
+    commitSha="$(echo "$commitSha" | tr -cd 'a-zA-Z0-9-')"
     case "${os}" in
         "centos7")
             osBaseImage="centos:centos7"
@@ -65,7 +69,7 @@ _setup() {
             fromImage="${FROM_IMAGE_OVERRIDE:-$osBaseImage}"
             cp tools/OpenROAD/etc/DependencyInstaller.sh etc/InstallerOpenROAD.sh
             context="etc"
-            buildArgs=""
+            buildArgs="--build-arg options=${options}"
             ;;
         *)
             echo "Target ${target} not found" >&2
@@ -79,34 +83,24 @@ _setup() {
 
 _create() {
     echo "Create docker image ${imagePath} using ${file}"
-    docker build --file "${file}" --tag "${imagePath}" ${buildArgs} "${context}"
+    echo $buildArgs
+    docker build --file "${file}" --tag "${imagePath}" ${buildArgs} "${context}" --progress plain
     rm -f etc/InstallerOpenROAD.sh
 }
 
 _push() {
     case "${target}" in
         "dev" )
-            read -p "Will push docker image ${imagePath} to DockerHub [y/N]" -n 1 -r
-            echo
-            if [[ $REPLY =~ ^[Yy]$  ]]; then
-                mkdir -p build
-
-                OS_LIST="centos7 ubuntu20.04 ubuntu22.04"
-                # create image with sha and latest tag for all os
-                for os in ${OS_LIST}; do
-                    ./etc/DockerHelper.sh create -target=dev \
-                        2>&1 | tee build/create-${os}-latest.log
-                    ./etc/DockerHelper.sh create -target=dev -sha \
-                        2>&1 | tee build/create-${os}-${commitSha}.log
-                done
-
-                for os in ${OS_LIST}; do
-                    echo [DRY-RUN] docker push openroad/flow-${os}-dev:latest
-                    echo [DRY-RUN] docker push openroad/flow-${os}-dev:${commitSha}
-                done
-
+            mkdir -p build
+            docker login --username ${username} --password ${password}
+            if [[ "${useCommitSha}" == "yes" ]]; then
+                ./etc/DockerHelper.sh create -os=${os} -ci -target=dev -sha \
+                    2>&1 | tee build/create-${os}-${commitSha}.log
+                docker push openroad/flow-${os}-dev:${commitSha}
             else
-                echo "Will not push."
+                ./etc/DockerHelper.sh create -os=${os} -ci -target=dev \
+                    2>&1 | tee build/create-${os}-${tag}.log
+                docker push openroad/flow-${os}-dev:${tag}
             fi
             ;;
         *)
@@ -144,6 +138,8 @@ os="centos7"
 target="dev"
 useCommitSha="no"
 numThreads="-1"
+tag="latest"
+options=""
 
 while [ "$#" -gt 0 ]; do
     case "${1}" in
@@ -162,9 +158,21 @@ while [ "$#" -gt 0 ]; do
         -sha )
             useCommitSha=yes
             ;;
+        -ci )
+            options="-ci"
+            ;;
         -os | -target )
             echo "${1} requires an argument" >&2
             _help
+            ;;
+        -username=* )
+            username="${1#*=}"
+            ;;
+        -password=* )
+            password="${1#*=}"
+            ;;
+        -tag=* )
+            tag="${1#*=}"
             ;;
         *)
             echo "unknown option: ${1}" >&2
