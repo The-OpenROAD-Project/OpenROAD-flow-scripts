@@ -14,3 +14,9 @@ COPY InstallerOpenROAD.sh \
 
 RUN ./DependencyInstaller.sh \
       && rm -rf /tmp/installer
+
+ARG fromImage
+
+RUN echo "$fromImage" | grep -q "ubuntu" && \
+    strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so || \
+    echo "Skipping strip command as fromImage does not contain 'ubuntu'"

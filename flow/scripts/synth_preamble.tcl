@@ -55,16 +55,6 @@ if {[info exist ::env(PRESERVE_CELLS)]} {
   }
 }
 
-
-
-if {[info exist ::env(BLOCKS)]} {
-  hierarchy -check -top $::env(DESIGN_NAME)
-  foreach block $::env(BLOCKS) {
-    blackbox $block
-    puts "blackboxing $block"
-  }
-}
-
 if {$::env(ABC_AREA)} {
   puts "Using ABC area script."
   set abc_script $::env(SCRIPTS_DIR)/abc_area.script
@@ -79,7 +69,8 @@ set abc_args [list -script $abc_script \
       -liberty $::env(DONT_USE_SC_LIB) \
       -constr $::env(OBJECTS_DIR)/abc.constr]
 
-# Exclude dont_use cells
+# Exclude dont_use cells. This includes macros that are specified via
+# LIB_FILES and ADDITIONAL_LIBS that are included in LIB_FILES.
 if {[info exist ::env(DONT_USE_CELLS)] && $::env(DONT_USE_CELLS) != ""} {
   foreach cell $::env(DONT_USE_CELLS) {
     lappend abc_args -dont_use $cell
