@@ -56,16 +56,6 @@ class IHPSG13G2SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
             successful = out.returncode == 0
             self.assertTrue(successful)
 
-# Disable GF180 tests for now.
-# class ASAP7SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
-#     platform = "gf180"
-#     design = "gcd"
-# 
-#     def test_sample_iteration(self):
-#         for command in self.commands:
-#             out = subprocess.run(command, shell=True, check=True)
-#             successful = out.returncode == 0
-#             self.assertTrue(successful)
-
 if __name__ == '__main__':
     unittest.main()
+    

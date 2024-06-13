@@ -89,12 +89,6 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   PLATFORM=${PLATFORM//-/}
   PLATFORM=${PLATFORM^^}  
 
-  #echo "Running Autotuner smoke tune test"
-  #python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM^^}TuneSmokeTest.test_tune
-  
-  #echo "Running Autotuner smoke sweep test"
-  #python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM^^}SweepSmokeTest.test_sweep
-
   echo "Running Autotuner smoke sample & iteration test"
   python3 -m unittest tools.AutoTuner.test.smoke_test_sample_iteration.${PLATFORM^^}SampleIterationSmokeTest.test_sample_iteration
 fi
