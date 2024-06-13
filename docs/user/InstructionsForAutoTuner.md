@@ -30,7 +30,7 @@ which is a free minimal installer for the package manager `conda`.
 
 ```shell
 # set up conda environment
-conda create -n autotuner_env python=3.9
+conda create -n autotuner_env python=3.8 -y
 conda activate autotuner_env
 
 # install requirements
@@ -201,6 +201,9 @@ We show three different views possible at the end, namely: `Table View`, `Scatte
 ## Testing framework
 
 ```
+# Activate your virtualenv before this
+conda activate autotuner_env
+
 # Smoke test
 cd tools/AutoTuner/tests
 python3 smoke_test_tune.py
