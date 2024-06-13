@@ -262,7 +262,7 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
     d["log_warnings"] = list()
     for name_ in sorted(files):
         # ignore autotuner artifacts (json/pkl)
-        if not name.endswith('.log'): continue 
+        if not name_.endswith('.log'): continue 
         temp_e, temp_w = parse_messages(os.path.join(log_dir, name_))
         d["log_errors"] += temp_e
         d["log_warnings"] += temp_w
