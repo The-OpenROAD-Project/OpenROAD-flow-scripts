@@ -60,15 +60,5 @@ class IHPSG13G2SweepSmokeTest(BaseSweepSmokeTest):
         successful = out.returncode == 0
         self.assertTrue(successful)
 
-# Disable GF180 tests for now.
-# class GF180SweepSmokeTest(BaseSweepSmokeTest):
-#     platform = "gf180"
-#     design = "ibex"
-
-#     def test_sweep(self):
-#         out = subprocess.run(self.command, shell=True, check=True)
-#         successful = out.returncode == 0
-#         self.assertTrue(successful)
-
 if __name__ == '__main__':
     unittest.main()

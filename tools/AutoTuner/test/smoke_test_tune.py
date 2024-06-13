@@ -46,15 +46,5 @@ class IHPSG13G2TuneSmokeTest(BaseTuneSmokeTest):
         successful = out.returncode == 0
         self.assertTrue(successful)
 
-# Disable GF180 tests for now.
-# class GF180TuneSmokeTest(BaseTuneSmokeTest):
-#     platform = "gf180"
-#     design = "ibex"
-
-#     def test_tune(self):
-#         out = subprocess.run(self.command, shell=True, check=True)
-#         successful = out.returncode == 0
-#         self.assertTrue(successful)
-
 if __name__ == '__main__':
     unittest.main()
