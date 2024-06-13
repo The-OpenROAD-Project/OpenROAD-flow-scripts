@@ -16,8 +16,8 @@
  <description>IHP SiGe 130nm technology</description>
  <group/>
  <dbu>0.001</dbu>
- <base-path>./platforms/ihp-sg13g2</base-path>
- <!--<original-base-path>.klayout/tech/IHP130</original-base-path>-->
+ <base-path></base-path>
+ <original-base-path></original-base-path>
  <layer-properties_file>sg13g2.lyp</layer-properties_file>
  <add-other-layers>true</add-other-layers>
  <reader-options>
@@ -34,9 +34,8 @@
   </common>
   <lefdef>
    <read-all-layers>true</read-all-layers>
-   <!--  <layer-map>layer_map('prBoundary.boundary : 189/4'; 'Metal1.drw : 8/0'; 'Metal1.lbl : 8/1'; 'Metal1.pin : 8/2'; 'Metal1.txt : 8/25'; 'Metal2.drw : 10/0'; 'Metal2.lbl : 10/1'; 'Metal2.pin : 10/2'; 'Metal2.txt : 10/25';  'Metal3.drw : 30/0'; 'Metal3.lbl : 30/1'; 'Metal3.pin : 30/2'; 'Metal3.txt : 30/25'; 'Metal4.drw : 50/0'; 'Metal4.lbl : 50/1'; 'Metal4.pin : 50/2'; 'Metal4.txt : 50/25'; 'Metal5.drw : 67/0'; 'Metal4.lbl : 67/1'; 'Metal4.pin : 67/2'; 'Metal4.txt : 67/25'; 'TopMetal1.drw : 126/0'; 'TopMetal1.lbl : 126/1'; 'TopMetal1.pin : 126/2'; 'TopMetal1.txt : 126/25';  'TopMetal2.drw : 134/0'; 'TopMetal2.lbl : 134/1'; 'TopMetal2.pin : 134/2'; 'TopMetal2.txt : 134/25' )</layer-map> -->
+   <layer-map>layer_map()</layer-map>
    <dbu>0.001</dbu>
-   
    <produce-net-names>true</produce-net-names>
    <net-property-name>#1</net-property-name>
    <produce-inst-names>true</produce-inst-names>
@@ -44,7 +43,7 @@
    <produce-pin-names>false</produce-pin-names>
    <pin-property-name>#1</pin-property-name>
    <produce-cell-outlines>true</produce-cell-outlines>
-   <cell-outline-layer>prBoundary.boundary</cell-outline-layer>
+   <cell-outline-layer>OUTLINE</cell-outline-layer>
    <produce-placement-blockages>true</produce-placement-blockages>
    <placement-blockage-layer>PLACEMENT_BLK</placement-blockage-layer>
    <produce-regions>true</produce-regions>
@@ -77,13 +76,13 @@
    <routing-suffix-string/>
    <routing-datatype-string>0</routing-datatype-string>
    <produce-special-routing>true</produce-special-routing>
-   <special-routing-suffix-string>.drawing</special-routing-suffix-string>
+   <special-routing-suffix-string/>
    <special-routing-datatype-string>0</special-routing-datatype-string>
    <via-cellname-prefix>VIA_</via-cellname-prefix>
    <read-lef-with-def>true</read-lef-with-def>
    <macro-resolution-mode>default</macro-resolution-mode>
    <separate-groups>false</separate-groups>
-   <map-file>../../../../platforms/ihp-sg13g2/sg13g2.map</map-file>
+   <map-file/>
    <lef-files>merged.lef</lef-files> 
   </lefdef>
   <mebes>
@@ -168,18 +167,31 @@
   </mag>
  </writer-options>
  <connectivity>
+  <connection>GatPoly,Cont,Metal1</connection>
+  <connection>Diff,Cont,Metal1</connection>
   <connection>Metal1,Via1,Metal2</connection>
   <connection>Metal2,Via2,Metal3</connection>
   <connection>Metal3,Via3,Metal4</connection>
-  <connection>Metal4,Via5,Metal5</connection>
+  <connection>Metal4,Via4,Metal5</connection>
   <connection>Metal5,TopVia1,TopMetal1</connection>
   <connection>TopMetal1,TopVia2,TopMetal2</connection>
-  <symbols>Metal1='8/25+8/2'</symbols>
-  <symbols>Metal2='10/25+10/2'</symbols>
-  <symbols>Metal3='30/25+30/2'</symbols>
-  <symbols>Metal4='50/25+50/2'</symbols>
-  <symbols>Metal5='67/25+67/2'</symbols>
-  <symbols>TopMetal1='125/25+125/2'</symbols>
-  <symbols>TopMetal2='134/25+134/2'</symbols>
+  <symbols>SalBlock='28/0'</symbols>
+  <symbols>Activ='1/0-Salblock'</symbols>
+  <symbols>GatPoly='5/0-SalBlock'</symbols>
+  <symbols>Diff='Activ-GatPoly'</symbols>
+  <symbols>Cont='6/0'</symbols>
+  <symbols>Metal1='8/0-8/29'</symbols>
+  <symbols>Via1='19/0'</symbols>
+  <symbols>Metal2='10/0-10/29'</symbols>
+  <symbols>Via2='29/0'</symbols>
+  <symbols>Metal3='30/0-30/29'</symbols>
+  <symbols>Via3='49/0'</symbols>
+  <symbols>Metal4='50/0-50/29'</symbols>
+  <symbols>Via4='66/0'</symbols>
+  <symbols>Metal5='67/0-67/29'</symbols>
+  <symbols>TopVia1='125/0'</symbols>
+  <symbols>TopMetal1='126/0-126/29'</symbols>
+  <symbols>TopVia2='133/0'</symbols>
+  <symbols>TopMetal2='134/0-134/29'</symbols>
  </connectivity>
 </technology>
