@@ -81,6 +81,7 @@ pipeline {
                    "gcd ihp-sg13g2",
                    "spi ihp-sg13g2",
                    "riscv32i ihp-sg13g2";
+                   "autotuner ref_file_check"
           }
         }
 
@@ -107,7 +108,10 @@ pipeline {
                       }
                       sh "docker run --rm openroad/flow-ubuntu22.04-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
                       sh "docker run --rm openroad/flow-ubuntu22.04-builder:latest bash -c 'source ./env.sh ; make -C flow'";
-                    } else {
+                    } else if ("${TEST_SLUG}".contains("autotuner")){
+                      sh 'nice flow/test/at_test_helper.sh ${TEST_SLUG}'
+                    }
+                    else {
                       sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
                     }
                   }
