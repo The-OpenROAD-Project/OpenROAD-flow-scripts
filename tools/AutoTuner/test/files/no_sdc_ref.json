@@ -1,5 +1,5 @@
 {
-    "_SDC_FILE_PATH": "DOESNOTEXIST.sdc",
+    "_SDC_FILE_PATH": "",
     "_SDC_CLK_PERIOD": {
         "type": "float",
         "minmax": [
@@ -80,5 +80,5 @@
         ],
         "step": 1
     },
-    "_FR_FILE_PATH": ""
+    "_FR_FILE_PATH" : ""
 }
