@@ -1,5 +1,5 @@
 {
-    "_SDC_FILE_PATH": "constraint.sdc",
+    "_SDC_FILE_PATH": "../../../../flow/designs/asap7/gcd/constraint.sdc",
     "_SDC_CLK_PERIOD": {
         "type": "float",
         "minmax": [

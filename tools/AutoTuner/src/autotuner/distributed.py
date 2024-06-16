@@ -208,6 +208,7 @@ def read_config(file_name):
 
     def read(path):
         # if file path does not exist, return empty string
+        print(os.path.abspath(path))
         if not os.path.isfile(os.path.abspath(path)):
             return ""
         with open(os.path.abspath(path), "r") as file:

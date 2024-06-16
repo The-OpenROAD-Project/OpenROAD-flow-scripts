@@ -12,8 +12,7 @@ class RefFileCheck(unittest.TestCase):
     design = 'gcd'
 
     def setUp(self):
-        # configs = ["../../test/files/no_sdc_ref.json", "../../test/files/no_fr_ref.json"]
-        configs = ["../../test/files/no_fr_ref.json"]
+        configs = ["../../test/files/no_sdc_ref.json", "../../test/files/no_fr_ref.json"]
         self.commands = [
                         f"python3 distributed.py"
                         f" --design {self.design}"
