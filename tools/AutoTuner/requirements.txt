@@ -1,11 +1,11 @@
 ray[default,tune]==2.9.3
-ax-platform==0.3.7
+ax-platform>=0.3.3,<=0.3.7
 hyperopt==0.2.7
-nevergrad==1.0.2
 optuna==3.6.0
-pandas==2.2.1
-colorama==0.4.4
+pandas>=2.0,<=2.2.1
 bayesian-optimization==1.4.0
-tensorboard==2.16.2
+colorama==0.4.6
+tensorboard>=2.14.0,<=2.16.2
 protobuf==3.20.3
 SQLAlchemy==1.4.17
+urllib3<=1.26.15
