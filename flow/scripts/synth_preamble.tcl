@@ -22,7 +22,11 @@ if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
 
 # Read verilog files
 foreach file $::env(VERILOG_FILES) {
-  read_verilog -defer -sv {*}$vIdirsArgs $file
+  if {[file extension $file] == ".json"} {
+    read_json $file
+  } else {
+    read_verilog -defer -sv {*}$vIdirsArgs $file
+  }
 }
 
 
@@ -102,9 +106,10 @@ close $constr
 proc synthesize_check {synth_args} {
   # Generic synthesis
   log_cmd synth -top $::env(DESIGN_NAME) -run :fine {*}$synth_args
-  json -o $::env(RESULTS_DIR)/mem.json
+  clean
+  json -o $::env(RESULTS_DIR)/1_0_synth_canonical.json
   # Run report and check here so as to fail early if this synthesis run is doomed
-  exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
+  exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/1_0_synth_canonical.json
   synth -top $::env(DESIGN_NAME) -run fine: {*}$synth_args
   # Get rid of indigestibles
   chformal -remove
