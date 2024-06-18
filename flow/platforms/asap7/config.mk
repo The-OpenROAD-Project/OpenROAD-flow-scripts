@@ -1,7 +1,3 @@
-ifeq ($(MAKELEVEL),0)
-$(info [INFO-FLOW] ASU ASAP7 - version 2)
-endif
-
 export PLATFORM                = asap7
 export PROCESS                 = 7
 
