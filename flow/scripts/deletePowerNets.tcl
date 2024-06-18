@@ -18,7 +18,7 @@ proc deleteNetByName {name} {
   set block [$chip getBlock]
   set net [$block findNet $name]
   $net destroySWires
-  puts "\[INFO\] Deleted net '[$net getName]'"
+  puts "Deleted net '[$net getName]'"
 }
 
 deleteNetByName VDD
