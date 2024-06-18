@@ -32,9 +32,21 @@ if __name__ == "__main__":
 
     with open(args.file, 'r') as file:
         json_data = json.load(file)
+
+    src_files = set()
+    for module_name, module_info in json_data["modules"].items():
+        for cell in module_info["cells"].values():
+            if "src" not in cell["attributes"]:
+                continue
+            src_file = cell["attributes"]["src"].split(":")[0]
+            src_files.add(src_file)
+
+    print("Source files actually used in the design:")
+    print(" " + "\n ".join(src_files))
+
+    print("Memories found in the design:")
     formatted_table, max_ok = format_ram_table_from_json(
         json_data, args.max_bits)
-    print()
     print(formatted_table)
     if not max_ok:
         sys.exit(
