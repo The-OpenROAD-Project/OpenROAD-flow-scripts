@@ -22,7 +22,11 @@ if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
 
 # Read verilog files
 foreach file $::env(VERILOG_FILES) {
-  read_verilog -defer -sv {*}$vIdirsArgs $file
+  if {[file extension $file] == ".json"} {
+    read_json $file
+  } else {
+    read_verilog -defer -sv {*}$vIdirsArgs $file
+  }
 }
 
 
