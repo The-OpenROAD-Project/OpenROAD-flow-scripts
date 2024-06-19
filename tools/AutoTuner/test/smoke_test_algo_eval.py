@@ -84,19 +84,6 @@ class SKY130HDAlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
             successful = out.returncode == 0
             self.assertTrue(successful)
 
-# Disable GF180 tests for now.
-# class GF180AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
-#     platform = "gf180"
-#     design = "gcd"
-# 
-#     def test_algo_eval(self):
-#          # Run `make` to get baseline metrics (metadata-base-ok.json)
-#          self.make_base()
-#          for command in self.commands:
-#              print(command)
-#              out = subprocess.run(command, shell=True, check=True)
-#              successful = out.returncode == 0
-#              self.assertTrue(successful)
 
 if __name__ == '__main__':
     unittest.main()
