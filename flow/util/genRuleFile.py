@@ -137,6 +137,11 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
             'round_value': True,
             'compare': '<=',
         },
+        'detailedroute__antenna__violating__nets': {
+            'mode': 'direct',
+            'round_value': True,
+            'compare': '<=',
+        },
         # finish
         'finish__timing__setup__ws': {
             'mode': 'period',
