@@ -470,7 +470,7 @@ do-synth-report:
 
 .PHONY: memory
 memory:
-	python3 $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
+	python3 $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/1_0_synth_canonical.json
 
 # ==============================================================================
 
@@ -520,7 +520,7 @@ $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 
 .PHONY: clean_synth
 clean_synth:
-	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc $(RESULTS_DIR)/mem.json
+	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc $(RESULTS_DIR)/1_0_synth_canonical.json
 	rm -f $(REPORTS_DIR)/synth_*
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STOP_MODULE_SCRIPT)
