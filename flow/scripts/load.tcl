@@ -111,7 +111,7 @@ proc run_equivalence_test {} {
     write_eqy_verilog 4_after_rsz.v
     write_eqy_script
 
-    eval exec eqy -d $::env(LOG_DIR)/4_eqy_output \
+    eval exec $::env(EQY_EXE) -d $::env(LOG_DIR)/4_eqy_output \
         --force \
         --jobs $::env(NUM_CORES) \
         $::env(OBJECTS_DIR)/4_eqy_test.eqy \
