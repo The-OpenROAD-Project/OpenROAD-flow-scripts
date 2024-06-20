@@ -102,6 +102,8 @@ close $constr
 proc synthesize_check {synth_args} {
   # Generic synthesis
   log_cmd synth -top $::env(DESIGN_NAME) -run :fine {*}$synth_args
+  # Get rid of unused modules
+  clean
   json -o $::env(RESULTS_DIR)/mem.json
   # Run report and check here so as to fail early if this synthesis run is doomed
   exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
