@@ -32,7 +32,11 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 2,
+        "value": 0,
+        "compare": "<="
+    },
+    "detailedroute__antenna__violating__nets": {
+        "value": 0,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
@@ -48,7 +52,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 619,
+        "value": 111,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {

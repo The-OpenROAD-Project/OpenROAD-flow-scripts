@@ -28,10 +28,14 @@
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 78797,
+        "value": 77902,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
+        "value": 0,
+        "compare": "<="
+    },
+    "detailedroute__antenna__violating__nets": {
         "value": 0,
         "compare": "<="
     },
