@@ -55,16 +55,6 @@ if {[info exist ::env(PRESERVE_CELLS)]} {
   }
 }
 
-
-
-if {[info exist ::env(BLOCKS)]} {
-  hierarchy -check -top $::env(DESIGN_NAME)
-  foreach block $::env(BLOCKS) {
-    blackbox $block
-    puts "blackboxing $block"
-  }
-}
-
 if {$::env(ABC_AREA)} {
   puts "Using ABC area script."
   set abc_script $::env(SCRIPTS_DIR)/abc_area.script
@@ -79,7 +69,8 @@ set abc_args [list -script $abc_script \
       -liberty $::env(DONT_USE_SC_LIB) \
       -constr $::env(OBJECTS_DIR)/abc.constr]
 
-# Exclude dont_use cells
+# Exclude dont_use cells. This includes macros that are specified via
+# LIB_FILES and ADDITIONAL_LIBS that are included in LIB_FILES.
 if {[info exist ::env(DONT_USE_CELLS)] && $::env(DONT_USE_CELLS) != ""} {
   foreach cell $::env(DONT_USE_CELLS) {
     lappend abc_args -dont_use $cell
@@ -87,11 +78,11 @@ if {[info exist ::env(DONT_USE_CELLS)] && $::env(DONT_USE_CELLS) != ""} {
 }
 
 if {[info exist ::env(SDC_FILE_CLOCK_PERIOD)] && [file isfile $::env(SDC_FILE_CLOCK_PERIOD)]} {
-  puts "\[FLOW\] Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
+  puts "Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
   set fp [open $::env(SDC_FILE_CLOCK_PERIOD) r]
   set clock_period [string trim [read $fp]]
   if {$clock_period != ""} {
-    puts "\[FLOW\] Setting clock period to $clock_period"
+    puts "Setting clock period to $clock_period"
     lappend abc_args -D $clock_period
   }
   close $fp
@@ -111,6 +102,8 @@ close $constr
 proc synthesize_check {synth_args} {
   # Generic synthesis
   log_cmd synth -top $::env(DESIGN_NAME) -run :fine {*}$synth_args
+  # Get rid of unused modules
+  clean
   json -o $::env(RESULTS_DIR)/mem.json
   # Run report and check here so as to fail early if this synthesis run is doomed
   exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
