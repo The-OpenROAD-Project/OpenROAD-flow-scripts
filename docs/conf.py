@@ -166,5 +166,5 @@ def setup(app):
         f.write(content)
 
     # Get Manpage file
-    url = 'https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/0ea1fb99aece62ba903027f028ea4310682b013c/src/utl/README.md'
+    url = 'https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/src/utl/README.md'
     get_file_from_url(url, 'Manpage.md')
