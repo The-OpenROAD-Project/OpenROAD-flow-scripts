@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     src_files = set()
     for module_name, module_info in json_data["modules"].items():
-        for cell in module_info["cells"].values():
+        for cell in list(module_info["cells"].values()) + [module_info]:
             if "src" not in cell["attributes"]:
                 continue
             src_file = cell["attributes"]["src"].split(":")[0]
