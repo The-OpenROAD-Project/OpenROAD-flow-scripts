@@ -18,7 +18,7 @@ usage: $0 [CMD] [OPTIONS]
   push                          Push the docker image to Docker Hub
 
   OPTIONS:
-  -os=OS_NAME                   Choose beween centos7 (default), ubuntu20.04 and ubuntu22.04.
+  -os=OS_NAME                   Choose beween ubuntu20.04 and ubuntu22.04 (default).
   -target=TARGET                Choose target fo the Docker image:
                                   'dev': os + packages to compile app
                                   'builder': os + packages to compile app +
@@ -39,9 +39,6 @@ _setup() {
     commitSha="$(git rev-parse HEAD)"
     commitSha="$(echo "$commitSha" | tr -cd 'a-zA-Z0-9-')"
     case "${os}" in
-        "centos7")
-            osBaseImage="centos:centos7"
-            ;;
         "ubuntu20.04")
             osBaseImage="ubuntu:20.04"
             ;;
@@ -54,13 +51,12 @@ _setup() {
             ;;
     esac
     imageName="${IMAGE_NAME_OVERRIDE:-"${org}/flow-${os}-${target}"}"
-    if [[ "${useCommitSha}" == "yes" ]]; then
-        imageTag="${commitSha}"
-    else
-        imageTag="latest"
+    imageTag="${commitSha}"
+    if [[ "${tag}" != "NONE" ]]; then
+        imageTag="${tag}"
     fi
     case "${target}" in
-        "builder" )
+        "builder" | "master")
             fromImage="${FROM_IMAGE_OVERRIDE:-"${org}/flow-${os}-dev"}:${imageTag}"
             context="."
             buildArgs="--build-arg numThreads=${numThreads}"
@@ -83,26 +79,49 @@ _setup() {
 
 _create() {
     echo "Create docker image ${imagePath} using ${file}"
-    echo $buildArgs
-    docker build --file "${file}" --tag "${imagePath}" ${buildArgs} "${context}" --progress plain
+    docker build \
+        --file "${file}" \
+        --tag "${imagePath}" \
+        ${buildArgs} \
+        "${context}" \
+        --progress plain
     rm -f etc/InstallerOpenROAD.sh
 }
 
 _push() {
+    if [[ -z ${username+x} ]]; then
+        echo "Missing required -username=<USER> argument"
+        exit 1
+    fi
+    if [[ -z ${password+x} ]]; then
+        echo "Missing required -password=<PASS> argument"
+        exit 1
+    fi
+    docker login --username ${username} --password ${password}
+    if [[ "${tag}" == "NONE" ]]; then
+        tag="latest"
+    fi
+    mkdir -p build
     case "${target}" in
         "dev" )
-            mkdir -p build
-            docker login --username ${username} --password ${password}
-            if [[ "${useCommitSha}" == "yes" ]]; then
-                ./etc/DockerHelper.sh create -os=${os} -ci -target=dev -sha \
-                    2>&1 | tee build/create-${os}-${commitSha}.log
-                docker push openroad/flow-${os}-dev:${commitSha}
-            else
-                ./etc/DockerHelper.sh create -os=${os} -ci -target=dev \
-                    2>&1 | tee build/create-${os}-${tag}.log
-                docker push openroad/flow-${os}-dev:${tag}
-            fi
+            ./etc/DockerHelper.sh create -os=${os} -ci -target=${target} \
+                2>&1 | tee build/create-${os}-${target}-${tag}.log
+            docker push ${imagePath}
             ;;
+
+        "master" )
+            # Create dev image needed as a base for builder image
+            ./etc/DockerHelper.sh create -os=${os} -target=dev \
+                2>&1 | tee build/create-${os}-dev-${target}-${tag}.log
+            # Create builder image
+            ./etc/DockerHelper.sh create -os=${os} -target=builder \
+                2>&1 | tee build/create-${os}-${target}-${tag}.log
+            docker push ${org}/flow-${os}-dev:${commitSha}
+            docker push ${org}/flow-${os}-dev:${commitSha} ${org}/flow-${os}-dev:latest
+            docker push ${org}/flow-${os}-builder:${commitSha} ${org}/orfs:${commitSha}
+            docker push ${org}/flow-${os}-builder:${commitSha} ${org}/orfs:${tag}
+            ;;
+
         *)
             echo "Target ${target} is not valid candidate for push to DockerHub." >&2
             _help
@@ -134,11 +153,10 @@ if [[ -z $(command -v "${_rule}") ]]; then
 fi
 
 # default values, can be overwritten by cmdline args
-os="centos7"
+os="ubuntu22.04"
 target="dev"
-useCommitSha="no"
 numThreads="-1"
-tag="latest"
+tag="NONE"
 options=""
 
 while [ "$#" -gt 0 ]; do
@@ -154,9 +172,6 @@ while [ "$#" -gt 0 ]; do
             ;;
         -threads=* )
             numThreads="${1#*=}"
-            ;;
-        -sha )
-            useCommitSha=yes
             ;;
         -ci )
             options="-ci"
