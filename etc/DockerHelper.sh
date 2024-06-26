@@ -36,8 +36,7 @@ EOF
 }
 
 _setup() {
-    commitSha="$(git rev-parse HEAD)"
-    commitSha="$(echo "$commitSha" | tr -cd 'a-zA-Z0-9-')"
+    commitSha="$(git rev-parse HEAD | tr -cd 'a-zA-Z0-9-')"
     case "${os}" in
         "ubuntu20.04")
             osBaseImage="ubuntu:20.04"
@@ -91,11 +90,11 @@ _create() {
 _push() {
     if [[ -z ${username+x} ]]; then
         echo "Missing required -username=<USER> argument"
-        exit 1
+        _help
     fi
     if [[ -z ${password+x} ]]; then
         echo "Missing required -password=<PASS> argument"
-        exit 1
+        _help
     fi
     docker login --username ${username} --password ${password}
     if [[ "${tag}" == "NONE" ]]; then
@@ -123,7 +122,7 @@ _push() {
             ;;
 
         *)
-            echo "Target ${target} is not valid candidate for push to DockerHub." >&2
+            echo "Target ${target} is not valid candidate for push to Docker Hub." >&2
             _help
             ;;
     esac
@@ -152,7 +151,7 @@ if [[ -z $(command -v "${_rule}") ]]; then
     _help
 fi
 
-# default values, can be overwritten by cmdline args
+# default values, can be overwritten by command line arguments
 os="ubuntu22.04"
 target="dev"
 numThreads="-1"
@@ -164,6 +163,9 @@ while [ "$#" -gt 0 ]; do
         -h|-help)
             _help 0
             ;;
+        -ci )
+            options="-ci"
+            ;;
         -os=* )
             os="${1#*=}"
             ;;
@@ -173,13 +175,6 @@ while [ "$#" -gt 0 ]; do
         -threads=* )
             numThreads="${1#*=}"
             ;;
-        -ci )
-            options="-ci"
-            ;;
-        -os | -target )
-            echo "${1} requires an argument" >&2
-            _help
-            ;;
         -username=* )
             username="${1#*=}"
             ;;
@@ -188,6 +183,10 @@ while [ "$#" -gt 0 ]; do
             ;;
         -tag=* )
             tag="${1#*=}"
+            ;;
+        -os | -target | -threads | -username | -password | -tag )
+            echo "${1} requires an argument" >&2
+            _help
             ;;
         *)
             echo "unknown option: ${1}" >&2
