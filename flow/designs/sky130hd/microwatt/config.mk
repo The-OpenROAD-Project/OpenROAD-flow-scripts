@@ -28,9 +28,6 @@ export RTLMP_BOUNDARY_WT = 0
 export MACRO_PLACE_HALO = 100 100
 export MACRO_PLACE_CHANNEL = 200 200
 
-# Temporary
-export SKIP_ANTENNA_REPAIR = 1
-
 # CTS tuning
 export CTS_BUF_CELL = sky130_fd_sc_hd__clkbuf_8
 export CTS_BUF_DISTANCE = 600

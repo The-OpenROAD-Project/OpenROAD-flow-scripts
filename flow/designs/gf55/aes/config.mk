@@ -1,6 +1,4 @@
 
-$(info [INFO-FLOW] AES - GF55LP)
-
 DESIGN_DIR              := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
 export DESIGN_NICKNAME   = aes

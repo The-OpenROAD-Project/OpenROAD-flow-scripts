@@ -1,8 +1,8 @@
-puts "\[INFO-FLOW\] Tap and End Cap cell insertion"
-puts "\[INFO-FLOW\]   TAP Cell          : $::env(TAP_CELL_NAME)"
-puts "\[INFO-FLOW\]   ENDCAP Cell       : $::env(TAP_CELL_NAME)"
-puts "\[INFO-FLOW\]   Halo Around Macro : $::env(MACRO_HALO_X) $::env(MACRO_HALO_Y)"
-puts "\[INFO-FLOW\]   TAP Cell Distance : 25"
+puts "Tap and End Cap cell insertion"
+puts "  TAP Cell          : $::env(TAP_CELL_NAME)"
+puts "  ENDCAP Cell       : $::env(TAP_CELL_NAME)"
+puts "  Halo Around Macro : $::env(MACRO_HALO_X) $::env(MACRO_HALO_Y)"
+puts "  TAP Cell Distance : 25"
 
 # allow user to set the halo around macro with MACRO_HALO_?
 tapcell \
