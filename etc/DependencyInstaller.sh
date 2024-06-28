@@ -30,9 +30,9 @@ _installCommon() {
     fi
     local pkgs="pandas numpy firebase_admin click pyyaml"
     if [[ $(id -u) == 0 ]]; then
-        pip3 install -U $pkgs
+        pip3 install --no-cache-dir -U $pkgs
     else
-        pip3 install --user -U $pkgs
+        pip3 install --no-cache-dir --user -U $pkgs
     fi
 }
 
@@ -70,7 +70,7 @@ _installUbuntuCleanUp() {
 _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
-    apt-get -y install \
+    apt-get -y install --no-install-recommends \
         libqt5multimediawidgets5 \
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
