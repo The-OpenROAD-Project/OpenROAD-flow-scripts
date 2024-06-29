@@ -82,8 +82,7 @@ _create() {
         --file "${file}" \
         --tag "${imagePath}" \
         ${buildArgs} \
-        "${context}" \
-        --progress plain
+        "${context}"
     rm -f etc/InstallerOpenROAD.sh
 }
 
