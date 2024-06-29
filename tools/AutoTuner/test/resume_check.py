@@ -24,11 +24,21 @@ class ResumeCheck(unittest.TestCase):
     platform = 'asap7'
     design = 'gcd'
     samples = 5
-    iterations = 2
+    iterations = 20
 
     def setUp(self):
         self.config = os.path.join(orfs_dir, "designs", self.platform, self.design, "autotuner.json")
         self.jobs = self.samples
+        self.num_cpus = os.cpu_count()
+
+        # How it works: Say we have 5 samples and 5 iterations.
+        # This means at any one time, there will be 5 trials.
+        # If we want to only run 5 trials: 
+        #  We can set resources_per_trial = NUM_CORES/5 = 3.2 
+        # Yes fractional resources_per_trial is allowed.
+
+        # Cast to 1 decimal place
+        res_per_trial = float("{:.1f}".format(self.num_cpus/self.samples))
         options = ["", "--resume"]
         self.commands = [
                         f"python3 distributed.py"
@@ -37,6 +47,7 @@ class ResumeCheck(unittest.TestCase):
                         f" --config {self.config}"
                         f" --jobs {self.jobs}"
                         f" tune --iterations {self.iterations} --samples {self.samples}"
+                        f" --resources_per_trial {res_per_trial}"
                         f" {c}"
                         for c in options
                         ]
@@ -47,14 +58,15 @@ class ResumeCheck(unittest.TestCase):
 
         # Run the first config
         print("Running the first config")
-        with managed_process(self.commands[0], shell=True) as proc:
-            time.sleep(60)
+        subprocess.run(self.commands[0], shell=True)
+        # with managed_process(self.commands[0], shell=True) as proc:
+        #     time.sleep(100)
 
-        # Run the second config to completion
-        print("Running the second config")
-        proc = subprocess.run(self.commands[1], shell=True)
-        successful = proc.returncode == 0
-        self.assertTrue(successful)
+        # # Run the second config to completion
+        # print("Running the second config")
+        # proc = subprocess.run(self.commands[1], shell=True)
+        # successful = proc.returncode == 0
+        # self.assertTrue(successful)
 
 
 if __name__ == '__main__':

@@ -797,8 +797,8 @@ def parse_arguments():
     )
     tune_parser.add_argument(
         "--resources_per_trial",
-        type=int,
-        metavar="<int>",
+        type=float,
+        metavar="<float>",
         default=1,
         help="Number of CPUs to request for each tuning job.",
     )
