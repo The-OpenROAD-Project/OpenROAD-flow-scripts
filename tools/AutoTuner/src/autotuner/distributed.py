@@ -82,7 +82,8 @@ class AutoTunerBase(tune.Trainable):
         '''
         Run step experiment and compute its score.
         '''
-        metrics_file = openroad(self.repo_dir, self.parameters, self.variant)
+        self._variant = f"{self.variant}-{self.step_}"
+        metrics_file = openroad(self.repo_dir, self.parameters, self._variant)
         self.step_ += 1
         score = self.evaluate(self.read_metrics(metrics_file))
         # Feed the score back to Tune.

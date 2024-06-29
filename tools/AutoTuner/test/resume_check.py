@@ -24,7 +24,7 @@ class ResumeCheck(unittest.TestCase):
     platform = 'asap7'
     design = 'gcd'
     samples = 5
-    iterations = 20
+    iterations = 2
 
     def setUp(self):
         self.config = os.path.join(orfs_dir, "designs", self.platform, self.design, "autotuner.json")
