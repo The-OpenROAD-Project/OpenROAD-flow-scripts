@@ -1,3 +1,4 @@
+source $::env(SCRIPTS_DIR)/util.tcl
 # Read liberty files
 source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
@@ -45,11 +46,21 @@ if {![info exist ::env(GUI_NO_TIMING)]} {
   }
   
   if {$design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef]} {
-    puts "Loading spef"
-    read_spef $::env(RESULTS_DIR)/6_final.spef
+    log_cmd read_spef $::env(RESULTS_DIR)/6_final.spef
+  } elseif {$design_stage >= 5} {
+    log_cmd estimate_parasitics -global_routing
   } elseif {$design_stage >= 3} {
-    puts "Estimating parasitics"
-    estimate_parasitics -placement
+    log_cmd estimate_parasitics -placement
+  }
+
+  if {[info exist env(FASTROUTE_TCL)]} {
+    source $env(FASTROUTE_TCL)
+  } else {
+    set_global_routing_layer_adjustment $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER) 0.5
+    set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
+    if {[info exist env(MACRO_EXTENSION)]} {
+      set_macro_extension $env(MACRO_EXTENSION)
+    }
   }
   
   # Cleanup temporary variables

@@ -6,6 +6,11 @@ platform, design and tool specific variables to allow finer control and
 user overrides at various flow stages. These are defined in the
 `config.mk` file located in the platform and design specific directories.
 
+### General variables for all stages
+
+| Variable         | Description                                                                        |
+|------------------|------------------------------------------------------------------------------------|
+| `SKIP_REPORT_METRICS`   | If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds. |
 
 ## Platform
 
@@ -176,6 +181,7 @@ Note:
 | `TNS_END_PERCENT`     | Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed                |
 | `EQUIVALENCE_CHECK`   | Enable running equivalence checks with to verify logical correctness of repair_timing                        |
 | `REMOVE_CELLS_FOR_EQY`| String patterns directly passed to write_verilog -remove_cells <> for equivalence checks                     |
+| `SKIP_CTS_REPAIR_TIMING`| Skipping CTS repair, which can take a long time, can be useful in architectural exploration or when getting CI up and running |
 
 ### Routing
 
@@ -233,8 +239,9 @@ configuration file.
 
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
-| `ADDITIONAL_LEFS`        | Hardened macro LEF view files listed here.                                                         |
-| `ADDITIONAL_LIBS`        | Hardened macro library files listed here.                                                          |
+| `ADDITIONAL_FILES`       | Additional files to be added to `make issue` archive |
+| `ADDITIONAL_LEFS`        | Hardened macro LEF view files listed here. The LEF information of the macros is immutable and used throughout all stages. Stored in the .odb file. |
+| `ADDITIONAL_LIBS`        | Hardened macro library files listed here. The library information is immutable and used throughout all stages. Not stored in the .odb file. |
 | `ADDITIONAL_GDS`         | Hardened macro GDS files listed here.                                                              |
 | `VERILOG_INCLUDE_DIRS`   | Specifies the include directories for the Verilog input files.                                     |
 | `CORNER`                 | PVT corner library selection. Only available for ASAP7 and GF180 PDK.                                                                 |

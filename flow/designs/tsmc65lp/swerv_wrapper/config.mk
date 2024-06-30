@@ -29,7 +29,6 @@ export REMOVE_BUFFER_TREE     = 1
 export DIE_AREA    = 0 0 1610 1360
 export CORE_AREA   = 5 5 1605 1355
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-300 -exclude bottom:1300-1600
-export HAS_IO_CONSTRAINTS = 1
 
 export MACRO_PLACE_HALO = 10 10 
 export MACRO_PLACE_CHANNEL = 20 20

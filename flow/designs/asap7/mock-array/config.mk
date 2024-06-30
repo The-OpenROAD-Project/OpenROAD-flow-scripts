@@ -23,17 +23,18 @@ export DIE_AREA  = $(shell \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config; print(f'{0} {0} {config.die_width} {config.die_height}')")
 
-export BLOCKS                       = Element
+export BLOCKS                ?= Element
 
-export GDS_ALLOW_EMPTY       = Element
-
-export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
+ifneq ($(BLOCKS),)
+  export GDS_ALLOW_EMPTY       = Element
+  export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
+  export PDN_TCL               = $(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl
+endif
 
 export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
 
-export PDN_TCL               = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCKS_grid_strategy.tcl
-
 # Target to force generation of Verilog per user settings MOCK_ARRAY_TABLE (rows, cols)
+.PHONY: verilog
 verilog:
 	export MOCK_ARRAY_ROWS=$(word 1, $(MOCK_ARRAY_TABLE)) ; \
 	export MOCK_ARRAY_COLS=$(word 2, $(MOCK_ARRAY_TABLE)) ; \
@@ -57,7 +58,6 @@ export FASTROUTE_TCL = ./designs/$(PLATFORM)/mock-array/fastroute.tcl
 export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
 
-export GND_NETS_VOLTAGES      =
-export PWR_NETS_VOLTAGES      =
+export CTS_BUF_DISTANCE = 60
 
-export CTS_ARGS = -insertion_delay -sink_clustering_enable -balance_levels -distance_between_buffers 60
+export ADDITIONAL_FILES = designs/src/mock-array/util.tcl

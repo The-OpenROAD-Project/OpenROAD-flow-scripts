@@ -1,3 +1,7 @@
+source $::env(SCRIPTS_DIR)/util.tcl
+
+source $::env(SCRIPTS_DIR)/report_metrics.tcl
+
 proc load_design {design_file sdc_file} {
   # Read liberty files
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
@@ -28,6 +32,11 @@ proc load_design {design_file sdc_file} {
   }
 
   source $::env(PLATFORM_DIR)/setRC.tcl
+
+  if { [info exists ::env(LIB_MODEL)] && $::env(LIB_MODEL) == "CCS" } {
+    puts "Using CCS delay calculation"
+    set_delay_calculator ccs_sim
+  }
 }
 
 #===========================================================================================
@@ -114,4 +123,13 @@ proc run_equivalence_test {} {
       puts "Repair timing output passed equivalence test"
     }
 }
-#===========================================================================================
+
+proc append_env_var {list_name var_name prefix has_arg} {
+  upvar $list_name list
+  if {[info exist ::env($var_name)]} {
+    lappend list $prefix
+    if {$has_arg} {
+      lappend list $::env($var_name)
+    }
+  }
+}

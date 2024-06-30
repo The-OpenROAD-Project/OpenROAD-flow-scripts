@@ -4,7 +4,7 @@ export DESIGN_NAME            = Element
 export DESIGN_NICKNAME        = mock-array_Element
 
 export VERILOG_FILES          = designs/src/mock-array/*.v
-export SDC_FILE               = designs/asap7/mock-array/Element/constraints.sdc
+export SDC_FILE               = designs/asap7/mock-array/constraints.sdc
 
 export PLATFORM               = asap7
 
@@ -44,4 +44,4 @@ export PLACE_PINS_ARGS = -annealing
 export GND_NETS_VOLTAGES      =
 export PWR_NETS_VOLTAGES      =
 
-export CTS_ARGS = -insertion_delay -sink_clustering_enable -balance_levels -distance_between_buffers 60
+export ADDITIONAL_FILES = designs/src/mock-array/util.tcl

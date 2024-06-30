@@ -62,7 +62,6 @@ if {[info exist ::env(RCX_RULES)]} {
 
 report_cell_usage
 
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics 6 "finish"
 
 # Save a final image if openroad is compiled with the gui

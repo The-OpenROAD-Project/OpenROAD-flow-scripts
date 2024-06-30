@@ -42,15 +42,15 @@ import ray
 from ray import tune
 from ray.tune.schedulers import AsyncHyperBandScheduler
 from ray.tune.schedulers import PopulationBasedTraining
-from ray.tune.suggest import ConcurrencyLimiter
-from ray.tune.suggest.ax import AxSearch
-from ray.tune.suggest.basic_variant import BasicVariantGenerator
-from ray.tune.suggest.hyperopt import HyperOptSearch
-from ray.tune.suggest.nevergrad import NevergradSearch
-from ray.tune.suggest.optuna import OptunaSearch
+from ray.tune.search import ConcurrencyLimiter
+from ray.tune.search.ax import AxSearch
+from ray.tune.search.basic_variant import BasicVariantGenerator
+from ray.tune.search.hyperopt import HyperOptSearch
+# from ray.tune.search.nevergrad import NevergradSearch
+from ray.tune.search.optuna import OptunaSearch
 from ray.util.queue import Queue
 
-import nevergrad as ng
+# import nevergrad as ng
 from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -227,7 +227,7 @@ def read_config(file_name):
         if dp_pad_step > 1:
             config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
                 lambda spec: tune.choice(
-                    np.adarray.tolist(
+                    np.ndarray.tolist(
                         np.arange(
                             dp_pad_min,
                             spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT +
@@ -248,7 +248,7 @@ def read_config(file_name):
             if this['step'] == 1:
                 return tune.randint(min_, max_)
             return tune.choice(
-                np.adarray.tolist(
+                np.ndarray.tolist(
                     np.arange(min_,
                               max_,
                               this['step'])))
@@ -256,7 +256,7 @@ def read_config(file_name):
             if this['step'] == 0:
                 return tune.uniform(min_, max_)
             return tune.choice(
-                np.adarray.tolist(
+                np.ndarray.tolist(
                     np.arange(min_,
                               max_,
                               this['step'])))
@@ -280,7 +280,7 @@ def read_config(file_name):
         elif this['type'] == 'float':
             if this['step'] == 1:
                 dict_["type"] = "choice"
-                dict_["values"] = tune.choice(np.adarray.tolist(
+                dict_["values"] = tune.choice(np.ndarray.tolist(
                     np.arange(min_,
                               max_,
                               this['step'])))
@@ -488,7 +488,7 @@ def openroad(base_dir, parameters, flow_variant, path=''):
     make_command += f'make -C {base_dir}/flow DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
-    make_command += f' NPROC={args.openroad_threads} SHELL=bash'
+    make_command += f' NUM_PROCS={args.openroad_threads} SHELL=bash'
     run_command(make_command,
                 timeout=args.timeout,
                 stderr_file=f'{log_path}error-make-finish.log',

@@ -7,6 +7,10 @@ proc report_puts { out } {
 }
 
 proc report_metrics { stage when {include_erc true} {include_clock_skew true} } {
+  if {[info exists ::env(SKIP_REPORT_METRICS)] && $::env(SKIP_REPORT_METRICS) == 1} {
+    return
+  }
+  puts "Report metrics stage $stage, $when..."
   set filename $::env(REPORTS_DIR)/${stage}_[string map {" " "_"} $when].rpt
   set fileId [open $filename w]
   close $fileId
@@ -148,6 +152,53 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
       set path_delay -1
       set path_slack 0
     }
+
+    if { [llength [all_registers]] != 0} {
+    report_puts "\n=========================================================================="
+    report_puts "$when report_checks -path_delay max reg to reg"
+    report_puts "--------------------------------------------------------------------------"
+    report_checks -path_delay max -from [all_registers] -to [all_registers] -format full_clock_expanded >> $filename    
+    report_puts "\n=========================================================================="
+    report_puts "$when report_checks -path_delay min reg to reg"
+    report_puts "--------------------------------------------------------------------------"
+    report_checks -path_delay min -from [all_registers] -to [all_registers]  -format full_clock_expanded >> $filename         
+
+    set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay max -from [all_inputs] -to [all_registers]] 0]
+    if {$inp_to_reg_critical_path != ""} {
+      set target_clock_latency_max [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
+    } else {
+      set target_clock_latency_max 0	
+    }
+
+
+    set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay min -from [all_inputs] -to [all_registers]] 0]
+    if {$inp_to_reg_critical_path != ""} {
+      set target_clock_latency_min [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
+      set source_clock_latency [sta::format_time [$inp_to_reg_critical_path source_clk_latency] 4]
+    } else {
+      set target_clock_latency_min 0	
+      set source_clock_latency 0
+    }
+      
+    report_puts "\n=========================================================================="
+    report_puts "$when critical path target clock latency max path"
+    report_puts "--------------------------------------------------------------------------"
+    report_puts "$target_clock_latency_max"
+
+    report_puts "\n=========================================================================="
+    report_puts "$when critical path target clock latency min path"
+    report_puts "--------------------------------------------------------------------------"
+    report_puts "$target_clock_latency_min"
+
+    report_puts "\n=========================================================================="
+    report_puts "$when critical path source clock latency min path"
+    report_puts "--------------------------------------------------------------------------"
+    report_puts "$source_clock_latency"
+    } else {
+    puts "No registers in design"
+    }
+    # end if all_registers
+      
     report_puts "\n=========================================================================="
     report_puts "$when critical path delay"
     report_puts "--------------------------------------------------------------------------"

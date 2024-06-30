@@ -62,7 +62,6 @@ export ABC_CLOCK_PERIOD_IN_PS = 1250
 export PLACE_DENSITY = 0.55
 export TNS_END_PERCENT = 0
 
-export HAS_IO_CONSTRAINTS = 1
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
 export PDN_TCL ?= $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl

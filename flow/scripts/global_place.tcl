@@ -31,7 +31,11 @@ if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
 set global_placement_args {}
 if {$::env(GPL_ROUTABILITY_DRIVEN)} {
   lappend global_placement_args {-routability_driven}
+    if { [info exists ::env(GPL_TARGET_RC)] } { 
+      lappend global_placement_args {-routability_target_rc_metric} $::env(GPL_TARGET_RC)
+  }
 }
+
 if {$::env(GPL_TIMING_DRIVEN)} {
   lappend global_placement_args {-timing_driven}
 }
@@ -46,9 +50,7 @@ proc do_placement {place_density global_placement_args} {
     lappend all_args {*}$::env(GLOBAL_PLACEMENT_ARGS)
   }
 
-  puts "global_placement [join $all_args " "]"
-
-  global_placement {*}$all_args
+  log_cmd global_placement {*}$all_args
 }
 
 set result [catch {do_placement $place_density $global_placement_args} errMsg]
@@ -64,7 +66,6 @@ if {[info exist ::env(CLUSTER_FLOPS)]} {
   estimate_parasitics -placement
 }
 
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
 report_metrics 5 "global place" false false
 
 write_db $::env(RESULTS_DIR)/3_3_place_gp.odb

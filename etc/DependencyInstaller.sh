@@ -84,7 +84,7 @@ _installUbuntuPackages() {
 
     # install KLayout
     if _versionCompare $1 -ge 23.04; then
-        apt-get install klayout python3-pandas
+        apt-get install -y klayout python3-pandas
     else
         if [[ $1 == 20.04 ]]; then
             klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
@@ -109,6 +109,29 @@ _installDarwinPackages() {
     brew install python libomp
     brew link --force libomp
     brew install --cask klayout
+}
+
+_installCI() {
+    apt-get -y update
+
+    #docker
+    apt install -y \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo \
+    "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    apt-get -y update
+    apt-get install -y docker-ce docker-ce-cli containerd.io
+
+    # python
+    apt-get install -y python3
+
+    # stdbuf
+    apt-get install -y coreutils
 }
 
 _help() {
@@ -138,6 +161,8 @@ Usage: $0
                                 #    "$HOME/.local". Only used with
                                 #    -common. This flag cannot be used with
                                 #    sudo or with root access.
+       $0 -ci
+                                # Installs CI tools
 EOF
     exit "${1:-1}"
 }
@@ -150,6 +175,7 @@ PREFIX=""
 option="all"
 # default isLocal
 isLocal="false"
+CI="no"
 
 # default values, can be overwritten by cmdline args
 while [ "$#" -gt 0 ]; do
@@ -173,6 +199,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -local)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
+            ;;
+        -ci)
+            CI="yes"
             ;;
         -prefix=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
@@ -209,6 +238,9 @@ esac
 
 case "${os}" in
     "CentOS Linux" )
+        if [[ ${CI} == "yes" ]]; then
+            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
+        fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installCentosPackages
@@ -220,6 +252,10 @@ case "${os}" in
         ;;
     "Ubuntu" )
         version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
+        if [[ ${CI} == "yes" ]]; then
+            echo "Installing CI Tools"
+            _installCI
+        fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installUbuntuPackages "${version}"
@@ -232,6 +268,9 @@ case "${os}" in
         fi
         ;;
     "Darwin" )
+        if [[ ${CI} == "yes" ]]; then
+            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
+        fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installDarwinPackages

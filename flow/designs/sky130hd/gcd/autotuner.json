@@ -1,10 +1,11 @@
+
 {
     "_SDC_FILE_PATH": "constraint.sdc",
     "_SDC_CLK_PERIOD": {
         "type": "float",
         "minmax": [
-            1.0,
-            4.3647
+            3.0,
+            4.0
         ],
         "step": 0
     },
@@ -12,7 +13,7 @@
         "type": "int",
         "minmax": [
             5,
-            100
+            45
         ],
         "step": 1
     },
@@ -36,7 +37,7 @@
         "type": "int",
         "minmax": [
             0,
-            5
+            2
         ],
         "step": 1
     },
@@ -44,7 +45,7 @@
         "type": "int",
         "minmax": [
             0,
-            5
+            2
         ],
         "step": 1
     },
@@ -52,7 +53,7 @@
         "type": "float",
         "minmax": [
             0.1,
-            0.7
+            0.3
         ],
         "step": 0
     },
@@ -60,7 +61,7 @@
         "type": "float",
         "minmax": [
             0.0,
-            0.99
+            0.1
         ],
         "step": 0
     },
@@ -68,7 +69,7 @@
         "type": "int",
         "minmax": [
             1,
-            4
+            1
         ],
         "step": 1
     },
