@@ -2,6 +2,7 @@ import unittest
 import subprocess
 import os
 import time
+import uuid
 
 from contextlib import contextmanager
 
@@ -39,12 +40,14 @@ class ResumeCheck(unittest.TestCase):
 
         # Cast to 1 decimal place
         res_per_trial = float("{:.1f}".format(self.num_cpus/self.samples))
+        self.uuid = str(uuid.uuid4())[:8]
         options = ["", "--resume"]
         self.commands = [
                         f"python3 distributed.py"
                         f" --design {self.design}"
                         f" --platform {self.platform}"
                         f" --config {self.config}"
+                        f" --experiment {self.uuid}"
                         f" --jobs {self.jobs}"
                         f" tune --iterations {self.iterations} --samples {self.samples}"
                         f" --resources_per_trial {res_per_trial}"
@@ -56,17 +59,19 @@ class ResumeCheck(unittest.TestCase):
         # Goal is to first run the first config (without resume) and then run the second config (with resume)
         # and check if the run is able to complete. 
 
-        # Run the first config
+        # Run the first config asynchronously.
         print("Running the first config")
-        subprocess.run(self.commands[0], shell=True)
-        # with managed_process(self.commands[0], shell=True) as proc:
-        #     time.sleep(100)
+        with managed_process(self.commands[0], shell=True) as proc:
+            time.sleep(120)
 
-        # # Run the second config to completion
-        # print("Running the second config")
-        # proc = subprocess.run(self.commands[1], shell=True)
-        # successful = proc.returncode == 0
-        # self.assertTrue(successful)
+        # Close all ray instances
+        subprocess.run("ray stop", shell=True)
+
+        # Run the second config to completion
+        print("Running the second config")
+        proc = subprocess.run(self.commands[1], shell=True)
+        successful = proc.returncode == 0
+        self.assertTrue(successful)
 
 
 if __name__ == '__main__':

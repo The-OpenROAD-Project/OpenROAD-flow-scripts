@@ -29,7 +29,6 @@ import json
 import os
 import re
 import sys
-from datetime import datetime
 from multiprocessing import cpu_count
 from subprocess import run
 from itertools import product
@@ -52,7 +51,6 @@ from ray.util.queue import Queue
 # import nevergrad as ng
 from ax.service.ax_client import AxClient
 
-DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
 FASTROUTE_TCL = 'fastroute.tcl'
 CONSTRAINTS_SDC = 'constraint.sdc'
@@ -71,7 +69,7 @@ class AutoTunerBase(tune.Trainable):
         '''
         # We create the following directory structure:
         #      1/     2/         3/       4/                5/   6/
-        # <repo>/<logs>/<platform>/<design>/<experiment>-DATE/<id>/<cwd>
+        # <repo>/<logs>/<platform>/<design>/<experiment>/<id>/<cwd>
         repo_dir = os.getcwd() + '/../' * 6
         self.repo_dir = os.path.abspath(repo_dir)
         self.parameters = parse_config(config, path=os.getcwd())
@@ -757,7 +755,7 @@ def parse_arguments():
                   ' requires that "--reference <FILE>" is also given.')
             sys.exit(7)
 
-    arguments.experiment += f'-{arguments.mode}-{DATE}'
+    arguments.experiment += f'-{arguments.mode}'
 
     if arguments.timeout is not None:
         arguments.timeout = round(arguments.timeout*3600)
