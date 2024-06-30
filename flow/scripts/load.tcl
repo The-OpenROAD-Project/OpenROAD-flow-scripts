@@ -1,3 +1,7 @@
+source $::env(SCRIPTS_DIR)/util.tcl
+
+source $::env(SCRIPTS_DIR)/report_metrics.tcl
+
 proc load_design {design_file sdc_file} {
   # Read liberty files
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
@@ -28,6 +32,11 @@ proc load_design {design_file sdc_file} {
   }
 
   source $::env(PLATFORM_DIR)/setRC.tcl
+
+  if { [info exists ::env(LIB_MODEL)] && $::env(LIB_MODEL) == "CCS" } {
+    puts "Using CCS delay calculation"
+    set_delay_calculator ccs_sim
+  }
 }
 
 #===========================================================================================

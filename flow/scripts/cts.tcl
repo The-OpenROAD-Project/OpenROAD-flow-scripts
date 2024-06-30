@@ -33,9 +33,7 @@ if {[info exist ::env(CTS_ARGS)]} {
   set cts_args $::env(CTS_ARGS)
 }
 
-puts "clock_tree_synthesis [join $cts_args " "]"
-
-clock_tree_synthesis {*}$cts_args
+log_cmd clock_tree_synthesis {*}$cts_args
 
 if {[info exist ::env(CTS_SNAPSHOTS)]} {
   save_progress 4_1_pre_repair_clock_nets
@@ -46,17 +44,20 @@ set_propagated_clock [all_clocks]
 set_dont_use $::env(DONT_USE_CELLS)
 
 utl::push_metrics_stage "cts__{}__pre_repair"
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
 estimate_parasitics -placement
-report_metrics 4 "cts pre-repair"
+if {[info exist ::env(DETAILED_METRICS)]} {
+  report_metrics 4 "cts pre-repair"
+}
 utl::pop_metrics_stage
 
 repair_clock_nets
 
 utl::push_metrics_stage "cts__{}__post_repair"
 estimate_parasitics -placement
-report_metrics 4 "cts post-repair"
+if {[info exist ::env(DETAILED_METRICS)]} {
+  report_metrics 4 "cts post-repair"
+}
 utl::pop_metrics_stage
 
 set_placement_padding -global \
@@ -79,14 +80,14 @@ append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
 append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
 
 if {[info exists ::env(SKIP_CTS_REPAIR_TIMING)] == 0 || $::env(SKIP_CTS_REPAIR_TIMING) == 0} {
-  if { [info exists ::env(EQUIVALENCE_CHECK)] } {
+  if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
       write_eqy_verilog 4_before_rsz.v
   }
 
   puts "repair_timing [join $additional_args " "]"
   repair_timing {*}$additional_args
 
-  if { [info exists ::env(EQUIVALENCE_CHECK)] } {
+  if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
       run_equivalence_test
   }
 

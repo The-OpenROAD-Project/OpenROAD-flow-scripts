@@ -18,6 +18,7 @@ ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \
 ISSUE_CP_PLATFORM_FILE_VARS="LIB_FILES \
                              SC_LEF \
                              TECH_LEF \
+                             ADDITIONAL_FILES \
                              ADDITIONAL_LEFS \
                              CLKGATE_MAP_FILE \
                              ADDER_MAP_FILE \
@@ -95,7 +96,7 @@ echo "Using $COMPRESS to compress tar file"
 if [ -v FULL_ISSUE ]; then
     DESIGN_PLATFORM_FILES="$DESIGN_DIR $PLATFORM_DIR"
 else
-    DESIGN_PLATFORM_FILES="$DESIGN_DIR/config.mk $PLATFORM_DIR/config.mk"
+    DESIGN_PLATFORM_FILES="$DESIGN_CONFIG $PLATFORM_DIR/config.mk"
 fi
 
 set -x

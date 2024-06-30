@@ -57,6 +57,7 @@ ORFS_URL = 'https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts'
 FASTROUTE_TCL = 'fastroute.tcl'
 CONSTRAINTS_SDC = 'constraint.sdc'
 METRIC = 'minimum'
+ERROR_METRIC = 9e99
 
 
 class AutoTunerBase(tune.Trainable):
@@ -97,7 +98,7 @@ class AutoTunerBase(tune.Trainable):
         error = 'ERR' in metrics.values()
         not_found = 'N/A' in metrics.values()
         if error or not_found:
-            return (99999999999) * (self.step_ / 100)**(-1)
+            return ERROR_METRIC
         gamma = (metrics['clk_period'] - metrics['worst_slack']) / 10
         score = metrics['clk_period'] - metrics['worst_slack']
         score = score * (self.step_ / 100)**(-1) + gamma * metrics['num_drc']
@@ -185,7 +186,7 @@ class PPAImprov(AutoTunerBase):
         error = 'ERR' in metrics.values() or 'ERR' in reference.values()
         not_found = 'N/A' in metrics.values() or 'N/A' in reference.values()
         if error or not_found:
-            return (99999999999) * (self.step_ / 100)**(-1)
+            return ERROR_METRIC
         ppa = self.get_ppa(metrics)
         gamma = ppa / 10
         score = ppa * (self.step_ / 100)**(-1) + (gamma * metrics['num_drc'])
@@ -290,8 +291,12 @@ def read_config(file_name):
                 dict_["value_type"] = "float"
         return dict_
 
-    with open(file_name) as file:
-        data = json.load(file)
+    # Check file exists and whether it is a valid JSON file.
+    assert os.path.isfile(file_name), f'File {file_name} not found.'
+    try:
+        with open(file_name) as file: data = json.load(file)
+    except json.JSONDecodeError:
+        raise ValueError(f"Invalid JSON file: {file_name}")
     sdc_file = ''
     fr_file = ''
     if args.mode == 'tune' and args.algorithm == 'ax':
@@ -487,6 +492,7 @@ def openroad(base_dir, parameters, flow_variant, path=''):
     make_command += f'make -C {base_dir}/flow DESIGN_CONFIG=designs/'
     make_command += f'{args.platform}/{args.design}/config.mk'
     make_command += f' FLOW_VARIANT={flow_variant} {parameters}'
+    make_command += f' EQUIVALENCE_CHECK=0'
     make_command += f' NPROC={args.openroad_threads} SHELL=bash'
     run_command(make_command,
                 timeout=args.timeout,
@@ -949,5 +955,10 @@ if __name__ == '__main__':
         task_id = save_best.remote(analysis)
         _ = ray.get(task_id)
         print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
+        
+        # if all runs have failed
+        if analysis.best_result['minimum'] == ERROR_METRIC:
+            print('[ERROR TUN-0016] No successful runs found.')
+            sys.exit(1)
     elif args.mode == 'sweep':
         sweep()

@@ -3,8 +3,8 @@
     "_SDC_CLK_PERIOD": {
         "type": "float",
         "minmax": [
-            1.0,
-            12.087
+            7.0,
+            9.0
         ],
         "step": 0
     },
@@ -12,7 +12,7 @@
         "type": "int",
         "minmax": [
             20,
-            100
+            50
         ],
         "step": 1
     },
@@ -36,7 +36,7 @@
         "type": "int",
         "minmax": [
             0,
-            5
+            2
         ],
         "step": 1
     },
@@ -44,7 +44,7 @@
         "type": "int",
         "minmax": [
             0,
-            5
+            2
         ],
         "step": 1
     },
@@ -52,7 +52,7 @@
         "type": "float",
         "minmax": [
             0.1,
-            0.7
+            0.3
         ],
         "step": 0
     },
@@ -60,7 +60,7 @@
         "type": "float",
         "minmax": [
             0.0,
-            0.99
+            0.1
         ],
         "step": 0
     },
@@ -68,7 +68,7 @@
         "type": "int",
         "minmax": [
             1,
-            4
+            1
         ],
         "step": 1
     },
@@ -88,7 +88,7 @@
         ],
         "step": 1
     },
-    "_FR_FILE_PATH": "../../../platforms/sky130hd/fastroute.tcl",
+    "_FR_FILE_PATH": "fastroute.tcl",
     "_FR_GR_OVERFLOW": {
         "type": "int",
         "minmax": [
