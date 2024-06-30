@@ -2,7 +2,7 @@
 # i.e., "./build_openroad.sh --local" from inside a docker container
 # NOTE: don't use this file directly unless you know what you are doing,
 # instead use etc/DockerHelper.sh
-ARG fromImage=openroad/flow-centos7-dev:latest
+ARG fromImage=openroad/flow-ubuntu22.04-dev:latest
 
 FROM $fromImage
 

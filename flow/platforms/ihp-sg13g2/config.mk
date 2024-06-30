@@ -63,6 +63,9 @@ export IO_PLACER_V = Metal3
 # Define default PDN config
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
+# To allow the core rings to fit inside the core area
+export CORE_MARGIN ?= 16.5
+
 # There are no Endcap and Welltie cells in this PDK, so
 # `cut_rows` has to be called from the tapcell script.
 export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
