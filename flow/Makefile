@@ -876,7 +876,7 @@ elapsed-all:
 
 # ==============================================================================
 
-ifneq ($(USE_FILL),)
+ifeq ($(USE_FILL),1)
 $(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(RESULTS_DIR)/5_route.sdc $(FILL_CONFIG),density_fill))
 else
 $(eval $(call do-copy,6_1_fill,5_route.odb))

@@ -89,6 +89,7 @@ docs/main
 docs/build
 GitGuide.md
 mainREADME.md
+build
 
 # Autotuner
 autotuner_env/

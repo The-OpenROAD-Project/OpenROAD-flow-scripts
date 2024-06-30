@@ -1,7 +1,7 @@
 # create image with dependencies needed to compile openroad app and run openroad flow scripts
 # NOTE: don't use this file directly unless you know what you are doing,
 # instead use etc/DockerHelper.sh
-ARG fromImage=centos:centos7
+ARG fromImage=ubuntu:22.04
 
 FROM $fromImage
 
@@ -13,7 +13,9 @@ COPY requirements.txt .
 COPY InstallerOpenROAD.sh \
        /tmp/installer/tools/OpenROAD/etc/DependencyInstaller.sh
 
-RUN ./DependencyInstaller.sh \
+ARG options=""
+
+RUN ./DependencyInstaller.sh $options \
       && rm -rf /tmp/installer
 
 ARG fromImage
