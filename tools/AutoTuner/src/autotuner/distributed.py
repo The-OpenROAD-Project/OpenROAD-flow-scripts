@@ -77,7 +77,7 @@ class AutoTunerBase(tune.Trainable):
         """
         # We create the following directory structure:
         #      1/     2/         3/       4/                5/   6/
-        # <repo>/<logs>/<platform>/<design>/<experiment>-DATE/<id>/<cwd>
+        # <repo>/<logs>/<platform>/<design>/<experiment>/<id>/<cwd>
         repo_dir = os.getcwd() + "/../" * 6
         self.repo_dir = os.path.abspath(repo_dir)
         self.parameters = parse_config(config, path=os.getcwd())
@@ -875,7 +875,7 @@ def parse_arguments():
             )
             sys.exit(7)
 
-    arguments.experiment += f"-{arguments.mode}-{DATE}"
+    arguments.experiment += f"-{arguments.mode}"
 
     if arguments.timeout is not None:
         arguments.timeout = round(arguments.timeout * 3600)
