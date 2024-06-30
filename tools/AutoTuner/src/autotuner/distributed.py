@@ -710,7 +710,10 @@ def parse_arguments():
         help="Time limit (in hours) for each trial run. Default is no limit.",
     )
     tune_parser.add_argument(
-        "--resume", action="store_true", help="Resume previous run."
+        "--resume",
+        action="store_true",
+        help="Resume previous run. Note that you must also set a unique experiment\
+                name identifier via `--experiment NAME` to be able to resume.",
     )
 
     # Setup
@@ -875,7 +878,20 @@ def parse_arguments():
             )
             sys.exit(7)
 
-    arguments.experiment += f"-{arguments.mode}"
+        # Check for experiment name and resume flag.
+        if arguments.resume and arguments.experiment == "test":
+            print(
+                '[ERROR TUN-0031] The flag "--resume"'
+                ' requires that "--experiment NAME" is also given.'
+            )
+            sys.exit(1)
+
+    # If the experiment name is the default, add a UUID to the end.
+    if arguments.experiment == "test":
+        id = str(uuid())[:8]
+        arguments.experiment = f"{arguments.mode}-{id}"
+    else:
+        arguments.experiment += f"-{arguments.mode}"
 
     if arguments.timeout is not None:
         arguments.timeout = round(arguments.timeout * 3600)
