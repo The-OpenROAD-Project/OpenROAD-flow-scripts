@@ -29,6 +29,8 @@ if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
 }
 
 set global_placement_args {}
+
+# Parameters for routability mode in global placement
 if {$::env(GPL_ROUTABILITY_DRIVEN)} {
   lappend global_placement_args {-routability_driven}
     if { [info exists ::env(GPL_TARGET_RC)] } { 
@@ -36,8 +38,13 @@ if {$::env(GPL_ROUTABILITY_DRIVEN)} {
   }
 }
 
+# Parameters for timing driven mode in global placement
 if {$::env(GPL_TIMING_DRIVEN)} {
   lappend global_placement_args {-timing_driven}
+  
+  # Timing-driven iterations will trigger with these overflow values
+  set reweight_overflow {79 64 49 29 21 15}
+  lappend global_placement_args {-timing_driven_net_reweight_overflow} $reweight_overflow
 }
 
 proc do_placement {place_density global_placement_args} {
