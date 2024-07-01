@@ -1,7 +1,7 @@
 # Copyright (c) 2024 Antmicro <www.antmicro.com>
 # SPDX-License-Identifier: Apache-2.0
 
-FROM ghcr.io/antmicro/openroad-flow-scripts:orfs
+FROM openroad/orfs:latest
 
 COPY ./tools/codespace/scripts/common.sh /usr/local/bin/common.sh
 COPY ./tools/codespace/scripts/install-desktop-deps.sh /usr/local/bin/install-desktop-deps.sh

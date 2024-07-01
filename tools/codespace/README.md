@@ -20,15 +20,15 @@ First time Codespace users are encouraged to read the tutorial [creating a codes
 
 ### OpenROAD GUI
 
-At the bottom, there should be tab `PORTS`, where you will find the `Forwarded Address`. A link labelled `Desktop (6080) is provided, which you can follow to open the OpenROAD GUI.
+At the bottom, there should be tab `PORTS`, where you will find the `Forwarded Address`. A link labelled `Desktop (6080)` is provided, which you can follow to open the OpenROAD GUI.
 
 ![open](../../docs/images/open_vnc.gif)
 
 Test that the ORFS flow works by running the following commands:
 
 ```
-cd ~/OpenROAD-flow-scripts/flow
-. ../env.sh
+cd /OpenROAD-flow-scripts/flow
+source ../env.sh
 make
 make gui_final
 ```
