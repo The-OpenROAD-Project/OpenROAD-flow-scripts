@@ -1,4 +1,4 @@
-@Library('utils@main') _
+@Library('utils@autotuner') _
 
 node {
 
@@ -30,7 +30,7 @@ node {
 
     stage('Run Tests') {
         Map tasks = [failFast: false];
-        def test_slugs = getTestSlugs("all");
+        def test_slugs = getTestSlugs("autotuner");
         for (test in test_slugs) {
             def currentSlug = test; // copy needed to correctly pass args to runTests
             tasks["${test}"] = {
