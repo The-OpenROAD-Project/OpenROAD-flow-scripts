@@ -76,6 +76,7 @@ _installUbuntuPackages() {
         libqt5xmlpatterns5-dev \
         libz-dev \
         python3-pip \
+        python3-venv \
         qtmultimedia5-dev \
         qttools5-dev \
         ruby \
