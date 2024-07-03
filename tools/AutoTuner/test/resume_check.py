@@ -68,8 +68,16 @@ class ResumeCheck(unittest.TestCase):
         with managed_process(self.commands[0], shell=True) as proc:
             time.sleep(120)
 
-        # Close all ray instances
-        subprocess.run("ray stop", shell=True)
+        # Keep trying to stop the ray cluster until it is stopped
+        while 1:
+            proc = subprocess.run("ray status", shell=True)
+            no_nodes = proc.returncode != 0
+            proc = subprocess.run("ray stop", shell=True)
+            successful = proc.returncode == 0
+
+            if no_nodes and successful:
+                break           
+            time.sleep(10)
 
         # Run the second config to completion
         print("Running the second config")
