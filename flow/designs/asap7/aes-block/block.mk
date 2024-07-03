@@ -1,7 +1,7 @@
 export PLATFORM               = asap7
 
 export VERILOG_FILES = $(sort $(wildcard ./designs/src/aes/*.v))
-export SDC_FILE      = ./designs/$(PLATFORM)/aes/constraint.sdc
+export SDC_FILE      = ./designs/$(PLATFORM)/aes-block/constraint.sdc
 
 export ABC_AREA               = 1
 
