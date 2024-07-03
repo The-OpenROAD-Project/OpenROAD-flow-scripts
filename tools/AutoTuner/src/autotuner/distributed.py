@@ -29,7 +29,6 @@ import json
 import os
 import re
 import sys
-import warnings
 import glob
 import subprocess
 from datetime import datetime
