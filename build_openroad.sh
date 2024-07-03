@@ -206,6 +206,8 @@ EOF
         fi
 fi
 
+echo "[INFO FLW-0028] Compiling with ${PROC} threads."
+
 # Only add install prefix variables after parsing arguments.
 YOSYS_ARGS+=" PREFIX=${INSTALL_PATH}/yosys"
 OPENROAD_APP_ARGS+=" -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/OpenROAD"
