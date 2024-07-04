@@ -19,7 +19,11 @@ node {
     }
 
     stage('Run Tests') {
-        runTests(DOCKER_IMAGE, 'pr');
+        if (env.CHANGE_BRANCH && env.CHANGE_BRANCH.contains('ci-dev')) {
+            runTests(DOCKER_IMAGE, 'dev');
+        } else {
+            runTests(DOCKER_IMAGE, 'pr');
+        }
     }
 
     stage ('Cleanup and Reporting') {
