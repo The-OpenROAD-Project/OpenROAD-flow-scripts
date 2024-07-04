@@ -29,6 +29,7 @@ usage: $0 [CMD] [OPTIONS]
                                   Default = \$(nproc)
   -tag                          Use as the image tag. Default is git commit sha
   -ci                           Install CI tools in image
+  -dry-run                      Do not push images to the repository
   -h -help                      Show this message and exits
   -username                     Docker Username
   -password                     Docker Password
@@ -102,7 +103,11 @@ _push() {
         _help
     fi
 
-    ${DOCKER_CMD} login --username "${username}" --password "${password}"
+    if [[ "${dryRun}" == 1 ]]; then
+        echo "Skipping docker login"
+    else
+        ${DOCKER_CMD} login --username "${username}" --password "${password}"
+    fi
 
     if [[ "${tag}" == "" ]]; then
         tag=$(./etc/DockerTag.sh -dev)
@@ -114,7 +119,9 @@ _push() {
         ./etc/DockerHelper.sh create -os=${os} -target=dev -tag=${tag} -ci \
             2>&1 | tee build/create-${os}-dev-${tag}.log
 
-        ${DOCKER_CMD} push "${org}/flow-${os}-dev:${tag}"
+        if [[ "${dryRun}" != 1 ]]; then
+            ${DOCKER_CMD} push "${org}/flow-${os}-dev:${tag}"
+        fi
     fi
 
     if [[ "${target}" == "master" ]]; then
@@ -123,8 +130,15 @@ _push() {
         ./etc/DockerHelper.sh create -os=${os} -target=builder \
             2>&1 | tee build/create-${os}-${target}-${tag}.log
 
-        ${DOCKER_CMD} tag ${org}/flow-${os}-builder:${imageTag} ${org}/orfs:${tag}
-        ${DOCKER_CMD} push ${org}/orfs:${tag}
+        builderTag=${org}/flow-${os}-builder:${imageTag}
+        orfsTag=${org}/orfs:${tag}
+        echo "Renaming docker image: ${builderTag} -> ${orfsTag}"
+        ${DOCKER_CMD} tag ${builderTag} ${orfsTag}
+        if [[ "${dryRun}" == 1 ]]; then
+            echo "[DRY-RUN] ${DOCKER_CMD} push ${orfsTag}"
+        else
+            ${DOCKER_CMD} push ${orfsTag}
+        fi
     fi
 }
 
@@ -157,6 +171,7 @@ target="dev"
 numThreads="-1"
 tag=""
 options=""
+dryRun=0
 
 while [ "$#" -gt 0 ]; do
     case "${1}" in
@@ -165,6 +180,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -ci )
             options="-ci"
+            ;;
+        -dry-run )
+            dryRun=1
             ;;
         -os=* )
             os="${1#*=}"
