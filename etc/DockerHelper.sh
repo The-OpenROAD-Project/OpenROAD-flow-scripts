@@ -8,6 +8,8 @@ baseDir="$(pwd)"
 # docker hub organization/user from where to pull/push images
 org=openroad
 
+DOCKER_CMD="docker"
+
 _help() {
     cat <<EOF
 usage: $0 [CMD] [OPTIONS]
@@ -77,7 +79,7 @@ _setup() {
 
 _create() {
     echo "Create docker image ${imagePath} using ${file}"
-    docker build \
+    ${DOCKER_CMD} build \
         --file "${file}" \
         --tag "${imagePath}" \
         ${buildArgs} \
@@ -99,7 +101,7 @@ _push() {
         _help
     fi
 
-    docker login --username "${username}" --password "${password}"
+    ${DOCKER_CMD} login --username "${username}" --password "${password}"
 
     if [[ "${tag}" == "" ]]; then
         tag=$(./etc/DockerTag.sh -dev)
@@ -109,18 +111,16 @@ _push() {
     ./etc/DockerHelper.sh create -os=${os} -target=dev -tag=${tag} -ci \
         2>&1 | tee build/create-${os}-dev-${tag}.log
 
-    docker push "${imageName}:${tag}"
+    ${DOCKER_CMD} push "${org}/flow-${os}-dev:${tag}"
 
     if [[ "${target}" == "master" ]]; then
         tag=$(./etc/DockerTag.sh -master)
         # Create builder image
-        ./etc/DockerHelper.sh create -os=${os} -target=builder -tag=${tag} \
+        ./etc/DockerHelper.sh create -os=${os} -target=builder \
             2>&1 | tee build/create-${os}-${target}-${tag}.log
 
-        docker tag ${org}/flow-${os}-builder:${tag} ${org}/orfs:${tag}
-        docker push ${org}/orfs:${tag}
-        docker tag ${org}/flow-${os}-builder:${tag} ${org}/orfs:${tag}
-        docker push ${org}/orfs:${tag}
+        ${DOCKER_CMD} tag ${org}/flow-${os}-builder:${imageTag} ${org}/orfs:${tag}
+        ${DOCKER_CMD} push ${org}/orfs:${tag}
     fi
 }
 
