@@ -1,6 +1,6 @@
 @Library('utils@orfs-v2.0.1') _
 
-node('ubuntu22') {
+node {
 
     properties([copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME)]);
 
