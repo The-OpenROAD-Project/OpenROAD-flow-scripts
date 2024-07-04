@@ -25,14 +25,14 @@ usage: $0 [CMD] [OPTIONS]
                                   'dev': os + packages to compile app
                                   'builder': os + packages to compile app +
                                              copy source code and build app
-  -threads                      Max number of threads to use if compiling.
+  -threads=N                    Max number of threads to use if compiling.
                                   Default = \$(nproc)
-  -tag                          Use as the image tag. Default is git commit sha
+  -tag=TAG                      Use as the image tag. Default is git commit sha.
+  -username=USERNAME            Username to loging at the docker registry.
+  -password=PASSWORD            Password to loging at the docker registry.
   -ci                           Install CI tools in image
   -dry-run                      Do not push images to the repository
   -h -help                      Show this message and exits
-  -username                     Docker Username
-  -password                     Docker Password
 
 EOF
     exit "${1:-1}"
