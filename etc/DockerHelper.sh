@@ -108,10 +108,13 @@ _push() {
     fi
 
     mkdir -p build
-    ./etc/DockerHelper.sh create -os=${os} -target=dev -tag=${tag} -ci \
-        2>&1 | tee build/create-${os}-dev-${tag}.log
 
-    ${DOCKER_CMD} push "${org}/flow-${os}-dev:${tag}"
+    if [[ "${target}" == "dev" ]]; then
+        ./etc/DockerHelper.sh create -os=${os} -target=dev -tag=${tag} -ci \
+            2>&1 | tee build/create-${os}-dev-${tag}.log
+
+        ${DOCKER_CMD} push "${org}/flow-${os}-dev:${tag}"
+    fi
 
     if [[ "${target}" == "master" ]]; then
         tag=$(./etc/DockerTag.sh -master)
