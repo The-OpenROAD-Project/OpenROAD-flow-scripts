@@ -51,10 +51,10 @@ jobs:
             sudo rm -rf "/usr/local/share/boost"
             sudo rm -rf "$AGENT_TOOLSDIRECTORY"
           fi
-          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }}
+          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }} -tag=latest
       - name: Build project
         run: |
-          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }}
+          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }} -tag=latest
       - name: Test build
         run: |
           cmd="source ./env.sh ; yosys -help ; openroad -help ; make -C flow ;"

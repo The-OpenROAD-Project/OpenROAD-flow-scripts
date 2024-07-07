@@ -16,7 +16,7 @@ COPY InstallerOpenROAD.sh \
 ARG options=""
 
 RUN ./DependencyInstaller.sh $options \
-      && rm -rf /tmp/installer
+      && rm -rf /tmp/installer /tmp/* /var/tmp/* /var/lib/apt/lists/*
 
 ARG fromImage
 

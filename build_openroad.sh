@@ -20,7 +20,7 @@ OPENROAD_APP_BRANCH="master"
 INSTALL_PATH="$(pwd)/tools/install"
 
 YOSYS_USER_ARGS=""
-YOSYS_ARGS="CONFIG=gcc"
+YOSYS_ARGS="CONFIG=clang ENABLE_NDEBUG=1"
 
 OPENROAD_APP_USER_ARGS=""
 OPENROAD_APP_ARGS=""
@@ -205,6 +205,8 @@ EOF
   PROC=2
         fi
 fi
+
+echo "[INFO FLW-0028] Compiling with ${PROC} threads."
 
 # Only add install prefix variables after parsing arguments.
 YOSYS_ARGS+=" PREFIX=${INSTALL_PATH}/yosys"
