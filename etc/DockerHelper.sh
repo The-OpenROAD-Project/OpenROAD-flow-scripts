@@ -8,6 +8,8 @@ baseDir="$(pwd)"
 # docker hub organization/user from where to pull/push images
 org=openroad
 
+DOCKER_CMD="docker"
+
 _help() {
     cat <<EOF
 usage: $0 [CMD] [OPTIONS]
@@ -18,17 +20,19 @@ usage: $0 [CMD] [OPTIONS]
   push                          Push the docker image to Docker Hub
 
   OPTIONS:
-  -os=OS_NAME                   Choose beween ubuntu20.04 and ubuntu22.04 (default).
-  -target=TARGET                Choose target fo the Docker image:
+  -os=OS_NAME                   Choose between ubuntu20.04 and ubuntu22.04 (default).
+  -target=TARGET                Choose target for the Docker image:
                                   'dev': os + packages to compile app
                                   'builder': os + packages to compile app +
                                              copy source code and build app
-  -threads                      Max number of threads to use if compiling.
+  -threads=N                    Max number of threads to use if compiling.
                                   Default = \$(nproc)
+  -tag=TAG                      Use as the image tag. Default is git commit sha.
+  -username=USERNAME            Username to loging at the docker registry.
+  -password=PASSWORD            Password to loging at the docker registry.
   -ci                           Install CI tools in image
+  -dry-run                      Do not push images to the repository
   -h -help                      Show this message and exits
-  -username                     Docker Username
-  -password                     Docker Password
 
 EOF
     exit "${1:-1}"
@@ -77,7 +81,7 @@ _setup() {
 
 _create() {
     echo "Create docker image ${imagePath} using ${file}"
-    docker build \
+    ${DOCKER_CMD} build \
         --file "${file}" \
         --tag "${imagePath}" \
         ${buildArgs} \
@@ -99,28 +103,42 @@ _push() {
         _help
     fi
 
-    docker login --username "${username}" --password "${password}"
+    if [[ "${dryRun}" == 1 ]]; then
+        echo "Skipping docker login"
+    else
+        ${DOCKER_CMD} login --username "${username}" --password "${password}"
+    fi
 
     if [[ "${tag}" == "" ]]; then
         tag=$(./etc/DockerTag.sh -dev)
     fi
 
     mkdir -p build
-    ./etc/DockerHelper.sh create -os=${os} -target=dev -tag=${tag} -ci \
-        2>&1 | tee build/create-${os}-dev-${tag}.log
 
-    docker push "${imageName}:${tag}"
+    if [[ "${target}" == "dev" ]]; then
+        ./etc/DockerHelper.sh create -os=${os} -target=dev -tag=${tag} -ci \
+            2>&1 | tee build/create-${os}-dev-${tag}.log
+
+        if [[ "${dryRun}" != 1 ]]; then
+            ${DOCKER_CMD} push "${org}/flow-${os}-dev:${tag}"
+        fi
+    fi
 
     if [[ "${target}" == "master" ]]; then
         tag=$(./etc/DockerTag.sh -master)
         # Create builder image
-        ./etc/DockerHelper.sh create -os=${os} -target=builder -tag=${tag} \
+        ./etc/DockerHelper.sh create -os=${os} -target=builder \
             2>&1 | tee build/create-${os}-${target}-${tag}.log
 
-        docker tag ${org}/flow-${os}-builder:${tag} ${org}/orfs:${tag}
-        docker push ${org}/orfs:${tag}
-        docker tag ${org}/flow-${os}-builder:${tag} ${org}/orfs:${tag}
-        docker push ${org}/orfs:${tag}
+        builderTag=${org}/flow-${os}-builder:${imageTag}
+        orfsTag=${org}/orfs:${tag}
+        echo "Renaming docker image: ${builderTag} -> ${orfsTag}"
+        ${DOCKER_CMD} tag ${builderTag} ${orfsTag}
+        if [[ "${dryRun}" == 1 ]]; then
+            echo "[DRY-RUN] ${DOCKER_CMD} push ${orfsTag}"
+        else
+            ${DOCKER_CMD} push ${orfsTag}
+        fi
     fi
 }
 
@@ -153,6 +171,7 @@ target="dev"
 numThreads="-1"
 tag=""
 options=""
+dryRun=0
 
 while [ "$#" -gt 0 ]; do
     case "${1}" in
@@ -161,6 +180,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -ci )
             options="-ci"
+            ;;
+        -dry-run )
+            dryRun=1
             ;;
         -os=* )
             os="${1#*=}"
