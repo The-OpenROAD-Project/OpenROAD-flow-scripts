@@ -1,11 +1,26 @@
-@Library('utils@orfs-v2.0.1') _
+@Library('utils@orfs-v2.1.0') _
 
-node('ubuntu22') {
+node {
 
     properties([copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME)]);
 
     stage('Checkout') {
-        checkout scm;
+        checkout([
+            $class: 'GitSCM',
+            branches: [[name: scm.branches[0].name]],
+            doGenerateSubmoduleConfigurations: false,
+            extensions: [
+                [$class: 'CloneOption', noTags: false],
+                [$class: 'SubmoduleOption', recursiveSubmodules: true]
+            ],
+            submoduleCfg: [],
+            userRemoteConfigs: scm.userRemoteConfigs
+        ]);
+        def description = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim();
+        if (description.contains('ci') && description.contains('skip')) {
+            currentBuild.result = 'SKIPPED'; // 'SUCCESS', 'SKIPPED'
+            return;
+        }
     }
 
     def DOCKER_IMAGE;
@@ -19,7 +34,11 @@ node('ubuntu22') {
     }
 
     stage('Run Tests') {
-        runTests(DOCKER_IMAGE, 'pr');
+        if (env.CHANGE_BRANCH && env.CHANGE_BRANCH.contains('ci-dev')) {
+            runTests(DOCKER_IMAGE, 'dev');
+        } else {
+            runTests(DOCKER_IMAGE, 'pr');
+        }
     }
 
     stage ('Cleanup and Reporting') {
