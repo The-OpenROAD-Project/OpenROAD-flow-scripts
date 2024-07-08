@@ -14,3 +14,5 @@ sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \
 
 # reduce git noise as these comments will change if the line numbers in Chisel changes
 find . -name "*.v" -type f -exec sed -i 's/ \/\/.*$//' {} \;
+
+cp test_run_dir/MockArray_should_Wiggle_some_wires/MockArray.vcd .

@@ -4,6 +4,8 @@
 import chisel3._
 
 import org.scalatest._
+import chiseltest._
+import org.scalatest.flatspec.AnyFlatSpec
 
 import chisel3._
 import chisel3.util._
@@ -147,6 +149,23 @@ case class ArrayConfig(
     remainingArgs: Seq[String] = Seq.empty
 )
 
+
+class MockArrayTest(width:Int, height:Int, singleElementWidth:Int) extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "MockArray"
+
+  it should "Wiggle some wires" in {
+    test(new MockArray(width, height, singleElementWidth)).withAnnotations(Seq(WriteVcdAnnotation)) { dut =>
+      dut.io.ins.routes.foreach { case (route, vec) =>
+        vec.zipWithIndex.foreach { case (wire, i) =>
+          wire.poke(i.U)
+          dut.clock.step(1)
+        }
+      }
+    }
+  }
+}
+
+
 object GenerateMockArray extends App {
 
   val builder = OParser.builder[ArrayConfig]
@@ -186,6 +205,7 @@ object GenerateMockArray extends App {
             )
           )
         )
+      new MockArrayTest(c.width, c.height, c.dataWidth).execute()
 
     case _ =>
       // arguments are invalid
