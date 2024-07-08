@@ -40,6 +40,13 @@ verilog:
 	export MOCK_ARRAY_COLS=$(word 2, $(MOCK_ARRAY_TABLE)) ; \
 	./designs/asap7/mock-array/verilog.sh
 
+.PHONY: simulate
+simulate:
+	export MOCK_ARRAY_ROWS=$(word 1, $(MOCK_ARRAY_TABLE)) ; \
+	export MOCK_ARRAY_COLS=$(word 2, $(MOCK_ARRAY_TABLE)) ; \
+	./designs/asap7/mock-array/simulate.sh
+
+
 # If this design isn't quickly done in detailed routing, something is wrong.
 # At time of adding this option, only 12 iterations were needed for 0
 # violations.
