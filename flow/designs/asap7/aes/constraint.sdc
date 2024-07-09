@@ -1,3 +1,5 @@
+sta::set_delay_calculator prima
+
 set clk_name  clk
 set clk_port_name clk
 set clk_period 400 
