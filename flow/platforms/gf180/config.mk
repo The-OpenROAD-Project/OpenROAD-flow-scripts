@@ -132,6 +132,12 @@ export TEMPERATURE                           = $($(CORNER)_TEMPERATURE)
 export LIB_FILES                             = $($(CORNER)_LIB_FILES) \
                                                $(ADDITIONAL_LIBS)
 
+# IR drop estimation supply net name to be analyzed and supply voltage variable
+# For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
+export PWR_NETS_VOLTAGES  ?= "VDD 5.0"
+export GND_NETS_VOLTAGES  ?= "VSS 0.0"
+export IR_DROP_LAYER ?= Metal1
+
 # For proprietary tool enablements that are not public
 export GF180_PRIVATE_DIR ?= ../../gf180-private
 -include $(GF180_PRIVATE_DIR)/private.mk
