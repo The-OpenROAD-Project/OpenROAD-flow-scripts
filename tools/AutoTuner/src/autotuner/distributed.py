@@ -29,10 +29,12 @@ import json
 import os
 import re
 import sys
+import random
 from datetime import datetime
 from multiprocessing import cpu_count
 from subprocess import run
 from itertools import product
+from collections import namedtuple
 from uuid import uuid4 as uuid
 
 import numpy as np
@@ -45,11 +47,9 @@ from ray.tune.search import ConcurrencyLimiter
 from ray.tune.search.ax import AxSearch
 from ray.tune.search.basic_variant import BasicVariantGenerator
 from ray.tune.search.hyperopt import HyperOptSearch
-# from ray.tune.search.nevergrad import NevergradSearch
 from ray.tune.search.optuna import OptunaSearch
 from ray.util.queue import Queue
 
-# import nevergrad as ng
 from ax.service.ax_client import AxClient
 
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -107,7 +107,7 @@ class AutoTunerBase(tune.Trainable):
     @classmethod
     def read_metrics(cls, file_name):
         '''
-        Collects metrics to evaluate the user-defined objective function.
+        Collects param_dictmetrics to evaluate the user-defined objective function.
         '''
         with open(file_name) as file:
             data = json.load(file)
@@ -217,22 +217,22 @@ def read_config(file_name):
         if args.algorithm != 'random':
             return config
         dp_pad_min = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax'][0]
-        # dp_pad_max = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['minmax'][1]
         dp_pad_step = data['CELL_PAD_IN_SITES_DETAIL_PLACEMENT']['step']
         if dp_pad_step == 1:
             config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
-                lambda spec: tune.randint(
-                    dp_pad_min,
-                    spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1))
+                lambda spec: np.random.randint(
+                                    dp_pad_min,
+                                    spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1
+                                    )
+                )
         if dp_pad_step > 1:
             config['CELL_PAD_IN_SITES_DETAIL_PLACEMENT'] = tune.sample_from(
-                lambda spec: tune.choice(
-                    np.ndarray.tolist(
-                        np.arange(
-                            dp_pad_min,
-                            spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT +
-                            1,
-                            dp_pad_step))))
+                lambda spec: random.randrange(
+                                    dp_pad_min,
+                                    spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1,
+                                    dp_pad_step
+                                    )
+                )
         return config
 
     def read_tune(this):
@@ -240,11 +240,8 @@ def read_config(file_name):
         if min_ == max_:
             # Returning a choice of a single element allow pbt algorithm to
             # work. pbt does not accept single values as tunable.
-            return tune.choice([min_])
+            return tune.choice([min_, max_])
         if this['type'] == 'int':
-            if min_ == 0 and args.algorithm == 'nevergrad':
-                print('[WARNING TUN-0011] NevergradSearch may not work '
-                      'with lower bound value 0.')
             if this['step'] == 1:
                 return tune.randint(min_, max_)
             return tune.choice(
@@ -263,7 +260,11 @@ def read_config(file_name):
         return None
 
     def read_tune_ax(name, this):
+        """
+        Ax format: https://ax.dev/versions/0.3.7/api/service.html
+        """
         dict_ = dict(name=name)
+        if 'minmax' not in this: return None
         min_, max_ = this['minmax']
         if min_ == max_:
             dict_["type"] = "fixed"
@@ -291,6 +292,19 @@ def read_config(file_name):
                 dict_["value_type"] = "float"
         return dict_
 
+    def read_tune_pbt(name, this):
+        """
+        PBT format: https://docs.ray.io/en/releases-2.9.3/tune/examples/pbt_guide.html
+        Note that PBT does not support step values.
+        """
+        if 'minmax' not in this: return None
+        min_, max_ = this['minmax']
+        if min_ == max_: return ray.tune.choice([min_, max_])
+        if this['type'] == 'int':
+            return ray.tune.randint(min_, max_)
+        if this['type'] == 'float':
+            return ray.tune.uniform(min_, max_)
+
     # Check file exists and whether it is a valid JSON file.
     assert os.path.isfile(file_name), f'File {file_name} not found.'
     try:
@@ -317,13 +331,23 @@ def read_config(file_name):
             fr_file = read(f'{os.path.dirname(file_name)}/{value}')
             continue
         if not isinstance(value, dict):
-            config[key] = value
+            # To take care of empty values like _FR_FILE_PATH
+            if args.mode == 'tune' and args.algorithm == 'ax':
+                param_dict = read_tune_ax(key, value)
+                if param_dict: config.append(param_dict)
+            elif args.mode == 'tune' and args.algorithm == 'pbt':
+                param_dict = read_tune_pbt(key, value)
+                if param_dict: config[key] = param_dict
+            else:
+                config[key] = value
         elif args.mode == 'sweep':
             config[key] = read_sweep(value)
-        elif args.mode == 'tune' and args.algorithm != 'ax':
-            config[key] = read_tune(value)
         elif args.mode == 'tune' and args.algorithm == 'ax':
             config.append(read_tune_ax(key, value))
+        elif args.mode == 'tune' and args.algorithm == 'pbt':
+            config[key] = read_tune_pbt(key, value)
+        elif args.mode == 'tune':
+            config[key] = read_tune(value)
     if args.mode == 'tune':
         config = apply_condition(config, data)
     return config, sdc_file, fr_file
@@ -665,7 +689,6 @@ def parse_arguments():
         type=str,
         choices=['hyperopt',
                  'ax',
-                 'nevergrad',
                  'optuna',
                  'pbt',
                  'random'],
@@ -772,19 +795,14 @@ def set_algorithm(experiment_name, config):
         algorithm = HyperOptSearch(points_to_evaluate=best_params)
     elif args.algorithm == 'ax':
         ax_client = AxClient(enforce_sequential_optimization=False)
+        AxClientMetric = namedtuple('AxClientMetric', 'minimize')
         ax_client.create_experiment(
             name=experiment_name,
             parameters=config,
-            objective_name=METRIC,
-            minimize=True
+            objectives={METRIC: AxClientMetric(minimize=True)},
         )
         algorithm = AxSearch(ax_client=ax_client,
                              points_to_evaluate=best_params)
-    elif args.algorithm == 'nevergrad':
-        algorithm = NevergradSearch(
-            points_to_evaluate=best_params,
-            optimizer=ng.optimizers.registry["PortfolioDiscreteOnePlusOne"]
-        )
     elif args.algorithm == 'optuna':
         algorithm = OptunaSearch(points_to_evaluate=best_params,
                                  seed=args.seed)
