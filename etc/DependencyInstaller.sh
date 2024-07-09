@@ -74,6 +74,7 @@ _installUbuntuPackages() {
         libqt5multimediawidgets5 \
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
+        libqt5opengl5 \
         libz-dev \
         python3-pip \
         qtmultimedia5-dev \
