@@ -65,5 +65,6 @@ else
 export DESIGN_TYPE = CELL_NODEN
 endif
 
-export SKIP_PIN_SWAP          = 1
+#export SKIP_PIN_SWAP          = 1
 export SKIP_INCREMENTAL_REPAIR = 1
+export TNS_END_PERCENT = 5

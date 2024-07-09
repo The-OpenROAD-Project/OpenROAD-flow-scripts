@@ -104,8 +104,9 @@
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
-# Default TNS_END_PERCENT value
-export TNS_END_PERCENT ?=5
+# Default TNS_END_PERCENT value for post CTS timing repair
+# Try fixing all violating endpoints by default (reduce to 5% for runtime)
+export TNS_END_PERCENT ?=100
 
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY

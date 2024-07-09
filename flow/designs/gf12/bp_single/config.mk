@@ -3,6 +3,7 @@ export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 
 export SKIP_GATE_CLONING = 1
+export TNS_END_PERCENT = 5
 
 # export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.sv2v.v
 export VERILOG_FILES =  $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_don_abc_script.v \
