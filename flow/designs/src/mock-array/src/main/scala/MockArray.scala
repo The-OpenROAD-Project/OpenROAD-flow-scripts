@@ -157,7 +157,7 @@ class MockArrayPostSynthesis(width:Int, height:Int, singleElementWidth:Int)
 extends BlackBox with HasBlackBoxPath {
   override def desiredName = "MockArray"
   val io = IO(new Bundle {
-    val clock = Clock()
+    val clock = Input(Clock())
     val reset = Input(Bool())
     val io = new MockArrayBundle(width, height, singleElementWidth)
   })
@@ -177,6 +177,7 @@ class MockArrayTestbench(width:Int, height:Int, singleElementWidth:Int) extends 
   val postSynthesis = Module(new MockArrayPostSynthesis(width, height, singleElementWidth))
   postSynthesis.io.io <> io
   postSynthesis.io.reset := reset.asBool
+  postSynthesis.io.clock := clock
 }
 
 
@@ -190,12 +191,14 @@ class MockArrayTest(width:Int, height:Int, singleElementWidth:Int) extends AnyFl
       VerilatorBackendAnnotation,
       SimulatorDebugAnnotation,
       // DD flip flops use UDP Tables, unsupported by Verilator
-      VerilatorFlags(Seq("--bbox-unsup"))
+      VerilatorFlags(Seq())
       )) { dut =>
-      dut.io.ins.routes.foreach { case (route, vec) =>
-        vec.zipWithIndex.foreach { case (wire, i) =>
-          wire.poke(i.U)
-          dut.clock.step(1)
+      for (j <- 0 until 5) {
+        dut.io.ins.routes.foreach { case (route, vec) =>
+          vec.zipWithIndex.foreach { case (wire, i) =>
+            wire.poke((i+j).U)
+            dut.clock.step(1)
+          }
         }
       }
     }

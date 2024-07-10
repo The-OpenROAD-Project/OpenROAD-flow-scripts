@@ -15,5 +15,5 @@ pwd
 sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \
      "test:runMain SimulatePostSynthesis --width ${MOCK_ARRAY_COLS} --height ${MOCK_ARRAY_ROWS} --dataWidth ${MOCK_ARRAY_DATAWIDTH}"
 
-cp test_run_dir/MockArray_should_Wiggle_some_wires/MockArray.vcd .
+cp test_run_dir/MockArray_should_Wiggle_some_wires/MockArrayTestbench.vcd .
 
