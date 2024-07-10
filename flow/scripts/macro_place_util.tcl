@@ -118,6 +118,9 @@ if {[find_macros] != ""} {
         append additional_rtlmp_args " -fence_uy $env(RTLMP_FENCE_UY)"
     }
 
+    source $::env(SCRIPTS_DIR)/set_place_density.tcl
+    append additional_rtlmp_args " -target_util $place_density"
+
     set all_args $additional_rtlmp_args
 
     if { [info exists ::env(RTLMP_ARGS)] } {
