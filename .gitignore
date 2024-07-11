@@ -92,3 +92,5 @@ SupportedOS.md
 index2.md
 mainREADME.md
 build
+.scala-build/
+.bsp/
