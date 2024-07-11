@@ -23,15 +23,6 @@ User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) o
 
 ## Setting up AutoTuner
 
-```{important}
-Note that if you have installed OpenROAD via Docker or the build scripts, you can access
-the autotuner libraries via venv. 
-
-source autotuner_env/bin/activate
-
-This is inserted for developers' reference.
-```
-
 To setup AutoTuner, make sure you have a virtual environment set up with
 Python 3.9.X. There are plenty of ways to do this, we recommend using 
 [Miniconda](https://docs.conda.io/en/latest/miniconda.html),

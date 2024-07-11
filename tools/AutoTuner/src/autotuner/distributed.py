@@ -331,65 +331,44 @@ def read_config(file_name):
         config = apply_condition(config, data)
     return config, sdc_file, fr_file
 
-def parse_flow_variables(source = 'code'):
+def parse_flow_variables():
     """
-    Parse the flow variables from one of the following two sources
-    - Docs: ./docs/user/FlowVariables.md
+    Parse the flow variables from source
     - Code: Makefile `vars` target output
 
     TODO: Tests.
 
-    Args:
-    - source: source of the flow variables. Must be either 'docs' or 'makefile'.
-
     Output:
     - flow_variables: set of flow variables
     """
-    assert source in ['docs', 'code'],\
-     "Invalid source. Must be either 'docs' or 'code'."
-
-    DOCS_UPPERCASE_REGEX = r"`(.+?)`"
-
     cur_path = os.path.dirname(os.path.realpath(__file__))
-    if source == 'docs':
-        fv_path = os.path.join(cur_path, "../../../../docs/user/FlowVariables.md")
-        with open(fv_path) as f:
-            # Regex to parse all variables with "``" identifiers that are uppercase.
-            flow_variables = set(match 
-                                for line in f
-                                for match in re.findall(DOCS_UPPERCASE_REGEX, line)
-                                if match.isupper())
-            for line in f:
-                matches = re.findall(regex, line)
-                for match in matches:
-                    if not match.isupper(): continue
-                    flow_variables.add(match)
-    else:
-        # first, generate vars.tcl
-        makefile_path = os.path.join(cur_path, "../../../../flow/")
-        initial_path = os.path.abspath(os.getcwd())
-        os.chdir(makefile_path)
-        result = subprocess.run(["make", "vars"])
-        if result.returncode != 0:
-            print(f"[ERROR TUN-0018] Makefile failed with error code {result.returncode}.")
-            sys.exit(1)
-        if not os.path.exists("vars.tcl"):
-            print(f"[ERROR TUN-0019] Makefile did not generate vars.tcl.")
-            sys.exit(1)
-        os.chdir(initial_path)
 
-        # for code parsing, you need to parse from both scripts and vars.tcl file.
-        paths = glob.glob(os.path.join(cur_path, "../../../../flow/scripts/*tcl"))
-        paths.append(os.path.join(cur_path, "../../../../flow/vars.tcl"))
-        pattern = r"(?:::)?env\((.*?)\)"
-        flow_variables = set()
-        for fv_path in paths:
-            with open(fv_path) as f:
-                matches = re.findall(pattern, f.read())
-                flow_variables.update(s.strip().upper()
-                                    for match in matches
-                                    for s in match.split('\n') 
-                                    if len(s))        
+    # first, generate vars.tcl
+    makefile_path = os.path.join(cur_path, "../../../../flow/")
+    initial_path = os.path.abspath(os.getcwd())
+    os.chdir(makefile_path)
+    result = subprocess.run(["make", "vars"])
+    if result.returncode != 0:
+        print(f"[ERROR TUN-0018] Makefile failed with error code {result.returncode}.")
+        sys.exit(1)
+    if not os.path.exists("vars.tcl"):
+        print(f"[ERROR TUN-0019] Makefile did not generate vars.tcl.")
+        sys.exit(1)
+    os.chdir(initial_path)
+
+    # for code parsing, you need to parse from both scripts and vars.tcl file.
+    paths = glob.glob(os.path.join(cur_path, "../../../../flow/scripts/*tcl"))
+    paths.append(os.path.join(cur_path, "../../../../flow/vars.tcl"))
+    pattern = r"(?:::)?env\((.*?)\)"
+    flow_variables = set()
+    for fv_path in paths:
+        with open(fv_path) as f:
+            matches = re.findall(pattern, f.read())
+            flow_variables.update(s.strip().upper()
+                                for match in matches
+                                for s in match.split('\n') 
+                                if len(s))        
+
     return flow_variables
 
 def parse_config(config, path=os.getcwd()):
@@ -399,7 +378,7 @@ def parse_config(config, path=os.getcwd()):
     options = ''
     sdc = {}
     fast_route = {}
-    flow_variables = parse_flow_variables("code")
+    flow_variables = parse_flow_variables()
     for key, value in config.items():
         # Keys that begin with underscore need special handling.
         if key.startswith('_'):
