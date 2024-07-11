@@ -34,14 +34,6 @@ _installCommon() {
     else
         pip3 install --no-cache-dir --user -U $pkgs
     fi
-
-    # Autotuner reqs (use venv)
-    local autotuner_pkgs=" $(cat ./etc/requirements.txt)"
-    local venv_name="autotuner_env"
-    python3 -m venv $venv_name
-    source "$venv_name/bin/activate"
-    pip3 install -U $autotuner_pkgs
-    deactivate
 }
 
 _installCentosCleanUp() {
