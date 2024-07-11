@@ -22,6 +22,9 @@ entries:
   - file: user/InstructionsForAutoTuner.md
     title: AutoTuner
 
+- file: Manpage.md
+  title: Manpages
+
 - file: contrib/GettingInvolved.md
   title: Getting Involved
 
