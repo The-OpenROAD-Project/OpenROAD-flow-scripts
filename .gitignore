@@ -91,3 +91,5 @@ GitGuide.md
 Manpage.md
 mainREADME.md
 build
+.scala-build/
+.bsp/

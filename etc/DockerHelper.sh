@@ -8,6 +8,8 @@ baseDir="$(pwd)"
 # docker hub organization/user from where to pull/push images
 org=openroad
 
+DOCKER_CMD="docker"
+
 _help() {
     cat <<EOF
 usage: $0 [CMD] [OPTIONS]
@@ -18,25 +20,25 @@ usage: $0 [CMD] [OPTIONS]
   push                          Push the docker image to Docker Hub
 
   OPTIONS:
-  -os=OS_NAME                   Choose beween ubuntu20.04 and ubuntu22.04 (default).
-  -target=TARGET                Choose target fo the Docker image:
+  -os=OS_NAME                   Choose between ubuntu20.04 and ubuntu22.04 (default).
+  -target=TARGET                Choose target for the Docker image:
                                   'dev': os + packages to compile app
                                   'builder': os + packages to compile app +
                                              copy source code and build app
-  -threads                      Max number of threads to use if compiling.
-  -sha                          Use git commit sha as the tag image. Default is
-                                  'latest'.
+  -threads=N                    Max number of threads to use if compiling.
+                                  Default = \$(nproc)
+  -tag=TAG                      Use as the image tag. Default is git commit sha.
+  -username=USERNAME            Username to loging at the docker registry.
+  -password=PASSWORD            Password to loging at the docker registry.
   -ci                           Install CI tools in image
+  -dry-run                      Do not push images to the repository
   -h -help                      Show this message and exits
-  -username                     Docker Username
-  -password                     Docker Password
 
 EOF
     exit "${1:-1}"
 }
 
 _setup() {
-    commitSha="$(git rev-parse HEAD | tr -cd 'a-zA-Z0-9-')"
     case "${os}" in
         "ubuntu20.04")
             osBaseImage="ubuntu:20.04"
@@ -50,9 +52,10 @@ _setup() {
             ;;
     esac
     imageName="${IMAGE_NAME_OVERRIDE:-"${org}/flow-${os}-${target}"}"
-    imageTag="${commitSha}"
-    if [[ "${tag}" != "NONE" ]]; then
+    if [[ "${tag}" != "" ]]; then
         imageTag="${tag}"
+    else
+        imageTag=$(./etc/DockerTag.sh -dev)
     fi
     case "${target}" in
         "builder" | "master")
@@ -78,7 +81,7 @@ _setup() {
 
 _create() {
     echo "Create docker image ${imagePath} using ${file}"
-    docker build \
+    ${DOCKER_CMD} build \
         --file "${file}" \
         --tag "${imagePath}" \
         ${buildArgs} \
@@ -95,43 +98,48 @@ _push() {
         echo "Missing required -password=<PASS> argument"
         _help
     fi
-    docker login --username ${username} --password ${password}
-    if [[ "${tag}" == "NONE" ]]; then
-        tag="latest"
+    if [[ "${target}" != "dev" ]] && [[ "${target}" != "master" ]]; then
+        echo "Target ${target} is not valid candidate for push to Docker Hub." >&2
+        _help
     fi
+
+    if [[ "${dryRun}" == 1 ]]; then
+        echo "Skipping docker login"
+    else
+        ${DOCKER_CMD} login --username "${username}" --password "${password}"
+    fi
+
+    if [[ "${tag}" == "" ]]; then
+        tag=$(./etc/DockerTag.sh -dev)
+    fi
+
     mkdir -p build
-    case "${target}" in
-        "dev" )
-            ./etc/DockerHelper.sh create -os=${os} -ci -target=${target} \
-                2>&1 | tee build/create-${os}-${target}-${tag}.log
-            docker push ${imagePath}
-            ;;
 
-        "master" )
-            # Create dev image needed as a base for builder image
-            ./etc/DockerHelper.sh create -os=${os} -target=dev \
-                2>&1 | tee build/create-${os}-dev-${target}-${tag}.log
-            # Create builder image
-            ./etc/DockerHelper.sh create -os=${os} -target=builder \
-                2>&1 | tee build/create-${os}-${target}-${tag}.log
+    if [[ "${target}" == "dev" ]]; then
+        ./etc/DockerHelper.sh create -os=${os} -target=dev -tag=${tag} -ci \
+            2>&1 | tee build/create-${os}-dev-${tag}.log
 
-            docker push ${org}/flow-${os}-dev:${commitSha}
+        if [[ "${dryRun}" != 1 ]]; then
+            ${DOCKER_CMD} push "${org}/flow-${os}-dev:${tag}"
+        fi
+    fi
 
-            docker tag ${org}/flow-${os}-dev:${commitSha} ${org}/flow-${os}-dev:latest
-            docker push ${org}/flow-${os}-dev:latest
+    if [[ "${target}" == "master" ]]; then
+        tag=$(./etc/DockerTag.sh -master)
+        # Create builder image
+        ./etc/DockerHelper.sh create -os=${os} -target=builder \
+            2>&1 | tee build/create-${os}-${target}-${tag}.log
 
-            docker tag ${org}/flow-${os}-builder:${commitSha} ${org}/orfs:${commitSha}
-            docker push ${org}/orfs:${commitSha}
-
-            docker tag ${org}/flow-${os}-builder:${commitSha} ${org}/orfs:${tag}
-            docker push ${org}/orfs:${tag}
-            ;;
-
-        *)
-            echo "Target ${target} is not valid candidate for push to Docker Hub." >&2
-            _help
-            ;;
-    esac
+        builderTag=${org}/flow-${os}-builder:${imageTag}
+        orfsTag=${org}/orfs:${tag}
+        echo "Renaming docker image: ${builderTag} -> ${orfsTag}"
+        ${DOCKER_CMD} tag ${builderTag} ${orfsTag}
+        if [[ "${dryRun}" == 1 ]]; then
+            echo "[DRY-RUN] ${DOCKER_CMD} push ${orfsTag}"
+        else
+            ${DOCKER_CMD} push ${orfsTag}
+        fi
+    fi
 }
 
 #
@@ -161,8 +169,9 @@ fi
 os="ubuntu22.04"
 target="dev"
 numThreads="-1"
-tag="NONE"
+tag=""
 options=""
+dryRun=0
 
 while [ "$#" -gt 0 ]; do
     case "${1}" in
@@ -171,6 +180,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -ci )
             options="-ci"
+            ;;
+        -dry-run )
+            dryRun=1
             ;;
         -os=* )
             os="${1#*=}"
