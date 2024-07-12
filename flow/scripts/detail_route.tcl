@@ -70,4 +70,6 @@ if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
 }
 
+check_antennas -report_file $env(REPORTS_DIR)/drt_antennas.log
+
 write_db $::env(RESULTS_DIR)/5_3_route.odb

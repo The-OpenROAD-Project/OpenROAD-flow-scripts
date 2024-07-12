@@ -100,7 +100,7 @@ if {![info exist env(SKIP_ANTENNA_REPAIR)]} {
   puts "Repair antennas..."
   repair_antennas -iterations 5
   check_placement -verbose
-  check_antennas -report_file $env(REPORTS_DIR)/antenna.log
+  check_antennas -report_file $env(REPORTS_DIR)/grt_antennas.log
 }
 
 puts "Estimate parasitics..."
