@@ -78,6 +78,8 @@
   "detailedplace__timing__drv__setup_violation_count": 72,
   "detailedplace__timing__setup__tns": -3181.86,
   "detailedplace__timing__setup__ws": -94.4758,
+  "detailedroute__antenna__violating__nets": 0,
+  "detailedroute__antenna__violating__pins": 0,
   "detailedroute__cpu__total": 112.98,
   "detailedroute__flow__errors__count": 0,
   "detailedroute__flow__warnings__count": 15,
