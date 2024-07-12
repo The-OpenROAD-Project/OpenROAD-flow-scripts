@@ -1,0 +1,23 @@
+# Copyright (c) 2024 Antmicro <www.antmicro.com>
+# SPDX-License-Identifier: Apache-2.0
+
+FROM openroad/orfs:latest
+
+COPY ./tools/codespace/scripts/common.sh /usr/local/bin/common.sh
+COPY ./tools/codespace/scripts/install-desktop-deps.sh /usr/local/bin/install-desktop-deps.sh
+RUN bash /usr/local/bin/install-desktop-deps.sh
+
+COPY ./tools/codespace/scripts/install-desktop.sh /usr/local/bin/install-desktop.sh
+RUN bash /usr/local/bin/install-desktop.sh
+RUN chsh -s /bin/bash
+
+ENV DISPLAY=:1
+
+COPY ./tools/codespace/scripts/patch-lxqt-config.sh /usr/local/bin/patch-lxqt-config.sh
+COPY ./tools/codespace/scripts/lxqt-config /usr/local/bin/lxqt-config
+RUN bash /usr/local/bin/patch-lxqt-config.sh
+
+COPY ./tools/codespace/scripts/patch-novnc-ui.sh /usr/local/bin/patch-novnc-ui.sh
+RUN bash /usr/local/bin/patch-novnc-ui.sh
+
+CMD ["/usr/local/share/desktop-init.sh"]

@@ -200,3 +200,7 @@ def setup(app):
         updated_content = before_insert + extracted_content + after_insert
     
         f.write(updated_content)
+      
+    # Get Manpage file
+    url = 'https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/src/utl/README.md'
+    get_file_from_url(url, 'Manpage.md')
