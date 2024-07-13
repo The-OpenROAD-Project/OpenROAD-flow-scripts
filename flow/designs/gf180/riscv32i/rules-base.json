@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -3.72,
+        "value": -1.95,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -52,7 +52,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -34.02,
+        "value": -28.49,
         "compare": ">="
     }
 }

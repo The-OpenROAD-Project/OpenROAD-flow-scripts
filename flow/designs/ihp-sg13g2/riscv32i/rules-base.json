@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 11792,
+        "value": 11461,
         "compare": "<="
     },
     "detailedplace__design__violations": {
