@@ -549,7 +549,13 @@ endif
 
 UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
 
-SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo "$($V)" | $(FLOW_HOME)/scripts/escape.sh),$V='')) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG)
+# FILE_MAKEFILE is needed when ORFS is invoked with
+# `make --file=$FLOW_DIR/Makefile` or `make --directory $FLOW_DIR`.
+#
+# However, on some versions of make, MAKEFILE_LIST can be empty, so
+# don't expand it in that case.
+FILE_MAKEFILE ?= $(if $(firstword $(MAKEFILE_LIST)),--file=$(firstword $(MAKEFILE_LIST)),)
+SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo "$($V)" | $(FLOW_HOME)/scripts/escape.sh),$V='')) --no-print-directory $(FILE_MAKEFILE) DESIGN_CONFIG=$(DESIGN_CONFIG)
 UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
 
 $(OBJECTS_DIR)/copyright.txt:
