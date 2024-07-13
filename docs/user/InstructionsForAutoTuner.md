@@ -200,14 +200,14 @@ We show three different views possible at the end, namely: `Table View`, `Scatte
 
 ## Testing framework
 
-```
-# Activate your virtualenv before this
-conda activate autotuner_env
+Assuming the virtual environment is setup at `./tools/AutoTuner/autotuner_env`:
 
+```
 # Smoke test
-cd tools/AutoTuner/tests
-python3 smoke_test_tune.py
-python3 smoke_test_sweep.py
+cd tools/AutoTuner && \
+./setup.sh && \
+python3 tests/smoke_test_tune.py && \
+python3 tests/smoke_test_sweep.py
 ```
 
 ## Citation
