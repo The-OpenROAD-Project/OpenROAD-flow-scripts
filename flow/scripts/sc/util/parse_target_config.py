@@ -136,8 +136,8 @@ def parse(chip, platform):
         dontuse_l = []
         for lf in libs:
             dontuse_l.append(os.path.join(mod_lib_base, f'{os.path.split(lf)[1]}-mod.lib'))
-        merged_config['DONT_USE_LIBS'] = ' '.join(dontuse_l)
-        merged_config['DONT_USE_SC_LIB'] = os.path.join('..', '..', 'merged.lib')
+        merged_config['PROCESSED_LIBS'] = ' '.join(dontuse_l)
+        merged_config['PROCESSED_SC_LIB'] = os.path.join('..', '..', 'merged.lib')
 
         # Set config environment values to be set during sc flow.
         for key, val in merged_config.items():

@@ -271,9 +271,9 @@ endif
 export LIB_FILES             += $($(CORNER)_$(LIB_MODEL)_LIB_FILES)
 export LIB_FILES             += $(ADDITIONAL_LIBS)
 export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
+export DFF_LIB_FILE           = $($(CORNER)_$(LIB_MODEL)_DFF_LIB_FILE)
 export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
 export VOLTAGE                = $($(CORNER)_VOLTAGE)
-export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 
 # ---------------------------------------------------------
 #  IR Drop
