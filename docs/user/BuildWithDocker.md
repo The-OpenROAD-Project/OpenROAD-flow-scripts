@@ -1,12 +1,19 @@
 # Build from sources using Docker
 
+```{Note}
+If you are intending to use the master's docker image, then you can skip this page
+and just pull the latest pre-built docker image. The image is updated with every commit.
+To pull with the latest tag:
+`docker pull openroad/orfs:latest`
+```
+
 ## Prerequisites
 
 - For this method you only need to install
-[Docker](https://docs.docker.com/engine/install) on your machine.
+  [Docker](https://docs.docker.com/engine/install) on your machine.
 - Ensure that you have sufficient memory allocated to the Virtual Machine (VM)
-as per our system [requirements](../index.md#system-requirements). Refer to
-this [Docker guide](https://docs.docker.com/config/containers/resource_constraints/) for setting CPU cores and memory limits.
+  as per our system [requirements](../index.md#system-requirements). Refer to
+  this [Docker guide](https://docs.docker.com/config/containers/resource_constraints/) for setting CPU cores and memory limits.
 
 :::{Warning}
 The `build_openroad.sh` will use the host number of CPUs to compile `openroad`.
@@ -18,7 +25,7 @@ then is recommended that you restrict the number of CPUs used by the scripts
 (see instructions below).
 :::
 
-``` shell
+```shell
 docker run --rm ubuntu:22.04 nproc
 ```
 
@@ -31,9 +38,9 @@ This greatly helps to reduce the compilation time needed.
 
 We recommend to use a Docker image of a supported OS
 and install OpenROAD using the pre-built binaries from
-Precision Innovations. 
-You can start the container in an interactive mode using 
-the command below. 
+Precision Innovations.
+You can start the container in an interactive mode using
+the command below.
 
 ```shell
 docker run -it ubuntu:22.04
@@ -48,13 +55,11 @@ Please refer to the instructions for installing prebuilt binaries
 Alternatively, if you would like the latest commits from the OpenROAD repositories,
 do follow the instructions below.
 
-
 #### Clone and Build
 
 The following instructions build the docker image with Ubuntu 22.04 as the base OS:
 
-
-``` shell
+```shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
 ./build_openroad.sh
@@ -62,7 +67,7 @@ cd OpenROAD-flow-scripts
 
 You can restrict the number of CPUs with the `-t|--threads N` argument:
 
-``` shell
+```shell
 ./build_openroad.sh --threads N
 ```
 
@@ -70,13 +75,13 @@ You can restrict the number of CPUs with the `-t|--threads N` argument:
 
 The binaries are only available from inside a Docker container. Here is an example of starting a container from the created Docker image.
 
-``` shell
+```shell
 docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22.04-builder
 ```
 
 Then, inside docker:
 
-``` shell
+```shell
 source ./env.sh
 yosys -help
 openroad -help
@@ -86,7 +91,7 @@ exit
 ```
 
 Alternatively you may also use the `docker_shell` utility as follows.
-It is important that you are in the `flow` directory. 
+It is important that you are in the `flow` directory.
 
 ```shell
 cd flow
@@ -120,8 +125,8 @@ Then use:
 docker run --rm -it -e DISPLAY=<IP_LIKE_FROM_TUTORIAL>:0 --network host --privileged <IMAGE_NAME>
 ```
 
-Alternatively, you may also use the `docker_shell` utility for GUI as follows. 
-It is important that you are in the `flow` directory. 
+Alternatively, you may also use the `docker_shell` utility for GUI as follows.
+It is important that you are in the `flow` directory.
 
 ```shell
 cd flow
@@ -129,8 +134,8 @@ util/docker_shell gui_final
 ```
 
 ```{note}
-`docker_shell` is a helpful utility to automate the 
-aforementioned Docker commands using the user's parameters. 
+`docker_shell` is a helpful utility to automate the
+aforementioned Docker commands using the user's parameters.
 Do refer to the documentation [here](./DockerShell.md).
 ```
 
@@ -143,7 +148,7 @@ The dev stage installs all dependencies and packages required to run OpenROAD
 and OpenROAD Flow Scripts. The build stage generates all binaries needed to run
 the flow (i.e., `openroad` and `yosys`).
 
-``` shell
+```shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
 cd OpenROAD-flow-scripts
 ./etc/DockerHelper.sh create -target=dev -os=$OS_NAME
