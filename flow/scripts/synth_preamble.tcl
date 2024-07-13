@@ -30,7 +30,7 @@ foreach file $::env(VERILOG_FILES) {
 
 # Read standard cells and macros as blackbox inputs
 # These libs have their dont_use properties set accordingly
-read_liberty -lib {*}$::env(DONT_USE_LIBS)
+read_liberty -lib {*}$::env(PROCESSED_LIBS)
 
 # Apply toplevel parameters (if exist)
 if {[info exist ::env(VERILOG_TOP_PARAMS)]} {
@@ -64,10 +64,11 @@ if {$::env(ABC_AREA)} {
 }
 
 # Technology mapping for cells
-# ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
-set abc_args [list -script $abc_script \
-      -liberty $::env(DONT_USE_SC_LIB) \
-      -constr $::env(OBJECTS_DIR)/abc.constr]
+set abc_args [list -script $abc_script -constr $::env(OBJECTS_DIR)/abc.constr]
+
+foreach lib $::env(PROCESSED_LIBS) {
+  lappend abc_args -liberty $lib
+}
 
 # Exclude dont_use cells. This includes macros that are specified via
 # LIB_FILES and ADDITIONAL_LIBS that are included in LIB_FILES.
@@ -90,7 +91,7 @@ if {[info exist ::env(SDC_FILE_CLOCK_PERIOD)] && [file isfile $::env(SDC_FILE_CL
 
 # Create argument list for stat
 set stat_libs ""
-foreach lib $::env(DONT_USE_LIBS) {
+foreach lib $::env(PROCESSED_LIBS) {
   append stat_libs "-liberty $lib "
 }
 

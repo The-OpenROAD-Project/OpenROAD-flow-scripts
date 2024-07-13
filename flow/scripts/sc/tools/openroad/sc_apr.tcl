@@ -33,7 +33,7 @@ if {$sc_step == "or_synth"} {
     }
     set merge_cmd $::env(UTILS_DIR)/mergeLib.pl
     lappend merge_cmd $::env(PLATFORM)_merged
-    foreach ff [regexp -all -inline {\S+} $::env(DONT_USE_LIBS)] {
+    foreach ff [regexp -all -inline {\S+} $::env(PROCESSED_LIBS)] {
         lappend merge_cmd $ff
     }
     exec {*}$merge_cmd > ../../merged.lib
