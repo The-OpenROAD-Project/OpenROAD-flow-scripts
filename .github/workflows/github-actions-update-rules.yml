@@ -15,6 +15,7 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+          ref: ${{ github.event.client_payload.branch }}
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
@@ -45,7 +46,12 @@ jobs:
           fi
           git add .
           git commit -m "flow: update rules based on new golden reference"
-      - if: "steps.remote-update.outputs.has_update == 'true'"
+      - if: "${{ github.event.client_payload.branch }} != "master""
+        name: update rules pr
+        id: remote-update-pr
+        run: |
+          git push origin ${{ github.event.client_payload.branch }}
+      - if: "steps.remote-update.outputs.has_update == 'true' && ${{ github.event.client_payload.branch }} == "master""
         name: Create Draft PR
         uses: peter-evans/create-pull-request@v5
         with:
