@@ -96,9 +96,8 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   # change directory to ../
   cd ..
   echo "Install dependencies in Venv"
-  python3 -m venv .venv
-  source .venv/bin/activate
-  pip install -r tools/AutoTuner/requirements.txt
+  ./tools/AutoTuner/installer.sh
+  ./tools/AutoTuner/setup.sh
 
   PLATFORM=${PLATFORM//-/}
   PLATFORM=${PLATFORM^^}  
