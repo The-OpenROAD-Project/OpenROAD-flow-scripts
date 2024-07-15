@@ -222,7 +222,7 @@ file for each design located in the OpenROAD-flow-scripts directory of
 |-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `PLATFORM`      | Specifies process design kit or technology node to be used.                                                                                                          |
 | `DESIGN_NAME`   | The name of the top-level module of the design.                                                                                                                      |
-| `VERILOG_FILES` | The path to the design Verilog files.                                                                                                                                |
+| `VERILOG_FILES` | The path to the design Verilog files or JSON files providing a description of modules (check `yosys -h write_json` for more details).                                |
 | `SDC_FILE`      | The path to design constraint (SDC) file.                                                                                                                            |
 
 
