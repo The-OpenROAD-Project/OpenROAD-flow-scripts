@@ -8,8 +8,8 @@ BASE=$DIR/../..
 cd $DIR
 
 cd ../../src/mock-array
-cp ../../../results/asap7/mock-array/base/6_final.v MockArrayFinal.v
-cp ../../../results/asap7/mock-array_Element/base/6_final.v MockArrayElementFinal.v
+cp ../../../results/asap7/mock-array/base/6_final.v post/MockArrayFinal.v
+cp ../../../results/asap7/mock-array_Element/base/6_final.v post/MockArrayElementFinal.v
 
 pwd
 sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \
