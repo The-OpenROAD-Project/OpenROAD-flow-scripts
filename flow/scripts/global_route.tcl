@@ -70,7 +70,14 @@ if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
   # Repair timing using global route parasitics
   puts "Repair setup and hold violations..."
   estimate_parasitics -global_routing
-  repair_timing -verbose
+
+  # process user settings
+  set additional_args "-verbose"
+  append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
+  append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
+  puts "repair_timing [join $additional_args " "]"
+  repair_timing {*}$additional_args
+
   if {[info exist ::env(DETAILED_METRICS)]} {
     report_metrics 5 "global route post repair timing"
   }
