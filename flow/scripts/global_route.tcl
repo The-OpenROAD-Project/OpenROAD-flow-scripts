@@ -24,8 +24,7 @@ if {[info exist env(FASTROUTE_TCL)]} {
 # If GLOBAL_ROUTE_ARGS is specified, then we do only what the
 # GLOBAL_ROUTE_ARGS specifies.
 proc do_global_route {} {
-  set all_args [concat [list -guide_file $::env(RESULTS_DIR)/route.guide \
-    -congestion_report_file $::env(REPORTS_DIR)/congestion.rpt] \
+  set all_args [concat [list -congestion_report_file $::env(REPORTS_DIR)/congestion.rpt] \
     [expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
      {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]]
 
@@ -112,4 +111,5 @@ report_metrics 5 "global route"
 # Use make target update_sdc_clock to install the updated sdc.
 source [file join $env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
 
+write_guides $::env(RESULTS_DIR)/route.guide
 write_db $env(RESULTS_DIR)/5_1_grt.odb
