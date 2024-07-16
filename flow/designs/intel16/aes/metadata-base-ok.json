@@ -162,7 +162,6 @@
   "finish_merge__mem__peak": 642396.0,
   "finish_merge__runtime__total": "0:11.86",
   "floorplan__cpu__total": 4.46,
->>>>>>> origin/master
   "floorplan__design__core__area": 60607.3,
   "floorplan__design__die__area": 62500,
   "floorplan__design__instance__area": 4548.44,
