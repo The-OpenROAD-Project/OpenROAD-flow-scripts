@@ -10,7 +10,7 @@ First time Codespace users are encouraged to read the tutorial [creating a codes
 
 ![create](../../docs/images/create_codespace.gif)
 
-2. Select `ubuntu gui full` in the `Dev container configuration` field
+2. Select `Default Project Configuration` in the `Dev container configuration` field
 
 ![configure](../../docs/images/configure_codespace.gif)
 
