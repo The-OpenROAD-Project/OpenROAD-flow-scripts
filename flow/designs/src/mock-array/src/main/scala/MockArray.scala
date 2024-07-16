@@ -168,7 +168,7 @@ extends BlackBox with HasBlackBoxPath {
     "tap.v",
   "MockArrayFinal.v",
   "MockArrayElementFinal.v").foreach{
-    path => addPath(Paths.get(path).toAbsolutePath().toString())
+    path => addPath(Paths.get("post/" + path).toAbsolutePath().toString())
   }
 }
 
