@@ -5,17 +5,22 @@ node {
     properties([copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME)]);
 
     stage('Checkout') {
-        checkout([
-            $class: 'GitSCM',
-            branches: [[name: scm.branches[0].name]],
-            doGenerateSubmoduleConfigurations: false,
-            extensions: [
-                [$class: 'CloneOption', noTags: false],
-                [$class: 'SubmoduleOption', recursiveSubmodules: true]
-            ],
-            submoduleCfg: [],
-            userRemoteConfigs: scm.userRemoteConfigs
-        ]);
+        if (env.BRANCH_NAME && env.BRANCH_NAME == 'master') {
+            checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: scm.branches[0].name]],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [
+                    [$class: 'CloneOption', noTags: false],
+                    [$class: 'SubmoduleOption', recursiveSubmodules: true]
+                    ],
+                    submoduleCfg: [],
+                    userRemoteConfigs: scm.userRemoteConfigs
+            ]);
+        }
+        else {
+            checkout scm;
+        }
         def description = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim();
         if (description.contains('ci') && description.contains('skip')) {
             currentBuild.result = 'SKIPPED'; // 'SUCCESS', 'SKIPPED'
