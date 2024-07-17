@@ -104,8 +104,9 @@
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
-# Default TNS_END_PERCENT value
-export TNS_END_PERCENT ?=5
+# Default TNS_END_PERCENT value for post CTS timing repair
+# Try fixing all violating endpoints by default (reduce to 5% for runtime)
+export TNS_END_PERCENT ?=100
 
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY
@@ -295,6 +296,7 @@ endif
 #       1 user explicit set with variable in Makefile or command line, for instance setting OPENROAD_EXE
 #       2 ORFS compiled tools: openroad, yosys
 export OPENROAD_EXE      ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+export OPENSTA_EXE       ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 
 OPENROAD_ARGS            = -no_init $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
