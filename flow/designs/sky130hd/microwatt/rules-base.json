@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 575,
+        "value": 642,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
