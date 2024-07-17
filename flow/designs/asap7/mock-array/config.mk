@@ -48,7 +48,7 @@ simulate:
 
 .PHONY: power
 power:
-	$(OPENROAD_CMD) $(SCRIPTS_DIR)/power.tcl
+	$(OPENSTA_EXE) -no_init -exit $(SCRIPTS_DIR)/power.tcl
 
 # If this design isn't quickly done in detailed routing, something is wrong.
 # At time of adding this option, only 12 iterations were needed for 0
