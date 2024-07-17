@@ -128,10 +128,11 @@ _installCI() {
 
     apt-get -y update
     apt-get -y install --no-install-recommends \
-        docker-buildx \
         docker-ce \
         docker-ce-cli \
         containerd.io
+
+    apt-get -y install --no-install-recommends docker-buildx
 
 }
 
