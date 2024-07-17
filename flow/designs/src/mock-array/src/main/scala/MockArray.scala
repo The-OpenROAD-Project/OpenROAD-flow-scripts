@@ -165,7 +165,8 @@ extends BlackBox with HasBlackBoxPath {
     "asap7sc7p5t_SEQ_RVT_TT_220101.v",
     "asap7sc7p5t_SIMPLE_RVT_TT_201020.v",
     "asap7sc7p5t_INVBUF_RVT_TT_201020.v",
-    "tap.v",
+    "empty.v",
+    "dff.v",
   "MockArrayFinal.v",
   "MockArrayElementFinal.v").foreach{
     path => addPath(Paths.get("post/" + path).toAbsolutePath().toString())
