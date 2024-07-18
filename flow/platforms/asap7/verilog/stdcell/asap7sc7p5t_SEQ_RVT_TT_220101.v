@@ -47,8 +47,8 @@ module DFFASRHQNx1_ASAP7_75t_R (QN, D, RESETN, SETN, CLK);
 	not (int_fwire_d, delayed_D);
 	not (int_fwire_s, delayed_RESETN);
 	not (int_fwire_r, delayed_SETN);
-//	altos_dff_sr_err (xcr_0, delayed_CLK, int_fwire_d, int_fwire_s, int_fwire_r);
-//	altos_dff_sr_0 (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, int_fwire_s, int_fwire_r, xcr_0);
+	altos_dff_sr_err (xcr_0, delayed_CLK, int_fwire_d, int_fwire_s, int_fwire_r);
+	altos_dff_sr_0 (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, int_fwire_s, int_fwire_r, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -529,8 +529,8 @@ module DFFHQNx1_ASAP7_75t_R (QN, D, CLK);
 	wire int_fwire_d, int_fwire_IQN, xcr_0;
 
 	not (int_fwire_d, delayed_D);
-//	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -559,8 +559,8 @@ module DFFHQNx2_ASAP7_75t_R (QN, D, CLK);
 	wire int_fwire_d, int_fwire_IQN, xcr_0;
 
 	not (int_fwire_d, delayed_D);
-//	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -589,8 +589,8 @@ module DFFHQNx3_ASAP7_75t_R (QN, D, CLK);
 	wire int_fwire_d, int_fwire_IQN, xcr_0;
 
 	not (int_fwire_d, delayed_D);
-//	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -618,8 +618,8 @@ module DFFHQx4_ASAP7_75t_R (Q, D, CLK);
 	// Function
 	wire int_fwire_IQ, xcr_0;
 
-//	altos_dff_err (xcr_0, delayed_CLK, delayed_D);
-//	altos_dff (int_fwire_IQ, notifier, delayed_CLK, delayed_D, xcr_0);
+	altos_dff_err (xcr_0, delayed_CLK, delayed_D);
+	altos_dff (int_fwire_IQ, notifier, delayed_CLK, delayed_D, xcr_0);
 	buf (Q, int_fwire_IQ);
 
 	// Timing
@@ -650,8 +650,8 @@ module DFFLQNx1_ASAP7_75t_R (QN, D, CLK);
 
 	not (int_fwire_d, delayed_D);
 	not (int_fwire_clk, delayed_CLK);
-//	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -682,8 +682,8 @@ module DFFLQNx2_ASAP7_75t_R (QN, D, CLK);
 
 	not (int_fwire_d, delayed_D);
 	not (int_fwire_clk, delayed_CLK);
-//	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -714,8 +714,8 @@ module DFFLQNx3_ASAP7_75t_R (QN, D, CLK);
 
 	not (int_fwire_d, delayed_D);
 	not (int_fwire_clk, delayed_CLK);
-//	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -744,8 +744,8 @@ module DFFLQx4_ASAP7_75t_R (Q, D, CLK);
 	wire int_fwire_clk, int_fwire_IQ, xcr_0;
 
 	not (int_fwire_clk, delayed_CLK);
-//	altos_dff_err (xcr_0, int_fwire_clk, delayed_D);
-//	altos_dff (int_fwire_IQ, notifier, int_fwire_clk, delayed_D, xcr_0);
+	altos_dff_err (xcr_0, int_fwire_clk, delayed_D);
+	altos_dff (int_fwire_IQ, notifier, int_fwire_clk, delayed_D, xcr_0);
 	buf (Q, int_fwire_IQ);
 
 	// Timing
@@ -773,7 +773,7 @@ module DHLx1_ASAP7_75t_R (Q, D, CLK);
 	// Function
 	wire int_fwire_IQ;
 
-//	altos_latch (int_fwire_IQ, notifier, delayed_CLK, delayed_D);
+	altos_latch (int_fwire_IQ, notifier, delayed_CLK, delayed_D);
 	buf (Q, int_fwire_IQ);
 
 	// Timing
@@ -800,7 +800,7 @@ module DHLx2_ASAP7_75t_R (Q, D, CLK);
 	// Function
 	wire int_fwire_IQ;
 
-//	altos_latch (int_fwire_IQ, notifier, delayed_CLK, delayed_D);
+	altos_latch (int_fwire_IQ, notifier, delayed_CLK, delayed_D);
 	buf (Q, int_fwire_IQ);
 
 	// Timing
@@ -827,7 +827,7 @@ module DHLx3_ASAP7_75t_R (Q, D, CLK);
 	// Function
 	wire int_fwire_IQ;
 
-//	altos_latch (int_fwire_IQ, notifier, delayed_CLK, delayed_D);
+	altos_latch (int_fwire_IQ, notifier, delayed_CLK, delayed_D);
 	buf (Q, int_fwire_IQ);
 
 	// Timing
@@ -855,7 +855,7 @@ module DLLx1_ASAP7_75t_R (Q, D, CLK);
 	wire int_fwire_clk, int_fwire_IQ;
 
 	not (int_fwire_clk, delayed_CLK);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, delayed_D);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, delayed_D);
 	buf (Q, int_fwire_IQ);
 
 	// Timing
@@ -883,7 +883,7 @@ module DLLx2_ASAP7_75t_R (Q, D, CLK);
 	wire int_fwire_clk, int_fwire_IQ;
 
 	not (int_fwire_clk, delayed_CLK);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, delayed_D);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, delayed_D);
 	buf (Q, int_fwire_IQ);
 
 	// Timing
@@ -911,7 +911,7 @@ module DLLx3_ASAP7_75t_R (Q, D, CLK);
 	wire int_fwire_clk, int_fwire_IQ;
 
 	not (int_fwire_clk, delayed_CLK);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, delayed_D);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, delayed_D);
 	buf (Q, int_fwire_IQ);
 
 	// Timing
@@ -940,7 +940,7 @@ module ICGx1_ASAP7_75t_R (GCLK, ENA, SE, CLK);
 
 	not (int_fwire_clk, delayed_CLK);
 	or (int_fwire_test, delayed_ENA, delayed_SE);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
 	and (GCLK, delayed_CLK, int_fwire_IQ);
 
 	// Timing
@@ -992,7 +992,7 @@ module ICGx2_ASAP7_75t_R (GCLK, ENA, SE, CLK);
 
 	not (int_fwire_clk, delayed_CLK);
 	or (int_fwire_test, delayed_ENA, delayed_SE);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
 	and (GCLK, delayed_CLK, int_fwire_IQ);
 
 	// Timing
@@ -1044,7 +1044,7 @@ module ICGx2p67DC_ASAP7_75t_R (GCLK, ENA, SE, CLK);
 
 	not (int_fwire_clk, delayed_CLK);
 	or (int_fwire_test, delayed_ENA, delayed_SE);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
 	and (GCLK, delayed_CLK, int_fwire_IQ);
 
 	// Timing
@@ -1096,7 +1096,7 @@ module ICGx3_ASAP7_75t_R (GCLK, ENA, SE, CLK);
 
 	not (int_fwire_clk, delayed_CLK);
 	or (int_fwire_test, delayed_ENA, delayed_SE);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
 	and (GCLK, delayed_CLK, int_fwire_IQ);
 
 	// Timing
@@ -1148,7 +1148,7 @@ module ICGx4DC_ASAP7_75t_R (GCLK, ENA, SE, CLK);
 
 	not (int_fwire_clk, delayed_CLK);
 	or (int_fwire_test, delayed_ENA, delayed_SE);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
 	and (GCLK, delayed_CLK, int_fwire_IQ);
 
 	// Timing
@@ -1200,7 +1200,7 @@ module ICGx4_ASAP7_75t_R (GCLK, ENA, SE, CLK);
 
 	not (int_fwire_clk, delayed_CLK);
 	or (int_fwire_test, delayed_ENA, delayed_SE);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
 	and (GCLK, delayed_CLK, int_fwire_IQ);
 
 	// Timing
@@ -1252,7 +1252,7 @@ module ICGx5_ASAP7_75t_R (GCLK, ENA, SE, CLK);
 
 	not (int_fwire_clk, delayed_CLK);
 	or (int_fwire_test, delayed_ENA, delayed_SE);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
 	and (GCLK, delayed_CLK, int_fwire_IQ);
 
 	// Timing
@@ -1304,7 +1304,7 @@ module ICGx5p33DC_ASAP7_75t_R (GCLK, ENA, SE, CLK);
 
 	not (int_fwire_clk, delayed_CLK);
 	or (int_fwire_test, delayed_ENA, delayed_SE);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
 	and (GCLK, delayed_CLK, int_fwire_IQ);
 
 	// Timing
@@ -1356,7 +1356,7 @@ module ICGx6p67DC_ASAP7_75t_R (GCLK, ENA, SE, CLK);
 
 	not (int_fwire_clk, delayed_CLK);
 	or (int_fwire_test, delayed_ENA, delayed_SE);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
 	and (GCLK, delayed_CLK, int_fwire_IQ);
 
 	// Timing
@@ -1408,7 +1408,7 @@ module ICGx8DC_ASAP7_75t_R (GCLK, ENA, SE, CLK);
 
 	not (int_fwire_clk, delayed_CLK);
 	or (int_fwire_test, delayed_ENA, delayed_SE);
-//	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
+	altos_latch (int_fwire_IQ, notifier, int_fwire_clk, int_fwire_test);
 	and (GCLK, delayed_CLK, int_fwire_IQ);
 
 	// Timing
@@ -1467,8 +1467,8 @@ module SDFHx1_ASAP7_75t_R (QN, D, SE, SI, CLK);
 	not (delayed_SE__bar, delayed_SE);
 	and (int_fwire_2, delayed_D__bar, delayed_SE__bar);
 	or (int_fwire_d, int_fwire_2, int_fwire_1, int_fwire_0);
-//	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -1550,8 +1550,8 @@ module SDFHx2_ASAP7_75t_R (QN, D, SE, SI, CLK);
 	not (delayed_SE__bar, delayed_SE);
 	and (int_fwire_2, delayed_D__bar, delayed_SE__bar);
 	or (int_fwire_d, int_fwire_2, int_fwire_1, int_fwire_0);
-//	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -1633,8 +1633,8 @@ module SDFHx3_ASAP7_75t_R (QN, D, SE, SI, CLK);
 	not (delayed_SE__bar, delayed_SE);
 	and (int_fwire_2, delayed_D__bar, delayed_SE__bar);
 	or (int_fwire_d, int_fwire_2, int_fwire_1, int_fwire_0);
-//	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -1716,8 +1716,8 @@ module SDFHx4_ASAP7_75t_R (QN, D, SE, SI, CLK);
 	not (delayed_SE__bar, delayed_SE);
 	and (int_fwire_2, delayed_D__bar, delayed_SE__bar);
 	or (int_fwire_d, int_fwire_2, int_fwire_1, int_fwire_0);
-//	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, delayed_CLK, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, delayed_CLK, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -1801,8 +1801,8 @@ module SDFLx1_ASAP7_75t_R (QN, D, SE, SI, CLK);
 	and (int_fwire_2, delayed_D__bar, delayed_SE__bar);
 	or (int_fwire_d, int_fwire_2, int_fwire_1, int_fwire_0);
 	not (int_fwire_clk, delayed_CLK);
-//	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -1886,8 +1886,8 @@ module SDFLx2_ASAP7_75t_R (QN, D, SE, SI, CLK);
 	and (int_fwire_2, delayed_D__bar, delayed_SE__bar);
 	or (int_fwire_d, int_fwire_2, int_fwire_1, int_fwire_0);
 	not (int_fwire_clk, delayed_CLK);
-//	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -1971,8 +1971,8 @@ module SDFLx3_ASAP7_75t_R (QN, D, SE, SI, CLK);
 	and (int_fwire_2, delayed_D__bar, delayed_SE__bar);
 	or (int_fwire_d, int_fwire_2, int_fwire_1, int_fwire_0);
 	not (int_fwire_clk, delayed_CLK);
-//	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing
@@ -2056,8 +2056,8 @@ module SDFLx4_ASAP7_75t_R (QN, D, SE, SI, CLK);
 	and (int_fwire_2, delayed_D__bar, delayed_SE__bar);
 	or (int_fwire_d, int_fwire_2, int_fwire_1, int_fwire_0);
 	not (int_fwire_clk, delayed_CLK);
-//	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
-//	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
+	altos_dff_err (xcr_0, int_fwire_clk, int_fwire_d);
+	altos_dff (int_fwire_IQN, notifier, int_fwire_clk, int_fwire_d, xcr_0);
 	buf (QN, int_fwire_IQN);
 
 	// Timing

@@ -3,7 +3,7 @@ import scala.io.Source
 
 organization := "edu.berkeley.cs"
 
-scalaVersion := "2.13.6"
+scalaVersion := "2.13.10"
 
 scalacOptions ++= Seq("-deprecation", "-feature", "-unchecked", "-language:reflectiveCalls")
 

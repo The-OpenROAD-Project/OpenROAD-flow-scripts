@@ -12,6 +12,7 @@ cp ../../../results/asap7/mock-array/base/6_final.v post/MockArrayFinal.v
 cp ../../../results/asap7/mock-array_Element/base/6_final.v post/MockArrayElementFinal.v
 
 pwd
+rm -rf test_run_dir/
 sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \
      "test:runMain SimulatePostSynthesis --width ${MOCK_ARRAY_COLS} --height ${MOCK_ARRAY_ROWS} --dataWidth ${MOCK_ARRAY_DATAWIDTH}"
 

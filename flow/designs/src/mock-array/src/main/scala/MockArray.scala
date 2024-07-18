@@ -163,11 +163,10 @@ extends BlackBox with HasBlackBoxPath {
   })
   val platformDir = sys.env.getOrElse("PLATFORM_DIR", "defaultPath") + "/verilog/stdcell/"
   (Seq("asap7sc7p5t_AO_RVT_TT_201020.v",
-    "asap7sc7p5t_SEQ_RVT_TT_220101.v",
+    "dff.v",
     "asap7sc7p5t_SIMPLE_RVT_TT_201020.v",
     "asap7sc7p5t_INVBUF_RVT_TT_201020.v",
-    "empty.v",
-    "dff.v").map(p=>Paths.get(platformDir + p)) ++
+    "empty.v").map(p=>Paths.get(platformDir + p)) ++
     Seq(
   "MockArrayFinal.v",
   "MockArrayElementFinal.v").map(p=>Paths.get("post/" + p)))
