@@ -71,10 +71,15 @@
 # DESIGN_CONFIG=./designs/sky130hs/riscv32i/config.mk
 
 # DESIGN_CONFIG=./designs/asap7/aes/config.mk
+# DESIGN_CONFIG=./designs/asap7/aes-block/config.mk
+# DESIGN_CONFIG=./designs/asap7/aes-mbff/config.mk
 # DESIGN_CONFIG=./designs/asap7/ethmac/config.mk
+# DESIGN_CONFIG=./designs/asap7/ethmac_lvt/config.mk
 # DESIGN_CONFIG=./designs/asap7/gcd/config.mk
+# DESIGN_CONFIG=./designs/asap7/gcd-ccs/config.mk
 # DESIGN_CONFIG=./designs/asap7/ibex/config.mk
 # DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
+# DESIGN_CONFIG=./designs/asap7/jpeg_lvt/config.mk
 # DESIGN_CONFIG=./designs/asap7/megaboom/config.mk
 # DESIGN_CONFIG=./designs/asap7/mock-array/config.mk
 # DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
