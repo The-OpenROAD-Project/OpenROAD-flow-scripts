@@ -20,5 +20,6 @@ else
 export DESIGN_TYPE = CELL_NODEN
 endif
 
-export SKIP_PIN_SWAP     = 1
+#export SKIP_PIN_SWAP     = 1
 export SKIP_GATE_CLONING = 1
+
