@@ -9,10 +9,13 @@ if [[ "$@" == "-dev" ]]; then
         "./docker/Dockerfile.dev"
         "./etc/DependencyInstaller.sh"
         "./etc/DockerHelper.sh"
+        "./etc/DockerTag.sh"
+        "./tools/OpenROAD/docker/Dockerfile.binary"
         "./tools/OpenROAD/docker/Dockerfile.builder"
         "./tools/OpenROAD/docker/Dockerfile.dev"
-        "./tools/OpenROAD/docker/Dockerfile.binary"
         "./tools/OpenROAD/etc/DependencyInstaller.sh"
+        "./tools/OpenROAD/etc/DockerHelper.sh"
+        "./tools/OpenROAD/etc/DockerTag.sh"
     )
     cat "${file_list[@]}" | sha256sum | awk '{print substr($1, 1, 6)}'
 elif [[ "$@" == "-master" ]]; then

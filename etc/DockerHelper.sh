@@ -81,7 +81,7 @@ _setup() {
 
 _create() {
     echo "Create docker image ${imagePath} using ${file}"
-    ${DOCKER_CMD} build \
+    ${DOCKER_CMD} buildx build \
         --file "${file}" \
         --tag "${imagePath}" \
         ${buildArgs} \
