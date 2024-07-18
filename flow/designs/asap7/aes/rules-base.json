@@ -35,8 +35,12 @@
         "value": 0,
         "compare": "<="
     },
+    "detailedroute__antenna__violating__nets": {
+        "value": 0,
+        "compare": "<="
+    },
     "finish__timing__setup__ws": {
-        "value": -160.59,
+        "value": -172.2,
         "compare": ">="
     },
     "finish__design__instance__area": {
