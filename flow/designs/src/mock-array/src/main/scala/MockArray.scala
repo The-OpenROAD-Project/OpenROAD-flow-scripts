@@ -161,16 +161,17 @@ extends BlackBox with HasBlackBoxPath {
     val reset = Input(Bool())
     val io = new MockArrayBundle(width, height, singleElementWidth)
   })
-  Seq("asap7sc7p5t_AO_RVT_TT_201020.v",
+  val platformDir = sys.env.getOrElse("PLATFORM_DIR", "defaultPath") + "/verilog/stdcell/"
+  (Seq("asap7sc7p5t_AO_RVT_TT_201020.v",
     "asap7sc7p5t_SEQ_RVT_TT_220101.v",
     "asap7sc7p5t_SIMPLE_RVT_TT_201020.v",
     "asap7sc7p5t_INVBUF_RVT_TT_201020.v",
     "empty.v",
-    "dff.v",
+    "dff.v").map(p=>Paths.get(platformDir + p)) ++
+    Seq(
   "MockArrayFinal.v",
-  "MockArrayElementFinal.v").foreach{
-    path => addPath(Paths.get("post/" + path).toAbsolutePath().toString())
-  }
+  "MockArrayElementFinal.v").map(p=>Paths.get("post/" + p)))
+  .foreach(p=> addPath(p.toAbsolutePath().toString()))
 }
 
 class MockArrayTestbench(width:Int, height:Int, singleElementWidth:Int) extends Module {

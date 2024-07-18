@@ -6,7 +6,7 @@ foreach libFile $::env(LIB_FILES) {
 
 read_verilog results/asap7/mock-array_Element/base/6_final.v
 read_verilog $::env(RESULTS_DIR)/6_final.v
-read_verilog designs/src/mock-array/post/empty.v
+read_verilog $::env(PLATFORM_DIR)/verilog/stdcell/empty.v
 
 link_design MockArray
 

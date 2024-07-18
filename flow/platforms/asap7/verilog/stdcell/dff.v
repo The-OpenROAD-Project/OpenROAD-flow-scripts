@@ -1,3 +1,8 @@
+// Quick and dirty reimplementation of altos_dff_module because
+// Verilato doesn't support and has no plans to support 1995 UDP
+// tables.
+//
+// https://github.com/verilator/verilator/issues/5243
 module altos_dff_module(q, v, clk, d, xcr);
     output reg q;
     input v, clk, d, xcr;
