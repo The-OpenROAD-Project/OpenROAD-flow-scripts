@@ -81,8 +81,11 @@
 # DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
 # DESIGN_CONFIG=./designs/asap7/jpeg_lvt/config.mk
 # DESIGN_CONFIG=./designs/asap7/megaboom/config.mk
+# DESIGN_CONFIG=./designs/asap7/mock-alu/config.mk
 # DESIGN_CONFIG=./designs/asap7/mock-array/config.mk
+# DESIGN_CONFIG=./designs/asap7/mock-cpu/config.mk
 # DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
+# DESIGN_CONFIG=./designs/asap7/riscv32i-mock-sram/config.mk
 # DESIGN_CONFIG=./designs/asap7/swerv_wrapper/config.mk
 # DESIGN_CONFIG=./designs/asap7/uart/config.mk
 
