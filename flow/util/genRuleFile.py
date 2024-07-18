@@ -280,7 +280,7 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
 
             if update and old_rule['value'] != rule_value:
                 UPDATE = True
-                change_str += format.format_str.format(field, old_rule['value'],
+                change_str += format_str.format(field, old_rule['value'],
                                                        rule_value, 'Updating')
 
             if not UPDATE:
