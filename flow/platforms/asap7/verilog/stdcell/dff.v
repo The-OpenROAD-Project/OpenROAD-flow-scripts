@@ -1,5 +1,5 @@
 // Quick and dirty reimplementation of altos_dff_module because
-// Verilato doesn't support and has no plans to support 1995 UDP
+// Verilator doesn't support and has no plans to support 1995 UDP
 // tables.
 //
 // https://github.com/verilator/verilator/issues/5243
