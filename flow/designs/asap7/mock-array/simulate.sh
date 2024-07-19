@@ -11,10 +11,22 @@ cd ../../src/mock-array
 cp ../../../results/asap7/mock-array/base/6_final.v post/MockArrayFinal.v
 cp ../../../results/asap7/mock-array_Element/base/6_final.v post/MockArrayElementFinal.v
 
-pwd
-rm -rf test_run_dir/
-sbt -Duser.home="$HOME" -Djline.terminal=jline.UnsupportedTerminal -batch \
-     "test:runMain SimulatePostSynthesis --width ${MOCK_ARRAY_COLS} --height ${MOCK_ARRAY_ROWS} --dataWidth ${MOCK_ARRAY_DATAWIDTH}"
+verilator -Wall --cc \
+  -Wno-DECLFILENAME \
+  -Wno-UNUSEDSIGNAL \
+  -Wno-PINMISSING \
+  --top-module MockArray \
+  --trace \
+  $PLATFORM_DIR/verilog/stdcell/asap7sc7p5t_AO_RVT_TT_201020.v \
+  $PLATFORM_DIR/verilog/stdcell/asap7sc7p5t_INVBUF_RVT_TT_201020.v \
+  $PLATFORM_DIR/verilog/stdcell/asap7sc7p5t_SIMPLE_RVT_TT_201020.v \
+  $PLATFORM_DIR/verilog/stdcell/dff.v \
+  $PLATFORM_DIR/verilog/stdcell/empty.v \
+  ../../../results/asap7/mock-array/base/6_final.v \
+  ../../../results/asap7/mock-array_Element/base/6_final.v \
+  --exe \
+  ../../../designs/src/mock-array/simulate.cpp
 
-cp test_run_dir/MockArray_should_Wiggle_some_wires/MockArrayTestbench.vcd .
+make -C obj_dir -f VMockArray.mk
 
+obj_dir/VMockArray
