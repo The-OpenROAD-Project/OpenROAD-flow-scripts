@@ -74,7 +74,7 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
     //  up <-> right
     (io.outs.asSeq zip (io.ins.asSeq ++ Seq(io.ins.asSeq.head))
       .sliding(2).toSeq.reverse.map(_.map(RegNext(_)))).foreach {
-      case (a, b) => a := RegNext(b(0) | b(1))
+      case (a, b) => a := RegNext(b(0) ^ b(1))
     }
 
     // Combinational logic, but a maximum flight path of 4 elements
