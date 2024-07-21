@@ -78,6 +78,10 @@ if {[find_macros] != ""} {
     if { [info exists ::env(RTLMP_MIN_AR)]} {
         append additional_rtlmp_args " -min_ar $env(RTLMP_MIN_AR)"
     }
+    if { [info exists ::env(RTLMP_SIGNATURE_NET_THRESHOLD)]} {
+        append additional_rtlmp_args \
+            " -signature_net_threshold $env(RTLMP_SIGNATURE_NET_THRESHOLD)"
+    }
     if { [info exists ::env(RTLMP_AREA_WT)]} {
         append additional_rtlmp_args " -area_weight $env(RTLMP_AREA_WT)"
     }
