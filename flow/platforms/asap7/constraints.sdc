@@ -81,3 +81,11 @@ set max_delay 80
 set_max_delay $max_delay -from $non_clk_inputs -to [all_registers]
 set_max_delay $max_delay -from $all_register_outputs -to [all_outputs]
 set_max_delay $max_delay -from $non_clk_inputs -to [all_outputs]
+
+# This allows us to view the different groups
+# in the histogram in the GUI and also includes these
+# groups in the report
+group_path -name in2reg -from $non_clk_inputs -to [all_registers]
+group_path -name reg2out -from [all_registers] -to [all_outputs]
+group_path -name reg2reg -from [all_registers] -to [all_registers]
+group_path -name in2out -from $non_clk_inputs -to [all_outputs]

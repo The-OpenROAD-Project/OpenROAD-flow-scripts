@@ -14,6 +14,11 @@ if { [info exist ::env(SYNTH_GUT)] && $::env(SYNTH_GUT) == 1 } {
 
 synthesize_check $::env(SYNTH_FULL_ARGS)
 
+# rename registers to have the verilog register name in its name
+# of the form \regName$_DFF_P_. We should fix yosys to make it the reg name.
+# At least this is predictable.
+renames -wire
+
 if { [info exists ::env(USE_LSORACLE)] } {
     set lso_script [open $::env(OBJECTS_DIR)/lso.script w]
     puts $lso_script "ps -a"
@@ -46,11 +51,6 @@ if {[info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)]} 
 if {[info exist ::env(LATCH_MAP_FILE)]} {
   techmap -map $::env(LATCH_MAP_FILE)
 }
-
-# rename registers to have the verilog register name in its name
-# of the form \regName$_DFF_P_. We should fix yosys to make it the reg name.
-# At least this is predictable.
-renames -wire
 
 set dfflibmap_args ""
 foreach cell $::env(DONT_USE_CELLS) {

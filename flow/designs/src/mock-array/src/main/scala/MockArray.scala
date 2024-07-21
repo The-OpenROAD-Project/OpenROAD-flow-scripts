@@ -4,6 +4,10 @@
 import chisel3._
 
 import org.scalatest._
+import chiseltest._
+import chiseltest.simulator.SimulatorDebugAnnotation
+import chiseltest.simulator.VerilatorFlags
+import org.scalatest.flatspec.AnyFlatSpec
 
 import chisel3._
 import chisel3.util._
@@ -13,6 +17,7 @@ import scopt.OParser
 import System.err
 import scopt.RenderingMode
 import scala.collection.immutable.SeqMap
+import java.nio.file.Paths
 
 object Routes extends Enumeration {
   type Routes = Value
@@ -44,14 +49,15 @@ class BusesVec(singleElementWidth: Int, width: Int, height: Int)
   def asSeq: Seq[Vec[UInt]] = routes.map(_._2).toSeq
 }
 
+class MockArrayBundle(width: Int, height: Int, singleElementWidth: Int) extends Bundle {
+  val ins = Input(new BusesVec(singleElementWidth, width, height))
+  val outs = Output(new BusesVec(singleElementWidth, width, height))
+  val lsbs = Output(Vec(width * height, Bool()))
+}
+
 class MockArray(width: Int, height: Int, singleElementWidth: Int)
     extends Module {
-  val io = IO(new Bundle {
-    val ins = Input(new BusesVec(singleElementWidth, width, height))
-    val outs = Output(new BusesVec(singleElementWidth, width, height))
-
-    val lsbs = Output(Vec(width * height, Bool()))
-  })
+  val io = IO(new MockArrayBundle(width, height, singleElementWidth))
 
   class Element extends Module {
     val io =
@@ -68,7 +74,7 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
     //  up <-> right
     (io.outs.asSeq zip (io.ins.asSeq ++ Seq(io.ins.asSeq.head))
       .sliding(2).toSeq.reverse.map(_.map(RegNext(_)))).foreach {
-      case (a, b) => a := RegNext(b(0) | b(1))
+      case (a, b) => a := RegNext(b(0) ^ b(1))
     }
 
     // Combinational logic, but a maximum flight path of 4 elements
@@ -147,49 +153,118 @@ case class ArrayConfig(
     remainingArgs: Seq[String] = Seq.empty
 )
 
+class MockArrayPostSynthesis(width:Int, height:Int, singleElementWidth:Int) 
+extends BlackBox with HasBlackBoxPath {
+  override def desiredName = "MockArray"
+  val io = IO(new Bundle {
+    val clock = Input(Clock())
+    val reset = Input(Bool())
+    val io = new MockArrayBundle(width, height, singleElementWidth)
+  })
+  val platformDir = sys.env.getOrElse("PLATFORM_DIR", "defaultPath") + "/verilog/stdcell/"
+  (Seq("asap7sc7p5t_AO_RVT_TT_201020.v",
+    "dff.v",
+    "asap7sc7p5t_SIMPLE_RVT_TT_201020.v",
+    "asap7sc7p5t_INVBUF_RVT_TT_201020.v",
+    "empty.v").map(p=>Paths.get(platformDir + p)) ++
+    Seq(
+  "MockArrayFinal.v",
+  "MockArrayElementFinal.v").map(p=>Paths.get("post/" + p)))
+  .foreach(p=> addPath(p.toAbsolutePath().toString()))
+}
+
+class MockArrayTestbench(width:Int, height:Int, singleElementWidth:Int) extends Module {
+  val io = IO(new MockArrayBundle(width, height, singleElementWidth))
+  val postSynthesis = Module(new MockArrayPostSynthesis(width, height, singleElementWidth))
+  postSynthesis.io.io <> io
+  postSynthesis.io.reset := reset.asBool
+  postSynthesis.io.clock := clock
+}
+
+
+class MockArrayTest(width:Int, height:Int, singleElementWidth:Int) extends AnyFlatSpec with ChiselScalatestTester {
+  behavior of "MockArray"
+
+  it should "Wiggle some wires" in {
+    // find full path foo.v in scala/src/resources
+    test(new MockArrayTestbench(width, height, singleElementWidth)).
+      withAnnotations(Seq(WriteVcdAnnotation,
+      VerilatorBackendAnnotation,
+      SimulatorDebugAnnotation,
+      // DD flip flops use UDP Tables, unsupported by Verilator
+      VerilatorFlags(Seq())
+      )) { dut =>
+      for (j <- 0 until 5) {
+        dut.io.ins.routes.foreach { case (route, vec) =>
+          vec.zipWithIndex.foreach { case (wire, i) =>
+            wire.poke((i+j).U)
+            dut.clock.step(1)
+          }
+        }
+      }
+    }
+  }
+}
+
+
+object parse {
+  def apply(args:Array[String]) : (ArrayConfig, Array[String]) = {
+    val builder = OParser.builder[ArrayConfig]
+    val parser = {
+      import builder._
+      OParser.sequence(
+        programName("my-program"),
+        opt[Int]('w', "width")
+          .required()
+          .valueName("Array width")
+          .action((width, c) => c.copy(width = width))
+          .text("input file is required"),
+        opt[Int]('h', "height")
+          .required()
+          .valueName("height")
+          .action((height, c) => c.copy(height = height))
+          .text("Array height"),
+        opt[Int]('d', "dataWidth")
+          .required()
+          .valueName("dataWidth")
+          .action((dataWidth, c) => c.copy(dataWidth = dataWidth))
+          .text("data path width")
+      )
+    }
+
+    val (configArgs, afterDelimiter) = args.span(_ != "--")
+    val chiselArgs = afterDelimiter.drop(1)
+
+
+
+    OParser.parse(parser, configArgs, ArrayConfig()) match {
+      case Some(c) =>
+        return (c, chiselArgs)
+
+      case _ =>
+        // arguments are invalid
+        OParser.usage(parser, RenderingMode.TwoColumns)
+        sys.exit(1)
+    }
+  }
+
+}
+
 object GenerateMockArray extends App {
+  val (c, chiselArgs) = parse(args)
 
-  val builder = OParser.builder[ArrayConfig]
-  val parser = {
-    import builder._
-    OParser.sequence(
-      programName("my-program"),
-      opt[Int]('w', "width")
-        .required()
-        .valueName("Array width")
-        .action((width, c) => c.copy(width = width))
-        .text("input file is required"),
-      opt[Int]('h', "height")
-        .required()
-        .valueName("height")
-        .action((height, c) => c.copy(height = height))
-        .text("Array height"),
-      opt[Int]('d', "dataWidth")
-        .required()
-        .valueName("dataWidth")
-        .action((dataWidth, c) => c.copy(dataWidth = dataWidth))
-        .text("data path width")
-    )
-  }
-
-  val (configArgs, afterDelimiter) = args.span(_ != "--")
-  val chiselArgs = afterDelimiter.drop(1)
-
-  OParser.parse(parser, configArgs, ArrayConfig()) match {
-    case Some(c) =>
-      new ChiselStage()
-        .execute(
-          chiselArgs,
-          Seq(
-            ChiselGeneratorAnnotation(() =>
-              new MockArray(c.width, c.height, c.dataWidth)
-            )
-          )
+  new ChiselStage()
+    .execute(
+      chiselArgs,
+      Seq(
+        ChiselGeneratorAnnotation(() =>
+          new MockArray(c.width, c.height, c.dataWidth)
         )
+      )
+    )
+}
 
-    case _ =>
-      // arguments are invalid
-      OParser.usage(parser, RenderingMode.TwoColumns)
-      sys.exit(1)
-  }
+object SimulatePostSynthesis extends App {
+  val (c, chiselArgs) = parse(args)
+  new MockArrayTest(c.width, c.height, c.dataWidth).execute()
 }

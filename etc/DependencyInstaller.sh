@@ -30,9 +30,9 @@ _installCommon() {
     fi
     local pkgs="pandas numpy firebase_admin click pyyaml"
     if [[ $(id -u) == 0 ]]; then
-        pip3 install -U $pkgs
+        pip3 install --no-cache-dir -U $pkgs
     else
-        pip3 install --user -U $pkgs
+        pip3 install --no-cache-dir --user -U $pkgs
     fi
 }
 
@@ -42,14 +42,14 @@ _installCentosCleanUp() {
 }
 
 _installCentosPackages() {
-    yum update -y
-    yum install -y \
+    yum -y update
+    yum -y install \
         time \
         ruby \
         ruby-devel
 
     if ! [ -x "$(command -v klayout)" ]; then
-      yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
+      yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
     else
       currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
       if _versionCompare $currentVersion -ge $klayoutVersion; then
@@ -57,7 +57,7 @@ _installCentosPackages() {
       else
         echo "KLayout version less than ${klayoutVersion}"
         sudo yum remove -y klayout
-        yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
+        yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
       fi
     fi
 }
@@ -70,10 +70,11 @@ _installUbuntuCleanUp() {
 _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
-    apt-get -y install \
+    apt-get -y install --no-install-recommends \
         libqt5multimediawidgets5 \
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
+        libqt5opengl5 \
         libz-dev \
         python3-pip \
         qtmultimedia5-dev \
@@ -84,7 +85,7 @@ _installUbuntuPackages() {
 
     # install KLayout
     if _versionCompare $1 -ge 23.04; then
-        apt-get install -y klayout python3-pandas
+        apt-get -y install --no-install-recommends klayout python3-pandas
     else
         if [[ $1 == 20.04 ]]; then
             klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
@@ -113,25 +114,32 @@ _installDarwinPackages() {
 
 _installCI() {
     apt-get -y update
-
-    #docker
-    apt install -y \
+    apt-get -y install --no-install-recommends \
         apt-transport-https \
         ca-certificates \
+        coreutils \
         curl \
+        python3 \
         software-properties-common
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    echo \
-    "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-    $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    # Add Docker's official GPG key:
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+        -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        tee /etc/apt/sources.list.d/docker.list > /dev/null
+
     apt-get -y update
-    apt-get install -y docker-ce docker-ce-cli containerd.io
+    apt-get -y install --no-install-recommends \
+        docker-ce \
+        docker-ce-cli \
+        containerd.io \
+        docker-buildx-plugin \
 
-    # python
-    apt-get install -y python3
-
-    # stdbuf
-    apt-get install -y coreutils
 }
 
 _help() {

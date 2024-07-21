@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 18363.81,
+        "value": 17955.11,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -35,8 +35,12 @@
         "value": 0,
         "compare": "<="
     },
+    "detailedroute__antenna__violating__nets": {
+        "value": 0,
+        "compare": "<="
+    },
     "finish__timing__setup__ws": {
-        "value": -6.93,
+        "value": -14.31,
         "compare": ">="
     },
     "finish__design__instance__area": {
