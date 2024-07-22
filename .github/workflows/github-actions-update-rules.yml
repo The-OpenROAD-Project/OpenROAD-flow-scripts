@@ -35,9 +35,9 @@ jobs:
           echo ${{ github.event_name }}
           echo ${{ github.event.client_payload.type }}
           if [[ "${{ github.event_name }}" == "repository_dispatch" && "${{ github.event.client_payload.type }}" == "overwrite" ]]; then
-            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA ${{ github.event.client_payload.commitsha }} --overwrite > table_output.txt 2>&1
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --overwrite > table_output.txt 2>&1
           else 
-            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA ${{ github.event.client_payload.commitsha }} > table_output.txt 2>&1
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} > table_output.txt 2>&1
           fi
       - name: Push updated rules
         id: remote-update
