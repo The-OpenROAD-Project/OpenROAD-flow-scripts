@@ -512,7 +512,7 @@ do-yosys-canonicalize: yosys-dependencies
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
-$(RESULTS_DIR)/1_synth.rtlil: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE_CLOCK_PERIOD)
+$(RESULTS_DIR)/1_synth.rtlil: $(SDC_FILE_CLOCK_PERIOD)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
 
 $(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil $(SDC_FILE_CLOCK_PERIOD)
