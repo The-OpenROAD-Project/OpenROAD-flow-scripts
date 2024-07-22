@@ -37,11 +37,10 @@ runFilename = f'rules-base.json'
 
 platform_list = []
 platforms_path = 'platforms'
-for item in os.listdir():
+for item in os.listdir(platforms_path):
     if item == 'sky130hd_fakestack':
         continue
-    item_path = os.path.join(platforms_path, item)
-    if os.path.isdir(item_path):
+    if os.path.isdir(os.path.join(platforms_path, item)):
         platform_list.append(item)
 
 for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
