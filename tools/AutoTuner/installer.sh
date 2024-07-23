@@ -1,14 +1,15 @@
 #!/bin/bash
 
 # Get the directory where the script is located
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+script_dir="$(dirname "${BASH_SOURCE[0]}")"
 cd $script_dir
 
 # Check if the Python version is 3.8
 required_version="3.8"
-python_version=$(python3.8 --version 2>&1)
-if [[ $python_version != "Python $required_version"* ]]; then
-    echo "Error: Python $required_version is required. Current version: $python_version"
+if command -v python${required_version} &> /dev/null ; then
+    echo "Found python${required_version}"
+else
+    echo "Error: Python ${required_version} is required."
     exit 1
 fi
 
