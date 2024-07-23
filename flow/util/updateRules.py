@@ -9,6 +9,7 @@ import os
 import requests
 from genRuleFile import get_golden
 from genRuleFile import update_rules
+from genRuleFile import get_metrics
 
 # make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -45,7 +46,7 @@ for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
     test = '{} {}'.format(platform, design)
     dataFile = os.path.join(designsDir, runFilename)
     if os.path.exists(dataFile) and (platform != 'sky130hd_fakestack' or platform != 'src'):
-        metrics, error_metrics = get_metrics(args.commitSHA # commit
+        metrics, error_metrics = get_metrics(args.commitSHA, # commit
                             platform, # platform
                             design, # design
                             api_base_url # backend url
