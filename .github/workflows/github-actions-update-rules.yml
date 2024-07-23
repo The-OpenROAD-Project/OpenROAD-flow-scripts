@@ -45,7 +45,7 @@ jobs:
             echo "has_update=false" >> "$GITHUB_OUTPUT"
           fi
           git add .
-          git commit -m "flow: update rules based on new golden reference"
+          git commit --signoff -m "flow: update rules based on new golden reference"
       - if: "${{ github.event.client_payload.branch }} != 'master'"
         name: update rules pr
         id: remote-update-pr
