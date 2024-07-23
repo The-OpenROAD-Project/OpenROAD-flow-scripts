@@ -60,17 +60,7 @@ To manage docker as non-root user and verify that you can run
 `docker` commands without `sudo` must complete steps from
 [here](https://docs.docker.com/engine/install/linux-postinstall/).
 
-There's a prebuilt image for ORFS that you can use right away instead
-of building it from source. However, if you are interested in further
-development of ORFS, you can build the image from source.
-
-#### Use Prebuilt ORFS Docker Image
-
-```
-docker pull openroad/orfs:latest
-```
-
-#### Build ORFS with Docker from Source
+#### Build ORFS with Docker
 
 Document for detailed steps on docker based installation found
 [here](./docs/user/BuildWithDocker.md).
