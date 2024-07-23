@@ -246,7 +246,7 @@ def read_config(file_name):
             return tune.choice([min_])
         if this['type'] == 'int':
             if min_ == 0 and args.algorithm == 'nevergrad':
-                print('[WARNING TUN-0011] NevergradSearch may not work '
+                print('[WARNING 0011] NevergradSearch may not work '
                       'with lower bound value 0.')
             if this['step'] == 1:
                 return tune.randint(min_, max_)
@@ -311,12 +311,12 @@ def read_config(file_name):
             continue
         if key == '_SDC_FILE_PATH' and value != '':
             if sdc_file != '':
-                print('[WARNING TUN-0004] Overwriting SDC base file.')
+                print('[WARNING 0004] Overwriting SDC base file.')
             sdc_file = read(f'{os.path.dirname(file_name)}/{value}')
             continue
         if key == '_FR_FILE_PATH' and value != '':
             if fr_file != '':
-                print('[WARNING TUN-0005] Overwriting FastRoute base file.')
+                print('[WARNING 0005] Overwriting FastRoute base file.')
             fr_file = read(f'{os.path.dirname(file_name)}/{value}')
             continue
         if not isinstance(value, dict):
@@ -349,10 +349,10 @@ def parse_flow_variables():
     os.chdir(makefile_path)
     result = subprocess.run(["make", "vars"])
     if result.returncode != 0:
-        print(f"[ERROR TUN-0018] Makefile failed with error code {result.returncode}.")
+        print(f"[ERROR 0018] Makefile failed with error code {result.returncode}.")
         sys.exit(1)
     if not os.path.exists("vars.tcl"):
-        print(f"[ERROR TUN-0019] Makefile did not generate vars.tcl.")
+        print(f"[ERROR 0019] Makefile did not generate vars.tcl.")
         sys.exit(1)
     os.chdir(initial_path)
 
@@ -392,13 +392,13 @@ def parse_config(config, path=os.getcwd()):
             elif key == "_PINS_DISTANCE":
                 options += f' PLACE_PINS_ARGS="-min_distance {value}"'
             elif key == "_SYNTH_FLATTEN":
-                print('[WARNING TUN-0013] Non-flatten the designs are not '
+                print('[WARNING 0013] Non-flatten the designs are not '
                       'fully supported, ignoring _SYNTH_FLATTEN parameter.')
         # Default case is VAR=VALUE
         else:
             # Sanity check: ignore all flow variables that are not tunable
             if key not in flow_variables:
-                print(f'[ERROR TUN-0017] Variable {key} is not tunable.')
+                print(f'[ERROR 0017] Variable {key} is not tunable.')
                 sys.exit(1)
             options += f' {key}={value}'
     if bool(sdc):
@@ -599,7 +599,7 @@ def setup_repo(base):
     '''
     Clone ORFS repository and compile binaries.
     '''
-    print(f'[INFO TUN-0000] Remote folder: {base}')
+    print(f'[INFO 0000] Remote folder: {base}')
     install = f'{base}/tools/install'
     if args.server is not None:
         clone(base)
@@ -799,7 +799,7 @@ def parse_arguments():
         arguments.algorithm = arguments.algorithm.lower()
         # Validation of arguments
         if arguments.eval == 'ppa-improv' and arguments.reference is None:
-            print('[ERROR TUN-0006] The argument "--eval ppa-improv"'
+            print('[ERROR 0006] The argument "--eval ppa-improv"'
                   ' requires that "--reference <FILE>" is also given.')
             sys.exit(7)
 
@@ -884,7 +884,7 @@ def save_best(results):
     new_best_path += f'autotuner-best-{trial_id}.json'
     with open(new_best_path, 'w') as new_best_file:
         json.dump(best_config, new_best_file, indent=4)
-    print(f'[INFO TUN-0003] Best parameters written to {new_best_path}')
+    print(f'[INFO 0003] Best parameters written to {new_best_path}')
 
 
 @ray.remote
@@ -893,9 +893,9 @@ def consumer(queue):
     while not queue.empty():
         next_item = queue.get()
         name = next_item[1]
-        print(f'[INFO TUN-0007] Scheduling run for parameter {name}.')
+        print(f'[INFO 0007] Scheduling run for parameter {name}.')
         ray.get(openroad_distributed.remote(*next_item))
-        print(f'[INFO TUN-0008] Finished run for parameter {name}.')
+        print(f'[INFO 0008] Finished run for parameter {name}.')
 
 
 def sweep():
@@ -907,15 +907,15 @@ def sweep():
         repo_dir = os.path.abspath(LOCAL_DIR + '/../' * 4)
     else:
         repo_dir = os.path.abspath('../')
-    print(f'[INFO TUN-0012] Log folder {LOCAL_DIR}.')
+    print(f'[INFO 0012] Log folder {LOCAL_DIR}.')
     queue = Queue()
     parameter_list = list()
     for name, content in config_dict.items():
         if not isinstance(content, list):
-            print(f'[ERROR TUN-0015] {name} sweep is not supported.')
+            print(f'[ERROR 0015] {name} sweep is not supported.')
             sys.exit(1)
         if content[-1] == 0:
-            print('[ERROR TUN-0014] Sweep does not support step value zero.')
+            print('[ERROR 0014] Sweep does not support step value zero.')
             sys.exit(1)
         parameter_list.append([{name: i} for i in np.arange(*content)])
     parameter_list = list(product(*parameter_list))
@@ -926,9 +926,9 @@ def sweep():
         print(temp)
         queue.put([repo_dir, temp, LOCAL_DIR])
     workers = [consumer.remote(queue) for _ in range(args.jobs)]
-    print('[INFO TUN-0009] Waiting for results.')
+    print('[INFO 0009] Waiting for results.')
     ray.get(workers)
-    print('[INFO TUN-0010] Sweep complete.')
+    print('[INFO 0010] Sweep complete.')
 
 
 if __name__ == '__main__':
@@ -957,7 +957,7 @@ if __name__ == '__main__':
         # for its completion.
         INSTALL_PATH = ray.get(setup_repo.remote(LOCAL_DIR))
         LOCAL_DIR += f'/flow/logs/{args.platform}/{args.design}'
-        print('[INFO TUN-0001] NFS setup completed.')
+        print('[INFO 0001] NFS setup completed.')
     else:
         # For local runs, use the same folder as other ORFS utilities.
         os.chdir(ORFS_FLOW_DIR)
@@ -1000,11 +1000,11 @@ if __name__ == '__main__':
 
         task_id = save_best.remote(analysis)
         _ = ray.get(task_id)
-        print(f'[INFO TUN-0002] Best parameters found: {analysis.best_config}')
+        print(f'[INFO 0002] Best parameters found: {analysis.best_config}')
         
         # if all runs have failed
         if analysis.best_result['minimum'] == ERROR_METRIC:
-            print('[ERROR TUN-0016] No successful runs found.')
+            print('[ERROR 0016] No successful runs found.')
             sys.exit(1)
     elif args.mode == 'sweep':
         sweep()
