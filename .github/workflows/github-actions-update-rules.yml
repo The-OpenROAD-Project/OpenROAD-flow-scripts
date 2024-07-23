@@ -46,12 +46,12 @@ jobs:
           fi
           git add .
           git commit --signoff -m "flow: update rules based on new golden reference"
-      - if: "${{ github.event.client_payload.branch }} != 'master'"
+      - if: "github.event.client_payload.branch != 'master'"
         name: update rules pr
         id: remote-update-pr
         run: |
           git push origin ${{ github.event.client_payload.branch }}
-      - if: "steps.remote-update.outputs.has_update == 'true' && ${{ github.event.client_payload.branch }} == 'master'"
+      - if: "steps.remote-update.outputs.has_update == 'true' && github.event.client_payload.branch == 'master'"
         name: Create Draft PR
         uses: peter-evans/create-pull-request@v5
         with:
