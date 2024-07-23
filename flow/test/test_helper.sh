@@ -99,14 +99,16 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   ./tools/AutoTuner/installer.sh
   ./tools/AutoTuner/setup.sh
 
+  # remove dashes
   PLATFORM=${PLATFORM//-/}
-  PLATFORM=${PLATFORM^^}  
+  # convert to uppercase
+  PLATFORM=${PLATFORM^^}
 
   echo "Running Autotuner smoke tune test"
-  python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM^^}TuneSmokeTest.test_tune
-  
+  python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM}TuneSmokeTest.test_tune
+
   echo "Running Autotuner smoke sweep test"
-  python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM^^}SweepSmokeTest.test_sweep
+  python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeTest.test_sweep
 fi
 
 exit $ret
