@@ -45,7 +45,7 @@ for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
     test = '{} {}'.format(platform, design)
     dataFile = os.path.join(designsDir, runFilename)
     if os.path.exists(dataFile) and (platform != 'sky130hd_fakestack' or platform != 'src'):
-        metrics, error_metrics = get_metrics(args.commitSHA # commit
+        metrics, error_metrics = get_metrics(args.commitSHA, # commit
                             platform, # platform
                             design, # design
                             api_base_url # backend url
