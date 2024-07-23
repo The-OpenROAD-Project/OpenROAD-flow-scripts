@@ -512,7 +512,7 @@ do-yosys-canonicalize: yosys-dependencies
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
-$(RESULTS_DIR)/1_synth.rtlil: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE_CLOCK_PERIOD)
+$(RESULTS_DIR)/1_synth.rtlil: $(SDC_FILE_CLOCK_PERIOD)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
 
 $(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil $(SDC_FILE_CLOCK_PERIOD)
@@ -630,7 +630,7 @@ do-$(1): $(OBJECTS_DIR)/copyright.txt
 	trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
 	$(OPENROAD_EXE) -exit -no_init $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
 	$(TIME_CMD) $(OPENROAD_CMD) -no_splash $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json 2>&1 | \
-	tee -a $(LOG_DIR)/$(1).tmp.log)
+	tee -a $(abspath $(LOG_DIR)/$(1).tmp.log))
 endef
 
 # generate make rules to copy a file, if a dependency change and

@@ -20,5 +20,5 @@ for {set x 0} {$x < 8} {incr x} {
 
 report_parasitic_annotation
 report_power
-read_power_activities -scope TOP/MockArrayTestbench/postSynthesis -vcd designs/src/mock-array/MockArrayTestbench.vcd
+read_power_activities -scope TOP/MockArray -vcd designs/src/mock-array/MockArrayTestbench.vcd
 report_power
