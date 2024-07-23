@@ -94,6 +94,9 @@ export MIN_ROUTING_LAYER                     ?= Metal2
 export MAX_ROUTING_LAYER                     ?= Metal5
 export DISABLE_VIA_GEN                       ?= 1
 
+# Define fastRoute tcl
+export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
+
 # KLayout layer properties
 export KLAYOUT_TECH_FILE                      = $(PLATFORM_DIR)/KLayout/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION).lyt
 export KLAYOUT_LEF_FILE                       = $(PLATFORM_DIR)/KLayout/tech_$(TRACK_OPTION)_$(METAL_OPTION).lef
