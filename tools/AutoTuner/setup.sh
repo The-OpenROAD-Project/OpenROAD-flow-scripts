@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get the directory of the current script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 
 # Check if the activation script exists
 VENV_PATH="$SCRIPT_DIR/autotuner_env/bin/activate"
