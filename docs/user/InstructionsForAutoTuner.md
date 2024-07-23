@@ -23,18 +23,16 @@ User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) o
 
 ## Setting up AutoTuner
 
-To setup AutoTuner, make sure you have a virtual environment set up with
-Python 3.9.X. There are plenty of ways to do this, we recommend using 
-[Miniconda](https://docs.conda.io/en/latest/miniconda.html),
-which is a free minimal installer for the package manager `conda`. 
+We have provided two convenience scripts, `./install.sh` and `./setup.sh`
+that works in Python3.8 for installation and configuration of AutoTuner,
+as shown below:
 
 ```shell
-# set up conda environment
-conda create -n autotuner_env python=3.8 -y
-conda activate autotuner_env
+# Install prerequisites
+./tools/AutoTuner/install.sh
 
-# install requirements
-pip install -r ./tools/AutoTuner/requirements.txt
+# Start virtual environment
+./tools/AutoTuner/setup.sh
 ```
 
 ## Input JSON structure
@@ -203,11 +201,9 @@ We show three different views possible at the end, namely: `Table View`, `Scatte
 Assuming the virtual environment is setup at `./tools/AutoTuner/autotuner_env`:
 
 ```
-# Smoke test
-cd tools/AutoTuner && \
-./setup.sh && \
-python3 tests/smoke_test_tune.py && \
-python3 tests/smoke_test_sweep.py
+./tools/AutoTuner/setup.sh
+python3 ./tools/AutoTuner/test/smoke_test_sweep.py
+python3 ./tools/AutoTuner/test/smoke_test_tune.py
 ```
 
 ## Citation
