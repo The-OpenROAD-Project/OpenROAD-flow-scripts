@@ -53,7 +53,7 @@ jobs:
         name: update rules pr
         id: remote-update-pr
         run: |
-          git push origin "refs/pull/${{ github.event.client_payload.branch }}/head"
+          git push origin "HEAD:refs/pull/${{ github.event.client_payload.branch }}/head"
       - if: "steps.remote-update.outputs.has_update == 'true' && github.event.client_payload.branch == 'master'"
         name: Create Draft PR
         uses: peter-evans/create-pull-request@v5
