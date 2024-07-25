@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Get the directory where the script is located
 script_dir="$(dirname "${BASH_SOURCE[0]}")"
