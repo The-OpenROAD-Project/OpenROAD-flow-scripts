@@ -71,6 +71,7 @@ _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
     apt-get -y install --no-install-recommends \
+        curl \
         libqt5multimediawidgets5 \
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
@@ -103,6 +104,24 @@ _installUbuntuPackages() {
         cd ${lastDir}
         rm -rf "${baseDir}"
     fi
+
+    # Add Docker's official GPG key:
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+        -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    apt-get -y update
+    apt-get -y install --no-install-recommends \
+        docker-ce \
+        docker-ce-cli \
+        containerd.io \
+        docker-buildx-plugin
 }
 
 _installDarwinPackages() {
@@ -110,6 +129,7 @@ _installDarwinPackages() {
     brew install python libomp
     brew link --force libomp
     brew install --cask klayout
+    brew install docker docker-buildx
 }
 
 _installCI() {
@@ -121,17 +141,6 @@ _installCI() {
         curl \
         python3 \
         software-properties-common
-
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-        $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-    apt-get -y update
-    apt-get -y install --no-install-recommends \
-        docker-ce \
-        docker-ce-cli \
-        containerd.io
-
 }
 
 _help() {

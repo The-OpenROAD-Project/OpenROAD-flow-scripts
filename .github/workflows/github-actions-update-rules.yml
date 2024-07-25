@@ -13,8 +13,12 @@ jobs:
       - name: Check out repository code recursively
         uses: actions/checkout@v3
         with:
-          submodules: recursive
           fetch-depth: 0
+      - name: Git prep
+        run: |
+          git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"
+          git fetch
+          git checkout ${{ github.event.client_payload.branch }}
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
@@ -29,9 +33,9 @@ jobs:
           echo ${{ github.event_name }}
           echo ${{ github.event.client_payload.type }}
           if [[ "${{ github.event_name }}" == "repository_dispatch" && "${{ github.event.client_payload.type }}" == "overwrite" ]]; then
-            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --overwrite
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA ${{ github.event.client_payload.commitsha }} --overwrite
           else 
-            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL}
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA ${{ github.event.client_payload.commitsha }}
           fi
       - name: Push updated rules
         id: remote-update
@@ -44,8 +48,13 @@ jobs:
             echo "has_update=false" >> "$GITHUB_OUTPUT"
           fi
           git add .
-          git commit -m "flow: update rules based on new golden reference"
-      - if: "steps.remote-update.outputs.has_update == 'true'"
+          git commit --signoff -m "flow: update rules based on new golden reference"
+      - if: "github.event.client_payload.branch != 'master'"
+        name: update rules pr
+        id: remote-update-pr
+        run: |
+          git push origin ${{ github.event.client_payload.branch }}
+      - if: "steps.remote-update.outputs.has_update == 'true' && github.event.client_payload.branch == 'master'"
         name: Create Draft PR
         uses: peter-evans/create-pull-request@v5
         with:

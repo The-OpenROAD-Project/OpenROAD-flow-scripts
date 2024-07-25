@@ -24,8 +24,7 @@ if {[info exist env(FASTROUTE_TCL)]} {
 # If GLOBAL_ROUTE_ARGS is specified, then we do only what the
 # GLOBAL_ROUTE_ARGS specifies.
 proc do_global_route {} {
-  set all_args [concat [list -guide_file $::env(RESULTS_DIR)/route.guide \
-    -congestion_report_file $::env(REPORTS_DIR)/congestion.rpt] \
+  set all_args [concat [list -congestion_report_file $::env(REPORTS_DIR)/congestion.rpt] \
     [expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
      {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]]
 
@@ -71,7 +70,14 @@ if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
   # Repair timing using global route parasitics
   puts "Repair setup and hold violations..."
   estimate_parasitics -global_routing
-  repair_timing -verbose
+
+  # process user settings
+  set additional_args "-verbose"
+  append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
+  append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
+  puts "repair_timing [join $additional_args " "]"
+  repair_timing {*}$additional_args
+
   if {[info exist ::env(DETAILED_METRICS)]} {
     report_metrics 5 "global route post repair timing"
   }
@@ -112,4 +118,5 @@ report_metrics 5 "global route"
 # Use make target update_sdc_clock to install the updated sdc.
 source [file join $env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
 
+write_guides $::env(RESULTS_DIR)/route.guide
 write_db $env(RESULTS_DIR)/5_1_grt.odb

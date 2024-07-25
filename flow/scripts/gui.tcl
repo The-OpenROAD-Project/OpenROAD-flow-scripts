@@ -66,3 +66,7 @@ if {![info exist ::env(GUI_NO_TIMING)]} {
   # Cleanup temporary variables
   unset sdc_file s design_stage
 }
+
+if {[info exist env(GUI_SOURCE)]} {
+  source $::env(GUI_SOURCE)
+}

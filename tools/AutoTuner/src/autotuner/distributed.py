@@ -485,7 +485,6 @@ def openroad(base_dir, parameters, flow_variant, path=''):
 
     export_command = f'export PATH={INSTALL_PATH}/OpenROAD/bin'
     export_command += f':{INSTALL_PATH}/yosys/bin'
-    export_command += f':{INSTALL_PATH}/LSOracle/bin:$PATH'
     export_command += ' && '
 
     make_command = export_command
