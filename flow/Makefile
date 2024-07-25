@@ -269,17 +269,6 @@ ifeq (,$(strip $(NUM_CORES)))
 endif
 export NUM_CORES
 
-export LSORACLE_CMD ?= $(shell command -v lsoracle)
-ifeq ($(LSORACLE_CMD),)
-  LSORACLE_CMD = $(abspath $(FLOW_HOME)/../tools/install/LSOracle/bin/lsoracle)
-endif
-
-LSORACLE_PLUGIN ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/share/yosys/plugin/oracle.so)
-export LSORACLE_KAHYPAR_CONFIG ?= $(abspath $(FLOW_HOME)/../tools/install/LSOracle/share/lsoracle/test.ini)
-ifneq ($(USE_LSORACLE),)
-  YOSYS_FLAGS ?= -m $(LSORACLE_PLUGIN)
-endif
-
 YOSYS_FLAGS += -v 3
 
 #-------------------------------------------------------------------------------

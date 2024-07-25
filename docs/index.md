@@ -91,9 +91,6 @@ Options for `./build_openroad.sh` script
 | `--yosys-args STRING`         | Aditional compilation flags for Yosys compilation.                                    |
 | `--openroad-args-overwrite`   | Do not use default flags set by this script during OpenROAD app compilation.          |
 | `--openroad-args STRING`      | Aditional compilation flags for OpenROAD app compilation.                             |
-| `--lsoracle-enable`           | Compile LSOracle. Disable by default as it is not currently used on the flow.         |
-| `--lsoracle-args-overwrite`   | Do not use default flags set by this scrip during LSOracle compilation.               |
-| `--lsoracle-args STRING`      | Aditional compilation flags for LSOracle compilation.                                 |
 | `--install-path PATH`         | Path to install tools. Default is `${INSTALL_PATH}`.                                  |
 | `--clean`                     | Call git clean interactively before compile. Useful to remove old build files.        |
 | `--clean-force`               | Call git clean before compile. WARNING: this option will not ask for confirmation. Useful to remove old build files. |
