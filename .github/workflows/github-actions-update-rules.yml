@@ -13,7 +13,6 @@ jobs:
       - name: Check out repository code recursively
         uses: actions/checkout@v3
         with:
-          submodules: recursive
           fetch-depth: 0
       - name: Git prep
         run: |
