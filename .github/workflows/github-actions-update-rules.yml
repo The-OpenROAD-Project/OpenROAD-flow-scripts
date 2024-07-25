@@ -10,16 +10,12 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - name: Git prep
-        run: |
-          git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"
-          git fetch
       - name: Check out repository code recursively
         uses: actions/checkout@v3
         with:
           submodules: recursive
           fetch-depth: 0
-      - name: Git prep step
+      - name: Git prep
         run: |
           git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"
           git fetch
