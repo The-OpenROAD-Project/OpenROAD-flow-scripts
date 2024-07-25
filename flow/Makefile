@@ -269,17 +269,6 @@ ifeq (,$(strip $(NUM_CORES)))
 endif
 export NUM_CORES
 
-export LSORACLE_CMD ?= $(shell command -v lsoracle)
-ifeq ($(LSORACLE_CMD),)
-  LSORACLE_CMD = $(abspath $(FLOW_HOME)/../tools/install/LSOracle/bin/lsoracle)
-endif
-
-LSORACLE_PLUGIN ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/share/yosys/plugin/oracle.so)
-export LSORACLE_KAHYPAR_CONFIG ?= $(abspath $(FLOW_HOME)/../tools/install/LSOracle/share/lsoracle/test.ini)
-ifneq ($(USE_LSORACLE),)
-  YOSYS_FLAGS ?= -m $(LSORACLE_PLUGIN)
-endif
-
 YOSYS_FLAGS += -v 3
 
 #-------------------------------------------------------------------------------
@@ -312,7 +301,9 @@ KLAYOUT_BIN_FROM_DIR = $(KLAYOUT_DIR)/klayout
 ifeq ($(wildcard $(KLAYOUT_BIN_FROM_DIR)), $(KLAYOUT_BIN_FROM_DIR))
 KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
 else
-KLAYOUT_CMD ?= $(shell command -v klayout)
+ifeq ($(KLAYOUT_CMD),)
+KLAYOUT_CMD := $(shell command -v klayout)
+endif
 endif
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
@@ -404,7 +395,7 @@ do-klayout_tech:
 	cp $(TECH_LEF) $(OBJECTS_DIR)/klayout_tech.lef
 
 KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
-KLAYOUT_VERSION = $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
+KLAYOUT_VERSION := $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
 
 KLAYOUT_ENV_VAR_IN_PATH = $(shell \
 	if [ -z "$(KLAYOUT_VERSION)" ]; then \
@@ -584,7 +575,7 @@ endef
 define OPEN_GUI
 .PHONY: $(1)_$(2)
 $(1)_$(2):
-	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
+	$(3)=$(RESULTS_DIR)/$(2) $(4) $(GUI_ARGS) $(SCRIPTS_DIR)/gui.tcl
 endef
 
 # Separate dependency checking and doing a step. This can
@@ -1056,10 +1047,10 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): kl
 
 .PHONY: gui_synth
 gui_synth:
-	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
+	$(OPENROAD_GUI_CMD) $(GUI_ARGS) $(SCRIPTS_DIR)/sta-synth.tcl
 .PHONY: open_synth
 open_synth:
-	$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
+	$(OPENROAD_NO_EXIT_CMD) $(GUI_ARGS) $(SCRIPTS_DIR)/sta-synth.tcl
 
 $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))
