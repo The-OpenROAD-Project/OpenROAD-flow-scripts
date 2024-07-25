@@ -19,20 +19,6 @@ synthesize_check $::env(SYNTH_FULL_ARGS)
 # At least this is predictable.
 renames -wire
 
-if { [info exists ::env(USE_LSORACLE)] } {
-    set lso_script [open $::env(OBJECTS_DIR)/lso.script w]
-    puts $lso_script "ps -a"
-    puts $lso_script "oracle --config $::env(LSORACLE_KAHYPAR_CONFIG)"
-    puts $lso_script "ps -m"
-    puts $lso_script "crit_path_stats"
-    puts $lso_script "ntk_stats"
-    close $lso_script
-
-    # LSOracle synthesis
-    lsoracle -script $::env(OBJECTS_DIR)/lso.script -lso_exe $::env(LSORACLE_CMD)
-    techmap
-}
-
 # Optimize the design
 opt -purge
 

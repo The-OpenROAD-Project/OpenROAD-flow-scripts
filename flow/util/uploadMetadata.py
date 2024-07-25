@@ -136,7 +136,10 @@ def upload_data(db, datafile, platform, design, variant, args, rules):
             'designs': designs,
             'name': platform,
         })
-    
+
+    if not doc_ref.get().exists or not branch_doc_ref.get().exists or not commit_doc_ref.get().exists or not platform_doc_ref.get().exists:
+        raise Exception(f"Failed to upload data for {platform} {design} {variant}.")
+
 def get_rules(platform, design, variant):
     runFilename = f'rules-{variant}.json'
     dataFile = os.path.join('designs', platform, design, runFilename)
