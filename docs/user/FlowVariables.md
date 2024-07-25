@@ -144,6 +144,8 @@ Note:
 | `IO_PLACER_H`         | The metal layer on which to place the I/O pins horizontally (top and bottom of the die).                                                                                         |
 | `IO_PLACER_V`         | The metal layer on which to place the I/O pins vertically (sides of the die).                                                                                                    |
 | `GUI_NO_TIMING`       | Skip loading timing for a faster GUI load.                                                                                                                                       |
+| `GUI_SOURCE` | Source the script. |
+| `GUI_ARGS` | OpenROAD command line options for gui_ and open_ targets, typically set tup `-exit` in combination with GUI_SOURCE to run a script and exit. |
 
 
 ### Placement
