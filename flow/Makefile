@@ -490,7 +490,7 @@ $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
 	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
 
 .PHONY: yosys-dependencies
-yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
+yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
 
 .PHONY: do-yosys
 do-yosys:
@@ -503,10 +503,10 @@ do-yosys-canonicalize: yosys-dependencies
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
-$(RESULTS_DIR)/1_synth.rtlil: $(SDC_FILE_CLOCK_PERIOD)
+$(RESULTS_DIR)/1_synth.rtlil:
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
 
-$(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil $(SDC_FILE_CLOCK_PERIOD)
+$(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
 	$(UNSET_AND_MAKE) do-yosys
 
 $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
