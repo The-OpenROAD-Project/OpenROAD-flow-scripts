@@ -599,7 +599,7 @@ def setup_repo(base):
     '''
     Clone ORFS repository and compile binaries.
     '''
-    print(f'[INFO 0000] Remote folder: {base}')
+    print(f'[INFO TUN-0000] Remote folder: {base}')
     install = f'{base}/tools/install'
     if args.server is not None:
         clone(base)
@@ -907,7 +907,7 @@ def sweep():
         repo_dir = os.path.abspath(LOCAL_DIR + '/../' * 4)
     else:
         repo_dir = os.path.abspath('../')
-    print(f'[INFO TUN_0012] Log folder {LOCAL_DIR}.')
+    print(f'[INFO TUN-0012] Log folder {LOCAL_DIR}.')
     queue = Queue()
     parameter_list = list()
     for name, content in config_dict.items():
