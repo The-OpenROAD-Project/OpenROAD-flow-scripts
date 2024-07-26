@@ -2,6 +2,9 @@ utl::set_metrics_stage "globalplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 3_2_place_iop.odb 2_floorplan.sdc
 
+# Temporary: remove after fixing instability in GPL with multithreading
+set_thread_count 1
+
 set_dont_use $::env(DONT_USE_CELLS)
 
 # set fastroute layer reduction

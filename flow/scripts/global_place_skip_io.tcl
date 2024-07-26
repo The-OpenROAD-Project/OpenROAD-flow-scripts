@@ -1,6 +1,9 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 2_floorplan.odb 2_floorplan.sdc
 
+# Temporary: remove after fixing instability in GPL with multithreading
+set_thread_count 1
+
 if {
   [info exists ::env(FLOORPLAN_DEF)] ||
   (
