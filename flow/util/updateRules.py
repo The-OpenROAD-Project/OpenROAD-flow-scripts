@@ -51,6 +51,7 @@ for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
                             design, # design
                             api_base_url # backend url
                             )
+        print("metrics are", metrics)
         if error_metrics:
             print("failed to update rule for", platform, design)
             continue
