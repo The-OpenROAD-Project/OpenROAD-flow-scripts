@@ -18,7 +18,7 @@ jobs:
         run: |
           git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"
           git fetch
-          git checkout ${{ github.event.client_payload.branch }}
+          git checkout "origin/pr/${{ github.event.client_payload.branch }}"
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
@@ -53,7 +53,7 @@ jobs:
         name: update rules pr
         id: remote-update-pr
         run: |
-          git push origin ${{ github.event.client_payload.branch }}
+          git push origin "HEAD:refs/pull/${{ github.event.client_payload.branch }}/head"
       - if: "steps.remote-update.outputs.has_update == 'true' && github.event.client_payload.branch == 'master'"
         name: Create Draft PR
         uses: peter-evans/create-pull-request@v5
