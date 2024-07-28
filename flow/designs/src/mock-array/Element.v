@@ -58,10 +58,10 @@ module Element(
     REG_5 <= io_ins_right;
     REG_6 <= io_ins_left;
     REG_7 <= io_ins_up;
-    io_outs_left_REG <= REG | REG_1;
-    io_outs_up_REG <= REG_2 | REG_3;
-    io_outs_right_REG <= REG_4 | REG_5;
-    io_outs_down_REG <= REG_6 | REG_7;
+    io_outs_left_REG <= REG ^ REG_1;
+    io_outs_up_REG <= REG_2 ^ REG_3;
+    io_outs_right_REG <= REG_4 ^ REG_5;
+    io_outs_down_REG <= REG_6 ^ REG_7;
     REG_8 <= io_lsbIns_4;
   end
 endmodule

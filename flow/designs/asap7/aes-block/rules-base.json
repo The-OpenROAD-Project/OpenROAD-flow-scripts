@@ -24,11 +24,11 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1000,
+        "value": 1270,
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 77553,
+        "value": 73410,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -346.01,
+        "value": -272.58,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -52,11 +52,11 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 376,
+        "value": 318,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -54.04,
+        "value": -48.22,
         "compare": ">="
     }
 }

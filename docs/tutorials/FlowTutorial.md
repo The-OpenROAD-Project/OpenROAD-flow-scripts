@@ -160,7 +160,7 @@ constraints. We will use default configuration variables for this tutorial.
 |--------------------|------------------------------------------------------------------------------------------------------------------------------------------|
 | `PLATFORM`         | Specifies Process design kit.                                                                                                            |
 | `DESIGN_NAME`      | The name of the top-level module of the design                                                                                           |
-| `VERILOG_FILES`    | The path to the design Verilog files                                                                                                     |
+| `VERILOG_FILES`    | The path to the design Verilog files or JSON files providing a description of modules (check `yosys -h write_json` for more details).    |
 | `SDC_FILE`         | The path to design `.sdc` file                                                                                                           |
 | `CORE_UTILIZATION` | The core utilization percentage.                                                                                                         |
 | `PLACE_DENSITY`    | The desired placement density of cells. It reflects how spread the cells would be on the core area. 1 = closely dense. 0 = widely spread |
