@@ -1,8 +1,8 @@
-# #!/usr/bin/env bash
+#!/usr/bin/env bash
 
-# set -eoux pipefail
+set -eoux pipefail
 
-# cd "$(dirname $(readlink -f $0))/../"
+cd "$(dirname $(readlink -f $0))/../"
 
 # # Setting args (and setting default values for testing)
 # DESIGN_NAME=${1:-gcd}
