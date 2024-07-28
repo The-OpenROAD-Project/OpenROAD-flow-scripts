@@ -8,8 +8,6 @@ if { [info exists ::env(USE_WXL)]} {
 load_design $db_file 4_cts.sdc
 set_propagated_clock [all_clocks]
 
-set_thread_count $::env(NUM_CORES)
-
 set additional_args ""
 if { [info exists ::env(dbProcessNode)]} {
   append additional_args " -db_process_node $::env(dbProcessNode)"
