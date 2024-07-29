@@ -6,9 +6,6 @@ on:
         description: 'Type of update (overwrite or normal)'
         required: true
         default: 'normal'
-      commitsha:
-        description: 'Commit SHA'
-        required: true
 
 jobs:
   update:
@@ -32,9 +29,9 @@ jobs:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
         run: |
           if [[ "${{ github.event.inputs.type }}" == "overwrite" ]]; then
-            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA ${{ github.event.inputs.commitsha }} --overwrite
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA $(git rev-parse HEAD) --overwrite
           else 
-            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA ${{ github.event.inputs.commitsha }}
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA $(git rev-parse HEAD)
           fi
       - name: Push updated rules
         id: remote-update
