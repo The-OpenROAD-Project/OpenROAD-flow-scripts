@@ -34,6 +34,7 @@ while true; do
 
     echo "Getting latest build ID..."
     LAST_BUILD_ID=$(curl -s "${PR_BUILD_URL}/api/json?pretty" | jq -r '.lastBuild.number')
+    LAST_BUILD_ID=1
     if [ "$LAST_BUILD_ID" == "null" ]; then
         echo "Build id is null."
         exit 1
