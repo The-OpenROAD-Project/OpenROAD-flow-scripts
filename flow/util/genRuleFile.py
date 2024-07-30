@@ -332,9 +332,9 @@ if __name__ == "__main__":
     parser.add_argument('dir', help='Path to the design directory.')
     parser.add_argument(
         '-v',
-        '--platform',
+        '--variant',
         default='base',
-        help='Flow platform [default="asap7"].')
+        help='Flow variant [default="base"].')
     parser.add_argument(
         '-u',
         '--update',
