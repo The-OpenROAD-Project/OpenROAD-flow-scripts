@@ -41,7 +41,8 @@ parser.add_argument(
 args = parser.parse_args()
 
 # Initialize Firebase Admin SDK with service account credentials
-cred = credentials.Certificate(json.loads(args.keyFile))
+with open(args.keyFile) as fp:
+    cred = credentials.Certificate(json.load(fp))
 
 firebase_admin.initialize_app(cred)
 # Initialize Firestore client
