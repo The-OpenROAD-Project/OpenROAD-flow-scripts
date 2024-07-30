@@ -104,8 +104,9 @@
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
-# Default TNS_END_PERCENT value
-export TNS_END_PERCENT ?=5
+# Default TNS_END_PERCENT value for post CTS timing repair
+# Try fixing all violating endpoints by default (reduce to 5% for runtime)
+export TNS_END_PERCENT ?=100
 
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY
@@ -268,17 +269,6 @@ ifeq (,$(strip $(NUM_CORES)))
 endif
 export NUM_CORES
 
-export LSORACLE_CMD ?= $(shell command -v lsoracle)
-ifeq ($(LSORACLE_CMD),)
-  LSORACLE_CMD = $(abspath $(FLOW_HOME)/../tools/install/LSOracle/bin/lsoracle)
-endif
-
-LSORACLE_PLUGIN ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/share/yosys/plugin/oracle.so)
-export LSORACLE_KAHYPAR_CONFIG ?= $(abspath $(FLOW_HOME)/../tools/install/LSOracle/share/lsoracle/test.ini)
-ifneq ($(USE_LSORACLE),)
-  YOSYS_FLAGS ?= -m $(LSORACLE_PLUGIN)
-endif
-
 YOSYS_FLAGS += -v 3
 
 #-------------------------------------------------------------------------------
@@ -295,8 +285,9 @@ endif
 #       1 user explicit set with variable in Makefile or command line, for instance setting OPENROAD_EXE
 #       2 ORFS compiled tools: openroad, yosys
 export OPENROAD_EXE      ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+export OPENSTA_EXE       ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 
-OPENROAD_ARGS            = -no_init $(OR_ARGS)
+OPENROAD_ARGS            = -no_init -threads $(NUM_CORES) $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
@@ -310,7 +301,9 @@ KLAYOUT_BIN_FROM_DIR = $(KLAYOUT_DIR)/klayout
 ifeq ($(wildcard $(KLAYOUT_BIN_FROM_DIR)), $(KLAYOUT_BIN_FROM_DIR))
 KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
 else
-KLAYOUT_CMD ?= $(shell command -v klayout)
+ifeq ($(KLAYOUT_CMD),)
+KLAYOUT_CMD := $(shell command -v klayout)
+endif
 endif
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
@@ -402,7 +395,7 @@ do-klayout_tech:
 	cp $(TECH_LEF) $(OBJECTS_DIR)/klayout_tech.lef
 
 KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
-KLAYOUT_VERSION = $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
+KLAYOUT_VERSION := $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
 
 KLAYOUT_ENV_VAR_IN_PATH = $(shell \
 	if [ -z "$(KLAYOUT_VERSION)" ]; then \
@@ -483,7 +476,8 @@ export SYNTH_MEMORY_MAX_BITS ?= 4096
 
 $(SYNTH_STOP_MODULE_SCRIPT):
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys_hier_report.log
+	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
+	$(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys_hier_report.log
 
 ifeq ($(SYNTH_HIERARCHICAL), 1)
 do-yosys: $(SYNTH_STOP_MODULE_SCRIPT)
@@ -496,14 +490,23 @@ $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
 	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
 
 .PHONY: yosys-dependencies
-yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE)
+yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
 
 .PHONY: do-yosys
-do-yosys: yosys-dependencies
+do-yosys:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
+	$(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
 
-$(RESULTS_DIR)/1_1_yosys.v: $(SDC_FILE_CLOCK_PERIOD)
+.PHONY: do-yosys-canonicalize
+do-yosys-canonicalize: yosys-dependencies
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
+	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+
+$(RESULTS_DIR)/1_synth.rtlil:
+	$(UNSET_AND_MAKE) do-yosys-canonicalize
+
+$(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
 	$(UNSET_AND_MAKE) do-yosys
 
 $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
@@ -520,7 +523,7 @@ $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
 
 .PHONY: clean_synth
 clean_synth:
-	rm -f $(RESULTS_DIR)/1_*.v $(RESULTS_DIR)/1_synth.sdc $(RESULTS_DIR)/mem.json
+	rm -f $(RESULTS_DIR)/1_* $(RESULTS_DIR)/mem.json
 	rm -f $(REPORTS_DIR)/synth_*
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STOP_MODULE_SCRIPT)
@@ -549,7 +552,13 @@ endif
 
 UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
 
-SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo "$($V)" | $(FLOW_HOME)/scripts/escape.sh),$V='')) --no-print-directory DESIGN_CONFIG=$(DESIGN_CONFIG)
+# FILE_MAKEFILE is needed when ORFS is invoked with
+# `make --file=$FLOW_DIR/Makefile` or `make --directory $FLOW_DIR`.
+#
+# However, on some versions of make, MAKEFILE_LIST can be empty, so
+# don't expand it in that case.
+FILE_MAKEFILE ?= $(if $(firstword $(MAKEFILE_LIST)),--file=$(firstword $(MAKEFILE_LIST)),)
+SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo "$($V)" | $(FLOW_HOME)/scripts/escape.sh),$V='')) --no-print-directory $(FILE_MAKEFILE) DESIGN_CONFIG=$(DESIGN_CONFIG)
 UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
 
 $(OBJECTS_DIR)/copyright.txt:
@@ -566,7 +575,7 @@ endef
 define OPEN_GUI
 .PHONY: $(1)_$(2)
 $(1)_$(2):
-	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
+	$(3)=$(RESULTS_DIR)/$(2) $(4) $(GUI_ARGS) $(SCRIPTS_DIR)/gui.tcl
 endef
 
 # Separate dependency checking and doing a step. This can
@@ -612,7 +621,7 @@ do-$(1): $(OBJECTS_DIR)/copyright.txt
 	trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
 	$(OPENROAD_EXE) -exit -no_init $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
 	$(TIME_CMD) $(OPENROAD_CMD) -no_splash $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json 2>&1 | \
-	tee -a $(LOG_DIR)/$(1).tmp.log)
+	tee -a $(abspath $(LOG_DIR)/$(1).tmp.log))
 endef
 
 # generate make rules to copy a file, if a dependency change and
@@ -1038,10 +1047,10 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): kl
 
 .PHONY: gui_synth
 gui_synth:
-	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
+	$(OPENROAD_GUI_CMD) $(GUI_ARGS) $(SCRIPTS_DIR)/sta-synth.tcl
 .PHONY: open_synth
 open_synth:
-	$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
+	$(OPENROAD_NO_EXIT_CMD) $(GUI_ARGS) $(SCRIPTS_DIR)/sta-synth.tcl
 
 $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))

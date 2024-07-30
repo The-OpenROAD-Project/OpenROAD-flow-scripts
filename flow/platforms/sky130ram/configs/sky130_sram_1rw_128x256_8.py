@@ -5,18 +5,19 @@ FIXME: What is this useful for?
 FIXME: Why would you want byte write on this?
 """
 
-word_size = 128 # Bits
+word_size = 128  # Bits
 num_words = 256
-human_byte_size = "{:.0f}kbytes".format((word_size * num_words)/1024/8)
+human_byte_size = "{:.0f}kbytes".format((word_size * num_words) / 1024 / 8)
 
 # Allow byte writes
-write_size = 8 # Bits
+write_size = 8  # Bits
 
 # Dual port
 num_rw_ports = 1
 num_r_ports = 0
 num_w_ports = 0
-ports_human = '1rw'
+ports_human = "1rw"
 
 import os
-exec(open(os.path.join(os.path.dirname(__file__), 'sky130_sram_common.py')).read())
+
+exec(open(os.path.join(os.path.dirname(__file__), "sky130_sram_common.py")).read())

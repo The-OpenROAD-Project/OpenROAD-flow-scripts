@@ -258,16 +258,7 @@ endif
 # BC - Best case, fastest
 # WC - Worst case, slowest
 # TC - Typical case
-ifeq ($(CORNER),)
-   export CORNER = BC
-ifeq ($(MAKELEVEL),0)
-   $(info Default PVT selection: $(CORNER) model: $(LIB_MODEL))
-endif
-else
-ifeq ($(MAKELEVEL),0)
-   $(info User PVT selection: $(CORNER) model: $(LIB_MODEL))
-endif
-endif
+export CORNER ?= BC
 export LIB_FILES             += $($(CORNER)_$(LIB_MODEL)_LIB_FILES)
 export LIB_FILES             += $(ADDITIONAL_LIBS)
 export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))

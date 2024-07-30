@@ -5,13 +5,14 @@ import pya
 import re
 
 # lx ly ux uy layer_name
-bbox_re = re.compile('(\d+) (\d+) (\d+) (\d+) (\w+)')
+bbox_re = re.compile("(\d+) (\d+) (\d+) (\d+) (\w+)")
 categories = {}
+
 
 def add_box(line):
     m = re.match(bbox_re, line)
     if not m:
-        assert(line.strip() == ')')
+        assert line.strip() == ")"
         return False
 
     # covert DBU to microns
@@ -33,6 +34,7 @@ def add_box(line):
 
     return True
 
+
 app = pya.Application.instance()
 win = app.main_window()
 
@@ -45,7 +47,7 @@ layoutOptions = tech.load_layout_options
 cell_view = win.load_layout(in_def, layoutOptions, 0)
 layout_view = cell_view.view()
 
-rdb_id = layout_view.create_rdb('FastRoute')
+rdb_id = layout_view.create_rdb("FastRoute")
 rdb = layout_view.rdb(rdb_id)
 cell = rdb.create_cell(cell_view.cell_name)
 
@@ -55,23 +57,23 @@ on_net = False
 with open(in_guide) as fp:
     for line in fp:
         if field == 0:
-            m = re.match('(.*)', line)
-            assert(m)
+            m = re.match("(.*)", line)
+            assert m
             net = m.group(1)
-            on_net = (net == net_name)
+            on_net = net == net_name
             field = 1
         elif field == 1:
-            assert(line.strip() == '(')
+            assert line.strip() == "("
             field = 2
         elif field == 2:
             if on_net:
                 if not add_box(line):
                     field = 0
             else:
-                if line.strip() == ')':
+                if line.strip() == ")":
                     field = 0
 
 
-assert(field == 0)
+assert field == 0
 
-win.menu().action('tools_menu.browse_markers').trigger()
+win.menu().action("tools_menu.browse_markers").trigger()
