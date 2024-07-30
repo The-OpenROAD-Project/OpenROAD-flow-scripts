@@ -23,11 +23,17 @@ export DIE_AREA  = $(shell \
   cd $(dir $(DESIGN_CONFIG)) && \
   python3 -c "import config; print(f'{0} {0} {config.die_width} {config.die_height}')")
 
+export MACRO_PLACE_HALO = 0 2.16
+export RTLMP_BOUNDARY_WT = 0
+export RTLMP_FLOW ?= True
+
 export BLOCKS                ?= Element
 
 ifneq ($(BLOCKS),)
   export GDS_ALLOW_EMPTY       = Element
-  export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
+  ifeq ($(RTLMP_FLOW), False)
+    export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
+  endif
   export PDN_TCL               = $(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl
 endif
 
