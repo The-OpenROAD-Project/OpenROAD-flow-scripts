@@ -11,17 +11,16 @@ import ray
 @ray.remote
 def gethostname(x):
     import platform
+
     time.sleep(2)
-    return x + (platform.node(), )
+    return x + (platform.node(),)
 
 
 def main():
-    '''
+    """
     Check that objects can be transferred from each node to each other node.
-    '''
-    results = [
-        gethostname.remote(gethostname.remote(())) for _ in range(10)
-    ]
+    """
+    results = [gethostname.remote(gethostname.remote(())) for _ in range(10)]
     print(Counter(ray.get(results)))
     sys.stdout.flush()
 
