@@ -1,28 +1,10 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 2_floorplan.odb 2_floorplan.sdc
 
-if {
-  [info exists ::env(FLOORPLAN_DEF)] ||
-  (
-    [info exists ::env(HAS_IO_CONSTRAINTS)] &&
-    $::env(HAS_IO_CONSTRAINTS) == 1
-  ) ||
-  (
-    [info exists ::env(IO_CONSTRAINTS)] &&
-    (
-      [info exists ::env(HAS_IO_CONSTRAINTS)] == 0 ||
-      $::env(HAS_IO_CONSTRAINTS) == 1
-    )
-  ) ||
-  (
-    $::env(PLACE_PINS_ARGS) != "" &&
-    (
-      [info exists ::env(HAS_IO_CONSTRAINTS)] == 0 ||
-      $::env(HAS_IO_CONSTRAINTS) == 1
-    )
-  )
-} {
-  puts "Has top down IO Constraints. Skip global placement without IOs"
+set_thread_count 1
+
+if { [info exists ::env(FLOORPLAN_DEF)] } {
+  puts "FLOORPLAN_DEF is set. Skipping global placement without IOs"
 } else {
   source $::env(SCRIPTS_DIR)/set_place_density.tcl
 
