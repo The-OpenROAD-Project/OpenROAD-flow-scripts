@@ -4,6 +4,7 @@ Dual port (1 read/write + 1 read only), 2 kbytes SRAM (with byte write).
 FIXME: What is this useful for?
 FIXME: Why would you want byte write on this?
 """
+
 word_size = 32  # Bits
 num_words = 512
 human_byte_size = "{:.0f}kbytes".format((word_size * num_words) / 1024 / 8)

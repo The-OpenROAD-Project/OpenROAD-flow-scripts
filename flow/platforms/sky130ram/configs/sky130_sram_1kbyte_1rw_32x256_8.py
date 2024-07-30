@@ -2,6 +2,7 @@
 Single port, 1 kbytes SRAM, with byte write, useful for RISC-V processor main
 memory.
 """
+
 word_size = 32  # Bits
 num_words = 256
 human_byte_size = "{:.0f}kbytes".format((word_size * num_words) / 1024 / 8)

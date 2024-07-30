@@ -3,6 +3,7 @@ Pseudo-dual port (independent read and write ports), 8bit word, 1 kbyte SRAM.
 
 Useful as a byte FIFO between two devices (the reader and the writer).
 """
+
 word_size = 8  # Bits
 num_words = 1024
 human_byte_size = "{:.0f}kbytes".format((word_size * num_words) / 1024 / 8)
