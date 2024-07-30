@@ -11,9 +11,6 @@ from genRuleFile import get_golden
 from genRuleFile import update_rules
 from genRuleFile import get_metrics
 
-# make sure the working dir is flow/
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-
 # Create the argument parser
 parser = argparse.ArgumentParser(description='Process some integers.')
 
@@ -26,13 +23,17 @@ parser.add_argument('--commitSHA', type=str, default="", help='commit for the me
 args = parser.parse_args()
 
 # Initialize Firebase Admin SDK with service account credentials
-cred = credentials.Certificate(json.loads(args.keyFile))
+with open(args.keyFile) as file:
+    cred = credentials.Certificate(json.load(file))
 
 firebase_admin.initialize_app(cred)
 # Initialize Firestore client
 db = firestore.client()
 
 api_base_url = args.apiURL
+
+# make sure the working dir is flow/
+os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 runFilename = f'rules-base.json'
 
