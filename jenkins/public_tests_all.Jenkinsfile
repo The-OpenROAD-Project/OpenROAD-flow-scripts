@@ -1,6 +1,6 @@
 @Library('utils@orfs-dev') _
 
-node {
+node('testing') {
 
     properties([copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME)]);
 
