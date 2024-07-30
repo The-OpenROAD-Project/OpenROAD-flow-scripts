@@ -41,6 +41,7 @@ jobs:
           echo "PR has commit sha: $COMMIT_SHA"
           COMMIT_SHA=abbc09da7f92f176a669e72d52653b80f074c12e
           echo "${CREDS_FILE}" > creds.json
+          cat creds.json
           if [[ "${{ github.event.label.name }}" == "Update Rules Overwrite" ]]; then
             echo "Calling updateRules.py with overwrite."
             python flow/util/updateRules.py --keyFile creds.json \

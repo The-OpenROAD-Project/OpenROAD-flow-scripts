@@ -24,6 +24,8 @@ args = parser.parse_args()
 
 # Initialize Firebase Admin SDK with service account credentials
 with open(args.keyFile) as file:
+    print(args.keyFile)
+    print(file.read())
     cred = credentials.Certificate(json.load(file))
 
 firebase_admin.initialize_app(cred)
@@ -36,6 +38,8 @@ api_base_url = args.apiURL
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 runFilename = f'rules-base.json'
+
+exit(0)
 
 for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
     dirList = designsDir.split(os.sep)
