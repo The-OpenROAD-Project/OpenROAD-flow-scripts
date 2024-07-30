@@ -357,19 +357,17 @@ def parse_flow_variables():
     os.chdir(initial_path)
 
     # for code parsing, you need to parse from both scripts and vars.tcl file.
-    paths = glob.glob(os.path.join(cur_path, "../../../../flow/scripts/*tcl"))
-    paths.append(os.path.join(cur_path, "../../../../flow/vars.tcl"))
     pattern = r"(?:::)?env\((.*?)\)"
-    flow_variables = set()
-    for fv_path in paths:
-        with open(fv_path) as f:
-            matches = re.findall(pattern, f.read())
-            flow_variables.update(s.strip().upper()
-                                for match in matches
-                                for s in match.split('\n') 
-                                if len(s))        
-
-    return flow_variables
+    files = glob.glob(os.path.join(cur_path, "../../../../flow/scripts/*.tcl"))
+    files.append(os.path.join(cur_path, "../../../../flow/vars.tcl"))
+    variables = set()
+    for file in files:
+        with open(file) as fp:
+            matches = re.findall(pattern, fp.read())
+        for match in matches:
+            for variable in match.split('\n'):
+                variables.add(variable.strip().upper())
+    return variables
 
 def parse_config(config, path=os.getcwd()):
     '''
