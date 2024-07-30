@@ -6,6 +6,9 @@
 # variable names such as $(false), unused variables, etc.
 set -ue -o pipefail
 
+echo "Should fail"
+exit 1
+
 cd flow
 testname=uart
 
