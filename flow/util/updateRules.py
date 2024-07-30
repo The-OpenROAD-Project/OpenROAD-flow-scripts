@@ -24,8 +24,6 @@ args = parser.parse_args()
 
 # Initialize Firebase Admin SDK with service account credentials
 with open(args.keyFile) as file:
-    print(args.keyFile)
-    print(file.read())
     cred = credentials.Certificate(json.load(file))
 
 firebase_admin.initialize_app(cred)
