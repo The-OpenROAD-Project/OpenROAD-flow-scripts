@@ -10,57 +10,50 @@ import operator
 import sys
 import requests
 
+
+def request_db(url):
+    response = requests.get(url)
+    if response.json() is None:
+        print(f"Got 'None' while expecting a JSON from {url}")
+        return None
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200 and "error" not in response.json():
+        # Parse the JSON response
+        data = response.json()
+        return data
+    else:
+        print("API request failed", response)
+        exit(1)
+
+
 def get_golden(platform, design, api_base_url):
-    try:
-        response = requests.get(api_base_url+f"/golden?platform={platform}&design={design}&variant=base")
+    url = f"/golden?platform={platform}&design={design}&variant=base"
+    return request_db(api_base_url+url)
 
-        # Check if the request was successful (status code 200)
-        if response.status_code == 200 and "error" not in response.json():
-            # Parse the JSON response
-            data = response.json()
-
-            return data, None
-        else:
-            print("API request failed")
-            return None, "API request failed"
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        return None, f"An error occurred: {str(e)}"
 
 def get_metrics(commitSHA, platform, design, api_base_url):
-    try:
-        response = requests.get(api_base_url+f"/commit?commitSHA={commitSHA}&platform={platform}&design={design}&variant=base")
+    url = f"/commit?commitSHA={commitSHA}&platform={platform}&design={design}&variant=base"
+    return request_db(api_base_url+url)
 
-        # Check if the request was successful (status code 200)
-        if response.status_code == 200 and "error" not in response.json():
-            # Parse the JSON response
-            data = response.json()
-
-            return data, None
-        else:
-            print("API request failed")
-            return None, "API request failed"
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        return None, f"An error occurred: {str(e)}"
 
 def update_rules(designDir, variant, golden_metrics, overwrite):
     if overwrite:
-        gen_rule_file(designDir, # design directory
-                        True, # update
-                        False, # tighten
-                        False, # failing
-                        variant, # variant
-                        golden_metrics # metrics needed for update, default is {} in case of file
-                        )
+        gen_rule_file(designDir,  # design directory
+                      True,  # update
+                      False,  # tighten
+                      False,  # failing
+                      variant,  # variant
+                      golden_metrics  # metrics needed for update, default is {} in case of file
+                      )
     else:
-        gen_rule_file(designDir, # design directory
-                        False, # update
-                        True, # tighten
-                        False, # failing
-                        variant, # variant
-                        golden_metrics # metrics needed for update, default is {} in case of file
-                        )
+        gen_rule_file(designDir,  # design directory
+                      False,  # update
+                      True,  # tighten
+                      False,  # failing
+                      variant,  # variant
+                      golden_metrics  # metrics needed for update, default is {} in case of file
+                      )
+
 
 def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics={}):
     original_directory = getcwd()
@@ -211,18 +204,20 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
 
     period = float(sub(r'^.*: ', '', period_list[0]))
     if len(period_list) != 1:
-        print(f'[WARNING] Multiple clocks not supported. Will use first clock: {period_list[0]}.')
+        print(
+            f'[WARNING] Multiple clocks not supported. Will use first clock: {period_list[0]}.')
 
     format_str = '| {:45} | {:8} | {:8} | {:8} |\n'
     change_str = ''
     for field, option in rules_dict.items():
         if field not in metrics.keys():
             print(f"[ERROR] Metric {field} not found in "
-                f"metrics file: {metrics_file} or golden metrics.")
+                  f"metrics file: {metrics_file} or golden metrics.")
             sys.exit(1)
 
         if isinstance(metrics[field], str):
-            print(f"[WARNING] Skipping string field {field} = {metrics[field]}")
+            print(
+                f"[WARNING] Skipping string field {field} = {metrics[field]}")
             continue
 
         if len(period_list) != 1 and field == 'globalroute__timing__clock__slack':
@@ -262,7 +257,7 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
                     rule_value + option['min_max_sum'], option['min_max_sum'])
             else:
                 print(f"[ERROR] Metric {field} has 'min_max' field but no "
-                    "'min_max_direct' or 'min_max_sum' field.")
+                      "'min_max_direct' or 'min_max_sum' field.")
                 sys.exit(1)
 
         if rule_value is None:
@@ -304,7 +299,7 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
             if update and old_rule['value'] != rule_value:
                 UPDATE = True
                 change_str += format_str.format(field, old_rule['value'],
-                                                       rule_value, 'Updating')
+                                                rule_value, 'Updating')
 
             if not UPDATE:
                 rule_value = old_rule['value']
@@ -319,8 +314,9 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
     with open(rules_file, 'w') as f:
         print('[INFO] writing', abspath(rules_file))
         json.dump(rules, f, indent=4)
-    
+
     chdir(original_directory)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -353,8 +349,9 @@ if __name__ == "__main__":
 
     if not args.update and not args.tighten and not args.failing:
         print('[ERROR] Please select at least one of '
-            '-u/--update, -t/--tighten, -f/--failing.')
+              '-u/--update, -t/--tighten, -f/--failing.')
         parser.print_help()
         sys.exit(1)
-    
-    gen_rule_file(args.dir, args.update, args.tighten, args.failing, args.variant)
+
+    gen_rule_file(args.dir, args.update, args.tighten,
+                  args.failing, args.variant)
