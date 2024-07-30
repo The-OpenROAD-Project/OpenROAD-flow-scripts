@@ -65,4 +65,4 @@ cd "$(dirname $(readlink -f $0))/../"
 
 # exit $ret
 
-./test/test_helper.py --make_issue design_name ${1:-gcd} platform ${2:-nangate45} config_mk ${3:-config.mk}
+./test/test_helper.py ${1:-gcd} ${2:-nangate45} ${3:-config.mk} --make_issue
