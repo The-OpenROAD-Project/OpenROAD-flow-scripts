@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu20.04", "ubuntu22.04", "centos7"]
+        os: ["ubuntu20.04", "ubuntu22.04"]
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -45,16 +45,11 @@ jobs:
           sudo service docker restart
       - name: Run installer
         run: |
-          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }}
+          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }} -tag=latest
       - name: Build project
         run: |
-          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }}
+          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }} -tag=latest
       - name: Test build
         run: |
           cmd="source ./env.sh ; yosys -help ; openroad -help ; make -C flow ;"
-          if [[ ${{ matrix.os }} == "centos7" ]]; then
-            cmd="source /opt/rh/devtoolset-8/enable; ${cmd}"
-            cmd="source /opt/rh/llvm-toolset-7.0/enable; ${cmd}"
-            cmd="source /opt/rh/rh-python38/enable; ${cmd}"
-          fi
           docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "${cmd}"

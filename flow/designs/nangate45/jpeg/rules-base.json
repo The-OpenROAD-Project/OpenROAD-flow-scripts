@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 78892,
+        "value": 75821,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -28,10 +28,14 @@
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 738656,
+        "value": 738576,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
+        "value": 0,
+        "compare": "<="
+    },
+    "detailedroute__antenna__violating__nets": {
         "value": 0,
         "compare": "<="
     },
@@ -52,7 +56,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -22.03,
+        "value": -19.96,
         "compare": ">="
     }
 }

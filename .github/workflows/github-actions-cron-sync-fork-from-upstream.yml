@@ -10,8 +10,6 @@ on:
         description: Use GitHub --force push.
         default:
 
-  repository_dispatch:
-
 
 jobs:
   Sync-Branch-From-Upstream:

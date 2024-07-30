@@ -6,6 +6,7 @@
 # variable names such as $(false), unused variables, etc.
 set -ue -o pipefail
 
+cd flow
 testname=uart
 
 make DESIGN_CONFIG=designs/asap7/$testname/config.mk place

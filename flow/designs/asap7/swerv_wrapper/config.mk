@@ -9,6 +9,8 @@ export RTLMP_MIN_INST = 5000
 export RTLMP_MAX_MACRO = 30
 export RTLMP_MIN_MACRO = 4 
 
+export LIB_MODEL = CCS
+
 export VERILOG_FILES = ./designs/src/swerv/swerv_wrapper.sv2v.v \
                        ./designs/$(PLATFORM)/swerv_wrapper/macros.v
 export SDC_FILE      = ./designs/$(PLATFORM)/swerv_wrapper/constraint.sdc

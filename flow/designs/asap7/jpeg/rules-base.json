@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 72854,
+        "value": 72810,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -28,23 +28,27 @@
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 235232,
+        "value": 194792,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
         "value": 0,
         "compare": "<="
     },
+    "detailedroute__antenna__violating__nets": {
+        "value": 0,
+        "compare": "<="
+    },
     "finish__timing__setup__ws": {
-        "value": -516.48,
+        "value": -447.13,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 7598,
+        "value": 8777,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 2921,
+        "value": 3166,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {

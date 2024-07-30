@@ -22,7 +22,13 @@ if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
 
 # Read verilog files
 foreach file $::env(VERILOG_FILES) {
-  read_verilog -defer -sv {*}$vIdirsArgs $file
+  if {[file extension $file] == ".rtlil"} {
+    read_rtlil $file
+  } elseif {[file extension $file] == ".json"} {
+    read_json $file
+  } else {
+    read_verilog -defer -sv {*}$vIdirsArgs $file
+  }
 }
 
 
@@ -78,11 +84,11 @@ if {[info exist ::env(DONT_USE_CELLS)] && $::env(DONT_USE_CELLS) != ""} {
 }
 
 if {[info exist ::env(SDC_FILE_CLOCK_PERIOD)] && [file isfile $::env(SDC_FILE_CLOCK_PERIOD)]} {
-  puts "\[FLOW\] Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
+  puts "Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
   set fp [open $::env(SDC_FILE_CLOCK_PERIOD) r]
   set clock_period [string trim [read $fp]]
   if {$clock_period != ""} {
-    puts "\[FLOW\] Setting clock period to $clock_period"
+    puts "Setting clock period to $clock_period"
     lappend abc_args -D $clock_period
   }
   close $fp
