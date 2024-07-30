@@ -70,3 +70,10 @@ jobs:
         if: env.has_update == 'true'
         run: |
           git push
+
+      - name: Remove label from PR
+        if: always()
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: "${{ github.event.label.name }}"
