@@ -76,6 +76,8 @@ jobs:
       - name: Remove label from PR
         if: always()
         uses: actions-ecosystem/action-remove-labels@v1
+        env:
+          LABEL: ${{ github.event.label.name }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          labels: "${{ github.event.label.name }}"
+          labels: "${LABEL}"
