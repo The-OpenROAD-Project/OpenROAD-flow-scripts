@@ -17,8 +17,7 @@ def format_ram_table_from_json(data, max_bits=None):
             size = int(parameters["SIZE"], 2)
             width = int(parameters["WIDTH"], 2)
             bits = size * width
-            table += formatting.format(size, width, bits,
-                                       module_name + "." + memory)
+            table += formatting.format(size, width, bits, module_name + "." + memory)
             if max_bits is not None and bits > max_bits:
                 max_ok = False
     return table, max_ok
@@ -30,7 +29,7 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--max-bits", type=int, default=None)
     args = parser.parse_args()
 
-    with open(args.file, 'r') as file:
+    with open(args.file, "r") as file:
         json_data = json.load(file)
 
     src_files = set()
@@ -45,10 +44,10 @@ if __name__ == "__main__":
     print(" " + "\n ".join(src_files))
 
     print("Memories found in the design:")
-    formatted_table, max_ok = format_ram_table_from_json(
-        json_data, args.max_bits)
+    formatted_table, max_ok = format_ram_table_from_json(json_data, args.max_bits)
     print(formatted_table)
     if not max_ok:
         sys.exit(
-            "ERROR: Synthesized memory size exceeds maximum allowed bits " +
-            str(args.max_bits))
+            "ERROR: Synthesized memory size exceeds maximum allowed bits "
+            + str(args.max_bits)
+        )
