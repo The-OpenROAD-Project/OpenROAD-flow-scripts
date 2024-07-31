@@ -25,13 +25,13 @@ export DIE_AREA  = $(shell \
 
 export MACRO_PLACE_HALO = 0 2.16
 export RTLMP_BOUNDARY_WT = 0
-export RTLMP_FLOW ?= True
+export RTLMP_FLOW ?= 1
 
 export BLOCKS                ?= Element
 
 ifneq ($(BLOCKS),)
   export GDS_ALLOW_EMPTY       = Element
-  ifeq ($(RTLMP_FLOW), False)
+  ifneq ($(RTLMP_FLOW), 1)
     export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
   endif
   export PDN_TCL               = $(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl
