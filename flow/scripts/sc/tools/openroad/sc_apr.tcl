@@ -29,7 +29,7 @@ set inputs [list]
 if {$sc_step == "or_synth"} {
     # Pre-synthesis: mark dont-use cells in liberty files, and merge them.
     foreach f [split $::env(LIB_FILES)] {
-        exec $::env(UTILS_DIR)/preprocessLib.py -i $f -o "../../[file tail $f]-mod.lib"
+        exec $::env(UTILS_DIR)/markDontUse.py -p $::env(DONT_USE_CELLS) -i $f -o "../../[file tail $f]-mod.lib"
     }
     set merge_cmd $::env(UTILS_DIR)/mergeLib.pl
     lappend merge_cmd $::env(PLATFORM)_merged

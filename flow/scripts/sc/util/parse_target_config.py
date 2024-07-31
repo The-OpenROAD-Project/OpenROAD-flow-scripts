@@ -128,7 +128,7 @@ def parse(chip, platform):
         index = '0'
         tool = chip.get('flowgraph', 'orflow', step, index, 'tool')
         # "Don't use" libraries get pre-processed. TODO: Currently placed in build dir root.
-        # Also, 'preprocessLib.py' is called from TCL; might be easier to do that pp here.
+        # Also, 'markDontUse.py' is called from TCL; might be easier to do that pp here.
         mod_lib_base = os.path.abspath(os.path.join(chip.get('option', 'builddir'),
                                                     config['DESIGN_NAME'],
                                                     chip.get('option', 'jobname')))

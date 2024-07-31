@@ -1,6 +1,6 @@
 utl::set_metrics_stage "globalplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 3_2_place_iop.odb 2_floorplan.sdc
+load_design 3_2_place_iop.odb 2_floorplan.sdc "Starting global placement"
 
 set_dont_use $::env(DONT_USE_CELLS)
 
@@ -28,47 +28,33 @@ if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
   set place_density $::env(PLACE_DENSITY)
 }
 
-set global_placement_args {}
+set global_placement_args ""
 if {$::env(GPL_ROUTABILITY_DRIVEN)} {
-  lappend global_placement_args {-routability_driven}
-    if { [info exists ::env(GPL_TARGET_RC)] } { 
-      lappend global_placement_args {-routability_target_rc_metric} $::env(GPL_TARGET_RC)
-  }
+    append global_placement_args " -routability_driven"
 }
-
 if {$::env(GPL_TIMING_DRIVEN)} {
-  lappend global_placement_args {-timing_driven}
+    append global_placement_args " -timing_driven"
 }
 
-proc do_placement {place_density global_placement_args} {
-  set all_args [concat [list -density $place_density \
+
+if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
+global_placement -density $place_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-    -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)] \
-    $global_placement_args]
-
-  if { 0 != [llength [array get ::env GLOBAL_PLACEMENT_ARGS]] } {
-    lappend all_args {*}$::env(GLOBAL_PLACEMENT_ARGS)
-  }
-
-  puts "global_placement [join $all_args " "]"
-
-  global_placement {*}$all_args
-}
-
-set result [catch {do_placement $place_density $global_placement_args} errMsg]
-if {$result != 0} {
-  write_db $::env(RESULTS_DIR)/3_3_place_gp-failed.odb
-  error $errMsg
+    -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+    {*}$global_placement_args \
+    {*}$::env(GLOBAL_PLACEMENT_ARGS)
+} else {
+global_placement -density $place_density \
+    -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+    -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+    {*}$global_placement_args
 }
 
 estimate_parasitics -placement
 
-if {[info exist ::env(CLUSTER_FLOPS)]} {
-  cluster_flops
-  estimate_parasitics -placement
-}
-
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics 5 "global place" false false
+report_metrics "global place" false false
 
-write_db $::env(RESULTS_DIR)/3_3_place_gp.odb
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_db $::env(RESULTS_DIR)/3_3_place_gp.odb
+}

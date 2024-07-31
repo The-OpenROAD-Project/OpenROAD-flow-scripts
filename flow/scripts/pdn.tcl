@@ -1,8 +1,13 @@
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 2_5_floorplan_tapcell.odb 1_synth.sdc
+load_design 2_5_floorplan_tapcell.odb 1_synth.sdc "Starting PDN generation"
 
 source $::env(PDN_TCL)
-pdngen
+if {[catch {
+  pdngen
+} errorMessage]} {
+    # 打印错误信息
+    puts "ErrorPDN: $errorMessage"
+}
 
 if { [info exists ::env(POST_PDN_TCL)] && [file exists $::env(POST_PDN_TCL)] } {
   source $::env(POST_PDN_TCL)
@@ -19,7 +24,9 @@ foreach net [$block getNets] {
     }
 }
 
-if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
-  write_def $::env(RESULTS_DIR)/2_floorplan.def
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
+    write_def $::env(RESULTS_DIR)/2_floorplan.def
+  }
+  write_db $::env(RESULTS_DIR)/2_6_floorplan_pdn.odb
 }
-write_db $::env(RESULTS_DIR)/2_6_floorplan_pdn.odb

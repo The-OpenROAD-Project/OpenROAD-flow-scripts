@@ -1,5 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 2_2_floorplan_io.odb 1_synth.sdc
+load_design 2_2_floorplan_io.odb 1_synth.sdc "Starting TDMS placement"
 
 proc find_macros {} {
   set macros ""
@@ -27,4 +27,6 @@ if {[find_macros] != ""} {
   puts "No macros found: Skipping global_placement"
 }
 
-write_db $::env(RESULTS_DIR)/2_3_floorplan_tdms.odb
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_db $::env(RESULTS_DIR)/2_3_floorplan_tdms.odb
+}

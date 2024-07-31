@@ -1,5 +1,3 @@
-set_thread_count $::env(NUM_CORES)
-
 proc find_macros {} {
   set macros ""
 
@@ -117,14 +115,14 @@ if {[find_macros] != ""} {
         append additional_rtlmp_args " -fence_uy $env(RTLMP_FENCE_UY)"
     }
 
-    set all_args $additional_rtlmp_args
 
-    if { [info exists ::env(RTLMP_ARGS)] } {
-      set all_args $::env(RTLMP_ARGS)
-    }
+    puts "Call Macro Placer $additional_rtlmp_args"
 
-    puts "rtl_macro_placer [join $all_args " "]"
-    rtl_macro_placer {*}$all_args
+    rtl_macro_placer \
+                 {*}$additional_rtlmp_args
+
+    puts "Delete buffers for RTLMP flow..."
+    remove_buffers
   } else {
     macro_placement \
       -halo $::env(MACRO_PLACE_HALO) \

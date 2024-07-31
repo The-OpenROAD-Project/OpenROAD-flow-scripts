@@ -3,12 +3,16 @@ source $::env(SCRIPTS_DIR)/load.tcl
 if { [info exists ::env(USE_WXL)]} {
   set db_file 4_cts.odb
 } else {
-  set db_file 5_2_fillcell.odb
+  set db_file 5_1_grt.odb
 }
-load_design $db_file 4_cts.sdc
+load_design $db_file 4_cts.sdc "Starting detailed routing"
 set_propagated_clock [all_clocks]
 
 set_thread_count $::env(NUM_CORES)
+
+if { [info exists ::env(PRE_DETAIL_ROUTE_TCL)] } {
+  source $::env(PRE_DETAIL_ROUTE_TCL)
+}
 
 set additional_args ""
 if { [info exists ::env(dbProcessNode)]} {
@@ -57,19 +61,18 @@ append additional_args " -save_guide_updates -verbose 1"
 # not having to wait too long or generating large useless reports.
 
 set arguments [expr {[info exists ::env(DETAILED_ROUTE_ARGS)] ? $::env(DETAILED_ROUTE_ARGS) : \
- [concat $additional_args {-drc_report_iter_step 5}]}]
+ [concat $additional_args {-drc_report_iter_step 1}]}]
 
-set all_args [concat [list \
-  -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
-  -output_maze $::env(RESULTS_DIR)/maze.log] \
-  $arguments]
+puts "detailed_route arguments: $arguments"
 
-puts "detailed_route [join $all_args " "]"
-
-detailed_route {*}$all_args
+detailed_route -output_drc $::env(REPORTS_DIR)/5_route_drc.rpt \
+               -output_maze $::env(RESULTS_DIR)/maze.log \
+               {*}$arguments
 
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
 }
 
-write_db $::env(RESULTS_DIR)/5_3_route.odb
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_db $::env(RESULTS_DIR)/5_2_route.odb
+}
