@@ -8,13 +8,14 @@ import operator
 from collections import defaultdict
 
 # make sure the working dir is flow/
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-htmlOutput = 'reports/report-table.html'
-cssOutput = 'reports/table.css'
-designPathFile = 'design-dir.txt'
+htmlOutput = "reports/report-table.html"
+cssOutput = "reports/table.css"
+designPathFile = "design-dir.txt"
 
-dontUse = re.compile(r'''
+dontUse = re.compile(
+    r"""
 clocks__details |
 commit |
 cpu__total |
@@ -23,41 +24,43 @@ runtime__total |
 total_time |
 uuid |
 version
-''', re.VERBOSE | re.IGNORECASE)
+""",
+    re.VERBOSE | re.IGNORECASE,
+)
 
 # list of metrics that should be considered green if they increase
 # all other metrics are considered better if they decrease in value
-higherIsBetter = re.compile(r'''
+higherIsBetter = re.compile(
+    r"""
 __ws |
 __wns |
 __drv__max.*_limit |
 __clock__slack |
 __tns
-''', re.VERBOSE | re.IGNORECASE)
+""",
+    re.VERBOSE | re.IGNORECASE,
+)
 
 
-helpText = '''
+helpText = """
 Creates a HTML table with metric comparison between golden and current run
 for each design.
-'''
+"""
 parser = argparse.ArgumentParser(description=helpText)
-parser.add_argument(
-    "--variant",
-    default="base"
-)
+parser.add_argument("--variant", default="base")
 args = parser.parse_args()
 
-goldFilename = f'metadata-{args.variant}-ok.json'
-runFilename = f'metadata-{args.variant}.json'
+goldFilename = f"metadata-{args.variant}-ok.json"
+runFilename = f"metadata-{args.variant}.json"
 
 
 def readMetrics(fname, justLoad=False):
     global tableDict
     try:
-        with open(fname, 'r') as f:
+        with open(fname, "r") as f:
             tempDict = json.loads(f.read())
     except BaseException:
-        print('Failed to open {}.'.format(fname))
+        print("Failed to open {}.".format(fname))
         return None
     if justLoad:
         return tempDict
@@ -83,30 +86,30 @@ ops = {
 
 
 def getDiff(metric, gold, run, rules):
-    diff = '-'
-    style = 'no_change'
+    diff = "-"
+    style = "no_change"
     if isNumber:
         diff = run - gold
         if gold != 0:
-            percentage = '{:.2f}%'.format(abs(diff / gold) * 100)
+            percentage = "{:.2f}%".format(abs(diff / gold) * 100)
         else:
-            percentage = '#DIV/0!'
+            percentage = "#DIV/0!"
         if run > gold:
-            style = 'green' if re.search(higherIsBetter, metric) else 'orange'
+            style = "green" if re.search(higherIsBetter, metric) else "orange"
         elif gold > run:
-            style = 'orange' if re.search(higherIsBetter, metric) else 'green'
+            style = "orange" if re.search(higherIsBetter, metric) else "green"
         for field, rule in rules.items():
             if metric != field:
                 continue
-            op = ops[rule['compare']]
-            value = rule['value']
+            op = ops[rule["compare"]]
+            value = rule["value"]
             if not op(run, value):
-                style = 'red'
+                style = "red"
         if diff != 0:
             if abs(diff) < 0.01:
-                diff = '{:+.2} ({})'.format(diff, percentage)
+                diff = "{:+.2} ({})".format(diff, percentage)
             else:
-                diff = '{:+.2f} ({})'.format(diff, percentage)
+                diff = "{:+.2f} ({})".format(diff, percentage)
     return diff, style
 
 
@@ -114,7 +117,7 @@ tableDict = dict()
 testList = list()
 status = dict()
 
-for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
+for logDir, dirs, files in sorted(os.walk("logs", topdown=False)):
     dirList = logDir.split(os.sep)
     if len(dirList) != 4:
         continue
@@ -123,20 +126,20 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     platform = dirList[1]
     design = dirList[2]
     variant = dirList[3]
-    test = '{} {} {}'.format(platform, design, variant)
-    reportDir = logDir.replace('logs', 'reports')
+    test = "{} {} {}".format(platform, design, variant)
+    reportDir = logDir.replace("logs", "reports")
     errors = 0
 
-    print('-' * 79)
+    print("-" * 79)
     print(test)
-    print('-' * 79)
+    print("-" * 79)
 
     try:
-        with open(os.path.join(reportDir, designPathFile), 'r') as f:
+        with open(os.path.join(reportDir, designPathFile), "r") as f:
             designDir = f.read().strip()
     except BaseException:
-        print('Failed to open {}.'.format(designPathFile))
-        designDir = os.path.join('designs', platform, design)
+        print("Failed to open {}.".format(designPathFile))
+        designDir = os.path.join("designs", platform, design)
         errors += 1
 
     gold = readMetrics(os.path.join(designDir, goldFilename))
@@ -153,7 +156,7 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     else:
         runKeys = run.keys()
 
-    rulesFilename = f'rules-{variant}.json'
+    rulesFilename = f"rules-{variant}.json"
     rules = readMetrics(os.path.join(designDir, rulesFilename), justLoad=True)
     if rules is None:
         errors += 1
@@ -161,27 +164,27 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
     testList.append(test)
     if test not in status.keys():
         status[test] = dict()
-        status[test]['error'] = errors
-        status[test]['red'] = 0
-        status[test]['orange'] = 0
-        status[test]['no_change'] = 0
-        status[test]['green'] = 0
+        status[test]["error"] = errors
+        status[test]["red"] = 0
+        status[test]["orange"] = 0
+        status[test]["no_change"] = 0
+        status[test]["green"] = 0
 
     for metric in tableDict.keys():
         try:
             if metric in goldKeys:
                 goldValue = gold[metric]
             else:
-                goldValue = 'N/A'
+                goldValue = "N/A"
         except BaseException:
-            goldValue = 'ERR'
+            goldValue = "ERR"
         try:
             if metric in runKeys:
                 runValue = run[metric]
             else:
-                runValue = 'N/A'
+                runValue = "N/A"
         except BaseException:
-            runValue = 'ERR'
+            runValue = "ERR"
         try:
             goldValue = float(goldValue)
             runValue = float(runValue)
@@ -196,7 +199,7 @@ for logDir, dirs, files in sorted(os.walk('logs', topdown=False)):
 
     print()
 
-cssStyle = '''/* table styles */
+cssStyle = """/* table styles */
 table {
   border-collapse: collapse;
   margin: 25px 0;
@@ -290,12 +293,12 @@ div.desc {
   padding: 10px;
   text-align: center;
 }
-'''
+"""
 
-with open(cssOutput, 'w') as f:
+with open(cssOutput, "w") as f:
     f.writelines(cssStyle)
 
-head = '''<!DOCTYPE html>
+head = """<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -304,15 +307,15 @@ head = '''<!DOCTYPE html>
 </head>
 
 <body>
-'''
+"""
 
-tail = '''</body>
+tail = """</body>
 </html>
-'''
+"""
 
 
 def add_image(path, platform, view):
-    return f'''<td>
+    return f"""<td>
   <div class="gallery">
     <div class="desc">
       {platform} - {view}
@@ -322,17 +325,17 @@ def add_image(path, platform, view):
     </a>
   </div>
 </td>
-'''
+"""
 
 
 platforms = set()
 designs = set()
 views = set()
 images = defaultdict(lambda: defaultdict(dict))
-for parents, dirs, files in sorted(os.walk('reports', topdown=False)):
+for parents, dirs, files in sorted(os.walk("reports", topdown=False)):
     for file in files:
-        if file.endswith('.webp'):
-            path = os.path.join(parents, file).replace('reports', '.')
+        if file.endswith(".webp"):
+            path = os.path.join(parents, file).replace("reports", ".")
             platform, design = path.split(os.sep)[1:3]
             view = file[:-5]
             designs.add(design)
@@ -346,25 +349,23 @@ view = sorted(views)
 
 
 def write_gallery(design, platforms, views):
-    htmlGallery = f'reports/report-gallery-{design}.html'
-    with open(htmlGallery, 'w') as f:
-        gallery = '  <h1>Image Gallery</h1>\n'
+    htmlGallery = f"reports/report-gallery-{design}.html"
+    with open(htmlGallery, "w") as f:
+        gallery = "  <h1>Image Gallery</h1>\n"
         gallery += '<table class="image-table">\n'
-        gallery += '<tr>\n'
+        gallery += "<tr>\n"
         for key in platforms:
-            gallery += f'<th>{key}</th>\n'
-        gallery += '</tr>\n'
+            gallery += f"<th>{key}</th>\n"
+        gallery += "</tr>\n"
         for view in views:
-            gallery += '<tr>\n'
+            gallery += "<tr>\n"
             for platform in platforms:
-                if platform in images[design] and \
-                   view in images[design][platform]:
-                    gallery += add_image(images[design][platform][view],
-                                         platform, view)
+                if platform in images[design] and view in images[design][platform]:
+                    gallery += add_image(images[design][platform][view], platform, view)
                 else:
-                    gallery += '<td>\n</td>\n'
-            gallery += '</tr>\n'
-        gallery += '</table>\n'
+                    gallery += "<td>\n</td>\n"
+            gallery += "</tr>\n"
+        gallery += "</table>\n"
         html = head + gallery + tail
         f.writelines(html)
 
@@ -372,11 +373,10 @@ def write_gallery(design, platforms, views):
 for design in designs:
     write_gallery(design, platforms, views)
 
-subColumns = ['Gold', 'Current', 'Diff (%)']
+subColumns = ["Gold", "Current", "Diff (%)"]
 
-table = ''
-with open(htmlOutput, 'w') as f:
-
+table = ""
+with open(htmlOutput, "w") as f:
     # Compute summary rows
     noChangeList = list()
     improvementList = list()
@@ -390,11 +390,11 @@ with open(htmlOutput, 'w') as f:
     designsRed = list()
     designsParsingErrors = list()
     for test, value in status.items():
-        noChange = value['no_change']
-        improvements = value['green']
-        degradations = value['orange']
-        failedMetrics = value['red']
-        parsingErrors = value['error']
+        noChange = value["no_change"]
+        improvements = value["green"]
+        degradations = value["orange"]
+        failedMetrics = value["red"]
+        parsingErrors = value["error"]
         noChangeList.append(noChange)
         improvementList.append(improvements)
         degradationList.append(degradations)
@@ -415,150 +415,149 @@ with open(htmlOutput, 'w') as f:
             designsMoreDegradations.append(test)
 
     # Summary table begin
-    table += '\n<h1>Metrics Overview</h1>\n'
+    table += "\n<h1>Metrics Overview</h1>\n"
 
-    txt = 'Number of designs that failed parsing: '
-    txt += '{}\n'.format(len(designsParsingErrors))
-    txt += '    {}\n'.format(', '.join(designsParsingErrors))
-    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
+    txt = "Number of designs that failed parsing: "
+    txt += "{}\n".format(len(designsParsingErrors))
+    txt += "    {}\n".format(", ".join(designsParsingErrors))
+    table += "<pre>\n{}\n</pre>\n".format(txt.strip())
 
-    txt = 'Number of designs failing metrics checks: '
-    txt += '{}\n'.format(len(designsRed))
-    txt += '    {}\n'.format(', '.join(designsRed))
-    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
+    txt = "Number of designs failing metrics checks: "
+    txt += "{}\n".format(len(designsRed))
+    txt += "    {}\n".format(", ".join(designsRed))
+    table += "<pre>\n{}\n</pre>\n".format(txt.strip())
 
-    txt = 'Number of designs with more improvements: '
-    txt += '{}\n'.format(len(designsMoreImprovements))
-    txt += '    {}\n'.format(', '.join(designsMoreImprovements))
-    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
+    txt = "Number of designs with more improvements: "
+    txt += "{}\n".format(len(designsMoreImprovements))
+    txt += "    {}\n".format(", ".join(designsMoreImprovements))
+    table += "<pre>\n{}\n</pre>\n".format(txt.strip())
 
-    txt = 'Number of designs with more degradations: '
-    txt += '{}\n'.format(len(designsMoreDegradations))
-    txt += '    {}\n'.format(', '.join(designsMoreDegradations))
-    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
+    txt = "Number of designs with more degradations: "
+    txt += "{}\n".format(len(designsMoreDegradations))
+    txt += "    {}\n".format(", ".join(designsMoreDegradations))
+    table += "<pre>\n{}\n</pre>\n".format(txt.strip())
 
-    txt = 'Number of designs with same number of degradations and improvements: '
-    txt += '{}\n'.format(len(designsSameNumber))
-    txt += '    {}\n'.format(', '.join(designsSameNumber))
-    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
+    txt = "Number of designs with same number of degradations and improvements: "
+    txt += "{}\n".format(len(designsSameNumber))
+    txt += "    {}\n".format(", ".join(designsSameNumber))
+    table += "<pre>\n{}\n</pre>\n".format(txt.strip())
 
-    txt = 'Number of designs with no change: '
-    txt += '{}\n'.format(len(designsNoChange))
-    txt += '    {}\n'.format(', '.join(designsNoChange))
-    table += '<pre>\n{}\n</pre>\n'.format(txt.strip())
+    txt = "Number of designs with no change: "
+    txt += "{}\n".format(len(designsNoChange))
+    txt += "    {}\n".format(", ".join(designsNoChange))
+    table += "<pre>\n{}\n</pre>\n".format(txt.strip())
 
     table += '\n<table class="summary-table">\n'
     # Summary header
-    table += '  <tr>\n'
-    table += '    <th>Summary</th>\n'
-    for test in testList + ['Total']:
-        table += '    <th>{}</th>\n'.format(test)
-    table += '  </tr>\n'
+    table += "  <tr>\n"
+    table += "    <th>Summary</th>\n"
+    for test in testList + ["Total"]:
+        table += "    <th>{}</th>\n".format(test)
+    table += "  </tr>\n"
 
     # Summary rows
 
-    title = 'Parsing Errors'
-    table += '  <tr>\n'
+    title = "Parsing Errors"
+    table += "  <tr>\n"
     table += '    <td bgcolor="brown">{}</td>\n'.format(title)
     for value in parsingErrorList:
         table += '    <td title="{}">{}</td>\n'.format(title, value)
-    table += '    <td>{}</td>\n'.format(sum(parsingErrorList))
-    table += '  </tr>\n'
+    table += "    <td>{}</td>\n".format(sum(parsingErrorList))
+    table += "  </tr>\n"
 
-    title = 'Failed Metrics'
-    table += '  <tr>\n'
+    title = "Failed Metrics"
+    table += "  <tr>\n"
     table += '    <td bgcolor="red">{}</td>\n'.format(title)
     for value in failedMetricsList:
         table += '    <td title="{}">{}</td>\n'.format(title, value)
-    table += '    <td>{}</td>\n'.format(sum(failedMetricsList))
-    table += '  </tr>\n'
+    table += "    <td>{}</td>\n".format(sum(failedMetricsList))
+    table += "  </tr>\n"
 
-    title = 'Degradation'
-    table += '  <tr>\n'
+    title = "Degradation"
+    table += "  <tr>\n"
     table += '    <td bgcolor="orange">{}</td>\n'.format(title)
     for value in degradationList:
         table += '    <td title="{}">{}</td>\n'.format(title, value)
-    table += '    <td>{}</td>\n'.format(sum(degradationList))
-    table += '  </tr>\n'
+    table += "    <td>{}</td>\n".format(sum(degradationList))
+    table += "  </tr>\n"
 
-    title = 'No Change'
-    table += '  <tr>\n'
-    table += '    <td>{}</td>\n'.format(title)
+    title = "No Change"
+    table += "  <tr>\n"
+    table += "    <td>{}</td>\n".format(title)
     for value in noChangeList:
         table += '    <td title="{}">{}</td>\n'.format(title, value)
-    table += '    <td>{}</td>\n'.format(sum(noChangeList))
-    table += '  </tr>\n'
+    table += "    <td>{}</td>\n".format(sum(noChangeList))
+    table += "  </tr>\n"
 
-    title = 'Improvement'
-    table += '  <tr>\n'
+    title = "Improvement"
+    table += "  <tr>\n"
     table += '    <td bgcolor="green">{}</td>\n'.format(title)
     for value in improvementList:
         table += '    <td title="{}">{}</td>\n'.format(title, value)
-    table += '    <td>{}</td>\n'.format(sum(improvementList))
-    table += '  </tr>\n'
+    table += "    <td>{}</td>\n".format(sum(improvementList))
+    table += "  </tr>\n"
 
-    table += '</table>\n'
+    table += "</table>\n"
 
     # Main table begin
-    table += '\n<h1>Metrics Comparison Per Design</h1>\n'
+    table += "\n<h1>Metrics Comparison Per Design</h1>\n"
     table += '<table class="main-table">\n'
     # Main table header
-    table += '  <tr>\n'
-    table += '    <th>Metric</th>\n'
+    table += "  <tr>\n"
+    table += "    <th>Metric</th>\n"
     for test in testList:
         table += '    <th colspan="3">{}</th>\n'.format(test)
-    table += '  </tr>\n'
+    table += "  </tr>\n"
 
     # Main table header subdivision
-    table += '  <tr>\n'
-    table += '    <td>Name</td>\n'
+    table += "  <tr>\n"
+    table += "    <td>Name</td>\n"
     for _ in testList:
         for col in subColumns:
-            table += '    <td>{}</td>\n'.format(col)
-    table += '  </tr>\n'
+            table += "    <td>{}</td>\n".format(col)
+    table += "  </tr>\n"
 
     # Main table rows
     for metric, entry in tableDict.items():
-        table += '  <tr>\n'
-        table += '    <td>{}</td>\n'.format(metric)
+        table += "  <tr>\n"
+        table += "    <td>{}</td>\n".format(metric)
         title = 'title="{}"'.format(metric)
 
         for num in range(0, len(entry), len(subColumns)):
-
-            goldValue = '{}'.format(entry[num])
+            goldValue = "{}".format(entry[num])
             props = title
-            if goldValue == 'N/A':
-                props += 'bgcolor=yellow'
-            elif goldValue == 'ERR':
-                props += 'bgcolor=brown'
-            table += '    <td {}>{}</td>\n'.format(props, goldValue)
+            if goldValue == "N/A":
+                props += "bgcolor=yellow"
+            elif goldValue == "ERR":
+                props += "bgcolor=brown"
+            table += "    <td {}>{}</td>\n".format(props, goldValue)
 
-            runValue = '{}'.format(entry[num + 1])
+            runValue = "{}".format(entry[num + 1])
             props = title
-            if runValue == 'N/A':
-                props += 'bgcolor=yellow'
-            elif runValue == 'ERR':
-                props += 'bgcolor=brown'
-            table += '    <td {}>{}</td>\n'.format(props, runValue)
+            if runValue == "N/A":
+                props += "bgcolor=yellow"
+            elif runValue == "ERR":
+                props += "bgcolor=brown"
+            table += "    <td {}>{}</td>\n".format(props, runValue)
 
             diffValue, style = entry[num + 2]
             props = title
-            if style == 'no_change':
-                style = ''
+            if style == "no_change":
+                style = ""
             props = '{} bgcolor="{}"'.format(props, style)
-            table += '    <td {}>{}</td>\n'.format(props, diffValue)
+            table += "    <td {}>{}</td>\n".format(props, diffValue)
 
-        table += '  </tr>\n'
+        table += "  </tr>\n"
 
-    table += '</table>\n\n'
+    table += "</table>\n\n"
 
-    fname = 'reports/report.log'
-    content = ''
+    fname = "reports/report.log"
+    content = ""
     if os.path.isfile(fname):
-        with open(fname, 'r') as reportFile:
-            content = ''.join(reportFile.readlines()[4:])
-        content = '<pre>\n' + content + '\n</pre>\n'
-        content = '<h1>Flow Finish State and Log Summary</h1>\n' + content
+        with open(fname, "r") as reportFile:
+            content = "".join(reportFile.readlines()[4:])
+        content = "<pre>\n" + content + "\n</pre>\n"
+        content = "<h1>Flow Finish State and Log Summary</h1>\n" + content
 
     html = head + table + content + tail
     f.writelines(html)

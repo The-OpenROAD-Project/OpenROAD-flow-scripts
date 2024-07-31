@@ -4,7 +4,7 @@ export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1
 #
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 # RTL_MP Settings
 export RTLMP_MAX_INST = 30000
 export RTLMP_MIN_INST = 10000

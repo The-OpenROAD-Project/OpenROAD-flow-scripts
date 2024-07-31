@@ -7,6 +7,7 @@ from matplotlib import cm
 import itertools
 import argparse
 
+
 def run(platform):
     test_design = "make DESIGN_CONFIG=designs/asap7/mock-alu/config.mk"
 
@@ -18,13 +19,12 @@ def run(platform):
         "operations": (
             ("MOCK_ALU_OPERATIONS",),
             (
-               "ADD",
+                "ADD",
                 "ADD_BRENTKUNG",
                 "ADD_HANCARLSON",
                 "ADD_INFERRED",
                 "ADD_KOGGESTONE",
-#                "ADD_RIPPLE",
-               
+                #                "ADD_RIPPLE",
                 # "MULT_BRENTKUNG",
                 # "MULT_HANCARLSON",
                 # "MULT_INFERRED",
@@ -35,22 +35,22 @@ def run(platform):
                 # "MULT_HANCARLSON48",
                 # "MULT_HANCARLSON64",
                 # "MULT_HANCARLSON128",
- #               "ADD",
-                #"CLAADD",
-                #"KOGGESTONEADD",
+                #               "ADD",
+                # "CLAADD",
+                # "KOGGESTONEADD",
                 # "ADD8",
-                 #"ADD16",
-#                 "ADD32",
-                #"MUX1,MUX2",
+                # "ADD16",
+                #                 "ADD32",
+                # "MUX1,MUX2",
                 # "MUX1,MUX2,MUX3,MUX4",
-                #"MUX1,MUX2,MUX3,MUX4,MUX5,MUX6,MUX7,MUX8",
+                # "MUX1,MUX2,MUX3,MUX4,MUX5,MUX6,MUX7,MUX8",
                 # "ADD",
-                #"AND,OR,XOR",
-                #"OR",
-                #"SHL,SHR,SRA",
-                #"ADD,SUB,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE",
+                # "AND,OR,XOR",
+                # "OR",
+                # "SHL,SHR,SRA",
+                # "ADD,SUB,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE",
                 # "MULT",
-                #"AND,OR,XOR,SHL,SHR,SRA,ADD,SUB,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE",
+                # "AND,OR,XOR,SHL,SHR,SRA,ADD,SUB,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE",
                 # "AND,OR,XOR,SHL,SHR,SRA,ADD,SUB,SETCC_EQ,SETCC_NE,SETCC_LT,SETCC_ULT,SETCC_LE,SETCC_ULE,MULT",
             ),
         ),
@@ -62,7 +62,7 @@ def run(platform):
     ):
         variant = "-".join(map(str, measurement)).replace(" ", "-")
         print(f"testing {variant}")
-        env_change = {"FLOW_VARIANT": variant, "PLATFORM":platform}
+        env_change = {"FLOW_VARIANT": variant, "PLATFORM": platform}
         for e in itertools.chain(
             *map(
                 lambda measure: map(
@@ -131,7 +131,12 @@ def run(platform):
 
     # Annotating each point with its label
     for i, label in enumerate(labels):
-        plt.annotate("\n".join(custom_wrap(label[0])), (x_coords[i], y_coords[i]+0), ha='center', va='bottom')
+        plt.annotate(
+            "\n".join(custom_wrap(label[0])),
+            (x_coords[i], y_coords[i] + 0),
+            ha="center",
+            va="bottom",
+        )
 
     # Displaying the plot
     units = {
@@ -148,7 +153,9 @@ def run(platform):
 
 
 if __name__ == "__main__":
-   parser = argparse.ArgumentParser(description='Process some arguments.')
-   parser.add_argument('--platform', default='asap7', help='Specify the platform. Default is asap7.')
-   args = parser.parse_args()
-   run(args.platform)
+    parser = argparse.ArgumentParser(description="Process some arguments.")
+    parser.add_argument(
+        "--platform", default="asap7", help="Specify the platform. Default is asap7."
+    )
+    args = parser.parse_args()
+    run(args.platform)

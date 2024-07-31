@@ -210,7 +210,7 @@ def generate_klayout_switches(arguments, layout_path, netlist_path):
         "verbose": "true" if arguments.get("--verbose") else "false",
         "topcell": get_run_top_cell_name(arguments, layout_path),
         "input": os.path.abspath(layout_path),
-        "schematic": os.path.abspath(netlist_path)
+        "schematic": os.path.abspath(netlist_path),
     }
 
     return switches
@@ -265,9 +265,7 @@ def run_check(lvs_file: str, path: str, run_dir: str, sws: dict):
 
     """
 
-    logging.info(
-        f'Running SG13G2 LVS checks on design {path} on cell {sws["topcell"]}'
-    )
+    logging.info(f'Running SG13G2 LVS checks on design {path} on cell {sws["topcell"]}')
 
     layout_base_name = os.path.basename(path).split(".")[0]
     new_sws = sws.copy()
