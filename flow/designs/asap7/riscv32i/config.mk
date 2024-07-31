@@ -3,7 +3,7 @@ export DESIGN_NAME = riscv_top
 export PLATFORM    = asap7
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 
 export RTLMP_MIN_INST = 1000
 export RTLMP_MAX_INST = 3500

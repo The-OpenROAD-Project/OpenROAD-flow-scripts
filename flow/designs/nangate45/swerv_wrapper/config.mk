@@ -2,7 +2,7 @@ export DESIGN_NAME = swerv_wrapper
 export PLATFORM    = nangate45
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 #
 # RTL_MP Settings
 export RTLMP_MAX_INST = 30000
