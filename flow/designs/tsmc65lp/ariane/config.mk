@@ -2,7 +2,7 @@ export DESIGN_NAME = ariane
 export PLATFORM    = tsmc65lp
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/ariane.sv2v.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v

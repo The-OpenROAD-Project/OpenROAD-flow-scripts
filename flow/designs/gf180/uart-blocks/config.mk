@@ -7,7 +7,7 @@ export VERILOG_FILES = ./designs/src/uart-no-param/*.v
 export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 export BLOCKS = uart_rx
 
 export DIE_AREA = 0 0 430 430
