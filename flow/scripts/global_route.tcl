@@ -1,6 +1,6 @@
 utl::set_metrics_stage "globalroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 4_cts.odb 4_cts.sdc
+load_design 4_cts.odb 4_cts.sdc "Starting global routing"
 
 if {[info exist env(PRE_GLOBAL_ROUTE)]} {
   source $env(PRE_GLOBAL_ROUTE)
@@ -21,64 +21,14 @@ if {[info exist env(FASTROUTE_TCL)]} {
 #
 # If GLOBAL_ROUTE_ARGS is specified, then we do only what the
 # GLOBAL_ROUTE_ARGS specifies.
-proc do_global_route {} {
-  set all_args [concat [list -guide_file $::env(RESULTS_DIR)/route.guide \
-    -congestion_report_file $::env(REPORTS_DIR)/congestion.rpt] \
-    [expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
-     {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]]
+global_route -guide_file $env(RESULTS_DIR)/route.guide \
+               -congestion_report_file $env(REPORTS_DIR)/congestion.rpt \
+               {*}[expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
+               {-congestion_iterations 2 -congestion_report_iter_step 5 -verbose}}]
 
-  puts "global_route [join $all_args " "]"
-
-  global_route {*}$all_args
-}
-
-set result [catch {do_global_route} errMsg]
-if {$result != 0} {
-  write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
-  error $errMsg
-}
-
-set_placement_padding -global \
-    -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
-    -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
 set_propagated_clock [all_clocks]
 estimate_parasitics -global_routing
-
-if {[info exist env(DONT_USE_CELLS)]} {
-  set_dont_use $::env(DONT_USE_CELLS)
-}
-
-source $env(SCRIPTS_DIR)/report_metrics.tcl
-
-if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
-  report_metrics 5 "global route pre repair design"
-
-  # Repair design using global route parasitics
-  puts "Perform buffer insertion..."
-  repair_design
-  report_metrics 5 "global route post repair design"
-
-  # Running DPL to fix overlapped instances
-  # Run to get modified net by DPL
-  global_route -start_incremental
-  detailed_placement
-  # Route only the modified net by DPL
-  global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_design.rpt
-
-  # Repair timing using global route parasitics
-  puts "Repair setup and hold violations..."
-  estimate_parasitics -global_routing
-  repair_timing -verbose
-  report_metrics 5 "global route post repair timing"
-
-  # Running DPL to fix overlapped instances
-  # Run to get modified net by DPL
-  global_route -start_incremental
-  detailed_placement
-  # Route only the modified net by DPL
-  global_route -end_incremental -congestion_report_file $env(REPORTS_DIR)/congestion_post_repair_timing.rpt
-}
 
 if { [info exists ::env(RECOVER_POWER)] } {
   puts "Downsizing/switching to higher Vt  for non critical gates for power recovery"
@@ -92,20 +42,17 @@ if { [info exists ::env(RECOVER_POWER)] } {
   report_power
 }
 
-if {![info exist env(SKIP_ANTENNA_REPAIR)]} {
-  puts "Repair antennas..."
-  repair_antennas -iterations 5
-  check_placement -verbose
-  check_antennas -report_file $env(REPORTS_DIR)/antenna.log
-}
+source $env(SCRIPTS_DIR)/report_metrics.tcl
+report_metrics "global route"
 
-puts "Estimate parasitics..."
-estimate_parasitics -global_routing
-
-report_metrics 5 "global route"
+puts "\n=========================================================================="
+puts "check_antennas"
+puts "--------------------------------------------------------------------------"
+# check_antennas -report_file $env(REPORTS_DIR)/antenna.log -report_violating_nets
 
 # Write SDC to results with updated clock periods that are just failing.
 # Use make target update_sdc_clock to install the updated sdc.
 source [file join $env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
-
-write_db $env(RESULTS_DIR)/5_1_grt.odb
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_db $env(RESULTS_DIR)/5_1_grt.odb
+}

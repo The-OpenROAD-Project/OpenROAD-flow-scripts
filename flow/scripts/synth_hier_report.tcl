@@ -1,7 +1,15 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
+set constr [open $::env(OBJECTS_DIR)/abc.constr w]
+puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
+puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
+close $constr
+
 # Hierarchical synthesis
 synth  -top $::env(DESIGN_NAME)
+
+
+
 if { [info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)] } {
   techmap -map $::env(ADDER_MAP_FILE)
 }
@@ -11,9 +19,14 @@ if {[info exist ::env(DFF_LIB_FILE)]} {
 } else {
   dfflibmap -liberty $::env(DONT_USE_SC_LIB)
 }
-puts "abc [join $abc_args " "]"
-abc {*}$abc_args
+abc -liberty $::env(DONT_USE_SC_LIB) \
+    -constr $::env(OBJECTS_DIR)/abc.constr
 
+# Create argument list for stat
+set stat_libs ""
+foreach lib $::env(DONT_USE_LIBS) {
+  append stat_libs "-liberty $lib "
+}
 tee -o $::env(REPORTS_DIR)/synth_hier_stat.txt stat {*}$stat_libs
 
 if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_hier_stat.txt] } {

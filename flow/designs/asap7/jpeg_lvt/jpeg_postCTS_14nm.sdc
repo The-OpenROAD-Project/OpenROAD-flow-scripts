@@ -1,1 +1,0 @@
-../jpeg/jpeg_postCTS_14nm.sdc

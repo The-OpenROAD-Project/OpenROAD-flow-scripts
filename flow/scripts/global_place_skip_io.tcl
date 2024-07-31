@@ -1,5 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 2_floorplan.odb 2_floorplan.sdc
+load_design 2_floorplan.odb 2_floorplan.sdc "Starting global placement"
 
 if {[info exists ::env(FLOORPLAN_DEF)] || ([info exists ::env(HAS_IO_CONSTRAINTS)] && $::env(HAS_IO_CONSTRAINTS) != 0)} {
   puts "Has top down IO Constraints. Skip global placement without IOs"
@@ -29,4 +29,6 @@ if {[info exists ::env(FLOORPLAN_DEF)] || ([info exists ::env(HAS_IO_CONSTRAINTS
   }
 }
 
-write_db $::env(RESULTS_DIR)/3_1_place_gp_skip_io.odb
+if {![info exists save_checkpoint] || $save_checkpoint} {
+  write_db $::env(RESULTS_DIR)/3_1_place_gp_skip_io.odb
+}

@@ -1,0 +1,157 @@
+library (memory4) {
+  comment                        : "";
+  delay_model                    : table_lookup;
+  simulation                     : false;
+  capacitive_load_unit (1,fF);
+  leakage_power_unit             : 1pW;
+  current_unit                   : "1A";
+  pulling_resistance_unit        : "1kohm";
+  time_unit                      : "1ns";
+  voltage_unit                   : "1v";
+  library_features(report_delay_calculation);
+
+  input_threshold_pct_rise : 50;
+  input_threshold_pct_fall : 50;
+  output_threshold_pct_rise : 50;
+  output_threshold_pct_fall : 50;
+  slew_lower_threshold_pct_rise : 30;
+  slew_lower_threshold_pct_fall : 30;
+  slew_upper_threshold_pct_rise : 70;
+  slew_upper_threshold_pct_fall : 70;
+  slew_derate_from_library : 1.0;
+
+
+  nom_process                    : 1.0;
+  nom_temperature                : 25.0;
+  nom_voltage                    : 1.10;
+
+  type ("addr") {
+    base_type : array;
+    data_type : bit;
+    bit_width : 11;
+    bit_from : 10;
+    bit_to : 0;
+  }
+  type ("di") {
+    base_type : array;
+    data_type : bit;
+    bit_width : 4;
+    bit_from : 3;
+    bit_to : 0;
+  }
+  type ("doq") {
+    base_type : array;
+    data_type : bit;
+    bit_width : 4;
+    bit_from : 3;
+    bit_to : 0;
+  }
+
+  cell ("memory4") {
+    interface_timing : true;
+    pin("ce") {
+      direction : input;
+      capacitance : 6.8654;
+    }
+    pin("clk") {
+      direction : input;
+      capacitance : 26.8387;
+    }
+    pin("we") {
+      direction : input;
+      capacitance : 2.0431;
+    }
+    bus("addr") {
+      bus_type : addr;
+      direction : input;
+      capacitance : 0.0000;
+    pin("addr[10]") {
+      direction : input;
+      capacitance : 4.1025;
+    }
+    pin("addr[9]") {
+      direction : input;
+      capacitance : 7.3435;
+    }
+    pin("addr[8]") {
+      direction : input;
+      capacitance : 7.3191;
+    }
+    pin("addr[7]") {
+      direction : input;
+      capacitance : 3.6686;
+    }
+    pin("addr[6]") {
+      direction : input;
+      capacitance : 4.0041;
+    }
+    pin("addr[5]") {
+      direction : input;
+      capacitance : 6.8276;
+    }
+    pin("addr[4]") {
+      direction : input;
+      capacitance : 3.7717;
+    }
+    pin("addr[3]") {
+      direction : input;
+      capacitance : 3.9480;
+    }
+    pin("addr[2]") {
+      direction : input;
+      capacitance : 7.2064;
+    }
+    pin("addr[1]") {
+      direction : input;
+      capacitance : 27.3804;
+    }
+    pin("addr[0]") {
+      direction : input;
+      capacitance : 27.0177;
+    }
+    }
+    bus("di") {
+      bus_type : di;
+      direction : input;
+      capacitance : 0.0000;
+    pin("di[3]") {
+      direction : input;
+      capacitance : 6.8308;
+    }
+    pin("di[2]") {
+      direction : input;
+      capacitance : 6.9504;
+    }
+    pin("di[1]") {
+      direction : input;
+      capacitance : 3.5932;
+    }
+    pin("di[0]") {
+      direction : input;
+      capacitance : 7.2040;
+    }
+    }
+    bus("doq") {
+      bus_type : doq;
+      direction : output;
+      capacitance : 0.0000;
+    pin("doq[3]") {
+      direction : output;
+      capacitance : 0.4995;
+    }
+    pin("doq[2]") {
+      direction : output;
+      capacitance : 0.1702;
+    }
+    pin("doq[1]") {
+      direction : output;
+      capacitance : 0.2674;
+    }
+    pin("doq[0]") {
+      direction : output;
+      capacitance : 0.2357;
+    }
+    }
+  }
+
+}

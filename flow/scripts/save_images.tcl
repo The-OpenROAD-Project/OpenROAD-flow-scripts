@@ -20,8 +20,7 @@ gui::set_display_controls "Instances/StdCells/*" visible true
 gui::set_display_controls "Instances/Macro" visible true
 gui::set_display_controls "Instances/Pads/*" visible true
 gui::set_display_controls "Instances/Physical/*" visible true
-gui::set_display_controls "Shape Types/Pins" visible true
-gui::set_display_controls "Shape Types/*/*" visible true
+gui::set_display_controls "Pin Markers" visible true
 gui::set_display_controls "Misc/Instances/names" visible true
 gui::set_display_controls "Misc/Scale bar" visible true
 gui::set_display_controls "Misc/Highlight selected" visible true
@@ -35,7 +34,7 @@ gui::set_display_controls "Layers/*" visible false
 gui::set_display_controls "Instances/Physical/*" visible false
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_placement.webp
 
-if {[info exist ::env(PWR_NETS_VOLTAGES)] && [string length $::env(PWR_NETS_VOLTAGES)] > 0} {
+if {[info exist ::env(PWR_NETS_VOLTAGES)]} {
   gui::set_display_controls "Heat Maps/IR Drop" visible true
   gui::set_heatmap IRDrop Layer $::env(IR_DROP_LAYER)
   gui::set_heatmap IRDrop ShowLegend 1
@@ -51,6 +50,14 @@ gui::set_display_controls "Instances/*" visible false
 gui::set_display_controls "Instances/StdCells/Clock tree/*" visible true
 select -name "clk*" -type Inst
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_clocks.webp
+gui::clear_selections
+
+gui::set_display_controls "Instances/*" visible false
+gui::set_display_controls "Nets/*" visible false
+gui::set_display_controls "Heat Maps/Routing Congestion" visible true
+save_image -resolution $resolution $::env(REPORTS_DIR)/final_congestion.webp
+
+gui::set_display_controls "Heat Maps/Routing Congestion" visible false
 gui::clear_selections
 
 # The resizer view: all instances created by the resizer grouped
@@ -78,8 +85,7 @@ gui::clear_selections
 foreach clock [get_clocks *] {
   if { [llength [get_property $clock sources]] > 0 } {
     set clock_name [get_name $clock]
-    save_clocktree_image -clock $clock_name \
-        $::env(REPORTS_DIR)/cts_$clock_name.webp
+    gui::save_clocktree_image $::env(REPORTS_DIR)/cts_$clock_name.webp $clock_name
   }
 }
 
