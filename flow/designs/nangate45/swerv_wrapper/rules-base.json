@@ -52,7 +52,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 304,
+        "value": 116,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {

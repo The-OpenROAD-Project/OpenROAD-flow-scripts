@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.48,
+        "value": -0.22,
         "compare": ">="
     },
     "finish__design__instance__area": {

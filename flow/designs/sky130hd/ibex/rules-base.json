@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 26,
+        "value": 20,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
@@ -44,7 +44,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 211488,
+        "value": 206050,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
