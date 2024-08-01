@@ -36,7 +36,7 @@ docker run -u $(id -u ${USER}):$(id -g ${USER}) \
  -v $WORKSPACE:/OpenROAD-flow-scripts/flow \
  --network host \
  $DOCKER_INTERACTIVE \
- ${OR_IMAGE:-openroad/flow-ubuntu22.04-builder:latest} \
+ ${OR_IMAGE:-openroad/orfs:latest} \
  bash -c "set -ex
  mkdir /tmp/xdg-run
  cd /OpenROAD-flow-scripts/flow
