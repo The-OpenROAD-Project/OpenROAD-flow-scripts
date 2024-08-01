@@ -61,7 +61,9 @@ FASTROUTE_TCL = "fastroute.tcl"
 CONSTRAINTS_SDC = "constraint.sdc"
 METRIC = "minimum"
 ERROR_METRIC = 9e99
-ORFS_FLOW_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../flow'))
+ORFS_FLOW_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "../../../../flow")
+)
 
 
 class AutoTunerBase(tune.Trainable):
@@ -328,6 +330,7 @@ def read_config(file_name):
         config = apply_condition(config, data)
     return config, sdc_file, fr_file
 
+
 def parse_flow_variables():
     """
     Parse the flow variables from source
@@ -362,9 +365,10 @@ def parse_flow_variables():
         with open(file) as fp:
             matches = re.findall(pattern, fp.read())
         for match in matches:
-            for variable in match.split('\n'):
+            for variable in match.split("\n"):
                 variables.add(variable.strip().upper())
     return variables
+
 
 def parse_config(config, path=os.getcwd()):
     """
@@ -395,7 +399,7 @@ def parse_config(config, path=os.getcwd()):
         else:
             # Sanity check: ignore all flow variables that are not tunable
             if key not in flow_variables:
-                print(f'[ERROR TUN-0017] Variable {key} is not tunable.')
+                print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
                 sys.exit(1)
             options += f" {key}={value}"
     if bool(sdc):
