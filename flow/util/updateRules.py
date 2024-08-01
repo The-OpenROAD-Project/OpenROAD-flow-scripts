@@ -1,4 +1,3 @@
-from firebase_admin import credentials
 import json
 import argparse
 import os
@@ -26,10 +25,6 @@ parser.add_argument('--commitSHA',
 
 # Parse the arguments
 args = parser.parse_args()
-
-# Initialize Firebase Admin SDK with service account credentials
-with open(args.keyFile) as fp:
-    cred = credentials.Certificate(json.load(fp))
 
 # make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
