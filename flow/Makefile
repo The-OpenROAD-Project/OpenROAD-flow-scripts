@@ -510,7 +510,7 @@ $(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
 	$(UNSET_AND_MAKE) do-yosys
 
 $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
-	mkdir -p $(REPORTS_DIR)
+	mkdir -p $(RESULTS_DIR)
 	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
 
 .PHONY: do-synth
