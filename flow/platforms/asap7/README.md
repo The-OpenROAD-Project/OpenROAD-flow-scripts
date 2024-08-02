@@ -14,7 +14,7 @@ The package contain
 
 	* lib     - timing libraries for both standard cells and memory macros
 	* lef     - LEF file format for physical design implementation for both
-                    stardard cells and memory macros
+                    standard cells and memory macros
 	* verilog - verilog model for memory macros
 	* gds     - GDS for standard cells
 
