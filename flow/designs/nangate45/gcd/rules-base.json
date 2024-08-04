@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 684,
+        "value": 678,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 60,
+        "value": 59,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -48,7 +48,7 @@
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 33,
+        "value": 30,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
