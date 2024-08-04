@@ -660,7 +660,7 @@ endif
 ifneq ($(MACRO_PLACEMENT)$(MACRO_PLACEMENT_TCL),)
 SKIP_TDMS:=1
 endif
-ifneq ($(RTLMP_FLOW), 1)
+ifeq ($(RTLMP_FLOW), 1)
 SKIP_TDMS:=1
 endif
 ifneq ($(SKIP_TDMS), 1)
