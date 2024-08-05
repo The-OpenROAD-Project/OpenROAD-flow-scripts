@@ -2,8 +2,6 @@ source $::env(SCRIPTS_DIR)/load.tcl
 load_design 2_floorplan.odb 2_floorplan.sdc
 
 
-set_thread_count 1
-
 if { [info exists ::env(FLOORPLAN_DEF)] } {
   puts "FLOORPLAN_DEF is set. Skipping global placement without IOs"
 } else {
