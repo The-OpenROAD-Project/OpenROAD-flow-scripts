@@ -19,7 +19,6 @@ export GDS_FILES = $(PLATFORM_DIR)/gds/sg13g2_stdcell.gds \
 # on all layers.
 # *lpflow* cells are for multi-power domains
 export DONT_USE_CELLS += \
-sg13g2_antennanp \
 sg13g2_lgcp_1 \
 sg13g2_sighold \
 sg13g2_slgcp_1 \
