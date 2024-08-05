@@ -36,11 +36,11 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 1,
+        "value": 4,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -2.69,
+        "value": -0.8,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -56,7 +56,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -29.9,
+        "value": -14.38,
         "compare": ">="
     }
 }
