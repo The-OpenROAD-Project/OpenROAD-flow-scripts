@@ -337,7 +337,7 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 
 define GENERATE_ABSTRACT_RULE
 ifeq ($(wildcard $(3)),)
-# There is no unqiue config.mk for this module, use the shared
+# There is no unique config.mk for this module, use the shared
 # block.mk that, by convention, is in the same folder as config.mk
 # of the parent macro.
 #
@@ -349,7 +349,7 @@ block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
 $(1) $(2) &:
 	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk generate_abstract
 else
-# There is a unqiue config.mk for this Verilog module
+# There is a unique config.mk for this Verilog module
 $(1) $(2) &:
 	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$(3) generate_abstract
 endif
@@ -395,7 +395,7 @@ do-klayout_tech:
 	cp $(TECH_LEF) $(OBJECTS_DIR)/klayout_tech.lef
 
 KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
-KLAYOUT_VERSION := $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
+KLAYOUT_VERSION := $(if $(KLAYOUT_CMD),$(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2),)
 
 KLAYOUT_ENV_VAR_IN_PATH = $(shell \
 	if [ -z "$(KLAYOUT_VERSION)" ]; then \
@@ -582,7 +582,7 @@ endef
 # be useful to retest a stage without having to delete the
 # target, or when building a wafer thin layer on top of
 # ORFS using CMake, Ninja, Bazel, etc. where makefile
-# dependecy checking only gets in the way.
+# dependency checking only gets in the way.
 #
 # Note that there is no "do-synth" step as it is a special
 # first step that for usecases such as Bazel where it should
