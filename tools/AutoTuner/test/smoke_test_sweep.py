@@ -2,9 +2,11 @@ import unittest
 import subprocess
 import os
 import json
+
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 src_dir = os.path.join(cur_dir, "../src/autotuner")
 os.chdir(src_dir)
+
 
 class BaseSweepSmokeTest(unittest.TestCase):
     platform = ""
@@ -17,21 +19,27 @@ class BaseSweepSmokeTest(unittest.TestCase):
             contents = json.load(f)
             assert len(contents.keys()) == 1, "Must be size 1"
             assert "CTS_CLUSTER_SIZE" in contents, "Must have key CTS_CLUSTER_SIZE"
-            assert (contents["CTS_CLUSTER_SIZE"]["minmax"][1] - \
-                    contents["CTS_CLUSTER_SIZE"]["minmax"][0]) / \
-                    contents["CTS_CLUSTER_SIZE"]["step"] == 4, "Must have only 4 possible values"
+            assert (
+                contents["CTS_CLUSTER_SIZE"]["minmax"][1]
+                - contents["CTS_CLUSTER_SIZE"]["minmax"][0]
+            ) / contents["CTS_CLUSTER_SIZE"][
+                "step"
+            ] == 4, "Must have only 4 possible values"
 
         # limit jobs because ray.get() does not terminate if jobs > number of samples
         core = os.cpu_count()
         self.jobs = 4 if core >= 4 else core
         self.experiment = f"smoke-test-sweep-{self.platform}"
-        self.command = ("python3 distributed.py"
-                        f" --design {self.design}"
-                        f" --platform {self.platform}"
-                        f" --experiment {self.experiment}"
-                        f" --config {self.config}"
-                        f" --jobs {self.jobs}"
-                        f" sweep")
+        self.command = (
+            "python3 distributed.py"
+            f" --design {self.design}"
+            f" --platform {self.platform}"
+            f" --experiment {self.experiment}"
+            f" --config {self.config}"
+            f" --jobs {self.jobs}"
+            f" sweep"
+        )
+
 
 class ASAP7SweepSmokeTest(BaseSweepSmokeTest):
     platform = "asap7"
@@ -42,6 +50,7 @@ class ASAP7SweepSmokeTest(BaseSweepSmokeTest):
         successful = out.returncode == 0
         self.assertTrue(successful)
 
+
 class SKY130HDSweepSmokeTest(BaseSweepSmokeTest):
     platform = "sky130hd"
     design = "gcd"
@@ -50,6 +59,7 @@ class SKY130HDSweepSmokeTest(BaseSweepSmokeTest):
         out = subprocess.run(self.command, shell=True, check=True)
         successful = out.returncode == 0
         self.assertTrue(successful)
+
 
 class IHPSG13G2SweepSmokeTest(BaseSweepSmokeTest):
     platform = "ihp-sg13g2"
@@ -60,5 +70,6 @@ class IHPSG13G2SweepSmokeTest(BaseSweepSmokeTest):
         successful = out.returncode == 0
         self.assertTrue(successful)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
