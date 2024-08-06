@@ -198,6 +198,21 @@ We show three different views possible at the end, namely: `Table View`, `Scatte
 ![Parallel Coordinate View](../images/Autotuner_best_parameter_view.webp)
 <p style="text-align: center;">Parallel Coordinate View (best run is in green)</p>
 
+## Tests
+
+The tests can be run assuming you have the virtual environment set up.
+At a glance, we have:
+- Smoke tests: `--tune`, `--sweep`
+
+```
+./tools/AutoTuner/installer.sh
+cd tools/AutoTuner/tests
+
+# Smoke tests
+python smoke_test_tune.py
+python smoke_test_sweep.py
+```
+
 
 ## Citation
 

@@ -83,6 +83,7 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   ./tools/AutoTuner/installer.sh
   . .venv/bin/activate
 
+  # Remove dashes and capitalize platform name
   PLATFORM=${PLATFORM//-/}
   PLATFORM=${PLATFORM^^}  
 
