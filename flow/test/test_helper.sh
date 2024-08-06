@@ -100,7 +100,7 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   ./tools/AutoTuner/installer.sh
   . ./tools/AutoTuner/setup.sh
 
-  # remove dashes
+  # remove dashes and capitalize platform name
   PLATFORM=${PLATFORM//-/}
   # convert to uppercase
   PLATFORM=${PLATFORM^^}
