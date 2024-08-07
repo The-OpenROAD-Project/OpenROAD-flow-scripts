@@ -12,3 +12,5 @@ export PLACE_PINS_ARGS=-min_distance 6 -min_distance_in_tracks
 export TNS_END_PERCENT = 100
 
 export FASTROUTE_TCL = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
+
+export REMOVE_ABC_BUFFERS = 1
