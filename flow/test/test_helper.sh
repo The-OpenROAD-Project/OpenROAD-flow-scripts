@@ -94,8 +94,7 @@ fi
 
 if [ $RUN_AUTOTUNER -eq 1 ]; then
   # change directory to the root of the repo
-  cd ..
-  echo "Install dependencies in Venv"
+  echo "Install and starting venv"
   ./tools/AutoTuner/installer.sh
   ./tools/AutoTuner/setup.sh
 
