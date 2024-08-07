@@ -74,6 +74,8 @@ export FASTROUTE_TCL = ./designs/$(PLATFORM)/mock-array/fastroute.tcl
 export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
 
+export MACRO_PLACE_HALO = 0 2.16
+
 export CTS_BUF_DISTANCE = 60
 
 export ADDITIONAL_FILES = designs/src/mock-array/util.tcl
