@@ -12,7 +12,6 @@ user overrides at various flow stages. These are defined in the
 |------------------|------------------------------------------------------------------------------------|
 | `SKIP_REPORT_METRICS`   | If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds. |
 | `DETAILED_METRICS`      | If set, then calls report_metrics prior to repair operations in the CTS and global route stages |
-| `GALLERY_REPORT`        | If set to 1, then generates a DEF file that snapshots the state of the design at a given time. |
 
 ## Platform
 

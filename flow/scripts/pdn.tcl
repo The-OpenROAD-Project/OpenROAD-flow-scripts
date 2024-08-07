@@ -19,7 +19,4 @@ foreach net [$block getNets] {
     }
 }
 
-if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
-  write_def $::env(RESULTS_DIR)/2_floorplan.def
-}
 write_db $::env(RESULTS_DIR)/2_6_floorplan_pdn.odb
