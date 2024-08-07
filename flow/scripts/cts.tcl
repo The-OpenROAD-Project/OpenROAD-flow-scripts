@@ -107,8 +107,5 @@ if { [info exists ::env(POST_CTS_TCL)] } {
   source $::env(POST_CTS_TCL)
 }
 
-if {[info exists ::env(GALLERY_REPORT)]  && $::env(GALLERY_REPORT) != 0} {
-  write_def $::env(RESULTS_DIR)/4_1_cts.def
-}
 write_db $::env(RESULTS_DIR)/4_1_cts.odb
 write_sdc -no_timestamp $::env(RESULTS_DIR)/4_cts.sdc
