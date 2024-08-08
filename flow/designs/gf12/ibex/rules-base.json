@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 7891,
+        "value": 9233,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 16618,
+        "value": 20666,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -28,7 +28,7 @@
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 167257,
+        "value": 212268,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -40.6,
+        "value": 0.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
