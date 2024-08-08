@@ -177,7 +177,6 @@ endif
 
 include $(PLATFORM_DIR)/config.mk
 
-export GALLERY_REPORT ?= 0
 # Enables hierarchical yosys
 export SYNTH_HIERARCHICAL ?= 0
 export SYNTH_STOP_MODULE_SCRIPT = $(OBJECTS_DIR)/mark_hier_stop_modules.tcl
