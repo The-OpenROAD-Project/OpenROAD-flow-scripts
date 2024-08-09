@@ -65,27 +65,30 @@ fi
 
 # Run Autotuner CI specifically for gcd/selected platforms.
 RUN_AUTOTUNER=0
-if [ "$DESIGN_NAME" = "gcd" ]; then
-  case "$PLATFORM" in
-    "gf180" | "nangate45" | "sky130hd_fakestack" | "sky130hs")
-      RUN_AUTOTUNER=0
-      ;;
-    *)
-      RUN_AUTOTUNER=1
-      ;;
+case $DESIGN_NAME in
+  "gcd")
+    RUN_AUTOTUNER=1
+    ;;
+esac
+if [ $RUN_AUTOTUNER -eq 1 ]; then
+  case $PLATFORM in
+       "gf180" | "nangate45" | "sky130hd_fakestack" | "sky130hs")
+        RUN_AUTOTUNER=0
+        ;;
   esac
 fi
 
 if [ $RUN_AUTOTUNER -eq 1 ]; then
   # run the commands in ORFS root dir
   echo "[INFO FLW-0029] Installing dependencies in virtual environment."
-  cd ../
   ./tools/AutoTuner/installer.sh
-  . .venv/bin/activate
+  ./tools/AutoTuner/setup.sh
 
-  # Remove dashes and capitalize platform name
+  # remove dashes
   PLATFORM=${PLATFORM//-/}
-  PLATFORM=${PLATFORM^^}  
+
+  # convert to uppercase
+  PLATFORM=${PLATFORM^^}
 
   echo "[INFO FLW-0030] Running Autotuner smoke tests for --sample and --iteration."
   python3 -m unittest tools.AutoTuner.test.smoke_test_sample_iteration.${PLATFORM}SampleIterationSmokeTest.test_sample_iteration
