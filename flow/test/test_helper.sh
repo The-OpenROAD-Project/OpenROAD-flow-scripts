@@ -96,6 +96,8 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   # change directory to the root of the repo
   echo "Install and starting venv"
   cd ../
+  # Debug: Are the files even copied into the docker container?
+  ls -lrt ./tools/AutoTuner
   ./tools/AutoTuner/installer.sh
   ./tools/AutoTuner/setup.sh
 
