@@ -63,4 +63,36 @@ if [ ! -z ${MAKE_ISSUE+x} ]; then
   $__make final_report_issue 2>&1 | tee -a $LOG_FILE
 fi
 
+# Run Autotuner CI specifically for gcd/selected platforms.
+RUN_AUTOTUNER=0
+case $DESIGN_NAME in
+  "gcd")
+    RUN_AUTOTUNER=1
+    ;;
+esac
+if [ $RUN_AUTOTUNER -eq 1 ]; then
+  case $PLATFORM in
+       "gf180" | "nangate45" | "sky130hd_fakestack" | "sky130hs")
+        RUN_AUTOTUNER=0
+        ;;
+  esac
+fi
+
+if [ $RUN_AUTOTUNER -eq 1 ]; then
+  # run the commands in ORFS root dir
+  echo "[INFO FLW-0029] Installing dependencies in virtual environment."
+  cd ../
+  ./tools/AutoTuner/installer.sh
+  ./tools/AutoTuner/setup.sh
+
+  # remove dashes
+  PLATFORM=${PLATFORM//-/}
+
+  # convert to uppercase
+  PLATFORM=${PLATFORM^^}
+
+  echo "[INFO FLW-0030] Running Autotuner smoke tests for --sample and --iteration."
+  python3 -m unittest tools.AutoTuner.test.smoke_test_sample_iteration.${PLATFORM}SampleIterationSmokeTest.test_sample_iteration
+fi
+
 exit $ret
