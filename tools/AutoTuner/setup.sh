@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+echo "Setting up AutoTuner..."
 
 # Get the directory of the current script
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
