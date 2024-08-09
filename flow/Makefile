@@ -364,8 +364,7 @@ $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(bloc
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
 .PHONY: versions.txt
-versions.txt:
-	mkdir -p $(OBJECTS_DIR)
+versions.txt: mkdirs
 	@$(YOSYS_CMD) -V > $(OBJECTS_DIR)/$@
 	@echo openroad `$(OPENROAD_EXE) -version` >> $(OBJECTS_DIR)/$@
 	@$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@
@@ -389,8 +388,7 @@ $(OBJECTS_DIR)/klayout_tech.lef: $(TECH_LEF)
 	$(UNSET_AND_MAKE) do-klayout_tech
 
 .PHONY: do-klayout_tech
-do-klayout_tech:
-	@mkdir -p $(OBJECTS_DIR)
+do-klayout_tech: mkdirs
 	cp $(TECH_LEF) $(OBJECTS_DIR)/klayout_tech.lef
 
 KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
@@ -474,8 +472,7 @@ memory:
 export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 export SYNTH_MEMORY_MAX_BITS ?= 4096
 
-$(SYNTH_STOP_MODULE_SCRIPT):
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+$(SYNTH_STOP_MODULE_SCRIPT): mkdirs
 	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
 	$(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys_hier_report.log
 
@@ -485,22 +482,23 @@ endif
 
 export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
-$(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
-	mkdir -p $(dir $@)
+$(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE) mkdirs
 	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
 
 .PHONY: yosys-dependencies
 yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
 
+.PHONY: mkdirs
+mkdirs:
+	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
+
 .PHONY: do-yosys
-do-yosys:
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
+do-yosys: mkdirs
 	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
 	$(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
 
 .PHONY: do-yosys-canonicalize
-do-yosys-canonicalize: yosys-dependencies
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
+do-yosys-canonicalize: mkdirs yosys-dependencies
 	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
 
 $(RESULTS_DIR)/1_synth.rtlil:
@@ -509,13 +507,11 @@ $(RESULTS_DIR)/1_synth.rtlil:
 $(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
 	$(UNSET_AND_MAKE) do-yosys
 
-$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
-	mkdir -p $(RESULTS_DIR)
+$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE) mkdirs
 	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
 
 .PHONY: do-synth
-do-synth:
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+do-synth: mkdirs
 	cp $(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.v
 
 $(RESULTS_DIR)/1_synth.v: $(RESULTS_DIR)/1_1_yosys.v
@@ -561,9 +557,8 @@ FILE_MAKEFILE ?= $(if $(firstword $(MAKEFILE_LIST)),--file=$(firstword $(MAKEFIL
 SUB_MAKE = $(MAKE) $(foreach V,$(COMMAND_LINE_ARGS), $(if $($V),$V=$(shell echo "$($V)" | $(FLOW_HOME)/scripts/escape.sh),$V='')) --no-print-directory $(FILE_MAKEFILE) DESIGN_CONFIG=$(DESIGN_CONFIG)
 UNSET_AND_MAKE = @bash -c '$(UNSET_VARS); $(SUB_MAKE) $$@' --
 
-$(OBJECTS_DIR)/copyright.txt:
+$(OBJECTS_DIR)/copyright.txt: mkdirs
 	@$(OPENROAD_CMD) $(SCRIPTS_DIR)/noop.tcl
-	mkdir -p $(OBJECTS_DIR)
 	@touch $(OBJECTS_DIR)/copyright.txt
 
 define OPEN_GUI_SHORTCUT
@@ -604,7 +599,7 @@ endef
 # $(4) extension of result, default .odb
 # $(5) folder of target, default $(RESULTS_DIR)
 define do-step
-$(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
+$(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2) mkdirs
 	$$(UNSET_AND_MAKE) do-$(1)
 
 ifeq ($(if $(4),$(4),.odb),.odb)
@@ -686,8 +681,7 @@ $(eval $(call do-copy,2_floorplan,2_6_floorplan_pdn.odb,))
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
 .PHONY: do-floorplan
-do-floorplan:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
+do-floorplan: mkdirs
 	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_io do-2_3_floorplan_tdms do-2_4_floorplan_macro do-2_5_floorplan_tapcell do-2_6_floorplan_pdn do-2_floorplan
 
 .PHONY: clean_floorplan
@@ -741,7 +735,6 @@ $(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
 
 .PHONY: do-place
 do-place:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place do-3_place.sdc
 
 # Clean Targets
@@ -776,8 +769,7 @@ $(RESULTS_DIR)/4_cts.sdc: $(RESULTS_DIR)/4_cts.odb
 $(eval $(call do-copy,4_cts,4_1_cts.odb))
 
 .PHONY: do-cts
-do-cts:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
+do-cts: mkdirs
 	$(UNSET_AND_MAKE) do-4_1_cts do-4_cts
 
 .PHONY: clean_cts
@@ -821,8 +813,7 @@ $(eval $(call do-copy,5_route,5_3_route.odb))
 $(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
 
 .PHONY: do-route
-do-route:
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+do-route: mkdirs
 	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_fillcell do-5_3_route do-5_route do-5_route.sdc
 
 $(RESULTS_DIR)/5_route.v:
@@ -904,8 +895,7 @@ do-final: do-finish
 final: finish
 
 .PHONY: do-finish
-do-finish:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
+do-finish: mkdirs
 	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report do-gds elapsed
 
 .PHONY: generate_abstract
@@ -914,8 +904,7 @@ generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESU
 
 # Set ABSTRACT_SOURCE if you want to create an abstract from another stage than 6_final.
 .PHONY: do-generate_abstract
-do-generate_abstract:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
+do-generate_abstract: mkdirs
 	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(LOG_DIR)/generate_abstract.log
 
 .PHONY: clean_abstract
