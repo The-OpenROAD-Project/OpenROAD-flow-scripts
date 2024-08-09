@@ -94,8 +94,8 @@ case $PLATFORM in
 esac
 
 if [ $RUN_AUTOTUNER -eq 1 ]; then
-  # change directory to the root of the repo
-  echo "Install and starting venv"
+  # run the commands in ORFS root dir
+  echo "[INFO FLW-0029] Installing dependencies in virtual environment."
   cd ../
   ./tools/AutoTuner/installer.sh
   . ./tools/AutoTuner/setup.sh
