@@ -30,12 +30,6 @@ proc report_unused_masters {} {
 
 report_unused_masters
 
-#Run check_setup
-puts "\n=========================================================================="
-puts "Floorplan check_setup"
-puts "--------------------------------------------------------------------------"
-check_setup
-
 set num_instances [llength [get_cells -hier *]]
 puts "number instances in verilog is $num_instances"
 
