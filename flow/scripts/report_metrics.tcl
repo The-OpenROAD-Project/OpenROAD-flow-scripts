@@ -15,11 +15,6 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
   set fileId [open $filename w]
   close $fileId
   report_puts "\n=========================================================================="
-  report_puts "$when check_setup"
-  report_puts "--------------------------------------------------------------------------"
-  report_puts [check_setup]
-
-  report_puts "\n=========================================================================="
   report_puts "$when report_tns"
   report_puts "--------------------------------------------------------------------------"
   report_tns >> $filename
