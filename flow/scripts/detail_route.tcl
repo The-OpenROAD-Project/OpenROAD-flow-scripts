@@ -1,10 +1,4 @@
 utl::set_metrics_stage "detailedroute__{}"
-if {[expr [file exists $::env(REPORTS_DIR)/congestion.rpt] && \
-    [file size $::env(REPORTS_DIR)/congestion.rpt] != 0]} {
-  error "Global routing failed, run `make gui_grt` and load $::env(REPORTS_DIR)/congestion.rpt \
-    in DRC viewer to view congestion"
-}
-
 source $::env(SCRIPTS_DIR)/load.tcl
 if { [info exists ::env(USE_WXL)]} {
   set db_file 4_cts.odb

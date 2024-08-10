@@ -43,31 +43,16 @@ proc global_route_helper {} {
 
   set result [catch {do_global_route} errMsg]
 
-  # Just like detailed routing, a global route that fails with congestion, is not
-  # a build failure(as in exit code non-zero), it is a successful(as in zero exit code)
-  # global route that produce reports detailing the problem.
-  #
-  # Detailed route will not proceed, if there is global routing congestion
-  #
-  # This allows build systems, such as bazel, to create artifacts for global
-  # and detailed route, even if the operation had problems, without having
-  # know about the semantics between global and detailed route.
-  #
-  # Considering that global and detailed route can run for a long time and
-  # use a lot of memory, this allows inspecting results on a laptop for
-  # a build that ran on a server.
   write_guides $::env(RESULTS_DIR)/route.guide
 
   if {$result != 0} {
-    if {[expr ![file exists $::env(REPORTS_DIR)/congestion.rpt] || \
+    if {[expr !$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
+        ![file exists $::env(REPORTS_DIR)/congestion.rpt] || \
         [file size $::env(REPORTS_DIR)/congestion.rpt] == 0]} {
+      write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
       error $errMsg
     }
-    puts $errMsg
     write_db $::env(RESULTS_DIR)/5_1_grt.odb
-    puts "Warning: Global routing failed, detailed routing will not proceed,\
-      run `make gui_grt` and load $::env(REPORTS_DIR)/congestion.rpt\
-      in DRC viewer to view congestion"
     return
   }
 
