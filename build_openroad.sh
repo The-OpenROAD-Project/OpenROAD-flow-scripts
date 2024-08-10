@@ -34,7 +34,7 @@ CLEAN_FORCE=0
 USE_OPENROAD_APP_LATEST=0
 DOCKER_COPY_PLATFORMS=0
 
-__usage() {
+function usage() {
     cat << EOF
 
 Usage: $0 [-h|--help] [-o|--local] [--pull-docker] [-l|--latest] 
@@ -247,6 +247,7 @@ __local_build() {
 
 __update_openroad_app_remote()
 (
+        baseDir="$(pwd)"
         cd tools/OpenROAD
         remotes=$(git remote)
         SAVEIFS=$IFS
@@ -256,6 +257,7 @@ __update_openroad_app_remote()
         if [[ ! " ${remotes[@]} " =~ " ${OPENROAD_APP_REMOTE} " ]]; then
                 git remote add "${OPENROAD_APP_REMOTE}" "${OPENROAD_APP_GIT_URL}"
         fi
+        cd ${baseDir}
 )
 
 __change_openroad_app_remote()
@@ -271,11 +273,13 @@ __change_openroad_app_remote()
 
 __update_openroad_app_latest() 
 {
+        baseDir="$(pwd)"
         cd tools/OpenROAD
         git fetch "${OPENROAD_APP_REMOTE}"
         git checkout "${OPENROAD_APP_REMOTE}/${OPENROAD_APP_BRANCH}"
         git pull "${OPENROAD_APP_REMOTE}" "${OPENROAD_APP_BRANCH}"
         git submodule update --init --recursive
+        cd ${baseDir}
 }
 
 __common_setup()
@@ -335,7 +339,7 @@ __clean_previous_build() {
 function main() {
         __logging
         [ "$CLEAN_BEFORE" -eq 1 ] && __clean_previous_build
-        __parse_args "$@"
+        __parse_args "$0 $@"
         __setup_parallelism
         __setup_build_args
         __common_setup
@@ -349,5 +353,6 @@ function main() {
                 __local_build
         fi
 }
+
 __CMD="$0 $@"
-main "$@"
+main "$0 $@"
