@@ -822,10 +822,6 @@ $(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
 do-route:
 	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_fillcell do-5_3_route do-5_route do-5_route.sdc
 
-$(RESULTS_DIR)/5_route.v:
-	@export OR_DB=5_route ;\
-	$(OPENROAD_CMD) ./scripts/write_verilog.tcl
-
 .PHONY: clean_route
 clean_route:
 	rm -rf output*/ results*.out.dmp layer_*.mps
