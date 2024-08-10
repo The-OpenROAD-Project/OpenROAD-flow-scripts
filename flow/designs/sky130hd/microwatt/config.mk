@@ -29,7 +29,6 @@ export MACRO_PLACE_HALO = 100 100
 export MACRO_PLACE_CHANNEL = 200 200
 
 # CTS tuning
-export CTS_BUF_CELL = sky130_fd_sc_hd__clkbuf_8
 export CTS_BUF_DISTANCE = 600
 #export CTS_CLUSTER_DIAMETER = 100
 #export CTS_CLUSTER_SIZE = 30
