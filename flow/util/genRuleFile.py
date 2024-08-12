@@ -98,7 +98,7 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
         print(f"[WARNING] File not found {abspath(rules_file)}")
         OLD_RULES = None
 
-    path_parts = abspath(rules_file).split('/')
+    path_parts = abspath(rules_file).split("/")
     platform = path_parts[-3]
     design = path_parts[-2]
 
@@ -340,12 +340,12 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
         rules[field] = dict(value=rule_value, compare=option["compare"])
 
     if len(change_str) > 0:
-        print(f'Platform: {platform}     Design: {design}')
-        print(format_str.format('Metric', 'Old', 'New', 'Type'), end='')
-        print(format_str.format('------', '---', '---', '----'), end='')
+        print(f"Platform: {platform}     Design: {design}")
+        print(format_str.format("Metric", "Old", "New", "Type"), end="")
+        print(format_str.format("------", "---", "---", "----"), end="")
         print(change_str)
 
-    with open(rules_file, 'w') as f:
+    with open(rules_file, "w") as f:
         print(format_str.format("Metric", "Old", "New", "Type"), end="")
         print(format_str.format("------", "---", "---", "----"), end="")
         print(change_str)
