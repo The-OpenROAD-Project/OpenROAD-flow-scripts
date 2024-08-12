@@ -6,11 +6,12 @@ platform, design and tool specific variables to allow finer control and
 user overrides at various flow stages. These are defined in the
 `config.mk` file located in the platform and design specific directories.
 
-### General variables for all stages
+### General variables
 
 | Variable         | Description                                                                        |
 |------------------|------------------------------------------------------------------------------------|
 | `SKIP_REPORT_METRICS`   | If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds. |
+| `DETAILED_METRICS`      | If set, then calls report_metrics prior to repair operations in the CTS and global route stages |
 
 ## Platform
 
@@ -76,15 +77,14 @@ Note:
 | `PLACE_DENSITY`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `WIRE_RC_LAYER`                      | =            | =            | =             | =         | =         |
 | Clock Tree Synthesis                 |              |              |               |           |           |
-| `CTS_BUF_CELL`                       | =            | =            | =             | =         | =         |
 | `CTS_BUF_DISTANCE`                   | N/A          | N/A          | N/A           | =         | =         |
-| `FILL_CELLS`                         | =            | =            | =             | =         | =         |
 | `SKIP_GATE_CLONING`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `SKIP_PIN_SWAP`                      | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `TNS_END_PERCENT`                    | ?=           | ?=           |               | ?=        | ?=        |
 | `EQUIVALENCE_CHECK`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `REMOVE_CELLS_FOR_EQY`               | ?=           | ?=           | ?=            | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
+| `FILL_CELLS`                         | =            | =            | =             | =         | =         |
 | `KLAYOUT_TECH_FILE`                  | =            | =            | =             | =         | =         |
 | `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
 | `MIN_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
@@ -132,7 +132,7 @@ Note:
 | `FLOORPLAN_DEF`       | Use the DEF file to initialize floorplan.                                                                                                                                        |
 | `PLACE_SITE`          | Placement site for core cells defined in the technology LEF file.                                                                                                                |
 | `TAPCELL_TCL`         | Path to Endcap and Welltie cells file.                                                                                                                                           |
-| `RTLMP_FLOW`          | Enable the Hierarchical RTLMP flow. By default it is disabled.                                                                                                                   |
+| `RTLMP_FLOW`          | 1 to enable the Hierarchical RTLMP flow, default empty |
 | `MACRO_HALO`          | Specifies keep out distance from macro, in X and Y, to standard cell row.                                                                                                        |
 | `MACRO_PLACEMENT`     | Specifies the path of a file on how to place certain macros manually using read_macro_placement.                                                                                 |
 | `MACRO_PLACEMENT_TCL` | Specifies the path of a TCL file on how to place certain macros manually.                                                                                                        |
@@ -174,8 +174,6 @@ Note:
 | Variable              | Description                                                                                                  |
 |-----------------------|--------------------------------------------------------------------------------------------------------------|
 | `CTS_ARGS`            | Override `clock_tree_synthesis` arguments                           |
-| `CTS_BUF_CELL`        | The buffer cell used in the clock tree.                                                                      |
-| `FILL_CELLS`          | Fill cells are used to fill empty sites.    								                                   |
 | `HOLD_SLACK_MARGIN`   | Specifies a time margin for the slack when fixing hold violations. This option allow you to overfix.         |
 | `SETUP_SLACK_MARGIN`  | Specifies a time margin for the slack when fixing setup violations.                                          |
 | `SKIP_GATE_CLONING`   | Do not use gate cloning transform to fix timing violations (default: use gate cloning)                       |
@@ -190,6 +188,7 @@ Note:
 
 | Variable              | Description                                                             |
 |-----------------------|---------------------------------------------------------------------------------------------------|
+| `FILL_CELLS`          | Fill cells are used to fill empty sites.    							    |
 | `MIN_ROUTING_LAYER`   | The lowest metal layer name to be used in routing.                                                |
 | `MAX_ROUTING_LAYER`   | The highest metal layer name to be used in routing.                                               |
 | `DETAILED_ROUTE_ARGS` | Add additional arguments for debugging purpose during detail route.                               |
@@ -274,7 +273,7 @@ configuration file.
 | `MACRO_HALO_X`         | Set macro halo for x-direction. Only available for ASAP7 PDK. |
 | `MACRO_HALO_Y`         | Set macro halo for y-direction. Only available for ASAP7 PDK. |
 
-## Placement
+#### Placement
 
 
 | Variable                 | Description                                                                                        |
@@ -282,25 +281,27 @@ configuration file.
 | `MACRO_WRAPPERS`         | The wrapper file that replace existing macros with their wrapped version.                          |
 
 
-## Clock Tree Synthesis
+#### Clock Tree Synthesis
 
 
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
-| `CTS_BUF_DISTANCE`       | Distance (in microns) between buffers.                                                              |
+| `CTS_BUF_DISTANCE`       | Distance (in microns) between buffers.                                                             |
 | `CTS_CLUSTER_DIAMETER`   | Maximum diameter (in microns) of sink cluster. Default 20.                                         |
-| `CTS_CLUSTER_SIZE`       | Maximum number of sinks per cluster. Default 50.
+| `CTS_CLUSTER_SIZE`       | Maximum number of sinks per cluster. Default 50.                                                   |
+| `CTS_SNAPSHOT`           | Creates ODB/SDC files prior to clock net and setup/hold repair.                                    |
+| `POST_CTS_TCL`           | Specifies a Tcl script with commands to run after CTS is completed.                                |
 
 
-## Routing
+#### Routing
 
 
 | Variable                 | Description                                                                                        |
 |--------------------------|----------------------------------------------------------------------------------------------------|
-| `FASTROUTE_TCL`          | Specifies a Tcl scripts with commands to run before FastRoute.                                      |
+| `FASTROUTE_TCL`          | Specifies a Tcl scripts with commands to run before FastRoute.                                     |
 
 
-## GDS Streamout
+#### GDS Streamout
 
 
 | Variable                 | Description                                                                                        |

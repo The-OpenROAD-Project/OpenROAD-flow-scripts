@@ -78,6 +78,7 @@ _installUbuntuPackages() {
         libqt5opengl5 \
         libz-dev \
         python3-pip \
+        python3-venv \
         qtmultimedia5-dev \
         qttools5-dev \
         ruby \

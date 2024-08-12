@@ -3,7 +3,7 @@ export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 10000
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 #
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/ariane.sv2v.v \
@@ -20,6 +20,8 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12lp_1rf_lg8_w64_byte.gds2
 
 export DIE_AREA    = 0 0 850 600
 export CORE_AREA   = 5 5 745 595
+
+export PLACE_DENSITY ?= 0.50
 
 export PLACE_PINS_ARGS = -exclude left:0-150 -exclude left:450-600 -exclude right:* -exclude top:* -exclude bottom:*
 

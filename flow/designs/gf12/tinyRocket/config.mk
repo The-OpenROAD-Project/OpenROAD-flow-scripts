@@ -4,7 +4,7 @@ export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 1000
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 
 export VERILOG_FILES  = ./designs/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
                         ./designs/src/$(DESIGN_NICKNAME)/ClockDivider2.v \

@@ -1,0 +1,52 @@
+name: Manually Trigger Update Rules
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'Type of update (overwrite or normal)'
+        required: true
+        default: 'normal'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Check out repository code recursively
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install Python Packages
+        run: |
+          pip install firebase-admin
+      - name: Execute Python Script Update
+        env:
+          CREDS_FILE: ${{ secrets.CREDS_FILE }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+        run: |
+          if [[ "${{ github.event.inputs.type }}" == "overwrite" ]]; then
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA $(git rev-parse HEAD) --overwrite
+          else 
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA $(git rev-parse HEAD)
+          fi
+      - name: Push updated rules
+        id: remote-update
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has_update=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_update=false" >> "$GITHUB_OUTPUT"
+          fi
+          git add .
+          git commit --signoff -m "flow: update rules based on new golden reference"
+      - if: "steps.remote-update.outputs.has_update == 'true'"
+        name: update rules pr
+        id: remote-update-pr
+        run: |
+          git push

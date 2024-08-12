@@ -2,7 +2,7 @@ export DESIGN_NAME = swerv_wrapper
 export PLATFORM    = asap7
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 # RTL_MP Settings
 export RTLMP_MAX_INST = 30000
 export RTLMP_MIN_INST = 5000
@@ -23,7 +23,6 @@ export CORE_AREA   = 5 5 545 595
 
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* 
 export PLACE_DENSITY_LB_ADDON = 0.20
-export CTS_BUF_CELL  = BUFx8_ASAP7_75t_R
 
 export FASTROUTE_TCL = ./designs/$(PLATFORM)/swerv_wrapper/fastroute.tcl
 

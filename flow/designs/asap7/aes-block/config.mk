@@ -15,7 +15,7 @@ export PLACE_DENSITY          = 0.65
 
 export BLOCKS = aes_rcon aes_sbox
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 
 export PLACE_PINS_ARGS = -annealing
 export HAS_IO_CONSTRAINTS = 0
