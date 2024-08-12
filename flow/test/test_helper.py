@@ -5,27 +5,41 @@ import os
 import subprocess
 import sys
 
+
 def run_command(command, log_file, append=False):
-    mode = 'a' if append else 'w'
+    mode = "a" if append else "w"
     with open(log_file, mode) as log:
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        process = subprocess.Popen(
+            command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
         for line in process.stdout:
             sys.stdout.write(line.decode())
             log.write(line.decode())
         process.wait()
         return process.returncode
 
+
 def main():
     parser = argparse.ArgumentParser(description="Run design flow script")
-    parser.add_argument('design_name', default='gcd', nargs='?', help='Design name')
-    parser.add_argument('platform', default='nangate45', nargs='?', help='Platform')
-    parser.add_argument('config_mk', default='config.mk', nargs='?', help='Configuration file')
-    parser.add_argument('--flow_variant', help='Flow variant')
-    parser.add_argument('--private_dir', default='../../private_tool_scripts', help='Private directory')
-    parser.add_argument('--save_to_db', action='store_true', help='Save to metrics database')
-    parser.add_argument('--run_calibre', action='store_true', help='Run calibre DRC')
-    parser.add_argument('--check_drc_db', action='store_true', help='Check DRC database')
-    parser.add_argument('--make_issue', action='store_true', help='Create final report issue')
+    parser.add_argument("design_name", default="gcd", nargs="?", help="Design name")
+    parser.add_argument("platform", default="nangate45", nargs="?", help="Platform")
+    parser.add_argument(
+        "config_mk", default="config.mk", nargs="?", help="Configuration file"
+    )
+    parser.add_argument("--flow_variant", help="Flow variant")
+    parser.add_argument(
+        "--private_dir", default="../../private_tool_scripts", help="Private directory"
+    )
+    parser.add_argument(
+        "--save_to_db", action="store_true", help="Save to metrics database"
+    )
+    parser.add_argument("--run_calibre", action="store_true", help="Run calibre DRC")
+    parser.add_argument(
+        "--check_drc_db", action="store_true", help="Check DRC database"
+    )
+    parser.add_argument(
+        "--make_issue", action="store_true", help="Create final report issue"
+    )
 
     args = parser.parse_args()
 
@@ -59,9 +73,10 @@ def main():
 
     sys.exit(ret)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.realpath(__file__))
     parent_dir = os.path.abspath(os.path.join(script_dir, os.pardir))
     os.chdir(parent_dir)
-    
+
     main()
