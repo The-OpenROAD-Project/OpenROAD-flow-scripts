@@ -52,14 +52,14 @@ api_base_url = args.apiURL
 runFilename = f"rules-base.json"
 
 platform_list = []
-platforms_path = 'platforms'
+platforms_path = "platforms"
 for item in os.listdir(platforms_path):
-    if item == 'sky130hd_fakestack':
+    if item == "sky130hd_fakestack":
         continue
     if os.path.isdir(os.path.join(platforms_path, item)):
         platform_list.append(item)
 
-for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
+for designsDir, dirs, files in sorted(os.walk("designs", topdown=False)):
     dirList = designsDir.split(os.sep)
     if len(dirList) != 3:
         continue
@@ -69,16 +69,18 @@ for designsDir, dirs, files in sorted(os.walk('designs', topdown=False)):
     test = "{} {}".format(platform, design)
     dataFile = os.path.join(designsDir, runFilename)
     if os.path.exists(dataFile) and platform in platform_list:
-        metrics, error_metrics = get_metrics(args.commitSHA, # commit
-                            platform, # platform
-                            design, # design
-                            api_base_url # backend url
-                            )
+        metrics, error_metrics = get_metrics(
+            args.commitSHA,  # commit
+            platform,  # platform
+            design,  # design
+            api_base_url,  # backend url
+        )
         if error_metrics:
             print("failed to update rule for", platform, design)
             continue
-        update_rules(designsDir, # design directory
-                     "base", # variant
-                     metrics, # metrics needed for update, default is {} in case of file
-                     args.overwrite # overwrite flag, default is false
-                    )
+        update_rules(
+            designsDir,  # design directory
+            "base",  # variant
+            metrics,  # metrics needed for update, default is {} in case of file
+            args.overwrite,  # overwrite flag, default is false
+        )
