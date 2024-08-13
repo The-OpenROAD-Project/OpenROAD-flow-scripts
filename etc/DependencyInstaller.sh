@@ -11,6 +11,7 @@ fi
 
 # package versions
 klayoutVersion=0.28.8
+verilatorVersion=5.026
 
 _versionCompare() {
     local a b IFS=. ; set -f
@@ -33,6 +34,23 @@ _installCommon() {
         pip3 install --no-cache-dir -U $pkgs
     else
         pip3 install --no-cache-dir --user -U $pkgs
+    fi
+
+    baseDir=$(mktemp -d /tmp/DependencyInstaller-orfs-XXXXXX)
+
+    # Install Verilator
+    verilatorPrefix=`realpath ${PREFIX:-"/usr/local"}`
+    if [[ ! -x ${verilatorPrefix}/bin/verilator ]]; then
+        pushd $baseDir
+            git clone --depth=1 -b "v$verilatorVersion" https://github.com/verilator/verilator.git
+            pushd verilator
+                autoconf
+                ./configure --prefix "${verilatorPrefix}"
+                make -j`nproc`
+                make install
+            popd
+            rm -r verilator
+        popd
     fi
 }
 
@@ -71,19 +89,28 @@ _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
     apt-get -y install --no-install-recommends \
+        bison \
         curl \
+        flex \
+        help2man \
+        libfl-dev \
+        libfl2 \
+        libgoogle-perftools-dev \
         libqt5multimediawidgets5 \
+        libqt5opengl5 \
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
-        libqt5opengl5 \
         libz-dev \
+        perl \
         python3-pip \
         python3-venv \
         qtmultimedia5-dev \
         qttools5-dev \
         ruby \
         ruby-dev \
-        time
+        time \
+        zlib1g \
+        zlib1g-dev
 
     # install KLayout
     if _versionCompare $1 -ge 23.04; then
@@ -215,6 +242,7 @@ while [ "$#" -gt 0 ]; do
             ;;
         -prefix=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
+            PREFIX=${1#*=}
             ;;
         *)
             echo "unknown option: ${1}" >&2
