@@ -1,7 +1,7 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_flow")
 
 filegroup(
-    name = "constraints-sdc",
+    name = "constraints-gcd",
     srcs = [
         "designs/asap7/gcd/constraint.sdc",
     ],
@@ -12,7 +12,7 @@ orfs_flow(
     name = "gcd",
     stage_args = {
         "synth": {
-            "SDC_FILE": "$(location :constraints-sdc)",
+            "SDC_FILE": "$(location :constraints-gcd)",
         },
         "floorplan": {
             "DIE_AREA": "0 0 16.2 16.2",
@@ -23,7 +23,84 @@ orfs_flow(
         },
     },
     stage_sources = {
-        "synth": [":constraints-sdc"],
+        "synth": [":constraints-gcd"],
     },
     verilog_files = glob(include=["designs/src/gcd/*.v"]),
+)
+
+
+filegroup(
+    name = "constraints-swerv",
+    srcs = [
+        "designs/asap7/swerv_wrapper/constraint.sdc",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+filegroup(
+    name = "swerv-fastroute",
+    srcs = [
+        "designs/asap7/swerv_wrapper/fastroute.tcl",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+filegroup(
+    name = "additional_lefs",
+    srcs = glob(include=["designs/asap7/swerv_wrapper/lef/*.lef"])
+)
+filegroup(
+    name = "additional_libs",
+    srcs = glob(include=["designs/asap7/swerv_wrapper/lib/*.lib"])
+)
+
+SWERV_ALL = {"LIB_MODEL":"CCS",
+"ADDITIONAL_LEFS": "$(locations :additional_lefs)",
+"ADDITIONAL_LIBS": "$(locations :additional_libs)",
+}
+
+all_sources = [":additional_lefs", ":additional_libs"]
+
+orfs_flow(
+    name = "swerv_wrapper",
+    stage_args = {
+        "synth": SWERV_ALL | {
+            "SYNTH_HIERARCHICAL": "1",
+            "SDC_FILE": "$(location :constraints-swerv)",
+        },
+        "floorplan": SWERV_ALL | {
+            "RTLMP_FLOW": "1",
+            "RTLMP_MAX_INST": "30000",
+            "RTLMP_MIN_INST": "5000",
+            "RTLMP_MAX_MACRO": "30",
+            "RTLMP_MIN_MACRO": "4",
+            "DIE_AREA": "0 0 550 600",
+            "CORE_AREA": "5 5 545 595",
+            "PLACE_PINS_ARGS": "-exclude left:* -exclude right:*"
+        },
+        "place": SWERV_ALL | {
+            "PLACE_PINS_ARGS": "-exclude left:* -exclude right:*",
+            "PLACE_DENSITY_LB_ADDON": "0.20",
+        },
+        "cts": SWERV_ALL | {
+            "TNS_END_PERCENT": "100",
+        },
+        "route": SWERV_ALL | {
+            "FASTROUTE_TCL": "$(location :swerv-fastroute)",
+        },
+        "final": SWERV_ALL | {
+            "PWR_NETS_VOLTAGEsS": "",
+            "GND_NETS_VOLTAGES": "",
+        }
+    },
+    verilog_files = glob(include=["designs/src/swerv/swerv_wrapper.sv2v.v",
+    "designs/asap7/swerv_wrapper/macros.v"]),
+    stage_sources = {
+        "synth": all_sources + [":constraints-swerv"],
+        "floorplan": all_sources,
+        "place": all_sources,
+        "cts": all_sources,
+        "route": all_sources + [":swerv-fastroute"],
+        "final": all_sources,
+    },
 )
