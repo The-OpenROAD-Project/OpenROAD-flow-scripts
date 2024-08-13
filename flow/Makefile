@@ -605,6 +605,7 @@ endef
 # $(5) folder of target, default $(RESULTS_DIR)
 define do-step
 $(if $(5),$(5),$(RESULTS_DIR))/$(1)$(if $(4),$(4),.odb): $(2)
+	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	$$(UNSET_AND_MAKE) do-$(1)
 
 ifeq ($(if $(4),$(4),.odb),.odb)
@@ -687,7 +688,6 @@ $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
 .PHONY: do-floorplan
 do-floorplan:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_io do-2_3_floorplan_tdms do-2_4_floorplan_macro do-2_5_floorplan_tapcell do-2_6_floorplan_pdn do-2_floorplan
 
 .PHONY: clean_floorplan
@@ -741,7 +741,6 @@ $(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
 
 .PHONY: do-place
 do-place:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place do-3_place.sdc
 
 # Clean Targets
@@ -777,7 +776,6 @@ $(eval $(call do-copy,4_cts,4_1_cts.odb))
 
 .PHONY: do-cts
 do-cts:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-4_1_cts do-4_cts
 
 .PHONY: clean_cts
@@ -822,12 +820,7 @@ $(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
 
 .PHONY: do-route
 do-route:
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_fillcell do-5_3_route do-5_route do-5_route.sdc
-
-$(RESULTS_DIR)/5_route.v:
-	@export OR_DB=5_route ;\
-	$(OPENROAD_CMD) ./scripts/write_verilog.tcl
 
 .PHONY: clean_route
 clean_route:
@@ -905,7 +898,6 @@ final: finish
 
 .PHONY: do-finish
 do-finish:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report do-gds elapsed
 
 .PHONY: generate_abstract

@@ -22,3 +22,13 @@ report_parasitic_annotation
 report_power
 read_power_activities -scope TOP/MockArray -vcd designs/src/mock-array/MockArrayTestbench.vcd
 report_power
+
+# FIXME add an automated test to check that the top-level power is
+# smaller than the sum of the individual elements.
+
+for {set x 0} {$x < 8} {incr x} {
+  for {set y 0} {$y < 8} {incr y} {
+    puts "Power for ces_${x}_${y}"
+    report_power -instances ces_${x}_${y}
+  }
+}
