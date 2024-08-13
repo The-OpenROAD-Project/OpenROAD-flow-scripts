@@ -1,7 +1,7 @@
 # create image with dependencies needed to compile openroad app and run openroad flow scripts
 # NOTE: don't use this file directly unless you know what you are doing,
 # instead use etc/DockerHelper.sh
-ARG fromImage=centos:centos7
+ARG fromImage=ubuntu:22.04
 
 FROM $fromImage
 
@@ -12,5 +12,13 @@ COPY DependencyInstaller.sh .
 COPY InstallerOpenROAD.sh \
        /tmp/installer/tools/OpenROAD/etc/DependencyInstaller.sh
 
-RUN ./DependencyInstaller.sh \
-      && rm -rf /tmp/installer
+ARG options=""
+
+RUN ./DependencyInstaller.sh $options \
+      && rm -rf /tmp/installer /tmp/* /var/tmp/* /var/lib/apt/lists/*
+
+ARG fromImage
+
+RUN echo "$fromImage" | grep -q "ubuntu" && \
+    strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so || \
+    echo "Skipping strip command as fromImage does not contain 'ubuntu'"

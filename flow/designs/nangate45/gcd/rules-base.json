@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 42,
+        "value": 60,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -35,6 +35,10 @@
         "value": 0,
         "compare": "<="
     },
+    "detailedroute__antenna__violating__nets": {
+        "value": 0,
+        "compare": "<="
+    },
     "finish__timing__setup__ws": {
         "value": -0.06,
         "compare": ">="
@@ -44,7 +48,7 @@
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 46,
+        "value": 33,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {

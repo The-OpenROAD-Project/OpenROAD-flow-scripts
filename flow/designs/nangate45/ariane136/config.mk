@@ -3,13 +3,14 @@ export DESIGN_NICKNAME = ariane136
 export PLATFORM    = nangate45
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 
 # RTL_MP Settings
 export RTLMP_MAX_INST = 30000
 export RTLMP_MIN_INST = 5000
 export RTLMP_MAX_MACRO = 16
 export RTLMP_MIN_MACRO = 4
+export RTLMP_SIGNATURE_NET_THRESHOLD = 30
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ariane.sv2v.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v

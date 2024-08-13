@@ -1,225 +1,53 @@
-pipeline {
-  agent any;
-  environment {
-    MAKE_ISSUE = 1;
-  }
-  options {
-    copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME);
-  }
-  stages {
+@Library('utils@orfs-v2.1.0') _
 
-    stage('Local Build') {
-      agent any;
-      steps {
-        sh "./build_openroad.sh --local";
-        stash name: "install", includes: "tools/install/**";
-      }
-      post {
-        always {
-          catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-            archiveArtifacts artifacts: "build_openroad.log";
-          }
+node {
+
+    properties([copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME)]);
+
+    stage('Checkout') {
+        if (env.BRANCH_NAME && env.BRANCH_NAME == 'master') {
+            checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: scm.branches[0].name]],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [
+                    [$class: 'CloneOption', noTags: false],
+                    [$class: 'SubmoduleOption', recursiveSubmodules: true]
+                    ],
+                    submoduleCfg: [],
+                    userRemoteConfigs: scm.userRemoteConfigs
+            ]);
         }
-      }
-    }
-
-    stage('Tests') {
-      matrix {
-        axes {
-          axis {
-            name 'TEST_SLUG';
-            values "docker build",
-                   "aes asap7",
-                   "aes-mbff asap7",
-                   "aes_lvt asap7",
-                   "ethmac asap7",
-                   "ethmac_lvt asap7",
-                   "gcd asap7",
-                   "gcd-ccs asap7",
-                   "ibex asap7",
-                   "jpeg asap7",
-                   "jpeg_lvt asap7",
-                   "riscv32i asap7",
-                   "riscv32i-mock-sram asap7",
-                   "riscv32i-mock-sram/fakeram7_256x32 asap7",
-                   "uart asap7",
-                   "mock-array asap7",
-                   "mock-cpu asap7",
-                   "mock-alu asap7",
-                   "aes-block asap7",
-                   "aes nangate45",
-                   "bp_be_top nangate45",
-                   "bp_fe_top nangate45",
-                   "bp_multi_top nangate45",
-                   "dynamic_node nangate45",
-                   "gcd nangate45",
-                   "ibex nangate45",
-                   "jpeg nangate45",
-                   "swerv nangate45",
-                   "swerv_wrapper nangate45",
-                   "tinyRocket nangate45",
-                   "aes sky130hd",
-                   "chameleon sky130hd",
-                   "gcd sky130hd",
-                   "ibex sky130hd",
-                   "jpeg sky130hd",
-                   "microwatt sky130hd",
-                   "riscv32i sky130hd",
-                   "aes sky130hs",
-                   "gcd sky130hs",
-                   "ibex sky130hs",
-                   "jpeg sky130hs",
-                   "riscv32i sky130hs",
-                   "aes gf180",
-                   "aes-hybrid gf180",
-                   "ibex gf180",
-                   "jpeg gf180",
-                   "riscv32i gf180",
-                   "uart-blocks gf180",
-                   "aes ihp-sg13g2",
-                   "ibex ihp-sg13g2",
-                   "gcd ihp-sg13g2",
-                   "spi ihp-sg13g2",
-                   "riscv32i ihp-sg13g2";
-          }
+        else {
+            checkout scm;
         }
-
-        stages {
-          stage('Test') {
-            options {
-              timeout(time: 6, unit: "HOURS");
-            }
-            agent any;
-            steps {
-              unstash "install";
-              script {
-                stage("${TEST_SLUG}") {
-                  catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    if ("${TEST_SLUG}" == 'docker build'){
-                      retry(3) {
-                        try {
-                          sh "./build_openroad.sh --no_init";
-                        }
-                        catch (e) {
-                          sleep(60);
-                          sh 'exit 1';
-                        }
-                      }
-                      sh "docker run --rm openroad/flow-ubuntu22.04-builder:latest tools/install/OpenROAD/bin/openroad -help -exit";
-                      sh "docker run --rm openroad/flow-ubuntu22.04-builder:latest bash -c 'source ./env.sh ; make -C flow'";
-                    } else {
-                      sh 'nice flow/test/test_helper.sh ${TEST_SLUG}';
-                    }
-                  }
-                }
-              }
-            }
-            post {
-              always {
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                  archiveArtifacts artifacts: "flow/*tar.gz", allowEmptyArchive: true, excludes: "**/4_eqy_output/**";
-                  archiveArtifacts artifacts: "flow/logs/**/*, flow/reports/**/*", allowEmptyArchive: true, excludes: "**/4_eqy_output/**";
-                }
-              }
-            }
-          }
+        def description = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim();
+        if (description.contains('ci') && description.contains('skip')) {
+            currentBuild.result = 'SKIPPED'; // 'SUCCESS', 'SKIPPED'
+            return;
         }
-      }
     }
 
-    stage("Report Short Summary") {
-      steps {
-        copyArtifacts filter: "flow/logs/**/*",
-                      projectName: '${JOB_NAME}',
-                      selector: specific('${BUILD_NUMBER}');
-        copyArtifacts filter: "flow/reports/**/*",
-                      projectName: '${JOB_NAME}',
-                      selector: specific('${BUILD_NUMBER}');
-        sh "flow/util/genReport.py -sv";
-      }
-      post {
-        always {
-          archiveArtifacts artifacts: "flow/reports/report-summary.log";
-          archiveArtifacts artifacts: "flow/reports/**/report*.log";
+    def DOCKER_IMAGE;
+    stage('Build and Push Docker Image') {
+        DOCKER_IMAGE = dockerPush('ubuntu22.04', 'orfs');
+        echo "Docker image is $DOCKER_IMAGE";
+    }
+
+    stage('Build ORFS and Stash bins') {
+        buildBins(DOCKER_IMAGE);
+    }
+
+    stage('Run Tests') {
+        if (env.CHANGE_BRANCH && env.CHANGE_BRANCH.contains('ci-dev')) {
+            runTests(DOCKER_IMAGE, 'dev');
+        } else {
+            runTests(DOCKER_IMAGE, 'pr');
         }
-      }
     }
 
-    stage("Report Summary") {
-      steps {
-        sh "flow/util/genReport.py -svv";
-      }
+    stage ('Cleanup and Reporting') {
+        finalReport(DOCKER_IMAGE);
     }
-
-    stage("Report Full") {
-      steps {
-        sh "flow/util/genReport.py -vvvv";
-      }
-    }
-
-    stage("Report HTML Table") {
-      steps {
-        sh "flow/util/genReportTable.py";
-        publishHTML([
-            allowMissing: true,
-            alwaysLinkToLastBuild: true,
-            keepAll: true,
-            reportName: "Report",
-            reportDir: "flow/reports",
-            reportFiles: "report-table.html,report-gallery*.html",
-            reportTitles: "Flow Report"
-        ]);
-      }
-    }
-
-    stage('Upload Metadata') {
-      steps {
-        withCredentials([file(credentialsId: 'firebase-admin-svc', variable: 'db_cred')]) {
-          sh """
-            python3 flow/util/uploadMetadata.py \
-              --buildID ${env.BUILD_ID} \
-              --branchName ${env.BRANCH_NAME} \
-              --commitSHA ${env.GIT_COMMIT} \
-              --jenkinsURL ${env.RUN_DISPLAY_URL} \
-              --pipelineID ${env.BUILD_TAG} \
-              --changeBranch ${env.CHANGE_BRANCH} \
-            """ + '--cred ${db_cred}'
-        }
-      }
-    }
-
-  }
-
-  post {
-    failure {
-      copyArtifacts filter: "flow/reports/report-summary.log",
-                    projectName: '${JOB_NAME}',
-                    selector: specific('${BUILD_NUMBER}');
-      script {
-        try {
-          COMMIT_AUTHOR_EMAIL = sh (returnStdout: true, script: "git --no-pager show -s --format='%ae'").trim();
-          if ( env.BRANCH_NAME == "master" ) {
-            echo("Main development branch: report to stakeholders and commit author.");
-            EMAIL_TO="$COMMIT_AUTHOR_EMAIL, \$DEFAULT_RECIPIENTS";
-          } else {
-            echo("Feature development branch: report only to commit author.");
-            EMAIL_TO="$COMMIT_AUTHOR_EMAIL";
-          }
-        } catch (Exception e) {
-          echo "Exception occurred: " + e.toString();
-          EMAIL_TO="\$DEFAULT_RECIPIENTS";
-        }
-        emailext (
-            to: "$EMAIL_TO",
-            replyTo: "$EMAIL_TO",
-            subject: '$DEFAULT_SUBJECT',
-            body: '''
-$DEFAULT_CONTENT
-${FILE,path="flow/reports/report-summary.log"}
-            ''',
-            )
-      }
-    }
-  }
 
 }

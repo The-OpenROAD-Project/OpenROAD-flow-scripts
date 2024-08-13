@@ -17,7 +17,7 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/tsmc65lp_1rf_lg10_w32_all.gds2 \
 
 export SYNTH_HIERARCHICAL = 1
 
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 
 # These values must be multiples of placement site
 export DIE_AREA    = 0 0 1100 400.8

@@ -28,6 +28,5 @@ flow/*.log
 # core dumps
 core*
 
-# git
-.git
-.gitignore
+# local dependencies
+dependencies/

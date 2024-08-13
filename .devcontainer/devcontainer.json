@@ -1,0 +1,13 @@
+// Copyright (c) 2024 Antmicro <www.antmicro.com>
+// SPDX-License-Identifier: Apache-2.0
+
+{
+  "image": "ghcr.io/the-openroad-project/openroad-flow-scripts:lxqt",
+  "forwardPorts": [6080],
+  "portsAttributes": {
+    "6080": {
+      "label": "desktop"
+    }
+  },
+  "postAttachCommand": "bash /usr/local/share/desktop-init.sh"
+}

@@ -1,7 +1,7 @@
 export DESIGN_NAME = ca53_cpu
 export PLATFORM    = gf12
 
-export RTLMP_FLOW = True
+export RTLMP_FLOW = 1
 
 export VERILOG_FILES  = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
 export CACHED_NETLIST = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
@@ -65,5 +65,6 @@ else
 export DESIGN_TYPE = CELL_NODEN
 endif
 
-export SKIP_PIN_SWAP          = 1
+#export SKIP_PIN_SWAP          = 1
 export SKIP_INCREMENTAL_REPAIR = 1
+export TNS_END_PERCENT = 5

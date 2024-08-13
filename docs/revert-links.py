@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
+
 def swap_prefix(file, old, new):
-    with open(file, 'r') as f:
+    with open(file, "r") as f:
         lines = f.read()
     lines = lines.replace(old, new)
-    with open(file, 'wt') as f:
+    with open(file, "wt") as f:
         f.write(lines)
 
 
-swap_prefix('mainREADME.md', '```{mermaid}\n:align: center\n', '```mermaid')
+swap_prefix("mainREADME.md", "```{mermaid}\n:align: center\n", "```mermaid")

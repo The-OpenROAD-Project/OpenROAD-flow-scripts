@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 737,
+        "value": 734,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -32,6 +32,10 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
+        "value": 0,
+        "compare": "<="
+    },
+    "detailedroute__antenna__violating__nets": {
         "value": 0,
         "compare": "<="
     },
