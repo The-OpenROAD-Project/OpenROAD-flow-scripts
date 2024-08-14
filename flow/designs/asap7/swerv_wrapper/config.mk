@@ -25,8 +25,3 @@ export PLACE_PINS_ARGS = -exclude left:* -exclude right:*
 export PLACE_DENSITY_LB_ADDON = 0.20
 
 export FASTROUTE_TCL = ./designs/$(PLATFORM)/swerv_wrapper/fastroute.tcl
-
-#Temporary until sta bug is fixed
-export PWR_NETS_VOLTAGES  =
-export GND_NETS_VOLTAGES  =
-export TNS_END_PERCENT        = 100
