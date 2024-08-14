@@ -3,14 +3,6 @@ utl::set_metrics_stage "globalroute__{}"
 # This proc is here to allow us to use 'return' to return early from this
 # file which is sourced
 proc global_route_helper {} {
-  foreach file [list $::env(RESULTS_DIR)/5_1_grt.odb \
-    $::env(REPORTS_DIR)/congestion.rpt \
-    $::env(RESULTS_DIR)/route.guide] {
-    while {[file exists $file]} {
-      file delete -force $file
-    }
-  }
-
   source $::env(SCRIPTS_DIR)/load.tcl
   load_design 4_cts.odb 4_cts.sdc
 
@@ -42,8 +34,6 @@ proc global_route_helper {} {
   }
 
   set result [catch {do_global_route} errMsg]
-
-  write_guides $::env(RESULTS_DIR)/route.guide
 
   if {$result != 0} {
     if {[expr !$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
@@ -137,6 +127,7 @@ proc global_route_helper {} {
   # Use make target update_sdc_clock to install the updated sdc.
   source [file join $::env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
 
+  write_guides $::env(RESULTS_DIR)/route.guide
   write_db $::env(RESULTS_DIR)/5_1_grt.odb
 }
 
