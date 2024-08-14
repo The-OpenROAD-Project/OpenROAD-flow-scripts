@@ -3,7 +3,7 @@ source $::env(SCRIPTS_DIR)/load.tcl
 if { [info exists ::env(USE_WXL)]} {
   set db_file 4_cts.odb
 } else {
-  set db_file 5_2_fillcell.odb
+  set db_file 5_1_grt.odb
 }
 load_design $db_file 4_cts.sdc
 set_propagated_clock [all_clocks]
@@ -84,4 +84,4 @@ if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
 
 check_antennas -report_file $env(REPORTS_DIR)/drt_antennas.log
 
-write_db $::env(RESULTS_DIR)/5_3_route.odb
+write_db $::env(RESULTS_DIR)/5_2_route.odb
