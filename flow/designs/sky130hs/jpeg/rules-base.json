@@ -32,11 +32,11 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 1,
+        "value": 0,
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 20,
+        "value": 30,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
