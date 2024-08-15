@@ -1,4 +1,4 @@
-@Library('utils@orfs-v2.1.0') _
+@Library('utils@orfs-arm') _
 
 node {
 
@@ -39,11 +39,7 @@ node {
     }
 
     stage('Run Tests') {
-        if (env.CHANGE_BRANCH && env.CHANGE_BRANCH.contains('ci-dev')) {
-            runTests(DOCKER_IMAGE, 'dev');
-        } else {
-            runTests(DOCKER_IMAGE, 'pr');
-        }
+        runTests(DOCKER_IMAGE, 'dev');
     }
 
     stage ('Cleanup and Reporting') {
