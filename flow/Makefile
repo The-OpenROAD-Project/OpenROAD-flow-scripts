@@ -392,9 +392,17 @@ $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(bloc
 .PHONY: versions.txt
 versions.txt:
 	mkdir -p $(OBJECTS_DIR)
-	@$(YOSYS_CMD) -V > $(OBJECTS_DIR)/$@
+	@if [ -z "$(YOSYS_CMD)" ]; then \
+		echo >> $(OBJECTS_DIR)/$@ "yosys not installed"; \
+	else \
+		$(YOSYS_CMD) -V > $(OBJECTS_DIR)/$@; \
+	fi
 	@echo openroad `$(OPENROAD_EXE) -version` >> $(OBJECTS_DIR)/$@
-	@$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@
+	@if [ -z "$(KLAYOUT_CMD)" ]; then \
+		echo >> $(OBJECTS_DIR)/$@ "klayout not installed"; \
+	else \
+		$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@; \
+	fi
 
 # Pre-process libraries
 # ==============================================================================
