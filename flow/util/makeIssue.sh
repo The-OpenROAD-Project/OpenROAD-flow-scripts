@@ -67,7 +67,6 @@ ISSUE_CP_FILES+="${ISSUE_CP_FILES_PLATFORM} \
     $VARS_BASENAME.tcl \
     $VARS_BASENAME.gdb"
 
-echo "Creating ${RUN_ME_SCRIPT} script"
 cat > ${RUN_ME_SCRIPT} <<EOF
 #!/usr/bin/env bash
 source ${VARS_BASENAME}.sh
@@ -79,7 +78,6 @@ fi
 EOF
 chmod +x ${RUN_ME_SCRIPT}
 
-echo "Creating ${VARS_BASENAME}.sh/tcl script"
 rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true
 
 $DIR/generate-vars.sh ${VARS_BASENAME}
@@ -101,7 +99,6 @@ else
     DESIGN_PLATFORM_FILES="$DESIGN_CONFIG $PLATFORM_DIR/config.mk"
 fi
 
-set -x
 tar --use-compress-program=${COMPRESS} \
     --ignore-failed-read -chf $1_${ISSUE_TAG}.tar.gz \
     --transform="s|^|$1_${ISSUE_TAG}/|S" \

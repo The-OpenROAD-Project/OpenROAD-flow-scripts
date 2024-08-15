@@ -67,6 +67,19 @@ _installUbuntuCleanUp() {
     apt-get autoremove -y
 }
 
+_installKlayoutDependenciesUbuntuAarch64() {
+    echo "Installing Klayout dependancies"
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get -y update
+    apt-get -y install  build-essential \
+                        qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev \
+                        ruby ruby-dev \
+                        python3 python3-dev \
+                        libz-dev\
+                        libgit2-dev
+    echo "All dependencies installed successfully"
+}
+
 _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
@@ -89,20 +102,34 @@ _installUbuntuPackages() {
     if _versionCompare $1 -ge 23.04; then
         apt-get -y install --no-install-recommends klayout python3-pandas
     else
-        if [[ $1 == 20.04 ]]; then
-            klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
-        else
-            klayoutChecksum=db751264399706a23d20455bb7624264
-        fi
+        arch=$(uname -m)
         lastDir="$(pwd)"
         # temp dir to download and compile
         baseDir=/tmp/installers
+        klayoutPrefix=${PREFIX:-"/usr/local"}
         mkdir -p "${baseDir}"
-        cd ${baseDir}
-        wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
-        md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
-        dpkg -i klayout_${klayoutVersion}-1_amd64.deb
-        cd ${lastDir}
+        cd "${baseDir}"
+        if [[ $arch == "aarch64" ]]; then
+            if [ ! -f ${klayoutPrefix}/klayout ]; then
+                _installKlayoutDependenciesUbuntuAarch64
+                echo "Installing KLayout for aarch64 architecture"
+                git clone https://github.com/KLayout/klayout.git
+                cd klayout
+                ./build.sh -bin "${klayoutPrefix}"
+            else
+                echo "Klayout is already installed"
+        fi
+        else
+            if [[ $1 == 20.04 ]]; then
+                klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
+            else
+                klayoutChecksum=db751264399706a23d20455bb7624264
+            fi
+            wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
+            md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
+            dpkg -i klayout_${klayoutVersion}-1_amd64.deb
+        fi
+        cd "${lastDir}"
         rm -rf "${baseDir}"
     fi
 
