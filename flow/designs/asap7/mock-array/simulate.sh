@@ -27,6 +27,6 @@ verilator -Wall --cc \
   --exe \
   ../../../designs/src/mock-array/simulate.cpp
 
-make -C obj_dir -f VMockArray.mk
+make -j -C obj_dir -f VMockArray.mk
 
 obj_dir/VMockArray
