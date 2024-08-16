@@ -63,4 +63,15 @@ if [ -n "${MAKE_ISSUE+x}" ]; then
   $__make final_report_issue 2>&1 | tee -a "$LOG_FILE"
 fi
 
+# Find make targets
+TARGETS=$($__make -np | grep -e '^[^ ]*:')
+if [ $ret -eq 0 ] && grep -q 'simulate:' <(echo $TARGETS); then
+  $__make simulate 2>&1 | tee -a "$LOG_FILE"
+  ret=$(( ret + $? ))
+fi
+if [ $ret -eq 0 ] && grep -q 'power:' <(echo $TARGETS); then
+  $__make power 2>&1 | tee -a "$LOG_FILE"
+  ret=$(( ret + $? ))
+fi
+
 exit $ret
