@@ -12,3 +12,5 @@ export PLACE_DENSITY = 0.65
 export TNS_END_PERCENT = 100
 
 export USE_FILL = 1
+
+export REMOVE_ABC_BUFFERS = 1
