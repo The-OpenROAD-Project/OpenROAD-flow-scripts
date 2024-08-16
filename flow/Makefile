@@ -317,7 +317,7 @@ OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
-YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+YOSYS_EXE               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
 # Use locally installed and built klayout if it exists, otherwise use klayout in path
 KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
@@ -392,10 +392,10 @@ $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(bloc
 .PHONY: versions.txt
 versions.txt:
 	mkdir -p $(OBJECTS_DIR)
-	@if [ -z "$(YOSYS_CMD)" ]; then \
+	@if [ -z "$(YOSYS_EXE)" ]; then \
 		echo >> $(OBJECTS_DIR)/$@ "yosys not installed"; \
 	else \
-		$(YOSYS_CMD) -V > $(OBJECTS_DIR)/$@; \
+		$(YOSYS_EXE) -V > $(OBJECTS_DIR)/$@; \
 	fi
 	@echo openroad `$(OPENROAD_EXE) -version` >> $(OBJECTS_DIR)/$@
 	@if [ -z "$(KLAYOUT_CMD)" ]; then \
@@ -511,7 +511,7 @@ export SYNTH_MEMORY_MAX_BITS ?= 4096
 $(SYNTH_STOP_MODULE_SCRIPT):
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
-	$(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_hier_report.log)
+	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_hier_report.log)
 
 ifeq ($(SYNTH_HIERARCHICAL), 1)
 do-yosys: $(SYNTH_STOP_MODULE_SCRIPT)
@@ -530,12 +530,12 @@ yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LI
 do-yosys:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
-	$(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee -a $(abspath $(LOG_DIR)/1_1_yosys.log)
+	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee -a $(abspath $(LOG_DIR)/1_1_yosys.log)
 
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
+	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
 
 $(RESULTS_DIR)/1_synth.rtlil:
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
@@ -1109,7 +1109,7 @@ $(foreach file,$(RESULTS_ODB),$(file).v): %.v:
 # generate a .dot file of the design to visualize designs.
 .PHONY: yosys
 yosys:
-	$(YOSYS_CMD)
+	$(YOSYS_EXE)
 
 # Drop into a bash shell with all environment variables, useful for debugging
 .PHONY: bash
