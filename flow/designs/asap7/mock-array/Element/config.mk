@@ -31,9 +31,6 @@ export PDN_TCL                = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCK_
 # violations.
 export DETAILED_ROUTE_ARGS=-bottom_routing_layer M2 -top_routing_layer M5 -save_guide_updates -verbose 1 -droute_end_iter 10
 
-export MOCK_ARRAY_ROWS        = $(word 1, $(MOCK_ARRAY_TABLE))
-export MOCK_ARRAY_COLS        = $(word 2, $(MOCK_ARRAY_TABLE))
-
 # since we are specifying DETAILED_ROUTE_ARGS, we need to communicate the
 # same information to other stages in the flow.
 export MIN_ROUTING_LAYER = M2
