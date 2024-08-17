@@ -101,7 +101,17 @@ if {[info exists ::env(FOOTPRINT_TCL)]} {
 }
 
 # remove buffers inserted by yosys/abc
-remove_buffers
+if { [info exists ::env(REMOVE_ABC_BUFFERS)] && $::env(REMOVE_ABC_BUFFERS) == 1 } {
+  remove_buffers
+} else {
+  set additional_args "-verbose"
+  append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
+  append_env_var additional_args TNS_END_PERCENT -repair_tns 1
+  append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
+  append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
+  append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
+  repair_timing {*}$additional_args
+}
 
 ##### Restructure for timing #########
 if { [info exist ::env(RESYNTH_TIMING_RECOVER)] && $::env(RESYNTH_TIMING_RECOVER) == 1 } {
