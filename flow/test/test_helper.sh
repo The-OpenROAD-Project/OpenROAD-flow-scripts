@@ -64,7 +64,7 @@ if [ -n "${MAKE_ISSUE+x}" ]; then
 fi
 
 # Find make targets
-TARGETS=$($__make -np | grep -e '^[^ ]*:')
+TARGETS=$($__make -np | grep -e '^[^ ]*:' | grep -E 'simulate:|power:')
 if [ $ret -eq 0 ] && grep -q 'simulate:' <(echo $TARGETS); then
   $__make simulate 2>&1 | tee -a "$LOG_FILE"
   ret=$(( ret + $? ))
