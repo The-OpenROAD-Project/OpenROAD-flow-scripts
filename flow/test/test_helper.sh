@@ -64,12 +64,15 @@ if [ -n "${MAKE_ISSUE+x}" ]; then
 fi
 
 # Find make targets
+set +x # These rules are noisy
 TARGETS=$($__make -np | grep -e '^[^ ]*:')
 if [ $ret -eq 0 ] && grep -q 'simulate:' <(echo $TARGETS); then
+  echo "Start simulate"
   $__make simulate 2>&1 | tee -a "$LOG_FILE"
   ret=$(( ret + $? ))
 fi
 if [ $ret -eq 0 ] && grep -q 'power:' <(echo $TARGETS); then
+  echo "Start power"
   $__make power 2>&1 | tee -a "$LOG_FILE"
   ret=$(( ret + $? ))
 fi
