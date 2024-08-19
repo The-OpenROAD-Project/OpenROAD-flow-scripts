@@ -11,3 +11,5 @@ export CORE_MARGIN = 2
 
 export PLACE_DENSITY_LB_ADDON = 0.25
 export TNS_END_PERCENT = 100
+
+export REMOVE_ABC_BUFFERS = 1
