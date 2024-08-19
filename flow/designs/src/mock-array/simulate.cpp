@@ -2,6 +2,20 @@
 #include "verilated.h"
 #include <verilated_vcd_c.h>
 
+/**
+ * Returns the VCD output path under the results directory
+ **/
+static std::string getVCDFilePath() {
+
+    std::string vcd_file_name = "results/asap7/mock-array/base/MockArrayTestbench.vcd";
+    std::string flow_home_dir = getenv("FLOW_HOME");
+    if (flow_home_dir.empty()) {
+        flow_home_dir = ".";
+    }
+    std::string vcd_path = flow_home_dir + "/" + vcd_file_name;
+    return vcd_path;
+}
+
 int main(int argc, char** argv) {
     Verilated::commandArgs(argc, argv);
     VMockArray * top = new VMockArray;
@@ -48,7 +62,7 @@ int main(int argc, char** argv) {
     };
 
     top->trace(vcd, 99); // Trace all levels of hierarchy
-    vcd->open("MockArrayTestbench.vcd");
+    vcd->open(getVCDFilePath().c_str());
 
     int tick = 0;
     for (int j = 0; j < sizeof(inputs)/sizeof(*inputs); j++) {
