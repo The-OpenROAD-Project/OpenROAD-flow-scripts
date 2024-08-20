@@ -5,15 +5,8 @@
 #
 set -ex
 
-
-RESULTS_DIR="$FLOW_HOME/results/asap7/mock-array/base"
 OBJ_DIR="$RESULTS_DIR/verilator/obj"
 POST_DIR="$RESULTS_DIR/verilator/post"
-
-# If you run outside of the Makefile system, then PLATFORM_DIR won't be set
-if [[ -z "$PLATFORM_DIR" ]]; then
-    PLATFORM_DIR="$FLOW_HOME/platforms/asap7"
-fi
 
 # Make sure the output directories are created
 mkdir -p $OBJ_DIR
