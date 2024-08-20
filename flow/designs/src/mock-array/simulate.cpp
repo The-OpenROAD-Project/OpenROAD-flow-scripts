@@ -3,16 +3,19 @@
 #include <verilated_vcd_c.h>
 
 /**
- * Returns the VCD output path under the results directory
+ * Returns the VCD output path.
+ *
+ * If RESULTS_DIR is set, the VCD file will be written there. If not, it will be written to the 
+ * current directory.
  **/
 static std::string getVCDFilePath() {
 
-    std::string vcd_file_name = "results/asap7/mock-array/base/MockArrayTestbench.vcd";
-    std::string flow_home_dir = getenv("FLOW_HOME");
-    if (flow_home_dir.empty()) {
-        flow_home_dir = ".";
+    std::string results_dir = getenv("RESULTS_DIR");
+    std::string vcd_file_name = "MockArrayTestbench.vcd";
+    if (results_dir.empty()) {
+        results_dir = ".";
     }
-    std::string vcd_path = flow_home_dir + "/" + vcd_file_name;
+    std::string vcd_path = results_dir + "/" + vcd_file_name;
     return vcd_path;
 }
 
