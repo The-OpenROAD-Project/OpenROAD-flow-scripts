@@ -17,10 +17,11 @@ if [[ "$@" == "-dev" ]]; then
         "./tools/OpenROAD/etc/DockerHelper.sh"
         "./tools/OpenROAD/etc/DockerTag.sh"
     )
-    cat "${file_list[@]}" | sha256sum | awk '{print substr($1, 1, 6)}'
+    ret=$(cat "${file_list[@]}" | sha256sum | awk '{print substr($1, 1, 6)}')
 elif [[ "$@" == "-master" ]]; then
-    git describe
+    ret=$(git describe)
 else
     echo "Usage: $0 {-dev|-master}"
     exit 1
 fi
+echo "${ret}-$(uname -m)"
