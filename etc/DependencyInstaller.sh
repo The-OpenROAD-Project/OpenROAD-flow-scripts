@@ -140,9 +140,9 @@ _installUbuntuPackages() {
             if [ ! -f ${klayoutPrefix}/klayout ]; then
                 _installKlayoutDependenciesUbuntuAarch64
                 echo "Installing KLayout for aarch64 architecture"
-                git clone https://github.com/KLayout/klayout.git
+                git clone --depth=1 -b "v${klayoutVersion}" https://github.com/KLayout/klayout.git
                 cd klayout
-                ./build.sh -bin "${klayoutPrefix}"
+                ./build.sh -bin "${klayoutPrefix}" -j $(nproc)
             else
                 echo "Klayout is already installed"
         fi
