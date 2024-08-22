@@ -493,7 +493,7 @@ synth-report: synth
 
 .PHONY: do-synth-report
 do-synth-report:
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee $(LOG_DIR)/1_1_yosys_metrics.log
 
 .PHONY: memory
 memory:
@@ -530,12 +530,12 @@ yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LI
 do-yosys:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
-	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee -a $(abspath $(LOG_DIR)/1_1_yosys.log)
+	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
 
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
+	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_canonicalize.log)
 
 $(RESULTS_DIR)/1_synth.rtlil:
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
