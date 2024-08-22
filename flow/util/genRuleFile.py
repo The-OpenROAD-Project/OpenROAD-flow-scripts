@@ -8,32 +8,6 @@ import argparse
 import json
 import operator
 import sys
-import requests
-
-
-def request_db(url):
-    response = requests.get(url)
-    if response.json() is None:
-        print(f"Got 'None' while expecting a JSON from {url}")
-        return None
-    # Check if the request was successful (status code 200)
-    if response.status_code == 200 and "error" not in response.json():
-        # Parse the JSON response
-        data = response.json()
-        return data
-    else:
-        print("API request failed", response)
-        exit(1)
-
-
-def get_golden(platform, design, api_base_url):
-    url = f"/golden?platform={platform}&design={design}&variant=base"
-    return request_db(api_base_url+url)
-
-
-def get_metrics(commitSHA, platform, design, api_base_url):
-    url = f"/commit?commitSHA={commitSHA}&platform={platform}&design={design}&variant=base"
-    return request_db(api_base_url+url)
 
 
 def update_rules(designDir, variant, golden_metrics, overwrite):

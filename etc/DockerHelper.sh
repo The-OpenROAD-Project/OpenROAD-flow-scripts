@@ -132,12 +132,20 @@ _push() {
 
         builderTag=${org}/flow-${os}-builder:${imageTag}
         orfsTag=${org}/orfs:${tag}
+        latestTag=${org}/orfs:latest
         echo "Renaming docker image: ${builderTag} -> ${orfsTag}"
         ${DOCKER_CMD} tag ${builderTag} ${orfsTag}
         if [[ "${dryRun}" == 1 ]]; then
             echo "[DRY-RUN] ${DOCKER_CMD} push ${orfsTag}"
         else
             ${DOCKER_CMD} push ${orfsTag}
+        fi
+        echo "Renaming docker image: ${orfsTag} -> ${latestTag}"
+        ${DOCKER_CMD} tag ${builderTag} ${latestTag}
+        if [[ "${dryRun}" == 1 ]]; then
+            echo "[DRY-RUN] ${DOCKER_CMD} push ${latestTag}"
+        else
+            ${DOCKER_CMD} push ${latestTag}
         fi
     fi
 }
