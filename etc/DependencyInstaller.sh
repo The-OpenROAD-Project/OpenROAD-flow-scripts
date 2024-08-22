@@ -195,7 +195,9 @@ _installCI() {
         coreutils \
         curl \
         python3 \
-        software-properties-common
+        software-properties-common \
+        unzip \
+        wget
 }
 
 _help() {
