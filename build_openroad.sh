@@ -62,13 +62,13 @@ Options:
     --yosys-args-overwrite  Do not use default flags set by this scrip during
                             Yosys compilation.
 
-    --yosys-args STRING      Aditional compilation flags for Yosys compilation.
+    --yosys-args STRING     Additional compilation flags for Yosys compilation.
 
     --openroad-args-overwrite
                             Do not use default flags set by this scrip during
                             OpenROAD app compilation.
 
-    --openroad-args STRING  Aditional compilation flags for OpenROAD app
+    --openroad-args STRING  Additional compilation flags for OpenROAD app
                             compilation.
 
     --install-path PATH     Path to install tools. Default is ${INSTALL_PATH}.
@@ -84,7 +84,7 @@ Options:
 Options valid only for Docker builds:
     -c, --copy-platforms    Copy platforms to inside docker image.
 
-    --os=DOCKER_OS_NAME     Choose beween ubuntu22.04 (default), ubuntu20.04.
+    --os=DOCKER_OS_NAME     Choose between ubuntu22.04 (default), ubuntu20.04.
 
     This script builds the OpenROAD tools: openroad, yosys and yosys plugins.
     By default, the tools will be built from the linked submodule hashes.
@@ -128,14 +128,14 @@ while (( "$#" )); do
                         DOCKER_COPY_PLATFORMS=1
                         ;;
                 --yosys-args-overwrite)
-                        YOSYS_OVERWIRTE_ARGS=1
+                        YOSYS_OVERWRITE_ARGS=1
                         ;;
                 --yosys-args)
                         YOSYS_USER_ARGS="$2"
                         shift
                         ;;
                 --openroad-args-overwrite)
-                        OPENROAD_APP_OVERWIRTE_ARGS=1
+                        OPENROAD_APP_OVERWRITE_ARGS=1
                         ;;
                 --openroad-args)
                         OPENROAD_APP_USER_ARGS="$2"
@@ -189,14 +189,14 @@ if [ -n "$CMAKE_INSTALL_RPATH" ]; then
 fi
 
 __args_setup() {
-        if [ ! -z "${YOSYS_OVERWIRTE_ARGS+x}" ]; then
+        if [ ! -z "${YOSYS_OVERWRITE_ARGS+x}" ]; then
                 echo "[INFO FLW-0014] Overwriting Yosys compilation flags."
                 YOSYS_ARGS="${YOSYS_USER_ARGS}"
         else
                 YOSYS_ARGS+=" ${YOSYS_USER_ARGS}"
         fi
 
-        if [ ! -z "${OPENROAD_APP_OVERWIRTE_ARGS+x}" ]; then
+        if [ ! -z "${OPENROAD_APP_OVERWRITE_ARGS+x}" ]; then
                 echo "[INFO FLW-0015] Overwriting OpenROAD app compilation flags."
                 OPENROAD_APP_ARGS="${OPENROAD_APP_USER_ARGS}"
         else
