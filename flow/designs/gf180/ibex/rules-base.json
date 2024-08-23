@@ -36,11 +36,11 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 13,
+        "value": 1,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.75,
+        "value": -2.43,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -48,7 +48,7 @@
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 722,
+        "value": 941,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
@@ -56,7 +56,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -10.0,
+        "value": -33.4,
         "compare": ">="
     }
 }
