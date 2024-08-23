@@ -23,6 +23,7 @@ YOSYS_USER_ARGS=""
 YOSYS_ARGS="CONFIG=clang"
 
 OPENROAD_APP_USER_ARGS=""
+OPENROAD_APP_USER_ARGS_FILE="$(pwd)/dependencies/openroad_args.txt"
 OPENROAD_APP_ARGS=""
 
 DOCKER_OS_NAME="ubuntu22.04"
@@ -36,7 +37,8 @@ Usage: $0 [-h|--help] [-o|--local] [-l|--latest]
           [-n|--nice] [-t|--threads N]
           [--yosys-args-overwrite] [--yosys-args STRING]
           [--openroad-args-overwrite] [--openroad-args STRING]
-          [--install-path PATH] [--clean] [--clean-force]
+          [--openroad-args-file PATH] [--install-path PATH]
+          [--clean] [--clean-force]
 
           [-c|--copy-platforms]
 
@@ -70,6 +72,10 @@ Options:
 
     --openroad-args STRING  Additional compilation flags for OpenROAD app
                             compilation.
+
+    --openroad-args-file PATH
+                            Additional compilation flags for OpenROAD app
+                            stored in file.
 
     --install-path PATH     Path to install tools. Default is ${INSTALL_PATH}.
 
@@ -141,6 +147,15 @@ while (( "$#" )); do
                         OPENROAD_APP_USER_ARGS="$2"
                         shift
                         ;;
+                --openroad-args-file)
+                        if [[ ! -f "$2" ]]; then
+                            echo "[ERROR] Provided file does not exist: $2"
+                            exit 1
+                        else
+                            OPENROAD_APP_USER_ARGS_FILE=$(realpath "$2")
+                        fi
+                        shift
+                        ;;
                 --install-path)
                         INSTALL_PATH="$2"
                         shift
@@ -201,6 +216,9 @@ __args_setup() {
                 OPENROAD_APP_ARGS="${OPENROAD_APP_USER_ARGS}"
         else
                 OPENROAD_APP_ARGS+=" ${OPENROAD_APP_USER_ARGS}"
+        fi
+        if [ ! -z "${OPENROAD_APP_USER_ARGS_FILE}+x" ]; then
+                OPENROAD_APP_ARGS+=" $(cat $OPENROAD_APP_USER_ARGS_FILE)"
         fi
 }
 
