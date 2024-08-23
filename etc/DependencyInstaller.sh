@@ -133,7 +133,7 @@ _installUbuntuPackages() {
         lastDir="$(pwd)"
         # temp dir to download and compile
         baseDir=/tmp/installers
-        klayoutPrefix=${PREFIX:-"/usr/local"}
+        klayoutPrefix=${PREFIX:-"/usr/local/bin"}
         mkdir -p "${baseDir}"
         cd "${baseDir}"
         if [[ $arch == "aarch64" ]]; then
@@ -142,7 +142,7 @@ _installUbuntuPackages() {
                 echo "Installing KLayout for aarch64 architecture"
                 git clone --depth=1 -b "v${klayoutVersion}" https://github.com/KLayout/klayout.git
                 cd klayout
-                ./build.sh -bin "${klayoutPrefix}" -j $(nproc)
+                ./build.sh -prefix "${klayoutPrefix}" -j $(nproc)
             else
                 echo "Klayout is already installed"
         fi
