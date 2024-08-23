@@ -39,14 +39,14 @@ _installCommon() {
     baseDir=$(mktemp -d /tmp/DependencyInstaller-orfs-XXXXXX)
 
     # Install Verilator
-    verilatorPrefix=`realpath ${PREFIX:-"/usr/local"}`
+    verilatorPrefix="$(realpath ${PREFIX:-/usr/local})"
     if [[ ! -x ${verilatorPrefix}/bin/verilator ]]; then
         pushd $baseDir
             git clone --depth=1 -b "v$verilatorVersion" https://github.com/verilator/verilator.git
             pushd verilator
                 autoconf
                 ./configure --prefix "${verilatorPrefix}"
-                make -j`nproc`
+                make -j $(nproc)
                 make install
             popd
             rm -r verilator
@@ -67,16 +67,16 @@ _installCentosPackages() {
         ruby-devel
 
     if ! [ -x "$(command -v klayout)" ]; then
-      yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
-    else
-      currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
-      if _versionCompare $currentVersion -ge $klayoutVersion; then
-        echo "KLayout version greater than or equal to ${klayoutVersion}"
-      else
-        echo "KLayout version less than ${klayoutVersion}"
-        sudo yum remove -y klayout
         yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
-      fi
+    else
+        currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+        if _versionCompare $currentVersion -ge $klayoutVersion; then
+            echo "KLayout version greater than or equal to ${klayoutVersion}"
+        else
+            echo "KLayout version less than ${klayoutVersion}"
+            sudo yum remove -y klayout
+            yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
+        fi
     fi
 }
 
@@ -90,11 +90,12 @@ _installKlayoutDependenciesUbuntuAarch64() {
     export DEBIAN_FRONTEND=noninteractive
     apt-get -y update
     apt-get -y install  build-essential \
-                        qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev \
-                        ruby ruby-dev \
-                        python3 python3-dev \
-                        libz-dev\
-                        libgit2-dev
+        qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev \
+        ruby ruby-dev \
+        python3 python3-dev \
+        libz-dev\
+        libgit2-dev
+
     echo "All dependencies installed successfully"
 }
 
@@ -145,7 +146,7 @@ _installUbuntuPackages() {
                 ./build.sh -prefix "${klayoutPrefix}" -j $(nproc)
             else
                 echo "Klayout is already installed"
-        fi
+            fi
         else
             if [[ $1 == 20.04 ]]; then
                 klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
@@ -164,6 +165,7 @@ _installUbuntuPackages() {
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
         -o /etc/apt/keyrings/docker.asc
+
     chmod a+r /etc/apt/keyrings/docker.asc
 
     # Add the repository to Apt sources:
