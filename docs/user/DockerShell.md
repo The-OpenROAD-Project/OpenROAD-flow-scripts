@@ -40,7 +40,7 @@ If you have built your OpenROAD Docker image using prebuilt binaries,
 you might want to source custom paths for your modules as follows.
 
 ```
-OR_IMAGE=openroad_prebuilt_image YOSYS_CMD=/oss-cad-suite/bin/yosys util/docker_shell make
+OR_IMAGE=openroad_prebuilt_image YOSYS_EXE=/oss-cad-suite/bin/yosys util/docker_shell make
 ```
 
 Using `docker_shell` from outside of `OpenROAD-flow-scripts/flow` folder
