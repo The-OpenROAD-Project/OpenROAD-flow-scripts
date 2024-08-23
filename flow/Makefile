@@ -205,11 +205,10 @@ include $(PLATFORM_DIR)/config.mk
 
 # Enables hierarchical yosys
 export SYNTH_HIERARCHICAL ?= 0
-export SYNTH_STOP_MODULE_SCRIPT = $(OBJECTS_DIR)/mark_hier_stop_modules.tcl
-ifeq ($(SYNTH_HIERARCHICAL), 1)
+export SYNTH_STOP_MODULE_SCRIPT = $(RESULTS_DIR)/flatten_policy.tcl
 export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
 export MAX_UNGROUP_SIZE ?= 0
-endif
+
 # Enables Re-synthesis for area reclaim
 export RESYNTH_AREA_RECOVER ?= 0
 export RESYNTH_TIMING_RECOVER ?= 0
@@ -508,14 +507,11 @@ memory:
 export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 export SYNTH_MEMORY_MAX_BITS ?= 4096
 
-$(SYNTH_STOP_MODULE_SCRIPT):
+.PHONY: do-yosys-flatten-policy
+do-yosys-flatten-policy:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
 	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_hier_report.log)
-
-ifeq ($(SYNTH_HIERARCHICAL), 1)
-do-yosys: $(SYNTH_STOP_MODULE_SCRIPT)
-endif
 
 export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
@@ -541,7 +537,7 @@ $(RESULTS_DIR)/1_synth.rtlil:
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
 
 $(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
-	$(UNSET_AND_MAKE) do-yosys
+	$(UNSET_AND_MAKE) do-yosys-flatten-policy do-yosys
 
 $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
 	mkdir -p $(RESULTS_DIR)
