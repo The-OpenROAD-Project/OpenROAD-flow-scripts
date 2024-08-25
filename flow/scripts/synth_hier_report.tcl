@@ -1,4 +1,4 @@
-proc write_flatten_policy {} {
+proc write_keep_hierarchy {} {
   if { ![info exist ::env(SYNTH_HIERARCHICAL)] || $::env(SYNTH_HIERARCHICAL) == 0 } {
     set out_script_ptr [open $::env(SYNTH_STOP_MODULE_SCRIPT) w]
     close $out_script_ptr
@@ -75,4 +75,4 @@ proc write_flatten_policy {} {
   close $out_script_ptr
 }
 
-write_flatten_policy
+write_keep_hierarchy
