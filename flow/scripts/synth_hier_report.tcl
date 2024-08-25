@@ -1,22 +1,28 @@
-source $::env(SCRIPTS_DIR)/synth_preamble.tcl
+proc write_keep_hierarchy {} {
+  if { ![info exist ::env(SYNTH_HIERARCHICAL)] || $::env(SYNTH_HIERARCHICAL) == 0 } {
+    set out_script_ptr [open $::env(SYNTH_STOP_MODULE_SCRIPT) w]
+    close $out_script_ptr
+    return
+  }
 
-synthesize_check {}
+  source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
-if { [info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)] } {
-  techmap -map $::env(ADDER_MAP_FILE)
-}
-techmap
-if {[info exist ::env(DFF_LIB_FILE)]} {
-  dfflibmap -liberty $::env(DFF_LIB_FILE)
-} else {
-  dfflibmap -liberty $::env(DONT_USE_SC_LIB)
-}
-puts "abc [join $abc_args " "]"
-abc {*}$abc_args
+  synthesize_check {}
 
-tee -o $::env(REPORTS_DIR)/synth_hier_stat.txt stat {*}$stat_libs
+  if { [info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)] } {
+    techmap -map $::env(ADDER_MAP_FILE)
+  }
+  techmap
+  if {[info exist ::env(DFF_LIB_FILE)]} {
+    dfflibmap -liberty $::env(DFF_LIB_FILE)
+  } else {
+    dfflibmap -liberty $::env(DONT_USE_SC_LIB)
+  }
+  puts "abc [join $abc_args " "]"
+  abc {*}$abc_args
 
-if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_hier_stat.txt] } {
+  tee -o $::env(REPORTS_DIR)/synth_hier_stat.txt stat {*}$stat_libs
+
   set ungroup_threshold 0
   if { [info exist ::env(MAX_UNGROUP_SIZE)] && $::env(MAX_UNGROUP_SIZE) > 0 } {
     set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
@@ -45,7 +51,7 @@ if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_h
       }
     }
   }
-  set out_script_ptr [open $::env(OBJECTS_DIR)/mark_hier_stop_modules.tcl w]
+  set out_script_ptr [open $::env(SYNTH_STOP_MODULE_SCRIPT) w]
   puts $out_script_ptr "hierarchy -check -top $::env(DESIGN_NAME)"
   foreach module $module_list {
     tee -o $::env(REPORTS_DIR)/synth_hier_stat_temp_module.txt stat -top "$module" {*}$stat_libs
@@ -57,10 +63,10 @@ if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_h
       if {[regexp { +Chip area for top module '(\S+)': (.*)} $line -> module_name area]} {
         puts "Area of module $module_name is $area"
         if {[expr $area > $ungroup_threshold]} {
-           puts "Preserving hierarchical module: $module_name"
-           puts $out_script_ptr "select -module {$module_name}"
-           puts $out_script_ptr "setattr -mod -set keep_hierarchy 1"
-           puts $out_script_ptr "select -clear"
+            puts "Preserving hierarchical module: $module_name"
+            puts $out_script_ptr "select -module {$module_name}"
+            puts $out_script_ptr "setattr -mod -set keep_hierarchy 1"
+            puts $out_script_ptr "select -clear"
         }
       }
     }
@@ -69,3 +75,4 @@ if { [info exist ::env(REPORTS_DIR)] && [file isfile $::env(REPORTS_DIR)/synth_h
   close $out_script_ptr
 }
 
+write_keep_hierarchy
