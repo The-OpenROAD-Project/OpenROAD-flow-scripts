@@ -1,5 +1,5 @@
 
-create_clock [get_ports clk_i]  -name CLK  -period 5.4  -waveform {0 2.7}
+create_clock [get_ports clk_i]  -name CLK  -period 2.6  -waveform {0 1.3}
 set_input_delay -clock CLK  -max 0.6  [get_ports reset_i]
 set_input_delay -clock CLK  -min 0.6  [get_ports reset_i]
 set_input_delay -clock CLK  -max 0.6  [get_ports {fe_queue_i[133]}]
