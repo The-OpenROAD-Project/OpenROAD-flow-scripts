@@ -361,7 +361,7 @@ The table below briefly describes the reports directory files.
 
 | File Name              | Description                                              |
 |------------------------|----------------------------------------------------------|
-| `congestion.rpt`       | Gloabl routing congestion if occurred.                   |
+| `congestion.rpt`       | Global routing congestion if occurred.                   |
 | `5_route_drc.rpt`      | DRC violations if occurred.                              |
 | `final_clocks.webp`    | OR extracted image reference after clock tree synthesis. |
 | `final_resizer.webp`   | OR extracted image reference after resizer.              |
