@@ -1,6 +1,6 @@
 set clk_name  CLK
 set clk_port_name clk_i
-set clk_period 6.84
+set clk_period 6.0
 set clk_io_pct 0.2
 
 set min_arrival [expr $clk_period * $clk_io_pct]

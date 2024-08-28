@@ -20,7 +20,7 @@ for {set x 0} {$x < 8} {incr x} {
 
 report_parasitic_annotation
 report_power
-read_power_activities -scope TOP/MockArray -vcd designs/src/mock-array/MockArrayTestbench.vcd
+read_power_activities -scope TOP/MockArray -vcd $::env(RESULTS_DIR)/MockArrayTestbench.vcd
 report_power
 
 # FIXME add an automated test to check that the top-level power is

@@ -46,3 +46,5 @@ export PLACE_DENSITY_LB_ADDON = 0.2
 export TNS_END_PERCENT = 100
 
 export GPL_TARGET_RC = 1.25
+
+export REMOVE_ABC_BUFFERS = 1

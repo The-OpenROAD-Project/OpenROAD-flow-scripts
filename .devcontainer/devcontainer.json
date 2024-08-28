@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 {
-  "image": "ghcr.io/the-openroad-project/openroad-flow-scripts:lxqt",
+  "image": "docker.io/openroad/orfs-lxqt:latest",
   "forwardPorts": [6080],
   "portsAttributes": {
     "6080": {

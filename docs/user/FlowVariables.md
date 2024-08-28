@@ -12,6 +12,7 @@ user overrides at various flow stages. These are defined in the
 |------------------|------------------------------------------------------------------------------------|
 | `SKIP_REPORT_METRICS`   | If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds. |
 | `DETAILED_METRICS`      | If set, then calls report_metrics prior to repair operations in the CTS and global route stages |
+| `GENERATE_ARTIFACTS_ON_FAILURE` | Used with non-Makefile build systems, such as Bazel. If set to 1, artifacts are generated even if a step failed, such a failed global routing will generate a .odb file and an .rpt file. The subsequent step will not proceed, thus detecting the error. |
 
 ## Platform
 
@@ -159,7 +160,7 @@ Note:
 | `PLACE_DENSITY`                      | The desired placement density of cells. It reflects how spread the cells would be on the core area. 1.0 = closely dense. 0.0 = widely spread. |
 | `PLACE_DENSITY_LB_ADDON`             | Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.                                                    |
 | `REPAIR_PDN_VIA_LAYER`               | Remove power grid vias which generate DRC violations after detailed routing.                                                                  |
-| `GLOBAL_PLACEMENT_ARGS`              | Use additional tuning parameters during global placement other than default args defined in gloabl_place.tcl.                                 |
+| `GLOBAL_PLACEMENT_ARGS`              | Use additional tuning parameters during global placement other than default args defined in global_place.tcl.                                 |
 | `ENABLE_DPO`                         | Enable detail placement with improve_placement feature.                                                                                       |
 | `DPO_MAX_DISPLACEMENT`               | Specifies how far an instance can be moved when optimizing.                                                                                   |
 | `GPL_TIMING_DRIVEN`                  | Specifies whether the placer should use timing driven placement.                                                                              |

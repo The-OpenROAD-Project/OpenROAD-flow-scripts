@@ -1,5 +1,5 @@
 
-set clk_period 5.4
+set clk_period 1.8
 create_clock [get_ports clk_i] -name CLK -period $clk_period
 set io_delay [expr $clk_period * .2]
 set_input_delay -clock CLK $io_delay [get_ports reset_i]
