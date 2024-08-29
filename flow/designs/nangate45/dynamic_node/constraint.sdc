@@ -6,7 +6,7 @@ current_design dynamic_node_top_wrap
 ###############################################################################
 # Timing Constraints
 ###############################################################################
-create_clock -name clk -period 6.6587 -waveform {0.0000 3.3294} [get_ports {clk}]
+create_clock -name clk -period 6.0 [get_ports {clk}]
 set_input_delay 4.0200 -clock [get_clocks {clk}] -min -add_delay [get_ports {dataIn_E[0]}]
 set_input_delay 5.1000 -clock [get_clocks {clk}] -max -add_delay [get_ports {dataIn_E[0]}]
 set_input_delay 4.0200 -clock [get_clocks {clk}] -min -add_delay [get_ports {dataIn_E[10]}]
