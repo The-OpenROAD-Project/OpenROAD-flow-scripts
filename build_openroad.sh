@@ -5,7 +5,8 @@
 set -eu
 
 # Make sure we are on the correct folder before beginning
-cd "$(dirname $(readlink -f $0))"
+DIR="$(dirname $(readlink -f $0))"
+cd "$DIR"
 
 # Set up paths to dependencies, such as cmake and boost. Safe no-op
 # if tools were set up elsewhere in the path.
@@ -246,7 +247,7 @@ __local_build()
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
         echo "[INFO FLW-0018] Compiling OpenROAD."
-        eval ${NICE} cmake tools/OpenROAD -B tools/OpenROAD/build ${OPENROAD_APP_ARGS}
+        eval ${NICE} ./tools/OpenROAD/etc/Build.sh -dir="$DIR/tools/OpenROAD/build" -threads=${PROC} -cmake=\'${OPENROAD_APP_ARGS}\'
         ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
 }
 
