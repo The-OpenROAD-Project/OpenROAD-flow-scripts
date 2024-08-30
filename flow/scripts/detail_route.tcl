@@ -69,7 +69,6 @@ set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
 
 set repair_antennas_iters 0
 while {[check_antennas] && $repair_antennas_iters < 5} {
-  remove_fillers
   foreach inst [[ord::get_db_block] getInsts] {
     $inst setPlacementStatus "FIRM"
   }
