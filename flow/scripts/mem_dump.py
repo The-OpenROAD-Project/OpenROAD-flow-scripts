@@ -4,20 +4,28 @@ import sys
 
 
 def format_ram_table_from_json(data, max_bits=None):
-    formatting = "{:<15} | {:<15} | {:<15} | {:<50}\n"
-    table = formatting.format("Rows", "Width", "Total bits", "Name")
+    formatting = "{:>5} | {:>5} | {:>6} | {:<20} | {:<80}\n"
+    table = formatting.format("Rows", "Width", "Bits", "Module", "Instances")
     table += "-" * len(table) + "\n"
     max_ok = True
     for module_name, module_info in data["modules"].items():
         cells = module_info["cells"]
-        for memory, cell in cells.items():
+        for cell in cells.values():
             if not cell["type"].startswith("$mem"):
                 continue
             parameters = cell["parameters"]
             size = int(parameters["SIZE"], 2)
             width = int(parameters["WIDTH"], 2)
-            bits = size * width
-            table += formatting.format(size, width, bits, module_name + "." + memory)
+            instances = [
+                mname + "." + cell_name
+                for mname, minfo in data["modules"].items()
+                for cell_name, cell in minfo["cells"].items()
+                if cell["type"] == module_name
+            ]
+            bits = size * width * len(instances)
+            table += formatting.format(
+                size, width, bits, module_name, ", ".join(instances)
+            )
             if max_bits is not None and bits > max_bits:
                 max_ok = False
     return table, max_ok
