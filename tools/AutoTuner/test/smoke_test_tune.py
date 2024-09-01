@@ -26,6 +26,9 @@ class BaseTuneSmokeTest(unittest.TestCase):
             f" tune --samples 1"
         )
 
+    def test_tune(self):
+        raise NotImplementedError("This method needs to be implemented in the derivative classes".)
+
 
 class ASAP7TuneSmokeTest(BaseTuneSmokeTest):
     platform = "asap7"
