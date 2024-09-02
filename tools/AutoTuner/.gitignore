@@ -6,3 +6,6 @@ __pycache__/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# Autotuner env
+autotuner_env

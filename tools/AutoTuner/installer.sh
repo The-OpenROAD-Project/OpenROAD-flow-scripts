@@ -2,12 +2,11 @@
 
 # Get the directory where the script is located
 script_dir="$(dirname "${BASH_SOURCE[0]}")"
-cd $script_dir
 
 # Define the virtual environment name
 venv_name="autotuner_env"
 required_version="3"
 python${required_version} -m venv "$script_dir/$venv_name"
 source "$script_dir/$venv_name/bin/activate"
-pip3 install -U -r requirements.txt
+pip3 install -U -r $script_dir/requirements.txt
 deactivate
