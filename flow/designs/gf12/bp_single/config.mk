@@ -51,7 +51,7 @@ export SIG_MAP_FILE = $(PLATFORM_DIR)/bp/soc_bsg_black_parrot.sigmap
 
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
-export PLACE_DENSITY = 0.20
+export PLACE_DENSITY = 0.80
 
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 #export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/bp_single.macro_placment.cfg
