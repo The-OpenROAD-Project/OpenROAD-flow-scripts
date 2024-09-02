@@ -67,14 +67,17 @@ log_cmd detailed_route {*}$all_args
 set_global_routing_layer_adjustment $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER) 0.5
 set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
 
-set repair_antennas_iters 0
-while {[check_antennas] && $repair_antennas_iters < 5} {
-  foreach inst [[ord::get_db_block] getInsts] {
-    $inst setPlacementStatus "FIRM"
+
+if {![info exist ::env(SKIP_ANTENNA_REPAIR_POST_DRT)]} {
+  set repair_antennas_iters 0
+  while {[check_antennas] && $repair_antennas_iters < 5} {
+    foreach inst [[ord::get_db_block] getInsts] {
+      $inst setPlacementStatus "FIRM"
+    }
+    repair_antennas
+    detailed_route {*}$all_args
+    incr repair_antennas_iters
   }
-  repair_antennas
-  detailed_route {*}$all_args
-  incr repair_antennas_iters
 }
 
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
