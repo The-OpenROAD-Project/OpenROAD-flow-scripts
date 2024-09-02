@@ -33,7 +33,6 @@ COPY --link flow/platforms flow/platforms
 COPY --link flow/util flow/util
 COPY --link flow/scripts flow/scripts
 COPY --link flow/designs flow/designs
-COPY --link tools/AutoTuner tools/AutoTuner
 
 COPY --link --from=orfs-builder-base /OpenROAD-flow-scripts/tools/install tools/install
 COPY --link \
