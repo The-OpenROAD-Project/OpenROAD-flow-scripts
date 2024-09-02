@@ -41,7 +41,9 @@ class BaseSweepSmokeTest(unittest.TestCase):
         )
 
     def test_sweep(self):
-        raise NotImplementedError("This method needs to be implemented in the derivative classes".)
+        raise NotImplementedError(
+            "This method needs to be implemented in the derivative classes."
+        )
 
 
 class ASAP7SweepSmokeTest(BaseSweepSmokeTest):
