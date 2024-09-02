@@ -6,7 +6,7 @@ cd $script_dir
 
 # Define the virtual environment name
 venv_name="autotuner_env"
-required_version="3.8"
+required_version="3"
 python${required_version} -m venv "$script_dir/$venv_name"
 source "$script_dir/$venv_name/bin/activate"
 pip3 install -U -r requirements.txt

@@ -33,11 +33,11 @@ COPY --link flow/platforms flow/platforms
 COPY --link flow/util flow/util
 COPY --link flow/scripts flow/scripts
 COPY --link flow/designs flow/designs
+COPY --link tools/AutoTuner tools/AutoTuner
 
 COPY --link --from=orfs-builder-base /OpenROAD-flow-scripts/tools/install tools/install
 COPY --link \
-     --exclude=.git* --exclude=tools/OpenROAD --exclude=tools/codespace \
-     --exclude=tools/yosys --exclude=tools/yosys_utils --exclude=docs/ --exclude=docker/ \
+     --exclude=.git* --exclude=tools/ --exclude=docs/ --exclude=docker/ \
      --exclude=flow/designs --exclude=flow/platforms --exclude=flow/scripts \
      --exclude=flow/test --exclude=flow/tutorials --exclude=flow/util \
   . ./
