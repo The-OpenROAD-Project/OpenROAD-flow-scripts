@@ -79,7 +79,8 @@ set abc_args [list -script $abc_script \
 # LIB_FILES and ADDITIONAL_LIBS that are included in LIB_FILES.
 if {[info exist ::env(DONT_USE_CELLS)] && $::env(DONT_USE_CELLS) != ""} {
   foreach cell $::env(DONT_USE_CELLS) {
-    lappend abc_args -dont_use $cell
+      puts "INFO: Lib Cell $cell is in the list of DONT_USE_CELLS so it will not be used."
+      lappend abc_args -dont_use $cell
   }
 }
 
