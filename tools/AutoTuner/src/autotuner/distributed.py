@@ -227,18 +227,17 @@ def read_config(file_name):
         if dp_pad_step == 1:
             config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"] = tune.sample_from(
                 lambda spec: np.random.randint(
-                                    dp_pad_min,
-                                    spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1
-                                    )
+                    dp_pad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1
                 )
+            )
         if dp_pad_step > 1:
             config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"] = tune.sample_from(
                 lambda spec: random.randrange(
-                                    dp_pad_min,
-                                    spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1,
-                                    dp_pad_step
-                                    )
+                    dp_pad_min,
+                    spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1,
+                    dp_pad_step,
                 )
+            )
         return config
 
     def read_tune(this):
@@ -262,7 +261,8 @@ def read_config(file_name):
         Ax format: https://ax.dev/versions/0.3.7/api/service.html
         """
         dict_ = dict(name=name)
-        if "minmax" not in this: return None
+        if "minmax" not in this:
+            return None
         min_, max_ = this["minmax"]
         if min_ == max_:
             dict_["type"] = "fixed"
@@ -294,12 +294,14 @@ def read_config(file_name):
         PBT format: https://docs.ray.io/en/releases-2.9.3/tune/examples/pbt_guide.html
         Note that PBT does not support step values.
         """
-        if 'minmax' not in this: return None
-        min_, max_ = this['minmax']
-        if min_ == max_: return ray.tune.choice([min_, max_])
-        if this['type'] == 'int':
+        if "minmax" not in this:
+            return None
+        min_, max_ = this["minmax"]
+        if min_ == max_:
+            return ray.tune.choice([min_, max_])
+        if this["type"] == "int":
             return ray.tune.randint(min_, max_)
-        if this['type'] == 'float':
+        if this["type"] == "float":
             return ray.tune.uniform(min_, max_)
 
     # Check file exists and whether it is a valid JSON file.
@@ -332,10 +334,12 @@ def read_config(file_name):
             # To take care of empty values like _FR_FILE_PATH
             if args.mode == "tune" and args.algorithm == "ax":
                 param_dict = read_tune_ax(key, value)
-                if param_dict: config.append(param_dict)
+                if param_dict:
+                    config.append(param_dict)
             elif args.mode == "tune" and args.algorithm == "pbt":
                 param_dict = read_tune_pbt(key, value)
-                if param_dict: config[key] = param_dict
+                if param_dict:
+                    config[key] = param_dict
             else:
                 config[key] = value
         elif args.mode == "sweep":
@@ -741,13 +745,10 @@ def parse_arguments():
     tune_parser.add_argument(
         "--algorithm",
         type=str,
-        choices=["hyperopt",
-                 "ax",
-                 "optuna",
-                 "pbt",
-                 "random"],
+        choices=["hyperopt", "ax", "optuna", "pbt", "random"],
         default="hyperopt",
-        help="Search algorithm to use for Autotuning.")
+        help="Search algorithm to use for Autotuning.",
+    )
     tune_parser.add_argument(
         "--eval",
         type=str,
@@ -856,21 +857,19 @@ def set_algorithm(experiment_name, config):
     """
     Configure search algorithm.
     """
-    if args.algorithm == 'hyperopt':
+    if args.algorithm == "hyperopt":
         algorithm = HyperOptSearch(points_to_evaluate=best_params)
     elif args.algorithm == "ax":
         ax_client = AxClient(enforce_sequential_optimization=False)
-        AxClientMetric = namedtuple('AxClientMetric', 'minimize')
+        AxClientMetric = namedtuple("AxClientMetric", "minimize")
         ax_client.create_experiment(
             name=experiment_name,
             parameters=config,
             objectives={METRIC: AxClientMetric(minimize=True)},
         )
-        algorithm = AxSearch(ax_client=ax_client,
-                             points_to_evaluate=best_params)
+        algorithm = AxSearch(ax_client=ax_client, points_to_evaluate=best_params)
     elif args.algorithm == "optuna":
-        algorithm = OptunaSearch(points_to_evaluate=best_params,
-                                 seed=args.seed)
+        algorithm = OptunaSearch(points_to_evaluate=best_params, seed=args.seed)
     elif args.algorithm == "pbt":
         algorithm = PopulationBasedTraining(
             time_attr="training_iteration",
