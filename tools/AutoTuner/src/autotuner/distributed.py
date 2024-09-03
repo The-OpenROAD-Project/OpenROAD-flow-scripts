@@ -526,7 +526,7 @@ def openroad(base_dir, parameters, flow_variant, path=""):
         log_path = report_path = os.getcwd() + "/"
 
     export_command = f"export PATH={INSTALL_PATH}/OpenROAD/bin"
-    export_command += f":{INSTALL_PATH}/yosys/bin"
+    export_command += f":{INSTALL_PATH}/yosys/bin:$PATH"
     export_command += " && "
 
     make_command = export_command
