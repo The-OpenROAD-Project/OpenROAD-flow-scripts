@@ -59,6 +59,9 @@ def format_ram_table_from_json(data, max_bits=None):
     table = formatting.format("Rows", "Width", "Bits", "Module", "Instances")
     table += "-" * len(table) + "\n"
     max_ok = True
+    entries = []
+
+    # Collect the entries in a list
     for module_name, module_info in data["modules"].items():
         cells = module_info["cells"]
         for cell in cells.values():
@@ -69,11 +72,17 @@ def format_ram_table_from_json(data, max_bits=None):
             width = int(parameters["WIDTH"], 2)
             instances = find_cells_by_type(data, module_name)
             bits = size * width * len(instances)
-            table += formatting.format(
-                size, width, bits, module_name, ", ".join(instances)
-            )
+            entries.append((size, width, bits, module_name, ", ".join(instances)))
             if max_bits is not None and bits > max_bits:
                 max_ok = False
+
+    # Sort the entries by descending bits
+    entries.sort(key=lambda x: x[2], reverse=True)
+
+    # Format the sorted entries into the table
+    for entry in entries:
+        table += formatting.format(*entry)
+
     return table, max_ok
 
 
