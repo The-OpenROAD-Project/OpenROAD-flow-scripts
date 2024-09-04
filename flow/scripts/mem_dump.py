@@ -3,7 +3,7 @@ import json
 import sys
 
 
-def find_top_module(data):
+def find_top_modules(data):
     # There can be some cruft in the modules list so that
     # we have multiple top level candidates.
     top_module = []
@@ -23,6 +23,16 @@ def find_top_module(data):
 def find_cells_by_type_in_module(
     module_name, data, target_type, current_path, matching_cells
 ):
+    """
+    Searches through hierarchy starting at module_name to find all instances of
+    the given module/type in the hierarchy.
+
+    Returns list of cell paths, which are constructed as:
+
+        <top_module_name>.(<child_inst_name>.<child_module_name>+).<memory_inst_name>
+
+    where the child_inst_name/child_module_name pairs are repeated for each level of the hierarchy.
+    """
     for cell_name, cell in data["modules"][module_name]["cells"].items():
         cell_path = (
             f"{current_path}.{module_name}.{cell_name}"
@@ -42,10 +52,10 @@ def find_cells_by_type_in_module(
     return matching_cells
 
 
-def find_cells_by_type(data, module_name, current_path=""):
+def find_cells_by_type(top_modules, data, module_name, current_path=""):
     # first find top module, the module without any submodules
     names = []
-    for top_module in find_top_module(data):
+    for top_module in top_modules:
         names.extend(
             find_cells_by_type_in_module(
                 top_module, data, module_name, current_path, []
@@ -55,6 +65,7 @@ def find_cells_by_type(data, module_name, current_path=""):
 
 
 def format_ram_table_from_json(data, max_bits=None):
+    top_modules = find_top_modules(data)
     formatting = "{:>5} | {:>5} | {:>6} | {:<20} | {:<80}\n"
     table = formatting.format("Rows", "Width", "Bits", "Module", "Instances")
     table += "-" * len(table) + "\n"
@@ -70,7 +81,7 @@ def format_ram_table_from_json(data, max_bits=None):
             parameters = cell["parameters"]
             size = int(parameters["SIZE"], 2)
             width = int(parameters["WIDTH"], 2)
-            instances = find_cells_by_type(data, module_name)
+            instances = find_cells_by_type(top_modules, data, module_name)
             bits = size * width * len(instances)
             entries.append((size, width, bits, module_name, ", ".join(instances)))
             if max_bits is not None and bits > max_bits:
