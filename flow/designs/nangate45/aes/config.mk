@@ -9,7 +9,5 @@ export FLOORPLAN_DEF = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/aes_ng45_fp.def
 
 export PLACE_DENSITY_LB_ADDON = 0.20
 export TNS_END_PERCENT        = 100
-# temporarily disabled equivalence check due to failures
-export EQUIVALENCE_CHECK     ?=   0
 export REMOVE_CELLS_FOR_EQY   = TAPCELL*
 

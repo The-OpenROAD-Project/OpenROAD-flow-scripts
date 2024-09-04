@@ -22,9 +22,6 @@ set global_placement_args {}
 # Parameters for routability mode in global placement
 if {$::env(GPL_ROUTABILITY_DRIVEN)} {
   lappend global_placement_args {-routability_driven}
-    if { [info exists ::env(GPL_TARGET_RC)] } { 
-      lappend global_placement_args {-routability_target_rc_metric} $::env(GPL_TARGET_RC)
-  }
 }
 
 # Parameters for timing driven mode in global placement
