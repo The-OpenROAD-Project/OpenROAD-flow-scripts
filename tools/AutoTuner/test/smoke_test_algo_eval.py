@@ -35,13 +35,12 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
 
     def make_base(self):
         os.chdir(orfs_dir)
-        makefile_command_1 = (
-            f"make DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk"
-            f" EQUIVALENCE_CHECK=0"
-        )
-        makefile_command_2 = f"{makefile_command_1} update_metadata_autotuner"
-
-        for command in [makefile_command_1, makefile_command_2]:
+        commands = [
+            f"make DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk clean_all",
+            f"make DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk EQUIVALENCE_CHECK=0",
+            f"make DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk update_metadata_autotuner",
+        ]
+        for command in commands:
             out = subprocess.run(command, shell=True, check=True)
             self.assertTrue(out.returncode == 0)
         os.chdir(src_dir)
