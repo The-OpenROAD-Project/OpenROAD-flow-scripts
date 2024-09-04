@@ -54,9 +54,10 @@ filegroup(
     srcs = glob(include=["designs/asap7/swerv_wrapper/lib/*.lib"])
 )
 
-SWERV_ALL = {"LIB_MODEL":"CCS",
-"ADDITIONAL_LEFS": "$(locations :additional_lefs)",
-"ADDITIONAL_LIBS": "$(locations :additional_libs)",
+SWERV_ALL = {
+    "LIB_MODEL":"CCS",
+    "ADDITIONAL_LEFS": "$(locations :additional_lefs)",
+    "ADDITIONAL_LIBS": "$(locations :additional_libs)",
 }
 
 all_sources = [":additional_lefs", ":additional_libs"]
@@ -93,8 +94,10 @@ orfs_flow(
             "GND_NETS_VOLTAGES": "",
         }
     },
-    verilog_files = glob(include=["designs/src/swerv/swerv_wrapper.sv2v.v",
-    "designs/asap7/swerv_wrapper/macros.v"]),
+    verilog_files = glob(include=[
+        "designs/src/swerv/swerv_wrapper.sv2v.v",
+        "designs/asap7/swerv_wrapper/macros.v"
+    ]),
     stage_sources = {
         "synth": all_sources + [":constraints-swerv"],
         "floorplan": all_sources,
@@ -104,10 +107,6 @@ orfs_flow(
         "final": all_sources,
     },
 )
-
-
-
-
 
 
 filegroup(
@@ -136,8 +135,6 @@ filegroup(
     ],
     visibility = [":__subpackages__"],
 )
-MOCK_ARRAY_ALL = {
-}
 
 MOCK_ARRAY_FLOORPLAN_PLACE = {
     "PLACE_PINS_ARGS": "-annealing",
@@ -159,17 +156,17 @@ orfs_flow(
     name = "MockArray",
     macros = ["Element_generate_abstract"],
     stage_args = {
-        "synth": MOCK_ARRAY_ALL | {
+        "synth": {
             "SDC_FILE": "$(location :mock-array-constraints)",
         },
-        "floorplan": MOCK_ARRAY_ALL | MOCK_ARRAY_FLOORPLAN_PLACE | {
+        "floorplan": MOCK_ARRAY_FLOORPLAN_PLACE | {
         },
-        "place": MOCK_ARRAY_ALL | MOCK_ARRAY_FLOORPLAN_PLACE | {
+        "place": MOCK_ARRAY_FLOORPLAN_PLACE | {
         },
-        "cts": MOCK_ARRAY_ALL | {
+        "cts": {
             "CTS_BUF_DISTANCE": "60"
         },
-        "route": MOCK_ARRAY_ALL | {
+        "route": {
             "FASTROUTE_TCL": "$(location :mock-array-fastroute)",
             # works with 28 or more iterations as of writing, so give it a few more.
             "GLOBAL_ROUTE_ARGS" : "-congestion_iterations 40 -verbose",
@@ -182,7 +179,7 @@ orfs_flow(
             "MIN_ROUTING_LAYER": "M2",
             "MAX_ROUTING_LAYER": "M7",
         },
-        "final": MOCK_ARRAY_ALL | {
+        "final": {
             "GDS_ALLOW_EMPTY": "Element",
             "PWR_NETS_VOLTAGEsS": "",
             "GND_NETS_VOLTAGES": "",
@@ -211,7 +208,6 @@ filegroup(
     visibility = [":__subpackages__"],
 )
 
-
 MOCK_ARRAY_ELEMENT_FLOORPLAN_PLACE = {
     "IO_CONSTRAINTS": "$(location :mock-array-element-io)",
     "PLACE_DENSITY": "0.50",
@@ -222,7 +218,6 @@ MOCK_ARRAY_ELEMENT_ALL = {
 "MOCK_ARRAY_ROWS" : "8",
 "MOCK_ARRAY_COLS" : "8",
 }
-
 
 mock_array_all_sources = ["designs/src/mock-array/util.tcl"]
 
@@ -267,5 +262,4 @@ orfs_flow(
         "final": mock_array_all_sources,
     },
 )
-
 
