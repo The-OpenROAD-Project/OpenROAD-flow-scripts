@@ -143,17 +143,17 @@ def extractGnuTime(prefix, jsonFile, file):
     extractTagFromFile(
         prefix + "__runtime__total",
         jsonFile,
-        "^Elapsed time: (\S+)\[h:\]min:sec.*",
+        "^Elapsed time: (\\S+)\\[h:\\]min:sec.*",
         file,
     )
     extractTagFromFile(
         prefix + "__cpu__total",
         jsonFile,
-        "^Elapsed time:.*CPU time: user (\S+) .*",
+        "^Elapsed time:.*CPU time: user (\\S+) .*",
         file,
     )
     extractTagFromFile(
-        prefix + "__mem__peak", jsonFile, "^Elapsed time:.*Peak memory: (\S+)KB.", file
+        prefix + "__mem__peak", jsonFile, "^Elapsed time:.*Peak memory: (\\S+)KB.", file
     )
 
 
@@ -256,14 +256,14 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     extractTagFromFile(
         "synth__design__instance__count__stdcell",
         metrics_dict,
-        "Number of cells: +(\S+)",
+        "Number of cells: +(\\S+)",
         rptPath + "/synth_stat.txt",
     )
 
     extractTagFromFile(
         "synth__design__instance__area__stdcell",
         metrics_dict,
-        "Chip area for (?:top )?module.*: +(\S+)",
+        "Chip area for (?:top )?module.*: +(\\S+)",
         rptPath + "/synth_stat.txt",
     )
 
@@ -291,7 +291,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     extractTagFromFile(
         "globalroute__timing__clock__slack",
         metrics_dict,
-        "^\[INFO FLW-....\] Clock .* slack (\S+)",
+        "^\\[INFO FLW-....\\] Clock .* slack (\\S+)",
         logPath + "/5_1_grt.log",
     )
 
@@ -301,7 +301,7 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     extractTagFromFile(
         "finish__timing__wns_percent_delay",
         metrics_dict,
-        baseRegEx.format("finish slack div critical path delay", "(\S+)"),
+        baseRegEx.format("finish slack div critical path delay", "(\\S+)"),
         rptPath + "/6_finish.rpt",
     )
 
