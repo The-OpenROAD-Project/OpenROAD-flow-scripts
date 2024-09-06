@@ -16,7 +16,7 @@ export GDS_FILES = $(sort $(wildcard $(PLATFORM_DIR)/gds/*.gds)) \
 export DONT_USE_CELLS = TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1
 
 # Fill cells used in fill cell insertion
-export FILL_CELLS = FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32
+export FILL_CELLS ?= FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32
 
 # -----------------------------------------------------
 #  Yosys
@@ -57,6 +57,8 @@ export IO_PLACER_V = metal6
 export PDN_TCL ?= $(PLATFORM_DIR)/grid_strategy-M1-M4-M7.tcl
 
 # Endcap and Welltie cells
+export TAP_CELL_NAME = TAPCELL_X1
+export ENDCAP_CELL_NAME = $(TAP_CELL_NAME)
 export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
 
 export MACRO_PLACE_HALO ?= 22.4 15.12
