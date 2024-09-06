@@ -2,3 +2,5 @@ settings.mk
 vars.sh
 vars.gdb
 vars.tcl
+.user-bazelrc
+bazel-*

@@ -2,9 +2,6 @@ utl::set_metrics_stage "globalplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 3_2_place_iop.odb 2_floorplan.sdc
 
-# Temporary: remove after fixing instability in GPL with multithreading
-set_thread_count 1
-
 set_dont_use $::env(DONT_USE_CELLS)
 
 # set fastroute layer reduction
@@ -25,9 +22,6 @@ set global_placement_args {}
 # Parameters for routability mode in global placement
 if {$::env(GPL_ROUTABILITY_DRIVEN)} {
   lappend global_placement_args {-routability_driven}
-    if { [info exists ::env(GPL_TARGET_RC)] } { 
-      lappend global_placement_args {-routability_target_rc_metric} $::env(GPL_TARGET_RC)
-  }
 }
 
 # Parameters for timing driven mode in global placement

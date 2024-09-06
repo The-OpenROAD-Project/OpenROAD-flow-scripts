@@ -159,7 +159,7 @@ def setup(app):
     get_file_from_url(url, "contrib/GitGuide.md")
 
     # Temporarily using commit number, will change once OR commit merged.
-    url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/3563176d00daeb613eed2ccf9442137b0ae2cad3/docs/index.md"
+    url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/docs/index.md"
     get_file_from_url(url, "SupportedOS.md")
 
     # edit OpenROAD to OpenROAD-flow-scripts for GitGuide

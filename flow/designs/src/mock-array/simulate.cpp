@@ -2,6 +2,23 @@
 #include "verilated.h"
 #include <verilated_vcd_c.h>
 
+/**
+ * Returns the VCD output path.
+ *
+ * If RESULTS_DIR is set, the VCD file will be written there. If not, it will be written to the 
+ * current directory.
+ **/
+static std::string getVCDFilePath() {
+
+    std::string results_dir = getenv("RESULTS_DIR");
+    std::string vcd_file_name = "MockArrayTestbench.vcd";
+    if (results_dir.empty()) {
+        results_dir = ".";
+    }
+    std::string vcd_path = results_dir + "/" + vcd_file_name;
+    return vcd_path;
+}
+
 int main(int argc, char** argv) {
     Verilated::commandArgs(argc, argv);
     VMockArray * top = new VMockArray;
@@ -48,7 +65,7 @@ int main(int argc, char** argv) {
     };
 
     top->trace(vcd, 99); // Trace all levels of hierarchy
-    vcd->open("MockArrayTestbench.vcd");
+    vcd->open(getVCDFilePath().c_str());
 
     int tick = 0;
     for (int j = 0; j < sizeof(inputs)/sizeof(*inputs); j++) {

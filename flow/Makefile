@@ -104,6 +104,32 @@
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
+# For instance Bazel needs artifacts (.odb and .rpt files) on a failure to
+# allow the user to save hours on re-running the failed step locally, but
+# when working with a Makefile flow, it is more natural to fail the step
+# and leave the user to manually inspect the logs and artifacts directly via
+# the file system.
+#
+# Set to 1 to change the behavior to generate artifacts upon failure to
+# e.g. do a global route. The exit code will still be non-zero on all other
+# failures that aren't covered by the "useful to inspect the artifacts on
+# failure" use-case.
+#
+# Example: just like detailed routing, a global route that fails with congestion, is not
+# a build failure(as in exit code non-zero), it is a successful(as in zero exit code)
+# global route that produce reports detailing the problem.
+#
+# Detailed route will not proceed, if there is global routing congestion
+#
+# This allows build systems, such as bazel, to create artifacts for global
+# and detailed route, even if the operation had problems, without having
+# know about the semantics between global and detailed route.
+#
+# Considering that global and detailed route can run for a long time and
+# use a lot of memory, this allows inspecting results on a laptop for
+# a build that ran on a server.
+export GENERATE_ARTIFACTS_ON_FAILURE ?= 0
+
 # Default TNS_END_PERCENT value for post CTS timing repair
 # Try fixing all violating endpoints by default (reduce to 5% for runtime)
 export TNS_END_PERCENT ?=100
@@ -177,14 +203,12 @@ endif
 
 include $(PLATFORM_DIR)/config.mk
 
-export GALLERY_REPORT ?= 0
 # Enables hierarchical yosys
 export SYNTH_HIERARCHICAL ?= 0
-export SYNTH_STOP_MODULE_SCRIPT = $(OBJECTS_DIR)/mark_hier_stop_modules.tcl
-ifeq ($(SYNTH_HIERARCHICAL), 1)
+export SYNTH_STOP_MODULE_SCRIPT = $(RESULTS_DIR)/keep_hierarchy.tcl
 export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
 export MAX_UNGROUP_SIZE ?= 0
-endif
+
 # Enables Re-synthesis for area reclaim
 export RESYNTH_AREA_RECOVER ?= 0
 export RESYNTH_TIMING_RECOVER ?= 0
@@ -293,7 +317,7 @@ OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
-YOSYS_CMD               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+YOSYS_EXE               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 
 # Use locally installed and built klayout if it exists, otherwise use klayout in path
 KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
@@ -338,7 +362,7 @@ export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(le
 
 define GENERATE_ABSTRACT_RULE
 ifeq ($(wildcard $(3)),)
-# There is no unqiue config.mk for this module, use the shared
+# There is no unique config.mk for this module, use the shared
 # block.mk that, by convention, is in the same folder as config.mk
 # of the parent macro.
 #
@@ -350,7 +374,7 @@ block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
 $(1) $(2) &:
 	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk generate_abstract
 else
-# There is a unqiue config.mk for this Verilog module
+# There is a unique config.mk for this Verilog module
 $(1) $(2) &:
 	$$(UNSET_AND_MAKE) DESIGN_CONFIG=$(3) generate_abstract
 endif
@@ -368,9 +392,17 @@ $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(bloc
 .PHONY: versions.txt
 versions.txt:
 	mkdir -p $(OBJECTS_DIR)
-	@$(YOSYS_CMD) -V > $(OBJECTS_DIR)/$@
+	@if [ -z "$(YOSYS_EXE)" ]; then \
+		echo >> $(OBJECTS_DIR)/$@ "yosys not installed"; \
+	else \
+		$(YOSYS_EXE) -V > $(OBJECTS_DIR)/$@; \
+	fi
 	@echo openroad `$(OPENROAD_EXE) -version` >> $(OBJECTS_DIR)/$@
-	@$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@
+	@if [ -z "$(KLAYOUT_CMD)" ]; then \
+		echo >> $(OBJECTS_DIR)/$@ "klayout not installed"; \
+	else \
+		$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@; \
+	fi
 
 # Pre-process libraries
 # ==============================================================================
@@ -396,7 +428,7 @@ do-klayout_tech:
 	cp $(TECH_LEF) $(OBJECTS_DIR)/klayout_tech.lef
 
 KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
-KLAYOUT_VERSION := $(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2)
+KLAYOUT_VERSION := $(if $(KLAYOUT_CMD),$(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2),)
 
 KLAYOUT_ENV_VAR_IN_PATH = $(shell \
 	if [ -z "$(KLAYOUT_VERSION)" ]; then \
@@ -419,6 +451,7 @@ ifeq ($(KLAYOUT_ENV_VAR_IN_PATH),valid)
 else
 	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS),<lef-files>$(shell realpath --relative-to=$(RESULTS_DIR) $(file))</lef-files>),g' $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout.lyt
 endif
+	sed -i 's,<map-file>.*</map-file>,$(foreach file, $(FLOW_HOME)/platforms/$(PLATFORM)/*map,<map-file>$(shell realpath $(file))</map-file>),g' $(OBJECTS_DIR)/klayout.lyt
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
 	$(UNSET_AND_MAKE) do-klayout_wrap
@@ -460,7 +493,7 @@ synth-report: synth
 
 .PHONY: do-synth-report
 do-synth-report:
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
+	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee $(LOG_DIR)/1_1_yosys_metrics.log
 
 .PHONY: memory
 memory:
@@ -475,14 +508,11 @@ memory:
 export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 export SYNTH_MEMORY_MAX_BITS ?= 4096
 
-$(SYNTH_STOP_MODULE_SCRIPT):
+.PHONY: do-yosys-keep-hierarchy
+do-yosys-keep-hierarchy:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
-	$(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(LOG_DIR)/1_1_yosys_hier_report.log
-
-ifeq ($(SYNTH_HIERARCHICAL), 1)
-do-yosys: $(SYNTH_STOP_MODULE_SCRIPT)
-endif
+	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(HIER_REPORT_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_hier_report.log)
 
 export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
@@ -490,25 +520,27 @@ $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
 	mkdir -p $(dir $@)
 	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
 
+YOSYS_DEPENDENCIES=$(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
+
 .PHONY: yosys-dependencies
-yosys-dependencies: $(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
+yosys-dependencies: $(YOSYS_DEPENDENCIES)
 
 .PHONY: do-yosys
 do-yosys:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
-	$(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee -a $(LOG_DIR)/1_1_yosys.log
+	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
 
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	($(TIME_CMD) $(YOSYS_CMD) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(LOG_DIR)/1_1_yosys.log
+	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_canonicalize.log)
 
-$(RESULTS_DIR)/1_synth.rtlil:
+$(RESULTS_DIR)/1_synth.rtlil: $(YOSYS_DEPENDENCIES)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
 
 $(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
-	$(UNSET_AND_MAKE) do-yosys
+	$(UNSET_AND_MAKE) do-yosys-keep-hierarchy do-yosys
 
 $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
 	mkdir -p $(RESULTS_DIR)
@@ -583,7 +615,7 @@ endef
 # be useful to retest a stage without having to delete the
 # target, or when building a wafer thin layer on top of
 # ORFS using CMake, Ninja, Bazel, etc. where makefile
-# dependecy checking only gets in the way.
+# dependency checking only gets in the way.
 #
 # Note that there is no "do-synth" step as it is a special
 # first step that for usecases such as Bazel where it should
@@ -617,6 +649,7 @@ endif
 
 .PHONY: do-$(1)
 do-$(1): $(OBJECTS_DIR)/copyright.txt
+	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	@echo Running $(3).tcl, stage $(1)
 	@(set -eo pipefail; \
 	trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
@@ -688,7 +721,6 @@ $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
 .PHONY: do-floorplan
 do-floorplan:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_io do-2_3_floorplan_tdms do-2_4_floorplan_macro do-2_5_floorplan_tapcell do-2_6_floorplan_pdn do-2_floorplan
 
 .PHONY: clean_floorplan
@@ -742,7 +774,6 @@ $(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
 
 .PHONY: do-place
 do-place:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place do-3_place.sdc
 
 # Clean Targets
@@ -778,7 +809,6 @@ $(eval $(call do-copy,4_cts,4_1_cts.odb))
 
 .PHONY: do-cts
 do-cts:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-4_1_cts do-4_cts
 
 .PHONY: clean_cts
@@ -823,12 +853,7 @@ $(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
 
 .PHONY: do-route
 do-route:
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_fillcell do-5_3_route do-5_route do-5_route.sdc
-
-$(RESULTS_DIR)/5_route.v:
-	@export OR_DB=5_route ;\
-	$(OPENROAD_CMD) ./scripts/write_verilog.tcl
 
 .PHONY: clean_route
 clean_route:
@@ -906,7 +931,6 @@ final: finish
 
 .PHONY: do-finish
 do-finish:
-	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
 	$(UNSET_AND_MAKE) do-6_1_fill do-6_1_fill.sdc do-6_final.sdc do-6_report do-gds elapsed
 
 .PHONY: generate_abstract
@@ -1084,7 +1108,7 @@ $(foreach file,$(RESULTS_ODB),$(file).v): %.v:
 # generate a .dot file of the design to visualize designs.
 .PHONY: yosys
 yosys:
-	$(YOSYS_CMD)
+	$(YOSYS_EXE)
 
 # Drop into a bash shell with all environment variables, useful for debugging
 .PHONY: bash

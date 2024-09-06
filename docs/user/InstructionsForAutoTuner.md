@@ -98,7 +98,6 @@ For Global Routing parameters that are set on `fastroute.tcl` you can use:
 * `_FR_GR_SEED`
   - Global route random seed. This will create a copy of `_FR_FILE_PATH` and modify the global route random seed.
 
-
 ## How to use
 
 ### General Information

@@ -11,6 +11,7 @@ fi
 
 # package versions
 klayoutVersion=0.28.8
+verilatorVersion=5.026
 
 _versionCompare() {
     local a b IFS=. ; set -f
@@ -33,6 +34,23 @@ _installCommon() {
         pip3 install --no-cache-dir -U $pkgs
     else
         pip3 install --no-cache-dir --user -U $pkgs
+    fi
+
+    baseDir=$(mktemp -d /tmp/DependencyInstaller-orfs-XXXXXX)
+
+    # Install Verilator
+    verilatorPrefix=`realpath ${PREFIX:-"/usr/local"}`
+    if [[ ! -x ${verilatorPrefix}/bin/verilator ]]; then
+        pushd $baseDir
+            git clone --depth=1 -b "v$verilatorVersion" https://github.com/verilator/verilator.git
+            pushd verilator
+                autoconf
+                ./configure --prefix "${verilatorPrefix}"
+                make -j`nproc`
+                make install
+            popd
+            rm -r verilator
+        popd
     fi
 }
 
@@ -67,42 +85,87 @@ _installUbuntuCleanUp() {
     apt-get autoremove -y
 }
 
+_installKlayoutDependenciesUbuntuAarch64() {
+    echo "Installing Klayout dependancies"
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get -y update
+    apt-get -y install  build-essential \
+                        qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev \
+                        ruby ruby-dev \
+                        python3 python3-dev \
+                        libz-dev\
+                        libgit2-dev
+    echo "All dependencies installed successfully"
+}
+
 _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
     apt-get -y install --no-install-recommends \
+        bison \
         curl \
+        flex \
+        help2man \
+        libfl-dev \
+        libfl2 \
+        libgoogle-perftools-dev \
         libqt5multimediawidgets5 \
+        libqt5opengl5 \
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
-        libqt5opengl5 \
         libz-dev \
+        perl \
         python3-pip \
+        python3-venv \
         qtmultimedia5-dev \
         qttools5-dev \
         ruby \
         ruby-dev \
-        time
+        time \
+        zlib1g \
+        zlib1g-dev
 
     # install KLayout
     if _versionCompare $1 -ge 23.04; then
         apt-get -y install --no-install-recommends klayout python3-pandas
     else
-        if [[ $1 == 20.04 ]]; then
-            klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
-        else
-            klayoutChecksum=db751264399706a23d20455bb7624264
-        fi
+        arch=$(uname -m)
         lastDir="$(pwd)"
         # temp dir to download and compile
         baseDir=/tmp/installers
+        klayoutPrefix=${PREFIX:-"/usr/local"}
         mkdir -p "${baseDir}"
-        cd ${baseDir}
-        wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
-        md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
-        dpkg -i klayout_${klayoutVersion}-1_amd64.deb
-        cd ${lastDir}
+        cd "${baseDir}"
+        if [[ $arch == "aarch64" ]]; then
+            if [ ! -f ${klayoutPrefix}/klayout ]; then
+                _installKlayoutDependenciesUbuntuAarch64
+                echo "Installing KLayout for aarch64 architecture"
+                git clone https://github.com/KLayout/klayout.git
+                cd klayout
+                ./build.sh -bin "${klayoutPrefix}"
+            else
+                echo "Klayout is already installed"
+        fi
+        else
+            if [[ $1 == 20.04 ]]; then
+                klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
+            else
+                klayoutChecksum=db751264399706a23d20455bb7624264
+            fi
+            wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
+            md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
+            dpkg -i klayout_${klayoutVersion}-1_amd64.deb
+        fi
+        cd "${lastDir}"
         rm -rf "${baseDir}"
+    fi
+
+    if command -v docker &> /dev/null; then
+        # The user can uninstall docker if they want to reinstall it,
+        # and also this allows the user to choose drop in replacements
+        # for docker, such as podman-docker
+        echo "Docker is already installed, skip docker reinstall."
+        return 0
     fi
 
     # Add Docker's official GPG key:
@@ -214,6 +277,7 @@ while [ "$#" -gt 0 ]; do
             ;;
         -prefix=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
+            PREFIX=${1#*=}
             ;;
         *)
             echo "unknown option: ${1}" >&2

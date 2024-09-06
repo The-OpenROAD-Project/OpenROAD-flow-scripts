@@ -15,3 +15,6 @@ export PLACE_DENSITY = 0.6
 export TNS_END_PERCENT = 100
 
 export FASTROUTE_TCL = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
+
+export REMOVE_ABC_BUFFERS = 1
+

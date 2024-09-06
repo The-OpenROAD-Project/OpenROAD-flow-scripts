@@ -1,9 +1,6 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
-if { [info exist ::env(SYNTH_HIERARCHICAL)] && $::env(SYNTH_HIERARCHICAL) == 1 && [file isfile $::env(SYNTH_STOP_MODULE_SCRIPT)] } {
-  puts "Sourcing $::env(SYNTH_STOP_MODULE_SCRIPT)"
-  source $::env(SYNTH_STOP_MODULE_SCRIPT)
-}
+source $::env(SYNTH_STOP_MODULE_SCRIPT)
 
 if { [info exist ::env(SYNTH_GUT)] && $::env(SYNTH_GUT) == 1 } {
   hierarchy -check -top $::env(DESIGN_NAME)

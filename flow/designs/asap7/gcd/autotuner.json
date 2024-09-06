@@ -8,22 +8,6 @@
         ],
         "step": 0
     },
-    "CORE_UTILIZATION": {
-        "type": "int",
-        "minmax": [
-            5,
-            100
-        ],
-        "step": 1
-    },
-    "CORE_ASPECT_RATIO": {
-        "type": "float",
-        "minmax": [
-            0.5,
-            2.0
-        ],
-        "step": 0
-    },
    "CORE_MARGIN": {
         "type": "int",
         "minmax": [

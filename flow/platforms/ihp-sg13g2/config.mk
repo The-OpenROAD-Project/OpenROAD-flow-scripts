@@ -4,13 +4,22 @@ export PROCESS = ihp-sg13g2
 #-----------------------------------------------------
 # Tech/Libs
 # ----------------------------------------------------
+# Add IO related files when a TCL script is assigned to 'FOOTPRINT_TCL'.
+# This variable is used to pass IO information.
+ifdef FOOTPRINT_TCL
+  export ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/sg13g2_io.lef \
+                            $(PLATFORM_DIR)/lef/bondpad_70x70.lef
+  export ADDITIONAL_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_dummy.lib
+  export ADDITIONAL_GDS += $(PLATFORM_DIR)/gds/sg13g2_io.gds \
+                           $(PLATFORM_DIR)/gds/bondpad_70x70.gds
+endif
 export TECH_LEF = $(PLATFORM_DIR)/lef/sg13g2_tech.lef
 export SC_LEF = $(PLATFORM_DIR)/lef/sg13g2_stdcell.lef
 
 export LIB_FILES = $(PLATFORM_DIR)/lib/sg13g2_stdcell_typ_1p20V_25C.lib \
-	                  $(ADDITIONAL_LIBS)
+                   $(ADDITIONAL_LIBS)
 export GDS_FILES = $(PLATFORM_DIR)/gds/sg13g2_stdcell.gds \
-	                  $(ADDITIONAL_GDS)
+                   $(ADDITIONAL_GDS)
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
@@ -19,11 +28,10 @@ export GDS_FILES = $(PLATFORM_DIR)/gds/sg13g2_stdcell.gds \
 # on all layers.
 # *lpflow* cells are for multi-power domains
 export DONT_USE_CELLS += \
-sg13g2_antennanp \
 sg13g2_lgcp_1 \
 sg13g2_sighold \
 sg13g2_slgcp_1 \
-sg13g2_dfrbp_2 
+sg13g2_dfrbp_2
 
 
 # Define fill cells
