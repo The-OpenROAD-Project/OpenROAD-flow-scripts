@@ -24,16 +24,16 @@ export GDS_FILES                              = $(wildcard $(PLATFORM_DIR)/gds/$
 export DONT_USE_CELLS                         = *_1
 
 # Fill cells used in fill cell insertion
-export FILL_CELLS                             = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_64 \
-                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_32 \
-                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_16 \
-                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_8 \
-                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_4 \
-                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_2 \
-                                                gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_1
+export FILL_CELLS                             ?= gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_64 \
+                                                 gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_32 \
+                                                 gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_16 \
+                                                 gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_8 \
+                                                 gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_4 \
+                                                 gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_2 \
+                                                 gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_1
 
-export TIE_CELL                               = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__filltie
-export ENDCAP_CELL                            = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__endcap
+export TAP_CELL_NAME                          = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__filltie
+export ENDCAP_CELL_NAME                       = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__endcap
 export RC_FILE                                = $(PLATFORM_DIR)/setRC.tcl
 
 #-----------------------------------------------------
