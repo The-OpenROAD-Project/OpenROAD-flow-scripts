@@ -332,7 +332,7 @@ endif
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
 ifneq ($(shell command -v stdbuf),)
-  STDBUF_CMD = stdbuf -o L
+  STDBUF_CMD ?= stdbuf -o L
 endif
 
 #-------------------------------------------------------------------------------
