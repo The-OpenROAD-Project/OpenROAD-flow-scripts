@@ -65,14 +65,6 @@
         ],
         "step": 0
     },
-    "_PINS_DISTANCE": {
-        "type": "int",
-        "minmax": [
-            1,
-            1
-        ],
-        "step": 1
-    },
     "CTS_CLUSTER_SIZE": {
         "type": "int",
         "minmax": [
