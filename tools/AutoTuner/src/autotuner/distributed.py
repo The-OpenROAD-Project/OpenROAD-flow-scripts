@@ -421,7 +421,7 @@ def write_sdc(variables, path):
     """
     # Handle case where the reference file does not exist
     if SDC_ORIGINAL == "":
-        print('[ERROR TUN-0020] No SDC reference file provided.')
+        print("[ERROR TUN-0020] No SDC reference file provided.")
         sys.exit(1)
     new_file = SDC_ORIGINAL
     for key, value in variables.items():
@@ -462,10 +462,10 @@ def write_fast_route(variables, path):
     Create a FastRoute Tcl file with parameters for current tuning iteration.
     """
     # Handle case where the reference file does not exist
-    if FR_ORIGINAL == '':
-        print('[ERROR TUN-0021] No FastRoute Tcl reference file provided.')
+    if FR_ORIGINAL == "":
+        print("[ERROR TUN-0021] No FastRoute Tcl reference file provided.")
         sys.exit(1)
-    layer_cmd = 'set_global_routing_layer_adjustment'
+    layer_cmd = "set_global_routing_layer_adjustment"
     new_file = FR_ORIGINAL
     for key, value in variables.items():
         if key.startswith("LAYER_ADJUST"):
