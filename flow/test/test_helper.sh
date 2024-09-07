@@ -111,8 +111,11 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   echo "Running Autotuner smoke sweep test"
   python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeTest.test_sweep
 
-  echo "Running Autotuner ref file test"
-  python3 -m unittest tools.AutoTuner.test.ref_file_check.${PLATFORM}SweepSmokeTest.ref_file_check
+  echo "Running Autotuner ref file test (only once)"
+  if [ ! -f ./logs/autotuner_ref_file_check.log ]; then
+    date > ./logs/autotuner_ref_file_check.log
+    python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck
+  fi
 fi
 
 exit $ret
