@@ -1,0 +1,34 @@
+version: "3.8"
+
+# services:
+#   # Ray Head Node (Server)
+#   ray-head:
+#     image: rayproject/ray:latest
+#     container_name: ray-head
+#     command: >
+#       ray start --head --node-ip-address=ray-head --port=6379 --redis-password='yourpassword'
+#     environment:
+#       - RAY_NODE_IP_ADDRESS=ray-head
+#       - RAY_REDIS_PASSWORD=yourpassword
+#     ports:
+#       - "8265:8265"  # Dashboard
+#       - "6379:6379"  # Redis
+#     networks:
+#       - ray-network
+
+#   # Ray Worker Node
+#   ray-worker:
+#     image: rayproject/ray:latest
+#     container_name: ray-worker
+#     command: >
+#       ray start --address='ray-head:6379' --redis-password='yourpassword'
+#     environment:
+#       - RAY_REDIS_PASSWORD=yourpassword
+#     depends_on:
+#       - ray-head
+#     networks:
+#       - ray-network
+
+# networks:
+#   ray-network:
+#     driver: bridge

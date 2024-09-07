@@ -84,14 +84,13 @@ case $DESIGN_NAME in
     RUN_AUTOTUNER=1
     ;;
 esac
-case $PLATFORM in
-     "asap7" | "sky130hd" | "ihp-sg13g2" )
-      # Keep RUN_AUTOTUNER enabled only for these platforms
-      ;;
-     *)
-      RUN_AUTOTUNER=0
-      ;;
-esac
+if [ $RUN_AUTOTUNER -eq 1 ]; then
+  case $PLATFORM in
+       "gf180" | "nangate45" | "sky130hd_fakestack" | "sky130hs")
+        RUN_AUTOTUNER=0
+        ;;
+  esac
+fi
 
 if [ $RUN_AUTOTUNER -eq 1 ]; then
   # change directory to the root of the repo
