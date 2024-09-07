@@ -80,7 +80,7 @@ fi
 # Run Autotuner CI specifically for gcd on selected platforms.
 RUN_AUTOTUNER=0
 case $DESIGN_NAME in
-  "gcd")
+  "gcd" "aes" "ibex")
     RUN_AUTOTUNER=1
     ;;
 esac
@@ -103,12 +103,10 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   PLATFORM=${PLATFORM//-/}
   # convert to uppercase
   PLATFORM=${PLATFORM^^}
+  DESIGN_NAME=${DESIGN_NAME^^}
 
-  echo "Running Autotuner smoke tune test"
-  python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM}TuneSmokeTest.test_tune
-
-  echo "Running Autotuner smoke sweep test"
-  python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeTest.test_sweep
+  echo "Running Autotuner Regression Test"
+  python3 -m unittest tools.AutoTuner.test.regression_tune_base.${PLATFORM}TuneRegression${DESIGN_NAME}Test.test_tune
 fi
 
 exit $ret
