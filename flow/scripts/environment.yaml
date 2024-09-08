@@ -1,0 +1,74 @@
+script_stages:
+  - cts: cts
+  detail_place: place
+  detail_route: route
+  fillcell: route
+  final_report: final
+  floorplan: floorplan
+  generate_abstract: generate_abstract
+  global_place_skip_io: place
+  global_place: place
+  global_route: route
+  gui: gui
+  io_placement_random: place
+  io_placement: place
+  io_placement_util: place
+  macro_place: floorplan
+  pdn: floorplan
+  resize: place
+  synth_canonicalize: canonicalize
+  synth_hier_report: synth
+  synth: synth
+  tapcell: floorplan
+  tdms_place: floorplan
+  yosys: synth
+
+PROCESS:
+  - synth
+TECH_LEF:
+  - synth
+SC_LEF:
+  - synth
+LIB_FILES:
+  - synth
+GDS_FILES:
+  - synth
+DONT_USE_CELLS:
+  - synth
+PLACE_SITE:
+  - place
+MAKE_TRACKS:
+  - place
+TAPCELL_TCL:
+  - place
+MACRO_PLACE_HALO:
+  - place
+MACRO_PLACE_CHANNEL:
+  - place
+PDN_TCL:
+  - place
+IO_PLACER_H:
+  - place
+IO_PLACER_V:
+  - place
+CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
+  - place
+CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
+  - place
+PLACE_DENSITY:
+  - place
+  - floorplan
+WIRE_RC_LAYER:
+  - place
+MIN_ROUTING_LAYER:
+  - gui
+  - route
+  - place
+MAX_ROUTING_LAYER:
+  - gui
+  - route
+  - place
+ROUTING_LAYER_ADJUSTMENT:
+  - gui
+  - route
+  - place
