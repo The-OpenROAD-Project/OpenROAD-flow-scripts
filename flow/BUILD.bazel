@@ -1,0 +1,265 @@
+load("@bazel-orfs//:openroad.bzl", "orfs_flow")
+
+filegroup(
+    name = "constraints-gcd",
+    srcs = [
+        "designs/asap7/gcd/constraint.sdc",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+orfs_flow(
+    name = "gcd",
+    stage_args = {
+        "synth": {
+            "SDC_FILE": "$(location :constraints-gcd)",
+        },
+        "floorplan": {
+            "DIE_AREA": "0 0 16.2 16.2",
+            "CORE_AREA": "1.08 1.08 15.12 15.12",
+        },
+        "place": {
+            "PLACE_DENSITY": "0.35",
+        },
+    },
+    stage_sources = {
+        "synth": [":constraints-gcd"],
+    },
+    verilog_files = glob(include=["designs/src/gcd/*.v"]),
+)
+
+
+filegroup(
+    name = "constraints-swerv",
+    srcs = [
+        "designs/asap7/swerv_wrapper/constraint.sdc",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+filegroup(
+    name = "swerv-fastroute",
+    srcs = [
+        "designs/asap7/swerv_wrapper/fastroute.tcl",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+filegroup(
+    name = "additional_lefs",
+    srcs = glob(include=["designs/asap7/swerv_wrapper/lef/*.lef"])
+)
+filegroup(
+    name = "additional_libs",
+    srcs = glob(include=["designs/asap7/swerv_wrapper/lib/*.lib"])
+)
+
+SWERV_ALL = {
+    "LIB_MODEL":"CCS",
+    "ADDITIONAL_LEFS": "$(locations :additional_lefs)",
+    "ADDITIONAL_LIBS": "$(locations :additional_libs)",
+}
+
+all_sources = [":additional_lefs", ":additional_libs"]
+
+orfs_flow(
+    name = "swerv_wrapper",
+    stage_args = {
+        "synth": SWERV_ALL | {
+            "SYNTH_HIERARCHICAL": "1",
+            "SDC_FILE": "$(location :constraints-swerv)",
+        },
+        "floorplan": SWERV_ALL | {
+            "RTLMP_FLOW": "1",
+            "RTLMP_MAX_INST": "30000",
+            "RTLMP_MIN_INST": "5000",
+            "RTLMP_MAX_MACRO": "30",
+            "RTLMP_MIN_MACRO": "4",
+            "DIE_AREA": "0 0 550 600",
+            "CORE_AREA": "5 5 545 595",
+            "PLACE_PINS_ARGS": "-exclude left:* -exclude right:*"
+        },
+        "place": SWERV_ALL | {
+            "PLACE_PINS_ARGS": "-exclude left:* -exclude right:*",
+            "PLACE_DENSITY_LB_ADDON": "0.20",
+        },
+        "cts": SWERV_ALL | {
+            "TNS_END_PERCENT": "100",
+        },
+        "route": SWERV_ALL | {
+            "FASTROUTE_TCL": "$(location :swerv-fastroute)",
+        },
+        "final": SWERV_ALL | {
+            "PWR_NETS_VOLTAGEsS": "",
+            "GND_NETS_VOLTAGES": "",
+        }
+    },
+    verilog_files = glob(include=[
+        "designs/src/swerv/swerv_wrapper.sv2v.v",
+        "designs/asap7/swerv_wrapper/macros.v"
+    ]),
+    stage_sources = {
+        "synth": all_sources + [":constraints-swerv"],
+        "floorplan": all_sources,
+        "place": all_sources,
+        "cts": all_sources,
+        "route": all_sources + [":swerv-fastroute"],
+        "final": all_sources,
+    },
+)
+
+
+filegroup(
+    name = "mock-array-constraints",
+    srcs = [
+        "designs/asap7/mock-array/constraints.sdc",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+filegroup(
+    name = "mock-array-io",
+    srcs = [
+        "designs/asap7/mock-array/io.tcl"
+    ],
+    data = [
+        "designs/src/mock-array/util.tcl",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+filegroup(
+    name = "mock-array-fastroute",
+    srcs = [
+        "designs/asap7/mock-array/fastroute.tcl",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+MOCK_ARRAY_FLOORPLAN_PLACE = {
+    "PLACE_PINS_ARGS": "-annealing",
+    "IO_CONSTRAINTS": "$(location :mock-array-io)",
+    "PLACE_DENSITY": "0.30",
+            "DIE_AREA": "0 0 358.56 388.8",
+            "CORE_AREA": "2.16 2.16 356.40000000000003 386.64000000000004",
+            "MACRO_PLACE_HALO": "0 2.16",
+            "RTLMP_BOUNDARY_WT": "0",
+            "RTLMP_FLOW": "1",
+            "PDN_TCL": "$(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl",
+            "MACRO_HALO_X": "0.5",
+            "MACRO_HALO_Y": "0.5",
+            "MACRO_BLOCKAGE_HALO": "0",
+    "ADDITIONAL_FILES": "$(locations :mock-array-io)",
+}
+
+orfs_flow(
+    name = "MockArray",
+    macros = ["Element_generate_abstract"],
+    stage_args = {
+        "synth": {
+            "SDC_FILE": "$(location :mock-array-constraints)",
+        },
+        "floorplan": MOCK_ARRAY_FLOORPLAN_PLACE | {
+        },
+        "place": MOCK_ARRAY_FLOORPLAN_PLACE | {
+        },
+        "cts": {
+            "CTS_BUF_DISTANCE": "60"
+        },
+        "route": {
+            "FASTROUTE_TCL": "$(location :mock-array-fastroute)",
+            # works with 28 or more iterations as of writing, so give it a few more.
+            "GLOBAL_ROUTE_ARGS" : "-congestion_iterations 40 -verbose",
+            # If this design isn't quickly done in detailed routing, something is wrong.
+            # At time of adding this option, only 12 iterations were needed for 0
+            # violations.
+            "DETAILED_ROUTE_ARGS": "-bottom_routing_layer M2 -top_routing_layer M7 -save_guide_updates -verbose 1 -droute_end_iter 15",
+            # since we are specifying DETAILED_ROUTE_ARGS, we need to communicate the
+            # same information to other stages in the flow.
+            "MIN_ROUTING_LAYER": "M2",
+            "MAX_ROUTING_LAYER": "M7",
+        },
+        "final": {
+            "GDS_ALLOW_EMPTY": "Element",
+            "PWR_NETS_VOLTAGEsS": "",
+            "GND_NETS_VOLTAGES": "",
+        }
+    },
+    verilog_files = glob(include=["designs/src/mock-array/*.v"]),
+    stage_sources = {
+        "synth": all_sources + [":mock-array-constraints"] + [":mock-array-io"],
+        "floorplan": all_sources + [":mock-array-io"],
+        "place": all_sources + [":mock-array-io"],
+        "cts": all_sources,
+        "route": all_sources + [":mock-array-fastroute"],
+        "final": all_sources,
+    },
+)
+
+
+filegroup(
+    name = "mock-array-element-io",
+    srcs = [
+        "designs/asap7/mock-array/Element/io.tcl"
+    ],
+    data = [
+        "designs/src/mock-array/util.tcl",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+MOCK_ARRAY_ELEMENT_FLOORPLAN_PLACE = {
+    "IO_CONSTRAINTS": "$(location :mock-array-element-io)",
+    "PLACE_DENSITY": "0.50",
+    "PLACE_PINS_ARGS": "-annealing",
+}
+
+MOCK_ARRAY_ELEMENT_ALL = {
+"MOCK_ARRAY_ROWS" : "8",
+"MOCK_ARRAY_COLS" : "8",
+}
+
+mock_array_all_sources = ["designs/src/mock-array/util.tcl"]
+
+orfs_flow(
+    name = "Element",
+    abstract_stage = "route",
+    stage_args = {
+        "synth": MOCK_ARRAY_ELEMENT_ALL | {
+            "SDC_FILE": "$(location :mock-array-constraints)",
+        },
+        "floorplan": MOCK_ARRAY_ELEMENT_ALL | MOCK_ARRAY_ELEMENT_FLOORPLAN_PLACE | {
+            "DIE_AREA": "0 0 43.2 43.2",
+            "CORE_AREA": "1.08 1.08 42.120000000000005 42.120000000000005",
+            "PDN_TCL": "$(PLATFORM_DIR)/openRoad/pdn/BLOCK_grid_strategy.tcl",
+        },
+        "place": MOCK_ARRAY_ELEMENT_ALL | MOCK_ARRAY_ELEMENT_FLOORPLAN_PLACE | {
+        },
+        "cts": MOCK_ARRAY_ELEMENT_ALL | {
+        },
+        "route": MOCK_ARRAY_ELEMENT_ALL | {
+            # If this design isn't quickly done in detailed routing, something is wrong.
+            # At time of adding this option, only 3 iterations were needed for 0
+            # violations.
+            "DETAILED_ROUTE_ARGS": "-bottom_routing_layer M2 -top_routing_layer M5 -save_guide_updates -verbose 1 -droute_end_iter 10",
+            # since we are specifying DETAILED_ROUTE_ARGS, we need to communicate the
+            # same information to other stages in the flow.
+            "MIN_ROUTING_LAYER": "M2",
+            "MAX_ROUTING_LAYER": "M5",
+        },
+        "final": MOCK_ARRAY_ELEMENT_ALL | {
+            "PWR_NETS_VOLTAGES": "",
+            "GND_NETS_VOLTAGES": "",
+        }
+    },
+    verilog_files = glob(include=["designs/src/mock-array/*.v"]),
+    stage_sources = {
+        "synth": mock_array_all_sources + [":mock-array-constraints"],
+        "floorplan": mock_array_all_sources + [":mock-array-element-io"],
+        "place": mock_array_all_sources + [":mock-array-element-io"],
+        "cts": mock_array_all_sources,
+        "route": mock_array_all_sources + [":mock-array-fastroute"],
+        "final": mock_array_all_sources,
+    },
+)
+
