@@ -104,13 +104,7 @@ if {[info exists ::env(FOOTPRINT_TCL)]} {
 if { [info exists ::env(REMOVE_ABC_BUFFERS)] && $::env(REMOVE_ABC_BUFFERS) == 1 } {
   remove_buffers
 } else {
-  set additional_args "-verbose"
-  append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
-  append_env_var additional_args TNS_END_PERCENT -repair_tns 1
-  append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
-  append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
-  append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
-  repair_timing {*}$additional_args
+  repair_timing_helper 0
 }
 
 ##### Restructure for timing #########
