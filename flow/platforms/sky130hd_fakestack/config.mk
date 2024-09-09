@@ -95,8 +95,7 @@ export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # Endcap and Welltie cells
 export TAP_CELL_NAME = sky130_fd_sc_hd__tapvpwrvgnd_1
-export ENDCAP_CELL_NAME = $(TAP_CELL_NAME)
-export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
+export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 
 export MACRO_PLACE_HALO ?= 40 40
 export MACRO_PLACE_CHANNEL ?= 80 80

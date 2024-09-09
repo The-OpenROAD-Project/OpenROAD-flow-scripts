@@ -711,7 +711,11 @@ $(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb 
 
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
+ifeq ($(TAPCELL_TCL),)
+$(eval $(call do-copy,2_5_floorplan_tapcell,2_4_floorplan_macro.odb))
+else
 $(eval $(call do-step,2_5_floorplan_tapcell,$(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL),tapcell))
+endif
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------

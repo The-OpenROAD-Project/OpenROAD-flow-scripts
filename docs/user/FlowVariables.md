@@ -147,9 +147,8 @@ Note:
 | `GUI_NO_TIMING`       | Skip loading timing for a faster GUI load.                                                                                                                                       |
 | `GUI_SOURCE` | Source the script. |
 | `GUI_ARGS` | OpenROAD command line options for gui_ and open_ targets, typically set tup `-exit` in combination with GUI_SOURCE to run a script and exit. |
-| `FILL_CELLS`          | Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped	    |
-| `TAP_CELL_NAME`       | Name of the cell to use in tap cell insertion. If not set or empty, tap cell insertion may be skipped (based on platform) |
-| `ENDCAP_CELL_NAME`    | Name of the cell to use in end cap insertion. If not set or empty, end cap insertion may be skipped (based on platform)   |
+| `FILL_CELLS`          | Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.	    |
+| `TAP_CELL_NAME`       | Name of the cell to use in tap cell insertion. |
 
 
 ### Placement

@@ -17,7 +17,7 @@ export GDS_FILES = $(wildcard $(PLATFORM_DIR)/gds/*.gds) \
 export DONT_USE_CELLS += 
 
 # Define fill cells
-export FILL_CELLS = sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc_hs__fill_4 sky130_fd_sc_hs__fill_8
+export FILL_CELLS ?= sky130_fd_sc_hs__fill_1 sky130_fd_sc_hs__fill_2 sky130_fd_sc_hs__fill_4 sky130_fd_sc_hs__fill_8
 
 # -----------------------------------------------------
 #  Yosys
@@ -56,8 +56,7 @@ export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # Endcap and Welltie cells
 export TAP_CELL_NAME = sky130_fd_sc_hs__tapvpwrvgnd_1
-export ENDCAP_CELL_NAME = $(TAP_CELL_NAME)
-export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
+export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 
 export MACRO_PLACE_HALO ?= 40 40
 export MACRO_PLACE_CHANNEL ?= 80 80

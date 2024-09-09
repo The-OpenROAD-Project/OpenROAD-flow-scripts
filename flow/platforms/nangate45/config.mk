@@ -58,8 +58,7 @@ export PDN_TCL ?= $(PLATFORM_DIR)/grid_strategy-M1-M4-M7.tcl
 
 # Endcap and Welltie cells
 export TAP_CELL_NAME = TAPCELL_X1
-export ENDCAP_CELL_NAME = $(TAP_CELL_NAME)
-export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
+export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 
 export MACRO_PLACE_HALO ?= 22.4 15.12
 export MACRO_PLACE_CHANNEL ?= 18.8 19.95
