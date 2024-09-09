@@ -80,7 +80,7 @@ fi
 # Run Autotuner CI specifically for gcd on selected platforms.
 RUN_AUTOTUNER=0
 case $DESIGN_NAME in
-  "gcd" "aes" "ibex")
+  "gcd" | "aes" | "ibex")
     RUN_AUTOTUNER=1
     ;;
 esac
