@@ -72,16 +72,7 @@ proc global_route_helper {} {
     puts "Repair setup and hold violations..."
     estimate_parasitics -global_routing
 
-    # process user settings
-    set additional_args "-verbose"
-    append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
-    append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
-    append_env_var additional_args TNS_END_PERCENT -repair_tns 1
-    append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
-    append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
-    append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
-    puts "repair_timing [join $additional_args " "]"
-    repair_timing {*}$additional_args
+    repair_timing_helper
 
     if {[info exist ::env(DETAILED_METRICS)]} {
       report_metrics 5 "global route post repair timing"
