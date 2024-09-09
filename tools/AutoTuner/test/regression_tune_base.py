@@ -69,6 +69,9 @@ class BaseTuneRegressionBaseTest(unittest.TestCase):
             f" tune --samples 10"
         )
 
+    def test_tune(self):
+        raise NotImplementedError("Subclasses must implement this method.")
+
 
 class ASAP7TuneRegressionGCDTest(BaseTuneRegressionBaseTest):
     platform = "asap7"
@@ -154,6 +157,54 @@ class IHPSG13G2TuneRegressionAESTest(BaseTuneRegressionBaseTest):
     platform = "ihp-sg13g2"
     design = "aes"
     qor = 544.835
+
+    def test_tune(self):
+        out = subprocess.run(self.command, shell=True, check=True)
+        successful = out.returncode == 0
+        self.assertTrue(successful)
+
+        # check if final mean QoR is within confidence interval of expected value
+        df = get_latest_data(f"../../../../flow/logs/{self.platform}/{self.design}")
+        mean_qor = df["minimum"].mean()
+        self.assertLess(abs(mean_qor - self.qor) / self.qor, (1 - self.THRESHOLD))
+
+
+class ASAP7TuneRegressionIBEXTest(BaseTuneRegressionBaseTest):
+    platform = "asap7"
+    design = "ibex"
+    qor = 205678.545
+
+    def test_tune(self):
+        out = subprocess.run(self.command, shell=True, check=True)
+        successful = out.returncode == 0
+        self.assertTrue(successful)
+
+        # check if final mean QoR is within confidence interval of expected value
+        df = get_latest_data(f"../../../../flow/logs/{self.platform}/{self.design}")
+        mean_qor = df["minimum"].mean()
+        self.assertLess(abs(mean_qor - self.qor) / self.qor, (1 - self.THRESHOLD))
+
+
+class SKY130HDTuneRegressionIBEXTest(BaseTuneRegressionBaseTest):
+    platform = "sky130hd"
+    design = "ibex"
+    qor = 1425.996
+
+    def test_tune(self):
+        out = subprocess.run(self.command, shell=True, check=True)
+        successful = out.returncode == 0
+        self.assertTrue(successful)
+
+        # check if final mean QoR is within confidence interval of expected value
+        df = get_latest_data(f"../../../../flow/logs/{self.platform}/{self.design}")
+        mean_qor = df["minimum"].mean()
+        self.assertLess(abs(mean_qor - self.qor) / self.qor, (1 - self.THRESHOLD))
+
+
+class IHPSG13G2TuneRegressionIBEXTest(BaseTuneRegressionBaseTest):
+    platform = "ihp-sg13g2"
+    design = "ibex"
+    qor = 1422.309
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
