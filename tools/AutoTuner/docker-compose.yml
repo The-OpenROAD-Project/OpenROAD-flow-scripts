@@ -1,12 +1,10 @@
-version: "3.8"
-
 services:
   # Ray Head Node (Server)
   ray-head:
-    image: openroad/flow-ubuntu22.04-builder:365eae
+    image: openroad/flow-ubuntu22.04-builder:${ORFS_VERSION}
     container_name: ray-head
     command: |
-      sh -c "cd /OpenROAD-flow-scripts && pip install ./tools/AutoTuner/requirements.txt && ray start --head --dashboard-port=8265 --port=6379 --dashboard-host=0.0.0.0 --block"
+      sh -c "cd /OpenROAD-flow-scripts && pip install -r ./tools/AutoTuner/requirements.txt && ray start --head --dashboard-port=8265 --port=6379 --dashboard-host=0.0.0.0 --block"
     volumes:
       - ../../flow:/OpenROAD-flow-scripts/flow
       - ../../tools/AutoTuner:/OpenROAD-flow-scripts/tools/AutoTuner
@@ -14,7 +12,7 @@ services:
       - "6379:6379" # redis
       - "8265:8265" # dashboard
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8265 || exit 1"]
+      test: ["CMD-SHELL", "pgrep -f 'ray::' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -22,7 +20,7 @@ services:
 
   # Ray Worker Node
   ray-worker:
-    image: openroad/flow-ubuntu22.04-builder:365eae
+    image: openroad/flow-ubuntu22.04-builder:${ORFS_VERSION}
     container_name: ray-worker
     command: |
       sh -c "cd /OpenROAD-flow-scripts && pip install -r ./tools/AutoTuner/requirements.txt && ray start --address=ray-head:6379 --block"

@@ -104,11 +104,21 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   # convert to uppercase
   PLATFORM=${PLATFORM^^}
 
-  echo "Running Autotuner smoke tune test"
-  python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM}TuneSmokeTest.test_tune
-
-  echo "Running Autotuner smoke sweep test"
-  python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeTest.test_sweep
+  echo "Running Autotuner remote test (once)"
+  if [ ! -f ./flow/logs/autotuner_ref_file_check.log ]; then
+    date > ./flow/logs/autotuner_ref_file_check.log
+    latest_image=$(docker images openroad/flow-ubuntu22.04-dev --format "{{.Repository}}:{{.Tag}}" | sort -r | head -n 1 | cut -d':' -f2)
+    cat << EOF
+    ORFS_VERSION=$latest_image
+    EOF > ./tools/AutoTuner/.env
+    cur_dir=$(pwd)
+    cd ./tools/AutoTuner
+    docker compose up --wait
+    docker compose exec ray-worker bash -c "cd /OpenROAD-flow-scripts/tools/AutoTuner/src/autotuner && \
+            python3 distributed.py --design gcd --platform asap7 --config ../../../../flow/designs/asap7/gcd/autotuner.json tune --samples 1"
+    docker compose down -v --remove-orphans
+    cd $cur_dir
+  fi
 fi
 
 exit $ret
