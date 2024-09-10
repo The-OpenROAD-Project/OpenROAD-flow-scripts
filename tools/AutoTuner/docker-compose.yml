@@ -8,6 +8,7 @@ services:
     volumes:
       - ../../flow:/OpenROAD-flow-scripts/flow
       - ../../tools/AutoTuner:/OpenROAD-flow-scripts/tools/AutoTuner
+      - /shared-data/autotuner:/shared-data/autotuner
     ports:
       - "6379:6379" # redis
       - "8265:8265" # dashboard
@@ -27,6 +28,7 @@ services:
     volumes:
       - ../../flow:/OpenROAD-flow-scripts/flow
       - ../../tools/AutoTuner:/OpenROAD-flow-scripts/tools/AutoTuner
+      - /shared-data/autotuner:/shared-data/autotuner
     healthcheck:
       test: ["CMD-SHELL", "pgrep -f 'ray::' || exit 1"]
       interval: 30s
