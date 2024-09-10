@@ -136,6 +136,9 @@ export TNS_END_PERCENT ?=100
 
 # Default routing layer adjustment
 export ROUTING_LAYER_ADJUSTMENT ?= 0.5
+export RECOVER_POWER ?= 0
+export SKIP_INCREMENTAL_REPAIR ?= 0
+export DETAILED_METRICS ?= 0
 
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY

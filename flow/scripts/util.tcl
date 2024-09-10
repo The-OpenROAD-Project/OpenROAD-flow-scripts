@@ -29,3 +29,18 @@ proc repair_timing_helper { {hold_margin 1} } {
   puts "repair_timing [join $additional_args " "]"
   repair_timing {*}$additional_args
 }
+
+proc recover_power {} {
+  if { $::env(RECOVER_POWER) == 0 } {
+    return
+  }
+  puts "Downsizing/switching to higher Vt for non critical gates for power recovery"
+  puts "Percent of paths optimized $::env(RECOVER_POWER)"
+  report_tns
+  report_wns
+  report_power
+  repair_timing -recover_power $::env(RECOVER_POWER)
+  report_tns
+  report_wns
+  report_power
+}

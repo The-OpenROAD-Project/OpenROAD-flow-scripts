@@ -46,7 +46,7 @@ set_dont_use $::env(DONT_USE_CELLS)
 utl::push_metrics_stage "cts__{}__pre_repair"
 
 estimate_parasitics -placement
-if {[info exist ::env(DETAILED_METRICS)]} {
+if { $::env(DETAILED_METRICS) } {
   report_metrics 4 "cts pre-repair"
 }
 utl::pop_metrics_stage
@@ -55,7 +55,7 @@ repair_clock_nets
 
 utl::push_metrics_stage "cts__{}__post_repair"
 estimate_parasitics -placement
-if {[info exist ::env(DETAILED_METRICS)]} {
+if { $::env(DETAILED_METRICS) } {
   report_metrics 4 "cts post-repair"
 }
 utl::pop_metrics_stage
