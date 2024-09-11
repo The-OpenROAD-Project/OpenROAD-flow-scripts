@@ -13,7 +13,8 @@ export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.65
 
-export BLOCKS ?= aes_rcon aes_sbox
+export BLOCKS ?= aes_rcon aes_key_expand_128
+
 export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = 1
 
