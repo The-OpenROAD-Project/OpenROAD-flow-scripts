@@ -18,6 +18,10 @@ export BLOCKS ?= aes_rcon aes_key_expand_128
 export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = 1
 
+ifneq ($(BLOCKS),)
+  export PDN_TCL               = $(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl
+endif
+
 export PLACE_PINS_ARGS = -annealing
 export HAS_IO_CONSTRAINTS = 0
 
