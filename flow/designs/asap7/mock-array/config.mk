@@ -61,14 +61,12 @@ power:
 # violations.
 export DETAILED_ROUTE_ARGS   = -bottom_routing_layer M2 -top_routing_layer M7 -save_guide_updates -verbose 1 -droute_end_iter 15
 
-# since we are specifying DETAILED_ROUTE_ARGS, we need to communicate the
-# same information to other stages in the flow.
 export MIN_ROUTING_LAYER = M2
 export MAX_ROUTING_LAYER = M7
+export ROUTING_LAYER_ADJUSTMENT = 0.45
 
 # works with 28 or more iterations as of writing, so give it a few more.
 export GLOBAL_ROUTE_ARGS=-congestion_iterations 40 -verbose
-export FASTROUTE_TCL = ./designs/$(PLATFORM)/mock-array/fastroute.tcl
 
 # ensure we have some rows, so we don't get a bad clock skew.
 export MACRO_HALO_X            = 0.5
