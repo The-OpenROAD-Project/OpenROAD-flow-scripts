@@ -108,9 +108,7 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   if [ ! -f ./flow/logs/autotuner_ref_file_check.log ]; then
     date > ./flow/logs/autotuner_ref_file_check.log
     latest_image=$(docker images openroad/flow-ubuntu22.04-dev --format "{{.Repository}}:{{.Tag}}" | sort -r | head -n 1 | cut -d':' -f2)
-    cat << EOF
-    ORFS_VERSION=$latest_image
-    EOF > ./tools/AutoTuner/.env
+    sed 's|{{ORFS_VERSION}}|'"$latest_image"'|g' ./tools/AutoTuner/.env.example > ./tools/AutoTuner/.env
     cur_dir=$(pwd)
     cd ./tools/AutoTuner
     docker compose up --wait
