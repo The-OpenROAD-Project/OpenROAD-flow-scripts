@@ -377,7 +377,7 @@ ifeq ($(wildcard $(3)),)
 # each macro.
 block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
 $(1) $(2) &:
-	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk generate_abstract
+	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=$$(shell dirname $$(DESIGN_CONFIG))/block.mk generate_abstract
 else
 # There is a unique config.mk for this Verilog module
 $(1) $(2) &:
