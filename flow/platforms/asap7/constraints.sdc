@@ -85,7 +85,14 @@ set_max_delay $max_delay -from $non_clk_inputs -to [all_outputs]
 # This allows us to view the different groups
 # in the histogram in the GUI and also includes these
 # groups in the report
-group_path -name in2reg -from $non_clk_inputs -to [all_registers]
-group_path -name reg2out -from [all_registers] -to [all_outputs]
-group_path -name reg2reg -from [all_registers] -to [all_registers]
-group_path -name in2out -from $non_clk_inputs -to [all_outputs]
+proc validate_and_group_path {name from_list to_list} {
+    if {[llength $from_list] == 0 || [llength $to_list] == 0} {
+        return
+    }
+    group_path -name $name -from $from_list -to $to_list
+}
+
+validate_and_group_path in2reg $non_clk_inputs [all_registers]
+validate_and_group_path reg2out [all_registers] [all_outputs]
+validate_and_group_path reg2reg [all_registers] [all_registers]
+validate_and_group_path in2out $non_clk_inputs [all_outputs]
