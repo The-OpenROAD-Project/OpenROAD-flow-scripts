@@ -554,7 +554,7 @@ do-synth:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 ifeq ($(DO_NAJA), 1)
 	export PYTHONPATH=$(NAJA_INSTALL)/lib/python; \
-	($(TIME_CMD) $(NAJA_INSTALL)/bin/naja_edit -f verilog -t verilog -i $(RESULTS_DIR)/1_1_yosys.v -o $(RESULTS_DIR)/1_1_naja.v -a all -p $(NAJA_INSTALL)/shared/primitives/nangate45.py 2>&1) | tee $(LOG_DIR)/1_naja.log
+	($(TIME_CMD) $(NAJA_INSTALL)/bin/naja_edit -f verilog -t verilog -i $(RESULTS_DIR)/1_1_yosys.v -o $(RESULTS_DIR)/1_1_naja.v -a all -p $(DONT_USE_SC_LIB) 2>&1) | tee $(LOG_DIR)/1_naja.log
 	cp $(RESULTS_DIR)/1_1_naja.v $(RESULTS_DIR)/1_synth.v
 else
 	cp $(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.v
