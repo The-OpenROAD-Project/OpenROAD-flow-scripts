@@ -77,20 +77,21 @@ if [ $ret -eq 0 ] && grep -q 'power:' <(echo $TARGETS); then
   ret=$(( ret + $? ))
 fi
 
-# Run Autotuner CI specifically for gcd/selected platforms.
+# Run Autotuner CI specifically for gcd on selected platforms.
 RUN_AUTOTUNER=0
 case $DESIGN_NAME in
   "gcd")
     RUN_AUTOTUNER=1
     ;;
 esac
-if [ $RUN_AUTOTUNER -eq 1 ]; then
-  case $PLATFORM in
-       "gf180" | "nangate45" | "sky130hd_fakestack" | "sky130hs")
-        RUN_AUTOTUNER=0
-        ;;
-  esac
-fi
+case $PLATFORM in
+     "asap7" | "sky130hd" | "ihp-sg13g2" )
+      # Keep RUN_AUTOTUNER enabled only for these platforms
+      ;;
+     *)
+      RUN_AUTOTUNER=0
+      ;;
+esac
 
 if [ $RUN_AUTOTUNER -eq 1 ]; then
   # change directory to the root of the repo
