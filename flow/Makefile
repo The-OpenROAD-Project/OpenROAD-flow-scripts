@@ -134,6 +134,12 @@ export GENERATE_ARTIFACTS_ON_FAILURE ?= 0
 # Try fixing all violating endpoints by default (reduce to 5% for runtime)
 export TNS_END_PERCENT ?=100
 
+# Default routing layer adjustment
+export ROUTING_LAYER_ADJUSTMENT ?= 0.5
+export RECOVER_POWER ?= 0
+export SKIP_INCREMENTAL_REPAIR ?= 0
+export DETAILED_METRICS ?= 0
+
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY
 export QT_QPA_PLATFORM ?= offscreen
@@ -336,7 +342,7 @@ endif
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
 ifneq ($(shell command -v stdbuf),)
-  STDBUF_CMD = stdbuf -o L
+  STDBUF_CMD ?= stdbuf -o L
 endif
 
 #-------------------------------------------------------------------------------
