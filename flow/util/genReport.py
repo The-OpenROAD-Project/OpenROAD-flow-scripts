@@ -246,7 +246,9 @@ design_list = dict()
 
 for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
     dir_list = log_dir.split(os.sep)
-    if len(dir_list) != 4:
+    # Handles autotuner folders, which do not have `report.log` natively.
+    # TODO: Can we log something for autotuner?
+    if len(dir_list) != 4 or "test-" in dir_list[-1]:
         continue
     report_dir = log_dir.replace(LOGS_FOLDER, REPORTS_FOLDER)
 
