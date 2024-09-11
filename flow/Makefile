@@ -2,6 +2,11 @@
 # file to avoid having to adding the to the make command line.
 -include settings.mk
 
+# Include design and platform configuration before setting default options
+# in this file. This allows the DESIGN_CONFIG to set different defaults than
+# this file.
+include $(DESIGN_CONFIG)
+
 # ==============================================================================
 # Uncomment or add the design to run
 # ==============================================================================
@@ -139,6 +144,7 @@ export ROUTING_LAYER_ADJUSTMENT ?= 0.5
 export RECOVER_POWER ?= 0
 export SKIP_INCREMENTAL_REPAIR ?= 0
 export DETAILED_METRICS ?= 0
+export EQUIVALENCE_CHECK ?= 0
 
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY
@@ -190,10 +196,6 @@ export WORK_HOME     ?= .
 export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
 export TEST_DIR      ?= $(FLOW_HOME)/test
-
-#-------------------------------------------------------------------------------
-# Include design and platform configuration
-include $(DESIGN_CONFIG)
 
 PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
