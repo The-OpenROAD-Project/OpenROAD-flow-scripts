@@ -347,7 +347,7 @@ def parse_flow_variables():
     makefile_path = os.path.join(cur_path, "../../../../flow/")
     initial_path = os.path.abspath(os.getcwd())
     os.chdir(makefile_path)
-    result = subprocess.run(["make", "vars"])
+    result = subprocess.run(["make", "vars", f"PLATFORM={args.platform}"])
     if result.returncode != 0:
         print(f"[ERROR TUN-0018] Makefile failed with error code {result.returncode}.")
         sys.exit(1)
@@ -532,6 +532,7 @@ def openroad(base_dir, parameters, flow_variant, path=""):
     make_command = export_command
     make_command += f"make -C {base_dir}/flow DESIGN_CONFIG=designs/"
     make_command += f"{args.platform}/{args.design}/config.mk"
+    make_command += f" PLATFORM={args.platform}"
     make_command += f" FLOW_VARIANT={flow_variant} {parameters}"
     make_command += f" EQUIVALENCE_CHECK=0"
     make_command += f" NPROC={args.openroad_threads} SHELL=bash"
