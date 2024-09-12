@@ -2,11 +2,6 @@
 # file to avoid having to adding the to the make command line.
 -include settings.mk
 
-# Include design and platform configuration before setting default options
-# in this file. This allows the DESIGN_CONFIG to set different defaults than
-# this file.
-include $(DESIGN_CONFIG)
-
 # ==============================================================================
 # Uncomment or add the design to run
 # ==============================================================================
@@ -108,6 +103,11 @@ include $(DESIGN_CONFIG)
 
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
+
+# Include design and platform configuration before setting default options
+# in this file. This allows the DESIGN_CONFIG to set different defaults than
+# this file.
+include $(DESIGN_CONFIG)
 
 # For instance Bazel needs artifacts (.odb and .rpt files) on a failure to
 # allow the user to save hours on re-running the failed step locally, but
