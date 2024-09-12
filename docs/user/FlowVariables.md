@@ -274,6 +274,8 @@ configuration file.
 | `MACRO_HALO_X`         | Set macro halo for x-direction. Only available for ASAP7 PDK. |
 | `MACRO_HALO_Y`         | Set macro halo for y-direction. Only available for ASAP7 PDK. |
 
+The various methods to specify the die and core area(`FLOORPLAN_DEF`, `FOOTPRINT`, `DIE_AREA`, `CORE_AREA` and `CORE_UTILIZATION`) are mutually exclusive. If two methods are specified, floorplan.tcl will exit with an error requiring that a single method is used.
+
 #### Placement
 
 
