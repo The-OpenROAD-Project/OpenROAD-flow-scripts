@@ -69,11 +69,9 @@ set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
 
 
 if {![info exist ::env(SKIP_ANTENNA_REPAIR_POST_DRT)]} {
-  set repair_antennas_iters 0
+  set repair_antennas_iters 1
+  repair_antennas
   while {[check_antennas] && $repair_antennas_iters < 5} {
-    foreach inst [[ord::get_db_block] getInsts] {
-      $inst setPlacementStatus "FIRM"
-    }
     repair_antennas
     detailed_route {*}$all_args
     incr repair_antennas_iters
