@@ -57,7 +57,7 @@ class ResumeCheck(unittest.TestCase):
             f" {c}"
             for c in options
         ]
-        self.failCommands = []  # TODO
+
 
     def test_tune_resume(self):
         # Goal is to first run the first config (without resume) and then run the second config (with resume)
