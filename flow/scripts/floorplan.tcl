@@ -44,48 +44,57 @@ if { [info exists ::env(ADDITIONAL_SITES)]} {
   append additional_args " -additional_sites $::env(ADDITIONAL_SITES)"
 }
 
-# Initialize floorplan by reading in floorplan DEF
-# ---------------------------------------------------------------------------
-if {[info exists ::env(FLOORPLAN_DEF)]} {
+proc env_var_exists_and_non_empty {env_var} {
+    return [expr {[info exists ::env($env_var)] && ![string equal $::env($env_var) ""]}]
+}
+
+set use_floorplan_def [env_var_exists_and_non_empty FLOORPLAN_DEF]
+set use_footprint [env_var_exists_and_non_empty FOOTPRINT]
+set use_die_and_core_area [expr {[env_var_exists_and_non_empty DIE_AREA] && [env_var_exists_and_non_empty CORE_AREA]}]
+set use_core_utilization [env_var_exists_and_non_empty CORE_UTILIZATION]
+
+set methods_defined [expr {$use_floorplan_def + $use_footprint + $use_die_and_core_area + $use_core_utilization}]
+if {$methods_defined > 1} {
+    puts "ERROR: More than one floorplan initialization method specified"
+    exit 1
+}
+
+if {$use_floorplan_def} {
+    # Initialize floorplan by reading in floorplan DEF
     puts "Read in Floorplan DEF to initialize floorplan:  $env(FLOORPLAN_DEF)"
     read_def -floorplan_initialize $env(FLOORPLAN_DEF)
-# Initialize floorplan using ICeWall FOOTPRINT
-# ----------------------------------------------------------------------------
-} elseif {[info exists ::env(FOOTPRINT)]} {
+} elseif {$use_footprint} {
+    # Initialize floorplan using ICeWall FOOTPRINT
+    ICeWall load_footprint $env(FOOTPRINT)
 
-  ICeWall load_footprint $env(FOOTPRINT)
+    initialize_floorplan \
+        -die_area  [ICeWall get_die_area] \
+        -core_area [ICeWall get_core_area] \
+        -site      $::env(PLACE_SITE)
 
-  initialize_floorplan \
-    -die_area  [ICeWall get_die_area] \
-    -core_area [ICeWall get_core_area] \
-    -site      $::env(PLACE_SITE)
-
-  ICeWall init_footprint $env(SIG_MAP_FILE)
-
-# Initialize floorplan using CORE_UTILIZATION
-# ----------------------------------------------------------------------------
-} elseif {[info exists ::env(CORE_UTILIZATION)] && $::env(CORE_UTILIZATION) != "" } {
-  set aspect_ratio 1.0
-  if {[info exists ::env(CORE_ASPECT_RATIO)] && $::env(CORE_ASPECT_RATIO) != ""} {
-    set aspect_ratio $::env(CORE_ASPECT_RATIO)
-  }
-  set core_margin 1.0
-  if {[info exists ::env(CORE_MARGIN)] && $::env(CORE_MARGIN) != ""} {
-    set core_margin $::env(CORE_MARGIN)
-  }
-  initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
-                       -aspect_ratio $aspect_ratio \
-                       -core_space $core_margin \
-                       -site $::env(PLACE_SITE) \
-                       {*}$additional_args
-
-# Initialize floorplan using DIE_AREA/CORE_AREA
-# ----------------------------------------------------------------------------
+    ICeWall init_footprint $env(SIG_MAP_FILE)
+} elseif {$use_die_and_core_area} {
+    initialize_floorplan -die_area $::env(DIE_AREA) \
+                         -core_area $::env(CORE_AREA) \
+                         -site $::env(PLACE_SITE) \
+                         {*}$additional_args
+} elseif {$use_core_utilization} {
+    set aspect_ratio 1.0
+    if {[env_var_exists_and_non_empty "CORE_ASPECT_RATIO"]} {
+        set aspect_ratio $::env(CORE_ASPECT_RATIO)
+    }
+    set core_margin 1.0
+    if {[env_var_exists_and_non_empty "CORE_MARGIN"]} {
+        set core_margin $::env(CORE_MARGIN)
+    }
+    initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
+                         -aspect_ratio $aspect_ratio \
+                         -core_space $core_margin \
+                         -site $::env(PLACE_SITE) \
+                         {*}$additional_args
 } else {
-  initialize_floorplan -die_area $::env(DIE_AREA) \
-                       -core_area $::env(CORE_AREA) \
-                       -site $::env(PLACE_SITE) \
-                       {*}$additional_args
+    puts "ERROR: No floorplan initialization method specified"
+    exit 1
 }
 
 if { [info exists ::env(MAKE_TRACKS)] } {
@@ -100,8 +109,8 @@ if {[info exists ::env(FOOTPRINT_TCL)]} {
   source $::env(FOOTPRINT_TCL)
 }
 
-# remove buffers inserted by yosys/abc
 if { [info exists ::env(REMOVE_ABC_BUFFERS)] && $::env(REMOVE_ABC_BUFFERS) == 1 } {
+  # remove buffers inserted by yosys/abc
   remove_buffers
 } else {
   repair_timing_helper 0

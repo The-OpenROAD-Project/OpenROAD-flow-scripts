@@ -264,11 +264,11 @@ configuration file.
 
 | Variable              | Description                                                                                                                                                                                                                                |
 |-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `CORE_UTILIZATION`    | The core utilization percentage (0-100). Overrides `DIE_AREA` and `CORE_AREA`.                                                                                                                                                                   |
-| `CORE_ASPECT_RATIO`   | The core aspect ratio (height / width). This values is ignored if `CORE_UTILIZATION` undefined.                                                                                                                                            |
-| `CORE_MARGIN`         | The margin between the core area and die area, in multiples of SITE heights. The margin is applied to each side. This variable is ignored if `CORE_UTILIZATION` is undefined.                                                              |
-| `DIE_AREA`            | The die area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2). This variable is ignored if `CORE_UTILIZATION` and `CORE_ASPECT_RATIO` are defined.                                                       |
-| `CORE_AREA`           | The core area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2). This variable is ignored if `CORE_UTILIZATION` and `CORE_ASPECT_RATIO` are defined.                                                      |
+| `CORE_UTILIZATION`    | The core utilization percentage (0-100). |
+| `CORE_ASPECT_RATIO`   | The core aspect ratio (height / width). This values is ignored if `CORE_UTILIZATION` undefined. |
+| `CORE_MARGIN`         | The margin between the core area and die area, in multiples of SITE heights. The margin is applied to each side. This variable is ignored if `CORE_UTILIZATION` is undefined. |
+| `DIE_AREA`            | The die area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2). |
+| `CORE_AREA`           | The core area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2). |
 | `RESYNTH_AREA_RECOVER` | Enable re-synthesis for area reclaim. |
 | `RESYNTH_TIMING_RECOVER` | Enable re-synthesis for timing optimization. | 
 | `MACRO_HALO_X`         | Set macro halo for x-direction. Only available for ASAP7 PDK. |
