@@ -3,7 +3,7 @@
         "type": "int",
         "minmax": [
             50,
-            60
+            54
         ],
         "step": 1
     }

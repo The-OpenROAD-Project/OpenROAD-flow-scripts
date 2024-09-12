@@ -72,13 +72,13 @@ if {[info exist ::env(CTS_SNAPSHOTS)]} {
 }
 
 if {[info exists ::env(SKIP_CTS_REPAIR_TIMING)] == 0 || $::env(SKIP_CTS_REPAIR_TIMING) == 0} {
-  if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
+  if {$::env(EQUIVALENCE_CHECK)} {
       write_eqy_verilog 4_before_rsz.v
   }
 
   repair_timing_helper
 
-  if {[info exists ::env(EQUIVALENCE_CHECK)] && $::env(EQUIVALENCE_CHECK) == 1} {
+  if {$::env(EQUIVALENCE_CHECK)} {
       run_equivalence_test
   }
 
