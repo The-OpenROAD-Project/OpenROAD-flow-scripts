@@ -1092,7 +1092,7 @@ if __name__ == "__main__":
             local_dir=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
-            resources_per_trial={"cpu": args.resources_per_trial},
+            resources_per_trial={"cpu": os.cpu_count()/args.jobs},
             log_to_file=["trail-out.log", "trail-err.log"],
             trial_name_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
             trial_dirname_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
