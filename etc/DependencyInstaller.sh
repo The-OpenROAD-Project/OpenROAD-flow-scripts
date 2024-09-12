@@ -126,7 +126,9 @@ _installUbuntuPackages() {
         zlib1g-dev
 
     # install KLayout
-    if _versionCompare $1 -ge 23.04; then
+    if  [[ $1 == "rodete" ]]; then
+        apt-get -y install --no-install-recommends klayout python3-pandas
+    elif _versionCompare "$1" -ge 23.04; then
         apt-get -y install --no-install-recommends klayout python3-pandas
     else
         arch=$(uname -m)
@@ -160,6 +162,14 @@ _installUbuntuPackages() {
         rm -rf "${baseDir}"
     fi
 
+    if command -v docker &> /dev/null; then
+        # The user can uninstall docker if they want to reinstall it,
+        # and also this allows the user to choose drop in replacements
+        # for docker, such as podman-docker
+        echo "Docker is already installed, skip docker reinstall."
+        return 0
+    fi
+
     # Add Docker's official GPG key:
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
@@ -172,11 +182,13 @@ _installUbuntuPackages() {
         tee /etc/apt/sources.list.d/docker.list > /dev/null
 
     apt-get -y update
-    apt-get -y install --no-install-recommends \
-        docker-ce \
-        docker-ce-cli \
-        containerd.io \
-        docker-buildx-plugin
+    if [[ $1 != "rodete" ]]; then
+        apt-get -y install --no-install-recommends \
+            docker-ce \
+            docker-ce-cli \
+            containerd.io \
+            docker-buildx-plugin
+    fi
 }
 
 _installDarwinPackages() {
@@ -315,8 +327,11 @@ case "${os}" in
             _installCommon
         fi
         ;;
-    "Ubuntu" )
+    "Ubuntu" | "Debian GNU/Linux rodete" )
         version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
+        if [[ -z ${version} ]]; then
+            version=$(awk -F= '/^VERSION_CODENAME/{print $2}' /etc/os-release | sed 's/"//g')
+        fi
         if [[ ${CI} == "yes" ]]; then
             echo "Installing CI Tools"
             _installCI
@@ -327,7 +342,9 @@ case "${os}" in
             _installUbuntuCleanUp
         fi
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-            if _versionCompare ${version} -lt 23.04 ; then
+            if [[ $version == "rodete" ]]; then
+                echo "Skip common for rodete"
+            elif _versionCompare ${version} -lt 23.04 ; then
                 _installCommon
             fi
         fi

@@ -1,0 +1,24 @@
+module(
+    name = "orfs",
+    version = "0.0.1",
+    compatibility_level = 1,
+)
+
+bazel_dep(name = "bazel-orfs")
+git_override(
+    module_name = "bazel-orfs",
+    commit = "16eb5dd5b31bdeacc0b3006a71dbce29076e9850",
+    remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
+)
+
+# Read: https://github.com/The-OpenROAD-Project/bazel-orfs?tab=readme-ov-file#usage
+#
+# TL;DR
+#
+# 1. uncomment below
+# 2. comment git_override() above
+#
+#local_path_override(
+#   module_name = "bazel-orfs", path = "../bazel-orfs"
+#)
+

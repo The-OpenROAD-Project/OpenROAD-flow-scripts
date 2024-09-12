@@ -104,6 +104,11 @@
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
+# Include design and platform configuration before setting default options
+# in this file. This allows the DESIGN_CONFIG to set different defaults than
+# this file.
+include $(DESIGN_CONFIG)
+
 # For instance Bazel needs artifacts (.odb and .rpt files) on a failure to
 # allow the user to save hours on re-running the failed step locally, but
 # when working with a Makefile flow, it is more natural to fail the step
@@ -133,6 +138,13 @@ export GENERATE_ARTIFACTS_ON_FAILURE ?= 0
 # Default TNS_END_PERCENT value for post CTS timing repair
 # Try fixing all violating endpoints by default (reduce to 5% for runtime)
 export TNS_END_PERCENT ?=100
+
+# Default routing layer adjustment
+export ROUTING_LAYER_ADJUSTMENT ?= 0.5
+export RECOVER_POWER ?= 0
+export SKIP_INCREMENTAL_REPAIR ?= 0
+export DETAILED_METRICS ?= 0
+export EQUIVALENCE_CHECK ?= 0
 
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY
@@ -184,10 +196,6 @@ export WORK_HOME     ?= .
 export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
 export TEST_DIR      ?= $(FLOW_HOME)/test
-
-#-------------------------------------------------------------------------------
-# Include design and platform configuration
-include $(DESIGN_CONFIG)
 
 PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
@@ -332,7 +340,7 @@ endif
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
 ifneq ($(shell command -v stdbuf),)
-  STDBUF_CMD = stdbuf -o L
+  STDBUF_CMD ?= stdbuf -o L
 endif
 
 #-------------------------------------------------------------------------------
@@ -371,7 +379,7 @@ ifeq ($(wildcard $(3)),)
 # each macro.
 block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
 $(1) $(2) &:
-	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk generate_abstract
+	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=$$(shell dirname $$(DESIGN_CONFIG))/block.mk generate_abstract
 else
 # There is a unique config.mk for this Verilog module
 $(1) $(2) &:
