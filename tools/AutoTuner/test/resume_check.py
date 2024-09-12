@@ -76,7 +76,7 @@ class ResumeCheck(unittest.TestCase):
             successful = proc.returncode == 0
 
             if no_nodes and successful:
-                break           
+                break
             time.sleep(10)
 
         # Run the second config to completion
