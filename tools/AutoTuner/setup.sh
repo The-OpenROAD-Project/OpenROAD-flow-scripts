@@ -16,6 +16,6 @@ source "$venv_path"
 echo "Virtual environment activated successfully."
 
 # Make autotuner shared folder
-AUTOTUNER_SHARED_DIR=/shared-data/autotuner
-sudo mkdir -p $AUTOTUNER_SHARED_DIR
-sudo chmod 777 $AUTOTUNER_SHARED_DIR
+AUTOTUNER_SHARED_DIR=$HOME/.local/shared-data/autotuner
+mkdir -p $AUTOTUNER_SHARED_DIR
+chmod 777 $AUTOTUNER_SHARED_DIR
