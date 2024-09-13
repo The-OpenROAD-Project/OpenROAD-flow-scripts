@@ -835,6 +835,10 @@ clean_cts:
 .PHONY: route
 route: $(RESULTS_DIR)/5_route.odb \
        $(RESULTS_DIR)/5_route.sdc
+
+.PHONY: grt
+grt: $(RESULTS_DIR)/5_1_grt.odb
+
 # ==============================================================================
 
 
