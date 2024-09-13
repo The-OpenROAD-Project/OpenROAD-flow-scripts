@@ -461,8 +461,8 @@ def write_fast_route(variables, path):
     """
     Create a FastRoute Tcl file with parameters for current tuning iteration.
     """
-    # Handle case where the reference file does not exist
-    if FR_ORIGINAL == "":
+    # Handle case where the reference file does not exist (asap7 doesn't have reference)
+    if FR_ORIGINAL == "" and args.platform == "asap7":
         print("[ERROR TUN-0021] No FastRoute Tcl reference file provided.")
         sys.exit(1)
     layer_cmd = "set_global_routing_layer_adjustment"
