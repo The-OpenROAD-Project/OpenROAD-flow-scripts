@@ -72,6 +72,7 @@ Note:
 | `PDN_TCL`                            | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `IO_PLACER_H`                        | =            | =            | =             | =         | ?=        |
 | `IO_PLACER_V`                        | =            | =            | =             | =         | ?=        |
+| `FILL_CELLS`                         | =            | =            | =             | =         | =         |
 | Placement                            |              |              |               |           |           |
 | `CELL_PAD_IN_SITES_GLOBAL_PLACEMENT` | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `CELL_PAD_IN_SITES_DETAIL_PLACEMENT` | ?=           | ?=           | ?=            | ?=        | ?=        |
@@ -85,7 +86,6 @@ Note:
 | `EQUIVALENCE_CHECK`                  | ?=           | ?=           | ?=            | ?=        | ?=        |
 | `REMOVE_CELLS_FOR_EQY`               | ?=           | ?=           | ?=            | ?=        | ?=        |
 | Routing                              |              |              |               |           |           |
-| `FILL_CELLS`                         | =            | =            | =             | =         | =         |
 | `KLAYOUT_TECH_FILE`                  | =            | =            | =             | =         | =         |
 | `MAX_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
 | `MIN_ROUTING_LAYER`                  | =            | =            | =             | =         | ?=        |
@@ -147,6 +147,8 @@ Note:
 | `GUI_NO_TIMING`       | Skip loading timing for a faster GUI load.                                                                                                                                       |
 | `GUI_SOURCE` | Source the script. |
 | `GUI_ARGS` | OpenROAD command line options for gui_ and open_ targets, typically set tup `-exit` in combination with GUI_SOURCE to run a script and exit. |
+| `FILL_CELLS`          | Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.	    |
+| `TAP_CELL_NAME`       | Name of the cell to use in tap cell insertion. |
 
 
 ### Placement
@@ -189,7 +191,6 @@ Note:
 
 | Variable              | Description                                                             |
 |-----------------------|---------------------------------------------------------------------------------------------------|
-| `FILL_CELLS`          | Fill cells are used to fill empty sites.    							    |
 | `MIN_ROUTING_LAYER`   | The lowest metal layer name to be used in routing.                                                |
 | `MAX_ROUTING_LAYER`   | The highest metal layer name to be used in routing.                                               |
 | `DETAILED_ROUTE_ARGS` | Add additional arguments for debugging purpose during detail route.                               |
