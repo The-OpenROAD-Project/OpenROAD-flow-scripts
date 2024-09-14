@@ -112,8 +112,7 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeTest.test_sweep
 
   echo "Running Autotuner ref file test (only once)"
-  if [ ! -f ./flow/logs/autotuner_ref_file_check.log ]; then
-    date > ./flow/logs/autotuner_ref_file_check.log
+  if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN" == "gcd" ]; then
     python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck.test_files
   fi
 fi
