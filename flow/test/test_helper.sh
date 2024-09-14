@@ -110,19 +110,20 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   echo "Running Autotuner smoke sweep test"
   python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeTest.test_sweep
 
-  echo "Running Autotuner remote test (once)"
-  if [ ! -f ./flow/logs/autotuner_ref_file_check.log ]; then
-    date > ./flow/logs/autotuner_ref_file_check.log
+  # run this test last (because it modifies current path)
+  echo "Running Autotuner remote test"
+  if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN" == "gcd" ]; then
+    # Get the directory of the current script
+    script_dir="$(dirname "${BASH_SOURCE[0]}")"
+    cd "$script_dir"/../../
     latest_image=$(./etc/DockerTag.sh -dev)
     sed 's|{{ORFS_VERSION}}|'"$latest_image"'|g' ./tools/AutoTuner/.env.example > ./tools/AutoTuner/.env
-    cur_dir=$(pwd)
     cd ./tools/AutoTuner
     docker compose up --wait
     docker compose exec ray-worker bash -c "cd /OpenROAD-flow-scripts/tools/AutoTuner/src/autotuner && \
             python3 distributed.py --design gcd --platform asap7 --server 127.0.0.1 --port 10001 \
             --config ../../../../flow/designs/asap7/gcd/autotuner.json tune --samples 1"
     docker compose down -v --remove-orphans
-    cd $cur_dir
   fi
 fi
 
