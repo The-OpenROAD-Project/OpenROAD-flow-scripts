@@ -125,18 +125,18 @@ export MACRO_HALO_Y            ?= 2
 export PLACE_DENSITY ?= 0.60
 
 # Endcap and Welltie cells
-export TAPCELL_TCL             = $(PLATFORM_DIR)/openRoad/tapcell.tcl
+export TAPCELL_TCL             ?= $(PLATFORM_DIR)/openRoad/tapcell.tcl
 
 # Fill cells used in fill cell insertion
-export FILL_CELLS              = FILLERxp5_ASAP7_75t_R \
-                                 FILLER_ASAP7_75t_R \
-                                 DECAPx1_ASAP7_75t_R \
-                                 DECAPx2_ASAP7_75t_R \
-                                 DECAPx4_ASAP7_75t_R \
-                                 DECAPx6_ASAP7_75t_R \
-                                 DECAPx10_ASAP7_75t_R
+export FILL_CELLS              ?= FILLERxp5_ASAP7_75t_R \
+                                  FILLER_ASAP7_75t_R \
+                                  DECAPx1_ASAP7_75t_R \
+                                  DECAPx2_ASAP7_75t_R \
+                                  DECAPx4_ASAP7_75t_R \
+                                  DECAPx6_ASAP7_75t_R \
+                                  DECAPx10_ASAP7_75t_R
 
-export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_R
+export TAP_CELL_NAME           ?= TAPCELL_ASAP7_75t_R
 
 export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
 
@@ -165,9 +165,9 @@ ifeq ($(ASAP7_USELVT), 1)
 
    export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_L
 
-   export FILL_CELLS              = "FILLERxp5_ASAP7_75t_L"
+   export FILL_CELLS              ?= "FILLERxp5_ASAP7_75t_L"
 
-   export TAP_CELL_NAME           = TAPCELL_ASAP7_75t_L
+   export TAP_CELL_NAME           ?= TAPCELL_ASAP7_75t_L
 
    export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_L_220121a.gds \
                                      $(ADDITIONAL_GDS)
@@ -214,9 +214,9 @@ ifeq ($(ASAP7_USESLVT), 1)
 
    export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_SL
 
-   export FILL_CELLS              = "FILLERxp5_ASAP7_75t_SL"
+   export FILL_CELLS              ?= "FILLERxp5_ASAP7_75t_SL"
 
-   export TAP_CELL_NAME		  = TAPCELL_ASAP7_75t_SL
+   export TAP_CELL_NAME		  ?= TAPCELL_ASAP7_75t_SL
 
    export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_SL_220121a.gds \
 				    $(ADDITIONAL_GDS)
