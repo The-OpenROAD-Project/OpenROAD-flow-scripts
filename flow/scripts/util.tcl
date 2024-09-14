@@ -14,3 +14,33 @@ proc fast_route {} {
     }
   }
 }
+
+# -hold_margin is only set when hold_margin is set, default 1
+proc repair_timing_helper { {hold_margin 1} } {
+  set additional_args "-verbose"
+  append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
+  if {$hold_margin} {
+    append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
+  }
+  append_env_var additional_args TNS_END_PERCENT -repair_tns 1
+  append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
+  append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
+  append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
+  puts "repair_timing [join $additional_args " "]"
+  repair_timing {*}$additional_args
+}
+
+proc recover_power {} {
+  if { $::env(RECOVER_POWER) == 0 } {
+    return
+  }
+  puts "Downsizing/switching to higher Vt for non critical gates for power recovery"
+  puts "Percent of paths optimized $::env(RECOVER_POWER)"
+  report_tns
+  report_wns
+  report_power
+  repair_timing -recover_power $::env(RECOVER_POWER)
+  report_tns
+  report_wns
+  report_power
+}

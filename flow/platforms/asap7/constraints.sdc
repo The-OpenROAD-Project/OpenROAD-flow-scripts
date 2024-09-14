@@ -77,10 +77,9 @@ set all_register_outputs [get_pins -of_objects [all_registers] -filter {directio
 #
 # Minimum time for io-io, io-reg, reg-io paths in macro is on
 # the order of 80ps for a small macro on ASAP7.
-set max_delay 80
-set_max_delay $max_delay -from $non_clk_inputs -to [all_registers]
-set_max_delay $max_delay -from $all_register_outputs -to [all_outputs]
-set_max_delay $max_delay -from $non_clk_inputs -to [all_outputs]
+set_max_delay [expr {[info exists in2reg_max] ? $in2reg_max : 80}] -from $non_clk_inputs -to [all_registers]
+set_max_delay [expr {[info exists reg2out_max] ? $reg2out_max : 80}] -from $all_register_outputs -to [all_outputs]
+set_max_delay [expr {[info exists in2out_max] ? $in2out_max : 80}] -from $non_clk_inputs -to [all_outputs]
 
 # This allows us to view the different groups
 # in the histogram in the GUI and also includes these

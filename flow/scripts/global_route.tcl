@@ -49,15 +49,15 @@ proc global_route_helper {} {
     set_dont_use $::env(DONT_USE_CELLS)
   }
 
-  if { ![info exists ::env(SKIP_INCREMENTAL_REPAIR)] } {
-    if {[info exist ::env(DETAILED_METRICS)]} {
+  if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
+    if { $::env(DETAILED_METRICS) } {
       report_metrics 5 "global route pre repair design"
     }
 
     # Repair design using global route parasitics
     puts "Perform buffer insertion..."
     repair_design
-    if {[info exist ::env(DETAILED_METRICS)]} {
+    if { $::env(DETAILED_METRICS) } {
       report_metrics 5 "global route post repair design"
     }
 
@@ -72,18 +72,9 @@ proc global_route_helper {} {
     puts "Repair setup and hold violations..."
     estimate_parasitics -global_routing
 
-    # process user settings
-    set additional_args "-verbose"
-    append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
-    append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
-    append_env_var additional_args TNS_END_PERCENT -repair_tns 1
-    append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
-    append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
-    append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
-    puts "repair_timing [join $additional_args " "]"
-    repair_timing {*}$additional_args
+    repair_timing_helper
 
-    if {[info exist ::env(DETAILED_METRICS)]} {
+    if { $::env(DETAILED_METRICS) } {
       report_metrics 5 "global route post repair timing"
     }
 
@@ -95,17 +86,7 @@ proc global_route_helper {} {
     global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
   }
 
-  if { [info exists ::env(RECOVER_POWER)] } {
-    puts "Downsizing/switching to higher Vt  for non critical gates for power recovery"
-    puts "Percent of paths optimized $::env(RECOVER_POWER)"
-    report_tns
-    report_wns
-    report_power
-    repair_timing -recover_power $::env(RECOVER_POWER)
-    report_tns
-    report_wns
-    report_power
-  }
+  recover_power
 
   if {![info exist ::env(SKIP_ANTENNA_REPAIR)]} {
     puts "Repair antennas..."

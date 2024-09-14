@@ -126,7 +126,9 @@ _installUbuntuPackages() {
         zlib1g-dev
 
     # install KLayout
-    if  [[ $1 == "rodete" || $(_versionCompare "$1") -ge 23.04 ]]; then
+    if  [[ $1 == "rodete" ]]; then
+        apt-get -y install --no-install-recommends klayout python3-pandas
+    elif _versionCompare "$1" -ge 23.04; then
         apt-get -y install --no-install-recommends klayout python3-pandas
     else
         arch=$(uname -m)
