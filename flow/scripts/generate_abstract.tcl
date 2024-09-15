@@ -2,9 +2,11 @@ source $::env(SCRIPTS_DIR)/load.tcl
 
 set stem [expr {[info exists ::env(ABSTRACT_SOURCE)] ? $::env(ABSTRACT_SOURCE) : "6_final"}]
 
-set design_stage [lindex [split [file tail $stem] "_"] 0]
+set result [find_sdc_file $stem.odb]
+set design_stage [lindex $result 0]
+set sdc_file [lindex $result 1]
 
-load_design $stem.odb $stem.sdc
+load_design $stem.odb [file tail $sdc_file]
 
 if {$design_stage >= 6 && [file exists $::env(RESULTS_DIR)/$stem.spef]} {
   read_spef $::env(RESULTS_DIR)/$stem.spef
