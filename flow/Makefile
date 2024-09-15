@@ -148,6 +148,12 @@ export EQUIVALENCE_CHECK ?= 0
 export CORE_UTILIZATION ?=
 export DIE_AREA ?=
 export CORE_AREA ?=
+# Ideally, this should be 0 by default, but it can easily
+# run for a very long time as repair timing continues
+# to run while it is making progress, even if that progress
+# is miniscule. Therefore, setting this to 0 is a refinement of
+# the design, not the best starting parameter.
+export REMOVE_ABC_BUFFERS ?= 1
 
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY
