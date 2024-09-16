@@ -35,7 +35,7 @@ sg13g2_dfrbp_2
 
 
 # Define fill cells
-export FILL_CELLS = sg13g2_fill_1 sg13g2_fill_2 sg13g2_decap_4 sg13g2_decap_8
+export FILL_CELLS ?= sg13g2_fill_1 sg13g2_fill_2 sg13g2_decap_4 sg13g2_decap_8
 # -----------------------------------------------------
 #  Yosys
 #  ----------------------------------------------------
@@ -76,7 +76,7 @@ export CORE_MARGIN ?= 16.5
 
 # There are no Endcap and Welltie cells in this PDK, so
 # `cut_rows` has to be called from the tapcell script.
-export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
+export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 
 export MACRO_PLACE_HALO ?= 40 40
 export MACRO_PLACE_CHANNEL ?= 80 80
