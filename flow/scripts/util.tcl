@@ -44,3 +44,18 @@ proc recover_power {} {
   report_wns
   report_power
 }
+
+proc find_sdc_file {input_file} {
+    # Determine design stage (1 ... 6)
+    set design_stage [lindex [split [file tail $input_file] "_"] 0]
+
+    # Read SDC, first try to find the most recent SDC file for the stage
+    set sdc_file ""
+    for {set s $design_stage} {$s > 0} {incr s -1} {
+        set sdc_file [glob -nocomplain -directory $::env(RESULTS_DIR) -types f "${s}_\[A-Za-z\]*\.sdc"]
+        if {$sdc_file != ""} {
+            break
+        }
+    }
+    return [list $design_stage $sdc_file]
+}
