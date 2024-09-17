@@ -145,6 +145,9 @@ export RECOVER_POWER ?= 0
 export SKIP_INCREMENTAL_REPAIR ?= 0
 export DETAILED_METRICS ?= 0
 export EQUIVALENCE_CHECK ?= 0
+export CORE_UTILIZATION ?=
+export DIE_AREA ?=
+export CORE_AREA ?=
 
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY
@@ -835,6 +838,10 @@ clean_cts:
 .PHONY: route
 route: $(RESULTS_DIR)/5_route.odb \
        $(RESULTS_DIR)/5_route.sdc
+
+.PHONY: grt
+grt: $(RESULTS_DIR)/5_1_grt.odb
+
 # ==============================================================================
 
 

@@ -290,6 +290,7 @@ while [ "$#" -gt 0 ]; do
             ;;
         -ci)
             CI="yes"
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -save-deps-prefixes=/etc/openroad_deps_prefixes.txt"
             ;;
         -prefix=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
