@@ -133,11 +133,11 @@ class AutoTunerBase(tune.Trainable):
                 num_drc = value["route__drc_errors"]
             if stage == "detailedroute" and "route__wirelength" in value:
                 wirelength = value["route__wirelength"]
-            if stage == "finish" and "timing__setup__ws" in value:
+            if stage == "detailedroute" and "timing__setup__ws" in value:
                 worst_slack = value["timing__setup__ws"]
-            if stage == "finish" and "power__total" in value:
+            if stage == "detailedroute" and "power__total" in value:
                 total_power = value["power__total"]
-            if stage == "finish" and "design__instance__utilization" in value:
+            if stage == "detailedroute" and "design__instance__utilization" in value:
                 final_util = value["design__instance__utilization"]
         ret = {
             "clk_period": clk_period,
@@ -569,7 +569,7 @@ def openroad(base_dir, parameters, flow_variant, path=""):
 
     make_command = export_command
     make_command += f"make -C {base_dir}/flow DESIGN_CONFIG=designs/"
-    make_command += f"{args.platform}/{args.design}/config.mk"
+    make_command += f"{args.platform}/{args.design}/config.mk route"
     make_command += f" PLATFORM={args.platform}"
     make_command += f" FLOW_VARIANT={flow_variant} {parameters}"
     make_command += f" EQUIVALENCE_CHECK=0"
