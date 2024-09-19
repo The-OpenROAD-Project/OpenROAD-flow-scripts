@@ -1,4 +1,4 @@
-@Library('utils@orfs-v2.1.1') _
+@Library('utils@extend-for-megaboom-ci') _
 
 node {
 
