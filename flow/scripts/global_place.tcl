@@ -4,16 +4,7 @@ load_design 3_2_place_iop.odb 2_floorplan.sdc
 
 set_dont_use $::env(DONT_USE_CELLS)
 
-# set fastroute layer reduction
-if {[info exist env(FASTROUTE_TCL)]} {
-  source $env(FASTROUTE_TCL)
-} else {
-  set_global_routing_layer_adjustment $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER) 0.5
-  set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
-  if {[info exist env(MACRO_EXTENSION)]} {
-    set_macro_extension $env(MACRO_EXTENSION)
-  }
-}
+fast_route
 
 source $::env(SCRIPTS_DIR)/set_place_density.tcl
 

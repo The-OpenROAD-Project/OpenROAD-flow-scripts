@@ -104,6 +104,11 @@
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 
+# Include design and platform configuration before setting default options
+# in this file. This allows the DESIGN_CONFIG to set different defaults than
+# this file.
+include $(DESIGN_CONFIG)
+
 # For instance Bazel needs artifacts (.odb and .rpt files) on a failure to
 # allow the user to save hours on re-running the failed step locally, but
 # when working with a Makefile flow, it is more natural to fail the step
@@ -133,6 +138,16 @@ export GENERATE_ARTIFACTS_ON_FAILURE ?= 0
 # Default TNS_END_PERCENT value for post CTS timing repair
 # Try fixing all violating endpoints by default (reduce to 5% for runtime)
 export TNS_END_PERCENT ?=100
+
+# Default routing layer adjustment
+export ROUTING_LAYER_ADJUSTMENT ?= 0.5
+export RECOVER_POWER ?= 0
+export SKIP_INCREMENTAL_REPAIR ?= 0
+export DETAILED_METRICS ?= 0
+export EQUIVALENCE_CHECK ?= 0
+export CORE_UTILIZATION ?=
+export DIE_AREA ?=
+export CORE_AREA ?=
 
 # If we are running headless use offscreen rendering for save_image
 ifndef DISPLAY
@@ -184,10 +199,6 @@ export WORK_HOME     ?= .
 export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
 export TEST_DIR      ?= $(FLOW_HOME)/test
-
-#-------------------------------------------------------------------------------
-# Include design and platform configuration
-include $(DESIGN_CONFIG)
 
 PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
@@ -251,10 +262,6 @@ export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 export MACROS ?= $(BLOCKS)
 
 ifdef BLOCKS
-ifeq ($(MAKELEVEL),0)
-  $(info [INFO][FLOW] Invoked hierarchical flow.)
-  $(foreach block,$(BLOCKS),$(info Block ${block} needs to be hardened.))
-endif
   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
   $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
@@ -332,7 +339,7 @@ endif
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
 ifneq ($(shell command -v stdbuf),)
-  STDBUF_CMD = stdbuf -o L
+  STDBUF_CMD ?= stdbuf -o L
 endif
 
 #-------------------------------------------------------------------------------
@@ -371,7 +378,7 @@ ifeq ($(wildcard $(3)),)
 # each macro.
 block := $(patsubst ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/%,%,$(dir $(3)))
 $(1) $(2) &:
-	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=./designs/$$(PLATFORM)/$$(DESIGN_NICKNAME)/block.mk generate_abstract
+	$$(UNSET_AND_MAKE) DESIGN_NAME=${block} DESIGN_NICKNAME=$$(DESIGN_NICKNAME)_${block} DESIGN_CONFIG=$$(shell dirname $$(DESIGN_CONFIG))/block.mk generate_abstract
 else
 # There is a unique config.mk for this Verilog module
 $(1) $(2) &:
@@ -383,7 +390,7 @@ endef
 .PHONY: build_macros
 build_macros: $(BLOCK_LEFS) $(BLOCK_LIBS)
 
-$(foreach block,$(BLOCKS),$(eval $(call GENERATE_ABSTRACT_RULE,./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef,./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib,./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/${block}/config.mk)))
+$(foreach block,$(BLOCKS),$(eval $(call GENERATE_ABSTRACT_RULE,./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef,./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib,$(shell dirname $(DESIGN_CONFIG))/${block}/config.mk)))
 $(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
 
 # Utility to print tool version information
@@ -708,7 +715,11 @@ $(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb 
 
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
+ifeq ($(TAPCELL_TCL),)
+$(eval $(call do-copy,2_5_floorplan_tapcell,2_4_floorplan_macro.odb))
+else
 $(eval $(call do-step,2_5_floorplan_tapcell,$(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL),tapcell))
+endif
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
@@ -827,6 +838,10 @@ clean_cts:
 .PHONY: route
 route: $(RESULTS_DIR)/5_route.odb \
        $(RESULTS_DIR)/5_route.sdc
+
+.PHONY: grt
+grt: $(RESULTS_DIR)/5_1_grt.odb
+
 # ==============================================================================
 
 
@@ -836,7 +851,11 @@ $(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GL
 
 # SEP 2: Filler cell insertion
 # ------------------------------------------------------------------------------
+ifeq ($(FILL_CELLS),)
+$(eval $(call do-copy,5_2_fillcell,5_1_grt.odb))
+else
 $(eval $(call do-step,5_2_fillcell,$(RESULTS_DIR)/5_1_grt.odb,fillcell))
+endif
 
 # STEP 3: Run detailed route
 #-------------------------------------------------------------------------------
