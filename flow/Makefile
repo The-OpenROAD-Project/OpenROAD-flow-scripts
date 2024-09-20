@@ -1152,6 +1152,10 @@ test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 klayout:
 	$(KLAYOUT_CMD)
 
+.phony: run
+run:
+	$(OPENROAD_CMD) -no_splash $(RUN_SCRIPT)
+
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
