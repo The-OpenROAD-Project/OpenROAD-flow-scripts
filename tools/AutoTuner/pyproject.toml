@@ -1,0 +1,42 @@
+[project]
+name = "autotuner"
+version = "0.0.1"
+description = "This project provides a set of tools for tuning OpenROAD-flow-scripts parameter without user interference."
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD 3-Clause",
+]
+readme = "RAY_README.md"
+dependencies = []
+
+[project.optional-dependencies]
+ray = [
+    "ray[default,tune]==2.9.3",
+    "ax-platform>=0.3.3,<=0.3.7",
+    "hyperopt==0.2.7",
+    "nevergrad==1.0.2",
+    "optuna==3.6.0",
+    "pandas>=2.0,<=2.2.1",
+    "bayesian-optimization==1.4.0",
+    "colorama==0.4.6",
+    "tensorboard>=2.14.0,<=2.16.2",
+    "protobuf==3.20.3",
+    "SQLAlchemy==1.4.17",
+    "urllib3<=1.26.15",
+]
+vizier = [
+    "google-vizier[jax]",
+]
+
+[build-system]
+requires = ["setuptools", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src/"]
+include = [
+    "autotuner*",
+]
+
+[tool.setuptools]
+include-package-data = true
