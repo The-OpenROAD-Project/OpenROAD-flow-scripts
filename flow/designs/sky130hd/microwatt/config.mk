@@ -30,13 +30,9 @@ export MACRO_PLACE_CHANNEL = 200 200
 
 # CTS tuning
 export CTS_BUF_DISTANCE = 600
-#export CTS_CLUSTER_DIAMETER = 100
-#export CTS_CLUSTER_SIZE = 30
 export SKIP_GATE_CLONING = 1
 
 export export SETUP_SLACK_MARGIN = 0.2
-
-export GLOBAL_ROUTE_ARGS=-congestion_iterations 100 -verbose
 
 # This is high, some SRAMs should probably be converted
 # to real SRAMs and not instantiated as flops

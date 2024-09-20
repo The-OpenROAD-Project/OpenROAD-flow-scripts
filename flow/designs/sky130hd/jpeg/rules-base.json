@@ -27,8 +27,12 @@
         "value": 5807,
         "compare": "<="
     },
+    "globalroute__antenna_diodes_count": {
+        "value": 3145,
+        "compare": "<="
+    },
     "detailedroute__route__wirelength": {
-        "value": 3155204,
+        "value": 3112711,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -36,7 +40,11 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 256,
+        "value": 0,
+        "compare": "<="
+    },
+    "detailedroute__antenna_diodes_count": {
+        "value": 447,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
@@ -44,7 +52,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 677992,
+        "value": 670328,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
