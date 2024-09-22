@@ -47,11 +47,16 @@ proc recover_power {} {
 
 proc find_sdc_file {input_file} {
     # Determine design stage (1 ... 6)
-    set design_stage [lindex [split [file tail $input_file] "_"] 0]
-
+    set input_pieces [split [file tail $input_file] "_"]
+    set design_stage [lindex $input_pieces 0]
+    if { [llength $input_pieces] == 3 } {
+      set start [expr $design_stage - 1]
+    } else {
+      set start $design_stage
+    }
     # Read SDC, first try to find the most recent SDC file for the stage
     set sdc_file ""
-    for {set s $design_stage} {$s > 0} {incr s -1} {
+    for {set s $start} {$s > 0} {incr s -1} {
         set sdc_file [glob -nocomplain -directory $::env(RESULTS_DIR) -types f "${s}_\[A-Za-z\]*\.sdc"]
         if {$sdc_file != ""} {
             break
