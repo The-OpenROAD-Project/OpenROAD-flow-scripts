@@ -36,7 +36,15 @@ _installCommon() {
         pip3 install --no-cache-dir --user -U $pkgs
     fi
 
-    baseDir=$(mktemp -d /tmp/DependencyInstaller-orfs-XXXXXX)
+    if [[ "$constantBuildDir" == "true" ]]; then
+        baseDir="/tmp/DependencyInstaller-ORFS"
+        if [[ -d "$baseDir" ]]; then
+            echo "[INFO] Removing old building directory $baseDir"
+        fi
+        mkdir -p "$baseDir"
+    else
+        baseDir=$(mktemp -d /tmp/DependencyInstaller-orfs-XXXXXX)
+    fi
 
     # Install Verilator
     verilatorPrefix=`realpath ${PREFIX:-"/usr/local"}`
@@ -126,7 +134,9 @@ _installUbuntuPackages() {
         zlib1g-dev
 
     # install KLayout
-    if _versionCompare $1 -ge 23.04; then
+    if  [[ $1 == "rodete" ]]; then
+        apt-get -y install --no-install-recommends klayout python3-pandas
+    elif _versionCompare "$1" -ge 23.04; then
         apt-get -y install --no-install-recommends klayout python3-pandas
     else
         arch=$(uname -m)
@@ -160,6 +170,14 @@ _installUbuntuPackages() {
         rm -rf "${baseDir}"
     fi
 
+    if command -v docker &> /dev/null; then
+        # The user can uninstall docker if they want to reinstall it,
+        # and also this allows the user to choose drop in replacements
+        # for docker, such as podman-docker
+        echo "Docker is already installed, skip docker reinstall."
+        return 0
+    fi
+
     # Add Docker's official GPG key:
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
@@ -172,11 +190,13 @@ _installUbuntuPackages() {
         tee /etc/apt/sources.list.d/docker.list > /dev/null
 
     apt-get -y update
-    apt-get -y install --no-install-recommends \
-        docker-ce \
-        docker-ce-cli \
-        containerd.io \
-        docker-buildx-plugin
+    if [[ $1 != "rodete" ]]; then
+        apt-get -y install --no-install-recommends \
+            docker-ce \
+            docker-ce-cli \
+            containerd.io \
+            docker-buildx-plugin
+    fi
 }
 
 _installDarwinPackages() {
@@ -227,6 +247,9 @@ Usage: $0
                                 #    sudo or with root access.
        $0 -ci
                                 # Installs CI tools
+       $0 -constant-build-dir
+                                #  Use constant build directory, instead of
+                                #    random one.
 EOF
     exit "${1:-1}"
 }
@@ -239,6 +262,7 @@ PREFIX=""
 option="all"
 # default isLocal
 isLocal="false"
+constantBuildDir="false"
 CI="no"
 
 # default values, can be overwritten by cmdline args
@@ -266,10 +290,15 @@ while [ "$#" -gt 0 ]; do
             ;;
         -ci)
             CI="yes"
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -save-deps-prefixes=/etc/openroad_deps_prefixes.txt"
             ;;
         -prefix=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
             PREFIX=${1#*=}
+            ;;
+        -constant-build-dir)
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
+            constantBuildDir="true"
             ;;
         *)
             echo "unknown option: ${1}" >&2
@@ -315,8 +344,11 @@ case "${os}" in
             _installCommon
         fi
         ;;
-    "Ubuntu" )
+    "Ubuntu" | "Debian GNU/Linux rodete" )
         version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
+        if [[ -z ${version} ]]; then
+            version=$(awk -F= '/^VERSION_CODENAME/{print $2}' /etc/os-release | sed 's/"//g')
+        fi
         if [[ ${CI} == "yes" ]]; then
             echo "Installing CI Tools"
             _installCI
@@ -327,7 +359,9 @@ case "${os}" in
             _installUbuntuCleanUp
         fi
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-            if _versionCompare ${version} -lt 23.04 ; then
+            if [[ $version == "rodete" ]]; then
+                echo "Skip common for rodete"
+            elif _versionCompare ${version} -lt 23.04 ; then
                 _installCommon
             fi
         fi
