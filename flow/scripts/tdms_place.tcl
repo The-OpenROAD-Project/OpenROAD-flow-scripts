@@ -17,14 +17,18 @@ proc find_macros {} {
   return $macros
 }
 
-set_dont_use $::env(DONT_USE_CELLS)
+if {[expr !(![env_var_exists_and_non_empty MACRO_PLACEMENT] ||
+            ![env_var_exists_and_non_empty MACRO_PLACEMENT_TCL] ||
+            [env_var_equals RTLMP_FLOW 1])]} {
+  set_dont_use $::env(DONT_USE_CELLS)
 
-if {[find_macros] != ""} {
-  global_placement -density $::env(PLACE_DENSITY) \
-                 -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-                 -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
-} else {
-  puts "No macros found: Skipping global_placement"
+  if {[find_macros] != ""} {
+    log_cmd global_placement -density $::env(PLACE_DENSITY) \
+                  -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
+                  -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
+  } else {
+    puts "No macros found: Skipping global_placement"
+  }
 }
 
 write_db $::env(RESULTS_DIR)/2_3_floorplan_tdms.odb
