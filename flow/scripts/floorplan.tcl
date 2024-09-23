@@ -40,7 +40,7 @@ set num_instances [llength [get_cells -hier *]]
 puts "number instances in verilog is $num_instances"
 
 set additional_args ""
-append_env_var additinal_args ADDITIONAL_SITES -additional_sites 1
+append_env_var additional_args ADDITIONAL_SITES -additional_sites 1
 
 set use_floorplan_def [env_var_exists_and_non_empty FLOORPLAN_DEF]
 set use_footprint [env_var_exists_and_non_empty FOOTPRINT]
