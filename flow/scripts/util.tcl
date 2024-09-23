@@ -64,3 +64,21 @@ proc find_sdc_file {input_file} {
     }
     return [list $design_stage $sdc_file]
 }
+
+proc env_var_equals {env_var value} {
+    return [info exists ::env($env_var)] && $::env($env_var) == $value
+}
+
+proc env_var_exists_and_non_empty {env_var} {
+    return [expr {[info exists ::env($env_var)] && ![string equal $::env($env_var) ""]}]
+}
+
+proc append_env_var {list_name var_name prefix has_arg} {
+  upvar $list_name list
+  if {[info exist ::env($var_name)]} {
+    lappend list $prefix
+    if {$has_arg} {
+      lappend list $::env($var_name)
+    }
+  }
+}
