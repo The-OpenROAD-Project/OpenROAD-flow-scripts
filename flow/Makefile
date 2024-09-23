@@ -851,11 +851,7 @@ $(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GL
 
 # STEP 2: Run detailed route
 #-------------------------------------------------------------------------------
-ifeq ($(USE_WXL),)
 $(eval $(call do-step,5_2_route,$(RESULTS_DIR)/5_1_grt.odb,detail_route))
-else
-$(eval $(call do-step,5_2_route,$(RESULTS_DIR)/4_cts.odb,detail_route))
-endif
 
 # SEP 3: Filler cell insertion
 # ------------------------------------------------------------------------------
