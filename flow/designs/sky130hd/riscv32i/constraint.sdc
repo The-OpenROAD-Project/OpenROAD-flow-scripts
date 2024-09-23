@@ -1,6 +1,6 @@
 set clk_name  clk
 set clk_port_name clk
-set clk_period 10.0 
+set clk_period 6.0 
 set clk_io_pct 0.2
 
 set clk_port [get_ports $clk_port_name]
