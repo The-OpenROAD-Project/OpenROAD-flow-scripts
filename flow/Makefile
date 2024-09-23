@@ -744,13 +744,7 @@ place: $(RESULTS_DIR)/3_place.odb \
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place_skip_io))
 
-# STEP 2: IO placement (non-random)
-#-------------------------------------------------------------------------------
-ifeq ($(IS_CHIP),1)
-$(eval $(call do-copy,3_2_place_iop,3_1_place_gp_skip_io.odb,$(IO_CONSTRAINTS)))
-else
 $(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS),io_placement))
-endif
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
