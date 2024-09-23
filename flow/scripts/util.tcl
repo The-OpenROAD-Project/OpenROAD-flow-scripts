@@ -66,7 +66,7 @@ proc find_sdc_file {input_file} {
 }
 
 proc env_var_equals {env_var value} {
-    return [info exists ::env($env_var)] && $::env($env_var) == $value
+    return [expr {[info exists ::env($env_var)] && $::env($env_var) == $value}]
 }
 
 proc env_var_exists_and_non_empty {env_var} {
