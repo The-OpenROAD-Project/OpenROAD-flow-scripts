@@ -145,11 +145,8 @@ Note:
 | `IO_PLACER_H`         | The metal layer on which to place the I/O pins horizontally (top and bottom of the die).                                                                                         |
 | `IO_PLACER_V`         | The metal layer on which to place the I/O pins vertically (sides of the die).                                                                                                    |
 | `GUI_NO_TIMING`       | Skip loading timing for a faster GUI load.                                                                                                                                       |
-| `GUI_SOURCE` | Source the script. |
-| `GUI_ARGS` | OpenROAD command line options for gui_ and open_ targets, typically set tup `-exit` in combination with GUI_SOURCE to run a script and exit. |
 | `FILL_CELLS`          | Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.	    |
 | `TAP_CELL_NAME`       | Name of the cell to use in tap cell insertion. |
-
 
 ### Placement
 
