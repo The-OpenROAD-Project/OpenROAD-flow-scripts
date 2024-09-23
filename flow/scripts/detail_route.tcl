@@ -1,11 +1,6 @@
 utl::set_metrics_stage "detailedroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-if { [info exists ::env(USE_WXL)]} {
-  set db_file 4_cts.odb
-} else {
-  set db_file 5_1_grt.odb
-}
-load_design $db_file 4_cts.sdc
+load_design 5_1_grt.odb 4_cts.sdc
 set_propagated_clock [all_clocks]
 
 set additional_args ""
