@@ -35,7 +35,7 @@ export BALANCE_ROWS = 1
 
 export PDN_TCL = $(PLATFORM_DIR)/openROAD/pdn/pdn_grid_strategy_7t_6M.cfg
 
-ifneq ($(USE_FILL),)
+ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL
 else
 export DESIGN_TYPE = CELL_NODEN
