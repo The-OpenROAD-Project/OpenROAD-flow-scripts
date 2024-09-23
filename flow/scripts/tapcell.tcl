@@ -1,7 +1,7 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 2_4_floorplan_macro.odb 1_synth.sdc
 
-if {[info exist ::env(TAPCELL_TCL)]} {
+if {[env_var_exists_and_non_empty TAPCELL_TCL]} {
   source $::env(TAPCELL_TCL)
 }
 
