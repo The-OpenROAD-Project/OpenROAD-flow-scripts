@@ -403,24 +403,6 @@ module DFFS_X2 (D, SN, CK, Q, QN);
    assign QN = ~Q;
 endmodule
 
-module DLH_X1 (D, G, Q);
-  input D;
-  input G;
-  output Q;
-  always @(G or D)
-    if (G)
-      Q <= D; 
-endmodule //DLH_X1
-
-module DLL_X1 (D, GN, Q);
-  input D;
-  input GN;
-  output Q;
-  always @(GN or D)
-    if (!GN)
-      Q <= D; 
-endmodule //DLL_X1
-
 module HA_X1 (A, B, CO, S);
    input A;
    input B;
