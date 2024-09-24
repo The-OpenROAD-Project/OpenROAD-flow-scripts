@@ -36,7 +36,15 @@ _installCommon() {
         pip3 install --no-cache-dir --user -U $pkgs
     fi
 
-    baseDir=$(mktemp -d /tmp/DependencyInstaller-orfs-XXXXXX)
+    if [[ "$constantBuildDir" == "true" ]]; then
+        baseDir="/tmp/DependencyInstaller-ORFS"
+        if [[ -d "$baseDir" ]]; then
+            echo "[INFO] Removing old building directory $baseDir"
+        fi
+        mkdir -p "$baseDir"
+    else
+        baseDir=$(mktemp -d /tmp/DependencyInstaller-orfs-XXXXXX)
+    fi
 
     # Install Verilator
     verilatorPrefix=`realpath ${PREFIX:-"/usr/local"}`
@@ -239,6 +247,9 @@ Usage: $0
                                 #    sudo or with root access.
        $0 -ci
                                 # Installs CI tools
+       $0 -constant-build-dir
+                                #  Use constant build directory, instead of
+                                #    random one.
 EOF
     exit "${1:-1}"
 }
@@ -251,6 +262,7 @@ PREFIX=""
 option="all"
 # default isLocal
 isLocal="false"
+constantBuildDir="false"
 CI="no"
 
 # default values, can be overwritten by cmdline args
@@ -283,6 +295,10 @@ while [ "$#" -gt 0 ]; do
         -prefix=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
             PREFIX=${1#*=}
+            ;;
+        -constant-build-dir)
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
+            constantBuildDir="true"
             ;;
         *)
             echo "unknown option: ${1}" >&2

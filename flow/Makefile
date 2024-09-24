@@ -150,7 +150,7 @@ export DIE_AREA ?=
 export CORE_AREA ?=
 
 # If we are running headless use offscreen rendering for save_image
-ifndef DISPLAY
+ifeq ($(DISPLAY),)
 export QT_QPA_PLATFORM ?= offscreen
 endif
 
@@ -265,7 +265,7 @@ export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 # but not necessarily built by ORFS using the BLOCKS mechanism.
 export MACROS ?= $(BLOCKS)
 
-ifdef BLOCKS
+ifneq ($(BLOCKS),)
   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
   $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
@@ -275,7 +275,7 @@ ifdef BLOCKS
   export ADDITIONAL_LIBS += $(BLOCK_LIBS)
   export ADDITIONAL_GDS += $(BLOCK_GDS)
   export GDS_FILES += $(BLOCK_GDS)
-  ifdef CDL_FILES
+  ifneq ($(CDL_FILES),)
     export CDL_FILES += $(BLOCK_CDL)
   endif
 endif
@@ -627,7 +627,7 @@ endef
 define OPEN_GUI
 .PHONY: $(1)_$(2)
 $(1)_$(2):
-	$(3)=$(RESULTS_DIR)/$(2) $(4) $(GUI_ARGS) $(SCRIPTS_DIR)/gui.tcl
+	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
 endef
 
 # Separate dependency checking and doing a step. This can
@@ -702,10 +702,10 @@ $(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_sy
 
 # STEP 2: IO Placement (random)
 #-------------------------------------------------------------------------------
-ifndef IS_CHIP
-$(eval $(call do-step,2_2_floorplan_io,$(RESULTS_DIR)/2_1_floorplan.odb $(IO_CONSTRAINTS),io_placement_random))
-else
+ifeq ($(IS_CHIP),1)
 $(eval $(call do-copy,2_2_floorplan_io,2_1_floorplan.odb,$(IO_CONSTRAINTS)))
+else
+$(eval $(call do-step,2_2_floorplan_io,$(RESULTS_DIR)/2_1_floorplan.odb $(IO_CONSTRAINTS),io_placement_random))
 endif
 
 # STEP 3: Timing Driven Mixed Sized Placement
@@ -769,10 +769,10 @@ $(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESU
 
 # STEP 2: IO placement (non-random)
 #-------------------------------------------------------------------------------
-ifndef IS_CHIP
-$(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS),io_placement))
-else
+ifeq ($(IS_CHIP),1)
 $(eval $(call do-copy,3_2_place_iop,3_1_place_gp_skip_io.odb,$(IO_CONSTRAINTS)))
+else
+$(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS),io_placement))
 endif
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
@@ -862,29 +862,25 @@ grt: $(RESULTS_DIR)/5_1_grt.odb
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE),global_route))
 
-# SEP 2: Filler cell insertion
+# STEP 2: Run detailed route
+#-------------------------------------------------------------------------------
+$(eval $(call do-step,5_2_route,$(RESULTS_DIR)/5_1_grt.odb,detail_route))
+
+# SEP 3: Filler cell insertion
 # ------------------------------------------------------------------------------
 ifeq ($(FILL_CELLS),)
-$(eval $(call do-copy,5_2_fillcell,5_1_grt.odb))
+$(eval $(call do-copy,5_3_fillcell,5_2_route.odb))
 else
-$(eval $(call do-step,5_2_fillcell,$(RESULTS_DIR)/5_1_grt.odb,fillcell))
+$(eval $(call do-step,5_3_fillcell,$(RESULTS_DIR)/5_2_route.odb,fillcell))
 endif
 
-# STEP 3: Run detailed route
-#-------------------------------------------------------------------------------
-ifeq ($(USE_WXL),)
-$(eval $(call do-step,5_3_route,$(RESULTS_DIR)/5_2_fillcell.odb,detail_route))
-else
-$(eval $(call do-step,5_3_route,$(RESULTS_DIR)/4_cts.odb,detail_route))
-endif
-
-$(eval $(call do-copy,5_route,5_3_route.odb))
+$(eval $(call do-copy,5_route,5_3_fillcell.odb))
 
 $(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
 
 .PHONY: do-route
 do-route:
-	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_fillcell do-5_3_route do-5_route do-5_route.sdc
+	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_3_fillcell do-5_route do-5_route.sdc
 
 .PHONY: clean_route
 clean_route:
@@ -1109,10 +1105,10 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): kl
 
 .PHONY: gui_synth
 gui_synth:
-	$(OPENROAD_GUI_CMD) $(GUI_ARGS) $(SCRIPTS_DIR)/sta-synth.tcl
+	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
 .PHONY: open_synth
 open_synth:
-	$(OPENROAD_NO_EXIT_CMD) $(GUI_ARGS) $(SCRIPTS_DIR)/sta-synth.tcl
+	$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
 
 $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))
@@ -1164,6 +1160,10 @@ test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 .phony: klayout
 klayout:
 	$(KLAYOUT_CMD)
+
+.phony: run
+run:
+	$(OPENROAD_CMD) -no_splash $(RUN_SCRIPT)
 
 # Utilities
 #-------------------------------------------------------------------------------
