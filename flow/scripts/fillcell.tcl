@@ -4,10 +4,9 @@ if {[expr [file exists $::env(REPORTS_DIR)/congestion.rpt] && \
     in DRC viewer to view congestion"
 }
 
-source $::env(SCRIPTS_DIR)/util.tcl
+source $::env(SCRIPTS_DIR)/load.tcl
 
 if {[env_var_exists_and_non_empty FILL_CELLS]} {
-  source $::env(SCRIPTS_DIR)/load.tcl
   load_design 5_2_route.odb 4_cts.sdc
 
   set_propagated_clock [all_clocks]
