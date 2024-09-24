@@ -52,7 +52,3 @@ proc read_timing {input_file} {
 if {![info exist ::env(GUI_NO_TIMING)]} {
   read_timing $input_file
 }
-
-if {[info exist env(GUI_SOURCE)]} {
-  source $::env(GUI_SOURCE)
-}
