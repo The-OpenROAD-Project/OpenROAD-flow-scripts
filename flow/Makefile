@@ -215,9 +215,14 @@ export SYNTH_STOP_MODULE_SCRIPT = $(RESULTS_DIR)/keep_hierarchy.tcl
 export HIER_REPORT_SCRIPT = $(SCRIPTS_DIR)/synth_hier_report.tcl
 export MAX_UNGROUP_SIZE ?= 0
 
-
 # Enables Naja
 export DO_NAJA ?= 0
+
+ifeq ($(shell grep -c SYNTH_HIERARCHICAL $(DESIGN_CONFIG) 2>/dev/null),0)
+  export SYNTH_MODE = flatsynth
+else
+  export SYNTH_MODE = hiersynth
+endif
 
 # Enables Re-synthesis for area reclaim
 export RESYNTH_AREA_RECOVER ?= 0
@@ -560,8 +565,12 @@ do-synth:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 ifeq ($(DO_NAJA), 1)
 	export PYTHONPATH=$(NAJA_INSTALL)/lib/python; \
-	($(TIME_CMD) $(NAJA_INSTALL)/bin/naja_edit -f verilog -t verilog -i $(RESULTS_DIR)/1_1_yosys.v -o $(RESULTS_DIR)/1_1_naja.v -a all -p $(DONT_USE_LIBS) 2>&1) | tee $(LOG_DIR)/1_naja.log
+	export PRE_EDIT_BASE_NAME=naja_results/${PLATFORM}_${DESIGN_NICKNAME}_${SYNTH_MODE}_pre; \
+	export POST_EDIT_BASE_NAME=naja_results/${PLATFORM}_${DESIGN_NICKNAME}_${SYNTH_MODE}_post; \
+	($(TIME_CMD) $(NAJA_INSTALL)/bin/naja_edit -e ${SCRIPTS_DIR}/naja_pre_edit.py -z ${SCRIPTS_DIR}/naja_post_edit.py -f verilog -t verilog -i $(RESULTS_DIR)/1_1_yosys.v -o $(RESULTS_DIR)/1_1_naja.v -a all -s $(LOG_DIR)/1_naja_stats.log -p $(DONT_USE_LIBS) 2>&1) | tee $(LOG_DIR)/1_naja.log
 	cp $(RESULTS_DIR)/1_1_naja.v $(RESULTS_DIR)/1_synth.v
+	cp $(LOG_DIR)/1_naja.log naja_results/${PLATFORM}_${DESIGN_NICKNAME}_${SYNTH_MODE}.log
+	cp $(LOG_DIR)/1_naja_stats.log naja_results/${PLATFORM}_${DESIGN_NICKNAME}_${SYNTH_MODE}_stats.log
 else
 	cp $(RESULTS_DIR)/1_1_yosys.v $(RESULTS_DIR)/1_synth.v
 endif
