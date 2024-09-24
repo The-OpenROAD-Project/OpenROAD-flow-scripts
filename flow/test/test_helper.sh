@@ -77,4 +77,39 @@ if [ $ret -eq 0 ] && grep -q 'power:' <(echo $TARGETS); then
   ret=$(( ret + $? ))
 fi
 
+# Run Autotuner CI specifically for gcd on selected platforms.
+RUN_AUTOTUNER=0
+case $DESIGN_NAME in
+  "gcd")
+    RUN_AUTOTUNER=1
+    ;;
+esac
+case $PLATFORM in
+     "asap7" | "sky130hd" | "ihp-sg13g2" )
+      # Keep RUN_AUTOTUNER enabled only for these platforms
+      ;;
+     *)
+      RUN_AUTOTUNER=0
+      ;;
+esac
+
+if [ $RUN_AUTOTUNER -eq 1 ]; then
+  # change directory to the root of the repo
+  echo "Install and starting venv"
+  cd ../
+  ./tools/AutoTuner/installer.sh
+  . ./tools/AutoTuner/setup.sh
+
+  # remove dashes
+  PLATFORM=${PLATFORM//-/}
+  # convert to uppercase
+  PLATFORM=${PLATFORM^^}
+
+  echo "Running Autotuner smoke tune test"
+  python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM}TuneSmokeTest.test_tune
+
+  echo "Running Autotuner smoke sweep test"
+  python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeTest.test_sweep
+fi
+
 exit $ret

@@ -56,7 +56,7 @@ export DONT_USE_CELLS += \
     sky130_fd_sc_hd__lpflow_lsbuf_lh_isowell_tap_4
 #
 # Define fill cells
-export FILL_CELLS = sky130_fd_sc_hd__fill_1 sky130_fd_sc_hd__fill_2 sky130_fd_sc_hd__fill_4 sky130_fd_sc_hd__fill_8
+export FILL_CELLS ?= sky130_fd_sc_hd__fill_1 sky130_fd_sc_hd__fill_2 sky130_fd_sc_hd__fill_4 sky130_fd_sc_hd__fill_8
 
 # -----------------------------------------------------
 #  Yosys
@@ -94,7 +94,8 @@ export IO_PLACER_V = met2
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # Endcap and Welltie cells
-export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
+export TAP_CELL_NAME = sky130_fd_sc_hd__tapvpwrvgnd_1
+export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 
 export MACRO_PLACE_HALO ?= 40 40
 export MACRO_PLACE_CHANNEL ?= 80 80
