@@ -564,6 +564,7 @@ $(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
 do-synth:
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 ifeq ($(DO_NAJA), 1)
+	mkdir -p naja_results
 	export PYTHONPATH=$(NAJA_INSTALL)/lib/python; \
 	export PRE_EDIT_BASE_NAME=naja_results/${PLATFORM}_${DESIGN_NICKNAME}_${SYNTH_MODE}_pre; \
 	export POST_EDIT_BASE_NAME=naja_results/${PLATFORM}_${DESIGN_NICKNAME}_${SYNTH_MODE}_post; \
