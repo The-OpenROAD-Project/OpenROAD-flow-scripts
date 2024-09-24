@@ -38,7 +38,7 @@ export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 export MACRO_PLACE_HALO = 7 7
 export MACRO_PLACE_CHANNEL = 14 14
 
-ifneq ($(USE_FILL),)
+ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL
 else
 export DESIGN_TYPE = CELL_NODEN

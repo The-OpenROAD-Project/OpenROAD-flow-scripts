@@ -853,13 +853,7 @@ $(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GL
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,5_2_route,$(RESULTS_DIR)/5_1_grt.odb,detail_route))
 
-# SEP 3: Filler cell insertion
-# ------------------------------------------------------------------------------
-ifeq ($(FILL_CELLS),)
-$(eval $(call do-copy,5_3_fillcell,5_2_route.odb))
-else
 $(eval $(call do-step,5_3_fillcell,$(RESULTS_DIR)/5_2_route.odb,fillcell))
-endif
 
 $(eval $(call do-copy,5_route,5_3_fillcell.odb))
 
@@ -919,13 +913,7 @@ elapsed:
 elapsed-all:
 	@$(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
 
-# ==============================================================================
-
-ifeq ($(USE_FILL),1)
 $(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(RESULTS_DIR)/5_route.sdc $(FILL_CONFIG),density_fill))
-else
-$(eval $(call do-copy,6_1_fill,5_route.odb))
-endif
 
 $(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
 
