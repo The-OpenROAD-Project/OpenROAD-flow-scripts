@@ -549,7 +549,8 @@ do-yosys:
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_canonicalize.log)
+	# NOTE! YOSYS_FLAGS is omitted here because "-v 3" silences helpful error messages
+	($(TIME_CMD) $(YOSYS_EXE) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_canonicalize.log)
 
 $(RESULTS_DIR)/1_synth.rtlil: $(YOSYS_DEPENDENCIES)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
@@ -720,17 +721,7 @@ endif
 
 # STEP 3: Timing Driven Mixed Sized Placement
 #-------------------------------------------------------------------------------
-ifneq ($(MACRO_PLACEMENT)$(MACRO_PLACEMENT_TCL),)
-SKIP_TDMS:=1
-endif
-ifeq ($(RTLMP_FLOW), 1)
-SKIP_TDMS:=1
-endif
-ifneq ($(SKIP_TDMS), 1)
 $(eval $(call do-step,2_3_floorplan_tdms,$(RESULTS_DIR)/2_2_floorplan_io.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES),tdms_place))
-else
-$(eval $(call do-copy,2_3_floorplan_tdms,2_2_floorplan_io.odb,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES)))
-endif
 
 # STEP 4: Macro Placement
 #-------------------------------------------------------------------------------
