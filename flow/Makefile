@@ -900,13 +900,7 @@ elapsed:
 elapsed-all:
 	@$(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
 
-# ==============================================================================
-
-ifeq ($(USE_FILL),1)
 $(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(RESULTS_DIR)/5_route.sdc $(FILL_CONFIG),density_fill))
-else
-$(eval $(call do-copy,6_1_fill,5_route.odb))
-endif
 
 $(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
 

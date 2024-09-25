@@ -59,7 +59,7 @@ export MACRO_WRAPPERS = $(dir $(DESIGN_CONFIG))/wrappers.tcl
 #export MAX_ROUTING_LAYER = H2 
 export FASTROUTE_TCL = $(dir $(DESIGN_CONFIG))/fastroute.tcl
 #
-ifneq ($(USE_FILL),)
+ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL
 else
 export DESIGN_TYPE = CELL_NODEN
