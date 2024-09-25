@@ -123,7 +123,7 @@ Note:
 | `ABC_DRIVER_CELL`        | Default driver cell used during ABC synthesis.                                             |
 | `ABC_LOAD_IN_FF`         | During synthesis set_load value used.                                                      |
 | `MAX_UNGROUP_SIZE`       | For hierarchical synthesis, we ungroup modules of size given by this variable.             |
-
+| `SYNTH_OUTPUT_STEM`      | By default 1_synth. Set when doing post-synthesis processing with out of ORFS tree tools such as https://github.com/najaeda/naja |
 
 ### Floorplan
 

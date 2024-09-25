@@ -148,6 +148,7 @@ export EQUIVALENCE_CHECK ?= 0
 export CORE_UTILIZATION ?=
 export DIE_AREA ?=
 export CORE_AREA ?=
+export FLOORPLAN_INPUT_STEM ?= 1_synth
 
 # If we are running headless use offscreen rendering for save_image
 ifeq ($(DISPLAY),)
@@ -686,7 +687,7 @@ endef
 
 # STEP 1: Translate verilog to odb
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL),floorplan))
+$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/$(FLOORPLAN_INPUT_STEM).v $(RESULTS_DIR)/$(FLOORPLAN_INPUT_STEM).sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL),floorplan))
 
 # STEP 2: IO Placement (random)
 #-------------------------------------------------------------------------------

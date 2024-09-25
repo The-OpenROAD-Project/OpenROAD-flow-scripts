@@ -1,6 +1,6 @@
 utl::set_metrics_stage "floorplan__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 1_synth.v 1_synth.sdc
+load_design $::env(FLOORPLAN_INPUT_STEM).v $::env(FLOORPLAN_INPUT_STEM).sdc
 
 proc report_unused_masters {} {
   set db [ord::get_db]
