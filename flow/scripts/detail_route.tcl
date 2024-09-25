@@ -1,11 +1,12 @@
+if {[expr [file exists $::env(REPORTS_DIR)/congestion.rpt] && \
+    [file size $::env(REPORTS_DIR)/congestion.rpt] != 0]} {
+  error "Global routing failed, run `make gui_grt` and load $::env(REPORTS_DIR)/congestion.rpt \
+    in DRC viewer to view congestion"
+}
+
 utl::set_metrics_stage "detailedroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-if { [info exists ::env(USE_WXL)]} {
-  set db_file 4_cts.odb
-} else {
-  set db_file 5_2_fillcell.odb
-}
-load_design $db_file 4_cts.sdc
+load_design 5_1_grt.odb 4_cts.sdc
 set_propagated_clock [all_clocks]
 
 set additional_args ""
@@ -64,10 +65,24 @@ set all_args [concat [list \
 
 log_cmd detailed_route {*}$all_args
 
+set_global_routing_layer_adjustment $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER) 0.5
+set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
+
+
+if {![info exist ::env(SKIP_ANTENNA_REPAIR_POST_DRT)]} {
+  set repair_antennas_iters 1
+  repair_antennas
+  while {[check_antennas] && $repair_antennas_iters < 5} {
+    repair_antennas
+    detailed_route {*}$all_args
+    incr repair_antennas_iters
+  }
+}
+
 if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
 }
 
 check_antennas -report_file $env(REPORTS_DIR)/drt_antennas.log
 
-write_db $::env(RESULTS_DIR)/5_3_route.odb
+write_db $::env(RESULTS_DIR)/5_2_route.odb
