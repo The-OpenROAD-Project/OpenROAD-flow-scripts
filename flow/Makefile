@@ -148,6 +148,7 @@ export EQUIVALENCE_CHECK ?= 0
 export CORE_UTILIZATION ?=
 export DIE_AREA ?=
 export CORE_AREA ?=
+export FINAL_FILE_STEM ?= 6_1_fill
 
 # If we are running headless use offscreen rendering for save_image
 ifeq ($(DISPLAY),)

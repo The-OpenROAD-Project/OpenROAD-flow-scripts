@@ -1,6 +1,6 @@
 utl::set_metrics_stage "finish__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 6_1_fill.odb 6_1_fill.sdc
+load_design $::env(FINAL_FILE_STEM).odb $::env(FINAL_FILE_STEM).sdc
 
 set_propagated_clock [all_clocks]
 
