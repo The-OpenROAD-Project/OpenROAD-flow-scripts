@@ -71,7 +71,7 @@ if {[info exist ::env(CTS_SNAPSHOTS)]} {
   save_progress 4_1_pre_repair_hold_setup
 }
 
-if {[info exists ::env(SKIP_CTS_REPAIR_TIMING)] == 0 || $::env(SKIP_CTS_REPAIR_TIMING) == 0} {
+if {![env_var_equals SKIP_CTS_REPAIR_TIMING 1]} {
   if {$::env(EQUIVALENCE_CHECK)} {
       write_eqy_verilog 4_before_rsz.v
   }
@@ -94,7 +94,7 @@ if {[info exists ::env(SKIP_CTS_REPAIR_TIMING)] == 0 || $::env(SKIP_CTS_REPAIR_T
 
 report_metrics 4 "cts final"
 
-if { [info exists ::env(POST_CTS_TCL)] } {
+if { [env_var_exists_and_non_empty POST_CTS_TCL] } {
   source $::env(POST_CTS_TCL)
 }
 

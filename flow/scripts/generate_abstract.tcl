@@ -1,6 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 
-set stem [expr {[info exists ::env(ABSTRACT_SOURCE)] ? $::env(ABSTRACT_SOURCE) : "6_final"}]
+set stem [expr {[env_var_exists_and_non_empty ABSTRACT_SOURCE] ? $::env(ABSTRACT_SOURCE) : "6_final"}]
 
 set result [find_sdc_file $stem.odb]
 set design_stage [lindex $result 0]
