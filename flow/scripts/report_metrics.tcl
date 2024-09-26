@@ -7,7 +7,7 @@ proc report_puts { out } {
 }
 
 proc report_metrics { stage when {include_erc true} {include_clock_skew true} } {
-  if {[info exists ::env(SKIP_REPORT_METRICS)] && $::env(SKIP_REPORT_METRICS) == 1} {
+  if {[env_var_equals SKIP_REPORT_METRICS 1]} {
     return
   }
   puts "Report metrics stage $stage, $when..."
