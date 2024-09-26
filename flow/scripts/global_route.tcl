@@ -19,7 +19,7 @@ proc global_route_helper {} {
   # GLOBAL_ROUTE_ARGS specifies.
   proc do_global_route {} {
     set all_args [concat [list -congestion_report_file $::env(REPORTS_DIR)/congestion.rpt] \
-      [expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
+      [expr {[env_var_exists_and_non_empty GLOBAL_ROUTE_ARGS] ? $::env(GLOBAL_ROUTE_ARGS) : \
       {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]]
 
     log_cmd global_route {*}$all_args

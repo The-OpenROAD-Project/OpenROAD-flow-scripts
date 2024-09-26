@@ -55,7 +55,7 @@ append additional_args " -save_guide_updates -verbose 1"
 # having to go spelunking in Tcl or modify configuration scripts, while
 # not having to wait too long or generating large useless reports.
 
-set arguments [expr {[info exists ::env(DETAILED_ROUTE_ARGS)] ? $::env(DETAILED_ROUTE_ARGS) : \
+set arguments [expr {[env_var_exists_and_non_empty DETAILED_ROUTE_ARGS] ? $::env(DETAILED_ROUTE_ARGS) : \
  [concat $additional_args {-drc_report_iter_step 5}]}]
 
 set all_args [concat [list \

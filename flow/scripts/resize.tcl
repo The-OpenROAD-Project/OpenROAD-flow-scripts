@@ -14,7 +14,7 @@ set_dont_use $::env(DONT_USE_CELLS)
 # to not buffer IO ports, set environment variable
 # DONT_BUFFER_PORT = 1
 if { ![env_var_exists_and_non_empty FOOTPRINT] } {
-  if { ![info exists ::env(DONT_BUFFER_PORTS)] || $::env(DONT_BUFFER_PORTS) == 0 } {
+  if { ![env_var_equals DONT_BUFFER_PORTS 1] } {
     puts "Perform port buffering..."
     buffer_ports
   }
@@ -22,11 +22,11 @@ if { ![env_var_exists_and_non_empty FOOTPRINT] } {
 
 puts "Perform buffer insertion..."
 set additional_args ""
-if { [info exists ::env(CAP_MARGIN)] && $::env(CAP_MARGIN) > 0.0} {
+if { [env_var_exists_and_non_empty CAP_MARGIN] && $::env(CAP_MARGIN) > 0.0} {
   puts "Cap margin $::env(CAP_MARGIN)"
   append additional_args " -cap_margin $::env(CAP_MARGIN)"
 }
-if { [info exists ::env(SLEW_MARGIN)] && $::env(SLEW_MARGIN) > 0.0} {
+if { [env_var_exists_and_non_empty SLEW_MARGIN] && $::env(SLEW_MARGIN) > 0.0} {
   puts "Slew margin $::env(SLEW_MARGIN)"
   append additional_args " -slew_margin $::env(SLEW_MARGIN)"
 }
