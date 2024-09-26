@@ -711,13 +711,7 @@ endef
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL),floorplan))
 
-# STEP 2: IO Placement (random)
-#-------------------------------------------------------------------------------
-ifeq ($(IS_CHIP),1)
-$(eval $(call do-copy,2_2_floorplan_io,2_1_floorplan.odb,$(IO_CONSTRAINTS)))
-else
 $(eval $(call do-step,2_2_floorplan_io,$(RESULTS_DIR)/2_1_floorplan.odb $(IO_CONSTRAINTS),io_placement_random))
-endif
 
 # STEP 3: Timing Driven Mixed Sized Placement
 #-------------------------------------------------------------------------------
@@ -729,11 +723,7 @@ $(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb 
 
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-ifeq ($(TAPCELL_TCL),)
-$(eval $(call do-copy,2_5_floorplan_tapcell,2_4_floorplan_macro.odb))
-else
 $(eval $(call do-step,2_5_floorplan_tapcell,$(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL),tapcell))
-endif
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
@@ -768,13 +758,7 @@ place: $(RESULTS_DIR)/3_place.odb \
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place_skip_io))
 
-# STEP 2: IO placement (non-random)
-#-------------------------------------------------------------------------------
-ifeq ($(IS_CHIP),1)
-$(eval $(call do-copy,3_2_place_iop,3_1_place_gp_skip_io.odb,$(IO_CONSTRAINTS)))
-else
 $(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS),io_placement))
-endif
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
@@ -867,13 +851,7 @@ $(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GL
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,5_2_route,$(RESULTS_DIR)/5_1_grt.odb,detail_route))
 
-# SEP 3: Filler cell insertion
-# ------------------------------------------------------------------------------
-ifeq ($(FILL_CELLS),)
-$(eval $(call do-copy,5_3_fillcell,5_2_route.odb))
-else
 $(eval $(call do-step,5_3_fillcell,$(RESULTS_DIR)/5_2_route.odb,fillcell))
-endif
 
 $(eval $(call do-copy,5_route,5_3_fillcell.odb))
 
@@ -933,13 +911,7 @@ elapsed:
 elapsed-all:
 	@$(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
 
-# ==============================================================================
-
-ifeq ($(USE_FILL),1)
 $(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(RESULTS_DIR)/5_route.sdc $(FILL_CONFIG),density_fill))
-else
-$(eval $(call do-copy,6_1_fill,5_route.odb))
-endif
 
 $(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
 
