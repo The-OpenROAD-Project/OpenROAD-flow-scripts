@@ -10,34 +10,15 @@ load_design 5_1_grt.odb 4_cts.sdc
 set_propagated_clock [all_clocks]
 
 set additional_args ""
-if { [info exists ::env(dbProcessNode)]} {
-  append additional_args " -db_process_node $::env(dbProcessNode)"
-}
-if { [info exists ::env(OR_SEED)]} {
-  append additional_args " -or_seed $::env(OR_SEED)"
-}
-if { [info exists ::env(OR_K)]} {
-  append additional_args " -or_k $::env(OR_K)"
-}
-
-if { [info exists ::env(MIN_ROUTING_LAYER)]} {
-  append additional_args " -bottom_routing_layer $::env(MIN_ROUTING_LAYER)"
-}
-if { [info exists ::env(MAX_ROUTING_LAYER)]} {
-  append additional_args " -top_routing_layer $::env(MAX_ROUTING_LAYER)"
-}
-if { [info exists ::env(VIA_IN_PIN_MIN_LAYER)]} {
-  append additional_args " -via_in_pin_bottom_layer $::env(VIA_IN_PIN_MIN_LAYER)"
-}
-if { [info exists ::env(VIA_IN_PIN_MAX_LAYER)]} {
-  append additional_args " -via_in_pin_top_layer $::env(VIA_IN_PIN_MAX_LAYER)"
-}
-if { [info exists ::env(DISABLE_VIA_GEN)]} {
-  append additional_args " -disable_via_gen"
-}
-if { [info exists ::env(REPAIR_PDN_VIA_LAYER)]} {
-  append additional_args " -repair_pdn_vias $::env(REPAIR_PDN_VIA_LAYER)"
-}
+append_env_var additional_args dbProcessNode -db_process_node 1
+append_env_var additional_args OR_SEED -or_seed 1
+append_env_var additional_args OR_K -or_k 1
+append_env_var additional_args MIN_ROUTING_LAYER -bottom_routing_layer 1
+append_env_var additional_args MAX_ROUTING_LAYER -top_routing_layer 1
+append_env_var additional_args VIA_IN_PIN_MIN_LAYER -via_in_pin_bottom_layer 1
+append_env_var additional_args VIA_IN_PIN_MAX_LAYER -via_in_pin_top_layer 1
+append_env_var additional_args DISABLE_VIA_GEN -disable_via_gen 0
+append_env_var additional_args REPAIR_PDN_VIA_LAYER -repair_pdn_vias 1
 
 append additional_args " -save_guide_updates -verbose 1"
 
