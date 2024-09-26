@@ -94,7 +94,7 @@ if {[info exists ::env(SKIP_CTS_REPAIR_TIMING)] == 0 || $::env(SKIP_CTS_REPAIR_T
 
 report_metrics 4 "cts final"
 
-if { [info exists ::env(POST_CTS_TCL)] } {
+if { [env_var_exists_and_non_empty POST_CTS_TCL] } {
   source $::env(POST_CTS_TCL)
 }
 

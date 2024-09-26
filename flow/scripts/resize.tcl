@@ -13,7 +13,7 @@ set_dont_use $::env(DONT_USE_CELLS)
 # by default, IO ports will be buffered
 # to not buffer IO ports, set environment variable
 # DONT_BUFFER_PORT = 1
-if { ![info exists ::env(FOOTPRINT)] } {
+if { ![env_var_exists_and_non_empty FOOTPRINT] } {
   if { ![info exists ::env(DONT_BUFFER_PORTS)] || $::env(DONT_BUFFER_PORTS) == 0 } {
     puts "Perform port buffering..."
     buffer_ports

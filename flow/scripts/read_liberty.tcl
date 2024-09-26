@@ -6,7 +6,7 @@ if {[info exists ::env(PLATFORM)] && $::env(PLATFORM) == "asap7"} {
 }
 
 #Read Liberty
-if {[info exists ::env(CORNERS)]} {
+if {[env_var_exists_and_non_empty CORNERS]} {
   # corners
   define_corners {*}$::env(CORNERS)
   foreach corner $::env(CORNERS) {

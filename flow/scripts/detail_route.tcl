@@ -79,7 +79,7 @@ if {![info exist ::env(SKIP_ANTENNA_REPAIR_POST_DRT)]} {
   }
 }
 
-if { [info exists ::env(POST_DETAIL_ROUTE_TCL)] } {
+if { [env_var_exists_and_non_empty POST_DETAIL_ROUTE_TCL] } {
   source $::env(POST_DETAIL_ROUTE_TCL)
 }
 

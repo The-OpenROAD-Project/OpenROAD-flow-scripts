@@ -213,7 +213,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
   report_puts "\n=========================================================================="
   report_puts "$when report_power"
   report_puts "--------------------------------------------------------------------------"
-  if {[info exists ::env(CORNERS)]} {
+  if {[env_var_exists_and_non_empty CORNERS]} {
     foreach corner $::env(CORNERS) {
       report_puts "Corner: $corner"
       report_power -corner $corner >> $filename

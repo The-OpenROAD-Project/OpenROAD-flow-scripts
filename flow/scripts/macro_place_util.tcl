@@ -17,7 +17,7 @@ proc find_macros {} {
 if {[find_macros] != ""} {
 # If wrappers defined replace macros with their wrapped version
 # # ----------------------------------------------------------------------------
-  if {[info exists ::env(MACRO_WRAPPERS)]} {
+  if {[env_var_exists_and_non_empty MACRO_WRAPPERS]} {
     source $::env(MACRO_WRAPPERS)
 
     set wrapped_macros [dict keys [dict get $wrapper around]]
@@ -40,14 +40,14 @@ if {[find_macros] != ""} {
   set blockage_width [expr max($halo_max, $channel_max/2)]
 
   
-  if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
+  if {[env_var_exists_and_non_empty MACRO_BLOCKAGE_HALO]} {
     set blockage_width $::env(MACRO_BLOCKAGE_HALO)
   }
 
-  if {[info exists ::env(MACRO_PLACEMENT_TCL)]} {
+  if {[env_var_exists_and_non_empty MACRO_PLACEMENT_TCL]} {
     source $::env(MACRO_PLACEMENT_TCL)
     puts "Using manual macro placement file $::env(MACRO_PLACEMENT_TCL)"
-  } elseif {[info exists ::env(MACRO_PLACEMENT)]} {
+  } elseif {[env_var_exists_and_non_empty MACRO_PLACEMENT]} {
     source $::env(SCRIPTS_DIR)/read_macro_placement.tcl
     puts "Using manual macro placement file $::env(MACRO_PLACEMENT)"
     read_macro_placement $::env(MACRO_PLACEMENT)
