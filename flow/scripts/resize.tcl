@@ -33,7 +33,7 @@ if { [env_var_exists_and_non_empty SLEW_MARGIN] && $::env(SLEW_MARGIN) > 0.0} {
 
 repair_design {*}$additional_args
 
-if { [info exists env(TIE_SEPARATION)] } {
+if { [env_var_exists_and_non_empty TIE_SEPARATION] } {
   set tie_separation $env(TIE_SEPARATION)
 } else {
   set tie_separation 0
