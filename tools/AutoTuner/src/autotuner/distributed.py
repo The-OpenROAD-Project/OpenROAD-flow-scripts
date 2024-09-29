@@ -588,7 +588,7 @@ def openroad(base_dir, parameters, flow_variant, path=""):
     make_command += f" NUM_CORES={args.openroad_threads} SHELL=bash"
     run_command(
         make_command,
-        timeout=args.timeout,
+        timeout=args.timeout_per_trial,
         stderr_file=f"{log_path}error-make-finish.log",
         stdout_file=f"{log_path}make-finish-stdout.log",
     )
@@ -703,11 +703,18 @@ def parse_arguments():
         " FLOW_VARIANT and to set the Ray log destination.",
     )
     parser.add_argument(
-        "--timeout",
+        "--timeout_per_trial",
         type=float,
         metavar="<float>",
         default=None,
         help="Time limit (in hours) for each trial run. Default is no limit.",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        metavar="<float>",
+        default=None,
+        help="Time limit (in hours) for the whole Autotuning process.",
     )
     tune_parser.add_argument(
         "--resume",
@@ -829,12 +836,19 @@ def parse_arguments():
     )
 
     # Workload
+    # parser.add_argument(
+    #     "--jobs",
+    #     type=int,
+    #     metavar="<int>",
+    #     default=int(np.floor(cpu_count() / 2)),
+    #     help="Max number of concurrent jobs.",
+    # )
     parser.add_argument(
-        "--jobs",
+        "--cpu_budget",
         type=int,
         metavar="<int>",
         default=int(np.floor(cpu_count() / 2)),
-        help="Max number of concurrent jobs.",
+        help="Number of cpus to be used per hour.",
     )
     parser.add_argument(
         "--openroad_threads",
@@ -867,11 +881,11 @@ def parse_arguments():
         " training stderr\n\t2: also print training stdout.",
     )
 
-    arguments = parser.parse_args()
-    if arguments.mode == "tune":
-        arguments.algorithm = arguments.algorithm.lower()
+    args = parser.parse_args()
+    if args.mode == "tune":
+        args.algorithm = args.algorithm.lower()
         # Validation of arguments
-        if arguments.eval == "ppa-improv" and arguments.reference is None:
+        if args.eval == "ppa-improv" and args.reference is None:
             print(
                 '[ERROR TUN-0006] The argument "--eval ppa-improv"'
                 ' requires that "--reference <FILE>" is also given.'
@@ -879,7 +893,7 @@ def parse_arguments():
             sys.exit(7)
 
         # Check for experiment name and resume flag.
-        if arguments.resume and arguments.experiment == "test":
+        if args.resume and args.experiment == "test":
             print(
                 '[ERROR TUN-0031] The flag "--resume"'
                 ' requires that "--experiment NAME" is also given.'
@@ -887,16 +901,24 @@ def parse_arguments():
             sys.exit(1)
 
     # If the experiment name is the default, add a UUID to the end.
-    if arguments.experiment == "test":
+    if args.experiment == "test":
         id = str(uuid())[:8]
-        arguments.experiment = f"{arguments.mode}-{id}"
+        args.experiment = f"{args.mode}-{id}"
     else:
-        arguments.experiment += f"-{arguments.mode}"
+        args.experiment += f"-{args.mode}"
+    args.experiment += f"-{args.mode}-{DATE}"
 
-    if arguments.timeout is not None:
-        arguments.timeout = round(arguments.timeout * 3600)
+    # Convert time to seconds
+    if args.timeout_per_trial is not None:
+        args.timeout_per_trial = round(args.timeout_per_trial * 3600)
+    if args.timeout is not None:
+        args.timeout = round(args.timeout * 3600)
 
-    return arguments
+    # Calculate jobs
+    jobs = int(args.cpu_budget / args.resources_per_trial)
+    args["jobs"] = jobs
+
+    return args
 
 
 def set_algorithm(experiment_name, config):
@@ -1087,6 +1109,7 @@ if __name__ == "__main__":
             name=args.experiment,
             metric=METRIC,
             mode="min",
+            time_budget_s=args.timeout,
             num_samples=args.samples,
             fail_fast=False,
             local_dir=LOCAL_DIR,
