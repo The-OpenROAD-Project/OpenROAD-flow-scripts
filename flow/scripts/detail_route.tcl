@@ -50,7 +50,7 @@ set_global_routing_layer_adjustment $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAY
 set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
 
 
-if {![info exist ::env(SKIP_ANTENNA_REPAIR_POST_DRT)]} {
+if {![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1]} {
   set repair_antennas_iters 1
   repair_antennas
   while {[check_antennas] && $repair_antennas_iters < 5} {

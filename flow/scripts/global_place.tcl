@@ -41,7 +41,7 @@ if {$result != 0} {
 
 estimate_parasitics -placement
 
-if {[info exist ::env(CLUSTER_FLOPS)]} {
+if {[env_var_equals CLUSTER_FLOPS 1]} {
   cluster_flops
   estimate_parasitics -placement
 }
