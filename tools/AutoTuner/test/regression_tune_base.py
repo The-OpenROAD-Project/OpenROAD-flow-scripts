@@ -76,7 +76,7 @@ class BaseTuneRegressionBaseTest(unittest.TestCase):
 class ASAP7TuneRegressionGCDTest(BaseTuneRegressionBaseTest):
     platform = "asap7"
     design = "gcd"
-    qor = 37668.290
+    qor = 35847.475
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
@@ -92,7 +92,7 @@ class ASAP7TuneRegressionGCDTest(BaseTuneRegressionBaseTest):
 class SKY130HDTuneRegressionGCDTest(BaseTuneRegressionBaseTest):
     platform = "sky130hd"
     design = "gcd"
-    qor = 327.023
+    qor = 332.139
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
@@ -108,7 +108,7 @@ class SKY130HDTuneRegressionGCDTest(BaseTuneRegressionBaseTest):
 class IHPSG13G2TuneRegressionGCDTest(BaseTuneRegressionBaseTest):
     platform = "ihp-sg13g2"
     design = "gcd"
-    qor = 251.102
+    qor = 398.452
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
@@ -124,7 +124,7 @@ class IHPSG13G2TuneRegressionGCDTest(BaseTuneRegressionBaseTest):
 class ASAP7TuneRegressionAESTest(BaseTuneRegressionBaseTest):
     platform = "asap7"
     design = "aes"
-    qor = 70934.140
+    qor = 61455.680
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
@@ -140,7 +140,7 @@ class ASAP7TuneRegressionAESTest(BaseTuneRegressionBaseTest):
 class SKY130HDTuneRegressionAESTest(BaseTuneRegressionBaseTest):
     platform = "sky130hd"
     design = "aes"
-    qor = 546.433
+    qor = 540.688
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
@@ -156,7 +156,7 @@ class SKY130HDTuneRegressionAESTest(BaseTuneRegressionBaseTest):
 class IHPSG13G2TuneRegressionAESTest(BaseTuneRegressionBaseTest):
     platform = "ihp-sg13g2"
     design = "aes"
-    qor = 544.835
+    qor = 544.728
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
@@ -172,7 +172,7 @@ class IHPSG13G2TuneRegressionAESTest(BaseTuneRegressionBaseTest):
 class ASAP7TuneRegressionIBEXTest(BaseTuneRegressionBaseTest):
     platform = "asap7"
     design = "ibex"
-    qor = 205678.545
+    qor = 192118.310
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
@@ -188,7 +188,7 @@ class ASAP7TuneRegressionIBEXTest(BaseTuneRegressionBaseTest):
 class SKY130HDTuneRegressionIBEXTest(BaseTuneRegressionBaseTest):
     platform = "sky130hd"
     design = "ibex"
-    qor = 1425.996
+    qor = 1421.194
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
@@ -204,7 +204,7 @@ class SKY130HDTuneRegressionIBEXTest(BaseTuneRegressionBaseTest):
 class IHPSG13G2TuneRegressionIBEXTest(BaseTuneRegressionBaseTest):
     platform = "ihp-sg13g2"
     design = "ibex"
-    qor = 1422.309
+    qor = 1278.664
 
     def test_tune(self):
         out = subprocess.run(self.command, shell=True, check=True)
