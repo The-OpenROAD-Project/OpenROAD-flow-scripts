@@ -268,11 +268,18 @@ def parse_arguments():
         " FLOW_VARIANT and to set the Ray log destination.",
     )
     parser.add_argument(
-        "--timeout",
+        "--timeout_per_trial",
         type=float,
         metavar="<float>",
         default=None,
         help="Time limit (in hours) for each trial run. Default is no limit.",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        metavar="<float>",
+        default=None,
+        help="Time limit (in hours) for the whole Autotuning process.",
     )
     tune_parser.add_argument(
         "--resume",
@@ -394,12 +401,19 @@ def parse_arguments():
     )
 
     # Workload
+    # parser.add_argument(
+    #     "--jobs",
+    #     type=int,
+    #     metavar="<int>",
+    #     default=int(np.floor(cpu_count() / 2)),
+    #     help="Max number of concurrent jobs.",
+    # )
     parser.add_argument(
-        "--jobs",
+        "--cpu_budget",
         type=int,
         metavar="<int>",
         default=int(np.floor(cpu_count() / 2)),
-        help="Max number of concurrent jobs.",
+        help="Number of cpus to be used per hour.",
     )
     parser.add_argument(
         "--openroad_threads",
@@ -457,9 +471,17 @@ def parse_arguments():
         args.experiment = f"{args.mode}-{id}"
     else:
         args.experiment += f"-{args.mode}"
+    args.experiment += f"-{args.mode}-{DATE}"
 
+    # Convert time to seconds
+    if args.timeout_per_trial is not None:
+        args.timeout_per_trial = round(args.timeout_per_trial * 3600)
     if args.timeout is not None:
         args.timeout = round(args.timeout * 3600)
+
+    # Calculate jobs
+    jobs = int(args.cpu_budget / args.resources_per_trial)
+    args["jobs"] = jobs
 
     return args
 
@@ -617,6 +639,7 @@ def main():
             name=args.experiment,
             metric=METRIC,
             mode="min",
+            time_budget_s=args.timeout,
             num_samples=args.samples,
             fail_fast=False,
             local_dir=LOCAL_DIR,
