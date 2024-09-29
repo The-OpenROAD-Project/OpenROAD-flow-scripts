@@ -145,6 +145,18 @@ python3 -m autotuner.distributed --design gcd --platform sky130hd \
                        sweep
 ```
 
+#### Plot images
+
+After running the autotuner experiments, you can visualize the results as follows.
+Currently, we support the following metrics:
+- QoR
+- Runtime per trial
+- Clock Period
+- Worst slack
+
+```shell
+python3 utils/plot.py --results_dir <your-autotuner-result-path>
+```
 
 ### Google Cloud Platform (GCP) distribution with Ray
 
