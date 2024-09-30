@@ -1,5 +1,7 @@
+source $::env(SCRIPTS_DIR)/util.tcl
+
 proc write_keep_hierarchy {} {
-  if { ![info exist ::env(SYNTH_HIERARCHICAL)] || $::env(SYNTH_HIERARCHICAL) == 0 } {
+  if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
     set out_script_ptr [open $::env(SYNTH_STOP_MODULE_SCRIPT) w]
     close $out_script_ptr
     return
@@ -9,11 +11,11 @@ proc write_keep_hierarchy {} {
 
   synthesize_check {}
 
-  if { [info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)] } {
+  if { [env_var_exists_and_non_empty ADDER_MAP_FILE] && [file isfile $::env(ADDER_MAP_FILE)] } {
     techmap -map $::env(ADDER_MAP_FILE)
   }
   techmap
-  if {[info exist ::env(DFF_LIB_FILE)]} {
+  if {[env_var_exists_and_non_empty DFF_LIB_FILE]} {
     dfflibmap -liberty $::env(DFF_LIB_FILE)
   } else {
     dfflibmap -liberty $::env(DONT_USE_SC_LIB)
@@ -24,7 +26,7 @@ proc write_keep_hierarchy {} {
   tee -o $::env(REPORTS_DIR)/synth_hier_stat.txt stat {*}$stat_libs
 
   set ungroup_threshold 0
-  if { [info exist ::env(MAX_UNGROUP_SIZE)] && $::env(MAX_UNGROUP_SIZE) > 0 } {
+  if { [env_var_exists_and_non_empty MAX_UNGROUP_SIZE] && $::env(MAX_UNGROUP_SIZE) > 0 } {
     set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
     puts "Ungroup modules of size $ungroup_threshold"
   }
