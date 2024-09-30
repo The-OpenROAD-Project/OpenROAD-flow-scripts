@@ -75,7 +75,8 @@ proc env_var_exists_and_non_empty {env_var} {
 
 proc append_env_var {list_name var_name prefix has_arg} {
   upvar $list_name list
-  if {[info exist ::env($var_name)]} {
+  if {(!$has_arg && [env_var_equals $var_name 1]) ||
+      ($has_arg && [env_var_exists_and_non_empty $var_name])} {
     lappend list $prefix
     if {$has_arg} {
       lappend list $::env($var_name)
