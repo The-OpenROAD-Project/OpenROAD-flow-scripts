@@ -397,10 +397,13 @@ def parse_config(config, path=os.getcwd()):
                 )
         # Default case is VAR=VALUE
         else:
+            # FIXME there is no robust way to get this metainformation from
+            # ORFS about the variables, so disable this code for now.
+
             # Sanity check: ignore all flow variables that are not tunable
-            if key not in flow_variables:
-                print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
-                sys.exit(1)
+            # if key not in flow_variables:
+            #     print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
+            #     sys.exit(1)
             options += f" {key}={value}"
     if bool(sdc):
         write_sdc(sdc, path)
