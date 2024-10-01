@@ -481,7 +481,7 @@ def parse_arguments():
 
     # Calculate jobs
     jobs = int(args.cpu_budget / args.resources_per_trial)
-    args["jobs"] = jobs
+    args.jobs = jobs
 
     return args
 
