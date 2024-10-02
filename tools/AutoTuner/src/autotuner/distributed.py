@@ -401,19 +401,12 @@ def parse_arguments():
     )
 
     # Workload
-    # parser.add_argument(
-    #     "--jobs",
-    #     type=int,
-    #     metavar="<int>",
-    #     default=int(np.floor(cpu_count() / 2)),
-    #     help="Max number of concurrent jobs.",
-    # )
     parser.add_argument(
         "--cpu_budget",
         type=int,
         metavar="<int>",
         default=int(np.floor(cpu_count() / 2)),
-        help="Number of cpus to be used per hour.",
+        help="Number of cpus to be used.",
     )
     parser.add_argument(
         "--openroad_threads",
