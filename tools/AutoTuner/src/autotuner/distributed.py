@@ -28,10 +28,7 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime
-from multiprocessing import cpu_count
 from itertools import product
-from uuid import uuid4 as uuid
 
 import numpy as np
 
@@ -51,21 +48,24 @@ from ray.util.queue import Queue
 # import nevergrad as ng
 from ax.service.ax_client import AxClient
 
-from utils import (
+from autotuner.utils import (
     add_common_args,
     openroad,
+    consumer,
     parse_config,
     read_config,
     read_metrics,
-    run_command,
+    prepare_ray_server,
+    DATE,
+    CONSTRAINTS_SDC,
+    FASTROUTE_TCL,
 )
 
-DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
-FASTROUTE_TCL = "fastroute.tcl"
-CONSTRAINTS_SDC = "constraint.sdc"
+# Name of the final metric
 METRIC = "minimum"
+# The worst of optimized metric
 ERROR_METRIC = 9e99
+# Path to the FLOW_HOME directory
 ORFS_FLOW_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../flow")
 )
@@ -83,9 +83,19 @@ class AutoTunerBase(tune.Trainable):
         # We create the following directory structure:
         #      1/     2/         3/       4/                5/   6/
         # <repo>/<logs>/<platform>/<design>/<experiment>-DATE/<id>/<cwd>
+        # Run by Ray in directory specified by `local_dir`
         repo_dir = os.getcwd() + "/../" * 6
         self.repo_dir = os.path.abspath(repo_dir)
-        self.parameters = parse_config(config, args.platform, SDC_ORIGINAL, CONSTRAINTS_SDC, FR_ORIGINAL, FASTROUTE_TCL, path=os.getcwd())
+        self.parameters = parse_config(
+            config=config,
+            base_dir=self.repo_dir,
+            platform=args.platform,
+            sdc_original=SDC_ORIGINAL,
+            constraints_sdc=CONSTRAINTS_SDC,
+            fr_original=FR_ORIGINAL,
+            fastroute_tcl=FASTROUTE_TCL,
+            path=os.getcwd(),
+        )
         self.step_ = 0
         self.variant = f"variant-{self.__class__.__name__}-{self.trial_id}-or"
 
@@ -93,7 +103,14 @@ class AutoTunerBase(tune.Trainable):
         """
         Run step experiment and compute its score.
         """
-        metrics_file = openroad(args, self.repo_dir, self.parameters, self.variant, install_path=INSTALL_PATH, stage=args.to_stage)
+        metrics_file = openroad(
+            args=args,
+            base_dir=self.repo_dir,
+            parameters=self.parameters,
+            flow_variant=self.variant,
+            install_path=INSTALL_PATH,
+            stage=args.to_stage,
+        )
         self.step_ += 1
         score = self.evaluate(read_metrics(metrics_file, args.to_stage))
         # Feed the score back to Tune.
@@ -108,8 +125,6 @@ class AutoTunerBase(tune.Trainable):
         """
         error = "ERR" in metrics.values()
         not_found = "N/A" in metrics.values()
-        print("evaluate METRICS")
-        print(metrics)
         if error or not_found:
             return ERROR_METRIC
         gamma = (metrics["clk_period"] - metrics["worst_slack"]) / 10
@@ -155,70 +170,12 @@ class PPAImprov(AutoTunerBase):
     def evaluate(self, metrics):
         error = "ERR" in metrics.values() or "ERR" in reference.values()
         not_found = "N/A" in metrics.values() or "N/A" in reference.values()
-        print("evaluate METRICS")
-        print(metrics)
         if error or not_found:
             return ERROR_METRIC
         ppa = self.get_ppa(metrics)
         gamma = ppa / 10
         score = ppa * (self.step_ / 100) ** (-1) + (gamma * metrics["num_drc"])
         return score
-
-
-@ray.remote
-def openroad_distributed(repo_dir, config, path):
-    """Simple wrapper to run openroad distributed with Ray."""
-    config = parse_config(args, config, SDC_ORIGINAL, CONSTRAINTS_SDC, FR_ORIGINAL, FASTROUTE_TCL)
-    openroad(args, repo_dir, config, str(uuid()), path=path, install_path=INSTALL_PATH, stage=args.to_stage)
-
-
-def clone(path):
-    """
-    Clone base repo in the remote machine. Only used for Kubernetes at GCP.
-    """
-    if args.git_clone:
-        run_command(args, f"rm -rf {path}")
-    if not os.path.isdir(f"{path}/.git"):
-        git_command = "git clone --depth 1 --recursive --single-branch"
-        git_command += f" {args.git_clone_args}"
-        git_command += f" --branch {args.git_orfs_branch}"
-        git_command += f" {args.git_url} {path}"
-        run_command(args, git_command)
-
-
-def build(base, install):
-    """
-    Build OpenROAD, Yosys and other dependencies.
-    """
-    build_command = f'cd "{base}"'
-    if args.git_clean:
-        build_command += " && git clean -xdf tools"
-        build_command += " && git submodule foreach --recursive git clean -xdf"
-    if (
-        args.git_clean
-        or not os.path.isfile(f"{install}/OpenROAD/bin/openroad")
-        or not os.path.isfile(f"{install}/yosys/bin/yosys")
-    ):
-        build_command += ' && bash -ic "./build_openroad.sh'
-        # Some GCP machines have 200+ cores. Let's be reasonable...
-        build_command += f" --local --nice --threads {min(32, cpu_count())}"
-        if args.git_latest:
-            build_command += " --latest"
-        build_command += f' {args.build_args}"'
-    run_command(args, build_command)
-
-
-@ray.remote
-def setup_repo(base):
-    """
-    Clone ORFS repository and compile binaries.
-    """
-    print(f"[INFO TUN-0000] Remote folder: {base}")
-    install = f"{base}/tools/install"
-    if args.server is not None:
-        clone(base)
-    build(base, install)
-    return install
 
 
 def parse_arguments():
@@ -246,60 +203,6 @@ def parse_arguments():
     )
     tune_parser.add_argument(
         "--resume", action="store_true", help="Resume previous run."
-    )
-
-    # Setup
-    parser.add_argument(
-        "--git_clean",
-        action="store_true",
-        help="Clean binaries and build files."
-        " WARNING: may lose previous data."
-        " Use carefully.",
-    )
-    parser.add_argument(
-        "--git_clone",
-        action="store_true",
-        help="Force new git clone."
-        " WARNING: may lose previous data."
-        " Use carefully.",
-    )
-    parser.add_argument(
-        "--git_clone_args",
-        type=str,
-        metavar="<str>",
-        default="",
-        help="Additional git clone arguments.",
-    )
-    parser.add_argument(
-        "--git_latest", action="store_true", help="Use latest version of OpenROAD app."
-    )
-    parser.add_argument(
-        "--git_or_branch",
-        type=str,
-        metavar="<str>",
-        default="",
-        help="OpenROAD app branch to use.",
-    )
-    parser.add_argument(
-        "--git_orfs_branch",
-        type=str,
-        metavar="<str>",
-        default="master",
-        help="OpenROAD-flow-scripts branch to use.",
-    )
-    parser.add_argument(
-        "--git_url",
-        type=str,
-        metavar="<url>",
-        default=ORFS_URL,
-        help="OpenROAD-flow-scripts repo URL to use.",
-    )
-    parser.add_argument(
-        "--build_args",
-        type=str,
-        metavar="<str>",
-        default="",
-        help="Additional arguments given to ./build_openroad.sh.",
     )
 
     # ML
@@ -336,7 +239,7 @@ def parse_arguments():
         type=int,
         metavar="<int>",
         default=1,
-        help="Number of CPUs to request for each tunning job.",
+        help="Number of CPUs to request for each tuning job.",
     )
     tune_parser.add_argument(
         "--reference",
@@ -354,29 +257,6 @@ def parse_arguments():
     )
     tune_parser.add_argument(
         "--seed", type=int, metavar="<int>", default=42, help="Random seed."
-    )
-
-    # Workload
-    parser.add_argument(
-        "--jobs",
-        type=int,
-        metavar="<int>",
-        default=int(np.floor(cpu_count() / 2)),
-        help="Max number of concurrent jobs.",
-    )
-    parser.add_argument(
-        "--server",
-        type=str,
-        metavar="<ip|servername>",
-        default=None,
-        help="The address of Ray server to connect.",
-    )
-    parser.add_argument(
-        "--port",
-        type=int,
-        metavar="<int>",
-        default=10001,
-        help="The port of Ray server to connect.",
     )
 
     arguments = parser.parse_args()
@@ -472,17 +352,6 @@ def save_best(results):
     print(f"[INFO TUN-0003] Best parameters written to {new_best_path}")
 
 
-@ray.remote
-def consumer(queue):
-    """consumer"""
-    while not queue.empty():
-        next_item = queue.get()
-        name = next_item[1]
-        print(f"[INFO TUN-0007] Scheduling run for parameter {name}.")
-        ray.get(openroad_distributed.remote(*next_item))
-        print(f"[INFO TUN-0008] Finished run for parameter {name}.")
-
-
 def sweep():
     """Run sweep of parameters"""
     if args.server is not None:
@@ -491,7 +360,7 @@ def sweep():
         # <repo>/<logs>/<platform>/<design>/
         repo_dir = os.path.abspath(LOCAL_DIR + "/../" * 4)
     else:
-        repo_dir = os.path.abspath("../")
+        repo_dir = os.path.abspath(os.path.join(ORFS_FLOW_DIR, ".."))
     print(f"[INFO TUN-0012] Log folder {LOCAL_DIR}.")
     queue = Queue()
     parameter_list = list()
@@ -508,50 +377,25 @@ def sweep():
         temp = dict()
         for value in parameter:
             temp.update(value)
-        print(temp)
-        queue.put([repo_dir, temp, LOCAL_DIR])
+        queue.put(
+            [args, repo_dir, temp, LOCAL_DIR, SDC_ORIGINAL, FR_ORIGINAL, INSTALL_PATH]
+        )
     workers = [consumer.remote(queue) for _ in range(args.jobs)]
     print("[INFO TUN-0009] Waiting for results.")
     ray.get(workers)
     print("[INFO TUN-0010] Sweep complete.")
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     args = parse_arguments()
 
     # Read config and original files before handling where to run in case we
     # need to upload the files.
-    config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(os.path.abspath(args.config), args.mode, args.algorithm)
+    config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(
+        os.path.abspath(args.config), args.mode, getattr(args, "algorithm", None)
+    )
 
-    # Connect to remote Ray server if any, otherwise will run locally
-    if args.server is not None:
-        # At GCP we have a NFS folder that is present for all worker nodes.
-        # This allows to build required binaries once. We clone, build and
-        # store intermediate files at LOCAL_DIR.
-        with open(args.config) as config_file:
-            LOCAL_DIR = "/shared-data/autotuner"
-            LOCAL_DIR += f"-orfs-{args.git_orfs_branch}"
-            if args.git_or_branch != "":
-                LOCAL_DIR += f"-or-{args.git_or_branch}"
-            if args.git_latest:
-                LOCAL_DIR += "-or-latest"
-        # Connect to ray server before first remote execution.
-        ray.init(f"ray://{args.server}:{args.port}")
-        # Remote functions return a task id and are non-blocking. Since we
-        # need the setup repo before continuing, we call ray.get() to wait
-        # for its completion.
-        INSTALL_PATH = ray.get(setup_repo.remote(LOCAL_DIR))
-        LOCAL_DIR += f"/flow/logs/{args.platform}/{args.design}"
-        print("[INFO TUN-0001] NFS setup completed.")
-    else:
-        # For local runs, use the same folder as other ORFS utilities.
-        ORFS_FLOW_DIR = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../../../../flow")
-        )
-        os.chdir(ORFS_FLOW_DIR)
-        LOCAL_DIR = f"logs/{args.platform}/{args.design}"
-        LOCAL_DIR = os.path.abspath(LOCAL_DIR)
-        INSTALL_PATH = os.path.abspath("../tools/install")
+    LOCAL_DIR, ORFS_FLOW_DIR, INSTALL_PATH = prepare_ray_server(args)
 
     if args.mode == "tune":
         best_params = set_best_params(args.platform, args.design)

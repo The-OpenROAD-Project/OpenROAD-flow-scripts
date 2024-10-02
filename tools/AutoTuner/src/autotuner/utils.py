@@ -5,9 +5,15 @@ import os
 import re
 import subprocess
 import sys
+from multiprocessing import cpu_count
+from datetime import datetime
+from uuid import uuid4 as uuid
+from time import time
 
 import numpy as np
+import ray
 
+# Default scheme of a SDC constraints file
 SDC_TEMPLATE = """
 set clk_name  core_clock
 set clk_port_name clk
@@ -23,11 +29,20 @@ set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
 set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs
 set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
 """
+# Maps ORFS stage to a name of produced metrics
 STAGE_TO_METRICS = {
     "route": "detailedroute",
     "place": "detailedplace",
     "final": "finish",
 }
+# Name of the SDC file with constraints
+CONSTRAINTS_SDC = "constraint.sdc"
+# Name of the TCL script run before routing
+FASTROUTE_TCL = "fastroute.tcl"
+# URL to ORFS GitHub repository
+ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
+DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
 
 def write_sdc(variables, path, sdc_original, constraints_sdc):
     """
@@ -62,6 +77,11 @@ def write_sdc(variables, path, sdc_original, constraints_sdc):
                 )
             else:
                 new_file += f"\nset io_delay {value}\n"
+        else:
+            print(
+                f"[WARN TUN-0025] {key} variable not supported in context of SDC files"
+            )
+            continue
     file_name = path + f"/{constraints_sdc}"
     with open(file_name, "w") as file:
         file.write(new_file)
@@ -93,41 +113,43 @@ def write_fast_route(variables, path, fr_original, fastroute_tcl):
                 new_file += f"\n{layer_cmd} {layer} {value}\n"
         elif key == "GR_SEED":
             new_file += f"\nset_global_routing_random -seed {value}\n"
+        else:
+            print(
+                f"[WARN TUN-0028] {key} variable not supported in context of FastRoute TCL files"
+            )
+            continue
     file_name = path + f"/{fastroute_tcl}"
     with open(file_name, "w") as file:
         file.write(new_file)
     return file_name
 
 
-def parse_flow_variables(platform):
+def parse_flow_variables(base_dir, platform):
     """
     Parse the flow variables from source
     - Code: Makefile `vars` target output
 
-    TODO: Tests.
-
     Output:
     - flow_variables: set of flow variables
     """
-    cur_path = os.path.dirname(os.path.realpath(__file__))
-
+    # TODO: Tests.
     # first, generate vars.tcl
-    makefile_path = os.path.join(cur_path, "../../../../flow/")
-    initial_path = os.path.abspath(os.getcwd())
-    os.chdir(makefile_path)
-    result = subprocess.run(["make", "vars", f"PLATFORM={platform}"])
+    makefile_path = os.path.join(base_dir, "flow")
+    result = subprocess.run(
+        ["make", "-C", makefile_path, "vars", f"PLATFORM={platform}"],
+        capture_output=True,
+    )
     if result.returncode != 0:
         print(f"[ERROR TUN-0018] Makefile failed with error code {result.returncode}.")
         sys.exit(1)
-    if not os.path.exists("vars.tcl"):
+    if not os.path.exists(os.path.join(makefile_path, "vars.tcl")):
         print("[ERROR TUN-0019] Makefile did not generate vars.tcl.")
         sys.exit(1)
-    os.chdir(initial_path)
 
     # for code parsing, you need to parse from both scripts and vars.tcl file.
     pattern = r"(?:::)?env\((.*?)\)"
-    files = glob.glob(os.path.join(cur_path, "../../../../flow/scripts/*.tcl"))
-    files.append(os.path.join(cur_path, "../../../../flow/vars.tcl"))
+    files = glob.glob(os.path.join(makefile_path, "scripts/*.tcl"))
+    files.append(os.path.join(makefile_path, "vars.tcl"))
     variables = set()
     for file in files:
         with open(file) as fp:
@@ -140,6 +162,7 @@ def parse_flow_variables(platform):
 
 def parse_config(
     config,
+    base_dir,
     platform,
     sdc_original,
     constraints_sdc,
@@ -153,16 +176,16 @@ def parse_config(
     options = ""
     sdc = {}
     fast_route = {}
-    flow_variables = parse_flow_variables(platform)
+    # flow_variables = parse_flow_variables(base_dir, platform)
     for key, value in config.items():
         # Keys that begin with underscore need special handling.
         if key.startswith("_"):
             # Variables to be injected into fastroute.tcl
             if key.startswith("_FR_"):
-                fast_route[key.replace("_FR_", "", 1)] = value
+                fast_route[key[4:]] = value
             # Variables to be injected into constraints.sdc
             elif key.startswith("_SDC_"):
-                sdc[key.replace("_SDC_", "", 1)] = value
+                sdc[key[5:]] = value
             # Special substitution cases
             elif key == "_PINS_DISTANCE":
                 options += f' PLACE_PINS_ARGS="-min_distance {value}"'
@@ -181,10 +204,10 @@ def parse_config(
             #     print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
             #     sys.exit(1)
             options += f" {key}={value}"
-    if bool(sdc):
+    if sdc:
         write_sdc(sdc, path, sdc_original, constraints_sdc)
         options += f" SDC_FILE={path}/{constraints_sdc}"
-    if bool(fast_route):
+    if fast_route:
         write_fast_route(fast_route, path, fr_original, fastroute_tcl)
         options += f" FASTROUTE_TCL={path}/{fastroute_tcl}"
     return options
@@ -221,7 +244,7 @@ def openroad(
     parameters,
     flow_variant,
     path="",
-    install_path=os.path.abspath("../tools/install"),
+    install_path=None,
     stage="",
 ):
     """
@@ -236,6 +259,9 @@ def openroad(
         run_command(args, f"mkdir -p {report_path}")
     else:
         log_path = report_path = os.getcwd() + "/"
+
+    if install_path is None:
+        install_path = os.path.join(base_dir, "tools/install")
 
     export_command = f"export PATH={install_path}/OpenROAD/bin"
     export_command += f":{install_path}/yosys/bin:$PATH"
@@ -256,7 +282,7 @@ def openroad(
         stdout_file=f"{log_path}make-finish-stdout.log",
     )
 
-    metrics_file = os.path.join(report_path, "metrics.json")
+    metrics_file = os.path.abspath(os.path.join(report_path, "metrics.json"))
     metrics_command = export_command
     metrics_command += f"{base_dir}/flow/util/genMetrics.py -x"
     metrics_command += f" -v {flow_variant}"
@@ -288,6 +314,7 @@ STAGES = list(
             "cts",
             "globalroute",
             "detailedroute",
+            "finish",
         ]
     )
 )
@@ -346,10 +373,14 @@ def read_metrics(file_name, stage=""):
         "core_area": core_area,
         "die_area": die_area,
         "last_successful_stage": last_stage,
-    } | ({
-        "wirelength": wirelength,
-        "num_drc": num_drc,
-    } if metric_name in ("detailedroute", "finish") else {})
+    } | (
+        {
+            "wirelength": wirelength,
+            "num_drc": num_drc,
+        }
+        if metric_name in ("detailedroute", "finish")
+        else {}
+    )
     return ret
 
 
@@ -513,6 +544,142 @@ def read_config(file_name, mode, algorithm):
     return config, sdc_file, fr_file
 
 
+def clone(args, path):
+    """
+    Clone base repo in the remote machine. Only used for Kubernetes at GCP.
+    """
+    if args.git_clone:
+        run_command(args, f"rm -rf {path}")
+    if not os.path.isdir(f"{path}/.git"):
+        git_command = "git clone --depth 1 --recursive --single-branch"
+        git_command += f" {args.git_clone_args}"
+        git_command += f" --branch {args.git_orfs_branch}"
+        git_command += f" {args.git_url} {path}"
+        run_command(args, git_command)
+
+
+def build(args, base, install):
+    """
+    Build OpenROAD, Yosys and other dependencies.
+    """
+    build_command = f'cd "{base}"'
+    if args.git_clean:
+        build_command += " && git clean -xdf tools"
+        build_command += " && git submodule foreach --recursive git clean -xdf"
+    if (
+        args.git_clean
+        or not os.path.isfile(f"{install}/OpenROAD/bin/openroad")
+        or not os.path.isfile(f"{install}/yosys/bin/yosys")
+    ):
+        build_command += ' && bash -ic "./build_openroad.sh'
+        # Some GCP machines have 200+ cores. Let's be reasonable...
+        build_command += f" --local --nice --threads {min(32, cpu_count())}"
+        if args.git_latest:
+            build_command += " --latest"
+        build_command += f' {args.build_args}"'
+    run_command(args, build_command)
+
+
+@ray.remote
+def setup_repo(args, base):
+    """
+    Clone ORFS repository and compile binaries.
+    """
+    print(f"[INFO TUN-0000] Remote folder: {base}")
+    install = f"{base}/tools/install"
+    if args.server is not None:
+        clone(base)
+    build(base, install)
+    return install
+
+
+def prepare_ray_server(args):
+    """
+    Prepares Ray server and returns basic directories.
+    """
+    # Connect to remote Ray server if any, otherwise will run locally
+    if args.server is not None:
+        # At GCP we have a NFS folder that is present for all worker nodes.
+        # This allows to build required binaries once. We clone, build and
+        # store intermediate files at LOCAL_DIR.
+        with open(args.config) as config_file:
+            local_dir = "/shared-data/autotuner"
+            local_dir += f"-orfs-{args.git_orfs_branch}"
+            if args.git_or_branch != "":
+                local_dir += f"-or-{args.git_or_branch}"
+            if args.git_latest:
+                local_dir += "-or-latest"
+        # Connect to ray server before first remote execution.
+        ray.init(f"ray://{args.server}:{args.port}")
+        # Remote functions return a task id and are non-blocking. Since we
+        # need the setup repo before continuing, we call ray.get() to wait
+        # for its completion.
+        install_path = ray.get(setup_repo.remote(local_dir))
+        orfs_flow_dir = os.path.join(local_dir, "flow")
+        local_dir += f"/flow/logs/{args.platform}/{args.design}"
+        print("[INFO TUN-0001] NFS setup completed.")
+    else:
+        orfs_dir = getattr(args, "orfs", None)
+        # For local runs, use the same folder as other ORFS utilities.
+        orfs_flow_dir = os.path.abspath(
+            os.path.join(orfs_dir, "flow")
+            if orfs_dir
+            else os.path.join(os.path.dirname(__file__), "../../../../flow")
+        )
+        local_dir = f"logs/{args.platform}/{args.design}"
+        local_dir = os.path.join(orfs_flow_dir, local_dir)
+        install_path = os.path.abspath(os.path.join(orfs_flow_dir, "../tools/install"))
+    return local_dir, orfs_flow_dir, install_path
+
+
+@ray.remote
+def openroad_distributed(
+    args,
+    repo_dir,
+    config,
+    path,
+    sdc_original,
+    fr_original,
+    install_path,
+    variant=None,
+):
+    """Simple wrapper to run openroad distributed with Ray."""
+    config = parse_config(
+        config=config,
+        base_dir=repo_dir,
+        platform=args.platform,
+        sdc_original=sdc_original,
+        constraints_sdc=CONSTRAINTS_SDC,
+        fr_original=fr_original,
+        fastroute_tcl=FASTROUTE_TCL,
+    )
+    if variant is None:
+        variant = config.replace(" ", "_").replace("=", "_")
+    t = time()
+    metric_file = openroad(
+        args=args,
+        base_dir=repo_dir,
+        parameters=config,
+        flow_variant=f"{uuid()}-{variant}",
+        path=path,
+        install_path=install_path,
+        stage=args.to_stage,
+    )
+    duration = time() - t
+    return metric_file, duration
+
+
+@ray.remote
+def consumer(queue):
+    """consumer"""
+    while not queue.empty():
+        next_item = queue.get()
+        name = next_item[1]
+        print(f"[INFO TUN-0007] Scheduling run for parameter {name}.")
+        ray.get(openroad_distributed.remote(*next_item))
+        print(f"[INFO TUN-0008] Finished run for parameter {name}.")
+
+
 def add_common_args(parser: argparse.ArgumentParser):
     # DUT
     parser.add_argument(
@@ -541,7 +708,7 @@ def add_common_args(parser: argparse.ArgumentParser):
         "--to-stage",
         type=str,
         choices=("floorplan", "place", "cts", "route", "finish"),
-        default=None,
+        default="",
         help="Run ORFS only to the given stage (inclusive)",
     )
     parser.add_argument(
@@ -566,4 +733,81 @@ def add_common_args(parser: argparse.ArgumentParser):
         default=0,
         help="Verbosity level.\n\t0: only print status\n\t1: also print"
         " training stderr\n\t2: also print training stdout.",
+    )
+
+    # Setup
+    parser.add_argument(
+        "--git_clean",
+        action="store_true",
+        help="Clean binaries and build files."
+        " WARNING: may lose previous data."
+        " Use carefully.",
+    )
+    parser.add_argument(
+        "--git_clone",
+        action="store_true",
+        help="Force new git clone."
+        " WARNING: may lose previous data."
+        " Use carefully.",
+    )
+    parser.add_argument(
+        "--git_clone_args",
+        type=str,
+        metavar="<str>",
+        default="",
+        help="Additional git clone arguments.",
+    )
+    parser.add_argument(
+        "--git_latest", action="store_true", help="Use latest version of OpenROAD app."
+    )
+    parser.add_argument(
+        "--git_or_branch",
+        type=str,
+        metavar="<str>",
+        default="",
+        help="OpenROAD app branch to use.",
+    )
+    parser.add_argument(
+        "--git_orfs_branch",
+        type=str,
+        metavar="<str>",
+        default="master",
+        help="OpenROAD-flow-scripts branch to use.",
+    )
+    parser.add_argument(
+        "--git_url",
+        type=str,
+        metavar="<url>",
+        default=ORFS_URL,
+        help="OpenROAD-flow-scripts repo URL to use.",
+    )
+    parser.add_argument(
+        "--build_args",
+        type=str,
+        metavar="<str>",
+        default="",
+        help="Additional arguments given to ./build_openroad.sh.",
+    )
+
+    # Workload
+    parser.add_argument(
+        "--jobs",
+        type=int,
+        metavar="<int>",
+        default=int(np.floor(cpu_count() / 2)),
+        help="Max number of concurrent jobs.",
+    )
+    parser.add_argument(
+        "--server",
+        type=str,
+        metavar="<ip|servername>",
+        default=None,
+        help="The address of Ray server to connect.",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        metavar="<int>",
+        default=10001,
+        help="The port of Ray server to connect.",
     )

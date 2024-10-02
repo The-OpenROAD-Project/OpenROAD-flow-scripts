@@ -1,24 +1,28 @@
 import argparse
 import json
-import logging
-import os
 import sys
-import time
 import traceback
-from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
 from pathlib import Path
-from tqdm import tqdm
-from typing import Dict, Tuple
+from typing import Dict
 
-from utils import add_common_args, openroad, parse_config, read_config, read_metrics
+import ray
+from tqdm import tqdm
 from vizier import service
 from vizier.service import clients, servers
 from vizier.service import pyvizier as vz
 
+from autotuner.utils import (
+    DATE,
+    add_common_args,
+    openroad_distributed,
+    read_config,
+    read_metrics,
+    prepare_ray_server,
+)
+
+# Path to the ORFS base directory
 ORFS = list(Path(__file__).absolute().parents)[4]
-CONSTRAINTS_SDC = "constraint.sdc"
-FASTROUTE_TCL = "fastroute.tcl"
+# Maps metrics to a goal (min or max)
 METRIC_TO_GOAL = {
     "worst_slack": vz.ObjectiveMetricGoal.MAXIMIZE,
     "clk_period-worst_slack": vz.ObjectiveMetricGoal.MINIMIZE,
@@ -30,26 +34,20 @@ METRIC_TO_GOAL = {
     "die_area": vz.ObjectiveMetricGoal.MINIMIZE,
     "last_successful_stage": vz.ObjectiveMetricGoal.MAXIMIZE,
 }
+# Maps goal to a worst value
 GOAL_TO_VALUE = {
     vz.ObjectiveMetricGoal.MINIMIZE: float("inf"),
     vz.ObjectiveMetricGoal.MAXIMIZE: float("-inf"),
 }
+# Maps string to Vizier ScaleType
 MAP_SCALE_TYPE = {
     "linear": vz.ScaleType.LINEAR,
     "log": vz.ScaleType.LOG,
     "rlog": vz.ScaleType.REVERSE_LOG,
 }
-DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-LOG = logging.Logger(Path(__name__).with_suffix("").name)
 
 
-def evaluate(
-    args: argparse.Namespace,
-    params: Dict,
-    iteration: int,
-    suggestion: int,
-    install_path: Path,
-) -> Tuple[Dict[str, float], str, float]:
+def evaluate(args: argparse.Namespace, metric_file: str) -> Dict[str, float]:
     """
     Runs ORFS and calculates metrics.
 
@@ -57,43 +55,15 @@ def evaluate(
     ----------
     args : argparse.Namespace
         Optimization arguments
-    params : Dict
-        Parameters to evaluate
-    iteration : int
-        Current iteration
-    suggestion : int
-        Current suggestion number
-    install_path : Path
-        Path to the folder with installed ORFS binaries
+    metric_file : str
+        Path to the file with metrics
 
     Returns
     -------
-    Tuple[Dict[str, float], str, float]
-        Dictionary with metrics, name of variant and duration of ORFS run
+    Dict[str, float]
+        Dictionary with metrics
     """
-    variant = f"variant-{iteration}-{suggestion}"
     try:
-        # Prepare ORFS options
-        options = parse_config(
-            params,
-            args.platform,
-            args.sdc_file,
-            CONSTRAINTS_SDC,
-            args.fr_file,
-            FASTROUTE_TCL,
-        )
-        t = time.time()
-        # Run flow
-        metric_file = openroad(
-            args,
-            str(args.orfs),
-            options,
-            variant,
-            path=f"logs/{args.platform}/{args.design}",
-            install_path=str(install_path),
-            stage=args.to_stage,
-        )
-        duration = time.time() - t
         metrics = read_metrics(metric_file, stage=args.to_stage)
         # Calculate difference of clock period and worst slack
         if metrics["clk_period"] != 9999999 and metrics["worst_slack"] != "ERR":
@@ -117,34 +87,61 @@ def evaluate(
         ):
             # Invert core util, as for smaller values design should be easier to built
             results["core_util"] *= -1
-        return results, variant, duration
+        return results
     except Exception as ex:
-        LOG.error(f"Exception during {args.design} {variant}: {ex}", file=sys.stderr)
-        LOG.error("\n".join(traceback.format_tb(ex.__traceback__)), file=sys.stderr)
+        print(
+            f"[ERROR TUN-0023] Exception during metrics processing {args.design}: {ex}",
+            file=sys.stderr,
+        )
+        print("\n".join(traceback.format_tb(ex.__traceback__)), file=sys.stderr)
         results = {}
         for metric, goal in args.use_metrics:
             results[metric] = GOAL_TO_VALUE[METRIC_TO_GOAL[metric]]
-        return results, variant, 0.0
+        return results
 
 
-def parallel_evaluate(tup: Tuple[argparse.Namespace, Dict, int, int]) -> Dict:
+@ray.remote
+def parallel_evaluate(
+    args: argparse.Namespace,
+    suggestion: Dict,
+    i: int,
+    s: int,
+    install_path: Path,
+) -> Dict:
     """
     Wrapper for evaluate, run in thread pool.
 
     Parameters
     ----------
-    tup : Tuple[argparse.Namespace, Dict, int, int]
-        Tupled evaluate input
+    args : argparse.Namespace
+        Optimization arguments
+    suggestion : Dict
+    i : int
+        Number of iteration
+    s : int
+        Number of suggestion
+    install_path : Path
+        Path to the install directory with ORFS binaries
 
     Returns
     -------
     Dict
         Results of evaluation with additional data
     """
-    args, suggestion, i, s, install_path = tup
-    LOG.info(f"It {i} sug {s} params: {suggestion}")
-    objective, variant, duration = evaluate(args, suggestion, i, s, install_path)
-    LOG.info(f"It {i} sug {s} metric: {objective}")
+    variant = f"variant-{i}-{s}"
+    metric_file, duration = ray.get(
+        openroad_distributed.remote(
+            args=args,
+            repo_dir=str(args.orfs),
+            config=suggestion,
+            path=f"logs/{args.platform}/{args.design}",
+            sdc_original=args.sdc_file,
+            fr_original=args.fr_file,
+            install_path=str(install_path),
+            variant=variant,
+        )
+    )
+    objective = evaluate(args, metric_file)
     return {
         "iterations": i,
         "suggestion": s,
@@ -190,6 +187,28 @@ def register_param(
         )
 
 
+def cast_params(params: Dict, config: Dict) -> Dict:
+    """
+    Cast params to integer according to configuration.
+
+    Parameters
+    ----------
+    params : Dict
+        Dictionary with suggested parameters
+    config : Dict
+        Provided configuration with types
+
+    Returns
+    -------
+    Dict
+        Updated parameters
+    """
+    for key, value in params.items():
+        if config[key]["type"] == "int":
+            params[key] = int(value)
+    return params
+
+
 def main(
     args: argparse.Namespace,
     config: Dict,
@@ -220,9 +239,12 @@ def main(
 
     problem = vz.ProblemStatement()
     for key, value in config.items():
-        register_param(args, problem, key, value)
-    for metric, goal in METRIC_TO_GOAL.items():
-        problem.metric_information.append(vz.MetricInformation(metric, goal=goal))
+        if isinstance(value, Dict):
+            register_param(args, problem, key, value)
+    for metric in args.use_metrics:
+        problem.metric_information.append(
+            vz.MetricInformation(metric, goal=METRIC_TO_GOAL[metric])
+        )
 
     study_config = vz.StudyConfig.from_problem(problem)
     study_config.algorithm = args.algorithm
@@ -244,7 +266,7 @@ def main(
         )
         start_iteration = last_iteration + 1
         if start_iteration <= args.iterations - 1:
-            LOG.warn(f"Trying to restart experiment (previously {state})")
+            print(f"[WARN TUN-0026] Trying to restart experiment (previously {state})")
             study_client.set_state(vz.StudyState.ACTIVE)
 
     # Run iterations
@@ -253,31 +275,45 @@ def main(
     ):
         try:
             suggestions = study_client.suggest(count=s)
-            with ThreadPoolExecutor(args.workers) as pool:
-                population = pool.map(
-                    parallel_evaluate,
-                    [
-                        (args, suggestion.parameters, i, s, install_path)
-                        for s, suggestion in enumerate(suggestions)
-                    ],
+            unfinished = [
+                parallel_evaluate.remote(
+                    args,
+                    cast_params(suggestion.parameters, config),
+                    i,
+                    s_i,
+                    install_path,
                 )
-                tqdm_population = tqdm(population)
-                tqdm_population.set_description(f"Iteration {i}/{args.iterations}")
-                for p in tqdm_population:
-                    results["populations"].append(p)
-                    final_measurement = vz.Measurement(p["evaluation"])
-                    suggestions[p["suggestion"]].update_metadata(
-                        vz.Metadata(
-                            {
-                                "variant": p["variant"],
-                                "duration": str(p["duration"]),
-                                "iteration": str(i),
-                                "suggestion": str(s),
-                            }
-                        )
+                for s_i, suggestion in enumerate(suggestions)
+            ]
+            # Setup tqdm
+            print("\n")  # Prepare space for additional info
+            tqdm_population = tqdm(total=s)
+            tqdm_population.set_description(f"Iteration {i + 1}/{args.iterations}")
+            while unfinished:
+                finished, unfinished = ray.wait(unfinished, num_returns=1)
+                sample = ray.get(finished)[0]
+                print(sample)
+                results["populations"].append(sample)
+                final_measurement = vz.Measurement(sample["evaluation"])
+                process_suggestion = suggestions[sample["suggestion"]]
+                process_suggestion.update_metadata(
+                    vz.Metadata(
+                        {
+                            "variant": sample["variant"],
+                            "duration": str(sample["duration"]),
+                            "iteration": str(i),
+                            "suggestion": str(s),
+                        }
                     )
-                    suggestions[p["suggestion"]].complete(final_measurement)
-            LOG.info(f"Iteration {i} finished")
+                )
+                # Display suggestion's parameters and evaluations
+                tqdm_population.display(
+                    f"[INFO TUN-0024] Params: {process_suggestion.parameters}\n"
+                    f"Evaluation: {sample['evaluation']}\n",
+                    -1,
+                )
+                tqdm_population.update(1)
+                suggestions[sample["suggestion"]].complete(final_measurement)
         except KeyboardInterrupt as ex:
             study_client.set_state(vz.StudyState.ABORTED)
             raise ex
@@ -286,8 +322,9 @@ def main(
 
     for optimal_trial in study_client.optimal_trials():
         trial = optimal_trial.materialize()
-        LOG.info(trial.parameters.as_dict())
-        LOG.info(trial.final_measurement.metrics)
+        print(
+            f"[INFO TUN-0027] Found params: {trial.parameters.as_dict()}\nMetrics: {trial.final_measurement.metrics}"
+        )
         results["optimals"].append(
             {
                 "params": trial.parameters.as_dict(),
@@ -323,12 +360,14 @@ def initialize_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--orfs",
         type=Path,
+        metavar="<str>",
         default=ORFS,
         help="Path to the OpenROAD-flow-scripts repository",
     )
     parser.add_argument(
         "--results",
         type=Path,
+        metavar="<str>",
         default="results.json",
         help="Path where JSON file with results will be saved",
     )
@@ -360,6 +399,7 @@ def initialize_parser() -> argparse.ArgumentParser:
         "-i",
         "--iterations",
         type=int,
+        metavar="<int>",
         help="Max iteration count for the optimization engine",
         default=2,
     )
@@ -367,40 +407,31 @@ def initialize_parser() -> argparse.ArgumentParser:
         "-s",
         "--suggestions",
         type=int,
+        metavar="<int>",
         nargs="+",
         help="Suggestion count per iteration of the optimization engine",
         default=[5],
     )
-    parser.add_argument(
-        "-w",
-        "--workers",
-        default=2,
-        help="Number of parallel workers",
-        type=int,
-    )
     vizier_server_args = parser.add_mutually_exclusive_group()
     vizier_server_args.add_argument(
-        "--use-existing-server",
+        "--vz-use-existing-server",
         type=str,
+        metavar="<str>",
         help="Address of the running Vizier server",
         default=None,
     )
     start_server_args = vizier_server_args.add_argument_group("Local server")
     start_server_args.add_argument(
-        "--server-host",
+        "--vz-server-host",
         type=str,
+        metavar="<str>",
         help="Spawn Vizier server with given host",
         default=None,
     )
     start_server_args.add_argument(
-        "--server-port",
+        "--vz-server-db",
         type=str,
-        help="Spawn Vizier server with given port",
-        default=None,
-    )
-    start_server_args.add_argument(
-        "--server-db",
-        type=str,
+        metavar="<str>",
         help="Path to the Vizier server's database",
         default=None,
     )
@@ -417,13 +448,13 @@ def run_vizier():
     parser = initialize_parser()
     args = parser.parse_args()
 
-    LOG.setLevel([logging.ERROR, logging.WARN, logging.INFO][args.verbose])
-
     if args.algorithm == "GAUSSIAN_PROCESS_BANDIT" and any(
         s > 1 for s in args.suggestions
     ):
-        LOG.error(
-            "GAUSSIAN_PROCESS_BANDIT does not support batch operation, please set suggestions to 1"
+        print(
+            "[ERROR TUN-0022] GAUSSIAN_PROCESS_BANDIT does not support "
+            "batch operation, please set suggestions to 1",
+            file=sys.stderr,
         )
         exit(1)
 
@@ -432,34 +463,34 @@ def run_vizier():
     args.suggestions += [
         args.suggestions[-1] for _ in range(args.iterations - len(args.suggestions))
     ]
-    if args.to_stage is None:
-        args.to_stage = ""
 
     config, sdc_file, fr_file = read_config(args.config, "vizier", args.algorithm)
     args.sdc_file = sdc_file
     args.fr_file = fr_file
 
-    orfs_flow_dir = str(args.orfs / "flow")
-    os.chdir(orfs_flow_dir)
-    install_path = Path("../tools/install").absolute()
+    local_dir, orfs_flow_dir, install_path = prepare_ray_server(args)
+    args.orfs = Path(orfs_flow_dir).parent
 
     server_endpoint = None
-    if args.server_host:
+    if args.vz_server_host:
         # Start Vizier server
-        server_database = args.server_db if args.server_db else service.SQL_LOCAL_URL
-        server = servers.DefaultVizierServer(
-            host=args.server_host, database_url=server_database, port=args.server_port
+        server_database = (
+            args.vz_server_db if args.vz_server_db else service.SQL_LOCAL_URL
         )
-        LOG.info(f"Started Vizier Server at: {server.endpoint}")
-        LOG.info(f"SQL database file located at: {server._database_url}")
+        server = servers.DefaultVizierServer(
+            host=args.vz_server_host,
+            database_url=server_database,
+        )
+        print(f"[INFO TUN-0020] Started Vizier Server at: {server.endpoint}")
+        print(f"[INFO TUN-0021] SQL database file located at: {server._database_url}")
         server_endpoint = server.endpoint
-    if args.use_existing_server:
-        server_endpoint = args.use_existing_server
+    if args.vz_use_existing_server:
+        server_endpoint = args.vz_use_existing_server
 
     results = main(args, config, install_path, server_endpoint)
     with args.results.open("w") as fd:
         json.dump(results, fd)
-    print(f"Results saved to {args.results}")
+    print(f"[INFO TUN-0002] Results saved to {args.results}")
 
 
 if __name__ == "__main__":
