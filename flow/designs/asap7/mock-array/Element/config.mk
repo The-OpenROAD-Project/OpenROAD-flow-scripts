@@ -29,14 +29,17 @@ export PDN_TCL                = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCK_
 # If this design isn't quickly done in detailed routing, something is wrong.
 # At time of adding this option, only 3 iterations were needed for 0
 # violations.
-export DETAILED_ROUTE_ARGS=-bottom_routing_layer M2 -top_routing_layer M5 -save_guide_updates -verbose 1 -droute_end_iter 10
+export DETAILED_ROUTE_END_ITERATION = 10
 
 # since we are specifying DETAILED_ROUTE_ARGS, we need to communicate the
 # same information to other stages in the flow.
-export MIN_ROUTING_LAYER = M2
-export MAX_ROUTING_LAYER = M5
+export MAX_ROUTING_LAYER = M7
 
-export PLACE_PINS_ARGS = -annealing
+export IO_PLACER_H=M4 M6
+export IO_PLACER_V=M5 M7
+
+# FIXME annealing takes a long time
+# export PLACE_PINS_ARGS = -annealing
 
 export GND_NETS_VOLTAGES      =
 export PWR_NETS_VOLTAGES      =
