@@ -6,15 +6,16 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: BSD 3-Clause",
 ]
-readme = "RAY_README.md"
-dependencies = []
+readme = "README.md"
+dependencies = [
+    "ray[default]==2.9.3",
+]
 
 [project.optional-dependencies]
 ray = [
-    "ray[default,tune]==2.9.3",
+    "ray[tune]==2.9.3",
     "ax-platform>=0.3.3,<=0.3.7",
     "hyperopt==0.2.7",
-    "nevergrad==1.0.2",
     "optuna==3.6.0",
     "pandas>=2.0,<=2.2.1",
     "bayesian-optimization==1.4.0",
@@ -25,7 +26,9 @@ ray = [
     "urllib3<=1.26.15",
 ]
 vizier = [
+    "jax<=0.4.33",
     "google-vizier[jax]",
+    "tqdm",
 ]
 
 [build-system]
