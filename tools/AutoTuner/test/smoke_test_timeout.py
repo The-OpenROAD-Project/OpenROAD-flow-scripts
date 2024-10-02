@@ -16,7 +16,7 @@ class BaseTuneTimeoutTest(unittest.TestCase):
             cur_dir,
             f"../../../flow/designs/{self.platform}/{self.design}/autotuner.json",
         )
-        self.experiment = f"smoke-test-tune-{self.platform}"
+        self.experiment = f"smoke-test-timeout-{self.platform}"
 
         # 0.01 hour translates to 36 seconds, which will definitely cause failure.
         timeout_flags = ["--timeout 0.05", "--timeout_per_trial 0.05"]
