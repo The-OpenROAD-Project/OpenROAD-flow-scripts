@@ -192,6 +192,7 @@ Note:
 | `DETAILED_ROUTE_ARGS` | Add additional arguments for debugging purpose during detail route.                               |
 | `MACRO_EXTENSION`     | Sets the number of GCells added to the blockages boundaries from macros.                          |
 | `RECOVER_POWER`       | Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100]. |
+| `DETAILED_ROUTE_END_ITERATION` | Maximum number of iterations, default 64. |
 
 
 ### Extraction
