@@ -233,7 +233,7 @@ def parse_arguments():
         help="mode of execution", dest="mode", required=True
     )
     tune_parser = subparsers.add_parser("tune")
-    _ = subparsers.add_parser("sweep")
+    sweep_parser = subparsers.add_parser("sweep")
 
     # DUT
     parser.add_argument(
@@ -342,7 +342,7 @@ def parse_arguments():
         help="Additional arguments given to ./build_openroad.sh.",
     )
 
-    # ML
+    # Tune mode
     tune_parser.add_argument(
         "--algorithm",
         type=str,
@@ -398,6 +398,14 @@ def parse_arguments():
         metavar="<int>",
         default=42,
         help="Random seed. (0 means no seed.)",
+    )
+
+    sweep_parser.add_argument(
+        "--resources_per_trial",
+        type=int,
+        metavar="<int>",
+        default=1,
+        help="Number of CPUs to request for each sweep job.",
     )
 
     # Workload

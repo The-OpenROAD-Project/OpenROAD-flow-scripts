@@ -38,8 +38,7 @@ class BaseSweepSmokeTest(unittest.TestCase):
             f" --experiment {self.experiment}"
             f" --config {self.config}"
             f" --cpu_budget {self.cpu_budget}"
-            f" --resources_per_trial {self.resources_per_trial}"
-            f" sweep"
+            f" sweep --resources_per_trial {self.resources_per_trial}"
         )
 
     def test_sweep(self):
