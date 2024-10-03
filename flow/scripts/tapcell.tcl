@@ -1,4 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables floorplan
 
 if {[env_var_exists_and_non_empty TAPCELL_TCL]} {
   load_design 2_4_floorplan_macro.odb 1_synth.sdc
