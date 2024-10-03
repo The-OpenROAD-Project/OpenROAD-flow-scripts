@@ -119,6 +119,10 @@ The order of the parameters matter. Arguments `--design`, `--platform` and
 `--config` are always required and should precede <mode>.
 ```
 
+```{note}
+Make sure you run the following commands in `./tools/AutoTuner/src/autotuner`.
+```
+
 #### Tune only 
 
 * AutoTuner: `python3 distributed.py tune -h`
@@ -127,8 +131,8 @@ Example:
 
 ```shell
 python3 distributed.py --design gcd --platform sky130hd \
-                       --config ../designs/sky130hd/gcd/autotuner.json \
-                       tune
+                       --config ../../../../flow/designs/sky130hd/gcd/autotuner.json \
+                       tune --samples 5
 ```
 #### Sweep only 
 
