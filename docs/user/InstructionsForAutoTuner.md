@@ -27,6 +27,10 @@ We have provided two convenience scripts, `./install.sh` and `./setup.sh`
 that works in Python3.8 for installation and configuration of AutoTuner,
 as shown below:
 
+```{note}
+Make sure you run the following commands in `./tools/AutoTuner/src/autotuner`.
+```
+
 ```shell
 # Install prerequisites
 ./tools/AutoTuner/install.sh
@@ -117,10 +121,6 @@ though some features may not be available for sweeping.
 ```{note}
 The order of the parameters matter. Arguments `--design`, `--platform` and
 `--config` are always required and should precede <mode>.
-```
-
-```{note}
-Make sure you run the following commands in `./tools/AutoTuner/src/autotuner`.
 ```
 
 #### Tune only 
