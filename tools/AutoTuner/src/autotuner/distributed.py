@@ -74,6 +74,30 @@ ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
 # Global variable for args
 args = None
 
+TEMPLATE = """
+Expected figures for this experiment.
+    Wall time: {runtime:.2f} hours
+    Number of Samples: 
+        Samples per minute: {num_samples_per_minute:.2f}
+        Design runtime of 10 min: {num_samples_10min:.2f}
+        Design runtime of 1h: {num_samples_1h:.2f}
+    Number of iterations
+        Design runtime of 10 min: {num_iterations_10min:.2f}
+        Design runtime of 1h: {num_iterations_1h:.2f}
+"""
+
+
+def calculate_expected_numbers(runtime, num_samples):
+    # Runtime - hours
+    return TEMPLATE.format(
+        runtime=runtime,
+        num_samples_per_minute=num_samples / (runtime * 60),
+        num_samples_10min=(num_samples / (runtime * 60)) * 10,
+        num_samples_1h=(num_samples / (runtime * 60)) * 60,
+        num_iterations_10min=((num_samples / (runtime * 60)) * 10) / num_samples,
+        num_iterations_1h=((num_samples / (runtime * 60)) * 60) / num_samples,
+    )
+
 
 class AutoTunerBase(tune.Trainable):
     """
@@ -414,7 +438,7 @@ def parse_arguments():
         type=int,
         metavar="<int>",
         default=int(np.floor(cpu_count() / 2)),
-        help="Number of cpus to be used.",
+        help="CPU Hours",
     )
     parser.add_argument(
         "--openroad_threads",
@@ -483,6 +507,15 @@ def parse_arguments():
     # Calculate jobs
     jobs = int(args.cpu_budget / args.resources_per_trial)
     args.jobs = jobs
+
+    # Calculate timeout based on cpu_budget
+    if args.cpu_budget is not None:
+        args.timeout = args.cpu_budget / os.cpu_count()
+        template = calculate_expected_numbers(args.timeout, args.samples)
+        print(template)
+        ans = input("Do you want to continue? [Y/n]")
+        if ans.lower() != "y":
+            sys.exit(0)
 
     return args
 

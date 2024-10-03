@@ -7,7 +7,7 @@ src_dir = os.path.join(cur_dir, "../src/autotuner")
 os.chdir(src_dir)
 
 
-class BaseTuneTimeoutTest(unittest.TestCase):
+class BaseTimeoutSmokeTest(unittest.TestCase):
     platform = ""
     design = ""
 
@@ -37,7 +37,7 @@ class BaseTuneTimeoutTest(unittest.TestCase):
         )
 
 
-class ASAP7TuneTimeoutTest(BaseTuneTimeoutTest):
+class ASAP7TimeoutSmokeTest(BaseTimeoutSmokeTest):
     platform = "asap7"
     design = "gcd"
 
@@ -48,7 +48,7 @@ class ASAP7TuneTimeoutTest(BaseTuneTimeoutTest):
             self.assertFalse(successful)
 
 
-class SKY130HDTuneTimeoutTest(BaseTuneTimeoutTest):
+class SKY130HDTimeoutSmokeTest(BaseTimeoutSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
@@ -59,7 +59,7 @@ class SKY130HDTuneTimeoutTest(BaseTuneTimeoutTest):
             self.assertFalse(successful)
 
 
-class IHPSG13G2TuneTimeoutTest(BaseTuneTimeoutTest):
+class IHPSG13G2TimeoutSmokeTest(BaseTimeoutSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 
