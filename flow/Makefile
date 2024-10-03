@@ -109,46 +109,6 @@ DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 # this file.
 include $(DESIGN_CONFIG)
 
-# For instance Bazel needs artifacts (.odb and .rpt files) on a failure to
-# allow the user to save hours on re-running the failed step locally, but
-# when working with a Makefile flow, it is more natural to fail the step
-# and leave the user to manually inspect the logs and artifacts directly via
-# the file system.
-#
-# Set to 1 to change the behavior to generate artifacts upon failure to
-# e.g. do a global route. The exit code will still be non-zero on all other
-# failures that aren't covered by the "useful to inspect the artifacts on
-# failure" use-case.
-#
-# Example: just like detailed routing, a global route that fails with congestion, is not
-# a build failure(as in exit code non-zero), it is a successful(as in zero exit code)
-# global route that produce reports detailing the problem.
-#
-# Detailed route will not proceed, if there is global routing congestion
-#
-# This allows build systems, such as bazel, to create artifacts for global
-# and detailed route, even if the operation had problems, without having
-# know about the semantics between global and detailed route.
-#
-# Considering that global and detailed route can run for a long time and
-# use a lot of memory, this allows inspecting results on a laptop for
-# a build that ran on a server.
-export GENERATE_ARTIFACTS_ON_FAILURE ?= 0
-
-# Default TNS_END_PERCENT value for post CTS timing repair
-# Try fixing all violating endpoints by default (reduce to 5% for runtime)
-export TNS_END_PERCENT ?=100
-
-# Default routing layer adjustment
-export ROUTING_LAYER_ADJUSTMENT ?= 0.5
-export RECOVER_POWER ?= 0
-export SKIP_INCREMENTAL_REPAIR ?= 0
-export DETAILED_METRICS ?= 0
-export EQUIVALENCE_CHECK ?= 0
-export CORE_UTILIZATION ?=
-export DIE_AREA ?=
-export CORE_AREA ?=
-
 # If we are running headless use offscreen rendering for save_image
 ifeq ($(DISPLAY),)
 export QT_QPA_PLATFORM ?= offscreen
@@ -199,6 +159,8 @@ export WORK_HOME     ?= .
 export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
 export TEST_DIR      ?= $(FLOW_HOME)/test
+
+$(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(line)))
 
 PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
