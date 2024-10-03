@@ -3,7 +3,6 @@ export DESIGN_NAME = bp_fe_top
 export PLATFORM    = tsmc65lp
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = 1
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/pickled.v \
                        ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
