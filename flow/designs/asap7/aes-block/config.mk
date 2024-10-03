@@ -18,7 +18,6 @@ export SYNTH_HIERARCHICAL = 1
 export RTLMP_FLOW = 1
 
 export PLACE_PINS_ARGS = -annealing
-export HAS_IO_CONSTRAINTS = 0
 
 # Generous routing at top level
 export MIN_ROUTING_LAYER      = M2
