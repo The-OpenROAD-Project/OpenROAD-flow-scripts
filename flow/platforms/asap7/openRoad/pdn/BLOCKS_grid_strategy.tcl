@@ -1,4 +1,5 @@
 # Top level PDN for macros using BLOCK_grid_strategy.tcl
+source $::env(SCRIPTS_DIR)/util.tcl
 
 ####################################
 # global connections
