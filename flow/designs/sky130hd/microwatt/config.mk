@@ -22,7 +22,6 @@ export ADDITIONAL_LEFS  = $(wildcard $(microwatt_DIR)/lef/*.lef)
 export ADDITIONAL_LIBS = $(wildcard $(microwatt_DIR)/lib/*.lib)
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = 1
 
 export RTLMP_BOUNDARY_WT = 0
 export MACRO_PLACE_HALO = 100 100
