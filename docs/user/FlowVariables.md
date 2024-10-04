@@ -134,7 +134,6 @@ Note:
 | `PLACE_SITE`          | Placement site for core cells defined in the technology LEF file.                                                                                                                |
 | `TAPCELL_TCL`         | Path to Endcap and Welltie cells file.                                                                                                                                           |
 | `RTLMP_FLOW`          | 1 to enable the Hierarchical RTLMP flow, default empty |
-| `MACRO_HALO`          | Specifies keep out distance from macro, in X and Y, to standard cell row.                                                                                                        |
 | `MACRO_PLACEMENT`     | Specifies the path of a file on how to place certain macros manually using read_macro_placement.                                                                                 |
 | `MACRO_PLACEMENT_TCL` | Specifies the path of a TCL file on how to place certain macros manually.                                                                                                        |
 | `MACRO_PLACE_HALO`    | horizontal/vertical halo around macros (microns). Used by automatic macro placement.                                                                               |
@@ -193,6 +192,7 @@ Note:
 | `DETAILED_ROUTE_ARGS` | Add additional arguments for debugging purpose during detail route.                               |
 | `MACRO_EXTENSION`     | Sets the number of GCells added to the blockages boundaries from macros.                          |
 | `RECOVER_POWER`       | Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100]. |
+| `DETAILED_ROUTE_END_ITERATION` | Maximum number of iterations, default 64. |
 
 
 ### Extraction

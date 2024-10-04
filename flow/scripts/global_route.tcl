@@ -6,7 +6,7 @@ proc global_route_helper {} {
   source $::env(SCRIPTS_DIR)/load.tcl
   load_design 4_cts.odb 4_cts.sdc
 
-  if {[info exist ::env(PRE_GLOBAL_ROUTE)]} {
+  if {[env_var_exists_and_non_empty PRE_GLOBAL_ROUTE]} {
     source $::env(PRE_GLOBAL_ROUTE)
   }
 
@@ -19,7 +19,7 @@ proc global_route_helper {} {
   # GLOBAL_ROUTE_ARGS specifies.
   proc do_global_route {} {
     set all_args [concat [list -congestion_report_file $::env(REPORTS_DIR)/congestion.rpt] \
-      [expr {[info exists ::env(GLOBAL_ROUTE_ARGS)] ? $::env(GLOBAL_ROUTE_ARGS) : \
+      [expr {[env_var_exists_and_non_empty GLOBAL_ROUTE_ARGS] ? $::env(GLOBAL_ROUTE_ARGS) : \
       {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]]
 
     log_cmd global_route {*}$all_args
@@ -45,7 +45,7 @@ proc global_route_helper {} {
   set_propagated_clock [all_clocks]
   estimate_parasitics -global_routing
 
-  if {[info exist ::env(DONT_USE_CELLS)]} {
+  if {[env_var_exists_and_non_empty DONT_USE_CELLS]} {
     set_dont_use $::env(DONT_USE_CELLS)
   }
 
@@ -88,7 +88,7 @@ proc global_route_helper {} {
 
   recover_power
 
-  if {![info exist ::env(SKIP_ANTENNA_REPAIR)]} {
+  if {![env_var_equals SKIP_ANTENNA_REPAIR 1]} {
     puts "Repair antennas..."
     repair_antennas -iterations 5
     check_placement -verbose

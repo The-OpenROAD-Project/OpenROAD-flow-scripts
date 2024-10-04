@@ -4,7 +4,7 @@ load_design 2_5_floorplan_tapcell.odb 1_synth.sdc
 source $::env(PDN_TCL)
 pdngen
 
-if { [info exists ::env(POST_PDN_TCL)] && [file exists $::env(POST_PDN_TCL)] } {
+if { [env_var_exists_and_non_empty POST_PDN_TCL] } {
   source $::env(POST_PDN_TCL)
 }
 

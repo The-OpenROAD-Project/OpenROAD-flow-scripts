@@ -4,7 +4,6 @@ export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 10000
-export RTLMP_FLOW = 1
 #
 # RTL_MP Settings
 
