@@ -1,4 +1,5 @@
 # Top level PDN for macros using BLOCK_grid_strategy.tcl
+source $::env(SCRIPTS_DIR)/util.tcl
 
 ####################################
 # global connections
@@ -30,7 +31,16 @@ add_pdn_connect -grid {top} -layers {M5 M6}
 # Element grid
 ####################################
 # The halo around the macro prevents pdn from blocking pin access
-define_pdn_grid -macro -cells $::env(MACROS) \
+
+set macro_names {}
+
+foreach macro [find_macros] {
+  set macro_name [[$macro getMaster] getName]
+  dict set macro_names $macro_name 1
+}
+set macro_names [dict keys $macro_names]
+
+define_pdn_grid -macro -cells $macro_names \
     -halo "$::env(MACRO_HALO_X) $::env(MACRO_HALO_Y) $::env(MACRO_HALO_X) $::env(MACRO_HALO_Y)" \
     -voltage_domains {CORE} -name ElementGrid
 

@@ -3,7 +3,6 @@ export DESIGN_NAME = black_parrot
 export PLATFORM    = tsmc65lp
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = 1
 #
 # RTL_MP Settings
 export RTLMP_MAX_INST = 30000
