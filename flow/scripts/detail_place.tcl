@@ -16,7 +16,7 @@ proc do_dpl {} {
   detailed_placement
   
   if {[env_var_equals ENABLE_DPO 1]} {
-    if {[info exist ::env(DPO_MAX_DISPLACEMENT)]} {
+    if {[env_var_exists_and_non_empty DPO_MAX_DISPLACEMENT]} {
       improve_placement -max_displacement $::env(DPO_MAX_DISPLACEMENT)
     } else {
       improve_placement

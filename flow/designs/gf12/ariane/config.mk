@@ -3,7 +3,6 @@ export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 10000
-export RTLMP_FLOW = 1
 #
 
 export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/ariane.sv2v.v \

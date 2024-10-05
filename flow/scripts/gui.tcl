@@ -3,11 +3,11 @@ source $::env(SCRIPTS_DIR)/util.tcl
 source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
 # Read def
-if {[info exist ::env(DEF_FILE)]} {
+if {[env_var_exists_and_non_empty DEF_FILE]} {
     # Read lef
     read_lef $::env(TECH_LEF)
     read_lef $::env(SC_LEF)
-    if {[info exist ::env(ADDITIONAL_LEFS)]} {
+    if {[env_var_exists_and_non_empty ADDITIONAL_LEFS]} {
       foreach lef $::env(ADDITIONAL_LEFS) {
         read_lef $lef
       }
@@ -49,6 +49,6 @@ proc read_timing {input_file} {
   fast_route
 }
 
-if {![info exist ::env(GUI_NO_TIMING)]} {
+if {![env_var_equals GUI_NO_TIMING 1]} {
   read_timing $input_file
 }

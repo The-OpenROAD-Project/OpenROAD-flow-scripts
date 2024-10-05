@@ -11,4 +11,3 @@ export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.70
 
 export PLACE_PINS_ARGS = -annealing
-export HAS_IO_CONSTRAINTS = 0
