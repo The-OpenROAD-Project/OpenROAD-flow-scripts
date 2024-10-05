@@ -618,7 +618,7 @@ do-$(1): $(OBJECTS_DIR)/copyright.txt
 	@echo Running $(3).tcl, stage $(1)
 	@(set -eo pipefail; \
 	trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
-	$(OPENROAD_EXE) -exit -no_init $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
+	$(OPENROAD_EXE) $(OPENROAD_ARGS) -exit $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
 	$(TIME_CMD) $(OPENROAD_CMD) -no_splash $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json 2>&1 | \
 	tee -a $(abspath $(LOG_DIR)/$(1).tmp.log))
 endef
