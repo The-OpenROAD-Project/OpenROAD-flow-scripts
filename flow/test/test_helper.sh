@@ -113,6 +113,9 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
 
   echo "Running AutoTuner smoke timeout test"
   python3 -m unittest tools.AutoTuner.test.smoke_test_timeout.${PLATFORM}TimeoutSmokeTest.test_timeout
+
+  echo "Running AutoTuner smoke CPU budget test"
+  python3 -m unittest tools.AutoTuner.test.smoke_test_cpubudget.${PLATFORM}CPUBudgetSmokeTest.test_cpu_budget
 fi
 
 exit $ret
