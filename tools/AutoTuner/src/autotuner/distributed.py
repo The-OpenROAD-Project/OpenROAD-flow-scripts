@@ -305,6 +305,9 @@ def parse_arguments():
         default=None,
         help="Time limit (in hours) for the whole Autotuning process.",
     )
+    parser.add_argument(
+        "-y", "--yes", action="store_true", help="Skip confirmation prompt."
+    )
     tune_parser.add_argument(
         "--resume",
         action="store_true",
@@ -513,9 +516,11 @@ def parse_arguments():
         args.timeout = args.cpu_budget / os.cpu_count()
         template = calculate_expected_numbers(args.timeout, args.samples)
         print(template)
-        ans = input("Do you want to continue? [Y/n]")
-        if ans.lower() != "y":
-            sys.exit(0)
+        if not args.yes:
+            ans = input("Are you sure you want to proceed? (y/n): ")
+            if ans.lower() != "y":
+                print("Exiting AutoTuner.")
+                sys.exit(0)
 
     return args
 
