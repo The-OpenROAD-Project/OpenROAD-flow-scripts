@@ -26,6 +26,7 @@ class BaseTimeoutSmokeTest(unittest.TestCase):
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
             f" --config {self.config}"
+            f" --yes"
             f" {flag}"
             f" tune --samples 1"
             for flag in timeout_flags
