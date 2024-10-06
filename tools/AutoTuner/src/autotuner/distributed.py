@@ -513,7 +513,7 @@ def parse_arguments():
 
     # Calculate timeout based on cpu_budget
     if args.cpu_budget is not None:
-        args.timeout = args.cpu_budget / os.cpu_count()
+        args.timeout = round(args.cpu_budget / os.cpu_count() * 3600)
         template = calculate_expected_numbers(args.timeout, args.samples)
         print(template)
         if not args.yes:
