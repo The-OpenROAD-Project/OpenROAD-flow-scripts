@@ -4,12 +4,12 @@ proc log_cmd {cmd args} {
 }
 
 proc fast_route {} {
-  if {[info exist ::env(FASTROUTE_TCL)]} {
+  if {[env_var_exists_and_non_empty FASTROUTE_TCL]} {
     source $::env(FASTROUTE_TCL)
   } else {
     set_global_routing_layer_adjustment $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) $::env(ROUTING_LAYER_ADJUSTMENT)
     set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
-    if {[info exist ::env(MACRO_EXTENSION)]} {
+    if {[env_var_exists_and_non_empty MACRO_EXTENSION]} {
       set_macro_extension $::env(MACRO_EXTENSION)
     }
   }
@@ -75,10 +75,27 @@ proc env_var_exists_and_non_empty {env_var} {
 
 proc append_env_var {list_name var_name prefix has_arg} {
   upvar $list_name list
-  if {[info exist ::env($var_name)]} {
+  if {(!$has_arg && [env_var_equals $var_name 1]) ||
+      ($has_arg && [env_var_exists_and_non_empty $var_name])} {
     lappend list $prefix
     if {$has_arg} {
       lappend list $::env($var_name)
     }
   }
+}
+
+proc find_macros {} {
+  set macros ""
+
+  set db [ord::get_db]
+  set block [[$db getChip] getBlock]
+  foreach inst [$block getInsts] {
+    set inst_master [$inst getMaster]
+
+    # BLOCK means MACRO cells
+    if { [string match [$inst_master getType] "BLOCK"] } {
+      append macros " " $inst
+    }
+  }
+  return $macros
 }
