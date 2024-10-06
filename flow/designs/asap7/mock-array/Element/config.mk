@@ -31,9 +31,9 @@ export DETAILED_ROUTE_END_ITERATION = 6
 
 export MIN_ROUTING_LAYER = M2
 # M6 is the top PDN layer, so don't exceed that.
-export MAX_ROUTING_LAYER = M6
+export MAX_ROUTING_LAYER = M5
 
-export IO_PLACER_H=M4 M6
+export IO_PLACER_H=M2 M4
 export IO_PLACER_V=M3 M5
 
 # FIXME annealing takes a long time
