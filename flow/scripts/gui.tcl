@@ -52,3 +52,38 @@ proc read_timing {input_file} {
 if {![env_var_equals GUI_NO_TIMING 1]} {
   read_timing $input_file
 }
+
+if {[env_var_exists_and_non_empty GUI_PRELOAD]} {
+  # Run commands to "prime" the GUI, this moves waiting to the
+  # headless part of the flow.
+  #
+  # Also, it can be combined with criu
+  # to save the state of the GUI after the preload commands have
+  # completed, but before the GUI starts(minimizes criu snapshot trouble)
+  # such that a preloaded dumped headless process can be launched
+  # from an artifact downloaded from a build server.
+  #
+  # Use-case in scripting with criu:
+  #
+  # - Run "make open_final GUI_PRELOAD"
+  # - Wait for "openroad> " prompt
+  # - Run "criu dump -t <PID> -D <DUMP_DIR>"
+  # - Run "criu restore -D <DUMP_DIR>"
+  # - Run gui::show
+  #
+  # Example of how this is used with bazel-orfs:
+  #
+  # bazel run SomeTarget_cts -- $(pwd)/tmp gui_cts
+  #
+  # If criu was installed on the server and a snapshot exists,
+  # then bazel-orfs detects the gui_ targets and restores a snapshot
+  # and the user has to type gui::show to start the GUI.
+  report_checks
+  # Other things that would be nice to preload, if there aren't commands
+  # to do so, can they be added?
+  # - Timing Report => Update
+  # - Charts -> End point slack histogram
+  # - Clock Tree Viewer
+  # - report_min_period
+  # - more?
+}
