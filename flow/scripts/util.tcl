@@ -107,7 +107,7 @@ proc erase_non_stage_variables {stage_name} {
   # Tcl yaml package can't be imported in the sta/openroad environment:
   # 
   # https://github.com/The-OpenROAD-Project/OpenROAD/issues/5875
-  set variables [exec $::env(SCRIPTS_DIR)/stage_variables.py $stage_name]
+  set variables [exec $::env(SCRIPTS_DIR)/non_stage_variables.py $stage_name]
   foreach var $variables {
     if {[info exists ::env($var)]} {
       unset ::env($var)

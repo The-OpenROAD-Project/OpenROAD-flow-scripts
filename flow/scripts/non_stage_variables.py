@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-
+#
+# Reading .yaml from tcl is tedious and we already have
+# a yaml library in Python.
+#
+# This script generates a list of variables known
+# not to be in the current stage.
 import os
 import sys
 import yaml
