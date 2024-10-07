@@ -21,9 +21,7 @@ preferred_order = [
     "cts",
     "grt",
     "route",
-    "final",
-    "generate_abstract",
-    "all",
+    "final"
 ]
 stages = {stage for value in data.values() for stage in value.get("stages", [])}
 # convert set of stages to stages in a list in the preferred order, but
@@ -40,18 +38,22 @@ table_rows = ""
 for key in sorted(data):
     value = data[key]
     description = value.get("description", "").replace("\n", " ").strip()
-    table_rows += f"| {key} | {description} |\n"
+    table_rows += f"| <a name=\"{key}\"></a>{key} | {description} |\n"
 
 markdown_table += table_header + table_rows
 
-for stage in stages:
+for stage in stages + ["All stages", "Uncategorized"]:
     markdown_table += f"## {stage} variables\n\n"
     stage_keys = [
         key
         for key in sorted(data)
-        if "stages" in data[key] and stage in data[key]["stages"]
+        if (("stages" in data[key] and stage in data[key]["stages"]) or
+            ("stages" not in data[key] and stage == "Uncategorized") or
+            (stage == "All stages" and
+             set(data[key].get("stages", [])) == set(stages)))
     ]
-    markdown_table += " ".join(stage_keys) + "\n\n"
+    markdown_table += "\n".join(map(lambda k: f"- [{k}](#{k})", stage_keys))
+    markdown_table += "\n\n"
 
 docs = os.path.join(dir_path, "..", "..", "docs", "user", "FlowVariables.md")
 with open(docs, "r") as file:

@@ -381,6 +381,14 @@ SDC_FILE:
 ADDITIONAL_FILES:
   description: >
     Additional files to be added to `make issue` archive.
+  stages:
+  - synth
+  - floorplan
+  - place
+  - cts
+  - grt
+  - route
+  - final
 ADDITIONAL_LEFS:
   description: >
     Hardened macro LEF view files listed here. The LEF information of the macros
