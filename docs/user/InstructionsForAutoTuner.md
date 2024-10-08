@@ -134,7 +134,7 @@ Example:
 python3 distributed.py --design gcd --platform sky130hd \
                        --config ../../../../flow/designs/sky130hd/gcd/autotuner.json \
                        --yes \
-                       tune
+                       tune --samples 5
 ```
 #### Sweep only 
 
