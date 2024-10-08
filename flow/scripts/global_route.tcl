@@ -86,7 +86,10 @@ proc global_route_helper {} {
     global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
   }
 
+  global_route -start_incremental
   recover_power
+  # Route the modified nets by rsz journal restore
+  global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
 
   if {![env_var_equals SKIP_ANTENNA_REPAIR 1]} {
     puts "Repair antennas..."
