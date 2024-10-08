@@ -14,15 +14,7 @@ yaml_path = os.path.join(dir_path, "variables.yaml")
 with open(yaml_path, "r") as file:
     data = yaml.safe_load(file)
 
-preferred_order = [
-    "synth",
-    "floorplan",
-    "place",
-    "cts",
-    "grt",
-    "route",
-    "final"
-]
+preferred_order = ["synth", "floorplan", "place", "cts", "grt", "route", "final"]
 stages = {stage for value in data.values() for stage in value.get("stages", [])}
 # convert set of stages to stages in a list in the preferred order, but
 # list all stages
@@ -38,7 +30,7 @@ table_rows = ""
 for key in sorted(data):
     value = data[key]
     description = value.get("description", "").replace("\n", " ").strip()
-    table_rows += f"| <a name=\"{key}\"></a>{key} | {description} |\n"
+    table_rows += f'| <a name="{key}"></a>{key} | {description} |\n'
 
 markdown_table += table_header + table_rows
 
@@ -47,10 +39,14 @@ for stage in stages + ["All stages", "Uncategorized"]:
     stage_keys = [
         key
         for key in sorted(data)
-        if (("stages" in data[key] and stage in data[key]["stages"]) or
-            ("stages" not in data[key] and stage == "Uncategorized") or
-            (stage == "All stages" and
-             set(data[key].get("stages", [])) == set(stages)))
+        if (
+            ("stages" in data[key] and stage in data[key]["stages"])
+            or ("stages" not in data[key] and stage == "Uncategorized")
+            or (
+                stage == "All stages"
+                and set(data[key].get("stages", [])) == set(stages)
+            )
+        )
     ]
     markdown_table += "\n".join(map(lambda k: f"- [{k}](#{k})", stage_keys))
     markdown_table += "\n\n"
