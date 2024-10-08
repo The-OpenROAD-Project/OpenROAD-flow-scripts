@@ -444,6 +444,13 @@ def parse_arguments():
         help="CPU Hours",
     )
     parser.add_argument(
+        "--jobs",
+        type=int,
+        metavar="<int>",
+        default=int(np.floor(cpu_count() / 2)),
+        help="Max number of concurrent jobs.",
+    )
+    parser.add_argument(
         "--openroad_threads",
         type=int,
         metavar="<int>",
@@ -507,14 +514,17 @@ def parse_arguments():
     if args.timeout is not None:
         args.timeout = round(args.timeout * 3600)
 
-    # Calculate jobs
-    jobs = int(args.cpu_budget / args.resources_per_trial)
-    args.jobs = jobs
-
     # Calculate timeout based on cpu_budget
     if args.cpu_budget is not None:
         args.timeout = round(args.cpu_budget / os.cpu_count() * 3600)
-        template = calculate_expected_numbers(args.timeout, args.samples)
+        args.timeout_per_trial = round(
+            args.cpu_budget / (args.jobs * args.resources_per_trial) * 3600
+        )
+        overall_timeout = min(args.timeout, args.timeout_per_trial)
+        if args.mode == "tune":
+            template = calculate_expected_numbers(overall_timeout, args.samples)
+        else:
+            template = calculate_expected_numbers(overall_timeout, 1)
         print(template)
         if not args.yes:
             ans = input("Are you sure you want to proceed? (y/n): ")
