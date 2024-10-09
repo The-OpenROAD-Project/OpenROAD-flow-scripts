@@ -1,4 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables final
 load_design 5_route.odb 5_route.sdc
 
 if {[env_var_equals USE_FILL 1]} {

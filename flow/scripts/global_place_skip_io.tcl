@@ -1,4 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables place
 load_design 2_floorplan.odb 2_floorplan.sdc
 
 

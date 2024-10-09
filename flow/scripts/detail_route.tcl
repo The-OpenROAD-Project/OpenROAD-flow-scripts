@@ -7,6 +7,7 @@ if {[expr [file exists $::env(REPORTS_DIR)/congestion.rpt] && \
 utl::set_metrics_stage "detailedroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 5_1_grt.odb 4_cts.sdc
+erase_non_stage_variables route
 set_propagated_clock [all_clocks]
 
 set additional_args ""
