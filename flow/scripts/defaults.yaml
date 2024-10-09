@@ -1,0 +1,78 @@
+GENERATE_ARTIFACTS_ON_FAILURE:
+  description: >
+    For instance Bazel needs artifacts (.odb and .rpt files) on a failure to
+    allow the user to save hours on re-running the failed step locally, but
+    when working with a Makefile flow, it is more natural to fail the step
+    and leave the user to manually inspect the logs and artifacts directly via
+    the file system.
+
+    Set to 1 to change the behavior to generate artifacts upon failure to
+    e.g. do a global route. The exit code will still be non-zero on all other
+    failures that aren't covered by the "useful to inspect the artifacts on
+    failure" use-case.
+
+    Example: just like detailed routing, a global route that fails with congestion, is not
+    a build failure(as in exit code non-zero), it is a successful(as in zero exit code)
+    global route that produce reports detailing the problem.
+
+    Detailed route will not proceed, if there is global routing congestion
+
+    This allows build systems, such as bazel, to create artifacts for global
+    and detailed route, even if the operation had problems, without having
+    know about the semantics between global and detailed route.
+
+    Considering that global and detailed route can run for a long time and
+    use a lot of memory, this allows inspecting results on a laptop for
+    a build that ran on a server.
+  value: 0
+  stages:
+    - all
+
+TNS_END_PERCENT:
+  description: >
+    Default TNS_END_PERCENT value for post CTS timing repair.
+    Try fixing all violating endpoints by default (reduce to 5% for runtime).
+  value: 100
+  stages:
+    - crt
+    - floorplan
+    - grt
+
+ROUTING_LAYER_ADJUSTMENT:
+  value: 0.5
+  description: Default routing layer adjustment
+  stages:
+    - place
+    - grt
+    - route
+    - final
+
+RECOVER_POWER:
+  value: 0
+  stages:
+    - grt
+SKIP_INCREMENTAL_REPAIR:
+  value: 0
+  stages:
+    - grt
+DETAILED_METRICS:
+  value: 0
+  stages:
+    - cts
+    - grt
+EQUIVALENCE_CHECK:
+  value: 0
+  stages:
+    - cts
+CORE_UTILIZATION:
+  value: null
+  stages:
+    - floorplan
+DIE_AREA:
+  value: null
+  stages:
+    - floorplan
+CORE_AREA:
+  value: null
+  stages:
+    - floorplan
