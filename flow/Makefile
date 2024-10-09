@@ -571,9 +571,11 @@ open_$(1): open_$(2)
 endef
 
 define OPEN_GUI
-.PHONY: $(1)_$(2)
-$(1)_$(2):
-	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
+.PHONY: open_$(1) gui_$(1)
+open_$(1):
+	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/gui.tcl
+gui_$(1):
+	$$(UNSET_AND_MAKE) GUI_SHOW=1 open_$(1)
 endef
 
 # Separate dependency checking and doing a step. This can
@@ -1025,10 +1027,8 @@ $(eval $(call OPEN_GUI_SHORTCUT,route,5_route.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,grt,5_1_grt.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,final,6_final.odb))
 
-$(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,gui,$(file),DEF_FILE,$(OPENROAD_GUI_CMD))))
-$(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,gui,$(file),ODB_FILE,$(OPENROAD_GUI_CMD))))
-$(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,open,$(file),DEF_FILE,$(OPENROAD_NO_EXIT_CMD))))
-$(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,open,$(file),ODB_FILE,$(OPENROAD_NO_EXIT_CMD))))
+$(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,$(file),DEF_FILE)))
+$(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,$(file),ODB_FILE)))
 
 # Write a def for the corresponding odb
 $(foreach file,$(RESULTS_ODB),$(file).def): %.def:
