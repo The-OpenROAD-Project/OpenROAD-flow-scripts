@@ -162,6 +162,8 @@ export TEST_DIR      ?= $(FLOW_HOME)/test
 
 $(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(line)))
 
+export GUI_TIMING ?= 1
+
 PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
 ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
