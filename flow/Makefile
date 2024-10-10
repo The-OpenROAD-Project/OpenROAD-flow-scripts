@@ -262,7 +262,7 @@ YOSYS_FLAGS += -v 3
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
-export TIME_BIN   ?= /usr/bin/time
+export TIME_BIN   ?= env time
 TIME_CMD = $(TIME_BIN) -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
 TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
 ifeq (,$(strip $(TIME_TEST)))
