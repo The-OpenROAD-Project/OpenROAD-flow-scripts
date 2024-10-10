@@ -1,7 +1,6 @@
 ray[default,tune]==2.9.3
 ax-platform>=0.3.3,<=0.3.7
 hyperopt==0.2.7
-nevergrad==1.0.2
 optuna==3.6.0
 pandas>=2.0,<=2.2.1
 bayesian-optimization==1.4.0
