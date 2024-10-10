@@ -27,7 +27,7 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
             f" --config {self.config}"
-            f" tune --samples 1"
+            f" tune --samples 5"
             f" --algorithm {a} --eval {e}"
             f" --reference {self.reference}"
             for a, e in self.matrix

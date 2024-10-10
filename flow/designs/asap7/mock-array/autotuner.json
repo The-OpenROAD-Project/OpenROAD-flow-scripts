@@ -27,7 +27,7 @@
     "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT": {
         "type": "int",
         "minmax": [
-            0,
+            1,
             5
         ],
         "step": 1
@@ -35,7 +35,7 @@
     "CELL_PAD_IN_SITES_DETAIL_PLACEMENT": {
         "type": "int",
         "minmax": [
-            0,
+            1,
             5
         ],
         "step": 1
