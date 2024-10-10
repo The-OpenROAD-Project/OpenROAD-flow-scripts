@@ -12,7 +12,7 @@ export CORE_MARGIN       = 2
 
 export PLACE_DENSITY = 0.60
 
-ifneq ($(USE_FILL),)
+ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL
 else
 export DESIGN_TYPE = CELL_NODEN

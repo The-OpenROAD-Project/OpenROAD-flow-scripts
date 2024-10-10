@@ -109,45 +109,8 @@ DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 # this file.
 include $(DESIGN_CONFIG)
 
-# For instance Bazel needs artifacts (.odb and .rpt files) on a failure to
-# allow the user to save hours on re-running the failed step locally, but
-# when working with a Makefile flow, it is more natural to fail the step
-# and leave the user to manually inspect the logs and artifacts directly via
-# the file system.
-#
-# Set to 1 to change the behavior to generate artifacts upon failure to
-# e.g. do a global route. The exit code will still be non-zero on all other
-# failures that aren't covered by the "useful to inspect the artifacts on
-# failure" use-case.
-#
-# Example: just like detailed routing, a global route that fails with congestion, is not
-# a build failure(as in exit code non-zero), it is a successful(as in zero exit code)
-# global route that produce reports detailing the problem.
-#
-# Detailed route will not proceed, if there is global routing congestion
-#
-# This allows build systems, such as bazel, to create artifacts for global
-# and detailed route, even if the operation had problems, without having
-# know about the semantics between global and detailed route.
-#
-# Considering that global and detailed route can run for a long time and
-# use a lot of memory, this allows inspecting results on a laptop for
-# a build that ran on a server.
-export GENERATE_ARTIFACTS_ON_FAILURE ?= 0
-
-# Default TNS_END_PERCENT value for post CTS timing repair
-# Try fixing all violating endpoints by default (reduce to 5% for runtime)
-export TNS_END_PERCENT ?=100
-
-# Default routing layer adjustment
-export ROUTING_LAYER_ADJUSTMENT ?= 0.5
-export RECOVER_POWER ?= 0
-export SKIP_INCREMENTAL_REPAIR ?= 0
-export DETAILED_METRICS ?= 0
-export EQUIVALENCE_CHECK ?= 0
-
 # If we are running headless use offscreen rendering for save_image
-ifndef DISPLAY
+ifeq ($(DISPLAY),)
 export QT_QPA_PLATFORM ?= offscreen
 endif
 
@@ -196,6 +159,8 @@ export WORK_HOME     ?= .
 export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
 export TEST_DIR      ?= $(FLOW_HOME)/test
+
+$(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(line)))
 
 PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
@@ -253,12 +218,7 @@ export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 
-# BLOCKS is ORFS specific and is used to trigger hierarchical flow,
-# MACROS is a space separated list of macros used in the design,
-# but not necessarily built by ORFS using the BLOCKS mechanism.
-export MACROS ?= $(BLOCKS)
-
-ifdef BLOCKS
+ifneq ($(BLOCKS),)
   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
   $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
@@ -268,11 +228,12 @@ ifdef BLOCKS
   export ADDITIONAL_LIBS += $(BLOCK_LIBS)
   export ADDITIONAL_GDS += $(BLOCK_GDS)
   export GDS_FILES += $(BLOCK_GDS)
-  ifdef CDL_FILES
+  ifneq ($(CDL_FILES),)
     export CDL_FILES += $(BLOCK_CDL)
   endif
 endif
 
+export RTLMP_FLOW ?= 1
 export RTLMP_RPT_DIR ?= $(OBJECTS_DIR)/rtlmp
 export RTLMP_RPT_FILE ?= partition.txt
 export RTLMP_BLOCKAGE_FILE ?= $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
@@ -301,7 +262,7 @@ YOSYS_FLAGS += -v 3
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
-export TIME_BIN   ?= /usr/bin/time
+export TIME_BIN   ?= env time
 TIME_CMD = $(TIME_BIN) -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
 TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
 ifeq (,$(strip $(TIME_TEST)))
@@ -537,7 +498,8 @@ do-yosys:
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_canonicalize.log)
+	# NOTE! YOSYS_FLAGS is omitted here because "-v 3" silences helpful error messages
+	($(TIME_CMD) $(YOSYS_EXE) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_canonicalize.log)
 
 $(RESULTS_DIR)/1_synth.rtlil: $(YOSYS_DEPENDENCIES)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
@@ -611,7 +573,7 @@ endef
 define OPEN_GUI
 .PHONY: $(1)_$(2)
 $(1)_$(2):
-	$(3)=$(RESULTS_DIR)/$(2) $(4) $(GUI_ARGS) $(SCRIPTS_DIR)/gui.tcl
+	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
 endef
 
 # Separate dependency checking and doing a step. This can
@@ -656,7 +618,7 @@ do-$(1): $(OBJECTS_DIR)/copyright.txt
 	@echo Running $(3).tcl, stage $(1)
 	@(set -eo pipefail; \
 	trap 'mv $(LOG_DIR)/$(1).tmp.log $(LOG_DIR)/$(1).log' EXIT; \
-	$(OPENROAD_EXE) -exit -no_init $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
+	$(OPENROAD_EXE) $(OPENROAD_ARGS) -exit $(SCRIPTS_DIR)/noop.tcl 2>&1 >$(LOG_DIR)/$(1).tmp.log; \
 	$(TIME_CMD) $(OPENROAD_CMD) -no_splash $(SCRIPTS_DIR)/$(3).tcl -metrics $(LOG_DIR)/$(1).json 2>&1 | \
 	tee -a $(abspath $(LOG_DIR)/$(1).tmp.log))
 endef
@@ -684,27 +646,11 @@ endef
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL),floorplan))
 
-# STEP 2: IO Placement (random)
-#-------------------------------------------------------------------------------
-ifndef IS_CHIP
 $(eval $(call do-step,2_2_floorplan_io,$(RESULTS_DIR)/2_1_floorplan.odb $(IO_CONSTRAINTS),io_placement_random))
-else
-$(eval $(call do-copy,2_2_floorplan_io,2_1_floorplan.odb,$(IO_CONSTRAINTS)))
-endif
 
 # STEP 3: Timing Driven Mixed Sized Placement
 #-------------------------------------------------------------------------------
-ifneq ($(MACRO_PLACEMENT)$(MACRO_PLACEMENT_TCL),)
-SKIP_TDMS:=1
-endif
-ifeq ($(RTLMP_FLOW), 1)
-SKIP_TDMS:=1
-endif
-ifneq ($(SKIP_TDMS), 1)
 $(eval $(call do-step,2_3_floorplan_tdms,$(RESULTS_DIR)/2_2_floorplan_io.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES),tdms_place))
-else
-$(eval $(call do-copy,2_3_floorplan_tdms,2_2_floorplan_io.odb,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES)))
-endif
 
 # STEP 4: Macro Placement
 #-------------------------------------------------------------------------------
@@ -712,11 +658,7 @@ $(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb 
 
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-ifeq ($(TAPCELL_TCL),)
-$(eval $(call do-copy,2_5_floorplan_tapcell,2_4_floorplan_macro.odb))
-else
 $(eval $(call do-step,2_5_floorplan_tapcell,$(RESULTS_DIR)/2_4_floorplan_macro.odb $(TAPCELL_TCL),tapcell))
-endif
 
 # STEP 6: PDN generation
 #-------------------------------------------------------------------------------
@@ -751,13 +693,7 @@ place: $(RESULTS_DIR)/3_place.odb \
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place_skip_io))
 
-# STEP 2: IO placement (non-random)
-#-------------------------------------------------------------------------------
-ifndef IS_CHIP
 $(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS),io_placement))
-else
-$(eval $(call do-copy,3_2_place_iop,3_1_place_gp_skip_io.odb,$(IO_CONSTRAINTS)))
-endif
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
@@ -835,6 +771,10 @@ clean_cts:
 .PHONY: route
 route: $(RESULTS_DIR)/5_route.odb \
        $(RESULTS_DIR)/5_route.sdc
+
+.PHONY: grt
+grt: $(RESULTS_DIR)/5_1_grt.odb
+
 # ==============================================================================
 
 
@@ -842,29 +782,19 @@ route: $(RESULTS_DIR)/5_route.odb \
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,5_1_grt,$(RESULTS_DIR)/4_cts.odb $(FASTROUTE_TCL) $(PRE_GLOBAL_ROUTE),global_route))
 
-# SEP 2: Filler cell insertion
-# ------------------------------------------------------------------------------
-ifeq ($(FILL_CELLS),)
-$(eval $(call do-copy,5_2_fillcell,5_1_grt.odb))
-else
-$(eval $(call do-step,5_2_fillcell,$(RESULTS_DIR)/5_1_grt.odb,fillcell))
-endif
-
-# STEP 3: Run detailed route
+# STEP 2: Run detailed route
 #-------------------------------------------------------------------------------
-ifeq ($(USE_WXL),)
-$(eval $(call do-step,5_3_route,$(RESULTS_DIR)/5_2_fillcell.odb,detail_route))
-else
-$(eval $(call do-step,5_3_route,$(RESULTS_DIR)/4_cts.odb,detail_route))
-endif
+$(eval $(call do-step,5_2_route,$(RESULTS_DIR)/5_1_grt.odb,detail_route))
 
-$(eval $(call do-copy,5_route,5_3_route.odb))
+$(eval $(call do-step,5_3_fillcell,$(RESULTS_DIR)/5_2_route.odb,fillcell))
+
+$(eval $(call do-copy,5_route,5_3_fillcell.odb))
 
 $(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
 
 .PHONY: do-route
 do-route:
-	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_fillcell do-5_3_route do-5_route do-5_route.sdc
+	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_3_fillcell do-5_route do-5_route.sdc
 
 .PHONY: clean_route
 clean_route:
@@ -916,13 +846,7 @@ elapsed:
 elapsed-all:
 	@$(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
 
-# ==============================================================================
-
-ifeq ($(USE_FILL),1)
 $(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(RESULTS_DIR)/5_route.sdc $(FILL_CONFIG),density_fill))
-else
-$(eval $(call do-copy,6_1_fill,5_route.odb))
-endif
 
 $(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
 
@@ -1089,10 +1013,10 @@ $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): kl
 
 .PHONY: gui_synth
 gui_synth:
-	$(OPENROAD_GUI_CMD) $(GUI_ARGS) $(SCRIPTS_DIR)/sta-synth.tcl
+	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
 .PHONY: open_synth
 open_synth:
-	$(OPENROAD_NO_EXIT_CMD) $(GUI_ARGS) $(SCRIPTS_DIR)/sta-synth.tcl
+	$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
 
 $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))
@@ -1144,6 +1068,10 @@ test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 .phony: klayout
 klayout:
 	$(KLAYOUT_CMD)
+
+.phony: run
+run:
+	$(OPENROAD_CMD) -no_splash $(RUN_SCRIPT)
 
 # Utilities
 #-------------------------------------------------------------------------------
