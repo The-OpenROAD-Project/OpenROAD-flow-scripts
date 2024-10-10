@@ -149,8 +149,9 @@ python3 distributed.py --design gcd --platform sky130hd \
 
 #### Plot images
 
-After running the autotuner experiments, you can visualize the results as follows.
-Currently, we support the following metrics:
+After running an AutoTuner experiment, you can generate a graph to understand the results better.
+The graph will show one of the metrics listed below progression over the execution of the experiment.
+
 - QoR
 - Runtime per trial
 - Clock Period
