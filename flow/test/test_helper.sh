@@ -111,8 +111,11 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   echo "Running Autotuner smoke sweep test"
   python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeTest.test_sweep
 
-  echo "[INFO FLW-0030] Running Autotuner smoke tests for --sample and --iteration."
+  echo "Running Autotuner smoke tests for --sample and --iteration."
   python3 -m unittest tools.AutoTuner.test.smoke_test_sample_iteration.${PLATFORM}SampleIterationSmokeTest.test_sample_iteration
+
+  echo "Running Autotuner smoke algorithm & evaluation test"
+  python3 -m unittest tools.AutoTuner.test.smoke_test_algo_eval.${PLATFORM}AlgoEvalSmokeTest.test_algo_eval
 fi
 
 exit $ret

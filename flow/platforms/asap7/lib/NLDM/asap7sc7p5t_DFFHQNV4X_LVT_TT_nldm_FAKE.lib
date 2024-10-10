@@ -1294,9 +1294,9 @@ library (asap7sc7p5t_DFFHQNV4X_LVT_TT_nldm_FAKE) {
       }
     }
     }
-    ff_bank (IQ,IQN,4) {
+    ff_bank (IQN,IQNN,4) {
       clocked_on : "CLK";
-      next_state : "D";
+      next_state : "!D";
       power_down_function : "(!VDD) + (VSS)";
     }
   }
@@ -2441,9 +2441,9 @@ library (asap7sc7p5t_DFFHQNV4X_LVT_TT_nldm_FAKE) {
       }
     }
     }
-    ff_bank (IQ,IQN,4) {
+    ff_bank (IQN,IQNN,4) {
       clocked_on : "CLK";
-      next_state : "D";
+      next_state : "!D";
       power_down_function : "(!VDD) + (VSS)";
     }
   }
@@ -3588,9 +3588,9 @@ library (asap7sc7p5t_DFFHQNV4X_LVT_TT_nldm_FAKE) {
       }
     }
     }
-    ff_bank (IQ,IQN,4) {
+    ff_bank (IQN,IQNN,4) {
       clocked_on : "CLK";
-      next_state : "D";
+      next_state : "!D";
       power_down_function : "(!VDD) + (VSS)";
     }
   }

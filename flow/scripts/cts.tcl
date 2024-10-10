@@ -1,5 +1,6 @@
 utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables cts
 load_design 3_place.odb 3_place.sdc
 
 # Clone clock tree inverters next to register loads
@@ -17,25 +18,17 @@ set cts_args [list \
           -sink_clustering_enable \
           -balance_levels]
 
-if {[info exist ::env(CTS_BUF_DISTANCE)]} {
-  lappend cts_args -distance_between_buffers $::env(CTS_BUF_DISTANCE)
-}
+append_env_var cts_args -distance_between_buffers CTS_BUF_DISTANCE 1
+append_env_var cts_args -sink_clustering_size CTS_CLUSTER_SIZE 1
+append_env_var cts_args -sink_clustering_max_diameter CTS_CLUSTER_DIAMETER 1
 
-if {[info exist ::env(CTS_CLUSTER_SIZE)]} {
-  lappend cts_args -sink_clustering_size $::env(CTS_CLUSTER_SIZE)
-}
-
-if {[info exist ::env(CTS_CLUSTER_DIAMETER)]} {
-  lappend cts_args -sink_clustering_max_diameter $::env(CTS_CLUSTER_DIAMETER)
-}
-
-if {[info exist ::env(CTS_ARGS)]} {
+if {[env_var_exists_and_non_empty CTS_ARGS]} {
   set cts_args $::env(CTS_ARGS)
 }
 
 log_cmd clock_tree_synthesis {*}$cts_args
 
-if {[info exist ::env(CTS_SNAPSHOTS)]} {
+if {[env_var_equals CTS_SNAPSHOTS 1]} {
   save_progress 4_1_pre_repair_clock_nets
 }
 
@@ -67,11 +60,11 @@ detailed_placement
 
 estimate_parasitics -placement
 
-if {[info exist ::env(CTS_SNAPSHOTS)]} {
+if {[env_var_equals CTS_SNAPSHOTS 1]} {
   save_progress 4_1_pre_repair_hold_setup
 }
 
-if {[info exists ::env(SKIP_CTS_REPAIR_TIMING)] == 0 || $::env(SKIP_CTS_REPAIR_TIMING) == 0} {
+if {![env_var_equals SKIP_CTS_REPAIR_TIMING 1]} {
   if {$::env(EQUIVALENCE_CHECK)} {
       write_eqy_verilog 4_before_rsz.v
   }
@@ -94,7 +87,7 @@ if {[info exists ::env(SKIP_CTS_REPAIR_TIMING)] == 0 || $::env(SKIP_CTS_REPAIR_T
 
 report_metrics 4 "cts final"
 
-if { [info exists ::env(POST_CTS_TCL)] } {
+if { [env_var_exists_and_non_empty POST_CTS_TCL] } {
   source $::env(POST_CTS_TCL)
 }
 
