@@ -59,8 +59,7 @@ power:
 # Routing by abutment should be easy, limit iterations
 export DETAILED_ROUTE_END_ITERATION = 6
 
-export MIN_ROUTING_LAYER = M2
-export MAX_ROUTING_LAYER = M7
+export MAX_ROUTING_LAYER = M9
 export ROUTING_LAYER_ADJUSTMENT = 0.45
 
 # works with 28 or more iterations as of writing, so give it a few more.
@@ -73,3 +72,6 @@ export MACRO_HALO_Y            = 0.5
 export CTS_BUF_DISTANCE = 60
 
 export ADDITIONAL_FILES = designs/src/mock-array/util.tcl
+
+export IO_PLACER_V = M5 M7
+export IO_PLACER_H = M4 M6
