@@ -111,6 +111,11 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   echo "Running Autotuner smoke sweep test"
   python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeTest.test_sweep
 
+  echo "Running Autotuner ref file test (only once)"
+  if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN" == "gcd" ]; then
+    python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck.test_files
+  fi
+
   echo "Running Autotuner smoke algorithm & evaluation test"
   python3 -m unittest tools.AutoTuner.test.smoke_test_algo_eval.${PLATFORM}AlgoEvalSmokeTest.test_algo_eval
 fi
