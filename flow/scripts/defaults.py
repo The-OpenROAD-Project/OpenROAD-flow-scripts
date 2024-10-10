@@ -5,11 +5,11 @@ import yaml
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-yaml_path = os.path.join(dir_path, "defaults.yaml")
+yaml_path = os.path.join(dir_path, "variables.yaml")
 with open(yaml_path, "r") as file:
     data = yaml.safe_load(file)
 
 for key, value in data.items():
-    if value["value"] is None:
+    if value.get("value", None) is None:
         continue
     print(f'{key}?={value["value"]}')
