@@ -836,6 +836,14 @@ def parse_arguments():
     if arguments.timeout is not None:
         arguments.timeout = round(arguments.timeout * 3600)
 
+    # Do a sanity check that jobs are limited by number of cpus.
+    if arguments.jobs >= os.cpu_count():
+        print(
+            f"Warning: you have specified {arguments.jobs} jobs which is greater than {os.cpu_count()}, the number of CPUs on the machine"
+        )
+        print("Setting jobs to max_cpu_counts.")
+        arguments.jobs = os.cpu_count()
+
     return arguments
 
 
