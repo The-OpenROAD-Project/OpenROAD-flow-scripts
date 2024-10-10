@@ -30,14 +30,13 @@ export PDN_TCL                = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCK_
 export DETAILED_ROUTE_END_ITERATION = 6
 
 export MIN_ROUTING_LAYER = M2
-# M6 is the top PDN layer, so don't exceed that.
+# M5 is the top PDN layer, so don't exceed that.
 export MAX_ROUTING_LAYER = M5
 
 export IO_PLACER_H=M2 M4
 export IO_PLACER_V=M3 M5
 
-# FIXME annealing takes a long time
-# export PLACE_PINS_ARGS = -annealing
+export PLACE_PINS_ARGS = -annealing
 
 export GND_NETS_VOLTAGES      =
 export PWR_NETS_VOLTAGES      =
