@@ -93,10 +93,7 @@ def main(results_dir: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot AutoTuner results.")
     parser.add_argument(
-        "results_dir",
-        type=str,
-        help="Directory containing the results.",
-        default="../../../../../flow/logs/asap7/gcd/test-tune-2024-09-17-12-00-44",
+        "results_dir", type=str, help="Directory containing the results.", required=True
     )
     args = parser.parse_args()
     main(args.results_dir)
