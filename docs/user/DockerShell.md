@@ -11,8 +11,9 @@ Build docker image
 First build the docker image:
 
 ```
+sudo apt-get install pandoc
 cd OpenROAD-flow-scripts
-./build_openroad.sh
+./build_openroad.sh --openroad-args "-DBUILD_MAN=ON"
 ```
 
 Build an example design and run the GUI:
