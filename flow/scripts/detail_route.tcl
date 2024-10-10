@@ -7,6 +7,7 @@ if {[expr [file exists $::env(REPORTS_DIR)/congestion.rpt] && \
 utl::set_metrics_stage "detailedroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 load_design 5_1_grt.odb 4_cts.sdc
+erase_non_stage_variables route
 set_propagated_clock [all_clocks]
 
 set additional_args ""
@@ -68,5 +69,9 @@ if { [env_var_exists_and_non_empty POST_DETAIL_ROUTE_TCL] } {
 }
 
 check_antennas -report_file $env(REPORTS_DIR)/drt_antennas.log
+
+if {![design_is_routed]} {
+  error "Design has unrouted nets."
+}
 
 write_db $::env(RESULTS_DIR)/5_2_route.odb

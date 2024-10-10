@@ -1,4 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables floorplan
 
 proc find_macros {} {
   set macros ""
