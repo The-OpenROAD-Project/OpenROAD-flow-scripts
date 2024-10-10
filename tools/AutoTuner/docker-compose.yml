@@ -3,8 +3,10 @@ services:
   ray-head:
     image: openroad/orfs:${ORFS_VERSION}
     container_name: ray-head
-    command: |
-      sh -c "cd /OpenROAD-flow-scripts && pip install -r ./tools/AutoTuner/requirements.txt && ray start --head --dashboard-port=8265 --port=6379 --dashboard-host=0.0.0.0 --block"
+    command: >
+      sh -c "cd /OpenROAD-flow-scripts &&
+      pip install -r ./tools/AutoTuner/requirements.txt &&
+      ray start --head --dashboard-port=8265 --port=6379 --dashboard-host=0.0.0.0 --block"
     volumes:
       - ../../flow:/OpenROAD-flow-scripts/flow
       - ../../tools/AutoTuner:/OpenROAD-flow-scripts/tools/AutoTuner
@@ -24,8 +26,10 @@ services:
   ray-worker:
     image: openroad/orfs:${ORFS_VERSION}
     container_name: ray-worker
-    command: |
-      sh -c "cd /OpenROAD-flow-scripts && pip install -r ./tools/AutoTuner/requirements.txt && ray start --address=ray-head:10001 --block"
+    command: >
+      sh -c "cd /OpenROAD-flow-scripts &&
+      pip install -r ./tools/AutoTuner/requirements.txt &&
+      ray start --address=ray-head:10001 --block"
     volumes:
       - ../../flow:/OpenROAD-flow-scripts/flow
       - ../../tools/AutoTuner:/OpenROAD-flow-scripts/tools/AutoTuner

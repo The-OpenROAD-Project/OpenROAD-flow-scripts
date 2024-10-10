@@ -84,13 +84,14 @@ case $DESIGN_NAME in
     RUN_AUTOTUNER=1
     ;;
 esac
-if [ $RUN_AUTOTUNER -eq 1 ]; then
-  case $PLATFORM in
-       "gf180" | "nangate45" | "sky130hd_fakestack" | "sky130hs")
-        RUN_AUTOTUNER=0
-        ;;
-  esac
-fi
+case $PLATFORM in
+     "asap7" | "sky130hd" | "ihp-sg13g2" )
+      # Keep RUN_AUTOTUNER enabled only for these platforms
+      ;;
+     *)
+      RUN_AUTOTUNER=0
+      ;;
+esac
 
 if [ $RUN_AUTOTUNER -eq 1 ]; then
   # change directory to the root of the repo
@@ -117,7 +118,7 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
     script_dir="$(dirname "${BASH_SOURCE[0]}")"
     cd "$script_dir"/../../
     latest_image=$(./etc/DockerTag.sh -dev)
-    sed 's|{{ORFS_VERSION}}|'"$latest_image"'|g' ./tools/AutoTuner/.env.example > ./tools/AutoTuner/.env
+    echo "ORFS_VERSION=$latest_image" > ./tools/AutoTuner/.env
     cd ./tools/AutoTuner
     docker compose up --wait
     docker compose exec ray-worker bash -c "cd /OpenROAD-flow-scripts/tools/AutoTuner/src/autotuner && \
