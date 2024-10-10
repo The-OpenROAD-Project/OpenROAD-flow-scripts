@@ -49,6 +49,7 @@ proc read_timing {input_file} {
   fast_route
 }
 
-if {![env_var_equals GUI_NO_TIMING 1]} {
+if {[env_var_equals GUI_TIMING 1]} {
+  puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
   read_timing $input_file
 }
