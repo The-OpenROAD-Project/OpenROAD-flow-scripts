@@ -150,7 +150,7 @@ python3 distributed.py --design gcd --platform sky130hd \
 #### Plot images
 
 After running an AutoTuner experiment, you can generate a graph to understand the results better.
-The graph will show one of the metrics listed below progression over the execution of the experiment.
+The graph will show the progression of one metric (see list below) over the execution of the experiment.
 
 - QoR
 - Runtime per trial
