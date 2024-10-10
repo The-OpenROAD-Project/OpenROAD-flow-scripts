@@ -35,6 +35,11 @@ if {[env_var_exists_and_non_empty LATCH_MAP_FILE]} {
   techmap -map $::env(LATCH_MAP_FILE)
 }
 
+# Technology mapping of ICGs
+if {[env_var_exists_and_non_empty CLKGATE_MAP_FILE]} {
+  techmap -map $::env(CLKGATE_MAP_FILE)
+}
+
 set dfflibmap_args ""
 foreach cell $::env(DONT_USE_CELLS) {
   lappend dfflibmap_args -dont_use $cell
