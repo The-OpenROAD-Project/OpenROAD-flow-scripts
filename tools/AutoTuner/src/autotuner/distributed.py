@@ -209,6 +209,10 @@ def read_config(file_name):
     """
 
     def read(path):
+        # if file path does not exist, return empty string
+        print(os.path.abspath(path))
+        if not os.path.isfile(os.path.abspath(path)):
+            return ""
         with open(os.path.abspath(path), "r") as file:
             ret = file.read()
         return ret
@@ -442,7 +446,10 @@ def write_sdc(variables, path):
     """
     Create a SDC file with parameters for current tuning iteration.
     """
-    # TODO: handle case where the reference file does not exist
+    # Handle case where the reference file does not exist
+    if SDC_ORIGINAL == "":
+        print("[ERROR TUN-0020] No SDC reference file provided.")
+        sys.exit(1)
     new_file = SDC_ORIGINAL
     for key, value in variables.items():
         if key == "CLK_PERIOD":
@@ -481,7 +488,10 @@ def write_fast_route(variables, path):
     """
     Create a FastRoute Tcl file with parameters for current tuning iteration.
     """
-    # TODO: handle case where the reference file does not exist
+    # Handle case where the reference file does not exist (asap7 doesn't have reference)
+    if FR_ORIGINAL == "" and args.platform != "asap7":
+        print("[ERROR TUN-0021] No FastRoute Tcl reference file provided.")
+        sys.exit(1)
     layer_cmd = "set_global_routing_layer_adjustment"
     new_file = FR_ORIGINAL
     for key, value in variables.items():
