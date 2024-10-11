@@ -24,7 +24,7 @@ GENERATE_ARTIFACTS_ON_FAILURE:
     Considering that global and detailed route can run for a long time and
     use a lot of memory, this allows inspecting results on a laptop for
     a build that ran on a server.
-  value: 0
+  default: 0
 
 TNS_END_PERCENT:
   description: >
@@ -33,13 +33,13 @@ TNS_END_PERCENT:
 
     Specifies how many percent of violating paths to fix [0-100].
     Worst path will always be fixed.
-  value: 100
+  default: 100
   stages:
     - cts
     - floorplan
     - grt
 ROUTING_LAYER_ADJUSTMENT:
-  value: 0.5
+  default: 0.5
   description: Default routing layer adjustment
   stages:
     - place
@@ -49,21 +49,21 @@ ROUTING_LAYER_ADJUSTMENT:
 RECOVER_POWER:
   description: >
     Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100].
-  value: 0
+  default: 0
 SKIP_INCREMENTAL_REPAIR:
-  value: 0
+  default: 0
 DETAILED_METRICS:
   description: >
     If set, then calls report_metrics prior to repair operations in the CTS
     and global route stages 
-  value: 0
+  default: 0
   stages:
     - cts
     - grt
 EQUIVALENCE_CHECK:
   description: >
     Enable running equivalence checks to verify logical correctness of repair_timing.
-  value: 0
+  default: 0
   stages:
     - cts
 CORE_UTILIZATION:
