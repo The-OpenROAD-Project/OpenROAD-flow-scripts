@@ -1,5 +1,6 @@
 utl::set_metrics_stage "globalplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables place
 load_design 3_2_place_iop.odb 2_floorplan.sdc
 
 set_dont_use $::env(DONT_USE_CELLS)
@@ -41,7 +42,7 @@ if {$result != 0} {
 
 estimate_parasitics -placement
 
-if {[info exist ::env(CLUSTER_FLOPS)]} {
+if {[env_var_equals CLUSTER_FLOPS 1]} {
   cluster_flops
   estimate_parasitics -placement
 }

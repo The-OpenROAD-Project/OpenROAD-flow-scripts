@@ -2,7 +2,7 @@ source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
 source $::env(SYNTH_STOP_MODULE_SCRIPT)
 
-if { [info exist ::env(SYNTH_GUT)] && $::env(SYNTH_GUT) == 1 } {
+if { [env_var_equals SYNTH_GUT 1] } {
   hierarchy -check -top $::env(DESIGN_NAME)
   # /deletes all cells at the top level, which will quickly optimize away
   # everything else, including macros.
@@ -20,7 +20,7 @@ renames -wire
 opt -purge
 
 # Technology mapping of adders
-if {[info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)]} {
+if {[env_var_exists_and_non_empty ADDER_MAP_FILE] && [file isfile $::env(ADDER_MAP_FILE)]} {
   # extract the full adders
   extract_fa
   # map full adders
@@ -31,7 +31,7 @@ if {[info exist ::env(ADDER_MAP_FILE)] && [file isfile $::env(ADDER_MAP_FILE)]} 
 }
 
 # Technology mapping of latches
-if {[info exist ::env(LATCH_MAP_FILE)]} {
+if {[env_var_exists_and_non_empty LATCH_MAP_FILE]} {
   techmap -map $::env(LATCH_MAP_FILE)
 }
 
@@ -42,7 +42,7 @@ foreach cell $::env(DONT_USE_CELLS) {
 
 # Technology mapping of flip-flops
 # dfflibmap only supports one liberty file
-if {[info exist ::env(DFF_LIB_FILE)]} {
+if {[env_var_exists_and_non_empty DFF_LIB_FILE]} {
   dfflibmap -liberty $::env(DFF_LIB_FILE) {*}$dfflibmap_args
 } else {
   dfflibmap -liberty $::env(DONT_USE_SC_LIB) {*}$dfflibmap_args

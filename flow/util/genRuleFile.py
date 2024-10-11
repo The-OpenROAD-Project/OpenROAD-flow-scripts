@@ -154,6 +154,12 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
             "compare": "<=",
         },
         # route
+        "globalroute__antenna_diodes_count": {
+            "mode": "padding",
+            "padding": 15,
+            "round_value": True,
+            "compare": "<=",
+        },
         "detailedroute__route__wirelength": {
             "mode": "padding",
             "padding": 15,
@@ -168,6 +174,12 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
         "detailedroute__antenna__violating__nets": {
             "mode": "padding",
             "padding": 30,
+            "round_value": True,
+            "compare": "<=",
+        },
+        "detailedroute__antenna_diodes_count": {
+            "mode": "padding",
+            "padding": 15,
             "round_value": True,
             "compare": "<=",
         },

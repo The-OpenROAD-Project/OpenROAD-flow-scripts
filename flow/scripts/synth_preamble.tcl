@@ -1,10 +1,11 @@
 yosys -import
 
 source $::env(SCRIPTS_DIR)/util.tcl
+erase_non_stage_variables synth
 
-if {[info exist ::env(CACHED_NETLIST)]} {
+if {[env_var_exists_and_non_empty CACHED_NETLIST]} {
   exec cp $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
-  if {[info exist ::env(CACHED_REPORTS)]} {
+  if {[env_var_exists_and_non_empty CACHED_REPORTS]} {
     exec cp {*}$::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
   }
   exit
@@ -12,7 +13,7 @@ if {[info exist ::env(CACHED_NETLIST)]} {
 
 # Setup verilog include directories
 set vIdirsArgs ""
-if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
+if {[env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS]} {
   foreach dir $::env(VERILOG_INCLUDE_DIRS) {
     lappend vIdirsArgs "-I$dir"
   }
@@ -39,19 +40,19 @@ foreach file $::env(VERILOG_FILES) {
 read_liberty -lib {*}$::env(DONT_USE_LIBS)
 
 # Apply toplevel parameters (if exist)
-if {[info exist ::env(VERILOG_TOP_PARAMS)]} {
+if {[env_var_exists_and_non_empty VERILOG_TOP_PARAMS]} {
   dict for {key value} $::env(VERILOG_TOP_PARAMS) {
     chparam -set $key $value $::env(DESIGN_NAME)
   }
 }
 
 # Read platform specific mapfile for OPENROAD_CLKGATE cells
-if {[info exist ::env(CLKGATE_MAP_FILE)]} {
+if {[env_var_exists_and_non_empty CLKGATE_MAP_FILE]} {
   read_verilog -defer $::env(CLKGATE_MAP_FILE)
 }
 
 # Mark modules to keep from getting removed in flattening
-if {[info exist ::env(PRESERVE_CELLS)]} {
+if {[env_var_exists_and_non_empty PRESERVE_CELLS]} {
   # Expand hierarchy since verilog was read in with -defer
   hierarchy -check -top $::env(DESIGN_NAME)
   foreach cell $::env(PRESERVE_CELLS) {
@@ -77,13 +78,13 @@ set abc_args [list -script $abc_script \
 
 # Exclude dont_use cells. This includes macros that are specified via
 # LIB_FILES and ADDITIONAL_LIBS that are included in LIB_FILES.
-if {[info exist ::env(DONT_USE_CELLS)] && $::env(DONT_USE_CELLS) != ""} {
+if {[env_var_exists_and_non_empty DONT_USE_CELLS]} {
   foreach cell $::env(DONT_USE_CELLS) {
     lappend abc_args -dont_use $cell
   }
 }
 
-if {[info exist ::env(SDC_FILE_CLOCK_PERIOD)] && [file isfile $::env(SDC_FILE_CLOCK_PERIOD)]} {
+if {[env_var_exists_and_non_empty SDC_FILE_CLOCK_PERIOD] && [file isfile $::env(SDC_FILE_CLOCK_PERIOD)]} {
   puts "Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
   set fp [open $::env(SDC_FILE_CLOCK_PERIOD) r]
   set clock_period [string trim [read $fp]]

@@ -19,6 +19,8 @@ COPY --link tools tools
 ARG numThreads=$(nproc)
 
 RUN echo "" > tools/yosys/abc/.gitcommit && \
+  env CFLAGS="-D__TIME__=0 -D__DATE__=0 -D__TIMESTAMP__=0 -Wno-builtin-macro-redefined" \
+  CXXFLAGS="-D__TIME__=0 -D__DATE__=0 -D__TIMESTAMP__=0 -Wno-builtin-macro-redefined" \
   ./build_openroad.sh --no_init --local --threads ${numThreads}
 
 FROM orfs-base

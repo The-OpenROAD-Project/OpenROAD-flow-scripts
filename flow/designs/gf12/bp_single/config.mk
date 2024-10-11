@@ -63,7 +63,7 @@ export MACRO_BLOCKAGE_HALO = 25
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 export FASTROUTE_TCL = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
 
-ifneq ($(USE_FILL),)
+ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CHIP
 else
 export DESIGN_TYPE = CHIP_NODEN

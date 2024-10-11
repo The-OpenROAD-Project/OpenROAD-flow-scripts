@@ -9,6 +9,7 @@ baseDir="$(pwd)"
 org=openroad
 
 DOCKER_CMD="docker"
+noConstantBuildDir=""
 
 _help() {
     cat <<EOF
@@ -32,6 +33,7 @@ usage: $0 [CMD] [OPTIONS]
   -password=PASSWORD            Password to loging at the docker registry.
   -ci                           Install CI tools in image
   -dry-run                      Do not push images to the repository
+  -no-constant-build-dir        Do not use constant build directory
   -h -help                      Show this message and exits
 
 EOF
@@ -67,7 +69,7 @@ _setup() {
             fromImage="${FROM_IMAGE_OVERRIDE:-$osBaseImage}"
             cp tools/OpenROAD/etc/DependencyInstaller.sh etc/InstallerOpenROAD.sh
             context="etc"
-            buildArgs="--build-arg options=${options}"
+            buildArgs="--build-arg options=${options} ${noConstantBuildDir}"
             ;;
         *)
             echo "Target ${target} not found" >&2
@@ -201,6 +203,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -tag=* )
             tag="${1#*=}"
+            ;;
+        -no-constant-build-dir )
+            noConstantBuildDir="--build-arg constantBuildDir= "
             ;;
         -os | -target | -threads | -username | -password | -tag )
             echo "${1} requires an argument" >&2

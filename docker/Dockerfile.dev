@@ -13,8 +13,11 @@ COPY InstallerOpenROAD.sh \
        /tmp/installer/tools/OpenROAD/etc/DependencyInstaller.sh
 
 ARG options=""
+ARG constantBuildDir="-constant-build-dir"
 
-RUN ./DependencyInstaller.sh $options \
+RUN env CFLAGS="-D__TIME__=0 -D__DATE__=0 -D__TIMESTAMP__=0 -Wno-builtin-macro-redefined" \
+      CXXFLAGS="-D__TIME__=0 -D__DATE__=0 -D__TIMESTAMP__=0 -Wno-builtin-macro-redefined" \
+      ./DependencyInstaller.sh $options $constantBuildDir \
       && rm -rf /tmp/installer /tmp/* /var/tmp/* /var/lib/apt/lists/*
 
 ARG fromImage

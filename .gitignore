@@ -95,3 +95,6 @@ mainREADME.md
 build
 .scala-build/
 .bsp/
+
+# autotuner artifacts
+metadata-base-at.json

@@ -1,10 +1,10 @@
-if {[info exists ::env(FILL_CONFIG)]} {
+if {[env_var_exists_and_non_empty FILL_CONFIG]} {
     set fill_config $::env(FILL_CONFIG)
 } else {
     set fill_config ""
 }
 
-if {[info exists ::env(SEAL_GDS)]} {
+if {[env_var_exists_and_non_empty  SEAL_GDS]} {
     set seal_gds $::env(SEAL_GDS)
 } else {
     set seal_gds ""

@@ -1,23 +1,7 @@
-proc find_macros {} {
-  set macros ""
-
-  set db [ord::get_db]
-  set block [[$db getChip] getBlock]
-  foreach inst [$block getInsts] {
-    set inst_master [$inst getMaster]
-
-    # BLOCK means MACRO cells
-    if { [string match [$inst_master getType] "BLOCK"] } {
-      append macros " " $inst
-    }
-  }
-  return $macros
-}
-
 if {[find_macros] != ""} {
 # If wrappers defined replace macros with their wrapped version
 # # ----------------------------------------------------------------------------
-  if {[info exists ::env(MACRO_WRAPPERS)]} {
+  if {[env_var_exists_and_non_empty MACRO_WRAPPERS]} {
     source $::env(MACRO_WRAPPERS)
 
     set wrapped_macros [dict keys [dict get $wrapper around]]
@@ -40,92 +24,48 @@ if {[find_macros] != ""} {
   set blockage_width [expr max($halo_max, $channel_max/2)]
 
   
-  if {[info exists ::env(MACRO_BLOCKAGE_HALO)]} {
+  if {[env_var_exists_and_non_empty MACRO_BLOCKAGE_HALO]} {
     set blockage_width $::env(MACRO_BLOCKAGE_HALO)
   }
 
-  if {[info exists ::env(MACRO_PLACEMENT_TCL)]} {
+  if {[env_var_exists_and_non_empty MACRO_PLACEMENT_TCL]} {
     source $::env(MACRO_PLACEMENT_TCL)
     puts "Using manual macro placement file $::env(MACRO_PLACEMENT_TCL)"
-  } elseif {[info exists ::env(MACRO_PLACEMENT)]} {
+  } elseif {[env_var_exists_and_non_empty MACRO_PLACEMENT]} {
     source $::env(SCRIPTS_DIR)/read_macro_placement.tcl
     puts "Using manual macro placement file $::env(MACRO_PLACEMENT)"
     read_macro_placement $::env(MACRO_PLACEMENT)
-  } elseif {[info exists ::env(RTLMP_FLOW)]} {
+  } elseif {[env_var_equals RTLMP_FLOW 1]} {
     puts "HierRTLMP Flow enabled..."
     set additional_rtlmp_args ""
-    if { [info exists ::env(RTLMP_MAX_LEVEL)]} {
-        append additional_rtlmp_args " -max_num_level $env(RTLMP_MAX_LEVEL)"
-    }
-    if { [info exists ::env(RTLMP_MAX_INST)]} {
-        append additional_rtlmp_args " -max_num_inst $env(RTLMP_MAX_INST)"
-    }
-    if { [info exists ::env(RTLMP_MIN_INST)]} {
-        append additional_rtlmp_args " -min_num_inst $env(RTLMP_MIN_INST)"
-    }
-    if { [info exists ::env(RTLMP_MAX_MACRO)]} {
-        append additional_rtlmp_args " -max_num_macro $env(RTLMP_MAX_MACRO)"
-    }
-    if { [info exists ::env(RTLMP_MIN_MACRO)]} {
-        append additional_rtlmp_args " -min_num_macro $env(RTLMP_MIN_MACRO)"
-    }
-    
+    append_env_var additional_rtlmp_args RTLMP_MAX_LEVEL -max_num_level 1
+    append_env_var additional_rtlmp_args RTLMP_MAX_INST -max_num_inst 1
+    append_env_var additional_rtlmp_args RTLMP_MIN_INST -min_num_inst 1
+    append_env_var additional_rtlmp_args RTLMP_MAX_MACRO -max_num_macro 1
+    append_env_var additional_rtlmp_args RTLMP_MIN_MACRO -min_num_macro 1
     append additional_rtlmp_args " -halo_width $halo_x"
     append additional_rtlmp_args " -halo_height $halo_y"
-
-    if { [info exists ::env(RTLMP_MIN_AR)]} {
-        append additional_rtlmp_args " -min_ar $env(RTLMP_MIN_AR)"
-    }
-    if { [info exists ::env(RTLMP_SIGNATURE_NET_THRESHOLD)]} {
-        append additional_rtlmp_args \
-            " -signature_net_threshold $env(RTLMP_SIGNATURE_NET_THRESHOLD)"
-    }
-    if { [info exists ::env(RTLMP_AREA_WT)]} {
-        append additional_rtlmp_args " -area_weight $env(RTLMP_AREA_WT)"
-    }
-    if { [info exists ::env(RTLMP_WIRELENGTH_WT)]} {
-        append additional_rtlmp_args " -wirelength_weight $env(RTLMP_WIRELENGTH_WT)"
-    }
-    if { [info exists ::env(RTLMP_OUTLINE_WT)]} {
-        append additional_rtlmp_args " -outline_weight $env(RTLMP_OUTLINE_WT)"
-    }
-    if { [info exists ::env(RTLMP_BOUNDARY_WT)]} {
-        append additional_rtlmp_args " -boundary_weight $env(RTLMP_BOUNDARY_WT)"
-    }
-
-    if { [info exists ::env(RTLMP_NOTCH_WT)]} {
-        append additional_rtlmp_args " -notch_weight $env(RTLMP_NOTCH_WT)"
-    }
-
-    if { [info exists ::env(RTLMP_DEAD_SPACE)]} {
-        append additional_rtlmp_args " -dead_space $env(RTLMP_DEAD_SPACE)"
-    }
-    if { [info exists ::env(RTLMP_CONFIG_FILE)]} {
-        append additional_rtlmp_args " -config_file $env(RTLMP_CONFIG_FILE)"
-    }
-    if { [info exists ::env(RTLMP_RPT_DIR)]} {
-        append additional_rtlmp_args " -report_directory $env(RTLMP_RPT_DIR)"
-    }
-
-    if { [info exists ::env(RTLMP_FENCE_LX)]} {
-        append additional_rtlmp_args " -fence_lx $env(RTLMP_FENCE_LX)"
-    }
-    if { [info exists ::env(RTLMP_FENCE_LY)]} {
-        append additional_rtlmp_args " -fence_ly $env(RTLMP_FENCE_LY)"
-    }
-    if { [info exists ::env(RTLMP_FENCE_UX)]} {
-        append additional_rtlmp_args " -fence_ux $env(RTLMP_FENCE_UX)"
-    }
-    if { [info exists ::env(RTLMP_FENCE_UY)]} {
-        append additional_rtlmp_args " -fence_uy $env(RTLMP_FENCE_UY)"
-    }
+    append_env_var additional_rtlmp_args RTLMP_MIN_AR -min_ar 1
+    append_env_var additional_rtlmp_args RTLMP_SIGNATURE_NET_THRESHOLD -signature_net_threshold 1
+    append_env_var additional_rtlmp_args RTLMP_AREA_WT -area_weight 1
+    append_env_var additional_rtlmp_args RTLMP_WIRELENGTH_WT -wirelength_weight 1
+    append_env_var additional_rtlmp_args RTLMP_OUTLINE_WT -outline_weight 1
+    append_env_var additional_rtlmp_args RTLMP_BOUNDARY_WT -boundary_weight 1
+    append_env_var additional_rtlmp_args RTLMP_NOTCH_WT -notch_weight 1
+    append_env_var additional_rtlmp_args RTLMP_DEAD_SPACE -dead_space 1
+    append_env_var additional_rtlmp_args RTLMP_CONFIG_FILE -config_file 1
+    append_env_var additional_rtlmp_args RTLMP_RPT_DIR -report_directory 1
+    append_env_var additional_rtlmp_args RTLMP_FENCE_LX -fence_lx 1
+    append_env_var additional_rtlmp_args RTLMP_FENCE_LY -fence_ly 1
+    append_env_var additional_rtlmp_args RTLMP_FENCE_UX -fence_ux 1
+    append_env_var additional_rtlmp_args RTLMP_FENCE_UY -fence_uy 1
 
     source $::env(SCRIPTS_DIR)/set_place_density.tcl
     append additional_rtlmp_args " -target_util $place_density"
 
     set all_args $additional_rtlmp_args
 
-    if { [info exists ::env(RTLMP_ARGS)] } {
+    if { [env_var_exists_and_non_empty RTLMP_ARGS] } {
       set all_args $::env(RTLMP_ARGS)
     }
 
