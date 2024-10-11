@@ -208,6 +208,7 @@ Assuming the virtual environment is setup at `./tools/AutoTuner/autotuner_env`:
 ./tools/AutoTuner/setup.sh
 python3 ./tools/AutoTuner/test/smoke_test_sweep.py
 python3 ./tools/AutoTuner/test/smoke_test_tune.py
+python3 ./tools/AutoTuner/test/smoke_test_sample_iteration.py
 ```
 
 ## Citation
