@@ -573,7 +573,7 @@ endef
 define OPEN_GUI
 .PHONY: open_$(1) gui_$(1)
 open_$(1):
-	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/gui.tcl
+	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/open.tcl
 gui_$(1):
 	$$(UNSET_AND_MAKE) GUI_SHOW=1 open_$(1)
 endef
