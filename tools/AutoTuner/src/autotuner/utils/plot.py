@@ -4,9 +4,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import re
+import os
 import argparse
 
 AT_REGEX = r"variant-AutoTunerBase-([\w-]+)-\w+"
+IMG_DIR = "images"
 
 
 def load_dir(dir: str) -> pd.DataFrame:
@@ -83,6 +85,8 @@ def plot(df: pd.DataFrame, key: str):
 
 
 def main(results_dir: str):
+    # Default: saves to <REPO_ROOT>/images. Change the IMG_DIR above.
+    os.makedirs(IMG_DIR, exist_ok=True)
     df = load_dir(results_dir)
     df = preprocess(df)
     keys = ["qor", "runtime", "clk_period", "worst_slack"]
@@ -93,7 +97,10 @@ def main(results_dir: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot AutoTuner results.")
     parser.add_argument(
-        "results_dir", type=str, help="Directory containing the results.", required=True
+        "--results_dir",
+        type=str,
+        help="Directory containing the results.",
+        required=True,
     )
     args = parser.parse_args()
     main(args.results_dir)
