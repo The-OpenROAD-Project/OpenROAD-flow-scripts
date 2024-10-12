@@ -360,42 +360,18 @@ def read_config(file_name):
     return config, sdc_file, fr_file
 
 
-def parse_flow_variables():
+def parse_tunable_variables():
     """
-    Parse the flow variables from source
-    - Code: Makefile `vars` target output
-
+    Parse the tunable variables from variables.yaml
     TODO: Tests.
-
-    Output:
-    - flow_variables: set of flow variables
     """
     cur_path = os.path.dirname(os.path.realpath(__file__))
-
-    # first, generate vars.tcl
     makefile_path = os.path.join(cur_path, "../../../../flow/")
     initial_path = os.path.abspath(os.getcwd())
     os.chdir(makefile_path)
     result = subprocess.run(["make", "vars", f"PLATFORM={args.platform}"])
-    if result.returncode != 0:
-        print(f"[ERROR TUN-0018] Makefile failed with error code {result.returncode}.")
-        sys.exit(1)
-    if not os.path.exists("vars.tcl"):
-        print(f"[ERROR TUN-0019] Makefile did not generate vars.tcl.")
-        sys.exit(1)
     os.chdir(initial_path)
-
-    # for code parsing, you need to parse from both scripts and vars.tcl file.
-    pattern = r"(?:::)?env\((.*?)\)"
-    files = glob.glob(os.path.join(cur_path, "../../../../flow/scripts/*.tcl"))
-    files.append(os.path.join(cur_path, "../../../../flow/vars.tcl"))
-    variables = set()
-    for file in files:
-        with open(file) as fp:
-            matches = re.findall(pattern, fp.read())
-        for match in matches:
-            for variable in match.split("\n"):
-                variables.add(variable.strip().upper())
+    variables = [var.strip() for var in result.split("\n")]
     return variables
 
 
@@ -406,7 +382,7 @@ def parse_config(config, path=os.getcwd()):
     options = ""
     sdc = {}
     fast_route = {}
-    flow_variables = parse_flow_variables()
+    flow_variables = parse_tunable_variables()
     for key, value in config.items():
         # Keys that begin with underscore need special handling.
         if key.startswith("_"):
@@ -424,15 +400,12 @@ def parse_config(config, path=os.getcwd()):
                     "[WARNING TUN-0013] Non-flatten the designs are not "
                     "fully supported, ignoring _SYNTH_FLATTEN parameter."
                 )
-        # Default case is VAR=VALUE
         else:
-            # FIXME there is no robust way to get this metainformation from
-            # ORFS about the variables, so disable this code for now.
-
+            # Default case is VAR=VALUE
             # Sanity check: ignore all flow variables that are not tunable
-            # if key not in flow_variables:
-            #     print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
-            #     sys.exit(1)
+            if key not in flow_variables:
+                print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
+                sys.exit(1)
             options += f" {key}={value}"
     if bool(sdc):
         write_sdc(sdc, path)
