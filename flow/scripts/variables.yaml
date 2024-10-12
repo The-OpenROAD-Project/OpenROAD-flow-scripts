@@ -25,7 +25,7 @@ GENERATE_ARTIFACTS_ON_FAILURE:
     use a lot of memory, this allows inspecting results on a laptop for
     a build that ran on a server.
   default: 0
-
+  tunable: false
 TNS_END_PERCENT:
   description: >
     Default TNS_END_PERCENT value for post CTS timing repair.
@@ -34,12 +34,14 @@ TNS_END_PERCENT:
     Specifies how many percent of violating paths to fix [0-100].
     Worst path will always be fixed.
   default: 100
+  tunable: false
   stages:
     - cts
     - floorplan
     - grt
 ROUTING_LAYER_ADJUSTMENT:
   default: 0.5
+  tunable: false
   description: Default routing layer adjustment
   stages:
     - place
@@ -50,17 +52,20 @@ RECOVER_POWER:
   description: >
     Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100].
   default: 0
+  tunable: false
 SKIP_INCREMENTAL_REPAIR:
   default: 0
   description: >
     Skip incremental repair in global route.
   stages:
     - grt
+  tunable: false
 DETAILED_METRICS:
   description: >
     If set, then calls report_metrics prior to repair operations in the CTS
     and global route stages 
   default: 0
+  tunable: false
   stages:
     - cts
     - grt
@@ -68,6 +73,7 @@ EQUIVALENCE_CHECK:
   description: >
     Enable running equivalence checks to verify logical correctness of repair_timing.
   default: 0
+  tunable: false
   stages:
     - cts
 CORE_UTILIZATION:
@@ -75,12 +81,14 @@ CORE_UTILIZATION:
     The core utilization percentage (0-100).
   stages:
     - floorplan
+  tunable: false
 CORE_AREA:
   description: >
     The core area specified as a list of lower-left and upper-right corners in microns
     (X1 Y1 X2 Y2).
   stages:
     - floorplan
+  tunable: false
 SKIP_REPORT_METRICS:
   description: >
     If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.
@@ -91,29 +99,37 @@ SKIP_REPORT_METRICS:
     - grt
     - route
     - final
+  tunable: false
 PROCESS:
   description: >
     Technology node or process in use.
+  tunable: false
 CORNER:
   description: >
     Library to select based on corner BC/TC/WC.
+  tunable: false
 TECH_LEF:
   description: >
     A technology LEF file of the PDK that includes all relevant information
     regarding metal layers, vias, and spacing requirements.
+  tunable: false
 SC_LEF:
   description: >
     Path to technology standard cell LEF file.
+  tunable: false
 GDS_FILES:
   description: >
     Path to platform GDS files.
+  tunable: false
 LIB_FILES:
   description: >
     A Liberty file of the standard cell library with PVT characterization,
     input and output characteristics, timing and power definitions for each cell.
+  tunable: false
 DONT_USE_CELLS:
   description: >
     Dont use cells eases pin access in detailed routing.
+  tunable: false
 SYNTH_GUT:
   description: >
     Load design and remove all internal logic before doing synthesis. This
@@ -122,162 +138,193 @@ SYNTH_GUT:
     SRAMs, for instance.
   stages:
     - synth
+  tunable: false
 SYNTH_HIERARCHICAL:
   description: >
     Enable to Synthesis hierarchically, otherwise considered flat synthesis.
   stages:
     - synth
+  tunable: false
 LATCH_MAP_FILE:
   description: >
     List of latches treated as a black box by Yosys.
   stages:
     - synth
+  tunable: false
 CLKGATE_MAP_FILE:
   description: >
     List of cells for gating clock treated as a black box by Yosys.
   stages:
     - synth
+  tunable: false
 ADDER_MAP_FILE:
   description: >
     List of adders treated as a black box by Yosys.
   stages:
     - synth
+  tunable: false
 TIEHI_CELL_AND_PORT:
   description: >
     Tie high cells used in Yosys synthesis to replace a logical 1 in the Netlist.
   stages:
     - synth
     - place
+  tunable: false
 TIELO_CELL_AND_PORT:
   description: >
     Tie low cells used in Yosys synthesis to replace a logical 0 in the Netlist.
   stages:
     - synth
     - place
+  tunable: false
 MIN_BUF_CELL_AND_PORTS:
   description: >
     Used to insert a buffer cell to pass through wires. Used in synthesis.
   stages:
     - synth
+  tunable: false
 ABC_CLOCK_PERIOD_IN_PS:
   description: >
     Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`.
   stages:
     - synth
+  tunable: false
 ABC_DRIVER_CELL:
   description: >
     Default driver cell used during ABC synthesis.
   stages:
     - synth
+  tunable: false
 ABC_LOAD_IN_FF:
   description: >
     During synthesis set_load value used.
   stages:
     - synth
+  tunable: false
 MAX_UNGROUP_SIZE:
   description: >
     For hierarchical synthesis, we ungroup modules of size given by this variable.
   stages:
     - synth
+  tunable: false
 FLOORPLAN_DEF:
   description: >
     Use the DEF file to initialize floorplan.
   stages:
     - floorplan
+  tunable: false
 REMOVE_ABC_BUFFERS:
   description: >
     Remove abc buffers from the netlist.
   stages:
     - floorplan
+  tunable: false
 PLACE_SITE:
   description: >
     Placement site for core cells defined in the technology LEF file.
   stages:
     - floorplan
+  tunable: false
 TAPCELL_TCL:
   description: >
     Path to Endcap and Welltie cells file.
   stages:
     - floorplan
+  tunable: false
 RTLMP_FLOW:
   description: >
     1 to enable the Hierarchical RTLMP flow, default empty.
   stages:
     - floorplan
+  tunable: false
 MACRO_PLACEMENT:
   description: >
     Specifies the path of a file on how to place certain macros manually using read_macro_placement.
   stages:
     - floorplan
+  tunable: false
 MACRO_PLACEMENT_TCL:
   description: >
     Specifies the path of a TCL file on how to place certain macros manually.
   stages:
     - floorplan
+  tunable: false
 MACRO_PLACE_HALO:
   description: >
     Horizontal/vertical halo around macros (microns). Used by automatic macro placement.
   stages:
     - floorplan
+  tunable: false
 MACRO_PLACE_CHANNEL:
   description: >
     Horizontal/vertical channel width between macros (microns). Used by automatic macro placement when RTLMP_FLOW is disabled.
     Imagine channel=10 and halo=5. Then macros must be 10 apart but standard cells must be 5 away from a macro.
   stages:
     - floorplan
+  tunable: false
 MACRO_BLOCKAGE_HALO:
   description: >
     Blockage width overridden from default calculation.
   stages:
     - floorplan
+  tunable: false
 PDN_TCL:
   description: >
     File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.
   stages:
     - floorplan
+  tunable: false
 MAKE_TRACKS:
   description: >
     Tcl file that defines add routing tracks to a floorplan.
   stages:
     - floorplan
+  tunable: false
 IO_CONSTRAINTS:
   description: >
     File path to the IO constraints .tcl file.
   stages:
     - floorplan
     - place
+  tunable: false
 IO_PLACER_H:
   description: >
     The metal layer on which to place the I/O pins horizontally (top and bottom of the die).
   stages:
     - floorplan
     - place
+  tunable: false
 IO_PLACER_V:
   description: >
     The metal layer on which to place the I/O pins vertically (sides of the die).
   stages:
     - floorplan
     - place
+  tunable: false
 GUI_TIMING:
   description: >
     Load timing information when opening GUI. For large designs, this can
     be quite time consuming. Useful to disable when investigating non-timing
     aspects like floorplan, placement, routing, etc.
   default: 1
+  tunable: false
 FILL_CELLS:
   description: >
     Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.
   stages:
     - route
+  tunable: false
 TAP_CELL_NAME:
   description: >
     Name of the cell to use in tap cell insertion.
+  tunable: false
 CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
   description: >
     Cell padding on both sides in site widths to ease routability during global placement.
   stages:
     - place
     - floorplan
+  tunable: true
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
     Cell padding on both sides in site widths to ease routability in detail placement.
@@ -285,12 +332,14 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     - place
     - cts
     - grt
+  tunable: true
 PLACE_PINS_ARGS:
   description: >
     Arguments to place_pins
   stages:
     - place
     - floorplan
+  tunable: false
 PLACE_DENSITY:
   description: >
     The desired placement density of cells. It reflects how spread the cells would be on the core area.
@@ -298,66 +347,83 @@ PLACE_DENSITY:
   stages:
     - floorplan
     - place
+  tunable: false
 PLACE_DENSITY_LB_ADDON:
   description: >
     Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.
+  tunable: true
 REPAIR_PDN_VIA_LAYER:
   description: >
     Remove power grid vias which generate DRC violations after detailed routing.
+  tunable: false
 GLOBAL_PLACEMENT_ARGS:
   description: >
     Use additional tuning parameters during global placement other than default args defined in global_place.tcl.
+  tunable: false
 ENABLE_DPO:
   description: >
     Enable detail placement with improve_placement feature.
+  tunable: false
 DPO_MAX_DISPLACEMENT:
   description: >
     Specifies how far an instance can be moved when optimizing.
+  tunable: false
 GPL_TIMING_DRIVEN:
   description: >
     Specifies whether the placer should use timing driven placement.
   stages:
     - place
+  tunable: false
 GPL_ROUTABILITY_DRIVEN:
   description: >
     Specifies whether the placer should use routability driven placement.
   stages:
     - place
+  tunable: false
 CAP_MARGIN:
   description: >
     Specifies a capacitance margin when fixing max capacitance violations. This option allows you to overfix.
+  tunable: false
 SLEW_MARGIN:
   description: >
     Specifies a slew margin when fixing max slew violations. This option allows you to overfix.
+  tunable: false
 CTS_ARGS:
   description: >
     Override `clock_tree_synthesis` arguments.
   stages:
     - cts
+  tunable: false
 HOLD_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing hold violations.
     This option allows you to overfix.
+  tunable: false
 SETUP_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing setup violations.
+  tunable: false
 SKIP_GATE_CLONING:
   description: >
     Do not use gate cloning transform to fix timing violations (default: use gate cloning).
+  tunable: false
 SKIP_PIN_SWAP:
   description: >
     Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).
+  tunable: false
 REMOVE_CELLS_FOR_EQY:
   description: >
     String patterns directly passed to write_verilog -remove_cells <> for equivalence checks.
   stages:
     - cts
+  tunable: false
 SKIP_CTS_REPAIR_TIMING:
   description: >
     Skipping CTS repair, which can take a long time, can be useful in architectural exploration
     or when getting CI up and running.
   stages:
     - cts
+  tunable: false
 MIN_ROUTING_LAYER:
   description: >
     The lowest metal layer name to be used in routing.
@@ -366,6 +432,7 @@ MIN_ROUTING_LAYER:
     - grt
     - route
     - final
+  tunable: false
 MAX_ROUTING_LAYER:
   description: >
     The highest metal layer name to be used in routing.
@@ -374,42 +441,53 @@ MAX_ROUTING_LAYER:
     - grt
     - route
     - final
+  tunable: false
 DETAILED_ROUTE_ARGS:
   description: >
     Add additional arguments for debugging purposes during detail route.
   stages:
     - route
+  tunable: false
 MACRO_EXTENSION:
   description: >
     Sets the number of GCells added to the blockages boundaries from macros.
+  tunable: false
 DETAILED_ROUTE_END_ITERATION:
   description: >
     Maximum number of iterations, default 64.
   stages:
     - route
+  tunable: false
 RCX_RULES:
   description: >
     RC Extraction rules file path.
+  tunable: false
 SET_RC_TCL:
   description: >
     Metal & Via RC definition file path.
+  tunable: false
 FILL_CONFIG:
   description: >
     JSON rule file for metal fill during chip finishing.
+  tunable: false
 KLAYOUT_TECH_FILE:
   description: >
     A mapping from LEF/DEF to GDS using the KLayout tool.
+  tunable: false
 IR_DROP_LAYER:
   description: >
     Default metal layer to report IR drop.
+  tunable: false
 PLATFORM:
   required: true
   description: >
     Specifies process design kit or technology node to be used.
+  tunable: false
 DESIGN_NAME:
   required: true
   description: >
     The name of the top-level module of the design.
+  tunable: false
 VERILOG_FILES:
   required: true
   description: >
@@ -417,12 +495,14 @@ VERILOG_FILES:
     of modules (check `yosys -h write_json` for more details).
   stages:
     - synth
+  tunable: false
 SDC_FILE:
   required: true
   description: >
     The path to design constraint (SDC) file.
   stages:
     - synth
+  tunable: false
 SDC_GUT:
   description: >
     Load design and remove all internal logic before doing synthesis. This
@@ -431,6 +511,7 @@ SDC_GUT:
     SRAMs, for instance.
   stages:
     - synth
+  tunable: false
 ADDITIONAL_FILES:
   description: >
     Additional files to be added to `make issue` archive.
@@ -442,67 +523,84 @@ ADDITIONAL_FILES:
   - grt
   - route
   - final
+  tunable: false
 ADDITIONAL_LEFS:
   description: >
     Hardened macro LEF view files listed here. The LEF information of the macros
     is immutable and used throughout all stages. Stored in the .odb file.
+  tunable: false
 ADDITIONAL_LIBS:
   description: >
     Hardened macro library files listed here. The library information is immutable
     and used throughout all stages. Not stored in the .odb file.
+  tunable: false
 ADDITIONAL_GDS:
   description: >
     Hardened macro GDS files listed here.
+  tunable: false
 VERILOG_INCLUDE_DIRS:
   description: >
     Specifies the include directories for the Verilog input files.
   stages:
     - synth
+  tunable: false
 CORNER:
   description: >
     PVT corner library selection. Only available for ASAP7 and GF180 PDK.
+  tunable: false
 DESIGN_NICKNAME:
   description: >
     DESIGN_NICKNAME just changes the directory name that ORFS outputs to be
     DESIGN_NICKNAME instead of DESIGN_NAME in case DESIGN_NAME is unwieldy or
     conflicts with a different design.
+  tunable: false
 ABC_AREA:
   description: >
     Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.
   stages:
     - synth
+  tunable: false
 PWR_NETS_VOLTAGES:
   description: >
     Used for IR Drop calculation.
   stages:
     - final
+  tunable: false
 GND_NETS_VOLTAGES:
   description: >
     Used for IR Drop calculation.
   stages:
     - final
+  tunable: false
 BLOCKS:
   description: >
     Blocks used as hard macros in a hierarchical flow. Do note that you have to
     specify block-specific inputs file in the directory mentioned by Makefile.
+  tunable: false
 CDL_FILES:
   description: >
     Insert additional Circuit Description Language (`.cdl`) netlist files.
+  tunable: false
 DFF_LIB_FILES:
   description: >
     Technology mapping liberty files for flip-flops.
+  tunable: false
 DONT_USE_LIBS:
   description: >
     Set liberty files as `dont_use`.
+  tunable: false
 PRESERVE_CELLS:
   description: >
     Mark modules to keep from getting removed in flattening.
+  tunable: false
 SYNTH_ARGS:
   description: >
     Optional synthesis variables for yosys.
+  tunable: false
 VERILOG_TOP_PARAMS:
   description: >
     Apply toplevel params (if exist).
+  tunable: false
   stages:
     - synth
 CORE_ASPECT_RATIO:
@@ -511,6 +609,7 @@ CORE_ASPECT_RATIO:
     is undefined.
   stages:
     - floorplan
+  tunable: false
 CORE_MARGIN:
   description: >
     The margin between the core area and die area, in multiples of SITE heights.
@@ -518,73 +617,89 @@ CORE_MARGIN:
     is undefined.
   stages:
     - floorplan
+  tunable: true
 DIE_AREA:
   description: >
     The die area specified as a list of lower-left and upper-right corners in microns
     (X1 Y1 X2 Y2).
   stages:
     - floorplan
+  tunable: false
 RESYNTH_AREA_RECOVER:
   description: >
     Enable re-synthesis for area reclaim.
   stages:
     - synth
+  tunable: false
 RESYNTH_TIMING_RECOVER:
   description: >
     Enable re-synthesis for timing optimization.
   stages:
     - synth
+  tunable: false
 MACRO_HALO_X:
   description: >
     Set macro halo for x-direction. Only available for ASAP7 PDK.
   stages:
     - floorplan
+  tunable: false
 MACRO_HALO_Y:
   description: >
     Set macro halo for y-direction. Only available for ASAP7 PDK.
   stages:
     - floorplan
+  tunable: false
 MACRO_WRAPPERS:
   description: >
     The wrapper file that replaces existing macros with their wrapped version.
   stages:
     - floorplan
+  tunable: false
 CTS_BUF_DISTANCE:
   description: >
     Distance (in microns) between buffers.
   stages:
     - cts
+  tunable: false
 CTS_CLUSTER_DIAMETER:
   description: >
     Maximum diameter (in microns) of sink cluster. Default 20.
   stages:
     - cts
+  tunable: true
 CTS_CLUSTER_SIZE:
   description: >
     Maximum number of sinks per cluster. Default 50.
   stages:
     - cts
+  tunable: true
 CTS_SNAPSHOT:
   description: >
     Creates ODB/SDC files prior to clock net and setup/hold repair.
   stages:
     - cts
+  tunable: false
 POST_CTS_TCL:
   description: >
     Specifies a Tcl script with commands to run after CTS is completed.
   stages:
     - cts
+  tunable: false
 FASTROUTE_TCL:
   description: >
     Specifies a Tcl script with commands to run before FastRoute.
+  tunable: false
 USE_FILL:
   description: >
     Whether to perform metal density filling. Default 0 (=off).
+  tunable: false
 SEAL_GDS:
   description: >
     Seal macro to place around the design.
+  tunable: false
 ABSTRACT_SOURCE:
   description: >
     Which .odb file to use to create abstract
   stages:
     - generate_abstract
+  tunable: false
