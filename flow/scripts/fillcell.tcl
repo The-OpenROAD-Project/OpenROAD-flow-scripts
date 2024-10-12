@@ -1,4 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables route
 if {[env_var_exists_and_non_empty FILL_CELLS]} {
   load_design 5_2_route.odb 4_cts.sdc
 

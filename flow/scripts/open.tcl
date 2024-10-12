@@ -52,3 +52,9 @@ proc read_timing {input_file} {
 if {![env_var_equals GUI_NO_TIMING 1]} {
   read_timing $input_file
 }
+
+if {[env_var_equals GUI_SHOW 1]} {
+  # Show the GUI when it is ready; it is unresponsive(with modal requesters
+  # saying it is unresponsive) until everything is loaded
+  gui::show
+}

@@ -1,4 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables floorplan
 
 if {![env_var_equals IS_CHIP 1]} {
   load_design 2_1_floorplan.odb 1_synth.sdc

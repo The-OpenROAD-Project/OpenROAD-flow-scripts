@@ -1,11 +1,11 @@
 utl::set_metrics_stage "globalroute__{}"
+source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables grt
+load_design 4_cts.odb 4_cts.sdc
 
 # This proc is here to allow us to use 'return' to return early from this
 # file which is sourced
 proc global_route_helper {} {
-  source $::env(SCRIPTS_DIR)/load.tcl
-  load_design 4_cts.odb 4_cts.sdc
-
   if {[env_var_exists_and_non_empty PRE_GLOBAL_ROUTE]} {
     source $::env(PRE_GLOBAL_ROUTE)
   }
@@ -86,7 +86,10 @@ proc global_route_helper {} {
     global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
   }
 
+  global_route -start_incremental
   recover_power
+  # Route the modified nets by rsz journal restore
+  global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
 
   if {![env_var_equals SKIP_ANTENNA_REPAIR 1]} {
     puts "Repair antennas..."
