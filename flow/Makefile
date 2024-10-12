@@ -506,9 +506,13 @@ $(RESULTS_DIR)/1_synth.rtlil: $(YOSYS_DEPENDENCIES)
 $(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
 	$(UNSET_AND_MAKE) do-yosys-keep-hierarchy do-yosys
 
-$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
+.PHONY: do-synth-sdc
+do-synth-sdc:
 	mkdir -p $(RESULTS_DIR)
 	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
+
+$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
+	$(UNSET_AND_MAKE) do-synth-sdc
 
 .PHONY: do-synth
 do-synth:
