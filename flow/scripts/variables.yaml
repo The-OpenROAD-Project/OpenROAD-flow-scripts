@@ -246,9 +246,12 @@ IO_PLACER_V:
   stages:
     - floorplan
     - place
-GUI_NO_TIMING:
+GUI_TIMING:
   description: >
-    Skip loading timing for a faster GUI load.
+    Load timing information when opening GUI. For large designs, this can
+    be quite time consuming. Useful to disable when investigating non-timing
+    aspects like floorplan, placement, routing, etc.
+  value: 1
 FILL_CELLS:
   description: >
     Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.
