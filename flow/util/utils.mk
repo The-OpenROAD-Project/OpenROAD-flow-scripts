@@ -34,6 +34,13 @@ update_rules:
 update_rules_force:
 	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
 
+.PHONY: update_metadata_autotuner
+update_metadata_autotuner:
+	@$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
+		-p $(PLATFORM) \
+		-v $(FLOW_VARIANT) \
+		-o $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-at.json -x
+
 #-------------------------------------------------------------------------------
 
 .PHONY: write_net_rc
