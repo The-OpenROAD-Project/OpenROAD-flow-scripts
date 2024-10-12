@@ -52,6 +52,10 @@ RECOVER_POWER:
   default: 0
 SKIP_INCREMENTAL_REPAIR:
   default: 0
+  description: >
+    Skip incremental repair in global route.
+  stages:
+    - grt
 DETAILED_METRICS:
   description: >
     If set, then calls report_metrics prior to repair operations in the CTS
@@ -80,6 +84,13 @@ CORE_AREA:
 SKIP_REPORT_METRICS:
   description: >
     If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.
+  stages:
+    - synth
+    - floorplan
+    - cts
+    - grt
+    - route
+    - final
 PROCESS:
   description: >
     Technology node or process in use.
