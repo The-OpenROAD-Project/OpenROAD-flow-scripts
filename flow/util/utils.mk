@@ -167,8 +167,3 @@ ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
       export ABC_CLOCK_PERIOD_IN_PS := $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
    endif
 endif
-
-# Get AutoTuner tunable variables
-.PHONY: get_tunable_variables
-get_tunable_variables:
-	@$(SCRIPTS_DIR)/tunable.py
