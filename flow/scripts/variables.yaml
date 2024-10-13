@@ -110,6 +110,14 @@ LIB_FILES:
 DONT_USE_CELLS:
   description: >
     Dont use cells eases pin access in detailed routing.
+SYNTH_GUT:
+  description: >
+    Load design and remove all internal logic before doing synthesis. This
+    is useful when creating a mock .lef abstract that has a smaller area
+    than the amount of logic would allow. bazel-orfs uses this to mock
+    SRAMs, for instance.
+  stages:
+    - synth
 SYNTH_HIERARCHICAL:
   description: >
     Enable to Synthesis hierarchically, otherwise considered flat synthesis.
