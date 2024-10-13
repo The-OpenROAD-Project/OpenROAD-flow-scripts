@@ -1,0 +1,37 @@
+extends: default
+
+rules:
+  # General formatting
+  indentation: 
+    level: error  # options: 'error' (strict), 'warning' (less strict)
+    spaces: 2     # number of spaces per indentation level
+  line-length:
+    max: 120      # maximum allowed length for lines
+    level: warning
+    allow-non-breakable-words: false  # non-breakable words exceeding line-length
+
+  # Document structure
+  document-start:
+    level: error  # documents should start with '---'
+  
+  # Trailing spaces
+  trailing-spaces:
+    level: error  # no trailing spaces allowed
+
+  # Comments
+  comments:
+    level: warning
+    require-starting-space: true  # comments should have a space after '#'
+
+  # Special characters
+  key-duplicates: 
+    level: error  # duplicate keys are not allowed
+  truthy:
+    level: warning  # warn on 'yes/no' and 'on/off'; prefer 'true/false'
+
+  # File properties
+  empty-lines: 
+    max: 2    # no more than 2 consecutive empty lines
+    level: warning
+  new-line-at-end-of-file:
+    level: warning  # files should end with a newline
