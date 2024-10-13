@@ -85,8 +85,8 @@ SKIP_REPORT_METRICS:
   description: >
     If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.
   stages:
-    - synth
     - floorplan
+    - place
     - cts
     - grt
     - route
@@ -114,6 +114,14 @@ LIB_FILES:
 DONT_USE_CELLS:
   description: >
     Dont use cells eases pin access in detailed routing.
+SYNTH_GUT:
+  description: >
+    Load design and remove all internal logic before doing synthesis. This
+    is useful when creating a mock .lef abstract that has a smaller area
+    than the amount of logic would allow. bazel-orfs uses this to mock
+    SRAMs, for instance.
+  stages:
+    - synth
 SYNTH_HIERARCHICAL:
   description: >
     Enable to Synthesis hierarchically, otherwise considered flat synthesis.
@@ -176,6 +184,11 @@ FLOORPLAN_DEF:
     Use the DEF file to initialize floorplan.
   stages:
     - floorplan
+REMOVE_ABC_BUFFERS:
+  description: >
+    Remove abc buffers from the netlist.
+  stages:
+    - floorplan
 PLACE_SITE:
   description: >
     Placement site for core cells defined in the technology LEF file.
@@ -227,6 +240,12 @@ MAKE_TRACKS:
     Tcl file that defines add routing tracks to a floorplan.
   stages:
     - floorplan
+IO_CONSTRAINTS:
+  description: >
+    File path to the IO constraints .tcl file.
+  stages:
+    - floorplan
+    - place
 IO_PLACER_H:
   description: >
     The metal layer on which to place the I/O pins horizontally (top and bottom of the die).
@@ -239,12 +258,17 @@ IO_PLACER_V:
   stages:
     - floorplan
     - place
-GUI_NO_TIMING:
+GUI_TIMING:
   description: >
-    Skip loading timing for a faster GUI load.
+    Load timing information when opening GUI. For large designs, this can
+    be quite time consuming. Useful to disable when investigating non-timing
+    aspects like floorplan, placement, routing, etc.
+  value: 1
 FILL_CELLS:
   description: >
     Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.
+  stages:
+    - route
 TAP_CELL_NAME:
   description: >
     Name of the cell to use in tap cell insertion.
@@ -261,6 +285,12 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     - place
     - cts
     - grt
+PLACE_PINS_ARGS:
+  description: >
+    Arguments to place_pins
+  stages:
+    - place
+    - floorplan
 PLACE_DENSITY:
   description: >
     The desired placement density of cells. It reflects how spread the cells would be on the core area.
@@ -335,6 +365,7 @@ MIN_ROUTING_LAYER:
     - place
     - grt
     - route
+    - final
 MAX_ROUTING_LAYER:
   description: >
     The highest metal layer name to be used in routing.
@@ -342,6 +373,7 @@ MAX_ROUTING_LAYER:
     - place
     - grt
     - route
+    - final
 DETAILED_ROUTE_ARGS:
   description: >
     Add additional arguments for debugging purposes during detail route.
@@ -389,6 +421,16 @@ SDC_FILE:
   required: true
   description: >
     The path to design constraint (SDC) file.
+  stages:
+    - synth
+SDC_GUT:
+  description: >
+    Load design and remove all internal logic before doing synthesis. This
+    is useful when creating a mock .lef abstract that has a smaller area
+    than the amount of logic would allow. bazel-orfs uses this to mock
+    SRAMs, for instance.
+  stages:
+    - synth
 ADDITIONAL_FILES:
   description: >
     Additional files to be added to `make issue` archive.
@@ -432,9 +474,13 @@ ABC_AREA:
 PWR_NETS_VOLTAGES:
   description: >
     Used for IR Drop calculation.
+  stages:
+    - final
 GND_NETS_VOLTAGES:
   description: >
     Used for IR Drop calculation.
+  stages:
+    - final
 BLOCKS:
   description: >
     Blocks used as hard macros in a hierarchical flow. Do note that you have to
@@ -537,3 +583,8 @@ USE_FILL:
 SEAL_GDS:
   description: >
     Seal macro to place around the design.
+ABSTRACT_SOURCE:
+  description: >
+    Which .odb file to use to create abstract
+  stages:
+    - generate_abstract
