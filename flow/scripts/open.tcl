@@ -47,6 +47,10 @@ proc read_timing {input_file} {
   }
 
   fast_route
+
+  puts "Populating timing paths..."
+  # Warm up OpenSTA, so clicking on timing related buttons reacts faster
+  set _tmp [find_timing_paths]
 }
 
 if {[env_var_equals GUI_TIMING 1]} {
