@@ -651,11 +651,11 @@ $(eval $(call do-step,2_2_floorplan_io,$(RESULTS_DIR)/2_1_floorplan.odb $(IO_CON
 
 # STEP 3: Timing Driven Mixed Sized Placement
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,2_3_floorplan_tdms,$(RESULTS_DIR)/2_2_floorplan_io.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(LIB_FILES),tdms_place))
+$(eval $(call do-step,2_3_floorplan_tdms,$(RESULTS_DIR)/2_2_floorplan_io.odb,tdms_place))
 
 # STEP 4: Macro Placement
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),macro_place))
+$(eval $(call do-step,2_4_floorplan_macro,$(RESULTS_DIR)/2_3_floorplan_tdms.odb $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),macro_place))
 
 # STEP 5: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
@@ -692,13 +692,13 @@ place: $(RESULTS_DIR)/3_place.odb \
 # ==============================================================================
 # STEP 1: Global placement without placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place_skip_io))
+$(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb,global_place_skip_io))
 
 $(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS),io_placement))
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_3_place_gp,$(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place))
+$(eval $(call do-step,3_3_place_gp,$(RESULTS_DIR)/3_2_place_iop.odb,global_place))
 
 # STEP 4: Resizing & Buffering
 #-------------------------------------------------------------------------------
