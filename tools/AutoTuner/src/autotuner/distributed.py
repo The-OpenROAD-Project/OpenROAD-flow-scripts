@@ -372,14 +372,11 @@ def parse_tunable_variables():
 
     # Read from variables.yaml and get variables with tunable = 1
     os.chdir(vars_path)
-    if not os.path.exists("variables.yaml"):
-        print("[ERROR TUN-0018] variables.yaml not found.")
-        sys.exit(1)
     with open("variables.yaml") as file:
         try:
             result = yaml.safe_load(file)
         except yaml.YAMLError as exc:
-            print("[ERROR TUN-0019] Error parsing variables.yaml.")
+            print("[ERROR TUN-0018] Error parsing variables.yaml.")
             sys.exit(1)
     variables = {key: 1 for key, value in result.items() if value.get("tunable") == 1}
 
