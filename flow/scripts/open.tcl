@@ -51,7 +51,9 @@ proc read_timing {input_file} {
 
 if {[env_var_equals GUI_TIMING 1]} {
   puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
-  read_timing $input_file
+  if {[catch {read_timing $input_file} errMsg]} {
+      puts "Error reading timing: $errMsg"
+  }
 }
 
 if {[env_var_equals GUI_SHOW 1]} {
