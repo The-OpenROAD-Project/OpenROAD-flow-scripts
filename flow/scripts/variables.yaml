@@ -259,7 +259,7 @@ GUI_TIMING:
     Load timing information when opening GUI. For large designs, this can
     be quite time consuming. Useful to disable when investigating non-timing
     aspects like floorplan, placement, routing, etc.
-  value: 1
+  default: 1
 FILL_CELLS:
   description: >
     Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.
