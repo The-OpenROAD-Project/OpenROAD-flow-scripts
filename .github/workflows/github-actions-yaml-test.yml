@@ -1,0 +1,67 @@
+name: ORFS variables.yaml tester and linter
+
+on:
+  push:
+
+jobs:
+  docs-test-job:
+    name: 'Tests for variables.yaml'
+    runs-on: ubuntu-latest
+    container:
+      image: openroad/ubuntu-cpp20
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: Run YAML script
+      run: |
+        python3 flow/scripts/generate-variable-docs.py
+    - name: Run YAML Lint
+      run: |
+        pip install yamllint==1.35.1
+        yamllint flow/scripts/variables.yaml
+
+  docs-pr-update:
+    name: 'Create PR to update ORFS FlowVariables.md'
+    needs:
+      - docs-test-job
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Run generate-variable-docs.py
+      run: |
+        python3 flow/scripts/generate-variable-docs.py
+    - name: Create branch if diff exists
+      id: docs-update
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "has_update=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "has_update=false" >> "$GITHUB_OUTPUT"
+        fi
+        git add .
+        git commit --signoff -m "[Docs]: Update ORFS FlowVariables.md"
+    - name: Only push if not master
+      if: "github.event.client_payload.branch != 'master'"
+      id: remote-update-pr
+      run: |
+        git push origin "HEAD:refs/pull/${{ github.event.client_payload.branch }}/head"
+    - name: Create docs update PR
+      if: "steps.remote-update.outputs.has_update == 'true' && github.event.client_payload.branch == 'master'"
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ github.token }}
+        signoff: true
+        delete-branch: true
+        title: "[BOT] Update ORFS variables"
+        reviewers: |
+          vvbandeira
+          maliberty
+        draft: true
+        branch: bot-update-variables
+        commit-message: |
+          [BOT] Update ORFS variables
