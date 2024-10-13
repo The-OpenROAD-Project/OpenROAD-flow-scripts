@@ -579,3 +579,8 @@ USE_FILL:
 SEAL_GDS:
   description: >
     Seal macro to place around the design.
+ABSTRACT_SOURCE:
+  description: >
+    Which .odb file to use to create abstract
+  stages:
+    - generate_abstract
