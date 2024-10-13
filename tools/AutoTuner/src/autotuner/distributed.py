@@ -32,6 +32,7 @@ import sys
 import glob
 import subprocess
 import random
+import yaml
 from datetime import datetime
 from multiprocessing import cpu_count
 from subprocess import run
@@ -366,12 +367,24 @@ def parse_tunable_variables():
     TODO: Tests.
     """
     cur_path = os.path.dirname(os.path.realpath(__file__))
-    makefile_path = os.path.join(cur_path, "../../../../flow/")
+    vars_path = os.path.join(cur_path, "../../../../flow/scripts")
     initial_path = os.path.abspath(os.getcwd())
-    os.chdir(makefile_path)
-    result = subprocess.run(["make", "vars", f"PLATFORM={args.platform}"])
+
+    # Read from variables.yaml and get variables with tunable = 1
+    os.chdir(vars_path)
+    if not os.path.exists("variables.yaml"):
+        print("[ERROR TUN-0018] variables.yaml not found.")
+        sys.exit(1)
+    with open("variables.yaml") as file:
+        try:
+            result = yaml.safe_load(file)
+        except yaml.YAMLError as exc:
+            print("[ERROR TUN-0019] Error parsing variables.yaml.")
+            sys.exit(1)
+    variables = {key: 1 for key, value in result.items() if value.get("tunable") == 1}
+
+    # Return to initial path
     os.chdir(initial_path)
-    variables = [var.strip() for var in result.split("\n")]
     return variables
 
 
@@ -403,7 +416,7 @@ def parse_config(config, path=os.getcwd()):
         else:
             # Default case is VAR=VALUE
             # Sanity check: ignore all flow variables that are not tunable
-            if key not in flow_variables:
+            if flow_variables.get(key, 0) == 1:
                 print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
                 sys.exit(1)
             options += f" {key}={value}"
