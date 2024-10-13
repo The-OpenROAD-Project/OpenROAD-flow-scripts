@@ -52,6 +52,10 @@ RECOVER_POWER:
   default: 0
 SKIP_INCREMENTAL_REPAIR:
   default: 0
+  description: >
+    Skip incremental repair in global route.
+  stages:
+    - grt
 DETAILED_METRICS:
   description: >
     If set, then calls report_metrics prior to repair operations in the CTS
