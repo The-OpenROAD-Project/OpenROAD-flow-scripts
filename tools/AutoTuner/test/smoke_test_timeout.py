@@ -32,7 +32,7 @@ class BaseTimeoutSmokeTest(unittest.TestCase):
             for flag in timeout_flags
         ]
 
-    def test_trial_timeout(self):
+    def test_timeout(self):
         raise NotImplementedError(
             "This method needs to be implemented in the derivative classes."
         )
@@ -42,7 +42,7 @@ class ASAP7TimeoutSmokeTest(BaseTimeoutSmokeTest):
     platform = "asap7"
     design = "gcd"
 
-    def test_trial_timeout(self):
+    def test_timeout(self):
         for command in self.commands:
             out = subprocess.run(command, shell=True, check=True)
             successful = out.returncode == 0
@@ -53,7 +53,7 @@ class SKY130HDTimeoutSmokeTest(BaseTimeoutSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
-    def test_trial_timeout(self):
+    def test_timeout(self):
         for command in self.commands:
             out = subprocess.run(command, shell=True, check=True)
             successful = out.returncode == 0
@@ -64,7 +64,7 @@ class IHPSG13G2TimeoutSmokeTest(BaseTimeoutSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 
-    def test_trial_timeout(self):
+    def test_timeout(self):
         for command in self.commands:
             out = subprocess.run(command, shell=True, check=True)
             successful = out.returncode == 0
