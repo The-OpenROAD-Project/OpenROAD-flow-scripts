@@ -448,8 +448,7 @@ $(WRAPPED_LIBS):
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
 .PHONY: synth
-synth: $(RESULTS_DIR)/1_synth.v \
-       $(RESULTS_DIR)/1_synth.sdc
+synth: $(RESULTS_DIR)/1_synth.v
 
 .PHONY: synth-report
 synth-report: synth
@@ -505,10 +504,6 @@ $(RESULTS_DIR)/1_synth.rtlil: $(YOSYS_DEPENDENCIES)
 
 $(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
 	$(UNSET_AND_MAKE) do-yosys-keep-hierarchy do-yosys
-
-$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
-	mkdir -p $(RESULTS_DIR)
-	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
 
 .PHONY: do-synth
 do-synth:
