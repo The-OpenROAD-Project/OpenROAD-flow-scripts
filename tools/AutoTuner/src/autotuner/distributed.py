@@ -413,7 +413,7 @@ def parse_config(config, path=os.getcwd()):
         else:
             # Default case is VAR=VALUE
             # Sanity check: ignore all flow variables that are not tunable
-            if flow_variables.get(key, 0) == 1:
+            if flow_variables.get(key, 0) == 0:
                 print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
                 sys.exit(1)
             options += f" {key}={value}"
