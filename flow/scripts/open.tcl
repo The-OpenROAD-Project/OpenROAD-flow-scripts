@@ -47,8 +47,19 @@ proc read_timing {input_file} {
   }
 
   fast_route
+
+  puts "Populating timing paths..."
+  # Warm up OpenSTA, so clicking on timing related buttons reacts faster
+  set _tmp [find_timing_paths]
 }
 
-if {![env_var_equals GUI_NO_TIMING 1]} {
+if {[env_var_equals GUI_TIMING 1]} {
+  puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
   read_timing $input_file
+}
+
+if {[env_var_equals GUI_SHOW 1]} {
+  # Show the GUI when it is ready; it is unresponsive(with modal requesters
+  # saying it is unresponsive) until everything is loaded
+  gui::show
 }

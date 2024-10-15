@@ -10,6 +10,6 @@ with open(yaml_path, "r") as file:
     data = yaml.safe_load(file)
 
 for key, value in data.items():
-    if value.get("value", None) is None:
+    if value.get("default", None) is None:
         continue
-    print(f'{key}?={value["value"]}')
+    print(f'{key}?={value["default"]}')

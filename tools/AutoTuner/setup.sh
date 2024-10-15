@@ -14,3 +14,8 @@ fi
 # Source the activation script to activate the virtual environment
 source "$venv_path"
 echo "Virtual environment activated successfully."
+
+# Make autotuner shared folder
+AUTOTUNER_SHARED_DIR=$HOME/.local/shared-data/autotuner
+mkdir -p $AUTOTUNER_SHARED_DIR
+chmod 777 $AUTOTUNER_SHARED_DIR
