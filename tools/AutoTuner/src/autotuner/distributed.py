@@ -440,8 +440,8 @@ def parse_arguments():
         "--cpu_budget",
         type=int,
         metavar="<int>",
-        default=None,
-        help="CPU Hours",
+        default=-1,
+        help="CPU Hours (-1 means no limit.)",
     )
     parser.add_argument(
         "--jobs",
@@ -515,7 +515,7 @@ def parse_arguments():
         args.timeout = round(args.timeout * 3600)
 
     # Calculate timeout based on cpu_budget
-    if args.cpu_budget is not None:
+    if args.cpu_budget != -1:
         args.timeout = round(args.cpu_budget / os.cpu_count() * 3600)
         args.timeout_per_trial = round(
             args.cpu_budget / (args.jobs * args.resources_per_trial) * 3600
