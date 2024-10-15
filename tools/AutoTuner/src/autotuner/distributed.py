@@ -76,14 +76,14 @@ args = None
 
 TEMPLATE = """
 Expected figures for this experiment.
-    Wall time: {runtime:.2f} hours
+    Wall time: {runtime:.5f} hours
     Number of Samples: 
-        Samples per minute: {num_samples_per_minute:.2f}
-        Design runtime of 10 min: {num_samples_10min:.2f}
-        Design runtime of 1h: {num_samples_1h:.2f}
+        Samples per minute: {num_samples_per_minute:.5f}
+        Design runtime of 10 min: {num_samples_10min:.5f}
+        Design runtime of 1h: {num_samples_1h:.5f}
     Number of iterations
-        Design runtime of 10 min: {num_iterations_10min:.2f}
-        Design runtime of 1h: {num_iterations_1h:.2f}
+        Design runtime of 10 min: {num_iterations_10min:.5f}
+        Design runtime of 1h: {num_iterations_1h:.5f}
 """
 
 
@@ -440,7 +440,7 @@ def parse_arguments():
         "--cpu_budget",
         type=int,
         metavar="<int>",
-        default=int(np.floor(cpu_count() / 2)),
+        default=None,
         help="CPU Hours",
     )
     parser.add_argument(
@@ -667,6 +667,8 @@ def sweep():
 def main():
     global args, SDC_ORIGINAL, FR_ORIGINAL, LOCAL_DIR, INSTALL_PATH, ORFS_FLOW_DIR, config_dict, reference, best_params
     args = parse_arguments()
+    print(args)
+    exit()
 
     # Read config and original files before handling where to run in case we
     # need to upload the files.

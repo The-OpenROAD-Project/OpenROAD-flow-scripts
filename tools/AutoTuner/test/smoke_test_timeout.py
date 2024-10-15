@@ -18,14 +18,15 @@ class BaseTimeoutSmokeTest(unittest.TestCase):
         )
         self.experiment = f"smoke-test-timeout-{self.platform}"
 
-        # 0.01 hour translates to 36 seconds, which will definitely cause failure.
-        timeout_flags = ["--timeout 0.05", "--timeout_per_trial 0.05"]
+        # 0.001 hour translates to 3.6 seconds, which will definitely cause failure.
+        timeout_flags = ["--timeout 0.001", "--timeout_per_trial 0.001"]
         self.commands = [
             "python3 distributed.py"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
             f" --config {self.config}"
+            f" --cpu_budget None"
             f" --yes"
             f" {flag}"
             f" tune --samples 1"
