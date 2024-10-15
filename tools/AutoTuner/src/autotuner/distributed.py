@@ -367,21 +367,16 @@ def parse_tunable_variables():
     TODO: Tests.
     """
     cur_path = os.path.dirname(os.path.realpath(__file__))
-    vars_path = os.path.join(cur_path, "../../../../flow/scripts")
-    initial_path = os.path.abspath(os.getcwd())
+    vars_path = os.path.join(cur_path, "../../../../flow/scripts/variables.yaml")
 
     # Read from variables.yaml and get variables with tunable = 1
-    os.chdir(vars_path)
-    with open("variables.yaml") as file:
+    with open(vars_path) as file:
         try:
             result = yaml.safe_load(file)
         except yaml.YAMLError as exc:
             print("[ERROR TUN-0018] Error parsing variables.yaml.")
             sys.exit(1)
     variables = {key: 1 for key, value in result.items() if value.get("tunable") == 1}
-
-    # Return to initial path
-    os.chdir(initial_path)
     return variables
 
 
