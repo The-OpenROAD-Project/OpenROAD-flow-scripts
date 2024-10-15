@@ -75,6 +75,7 @@ CORE_UTILIZATION:
     The core utilization percentage (0-100).
   stages:
     - floorplan
+  tunable: 1
 CORE_AREA:
   description: >
     The core area specified as a list of lower-left and upper-right corners in microns
@@ -515,6 +516,7 @@ CORE_ASPECT_RATIO:
     is undefined.
   stages:
     - floorplan
+  tunable: 1
 CORE_MARGIN:
   description: >
     The margin between the core area and die area, in multiples of SITE heights.
