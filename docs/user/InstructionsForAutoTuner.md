@@ -27,6 +27,10 @@ We have provided two convenience scripts, `./install.sh` and `./setup.sh`
 that works in Python3.8 for installation and configuration of AutoTuner,
 as shown below:
 
+```{note}
+Make sure you run the following commands in `./tools/AutoTuner/src/autotuner`.
+```
+
 ```shell
 # Install prerequisites
 ./tools/AutoTuner/install.sh
@@ -127,8 +131,8 @@ Example:
 
 ```shell
 python3 distributed.py --design gcd --platform sky130hd \
-                       --config ../designs/sky130hd/gcd/autotuner.json \
-                       tune
+                       --config ../../../../flow/designs/sky130hd/gcd/autotuner.json \
+                       tune --samples 5
 ```
 #### Sweep only 
 
@@ -204,6 +208,7 @@ Assuming the virtual environment is setup at `./tools/AutoTuner/autotuner_env`:
 ./tools/AutoTuner/setup.sh
 python3 ./tools/AutoTuner/test/smoke_test_sweep.py
 python3 ./tools/AutoTuner/test/smoke_test_tune.py
+python3 ./tools/AutoTuner/test/smoke_test_sample_iteration.py
 ```
 
 ## Citation

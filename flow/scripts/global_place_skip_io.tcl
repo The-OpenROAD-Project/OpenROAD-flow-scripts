@@ -1,8 +1,9 @@
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables place
 load_design 2_floorplan.odb 2_floorplan.sdc
 
 
-if { [info exists ::env(FLOORPLAN_DEF)] } {
+if { [env_var_exists_and_non_empty FLOORPLAN_DEF] } {
   puts "FLOORPLAN_DEF is set. Skipping global placement without IOs"
 } else {
   source $::env(SCRIPTS_DIR)/set_place_density.tcl

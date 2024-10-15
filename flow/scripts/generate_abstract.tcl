@@ -1,6 +1,7 @@
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables generate_abstract
 
-set stem [expr {[info exists ::env(ABSTRACT_SOURCE)] ? $::env(ABSTRACT_SOURCE) : "6_final"}]
+set stem [expr {[env_var_exists_and_non_empty ABSTRACT_SOURCE] ? $::env(ABSTRACT_SOURCE) : "6_final"}]
 
 set result [find_sdc_file $stem.odb]
 set design_stage [lindex $result 0]
@@ -24,7 +25,7 @@ puts "Generating abstract views"
 write_timing_model $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lib
 write_abstract_lef -bloat_occupied_layers $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lef
 
-if {[info exist ::env(CDL_FILES)]} {
+if {[env_var_exists_and_non_empty CDL_FILES]} {
   cdl read_masters $::env(CDL_FILES)
   cdl out $::env(RESULTS_DIR)/$stem.cdl
 }

@@ -3,7 +3,6 @@ export PLATFORM    = gf12
 #
 export MAX_UNGROUP_SIZE ?= 10000
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = 1
 
 # RTL_MP Settings
 export RTLMP_MAX_INST = 25000
@@ -38,7 +37,7 @@ export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 export MACRO_PLACE_HALO = 7 7
 export MACRO_PLACE_CHANNEL = 14 14
 
-ifneq ($(USE_FILL),)
+ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL
 else
 export DESIGN_TYPE = CELL_NODEN

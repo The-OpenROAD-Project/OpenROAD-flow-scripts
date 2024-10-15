@@ -4,7 +4,6 @@ export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 10000
-export RTLMP_FLOW = 1
 #
 # RTL_MP Settings
 
@@ -27,7 +26,7 @@ export MACRO_PLACE_CHANNEL = 14 14
 
 export PLACE_DENSITY_LB_ADDON = 0.05
 
-ifneq ($(USE_FILL),)
+ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL
 else
 export DESIGN_TYPE = CELL_NODEN

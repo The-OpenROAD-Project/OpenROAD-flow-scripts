@@ -69,7 +69,7 @@ OpenROAD-flow-scripts installation is complete.
 Launch the docker with OpenROAD-flow-scripts container as follows:
 
 ```shell
-docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22-builder
+docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22.04-builder
 ```
 
 :::{seealso}
