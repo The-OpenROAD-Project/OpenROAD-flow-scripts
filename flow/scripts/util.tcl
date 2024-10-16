@@ -115,3 +115,4 @@ proc erase_non_stage_variables {stage_name} {
   }
 }
 
+set global_route_congestion_report $::env(REPORTS_DIR)/congestion.rpt
