@@ -806,7 +806,11 @@ def parse_arguments():
         help="Perturbation interval for PopulationBasedTraining.",
     )
     tune_parser.add_argument(
-        "--seed", type=int, metavar="<int>", default=42, help="Random seed. (0 means no seed.)"
+        "--seed",
+        type=int,
+        metavar="<int>",
+        default=42,
+        help="Random seed. (0 means no seed.)",
     )
 
     # Workload
@@ -873,10 +877,16 @@ def set_algorithm(experiment_name, config):
     """
     # Pre-set seed if user sets seed to 0
     if args.seed == 0:
-        print("Warning: you have chosen not to set a seed. Do you wish to continue? (y/n)")
+        print(
+            "Warning: you have chosen not to set a seed. Do you wish to continue? (y/n)"
+        )
         if input().lower() != "y":
             sys.exit(0)
         args.seed = None
+    else:
+        torch.manual_seed(args.seed)
+        np.random.seed(args.seed)
+        random.seed(args.seed)
 
     if args.algorithm == "hyperopt":
         algorithm = HyperOptSearch(
@@ -896,10 +906,7 @@ def set_algorithm(experiment_name, config):
         )
         algorithm = AxSearch(ax_client=ax_client, points_to_evaluate=best_params)
     elif args.algorithm == "optuna":
-        algorithm = OptunaSearch(
-            points_to_evaluate=best_params,
-            seed=args.seed
-        )
+        algorithm = OptunaSearch(points_to_evaluate=best_params, seed=args.seed)
     elif args.algorithm == "pbt":
         print("Warning: PBT does not support seed values. args.seed will be ignored.")
         algorithm = PopulationBasedTraining(
@@ -911,17 +918,12 @@ def set_algorithm(experiment_name, config):
     elif args.algorithm == "random":
         algorithm = BasicVariantGenerator(
             max_concurrent=args.jobs,
-            random_state=args.seed,)
+            random_state=args.seed,
+        )
 
     # A wrapper algorithm for limiting the number of concurrent trials.
     if args.algorithm not in ["random", "pbt"]:
         algorithm = ConcurrencyLimiter(algorithm, max_concurrent=args.jobs)
-
-    # Self seed
-    if args.seed is not None:
-        torch.manual_seed(args.seed)
-        np.random.seed(args.seed)
-        random.seed(args.seed)
 
     return algorithm
 
