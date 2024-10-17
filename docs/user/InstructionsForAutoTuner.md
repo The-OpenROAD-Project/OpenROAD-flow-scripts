@@ -5,25 +5,34 @@ AutoTuner provides a generic interface where users can define parameter configur
 This enables AutoTuner to easily support various tools and flows. AutoTuner also utilizes [METRICS2.1](https://github.com/ieee-ceda-datc/datc-rdf-Metrics4ML) to capture PPA
 of individual search trials. With the abundant features of METRICS2.1, users can explore various reward functions that steer the flow autotuning to different PPA goals.
 
-AutoTuner provides two main functionalities as follows.
-* Automatic hyperparameter tuning framework for OpenROAD-flow-script (ORFS)
-* Parametric sweeping experiments for ORFS
+AutoTuner provides three main functionalities as follows.
+* [Ray] Automatic hyperparameter tuning framework for OpenROAD-flow-script (ORFS)
+* [Ray] Parametric sweeping experiments for ORFS
+* [Vizier] Multi-objective optimization of ORFS parameters
 
 
 AutoTuner contains top-level Python script for ORFS, each of which implements a different search algorithm. Current supported search algorithms are as follows.
-* Random/Grid Search
-* Population Based Training ([PBT](https://www.deepmind.com/blog/population-based-training-of-neural-networks))
-* Tree Parzen Estimator ([HyperOpt](https://hyperopt.github.io/hyperopt))
-* Bayesian + Multi-Armed Bandit ([AxSearch](https://ax.dev/))
-* Tree Parzen Estimator + Covariance Matrix Adaptation Evolution Strategy ([Optuna](https://optuna.org/))
-* Evolutionary Algorithm ([Nevergrad](https://github.com/facebookresearch/nevergrad))
+* Ray (Single-objective optimization)
+  * Random/Grid Search
+  * Population Based Training ([PBT](https://www.deepmind.com/blog/population-based-training-of-neural-networks))
+  * Tree Parzen Estimator ([HyperOpt](https://hyperopt.github.io/hyperopt))
+  * Bayesian + Multi-Armed Bandit ([AxSearch](https://ax.dev/docs/bayesopt.html))
+  * Tree Parzen Estimator + Covariance Matrix Adaptation Evolution Strategy ([Optuna](https://optuna.readthedocs.io/en/stable/reference/samplers/generated/optuna.samplers.TPESampler.html))
+  * Evolutionary Algorithm ([Nevergrad](https://github.com/facebookresearch/nevergrad))
+* Vizier (Multi-objective optimization)
+  * Random/Grid/Shuffled Search
+  * Quasi Random Search ([quasi-random](https://developers.google.com/machine-learning/guides/deep-learning-tuning-playbook/quasi-random-search))
+  * Gaussian Process Bandit ([GP-Bandit](https://acsweb.ucsd.edu/~shshekha/GPBandits.html))
+  * Non-dominated Sorting Genetic Algorithm II ([NSGA-II](https://ieeexplore.ieee.org/document/996017))
 
-User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) of three objectives to set the direction of tuning are written in the script. Each coefficient is expressed as a global variable at the `get_ppa` function in `PPAImprov` class in the script (`coeff_perform`, `coeff_power`, `coeff_area`). Efforts to optimize each of the objectives are proportional to the specified coefficients.
+For Ray algorithms, optimized function can be adjusted with user-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) for three objectives to set the direction of tuning. They are defined in the [distributed.py sricpt](../../tools/AutoTuner/src/autotuner/distributed.py) in `get_ppa` method of `PPAImprov` class. Efforts to optimize each of the objectives are proportional to the specified coefficients.
+
+Using Vizier algorithms, used can choose which metrics should be optimized with `--use-metrics` argument.
 
 
 ## Setting up AutoTuner
 
-We have provided two convenience scripts, `./install.sh` and `./setup.sh`
+We have provided two convenience scripts, `./installer.sh` and `./setup.sh`
 that works in Python3.8 for installation and configuration of AutoTuner,
 as shown below:
 
@@ -32,8 +41,10 @@ Make sure you run the following commands in `./tools/AutoTuner/src/autotuner`.
 ```
 
 ```shell
-# Install prerequisites
-./tools/AutoTuner/install.sh
+# Install prerequisites for both Ray Tune and Vizier
+./tools/AutoTuner/installer.sh
+# Or install prerequisites for `ray` or `vizier`
+./tools/AutoTuner/installer.sh vizier
 
 # Start virtual environment
 ./tools/AutoTuner/setup.sh
@@ -54,7 +65,8 @@ Alternatively, here is a minimal example to get started:
             1.0,
             3.7439
         ],
-        "step": 0
+        "step": 0,
+        "scale": "log"
     },
     "CORE_MARGIN": {
         "type": "int",
@@ -71,6 +83,7 @@ Alternatively, here is a minimal example to get started:
 * `"type"`: Parameter type ("float" or "int") for sweeping/tuning
 * `"minmax"`: Min-to-max range for sweeping/tuning. The unit follows the default value of each technology std cell library.
 * `"step"`: Parameter step within the minmax range. Step 0 for type "float" means continuous step for sweeping/tuning. Step 0 for type "int" means the constant parameter.
+* `"scale"`: Vizier-specific parameter setting [scaling type](https://oss-vizier.readthedocs.io/en/latest/guides/user/search_spaces.html#scaling), allowed values: `linear`, `log` and `rlog`.
 
 ## Tunable / sweepable parameters
 
@@ -104,7 +117,7 @@ For Global Routing parameters that are set on `fastroute.tcl` you can use:
 
 ### General Information
 
-The `distributed.py` script uses Ray's job scheduling and management to
+The `autotuner.distributed` module uses Ray's job scheduling and management to
 fully utilize available hardware resources from a single server 
 configuration, on-premies or over the cloud with multiple CPUs. 
 The two modes of operation: `sweep`, where every possible parameter
@@ -114,51 +127,76 @@ hyperparameters using one of the algorithms listed above. The `sweep`
 mode is useful when we want to isolate or test a single or very few
 parameters. On the other hand, `tune` is more suitable for finding
 the best combination of a complex and large number of flow 
-parameters. Both modes rely on user-specified search space that is 
-defined by a `.json` file, they use the same syntax and format, 
-though some features may not be available for sweeping.
+parameters.
 
 ```{note}
 The order of the parameters matter. Arguments `--design`, `--platform` and
 `--config` are always required and should precede <mode>.
 ```
 
+The `autotuner.vizier` module integrates OpenROAD flow into the Vizier optimizer.
+It is used for multi-objective optimization with an additional features improving chance of finding valid parameters.
+Moreover, various algorithms are available for tuning parameters.
+
+Each mode relies on user-specified search space that is 
+defined by a `.json` file, they use the same syntax and format, 
+though some features may not be available for sweeping.
+
 #### Tune only 
 
-* AutoTuner: `python3 distributed.py tune -h`
+* Ray-based AutoTuner: `python3 -m autotuner.distributed tune -h`
 
 Example:
 
 ```shell
-python3 distributed.py --design gcd --platform sky130hd \
+python3 -m autotuner.distributed --design gcd --platform sky130hd \
                        --config ../../../../flow/designs/sky130hd/gcd/autotuner.json \
                        tune --samples 5
 ```
 #### Sweep only 
 
-* Parameter sweeping: `python3 distributed.py sweep -h`
+* Parameter sweeping: `python3 -m autotuner.distributed sweep -h`
 
 Example:
 
 ```shell
-python3 distributed.py --design gcd --platform sky130hd \
+python3 -m autotuner.distributed --design gcd --platform sky130hd \
                        --config distributed-sweep-example.json \
                        sweep
 ```
 
+#### Multi-object optimization
+
+* Vizier-based AutoTuner: `python3 -m autotuner.vizier -h`
+
+Example:
+
+```shell
+python3 -m autotuner.vizier --design gcd --platform sky130hd \
+                       --config ../../flow/designs/sky130hd/gcd/autotuner.json
+```
 
 ### Google Cloud Platform (GCP) distribution with Ray
 
 GCP Setup Tutorial coming soon.
 
 
-### List of input arguments
+### List of common input arguments
 | Argument                      | Description                                                                                           |
 |-------------------------------|-------------------------------------------------------------------------------------------------------|
 | `--design`                    | Name of the design for Autotuning.                                                                    |
 | `--platform`                  | Name of the platform for Autotuning.                                                                  |
 | `--config`                    | Configuration file that sets which knobs to use for Autotuning.                                       |
 | `--experiment`                | Experiment name. This parameter is used to prefix the FLOW_VARIANT and to set the Ray log destination.|
+| `--algorithm`                 | Search algorithm to use for Autotuning.                                                               |
+| `--openroad_threads`          | Max number of threads usable.                                                                         |
+| `--to-stage`                  | The last stage to be built during optimization.                                                       | 
+| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: print stdout on top of what is in level 0 and 1. ]                  |
+|                               |                                                                                                       |
+### List of Ray-specific input arguments
+| Argument                      | Description                                                                                           |
+|-------------------------------|-------------------------------------------------------------------------------------------------------|
+| `--eval`                      | Evalaute function to use with search algorithm.  \                                                    |
 | `--resume`                    | Resume previous run.                                                                                  |
 | `--git_clean`                 | Clean binaries and build files. **WARNING**: may lose previous data.                                  |
 | `--git_clone`                 | Force new git clone. **WARNING**: may lose previous data.                                             |
@@ -168,8 +206,6 @@ GCP Setup Tutorial coming soon.
 | `--git_orfs_branch`           | OpenROAD-flow-scripts branch to use.                                                                  |
 | `--git_url`                   | OpenROAD-flow-scripts repo URL to use.                                                                |
 | `--build_args`                | Additional arguments given to ./build_openroad.sh                                                     |
-| `--algorithm`                 | Search algorithm to use for Autotuning.                                                               |
-| `--eval`                      | Evalaute function to use with search algorithm.  \                                                    |
 | `--samples`                   | Number of samples for tuning.                                                                         |
 | `--iterations`                | Number of iterations for tuning.                                                                      |
 | `--resources_per_trial`       | Number of CPUs to request for each tuning job.                                                        |
@@ -177,12 +213,22 @@ GCP Setup Tutorial coming soon.
 | `--perturbation`              | Perturbation interval for PopulationBasedTraining                                                     |
 | `--seed`                      | Random seed.                                                                                          |
 | `--jobs`                      | Max number of concurrent jobs.                                                                        |
-| `--openroad_threads`          | Max number of threads usable.                                                                         |
 | `--server`                    | The address of Ray server to connect.                                                                 |
 | `--port`                      | The port of Ray server to connect.                                                                    |
-| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: print stdout on top of what is in level 0 and 1. ]                  |
-|                               |                                                                                                       |
-### GUI
+
+### List of Vizier-specific input arguments
+| Argument                      | Description                                                                                                                                                     |
+|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `--orfs`                      | Path to the OpenROAD-flow-scripts repository                                                                                                                    |
+| `--results`                   | Path where JSON file with results will be saved                                                                                                                 |
+| `-a` or `--algorithm`         | Algorithm for the optimization engine, one of GAUSSIAN_PROCESS_BANDIT, RANDOM_SEARCH, QUASI_RANDOM_SEARCH, GRID_SEARCH, SHUFFLED_GRID_SEARCH, NSGA2             |
+| `-m` or `--use-metrics`       | Metrics to optimize, list of worst_slack, clk_period-worst_slack, total_power, core_util, final_util, design_area, core_area, die_area, last_successful_stage   |
+| `-i` or `--iterations`        | Max iteration count for the optimization engine                                                                                                                 |
+| `-s` or `--suggestions`       | Suggestion count per iteration of the optimization engine                                                                                                       |
+| `-w` or `--workers`           | Number of parallel workers                                                                                                                                      |
+| `--use-existing-server`       | Address of the running Vizier server                                                                                                                            |
+
+### GUI for optimizations with Ray Tune
 
 Basically, progress is displayed at the terminal where you run, and when all runs are finished, the results are displayed.
 You could find the "Best config found" on the screen.

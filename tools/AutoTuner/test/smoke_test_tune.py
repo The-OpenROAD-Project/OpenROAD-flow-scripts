@@ -3,8 +3,6 @@ import subprocess
 import os
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(cur_dir, "../src/autotuner")
-os.chdir(src_dir)
 
 
 class BaseTuneSmokeTest(unittest.TestCase):
@@ -18,7 +16,7 @@ class BaseTuneSmokeTest(unittest.TestCase):
         )
         self.experiment = f"smoke-test-tune-{self.platform}"
         self.command = (
-            "python3 distributed.py"
+            "python3 -m autotuner.distributed"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
@@ -26,6 +24,7 @@ class BaseTuneSmokeTest(unittest.TestCase):
             f" tune --samples 5"
         )
 
+    @unittest.skip("abstract_method")
     def test_tune(self):
         raise NotImplementedError(
             "This method needs to be implemented in the derivative classes."
