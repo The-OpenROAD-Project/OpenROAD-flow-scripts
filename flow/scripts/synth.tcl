@@ -40,6 +40,8 @@ foreach cell $::env(DONT_USE_CELLS) {
   lappend dfflibmap_args -dont_use $cell
 }
 
+yosys $::env(CLOCKGATE_CMD)
+
 # Technology mapping of flip-flops
 # dfflibmap only supports one liberty file
 if {[env_var_exists_and_non_empty DFF_LIB_FILE]} {
