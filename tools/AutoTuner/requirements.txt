@@ -9,3 +9,4 @@ tensorboard>=2.14.0,<=2.16.2
 protobuf==3.20.3
 SQLAlchemy==1.4.17
 urllib3<=1.26.15
+pyyaml==6.0.1
