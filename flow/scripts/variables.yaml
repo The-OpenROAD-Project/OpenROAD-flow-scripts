@@ -164,6 +164,7 @@ ABC_CLOCK_PERIOD_IN_PS:
     Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`.
   stages:
     - synth
+    - floorplan
 ABC_DRIVER_CELL:
   description: >
     Default driver cell used during ABC synthesis.
