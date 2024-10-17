@@ -448,8 +448,7 @@ $(WRAPPED_LIBS):
 # |____/ |_| |_| \_| |_| |_| |_|_____|____/___|____/
 #
 .PHONY: synth
-synth: $(RESULTS_DIR)/1_synth.v \
-       $(RESULTS_DIR)/1_synth.sdc
+synth: $(RESULTS_DIR)/1_synth.v
 
 .PHONY: synth-report
 synth-report: synth
@@ -505,10 +504,6 @@ $(RESULTS_DIR)/1_synth.rtlil: $(YOSYS_DEPENDENCIES)
 
 $(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
 	$(UNSET_AND_MAKE) do-yosys-keep-hierarchy do-yosys
-
-$(RESULTS_DIR)/1_synth.sdc: $(SDC_FILE)
-	mkdir -p $(RESULTS_DIR)
-	cp $(SDC_FILE) $(RESULTS_DIR)/1_synth.sdc
 
 .PHONY: do-synth
 do-synth:
@@ -570,9 +565,11 @@ open_$(1): open_$(2)
 endef
 
 define OPEN_GUI
-.PHONY: $(1)_$(2)
-$(1)_$(2):
-	$(3)=$(RESULTS_DIR)/$(2) $(4) $(SCRIPTS_DIR)/gui.tcl
+.PHONY: open_$(1) gui_$(1)
+open_$(1):
+	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/open.tcl
+gui_$(1):
+	$$(UNSET_AND_MAKE) GUI_SHOW=1 open_$(1)
 endef
 
 # Separate dependency checking and doing a step. This can
@@ -794,6 +791,10 @@ $(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
 .PHONY: do-route
 do-route:
 	$(UNSET_AND_MAKE) do-5_1_grt do-5_2_route do-5_3_fillcell do-5_route do-5_route.sdc
+
+.PHONY: do-grt
+do-grt:
+	$(UNSET_AND_MAKE) do-5_1_grt
 
 .PHONY: clean_route
 clean_route:
@@ -1024,10 +1025,8 @@ $(eval $(call OPEN_GUI_SHORTCUT,route,5_route.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,grt,5_1_grt.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,final,6_final.odb))
 
-$(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,gui,$(file),DEF_FILE,$(OPENROAD_GUI_CMD))))
-$(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,gui,$(file),ODB_FILE,$(OPENROAD_GUI_CMD))))
-$(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,open,$(file),DEF_FILE,$(OPENROAD_NO_EXIT_CMD))))
-$(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,open,$(file),ODB_FILE,$(OPENROAD_NO_EXIT_CMD))))
+$(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,$(file),DEF_FILE)))
+$(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,$(file),ODB_FILE)))
 
 # Write a def for the corresponding odb
 $(foreach file,$(RESULTS_ODB),$(file).def): %.def:
@@ -1070,7 +1069,7 @@ klayout:
 
 .phony: run
 run:
-	$(OPENROAD_CMD) -no_splash $(RUN_SCRIPT)
+	$(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT)
 
 # Utilities
 #-------------------------------------------------------------------------------

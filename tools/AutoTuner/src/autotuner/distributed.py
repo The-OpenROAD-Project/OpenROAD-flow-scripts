@@ -40,6 +40,7 @@ from collections import namedtuple
 from uuid import uuid4 as uuid
 
 import numpy as np
+import torch
 
 import ray
 from ray import tune
@@ -805,7 +806,11 @@ def parse_arguments():
         help="Perturbation interval for PopulationBasedTraining.",
     )
     tune_parser.add_argument(
-        "--seed", type=int, metavar="<int>", default=42, help="Random seed."
+        "--seed",
+        type=int,
+        metavar="<int>",
+        default=42,
+        help="Random seed. (0 means no seed.)",
     )
 
     # Workload
@@ -870,10 +875,29 @@ def set_algorithm(experiment_name, config):
     """
     Configure search algorithm.
     """
+    # Pre-set seed if user sets seed to 0
+    if args.seed == 0:
+        print(
+            "Warning: you have chosen not to set a seed. Do you wish to continue? (y/n)"
+        )
+        if input().lower() != "y":
+            sys.exit(0)
+        args.seed = None
+    else:
+        torch.manual_seed(args.seed)
+        np.random.seed(args.seed)
+        random.seed(args.seed)
+
     if args.algorithm == "hyperopt":
-        algorithm = HyperOptSearch(points_to_evaluate=best_params)
+        algorithm = HyperOptSearch(
+            points_to_evaluate=best_params,
+            random_state_seed=args.seed,
+        )
     elif args.algorithm == "ax":
-        ax_client = AxClient(enforce_sequential_optimization=False)
+        ax_client = AxClient(
+            enforce_sequential_optimization=False,
+            random_seed=args.seed,
+        )
         AxClientMetric = namedtuple("AxClientMetric", "minimize")
         ax_client.create_experiment(
             name=experiment_name,
@@ -884,6 +908,7 @@ def set_algorithm(experiment_name, config):
     elif args.algorithm == "optuna":
         algorithm = OptunaSearch(points_to_evaluate=best_params, seed=args.seed)
     elif args.algorithm == "pbt":
+        print("Warning: PBT does not support seed values. args.seed will be ignored.")
         algorithm = PopulationBasedTraining(
             time_attr="training_iteration",
             perturbation_interval=args.perturbation,
@@ -891,9 +916,15 @@ def set_algorithm(experiment_name, config):
             synch=True,
         )
     elif args.algorithm == "random":
-        algorithm = BasicVariantGenerator(max_concurrent=args.jobs)
+        algorithm = BasicVariantGenerator(
+            max_concurrent=args.jobs,
+            random_state=args.seed,
+        )
+
+    # A wrapper algorithm for limiting the number of concurrent trials.
     if args.algorithm not in ["random", "pbt"]:
         algorithm = ConcurrencyLimiter(algorithm, max_concurrent=args.jobs)
+
     return algorithm
 
 
