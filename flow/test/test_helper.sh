@@ -117,6 +117,10 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
   if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN" == "gcd" ]; then
     echo "Running Autotuner ref file test (only once)"
     python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck.test_files
+
+    echo "Running Autotuner plotting utility test"
+    folder_name=$(ls -dt ./flow/logs/asap7/gcd/test-tune* | head -n 1)
+    python3 tools/AutoTuner/src/autotuner/utils/plot.py --results_dir=$folder_name
   fi
 
   echo "Running Autotuner smoke algorithm & evaluation test"
