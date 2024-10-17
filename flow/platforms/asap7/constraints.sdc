@@ -67,6 +67,9 @@ set sdc_version 2.0
 # that includes this generic part.
 
 set clk_port [get_ports $clk_port_name]
+if {[info exists ::env(ABC_CLOCK_PERIOD_IN_PS)] && [string length $::env(ABC_CLOCK_PERIOD_IN_PS)] > 0} {
+  set clk_period $::env(ABC_CLOCK_PERIOD_IN_PS)
+}
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name $clk_name $clk_port
 
 set non_clk_inputs  [lsearch -inline -all -not -exact [all_inputs] $clk_port]
