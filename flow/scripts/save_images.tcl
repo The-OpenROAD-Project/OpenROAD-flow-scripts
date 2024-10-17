@@ -6,11 +6,11 @@ set height [[[ord::get_db_block] getBBox] getDY]
 set height [ord::dbu_to_microns $height]
 set resolution [expr $height / 1000]
 
-# Show the drc markers (if any)
-if {[file exists $::env(REPORTS_DIR)/5_route_drc.rpt] == 1} {
-    gui::load_drc $::env(REPORTS_DIR)/5_route_drc.rpt
+set markerdb [[ord::get_db_block] findMarkerCategory DRC]
+if {$markerdb != "NULL" && [$markerdb getMarkerCount] > 0} {
+  gui::select_marker_category $markerdb
 }
-
+              
 gui::clear_selections
 
 # Setup initial visibility to avoid any previous settings
