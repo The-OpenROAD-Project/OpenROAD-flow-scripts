@@ -1,7 +1,7 @@
 utl::set_metrics_stage "detailedroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 if {[file exists $::global_route_congestion_report]} {
-  if {[file size $::global_route_congestion_report] != 0]} {
+  if {[file size $::global_route_congestion_report] != 0} {
     error "Global routing failed, run `make gui_grt` and load $::global_route_congestion_report \
           in DRC viewer to view congestion"
   }
