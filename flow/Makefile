@@ -1069,7 +1069,7 @@ klayout:
 
 .phony: run
 run:
-	$(OPENROAD_CMD) -no_splash $(RUN_SCRIPT)
+	$(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT)
 
 # Utilities
 #-------------------------------------------------------------------------------
