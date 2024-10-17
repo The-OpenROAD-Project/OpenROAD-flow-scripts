@@ -132,6 +132,7 @@ Example:
 ```shell
 python3 distributed.py --design gcd --platform sky130hd \
                        --config ../../../../flow/designs/sky130hd/gcd/autotuner.json \
+                       --yes \
                        tune --samples 5
 ```
 #### Sweep only 
@@ -143,6 +144,7 @@ Example:
 ```shell
 python3 distributed.py --design gcd --platform sky130hd \
                        --config distributed-sweep-example.json \
+                       --yes \
                        sweep
 ```
 
