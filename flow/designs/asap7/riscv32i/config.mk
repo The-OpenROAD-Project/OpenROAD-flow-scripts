@@ -9,7 +9,7 @@ export RTLMP_MAX_INST = 3500
 export RTLMP_MIN_MACRO = 1
 export RTLMP_MAX_MACRO = 5
 
-export MAX_UNGROUP_SIZE ?= 1000
+export MAX_UNGROUP_SIZE ?= 10000
 
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/riscv32i/*.v))
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/riscv32i/constraint.sdc
