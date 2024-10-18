@@ -80,6 +80,7 @@ export DONT_USE_CELLS          += SDF* ICG*
 # Yosys mapping files
 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_R.v
 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_R.v
+export CLOCKGATE_CMD = clockgate -pos ICGx1_ASAP7_75t_R ENA:CLK:GCLK -min_net_size 8 -tie_lo SE
 export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_R.v
 export MAX_UNGROUP_SIZE       ?= 100
 
@@ -176,6 +177,7 @@ ifeq ($(ASAP7_USELVT), 1)
 
    export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_L.v
    export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_L.v
+   export CLOCKGATE_CMD = clockgate -pos ICGx1_ASAP7_75t_L ENA:CLK:GCLK -min_net_size 8 -tie_lo SE
    export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_L.v
 
    export BC_NLDM_DFF_LIB_FILE         = $(LIB_DIR)/asap7sc7p5t_SEQ_LVT_FF_nldm_220123.lib
@@ -225,6 +227,7 @@ ifeq ($(ASAP7_USESLVT), 1)
 
    export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_SL.v
    export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_SL.v
+   export CLOCKGATE_CMD = clockgate -pos ICGx1_ASAP7_75t_SL ENA:CLK:GCLK -min_net_size 8 -tie_lo SE
    export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_SL.v
 
    export BC_NLDM_DFF_LIB_FILE        = $(LIB_DIR)/asap7sc7p5t_SEQ_SLVT_FF_nldm_220123.lib
