@@ -376,7 +376,7 @@ def parse_tunable_variables():
         except yaml.YAMLError as exc:
             print("[ERROR TUN-0018] Error parsing variables.yaml.")
             sys.exit(1)
-    variables = {key: 1 for key, value in result.items() if value.get("tunable") == 1}
+    variables = {key for key, value in result.items() if value.get("tunable", 0) == 1}
     return variables
 
 
@@ -408,7 +408,7 @@ def parse_config(config, path=os.getcwd()):
         else:
             # Default case is VAR=VALUE
             # Sanity check: ignore all flow variables that are not tunable
-            if flow_variables.get(key, 0) == 0:
+            if key in flow_variables:
                 print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
                 sys.exit(1)
             options += f" {key}={value}"
