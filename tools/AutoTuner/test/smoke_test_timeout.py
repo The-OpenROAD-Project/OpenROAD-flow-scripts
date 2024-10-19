@@ -26,7 +26,7 @@ class BaseTimeoutSmokeTest(unittest.TestCase):
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
             f" --config {self.config}"
-            f" --cpu_budget None"
+            f" --cpu_budget 1"
             f" --yes"
             f" {flag}"
             f" tune --samples 1"
