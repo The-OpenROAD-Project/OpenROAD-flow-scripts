@@ -67,7 +67,7 @@ ORFS_FLOW_DIR = os.path.abspath(
 
 TEMPLATE = """
 Expected figures for this experiment.
-    Wall time: {runtime:.5f} hours
+    Wall time: {runtime:.5f} seconds
     Number of Samples: 
         Samples per minute: {num_samples_per_minute:.5f}
         Design runtime of 10 min: {num_samples_10min:.5f}
@@ -79,7 +79,7 @@ Expected figures for this experiment.
 
 
 def calculate_expected_numbers(runtime, num_samples):
-    # Runtime - hours
+    # Runtime - seconds
     return TEMPLATE.format(
         runtime=runtime,
         num_samples_per_minute=num_samples / (runtime * 60),

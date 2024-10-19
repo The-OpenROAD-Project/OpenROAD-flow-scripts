@@ -20,6 +20,7 @@ class BaseTimeoutSmokeTest(unittest.TestCase):
 
         # 0.001 hour translates to 3.6 seconds, which will definitely cause failure.
         timeout_flags = ["--timeout 0.001", "--timeout_per_trial 0.001"]
+        self.timeout_limit = 15  # 15 second upper limit
         self.commands = [
             "python3 distributed.py"
             f" --design {self.design}"
@@ -45,9 +46,11 @@ class ASAP7TimeoutSmokeTest(BaseTimeoutSmokeTest):
 
     def test_timeout(self):
         for command in self.commands:
-            out = subprocess.run(command, shell=True, check=True)
+            out = subprocess.run(
+                command, shell=True, check=True, timeout=self.timeout_limit
+            )
             successful = out.returncode == 0
-            self.assertFalse(successful)
+            self.assertTrue(successful)
 
 
 class SKY130HDTimeoutSmokeTest(BaseTimeoutSmokeTest):
@@ -56,9 +59,11 @@ class SKY130HDTimeoutSmokeTest(BaseTimeoutSmokeTest):
 
     def test_timeout(self):
         for command in self.commands:
-            out = subprocess.run(command, shell=True, check=True)
+            out = subprocess.run(
+                command, shell=True, check=True, timeout=self.timeout_limit
+            )
             successful = out.returncode == 0
-            self.assertFalse(successful)
+            self.assertTrue(successful)
 
 
 class IHPSG13G2TimeoutSmokeTest(BaseTimeoutSmokeTest):
@@ -67,9 +72,11 @@ class IHPSG13G2TimeoutSmokeTest(BaseTimeoutSmokeTest):
 
     def test_timeout(self):
         for command in self.commands:
-            out = subprocess.run(command, shell=True, check=True)
+            out = subprocess.run(
+                command, shell=True, check=True, timeout=self.timeout_limit
+            )
             successful = out.returncode == 0
-            self.assertFalse(successful)
+            self.assertTrue(successful)
 
 
 if __name__ == "__main__":
