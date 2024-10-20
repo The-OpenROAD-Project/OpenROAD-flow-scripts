@@ -1,6 +1,6 @@
 utl::set_metrics_stage "detailedroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 5_1_grt.odb 4_cts.sdc
+load_design 5_1_grt.odb 5_1_grt.sdc
 if {![grt::have_routes]} {
   error "Global routing failed, run `make gui_grt` and load $::global_route_congestion_report \
         in DRC viewer to view congestion"
