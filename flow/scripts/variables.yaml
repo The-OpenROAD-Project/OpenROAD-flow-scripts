@@ -347,6 +347,10 @@ SKIP_GATE_CLONING:
 SKIP_LAST_GASP:
   description: >
     Do not use last gasp optimization to fix timing violations (default: use gate last gasp).
+  stages:
+    - cts
+    - floorplan
+    - grt
 SKIP_PIN_SWAP:
   description: >
     Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).
