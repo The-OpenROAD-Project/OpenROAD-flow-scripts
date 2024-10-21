@@ -31,7 +31,6 @@ import sys
 import random
 from itertools import product
 from collections import namedtuple
-from multiprocessing import cpu_count
 
 import numpy as np
 import torch
@@ -50,6 +49,7 @@ from ray.util.queue import Queue
 from ax.service.ax_client import AxClient
 
 from autotuner.utils import (
+    add_common_args,
     openroad,
     consumer,
     parse_config,
@@ -69,8 +69,6 @@ ERROR_METRIC = 9e99
 ORFS_FLOW_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../flow")
 )
-# URL to ORFS GitHub repository
-ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
 
 
 class AutoTunerBase(tune.Trainable):
@@ -194,30 +192,9 @@ def parse_arguments():
     tune_parser = subparsers.add_parser("tune")
     _ = subparsers.add_parser("sweep")
 
-    # DUT
-    parser.add_argument(
-        "--design",
-        type=str,
-        metavar="<gcd,jpeg,ibex,aes,...>",
-        required=True,
-        help="Name of the design for Autotuning.",
-    )
-    parser.add_argument(
-        "--platform",
-        type=str,
-        metavar="<sky130hd,sky130hs,asap7,...>",
-        required=True,
-        help="Name of the platform for Autotuning.",
-    )
+    add_common_args(parser)
 
     # Experiment Setup
-    parser.add_argument(
-        "--config",
-        type=str,
-        metavar="<path>",
-        required=True,
-        help="Configuration file that sets which knobs to use for Autotuning.",
-    )
     parser.add_argument(
         "--experiment",
         type=str,
@@ -226,69 +203,8 @@ def parse_arguments():
         help="Experiment name. This parameter is used to prefix the"
         " FLOW_VARIANT and to set the Ray log destination.",
     )
-    parser.add_argument(
-        "--timeout",
-        type=float,
-        metavar="<float>",
-        default=None,
-        help="Time limit (in hours) for each trial run. Default is no limit.",
-    )
     tune_parser.add_argument(
         "--resume", action="store_true", help="Resume previous run."
-    )
-
-    # Setup
-    parser.add_argument(
-        "--git_clean",
-        action="store_true",
-        help="Clean binaries and build files."
-        " WARNING: may lose previous data."
-        " Use carefully.",
-    )
-    parser.add_argument(
-        "--git_clone",
-        action="store_true",
-        help="Force new git clone."
-        " WARNING: may lose previous data."
-        " Use carefully.",
-    )
-    parser.add_argument(
-        "--git_clone_args",
-        type=str,
-        metavar="<str>",
-        default="",
-        help="Additional git clone arguments.",
-    )
-    parser.add_argument(
-        "--git_latest", action="store_true", help="Use latest version of OpenROAD app."
-    )
-    parser.add_argument(
-        "--git_or_branch",
-        type=str,
-        metavar="<str>",
-        default="",
-        help="OpenROAD app branch to use.",
-    )
-    parser.add_argument(
-        "--git_orfs_branch",
-        type=str,
-        metavar="<str>",
-        default="master",
-        help="OpenROAD-flow-scripts branch to use.",
-    )
-    parser.add_argument(
-        "--git_url",
-        type=str,
-        metavar="<url>",
-        default=ORFS_URL,
-        help="OpenROAD-flow-scripts repo URL to use.",
-    )
-    parser.add_argument(
-        "--build_args",
-        type=str,
-        metavar="<str>",
-        default="",
-        help="Additional arguments given to ./build_openroad.sh.",
     )
 
     # ML
@@ -347,45 +263,6 @@ def parse_arguments():
         metavar="<int>",
         default=42,
         help="Random seed. (0 means no seed.)",
-    )
-
-    # Workload
-    parser.add_argument(
-        "--jobs",
-        type=int,
-        metavar="<int>",
-        default=int(np.floor(cpu_count() / 2)),
-        help="Max number of concurrent jobs.",
-    )
-    parser.add_argument(
-        "--openroad_threads",
-        type=int,
-        metavar="<int>",
-        default=16,
-        help="Max number of threads openroad can use.",
-    )
-    parser.add_argument(
-        "--server",
-        type=str,
-        metavar="<ip|servername>",
-        default=None,
-        help="The address of Ray server to connect.",
-    )
-    parser.add_argument(
-        "--port",
-        type=int,
-        metavar="<int>",
-        default=10001,
-        help="The port of Ray server to connect.",
-    )
-
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="count",
-        default=0,
-        help="Verbosity level.\n\t0: only print Ray status\n\t1: also print"
-        " training stderr\n\t2: also print training stdout.",
     )
 
     arguments = parser.parse_args()
