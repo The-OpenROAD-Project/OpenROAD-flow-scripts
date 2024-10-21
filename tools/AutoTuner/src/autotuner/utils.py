@@ -65,6 +65,12 @@ set non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
 set_input_delay  [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs
 set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
 """
+# Maps ORFS stage to a name of produced metrics
+STAGE_TO_METRICS = {
+    "route": "detailedroute",
+    "place": "detailedplace",
+    "final": "finish",
+}
 # Name of the SDC file with constraints
 CONSTRAINTS_SDC = "constraint.sdc"
 # Name of the TCL script run before routing
@@ -296,6 +302,7 @@ def openroad(
     parameters,
     flow_variant,
     install_path=None,
+    stage="",
 ):
     """
     Run OpenROAD-flow-scripts with a given set of parameters.
@@ -331,7 +338,7 @@ def openroad(
         limit = int(args.memory_limit * 1_000_000)
         make_command += f"ulimit -v {limit}; "
     make_command += f"make -C {base_dir}/flow DESIGN_CONFIG=designs/"
-    make_command += f"{args.platform}/{args.design}/config.mk"
+    make_command += f"{args.platform}/{args.design}/config.mk {stage}"
     make_command += f" PLATFORM={args.platform}"
     make_command += f" FLOW_VARIANT={flow_variant} {parameters}"
     make_command += " EQUIVALENCE_CHECK=0"
@@ -387,7 +394,7 @@ STAGES = list(
 )
 
 
-def read_metrics(file_name, stop_stage):
+def read_metrics(file_name, stop_stage=""):
     """
     Collects metrics to evaluate the user-defined objective function.
 
@@ -396,6 +403,9 @@ def read_metrics(file_name, stop_stage):
     before "finish", then no need to extract the metrics from the route stage,
     so set them to 0
     """
+    validated_stage = STAGE_TO_METRICS.get(
+        stop_stage if stop_stage else "final", stop_stage
+    )
     with open(file_name) as file:
         data = json.load(file)
     clk_period = 9999999
@@ -420,17 +430,17 @@ def read_metrics(file_name, stop_stage):
             num_drc = value["route__drc_errors"]
         if stage_name == "detailedroute" and "route__wirelength" in value:
             wirelength = value["route__wirelength"]
-        if stage_name == stop_stage and "timing__setup__ws" in value:
+        if stage_name == validated_stage and "timing__setup__ws" in value:
             worst_slack = value["timing__setup__ws"]
-        if stage_name == stop_stage and "power__total" in value:
+        if stage_name == validated_stage and "power__total" in value:
             total_power = value["power__total"]
-        if stage_name == stop_stage and "design__instance__utilization" in value:
+        if stage_name == validated_stage and "design__instance__utilization" in value:
             final_util = value["design__instance__utilization"]
-        if stage_name == stop_stage and "design__instance__area" in value:
+        if stage_name == validated_stage and "design__instance__area" in value:
             design_area = value["design__instance__area"]
-        if stage_name == stop_stage and "design__core__area" in value:
+        if stage_name == validated_stage and "design__core__area" in value:
             core_area = value["design__core__area"]
-        if stage_name == stop_stage and "design__die__area" in value:
+        if stage_name == validated_stage and "design__die__area" in value:
             die_area = value["design__die__area"]
     for i, stage_name in reversed(STAGES):
         if stage_name in data and [d for d in data[stage_name].values() if d != "ERR"]:
@@ -445,9 +455,15 @@ def read_metrics(file_name, stop_stage):
         "design_area": design_area,
         "core_area": core_area,
         "die_area": die_area,
-        "wirelength": wirelength,
-        "num_drc": num_drc,
-    }
+        "last_successful_stage": last_stage,
+    } | (
+        {
+            "wirelength": wirelength,
+            "num_drc": num_drc,
+        }
+        if validated_stage in ("detailedroute", "finish")
+        else {}
+    )
     return ret
 
 
@@ -706,6 +722,7 @@ def openroad_distributed(
         parameters=config,
         flow_variant=f"{uuid.uuid4()}-{variant}" if variant else f"{uuid.uuid4()}",
         install_path=install_path,
+        stage=args.stop_stage,
     )
     duration = time.time() - t
     return metric_file, duration
@@ -745,6 +762,14 @@ def add_common_args(parser: argparse.ArgumentParser):
         metavar="<path>",
         required=True,
         help="Configuration file that sets which knobs to use for Autotuning.",
+    )
+    parser.add_argument(
+        "--stop_stage",
+        type=str,
+        metavar="<str>",
+        choices=["floorplan", "place", "cts", "globalroute", "route", "finish"],
+        default="finish",
+        help="Name of the stage to stop after. Default is finish.",
     )
     parser.add_argument(
         "--timeout",

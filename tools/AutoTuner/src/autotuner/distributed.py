@@ -152,6 +152,7 @@ class AutoTunerBase(tune.Trainable):
             parameters=self.parameters,
             flow_variant=self._variant,
             install_path=INSTALL_PATH,
+            stage=args.stop_stage,
         )
         self.step_ += 1
         (score, effective_clk_period, num_drc, die_area) = self.evaluate(
@@ -279,14 +280,6 @@ def parse_arguments():
         default="test",
         help="Experiment name. This parameter is used to prefix the"
         " FLOW_VARIANT and to set the Ray log destination.",
-    )
-    parser.add_argument(
-        "--stop_stage",
-        type=str,
-        metavar="<str>",
-        choices=["floorplan", "place", "cts", "globalroute", "route", "finish"],
-        default="finish",
-        help="Name of the stage to stop after. Default is finish.",
     )
     tune_parser.add_argument(
         "--resume",
