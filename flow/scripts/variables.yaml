@@ -450,14 +450,6 @@ ADDITIONAL_LIBS:
   description: >
     Hardened macro library files listed here. The library information is immutable
     and used throughout all stages. Not stored in the .odb file.
-  stages:
-  - synth
-  - floorplan
-  - place
-  - cts
-  - grt
-  - route
-  - final
 ADDITIONAL_GDS:
   description: >
     Hardened macro GDS files listed here.
