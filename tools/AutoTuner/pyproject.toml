@@ -8,7 +8,12 @@ classifiers = [
 ]
 readme = "README.md"
 dependencies = [
-    "ray[default,tune]==2.9.3",
+    "ray[default]==2.9.3",
+]
+
+[project.optional-dependencies]
+ray = [
+    "ray[tune]==2.9.3",
     "ax-platform>=0.3.3,<=0.3.7",
     "hyperopt==0.2.7",
     "optuna==3.6.0",
@@ -19,6 +24,11 @@ dependencies = [
     "protobuf==3.20.3",
     "SQLAlchemy==1.4.17",
     "urllib3<=1.26.15",
+]
+vizier = [
+    "jax<=0.4.33",
+    "google-vizier[jax]",
+    "tqdm",
 ]
 
 [build-system]
