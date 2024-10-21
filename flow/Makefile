@@ -786,7 +786,7 @@ $(eval $(call do-step,5_3_fillcell,$(RESULTS_DIR)/5_2_route.odb,fillcell))
 
 $(eval $(call do-copy,5_route,5_3_fillcell.odb))
 
-$(eval $(call do-copy,5_route,4_cts.sdc,,.sdc))
+$(eval $(call do-copy,5_route,5_1_grt.sdc,,.sdc))
 
 .PHONY: do-route
 do-route:

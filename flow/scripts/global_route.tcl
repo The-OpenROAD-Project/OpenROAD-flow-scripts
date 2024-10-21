@@ -109,6 +109,7 @@ proc global_route_helper {} {
 
   write_guides $::env(RESULTS_DIR)/route.guide
   write_db $::env(RESULTS_DIR)/5_1_grt.odb
+  write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt.sdc
 }
 
 global_route_helper

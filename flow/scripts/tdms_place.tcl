@@ -20,7 +20,7 @@ proc find_macros {} {
 if {!([env_var_exists_and_non_empty MACRO_PLACEMENT] ||
       [env_var_exists_and_non_empty MACRO_PLACEMENT_TCL]) &&
     ![env_var_equals RTLMP_FLOW 1]} {
-  load_design 2_2_floorplan_io.odb 1_synth.sdc
+  load_design 2_2_floorplan_io.odb 2_floorplan.sdc
 
   set_dont_use $::env(DONT_USE_CELLS)
 
