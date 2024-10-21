@@ -1,11 +1,11 @@
 utl::set_metrics_stage "globalroute__{}"
+source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables grt
+load_design 4_cts.odb 4_cts.sdc
 
 # This proc is here to allow us to use 'return' to return early from this
 # file which is sourced
 proc global_route_helper {} {
-  source $::env(SCRIPTS_DIR)/load.tcl
-  load_design 4_cts.odb 4_cts.sdc
-
   if {[env_var_exists_and_non_empty PRE_GLOBAL_ROUTE]} {
     source $::env(PRE_GLOBAL_ROUTE)
   }
@@ -18,7 +18,7 @@ proc global_route_helper {} {
   # If GLOBAL_ROUTE_ARGS is specified, then we do only what the
   # GLOBAL_ROUTE_ARGS specifies.
   proc do_global_route {} {
-    set all_args [concat [list -congestion_report_file $::env(REPORTS_DIR)/congestion.rpt] \
+    set all_args [concat [list -congestion_report_file $::global_route_congestion_report] \
       [expr {[env_var_exists_and_non_empty GLOBAL_ROUTE_ARGS] ? $::env(GLOBAL_ROUTE_ARGS) : \
       {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]]
 
@@ -29,8 +29,8 @@ proc global_route_helper {} {
 
   if {$result != 0} {
     if {[expr !$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
-        ![file exists $::env(REPORTS_DIR)/congestion.rpt] || \
-        [file size $::env(REPORTS_DIR)/congestion.rpt] == 0]} {
+        ![file exists $::global_route_congestion_report] || \
+        [file size $::global_route_congestion_report] == 0]} {
       write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
       error $errMsg
     }
@@ -109,6 +109,7 @@ proc global_route_helper {} {
 
   write_guides $::env(RESULTS_DIR)/route.guide
   write_db $::env(RESULTS_DIR)/5_1_grt.odb
+  write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt.sdc
 }
 
 global_route_helper

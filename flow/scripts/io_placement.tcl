@@ -1,4 +1,5 @@
 source $::env(SCRIPTS_DIR)/load.tcl
+erase_non_stage_variables place
 
 if {![env_var_equals IS_CHIP 1]} {
   load_design 3_1_place_gp_skip_io.odb 2_floorplan.sdc

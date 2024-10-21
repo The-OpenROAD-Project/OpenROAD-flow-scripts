@@ -1,0 +1,42 @@
+services:
+  # Ray Head Node (Server)
+  ray-head:
+    image: openroad/orfs:${ORFS_VERSION}
+    container_name: ray-head
+    command: >
+      cd /OpenROAD-flow-scripts
+      pip install -r ./tools/AutoTuner/requirements.txt
+      ray start --head --dashboard-port=8265 --port=6379 --dashboard-host=0.0.0.0 --block
+    volumes:
+      - ../../flow:/OpenROAD-flow-scripts/flow
+      - ../../tools/AutoTuner:/OpenROAD-flow-scripts/tools/AutoTuner
+      - ~/.local/shared-data/autotuner:/shared-data/autotuner
+    ports:
+      - "6379:6379" # redis
+      - "8265:8265" # dashboard
+      - "10001-10010:10001-10010" # ray ports
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f 'ray::' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  # Ray Worker Node
+  ray-worker:
+    image: openroad/orfs:${ORFS_VERSION}
+    container_name: ray-worker
+    command: >
+      cd /OpenROAD-flow-scripts
+      pip install -r ./tools/AutoTuner/requirements.txt
+      ray start --address=ray-head:10001 --block
+    volumes:
+      - ../../flow:/OpenROAD-flow-scripts/flow
+      - ../../tools/AutoTuner:/OpenROAD-flow-scripts/tools/AutoTuner
+      - ~/.local/shared-data/autotuner:/shared-data/autotuner
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f 'ray::' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s

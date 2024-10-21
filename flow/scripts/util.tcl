@@ -26,6 +26,7 @@ proc repair_timing_helper { {hold_margin 1} } {
   append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
   append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
   append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
+  append_env_var additional_args SKIP_LAST_GASP -skip_last_gasp 0
   puts "repair_timing [join $additional_args " "]"
   repair_timing {*}$additional_args
 }
@@ -99,3 +100,20 @@ proc find_macros {} {
   }
   return $macros
 }
+
+proc erase_non_stage_variables {stage_name} {
+  # "$::env(SCRIPTS_DIR)/stage_variables.py stage_name" returns list of
+  # variables to erase.
+  # 
+  # Tcl yaml package can't be imported in the sta/openroad environment:
+  # 
+  # https://github.com/The-OpenROAD-Project/OpenROAD/issues/5875
+  set variables [exec $::env(SCRIPTS_DIR)/non_stage_variables.py $stage_name]
+  foreach var $variables {
+    if {[info exists ::env($var)]} {
+      unset ::env($var)
+    }
+  }
+}
+
+set global_route_congestion_report $::env(REPORTS_DIR)/congestion.rpt

@@ -1,11 +1,13 @@
 yosys -import
 
 source $::env(SCRIPTS_DIR)/util.tcl
+erase_non_stage_variables synth
 
 if {[env_var_exists_and_non_empty CACHED_NETLIST]} {
-  exec cp $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
+  log_cmd exec cp $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
+  log_cmd exec cp $::env(SDC_FILE) $::env(RESULTS_DIR)/1_synth.sdc
   if {[env_var_exists_and_non_empty CACHED_REPORTS]} {
-    exec cp {*}$::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
+    log_cmd exec cp {*}$::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
   }
   exit
 }
