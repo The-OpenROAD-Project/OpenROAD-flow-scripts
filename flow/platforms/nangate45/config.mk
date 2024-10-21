@@ -41,6 +41,8 @@ export ABC_DRIVER_CELL = BUF_X1
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
 export ABC_LOAD_IN_FF = 3.898
 
+export CLOCKGATE_CMD = clockgate -pos CLKGATE_X1 E:CK:GCK -min_net_size 8
+
 #--------------------------------------------------------
 # Floorplan
 # -------------------------------------------------------
