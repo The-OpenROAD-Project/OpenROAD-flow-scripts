@@ -1,0 +1,13 @@
+ray[default,tune]==2.43.0
+ax-platform>=0.3.3,<=0.3.7
+hyperopt==0.2.7
+optuna==3.6.0
+pandas>=2.0,<=2.2.1
+bayesian-optimization==1.4.0
+colorama==0.4.6
+tensorboard>=2.17.0
+protobuf>=5.26.1
+SQLAlchemy==1.4.17
+urllib3>=1.26.17
+matplotlib==3.10.0
+pyyaml==6.0.1
