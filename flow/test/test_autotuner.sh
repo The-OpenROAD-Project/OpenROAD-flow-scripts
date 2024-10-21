@@ -25,6 +25,9 @@ python3 -m unittest tools.AutoTuner.test.smoke_test_sample_iteration.${PLATFORM_
 echo "Running Autotuner smoke algorithm eval test"
 python3 -m unittest tools.AutoTuner.test.smoke_test_algo_eval.${PLATFORM_WITHOUT_DASHES}AlgoEvalSmokeTest.test_algo_eval
 
+echo "Running Autotuner smoke Vizier test"
+python3 -m unittest tools.AutoTuner.test.smoke_test_vizier.${PLATFORM}VizierSmokeTest.test_vizier
+
 if [ "$PLATFORM_WITHOUT_DASHES" == "asap7" ] && [ "$DESIGN_NAME" == "gcd" ]; then
   echo "Running Autotuner ref file test (only once)"
   python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck
