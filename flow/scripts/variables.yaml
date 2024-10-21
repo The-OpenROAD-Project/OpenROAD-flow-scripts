@@ -438,14 +438,6 @@ ADDITIONAL_LEFS:
   description: >
     Hardened macro LEF view files listed here. The LEF information of the macros
     is immutable and used throughout all stages. Stored in the .odb file.
-  stages:
-  - synth
-  - floorplan
-  - place
-  - cts
-  - grt
-  - route
-  - final
 ADDITIONAL_LIBS:
   description: >
     Hardened macro library files listed here. The library information is immutable
