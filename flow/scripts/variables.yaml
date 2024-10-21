@@ -25,7 +25,6 @@ GENERATE_ARTIFACTS_ON_FAILURE:
     use a lot of memory, this allows inspecting results on a laptop for
     a build that ran on a server.
   default: 0
-
 TNS_END_PERCENT:
   description: >
     Default TNS_END_PERCENT value for post CTS timing repair.
@@ -56,6 +55,7 @@ SKIP_INCREMENTAL_REPAIR:
     Skip incremental repair in global route.
   stages:
     - grt
+  tunable: false
 DETAILED_METRICS:
   description: >
     If set, then calls report_metrics prior to repair operations in the CTS
@@ -75,6 +75,7 @@ CORE_UTILIZATION:
     The core utilization percentage (0-100).
   stages:
     - floorplan
+  tunable: 1
 CORE_AREA:
   description: >
     The core area specified as a list of lower-left and upper-right corners in microns
@@ -264,6 +265,7 @@ GUI_TIMING:
     be quite time consuming. Useful to disable when investigating non-timing
     aspects like floorplan, placement, routing, etc.
   default: 1
+  tunable: 1
 FILL_CELLS:
   description: >
     Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.
@@ -278,6 +280,7 @@ CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
   stages:
     - place
     - floorplan
+  tunable: 1
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
     Cell padding on both sides in site widths to ease routability in detail placement.
@@ -285,6 +288,7 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     - place
     - cts
     - grt
+  tunable: 1
 PLACE_PINS_ARGS:
   description: >
     Arguments to place_pins
@@ -301,6 +305,7 @@ PLACE_DENSITY:
 PLACE_DENSITY_LB_ADDON:
   description: >
     Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.
+  tunable: 1
 REPAIR_PDN_VIA_LAYER:
   description: >
     Remove power grid vias which generate DRC violations after detailed routing.
@@ -518,6 +523,7 @@ CORE_ASPECT_RATIO:
     is undefined.
   stages:
     - floorplan
+  tunable: 1
 CORE_MARGIN:
   description: >
     The margin between the core area and die area, in multiples of SITE heights.
@@ -525,6 +531,7 @@ CORE_MARGIN:
     is undefined.
   stages:
     - floorplan
+  tunable: 1
 DIE_AREA:
   description: >
     The die area specified as a list of lower-left and upper-right corners in microns
@@ -566,11 +573,13 @@ CTS_CLUSTER_DIAMETER:
     Maximum diameter (in microns) of sink cluster. Default 20.
   stages:
     - cts
+  tunable: 1
 CTS_CLUSTER_SIZE:
   description: >
     Maximum number of sinks per cluster. Default 50.
   stages:
     - cts
+  tunable: 1
 CTS_SNAPSHOT:
   description: >
     Creates ODB/SDC files prior to clock net and setup/hold repair.
