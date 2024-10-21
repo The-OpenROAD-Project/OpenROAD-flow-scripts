@@ -64,7 +64,7 @@ def evaluate(args: argparse.Namespace, metric_file: str) -> Dict[str, float]:
         Dictionary with metrics
     """
     try:
-        metrics = read_metrics(metric_file)
+        metrics = read_metrics(metric_file, stage=args.to_stage)
         # Calculate difference of clock period and worst slack
         if metrics["clk_period"] != 9999999 and metrics["worst_slack"] != "ERR":
             metrics["clk_period-worst_slack"] = (
