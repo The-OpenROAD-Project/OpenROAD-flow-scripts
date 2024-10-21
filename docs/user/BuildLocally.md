@@ -16,7 +16,8 @@ sudo ./setup.sh
 ## Build
 
 ``` shell
-./build_openroad.sh --local
+sudo apt-get install pandoc
+./build_openroad.sh --local --openroad-args " -DBUILD_MAN=ON"
 ```
 :::{Note}
 There is a `build_openroad.log` file that is generated with every
