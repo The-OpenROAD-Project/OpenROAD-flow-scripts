@@ -23,17 +23,13 @@ User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) o
 
 ## Setting up AutoTuner
 
-We have provided two convenience scripts, `./install.sh` and `./setup.sh`
+We have provided two convenience scripts, `./installer.sh` and `./setup.sh`
 that works in Python3.8 for installation and configuration of AutoTuner,
 as shown below:
 
-```{note}
-Make sure you run the following commands in `./tools/AutoTuner/src/autotuner`.
-```
-
 ```shell
 # Install prerequisites
-./tools/AutoTuner/install.sh
+./tools/AutoTuner/installer.sh
 
 # Start virtual environment
 ./tools/AutoTuner/setup.sh
@@ -104,7 +100,7 @@ For Global Routing parameters that are set on `fastroute.tcl` you can use:
 
 ### General Information
 
-The `distributed.py` script uses Ray's job scheduling and management to
+The `autotuner.distributed` module uses Ray's job scheduling and management to
 fully utilize available hardware resources from a single server 
 configuration, on-premies or over the cloud with multiple CPUs. 
 The two modes of operation: `sweep`, where every possible parameter
@@ -114,35 +110,37 @@ hyperparameters using one of the algorithms listed above. The `sweep`
 mode is useful when we want to isolate or test a single or very few
 parameters. On the other hand, `tune` is more suitable for finding
 the best combination of a complex and large number of flow 
-parameters. Both modes rely on user-specified search space that is 
-defined by a `.json` file, they use the same syntax and format, 
-though some features may not be available for sweeping.
+parameters.
 
 ```{note}
 The order of the parameters matter. Arguments `--design`, `--platform` and
 `--config` are always required and should precede <mode>.
 ```
 
+```{note}
+The following commands should be run from `./tools/AutoTuner`.
+```
+
 #### Tune only 
 
-* AutoTuner: `python3 distributed.py tune -h`
+* AutoTuner: `python3 -m autotuner.distributed tune -h`
 
 Example:
 
 ```shell
-python3 distributed.py --design gcd --platform sky130hd \
-                       --config ../../../../flow/designs/sky130hd/gcd/autotuner.json \
+python3 -m autotuner.distributed --design gcd --platform sky130hd \
+                       --config ../../flow/designs/sky130hd/gcd/autotuner.json \
                        tune --samples 5
 ```
 #### Sweep only 
 
-* Parameter sweeping: `python3 distributed.py sweep -h`
+* Parameter sweeping: `python3 -m autotuner.distributed sweep -h`
 
 Example:
 
 ```shell
-python3 distributed.py --design gcd --platform sky130hd \
-                       --config distributed-sweep-example.json \
+python3 -m autotuner.distributed --design gcd --platform sky130hd \
+                       --config src/autotuner/distributed-sweep-example.json \
                        sweep
 ```
 
