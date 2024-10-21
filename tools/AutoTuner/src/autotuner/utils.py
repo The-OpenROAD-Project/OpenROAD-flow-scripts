@@ -1,3 +1,4 @@
+import argparse
 import glob
 import json
 import os
@@ -32,6 +33,8 @@ set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
 CONSTRAINTS_SDC = "constraint.sdc"
 # Name of the TCL script run before routing
 FASTROUTE_TCL = "fastroute.tcl"
+# URL to ORFS GitHub repository
+ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 
@@ -295,6 +298,27 @@ def openroad(
     return metrics_file
 
 
+STAGES = list(
+    enumerate(
+        [
+            "synth",
+            "floorplan",
+            "floorplan_io",
+            "floorplan_tdms",
+            "floorplan_macro",
+            "floorplan_tap",
+            "floorplan_pdn",
+            "globalplace",
+            "detailedplace",
+            "cts",
+            "globalroute",
+            "detailedroute",
+            "finish",
+        ]
+    )
+)
+
+
 def read_metrics(file_name):
     """
     Collects metrics to evaluate the user-defined objective function.
@@ -311,6 +335,7 @@ def read_metrics(file_name):
     design_area = "ERR"
     die_area = "ERR"
     core_area = "ERR"
+    last_stage = -1
     for stage_name, value in data.items():
         if stage_name == "constraints" and len(value["clocks__details"]) > 0:
             clk_period = float(value["clocks__details"][0].split()[1])
@@ -332,6 +357,10 @@ def read_metrics(file_name):
             core_area = value["design__core__area"]
         if stage_name == "finish" and "design__die__area" in value:
             die_area = value["design__die__area"]
+    for i, stage_name in reversed(STAGES):
+        if stage_name in data and [d for d in data[stage_name].values() if d != "ERR"]:
+            last_stage = i
+            break
     ret = {
         "clk_period": clk_period,
         "worst_slack": worst_slack,
@@ -466,6 +495,20 @@ def read_config(file_name, mode, algorithm):
         if this["type"] == "float":
             return tune.uniform(min_, max_)
 
+    def read_vizier(this):
+        dict_ = {}
+        min_, max_ = this["minmax"]
+        dict_["value"] = (min_, max_)
+        if "scale_type" in this:
+            dict_["scale_type"] = this["scale_type"]
+        if min_ == max_:
+            dict_["type"] = "fixed"
+        elif this["type"] == "int":
+            dict_["type"] = "int"
+        elif this["type"] == "float":
+            dict_["type"] = "float"
+        return dict_
+
     # Check file exists and whether it is a valid JSON file.
     assert os.path.isfile(file_name), f"File {file_name} not found."
     try:
@@ -512,6 +555,8 @@ def read_config(file_name, mode, algorithm):
             config[key] = read_tune_pbt(key, value)
         elif mode == "tune":
             config[key] = read_tune(value)
+        elif mode == "vizier":
+            config[key] = read_vizier(value)
     if mode == "tune":
         config = apply_condition(config, data)
     return config, sdc_file, fr_file
@@ -650,3 +695,129 @@ def consumer(queue):
         print(f"[INFO TUN-0007] Scheduling run for parameter {name}.")
         ray.get(openroad_distributed.remote(*next_item))
         print(f"[INFO TUN-0008] Finished run for parameter {name}.")
+
+
+def add_common_args(parser: argparse.ArgumentParser):
+    # DUT
+    parser.add_argument(
+        "--design",
+        type=str,
+        metavar="<gcd,jpeg,ibex,aes,...>",
+        required=True,
+        help="Name of the design for Autotuning.",
+    )
+    parser.add_argument(
+        "--platform",
+        type=str,
+        metavar="<sky130hd,sky130hs,asap7,...>",
+        required=True,
+        help="Name of the platform for Autotuning.",
+    )
+    # Experiment Setup
+    parser.add_argument(
+        "--config",
+        type=str,
+        metavar="<path>",
+        required=True,
+        help="Configuration file that sets which knobs to use for Autotuning.",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        metavar="<float>",
+        default=None,
+        help="Time limit (in hours) for each trial run. Default is no limit.",
+    )
+    # Workload
+    parser.add_argument(
+        "--openroad_threads",
+        type=int,
+        metavar="<int>",
+        default=16,
+        help="Max number of threads openroad can use.",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Verbosity level.\n\t0: only print status\n\t1: also print"
+        " training stderr\n\t2: also print training stdout.",
+    )
+
+    # Setup
+    parser.add_argument(
+        "--git_clean",
+        action="store_true",
+        help="Clean binaries and build files."
+        " WARNING: may lose previous data."
+        " Use carefully.",
+    )
+    parser.add_argument(
+        "--git_clone",
+        action="store_true",
+        help="Force new git clone."
+        " WARNING: may lose previous data."
+        " Use carefully.",
+    )
+    parser.add_argument(
+        "--git_clone_args",
+        type=str,
+        metavar="<str>",
+        default="",
+        help="Additional git clone arguments.",
+    )
+    parser.add_argument(
+        "--git_latest", action="store_true", help="Use latest version of OpenROAD app."
+    )
+    parser.add_argument(
+        "--git_or_branch",
+        type=str,
+        metavar="<str>",
+        default="",
+        help="OpenROAD app branch to use.",
+    )
+    parser.add_argument(
+        "--git_orfs_branch",
+        type=str,
+        metavar="<str>",
+        default="master",
+        help="OpenROAD-flow-scripts branch to use.",
+    )
+    parser.add_argument(
+        "--git_url",
+        type=str,
+        metavar="<url>",
+        default=ORFS_URL,
+        help="OpenROAD-flow-scripts repo URL to use.",
+    )
+    parser.add_argument(
+        "--build_args",
+        type=str,
+        metavar="<str>",
+        default="",
+        help="Additional arguments given to ./build_openroad.sh.",
+    )
+
+    # Workload
+    parser.add_argument(
+        "--jobs",
+        type=int,
+        metavar="<int>",
+        default=int(np.floor(cpu_count() / 2)),
+        help="Max number of concurrent jobs.",
+    )
+    parser.add_argument(
+        "--server",
+        type=str,
+        metavar="<ip|servername>",
+        default=None,
+        help="The address of Ray server to connect.",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        metavar="<int>",
+        default=10001,
+        help="The port of Ray server to connect.",
+    )
