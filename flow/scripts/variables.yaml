@@ -441,14 +441,6 @@ SDC_GUT:
 ADDITIONAL_FILES:
   description: >
     Additional files to be added to `make issue` archive.
-  stages:
-  - synth
-  - floorplan
-  - place
-  - cts
-  - grt
-  - route
-  - final
 ADDITIONAL_LEFS:
   description: >
     Hardened macro LEF view files listed here. The LEF information of the macros
@@ -460,6 +452,8 @@ ADDITIONAL_LIBS:
 ADDITIONAL_GDS:
   description: >
     Hardened macro GDS files listed here.
+  stages:
+  - final
 VERILOG_INCLUDE_DIRS:
   description: >
     Specifies the include directories for the Verilog input files.
