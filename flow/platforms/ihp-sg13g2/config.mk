@@ -122,10 +122,10 @@ export GND_NETS_VOLTAGES  ?= "VSS 0.0"
 export IR_DROP_LAYER ?= Metal1
 
 # DRC Check
-export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/sg13g2.lydrc
+export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/sg13g2.lydrc
 
 #LVS Check
-export CDL_FILE = $(PLATFORM_DIR)/cdl/sg13g2_stdcell.cdl
+export CDL_FILE ?= $(PLATFORM_DIR)/cdl/sg13g2_stdcell.cdl
 #export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/$(PLATFORM).lylvs
 
 #Temporary: skip post-DRT repair antennas
