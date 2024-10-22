@@ -31,7 +31,7 @@ export MACRO_PLACE_CHANNEL = 200 200
 export CTS_BUF_DISTANCE = 600
 export SKIP_GATE_CLONING = 1
 
-export export SETUP_SLACK_MARGIN = 0.2
+export SETUP_SLACK_MARGIN = 0.2
 
 # This is high, some SRAMs should probably be converted
 # to real SRAMs and not instantiated as flops
