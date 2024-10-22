@@ -337,13 +337,28 @@ CTS_ARGS:
 HOLD_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing hold violations.
-    This option allows you to overfix.
+    This option allows you to overfix or underfix(negative value, terminate
+    retiming before 0 or positive slack).
+  stages:
+    - cts
+    - floorplan
+    - grt
 SETUP_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing setup violations.
+    This option allows you to overfix or underfix(negative value, terminate
+    retiming before 0 or positive slack).
+  stages:
+    - cts
+    - floorplan
+    - grt
 SKIP_GATE_CLONING:
   description: >
     Do not use gate cloning transform to fix timing violations (default: use gate cloning).
+  stages:
+    - cts
+    - floorplan
+    - grt
 SKIP_LAST_GASP:
   description: >
     Do not use last gasp optimization to fix timing violations (default: use gate last gasp).
@@ -354,6 +369,10 @@ SKIP_LAST_GASP:
 SKIP_PIN_SWAP:
   description: >
     Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).
+  stages:
+    - cts
+    - floorplan
+    - grt
 REMOVE_CELLS_FOR_EQY:
   description: >
     String patterns directly passed to write_verilog -remove_cells <> for equivalence checks.
