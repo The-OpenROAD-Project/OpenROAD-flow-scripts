@@ -40,15 +40,15 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 1,
+        "value": 0,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 1048,
+        "value": 922,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -3.07,
+        "value": -2.03,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -60,11 +60,11 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 134,
+        "value": 315,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -22.65,
+        "value": -17.97,
         "compare": ">="
     }
 }
