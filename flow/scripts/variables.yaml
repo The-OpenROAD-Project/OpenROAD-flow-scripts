@@ -184,6 +184,7 @@ FLOORPLAN_DEF:
     Use the DEF file to initialize floorplan.
   stages:
     - floorplan
+    - place
 REMOVE_ABC_BUFFERS:
   description: >
     Remove abc buffers from the netlist.
