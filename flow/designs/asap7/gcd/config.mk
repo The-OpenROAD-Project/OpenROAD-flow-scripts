@@ -12,3 +12,8 @@ export PLACE_DENSITY          = 0.35
 # a smoketest for this option, there are a
 # few last gasp iterations
 export SKIP_LAST_GASP ?= 1
+
+# A smoketest to verify that we can have a negative margin
+# for timing repair, which gives us faster builds
+export SETUP_SLACK_MARGIN = -100
+export HOLD_SLACK_MARGIN = -100
