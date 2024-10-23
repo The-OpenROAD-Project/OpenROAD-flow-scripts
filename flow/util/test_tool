@@ -10,6 +10,7 @@ proc unknown args {
 if { [regexp yosys $argv0] } {
   # Writes an empty .v
   proc write_verilog {args} {
+    unknown "write_verilog" {*}$args
     set file_name [lindex $args [expr {[llength $args] - 1}]]
     set fileId [open $file_name "w"]
     #puts $fileId "{\"modules\" : {}}"
@@ -18,6 +19,7 @@ if { [regexp yosys $argv0] } {
 
   # Writes a dummy json for mem_dump.py
   proc json {args} {
+    unknown "json" {*}$args
     for {set i 0} {$i < [llength $args]} {incr i} {
       set arg [lindex $args $i]
       
@@ -45,6 +47,7 @@ if { [regexp yosys $argv0] } {
 
   # Writes an empty .odb
   proc write_db {args} {
+    unknown "write_db" {*}$args
     set file_name [lindex $args 0]
     set fileId [open $file_name "w"]
     close $fileId
