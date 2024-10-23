@@ -108,7 +108,7 @@ if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
   # remove buffers inserted by yosys/abc
   remove_buffers
 } else {
-  repair_timing_helper 0
+  repair_timing_helper
 }
 
 ##### Restructure for timing #########

@@ -16,12 +16,10 @@ proc fast_route {} {
 }
 
 # -hold_margin is only set when hold_margin is set, default 1
-proc repair_timing_helper { {hold_margin 1} } {
+proc repair_timing_helper {} {
   set additional_args "-verbose"
   append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
-  if {$hold_margin} {
-    append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
-  }
+  append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
   append_env_var additional_args TNS_END_PERCENT -repair_tns 1
   append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
   append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
