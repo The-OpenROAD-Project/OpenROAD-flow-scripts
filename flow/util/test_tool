@@ -1,0 +1,64 @@
+#!/usr/bin/tclsh
+
+puts "Run: $argv0 $argv"
+
+# Provide our own implementation
+proc unknown args {
+    puts "Command: $args"
+}
+
+if { [regexp yosys $argv0] } {
+  # Writes an empty .v
+  proc write_verilog {args} {
+    set file_name [lindex $args [expr {[llength $args] - 1}]]
+    set fileId [open $file_name "w"]
+    #puts $fileId "{\"modules\" : {}}"
+    close $fileId
+  }
+
+  # Writes a dummy json for mem_dump.py
+  proc json {args} {
+    for {set i 0} {$i < [llength $args]} {incr i} {
+      set arg [lindex $args $i]
+      
+      if {$arg == "-o"} {
+        #incr i
+        set fileId [open [lindex $args $i+1] "w"]
+        puts $fileId "{\"modules\" : {}}"
+        close $fileId
+      }
+    }
+  }
+
+  # Execute any "-c script" arg
+  for {set i 0} {$i < [llength $argv]} {incr i} {
+    set arg [lindex $argv $i]
+    
+    # Check if the argument is "-c"
+    if {$arg == "-c"} {
+      incr i
+      source [lindex $argv $i]
+    }
+  }
+} elseif { [regexp openroad $argv0] } {
+  puts "OPENROAD"
+
+  # Writes an empty .odb
+  proc write_db {args} {
+    set file_name [lindex $args 0]
+    set fileId [open $file_name "w"]
+    close $fileId
+  }
+
+  # Execute any tcl file
+  for {set i 0} {$i < [llength $argv]} {incr i} {
+    set arg [lindex $argv $i]
+    
+    # Check if the argument is "-c"
+    if { [regexp "\.tcl$" $arg] } {
+      source $arg
+    }
+  }
+} else {
+  error "Unknown tool $argv0"
+}
