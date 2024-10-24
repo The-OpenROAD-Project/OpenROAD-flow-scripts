@@ -68,6 +68,8 @@ if { [env_var_exists_and_non_empty POST_DETAIL_ROUTE_TCL] } {
 
 check_antennas -report_file $env(REPORTS_DIR)/drt_antennas.log
 
+report_metrics 5 "detailed route"
+
 if {![design_is_routed]} {
   error "Design has unrouted nets."
 }
