@@ -28,7 +28,9 @@ class BaseSweepSmokeTest(unittest.TestCase):
 
         # limit jobs because ray.get() does not terminate if jobs > number of samples
         core = os.cpu_count()
-        self.jobs = 4 if core >= 4 else core
+        self.resources_per_trial = 1
+        self.jobs = 4
+        self.cpu_budget = 1  # test should terminate in 1/(4*1) = 0.25 hours
         self.experiment = f"smoke-test-sweep-{self.platform}"
         self.command = (
             "python3 distributed.py"
@@ -36,8 +38,10 @@ class BaseSweepSmokeTest(unittest.TestCase):
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
             f" --config {self.config}"
+            f" --cpu_budget {self.cpu_budget}"
             f" --jobs {self.jobs}"
-            f" sweep"
+            f" --yes"
+            f" sweep --resources_per_trial {self.resources_per_trial}"
         )
 
     def test_sweep(self):
