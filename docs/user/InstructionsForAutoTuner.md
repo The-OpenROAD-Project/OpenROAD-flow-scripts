@@ -23,17 +23,17 @@ User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) o
 
 ## Setting up AutoTuner
 
-We have provided two convenience scripts, `./install.sh` and `./setup.sh`
+We have provided two convenience scripts, `./installer.sh` and `./setup.sh`
 that works in Python3.8 for installation and configuration of AutoTuner,
 as shown below:
 
 ```{note}
-Make sure you run the following commands in `./tools/AutoTuner/src/autotuner`.
+Make sure you run the following commands in the ORFS root directory.
 ```
 
 ```shell
 # Install prerequisites
-./tools/AutoTuner/install.sh
+./tools/AutoTuner/installer.sh
 
 # Start virtual environment
 ./tools/AutoTuner/setup.sh
@@ -104,14 +104,15 @@ For Global Routing parameters that are set on `fastroute.tcl` you can use:
 
 ### General Information
 
-The `distributed.py` script uses Ray's job scheduling and management to
+The `distributed.py` script located in `./tools/AutoTuner/src/autotuner` uses [Ray's](https://docs.ray.io/en/latest/index.html) job scheduling and management to
 fully utilize available hardware resources from a single server 
-configuration, on-premies or over the cloud with multiple CPUs. 
-The two modes of operation: `sweep`, where every possible parameter
-combination in the search space is tested; and `tune`, where we use
-Ray's Tune feature to intelligently search the space and optimize
-hyperparameters using one of the algorithms listed above. The `sweep`
-mode is useful when we want to isolate or test a single or very few
+configuration, on-premise or over the cloud with multiple CPUs.
+
+The two modes of operation:
+- `sweep`, where every possible parameter combination in the search space is tested
+- `tune`, where we use Ray's Tune feature to intelligently search the space and optimize hyperparameters using one of the algorithms listed above.
+
+The `sweep` mode is useful when we want to isolate or test a single or very few
 parameters. On the other hand, `tune` is more suitable for finding
 the best combination of a complex and large number of flow 
 parameters. Both modes rely on user-specified search space that is 
@@ -120,7 +121,7 @@ though some features may not be available for sweeping.
 
 ```{note}
 The order of the parameters matter. Arguments `--design`, `--platform` and
-`--config` are always required and should precede <mode>.
+`--config` are always required and should precede *mode*.
 ```
 
 #### Tune only 
@@ -169,7 +170,7 @@ GCP Setup Tutorial coming soon.
 | `--git_url`                   | OpenROAD-flow-scripts repo URL to use.                                                                |
 | `--build_args`                | Additional arguments given to ./build_openroad.sh                                                     |
 | `--algorithm`                 | Search algorithm to use for Autotuning.                                                               |
-| `--eval`                      | Evalaute function to use with search algorithm.  \                                                    |
+| `--eval`                      | Evaluate function to use with search algorithm.                                                       |
 | `--samples`                   | Number of samples for tuning.                                                                         |
 | `--iterations`                | Number of iterations for tuning.                                                                      |
 | `--resources_per_trial`       | Number of CPUs to request for each tuning job.                                                        |
