@@ -90,7 +90,7 @@ Document for detailed local build from sources and installation steps found [her
   individual flows commands, see the documentation
   [here](https://openroad.readthedocs.io/en/latest/).
 - For details about automated flow setup, see ORFS docs
-  [here](https://openroad-flow-scripts.readthedocs.io/en/latest/user/GettingStarted.html).
+  [here](https://openroad-flow-scripts.readthedocs.io/en/latest/index2.html).
 - Flow tutorial to run the complete OpenROAD based flow from
   RTL-GDSII, see the tutorial
   [here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
