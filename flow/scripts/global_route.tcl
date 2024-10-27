@@ -34,6 +34,7 @@ proc global_route_helper {} {
       write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
       error $errMsg
     }
+    write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt.sdc
     write_db $::env(RESULTS_DIR)/5_1_grt.odb
     return
   }
