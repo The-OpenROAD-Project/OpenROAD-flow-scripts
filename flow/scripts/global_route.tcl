@@ -31,6 +31,7 @@ proc global_route_helper {} {
     if {[expr !$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
         ![file exists $::global_route_congestion_report] || \
         [file size $::global_route_congestion_report] == 0]} {
+      write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt.sdc
       write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
       error $errMsg
     }
