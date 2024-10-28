@@ -29,14 +29,11 @@ if {[find_macros] != ""} {
   }
 
   if {[env_var_exists_and_non_empty MACRO_PLACEMENT_TCL]} {
-    source $::env(MACRO_PLACEMENT_TCL)
-    puts "Using manual macro placement file $::env(MACRO_PLACEMENT_TCL)"
+    log_cmd source $::env(MACRO_PLACEMENT_TCL)
   } elseif {[env_var_exists_and_non_empty MACRO_PLACEMENT]} {
     source $::env(SCRIPTS_DIR)/read_macro_placement.tcl
-    puts "Using manual macro placement file $::env(MACRO_PLACEMENT)"
-    read_macro_placement $::env(MACRO_PLACEMENT)
+    log_cmd read_macro_placement $::env(MACRO_PLACEMENT)
   } else {
-    puts "HierRTLMP Flow enabled..."
     set additional_rtlmp_args ""
     append_env_var additional_rtlmp_args RTLMP_MAX_LEVEL -max_num_level 1
     append_env_var additional_rtlmp_args RTLMP_MAX_INST -max_num_inst 1
