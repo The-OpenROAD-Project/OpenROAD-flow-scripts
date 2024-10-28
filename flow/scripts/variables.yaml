@@ -200,11 +200,6 @@ TAPCELL_TCL:
     Path to Endcap and Welltie cells file.
   stages:
     - floorplan
-RTLMP_FLOW:
-  description: >
-    1 to enable the Hierarchical RTLMP flow, default empty.
-  stages:
-    - floorplan
 MACRO_PLACEMENT:
   description: >
     Specifies the path of a file on how to place certain macros manually using read_macro_placement.
@@ -222,7 +217,7 @@ MACRO_PLACE_HALO:
     - floorplan
 MACRO_PLACE_CHANNEL:
   description: >
-    Horizontal/vertical channel width between macros (microns). Used by automatic macro placement when RTLMP_FLOW is disabled.
+    Horizontal/vertical channel width between macros (microns). Used by automatic macro placement.
     Imagine channel=10 and halo=5. Then macros must be 10 apart but standard cells must be 5 away from a macro.
   stages:
     - floorplan
