@@ -160,7 +160,9 @@ export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
 export TEST_DIR      ?= $(FLOW_HOME)/test
 
-$(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(line)))
+# __SPACE__ is a workaround for whitespace hell in "foreach"; there
+# is no way to escape space in defaults.py and get "foreach" to work.
+$(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
 
 PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
