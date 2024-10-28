@@ -1,6 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
-load_design 2_4_floorplan_tapcell.odb 2_floorplan.sdc
+load_design 2_4_floorplan_tapcell.odb 2_1_floorplan.sdc
 
 source $::env(PDN_TCL)
 pdngen
