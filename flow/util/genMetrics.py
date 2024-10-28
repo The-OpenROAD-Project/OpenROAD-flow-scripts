@@ -313,14 +313,13 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
     extractGnuTime("synth", metrics_dict, logPath + "/1_1_yosys.log")
     extractGnuTime("floorplan", metrics_dict, logPath + "/2_1_floorplan.log")
     extractGnuTime("floorplan_io", metrics_dict, logPath + "/2_2_floorplan_io.log")
-    extractGnuTime("floorplan_tdms", metrics_dict, logPath + "/2_3_floorplan_tdms.log")
     extractGnuTime(
-        "floorplan_macro", metrics_dict, logPath + "/2_4_floorplan_macro.log"
+        "floorplan_macro", metrics_dict, logPath + "/2_3_floorplan_macro.log"
     )
     extractGnuTime(
-        "floorplan_tap", metrics_dict, logPath + "/2_5_floorplan_tapcell.log"
+        "floorplan_tap", metrics_dict, logPath + "/2_4_floorplan_tapcell.log"
     )
-    extractGnuTime("floorplan_pdn", metrics_dict, logPath + "/2_6_floorplan_pdn.log")
+    extractGnuTime("floorplan_pdn", metrics_dict, logPath + "/2_5_floorplan_pdn.log")
     extractGnuTime(
         "globalplace_skip_io", metrics_dict, logPath + "/3_1_place_gp_skip_io.log"
     )
