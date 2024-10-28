@@ -33,7 +33,9 @@ if {[find_macros] != ""} {
   } elseif {[env_var_exists_and_non_empty MACRO_PLACEMENT]} {
     source $::env(SCRIPTS_DIR)/read_macro_placement.tcl
     log_cmd read_macro_placement $::env(MACRO_PLACEMENT)
-  } elseif {[env_var_equals RTLMP_FLOW 1]} {
+  }
+
+  if {[env_var_equals RTLMP_FLOW 1]} {
     set additional_rtlmp_args ""
     append_env_var additional_rtlmp_args RTLMP_MAX_LEVEL -max_num_level 1
     append_env_var additional_rtlmp_args RTLMP_MAX_INST -max_num_inst 1

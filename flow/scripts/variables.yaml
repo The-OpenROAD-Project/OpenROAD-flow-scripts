@@ -202,9 +202,11 @@ TAPCELL_TCL:
     - floorplan
 RTLMP_FLOW:
   description: >
-    1 to enable the Hierarchical RTLMP flow, default empty.
+    1 to enable the Hierarchical RTLMP macro placement flow. Places macros
+    that are not placed(locked), if any, or runs silently.
   stages:
     - floorplan
+  default: 1
 MACRO_PLACEMENT:
   description: >
     Specifies the path of a file on how to place certain macros manually using read_macro_placement.
