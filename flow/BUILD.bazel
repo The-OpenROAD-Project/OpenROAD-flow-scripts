@@ -70,7 +70,6 @@ orfs_flow(
             "SDC_FILE": "$(location :constraints-swerv)",
         },
         "floorplan": SWERV_ALL | {
-            "RTLMP_FLOW": "1",
             "RTLMP_MAX_INST": "30000",
             "RTLMP_MIN_INST": "5000",
             "RTLMP_MAX_MACRO": "30",
@@ -144,7 +143,6 @@ MOCK_ARRAY_FLOORPLAN_PLACE = {
             "CORE_AREA": "2.16 2.16 356.40000000000003 386.64000000000004",
             "MACRO_PLACE_HALO": "0 2.16",
             "RTLMP_BOUNDARY_WT": "0",
-            "RTLMP_FLOW": "1",
             "PDN_TCL": "$(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl",
             "MACRO_HALO_X": "0.5",
             "MACRO_HALO_Y": "0.5",
