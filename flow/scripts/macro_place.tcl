@@ -1,6 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
-load_design 2_3_floorplan_tdms.odb 2_floorplan.sdc
+load_design 2_3_floorplan_tdms.odb 2_1_floorplan.sdc
 
 source $::env(SCRIPTS_DIR)/macro_place_util.tcl
 
