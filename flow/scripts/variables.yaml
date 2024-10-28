@@ -609,3 +609,9 @@ ABSTRACT_SOURCE:
     Which .odb file to use to create abstract
   stages:
     - generate_abstract
+GLOBAL_ROUTE_ARGS:
+  description: >
+    Replaces default arguments for global route.
+  stages:
+    - grt
+  default: -congestion_iterations 30 -congestion_report_iter_step 5 -verbose

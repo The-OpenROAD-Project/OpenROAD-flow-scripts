@@ -12,15 +12,10 @@ proc global_route_helper {} {
 
   fast_route
 
-  # The default behavior if the user didn't specify GLOBAL_ROUTE_ARGS is to
-  # produce a drc report every 5 iterations.
-  #
-  # If GLOBAL_ROUTE_ARGS is specified, then we do only what the
-  # GLOBAL_ROUTE_ARGS specifies.
   proc do_global_route {} {
-    set all_args [concat [list -congestion_report_file $::global_route_congestion_report] \
-      [expr {[env_var_exists_and_non_empty GLOBAL_ROUTE_ARGS] ? $::env(GLOBAL_ROUTE_ARGS) : \
-      {-congestion_iterations 30 -congestion_report_iter_step 5 -verbose}}]]
+    set all_args [concat [list \
+      -congestion_report_file $::global_route_congestion_report] \
+      $::env(GLOBAL_ROUTE_ARGS)]
 
     log_cmd global_route {*}$all_args
   }
