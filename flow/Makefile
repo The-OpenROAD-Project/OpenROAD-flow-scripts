@@ -160,7 +160,7 @@ export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
 export TEST_DIR      ?= $(FLOW_HOME)/test
 
-$(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(line)))
+$(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
 
 PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
