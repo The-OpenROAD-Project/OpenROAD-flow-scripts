@@ -46,24 +46,43 @@ proc recover_power {} {
   report_power
 }
 
+proc extract_stage {input_file} {
+  if {![regexp {/([0-9])_(([0-9])_)?} $input_file match num1 _ num2]} {
+    puts "ERROR: Could not determine design stage from $input_file"
+    exit 1
+  }
+  lappend number_groups $num1
+  if {$num2!=""} {
+      lappend number_groups $num2
+  } else {
+    lappend number_groups "0"
+  }
+}
+
 proc find_sdc_file {input_file} {
-    # Determine design stage (1 ... 6)
-    set input_pieces [split [file tail $input_file] "_"]
-    set design_stage [lindex $input_pieces 0]
-    if { [llength $input_pieces] == 3 } {
-      set start [expr $design_stage - 1]
-    } else {
-      set start $design_stage
+  # canonicalize input file, sometimes it is called with an input
+  # file relative to $::env(RESULTS_DIR), other times with
+  # an absolute path
+  if { ![file exists $input_file] } {
+    set input_file [file join $::env(RESULTS_DIR) $input_file]
+  }
+  set input_file [file normalize $input_file]
+
+  set stage [extract_stage $input_file]
+  set design_stage [lindex $stage 0]
+  set sdc_file ""
+
+  set exact_sdc [string map {.odb .sdc} $input_file]
+  set sdc_files [glob -nocomplain -directory $::env(RESULTS_DIR) -types f "\[1-9+\]_\[1-9_A-Za-z\]*\.sdc"]
+  set sdc_files [lsort -decreasing -dictionary $sdc_files]
+  set sdc_files [lmap file $sdc_files {file normalize $file}]
+  foreach name $sdc_files {
+    if {[lindex [lsort -decreasing -dictionary [list $name $exact_sdc] ] 0] == $exact_sdc} {
+      set sdc_file $name
+      break
     }
-    # Read SDC, first try to find the most recent SDC file for the stage
-    set sdc_file ""
-    for {set s $start} {$s > 0} {incr s -1} {
-        set sdc_file [glob -nocomplain -directory $::env(RESULTS_DIR) -types f "${s}_\[A-Za-z\]*\.sdc"]
-        if {$sdc_file != ""} {
-            break
-        }
-    }
-    return [list $design_stage $sdc_file]
+  }
+  return [list $design_stage $sdc_file]
 }
 
 proc env_var_equals {env_var value} {
