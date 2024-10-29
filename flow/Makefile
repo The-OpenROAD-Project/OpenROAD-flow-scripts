@@ -1070,7 +1070,7 @@ klayout:
 
 .phony: run
 run:
-	$(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT)
+	$(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(if $(METRICS_NAME),-metrics $(LOG_DIR)/$(METRICS_NAME).json) $(RUN_SCRIPT)
 
 # Utilities
 #-------------------------------------------------------------------------------
