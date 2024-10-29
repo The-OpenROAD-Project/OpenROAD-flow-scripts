@@ -226,9 +226,9 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
   }
 
   # TODO these only work to stdout, whereas we want to append to the $filename
-  puts "\n=========================================================================="
-  puts "$when report_design_area"
-  puts "--------------------------------------------------------------------------"
-  report_design_area
-  report_design_area_metrics
+  report_puts "\n=========================================================================="
+  report_puts "$when report_design_area"
+  report_puts "--------------------------------------------------------------------------"
+  report_design_area >> $filename
+  report_design_area_metrics >> $filename
 }
