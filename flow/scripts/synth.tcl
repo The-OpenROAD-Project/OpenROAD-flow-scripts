@@ -1,9 +1,31 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
-source $::env(SYNTH_STOP_MODULE_SCRIPT)
+hierarchy -check -top $::env(DESIGN_NAME)
+
+set ungroup_threshold 0
+if { $::env(MAX_UNGROUP_SIZE) > 0 } {
+  set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
+  puts "Ungroup modules of size greater than $ungroup_threshold"
+}
+
+set fp [open $::env(SYNTH_STATS) r]
+while {[gets $fp line] != -1} {
+    set fields [split $line " "]
+    set area [lindex $fields 0]
+    set module_name [lindex $fields 1]
+
+    if {[expr $area > $ungroup_threshold]} {
+      puts "Keeping module $module_name (area: $area)"
+      select -module $module_name
+      setattr -mod -set keep_hierarchy 1
+      select -clear
+    } else {
+      puts "Flattening module $module_name (area: $area)"
+    }
+}
+close $fp
 
 if { [env_var_equals SYNTH_GUT 1] } {
-  hierarchy -check -top $::env(DESIGN_NAME)
   # /deletes all cells at the top level, which will quickly optimize away
   # everything else, including macros.
   delete $::env(DESIGN_NAME)/c:*
