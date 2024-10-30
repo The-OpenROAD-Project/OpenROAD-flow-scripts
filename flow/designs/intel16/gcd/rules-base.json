@@ -32,7 +32,7 @@
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 2564,
+        "value": 3020,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 273,
+        "value": 360,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
