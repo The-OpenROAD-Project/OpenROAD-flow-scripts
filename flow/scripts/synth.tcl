@@ -9,7 +9,7 @@ if { [env_var_equals SYNTH_GUT 1] } {
   delete $::env(DESIGN_NAME)/c:*
 }
 
-synthesize_check $::env(SYNTH_FULL_ARGS)
+synthesize_check mem $::env(SYNTH_FULL_ARGS)
 
 # rename registers to have the verilog register name in its name
 # of the form \regName$_DFF_P_. We should fix yosys to make it the reg name.
