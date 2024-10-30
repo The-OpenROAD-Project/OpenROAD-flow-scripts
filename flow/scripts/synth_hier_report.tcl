@@ -2,7 +2,7 @@ source $::env(SCRIPTS_DIR)/util.tcl
 
 proc write_keep_hierarchy {} {
   if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
-    set out_script_ptr [open $::env(SYNTH_STOP_MODULE_SCRIPT) w]
+    set out_script_ptr [open $::env(SYNTH_STATS) w]
     close $out_script_ptr
     return
   }
@@ -65,7 +65,7 @@ proc write_keep_hierarchy {} {
   }
   set areas [lsort -index 0 -real $areas]
 
-  set out_script_ptr [open $::env(SYNTH_STOP_MODULE_SCRIPT) w]
+  set out_script_ptr [open $::env(SYNTH_STATS) w]
   foreach {line} $areas {
     puts $out_script_ptr $line
   }

@@ -8,19 +8,19 @@ if { $::env(MAX_UNGROUP_SIZE) > 0 } {
   puts "Ungroup modules of size greater than $ungroup_threshold"
 }
 
-set fp [open $::env(SYNTH_STOP_MODULE_SCRIPT) r]
+set fp [open $::env(SYNTH_STATS) r]
 while {[gets $fp line] != -1} {
     set fields [split $line " "]
     set area [lindex $fields 0]
     set module_name [lindex $fields 1]
 
     if {[expr $area > $ungroup_threshold]} {
-      puts "Keeping $area $module_name"
+      puts "Keeping module $module_name (area: $area)"
       select -module $module_name
       setattr -mod -set keep_hierarchy 1
       select -clear
     } else {
-      puts "Flattening $area $module_name"
+      puts "Flattening module $module_name (area: $area)"
     }
 }
 close $fp
