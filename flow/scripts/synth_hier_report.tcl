@@ -73,7 +73,6 @@ proc write_keep_hierarchy {} {
         }
       }
     }
-    file delete -force $::env(REPORTS_DIR)/synth_hier_stat_temp_module.txt
   }
   close $out_script_ptr
 }
