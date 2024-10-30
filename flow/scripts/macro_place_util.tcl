@@ -57,8 +57,7 @@ if {[find_macros] != ""} {
     append_env_var additional_rtlmp_args RTLMP_FENCE_UX -fence_ux 1
     append_env_var additional_rtlmp_args RTLMP_FENCE_UY -fence_uy 1
 
-    source $::env(SCRIPTS_DIR)/set_place_density.tcl
-    append additional_rtlmp_args " -target_util $place_density"
+    append additional_rtlmp_args " -target_util [place_density_with_lb_addon]"
 
     set all_args $additional_rtlmp_args
 
