@@ -25,11 +25,6 @@ proc write_keep_hierarchy {} {
 
   tee -o $::env(REPORTS_DIR)/synth_hier_stat.txt stat {*}$stat_libs
 
-  set ungroup_threshold 0
-  if { [env_var_exists_and_non_empty MAX_UNGROUP_SIZE] && $::env(MAX_UNGROUP_SIZE) > 0 } {
-    set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
-    puts "Ungroup modules of size $ungroup_threshold"
-  }
   hierarchy -check -top $::env(DESIGN_NAME)
   set fptr [open $::env(REPORTS_DIR)/synth_hier_stat.txt r]
   set contents [read -nonewline $fptr]
@@ -53,8 +48,8 @@ proc write_keep_hierarchy {} {
       }
     }
   }
-  set out_script_ptr [open $::env(SYNTH_STOP_MODULE_SCRIPT) w]
-  puts $out_script_ptr "hierarchy -check -top $::env(DESIGN_NAME)"
+
+  set areas {}
   foreach module $module_list {
     tee -o $::env(REPORTS_DIR)/synth_hier_stat_temp_module.txt stat -top "$module" {*}$stat_libs
     set fptr1 [open $::env(REPORTS_DIR)/synth_hier_stat_temp_module.txt r]
@@ -63,17 +58,16 @@ proc write_keep_hierarchy {} {
     set split_cont1 [split $contents1 "\n"]
     foreach line $split_cont1 {
       if {[regexp { +Chip area for top module '(\S+)': (.*)} $line -> module_name area]} {
-        if {[expr $area > $ungroup_threshold]} {
-            puts "Preserving module: $module_name (area: $area)"
-            puts $out_script_ptr "select -module {$module_name}"
-            puts $out_script_ptr "setattr -mod -set keep_hierarchy 1"
-            puts $out_script_ptr "select -clear"
-        } else {
-          puts "Flattening module $module_name (area: $area)"
-        }
+        lappend areas "$area $module_name"
       }
     }
     file delete -force $::env(REPORTS_DIR)/synth_hier_stat_temp_module.txt
+  }
+  set areas [lsort -index 0 -real $areas]
+
+  set out_script_ptr [open $::env(SYNTH_STOP_MODULE_SCRIPT) w]
+  foreach {line} $areas {
+    puts $out_script_ptr $line
   }
   close $out_script_ptr
 }
