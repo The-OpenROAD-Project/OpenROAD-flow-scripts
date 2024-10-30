@@ -9,7 +9,7 @@ proc write_keep_hierarchy {} {
 
   source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
-  synthesize_check {}
+  synthesize_check mem_hierarchical {}
 
   if { [env_var_exists_and_non_empty ADDER_MAP_FILE] && [file isfile $::env(ADDER_MAP_FILE)] } {
     techmap -map $::env(ADDER_MAP_FILE)
