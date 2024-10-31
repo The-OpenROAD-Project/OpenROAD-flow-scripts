@@ -147,6 +147,7 @@ proc place_density_with_lb_addon {} {
     if {$place_density > 1.0} {
       utl::error FLW 24 "Place density exceeds 1.0 (current PLACE_DENSITY_LB_ADDON = $::env(PLACE_DENSITY_LB_ADDON)). Please check if the value of PLACE_DENSITY_LB_ADDON is between 0 and 0.99."
     }
+    puts "Placement density is $place_density, computed from PLACE_DENSITY_LB_ADDON $::env(PLACE_DENSITY_LB_ADDON) and lower bound $place_density_lb"
   } else {
     set place_density $::env(PLACE_DENSITY)
   }
