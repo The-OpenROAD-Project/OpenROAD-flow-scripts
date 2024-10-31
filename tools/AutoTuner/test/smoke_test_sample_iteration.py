@@ -27,6 +27,7 @@ class BaseSampleIterationSmokeTest(unittest.TestCase):
             f" tune --samples {s} --iterations {i}"
             for s, i in self.matrix
         ]
+        subprocess.run(["ray", "stop"], shell=True, check=True)
 
 
 class ASAP7SampleIterationSmokeTest(BaseSampleIterationSmokeTest):

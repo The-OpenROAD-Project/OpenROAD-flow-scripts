@@ -26,6 +26,7 @@ class RefFileCheck(unittest.TestCase):
             f" tune --samples 1"
             for c in configs
         ]
+        subprocess.run(["ray", "stop"], shell=True, check=True)
 
     # Make this a test case
     def test_files(self):

@@ -39,6 +39,7 @@ class BaseSweepSmokeTest(unittest.TestCase):
             f" --jobs {self.jobs}"
             f" sweep"
         )
+        subprocess.run(["ray", "stop"], shell=True, check=True)
 
     def test_sweep(self):
         raise NotImplementedError(

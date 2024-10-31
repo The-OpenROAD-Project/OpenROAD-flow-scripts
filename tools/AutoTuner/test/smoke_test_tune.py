@@ -25,6 +25,7 @@ class BaseTuneSmokeTest(unittest.TestCase):
             f" --config {self.config}"
             f" tune --samples 5"
         )
+        subprocess.run(["ray", "stop"], shell=True, check=True)
 
     def test_tune(self):
         raise NotImplementedError(
