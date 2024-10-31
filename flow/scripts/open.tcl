@@ -1,3 +1,13 @@
+# This script is used to launch the OpenROAD user ineterface
+# console as well as GUI mode. The user interface will remain
+# go from batch to interactive mode after this script has
+# been executed, whether it failed or not. For instance,
+# a failed global route run can be loaded to examine the
+# DRC errors.
+#
+# However, this script is also used to load the design and timing
+# in automation scripts, hence the script should fail upon
+# errors, not continue.
 source $::env(SCRIPTS_DIR)/util.tcl
 # Read liberty files
 source $::env(SCRIPTS_DIR)/read_liberty.tcl
@@ -44,8 +54,9 @@ proc read_timing {input_file} {
     if { [grt::have_routes] } {
       log_cmd estimate_parasitics -global_routing
     } else {
-      puts "No global routing results available, skipping estimate_parasitics"
-      puts "Load $::global_route_congestion_report for details"
+      error "No global routing results available,\
+      skipping estimate_parasitics,\
+      load $::global_route_congestion_report for details"
     }
   } elseif {$design_stage >= 3} {
     log_cmd estimate_parasitics -placement
