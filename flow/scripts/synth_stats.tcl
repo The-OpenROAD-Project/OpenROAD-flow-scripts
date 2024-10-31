@@ -1,3 +1,8 @@
+# Gather statistics, if needed. Gathering the statistics is
+# time consuming, because it requires a full synthesis run.
+#
+# The statistics is needed for SYNTH_HIERARCHICAL=1 flattening/keep
+# module policy, and write to $::env(SYNTH_STATS)
 source $::env(SCRIPTS_DIR)/util.tcl
 
 proc write_keep_hierarchy {} {
@@ -51,8 +56,8 @@ proc write_keep_hierarchy {} {
 
   set areas {}
   foreach module $module_list {
-    tee -o $::env(OBJECTS_DIR)/synth_hier_stat_temp_module.txt stat -top "$module" {*}$stat_libs
-    set fptr1 [open $::env(OBJECTS_DIR)/synth_hier_stat_temp_module.txt r]
+    tee -o $::env(OBJECTS_DIR)/synth_stat_temp_module.txt stat -top "$module" {*}$stat_libs
+    set fptr1 [open $::env(OBJECTS_DIR)/synth_stat_temp_module.txt r]
     set contents1 [read -nonewline $fptr1]
     close $fptr1
     set split_cont1 [split $contents1 "\n"]
@@ -61,7 +66,7 @@ proc write_keep_hierarchy {} {
         lappend areas "$area $module_name"
       }
     }
-    file delete -force $::env(OBJECTS_DIR)/synth_hier_stat_temp_module.txt
+    file delete -force $::env(OBJECTS_DIR)/synth_stat_temp_module.txt
   }
   set areas [lsort -index 0 -real $areas]
 
