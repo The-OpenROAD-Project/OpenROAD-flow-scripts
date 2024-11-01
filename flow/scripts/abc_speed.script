@@ -4,26 +4,31 @@
 &nf
 &st
 &syn2
+&retime
 &if -s -g -K 6
 &synch2
 &nf
 &st
 &syn2
+&retime
 &if -s -g -K 6
 &synch2
 &nf
 &st
 &syn2
+&retime
 &if -s -g -K 6
 &synch2
 &nf
 &st
 &syn2
+&retime
 &if -s -g -K 6
 &synch2
 &nf
 &st
 &syn2
+&retime
 &if -s -g -K 6
 &synch2
 &nf
