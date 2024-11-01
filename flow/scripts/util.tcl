@@ -15,11 +15,10 @@ proc fast_route {} {
   }
 }
 
-# -hold_margin is only set when hold_margin is set, default 1
 proc repair_timing_helper { {hold_margin 1} } {
   set additional_args "-verbose"
   append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
-  if {$hold_margin} {
+  if {$hold_margin || $::env(HOLD_SLACK_MARGIN) < 0} {
     append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
   }
   append_env_var additional_args TNS_END_PERCENT -repair_tns 1
