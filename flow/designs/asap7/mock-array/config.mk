@@ -69,8 +69,6 @@ export GLOBAL_ROUTE_ARGS=-congestion_iterations 40 -verbose
 export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
 
-export CTS_BUF_DISTANCE = 60
-
 export ADDITIONAL_FILES = designs/src/mock-array/util.tcl
 
 export IO_PLACER_V = M5 M7
