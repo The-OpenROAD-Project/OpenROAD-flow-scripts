@@ -81,6 +81,18 @@ CORE_AREA:
     (X1 Y1 X2 Y2).
   stages:
     - floorplan
+REPORT_CLOCK_SKEW:
+  description:
+    Report clock skew as part of reporting metrics, starting at CTS,
+    before which there is no clock skew.
+
+    This metric can be quite time-consuming, so it can be useful to disable.
+  stages:
+    - cts
+    - grt
+    - route
+    - final
+  default: 1
 SKIP_REPORT_METRICS:
   description: >
     If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.
