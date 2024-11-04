@@ -5,11 +5,11 @@ export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 10000
 #
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/ariane.sv2v.v \
-                       ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
+export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NAME)/ariane.sv2v.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/macros.v
 
-#export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint_hier.sdc
+#export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint_hier.sdc
 
 export WRAP_LEFS = $(PLATFORM_DIR)/lef/gf12lp_1rf_lg8_w64_byte.lef
 
@@ -27,7 +27,7 @@ export PLACE_PINS_ARGS = -exclude left:0-150 -exclude left:450-600 -exclude righ
 export MACRO_PLACE_HALO = 7 7 
 export MACRO_PLACE_CHANNEL = 14 14
 
-export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
+export MACRO_WRAPPERS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
 ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL

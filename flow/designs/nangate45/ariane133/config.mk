@@ -10,10 +10,10 @@ export RTLMP_MIN_INST = 5000
 export RTLMP_MAX_MACRO = 16
 export RTLMP_MIN_MACRO = 4
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/ariane.sv2v.v \
-                       ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
+export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/ariane.sv2v.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
 
-export SDC_FILE      = ./designs/$(PLATFORM)/ariane133/ariane.sdc
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/ariane133/ariane.sdc
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram45_256x16.lef
 export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_256x16.lib
