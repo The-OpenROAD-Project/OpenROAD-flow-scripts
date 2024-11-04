@@ -3,9 +3,9 @@ export PLATFORM               = asap7
 export DESIGN_NAME            = jpeg_encoder
 export DESIGN_NICKNAME        = jpeg_lvt
 
-export VERILOG_FILES          = $(sort $(wildcard ./designs/src/$(DESIGN_NICKNAME)/*.v))
-export VERILOG_INCLUDE_DIRS   = ./designs/src/$(DESIGN_NICKNAME)/include
-export SDC_FILE               = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_7nm.sdc
+export VERILOG_FILES          = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*.v))
+export VERILOG_INCLUDE_DIRS   = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/include
+export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_7nm.sdc
 export ABC_AREA               = 1
 
 export ADDITIONAL_LIBS        = $(LIB_DIR)/asap7sc7p5t_AO_LVT_FF_nldm_211120.lib.gz \

@@ -2,8 +2,8 @@ export DESIGN_NICKNAME = riscv32i-mock-sram_fakeram7_256x32
 export DESIGN_NAME = fakeram7_256x32
 export PLATFORM    = asap7
 
-export VERILOG_FILES = ./designs/asap7/riscv32i-mock-sram/fakeram7_256x32/*.v
-export SDC_FILE      = ./designs/$(PLATFORM)/riscv32i-mock-sram/fakeram7_256x32/constraints.sdc
+export VERILOG_FILES = $(DESIGN_HOME)/asap7/riscv32i-mock-sram/fakeram7_256x32/*.v
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/riscv32i-mock-sram/fakeram7_256x32/constraints.sdc
 
 export CORE_UTILIZATION = 50
 export CORE_ASPECT_RATIO = 8
