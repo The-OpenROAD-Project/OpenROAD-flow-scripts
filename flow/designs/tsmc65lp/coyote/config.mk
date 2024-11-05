@@ -11,10 +11,10 @@ export RTLMP_MIN_INST = 5000
 export RTLMP_MAX_MACRO = 10
 export RTLMP_MIN_MACRO = 5 
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \
-                       ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
-#export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_hier.sdc
+export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
+#export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_hier.sdc
 export ABC_AREA      = 1
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/tsmc65lp_1rf_lg6_w80_bit.lef \

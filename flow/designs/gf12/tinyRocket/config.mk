@@ -5,14 +5,14 @@ export PLATFORM    = gf12
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 1000
 
-export VERILOG_FILES  = ./designs/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
-                        ./designs/src/$(DESIGN_NICKNAME)/ClockDivider2.v \
-                        ./designs/src/$(DESIGN_NICKNAME)/ClockDivider3.v \
-                        ./designs/src/$(DESIGN_NICKNAME)/plusarg_reader.v \
-                        ./designs/src/$(DESIGN_NICKNAME)/freechips.rocketchip.system.TinyConfig.v \
-                        ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
+export VERILOG_FILES  = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
+                        $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/ClockDivider2.v \
+                        $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/ClockDivider3.v \
+                        $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/plusarg_reader.v \
+                        $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/freechips.rocketchip.system.TinyConfig.v \
+                        $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
 
-export SDC_FILE       = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE       = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export WRAP_LEFS      = $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w32_all.lef \
                         $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w32_byte.lef
@@ -31,7 +31,7 @@ export CORE_AREA   = 19.992 20.16 380.016 380.16
 
 export PLACE_DENSITY = 0.20
 
-export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
+export MACRO_WRAPPERS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
 ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL

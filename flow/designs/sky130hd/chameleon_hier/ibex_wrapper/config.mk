@@ -1,10 +1,10 @@
 export TOP_NICKNAME = chameleon_hier
-export TOP_DIR = ./designs/$(PLATFORM)/${TOP_NICKNAME}
+export TOP_DIR = $(DESIGN_HOME)/$(PLATFORM)/${TOP_NICKNAME}
 
 export DESIGN_NAME = ibex_wrapper
 export DESIGN_NICKNAME = ${TOP_NICKNAME}_${DESIGN_NAME}
 export PLATFORM    = sky130hd
-export RTL_DIR  = ./designs/src/${TOP_NICKNAME}/rtl
+export RTL_DIR  = $(DESIGN_HOME)/src/${TOP_NICKNAME}/rtl
 
 export VERILOG_FILES = \
                          ${RTL_DIR}/ibex/ibex_core.v\

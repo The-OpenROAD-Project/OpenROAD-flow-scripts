@@ -11,8 +11,8 @@ export RTLMP_MAX_MACRO = 5
 
 export MAX_UNGROUP_SIZE ?= 1000
 
-export VERILOG_FILES = $(sort $(wildcard ./designs/src/riscv32i/*.v))
-export SDC_FILE      = ./designs/$(PLATFORM)/riscv32i/constraint.sdc
+export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/riscv32i/*.v))
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/riscv32i/constraint.sdc
 
 ifeq ($(BLOCKS),)
 	export ADDITIONAL_LEFS = ./platforms/$(PLATFORM)/lef/fakeram7_256x32.lef

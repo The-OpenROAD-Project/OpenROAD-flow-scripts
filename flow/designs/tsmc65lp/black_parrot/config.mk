@@ -10,9 +10,9 @@ export RTLMP_MIN_INST = 5000
 export RTLMP_MAX_MACRO = 12
 export RTLMP_MIN_MACRO = 4 
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NAME)/pickled.v \
-                       ./designs/$(PLATFORM)/$(DESIGN_NAME)/macros.v
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
+export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NAME)/pickled.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/macros.v
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/tsmc65lp_1rf_lg6_w16_bit.lef \
                          $(PLATFORM_DIR)/lef/tsmc65lp_1rf_lg6_w8_bit.lef \

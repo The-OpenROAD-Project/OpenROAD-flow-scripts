@@ -12,15 +12,15 @@ export SKY130_IO_VERSION ?= v0.2.0
 export OPENRAMS_DIR = ./platforms/sky130ram
 export IO_DIR       = ./platforms/sky130io
 
-export VERILOG_FILES = ./designs/$(PLATFORM)/coyote_tc/ios.v \
-                       ./designs/$(PLATFORM)/coyote_tc/macros.v \
-                       ./designs/src/coyote_tc/coyote_tc.v \
-                       ./designs/src/coyote/coyote.sv2v.v \
+export VERILOG_FILES = $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/ios.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/macros.v \
+                       $(DESIGN_HOME)/src/coyote_tc/coyote_tc.v \
+                       $(DESIGN_HOME)/src/coyote/coyote.sv2v.v \
                        $(IO_DIR)/verilog/sky130_io.blackbox.v
 
-export SDC_FILE      = ./designs/$(PLATFORM)/coyote_tc/constraint.sdc
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/constraint.sdc
 
-export FOOTPRINT_TCL = ./designs/$(PLATFORM)/coyote_tc/pad.tcl
+export FOOTPRINT_TCL = $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/pad.tcl
 
 export ADDITIONAL_LIBS = $(OPENRAMS_DIR)/sky130_sram_1rw1r_80x64_8/sky130_sram_1rw1r_80x64_8_TT_1p8V_25C.lib \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_128x256_8/sky130_sram_1rw1r_128x256_8_TT_1p8V_25C.lib \
@@ -61,7 +61,7 @@ export DIE_AREA    = 0.0 0.0 5200 4609.14
 export CORE_AREA   = 250 250 4950 4349.14
 
 # Use custom power grid with core rings offset from the pads
-export PDN_TCL = ./designs/$(PLATFORM)/coyote_tc/pdn.tcl
+export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/pdn.tcl
 
 # Point to the RC file
 export SETRC_FILE = $(PLATFORM_DIR)/setRC.tcl
