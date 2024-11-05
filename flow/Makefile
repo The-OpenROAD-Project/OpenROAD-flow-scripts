@@ -210,6 +210,9 @@ export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
 export ENABLE_DPO ?= 1
 export DPO_MAX_DISPLACEMENT ?= 5 1
 
+# Settings for Sizing
+export HONOR_CELL_FOOTPRINT ?= 0
+
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 

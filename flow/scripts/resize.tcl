@@ -21,18 +21,7 @@ if { ![env_var_exists_and_non_empty FOOTPRINT] } {
   }
 }
 
-puts "Perform buffer insertion..."
-set additional_args ""
-if { [env_var_exists_and_non_empty CAP_MARGIN] && $::env(CAP_MARGIN) > 0.0} {
-  puts "Cap margin $::env(CAP_MARGIN)"
-  append additional_args " -cap_margin $::env(CAP_MARGIN)"
-}
-if { [env_var_exists_and_non_empty SLEW_MARGIN] && $::env(SLEW_MARGIN) > 0.0} {
-  puts "Slew margin $::env(SLEW_MARGIN)"
-  append additional_args " -slew_margin $::env(SLEW_MARGIN)"
-}
-
-repair_design {*}$additional_args
+repair_design_helper
 
 if { [env_var_exists_and_non_empty TIE_SEPARATION] } {
   set tie_separation $env(TIE_SEPARATION)
