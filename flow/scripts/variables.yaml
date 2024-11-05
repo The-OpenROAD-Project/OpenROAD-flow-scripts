@@ -622,3 +622,11 @@ GLOBAL_ROUTE_ARGS:
   stages:
     - grt
   default: -congestion_iterations 30 -congestion_report_iter_step 5 -verbose
+MATCH_CELL_FOOTPRINT:
+  description: >
+    Enforce sizing operations to only swap cells that have the same layout boundary.
+  stages:
+    - floorplan
+    - place
+    - cts
+    - route

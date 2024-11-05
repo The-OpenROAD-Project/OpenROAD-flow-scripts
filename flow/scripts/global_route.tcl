@@ -51,8 +51,7 @@ proc global_route_helper {} {
     }
 
     # Repair design using global route parasitics
-    puts "Perform buffer insertion..."
-    repair_design
+    repair_design_helper
     if { $::env(DETAILED_METRICS) } {
       report_metrics 5 "global route post repair design"
     }
