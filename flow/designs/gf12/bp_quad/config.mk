@@ -43,8 +43,6 @@ export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclud
 
 export PLACE_DENSITY_LB_ADDON = 0.02
 
-export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
-
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
 # Define macro halo and channel spacings

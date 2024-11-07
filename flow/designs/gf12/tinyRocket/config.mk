@@ -31,8 +31,6 @@ export CORE_AREA   = 19.992 20.16 380.016 380.16
 
 export PLACE_DENSITY = 0.20
 
-export MACRO_WRAPPERS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
-
 ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL
 else

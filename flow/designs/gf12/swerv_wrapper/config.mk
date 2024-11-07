@@ -32,7 +32,6 @@ export CORE_AREA   = 2 2 608 498
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-10 -exclude bottom:400-700
 
 export PLACE_DENSITY_LB_ADDON = 0.05
-export MACRO_WRAPPERS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 #
 export MACRO_PLACE_HALO = 7 7
 export MACRO_PLACE_CHANNEL = 14 14

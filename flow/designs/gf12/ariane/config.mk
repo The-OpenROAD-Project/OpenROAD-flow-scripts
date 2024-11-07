@@ -27,7 +27,6 @@ export PLACE_PINS_ARGS = -exclude left:0-150 -exclude left:450-600 -exclude righ
 export MACRO_PLACE_HALO = 7 7 
 export MACRO_PLACE_CHANNEL = 14 14
 
-export MACRO_WRAPPERS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
 ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL

@@ -53,8 +53,6 @@ export PLACE_PINS_ARGS = -exclude left:0-600 -exclude left:1350-1400 -exclude ri
 export MACRO_PLACE_HALO = 7 7
 export MACRO_PLACE_CHANNEL = 14 14
 
-export MACRO_WRAPPERS = $(dir $(DESIGN_CONFIG))/wrappers.tcl
-
 #export MAX_ROUTING_LAYER = H2 
 export FASTROUTE_TCL = $(dir $(DESIGN_CONFIG))/fastroute.tcl
 #

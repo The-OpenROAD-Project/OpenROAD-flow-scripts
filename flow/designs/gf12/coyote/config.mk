@@ -25,8 +25,6 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w80_bit.gds2 \
 
 export PLACE_DENSITY = 0.35
 
-export MACRO_WRAPPERS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
-
 export DIE_AREA    = 0 0 752 752
 export CORE_AREA   = 2 2 750 750
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:450-750
