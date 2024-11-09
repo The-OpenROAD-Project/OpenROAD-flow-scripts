@@ -16,25 +16,25 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: 'recursive'
-    - name: Run generate-variable-docs.py
+    - name: Run generate-variables-docs.py
       run: |
-        python3 flow/scripts/generate-variable-docs.py
+        python3 flow/scripts/generate-variables-docs.py
     - name: Run yamlfix check
       run: |
         yamlfix -c yamlfix.toml flow/scripts/variables.yaml --check
 
   docs-pr-update:
     name: 'Create PR to update ORFS FlowVariables.md and variables.yaml'
-    if: "github.event_name == 'push'"
+    if: "github.event_name == 'pull_request' || github.event_name == 'push'"
     needs:
       - docs-test-job
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Run generate-variable-docs.py
+    - name: Run generate-variables-docs.py
       run: |
-        python3 flow/scripts/generate-variable-docs.py
+        python3 flow/scripts/generate-variables-docs.py
     - name: Run yamlfix
       run: |
         pip install yamlfix==1.17.0
