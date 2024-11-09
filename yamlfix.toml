@@ -1,5 +1,5 @@
 explicit_start = true
-line_length = 120
+line_length = 80
 preserve_quotes = true
 quote_representation = "'"
 section_whitelines = 0

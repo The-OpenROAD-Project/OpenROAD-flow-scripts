@@ -7,7 +7,7 @@ on:
 jobs:
   docs-test-job:
     name: 'Tests for variables.yaml'
-    if: "github.event_name == 'pull_request' || github.event_name == 'push'"
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
     runs-on: ubuntu-latest
     container:
       image: openroad/ubuntu-cpp20
@@ -19,13 +19,17 @@ jobs:
     - name: Run generate-variables-docs.py
       run: |
         python3 flow/scripts/generate-variables-docs.py
+    - name: Check if FlowVariables.md is up to date
+      run: |
+        git diff --exit-code docs/user/FlowVariables.md
     - name: Run yamlfix check
       run: |
+        pip install yamlfix==1.17.0
         yamlfix -c yamlfix.toml flow/scripts/variables.yaml --check
 
   docs-pr-update:
     name: 'Create PR to update ORFS FlowVariables.md and variables.yaml'
-    if: "github.event_name == 'pull_request' || github.event_name == 'push'"
+    if: github.event_name == 'push'
     needs:
       - docs-test-job
     runs-on: ubuntu-latest

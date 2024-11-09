@@ -106,10 +106,9 @@ CORE_AREA:
   stages:
     - floorplan
 REPORT_CLOCK_SKEW:
-  description:
-    Report clock skew as part of reporting metrics, starting at CTS,
-    before which there is no clock skew.
-
+  description: >
+    Report clock skew as part of reporting metrics, starting at CTS, before which
+    there is no clock skew.
     This metric can be quite time-consuming, so it can be useful to disable.
   stages:
     - cts
