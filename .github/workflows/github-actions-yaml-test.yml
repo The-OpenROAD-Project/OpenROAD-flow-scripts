@@ -2,10 +2,12 @@ name: ORFS variables.yaml tester and linter
 
 on:
   push:
+  pull_request:
 
 jobs:
   docs-test-job:
     name: 'Tests for variables.yaml'
+    if: "github.event_name == 'pull_request' || github.event_name == 'push'"
     runs-on: ubuntu-latest
     container:
       image: openroad/ubuntu-cpp20
@@ -23,6 +25,7 @@ jobs:
 
   docs-pr-update:
     name: 'Create PR to update ORFS FlowVariables.md and variables.yaml'
+    if: "github.event_name == 'push'"
     needs:
       - docs-test-job
     runs-on: ubuntu-latest
