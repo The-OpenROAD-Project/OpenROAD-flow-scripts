@@ -612,7 +612,7 @@ FASTROUTE_TCL:
 USE_FILL:
   description: >
     Whether to perform metal density filling.
-  default: 0 (=off)
+  default: 0
 SEAL_GDS:
   description: >
     Seal macro to place around the design.
