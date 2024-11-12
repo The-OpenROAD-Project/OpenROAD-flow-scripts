@@ -55,6 +55,7 @@ configuration file.
 | <a name="ABC_CLOCK_PERIOD_IN_PS"></a>ABC_CLOCK_PERIOD_IN_PS| Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`.|  |
 | <a name="ABC_DRIVER_CELL"></a>ABC_DRIVER_CELL| Default driver cell used during ABC synthesis.|  |
 | <a name="ABC_LOAD_IN_FF"></a>ABC_LOAD_IN_FF| During synthesis set_load value used.|  |
+| <a name="ABSTRACT_SOURCE"></a>ABSTRACT_SOURCE| Which .odb file to use to create abstract|  |
 | <a name="ADDER_MAP_FILE"></a>ADDER_MAP_FILE| List of adders treated as a black box by Yosys.|  |
 | <a name="ADDITIONAL_FILES"></a>ADDITIONAL_FILES| Additional files to be added to `make issue` archive.|  |
 | <a name="ADDITIONAL_GDS"></a>ADDITIONAL_GDS| Hardened macro GDS files listed here.|  |
@@ -95,13 +96,13 @@ configuration file.
 | <a name="GDS_FILES"></a>GDS_FILES| Path to platform GDS files.|  |
 | <a name="GENERATE_ARTIFACTS_ON_FAILURE"></a>GENERATE_ARTIFACTS_ON_FAILURE| For instance Bazel needs artifacts (.odb and .rpt files) on a failure to allow the user to save hours on re-running the failed step locally, but when working with a Makefile flow, it is more natural to fail the step and leave the user to manually inspect the logs and artifacts directly via the file system. Set to 1 to change the behavior to generate artifacts upon failure to e.g. do a global route. The exit code will still be non-zero on all other failures that aren't covered by the "useful to inspect the artifacts on failure" use-case. Example: just like detailed routing, a global route that fails with congestion, is not a build failure(as in exit code non-zero), it is a successful(as in zero exit code) global route that produce reports detailing the problem. Detailed route will not proceed, if there is global routing congestion This allows build systems, such as bazel, to create artifacts for global and detailed route, even if the operation had problems, without having know about the semantics between global and detailed route. Considering that global and detailed route can run for a long time and use a lot of memory, this allows inspecting results on a laptop for a build that ran on a server.| 0 |
 | <a name="GLOBAL_PLACEMENT_ARGS"></a>GLOBAL_PLACEMENT_ARGS| Use additional tuning parameters during global placement other than default args defined in global_place.tcl.|  |
-| <a name="GLOBAL_ROUTE_ARGS"></a>GLOBAL_ROUTE_ARGS| Use additional tuning parameters during global routing other than default args defined in global_route.tcl.|  |
+| <a name="GLOBAL_ROUTE_ARGS"></a>GLOBAL_ROUTE_ARGS| Replaces default arguments for global route.| -congestion_iterations 30 -congestion_report_iter_step 5 -verbose |
 | <a name="GND_NETS_VOLTAGES"></a>GND_NETS_VOLTAGES| Used for IR Drop calculation.|  |
 | <a name="GPL_ROUTABILITY_DRIVEN"></a>GPL_ROUTABILITY_DRIVEN| Specifies whether the placer should use routability driven placement.|  |
 | <a name="GPL_TIMING_DRIVEN"></a>GPL_TIMING_DRIVEN| Specifies whether the placer should use timing driven placement.|  |
-| <a name="GUI_TIMING"></a>GUI_TIMING| Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.|  |
-| <a name="HOLD_SLACK_MARGIN"></a>HOLD_SLACK_MARGIN| Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix.|  |
-| <a name="IO_CONSTRAINTS"></a>IO_CONSTRAINTS| Specifies the path of a TCL file on how to place the I/O pins.  |
+| <a name="GUI_TIMING"></a>GUI_TIMING| Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.| 1 |
+| <a name="HOLD_SLACK_MARGIN"></a>HOLD_SLACK_MARGIN| Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack).|  |
+| <a name="IO_CONSTRAINTS"></a>IO_CONSTRAINTS| File path to the IO constraints .tcl file.|  |
 | <a name="IO_PLACER_H"></a>IO_PLACER_H| The metal layer on which to place the I/O pins horizontally (top and bottom of the die).|  |
 | <a name="IO_PLACER_V"></a>IO_PLACER_V| The metal layer on which to place the I/O pins vertically (sides of the die).|  |
 | <a name="IR_DROP_LAYER"></a>IR_DROP_LAYER| Default metal layer to report IR drop.|  |
@@ -114,10 +115,11 @@ configuration file.
 | <a name="MACRO_HALO_Y"></a>MACRO_HALO_Y| Set macro halo for y-direction. Only available for ASAP7 PDK.|  |
 | <a name="MACRO_PLACEMENT"></a>MACRO_PLACEMENT| Specifies the path of a file on how to place certain macros manually using read_macro_placement.|  |
 | <a name="MACRO_PLACEMENT_TCL"></a>MACRO_PLACEMENT_TCL| Specifies the path of a TCL file on how to place certain macros manually.|  |
-| <a name="MACRO_PLACE_CHANNEL"></a>MACRO_PLACE_CHANNEL| Horizontal/vertical channel width between macros (microns). Used by automatic macro placement when RTLMP_FLOW is disabled. Imagine channel=10 and halo=5. Then macros must be 10 apart but standard cells must be 5 away from a macro.|  |
+| <a name="MACRO_PLACE_CHANNEL"></a>MACRO_PLACE_CHANNEL| Horizontal/vertical channel width between macros (microns). Used by automatic macro placement. Imagine channel=10 and halo=5. Then macros must be 10 apart but standard cells must be 5 away from a macro.|  |
 | <a name="MACRO_PLACE_HALO"></a>MACRO_PLACE_HALO| Horizontal/vertical halo around macros (microns). Used by automatic macro placement.|  |
 | <a name="MACRO_WRAPPERS"></a>MACRO_WRAPPERS| The wrapper file that replaces existing macros with their wrapped version.|  |
 | <a name="MAKE_TRACKS"></a>MAKE_TRACKS| Tcl file that defines add routing tracks to a floorplan.|  |
+| <a name="MATCH_CELL_FOOTPRINT"></a>MATCH_CELL_FOOTPRINT| Enforce sizing operations to only swap cells that have the same layout boundary.|  |
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.|  |
 | <a name="MAX_UNGROUP_SIZE"></a>MAX_UNGROUP_SIZE| For hierarchical synthesis, we ungroup modules of size given by this variable.|  |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.|  |
@@ -125,7 +127,7 @@ configuration file.
 | <a name="PDN_TCL"></a>PDN_TCL| File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.|  |
 | <a name="PLACE_DENSITY"></a>PLACE_DENSITY| The desired placement density of cells. It reflects how spread the cells would be on the core area. 1.0 = closely dense. 0.0 = widely spread.|  |
 | <a name="PLACE_DENSITY_LB_ADDON"></a>PLACE_DENSITY_LB_ADDON| Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.|  |
-| <a name="PLACE_PINS_ARGS"></a>PLACE_PINS_ARGS| Additional command line options to provide to place_pins command.|  |
+| <a name="PLACE_PINS_ARGS"></a>PLACE_PINS_ARGS| Arguments to place_pins|  |
 | <a name="PLACE_SITE"></a>PLACE_SITE| Placement site for core cells defined in the technology LEF file.|  |
 | <a name="PLATFORM"></a>PLATFORM| Specifies process design kit or technology node to be used.|  |
 | <a name="POST_CTS_TCL"></a>POST_CTS_TCL| Specifies a Tcl script with commands to run after CTS is completed.|  |
@@ -134,24 +136,28 @@ configuration file.
 | <a name="PWR_NETS_VOLTAGES"></a>PWR_NETS_VOLTAGES| Used for IR Drop calculation.|  |
 | <a name="RCX_RULES"></a>RCX_RULES| RC Extraction rules file path.|  |
 | <a name="RECOVER_POWER"></a>RECOVER_POWER| Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100].| 0 |
+| <a name="REMOVE_ABC_BUFFERS"></a>REMOVE_ABC_BUFFERS| Remove abc buffers from the netlist.|  |
 | <a name="REMOVE_CELLS_FOR_EQY"></a>REMOVE_CELLS_FOR_EQY| String patterns directly passed to write_verilog -remove_cells <> for equivalence checks.|  |
 | <a name="REPAIR_PDN_VIA_LAYER"></a>REPAIR_PDN_VIA_LAYER| Remove power grid vias which generate DRC violations after detailed routing.|  |
+| <a name="REPORT_CLOCK_SKEW"></a>REPORT_CLOCK_SKEW| Report clock skew as part of reporting metrics, starting at CTS, before which there is no clock skew. This metric can be quite time-consuming, so it can be useful to disable.| 1 |
 | <a name="RESYNTH_AREA_RECOVER"></a>RESYNTH_AREA_RECOVER| Enable re-synthesis for area reclaim.|  |
 | <a name="RESYNTH_TIMING_RECOVER"></a>RESYNTH_TIMING_RECOVER| Enable re-synthesis for timing optimization.|  |
 | <a name="ROUTING_LAYER_ADJUSTMENT"></a>ROUTING_LAYER_ADJUSTMENT| Default routing layer adjustment| 0.5 |
-| <a name="RTLMP_FLOW"></a>RTLMP_FLOW| 1 to enable the Hierarchical RTLMP flow.| 0 |
 | <a name="SC_LEF"></a>SC_LEF| Path to technology standard cell LEF file.|  |
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.|  |
+| <a name="SDC_GUT"></a>SDC_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.|  |
 | <a name="SEAL_GDS"></a>SEAL_GDS| Seal macro to place around the design.|  |
-| <a name="SETUP_SLACK_MARGIN"></a>SETUP_SLACK_MARGIN| Specifies a time margin for the slack when fixing setup violations.|  |
+| <a name="SETUP_SLACK_MARGIN"></a>SETUP_SLACK_MARGIN| Specifies a time margin for the slack when fixing setup violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack).|  |
 | <a name="SET_RC_TCL"></a>SET_RC_TCL| Metal & Via RC definition file path.|  |
 | <a name="SKIP_CTS_REPAIR_TIMING"></a>SKIP_CTS_REPAIR_TIMING| Skipping CTS repair, which can take a long time, can be useful in architectural exploration or when getting CI up and running.|  |
-| <a name="SKIP_GATE_CLONING"></a>SKIP_GATE_CLONING| Do not use gate cloning transform to fix timing violations. | use gate cloning |
-| <a name="SKIP_INCREMENTAL_REPAIR"></a>SKIP_INCREMENTAL_REPAIR| Skipping global routing timing repair, which can lead to longer run times. | 0 |
-| <a name="SKIP_PIN_SWAP"></a>SKIP_PIN_SWAP| Do not use pin swapping as a transform to fix timing violations | use pin swapping |
+| <a name="SKIP_GATE_CLONING"></a>SKIP_GATE_CLONING| Do not use gate cloning transform to fix timing violations (default: use gate cloning).|  |
+| <a name="SKIP_INCREMENTAL_REPAIR"></a>SKIP_INCREMENTAL_REPAIR| Skip incremental repair in global route.| 0 |
+| <a name="SKIP_LAST_GASP"></a>SKIP_LAST_GASP| Do not use last gasp optimization to fix timing violations (default: use gate last gasp).|  |
+| <a name="SKIP_PIN_SWAP"></a>SKIP_PIN_SWAP| Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).|  |
 | <a name="SKIP_REPORT_METRICS"></a>SKIP_REPORT_METRICS| If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.|  |
 | <a name="SLEW_MARGIN"></a>SLEW_MARGIN| Specifies a slew margin when fixing max slew violations. This option allows you to overfix.|  |
 | <a name="SYNTH_ARGS"></a>SYNTH_ARGS| Optional synthesis variables for yosys.|  |
+| <a name="SYNTH_GUT"></a>SYNTH_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.|  |
 | <a name="SYNTH_HIERARCHICAL"></a>SYNTH_HIERARCHICAL| Enable to Synthesis hierarchically, otherwise considered flat synthesis.|  |
 | <a name="TAPCELL_TCL"></a>TAPCELL_TCL| Path to Endcap and Welltie cells file.|  |
 | <a name="TAP_CELL_NAME"></a>TAP_CELL_NAME| Name of the cell to use in tap cell insertion.|  |
@@ -170,13 +176,15 @@ configuration file.
 - [ABC_DRIVER_CELL](#ABC_DRIVER_CELL)
 - [ABC_LOAD_IN_FF](#ABC_LOAD_IN_FF)
 - [ADDER_MAP_FILE](#ADDER_MAP_FILE)
-- [ADDITIONAL_FILES](#ADDITIONAL_FILES)
 - [CLKGATE_MAP_FILE](#CLKGATE_MAP_FILE)
 - [LATCH_MAP_FILE](#LATCH_MAP_FILE)
 - [MAX_UNGROUP_SIZE](#MAX_UNGROUP_SIZE)
 - [MIN_BUF_CELL_AND_PORTS](#MIN_BUF_CELL_AND_PORTS)
 - [RESYNTH_AREA_RECOVER](#RESYNTH_AREA_RECOVER)
 - [RESYNTH_TIMING_RECOVER](#RESYNTH_TIMING_RECOVER)
+- [SDC_FILE](#SDC_FILE)
+- [SDC_GUT](#SDC_GUT)
+- [SYNTH_GUT](#SYNTH_GUT)
 - [SYNTH_HIERARCHICAL](#SYNTH_HIERARCHICAL)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
@@ -186,7 +194,6 @@ configuration file.
 
 ## floorplan variables
 
-- [ADDITIONAL_FILES](#ADDITIONAL_FILES)
 - [CELL_PAD_IN_SITES_GLOBAL_PLACEMENT](#CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 - [CORE_AREA](#CORE_AREA)
 - [CORE_ASPECT_RATIO](#CORE_ASPECT_RATIO)
@@ -194,6 +201,8 @@ configuration file.
 - [CORE_UTILIZATION](#CORE_UTILIZATION)
 - [DIE_AREA](#DIE_AREA)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
+- [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
+- [IO_CONSTRAINTS](#IO_CONSTRAINTS)
 - [IO_PLACER_H](#IO_PLACER_H)
 - [IO_PLACER_V](#IO_PLACER_V)
 - [MACRO_BLOCKAGE_HALO](#MACRO_BLOCKAGE_HALO)
@@ -205,32 +214,42 @@ configuration file.
 - [MACRO_PLACE_HALO](#MACRO_PLACE_HALO)
 - [MACRO_WRAPPERS](#MACRO_WRAPPERS)
 - [MAKE_TRACKS](#MAKE_TRACKS)
+- [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [PDN_TCL](#PDN_TCL)
 - [PLACE_DENSITY](#PLACE_DENSITY)
+- [PLACE_PINS_ARGS](#PLACE_PINS_ARGS)
 - [PLACE_SITE](#PLACE_SITE)
-- [RTLMP_FLOW](#RTLMP_FLOW)
+- [REMOVE_ABC_BUFFERS](#REMOVE_ABC_BUFFERS)
+- [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
+- [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
+- [SKIP_LAST_GASP](#SKIP_LAST_GASP)
+- [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
+- [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [TAPCELL_TCL](#TAPCELL_TCL)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## place variables
 
-- [ADDITIONAL_FILES](#ADDITIONAL_FILES)
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [CELL_PAD_IN_SITES_GLOBAL_PLACEMENT](#CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
+- [FLOORPLAN_DEF](#FLOORPLAN_DEF)
 - [GPL_ROUTABILITY_DRIVEN](#GPL_ROUTABILITY_DRIVEN)
 - [GPL_TIMING_DRIVEN](#GPL_TIMING_DRIVEN)
+- [IO_CONSTRAINTS](#IO_CONSTRAINTS)
 - [IO_PLACER_H](#IO_PLACER_H)
 - [IO_PLACER_V](#IO_PLACER_V)
+- [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [PLACE_DENSITY](#PLACE_DENSITY)
+- [PLACE_PINS_ARGS](#PLACE_PINS_ARGS)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
 
 ## cts variables
 
-- [ADDITIONAL_FILES](#ADDITIONAL_FILES)
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [CTS_ARGS](#CTS_ARGS)
 - [CTS_BUF_DISTANCE](#CTS_BUF_DISTANCE)
@@ -239,42 +258,71 @@ configuration file.
 - [CTS_SNAPSHOT](#CTS_SNAPSHOT)
 - [DETAILED_METRICS](#DETAILED_METRICS)
 - [EQUIVALENCE_CHECK](#EQUIVALENCE_CHECK)
+- [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
+- [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [POST_CTS_TCL](#POST_CTS_TCL)
 - [REMOVE_CELLS_FOR_EQY](#REMOVE_CELLS_FOR_EQY)
+- [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_CTS_REPAIR_TIMING](#SKIP_CTS_REPAIR_TIMING)
+- [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
+- [SKIP_LAST_GASP](#SKIP_LAST_GASP)
+- [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
+- [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## grt variables
 
-- [ADDITIONAL_FILES](#ADDITIONAL_FILES)
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [DETAILED_METRICS](#DETAILED_METRICS)
+- [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
+- [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
+- [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
+- [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
+- [SKIP_INCREMENTAL_REPAIR](#SKIP_INCREMENTAL_REPAIR)
+- [SKIP_LAST_GASP](#SKIP_LAST_GASP)
+- [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
+- [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## route variables
 
-- [ADDITIONAL_FILES](#ADDITIONAL_FILES)
 - [DETAILED_ROUTE_ARGS](#DETAILED_ROUTE_ARGS)
 - [DETAILED_ROUTE_END_ITERATION](#DETAILED_ROUTE_END_ITERATION)
+- [FILL_CELLS](#FILL_CELLS)
+- [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
+- [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 
 ## final variables
 
-- [ADDITIONAL_FILES](#ADDITIONAL_FILES)
+- [ADDITIONAL_GDS](#ADDITIONAL_GDS)
+- [GND_NETS_VOLTAGES](#GND_NETS_VOLTAGES)
+- [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
+- [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
+- [PWR_NETS_VOLTAGES](#PWR_NETS_VOLTAGES)
+- [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
+
+## generate_abstract variables
+
+- [ABSTRACT_SOURCE](#ABSTRACT_SOURCE)
 
 ## All stages variables
 
-- [ADDITIONAL_FILES](#ADDITIONAL_FILES)
+
 
 ## Uncategorized variables
 
-- [ADDITIONAL_GDS](#ADDITIONAL_GDS)
+- [ADDITIONAL_FILES](#ADDITIONAL_FILES)
 - [ADDITIONAL_LEFS](#ADDITIONAL_LEFS)
 - [ADDITIONAL_LIBS](#ADDITIONAL_LIBS)
 - [BLOCKS](#BLOCKS)
@@ -289,14 +337,11 @@ configuration file.
 - [DPO_MAX_DISPLACEMENT](#DPO_MAX_DISPLACEMENT)
 - [ENABLE_DPO](#ENABLE_DPO)
 - [FASTROUTE_TCL](#FASTROUTE_TCL)
-- [FILL_CELLS](#FILL_CELLS)
 - [FILL_CONFIG](#FILL_CONFIG)
 - [GDS_FILES](#GDS_FILES)
 - [GENERATE_ARTIFACTS_ON_FAILURE](#GENERATE_ARTIFACTS_ON_FAILURE)
 - [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
-- [GND_NETS_VOLTAGES](#GND_NETS_VOLTAGES)
 - [GUI_TIMING](#GUI_TIMING)
-- [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [IR_DROP_LAYER](#IR_DROP_LAYER)
 - [KLAYOUT_TECH_FILE](#KLAYOUT_TECH_FILE)
 - [LIB_FILES](#LIB_FILES)
@@ -305,19 +350,12 @@ configuration file.
 - [PLATFORM](#PLATFORM)
 - [PRESERVE_CELLS](#PRESERVE_CELLS)
 - [PROCESS](#PROCESS)
-- [PWR_NETS_VOLTAGES](#PWR_NETS_VOLTAGES)
 - [RCX_RULES](#RCX_RULES)
 - [RECOVER_POWER](#RECOVER_POWER)
 - [REPAIR_PDN_VIA_LAYER](#REPAIR_PDN_VIA_LAYER)
 - [SC_LEF](#SC_LEF)
-- [SDC_FILE](#SDC_FILE)
 - [SEAL_GDS](#SEAL_GDS)
-- [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SET_RC_TCL](#SET_RC_TCL)
-- [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
-- [SKIP_INCREMENTAL_REPAIR](#SKIP_INCREMENTAL_REPAIR)
-- [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
-- [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SLEW_MARGIN](#SLEW_MARGIN)
 - [SYNTH_ARGS](#SYNTH_ARGS)
 - [TAP_CELL_NAME](#TAP_CELL_NAME)
