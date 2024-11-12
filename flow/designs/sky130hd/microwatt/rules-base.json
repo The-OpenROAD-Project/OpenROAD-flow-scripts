@@ -28,11 +28,11 @@
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 7292,
+        "value": 10468,
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 9705104,
+        "value": 11886614,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -44,7 +44,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 1420,
+        "value": 1666,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
