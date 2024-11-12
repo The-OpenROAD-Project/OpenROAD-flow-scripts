@@ -789,7 +789,7 @@ def parse_arguments():
         type=int,
         metavar="<int>",
         default=1,
-        help="Number of CPUs to request for each tunning job.",
+        help="Number of CPUs to request for each tuning job.",
     )
     tune_parser.add_argument(
         "--reference",
