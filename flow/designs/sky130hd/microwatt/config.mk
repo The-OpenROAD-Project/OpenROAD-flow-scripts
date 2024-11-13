@@ -11,7 +11,7 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 export DIE_AREA   = 0 0 2920 3520
 export CORE_AREA  = 10 10 2910 3510
 
-export PLACE_DENSITY ?= 0.2
+export PLACE_DENSITY ?= 0.5
 
 export microwatt_DIR = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)
 
@@ -36,3 +36,4 @@ export SETUP_SLACK_MARGIN = 0.2
 # This is high, some SRAMs should probably be converted
 # to real SRAMs and not instantiated as flops
 export SYNTH_MEMORY_MAX_BITS ?= 42000
+
