@@ -347,10 +347,22 @@ HOLD_SLACK_MARGIN:
     Specifies a time margin for the slack when fixing hold violations.
     This option allows you to overfix or underfix(negative value, terminate
     retiming before 0 or positive slack).
+
+    Use min of HOLD_SLACK_MARGIN and 0(default hold slack margin) in floorplan.
+
+    This avoids overrepair in floorplan for hold by default, but allows skipping
+    hold repair using a negative HOLD_SLACK_MARGIN.
+
+    Exiting timing repair early is useful in exploration where
+
+    the .sdc has a fixed clock period at designs target clock period and where
+    HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair(extremelly long running times)
+    when exploring different parameter settings.
   stages:
     - cts
     - floorplan
     - grt
+  default: 0
 SETUP_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing setup violations.
@@ -360,6 +372,7 @@ SETUP_SLACK_MARGIN:
     - cts
     - floorplan
     - grt
+  default: 0
 SKIP_GATE_CLONING:
   description: >
     Do not use gate cloning transform to fix timing violations (default: use gate cloning).
