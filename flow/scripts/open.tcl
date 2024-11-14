@@ -51,8 +51,6 @@ proc read_timing {input_file} {
     log_cmd estimate_parasitics -placement
   }
 
-  fast_route
-
   puts "Populating timing paths..."
   # Warm up OpenSTA, so clicking on timing related buttons reacts faster
   set _tmp [find_timing_paths]
@@ -62,6 +60,8 @@ if {[env_var_equals GUI_TIMING 1]} {
   puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
   read_timing $input_file
 }
+
+fast_route
 
 if {[env_var_equals GUI_SHOW 1]} {
   # Show the GUI when it is ready; it is unresponsive(with modal requesters
