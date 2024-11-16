@@ -10,12 +10,12 @@ export RTLMP_MIN_MACRO = 4
 
 export LIB_MODEL = CCS
 
-export VERILOG_FILES = ./designs/src/swerv/swerv_wrapper.sv2v.v \
-                       ./designs/$(PLATFORM)/swerv_wrapper/macros.v
-export SDC_FILE      = ./designs/$(PLATFORM)/swerv_wrapper/constraint.sdc
+export VERILOG_FILES = $(DESIGN_HOME)/src/swerv/swerv_wrapper.sv2v.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/macros.v
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/constraint.sdc
 
-export ADDITIONAL_LEFS = $(sort $(wildcard ./designs/$(PLATFORM)/swerv_wrapper/lef/*.lef))
-export ADDITIONAL_LIBS = $(sort $(wildcard ./designs/$(PLATFORM)/swerv_wrapper/lib/*.lib))
+export ADDITIONAL_LEFS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lef/*.lef))
+export ADDITIONAL_LIBS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/lib/*.lib))
 
 export DIE_AREA    = 0 0 550 600
 export CORE_AREA   = 5 5 545 595 

@@ -9,9 +9,9 @@ export RTLMP_MIN_INST = 5000
 export RTLMP_MAX_MACRO = 12
 export RTLMP_MIN_MACRO = 4 
 
-export VERILOG_FILES = ./designs/src/swerv/swerv_wrapper.sv2v.v \
-                       ./designs/$(PLATFORM)/swerv/macros.v
-export SDC_FILE      = ./designs/$(PLATFORM)/swerv_wrapper/constraint.sdc
+export VERILOG_FILES = $(DESIGN_HOME)/src/swerv/swerv_wrapper.sv2v.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/swerv/macros.v
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/constraint.sdc
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram45_2048x39.lef \
                          $(PLATFORM_DIR)/lef/fakeram45_256x34.lef \
@@ -31,5 +31,5 @@ export MACRO_PLACE_CHANNEL = 20 20
 export PLACE_DENSITY_LB_ADDON = 0.10
 export TNS_END_PERCENT        = 100
 
-export FASTROUTE_TCL = ./designs/$(PLATFORM)/$(DESIGN_NAME)/fastroute.tcl
+export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/fastroute.tcl
 

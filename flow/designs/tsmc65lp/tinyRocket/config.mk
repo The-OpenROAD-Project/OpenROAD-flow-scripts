@@ -5,14 +5,14 @@ export PLATFORM    = tsmc65lp
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 5000
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
-                       ./designs/src/$(DESIGN_NICKNAME)/ClockDivider2.v \
-                       ./designs/src/$(DESIGN_NICKNAME)/ClockDivider3.v \
-                       ./designs/src/$(DESIGN_NICKNAME)/plusarg_reader.v \
-                       ./designs/src/$(DESIGN_NICKNAME)/freechips.rocketchip.system.TinyConfig.v \
-                       ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
+export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
+                       $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/ClockDivider2.v \
+                       $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/ClockDivider3.v \
+                       $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/plusarg_reader.v \
+                       $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/freechips.rocketchip.system.TinyConfig.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
 
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/tsmc65lp_1rf_lg6_w32_byte.lef \
                          $(PLATFORM_DIR)/lef/tsmc65lp_1rf_lg6_w32_all.lef \

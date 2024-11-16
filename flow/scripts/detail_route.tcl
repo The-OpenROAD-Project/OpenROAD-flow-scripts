@@ -20,7 +20,7 @@ append_env_var additional_args DISABLE_VIA_GEN -disable_via_gen 0
 append_env_var additional_args REPAIR_PDN_VIA_LAYER -repair_pdn_vias 1
 append_env_var additional_args DETAILED_ROUTE_END_ITERATION -droute_end_iter 1
 
-append additional_args " -save_guide_updates -verbose 1"
+append additional_args " -verbose 1"
 
 # DETAILED_ROUTE_ARGS is used when debugging detailed, route, e.g. append
 # "-droute_end_iter 5" to look at routing violations after only 5 iterations,

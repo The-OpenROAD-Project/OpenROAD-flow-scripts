@@ -15,11 +15,10 @@ proc fast_route {} {
   }
 }
 
-# -hold_margin is only set when hold_margin is set, default 1
 proc repair_timing_helper { {hold_margin 1} } {
   set additional_args "-verbose"
   append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
-  if {$hold_margin} {
+  if {$hold_margin || $::env(HOLD_SLACK_MARGIN) < 0} {
     append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
   }
   append_env_var additional_args TNS_END_PERCENT -repair_tns 1
@@ -27,8 +26,21 @@ proc repair_timing_helper { {hold_margin 1} } {
   append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
   append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
   append_env_var additional_args SKIP_LAST_GASP -skip_last_gasp 0
+  append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
   puts "repair_timing [join $additional_args " "]"
   repair_timing {*}$additional_args
+}
+
+proc repair_design_helper {} {
+  puts "Perform buffer insertion and gate resizing..."
+
+  set additional_args ""
+  append_env_var additional_args CAP_MARGIN -cap_margin 1
+  append_env_var additional_args SLEW_MARGIN -slew_margin 1
+  append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
+  puts "repair_design [join $additional_args " "]"
+
+  repair_design {*}$additional_args
 }
 
 proc recover_power {} {
@@ -40,7 +52,10 @@ proc recover_power {} {
   report_tns
   report_wns
   report_power
-  repair_timing -recover_power $::env(RECOVER_POWER)
+  set additional_args ""
+  append_env_var additional_args RECOVER_POWER -recover_power 1
+  append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
+  repair_timing {*}$additional_args
   report_tns
   report_wns
   report_power

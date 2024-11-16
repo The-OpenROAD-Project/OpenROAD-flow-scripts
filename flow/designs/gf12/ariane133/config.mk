@@ -9,7 +9,7 @@ export MAX_UNGROUP_SIZE ?= 10000
 
 export VERILOG_FILES = $(PLATFORM_DIR)/ariane133/ariane.v
 
-export SDC_FILE      = ./designs/$(PLATFORM)/ariane133/ariane.sdc
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/ariane133/ariane.sdc
 
 export WRAP_LEFS = $(PLATFORM_DIR)/lef/gf12_1rw_256x16.lef
 export WRAP_LIBS = $(PLATFORM_DIR)/lib/gf12_1rw_256x16_ffpg_sigcmin_0p88v_0p88v_m40c.lib
