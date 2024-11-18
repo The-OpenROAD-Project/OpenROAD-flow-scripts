@@ -51,9 +51,10 @@ proc read_timing {input_file} {
     log_cmd estimate_parasitics -placement
   }
 
-  puts "Populating timing paths..."
+  puts -nonewline "Populating timing paths..."
   # Warm up OpenSTA, so clicking on timing related buttons reacts faster
   set _tmp [find_timing_paths]
+  puts "OK"
 }
 
 if {[env_var_equals GUI_TIMING 1]} {
