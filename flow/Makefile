@@ -179,39 +179,16 @@ endif
 include $(PLATFORM_DIR)/config.mk
 
 # Enables hierarchical yosys
-export SYNTH_HIERARCHICAL ?= 0
 export SYNTH_STATS = $(RESULTS_DIR)/synth_stats.txt
 export SYNTH_STATS_SCRIPT = $(SCRIPTS_DIR)/synth_stats.tcl
+# If the design, nor $(PLATFORM_DIR)/config.mk provided a default, provide one here
 export MAX_UNGROUP_SIZE ?= 0
 
-# Enables Re-synthesis for area reclaim
-export RESYNTH_AREA_RECOVER ?= 0
-export RESYNTH_TIMING_RECOVER ?= 0
-export ABC_AREA ?= 0
-
-# User adjustable synthesis arguments
-export SYNTH_ARGS ?= -flatten
 # Not normally adjusted by user
 export SYNTH_OPERATIONS_ARGS ?= -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
 export SYNTH_FULL_ARGS ?= $(SYNTH_ARGS) $(SYNTH_OPERATIONS_ARGS)
 
-# Global setting for Floorplan
-export PLACE_PINS_ARGS
-
 export FLOW_VARIANT ?= base
-
-export GPL_TIMING_DRIVEN ?= 1
-export GPL_ROUTABILITY_DRIVEN ?= 1
-
-# Cell padding in SITE widths to ease rout-ability.  Applied to both sides
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
-
-export ENABLE_DPO ?= 1
-export DPO_MAX_DISPLACEMENT ?= 5 1
-
-# Settings for Sizing
-export MATCH_CELL_FOOTPRINT ?= 0
 
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
