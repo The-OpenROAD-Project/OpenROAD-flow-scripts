@@ -181,6 +181,8 @@ include $(PLATFORM_DIR)/config.mk
 # Enables hierarchical yosys
 export SYNTH_STATS = $(RESULTS_DIR)/synth_stats.txt
 export SYNTH_STATS_SCRIPT = $(SCRIPTS_DIR)/synth_stats.tcl
+# If the design, nor $(PLATFORM_DIR)/config.mk provided a default, provide one here
+export MAX_UNGROUP_SIZE ?= 0
 
 # Not normally adjusted by user
 export SYNTH_OPERATIONS_ARGS ?= -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
