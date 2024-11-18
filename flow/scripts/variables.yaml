@@ -189,10 +189,10 @@ ABC_LOAD_IN_FF:
     - synth
 MAX_UNGROUP_SIZE:
   description: >
-    For hierarchical synthesis, we ungroup modules of size given by this variable.
+    For hierarchical synthesis, we ungroup modules of larger area than given by this
+    variable. The default value is > 0 platform specific.
   stages:
     - synth
-  default: 0
 FLOORPLAN_DEF:
   description: >
     Use the DEF file to initialize floorplan.
