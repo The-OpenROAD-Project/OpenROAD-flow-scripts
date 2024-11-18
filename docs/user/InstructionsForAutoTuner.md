@@ -23,17 +23,17 @@ User-defined coefficient values (`coeff_perform`, `coeff_power`, `coeff_area`) o
 
 ## Setting up AutoTuner
 
-We have provided two convenience scripts, `./install.sh` and `./setup.sh`
+We have provided two convenience scripts, `./installer.sh` and `./setup.sh`
 that works in Python3.8 for installation and configuration of AutoTuner,
 as shown below:
 
 ```{note}
-Make sure you run the following commands in `./tools/AutoTuner/src/autotuner`.
+Make sure you run the following commands in the ORFS root directory.
 ```
 
 ```shell
 # Install prerequisites
-./tools/AutoTuner/install.sh
+./tools/AutoTuner/installer.sh
 
 # Start virtual environment
 ./tools/AutoTuner/setup.sh
@@ -104,14 +104,15 @@ For Global Routing parameters that are set on `fastroute.tcl` you can use:
 
 ### General Information
 
-The `distributed.py` script uses Ray's job scheduling and management to
+The `distributed.py` script located in `./tools/AutoTuner/src/autotuner` uses [Ray's](https://docs.ray.io/en/latest/index.html) job scheduling and management to
 fully utilize available hardware resources from a single server 
-configuration, on-premies or over the cloud with multiple CPUs. 
-The two modes of operation: `sweep`, where every possible parameter
-combination in the search space is tested; and `tune`, where we use
-Ray's Tune feature to intelligently search the space and optimize
-hyperparameters using one of the algorithms listed above. The `sweep`
-mode is useful when we want to isolate or test a single or very few
+configuration, on-premise or over the cloud with multiple CPUs.
+
+The two modes of operation:
+- `sweep`, where every possible parameter combination in the search space is tested
+- `tune`, where we use Ray's Tune feature to intelligently search the space and optimize hyperparameters using one of the algorithms listed above.
+
+The `sweep` mode is useful when we want to isolate or test a single or very few
 parameters. On the other hand, `tune` is more suitable for finding
 the best combination of a complex and large number of flow 
 parameters. Both modes rely on user-specified search space that is 
@@ -120,7 +121,7 @@ though some features may not be available for sweeping.
 
 ```{note}
 The order of the parameters matter. Arguments `--design`, `--platform` and
-`--config` are always required and should precede <mode>.
+`--config` are always required and should precede *mode*.
 ```
 
 #### Tune only 
@@ -153,35 +154,44 @@ GCP Setup Tutorial coming soon.
 
 
 ### List of input arguments
-| Argument                      | Description                                                                                           |
-|-------------------------------|-------------------------------------------------------------------------------------------------------|
-| `--design`                    | Name of the design for Autotuning.                                                                    |
-| `--platform`                  | Name of the platform for Autotuning.                                                                  |
-| `--config`                    | Configuration file that sets which knobs to use for Autotuning.                                       |
-| `--experiment`                | Experiment name. This parameter is used to prefix the FLOW_VARIANT and to set the Ray log destination.|
-| `--resume`                    | Resume previous run.                                                                                  |
-| `--git_clean`                 | Clean binaries and build files. **WARNING**: may lose previous data.                                  |
-| `--git_clone`                 | Force new git clone. **WARNING**: may lose previous data.                                             |
-| `--git_clone_args`            | Additional git clone arguments.                                                                       |
-| `--git_latest`                | Use latest version of OpenROAD app.                                                                   |
-| `--git_or_branch`             | OpenROAD app branch to use.                                                                           |
-| `--git_orfs_branch`           | OpenROAD-flow-scripts branch to use.                                                                  |
-| `--git_url`                   | OpenROAD-flow-scripts repo URL to use.                                                                |
-| `--build_args`                | Additional arguments given to ./build_openroad.sh                                                     |
-| `--algorithm`                 | Search algorithm to use for Autotuning.                                                               |
-| `--eval`                      | Evalaute function to use with search algorithm.  \                                                    |
-| `--samples`                   | Number of samples for tuning.                                                                         |
-| `--iterations`                | Number of iterations for tuning.                                                                      |
-| `--resources_per_trial`       | Number of CPUs to request for each tuning job.                                                        |
-| `--reference`                 | Reference file for use with PPAImprov.                                                                |
-| `--perturbation`              | Perturbation interval for PopulationBasedTraining                                                     |
-| `--seed`                      | Random seed.                                                                                          |
-| `--jobs`                      | Max number of concurrent jobs.                                                                        |
-| `--openroad_threads`          | Max number of threads usable.                                                                         |
-| `--server`                    | The address of Ray server to connect.                                                                 |
-| `--port`                      | The port of Ray server to connect.                                                                    |
-| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: print stdout on top of what is in level 0 and 1. ]                  |
-|                               |                                                                                                       |
+| Argument                      | Description                                                                                           | Default |
+|-------------------------------|-------------------------------------------------------------------------------------------------------|---------|
+| `--design`                    | Name of the design for Autotuning.                                                                    ||
+| `--platform`                  | Name of the platform for Autotuning.                                                                  ||
+| `--config`                    | Configuration file that sets which knobs to use for Autotuning.                                       ||
+| `--experiment`                | Experiment name. This parameter is used to prefix the FLOW_VARIANT and to set the Ray log destination.| test |
+| `--git_clean`                 | Clean binaries and build files. **WARNING**: may lose previous data.                                  ||
+| `--git_clone`                 | Force new git clone. **WARNING**: may lose previous data.                                             ||
+| `--git_clone_args`            | Additional git clone arguments.                                                                       ||
+| `--git_latest`                | Use latest version of OpenROAD app.                                                                   ||
+| `--git_or_branch`             | OpenROAD app branch to use.                                                                           ||
+| `--git_orfs_branch`           | OpenROAD-flow-scripts branch to use.                                                                  ||
+| `--git_url`                   | OpenROAD-flow-scripts repo URL to use.                                                                | [ORFS GitHub repo](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts) |
+| `--build_args`                | Additional arguments given to ./build_openroad.sh                                                     ||
+| `--samples`                   | Number of samples for tuning.                                                                         | 10 |
+| `--jobs`                      | Max number of concurrent jobs.                                                                        | # of CPUs / 2 |
+| `--openroad_threads`          | Max number of threads usable.                                                                         | 16 |
+| `--server`                    | The address of Ray server to connect.                                                                 ||
+| `--port`                      | The port of Ray server to connect.                                                                    | 10001 |
+| `--timeout`                   | Time limit (in hours) for each trial run.                                                             | No limit |
+| `-v` or `--verbose`           | Verbosity Level. [0: Only ray status, 1: print stderr, 2: print stdout on top of what is in level 0 and 1. ]                  | 0 |
+|                               |                                                                                                       ||
+
+#### Input arguments specific to tune mode
+The following input arguments are applicable for tune mode only.
+
+| Argument                      | Description                                                                                           | Default |
+|-------------------------------|-------------------------------------------------------------------------------------------------------|---------|
+| `--algorithm`                 | Search algorithm to use for Autotuning.                                                               | hyperopt |
+| `--eval`                      | Evaluate function to use with search algorithm.                                                       ||
+| `--iterations`                | Number of iterations for tuning.                                                                      | 1 |
+| `--resources_per_trial`       | Number of CPUs to request for each tuning job.                                                        | 1 |
+| `--reference`                 | Reference file for use with PPAImprov.                                                                ||
+| `--perturbation`              | Perturbation interval for PopulationBasedTraining                                                     | 25 |
+| `--seed`                      | Random seed.                                                                                          | 42 |
+| `--resume`                    | Resume previous run.                                                                                  ||
+|                               |                                                                                                       ||
+
 ### GUI
 
 Basically, progress is displayed at the terminal where you run, and when all runs are finished, the results are displayed.

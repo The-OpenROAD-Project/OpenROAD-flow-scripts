@@ -10,17 +10,17 @@ export SKY130_IO_VERSION ?= v0.2.0
 export OPENRAMS_DIR = ./platforms/sky130ram
 export IO_DIR       = ./platforms/sky130io
 
-export VERILOG_FILES = ./designs/src/coyote_tc/coyote_tc.v \
-                       ./designs/src/coyote/coyote.sv2v.v \
-                       ./designs/$(PLATFORM)/coyote_tc/ios.v \
-                       ./designs/$(PLATFORM)/coyote_tc/macros.v \
+export VERILOG_FILES = $(DESIGN_HOME)/src/coyote_tc/coyote_tc.v \
+                       $(DESIGN_HOME)/src/coyote/coyote.sv2v.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/ios.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/macros.v \
                        $(IO_DIR)/verilog/sky130_io.blackbox.v
 
-export SDC_FILE          = ./designs/$(PLATFORM)/coyote_tc/constraint.sdc
+export SDC_FILE          = $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/constraint.sdc
 
 export FOOTPRINT_LIBRARY = $(IO_DIR)/library.sky130_fd_io.tcl
-export FOOTPRINT         = ./designs/$(PLATFORM)/coyote_tc/coyote_tc.package.strategy
-export SIG_MAP_FILE      = ./designs/$(PLATFORM)/coyote_tc/coyote_tc.sigmap
+export FOOTPRINT         = $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/coyote_tc.package.strategy
+export SIG_MAP_FILE      = $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/coyote_tc.sigmap
 
 export ADDITIONAL_LIBS = $(OPENRAMS_DIR)/sky130_sram_1rw1r_80x64_8/sky130_sram_1rw1r_80x64_8_TT_1p8V_25C.lib \
                          $(OPENRAMS_DIR)/sky130_sram_1rw1r_128x256_8/sky130_sram_1rw1r_128x256_8_TT_1p8V_25C.lib \
@@ -64,10 +64,10 @@ export CORE_AREA   = 210 210 4990 4389.14
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
 export ABC_LOAD_IN_FF = 3
 
-export POST_SYNTHESYS_RENAMING = ./designs/$(PLATFORM)/coyote_tc/post_synthesis_rename.tcl
+export POST_SYNTHESYS_RENAMING = $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/post_synthesis_rename.tcl
 
 # Use custom power grid with core rings offset from the pads
-export PDN_CFG = ./designs/$(PLATFORM)/coyote_tc/pdn.cfg
+export PDN_CFG = $(DESIGN_HOME)/$(PLATFORM)/coyote_tc/pdn.cfg
 
 # Point to the RC file
 export SETRC_FILE = $(PLATFORM_DIR)/setRC.tcl

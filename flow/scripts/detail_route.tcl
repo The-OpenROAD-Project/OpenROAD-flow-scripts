@@ -20,7 +20,7 @@ append_env_var additional_args DISABLE_VIA_GEN -disable_via_gen 0
 append_env_var additional_args REPAIR_PDN_VIA_LAYER -repair_pdn_vias 1
 append_env_var additional_args DETAILED_ROUTE_END_ITERATION -droute_end_iter 1
 
-append additional_args " -save_guide_updates -verbose 1"
+append additional_args " -verbose 1"
 
 # DETAILED_ROUTE_ARGS is used when debugging detailed, route, e.g. append
 # "-droute_end_iter 5" to look at routing violations after only 5 iterations,
@@ -46,9 +46,7 @@ set all_args [concat [list \
 
 log_cmd detailed_route {*}$all_args
 
-set_global_routing_layer_adjustment $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER) 0.5
-set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
-
+fast_route
 
 if {![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1]} {
   set repair_antennas_iters 1

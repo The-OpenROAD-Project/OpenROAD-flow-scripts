@@ -6,7 +6,7 @@ export DESIGN_NAME = jpeg_encoder
 export PLATFORM    = intel22
 
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*.v))
-export VERILOG_INCLUDE_DIRS = ./designs/src/$(DESIGN_NICKNAME)/include
+export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/include
 export SDC_FILE      = $(DESIGN_DIR)/constraint.sdc
 
 export CORE_UTILIZATION = 30

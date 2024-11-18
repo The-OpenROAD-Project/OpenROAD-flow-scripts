@@ -12,4 +12,4 @@ with open(yaml_path, "r") as file:
 for key, value in data.items():
     if value.get("default", None) is None:
         continue
-    print(f'{key}?={value["default"]}')
+    print(f'export {key}?={str(value["default"]).replace(" ", "__SPACE__")}')

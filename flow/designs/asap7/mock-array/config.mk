@@ -32,7 +32,7 @@ export BLOCKS                ?= Element
 ifneq ($(BLOCKS),)
   export GDS_ALLOW_EMPTY       = Element
   ifneq ($(RTLMP_FLOW), 1)
-    export MACRO_PLACEMENT_TCL   = ./designs/asap7/mock-array/macro-placement.tcl
+    export MACRO_PLACEMENT_TCL   = $(DESIGN_HOME)/asap7/mock-array/macro-placement.tcl
   endif
   export PDN_TCL               = $(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl
 endif
@@ -44,13 +44,13 @@ export IO_CONSTRAINTS        = designs/asap7/mock-array/io.tcl
 verilog:
 	export MOCK_ARRAY_ROWS=$(word 1, $(MOCK_ARRAY_TABLE)) ; \
 	export MOCK_ARRAY_COLS=$(word 2, $(MOCK_ARRAY_TABLE)) ; \
-	./designs/asap7/mock-array/verilog.sh
+	$(DESIGN_HOME)/asap7/mock-array/verilog.sh
 
 .PHONY: simulate
 simulate:
 	export MOCK_ARRAY_ROWS=$(word 1, $(MOCK_ARRAY_TABLE)) ; \
 	export MOCK_ARRAY_COLS=$(word 2, $(MOCK_ARRAY_TABLE)) ; \
-	./designs/asap7/mock-array/simulate.sh
+	$(DESIGN_HOME)/asap7/mock-array/simulate.sh
 
 .PHONY: power
 power:
@@ -62,14 +62,9 @@ export DETAILED_ROUTE_END_ITERATION = 6
 export MAX_ROUTING_LAYER = M9
 export ROUTING_LAYER_ADJUSTMENT = 0.45
 
-# works with 28 or more iterations as of writing, so give it a few more.
-export GLOBAL_ROUTE_ARGS=-congestion_iterations 40 -verbose
-
 # ensure we have some rows, so we don't get a bad clock skew.
 export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
-
-export CTS_BUF_DISTANCE = 60
 
 export ADDITIONAL_FILES = designs/src/mock-array/util.tcl
 

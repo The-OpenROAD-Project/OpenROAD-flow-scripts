@@ -3,8 +3,8 @@ export PLATFORM               = asap7
 export DESIGN_NAME            = aes_cipher_top
 export DESIGN_NICKNAME        = aes-mbff
 
-export VERILOG_FILES = $(sort $(wildcard ./designs/src/aes/*.v))
-export SDC_FILE      = ./designs/$(PLATFORM)/aes/constraint.sdc
+export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/aes/*.v))
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/aes/constraint.sdc
 
 export ABC_AREA               = 1
 

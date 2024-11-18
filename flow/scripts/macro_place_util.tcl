@@ -29,14 +29,11 @@ if {[find_macros] != ""} {
   }
 
   if {[env_var_exists_and_non_empty MACRO_PLACEMENT_TCL]} {
-    source $::env(MACRO_PLACEMENT_TCL)
-    puts "Using manual macro placement file $::env(MACRO_PLACEMENT_TCL)"
+    log_cmd source $::env(MACRO_PLACEMENT_TCL)
   } elseif {[env_var_exists_and_non_empty MACRO_PLACEMENT]} {
     source $::env(SCRIPTS_DIR)/read_macro_placement.tcl
-    puts "Using manual macro placement file $::env(MACRO_PLACEMENT)"
-    read_macro_placement $::env(MACRO_PLACEMENT)
-  } elseif {[env_var_equals RTLMP_FLOW 1]} {
-    puts "HierRTLMP Flow enabled..."
+    log_cmd read_macro_placement $::env(MACRO_PLACEMENT)
+  } else {
     set additional_rtlmp_args ""
     append_env_var additional_rtlmp_args RTLMP_MAX_LEVEL -max_num_level 1
     append_env_var additional_rtlmp_args RTLMP_MAX_INST -max_num_inst 1
@@ -60,8 +57,7 @@ if {[find_macros] != ""} {
     append_env_var additional_rtlmp_args RTLMP_FENCE_UX -fence_ux 1
     append_env_var additional_rtlmp_args RTLMP_FENCE_UY -fence_uy 1
 
-    source $::env(SCRIPTS_DIR)/set_place_density.tcl
-    append additional_rtlmp_args " -target_util $place_density"
+    append additional_rtlmp_args " -target_util [place_density_with_lb_addon]"
 
     set all_args $additional_rtlmp_args
 
@@ -70,10 +66,6 @@ if {[find_macros] != ""} {
     }
 
     log_cmd rtl_macro_placer {*}$all_args
-  } else {
-    macro_placement \
-      -halo $::env(MACRO_PLACE_HALO) \
-      -channel $::env(MACRO_PLACE_CHANNEL)
   }
 
   source $::env(SCRIPTS_DIR)/placement_blockages.tcl

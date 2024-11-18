@@ -408,8 +408,13 @@ The log structure is as follows:
 
 View design area and its core utilization:
 
-```
+```shell
 make gui_final
+```
+
+In the `Tcl Commands` section:
+
+```tcl
 report_design_area
 ```
 
@@ -452,6 +457,8 @@ hierarchy refer to the OpenROAD [GUI](https://openroad.readthedocs.io/en/latest/
 
 Use the report command to view individual power components i.e.
 sequential, combinational, macro and power consumed by I/O pads.
+
+In the `Tcl Commands` section:
 
 ```tcl
 report_power
@@ -699,6 +706,11 @@ fixed DRC violation in the design:
 
 ```shell
 openroad -gui
+```
+
+In the `Tcl Commands` section:
+
+```tcl
 source drc_fix.tcl
 ```
 
@@ -718,7 +730,7 @@ to view Tcl Commands available. In OpenROAD GUI, at the bottom,
 `TCL commands` executable space is available to run the commands.
 For example
 
-View `design area`:
+View `design area` in the `Tcl Commands` section of the GUI:
 
 ```tcl
 report_design_area
@@ -817,7 +829,7 @@ The `gcd` design synthesis results for area and speed optimizations are shown be
 |-----------------------|--------------------------------------|--------------------------------------|
 | `Number of wires`     | 224                                  | 224                                  |
 | `Number of wire bits` | 270                                  | 270                                  |
-| `Number of cells`     | 234                                  | 234                                  |
+[O| `Number of cells`     | 234                                  | 234                                  |
 | `Chip area`           | 2083.248000                          | 2083.248000                          |
 | `Final Design Area`   | Design area 4295 u^2 6% utilization. | Design area 4074 u^2 6% utilization. |
 
@@ -1085,6 +1097,11 @@ To check this in OpenROAD tool root directory:
 ```shell
 cd ../tools/OpenROAD/src/ifp/test/
 openroad
+```
+
+In the `Tcl Commands` section:
+
+```tcl
 source tiecells.tcl
 ```
 
@@ -1095,7 +1112,7 @@ AND2_X1 u2 (.A1(r1q), .A2(1'b0), .ZN(u2z0));
 AND2_X1 u3 (.A1(u1z), .A2(1'b1), .ZN(u2z1));
 ```
 With following `insert_tiecells` command:
-```
+```tcl
 insert_tiecells LOGIC0_X1/Z -prefix "TIE_ZERO_"
 insert_tiecells LOGIC1_X1/Z
 ```
@@ -1152,7 +1169,7 @@ Read the resulting macro placement with a complete core view:
 ##### Macro Placement With Halo Spacing
 
 Explore macro placement with halo spacing, refer to the example
-[here]((https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/mpl/test/).
+[here](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/mpl/test/).
 
 Launch GUI by running the following command(s) in the terminal in OpenROAD tool root directory:
 ```shell
@@ -1208,7 +1225,7 @@ Change `CORE_UTILIZATION` and `PLACE_DENSITY` for the `ibex` design
 View `ibex` design `config.mk`
 [here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/ibex/config.mk).
 
-```
+```tcl
 export CORE_UTILIZATION = 40
 export PLACE_DENSITY_LB_ADDON = 0.1
 ```
@@ -1324,6 +1341,7 @@ corners.
 Refer to the built-in example [here](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/test/gcd_sky130hd_fast_slow.tcl).
 
 Run the following commands in the terminal:
+
 ```shell
 cd ../../test/
 openroad
@@ -1332,12 +1350,15 @@ source gcd_sky130hd_fast_slow.tcl
 
 The resulting `worst slack`, `TNS`:
 
-```
+```tcl
 report_worst_slack -min -digits 3
-worst slack 0.321
 report_worst_slack -max -digits 3
-worst slack -16.005
 report_tns -digits 3
+```
+
+```
+worst slack 0.321
+worst slack -16.005
 tns -529.496
 ```
 
@@ -1431,7 +1452,7 @@ Reduce the clock frequency by increasing the clock period to `0.9` and re-run
 `repair_timing` to fix the setup violation warnings. Such timing violations
 are automatically fixed by the `resizer` `post CTS` and `global routing.`
 
-```yvl
+```tcl
 create_clock -period 0.9 clk
 repair_timing -setup
 ```
@@ -1701,7 +1722,7 @@ Refer to the built-in examples [here](https://github.com/The-OpenROAD-Project/Op
 
 Run these Tcl commands in the terminal in OpenROAD tool root directory:
 
-```
+```shell
 cd ../tools/OpenROAD/src/cts/test/
 openroad
 source post_cts_opt.tcl
@@ -1765,7 +1786,7 @@ Filler cells removed with `remove_fillers` command.
 ### Global Routing
 
 The global router analyzes available routing resources and automatically
-allocates them to avoid any  H/V  overflow violations for optimal routing. 
+allocates them to avoid any  H/V  overflow violations for optimal routing. 
 It generates a congestion report for GCells showing total resources, demand,
 utilization, location and the H/V violation status. If there are no violations
 reported then the design can proceed to detail routing.
@@ -1937,22 +1958,32 @@ design rules while obeying DRC constraints. It is driven by a json
 configuration file.
 
 Command used as follows:
+
 ```tcl
 density_fill -rules <json_file> [-area <list of lx ly ux uy>]
 ```
+
 If -area is not specified, the core area will be used.
 
 To run metal fill post route, run the following:
+
 ```shell
 cd flow/tutorials/scripts/metal_fill
 openroad -gui
+```
+
+In the `Tcl Commands` section:
+
+```tcl
 source "helpers.tcl"
 read_db ./5_route.odb
 ```
+
 Layout before adding metal fill is as follows:
 ![Detail Routing](./images/sky130_gcd_route.webp)
 
 To add metal fill, run the command:
+
 ```tcl
 density_fill -rules ../../../platforms/sky130hd/fill.json
 ```
@@ -1980,7 +2011,8 @@ cd ../tools/OpenROAD/src/rcx/test/
 openroad
 ```
 
-To run parasitics for gcd design:
+Run parasitics in the `Tcl Commands` section:
+
 ```tcl
 source 45_gcd.tcl
 ```
@@ -2064,6 +2096,7 @@ In the GUI, you can go under `Heat Maps` and mark the
 You can create a text file with the congestion information of the
 GCells for further investigation on the GUI. To do that, add the
 `-congestion_report_file file_name` to the `global_route` command, as shown below:
+
 ```tcl
 global_route -guide_file out.guide -congestion_report_file congest.rpt
 ```

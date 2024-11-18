@@ -1,8 +1,8 @@
 export DESIGN_NAME = gcd
 export PLATFORM    = sky130hd_fakestack
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/gcd.v
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/gcd.v
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 # Adders degrade GCD
 export ADDER_MAP_FILE :=
