@@ -323,6 +323,7 @@ REPAIR_PDN_VIA_LAYER:
 GLOBAL_PLACEMENT_ARGS:
   description: >
     Use additional tuning parameters during global placement other than default args defined in global_place.tcl.
+  default: ""
 ENABLE_DPO:
   description: >
     Enable detail placement with improve_placement feature.
