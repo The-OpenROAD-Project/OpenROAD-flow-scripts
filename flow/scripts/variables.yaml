@@ -199,9 +199,12 @@ FLOORPLAN_DEF:
     - place
 REMOVE_ABC_BUFFERS:
   description: >
-    Remove abc buffers from the netlist.
+    Remove abc buffers from the netlist. If timing repair in floorplanning is
+    taking too long, use a SETUP_HOLD_MARGIN to terminate timing repair early
+    instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GAST=1.
   stages:
     - floorplan
+  deprecated: 1
 PLACE_SITE:
   description: >
     Placement site for core cells defined in the technology LEF file.
@@ -315,6 +318,7 @@ REPAIR_PDN_VIA_LAYER:
 GLOBAL_PLACEMENT_ARGS:
   description: >
     Use additional tuning parameters during global placement other than default args defined in global_place.tcl.
+  default: ""
 ENABLE_DPO:
   description: >
     Enable detail placement with improve_placement feature.
@@ -347,10 +351,22 @@ HOLD_SLACK_MARGIN:
     Specifies a time margin for the slack when fixing hold violations.
     This option allows you to overfix or underfix(negative value, terminate
     retiming before 0 or positive slack).
+
+    Use min of HOLD_SLACK_MARGIN and 0(default hold slack margin) in floorplan.
+
+    This avoids overrepair in floorplan for hold by default, but allows skipping
+    hold repair using a negative HOLD_SLACK_MARGIN.
+
+    Exiting timing repair early is useful in exploration where
+
+    the .sdc has a fixed clock period at designs target clock period and where
+    HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair(extremelly long running times)
+    when exploring different parameter settings.
   stages:
     - cts
     - floorplan
     - grt
+  default: 0
 SETUP_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing setup violations.
@@ -360,6 +376,7 @@ SETUP_SLACK_MARGIN:
     - cts
     - floorplan
     - grt
+  default: 0
 SKIP_GATE_CLONING:
   description: >
     Do not use gate cloning transform to fix timing violations (default: use gate cloning).
@@ -418,7 +435,8 @@ MACRO_EXTENSION:
     Sets the number of GCells added to the blockages boundaries from macros.
 DETAILED_ROUTE_END_ITERATION:
   description: >
-    Maximum number of iterations, default 64.
+    Maximum number of iterations.
+  default: 64
   stages:
     - route
 RCX_RULES:
@@ -541,8 +559,9 @@ CORE_ASPECT_RATIO:
     - floorplan
 CORE_MARGIN:
   description: >
-    The margin between the core area and die area, in multiples of SITE heights.
-    The margin is applied to each side. This variable is ignored if `CORE_UTILIZATION`
+    The margin between the core area and die area, specified in microns. Allowed values
+    are either one value for all margins or a set of four values, one for each margin. The order
+    of the four values are: `{bottom top left right}`. This variable is ignored if `CORE_UTILIZATION`
     is undefined.
   stages:
     - floorplan
@@ -584,12 +603,14 @@ CTS_BUF_DISTANCE:
     - cts
 CTS_CLUSTER_DIAMETER:
   description: >
-    Maximum diameter (in microns) of sink cluster. Default 20.
+    Maximum diameter (in microns) of sink cluster.
+  default: 20
   stages:
     - cts
 CTS_CLUSTER_SIZE:
   description: >
-    Maximum number of sinks per cluster. Default 50.
+    Maximum number of sinks per cluster.
+  default: 50
   stages:
     - cts
 CTS_SNAPSHOT:
@@ -607,7 +628,8 @@ FASTROUTE_TCL:
     Specifies a Tcl script with commands to run before FastRoute.
 USE_FILL:
   description: >
-    Whether to perform metal density filling. Default 0 (=off).
+    Whether to perform metal density filling.
+  default: 0
 SEAL_GDS:
   description: >
     Seal macro to place around the design.

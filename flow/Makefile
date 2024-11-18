@@ -576,7 +576,7 @@ define OPEN_GUI
 open_$(1):
 	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/open.tcl
 gui_$(1):
-	$$(UNSET_AND_MAKE) GUI_SHOW=1 open_$(1)
+	$(2)=$(RESULTS_DIR)/$(1) GUI_SHOW=1 $(OPENROAD_GUI_CMD) -minimize $(SCRIPTS_DIR)/open.tcl
 endef
 
 # Separate dependency checking and doing a step. This can
