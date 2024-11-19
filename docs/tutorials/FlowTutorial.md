@@ -830,10 +830,12 @@ The `gcd` design synthesis results for area and speed optimizations are shown be
 | `Chip area`           | 2083.248000                          | 2083.248000                          |
 | `Final Design Area`   | Design area 4295 u^2 6% utilization. | Design area 4074 u^2 6% utilization. |
 
-Note: Results for area optimization should be ideally checked after
+:::{Note}
+Results for area optimization should be ideally checked after
 floorplanning to verify the final impact. First, relax the `.sdc` constraint
 and re-run to see area impact. Otherwise, the repair design command will
 increase the area to meet timing regardless of the netlist produced earlier.
+:::
 
 ### Floorplanning
 
