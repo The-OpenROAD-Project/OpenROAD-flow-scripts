@@ -22,7 +22,7 @@ This is intended for:
 ## User Guidelines
 
 -   This tutorial requires a specific directory structure built by
-    OpenROAD-flow-scripts (ORFS). Do not modify this structure or
+    OpenROAD-flow-scripts (ORFS). **Do not modify this structure** or
     underlying files since this will cause problems in the flow execution.
 -   User can run the full RTL-to-GDS flow and learn specific flow
     sections independently. This allows users to learn the flow and tool
@@ -31,13 +31,15 @@ This is intended for:
     vary based on release updates. However, the main flow and command
     structure should generally apply.
 
-Note: Please submit any problem found under Issues in the GitHub repository
+:::{Note}
+Please submit any problem found under Issues in the GitHub repository
 [here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/issues).
+:::
 
 ## Getting Started
 
 This section describes the environment setup to build OpenROAD-flow-scripts
-and get ready to execute the RTL-to-GDS flow of the open-source
+and execute the RTL-to-GDS flow of the open-source 
 design `ibex` using the `sky130hd` technology.
 
 `ibex` is a 32 bit RISC-V CPU core (`RV32IMC/EMC`) with a two-stage
@@ -50,11 +52,11 @@ Use the `bash` shell to run commands and scripts.
 #### OpenROAD-flow-scripts Installation
 
 To install OpenROAD-flow-scripts,  refer to the
-[Build or installing ORFS  Dependencies](https://openroad-flow-scripts.readthedocs.io/en/latest/#build-or-installing-orfs-dependencies)
+[Build or installing ORFS Dependencies](https://openroad-flow-scripts.readthedocs.io/en/latest/#build-or-installing-orfs-dependencies)
 documentation.
 
 In general, we recommend using `Docker` for an efficient user
-experience. Install OpenROAD-flow-scripts using a docker as described
+experience. Install OpenROAD-flow-scripts using Docker as described
 here [Build from sources using Docker](../user/BuildWithDocker.md).
 
 :::{Note}
@@ -62,33 +64,31 @@ If you need to update an existing OpenROAD-flow-scripts installation,
 follow instructions from [here](../user/FAQS.md#how-do-i-update-openroad-flow-scripts).
 :::
 
-OpenROAD-flow-scripts installation is complete.
-
 #### Running OpenROAD-flow-scripts inside the Docker
 
-Launch the docker with OpenROAD-flow-scripts container as follows:
+Launch the OpenROAD-flow-scripts Docker container as follows:
 
 ```shell
 docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22.04-builder
 ```
 
 :::{seealso}
-To launch OpenROAD GUI inside the docker, based on the OS, use the command from [here](../user/BuildWithDocker.md#enable-gui-support).
+To launch OpenROAD GUI inside the docker based on the OS, use the command [here](../user/BuildWithDocker.md#enable-gui-support).
 :::
 
-Once you are entered into OpenROAD-flow-scripts container run:
+Once you have entered into OpenROAD-flow-scripts container, run this to initialize ORFS environment variables:
 
 ```shell
 source env.sh
 ```
 
-If your installation is  successful, you will see the following message:
+If your installation is successful, you will see the following message:
 
 ```
 OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
 ```
 
-#### Verifying the Docker based  Installation
+#### Verifying the Docker based Installation
 
 To verify the installation run the built-in example design as follows:
 
@@ -97,7 +97,7 @@ cd flow
 make
 ```
 
-A successful run end with the log:
+A successful run ends with the log:
 
 ```
 [INFO] Writing out GDS/OAS 'results/nangate45/gcd/base/6_1_merged.gds'
@@ -107,7 +107,7 @@ Log                       Elapsed seconds
 1_1_yosys                          2
 3_3_place_gp                       1
 4_1_cts                            8
-5_2_route                   10
+5_2_route                         10
 6_1_merge                         10
 6_report                           3
 ```
@@ -131,12 +131,12 @@ View the platform configuration file setup for default variables for
 less ./platforms/sky130hd/config.mk
 ```
 
-The `config.mk` file has all the required variables for the `sky130`
+The `config.mk` file has all the required variables for the `sky130hd`
 platform and hence it is not recommended to change any variable
 definition here. You can view the `sky130hd` platform configuration
 [here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/platforms/sky130hd/config.mk).
 
-Refer to the [Flow variables](../user/FlowVariables.md) document for
+Refer to the [Flow Variables](../user/FlowVariables.md) document for
 details on how to use platform and design specific environment variables
 in OpenROAD-flow-scripts to customize and configure your design flow.
 
@@ -163,7 +163,7 @@ constraints. We will use default configuration variables for this tutorial.
 | `VERILOG_FILES`    | The path to the design Verilog files or JSON files providing a description of modules (check `yosys -h write_json` for more details).    |
 | `SDC_FILE`         | The path to design `.sdc` file                                                                                                           |
 | `CORE_UTILIZATION` | The core utilization percentage.                                                                                                         |
-| `PLACE_DENSITY`    | The desired placement density of cells. It reflects how spread the cells would be on the core area. 1 = closely dense. 0 = widely spread |
+| `PLACE_DENSITY`    | The desired placement density of cells. It reflects how spread the cells would be on the core area. 1 = closely dense. 0 = widely spread.|
 
 :::{Note} To add a new design to the `flow`, refer to the document
 [here](../user/AddingNewDesign.md). This step is for advanced users.
@@ -183,13 +183,15 @@ less ./designs/sky130hd/ibex/constraint.sdc
 For `ibex` design, we simply use the clock definition as follows as a
 minimum required timing constraint.
 
+In the `Tcl Commands` section of the OpenROAD GUI:
+
 ```tcl
 create_clock -name core_clock -period 17.4 [get_ports {clk_i}]
 ```
 
 ### Design Input Verilog
 
-The Verilog input files are located in `./designs/src/ibex/`
+The Verilog input files are located in `./designs/src/ibex/`.
 
 The design is defined in `ibex_core.v` available
 [here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/ibex_core.v).
@@ -235,8 +237,8 @@ configuration examples using the Tcl interface and other such details.
 
 Run the `ibex` design in OpenROAD-flow-scripts automated flow from
 RTL-to-GDS using `sky130hd`. Find `ibex` design details
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md)
-and the design goals are:
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md).
+In particular, the design goals are:
 
 -   Area
 
@@ -269,13 +271,16 @@ make DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 As the flow executes, check out the OpenROAD-flow-scripts directory contents and their
 significance.
 
-OpenROAD-flow-scripts can generally restart from a previous partial run. If you have errors which prevent restarting the flow, you may try deleting all generated files and start a fresh run. Errors can occur if a tool crashes or is killed while writing a file. The files for `sky130hd/ibex` as an example can be deleted with:
+OpenROAD-flow-scripts can generally restart from a previous partial run. If you have errors which prevent restarting the flow,
+you may try deleting all generated files and start a fresh run. Errors can occur if a tool crashes or is killed while writing a file.
+For example, the generated files for `sky130hd/ibex` can be deleted with:
 
 ```shell
 make clean_all DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 ```
 
-You can also delete files related to individual stages of RTL to GDSII conversion like synthesis, floorplanning, macro placement, clock tree synthesis, routing and layout generation with `clean_synth`, `clean_floorplan`, `clean_place`, `clean_cts`, `clean_route`, and `clean_finish`, respectively.
+You can also delete files related to individual stages of RTL to GDSII conversion like synthesis, floorplanning, macro placement, clock tree synthesis,
+routing and layout generation with `clean_synth`, `clean_floorplan`, `clean_place`, `clean_cts`, `clean_route`, and `clean_finish`, respectively.
 
 
 ### Viewing OpenROAD-flow-scripts Directory Structure And Results
@@ -283,7 +288,7 @@ You can also delete files related to individual stages of RTL to GDSII conversio
 Open a new tab in the terminal and explore the directory structure in
 `flow` by typing `ls` command to view its contents:
 
-```shell
+```
 designs logs Makefile objects platforms reports results scripts test util
 ```
 
@@ -359,17 +364,17 @@ abc.constr klayout.lyt klayout_tech.lef lib
 
 The table below briefly describes the reports directory files.
 
-| File Name              | Description                                              |
-|------------------------|----------------------------------------------------------|
-| `congestion.rpt`       | Global routing congestion if occurred.                   |
-| `5_route_drc.rpt`      | DRC violations if occurred.                              |
-| `final_clocks.webp`    | OR extracted image reference after clock tree synthesis. |
-| `final_resizer.webp`   | OR extracted image reference after resizer.              |
-| `synth_check.txt`      | Synthesis warning/error messages.                        |
-| `antenna.log`          | Antenna check log report.                                |
-| `final_placement.webp` | Extracted image after final placement.                   |
-| `final.webp`           | Extracted image after routing.                           |
-| `synth_stat.txt`       | Post synthesis design statistics log saved here.         |
+| File Name              | Description                                                    |
+|------------------------|----------------------------------------------------------------|
+| `congestion.rpt`       | Global routing congestion if occurred.                         |
+| `5_route_drc.rpt`      | DRC violations if occurred.                                    |
+| `final_clocks.webp`    | OpenROAD extracted image reference after clock tree synthesis. |
+| `final_resizer.webp`   | OpenROAD extracted image reference after resizer.              |
+| `synth_check.txt`      | Synthesis warning/error messages.                              |
+| `antenna.log`          | Antenna check log report.                                      |
+| `final_placement.webp` | Extracted image after final placement.                         |
+| `final.webp`           | Extracted image after routing.                                 |
+| `synth_stat.txt`       | Post synthesis design statistics log saved here.               |
 
 The flow completes with the message below by creating a merged final GDS file.
 
@@ -406,19 +411,19 @@ The log structure is as follows:
 
 ### Area
 
-View design area and its core utilization:
+Start the OpenROAD GUI and view design area and its core utilization:
 
 ```shell
 make gui_final
 ```
 
-In the `Tcl Commands` section:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 report_design_area
 ```
 
-View the resulting area as:
+View the resulting area as follows:
 
 ```
 Design area 191262 u^2 30% utilization.
@@ -426,15 +431,7 @@ Design area 191262 u^2 30% utilization.
 
 ### Timing
 
-Users can view flow results using the command interface from the shell or
-the OpenROAD GUI to visualize further and debug. Learn more about the
-[GUI](https://openroad.readthedocs.io/en/latest/main/README.html#gui).
-
-```shell
-make gui_final
-```
-
-Use the following commands in the `Tcl Commands` section of GUI:
+To view the timing results, use the following commands in the `Tcl Commands` section of GUI:
 
 ```tcl
 report_worst_slack
@@ -458,7 +455,7 @@ hierarchy refer to the OpenROAD [GUI](https://openroad.readthedocs.io/en/latest/
 Use the report command to view individual power components i.e.
 sequential, combinational, macro and power consumed by I/O pads.
 
-In the `Tcl Commands` section:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 report_power
@@ -486,16 +483,17 @@ The GUI allows users to select, control, highlight and navigate the
 design hierarchy and design objects (nets, pins, instances, paths, etc.)
 through detailed visualization and customization options. Find details
 on how to use the [GUI](https://openroad.readthedocs.io/en/latest/main/README.html#gui). All the windows
-aside from the layout are docking windows that can be undocked.  Also it
+aside from the layout are docking windows that can be undocked. Also it
 can be closed and reopened from the Windows menu.
 
 
-Note:  When you are using remote access, you will need to include -Y (or -X) option in your command to
-enable X11 applications to function properly over the network. By using the command "ssh -Y" followed
+:::{Note}
+When you are using remote access, you will need to include `-Y` (or `-X`) option in your `ssh` command to
+enable X11 applications to function properly over the network. By using the command `ssh -Y` followed
 by the remote servers' address or hostname, you can establish a secure connection and activate X11 forwarding.
 This feature enables you to run graphical programs on the remote server and have their windows display
 on your local machines desktop environment.
-
+:::
 
 In this section, learn how to:
 
@@ -507,7 +505,7 @@ In this section, learn how to:
 6. Set display control options
 7. Zoom to object from inspector
 
-If you have completed the RTL-GDS flow, then proceed to view the final
+Alternatively, if you have completed the RTL-GDS flow, then proceed to view the final
 GDS file under results directory `./results/sky130hd/ibex/base/`
 
 For the `ibex` design uncomment the `DESIGN_CONFIG`
@@ -551,7 +549,7 @@ the display control window and observing their impact on the display.
 ### Tracing The Clock Tree
 
 View the synthesized clock tree for `ibex` design:
--   From the top Toolbar Click `Windows` -> `Clock Tree Viewer`
+-   From the top toolbar Click `Windows` -> `Clock Tree Viewer`
 
 ![cts_viewer](./images/CTV_update.webp)
 
@@ -563,12 +561,12 @@ View clock tree structure below, the user needs to disable the metal
 
 ![ibex_clock_tree](./images/ibex_clock_tree.webp)
 
-From the top Toolbar, click on the `Windows` menu to select/hide different
+From the top toolbar, click on the `Windows` menu to select/hide different
 view options of Scripting, Display control, etc.
 
 ### Using Heat Maps
 
-From the Menu Bar, Click on `Tools` -> `Heat Maps` -> `Placement Density` to view
+From the menu bar, Click on `Tools` -> `Heat Maps` -> `Placement Density` to view
 congestion selectively on vertical and horizontal layers.
 
 Expand `Heat Maps` -> `Placement Density` from the Display Control window
@@ -576,7 +574,7 @@ available on LHS of OpenROAD GUI.
 
 View congestion on all layers between 50-100%:
 
-In the `Placement density` setup pop-up window, Select `Minimum` -> `50.00%`
+In the `Placement Density` setup pop-up window, Select `Minimum` -> `50.00%`
 `Maximum` -> `100.00%`
 
 ![placement_heat_map](./images/placement_heatmap.webp)
@@ -653,7 +651,7 @@ cd ./flow/tutorials/scripts/drt/
 openroad -gui
 ```
 
-In the `Tcl Commands` section of GUI:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source drc_issue.tcl
@@ -708,7 +706,7 @@ fixed DRC violation in the design:
 openroad -gui
 ```
 
-In the `Tcl Commands` section:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source drc_fix.tcl
@@ -728,9 +726,8 @@ Routing completed with 0 violations.
 Execute OpenROAD-flow-scripts Tcl commands from the GUI. Type `help`
 to view Tcl Commands available. In OpenROAD GUI, at the bottom,
 `TCL commands` executable space is available to run the commands.
-For example
 
-View `design area` in the `Tcl Commands` section of the GUI:
+View `design area` in the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 report_design_area
@@ -775,7 +772,7 @@ proc load_lef_sky130 {} {
 create_toolbar_button -name "Load_LEF" -text "Load_LEF" -script {load_lef_sky130} -echo
 ```
 
-From OpenROAD GUI `Tcl commands`:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 cd ./flow/tutorials/scripts/gui/
@@ -829,7 +826,7 @@ The `gcd` design synthesis results for area and speed optimizations are shown be
 |-----------------------|--------------------------------------|--------------------------------------|
 | `Number of wires`     | 224                                  | 224                                  |
 | `Number of wire bits` | 270                                  | 270                                  |
-[O| `Number of cells`     | 234                                  | 234                                  |
+| `Number of cells`     | 234                                  | 234                                  |
 | `Chip area`           | 2083.248000                          | 2083.248000                          |
 | `Final Design Area`   | Design area 4295 u^2 6% utilization. | Design area 4074 u^2 6% utilization. |
 
@@ -856,7 +853,7 @@ cd ../tools/OpenROAD/src/ifp/test/
 openroad -gui
 ```
 
-In `Tcl Commands` section GUI:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source init_floorplan1.tcl
@@ -880,7 +877,7 @@ cd ../tools/OpenROAD/src/ifp/test/
 openroad -gui
 ```
 
-In the `Tcl Commands` section of the GUI:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source init_floorplan2.tcl
@@ -913,7 +910,7 @@ openroad -gui
 Run [place_pin4.tcl](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/ppl/test/place_pin4.tcl) script to view
 pin placement.
 
-From the GUI `Tcl commands` section:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source place_pin4.tcl
@@ -957,7 +954,7 @@ openroad -gui
 Run [skywater130_coyote_tc.tcl](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pad/test/skywater130_coyote_tc.tcl) script
 to view IO pad placement.
 
-From the GUI `Tcl commands` section:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source skywater130_coyote_tc.tcl
@@ -983,8 +980,10 @@ cd ../tools/OpenROAD/src/pdn/test
 openroad -gui
 ```
 
-Run [core_grid_snap.tcl](.(https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pdn/test/core_grid_snap.tcl)
+Run [core_grid_snap.tcl](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/pdn/test/core_grid_snap.tcl)
 to generate power grid for `gcd` design.
+
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source core_grid_snap.tcl
@@ -1020,6 +1019,8 @@ openroad
 
 Run [gcd_test_vdd.tcl](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/psm/test/gcd_test_vdd.tcl)
 to generate IR drop report for `gcd` design.
+
+In the OpenROAD `Tcl` shell:
 
 ```tcl
 source gcd_test_vdd.tcl
@@ -1072,7 +1073,7 @@ cd ../tools/OpenROAD/src/tap/test/
 openroad -gui
 ```
 
-In the `Tcl Commands` section of GUI
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source gcd_nangate45.tcl
@@ -1087,7 +1088,7 @@ View the resulting tap cell insertion as follows:
 The tie cell is a standard cell, designed specially to provide the high
 or low signal to the input (gate terminal) of any logic gate.
 Where ever netlist is having any pin connected to 0 logic or 1 logic
-(like .A(1'b0) or .IN(1'b1), a tie cell gets inserted there.
+(like .A(1'b0) or .IN(1'b1)), a tie cell gets inserted there.
 
 Refer to the following built-in example [here](https://github.com/The-OpenROAD-Project/OpenROAD/blob/master/src/ifp/test/tiecells.tcl)
 to learn about Tie cell insertion.
@@ -1099,7 +1100,7 @@ cd ../tools/OpenROAD/src/ifp/test/
 openroad
 ```
 
-In the `Tcl Commands` section:
+In the OpenROAD `Tcl` shell:
 
 ```tcl
 source tiecells.tcl
@@ -1111,7 +1112,8 @@ Refer the following verilog code which have tie high/low net.
 AND2_X1 u2 (.A1(r1q), .A2(1'b0), .ZN(u2z0));
 AND2_X1 u3 (.A1(u1z), .A2(1'b1), .ZN(u2z1));
 ```
-With following `insert_tiecells` command:
+Following which, run the `insert_tiecells` command:
+
 ```tcl
 insert_tiecells LOGIC0_X1/Z -prefix "TIE_ZERO_"
 insert_tiecells LOGIC1_X1/Z
@@ -1141,7 +1143,7 @@ cd ../tools/OpenROAD/src/gpl/test/
 openroad -gui
 ```
 
-In the `Tcl Commands` section of GUI
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source macro01.tcl
@@ -1177,7 +1179,7 @@ cd ../tools/OpenROAD/src/mpl/test
 openroad -gui
 ```
 
-In the `Tcl Commands` section of GUI:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source helpers.tcl
@@ -1210,7 +1212,7 @@ To learn on placement density strategies for `ibex` design, go to
 openroad -gui
 ```
 
-Enter the following commands in the `Tcl Commands` section of GUI
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 read_lef ./platforms/sky130hd/lef/sky130_fd_sc_hd.tlef
@@ -1225,7 +1227,7 @@ Change `CORE_UTILIZATION` and `PLACE_DENSITY` for the `ibex` design
 View `ibex` design `config.mk`
 [here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/sky130hd/ibex/config.mk).
 
-```tcl
+```
 export CORE_UTILIZATION = 40
 export PLACE_DENSITY_LB_ADDON = 0.1
 ```
@@ -1263,7 +1265,7 @@ cd ../tools/OpenROAD/src/rsz/test/
 openroad -gui
 ```
 
-Copy and paste the below commands in the `Tcl Commands` section of GUI.
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source "helpers.tcl"
@@ -1289,7 +1291,7 @@ The number of violations log as:
 Found 31 violations
 ```
 
-These violations were fixed by:
+Fix the violations with this command in the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 repair_design
@@ -1308,13 +1310,11 @@ To view violation counts again:
 puts "Found [sta::max_slew_violation_count] violations"
 ```
 
-The log follows:
+The log follows, note how the command fixed all violations.
 
 ```
 Found 0 violations
 ```
-
-`repair_design` fixed all 31 violations.
 
 #### Timing Optimization Using repair_timing
 
@@ -1345,12 +1345,12 @@ Run the following commands in the terminal:
 ```shell
 cd ../../test/
 openroad
-source gcd_sky130hd_fast_slow.tcl
 ```
 
-The resulting `worst slack`, `TNS`:
+In the OpenROAD `Tcl` shell:
 
 ```tcl
+source gcd_sky130hd_fast_slow.tcl
 report_worst_slack -min -digits 3
 report_worst_slack -max -digits 3
 report_tns -digits 3
@@ -1378,7 +1378,7 @@ cd ../tools/OpenROAD/src/rsz/test/
 openroad
 ```
 
-Copy and paste the following Tcl commands.
+In the OpenROAD `Tcl` shell:
 
 ```tcl
 define_corners fast slow
@@ -1520,7 +1520,7 @@ cd ../tools/OpenROAD/src/rsz/test/
 openroad -gui
 ```
 
-Copy and paste the below commands in the `Tcl Commands` section of GUI.
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source helpers.tcl
@@ -1587,8 +1587,7 @@ cd ../tools/OpenROAD/src/cts/test/
 openroad -gui
 ```
 
-To build the clock tree, run the following commands in `Tcl Commands` of
-GUI:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 read_lef Nangate45/Nangate45.lef
@@ -1759,7 +1758,7 @@ cd ../tools/OpenROAD/src/grt/test/
 openroad -gui
 ```
 
-In the `Tcl Commands` section of GUI,run following commands:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source "helpers.tcl"
@@ -1800,8 +1799,7 @@ cd ../tools/OpenROAD/src/grt/test/
 openroad -gui
 ```
 
-To run the global routing, run the following commands in `Tcl Commands` of
-GUI:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source gcd.tcl
@@ -1848,8 +1846,7 @@ cd ../tools/OpenROAD/src/drt/test/
 openroad -gui
 ```
 
-To run the detail routing, run the following commands in `Tcl Commands` of
-GUI:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 read_lef Nangate45/Nangate45_tech.lef
@@ -1924,7 +1921,7 @@ cd ../tools/OpenROAD/src/ant/test/
 openroad
 ```
 
-To extract antenna violations, run the following commands:
+In the OpenROAD `Tcl` shell:
 
 ```tcl
 read_lef ant_check.lef
@@ -1972,7 +1969,7 @@ cd flow/tutorials/scripts/metal_fill
 openroad -gui
 ```
 
-In the `Tcl Commands` section:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source "helpers.tcl"
@@ -2011,7 +2008,7 @@ cd ../tools/OpenROAD/src/rcx/test/
 openroad
 ```
 
-Run parasitics in the `Tcl Commands` section:
+In the OpenROAD `Tcl` shell:
 
 ```tcl
 source 45_gcd.tcl
@@ -2077,8 +2074,7 @@ cd ../tools/OpenROAD/src/grt/test/
 openroad -gui
 ```
 
-To run the global routing, run the following commands in `Tcl Commands` of
-GUI:
+In the `Tcl Commands` section of the OpenROAD GUI:
 
 ```tcl
 source congestion5.tcl
