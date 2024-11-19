@@ -139,7 +139,6 @@ SYNTH_HIERARCHICAL:
     Enable to Synthesis hierarchically, otherwise considered flat synthesis.
   stages:
     - synth
-  default: 0
 LATCH_MAP_FILE:
   description: >
     List of latches treated as a black box by Yosys.
@@ -189,8 +188,7 @@ ABC_LOAD_IN_FF:
     - synth
 MAX_UNGROUP_SIZE:
   description: >
-    For hierarchical synthesis, we ungroup modules of larger area than given by this
-    variable. The default value is > 0 platform specific.
+    For hierarchical synthesis, we ungroup modules of size given by this variable.
   stages:
     - synth
 FLOORPLAN_DEF:
@@ -291,7 +289,6 @@ CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
   stages:
     - place
     - floorplan
-  default: 0
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
     Cell padding on both sides in site widths to ease routability in detail placement.
@@ -299,14 +296,12 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     - place
     - cts
     - grt
-  default: 0
 PLACE_PINS_ARGS:
   description: >
     Arguments to place_pins
   stages:
     - place
     - floorplan
-  default: ""
 PLACE_DENSITY:
   description: >
     The desired placement density of cells. It reflects how spread the cells would be on the core area.
@@ -327,23 +322,19 @@ GLOBAL_PLACEMENT_ARGS:
 ENABLE_DPO:
   description: >
     Enable detail placement with improve_placement feature.
-  default: 1
 DPO_MAX_DISPLACEMENT:
   description: >
     Specifies how far an instance can be moved when optimizing.
-  default: 5 1
 GPL_TIMING_DRIVEN:
   description: >
     Specifies whether the placer should use timing driven placement.
   stages:
     - place
-  default: 1
 GPL_ROUTABILITY_DRIVEN:
   description: >
     Specifies whether the placer should use routability driven placement.
   stages:
     - place
-  default: 1
 CAP_MARGIN:
   description: >
     Specifies a capacitance margin when fixing max capacitance violations. This option allows you to overfix.
@@ -526,7 +517,6 @@ ABC_AREA:
     Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.
   stages:
     - synth
-  default: 0
 PWR_NETS_VOLTAGES:
   description: >
     Used for IR Drop calculation.
@@ -556,7 +546,6 @@ PRESERVE_CELLS:
 SYNTH_ARGS:
   description: >
     Optional synthesis variables for yosys.
-  default: -flatten
 VERILOG_TOP_PARAMS:
   description: >
     Apply toplevel params (if exist).
@@ -587,13 +576,11 @@ RESYNTH_AREA_RECOVER:
     Enable re-synthesis for area reclaim.
   stages:
     - synth
-  default: 0
 RESYNTH_TIMING_RECOVER:
   description: >
     Enable re-synthesis for timing optimization.
   stages:
     - synth
-  default: 0
 MACRO_HALO_X:
   description: >
     Set macro halo for x-direction. Only available for ASAP7 PDK.
@@ -665,4 +652,3 @@ MATCH_CELL_FOOTPRINT:
     - place
     - cts
     - route
-  default: 0
