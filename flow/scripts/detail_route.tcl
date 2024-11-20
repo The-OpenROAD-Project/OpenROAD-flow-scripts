@@ -46,9 +46,7 @@ set all_args [concat [list \
 
 log_cmd detailed_route {*}$all_args
 
-set_global_routing_layer_adjustment $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER) 0.5
-set_routing_layers -signal $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER)
-
+fast_route
 
 if {![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1]} {
   set repair_antennas_iters 1
