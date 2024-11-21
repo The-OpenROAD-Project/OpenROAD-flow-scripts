@@ -10,7 +10,7 @@ else
 fi
 
 # package versions
-klayoutVersion=0.28.17
+klayoutVersion=0.29.8
 verilatorVersion=5.026
 
 _versionCompare() {
@@ -170,9 +170,14 @@ _installUbuntuPackages() {
         fi
         else
             if [[ $1 == 20.04 ]]; then
-                klayoutChecksum=f78d41edf5bcfa5f1990bde1a9307e9e
+                klayoutChecksum=bfa011330bc9e1f61b46f668379cc741
+            elif [[ $1 == 22.04 ]]; then
+                klayoutChecksum=60839f6b5b2b1c1e76bf0c1bc17bf18c
+            elif [[ $1 == 24.04 ]]; then
+                klayoutChecksum=b8909538985b15135b49e8d32a089d72
             else
-                klayoutChecksum=54748a49e1ab53e14cf5bf95feb2f25a
+                echo "Unrecognized version of Ubuntu $1. Please install KLayout manually"
+                exit 1
             fi
             wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
             md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
