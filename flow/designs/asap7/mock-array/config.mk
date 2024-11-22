@@ -57,7 +57,7 @@ power:
 	$(OPENSTA_EXE) -no_init -exit designs/asap7/mock-array/power.tcl
 
 # Routing by abutment should be easy, limit iterations
-export DETAILED_ROUTE_END_ITERATION = 6
+export DETAILED_ROUTE_END_ITERATION ?= 6
 
 export MAX_ROUTING_LAYER = M9
 export ROUTING_LAYER_ADJUSTMENT = 0.45
