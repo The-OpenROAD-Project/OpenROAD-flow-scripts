@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 4526,
+        "value": 5357,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 4590,
+        "value": 5428,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
