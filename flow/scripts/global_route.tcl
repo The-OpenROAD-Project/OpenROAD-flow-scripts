@@ -93,8 +93,7 @@ proc global_route_helper {} {
     check_antennas -report_file $::env(REPORTS_DIR)/grt_antennas.log
   }
 
-  puts "Estimate parasitics..."
-  estimate_parasitics -global_routing
+  log_cmd estimate_parasitics -global_routing -spef_file $::env(RESULTS_DIR)/5_1_grt.spef
 
   report_metrics 5 "global route"
 
@@ -105,6 +104,7 @@ proc global_route_helper {} {
   write_guides $::env(RESULTS_DIR)/route.guide
   write_db $::env(RESULTS_DIR)/5_1_grt.odb
   write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt.sdc
+  write_verilog $::env(RESULTS_DIR)/5_1_grt.v
 }
 
 global_route_helper
