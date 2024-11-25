@@ -49,7 +49,8 @@ class BusesVec(singleElementWidth: Int, width: Int, height: Int)
   def asSeq: Seq[Vec[UInt]] = routes.map(_._2).toSeq
 }
 
-class MockArrayBundle(width: Int, height: Int, singleElementWidth: Int) extends Bundle {
+class MockArrayBundle(width: Int, height: Int, singleElementWidth: Int)
+    extends Bundle {
   val ins = Input(new BusesVec(singleElementWidth, width, height))
   val outs = Output(new BusesVec(singleElementWidth, width, height))
   val lsbs = Output(Vec(width * height, Bool()))
@@ -73,8 +74,11 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
     //  left <-> down
     //  up <-> right
     (io.outs.asSeq zip (io.ins.asSeq ++ Seq(io.ins.asSeq.head))
-      .sliding(2).toSeq.reverse.map(_.map(RegNext(_)))).foreach {
-      case (a, b) => a := RegNext(b(0) ^ b(1))
+      .sliding(2)
+      .toSeq
+      .reverse
+      .map(_.map(RegNext(_)))).foreach { case (a, b) =>
+      a := RegNext(b(0) ^ b(1))
     }
 
     // Combinational logic, but a maximum flight path of 4 elements
@@ -109,28 +113,30 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
   io.lsbs := RegNext(VecInit(ces.map(_.last.io.lsbOuts).flatten))
 
   // Connect inputs to edge element buses
-  (ces.map(_.head).map(_.io.ins.asMap(Routes.RIGHT)) zip io.ins.asMap(
-    Routes.RIGHT
-  )).foreach { case (a, b) => a := b }
-  (ces.last.map(_.io.ins.asMap(Routes.DOWN)) zip io.ins.asMap(Routes.DOWN))
-    .foreach { case (a, b) => a := b }
-  (ces.map(_.last).map(_.io.ins.asMap(Routes.LEFT)) zip io.ins.asMap(
-    Routes.LEFT
-  )).foreach { case (a, b) => a := b }
-  (ces.head.map(_.io.ins.asMap(Routes.UP)) zip io.ins.asMap(Routes.UP))
-    .foreach { case (a, b) => a := b }
-
-  // Connect edge element buses to outputs
-  (ces.map(_.head).map(_.io.outs.asMap(Routes.LEFT)) zip io.outs.asMap(
-    Routes.LEFT
-  )).foreach { case (a, b) => b := a }
-  (ces.last.map(_.io.outs.asMap(Routes.UP)) zip io.outs.asMap(Routes.UP))
-    .foreach { case (a, b) => b := a }
-  (ces.map(_.last).map(_.io.outs.asMap(Routes.RIGHT)) zip io.outs.asMap(
-    Routes.RIGHT
-  )).foreach { case (a, b) => b := a }
-  (ces.head.map(_.io.outs.asMap(Routes.DOWN)) zip io.outs.asMap(Routes.DOWN))
-    .foreach { case (a, b) => b := a }
+  (
+    (ces.map(_.head).map(_.io.ins.asMap(Routes.RIGHT)) zip io.ins.asMap(
+      Routes.RIGHT
+    )) ++
+      (ces.last
+        .map(_.io.ins.asMap(Routes.DOWN)) zip io.ins.asMap(Routes.DOWN)) ++
+      (ces.map(_.last).map(_.io.ins.asMap(Routes.LEFT)) zip io.ins.asMap(
+        Routes.LEFT
+      )) ++
+      (ces.head.map(_.io.ins.asMap(Routes.UP)) zip io.ins.asMap(Routes.UP)) ++
+      ((ces.map(_.head).map(_.io.outs.asMap(Routes.LEFT)) zip io.outs.asMap(
+        Routes.LEFT
+      )) ++
+        (ces.last.map(_.io.outs.asMap(Routes.UP)) zip io.outs.asMap(
+          Routes.UP
+        )) ++
+        (ces.map(_.last).map(_.io.outs.asMap(Routes.RIGHT)) zip io.outs.asMap(
+          Routes.RIGHT
+        )) ++
+        (ces.head.map(_.io.outs.asMap(Routes.DOWN)) zip io.outs.asMap(
+          Routes.DOWN
+        ))).map { case (a, b) => (b, a) }
+  )
+    .foreach { case (a, b) => a := RegNext(b) }
 
   // Connect neighboring left/right element buses
   (ces.transpose.flatten zip ces.transpose.drop(1).flatten).foreach {
@@ -153,62 +159,72 @@ case class ArrayConfig(
     remainingArgs: Seq[String] = Seq.empty
 )
 
-class MockArrayPostSynthesis(width:Int, height:Int, singleElementWidth:Int) 
-extends BlackBox with HasBlackBoxPath {
+class MockArrayPostSynthesis(width: Int, height: Int, singleElementWidth: Int)
+    extends BlackBox
+    with HasBlackBoxPath {
   override def desiredName = "MockArray"
   val io = IO(new Bundle {
     val clock = Input(Clock())
     val reset = Input(Bool())
     val io = new MockArrayBundle(width, height, singleElementWidth)
   })
-  val platformDir = sys.env.getOrElse("PLATFORM_DIR", "defaultPath") + "/verilog/stdcell/"
-  (Seq("asap7sc7p5t_AO_RVT_TT_201020.v",
+  val platformDir =
+    sys.env.getOrElse("PLATFORM_DIR", "defaultPath") + "/verilog/stdcell/"
+  (Seq(
+    "asap7sc7p5t_AO_RVT_TT_201020.v",
     "dff.v",
     "asap7sc7p5t_SIMPLE_RVT_TT_201020.v",
     "asap7sc7p5t_INVBUF_RVT_TT_201020.v",
-    "empty.v").map(p=>Paths.get(platformDir + p)) ++
-    Seq(
-  "MockArrayFinal.v",
-  "MockArrayElementFinal.v").map(p=>Paths.get("post/" + p)))
-  .foreach(p=> addPath(p.toAbsolutePath().toString()))
+    "empty.v"
+  ).map(p => Paths.get(platformDir + p)) ++
+    Seq("MockArrayFinal.v", "MockArrayElementFinal.v").map(p =>
+      Paths.get("post/" + p)
+    ))
+    .foreach(p => addPath(p.toAbsolutePath().toString()))
 }
 
-class MockArrayTestbench(width:Int, height:Int, singleElementWidth:Int) extends Module {
+class MockArrayTestbench(width: Int, height: Int, singleElementWidth: Int)
+    extends Module {
   val io = IO(new MockArrayBundle(width, height, singleElementWidth))
-  val postSynthesis = Module(new MockArrayPostSynthesis(width, height, singleElementWidth))
+  val postSynthesis = Module(
+    new MockArrayPostSynthesis(width, height, singleElementWidth)
+  )
   postSynthesis.io.io <> io
   postSynthesis.io.reset := reset.asBool
   postSynthesis.io.clock := clock
 }
 
-
-class MockArrayTest(width:Int, height:Int, singleElementWidth:Int) extends AnyFlatSpec with ChiselScalatestTester {
+class MockArrayTest(width: Int, height: Int, singleElementWidth: Int)
+    extends AnyFlatSpec
+    with ChiselScalatestTester {
   behavior of "MockArray"
 
   it should "Wiggle some wires" in {
     // find full path foo.v in scala/src/resources
-    test(new MockArrayTestbench(width, height, singleElementWidth)).
-      withAnnotations(Seq(WriteVcdAnnotation,
-      VerilatorBackendAnnotation,
-      SimulatorDebugAnnotation,
-      // DD flip flops use UDP Tables, unsupported by Verilator
-      VerilatorFlags(Seq())
-      )) { dut =>
-      for (j <- 0 until 5) {
-        dut.io.ins.routes.foreach { case (route, vec) =>
-          vec.zipWithIndex.foreach { case (wire, i) =>
-            wire.poke((i+j).U)
-            dut.clock.step(1)
+    test(new MockArrayTestbench(width, height, singleElementWidth))
+      .withAnnotations(
+        Seq(
+          WriteVcdAnnotation,
+          VerilatorBackendAnnotation,
+          SimulatorDebugAnnotation,
+          // DD flip flops use UDP Tables, unsupported by Verilator
+          VerilatorFlags(Seq())
+        )
+      ) { dut =>
+        for (j <- 0 until 5) {
+          dut.io.ins.routes.foreach { case (route, vec) =>
+            vec.zipWithIndex.foreach { case (wire, i) =>
+              wire.poke((i + j).U)
+              dut.clock.step(1)
+            }
           }
         }
       }
-    }
   }
 }
 
-
 object parse {
-  def apply(args:Array[String]) : (ArrayConfig, Array[String]) = {
+  def apply(args: Array[String]): (ArrayConfig, Array[String]) = {
     val builder = OParser.builder[ArrayConfig]
     val parser = {
       import builder._
@@ -234,8 +250,6 @@ object parse {
 
     val (configArgs, afterDelimiter) = args.span(_ != "--")
     val chiselArgs = afterDelimiter.drop(1)
-
-
 
     OParser.parse(parser, configArgs, ArrayConfig()) match {
       case Some(c) =>
