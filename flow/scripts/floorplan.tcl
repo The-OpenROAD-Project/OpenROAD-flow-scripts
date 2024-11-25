@@ -108,13 +108,13 @@ if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
   # remove buffers inserted by yosys/abc
   remove_buffers
 } else {
-  repair_timing_helper 0
+  repair_timing_helper "floorplan" 0
 }
 
 ##### Restructure for timing #########
 if { [env_var_equals RESYNTH_TIMING_RECOVER 1] } {
   repair_design_helper
-  repair_timing_helper
+  repair_timing_helper "floorplan"
   # pre restructure area/timing report (ideal clocks)
   puts "Post synth-opt area"
   report_design_area
@@ -134,7 +134,7 @@ if { [env_var_equals RESYNTH_TIMING_RECOVER 1] } {
   # post restructure area/timing report (ideal clocks)
   remove_buffers
   repair_design_helper
-  repair_timing_helper
+  repair_timing_helper "floorplan"
 
   puts "Post restructure-opt wns"
   report_worst_slack -max -digits 3

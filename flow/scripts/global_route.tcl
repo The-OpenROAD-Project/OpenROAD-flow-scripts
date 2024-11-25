@@ -67,7 +67,7 @@ proc global_route_helper {} {
     puts "Repair setup and hold violations..."
     estimate_parasitics -global_routing
 
-    repair_timing_helper
+    repair_timing_helper "grt"
 
     if { $::env(DETAILED_METRICS) } {
       report_metrics 5 "global route post repair timing"

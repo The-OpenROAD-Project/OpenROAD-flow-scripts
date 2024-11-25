@@ -16,7 +16,7 @@ proc fast_route {} {
   }
 }
 
-proc repair_timing_helper { {hold_margin 1} } {
+proc repair_timing_helper { stage {hold_margin 1} } {
   set additional_args "-verbose"
   append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
   if {$hold_margin || $::env(HOLD_SLACK_MARGIN) < 0} {
@@ -28,6 +28,15 @@ proc repair_timing_helper { {hold_margin 1} } {
   append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
   append_env_var additional_args SKIP_LAST_GASP -skip_last_gasp 0
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
+  if { $stage == "floorplan"} {
+    set max_passes_prefix "FP_"
+  } elseif { $stage == "cts" } {
+    set max_passes_prefix "CTS_"
+  } elseif { $stage == "grt"} {
+    set max_passes_prefix "GRT_"
+  }
+  append_env_var additional_args "${max_passes_prefix}REPAIR_TIMING_MAX_PASSES_PER_ITER" -max_passes_per_iter 1
+  puts "repair_timing [join $additional_args " "]"
   log_cmd repair_timing {*}$additional_args
 }
 
