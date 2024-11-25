@@ -27,7 +27,7 @@ export IO_CONSTRAINTS         = designs/asap7/mock-array/Element/io.tcl
 export PDN_TCL                = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCK_grid_strategy.tcl
 
 # Detailed routing should be easy, limit iterations
-export DETAILED_ROUTE_END_ITERATION = 6
+export DETAILED_ROUTE_END_ITERATION ?= 6
 
 export MIN_ROUTING_LAYER = M2
 # M5 is the top PDN layer, so don't exceed that.
