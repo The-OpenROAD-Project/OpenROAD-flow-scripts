@@ -1,3 +1,4 @@
+---
 GENERATE_ARTIFACTS_ON_FAILURE:
   description: >
     For instance Bazel needs artifacts (.odb and .rpt files) on a failure to
@@ -11,9 +12,10 @@ GENERATE_ARTIFACTS_ON_FAILURE:
     failures that aren't covered by the "useful to inspect the artifacts on
     failure" use-case.
 
-    Example: just like detailed routing, a global route that fails with congestion, is not
-    a build failure(as in exit code non-zero), it is a successful(as in zero exit code)
-    global route that produce reports detailing the problem.
+    Example: just like detailed routing, a global route that fails with
+    congestion, is not a build failure(as in exit code non-zero), it is a
+    successful(as in zero exit code) global route that produce reports
+    detailing the problem.
 
     Detailed route will not proceed, if there is global routing congestion
 
@@ -48,7 +50,8 @@ ROUTING_LAYER_ADJUSTMENT:
     - final
 RECOVER_POWER:
   description: >
-    Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100].
+    Specifies how many percent of paths with positive slacks can be slowed for
+    power savings [0-100].
   default: 0
 SKIP_INCREMENTAL_REPAIR:
   default: 0
@@ -59,14 +62,15 @@ SKIP_INCREMENTAL_REPAIR:
 DETAILED_METRICS:
   description: >
     If set, then calls report_metrics prior to repair operations in the CTS
-    and global route stages 
+    and global route stages
   default: 0
   stages:
     - cts
     - grt
 EQUIVALENCE_CHECK:
   description: >
-    Enable running equivalence checks to verify logical correctness of repair_timing.
+    Enable running equivalence checks to verify logical correctness of
+    repair_timing.
   default: 0
   stages:
     - cts
@@ -77,7 +81,8 @@ CORE_UTILIZATION:
     - floorplan
 CORE_AREA:
   description: >
-    The core area specified as a list of lower-left and upper-right corners in microns
+    The core area specified as a list of lower-left and upper-right corners in
+    microns
     (X1 Y1 X2 Y2).
   stages:
     - floorplan
@@ -95,7 +100,8 @@ REPORT_CLOCK_SKEW:
   default: 1
 SKIP_REPORT_METRICS:
   description: >
-    If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.
+    If set to 1, then metrics, report_metrics does nothing. Useful to speed up
+    builds.
   stages:
     - floorplan
     - place
@@ -108,7 +114,7 @@ PROCESS:
     Technology node or process in use.
 CORNER:
   description: >
-    Library to select based on corner BC/TC/WC.
+    PVT corner library selection. Only available for ASAP7 and GF180 PDKs.
 TECH_LEF:
   description: >
     A technology LEF file of the PDK that includes all relevant information
@@ -122,7 +128,8 @@ GDS_FILES:
 LIB_FILES:
   description: >
     A Liberty file of the standard cell library with PVT characterization,
-    input and output characteristics, timing and power definitions for each cell.
+    input and output characteristics, timing and power definitions for each
+    cell.
 DONT_USE_CELLS:
   description: >
     Dont use cells eases pin access in detailed routing.
@@ -139,6 +146,7 @@ SYNTH_HIERARCHICAL:
     Enable to Synthesis hierarchically, otherwise considered flat synthesis.
   stages:
     - synth
+  default: 0
 LATCH_MAP_FILE:
   description: >
     List of latches treated as a black box by Yosys.
@@ -156,7 +164,8 @@ ADDER_MAP_FILE:
     - synth
 TIEHI_CELL_AND_PORT:
   description: >
-    Tie high cells used in Yosys synthesis to replace a logical 1 in the Netlist.
+    Tie high cells used in Yosys synthesis to replace a logical 1 in the
+    Netlist.
   stages:
     - synth
     - place
@@ -173,7 +182,8 @@ MIN_BUF_CELL_AND_PORTS:
     - synth
 ABC_CLOCK_PERIOD_IN_PS:
   description: >
-    Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`.
+    Clock period to be used by STA during synthesis. Default value read from
+    `constraint.sdc`.
   stages:
     - synth
 ABC_DRIVER_CELL:
@@ -188,7 +198,8 @@ ABC_LOAD_IN_FF:
     - synth
 MAX_UNGROUP_SIZE:
   description: >
-    For hierarchical synthesis, we ungroup modules of size given by this variable.
+    For hierarchical synthesis, we ungroup modules of larger area than given by
+    this variable. The default value is > 0 platform specific.
   stages:
     - synth
 FLOORPLAN_DEF:
@@ -217,7 +228,8 @@ TAPCELL_TCL:
     - floorplan
 MACRO_PLACEMENT:
   description: >
-    Specifies the path of a file on how to place certain macros manually using read_macro_placement.
+    Specifies the path of a file on how to place certain macros manually using
+    read_macro_placement.
   stages:
     - floorplan
 MACRO_PLACEMENT_TCL:
@@ -227,13 +239,15 @@ MACRO_PLACEMENT_TCL:
     - floorplan
 MACRO_PLACE_HALO:
   description: >
-    Horizontal/vertical halo around macros (microns). Used by automatic macro placement.
+    Horizontal/vertical halo around macros (microns). Used by automatic macro
+    placement.
   stages:
     - floorplan
 MACRO_PLACE_CHANNEL:
   description: >
-    Horizontal/vertical channel width between macros (microns). Used by automatic macro placement.
-    Imagine channel=10 and halo=5. Then macros must be 10 apart but standard cells must be 5 away from a macro.
+    Horizontal/vertical channel width between macros (microns). Used by
+    automatic macro placement. Imagine channel=10 and halo=5. Then macros must
+    be 10 apart but standard cells must be 5 away from a macro.
   stages:
     - floorplan
 MACRO_BLOCKAGE_HALO:
@@ -243,7 +257,9 @@ MACRO_BLOCKAGE_HALO:
     - floorplan
 PDN_TCL:
   description: >
-    File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.
+    File path which has a set of power grid policies used by pdn to be applied
+    to the design, such as layers to use, stripe width and spacing to generate
+    the actual metal straps.
   stages:
     - floorplan
 MAKE_TRACKS:
@@ -259,13 +275,15 @@ IO_CONSTRAINTS:
     - place
 IO_PLACER_H:
   description: >
-    The metal layer on which to place the I/O pins horizontally (top and bottom of the die).
+    The metal layer on which to place the I/O pins horizontally (top and bottom
+    of the die).
   stages:
     - floorplan
     - place
 IO_PLACER_V:
   description: >
-    The metal layer on which to place the I/O pins vertically (sides of the die).
+    The metal layer on which to place the I/O pins vertically (sides of the
+    die).
   stages:
     - floorplan
     - place
@@ -277,7 +295,8 @@ GUI_TIMING:
   default: 1
 FILL_CELLS:
   description: >
-    Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.
+    Fill cells are used to fill empty sites. If not set or empty, fill cell
+    insertion is skipped.
   stages:
     - route
 TAP_CELL_NAME:
@@ -285,62 +304,75 @@ TAP_CELL_NAME:
     Name of the cell to use in tap cell insertion.
 CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
   description: >
-    Cell padding on both sides in site widths to ease routability during global placement.
+    Cell padding on both sides in site widths to ease routability during global
+    placement.
   stages:
     - place
     - floorplan
+  default: 0
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
-    Cell padding on both sides in site widths to ease routability in detail placement.
+    Cell padding on both sides in site widths to ease routability in detail
+    placement.
   stages:
     - place
     - cts
     - grt
+  default: 0
 PLACE_PINS_ARGS:
   description: >
     Arguments to place_pins
   stages:
     - place
     - floorplan
+  default: ""
 PLACE_DENSITY:
   description: >
-    The desired placement density of cells. It reflects how spread the cells would be on the core area.
-    1.0 = closely dense. 0.0 = widely spread.
+    The desired placement density of cells. It reflects how spread the cells
+    would be on the core area. 1.0 = closely dense. 0.0 = widely spread.
   stages:
     - floorplan
     - place
 PLACE_DENSITY_LB_ADDON:
   description: >
-    Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.
+    Check the lower boundary of the PLACE_DENSITY and add
+    PLACE_DENSITY_LB_ADDON if it exists.
 REPAIR_PDN_VIA_LAYER:
   description: >
     Remove power grid vias which generate DRC violations after detailed routing.
 GLOBAL_PLACEMENT_ARGS:
   description: >
-    Use additional tuning parameters during global placement other than default args defined in global_place.tcl.
+    Use additional tuning parameters during global placement other than default
+    args defined in global_place.tcl.
   default: ""
 ENABLE_DPO:
   description: >
     Enable detail placement with improve_placement feature.
+  default: 1
 DPO_MAX_DISPLACEMENT:
   description: >
     Specifies how far an instance can be moved when optimizing.
+  default: 5 1
 GPL_TIMING_DRIVEN:
   description: >
     Specifies whether the placer should use timing driven placement.
   stages:
     - place
+  default: 1
 GPL_ROUTABILITY_DRIVEN:
   description: >
     Specifies whether the placer should use routability driven placement.
   stages:
     - place
+  default: 1
 CAP_MARGIN:
   description: >
-    Specifies a capacitance margin when fixing max capacitance violations. This option allows you to overfix.
+    Specifies a capacitance margin when fixing max capacitance violations. This
+    option allows you to overfix.
 SLEW_MARGIN:
   description: >
-    Specifies a slew margin when fixing max slew violations. This option allows you to overfix.
+    Specifies a slew margin when fixing max slew violations. This option allows
+    you to overfix.
 CTS_ARGS:
   description: >
     Override `clock_tree_synthesis` arguments.
@@ -360,8 +392,8 @@ HOLD_SLACK_MARGIN:
     Exiting timing repair early is useful in exploration where
 
     the .sdc has a fixed clock period at designs target clock period and where
-    HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair(extremelly long running times)
-    when exploring different parameter settings.
+    HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair(extremely long running
+    times) when exploring different parameter settings.
   stages:
     - cts
     - floorplan
@@ -379,34 +411,38 @@ SETUP_SLACK_MARGIN:
   default: 0
 SKIP_GATE_CLONING:
   description: >
-    Do not use gate cloning transform to fix timing violations (default: use gate cloning).
+    Do not use gate cloning transform to fix timing violations (default: use
+    gate cloning).
   stages:
     - cts
     - floorplan
     - grt
 SKIP_LAST_GASP:
   description: >
-    Do not use last gasp optimization to fix timing violations (default: use gate last gasp).
+    Do not use last gasp optimization to fix timing violations (default: use
+    gate last gasp).
   stages:
     - cts
     - floorplan
     - grt
 SKIP_PIN_SWAP:
   description: >
-    Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).
+    Do not use pin swapping as a transform to fix timing violations (default:
+    use pin swapping).
   stages:
     - cts
     - floorplan
     - grt
 REMOVE_CELLS_FOR_EQY:
   description: >
-    String patterns directly passed to write_verilog -remove_cells <> for equivalence checks.
+    String patterns directly passed to write_verilog -remove_cells <> for
+    equivalence checks.
   stages:
     - cts
 SKIP_CTS_REPAIR_TIMING:
   description: >
-    Skipping CTS repair, which can take a long time, can be useful in architectural exploration
-    or when getting CI up and running.
+    Skipping CTS repair, which can take a long time, can be useful in
+    architectural exploration or when getting CI up and running.
   stages:
     - cts
 MIN_ROUTING_LAYER:
@@ -488,25 +524,22 @@ ADDITIONAL_FILES:
     Additional files to be added to `make issue` archive.
 ADDITIONAL_LEFS:
   description: >
-    Hardened macro LEF view files listed here. The LEF information of the macros
-    is immutable and used throughout all stages. Stored in the .odb file.
+    Hardened macro LEF view files listed here. The LEF information of the
+    macros is immutable and used throughout all stages. Stored in the .odb file.
 ADDITIONAL_LIBS:
   description: >
-    Hardened macro library files listed here. The library information is immutable
-    and used throughout all stages. Not stored in the .odb file.
+    Hardened macro library files listed here. The library information is
+    immutable and used throughout all stages. Not stored in the .odb file.
 ADDITIONAL_GDS:
   description: >
     Hardened macro GDS files listed here.
   stages:
-  - final
+    - final
 VERILOG_INCLUDE_DIRS:
   description: >
     Specifies the include directories for the Verilog input files.
   stages:
     - synth
-CORNER:
-  description: >
-    PVT corner library selection. Only available for ASAP7 and GF180 PDK.
 DESIGN_NICKNAME:
   description: >
     DESIGN_NICKNAME just changes the directory name that ORFS outputs to be
@@ -517,6 +550,7 @@ ABC_AREA:
     Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.
   stages:
     - synth
+  default: 0
 PWR_NETS_VOLTAGES:
   description: >
     Used for IR Drop calculation.
@@ -546,6 +580,7 @@ PRESERVE_CELLS:
 SYNTH_ARGS:
   description: >
     Optional synthesis variables for yosys.
+  default: -flatten
 VERILOG_TOP_PARAMS:
   description: >
     Apply toplevel params (if exist).
@@ -553,21 +588,23 @@ VERILOG_TOP_PARAMS:
     - synth
 CORE_ASPECT_RATIO:
   description: >
-    The core aspect ratio (height / width). This value is ignored if `CORE_UTILIZATION`
-    is undefined.
+    The core aspect ratio (height / width). This value is ignored if
+    `CORE_UTILIZATION` is undefined.
   stages:
     - floorplan
 CORE_MARGIN:
   description: >
-    The margin between the core area and die area, specified in microns. Allowed values
-    are either one value for all margins or a set of four values, one for each margin. The order
-    of the four values are: `{bottom top left right}`. This variable is ignored if `CORE_UTILIZATION`
+    The margin between the core area and die area, specified in microns.
+    Allowed values are either one value for all margins or a set of four
+    values, one for each margin. The order of the four values are:
+    `{bottom top left right}`. This variable is ignored if `CORE_UTILIZATION`
     is undefined.
   stages:
     - floorplan
 DIE_AREA:
   description: >
-    The die area specified as a list of lower-left and upper-right corners in microns
+    The die area specified as a list of lower-left and upper-right corners in
+    microns
     (X1 Y1 X2 Y2).
   stages:
     - floorplan
@@ -576,11 +613,13 @@ RESYNTH_AREA_RECOVER:
     Enable re-synthesis for area reclaim.
   stages:
     - synth
+  default: 0
 RESYNTH_TIMING_RECOVER:
   description: >
     Enable re-synthesis for timing optimization.
   stages:
     - synth
+  default: 0
 MACRO_HALO_X:
   description: >
     Set macro halo for x-direction. Only available for ASAP7 PDK.
@@ -646,9 +685,132 @@ GLOBAL_ROUTE_ARGS:
   default: -congestion_iterations 30 -congestion_report_iter_step 5 -verbose
 MATCH_CELL_FOOTPRINT:
   description: >
-    Enforce sizing operations to only swap cells that have the same layout boundary.
+    Enforce sizing operations to only swap cells that have the same layout
+    boundary.
   stages:
     - floorplan
     - place
     - cts
     - route
+  default: 0
+RTLMP_MAX_LEVEL:
+  description: >
+    Maximum depth of the physical hierarchy tree.
+  default: 2
+  stages:
+    - floorplan
+RTLMP_MAX_INST:
+  description: >
+    Maximum number of standard cells in a cluster. If unset, rtl_macro_placer
+    will calculate a value based on the design attributes.
+  stages:
+    - floorplan
+RTLMP_MIN_INST:
+  description: >
+    Minimum number of standard cells in a cluster. If unset, rtl_macro_placer
+    will calculate a value based on the design attributes.
+  stages:
+    - floorplan
+RTLMP_MAX_MACRO:
+  description: >
+    Maximum number of macros in a cluster. If unset, rtl_macro_placer will
+    calculate a value based on the design attributes.
+  stages:
+    - floorplan
+RTLMP_MIN_MACRO:
+  description: >
+    Minimum number of macros in a cluster. If unset, rtl_macro_placer will
+    calculate a value based on the design attributes.
+  stages:
+    - floorplan
+RTLMP_MIN_AR:
+  description: >
+    Specifies the minimum aspect ratio (height/width).
+  default: 0.33
+  stages:
+    - floorplan
+RTLMP_SIGNATURE_NET_THRESHOLD:
+  description: >
+    Minimum number of connections between two clusters to be identified as
+    connected.
+  default: 50
+  stages:
+    - floorplan
+RTLMP_AREA_WT:
+  description: >
+    Weight for the area of the current floorplan.
+  default: 0.1
+  stages:
+    - floorplan
+RTLMP_WIRELENGTH_WT:
+  description: >
+    Weight for half-perimiter wirelength.
+  default: 100.0
+  stages:
+    - floorplan
+RTLMP_OUTLINE_WT:
+  description: >
+    Weight for violating the fixed outline constraint, meaning that all
+    clusters should be placed within the shape of their parent cluster.
+  default: 100.00
+  stages:
+    - floorplan
+RTLMP_BOUNDARY_WT:
+  description: >
+    Weight for the boundary or how far the hard macro clusters are from
+    boundaries.
+  default: 50.0
+  stages:
+    - floorplan
+RTLMP_NOTCH_WT:
+  description: >
+    Weight for the notch, or the existence of dead space that cannot be used
+    for placement and routing.
+  default: 10.0
+  stages:
+    - floorplan
+RTLMP_DEAD_SPACE:
+  description: >
+    Specifies the target dead space percentage, which influences the
+    utilization of a cluster.
+  default: 0.05
+  stages:
+    - floorplan
+RTLMP_RPT_DIR:
+  description: >
+    Path to the directory where reports are saved.
+  stages:
+    - floorplan
+RTLMP_FENCE_LX:
+  description: >
+    Defines the lower left X coordinate for the global fence bounding box in
+    microns.
+  default: 0.0
+  stages:
+    - floorplan
+RTLMP_FENCE_LY:
+  description: >
+    Defines the lower left Y coordinate for the global fence bounding box in
+    microns.
+  default: 0.0
+  stages:
+    - floorplan
+RTLMP_FENCE_UX:
+  description: >
+    Defines the upper right X coordinate for the global fence bounding box in
+    microns.
+  default: 100000000.0
+  stages:
+    - floorplan
+RTLMP_FENCE_UY:
+  description: >
+    Defines the upper right Y coordinate for the global fence bounding box in
+    microns.
+  default: 100000000.0
+  stages:
+    - floorplan
+RTLMP_ARGS:
+  description: >
+    Overrides all other RTL macro placer arguments.
+  stages:
+    - floorplan

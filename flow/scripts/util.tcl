@@ -153,8 +153,8 @@ proc erase_non_stage_variables {stage_name} {
 set global_route_congestion_report $::env(REPORTS_DIR)/congestion.rpt
 
 proc place_density_with_lb_addon {} {
-  # check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists
-  if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
+  if {[env_var_exists_and_non_empty PLACE_DENSITY_LB_ADDON]} {
+    # check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON
     set place_density_lb [gpl::get_global_placement_uniform_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)]
