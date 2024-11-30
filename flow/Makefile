@@ -548,6 +548,15 @@ gui_$(1): gui_$(2)
 open_$(1): open_$(2)
 endef
 
+ifeq ($(XDG_SESSION_TYPE),wayland)
+    ifeq ($(shell lsb_release -rs | cut -d. -f1),24)
+		# Workaround for https://github.com/The-OpenROAD-Project/OpenROAD/issues/6172
+		# Also removes warning:
+		# [WARNING GUI-0076] Wayland does not support QWindow::requestActivate()
+        export QT_QPA_PLATFORM ?= xcb
+    endif
+endif
+
 define OPEN_GUI
 .PHONY: open_$(1) gui_$(1)
 open_$(1):
