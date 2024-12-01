@@ -11,19 +11,19 @@ export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_quad_core_v0/bp_qu
 
 export SDC_FILE      = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_quad_core_v0/bp_quad_block/sdc/bsg_chip.sdc
 
-export WRAP_LEFS       = $(PLATFORM_DIR)/lef/gf12_1r1w_d32_w64_m1.lef \
-                         $(PLATFORM_DIR)/lef/gf12_1rw_d128_w116_m2_bit.lef \
-                         $(PLATFORM_DIR)/lef/gf12_1rw_d256_w48_m2.lef \
-                         $(PLATFORM_DIR)/lef/gf12_1rw_d512_w64_m2_byte.lef \
-                         $(PLATFORM_DIR)/lef/gf12_1rw_d64_w124_m2_bit.lef \
-                         $(PLATFORM_DIR)/lef/gf12_1rw_d64_w62_m2_bit.lef
+export ADDITIONAL_LEFS   += $(PLATFORM_DIR)/lef/gf12_1r1w_d32_w64_m1.lef \
+                            $(PLATFORM_DIR)/lef/gf12_1rw_d128_w116_m2_bit.lef \
+                            $(PLATFORM_DIR)/lef/gf12_1rw_d256_w48_m2.lef \
+                            $(PLATFORM_DIR)/lef/gf12_1rw_d512_w64_m2_byte.lef \
+                            $(PLATFORM_DIR)/lef/gf12_1rw_d64_w124_m2_bit.lef \
+                            $(PLATFORM_DIR)/lef/gf12_1rw_d64_w62_m2_bit.lef
 
-export WRAP_LIBS       = $(PLATFORM_DIR)/lib/gf12_1r1w_d32_w64_m1_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         $(PLATFORM_DIR)/lib/gf12_1rw_d128_w116_m2_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         $(PLATFORM_DIR)/lib/gf12_1rw_d256_w48_m2_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         $(PLATFORM_DIR)/lib/gf12_1rw_d512_w64_m2_byte_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         $(PLATFORM_DIR)/lib/gf12_1rw_d64_w124_m2_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         $(PLATFORM_DIR)/lib/gf12_1rw_d64_w62_m2_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib
+export ADDITIONAL_LIBS   += $(PLATFORM_DIR)/lib/gf12_1r1w_d32_w64_m1_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                            $(PLATFORM_DIR)/lib/gf12_1rw_d128_w116_m2_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                            $(PLATFORM_DIR)/lib/gf12_1rw_d256_w48_m2_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                            $(PLATFORM_DIR)/lib/gf12_1rw_d512_w64_m2_byte_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                            $(PLATFORM_DIR)/lib/gf12_1rw_d64_w124_m2_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                            $(PLATFORM_DIR)/lib/gf12_1rw_d64_w62_m2_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib
 
 
 export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1r1w_d32_w64_m1.gds2 \

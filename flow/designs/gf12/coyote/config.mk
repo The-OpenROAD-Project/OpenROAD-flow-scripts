@@ -8,15 +8,15 @@ export VERILOG_FILES   = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \
 export SDC_FILE        = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 export ABC_AREA        = 1
 
-export WRAP_LEFS       = $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w80_bit.lef \
-                         $(PLATFORM_DIR)/lef/gf12_1rf_lg8_w128_all.lef \
-                         $(PLATFORM_DIR)/lef/gf12_2rf_lg6_w44_bit.lef \
-                         $(PLATFORM_DIR)/lef/gf12_2rf_lg8_w64_bit.lef
+export ADDITIONAL_LEFS   += $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w80_bit.lef \
+                            $(PLATFORM_DIR)/lef/gf12_1rf_lg8_w128_all.lef \
+                            $(PLATFORM_DIR)/lef/gf12_2rf_lg6_w44_bit.lef \
+                            $(PLATFORM_DIR)/lef/gf12_2rf_lg8_w64_bit.lef
 
-export WRAP_LIBS       = $(PLATFORM_DIR)/lib/gf12_1rf_lg6_w80_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         $(PLATFORM_DIR)/lib/gf12_1rf_lg8_w128_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         $(PLATFORM_DIR)/lib/gf12_2rf_lg6_w44_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
-                         $(PLATFORM_DIR)/lib/gf12_2rf_lg8_w64_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib
+export ADDITIONAL_LIBS   += $(PLATFORM_DIR)/lib/gf12_1rf_lg6_w80_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                            $(PLATFORM_DIR)/lib/gf12_1rf_lg8_w128_all_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                            $(PLATFORM_DIR)/lib/gf12_2rf_lg6_w44_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib \
+                            $(PLATFORM_DIR)/lib/gf12_2rf_lg8_w64_bit_ffpg_sigcmin_0p88v_0p88v_m40c.lib
 
 export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w80_bit.gds2 \
                          $(PLATFORM_DIR)/gds/gf12_1rf_lg8_w128_all.gds2 \

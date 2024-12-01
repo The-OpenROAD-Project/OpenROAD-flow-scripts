@@ -8,27 +8,27 @@ export CACHED_NETLIST = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
 export SDC_FILE      = $(PLATFORM_DIR)/$(DESIGN_NAME)/sdc/ca53_cpu.sdc
 
 
-export ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/sc9mcpp84_12lp_base_lvt_c14.lef
-export ADDITIONAL_LIBS += $(PLATFORM_DIR)/lib/sc9mcpp84_12lp_base_lvt_c14_tt_nominal_max_0p80v_25c.lib
 export ADDITIONAL_GDS  += $(PLATFORM_DIR)/gds/sc9mcpp84_12lp_base_lvt_c14.gds2
 
-export WRAP_LEFS = $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_128X32M2_FB1FS1SB0PG1.lef \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_160X118M2_FB1FS2SB0PG1.lef \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_128X50M2_FB1FS2SB0PG1.lef \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_128X60M2_FB1FS2SB0PG1.lef \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_256X12M2_FB1FS1SB0WM1PG1.lef \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_256X32M2_FB1FS1SB0PG1.lef \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/SRAMSPHD_A53_HS_1024X39M4_FB2FS2SB0PG1.lef \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/SRAMSPHD_A53_HS_2048X42M4_FB2FS2SB0WM1PG1.lef
+export ADDITIONAL_LEFS   += $(PLATFORM_DIR)/lef/sc9mcpp84_12lp_base_lvt_c14.lef /
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_128X32M2_FB1FS1SB0PG1.lef \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_160X118M2_FB1FS2SB0PG1.lef \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_128X50M2_FB1FS2SB0PG1.lef \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_128X60M2_FB1FS2SB0PG1.lef \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_256X12M2_FB1FS1SB0WM1PG1.lef \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_256X32M2_FB1FS1SB0PG1.lef \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/SRAMSPHD_A53_HS_1024X39M4_FB2FS2SB0PG1.lef \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/SRAMSPHD_A53_HS_2048X42M4_FB2FS2SB0WM1PG1.lef
 
-export WRAP_LIBS = $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_128X32M2_FB1FS1SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_128X50M2_FB1FS2SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_128X60M2_FB1FS2SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_160X118M2_FB1FS2SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_256X12M2_FB1FS1SB0WM1PG1_tt_nominal_0p80v_0p80v_25c.lib \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_256X32M2_FB1FS1SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/SRAMSPHD_A53_HS_1024X39M4_FB2FS2SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
-                   $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/SRAMSPHD_A53_HS_2048X42M4_FB2FS2SB0WM1PG1_tt_nominal_0p80v_0p80v_25c.lib
+export ADDITIONAL_LIBS   += $(PLATFORM_DIR)/lib/sc9mcpp84_12lp_base_lvt_c14_tt_nominal_max_0p80v_25c.lib \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_128X32M2_FB1FS1SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_128X50M2_FB1FS2SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_128X60M2_FB1FS2SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_160X118M2_FB1FS2SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_256X12M2_FB1FS1SB0WM1PG1_tt_nominal_0p80v_0p80v_25c.lib \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/RFSPHD_A53_HS_256X32M2_FB1FS1SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/SRAMSPHD_A53_HS_1024X39M4_FB2FS2SB0PG1_tt_nominal_0p80v_0p80v_25c.lib \
+                            $(PLATFORM_DIR)/$(DESIGN_NAME)/lib/SRAMSPHD_A53_HS_2048X42M4_FB2FS2SB0WM1PG1_tt_nominal_0p80v_0p80v_25c.lib
 
 
 
