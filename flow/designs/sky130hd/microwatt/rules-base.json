@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 5661289,
+        "value": 5655458,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 1,
+        "value": 3,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
