@@ -28,7 +28,7 @@ export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclud
 export MACRO_PLACE_HALO = 10 10
 export MACRO_PLACE_CHANNEL = 20 20
 
-export PLACE_DENSITY_LB_ADDON = 0.25
+export PLACE_DENSITY_LB_ADDON = 0.10
 export TNS_END_PERCENT        = 100
 
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/fastroute.tcl
