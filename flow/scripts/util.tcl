@@ -1,5 +1,6 @@
 proc log_cmd {cmd args} {
-  puts "$cmd [join $args " "]"
+  # log the command, escape arguments with spaces
+  puts "$cmd [join [lmap arg $args {expr {[string match {* *} $arg] ? "\"$arg\"" : $arg}}] " "]"
   $cmd {*}$args
 }
 
