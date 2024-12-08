@@ -390,7 +390,7 @@ HOLD_SLACK_MARGIN:
     hold repair using a negative HOLD_SLACK_MARGIN.
 
     Exiting timing repair early is useful in exploration where
-    the .sdc has a fixed clock period at designs target clock period and where
+    the .sdc has a fixed clock period at the design's target clock period and where
     HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair(extremely long running
     times) when exploring different parameter settings.
 
@@ -398,15 +398,18 @@ HOLD_SLACK_MARGIN:
     a clock insertion delay of 0 is used in timing paths. This creates
     a mismatch between macros that have a .lib file from after CTS, when
     the clock is propagated. To mitigate this, OpenSTA will use subtract
-    the clock insertion delay of macros when calculating timing.
-    This works with macros built with OpenROAD that have min_clock_tree_path
-    and max_clock_tree_path set. This is less accurate than if OpenROAD had
+    the clock insertion delay of macros when calculating timing with ideal
+    clock. Provided that min_clock_tree_path
+    and max_clock_tree_path are in the .lib file, which is the case for
+    macros built with OpenROAD. This is less accurate than if OpenROAD had
     created a placeholder clock tree for timing estimation purposes
     prior to CTS.
 
     There will inevitably be inaccuracies in the timing calculation prior
     to CTS. Use a slack margin that is low enough, even negative, to
-    avoid overrepair.
+    avoid overrepair. Inaccuracies in the timing prior to CTS can also
+    lead to underrepair, but there no obvious and simple way to avoid
+    underrapir in these cases.
 
     Overrepair can lead to excessive runtimes in repair or too much buffering
     being added, which can present itself as congestion of hold cells or
