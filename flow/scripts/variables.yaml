@@ -384,16 +384,33 @@ HOLD_SLACK_MARGIN:
     This option allows you to overfix or underfix(negative value, terminate
     retiming before 0 or positive slack).
 
-    Use min of HOLD_SLACK_MARGIN and 0(default hold slack margin) in floorplan.
+    floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0(default hold slack margin).
 
     This avoids overrepair in floorplan for hold by default, but allows skipping
     hold repair using a negative HOLD_SLACK_MARGIN.
 
     Exiting timing repair early is useful in exploration where
-
     the .sdc has a fixed clock period at designs target clock period and where
     HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair(extremely long running
     times) when exploring different parameter settings.
+
+    When an ideal clock is used, that is before CTS,
+    a clock insertion delay of 0 is used in timing paths. This creates
+    a mismatch between macros that have a .lib file from after CTS, when
+    the clock is propagated. To mitigate this, OpenSTA will use subtract
+    the clock insertion delay of macros when calculating timing.
+    This works with macros built with OpenROAD that have min_clock_tree_path
+    and max_clock_tree_path set. This is less accurate than if OpenROAD had
+    created a placeholder clock tree for timing estimation purposes
+    prior to CTS.
+
+    There will inevitably be inaccuracies in the timing calculation prior
+    to CTS. Use a slack margin that is low enough, even negative, to
+    avoid overrepair.
+
+    Overrepair can lead to excessive runtimes in repair or too much buffering
+    being added, which can present itself as congestion of hold cells or
+    buffer cells.
   stages:
     - cts
     - floorplan
@@ -404,6 +421,8 @@ SETUP_SLACK_MARGIN:
     Specifies a time margin for the slack when fixing setup violations.
     This option allows you to overfix or underfix(negative value, terminate
     retiming before 0 or positive slack).
+
+    See HOLD_SLACK_MARGIN for more details.
   stages:
     - cts
     - floorplan
