@@ -411,6 +411,15 @@ HOLD_SLACK_MARGIN:
     Overrepair can lead to excessive runtimes in repair or too much buffering
     being added, which can present itself as congestion of hold cells or
     buffer cells.
+
+    Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration
+    when trying to find the minimum clock period for a design.
+
+    The SDC_FILE for a design can be quite complicated and instead of
+    modifying the clock period in the SDC_FILE, which can be non-trivial,
+    the clock period can be fixed at the target frequency and the
+    SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible
+    current minimum clock period.
   stages:
     - cts
     - floorplan
