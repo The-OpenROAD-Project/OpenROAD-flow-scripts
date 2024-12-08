@@ -211,8 +211,8 @@ FLOORPLAN_DEF:
 REMOVE_ABC_BUFFERS:
   description: >
     Remove abc buffers from the netlist. If timing repair in floorplanning is
-    taking too long, use a SETUP_HOLD_MARGIN to terminate timing repair early
-    instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GAST=1.
+    taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early
+    instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.
   stages:
     - floorplan
   deprecated: 1
