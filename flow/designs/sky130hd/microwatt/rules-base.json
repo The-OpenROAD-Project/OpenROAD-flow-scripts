@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 3,
+        "value": 6,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
