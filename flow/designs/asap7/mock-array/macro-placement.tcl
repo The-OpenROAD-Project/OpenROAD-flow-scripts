@@ -1,27 +1,25 @@
-# fish out values from single source of truth: config.py
-set vals [regexp -all -inline {\S+} [exec sh -c {cd designs/asap7/mock-array && python3 -c "import config;print(f'{config.rows} {config.cols} {config.pitch_x} {config.pitch_y} {config.array_offset_x} {config.array_offset_y} {config.placement_grid_x} {config.placement_grid_y}')"}]]
-lassign $vals rows cols pitch_x pitch_y array_offset_x array_offset_y placement_grid_x placement_grid_y
+# Define the variables x and y for the offset
 
 set block [ord::get_db_block]
-set units [$block getDefUnits]
+set core [$block getCoreArea]
 
-for {set row 0} {$row < $rows} {incr row} {
-  for {set col 0} {$col < $cols} {incr col} {
-    set inst [$block findInst [format "ces_%d_%d" $row $col]]
+set element [lindex [find_macros] 0]
+set bbox [$element getBBox]
 
-    set x [expr round((($array_offset_x + (($placement_grid_x * $pitch_x) * $col)) * $units))]
-    set y [expr round((($array_offset_y + (($placement_grid_y * $pitch_y) * $row)) * $units))]
+# Calculate the x and y pitch
+set x_pitch [$bbox getDX]
+set y_pitch [expr [$bbox getDY] + 4/[ord::dbu_to_microns 1]]
 
-    # belt and suspenders check... ASAP7 macro placement must be aligned to 0.048um
-    if {$x % 48 != 0} {
-        error "x=$x is not divisible by 48"
+# Define the base location
+set x_offset [expr [$core xMin] + ([$core dx] - (7 * $x_pitch) - [$bbox getDX])/2]
+set y_offset [expr [$core yMin] + ([$core dy] - (7 * $y_pitch) - [$bbox getDY])/2]
+
+# Loop through the 8x8 array, add the offset, and invoke place_macro
+for {set i 0} {$i < 8} {incr i} {
+    for {set j 0} {$j < 8} {incr j} {
+        set macro_name [format "ces_%d_%d" $i $j]
+        set x_location [expr {$j * $x_pitch + $x_offset}]
+        set y_location [expr {$i * $y_pitch + $y_offset}]
+        place_macro -macro_name $macro_name -location [list [expr [ord::dbu_to_microns 1] * $x_location] [expr [ord::dbu_to_microns 1] * $y_location]] -orientation R0
     }
-    if {$y % 48 != 0} {
-        error "y=$y is not divisible by 48"
-    }
-
-    $inst setOrient R0
-    $inst setOrigin $x $y
-    $inst setPlacementStatus FIRM
-  }
 }

@@ -41,13 +41,10 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1r1w_d32_w64_m1.gds2 \
 
 export SEAL_GDS        = $(PLATFORM_DIR)/gds/crackstop_3x3.gds
 
+export FOOTPRINT_TCL   = $(PLATFORM_DIR)/bp/footprint.tcl
 
-export FOOTPRINT    = $(PLATFORM_DIR)/bp/bsg_bp_single.package.strategy
-export SIG_MAP_FILE = $(PLATFORM_DIR)/bp/soc_bsg_black_parrot.sigmap
-
-# These values must be multiples of placement site
-# export DIE_AREA    =
-# export CORE_AREA   =
+export DIE_AREA =    0   0 3000 3000
+export CORE_AREA = 200 200 2800 2800
 
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
