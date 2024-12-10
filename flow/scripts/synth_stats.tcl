@@ -23,7 +23,7 @@ proc write_keep_hierarchy {} {
   if {[env_var_exists_and_non_empty DFF_LIB_FILE]} {
     dfflibmap -liberty $::env(DFF_LIB_FILE)
   } else {
-    dfflibmap -liberty $::env(DONT_USE_SC_LIB)
+    dfflibmap -liberty $::env(SC_LIB_FILE)
   }
   puts "abc [join $abc_args " "]"
   abc {*}$abc_args

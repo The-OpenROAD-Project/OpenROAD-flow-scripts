@@ -125,7 +125,7 @@ LIB_FILES:
     input and output characteristics, timing and power definitions for each cell.
 DONT_USE_CELLS:
   description: >
-    Dont use cells eases pin access in detailed routing.
+    List of cells to mark dont_use to e.g. ease pin access in detailed routing.
 SYNTH_GUT:
   description: >
     Load design and remove all internal logic before doing synthesis. This
@@ -547,9 +547,9 @@ CDL_FILES:
 DFF_LIB_FILES:
   description: >
     Technology mapping liberty files for flip-flops.
-DONT_USE_LIBS:
+LIB_FILES_EXTRACTED:
   description: >
-    Set liberty files as `dont_use`.
+    All technology mapping liberty files to use, extracted into object directory. Set by Makefile.
 PRESERVE_CELLS:
   description: >
     Mark modules to keep from getting removed in flattening.
