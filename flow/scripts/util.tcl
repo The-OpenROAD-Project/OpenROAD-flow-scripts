@@ -1,5 +1,6 @@
 proc log_cmd {cmd args} {
-  puts "$cmd [join $args " "]"
+  # log the command, escape arguments with spaces
+  puts "$cmd [join [lmap arg $args {expr {[string match {* *} $arg] ? "\"$arg\"" : $arg}}] " "]"
   $cmd {*}$args
 }
 
@@ -27,8 +28,7 @@ proc repair_timing_helper { {hold_margin 1} } {
   append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
   append_env_var additional_args SKIP_LAST_GASP -skip_last_gasp 0
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
-  puts "repair_timing [join $additional_args " "]"
-  repair_timing {*}$additional_args
+  log_cmd repair_timing {*}$additional_args
 }
 
 proc repair_design_helper {} {
@@ -38,9 +38,7 @@ proc repair_design_helper {} {
   append_env_var additional_args CAP_MARGIN -cap_margin 1
   append_env_var additional_args SLEW_MARGIN -slew_margin 1
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
-  puts "repair_design [join $additional_args " "]"
-
-  repair_design {*}$additional_args
+  log_cmd repair_design {*}$additional_args
 }
 
 proc recover_power {} {
@@ -153,8 +151,8 @@ proc erase_non_stage_variables {stage_name} {
 set global_route_congestion_report $::env(REPORTS_DIR)/congestion.rpt
 
 proc place_density_with_lb_addon {} {
-  # check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists
-  if {[info exist ::env(PLACE_DENSITY_LB_ADDON)]} {
+  if {[env_var_exists_and_non_empty PLACE_DENSITY_LB_ADDON]} {
+    # check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON
     set place_density_lb [gpl::get_global_placement_uniform_density \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)]

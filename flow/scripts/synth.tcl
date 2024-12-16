@@ -71,8 +71,7 @@ if {[env_var_exists_and_non_empty DFF_LIB_FILE]} {
 }
 opt
 
-puts "abc [join $abc_args " "]"
-abc {*}$abc_args
+log_cmd abc {*}$abc_args
 
 # Replace undef values with defined constants
 setundef -zero
