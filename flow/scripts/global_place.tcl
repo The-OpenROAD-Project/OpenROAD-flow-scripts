@@ -43,6 +43,6 @@ if {[env_var_equals CLUSTER_FLOPS 1]} {
   estimate_parasitics -placement
 }
 
-report_metrics 5 "global place" false false
+report_metrics 3 "global place" false false
 
 write_db $::env(RESULTS_DIR)/3_3_place_gp.odb

@@ -25,8 +25,7 @@ proc write_keep_hierarchy {} {
   } else {
     dfflibmap -liberty $::env(DONT_USE_SC_LIB)
   }
-  puts "abc [join $abc_args " "]"
-  abc {*}$abc_args
+  log_cmd abc {*}$abc_args
 
   tee -o $::env(REPORTS_DIR)/synth_hier_stat.txt stat {*}$stat_libs
 
