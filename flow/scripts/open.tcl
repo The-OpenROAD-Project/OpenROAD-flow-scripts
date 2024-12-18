@@ -67,18 +67,6 @@ if {[env_var_equals GUI_TIMING 1]} {
   set height [ord::dbu_to_microns $height]
   set resolution [expr $height / 1000]
 
-  # FIXME reenable when there is a way to disable the rendered clock tree
-  #
-  # foreach clock [get_clocks *] {
-  #   if { [llength [get_property $clock sources]] > 0 } {
-  #     set clock_name [get_name $clock]
-  #     save_clocktree_image -clock $clock_name \
-  #         -width 100 -height 100 \
-  #         $::env(OBJECTS_DIR)/dummy.png
-  #     break
-  #   }
-  # }
-
   # FIXME IRDrop heatmap should be added, but it has to be skipped
   # when there is no IRDrop heatmap to be rendered.
 
