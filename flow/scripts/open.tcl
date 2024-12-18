@@ -82,7 +82,7 @@ if {[env_var_equals GUI_TIMING 1]} {
     }
   }
 
-  set have_routes [expr {$placed && [grt::have_routes]}]
+  set have_routes [grt::have_routes]
 
   foreach heatmap {Placement Routing RUDY Power} {
     if {[string equal $heatmap Routing] && !$have_routes} {
@@ -101,7 +101,6 @@ if {[env_var_equals GUI_TIMING 1]} {
     }
     puts "Prerendering $heatmap heatmap..."
     gui::set_heatmap $heatmap rebuild 1
-    gui::dump_heatmap $heatmap $::env(REPORTS_DIR)/dummy.png
   }
 
   log_cmd gui::select_chart "Endpoint Slack"
