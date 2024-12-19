@@ -17,6 +17,9 @@ if {$::env(GPL_ROUTABILITY_DRIVEN)} {
 # Parameters for timing driven mode in global placement
 if {$::env(GPL_TIMING_DRIVEN)} {
   lappend global_placement_args {-timing_driven}
+  if {[info exists ::env(GPL_KEEP_OVERFLOW)] && $::env(GPL_KEEP_OVERFLOW) ne ""} {
+    lappend global_placement_args -keep_resize_below_overflow $::env(GPL_KEEP_OVERFLOW)
+  }
 }
 
 proc do_placement {global_placement_args} {
