@@ -845,3 +845,8 @@ RTLMP_ARGS:
     Overrides all other RTL macro placer arguments.
   stages:
     - floorplan
+GDS_ALLOW_EMPTY:
+  description: >
+    Regular expression of module names of macros that have no .gds file
+  stages:
+    - final
