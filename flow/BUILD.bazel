@@ -10,7 +10,7 @@ filegroup(
 
 orfs_flow(
     name = "gcd",
-    stage_args = {
+    stage_arguments = {
         "synth": {
             "SDC_FILE": "$(location :constraints-gcd)",
         },
@@ -64,7 +64,7 @@ all_sources = [":additional_lefs", ":additional_libs"]
 
 orfs_flow(
     name = "swerv_wrapper",
-    stage_args = {
+    stage_arguments = {
         "synth": SWERV_ALL | {
             "SYNTH_HIERARCHICAL": "1",
             "SDC_FILE": "$(location :constraints-swerv)",
@@ -153,7 +153,7 @@ MOCK_ARRAY_FLOORPLAN_PLACE = {
 orfs_flow(
     name = "MockArray",
     macros = ["Element_generate_abstract"],
-    stage_args = {
+    stage_arguments = {
         "synth": {
             "SDC_FILE": "$(location :mock-array-constraints)",
         },
@@ -222,7 +222,7 @@ mock_array_all_sources = ["designs/src/mock-array/util.tcl"]
 orfs_flow(
     name = "Element",
     abstract_stage = "route",
-    stage_args = {
+    stage_arguments = {
         "synth": MOCK_ARRAY_ELEMENT_ALL | {
             "SDC_FILE": "$(location :mock-array-constraints)",
         },

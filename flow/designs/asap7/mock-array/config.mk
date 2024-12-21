@@ -60,13 +60,14 @@ power:
 export DETAILED_ROUTE_END_ITERATION ?= 6
 
 export MAX_ROUTING_LAYER = M9
-export ROUTING_LAYER_ADJUSTMENT = 0.45
 
 # ensure we have some rows, so we don't get a bad clock skew.
 export MACRO_HALO_X            = 0.5
 export MACRO_HALO_Y            = 0.5
 
-export ADDITIONAL_FILES = designs/src/mock-array/util.tcl
+export ADDITIONAL_FILES = \
+ designs/src/mock-array/util.tcl \
+ designs/asap7/mock-array/macro-placement.tcl
 
 export IO_PLACER_V = M5 M7
 export IO_PLACER_H = M4 M6
