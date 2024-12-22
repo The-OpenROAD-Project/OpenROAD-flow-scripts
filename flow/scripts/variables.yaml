@@ -50,10 +50,24 @@ ROUTING_LAYER_ADJUSTMENT:
     complicate detailed routing.
 
     The global routing running time normally reduces
-    dramatically(from hours to minutes) when the value is
-    very low. If the default value does not work, start with
-    a too low low value, such as 0.10, and bisect your way
+    dramatically(entirely design specific, but going from hours to
+    minutes has been observed) when the value is
+    low(such as 0.10).
+
+    Sometimes, global routing will succeed with lower values and
+    fail with higher values. Exploring results with different
+    values can help shed light on the problem. Start with
+    a too low value, such as 0.10, and bisect
     to value that works by doing multiple global routing runs.
+
+    As a last resort, `make global_route_issue` and using
+    the tools/OpenROAD/etc/deltaDebug.py can be useful to debug
+    global routing errors. If there is something specific that is
+    impossible to route, such as a clock line over a macro, global
+    routing will terminate with DRC errors routes that could
+    have been routed were it not for the specific impossible routes.
+    deltaDebug.py should weed out the possible routes and leave
+    a minimal failing case that pinpoints the problem.
   stages:
     - place
     - grt
