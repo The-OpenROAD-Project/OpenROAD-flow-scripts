@@ -42,7 +42,18 @@ TNS_END_PERCENT:
     - grt
 ROUTING_LAYER_ADJUSTMENT:
   default: 0.5
-  description: Default routing layer adjustment
+  description: >
+    Adjusts routing layer capacities to manage congestion and
+    improve detailed routing. High values ease detailed routing
+    but risk excessive detours and long global routing times,
+    while low values reduce global routing failure but can
+    complicate detailed routing.
+
+    The global routing running time normally reduces
+    dramatically(from hours to minutes) when the value is
+    very low. If the default value does not work, start with
+    a too low low value, such as 0.10, and bisect your way
+    to value that works by doing multiple global routing runs.
   stages:
     - place
     - grt
