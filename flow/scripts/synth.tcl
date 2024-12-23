@@ -67,7 +67,7 @@ foreach cell $::env(DONT_USE_CELLS) {
 if {[env_var_exists_and_non_empty DFF_LIB_FILE]} {
   dfflibmap -liberty $::env(DFF_LIB_FILE) {*}$dfflibmap_args
 } else {
-  dfflibmap -liberty $::env(DONT_USE_SC_LIB) {*}$dfflibmap_args
+  dfflibmap -liberty $::env(SC_LIB_FILE) {*}$dfflibmap_args
 }
 opt
 

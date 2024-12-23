@@ -286,9 +286,8 @@ WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.le
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
-
-export DONT_USE_LIBS   = $(patsubst %.lib.gz, %.lib, $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES))))
-export DONT_USE_SC_LIB ?= $(firstword $(DONT_USE_LIBS))
+export LIB_FILES_EXTRACTED := $(patsubst %.lib.gz, %.lib, $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES))))
+export SC_LIB_FILE ?= $(firstword $(LIB_FILES_EXTRACTED))
 
 # Stream system used for final result (GDS is default): GDS, GSDII, GDS2, OASIS, or OAS
 STREAM_SYSTEM ?= GDS
@@ -355,12 +354,16 @@ versions.txt:
 # Create temporary Liberty files which have the proper dont_use properties set
 # For use with Yosys and ABC
 .SECONDEXPANSION:
-$(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
+$(LIB_FILES_EXTRACTED): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
 	@mkdir -p $(OBJECTS_DIR)/lib
-	$(UTILS_DIR)/preprocessLib.py -i $^ -o $@
+	@if echo "$<" | grep -q "\.gz$$"; then \
+		gunzip -c $< > $@; \
+	else \
+		cp $< $@; \
+	fi
 
 $(OBJECTS_DIR)/lib/merged.lib:
-	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
+	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(LIB_FILES_EXTRACTED) > $@
 
 # Pre-process KLayout tech
 # ==============================================================================
@@ -467,7 +470,7 @@ $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
 	mkdir -p $(dir $@)
 	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
 
-YOSYS_DEPENDENCIES=$(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
+YOSYS_DEPENDENCIES=$(LIB_FILES_EXTRACTED) $(WRAPPED_LIBS) $(SC_LIB_FILE) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
 
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)

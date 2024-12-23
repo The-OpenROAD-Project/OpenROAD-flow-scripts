@@ -264,7 +264,7 @@ export LIB_FILES             += $(ADDITIONAL_LIBS)
 export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
 export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
 export VOLTAGE                = $($(CORNER)_VOLTAGE)
-export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
+export SC_LIB_FILE            = $(OBJECTS_DIR)/lib/merged.lib
 
 # ---------------------------------------------------------
 #  IR Drop
