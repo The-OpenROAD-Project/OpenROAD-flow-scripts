@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 5655458,
+        "value": 5653331,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -28,7 +28,7 @@
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 3344,
+        "value": 4507,
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
@@ -40,15 +40,15 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 6,
+        "value": 0,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 2196,
+        "value": 2148,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -4.68,
+        "value": -3.7,
         "compare": ">="
     },
     "finish__design__instance__area": {
