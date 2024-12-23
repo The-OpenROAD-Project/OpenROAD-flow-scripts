@@ -1053,7 +1053,7 @@ klayout:
 
 .phony: run
 run:
-	$(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT)
+	($(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT) 2>&1 | tee $(abspath $(LOG_DIR)/run.log))
 
 # Utilities
 #-------------------------------------------------------------------------------
