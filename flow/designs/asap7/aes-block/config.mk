@@ -28,3 +28,5 @@ export PWR_NETS_VOLTAGES      =
 
 # The macros are very small so use a smaller halo
 export MACRO_PLACE_HALO        ?= 5 5
+
+export ROUTING_LAYER_ADJUSTMENT = 0.3
