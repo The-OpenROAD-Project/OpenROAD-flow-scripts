@@ -7,9 +7,6 @@ export CACHED_NETLIST = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
 
 export SDC_FILE      = $(PLATFORM_DIR)/$(DESIGN_NAME)/sdc/ca53_cpu.sdc
 
-
-export ADDITIONAL_GDS  += $(PLATFORM_DIR)/gds/sc9mcpp84_12lp_base_lvt_c14.gds2
-
 export ADDITIONAL_LEFS   += $(PLATFORM_DIR)/lef/sc9mcpp84_12lp_base_lvt_c14.lef \
                             $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_128X32M2_FB1FS1SB0PG1.lef \
                             $(PLATFORM_DIR)/$(DESIGN_NAME)/lef/RFSPHD_A53_HS_160X118M2_FB1FS2SB0PG1.lef \
@@ -32,7 +29,8 @@ export ADDITIONAL_LIBS   += $(PLATFORM_DIR)/lib/sc9mcpp84_12lp_base_lvt_c14_tt_n
 
 
 
-export ADDITIONAL_GDS  += $(PLATFORM_DIR)/$(DESIGN_NAME)/gds2/RFSPHD_A53_HS_128X32M2_FB1FS1SB0PG1.gds2 \
+export ADDITIONAL_GDS  += $(PLATFORM_DIR)/gds/sc9mcpp84_12lp_base_lvt_c14.gds2 \
+                         $(PLATFORM_DIR)/$(DESIGN_NAME)/gds2/RFSPHD_A53_HS_128X32M2_FB1FS1SB0PG1.gds2 \
                          $(PLATFORM_DIR)/$(DESIGN_NAME)/gds2/RFSPHD_A53_HS_160X118M2_FB1FS2SB0PG1.gds2 \
                          $(PLATFORM_DIR)/$(DESIGN_NAME)/gds2/RFSPHD_A53_HS_128X50M2_FB1FS2SB0PG1.gds2 \
                          $(PLATFORM_DIR)/$(DESIGN_NAME)/gds2/RFSPHD_A53_HS_128X60M2_FB1FS2SB0PG1.gds2 \
