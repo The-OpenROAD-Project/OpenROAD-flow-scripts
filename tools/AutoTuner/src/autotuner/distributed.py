@@ -436,7 +436,7 @@ def parse_config(config, path=os.getcwd()):
             # Sanity check: ignore all flow variables that are not tunable
             if key not in flow_variables:
                 print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
-                sys.exit(1) 
+                sys.exit(1)
             options += f" {key}={value}"
     if bool(sdc):
         write_sdc(sdc, path)
