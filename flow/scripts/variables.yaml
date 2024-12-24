@@ -14,7 +14,6 @@ GENERATE_ARTIFACTS_ON_FAILURE:
     congestion, is not a build failure(as in exit code non-zero), it is a
     successful(as in zero exit code) global route that produce reports
     detailing the problem.
-
     Detailed route will not proceed, if there is global routing congestion
     This allows build systems, such as bazel, to create artifacts for global and
     detailed route, even if the operation had problems, without having know
@@ -42,18 +41,15 @@ ROUTING_LAYER_ADJUSTMENT:
     but risk excessive detours and long global routing times,
     while low values reduce global routing failure but can
     complicate detailed routing.
-
     The global routing running time normally reduces
     dramatically(entirely design specific, but going from hours to
     minutes has been observed) when the value is
     low(such as 0.10).
-
     Sometimes, global routing will succeed with lower values and
     fail with higher values. Exploring results with different
     values can help shed light on the problem. Start with
     a too low value, such as 0.10, and bisect
     to value that works by doing multiple global routing runs.
-
     As a last resort, `make global_route_issue` and using
     the tools/OpenROAD/etc/deltaDebug.py can be useful to debug
     global routing errors. If there is something specific that is
@@ -402,17 +398,13 @@ HOLD_SLACK_MARGIN:
     Specifies a time margin for the slack when fixing hold violations.
     This option allows you to overfix or underfix(negative value, terminate
     retiming before 0 or positive slack).
-
     floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0(default hold slack margin).
-
     This avoids overrepair in floorplan for hold by default, but allows skipping
     hold repair using a negative HOLD_SLACK_MARGIN.
-
     Exiting timing repair early is useful in exploration where
     the .sdc has a fixed clock period at the design's target clock period and where
     HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair(extremely long running
     times) when exploring different parameter settings.
-
     When an ideal clock is used, that is before CTS,
     a clock insertion delay of 0 is used in timing paths. This creates
     a mismatch between macros that have a .lib file from after CTS, when
@@ -423,20 +415,16 @@ HOLD_SLACK_MARGIN:
     macros built with OpenROAD. This is less accurate than if OpenROAD had
     created a placeholder clock tree for timing estimation purposes
     prior to CTS.
-
     There will inevitably be inaccuracies in the timing calculation prior
     to CTS. Use a slack margin that is low enough, even negative, to
     avoid overrepair. Inaccuracies in the timing prior to CTS can also
     lead to underrepair, but there no obvious and simple way to avoid
     underrapir in these cases.
-
     Overrepair can lead to excessive runtimes in repair or too much buffering
     being added, which can present itself as congestion of hold cells or
     buffer cells.
-
     Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration
     when trying to find the minimum clock period for a design.
-
     The SDC_FILE for a design can be quite complicated and instead of
     modifying the clock period in the SDC_FILE, which can be non-trivial,
     the clock period can be fixed at the target frequency and the
@@ -452,7 +440,6 @@ SETUP_SLACK_MARGIN:
     Specifies a time margin for the slack when fixing setup violations.
     This option allows you to overfix or underfix(negative value, terminate
     retiming before 0 or positive slack).
-
     See HOLD_SLACK_MARGIN for more details.
   stages:
     - cts
