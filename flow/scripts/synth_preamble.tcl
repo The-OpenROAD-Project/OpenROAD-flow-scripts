@@ -38,7 +38,8 @@ foreach file $::env(VERILOG_FILES) {
 
 # Read standard cells and macros as blackbox inputs
 # These libs have their dont_use properties set accordingly
-read_liberty -lib {*}$::env(DONT_USE_LIBS)
+read_liberty -overwrite -lib {*}$::env(DONT_USE_LIBS)
+read_liberty -overwrite -unit_delay -wb -ignore_miss_func -ignore_buses {*}$::env(DONT_USE_LIBS)
 
 # Apply toplevel parameters (if exist)
 if {[env_var_exists_and_non_empty VERILOG_TOP_PARAMS]} {
