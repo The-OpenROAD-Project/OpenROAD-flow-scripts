@@ -112,9 +112,3 @@ if {[env_var_equals GUI_TIMING 1]} {
 }
 
 fast_route
-
-if {[env_var_equals GUI_SHOW 1]} {
-  # Show the GUI when it is ready; it is unresponsive(with modal requesters
-  # saying it is unresponsive) until everything is loaded
-  log_cmd gui::unminimize
-}

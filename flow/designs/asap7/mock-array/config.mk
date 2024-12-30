@@ -60,7 +60,6 @@ power:
 export DETAILED_ROUTE_END_ITERATION ?= 6
 
 export MAX_ROUTING_LAYER = M9
-export ROUTING_LAYER_ADJUSTMENT = 0.45
 
 # ensure we have some rows, so we don't get a bad clock skew.
 export MACRO_HALO_X            = 0.5
