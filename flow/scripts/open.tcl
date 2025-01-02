@@ -60,55 +60,8 @@ proc read_timing {input_file} {
 if {[env_var_equals GUI_TIMING 1]} {
   puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
   read_timing $input_file
-
-  gui::save_display_controls
-
-  set height [[[ord::get_db_block] getBBox] getDY]
-  set height [ord::dbu_to_microns $height]
-  set resolution [expr $height / 1000]
-
-  # FIXME IRDrop heatmap should be added, but it has to be skipped
-  # when there is no IRDrop heatmap to be rendered.
-
-  set block [ord::get_db_block]
-  set insts [$block getInsts]
-  set placed 1
-  foreach inst $insts {
-    set status [$inst getPlacementStatus]
-    # status is not in the list of PLACED, LOCKED
-    if {[lsearch {PLACED LOCKED} $status] == -1} {
-      set placed 0
-      break
-    }
-  }
-
-  set have_routes [grt::have_routes]
-
-  foreach heatmap {Placement Routing RUDY Power} {
-    if {[string equal $heatmap Routing] && !$have_routes} {
-      # Skipping $heatmap heatmap, no routes available
-      continue
-    }
-    if {[string equal $heatmap IRDrop] &&
-        (![env_var_exists_and_non_empty PWR_NETS_VOLTAGES] ||
-         ![grt::have_routes])} {
-      # Skipping $heatmap heatmap, no PWR_NETS_VOLTAGES available
-      continue
-    }
-    if {[lsearch {RUDY Placement} $heatmap] != -1 && !$placed} {
-      # Skipping $heatmap heatmap, not all instances are placed
-      continue
-    }
-    puts "Prerendering $heatmap heatmap..."
-    gui::set_heatmap $heatmap rebuild 1
-  }
-
-  log_cmd gui::select_chart "Endpoint Slack"
+  gui::select_chart "Endpoint Slack"
   log_cmd gui::update_timing_report
-
-  gui::clear_highlights -1
-  gui::clear_selections
-  gui::restore_display_controls
 }
 
 fast_route
