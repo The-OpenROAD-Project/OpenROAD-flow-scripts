@@ -60,6 +60,8 @@ proc read_timing {input_file} {
 if {[env_var_equals GUI_TIMING 1]} {
   puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
   read_timing $input_file
+  gui::select_chart "Endpoint Slack"
+  log_cmd gui::update_timing_report
 }
 
 fast_route
