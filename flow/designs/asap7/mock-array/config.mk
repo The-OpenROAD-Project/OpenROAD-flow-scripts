@@ -54,7 +54,10 @@ simulate:
 
 .PHONY: power
 power:
+	$(OPENROAD_EXE) -no_init -exit designs/asap7/mock-array/power.tcl
+	mv $(OBJECTS_DIR)/power.rpt $(OBJECTS_DIR)/openroad_power.rpt
 	$(OPENSTA_EXE) -no_init -exit designs/asap7/mock-array/power.tcl
+	diff $(OBJECTS_DIR)/power.rpt $(OBJECTS_DIR)/openroad_power.rpt
 
 # Routing by abutment should be easy, limit iterations
 export DETAILED_ROUTE_END_ITERATION ?= 6
