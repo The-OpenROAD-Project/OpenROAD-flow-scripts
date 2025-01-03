@@ -1051,8 +1051,6 @@ test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
 klayout:
 	$(KLAYOUT_CMD)
 
-export RUN_LOG_NAME_STEM ?= run
-
 .phony: run
 run:
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
