@@ -29,5 +29,5 @@ export PLACE_PINS_ARGS = -exclude left:500-800 -exclude right:500-800 -exclude t
 export MACRO_PLACE_HALO = 10 10
 export MACRO_PLACE_CHANNEL = 20 20
 
-export PLACE_DENSITY_LB_ADDON = 0.10
+export PLACE_DENSITY_LB_ADDON = 0.15
 export TNS_END_PERCENT        = 100
