@@ -56,6 +56,14 @@ simulate:
 power:
 	$(OPENSTA_EXE) -no_init -exit designs/asap7/mock-array/power.tcl
 
+.PHONY: sta-report-checks
+sta-report-checks:
+	$(OPENSTA_EXE) -no_init -exit designs/asap7/mock-array/sta-report-checks.tcl
+
+.PHONY: openroad-report-checks
+openroad-report-checks:
+	$(UNSET_AND_MAKE) ODB_FILE=$(RESULTS_DIR)/6_final.odb RUN_SCRIPT=$(DESIGN_DIR)/openroad-report-checks.tcl run
+
 # Routing by abutment should be easy, limit iterations
 export DETAILED_ROUTE_END_ITERATION ?= 6
 
