@@ -12,6 +12,8 @@ set global_placement_args {}
 # Parameters for routability mode in global placement
 if {$::env(GPL_ROUTABILITY_DRIVEN)} {
   lappend global_placement_args {-routability_driven}
+  lappend global_placement_args {-routability_max_inflation_ratio} 6
+  lappend global_placement_args {-routability_inflation_ratio_coef} 3
 }
 
 # Parameters for timing driven mode in global placement
