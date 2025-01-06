@@ -875,3 +875,12 @@ GDS_ALLOW_EMPTY:
     Regular expression of module names of macros that have no .gds file
   stages:
     - final
+RUN_SCRIPT:
+  description: >
+    Path to script to run from `make run`, python or tcl script detected by
+    .py or .tcl extension.
+RUN_LOG_NAME_STEM:
+  description: >
+    Stem of the log file name, the log file will be named
+    `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.
+  default: run
