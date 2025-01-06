@@ -65,8 +65,10 @@ foreach cell $::env(DONT_USE_CELLS) {
 # Technology mapping of flip-flops
 # dfflibmap only supports one liberty file
 if {[env_var_exists_and_non_empty DFF_LIB_FILE]} {
+  clockgate -liberty $::env(DFF_LIB_FILE) -min_net_size 8 {*}$dfflibmap_args
   dfflibmap -liberty $::env(DFF_LIB_FILE) {*}$dfflibmap_args
 } else {
+  clockgate -liberty $::env(DONT_USE_SC_LIB) -min_net_size 8 {*}$dfflibmap_args
   dfflibmap -liberty $::env(DONT_USE_SC_LIB) {*}$dfflibmap_args
 }
 opt
