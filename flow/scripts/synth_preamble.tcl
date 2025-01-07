@@ -114,6 +114,7 @@ proc convert_liberty_areas {} {
   # find a reference nand2 gate
   set found_cell ""
   set found_cell_area ""
+  # iterate over all cells with a nand2 signature
   foreach cell [tee -q -s result.string select -list-mod =*/a:lut=4'b0111 %m] {
     if {! [rtlil::has_attr -mod $cell area]} {
       puts "Cell $cell missing area information"
