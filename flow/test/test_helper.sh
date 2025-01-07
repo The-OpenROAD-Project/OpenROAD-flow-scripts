@@ -77,7 +77,25 @@ if [ $ret -eq 0 ] && grep -q 'power:' <(echo $TARGETS); then
   ret=$(( ret + $? ))
 fi
 
-if [[ -n "${RUN_AUTOTUNER+x}"  ]] && [[ ${RUN_AUTOTUNER} -eq 1  ]]; then
+# Run Autotuner CI specifically for gcd on selected platforms.
+if [ -z "${RUN_AUTOTUNER+x}" ]; then
+  RUN_AUTOTUNER=0
+fi
+case $DESIGN_NAME in
+  "gcd")
+    RUN_AUTOTUNER=1
+    ;;
+esac
+case $PLATFORM in
+  "asap7" | "sky130hd" | "ihp-sg13g2" )
+    # Keep RUN_AUTOTUNER enabled only for these platforms
+    ;;
+  *)
+    RUN_AUTOTUNER=0
+    ;;
+esac
+
+if [ $RUN_AUTOTUNER -eq 1 ]; then
   # run the commands in ORFS root dir
   echo "[INFO FLW-0029] Installing dependencies in virtual environment."
   cd ../
