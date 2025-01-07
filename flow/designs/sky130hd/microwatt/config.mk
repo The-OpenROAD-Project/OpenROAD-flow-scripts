@@ -11,7 +11,7 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 export DIE_AREA   = 0 0 2920 3520
 export CORE_AREA  = 10 10 2910 3510
 
-export PLACE_DENSITY ?= 0.23
+export PLACE_DENSITY ?= 0.2
 
 export microwatt_DIR = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)
 

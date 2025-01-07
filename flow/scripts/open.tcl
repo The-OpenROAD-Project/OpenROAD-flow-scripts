@@ -57,15 +57,18 @@ proc read_timing {input_file} {
   puts "OK"
 }
 
+if {[ord::openroad_gui_compiled]} {
+  set db_basename [file rootname [file tail $input_file]]
+  gui::set_title "OpenROAD - $::env(PLATFORM)/$::env(DESIGN_NICKNAME)/$::env(FLOW_VARIANT) - ${db_basename}"
+}
+
 if {[env_var_equals GUI_TIMING 1]} {
   puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
   read_timing $input_file
+  if {[gui::enabled]} {
+    gui::select_chart "Endpoint Slack"
+    log_cmd gui::update_timing_report
+  }
 }
 
 fast_route
-
-if {[env_var_equals GUI_SHOW 1]} {
-  # Show the GUI when it is ready; it is unresponsive(with modal requesters
-  # saying it is unresponsive) until everything is loaded
-  gui::unminimize
-}
