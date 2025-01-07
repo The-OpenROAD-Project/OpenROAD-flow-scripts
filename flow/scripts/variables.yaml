@@ -224,7 +224,8 @@ ABC_LOAD_IN_FF:
 MAX_UNGROUP_SIZE:
   description: >
     For hierarchical synthesis, we ungroup modules of larger area than given by
-    this variable. The default value is > 0 platform specific.
+    this variable. The area unit used is the size of a basic nand2 gate from the
+    platform's standard cell library. The default value is platform specific.
   stages:
     - synth
 FLOORPLAN_DEF:
