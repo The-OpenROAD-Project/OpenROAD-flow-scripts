@@ -573,7 +573,7 @@ def openroad(base_dir, parameters, flow_variant, path=""):
     make_command += f" PLATFORM={args.platform}"
     make_command += f" FLOW_VARIANT={flow_variant} {parameters}"
     make_command += f" EQUIVALENCE_CHECK=0"
-    make_command += f" NPROC={args.openroad_threads} SHELL=bash"
+    make_command += f" NUM_CORES={args.openroad_threads} SHELL=bash"
     run_command(
         make_command,
         timeout=args.timeout,
