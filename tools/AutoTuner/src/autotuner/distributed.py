@@ -59,7 +59,7 @@ DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
 FASTROUTE_TCL = "fastroute.tcl"
 CONSTRAINTS_SDC = "constraint.sdc"
-METRIC = "minimum"
+METRIC = "metric"
 ERROR_METRIC = 9e99
 ORFS_FLOW_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../flow")
@@ -90,10 +90,16 @@ class AutoTunerBase(tune.Trainable):
         """
         metrics_file = openroad(self.repo_dir, self.parameters, self.variant)
         self.step_ += 1
-        score = self.evaluate(self.read_metrics(metrics_file))
+        (score, effective_clk_period, num_drc) = self.evaluate(
+            self.read_metrics(metrics_file)
+        )
         # Feed the score back to Tune.
         # return must match 'metric' used in tune.run()
-        return {METRIC: score}
+        return {
+            METRIC: score,
+            "effective_clk_period": effective_clk_period,
+            "num_drc": num_drc,
+        }
 
     def evaluate(self, metrics):
         """
@@ -104,11 +110,13 @@ class AutoTunerBase(tune.Trainable):
         error = "ERR" in metrics.values()
         not_found = "N/A" in metrics.values()
         if error or not_found:
-            return ERROR_METRIC
-        gamma = (metrics["clk_period"] - metrics["worst_slack"]) / 10
-        score = metrics["clk_period"] - metrics["worst_slack"]
-        score = score * (self.step_ / 100) ** (-1) + gamma * metrics["num_drc"]
-        return score
+            return (ERROR_METRIC, "-", "-")
+        effective_clk_period = metrics["clk_period"] - metrics["worst_slack"]
+        num_drc = metrics["num_drc"]
+        gamma = effective_clk_period / 10
+        score = effective_clk_period
+        score = score * (100 / self.step_) + gamma * num_drc
+        return (score, effective_clk_period, num_drc)
 
     @classmethod
     def read_metrics(cls, file_name):
@@ -1087,7 +1095,7 @@ if __name__ == "__main__":
         print(f"[INFO TUN-0002] Best parameters found: {analysis.best_config}")
 
         # if all runs have failed
-        if analysis.best_result["minimum"] == ERROR_METRIC:
+        if analysis.best_result[METRIC] == ERROR_METRIC:
             print("[ERROR TUN-0016] No successful runs found.")
             sys.exit(1)
     elif args.mode == "sweep":
