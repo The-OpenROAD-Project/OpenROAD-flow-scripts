@@ -18,6 +18,7 @@ cp $FLOW_HOME/results/asap7/mock-array_Element/base/6_final.v $POST_DIR/MockArra
 
 # Run simulation and have Verilator write the output files to the objects area
 verilator -Wall --cc \
+  --timescale 1ps/1ps \
   -Wno-DECLFILENAME \
   -Wno-UNUSEDSIGNAL \
   -Wno-PINMISSING \
@@ -35,7 +36,7 @@ verilator -Wall --cc \
   $FLOW_HOME/designs/src/mock-array/simulate.cpp
 
 # Link the generated object files into the VMockArray executable
-make -j -C $OBJ_DIR -f VMockArray.mk
+make -j16 -C $OBJ_DIR -f VMockArray.mk
 
 # Run the simulation
 $OBJ_DIR/VMockArray
