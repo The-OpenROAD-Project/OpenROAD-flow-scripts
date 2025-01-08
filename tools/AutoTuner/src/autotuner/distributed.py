@@ -495,6 +495,9 @@ def write_fast_route(variables, path):
         sys.exit(1)
     layer_cmd = "set_global_routing_layer_adjustment"
     new_file = FR_ORIGINAL
+    # This is part of the defaults when no FASTROUTE_TCL is provided
+    if len(new_file) == 0:
+        new_file = "set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)"
     for key, value in variables.items():
         if key.startswith("LAYER_ADJUST"):
             layer = key.lstrip("LAYER_ADJUST")
