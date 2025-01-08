@@ -13,6 +13,7 @@ import chisel3._
 import chisel3.util._
 import chisel3.stage._
 import chisel3.experimental._
+import chisel3.util.HasBlackBoxResource
 import scopt.OParser
 import System.err
 import scopt.RenderingMode
@@ -55,6 +56,21 @@ class MockArrayBundle(width: Int, height: Int, singleElementWidth: Int) extends 
   val lsbs = Output(Vec(width * height, Bool()))
 }
 
+// Generated with:
+//
+// vlsi-multiplier --register-input --register-post-ppg --register-post-ppa --register-output --bits=32 --algorithm=brentkung --tech=asap7 --output=multiplier.v
+class Multiplier extends BlackBox with HasBlackBoxResource {
+  override def desiredName = "multiplier"
+  val io = IO(new Bundle {
+    val a = Input(UInt(32.W))
+    val b = Input(UInt(32.W))
+    val o = Output(UInt(32.W))
+    val rst = Input(Bool())
+    val clk = Input(Clock())
+  })
+  addResource("/multiplier.v")
+}
+
 class MockArray(width: Int, height: Int, singleElementWidth: Int)
     extends Module {
   val io = IO(new MockArrayBundle(width, height, singleElementWidth))
@@ -74,7 +90,15 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
     //  up <-> right
     (io.outs.asSeq zip (io.ins.asSeq ++ Seq(io.ins.asSeq.head))
       .sliding(2).toSeq.reverse.map(_.map(RegNext(_)))).foreach {
-      case (a, b) => a := RegNext(b(0) ^ b(1))
+      case (a, b) => a := RegNext({
+        val mult = Module(new Multiplier())
+        mult.io.a := b(0)
+        mult.io.b := b(1)
+        // save some area and complexity by not having reset
+        mult.io.rst := false.B
+        mult.io.clk := clock
+        mult.io.o
+      })
     }
 
     // Combinational logic, but a maximum flight path of 4 elements
