@@ -35,7 +35,7 @@ verilator -Wall --cc \
   $FLOW_HOME/designs/src/mock-array/simulate.cpp
 
 # Link the generated object files into the VMockArray executable
-make -j -C $OBJ_DIR -f VMockArray.mk
+make -j16 -C $OBJ_DIR -f VMockArray.mk
 
 # Run the simulation
 $OBJ_DIR/VMockArray
