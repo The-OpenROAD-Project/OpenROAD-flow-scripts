@@ -81,17 +81,17 @@ set -x
 # Run Autotuner CI specifically for gcd on selected platforms.
 if [ -z "${RUN_AUTOTUNER+x}" ]; then
   echo "RUN_AUTOTUNER not set, disable AT test."
-  RUN_AUTOTUNER=0
+  RUN_AUTOTUNER="false"
 fi
 
-if [ $RUN_AUTOTUNER -eq 1 ]; then
+if [ "${RUN_AUTOTUNER}" == "true" ]; then
   case $DESIGN_NAME in
     "gcd")
       # Keep RUN_AUTOTUNER enabled only for these designs
       ;;
     "*")
       echo "Disable AT test for design ${DESIGN_NAME}."
-      RUN_AUTOTUNER=0
+      RUN_AUTOTUNER="false"
       ;;
   esac
   case $PLATFORM in
@@ -100,12 +100,12 @@ if [ $RUN_AUTOTUNER -eq 1 ]; then
       ;;
     *)
       echo "Disable AT test for platform ${PLATFORM}."
-      RUN_AUTOTUNER=0
+      RUN_AUTOTUNER="false"
       ;;
   esac
 fi
 
-if [ $RUN_AUTOTUNER -eq 1 ]; then
+if [ "${RUN_AUTOTUNER}" == "true" ]; then
   set +x
   echo "Start AutoTuner test."
   ./test_autotuner.sh
