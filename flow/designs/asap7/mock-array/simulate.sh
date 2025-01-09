@@ -22,6 +22,8 @@ verilator -Wall --cc \
   -Wno-DECLFILENAME \
   -Wno-UNUSEDSIGNAL \
   -Wno-PINMISSING \
+  --coverage-toggle \
+  --coverage-underscore \
   --Mdir $OBJ_DIR \
   --top-module MockArray \
   --trace \
@@ -30,8 +32,8 @@ verilator -Wall --cc \
   $PLATFORM_DIR/verilog/stdcell/asap7sc7p5t_SIMPLE_RVT_TT_201020.v \
   $PLATFORM_DIR/verilog/stdcell/dff.v \
   $PLATFORM_DIR/verilog/stdcell/empty.v \
-  $FLOW_HOME/results/asap7/mock-array/base/6_final.v \
-  $FLOW_HOME/results/asap7/mock-array_Element/base/6_final.v \
+  $POST_DIR/MockArrayFinal.v \
+  $POST_DIR/MockArrayElement.v \
   --exe \
   $FLOW_HOME/designs/src/mock-array/simulate.cpp
 
@@ -40,3 +42,4 @@ make -j16 -C $OBJ_DIR -f VMockArray.mk
 
 # Run the simulation
 $OBJ_DIR/VMockArray
+verilator_coverage $RESULTS_DIR/coverage.dat --annotate $REPORTS_DIR/
