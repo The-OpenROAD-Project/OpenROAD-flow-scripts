@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # run the commands in ORFS root dir
 echo "[INFO FLW-0029] Installing dependencies in virtual environment."
 cd ../

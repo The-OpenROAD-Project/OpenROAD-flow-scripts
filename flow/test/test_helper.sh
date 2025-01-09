@@ -108,7 +108,7 @@ fi
 if [ "${RUN_AUTOTUNER}" == "true" ]; then
   set +x
   echo "Start AutoTuner test."
-  ./test_autotuner.sh
+  ./test/test_autotuner.sh
   set -x
 fi
 
