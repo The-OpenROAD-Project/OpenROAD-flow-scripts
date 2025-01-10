@@ -63,9 +63,7 @@ done
 ISSUE_CP_FILES+="${ISSUE_CP_FILES_PLATFORM} \
     $UTILS_DIR/def2stream.py \
     ${RUN_ME_SCRIPT} \
-    $VARS_BASENAME.sh \
-    $VARS_BASENAME.tcl \
-    $VARS_BASENAME.gdb"
+    $VARS_BASENAME.sh"
 
 cat > ${RUN_ME_SCRIPT} <<EOF
 #!/usr/bin/env bash
