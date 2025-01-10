@@ -69,7 +69,7 @@ if {![env_var_equals SKIP_CTS_REPAIR_TIMING 1]} {
       write_eqy_verilog 4_before_rsz.v
   }
 
-  repair_timing_helper
+  repair_timing_helper "cts"
 
   if {$::env(EQUIVALENCE_CHECK)} {
       run_equivalence_test

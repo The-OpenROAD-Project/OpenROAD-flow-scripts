@@ -312,6 +312,12 @@ IO_PLACER_V:
   stages:
     - floorplan
     - place
+FP_REPAIR_TIMING_MAX_PASSES_PER_ITER:
+  description: >
+    Maximum number of repairs per iteration during repair_timing, called from floorplan.
+  default: 20
+  stages:
+    - floorplan
 GUI_TIMING:
   description: >
     Load timing information when opening GUI. For large designs, this can
@@ -708,6 +714,12 @@ CTS_CLUSTER_SIZE:
   default: 50
   stages:
     - cts
+CTS_REPAIR_TIMING_MAX_PASSES_PER_ITER:
+  description: >
+    Maximum number of repairs per iteration during repair_timing, called from CTS.
+  default: 20
+  stages:
+    - cts
 CTS_SNAPSHOT:
   description: >
     Creates ODB/SDC files prior to clock net and setup/hold repair.
@@ -739,6 +751,12 @@ GLOBAL_ROUTE_ARGS:
   stages:
     - grt
   default: -congestion_iterations 30 -congestion_report_iter_step 5 -verbose
+GRT_REPAIR_TIMING_MAX_PASSES_PER_ITER:
+  description: >
+    Maximum number of repairs per iteration during repair_timing, called from GRT.
+  default: 20
+  stages:
+    - grt
 MATCH_CELL_FOOTPRINT:
   description: >
     Enforce sizing operations to only swap cells that have the same layout
