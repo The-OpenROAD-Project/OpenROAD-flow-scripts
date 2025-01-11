@@ -46,13 +46,6 @@ while read -r VAR; do
         # skip variables that match the exclude patterns
         continue
     fi
-    # handle special case where the variable needs to be splitted in Tcl code
-    if [[ "${name}" == "GND_NETS_VOLTAGES" || "${name}" == "PWR_NETS_VOLTAGES" ]]; then
-        echo "export ${name}='${value}'" >> $1.sh
-        echo "set env(${name}) ${value}" >> $1.tcl
-        echo "set env ${name} ${value}" >> $1.gdb
-        continue
-    fi
 
     # convert absolute paths if possible to use FLOW_HOME variable
     if [[ "${name}" == *"SCRIPTS_DIR"* ]]; then
