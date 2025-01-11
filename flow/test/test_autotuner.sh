@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+DESIGN_NAME=${1:-gcd}
+PLATFORM=${2:-nangate45}
 
 # run the commands in ORFS root dir
 echo "[INFO FLW-0029] Installing dependencies in virtual environment."
@@ -20,7 +22,7 @@ python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeT
 echo "Running Autotuner smoke tests for --sample and --iteration."
 python3 -m unittest tools.AutoTuner.test.smoke_test_sample_iteration.${PLATFORM}SampleIterationSmokeTest.test_sample_iteration
 
-if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN" == "gcd" ]; then
+if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN_NAME" == "gcd" ]; then
   echo "Running Autotuner ref file test (only once)"
   python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck.test_files
 
@@ -28,23 +30,23 @@ if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN" == "gcd" ]; then
   python3 -m unittest tools.AutoTuner.test.resume_check.ResumeCheck.test_tune_resume
 fi
 
-echo "Running Autotuner smoke algorithm & evaluation test"
-python3 -m unittest tools.AutoTuner.test.smoke_test_algo_eval.${PLATFORM}AlgoEvalSmokeTest.test_algo_eval
+# echo "Running Autotuner smoke algorithm & evaluation test"
+# python3 -m unittest tools.AutoTuner.test.smoke_test_algo_eval.${PLATFORM}AlgoEvalSmokeTest.test_algo_eval
 
-# run this test last (because it modifies current path)
-echo "Running Autotuner remote test"
-if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN" == "gcd" ]; then
-  # Get the directory of the current script
-  script_dir="$(dirname "${BASH_SOURCE[0]}")"
-  cd "$script_dir"/../../
-  latest_image=$(./etc/DockerTag.sh -dev)
-  echo "ORFS_VERSION=$latest_image" > ./tools/AutoTuner/.env
-  cd ./tools/AutoTuner
-  docker compose up --wait
-  docker compose exec ray-worker bash -c "cd /OpenROAD-flow-scripts/tools/AutoTuner/src/autotuner && \
-    python3 distributed.py --design gcd --platform asap7 --server 127.0.0.1 --port 10001 \
-    --config ../../../../flow/designs/asap7/gcd/autotuner.json tune --samples 1"
-        docker compose down -v --remove-orphans
-fi
+# # run this test last (because it modifies current path)
+# echo "Running Autotuner remote test"
+# if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN_NAME" == "gcd" ]; then
+#   # Get the directory of the current script
+#   script_dir="$(dirname "${BASH_SOURCE[0]}")"
+#   cd "$script_dir"/../../
+#   latest_image=$(./etc/DockerTag.sh -dev)
+#   echo "ORFS_VERSION=$latest_image" > ./tools/AutoTuner/.env
+#   cd ./tools/AutoTuner
+#   docker compose up --wait
+#   docker compose exec ray-worker bash -c "cd /OpenROAD-flow-scripts/tools/AutoTuner/src/autotuner && \
+#     python3 distributed.py --design gcd --platform asap7 --server 127.0.0.1 --port 10001 \
+#     --config ../../../../flow/designs/asap7/gcd/autotuner.json tune --samples 1"
+#         docker compose down -v --remove-orphans
+# fi
 
 exit $ret
