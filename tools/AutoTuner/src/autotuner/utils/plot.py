@@ -17,24 +17,27 @@ def load_dir(dir: str) -> pd.DataFrame:
 
     # Concatenate params.json & metrics.json file
     params = []
-    for fname in glob.glob(f"{dir}/*/params.json"):
+    failed = []
+    for params_fname in glob.glob(f"{dir}/*/params.json"):
         try:
-            with open(fname, "r") as f:
+            with open(params_fname, "r") as f:
                 _dict = json.load(f)
-                _dict["trial_id"] = re.search(AT_REGEX, fname).group(1)
-            with open(fname.replace("params.json", "metrics.json"), "r") as f:
+                _dict["trial_id"] = re.search(AT_REGEX, params_fname).group(1)
+            metrics_fname = params_fname.replace("params.json", "metrics.json")
+            with open(metrics_fname, "r") as f:
                 metrics = json.load(f)
                 ws = metrics["finish"]["timing__setup__ws"]
                 metrics["worst_slack"] = ws
                 _dict.update(metrics)
             params.append(_dict)
         except Exception as e:
-            print(f"Error in {fname}: {e}")
+            failed.append(metrics_fname)
             continue
     tmp_df = pd.DataFrame(params)
 
     # Merge all dataframe
     df = df.merge(tmp_df, on="trial_id")
+    print(f"Failed to load {len(failed)} files:\n{'\n'.join(failed)}")
     return df
 
 
