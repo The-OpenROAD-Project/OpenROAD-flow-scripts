@@ -23,6 +23,9 @@ python3 -m unittest tools.AutoTuner.test.smoke_test_sample_iteration.${PLATFORM}
 if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN" == "gcd" ]; then
   echo "Running Autotuner ref file test (only once)"
   python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck.test_files
+
+  echo "Running AutoTuner resume test (only once)"
+  python3 -m unittest tools.AutoTuner.test.resume_check.ResumeCheck.test_tune_resume
 fi
 
 echo "Running Autotuner smoke algorithm & evaluation test"
