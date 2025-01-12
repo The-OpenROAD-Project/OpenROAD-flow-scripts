@@ -6,24 +6,43 @@ import matplotlib.pyplot as plt
 import re
 import os
 import argparse
+import sys
 
+# Only does plotting for AutoTunerBase variants
 AT_REGEX = r"variant-AutoTunerBase-([\w-]+)-\w+"
-IMG_DIR = "images"
+
+cur_dir = os.path.dirname(os.path.abspath(__file__))
+root_dir = os.path.join(cur_dir, "../../../../../")
+os.chdir(root_dir)
 
 
 def load_dir(dir: str) -> pd.DataFrame:
+    """
+    Load and merge progress, parameters, and metrics data from a specified directory.
+    This function searches for `progress.csv`, `params.json`, and `metrics.json` files within the given directory,
+    concatenates the data, and merges them into a single pandas DataFrame.
+    Args:
+        dir (str): The directory path containing the subdirectories with `progress.csv`, `params.json`, and `metrics.json` files.
+    Returns:
+        pd.DataFrame: A DataFrame containing the merged data from the progress, parameters, and metrics files.
+    """
+
     # Concatenate progress DFs
-    df = pd.concat([pd.read_csv(fname) for fname in glob.glob(f"{dir}/*/progress.csv")])
+    progress_csvs = glob.glob(f"{dir}/*/progress.csv")
+    if len(progress_csvs) == 0:
+        print("No progress.csv files found.")
+        sys.exit(0)
+    progress_df = pd.concat([pd.read_csv(f) for f in progress_csvs])
 
     # Concatenate params.json & metrics.json file
     params = []
     failed = []
     for params_fname in glob.glob(f"{dir}/*/params.json"):
+        metrics_fname = params_fname.replace("params.json", "metrics.json")
         try:
             with open(params_fname, "r") as f:
                 _dict = json.load(f)
                 _dict["trial_id"] = re.search(AT_REGEX, params_fname).group(1)
-            metrics_fname = params_fname.replace("params.json", "metrics.json")
             with open(metrics_fname, "r") as f:
                 metrics = json.load(f)
                 ws = metrics["finish"]["timing__setup__ws"]
@@ -33,15 +52,34 @@ def load_dir(dir: str) -> pd.DataFrame:
         except Exception as e:
             failed.append(metrics_fname)
             continue
-    tmp_df = pd.DataFrame(params)
 
     # Merge all dataframe
-    df = df.merge(tmp_df, on="trial_id")
-    print(f"Failed to load {len(failed)} files:\n{'\n'.join(failed)}")
-    return df
+    params_df = pd.DataFrame(params)
+    try:
+        progress_df = progress_df.merge(params_df, on="trial_id")
+    except KeyError:
+        print(
+            "Unable to merge DFs due to missing trial_id in params.json (possibly due to failed trials.)"
+        )
+        sys.exit(0)
+
+    # Print failed, if any
+    if failed:
+        print(f"Failed to load {len(failed)} files:\n{'\n'.join(failed)}")
+    return progress_df
 
 
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Preprocess the input DataFrame by renaming columns, removing unnecessary columns,
+    filtering out invalid rows, and normalizing the timestamp.
+    Args:
+        df (pd.DataFrame): The input DataFrame to preprocess.
+    Returns:
+        pd.DataFrame: The preprocessed DataFrame with renamed columns, removed columns,
+                      filtered rows, and normalized timestamp.
+    """
+
     cols_to_remove = [
         "done",
         "training_iteration",
@@ -58,52 +96,97 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         "_SDC_CLK_PERIOD": "clk_period",
         "minimum": "qor",
     }
-    df = df.rename(columns=rename_dict)
-    df = df.drop(columns=cols_to_remove)
-    df = df[df["qor"] != 9e99]
-    df["timestamp"] -= df["timestamp"].min()
-    return df
+    try:
+        df = df.rename(columns=rename_dict)
+        df = df.drop(columns=cols_to_remove)
+        df = df[df["qor"] != 9e99]
+        df["timestamp"] -= df["timestamp"].min()
+        return df
+    except KeyError as e:
+        print(
+            f"KeyError: {e} in the DataFrame. Dataframe does not contain necessary columns."
+        )
+        sys.exit(0)
 
 
-def plot(df: pd.DataFrame, key: str):
+def plot(df: pd.DataFrame, key: str, dir: str):
+    """
+    Plots a scatter plot with a linear fit and a box plot for a specified key from a DataFrame.
+    Args:
+        df (pd.DataFrame): The DataFrame containing the data to plot.
+        key (str): The column name in the DataFrame to plot.
+        dir (str): The directory where the plots will be saved. The directory must exist.
+    Returns:
+        None
+    """
+
+    assert os.path.exists(dir), f"Directory {dir} does not exist."
     # Plot box plot and time series plot for key
     fig, ax = plt.subplots(1, figsize=(15, 10))
     ax.scatter(df["timestamp"], df[key])
     ax.set_xlabel("Time (s)")
     ax.set_ylabel(key)
     ax.set_title(f"{key} vs Time")
-    z = np.polyfit(df["timestamp"], df[key], 1)
-    p = np.poly1d(z)
-    ax.plot(
-        df["timestamp"], p(df["timestamp"]), "r--", label=f"y={z[0]:.2f}x+{z[1]:.2f}"
-    )
-    ax.legend()
-    fig.savefig(f"images/{key}.png")
+
+    try:
+        coeff = np.polyfit(df["timestamp"], df[key], 1)
+        poly_func = np.poly1d(coeff)
+        ax.plot(
+            df["timestamp"],
+            poly_func(df["timestamp"]),
+            "r--",
+            label=f"y={coeff[0]:.2f}x+{coeff[1]:.2f}",
+        )
+        ax.legend()
+    except np.linalg.LinAlgError:
+        print("Cannot fit a line to the data, plotting only scatter plot.")
+
+    fig.savefig(f"{dir}/{key}.png")
 
     plt.figure(figsize=(15, 10))
     plt.boxplot(df[key])
     plt.ylabel(key)
     plt.title(f"{key} Boxplot")
-    plt.savefig(f"images/{key}-boxplot.png")
+    plt.savefig(f"{dir}/{key}-boxplot.png")
 
 
-def main(results_dir: str):
-    # Default: saves to <REPO_ROOT>/images. Change the IMG_DIR above.
-    os.makedirs(IMG_DIR, exist_ok=True)
+def main(platform: str, design: str, experiment: str):
+    """
+    Main function to process results from a specified directory and plot the results.
+    Args:
+        platform (str): The platform name.
+        design (str): The design name.
+        experiment (str): The experiment name.
+    Returns:
+        None
+    """
+
+    results_dir = os.path.join(
+        root_dir, f"./flow/logs/{platform}/{design}/{experiment}"
+    )
+    img_dir = os.path.join(
+        root_dir, f"./flow/reports/images/{platform}/{design}/{experiment}"
+    )
+    print("Processing results from", results_dir)
+    os.makedirs(img_dir, exist_ok=True)
     df = load_dir(results_dir)
     df = preprocess(df)
     keys = ["qor", "runtime", "clk_period", "worst_slack"]
+
+    # Plot only if more than one entry
+    if len(df) < 2:
+        print("Less than 2 entries, skipping plotting.")
+        sys.exit(0)
     for key in keys:
-        plot(df, key)
+        plot(df, key, img_dir)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Plot AutoTuner results.")
+    parser.add_argument("--platform", type=str, help="Platform name.", required=True)
+    parser.add_argument("--design", type=str, help="Design name.", required=True)
     parser.add_argument(
-        "--results_dir",
-        type=str,
-        help="Directory containing the results.",
-        required=True,
+        "--experiment", type=str, help="Experiment name.", required=True
     )
     args = parser.parse_args()
-    main(args.results_dir)
+    main(platform=args.platform, design=args.design, experiment=args.experiment)
