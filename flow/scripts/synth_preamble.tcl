@@ -38,7 +38,9 @@ foreach file $::env(VERILOG_FILES) {
 
 # Read standard cells and macros as blackbox inputs
 # These libs have their dont_use properties set accordingly
-read_liberty -lib {*}$::env(DONT_USE_LIBS)
+read_liberty -overwrite -setattr liberty_cell -lib {*}$::env(DONT_USE_LIBS)
+read_liberty -overwrite -setattr liberty_cell \
+  -unit_delay -wb -ignore_miss_func -ignore_buses {*}$::env(DONT_USE_LIBS)
 
 # Apply toplevel parameters (if exist)
 if {[env_var_exists_and_non_empty VERILOG_TOP_PARAMS]} {
@@ -107,13 +109,31 @@ puts $constr "set_driving_cell $::env(ABC_DRIVER_CELL)"
 puts $constr "set_load $::env(ABC_LOAD_IN_FF)"
 close $constr
 
-proc synthesize_check {report synth_args} {
-  # Generic synthesis
-  log_cmd synth -top $::env(DESIGN_NAME) -run :fine {*}$synth_args
-  json -o $::env(RESULTS_DIR)/$report.json
-  # Run report and check here so as to fail early if this synthesis run is doomed
-  exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/$report.json
-  synth -top $::env(DESIGN_NAME) -run fine: {*}$synth_args
-  # Get rid of indigestibles
-  chformal -remove
+proc convert_liberty_areas {} {
+  cellmatch -derive_luts =A:liberty_cell
+  # find a reference nand2 gate
+  set found_cell ""
+  set found_cell_area ""
+  # iterate over all cells with a nand2 signature
+  foreach cell [tee -q -s result.string select -list-mod =*/a:lut=4'b0111 %m] {
+    if {! [rtlil::has_attr -mod $cell area]} {
+      puts "Cell $cell missing area information"
+      continue
+    }
+    set area [rtlil::get_attr -string -mod $cell area]
+    if {$found_cell == "" || [expr $area < $found_cell_area]} {
+      set found_cell $cell
+      set found_cell_area $area
+    }
+  }
+  if {$found_cell == ""} {
+    error "reference nand2 cell not found"
+  }
+
+  # convert the area on all Liberty cells to a gate number equivalent
+  foreach box [tee -q -s result.string select -list-mod =A:area =A:liberty_cell %i] {
+    set area [rtlil::get_attr -mod -string $box area]
+    set gate_eq [expr int($area / $found_cell_area)]
+    rtlil::set_attr -mod -uint $box gate_cost_equivalent $gate_eq
+  }
 }

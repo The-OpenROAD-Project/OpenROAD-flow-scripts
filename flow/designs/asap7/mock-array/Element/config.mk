@@ -8,7 +8,7 @@ export SDC_FILE               = designs/asap7/mock-array/constraints.sdc
 
 export PLATFORM               = asap7
 
-export PLACE_DENSITY          = 0.50
+export PLACE_DENSITY          = 0.82
 
 export CORE_AREA = $(shell \
   export MOCK_ARRAY_TABLE="$(MOCK_ARRAY_TABLE)" && \
