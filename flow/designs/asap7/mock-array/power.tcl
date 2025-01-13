@@ -1,3 +1,5 @@
+source $::env(SCRIPTS_DIR)/util.tcl
+
 foreach libFile $::env(LIB_FILES) {
   if {[lsearch -exact $::env(ADDITIONAL_LIBS) $libFile] == -1} {
     read_liberty $libFile
@@ -18,9 +20,31 @@ for {set x 0} {$x < 8} {incr x} {
   }
 }
 
-report_parasitic_annotation
-report_power
-read_vcd -scope TOP/MockArray $::env(RESULTS_DIR)/MockArrayTestbench.vcd
+log_cmd report_parasitic_annotation
+
+log_cmd report_power
+set vcd_file $::env(RESULTS_DIR)/MockArrayTestbench.vcd
+log_cmd read_vcd -scope TOP/MockArray $vcd_file
+
+puts "Total number of pins to be annotated: [llength [get_pins -hierarchical *]]"
+set unannoted {}
+foreach pin [get_pins -hierarchical *] {
+  if {![sta::has_power_pin_activity $pin]} {
+    set name [get_name $pin]
+    lappend unannoted $pin
+    if {[llength $unannoted] >= 10} {
+      break
+    }
+  }
+}
+
+if {[llength $unannoted] > 0} {
+  puts "Error: Listing [llength $unannoted] pins without user power activity from $vcd_file:"
+  foreach pin $unannoted {
+    puts "[get_full_name $pin]"
+  }
+  exit 1
+}
 
 set ces {}
 for {set x 0} {$x < 8} {incr x} {
