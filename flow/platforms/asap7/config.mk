@@ -165,7 +165,7 @@ ifeq ($(ASAP7_USELVT), 1)
 
    export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_L
 
-   export FILL_CELLS              ?= "FILLERxp5_ASAP7_75t_L"
+   export FILL_CELLS              ?= FILLERxp5_ASAP7_75t_L
 
    export TAP_CELL_NAME           ?= TAPCELL_ASAP7_75t_L
 
@@ -214,7 +214,7 @@ ifeq ($(ASAP7_USESLVT), 1)
 
    export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_SL
 
-   export FILL_CELLS              ?= "FILLERxp5_ASAP7_75t_SL"
+   export FILL_CELLS              ?= FILLERxp5_ASAP7_75t_SL
 
    export TAP_CELL_NAME		  ?= TAPCELL_ASAP7_75t_SL
 
@@ -272,8 +272,8 @@ export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 
 # IR drop estimation supply net name to be analyzed and supply voltage variable
 # For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
-export PWR_NETS_VOLTAGES  ?= "VDD $(VOLTAGE)"
-export GND_NETS_VOLTAGES  ?= "VSS 0.0"
+export PWR_NETS_VOLTAGES  ?= VDD $(VOLTAGE)
+export GND_NETS_VOLTAGES  ?= VSS 0.0
 export IR_DROP_LAYER ?= M1
 
 # Allow empty GDS cell
