@@ -27,6 +27,7 @@ verilator -Wall --cc \
   --Mdir $OBJ_DIR \
   --top-module MockArray \
   --trace \
+  --trace-underscore \
   $PLATFORM_DIR/verilog/stdcell/asap7sc7p5t_AO_RVT_TT_201020.v \
   $PLATFORM_DIR/verilog/stdcell/asap7sc7p5t_INVBUF_RVT_TT_201020.v \
   $PLATFORM_DIR/verilog/stdcell/asap7sc7p5t_SIMPLE_RVT_TT_201020.v \
