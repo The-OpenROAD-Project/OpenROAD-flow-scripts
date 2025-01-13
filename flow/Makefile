@@ -178,9 +178,6 @@ include $(PLATFORM_DIR)/config.mk
 # is no way to escape space in defaults.py and get "foreach" to work.
 $(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
 
-# Enables hierarchical yosys
-export SYNTH_STATS = $(RESULTS_DIR)/synth_stats.txt
-export SYNTH_STATS_SCRIPT = $(SCRIPTS_DIR)/synth_stats.tcl
 # If the design, nor $(PLATFORM_DIR)/config.mk provided a default, provide one here
 export MAX_UNGROUP_SIZE ?= 0
 
@@ -454,13 +451,6 @@ memory:
 
 export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 export SYNTH_MEMORY_MAX_BITS ?= 4096
-
-.PHONY: do-yosys-stats
-do-yosys-stats:
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
-	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
-	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_STATS_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_stats.log)
-
 export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
 $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
@@ -487,7 +477,7 @@ $(RESULTS_DIR)/1_synth.rtlil: $(YOSYS_DEPENDENCIES)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
 
 $(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
-	$(UNSET_AND_MAKE) do-yosys-stats do-yosys
+	$(UNSET_AND_MAKE) do-yosys
 
 .PHONY: do-synth
 do-synth:
@@ -1054,7 +1044,7 @@ klayout:
 .phony: run
 run:
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	($(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT) 2>&1 | tee $(abspath $(LOG_DIR)/run.log))
+	($(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT) 2>&1 | tee $(abspath $(LOG_DIR)/$(RUN_LOG_NAME_STEM).log))
 
 # Utilities
 #-------------------------------------------------------------------------------
