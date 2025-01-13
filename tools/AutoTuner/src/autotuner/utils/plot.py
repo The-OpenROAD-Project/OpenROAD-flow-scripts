@@ -65,7 +65,8 @@ def load_dir(dir: str) -> pd.DataFrame:
 
     # Print failed, if any
     if failed:
-        print(f"Failed to load {len(failed)} files:\n{'\n'.join(failed)}")
+        failed_files = "\n".join(failed)
+        print(f"Failed to load {len(failed)} files:\n{failed_files}")
     return progress_df
 
 
