@@ -11,6 +11,9 @@ import sys
 # Only does plotting for AutoTunerBase variants
 AT_REGEX = r"variant-AutoTunerBase-([\w-]+)-\w+"
 
+# TODO: Make sure the distributed.py METRIC variable is consistent with this, single source of truth.
+METRIC = "metric"
+
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.join(cur_dir, "../../../../../")
 os.chdir(root_dir)
@@ -94,13 +97,12 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     ]
     rename_dict = {
         "time_this_iter_s": "runtime",
-        "_SDC_CLK_PERIOD": "clk_period",
-        "minimum": "qor",
+        "_SDC_CLK_PERIOD": "clk_period",  # param
     }
     try:
         df = df.rename(columns=rename_dict)
         df = df.drop(columns=cols_to_remove)
-        df = df[df["qor"] != 9e99]
+        df = df[df[METRIC] != 9e99]
         df["timestamp"] -= df["timestamp"].min()
         return df
     except KeyError as e:
@@ -172,7 +174,7 @@ def main(platform: str, design: str, experiment: str):
     os.makedirs(img_dir, exist_ok=True)
     df = load_dir(results_dir)
     df = preprocess(df)
-    keys = ["qor", "runtime", "clk_period", "worst_slack"]
+    keys = [METRIC] + ["runtime", "clk_period", "worst_slack"]
 
     # Plot only if more than one entry
     if len(df) < 2:
