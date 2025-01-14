@@ -25,3 +25,5 @@ resolvers ++= Seq(
   Resolver.sonatypeRepo("snapshots"),
   Resolver.sonatypeRepo("releases")
 )
+
+resourceDirectory in Compile := baseDirectory.value / "src/main/resources"
