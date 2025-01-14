@@ -39,7 +39,7 @@ fi
 all_experiments=$(basename -a $all_experiments)
 for expt in $all_experiments; do
   python3 tools/AutoTuner/src/autotuner/utils/plot.py \
-    --platform ${PLATFORM} \
+    --platform ${LOWERCASE_PLATFORM} \
     --design ${DESIGN_NAME} \
     --experiment $expt
 done
