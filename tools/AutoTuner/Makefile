@@ -1,4 +1,4 @@
-.PHONY: init
+.PHONY: clearcache init reqs test
 
 clearcache:
 	@echo "Cleaning python cache"
