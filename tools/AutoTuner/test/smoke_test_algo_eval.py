@@ -53,17 +53,17 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             self.assertTrue(successful)
 
 
-class ASAP7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+class asap7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "asap7"
     design = "gcd"
 
 
-class IHPSG13G2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+class ihpsg13g2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 
 
-class SKY130HDAlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+class sky130hdAlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 

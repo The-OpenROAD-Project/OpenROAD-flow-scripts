@@ -8,11 +8,6 @@ cd ../
 ./tools/AutoTuner/installer.sh
 . ./tools/AutoTuner/setup.sh
 
-# remove dashes and capitalize platform name
-LOWERCASE_PLATFORM=${PLATFORM//-/}
-# convert to uppercase
-PLATFORM=${LOWERCASE_PLATFORM^^}
-
 echo "Running Autotuner smoke tune test"
 python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM}TuneSmokeTest.test_tune
 
@@ -31,7 +26,7 @@ if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN_NAME" == "gcd" ]; then
 fi
 
 echo "Running Autotuner plotting smoke test"
-all_experiments=$(ls -d ./flow/logs/${LOWERCASE_PLATFORM}/${DESIGN_NAME}/*/)
+all_experiments=$(ls -d ./flow/logs/${PLATFORM}/${DESIGN_NAME}/*/)
 if [ -z "$all_experiments" ]; then
   echo "No experiments found for plotting"
   exit 0
@@ -39,7 +34,7 @@ fi
 all_experiments=$(basename -a $all_experiments)
 for expt in $all_experiments; do
   python3 tools/AutoTuner/src/autotuner/utils/plot.py \
-    --platform ${LOWERCASE_PLATFORM} \
+    --platform ${PLATFORM} \
     --design ${DESIGN_NAME} \
     --experiment $expt
 done

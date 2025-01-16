@@ -36,17 +36,17 @@ class BaseSampleIterationSmokeTest(unittest.TestCase):
             self.assertTrue(successful)
 
 
-class ASAP7SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
+class asap7SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
     platform = "asap7"
     design = "gcd"
 
 
-class SKY130HDSampleIterationSmokeTest(BaseSampleIterationSmokeTest):
+class sky130hdSampleIterationSmokeTest(BaseSampleIterationSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
 
-class IHPSG13G2SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
+class ihpsg13g2SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 
