@@ -123,7 +123,7 @@ configuration file.
 | <a name="MAKE_TRACKS"></a>MAKE_TRACKS| Tcl file that defines add routing tracks to a floorplan.| | |
 | <a name="MATCH_CELL_FOOTPRINT"></a>MATCH_CELL_FOOTPRINT| Enforce sizing operations to only swap cells that have the same layout boundary.| 0| |
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.| | |
-| <a name="MAX_UNGROUP_SIZE"></a>MAX_UNGROUP_SIZE| For hierarchical synthesis, we ungroup modules of larger area than given by this variable. The default value is > 0 platform specific.| | |
+| <a name="MAX_UNGROUP_SIZE"></a>MAX_UNGROUP_SIZE| For hierarchical synthesis, we ungroup modules of larger area than given by this variable. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| | |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| | |
 | <a name="MIN_ROUTING_LAYER"></a>MIN_ROUTING_LAYER| The lowest metal layer name to be used in routing.| | |
 | <a name="PDN_TCL"></a>PDN_TCL| File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.| | |
@@ -164,6 +164,8 @@ configuration file.
 | <a name="RTLMP_RPT_DIR"></a>RTLMP_RPT_DIR| Path to the directory where reports are saved.| | |
 | <a name="RTLMP_SIGNATURE_NET_THRESHOLD"></a>RTLMP_SIGNATURE_NET_THRESHOLD| Minimum number of connections between two clusters to be identified as connected.| 50| |
 | <a name="RTLMP_WIRELENGTH_WT"></a>RTLMP_WIRELENGTH_WT| Weight for half-perimiter wirelength.| 100.0| |
+| <a name="RUN_LOG_NAME_STEM"></a>RUN_LOG_NAME_STEM| Stem of the log file name, the log file will be named `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.| run| |
+| <a name="RUN_SCRIPT"></a>RUN_SCRIPT| Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.| | |
 | <a name="SC_LEF"></a>SC_LEF| Path to technology standard cell LEF file.| | |
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.| | |
 | <a name="SDC_GUT"></a>SDC_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| | |
@@ -394,6 +396,8 @@ configuration file.
 - [RCX_RULES](#RCX_RULES)
 - [RECOVER_POWER](#RECOVER_POWER)
 - [REPAIR_PDN_VIA_LAYER](#REPAIR_PDN_VIA_LAYER)
+- [RUN_LOG_NAME_STEM](#RUN_LOG_NAME_STEM)
+- [RUN_SCRIPT](#RUN_SCRIPT)
 - [SC_LEF](#SC_LEF)
 - [SEAL_GDS](#SEAL_GDS)
 - [SET_RC_TCL](#SET_RC_TCL)
