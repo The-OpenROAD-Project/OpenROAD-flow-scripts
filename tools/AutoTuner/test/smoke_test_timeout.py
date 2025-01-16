@@ -40,7 +40,7 @@ class BaseTimeoutSmokeTest(unittest.TestCase):
         )
 
 
-class ASAP7TimeoutSmokeTest(BaseTimeoutSmokeTest):
+class asap7TimeoutSmokeTest(BaseTimeoutSmokeTest):
     platform = "asap7"
     design = "gcd"
 
@@ -53,7 +53,7 @@ class ASAP7TimeoutSmokeTest(BaseTimeoutSmokeTest):
             self.assertTrue(successful)
 
 
-class SKY130HDTimeoutSmokeTest(BaseTimeoutSmokeTest):
+class sky130hdTimeoutSmokeTest(BaseTimeoutSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
@@ -66,7 +66,7 @@ class SKY130HDTimeoutSmokeTest(BaseTimeoutSmokeTest):
             self.assertTrue(successful)
 
 
-class IHPSG13G2TimeoutSmokeTest(BaseTimeoutSmokeTest):
+class ihpsg13g2TimeoutSmokeTest(BaseTimeoutSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 

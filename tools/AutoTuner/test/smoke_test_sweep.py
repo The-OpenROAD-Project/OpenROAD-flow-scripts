@@ -50,7 +50,7 @@ class BaseSweepSmokeTest(unittest.TestCase):
         )
 
 
-class ASAP7SweepSmokeTest(BaseSweepSmokeTest):
+class asap7SweepSmokeTest(BaseSweepSmokeTest):
     platform = "asap7"
     design = "gcd"
 
@@ -60,7 +60,7 @@ class ASAP7SweepSmokeTest(BaseSweepSmokeTest):
         self.assertTrue(successful)
 
 
-class SKY130HDSweepSmokeTest(BaseSweepSmokeTest):
+class sky130hdSweepSmokeTest(BaseSweepSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
@@ -70,7 +70,7 @@ class SKY130HDSweepSmokeTest(BaseSweepSmokeTest):
         self.assertTrue(successful)
 
 
-class IHPSG13G2SweepSmokeTest(BaseSweepSmokeTest):
+class ihpsg13g2SweepSmokeTest(BaseSweepSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 
