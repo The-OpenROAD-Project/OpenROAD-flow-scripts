@@ -527,7 +527,9 @@ def parse_arguments():
             template = calculate_expected_numbers(overall_timeout, 1)
         print(template)
         if not args.yes:
-            print("[INFO TUN-0022] Tip: use the flag --yes to skip the confirmation prompt.")
+            print(
+                "[INFO TUN-0022] Tip: use the flag --yes to skip the confirmation prompt."
+            )
             ans = input("Are you sure you want to proceed? (y/n): ")
             if ans.lower() != "y":
                 print("Exiting AutoTuner.")
