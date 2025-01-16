@@ -6,7 +6,7 @@ export VERILOG_FILES = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/$(DESIGN_NA
                        $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/I2cGpioExpander.v 
 export SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export SEAL_GDS = sealring.gds.gz
+export SEAL_GDS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/sealring.gds.gz
 
 export DIE_AREA = 0.0 0.0 1050.0 1050.0
 export CORE_AREA = 425.28 427.16 631.2 630.24
