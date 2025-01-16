@@ -46,7 +46,7 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
         os.chdir(src_dir)
 
 
-class ASAP7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+class asap7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "asap7"
     design = "gcd"
 
@@ -60,7 +60,7 @@ class ASAP7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
             self.assertTrue(successful)
 
 
-class IHPSG13G2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+class ihpsg13g2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 
@@ -74,7 +74,7 @@ class IHPSG13G2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
             self.assertTrue(successful)
 
 
-class SKY130HDAlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+class sky130hdAlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
