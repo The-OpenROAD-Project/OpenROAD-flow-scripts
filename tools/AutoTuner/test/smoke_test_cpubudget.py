@@ -38,7 +38,7 @@ class BaseCPUBudgetSmokeTest(unittest.TestCase):
         )
 
 
-class ASAP7CPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
+class asap7CPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
     platform = "asap7"
     design = "gcd"
 
@@ -53,7 +53,7 @@ class ASAP7CPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
         self.assertFalse(successful)
 
 
-class SKY130HDCPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
+class sky130hdCPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
@@ -68,7 +68,7 @@ class SKY130HDCPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
         self.assertFalse(successful)
 
 
-class IHPSG13G2CPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
+class ihpsg13g2CPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 
