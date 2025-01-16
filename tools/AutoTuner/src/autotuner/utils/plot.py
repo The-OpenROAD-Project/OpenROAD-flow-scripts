@@ -34,7 +34,7 @@ def load_dir(dir: str) -> pd.DataFrame:
     progress_csvs = glob.glob(f"{dir}/*/progress.csv")
     if len(progress_csvs) == 0:
         print("No progress.csv files found.")
-        sys.exit(0)
+        sys.exit(1)
     progress_df = pd.concat([pd.read_csv(f) for f in progress_csvs])
 
     # Concatenate params.json & metrics.json file
@@ -64,7 +64,7 @@ def load_dir(dir: str) -> pd.DataFrame:
         print(
             "Unable to merge DFs due to missing trial_id in params.json (possibly due to failed trials.)"
         )
-        sys.exit(0)
+        sys.exit(1)
 
     # Print failed, if any
     if failed:
@@ -109,7 +109,7 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         print(
             f"KeyError: {e} in the DataFrame. Dataframe does not contain necessary columns."
         )
-        sys.exit(0)
+        sys.exit(1)
 
 
 def plot(df: pd.DataFrame, key: str, dir: str):
