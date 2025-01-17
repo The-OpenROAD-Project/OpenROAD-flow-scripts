@@ -23,6 +23,7 @@ class RefFileCheck(unittest.TestCase):
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --config {c}"
+            f" --yes"
             f" tune --samples 1"
             for c in configs
         ]
