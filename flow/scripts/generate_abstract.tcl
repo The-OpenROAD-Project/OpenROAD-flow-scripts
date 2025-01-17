@@ -7,13 +7,12 @@ set result [find_sdc_file $stem.odb]
 set design_stage [lindex $result 0]
 set sdc_file [lindex $result 1]
 
-load_design $stem.odb [file tail $sdc_file]
+log_cmd load_design $stem.odb [file tail $sdc_file]
 
 if {$design_stage >= 6 && [file exists $::env(RESULTS_DIR)/$stem.spef]} {
-  read_spef $::env(RESULTS_DIR)/$stem.spef
+  log_cmd read_spef $::env(RESULTS_DIR)/$stem.spef
 } elseif {$design_stage >= 3} {
-  puts "Estimating parasitics"
-  estimate_parasitics -placement
+  log_cmd estimate_parasitics -placement
 }
 
 if {$design_stage >= 4} {
@@ -22,8 +21,8 @@ if {$design_stage >= 4} {
 # write_timing_model includes the source latency in the model
 set_clock_latency -source 0 [all_clocks]
 puts "Generating abstract views"
-write_timing_model $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lib
-write_abstract_lef -bloat_occupied_layers $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lef
+log_cmd write_timing_model $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lib
+log_cmd write_abstract_lef -bloat_occupied_layers $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lef
 
 if {[env_var_exists_and_non_empty CDL_FILES]} {
   cdl read_masters $::env(CDL_FILES)
