@@ -52,6 +52,7 @@ class ResumeCheck(unittest.TestCase):
             f" --config {self.config}"
             f" --jobs {self.jobs}"
             f" --experiment test_resume"
+            f" --yes"
             f" tune --iterations {self.iterations} --samples {self.samples}"
             f" --resources_per_trial {res_per_trial}"
             f" {c}"
