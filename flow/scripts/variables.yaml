@@ -166,6 +166,16 @@ SYNTH_GUT:
     SRAMs, for instance.
   stages:
     - synth
+SYNTH_STRIP:
+  description: >
+    Strip all debug information, such as source and line numbers.
+
+    Use-case: avoid many hours of rebuilds in bazel in architectural
+    exploration where Verilog line numbers can change without RTL
+    changing.
+  stages:
+    - synth
+  default: 0
 SYNTH_HIERARCHICAL:
   description: >
     Enable to Synthesis hierarchically, otherwise considered flat synthesis.
