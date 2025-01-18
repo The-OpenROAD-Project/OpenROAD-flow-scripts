@@ -127,6 +127,3 @@ export KLAYOUT_DRC_FILE ?= $(PLATFORM_DIR)/drc/sg13g2_minimal.lydrc
 #LVS Check
 export CDL_FILE ?= $(PLATFORM_DIR)/cdl/sg13g2_stdcell.cdl
 #export KLAYOUT_LVS_FILE = $(PLATFORM_DIR)/lvs/$(PLATFORM).lylvs
-
-#Temporary: skip post-DRT repair antennas
-export SKIP_ANTENNA_REPAIR_POST_DRT = 1

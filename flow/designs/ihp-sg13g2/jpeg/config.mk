@@ -10,3 +10,5 @@ export CORE_UTILIZATION = 55
 export PLACE_DENSITY_LB_ADDON = 0.20
 export TNS_END_PERCENT = 100
 
+#Temporary: skip post-DRT repair antennas
+export SKIP_ANTENNA_REPAIR_POST_DRT = 1
