@@ -20,14 +20,13 @@ class BaseTimeoutSmokeTest(unittest.TestCase):
 
         # 0.001 hour translates to 3.6 seconds, which will definitely cause failure.
         timeout_flags = ["--timeout 0.001", "--timeout_per_trial 0.001"]
-        self.timeout_limit = 15  # 15 second upper limit
+        self.timeout_limit = 60  # 60 second upper limit (Ray needs time to shutdown)
         self.commands = [
             "python3 distributed.py"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
             f" --config {self.config}"
-            f" --cpu_budget 1"
             f" --yes"
             f" {flag}"
             f" tune --samples 1"
@@ -47,10 +46,10 @@ class asap7TimeoutSmokeTest(BaseTimeoutSmokeTest):
     def test_timeout(self):
         for command in self.commands:
             out = subprocess.run(
-                command, shell=True, check=True, timeout=self.timeout_limit
+                command, shell=True, check=False, timeout=self.timeout_limit
             )
-            successful = out.returncode == 0
-            self.assertTrue(successful)
+            failed = out.returncode == 1
+            self.assertTrue(failed)
 
 
 class sky130hdTimeoutSmokeTest(BaseTimeoutSmokeTest):
@@ -60,10 +59,10 @@ class sky130hdTimeoutSmokeTest(BaseTimeoutSmokeTest):
     def test_timeout(self):
         for command in self.commands:
             out = subprocess.run(
-                command, shell=True, check=True, timeout=self.timeout_limit
+                command, shell=True, check=False, timeout=self.timeout_limit
             )
-            successful = out.returncode == 0
-            self.assertTrue(successful)
+            failed = out.returncode == 1
+            self.assertTrue(failed)
 
 
 class ihpsg13g2TimeoutSmokeTest(BaseTimeoutSmokeTest):
@@ -73,10 +72,10 @@ class ihpsg13g2TimeoutSmokeTest(BaseTimeoutSmokeTest):
     def test_timeout(self):
         for command in self.commands:
             out = subprocess.run(
-                command, shell=True, check=True, timeout=self.timeout_limit
+                command, shell=True, check=False, timeout=self.timeout_limit
             )
-            successful = out.returncode == 0
-            self.assertTrue(successful)
+            failed = out.returncode == 1
+            self.assertTrue(failed)
 
 
 if __name__ == "__main__":

@@ -624,6 +624,9 @@ def save_best(results):
     Save best configuration of parameters found.
     """
     best_config = results.best_config
+    if METRIC not in results.best_result:
+        print("[ERROR TUN-0023] Metric not found in results.")
+        sys.exit(1)
     best_config["best_result"] = results.best_result[METRIC]
     trial_id = results.best_trial.trial_id
     new_best_path = f"{LOCAL_DIR}/{args.experiment}/"
