@@ -30,6 +30,7 @@ class ResumeCheck(unittest.TestCase):
     design = "gcd"
     samples = 5
     iterations = 2
+    timeout = 120
 
     def setUp(self):
         self.config = os.path.join(
@@ -38,7 +39,7 @@ class ResumeCheck(unittest.TestCase):
         self.jobs = self.samples
         self.num_cpus = os.cpu_count()
 
-        # How it works: Say we have 5 samples and 5 iterations.
+        # How it works: Say we have 5 samples and 5 iterations and 16 cores.
         # If we want to limit to only 5 trials (and avoid any parallelism magic by Ray)
         #  We can set resources_per_trial = NUM_CORES/5 = 3.2 (fractional resources_per_trial are allowed!)
 
@@ -66,7 +67,7 @@ class ResumeCheck(unittest.TestCase):
         # Run the first config asynchronously.
         print("Running the first config")
         with managed_process(self.commands[0], shell=True) as proc:
-            time.sleep(120)
+            time.sleep(self.timeout)
 
         # Keep trying to stop the ray cluster until it is stopped
         while 1:
