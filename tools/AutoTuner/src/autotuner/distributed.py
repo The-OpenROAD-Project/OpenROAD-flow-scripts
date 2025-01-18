@@ -506,7 +506,10 @@ def parse_arguments():
         args.experiment = f"{args.mode}-{id}"
     else:
         args.experiment += f"-{args.mode}"
-    args.experiment += f"-{args.mode}-{DATE}"
+
+    # Append a date for non-resume mode to ensure unique experiment dirs.
+    if not args.resume:
+        args.experiment += f"-{DATE}"
 
     # Convert time to seconds
     if args.timeout_per_trial is not None:
