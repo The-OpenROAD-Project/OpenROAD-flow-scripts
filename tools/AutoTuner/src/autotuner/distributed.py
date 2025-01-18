@@ -670,8 +670,6 @@ def sweep():
 def main():
     global args, SDC_ORIGINAL, FR_ORIGINAL, LOCAL_DIR, INSTALL_PATH, ORFS_FLOW_DIR, config_dict, reference, best_params
     args = parse_arguments()
-    print(args)
-    exit()
 
     # Read config and original files before handling where to run in case we
     # need to upload the files.
