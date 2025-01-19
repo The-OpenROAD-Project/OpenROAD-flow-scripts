@@ -71,12 +71,17 @@ class ResumeCheck(unittest.TestCase):
 
         # Keep trying to stop the ray cluster until it is stopped
         while 1:
-            proc = subprocess.run(["ray", "status"], shell=True)
+            proc = subprocess.run(
+                ["ray", "status"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
             no_nodes = proc.returncode != 0
-            proc = subprocess.run(["ray", "stop"], shell=True)
+            proc = subprocess.run(
+                ["ray", "stop"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
             successful = proc.returncode == 0
 
             if no_nodes and successful:
+                print("Ray cluster successfully stopped with no remaining nodes.")
                 break
             time.sleep(5)
 
