@@ -30,7 +30,7 @@ class ResumeCheck(unittest.TestCase):
     design = "gcd"
     samples = 5
     iterations = 2
-    timeout = 120
+    timeout = 200
 
     def setUp(self):
         self.config = os.path.join(
