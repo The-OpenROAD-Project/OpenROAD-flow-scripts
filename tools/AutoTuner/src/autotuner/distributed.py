@@ -507,14 +507,6 @@ def parse_arguments():
     else:
         args.experiment += f"-{args.mode}"
 
-    # Experiment name must be unique. TODO: Have a single source of truth for EXPERIMENT_DIR.
-    if os.path.exists(f"{LOCAL_DIR}/{args.platform}/{args.design}/{args.experiment}"):
-        print(
-            f"[ERROR TUN-0032] Experiment {args.experiment} already exists."
-            " Please choose a different name."
-        )
-        sys.exit(1)
-
     # Convert time to seconds
     if args.timeout_per_trial is not None:
         args.timeout_per_trial = round(args.timeout_per_trial * 3600)
@@ -689,6 +681,14 @@ def main():
 
     LOCAL_DIR, ORFS_FLOW_DIR, INSTALL_PATH = prepare_ray_server(args)
 
+    # Check: Experiment name must be unique.
+    if os.path.exists(f"./{LOCAL_DIR}/{args.experiment}"):
+        print(
+            f"[ERROR TUN-0032] Experiment {args.experiment} already exists."
+            " Please choose a different name."
+        )
+        sys.exit(1)
+
     if args.mode == "tune":
         best_params = set_best_params(args.platform, args.design)
         search_algo = set_algorithm(args.experiment, config_dict)
@@ -712,7 +712,6 @@ def main():
             trial_name_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
             trial_dirname_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
         )
-        exit()
         if args.algorithm == "pbt":
             os.environ["TUNE_MAX_PENDING_TRIALS_PG"] = str(args.jobs)
             tune_args["scheduler"] = search_algo
