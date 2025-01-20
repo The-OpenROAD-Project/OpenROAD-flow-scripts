@@ -29,7 +29,7 @@ _installCommon() {
         source /opt/rh/rh-python38/enable
         set -u
     fi
-    local pkgs="pandas numpy firebase_admin click pyyaml"
+    local pkgs="pandas numpy firebase_admin click pyyaml yamlfix"
     if [[ $(id -u) == 0 ]]; then
         pip3 install --no-cache-dir -U $pkgs
     else
