@@ -25,12 +25,12 @@ class BaseTimeoutSmokeTest(unittest.TestCase):
             "python3 distributed.py"
             f" --design {self.design}"
             f" --platform {self.platform}"
-            f" --experiment {self.experiment}"
+            f" --experiment {self.experiment}-{idx}"
             f" --config {self.config}"
             f" --yes"
             f" {flag}"
             f" tune --samples 1"
-            for flag in timeout_flags
+            for idx, flag in enumerate(timeout_flags)
         ]
 
     def test_timeout(self):

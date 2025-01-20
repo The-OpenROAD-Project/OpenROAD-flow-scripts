@@ -22,11 +22,11 @@ class BaseSampleIterationSmokeTest(unittest.TestCase):
             f"python3 distributed.py"
             f" --design {self.design}"
             f" --platform {self.platform}"
-            f" --experiment {self.experiment}"
+            f" --experiment {self.experiment}-{idx}"
             f" --config {self.config}"
             f" --yes"
             f" tune --samples {s} --iterations {i}"
-            for s, i in self.matrix
+            for idx, (s, i) in enumerate(self.matrix)
         ]
 
 
