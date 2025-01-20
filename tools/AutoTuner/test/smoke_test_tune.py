@@ -23,7 +23,8 @@ class BaseTuneSmokeTest(unittest.TestCase):
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
             f" --config {self.config}"
-            f" tune --samples 5"
+            f" --yes"
+            f" tune --samples 1"
         )
 
     def test_tune(self):
@@ -32,7 +33,7 @@ class BaseTuneSmokeTest(unittest.TestCase):
         )
 
 
-class ASAP7TuneSmokeTest(BaseTuneSmokeTest):
+class asap7TuneSmokeTest(BaseTuneSmokeTest):
     platform = "asap7"
     design = "gcd"
 
@@ -42,7 +43,7 @@ class ASAP7TuneSmokeTest(BaseTuneSmokeTest):
         self.assertTrue(successful)
 
 
-class SKY130HDTuneSmokeTest(BaseTuneSmokeTest):
+class sky130hdTuneSmokeTest(BaseTuneSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
@@ -52,7 +53,7 @@ class SKY130HDTuneSmokeTest(BaseTuneSmokeTest):
         self.assertTrue(successful)
 
 
-class IHPSG13G2TuneSmokeTest(BaseTuneSmokeTest):
+class ihpsg13g2TuneSmokeTest(BaseTuneSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 

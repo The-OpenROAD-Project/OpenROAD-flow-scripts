@@ -22,14 +22,15 @@ class BaseSampleIterationSmokeTest(unittest.TestCase):
             f"python3 distributed.py"
             f" --design {self.design}"
             f" --platform {self.platform}"
-            f" --experiment {self.experiment}"
+            f" --experiment {self.experiment}-{idx}"
             f" --config {self.config}"
+            f" --yes"
             f" tune --samples {s} --iterations {i}"
-            for s, i in self.matrix
+            for idx, (s, i) in enumerate(self.matrix)
         ]
 
 
-class ASAP7SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
+class asap7SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
     platform = "asap7"
     design = "gcd"
 
@@ -41,7 +42,7 @@ class ASAP7SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
             self.assertTrue(successful)
 
 
-class SKY130HDSampleIterationSmokeTest(BaseSampleIterationSmokeTest):
+class sky130hdSampleIterationSmokeTest(BaseSampleIterationSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
@@ -53,7 +54,7 @@ class SKY130HDSampleIterationSmokeTest(BaseSampleIterationSmokeTest):
             self.assertTrue(successful)
 
 
-class IHPSG13G2SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
+class ihpsg13g2SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 

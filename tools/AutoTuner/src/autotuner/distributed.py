@@ -65,6 +65,30 @@ ORFS_FLOW_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../flow")
 )
 
+TEMPLATE = """
+Expected figures for this experiment.
+    Wall time: {runtime:.5f} seconds
+    Number of Samples: 
+        Samples per minute: {num_samples_per_minute:.5f}
+        Design runtime of 10 min: {num_samples_10min:.5f}
+        Design runtime of 1h: {num_samples_1h:.5f}
+    Number of iterations
+        Design runtime of 10 min: {num_iterations_10min:.5f}
+        Design runtime of 1h: {num_iterations_1h:.5f}
+"""
+
+
+def calculate_expected_numbers(runtime, num_samples):
+    # Runtime - seconds
+    return TEMPLATE.format(
+        runtime=runtime,
+        num_samples_per_minute=num_samples / (runtime * 60),
+        num_samples_10min=(num_samples / (runtime * 60)) * 10,
+        num_samples_1h=(num_samples / (runtime * 60)) * 60,
+        num_iterations_10min=((num_samples / (runtime * 60)) * 10) / num_samples,
+        num_iterations_1h=((num_samples / (runtime * 60)) * 60) / num_samples,
+    )
+
 
 class AutoTunerBase(tune.Trainable):
     """
@@ -588,7 +612,7 @@ def openroad(base_dir, parameters, flow_variant, path=""):
     make_command += f" NUM_CORES={args.openroad_threads} SHELL=bash"
     run_command(
         make_command,
-        timeout=args.timeout,
+        timeout=args.timeout_per_trial,
         stderr_file=f"{log_path}error-make-finish.log",
         stdout_file=f"{log_path}make-finish-stdout.log",
     )
@@ -668,7 +692,7 @@ def parse_arguments():
         help="mode of execution", dest="mode", required=True
     )
     tune_parser = subparsers.add_parser("tune")
-    _ = subparsers.add_parser("sweep")
+    sweep_parser = subparsers.add_parser("sweep")
 
     # DUT
     parser.add_argument(
@@ -703,11 +727,21 @@ def parse_arguments():
         " FLOW_VARIANT and to set the Ray log destination.",
     )
     parser.add_argument(
-        "--timeout",
+        "--timeout_per_trial",
         type=float,
         metavar="<float>",
         default=None,
         help="Time limit (in hours) for each trial run. Default is no limit.",
+    )
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        metavar="<float>",
+        default=None,
+        help="Time limit (in hours) for the whole Autotuning process.",
+    )
+    parser.add_argument(
+        "-y", "--yes", action="store_true", help="Skip confirmation prompt."
     )
     tune_parser.add_argument(
         "--resume",
@@ -770,7 +804,7 @@ def parse_arguments():
         help="Additional arguments given to ./build_openroad.sh.",
     )
 
-    # ML
+    # Tune mode
     tune_parser.add_argument(
         "--algorithm",
         type=str,
@@ -828,7 +862,22 @@ def parse_arguments():
         help="Random seed. (0 means no seed.)",
     )
 
+    sweep_parser.add_argument(
+        "--resources_per_trial",
+        type=int,
+        metavar="<int>",
+        default=1,
+        help="Number of CPUs to request for each sweep job.",
+    )
+
     # Workload
+    parser.add_argument(
+        "--cpu_budget",
+        type=int,
+        metavar="<int>",
+        default=-1,
+        help="CPU Hours (-1 means no limit.)",
+    )
     parser.add_argument(
         "--jobs",
         type=int,
@@ -867,11 +916,11 @@ def parse_arguments():
         " training stderr\n\t2: also print training stdout.",
     )
 
-    arguments = parser.parse_args()
-    if arguments.mode == "tune":
-        arguments.algorithm = arguments.algorithm.lower()
+    args = parser.parse_args()
+    if args.mode == "tune":
+        args.algorithm = args.algorithm.lower()
         # Validation of arguments
-        if arguments.eval == "ppa-improv" and arguments.reference is None:
+        if args.eval == "ppa-improv" and args.reference is None:
             print(
                 '[ERROR TUN-0006] The argument "--eval ppa-improv"'
                 ' requires that "--reference <FILE>" is also given.'
@@ -879,7 +928,7 @@ def parse_arguments():
             sys.exit(7)
 
         # Check for experiment name and resume flag.
-        if arguments.resume and arguments.experiment == "test":
+        if args.resume and args.experiment == "test":
             print(
                 '[ERROR TUN-0031] The flag "--resume"'
                 ' requires that "--experiment NAME" is also given.'
@@ -887,16 +936,40 @@ def parse_arguments():
             sys.exit(1)
 
     # If the experiment name is the default, add a UUID to the end.
-    if arguments.experiment == "test":
+    if args.experiment == "test":
         id = str(uuid())[:8]
-        arguments.experiment = f"{arguments.mode}-{id}"
+        args.experiment = f"{args.mode}-{id}"
     else:
-        arguments.experiment += f"-{arguments.mode}"
+        args.experiment += f"-{args.mode}"
 
-    if arguments.timeout is not None:
-        arguments.timeout = round(arguments.timeout * 3600)
+    # Convert time to seconds
+    if args.timeout_per_trial is not None:
+        args.timeout_per_trial = round(args.timeout_per_trial * 3600)
+    if args.timeout is not None:
+        args.timeout = round(args.timeout * 3600)
 
-    return arguments
+    # Calculate timeout based on cpu_budget
+    if args.cpu_budget != -1:
+        args.timeout = round(args.cpu_budget / os.cpu_count() * 3600)
+        args.timeout_per_trial = round(
+            args.cpu_budget / (args.jobs * args.resources_per_trial) * 3600
+        )
+        overall_timeout = min(args.timeout, args.timeout_per_trial)
+        if args.mode == "tune":
+            template = calculate_expected_numbers(overall_timeout, args.samples)
+        else:
+            template = calculate_expected_numbers(overall_timeout, 1)
+        print(template)
+        if not args.yes:
+            print(
+                "[INFO TUN-0022] Tip: use the flag --yes to skip the confirmation prompt."
+            )
+            ans = input("Are you sure you want to proceed? (y/n): ")
+            if ans.lower() != "y":
+                print("Exiting AutoTuner.")
+                sys.exit(0)
+
+    return args
 
 
 def set_algorithm(experiment_name, config):
@@ -985,6 +1058,9 @@ def save_best(results):
     Save best configuration of parameters found.
     """
     best_config = results.best_config
+    if METRIC not in results.best_result:
+        print("[ERROR TUN-0023] Metric not found in results.")
+        sys.exit(1)
     best_config["best_result"] = results.best_result[METRIC]
     trial_id = results.best_trial.trial_id
     new_best_path = f"{LOCAL_DIR}/{args.experiment}/"
@@ -1075,6 +1151,14 @@ if __name__ == "__main__":
         LOCAL_DIR = os.path.abspath(LOCAL_DIR)
         INSTALL_PATH = os.path.abspath("../tools/install")
 
+    # Check: Experiment name must be unique.
+    if os.path.exists(f"./{LOCAL_DIR}/{args.experiment}"):
+        print(
+            f"[ERROR TUN-0032] Experiment {args.experiment} already exists."
+            " Please choose a different name."
+        )
+        sys.exit(1)
+
     if args.mode == "tune":
         best_params = set_best_params(args.platform, args.design)
         search_algo = set_algorithm(args.experiment, config_dict)
@@ -1087,6 +1171,7 @@ if __name__ == "__main__":
             name=args.experiment,
             metric=METRIC,
             mode="min",
+            time_budget_s=args.timeout,
             num_samples=args.samples,
             fail_fast=False,
             local_dir=LOCAL_DIR,

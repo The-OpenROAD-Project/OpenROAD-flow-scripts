@@ -25,12 +25,13 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             f"python3 distributed.py"
             f" --design {self.design}"
             f" --platform {self.platform}"
-            f" --experiment {self.experiment}"
+            f" --experiment {self.experiment}-{idx}"
             f" --config {self.config}"
+            f" --yes"
             f" tune --samples 5"
             f" --algorithm {a} --eval {e}"
             f" --reference {self.reference}"
-            for a, e in self.matrix
+            for idx, (a, e) in enumerate(self.matrix)
         ]
 
     def make_base(self):
@@ -46,7 +47,7 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
         os.chdir(src_dir)
 
 
-class ASAP7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+class asap7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "asap7"
     design = "gcd"
 
@@ -60,7 +61,7 @@ class ASAP7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
             self.assertTrue(successful)
 
 
-class IHPSG13G2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+class ihpsg13g2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 
@@ -74,7 +75,7 @@ class IHPSG13G2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
             self.assertTrue(successful)
 
 
-class SKY130HDAlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
+class sky130hdAlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
