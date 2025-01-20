@@ -100,7 +100,10 @@ proc write_eqy_script { } {
     puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
 
     # Recommendation from eqy team on how to speed up a design
-    puts $outfile "\[match *]\ngate-nomatch _*_.*\n\n"
+    puts $outfile "\[match *]\ngate-nomatch _*_.*"
+
+    # See issue OpenROAD#6545 "Equivalence check failure due to non-unique resizer nets"
+    puts $outfile "gate-nomatch net*\n\n"
 
     # Equivalence check recipe 1
     puts $outfile "\[strategy basic]\nuse sat\ndepth 10\n\n"
