@@ -16,7 +16,7 @@ class BaseCPUBudgetSmokeTest(unittest.TestCase):
             cur_dir,
             f"../../../flow/designs/{self.platform}/{self.design}/autotuner.json",
         )
-        self.experiment = f"smoke-test-timeout-{self.platform}"
+        self.experiment = f"smoke-test-cpubudget-{self.platform}"
 
         cpu_budget = 1
         self.expected_timeout = cpu_budget / os.cpu_count()

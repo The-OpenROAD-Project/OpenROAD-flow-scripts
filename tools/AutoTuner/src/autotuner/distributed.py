@@ -507,9 +507,13 @@ def parse_arguments():
     else:
         args.experiment += f"-{args.mode}"
 
-    # Append a date for non-resume mode to ensure unique experiment dirs.
-    if not args.resume:
-        args.experiment += f"-{DATE}"
+    # Experiment name must be unique. TODO: Have a single source of truth for EXPERIMENT_DIR.
+    if os.path.exists(f"{LOCAL_DIR}/{args.platform}/{args.design}/{args.experiment}"):
+        print(
+            f"[ERROR TUN-0032] Experiment {args.experiment} already exists."
+            " Please choose a different name."
+        )
+        sys.exit(1)
 
     # Convert time to seconds
     if args.timeout_per_trial is not None:
@@ -708,6 +712,7 @@ def main():
             trial_name_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
             trial_dirname_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
         )
+        exit()
         if args.algorithm == "pbt":
             os.environ["TUNE_MAX_PENDING_TRIALS_PG"] = str(args.jobs)
             tune_args["scheduler"] = search_algo
