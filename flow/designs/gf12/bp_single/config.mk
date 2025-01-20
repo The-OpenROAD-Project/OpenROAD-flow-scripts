@@ -51,11 +51,11 @@ export ABC_CLOCK_PERIOD_IN_PS = 1250
 export PLACE_DENSITY = 0.80
 
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
-#export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/bp_single.macro_placment.cfg
-#export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_bp_single.macro_placment.cfg
-export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_fence2_bp_single.macro_placment.cfg
-
-export MACRO_BLOCKAGE_HALO = 25
+export RTLMP_FENCE_LX = 606.44
+export RTLMP_FENCE_LY = 896.44
+export RTLMP_FENCE_UX = 2449.96
+export RTLMP_FENCE_UY = 2239.96
+export MACRO_PLACE_HALO = 28.2 28.2
 
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
