@@ -77,7 +77,7 @@ class AutoTunerBase(tune.Trainable):
         """
         # We create the following directory structure:
         #      1/     2/         3/       4/                5/   6/
-        # <repo>/<logs>/<platform>/<design>/<experiment>-DATE/<id>/<cwd>
+        # <repo>/<logs>/<platform>/<design>/<experiment>/<id>/<cwd>
         repo_dir = os.getcwd() + "/../" * 6
         self.repo_dir = os.path.abspath(repo_dir)
         self.parameters = parse_config(config, path=os.getcwd())
@@ -88,7 +88,8 @@ class AutoTunerBase(tune.Trainable):
         """
         Run step experiment and compute its score.
         """
-        metrics_file = openroad(self.repo_dir, self.parameters, self.variant)
+        self._variant = f"{self.variant}-{self.step_}"
+        metrics_file = openroad(self.repo_dir, self.parameters, self._variant)
         self.step_ += 1
         (score, effective_clk_period, num_drc) = self.evaluate(
             self.read_metrics(metrics_file)
@@ -709,7 +710,10 @@ def parse_arguments():
         help="Time limit (in hours) for each trial run. Default is no limit.",
     )
     tune_parser.add_argument(
-        "--resume", action="store_true", help="Resume previous run."
+        "--resume",
+        action="store_true",
+        help="Resume previous run. Note that you must also set a unique experiment\
+                name identifier via `--experiment NAME` to be able to resume.",
     )
 
     # Setup
@@ -797,8 +801,8 @@ def parse_arguments():
     )
     tune_parser.add_argument(
         "--resources_per_trial",
-        type=int,
-        metavar="<int>",
+        type=float,
+        metavar="<float>",
         default=1,
         help="Number of CPUs to request for each tuning job.",
     )
@@ -874,7 +878,20 @@ def parse_arguments():
             )
             sys.exit(7)
 
-    arguments.experiment += f"-{arguments.mode}-{DATE}"
+        # Check for experiment name and resume flag.
+        if arguments.resume and arguments.experiment == "test":
+            print(
+                '[ERROR TUN-0031] The flag "--resume"'
+                ' requires that "--experiment NAME" is also given.'
+            )
+            sys.exit(1)
+
+    # If the experiment name is the default, add a UUID to the end.
+    if arguments.experiment == "test":
+        id = str(uuid())[:8]
+        arguments.experiment = f"{arguments.mode}-{id}"
+    else:
+        arguments.experiment += f"-{arguments.mode}"
 
     if arguments.timeout is not None:
         arguments.timeout = round(arguments.timeout * 3600)
@@ -1075,7 +1092,7 @@ if __name__ == "__main__":
             local_dir=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
-            resources_per_trial={"cpu": args.resources_per_trial},
+            resources_per_trial={"cpu": os.cpu_count() / args.jobs},
             log_to_file=["trail-out.log", "trail-err.log"],
             trial_name_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
             trial_dirname_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
