@@ -29,7 +29,6 @@ docker run -u $(id -u ${USER}):$(id -g ${USER}) \
  -v $XAUTH:$XAUTH \
  -e XAUTHORITY=$XAUTH \
  -e FLOW_HOME=/OpenROAD-flow-scripts/flow/ \
- -e MAKEFILES=/OpenROAD-flow-scripts/flow/Makefile \
  -e YOSYS_EXE=$YOSYS_EXE \
  -e OPENROAD_EXE=$OPENROAD_EXE \
  -e KLAYOUT_CMD=$KLAYOUT_CMD \
@@ -40,5 +39,6 @@ docker run -u $(id -u ${USER}):$(id -g ${USER}) \
  bash -c "set -ex
  mkdir /tmp/xdg-run
  cd /OpenROAD-flow-scripts/flow
+ . ../env.sh
  $ARGUMENTS
 "
