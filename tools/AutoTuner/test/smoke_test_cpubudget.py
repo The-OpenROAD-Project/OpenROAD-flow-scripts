@@ -18,8 +18,9 @@ class BaseCPUBudgetSmokeTest(unittest.TestCase):
         )
         self.experiment = f"smoke-test-cpubudget-{self.platform}"
 
+        # Tests should fail with such a low budget.
         cpu_budget = 1
-        self.expected_timeout = cpu_budget / os.cpu_count()
+        self.expected_timeout = cpu_budget / os.cpu_count() * 3600
 
         self.command = (
             "python3 distributed.py"
@@ -29,8 +30,9 @@ class BaseCPUBudgetSmokeTest(unittest.TestCase):
             f" --config {self.config}"
             f" --cpu_budget 1"
             f" --yes"
-            f" tune --samples 1000"
+            f" tune --samples 1"
         )
+        self.command = self.command.split()
 
     def test_cpu_budget(self):
         raise NotImplementedError(
@@ -44,13 +46,15 @@ class asap7CPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
 
     def test_cpu_budget(self):
         try:
-            out = subprocess.run(
-                self.command, shell=True, check=True, timeout=self.expected_timeout
+            _ = subprocess.run(
+                self.command,
+                stderr=subprocess.PIPE,
+                timeout=self.expected_timeout,
             )
-            successful = out.returncode == 0
+            failed = False
         except subprocess.TimeoutExpired:
-            successful = False
-        self.assertFalse(successful)
+            failed = True
+        self.assertTrue(failed)
 
 
 class sky130hdCPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
@@ -59,13 +63,15 @@ class sky130hdCPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
 
     def test_cpu_budget(self):
         try:
-            out = subprocess.run(
-                self.command, shell=True, check=True, timeout=self.expected_timeout
+            _ = subprocess.run(
+                self.command,
+                stderr=subprocess.PIPE,
+                timeout=self.expected_timeout,
             )
-            successful = out.returncode == 0
+            failed = False
         except subprocess.TimeoutExpired:
-            successful = False
-        self.assertFalse(successful)
+            failed = True
+        self.assertTrue(failed)
 
 
 class ihpsg13g2CPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
@@ -74,13 +80,15 @@ class ihpsg13g2CPUBudgetSmokeTest(BaseCPUBudgetSmokeTest):
 
     def test_cpu_budget(self):
         try:
-            out = subprocess.run(
-                self.command, shell=True, check=True, timeout=self.expected_timeout
+            _ = subprocess.run(
+                self.command,
+                stderr=subprocess.PIPE,
+                timeout=self.expected_timeout,
             )
-            successful = out.returncode == 0
+            failed = False
         except subprocess.TimeoutExpired:
-            successful = False
-        self.assertFalse(successful)
+            failed = True
+        self.assertTrue(failed)
 
 
 if __name__ == "__main__":
