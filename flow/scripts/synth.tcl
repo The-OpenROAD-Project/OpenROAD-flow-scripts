@@ -2,36 +2,41 @@ source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
 hierarchy -check -top $::env(DESIGN_NAME)
 
-set ungroup_threshold 0
-if { $::env(MAX_UNGROUP_SIZE) > 0 } {
-  set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
-  puts "Ungroup modules of size greater than $ungroup_threshold"
-}
-
-set fp [open $::env(SYNTH_STATS) r]
-while {[gets $fp line] != -1} {
-    set fields [split $line " "]
-    set area [lindex $fields 0]
-    set module_name [lindex $fields 1]
-
-    if {[expr $area > $ungroup_threshold]} {
-      puts "Keeping module $module_name (area: $area)"
-      select -module $module_name
-      setattr -mod -set keep_hierarchy 1
-      select -clear
-    } else {
-      puts "Flattening module $module_name (area: $area)"
-    }
-}
-close $fp
-
 if { [env_var_equals SYNTH_GUT 1] } {
   # /deletes all cells at the top level, which will quickly optimize away
   # everything else, including macros.
   delete $::env(DESIGN_NAME)/c:*
 }
 
-synthesize_check mem $::env(SYNTH_FULL_ARGS)
+if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
+  # Perform standard coarse-level synthesis script, flatten right away
+  # (-flatten part of $synth_args per default)
+  synth -run :fine {*}$::env(SYNTH_FULL_ARGS)
+} else {
+  # Perform standard coarse-level synthesis script,
+  # defer flattening until we have decided what hierarchy to keep
+  synth -run :fine
+
+  if {[env_var_exists_and_non_empty MAX_UNGROUP_SIZE]} {
+    set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
+    puts "Ungroup modules below estimated size of $ungroup_threshold instances"
+
+    convert_liberty_areas
+    keep_hierarchy -min_cost $ungroup_threshold
+  } else {
+    keep_hierarchy
+  }
+
+  # Re-run coarse-level script, this time do pass -flatten
+  synth -run coarse:fine {*}$::env(SYNTH_FULL_ARGS)
+}
+
+json -o $::env(RESULTS_DIR)/mem.json
+# Run report and check here so as to fail early if this synthesis run is doomed
+exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
+synth -top $::env(DESIGN_NAME) -run fine: {*}$::env(SYNTH_FULL_ARGS)
+# Get rid of indigestibles
+chformal -remove
 
 # rename registers to have the verilog register name in its name
 # of the form \regName$_DFF_P_. We should fix yosys to make it the reg name.

@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
 
             for (int k = 0; k < 2; k++) {
                 top->eval();
-                vcd->dump(tick++);
+                vcd->dump(tick++ * 125);
                 top->clock = !top->clock;
             }
         }
@@ -88,6 +88,9 @@ int main(int argc, char** argv) {
     done:
     vcd->flush();
     vcd->close();
+
+    std::string coverage_file = std::string(getenv("RESULTS_DIR")) + "/coverage.dat";
+    Verilated::threadContextp()->coveragep()->write(coverage_file.c_str());
 
     top->final();
     delete top;

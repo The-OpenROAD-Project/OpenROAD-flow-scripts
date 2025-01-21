@@ -59,7 +59,7 @@ DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
 FASTROUTE_TCL = "fastroute.tcl"
 CONSTRAINTS_SDC = "constraint.sdc"
-METRIC = "minimum"
+METRIC = "metric"
 ERROR_METRIC = 9e99
 ORFS_FLOW_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../flow")
@@ -77,7 +77,7 @@ class AutoTunerBase(tune.Trainable):
         """
         # We create the following directory structure:
         #      1/     2/         3/       4/                5/   6/
-        # <repo>/<logs>/<platform>/<design>/<experiment>-DATE/<id>/<cwd>
+        # <repo>/<logs>/<platform>/<design>/<experiment>/<id>/<cwd>
         repo_dir = os.getcwd() + "/../" * 6
         self.repo_dir = os.path.abspath(repo_dir)
         self.parameters = parse_config(config, path=os.getcwd())
@@ -88,12 +88,19 @@ class AutoTunerBase(tune.Trainable):
         """
         Run step experiment and compute its score.
         """
-        metrics_file = openroad(self.repo_dir, self.parameters, self.variant)
+        self._variant = f"{self.variant}-{self.step_}"
+        metrics_file = openroad(self.repo_dir, self.parameters, self._variant)
         self.step_ += 1
-        score = self.evaluate(self.read_metrics(metrics_file))
+        (score, effective_clk_period, num_drc) = self.evaluate(
+            self.read_metrics(metrics_file)
+        )
         # Feed the score back to Tune.
         # return must match 'metric' used in tune.run()
-        return {METRIC: score}
+        return {
+            METRIC: score,
+            "effective_clk_period": effective_clk_period,
+            "num_drc": num_drc,
+        }
 
     def evaluate(self, metrics):
         """
@@ -104,11 +111,13 @@ class AutoTunerBase(tune.Trainable):
         error = "ERR" in metrics.values()
         not_found = "N/A" in metrics.values()
         if error or not_found:
-            return ERROR_METRIC
-        gamma = (metrics["clk_period"] - metrics["worst_slack"]) / 10
-        score = metrics["clk_period"] - metrics["worst_slack"]
-        score = score * (self.step_ / 100) ** (-1) + gamma * metrics["num_drc"]
-        return score
+            return (ERROR_METRIC, "-", "-")
+        effective_clk_period = metrics["clk_period"] - metrics["worst_slack"]
+        num_drc = metrics["num_drc"]
+        gamma = effective_clk_period / 10
+        score = effective_clk_period
+        score = score * (100 / self.step_) + gamma * num_drc
+        return (score, effective_clk_period, num_drc)
 
     @classmethod
     def read_metrics(cls, file_name):
@@ -495,6 +504,9 @@ def write_fast_route(variables, path):
         sys.exit(1)
     layer_cmd = "set_global_routing_layer_adjustment"
     new_file = FR_ORIGINAL
+    # This is part of the defaults when no FASTROUTE_TCL is provided
+    if len(new_file) == 0:
+        new_file = "set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)"
     for key, value in variables.items():
         if key.startswith("LAYER_ADJUST"):
             layer = key.lstrip("LAYER_ADJUST")
@@ -573,7 +585,7 @@ def openroad(base_dir, parameters, flow_variant, path=""):
     make_command += f" PLATFORM={args.platform}"
     make_command += f" FLOW_VARIANT={flow_variant} {parameters}"
     make_command += f" EQUIVALENCE_CHECK=0"
-    make_command += f" NPROC={args.openroad_threads} SHELL=bash"
+    make_command += f" NUM_CORES={args.openroad_threads} SHELL=bash"
     run_command(
         make_command,
         timeout=args.timeout,
@@ -698,7 +710,10 @@ def parse_arguments():
         help="Time limit (in hours) for each trial run. Default is no limit.",
     )
     tune_parser.add_argument(
-        "--resume", action="store_true", help="Resume previous run."
+        "--resume",
+        action="store_true",
+        help="Resume previous run. Note that you must also set a unique experiment\
+                name identifier via `--experiment NAME` to be able to resume.",
     )
 
     # Setup
@@ -786,8 +801,8 @@ def parse_arguments():
     )
     tune_parser.add_argument(
         "--resources_per_trial",
-        type=int,
-        metavar="<int>",
+        type=float,
+        metavar="<float>",
         default=1,
         help="Number of CPUs to request for each tuning job.",
     )
@@ -863,7 +878,20 @@ def parse_arguments():
             )
             sys.exit(7)
 
-    arguments.experiment += f"-{arguments.mode}-{DATE}"
+        # Check for experiment name and resume flag.
+        if arguments.resume and arguments.experiment == "test":
+            print(
+                '[ERROR TUN-0031] The flag "--resume"'
+                ' requires that "--experiment NAME" is also given.'
+            )
+            sys.exit(1)
+
+    # If the experiment name is the default, add a UUID to the end.
+    if arguments.experiment == "test":
+        id = str(uuid())[:8]
+        arguments.experiment = f"{arguments.mode}-{id}"
+    else:
+        arguments.experiment += f"-{arguments.mode}"
 
     if arguments.timeout is not None:
         arguments.timeout = round(arguments.timeout * 3600)
@@ -1064,7 +1092,7 @@ if __name__ == "__main__":
             local_dir=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
-            resources_per_trial={"cpu": args.resources_per_trial},
+            resources_per_trial={"cpu": os.cpu_count() / args.jobs},
             log_to_file=["trail-out.log", "trail-err.log"],
             trial_name_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
             trial_dirname_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
@@ -1084,7 +1112,7 @@ if __name__ == "__main__":
         print(f"[INFO TUN-0002] Best parameters found: {analysis.best_config}")
 
         # if all runs have failed
-        if analysis.best_result["minimum"] == ERROR_METRIC:
+        if analysis.best_result[METRIC] == ERROR_METRIC:
             print("[ERROR TUN-0016] No successful runs found.")
             sys.exit(1)
     elif args.mode == "sweep":
