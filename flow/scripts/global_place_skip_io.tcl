@@ -5,7 +5,7 @@ load_design 2_floorplan.odb 2_floorplan.sdc
 if { [env_var_exists_and_non_empty FLOORPLAN_DEF] } {
   puts "FLOORPLAN_DEF is set. Skipping global placement without IOs"
 } else {
-  if { [env_var_exists_and_non_empty GPL_ALLOW_REVERT_IF_DIVERGE] } {
+  if {$::env(GPL_ALLOW_REVERT_IF_DIVERGE)} {
     lappend global_placement_args {-allow_revert_if_diverge}
   }
   
