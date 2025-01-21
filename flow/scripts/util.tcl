@@ -1,6 +1,6 @@
 proc log_cmd {cmd args} {
   # log the command, escape arguments with spaces
-  puts -nonewline "$cmd[join [lmap arg $args {expr {[string match {* *} $arg] ? " \"$arg\"" : " $arg"}}] ""]"
+  puts -nonewline "$cmd[join [lmap arg $args {format " %s" [expr {[string match {* *} $arg] ? "\"$arg\"" : "$arg"}]}] ""]"
   set start [clock seconds]
   $cmd {*}$args
   set time [expr {[clock seconds] - $start}]
