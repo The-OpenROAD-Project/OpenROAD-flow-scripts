@@ -9,9 +9,7 @@ fast_route
 
 set global_placement_args {}
 
-if {[info exists ::env(GPL_ALLOW_REVERT_IF_DIVERGE)] && $::env(GPL_ALLOW_REVERT_IF_DIVERGE)} {
-  lappend global_placement_args {-allow_revert_if_diverge}
-}
+append_env_var global_placement_args GPL_ALLOW_REVERT_IF_DIVERGE -allow_revert_if_diverge 0
     
 # Parameters for routability mode in global placement
 if {$::env(GPL_ROUTABILITY_DRIVEN)} {
