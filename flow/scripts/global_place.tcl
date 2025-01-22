@@ -12,9 +12,7 @@ set global_placement_args {}
 append_env_var global_placement_args GPL_ALLOW_REVERT_IF_DIVERGE -allow_revert_if_diverge 0
     
 # Parameters for routability mode in global placement
-if {$::env(GPL_ROUTABILITY_DRIVEN)} {
-  lappend global_placement_args {-routability_driven}
-}
+append_env_var global_placement_args GPL_ROUTABILITY_DRIVEN -routability_driven 0
 
 # Parameters for timing driven mode in global placement
 if {$::env(GPL_TIMING_DRIVEN)} {
