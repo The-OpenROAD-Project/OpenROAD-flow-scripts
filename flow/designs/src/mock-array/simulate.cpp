@@ -89,9 +89,6 @@ int main(int argc, char** argv) {
     vcd->flush();
     vcd->close();
 
-    std::string coverage_file = std::string(getenv("RESULTS_DIR")) + "/coverage.dat";
-    Verilated::threadContextp()->coveragep()->write(coverage_file.c_str());
-
     top->final();
     delete top;
     return 0;
