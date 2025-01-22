@@ -33,6 +33,9 @@ export SKIP_GATE_CLONING = 1
 
 export SETUP_SLACK_MARGIN = 0.2
 
+# GRT non-default config
+export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
+
 # This is high, some SRAMs should probably be converted
 # to real SRAMs and not instantiated as flops
 export SYNTH_MEMORY_MAX_BITS ?= 42000
