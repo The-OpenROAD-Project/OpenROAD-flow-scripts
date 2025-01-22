@@ -379,6 +379,12 @@ DPO_MAX_DISPLACEMENT:
   description: >
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
+GPL_ALLOW_REVERT_IF_DIVERGE:
+  description: >
+    Enable reverting to saved snapshot if a divergence is detected.
+  stages:
+    - place
+  default: 0
 GPL_TIMING_DRIVEN:
   description: >
     Specifies whether the placer should use timing driven placement.
