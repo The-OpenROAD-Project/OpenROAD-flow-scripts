@@ -381,7 +381,10 @@ DPO_MAX_DISPLACEMENT:
   default: 5 1
 GPL_ALLOW_REVERT_IF_DIVERGE:
   description: >
-    Enable reverting to saved snapshot if a divergence is detected.
+    Enable reverting to a saved snapshot if divergence is detected.
+    This option is useful when a design diverges during GPL execution.
+    The provided solution is incomplete as it avoids the target overflow of 0.10.
+    The snapshot is saved only if the solution has a total overflow of 0.25 or less and represents the smallest HPWL achieved.
   stages:
     - place
   default: 0
