@@ -58,6 +58,8 @@ if {![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1]} {
     detailed_route {*}$all_args
     incr repair_antennas_iters
   }
+} else {
+  utl::metric_int "antenna_diodes_count" -1
 }
 
 if { [env_var_exists_and_non_empty POST_DETAIL_ROUTE_TCL] } {
