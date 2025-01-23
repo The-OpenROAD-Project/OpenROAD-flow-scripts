@@ -10,7 +10,6 @@ proc log_cmd {cmd args} {
     # and we don't want to mix it with the log, so output the time it took afterwards.
     puts "Took $time seconds: $log_cmd"
   }
-  puts ""
 }
 
 proc fast_route {} {
