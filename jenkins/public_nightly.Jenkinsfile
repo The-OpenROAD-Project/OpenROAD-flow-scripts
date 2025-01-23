@@ -64,6 +64,8 @@ node {
     }
 
     stage ('Cleanup and Reporting') {
+        env.CHANGE_BRANCH = 'nightly'
+        env.BRANCH_NAME = 'nightly'
         finalReport(DOCKER_IMAGE);
     }
 
