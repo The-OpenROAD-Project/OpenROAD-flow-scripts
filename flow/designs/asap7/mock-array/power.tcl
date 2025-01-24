@@ -25,9 +25,24 @@ log_cmd report_power
 set vcd_file $::env(RESULTS_DIR)/MockArrayTestbench.vcd
 log_cmd read_vcd -scope TOP/MockArray $vcd_file
 
-puts "Total number of pins to be annotated: [llength [get_pins -hierarchical *]]"
-set no_vcd_activity {}
+set fp [open $::env(RESULTS_DIR)/activity.tcl w]
 set pins [get_pins -hierarchical *]
+set clock_period [expr [get_property [get_clocks] period] * 1e-12]
+foreach pin $pins {
+  set activity [get_property $pin activity]
+  set activity_origin [lindex $activity 2]
+  if {$activity_origin != "vcd"} {
+    continue
+  }
+  puts $fp "set_power_activity \
+  -pin \[get_pins \{[get_property $pin full_name]\}\] \
+  -activity [expr [lindex $activity 0] * $clock_period] \
+  -duty [lindex $activity 1]"
+}
+close $fp
+
+puts "Total number of pins: [llength [get_pins -hierarchical *]]"
+set no_vcd_activity {}
 foreach pin $pins {
   set activity [get_property $pin activity]
   set activity_origin [lindex $activity 2]
@@ -71,9 +86,16 @@ for {set x 0} {$x < 8} {incr x} {
   }
 }
 
-puts {report_power -instances [get_cells $ces]}
+# puts {report_power -instances [get_cells $ces]}
 report_power -instances [get_cells $ces]
-log_cmd report_power
+log_cmd report_power > $::env(REPORTS_DIR)/power_vcd.txt
+source $::env(RESULTS_DIR)/activity.tcl
+log_cmd report_power > $::env(REPORTS_DIR)/power_user.txt
+exec diff $::env(REPORTS_DIR)/power_vcd.txt $::env(REPORTS_DIR)/power_user.txt
+
+set fp [open $::env(REPORTS_DIR)/power_user.txt r]
+puts "[read $fp]"
+close $fp
 
 log_cmd report_parasitic_annotation
 log_cmd report_activity_annotation -report_unannotated
