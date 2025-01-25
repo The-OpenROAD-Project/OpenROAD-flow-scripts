@@ -86,16 +86,32 @@ for {set x 0} {$x < 8} {incr x} {
   }
 }
 
-# puts {report_power -instances [get_cells $ces]}
+puts {report_power -instances [get_cells $ces]}
 report_power -instances [get_cells $ces]
-log_cmd report_power > $::env(REPORTS_DIR)/power_vcd.txt
-source $::env(RESULTS_DIR)/activity.tcl
-log_cmd report_power > $::env(REPORTS_DIR)/power_user.txt
-exec diff $::env(REPORTS_DIR)/power_vcd.txt $::env(REPORTS_DIR)/power_user.txt
 
-set fp [open $::env(REPORTS_DIR)/power_user.txt r]
-puts "[read $fp]"
-close $fp
+proc total_power {} {
+  return [lindex [sta::design_power [sta::corners]] 3]
+}
+
+set total_power_vcd [total_power]
+log_cmd report_power
+
+source $::env(RESULTS_DIR)/activity.tcl
+log_cmd report_power
+set total_power_user_activity [total_power]
+
+puts "Total power from VCD: $total_power_vcd"
+puts "Total power from user activity: $total_power_user_activity"
+
+if {$total_power_vcd == $total_power_user_activity} {
+  puts "Error: settting user power activity had no effect, expected some loss in accuracy"
+  exit 1
+}
+
+if {abs($total_power_vcd - $total_power_user_activity) > 1e-3} {
+  puts "Error: Total power mismatch between VCD and user activity: $total_power_vcd vs $total_power_user_activity"
+  exit 1
+}
 
 log_cmd report_parasitic_annotation
 log_cmd report_activity_annotation -report_unannotated
