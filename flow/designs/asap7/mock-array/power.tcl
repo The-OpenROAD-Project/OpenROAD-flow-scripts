@@ -25,9 +25,24 @@ log_cmd report_power
 set vcd_file $::env(RESULTS_DIR)/MockArrayTestbench.vcd
 log_cmd read_vcd -scope TOP/MockArray $vcd_file
 
-puts "Total number of pins to be annotated: [llength [get_pins -hierarchical *]]"
-set no_vcd_activity {}
+set fp [open $::env(RESULTS_DIR)/activity.tcl w]
 set pins [get_pins -hierarchical *]
+set clock_period [expr [get_property [get_clocks] period] * 1e-12]
+foreach pin $pins {
+  set activity [get_property $pin activity]
+  set activity_origin [lindex $activity 2]
+  if {$activity_origin != "vcd"} {
+    continue
+  }
+  puts $fp "set_power_activity \
+  -pin \[get_pins \{[get_property $pin full_name]\}\] \
+  -activity [expr [lindex $activity 0] * $clock_period] \
+  -duty [lindex $activity 1]"
+}
+close $fp
+
+puts "Total number of pins: [llength [get_pins -hierarchical *]]"
+set no_vcd_activity {}
 foreach pin $pins {
   set activity [get_property $pin activity]
   set activity_origin [lindex $activity 2]
@@ -73,7 +88,30 @@ for {set x 0} {$x < 8} {incr x} {
 
 puts {report_power -instances [get_cells $ces]}
 report_power -instances [get_cells $ces]
+
+proc total_power {} {
+  return [lindex [sta::design_power [sta::corners]] 3]
+}
+
+set total_power_vcd [total_power]
 log_cmd report_power
+
+source $::env(RESULTS_DIR)/activity.tcl
+log_cmd report_power
+set total_power_user_activity [total_power]
+
+puts "Total power from VCD: $total_power_vcd"
+puts "Total power from user activity: $total_power_user_activity"
+
+if {$total_power_vcd == $total_power_user_activity} {
+  puts "Error: settting user power activity had no effect, expected some loss in accuracy"
+  exit 1
+}
+
+if {abs($total_power_vcd - $total_power_user_activity) > 1e-3} {
+  puts "Error: Total power mismatch between VCD and user activity: $total_power_vcd vs $total_power_user_activity"
+  exit 1
+}
 
 log_cmd report_parasitic_annotation
 log_cmd report_activity_annotation -report_unannotated
