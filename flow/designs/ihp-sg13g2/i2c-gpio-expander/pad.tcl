@@ -76,8 +76,8 @@ place_pad -row IO_WEST -location [calc_vertical_pad_location 0 5] {sg13g2_IOPad_
 place_pad -row IO_WEST -location [calc_vertical_pad_location 1 5] {sg13g2_IOPad_io_gpio_6} -master sg13g2_IOPadInOut16mA
 # IO pin io_gpio_7
 place_pad -row IO_WEST -location [calc_vertical_pad_location 2 5] {sg13g2_IOPad_io_gpio_7} -master sg13g2_IOPadInOut16mA
-place_pad -row IO_WEST -location [calc_vertical_pad_location 3 5] {sg13g2_IOPadVss_west_3} -master sg13g2_IOPadVss
-place_pad -row IO_WEST -location [calc_vertical_pad_location 4 5] {sg13g2_IOPadVdd_west_4} -master sg13g2_IOPadVdd
+place_pad -row IO_WEST -location [calc_vertical_pad_location 3 5] {sg13g2_IOPadIOVss_west_3} -master sg13g2_IOPadIOVss
+place_pad -row IO_WEST -location [calc_vertical_pad_location 4 5] {sg13g2_IOPadIOVdd_west_4} -master sg13g2_IOPadIOVdd
 # Place Corner Cells and Filler
 place_corners sg13g2_Corner
 
