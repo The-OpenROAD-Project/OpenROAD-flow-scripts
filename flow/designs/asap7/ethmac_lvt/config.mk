@@ -22,3 +22,8 @@ export ADDITIONAL_LIBS        = $(LIB_DIR)/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib
 export ADDITIONAL_GDS         = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_R_220121a.gds
 export ADDITIONAL_LEFS        = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_R_1x_220121a.lef
 export RECOVER_POWER          = 1
+
+# Constrain the pins somewhat so a small change in initial conditions doesn't
+# completely change the test-case by moving all the pins to completely
+# different edges.
+export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/io.tcl
