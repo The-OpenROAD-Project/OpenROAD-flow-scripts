@@ -1,0 +1,11 @@
+explicit_start = true
+line_length = 80
+preserve_quotes = true
+quote_representation = "'"
+section_whitelines = 0
+sequence_style = "block_style"
+comments_min_spaces_from_content = 2
+allow_duplicate_keys = false
+indent_mapping = 2
+indent_offset = 2
+indent_sequence = 4

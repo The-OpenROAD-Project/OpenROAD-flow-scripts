@@ -1,0 +1,23 @@
+name: ORFS variables.yaml tester and linter
+
+on:
+  pull_request:
+
+jobs:
+  docs-test-job:
+    name: 'Tests for variables.yaml'
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Run generate-variables-docs.py
+      run: |
+        python3 flow/scripts/generate-variables-docs.py
+    - name: Check if FlowVariables.md is up to date
+      run: |
+        git diff --exit-code docs/user/FlowVariables.md
+    - name: Run yamlfix check
+      run: |
+        pip install yamlfix==1.17.0
+        yamlfix -c yamlfix.toml flow/scripts/variables.yaml --check
