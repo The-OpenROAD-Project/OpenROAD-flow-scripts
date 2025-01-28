@@ -1,5 +1,6 @@
 name: Create draft PR for updated rules
 on:
+  push:
   repository_dispatch:
     types:
       - set-new-golden
@@ -26,6 +27,7 @@ jobs:
         run: |
           pip install firebase-admin
       - name: Execute Python Script Update
+        id: execute-script
         env:
           CREDS_FILE: ${{ secrets.CREDS_FILE }}
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
@@ -33,9 +35,9 @@ jobs:
           echo ${{ github.event_name }}
           echo ${{ github.event.client_payload.type }}
           if [[ "${{ github.event_name }}" == "repository_dispatch" && "${{ github.event.client_payload.type }}" == "overwrite" ]]; then
-            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA ${{ github.event.client_payload.commitsha }} --overwrite
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --overwrite > table_output.txt 2>&1
           else 
-            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA ${{ github.event.client_payload.commitsha }}
+            python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} > table_output.txt 2>&1
           fi
       - name: Push updated rules
         id: remote-update
@@ -66,6 +68,7 @@ jobs:
             vvbandeira
             maliberty
           draft: true
+          body-path: table_output.txt
           branch: bot-update-rules
           commit-message: |
             [BOT] Update rules
