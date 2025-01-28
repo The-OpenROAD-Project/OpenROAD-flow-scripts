@@ -57,6 +57,7 @@ class ResumeCheck(unittest.TestCase):
             f" {c}"
             for c in options
         ]
+        subprocess.run(["ray", "stop"], shell=True, check=True)
 
     def test_tune_resume(self):
         # Goal is to first run the first config (without resume) and then run the second config (with resume)

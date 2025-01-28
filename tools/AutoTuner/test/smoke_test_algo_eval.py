@@ -32,6 +32,7 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             f" --reference {self.reference}"
             for a, e in self.matrix
         ]
+        subprocess.run(["ray", "stop"], shell=True, check=True)
 
     def make_base(self):
         os.chdir(orfs_dir)
