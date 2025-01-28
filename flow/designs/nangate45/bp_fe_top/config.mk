@@ -28,7 +28,6 @@ export PLACE_PINS_ARGS = -exclude left:400-700 -exclude right:400-700 -exclude t
 
 
 export MACRO_PLACE_HALO = 10 10
-export MACRO_PLACE_CHANNEL = 20 20
 
 export PLACE_DENSITY_LB_ADDON = 0.10
 export PLACE_DENSITY_MAX_POST_HOLD = 0.12

@@ -35,4 +35,3 @@ export CORE_AREA   = 10 12 3590 3590
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-1000 -exclude bottom:2400-3600
 
 export MACRO_PLACE_HALO = 10 10
-export MACRO_PLACE_CHANNEL = 20 20
