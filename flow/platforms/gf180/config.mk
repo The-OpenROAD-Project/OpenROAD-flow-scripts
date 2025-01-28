@@ -79,7 +79,6 @@ export TAPCELL_TCL                           ?= $(PLATFORM_DIR)/openROAD/tapcell
 
 # macro planning
 export MACRO_PLACE_HALO                      ?= 10 10
-export MACRO_PLACE_CHANNEL                   ?= 20.16 20.16
 
 #---------------------------------------------------------
 # Place

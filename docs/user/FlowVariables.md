@@ -116,7 +116,6 @@ configuration file.
 | <a name="MACRO_HALO_Y"></a>MACRO_HALO_Y| Set macro halo for y-direction. Only available for ASAP7 PDK.| | |
 | <a name="MACRO_PLACEMENT"></a>MACRO_PLACEMENT| Specifies the path of a file on how to place certain macros manually using read_macro_placement.| | |
 | <a name="MACRO_PLACEMENT_TCL"></a>MACRO_PLACEMENT_TCL| Specifies the path of a TCL file on how to place certain macros manually.| | |
-| <a name="MACRO_PLACE_CHANNEL"></a>MACRO_PLACE_CHANNEL| Horizontal/vertical channel width between macros (microns). Used by automatic macro placement. Imagine channel=10 and halo=5. Then macros must be 10 apart but standard cells must be 5 away from a macro.| | |
 | <a name="MACRO_PLACE_HALO"></a>MACRO_PLACE_HALO| Horizontal/vertical halo around macros (microns). Used by automatic macro placement.| | |
 | <a name="MACRO_WRAPPERS"></a>MACRO_WRAPPERS| The wrapper file that replaces existing macros with their wrapped version.| | |
 | <a name="MAKE_TRACKS"></a>MAKE_TRACKS| Tcl file that defines add routing tracks to a floorplan.| | |
@@ -230,7 +229,6 @@ configuration file.
 - [MACRO_HALO_Y](#MACRO_HALO_Y)
 - [MACRO_PLACEMENT](#MACRO_PLACEMENT)
 - [MACRO_PLACEMENT_TCL](#MACRO_PLACEMENT_TCL)
-- [MACRO_PLACE_CHANNEL](#MACRO_PLACE_CHANNEL)
 - [MACRO_PLACE_HALO](#MACRO_PLACE_HALO)
 - [MACRO_WRAPPERS](#MACRO_WRAPPERS)
 - [MAKE_TRACKS](#MAKE_TRACKS)

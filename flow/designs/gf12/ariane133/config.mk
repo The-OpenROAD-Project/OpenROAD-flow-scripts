@@ -4,8 +4,6 @@ export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 10000
-#
-# RTL_MP Settings
 
 export VERILOG_FILES = $(PLATFORM_DIR)/ariane133/ariane.v
 
@@ -22,7 +20,6 @@ export CORE_AREA   = 5 5 895 745
 export PLACE_PINS_ARGS = -exclude left:0-200 -exclude left:500-700 -exclude right:* -exclude top:* -exclude bottom:*
 
 export MACRO_PLACE_HALO = 7 7
-export MACRO_PLACE_CHANNEL = 14 14
 
 export PLACE_DENSITY_LB_ADDON = 0.05
 
