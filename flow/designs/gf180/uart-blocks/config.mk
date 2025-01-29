@@ -20,5 +20,5 @@ export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/BLOCKS_grid_strat
 export PLACE_DENSITY          = 0.60
 
 export TAPCELL_TCL ?= $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/tapcell.tcl
-export MACRO_HALO_X = 14
-export MACRO_HALO_Y = 14
+export MACRO_ROWS_HALO_X = 14
+export MACRO_ROWS_HALO_Y = 14

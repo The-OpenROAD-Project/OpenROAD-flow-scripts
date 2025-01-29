@@ -144,8 +144,8 @@ MOCK_ARRAY_FLOORPLAN_PLACE = {
             "MACRO_PLACE_HALO": "0 2.16",
             "RTLMP_BOUNDARY_WT": "0",
             "PDN_TCL": "$(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl",
-            "MACRO_HALO_X": "0.5",
-            "MACRO_HALO_Y": "0.5",
+            "MACRO_ROWS_HALO_X": "0.5",
+            "MACRO_ROWS_HALO_Y": "0.5",
             "MACRO_BLOCKAGE_HALO": "0",
     "ADDITIONAL_FILES": "$(locations :mock-array-io)",
 }

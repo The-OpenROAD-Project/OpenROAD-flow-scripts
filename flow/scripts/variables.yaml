@@ -670,14 +670,18 @@ RESYNTH_TIMING_RECOVER:
   stages:
     - synth
   default: 0
-MACRO_HALO_X:
+MACRO_ROWS_HALO_X:
   description: >
-    Set macro halo for x-direction. Only available for ASAP7 PDK.
+    Horizontal distance between the edge of the macro and the begining of the
+    rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks
+    design.
   stages:
     - floorplan
-MACRO_HALO_Y:
+MACRO_ROWS_HALO_Y:
   description: >
-    Set macro halo for y-direction. Only available for ASAP7 PDK.
+    Vertical distance between the edge of the macro and the begining of the
+    rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks
+    design.
   stages:
     - floorplan
 MACRO_WRAPPERS:
