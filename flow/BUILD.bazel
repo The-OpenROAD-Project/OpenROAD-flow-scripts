@@ -271,6 +271,6 @@ filegroup(
 
 compile_pip_requirements(
     name = "requirements",
-    src = "requirements.in",
-    requirements_txt = "requirements_lock.txt",
+    src = "util/requirements.in",
+    requirements_txt = "util/requirements_lock.txt",
 )

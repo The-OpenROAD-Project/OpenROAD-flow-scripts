@@ -24,7 +24,6 @@ git_override(
 #   module_name = "bazel-orfs", path = "../bazel-orfs"
 #)
 
-
 bazel_dep(name = "rules_python", version = "0.31.0")
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
@@ -37,10 +36,9 @@ pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
     hub_name = "orfs-pip",
     python_version = "3.12",
-    requirements_lock = "//:requirements_lock.txt",
+    requirements_lock = "//:util/requirements_lock.txt",
 )
 use_repo(pip, "orfs-pip")
-
 
 orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
 orfs.default(

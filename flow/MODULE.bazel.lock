@@ -158,9 +158,9 @@
     "@@rules_python~//python/extensions:pip.bzl%pip": {
       "os:linux,arch:amd64": {
         "bzlTransitiveDigest": "EgU12L0eSIREBrWmKi8TaRwiKSFpxeqEDmXOlnCN+Zk=",
-        "usagesDigest": "4gB5SghbTuCT/zqg+hnxIv1PYzi1dMF5M3eKJC6dB6c=",
+        "usagesDigest": "eFbwkkIIVRmSd333ireMJ6Rp6YQ2d4zV/7C2XB/bJbI=",
         "recordedFileInputs": {
-          "@@//requirements_lock.txt": "e7ab63ecef6908e4e69d6efa0878fda3dfab8d4eb561cce2918c27db2db24b9b",
+          "@@//util/requirements_lock.txt": "016f788600d492820c9a6ff951c31a26735bcdb24a5a1bc83f68a726c6e4c884",
           "@@bazel-orfs~//requirements_lock.txt": "1867f0f11701867602e24f80007e66e36db27cbcde45d8e0c68e1cb6a2555472"
         },
         "recordedDirentsInputs": {},
