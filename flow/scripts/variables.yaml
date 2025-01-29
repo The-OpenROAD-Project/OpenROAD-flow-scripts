@@ -271,7 +271,11 @@ MACRO_PLACE_HALO:
     - floorplan
 MACRO_BLOCKAGE_HALO:
   description: >
-    Blockage width overridden from default calculation.
+    Distance beyond the edges of a macro that will be covered by a blockage.
+
+    Note that the default macro blockage halo comes from the largest of the
+    specified MACRO_PLACE_HALO_ x or y values. This variable overrides that
+    calculation.
   stages:
     - floorplan
 PDN_TCL:
