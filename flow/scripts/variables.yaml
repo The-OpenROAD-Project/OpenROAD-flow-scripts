@@ -269,13 +269,6 @@ MACRO_PLACE_HALO:
     placement.
   stages:
     - floorplan
-MACRO_PLACE_CHANNEL:
-  description: >
-    Horizontal/vertical channel width between macros (microns). Used by
-    automatic macro placement. Imagine channel=10 and halo=5. Then macros must
-    be 10 apart but standard cells must be 5 away from a macro.
-  stages:
-    - floorplan
 MACRO_BLOCKAGE_HALO:
   description: >
     Blockage width overridden from default calculation.
