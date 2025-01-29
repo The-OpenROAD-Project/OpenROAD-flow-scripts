@@ -61,7 +61,6 @@ export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 export TAP_CELL_NAME = TAPCELL_X1
 
 export MACRO_PLACE_HALO ?= 22.4 15.12
-export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 
 #---------------------------------------------------------
 # Place
