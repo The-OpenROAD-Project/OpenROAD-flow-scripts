@@ -12,8 +12,3 @@ export PLACE_DENSITY          = 0.35
 # a smoketest for this option, there are a
 # few last gasp iterations
 export SKIP_LAST_GASP ?= 1
-
-# AutoTuner results
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 0
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
-export PLACE_DENSITY_LB_ADDON = 0.14
