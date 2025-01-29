@@ -1,5 +1,4 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_flow")
-load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 
 filegroup(
     name = "constraints-gcd",
@@ -249,10 +248,4 @@ filegroup(
     name = "ethmac_lvt_src",
     srcs = glob(include = ["designs/src/ethmac_lvt/*.v"]),
     visibility = [":__subpackages__"],
-)
-
-compile_pip_requirements(
-    name = "requirements",
-    src = "util/requirements.in",
-    requirements_txt = "util/requirements_lock.txt",
 )
