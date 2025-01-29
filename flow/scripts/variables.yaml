@@ -50,9 +50,9 @@ ROUTING_LAYER_ADJUSTMENT:
     complicate detailed routing.
 
     The global routing running time normally reduces
-    dramatically(entirely design specific, but going from hours to
+    dramatically (entirely design specific, but going from hours to
     minutes has been observed) when the value is
-    low(such as 0.10).
+    low (such as 0.10).
 
     Sometimes, global routing will succeed with lower values and
     fail with higher values. Exploring results with different
@@ -274,7 +274,7 @@ MACRO_BLOCKAGE_HALO:
     Distance beyond the edges of a macro that will be covered by a blockage.
 
     Note that the default macro blockage halo comes from the largest of the
-    specified MACRO_PLACE_HALO_ x or y values. This variable overrides that
+    specified MACRO_PLACE_HALO x or y values. This variable overrides that
     calculation.
   stages:
     - floorplan
@@ -404,17 +404,17 @@ CTS_ARGS:
 HOLD_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing hold violations.
-    This option allows you to overfix or underfix(negative value, terminate
+    This option allows you to overfix or underfix (negative value, terminate
     retiming before 0 or positive slack).
 
-    floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0(default hold slack margin).
+    floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0 (default hold slack margin).
 
     This avoids overrepair in floorplan for hold by default, but allows skipping
     hold repair using a negative HOLD_SLACK_MARGIN.
 
     Exiting timing repair early is useful in exploration where
     the .sdc has a fixed clock period at the design's target clock period and where
-    HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair(extremely long running
+    HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair (extremely long running
     times) when exploring different parameter settings.
 
     When an ideal clock is used, that is before CTS,
