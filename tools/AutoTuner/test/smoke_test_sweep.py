@@ -4,8 +4,6 @@ import os
 import json
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(cur_dir, "../src/autotuner")
-os.chdir(src_dir)
 
 
 class BaseSweepSmokeTest(unittest.TestCase):
@@ -13,7 +11,9 @@ class BaseSweepSmokeTest(unittest.TestCase):
     design = ""
 
     def setUp(self):
-        self.config = "distributed-sweep-example.json"
+        self.config = os.path.abspath(
+            os.path.join(cur_dir, "../src/autotuner/distributed-sweep-example.json")
+        )
         # make sure this json only has 1 key called "CTS_CLUSTER_SIZE" and 4 possible values
         with open(self.config) as f:
             contents = json.load(f)
@@ -31,7 +31,7 @@ class BaseSweepSmokeTest(unittest.TestCase):
         self.jobs = 4 if core >= 4 else core
         self.experiment = f"smoke-test-sweep-{self.platform}"
         self.command = (
-            "python3 distributed.py"
+            "python3 -m autotuner.distributed"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
@@ -41,39 +41,26 @@ class BaseSweepSmokeTest(unittest.TestCase):
         )
 
     def test_sweep(self):
-        raise NotImplementedError(
-            "This method needs to be implemented in the derivative classes."
-        )
+        if not (self.platform and self.design):
+            raise unittest.SkipTest("Platform and design have to be defined")
+        out = subprocess.run(self.command, shell=True, check=True)
+        successful = out.returncode == 0
+        self.assertTrue(successful)
 
 
 class ASAP7SweepSmokeTest(BaseSweepSmokeTest):
     platform = "asap7"
     design = "gcd"
 
-    def test_sweep(self):
-        out = subprocess.run(self.command, shell=True, check=True)
-        successful = out.returncode == 0
-        self.assertTrue(successful)
-
 
 class SKY130HDSweepSmokeTest(BaseSweepSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
-    def test_sweep(self):
-        out = subprocess.run(self.command, shell=True, check=True)
-        successful = out.returncode == 0
-        self.assertTrue(successful)
-
 
 class IHPSG13G2SweepSmokeTest(BaseSweepSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
-
-    def test_sweep(self):
-        out = subprocess.run(self.command, shell=True, check=True)
-        successful = out.returncode == 0
-        self.assertTrue(successful)
 
 
 if __name__ == "__main__":
