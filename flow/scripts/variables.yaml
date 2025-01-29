@@ -271,7 +271,8 @@ MACRO_PLACE_HALO:
     - floorplan
 MACRO_BLOCKAGE_HALO:
   description: >
-    Distance beyond the edges of a macro that will be covered by a blockage.
+    Distance beyond the edges of a macro that will also be covered by the
+    blockage generated for that macro.
 
     Note that the default macro blockage halo comes from the largest of the
     specified MACRO_PLACE_HALO x or y values. This variable overrides that
@@ -676,14 +677,14 @@ RESYNTH_TIMING_RECOVER:
   default: 0
 MACRO_ROWS_HALO_X:
   description: >
-    Horizontal distance between the edge of the macro and the begining of the
+    Horizontal distance between the edge of the macro and the beginning of the
     rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks
     design.
   stages:
     - floorplan
 MACRO_ROWS_HALO_Y:
   description: >
-    Vertical distance between the edge of the macro and the begining of the
+    Vertical distance between the edge of the macro and the beginning of the
     rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks
     design.
   stages:
