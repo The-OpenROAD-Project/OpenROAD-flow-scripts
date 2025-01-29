@@ -1,3 +1,4 @@
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
 load("@bazel-orfs//:openroad.bzl", "orfs_flow")
 
 filegroup(
@@ -261,3 +262,15 @@ orfs_flow(
     },
 )
 
+
+filegroup(
+    name = "ethmac_lvt_src",
+    srcs = glob(include=["designs/src/ethmac_lvt/*.v"]),
+    visibility = [":__subpackages__"],
+)
+
+compile_pip_requirements(
+    name = "requirements",
+    src = "requirements.in",
+    requirements_txt = "requirements_lock.txt",
+)
