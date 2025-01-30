@@ -97,7 +97,8 @@ class MockArray(width: Int, height: Int, singleElementWidth: Int)
         // save some area and complexity by not having reset
         mult.io.rst := false.B
         mult.io.clk := clock
-        mult.io.o
+        // reduce output bit-width until we slight negative slack
+        mult.io.o(15, 0)
       })
     }
 
