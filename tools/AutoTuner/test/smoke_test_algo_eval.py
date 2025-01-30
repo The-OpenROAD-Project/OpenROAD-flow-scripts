@@ -3,9 +3,7 @@ import subprocess
 import os
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(cur_dir, "../src/autotuner")
 orfs_dir = os.path.join(cur_dir, "../../../flow")
-os.chdir(src_dir)
 
 
 class BaseAlgoEvalSmokeTest(unittest.TestCase):
@@ -22,7 +20,7 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
         _eval = ["default", "ppa-improv"]
         self.matrix = [(a, e) for a in _algo for e in _eval]
         self.commands = [
-            f"python3 distributed.py"
+            f"python3 -m autotuner.distributed"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
@@ -34,58 +32,40 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
         ]
 
     def make_base(self):
-        os.chdir(orfs_dir)
         commands = [
-            f"make DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk clean_all",
-            f"make DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk EQUIVALENCE_CHECK=0",
-            f"make DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk update_metadata_autotuner",
+            f"make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk clean_all",
+            f"make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk EQUIVALENCE_CHECK=0",
+            f"make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk update_metadata_autotuner",
         ]
         for command in commands:
             out = subprocess.run(command, shell=True, check=True)
             self.assertTrue(out.returncode == 0)
-        os.chdir(src_dir)
+
+    def test_algo_eval(self):
+        if not (self.platform and self.design):
+            raise unittest.SkipTest("Platform and design have to be defined")
+        # Run `make` to get baseline metrics (metadata-base-ok.json)
+        self.make_base()
+        for command in self.commands:
+            print(command)
+            out = subprocess.run(command, shell=True, check=True)
+            successful = out.returncode == 0
+            self.assertTrue(successful)
 
 
 class ASAP7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "asap7"
     design = "gcd"
 
-    def test_algo_eval(self):
-        # Run `make` to get baseline metrics (metadata-base-ok.json)
-        self.make_base()
-        for command in self.commands:
-            print(command)
-            out = subprocess.run(command, shell=True, check=True)
-            successful = out.returncode == 0
-            self.assertTrue(successful)
-
 
 class IHPSG13G2AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 
-    def test_algo_eval(self):
-        # Run `make` to get baseline metrics (metadata-base-ok.json)
-        self.make_base()
-        for command in self.commands:
-            print(command)
-            out = subprocess.run(command, shell=True, check=True)
-            successful = out.returncode == 0
-            self.assertTrue(successful)
-
 
 class SKY130HDAlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
     platform = "sky130hd"
     design = "gcd"
-
-    def test_algo_eval(self):
-        # Run `make` to get baseline metrics (metadata-base-ok.json)
-        self.make_base()
-        for command in self.commands:
-            print(command)
-            out = subprocess.run(command, shell=True, check=True)
-            successful = out.returncode == 0
-            self.assertTrue(successful)
 
 
 if __name__ == "__main__":
