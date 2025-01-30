@@ -100,11 +100,18 @@ class AutoTunerBase(tune.Trainable):
         )
         self.step_ = 0
         self.variant = f"variant-{self.__class__.__name__}-{self.trial_id}-or"
+        # Do a valid config check here, since we still have the config in a
+        # dict vs. having to scan through the parameter string later
+        self.is_valid_config = self._is_valid_config(config)
 
     def step(self):
         """
         Run step experiment and compute its score.
         """
+
+        # if not a valid config, then don't run and pass back an error
+        if not self.is_valid_config:
+            return {METRIC: ERROR_METRIC, "effective_clk_period": "-", "num_drc": "-"}
         self._variant = f"{self.variant}-{self.step_}"
         metrics_file = openroad(
             args=args,
@@ -141,6 +148,32 @@ class AutoTunerBase(tune.Trainable):
         score = effective_clk_period
         score = score * (100 / self.step_) + gamma * num_drc
         return (score, effective_clk_period, num_drc)
+
+    def _is_valid_config(self, config):
+        """
+        Checks dependent parameters and returns False if we violate
+        a dependency. That way, we don't end up running an incompatible run
+        """
+
+        ret_val = True
+        ret_val &= self._is_valid_padding(config)
+        return ret_val
+
+    def _is_valid_padding(self, config):
+        """Returns True if global padding >= detail padding"""
+
+        if (
+            "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT" in config
+            and "CELL_PAD_IN_SITES_DETAIL_PLACEMENT" in config
+        ):
+            global_padding = config["CELL_PAD_IN_SITES_GLOBAL_PLACEMENT"]
+            detail_padding = config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"]
+            if global_padding < detail_padding:
+                print(
+                    f"[WARN TUN-0032] CELL_PAD_IN_SITES_DETAIL_PLACEMENT cannot be greater than CELL_PAD_IN_SITES_GLOBAL_PLACEMENT: {detail_padding} {global_padding}"
+                )
+                return False
+        return True
 
 
 class PPAImprov(AutoTunerBase):
