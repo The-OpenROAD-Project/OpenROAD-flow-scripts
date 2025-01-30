@@ -19,7 +19,7 @@ fi
 
 # Most of these options below has to do with allowing to
 # run the OpenROAD GUI from within Docker.
-docker run -u $(id -u ${USER}):$(id -g ${USER}) \
+docker run --privileged -u $(id -u ${USER}):$(id -g ${USER}) \
  -e LIBGL_ALWAYS_SOFTWARE=1 \
  -e "QT_X11_NO_MITSHM=1" \
  -e XDG_RUNTIME_DIR=/tmp/xdg-run \
@@ -32,7 +32,7 @@ docker run -u $(id -u ${USER}):$(id -g ${USER}) \
  -e YOSYS_EXE=$YOSYS_EXE \
  -e OPENROAD_EXE=$OPENROAD_EXE \
  -e KLAYOUT_CMD=$KLAYOUT_CMD \
- -v $WORKSPACE:/OpenROAD-flow-scripts/flow \
+ -v $WORKSPACE:/OpenROAD-flow-scripts/flow:Z \
  --network host \
  $DOCKER_INTERACTIVE \
  ${OR_IMAGE:-openroad/flow-ubuntu22.04-builder:latest} \
