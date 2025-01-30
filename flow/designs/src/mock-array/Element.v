@@ -52,10 +52,10 @@ module Element(
   reg [63:0] REG_5;
   reg [63:0] REG_6;
   reg [63:0] REG_7;
-  reg [31:0] io_outs_left_REG;
-  reg [31:0] io_outs_up_REG;
-  reg [31:0] io_outs_right_REG;
-  reg [31:0] io_outs_down_REG;
+  reg [15:0] io_outs_left_REG;
+  reg [15:0] io_outs_up_REG;
+  reg [15:0] io_outs_right_REG;
+  reg [15:0] io_outs_down_REG;
   reg  REG_8;
   multiplier io_outs_left_mult (
     .a(io_outs_left_mult_a),
@@ -85,10 +85,10 @@ module Element(
     .rst(io_outs_down_mult_rst),
     .clk(io_outs_down_mult_clk)
   );
-  assign io_outs_down = {{32'd0}, io_outs_down_REG};
-  assign io_outs_right = {{32'd0}, io_outs_right_REG};
-  assign io_outs_up = {{32'd0}, io_outs_up_REG};
-  assign io_outs_left = {{32'd0}, io_outs_left_REG};
+  assign io_outs_down = {{48'd0}, io_outs_down_REG};
+  assign io_outs_right = {{48'd0}, io_outs_right_REG};
+  assign io_outs_up = {{48'd0}, io_outs_up_REG};
+  assign io_outs_left = {{48'd0}, io_outs_left_REG};
   assign io_lsbOuts_0 = io_lsbIns_1;
   assign io_lsbOuts_1 = io_lsbIns_2;
   assign io_lsbOuts_2 = io_lsbIns_3;
@@ -122,10 +122,10 @@ module Element(
     REG_5 <= io_ins_right;
     REG_6 <= io_ins_left;
     REG_7 <= io_ins_up;
-    io_outs_left_REG <= io_outs_left_mult_o;
-    io_outs_up_REG <= io_outs_up_mult_o;
-    io_outs_right_REG <= io_outs_right_mult_o;
-    io_outs_down_REG <= io_outs_down_mult_o;
+    io_outs_left_REG <= io_outs_left_mult_o[15:0];
+    io_outs_up_REG <= io_outs_up_mult_o[15:0];
+    io_outs_right_REG <= io_outs_right_mult_o[15:0];
+    io_outs_down_REG <= io_outs_down_mult_o[15:0];
     REG_8 <= io_lsbIns_4;
   end
 endmodule
