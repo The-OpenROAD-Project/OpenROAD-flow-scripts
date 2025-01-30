@@ -15,7 +15,6 @@ export CORE_AREA = 10 10 420 420
 export PLACE_PINS_ARGS    = -exclude bottom:* -exclude top:* -exclude right:*
 
 export MACRO_PLACE_HALO = 20 20
-export MACRO_PLACE_CHANNEL = 20 20
 
 export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/BLOCKS_grid_strategy.tcl
 export PLACE_DENSITY          = 0.60
