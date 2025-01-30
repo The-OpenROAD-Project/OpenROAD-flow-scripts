@@ -20,6 +20,11 @@ for {set x 0} {$x < 8} {incr x} {
   }
 }
 
+# OpenSTA reports reg2reg paths inside macros,
+# whereas these paths are hidden to OpenROAD that
+# uses a .lib file for the macros.
+log_cmd report_checks
+
 log_cmd report_power
 
 set vcd_file $::env(RESULTS_DIR)/MockArrayTestbench.vcd
