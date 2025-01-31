@@ -99,9 +99,3 @@ orfs_flow(
         "designs/asap7/swerv_wrapper/macros.v",
     ]),
 )
-
-filegroup(
-    name = "ethmac_lvt_src",
-    srcs = glob(include = ["designs/src/ethmac_lvt/*.v"]),
-    visibility = [":__subpackages__"],
-)

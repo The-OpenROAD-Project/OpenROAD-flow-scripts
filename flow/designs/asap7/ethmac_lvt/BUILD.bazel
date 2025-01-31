@@ -48,7 +48,7 @@ orfs_sweep(
         for value in SWEEPS[SWEEP]
     },
     top = "ethmac",
-    verilog_files = ["//:ethmac_lvt_src"],
+    verilog_files = ["//designs/src/ethmac_lvt:verilog"],
 )
 
 plot_congestion(
