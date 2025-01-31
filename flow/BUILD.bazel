@@ -1,34 +1,6 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_flow")
 
 filegroup(
-    name = "constraints-gcd",
-    srcs = [
-        "designs/asap7/gcd/constraint.sdc",
-    ],
-    visibility = [":__subpackages__"],
-)
-
-orfs_flow(
-    name = "gcd",
-    stage_arguments = {
-        "synth": {
-            "SDC_FILE": "$(location :constraints-gcd)",
-        },
-        "floorplan": {
-            "DIE_AREA": "0 0 16.2 16.2",
-            "CORE_AREA": "1.08 1.08 15.12 15.12",
-        },
-        "place": {
-            "PLACE_DENSITY": "0.35",
-        },
-    },
-    stage_sources = {
-        "synth": [":constraints-gcd"],
-    },
-    verilog_files = glob(include = ["designs/src/gcd/*.v"]),
-)
-
-filegroup(
     name = "constraints-swerv",
     srcs = [
         "designs/asap7/swerv_wrapper/constraint.sdc",
