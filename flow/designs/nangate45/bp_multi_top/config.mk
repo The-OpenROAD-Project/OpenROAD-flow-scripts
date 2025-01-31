@@ -34,7 +34,6 @@ export CORE_AREA   = 10.07 9.8 1090 1090
 export PLACE_PINS_ARGS = -exclude left:100-1100 -exclude right:100-1100 -exclude top:*
 
 export MACRO_PLACE_HALO = 10 10
-export MACRO_PLACE_CHANNEL = 20 20
 
 export PLACE_DENSITY_LB_ADDON = 0.05
 export SKIP_GATE_CLONING      = 1

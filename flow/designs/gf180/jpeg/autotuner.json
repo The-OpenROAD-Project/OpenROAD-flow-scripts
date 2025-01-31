@@ -12,7 +12,7 @@
         "type": "int",
         "minmax": [
             20,
-            60
+            50
         ],
         "step": 1
     },
@@ -35,7 +35,7 @@
     "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT": {
         "type": "int",
         "minmax": [
-            1,
+            0,
             3
         ],
         "step": 1
@@ -43,7 +43,7 @@
     "CELL_PAD_IN_SITES_DETAIL_PLACEMENT": {
         "type": "int",
         "minmax": [
-            1,
+            0,
             3
         ],
         "step": 1
@@ -60,7 +60,7 @@
         "type": "float",
         "minmax": [
             0.0,
-            0.1
+            0.2
         ],
         "step": 0
     },
@@ -88,13 +88,5 @@
         ],
         "step": 1
     },
-    "_FR_FILE_PATH": "",
-    "_FR_GR_OVERFLOW": {
-        "type": "int",
-        "minmax": [
-            1,
-            1
-        ],
-        "step": 0
-    }
+    "_FR_FILE_PATH": "../../../platforms/gf180/fastroute.tcl"
 }

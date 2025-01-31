@@ -1,0 +1,18 @@
+load("@orfs-pip//:requirements.bzl", "requirement")
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+
+exports_files(["open_plots.sh"])
+
+py_binary(
+    name = "plot_congestion",
+    srcs = ["plot_congestion.py"],
+    main = "plot_congestion.py",
+    visibility = ["//visibility:public"],
+    deps = [requirement("matplotlib")],
+)
+
+compile_pip_requirements(
+    name = "requirements",
+    src = "requirements.in",
+    requirements_txt = "requirements_lock.txt",
+)
