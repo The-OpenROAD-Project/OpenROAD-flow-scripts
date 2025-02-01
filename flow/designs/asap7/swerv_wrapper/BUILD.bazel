@@ -1,0 +1,61 @@
+load("@bazel-orfs//:openroad.bzl", "orfs_flow")
+
+filegroup(
+    name = "constraints-swerv",
+    srcs = [
+        "designs/asap7/swerv_wrapper/constraint.sdc",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+filegroup(
+    name = "additional_lefs",
+    srcs = glob(include = ["designs/asap7/swerv_wrapper/lef/*.lef"]),
+)
+
+filegroup(
+    name = "additional_libs",
+    srcs = glob(include = ["designs/asap7/swerv_wrapper/lib/*.lib"]),
+)
+
+all_sources = [
+    ":additional_lefs",
+    ":additional_libs",
+]
+
+orfs_flow(
+    name = "swerv_wrapper",
+    arguments = {
+        "LIB_MODEL": "CCS",
+        "SYNTH_HIERARCHICAL": "1",
+        "RTLMP_MAX_INST": "30000",
+        "RTLMP_MIN_INST": "5000",
+        "RTLMP_MAX_MACRO": "30",
+        "RTLMP_MIN_MACRO": "4",
+        "DIE_AREA": "0 0 550 600",
+        "CORE_AREA": "5 5 545 595",
+        "PLACE_PINS_ARGS": "-exclude left:* -exclude right:*",
+        "PLACE_PINS_ARGS": "-exclude left:* -exclude right:*",
+        "PLACE_DENSITY_LB_ADDON": "0.20",
+        "TNS_END_PERCENT": "100",
+        "PWR_NETS_VOLTAGEsS": "",
+        "GND_NETS_VOLTAGES": "",
+    },
+    sources = {
+        "ADDITIONAL_LEFS": ":additional_lefs",
+        "ADDITIONAL_LIBS": ":additional_libs",
+        "SDC_FILE": ":constraints-swerv",
+    },
+    stage_sources = {
+        "synth": all_sources,
+        "floorplan": all_sources,
+        "place": all_sources,
+        "cts": all_sources,
+        "route": all_sources,
+        "final": all_sources,
+    },
+    verilog_files = [
+        "macros.v",
+        "//designs/src/swerv_wrapper:verilog",
+    ],
+)
