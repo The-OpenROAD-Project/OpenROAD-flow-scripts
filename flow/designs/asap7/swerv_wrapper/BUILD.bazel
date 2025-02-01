@@ -1,29 +1,15 @@
-load("@bazel-orfs//:openroad.bzl", "orfs_flow")
+load("@bazel-orfs//:sweep.bzl", "orfs_sweep")
+load("//util:plot_congestion.bzl", "plot_congestion")
 
-filegroup(
-    name = "constraints-swerv",
-    srcs = [
-        "designs/asap7/swerv_wrapper/constraint.sdc",
-    ],
-    visibility = [":__subpackages__"],
-)
+# Format densities, rounding to 2 decimal places.
+SWEEPS = {
+    "PLACE_DENSITY_LB_ADDON": [str(0.20 + x * 0.01 + 0.005)[:4] for x in range(10)],
+    "CORE_UTILIZATION": [str(40 + x * 5) for x in range(4)],
+}
 
-filegroup(
-    name = "additional_lefs",
-    srcs = glob(include = ["designs/asap7/swerv_wrapper/lef/*.lef"]),
-)
+SWEEP = "PLACE_DENSITY_LB_ADDON"
 
-filegroup(
-    name = "additional_libs",
-    srcs = glob(include = ["designs/asap7/swerv_wrapper/lib/*.lib"]),
-)
-
-all_sources = [
-    ":additional_lefs",
-    ":additional_libs",
-]
-
-orfs_flow(
+orfs_sweep(
     name = "swerv_wrapper",
     arguments = {
         "LIB_MODEL": "CCS",
@@ -35,27 +21,37 @@ orfs_flow(
         "DIE_AREA": "0 0 550 600",
         "CORE_AREA": "5 5 545 595",
         "PLACE_PINS_ARGS": "-exclude left:* -exclude right:*",
-        "PLACE_PINS_ARGS": "-exclude left:* -exclude right:*",
         "PLACE_DENSITY_LB_ADDON": "0.20",
         "TNS_END_PERCENT": "100",
         "PWR_NETS_VOLTAGEsS": "",
         "GND_NETS_VOLTAGES": "",
     },
+    other_variants = {"base": {}},
     sources = {
-        "ADDITIONAL_LEFS": ":additional_lefs",
-        "ADDITIONAL_LIBS": ":additional_libs",
-        "SDC_FILE": ":constraints-swerv",
+        "ADDITIONAL_LEFS": glob(include = ["lef/*.lef"]),
+        "ADDITIONAL_LIBS": glob(include = ["lib/*.lib"]),
+        "SDC_FILE": [":constraint.sdc"],
     },
-    stage_sources = {
-        "synth": all_sources,
-        "floorplan": all_sources,
-        "place": all_sources,
-        "cts": all_sources,
-        "route": all_sources,
-        "final": all_sources,
+    sweep = {
+        value: {
+            "arguments": {
+                SWEEP: value,
+            },
+            "previous_stage": {
+                "floorplan": "swerv_wrapper_synth",
+            },
+        }
+        for value in SWEEPS[SWEEP]
     },
     verilog_files = [
         "macros.v",
-        "//designs/src/swerv_wrapper:verilog",
+        "//designs/src/swerv:verilog",
     ],
+)
+
+plot_congestion(
+    name = "plot",
+    srcs = [":swerv_wrapper_{value}_grt".format(value = value) for value in SWEEPS[SWEEP]],
+    argument = SWEEP,
+    values = SWEEPS[SWEEP],
 )
