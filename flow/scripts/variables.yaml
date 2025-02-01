@@ -345,6 +345,9 @@ PLACE_DENSITY_LB_ADDON:
   description: >
     Check the lower boundary of the PLACE_DENSITY and add
     PLACE_DENSITY_LB_ADDON if it exists.
+  stages:
+    - floorplan
+    - place
 REPAIR_PDN_VIA_LAYER:
   description: |
     Remove power grid vias which generate DRC violations after detailed routing.
