@@ -32,7 +32,6 @@ orfs_flow(
     name = "MockArray",
     arguments = {
         "PLACE_PINS_ARGS": "-annealing",
-        "IO_CONSTRAINTS": "$(location :mock-array-io)",
         "PLACE_DENSITY": "0.30",
         "DIE_AREA": "0 0 358.56 388.8",
         "CORE_AREA": "2.16 2.16 356.40000000000003 386.64000000000004",
@@ -42,17 +41,15 @@ orfs_flow(
         "MACRO_HALO_X": "0.5",
         "MACRO_HALO_Y": "0.5",
         "MACRO_BLOCKAGE_HALO": "0",
-        "SDC_FILE": "$(location :mock-array-constraints)",
         "MAX_ROUTING_LAYER": "M9",
         "GDS_ALLOW_EMPTY": "Element",
         "PWR_NETS_VOLTAGEsS": "",
         "GND_NETS_VOLTAGES": "",
     },
     macros = ["Element_generate_abstract"],
-    stage_sources = {
-        "synth": [":mock-array-constraints"] + [":mock-array-io"],
-        "floorplan": [":mock-array-io"],
-        "place": [":mock-array-io"],
+    sources = {
+        "SDC_FILE": [":mock-array-constraints"],
+        "IO_CONSTRAINTS": [":mock-array-io"],
     },
     verilog_files = ["//designs/src/mock-array:verilog"],
 )
@@ -67,8 +64,6 @@ filegroup(
     ],
     visibility = [":__subpackages__"],
 )
-
-mock_array_all_sources = ["//designs/src/mock-array:util.tcl"]
 
 orfs_sweep(
     name = "Element",
@@ -85,20 +80,14 @@ orfs_sweep(
         "PLACE_PINS_ARGS": "-annealing",
         "GND_NETS_VOLTAGES": "",
         "PWR_NETS_VOLTAGES": "",
-        "SDC_FILE": "$(location :mock-array-constraints)",
-        "IO_CONSTRAINTS": "$(location :mock-array-element-io)",
         "DIE_AREA": "0 0 43.2 43.2",
         "CORE_AREA": "1.08 1.08 42.120000000000005 42.120000000000005",
         "PDN_TCL": "$(PLATFORM_DIR)/openRoad/pdn/BLOCK_grid_strategy.tcl",
     },
     other_variants = {"base": {}},
-    stage_sources = {
-        "synth": mock_array_all_sources + [":mock-array-constraints"],
-        "floorplan": mock_array_all_sources + [":mock-array-element-io"],
-        "place": mock_array_all_sources + [":mock-array-element-io"],
-        "cts": mock_array_all_sources,
-        "route": mock_array_all_sources,
-        "final": mock_array_all_sources,
+    sources = {
+        "IO_CONSTRAINTS": [":mock-array-element-io"],
+        "SDC_FILE": [":mock-array-constraints"],
     },
     sweep = {
         value: {
