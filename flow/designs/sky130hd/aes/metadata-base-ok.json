@@ -211,7 +211,7 @@
   "floorplan__design__sites:unithd": 344871,
   "floorplan__flow__errors__count": 0,
   "floorplan__flow__warnings__count": 1,
-  "floorplan__mem__peak": 183036.0,
+  "floorplan__mem__peak": 182784.0,
   "floorplan__power__internal__total": 0.0846005,
   "floorplan__power__leakage__total": 2.92034e-08,
   "floorplan__power__switching__total": 0.0962745,

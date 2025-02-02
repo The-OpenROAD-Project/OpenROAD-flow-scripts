@@ -99,7 +99,7 @@
   "detailedroute__antenna__violating__pins": 2,
   "detailedroute__antenna_diodes_count": 360,
   "detailedroute__flow__errors__count": 0,
-  "detailedroute__flow__warnings__count": 155,
+  "detailedroute__flow__warnings__count": 178,
   "detailedroute__route__drc_errors": 0,
   "detailedroute__route__drc_errors__iter:0": 49,
   "detailedroute__route__drc_errors__iter:1": 6,
