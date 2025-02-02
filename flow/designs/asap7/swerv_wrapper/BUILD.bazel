@@ -1,3 +1,4 @@
+load("@bazel-orfs//:openroad.bzl", "orfs_macro")
 load("@bazel-orfs//:sweep.bzl", "orfs_sweep")
 load("//util:plot_congestion.bzl", "plot_congestion")
 
@@ -8,6 +9,19 @@ SWEEPS = {
 }
 
 SWEEP = "PLACE_DENSITY_LB_ADDON"
+
+FAKERAMS = [
+    "fakeram7_64x21",
+    "fakeram7_256x34",
+    "fakeram7_2048x39",
+]
+
+[orfs_macro(
+    name = top,
+    lef = "lef/{}.lef".format(top),
+    lib = "lib/{}.lib".format(top),
+    module_top = top,
+) for top in FAKERAMS]
 
 orfs_sweep(
     name = "swerv_wrapper",
@@ -26,10 +40,9 @@ orfs_sweep(
         "PWR_NETS_VOLTAGEsS": "",
         "GND_NETS_VOLTAGES": "",
     },
+    macros = FAKERAMS,
     other_variants = {"base": {}},
     sources = {
-        "ADDITIONAL_LEFS": glob(include = ["lef/*.lef"]),
-        "ADDITIONAL_LIBS": glob(include = ["lib/*.lib"]),
         "SDC_FILE": [":constraint.sdc"],
     },
     sweep = {
