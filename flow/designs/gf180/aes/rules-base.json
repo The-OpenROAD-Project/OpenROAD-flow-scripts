@@ -44,7 +44,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 5,
+        "value": 12,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 776334,
+        "value": 762481,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {

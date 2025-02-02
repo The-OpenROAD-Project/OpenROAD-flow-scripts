@@ -1,0 +1,122 @@
+load("@bazel-orfs//:openroad.bzl", "orfs_flow")
+load("@bazel-orfs//:sweep.bzl", "orfs_sweep")
+load("//util:plot_congestion.bzl", "plot_congestion")
+
+# Format densities, rounding to 2 decimal places.
+SWEEPS = {
+    "PLACE_DENSITY": [str(0.82 + x * 0.01 + 0.005)[:4] for x in range(10)],
+}
+
+SWEEP = "PLACE_DENSITY"
+
+filegroup(
+    name = "mock-array-constraints",
+    srcs = [
+        "constraints.sdc",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+filegroup(
+    name = "mock-array-io",
+    srcs = [
+        "io.tcl",
+    ],
+    data = [
+        "//designs/src/mock-array:util.tcl",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+orfs_flow(
+    name = "MockArray",
+    arguments = {
+        "PLACE_PINS_ARGS": "-annealing",
+        "IO_CONSTRAINTS": "$(location :mock-array-io)",
+        "PLACE_DENSITY": "0.30",
+        "DIE_AREA": "0 0 358.56 388.8",
+        "CORE_AREA": "2.16 2.16 356.40000000000003 386.64000000000004",
+        "MACRO_PLACE_HALO": "0 2.16",
+        "RTLMP_BOUNDARY_WT": "0",
+        "PDN_TCL": "$(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl",
+        "MACRO_HALO_X": "0.5",
+        "MACRO_HALO_Y": "0.5",
+        "MACRO_BLOCKAGE_HALO": "0",
+        "SDC_FILE": "$(location :mock-array-constraints)",
+        "MAX_ROUTING_LAYER": "M9",
+        "GDS_ALLOW_EMPTY": "Element",
+        "PWR_NETS_VOLTAGEsS": "",
+        "GND_NETS_VOLTAGES": "",
+    },
+    macros = ["Element_generate_abstract"],
+    stage_sources = {
+        "synth": [":mock-array-constraints"] + [":mock-array-io"],
+        "floorplan": [":mock-array-io"],
+        "place": [":mock-array-io"],
+    },
+    verilog_files = ["//designs/src/mock-array:verilog"],
+)
+
+filegroup(
+    name = "mock-array-element-io",
+    srcs = [
+        "Element/io.tcl",
+    ],
+    data = [
+        "//designs/src/mock-array:util.tcl",
+    ],
+    visibility = [":__subpackages__"],
+)
+
+mock_array_all_sources = ["//designs/src/mock-array:util.tcl"]
+
+orfs_sweep(
+    name = "Element",
+    abstract_stage = "route",
+    arguments = {
+        "PLACE_DENSITY": "0.82",
+        "MOCK_ARRAY_ROWS": "8",
+        "MOCK_ARRAY_COLS": "8",
+        "DETAILED_ROUTE_END_ITERATION": "6",
+        "MIN_ROUTING_LAYER": "M2",
+        "MAX_ROUTING_LAYER": "M5",
+        "IO_PLACER_H": "M2 M4",
+        "IO_PLACER_V": "M3 M5",
+        "PLACE_PINS_ARGS": "-annealing",
+        "GND_NETS_VOLTAGES": "",
+        "PWR_NETS_VOLTAGES": "",
+        "SDC_FILE": "$(location :mock-array-constraints)",
+        "IO_CONSTRAINTS": "$(location :mock-array-element-io)",
+        "DIE_AREA": "0 0 43.2 43.2",
+        "CORE_AREA": "1.08 1.08 42.120000000000005 42.120000000000005",
+        "PDN_TCL": "$(PLATFORM_DIR)/openRoad/pdn/BLOCK_grid_strategy.tcl",
+    },
+    other_variants = {"base": {}},
+    stage_sources = {
+        "synth": mock_array_all_sources + [":mock-array-constraints"],
+        "floorplan": mock_array_all_sources + [":mock-array-element-io"],
+        "place": mock_array_all_sources + [":mock-array-element-io"],
+        "cts": mock_array_all_sources,
+        "route": mock_array_all_sources,
+        "final": mock_array_all_sources,
+    },
+    sweep = {
+        value: {
+            "arguments": {
+                SWEEP: value,
+            },
+            "previous_stage": {
+                "floorplan": "Element_synth",
+            },
+        }
+        for value in SWEEPS[SWEEP]
+    },
+    verilog_files = ["//designs/src/mock-array:verilog"],
+)
+
+plot_congestion(
+    name = "plot",
+    srcs = [":Element_{value}_grt".format(value = value) for value in SWEEPS[SWEEP]],
+    argument = SWEEP,
+    values = SWEEPS[SWEEP],
+)
