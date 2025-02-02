@@ -41,7 +41,7 @@ foreach macro [find_macros] {
 set macro_names [dict keys $macro_names]
 
 define_pdn_grid -macro -cells $macro_names \
-    -halo "$::env(MACRO_HALO_X) $::env(MACRO_HALO_Y) $::env(MACRO_HALO_X) $::env(MACRO_HALO_Y)" \
+    -halo "$::env(MACRO_ROWS_HALO_X) $::env(MACRO_ROWS_HALO_Y) $::env(MACRO_ROWS_HALO_X) $::env(MACRO_ROWS_HALO_Y)" \
     -voltage_domains {CORE} -name ElementGrid
 
 add_pdn_connect -grid {ElementGrid} -layers {M5 M6}
