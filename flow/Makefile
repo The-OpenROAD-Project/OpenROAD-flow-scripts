@@ -236,7 +236,8 @@ ifeq (,$(strip $(NUM_CORES)))
 endif
 export NUM_CORES
 
-YOSYS_FLAGS += -v 3
+# Shuffle the Yosys seed occasionally to check for too-tight CI baseline checks.
+YOSYS_FLAGS += -v 3 --hash-seed=1234
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
