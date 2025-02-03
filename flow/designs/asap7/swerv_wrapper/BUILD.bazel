@@ -1,0 +1,70 @@
+load("@bazel-orfs//:openroad.bzl", "orfs_macro")
+load("@bazel-orfs//:sweep.bzl", "orfs_sweep")
+load("//util:plot_congestion.bzl", "plot_congestion")
+
+# Format densities, rounding to 2 decimal places.
+SWEEPS = {
+    "PLACE_DENSITY_LB_ADDON": [str(0.20 + x * 0.01 + 0.005)[:4] for x in range(10)],
+    "CORE_UTILIZATION": [str(40 + x * 5) for x in range(4)],
+}
+
+SWEEP = "PLACE_DENSITY_LB_ADDON"
+
+FAKERAMS = [
+    "fakeram7_64x21",
+    "fakeram7_256x34",
+    "fakeram7_2048x39",
+]
+
+[orfs_macro(
+    name = top,
+    lef = "lef/{}.lef".format(top),
+    lib = "lib/{}.lib".format(top),
+    module_top = top,
+) for top in FAKERAMS]
+
+orfs_sweep(
+    name = "swerv_wrapper",
+    arguments = {
+        "LIB_MODEL": "CCS",
+        "SYNTH_HIERARCHICAL": "1",
+        "RTLMP_MAX_INST": "30000",
+        "RTLMP_MIN_INST": "5000",
+        "RTLMP_MAX_MACRO": "30",
+        "RTLMP_MIN_MACRO": "4",
+        "DIE_AREA": "0 0 550 600",
+        "CORE_AREA": "5 5 545 595",
+        "PLACE_PINS_ARGS": "-exclude left:* -exclude right:*",
+        "PLACE_DENSITY_LB_ADDON": "0.20",
+        "TNS_END_PERCENT": "100",
+        "PWR_NETS_VOLTAGEsS": "",
+        "GND_NETS_VOLTAGES": "",
+    },
+    macros = FAKERAMS,
+    other_variants = {"base": {}},
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+    },
+    sweep = {
+        value: {
+            "arguments": {
+                SWEEP: value,
+            },
+            "previous_stage": {
+                "floorplan": "swerv_wrapper_synth",
+            },
+        }
+        for value in SWEEPS[SWEEP]
+    },
+    verilog_files = [
+        "macros.v",
+        "//designs/src/swerv:verilog",
+    ],
+)
+
+plot_congestion(
+    name = "plot",
+    srcs = [":swerv_wrapper_{value}_grt".format(value = value) for value in SWEEPS[SWEEP]],
+    argument = SWEEP,
+    values = SWEEPS[SWEEP],
+)

@@ -103,7 +103,7 @@ configuration file.
 | <a name="GPL_ROUTABILITY_DRIVEN"></a>GPL_ROUTABILITY_DRIVEN| Specifies whether the placer should use routability driven placement.| 1| |
 | <a name="GPL_TIMING_DRIVEN"></a>GPL_TIMING_DRIVEN| Specifies whether the placer should use timing driven placement.| 1| |
 | <a name="GUI_TIMING"></a>GUI_TIMING| Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.| 1| |
-| <a name="HOLD_SLACK_MARGIN"></a>HOLD_SLACK_MARGIN| Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack). floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0(default hold slack margin). This avoids overrepair in floorplan for hold by default, but allows skipping hold repair using a negative HOLD_SLACK_MARGIN. Exiting timing repair early is useful in exploration where the .sdc has a fixed clock period at the design's target clock period and where HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair(extremely long running times) when exploring different parameter settings. When an ideal clock is used, that is before CTS, a clock insertion delay of 0 is used in timing paths. This creates a mismatch between macros that have a .lib file from after CTS, when the clock is propagated. To mitigate this, OpenSTA will use subtract the clock insertion delay of macros when calculating timing with ideal clock. Provided that min_clock_tree_path and max_clock_tree_path are in the .lib file, which is the case for macros built with OpenROAD. This is less accurate than if OpenROAD had created a placeholder clock tree for timing estimation purposes prior to CTS. There will inevitably be inaccuracies in the timing calculation prior to CTS. Use a slack margin that is low enough, even negative, to avoid overrepair. Inaccuracies in the timing prior to CTS can also lead to underrepair, but there no obvious and simple way to avoid underrapir in these cases. Overrepair can lead to excessive runtimes in repair or too much buffering being added, which can present itself as congestion of hold cells or buffer cells. Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration when trying to find the minimum clock period for a design. The SDC_FILE for a design can be quite complicated and instead of modifying the clock period in the SDC_FILE, which can be non-trivial, the clock period can be fixed at the target frequency and the SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible current minimum clock period.| 0| |
+| <a name="HOLD_SLACK_MARGIN"></a>HOLD_SLACK_MARGIN| Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix or underfix (negative value, terminate retiming before 0 or positive slack). floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0 (default hold slack margin). This avoids overrepair in floorplan for hold by default, but allows skipping hold repair using a negative HOLD_SLACK_MARGIN. Exiting timing repair early is useful in exploration where the .sdc has a fixed clock period at the design's target clock period and where HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair (extremely long running times) when exploring different parameter settings. When an ideal clock is used, that is before CTS, a clock insertion delay of 0 is used in timing paths. This creates a mismatch between macros that have a .lib file from after CTS, when the clock is propagated. To mitigate this, OpenSTA will use subtract the clock insertion delay of macros when calculating timing with ideal clock. Provided that min_clock_tree_path and max_clock_tree_path are in the .lib file, which is the case for macros built with OpenROAD. This is less accurate than if OpenROAD had created a placeholder clock tree for timing estimation purposes prior to CTS. There will inevitably be inaccuracies in the timing calculation prior to CTS. Use a slack margin that is low enough, even negative, to avoid overrepair. Inaccuracies in the timing prior to CTS can also lead to underrepair, but there no obvious and simple way to avoid underrapir in these cases. Overrepair can lead to excessive runtimes in repair or too much buffering being added, which can present itself as congestion of hold cells or buffer cells. Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration when trying to find the minimum clock period for a design. The SDC_FILE for a design can be quite complicated and instead of modifying the clock period in the SDC_FILE, which can be non-trivial, the clock period can be fixed at the target frequency and the SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible current minimum clock period.| 0| |
 | <a name="IO_CONSTRAINTS"></a>IO_CONSTRAINTS| File path to the IO constraints .tcl file.| | |
 | <a name="IO_PLACER_H"></a>IO_PLACER_H| The metal layer on which to place the I/O pins horizontally (top and bottom of the die).| | |
 | <a name="IO_PLACER_V"></a>IO_PLACER_V| The metal layer on which to place the I/O pins vertically (sides of the die).| | |
@@ -111,13 +111,13 @@ configuration file.
 | <a name="KLAYOUT_TECH_FILE"></a>KLAYOUT_TECH_FILE| A mapping from LEF/DEF to GDS using the KLayout tool.| | |
 | <a name="LATCH_MAP_FILE"></a>LATCH_MAP_FILE| List of latches treated as a black box by Yosys.| | |
 | <a name="LIB_FILES"></a>LIB_FILES| A Liberty file of the standard cell library with PVT characterization, input and output characteristics, timing and power definitions for each cell.| | |
-| <a name="MACRO_BLOCKAGE_HALO"></a>MACRO_BLOCKAGE_HALO| Blockage width overridden from default calculation.| | |
+| <a name="MACRO_BLOCKAGE_HALO"></a>MACRO_BLOCKAGE_HALO| Distance beyond the edges of a macro that will also be covered by the blockage generated for that macro. Note that the default macro blockage halo comes from the largest of the specified MACRO_PLACE_HALO x or y values. This variable overrides that calculation.| | |
 | <a name="MACRO_EXTENSION"></a>MACRO_EXTENSION| Sets the number of GCells added to the blockages boundaries from macros.| | |
-| <a name="MACRO_HALO_X"></a>MACRO_HALO_X| Set macro halo for x-direction. Only available for ASAP7 PDK.| | |
-| <a name="MACRO_HALO_Y"></a>MACRO_HALO_Y| Set macro halo for y-direction. Only available for ASAP7 PDK.| | |
 | <a name="MACRO_PLACEMENT"></a>MACRO_PLACEMENT| Specifies the path of a file on how to place certain macros manually using read_macro_placement.| | |
 | <a name="MACRO_PLACEMENT_TCL"></a>MACRO_PLACEMENT_TCL| Specifies the path of a TCL file on how to place certain macros manually.| | |
 | <a name="MACRO_PLACE_HALO"></a>MACRO_PLACE_HALO| Horizontal/vertical halo around macros (microns). Used by automatic macro placement.| | |
+| <a name="MACRO_ROWS_HALO_X"></a>MACRO_ROWS_HALO_X| Horizontal distance between the edge of the macro and the beginning of the rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks design.| | |
+| <a name="MACRO_ROWS_HALO_Y"></a>MACRO_ROWS_HALO_Y| Vertical distance between the edge of the macro and the beginning of the rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks design.| | |
 | <a name="MACRO_WRAPPERS"></a>MACRO_WRAPPERS| The wrapper file that replaces existing macros with their wrapped version.| | |
 | <a name="MAKE_TRACKS"></a>MAKE_TRACKS| Tcl file that defines add routing tracks to a floorplan.| | |
 | <a name="MATCH_CELL_FOOTPRINT"></a>MATCH_CELL_FOOTPRINT| Enforce sizing operations to only swap cells that have the same layout boundary.| 0| |
@@ -143,7 +143,7 @@ configuration file.
 | <a name="REPORT_CLOCK_SKEW"></a>REPORT_CLOCK_SKEW| Report clock skew as part of reporting metrics, starting at CTS, before which there is no clock skew. This metric can be quite time-consuming, so it can be useful to disable.| 1| |
 | <a name="RESYNTH_AREA_RECOVER"></a>RESYNTH_AREA_RECOVER| Enable re-synthesis for area reclaim.| 0| |
 | <a name="RESYNTH_TIMING_RECOVER"></a>RESYNTH_TIMING_RECOVER| Enable re-synthesis for timing optimization.| 0| |
-| <a name="ROUTING_LAYER_ADJUSTMENT"></a>ROUTING_LAYER_ADJUSTMENT| Adjusts routing layer capacities to manage congestion and improve detailed routing. High values ease detailed routing but risk excessive detours and long global routing times, while low values reduce global routing failure but can complicate detailed routing. The global routing running time normally reduces dramatically(entirely design specific, but going from hours to minutes has been observed) when the value is low(such as 0.10). Sometimes, global routing will succeed with lower values and fail with higher values. Exploring results with different values can help shed light on the problem. Start with a too low value, such as 0.10, and bisect to value that works by doing multiple global routing runs. As a last resort, `make global_route_issue` and using the tools/OpenROAD/etc/deltaDebug.py can be useful to debug global routing errors. If there is something specific that is impossible to route, such as a clock line over a macro, global routing will terminate with DRC errors routes that could have been routed were it not for the specific impossible routes. deltaDebug.py should weed out the possible routes and leave a minimal failing case that pinpoints the problem.| 0.5| |
+| <a name="ROUTING_LAYER_ADJUSTMENT"></a>ROUTING_LAYER_ADJUSTMENT| Adjusts routing layer capacities to manage congestion and improve detailed routing. High values ease detailed routing but risk excessive detours and long global routing times, while low values reduce global routing failure but can complicate detailed routing. The global routing running time normally reduces dramatically (entirely design specific, but going from hours to minutes has been observed) when the value is low (such as 0.10). Sometimes, global routing will succeed with lower values and fail with higher values. Exploring results with different values can help shed light on the problem. Start with a too low value, such as 0.10, and bisect to value that works by doing multiple global routing runs. As a last resort, `make global_route_issue` and using the tools/OpenROAD/etc/deltaDebug.py can be useful to debug global routing errors. If there is something specific that is impossible to route, such as a clock line over a macro, global routing will terminate with DRC errors routes that could have been routed were it not for the specific impossible routes. deltaDebug.py should weed out the possible routes and leave a minimal failing case that pinpoints the problem.| 0.5| |
 | <a name="RTLMP_AREA_WT"></a>RTLMP_AREA_WT| Weight for the area of the current floorplan.| 0.1| |
 | <a name="RTLMP_ARGS"></a>RTLMP_ARGS| Overrides all other RTL macro placer arguments.| | |
 | <a name="RTLMP_BOUNDARY_WT"></a>RTLMP_BOUNDARY_WT| Weight for the boundary or how far the hard macro clusters are from boundaries.| 50.0| |
@@ -228,16 +228,17 @@ configuration file.
 - [IO_PLACER_H](#IO_PLACER_H)
 - [IO_PLACER_V](#IO_PLACER_V)
 - [MACRO_BLOCKAGE_HALO](#MACRO_BLOCKAGE_HALO)
-- [MACRO_HALO_X](#MACRO_HALO_X)
-- [MACRO_HALO_Y](#MACRO_HALO_Y)
 - [MACRO_PLACEMENT](#MACRO_PLACEMENT)
 - [MACRO_PLACEMENT_TCL](#MACRO_PLACEMENT_TCL)
 - [MACRO_PLACE_HALO](#MACRO_PLACE_HALO)
+- [MACRO_ROWS_HALO_X](#MACRO_ROWS_HALO_X)
+- [MACRO_ROWS_HALO_Y](#MACRO_ROWS_HALO_Y)
 - [MACRO_WRAPPERS](#MACRO_WRAPPERS)
 - [MAKE_TRACKS](#MAKE_TRACKS)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [PDN_TCL](#PDN_TCL)
 - [PLACE_DENSITY](#PLACE_DENSITY)
+- [PLACE_DENSITY_LB_ADDON](#PLACE_DENSITY_LB_ADDON)
 - [PLACE_PINS_ARGS](#PLACE_PINS_ARGS)
 - [PLACE_SITE](#PLACE_SITE)
 - [REMOVE_ABC_BUFFERS](#REMOVE_ABC_BUFFERS)
@@ -282,6 +283,7 @@ configuration file.
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [PLACE_DENSITY](#PLACE_DENSITY)
+- [PLACE_DENSITY_LB_ADDON](#PLACE_DENSITY_LB_ADDON)
 - [PLACE_PINS_ARGS](#PLACE_PINS_ARGS)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
@@ -387,7 +389,6 @@ configuration file.
 - [KLAYOUT_TECH_FILE](#KLAYOUT_TECH_FILE)
 - [LIB_FILES](#LIB_FILES)
 - [MACRO_EXTENSION](#MACRO_EXTENSION)
-- [PLACE_DENSITY_LB_ADDON](#PLACE_DENSITY_LB_ADDON)
 - [PLATFORM](#PLATFORM)
 - [PRESERVE_CELLS](#PRESERVE_CELLS)
 - [PROCESS](#PROCESS)

@@ -42,9 +42,9 @@ ROUTING_LAYER_ADJUSTMENT:
     while low values reduce global routing failure but can
     complicate detailed routing.
     The global routing running time normally reduces
-    dramatically(entirely design specific, but going from hours to
+    dramatically (entirely design specific, but going from hours to
     minutes has been observed) when the value is
-    low(such as 0.10).
+    low (such as 0.10).
     Sometimes, global routing will succeed with lower values and
     fail with higher values. Exploring results with different
     values can help shed light on the problem. Start with
@@ -259,8 +259,12 @@ MACRO_PLACE_HALO:
   stages:
     - floorplan
 MACRO_BLOCKAGE_HALO:
-  description: |
-    Blockage width overridden from default calculation.
+  description: >
+    Distance beyond the edges of a macro that will also be covered by the
+    blockage generated for that macro.
+    Note that the default macro blockage halo comes from the largest of the
+    specified MACRO_PLACE_HALO x or y values. This variable overrides that
+    calculation.
   stages:
     - floorplan
 PDN_TCL:
@@ -345,6 +349,9 @@ PLACE_DENSITY_LB_ADDON:
   description: >
     Check the lower boundary of the PLACE_DENSITY and add
     PLACE_DENSITY_LB_ADDON if it exists.
+  stages:
+    - floorplan
+    - place
 REPAIR_PDN_VIA_LAYER:
   description: |
     Remove power grid vias which generate DRC violations after detailed routing.
@@ -389,14 +396,14 @@ CTS_ARGS:
 HOLD_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing hold violations.
-    This option allows you to overfix or underfix(negative value, terminate
+    This option allows you to overfix or underfix (negative value, terminate
     retiming before 0 or positive slack).
-    floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0(default hold slack margin).
+    floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0 (default hold slack margin).
     This avoids overrepair in floorplan for hold by default, but allows skipping
     hold repair using a negative HOLD_SLACK_MARGIN.
     Exiting timing repair early is useful in exploration where
     the .sdc has a fixed clock period at the design's target clock period and where
-    HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair(extremely long running
+    HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair (extremely long running
     times) when exploring different parameter settings.
     When an ideal clock is used, that is before CTS,
     a clock insertion delay of 0 is used in timing paths. This creates
@@ -650,14 +657,18 @@ RESYNTH_TIMING_RECOVER:
   stages:
     - synth
   default: 0
-MACRO_HALO_X:
-  description: |
-    Set macro halo for x-direction. Only available for ASAP7 PDK.
+MACRO_ROWS_HALO_X:
+  description: >
+    Horizontal distance between the edge of the macro and the beginning of the
+    rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks
+    design.
   stages:
     - floorplan
-MACRO_HALO_Y:
-  description: |
-    Set macro halo for y-direction. Only available for ASAP7 PDK.
+MACRO_ROWS_HALO_Y:
+  description: >
+    Vertical distance between the edge of the macro and the beginning of the
+    rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks
+    design.
   stages:
     - floorplan
 MACRO_WRAPPERS:
