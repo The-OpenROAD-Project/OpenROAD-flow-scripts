@@ -103,7 +103,10 @@ proc write_eqy_script { } {
     puts $outfile "\[match *]\ngate-nomatch _*_.*"
 
     # See issue OpenROAD#6545 "Equivalence check failure due to non-unique resizer nets"
-    puts $outfile "gate-nomatch net*\n\n"
+    puts $outfile "gate-nomatch net*"
+
+    # Necessary to avoid false positive after Yosys 0.49
+    puts $outfile "gate-nomatch clone*\n\n"
 
     # Equivalence check recipe 1
     puts $outfile "\[strategy basic]\nuse sat\ndepth 10\n\n"

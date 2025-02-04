@@ -3,23 +3,23 @@ This scripts handles sweeping and tuning of OpenROAD-flow-scripts parameters.
 Dependencies are documented in pip format at distributed-requirements.txt
 
 For both sweep and tune modes:
-    python3 distributed.py -h
+    python3 -m autotuner.distributed -h
 
 Note: the order of the parameters matter.
 Arguments --design, --platform and --config are always required and should
 precede the <mode>.
 
 AutoTuner:
-    python3 distributed.py tune -h
-    python3 distributed.py --design gcd --platform sky130hd \
+    python3 -m autotuner.distributed tune -h
+    python3 -m autotuner.distributed --design gcd --platform sky130hd \
                            --config ../designs/sky130hd/gcd/autotuner.json \
                            tune
     Example:
 
 Parameter sweeping:
-    python3 distributed.py sweep -h
+    python3 -m autotuner.distributed sweep -h
     Example:
-    python3 distributed.py --design gcd --platform sky130hd \
+    python3 -m autotuner.distributed --design gcd --platform sky130hd \
                            --config distributed-sweep-example.json \
                            sweep
 """
@@ -27,17 +27,12 @@ Parameter sweeping:
 import argparse
 import json
 import os
-import re
 import sys
-import glob
-import subprocess
 import random
-from datetime import datetime
-from multiprocessing import cpu_count
-from subprocess import run
 from itertools import product
-from collections import namedtuple
 from uuid import uuid4 as uuid
+from collections import namedtuple
+from multiprocessing import cpu_count
 
 import numpy as np
 import torch
@@ -55,15 +50,27 @@ from ray.util.queue import Queue
 
 from ax.service.ax_client import AxClient
 
-DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
-FASTROUTE_TCL = "fastroute.tcl"
-CONSTRAINTS_SDC = "constraint.sdc"
+from autotuner.utils import (
+    openroad,
+    consumer,
+    parse_config,
+    read_config,
+    read_metrics,
+    prepare_ray_server,
+    CONSTRAINTS_SDC,
+    FASTROUTE_TCL,
+)
+
+# Name of the final metric
 METRIC = "metric"
+# The worst of optimized metric
 ERROR_METRIC = 9e99
+# Path to the FLOW_HOME directory
 ORFS_FLOW_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../flow")
 )
+# URL to ORFS GitHub repository
+ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
 
 
 class AutoTunerBase(tune.Trainable):
@@ -78,21 +85,44 @@ class AutoTunerBase(tune.Trainable):
         # We create the following directory structure:
         #      1/     2/         3/       4/                5/   6/
         # <repo>/<logs>/<platform>/<design>/<experiment>/<id>/<cwd>
+        # Run by Ray in directory specified by `local_dir`
         repo_dir = os.getcwd() + "/../" * 6
         self.repo_dir = os.path.abspath(repo_dir)
-        self.parameters = parse_config(config, path=os.getcwd())
+        self.parameters = parse_config(
+            config=config,
+            base_dir=self.repo_dir,
+            platform=args.platform,
+            sdc_original=SDC_ORIGINAL,
+            constraints_sdc=CONSTRAINTS_SDC,
+            fr_original=FR_ORIGINAL,
+            fastroute_tcl=FASTROUTE_TCL,
+            path=os.getcwd(),
+        )
         self.step_ = 0
         self.variant = f"variant-{self.__class__.__name__}-{self.trial_id}-or"
+        # Do a valid config check here, since we still have the config in a
+        # dict vs. having to scan through the parameter string later
+        self.is_valid_config = self._is_valid_config(config)
 
     def step(self):
         """
         Run step experiment and compute its score.
         """
+
+        # if not a valid config, then don't run and pass back an error
+        if not self.is_valid_config:
+            return {METRIC: ERROR_METRIC, "effective_clk_period": "-", "num_drc": "-"}
         self._variant = f"{self.variant}-{self.step_}"
-        metrics_file = openroad(self.repo_dir, self.parameters, self._variant)
+        metrics_file = openroad(
+            args=args,
+            base_dir=self.repo_dir,
+            parameters=self.parameters,
+            flow_variant=self._variant,
+            install_path=INSTALL_PATH,
+        )
         self.step_ += 1
         (score, effective_clk_period, num_drc) = self.evaluate(
-            self.read_metrics(metrics_file)
+            read_metrics(metrics_file)
         )
         # Feed the score back to Tune.
         # return must match 'metric' used in tune.run()
@@ -119,45 +149,31 @@ class AutoTunerBase(tune.Trainable):
         score = score * (100 / self.step_) + gamma * num_drc
         return (score, effective_clk_period, num_drc)
 
-    @classmethod
-    def read_metrics(cls, file_name):
+    def _is_valid_config(self, config):
         """
-        Collects metrics to evaluate the user-defined objective function.
+        Checks dependent parameters and returns False if we violate
+        a dependency. That way, we don't end up running an incompatible run
         """
-        with open(file_name) as file:
-            data = json.load(file)
-        clk_period = 9999999
-        worst_slack = "ERR"
-        wirelength = "ERR"
-        num_drc = "ERR"
-        total_power = "ERR"
-        core_util = "ERR"
-        final_util = "ERR"
-        for stage, value in data.items():
-            if stage == "constraints" and len(value["clocks__details"]) > 0:
-                clk_period = float(value["clocks__details"][0].split()[1])
-            if stage == "floorplan" and "design__instance__utilization" in value:
-                core_util = value["design__instance__utilization"]
-            if stage == "detailedroute" and "route__drc_errors" in value:
-                num_drc = value["route__drc_errors"]
-            if stage == "detailedroute" and "route__wirelength" in value:
-                wirelength = value["route__wirelength"]
-            if stage == "finish" and "timing__setup__ws" in value:
-                worst_slack = value["timing__setup__ws"]
-            if stage == "finish" and "power__total" in value:
-                total_power = value["power__total"]
-            if stage == "finish" and "design__instance__utilization" in value:
-                final_util = value["design__instance__utilization"]
-        ret = {
-            "clk_period": clk_period,
-            "worst_slack": worst_slack,
-            "wirelength": wirelength,
-            "num_drc": num_drc,
-            "total_power": total_power,
-            "core_util": core_util,
-            "final_util": final_util,
-        }
-        return ret
+
+        ret_val = True
+        ret_val &= self._is_valid_padding(config)
+        return ret_val
+
+    def _is_valid_padding(self, config):
+        """Returns True if global padding >= detail padding"""
+
+        if (
+            "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT" in config
+            and "CELL_PAD_IN_SITES_DETAIL_PLACEMENT" in config
+        ):
+            global_padding = config["CELL_PAD_IN_SITES_GLOBAL_PLACEMENT"]
+            detail_padding = config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"]
+            if global_padding < detail_padding:
+                print(
+                    f"[WARN TUN-0032] CELL_PAD_IN_SITES_DETAIL_PLACEMENT cannot be greater than CELL_PAD_IN_SITES_GLOBAL_PLACEMENT: {detail_padding} {global_padding}"
+                )
+                return False
+        return True
 
 
 class PPAImprov(AutoTunerBase):
@@ -206,456 +222,6 @@ class PPAImprov(AutoTunerBase):
         gamma = ppa / 10
         score = ppa * (self.step_ / 100) ** (-1) + (gamma * metrics["num_drc"])
         return score
-
-
-def read_config(file_name):
-    """
-    Please consider inclusive, exclusive
-    Most type uses [min, max)
-    But, Quantization makes the upper bound inclusive.
-    e.g., qrandint and qlograndint uses [min, max]
-    step value is used for quantized type (e.g., quniform). Otherwise, write 0.
-    When min==max, it means the constant value
-    """
-
-    def read(path):
-        # if file path does not exist, return empty string
-        print(os.path.abspath(path))
-        if not os.path.isfile(os.path.abspath(path)):
-            return ""
-        with open(os.path.abspath(path), "r") as file:
-            ret = file.read()
-        return ret
-
-    def read_sweep(this):
-        return [*this["minmax"], this["step"]]
-
-    def apply_condition(config, data):
-        # TODO: tune.sample_from only supports random search algorithm.
-        # To make conditional parameter for the other algorithms, different
-        # algorithms should take different methods (will be added)
-        if args.algorithm != "random":
-            return config
-        dp_pad_min = data["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"]["minmax"][0]
-        dp_pad_step = data["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"]["step"]
-        if dp_pad_step == 1:
-            config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"] = tune.sample_from(
-                lambda spec: np.random.randint(
-                    dp_pad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1
-                )
-            )
-        if dp_pad_step > 1:
-            config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"] = tune.sample_from(
-                lambda spec: random.randrange(
-                    dp_pad_min,
-                    spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1,
-                    dp_pad_step,
-                )
-            )
-        return config
-
-    def read_tune(this):
-        min_, max_ = this["minmax"]
-        if min_ == max_:
-            # Returning a choice of a single element allow pbt algorithm to
-            # work. pbt does not accept single values as tunable.
-            return tune.choice([min_, max_])
-        if this["type"] == "int":
-            if this["step"] == 1:
-                return tune.randint(min_, max_)
-            return tune.choice(np.ndarray.tolist(np.arange(min_, max_, this["step"])))
-        if this["type"] == "float":
-            if this["step"] == 0:
-                return tune.uniform(min_, max_)
-            return tune.choice(np.ndarray.tolist(np.arange(min_, max_, this["step"])))
-        return None
-
-    def read_tune_ax(name, this):
-        """
-        Ax format: https://ax.dev/versions/0.3.7/api/service.html
-        """
-        dict_ = dict(name=name)
-        if "minmax" not in this:
-            return None
-        min_, max_ = this["minmax"]
-        if min_ == max_:
-            dict_["type"] = "fixed"
-            dict_["value"] = min_
-        elif this["type"] == "int":
-            if this["step"] == 1:
-                dict_["type"] = "range"
-                dict_["bounds"] = [min_, max_]
-                dict_["value_type"] = "int"
-            else:
-                dict_["type"] = "choice"
-                dict_["values"] = tune.randint(min_, max_, this["step"])
-                dict_["value_type"] = "int"
-        elif this["type"] == "float":
-            if this["step"] == 1:
-                dict_["type"] = "choice"
-                dict_["values"] = tune.choice(
-                    np.ndarray.tolist(np.arange(min_, max_, this["step"]))
-                )
-                dict_["value_type"] = "float"
-            else:
-                dict_["type"] = "range"
-                dict_["bounds"] = [min_, max_]
-                dict_["value_type"] = "float"
-        return dict_
-
-    def read_tune_pbt(name, this):
-        """
-        PBT format: https://docs.ray.io/en/releases-2.9.3/tune/examples/pbt_guide.html
-        Note that PBT does not support step values.
-        """
-        if "minmax" not in this:
-            return None
-        min_, max_ = this["minmax"]
-        if min_ == max_:
-            return ray.tune.choice([min_, max_])
-        if this["type"] == "int":
-            return ray.tune.randint(min_, max_)
-        if this["type"] == "float":
-            return ray.tune.uniform(min_, max_)
-
-    # Check file exists and whether it is a valid JSON file.
-    assert os.path.isfile(file_name), f"File {file_name} not found."
-    try:
-        with open(file_name) as file:
-            data = json.load(file)
-    except json.JSONDecodeError:
-        raise ValueError(f"Invalid JSON file: {file_name}")
-    sdc_file = ""
-    fr_file = ""
-    if args.mode == "tune" and args.algorithm == "ax":
-        config = list()
-    else:
-        config = dict()
-    for key, value in data.items():
-        if key == "best_result":
-            continue
-        if key == "_SDC_FILE_PATH" and value != "":
-            if sdc_file != "":
-                print("[WARNING TUN-0004] Overwriting SDC base file.")
-            sdc_file = read(f"{os.path.dirname(file_name)}/{value}")
-            continue
-        if key == "_FR_FILE_PATH" and value != "":
-            if fr_file != "":
-                print("[WARNING TUN-0005] Overwriting FastRoute base file.")
-            fr_file = read(f"{os.path.dirname(file_name)}/{value}")
-            continue
-        if not isinstance(value, dict):
-            # To take care of empty values like _FR_FILE_PATH
-            if args.mode == "tune" and args.algorithm == "ax":
-                param_dict = read_tune_ax(key, value)
-                if param_dict:
-                    config.append(param_dict)
-            elif args.mode == "tune" and args.algorithm == "pbt":
-                param_dict = read_tune_pbt(key, value)
-                if param_dict:
-                    config[key] = param_dict
-            else:
-                config[key] = value
-        elif args.mode == "sweep":
-            config[key] = read_sweep(value)
-        elif args.mode == "tune" and args.algorithm == "ax":
-            config.append(read_tune_ax(key, value))
-        elif args.mode == "tune" and args.algorithm == "pbt":
-            config[key] = read_tune_pbt(key, value)
-        elif args.mode == "tune":
-            config[key] = read_tune(value)
-    if args.mode == "tune":
-        config = apply_condition(config, data)
-    return config, sdc_file, fr_file
-
-
-def parse_flow_variables():
-    """
-    Parse the flow variables from source
-    - Code: Makefile `vars` target output
-
-    TODO: Tests.
-
-    Output:
-    - flow_variables: set of flow variables
-    """
-    cur_path = os.path.dirname(os.path.realpath(__file__))
-
-    # first, generate vars.tcl
-    makefile_path = os.path.join(cur_path, "../../../../flow/")
-    initial_path = os.path.abspath(os.getcwd())
-    os.chdir(makefile_path)
-    result = subprocess.run(["make", "vars", f"PLATFORM={args.platform}"])
-    if result.returncode != 0:
-        print(f"[ERROR TUN-0018] Makefile failed with error code {result.returncode}.")
-        sys.exit(1)
-    if not os.path.exists("vars.tcl"):
-        print(f"[ERROR TUN-0019] Makefile did not generate vars.tcl.")
-        sys.exit(1)
-    os.chdir(initial_path)
-
-    # for code parsing, you need to parse from both scripts and vars.tcl file.
-    pattern = r"(?:::)?env\((.*?)\)"
-    files = glob.glob(os.path.join(cur_path, "../../../../flow/scripts/*.tcl"))
-    files.append(os.path.join(cur_path, "../../../../flow/vars.tcl"))
-    variables = set()
-    for file in files:
-        with open(file) as fp:
-            matches = re.findall(pattern, fp.read())
-        for match in matches:
-            for variable in match.split("\n"):
-                variables.add(variable.strip().upper())
-    return variables
-
-
-def parse_config(config, path=os.getcwd()):
-    """
-    Parse configuration received from tune into make variables.
-    """
-    options = ""
-    sdc = {}
-    fast_route = {}
-    flow_variables = parse_flow_variables()
-    for key, value in config.items():
-        # Keys that begin with underscore need special handling.
-        if key.startswith("_"):
-            # Variables to be injected into fastroute.tcl
-            if key.startswith("_FR_"):
-                fast_route[key.replace("_FR_", "", 1)] = value
-            # Variables to be injected into constraints.sdc
-            elif key.startswith("_SDC_"):
-                sdc[key.replace("_SDC_", "", 1)] = value
-            # Special substitution cases
-            elif key == "_PINS_DISTANCE":
-                options += f' PLACE_PINS_ARGS="-min_distance {value}"'
-            elif key == "_SYNTH_FLATTEN":
-                print(
-                    "[WARNING TUN-0013] Non-flatten the designs are not "
-                    "fully supported, ignoring _SYNTH_FLATTEN parameter."
-                )
-        # Default case is VAR=VALUE
-        else:
-            # FIXME there is no robust way to get this metainformation from
-            # ORFS about the variables, so disable this code for now.
-
-            # Sanity check: ignore all flow variables that are not tunable
-            # if key not in flow_variables:
-            #     print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
-            #     sys.exit(1)
-            options += f" {key}={value}"
-    if bool(sdc):
-        write_sdc(sdc, path)
-        options += f" SDC_FILE={path}/{CONSTRAINTS_SDC}"
-    if bool(fast_route):
-        write_fast_route(fast_route, path)
-        options += f" FASTROUTE_TCL={path}/{FASTROUTE_TCL}"
-    return options
-
-
-def write_sdc(variables, path):
-    """
-    Create a SDC file with parameters for current tuning iteration.
-    """
-    # Handle case where the reference file does not exist
-    if SDC_ORIGINAL == "":
-        print("[ERROR TUN-0020] No SDC reference file provided.")
-        sys.exit(1)
-    new_file = SDC_ORIGINAL
-    for key, value in variables.items():
-        if key == "CLK_PERIOD":
-            if new_file.find("set clk_period") != -1:
-                new_file = re.sub(
-                    r"set clk_period .*\n(.*)", f"set clk_period {value}\n\\1", new_file
-                )
-            else:
-                new_file = re.sub(
-                    r"-period [0-9\.]+ (.*)", f"-period {value} \\1", new_file
-                )
-                new_file = re.sub(r"-waveform [{}\s0-9\.]+[\s|\n]", "", new_file)
-        elif key == "UNCERTAINTY":
-            if new_file.find("set uncertainty") != -1:
-                new_file = re.sub(
-                    r"set uncertainty .*\n(.*)",
-                    f"set uncertainty {value}\n\\1",
-                    new_file,
-                )
-            else:
-                new_file += f"\nset uncertainty {value}\n"
-        elif key == "IO_DELAY":
-            if new_file.find("set io_delay") != -1:
-                new_file = re.sub(
-                    r"set io_delay .*\n(.*)", f"set io_delay {value}\n\\1", new_file
-                )
-            else:
-                new_file += f"\nset io_delay {value}\n"
-    file_name = path + f"/{CONSTRAINTS_SDC}"
-    with open(file_name, "w") as file:
-        file.write(new_file)
-    return file_name
-
-
-def write_fast_route(variables, path):
-    """
-    Create a FastRoute Tcl file with parameters for current tuning iteration.
-    """
-    # Handle case where the reference file does not exist (asap7 doesn't have reference)
-    if FR_ORIGINAL == "" and args.platform != "asap7":
-        print("[ERROR TUN-0021] No FastRoute Tcl reference file provided.")
-        sys.exit(1)
-    layer_cmd = "set_global_routing_layer_adjustment"
-    new_file = FR_ORIGINAL
-    # This is part of the defaults when no FASTROUTE_TCL is provided
-    if len(new_file) == 0:
-        new_file = "set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)"
-    for key, value in variables.items():
-        if key.startswith("LAYER_ADJUST"):
-            layer = key.lstrip("LAYER_ADJUST")
-            # If there is no suffix (i.e., layer name) apply adjust to all
-            # layers.
-            if layer == "":
-                new_file += "\nset_global_routing_layer_adjustment"
-                new_file += " $::env(MIN_ROUTING_LAYER)"
-                new_file += "-$::env(MAX_ROUTING_LAYER)"
-                new_file += f" {value}"
-            elif re.search(f"{layer_cmd}.*{layer}", new_file):
-                new_file = re.sub(
-                    f"({layer_cmd}.*{layer}).*\n(.*)", f"\\1 {value}\n\\2", new_file
-                )
-            else:
-                new_file += f"\n{layer_cmd} {layer} {value}\n"
-        elif key == "GR_SEED":
-            new_file += f"\nset_global_routing_random -seed {value}\n"
-    file_name = path + f"/{FASTROUTE_TCL}"
-    with open(file_name, "w") as file:
-        file.write(new_file)
-    return file_name
-
-
-def run_command(cmd, timeout=None, stderr_file=None, stdout_file=None, fail_fast=False):
-    """
-    Wrapper for subprocess.run
-    Allows to run shell command, control print and exceptions.
-    """
-    process = run(
-        cmd, timeout=timeout, capture_output=True, text=True, check=False, shell=True
-    )
-    if stderr_file is not None and process.stderr != "":
-        with open(stderr_file, "a") as file:
-            file.write(f"\n\n{cmd}\n{process.stderr}")
-    if stdout_file is not None and process.stdout != "":
-        with open(stdout_file, "a") as file:
-            file.write(f"\n\n{cmd}\n{process.stdout}")
-    if args.verbose >= 1:
-        print(process.stderr)
-    if args.verbose >= 2:
-        print(process.stdout)
-
-    if fail_fast and process.returncode != 0:
-        raise RuntimeError
-
-
-@ray.remote
-def openroad_distributed(repo_dir, config, path):
-    """Simple wrapper to run openroad distributed with Ray."""
-    config = parse_config(config)
-    openroad(repo_dir, config, str(uuid()), path=path)
-
-
-def openroad(base_dir, parameters, flow_variant, path=""):
-    """
-    Run OpenROAD-flow-scripts with a given set of parameters.
-    """
-    # Make sure path ends in a slash, i.e., is a folder
-    flow_variant = f"{args.experiment}/{flow_variant}"
-    if path != "":
-        log_path = f"{path}/{flow_variant}/"
-        report_path = log_path.replace("logs", "reports")
-        run_command(f"mkdir -p {log_path}")
-        run_command(f"mkdir -p {report_path}")
-    else:
-        log_path = report_path = os.getcwd() + "/"
-
-    export_command = f"export PATH={INSTALL_PATH}/OpenROAD/bin"
-    export_command += f":{INSTALL_PATH}/yosys/bin:$PATH"
-    export_command += " && "
-
-    make_command = export_command
-    make_command += f"make -C {base_dir}/flow DESIGN_CONFIG=designs/"
-    make_command += f"{args.platform}/{args.design}/config.mk"
-    make_command += f" PLATFORM={args.platform}"
-    make_command += f" FLOW_VARIANT={flow_variant} {parameters}"
-    make_command += f" EQUIVALENCE_CHECK=0"
-    make_command += f" NUM_CORES={args.openroad_threads} SHELL=bash"
-    run_command(
-        make_command,
-        timeout=args.timeout,
-        stderr_file=f"{log_path}error-make-finish.log",
-        stdout_file=f"{log_path}make-finish-stdout.log",
-    )
-
-    metrics_file = os.path.join(report_path, "metrics.json")
-    metrics_command = export_command
-    metrics_command += f"{base_dir}/flow/util/genMetrics.py -x"
-    metrics_command += f" -v {flow_variant}"
-    metrics_command += f" -d {args.design}"
-    metrics_command += f" -p {args.platform}"
-    metrics_command += f" -o {metrics_file}"
-    run_command(
-        metrics_command,
-        stderr_file=f"{log_path}error-metrics.log",
-        stdout_file=f"{log_path}metrics-stdout.log",
-    )
-
-    return metrics_file
-
-
-def clone(path):
-    """
-    Clone base repo in the remote machine. Only used for Kubernetes at GCP.
-    """
-    if args.git_clone:
-        run_command(f"rm -rf {path}")
-    if not os.path.isdir(f"{path}/.git"):
-        git_command = "git clone --depth 1 --recursive --single-branch"
-        git_command += f" {args.git_clone_args}"
-        git_command += f" --branch {args.git_orfs_branch}"
-        git_command += f" {args.git_url} {path}"
-        run_command(git_command)
-
-
-def build(base, install):
-    """
-    Build OpenROAD, Yosys and other dependencies.
-    """
-    build_command = f'cd "{base}"'
-    if args.git_clean:
-        build_command += " && git clean -xdf tools"
-        build_command += " && git submodule foreach --recursive git clean -xdf"
-    if (
-        args.git_clean
-        or not os.path.isfile(f"{install}/OpenROAD/bin/openroad")
-        or not os.path.isfile(f"{install}/yosys/bin/yosys")
-    ):
-        build_command += ' && bash -ic "./build_openroad.sh'
-        # Some GCP machines have 200+ cores. Let's be reasonable...
-        build_command += f" --local --nice --threads {min(32, cpu_count())}"
-        if args.git_latest:
-            build_command += " --latest"
-        build_command += f' {args.build_args}"'
-    run_command(build_command)
-
-
-@ray.remote
-def setup_repo(base):
-    """
-    Clone ORFS repository and compile binaries.
-    """
-    print(f"[INFO TUN-0000] Remote folder: {base}")
-    install = f"{base}/tools/install"
-    if args.server is not None:
-        clone(base)
-    build(base, install)
-    return install
 
 
 def parse_arguments():
@@ -994,17 +560,6 @@ def save_best(results):
     print(f"[INFO TUN-0003] Best parameters written to {new_best_path}")
 
 
-@ray.remote
-def consumer(queue):
-    """consumer"""
-    while not queue.empty():
-        next_item = queue.get()
-        name = next_item[1]
-        print(f"[INFO TUN-0007] Scheduling run for parameter {name}.")
-        ray.get(openroad_distributed.remote(*next_item))
-        print(f"[INFO TUN-0008] Finished run for parameter {name}.")
-
-
 def sweep():
     """Run sweep of parameters"""
     if args.server is not None:
@@ -1013,7 +568,7 @@ def sweep():
         # <repo>/<logs>/<platform>/<design>/
         repo_dir = os.path.abspath(LOCAL_DIR + "/../" * 4)
     else:
-        repo_dir = os.path.abspath("../")
+        repo_dir = os.path.abspath(os.path.join(ORFS_FLOW_DIR, ".."))
     print(f"[INFO TUN-0012] Log folder {LOCAL_DIR}.")
     queue = Queue()
     parameter_list = list()
@@ -1030,8 +585,9 @@ def sweep():
         temp = dict()
         for value in parameter:
             temp.update(value)
-        print(temp)
-        queue.put([repo_dir, temp, LOCAL_DIR])
+        queue.put(
+            [args, repo_dir, temp, LOCAL_DIR, SDC_ORIGINAL, FR_ORIGINAL, INSTALL_PATH]
+        )
     workers = [consumer.remote(queue) for _ in range(args.jobs)]
     print("[INFO TUN-0009] Waiting for results.")
     ray.get(workers)
@@ -1043,37 +599,11 @@ if __name__ == "__main__":
 
     # Read config and original files before handling where to run in case we
     # need to upload the files.
-    config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(os.path.abspath(args.config))
+    config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(
+        os.path.abspath(args.config), args.mode, getattr(args, "algorithm", None)
+    )
 
-    # Connect to remote Ray server if any, otherwise will run locally
-    if args.server is not None:
-        # At GCP we have a NFS folder that is present for all worker nodes.
-        # This allows to build required binaries once. We clone, build and
-        # store intermediate files at LOCAL_DIR.
-        with open(args.config) as config_file:
-            LOCAL_DIR = "/shared-data/autotuner"
-            LOCAL_DIR += f"-orfs-{args.git_orfs_branch}"
-            if args.git_or_branch != "":
-                LOCAL_DIR += f"-or-{args.git_or_branch}"
-            if args.git_latest:
-                LOCAL_DIR += "-or-latest"
-        # Connect to ray server before first remote execution.
-        ray.init(f"ray://{args.server}:{args.port}")
-        # Remote functions return a task id and are non-blocking. Since we
-        # need the setup repo before continuing, we call ray.get() to wait
-        # for its completion.
-        INSTALL_PATH = ray.get(setup_repo.remote(LOCAL_DIR))
-        LOCAL_DIR += f"/flow/logs/{args.platform}/{args.design}"
-        print("[INFO TUN-0001] NFS setup completed.")
-    else:
-        # For local runs, use the same folder as other ORFS utilities.
-        ORFS_FLOW_DIR = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "../../../../flow")
-        )
-        os.chdir(ORFS_FLOW_DIR)
-        LOCAL_DIR = f"logs/{args.platform}/{args.design}"
-        LOCAL_DIR = os.path.abspath(LOCAL_DIR)
-        INSTALL_PATH = os.path.abspath("../tools/install")
+    LOCAL_DIR, ORFS_FLOW_DIR, INSTALL_PATH = prepare_ray_server(args)
 
     if args.mode == "tune":
         best_params = set_best_params(args.platform, args.design)
@@ -1081,7 +611,7 @@ if __name__ == "__main__":
         TrainClass = set_training_class(args.eval)
         # PPAImprov requires a reference file to compute training scores.
         if args.eval == "ppa-improv":
-            reference = PPAImprov.read_metrics(args.reference)
+            reference = read_metrics(args.reference)
 
         tune_args = dict(
             name=args.experiment,

@@ -115,12 +115,11 @@ export IO_PLACER_H             ?= M4
 export IO_PLACER_V             ?= M5
 
 export MACRO_PLACE_HALO        ?= 10 10
-export MACRO_PLACE_CHANNEL     ?= 12 12
 
 # the followings create a keep out / halo between
 # macro and core rows
-export MACRO_HALO_X            ?= 2
-export MACRO_HALO_Y            ?= 2
+export MACRO_ROWS_HALO_X            ?= 2
+export MACRO_ROWS_HALO_Y            ?= 2
 
 export PLACE_DENSITY ?= 0.60
 

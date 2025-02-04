@@ -62,8 +62,8 @@ export DETAILED_ROUTE_END_ITERATION ?= 6
 export MAX_ROUTING_LAYER = M9
 
 # ensure we have some rows, so we don't get a bad clock skew.
-export MACRO_HALO_X            = 0.5
-export MACRO_HALO_Y            = 0.5
+export MACRO_ROWS_HALO_X            = 0.5
+export MACRO_ROWS_HALO_Y            = 0.5
 
 export ADDITIONAL_FILES = \
  designs/src/mock-array/util.tcl \
