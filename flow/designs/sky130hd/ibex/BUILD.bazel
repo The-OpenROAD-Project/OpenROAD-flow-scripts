@@ -1,0 +1,19 @@
+load("@bazel-orfs//:openroad.bzl", "orfs_flow")
+
+orfs_flow(
+    name = "ibex",
+    arguments = {
+        "ADDER_MAP_FILE": "",
+        "CORE_UTILIZATION": "45",
+        "PLACE_DENSITY_LB_ADDON": "0.2",
+        "TNS_END_PERCENT": "100",
+        "REMOVE_ABC_BUFFERS": "1",
+    },
+    pdk = "@docker_orfs//:sky130hd",
+    sources = {
+        "SDC_FILE": [":constraint.sdc"],
+        "FASTROUTE_TCL": ["fastroute.tcl"],
+    },
+    top = "ibex_core",
+    verilog_files = ["//designs/src/ibex:verilog"],
+)
