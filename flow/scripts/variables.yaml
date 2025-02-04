@@ -869,3 +869,8 @@ RUN_LOG_NAME_STEM:
     Stem of the log file name, the log file will be named
     `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.
   default: run
+YOSYS_FLAGS:
+  description: >
+    Additional flags to pass to yosys.
+  stages:
+    - synth
