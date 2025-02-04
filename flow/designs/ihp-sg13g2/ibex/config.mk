@@ -45,7 +45,18 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 # Adders degrade ibex setup repair
 export ADDER_MAP_FILE :=
 
-export CORE_UTILIZATION = 45
-export PLACE_DENSITY_LB_ADDON = 0.2
+#export CORE_UTILIZATION = 45
+#export PLACE_DENSITY_LB_ADDON = 0.2
 export TNS_END_PERCENT = 100
 export CTS_BUF_DISTANCE = 60
+
+# AT settings to force DRT 0206 checkConnectivity error
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 1
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 1
+export CORE_ASPECT_RATIO = 0.9224734929429836
+export CORE_MARGIN = 16.5
+export CORE_UTILIZATION = 28
+export CTS_CLUSTER_DIAMETER = 136
+export CTS_CLUSTER_SIZE = 58
+export PLACE_DENSITY_LB_ADDON = 0.02722404393382803
+export PLACE_PINS_ARGS = -min_distance 1
