@@ -9,5 +9,6 @@ RUN sudo apt-get update -y \
     && rm ./klayout_0.27.1-1_amd64.deb
 
 RUN wget https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/etc/DependencyInstaller.sh \
-    && sudo bash ./DependencyInstaller.sh -dev \
+    && sudo bash ./DependencyInstaller.sh -base \
+    && sudo bash ./DependencyInstaller.sh -common \
     && rm DependencyInstaller.sh
