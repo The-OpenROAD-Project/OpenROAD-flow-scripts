@@ -12,6 +12,8 @@ dynamic = ["dependencies", "optional-dependencies"]
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
+optional-dependencies.ray = { file = ["requirements-ray.txt"] }
+optional-dependencies.vizier = { file = ["requirements-vizier.txt"] }
 optional-dependencies.dev = { file = ["requirements-dev.txt"] }
 
 [build-system]
