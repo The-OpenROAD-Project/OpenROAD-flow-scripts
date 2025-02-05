@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
-
-function setpaths() {
+#
+# Set developer paths and environment variables here,
+# user settings go in ./env.sh
+function __setpaths() {
     local DIR=$(readlink -f "$(dirname "${BASH_SOURCE[0]}")")
     export PATH="$DIR/dependencies/bin:$PATH"
     export CMAKE_INSTALL_RPATH=$DIR/dependencies/lib:$DIR/dependencies/lib64
-}
 
-setpaths
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        export CMAKE_PREFIX_PATH="$(brew --prefix or-tools)"
+    fi
+}
+__setpaths
+unset -f __setpaths
