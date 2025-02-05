@@ -161,6 +161,12 @@ SYNTH_HIERARCHICAL:
   stages:
     - synth
   default: 0
+SYNTH_MEMORY_MAX_BITS:
+  description: >
+    Maximum number of bits for memory synthesis.
+  default: 4096
+  stages:
+    - synth
 LATCH_MAP_FILE:
   description: |
     List of latches treated as a black box by Yosys.
