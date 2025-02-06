@@ -27,7 +27,4 @@ elif grep -q "^+" "$tmpfile"; then
 fi
 
 "$DIR/etc/DependencyInstaller.sh" -base
-"$DIR/tools/OpenROAD/etc/DependencyInstaller.sh" -base
-
 sudo -u $SUDO_USER "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
-sudo -u $SUDO_USER "$DIR/tools/OpenROAD/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"

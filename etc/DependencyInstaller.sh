@@ -283,14 +283,12 @@ while [ "$#" -gt 0 ]; do
                 echo "WARNING: previous argument -${option} will be overwritten with -base." >&2
             fi
             option="base"
-            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
             ;;
         -common)
             if [[ "${option}" != "none" ]]; then
                 echo "WARNING: previous argument -${option} will be overwritten with -common." >&2
             fi
             option="common"
-            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
             ;;
         -local)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
