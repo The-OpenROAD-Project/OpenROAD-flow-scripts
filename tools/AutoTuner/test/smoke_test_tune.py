@@ -43,6 +43,5 @@ class sky130hdTuneSmokeTest(BaseTuneSmokeTest):
     design = "gcd"
 
 
-
 if __name__ == "__main__":
     unittest.main()

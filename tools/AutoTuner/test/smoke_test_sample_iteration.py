@@ -36,6 +36,7 @@ class BaseSampleIterationSmokeTest(unittest.TestCase):
             successful = out.returncode == 0
             self.assertTrue(successful)
 
+
 class asap7SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
     platform = "asap7"
     design = "gcd"
