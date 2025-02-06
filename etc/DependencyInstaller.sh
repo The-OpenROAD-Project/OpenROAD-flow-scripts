@@ -13,8 +13,6 @@ fi
 klayoutVersion=0.28.8
 verilatorVersion=5.026
 
-baseDir="/tmp/DependencyInstaller-ORFS"
-
 _versionCompare() {
     local a b IFS=. ; set -f
     printf -v a %08d $1; printf -v b %08d $3
@@ -36,16 +34,6 @@ _installCommon() {
         pip3 install --no-cache-dir -U $pkgs
     else
         pip3 install --no-cache-dir --user -U $pkgs
-    fi
-
-    if [[ "${constantBuildDir}" == "true" ]]; then
-        if [[ -d "${baseDir}" ]]; then
-            echo "[INFO] Removing old building directory ${baseDir}"
-            rm -rf "${baseDir}"
-        fi
-        mkdir -p "${baseDir}"
-    else
-        baseDir=$(mktemp -d /tmp/DependencyInstaller-ORFS-XXXXXX)
     fi
 
     # Install Verilator
@@ -250,13 +238,10 @@ EOF
     exit "${1:-1}"
 }
 
-# default args
+# default values for variables
 OR_INSTALLER_ARGS="-eqy"
-# default prefix
 PREFIX=""
-# default option
 option="none"
-# default isLocal
 isLocal="false"
 constantBuildDir="false"
 CI="no"
@@ -314,7 +299,6 @@ if [[ "${option}" == "none"  ]]; then
         echo "You must use one of: -all|-base|-common" >&2
         _help
 fi
-
 OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
 
 platform="$(uname -s)"
@@ -338,6 +322,17 @@ case "${platform}" in
         _help
         ;;
 esac
+
+if [[ "${constantBuildDir}" == "true" ]]; then
+    baseDir="/tmp/DependencyInstaller-ORFS-$(whoami)"
+else
+    baseDir=$(mktemp -d /tmp/DependencyInstaller-ORFS-XXXXXX)
+fi
+if [[ -d "${baseDir}" ]]; then
+    echo "[INFO] Removing old building directory ${baseDir}"
+    rm -rf "${baseDir}"
+fi
+mkdir -p "${baseDir}"
 
 case "${os}" in
     "CentOS Linux" )
@@ -392,3 +387,4 @@ case "${os}" in
         _help
         ;;
 esac
+rm -rf "${baseDir}"
