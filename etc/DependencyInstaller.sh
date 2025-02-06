@@ -12,6 +12,8 @@ fi
 # package versions
 klayoutVersion=0.28.8
 verilatorVersion=5.026
+# TODO: remove after PR-2796 is merged
+baseDir=""
 
 _versionCompare() {
     local a b IFS=. ; set -f
