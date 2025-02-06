@@ -32,17 +32,17 @@ class BaseTuneSmokeTest(unittest.TestCase):
         self.assertTrue(successful)
 
 
-class ASAP7TuneSmokeTest(BaseTuneSmokeTest):
+class asap7TuneSmokeTest(BaseTuneSmokeTest):
     platform = "asap7"
     design = "gcd"
 
 
-class SKY130HDTuneSmokeTest(BaseTuneSmokeTest):
+class sky130hdTuneSmokeTest(BaseTuneSmokeTest):
     platform = "sky130hd"
     design = "gcd"
 
 
-class IHPSG13G2TuneSmokeTest(BaseTuneSmokeTest):
+class ihpsg13g2TuneSmokeTest(BaseTuneSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"
 

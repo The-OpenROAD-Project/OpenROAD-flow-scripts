@@ -431,7 +431,6 @@ memory:
 #-------------------------------------------------------------------------------
 
 export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
-export SYNTH_MEMORY_MAX_BITS ?= 4096
 export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
 $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
