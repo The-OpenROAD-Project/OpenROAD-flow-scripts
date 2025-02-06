@@ -13,6 +13,8 @@ fi
 klayoutVersion=0.28.8
 verilatorVersion=5.026
 
+baseDir="/tmp/DependencyInstaller-ORFS"
+
 _versionCompare() {
     local a b IFS=. ; set -f
     printf -v a %08d $1; printf -v b %08d $3
@@ -36,29 +38,26 @@ _installCommon() {
         pip3 install --no-cache-dir --user -U $pkgs
     fi
 
-    if [[ "$constantBuildDir" == "true" ]]; then
-        baseDir="/tmp/DependencyInstaller-ORFS"
-        if [[ -d "$baseDir" ]]; then
-            echo "[INFO] Removing old building directory $baseDir"
+    if [[ "${constantBuildDir}" == "true" ]]; then
+        if [[ -d "${baseDir}" ]]; then
+            echo "[INFO] Removing old building directory ${baseDir}"
+            rm -rf "${baseDir}"
         fi
-        mkdir -p "$baseDir"
+        mkdir -p "${baseDir}"
     else
-        baseDir=$(mktemp -d /tmp/DependencyInstaller-orfs-XXXXXX)
+        baseDir=$(mktemp -d /tmp/DependencyInstaller-ORFS-XXXXXX)
     fi
 
     # Install Verilator
-    verilatorPrefix=`realpath ${PREFIX:-"/usr/local"}`
+    verilatorPrefix=$(realpath ${PREFIX:-"/usr/local"})
     if [[ ! -x ${verilatorPrefix}/bin/verilator ]]; then
-        pushd $baseDir
-            git clone --depth=1 -b "v$verilatorVersion" https://github.com/verilator/verilator.git
-            pushd verilator
-                autoconf
-                ./configure --prefix "${verilatorPrefix}"
-                make -j`nproc`
-                make install
-            popd
-            rm -r verilator
-        popd
+        cd "${baseDir}"
+        git clone --depth=1 -b "v$verilatorVersion" https://github.com/verilator/verilator.git
+        cd verilator
+        autoconf
+        ./configure --prefix "${verilatorPrefix}"
+        make -j
+        make install
     fi
 }
 
@@ -140,11 +139,8 @@ _installUbuntuPackages() {
         apt-get -y install --no-install-recommends klayout python3-pandas
     else
         arch=$(uname -m)
-        lastDir="$(pwd)"
         # temp dir to download and compile
-        baseDir=/tmp/installers
         klayoutPrefix=${PREFIX:-"/usr/local"}
-        mkdir -p "${baseDir}"
         cd "${baseDir}"
         if [[ $arch == "aarch64" ]]; then
             if [ ! -f ${klayoutPrefix}/klayout ]; then
@@ -166,8 +162,6 @@ _installUbuntuPackages() {
             md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
             dpkg -i klayout_${klayoutVersion}-1_amd64.deb
         fi
-        cd "${lastDir}"
-        rm -rf "${baseDir}"
     fi
 
     if command -v docker &> /dev/null; then
@@ -178,6 +172,7 @@ _installUbuntuPackages() {
         return 0
     fi
 
+    cd "${baseDir}"
     # Add Docker's official GPG key:
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
