@@ -93,17 +93,70 @@ _installUbuntuCleanUp() {
     apt-get autoremove -y
 }
 
-_installKlayoutDependenciesUbuntuAarch64() {
+_installKlayoutUbuntuAarch64() {
     echo "Installing Klayout dependancies"
     export DEBIAN_FRONTEND=noninteractive
     apt-get -y update
-    apt-get -y install  build-essential \
-                        qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev \
-                        ruby ruby-dev \
-                        python3 python3-dev \
-                        libz-dev\
-                        libgit2-dev
+    apt-get -y install \
+        build-essential \
+        libgit2-dev \
+        libz-dev \
+        qtbase5-dev \
+        qtmultimedia5-dev \
+        qttools5-dev \
+        libqt5multimediawidgets5 \
+        libqt5svg5-dev \
+        libqt5xmlpatterns5-dev \
+        python3 python3-dev \
+        ruby ruby-dev
     echo "All dependencies installed successfully"
+    echo "Installing KLayout for aarch64 architecture"
+    git clone --depth=1 -b v${klayoutVersion} https://github.com/KLayout/klayout.git
+    cd klayout
+    ./build.sh -bin "${klayoutPrefix}"
+}
+
+_install_KLayout() {
+    klayoutPrefix=${PREFIX:-"/usr/local"}
+    if [ -f ${klayoutPrefix}/klayout ]; then
+        currentVersion=$(${klayoutPrefix}/klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+        if _versionCompare $currentVersion -eq $klayoutVersion; then
+            echo "Klayout is already installed"
+            return
+        fi
+        if _versionCompare $currentVersion -gt $klayoutVersion; then
+            echo "KLayout version greater than or equal to ${klayoutVersion}"
+            return
+        else
+            echo "KLayout version less than ${klayoutVersion}"
+            echo "Replace old version"
+        fi
+        sudo apt-get -y remove klayout
+    fi
+
+    if  [[ $1 == "rodete" ]]; then
+        apt-get -y install --no-install-recommends klayout python3-pandas
+        return
+    fi
+    if _versionCompare "$1" -ge 23.04; then
+        apt-get -y install --no-install-recommends klayout python3-pandas
+        return
+    fi
+    if [[ $(uname -m) == "aarch64" ]]; then
+        _installKlayoutUbuntuAarch64
+        return
+    fi
+
+    if [[ $1 == 20.04 ]]; then
+        klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
+    else
+        klayoutChecksum=db751264399706a23d20455bb7624264
+    fi
+
+    cd "${baseDir}"
+    wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
+    md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
+    dpkg -i klayout_${klayoutVersion}-1_amd64.deb
 }
 
 _installUbuntuPackages() {
@@ -133,42 +186,7 @@ _installUbuntuPackages() {
         zlib1g \
         zlib1g-dev
 
-    # install KLayout
-    if  [[ $1 == "rodete" ]]; then
-        apt-get -y install --no-install-recommends klayout python3-pandas
-    elif _versionCompare "$1" -ge 23.04; then
-        apt-get -y install --no-install-recommends klayout python3-pandas
-    else
-        arch=$(uname -m)
-        lastDir="$(pwd)"
-        # temp dir to download and compile
-        baseDir=/tmp/installers
-        klayoutPrefix=${PREFIX:-"/usr/local"}
-        mkdir -p "${baseDir}"
-        cd "${baseDir}"
-        if [[ $arch == "aarch64" ]]; then
-            if [ ! -f ${klayoutPrefix}/klayout ]; then
-                _installKlayoutDependenciesUbuntuAarch64
-                echo "Installing KLayout for aarch64 architecture"
-                git clone https://github.com/KLayout/klayout.git
-                cd klayout
-                ./build.sh -bin "${klayoutPrefix}"
-            else
-                echo "Klayout is already installed"
-        fi
-        else
-            if [[ $1 == 20.04 ]]; then
-                klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
-            else
-                klayoutChecksum=db751264399706a23d20455bb7624264
-            fi
-            wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
-            md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
-            dpkg -i klayout_${klayoutVersion}-1_amd64.deb
-        fi
-        cd "${lastDir}"
-        rm -rf "${baseDir}"
-    fi
+    _install_KLayout "${1}"
 
     if command -v docker &> /dev/null; then
         # The user can uninstall docker if they want to reinstall it,
