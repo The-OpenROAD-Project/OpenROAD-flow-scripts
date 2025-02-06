@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 1,
+        "value": 0,
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
