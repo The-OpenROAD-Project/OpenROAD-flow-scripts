@@ -39,6 +39,8 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hs.v
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
 export ABC_LOAD_IN_FF = 5
+export CLOCKGATE_CMD = clockgate -pos sky130_fd_sc_hs__dlclkp_4 GATE:CLK:GCLK -min_net_size 8
+
 #--------------------------------------------------------
 # Floorplan
 # -------------------------------------------------------
