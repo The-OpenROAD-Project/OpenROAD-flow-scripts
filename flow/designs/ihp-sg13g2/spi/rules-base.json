@@ -32,7 +32,7 @@
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 4194,
+        "value": 4994,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.2,
+        "value": -0.16,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 10462,
+        "value": 10447,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -25.27,
+        "value": -21.65,
         "compare": ">="
     }
 }

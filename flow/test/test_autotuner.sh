@@ -8,11 +8,6 @@ cd ../
 ./tools/AutoTuner/installer.sh
 . ./tools/AutoTuner/setup.sh
 
-# remove dashes and capitalize platform name
-PLATFORM=${PLATFORM//-/}
-# convert to uppercase
-PLATFORM=${PLATFORM^^}
-
 echo "Running Autotuner smoke tune test"
 python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM}TuneSmokeTest.test_tune
 
@@ -28,6 +23,19 @@ if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN_NAME" == "gcd" ]; then
 
   echo "Running AutoTuner resume test (only once)"
   python3 -m unittest tools.AutoTuner.test.resume_check.ResumeCheck.test_tune_resume
+
+  echo "Running AutoTuner binary check (only once)"
+  openroad_autotuner -h
 fi
+
+echo "Running Autotuner plotting smoke test"
+all_experiments=$(ls -d ./flow/logs/${PLATFORM}/${DESIGN_NAME}/smoke-test-tune*)
+all_experiments=$(basename -a $all_experiments)
+for expt in $all_experiments; do
+  python3 tools/AutoTuner/src/autotuner/utils/plot.py \
+    --platform ${PLATFORM} \
+    --design ${DESIGN_NAME} \
+    --experiment $expt
+done
 
 exit $ret
