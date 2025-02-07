@@ -2,7 +2,7 @@
 Windows Subsystem for Linux, or WSL for short is a way for you to mount a Linux-based OS onto your Windows machine, allowing you to build OpenROAD-flow-scripts both locally and via Docker. 
 
 ## Install WSL
-Instructions to install WSL can be found [here](https://learn.microsoft.com/en-us/windows/wsl/install). You may use any kernel supported, such as: CentOS 7, Ubuntu 20.04, Ubuntu 22.04, RHEL 8, Debian 10 and Debian 11.
+Instructions to install WSL can be found [here](https://learn.microsoft.com/en-us/windows/wsl/install). You may use any kernel supported, such as: Ubuntu 20.04, Ubuntu 22.04, RHEL 8, RockyLinux 9, Debian 11.
 
 We recommend that users follow the Docker build by continuing onto the guide below. However, if you wish to install locally, you may follow the build locally instructions [here](./BuildLocally.md).
 

@@ -23,6 +23,9 @@ if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN_NAME" == "gcd" ]; then
 
   echo "Running AutoTuner resume test (only once)"
   python3 -m unittest tools.AutoTuner.test.resume_check.ResumeCheck.test_tune_resume
+
+  echo "Running AutoTuner binary check (only once)"
+  openroad_autotuner -h
 fi
 
 echo "Running Autotuner plotting smoke test"
