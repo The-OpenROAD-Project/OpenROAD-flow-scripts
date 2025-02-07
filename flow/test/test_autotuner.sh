@@ -34,5 +34,3 @@ for expt in $all_experiments; do
     --design ${DESIGN_NAME} \
     --experiment $expt
 done
-
-exit $ret
