@@ -71,6 +71,8 @@ ORFS_FLOW_DIR = os.path.abspath(
 )
 # URL to ORFS GitHub repository
 ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
+# Global variable for args
+args = None
 
 
 class AutoTunerBase(tune.Trainable):
@@ -433,11 +435,11 @@ def parse_arguments():
         " training stderr\n\t2: also print training stdout.",
     )
 
-    arguments = parser.parse_args()
-    if arguments.mode == "tune":
-        arguments.algorithm = arguments.algorithm.lower()
+    args = parser.parse_args()
+    if args.mode == "tune":
+        args.algorithm = args.algorithm.lower()
         # Validation of arguments
-        if arguments.eval == "ppa-improv" and arguments.reference is None:
+        if args.eval == "ppa-improv" and args.reference is None:
             print(
                 '[ERROR TUN-0006] The argument "--eval ppa-improv"'
                 ' requires that "--reference <FILE>" is also given.'
@@ -445,7 +447,7 @@ def parse_arguments():
             sys.exit(7)
 
         # Check for experiment name and resume flag.
-        if arguments.resume and arguments.experiment == "test":
+        if args.resume and args.experiment == "test":
             print(
                 '[ERROR TUN-0031] The flag "--resume"'
                 ' requires that "--experiment NAME" is also given.'
@@ -453,16 +455,16 @@ def parse_arguments():
             sys.exit(1)
 
     # If the experiment name is the default, add a UUID to the end.
-    if arguments.experiment == "test":
+    if args.experiment == "test":
         id = str(uuid())[:8]
-        arguments.experiment = f"{arguments.mode}-{id}"
+        args.experiment = f"{args.mode}-{id}"
     else:
-        arguments.experiment += f"-{arguments.mode}"
+        args.experiment += f"-{args.mode}"
 
-    if arguments.timeout is not None:
-        arguments.timeout = round(arguments.timeout * 3600)
+    if args.timeout is not None:
+        args.timeout = round(args.timeout * 3600)
 
-    return arguments
+    return args
 
 
 def set_algorithm(experiment_name, config):
