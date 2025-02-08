@@ -6,9 +6,6 @@ import time
 from contextlib import contextmanager
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(cur_dir, "../src/autotuner")
-orfs_dir = os.path.join(cur_dir, "../../../flow")
-os.chdir(src_dir)
 
 
 @contextmanager
@@ -34,7 +31,13 @@ class ResumeCheck(unittest.TestCase):
 
     def setUp(self):
         self.config = os.path.join(
-            orfs_dir, "designs", self.platform, self.design, "autotuner.json"
+            cur_dir,
+            "../../../",
+            "flow",
+            "designs",
+            self.platform,
+            self.design,
+            "autotuner.json",
         )
         self.jobs = self.samples
         self.num_cpus = os.cpu_count()
@@ -47,7 +50,7 @@ class ResumeCheck(unittest.TestCase):
         res_per_trial = float("{:.1f}".format(self.num_cpus / self.samples))
         options = ["", "--resume"]
         self.commands = [
-            f"python3 distributed.py"
+            f"python3 -m autotuner.distributed"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --config {self.config}"
