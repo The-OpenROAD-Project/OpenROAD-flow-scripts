@@ -43,5 +43,10 @@ class sky130hdTuneSmokeTest(BaseTuneSmokeTest):
     design = "gcd"
 
 
+class ihpsg13g2TuneSmokeTest(BaseTuneSmokeTest):
+    platform = "ihp-sg13g2"
+    design = "gcd"
+
+
 if __name__ == "__main__":
     unittest.main()
