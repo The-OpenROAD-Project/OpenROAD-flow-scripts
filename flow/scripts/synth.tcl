@@ -100,6 +100,9 @@ tee -o $::env(REPORTS_DIR)/synth_check.txt check
 
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
 
+# check the design is composed exclusively of target cells, and check for other problems
+check -assert -mapped
+
 # Write synthesized design
 write_verilog -noexpr -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
 # One day a more sophisticated synthesis will write out a modified
