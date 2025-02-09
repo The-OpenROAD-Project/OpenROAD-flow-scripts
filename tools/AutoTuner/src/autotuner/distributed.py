@@ -520,7 +520,7 @@ def parse_arguments():
         args.timeout_per_trial = round(
             args.cpu_budget / (args.jobs * args.resources_per_trial) * 3600
         )
-        args.timeotu = set_timeout(args.timeout, args.timeout_per_trial)
+        args.timeout = set_timeout(args.timeout, args.timeout_per_trial)
         if args.mode == "tune":
             template = calculate_expected_numbers(args.timeout, args.samples)
         else:
