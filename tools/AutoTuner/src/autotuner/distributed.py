@@ -512,6 +512,7 @@ def parse_arguments():
         args.timeout_per_trial = round(args.timeout_per_trial * 3600)
     if args.timeout is not None:
         args.timeout = round(args.timeout * 3600)
+    args.timeout = set_timeout(args.timeout, args.timeout_per_trial)
 
     # Calculate timeout based on cpu_budget
     if args.cpu_budget != -1:
@@ -519,11 +520,11 @@ def parse_arguments():
         args.timeout_per_trial = round(
             args.cpu_budget / (args.jobs * args.resources_per_trial) * 3600
         )
-        overall_timeout = min(args.timeout, args.timeout_per_trial)
+        args.timeotu = set_timeout(args.timeout, args.timeout_per_trial)
         if args.mode == "tune":
-            template = calculate_expected_numbers(overall_timeout, args.samples)
+            template = calculate_expected_numbers(args.timeout, args.samples)
         else:
-            template = calculate_expected_numbers(overall_timeout, 1)
+            template = calculate_expected_numbers(args.timeout, 1)
         print(template)
         if not args.yes:
             print(
@@ -615,6 +616,17 @@ def set_training_class(function):
     if function == "ppa-improv":
         return PPAImprov
     return None
+
+
+def set_timeout(timeout, timeout_per_trial):
+    """
+    Set timeout for experiment.
+    """
+    return (
+        min(timeout, timeout_per_trial)
+        if (timeout and timeout_per_trial)
+        else (timeout or timeout_per_trial)
+    )
 
 
 @ray.remote
