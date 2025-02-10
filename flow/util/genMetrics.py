@@ -18,12 +18,6 @@ import pandas as pd
 import re
 from glob import glob
 
-# make sure the working dir is flow/
-flow_home = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-
-# Parse and validate arguments
-# =============================================================================
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
