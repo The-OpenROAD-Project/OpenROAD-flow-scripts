@@ -24,7 +24,7 @@ export DIE_AREA = $(shell \
 
 export IO_CONSTRAINTS         = designs/asap7/mock-array/Element/io.tcl
 
-export PDN_TCL                = $(FLOW_HOME)/platforms/asap7/openRoad/pdn/BLOCK_grid_strategy.tcl
+export PDN_TCL                = $(PLATFORM_DIR)/openRoad/pdn/BLOCK_grid_strategy.tcl
 
 # Detailed routing should be easy, limit iterations
 export DETAILED_ROUTE_END_ITERATION ?= 6
