@@ -124,27 +124,40 @@ The following commands should be run from `./tools/AutoTuner`.
 
 #### Tune only 
 
-* AutoTuner: `python3 -m autotuner.distributed tune -h`
+* AutoTuner: `openroad_autotuner tune -h`
 
 Example:
 
 ```shell
-python3 -m autotuner.distributed --design gcd --platform sky130hd \
+openroad_autotuner --design gcd --platform sky130hd \
                        --config ../../flow/designs/sky130hd/gcd/autotuner.json \
                        tune --samples 5
 ```
 #### Sweep only 
 
-* Parameter sweeping: `python3 -m autotuner.distributed sweep -h`
+* Parameter sweeping: `openroad_autotuner sweep -h`
 
 Example:
 
 ```shell
-python3 -m autotuner.distributed --design gcd --platform sky130hd \
+openroad_autotuner --design gcd --platform sky130hd \
                        --config src/autotuner/distributed-sweep-example.json \
                        sweep
 ```
 
+#### Plot images
+
+After running an AutoTuner experiment, you can generate a graph to understand the results better.
+The graph will show the progression of one metric (see list below) over the execution of the experiment.
+
+- QoR
+- Runtime per trial
+- Clock Period
+- Worst slack
+
+```shell
+python3 utils/plot.py --results_dir <your-autotuner-result-path>
+```
 
 ### Google Cloud Platform (GCP) distribution with Ray
 

@@ -39,6 +39,13 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hs.v
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hs__buf_1
 export ABC_LOAD_IN_FF = 5
+
+# -----------------------------------------------------
+#  Sizing
+# -----------------------------------------------------
+
+export MATCH_CELL_FOOTPRINT = 1
+
 #--------------------------------------------------------
 # Floorplan
 # -------------------------------------------------------

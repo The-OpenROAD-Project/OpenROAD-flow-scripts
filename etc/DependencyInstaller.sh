@@ -260,7 +260,7 @@ OR_INSTALLER_ARGS="-eqy"
 # default prefix
 PREFIX=""
 # default option
-option="all"
+option="none"
 # default isLocal
 isLocal="false"
 constantBuildDir="false"
@@ -272,16 +272,20 @@ while [ "$#" -gt 0 ]; do
         -h|-help)
             _help 0
             ;;
+        -all)
+            if [[ "${option}" != "none" ]]; then
+                echo "WARNING: previous argument -${option} will be overwritten with -all." >&2
+            fi
+            option="all"
+            ;;
         -base)
-            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -base"
-            if [[ "${option}" != "all" ]]; then
+            if [[ "${option}" != "none" ]]; then
                 echo "WARNING: previous argument -${option} will be overwritten with -base." >&2
             fi
             option="base"
             ;;
         -common)
-            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -common"
-            if [[ "${option}" != "all" ]]; then
+            if [[ "${option}" != "none" ]]; then
                 echo "WARNING: previous argument -${option} will be overwritten with -common." >&2
             fi
             option="common"
@@ -308,6 +312,13 @@ while [ "$#" -gt 0 ]; do
     esac
     shift 1
 done
+
+if [[ "${option}" == "none"  ]]; then
+        echo "You must use one of: -all|-base|-common" >&2
+        _help
+fi
+
+OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
 
 platform="$(uname -s)"
 case "${platform}" in

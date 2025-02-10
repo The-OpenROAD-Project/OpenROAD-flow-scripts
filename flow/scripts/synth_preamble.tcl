@@ -87,7 +87,7 @@ if {[env_var_exists_and_non_empty DONT_USE_CELLS]} {
   }
 }
 
-if {[env_var_exists_and_non_empty SDC_FILE_CLOCK_PERIOD] && [file isfile $::env(SDC_FILE_CLOCK_PERIOD)]} {
+if {[env_var_exists_and_non_empty SDC_FILE_CLOCK_PERIOD]} {
   puts "Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
   set fp [open $::env(SDC_FILE_CLOCK_PERIOD) r]
   set clock_period [string trim [read $fp]]
