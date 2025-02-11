@@ -107,6 +107,13 @@ To build from your own git repository:
     cd /home/me/myproject
     make --file=~/OpenROAD-flow-scripts/flow/Makefile DESIGN_CONFIG=somefolder/config.mk ...
 
+## Running a quick smoke-test of ORFS on your own Verilog
+
+You can [run ORFS on your own Verilog files](./flow/designs/asap7/minimal/README.md)
+without setting up a project or moving your Verilog files and even learn
+a thing or two about floorplan, placement and routing
+before you create an .sdc file and a config.mk file.
+
 ## Citing this Work
 
 If you use this software in any published work, we would appreciate a citation!
