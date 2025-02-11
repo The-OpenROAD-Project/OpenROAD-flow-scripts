@@ -321,30 +321,30 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
                 else:
                     rule_value = ceil(rule_value * 100) / 100.0
 
-            UPDATE = False
+            need_to_update = False
             if (
                 tighten
                 and rule_value != old_rule["value"]
                 and compare(rule_value, old_rule["value"])
             ):
-                UPDATE = True
+                need_to_update = True
                 change_str += format_str.format(
                     field, old_rule["value"], rule_value, "Tighten"
                 )
 
             if failing and not compare(metrics[field], old_rule["value"]):
-                UPDATE = True
+                need_to_update = True
                 change_str += format_str.format(
                     field, old_rule["value"], rule_value, "Failing"
                 )
 
             if update and old_rule["value"] != rule_value:
-                UPDATE = True
+                need_to_update = True
                 change_str += format_str.format(
                     field, old_rule["value"], rule_value, "Updating"
                 )
 
-            if not UPDATE:
+            if not need_to_update:
                 rule_value = old_rule["value"]
 
         rules[field] = dict(value=rule_value, compare=option["compare"])
