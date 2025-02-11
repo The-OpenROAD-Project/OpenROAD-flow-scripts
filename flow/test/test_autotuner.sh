@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+set -eoux pipefail
+
 DESIGN_NAME=${1:-gcd}
 PLATFORM=${2:-nangate45}
 
