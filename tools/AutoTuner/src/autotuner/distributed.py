@@ -172,7 +172,7 @@ class AutoTunerBase(tune.Trainable):
             detail_padding = config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"]
             if global_padding < detail_padding:
                 print(
-                    f"[WARN TUN-0032] CELL_PAD_IN_SITES_DETAIL_PLACEMENT cannot be greater than CELL_PAD_IN_SITES_GLOBAL_PLACEMENT: {detail_padding} {global_padding}"
+                    f"[WARN TUN-0032] CELL_PAD_IN_SITES_DETAIL_PLACEMENT ({detail_padding}) cannot be greater than CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ({global_padding})"
                 )
                 return False
         return True
@@ -215,9 +215,6 @@ class PPAImprov(AutoTunerBase):
     def evaluate(self, metrics):
         error = "ERR" in metrics.values() or "ERR" in reference.values()
         not_found = "N/A" in metrics.values() or "N/A" in reference.values()
-        print("Metrics", metrics.values())
-        print("Reference", reference.values())
-        print(error, not_found)
         if error or not_found:
             return ERROR_METRIC
         ppa = self.get_ppa(metrics)
