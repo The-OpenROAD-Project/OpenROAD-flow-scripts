@@ -6,9 +6,6 @@ import time
 from contextlib import contextmanager
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(cur_dir, "../src/autotuner")
-orfs_dir = os.path.join(cur_dir, "../../../flow")
-os.chdir(src_dir)
 
 
 @contextmanager
@@ -30,15 +27,22 @@ class ResumeCheck(unittest.TestCase):
     design = "gcd"
     samples = 5
     iterations = 2
+    timeout = 200
 
     def setUp(self):
         self.config = os.path.join(
-            orfs_dir, "designs", self.platform, self.design, "autotuner.json"
+            cur_dir,
+            "../../../",
+            "flow",
+            "designs",
+            self.platform,
+            self.design,
+            "autotuner.json",
         )
         self.jobs = self.samples
         self.num_cpus = os.cpu_count()
 
-        # How it works: Say we have 5 samples and 5 iterations.
+        # How it works: Say we have 5 samples and 5 iterations and 16 cores.
         # If we want to limit to only 5 trials (and avoid any parallelism magic by Ray)
         #  We can set resources_per_trial = NUM_CORES/5 = 3.2 (fractional resources_per_trial are allowed!)
 
@@ -46,12 +50,13 @@ class ResumeCheck(unittest.TestCase):
         res_per_trial = float("{:.1f}".format(self.num_cpus / self.samples))
         options = ["", "--resume"]
         self.commands = [
-            f"python3 distributed.py"
+            f"python3 -m autotuner.distributed"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --config {self.config}"
             f" --jobs {self.jobs}"
-            f" --experiment test-resume"
+            f" --experiment test_resume"
+            f" --yes"
             f" tune --iterations {self.iterations} --samples {self.samples}"
             f" --resources_per_trial {res_per_trial}"
             f" {c}"
@@ -65,18 +70,23 @@ class ResumeCheck(unittest.TestCase):
         # Run the first config asynchronously.
         print("Running the first config")
         with managed_process(self.commands[0], shell=True) as proc:
-            time.sleep(120)
+            time.sleep(self.timeout)
 
         # Keep trying to stop the ray cluster until it is stopped
         while 1:
-            proc = subprocess.run("ray status", shell=True)
+            proc = subprocess.run(
+                ["ray", "status"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
             no_nodes = proc.returncode != 0
-            proc = subprocess.run("ray stop", shell=True)
+            proc = subprocess.run(
+                ["ray", "stop"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
             successful = proc.returncode == 0
 
             if no_nodes and successful:
+                print("Ray cluster successfully stopped with no remaining nodes.")
                 break
-            time.sleep(10)
+            time.sleep(5)
 
         # Run the second config to completion
         print("Running the second config")
