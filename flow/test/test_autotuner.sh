@@ -4,6 +4,8 @@ set -eoux pipefail
 
 DESIGN_NAME=${1:-gcd}
 PLATFORM=${2:-nangate45}
+# unittest does not allow dashes on test names
+PLATFORM_WITHOUT_DASHES="${PLATFORM//-/}"
 
 # run the commands in ORFS root dir
 echo "[INFO FLW-0029] Installing dependencies in virtual environment."
@@ -12,15 +14,15 @@ cd ../
 . ./tools/AutoTuner/setup.sh
 
 echo "Running Autotuner smoke tune test"
-python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM}TuneSmokeTest.test_tune
+python3 -m unittest tools.AutoTuner.test.smoke_test_tune.${PLATFORM_WITHOUT_DASHES}TuneSmokeTest.test_tune
 
 echo "Running Autotuner smoke sweep test"
-python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM}SweepSmokeTest.test_sweep
+python3 -m unittest tools.AutoTuner.test.smoke_test_sweep.${PLATFORM_WITHOUT_DASHES}SweepSmokeTest.test_sweep
 
 echo "Running Autotuner smoke tests for --sample and --iteration."
-python3 -m unittest tools.AutoTuner.test.smoke_test_sample_iteration.${PLATFORM}SampleIterationSmokeTest.test_sample_iteration
+python3 -m unittest tools.AutoTuner.test.smoke_test_sample_iteration.${PLATFORM_WITHOUT_DASHES}SampleIterationSmokeTest.test_sample_iteration
 
-if [ "$PLATFORM" == "asap7" ] && [ "$DESIGN_NAME" == "gcd" ]; then
+if [ "$PLATFORM_WITHOUT_DASHES" == "asap7" ] && [ "$DESIGN_NAME" == "gcd" ]; then
   echo "Running Autotuner ref file test (only once)"
   python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck.test_files
 
