@@ -71,6 +71,8 @@ ORFS_FLOW_DIR = os.path.abspath(
 )
 # URL to ORFS GitHub repository
 ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
+# Global variable for args
+args = None
 
 
 class AutoTunerBase(tune.Trainable):
@@ -170,7 +172,7 @@ class AutoTunerBase(tune.Trainable):
             detail_padding = config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"]
             if global_padding < detail_padding:
                 print(
-                    f"[WARN TUN-0032] CELL_PAD_IN_SITES_DETAIL_PLACEMENT cannot be greater than CELL_PAD_IN_SITES_GLOBAL_PLACEMENT: {detail_padding} {global_padding}"
+                    f"[WARN TUN-0032] CELL_PAD_IN_SITES_DETAIL_PLACEMENT ({detail_padding}) cannot be greater than CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ({global_padding})"
                 )
                 return False
         return True
@@ -213,9 +215,6 @@ class PPAImprov(AutoTunerBase):
     def evaluate(self, metrics):
         error = "ERR" in metrics.values() or "ERR" in reference.values()
         not_found = "N/A" in metrics.values() or "N/A" in reference.values()
-        print("Metrics", metrics.values())
-        print("Reference", reference.values())
-        print(error, not_found)
         if error or not_found:
             return ERROR_METRIC
         ppa = self.get_ppa(metrics)
@@ -433,11 +432,11 @@ def parse_arguments():
         " training stderr\n\t2: also print training stdout.",
     )
 
-    arguments = parser.parse_args()
-    if arguments.mode == "tune":
-        arguments.algorithm = arguments.algorithm.lower()
+    args = parser.parse_args()
+    if args.mode == "tune":
+        args.algorithm = args.algorithm.lower()
         # Validation of arguments
-        if arguments.eval == "ppa-improv" and arguments.reference is None:
+        if args.eval == "ppa-improv" and args.reference is None:
             print(
                 '[ERROR TUN-0006] The argument "--eval ppa-improv"'
                 ' requires that "--reference <FILE>" is also given.'
@@ -445,7 +444,7 @@ def parse_arguments():
             sys.exit(7)
 
         # Check for experiment name and resume flag.
-        if arguments.resume and arguments.experiment == "test":
+        if args.resume and args.experiment == "test":
             print(
                 '[ERROR TUN-0031] The flag "--resume"'
                 ' requires that "--experiment NAME" is also given.'
@@ -453,16 +452,16 @@ def parse_arguments():
             sys.exit(1)
 
     # If the experiment name is the default, add a UUID to the end.
-    if arguments.experiment == "test":
+    if args.experiment == "test":
         id = str(uuid())[:8]
-        arguments.experiment = f"{arguments.mode}-{id}"
+        args.experiment = f"{args.mode}-{id}"
     else:
-        arguments.experiment += f"-{arguments.mode}"
+        args.experiment += f"-{args.mode}"
 
-    if arguments.timeout is not None:
-        arguments.timeout = round(arguments.timeout * 3600)
+    if args.timeout is not None:
+        args.timeout = round(args.timeout * 3600)
 
-    return arguments
+    return args
 
 
 def set_algorithm(experiment_name, config):
@@ -595,6 +594,7 @@ def sweep():
 
 
 def main():
+    global args, SDC_ORIGINAL, FR_ORIGINAL, LOCAL_DIR, INSTALL_PATH, ORFS_FLOW_DIR, config_dict, reference, best_params
     args = parse_arguments()
 
     # Read config and original files before handling where to run in case we

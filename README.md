@@ -97,6 +97,16 @@ Document for detailed local build from sources and installation steps found [her
 - To watch ORFS flow tutorial videos, check
   [here](https://theopenroadproject.org/video).
 
+## Building from your own git repository
+
+ORFS supports hosting projects in your own git repository
+without the need to fork ORFS.
+
+To build from your own git repository:
+
+    cd /home/me/myproject
+    make --file=~/OpenROAD-flow-scripts/flow/Makefile DESIGN_CONFIG=somefolder/config.mk ...
+
 ## Citing this Work
 
 If you use this software in any published work, we would appreciate a citation!

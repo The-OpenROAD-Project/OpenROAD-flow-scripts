@@ -42,7 +42,7 @@ proc repair_timing_helper { {hold_margin 1} } {
 proc repair_design_helper {} {
   puts "Perform buffer insertion and gate resizing..."
 
-  set additional_args ""
+  set additional_args "-verbose"
   append_env_var additional_args CAP_MARGIN -cap_margin 1
   append_env_var additional_args SLEW_MARGIN -slew_margin 1
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0

@@ -18,23 +18,10 @@ import pandas as pd
 import re
 from glob import glob
 
-# make sure the working dir is flow/
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-
-# Parse and validate arguments
-# =============================================================================
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Generates metadata from OpenROAD flow"
-    )
-    parser.add_argument(
-        "--flowPath",
-        "-f",
-        required=False,
-        default="./",
-        help="Path to the flow directory",
     )
     parser.add_argument(
         "--design",
@@ -65,11 +52,6 @@ def parse_args():
     )
     parser.add_argument("--hier", "-x", action="store_true", help="Hierarchical JSON")
     args = parser.parse_args()
-
-    if not os.path.isdir(args.flowPath):
-        print("[ERROR] flowPath does not exist")
-        print("Path: " + args.flowPath)
-        exit(1)
 
     return args
 
@@ -102,7 +84,7 @@ def extractTagFromFile(
 
     # Open file
     try:
-        searchFilePath = os.path.join(args.flowPath, file)
+        searchFilePath = file
         with open(searchFilePath) as f:
             content = f.read()
 
@@ -438,7 +420,7 @@ if all_designs or len(designs) > 1 or len(flow_variants) > 1:
         f.write(all_df.to_html())
 else:
     metrics_dict, metrics_df = extract_metrics(
-        args.flowPath,
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), "../"),
         args.platform,
         args.design,
         args.flowVariant,

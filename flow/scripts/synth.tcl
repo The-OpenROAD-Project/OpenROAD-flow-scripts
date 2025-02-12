@@ -47,7 +47,7 @@ renames -wire
 opt -purge
 
 # Technology mapping of adders
-if {[env_var_exists_and_non_empty ADDER_MAP_FILE] && [file isfile $::env(ADDER_MAP_FILE)]} {
+if {[env_var_exists_and_non_empty ADDER_MAP_FILE]} {
   # extract the full adders
   extract_fa
   # map full adders
@@ -99,6 +99,9 @@ insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
 tee -o $::env(REPORTS_DIR)/synth_check.txt check
 
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
+
+# check the design is composed exclusively of target cells, and check for other problems
+check -assert -mapped
 
 # Write synthesized design
 write_verilog -noexpr -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
