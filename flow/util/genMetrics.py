@@ -420,7 +420,7 @@ if all_designs or len(designs) > 1 or len(flow_variants) > 1:
         f.write(all_df.to_html())
 else:
     metrics_dict, metrics_df = extract_metrics(
-        os.getcwd(),
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), "../"),
         args.platform,
         args.design,
         args.flowVariant,
