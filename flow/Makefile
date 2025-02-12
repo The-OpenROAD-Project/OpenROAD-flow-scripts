@@ -606,13 +606,8 @@ $(eval $(call do-copy,2_floorplan,2_4_floorplan_pdn.odb,))
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
 .PHONY: do-floorplan
-<<<<<<< HEAD
-do-floorplan: $(DONT_USE_SC_LIB)
-	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_io do-2_3_floorplan_macro do-2_4_floorplan_tapcell do-2_5_floorplan_pdn do-2_floorplan do-2_floorplan.sdc
-=======
 do-floorplan:
 	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_macro do-2_3_floorplan_tapcell do-2_4_floorplan_pdn do-2_floorplan do-2_floorplan.sdc
->>>>>>> 83857f6bd (remove random ppl step)
 
 .PHONY: clean_floorplan
 clean_floorplan:
