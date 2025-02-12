@@ -2,6 +2,7 @@ import unittest
 import subprocess
 import os
 import json
+from autotuner_test_utils import AutoTunerTestUtils
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -30,8 +31,9 @@ class BaseSweepSmokeTest(unittest.TestCase):
         core = os.cpu_count()
         self.jobs = 4 if core >= 4 else core
         self.experiment = f"smoke-test-sweep-{self.platform}"
+        self.exec = AutoTunerTestUtils.get_exec_cmd()
         self.command = (
-            "python3 -m autotuner.distributed"
+            f"{self.exec}"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"

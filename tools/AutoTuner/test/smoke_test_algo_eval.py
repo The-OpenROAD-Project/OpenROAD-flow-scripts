@@ -1,6 +1,7 @@
 import unittest
 import subprocess
 import os
+from autotuner_test_utils import AutoTunerTestUtils
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 orfs_dir = os.path.join(cur_dir, "../../../flow")
@@ -19,8 +20,9 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
         _algo = ["hyperopt", "ax", "optuna", "pbt", "random"]
         _eval = ["default", "ppa-improv"]
         self.matrix = [(a, e) for a in _algo for e in _eval]
+        self.exec = AutoTunerTestUtils.get_exec_cmd()
         self.commands = [
-            f"python3 -m autotuner.distributed"
+            f"{self.exec}"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
