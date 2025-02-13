@@ -16,14 +16,6 @@
         ],
         "step": 1
     },
-    "CORE_MARGIN": {
-        "type": "int",
-        "minmax": [
-            2,
-            2
-        ],
-        "step": 0
-    },
     "CORE_ASPECT_RATIO": {
         "type": "float",
         "minmax": [
