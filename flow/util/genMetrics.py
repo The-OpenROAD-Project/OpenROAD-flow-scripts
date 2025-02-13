@@ -82,10 +82,8 @@ def extractTagFromFile(
     if jsonTag in jsonFile:
         print("[WARN] Overwriting Tag", jsonTag)
 
-    # Open file
     try:
-        searchFilePath = file
-        with open(searchFilePath) as f:
+        with open(file) as f:
             content = f.read()
 
         parsedMetrics = re.findall(pattern, content, re.M)
@@ -110,12 +108,12 @@ def extractTagFromFile(
         else:
             # Only print a warning if the defaultNotFound is not set
             print(
-                "[WARN] Tag {} not found in {}.".format(jsonTag, searchFilePath),
+                "[WARN] Tag {} not found in {}.".format(jsonTag, file),
                 "Will use {}.".format(defaultNotFound),
             )
             jsonFile[jsonTag] = defaultNotFound
     except IOError:
-        print("[ERROR] Failed to open file:", searchFilePath)
+        print("[ERROR] Failed to open file:", file)
         jsonFile[jsonTag] = "ERR"
 
 
