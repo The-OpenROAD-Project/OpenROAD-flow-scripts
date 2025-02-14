@@ -4,5 +4,3 @@
 [submodule "tools/OpenROAD"]
 	path = tools/OpenROAD
 	url = ../OpenROAD.git
-[submodule "OpenROAD/"]
-	branch = gpl-binSize-float
