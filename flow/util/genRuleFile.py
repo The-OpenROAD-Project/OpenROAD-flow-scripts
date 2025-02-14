@@ -52,7 +52,7 @@ def get_metrics(commitSHA, platform, design, api_base_url):
         return None, f"An error occurred: {str(e)}"
 
 
-def update_rules(designDir, variant, golden_metrics, overwrite, include_metrics):
+def update_rules(designDir, variant, golden_metrics, overwrite, metrics_to_consider):
     if overwrite:
         gen_rule_file(
             designDir,  # design directory
@@ -61,7 +61,7 @@ def update_rules(designDir, variant, golden_metrics, overwrite, include_metrics)
             False,  # failing
             variant,  # variant
             golden_metrics,  # metrics needed for update, default is {} in case of file
-            include_metrics,
+            metrics_to_consider,
         )
     else:
         gen_rule_file(
@@ -71,12 +71,12 @@ def update_rules(designDir, variant, golden_metrics, overwrite, include_metrics)
             False,  # failing
             variant,  # variant
             golden_metrics,  # metrics needed for update, default is {} in case of file
-            include_metrics,
+            metrics_to_consider,
         )
 
 
 def gen_rule_file(
-    design_dir, update, tighten, failing, variant, golden_metrics={}, include_metrics=[]
+    design_dir, update, tighten, failing, variant, golden_metrics={}, metrics_to_consider=[]
 ):
     original_directory = getcwd()
     chdir(design_dir)
@@ -311,15 +311,15 @@ def gen_rule_file(
         else:
             rule_value = ceil(rule_value * 100) / 100.0
 
-        skip_metric = (
-            True if len(include_metrics) > 0 and field not in include_metrics else False
+        preserve_old_rule = (
+            True if len(metrics_to_consider) > 0 and field not in metrics_to_consider else False
         )
-        can_compare = OLD_RULES is not None and field in OLD_RULES.keys()
+        has_old_rule = OLD_RULES is not None and field in OLD_RULES.keys()
 
-        if can_compare and skip_metric:
+        if has_old_rule and preserve_old_rule:
             rule_value = OLD_RULES[field]["value"]
 
-        if can_compare and not skip_metric:
+        if has_old_rule and not preserve_old_rule:
             old_rule = OLD_RULES[field]
             if old_rule["compare"] != option["compare"]:
                 print("[WARNING] Compare operator changed since last update.")
