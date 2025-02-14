@@ -20,6 +20,9 @@ proc global_route_helper {} {
     log_cmd global_route {*}$all_args
   }
 
+  pin_access -bottom_routing_layer $::env(MIN_ROUTING_LAYER) \
+             -top_routing_layer $::env(MAX_ROUTING_LAYER)
+
   set result [catch {do_global_route} errMsg]
 
   if {$result != 0} {
@@ -83,7 +86,7 @@ proc global_route_helper {} {
 
 
   log_cmd global_route -start_incremental
-  log_cmd recover_power
+  recover_power_helper
   # Route the modified nets by rsz journal restore
   log_cmd global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
 
