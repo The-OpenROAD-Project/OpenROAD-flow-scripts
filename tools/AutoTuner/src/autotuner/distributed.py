@@ -216,11 +216,13 @@ class PPAImprov(AutoTunerBase):
         error = "ERR" in metrics.values() or "ERR" in reference.values()
         not_found = "N/A" in metrics.values() or "N/A" in reference.values()
         if error or not_found:
-            return ERROR_METRIC
+            return (ERROR_METRIC, "-", "-")
         ppa = self.get_ppa(metrics)
         gamma = ppa / 10
         score = ppa * (self.step_ / 100) ** (-1) + (gamma * metrics["num_drc"])
-        return score
+        effective_clk_period = metrics["clk_period"] - metrics["worst_slack"]
+        num_drc = metrics["num_drc"]
+        return (score, effective_clk_period, num_drc)
 
 
 def parse_arguments():
@@ -464,32 +466,34 @@ def parse_arguments():
     return args
 
 
-def set_algorithm(experiment_name, config):
+def set_algorithm(
+    algorithm_name, experiment_name, best_params, seed, perturbation, jobs, config
+):
     """
     Configure search algorithm.
     """
     # Pre-set seed if user sets seed to 0
-    if args.seed == 0:
+    if seed == 0:
         print(
             "Warning: you have chosen not to set a seed. Do you wish to continue? (y/n)"
         )
         if input().lower() != "y":
             sys.exit(0)
-        args.seed = None
+        seed = None
     else:
-        torch.manual_seed(args.seed)
-        np.random.seed(args.seed)
-        random.seed(args.seed)
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
 
-    if args.algorithm == "hyperopt":
+    if algorithm_name == "hyperopt":
         algorithm = HyperOptSearch(
             points_to_evaluate=best_params,
-            random_state_seed=args.seed,
+            random_state_seed=seed,
         )
-    elif args.algorithm == "ax":
+    elif algorithm_name == "ax":
         ax_client = AxClient(
             enforce_sequential_optimization=False,
-            random_seed=args.seed,
+            random_seed=seed,
         )
         AxClientMetric = namedtuple("AxClientMetric", "minimize")
         ax_client.create_experiment(
@@ -498,25 +502,25 @@ def set_algorithm(experiment_name, config):
             objectives={METRIC: AxClientMetric(minimize=True)},
         )
         algorithm = AxSearch(ax_client=ax_client, points_to_evaluate=best_params)
-    elif args.algorithm == "optuna":
-        algorithm = OptunaSearch(points_to_evaluate=best_params, seed=args.seed)
-    elif args.algorithm == "pbt":
-        print("Warning: PBT does not support seed values. args.seed will be ignored.")
+    elif algorithm_name == "optuna":
+        algorithm = OptunaSearch(points_to_evaluate=best_params, seed=seed)
+    elif algorithm_name == "pbt":
+        print("Warning: PBT does not support seed values. seed will be ignored.")
         algorithm = PopulationBasedTraining(
             time_attr="training_iteration",
-            perturbation_interval=args.perturbation,
+            perturbation_interval=perturbation,
             hyperparam_mutations=config,
             synch=True,
         )
-    elif args.algorithm == "random":
+    elif algorithm_name == "random":
         algorithm = BasicVariantGenerator(
-            max_concurrent=args.jobs,
-            random_state=args.seed,
+            max_concurrent=jobs,
+            random_state=seed,
         )
 
     # A wrapper algorithm for limiting the number of concurrent trials.
-    if args.algorithm not in ["random", "pbt"]:
-        algorithm = ConcurrencyLimiter(algorithm, max_concurrent=args.jobs)
+    if algorithm_name not in ["random", "pbt"]:
+        algorithm = ConcurrencyLimiter(algorithm, max_concurrent=jobs)
 
     return algorithm
 
@@ -607,7 +611,15 @@ def main():
 
     if args.mode == "tune":
         best_params = set_best_params(args.platform, args.design)
-        search_algo = set_algorithm(args.experiment, config_dict)
+        search_algo = set_algorithm(
+            args.algorithm,
+            args.experiment,
+            best_params,
+            args.seed,
+            args.perturbation,
+            args.jobs,
+            config_dict,
+        )
         TrainClass = set_training_class(args.eval)
         # PPAImprov requires a reference file to compute training scores.
         if args.eval == "ppa-improv":
