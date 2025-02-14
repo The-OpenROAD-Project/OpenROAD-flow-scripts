@@ -42,14 +42,14 @@ proc repair_timing_helper { {hold_margin 1} } {
 proc repair_design_helper {} {
   puts "Perform buffer insertion and gate resizing..."
 
-  set additional_args ""
+  set additional_args "-verbose"
   append_env_var additional_args CAP_MARGIN -cap_margin 1
   append_env_var additional_args SLEW_MARGIN -slew_margin 1
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
   log_cmd repair_design {*}$additional_args
 }
 
-proc recover_power {} {
+proc recover_power_helper {} {
   if { $::env(RECOVER_POWER) == 0 } {
     return
   }
@@ -58,10 +58,10 @@ proc recover_power {} {
   report_tns
   report_wns
   report_power
-  set additional_args ""
+  set additional_args "-verbose"
   append_env_var additional_args RECOVER_POWER -recover_power 1
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
-  repair_timing {*}$additional_args
+  log_cmd repair_timing {*}$additional_args
   report_tns
   report_wns
   report_power

@@ -15,10 +15,12 @@ COPY InstallerOpenROAD.sh \
 ARG options=""
 ARG constantBuildDir="-constant-build-dir"
 
-RUN env CFLAGS="-D__TIME__=0 -D__DATE__=0 -D__TIMESTAMP__=0 -Wno-builtin-macro-redefined" \
-      CXXFLAGS="-D__TIME__=0 -D__DATE__=0 -D__TIMESTAMP__=0 -Wno-builtin-macro-redefined" \
-      ./DependencyInstaller.sh $options $constantBuildDir \
-      && rm -rf /tmp/installer /tmp/* /var/tmp/* /var/lib/apt/lists/*
+ENV CFLAGS="-D__TIME__=0 -D__DATE__=0 -D__TIMESTAMP__=0 -Wno-builtin-macro-redefined"
+ENV CXXFLAGS="-D__TIME__=0 -D__DATE__=0 -D__TIMESTAMP__=0 -Wno-builtin-macro-redefined"
+
+RUN ./DependencyInstaller.sh -base $options $constantBuildDir \
+    && ./DependencyInstaller.sh -common $options $constantBuildDir \
+    && rm -rf /tmp/installer /tmp/* /var/tmp/* /var/lib/apt/lists/*
 
 ARG fromImage
 

@@ -89,7 +89,7 @@ if [ "${RUN_AUTOTUNER}" == "true" ]; then
     "gcd")
       # Keep RUN_AUTOTUNER enabled only for these designs
       ;;
-    "*")
+    *)
       echo "Disable AT test for design ${DESIGN_NAME}."
       RUN_AUTOTUNER="false"
       ;;

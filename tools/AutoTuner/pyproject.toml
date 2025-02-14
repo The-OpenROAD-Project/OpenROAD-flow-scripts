@@ -10,6 +10,9 @@ readme = "README.md"
 requires-python = ">= 3.8"
 dynamic = ["dependencies", "optional-dependencies"]
 
+[project.scripts]
+openroad_autotuner = "autotuner.distributed:main"
+
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
 optional-dependencies.dev = { file = ["requirements-dev.txt"] }
