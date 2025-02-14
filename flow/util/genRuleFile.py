@@ -312,14 +312,14 @@ def gen_rule_file(
             rule_value = ceil(rule_value * 100) / 100.0
 
         skip_metric = (
-            False if len(include_metrics) > 0 and field in include_metrics else True
+            True if len(include_metrics) > 0 and field not in include_metrics else False
         )
-
         can_compare = OLD_RULES is not None and field in OLD_RULES.keys()
-        if can_compare and field not in include_metrics:
+
+        if can_compare and skip_metric:
             rule_value = OLD_RULES[field]["value"]
 
-        if can_compare and field in include_metrics:
+        if can_compare and not skip_metric:
             old_rule = OLD_RULES[field]
             if old_rule["compare"] != option["compare"]:
                 print("[WARNING] Compare operator changed since last update.")
