@@ -3,7 +3,7 @@ import subprocess
 import os
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(cur_dir, "../src/autotuner")
+src_dir = os.path.join(cur_dir, "../src")
 orfs_dir = os.path.join(cur_dir, "../../../flow")
 os.chdir(src_dir)
 
@@ -19,7 +19,7 @@ class RefFileCheck(unittest.TestCase):
             "../../test/files/no_fr_ref.json",
         ]
         self.commands = [
-            f"python3 distributed.py"
+            f"python3 -m autotuner.distributed"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --config {c}"
