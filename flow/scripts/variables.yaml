@@ -94,6 +94,7 @@ CORE_UTILIZATION:
     The core utilization percentage (0-100).
   stages:
     - floorplan
+  tunable: 1
 CORE_AREA:
   description: >
     The core area specified as a list of lower-left and upper-right corners in
@@ -101,6 +102,7 @@ CORE_AREA:
     (X1 Y1 X2 Y2).
   stages:
     - floorplan
+  tunable: 1
 REPORT_CLOCK_SKEW:
   description: >
     Report clock skew as part of reporting metrics, starting at CTS, before which
@@ -328,6 +330,7 @@ CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
     - place
     - floorplan
   default: 0
+  tunable: 1
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
     Cell padding on both sides in site widths to ease routability in detail
@@ -337,6 +340,7 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     - cts
     - grt
   default: 0
+  tunable: 1
 PLACE_PINS_ARGS:
   description: |
     Arguments to place_pins
@@ -358,6 +362,7 @@ PLACE_DENSITY_LB_ADDON:
   stages:
     - floorplan
     - place
+  tunable: 1
 REPAIR_PDN_VIA_LAYER:
   description: |
     Remove power grid vias which generate DRC violations after detailed routing.
@@ -635,6 +640,7 @@ CORE_ASPECT_RATIO:
     `CORE_UTILIZATION` is undefined.
   stages:
     - floorplan
+  tunable: 1
 CORE_MARGIN:
   description: >
     The margin between the core area and die area, specified in microns.
@@ -644,6 +650,7 @@ CORE_MARGIN:
     is undefined.
   stages:
     - floorplan
+  tunable: 1
 DIE_AREA:
   description: >
     The die area specified as a list of lower-left and upper-right corners in
@@ -651,6 +658,7 @@ DIE_AREA:
     (X1 Y1 X2 Y2).
   stages:
     - floorplan
+  tunable: 1
 RESYNTH_AREA_RECOVER:
   description: |
     Enable re-synthesis for area reclaim.
@@ -693,12 +701,14 @@ CTS_CLUSTER_DIAMETER:
   default: 20
   stages:
     - cts
+  tunable: 1
 CTS_CLUSTER_SIZE:
   description: >
     Maximum number of sinks per cluster.
   default: 50
   stages:
     - cts
+  tunable: 1
 CTS_SNAPSHOT:
   description: |
     Creates ODB/SDC files prior to clock net and setup/hold repair.
