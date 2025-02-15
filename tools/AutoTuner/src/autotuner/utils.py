@@ -2,6 +2,7 @@ import glob
 import json
 import os
 import re
+import yaml
 import subprocess
 import sys
 from multiprocessing import cpu_count
@@ -161,6 +162,21 @@ def parse_flow_variables(base_dir, platform):
     return variables
 
 
+def parse_tunable_variables():
+    """
+    Parse the tunable variables from variables.yaml
+    TODO: Tests.
+    """
+    cur_path = os.path.dirname(os.path.realpath(__file__))
+    vars_path = os.path.join(cur_path, "../../../../flow/scripts/variables.yaml")
+
+    # Read from variables.yaml and get variables with tunable = 1
+    with open(vars_path) as file:
+        result = yaml.safe_load(file)
+    variables = {key for key, value in result.items() if value.get("tunable", 0) == 1}
+    return variables
+
+
 def parse_config(
     config,
     base_dir,
@@ -177,7 +193,7 @@ def parse_config(
     options = ""
     sdc = {}
     fast_route = {}
-    # flow_variables = parse_flow_variables(base_dir, platform)
+    flow_variables = parse_tunable_variables()
     for key, value in config.items():
         # Keys that begin with underscore need special handling.
         if key.startswith("_"):
@@ -198,9 +214,9 @@ def parse_config(
         # Default case is VAR=VALUE
         else:
             # Sanity check: ignore all flow variables that are not tunable
-            # if key not in flow_variables:
-            #     print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
-            #     sys.exit(1)
+            if key not in flow_variables:
+                print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
+                sys.exit(1)
             options += f" {key}={value}"
     if sdc:
         write_sdc(sdc, path, sdc_original, constraints_sdc)
