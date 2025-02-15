@@ -330,6 +330,7 @@ CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
     - place
     - floorplan
   default: 0
+  tunable: 1
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
     Cell padding on both sides in site widths to ease routability in detail
@@ -639,6 +640,7 @@ CORE_ASPECT_RATIO:
     `CORE_UTILIZATION` is undefined.
   stages:
     - floorplan
+  tunable: 1
 CORE_MARGIN:
   description: >
     The margin between the core area and die area, specified in microns.
