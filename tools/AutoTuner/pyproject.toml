@@ -9,7 +9,7 @@ classifiers = [
 ]
 readme = "README.md"
 dependencies = [
-    "ray[default,tune] ~= 2.10",
+    "ray[default,tune] >= 2.10, <= 2.23",
     "ax-platform >= 0.3.3, <= 0.3.7",
     "hyperopt ~= 0.2.7",
     "optuna ~= 3.6.0",
