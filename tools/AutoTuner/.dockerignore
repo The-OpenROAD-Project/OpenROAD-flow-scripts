@@ -1,0 +1,8 @@
+*
+!src
+!distributed
+!requirements.txt
+!requirements-dev.txt
+!setup.sh
+!pyproject.toml
+

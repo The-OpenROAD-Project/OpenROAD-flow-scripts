@@ -626,36 +626,23 @@ def prepare_ray_server(args):
     """
     # Connect to remote Ray server if any, otherwise will run locally
     if args.server is not None:
-        # At GCP we have a NFS folder that is present for all worker nodes.
-        # This allows to build required binaries once. We clone, build and
-        # store intermediate files at LOCAL_DIR.
-        with open(args.config) as config_file:
-            local_dir = "/shared-data/autotuner"
-            local_dir += f"-orfs-{args.git_orfs_branch}"
-            if args.git_or_branch != "":
-                local_dir += f"-or-{args.git_or_branch}"
-            if args.git_latest:
-                local_dir += "-or-latest"
         # Connect to ray server before first remote execution.
         ray.init(f"ray://{args.server}:{args.port}")
+        print("[INFO TUN-0001] Connected to Ray server.")
         # Remote functions return a task id and are non-blocking. Since we
         # need the setup repo before continuing, we call ray.get() to wait
         # for its completion.
-        install_path = ray.get(setup_repo.remote(local_dir))
-        orfs_flow_dir = os.path.join(local_dir, "flow")
-        local_dir += f"/flow/logs/{args.platform}/{args.design}"
-        print("[INFO TUN-0001] NFS setup completed.")
-    else:
-        orfs_dir = getattr(args, "orfs", None)
-        # For local runs, use the same folder as other ORFS utilities.
-        orfs_flow_dir = os.path.abspath(
-            os.path.join(orfs_dir, "flow")
-            if orfs_dir
-            else os.path.join(os.path.dirname(__file__), "../../../../flow")
-        )
-        local_dir = f"logs/{args.platform}/{args.design}"
-        local_dir = os.path.join(orfs_flow_dir, local_dir)
-        install_path = os.path.abspath(os.path.join(orfs_flow_dir, "../tools/install"))
+
+    # Common variables used for local and remote runs.
+    orfs_dir = getattr(args, "orfs", None)
+    orfs_flow_dir = os.path.abspath(
+        os.path.join(orfs_dir, "flow")
+        if orfs_dir
+        else os.path.join(os.path.dirname(__file__), "../../../../flow")
+    )
+    local_dir = f"logs/{args.platform}/{args.design}"
+    local_dir = os.path.join(orfs_flow_dir, local_dir)
+    install_path = os.path.abspath(os.path.join(orfs_flow_dir, "../tools/install"))
     return local_dir, orfs_flow_dir, install_path
 
 
