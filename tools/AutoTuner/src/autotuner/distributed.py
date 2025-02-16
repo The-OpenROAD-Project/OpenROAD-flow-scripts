@@ -618,7 +618,7 @@ def save_best(results):
     new_best_path += f"autotuner-best-{trial_id}.json"
     with CloudPath(new_best_path).open("w") as new_best_file:
         json.dump(best_config, new_best_file, indent=4)
-    print(f"[INFO TUN-0004] Cloud: Best parameters written to {new_best_path}")
+    print(f"[INFO TUN-0011] Cloud: Best parameters written to {new_best_path}")
 
 
 def sweep():
