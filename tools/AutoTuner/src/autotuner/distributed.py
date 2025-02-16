@@ -33,6 +33,7 @@ from itertools import product
 from uuid import uuid4 as uuid
 from collections import namedtuple
 from multiprocessing import cpu_count
+from cloudpathlib import CloudPath
 
 import numpy as np
 import torch
@@ -46,6 +47,7 @@ from ray.tune.search.ax import AxSearch
 from ray.tune.search.basic_variant import BasicVariantGenerator
 from ray.tune.search.hyperopt import HyperOptSearch
 from ray.tune.search.optuna import OptunaSearch
+from ray.tune.utils.file_transfer import sync_dir_between_nodes
 from ray.util.queue import Queue
 
 from ax.service.ax_client import AxClient
@@ -71,8 +73,7 @@ ORFS_FLOW_DIR = os.path.abspath(
 )
 # URL to ORFS GitHub repository
 ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
-# Global variable for args
-args = None
+MAX_SIZE_BYTES = 5_368_709_120  # 5 GiB, or 5*1024*1024*1024 B
 
 
 class AutoTunerBase(tune.Trainable):
@@ -336,6 +337,13 @@ def parse_arguments():
         default="",
         help="Additional arguments given to ./build_openroad.sh.",
     )
+    parser.add_argument(
+        "--cloud_dir",
+        type=str,
+        metavar="<str>",
+        default=None,
+        help="Cloud storage directory for logs, defaults to None. Currently supports only GCP.",
+    )
 
     # ML
     tune_parser.add_argument(
@@ -463,6 +471,15 @@ def parse_arguments():
     if args.timeout is not None:
         args.timeout = round(args.timeout * 3600)
 
+    # Validate cloud_dir if exist
+    if args.cloud_dir:
+        _ = CloudPath(args.cloud_dir)
+        if not args.cloud_dir.startswith("gs://"):
+            print(
+                f"[ERROR TUN-0030] Cloud storage directory {args.cloud_dir} is not supported."
+            )
+            sys.exit(1)
+
     return args
 
 
@@ -556,11 +573,21 @@ def save_best(results):
     best_config = results.best_config
     best_config["best_result"] = results.best_result[METRIC]
     trial_id = results.best_trial.trial_id
+
+    # Save locally
     new_best_path = f"{LOCAL_DIR}/{args.experiment}/"
+    os.makedirs(new_best_path, exist_ok=True)
     new_best_path += f"autotuner-best-{trial_id}.json"
     with open(new_best_path, "w") as new_best_file:
         json.dump(best_config, new_best_file, indent=4)
-    print(f"[INFO TUN-0003] Best parameters written to {new_best_path}")
+    print(f"[INFO TUN-0003] Local: Best parameters written to {new_best_path}")
+
+    # Save to cloud storage
+    new_best_path = f"{args.cloud_dir}/{args.experiment}/"
+    new_best_path += f"autotuner-best-{trial_id}.json"
+    with CloudPath(new_best_path).open("w") as new_best_file:
+        json.dump(best_config, new_best_file, indent=4)
+    print(f"[INFO TUN-0004] Cloud: Best parameters written to {new_best_path}")
 
 
 def sweep():
@@ -595,6 +622,31 @@ def sweep():
     print("[INFO TUN-0009] Waiting for results.")
     ray.get(workers)
     print("[INFO TUN-0010] Sweep complete.")
+
+
+def transfer_to_head(file_path):
+    """
+    Transfer files from worker to the head node.
+    """
+    workers = ray.nodes()
+    # TODO: Can this for loop be done async?
+    for worker_id, worker in enumerate(workers):
+        # Path: <repo>/<experiment>/<worker_id>
+        target_path = f"{LOCAL_DIR}/{args.experiment}/{worker_id}"
+        os.makedirs(target_path, exist_ok=True)
+        worker_ip = worker["NodeManagerAddress"]
+        try:
+            sync_dir_between_nodes(
+                source_ip=worker_ip,
+                source_path=file_path,
+                target_ip=args.server,
+                target_path=target_path,
+                max_size_bytes=MAX_SIZE_BYTES,
+            )
+        except Exception as e:
+            # TODO: maybe a retry mechanism if fails?
+            print(f"[INFO TUN-0012] Error syncing worker {worker_id}: {e}")
+            continue
 
 
 def main():
@@ -632,6 +684,7 @@ def main():
             num_samples=args.samples,
             fail_fast=False,
             local_dir=LOCAL_DIR,
+            storage_path=args.cloud_dir,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
             resources_per_trial={"cpu": os.cpu_count() / args.jobs},
@@ -651,6 +704,11 @@ def main():
 
         task_id = save_best.remote(analysis)
         _ = ray.get(task_id)
+
+        # if not args.server:
+        #     print("[INFO TUN-0011] No Ray server specified. Skipping transfer.")
+        #     sys.exit(0)
+        # transfer_to_head(LOCAL_DIR)
         print(f"[INFO TUN-0002] Best parameters found: {analysis.best_config}")
 
         # if all runs have failed
