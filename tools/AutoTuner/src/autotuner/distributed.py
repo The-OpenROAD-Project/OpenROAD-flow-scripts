@@ -82,7 +82,6 @@ from ray.tune.search.ax import AxSearch
 from ray.tune.search.basic_variant import BasicVariantGenerator
 from ray.tune.search.hyperopt import HyperOptSearch
 from ray.tune.search.optuna import OptunaSearch
-from ray.tune.utils.file_transfer import sync_dir_between_nodes
 from ray.util.queue import Queue
 
 from ax.service.ax_client import AxClient
@@ -108,7 +107,6 @@ ORFS_FLOW_DIR = os.path.abspath(
 )
 # URL to ORFS GitHub repository
 ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
-MAX_SIZE_BYTES = 5_368_709_120  # 5 GiB, or 5*1024*1024*1024 B
 
 
 class AutoTunerBase(tune.Trainable):
@@ -657,31 +655,6 @@ def sweep():
     print("[INFO TUN-0010] Sweep complete.")
 
 
-def transfer_to_head(file_path):
-    """
-    Transfer files from worker to the head node.
-    """
-    workers = ray.nodes()
-    # TODO: Can this for loop be done async?
-    for worker_id, worker in enumerate(workers):
-        # Path: <repo>/<experiment>/<worker_id>
-        target_path = f"{LOCAL_DIR}/{args.experiment}/{worker_id}"
-        os.makedirs(target_path, exist_ok=True)
-        worker_ip = worker["NodeManagerAddress"]
-        try:
-            sync_dir_between_nodes(
-                source_ip=worker_ip,
-                source_path=file_path,
-                target_ip=args.server,
-                target_path=target_path,
-                max_size_bytes=MAX_SIZE_BYTES,
-            )
-        except Exception as e:
-            # TODO: maybe a retry mechanism if fails?
-            print(f"[INFO TUN-0012] Error syncing worker {worker_id}: {e}")
-            continue
-
-
 def main():
     global args, SDC_ORIGINAL, FR_ORIGINAL, LOCAL_DIR, INSTALL_PATH, ORFS_FLOW_DIR, config_dict, reference, best_params
     args = parse_arguments()
@@ -736,11 +709,6 @@ def main():
 
         task_id = save_best.remote(analysis)
         _ = ray.get(task_id)
-
-        # if not args.server:
-        #     print("[INFO TUN-0011] No Ray server specified. Skipping transfer.")
-        #     sys.exit(0)
-        # transfer_to_head(LOCAL_DIR)
         print(f"[INFO TUN-0002] Best parameters found: {analysis.best_config}")
 
         # if all runs have failed
