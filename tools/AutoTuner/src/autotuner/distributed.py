@@ -85,6 +85,7 @@ from ray.tune.search.optuna import OptunaSearch
 from ray.util.queue import Queue
 
 from ax.service.ax_client import AxClient
+import warnings
 
 from autotuner.utils import (
     openroad,
@@ -504,12 +505,18 @@ def parse_arguments():
 
     # Validate cloud_dir if exist
     if args.cloud_dir:
-        _ = CloudPath(args.cloud_dir)
-        if not args.cloud_dir.startswith("gs://"):
+        try:
+            CloudPath(args.cloud_dir).exists()
+        except Exception as e:
             print(
-                f"[ERROR TUN-0030] Cloud storage directory {args.cloud_dir} is not supported."
+                f"[ERROR TUN-0007] Cloud storage directory {args.cloud_dir} does not exist or invalid IAM supplied."
             )
             sys.exit(1)
+        if not args.cloud_dir.startswith("gs://"):
+            warnings.warn(
+                f"Cloud storage directory {args.cloud_dir} is not supported. Please use gs://<bucket-name>.",
+                UserWarning,
+            )
 
     return args
 

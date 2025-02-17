@@ -37,7 +37,6 @@ Currently, this setup supports GCP with batteries included. With configuration o
 alternative cloud providers could be used:
 - [Azure](https://docs.ray.io/en/latest/cluster/vms/user-guides/launching-clusters/azure.html)
 - [AWS](https://docs.ray.io/en/latest/cluster/vms/user-guides/launching-clusters/aws.html)
-- [vSphere](https://docs.ray.io/en/latest/cluster/vms/user-guides/launching-clusters/vsphere.html)
 
 ## Public cluster setup
 
