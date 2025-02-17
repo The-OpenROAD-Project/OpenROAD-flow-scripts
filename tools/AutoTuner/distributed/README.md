@@ -23,19 +23,6 @@ For private deployments, we might have to use KubeRay
 2. https://www.paulsblog.dev/how-to-install-a-private-docker-container-registry-in-kubernetes/
 ```
 
-## TODO
-
-- Look up how to preserve the cache during pip install. 
-- Public flow, fixed: via autotuner script
-    - Tune
-    - Sweep
-- Public flow, fixed: via ray API.
-- Public flow, autoscaling
-- test using private registry on dockerhub same flow
-- Scaling concerns
-    - increase storage of head node.
-    - Object store memory - does that affect file transfer?
-
 ## Prerequisites
 
 Make sure Autotuner prerequisites are installed. To do so, refer to the installation script.
@@ -43,6 +30,14 @@ Make sure Autotuner prerequisites are installed. To do so, refer to the installa
 ```bash
 pip install ray[default] google-api-python-client cryptography cloudpathlib
 ```
+
+## Cloud-native support
+
+Currently, this setup supports GCP with batteries included. With configuration of the necessary variables in `public.yaml`,
+alternative cloud providers could be used:
+- [Azure](https://docs.ray.io/en/latest/cluster/vms/user-guides/launching-clusters/azure.html)
+- [AWS](https://docs.ray.io/en/latest/cluster/vms/user-guides/launching-clusters/aws.html)
+- [vSphere](https://docs.ray.io/en/latest/cluster/vms/user-guides/launching-clusters/vsphere.html)
 
 ## Public cluster setup
 
@@ -114,6 +109,15 @@ HEAD_SERVER=10.138.0.13
 ray job stop --address $HEAD_SERVER:6379 --no-wait {{ JOB_SUBMIT_ID }}
 ```
 
-## Private cluster setup
+## Roadmap
 
-Coming soon.
+- Public flow, fixed: via autotuner script
+    - Tune
+    - Sweep
+- Public flow, fixed: via ray API.
+- Public flow, autoscaling
+- test using private registry on dockerhub same flow
+- Scaling concerns
+    - increase storage of head node.
+    - Object store memory - does that affect file transfer?
+- Private cluster setup
