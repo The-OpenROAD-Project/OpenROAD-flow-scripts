@@ -176,7 +176,7 @@ mypy-extensions==1.0.0
     # via
     #   black
     #   typing-inspect
-narwhals==1.26.0
+narwhals==1.27.1
     # via plotly
 networkx==3.4.2
     # via
@@ -352,7 +352,7 @@ scikit-learn==1.6.1
     #   ax-platform
     #   bayesian-optimization
     #   gpytorch
-scipy==1.15.1
+scipy==1.15.2
     # via
     #   ax-platform
     #   bayesian-optimization
@@ -385,7 +385,7 @@ tensorboard-data-server==0.7.2
     # via tensorboard
 tensorboardx==2.6.2.2
     # via ray
-textual==2.0.1
+textual==2.0.4
     # via memray
 threadpoolctl==3.5.0
     # via scikit-learn
