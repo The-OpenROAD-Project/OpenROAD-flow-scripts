@@ -373,7 +373,7 @@ def parse_arguments():
         type=str,
         metavar="<str>",
         default=None,
-        help="Cloud storage directory for logs, defaults to None. Currently supports only GCP.",
+        help="Cloud storage directory for logs, defaults to None. See our documentation on cloud support for more information.",
     )
 
     # ML
