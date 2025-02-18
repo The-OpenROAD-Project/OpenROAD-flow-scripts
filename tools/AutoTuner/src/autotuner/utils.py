@@ -664,7 +664,6 @@ def openroad_distributed(
     args,
     repo_dir,
     config,
-    path,
     sdc_original,
     fr_original,
     install_path,
@@ -688,7 +687,6 @@ def openroad_distributed(
         base_dir=repo_dir,
         parameters=config,
         flow_variant=f"{uuid()}-{variant}",
-        path=path,
         install_path=install_path,
     )
     duration = time() - t
