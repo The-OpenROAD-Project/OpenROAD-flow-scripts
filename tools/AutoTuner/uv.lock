@@ -320,7 +320,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.0,<=2.2.1" },
     { name = "protobuf", specifier = "~=3.20.3" },
     { name = "pyyaml", specifier = "~=6.0.1" },
-    { name = "ray", extras = ["default", "tune"], specifier = "<=2.23" },
+    { name = "ray", extras = ["default", "tune"], specifier = ">=2.10,<=2.23" },
     { name = "sqlalchemy", specifier = "~=1.4.17" },
     { name = "tensorboard", specifier = ">=2.14.0,<=2.16.2" },
     { name = "urllib3", specifier = "<=1.26.15" },
