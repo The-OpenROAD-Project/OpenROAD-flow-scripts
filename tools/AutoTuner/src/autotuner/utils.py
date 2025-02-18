@@ -306,7 +306,12 @@ def openroad(
         run_command(args, f"mkdir -p {log_path}")
         run_command(args, f"mkdir -p {report_path}")
     else:
-        log_path = report_path = os.getcwd() + "/"
+        log_path = os.path.abspath(
+            os.path.join(base_dir, f"flow/logs/{args.platform}/{args.design}")
+        )
+        report_path = os.path.abspath(
+            os.path.join(base_dir, f"flow/reports/{args.platform}/{args.design}")
+        )
 
     if install_path is None:
         install_path = os.path.join(base_dir, "tools/install")
