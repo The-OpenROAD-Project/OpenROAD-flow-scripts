@@ -63,7 +63,7 @@ class ResumeCheck(unittest.TestCase):
     # only test 1 platform/design.
     platform = "asap7"
     design = "gcd"
-    samples = 5
+    samples = 8
     iterations = 2
 
     def setUp(self):
