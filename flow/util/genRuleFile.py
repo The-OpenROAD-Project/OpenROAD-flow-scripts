@@ -52,7 +52,7 @@ def get_metrics(commitSHA, platform, design, api_base_url):
         return None, f"An error occurred: {str(e)}"
 
 
-def update_rules(designDir, variant, golden_metrics, overwrite):
+def update_rules(designDir, variant, golden_metrics, overwrite, metrics_to_consider):
     if overwrite:
         gen_rule_file(
             designDir,  # design directory
@@ -61,6 +61,7 @@ def update_rules(designDir, variant, golden_metrics, overwrite):
             False,  # failing
             variant,  # variant
             golden_metrics,  # metrics needed for update, default is {} in case of file
+            metrics_to_consider,
         )
     else:
         gen_rule_file(
@@ -70,10 +71,19 @@ def update_rules(designDir, variant, golden_metrics, overwrite):
             False,  # failing
             variant,  # variant
             golden_metrics,  # metrics needed for update, default is {} in case of file
+            metrics_to_consider,
         )
 
 
-def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics={}):
+def gen_rule_file(
+    design_dir,
+    update,
+    tighten,
+    failing,
+    variant,
+    golden_metrics={},
+    metrics_to_consider=[],
+):
     original_directory = getcwd()
     chdir(design_dir)
 
@@ -307,7 +317,17 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
         else:
             rule_value = ceil(rule_value * 100) / 100.0
 
-        if OLD_RULES is not None and field in OLD_RULES.keys():
+        preserve_old_rule = (
+            True
+            if len(metrics_to_consider) > 0 and field not in metrics_to_consider
+            else False
+        )
+        has_old_rule = OLD_RULES is not None and field in OLD_RULES.keys()
+
+        if has_old_rule and preserve_old_rule:
+            rule_value = OLD_RULES[field]["value"]
+
+        if has_old_rule and not preserve_old_rule:
             old_rule = OLD_RULES[field]
             if old_rule["compare"] != option["compare"]:
                 print("[WARNING] Compare operator changed since last update.")
@@ -321,30 +341,30 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
                 else:
                     rule_value = ceil(rule_value * 100) / 100.0
 
-            UPDATE = False
+            need_to_update = False
             if (
                 tighten
                 and rule_value != old_rule["value"]
                 and compare(rule_value, old_rule["value"])
             ):
-                UPDATE = True
+                need_to_update = True
                 change_str += format_str.format(
                     field, old_rule["value"], rule_value, "Tighten"
                 )
 
             if failing and not compare(metrics[field], old_rule["value"]):
-                UPDATE = True
+                need_to_update = True
                 change_str += format_str.format(
                     field, old_rule["value"], rule_value, "Failing"
                 )
 
             if update and old_rule["value"] != rule_value:
-                UPDATE = True
+                need_to_update = True
                 change_str += format_str.format(
                     field, old_rule["value"], rule_value, "Updating"
                 )
 
-            if not UPDATE:
+            if not need_to_update:
                 rule_value = old_rule["value"]
 
         rules[field] = dict(value=rule_value, compare=option["compare"])
@@ -359,6 +379,12 @@ def gen_rule_file(design_dir, update, tighten, failing, variant, golden_metrics=
         json.dump(rules, f, indent=4)
 
     chdir(original_directory)
+
+
+def comma_separated_list(value):
+    if value is None or value == "all":
+        return []
+    return [item.strip() for item in value.split(",")]
 
 
 if __name__ == "__main__":
@@ -390,6 +416,13 @@ if __name__ == "__main__":
         default=False,
         help="Update failing rules.",
     )
+    parser.add_argument(
+        "-m",
+        "--metrics",
+        type=comma_separated_list,
+        default="all",
+        help="Only consider the following metrics to change. [default=all]",
+    )
     args = parser.parse_args()
 
     if not args.update and not args.tighten and not args.failing:
@@ -400,4 +433,14 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit(1)
 
-    gen_rule_file(args.dir, args.update, args.tighten, args.failing, args.variant)
+    golden_metrics = {}
+
+    gen_rule_file(
+        args.dir,
+        args.update,
+        args.tighten,
+        args.failing,
+        args.variant,
+        golden_metrics,
+        args.metrics,
+    )
