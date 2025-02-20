@@ -31,7 +31,7 @@ top_cell_index = main_layout.cell(design_name).cell_index()
 print("[INFO] Clearing cells...")
 for i in main_layout.each_cell():
     if i.cell_index() != top_cell_index:
-        if not i.name.startswith("VIA_"):
+        if not i.name.startswith("VIA_") and not i.name.endswith("_DEF_FILL"):
             i.clear()
 
 # Load in the gds to merge
