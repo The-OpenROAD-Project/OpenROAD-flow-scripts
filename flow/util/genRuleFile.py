@@ -76,7 +76,13 @@ def update_rules(designDir, variant, golden_metrics, overwrite, metrics_to_consi
 
 
 def gen_rule_file(
-    design_dir, update, tighten, failing, variant, golden_metrics={}, metrics_to_consider=[]
+    design_dir,
+    update,
+    tighten,
+    failing,
+    variant,
+    golden_metrics={},
+    metrics_to_consider=[],
 ):
     original_directory = getcwd()
     chdir(design_dir)
@@ -312,7 +318,9 @@ def gen_rule_file(
             rule_value = ceil(rule_value * 100) / 100.0
 
         preserve_old_rule = (
-            True if len(metrics_to_consider) > 0 and field not in metrics_to_consider else False
+            True
+            if len(metrics_to_consider) > 0 and field not in metrics_to_consider
+            else False
         )
         has_old_rule = OLD_RULES is not None and field in OLD_RULES.keys()
 
