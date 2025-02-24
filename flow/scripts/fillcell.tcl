@@ -6,7 +6,7 @@ if {[env_var_exists_and_non_empty FILL_CELLS]} {
   set_propagated_clock [all_clocks]
 
   log_cmd filler_placement $::env(FILL_CELLS)
-  check_placement -report_file_name $::env(REPORTS_DIR)/5_3_fillcell.json
+  check_placement -report_file_name $::env(REPORTS_DIR)/5_3_fillcell_placement.json
 
   write_db $::env(RESULTS_DIR)/5_3_fillcell.odb
 } else {

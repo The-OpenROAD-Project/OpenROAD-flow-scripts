@@ -25,8 +25,8 @@ proc do_dpl {} {
   }
   optimize_mirroring
 
-  utl::info FLW 12 "Placement violations [check_placement -verbose -report_file_name $::env(REPORTS_DIR)/dpl_report.json]."
-  
+  utl::info FLW 12 "Placement violations [check_placement -verbose -report_file_name $::env(REPORTS_DIR)/3_5_place_dp_placement.json]."
+
   estimate_parasitics -placement
 }
 
