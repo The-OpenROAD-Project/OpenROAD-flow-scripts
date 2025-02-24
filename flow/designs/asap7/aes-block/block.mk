@@ -10,4 +10,8 @@ export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.70
 
+export MAX_ROUTING_LAYER       ?= M5
+
 export PLACE_PINS_ARGS = -annealing
+
+export PDN_TCL                = $(PLATFORM_DIR)/openRoad/pdn/BLOCK_grid_strategy.tcl
