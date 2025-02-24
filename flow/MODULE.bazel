@@ -1,0 +1,61 @@
+"""ORFS bazel setup."""
+
+module(
+    name = "orfs",
+    version = "0.0.1",
+    compatibility_level = 1,
+)
+
+bazel_dep(name = "bazel-orfs")
+git_override(
+    module_name = "bazel-orfs",
+    commit = "f11fbdb35eeae7f8d5e08a58fb7d040f11cb9f04",
+    remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
+)
+
+# Read: https://github.com/The-OpenROAD-Project/bazel-orfs?tab=readme-ov-file#usage
+#
+# TL;DR
+#
+# 1. uncomment below
+# 2. comment git_override() above
+#
+#local_path_override(
+#   module_name = "bazel-orfs", path = "../bazel-orfs"
+#)
+
+bazel_dep(name = "rules_python", version = "0.31.0")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(
+    ignore_root_user_error = True,
+    python_version = "3.12",
+)
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "orfs-pip",
+    python_version = "3.12",
+    requirements_lock = "//:util/requirements_lock.txt",
+)
+use_repo(pip, "orfs-pip")
+
+orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
+orfs.default(
+    # To build an ORFS image from a PR:
+    # ./build_openroad.sh --latest
+    #
+    # Check out the PRs and modify the local repository as needed
+    # ./build_openroad.sh --no_init
+    #
+    # docker tag docker.io/openroad/flow-ubuntu22.04-builder:c46d41 gcr.io/ascenium/orfs-megaboom/flow-ubuntu22.04-builder:c46d41
+    # docker push gcr.io/ascenium/orfs-megaboom/flow-ubuntu22.04-builder:c46d41
+    # image = "gcr.io/ascenium/orfs-megaboom/flow-ubuntu22.04-builder:c46d41",
+    #
+    # Official image https://hub.docker.com/r/openroad/orfs/tags
+    image = "docker.io/openroad/orfs:v3.0-2130-g6b38aeeb",
+    # image = "gcr.io/ascenium/orfs-megaboom/flow-ubuntu22.04-builder:3d2c3d-2",
+    sha256 = "f5b573d244862bc59f858e2a3586c48aef70989e98f6541099bd15a720e28e7e",
+)
+use_repo(orfs, "com_github_nixos_patchelf_download")
+use_repo(orfs, "docker_orfs")

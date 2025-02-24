@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -11,6 +11,7 @@ fi
 
 # package versions
 klayoutVersion=0.28.8
+verilatorVersion=5.026
 
 _versionCompare() {
     local a b IFS=. ; set -f
@@ -23,10 +24,41 @@ _installORDependencies() {
 }
 
 _installCommon() {
+    if [[ -f /opt/rh/rh-python38/enable ]]; then
+        set +u
+        source /opt/rh/rh-python38/enable
+        set -u
+    fi
+    local pkgs="pandas numpy firebase_admin click pyyaml yamlfix"
     if [[ $(id -u) == 0 ]]; then
-        pip3 install -U pandas
+        pip3 install --no-cache-dir -U $pkgs
     else
-        pip3 install --user -U pandas
+        pip3 install --no-cache-dir --user -U $pkgs
+    fi
+
+    if [[ "$constantBuildDir" == "true" ]]; then
+        baseDir="/tmp/DependencyInstaller-ORFS"
+        if [[ -d "$baseDir" ]]; then
+            echo "[INFO] Removing old building directory $baseDir"
+        fi
+        mkdir -p "$baseDir"
+    else
+        baseDir=$(mktemp -d /tmp/DependencyInstaller-orfs-XXXXXX)
+    fi
+
+    # Install Verilator
+    verilatorPrefix=`realpath ${PREFIX:-"/usr/local"}`
+    if [[ ! -x ${verilatorPrefix}/bin/verilator ]]; then
+        pushd $baseDir
+            git clone --depth=1 -b "v$verilatorVersion" https://github.com/verilator/verilator.git
+            pushd verilator
+                autoconf
+                ./configure --prefix "${verilatorPrefix}"
+                make -j`nproc`
+                make install
+            popd
+            rm -r verilator
+        popd
     fi
 }
 
@@ -36,17 +68,14 @@ _installCentosCleanUp() {
 }
 
 _installCentosPackages() {
-    yum update -y
-    yum install -y \
-        libffi-devel \
-        tcl \
+    yum -y update
+    yum -y install \
         time \
         ruby \
-        ruby-devel \
-        tcl-devel
+        ruby-devel
 
     if ! [ -x "$(command -v klayout)" ]; then
-      yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
+      yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
     else
       currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
       if _versionCompare $currentVersion -ge $klayoutVersion; then
@@ -54,8 +83,8 @@ _installCentosPackages() {
       else
         echo "KLayout version less than ${klayoutVersion}"
         sudo yum remove -y klayout
-        yum install -y https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
-      fi 
+        yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
+      fi
     fi
 }
 
@@ -64,43 +93,111 @@ _installUbuntuCleanUp() {
     apt-get autoremove -y
 }
 
+_installKlayoutDependenciesUbuntuAarch64() {
+    echo "Installing Klayout dependancies"
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get -y update
+    apt-get -y install  build-essential \
+                        qtbase5-dev qttools5-dev libqt5xmlpatterns5-dev qtmultimedia5-dev libqt5multimediawidgets5 libqt5svg5-dev \
+                        ruby ruby-dev \
+                        python3 python3-dev \
+                        libz-dev\
+                        libgit2-dev
+    echo "All dependencies installed successfully"
+}
+
 _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
-    apt-get -y install \
-        libffi-dev \
-        tcl \
-        tcl-dev \
-        time \
+    apt-get -y install --no-install-recommends \
+        bison \
+        curl \
+        flex \
+        help2man \
+        libfl-dev \
+        libfl2 \
+        libgoogle-perftools-dev \
+        libqt5multimediawidgets5 \
+        libqt5opengl5 \
+        libqt5svg5-dev \
+        libqt5xmlpatterns5-dev \
+        libz-dev \
+        perl \
+        python3-pip \
+        python3-venv \
+        qtmultimedia5-dev \
+        qttools5-dev \
         ruby \
         ruby-dev \
-        libz-dev \
-        python3-pip \
-        qttools5-dev \
-        libqt5xmlpatterns5-dev \
-        qtmultimedia5-dev \
-        libqt5multimediawidgets5 \
-        libqt5svg5-dev
-
-    lastDir="$(pwd)"
-
-    # temp dir to download and compile
-    baseDir=/tmp/installers
-    mkdir -p "${baseDir}"
-    cd ${baseDir}
+        time \
+        zlib1g \
+        zlib1g-dev
 
     # install KLayout
-    if [[ $1 == 20.04 ]]; then
-        klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
+    if  [[ $1 == "rodete" ]]; then
+        apt-get -y install --no-install-recommends klayout python3-pandas
+    elif _versionCompare "$1" -ge 23.04; then
+        apt-get -y install --no-install-recommends klayout python3-pandas
     else
-        klayoutChecksum=db751264399706a23d20455bb7624264
+        arch=$(uname -m)
+        lastDir="$(pwd)"
+        # temp dir to download and compile
+        baseDir=/tmp/installers
+        klayoutPrefix=${PREFIX:-"/usr/local"}
+        mkdir -p "${baseDir}"
+        cd "${baseDir}"
+        if [[ $arch == "aarch64" ]]; then
+            if [ ! -f ${klayoutPrefix}/klayout ]; then
+                _installKlayoutDependenciesUbuntuAarch64
+                echo "Installing KLayout for aarch64 architecture"
+                git clone https://github.com/KLayout/klayout.git
+                cd klayout
+                ./build.sh -bin "${klayoutPrefix}"
+            else
+                echo "Klayout is already installed"
+        fi
+        else
+            if [[ $1 == 20.04 ]]; then
+                klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
+            else
+                klayoutChecksum=db751264399706a23d20455bb7624264
+            fi
+            wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
+            md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
+            dpkg -i klayout_${klayoutVersion}-1_amd64.deb
+        fi
+        cd "${lastDir}"
+        rm -rf "${baseDir}"
     fi
-    wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
-    md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
-    dpkg -i klayout_${klayoutVersion}-1_amd64.deb
 
-    cd ${lastDir}
-    rm -rf "${baseDir}"
+    if command -v docker &> /dev/null; then
+        # The user can uninstall docker if they want to reinstall it,
+        # and also this allows the user to choose drop in replacements
+        # for docker, such as podman-docker
+        echo "Docker is already installed, skip docker reinstall."
+        return 0
+    fi
+
+    # Add Docker's official GPG key:
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+        -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
+
+    # Add the repository to Apt sources:
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    apt-get -y update
+    if [[ $1 != "rodete" ]]; then
+        apt-get -y install --no-install-recommends \
+            docker-ce \
+            docker-ce-cli \
+            containerd.io \
+            docker-buildx-plugin \
+            docker-compose-plugin
+    fi
 }
 
 _installDarwinPackages() {
@@ -108,6 +205,18 @@ _installDarwinPackages() {
     brew install python libomp
     brew link --force libomp
     brew install --cask klayout
+    brew install docker docker-buildx
+}
+
+_installCI() {
+    apt-get -y update
+    apt-get -y install --no-install-recommends \
+        apt-transport-https \
+        ca-certificates \
+        coreutils \
+        curl \
+        python3 \
+        software-properties-common
 }
 
 _help() {
@@ -137,14 +246,25 @@ Usage: $0
                                 #    "$HOME/.local". Only used with
                                 #    -common. This flag cannot be used with
                                 #    sudo or with root access.
+       $0 -ci
+                                # Installs CI tools
+       $0 -constant-build-dir
+                                #  Use constant build directory, instead of
+                                #    random one.
 EOF
     exit "${1:-1}"
 }
 
 # default args
-OR_INSTALLER_ARGS=""
-#default option
-option="all"
+OR_INSTALLER_ARGS="-eqy"
+# default prefix
+PREFIX=""
+# default option
+option="none"
+# default isLocal
+isLocal="false"
+constantBuildDir="false"
+CI="no"
 
 # default values, can be overwritten by cmdline args
 while [ "$#" -gt 0 ]; do
@@ -152,16 +272,20 @@ while [ "$#" -gt 0 ]; do
         -h|-help)
             _help 0
             ;;
+        -all)
+            if [[ "${option}" != "none" ]]; then
+                echo "WARNING: previous argument -${option} will be overwritten with -all." >&2
+            fi
+            option="all"
+            ;;
         -base)
-            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -base"
-            if [[ "${option}" != "all" ]]; then
+            if [[ "${option}" != "none" ]]; then
                 echo "WARNING: previous argument -${option} will be overwritten with -base." >&2
             fi
             option="base"
             ;;
         -common)
-            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -common"
-            if [[ "${option}" != "all" ]]; then
+            if [[ "${option}" != "none" ]]; then
                 echo "WARNING: previous argument -${option} will be overwritten with -common." >&2
             fi
             option="common"
@@ -169,8 +293,17 @@ while [ "$#" -gt 0 ]; do
         -local)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -local"
             ;;
+        -ci)
+            CI="yes"
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -save-deps-prefixes=/etc/openroad_deps_prefixes.txt"
+            ;;
         -prefix=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
+            PREFIX=${1#*=}
+            ;;
+        -constant-build-dir)
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
+            constantBuildDir="true"
             ;;
         *)
             echo "unknown option: ${1}" >&2
@@ -179,6 +312,13 @@ while [ "$#" -gt 0 ]; do
     esac
     shift 1
 done
+
+if [[ "${option}" == "none"  ]]; then
+        echo "You must use one of: -all|-base|-common" >&2
+        _help
+fi
+
+OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
 
 platform="$(uname -s)"
 case "${platform}" in
@@ -204,6 +344,9 @@ esac
 
 case "${os}" in
     "CentOS Linux" )
+        if [[ ${CI} == "yes" ]]; then
+            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
+        fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installCentosPackages
@@ -211,20 +354,34 @@ case "${os}" in
         fi
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCommon
-        fi        
+        fi
         ;;
-    "Ubuntu" )
+    "Ubuntu" | "Debian GNU/Linux rodete" )
         version=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g')
+        if [[ -z ${version} ]]; then
+            version=$(awk -F= '/^VERSION_CODENAME/{print $2}' /etc/os-release | sed 's/"//g')
+        fi
+        if [[ ${CI} == "yes" ]]; then
+            echo "Installing CI Tools"
+            _installCI
+        fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installUbuntuPackages "${version}"
             _installUbuntuCleanUp
         fi
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-            _installCommon
+            if [[ $version == "rodete" ]]; then
+                echo "Skip common for rodete"
+            elif _versionCompare ${version} -lt 23.04 ; then
+                _installCommon
+            fi
         fi
         ;;
     "Darwin" )
+        if [[ ${CI} == "yes" ]]; then
+            echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
+        fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installDarwinPackages

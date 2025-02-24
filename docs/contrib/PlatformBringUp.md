@@ -178,8 +178,8 @@ create_clock [get_ports clk] -period 8.4  #Units are in nanoseconds
 ```
 
 Refer to the
-[OpenSTA][https://github.com/The-OpenROAD-Project/OpenSTA/blob/master/doc/OpenSTA.pdf]
-for the full documentation of the `create_clock` command.
+[OpenSTA](https://github.com/The-OpenROAD-Project/OpenSTA/blob/master/doc/OpenSTA.pdf)
+User Guide for the full documentation of the `create_clock` command.
 
 ### Liberty, LEF, and GDS Files
 

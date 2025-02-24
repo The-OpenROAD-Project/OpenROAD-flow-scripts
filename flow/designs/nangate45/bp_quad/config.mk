@@ -3,7 +3,6 @@ export DESIGN_NICKNAME = bp_quad
 export PLATFORM    = nangate45
 
 export SYNTH_HIERARCHICAL = 1
-export RTLMP_FLOW = True
 
 # RTL_MP Settings
 #export RTLMP_MAX_INST = 30000
@@ -11,10 +10,10 @@ export RTLMP_FLOW = True
 #export RTLMP_MAX_MACRO = 16
 #export RTLMP_MIN_MACRO = 4
 
-export VERILOG_FILES = ./designs/src/$(DESIGN_NICKNAME)/bsg_chip_block.sv2v.v \
-                       ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
+export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/bsg_chip_block.sv2v.v \
+                       $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
 
-export SDC_FILE      = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/bsg_chip.sdc
+export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/bsg_chip.sdc
 
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram45_256x48.lef \
                          $(PLATFORM_DIR)/lef/fakeram45_32x32.lef \
@@ -36,4 +35,3 @@ export CORE_AREA   = 10 12 3590 3590
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-1000 -exclude bottom:2400-3600
 
 export MACRO_PLACE_HALO = 10 10
-export MACRO_PLACE_CHANNEL = 20 20

@@ -1,13 +1,13 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 # Note 6_final.def has wires that prevent global routing.
-load_design 4_1_cts.odb 4_cts.sdc ""
+load_design 4_1_cts.odb 4_cts.sdc
 
 source $::env(UTILS_DIR)/write_net_rc.tcl
 
 estimate_parasitics -placement
 record_wire_rc gpl
 
-if {[info exist env(FASTROUTE_TCL)]} {
+if {[env_var_exists_and_non_empty FASTROUTE_TCL]} {
   source $env(FASTROUTE_TCL)
 } else {
   set_global_routing_layer_adjustment $env(MIN_ROUTING_LAYER)-$env(MAX_ROUTING_LAYER) 0.5

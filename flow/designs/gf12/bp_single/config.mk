@@ -2,6 +2,9 @@ export DESIGN_NICKNAME = bp_single
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 
+export SKIP_GATE_CLONING = 1
+export TNS_END_PERCENT = 5
+
 # export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/bsg_chip.sv2v.v
 export VERILOG_FILES =  $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_single_core_v0/yosys/synth_don_abc_script.v \
                         $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
@@ -38,29 +41,26 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1r1w_d32_w64_m1.gds2 \
 
 export SEAL_GDS        = $(PLATFORM_DIR)/gds/crackstop_3x3.gds
 
+export FOOTPRINT_TCL   = $(PLATFORM_DIR)/bp/footprint.tcl
 
-export FOOTPRINT    = $(PLATFORM_DIR)/bp/bsg_bp_single.package.strategy
-export SIG_MAP_FILE = $(PLATFORM_DIR)/bp/soc_bsg_black_parrot.sigmap
-
-# These values must be multiples of placement site
-# export DIE_AREA    =
-# export CORE_AREA   =
+export DIE_AREA =    0   0 3000 3000
+export CORE_AREA = 200 200 2800 2800
 
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
-export PLACE_DENSITY = 0.20
+export PLACE_DENSITY = 0.80
 
-export HAS_IO_CONSTRAINTS = 1
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
-#export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/bp_single.macro_placment.cfg
-#export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_bp_single.macro_placment.cfg
-export MACRO_PLACEMENT = $(PLATFORM_DIR)/bp/auto_fence2_bp_single.macro_placment.cfg
-
-export MACRO_BLOCKAGE_HALO = 25
+export RTLMP_FENCE_LX = 606.44
+export RTLMP_FENCE_LY = 896.44
+export RTLMP_FENCE_UX = 2449.96
+export RTLMP_FENCE_UY = 2239.96
+export MACRO_PLACE_HALO = 28.2 28.2
 
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
+export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
 
-ifneq ($(USE_FILL),)
+ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CHIP
 else
 export DESIGN_TYPE = CHIP_NODEN

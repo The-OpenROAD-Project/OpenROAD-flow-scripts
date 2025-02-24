@@ -1,26 +1,29 @@
-root: index
+root: index2
 entries:
 
 - file: user/UserGuide.md
   title: User Guide
   entries:
+  - file: user/BuildWithPrebuilt.md
+    title: Build Using Pre-built Binaries
   - file: user/BuildWithDocker
-    title: Build With Docker
+    title: Build Using Docker
     entries:
     - file: user/DockerShell.md
       title: Docker Shell utility
-  - file: user/BuildWithPrebuilt.md
-    title: Build With Pre-built Binaries
   - file: user/BuildLocally.md
     title: Build Locally
   - file: user/BuildWithWSL.md
-    title: Build With WSL
+    title: Build Using WSL
   - file: user/FlowVariables.md
     title: Flow Variables
   - file: contrib/Metrics.md
     title: Metrics
   - file: user/InstructionsForAutoTuner.md
     title: AutoTuner
+
+- file: Manpage.md
+  title: Manpages
 
 - file: contrib/GettingInvolved.md
   title: Getting Involved
@@ -37,5 +40,18 @@ entries:
 - file: user/FAQS.md
   title: FAQs
 
-- file: tutorials/FlowTutorial
-  title: Flow Tutorial
+- file: tutorials/TutorialHome
+  title: Tutorials
+  entries:
+  - file: tutorials/FlowTutorial
+    title: Flow Tutorial
+  - file: tutorials/Notebooks
+    title: Running the OpenROAD Flow in Google Colab
+
+- file: user/Flow_QoR_CI.md
+  title: Flow QoR and CI Metrics
+  entries:
+  - file: user/QoRDashboard.md
+    title: Using the OpenROAD Dashboard to track and analyze QoR
+  - file: user/Jenkins.md
+    title: Exploring CI Metrics with Jenkins

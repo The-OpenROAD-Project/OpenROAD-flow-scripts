@@ -1,12 +1,14 @@
-utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 4_1_cts.odb 3_place.sdc "Starting fill cell"
+erase_non_stage_variables route
+if {[env_var_exists_and_non_empty FILL_CELLS]} {
+  load_design 5_2_route.odb 5_1_grt.sdc
 
-set_propagated_clock [all_clocks]
+  set_propagated_clock [all_clocks]
 
-filler_placement $::env(FILL_CELLS)
-check_placement -report_file_name $::env(REPORTS_DIR)/4_2_cts_fillcell.json
+  log_cmd filler_placement $::env(FILL_CELLS)
+  check_placement -report_file_name $::env(REPORTS_DIR)/5_3_fillcell.json
 
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/4_2_cts_fillcell.odb
+  write_db $::env(RESULTS_DIR)/5_3_fillcell.odb
+} else {
+  log_cmd exec cp $::env(RESULTS_DIR)/5_2_route.odb $::env(RESULTS_DIR)/5_3_fillcell.odb
 }

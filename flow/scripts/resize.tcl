@@ -1,51 +1,29 @@
 utl::set_metrics_stage "placeopt__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 3_3_place_gp.odb 2_floorplan.sdc "Starting resizer"
-
-proc print_banner {header} {
-  puts "\n=========================================================================="
-  puts "$header"
-  puts "--------------------------------------------------------------------------"
-}
+erase_non_stage_variables place
+load_design 3_3_place_gp.odb 2_floorplan.sdc
 
 estimate_parasitics -placement
 
-
-utl::push_metrics_stage "placeopt__{}__pre_opt"
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "resizer pre" false false
-utl::pop_metrics_stage
-
-print_banner "instance_count"
-puts [sta::network_leaf_instance_count]
-
-print_banner "pin_count"
-puts [sta::network_leaf_pin_count]
-
-puts ""
+set instance_count_before [sta::network_leaf_instance_count]
+set pin_count_before [sta::network_leaf_pin_count]
 
 set_dont_use $::env(DONT_USE_CELLS)
 
 # Do not buffer chip-level designs
-if {![info exists ::env(FOOTPRINT)]} {
-  puts "Perform port buffering..."
-  buffer_ports
+# by default, IO ports will be buffered
+# to not buffer IO ports, set environment variable
+# DONT_BUFFER_PORT = 1
+if { ![env_var_exists_and_non_empty FOOTPRINT] } {
+  if { ![env_var_equals DONT_BUFFER_PORTS 1] } {
+    puts "Perform port buffering..."
+    buffer_ports
+  }
 }
 
-puts "Perform buffer insertion..."
-set additional_args ""
-if { [info exists ::env(CAP_MARGIN)] && $::env(CAP_MARGIN) > 0.0} {
-  puts "Cap margin $::env(CAP_MARGIN)"
-  append additional_args " -cap_margin $::env(CAP_MARGIN)"
-}
-if { [info exists ::env(SLEW_MARGIN)] && $::env(SLEW_MARGIN) > 0.0} {
-  puts "Slew margin $::env(SLEW_MARGIN)"
-  append additional_args " -slew_margin $::env(SLEW_MARGIN)"
-}
+repair_design_helper
 
-repair_design {*}$additional_args
-
-if { [info exists env(TIE_SEPARATION)] } {
+if { [env_var_exists_and_non_empty TIE_SEPARATION] } {
   set tie_separation $env(TIE_SEPARATION)
 } else {
   set tie_separation 0
@@ -69,20 +47,12 @@ repair_tie_fanout -separation $tie_separation $tiehi_pin
 
 # post report
 
-print_banner "report_floating_nets"
+puts "Floating nets: "
 report_floating_nets
 
-source $::env(SCRIPTS_DIR)/report_metrics.tcl
-report_metrics "resizer" true false
+report_metrics 3 "resizer" true false
 
-print_banner "instance_count"
-puts [sta::network_leaf_instance_count]
+puts "Instance count before $instance_count_before, after [sta::network_leaf_instance_count]"
+puts "Pin count before $pin_count_before, after [sta::network_leaf_pin_count]"
 
-print_banner "pin_count"
-puts [sta::network_leaf_pin_count]
-
-puts ""
-
-if {![info exists save_checkpoint] || $save_checkpoint} {
-  write_db $::env(RESULTS_DIR)/3_4_place_resized.odb
-}
+write_db $::env(RESULTS_DIR)/3_4_place_resized.odb

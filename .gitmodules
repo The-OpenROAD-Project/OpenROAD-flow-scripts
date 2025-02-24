@@ -1,9 +1,6 @@
 [submodule "tools/yosys"]
 	path = tools/yosys
-	url = https://github.com/The-OpenROAD-Project/yosys.git
+	url = ../../The-OpenROAD-Project/yosys.git
 [submodule "tools/OpenROAD"]
 	path = tools/OpenROAD
 	url = ../OpenROAD.git
-[submodule "tools/LSOracle"]
-	path = tools/LSOracle
-	url = https://github.com/The-OpenROAD-Project/LSOracle.git

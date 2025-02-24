@@ -9,7 +9,40 @@ of QoR and detailed physical design implementation. However, ORFS
 also enables manual intervention for finer user control of individual
 flow stages through Tcl commands and Python APIs.
 
-![ORFS_Flow](./docs/images/ORFS_Flow.svg)
+```mermaid
+%%{init: { 'logLevel': 'debug', 'theme': 'dark'
+  } }%%
+timeline
+  title RTL-GDSII Using OpenROAD-flow-scripts
+  Synthesis
+    : Inputs  [RTL, SDC, .lib, .lef]
+    : Logic Synthesis  (Yosys)
+    : Output files  [Netlist, SDC]
+  Floorplan
+    : Floorplan Initialization
+    : IO placement  (random)
+    : Timing-driven mixed-size placement
+    : Macro placement
+    : Tapcell and welltie insertion
+    : PDN generation
+  Placement
+    : Global placement without placed IOs
+    : IO placement  (optimized)
+    : Global placement with placed IOs
+    : Resizing and buffering
+    : Detailed placement
+  CTS : Clock Tree Synthesis
+    : Timing optimization
+    : Filler cell insertion
+  Routing
+    : Global Routing
+    : Detailed Routing
+  Finishing
+    : Metal Fill insertion
+    : Signoff timing report
+    : Generate GDSII  (KLayout)
+    : DRC/LVS check (KLayout)
+```
 
 ## Tool Installation
 
@@ -47,9 +80,9 @@ binaries, including OpenROAD, Yosys and Klayout. See instructions
 > **Disclaimer** The versions of OpenROAD, Yosys and Klayout provided by
 > other third-party vendors are not guaranteed to work with ORFS.
 
-### Local Installation
+### Build from sources locally
 
-Document for detailed local installation steps found [here](./docs/user/BuildLocally.md).
+Document for detailed local build from sources and installation steps found [here](./docs/user/BuildLocally.md).
 
 ## Using the Flow
 
@@ -63,6 +96,23 @@ Document for detailed local installation steps found [here](./docs/user/BuildLoc
   [here](https://openroad-flow-scripts.readthedocs.io/en/latest/tutorials/FlowTutorial.html).
 - To watch ORFS flow tutorial videos, check
   [here](https://theopenroadproject.org/video).
+
+## Building from your own git repository
+
+ORFS supports hosting projects in your own git repository
+without the need to fork ORFS.
+
+To build from your own git repository:
+
+    cd /home/me/myproject
+    make --file=~/OpenROAD-flow-scripts/flow/Makefile DESIGN_CONFIG=somefolder/config.mk ...
+
+## Running a quick smoke-test of ORFS on your own Verilog
+
+You can [run ORFS on your own Verilog files](./flow/designs/asap7/minimal/README.md)
+without setting up a project or moving your Verilog files and even learn
+a thing or two about floorplan, placement and routing
+before you create an .sdc file and a config.mk file.
 
 ## Citing this Work
 

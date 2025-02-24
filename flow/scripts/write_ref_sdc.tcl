@@ -25,7 +25,7 @@ if { [llength $clks] == 0 } {
       create_clock -name $clk_name -period $ref_period $sources
       # Undo the set_propagated_clock so SDC at beginning of flow uses ideal clocks.
       unset_propagated_clock [all_clocks]
-      write_sdc [file join $env(RESULTS_DIR) "updated_clks.sdc"]
+      write_sdc -no_timestamp [file join $env(RESULTS_DIR) "updated_clks.sdc"]
       # Reset
       create_clock -name $clk_name -period $period $sources
       set_propagated_clock [all_clocks]
@@ -37,4 +37,4 @@ if { [llength $clks] == 0 } {
   }
 }
 
-utl::info "FLW" 11 "Path endpoint count [sta::endpoint_count]"
+utl::info "FLW" 11 "Path endpoint path count [sta::endpoint_path_count]"

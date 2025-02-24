@@ -2,10 +2,10 @@ export DESIGN_NICKNAME = coyote
 export DESIGN_NAME = bsg_rocket_node_client_rocc
 export PLATFORM    = gf12
 
-export VERILOG_FILES   = ./designs/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \
-                         ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
+export VERILOG_FILES   = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/coyote.sv2v.v \
+                         $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/macros.v
 
-export SDC_FILE        = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+export SDC_FILE        = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 export ABC_AREA        = 1
 
 export WRAP_LEFS       = $(PLATFORM_DIR)/lef/gf12_1rf_lg6_w80_bit.lef \
@@ -25,14 +25,13 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1rf_lg6_w80_bit.gds2 \
 
 export PLACE_DENSITY = 0.35
 
-export MACRO_WRAPPERS = ./designs/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
+export MACRO_WRAPPERS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
 export DIE_AREA    = 0 0 752 752
 export CORE_AREA   = 2 2 750 750
-export HAS_IO_CONSTRAINTS = 1
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-20 -exclude bottom:450-750
 
-ifneq ($(USE_FILL),)
+ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL
 else
 export DESIGN_TYPE = CELL_NODEN

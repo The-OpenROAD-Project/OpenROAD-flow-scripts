@@ -2,8 +2,11 @@
 
 ## Prerequisites
 
-For this method you only need to install
+- For this method you only need to install
 [Docker](https://docs.docker.com/engine/install) on your machine.
+- Ensure that you have sufficient memory allocated to the Virtual Machine (VM)
+as per our system [requirements](../index.md#system-requirements). Refer to
+this [Docker guide](https://docs.docker.com/config/containers/resource_constraints/) for setting CPU cores and memory limits.
 
 :::{Warning}
 The `build_openroad.sh` will use the host number of CPUs to compile `openroad`.
@@ -19,15 +22,37 @@ then is recommended that you restrict the number of CPUs used by the scripts
 docker run --rm ubuntu:22.04 nproc
 ```
 
-You can restrict the number of CPUs with the `-t|--threads N` argument:
+### Build Using Docker from pre-built binaries
 
-``` shell
-./build_openroad.sh --threads N
+Courtesy of [Precision Innovations](https://precisioninno.com/),
+they release `.deb` installers of OpenROAD for Ubuntu
+and Debian on a regular basis.
+This greatly helps to reduce the compilation time needed.
+
+We recommend to use a Docker image of a supported OS
+and install OpenROAD using the pre-built binaries from
+Precision Innovations. 
+You can start the container in an interactive mode using 
+the command below. 
+
+```shell
+docker run -it ubuntu:22.04
 ```
 
-## Clone and Build
+Now you are ready to install the prebuilt binaries.
+Please refer to the instructions for installing prebuilt binaries
+[here](./BuildWithPrebuilt.md).
 
-The following instructions build the docker image with CentOS 7 as the base OS:
+### Build Using Docker from sources
+
+Alternatively, if you would like the latest commits from the OpenROAD repositories,
+do follow the instructions below.
+
+
+#### Clone and Build
+
+The following instructions build the docker image with Ubuntu 22.04 as the base OS:
+
 
 ``` shell
 git clone --recursive https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts
@@ -35,12 +60,18 @@ cd OpenROAD-flow-scripts
 ./build_openroad.sh
 ```
 
-## Verify Installation
-
-The binaries are only available from inside a Docker container. Here is an example of starting a container from the created Docker image. 
+You can restrict the number of CPUs with the `-t|--threads N` argument:
 
 ``` shell
-docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-centos7-builder
+./build_openroad.sh --threads N
+```
+
+## Verify Installation
+
+The binaries are only available from inside a Docker container. Here is an example of starting a container from the created Docker image.
+
+``` shell
+docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22.04-builder
 ```
 
 Then, inside docker:
@@ -54,12 +85,20 @@ make
 exit
 ```
 
+Alternatively you may also use the `docker_shell` utility as follows.
+It is important that you are in the `flow` directory. 
+
+```shell
+cd flow
+util/docker_shell make
+```
+
 ## Enable GUI support
 
 To use the GUI feature you will need to start the docker with the
 following command,
 
-For Ubuntu/Centos/Debian OS users:
+For Ubuntu/Debian OS users:
 
 ```
 docker run --rm -it \
@@ -81,16 +120,25 @@ Then use:
 docker run --rm -it -e DISPLAY=<IP_LIKE_FROM_TUTORIAL>:0 --network host --privileged <IMAGE_NAME>
 ```
 
-## Docker Shell Utility
+Alternatively, you may also use the `docker_shell` utility for GUI as follows. 
+It is important that you are in the `flow` directory. 
 
-Alternatively, use `docker_shell` to automate the above commands using the
-user's parameters. Do refer to the documentation [here](./DockerShell.md).
+```shell
+cd flow
+util/docker_shell gui_final
+```
+
+```{note}
+`docker_shell` is a helpful utility to automate the 
+aforementioned Docker commands using the user's parameters. 
+Do refer to the documentation [here](./DockerShell.md).
+```
 
 ## Build Docker Image for Different OS
 
 The following instructions build the docker image with a parameterized OS
 in two stages. These are for CI and developers that wish to use an OS other
-than CentOS 7; regular users should use the steps from previous sections.
+than Ubuntu 22.04; regular users should use the steps from previous sections.
 The dev stage installs all dependencies and packages required to run OpenROAD
 and OpenROAD Flow Scripts. The build stage generates all binaries needed to run
 the flow (i.e., `openroad` and `yosys`).

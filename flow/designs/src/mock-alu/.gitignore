@@ -1,0 +1,11 @@
+*.anno.json
+*.fir
+project/
+target/
+.metals/
+.vscode/
+.bloop/
+test_run_dir/
+*.gtkw
+*.fir
+*.f

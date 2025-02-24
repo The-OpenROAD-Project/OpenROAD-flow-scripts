@@ -1,7 +1,10 @@
-MockArray.anno.json
-MockArray.fir
+*.anno.json
+*.fir
 project/
 target/
 .metals/
 .vscode/
 .bloop/
+.bsp/
+test_run_dir/
+*.f

@@ -2,7 +2,6 @@ export DESIGN_NICKNAME = bp_quad
 export DESIGN_NAME = bsg_chip
 export PLATFORM    = gf12
 
-export RTLMP_FLOW = True
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 1000
 
@@ -41,8 +40,6 @@ export SEAL_GDS        = $(PLATFORM_DIR)/gds/crackstop_3x3.gds
 export DIE_AREA    = 0 0 1800 1800 
 export CORE_AREA   = 5 5 1795 1795
 export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-800 -exclude bottom:1200-1800
-export HAS_IO_CONSTRAINTS = 1
-
 
 export PLACE_DENSITY_LB_ADDON = 0.02
 
@@ -50,6 +47,4 @@ export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
-# Define macro halo and channel spacings
 export MACRO_PLACE_HALO = 5 5 
-export MACRO_PLACE_CHANNEL = 10 10

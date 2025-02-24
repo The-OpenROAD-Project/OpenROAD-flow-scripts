@@ -21,12 +21,12 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-jobs:     
+jobs:
   testInstaller:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu20.04", "ubuntu22.04", "centos7"]
+        os: ["ubuntu20.04", "ubuntu22.04"]
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -45,35 +45,11 @@ jobs:
           sudo service docker restart
       - name: Run installer
         run: |
-          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }}
+          ./etc/DockerHelper.sh create -target=dev -os=${{ matrix.os }} -tag=latest
       - name: Build project
         run: |
-          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }}
+          ./etc/DockerHelper.sh create -target=builder -os=${{ matrix.os }} -tag=latest
       - name: Test build
         run: |
-          if [[ ${{ matrix.os }} == "centos7" ]]; then
-            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source /opt/rh/llvm-toolset-7.0/enable; source /opt/rh/devtoolset-8/enable; source ./env.sh; yosys -help; openroad -help; cd flow; make;"
-          else
-            docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "source ./env.sh; yosys -help; openroad -help; cd flow; make;"
-          fi
-  testInstaller-macos:
-    strategy:
-      fail-fast: false
-    runs-on: macos-latest
-    steps:
-      - name: Setup xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
-      - name: Check out repository code
-        uses: actions/checkout@v3
-        with:
-          submodules: 'recursive'
-      - name: Run installer
-        shell: bash
-        run: |
-          ./etc/DependencyInstaller.sh
-      - name: Build project
-        shell: bash
-        run: |
-          ./build_openroad.sh --local
+          cmd="source ./env.sh ; yosys -help ; openroad -help ; make -C flow ;"
+          docker run openroad/flow-${{ matrix.os }}-builder /bin/bash -c "${cmd}"

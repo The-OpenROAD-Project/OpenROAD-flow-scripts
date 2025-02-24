@@ -20,7 +20,6 @@ flow/run-me*.sh
 flow/vars*.sh
 flow/vars*.tcl
 flow/vars*.gdb
-flow/versions.txt
 
 # Common temp files
 flow/pt_shell_command.log
@@ -58,6 +57,7 @@ flow/*.opennet
 # Platforms
 flow/platforms/*
 !flow/platforms/asap7
+!flow/platforms/ihp-sg13g2
 !flow/platforms/nangate45
 !flow/platforms/sky130hd
 !flow/platforms/sky130hs
@@ -88,3 +88,13 @@ perf.data.old
 docs/main
 docs/build
 GitGuide.md
+SupportedOS.md
+index2.md
+Manpage.md
+mainREADME.md
+build
+.scala-build/
+.bsp/
+
+# autotuner artifacts
+metadata-base-at.json

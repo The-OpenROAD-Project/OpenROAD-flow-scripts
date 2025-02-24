@@ -1,0 +1,76 @@
+{
+    "_SDC_FILE_PATH": "constraints.sdc",
+    "_SDC_CLK_PERIOD": {
+        "type": "float",
+        "minmax": [
+            50,
+            300
+        ],
+        "step": 1
+    },
+    "CORE_UTILIZATION": {
+        "type": "int",
+        "minmax": [
+            5,
+            40
+        ],
+        "step": 1
+    },
+    "CORE_ASPECT_RATIO": {
+        "type": "float",
+        "minmax": [
+            0.9,
+            1.1
+        ],
+        "step": 0
+    },
+    "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT": {
+        "type": "int",
+        "minmax": [
+            0,
+            4
+        ],
+        "step": 1
+    },
+    "CELL_PAD_IN_SITES_DETAIL_PLACEMENT": {
+        "type": "int",
+        "minmax": [
+            0,
+            4
+        ],
+        "step": 1
+    },
+    "_FR_LAYER_ADJUST": {
+        "type": "float",
+        "minmax": [
+            0.0,
+            0.1
+        ],
+        "step": 0
+    },
+    "PLACE_DENSITY_LB_ADDON": {
+        "type": "float",
+        "minmax": [
+            0.0,
+            0.1
+        ],
+        "step": 0
+    },
+    "CTS_CLUSTER_SIZE": {
+        "type": "int",
+        "minmax": [
+            10,
+            200
+        ],
+        "step": 1
+    },
+    "CTS_CLUSTER_DIAMETER": {
+        "type": "int",
+        "minmax": [
+            20,
+            400
+        ],
+        "step": 1
+    },
+    "_FR_FILE_PATH": ""
+}

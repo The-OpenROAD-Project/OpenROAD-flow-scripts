@@ -3,7 +3,7 @@
 The OpenROAD ("Foundations and Realization of Open, Accessible Design")
 project was launched in June 2018 within the DARPA IDEA program. OpenROAD
 aims to bring down the barriers of cost, expertise and unpredictability that
-currently block designers' access to hardware implementation in advanced
+currently block designers access to hardware implementation in advanced
 technologies. The project team (Qualcomm, Arm and multiple universities and
 partners, led by UC San Diego) is developing a fully autonomous, open-source
 tool chain for digital SoC layout generation, focusing on the RTL-to-GDSII
@@ -37,7 +37,8 @@ Learn more about the project at our website and our resources page
 
 OpenROAD Flow is a full RTL-to-GDS flow built entirely on open-source tools.
 The project aims for automated, no-human-in-the-loop digital circuit design
-with 24-hour turnaround time.
+with 24-hour turnaround time. For more information, refer to our repository
+[README](mainREADME.md).
 
 ```{tip}
 See these [tips](user/FAQS.md#how-do-i-get-better-search-results) to help improve your search results.
@@ -66,7 +67,7 @@ We support four major ways of installation:
 - [Windows Subsystem for Linux (WSL)](./user/BuildWithWSL.md)
 - [Local Installation](./user/BuildLocally.md)
 
-You may also choose use the build script to customise your build process.
+You may also choose and use the build script to customise your build process.
 See more in the next section.
 
 ##### Build Command and options
@@ -90,9 +91,6 @@ Options for `./build_openroad.sh` script
 | `--yosys-args STRING`         | Aditional compilation flags for Yosys compilation.                                    |
 | `--openroad-args-overwrite`   | Do not use default flags set by this script during OpenROAD app compilation.          |
 | `--openroad-args STRING`      | Aditional compilation flags for OpenROAD app compilation.                             |
-| `--lsoracle-enable`           | Compile LSOracle. Disable by default as it is not currently used on the flow.         |
-| `--lsoracle-args-overwrite`   | Do not use default flags set by this scrip during LSOracle compilation.               |
-| `--lsoracle-args STRING`      | Aditional compilation flags for LSOracle compilation.                                 |
 | `--install-path PATH`         | Path to install tools. Default is `${INSTALL_PATH}`.                                  |
 | `--clean`                     | Call git clean interactively before compile. Useful to remove old build files.        |
 | `--clean-force`               | Call git clean before compile. WARNING: this option will not ask for confirmation. Useful to remove old build files. |
@@ -150,15 +148,19 @@ OpenROAD-flow-scripts supports Verilog to GDS for the following open platforms:
 - ASAP7
 - Nangate45 / FreePDK45
 - SKY130
+- GF180
 
 These platforms have a permissive license which allows us to
 redistribute the PDK and OpenROAD platform-specific files. The platform
 files and license(s) are located in `platforms/{platform}`.
 
-OpenROAD-flow-scripts also supports the following commercial platforms:
+OpenROAD-flow-scripts also supports the following proprietary platforms:
 
+- GF55
 - GF12
-- TSMC65LP
+- Intel22
+- Intel16
+- TSMC65
 
 The PDKs and platform-specific files for these kits cannot be provided
 due to NDA restrictions. However, if you are able to access these
@@ -216,7 +218,7 @@ We maintain the following channels for communication:
   - OpenROAD with OpenROAD Flow Scripts: <https://github.com/The-OpenROAD-Project/OpenROAD/issues/>
 - Discussions:
   - OpenROAD Flow: <https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/discussions>
-- Inquiries: openroad@eng.ucsd.edu
+- Inquiries: openroad@ucsd.edu
 
 See also our [FAQs](user/FAQS.md).
 

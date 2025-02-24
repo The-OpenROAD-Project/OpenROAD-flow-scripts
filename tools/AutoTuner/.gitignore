@@ -1,0 +1,12 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Autotuner env
+autotuner_env
+.env

@@ -1,0 +1,10 @@
+{
+    "CTS_CLUSTER_SIZE": {
+        "type": "int",
+        "minmax": [
+            50,
+            54
+        ],
+        "step": 1
+    }
+}

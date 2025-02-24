@@ -16,7 +16,7 @@ export GDS_FILES = $(sort $(wildcard $(PLATFORM_DIR)/gds/*.gds)) \
 export DONT_USE_CELLS = TAPCELL_X1 FILLCELL_X1 AOI211_X1 OAI211_X1
 
 # Fill cells used in fill cell insertion
-export FILL_CELLS = FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32
+export FILL_CELLS ?= FILLCELL_X1 FILLCELL_X2 FILLCELL_X4 FILLCELL_X8 FILLCELL_X16 FILLCELL_X32
 
 # -----------------------------------------------------
 #  Yosys
@@ -37,8 +37,6 @@ export LATCH_MAP_FILE = $(PLATFORM_DIR)/cells_latch.v
 export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
 export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders.v
 #
-# Set yosys-abc clock period to first "-period" found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
 export ABC_DRIVER_CELL = BUF_X1
 # BUF_X1, pin (A) = 0.974659. Arbitrarily multiply by 4
 export ABC_LOAD_IN_FF = 3.898
@@ -59,26 +57,15 @@ export IO_PLACER_V = metal6
 export PDN_TCL ?= $(PLATFORM_DIR)/grid_strategy-M1-M4-M7.tcl
 
 # Endcap and Welltie cells
-export TAPCELL_TCL = $(PLATFORM_DIR)/tapcell.tcl
+export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
+export TAP_CELL_NAME = TAPCELL_X1
 
 export MACRO_PLACE_HALO ?= 22.4 15.12
-export MACRO_PLACE_CHANNEL ?= 18.8 19.95
 
 #---------------------------------------------------------
 # Place
 # --------------------------------------------------------
-# Cell padding in SITE widths to ease rout-ability.  Applied to both sides
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT ?= 0
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT ?= 0
-#
-
 export PLACE_DENSITY ?= 0.30
-
-# --------------------------------------------------------
-#  CTS
-#  -------------------------------------------------------
-# TritonCTS options
-export CTS_BUF_CELL   ?= BUF_X4
 
 # ---------------------------------------------------------
 #  Route
@@ -88,7 +75,7 @@ export MIN_ROUTING_LAYER = metal2
 export MAX_ROUTING_LAYER = metal10
 
 # Define fastRoute tcl
-export FASTROUTE_TCL = $(PLATFORM_DIR)/fastroute.tcl
+export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 
 # KLayout technology file
 export KLAYOUT_TECH_FILE = $(PLATFORM_DIR)/FreePDK45.lyt
@@ -115,6 +102,6 @@ export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules
 
 # IR drop estimation supply net name to be analyzed and supply voltage variable
 # For multiple nets: PWR_NETS_VOLTAGES  = "VDD1 1.8 VDD2 1.2"
-export PWR_NETS_VOLTAGES  ?= "VDD 1.1"
-export GND_NETS_VOLTAGES  ?= "VSS 0.0"
+export PWR_NETS_VOLTAGES  ?= VDD 1.1
+export GND_NETS_VOLTAGES  ?= VSS 0.0
 export IR_DROP_LAYER ?= metal1
