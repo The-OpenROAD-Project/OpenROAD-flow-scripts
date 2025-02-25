@@ -33,6 +33,7 @@ from itertools import product
 from uuid import uuid4 as uuid
 from collections import namedtuple
 from multiprocessing import cpu_count
+from cloudpathlib import CloudPath
 
 import numpy as np
 import torch
@@ -49,6 +50,7 @@ from ray.tune.search.optuna import OptunaSearch
 from ray.util.queue import Queue
 
 from ax.service.ax_client import AxClient
+import warnings
 
 from autotuner.utils import (
     openroad,
@@ -71,8 +73,6 @@ ORFS_FLOW_DIR = os.path.abspath(
 )
 # URL to ORFS GitHub repository
 ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
-# Global variable for args
-args = None
 
 
 class AutoTunerBase(tune.Trainable):
@@ -336,6 +336,13 @@ def parse_arguments():
         default="",
         help="Additional arguments given to ./build_openroad.sh.",
     )
+    parser.add_argument(
+        "--cloud_dir",
+        type=str,
+        metavar="<str>",
+        default=None,
+        help="Cloud storage directory for logs, defaults to None. See our documentation on cloud support for more information.",
+    )
 
     # ML
     tune_parser.add_argument(
@@ -463,6 +470,21 @@ def parse_arguments():
     if args.timeout is not None:
         args.timeout = round(args.timeout * 3600)
 
+    # Validate cloud_dir if exist
+    if args.cloud_dir:
+        try:
+            CloudPath(args.cloud_dir).exists()
+        except Exception as e:
+            print(
+                f"[ERROR TUN-0007] Cloud storage directory {args.cloud_dir} does not exist or invalid IAM supplied."
+            )
+            sys.exit(1)
+        if not args.cloud_dir.startswith("gs://"):
+            warnings.warn(
+                f"Cloud storage directory {args.cloud_dir} is not supported. Please use gs://<bucket-name>.",
+                UserWarning,
+            )
+
     return args
 
 
@@ -556,11 +578,22 @@ def save_best(results):
     best_config = results.best_config
     best_config["best_result"] = results.best_result[METRIC]
     trial_id = results.best_trial.trial_id
+
+    # Save locally
     new_best_path = f"{LOCAL_DIR}/{args.experiment}/"
+    os.makedirs(new_best_path, exist_ok=True)
     new_best_path += f"autotuner-best-{trial_id}.json"
     with open(new_best_path, "w") as new_best_file:
         json.dump(best_config, new_best_file, indent=4)
-    print(f"[INFO TUN-0003] Best parameters written to {new_best_path}")
+    print(f"[INFO TUN-0003] Local: Best parameters written to {new_best_path}")
+
+    # Save to cloud storage
+    if args.cloud_dir:
+        new_best_path = f"{args.cloud_dir}/{args.experiment}/"
+        new_best_path += f"autotuner-best-{trial_id}.json"
+        with CloudPath(new_best_path).open("w") as new_best_file:
+            json.dump(best_config, new_best_file, indent=4)
+        print(f"[INFO TUN-0011] Cloud: Best parameters written to {new_best_path}")
 
 
 def sweep():
@@ -632,6 +665,7 @@ def main():
             num_samples=args.samples,
             fail_fast=False,
             local_dir=LOCAL_DIR,
+            storage_path=args.cloud_dir,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
             resources_per_trial={"cpu": os.cpu_count() / args.jobs},
