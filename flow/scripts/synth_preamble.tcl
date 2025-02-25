@@ -23,13 +23,20 @@ if {[env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS]} {
 
 
 # Read verilog files
-foreach file $::env(VERILOG_FILES) {
-  if {[file extension $file] == ".rtlil"} {
-    read_rtlil $file
-  } elseif {[file extension $file] == ".json"} {
-    read_json $file
-  } else {
-    read_verilog -defer -sv {*}$vIdirsArgs $file
+if {[env_var_exists_and_non_empty USE_YOSYS_SLANG] && !([file extension $::env(VERILOG_FILES)] == ".rtlil")} {
+  # slang requires all files at once
+  plugin -i slang
+  yosys read_slang -D SYNTHESIS --keep-hierarchy --compat=vcs \
+     {*}$vIdirsArgs {*}$::env(VERILOG_FILES)
+} else {
+  foreach file $::env(VERILOG_FILES) {
+    if {[file extension $file] == ".rtlil"} {
+      read_rtlil $file
+    } elseif {[file extension $file] == ".json"} {
+      read_json $file
+    } else {
+      read_verilog -defer -sv {*}$vIdirsArgs $file
+    }
   }
 }
 
