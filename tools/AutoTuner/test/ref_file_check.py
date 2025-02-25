@@ -3,9 +3,6 @@ import subprocess
 import os
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(cur_dir, "../src")
-orfs_dir = os.path.join(cur_dir, "../../../flow")
-os.chdir(src_dir)
 
 
 class RefFileCheck(unittest.TestCase):
@@ -15,8 +12,8 @@ class RefFileCheck(unittest.TestCase):
 
     def setUp(self):
         configs = [
-            "../../test/files/no_sdc_ref.json",
-            "../../test/files/no_fr_ref.json",
+            os.path.join(cur_dir, "./files/no_sdc_ref.json"),
+            os.path.join(cur_dir, "./files/no_fr_ref.json"),
         ]
         self.commands = [
             f"python3 -m autotuner.distributed"
