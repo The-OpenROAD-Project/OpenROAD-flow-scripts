@@ -10,6 +10,6 @@ Cloned from https://github.com/lowRISC/ibex (`commit 77d801001554cce8fe69e742e96
 # Modifications
 
 - Default configuration from Repository.
-- Converted to verilog [using](https://github.com/zachjs/sv2v).
+- Pruned to only those source files which are used and moved most to the top directory. 
 - Added timing constraints.
 - Added LICENSE.
