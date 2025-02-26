@@ -27,7 +27,8 @@ if {[env_var_exists_and_non_empty USE_YOSYS_SLANG] && !([file extension $::env(V
   # slang requires all files at once
   plugin -i slang
   yosys read_slang -D SYNTHESIS --keep-hierarchy --compat=vcs \
-     {*}$vIdirsArgs {*}$::env(VERILOG_FILES)
+    --ignore-assertions \
+    {*}$vIdirsArgs {*}$::env(VERILOG_FILES)
 } else {
   foreach file $::env(VERILOG_FILES) {
     if {[file extension $file] == ".rtlil"} {
