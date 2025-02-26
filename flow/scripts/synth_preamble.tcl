@@ -21,38 +21,52 @@ if {[env_var_exists_and_non_empty SYNTH_NETLIST_FILES]} {
   exit
 }
 
-# Setup verilog include directories
-set vIdirsArgs ""
-if {[env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS]} {
-  foreach dir $::env(VERILOG_INCLUDE_DIRS) {
-    lappend vIdirsArgs "-I$dir"
-  }
-  set vIdirsArgs [join $vIdirsArgs]
-}
-
-
-# Read verilog files
-foreach file $::env(VERILOG_FILES) {
-  if {[file extension $file] == ".rtlil"} {
-    read_rtlil $file
-  } elseif {[file extension $file] == ".json"} {
+# Read design
+if {[env_var_exists_and_non_empty RTLIL_FILE]} {
+  # We are reading a Yosys checkpoint
+  set file $env(RTLIL_FILE)
+  if {[file extension $file] == ".json"} {
     read_json $file
   } else {
-    read_verilog -defer -sv {*}$vIdirsArgs $file
+    read_rtlil $file
   }
-}
+} else {
+  # We are reading Verilog sources
+  source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
 
-source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
+  # Setup verilog include directories
+  set vIdirsArgs ""
+  if {[env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS]} {
+    foreach dir $::env(VERILOG_INCLUDE_DIRS) {
+      lappend vIdirsArgs "-I$dir"
+    }
+    set vIdirsArgs [join $vIdirsArgs]
+  }
 
-# Read platform specific mapfile for OPENROAD_CLKGATE cells
-if {[env_var_exists_and_non_empty CLKGATE_MAP_FILE]} {
-  read_verilog -defer $::env(CLKGATE_MAP_FILE)
-}
+  if {[env_var_exists_and_non_empty SYNTH_USE_SLANG]} {
+    # slang requires all files at once
+    plugin -i slang
+    yosys read_slang -D SYNTHESIS --keep-hierarchy --compat=vcs \
+      --ignore-assertions --top $::env(DESIGN_NAME) \
+      {*}$vIdirsArgs {*}$::env(VERILOG_FILES) {*}$::env(VERILOG_DEFINES)
+    # Workaround for yosys-slang#119
+    setattr -unset init
+  } else {
+    foreach file $::env(VERILOG_FILES) {
+      read_verilog -defer -sv {*}$vIdirsArgs $file
+    }
+  }
 
-if {[env_var_exists_and_non_empty SYNTH_BLACKBOXES]} {
-  hierarchy -check -top $::env(DESIGN_NAME)
-  foreach m $::env(SYNTH_BLACKBOXES) {
-    blackbox $m
+  # Read platform specific mapfile for OPENROAD_CLKGATE cells
+  if {[env_var_exists_and_non_empty CLKGATE_MAP_FILE]} {
+    read_verilog -defer $::env(CLKGATE_MAP_FILE)
+  }
+
+  if {[env_var_exists_and_non_empty SYNTH_BLACKBOXES]} {
+    hierarchy -check -top $::env(DESIGN_NAME)
+    foreach m $::env(SYNTH_BLACKBOXES) {
+      blackbox $m
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-set ::env(VERILOG_FILES) $::env(RESULTS_DIR)/1_synth.rtlil
+set ::env(RTLIL_FILE) $::env(RESULTS_DIR)/1_synth.rtlil
 
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 

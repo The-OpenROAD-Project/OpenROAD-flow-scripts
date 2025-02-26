@@ -169,6 +169,9 @@ SYNTH_MEMORY_MAX_BITS:
   default: 4096
   stages:
     - synth
+SYNTH_USE_SLANG:
+  description: >
+    Use yosys-slang for read-in of SystemVerilog design.
 SYNTH_BLACKBOXES:
   description: >
     List of cells treated as a black box by Yosys. With Bazel, this can be used
@@ -569,8 +572,7 @@ DESIGN_NAME:
 VERILOG_FILES:
   required: true
   description: >
-    The path to the design Verilog files or JSON files providing a description
-    of modules (check `yosys -h write_json` for more details).
+    The path to the design Verilog files providing a description of modules.
   stages:
     - synth
 SDC_FILE:
