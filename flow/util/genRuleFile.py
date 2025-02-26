@@ -2,54 +2,12 @@
 
 from math import ceil, isinf
 from os import chdir, getcwd
-from os.path import isfile, abspath
+from os.path import isfile
 from re import sub
 import argparse
 import json
 import operator
 import sys
-import requests
-
-
-def get_golden(platform, design, api_base_url):
-    try:
-        response = requests.get(
-            api_base_url + f"/golden?platform={platform}&design={design}&variant=base"
-        )
-
-        # Check if the request was successful (status code 200)
-        if response.status_code == 200 and "error" not in response.json():
-            # Parse the JSON response
-            data = response.json()
-
-            return data, None
-        else:
-            print("API request failed")
-            return None, "API request failed"
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        return None, f"An error occurred: {str(e)}"
-
-
-def get_metrics(commitSHA, platform, design, api_base_url):
-    try:
-        response = requests.get(
-            api_base_url
-            + f"/commit?commitSHA={commitSHA}&platform={platform}&design={design}&variant=base"
-        )
-
-        # Check if the request was successful (status code 200)
-        if response.status_code == 200 and "error" not in response.json():
-            # Parse the JSON response
-            data = response.json()
-
-            return data, None
-        else:
-            print("API request failed")
-            return None, "API request failed"
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        return None, f"An error occurred: {str(e)}"
 
 
 def update_rules(designDir, variant, golden_metrics, overwrite, metrics_to_consider):
