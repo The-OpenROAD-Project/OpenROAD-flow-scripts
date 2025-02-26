@@ -2,54 +2,12 @@
 
 from math import ceil, isinf
 from os import chdir, getcwd
-from os.path import isfile, abspath
+from os.path import isfile
 from re import sub
 import argparse
 import json
 import operator
 import sys
-import requests
-
-
-def get_golden(platform, design, api_base_url):
-    try:
-        response = requests.get(
-            api_base_url + f"/golden?platform={platform}&design={design}&variant=base"
-        )
-
-        # Check if the request was successful (status code 200)
-        if response.status_code == 200 and "error" not in response.json():
-            # Parse the JSON response
-            data = response.json()
-
-            return data, None
-        else:
-            print("API request failed")
-            return None, "API request failed"
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        return None, f"An error occurred: {str(e)}"
-
-
-def get_metrics(commitSHA, platform, design, api_base_url):
-    try:
-        response = requests.get(
-            api_base_url
-            + f"/commit?commitSHA={commitSHA}&platform={platform}&design={design}&variant=base"
-        )
-
-        # Check if the request was successful (status code 200)
-        if response.status_code == 200 and "error" not in response.json():
-            # Parse the JSON response
-            data = response.json()
-
-            return data, None
-        else:
-            print("API request failed")
-            return None, "API request failed"
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        return None, f"An error occurred: {str(e)}"
 
 
 def update_rules(designDir, variant, golden_metrics, overwrite, metrics_to_consider):
@@ -96,7 +54,7 @@ def gen_rule_file(
             with open(metrics_file, "r") as f:
                 metrics = json.load(f)
         else:
-            print(f"[ERROR] File not found {abspath(metrics_file)}")
+            print(f"[ERROR] Golden metrics file not found {design_dir}")
             sys.exit(1)
     else:
         metrics = golden_metrics
@@ -105,7 +63,7 @@ def gen_rule_file(
         with open(rules_file, "r") as f:
             OLD_RULES = json.load(f)
     else:
-        print(f"[WARNING] File not found {abspath(rules_file)}")
+        print(f"[WARNING] Rules file not found {design_dir}")
         OLD_RULES = None
 
     # dict format
@@ -370,12 +328,12 @@ def gen_rule_file(
         rules[field] = dict(value=rule_value, compare=option["compare"])
 
     if len(change_str) > 0:
+        print(design_dir)
         print(format_str.format("Metric", "Old", "New", "Type"), end="")
         print(format_str.format("------", "---", "---", "----"), end="")
         print(change_str)
 
     with open(rules_file, "w") as f:
-        print("[INFO] writing", abspath(rules_file))
         json.dump(rules, f, indent=4)
 
     chdir(original_directory)
