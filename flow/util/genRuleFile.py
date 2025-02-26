@@ -96,7 +96,7 @@ def gen_rule_file(
             with open(metrics_file, "r") as f:
                 metrics = json.load(f)
         else:
-            print(f"[ERROR] File not found {abspath(metrics_file)}")
+            print(f"[ERROR] Golden metrics file not found {design_dir}")
             sys.exit(1)
     else:
         metrics = golden_metrics
@@ -105,7 +105,7 @@ def gen_rule_file(
         with open(rules_file, "r") as f:
             OLD_RULES = json.load(f)
     else:
-        print(f"[WARNING] File not found {abspath(rules_file)}")
+        print(f"[WARNING] Rules file not found {design_dir}")
         OLD_RULES = None
 
     # dict format
@@ -370,12 +370,12 @@ def gen_rule_file(
         rules[field] = dict(value=rule_value, compare=option["compare"])
 
     if len(change_str) > 0:
+        print(design_dir)
         print(format_str.format("Metric", "Old", "New", "Type"), end="")
         print(format_str.format("------", "---", "---", "----"), end="")
         print(change_str)
 
     with open(rules_file, "w") as f:
-        print("[INFO] writing", abspath(rules_file))
         json.dump(rules, f, indent=4)
 
     chdir(original_directory)
