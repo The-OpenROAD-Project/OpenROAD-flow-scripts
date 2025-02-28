@@ -36,29 +36,16 @@ _installCommon() {
         pip3 install --no-cache-dir --user -U $pkgs
     fi
 
-    if [[ "$constantBuildDir" == "true" ]]; then
-        baseDir="/tmp/DependencyInstaller-ORFS"
-        if [[ -d "$baseDir" ]]; then
-            echo "[INFO] Removing old building directory $baseDir"
-        fi
-        mkdir -p "$baseDir"
-    else
-        baseDir=$(mktemp -d /tmp/DependencyInstaller-orfs-XXXXXX)
-    fi
-
     # Install Verilator
-    verilatorPrefix=`realpath ${PREFIX:-"/usr/local"}`
+    verilatorPrefix=$(realpath ${PREFIX:-"/usr/local"})
     if [[ ! -x ${verilatorPrefix}/bin/verilator ]]; then
-        pushd $baseDir
-            git clone --depth=1 -b "v$verilatorVersion" https://github.com/verilator/verilator.git
-            pushd verilator
-                autoconf
-                ./configure --prefix "${verilatorPrefix}"
-                make -j`nproc`
-                make install
-            popd
-            rm -r verilator
-        popd
+        cd "${baseDir}"
+        git clone --depth=1 -b "v$verilatorVersion" https://github.com/verilator/verilator.git
+        cd verilator
+        autoconf
+        ./configure --prefix "${verilatorPrefix}"
+        make -j
+        make install
     fi
 }
 
@@ -140,11 +127,8 @@ _installUbuntuPackages() {
         apt-get -y install --no-install-recommends klayout python3-pandas
     else
         arch=$(uname -m)
-        lastDir="$(pwd)"
         # temp dir to download and compile
-        baseDir=/tmp/installers
         klayoutPrefix=${PREFIX:-"/usr/local"}
-        mkdir -p "${baseDir}"
         cd "${baseDir}"
         if [[ $arch == "aarch64" ]]; then
             if [ ! -f ${klayoutPrefix}/klayout ]; then
@@ -166,8 +150,6 @@ _installUbuntuPackages() {
             md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
             dpkg -i klayout_${klayoutVersion}-1_amd64.deb
         fi
-        cd "${lastDir}"
-        rm -rf "${baseDir}"
     fi
 
     if command -v docker &> /dev/null; then
@@ -178,6 +160,7 @@ _installUbuntuPackages() {
         return 0
     fi
 
+    cd "${baseDir}"
     # Add Docker's official GPG key:
     install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
@@ -255,13 +238,10 @@ EOF
     exit "${1:-1}"
 }
 
-# default args
+# default values for variables
 OR_INSTALLER_ARGS="-eqy"
-# default prefix
 PREFIX=""
-# default option
 option="none"
-# default isLocal
 isLocal="false"
 constantBuildDir="false"
 CI="no"
@@ -317,7 +297,6 @@ if [[ "${option}" == "none"  ]]; then
         echo "You must use one of: -all|-base|-common" >&2
         _help
 fi
-
 OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -${option}"
 
 platform="$(uname -s)"
@@ -341,6 +320,17 @@ case "${platform}" in
         _help
         ;;
 esac
+
+if [[ "${constantBuildDir}" == "true" ]]; then
+    baseDir="/tmp/DependencyInstaller-ORFS-$(whoami)"
+else
+    baseDir=$(mktemp -d /tmp/DependencyInstaller-ORFS-XXXXXX)
+fi
+if [[ -d "${baseDir}" ]]; then
+    echo "[INFO] Removing old building directory ${baseDir}"
+    rm -rf "${baseDir}"
+fi
+mkdir -p "${baseDir}"
 
 case "${os}" in
     "CentOS Linux" )
@@ -395,3 +385,4 @@ case "${os}" in
         _help
         ;;
 esac
+rm -rf "${baseDir}"
