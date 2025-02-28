@@ -1,6 +1,7 @@
 import unittest
 import subprocess
 import os
+from .autotuner_test_utils import AutoTunerTestUtils
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -16,8 +17,9 @@ class BaseSampleIterationSmokeTest(unittest.TestCase):
         )
         self.experiment = f"smoke-test-sample-iteration-{self.platform}"
         self.matrix = [(5, 1), (1, 5), (2, 2), (1, 1)]
+        self.exec = AutoTunerTestUtils.get_exec_cmd()
         self.commands = [
-            f"python3 -m autotuner.distributed"
+            f"{self.exec}"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"

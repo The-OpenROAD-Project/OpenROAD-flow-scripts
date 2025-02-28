@@ -1,6 +1,7 @@
 import unittest
 import subprocess
 import os
+from .autotuner_test_utils import AutoTunerTestUtils
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -15,8 +16,9 @@ class BaseTuneSmokeTest(unittest.TestCase):
             f"../../../flow/designs/{self.platform}/{self.design}/autotuner.json",
         )
         self.experiment = f"smoke-test-tune-{self.platform}"
+        self.exec = AutoTunerTestUtils.get_exec_cmd()
         self.command = (
-            "python3 -m autotuner.distributed"
+            f"{self.exec}"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"

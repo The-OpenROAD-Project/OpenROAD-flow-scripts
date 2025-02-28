@@ -2,6 +2,7 @@ import unittest
 import subprocess
 import os
 import time
+from .autotuner_test_utils import AutoTunerTestUtils
 
 from contextlib import contextmanager
 
@@ -45,8 +46,9 @@ class ResumeCheck(unittest.TestCase):
         # Cast to 1 decimal place
         res_per_trial = float("{:.1f}".format(self.num_cpus / self.samples))
         options = ["", "--resume"]
+        self.exec = AutoTunerTestUtils.get_exec_cmd()
         self.commands = [
-            f"python3 -m autotuner.distributed"
+            f"{self.exec}"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --config {self.config}"
