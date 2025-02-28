@@ -27,7 +27,7 @@ export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/ibex_pkg.sv \
 export VERILOG_INCLUDE_DIRS = \
     $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/vendor/lowrisc_ip/prim/rtl/
 
-export USE_YOSYS_SLANG = 1
+export SYNTH_USE_SLANG = 1
 
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
