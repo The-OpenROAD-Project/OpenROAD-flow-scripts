@@ -3,11 +3,14 @@ yosys -import
 source $::env(SCRIPTS_DIR)/util.tcl
 erase_non_stage_variables synth
 
+# If using a cached, gate level netlist, then copy over to the results dir with
+# preserve timestamps flag set. If you don't, subsequent runs will cause the
+# floorplan step to be re-executed.
 if {[env_var_exists_and_non_empty CACHED_NETLIST]} {
-  log_cmd exec cp $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
-  log_cmd exec cp $::env(SDC_FILE) $::env(RESULTS_DIR)/1_synth.sdc
+  log_cmd exec cp -p $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
+  log_cmd exec cp -p $::env(SDC_FILE) $::env(RESULTS_DIR)/1_synth.sdc
   if {[env_var_exists_and_non_empty CACHED_REPORTS]} {
-    log_cmd exec cp {*}$::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
+    log_cmd exec cp -p {*}$::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
   }
   exit
 }
