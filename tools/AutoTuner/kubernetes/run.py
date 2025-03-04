@@ -1,4 +1,4 @@
-""" This script is meant to be run from a pod in the same Kubernetes namespace
+"""This script is meant to be run from a pod in the same Kubernetes namespace
 as your Ray cluster.
 """
 

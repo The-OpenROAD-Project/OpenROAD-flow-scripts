@@ -1,6 +1,7 @@
 import unittest
 import subprocess
 import os
+from .autotuner_test_utils import AutoTunerTestUtils
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 src_dir = os.path.join(cur_dir, "../src")
@@ -18,8 +19,9 @@ class RefFileCheck(unittest.TestCase):
             "../../test/files/no_sdc_ref.json",
             "../../test/files/no_fr_ref.json",
         ]
+        self.exec = AutoTunerTestUtils.get_exec_cmd()
         self.commands = [
-            f"python3 -m autotuner.distributed"
+            f"{self.exec}"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --config {c}"
