@@ -17,7 +17,7 @@ export RTLMP_FENCE_UY ?= 2300
 
 export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.sv2v.v \
                        $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
-export CACHED_NETLIST = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/yosys/bp_dual_hier_yosys_netlist.v
+export SYNTH_NETLIST_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/yosys/bp_dual_hier_yosys_netlist.v
 
 export SDC_FILE      = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.elab.v.sdc
 

@@ -7,7 +7,7 @@ currentDate=$(date +"%Y-%m-%d_%H-%M")
 ISSUE_TAG=${ISSUE_TAG:-"${DESIGN_NICKNAME}_${PLATFORM}_${FLOW_VARIANT}_${currentDate}"}
 ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \
                            VERILOG_FILES \
-                           CACHED_NETLIST \
+                           SYNTH_NETLIST_FILES \
                            FOOTPRINT_TCL \
                            FOOTPRINT \
                            SIG_MAP_FILE \
