@@ -10,7 +10,7 @@ import operator
 import sys
 
 
-def update_rules(designDir, variant, golden_metrics, overwrite, metrics_to_consider):
+def update_rules(designDir, variant, reference, overwrite, metrics_to_consider):
     if overwrite:
         gen_rule_file(
             designDir,  # design directory
@@ -18,7 +18,7 @@ def update_rules(designDir, variant, golden_metrics, overwrite, metrics_to_consi
             False,  # tighten
             False,  # failing
             variant,  # variant
-            golden_metrics,  # metrics needed for update, default is {} in case of file
+            reference,  # metrics for update
             metrics_to_consider,
         )
     else:
@@ -28,7 +28,7 @@ def update_rules(designDir, variant, golden_metrics, overwrite, metrics_to_consi
             True,  # tighten
             False,  # failing
             variant,  # variant
-            golden_metrics,  # metrics needed for update, default is {} in case of file
+            reference,  # metrics for update
             metrics_to_consider,
         )
 
@@ -39,25 +39,25 @@ def gen_rule_file(
     tighten,
     failing,
     variant,
-    golden_metrics={},
+    metrics=None,
     metrics_to_consider=[],
 ):
+
+    golden_metrics = f"metadata-{variant}-ok.json"
+    if isinstance(metrics, str) and isfile(metrics):
+        with open(metrics, "r") as f:
+            metrics = json.load(f)
+    elif isfile(golden_metrics):
+        with open(golden_metrics, "r") as f:
+            metrics = json.load(f)
+    if not isinstance(metrics, dict):
+        print(f"[ERROR] Invalid format for reference metrics {design_dir}")
+        sys.exit(1)
+
     original_directory = getcwd()
     chdir(design_dir)
-
-    metrics_file = f"metadata-{variant}-ok.json"
     rules_file = f"rules-{variant}.json"
     rules = dict()
-
-    if golden_metrics == {}:
-        if isfile(metrics_file):
-            with open(metrics_file, "r") as f:
-                metrics = json.load(f)
-        else:
-            print(f"[ERROR] Golden metrics file not found {design_dir}")
-            sys.exit(1)
-    else:
-        metrics = golden_metrics
 
     if isfile(rules_file):
         with open(rules_file, "r") as f:
@@ -375,6 +375,13 @@ if __name__ == "__main__":
         help="Update failing rules.",
     )
     parser.add_argument(
+        "-r",
+        "--reference",
+        type=str,
+        default=None,
+        help="Reference metadata file.",
+    )
+    parser.add_argument(
         "-m",
         "--metrics",
         type=comma_separated_list,
@@ -391,14 +398,12 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit(1)
 
-    golden_metrics = {}
-
     gen_rule_file(
         args.dir,
         args.update,
         args.tighten,
         args.failing,
         args.variant,
-        golden_metrics,
+        args.reference,
         args.metrics,
     )
