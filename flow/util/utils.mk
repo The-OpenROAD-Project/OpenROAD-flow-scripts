@@ -19,7 +19,7 @@ clean_metadata:
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 
 .PHONY: update_ok
-update_ok: update_metadata update_rules
+update_ok: update_rules
 
 .PHONY: update_metadata
 update_metadata:
