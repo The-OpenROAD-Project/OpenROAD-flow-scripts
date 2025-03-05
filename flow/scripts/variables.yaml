@@ -169,6 +169,11 @@ SYNTH_MEMORY_MAX_BITS:
   default: 4096
   stages:
     - synth
+SYNTH_USE_SLANG:
+  description: >
+    Use yosys-slang for read-in of SystemVerilog design.
+  stages:
+    - synth
 LATCH_MAP_FILE:
   description: |
     List of latches treated as a black box by Yosys.

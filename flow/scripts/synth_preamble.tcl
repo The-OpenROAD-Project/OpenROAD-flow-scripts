@@ -24,26 +24,30 @@ if {[env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS]} {
   set vIdirsArgs [join $vIdirsArgs]
 }
 
-
-# Read verilog files
-foreach file $::env(VERILOG_FILES) {
-  if {[file extension $file] == ".rtlil"} {
-    read_rtlil $file
-  } elseif {[file extension $file] == ".json"} {
-    read_json $file
-  } else {
-    read_verilog -defer -sv {*}$vIdirsArgs $file
-  }
-}
-
-
-
-
 # Read standard cells and macros as blackbox inputs
 # These libs have their dont_use properties set accordingly
 read_liberty -overwrite -setattr liberty_cell -lib {*}$::env(DONT_USE_LIBS)
 read_liberty -overwrite -setattr liberty_cell \
   -unit_delay -wb -ignore_miss_func -ignore_buses {*}$::env(DONT_USE_LIBS)
+
+# Read verilog files
+if {[env_var_exists_and_non_empty SYNTH_USE_SLANG] && !([file extension $::env(VERILOG_FILES)] == ".rtlil")} {
+  # slang requires all files at once
+  plugin -i slang
+  yosys read_slang -D SYNTHESIS --keep-hierarchy --compat=vcs \
+    --ignore-assertions --top $::env(DESIGN_NAME) \
+    {*}$vIdirsArgs {*}$::env(VERILOG_FILES)
+} else {
+  foreach file $::env(VERILOG_FILES) {
+    if {[file extension $file] == ".rtlil"} {
+      read_rtlil -overwrite $file
+    } elseif {[file extension $file] == ".json"} {
+      read_json $file
+    } else {
+      read_verilog -defer -sv {*}$vIdirsArgs $file
+    }
+  }
+}
 
 # Apply toplevel parameters (if exist)
 if {[env_var_exists_and_non_empty VERILOG_TOP_PARAMS]} {
