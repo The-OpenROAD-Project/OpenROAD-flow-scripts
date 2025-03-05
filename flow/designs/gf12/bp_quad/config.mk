@@ -5,7 +5,7 @@ export PLATFORM    = gf12
 export SYNTH_HIERARCHICAL = 1
 export MAX_UNGROUP_SIZE ?= 1000
 
-export CACHED_NETLIST = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_quad_core_v0/bp_quad_block/yosys/bp_quad_yosys_netlist.v
+export SYNTH_NETLIST_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_quad_core_v0/bp_quad_block/yosys/bp_quad_yosys_netlist.v
 export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_quad_core_v0/bp_quad_block/rtl/bsg_chip_block.sv2v.v
 
 

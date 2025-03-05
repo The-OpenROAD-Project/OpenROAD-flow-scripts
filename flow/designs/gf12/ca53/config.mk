@@ -3,7 +3,7 @@ export PLATFORM    = gf12
 
 
 export VERILOG_FILES  = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
-export CACHED_NETLIST = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
+export SYNTH_NETLIST_FILES = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
 
 export SDC_FILE      = $(PLATFORM_DIR)/$(DESIGN_NAME)/sdc/ca53_cpu.sdc
 
