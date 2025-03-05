@@ -42,19 +42,15 @@ use_repo(pip, "orfs-pip")
 
 orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
 orfs.default(
-    # To build an ORFS image from a PR:
-    # ./build_openroad.sh --latest
+    # Check out the version you want to test and make any modifications locally:
     #
-    # Check out the PRs and modify the local repository as needed
     # ./build_openroad.sh --no_init
     #
-    # docker tag docker.io/openroad/flow-ubuntu22.04-builder:c46d41 gcr.io/ascenium/orfs-megaboom/flow-ubuntu22.04-builder:c46d41
-    # docker push gcr.io/ascenium/orfs-megaboom/flow-ubuntu22.04-builder:c46d41
-    # image = "gcr.io/ascenium/orfs-megaboom/flow-ubuntu22.04-builder:c46d41",
-    #
+    # Comment out "sha256" below, not available for local docker images
+    # and update "image" to point to the local image.
+
     # Official image https://hub.docker.com/r/openroad/orfs/tags
     image = "docker.io/openroad/orfs:v3.0-2130-g6b38aeeb",
-    # image = "gcr.io/ascenium/orfs-megaboom/flow-ubuntu22.04-builder:3d2c3d-2",
     sha256 = "f5b573d244862bc59f858e2a3586c48aef70989e98f6541099bd15a720e28e7e",
 )
 use_repo(orfs, "com_github_nixos_patchelf_download")
