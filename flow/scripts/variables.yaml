@@ -683,7 +683,7 @@ RESYNTH_TIMING_RECOVER:
   description: |
     Enable re-synthesis for timing optimization.
   stages:
-    - synth
+    - floorplan
   default: 0
 MACRO_ROWS_HALO_X:
   description: >
