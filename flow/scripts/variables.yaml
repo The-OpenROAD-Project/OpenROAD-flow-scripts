@@ -677,7 +677,7 @@ RESYNTH_AREA_RECOVER:
   description: |
     Enable re-synthesis for area reclaim.
   stages:
-    - synth
+    - floorplan
   default: 0
 RESYNTH_TIMING_RECOVER:
   description: |
