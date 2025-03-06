@@ -263,6 +263,10 @@ export LIB_FILES             += $(ADDITIONAL_LIBS)
 export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
 export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
 export VOLTAGE                = $($(CORNER)_VOLTAGE)
+
+# FIXME Need merged.lib for now, but ideally it shouldn't be necessary:
+#
+# https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/pull/2139
 export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 
 # ---------------------------------------------------------
