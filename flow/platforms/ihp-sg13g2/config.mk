@@ -6,20 +6,23 @@ export PROCESS = ihp-sg13g2
 # ----------------------------------------------------
 # Add IO related files when a TCL script is assigned to 'FOOTPRINT_TCL'.
 # This variable is used to pass IO information.
+export LOAD_ADDITIONAL_FILES ?= yes
 ifdef FOOTPRINT_TCL
+ifdef LOAD_ADDITIONAL_FILES
   export ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/sg13g2_io.lef \
                             $(PLATFORM_DIR)/lef/bondpad_70x70.lef
   export ADDITIONAL_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_typ_1p2V_3p3V_25C.lib
   export ADDITIONAL_GDS += $(PLATFORM_DIR)/gds/sg13g2_io.gds \
                            $(PLATFORM_DIR)/gds/bondpad_70x70.gds
 endif
-export TECH_LEF = $(PLATFORM_DIR)/lef/sg13g2_tech.lef
-export SC_LEF = $(PLATFORM_DIR)/lef/sg13g2_stdcell.lef
+endif
+export TECH_LEF ?= $(PLATFORM_DIR)/lef/sg13g2_tech.lef
+export SC_LEF ?= $(PLATFORM_DIR)/lef/sg13g2_stdcell.lef
 
-export LIB_FILES = $(PLATFORM_DIR)/lib/sg13g2_stdcell_typ_1p20V_25C.lib \
-                   $(ADDITIONAL_LIBS)
-export GDS_FILES = $(PLATFORM_DIR)/gds/sg13g2_stdcell.gds \
-                   $(ADDITIONAL_GDS)
+export LIB_FILES ?= $(PLATFORM_DIR)/lib/sg13g2_stdcell_typ_1p20V_25C.lib \
+                    $(ADDITIONAL_LIBS)
+export GDS_FILES ?= $(PLATFORM_DIR)/gds/sg13g2_stdcell.gds \
+                    $(ADDITIONAL_GDS)
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
