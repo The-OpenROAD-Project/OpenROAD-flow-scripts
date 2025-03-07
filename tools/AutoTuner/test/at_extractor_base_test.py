@@ -34,27 +34,29 @@
 ###############################################################################
 
 import os
+import sys
+import unittest
+
+sys.path.append(
+    os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "src", "autotuner")
+)
+from scripts.at_extractor_base import ATExtractorBase
 
 
-class AutoTunerTestUtils:
-    @staticmethod
-    def get_exec_cmd(is_at_run=True):
-        """
-        Returns the execution command based on whether this is a coverage run or
-        not.
+class ATExtractorBaseTest(unittest.TestCase):
+    """Tests ATExtractorBase methods"""
 
-        Note that you need to run coverage combine after the runs complete to
-        get the coverage of the parent plus the child invocations
-        """
+    def setUp(self):
+        """Setup method"""
+        self._rep = ATExtractorBase(None, None, None)
 
-        if "COVERAGE_RUN" in os.environ:
-            exec = "coverage run --parallel-mode --omit=*/site-packages/*,*/dist-packages/*"
-        else:  # pragma: no cover
-            exec = "python3"
-        if is_at_run:
-            return exec + " -m autotuner.distributed"
-        return exec
+    def test_get_completion_time(self):
+        """Tests the get_completion_time method"""
+
+        timestamp = 1741109632
+        exp_str = "2025-03-04 17:33:52"
+        self.assertEqual(self._rep.get_completion_time(timestamp), exp_str)
 
 
-if __name__ == "__main__":  # pragma: no cover
-    print(AutoTunerTestUtils.get_exec_cmd())
+if __name__ == "__main__":
+    unittest.main()
