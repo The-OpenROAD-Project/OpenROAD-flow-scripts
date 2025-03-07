@@ -11,6 +11,7 @@ set deferred_cells {
     \$macc
     MACC_{CONFIG}_{Y_WIDTH}{%unused}
     {BASE -map +/choices/han-carlson.v}
+    {BOOTH -max_iter 1 -map ../flow/scripts/synth_wrap_operators-booth.v}
   }
 }
 
@@ -36,7 +37,7 @@ foreach info $deferred_cells {
     t:$type r:A_WIDTH>=10 r:Y_WIDTH>=14 %i %i
 
   # make per-architecture copies of the unmapped module
-  foreach modname [tee -q -s result.string select -list-mod A:arithmetic_operator A:copy_pending] {
+  foreach modname [tee -q -s result.string select -list-mod A:arithmetic_operator A:copy_pending %i] {
     setattr -mod -unset copy_pending $modname
 
     # iterate over non-default architectures
@@ -52,13 +53,14 @@ foreach info $deferred_cells {
   # iterate over all architectures, both the default and non-default
   foreach arch [lrange $info 2 end] {
     set suffix [lindex $arch 0]
-    set extra_map_args [lrange $arch 1 end]
-
-    # inject booth before we have techmap support for it
-    #booth A:source_cell=$type A:architecture=$suffix %i
+    set extra_map_args [lrange $arch 1 end] 
 
     # map all operator copies which were selected to have this architecture
     techmap -map +/techmap.v {*}$extra_map_args A:source_cell=$type A:architecture=$suffix %i
+
+    # booth isn't able to map all $macc configurations: catch if this is one
+    # of those and delete the option
+    delete A:source_cell=$type A:architecture=$suffix %i t:\$macc %m %i
   }
 
   log -pop
@@ -71,4 +73,4 @@ opt -full
 chformal -remove
 setattr -mod -set abc9_script {"+&dch;&nf -R 5;"} A:arithmetic_operator
 setattr -mod -set abc9_box 1 A:arithmetic_operator
-techmap -map +/choices/han-carlson.v
+techmap -map +/techmap.v -map +/choices/han-carlson.v
