@@ -115,7 +115,14 @@ tee -o $::env(REPORTS_DIR)/synth_check.txt check
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
 
 # check the design is composed exclusively of target cells, and check for other problems
-check -assert -mapped
+if {![env_var_exists_and_non_empty NEW_OPERATOR_SYNTHESIS]} {
+  check -assert -mapped
+} else {
+  # Wrapped operator synthesis leaves around $buf cells which `check -mapped`
+  # gets confused by, once Yosys#4931 is merged we can remove this branch and
+  # always run `check -assert -mapped`
+  check -assert
+}
 
 # Write synthesized design
 write_verilog -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
