@@ -34,7 +34,13 @@ if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
 json -o $::env(RESULTS_DIR)/mem.json
 # Run report and check here so as to fail early if this synthesis run is doomed
 exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
-synth -top $::env(DESIGN_NAME) -run fine: {*}$::env(SYNTH_FULL_ARGS)
+
+if {![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS]} {
+  synth -top $::env(DESIGN_NAME) -run fine: {*}$::env(SYNTH_FULL_ARGS)
+} else {
+  source $::env(SCRIPTS_DIR)/synth_wrap_operators.tcl
+}
+
 # Get rid of indigestibles
 chformal -remove
 
@@ -76,7 +82,15 @@ if {[env_var_exists_and_non_empty DFF_LIB_FILE]} {
 }
 opt
 
-log_cmd abc {*}$abc_args
+if {![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS]} {
+  log_cmd abc {*}$abc_args
+} else {
+  scratchpad -set abc9.script scripts/abc_speed_gia_only.script
+  # crop out -script from arguments
+  set abc_args [lrange $abc_args 2 end]
+  log_cmd abc_new {*}$abc_args
+  delete {t:$specify*}
+}
 
 # Replace undef values with defined constants
 setundef -zero
@@ -101,10 +115,17 @@ tee -o $::env(REPORTS_DIR)/synth_check.txt check
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
 
 # check the design is composed exclusively of target cells, and check for other problems
-check -assert -mapped
+if {![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS]} {
+  check -assert -mapped
+} else {
+  # Wrapped operator synthesis leaves around $buf cells which `check -mapped`
+  # gets confused by, once Yosys#4931 is merged we can remove this branch and
+  # always run `check -assert -mapped`
+  check -assert
+}
 
 # Write synthesized design
-write_verilog -noexpr -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
+write_verilog -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
 # One day a more sophisticated synthesis will write out a modified
 # .sdc file after synthesis. For now, just copy the input .sdc file,
 # making synthesis more consistent with other stages.

@@ -239,6 +239,13 @@ MAX_UNGROUP_SIZE:
     platform's standard cell library. The default value is platform specific.
   stages:
     - synth
+SYNTH_WRAPPED_OPERATORS:
+  description: >
+    Synthesize multiple architectural options for each arithmetic operator in the
+    design. These options are available for switching among in later stages of
+    the flow.
+  stages:
+    - synth
 FLOORPLAN_DEF:
   description: |
     Use the DEF file to initialize floorplan.
