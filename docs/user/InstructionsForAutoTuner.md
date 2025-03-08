@@ -232,6 +232,11 @@ python3 ./tools/AutoTuner/test/smoke_test_tune.py
 python3 ./tools/AutoTuner/test/smoke_test_sample_iteration.py
 ```
 
+## Developer reference
+
+1. The [`uv`](https://docs.astral.sh/uv) package manager is used for handling different package requirements in AutoTuner.
+Hence, it is not a strict requirement to set it up for AutoTuner usage. To update requirements, run: `make reqs`.
+
 ## Citation
 
 Please cite the following paper.
