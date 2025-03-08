@@ -33,28 +33,35 @@
 ## POSSIBILITY OF SUCH DAMAGE.
 ###############################################################################
 
-import os
+from datetime import datetime
 
 
-class AutoTunerTestUtils:
+class ATExtractorBase:
+    """Base class for AutoTuner extractors"""
+
+    def __init__(self, obj, completion_cbk, result_cbk):
+        """Registers context object, completion callback and results callback"""
+
+        self._completion_cbk = completion_cbk
+        self._result_cbk = result_cbk
+        self._obj = obj
+
     @staticmethod
-    def get_exec_cmd(is_at_run=True):
-        """
-        Returns the execution command based on whether this is a coverage run or
-        not.
+    def get_completion_time(timestamp):
+        """Returns a string for the completion time timestamp"""
+        datetime_obj = datetime.fromtimestamp(timestamp)
+        datetime_str = datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
+        return datetime_str
 
-        Note that you need to run coverage combine after the runs complete to
-        get the coverage of the parent plus the child invocations
-        """
+    @staticmethod
+    def sample_completion_callback(obj, trial_name, completion_timestamp, run_time):
+        """Sample completion callback"""
+        completion_time = ATExtractorBase.get_completion_time(completion_timestamp)
+        print(
+            f"Trial {trial_name} finished at {completion_time} with run time {run_time}"
+        )
 
-        if "COVERAGE_RUN" in os.environ:
-            exec = "coverage run --parallel-mode --omit=*/site-packages/*,*/dist-packages/*"
-        else:  # pragma: no cover
-            exec = "python3"
-        if is_at_run:
-            return exec + " -m autotuner.distributed"
-        return exec
-
-
-if __name__ == "__main__":  # pragma: no cover
-    print(AutoTunerTestUtils.get_exec_cmd())
+    @staticmethod
+    def sample_results_callback(obj, trial_name, metrics):
+        """Sample results callback"""
+        print(f"Trial {trial_name} metrics {metrics}")
