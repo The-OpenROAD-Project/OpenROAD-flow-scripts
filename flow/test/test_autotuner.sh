@@ -27,7 +27,7 @@ python3 -m unittest tools.AutoTuner.test.smoke_test_algo_eval.${PLATFORM_WITHOUT
 
 if [ "$PLATFORM_WITHOUT_DASHES" == "asap7" ] && [ "$DESIGN_NAME" == "gcd" ]; then
   echo "Running Autotuner ref file test (only once)"
-  python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck.test_files
+  python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck
 
   echo "Running AutoTuner resume test (only once)"
   python3 -m unittest tools.AutoTuner.test.resume_check.ResumeCheck.test_tune_resume
