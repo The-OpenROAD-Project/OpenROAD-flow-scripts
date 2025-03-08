@@ -60,11 +60,11 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 101,
+        "value": 100,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -21.63,
+        "value": -21.31,
         "compare": ">="
     }
 }

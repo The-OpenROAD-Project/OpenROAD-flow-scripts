@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 776702,
+        "value": 776405,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
@@ -60,7 +60,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 442,
+        "value": 228,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
