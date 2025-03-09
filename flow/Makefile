@@ -445,8 +445,14 @@ yosys-dependencies: $(YOSYS_DEPENDENCIES)
 .PHONY: do-yosys
 do-yosys: $(DONT_USE_SC_LIB)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
+	(export VERILOG_FILES=$(RESULTS_DIR)/1_yosys_coarse.rtlil; \
 	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
+
+.PHONY: do-yosys-coarse
+do-yosys-coarse: $(DONT_USE_SC_LIB)
+	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
+	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
+	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_coarse.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_coarse.log)
 
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies $(DONT_USE_SC_LIB)
@@ -456,8 +462,11 @@ do-yosys-canonicalize: yosys-dependencies $(DONT_USE_SC_LIB)
 $(RESULTS_DIR)/1_synth.rtlil: $(YOSYS_DEPENDENCIES)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
 
-$(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
+$(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_yosys_coarse.rtlil
 	$(UNSET_AND_MAKE) do-yosys
+
+$(RESULTS_DIR)/1_yosys_coarse.rtlil: $(RESULTS_DIR)/1_synth.rtlil
+	$(UNSET_AND_MAKE) do-yosys-coarse
 
 .PHONY: do-synth
 do-synth:
