@@ -13,9 +13,15 @@ if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
   # (-flatten part of $synth_args per default)
   synth -run :fine {*}$::env(SYNTH_FULL_ARGS)
 } else {
-  # Perform standard coarse-level synthesis script,
-  # defer flattening until we have decided what hierarchy to keep
-  synth -run :fine
+  # Get a quick estimate of module sizes. Since we're only using
+  # this to decide which modules to flatten and which to keep,
+  # actual quality of results doesn't matter, so no point in running
+  # any optimizations of a coarse synthesis. the user has the
+  # option to tweak MAX_UNGROUP_SIZE or use an explicit list of
+  # modules to flatten if they have a better policy than this
+  # default policy on what to keep and what to flatten.
+  procs
+  memory -nomap
 
   if {[env_var_exists_and_non_empty MAX_UNGROUP_SIZE]} {
     set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
