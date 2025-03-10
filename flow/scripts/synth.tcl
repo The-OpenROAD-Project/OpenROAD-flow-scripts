@@ -21,6 +21,9 @@ if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
   # modules to flatten if they have a better policy than this
   # default policy on what to keep and what to flatten.
   procs
+  # reducing width significantly improves estimates without
+  # impacting running time much.
+  wreduce
   memory -nomap
 
   if {[env_var_exists_and_non_empty MAX_UNGROUP_SIZE]} {
