@@ -18,10 +18,14 @@ def load_data(filename):
     return data
 
 
-def plot_data(x, y):
+def plot_data(x, y, labels):
+    # add a label along with each data point
     plt.scatter(x, y)
-    plt.xlabel("Yosys gate equivalents")
-    plt.ylabel("OpenROAD area (um^2)")
+    for i, label in enumerate(labels):
+        plt.annotate(label, (x[i], y[i]))
+    plt.xlabel("Yosys coarse gate equivalents")
+    plt.ylabel("Yosys fine synthesis gate equivalents")
+#    plt.ylabel("OpenROAD area (um^2)")
     plt.show()
 
 
@@ -33,9 +37,13 @@ def main():
     data2 = load_data(sys.argv[2])
     keys = set(data1.keys()) & set(data2.keys())
     max_value = 3000
-    x = [data1[key] for key in keys if data1[key] < max_value and data2[key] < max_value]
-    y = [data2[key] for key in keys if data1[key] < max_value and data2[key] < max_value]
-    plot_data(x, y)
+    #keys = [key for key in keys if data1[key] > max_value and data2[key] < 1000]
+    #print(keys)
+    x = [data1[key] for key in keys]
+    y = [data2[key] for key in keys]
+    #print(list(zip(keys, x, y)))
+    # label = [key for key in keys]
+    plot_data(x, y, keys)
 
 
 if __name__ == "__main__":

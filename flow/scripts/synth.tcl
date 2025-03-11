@@ -15,7 +15,8 @@ if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
 } else {
   # Perform standard coarse-level synthesis script,
   # defer flattening until we have decided what hierarchy to keep
-  synth -run :fine
+  procs
+  memory -nomap
 
   if {[env_var_exists_and_non_empty MAX_UNGROUP_SIZE]} {
     set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
@@ -36,6 +37,7 @@ if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
       }
     }
     close $f
+    exit 1
     # clear change and reapply it with the threshold
     setattr -unset A:keep_hierarchy=1
     keep_hierarchy -min_cost $ungroup_threshold
