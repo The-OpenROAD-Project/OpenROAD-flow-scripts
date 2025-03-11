@@ -169,6 +169,20 @@ SYNTH_MEMORY_MAX_BITS:
   default: 4096
   stages:
     - synth
+SYNTH_BLACKBOXES:
+  description: >
+    List of cells treated as a black box by Yosys. With Bazel, this can be used
+    to run synthesis in parallel for the large modules of the design.
+  stages:
+    - synth
+SYNTH_NETLIST_FILES:
+  description: >
+    Skips synthesis and uses the supplied netlist files. If the netlist files
+    contains duplicate modules, which can happen when using hierarchical
+    synthesis on indvidual netlist files and combining here,
+    subsequent modules are silently ignored and only the first module is used.
+  stages:
+    - synth
 LATCH_MAP_FILE:
   description: |
     List of latches treated as a black box by Yosys.
@@ -223,6 +237,13 @@ MAX_UNGROUP_SIZE:
     For hierarchical synthesis, we ungroup modules of larger area than given by
     this variable. The area unit used is the size of a basic nand2 gate from the
     platform's standard cell library. The default value is platform specific.
+  stages:
+    - synth
+SYNTH_WRAPPED_OPERATORS:
+  description: >
+    Synthesize multiple architectural options for each arithmetic operator in the
+    design. These options are available for switching among in later stages of
+    the flow.
   stages:
     - synth
 FLOORPLAN_DEF:
@@ -663,13 +684,13 @@ RESYNTH_AREA_RECOVER:
   description: |
     Enable re-synthesis for area reclaim.
   stages:
-    - synth
+    - floorplan
   default: 0
 RESYNTH_TIMING_RECOVER:
   description: |
     Enable re-synthesis for timing optimization.
   stages:
-    - synth
+    - floorplan
   default: 0
 MACRO_ROWS_HALO_X:
   description: >

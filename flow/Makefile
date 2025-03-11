@@ -337,7 +337,7 @@ $(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
 	@mkdir -p $(OBJECTS_DIR)/lib
 	$(UTILS_DIR)/preprocessLib.py -i $^ -o $@
 
-$(OBJECTS_DIR)/lib/merged.lib:
+$(OBJECTS_DIR)/lib/merged.lib: $(DONT_USE_LIBS)
 	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
 
 # Pre-process KLayout tech
@@ -437,19 +437,19 @@ $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
 	mkdir -p $(dir $@)
 	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
 
-YOSYS_DEPENDENCIES=$(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
+YOSYS_DEPENDENCIES=$(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
 
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)
 
 .PHONY: do-yosys
-do-yosys:
+do-yosys: $(DONT_USE_SC_LIB)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
 	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
 
 .PHONY: do-yosys-canonicalize
-do-yosys-canonicalize: yosys-dependencies
+do-yosys-canonicalize: yosys-dependencies $(DONT_USE_SC_LIB)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_canonicalize.log)
 
@@ -594,7 +594,7 @@ endef
 
 # STEP 1: Translate verilog to odb
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL),floorplan))
+$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(DONT_USE_SC_LIB),floorplan))
 
 # STEP 2: Random IO placement
 #-------------------------------------------------------------------------------
@@ -619,7 +619,7 @@ $(eval $(call do-copy,2_floorplan,2_5_floorplan_pdn.odb,))
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
 .PHONY: do-floorplan
-do-floorplan:
+do-floorplan: $(DONT_USE_SC_LIB)
 	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_io do-2_3_floorplan_macro do-2_4_floorplan_tapcell do-2_5_floorplan_pdn do-2_floorplan do-2_floorplan.sdc
 
 .PHONY: clean_floorplan
@@ -1025,6 +1025,11 @@ klayout:
 run:
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT) 2>&1 | tee $(abspath $(LOG_DIR)/$(RUN_LOG_NAME_STEM).log))
+
+export RUN_YOSYS_ARGS ?= -c $(SCRIPTS_DIR)/yosys_keep.tcl
+.phony: run-yosys
+run-yosys:
+	$(YOSYS_EXE) $(RUN_YOSYS_ARGS)
 
 # Utilities
 #-------------------------------------------------------------------------------

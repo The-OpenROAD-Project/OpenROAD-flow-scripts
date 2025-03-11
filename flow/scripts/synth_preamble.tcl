@@ -6,8 +6,14 @@ erase_non_stage_variables synth
 # If using a cached, gate level netlist, then copy over to the results dir with
 # preserve timestamps flag set. If you don't, subsequent runs will cause the
 # floorplan step to be re-executed.
-if {[env_var_exists_and_non_empty CACHED_NETLIST]} {
-  log_cmd exec cp -p $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
+if {[env_var_exists_and_non_empty SYNTH_NETLIST_FILES]} {
+  if {[llength $::env(SYNTH_NETLIST_FILES)] == 1} {
+    log_cmd exec cp -p $::env(SYNTH_NETLIST_FILES) $::env(RESULTS_DIR)/1_1_yosys.v
+  } else {
+    # The date should be the most recent date of the files, but to
+    # keep things simple we just use the creation date
+    log_cmd exec cat {*}$::env(SYNTH_NETLIST_FILES) > $::env(RESULTS_DIR)/1_1_yosys.v
+  }
   log_cmd exec cp -p $::env(SDC_FILE) $::env(RESULTS_DIR)/1_synth.sdc
   if {[env_var_exists_and_non_empty CACHED_REPORTS]} {
     log_cmd exec cp -p {*}$::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
@@ -36,14 +42,7 @@ foreach file $::env(VERILOG_FILES) {
   }
 }
 
-
-
-
-# Read standard cells and macros as blackbox inputs
-# These libs have their dont_use properties set accordingly
-read_liberty -overwrite -setattr liberty_cell -lib {*}$::env(DONT_USE_LIBS)
-read_liberty -overwrite -setattr liberty_cell \
-  -unit_delay -wb -ignore_miss_func -ignore_buses {*}$::env(DONT_USE_LIBS)
+source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
 
 # Apply toplevel parameters (if exist)
 if {[env_var_exists_and_non_empty VERILOG_TOP_PARAMS]} {
@@ -57,9 +56,15 @@ if {[env_var_exists_and_non_empty CLKGATE_MAP_FILE]} {
   read_verilog -defer $::env(CLKGATE_MAP_FILE)
 }
 
+if {[env_var_exists_and_non_empty SYNTH_BLACKBOXES]} {
+  hierarchy -check -top $::env(DESIGN_NAME)
+  foreach m $::env(SYNTH_BLACKBOXES) {
+    blackbox $m
+  }
+}
+
 # Mark modules to keep from getting removed in flattening
 if {[env_var_exists_and_non_empty PRESERVE_CELLS]} {
-  # Expand hierarchy since verilog was read in with -defer
   hierarchy -check -top $::env(DESIGN_NAME)
   foreach cell $::env(PRESERVE_CELLS) {
     select -module $cell

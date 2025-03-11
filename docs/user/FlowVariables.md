@@ -179,9 +179,12 @@ configuration file.
 | <a name="SKIP_REPORT_METRICS"></a>SKIP_REPORT_METRICS| If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.| | |
 | <a name="SLEW_MARGIN"></a>SLEW_MARGIN| Specifies a slew margin when fixing max slew violations. This option allows you to overfix.| | |
 | <a name="SYNTH_ARGS"></a>SYNTH_ARGS| Optional synthesis variables for yosys.| -flatten| |
+| <a name="SYNTH_BLACKBOXES"></a>SYNTH_BLACKBOXES| List of cells treated as a black box by Yosys. With Bazel, this can be used to run synthesis in parallel for the large modules of the design.| | |
 | <a name="SYNTH_GUT"></a>SYNTH_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| | |
 | <a name="SYNTH_HIERARCHICAL"></a>SYNTH_HIERARCHICAL| Enable to Synthesis hierarchically, otherwise considered flat synthesis.| 0| |
 | <a name="SYNTH_MEMORY_MAX_BITS"></a>SYNTH_MEMORY_MAX_BITS| Maximum number of bits for memory synthesis.| 4096| |
+| <a name="SYNTH_NETLIST_FILES"></a>SYNTH_NETLIST_FILES| Skips synthesis and uses the supplied netlist files. If the netlist files contains duplicate modules, which can happen when using hierarchical synthesis on indvidual netlist files and combining here, subsequent modules are silently ignored and only the first module is used.| | |
+| <a name="SYNTH_WRAPPED_OPERATORS"></a>SYNTH_WRAPPED_OPERATORS| Synthesize multiple architectural options for each arithmetic operator in the design. These options are available for switching among in later stages of the flow.| | |
 | <a name="TAPCELL_TCL"></a>TAPCELL_TCL| Path to Endcap and Welltie cells file.| | |
 | <a name="TAP_CELL_NAME"></a>TAP_CELL_NAME| Name of the cell to use in tap cell insertion.| | |
 | <a name="TECH_LEF"></a>TECH_LEF| A technology LEF file of the PDK that includes all relevant information regarding metal layers, vias, and spacing requirements.| | |
@@ -204,13 +207,14 @@ configuration file.
 - [LATCH_MAP_FILE](#LATCH_MAP_FILE)
 - [MAX_UNGROUP_SIZE](#MAX_UNGROUP_SIZE)
 - [MIN_BUF_CELL_AND_PORTS](#MIN_BUF_CELL_AND_PORTS)
-- [RESYNTH_AREA_RECOVER](#RESYNTH_AREA_RECOVER)
-- [RESYNTH_TIMING_RECOVER](#RESYNTH_TIMING_RECOVER)
 - [SDC_FILE](#SDC_FILE)
 - [SDC_GUT](#SDC_GUT)
+- [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
 - [SYNTH_GUT](#SYNTH_GUT)
 - [SYNTH_HIERARCHICAL](#SYNTH_HIERARCHICAL)
 - [SYNTH_MEMORY_MAX_BITS](#SYNTH_MEMORY_MAX_BITS)
+- [SYNTH_NETLIST_FILES](#SYNTH_NETLIST_FILES)
+- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
 - [VERILOG_FILES](#VERILOG_FILES)
@@ -246,6 +250,8 @@ configuration file.
 - [PLACE_PINS_ARGS](#PLACE_PINS_ARGS)
 - [PLACE_SITE](#PLACE_SITE)
 - [REMOVE_ABC_BUFFERS](#REMOVE_ABC_BUFFERS)
+- [RESYNTH_AREA_RECOVER](#RESYNTH_AREA_RECOVER)
+- [RESYNTH_TIMING_RECOVER](#RESYNTH_TIMING_RECOVER)
 - [RTLMP_AREA_WT](#RTLMP_AREA_WT)
 - [RTLMP_ARGS](#RTLMP_ARGS)
 - [RTLMP_BOUNDARY_WT](#RTLMP_BOUNDARY_WT)

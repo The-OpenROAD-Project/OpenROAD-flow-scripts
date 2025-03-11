@@ -1,20 +1,77 @@
-load("@bazel-orfs//:openroad.bzl", "orfs_macro")
-load("@bazel-orfs//:sweep.bzl", "orfs_sweep")
-load("//util:plot_congestion.bzl", "plot_congestion")
-
-# Format densities, rounding to 2 decimal places.
-SWEEPS = {
-    "PLACE_DENSITY_LB_ADDON": [str(0.20 + x * 0.01 + 0.005)[:4] for x in range(10)],
-    "CORE_UTILIZATION": [str(40 + x * 5) for x in range(4)],
-}
-
-SWEEP = "PLACE_DENSITY_LB_ADDON"
+load("@bazel-orfs//:openroad.bzl", "orfs_flow", "orfs_macro", "orfs_synth")
 
 FAKERAMS = [
     "fakeram7_64x21",
     "fakeram7_256x34",
     "fakeram7_2048x39",
 ]
+
+# BLACKBOXES are those listed in SYNTH_HIERARCHICAL=1
+#
+# 33.1. IC_DATA_ICACHE_TAG_HIGH12_ICACHE_TAG_LOW6_ICACHE_IC_DEPTH8' to `<abc-temp-dir>/input.blif'..
+
+BLACKBOXES = [
+    "IC_TAG_ICACHE_TAG_HIGH12_ICACHE_TAG_LOW6_ICACHE_TAG_DEPTH64",
+    "dbg",
+    "dec_decode_ctl",
+    "dec_gpr_ctl_GPR_BANKS1_GPR_BANKS_LOG21",
+    "dec_ib_ctl",
+    "dec_tlu_ctl",
+    "dec_trigger",
+    "dma_ctrl",
+    "exu_alu_ctl",
+    "ifu_aln_ctl",
+    "ifu_bp_ctl",
+    "ifu_ifc_ctl",
+    "ifu_mem_ctl",
+    "lsu_bus_intf",
+    "lsu_dccm_ctl",
+    "lsu_ecc",
+    "lsu_lsc_ctl",
+    "lsu_stbuf",
+    "lsu_trigger",
+    "pic_ctrl",
+    "ram_256x34",
+    # When run with SYNTH_HIERARCHICAL=1, which should not be used here,
+    # the error below is produced.
+    #
+    # ERROR: Missing cost information on instanced blackbox lsu_dccm_mem
+    "lsu_dccm_mem",
+    "exu_div_ctl",
+    "lsu_bus_buffer",
+    "ram_2048x39",
+    "exu",
+    "swerv_wrapper",
+]
+
+[orfs_synth(
+    name = "{name}_netlist_synth".format(name = name),
+    arguments = {
+        "SDC_FILE": "$(location :constraint.sdc)",
+        "SYNTH_BLACKBOXES": " ".join([b for b in BLACKBOXES if b != name]),
+        "SYNTH_HIERARCHICAL": "0",
+    },
+    data = [":constraint.sdc"],
+    module_top = name,
+    variant = "netlist",
+    verilog_files = [
+        "macros.v",
+        "//designs/src/swerv:verilog",
+    ],
+    deps = FAKERAMS,
+) for name in BLACKBOXES]
+
+[filegroup(
+    name = "{name}_netlist".format(name = name),
+    srcs = ["{name}_netlist_synth".format(name = name)],
+    output_group = "1_synth.v",
+) for name in BLACKBOXES]
+
+# ca. 540 seconds for sequential synthesis, vs 90 seconds for netlist synthesis.
+filegroup(
+    name = "netlists",
+    srcs = [":{}_netlist".format(name) for name in BLACKBOXES],
+)
 
 [orfs_macro(
     name = top,
@@ -23,7 +80,7 @@ FAKERAMS = [
     module_top = top,
 ) for top in FAKERAMS]
 
-orfs_sweep(
+orfs_flow(
     name = "swerv_wrapper",
     arguments = {
         "LIB_MODEL": "CCS",
@@ -41,30 +98,9 @@ orfs_sweep(
         "GND_NETS_VOLTAGES": "",
     },
     macros = FAKERAMS,
-    other_variants = {"base": {}},
     sources = {
         "SDC_FILE": [":constraint.sdc"],
+        "SYNTH_NETLIST_FILES": [":netlists"],
     },
-    sweep = {
-        value: {
-            "arguments": {
-                SWEEP: value,
-            },
-            "previous_stage": {
-                "floorplan": "swerv_wrapper_synth",
-            },
-        }
-        for value in SWEEPS[SWEEP]
-    },
-    verilog_files = [
-        "macros.v",
-        "//designs/src/swerv:verilog",
-    ],
-)
-
-plot_congestion(
-    name = "plot",
-    srcs = [":swerv_wrapper_{value}_grt".format(value = value) for value in SWEEPS[SWEEP]],
-    argument = SWEEP,
-    values = SWEEPS[SWEEP],
+    verilog_files = [],
 )
