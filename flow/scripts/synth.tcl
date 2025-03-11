@@ -22,6 +22,22 @@ if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
     puts "Ungroup modules below estimated size of $ungroup_threshold instances"
 
     convert_liberty_areas
+
+    # Don't know how to enumerate gate equivalents for cells in the design
+    # so set keep threshold to one and parse log for now
+    tee -o $::env(OBJECTS_DIR)/1_keep.txt keep_hierarchy -min_cost 1
+    set f [open $::env(OBJECTS_DIR)/1_keep.txt r]
+    set keep_hierarchy [read $f]
+    close $f
+    set f [open $::env(REPORTS_DIR)/1_keep.txt w]
+    foreach line [split $keep_hierarchy \n] {
+      if {[regexp {Keeping (\S+) \(estimated size above threshold: (\d+) >} $line _ cell size]} {
+        puts $f "$cell $size"
+      }
+    }
+    close $f
+    # clear change and reapply it with the threshold
+    setattr -unset A:keep_hierarchy=1
     keep_hierarchy -min_cost $ungroup_threshold
   } else {
     keep_hierarchy
