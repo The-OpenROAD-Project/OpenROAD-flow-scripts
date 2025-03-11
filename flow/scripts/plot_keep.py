@@ -13,7 +13,7 @@ def load_data(filename):
     data = {}
     with open(filename) as f:
         for line in f:
-            key, value = line.split()
+            key, value = line.split()[0:2]
             data[key] = float(value)
     return data
 
@@ -32,8 +32,9 @@ def main():
     data1 = load_data(sys.argv[1])
     data2 = load_data(sys.argv[2])
     keys = set(data1.keys()) & set(data2.keys())
-    x = [data1[key] for key in keys]
-    y = [data2[key] for key in keys]
+    max_value = 3000
+    x = [data1[key] for key in keys if data1[key] < max_value and data2[key] < max_value]
+    y = [data2[key] for key in keys if data1[key] < max_value and data2[key] < max_value]
     plot_data(x, y)
 
 

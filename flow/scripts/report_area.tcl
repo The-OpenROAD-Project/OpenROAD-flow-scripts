@@ -8,22 +8,9 @@ set block [$chip getBlock]
 
 set scale_to_um [expr [$block getDbUnitsPerMicron] * [$block getDbUnitsPerMicron]]
 
-set insts [$block getInsts]
-
-proc insts_area {insts} {
+proc module_area {insts} {
   global scale_to_um
   set area 0
-  foreach inst $insts {
-    set bbox [$inst getBBox]
-    set area [expr $area + [$bbox getDX] * [$bbox getDY]]
-  }
-  return [expr $area / $scale_to_um]
-}
-
-proc module_area {module} {
-  global scale_to_um
-  set area 0
-  set insts [$module getLeafInsts]
   foreach inst $insts {
     set bbox [$inst getBBox]
     set area [expr $area + [$bbox getDX] * [$bbox getDY]]
@@ -33,7 +20,6 @@ proc module_area {module} {
 
 set f [open $::env(REPORTS_DIR)/2_area.txt w]
 foreach module [$block getModules] {
-  set area [module_area $module]
-  puts $f "[$module getName] $area"
+  puts $f "[$module getName] [module_area [$module getInsts]] [module_area [$module getLeafInsts]]"
 }   
 close $f
