@@ -19,5 +19,8 @@ jobs:
         git diff --exit-code docs/user/FlowVariables.md
     - name: Run yamlfix check
       run: |
-        pip install yamlfix==1.17.0
-        yamlfix -c yamlfix.toml flow/scripts/variables.yaml --check
+        pip install --quiet yamlfix==1.17.0
+        yamlfix --version
+        set -x
+        yamlfix -c yamlfix.toml flow/scripts/variables.yaml
+        git diff flow/scripts/variables.yaml
