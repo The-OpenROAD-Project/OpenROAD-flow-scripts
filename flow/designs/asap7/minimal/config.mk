@@ -4,7 +4,7 @@ export PLATFORM = asap7
 # Faster build and more information in GUI with hierarchical synthesis
 export SYNTH_HIERARCHICAL ?= 1
 # Keep all modules so we can examine the full hierarchy
-export MAX_UNGROUP_SIZE ?= 0
+export SYNTH_MINIMUM_KEEP_SIZE ?= 0
 
 # Set the core utilization to 10% for the minimal design to
 # maximize chances of getting an initial floorplan. This
