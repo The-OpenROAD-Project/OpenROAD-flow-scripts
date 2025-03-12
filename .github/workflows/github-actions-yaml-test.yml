@@ -11,6 +11,12 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        sparse-checkout: |
+          flow/scripts/generate-variables-docs.py
+          docs/user/FlowVariables.md
+          yamlfix.toml
     - name: Run generate-variables-docs.py
       run: |
         python3 flow/scripts/generate-variables-docs.py
