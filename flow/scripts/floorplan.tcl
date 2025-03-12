@@ -193,5 +193,32 @@ if { [env_var_exists_and_non_empty POST_FLOORPLAN_TCL] } {
   source $::env(POST_FLOORPLAN_TCL)
 }
 
+set db [ord::get_db]
+set chip [$db getChip]
+set block [$chip getBlock]
+
+set scale_to_um [expr [$block getDbUnitsPerMicron] * [$block getDbUnitsPerMicron]]
+
+proc module_area {insts} {
+  global scale_to_um
+  set area 0
+  foreach inst $insts {
+    set bbox [$inst getBBox]
+    set area [expr $area + [$bbox getDX] * [$bbox getDY]]
+  }
+  return [expr $area / $scale_to_um]
+}
+
+# $REPORTS_DIR/2_1_area.txt has three columns:
+#
+# name - name of module
+# area - area of instances within module, excluding submodules
+# area_leaf - area of instances within module and submodules
+set f [open $::env(REPORTS_DIR)/2_1_area.txt w]
+foreach module [$block getModules] {
+  puts $f "[$module getName] [module_area [$module getInsts]] [module_area [$module getLeafInsts]]"
+}
+close $f
+
 write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
 write_sdc -no_timestamp $::env(RESULTS_DIR)/2_1_floorplan.sdc
