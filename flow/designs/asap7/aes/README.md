@@ -3,7 +3,7 @@
 For large designs, it can be useful to split synthesis for the
 major blocks and combine the synthesized result.
 
-SYNTH_HIERARCHICAL=1 and MAX_UNGROUP_SIZE can be used to adjust which
+SYNTH_HIERARCHICAL=1 and SYNTH_MINIMUM_KEEP_SIZE can be used to adjust which
 modules are flattened and which are kept.
 
 A module that is not flattened, can be built separately without any

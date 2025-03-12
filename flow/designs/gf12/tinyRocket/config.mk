@@ -3,7 +3,7 @@ export DESIGN_NAME = RocketTile
 export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1
-export MAX_UNGROUP_SIZE ?= 1000
+export SYNTH_MINIMUM_KEEP_SIZE ?= 1000
 
 export VERILOG_FILES  = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/AsyncResetReg.v \
                         $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/ClockDivider2.v \

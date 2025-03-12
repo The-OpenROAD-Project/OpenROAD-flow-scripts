@@ -17,9 +17,9 @@ if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
   # defer flattening until we have decided what hierarchy to keep
   synth -run :fine
 
-  if {[env_var_exists_and_non_empty MAX_UNGROUP_SIZE]} {
-    set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
-    puts "Ungroup modules below estimated size of $ungroup_threshold instances"
+  if {[env_var_exists_and_non_empty SYNTH_MINIMUM_KEEP_SIZE]} {
+    set ungroup_threshold $::env(SYNTH_MINIMUM_KEEP_SIZE)
+    puts "Keep modules above estimated size of $ungroup_threshold gate equivalents"
 
     convert_liberty_areas
     keep_hierarchy -min_cost $ungroup_threshold
