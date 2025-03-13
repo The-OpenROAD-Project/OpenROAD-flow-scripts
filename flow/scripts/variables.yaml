@@ -644,9 +644,11 @@ DFF_LIB_FILES:
 DONT_USE_LIBS:
   description: |
     Set liberty files as `dont_use`.
-PRESERVE_CELLS:
+SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.
+  stages:
+    - synth
 SYNTH_ARGS:
   description: |
     Optional synthesis variables for yosys.

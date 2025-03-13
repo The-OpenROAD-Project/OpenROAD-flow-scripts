@@ -8,6 +8,14 @@ if { [env_var_equals SYNTH_GUT 1] } {
   delete $::env(DESIGN_NAME)/c:*
 }
 
+if {[env_var_exists_and_non_empty SYNTH_KEEP_MODULES]} {
+  foreach module $::env(SYNTH_KEEP_MODULES) {
+    select -module $module
+    setattr -mod -set keep_hierarchy 1
+    select -clear
+  }
+}
+
 if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
   # Perform standard coarse-level synthesis script, flatten right away
   # (-flatten part of $synth_args per default)
