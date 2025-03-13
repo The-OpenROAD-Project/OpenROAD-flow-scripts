@@ -122,7 +122,6 @@ configuration file.
 | <a name="MAKE_TRACKS"></a>MAKE_TRACKS| Tcl file that defines add routing tracks to a floorplan.| | |
 | <a name="MATCH_CELL_FOOTPRINT"></a>MATCH_CELL_FOOTPRINT| Enforce sizing operations to only swap cells that have the same layout boundary.| 0| |
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.| | |
-| <a name="MAX_UNGROUP_SIZE"></a>MAX_UNGROUP_SIZE| For hierarchical synthesis, we ungroup modules of larger area than given by this variable. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| | |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| | |
 | <a name="MIN_ROUTING_LAYER"></a>MIN_ROUTING_LAYER| The lowest metal layer name to be used in routing.| | |
 | <a name="PDN_TCL"></a>PDN_TCL| File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.| | |
@@ -183,7 +182,9 @@ configuration file.
 | <a name="SYNTH_GUT"></a>SYNTH_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| | |
 | <a name="SYNTH_HIERARCHICAL"></a>SYNTH_HIERARCHICAL| Enable to Synthesis hierarchically, otherwise considered flat synthesis.| 0| |
 | <a name="SYNTH_MEMORY_MAX_BITS"></a>SYNTH_MEMORY_MAX_BITS| Maximum number of bits for memory synthesis.| 4096| |
+| <a name="SYNTH_MINIMUM_KEEP_SIZE"></a>SYNTH_MINIMUM_KEEP_SIZE| For hierarchical synthesis, we keep modules of larger area than given by this variable and flatten smaller modules. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| | |
 | <a name="SYNTH_NETLIST_FILES"></a>SYNTH_NETLIST_FILES| Skips synthesis and uses the supplied netlist files. If the netlist files contains duplicate modules, which can happen when using hierarchical synthesis on indvidual netlist files and combining here, subsequent modules are silently ignored and only the first module is used.| | |
+| <a name="SYNTH_WRAPPED_OPERATORS"></a>SYNTH_WRAPPED_OPERATORS| Synthesize multiple architectural options for each arithmetic operator in the design. These options are available for switching among in later stages of the flow.| | |
 | <a name="TAPCELL_TCL"></a>TAPCELL_TCL| Path to Endcap and Welltie cells file.| | |
 | <a name="TAP_CELL_NAME"></a>TAP_CELL_NAME| Name of the cell to use in tap cell insertion.| | |
 | <a name="TECH_LEF"></a>TECH_LEF| A technology LEF file of the PDK that includes all relevant information regarding metal layers, vias, and spacing requirements.| | |
@@ -204,7 +205,6 @@ configuration file.
 - [ADDER_MAP_FILE](#ADDER_MAP_FILE)
 - [CLKGATE_MAP_FILE](#CLKGATE_MAP_FILE)
 - [LATCH_MAP_FILE](#LATCH_MAP_FILE)
-- [MAX_UNGROUP_SIZE](#MAX_UNGROUP_SIZE)
 - [MIN_BUF_CELL_AND_PORTS](#MIN_BUF_CELL_AND_PORTS)
 - [SDC_FILE](#SDC_FILE)
 - [SDC_GUT](#SDC_GUT)
@@ -212,7 +212,9 @@ configuration file.
 - [SYNTH_GUT](#SYNTH_GUT)
 - [SYNTH_HIERARCHICAL](#SYNTH_HIERARCHICAL)
 - [SYNTH_MEMORY_MAX_BITS](#SYNTH_MEMORY_MAX_BITS)
+- [SYNTH_MINIMUM_KEEP_SIZE](#SYNTH_MINIMUM_KEEP_SIZE)
 - [SYNTH_NETLIST_FILES](#SYNTH_NETLIST_FILES)
+- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
 - [VERILOG_FILES](#VERILOG_FILES)

@@ -160,7 +160,7 @@ include $(PLATFORM_DIR)/config.mk
 $(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
 
 # If the design, nor $(PLATFORM_DIR)/config.mk provided a default, provide one here
-export MAX_UNGROUP_SIZE ?= 0
+export SYNTH_MINIMUM_KEEP_SIZE ?= 0
 
 # Not normally adjusted by user
 export SYNTH_OPERATIONS_ARGS ?= -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
@@ -1025,6 +1025,11 @@ klayout:
 run:
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT) 2>&1 | tee $(abspath $(LOG_DIR)/$(RUN_LOG_NAME_STEM).log))
+
+export RUN_YOSYS_ARGS ?= -c $(SCRIPTS_DIR)/yosys_keep.tcl
+.phony: run-yosys
+run-yosys:
+	$(YOSYS_EXE) $(RUN_YOSYS_ARGS)
 
 # Utilities
 #-------------------------------------------------------------------------------
