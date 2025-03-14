@@ -50,9 +50,9 @@ orfs.default(
     # and update "image" to point to the local image.
 
     # Official image https://hub.docker.com/r/openroad/orfs/tags
-    image = "docker.io/openroad/orfs:v3.0-2528-ga8780221",
+    image = "docker.io/openroad/orfs:v3.0-2581-g11b93cfa",
     # image = "gcr.io/ascenium/orfs-megaboom/flow-ubuntu22.04-builder:3d2c3d-2",
-    sha256 = "5093434a9d3adaaf8e9a4d62fc0df2537d43ceaf01bf2acf9e94d9d38131b7ca",
+    sha256 = "6b778fcdc3c7ba5cc5250cde588c43a63c45ffb3126ee072596a4173fe4d7101",
 )
 use_repo(orfs, "com_github_nixos_patchelf_download")
 use_repo(orfs, "docker_orfs")
