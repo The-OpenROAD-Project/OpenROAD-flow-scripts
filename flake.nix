@@ -24,9 +24,11 @@
         buildInputs = [
           openroad.packages.${system}.default
           yosys.packages.${system}.default
+          pkgs.time
           pkgs.klayout
           pkgs.verilator
-	  pkgs.python3
+          pkgs.perl
+          pkgs.python3
           pkgs.python3Packages.pandas
           pkgs.python3Packages.numpy
           pkgs.python3Packages.firebase-admin
