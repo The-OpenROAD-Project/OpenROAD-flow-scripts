@@ -24,6 +24,7 @@
         buildInputs = [
           openroad.packages.${system}.default
           yosys.packages.${system}.default
+          pkgs.time
           pkgs.klayout
           pkgs.verilator
 	  pkgs.python3
