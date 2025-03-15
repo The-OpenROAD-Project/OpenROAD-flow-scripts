@@ -51,6 +51,7 @@ if {![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS]} {
 
 # Get rid of indigestibles
 chformal -remove
+delete t:\$print
 
 # rename registers to have the verilog register name in its name
 # of the form \regName$_DFF_P_. We should fix yosys to make it the reg name.
