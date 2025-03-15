@@ -14,6 +14,6 @@ set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
 
 set output_regs [get_cells *io_out_REG*]
 if {[llength $output_regs] == 0} {
-    puts "ERROR: Could not find *io_out_REG*"
+    puts "Error: Could not find *io_out_REG*"
     exit 1
 }
