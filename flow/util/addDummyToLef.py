@@ -30,5 +30,5 @@ if count > 0:
     f.write(result)
     f.close()
 else:
-    print("ERROR: Pattern not found")
+    print("Error: Pattern not found")
     sys.exit(1)
