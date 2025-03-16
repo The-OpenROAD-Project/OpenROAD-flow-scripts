@@ -3,7 +3,7 @@ export PLATFORM               = gf180
 export DESIGN_NAME            = uart
 export DESIGN_NICKNAME        = uart-blocks
 
-export VERILOG_FILES = $(DESIGN_HOME)/src/uart-no-param/*.v
+export VERILOG_FILES = $(DESIGN_HOME)/src/uart/*.v
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export SYNTH_HIERARCHICAL = 1

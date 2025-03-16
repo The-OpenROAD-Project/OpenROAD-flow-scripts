@@ -3,7 +3,7 @@ export PLATFORM               = gf180
 export DESIGN_NAME            = uart_rx
 export DESIGN_NICKNAME        = uart-blocks_uart_rx
 
-export VERILOG_FILES = $(DESIGN_HOME)/src/uart-no-param/*.v
+export VERILOG_FILES = $(DESIGN_HOME)/src/uart/*.v
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/uart-blocks/uart_rx/constraint.sdc
 
 export CORE_UTILIZATION       = 30
@@ -16,3 +16,5 @@ export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/uart-blocks/uart_rx/pdn.tcl
 export PLACE_PINS_ARGS    = -exclude bottom:* -exclude top:* -exclude right:*
 
 export MAX_ROUTING_LAYER      = Metal4
+
+export VERILOG_TOP_PARAMS = DATA_WIDTH 8
