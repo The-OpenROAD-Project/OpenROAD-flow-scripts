@@ -658,6 +658,7 @@ VERILOG_TOP_PARAMS:
     Apply toplevel params (if exist).
   stages:
     - synth
+  default: ""
 CORE_ASPECT_RATIO:
   description: >
     The core aspect ratio (height / width). This value is ignored if
