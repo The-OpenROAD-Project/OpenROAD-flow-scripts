@@ -55,8 +55,8 @@ export MATCH_CELL_FOOTPRINT = 1
 export PLACE_SITE = unit
 
 # IO Placer pin layers
-export IO_PLACER_H = met3
-export IO_PLACER_V = met2
+export IO_PLACER_H ?= met3
+export IO_PLACER_V ?= met2
 
 # Define default PDN config
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
