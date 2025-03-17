@@ -3,7 +3,7 @@ export DESIGN_NAME = ariane
 export PLATFORM    = gf12
 
 export SYNTH_HIERARCHICAL = 1
-export MAX_UNGROUP_SIZE ?= 10000
+export SYNTH_MINIMUM_KEEP_SIZE ?= 10000
 
 export VERILOG_FILES = $(PLATFORM_DIR)/ariane133/ariane.v
 

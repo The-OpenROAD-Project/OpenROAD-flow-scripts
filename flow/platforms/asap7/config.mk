@@ -81,7 +81,7 @@ export DONT_USE_CELLS          += SDF* ICG*
 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_R.v
 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_R.v
 export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_R.v
-export MAX_UNGROUP_SIZE       ?= 1000
+export SYNTH_MINIMUM_KEEP_SIZE       ?= 1000
 
 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_R
 

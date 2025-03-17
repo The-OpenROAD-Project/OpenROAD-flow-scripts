@@ -1,7 +1,7 @@
 export DESIGN_NAME = swerv_wrapper
 export PLATFORM    = gf12
 #
-export MAX_UNGROUP_SIZE ?= 10000
+export SYNTH_MINIMUM_KEEP_SIZE ?= 10000
 export SYNTH_HIERARCHICAL = 1
 
 # RTL_MP Settings

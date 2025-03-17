@@ -19,6 +19,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
   report_puts "--------------------------------------------------------------------------"
   report_tns >> $filename
   report_tns_metric >> $filename
+  report_tns_metric -hold >> $filename
 
   report_puts "\n=========================================================================="
   report_puts "$when report_wns"
@@ -30,6 +31,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
   report_puts "--------------------------------------------------------------------------"
   report_worst_slack >> $filename
   report_worst_slack_metric >> $filename
+  report_worst_slack_metric -hold >> $filename
 
   if {$include_clock_skew && $::env(REPORT_CLOCK_SKEW)} {
     report_puts "\n=========================================================================="
