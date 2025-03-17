@@ -595,6 +595,7 @@ endef
 # STEP 1: Translate verilog to odb
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(DONT_USE_SC_LIB),floorplan))
+$(eval $(call do-step,2_1_floorplan_metrics,$(RESULTS_DIR)/2_1_floorplan.odb $(RESULTS_DIR)/2_1_floorplan.sdc,floorplan-metrics))
 
 # STEP 2: Random IO placement
 #-------------------------------------------------------------------------------

@@ -149,7 +149,6 @@ if { [env_var_equals RESYNTH_TIMING_RECOVER 1] } {
 puts "Default units for flow"
 report_units
 report_units_metric
-report_metrics 2 "floorplan final" false false
 
 if { [env_var_equals RESYNTH_AREA_RECOVER 1] } {
 
