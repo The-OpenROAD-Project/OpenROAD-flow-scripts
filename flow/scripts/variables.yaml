@@ -232,10 +232,11 @@ ABC_LOAD_IN_FF:
     During synthesis set_load value used.
   stages:
     - synth
-MAX_UNGROUP_SIZE:
+SYNTH_MINIMUM_KEEP_SIZE:
   description: >
-    For hierarchical synthesis, we ungroup modules of larger area than given by
-    this variable. The area unit used is the size of a basic nand2 gate from the
+    For hierarchical synthesis, we keep modules of larger area than given by
+    this variable and flatten smaller modules.
+    The area unit used is the size of a basic nand2 gate from the
     platform's standard cell library. The default value is platform specific.
   stages:
     - synth
@@ -643,9 +644,11 @@ DFF_LIB_FILES:
 DONT_USE_LIBS:
   description: |
     Set liberty files as `dont_use`.
-PRESERVE_CELLS:
+SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.
+  stages:
+    - synth
 SYNTH_ARGS:
   description: |
     Optional synthesis variables for yosys.

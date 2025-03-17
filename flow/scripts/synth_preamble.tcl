@@ -63,16 +63,6 @@ if {[env_var_exists_and_non_empty SYNTH_BLACKBOXES]} {
   }
 }
 
-# Mark modules to keep from getting removed in flattening
-if {[env_var_exists_and_non_empty PRESERVE_CELLS]} {
-  hierarchy -check -top $::env(DESIGN_NAME)
-  foreach cell $::env(PRESERVE_CELLS) {
-    select -module $cell
-    setattr -mod -set keep_hierarchy 1
-    select -clear
-  }
-}
-
 if {$::env(ABC_AREA)} {
   puts "Using ABC area script."
   set abc_script $::env(SCRIPTS_DIR)/abc_area.script
