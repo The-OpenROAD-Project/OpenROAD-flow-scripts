@@ -13,3 +13,4 @@ export TNS_END_PERCENT        = 100
 export EQUIVALENCE_CHECK     ?=   1
 export REMOVE_CELLS_FOR_EQY   = TAPCELL*
 export SKIP_GATE_CLONING      = 1
+export VERILOG_TOP_PARAMS = DATA_WIDTH 8
