@@ -153,7 +153,15 @@ else
   $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
 endif
 
-include $(PLATFORM_DIR)/config.mk
+# The plan is to migrate all variables to .tcl so that
+# ORFS is no longer dependent on make.
+ifneq ($(wildcard $(PLATFORM_DIR)/config.tcl),)
+  # import variables defined in config.tcl to the make environment.
+  $(foreach line,$(shell tclsh $(SCRIPTS_DIR)/env.tcl $(PLATFORM_DIR)/config.tcl),$(eval $(line)))
+endif
+ifneq ($(wildcard $(PLATFORM_DIR)/config.mk),)
+  include $(PLATFORM_DIR)/config.mk
+endif
 
 # __SPACE__ is a workaround for whitespace hell in "foreach"; there
 # is no way to escape space in defaults.py and get "foreach" to work.
