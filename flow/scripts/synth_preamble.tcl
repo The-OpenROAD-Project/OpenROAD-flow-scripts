@@ -44,13 +44,6 @@ foreach file $::env(VERILOG_FILES) {
 
 source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
 
-# Apply toplevel parameters (if exist)
-if {[env_var_exists_and_non_empty VERILOG_TOP_PARAMS]} {
-  dict for {key value} $::env(VERILOG_TOP_PARAMS) {
-    chparam -set $key $value $::env(DESIGN_NAME)
-  }
-}
-
 # Read platform specific mapfile for OPENROAD_CLKGATE cells
 if {[env_var_exists_and_non_empty CLKGATE_MAP_FILE]} {
   read_verilog -defer $::env(CLKGATE_MAP_FILE)
