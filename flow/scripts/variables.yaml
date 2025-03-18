@@ -915,3 +915,7 @@ YOSYS_FLAGS:
     Additional flags to pass to yosys.
   stages:
     - synth
+FLOW_VARIANT:
+  description: >
+    Flow variant to use, used in the flow variant directory name.
+  default: base
