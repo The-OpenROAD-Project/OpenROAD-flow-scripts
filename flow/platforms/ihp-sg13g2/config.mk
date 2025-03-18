@@ -75,8 +75,8 @@ export MATCH_CELL_FOOTPRINT = 1
 export PLACE_SITE = CoreSite
 
 # IO Placer pin layers
-export IO_PLACER_H = Metal2
-export IO_PLACER_V = Metal3
+export IO_PLACER_H ?= Metal2
+export IO_PLACER_V ?= Metal3
 
 # Define default PDN config
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
