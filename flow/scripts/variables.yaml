@@ -240,6 +240,7 @@ SYNTH_MINIMUM_KEEP_SIZE:
     platform's standard cell library. The default value is platform specific.
   stages:
     - synth
+  default: 0
 SYNTH_WRAPPED_OPERATORS:
   description: >
     Synthesize multiple architectural options for each arithmetic operator in the
