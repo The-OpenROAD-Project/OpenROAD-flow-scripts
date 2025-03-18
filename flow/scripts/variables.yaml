@@ -240,6 +240,7 @@ SYNTH_MINIMUM_KEEP_SIZE:
     platform's standard cell library. The default value is platform specific.
   stages:
     - synth
+  default: 0
 SYNTH_WRAPPED_OPERATORS:
   description: >
     Synthesize multiple architectural options for each arithmetic operator in the
@@ -915,3 +916,7 @@ YOSYS_FLAGS:
     Additional flags to pass to yosys.
   stages:
     - synth
+FLOW_VARIANT:
+  description: >
+    Flow variant to use, used in the flow variant directory name.
+  default: base

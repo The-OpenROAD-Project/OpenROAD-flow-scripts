@@ -1,7 +1,3 @@
-# settings.mk is not under source control. Put variables into this
-# file to avoid having to adding the to the make command line.
--include settings.mk
-
 # ==============================================================================
 # Uncomment or add the design to run
 # ==============================================================================
@@ -159,14 +155,9 @@ include $(PLATFORM_DIR)/config.mk
 # is no way to escape space in defaults.py and get "foreach" to work.
 $(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
 
-# If the design, nor $(PLATFORM_DIR)/config.mk provided a default, provide one here
-export SYNTH_MINIMUM_KEEP_SIZE ?= 0
-
 # Not normally adjusted by user
 export SYNTH_OPERATIONS_ARGS ?= -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
 export SYNTH_FULL_ARGS ?= $(SYNTH_ARGS) $(SYNTH_OPERATIONS_ARGS)
-
-export FLOW_VARIANT ?= base
 
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
