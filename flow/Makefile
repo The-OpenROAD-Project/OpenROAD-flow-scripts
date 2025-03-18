@@ -166,8 +166,6 @@ export SYNTH_MINIMUM_KEEP_SIZE ?= 0
 export SYNTH_OPERATIONS_ARGS ?= -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
 export SYNTH_FULL_ARGS ?= $(SYNTH_ARGS) $(SYNTH_OPERATIONS_ARGS)
 
-export FLOW_VARIANT ?= base
-
 # Setup working directories
 export DESIGN_NICKNAME ?= $(DESIGN_NAME)
 
