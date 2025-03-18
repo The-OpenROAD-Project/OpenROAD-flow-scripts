@@ -94,6 +94,7 @@ configuration file.
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| | |
 | <a name="FILL_CONFIG"></a>FILL_CONFIG| JSON rule file for metal fill during chip finishing.| | |
 | <a name="FLOORPLAN_DEF"></a>FLOORPLAN_DEF| Use the DEF file to initialize floorplan.| | |
+| <a name="FLOW_VARIANT"></a>FLOW_VARIANT| Flow variant to use, used in the flow variant directory name.| base| |
 | <a name="GDS_ALLOW_EMPTY"></a>GDS_ALLOW_EMPTY| Regular expression of module names of macros that have no .gds file| | |
 | <a name="GDS_FILES"></a>GDS_FILES| Path to platform GDS files.| | |
 | <a name="GENERATE_ARTIFACTS_ON_FAILURE"></a>GENERATE_ARTIFACTS_ON_FAILURE| For instance Bazel needs artifacts (.odb and .rpt files) on a failure to allow the user to save hours on re-running the failed step locally, but when working with a Makefile flow, it is more natural to fail the step and leave the user to manually inspect the logs and artifacts directly via the file system. Set to 1 to change the behavior to generate artifacts upon failure to e.g. do a global route. The exit code will still be non-zero on all other failures that aren't covered by the "useful to inspect the artifacts on failure" use-case. Example: just like detailed routing, a global route that fails with congestion, is not a build failure(as in exit code non-zero), it is a successful(as in zero exit code) global route that produce reports detailing the problem. Detailed route will not proceed, if there is global routing congestion This allows build systems, such as bazel, to create artifacts for global and detailed route, even if the operation had problems, without having know about the semantics between global and detailed route. Considering that global and detailed route can run for a long time and use a lot of memory, this allows inspecting results on a laptop for a build that ran on a server.| 0| |
@@ -182,7 +183,7 @@ configuration file.
 | <a name="SYNTH_HIERARCHICAL"></a>SYNTH_HIERARCHICAL| Enable to Synthesis hierarchically, otherwise considered flat synthesis.| 0| |
 | <a name="SYNTH_KEEP_MODULES"></a>SYNTH_KEEP_MODULES| Mark modules to keep from getting removed in flattening.| | |
 | <a name="SYNTH_MEMORY_MAX_BITS"></a>SYNTH_MEMORY_MAX_BITS| Maximum number of bits for memory synthesis.| 4096| |
-| <a name="SYNTH_MINIMUM_KEEP_SIZE"></a>SYNTH_MINIMUM_KEEP_SIZE| For hierarchical synthesis, we keep modules of larger area than given by this variable and flatten smaller modules. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| | |
+| <a name="SYNTH_MINIMUM_KEEP_SIZE"></a>SYNTH_MINIMUM_KEEP_SIZE| For hierarchical synthesis, we keep modules of larger area than given by this variable and flatten smaller modules. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| 0| |
 | <a name="SYNTH_NETLIST_FILES"></a>SYNTH_NETLIST_FILES| Skips synthesis and uses the supplied netlist files. If the netlist files contains duplicate modules, which can happen when using hierarchical synthesis on indvidual netlist files and combining here, subsequent modules are silently ignored and only the first module is used.| | |
 | <a name="SYNTH_WRAPPED_OPERATORS"></a>SYNTH_WRAPPED_OPERATORS| Synthesize multiple architectural options for each arithmetic operator in the design. These options are available for switching among in later stages of the flow.| | |
 | <a name="TAPCELL_TCL"></a>TAPCELL_TCL| Path to Endcap and Welltie cells file.| | |
@@ -392,6 +393,7 @@ configuration file.
 - [ENABLE_DPO](#ENABLE_DPO)
 - [FASTROUTE_TCL](#FASTROUTE_TCL)
 - [FILL_CONFIG](#FILL_CONFIG)
+- [FLOW_VARIANT](#FLOW_VARIANT)
 - [GDS_FILES](#GDS_FILES)
 - [GENERATE_ARTIFACTS_ON_FAILURE](#GENERATE_ARTIFACTS_ON_FAILURE)
 - [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
