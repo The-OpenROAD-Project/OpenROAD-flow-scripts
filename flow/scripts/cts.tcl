@@ -18,9 +18,10 @@ set cts_args [list \
           -sink_clustering_enable \
           -balance_levels]
 
-append_env_var cts_args -distance_between_buffers CTS_BUF_DISTANCE 1
-append_env_var cts_args -sink_clustering_size CTS_CLUSTER_SIZE 1
-append_env_var cts_args -sink_clustering_max_diameter CTS_CLUSTER_DIAMETER 1
+append_env_var cts_args CTS_BUF_DISTANCE -distance_between_buffers 1
+append_env_var cts_args CTS_CLUSTER_SIZE -sink_clustering_size 1
+append_env_var cts_args CTS_CLUSTER_DIAMETER -sink_clustering_max_diameter 1
+append_env_var cts_args CTS_BUF_LIST -buf_list 1
 
 if {[env_var_exists_and_non_empty CTS_ARGS]} {
   set cts_args $::env(CTS_ARGS)
