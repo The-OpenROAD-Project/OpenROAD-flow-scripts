@@ -188,10 +188,6 @@ ifneq ($(BLOCKS),)
   endif
 endif
 
-export RTLMP_RPT_DIR ?= $(OBJECTS_DIR)/rtlmp
-export RTLMP_RPT_FILE ?= partition.txt
-export RTLMP_BLOCKAGE_FILE ?= $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
-
 #-------------------------------------------------------------------------------
 ifeq (,$(strip $(NUM_CORES)))
   # Linux (utility program)
