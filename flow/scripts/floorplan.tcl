@@ -193,5 +193,10 @@ if { [env_var_exists_and_non_empty POST_FLOORPLAN_TCL] } {
   source $::env(POST_FLOORPLAN_TCL)
 }
 
+
+if {[env_var_exists_and_non_empty IO_CONSTRAINTS]} {
+  source $::env(IO_CONSTRAINTS)
+}
+
 write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
 write_sdc -no_timestamp $::env(RESULTS_DIR)/2_1_floorplan.sdc
