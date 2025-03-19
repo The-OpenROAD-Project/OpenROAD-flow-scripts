@@ -24,7 +24,7 @@ export CORE_AREA = 5 5 75 85
 
 export PLACE_DENSITY_LB_ADDON = 0.10
 
-export PLACE_PINS_ARGS    = -exclude left:* -exclude right:* -exclude top:*
+export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/io.tcl
 export MACRO_PLACE_HALO    = 2 2
 
 export TNS_END_PERCENT   = 100

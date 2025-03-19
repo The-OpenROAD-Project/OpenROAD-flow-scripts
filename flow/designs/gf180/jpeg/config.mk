@@ -8,4 +8,4 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 
 export CORE_UTILIZATION = 45
 export PLACE_DENSITY_LB_ADDON = 0.20
-export PLACE_PINS_ARGS = -exclude top:* -exclude bottom:*
+export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/io.tcl
