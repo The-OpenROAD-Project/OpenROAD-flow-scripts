@@ -32,7 +32,7 @@
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 139792,
+        "value": 139696,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {

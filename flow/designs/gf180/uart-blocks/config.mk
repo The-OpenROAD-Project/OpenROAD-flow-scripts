@@ -12,7 +12,7 @@ export BLOCKS = uart_rx
 export DIE_AREA = 0 0 430 430
 export CORE_AREA = 10 10 420 420
 
-export PLACE_PINS_ARGS    = -exclude bottom:* -exclude top:* -exclude right:*
+export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/io.tcl
 
 export MACRO_PLACE_HALO = 20 20
 
