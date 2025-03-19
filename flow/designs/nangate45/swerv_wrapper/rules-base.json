@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 770260,
+        "value": 756670,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 776405,
+        "value": 763503,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
@@ -60,7 +60,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 444,
+        "value": 395,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
