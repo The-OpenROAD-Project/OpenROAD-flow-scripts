@@ -369,7 +369,6 @@ PLACE_PINS_ARGS:
     Arguments to place_pins
   stages:
     - place
-    - floorplan
   default: ""
 PLACE_DENSITY:
   description: >
