@@ -48,7 +48,7 @@ export DIE_AREA    = 0 0 1400 1400
 export CORE_AREA   = 10 10 1390 1390 
 export PLACE_DENSITY_LB_ADDON = 0.05
 
-export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/io.tcl
+export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/ca53/io.tcl
 
 export MACRO_PLACE_HALO = 7 7
 
