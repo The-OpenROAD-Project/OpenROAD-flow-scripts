@@ -24,7 +24,7 @@ export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_512x64.lib \
 export DIE_AREA    = 0 0 800 600 
 export CORE_AREA   = 10 10 790 590 
 
-export PLACE_PINS_ARGS = -exclude left:400-700 -exclude right:400-700 -exclude top:*
+export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/io.tcl
 
 
 export MACRO_PLACE_HALO = 10 10
