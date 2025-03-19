@@ -492,12 +492,6 @@ floorplan: $(RESULTS_DIR)/2_floorplan.odb \
 
 # ==============================================================================
 
-ifneq ($(FOOTPRINT),)
-IS_CHIP = 1
-else ifneq ($(FOOTPRINT_TCL),)
-IS_CHIP = 1
-endif
-
 UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
 
 # FILE_MAKEFILE is needed when ORFS is invoked with
