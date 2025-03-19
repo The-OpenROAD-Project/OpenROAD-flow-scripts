@@ -2,6 +2,14 @@
 
 Various scripts to support flow as well as utilities.
 
+## flow.sh/synth.sh - WORK IN PROGRESS
+
+This script is a low level script used to invoke a flow step. ORFS make or bazel-orfs will set up all the project specific variables before invoking this script where the rest of the variables are set up before invoking OpenROAD.
+
+    scripts/flow.sh 2_1_floorplan floorplan
+
+    scripts/synth.sh 
+
 ## make run-yosys
 
 Sets up all the ORFS environment variables and launches Yosys.
