@@ -1,3 +1,5 @@
+set ::env(VERILOG_FILES) $::env(RESULTS_DIR)/1_synth.rtlil
+
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
 hierarchy -check -top $::env(DESIGN_NAME)

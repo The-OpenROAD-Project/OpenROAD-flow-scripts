@@ -188,10 +188,6 @@ ifneq ($(BLOCKS),)
   endif
 endif
 
-export RTLMP_RPT_DIR ?= $(OBJECTS_DIR)/rtlmp
-export RTLMP_RPT_FILE ?= partition.txt
-export RTLMP_BLOCKAGE_FILE ?= $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
-
 #-------------------------------------------------------------------------------
 ifeq (,$(strip $(NUM_CORES)))
   # Linux (utility program)
@@ -227,15 +223,27 @@ endif
 # Priority is given to
 #       1 user explicit set with variable in Makefile or command line, for instance setting OPENROAD_EXE
 #       2 ORFS compiled tools: openroad, yosys
-export OPENROAD_EXE      ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
-export OPENSTA_EXE       ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
+ifneq (${IN_NIX_SHELL},)
+  export OPENROAD_EXE := $(shell command -v openroad)
+else
+  export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+endif
+ifneq (${IN_NIX_SHELL},)
+  export OPENSTA_EXE := $(shell command -v sta)
+else
+  export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
+endif
 
 OPENROAD_ARGS            = -no_init -threads $(NUM_CORES) $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
-YOSYS_EXE               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+ifneq (${IN_NIX_SHELL},)
+  YOSYS_EXE := $(shell command -v yosys)
+else
+  YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+endif
 
 # Use locally installed and built klayout if it exists, otherwise use klayout in path
 KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
@@ -440,8 +448,7 @@ yosys-dependencies: $(YOSYS_DEPENDENCIES)
 .PHONY: do-yosys
 do-yosys: $(DONT_USE_SC_LIB)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
-	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
+	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
 
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies $(DONT_USE_SC_LIB)
@@ -484,12 +491,6 @@ floorplan: $(RESULTS_DIR)/2_floorplan.odb \
            $(RESULTS_DIR)/2_floorplan.sdc
 
 # ==============================================================================
-
-ifneq ($(FOOTPRINT),)
-IS_CHIP = 1
-else ifneq ($(FOOTPRINT_TCL),)
-IS_CHIP = 1
-endif
 
 UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
 
