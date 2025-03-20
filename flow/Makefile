@@ -207,8 +207,6 @@ ifeq (,$(strip $(NUM_CORES)))
 endif
 export NUM_CORES
 
-YOSYS_FLAGS += -v 3
-
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
 export TIME_BIN   ?= env time
@@ -217,6 +215,7 @@ TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
 ifeq (,$(strip $(TIME_TEST)))
   TIME_CMD = $(TIME_BIN)
 endif
+export TIME_CMD
 
 # The following determine the executable location for each tool used by this flow.
 # Priority is given to
@@ -243,6 +242,7 @@ ifneq (${IN_NIX_SHELL},)
 else
   YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 endif
+export YOSYS_EXE
 
 # Use locally installed and built klayout if it exists, otherwise use klayout in path
 KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
@@ -446,13 +446,11 @@ yosys-dependencies: $(YOSYS_DEPENDENCIES)
 
 .PHONY: do-yosys
 do-yosys: $(DONT_USE_SC_LIB)
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
+	$(SCRIPTS_DIR)/synth.sh $(SYNTH_SCRIPT) $(LOG_DIR)/1_1_yosys.log
 
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies $(DONT_USE_SC_LIB)
-	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_canonicalize.log)
+	$(SCRIPTS_DIR)/synth.sh $(SCRIPTS_DIR)/synth_canonicalize.tcl $(LOG_DIR)/1_1_yosys_canonicalize.log
 
 $(RESULTS_DIR)/1_synth.rtlil: $(YOSYS_DEPENDENCIES)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
