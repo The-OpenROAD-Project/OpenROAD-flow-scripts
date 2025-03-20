@@ -4,13 +4,13 @@
 
 ###################################################################
 set sdc_version 2.0
-set bp_clk_p 3
+set clk_period 3
 set clk_uncertainty 150
-set bp_clk_hp [expr ${bp_clk_p}/2]
-set l_clk_p1 [expr ${bp_clk_p}*2]
-set l_clk_p2 [expr ${bp_clk_p}*4]
+set bp_clk_hp [expr ${clk_period}/2]
+set l_clk_p1 [expr ${clk_period}*2]
+set l_clk_p2 [expr ${clk_period}*4]
 set wv1 [list 0 $bp_clk_hp]
-set wv2 [list 0 $bp_clk_p]
+set wv2 [list 0 $clk_period]
 set wv3 [list 0 $l_clk_p1]
 set mx_delay1 [expr ${l_clk_p1}*0.28]
 set mx_delay2 [expr ${l_clk_p2}*0.28]
@@ -21,11 +21,11 @@ set_units -time ps -resistance kOhm -capacitance fF -power mW -voltage V       \
 -current uA
 create_clock [get_ports p_bsg_tag_clk_i]  -name tag_clk  -period $l_clk_p2  -waveform $wv3
 set_clock_uncertainty -hold $clk_uncertainty  [get_clocks tag_clk]
-create_clock [get_ports p_clk_A_i]  -name bp_clk  -period $bp_clk_p  -waveform $wv1
+create_clock [get_ports p_clk_A_i]  -name bp_clk  -period $clk_period  -waveform $wv1
 set_clock_uncertainty $clk_uncertainty  [get_clocks bp_clk]
-create_clock [get_ports p_clk_B_i]  -name io_master_clk  -period $bp_clk_p  -waveform $wv1
+create_clock [get_ports p_clk_B_i]  -name io_master_clk  -period $clk_period  -waveform $wv1
 set_clock_uncertainty $clk_uncertainty  [get_clocks io_master_clk]
-create_clock [get_ports p_clk_C_i]  -name router_clk  -period $bp_clk_p  -waveform $wv1
+create_clock [get_ports p_clk_C_i]  -name router_clk  -period $clk_period  -waveform $wv1
 set_clock_uncertainty $clk_uncertainty  [get_clocks router_clk]
 create_clock [get_ports p_ci_clk_i]  -name sdi_a_clk  -period $l_clk_p1  -waveform $wv2
 set_clock_uncertainty $clk_uncertainty  [get_clocks sdi_a_clk]
