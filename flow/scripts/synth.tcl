@@ -18,10 +18,17 @@ if {[env_var_exists_and_non_empty SYNTH_KEEP_MODULES]} {
   }
 }
 
+set synth_full_args $::env(SYNTH_ARGS)
+if {[env_var_exists_and_non_empty SYNTH_OPERATIONS_ARGS]} {
+  set synth_full_args [concat $synth_full_args $::env(SYNTH_OPERATIONS_ARGS)]
+} else {
+  set synth_full_args [concat $synth_full_args "-extra-map $::env(FLOW_HOME)/platforms/common/lcu_kogge_stone.v"]
+}
+
 if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
   # Perform standard coarse-level synthesis script, flatten right away
   # (-flatten part of $synth_args per default)
-  synth -run :fine {*}$::env(SYNTH_FULL_ARGS)
+  synth -run :fine {*}$synth_full_args
 } else {
   # Perform standard coarse-level synthesis script,
   # defer flattening until we have decided what hierarchy to keep
@@ -38,7 +45,7 @@ if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
   }
 
   # Re-run coarse-level script, this time do pass -flatten
-  synth -run coarse:fine {*}$::env(SYNTH_FULL_ARGS)
+  synth -run coarse:fine {*}$synth_full_args
 }
 
 json -o $::env(RESULTS_DIR)/mem.json
@@ -46,7 +53,7 @@ json -o $::env(RESULTS_DIR)/mem.json
 exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
 
 if {![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS]} {
-  synth -top $::env(DESIGN_NAME) -run fine: {*}$::env(SYNTH_FULL_ARGS)
+  synth -top $::env(DESIGN_NAME) -run fine: {*}$synth_full_args
 } else {
   source $::env(SCRIPTS_DIR)/synth_wrap_operators.tcl
 }
