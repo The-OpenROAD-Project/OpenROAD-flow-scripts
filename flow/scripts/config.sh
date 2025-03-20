@@ -1,6 +1,12 @@
 #!/bin/bash
 set -u
 
+# Run the defaults.py script and process its output
+while IFS= read -r line; do
+  # Replace "__SPACE__" with an actual space in the line
+  eval "${line//__SPACE__/ }"
+done < <("${FLOW_HOME}/scripts/defaults.py")
+
 # Set default paths
 export PLATFORM_HOME="${PLATFORM_HOME:-${FLOW_HOME}/platforms}"
 export WORK_HOME="${WORK_HOME:-.}"

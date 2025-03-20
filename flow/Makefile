@@ -160,8 +160,6 @@ export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
 #
 # __SPACE__ is a workaround for whitespace hell in "foreach"; there
 # is no way to escape space in defaults.py and get "foreach" to work.
-$(foreach line,$(shell $(FLOW_HOME)/scripts/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
-
 $(foreach line,$(shell \
  DESIGN_NAME=$(DESIGN_NAME) \
  FLOW_HOME=$(FLOW_HOME) \
