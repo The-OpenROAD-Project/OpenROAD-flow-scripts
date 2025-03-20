@@ -24,7 +24,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1025,
+        "value": 1024,
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -115.61,
+        "value": -86.3,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 7354,
+        "value": 7348,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
@@ -60,11 +60,11 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 326,
+        "value": 319,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -21.47,
+        "value": -21.42,
         "compare": ">="
     }
 }
