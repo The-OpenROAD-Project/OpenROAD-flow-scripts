@@ -23,21 +23,28 @@ jobs:
           git checkout master
           git pull
       - if: "steps.remote-update.outputs.has_update != ''"
-        name: Create Draft PR
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ github.token }}
-          signoff: true
-          delete-branch: true
-          title: 'Update OpenROAD submodule'
-          body: |
-            Automated action to update tools/OpenROAD submodule and tighten CI rule checking.
-            [ci:rules-tighten]
-          labels: UpdateRules
-          reviewers: |
-            vvbandeira
-            maliberty
-          draft: true
-          branch: update-openroad
-          commit-message: |
-              [BOT] Update OpenROAD submodule
+        steps:
+        - name: Install Nix
+          uses: cachix/install-nix-action@v31
+          with:
+            github_access_token: ${{ secrets.GITHUB_TOKEN }}
+        - name: Update flake.lock
+          run: nix --extra-experimental-features "nix-command flakes" flake update openroad-abc-src openroad-opensta-src openroad-flake
+        - name: Create Draft PR
+          uses: peter-evans/create-pull-request@v7
+          with:
+            token: ${{ github.token }}
+            signoff: true
+            delete-branch: true
+            title: 'Update OpenROAD submodule'
+            body: |
+              Automated action to update tools/OpenROAD submodule and tighten CI rule checking.
+              [ci:rules-tighten]
+            labels: UpdateRules
+            reviewers: |
+              vvbandeira
+              maliberty
+            draft: true
+            branch: update-openroad
+            commit-message: |
+                [BOT] Update OpenROAD submodule

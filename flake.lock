@@ -38,11 +38,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1741851582,
-        "narHash": "sha256-cPfs8qMccim2RBgtKGF+x9IBCduRvd/N5F4nYpU0TVE=",
+        "lastModified": 1742288794,
+        "narHash": "sha256-Txwa5uO+qpQXrNG4eumPSD+hHzzYi/CdaM80M9XRLCo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6607cf789e541e7873d40d3a8f7815ea92204f32",
+        "rev": "b6eaf97c6960d97350c584de1b6dcff03c9daf42",
         "type": "github"
       },
       "original": {
@@ -84,33 +84,63 @@
         "type": "github"
       }
     },
-    "openroad": {
+    "openroad-abc-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1735605591,
+        "narHash": "sha256-GF2EnSbXWHasKXqqPDoCP8GlatwZm+0WLX0BiDUJ1Qk=",
+        "rev": "5c9448c085eb8bf1e433a22a954532e44206c6f9",
+        "revCount": 5622,
+        "type": "git",
+        "url": "file:tools/OpenROAD/third-party/abc"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:tools/OpenROAD/third-party/abc"
+      }
+    },
+    "openroad-flake": {
       "inputs": {
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1741801451,
-        "narHash": "sha256-fzWCeq0o6vx8/GoFcOtnaIENes3jXzNk9qfWnIaxtHI=",
-        "ref": "refs/heads/master",
-        "rev": "ec1bf1a13902813b722f8341c432cd09714d9e55",
-        "revCount": 27845,
-        "submodules": true,
+        "lastModified": 1744179775,
+        "narHash": "sha256-+w6lnpbuh39QKI6oG6rZxMKSxyfufD+4PB2pIxO8AfA=",
+        "rev": "33cc7567fa495b89ed9a273c08f21e04c7a31397",
+        "revCount": 28690,
         "type": "git",
-        "url": "https://github.com/The-OpenROAD-Project/OpenROAD"
+        "url": "file:tools/OpenROAD"
       },
       "original": {
-        "rev": "ec1bf1a13902813b722f8341c432cd09714d9e55",
-        "submodules": true,
         "type": "git",
-        "url": "https://github.com/The-OpenROAD-Project/OpenROAD"
+        "url": "file:tools/OpenROAD"
+      }
+    },
+    "openroad-opensta-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1740616817,
+        "narHash": "sha256-y1zELJFgfWAyZGiiRaDH3Ie72CSzLBx7yiyXQsnc36k=",
+        "rev": "5a46b3ceb2ad40eddcf7f118093a24258240c74c",
+        "revCount": 1831,
+        "type": "git",
+        "url": "file:tools/OpenROAD/src/sta"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:tools/OpenROAD/src/sta"
       }
     },
     "root": {
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
-        "openroad": "openroad",
-        "yosys": "yosys"
+        "openroad-abc-src": "openroad-abc-src",
+        "openroad-flake": "openroad-flake",
+        "openroad-opensta-src": "openroad-opensta-src",
+        "yosys-abc-src": "yosys-abc-src",
+        "yosys-cxxopts-src": "yosys-cxxopts-src",
+        "yosys-flake": "yosys-flake"
       }
     },
     "systems": {
@@ -143,26 +173,52 @@
         "type": "github"
       }
     },
-    "yosys": {
+    "yosys-abc-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1741760927,
+        "narHash": "sha256-yu5O8bbUJYgN5GIA5cCT+KQ//QVTDx4SrDS8XHR3khs=",
+        "rev": "f2d68d590fa6f8fc32295a2edd79afc0d14a1414",
+        "revCount": 5821,
+        "type": "git",
+        "url": "file:tools/yosys/abc"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:tools/yosys/abc"
+      }
+    },
+    "yosys-cxxopts-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1708418392,
+        "narHash": "sha256-aOF3owz7SIV4trJY0PnMtIcwqoUpDbB3tNxZcsl9dzM=",
+        "rev": "4bf61f08697b110d9e3991864650a405b3dd515d",
+        "revCount": 412,
+        "type": "git",
+        "url": "file:tools/yosys/libs/cxxopts"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:tools/yosys/libs/cxxopts"
+      }
+    },
+    "yosys-flake": {
       "inputs": {
         "flake-utils": "flake-utils_2",
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
         "lastModified": 1741764697,
-        "narHash": "sha256-5jQ9l0cyRhEI4UFInW3kqw5B+mdLFr66nfG716rO454=",
-        "ref": "refs/heads/master",
+        "narHash": "sha256-z7hV4LpfSSpDo/LKD8xwb5id6K2lxJmaULiSzkTKKoA=",
         "rev": "c4b5190229616f7ebf8197f43990b4429de3e420",
         "revCount": 14791,
-        "submodules": true,
         "type": "git",
-        "url": "https://github.com/The-OpenROAD-Project/yosys"
+        "url": "file:tools/yosys"
       },
       "original": {
-        "rev": "c4b5190229616f7ebf8197f43990b4429de3e420",
-        "submodules": true,
         "type": "git",
-        "url": "https://github.com/The-OpenROAD-Project/yosys"
+        "url": "file:tools/yosys"
       }
     }
   },

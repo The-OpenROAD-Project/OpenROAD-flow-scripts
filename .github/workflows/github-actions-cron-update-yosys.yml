@@ -27,16 +27,23 @@ jobs:
           echo "::set-output name=has_update::$(git --no-pager diff --name-only ${latesttag}..HEAD)"
           git checkout ${latesttag}
       - if: "steps.remote-update.outputs.has_update != ''"
-        name: Create Draft PR
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ github.token }}
-          signoff: true
-          delete-branch: true
-          title: 'Update yosys submodule'
-          reviewers: |
-            habibayassin
-          draft: true
-          branch: update-yosys
-          commit-message: |
-              [BOT] Update yosys submodule
+        steps:
+          - name: Install Nix
+            uses: cachix/install-nix-action@v31
+            with:
+              github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          - name: Update flake.lock
+            run: nix --extra-experimental-features "nix-command flakes" flake update yosys-abc-src yosys-cxxopts-src yosys-flake
+          - name: Create Draft PR
+            uses: peter-evans/create-pull-request@v6
+            with:
+              token: ${{ github.token }}
+              signoff: true
+              delete-branch: true
+              title: 'Update yosys submodule'
+              reviewers: |
+                habibayassin
+              draft: true
+              branch: update-yosys
+              commit-message: |
+                  [BOT] Update yosys submodule
