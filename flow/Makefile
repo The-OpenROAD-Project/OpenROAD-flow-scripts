@@ -89,6 +89,27 @@ DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 # in this file. This allows the DESIGN_CONFIG to set different defaults than
 # this file.
 include $(DESIGN_CONFIG)
+export DESIGN_NICKNAME?=$(DESIGN_NAME)
+# default value "base" is duplicated from variables.yaml because we need it
+# earlier in the flow for BLOCKS. BLOCKS is a feature specific to Makefile
+# that will not be ported to bazel-orfs.
+export FLOW_VARIANT?=base
+ifneq ($(BLOCKS),)
+  # Normally this comes from variables.yaml, but we need it here to set up these variables
+  # which are part of the DESIGN_CONFIG. BLOCKS is a Makefile specific concept.
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LOG_FOLDERS += ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/))
+  export ADDITIONAL_LEFS += $(BLOCK_LEFS)
+  export ADDITIONAL_LIBS += $(BLOCK_LIBS)
+  export ADDITIONAL_GDS += $(BLOCK_GDS)
+  export GDS_FILES += $(BLOCK_GDS)
+  ifneq ($(CDL_FILES),)
+    export CDL_FILES += $(BLOCK_CDL)
+  endif
+endif
 
 # If we are running headless use offscreen rendering for save_image
 ifeq ($(DISPLAY),)
@@ -163,30 +184,12 @@ $(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE
 export SYNTH_OPERATIONS_ARGS ?= -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
 export SYNTH_FULL_ARGS ?= $(SYNTH_ARGS) $(SYNTH_OPERATIONS_ARGS)
 
-# Setup working directories
-export DESIGN_NICKNAME ?= $(DESIGN_NAME)
-
 export DESIGN_CONFIG
 export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
 export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-
-ifneq ($(BLOCKS),)
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LOG_FOLDERS += ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/))
-  export ADDITIONAL_LEFS += $(BLOCK_LEFS)
-  export ADDITIONAL_LIBS += $(BLOCK_LIBS)
-  export ADDITIONAL_GDS += $(BLOCK_GDS)
-  export GDS_FILES += $(BLOCK_GDS)
-  ifneq ($(CDL_FILES),)
-    export CDL_FILES += $(BLOCK_CDL)
-  endif
-endif
 
 #-------------------------------------------------------------------------------
 ifeq (,$(strip $(NUM_CORES)))
@@ -491,12 +494,6 @@ floorplan: $(RESULTS_DIR)/2_floorplan.odb \
            $(RESULTS_DIR)/2_floorplan.sdc
 
 # ==============================================================================
-
-ifneq ($(FOOTPRINT),)
-IS_CHIP = 1
-else ifneq ($(FOOTPRINT_TCL),)
-IS_CHIP = 1
-endif
 
 UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
 
