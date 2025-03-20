@@ -913,9 +913,10 @@ RUN_LOG_NAME_STEM:
   default: run
 YOSYS_FLAGS:
   description: >
-    Additional flags to pass to yosys.
+    Flags to pass to yosys.
   stages:
     - synth
+  default: -v 3
 FLOW_VARIANT:
   description: >
     Flow variant to use, used in the flow variant directory name.

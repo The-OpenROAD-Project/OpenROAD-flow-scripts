@@ -207,8 +207,6 @@ ifeq (,$(strip $(NUM_CORES)))
 endif
 export NUM_CORES
 
-YOSYS_FLAGS += -v 3
-
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
 export TIME_BIN   ?= env time
