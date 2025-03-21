@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import yaml
+from types import MappingProxyType
 
 # fewer edge cases as unset env vars are passed in as blank env vars
 # from make
@@ -108,7 +109,7 @@ def main():
     else:
         variables["FLOW_HOME"] = env_get("FLOW_HOME")
 
-    for name in ["PLATFORM", "DESIGN_NAME"]:
+    for name in ["PLATFORM", "DESIGN_NAME", "PLATFORM_DIR", "FLOW_VARIANT"]:
         variables[name] = env_get(name)
 
     if env_blank("DESIGN_NICKNAME"):
@@ -130,10 +131,24 @@ def main():
             variables["FLOW_VARIANT"],
         )
 
+    append_semantics = (
+        "ADDITIONAL_LEFS",
+        "ADDITIONAL_LIBS",
+        "ADDITIONAL_GDS",
+        "LIB_FILES",
+        "GDS_FILES"
+    )
+    for key in env_canonical:
+        if key in append_semantics:
+            variables[key] = " ".join(
+                ([variables.get[key]] if key in variables else [])
+                + [env_canonical[key]]
+            )
+
     # the platform overrides the defaults from variables.yaml, but need
     # OBJECTS_DIR. make handles such dependencies differently, it has
     # late and immediate expansion of variables.
-    variables |= get_platform_defaults(env_canonical | variables)
+    variables |= get_platform_defaults(MappingProxyType(variables))
 
     if env_blank("NUM_CORES"):
         variables["NUM_CORES"] = get_num_cores()
@@ -231,10 +246,16 @@ def main():
     variables["ORFS_DEFAULTS_LOADED"] = "1"
 
     for key, value in variables.items():
+        value = str(value).replace(" ", "__SPACE__")
+        append = key in append_semantics
         if sys.argv[1] == "make":
-            print(f'export {key}?={str(value).replace(" ", "__SPACE__")}')
+            print(f'export {key}{"" if append else "?"}={value}')
         elif sys.argv[1] == "bash":
-            print(f'export {key}="${{{key}:-{str(value).replace(" ", "__SPACE__")}}}"')
+            print(
+                f'export {key}="'
+                + (f"{value}" if append else ("${" + f"{key}:-{value}" + "}"))
+                + '"'
+            )
         else:
             print(f"{key}={value}")
 

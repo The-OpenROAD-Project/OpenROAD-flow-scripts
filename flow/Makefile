@@ -206,6 +206,7 @@ $(foreach line,$(shell \
   ADDITIONAL_LIBS="$(ADDITIONAL_LIBS)" \
   ADDITIONAL_GDS="$(ADDITIONAL_GDS)" \
   ADDITIONAL_LEFS="$(ADDITIONAL_LEFS)" \
+  LIB_FILES="$(LIB_FILES)" \
   CORNER=$(CORNER) \
   LIB_MODEL=$(LIB_MODEL) \
   VOLTAGE=$(VOLTAGE) \
@@ -214,6 +215,7 @@ $(foreach line,$(shell \
   BC_ADDITIONAL_LIBS="$(BC_ADDITIONAL_LIBS)" \
   WC_ADDITIONAL_LIBS="$(WC_ADDITIONAL_LIBS)" \
   ASAP7_USELVT=$(ASAP7_USELVT) \
+  FLOW_VARIANT=$(FLOW_VARIANT) \
   $(SCRIPTS_DIR)/defaults.py make),$(eval export $(subst __SPACE__, ,$(line))))
 
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
