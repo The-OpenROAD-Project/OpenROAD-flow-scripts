@@ -5,14 +5,20 @@ import subprocess
 import sys
 import yaml
 
+# fewer edge cases as unset env vars are passed in as blank env vars
+# from make
+env_canonical = {key: value for key, value in os.environ.items() if value != ""}
+
 config_py = os.path.join(os.environ["PLATFORM_DIR"], "config.py")
 if os.path.exists(config_py):
     sys.path.append(os.path.dirname(config_py))
     import config
 
-    platform_defaults = config.get_defaults(os.environ)
+    get_platform_defaults = config.get_defaults
 else:
-    platform_defaults = {}
+
+    def get_platform_defaults(variables):
+        return {}
 
 
 def get_num_cores():
@@ -42,7 +48,7 @@ def get_num_cores():
 
 
 def env_blank(name):
-    return name not in os.environ or os.environ[name] == ""
+    return name not in env_canonical or env_canonical[name] == ""
 
 
 def env_get(name):
@@ -54,7 +60,7 @@ def env_get(name):
     """
     if env_blank(name):
         raise ValueError(f"Environment variable {name} is not set.")
-    return os.environ[name]
+    return env_canonical[name]
 
 
 def get_time_cmd(time_bin):
@@ -86,7 +92,7 @@ def main():
 
     variables = {
         name: value["default"] for name, value in info.items() if "default" in value
-    } | platform_defaults
+    }
 
     # 'variables' is a dictionary that contains settings. Historically,
     # these settings were managed in variables in the Makefile. We are
@@ -123,6 +129,11 @@ def main():
             variables["DESIGN_NICKNAME"],
             variables["FLOW_VARIANT"],
         )
+
+    # the platform overrides the defaults from variables.yaml, but need
+    # OBJECTS_DIR. make handles such dependencies differently, it has
+    # late and immediate expansion of variables.
+    variables |= get_platform_defaults(env_canonical | variables)
 
     if env_blank("NUM_CORES"):
         variables["NUM_CORES"] = get_num_cores()
