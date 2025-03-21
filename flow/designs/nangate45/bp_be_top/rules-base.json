@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 302367,
+        "value": 301478,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
