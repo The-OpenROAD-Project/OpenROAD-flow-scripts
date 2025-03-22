@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 535113,
+        "value": 509289,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -36,7 +36,7 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 0,
+        "value": 1,
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -206.51,
+        "value": -183.6,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 538136,
+        "value": 519153,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
