@@ -131,13 +131,17 @@ def main():
             variables["FLOW_VARIANT"],
         )
 
-    append_semantics = (
+    append_semantics = [
         "ADDITIONAL_LEFS",
         "ADDITIONAL_LIBS",
         "ADDITIONAL_GDS",
         "LIB_FILES",
         "GDS_FILES",
-    )
+    ]
+
+    for key in ["ASAP7_USELVT", "ASAP7_USESLVT", "CLUSTER_FLOPS"]:
+        if key in env_canonical:
+            variables[key] = env_canonical[key]
 
     # the platform overrides the defaults from variables.yaml, but need
     # OBJECTS_DIR. make handles such dependencies differently, it has

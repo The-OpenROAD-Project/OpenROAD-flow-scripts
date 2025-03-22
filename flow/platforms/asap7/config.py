@@ -31,16 +31,6 @@ def get_defaults(environment):
             ]
             + list_if_exists(environment, "BC_ADDITIONAL_LIBS")
         ),
-        "BC_NLDM_LIB_FILES": " ".join(
-            [
-                f"{lib_dir}/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz",
-                f"{lib_dir}/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz",
-                f"{lib_dir}/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz",
-                f"{lib_dir}/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz",
-                f"{lib_dir}/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
-            ]
-            + list_if_exists(environment, "BC_ADDITIONAL_LIBS")
-        ),
         "BC_NLDM_DFF_LIB_FILE": f"{lib_dir}/asap7sc7p5t_SEQ_RVT_FF_nldm_220123.lib",
         "BC_CCS_LIB_FILES": " ".join(
             [
@@ -104,7 +94,6 @@ def get_defaults(environment):
                 if environment.get("CLUSTER_FLOPS") == "1"
                 else []
             )
-            + list_if_exists(environment, "ADDITIONAL_LEFS")
         ),
         "BC_TEMPERATURE": "25C",
         "TC_TEMPERATURE": "0C",
@@ -303,9 +292,9 @@ def get_defaults(environment):
             list_if_exists(environment, "LIB_FILES")
             + list_if_exists(
                 variables,
-                f"{variables['CORNER']}_{variables.get('LIB_MODEL', 'NLDM')}_LIB_FILES",
+                f"{variables['CORNER']}_{variables.get('LIB_MODEL')}_LIB_FILES",
             )
-            + list_if_exists(variables, "ADDITIONAL_LIBS")
+            + list_if_exists(environment, "ADDITIONAL_LIBS")
         ),
         "DB_FILES": " ".join(
             list_if_exists(variables, f"{variables['CORNER']}_DB_FILES")

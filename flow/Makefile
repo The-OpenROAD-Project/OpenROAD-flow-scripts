@@ -215,8 +215,14 @@ $(foreach line,$(shell \
   BC_ADDITIONAL_LIBS="$(BC_ADDITIONAL_LIBS)" \
   WC_ADDITIONAL_LIBS="$(WC_ADDITIONAL_LIBS)" \
   ASAP7_USELVT=$(ASAP7_USELVT) \
+  ASAP7_USESLVT=$(ASAP7_USESLVT) \
   FLOW_VARIANT=$(FLOW_VARIANT) \
   $(SCRIPTS_DIR)/defaults.py make),$(eval export $(subst __SPACE__, ,$(line))))
+
+# late expansion of $(ADDITIONAL_LIBS) since DESIGN_CONFIG can use
+# forward references in ADDITIONAL_LIBS. This is only to support
+# the "make" use-case.
+export LIB_FILES += $(ADDITIONAL_LIBS)
 
 KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
