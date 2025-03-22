@@ -46,7 +46,7 @@ source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
 
 # Read platform specific mapfile for OPENROAD_CLKGATE cells
 if {[env_var_exists_and_non_empty CLKGATE_MAP_FILE]} {
-  read_verilog -defer $::env(CLKGATE_MAP_FILE)
+  read_verilog -lib $::env(CLKGATE_MAP_FILE)
 }
 
 if {[env_var_exists_and_non_empty SYNTH_BLACKBOXES]} {
