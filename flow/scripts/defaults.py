@@ -138,12 +138,6 @@ def main():
         "LIB_FILES",
         "GDS_FILES"
     )
-    for key in env_canonical:
-        if key in append_semantics:
-            variables[key] = " ".join(
-                ([variables.get[key]] if key in variables else [])
-                + [env_canonical[key]]
-            )
 
     # the platform overrides the defaults from variables.yaml, but need
     # OBJECTS_DIR. make handles such dependencies differently, it has
@@ -249,7 +243,7 @@ def main():
         value = str(value).replace(" ", "__SPACE__")
         append = key in append_semantics
         if sys.argv[1] == "make":
-            print(f'export {key}{"" if append else "?"}={value}')
+            print(f'export {key}{"+" if append else "?"}={value}')
         elif sys.argv[1] == "bash":
             print(
                 f'export {key}="'
