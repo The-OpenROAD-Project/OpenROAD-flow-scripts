@@ -136,7 +136,7 @@ def main():
         "ADDITIONAL_LIBS",
         "ADDITIONAL_GDS",
         "LIB_FILES",
-        "GDS_FILES"
+        "GDS_FILES",
     )
 
     # the platform overrides the defaults from variables.yaml, but need
