@@ -80,7 +80,6 @@ export DONT_USE_CELLS          += SDF* ICG*
 # Yosys mapping files
 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_R.v
 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_R.v
-export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_R.v
 export SYNTH_MINIMUM_KEEP_SIZE       ?= 1000
 
 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_R
@@ -152,6 +151,12 @@ export KLAYOUT_DRC_FILE = $(PLATFORM_DIR)/drc/asap7.lydrc
 
 # OpenRCX extRules
 export RCX_RULES               = $(PLATFORM_DIR)/rcx_patterns.rules
+
+ifeq ($(ASAP7_USELVT),)
+ifeq ($(ASAP7_USESLVT),)
+export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_R.v
+endif
+endif
 
 # XS - defining function for using LVT
 ifeq ($(ASAP7_USELVT), 1)
