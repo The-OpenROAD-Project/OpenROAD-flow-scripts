@@ -142,6 +142,8 @@ def gen_rule_file(
         "detailedroute__antenna__violating__nets": {
             "mode": "padding",
             "padding": 30,
+            "min_max": max,
+            "min_max_direct": 10,
             "round_value": True,
             "compare": "<=",
         },
