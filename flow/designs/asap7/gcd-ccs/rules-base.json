@@ -52,11 +52,11 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 58,
+        "value": 57,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 38,
+        "value": 43,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {

@@ -196,7 +196,7 @@ configuration file.
 | <a name="VERILOG_FILES"></a>VERILOG_FILES| The path to the design Verilog files or JSON files providing a description of modules (check `yosys -h write_json` for more details).| | |
 | <a name="VERILOG_INCLUDE_DIRS"></a>VERILOG_INCLUDE_DIRS| Specifies the include directories for the Verilog input files.| | |
 | <a name="VERILOG_TOP_PARAMS"></a>VERILOG_TOP_PARAMS| Apply toplevel params (if exist).| | |
-| <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Additional flags to pass to yosys.| | |
+| <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Flags to pass to yosys.| -v 3| |
 ## synth variables
 
 - [ABC_AREA](#ABC_AREA)
