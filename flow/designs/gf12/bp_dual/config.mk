@@ -59,7 +59,7 @@ export CORE_AREA = 200 200 2800 2800
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
 export TNS_END_PERCENT = 0
-export PLACE_DENSITY = 0.55
+export PLACE_DENSITY = 0.50
 
 export MACRO_WRAPPERS = $(PLATFORM_DIR)/bp/wrappers/wrappers.tcl
 
