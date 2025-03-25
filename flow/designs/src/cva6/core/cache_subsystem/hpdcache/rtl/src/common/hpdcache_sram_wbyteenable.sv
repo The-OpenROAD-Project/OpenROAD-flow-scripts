@@ -39,20 +39,27 @@ module hpdcache_sram_wbyteenable
     input  logic [DATA_SIZE/8-1:0] wbyteenable,
     output logic [DATA_SIZE-1:0]   rdata
 );
-
-    hpdcache_sram_wbyteenable_1rw #(
-        .ADDR_SIZE(ADDR_SIZE),
-        .DATA_SIZE(DATA_SIZE),
-        .DEPTH(DEPTH)
-    ) ram_i (
-        .clk,
-        .rst_n,
-        .cs,
-        .we,
-        .addr,
-        .wdata,
-        .wbyteenable,
-        .rdata
+   fakeram7_256x32 ram_i (
+        .clk (clk),
+        .ce_in(cs),
+        .we_in(we),
+        .addr_in(addr),
+        .wd_in(wdata),
+        .rd_out(rdata)
     );
+    // hpdcache_sram_wbyteenable_1rw #(
+    //     .ADDR_SIZE(ADDR_SIZE),
+    //     .DATA_SIZE(DATA_SIZE),
+    //     .DEPTH(DEPTH)
+    // ) ram_i (
+    //     .clk,
+    //     .rst_n,
+    //     .cs,
+    //     .we,
+    //     .addr,
+    //     .wdata,
+    //     .wbyteenable,
+    //     .rdata
+    // );
 
 endmodule : hpdcache_sram_wbyteenable
