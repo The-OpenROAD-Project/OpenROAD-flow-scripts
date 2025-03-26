@@ -39,18 +39,26 @@ module hpdcache_sram
     output logic [DATA_SIZE-1:0]  rdata
 );
 
-    hpdcache_sram_1rw #(
-        .ADDR_SIZE(ADDR_SIZE),
-        .DATA_SIZE(DATA_SIZE),
-        .DEPTH(DEPTH)
-    ) ram_i (
-        .clk,
-        .rst_n,
-        .cs,
-        .we,
-        .addr,
-        .wdata,
-        .rdata
+    fakeram7_256x32 ram_i (
+        .clk(clk),
+        .ce_in(cs),
+        .we_in(we),
+        .addr_in(addr),
+        .wd_in(wdata),
+        .rd_out(rdata)
     );
+    // hpdcache_sram_1rw #(
+    //     .ADDR_SIZE(ADDR_SIZE),
+    //     .DATA_SIZE(DATA_SIZE),
+    //     .DEPTH(DEPTH)
+    // ) ram_i (
+    //     .clk,
+    //     .rst_n,
+    //     .cs,
+    //     .we,
+    //     .addr,
+    //     .wdata,
+    //     .rdata
+    // );
 
 endmodule : hpdcache_sram
