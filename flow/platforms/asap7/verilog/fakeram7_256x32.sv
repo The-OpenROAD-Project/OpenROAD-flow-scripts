@@ -1,3 +1,4 @@
+(* blackbox *)
 module fakeram7_256x32 (
    output reg [31:0] rd_out,
    input [7:0] addr_in,
