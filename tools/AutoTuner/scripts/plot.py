@@ -207,7 +207,7 @@ def main(platform: str, design: str, experiment: str):
         root_dir, f"./flow/logs/{platform}/{design}/{experiment}"
     )
     img_dir = os.path.join(
-        root_dir, f"./flow/reports/images/{platform}/{design}/{experiment}"
+        root_dir, f"./flow/reports/{platform}/{design}/{experiment}/images"
     )
     print("Processing results from", results_dir)
     os.makedirs(img_dir, exist_ok=True)
