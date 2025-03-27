@@ -3,7 +3,7 @@ export PLATFORM    = gf12
 
 
 export VERILOG_FILES  = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
-export CACHED_NETLIST = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
+export SYNTH_NETLIST_FILES = $(PLATFORM_DIR)/$(DESIGN_NAME)/rtl/ca53_cpu.v
 
 export SDC_FILE      = $(PLATFORM_DIR)/$(DESIGN_NAME)/sdc/ca53_cpu.sdc
 
@@ -46,10 +46,9 @@ export DIE_AREA    = 0 0 1400 1400
 export CORE_AREA   = 10 10 1390 1390 
 export PLACE_DENSITY_LB_ADDON = 0.05
 
-export PLACE_PINS_ARGS = -exclude left:0-600 -exclude left:1350-1400 -exclude right:* -exclude top:* -exclude bottom:*
+export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/ca53/io.tcl
 
 export MACRO_PLACE_HALO = 7 7
-export MACRO_PLACE_CHANNEL = 14 14
 
 #export MAX_ROUTING_LAYER = H2 
 export FASTROUTE_TCL = $(dir $(DESIGN_CONFIG))/fastroute.tcl

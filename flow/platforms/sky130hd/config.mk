@@ -77,6 +77,13 @@ export ADDER_MAP_FILE ?= $(PLATFORM_DIR)/cells_adders_hd.v
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sky130_fd_sc_hd__buf_1
 export ABC_LOAD_IN_FF = 5
+
+# -----------------------------------------------------
+#  Sizing
+# -----------------------------------------------------
+
+export MATCH_CELL_FOOTPRINT = 1
+
 #--------------------------------------------------------
 # Floorplan
 # -------------------------------------------------------
@@ -86,8 +93,8 @@ export ABC_LOAD_IN_FF = 5
 export PLACE_SITE = unithd
 
 # IO Placer pin layers
-export IO_PLACER_H = met3
-export IO_PLACER_V = met2
+export IO_PLACER_H ?= met3
+export IO_PLACER_V ?= met2
 
 # Define default PDN config
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
@@ -97,7 +104,6 @@ export TAP_CELL_NAME = sky130_fd_sc_hd__tapvpwrvgnd_1
 export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
 
 export MACRO_PLACE_HALO ?= 40 40
-export MACRO_PLACE_CHANNEL ?= 80 80
 
 #---------------------------------------------------------
 # Place

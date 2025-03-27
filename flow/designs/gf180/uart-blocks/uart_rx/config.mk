@@ -11,8 +11,8 @@ export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 export PLACE_DENSITY          = 0.60
 
-export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/uart-blocks/BLOCKS_grid_strategy.tcl
+export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/uart-blocks/uart_rx/pdn.tcl
 
-export PLACE_PINS_ARGS    = -exclude bottom:* -exclude top:* -exclude right:*
+export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/uart-blocks/uart_rx/io.tcl
 
 export MAX_ROUTING_LAYER      = Metal4

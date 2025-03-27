@@ -19,7 +19,7 @@ clean_metadata:
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 
 .PHONY: update_ok
-update_ok: update_metadata update_rules
+update_ok: update_rules
 
 .PHONY: update_metadata
 update_metadata:
@@ -28,7 +28,11 @@ update_metadata:
 
 .PHONY: update_rules
 update_rules:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --failing --tighten
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) \
+		--reference $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
+		--variant $(FLOW_VARIANT) \
+		--failing \
+		--tighten
 
 .PHONY: update_rules_force
 update_rules_force:

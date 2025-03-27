@@ -20,6 +20,9 @@ proc global_route_helper {} {
     log_cmd global_route {*}$all_args
   }
 
+  pin_access -bottom_routing_layer $::env(MIN_ROUTING_LAYER) \
+             -top_routing_layer $::env(MAX_ROUTING_LAYER)
+
   set result [catch {do_global_route} errMsg]
 
   if {$result != 0} {
@@ -58,10 +61,10 @@ proc global_route_helper {} {
 
     # Running DPL to fix overlapped instances
     # Run to get modified net by DPL
-    global_route -start_incremental
-    detailed_placement
+    log_cmd global_route -start_incremental
+    log_cmd detailed_placement
     # Route only the modified net by DPL
-    global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
+    log_cmd global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
 
     # Repair timing using global route parasitics
     puts "Repair setup and hold violations..."
@@ -75,16 +78,17 @@ proc global_route_helper {} {
 
     # Running DPL to fix overlapped instances
     # Run to get modified net by DPL
-    global_route -start_incremental
-    detailed_placement
+    log_cmd global_route -start_incremental
+    log_cmd detailed_placement
     # Route only the modified net by DPL
-    global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
+    log_cmd global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
   }
 
-  global_route -start_incremental
-  recover_power
+
+  log_cmd global_route -start_incremental
+  recover_power_helper
   # Route the modified nets by rsz journal restore
-  global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  log_cmd global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
 
   if {![env_var_equals SKIP_ANTENNA_REPAIR 1]} {
     puts "Repair antennas..."

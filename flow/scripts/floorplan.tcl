@@ -50,7 +50,7 @@ set use_core_utilization [env_var_exists_and_non_empty CORE_UTILIZATION]
 
 set methods_defined [expr {$use_floorplan_def + $use_footprint + $use_die_and_core_area + $use_core_utilization}]
 if {$methods_defined > 1} {
-    puts "ERROR: Floorplan initialization methods are mutually exclusive, pick one."
+    puts "Error: Floorplan initialization methods are mutually exclusive, pick one."
     exit 1
 }
 
@@ -88,7 +88,7 @@ if {$use_floorplan_def} {
                          -site $::env(PLACE_SITE) \
                          {*}$additional_args
 } else {
-    puts "ERROR: No floorplan initialization method specified"
+    puts "Error: No floorplan initialization method specified"
     exit 1
 }
 
@@ -191,6 +191,11 @@ if { [env_var_equals RESYNTH_AREA_RECOVER 1] } {
 
 if { [env_var_exists_and_non_empty POST_FLOORPLAN_TCL] } {
   source $::env(POST_FLOORPLAN_TCL)
+}
+
+
+if {[env_var_exists_and_non_empty IO_CONSTRAINTS]} {
+  source $::env(IO_CONSTRAINTS)
 }
 
 write_db $::env(RESULTS_DIR)/2_1_floorplan.odb

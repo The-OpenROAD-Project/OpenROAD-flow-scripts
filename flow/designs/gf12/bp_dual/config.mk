@@ -15,9 +15,9 @@ export RTLMP_FENCE_LY ?= 700
 export RTLMP_FENCE_UX ?= 2450
 export RTLMP_FENCE_UY ?= 2300
 
+export SYNTH_NETLIST_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/yosys/bp_dual_hier_yosys_netlist.v
 export VERILOG_FILES = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.sv2v.v \
                        $(PLATFORM_DIR)/bp/IN12LP_GPIO18_13M9S30P.blackbox.v
-export CACHED_NETLIST = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/yosys/bp_dual_hier_yosys_netlist.v
 
 export SDC_FILE      = $(PLATFORM_DIR)/bp/bsg_ac_black_parrot_dual_core_v0/bsg_chip.elab.v.sdc
 
@@ -49,19 +49,17 @@ export ADDITIONAL_GDS  = $(PLATFORM_DIR)/gds/gf12_1r1w_d32_w64_m1.gds2 \
 
 export SEAL_GDS        = $(PLATFORM_DIR)/gds/crackstop_3x3.gds
 
+export FOOTPRINT_TCL   = $(PLATFORM_DIR)/bp/footprint.tcl
 
-#Package Strategy for pad placement
-export FOOTPRINT    = $(PLATFORM_DIR)/bp/bsg_bp_dual.package.strategy
-export SIG_MAP_FILE = $(PLATFORM_DIR)/bp/soc_bsg_black_parrot.sigmap
+export DIE_AREA = 0 0 3000 3000
+export CORE_AREA = 200 200 2800 2800
 
 export ABC_CLOCK_PERIOD_IN_PS = 1250
 
 export TNS_END_PERCENT = 0
-export PLACE_DENSITY = 0.55
+export PLACE_DENSITY = 0.50
 
 
 export PDN_TCL = $(PLATFORM_DIR)/cfg/pdn_grid_strategy_13m_9T.top.tcl
 
-# Define macro halo and channel spacings
 export MACRO_PLACE_HALO = 7 7
-export MACRO_PLACE_CHANNEL = 14 14

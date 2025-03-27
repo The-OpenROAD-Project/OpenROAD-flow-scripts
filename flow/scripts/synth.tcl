@@ -1,3 +1,5 @@
+set ::env(VERILOG_FILES) $::env(RESULTS_DIR)/1_synth.rtlil
+
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 
 hierarchy -check -top $::env(DESIGN_NAME)
@@ -8,18 +10,33 @@ if { [env_var_equals SYNTH_GUT 1] } {
   delete $::env(DESIGN_NAME)/c:*
 }
 
+if {[env_var_exists_and_non_empty SYNTH_KEEP_MODULES]} {
+  foreach module $::env(SYNTH_KEEP_MODULES) {
+    select -module $module
+    setattr -mod -set keep_hierarchy 1
+    select -clear
+  }
+}
+
+set synth_full_args $::env(SYNTH_ARGS)
+if {[env_var_exists_and_non_empty SYNTH_OPERATIONS_ARGS]} {
+  set synth_full_args [concat $synth_full_args $::env(SYNTH_OPERATIONS_ARGS)]
+} else {
+  set synth_full_args [concat $synth_full_args "-extra-map $::env(FLOW_HOME)/platforms/common/lcu_kogge_stone.v"]
+}
+
 if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
   # Perform standard coarse-level synthesis script, flatten right away
   # (-flatten part of $synth_args per default)
-  synth -run :fine {*}$::env(SYNTH_FULL_ARGS)
+  synth -run :fine {*}$synth_full_args
 } else {
   # Perform standard coarse-level synthesis script,
   # defer flattening until we have decided what hierarchy to keep
   synth -run :fine
 
-  if {[env_var_exists_and_non_empty MAX_UNGROUP_SIZE]} {
-    set ungroup_threshold $::env(MAX_UNGROUP_SIZE)
-    puts "Ungroup modules below estimated size of $ungroup_threshold instances"
+  if {[env_var_exists_and_non_empty SYNTH_MINIMUM_KEEP_SIZE]} {
+    set ungroup_threshold $::env(SYNTH_MINIMUM_KEEP_SIZE)
+    puts "Keep modules above estimated size of $ungroup_threshold gate equivalents"
 
     convert_liberty_areas
     keep_hierarchy -min_cost $ungroup_threshold
@@ -28,15 +45,22 @@ if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
   }
 
   # Re-run coarse-level script, this time do pass -flatten
-  synth -run coarse:fine {*}$::env(SYNTH_FULL_ARGS)
+  synth -run coarse:fine {*}$synth_full_args
 }
 
 json -o $::env(RESULTS_DIR)/mem.json
 # Run report and check here so as to fail early if this synthesis run is doomed
 exec -- python3 $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
-synth -top $::env(DESIGN_NAME) -run fine: {*}$::env(SYNTH_FULL_ARGS)
+
+if {![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS]} {
+  synth -top $::env(DESIGN_NAME) -run fine: {*}$synth_full_args
+} else {
+  source $::env(SCRIPTS_DIR)/synth_wrap_operators.tcl
+}
+
 # Get rid of indigestibles
 chformal -remove
+delete t:\$print
 
 # rename registers to have the verilog register name in its name
 # of the form \regName$_DFF_P_. We should fix yosys to make it the reg name.
@@ -47,7 +71,7 @@ renames -wire
 opt -purge
 
 # Technology mapping of adders
-if {[env_var_exists_and_non_empty ADDER_MAP_FILE] && [file isfile $::env(ADDER_MAP_FILE)]} {
+if {[env_var_exists_and_non_empty ADDER_MAP_FILE]} {
   # extract the full adders
   extract_fa
   # map full adders
@@ -76,7 +100,15 @@ if {[env_var_exists_and_non_empty DFF_LIB_FILE]} {
 }
 opt
 
-log_cmd abc {*}$abc_args
+if {![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS]} {
+  log_cmd abc {*}$abc_args
+} else {
+  scratchpad -set abc9.script scripts/abc_speed_gia_only.script
+  # crop out -script from arguments
+  set abc_args [lrange $abc_args 2 end]
+  log_cmd abc_new {*}$abc_args
+  delete {t:$specify*}
+}
 
 # Replace undef values with defined constants
 setundef -zero
@@ -100,8 +132,18 @@ tee -o $::env(REPORTS_DIR)/synth_check.txt check
 
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
 
+# check the design is composed exclusively of target cells, and check for other problems
+if {![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS]} {
+  check -assert -mapped
+} else {
+  # Wrapped operator synthesis leaves around $buf cells which `check -mapped`
+  # gets confused by, once Yosys#4931 is merged we can remove this branch and
+  # always run `check -assert -mapped`
+  check -assert
+}
+
 # Write synthesized design
-write_verilog -noexpr -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
+write_verilog -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
 # One day a more sophisticated synthesis will write out a modified
 # .sdc file after synthesis. For now, just copy the input .sdc file,
 # making synthesis more consistent with other stages.

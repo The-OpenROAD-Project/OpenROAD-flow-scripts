@@ -123,6 +123,5 @@ if __name__ == "__main__":
     print(formatted_table)
     if not max_ok:
         sys.exit(
-            "ERROR: Synthesized memory size exceeds maximum allowed bits "
-            + str(args.max_bits)
+            f"Error: Synthesized memory size {args.max_bits} exceeds SYNTH_MEMORY_MAX_BITS"
         )

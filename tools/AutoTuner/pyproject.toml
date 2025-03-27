@@ -1,0 +1,31 @@
+[project]
+name = "autotuner"
+version = "0.0.1"
+description = "This project provides a set of tools for tuning OpenROAD-flow-scripts parameter without user interference."
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD 3-Clause",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+dynamic = ["dependencies", "optional-dependencies"]
+
+[project.scripts]
+openroad_autotuner = "autotuner.distributed:main"
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+optional-dependencies.dev = { file = ["requirements-dev.txt"] }
+
+[build-system]
+requires = ["setuptools", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src/"]
+include = [
+    "autotuner*",
+]
+
+[tool.setuptools]
+include-package-data = true

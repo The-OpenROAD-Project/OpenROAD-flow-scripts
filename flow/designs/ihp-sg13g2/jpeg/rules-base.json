@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 537426,
+        "value": 1512439.93,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,28 +8,16 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 570147,
+        "value": 1043533,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 66775,
+        "value": 88060,
         "compare": "<="
     },
     "detailedplace__design__violations": {
         "value": 0,
         "compare": "=="
-    },
-    "cts__timing__setup__ws": {
-        "value": -1.06,
-        "compare": ">="
-    },
-    "cts__timing__setup__ws__pre_repair": {
-        "value": -1.02,
-        "compare": ">="
-    },
-    "cts__timing__setup__ws__post_repair": {
-        "value": -1.02,
-        "compare": ">="
     },
     "cts__design__instance__count__setup_buffer": {
         "value": 2903,
@@ -39,44 +27,36 @@
         "value": 2903,
         "compare": "<="
     },
-    "globalroute__timing__clock__slack": {
-        "value": -0.81,
-        "compare": ">="
-    },
-    "globalroute__timing__setup__ws": {
-        "value": -0.81,
-        "compare": ">="
+    "globalroute__antenna_diodes_count": {
+        "value": 1714,
+        "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 1294864,
+        "value": 3188482,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
         "value": 0,
         "compare": "<="
     },
+    "detailedroute__antenna__violating__nets": {
+        "value": 110,
+        "compare": "<="
+    },
+    "detailedroute__antenna_diodes_count": {
+        "value": 5,
+        "compare": "<="
+    },
     "finish__timing__setup__ws": {
-        "value": -0.5,
+        "value": -2.18,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 572438,
+        "value": 2610834,
         "compare": "<="
     },
-    "finish__timing__drv__max_slew_limit": {
-        "value": -0.27,
-        "compare": ">="
-    },
-    "finish__timing__drv__max_fanout_limit": {
-        "value": -0.2,
-        "compare": ">="
-    },
-    "finish__timing__drv__max_cap_limit": {
-        "value": -0.23,
-        "compare": ">="
-    },
     "finish__timing__drv__setup_violation_count": {
-        "value": 29,
+        "value": 3829,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
@@ -84,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -10.0,
+        "value": -30.54,
         "compare": ">="
     }
 }

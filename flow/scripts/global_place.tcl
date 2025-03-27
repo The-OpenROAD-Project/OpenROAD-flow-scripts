@@ -10,9 +10,7 @@ fast_route
 set global_placement_args {}
 
 # Parameters for routability mode in global placement
-if {$::env(GPL_ROUTABILITY_DRIVEN)} {
-  lappend global_placement_args {-routability_driven}
-}
+append_env_var global_placement_args GPL_ROUTABILITY_DRIVEN -routability_driven 0
 
 # Parameters for timing driven mode in global placement
 if {$::env(GPL_TIMING_DRIVEN)} {

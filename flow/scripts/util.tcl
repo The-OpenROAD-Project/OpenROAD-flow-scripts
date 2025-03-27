@@ -1,13 +1,15 @@
 proc log_cmd {cmd args} {
   # log the command, escape arguments with spaces
-  puts -nonewline "$cmd[join [lmap arg $args {expr {[string match {* *} $arg] ? " \"$arg\"" : " $arg"}}] ""]"
+  set log_cmd "$cmd[join [lmap arg $args {format " %s" [expr {[string match {* *} $arg] ? "\"$arg\"" : "$arg"}]}] ""]"
+  puts $log_cmd
   set start [clock seconds]
   $cmd {*}$args
   set time [expr {[clock seconds] - $start}]
   if {$time >= 5} {
-    puts -nonewline " ($time seconds)"
+    # Ideally we'd use a single line, but the command can output text
+    # and we don't want to mix it with the log, so output the time it took afterwards.
+    puts "Took $time seconds: $log_cmd"
   }
-  puts ""
 }
 
 proc fast_route {} {
@@ -40,14 +42,14 @@ proc repair_timing_helper { {hold_margin 1} } {
 proc repair_design_helper {} {
   puts "Perform buffer insertion and gate resizing..."
 
-  set additional_args ""
+  set additional_args "-verbose"
   append_env_var additional_args CAP_MARGIN -cap_margin 1
   append_env_var additional_args SLEW_MARGIN -slew_margin 1
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
   log_cmd repair_design {*}$additional_args
 }
 
-proc recover_power {} {
+proc recover_power_helper {} {
   if { $::env(RECOVER_POWER) == 0 } {
     return
   }
@@ -56,10 +58,10 @@ proc recover_power {} {
   report_tns
   report_wns
   report_power
-  set additional_args ""
+  set additional_args "-verbose"
   append_env_var additional_args RECOVER_POWER -recover_power 1
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
-  repair_timing {*}$additional_args
+  log_cmd repair_timing {*}$additional_args
   report_tns
   report_wns
   report_power
@@ -67,7 +69,7 @@ proc recover_power {} {
 
 proc extract_stage {input_file} {
   if {![regexp {/([0-9])_(([0-9])_)?} $input_file match num1 _ num2]} {
-    puts "ERROR: Could not determine design stage from $input_file"
+    puts "Error: Could not determine design stage from $input_file"
     exit 1
   }
   lappend number_groups $num1

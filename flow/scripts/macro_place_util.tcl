@@ -1,6 +1,15 @@
 if {[find_macros] != ""} {
-# If wrappers defined replace macros with their wrapped version
-# # ----------------------------------------------------------------------------
+  if {![env_var_exists_and_non_empty RTLMP_RPT_DIR]} {
+    set ::env(RTLMP_RPT_DIR) "$::env(OBJECTS_DIR)/rtlmp"
+  }
+  if {![env_var_exists_and_non_empty RTLMP_RPT_FILE]} {
+    set ::env(RTLMP_RPT_FILE) "partition.txt"
+  }
+  if {![env_var_exists_and_non_empty RTLMP_BLOCKAGE_FILE]} {
+    set ::env(RTLMP_BLOCKAGE_FILE) "$::env(OBJECTS_DIR)/rtlmp/partition.txt.blockage"
+  }
+
+  # If wrappers defined replace macros with their wrapped version
   if {[env_var_exists_and_non_empty MACRO_WRAPPERS]} {
     source $::env(MACRO_WRAPPERS)
 
@@ -18,12 +27,9 @@ if {[find_macros] != ""} {
   }
 
   lassign $::env(MACRO_PLACE_HALO) halo_x halo_y
-  lassign $::env(MACRO_PLACE_CHANNEL) channel_x channel_y
   set halo_max [expr max($halo_x, $halo_y)]
-  set channel_max [expr max($channel_x, $channel_y)]
-  set blockage_width [expr max($halo_max, $channel_max/2)]
+  set blockage_width $halo_max
 
-  
   if {[env_var_exists_and_non_empty MACRO_BLOCKAGE_HALO]} {
     set blockage_width $::env(MACRO_BLOCKAGE_HALO)
   }

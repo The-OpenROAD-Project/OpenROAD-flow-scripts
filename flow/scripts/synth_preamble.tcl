@@ -3,11 +3,20 @@ yosys -import
 source $::env(SCRIPTS_DIR)/util.tcl
 erase_non_stage_variables synth
 
-if {[env_var_exists_and_non_empty CACHED_NETLIST]} {
-  log_cmd exec cp $::env(CACHED_NETLIST) $::env(RESULTS_DIR)/1_1_yosys.v
-  log_cmd exec cp $::env(SDC_FILE) $::env(RESULTS_DIR)/1_synth.sdc
+# If using a cached, gate level netlist, then copy over to the results dir with
+# preserve timestamps flag set. If you don't, subsequent runs will cause the
+# floorplan step to be re-executed.
+if {[env_var_exists_and_non_empty SYNTH_NETLIST_FILES]} {
+  if {[llength $::env(SYNTH_NETLIST_FILES)] == 1} {
+    log_cmd exec cp -p $::env(SYNTH_NETLIST_FILES) $::env(RESULTS_DIR)/1_1_yosys.v
+  } else {
+    # The date should be the most recent date of the files, but to
+    # keep things simple we just use the creation date
+    log_cmd exec cat {*}$::env(SYNTH_NETLIST_FILES) > $::env(RESULTS_DIR)/1_1_yosys.v
+  }
+  log_cmd exec cp -p $::env(SDC_FILE) $::env(RESULTS_DIR)/1_synth.sdc
   if {[env_var_exists_and_non_empty CACHED_REPORTS]} {
-    log_cmd exec cp {*}$::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
+    log_cmd exec cp -p {*}$::env(CACHED_REPORTS) $::env(REPORTS_DIR)/.
   }
   exit
 }
@@ -33,35 +42,17 @@ foreach file $::env(VERILOG_FILES) {
   }
 }
 
-
-
-
-# Read standard cells and macros as blackbox inputs
-# These libs have their dont_use properties set accordingly
-read_liberty -overwrite -setattr liberty_cell -lib {*}$::env(DONT_USE_LIBS)
-read_liberty -overwrite -setattr liberty_cell \
-  -unit_delay -wb -ignore_miss_func -ignore_buses {*}$::env(DONT_USE_LIBS)
-
-# Apply toplevel parameters (if exist)
-if {[env_var_exists_and_non_empty VERILOG_TOP_PARAMS]} {
-  dict for {key value} $::env(VERILOG_TOP_PARAMS) {
-    chparam -set $key $value $::env(DESIGN_NAME)
-  }
-}
+source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
 
 # Read platform specific mapfile for OPENROAD_CLKGATE cells
 if {[env_var_exists_and_non_empty CLKGATE_MAP_FILE]} {
   read_verilog -defer $::env(CLKGATE_MAP_FILE)
 }
 
-# Mark modules to keep from getting removed in flattening
-if {[env_var_exists_and_non_empty PRESERVE_CELLS]} {
-  # Expand hierarchy since verilog was read in with -defer
+if {[env_var_exists_and_non_empty SYNTH_BLACKBOXES]} {
   hierarchy -check -top $::env(DESIGN_NAME)
-  foreach cell $::env(PRESERVE_CELLS) {
-    select -module $cell
-    setattr -mod -set keep_hierarchy 1
-    select -clear
+  foreach m $::env(SYNTH_BLACKBOXES) {
+    blackbox $m
   }
 }
 
@@ -87,7 +78,7 @@ if {[env_var_exists_and_non_empty DONT_USE_CELLS]} {
   }
 }
 
-if {[env_var_exists_and_non_empty SDC_FILE_CLOCK_PERIOD] && [file isfile $::env(SDC_FILE_CLOCK_PERIOD)]} {
+if {[env_var_exists_and_non_empty SDC_FILE_CLOCK_PERIOD]} {
   puts "Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
   set fp [open $::env(SDC_FILE_CLOCK_PERIOD) r]
   set clock_period [string trim [read $fp]]

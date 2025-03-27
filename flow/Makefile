@@ -23,22 +23,6 @@
 # DESIGN_CONFIG=./designs/nangate45/swerv_wrapper/config.mk
 # DESIGN_CONFIG=./designs/nangate45/tinyRocket/config.mk
 
-# DESIGN_CONFIG=./designs/tsmc65lp/aes/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/ariane/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/black_parrot/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/bp_be_top/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/bp_fe_top/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/bp_multi_top/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/coyote/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/dynamic_node/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/gcd/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/ibex/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/jpeg/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/swerv/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/swerv_wrapper/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/tinyRocket/config.mk
-# DESIGN_CONFIG=./designs/tsmc65lp/vanilla5/config.mk
-
 # DESIGN_CONFIG=./designs/gf12/aes/config.mk
 # DESIGN_CONFIG=./designs/gf12/ariane/config.mk
 # DESIGN_CONFIG=./designs/gf12/ca53/config.mk
@@ -56,8 +40,6 @@
 
 # DESIGN_CONFIG=./designs/sky130hd/aes/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
-# DESIGN_CONFIG=./designs/sky130hd/chameleon_hier/config.mk
-# DESIGN_CONFIG=./designs/sky130hd/coyote_tc/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/jpeg/config.mk
@@ -84,8 +66,6 @@
 # DESIGN_CONFIG=./designs/intel16/aes/config.mk
 # DESIGN_CONFIG=./designs/intel16/gcd/config.mk
 
-# DESIGN_CONFIG=./designs/intel22/aes/config.mk
-# DESIGN_CONFIG=./designs/intel22/gcd/config.mk
 # DESIGN_CONFIG=./designs/intel22/ibex/config.mk
 # DESIGN_CONFIG=./designs/intel22/jpeg/config.mk
 
@@ -109,6 +89,27 @@ DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 # in this file. This allows the DESIGN_CONFIG to set different defaults than
 # this file.
 include $(DESIGN_CONFIG)
+export DESIGN_NICKNAME?=$(DESIGN_NAME)
+# default value "base" is duplicated from variables.yaml because we need it
+# earlier in the flow for BLOCKS. BLOCKS is a feature specific to Makefile
+# that will not be ported to bazel-orfs.
+export FLOW_VARIANT?=base
+ifneq ($(BLOCKS),)
+  # Normally this comes from variables.yaml, but we need it here to set up these variables
+  # which are part of the DESIGN_CONFIG. BLOCKS is a Makefile specific concept.
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LOG_FOLDERS += ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/))
+  export ADDITIONAL_LEFS += $(BLOCK_LEFS)
+  export ADDITIONAL_LIBS += $(BLOCK_LIBS)
+  export ADDITIONAL_GDS += $(BLOCK_GDS)
+  export GDS_FILES += $(BLOCK_GDS)
+  ifneq ($(CDL_FILES),)
+    export CDL_FILES += $(BLOCK_CDL)
+  endif
+endif
 
 # If we are running headless use offscreen rendering for save_image
 ifeq ($(DISPLAY),)
@@ -143,7 +144,7 @@ SHELL          := /usr/bin/env bash
 #   location
 # - default is current install / clone directory
 ifeq ($(origin FLOW_HOME), undefined)
-FLOW_HOME := $(shell pwd)
+FLOW_HOME := $(abspath $(dir $(firstword $(MAKEFILE_LIST))))
 endif
 export FLOW_HOME
 
@@ -179,43 +180,12 @@ include $(PLATFORM_DIR)/config.mk
 # is no way to escape space in defaults.py and get "foreach" to work.
 $(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
 
-# If the design, nor $(PLATFORM_DIR)/config.mk provided a default, provide one here
-export MAX_UNGROUP_SIZE ?= 0
-
-# Not normally adjusted by user
-export SYNTH_OPERATIONS_ARGS ?= -extra-map $(FLOW_HOME)/platforms/common/lcu_kogge_stone.v
-export SYNTH_FULL_ARGS ?= $(SYNTH_ARGS) $(SYNTH_OPERATIONS_ARGS)
-
-export FLOW_VARIANT ?= base
-
-# Setup working directories
-export DESIGN_NICKNAME ?= $(DESIGN_NAME)
-
 export DESIGN_CONFIG
 export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
 export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-
-ifneq ($(BLOCKS),)
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LOG_FOLDERS += ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/))
-  export ADDITIONAL_LEFS += $(BLOCK_LEFS)
-  export ADDITIONAL_LIBS += $(BLOCK_LIBS)
-  export ADDITIONAL_GDS += $(BLOCK_GDS)
-  export GDS_FILES += $(BLOCK_GDS)
-  ifneq ($(CDL_FILES),)
-    export CDL_FILES += $(BLOCK_CDL)
-  endif
-endif
-
-export RTLMP_RPT_DIR ?= $(OBJECTS_DIR)/rtlmp
-export RTLMP_RPT_FILE ?= partition.txt
-export RTLMP_BLOCKAGE_FILE ?= $(OBJECTS_DIR)/rtlmp/partition.txt.blockage
 
 #-------------------------------------------------------------------------------
 ifeq (,$(strip $(NUM_CORES)))
@@ -237,8 +207,6 @@ ifeq (,$(strip $(NUM_CORES)))
 endif
 export NUM_CORES
 
-YOSYS_FLAGS += -v 3
-
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
 export TIME_BIN   ?= env time
@@ -252,15 +220,27 @@ endif
 # Priority is given to
 #       1 user explicit set with variable in Makefile or command line, for instance setting OPENROAD_EXE
 #       2 ORFS compiled tools: openroad, yosys
-export OPENROAD_EXE      ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
-export OPENSTA_EXE       ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
+ifneq (${IN_NIX_SHELL},)
+  export OPENROAD_EXE := $(shell command -v openroad)
+else
+  export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+endif
+ifneq (${IN_NIX_SHELL},)
+  export OPENSTA_EXE := $(shell command -v sta)
+else
+  export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
+endif
 
 OPENROAD_ARGS            = -no_init -threads $(NUM_CORES) $(OR_ARGS)
 OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
-YOSYS_EXE               ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+ifneq (${IN_NIX_SHELL},)
+  YOSYS_EXE := $(shell command -v yosys)
+else
+  YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+endif
 
 # Use locally installed and built klayout if it exists, otherwise use klayout in path
 KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
@@ -357,7 +337,7 @@ $(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
 	@mkdir -p $(OBJECTS_DIR)/lib
 	$(UTILS_DIR)/preprocessLib.py -i $^ -o $@
 
-$(OBJECTS_DIR)/lib/merged.lib:
+$(OBJECTS_DIR)/lib/merged.lib: $(DONT_USE_LIBS)
 	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
 
 # Pre-process KLayout tech
@@ -451,26 +431,24 @@ memory:
 #-------------------------------------------------------------------------------
 
 export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
-export SYNTH_MEMORY_MAX_BITS ?= 4096
 export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
 $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
 	mkdir -p $(dir $@)
 	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
 
-YOSYS_DEPENDENCIES=$(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DONT_USE_SC_LIB) $(DFF_LIB_FILE) $(VERILOG_FILES) $(CACHED_NETLIST) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
+YOSYS_DEPENDENCIES=$(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
 
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)
 
 .PHONY: do-yosys
-do-yosys:
+do-yosys: $(DONT_USE_SC_LIB)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
-	(export VERILOG_FILES=$(RESULTS_DIR)/1_synth.rtlil; \
-	$(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
+	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SYNTH_SCRIPT)) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys.log)
 
 .PHONY: do-yosys-canonicalize
-do-yosys-canonicalize: yosys-dependencies
+do-yosys-canonicalize: yosys-dependencies $(DONT_USE_SC_LIB)
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(TIME_CMD) $(YOSYS_EXE) $(YOSYS_FLAGS) -c $(SCRIPTS_DIR)/synth_canonicalize.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_1_yosys_canonicalize.log)
 
@@ -510,12 +488,6 @@ floorplan: $(RESULTS_DIR)/2_floorplan.odb \
            $(RESULTS_DIR)/2_floorplan.sdc
 
 # ==============================================================================
-
-ifneq ($(FOOTPRINT),)
-IS_CHIP = 1
-else ifneq ($(FOOTPRINT_TCL),)
-IS_CHIP = 1
-endif
 
 UNSET_VARS = for var in $(UNSET_VARIABLES_NAMES); do unset $$var; done
 
@@ -599,7 +571,7 @@ endef
 #
 # The file is copied within the $(RESULTS_DIR)
 #
-# $(1) stem of target, e.g. 2_2_floorplan_io
+# $(1) stem of target, e.g. 2_1_floorplan
 # $(2) basename of file to be copied
 # $(3) further dependencies
 # $(4) target extension, default .odb
@@ -615,33 +587,29 @@ endef
 
 # STEP 1: Translate verilog to odb
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL),floorplan))
-
-# STEP 2: Random IO placement
-#-------------------------------------------------------------------------------
-$(eval $(call do-step,2_2_floorplan_io,$(RESULTS_DIR)/2_1_floorplan.odb $(IO_CONSTRAINTS),io_placement_random))
+$(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(DONT_USE_SC_LIB),floorplan))
 
 $(eval $(call do-copy,2_floorplan,2_1_floorplan.sdc,,.sdc))
 
-# STEP 3: Macro Placement
+# STEP 2: Macro Placement
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,2_3_floorplan_macro,$(RESULTS_DIR)/2_2_floorplan_io.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),macro_place))
+$(eval $(call do-step,2_2_floorplan_macro,$(RESULTS_DIR)/2_1_floorplan.odb $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(MACRO_PLACEMENT) $(MACRO_PLACEMENT_TCL),macro_place))
 
-# STEP 4: Tapcell and Welltie insertion
+# STEP 3: Tapcell and Welltie insertion
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,2_4_floorplan_tapcell,$(RESULTS_DIR)/2_3_floorplan_macro.odb $(TAPCELL_TCL),tapcell))
+$(eval $(call do-step,2_3_floorplan_tapcell,$(RESULTS_DIR)/2_2_floorplan_macro.odb $(TAPCELL_TCL),tapcell))
 
-# STEP 5: PDN generation
+# STEP 4: PDN generation
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,2_5_floorplan_pdn,$(RESULTS_DIR)/2_4_floorplan_tapcell.odb $(PDN_TCL),pdn))
+$(eval $(call do-step,2_4_floorplan_pdn,$(RESULTS_DIR)/2_3_floorplan_tapcell.odb $(PDN_TCL),pdn))
 
-$(eval $(call do-copy,2_floorplan,2_5_floorplan_pdn.odb,))
+$(eval $(call do-copy,2_floorplan,2_4_floorplan_pdn.odb,))
 
 $(RESULTS_DIR)/2_floorplan.sdc: $(RESULTS_DIR)/2_1_floorplan.odb
 
 .PHONY: do-floorplan
 do-floorplan:
-	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_io do-2_3_floorplan_macro do-2_4_floorplan_tapcell do-2_5_floorplan_pdn do-2_floorplan do-2_floorplan.sdc
+	$(UNSET_AND_MAKE) do-2_1_floorplan do-2_2_floorplan_macro do-2_3_floorplan_tapcell do-2_4_floorplan_pdn do-2_floorplan do-2_floorplan.sdc
 
 .PHONY: clean_floorplan
 clean_floorplan:
@@ -1046,6 +1014,11 @@ klayout:
 run:
 	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR) $(OBJECTS_DIR)
 	($(OPENROAD_CMD) -no_splash $(if $(filter %.py,$(RUN_SCRIPT)),-python) $(RUN_SCRIPT) 2>&1 | tee $(abspath $(LOG_DIR)/$(RUN_LOG_NAME_STEM).log))
+
+export RUN_YOSYS_ARGS ?= -c $(SCRIPTS_DIR)/yosys_keep.tcl
+.phony: run-yosys
+run-yosys:
+	$(YOSYS_EXE) $(RUN_YOSYS_ARGS)
 
 # Utilities
 #-------------------------------------------------------------------------------

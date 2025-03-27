@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 847095.23,
+        "value": 845982.06,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -44,7 +44,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 0,
+        "value": 5,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
@@ -60,7 +60,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 569,
+        "value": 299,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {

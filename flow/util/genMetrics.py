@@ -18,23 +18,10 @@ import pandas as pd
 import re
 from glob import glob
 
-# make sure the working dir is flow/
-os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-
-# Parse and validate arguments
-# =============================================================================
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Generates metadata from OpenROAD flow"
-    )
-    parser.add_argument(
-        "--flowPath",
-        "-f",
-        required=False,
-        default="./",
-        help="Path to the flow directory",
     )
     parser.add_argument(
         "--design",
@@ -66,11 +53,6 @@ def parse_args():
     parser.add_argument("--hier", "-x", action="store_true", help="Hierarchical JSON")
     args = parser.parse_args()
 
-    if not os.path.isdir(args.flowPath):
-        print("[ERROR] flowPath does not exist")
-        print("Path: " + args.flowPath)
-        exit(1)
-
     return args
 
 
@@ -100,10 +82,8 @@ def extractTagFromFile(
     if jsonTag in jsonFile:
         print("[WARN] Overwriting Tag", jsonTag)
 
-    # Open file
     try:
-        searchFilePath = os.path.join(args.flowPath, file)
-        with open(searchFilePath) as f:
+        with open(file) as f:
             content = f.read()
 
         parsedMetrics = re.findall(pattern, content, re.M)
@@ -128,12 +108,12 @@ def extractTagFromFile(
         else:
             # Only print a warning if the defaultNotFound is not set
             print(
-                "[WARN] Tag {} not found in {}.".format(jsonTag, searchFilePath),
+                "[WARN] Tag {} not found in {}.".format(jsonTag, file),
                 "Will use {}.".format(defaultNotFound),
             )
             jsonFile[jsonTag] = defaultNotFound
     except IOError:
-        print("[ERROR] Failed to open file:", searchFilePath)
+        print("[ERROR] Failed to open file:", file)
         jsonFile[jsonTag] = "ERR"
 
 
@@ -438,7 +418,7 @@ if all_designs or len(designs) > 1 or len(flow_variants) > 1:
         f.write(all_df.to_html())
 else:
     metrics_dict, metrics_df = extract_metrics(
-        args.flowPath,
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), "../"),
         args.platform,
         args.design,
         args.flowVariant,

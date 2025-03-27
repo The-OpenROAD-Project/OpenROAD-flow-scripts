@@ -32,10 +32,10 @@ export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_512x64.lib \
 export DIE_AREA    = 0 0 1350 1300 
 export CORE_AREA   = 10.07 11.2 1340 1290 
 
-export PLACE_PINS_ARGS = -exclude left:* -exclude right:* -exclude top:* -exclude bottom:0-100 -exclude bottom:1200-1350
+export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/io.tcl
 
 export PLACE_DENSITY_LB_ADDON = 0.05
 
 export MACRO_PLACE_HALO    = 10 10
-export MACRO_PLACE_CHANNEL = 20 20
+
 export TNS_END_PERCENT     = 100

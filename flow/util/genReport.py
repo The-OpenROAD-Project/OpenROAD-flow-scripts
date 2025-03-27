@@ -19,6 +19,7 @@ METRICS_LOG_FMT = "gen-metrics-{}-check.log"
 METRICS_CHECK_FMT = "{}/metadata-{}-check.log"
 REGEX_ERROR = re.compile(r"^\[error ?(\w+-\d+)?\]", re.IGNORECASE)
 REGEX_WARNING = re.compile(r"^\[warning ?(\w+-\d+)?\]", re.IGNORECASE)
+SKIPPED_FLOW_VARIANT_KEYWORDS = ["test", "tune"]
 STATUS_GREEN = "Passing"
 STATUS_RED = "Failing"
 
@@ -248,7 +249,9 @@ for log_dir, dirs, files in sorted(os.walk(LOGS_FOLDER, topdown=False)):
     dir_list = log_dir.split(os.sep)
     # Handles autotuner folders, which do not have `report.log` natively.
     # TODO: Can we log something for autotuner?
-    if len(dir_list) != 4 or "test-" in dir_list[-1]:
+    if len(dir_list) != 4 or any(
+        word in dir_list[-1] for word in SKIPPED_FLOW_VARIANT_KEYWORDS
+    ):
         continue
     report_dir = log_dir.replace(LOGS_FOLDER, REPORTS_FOLDER)
 

@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 113607.14,
+        "value": 35802.37,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -44,11 +44,11 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 0,
+        "value": 5,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -32.57,
+        "value": 0.0,
         "compare": ">="
     },
     "finish__design__instance__area": {

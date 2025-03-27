@@ -1,7 +1,28 @@
 #!/usr/bin/env bash
 
 set -ex
+
+#
+# Method to use docker CLI to determine if we're using docker or podman
+#
+# Sets container_engine global variable with either "docker" or "podman"
+#
+get_container_engine () {
+    local DOCKER_VERSION_STRING=$(docker --version 2> /dev/null)
+
+    if [[ "$DOCKER_VERSION_STRING" == *"Docker"* ]]; then
+        container_engine="docker"
+    elif [[ "$DOCKER_VERSION_STRING" == *"podman"* ]]; then
+        container_engine="podman"
+    else
+        echo "Unable to determine container engine using docker CLI"
+        exit 1
+    fi
+}
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+get_container_engine
 
 WORKSPACE=$(pwd)
 YOSYS_EXE=${YOSYS_EXE:-/OpenROAD-flow-scripts/tools/install/yosys/bin/yosys}
@@ -17,9 +38,15 @@ if test -t 0; then
     DOCKER_INTERACTIVE=-ti
 fi
 
+if [[ $container_engine == "podman" ]]; then
+    user_args="--privileged --userns=keep-id"
+else
+    user_args="-u $(id -u ${USER}):$(id -g ${USER})"
+fi
+
 # Most of these options below has to do with allowing to
 # run the OpenROAD GUI from within Docker.
-docker run -u $(id -u ${USER}):$(id -g ${USER}) \
+docker run $user_args \
  -e LIBGL_ALWAYS_SOFTWARE=1 \
  -e "QT_X11_NO_MITSHM=1" \
  -e XDG_RUNTIME_DIR=/tmp/xdg-run \
@@ -32,7 +59,7 @@ docker run -u $(id -u ${USER}):$(id -g ${USER}) \
  -e YOSYS_EXE=$YOSYS_EXE \
  -e OPENROAD_EXE=$OPENROAD_EXE \
  -e KLAYOUT_CMD=$KLAYOUT_CMD \
- -v $WORKSPACE:/OpenROAD-flow-scripts/flow \
+ -v $WORKSPACE:/OpenROAD-flow-scripts/flow:Z \
  --network host \
  $DOCKER_INTERACTIVE \
  ${OR_IMAGE:-openroad/flow-ubuntu22.04-builder:latest} \

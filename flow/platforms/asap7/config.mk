@@ -81,7 +81,7 @@ export DONT_USE_CELLS          += SDF* ICG*
 export LATCH_MAP_FILE          = $(PLATFORM_DIR)/yoSys/cells_latch_R.v
 export CLKGATE_MAP_FILE        = $(PLATFORM_DIR)/yoSys/cells_clkgate_R.v
 export ADDER_MAP_FILE         ?= $(PLATFORM_DIR)/yoSys/cells_adders_R.v
-export MAX_UNGROUP_SIZE       ?= 1000
+export SYNTH_MINIMUM_KEEP_SIZE       ?= 1000
 
 export ABC_DRIVER_CELL         = BUFx2_ASAP7_75t_R
 
@@ -115,12 +115,11 @@ export IO_PLACER_H             ?= M4
 export IO_PLACER_V             ?= M5
 
 export MACRO_PLACE_HALO        ?= 10 10
-export MACRO_PLACE_CHANNEL     ?= 12 12
 
 # the followings create a keep out / halo between
 # macro and core rows
-export MACRO_HALO_X            ?= 2
-export MACRO_HALO_Y            ?= 2
+export MACRO_ROWS_HALO_X            ?= 2
+export MACRO_ROWS_HALO_Y            ?= 2
 
 export PLACE_DENSITY ?= 0.60
 
@@ -264,6 +263,10 @@ export LIB_FILES             += $(ADDITIONAL_LIBS)
 export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
 export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
 export VOLTAGE                = $($(CORNER)_VOLTAGE)
+
+# FIXME Need merged.lib for now, but ideally it shouldn't be necessary:
+#
+# https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/pull/2139
 export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 
 # ---------------------------------------------------------
