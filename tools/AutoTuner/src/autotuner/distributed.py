@@ -120,8 +120,8 @@ class AutoTunerBase(tune.Trainable):
         Setup current experiment step.
         """
         # We create the following directory structure:
-        #      1/     2/         3/       4/                5/   6/
-        # <repo>/<logs>/<platform>/<design>/<experiment>/<id>/<cwd>
+        #      1/     2/         3/       4/           5/
+        # <repo>/<logs>/<platform>/<design>/<experiment/<cwd>
         self.repo_dir = os.path.abspath(LOCAL_DIR + "/../" * 4)
         self.parameters = parse_config(
             config=config,
