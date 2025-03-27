@@ -71,6 +71,7 @@ make upload
 
 ```bash
 make up
+make dashboard
 ```
 
 4. Ray CLI API
