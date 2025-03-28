@@ -56,3 +56,14 @@ orfs.default(
 )
 use_repo(orfs, "com_github_nixos_patchelf_download")
 use_repo(orfs, "docker_orfs")
+
+
+# Use local OpenROAD files instead of OpenROAD from ORFS docker image
+bazel_dep(
+    name = "openroad",
+    version = "0.1.0"
+)
+local_path_override(
+    module_name = "openroad",
+    path = "../tools/OpenROAD"
+)
