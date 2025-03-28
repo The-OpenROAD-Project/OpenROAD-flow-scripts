@@ -4,7 +4,7 @@ def plot_congestion(name, srcs, argument, values):
     native.filegroup(
         name = "{name}_congestion".format(name = name),
         srcs = srcs,
-        output_group = "congestion.rpt",
+        output_group = "5_global_route.rpt",
     )
 
     native.genrule(

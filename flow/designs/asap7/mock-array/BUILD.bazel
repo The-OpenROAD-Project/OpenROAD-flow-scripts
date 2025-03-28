@@ -1,13 +1,4 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_flow")
-load("@bazel-orfs//:sweep.bzl", "orfs_sweep")
-load("//util:plot_congestion.bzl", "plot_congestion")
-
-# Format densities, rounding to 2 decimal places.
-SWEEPS = {
-    "PLACE_DENSITY": [str(0.82 + x * 0.01 + 0.005)[:4] for x in range(10)],
-}
-
-SWEEP = "PLACE_DENSITY"
 
 filegroup(
     name = "mock-array-constraints",
@@ -65,7 +56,7 @@ filegroup(
     visibility = [":__subpackages__"],
 )
 
-orfs_sweep(
+orfs_flow(
     name = "Element",
     abstract_stage = "route",
     arguments = {
@@ -84,28 +75,9 @@ orfs_sweep(
         "CORE_AREA": "1.08 1.08 42.120000000000005 42.120000000000005",
         "PDN_TCL": "$(PLATFORM_DIR)/openRoad/pdn/BLOCK_grid_strategy.tcl",
     },
-    other_variants = {"base": {}},
     sources = {
         "IO_CONSTRAINTS": [":mock-array-element-io"],
         "SDC_FILE": [":mock-array-constraints"],
     },
-    sweep = {
-        value: {
-            "arguments": {
-                SWEEP: value,
-            },
-            "previous_stage": {
-                "floorplan": "Element_synth",
-            },
-        }
-        for value in SWEEPS[SWEEP]
-    },
     verilog_files = ["//designs/src/mock-array:verilog"],
-)
-
-plot_congestion(
-    name = "plot",
-    srcs = [":Element_{value}_grt".format(value = value) for value in SWEEPS[SWEEP]],
-    argument = SWEEP,
-    values = SWEEPS[SWEEP],
 )
