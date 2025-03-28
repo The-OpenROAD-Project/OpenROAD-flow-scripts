@@ -117,5 +117,6 @@ orfs_flow(
         "SDC_FILE": [":constraint.sdc"],
         "SYNTH_NETLIST_FILES": [":netlists_canonicalized"],
     },
+    tags = ["manual"],
     verilog_files = [],
 )
