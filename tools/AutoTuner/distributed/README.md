@@ -62,7 +62,6 @@ cp public.yaml.template public.yaml
 
 ```bash
 make clean
-make base
 make docker
 make upload
 ```
