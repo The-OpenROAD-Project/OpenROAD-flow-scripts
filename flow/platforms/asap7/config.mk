@@ -13,7 +13,7 @@ export SC_LEF                  = $(PLATFORM_DIR)/lef/asap7sc7p5t_28_R_1x_220121a
 export GDS_FILES               = $(PLATFORM_DIR)/gds/asap7sc7p5t_28_R_220121a.gds \
                                  $(ADDITIONAL_GDS)
 
-export BC_NLDM_LIB_FILES            = $(LIB_DIR)/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib.gz \
+export BC_NLDM_LIB_FILES            = $(LIB_DIR)/asap7sc7p5t_AO_RVT_FF_nldm_211120.lib \
 				 $(LIB_DIR)/asap7sc7p5t_INVBUF_RVT_FF_nldm_220122.lib.gz \
 				 $(LIB_DIR)/asap7sc7p5t_OA_RVT_FF_nldm_211120.lib.gz \
 				 $(LIB_DIR)/asap7sc7p5t_SIMPLE_RVT_FF_nldm_211120.lib.gz \
