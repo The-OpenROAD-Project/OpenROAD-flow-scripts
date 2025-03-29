@@ -40,9 +40,9 @@ fi
 echo "Running Autotuner plotting smoke test"
 all_experiments=$(ls -d ./flow/logs/${PLATFORM}/${DESIGN_NAME}/smoke-test-tune*)
 all_experiments=$(basename -a $all_experiments)
-for expt in $all_experiments; do
+for experiment in $all_experiments; do
   python3 tools/AutoTuner/src/autotuner/utils/plot.py \
     --platform ${PLATFORM} \
     --design ${DESIGN_NAME} \
-    --experiment $expt
+    --experiment ${experiment}
 done
