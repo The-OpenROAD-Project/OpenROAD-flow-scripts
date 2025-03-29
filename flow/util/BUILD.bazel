@@ -16,3 +16,18 @@ compile_pip_requirements(
     src = "requirements.in",
     requirements_txt = "requirements_lock.txt",
 )
+
+MAKEFILE_SHARED = [
+    "*.mk",
+]
+
+# The files used in the flow steps(floorplan, place, route, etc.)
+filegroup(
+    name = "makefile",
+    srcs = glob(MAKEFILE_SHARED + [
+        "*.pl",
+        "*.py",
+        "*.sh",
+    ]),
+    visibility = ["//visibility:public"],
+)

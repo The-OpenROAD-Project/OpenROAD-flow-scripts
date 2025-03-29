@@ -1,0 +1,18 @@
+MAKEFILE_SHARED = [
+    "scripts/*.py",
+    "scripts/*.sh",
+    "scripts/*.yaml",
+    "scripts/*.mk",
+]
+
+# The files used in the flow steps(floorplan, place, route, etc.)
+filegroup(
+    name = "makefile",
+    srcs = ["Makefile"],
+    data = glob(MAKEFILE_SHARED + [
+        "scripts/*.tcl",
+    ]) + [
+        "//util:makefile",
+    ],
+    visibility = ["//visibility:public"],
+)
