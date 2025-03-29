@@ -721,6 +721,11 @@ CTS_BUF_DISTANCE:
     Distance (in microns) between buffers.
   stages:
     - cts
+CTS_BUF_LIST:
+  description: |
+    List of cells used to construct the clock tree.
+  stages:
+    - cts
 CTS_CLUSTER_DIAMETER:
   description: >
     Maximum diameter (in microns) of sink cluster.

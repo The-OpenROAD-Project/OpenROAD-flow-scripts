@@ -75,6 +75,7 @@ configuration file.
 | <a name="CORNER"></a>CORNER| PVT corner library selection. Only available for ASAP7 and GF180 PDKs.| | |
 | <a name="CTS_ARGS"></a>CTS_ARGS| Override `clock_tree_synthesis` arguments.| | |
 | <a name="CTS_BUF_DISTANCE"></a>CTS_BUF_DISTANCE| Distance (in microns) between buffers.| | |
+| <a name="CTS_BUF_LIST"></a>CTS_BUF_LIST| List of cells used to construct the clock tree.| | |
 | <a name="CTS_CLUSTER_DIAMETER"></a>CTS_CLUSTER_DIAMETER| Maximum diameter (in microns) of sink cluster.| 20| |
 | <a name="CTS_CLUSTER_SIZE"></a>CTS_CLUSTER_SIZE| Maximum number of sinks per cluster.| 50| |
 | <a name="CTS_SNAPSHOT"></a>CTS_SNAPSHOT| Creates ODB/SDC files prior to clock net and setup/hold repair.| | |
@@ -307,6 +308,7 @@ configuration file.
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [CTS_ARGS](#CTS_ARGS)
 - [CTS_BUF_DISTANCE](#CTS_BUF_DISTANCE)
+- [CTS_BUF_LIST](#CTS_BUF_LIST)
 - [CTS_CLUSTER_DIAMETER](#CTS_CLUSTER_DIAMETER)
 - [CTS_CLUSTER_SIZE](#CTS_CLUSTER_SIZE)
 - [CTS_SNAPSHOT](#CTS_SNAPSHOT)
