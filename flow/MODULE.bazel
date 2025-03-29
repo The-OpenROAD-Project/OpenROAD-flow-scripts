@@ -9,7 +9,7 @@ module(
 bazel_dep(name = "bazel-orfs")
 git_override(
     module_name = "bazel-orfs",
-    commit = "41354d9de46816b79858e43baadf701cf7e997e5",
+    commit = "48cc8783f285d2a274b1613004dcbea21195f49c",
     remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
 )
 
@@ -50,8 +50,17 @@ orfs.default(
     # and update "image" to point to the local image.
 
     # Official image https://hub.docker.com/r/openroad/orfs/tags
-    image = "docker.io/openroad/orfs:v3.0-2707-g044183f3",
-    sha256 = "34db776930937b94b22f96b68feea87381de70727d12efc47f342b88c8cb3db6",
+    image = "docker.io/openroad/orfs:v3.0-2734-gcf6f0417",
+    # Use local files instead of docker image
+    makefile = "//:makefile",
+    pdk = "//:asap7",
+    makefile_yosys = "//:makefile_yosys",
+    # TODO once openroad is switched to MODULE.bazel, use
+    # local_path_override(module_name = "openroad", path = "../tools/OpenROAD")
+    # to point to the local openroad Bazel module instead of
+    # getting the openroad binary from the docker image.
+    openroad = "@docker_orfs//:openroad",
+    sha256 = "ef685898a5e3a2db7166c55238275adcf2dbec7ee0a7eb895a78657bcc27220a",
 )
 use_repo(orfs, "com_github_nixos_patchelf_download")
 use_repo(orfs, "docker_orfs")
