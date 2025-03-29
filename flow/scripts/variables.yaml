@@ -321,14 +321,12 @@ IO_PLACER_H:
     The metal layer on which to place the I/O pins horizontally (top and bottom
     of the die).
   stages:
-    - floorplan
     - place
 IO_PLACER_V:
   description: >
     The metal layer on which to place the I/O pins vertically (sides of the
     die).
   stages:
-    - floorplan
     - place
 GUI_TIMING:
   description: >
@@ -369,7 +367,6 @@ PLACE_PINS_ARGS:
     Arguments to place_pins
   stages:
     - place
-    - floorplan
   default: ""
 PLACE_DENSITY:
   description: >
