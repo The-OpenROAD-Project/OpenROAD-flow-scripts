@@ -38,9 +38,6 @@ import os
 from .autotuner_test_utils import AutoTunerTestUtils
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(cur_dir, "../src")
-orfs_dir = os.path.join(cur_dir, "../../../flow")
-os.chdir(src_dir)
 
 
 class RefFileCheck(unittest.TestCase):
@@ -50,8 +47,8 @@ class RefFileCheck(unittest.TestCase):
 
     def setUp(self):
         configs = [
-            "../../test/files/no_sdc_ref.json",
-            "../../test/files/no_fr_ref.json",
+            os.path.join(cur_dir, "./files/no_sdc_ref.json"),
+            os.path.join(cur_dir, "./files/no_fr_ref.json"),
         ]
         self.exec = AutoTunerTestUtils.get_exec_cmd()
         self.commands = [
