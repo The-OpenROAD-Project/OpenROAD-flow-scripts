@@ -666,7 +666,7 @@ def main():
             mode="min",
             num_samples=args.samples,
             fail_fast=False,
-            local_dir=LOCAL_DIR,
+            storage_path=LOCAL_DIR,
             resume=args.resume,
             stop={"training_iteration": args.iterations},
             resources_per_trial={"cpu": os.cpu_count() / args.jobs},
