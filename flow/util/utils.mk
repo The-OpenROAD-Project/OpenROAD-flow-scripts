@@ -96,15 +96,6 @@ define \n
 
 endef
 
-define get_variables
-$(foreach V, $(.VARIABLES),$(if $(filter-out $(1), $(origin $V)), $(if $(filter-out .% %QT_QPA_PLATFORM% %TIME_CMD% KLAYOUT% GENERATE_ABSTRACT_RULE% do-step% do-copy% OPEN_GUI% OPEN_GUI_SHORTCUT% SUB_MAKE% UNSET_VARS% export%, $(V)), $V$ )))
-endef
-
-export UNSET_VARIABLES_NAMES := $(call get_variables,command% line environment% default automatic)
-export ISSUE_VARIABLES_NAMES := $(sort $(filter-out \n get_variables, $(call get_variables,environment% default automatic)))
-export ISSUE_VARIABLES := $(foreach V, $(ISSUE_VARIABLES_NAMES), $(if $($V),$V=$($V),$V='')${\n})
-export COMMAND_LINE_ARGS := $(foreach V,$(.VARIABLES),$(if $(filter command% line, $(origin $V)),$(V)))
-
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	$(UTILS_DIR)/makeIssue.sh $*
 
@@ -164,10 +155,3 @@ endif
 .PHONY: update_sdc_clocks
 update_sdc_clocks: $(RESULTS_DIR)/route.guide
 	cp $(RESULTS_DIR)/updated_clks.sdc $(SDC_FILE)
-
-# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
-   ifneq ($(wildcard $(SDC_FILE)),)
-      export ABC_CLOCK_PERIOD_IN_PS := $(shell sed -nE "s/^set\s+clk_period\s+(\S+).*|.*-period\s+(\S+).*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1}')
-   endif
-endif

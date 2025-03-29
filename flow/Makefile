@@ -84,16 +84,16 @@
 
 # Default design
 DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
-
-# Include design and platform configuration before setting default options
-# in this file. This allows the DESIGN_CONFIG to set different defaults than
-# this file.
+export DESIGN_CONFIG
 include $(DESIGN_CONFIG)
-export DESIGN_NICKNAME?=$(DESIGN_NAME)
+
+export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
+
 # default value "base" is duplicated from variables.yaml because we need it
-# earlier in the flow for BLOCKS. BLOCKS is a feature specific to Makefile
-# that will not be ported to bazel-orfs.
+# earlier in the flow for BLOCKS. BLOCKS is a feature specific to the
+# ORFS Makefile.
 export FLOW_VARIANT?=base
+# BLOCKS is a ORFS make flow specific feature.
 ifneq ($(BLOCKS),)
   # Normally this comes from variables.yaml, but we need it here to set up these variables
   # which are part of the DESIGN_CONFIG. BLOCKS is a Makefile specific concept.
@@ -109,11 +109,6 @@ ifneq ($(BLOCKS),)
   ifneq ($(CDL_FILES),)
     export CDL_FILES += $(BLOCK_CDL)
   endif
-endif
-
-# If we are running headless use offscreen rendering for save_image
-ifeq ($(DISPLAY),)
-export QT_QPA_PLATFORM ?= offscreen
 endif
 
 # ==============================================================================
@@ -138,6 +133,7 @@ MAKEFLAGS += --no-builtin-rules
 SHELL          := /usr/bin/env bash
 .SHELLFLAGS    := -o pipefail -c
 
+
 #-------------------------------------------------------------------------------
 # Setup variables to point to root / head of the OpenROAD directory
 # - the following settings allowed user to point OpenROAD binaries to different
@@ -148,140 +144,7 @@ FLOW_HOME := $(abspath $(dir $(firstword $(MAKEFILE_LIST))))
 endif
 export FLOW_HOME
 
-#-------------------------------------------------------------------------------
-# Setup variables to point to other location for the following sub directory
-# - designs - default is under current directory
-# - platforms - default is under current directory
-# - work home - default is current directory
-# - utils, scripts, test - default is under current directory
-export DESIGN_HOME   ?= $(FLOW_HOME)/designs
-export PLATFORM_HOME ?= $(FLOW_HOME)/platforms
-export WORK_HOME     ?= .
-
-export UTILS_DIR     ?= $(FLOW_HOME)/util
-export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
-export TEST_DIR      ?= $(FLOW_HOME)/test
-
-PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
-
-ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
-  export PLATFORM_DIR = $(PLATFORM_HOME)/$(PLATFORM)
-else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
-  export PLATFORM_DIR = ./platforms/$(PLATFORM)
-else ifneq ($(wildcard ../../$(PLATFORM)),)
-  export PLATFORM_DIR = ../../$(PLATFORM)
-else
-  $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
-endif
-
-include $(PLATFORM_DIR)/config.mk
-
-# __SPACE__ is a workaround for whitespace hell in "foreach"; there
-# is no way to escape space in defaults.py and get "foreach" to work.
-$(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
-
-export DESIGN_CONFIG
-export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
-export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export REPORTS_DIR = $(WORK_HOME)/reports/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-export RESULTS_DIR = $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
-
-#-------------------------------------------------------------------------------
-ifeq (,$(strip $(NUM_CORES)))
-  # Linux (utility program)
-  NUM_CORES := $(shell nproc 2>/dev/null)
-
-  ifeq (,$(strip $(NUM_CORES)))
-    # Linux (generic)
-    NUM_CORES := $(shell grep -c ^processor /proc/cpuinfo 2>/dev/null)
-  endif
-  ifeq (,$(strip $(NUM_CORES)))
-    # BSD (at least FreeBSD and Mac OSX)
-    NUM_CORES := $(shell sysctl -n hw.ncpu 2>/dev/null)
-  endif
-  ifeq (,$(strip $(NUM_CORES)))
-    # Fallback
-    NUM_CORES := 1
-  endif
-endif
-export NUM_CORES
-
-#-------------------------------------------------------------------------------
-# setup all commands used within this flow
-export TIME_BIN   ?= env time
-TIME_CMD = $(TIME_BIN) -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
-TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
-ifeq (,$(strip $(TIME_TEST)))
-  TIME_CMD = $(TIME_BIN)
-endif
-
-# The following determine the executable location for each tool used by this flow.
-# Priority is given to
-#       1 user explicit set with variable in Makefile or command line, for instance setting OPENROAD_EXE
-#       2 ORFS compiled tools: openroad, yosys
-ifneq (${IN_NIX_SHELL},)
-  export OPENROAD_EXE := $(shell command -v openroad)
-else
-  export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
-endif
-ifneq (${IN_NIX_SHELL},)
-  export OPENSTA_EXE := $(shell command -v sta)
-else
-  export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
-endif
-
-OPENROAD_ARGS            = -no_init -threads $(NUM_CORES) $(OR_ARGS)
-OPENROAD_CMD             = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
-OPENROAD_NO_EXIT_CMD     = $(OPENROAD_EXE) $(OPENROAD_ARGS)
-OPENROAD_GUI_CMD         = $(OPENROAD_EXE) -gui $(OR_ARGS)
-
-ifneq (${IN_NIX_SHELL},)
-  YOSYS_EXE := $(shell command -v yosys)
-else
-  YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
-endif
-
-# Use locally installed and built klayout if it exists, otherwise use klayout in path
-KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
-KLAYOUT_BIN_FROM_DIR = $(KLAYOUT_DIR)/klayout
-
-ifeq ($(wildcard $(KLAYOUT_BIN_FROM_DIR)), $(KLAYOUT_BIN_FROM_DIR))
-KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
-else
-ifeq ($(KLAYOUT_CMD),)
-KLAYOUT_CMD := $(shell command -v klayout)
-endif
-endif
-KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
-
-ifneq ($(shell command -v stdbuf),)
-  STDBUF_CMD ?= stdbuf -o L
-endif
-
-#-------------------------------------------------------------------------------
-WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
-WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
-export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
-export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
-
-export DONT_USE_LIBS   = $(patsubst %.lib.gz, %.lib, $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES))))
-export DONT_USE_SC_LIB ?= $(firstword $(DONT_USE_LIBS))
-
-# Stream system used for final result (GDS is default): GDS, GSDII, GDS2, OASIS, or OAS
-STREAM_SYSTEM ?= GDS
-ifneq ($(findstring GDS,$(shell echo $(STREAM_SYSTEM) | tr '[:lower:]' '[:upper:]')),)
-	export STREAM_SYSTEM_EXT := gds
-	GDSOAS_FILES = $(GDS_FILES)
-	ADDITIONAL_GDSOAS = $(ADDITIONAL_GDS)
-	SEAL_GDSOAS = $(SEAL_GDS)
-else
-	export STREAM_SYSTEM_EXT := oas
-	GDSOAS_FILES = $(OAS_FILES)
-	ADDITIONAL_GDSOAS = $(ADDITIONAL_OAS)
-	SEAL_GDSOAS = $(SEAL_OAS)
-endif
-export WRAPPED_GDSOAS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/$(lef:.lef=_mod.$(STREAM_SYSTEM_EXT)))
+include $(FLOW_HOME)/scripts/variables.mk
 
 define GENERATE_ABSTRACT_RULE
 ifeq ($(wildcard $(3)),)
@@ -350,18 +213,6 @@ do-klayout_tech:
 	@mkdir -p $(OBJECTS_DIR)
 	cp $(TECH_LEF) $(OBJECTS_DIR)/klayout_tech.lef
 
-KLAYOUT_ENV_VAR_IN_PATH_VERSION = 0.28.11
-KLAYOUT_VERSION := $(if $(KLAYOUT_CMD),$(shell $(KLAYOUT_CMD) -v 2>/dev/null | grep 'KLayout' | cut -d ' ' -f2),)
-
-KLAYOUT_ENV_VAR_IN_PATH = $(shell \
-	if [ -z "$(KLAYOUT_VERSION)" ]; then \
-		echo "not_found"; \
-	elif [ "$$(echo -e "$(KLAYOUT_VERSION)\n$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" | sort -V | head -n1)" = "$(KLAYOUT_VERSION)" ] && [ "$(KLAYOUT_VERSION)" != "$(KLAYOUT_ENV_VAR_IN_PATH_VERSION)" ]; then \
-		echo "invalid"; \
-	else \
-		echo "valid"; \
-	fi)
-
 $(OBJECTS_DIR)/klayout.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
 	$(UNSET_AND_MAKE) do-klayout
 
@@ -383,12 +234,6 @@ $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tec
 do-klayout_wrap:
 	sed 's,<lef-files>.*</lef-files>,$(foreach file, $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS),<lef-files>$(shell realpath --relative-to=$(OBJECTS_DIR)/def $(file))</lef-files>),g' $(KLAYOUT_TECH_FILE) > $(OBJECTS_DIR)/klayout_wrap.lyt
 
-# Create Macro wrappers (if necessary)
-# ==============================================================================
-WRAP_CFG = $(PLATFORM_DIR)/wrapper.cfg
-
-
-export TCLLIBPATH := util/cell-veneer $(TCLLIBPATH)
 $(WRAPPED_LEFS):
 	mkdir -p $(OBJECTS_DIR)/lef $(OBJECTS_DIR)/def
 	util/cell-veneer/wrap.tcl -cfg $(WRAP_CFG) -macro $(filter %$(notdir $(@:_mod.lef=.lef)),$(WRAP_LEFS))
@@ -430,14 +275,9 @@ memory:
 # Run Synthesis using yosys
 #-------------------------------------------------------------------------------
 
-export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
-export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
-
 $(SDC_FILE_CLOCK_PERIOD): $(SDC_FILE)
 	mkdir -p $(dir $@)
 	echo $(ABC_CLOCK_PERIOD_IN_PS) > $@
-
-YOSYS_DEPENDENCIES=$(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
 
 .PHONY: yosys-dependencies
 yosys-dependencies: $(YOSYS_DEPENDENCIES)
@@ -772,7 +612,6 @@ klayout_guides: $(RESULTS_DIR)/5_route.def $(OBJECTS_DIR)/klayout.lyt
 # |  _|  | || |\  || | ___) |  _  || || |\  | |_| |
 # |_|   |___|_| \_|___|____/|_| |_|___|_| \_|\____|
 #
-GDS_FINAL_FILE = $(RESULTS_DIR)/6_final.$(STREAM_SYSTEM_EXT)
 .PHONY: finish
 finish: $(LOG_DIR)/6_report.log \
         $(RESULTS_DIR)/6_final.v \
@@ -841,7 +680,6 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
-GDS_MERGED_FILE = $(RESULTS_DIR)/6_1_merged.$(STREAM_SYSTEM_EXT)
 $(GDS_MERGED_FILE): $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klayout.lyt $(GDSOAS_FILES) $(WRAPPED_GDSOAS) $(SEAL_GDSOAS)
 	$(UNSET_AND_MAKE) do-gds-merged
 
@@ -940,16 +778,8 @@ nuke: clean_test clean_issues
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
 	rm -f $(OBJECTS_DIR)/versions.txt $(OBJECTS_DIR)/copyright.txt dummy.guide
 
-.PHONY: vars
-vars:
-	$(UTILS_DIR)/generate-vars.sh vars
-
 # DEF/GDS/OAS viewer shortcuts
 #-------------------------------------------------------------------------------
-RESULTS_ODB = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.odb)))
-RESULTS_DEF = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.def)))
-RESULTS_GDS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.gds)))
-RESULTS_OAS = $(notdir $(sort $(wildcard $(RESULTS_DIR)/*.oas)))
 .PHONY: $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file))
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
@@ -998,10 +828,6 @@ all_verilog : $(foreach file,$(RESULTS_ODB),$(file).v)
 
 .PHONY: handoff
 handoff : all_defs all_verilog
-
-.PHONY: print-%
-# Print any variable, for instance: make print-DIE_AREA
-print-%  : ; @echo "$* = $($*)"
 
 .PHONY: test-unset-and-make-%
 test-unset-and-make-%: ; $(UNSET_AND_MAKE) $*
