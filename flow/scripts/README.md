@@ -57,6 +57,10 @@ It is also possible to evaluate the variables without using the ORFS `Makefile`,
     Design area 38 u^2 19% utilization.
     $
 
+### flow.sh and synth.sh
+
+Utility scripts that can be used in combination with `variables.mk` to invoke synthesis and flow steps without going through the ORFS `Makefile`.
+
 ## make run-yosys
 
 Sets up all the ORFS environment variables and launches Yosys.
