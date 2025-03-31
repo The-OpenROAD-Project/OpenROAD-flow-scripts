@@ -76,7 +76,9 @@ def load_dir(dir: str) -> pd.DataFrame:
     params = []
     failed = []
     for params_fname in glob.glob(f"{dir}/*/params.json"):
-        metrics_fname = params_fname.replace("params.json", "metrics.json")
+        metrics_fname = params_fname.replace("params.json", "metrics.json").replace(
+            "ray", "or-0"
+        )
         try:
             with open(params_fname, "r") as f:
                 _dict = json.load(f)
