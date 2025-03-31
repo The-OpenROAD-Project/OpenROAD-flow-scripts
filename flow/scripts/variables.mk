@@ -37,7 +37,8 @@ ifeq ($(origin DESIGN_NAME), undefined)
   $(error DESIGN_NAME variable net set.)
 endif
 
-ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
+ifneq ($(PLATFORM_DIR),)
+else ifneq ($(wildcard $(PLATFORM_HOME)/$(PLATFORM)),)
   export PLATFORM_DIR = $(PLATFORM_HOME)/$(PLATFORM)
 else ifneq ($(findstring $(PLATFORM),$(PUBLIC)),)
   export PLATFORM_DIR = ./platforms/$(PLATFORM)
