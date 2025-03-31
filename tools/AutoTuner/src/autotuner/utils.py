@@ -292,7 +292,6 @@ def openroad(
     base_dir,
     parameters,
     flow_variant,
-    path="",
     install_path=None,
 ):
     """
@@ -300,13 +299,16 @@ def openroad(
     """
     # Make sure path ends in a slash, i.e., is a folder
     flow_variant = f"{args.experiment}/{flow_variant}"
-    if path != "":
-        log_path = f"{path}/{flow_variant}/"
-        report_path = log_path.replace("logs", "reports")
-        run_command(args, f"mkdir -p {log_path}")
-        run_command(args, f"mkdir -p {report_path}")
-    else:
-        log_path = report_path = os.getcwd() + "/"
+    log_path = os.path.abspath(
+        os.path.join(base_dir, f"flow/logs/{args.platform}/{args.design}", flow_variant)
+    )
+    report_path = os.path.abspath(
+        os.path.join(
+            base_dir, f"flow/reports/{args.platform}/{args.design}", flow_variant
+        )
+    )
+    os.makedirs(log_path, exist_ok=True)
+    os.makedirs(report_path, exist_ok=True)
 
     if install_path is None:
         install_path = os.path.join(base_dir, "tools/install")
@@ -326,8 +328,8 @@ def openroad(
         args,
         make_command,
         timeout=args.timeout,
-        stderr_file=f"{log_path}error-make-finish.log",
-        stdout_file=f"{log_path}make-finish-stdout.log",
+        stderr_file=os.path.join(log_path, "error-make-finish.log"),
+        stdout_file=os.path.join(log_path, "make-finish-stdout.log"),
     )
 
     metrics_file = os.path.abspath(os.path.join(report_path, "metrics.json"))
@@ -340,8 +342,8 @@ def openroad(
     run_command(
         args,
         metrics_command,
-        stderr_file=f"{log_path}error-metrics.log",
-        stdout_file=f"{log_path}metrics-stdout.log",
+        stderr_file=os.path.join(log_path, "error-metrics.log"),
+        stdout_file=os.path.join(log_path, "metrics-stdout.log"),
     )
 
     return metrics_file
@@ -662,7 +664,6 @@ def openroad_distributed(
     args,
     repo_dir,
     config,
-    path,
     sdc_original,
     fr_original,
     install_path,
@@ -686,7 +687,6 @@ def openroad_distributed(
         base_dir=repo_dir,
         parameters=config,
         flow_variant=f"{uuid()}-{variant}",
-        path=path,
         install_path=install_path,
     )
     duration = time() - t
