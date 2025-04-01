@@ -302,13 +302,7 @@ def openroad(
     log_path = os.path.abspath(
         os.path.join(base_dir, f"flow/logs/{args.platform}/{args.design}", flow_variant)
     )
-    report_path = os.path.abspath(
-        os.path.join(
-            base_dir, f"flow/reports/{args.platform}/{args.design}", flow_variant
-        )
-    )
     os.makedirs(log_path, exist_ok=True)
-    os.makedirs(report_path, exist_ok=True)
 
     if install_path is None:
         install_path = os.path.join(base_dir, "tools/install")
@@ -332,7 +326,7 @@ def openroad(
         stdout_file=os.path.join(log_path, "make-finish-stdout.log"),
     )
 
-    metrics_file = os.path.abspath(os.path.join(report_path, "metrics.json"))
+    metrics_file = os.path.abspath(os.path.join(log_path, "metrics.json"))
     metrics_command = export_command
     metrics_command += f"{base_dir}/flow/util/genMetrics.py -x"
     metrics_command += f" -v {flow_variant}"
