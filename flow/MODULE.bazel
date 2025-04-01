@@ -7,9 +7,10 @@ module(
 )
 
 bazel_dep(name = "bazel-orfs")
+# To bump version, run: bazelisk run @bazel-orfs//:bump
 git_override(
     module_name = "bazel-orfs",
-    commit = "48cc8783f285d2a274b1613004dcbea21195f49c",
+    commit = "9b00feceb3f2d695787c45708131a5e39e30d08e",
     remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
 )
 
@@ -41,6 +42,7 @@ pip.parse(
 use_repo(pip, "orfs-pip")
 
 orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
+# To bump version, run: bazelisk run @bazel-orfs//:bump
 orfs.default(
     # Check out the version you want to test and make any modifications locally:
     #
@@ -50,17 +52,17 @@ orfs.default(
     # and update "image" to point to the local image.
 
     # Official image https://hub.docker.com/r/openroad/orfs/tags
-    image = "docker.io/openroad/orfs:v3.0-2734-gcf6f0417",
+    image = "docker.io/openroad/orfs:v3.0-2763-gc7a4e7ed",
     # Use local files instead of docker image
     makefile = "//:makefile",
-    pdk = "//:asap7",
     makefile_yosys = "//:makefile_yosys",
     # TODO once openroad is switched to MODULE.bazel, use
     # local_path_override(module_name = "openroad", path = "../tools/OpenROAD")
     # to point to the local openroad Bazel module instead of
     # getting the openroad binary from the docker image.
     openroad = "@docker_orfs//:openroad",
-    sha256 = "ef685898a5e3a2db7166c55238275adcf2dbec7ee0a7eb895a78657bcc27220a",
+    pdk = "//:asap7",
+    sha256 = "3e42fe9dc5c71a79ccfce479a841a5f4d4ee327347483b2e0a64b3de9af4d390",
 )
 use_repo(orfs, "com_github_nixos_patchelf_download")
 use_repo(orfs, "docker_orfs")
