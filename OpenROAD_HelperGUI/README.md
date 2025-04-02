@@ -63,11 +63,8 @@ These options can be adjusted directly through the GUI interface.
 ## Troubleshooting
 
 - Ensure that OpenROAD tools are correctly installed and accessible from the command line.
-- Check that all required Python dependencies are installed by running:
-  ```bash
-  pip3 install -r ORHG/requirements.txt
-  ```
-- If any errors occur, refer to the **Log Output** section in the GUI for details on what might have gone wrong.
+- Check that all required Python dependencies are installed by running
+- Try reinstalling PyQt6 using pip
 
 ## License
 
