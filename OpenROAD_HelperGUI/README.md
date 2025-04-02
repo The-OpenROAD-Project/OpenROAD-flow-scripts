@@ -31,7 +31,7 @@ Before using this GUI, ensure the following dependencies are installed:
 
 2. Install the required Python dependencies:
    ```bash
-   pip3 install -r requirements.txt
+   cd OpenROAD_HelperGUI && pip3 install -r requirements.txt
    ```
 
 3. Ensure OpenROAD tools are installed and properly set up in your system. Refer to the [OpenROAD documentation](https://openroad.readthedocs.io/) for setup instructions.
