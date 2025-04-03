@@ -111,6 +111,7 @@ You can select a design using either of the following methods:
 2. Specify the design using the shell environment. For example:
 
 ```shell
+# Make sure you are in ./flow
 make DESIGN_CONFIG=./designs/nangate45/swerv/config.mk
 # or
 export DESIGN_CONFIG=./designs/nangate45/swerv/config.mk
