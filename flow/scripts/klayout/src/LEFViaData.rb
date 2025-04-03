@@ -62,7 +62,8 @@ class LEFViaData
         layer_stack = []
         while (line = fh.gets)
             if line.match("^\s*END")
-                key = layer_stack.join("_")
+                #key = layer_stack.join("_")
+                key = via_name
                 @via_map[key] = layer_stack
                 return
             end
