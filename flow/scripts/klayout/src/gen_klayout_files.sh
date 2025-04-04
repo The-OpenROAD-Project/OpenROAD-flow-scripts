@@ -136,7 +136,9 @@ CheckRequiredKLayoutScripts()
 {
     is_error=0
     klayout_file_path=~/.klayout/ruby
-    script_list=("LEFViaData.rb" "KLayoutLayerMapGenerator.rb" "import_tf.rb" "KLayoutLayerPropertiesFileGenerator.rb")
+    script_list=("LEFNamedObject.rb" "LEFLayer.rb" "LEFVia.rb" "LEFViaData.rb"
+		 "KLayoutLayerMapGenerator.rb" "import_tf.rb"
+		 "KLayoutLayerPropertiesFileGenerator.rb")
     script_list+=("${LAYER_NAME_MAPPER}")
     for script_name in "${script_list[@]}"; do
 	file_path=${klayout_file_path}/${script_name}
