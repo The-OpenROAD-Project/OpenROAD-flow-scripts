@@ -638,7 +638,7 @@
     "@@bazel-orfs~//:extension.bzl%orfs_repositories": {
       "general": {
         "bzlTransitiveDigest": "gEO3L8nT0efjc8b8O8nLk9gxcVCkKh3Bavx36cohUrk=",
-        "usagesDigest": "76DQf42AVg2qYUMtEo1eHsHVGoTJZf8jKkN53702O/U=",
+        "usagesDigest": "GdVcYIdUhfMRai995s1Y3C+2iaUZ9KGUwS9lHB7gP3g=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -674,16 +674,11 @@
               "makefile": "@@//:makefile",
               "pdk": "@@//:asap7",
               "makefile_yosys": "@@//:makefile_yosys",
-              "openroad": "@@bazel-orfs~~orfs_repositories~docker_orfs//:openroad"
+              "openroad": "@@//test:openroad"
             }
           }
         },
         "recordedRepoMappingEntries": [
-          [
-            "",
-            "docker_orfs",
-            "bazel-orfs~~orfs_repositories~docker_orfs"
-          ],
           [
             "bazel-orfs~",
             "bazel_tools",

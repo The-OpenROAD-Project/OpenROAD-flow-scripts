@@ -16,9 +16,10 @@ filegroup(
         "scripts/*.script",
         "scripts/util.tcl",
         "scripts/synth*.tcl",
-         "platforms/common/**/*.v",
-    ]) +
-    ["//util:makefile_yosys"],
+        "platforms/common/**/*.v",
+    ]) + [
+        "//util:makefile_yosys",
+    ],
     visibility = ["//visibility:public"],
 )
 
@@ -28,7 +29,7 @@ filegroup(
     srcs = ["Makefile"],
     data = glob(MAKEFILE_SHARED + [
         "scripts/*.tcl",
-         "platforms/common/**/*.v",
+        "platforms/common/**/*.v",
     ]) + [
         "//util:makefile",
     ],
@@ -38,23 +39,26 @@ filegroup(
 # These are the only PDKs for which we have BUILD.bazel files for now
 [orfs_pdk(
     name = pdk,
-    config = ":platforms/{pdk}/config.mk".format(pdk = pdk),
     srcs = glob([
-                    "platforms/{pdk}/**/*.{ext}".format(pdk = pdk, ext = ext)
-                    for ext in [
-                        "gds",
-                        "lib.gz",
-                        "lef",
-                        "lib",
-                        "lyt",
-                        "mk",
-                        "rules",
-                        "sdc",
-                        "tcl",
-                        "v",
-                        "tlef",
-                    ]
-                ]),
+        "platforms/{pdk}/**/*.{ext}".format(
+            ext = ext,
+            pdk = pdk,
+        )
+        for ext in [
+            "gds",
+            "lib.gz",
+            "lef",
+            "lib",
+            "lyt",
+            "mk",
+            "rules",
+            "sdc",
+            "tcl",
+            "v",
+            "tlef",
+        ]
+    ]),
+    config = ":platforms/{pdk}/config.mk".format(pdk = pdk),
     visibility = ["//visibility:public"],
 ) for pdk in [
     "asap7",
