@@ -48,15 +48,15 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -96.02,
+        "value": -90.3,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 57,
+        "value": 56,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 43,
+        "value": 42,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
