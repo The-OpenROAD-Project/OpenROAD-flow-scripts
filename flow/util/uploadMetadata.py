@@ -167,8 +167,7 @@ def upload_data(db, datafile, platform, design, variant, args, rules):
 
 
 def get_rules(platform, design, variant):
-    runFilename = f"rules-{variant}.json"
-    dataFile = os.path.join("designs", platform, design, runFilename)
+    dataFile = os.path.join("designs", platform, design, f"rules-{variant}.json")
     data = {}
     if os.path.exists(dataFile):
         with open(dataFile) as f:
@@ -177,14 +176,11 @@ def get_rules(platform, design, variant):
     return data
 
 
-# Initialize Firebase Admin SDK with service account credentials
+# Initialize Firebase Admin SDK with service account credentials and client
 firebase_admin.initialize_app(credentials.Certificate(args.cred))
-# Initialize Firestore client
 db = firestore.client()
 
-runFilename = f"metadata-{args.variant}.json"
-
-for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
+for reportDir, _, _ in sorted(os.walk("reports", topdown=False)):
     dirList = reportDir.split(os.sep)
     if len(dirList) != 4:
         continue
@@ -193,7 +189,7 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
     platform = dirList[1]
     design = dirList[2]
     variant = dirList[3]
-    dataFile = os.path.join(reportDir, runFilename)
+    dataFile = os.path.join(reportDir, f"metadata-{args.variant}.json")
     if not os.path.exists(dataFile):
         print(f"[WARN] No data file for {platform} {design} {variant}.")
         continue
