@@ -72,13 +72,16 @@ class KLayoutTechFileGenerator
         via_data = LEFViaData.new()
         via_data.read_file(lef_file)
         connectivity = @tech.component("connectivity")
-        via_data.get_map().each do | via_name, layer_stack |
-            lower_layer = layer_stack[0]
-            via_layer = layer_stack[1]
-            upper_layer = layer_stack[2]
+        via_data.get_map().each do | via_name, via |
+            layer_list = via.get_layer_list()
+            lower_layer = layer_list[0]
+            via_layer = layer_list[1]
+            upper_layer = layer_list[2]
             connection = NetTracerConnectivity.new
             connection.name = via_name
-            connection.connection(lower_layer, via_layer, upper_layer)
+            connection.connection(lower_layer.get_layer().get_name(),
+                                  via_layer.get_layer().get_name(),
+                                  upper_layer.get_layer().get_name())
             connectivity.add(connection)
         end
         # add symbolic mappings based on layers having multiple mappings
