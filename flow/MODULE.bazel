@@ -72,7 +72,7 @@ orfs.default(
     # and update "image" to point to the local image.
 
     # Official image https://hub.docker.com/r/openroad/orfs/tags
-    image = "docker.io/openroad/orfs:v3.0-2763-gc7a4e7ed",
+    image = "docker.io/openroad/orfs:v3.0-2784-g6bb4f353",
     # Use local files instead of docker image
     makefile = "//:makefile",
     makefile_yosys = "//:makefile_yosys",
@@ -90,7 +90,7 @@ orfs.default(
     # bazelisk build -c opt :openroad
     openroad = "//test:openroad",
     pdk = "//:asap7",
-    sha256 = "3e42fe9dc5c71a79ccfce479a841a5f4d4ee327347483b2e0a64b3de9af4d390",
+    sha256 = "67535c7e4a1bdf6adc98eebc3a17988c80674760293887447e750dd526fe6427",
 )
 use_repo(orfs, "com_github_nixos_patchelf_download")
 use_repo(orfs, "docker_orfs")
