@@ -638,7 +638,7 @@
     "@@bazel-orfs~//:extension.bzl%orfs_repositories": {
       "general": {
         "bzlTransitiveDigest": "gEO3L8nT0efjc8b8O8nLk9gxcVCkKh3Bavx36cohUrk=",
-        "usagesDigest": "76DQf42AVg2qYUMtEo1eHsHVGoTJZf8jKkN53702O/U=",
+        "usagesDigest": "Yz/Of3IYE+pyvSB2MPlW71EMNddUS640USzup5eQznQ=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -658,8 +658,8 @@
             "bzlFile": "@@bazel-orfs~//:docker.bzl",
             "ruleClassName": "docker_pkg",
             "attributes": {
-              "image": "docker.io/openroad/orfs:v3.0-2763-gc7a4e7ed",
-              "sha256": "3e42fe9dc5c71a79ccfce479a841a5f4d4ee327347483b2e0a64b3de9af4d390",
+              "image": "docker.io/openroad/orfs:v3.0-2784-g6bb4f353",
+              "sha256": "67535c7e4a1bdf6adc98eebc3a17988c80674760293887447e750dd526fe6427",
               "build_file": "@@bazel-orfs~//:docker.BUILD.bazel",
               "timeout": 3600,
               "patch_cmds": [
@@ -674,16 +674,11 @@
               "makefile": "@@//:makefile",
               "pdk": "@@//:asap7",
               "makefile_yosys": "@@//:makefile_yosys",
-              "openroad": "@@bazel-orfs~~orfs_repositories~docker_orfs//:openroad"
+              "openroad": "@@//test:openroad"
             }
           }
         },
         "recordedRepoMappingEntries": [
-          [
-            "",
-            "docker_orfs",
-            "bazel-orfs~~orfs_repositories~docker_orfs"
-          ],
           [
             "bazel-orfs~",
             "bazel_tools",
@@ -944,7 +939,7 @@
     },
     "@@rules_python~//python/extensions:pip.bzl%pip": {
       "general": {
-        "bzlTransitiveDigest": "KKG8vnUytPRDAVbcqo0JW8QI+4yDNfWXbYEIWPZbm0E=",
+        "bzlTransitiveDigest": "UVXSWhRHdKjw09doJ4m4mjTHC+BIiApwOePiq04rmBA=",
         "usagesDigest": "gZzaU+foStUD+Tfo1sNqwOVrVY6643ipNLjudCkYips=",
         "recordedFileInputs": {
           "@@rules_python~//tools/publish/requirements_linux.txt": "d576e0d8542df61396a9b38deeaa183c24135ed5e8e73bb9622f298f2671811e",
