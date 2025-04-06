@@ -1,0 +1,20 @@
+#############################################################
+# This file is used to configure the distributed autotuner.
+#############################################################
+# Ray specific variables
+entrypoint_num_cpus: 2
+
+# Autotuner specific - common variables
+cloud_dir: gs://autotuner_test
+
+# Autotuner specific - tune variables
+# note for "config" - please specify a relative path to ./tools/AutoTuner
+design: gcd
+platform: asap7
+config: ../../flow/designs/asap7/gcd/autotuner.json
+mode_arg: tune
+samples: 1
+
+# Autotuner specific - sweep variables
+# config: ./src/autotuner/distributed-sweep-example.json
+# mode_arg: sweep

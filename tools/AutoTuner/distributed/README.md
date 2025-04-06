@@ -76,6 +76,11 @@ make dashboard
 4. Ray CLI API
 
 ```bash
+# Run this once the dashboard is up
+HEAD_SERVER=$(ray job submit --address http://localhost:8265 -- python3 distributed/scripts/show_main_ip.py | grep "Main IP address" | awk '{print $4}')
+echo "HEAD_SERVER is at $HEAD_SERVER"
+export RAY_ADDRESS=$HEAD_SERVER:6379
+
 # Commands on machine (assume files/commands are present on cluster)
 ray job submit --address http://localhost:8265 ls
 
@@ -83,22 +88,27 @@ ray job submit --address http://localhost:8265 ls
 ray job submit --address http://localhost:8265 -- python3 -m autotuner.distributed --design gcd --platform asap7 --config ../../flow/designs/asap7/gcd/autotuner.json --cloud_dir gs://autotuner_test tune --samples 1
  
 # Case 2A: 2 job, with resource spec.
-HEAD_SERVER=10.138.0.13
 ray job submit --address http://localhost:8265 --entrypoint-num-cpus 2 -- python3 -m autotuner.distributed --design gcd --platform asap7 --server $HEAD_SERVER --config ../../flow/designs/asap7/gcd/autotuner.json --cloud_dir gs://autotuner_test tune --samples 1
 ray job submit --address http://localhost:8265 --entrypoint-num-cpus 2 -- python3 -m autotuner.distributed --design gcd --platform asap7 --server $HEAD_SERVER --config ../../flow/designs/asap7/gcd/autotuner.json --cloud_dir gs://autotuner_test tune --samples 1
 
 # Case 2B: 2 job, with resource spec (sweep)
-HEAD_SERVER=10.138.0.13
 ray job submit --address http://localhost:8265 --entrypoint-num-cpus 2 -- python3 -m autotuner.distributed --design gcd --platform asap7 --server $HEAD_SERVER --config ./src/autotuner/distributed-sweep-example.json --cloud_dir gs://autotuner_test sweep
 ray job submit --address http://localhost:8265 --entrypoint-num-cpus 2 -- python3 -m autotuner.distributed --design gcd --platform asap7 --server $HEAD_SERVER --config ./src/autotuner/distributed-sweep-example.json --cloud_dir gs://autotuner_test sweep
 
 # Case 3: Overprovisioned resource spec (should fail because the cluster cannot meet this demand.)
-HEAD_SERVER=10.138.0.13
 ray job submit --address http://localhost:8265 --entrypoint-num-cpus 4 -- python3 -m autotuner.distributed --design gcd --platform asap7 --server $HEAD_SERVER --config ../../flow/designs/asap7/gcd/autotuner.json --cloud_dir gs://autotuner_test tune --samples 1
 
 # Commands on machine (sync local working dir, note the dir is stored as some /tmp dir)
 ray job submit --address http://localhost:8265 \
     --working-dir scripts -- python3 hello_world.py
+```
+
+5. Ray Wrapper
+
+Alternatively, we also provided convenience scripts as an abstraction to the Ray Job Submission API.
+
+```bash
+python ray_wrapper.py --ray-dashboard-address localhost --ray-cluster-head-address $HEAD_ADDRESS
 ```
 
 ## Useful commands
