@@ -22,7 +22,13 @@ set synth_full_args $::env(SYNTH_ARGS)
 if {[env_var_exists_and_non_empty SYNTH_OPERATIONS_ARGS]} {
   set synth_full_args [concat $synth_full_args $::env(SYNTH_OPERATIONS_ARGS)]
 } else {
+  # Coarse LCU -> Kogge-Stone
   set synth_full_args [concat $synth_full_args "-extra-map $::env(FLOW_HOME)/platforms/common/lcu_kogge_stone.v"]
+
+  if {[env_var_exists_and_non_empty ADDER_MAP_FILE]} {
+    # Coarse FA -> PDK FA
+    set synth_full_args [concat $synth_full_args "-extra-map $::env(ADDER_MAP_FILE)"]
+  }
 }
 
 if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
@@ -69,16 +75,6 @@ renames -wire
 
 # Optimize the design
 opt -purge
-
-# Technology mapping of adders
-if {[env_var_exists_and_non_empty ADDER_MAP_FILE]} {
-  # default map all but full adders
-  techmap -dont_map \$fa
-  # custom map full adders
-  techmap -map $::env(ADDER_MAP_FILE)
-  # Quick optimization
-  opt -fast -purge
-}
 
 # Technology mapping of latches
 if {[env_var_exists_and_non_empty LATCH_MAP_FILE]} {
