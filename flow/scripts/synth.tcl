@@ -72,11 +72,10 @@ opt -purge
 
 # Technology mapping of adders
 if {[env_var_exists_and_non_empty ADDER_MAP_FILE]} {
-  # extract the full adders
-  extract_fa
-  # map full adders
+  # default map all but full adders
+  techmap -dont_map \$fa
+  # custom map full adders
   techmap -map $::env(ADDER_MAP_FILE)
-  techmap
   # Quick optimization
   opt -fast -purge
 }
