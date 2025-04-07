@@ -1,6 +1,6 @@
 
 (* techmap_celltype = "$fa" *)
-module _tech_fa (A, B, C, X, Y);
+module _80_tech_fa (A, B, C, X, Y);
   parameter WIDTH = 1;
   (* force_downto *)
     input [WIDTH-1 : 0] A, B, C;
