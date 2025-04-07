@@ -1,9 +1,8 @@
 import argparse
 import os
 import datetime
+import yaml
 from ray.job_submission import JobSubmissionClient
-
-from autotuner.utils.config_helper import parse_config
 
 # Constants
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -43,7 +42,9 @@ arguments.add_argument(
 
 # Parse configs
 # TODO: Validations + Schemas
-config_args = parse_config(os.path.join(FILE_DIR, "config.yaml"))
+print("Parsing config file...")
+with open(os.path.join(FILE_DIR, "config.yaml")) as file:
+    config_args = yaml.safe_load(file)
 
 
 if __name__ == "__main__":
