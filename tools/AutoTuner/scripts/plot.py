@@ -100,8 +100,6 @@ def load_dir(dir: str) -> pd.DataFrame:
     try:
         progress_df = progress_df.merge(params_df, on="trial_id")
     except KeyError:
-        print(params_df)
-        print(progress_df)
         print(
             "Unable to merge DFs due to missing trial_id in params.json (possibly due to failed trials.)"
         )
