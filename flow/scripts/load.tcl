@@ -2,9 +2,6 @@ source $::env(SCRIPTS_DIR)/util.tcl
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
-# Temporarily disable sta's threading due to random failures
-sta::set_thread_count 1
-
 proc load_design {design_file sdc_file} {
   # Read liberty files
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
@@ -31,9 +28,11 @@ proc load_design {design_file sdc_file} {
   read_sdc $::env(RESULTS_DIR)/$sdc_file
 
   if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
+    puts "Reading in $::env(PLATFORM_DIR)/derate.tcl"
     source $::env(PLATFORM_DIR)/derate.tcl
   }
 
+  puts "Reading in $::env(PLATFORM_DIR)/setRC.tcl"
   source $::env(PLATFORM_DIR)/setRC.tcl
 
   if { [env_var_equals LIB_MODEL CCS] } {
