@@ -28,9 +28,11 @@ proc load_design {design_file sdc_file} {
   read_sdc $::env(RESULTS_DIR)/$sdc_file
 
   if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
+    puts "Reading in $::env(PLATFORM_DIR)/derate.tcl"
     source $::env(PLATFORM_DIR)/derate.tcl
   }
 
+  puts "Reading in $::env(PLATFORM_DIR)/setRC.tcl"
   source $::env(PLATFORM_DIR)/setRC.tcl
 
   if { [env_var_equals LIB_MODEL CCS] } {
