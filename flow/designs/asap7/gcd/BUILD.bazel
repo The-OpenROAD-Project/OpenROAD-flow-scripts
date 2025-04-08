@@ -3,8 +3,8 @@ load("//util:plot_congestion.bzl", "plot_congestion")
 
 # Format densities, rounding to 2 decimal places.
 SWEEPS = {
-    "PLACE_DENSITY": [str(0.35 + x * 0.01 + 0.005)[:4] for x in range(65)],
-    "CORE_UTILIZATION": [str(40 + x * 5) for x in range(4)],
+    "PLACE_DENSITY": [str(0.35 + x * 0.1 + 0.05)[:4] for x in range(4)],
+    "CORE_UTILIZATION": [str(40 + x * 50) for x in range(4)],
 }
 
 SWEEP = "PLACE_DENSITY"
