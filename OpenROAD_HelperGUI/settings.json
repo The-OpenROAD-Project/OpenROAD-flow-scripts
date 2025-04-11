@@ -1,0 +1,12 @@
+{
+    "themes": [
+        {
+            "name": "Dark",
+            "data": "\n            QWidget {\n                background-color: #2e2e2e;\n                color: white;\n            }\n            QPushButton {\n                background-color: #444444;\n                color: white;\n                border: 1px solid #888888;\n            }\n            QPushButton:hover {\n                background-color: #555555;\n            }\n        "
+        },
+        {
+            "name": "Light",
+            "data": "\n                QWidget {\n                    background-color: #f8f8f8;\n                    color: black;\n                }\n                QPushButton {\n                    background-color: #e0e0e0;\n                    color: black;\n                    border: 1px solid #bbbbbb;\n                }\n                QPushButton:hover {\n                    background-color: #d6d6d6;\n                }\n                QComboBox {\n                    background-color: #ffffff;\n                    color: black;\n                    border: 1px solid #bbbbbb;\n                }\n            "
+        }
+    ]
+}
