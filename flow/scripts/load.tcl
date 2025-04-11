@@ -6,14 +6,18 @@ proc load_design {design_file sdc_file} {
   # Read liberty files
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
+  # OpenSTA does not have read_lef
+  set got_lef [expr [llength [info commands read_lef]] > 0]
   # Read design files
   set ext [file extension $design_file]
   if {$ext == ".v"} {
-    read_lef $::env(TECH_LEF)
-    read_lef $::env(SC_LEF)
-    if {[env_var_exists_and_non_empty ADDITIONAL_LEFS]} {
-      foreach lef $::env(ADDITIONAL_LEFS) {
-        read_lef $lef
+    if {$got_lef} {
+      read_lef $::env(TECH_LEF)
+      read_lef $::env(SC_LEF)
+      if {[env_var_exists_and_non_empty ADDITIONAL_LEFS]} {
+        foreach lef $::env(ADDITIONAL_LEFS) {
+          read_lef $lef
+        }
       }
     }
     read_verilog $::env(RESULTS_DIR)/$design_file
@@ -24,8 +28,11 @@ proc load_design {design_file sdc_file} {
     error "Unrecognized input file $design_file"
   }
 
-  # Read SDC file
   read_sdc $::env(RESULTS_DIR)/$sdc_file
+
+  if {!$got_lef} {
+    return
+  }
 
   if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
     log_cmd source $::env(PLATFORM_DIR)/derate.tcl
