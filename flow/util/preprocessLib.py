@@ -36,6 +36,12 @@ replace = r': "\1" ;'
 content, count = re.subn(pattern, replace, content)
 print("Replaced malformed functions", count)
 
+# Yosys-abc raises an assertion if the capacitive_load_unit is not ff
+pattern = r"capacitive_load_unit\s*\(\s*0.001,pf\s*\);"
+replace = r"capacitive_load_unit (1,ff);"
+content, count = re.subn(pattern, replace, content)
+print("Replaced capacitive_load_unit", count)
+
 # Write output file
 print("Writing replaced file:", args.outputFile)
 f = open(args.outputFile, "w")
