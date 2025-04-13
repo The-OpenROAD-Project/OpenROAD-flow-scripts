@@ -76,9 +76,9 @@ class ResumeCheck(unittest.TestCase):
         # Cast to 1 decimal place
         res_per_trial = float("{:.1f}".format(self.num_cpus / self.samples))
         options = ["", "--resume"]
-        self.exec = AutoTunerTestUtils.get_exec_cmd()
+        self.executable_command = AutoTunerTestUtils.get_exec_cmd()
         self.commands = [
-            f"{self.exec}"
+            f"{self.executable_command}"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --config {self.config}"
@@ -90,12 +90,13 @@ class ResumeCheck(unittest.TestCase):
             for c in options
         ]
 
-    def check_trial_times(self, iteration: int = 0) -> str:
+    def check_trial_times(self, iteration: int = 0) -> int:
         """
         Checks the nth iteration time of a trial.
 
         :param iteration: The iteration to check.
         :return: The latest modified UNIX time of the nth iteration.
+                 If no folders are found, returns a default value of 9e99.
         """
         if iteration < 0 or iteration >= self.iterations:
             raise ValueError("Iteration must be between 0 and iterations - 1")
@@ -114,24 +115,33 @@ class ResumeCheck(unittest.TestCase):
         # Run the first config asynchronously.
         print("Running the first config")
         latest_modified_time = 0
-        with managed_process(self.commands[0], shell=True) as proc:
+        with managed_process(self.commands[0].split()) as proc:
             time.sleep(30)
             # Check if first config is complete
             while True:
                 cur_modified_time = self.check_trial_times()
                 print(f"Current modified time: {cur_modified_time}")
                 print(f"Latest modified time: {latest_modified_time}")
-                if abs(cur_modified_time - latest_modified_time) < 1e-6:
+                if abs(cur_modified_time - latest_modified_time) < 1e-3:
                     break
                 latest_modified_time = cur_modified_time
                 time.sleep(10)
 
         # Keep trying to stop the ray cluster until it is stopped
         while 1:
-            proc = subprocess.run("ray status", shell=True)
+            proc = subprocess.run(
+                "ray status", shell=True, capture_output=True, text=True
+            )
+            if proc.returncode != 0:
+                print(f"Error running 'ray status': {proc.stderr}")
             no_nodes = proc.returncode != 0
-            proc = subprocess.run("ray stop", shell=True)
-            successful = proc.returncode in accepted_rc
+            proc = subprocess.run(
+                "ray stop", shell=True, capture_output=True, text=True
+            )
+            if proc.returncode not in accepted_rc:
+                print(f"Error running 'ray stop': {proc.stderr}")
+                raise RuntimeError("Failed to stop the ray cluster")
+            successful = True
 
             if no_nodes and successful:
                 break
