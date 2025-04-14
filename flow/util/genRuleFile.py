@@ -355,7 +355,7 @@ if __name__ == "__main__":
         "--new-rules",
         type=str,
         default=None,
-        help="Rules input file.",
+        help="Rules output file.",
     )
     parser.add_argument(
         "-m",

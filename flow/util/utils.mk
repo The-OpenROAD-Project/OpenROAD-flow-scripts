@@ -8,19 +8,19 @@ metadata-generate:
 	@mkdir -p $(REPORTS_DIR)
 	@echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
 	@$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
-		-p $(PLATFORM) \
-		-v $(FLOW_VARIANT) \
-		-o $(REPORTS_DIR)/metadata.json 2>&1 \
-		| tee $(abspath $(REPORTS_DIR)/metadata-generate.log)
+	    -p $(PLATFORM) \
+	    -v $(FLOW_VARIANT) \
+	    -o $(REPORTS_DIR)/metadata.json 2>&1 \
+	    | tee $(abspath $(REPORTS_DIR)/metadata-generate.log)
 
 export RULES_JSON ?= $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
 
 .PHONY: metadata-check
 metadata-check:
 	@$(UTILS_DIR)/checkMetadata.py \
-		-m $(REPORTS_DIR)/metadata.json \
-		-r $(RULES_JSON) 2>&1 \
-		| tee $(abspath $(REPORTS_DIR)/metadata-check.log)
+	    -m $(REPORTS_DIR)/metadata.json \
+	    -r $(RULES_JSON) 2>&1 \
+	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
 
 .PHONY: clean_metadata
 clean_metadata:
@@ -41,10 +41,10 @@ do-update_rules:
 	$(UTILS_DIR)/genRuleFile.py \
 	    --rules $(RULES_JSON) \
 	    --new-rules $(REPORTS_DIR)/rules.json \
-		--reference $(REPORTS_DIR)/metadata.json \
-		--variant $(FLOW_VARIANT) \
-		--failing \
-		--tighten
+	    --reference $(REPORTS_DIR)/metadata.json \
+	    --variant $(FLOW_VARIANT) \
+	    --failing \
+	    --tighten
 
 .PHONY: do-copy_update_rules
 do-copy_update_rules:
@@ -61,8 +61,8 @@ do-update_rules_force:
 	    --rules $(RULES_JSON) \
 	    --new-rules $(REPORTS_DIR)/rules.json \
 	    --reference $(REPORTS_DIR)/metadata.json \
-		--variant $(FLOW_VARIANT) \
-		--update
+	    --variant $(FLOW_VARIANT) \
+	    --update
 
 .PHONY: update_rules_force
 update_rules_force: do-update_rules_force
@@ -72,9 +72,9 @@ update_rules_force: do-update_rules_force
 .PHONY: update_metadata_autotuner
 update_metadata_autotuner:
 	@$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
-		-p $(PLATFORM) \
-		-v $(FLOW_VARIANT) \
-		-o $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-at.json -x
+	    -p $(PLATFORM) \
+	    -v $(FLOW_VARIANT) \
+	    -o $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-at.json -x
 
 #-------------------------------------------------------------------------------
 
