@@ -53,7 +53,7 @@ visibility = ["//visibility:public"],
 )
 filegroup(
     name = "all",
-    data = glob(["**/*"]),
+    data = glob(["openroad.runfiles/**/*"]),
     visibility = ["//visibility:public"],
 )
 """,
