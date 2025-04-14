@@ -10,29 +10,6 @@ import operator
 import sys
 
 
-def update_rules(designDir, variant, reference, overwrite, metrics_to_consider):
-    if overwrite:
-        gen_rule_file(
-            designDir,  # design directory
-            True,  # update
-            False,  # tighten
-            False,  # failing
-            variant,  # variant
-            reference,  # metrics for update
-            metrics_to_consider,
-        )
-    else:
-        gen_rule_file(
-            designDir,  # design directory
-            False,  # update
-            True,  # tighten
-            False,  # failing
-            variant,  # variant
-            reference,  # metrics for update
-            metrics_to_consider,
-        )
-
-
 def gen_rule_file(
     design_dir,
     update,
