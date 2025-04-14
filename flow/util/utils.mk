@@ -1,21 +1,29 @@
 # Utilities
 #===============================================================================
 .PHONY: metadata
-metadata: finish
+metadata: finish metadata-generate metadata-check
+
+.PHONY: metadata-generate
+metadata-generate:
+	@mkdir -p $(REPORTS_DIR)
 	@echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
 	@$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
 		-p $(PLATFORM) \
 		-v $(FLOW_VARIANT) \
 		-o $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json 2>&1 \
-		| tee $(REPORTS_DIR)/gen-metrics-$(FLOW_VARIANT)-check.log
+		| tee $(abspath $(REPORTS_DIR)/gen-metrics-$(FLOW_VARIANT)-generate.log)
+
+.PHONY: metadata-check
+metadata-check:
 	@$(UTILS_DIR)/checkMetadata.py \
 		-m $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
 		-r $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json 2>&1 \
-		| tee $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
+		| tee $(abspath $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log)
 
 .PHONY: clean_metadata
 clean_metadata:
-	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
+	rm -f $(REPORTS_DIR)/design-dir.txt
+	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-*.log
 	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
 
 .PHONY: update_ok
