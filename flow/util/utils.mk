@@ -43,7 +43,10 @@ update_rules:
 
 .PHONY: update_rules_force
 update_rules_force:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
+	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) \
+	    --reference $(REPORTS_DIR)/metadata.json \
+		--variant $(FLOW_VARIANT) \
+		--update
 
 .PHONY: update_metadata_autotuner
 update_metadata_autotuner:
