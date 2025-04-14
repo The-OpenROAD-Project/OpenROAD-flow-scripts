@@ -13,11 +13,13 @@ metadata-generate:
 		-o $(REPORTS_DIR)/metadata.json 2>&1 \
 		| tee $(abspath $(REPORTS_DIR)/metadata-generate.log)
 
+export RULES_JSON ?= $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
+
 .PHONY: metadata-check
 metadata-check:
 	@$(UTILS_DIR)/checkMetadata.py \
 		-m $(REPORTS_DIR)/metadata.json \
-		-r $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json 2>&1 \
+		-r $(RULES_JSON) 2>&1 \
 		| tee $(abspath $(REPORTS_DIR)/metadata-check.log)
 
 .PHONY: clean_metadata
@@ -36,7 +38,7 @@ update_metadata:
 .PHONY: do-update_rules
 do-update_rules:
 	$(UTILS_DIR)/genRuleFile.py \
-	    --rules $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json \
+	    --rules $(RULES_JSON) \
 	    --new-rules $(RESULTS_DIR)/rules-$(FLOW_VARIANT).json \
 		--reference $(REPORTS_DIR)/metadata.json \
 		--variant $(FLOW_VARIANT) \
@@ -46,7 +48,7 @@ do-update_rules:
 .PHONY: do-copy_update_rules
 do-copy_update_rules:
 	cp -f $(RESULTS_DIR)/rules-$(FLOW_VARIANT).json \
-	      $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
+	      $(RULES_JSON)
 
 .PHONY: update_rules
 update_rules: do-update_rules do-copy_update_rules
@@ -54,8 +56,8 @@ update_rules: do-update_rules do-copy_update_rules
 .PHONY: do-update_rules_force
 do-update_rules_force:
 	$(UTILS_DIR)/genRuleFile.py \
-	    --rules $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json \
-	    --new-rules $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json \
+	    --rules $(RULES_JSON) \
+	    --new-rules $(RULES_JSON) \
 	    --reference $(REPORTS_DIR)/metadata.json \
 		--variant $(FLOW_VARIANT) \
 		--update
@@ -63,7 +65,7 @@ do-update_rules_force:
 .PHONY: update_rules_force
 update_rules_force: do-update_rules_force
 	cp -f $(RESULTS_DIR)/rules-$(FLOW_VARIANT).json \
-	      $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
+	      $(RULES_JSON)
 
 .PHONY: update_metadata_autotuner
 update_metadata_autotuner:
