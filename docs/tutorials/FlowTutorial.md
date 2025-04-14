@@ -187,11 +187,11 @@ minimum required timing constraint.
 create_clock -name core_clock -period 17.4 [get_ports {clk_i}]
 ```
 
-### Design Input Verilog
+### Design Input SystemVerilog
 
-The Verilog input files are located in `./designs/src/ibex/`
+The SystemVerilog input files are located in `./designs/src/ibex/`
 
-The design is defined in `ibex_core.v` available
+The design is defined in `ibex_core.sv` available
 [here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/ibex_core.v).
 
 Refer to the `ibex` design `README.md`

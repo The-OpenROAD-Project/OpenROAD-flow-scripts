@@ -63,6 +63,7 @@ export YOSYS_EXE=$(command -v yosys)
 export LD_LIBRARY_PATH="<klayout_location>/bin:$PATH"
 
 yosys -help
+yosys -m slang -p "slang_version"
 openroad -help
 cd flow
 make
