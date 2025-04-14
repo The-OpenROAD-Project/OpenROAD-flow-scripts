@@ -21,7 +21,11 @@ orfs_sweep(
         "CORE_AREA": "1.08 1.08 15.12 15.12",
         "PLACE_DENSITY": "0.35",
     },
-    other_variants = {"base": {}},
+    other_variants = {"base": {
+        "sources": {
+            "RULES_JSON": [":rules-base.json"],
+        },
+    }},
     sources = {
         "SDC_FILE": [":constraint.sdc"],
     },
