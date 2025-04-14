@@ -35,7 +35,9 @@ update_metadata:
 
 .PHONY: update_rules
 update_rules:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) \
+	$(UTILS_DIR)/genRuleFile.py \
+	    --rules $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json \
+	    --new-rules $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json \
 		--reference $(REPORTS_DIR)/metadata.json \
 		--variant $(FLOW_VARIANT) \
 		--failing \
@@ -43,7 +45,9 @@ update_rules:
 
 .PHONY: update_rules_force
 update_rules_force:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) \
+	$(UTILS_DIR)/genRuleFile.py \
+	    --rules $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json \
+	    --new-rules $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json \
 	    --reference $(REPORTS_DIR)/metadata.json \
 		--variant $(FLOW_VARIANT) \
 		--update
