@@ -575,6 +575,13 @@ VERILOG_FILES:
     The path to the design Verilog files providing a description of modules.
   stages:
     - synth
+VERILOG_DEFINES:
+  description: >
+    Preprocessor defines passed to the language frontend.
+    Example: `-D HPDCACHE_ASSERT_OFF`
+  default: ""
+  stages:
+    - synth
 SDC_FILE:
   required: true
   description: |

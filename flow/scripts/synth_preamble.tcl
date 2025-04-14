@@ -52,9 +52,12 @@ if {[env_var_exists_and_non_empty RTLIL_FILE]} {
     # Workaround for yosys-slang#119
     setattr -unset init
   } else {
+    verilog_defaults -push
+    verilog_defaults -add {*}$::env(VERILOG_DEFINES)
     foreach file $::env(VERILOG_FILES) {
       read_verilog -defer -sv {*}$vIdirsArgs $file
     }
+    verilog_defaults -pop
   }
 
   # Read platform specific mapfile for OPENROAD_CLKGATE cells

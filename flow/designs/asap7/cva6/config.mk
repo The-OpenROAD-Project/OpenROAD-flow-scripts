@@ -1,7 +1,3 @@
-#
-# TODO before enablement: pipe VERILOG_DEFINES through to yosys
-#
-
 export PLATFORM               = asap7
 
 export DESIGN_NAME            = cva6
