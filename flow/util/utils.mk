@@ -10,7 +10,7 @@ metadata: finish
 		| tee $(REPORTS_DIR)/gen-metrics-$(FLOW_VARIANT)-check.log
 	@$(UTILS_DIR)/checkMetadata.py \
 		-m $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
-		-r $(dir $(DESIGN_CONFIG))rules-$(FLOW_VARIANT).json 2>&1 \
+		-r $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json 2>&1 \
 		| tee $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
 
 .PHONY: clean_metadata
