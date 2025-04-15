@@ -7,6 +7,7 @@ from re import sub
 import argparse
 import json
 import operator
+import os
 import sys
 
 
@@ -20,6 +21,7 @@ def gen_rule_file(
     metrics_file=None,
     metrics_to_consider=[],
 ):
+    print(f"{os.path.normpath(rules_file)} updates:")
 
     with open(metrics_file, "r") as f:
         metrics = json.load(f)
