@@ -187,7 +187,7 @@ configuration file.
 | <a name="SYNTH_MEMORY_MAX_BITS"></a>SYNTH_MEMORY_MAX_BITS| Maximum number of bits for memory synthesis.| 4096| |
 | <a name="SYNTH_MINIMUM_KEEP_SIZE"></a>SYNTH_MINIMUM_KEEP_SIZE| For hierarchical synthesis, we keep modules of larger area than given by this variable and flatten smaller modules. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| 0| |
 | <a name="SYNTH_NETLIST_FILES"></a>SYNTH_NETLIST_FILES| Skips synthesis and uses the supplied netlist files. If the netlist files contains duplicate modules, which can happen when using hierarchical synthesis on indvidual netlist files and combining here, subsequent modules are silently ignored and only the first module is used.| | |
-| <a name="SYNTH_USE_SLANG"></a>SYNTH_USE_SLANG| Use yosys-slang for read-in of SystemVerilog design.| | |
+| <a name="SYNTH_USE_SLANG"></a>SYNTH_USE_SLANG| Use yosys-slang for read-in of SystemVerilog design.| 0| |
 | <a name="SYNTH_WRAPPED_OPERATORS"></a>SYNTH_WRAPPED_OPERATORS| Synthesize multiple architectural options for each arithmetic operator in the design. These options are available for switching among in later stages of the flow.| | |
 | <a name="TAPCELL_TCL"></a>TAPCELL_TCL| Path to Endcap and Welltie cells file.| | |
 | <a name="TAP_CELL_NAME"></a>TAP_CELL_NAME| Name of the cell to use in tap cell insertion.| | |
@@ -197,7 +197,7 @@ configuration file.
 | <a name="TNS_END_PERCENT"></a>TNS_END_PERCENT| Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all violating endpoints by default (reduce to 5% for runtime). Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed.| 100| |
 | <a name="USE_FILL"></a>USE_FILL| Whether to perform metal density filling.| 0| |
 | <a name="VERILOG_DEFINES"></a>VERILOG_DEFINES| Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`| | |
-| <a name="VERILOG_FILES"></a>VERILOG_FILES| The path to the design Verilog files providing a description of modules.| | |
+| <a name="VERILOG_FILES"></a>VERILOG_FILES| The path to the design Verilog/SystemVerilog files providing a description of modules.| | |
 | <a name="VERILOG_INCLUDE_DIRS"></a>VERILOG_INCLUDE_DIRS| Specifies the include directories for the Verilog input files.| | |
 | <a name="VERILOG_TOP_PARAMS"></a>VERILOG_TOP_PARAMS| Apply toplevel params (if exist).| | |
 | <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Flags to pass to yosys.| -v 3| |
@@ -220,6 +220,7 @@ configuration file.
 - [SYNTH_MEMORY_MAX_BITS](#SYNTH_MEMORY_MAX_BITS)
 - [SYNTH_MINIMUM_KEEP_SIZE](#SYNTH_MINIMUM_KEEP_SIZE)
 - [SYNTH_NETLIST_FILES](#SYNTH_NETLIST_FILES)
+- [SYNTH_USE_SLANG](#SYNTH_USE_SLANG)
 - [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
@@ -421,7 +422,6 @@ configuration file.
 - [SET_RC_TCL](#SET_RC_TCL)
 - [SLEW_MARGIN](#SLEW_MARGIN)
 - [SYNTH_ARGS](#SYNTH_ARGS)
-- [SYNTH_USE_SLANG](#SYNTH_USE_SLANG)
 - [TAP_CELL_NAME](#TAP_CELL_NAME)
 - [TECH_LEF](#TECH_LEF)
 - [USE_FILL](#USE_FILL)

@@ -43,7 +43,7 @@ proc read_design_sources {} {
     set vIdirsArgs [join $vIdirsArgs]
   }
 
-  if {[env_var_exists_and_non_empty SYNTH_USE_SLANG]} {
+  if {[env_var_equals SYNTH_USE_SLANG 1]} {
     # slang requires all files at once
     plugin -i slang
     yosys read_slang -D SYNTHESIS --keep-hierarchy --compat=vcs \
