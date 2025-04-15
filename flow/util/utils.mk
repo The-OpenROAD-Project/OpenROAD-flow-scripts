@@ -37,9 +37,10 @@ update_metadata:
 
 .PHONY: do-update_rules
 do-update_rules:
+	@mkdir -p $(REPORTS_DIR)
 	$(UTILS_DIR)/genRuleFile.py \
 	    --rules $(RULES_JSON) \
-	    --new-rules $(RESULTS_DIR)/rules-$(FLOW_VARIANT).json \
+	    --new-rules $(REPORTS_DIR)/rules.json \
 		--reference $(REPORTS_DIR)/metadata.json \
 		--variant $(FLOW_VARIANT) \
 		--failing \
@@ -47,7 +48,7 @@ do-update_rules:
 
 .PHONY: do-copy_update_rules
 do-copy_update_rules:
-	cp -f $(RESULTS_DIR)/rules-$(FLOW_VARIANT).json \
+	cp -f $(REPORTS_DIR)/rules.json \
 	      $(RULES_JSON)
 
 .PHONY: update_rules
@@ -55,16 +56,17 @@ update_rules: do-update_rules do-copy_update_rules
 
 .PHONY: do-update_rules_force
 do-update_rules_force:
+	@mkdir -p $(REPORTS_DIR)
 	$(UTILS_DIR)/genRuleFile.py \
 	    --rules $(RULES_JSON) \
-	    --new-rules $(RULES_JSON) \
+	    --new-rules $(REPORTS_DIR)/rules.json \
 	    --reference $(REPORTS_DIR)/metadata.json \
 		--variant $(FLOW_VARIANT) \
 		--update
 
 .PHONY: update_rules_force
 update_rules_force: do-update_rules_force
-	cp -f $(RESULTS_DIR)/rules-$(FLOW_VARIANT).json \
+	cp -f $(REPORTS_DIR)/rules.json \
 	      $(RULES_JSON)
 
 .PHONY: update_metadata_autotuner
