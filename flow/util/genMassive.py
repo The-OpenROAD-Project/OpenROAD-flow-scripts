@@ -332,7 +332,7 @@ def writeConfigs(CurAttrs, CurChunkNum):
 
     fo = open("%s/%s" % (CurChunkDir, fileName), "w")
 
-    fo.write("include $(realpath $(dir $(DESIGN_CONFIG))../../)/config.mk\n")
+    fo.write("include $(realpath $(DESIGN_DIR)../../)/config.mk\n")
     fo.write("\n")
     fo.write("FLOW_VARIANT = %s\n" % (variantName))
     fo.write("\n")
@@ -363,8 +363,7 @@ def writeConfigs(CurAttrs, CurChunkNum):
         fOutSdc.write(filedata)
         fOutSdc.close()
         fo.write(
-            "export SDC_FILE = $(dir $(DESIGN_CONFIG))/constraint-DoE-%s.sdc\n"
-            % variantName
+            "export SDC_FILE = $(DESIGN_DIR)/constraint-DoE-%s.sdc\n" % variantName
         )
 
     if CurAbcClkPeriod != "empty":
@@ -411,8 +410,7 @@ def writeConfigs(CurAttrs, CurChunkNum):
         or CurGrSeed != "empty"
     ):
         fo.write(
-            "export FASTROUTE_TCL = $(dir $(DESIGN_CONFIG))/fastroute-DoE-%s.tcl"
-            % variantName
+            "export FASTROUTE_TCL = $(DESIGN_DIR)/fastroute-DoE-%s.tcl" % variantName
         )
 
         if CurPlatform in PUBLIC:

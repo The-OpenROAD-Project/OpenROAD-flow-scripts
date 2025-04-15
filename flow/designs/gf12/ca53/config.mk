@@ -52,10 +52,10 @@ export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/ca53/io.tcl
 
 export MACRO_PLACE_HALO = 7 7
 
-export MACRO_WRAPPERS = $(dir $(DESIGN_CONFIG))/wrappers.tcl
+export MACRO_WRAPPERS = $(DESIGN_DIR)/wrappers.tcl
 
 #export MAX_ROUTING_LAYER = H2 
-export FASTROUTE_TCL = $(dir $(DESIGN_CONFIG))/fastroute.tcl
+export FASTROUTE_TCL = $(DESIGN_DIR)/fastroute.tcl
 #
 ifeq ($(USE_FILL),1)
 export DESIGN_TYPE = CELL
