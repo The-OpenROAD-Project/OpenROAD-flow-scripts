@@ -367,13 +367,13 @@ configuration file.
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 
-## test variables
-
-- [RULES_JSON](#RULES_JSON)
-
 ## generate_abstract variables
 
 - [ABSTRACT_SOURCE](#ABSTRACT_SOURCE)
+
+## test variables
+
+- [RULES_JSON](#RULES_JSON)
 
 ## All stages variables
 
