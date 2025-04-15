@@ -21,16 +21,16 @@ if {[env_var_exists_and_non_empty SYNTH_NETLIST_FILES]} {
   exit
 }
 
-# Read design
-if {[env_var_exists_and_non_empty RTLIL_FILE]} {
+proc read_checkpoint {file} {
   # We are reading a Yosys checkpoint
-  set file $env(RTLIL_FILE)
   if {[file extension $file] == ".json"} {
     read_json $file
   } else {
     read_rtlil $file
-  }
-} else {
+  }  
+}
+
+proc read_design_sources {} {
   # We are reading Verilog sources
   source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
 

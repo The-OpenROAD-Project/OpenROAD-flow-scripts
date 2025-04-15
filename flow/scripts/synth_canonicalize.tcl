@@ -1,4 +1,5 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
+read_design_sources
 
 dict for {key value} $::env(VERILOG_TOP_PARAMS) {
   # Apply toplevel parameters
