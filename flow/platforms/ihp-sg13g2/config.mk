@@ -139,3 +139,11 @@ export CDL_FILE ?= $(PLATFORM_DIR)/cdl/sg13g2_stdcell.cdl
 
 #Temporary: skip post-DRT repair antennas
 export SKIP_ANTENNA_REPAIR_POST_DRT = 1
+
+# ---------------------------------------------------------
+#  Final
+# ---------------------------------------------------------
+
+# SRAM macros have empty placeholder cells included. Just ignore them to not
+# thrown an error.
+export GDS_ALLOW_EMPTY = RM_IHPSG13_1P_BITKIT_16x2_(CORNER|EDGE_TB|LE_con_corner|LE_con_edge_lr|LE_con_tap_lr|POWER_ramtap|TAP|TAP_LR)
