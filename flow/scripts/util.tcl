@@ -3,13 +3,14 @@ proc log_cmd {cmd args} {
   set log_cmd "$cmd[join [lmap arg $args {format " %s" [expr {[string match {* *} $arg] ? "\"$arg\"" : "$arg"}]}] ""]"
   puts $log_cmd
   set start [clock seconds]
-  uplevel 1 [list $cmd {*}$args]
+  set result [uplevel 1 [list $cmd {*}$args]]
   set time [expr {[clock seconds] - $start}]
   if {$time >= 5} {
     # Ideally we'd use a single line, but the command can output text
     # and we don't want to mix it with the log, so output the time it took afterwards.
     puts "Took $time seconds: $log_cmd"
   }
+  return $result
 }
 
 proc fast_route {} {
