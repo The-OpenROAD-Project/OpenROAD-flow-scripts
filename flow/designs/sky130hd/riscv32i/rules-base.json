@@ -44,11 +44,11 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 21,
+        "value": 9,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -1.36,
+        "value": -1.21,
         "compare": ">="
     },
     "finish__design__instance__area": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -30.94,
+        "value": -29.15,
         "compare": ">="
     }
 }
