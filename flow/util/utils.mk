@@ -1,49 +1,80 @@
 # Utilities
 #===============================================================================
 .PHONY: metadata
-metadata: finish
+metadata: finish metadata-generate metadata-check
+
+.PHONY: metadata-generate
+metadata-generate:
+	@mkdir -p $(REPORTS_DIR)
 	@echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
 	@$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
-		-p $(PLATFORM) \
-		-v $(FLOW_VARIANT) \
-		-o $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json 2>&1 \
-		| tee $(REPORTS_DIR)/gen-metrics-$(FLOW_VARIANT)-check.log
+	    -p $(PLATFORM) \
+	    -v $(FLOW_VARIANT) \
+	    -o $(REPORTS_DIR)/metadata.json 2>&1 \
+	    | tee $(abspath $(REPORTS_DIR)/metadata-generate.log)
+
+export RULES_JSON ?= $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
+
+.PHONY: metadata-check
+metadata-check:
 	@$(UTILS_DIR)/checkMetadata.py \
-		-m $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
-		-r $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json 2>&1 \
-		| tee $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
+	    -m $(REPORTS_DIR)/metadata.json \
+	    -r $(RULES_JSON) 2>&1 \
+	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
 
 .PHONY: clean_metadata
 clean_metadata:
-	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT)-check.log
-	rm -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json
+	rm -f $(REPORTS_DIR)/design-dir.txt
+	rm -f $(REPORTS_DIR)/metadata*.*
 
 .PHONY: update_ok
 update_ok: update_rules
 
 .PHONY: update_metadata
 update_metadata:
-	cp -f $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
+	cp -f $(REPORTS_DIR)/metadata.json \
 	      $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-ok.json
 
+.PHONY: do-update_rules
+do-update_rules:
+	@mkdir -p $(REPORTS_DIR)
+	$(UTILS_DIR)/genRuleFile.py \
+	    --rules $(RULES_JSON) \
+	    --new-rules $(REPORTS_DIR)/rules.json \
+	    --reference $(REPORTS_DIR)/metadata.json \
+	    --variant $(FLOW_VARIANT) \
+	    --failing \
+	    --tighten
+
+.PHONY: do-copy_update_rules
+do-copy_update_rules:
+	cp -f $(REPORTS_DIR)/rules.json \
+	      $(RULES_JSON)
+
 .PHONY: update_rules
-update_rules:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) \
-		--reference $(REPORTS_DIR)/metadata-$(FLOW_VARIANT).json \
-		--variant $(FLOW_VARIANT) \
-		--failing \
-		--tighten
+update_rules: do-update_rules do-copy_update_rules
+
+.PHONY: do-update_rules_force
+do-update_rules_force:
+	@mkdir -p $(REPORTS_DIR)
+	$(UTILS_DIR)/genRuleFile.py \
+	    --rules $(RULES_JSON) \
+	    --new-rules $(REPORTS_DIR)/rules.json \
+	    --reference $(REPORTS_DIR)/metadata.json \
+	    --variant $(FLOW_VARIANT) \
+	    --update
 
 .PHONY: update_rules_force
-update_rules_force:
-	$(UTILS_DIR)/genRuleFile.py $(DESIGN_DIR) --variant $(FLOW_VARIANT) --update
+update_rules_force: do-update_rules_force
+	cp -f $(REPORTS_DIR)/rules.json \
+	      $(RULES_JSON)
 
 .PHONY: update_metadata_autotuner
 update_metadata_autotuner:
 	@$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
-		-p $(PLATFORM) \
-		-v $(FLOW_VARIANT) \
-		-o $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-at.json -x
+	    -p $(PLATFORM) \
+	    -v $(FLOW_VARIANT) \
+	    -o $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-at.json -x
 
 #-------------------------------------------------------------------------------
 
