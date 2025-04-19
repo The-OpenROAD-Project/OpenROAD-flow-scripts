@@ -92,14 +92,16 @@ export TIME_CMD
 # The following determine the executable location for each tool used by this flow.
 # Priority is given to
 #       1 user explicit set with variable in Makefile or command line, for instance setting OPENROAD_EXE
-#       2 ORFS compiled tools: openroad, yosys
+#       2 either
+#          2.1 if in Nix shell: openroad, yosys from the environment
+#          2.2 ORFS compiled tools: openroad, yosys
 ifneq (${IN_NIX_SHELL},)
-  export OPENROAD_EXE := $(shell command -v openroad)
+  export OPENROAD_EXE ?= $(shell command -v openroad)
 else
   export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
 endif
 ifneq (${IN_NIX_SHELL},)
-  export OPENSTA_EXE := $(shell command -v sta)
+  export OPENSTA_EXE ?= $(shell command -v sta)
 else
   export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 endif
@@ -110,7 +112,7 @@ export OPENROAD_NO_EXIT_CMD = $(OPENROAD_EXE) $(OPENROAD_ARGS)
 export OPENROAD_GUI_CMD = $(OPENROAD_EXE) -gui $(OR_ARGS)
 
 ifneq (${IN_NIX_SHELL},)
-  YOSYS_EXE := $(shell command -v yosys)
+  YOSYS_EXE ?= $(shell command -v yosys)
 else
   YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 endif
