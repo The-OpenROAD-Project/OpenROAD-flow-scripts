@@ -71,9 +71,9 @@ class BaseSweepSmokeTest(unittest.TestCase):
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
-            f" --config {self.config}"
             f" --jobs {self.jobs}"
             f" sweep"
+            f" --config {self.config}"
         )
 
     def test_sweep(self):

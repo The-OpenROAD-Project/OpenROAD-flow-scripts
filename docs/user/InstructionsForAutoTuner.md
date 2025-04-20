@@ -133,8 +133,8 @@ Example:
 
 ```shell
 openroad_autotuner --design gcd --platform sky130hd \
+                       tune --samples 5 \
                        --config ../../flow/designs/sky130hd/gcd/autotuner.json \
-                       tune --samples 5
 ```
 #### Sweep only 
 
@@ -144,8 +144,8 @@ Example:
 
 ```shell
 openroad_autotuner --design gcd --platform sky130hd \
-                       --config src/autotuner/distributed-sweep-example.json \
-                       sweep
+                       sweep \
+                       --config src/autotuner/distributed-sweep-example.json
 ```
 
 #### Plot images

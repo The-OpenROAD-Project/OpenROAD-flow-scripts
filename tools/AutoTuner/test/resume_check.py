@@ -85,10 +85,10 @@ class ResumeCheck(unittest.TestCase):
             f"{self.exec}"
             f" --design {self.design}"
             f" --platform {self.platform}"
-            f" --config {self.config}"
             f" --jobs {self.jobs}"
             f" --experiment test-resume"
             f" tune --iterations {self.iterations} --samples {self.samples}"
+            f" --config {self.config}"
             f" --resources_per_trial {res_per_trial}"
             f" {c}"
             for c in options

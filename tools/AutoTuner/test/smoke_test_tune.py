@@ -56,8 +56,8 @@ class BaseTuneSmokeTest(unittest.TestCase):
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
-            f" --config {self.config}"
             f" tune --samples 5"
+            f" --config {self.config}"
         )
 
     def test_tune(self):

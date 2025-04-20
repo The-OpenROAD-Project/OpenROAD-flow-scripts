@@ -59,7 +59,7 @@ Parameter sweeping:
                        sweep
 """
 
-import argparse
+import jsonargparse
 import json
 import os
 import sys
@@ -260,13 +260,13 @@ def parse_arguments():
     """
     Parse arguments from command line.
     """
-    parser = argparse.ArgumentParser()
+    parser = jsonargparse.ArgumentParser()
+    tune_parser = jsonargparse.ArgumentParser()
+    sweep_parser = jsonargparse.ArgumentParser()
 
-    subparsers = parser.add_subparsers(
-        help="mode of execution", dest="mode", required=True
-    )
-    tune_parser = subparsers.add_parser("tune")
-    _ = subparsers.add_parser("sweep")
+    subcommands = parser.add_subcommands(dest="mode")
+    subcommands.add_subcommand("tune", tune_parser)
+    subcommands.add_subcommand("sweep", sweep_parser)
 
     # DUT
     parser.add_argument(
@@ -286,13 +286,6 @@ def parse_arguments():
 
     # Experiment Setup
     parser.add_argument(
-        "--config",
-        type=str,
-        metavar="<path>",
-        required=True,
-        help="Configuration file that sets which knobs to use for Autotuning.",
-    )
-    parser.add_argument(
         "--experiment",
         type=str,
         metavar="<str>",
@@ -307,14 +300,30 @@ def parse_arguments():
         default=None,
         help="Time limit (in hours) for each trial run. Default is no limit.",
     )
+
+    # Sweep-specific
+    sweep_parser.add_argument(
+        "--config",
+        type=str,
+        metavar="<path>",
+        required=True,
+        help="Configuration file that sets which knobs to use for Autotuning.",
+    )
+
+    # Tune-Specific
     tune_parser.add_argument(
         "--resume",
         action="store_true",
         help="Resume previous run. Note that you must also set a unique experiment\
                 name identifier via `--experiment NAME` to be able to resume.",
     )
-
-    # ML
+    tune_parser.add_argument(
+        "--config",
+        type=str,
+        metavar="<path>",
+        required=True,
+        help="Configuration file that sets which knobs to use for Autotuning.",
+    )
     tune_parser.add_argument(
         "--algorithm",
         type=str,

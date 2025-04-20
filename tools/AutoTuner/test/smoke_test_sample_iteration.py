@@ -57,8 +57,8 @@ class BaseSampleIterationSmokeTest(unittest.TestCase):
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment {self.experiment}"
-            f" --config {self.config}"
             f" tune --samples {s} --iterations {i}"
+            f" --config {self.config}"
             for s, i in self.matrix
         ]
 

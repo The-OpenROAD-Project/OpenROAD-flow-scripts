@@ -59,7 +59,7 @@ class RefFileCheck(unittest.TestCase):
     def _execute_autotuner(self, platform, design, config_file, error_code=None):
         full_path = os.path.abspath(os.path.join(self._cur_dir, config_file))
 
-        cmd = f"{self._exec} --design {design} --platform {platform} --config {full_path} tune --samples 1"
+        cmd = f"{self._exec} --design {design} --platform {platform} tune --samples 1 --config {full_path}"
 
         out = subprocess.run(cmd, shell=True, text=True, capture_output=True)
         failed = out.returncode != 0
