@@ -422,9 +422,9 @@ def parse_arguments():
 
     args = parser.parse_args()
     if args.mode == "tune":
-        args.algorithm = args.algorithm.lower()
+        args.tune.algorithm = args.tune.algorithm.lower()
         # Validation of arguments
-        if args.eval == "ppa-improv" and args.reference is None:
+        if args.tune.eval == "ppa-improv" and args.tune.reference is None:
             print(
                 '[ERROR TUN-0006] The argument "--eval ppa-improv"'
                 ' requires that "--reference <FILE>" is also given.'
@@ -432,7 +432,7 @@ def parse_arguments():
             sys.exit(7)
 
         # Check for experiment name and resume flag.
-        if args.resume and args.experiment == "test":
+        if args.tune.resume and args.experiment == "test":
             print(
                 '[ERROR TUN-0031] The flag "--resume"'
                 ' requires that "--experiment NAME" is also given.'
@@ -587,49 +587,57 @@ def main():
 
     # Read config and original files before handling where to run in case we
     # need to upload the files.
-    config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(
-        os.path.abspath(args.config), args.mode, getattr(args, "algorithm", None)
-    )
+    if args.mode == "tune":
+        config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(
+            file_name=os.path.abspath(args.tune.config),
+            mode=args.mode,
+            algorithm=args.tune.algorithm,
+        )
+    else:
+        config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(
+            file_name=os.path.abspath(args.sweep.config),
+            mode=args.mode,
+        )
 
     LOCAL_DIR, ORFS_FLOW_DIR, INSTALL_PATH = prepare_ray_server(args)
 
     if args.mode == "tune":
         best_params = set_best_params(args.platform, args.design)
         search_algo = set_algorithm(
-            args.algorithm,
+            args.tune.algorithm,
             args.experiment,
             best_params,
-            args.seed,
-            args.perturbation,
+            args.tune.seed,
+            args.tune.perturbation,
             args.jobs,
             config_dict,
         )
-        TrainClass = set_training_class(args.eval)
+        TrainClass = set_training_class(args.tune.eval)
         # PPAImprov requires a reference file to compute training scores.
-        if args.eval == "ppa-improv":
-            reference = read_metrics(args.reference)
+        if args.tune.eval == "ppa-improv":
+            reference = read_metrics(args.tune.reference)
 
         tune_args = dict(
             name=args.experiment,
             metric=METRIC,
             mode="min",
-            num_samples=args.samples,
+            num_samples=args.tune.samples,
             fail_fast=False,
             storage_path=LOCAL_DIR,
-            resume=args.resume,
-            stop={"training_iteration": args.iterations},
+            resume=args.tune.resume,
+            stop={"training_iteration": args.tune.iterations},
             resources_per_trial={"cpu": os.cpu_count() / args.jobs},
             log_to_file=["trail-out.log", "trail-err.log"],
             trial_name_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
             trial_dirname_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
         )
-        if args.algorithm == "pbt":
+        if args.tune.algorithm == "pbt":
             os.environ["TUNE_MAX_PENDING_TRIALS_PG"] = str(args.jobs)
             tune_args["scheduler"] = search_algo
         else:
             tune_args["search_alg"] = search_algo
             tune_args["scheduler"] = AsyncHyperBandScheduler()
-        if args.algorithm != "ax":
+        if args.tune.algorithm != "ax":
             tune_args["config"] = config_dict
         analysis = tune.run(TrainClass, **tune_args)
 
