@@ -1,0 +1,29 @@
+---
+# Common
+design: gcd
+platform: sky130hd
+experiment: test
+timeout: null
+verbose: 0
+
+# Workload
+jobs: 4 
+openroad_threads: 16
+server: null
+port: 10001
+
+# Tune-specific
+tune:
+  config: ../../flow/designs/sky130hd/gcd/autotuner.json
+  algorithm: hyperopt
+  eval: default
+  samples: 10
+  iterations: 1
+  resources_per_trial: 1.0
+  reference: null
+  perturbation: 25
+  seed: 42
+
+# Sweep-specific
+sweep:
+  config: ./src/autotuner/distributed-sweep-example.json

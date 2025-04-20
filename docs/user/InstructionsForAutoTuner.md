@@ -104,6 +104,9 @@ The `autotuner.distributed` module uses [Ray's](https://docs.ray.io/en/latest/in
 fully utilize available hardware resources from a single server 
 configuration, on-premise or over the cloud with multiple CPUs.
 
+For advanced users, we have provided a configuration file, please
+refer to [this guide](./CLIGuideAutotuner.md).
+
 The two modes of operation:
 - `sweep`, where every possible parameter combination in the search space is tested
 - `tune`, where we use Ray's Tune feature to intelligently search the space and optimize hyperparameters using one of the algorithms listed above.
