@@ -106,9 +106,6 @@ ORFS_FLOW_DIR = os.path.abspath(
 )
 # Global variable for args
 args = None
-design = None
-platform = None
-config = None
 
 
 class AutoTunerBase(tune.Trainable):
@@ -127,7 +124,7 @@ class AutoTunerBase(tune.Trainable):
         self.parameters = parse_config(
             config=config,
             base_dir=self.repo_dir,
-            platform=platform,
+            platform=args.platform,
             sdc_original=SDC_ORIGINAL,
             constraints_sdc=CONSTRAINTS_SDC,
             fr_original=FR_ORIGINAL,
@@ -582,13 +579,13 @@ def main():
     # Read config and original files before handling where to run in case we
     # need to upload the files.
     config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(
-        os.path.abspath(config), args.mode, getattr(args, "algorithm", None)
+        os.path.abspath(args.config), args.mode, getattr(args, "algorithm", None)
     )
 
     LOCAL_DIR, ORFS_FLOW_DIR, INSTALL_PATH = prepare_ray_server(args)
 
     if args.mode == "tune":
-        best_params = set_best_params(platform, design)
+        best_params = set_best_params(args.platform, args.design)
         search_algo = set_algorithm(
             args.algorithm,
             args.experiment,
