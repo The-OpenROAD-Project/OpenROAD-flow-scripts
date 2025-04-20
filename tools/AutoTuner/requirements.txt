@@ -11,4 +11,4 @@ SQLAlchemy==1.4.17
 urllib3>=1.26.17
 matplotlib==3.10.0
 pyyaml==6.0.1
-jsonargparse==4.3.8
+jsonargparse==4.38.0
