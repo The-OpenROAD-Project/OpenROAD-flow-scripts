@@ -90,9 +90,9 @@ class ResumeCheck(unittest.TestCase):
             for c in options
         ]
 
-    def check_trial_times(self, iteration: int = 0) -> int:
+    def get_trial_times(self, iteration: int = 0) -> int:
         """
-        Checks the nth iteration time of a trial.
+        Returns the nth iteration time of a trial.
 
         :param iteration: The iteration to check.
         :return: The latest modified UNIX time of the nth iteration.
