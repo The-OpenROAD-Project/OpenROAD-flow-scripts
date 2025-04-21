@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 # HACK while we're waiting for OpenROAD to be switched to MODULE.bazel
 # OpenROAD has its own TCL library
