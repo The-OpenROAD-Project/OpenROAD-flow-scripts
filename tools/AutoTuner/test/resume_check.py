@@ -99,7 +99,7 @@ class ResumeCheck(unittest.TestCase):
                  If no folders are found, returns a default value of 9e99.
         """
         if iteration < 0 or iteration >= self.iterations:
-            raise ValueError("Iteration must be between 0 and iterations - 1")
+            raise ValueError("Iteration must be between 0 and (iterations - 1)")
 
         experiment_dir = os.path.join(
             cur_dir,
