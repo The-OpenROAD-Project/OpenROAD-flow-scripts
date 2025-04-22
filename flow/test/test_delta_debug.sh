@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # deltaDebug.py integration smoke-test, run from ORFS/flow folder.
 #

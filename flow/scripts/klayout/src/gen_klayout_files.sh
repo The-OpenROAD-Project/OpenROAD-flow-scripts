@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Bash wrapper script to read PDK files and generate the KLayout layer
 # properties and technology file used the 6_final step of OpenROAD-flow-scripts
