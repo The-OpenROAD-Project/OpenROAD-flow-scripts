@@ -7,40 +7,34 @@ from re import sub
 import argparse
 import json
 import operator
+import os
 import sys
 
 
 def gen_rule_file(
-    design_dir,
+    rules_file,
+    new_rules_file,
     update,
     tighten,
     failing,
     variant,
-    metrics=None,
+    metrics_file=None,
     metrics_to_consider=[],
 ):
+    print(f"{os.path.normpath(rules_file)} updates:")
 
-    golden_metrics = f"metadata-{variant}-ok.json"
-    if isinstance(metrics, str) and isfile(metrics):
-        with open(metrics, "r") as f:
-            metrics = json.load(f)
-    elif isfile(golden_metrics):
-        with open(golden_metrics, "r") as f:
-            metrics = json.load(f)
+    with open(metrics_file, "r") as f:
+        metrics = json.load(f)
     if not isinstance(metrics, dict):
-        print(f"[ERROR] Invalid format for reference metrics {design_dir}")
+        print(f"[ERROR] Invalid format for reference metrics {metrics_file}")
         sys.exit(1)
 
-    original_directory = getcwd()
-    chdir(design_dir)
-    rules_file = f"rules-{variant}.json"
     rules = dict()
-
     if isfile(rules_file):
         with open(rules_file, "r") as f:
             OLD_RULES = json.load(f)
     else:
-        print(f"[WARNING] Rules file not found {design_dir}")
+        print(f"[WARNING] No old rules file found {rules_file}")
         OLD_RULES = None
 
     # dict format
@@ -189,10 +183,7 @@ def gen_rule_file(
     change_str = ""
     for field, option in rules_dict.items():
         if field not in metrics.keys():
-            print(
-                f"[ERROR] Metric {field} not found in "
-                f"metrics file: {metrics_file} or golden metrics."
-            )
+            print(f"[ERROR] Metric {field} not found")
             sys.exit(1)
 
         if isinstance(metrics[field], str):
@@ -305,15 +296,12 @@ def gen_rule_file(
         rules[field] = dict(value=rule_value, compare=option["compare"])
 
     if len(change_str) > 0:
-        print(design_dir)
         print(format_str.format("Metric", "Old", "New", "Type"), end="")
         print(format_str.format("------", "---", "---", "----"), end="")
         print(change_str)
 
-    with open(rules_file, "w") as f:
+    with open(new_rules_file, "w") as f:
         json.dump(rules, f, indent=4)
-
-    chdir(original_directory)
 
 
 def comma_separated_list(value):
@@ -326,7 +314,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Generates or updates rules file for CI."
     )
-    parser.add_argument("dir", help="Path to the design directory.")
     parser.add_argument(
         "-v", "--variant", default="base", help='Flow variant [default="base"].'
     )
@@ -359,6 +346,18 @@ if __name__ == "__main__":
         help="Reference metadata file.",
     )
     parser.add_argument(
+        "--rules",
+        type=str,
+        default=None,
+        help="Rules input file.",
+    )
+    parser.add_argument(
+        "--new-rules",
+        type=str,
+        default=None,
+        help="Rules output file.",
+    )
+    parser.add_argument(
         "-m",
         "--metrics",
         type=comma_separated_list,
@@ -376,7 +375,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     gen_rule_file(
-        args.dir,
+        args.rules,
+        args.new_rules,
         args.update,
         args.tighten,
         args.failing,
