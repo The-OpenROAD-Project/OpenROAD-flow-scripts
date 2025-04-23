@@ -7,9 +7,12 @@ metadata: finish metadata-generate metadata-check
 metadata-generate:
 	@mkdir -p $(REPORTS_DIR)
 	@echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
-	@$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
+	$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
 	    -p $(PLATFORM) \
 	    -v $(FLOW_VARIANT) \
+	    --logs $(LOG_DIR) \
+	    --reports $(REPORTS_DIR) \
+	    --results $(RESULTS_DIR) \
 	    -o $(REPORTS_DIR)/metadata.json 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-generate.log)
 
@@ -74,6 +77,9 @@ update_metadata_autotuner:
 	@$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
 	    -p $(PLATFORM) \
 	    -v $(FLOW_VARIANT) \
+	    --logs $(LOG_DIR) \
+	    --reports $(REPORTS_DIR) \
+	    --results $(RESULTS_DIR) \
 	    -o $(DESIGN_DIR)/metadata-$(FLOW_VARIANT)-at.json -x
 
 #-------------------------------------------------------------------------------
