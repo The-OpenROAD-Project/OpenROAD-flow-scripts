@@ -28,8 +28,3 @@
 &synch2
 &nf
 &put
-buffer -c
-topo
-stime -c
-upsize -c
-dnsize -c

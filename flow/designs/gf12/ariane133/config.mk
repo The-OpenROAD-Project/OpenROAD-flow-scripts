@@ -30,4 +30,4 @@ else
 export DESIGN_TYPE = CELL_NODEN
 endif
 
-export REMOVE_ABC_BUFFERS = 1
+export FLOORPLAN_BUFFERING = 0

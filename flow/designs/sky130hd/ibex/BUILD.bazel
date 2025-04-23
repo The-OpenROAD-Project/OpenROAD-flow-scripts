@@ -7,7 +7,7 @@ orfs_flow(
         "CORE_UTILIZATION": "45",
         "PLACE_DENSITY_LB_ADDON": "0.2",
         "TNS_END_PERCENT": "100",
-        "REMOVE_ABC_BUFFERS": "1",
+        "FLOORPLAN_BUFFERING": "0",
     },
     pdk = "@docker_orfs//:sky130hd",
     sources = {

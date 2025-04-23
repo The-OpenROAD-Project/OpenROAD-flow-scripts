@@ -94,6 +94,7 @@ configuration file.
 | <a name="FASTROUTE_TCL"></a>FASTROUTE_TCL| Specifies a Tcl script with commands to run before FastRoute.| | |
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| | |
 | <a name="FILL_CONFIG"></a>FILL_CONFIG| JSON rule file for metal fill during chip finishing.| | |
+| <a name="FLOORPLAN_BUFFERING"></a>FLOORPLAN_BUFFERING| Perform a pre-placement buffering round at the floorplan stage.| 1| |
 | <a name="FLOORPLAN_DEF"></a>FLOORPLAN_DEF| Use the DEF file to initialize floorplan.| | |
 | <a name="FLOW_VARIANT"></a>FLOW_VARIANT| Flow variant to use, used in the flow variant directory name.| base| |
 | <a name="GDS_ALLOW_EMPTY"></a>GDS_ALLOW_EMPTY| Regular expression of module names of macros that have no .gds file| | |
@@ -137,7 +138,6 @@ configuration file.
 | <a name="PWR_NETS_VOLTAGES"></a>PWR_NETS_VOLTAGES| Used for IR Drop calculation.| | |
 | <a name="RCX_RULES"></a>RCX_RULES| RC Extraction rules file path.| | |
 | <a name="RECOVER_POWER"></a>RECOVER_POWER| Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100].| 0| |
-| <a name="REMOVE_ABC_BUFFERS"></a>REMOVE_ABC_BUFFERS| Remove abc buffers from the netlist. If timing repair in floorplanning is taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.| | yes|
 | <a name="REMOVE_CELLS_FOR_EQY"></a>REMOVE_CELLS_FOR_EQY| String patterns directly passed to write_verilog -remove_cells <> for equivalence checks.| | |
 | <a name="REPAIR_PDN_VIA_LAYER"></a>REPAIR_PDN_VIA_LAYER| Remove power grid vias which generate DRC violations after detailed routing.| | |
 | <a name="REPORT_CLOCK_SKEW"></a>REPORT_CLOCK_SKEW| Report clock skew as part of reporting metrics, starting at CTS, before which there is no clock skew. This metric can be quite time-consuming, so it can be useful to disable.| 1| |
@@ -234,6 +234,7 @@ configuration file.
 - [CORE_MARGIN](#CORE_MARGIN)
 - [CORE_UTILIZATION](#CORE_UTILIZATION)
 - [DIE_AREA](#DIE_AREA)
+- [FLOORPLAN_BUFFERING](#FLOORPLAN_BUFFERING)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [IO_CONSTRAINTS](#IO_CONSTRAINTS)
@@ -250,7 +251,6 @@ configuration file.
 - [PLACE_DENSITY](#PLACE_DENSITY)
 - [PLACE_DENSITY_LB_ADDON](#PLACE_DENSITY_LB_ADDON)
 - [PLACE_SITE](#PLACE_SITE)
-- [REMOVE_ABC_BUFFERS](#REMOVE_ABC_BUFFERS)
 - [RESYNTH_AREA_RECOVER](#RESYNTH_AREA_RECOVER)
 - [RESYNTH_TIMING_RECOVER](#RESYNTH_TIMING_RECOVER)
 - [RTLMP_AREA_WT](#RTLMP_AREA_WT)

@@ -40,14 +40,14 @@ proc repair_timing_helper { {hold_margin 1} } {
   log_cmd repair_timing {*}$additional_args
 }
 
-proc repair_design_helper {} {
+proc repair_design_helper { {extra_args ""} } {
   puts "Perform buffer insertion and gate resizing..."
 
-  set additional_args "-verbose"
-  append_env_var additional_args CAP_MARGIN -cap_margin 1
-  append_env_var additional_args SLEW_MARGIN -slew_margin 1
-  append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
-  log_cmd repair_design {*}$additional_args
+  set args "-verbose"
+  append_env_var args CAP_MARGIN -cap_margin 1
+  append_env_var args SLEW_MARGIN -slew_margin 1
+  append_env_var args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
+  log_cmd repair_design {*}$args {*}$extra_args
 }
 
 proc recover_power_helper {} {
