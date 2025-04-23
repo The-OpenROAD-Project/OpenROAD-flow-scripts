@@ -15,17 +15,6 @@ git_override(
     remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
 )
 
-# Read: https://github.com/The-OpenROAD-Project/bazel-orfs?tab=readme-ov-file#usage
-#
-# TL;DR
-#
-# 1. uncomment below
-# 2. comment git_override() above
-#
-#local_path_override(
-#   module_name = "bazel-orfs", path = "../bazel-orfs"
-#)
-
 bazel_dep(name = "rules_python", version = "0.31.0")
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
@@ -53,7 +42,7 @@ visibility = ["//visibility:public"],
 )
 filegroup(
     name = "all",
-    data = glob(["**/*"]),
+    data = glob(["openroad.runfiles/**/*"]),
     visibility = ["//visibility:public"],
 )
 """,

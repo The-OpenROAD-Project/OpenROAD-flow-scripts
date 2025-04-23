@@ -87,7 +87,7 @@ DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 export DESIGN_CONFIG
 include $(DESIGN_CONFIG)
 
-export DESIGN_DIR  = $(dir $(DESIGN_CONFIG))
+export DESIGN_DIR ?= $(dir $(DESIGN_CONFIG))
 
 # default value "base" is duplicated from variables.yaml because we need it
 # earlier in the flow for BLOCKS. BLOCKS is a feature specific to the

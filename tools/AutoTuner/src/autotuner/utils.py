@@ -332,7 +332,7 @@ def openroad(
         stdout_file=os.path.join(log_path, "make-finish-stdout.log"),
     )
 
-    metrics_file = os.path.abspath(os.path.join(report_path, "metrics.json"))
+    metrics_file = os.path.abspath(os.path.join(log_path, "metrics.json"))
     metrics_command = export_command
     metrics_command += f"{base_dir}/flow/util/genMetrics.py -x"
     metrics_command += f" -v {flow_variant}"
