@@ -18,9 +18,9 @@ set cts_args [list \
           -sink_clustering_enable \
           -balance_levels]
 
-# TODO: The first three are no-ops since the arg order is wrong, but hard to get
+append_env_var cts_args CTS_BUF_DISTANCE -distance_between_buffers 1
+# TODO: The next two are no-ops since the arg order is wrong, but hard to get
 # through CI since nine designs change metrics and the PR is blocked
-append_env_var cts_args -distance_between_buffers CTS_BUF_DISTANCE 1
 append_env_var cts_args -sink_clustering_size CTS_CLUSTER_SIZE 1
 append_env_var cts_args -sink_clustering_max_diameter CTS_CLUSTER_DIAMETER 1
 append_env_var cts_args CTS_BUF_LIST -buf_list 1
