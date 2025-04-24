@@ -6,7 +6,6 @@
 # -----------------------------------------------------------------------------
 
 import os
-from sys import exit
 from datetime import datetime, timedelta
 from collections import defaultdict
 from uuid import uuid4 as uuid
@@ -26,8 +25,7 @@ def parse_args():
     parser.add_argument(
         "--design",
         "-d",
-        required=False,
-        default="all_designs",
+        required=True,
         help="Design Name for metrics",
     )
     parser.add_argument(
