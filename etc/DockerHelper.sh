@@ -123,6 +123,11 @@ _push() {
 
         if [[ "${dryRun}" != 1 ]]; then
             ${DOCKER_CMD} push "${org}/flow-${os}-dev:${tag}"
+            ${DOCKER_CMD} tag "${org}/flow-${os}-dev:${tag}" "${org}/flow-${os}-dev:latest"
+            ${DOCKER_CMD} push "${org}/flow-${os}-dev:latest"
+        else
+            echo "[DRY-RUN] ${DOCKER_CMD} tag \"${org}/flow-${os}-dev:${tag}\" \"${org}/flow-${os}-dev:latest\""
+            echo "[DRY-RUN] ${DOCKER_CMD} push \"${org}/flow-${os}-dev:latest\""
         fi
     fi
 
@@ -138,8 +143,12 @@ _push() {
         ${DOCKER_CMD} tag ${builderTag} ${orfsTag}
         if [[ "${dryRun}" == 1 ]]; then
             echo "[DRY-RUN] ${DOCKER_CMD} push ${orfsTag}"
+            echo "[DRY-RUN] ${DOCKER_CMD} tag ${orfsTag} \"${org}/orfs:latest\""
+            echo "[DRY-RUN] ${DOCKER_CMD} push \"${org}/orfs:latest\""
         else
             ${DOCKER_CMD} push ${orfsTag}
+            ${DOCKER_CMD} tag ${orfsTag} "${org}/orfs:latest"
+            ${DOCKER_CMD} push "${org}/orfs:latest"
         fi
     fi
 }
