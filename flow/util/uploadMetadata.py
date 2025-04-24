@@ -31,7 +31,7 @@ parser.add_argument("--variant", type=str, default="base")
 args = parser.parse_args()
 
 
-def upload_data(db, datafile, platform, design, variant, args, rules):
+def upload_data(db, dataFile, platform, design, variant, args, rules):
     # Set the document data
     key = args.commitSHA + "-" + platform + "-" + design + "-" + variant
     doc_ref = db.collection("build_metrics").document(key)
@@ -166,9 +166,7 @@ def upload_data(db, datafile, platform, design, variant, args, rules):
         raise Exception(f"Failed to upload data for {platform} {design} {variant}.")
 
 
-def get_rules(platform, design, variant):
-    runFilename = f"rules-{variant}.json"
-    dataFile = os.path.join("designs", platform, design, runFilename)
+def get_rules(dataFile):
     data = {}
     if os.path.exists(dataFile):
         with open(dataFile) as f:
@@ -182,7 +180,7 @@ firebase_admin.initialize_app(credentials.Certificate(args.cred))
 # Initialize Firestore client
 db = firestore.client()
 
-runFilename = f"metadata-{args.variant}.json"
+RUN_FILENAME = "metadata.json"
 
 for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
     dirList = reportDir.split(os.sep)
@@ -193,7 +191,7 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
     platform = dirList[1]
     design = dirList[2]
     variant = dirList[3]
-    dataFile = os.path.join(reportDir, runFilename)
+    dataFile = os.path.join(reportDir, RUN_FILENAME)
     if not os.path.exists(dataFile):
         print(f"[WARN] No data file for {platform} {design} {variant}.")
         continue
@@ -201,6 +199,6 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
         print(f"[WARN] Skiping upload {platform} {design} {variant}.")
         continue
     print(f"[INFO] Get rules for {platform} {design} {variant}.")
-    rules = get_rules(platform, design, variant)
+    rules = get_rules(os.path.join("designs", platform, design, RUN_FILENAME))
     print(f"[INFO] Upload data for {platform} {design} {variant}.")
     upload_data(db, dataFile, platform, design, variant, args, rules)
