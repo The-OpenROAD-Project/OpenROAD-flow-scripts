@@ -48,6 +48,7 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
 
     def setUp(self):
         design_path = f"../../../flow/designs/{self.platform}/{self.design}"
+        report_path = f"../../../flow/reports/{self.platform}/{self.design}"
         self.config = os.path.join(cur_dir, f"{design_path}/autotuner.json")
         self.experiment = f"smoke-test-algo-eval-{self.platform}"
         self.reference = os.path.join(cur_dir, f"{design_path}/metadata-base-at.json")
@@ -68,7 +69,7 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             for a, e in self.matrix
         ]
         # Make a file copy of the original metadata.json
-        self.metadata = os.path.join(cur_dir, f"{design_path}/metadata.json")
+        self.metadata = os.path.join(cur_dir, f"{report_path}/metadata.json")
         shutil.copyfile(self.metadata, self.metadata + ".orig")
 
     def make_base(self):
