@@ -51,7 +51,7 @@ parser.add_argument("--variant", default="base")
 args = parser.parse_args()
 
 goldFilename = f"metadata-{args.variant}-ok.json"
-runFilename = f"metadata-{args.variant}.json"
+runFilename = f"metadata.json"
 
 
 def readMetrics(fname, justLoad=False):
