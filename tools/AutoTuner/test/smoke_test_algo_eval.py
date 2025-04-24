@@ -35,6 +35,7 @@
 import unittest
 import subprocess
 import os
+import shutil
 from .autotuner_test_utils import AutoTunerTestUtils, accepted_rc
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
@@ -66,6 +67,9 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             f" --reference {self.reference}"
             for a, e in self.matrix
         ]
+        # Make a file copy of the original metadata.json
+        self.metadata = os.path.join(cur_dir, f"{design_path}/metadata.json")
+        shutil.copyfile(self.metadata, self.metadata + ".orig")
 
     def make_base(self):
         commands = [
@@ -87,6 +91,10 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             out = subprocess.run(command, shell=True)
             successful = out.returncode in accepted_rc
             self.assertTrue(successful)
+
+        # On successful run, restore the metadata.json file
+        shutil.copyfile(self.metadata + ".orig", self.metadata)
+        os.remove(self.metadata + ".orig")
 
 
 class asap7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
