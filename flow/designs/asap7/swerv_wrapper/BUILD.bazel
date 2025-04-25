@@ -56,7 +56,7 @@ BLACKBOXES = [
     variant = "netlist",
     verilog_files = [
         "macros.v",
-        "//designs/src/swerv:verilog",
+        "//flow/designs/src/swerv:verilog",
     ],
     deps = FAKERAMS,
 ) for name in BLACKBOXES]

@@ -27,7 +27,7 @@ pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
     hub_name = "orfs-pip",
     python_version = "3.12",
-    requirements_lock = "//:util/requirements_lock.txt",
+    requirements_lock = "//flow:util/requirements_lock.txt",
 )
 use_repo(pip, "orfs-pip")
 
@@ -46,7 +46,7 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 """,
-    path = "../tools/OpenROAD/bazel-out/k8-opt/bin",
+    path = "tools/OpenROAD/bazel-out/k8-opt/bin",
 )
 
 orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
@@ -63,8 +63,8 @@ orfs.default(
     # Official image https://hub.docker.com/r/openroad/orfs/tags
     image = "docker.io/openroad/orfs:v3.0-2883-ge22e4fc7",
     # Use local files instead of docker image
-    makefile = "//:makefile",
-    makefile_yosys = "//:makefile_yosys",
+    makefile = "//flow:makefile",
+    makefile_yosys = "//flow:makefile_yosys",
     # TODO once openroad is switched to MODULE.bazel, use
     # local_path_override(module_name = "openroad", path = "../tools/OpenROAD")
     # to point to the local openroad Bazel module instead of
@@ -77,8 +77,8 @@ orfs.default(
     #
     # cd ../tools/OpenROAD
     # bazelisk build -c opt :openroad
-    openroad = "//test:openroad",
-    pdk = "//:asap7",
+    openroad = "//flow/test:openroad",
+    pdk = "//flow:asap7",
     sha256 = "6ad0b1b7fbf290f33f0050ead4da181c83c6e8a9337b65f5f9cff65d67788424",
 )
 use_repo(orfs, "com_github_nixos_patchelf_download")

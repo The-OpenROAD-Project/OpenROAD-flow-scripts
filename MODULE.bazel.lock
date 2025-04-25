@@ -638,7 +638,7 @@
     "@@bazel-orfs~//:extension.bzl%orfs_repositories": {
       "general": {
         "bzlTransitiveDigest": "D8F4lxkxZKld3gfouPynfNto900AoYgU58+xOY+BTeA=",
-        "usagesDigest": "DZfg7ZDkfeymWERNV3fBZWfqeHZJi0t+4PjdbqYPnjs=",
+        "usagesDigest": "20HOh5nrpsC4vVZfhRyKacLuOdKCBbH4NcBdcX87ESM=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -671,10 +671,10 @@
             "bzlFile": "@@bazel-orfs~//:config.bzl",
             "ruleClassName": "global_config",
             "attributes": {
-              "makefile": "@@//:makefile",
-              "pdk": "@@//:asap7",
-              "makefile_yosys": "@@//:makefile_yosys",
-              "openroad": "@@//test:openroad"
+              "makefile": "@@//flow:makefile",
+              "pdk": "@@//flow:asap7",
+              "makefile_yosys": "@@//flow:makefile_yosys",
+              "openroad": "@@//flow/test:openroad"
             }
           }
         },
@@ -940,11 +940,11 @@
     "@@rules_python~//python/extensions:pip.bzl%pip": {
       "general": {
         "bzlTransitiveDigest": "UVXSWhRHdKjw09doJ4m4mjTHC+BIiApwOePiq04rmBA=",
-        "usagesDigest": "gZzaU+foStUD+Tfo1sNqwOVrVY6643ipNLjudCkYips=",
+        "usagesDigest": "pH3zwwfC5Cl9+K3uTBlFrrKV8Gno7nf5+n1aL4X3uGU=",
         "recordedFileInputs": {
           "@@rules_python~//tools/publish/requirements_linux.txt": "d576e0d8542df61396a9b38deeaa183c24135ed5e8e73bb9622f298f2671811e",
           "@@bazel-orfs~//requirements_lock_3_13.txt": "fcabafb7192fe8f92d82e7ec8ddd8e3fd6787f8acea3ec694f105ed63821416a",
-          "@@//util/requirements_lock.txt": "016f788600d492820c9a6ff951c31a26735bcdb24a5a1bc83f68a726c6e4c884",
+          "@@//flow/util/requirements_lock.txt": "016f788600d492820c9a6ff951c31a26735bcdb24a5a1bc83f68a726c6e4c884",
           "@@rules_fuzzing~//fuzzing/requirements.txt": "ab04664be026b632a0d2a2446c4f65982b7654f5b6851d2f9d399a19b7242a5b",
           "@@rules_python~//tools/publish/requirements_windows.txt": "d18538a3982beab378fd5687f4db33162ee1ece69801f9a451661b1b64286b76",
           "@@protobuf~//python/requirements.txt": "983be60d3cec4b319dcab6d48aeb3f5b2f7c3350f26b3a9e97486c37967c73c5",

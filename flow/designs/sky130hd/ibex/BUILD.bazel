@@ -15,5 +15,5 @@ orfs_flow(
         "FASTROUTE_TCL": ["fastroute.tcl"],
     },
     top = "ibex_core",
-    verilog_files = ["//designs/src/ibex:verilog"],
+    verilog_files = ["//flow/designs/src/ibex:verilog"],
 )

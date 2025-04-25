@@ -18,7 +18,7 @@ filegroup(
         "scripts/synth*.tcl",
         "platforms/common/**/*.v",
     ]) + [
-        "//util:makefile_yosys",
+        "//flow/util:makefile_yosys",
     ],
     visibility = ["//visibility:public"],
 )
@@ -31,7 +31,7 @@ filegroup(
         "scripts/*.tcl",
         "platforms/common/**/*.v",
     ]) + [
-        "//util:makefile",
+        "//flow/util:makefile",
     ],
     visibility = ["//visibility:public"],
 )
