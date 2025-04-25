@@ -36,8 +36,8 @@ filegroup(
 filegroup(
     name = "makefile_yosys",
     srcs = glob(MAKEFILE_SHARED) + [
-        "preprocessLib.py",
         "mergeLib.pl",
+        "preprocessLib.py",
     ],
     visibility = ["//visibility:public"],
 )

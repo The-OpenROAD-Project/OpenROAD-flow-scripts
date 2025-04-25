@@ -42,9 +42,6 @@ class KLayoutTechFileGenerator
     #  1) KLayout only writes out one mapping per layer, so we only add the
     #     first occurrence of the layer into the map. This is usually datatype
     #     == 0
-    #  2) KLayout doesn't support layers that start with a number in its maps,
-    #     so we prepend an "a" to the layer name. These layers are typically
-    #     not seen in the LEF, so it should be a no-op
     #
     def get_layer_map(sorted_layer_map)
         layer_map = LayerMap.new()
@@ -53,7 +50,9 @@ class KLayoutTechFileGenerator
             layer_list.each do |layer_info|
                 gds_info = layer_info.gds
                 if layer_name.match?(/\A\d/)
-                    layer_name = "a" + layer_name
+                    # single quote escaping required for layers that start
+                    # with a digit
+                    layer_name = "'" + layer_name + "'"
                 end
                 map_str = sprintf("%s:%d/%d", layer_name, gds_info.layer,
                                   gds_info.datatype)
@@ -73,14 +72,16 @@ class KLayoutTechFileGenerator
         via_data = LEFViaData.new()
         via_data.read_file(lef_file)
         connectivity = @tech.component("connectivity")
-        # Generally works, except it adds an extra definition for the first
-        # connection
-        via_data.get_map().each do | key, layer_stack |
-            lower_layer = layer_stack[0]
-            via_layer = layer_stack[1]
-            upper_layer = layer_stack[2]
+        via_data.get_map().each do | via_name, via |
+            layer_list = via.get_layer_list()
+            lower_layer = layer_list[0]
+            via_layer = layer_list[1]
+            upper_layer = layer_list[2]
             connection = NetTracerConnectivity.new
-            connection.connection(lower_layer, via_layer, upper_layer)
+            connection.name = via_name
+            connection.connection(lower_layer.get_layer().get_name(),
+                                  via_layer.get_layer().get_name(),
+                                  upper_layer.get_layer().get_name())
             connectivity.add(connection)
         end
         # add symbolic mappings based on layers having multiple mappings

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Bash wrapper script to read PDK files and generate the KLayout layer
 # properties and technology file used the 6_final step of OpenROAD-flow-scripts
@@ -136,7 +136,9 @@ CheckRequiredKLayoutScripts()
 {
     is_error=0
     klayout_file_path=~/.klayout/ruby
-    script_list=("LEFViaData.rb" "KLayoutLayerMapGenerator.rb" "import_tf.rb" "KLayoutLayerPropertiesFileGenerator.rb")
+    script_list=("LEFNamedObject.rb" "LEFLayer.rb" "LEFVia.rb" "LEFViaData.rb"
+		 "KLayoutLayerMapGenerator.rb" "import_tf.rb"
+		 "KLayoutLayerPropertiesFileGenerator.rb")
     script_list+=("${LAYER_NAME_MAPPER}")
     for script_name in "${script_list[@]}"; do
 	file_path=${klayout_file_path}/${script_name}

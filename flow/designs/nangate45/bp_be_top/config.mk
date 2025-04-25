@@ -3,12 +3,6 @@ export DESIGN_NAME = bp_be_top
 export PLATFORM    = nangate45
 
 export SYNTH_HIERARCHICAL = 1
-#
-# RTL_MP Settings
-export RTLMP_MAX_INST = 30000
-export RTLMP_MIN_INST = 5000
-export RTLMP_MAX_MACRO = 12
-export RTLMP_MIN_MACRO = 4 
 
 export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NAME)/pickled.v \
                        $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/macros.v
@@ -31,6 +25,8 @@ export MACRO_PLACE_HALO = 10 10
 export PLACE_DENSITY_LB_ADDON = 0.10
 export TNS_END_PERCENT        = 100
 
+export CTS_CLUSTER_SIZE = 30
+export CTS_CLUSTER_DIAMETER = 50
 export SYNTH_MINIMUM_KEEP_SIZE = 3000
 
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/fastroute.tcl

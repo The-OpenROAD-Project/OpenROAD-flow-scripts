@@ -133,6 +133,15 @@ _installUbuntuPackages() {
         zlib1g \
         zlib1g-dev
 
+    packages=()
+    # Choose libstdc++ version
+    if _versionCompare $1 -ge 24.04; then
+        packages+=("libstdc++-14-dev")
+    elif _versionCompare $1 -ge 22.10; then
+        packages+=("libstdc++-12-dev")
+    fi
+    apt-get install -y --no-install-recommends ${packages[@]}
+
     # install KLayout
     if  [[ $1 == "rodete" ]]; then
         apt-get -y install --no-install-recommends klayout python3-pandas

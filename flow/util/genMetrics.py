@@ -51,6 +51,17 @@ def parse_args():
         "--output", "-o", required=False, default="metadata.json", help="Output file"
     )
     parser.add_argument("--hier", "-x", action="store_true", help="Hierarchical JSON")
+    parser.add_argument("--logs", help="Path to logs", default=None)
+    parser.add_argument(
+        "--reports",
+        help="Path to reports",
+        default=None,
+    )
+    parser.add_argument(
+        "--results",
+        help="Path to results",
+        default=None,
+    )
     args = parser.parse_args()
 
     return args
@@ -190,12 +201,10 @@ def merge_jsons(root_path, output, files):
         file.close()
 
 
-def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
+def extract_metrics(
+    cwd, platform, design, flow_variant, output, hier_json, logPath, rptPath, resultPath
+):
     baseRegEx = "^{}\n^-*\n^{}"
-
-    logPath = os.path.join(cwd, "logs", platform, design, flow_variant)
-    rptPath = os.path.join(cwd, "reports", platform, design, flow_variant)
-    resultPath = os.path.join(cwd, "results", platform, design, flow_variant)
 
     metrics_dict = defaultdict(dict)
     metrics_dict["run__flow__generate_date"] = now.strftime("%Y-%m-%d %H:%M")
@@ -404,7 +413,20 @@ if all_designs or len(designs) > 1 or len(flow_variants) > 1:
                     continue
                 print(f"Extract Metrics for {plt}, {des}, {variant}")
                 file = "/".join(["reports", plt, des, variant, "metrics.json"])
-                metrics, df = extract_metrics(cwd, plt, des, variant, file, args.hier)
+                logPath = os.path.join(cwd, "logs", plt, des, variant)
+                rptPath = os.path.join(cwd, "reports", plt, des, variant)
+                resultPath = os.path.join(cwd, "results", plt, des, variant)
+                metrics, df = extract_metrics(
+                    cwd,
+                    plt,
+                    des,
+                    variant,
+                    file,
+                    args.hier,
+                    logPath,
+                    rptPath,
+                    resultPath,
+                )
                 all_d.append(metrics)
                 if all_df.shape[0] == 0:
                     all_df = df
@@ -424,4 +446,7 @@ else:
         args.flowVariant,
         args.output,
         args.hier,
+        args.logs,
+        args.reports,
+        args.results,
     )

@@ -41,7 +41,7 @@ proc read_timing {input_file} {
   if {$design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef]} {
     log_cmd read_spef $::env(RESULTS_DIR)/6_final.spef
   } elseif {$design_stage >= 5} {
-    if { [grt::have_routes] } {
+    if { [log_cmd grt::have_routes] } {
       log_cmd estimate_parasitics -global_routing
     } else {
       puts "No global routing results available, skipping estimate_parasitics"
@@ -51,10 +51,8 @@ proc read_timing {input_file} {
     log_cmd estimate_parasitics -placement
   }
 
-  puts -nonewline "Populating timing paths..."
   # Warm up OpenSTA, so clicking on timing related buttons reacts faster
-  set _tmp [find_timing_paths]
-  puts "OK"
+  set _tmp [log_cmd find_timing_paths]
 }
 
 if {[ord::openroad_gui_compiled]} {
@@ -66,7 +64,7 @@ if {[env_var_equals GUI_TIMING 1]} {
   puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
   read_timing $input_file
   if {[gui::enabled]} {
-    gui::select_chart "Endpoint Slack"
+    log_cmd gui::select_chart "Endpoint Slack"
     log_cmd gui::update_timing_report
   }
 }

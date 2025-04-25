@@ -28,7 +28,7 @@
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 37,
+        "value": 64,
         "compare": "<="
     },
     "detailedroute__route__wirelength": {

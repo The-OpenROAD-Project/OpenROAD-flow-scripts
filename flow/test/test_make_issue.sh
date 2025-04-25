@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # make issue smoketest
 set -ue -o pipefail
 

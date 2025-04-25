@@ -17,6 +17,10 @@ Copy the following files into ~/.klayout/ruby
 - GenericLayerNameMapper.rb
 - KLayoutLayerMapGenerator.rb
 - KLayoutLayerPropertiesFileGenerator.rb
+- LEFViaData.rb
+- LEFNamedObject.rb
+- LEFVia.rb
+- LEFLayer.rb
 
 Also make sure that you have the import_tf.rb file from [tf_import](https://github.com/klayoutmatthias/tf_import) copied there as well. If you follow the instructions at [Guide to Integrate a New Platform into the OpenROAD Flow](https://openroad-flow-scripts.readthedocs.io/en/latest/contrib/PlatformBringUp.html#klayout-properties-file), it will be installed in ~/.klayout/salt/tf_import. Just copy it over to ~/.klayout/ruby, so that the scripts can find it.
 

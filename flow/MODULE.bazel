@@ -7,23 +7,13 @@ module(
 )
 
 bazel_dep(name = "bazel-orfs")
+
 # To bump version, run: bazelisk run @bazel-orfs//:bump
 git_override(
     module_name = "bazel-orfs",
-    commit = "9b00feceb3f2d695787c45708131a5e39e30d08e",
+    commit = "126765508161956f8f82ae169084da0235230637",
     remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
 )
-
-# Read: https://github.com/The-OpenROAD-Project/bazel-orfs?tab=readme-ov-file#usage
-#
-# TL;DR
-#
-# 1. uncomment below
-# 2. comment git_override() above
-#
-#local_path_override(
-#   module_name = "bazel-orfs", path = "../bazel-orfs"
-#)
 
 bazel_dep(name = "rules_python", version = "0.31.0")
 
@@ -41,7 +31,26 @@ pip.parse(
 )
 use_repo(pip, "orfs-pip")
 
+# HACK! While we're waiting for OpenROAD to switch to bzlmod
+new_local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
+
+new_local_repository(
+    name = "openroad",
+    build_file_content = """
+exports_files(["openroad"],
+visibility = ["//visibility:public"],
+)
+filegroup(
+    name = "all",
+    data = glob(["openroad.runfiles/**/*"]),
+    visibility = ["//visibility:public"],
+)
+""",
+    path = "../tools/OpenROAD/bazel-out/k8-opt/bin",
+)
+
 orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
+
 # To bump version, run: bazelisk run @bazel-orfs//:bump
 orfs.default(
     # Check out the version you want to test and make any modifications locally:
@@ -52,17 +61,25 @@ orfs.default(
     # and update "image" to point to the local image.
 
     # Official image https://hub.docker.com/r/openroad/orfs/tags
-    image = "docker.io/openroad/orfs:v3.0-2763-gc7a4e7ed",
+    image = "docker.io/openroad/orfs:v3.0-2883-ge22e4fc7",
     # Use local files instead of docker image
     makefile = "//:makefile",
     makefile_yosys = "//:makefile_yosys",
     # TODO once openroad is switched to MODULE.bazel, use
     # local_path_override(module_name = "openroad", path = "../tools/OpenROAD")
     # to point to the local openroad Bazel module instead of
-    # getting the openroad binary from the docker image.
-    openroad = "@docker_orfs//:openroad",
+    # getting the openroad binary from the docker image, supports GUI.
+    #
+    # openroad = "@docker_orfs//:openroad",
+
+    # Use locally built OpenROAD while we're waiting for OpenROAD
+    # to bzlmod, no GUI for now.
+    #
+    # cd ../tools/OpenROAD
+    # bazelisk build -c opt :openroad
+    openroad = "//test:openroad",
     pdk = "//:asap7",
-    sha256 = "3e42fe9dc5c71a79ccfce479a841a5f4d4ee327347483b2e0a64b3de9af4d390",
+    sha256 = "6ad0b1b7fbf290f33f0050ead4da181c83c6e8a9337b65f5f9cff65d67788424",
 )
 use_repo(orfs, "com_github_nixos_patchelf_download")
 use_repo(orfs, "docker_orfs")
