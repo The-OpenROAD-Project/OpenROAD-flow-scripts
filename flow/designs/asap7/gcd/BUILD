@@ -17,5 +17,4 @@ orfs_flow(
         "SDC_FILE": [":constraint.sdc"],
     },
     verilog_files = ["//flow/designs/src/gcd:verilog"],
-    tags = ["manual"],
 )
