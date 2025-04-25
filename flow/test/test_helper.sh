@@ -76,6 +76,13 @@ if [ $ret -eq 0 ] && grep -q 'power:' <(echo $TARGETS); then
   $__make power 2>&1 | tee -a "$LOG_FILE"
   ret=$(( ret + $? ))
 fi
+
+# Fast AT Smoke Tests
+if [ "${DESIGN_NAME}" = "gcd" ] && [ "${PLATFORM}" = "asap7" ]; then
+  echo "Start fast autotuner smoke test"
+  ./test/test_fast_autotuner.sh
+  ret=$(( ret + $? ))
+fi
 set -x
 
 # Run Autotuner CI specifically for gcd on selected platforms.
