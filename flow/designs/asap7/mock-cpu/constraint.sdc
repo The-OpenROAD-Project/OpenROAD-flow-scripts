@@ -2,8 +2,7 @@
 #
 # This fifo is from http://www.sunburst-design.com/papers/CummingsSNUG2002SJ_FIFO1.pdf
 
-set script_dir [file dirname [info script]]
-source $script_dir/../../src/mock-array/util.tcl
+source designs/src/mock-array/util.tcl
 
 set sdc_version 2.0
 
