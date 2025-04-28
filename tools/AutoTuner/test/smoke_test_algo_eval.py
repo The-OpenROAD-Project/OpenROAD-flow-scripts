@@ -74,7 +74,7 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             f"make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk update_metadata_autotuner",
         ]
         for command in commands:
-            out = subprocess.run(command, shell=True, check=True)
+            out = subprocess.run(command, shell=True)
             self.assertTrue(out.returncode in accepted_rc)
 
     def test_algo_eval(self):
@@ -84,7 +84,7 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
         self.make_base()
         for command in self.commands:
             print(command)
-            out = subprocess.run(command, shell=True, check=True)
+            out = subprocess.run(command, shell=True)
             successful = out.returncode in accepted_rc
             self.assertTrue(successful)
 

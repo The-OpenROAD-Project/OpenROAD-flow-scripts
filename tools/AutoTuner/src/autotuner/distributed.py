@@ -106,6 +106,7 @@ ORFS_FLOW_DIR = os.path.abspath(
 )
 # Global variable for args
 args = None
+sys.exit(16)
 
 
 class AutoTunerBase(tune.Trainable):

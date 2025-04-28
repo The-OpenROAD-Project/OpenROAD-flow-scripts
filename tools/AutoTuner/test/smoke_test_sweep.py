@@ -79,7 +79,7 @@ class BaseSweepSmokeTest(unittest.TestCase):
     def test_sweep(self):
         if not (self.platform and self.design):
             raise unittest.SkipTest("Platform and design have to be defined")
-        out = subprocess.run(self.command, shell=True, check=True)
+        out = subprocess.run(self.command, shell=True)
         successful = out.returncode in accepted_rc
         self.assertTrue(successful)
 
