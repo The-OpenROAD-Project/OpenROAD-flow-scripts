@@ -97,7 +97,7 @@ filegroup(
         "io.tcl",
     ],
     data = [
-        "//designs/src/mock-array:util.tcl",
+        "//flow/designs/src/mock-array:util.tcl",
     ],
     visibility = [":__subpackages__"],
 )
@@ -137,7 +137,7 @@ orfs_flow(
         "IO_CONSTRAINTS": [":mock-array-io"],
         # "MACRO_PLACEMENT_TCL": [":macro-placement.tcl"],
     },
-    verilog_files = ["//designs/src/mock-array:verilog"],
+    verilog_files = ["//flow/designs/src/mock-array:verilog"],
 )
 
 filegroup(
@@ -146,7 +146,7 @@ filegroup(
         "Element/io.tcl",
     ],
     data = [
-        "//designs/src/mock-array:util.tcl",
+        "//flow/designs/src/mock-array:util.tcl",
     ],
     visibility = [":__subpackages__"],
 )
@@ -182,5 +182,5 @@ orfs_flow(
         "IO_CONSTRAINTS": [":mock-array-element-io"],
         "SDC_FILE": [":mock-array-constraints"],
     },
-    verilog_files = ["//designs/src/mock-array:verilog"],
+    verilog_files = ["//flow/designs/src/mock-array:verilog"],
 )

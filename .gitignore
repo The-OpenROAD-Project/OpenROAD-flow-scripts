@@ -97,3 +97,6 @@ build
 
 # autotuner artifacts
 metadata-base-at.json
+
+user.bazelrc
+bazel-*
