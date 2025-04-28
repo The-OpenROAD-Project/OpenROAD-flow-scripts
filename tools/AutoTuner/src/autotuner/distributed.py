@@ -633,7 +633,7 @@ def main():
         # if all runs have failed
         if analysis.best_result[METRIC] == ERROR_METRIC:
             print("[ERROR TUN-0016] No successful runs found.")
-            sys.exit(1)
+            sys.exit(16)
     elif args.mode == "sweep":
         sweep()
 
