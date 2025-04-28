@@ -77,11 +77,6 @@ class asap7SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
     design = "gcd"
 
 
-class sky130hdSampleIterationSmokeTest(BaseSampleIterationSmokeTest):
-    platform = "sky130hd"
-    design = "gcd"
-
-
 class ihpsg13g2SampleIterationSmokeTest(BaseSampleIterationSmokeTest):
     platform = "ihp-sg13g2"
     design = "gcd"

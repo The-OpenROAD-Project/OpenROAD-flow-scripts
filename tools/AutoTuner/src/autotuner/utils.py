@@ -307,8 +307,14 @@ def openroad(
             base_dir, f"flow/reports/{args.platform}/{args.design}", flow_variant
         )
     )
+    results_path = os.path.abspath(
+        os.path.join(
+            base_dir, f"flow/results/{args.platform}/{args.design}", flow_variant
+        )
+    )
     os.makedirs(log_path, exist_ok=True)
     os.makedirs(report_path, exist_ok=True)
+    os.makedirs(results_path, exist_ok=True)
 
     if install_path is None:
         install_path = os.path.join(base_dir, "tools/install")
@@ -338,6 +344,9 @@ def openroad(
     metrics_command += f" -v {flow_variant}"
     metrics_command += f" -d {args.design}"
     metrics_command += f" -p {args.platform}"
+    metrics_command += f" --logs {log_path}"
+    metrics_command += f" --reports {report_path}"
+    metrics_command += f" --results {results_path}"
     metrics_command += f" -o {metrics_file}"
     run_command(
         args,
