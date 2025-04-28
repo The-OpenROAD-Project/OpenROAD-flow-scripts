@@ -37,25 +37,52 @@ proc write_rc_csv { filename } {
   upvar 1 grt rc_var2
   upvar 1 rcx rc_var3
 
-  set max_layer_name $::env(MAX_ROUTING_LAYER)
-  set max_layer [[[ord::get_db_tech] findLayer $max_layer_name] getRoutingLevel]
-  set min_layer_name $::env(MIN_ROUTING_LAYER)
-  set min_layer [[[ord::get_db_tech] findLayer $min_layer_name] getRoutingLevel]
+  set tech [ord::get_db_tech]
   set stream [open $filename "w"]
-  foreach net [get_nets *] {
-    set net_name [get_full_name $net]
-    lassign $rc_var1($net_name) wire_res1 wire_cap1
-    lassign $rc_var2($net_name) wire_res2 wire_cap2
-    lassign $rc_var3($net_name) wire_res3 wire_cap3
-    puts -nonewline $stream "[get_full_name $net],[format %.3e $wire_res1],[format %.3e $wire_cap1],[format %.3e $wire_res2],[format %.3e $wire_cap2],[format %.3e $wire_res3],[format %.3e $wire_cap3]"
-    set db_net [sta::sta_to_db_net $net]
-    set layer_lengths [grt::route_layer_lengths $db_net]
-    for {set layer $min_layer} {$layer <= $max_layer} {incr layer} {
-      set layer_name [[[ord::get_db_tech] findRoutingLayer $layer] getName]
-      set length [lindex $layer_lengths $layer]
-      puts -nonewline $stream ",$layer_name,[ord::dbu_to_microns $length]"
+
+  puts -nonewline $stream "# stack:"
+  foreach layer [[ord::get_db_tech] getLayers] {
+    set routing [expr [$layer getRoutingLevel] != 0]
+    set is_routing([$layer getNumber]) $routing
+    puts -nonewline $stream " [$layer getName]"
+    if $routing {
+      puts -nonewline $stream "(routing)"
     }
-    puts $stream ""
+  }
+  puts $stream "" 
+
+  set use_drt_data [env_var_exists_and_non_empty CORRELATE_DRT_WIRELENGTH]
+
+  foreach net [get_nets *] {
+    set db_net [sta::sta_to_db_net $net]
+    set type [$db_net getSigType]
+    if {([string equal $type "CLOCK"] || [string equal $type "SIGNAL"]) &&
+        (!$use_drt_data || [$db_net getWire] ne "NULL")} {
+      set net_name [get_full_name $net]
+      lassign $rc_var1($net_name) wire_res1 wire_cap1
+      lassign $rc_var2($net_name) wire_res2 wire_cap2
+      lassign $rc_var3($net_name) wire_res3 wire_cap3
+      puts -nonewline $stream "[get_full_name $net],[expr {[string equal $type "CLOCK"] ? "clock" : "signal"}],"
+      puts -nonewline $stream "[format %.3e $wire_res1],[format %.3e $wire_cap1],[format %.3e $wire_res2],[format %.3e $wire_cap2],[format %.3e $wire_res3],[format %.3e $wire_cap3]"
+      set db_net [sta::sta_to_db_net $net]
+
+      if $use_drt_data {
+        set layer_lengths [drt::route_layer_lengths [$db_net getWire]]
+      } else {
+        set layer_lengths [grt::route_layer_lengths $db_net]
+      }
+
+      for {set layer 0} {$layer < [$tech getLayerCount]} {incr layer} {
+        set length [lindex $layer_lengths $layer]
+        if $is_routing($layer) {
+          puts -nonewline $stream ",[ord::dbu_to_microns $length]"
+        } else {
+          puts -nonewline $stream ",$length"
+        }  
+      }
+
+      puts $stream ""
+    }
   }
   close $stream
 }
@@ -73,19 +100,7 @@ proc record_wire_rc { var_name } {
 
 # Only works or makes sense for 2 pin nets.
 proc net_wire_res { net } {
-  set pins [get_pins -of_object $net]
-  if { [llength $pins] == 2 } {
-    lassign $pins pin1 pin2
-    if { [$pin1 is_driver] } {
-      set drvr $pin1
-    } else {
-      set drvr $pin2
-    }
-    lassign [sta::find_pi_elmore $drvr rise max] c2 rpi c1
-    return $rpi
-  } else {
-    return 0.0
-  }
+  return [rsz::sum_parasitic_network_resist $net]
 }
 
 proc net_wire_cap { net } {
