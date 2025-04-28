@@ -232,7 +232,7 @@ _help() {
     cat <<EOF
 
 All arguments and flags are only applicable for OpenROAD dependencies
-Usage: $0
+Usage: $0 -all
                                 # Installs all of OpenROAD's dependencies no
                                 #     need to run -base or -common. Requires
                                 #     privileged access.
