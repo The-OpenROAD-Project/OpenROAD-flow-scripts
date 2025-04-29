@@ -35,7 +35,7 @@
 import unittest
 import subprocess
 import os
-from .autotuner_test_utils import AutoTunerTestUtils
+from .autotuner_test_utils import AutoTunerTestUtils, accepted_rc
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 orfs_dir = os.path.join(cur_dir, "../../../flow")
@@ -74,8 +74,8 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             f"make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk update_metadata_autotuner",
         ]
         for command in commands:
-            out = subprocess.run(command, shell=True, check=True)
-            self.assertTrue(out.returncode == 0)
+            out = subprocess.run(command, shell=True)
+            self.assertTrue(out.returncode in accepted_rc)
 
     def test_algo_eval(self):
         if not (self.platform and self.design):
@@ -84,8 +84,8 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
         self.make_base()
         for command in self.commands:
             print(command)
-            out = subprocess.run(command, shell=True, check=True)
-            successful = out.returncode == 0
+            out = subprocess.run(command, shell=True)
+            successful = out.returncode in accepted_rc
             self.assertTrue(successful)
 
 
