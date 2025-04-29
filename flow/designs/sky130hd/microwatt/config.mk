@@ -38,6 +38,8 @@ export PLACE_DENSITY = 0.21
 # CTS tuning
 export CTS_BUF_DISTANCE = 600
 export SKIP_GATE_CLONING = 1
+export CTS_CLUSTER_SIZE = 10
+export CTS_CLUSTER_DIAMETER = 50
 
 export SETUP_SLACK_MARGIN = 0.2
 
