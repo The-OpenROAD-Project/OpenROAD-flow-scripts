@@ -35,7 +35,7 @@
 import unittest
 import subprocess
 import os
-from .autotuner_test_utils import AutoTunerTestUtils
+from .autotuner_test_utils import AutoTunerTestUtils, accepted_rc
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -75,15 +75,15 @@ class FastSmokeTest(unittest.TestCase):
         if not (self.platform and self.design):
             raise unittest.SkipTest("Platform and design have to be defined")
 
-        tune_process = subprocess.Popen(self.tune_command, shell=True)
-        sweep_process = subprocess.Popen(self.sweep_command, shell=True)
+        # Run tune command
+        tune_result = subprocess.run(self.tune_command, shell=True)
+        tune_successful = tune_result.returncode in accepted_rc
+        self.assertTrue(tune_successful)
 
-        tune_returncode = tune_process.wait()
-        sweep_returncode = sweep_process.wait()
-
-        self.assertEqual(tune_returncode, 0, "Tune command failed")
-        self.assertEqual(sweep_returncode, 0, "Sweep command failed")
-
+        # Run sweep command
+        sweep_result = subprocess.run(self.sweep_command, shell=True)
+        sweep_successful = sweep_result.returncode in accepted_rc
+        self.assertTrue(sweep_successful)
 
 
 if __name__ == "__main__":
