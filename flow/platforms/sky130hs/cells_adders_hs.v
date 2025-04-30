@@ -1,5 +1,5 @@
 
-(* techmap_celltype = "$fa" *)
+(* abc9_box, lib_whitebox, techmap_celltype = "$fa" *)
 module _80_tech_fa (A, B, C, X, Y);
   parameter WIDTH = 1;
   (* force_downto *)
