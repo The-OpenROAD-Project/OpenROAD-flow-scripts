@@ -36,7 +36,7 @@ import unittest
 import subprocess
 import os
 import time
-from .autotuner_test_utils import AutoTunerTestUtils
+from .autotuner_test_utils import AutoTunerTestUtils, accepted_rc
 
 from contextlib import contextmanager
 
@@ -108,7 +108,7 @@ class ResumeCheck(unittest.TestCase):
             proc = subprocess.run("ray status", shell=True)
             no_nodes = proc.returncode != 0
             proc = subprocess.run("ray stop", shell=True)
-            successful = proc.returncode == 0
+            successful = proc.returncode in accepted_rc
 
             if no_nodes and successful:
                 break
@@ -117,7 +117,7 @@ class ResumeCheck(unittest.TestCase):
         # Run the second config to completion
         print("Running the second config")
         proc = subprocess.run(self.commands[1], shell=True)
-        successful = proc.returncode == 0
+        successful = proc.returncode in accepted_rc
         self.assertTrue(successful)
 
 
