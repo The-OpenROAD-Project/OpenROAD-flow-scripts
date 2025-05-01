@@ -35,7 +35,6 @@
 import unittest
 import subprocess
 import os
-import shutil
 from .autotuner_test_utils import AutoTunerTestUtils, accepted_rc
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
@@ -45,13 +44,15 @@ orfs_dir = os.path.join(cur_dir, "../../../flow")
 class BaseAlgoEvalSmokeTest(unittest.TestCase):
     platform = ""
     design = ""
+    flow_variant = "smoke-test-algo-eval"
 
     def setUp(self):
         design_path = f"../../../flow/designs/{self.platform}/{self.design}"
-        report_path = f"../../../flow/reports/{self.platform}/{self.design}"
         self.config = os.path.join(cur_dir, f"{design_path}/autotuner.json")
-        self.experiment = f"smoke-test-algo-eval-{self.platform}"
-        self.reference = os.path.join(cur_dir, f"{design_path}/metadata-base-at.json")
+        self.experiment = f"{self.flow_variant}-{self.platform}"
+        self.reference = os.path.join(
+            cur_dir, f"{design_path}/metadata-{self.flow_variant}-at.json"
+        )
         # note for ppa-improv, you need to also add in reference file (--reference)
         _algo = ["hyperopt", "ax", "optuna", "pbt", "random"]
         _eval = ["default", "ppa-improv"]
@@ -68,17 +69,14 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             f" --reference {self.reference}"
             for a, e in self.matrix
         ]
-        # Make a file copy of the original metadata.json
-        self.metadata = os.path.join(cur_dir, f"{report_path}/metadata.json")
-        shutil.copyfile(self.metadata, self.metadata + ".orig")
 
     def make_base(self):
-        commands = [
-            f"make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk clean_all",
-            f"make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk EQUIVALENCE_CHECK=0",
-            f"make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk update_metadata_autotuner",
+        base_commands = [
+            f"FLOW_VARIANT={self.flow_variant} make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk clean_all",
+            f"FLOW_VARIANT={self.flow_variant} make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk EQUIVALENCE_CHECK=0",
+            f"FLOW_VARIANT={self.flow_variant} make -C {orfs_dir} DESIGN_CONFIG=./designs/{self.platform}/{self.design}/config.mk update_metadata_autotuner",
         ]
-        for command in commands:
+        for command in base_commands:
             out = subprocess.run(command, shell=True)
             self.assertTrue(out.returncode in accepted_rc)
 
@@ -92,10 +90,6 @@ class BaseAlgoEvalSmokeTest(unittest.TestCase):
             out = subprocess.run(command, shell=True)
             successful = out.returncode in accepted_rc
             self.assertTrue(successful)
-
-        # On successful run, restore the metadata.json file
-        shutil.copyfile(self.metadata + ".orig", self.metadata)
-        os.remove(self.metadata + ".orig")
 
 
 class asap7AlgoEvalSmokeTest(BaseAlgoEvalSmokeTest):
