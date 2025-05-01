@@ -1,8 +1,22 @@
 @Library('utils@orfs-v2.3.1') _
 
 node {
+    
+    def isDefaultBranch = (env.BRANCH_NAME == 'master') 
+    def daysToKeep = '20';
+    def numToKeep = (isDefaultBranch ? '-1' : '10');
 
-    properties([copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME)]);
+    properties([
+        copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
+
+        buildDiscarder(logRotator(
+            daysToKeepStr:         daysToKeep,
+            artifactDaysToKeepStr: daysToKeep, 
+
+            numToKeepStr:          numToKeep,
+            artifactNumToKeepStr:  numToKeep 
+        ))
+    ]);
 
     stage('Checkout') {
         if (env.BRANCH_NAME && env.BRANCH_NAME == 'master') {
