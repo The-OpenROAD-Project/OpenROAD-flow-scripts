@@ -2,7 +2,14 @@
 
 node {
 
-    properties([copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME)]);
+    properties([
+        copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
+
+        buildDiscarder(logRotator(
+            daysToKeepStr: '30',
+            artifactDaysToKeepStr: '30'
+        ))
+    ]);
 
     stage('Checkout') {
         if (env.BRANCH_NAME && env.BRANCH_NAME == 'master') {

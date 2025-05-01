@@ -2,7 +2,14 @@
 
 node {
 
-    properties([copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME)]);
+    properties([
+        copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
+
+        buildDiscarder(logRotator(
+            daysToKeepStr: '20',
+            artifactDaysToKeepStr: '20'
+        ))
+    ]);
 
     stage('Checkout ORFS') {
         checkout([
