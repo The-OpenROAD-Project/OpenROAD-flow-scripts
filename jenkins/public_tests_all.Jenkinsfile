@@ -3,7 +3,7 @@
 node {
     
     def isDefaultBranch = (env.BRANCH_NAME == 'master') 
-    def daysToKeep = (isDefaultBranch ? '30' : '-1');
+    def daysToKeep = (isDefaultBranch ? '20' : '-1');
     def numToKeep = (isDefaultBranch ? '-1' : '10');
 
     properties([
