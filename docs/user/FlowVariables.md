@@ -75,9 +75,10 @@ configuration file.
 | <a name="CORNER"></a>CORNER| PVT corner library selection. Only available for ASAP7 and GF180 PDKs.| | |
 | <a name="CTS_ARGS"></a>CTS_ARGS| Override `clock_tree_synthesis` arguments.| | |
 | <a name="CTS_BUF_DISTANCE"></a>CTS_BUF_DISTANCE| Distance (in microns) between buffers.| | |
-| <a name="CTS_BUF_LIST"></a>CTS_BUF_LIST| List of cells used to construct the clock tree.| | |
+| <a name="CTS_BUF_LIST"></a>CTS_BUF_LIST| List of cells used to construct the clock tree. Overrides buffer inference.| | |
 | <a name="CTS_CLUSTER_DIAMETER"></a>CTS_CLUSTER_DIAMETER| Maximum diameter (in microns) of sink cluster.| 20| |
 | <a name="CTS_CLUSTER_SIZE"></a>CTS_CLUSTER_SIZE| Maximum number of sinks per cluster.| 50| |
+| <a name="CTS_LIB_NAME"></a>CTS_LIB_NAME| Name of the Liberty library to use in selecting the clock buffers.| | |
 | <a name="CTS_SNAPSHOT"></a>CTS_SNAPSHOT| Creates ODB/SDC files prior to clock net and setup/hold repair.| | |
 | <a name="DESIGN_NAME"></a>DESIGN_NAME| The name of the top-level module of the design.| | |
 | <a name="DESIGN_NICKNAME"></a>DESIGN_NICKNAME| DESIGN_NICKNAME just changes the directory name that ORFS outputs to be DESIGN_NICKNAME instead of DESIGN_NAME in case DESIGN_NAME is unwieldy or conflicts with a different design.| | |
@@ -309,6 +310,7 @@ configuration file.
 - [CTS_BUF_LIST](#CTS_BUF_LIST)
 - [CTS_CLUSTER_DIAMETER](#CTS_CLUSTER_DIAMETER)
 - [CTS_CLUSTER_SIZE](#CTS_CLUSTER_SIZE)
+- [CTS_LIB_NAME](#CTS_LIB_NAME)
 - [CTS_SNAPSHOT](#CTS_SNAPSHOT)
 - [DETAILED_METRICS](#DETAILED_METRICS)
 - [EQUIVALENCE_CHECK](#EQUIVALENCE_CHECK)
