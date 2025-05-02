@@ -9,7 +9,7 @@ export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/ibex_sv/*.sv)) \
 export VERILOG_INCLUDE_DIRS = \
     $(DESIGN_HOME)/src/ibex_sv/vendor/lowrisc_ip/prim/rtl/
 
-export SYNTH_USE_SLANG = 1
+export SYNTH_HDL_FRONTEND = slang
 
 # if FLOW_VARIANT == pos_slack, use an SDC file that has a larger clock
 # resulting in positive slack

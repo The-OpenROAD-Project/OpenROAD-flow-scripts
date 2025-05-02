@@ -43,7 +43,7 @@ proc read_design_sources {} {
     set vIdirsArgs [join $vIdirsArgs]
   }
 
-  if {[env_var_equals SYNTH_USE_SLANG 1]} {
+  if {[env_var_equals SYNTH_HDL_FRONTEND slang]} {
     # slang requires all files at once
     plugin -i slang
     yosys read_slang -D SYNTHESIS --keep-hierarchy --compat=vcs \
@@ -51,13 +51,15 @@ proc read_design_sources {} {
       {*}$vIdirsArgs {*}$::env(VERILOG_FILES) {*}$::env(VERILOG_DEFINES)
     # Workaround for yosys-slang#119
     setattr -unset init
-  } else {
+  } elseif {![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND]} {
     verilog_defaults -push
     verilog_defaults -add {*}$::env(VERILOG_DEFINES)
     foreach file $::env(VERILOG_FILES) {
       read_verilog -defer -sv {*}$vIdirsArgs $file
     }
     verilog_defaults -pop
+  } else {
+    error "Unrecognized HDL frontend: $::env(SYNTH_HDL_FRONTEND)" 
   }
 
   # Read platform specific mapfile for OPENROAD_CLKGATE cells

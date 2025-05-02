@@ -169,10 +169,11 @@ SYNTH_MEMORY_MAX_BITS:
   default: 4096
   stages:
     - synth
-SYNTH_USE_SLANG:
+SYNTH_HDL_FRONTEND:
   description: >
-    Use yosys-slang for read-in of SystemVerilog design.
-  default: 0
+    Select an alternative language frontend to ingest the design. Available option
+    is "slang". If the variable is empty, design is read with the Yosys read_verilog
+    command.
   stages:
     - synth
 SYNTH_BLACKBOXES:
