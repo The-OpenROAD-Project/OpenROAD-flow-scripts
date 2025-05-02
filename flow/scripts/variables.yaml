@@ -720,7 +720,7 @@ CTS_BUF_DISTANCE:
     - cts
 CTS_BUF_LIST:
   description: |
-    List of cells used to construct the clock tree.
+    List of cells used to construct the clock tree. Overrides buffer inference.
   stages:
     - cts
 CTS_CLUSTER_DIAMETER:
@@ -737,6 +737,11 @@ CTS_CLUSTER_SIZE:
   stages:
     - cts
   tunable: 1
+CTS_LIB_NAME:
+  description: |
+    Name of the Liberty library to use in selecting the clock buffers.
+  stages:
+    - cts
 CTS_SNAPSHOT:
   description: |
     Creates ODB/SDC files prior to clock net and setup/hold repair.
