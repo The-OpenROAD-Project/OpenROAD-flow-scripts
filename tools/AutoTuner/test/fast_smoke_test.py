@@ -54,6 +54,8 @@ class FastSmokeTest(unittest.TestCase):
             "./files/fast-at-sweep.json",
         )
         self.exec = AutoTunerTestUtils.get_exec_cmd()
+
+        # Tune command
         self.tune_command = (
             f"{self.exec}"
             f" --design {self.design}"
@@ -62,12 +64,18 @@ class FastSmokeTest(unittest.TestCase):
             f" --config {self.tune_config}"
             f" tune --samples 1"
         )
+
+        # Sweep command
+        # limit jobs because ray.get() does not terminate if jobs > number of samples
+        core = os.cpu_count()
+        self.jobs = 4 if core >= 4 else core
         self.sweep_command = (
             f"{self.exec}"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --experiment fast-smke-test-sweep"
             f" --config {self.sweep_config}"
+            f" --jobs {self.jobs}"
             f" sweep"
         )
 
