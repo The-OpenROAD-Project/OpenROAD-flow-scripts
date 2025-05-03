@@ -565,9 +565,7 @@ def sweep():
         temp = dict()
         for value in parameter:
             temp.update(value)
-        queue.put(
-            [args, repo_dir, temp, LOCAL_DIR, SDC_ORIGINAL, FR_ORIGINAL, INSTALL_PATH]
-        )
+        queue.put([args, repo_dir, temp, SDC_ORIGINAL, FR_ORIGINAL, INSTALL_PATH])
     workers = [consumer.remote(queue) for _ in range(args.jobs)]
     print("[INFO TUN-0009] Waiting for results.")
     ray.get(workers)
