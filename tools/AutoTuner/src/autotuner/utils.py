@@ -40,10 +40,10 @@ import re
 import yaml
 import subprocess
 import sys
+import uuid
+import time
 from multiprocessing import cpu_count
 from datetime import datetime
-from uuid import uuid4 as uuid
-from time import time
 
 import numpy as np
 import ray
@@ -624,15 +624,15 @@ def openroad_distributed(
     )
     if variant is None:
         variant = config.replace(" ", "_").replace("=", "_")
-    t = time()
+    t = time.time()
     metric_file = openroad(
         args=args,
         base_dir=repo_dir,
         parameters=config,
-        flow_variant=f"{uuid()}-{variant}",
+        flow_variant=f"{uuid.uuid4()}-{variant}" if variant else f"{uuid.uuid4()}",
         install_path=install_path,
     )
-    duration = time() - t
+    duration = time.time() - t
     return metric_file, duration
 
 
