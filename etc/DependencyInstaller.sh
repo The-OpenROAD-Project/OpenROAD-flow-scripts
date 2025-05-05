@@ -10,7 +10,7 @@ else
 fi
 
 # package versions
-klayoutVersion=0.28.8
+klayoutVersion=0.30.1
 verilatorVersion=5.026
 
 _versionCompare() {
@@ -94,7 +94,7 @@ _installUbuntuCleanUp() {
 }
 
 _installKlayoutDependenciesUbuntuAarch64() {
-    echo "Installing Klayout dependancies"
+    echo "Installing Klayout dependencies"
     export DEBIAN_FRONTEND=noninteractive
     apt-get -y update
     apt-get -y install  build-essential \
@@ -116,6 +116,7 @@ _installUbuntuPackages() {
         help2man \
         libfl-dev \
         libfl2 \
+        libgit2-dev \
         libgoogle-perftools-dev \
         libqt5multimediawidgets5 \
         libqt5opengl5 \
@@ -169,7 +170,7 @@ _installUbuntuPackages() {
             if [[ $1 == 20.04 ]]; then
                 klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
             else
-                klayoutChecksum=db751264399706a23d20455bb7624264
+                klayoutChecksum=11953ce5009a0e83f9840b506f80df49
             fi
             wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
             md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
