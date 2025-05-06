@@ -1,7 +1,3 @@
-#
-# TODO before enablement: pipe VERILOG_DEFINES through to yosys
-#
-
 export PLATFORM               = asap7
 
 export DESIGN_NAME            = cva6
@@ -197,4 +193,4 @@ export PLACE_DENSITY          = 0.50
 export SKIP_LAST_GASP ?= 1
 
 
-export SYNTH_USE_SLANG = 1
+export SYNTH_HDL_FRONTEND = slang

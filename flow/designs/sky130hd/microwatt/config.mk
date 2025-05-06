@@ -8,8 +8,8 @@ export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*
 
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export DIE_AREA   = 0 0 2920 3520
-export CORE_AREA  = 10 10 2910 3510
+export DIE_AREA   = 0 0 3020 3610
+export CORE_AREA  = 10 10 3010 3610
 
 export PLACE_DENSITY ?= 0.2
 
@@ -33,7 +33,7 @@ export MACRO_BLOCKAGE_HALO = 151
 
 # There's less space due to the adapted blockage halos, so GPL requires a
 # higher density in order to run.
-export PLACE_DENSITY = 0.21
+export PLACE_DENSITY = 0.19
 
 # CTS tuning
 export CTS_BUF_DISTANCE = 600
