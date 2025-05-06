@@ -32,7 +32,6 @@ up the environment. The `make` command runs from RTL-GDSII generation for defaul
 ``` shell
 source ./env.sh
 yosys -help
-yosys -m slang -p "slang_version"
 openroad -help
 cd flow
 make

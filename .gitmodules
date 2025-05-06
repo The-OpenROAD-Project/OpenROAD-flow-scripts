@@ -4,6 +4,3 @@
 [submodule "tools/OpenROAD"]
 	path = tools/OpenROAD
 	url = ../OpenROAD.git
-[submodule "tools/yosys-slang"]
-	path = tools/yosys-slang
-	url = https://github.com/povik/yosys-slang.git

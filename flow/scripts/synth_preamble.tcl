@@ -21,57 +21,38 @@ if {[env_var_exists_and_non_empty SYNTH_NETLIST_FILES]} {
   exit
 }
 
-proc read_checkpoint {file} {
-  # We are reading a Yosys checkpoint
-  if {[file extension $file] == ".json"} {
-    read_json $file
-  } else {
-    read_rtlil $file
-  }  
+# Setup verilog include directories
+set vIdirsArgs ""
+if {[env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS]} {
+  foreach dir $::env(VERILOG_INCLUDE_DIRS) {
+    lappend vIdirsArgs "-I$dir"
+  }
+  set vIdirsArgs [join $vIdirsArgs]
 }
 
-proc read_design_sources {} {
-  # We are reading Verilog sources
-  source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
 
-  # Setup verilog include directories
-  set vIdirsArgs ""
-  if {[env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS]} {
-    foreach dir $::env(VERILOG_INCLUDE_DIRS) {
-      lappend vIdirsArgs "-I$dir"
-    }
-    set vIdirsArgs [join $vIdirsArgs]
-  }
-
-  if {[env_var_equals SYNTH_HDL_FRONTEND slang]} {
-    # slang requires all files at once
-    plugin -i slang
-    yosys read_slang -D SYNTHESIS --keep-hierarchy --compat=vcs \
-      --ignore-assertions --top $::env(DESIGN_NAME) \
-      {*}$vIdirsArgs {*}$::env(VERILOG_FILES) {*}$::env(VERILOG_DEFINES)
-    # Workaround for yosys-slang#119
-    setattr -unset init
-  } elseif {![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND]} {
-    verilog_defaults -push
-    verilog_defaults -add {*}$::env(VERILOG_DEFINES)
-    foreach file $::env(VERILOG_FILES) {
-      read_verilog -defer -sv {*}$vIdirsArgs $file
-    }
-    verilog_defaults -pop
+# Read verilog files
+foreach file $::env(VERILOG_FILES) {
+  if {[file extension $file] == ".rtlil"} {
+    read_rtlil $file
+  } elseif {[file extension $file] == ".json"} {
+    read_json $file
   } else {
-    error "Unrecognized HDL frontend: $::env(SYNTH_HDL_FRONTEND)" 
+    read_verilog -defer -sv {*}$vIdirsArgs $file
   }
+}
 
-  # Read platform specific mapfile for OPENROAD_CLKGATE cells
-  if {[env_var_exists_and_non_empty CLKGATE_MAP_FILE]} {
-    read_verilog -defer $::env(CLKGATE_MAP_FILE)
-  }
+source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
 
-  if {[env_var_exists_and_non_empty SYNTH_BLACKBOXES]} {
-    hierarchy -check -top $::env(DESIGN_NAME)
-    foreach m $::env(SYNTH_BLACKBOXES) {
-      blackbox $m
-    }
+# Read platform specific mapfile for OPENROAD_CLKGATE cells
+if {[env_var_exists_and_non_empty CLKGATE_MAP_FILE]} {
+  read_verilog -defer $::env(CLKGATE_MAP_FILE)
+}
+
+if {[env_var_exists_and_non_empty SYNTH_BLACKBOXES]} {
+  hierarchy -check -top $::env(DESIGN_NAME)
+  foreach m $::env(SYNTH_BLACKBOXES) {
+    blackbox $m
   }
 }
 

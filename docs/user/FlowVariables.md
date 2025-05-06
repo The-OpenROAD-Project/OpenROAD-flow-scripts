@@ -183,7 +183,6 @@ configuration file.
 | <a name="SYNTH_ARGS"></a>SYNTH_ARGS| Optional synthesis variables for yosys.| -flatten| |
 | <a name="SYNTH_BLACKBOXES"></a>SYNTH_BLACKBOXES| List of cells treated as a black box by Yosys. With Bazel, this can be used to run synthesis in parallel for the large modules of the design.| | |
 | <a name="SYNTH_GUT"></a>SYNTH_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| | |
-| <a name="SYNTH_HDL_FRONTEND"></a>SYNTH_HDL_FRONTEND| Select an alternative language frontend to ingest the design. Available option is "slang". If the variable is empty, design is read with the Yosys read_verilog command.| | |
 | <a name="SYNTH_HIERARCHICAL"></a>SYNTH_HIERARCHICAL| Enable to Synthesis hierarchically, otherwise considered flat synthesis.| 0| |
 | <a name="SYNTH_KEEP_MODULES"></a>SYNTH_KEEP_MODULES| Mark modules to keep from getting removed in flattening.| | |
 | <a name="SYNTH_MEMORY_MAX_BITS"></a>SYNTH_MEMORY_MAX_BITS| Maximum number of bits for memory synthesis.| 4096| |
@@ -197,8 +196,7 @@ configuration file.
 | <a name="TIELO_CELL_AND_PORT"></a>TIELO_CELL_AND_PORT| Tie low cells used in Yosys synthesis to replace a logical 0 in the Netlist.| | |
 | <a name="TNS_END_PERCENT"></a>TNS_END_PERCENT| Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all violating endpoints by default (reduce to 5% for runtime). Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed.| 100| |
 | <a name="USE_FILL"></a>USE_FILL| Whether to perform metal density filling.| 0| |
-| <a name="VERILOG_DEFINES"></a>VERILOG_DEFINES| Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`| | |
-| <a name="VERILOG_FILES"></a>VERILOG_FILES| The path to the design Verilog/SystemVerilog files providing a description of modules.| | |
+| <a name="VERILOG_FILES"></a>VERILOG_FILES| The path to the design Verilog files or JSON files providing a description of modules (check `yosys -h write_json` for more details).| | |
 | <a name="VERILOG_INCLUDE_DIRS"></a>VERILOG_INCLUDE_DIRS| Specifies the include directories for the Verilog input files.| | |
 | <a name="VERILOG_TOP_PARAMS"></a>VERILOG_TOP_PARAMS| Apply toplevel params (if exist).| | |
 | <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Flags to pass to yosys.| -v 3| |
@@ -216,7 +214,6 @@ configuration file.
 - [SDC_GUT](#SDC_GUT)
 - [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
 - [SYNTH_GUT](#SYNTH_GUT)
-- [SYNTH_HDL_FRONTEND](#SYNTH_HDL_FRONTEND)
 - [SYNTH_HIERARCHICAL](#SYNTH_HIERARCHICAL)
 - [SYNTH_KEEP_MODULES](#SYNTH_KEEP_MODULES)
 - [SYNTH_MEMORY_MAX_BITS](#SYNTH_MEMORY_MAX_BITS)
@@ -225,7 +222,6 @@ configuration file.
 - [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
-- [VERILOG_DEFINES](#VERILOG_DEFINES)
 - [VERILOG_FILES](#VERILOG_FILES)
 - [VERILOG_INCLUDE_DIRS](#VERILOG_INCLUDE_DIRS)
 - [VERILOG_TOP_PARAMS](#VERILOG_TOP_PARAMS)
