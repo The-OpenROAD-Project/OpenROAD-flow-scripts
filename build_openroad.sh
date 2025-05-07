@@ -247,7 +247,8 @@ __local_build()
         ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
         echo "[INFO FLW-0030] Compiling yosys-slang."
-        ${NICE} make install -C tools/yosys-slang -j "${PROC}" YOSYS_PREFIX="${INSTALL_PATH}/yosys/bin/"
+        # CMAKE_FLAGS added to work around yosys-slang#141 (unable to build outside of git checkout)
+        ${NICE} make install -C tools/yosys-slang -j "${PROC}" YOSYS_PREFIX="${INSTALL_PATH}/yosys/bin/" CMAKE_FLAGS="-DYOSYS_SLANG_REVISION=unknown -DSLANG_REVISION=unknown"
 
         echo "[INFO FLW-0018] Compiling OpenROAD."
         eval ${NICE} ./tools/OpenROAD/etc/Build.sh -dir="$DIR/tools/OpenROAD/build" -threads=${PROC} -cmake=\'${OPENROAD_APP_ARGS}\'
