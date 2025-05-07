@@ -40,7 +40,7 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 3,
+        "value": 1,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
@@ -60,7 +60,7 @@
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
-        "value": 106,
+        "value": 104,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
