@@ -51,6 +51,14 @@ proc read_design_sources {} {
       {*}$vIdirsArgs {*}$::env(VERILOG_FILES) {*}$::env(VERILOG_DEFINES)
     # Workaround for yosys-slang#119
     setattr -unset init
+  } elseif {[env_var_equals SYNTH_HDL_FRONTEND verific]} {
+    if {[env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS]} {
+	verific -vlog-incdir {*}$::env(VERILOG_INCLUDE_DIRS)
+    }
+    if {[env_var_exists_and_non_empty VERILOG_DEFINES]} {
+	verific -vlog-define {*}$::env(VERILOG_DEFINES)
+    }
+    verific -sv2012 {*}$::env(VERILOG_FILES)
   } elseif {![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND]} {
     verilog_defaults -push
     verilog_defaults -add {*}$::env(VERILOG_DEFINES)
