@@ -99,4 +99,7 @@ build
 metadata-base-at.json
 
 user.bazelrc
-bazel-*
+bazel-bin/
+bazel-out/
+bazel-flow/
+bazel-testlogs/
