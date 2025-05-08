@@ -10,7 +10,7 @@ else
 fi
 
 # package versions
-klayoutVersion=0.30.1
+klayoutVersion=0.28.17
 verilatorVersion=5.026
 
 _versionCompare() {
@@ -172,7 +172,7 @@ _installUbuntuPackages() {
             if [[ $1 == 20.04 ]]; then
                 klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
             else
-                klayoutChecksum=11953ce5009a0e83f9840b506f80df49
+                klayoutChecksum=54748a49e1ab53e14cf5bf95feb2f25a
             fi
             wget https://www.klayout.org/downloads/Ubuntu-${1%.*}/klayout_${klayoutVersion}-1_amd64.deb
             md5sum -c <(echo "${klayoutChecksum} klayout_${klayoutVersion}-1_amd64.deb") || exit 1
