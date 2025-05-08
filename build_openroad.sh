@@ -237,6 +237,10 @@ __local_build()
             set -u
         fi
 
+        echo "[INFO FLW-0018] Compiling OpenROAD."
+        eval ${NICE} ./tools/OpenROAD/etc/Build.sh -dir="$DIR/tools/OpenROAD/build" -threads=${PROC} -cmake=\'${OPENROAD_APP_ARGS}\'
+        ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
+
         YOSYS_ABC_PATH=tools/yosys/abc
         if [[ -d "${YOSYS_ABC_PATH}/.git" ]]; then
             # update indexes to make sure git diff-index uses correct data
@@ -250,9 +254,6 @@ __local_build()
         # CMAKE_FLAGS added to work around yosys-slang#141 (unable to build outside of git checkout)
         ${NICE} make install -C tools/yosys-slang -j "${PROC}" YOSYS_PREFIX="${INSTALL_PATH}/yosys/bin/" CMAKE_FLAGS="-DYOSYS_SLANG_REVISION=unknown -DSLANG_REVISION=unknown"
 
-        echo "[INFO FLW-0018] Compiling OpenROAD."
-        eval ${NICE} ./tools/OpenROAD/etc/Build.sh -dir="$DIR/tools/OpenROAD/build" -threads=${PROC} -cmake=\'${OPENROAD_APP_ARGS}\'
-        ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
 }
 
 __update_openroad_app_remote()
