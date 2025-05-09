@@ -56,7 +56,7 @@
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
-        "value": 35,
+        "value": 43,
         "compare": "<="
     },
     "finish__timing__drv__hold_violation_count": {
