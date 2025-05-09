@@ -119,7 +119,7 @@ class ResumeCheck(unittest.TestCase):
             time.sleep(30)
             # Check if first config is complete
             while True:
-                cur_modified_time = self.check_trial_times()
+                cur_modified_time = self.get_trial_times()
                 print(f"Current modified time: {cur_modified_time}")
                 print(f"Latest modified time: {latest_modified_time}")
                 if abs(cur_modified_time - latest_modified_time) < 1e-3:
