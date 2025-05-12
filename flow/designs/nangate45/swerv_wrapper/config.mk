@@ -1,12 +1,6 @@
 export DESIGN_NAME = swerv_wrapper
 export PLATFORM    = nangate45
 
-# RTL_MP Settings
-export RTLMP_MAX_INST = 30000
-export RTLMP_MIN_INST = 5000
-export RTLMP_MAX_MACRO = 12
-export RTLMP_MIN_MACRO = 4 
-
 export VERILOG_FILES = $(DESIGN_HOME)/src/swerv/swerv_wrapper.sv2v.v \
                        $(DESIGN_HOME)/$(PLATFORM)/swerv/macros.v
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/swerv_wrapper/constraint.sdc
