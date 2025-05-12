@@ -31,7 +31,6 @@ design: gcd
 platform: sky130hd
 experiment: test
 verbose: 0
-config: ../../flow/designs/sky130hd/gcd/autotuner.json
 
 # Workload
 jobs: 4 
@@ -47,6 +46,7 @@ tune:
   reference: null
   perturbation: 25
   seed: 42
+  config: ../../flow/designs/sky130hd/gcd/autotuner.json
 ```
 
 and run:
