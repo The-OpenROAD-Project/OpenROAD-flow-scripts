@@ -410,7 +410,7 @@ def read_metrics(file_name):
     return ret
 
 
-def read_config(file_name, mode, algorithm = None):
+def read_config(file_name, mode, algorithm=None):
     """
     Please consider inclusive, exclusive
     Most type uses [min, max)

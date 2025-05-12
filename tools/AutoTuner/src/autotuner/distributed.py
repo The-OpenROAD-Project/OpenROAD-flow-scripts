@@ -300,6 +300,11 @@ def parse_arguments():
         default=None,
         help="Time limit (in hours) for each trial run. Default is no limit.",
     )
+    parser.add_argument(
+        "--yaml",
+        action=jsonargparse.ActionConfigFile,
+        help="Path to Overall YAML config file.",
+    )
 
     # Sweep-specific
     sweep_parser.add_argument(
@@ -448,6 +453,9 @@ def parse_arguments():
 
     if args.timeout is not None:
         args.timeout = round(args.timeout * 3600)
+
+    print(args)
+    exit(1)
 
     return args
 

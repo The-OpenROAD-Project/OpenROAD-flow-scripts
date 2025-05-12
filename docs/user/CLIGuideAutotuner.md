@@ -52,7 +52,7 @@ tune:
 and run:
 
 ```bash
-openroad_autotuner --yaml test.yaml
+openroad_autotuner --yaml test.yaml tune
 ```
 
 ## How to generate new config files
