@@ -9,7 +9,7 @@ on:
 
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
     steps:
@@ -30,7 +30,7 @@ jobs:
         run: |
           if [[ "${{ github.event.inputs.type }}" == "overwrite" ]]; then
             python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA $(git rev-parse HEAD) --overwrite
-          else 
+          else
             python flow/util/updateRules.py --keyFile "${CREDS_FILE}" --apiURL ${API_BASE_URL} --commitSHA $(git rev-parse HEAD)
           fi
       - name: Push updated rules

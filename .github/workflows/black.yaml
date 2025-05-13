@@ -1,11 +1,9 @@
 name: Lint Python
 
 on: [push, pull_request]
-
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v3
       - uses: psf/black@stable
-
