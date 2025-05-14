@@ -42,6 +42,7 @@ from .autotuner_test_utils import AutoTunerTestUtils, accepted_rc
 from contextlib import contextmanager
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_MODIFIED_TIME = 0
 
 
 @contextmanager
@@ -90,13 +91,13 @@ class ResumeCheck(unittest.TestCase):
             for c in options
         ]
 
-    def get_trial_times(self, iteration: int = 0) -> int:
+    def get_last_modified_time(self, iteration: int = 0) -> int:
         """
         Returns the nth iteration time of a trial.
 
         :param iteration: The iteration to check.
         :return: The latest modified UNIX time of the nth iteration.
-                 If no folders are found, returns a default value of 9e99.
+                 If no folders are found, returns a default value.
         """
         if iteration < 0 or iteration >= self.iterations:
             raise ValueError("Iteration must be between 0 and (iterations - 1)")
@@ -105,8 +106,15 @@ class ResumeCheck(unittest.TestCase):
             cur_dir,
             f"../../../flow/logs/{self.platform}/{self.design}/{self.experiment_name}-tune",
         )
-        folders = glob.glob(os.path.join(experiment_dir, f"variant-*-or-{iteration}"))
-        return max((os.path.getmtime(folder) for folder in folders), default=9e99)
+        iteration_folders = glob.glob(
+            os.path.join(experiment_dir, f"variant-*-or-{iteration}")
+        )
+        latest_modified_time = DEFAULT_MODIFIED_TIME
+        for folder in iteration_folders:
+            modified_time = os.path.getmtime(folder)
+            if modified_time > latest_modified_time:
+                latest_modified_time = modified_time
+        return latest_modified_time
 
     def test_tune_resume(self):
         # Goal is to first run the first config (without resume) and then run the second config (with resume)
@@ -119,7 +127,7 @@ class ResumeCheck(unittest.TestCase):
             time.sleep(30)
             # Check if first config is complete
             while True:
-                cur_modified_time = self.get_trial_times()
+                cur_modified_time = self.get_last_modified_time()
                 print(f"Current modified time: {cur_modified_time}")
                 print(f"Latest modified time: {latest_modified_time}")
                 if abs(cur_modified_time - latest_modified_time) < 1e-3:
