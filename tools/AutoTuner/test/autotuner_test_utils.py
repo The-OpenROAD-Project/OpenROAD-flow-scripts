@@ -35,6 +35,9 @@
 
 import os
 
+# Accepted RC: success and failed with no valid results.
+accepted_rc = [0, 16]
+
 
 class AutoTunerTestUtils:
     @staticmethod

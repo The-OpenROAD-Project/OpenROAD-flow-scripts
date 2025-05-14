@@ -97,3 +97,9 @@ build
 
 # autotuner artifacts
 metadata-base-at.json
+
+user.bazelrc
+bazel-bin
+bazel-out
+bazel-OpenROAD-flow-scripts
+bazel-testlogs

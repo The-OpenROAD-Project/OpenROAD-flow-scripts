@@ -169,6 +169,13 @@ SYNTH_MEMORY_MAX_BITS:
   default: 4096
   stages:
     - synth
+SYNTH_HDL_FRONTEND:
+  description: >
+    Select an alternative language frontend to ingest the design. Available option
+    is "slang". If the variable is empty, design is read with the Yosys read_verilog
+    command.
+  stages:
+    - synth
 SYNTH_BLACKBOXES:
   description: >
     List of cells treated as a black box by Yosys. With Bazel, this can be used
@@ -567,8 +574,15 @@ DESIGN_NAME:
 VERILOG_FILES:
   required: true
   description: >
-    The path to the design Verilog files or JSON files providing a description
-    of modules (check `yosys -h write_json` for more details).
+    The path to the design Verilog/SystemVerilog files providing a description
+    of modules.
+  stages:
+    - synth
+VERILOG_DEFINES:
+  description: >
+    Preprocessor defines passed to the language frontend.
+    Example: `-D HPDCACHE_ASSERT_OFF`
+  default: ""
   stages:
     - synth
 SDC_FILE:
@@ -718,7 +732,7 @@ CTS_BUF_DISTANCE:
     - cts
 CTS_BUF_LIST:
   description: |
-    List of cells used to construct the clock tree.
+    List of cells used to construct the clock tree. Overrides buffer inference.
   stages:
     - cts
 CTS_CLUSTER_DIAMETER:
@@ -735,6 +749,11 @@ CTS_CLUSTER_SIZE:
   stages:
     - cts
   tunable: 1
+CTS_LIB_NAME:
+  description: |
+    Name of the Liberty library to use in selecting the clock buffers.
+  stages:
+    - cts
 CTS_SNAPSHOT:
   description: |
     Creates ODB/SDC files prior to clock net and setup/hold repair.

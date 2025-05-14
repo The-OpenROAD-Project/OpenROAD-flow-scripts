@@ -15,7 +15,7 @@ BLACKBOXES = [
     data = [":constraint.sdc"],
     module_top = name,
     variant = "netlist",
-    verilog_files = ["//designs/src/aes:verilog"],
+    verilog_files = ["//flow/designs/src/aes:verilog"],
 ) for name in BLACKBOXES]
 
 [filegroup(

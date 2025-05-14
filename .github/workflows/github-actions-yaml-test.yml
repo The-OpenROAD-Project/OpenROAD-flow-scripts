@@ -7,7 +7,7 @@ jobs:
   docs-test-job:
     name: 'Tests for variables.yaml'
     if: github.event_name == 'pull_request' || github.event_name == 'push'
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4

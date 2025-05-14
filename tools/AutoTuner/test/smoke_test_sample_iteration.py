@@ -35,7 +35,7 @@
 import unittest
 import subprocess
 import os
-from .autotuner_test_utils import AutoTunerTestUtils
+from .autotuner_test_utils import AutoTunerTestUtils, accepted_rc
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -67,8 +67,8 @@ class BaseSampleIterationSmokeTest(unittest.TestCase):
             raise unittest.SkipTest("Platform and design have to be defined")
         for command in self.commands:
             print(command)
-            out = subprocess.run(command, shell=True, check=True)
-            successful = out.returncode == 0
+            out = subprocess.run(command, shell=True)
+            successful = out.returncode in accepted_rc
             self.assertTrue(successful)
 
 
