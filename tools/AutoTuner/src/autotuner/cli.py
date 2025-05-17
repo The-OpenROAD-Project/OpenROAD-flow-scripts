@@ -1,4 +1,3 @@
-from typing import Union
 from jsonargparse.typing import (
     PositiveInt,
     NonNegativeInt,
@@ -15,12 +14,12 @@ import uuid
 
 # Collection of restricted types
 IP_ADDRESS_TYPE = restricted_string_type(
-    name="ip_address_type",
+    name="IP_ADDRESS_TYPE",
     regex=r"^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
 )
 IP_PORT_TYPE = restricted_number_type(
-    name="ip_port_type",
-    base_type=int,
+    name="IP_PORT_TYPE",
+    base_type=int,    
     restrictions=[(">", 0), ("<", 65536)],
 )
 
@@ -42,9 +41,16 @@ def process_args(args: Namespace) -> Namespace:
         if args.timeout is not None:
             args.timeout = round(args.timeout * 3600)
 
-        # Temp: Ray ConcurrencyLimiter expects `int` type for args.jobs
+        # --- Conversion into python primitive types for Ray compatibility. ---
+        # Ray ConcurrencyLimiter expects `int` type for args.jobs
         if args.jobs is not None:
             args.jobs = int(args.jobs)
+
+        # Ray workers are unable to import custom jsonargparse types.
+        if args.server is not None:
+            args.server = str(args.server)
+        if args.port is not None:
+            args.port = int(args.port)
 
     def _validate_tune_args(args: Namespace) -> None:
         """Validate and process arguments specific to tuning."""
