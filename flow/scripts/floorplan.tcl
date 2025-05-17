@@ -40,6 +40,26 @@ check_setup
 set num_instances [llength [get_cells -hier *]]
 puts "number instances in verilog is $num_instances"
 
+# Strip all incoming buffers
+remove_buffers
+
+set_dont_use $::env(DONT_USE_CELLS)
+
+# Do not buffer chip-level designs
+# by default, IO ports will be buffered
+# to not buffer IO ports, set environment variable
+# DONT_BUFFER_PORT = 1
+if { ![env_var_exists_and_non_empty FOOTPRINT] } {
+  if { ![env_var_equals DONT_BUFFER_PORTS 1] } {
+    puts "Perform port buffering..."
+    buffer_ports
+  }
+}
+
+if {[env_var_equals FLOORPLAN_BUFFERING 1]} {
+  repair_design_helper -pre_placement
+}
+
 set additional_args ""
 append_env_var additional_args ADDITIONAL_SITES -additional_sites 1
 
@@ -101,13 +121,6 @@ if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
 
 if {[env_var_exists_and_non_empty FOOTPRINT_TCL]} {
   log_cmd source $::env(FOOTPRINT_TCL)
-}
-
-if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
-  # remove buffers inserted by yosys/abc
-  remove_buffers
-} else {
-  repair_timing_helper 0
 }
 
 ##### Restructure for timing #########
