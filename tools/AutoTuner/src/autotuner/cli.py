@@ -19,7 +19,7 @@ IP_ADDRESS_TYPE = restricted_string_type(
 )
 IP_PORT_TYPE = restricted_number_type(
     name="IP_PORT_TYPE",
-    base_type=int,    
+    base_type=int,
     restrictions=[(">", 0), ("<", 65536)],
 )
 
