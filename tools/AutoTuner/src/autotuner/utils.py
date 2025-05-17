@@ -42,7 +42,6 @@ import subprocess
 import sys
 import uuid
 import time
-from multiprocessing import cpu_count
 from datetime import datetime
 
 import numpy as np
@@ -71,6 +70,56 @@ FASTROUTE_TCL = "fastroute.tcl"
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 
+# --- General utilities ---
+def run_command(
+    args, cmd, timeout=None, stderr_file=None, stdout_file=None, fail_fast=False
+):
+    """
+    Wrapper for subprocess.run
+    Allows to run shell command, control print and exceptions.
+    """
+    process = subprocess.run(
+        cmd, timeout=timeout, capture_output=True, text=True, check=False, shell=True
+    )
+    if stderr_file is not None and process.stderr != "":
+        with open(stderr_file, "a") as file:
+            file.write(f"\n\n{cmd}\n{process.stderr}")
+    if stdout_file is not None and process.stdout != "":
+        with open(stdout_file, "a") as file:
+            file.write(f"\n\n{cmd}\n{process.stdout}")
+    if args.verbose >= 1:
+        print(process.stderr)
+    if args.verbose >= 2:
+        print(process.stdout)
+
+    if fail_fast and process.returncode != 0:
+        raise RuntimeError
+
+
+def set_seed(seed: int):
+    """Set seed for reproducibility."""
+    import torch
+    import random
+
+    # TODO: shift seed validation into validate_args during parse_arguments
+    # Pre-set seed if user sets seed to 0
+    if seed == 0:
+        print(
+            "Warning: you have chosen not to set a seed. Do you wish to continue? (y/n)"
+        )
+        if input().lower() != "y":
+            sys.exit(0)
+        seed = None
+    else:
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
+
+
+# --- End General utilities ---
+
+
+# --- OpenROAD: write file utilities ---
 def write_sdc(variables, path, sdc_original, constraints_sdc):
     """
     Create a SDC file with parameters for current tuning iteration.
@@ -160,6 +209,10 @@ def write_fast_route(variables, path, platform, fr_original, fastroute_tcl):
     return file_name
 
 
+# --- End OpenROAD: write file utilities ---
+
+
+# --- OpenROAD: parse utilities ---
 def parse_flow_variables(base_dir, platform):
     """
     Parse the flow variables from source
@@ -262,31 +315,10 @@ def parse_config(
     return options
 
 
-def run_command(
-    args, cmd, timeout=None, stderr_file=None, stdout_file=None, fail_fast=False
-):
-    """
-    Wrapper for subprocess.run
-    Allows to run shell command, control print and exceptions.
-    """
-    process = subprocess.run(
-        cmd, timeout=timeout, capture_output=True, text=True, check=False, shell=True
-    )
-    if stderr_file is not None and process.stderr != "":
-        with open(stderr_file, "a") as file:
-            file.write(f"\n\n{cmd}\n{process.stderr}")
-    if stdout_file is not None and process.stdout != "":
-        with open(stdout_file, "a") as file:
-            file.write(f"\n\n{cmd}\n{process.stdout}")
-    if args.verbose >= 1:
-        print(process.stderr)
-    if args.verbose >= 2:
-        print(process.stdout)
-
-    if fail_fast and process.returncode != 0:
-        raise RuntimeError
+# --- End OpenROAD: parse utilities ---
 
 
+# --- OpenROAD specific functions ---
 def openroad(
     args,
     base_dir,
@@ -611,6 +643,7 @@ def prepare_ray_server(args):
     return local_dir, orfs_flow_dir, install_path
 
 
+# --- Ray: OpenROAD wrapper utilities ---
 @ray.remote
 def openroad_distributed(
     args,
@@ -654,3 +687,6 @@ def consumer(queue):
         print(f"[INFO TUN-0007] Scheduling run for parameter {name}.")
         ray.get(openroad_distributed.remote(*next_item))
         print(f"[INFO TUN-0008] Finished run for parameter {name}.")
+
+
+# --- End Ray: OpenROAD wrapper utilities ---
