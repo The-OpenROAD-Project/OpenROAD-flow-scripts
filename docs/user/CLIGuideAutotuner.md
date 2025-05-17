@@ -22,7 +22,7 @@ openroad_autotuner --design gcd --platform sky130hd --experiment abcdef \
                    --resources_per_trial 1.0 --seed 42
 ```
 
-With our new approach all you have to do is specify a YAML document `test.yaml`
+With our new approach all you have to do is specify a YAML document `cli.yaml`
 
 ```yaml
 ---
@@ -52,7 +52,8 @@ tune:
 and run:
 
 ```bash
-openroad_autotuner --yaml test.yaml tune
+# Make sure you run this in `./tools/AutoTuner` directory.
+openroad_autotuner --yaml cli.yaml tune
 ```
 
 ## How to generate new config files

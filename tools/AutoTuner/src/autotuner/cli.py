@@ -1,3 +1,4 @@
+from typing import Union
 from jsonargparse.typing import (
     PositiveInt,
     NonNegativeInt,
@@ -37,8 +38,13 @@ def process_args(args: Namespace) -> Namespace:
         else:
             args.experiment += f"-{args.mode}"
 
+        # If timeout is set, convert it to seconds.
         if args.timeout is not None:
             args.timeout = round(args.timeout * 3600)
+
+        # Temp: Ray ConcurrencyLimiter expects `int` type for args.jobs
+        if args.jobs is not None:
+            args.jobs = int(args.jobs)
 
     def _validate_tune_args(args: Namespace) -> None:
         """Validate and process arguments specific to tuning."""
@@ -73,7 +79,7 @@ def process_args(args: Namespace) -> Namespace:
     return args
 
 
-def main():
+def parse_arguments():
     parser = ArgumentParser()
     tune_parser = ArgumentParser()
     sweep_parser = ArgumentParser()
@@ -245,4 +251,4 @@ def main():
 
 
 if __name__ == "__main__":
-    print(main())
+    print(parse_arguments())
