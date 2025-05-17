@@ -127,23 +127,23 @@ The following commands should be run from `./tools/AutoTuner`.
 
 #### Tune only 
 
-* AutoTuner: `openroad_autotuner tune -h`
+* AutoTuner: `python -m autotuner.distributed tune -h`
 
 Example:
 
 ```shell
-openroad_autotuner --design gcd --platform sky130hd \
+python -m autotuner.distributed --design gcd --platform sky130hd \
                        tune --samples 5 \
                        --config ../../flow/designs/sky130hd/gcd/autotuner.json \
 ```
 #### Sweep only 
 
-* Parameter sweeping: `openroad_autotuner sweep -h`
+* Parameter sweeping: `python -m autotuner.distributed sweep -h`
 
 Example:
 
 ```shell
-openroad_autotuner --design gcd --platform sky130hd \
+python -m autotuner.distributed --design gcd --platform sky130hd \
                        sweep \
                        --config src/autotuner/distributed-sweep-example.json
 ```

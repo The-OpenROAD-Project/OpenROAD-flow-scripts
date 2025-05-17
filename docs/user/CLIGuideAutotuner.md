@@ -53,13 +53,13 @@ and run:
 
 ```bash
 # Make sure you run this in `./tools/AutoTuner` directory.
-openroad_autotuner --yaml cli.yaml tune
+python3 -m autotuner.distributed --yaml cli.yaml tune
 ```
 
 ## How to generate new config files
 
 ```bash
-openroad_autotuner --design gcd --platform sky130hd --experiment abcdef \
+python3 -m autotuner.distributed --design gcd --platform sky130hd --experiment abcdef \
                    --verbose \
                    --jobs 4 --openroad_threads 16 \
                    --print_config \
