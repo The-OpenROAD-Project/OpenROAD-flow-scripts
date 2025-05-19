@@ -21,7 +21,7 @@ RUN mkdir -p /usr/local/bin/wrapped-cc && \
     echo '#!/bin/sh' > /usr/local/bin/wrapped-cc/gcc && \
     echo 'exec /usr/bin/gcc -D__TIME__="\"0\"" -D__DATE__="\"0\"" -D__TIMESTAMP__="\"0\"" -Wno-builtin-macro-redefined "$@"' >> /usr/local/bin/wrapped-cc/gcc && \
     chmod +x /usr/local/bin/wrapped-cc/gcc && \
-    ln -s /usr/local/bin/wrapped-cc/gcc /usr/local/bin/wrapped-cc/cc && \
+    ln -sf /usr/local/bin/wrapped-cc/gcc /usr/local/bin/wrapped-cc/cc && \
     echo '#!/bin/sh' > /usr/local/bin/wrapped-cc/g++ && \
     echo 'exec /usr/bin/g++ -D__TIME__="\"0\"" -D__DATE__="\"0\"" -D__TIMESTAMP__="\"0\"" -Wno-builtin-macro-redefined "$@"' >> /usr/local/bin/wrapped-cc/g++ && \
     chmod +x /usr/local/bin/wrapped-cc/g++
