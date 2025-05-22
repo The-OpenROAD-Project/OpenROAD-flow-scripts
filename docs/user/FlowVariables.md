@@ -133,6 +133,7 @@ configuration file.
 | <a name="PLACE_PINS_ARGS"></a>PLACE_PINS_ARGS| Arguments to place_pins| | |
 | <a name="PLACE_SITE"></a>PLACE_SITE| Placement site for core cells defined in the technology LEF file.| | |
 | <a name="PLATFORM"></a>PLATFORM| Specifies process design kit or technology node to be used.| | |
+| <a name="PLATFORM_TCL"></a>PLATFORM_TCL| Specifies a Tcl script with commands to run before loading design.| | |
 | <a name="POST_CTS_TCL"></a>POST_CTS_TCL| Specifies a Tcl script with commands to run after CTS is completed.| | |
 | <a name="PROCESS"></a>PROCESS| Technology node or process in use.| | |
 | <a name="PWR_NETS_VOLTAGES"></a>PWR_NETS_VOLTAGES| Used for IR Drop calculation.| | |
@@ -413,6 +414,7 @@ configuration file.
 - [LIB_FILES](#LIB_FILES)
 - [MACRO_EXTENSION](#MACRO_EXTENSION)
 - [PLATFORM](#PLATFORM)
+- [PLATFORM_TCL](#PLATFORM_TCL)
 - [PROCESS](#PROCESS)
 - [RCX_RULES](#RCX_RULES)
 - [RECOVER_POWER](#RECOVER_POWER)
