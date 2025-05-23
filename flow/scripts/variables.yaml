@@ -146,6 +146,9 @@ LIB_FILES:
     A Liberty file of the standard cell library with PVT characterization,
     input and output characteristics, timing and power definitions for each
     cell.
+PLATFORM_TCL:
+  description: |
+    Specifies a Tcl script with commands to run before loading design.
 DONT_USE_CELLS:
   description: |
     Dont use cells eases pin access in detailed routing.
