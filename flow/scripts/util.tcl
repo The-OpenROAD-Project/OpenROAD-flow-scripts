@@ -31,6 +31,7 @@ proc repair_timing_helper { {hold_margin 1} } {
   if {$hold_margin || $::env(HOLD_SLACK_MARGIN) < 0} {
     append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
   }
+  append_env_var additional_args SETUP_MOVE_SEQUENCE -sequence 1
   append_env_var additional_args TNS_END_PERCENT -repair_tns 1
   append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
   append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
