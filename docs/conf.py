@@ -209,3 +209,7 @@ def setup(app):
     # Get Manpage file
     url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/src/utl/README.md"
     get_file_from_url(url, "Manpage.md")
+
+    # Populate Autotuner messages.
+    command = "python getMessages.py"
+    _ = os.popen(command).read()
