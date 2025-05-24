@@ -72,6 +72,7 @@ export PLACE_DENSITY ?= 0.30
 # ---------------------------------------------------------
 # FastRoute options
 export MIN_ROUTING_LAYER = metal2
+export MIN_CLK_ROUTING_LAYER = metal4
 export MAX_ROUTING_LAYER = metal10
 
 # Define fastRoute tcl
