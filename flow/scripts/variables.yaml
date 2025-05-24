@@ -484,6 +484,15 @@ SETUP_SLACK_MARGIN:
     - floorplan
     - grt
   default: 0
+SETUP_MOVE_SEQUENCE:
+  description: |
+    Specifies the sequence of moves to do in repair_timing -setup. This should be a string
+    of move keywords separated by commas such as the default when not used:
+    "unbuffer,sizedown,sizeup,swap,buffer,clone,split".
+  stages:
+    - cts
+    - floorplan
+    - grt
 SKIP_GATE_CLONING:
   description: >
     Do not use gate cloning transform to fix timing violations (default: use
