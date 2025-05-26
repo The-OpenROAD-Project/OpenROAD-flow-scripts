@@ -60,6 +60,7 @@ select -name "clk*" -type Inst
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_clocks.webp
 gui::clear_selections
 
+gui::show_widget "Clock Tree Viewer"
 foreach clock [get_clocks *] {
   if { [llength [get_property $clock sources]] > 0 } {
     set clock_name [get_name $clock]
@@ -70,6 +71,7 @@ foreach clock [get_clocks *] {
     save_image -resolution $resolution $::env(REPORTS_DIR)/cts_${clock_name}_layout.webp
   }
 }
+gui::hide_widget "Clock Tree Viewer"
 
 # The resizer view: all instances created by the resizer grouped
 gui::set_display_controls "Layers/*" visible false
