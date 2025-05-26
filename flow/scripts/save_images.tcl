@@ -92,4 +92,12 @@ save_image -resolution $resolution $::env(REPORTS_DIR)/final_resizer.webp
 gui::clear_highlights -1
 gui::clear_selections
 
+# The routing congestion view
+gui::set_display_controls "Instances/*" visible true
+gui::set_display_controls "Instances/Physical/*" visible false
+gui::set_display_controls "Nets/*" visible false
+gui::set_display_controls "Heat Maps/Routing Congestion" visible true
+
+save_image -resolution $resolution $::env(REPORTS_DIR)/final_congestion.webp
+
 gui::restore_display_controls
