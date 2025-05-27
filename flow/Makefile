@@ -98,12 +98,17 @@ ifneq ($(BLOCKS),)
   # Normally this comes from variables.yaml, but we need it here to set up these variables
   # which are part of the DESIGN_CONFIG. BLOCKS is a Makefile specific concept.
   $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_TYP_LIBS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}_typ.lib))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_FAST_LIBS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}_fast.lib))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_SLOW_LIBS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}_slow.lib))
   $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
   $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
   $(foreach block,$(BLOCKS),$(eval BLOCK_LOG_FOLDERS += $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/))
   export ADDITIONAL_LEFS += $(BLOCK_LEFS)
-  export ADDITIONAL_LIBS += $(BLOCK_LIBS)
+  export ADDITIONAL_LIBS += $(BLOCK_TYP_LIBS)
+  export ADDITIONAL_TYP_LIBS += $(BLOCK_TYP_LIBS)
+  export ADDITIONAL_FAST_LIBS += $(BLOCK_FAST_LIBS)
+  export ADDITIONAL_SLOW_LIBS += $(BLOCK_SLOW_LIBS)
   export ADDITIONAL_GDS += $(BLOCK_GDS)
   ifneq ($(CDL_FILES),)
     export CDL_FILES += $(BLOCK_CDL)
@@ -167,9 +172,9 @@ endef
 
 # Targets to harden Blocks in case of hierarchical flow is triggered
 .PHONY: build_macros
-build_macros: $(BLOCK_LEFS) $(BLOCK_LIBS)
+build_macros: $(BLOCK_LEFS) $(BLOCK_TYP_LIBS)
 
-$(foreach block,$(BLOCKS),$(eval $(call GENERATE_ABSTRACT_RULE,$(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef,$(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib,$(shell dirname $(DESIGN_CONFIG))/${block}/config.mk)))
+$(foreach block,$(BLOCKS),$(eval $(call GENERATE_ABSTRACT_RULE,$(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef,$(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}_typ.lib,$(shell dirname $(DESIGN_CONFIG))/${block}/config.mk)))
 $(foreach block,$(BLOCKS),$(eval $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
 
 # Utility to print tool version information
