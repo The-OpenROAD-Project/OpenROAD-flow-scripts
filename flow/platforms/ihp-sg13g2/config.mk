@@ -11,11 +11,11 @@ ifneq ($(FOOTPRINT_TCL),)
   ifeq ($(LOAD_ADDITIONAL_FILES),1)
     export ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/sg13g2_io.lef \
                               $(PLATFORM_DIR)/lef/bondpad_70x70.lef
-    export ADDITIONAL_SLOW_LIBS = $(ADDITIONAL_LIBS) $(PLATFORM_DIR)/lib/sg13g2_io_slow_1p08V_3p0V_125C.lib
-    export ADDITIONAL_FAST_LIBS = $(ADDITIONAL_LIBS) $(PLATFORM_DIR)/lib/sg13g2_io_fast_1p32V_3p6V_m40C.lib
-    export ADDITIONAL_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_typ_1p2V_3p3V_25C.lib
+    export ADDITIONAL_SLOW_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_slow_1p08V_3p0V_125C.lib
+    export ADDITIONAL_FAST_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_fast_1p32V_3p6V_m40C.lib
+    export ADDITIONAL_TYP_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_typ_1p2V_3p3V_25C.lib
     export ADDITIONAL_GDS += $(PLATFORM_DIR)/gds/sg13g2_io.gds \
-                            $(PLATFORM_DIR)/gds/bondpad_70x70.gds
+                             $(PLATFORM_DIR)/gds/bondpad_70x70.gds
   endif
 endif
 export TECH_LEF ?= $(PLATFORM_DIR)/lef/sg13g2_tech.lef
@@ -25,8 +25,9 @@ export SLOW_LIB_FILES ?= $(PLATFORM_DIR)/lib/sg13g2_stdcell_slow_1p08V_125C.lib 
                          $(ADDITIONAL_SLOW_LIBS)
 export FAST_LIB_FILES ?= $(PLATFORM_DIR)/lib/sg13g2_stdcell_fast_1p32V_m40C.lib \
                          $(ADDITIONAL_FAST_LIBS)
-export LIB_FILES ?= $(PLATFORM_DIR)/lib/sg13g2_stdcell_typ_1p20V_25C.lib \
-                    $(ADDITIONAL_LIBS)
+export TYP_LIB_FILES ?= $(PLATFORM_DIR)/lib/sg13g2_stdcell_typ_1p20V_25C.lib \
+                        $(ADDITIONAL_TYP_LIBS)
+export LIB_FILES ?= $(TYP_LIB_FILES)
 export GDS_FILES ?= $(PLATFORM_DIR)/gds/sg13g2_stdcell.gds \
                     $(ADDITIONAL_GDS)
 
