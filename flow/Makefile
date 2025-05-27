@@ -105,7 +105,6 @@ ifneq ($(BLOCKS),)
   export ADDITIONAL_LEFS += $(BLOCK_LEFS)
   export ADDITIONAL_LIBS += $(BLOCK_LIBS)
   export ADDITIONAL_GDS += $(BLOCK_GDS)
-  export GDS_FILES += $(BLOCK_GDS)
   ifneq ($(CDL_FILES),)
     export CDL_FILES += $(BLOCK_CDL)
   endif
