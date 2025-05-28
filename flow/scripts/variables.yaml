@@ -484,7 +484,7 @@ SETUP_SLACK_MARGIN:
     - floorplan
     - grt
   default: 0
-SETUP_MOVE_SEQUENCE:
+SETUP_REPAIR_SEQUENCE:
   description: |
     Specifies the sequence of moves to do in repair_timing -setup. This should be a string
     of move keywords separated by commas such as the default when not used:

@@ -171,6 +171,7 @@ configuration file.
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.| | |
 | <a name="SDC_GUT"></a>SDC_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| | |
 | <a name="SEAL_GDS"></a>SEAL_GDS| Seal macro to place around the design.| | |
+| <a name="SETUP_REPAIR_SEQUENCE"></a>SETUP_REPAIR_SEQUENCE| Specifies the sequence of moves to do in repair_timing -setup. This should be a string of move keywords separated by commas such as the default when not used: "unbuffer,sizedown,sizeup,swap,buffer,clone,split".| | |
 | <a name="SETUP_SLACK_MARGIN"></a>SETUP_SLACK_MARGIN| Specifies a time margin for the slack when fixing setup violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack). See HOLD_SLACK_MARGIN for more details.| 0| |
 | <a name="SET_RC_TCL"></a>SET_RC_TCL| Metal & Via RC definition file path.| | |
 | <a name="SKIP_CTS_REPAIR_TIMING"></a>SKIP_CTS_REPAIR_TIMING| Skipping CTS repair, which can take a long time, can be useful in architectural exploration or when getting CI up and running.| | |
@@ -277,6 +278,7 @@ configuration file.
 - [RTLMP_RPT_DIR](#RTLMP_RPT_DIR)
 - [RTLMP_SIGNATURE_NET_THRESHOLD](#RTLMP_SIGNATURE_NET_THRESHOLD)
 - [RTLMP_WIRELENGTH_WT](#RTLMP_WIRELENGTH_WT)
+- [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
 - [SKIP_LAST_GASP](#SKIP_LAST_GASP)
@@ -323,6 +325,7 @@ configuration file.
 - [POST_CTS_TCL](#POST_CTS_TCL)
 - [REMOVE_CELLS_FOR_EQY](#REMOVE_CELLS_FOR_EQY)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_CTS_REPAIR_TIMING](#SKIP_CTS_REPAIR_TIMING)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
@@ -341,6 +344,7 @@ configuration file.
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
 - [SKIP_INCREMENTAL_REPAIR](#SKIP_INCREMENTAL_REPAIR)
