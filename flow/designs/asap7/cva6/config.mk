@@ -65,7 +65,7 @@ export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/common/local/util/
 	$(SRC_HOME)/core/cvxif_example/include/cvxif_instr_pkg.sv \
 	$(sort $(wildcard $(SRC_HOME)/core/frontend/*.sv)) \
 	$(SRC_HOME)/vendor/pulp-platform/tech_cells_generic/src/rtl/tc_sram.sv \
-	$(PLATFORM_DIR)/verilog/fakeram7_256x32.sv
+	$(PLATFORM_DIR)/verilog/fakeram7_256x256.sv
 
 export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include \
 	$(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/cvfpu/src/common_cells/include \
@@ -73,15 +73,14 @@ export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include
 
 export VERILOG_DEFINES += -D HPDCACHE_ASSERT_OFF
 
-export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_256x32.lef
+export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_256x256.lef
 
-export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_256x32.lib
+export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_256x256.lib
 
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
-export DIE_AREA               = 0 0 250 250
-export CORE_AREA              = 1.08 1.08 240 240
-
+export DIE_AREA               = 0 0 350 350
+export CORE_AREA              = 1.08 1.08 340 340
 export PLACE_DENSITY          = 0.50
 
 # a smoketest for this option, there are a
