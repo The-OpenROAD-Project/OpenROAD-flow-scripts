@@ -31,10 +31,10 @@ export TEST_DIR      ?= $(FLOW_HOME)/test
 PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
 
 ifeq ($(origin PLATFORM), undefined)
-  $(error PLATFORM variable net set.)
+  $(error PLATFORM variable not set.)
 endif
 ifeq ($(origin DESIGN_NAME), undefined)
-  $(error DESIGN_NAME variable net set.)
+  $(error DESIGN_NAME variable not set.)
 endif
 
 ifneq ($(PLATFORM_DIR),)
