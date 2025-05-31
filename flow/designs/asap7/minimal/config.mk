@@ -19,5 +19,5 @@ export SKIP_REPORT_METRICS = 1
 
 # Faster build, remove these in your own config.mk
 export SKIP_CTS_REPAIR_TIMING = 1
-export REMOVE_ABC_BUFFERS = 1
+export FLOORPLAN_BUFFERING = 0
 export SKIP_INCREMENTAL_REPAIR = 1
