@@ -42,6 +42,7 @@ import re
 import os
 import argparse
 import sys
+import logging
 
 # Only does plotting for AutoTunerBase variants
 AT_REGEX = r"variant-AutoTunerBase-([\w-]+)-\w+"
@@ -52,6 +53,13 @@ METRIC = "metric"
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.join(cur_dir, "../../../")
 os.chdir(root_dir)
+
+# Setup logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
 
 
 def load_dir(dir: str) -> pd.DataFrame:
@@ -68,7 +76,7 @@ def load_dir(dir: str) -> pd.DataFrame:
     # Concatenate progress DFs
     progress_csvs = glob.glob(f"{dir}/*/progress.csv")
     if len(progress_csvs) == 0:
-        print("No progress.csv files found.")
+        logger.error("No progress.csv files found in the directory.")
         sys.exit(1)
     progress_df = pd.concat([pd.read_csv(f) for f in progress_csvs])
 
@@ -91,8 +99,8 @@ def load_dir(dir: str) -> pd.DataFrame:
             params.append(_dict)
         except Exception as e:
             failed.append(metrics_fname)
-            print("Failed to load", metrics_fname)
-            print(e)
+            logger.debug(f"Failed to load {params_fname} or {metrics_fname}.")
+            logger.debug(f"Exception: {e}")
             continue
 
     # Merge all dataframe
@@ -100,7 +108,7 @@ def load_dir(dir: str) -> pd.DataFrame:
     try:
         progress_df = progress_df.merge(params_df, on="trial_id")
     except KeyError:
-        print(
+        logger.error(
             "Unable to merge DFs due to missing trial_id in params.json (possibly due to failed trials.)"
         )
         sys.exit(1)
@@ -108,7 +116,7 @@ def load_dir(dir: str) -> pd.DataFrame:
     # Print failed, if any
     if failed:
         failed_files = "\n".join(failed)
-        print(f"Failed to load {len(failed)} files:\n{failed_files}")
+        logger.debug(f"Failed to load {len(failed)} files:\n{failed_files}")
     return progress_df
 
 
@@ -145,7 +153,7 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
         df["timestamp"] -= df["timestamp"].min()
         return df
     except KeyError as e:
-        print(
+        logger.error(
             f"KeyError: {e} in the DataFrame. Dataframe does not contain necessary columns."
         )
         sys.exit(1)
@@ -176,12 +184,12 @@ def plot(df: pd.DataFrame, key: str, dir: str):
         ax.plot(
             df["timestamp"],
             poly_func(df["timestamp"]),
-            "r--",
+            "r--logger.error",
             label=f"y={coeff[0]:.2f}x+{coeff[1]:.2f}",
         )
         ax.legend()
     except np.linalg.LinAlgError:
-        print("Cannot fit a line to the data, plotting only scatter plot.")
+        logger.info("Cannot fit a line to the data, plotting only scatter plot.")
 
     fig.savefig(f"{dir}/{key}.png")
 
@@ -209,7 +217,7 @@ def main(platform: str, design: str, experiment: str):
     img_dir = os.path.join(
         root_dir, f"./flow/reports/images/{platform}/{design}/{experiment}"
     )
-    print("Processing results from", results_dir)
+    logger.info(f"Processing results from {results_dir}")
     os.makedirs(img_dir, exist_ok=True)
     df = load_dir(results_dir)
     df = preprocess(df)
@@ -217,8 +225,7 @@ def main(platform: str, design: str, experiment: str):
 
     # Plot only if more than one entry
     if len(df) < 2:
-        print("Less than 2 entries, skipping plotting.")
-        sys.exit(0)
+        logger.info("Less than 2 entries, skipping plotting.")
     for key in keys:
         plot(df, key, img_dir)
 
