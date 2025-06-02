@@ -46,5 +46,9 @@ proc block_channels {channel_width_in_microns} {
   odb::destroySet $shapeSet1
   odb::destroySet $shapeSet0
   odb::destroySet $core_rect
+
+  foreach shape $shapes {
+        odb::destroySet $shape
+  }
 }
 
