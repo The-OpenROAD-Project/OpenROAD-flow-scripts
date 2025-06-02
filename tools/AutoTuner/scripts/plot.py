@@ -184,7 +184,7 @@ def plot(df: pd.DataFrame, key: str, dir: str):
         ax.plot(
             df["timestamp"],
             poly_func(df["timestamp"]),
-            "r--logger.error",
+            "r--",
             label=f"y={coeff[0]:.2f}x+{coeff[1]:.2f}",
         )
         ax.legend()
