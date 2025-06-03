@@ -146,6 +146,9 @@ LIB_FILES:
     A Liberty file of the standard cell library with PVT characterization,
     input and output characteristics, timing and power definitions for each
     cell.
+PLATFORM_TCL:
+  description: |
+    Specifies a Tcl script with commands to run before loading design.
 DONT_USE_CELLS:
   description: |
     Dont use cells eases pin access in detailed routing.
@@ -167,6 +170,13 @@ SYNTH_MEMORY_MAX_BITS:
   description: >
     Maximum number of bits for memory synthesis.
   default: 4096
+  stages:
+    - synth
+SYNTH_HDL_FRONTEND:
+  description: >
+    Select an alternative language frontend to ingest the design. Available option
+    is "slang". If the variable is empty, design is read with the Yosys read_verilog
+    command.
   stages:
     - synth
 SYNTH_BLACKBOXES:
@@ -321,14 +331,12 @@ IO_PLACER_H:
     The metal layer on which to place the I/O pins horizontally (top and bottom
     of the die).
   stages:
-    - floorplan
     - place
 IO_PLACER_V:
   description: >
     The metal layer on which to place the I/O pins vertically (sides of the
     die).
   stages:
-    - floorplan
     - place
 GUI_TIMING:
   description: >
@@ -369,7 +377,6 @@ PLACE_PINS_ARGS:
     Arguments to place_pins
   stages:
     - place
-    - floorplan
   default: ""
 PLACE_DENSITY:
   description: >
@@ -572,8 +579,15 @@ DESIGN_NAME:
 VERILOG_FILES:
   required: true
   description: >
-    The path to the design Verilog files or JSON files providing a description
-    of modules (check `yosys -h write_json` for more details).
+    The path to the design Verilog/SystemVerilog files providing a description
+    of modules.
+  stages:
+    - synth
+VERILOG_DEFINES:
+  description: >
+    Preprocessor defines passed to the language frontend.
+    Example: `-D HPDCACHE_ASSERT_OFF`
+  default: ""
   stages:
     - synth
 SDC_FILE:
@@ -721,6 +735,11 @@ CTS_BUF_DISTANCE:
     Distance (in microns) between buffers.
   stages:
     - cts
+CTS_BUF_LIST:
+  description: |
+    List of cells used to construct the clock tree. Overrides buffer inference.
+  stages:
+    - cts
 CTS_CLUSTER_DIAMETER:
   description: >
     Maximum diameter (in microns) of sink cluster.
@@ -735,6 +754,11 @@ CTS_CLUSTER_SIZE:
   stages:
     - cts
   tunable: 1
+CTS_LIB_NAME:
+  description: |
+    Name of the Liberty library to use in selecting the clock buffers.
+  stages:
+    - cts
 CTS_SNAPSHOT:
   description: |
     Creates ODB/SDC files prior to clock net and setup/hold repair.
@@ -913,10 +937,20 @@ RUN_LOG_NAME_STEM:
   default: run
 YOSYS_FLAGS:
   description: >
-    Additional flags to pass to yosys.
+    Flags to pass to yosys.
   stages:
     - synth
+  default: -v 3
 FLOW_VARIANT:
   description: >
     Flow variant to use, used in the flow variant directory name.
   default: base
+RULES_JSON:
+  description: >
+    json files with the metrics baseline regression rules.
+    In the ORFS Makefile, this defaults to $DESIGN_DIR/rules-base.json,
+    but ORFS does not mandate the users source directory layout and
+    this can be placed elsewhere when the user sets up an ORFS
+    config.mk or from bazel-orfs.
+  stages:
+    - test

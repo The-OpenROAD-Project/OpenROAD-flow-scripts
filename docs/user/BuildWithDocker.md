@@ -79,6 +79,7 @@ Then, inside docker:
 ``` shell
 source ./env.sh
 yosys -help
+yosys -m slang -p "slang_version"
 openroad -help
 cd flow
 make

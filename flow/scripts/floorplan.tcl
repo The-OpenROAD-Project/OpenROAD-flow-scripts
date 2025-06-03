@@ -56,8 +56,7 @@ if {$methods_defined > 1} {
 
 if {$use_floorplan_def} {
     # Initialize floorplan by reading in floorplan DEF
-    puts "Read in Floorplan DEF to initialize floorplan:  $env(FLOORPLAN_DEF)"
-    read_def -floorplan_initialize $env(FLOORPLAN_DEF)
+    log_cmd read_def -floorplan_initialize $env(FLOORPLAN_DEF)
 } elseif {$use_footprint} {
     # Initialize floorplan using ICeWall FOOTPRINT
     ICeWall load_footprint $env(FOOTPRINT)
@@ -93,15 +92,15 @@ if {$use_floorplan_def} {
 }
 
 if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
-  source $::env(MAKE_TRACKS)
+  log_cmd source $::env(MAKE_TRACKS)
 } elseif {[file exists $::env(PLATFORM_DIR)/make_tracks.tcl]} {
-  source $::env(PLATFORM_DIR)/make_tracks.tcl
+  log_cmd source $::env(PLATFORM_DIR)/make_tracks.tcl
 } else {
   make_tracks
 }
 
 if {[env_var_exists_and_non_empty FOOTPRINT_TCL]} {
-  source $::env(FOOTPRINT_TCL)
+  log_cmd source $::env(FOOTPRINT_TCL)
 }
 
 if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
@@ -190,12 +189,12 @@ if { [env_var_equals RESYNTH_AREA_RECOVER 1] } {
 }
 
 if { [env_var_exists_and_non_empty POST_FLOORPLAN_TCL] } {
-  source $::env(POST_FLOORPLAN_TCL)
+  log_cmd source $::env(POST_FLOORPLAN_TCL)
 }
 
 
 if {[env_var_exists_and_non_empty IO_CONSTRAINTS]} {
-  source $::env(IO_CONSTRAINTS)
+  log_cmd source $::env(IO_CONSTRAINTS)
 }
 
 write_db $::env(RESULTS_DIR)/2_1_floorplan.odb

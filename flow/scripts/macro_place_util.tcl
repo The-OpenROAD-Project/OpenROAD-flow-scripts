@@ -1,6 +1,15 @@
 if {[find_macros] != ""} {
-# If wrappers defined replace macros with their wrapped version
-# # ----------------------------------------------------------------------------
+  if {![env_var_exists_and_non_empty RTLMP_RPT_DIR]} {
+    set ::env(RTLMP_RPT_DIR) "$::env(OBJECTS_DIR)/rtlmp"
+  }
+  if {![env_var_exists_and_non_empty RTLMP_RPT_FILE]} {
+    set ::env(RTLMP_RPT_FILE) "partition.txt"
+  }
+  if {![env_var_exists_and_non_empty RTLMP_BLOCKAGE_FILE]} {
+    set ::env(RTLMP_BLOCKAGE_FILE) "$::env(OBJECTS_DIR)/rtlmp/partition.txt.blockage"
+  }
+
+  # If wrappers defined replace macros with their wrapped version
   if {[env_var_exists_and_non_empty MACRO_WRAPPERS]} {
     source $::env(MACRO_WRAPPERS)
 

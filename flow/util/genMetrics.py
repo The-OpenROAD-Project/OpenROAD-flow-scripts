@@ -6,7 +6,6 @@
 # -----------------------------------------------------------------------------
 
 import os
-from sys import exit
 from datetime import datetime, timedelta
 from collections import defaultdict
 from uuid import uuid4 as uuid
@@ -26,8 +25,7 @@ def parse_args():
     parser.add_argument(
         "--design",
         "-d",
-        required=False,
-        default="all_designs",
+        required=True,
         help="Design Name for metrics",
     )
     parser.add_argument(
@@ -51,6 +49,9 @@ def parse_args():
         "--output", "-o", required=False, default="metadata.json", help="Output file"
     )
     parser.add_argument("--hier", "-x", action="store_true", help="Hierarchical JSON")
+    parser.add_argument("--logs", help="Path to logs")
+    parser.add_argument("--reports", help="Path to reports")
+    parser.add_argument("--results", help="Path to results")
     args = parser.parse_args()
 
     return args
@@ -190,12 +191,10 @@ def merge_jsons(root_path, output, files):
         file.close()
 
 
-def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
+def extract_metrics(
+    cwd, platform, design, flow_variant, output, hier_json, logPath, rptPath, resultPath
+):
     baseRegEx = "^{}\n^-*\n^{}"
-
-    logPath = os.path.join(cwd, "logs", platform, design, flow_variant)
-    rptPath = os.path.join(cwd, "reports", platform, design, flow_variant)
-    resultPath = os.path.join(cwd, "results", platform, design, flow_variant)
 
     metrics_dict = defaultdict(dict)
     metrics_dict["run__flow__generate_date"] = now.strftime("%Y-%m-%d %H:%M")
@@ -369,59 +368,15 @@ def extract_metrics(cwd, platform, design, flow_variant, output, hier_json):
 
 args = parse_args()
 now = datetime.now()
-flow_variants = args.flowVariant.split()
-all_designs = True if args.design == "all_designs" else False
-designs = args.design.split()
-platforms = args.platform.split()
 
-if all_designs or len(designs) > 1 or len(flow_variants) > 1:
-    rootdir = "./logs"
-
-    all_df = pd.DataFrame()
-    all_d = []
-
-    cwd = os.getcwd()
-    for platform_it in os.scandir(rootdir):
-        if not platform_it.is_dir():
-            continue
-        plt = platform_it.name
-        if not plt in platforms:
-            continue
-        for design_it in os.scandir(platform_it.path):
-            if not design_it.is_dir():
-                continue
-            des = design_it.name
-            if not (all_designs or des in designs):
-                continue
-            for variant in flow_variants:
-                log_dir = os.path.join(cwd, "logs", plt, des, variant)
-                if not os.path.isdir(log_dir):
-                    continue
-                if not os.path.isfile(os.path.join(log_dir, "6_report.json")):
-                    print(
-                        f"Skip extracting metrics for {plt}, {des}, {variant} as run did not complete"
-                    )
-                    continue
-                print(f"Extract Metrics for {plt}, {des}, {variant}")
-                file = "/".join(["reports", plt, des, variant, "metrics.json"])
-                metrics, df = extract_metrics(cwd, plt, des, variant, file, args.hier)
-                all_d.append(metrics)
-                if all_df.shape[0] == 0:
-                    all_df = df
-                else:
-                    all_df = all_df.merge(df, on="Metrics", how="inner")
-
-    with open("metrics.json", "w") as outFile:
-        json.dump(all_d, outFile, indent=2)
-
-    with open("metrics.html", "w") as f:
-        f.write(all_df.to_html())
-else:
-    metrics_dict, metrics_df = extract_metrics(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), "../"),
-        args.platform,
-        args.design,
-        args.flowVariant,
-        args.output,
-        args.hier,
-    )
+metrics_dict, metrics_df = extract_metrics(
+    os.path.join(os.path.dirname(os.path.realpath(__file__)), "../"),
+    args.platform,
+    args.design,
+    args.flowVariant,
+    args.output,
+    args.hier,
+    args.logs,
+    args.reports,
+    args.results,
+)

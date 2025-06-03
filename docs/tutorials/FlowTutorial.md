@@ -187,15 +187,15 @@ minimum required timing constraint.
 create_clock -name core_clock -period 17.4 [get_ports {clk_i}]
 ```
 
-### Design Input Verilog
+### Design Input SystemVerilog
 
-The Verilog input files are located in `./designs/src/ibex/`
+The SystemVerilog input files are located in `./designs/src/ibex_sv/`
 
-The design is defined in `ibex_core.v` available
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/ibex_core.v).
+The design is defined in `ibex_core.sv` available
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex_sv/ibex_core.sv).
 
 Refer to the `ibex` design `README.md`
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md).
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex_sv/README.md).
 
 ## Running The Automated RTL-to-GDS Flow
 
@@ -829,7 +829,7 @@ The `gcd` design synthesis results for area and speed optimizations are shown be
 |-----------------------|--------------------------------------|--------------------------------------|
 | `Number of wires`     | 224                                  | 224                                  |
 | `Number of wire bits` | 270                                  | 270                                  |
-[O| `Number of cells`     | 234                                  | 234                                  |
+| `Number of cells`     | 234                                  | 234                                  |
 | `Chip area`           | 2083.248000                          | 2083.248000                          |
 | `Final Design Area`   | Design area 4295 u^2 6% utilization. | Design area 4074 u^2 6% utilization. |
 

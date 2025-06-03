@@ -27,7 +27,7 @@ on:
 
 jobs:
   buildCodespaceImage:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}
     timeout-minutes: 600
     steps:
       - uses: actions/checkout@v4
@@ -61,7 +61,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [["ubuntu20.04", "ubuntu:20.04"], ["ubuntu22.04", "ubuntu:22.04"]]
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.USE_SELF_HOSTED == 'true' && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4

@@ -17,10 +17,10 @@ with open(yaml_path, "r") as file:
 preferred_order = ["synth", "floorplan", "place", "cts", "grt", "route", "final"]
 stages = {stage for value in data.values() for stage in value.get("stages", [])}
 # convert set of stages to stages in a list in the preferred order, but
-# list all stages
-stages = [stage for stage in preferred_order if stage in stages] + [
-    stage for stage in stages if stage not in preferred_order
-]
+# list all stages and sort the rest for a stable order
+stages = [stage for stage in preferred_order if stage in stages] + sorted(
+    [stage for stage in stages if stage not in preferred_order]
+)
 
 markdown_table = ""
 

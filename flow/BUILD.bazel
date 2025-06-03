@@ -1,0 +1,70 @@
+load("@bazel-orfs//:openroad.bzl", "orfs_pdk")
+
+# files shared between scripts/synth.sh and scripts/flow.sh steps
+MAKEFILE_SHARED = [
+    "scripts/*.py",
+    "scripts/*.sh",
+    "scripts/*.yaml",
+    "scripts/*.mk",
+]
+
+# makefile and scripts used by script/synth.sh steps
+filegroup(
+    name = "makefile_yosys",
+    srcs = ["Makefile"],
+    data = glob(MAKEFILE_SHARED + [
+        "scripts/*.script",
+        "scripts/util.tcl",
+        "scripts/synth*.tcl",
+        "platforms/common/**/*.v",
+    ]) + [
+        "//flow/util:makefile_yosys",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# makefile and scripts used in the scripts/flow.sh steps
+filegroup(
+    name = "makefile",
+    srcs = ["Makefile"],
+    data = glob(MAKEFILE_SHARED + [
+        "scripts/*.tcl",
+        "platforms/common/**/*.v",
+    ]) + [
+        "//flow/util:makefile",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+[orfs_pdk(
+    name = pdk,
+    srcs = glob([
+        "platforms/{pdk}/**/*.{ext}".format(
+            ext = ext,
+            pdk = pdk,
+        )
+        for ext in [
+            "gds",
+            "lef",
+            "lib",
+            "lyt",
+            "mk",
+            "rules",
+            "tcl",
+            "v",
+        ] + {
+            "sky130hd": ["tlef"],
+            "asap7": [
+                "lib.gz",
+                "sdc",
+            ],
+        }.get(pdk, [])
+    ] + [
+        "platforms/common/**/*.v",
+    ]),
+    config = ":platforms/{pdk}/config.mk".format(pdk = pdk),
+    visibility = ["//visibility:public"],
+) for pdk in [
+    "asap7",
+    "sky130hd",
+]]

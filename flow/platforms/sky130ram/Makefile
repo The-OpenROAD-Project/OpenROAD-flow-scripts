@@ -66,7 +66,7 @@ endif
 # Verbosity
 OPTS += -v
 
-SHELL ?= /bin/bash
+SHELL ?= /usr/bin/env bash
 export SHELL
 export SHELLOPTS := pipefail
 

@@ -8,8 +8,8 @@ export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*
 
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export DIE_AREA   = 0 0 2920 3520
-export CORE_AREA  = 10 10 2910 3510
+export DIE_AREA   = 0 0 3020 3610
+export CORE_AREA  = 10 10 3010 3600
 
 export PLACE_DENSITY ?= 0.2
 
@@ -25,9 +25,21 @@ export SYNTH_HIERARCHICAL = 1
 
 export MACRO_PLACE_HALO = 100 100
 
+# We use large placement blockages to try eliminating the channels between
+# RAMs in order to make that space inaccessible for GPL. Experiments have
+# showed that connections crossing the RAMs vertically can be painful to
+# route.
+export MACRO_BLOCKAGE_HALO = 151
+
+# There's less space due to the adapted blockage halos, so GPL requires a
+# higher density in order to run.
+export PLACE_DENSITY = 0.19
+
 # CTS tuning
 export CTS_BUF_DISTANCE = 600
 export SKIP_GATE_CLONING = 1
+export CTS_CLUSTER_SIZE = 10
+export CTS_CLUSTER_DIAMETER = 50
 
 export SETUP_SLACK_MARGIN = 0.2
 

@@ -4,11 +4,6 @@ export PLATFORM    = nangate45
 
 export SYNTH_HIERARCHICAL = 1
 #
-# RTL_MP Settings
-export RTLMP_MAX_INST = 30000
-export RTLMP_MIN_INST = 5000
-export RTLMP_MAX_MACRO = 12
-export RTLMP_MIN_MACRO = 4 
 
 export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NAME)/pickled.v \
                        $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/macros.v
@@ -29,8 +24,8 @@ export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/io.tcl
 
 export MACRO_PLACE_HALO = 10 10
 
-export PLACE_DENSITY_LB_ADDON = 0.10
-export PLACE_DENSITY_MAX_POST_HOLD = 0.12
+export PLACE_DENSITY_LB_ADDON = 0.11
+export PLACE_DENSITY_MAX_POST_HOLD = 0.13
 export TNS_END_PERCENT        = 100
 
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/fastroute.tcl

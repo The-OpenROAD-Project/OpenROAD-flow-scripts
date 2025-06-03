@@ -3,24 +3,22 @@ proc log_cmd {cmd args} {
   set log_cmd "$cmd[join [lmap arg $args {format " %s" [expr {[string match {* *} $arg] ? "\"$arg\"" : "$arg"}]}] ""]"
   puts $log_cmd
   set start [clock seconds]
-  $cmd {*}$args
+  set result [uplevel 1 [list $cmd {*}$args]]
   set time [expr {[clock seconds] - $start}]
   if {$time >= 5} {
     # Ideally we'd use a single line, but the command can output text
     # and we don't want to mix it with the log, so output the time it took afterwards.
     puts "Took $time seconds: $log_cmd"
   }
+  return $result
 }
 
 proc fast_route {} {
   if {[env_var_exists_and_non_empty FASTROUTE_TCL]} {
-    source $::env(FASTROUTE_TCL)
+    log_cmd source $::env(FASTROUTE_TCL)
   } else {
-    set_global_routing_layer_adjustment $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) $::env(ROUTING_LAYER_ADJUSTMENT)
-    set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
-    if {[env_var_exists_and_non_empty MACRO_EXTENSION]} {
-      set_macro_extension $::env(MACRO_EXTENSION)
-    }
+    log_cmd set_global_routing_layer_adjustment $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) $::env(ROUTING_LAYER_ADJUSTMENT)
+    log_cmd set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
   }
 }
 
