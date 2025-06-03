@@ -135,7 +135,11 @@ if {![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS]} {
 
 # Write synthesized design
 write_verilog -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
+write_snl
+
 # One day a more sophisticated synthesis will write out a modified
 # .sdc file after synthesis. For now, just copy the input .sdc file,
 # making synthesis more consistent with other stages.
 log_cmd exec cp $::env(SDC_FILE) $::env(RESULTS_DIR)/1_synth.sdc
+
+
