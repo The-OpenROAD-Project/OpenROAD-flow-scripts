@@ -16,6 +16,8 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 
+LAYER_HEADER_RE = re.compile("^([^\\(]+)\\(([^\\)]+)\\)$")
+
 # Parse and validate arguments
 # =============================================================================
 
@@ -101,9 +103,19 @@ for rc_file in args.rc_file:
                     exit(1)
                 elif stack_line is None:
                     for layer in line.removeprefix("# stack: ").strip().split(" "):
-                        name = layer.removesuffix("(routing)")
-                        is_routing = layer.endswith("(routing)")
-                        stack.append((name, is_routing))
+                        name = layer
+                        is_routing = False
+                        via_resist = 0.0
+                        if layer.endswith(")"):
+                            # layer name has extra data
+                            match = LAYER_HEADER_RE.match(layer)
+                            assert match
+                            name = match.group(1)
+                            if match.group(2) == "routing":
+                                is_routing = True
+                            else:
+                                via_resist = float(match.group(2))
+                        stack.append((name, is_routing, via_resist))
                 continue
 
             tokens = line.strip().split(",")
@@ -125,11 +137,22 @@ for rc_file in args.rc_file:
                     active_layers.add(i)
 
             data[design][netName]["layer_lengths"] = layer_lengths
+            data[design][netName]["routable_layer_lengths"] = [
+                length
+                for i, length in enumerate(layer_lengths)
+                # ignore non-routable layers
+                if stack[i][1]
+            ]
             data[design][netName]["wire_length"] = sum(
                 length
                 for i, length in enumerate(layer_lengths)
-                # ignore contribution from via layers
+                # ignore non-routable layers
                 if stack[i][1]
+            )
+            data[design][netName]["grt_via_res"] = sum(
+                (length * stack[i][2])
+                for i, length in enumerate(layer_lengths)
+                if not stack[i][1]
             )
 
 ################################################################
@@ -227,15 +250,15 @@ for design in data:
     for net in data[design]:
         rcx_res = data[design][net]["rcx_res"]
         if rcx_res > 0:
-            x.append(data[design][net]["layer_lengths"])
-            y.append(rcx_res)
+            x.append(data[design][net]["routable_layer_lengths"])
+            y.append(rcx_res - data[design][net]["grt_via_res"])
 
 x = np.array(x)
 y = np.array(y)
 
 res_model = LinearRegression(fit_intercept=False).fit(x, y)
 r_sq = res_model.score(x, y)
-print("Resistance coefficient of determination: {:.4f}".format(r_sq))
+print("# Resistance coefficient of determination: {:.4f}".format(r_sq))
 
 ################################################################
 
@@ -245,8 +268,7 @@ x = []
 y = []
 for design in data:
     for net in data[design]:
-        lengths = data[design][net]["layer_lengths"]
-        x.append([length for length, layer in zip(lengths, stack) if layer[1]])
+        x.append(data[design][net]["routable_layer_lengths"])
         y.append(data[design][net]["rcx_cap"])
 
 x = np.array(x)
@@ -254,30 +276,17 @@ y = np.array(y)
 
 cap_model = LinearRegression(fit_intercept=False).fit(x, y)
 r_sq = cap_model.score(x, y)
-print("Capacitance coefficient of determination: {:.4f}".format(r_sq))
+print("# Capacitance coefficient of determination: {:.4f}".format(r_sq))
+print("# Updated layer resistance {}/um capacitance {}/um".format(res_unit, cap_unit))
 
-print("Updated layer resistance {}/um capacitance {}/um".format(res_unit, cap_unit))
-routable_layer_no = 0
-for i, layer, res_coeff in zip(range(len(stack)), stack, res_model.coef_):
-    if not layer[1] or i not in active_layers:
-        # skip non-routable and non-active layers
-        continue
-    cap_coeff = cap_model.coef_[routable_layer_no]
-    print(
-        "set_layer_rc -layer {} -resistance {:.5E} -capacitance {:.5E}".format(
-            layer[0], res_coeff / res_scale, cap_coeff / cap_scale
-        )
-    )
-    routable_layer_no += 1
-
-for i, layer, res_coeff in zip(range(len(stack)), stack, res_model.coef_):
-    if layer[1] or i not in active_layers:
-        # skip routable and non-active layers
-        continue
-    if res_coeff != 0.0:
+routable_layers = [layer for layer in stack if layer[1]]
+for i, layer in enumerate(routable_layers):
+    res_coeff = res_model.coef_[i]
+    cap_coeff = cap_model.coef_[i]
+    if res_coeff != 0.0 or cap_coeff != 0.0:
         print(
-            "set_layer_rc -via {} -resistance {:.5E}".format(
-                layer[0], res_coeff / res_scale
+            "set_layer_rc -layer {} -resistance {:.5E} -capacitance {:.5E}".format(
+                layer[0], res_coeff / res_scale, cap_coeff / cap_scale
             )
         )
 

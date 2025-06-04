@@ -44,9 +44,16 @@ proc write_rc_csv { filename } {
   foreach layer [[ord::get_db_tech] getLayers] {
     set routing [expr [$layer getRoutingLevel] != 0]
     set is_routing([$layer getNumber]) $routing
+    set is_routing([$layer getNumber]) $routing
     puts -nonewline $stream " [$layer getName]"
     if $routing {
       puts -nonewline $stream "(routing)"
+    } else {
+      # insert via resistance information
+      set via_resist [$layer getResistance]
+      if { $via_resist != 0.0 } {
+        puts -nonewline $stream "([format %.4e $via_resist])"
+      }
     }
   }
   puts $stream "" 
