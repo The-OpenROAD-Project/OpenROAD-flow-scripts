@@ -10,8 +10,6 @@ proc global_route_helper {} {
     source $::env(PRE_GLOBAL_ROUTE)
   }
 
-  fast_route
-
   proc do_global_route {} {
     set all_args [concat [list \
       -congestion_report_file $::global_route_congestion_report] \

@@ -46,8 +46,6 @@ set all_args [concat [list \
 
 log_cmd detailed_route {*}$all_args
 
-fast_route
-
 if {![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1]} {
   set repair_antennas_iters 1
   if {[repair_antennas]} {

@@ -69,4 +69,3 @@ if {[env_var_equals GUI_TIMING 1]} {
   }
 }
 
-fast_route
