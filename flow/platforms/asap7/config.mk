@@ -7,6 +7,8 @@ ifeq ($(LIB_MODEL),)
 endif
 export LIB_DIR                ?= $(PLATFORM_DIR)/lib/$(LIB_MODEL)
 
+export PLATFORM_TCL            = $(PLATFORM_DIR)/liberty_suppressions.tcl
+
 #Library Setup variable
 export TECH_LEF                = $(PLATFORM_DIR)/lef/asap7_tech_1x_201209.lef
 
@@ -63,8 +65,11 @@ export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
 
 # Route options
 export MIN_ROUTING_LAYER       ?= M2
-#export MIN_CLOCK_ROUTING_LAYER = M4
+export MIN_CLK_ROUTING_LAYER   ?= M4
 export MAX_ROUTING_LAYER       ?= M7
+
+# Define fastRoute tcl
+export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 
 # KLayout technology file
 export KLAYOUT_TECH_FILE       = $(PLATFORM_DIR)/KLayout/asap7.lyt

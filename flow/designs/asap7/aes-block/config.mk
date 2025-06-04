@@ -11,7 +11,7 @@ export ABC_AREA               = 1
 export CORE_UTILIZATION       = 20
 export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
-export PLACE_DENSITY          = 0.65
+export PLACE_DENSITY          = 0.60
 
 export BLOCKS ?= aes_rcon aes_sbox
 export SYNTH_HIERARCHICAL = 1
