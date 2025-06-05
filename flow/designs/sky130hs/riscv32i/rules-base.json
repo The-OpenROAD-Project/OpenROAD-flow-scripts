@@ -32,7 +32,7 @@
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 411975,
+        "value": 378010,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -44,15 +44,15 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 12,
+        "value": 9,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.32,
+        "value": -0.21,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 149394,
+        "value": 141659,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
