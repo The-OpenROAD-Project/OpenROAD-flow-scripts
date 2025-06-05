@@ -2,6 +2,7 @@ set IO_LENGTH 180
 set IO_WIDTH 80
 set BONDPAD_SIZE 70
 set SEALRING_OFFSET 70
+set IO_OFFSET [expr {$BONDPAD_SIZE + $SEALRING_OFFSET}]
 
 proc calc_horizontal_pad_location {index total} {
     global IO_LENGTH
