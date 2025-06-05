@@ -88,8 +88,7 @@ export MACRO_HALO             = 5 5
 # few last gasp iterations
 export SKIP_LAST_GASP ?= 1
 
-ifeq ($(SYNTH_HIERARCHICAL),1)
-	export SYNTH_MINIMUM_KEEP_SIZE ?= 40000
-endif
+# For use with SYNTH_HIERARCHICAL
+export SYNTH_MINIMUM_KEEP_SIZE ?= 40000
 
 export SYNTH_HDL_FRONTEND = slang
