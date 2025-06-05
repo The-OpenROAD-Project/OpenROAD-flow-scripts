@@ -89,10 +89,12 @@ include $(DESIGN_CONFIG)
 
 export DESIGN_DIR ?= $(dir $(DESIGN_CONFIG))
 
-# default value "base" is duplicated from variables.yaml because we need it
+# default value "base" for FLOW_VARIANT and "." for WORK_HOME are duplicated
+# from variables.yaml and variables.mk because we need it
 # earlier in the flow for BLOCKS. BLOCKS is a feature specific to the
 # ORFS Makefile.
 export FLOW_VARIANT?=base
+export WORK_HOME?=.
 # BLOCKS is a ORFS make flow specific feature.
 ifneq ($(BLOCKS),)
   # Normally this comes from variables.yaml, but we need it here to set up these variables
