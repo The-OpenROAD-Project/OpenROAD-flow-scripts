@@ -116,6 +116,7 @@ for rc_file in args.rc_file:
                             else:
                                 via_resist = float(match.group(2))
                         stack.append((name, is_routing, via_resist))
+                    stack_line = line
                 continue
 
             tokens = line.strip().split(",")
