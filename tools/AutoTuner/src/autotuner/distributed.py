@@ -38,36 +38,33 @@ This scripts handles sweeping and tuning of OpenROAD-flow-scripts parameters.
 Dependencies are documented in pip format at distributed-requirements.txt
 
 For both sweep and tune modes:
-    openroad_autotuner -h
+    python -m autotuner.distributed -h
 
 Note: the order of the parameters matter.
 Arguments --design, --platform and --config are always required and should
 precede the <mode>.
 
 AutoTuner:
-    openroad_autotuner tune -h
-    openroad_autotuner --design gcd --platform sky130hd \
+    python -m autotuner.distributed tune -h
+    python -m autotuner.distributed --design gcd --platform sky130hd \
                            --config ../designs/sky130hd/gcd/autotuner.json \
                            tune
     Example:
 
 Parameter sweeping:
-    openroad_autotuner sweep -h
+    python -m autotuner.distributed sweep -h
     Example:
-    openroad_autotuner --design gcd --platform sky130hd \
+    python -m autotuner.distributed --design gcd --platform sky130hd \
                        --config distributed-sweep-example.json \
                        sweep
 """
 
-import argparse
 import json
 import os
 import sys
 import random
 from itertools import product
-from uuid import uuid4 as uuid
 from collections import namedtuple
-from multiprocessing import cpu_count
 
 import numpy as np
 import torch
@@ -95,6 +92,7 @@ from autotuner.utils import (
     CONSTRAINTS_SDC,
     FASTROUTE_TCL,
 )
+from autotuner.cli import parse_arguments
 
 # Name of the final metric
 METRIC = "metric"
@@ -256,193 +254,6 @@ class PPAImprov(AutoTunerBase):
         return (score, effective_clk_period, num_drc)
 
 
-def parse_arguments():
-    """
-    Parse arguments from command line.
-    """
-    parser = argparse.ArgumentParser()
-
-    subparsers = parser.add_subparsers(
-        help="mode of execution", dest="mode", required=True
-    )
-    tune_parser = subparsers.add_parser("tune")
-    _ = subparsers.add_parser("sweep")
-
-    # DUT
-    parser.add_argument(
-        "--design",
-        type=str,
-        metavar="<gcd,jpeg,ibex,aes,...>",
-        required=True,
-        help="Name of the design for Autotuning.",
-    )
-    parser.add_argument(
-        "--platform",
-        type=str,
-        metavar="<sky130hd,sky130hs,asap7,...>",
-        required=True,
-        help="Name of the platform for Autotuning.",
-    )
-
-    # Experiment Setup
-    parser.add_argument(
-        "--config",
-        type=str,
-        metavar="<path>",
-        required=True,
-        help="Configuration file that sets which knobs to use for Autotuning.",
-    )
-    parser.add_argument(
-        "--experiment",
-        type=str,
-        metavar="<str>",
-        default="test",
-        help="Experiment name. This parameter is used to prefix the"
-        " FLOW_VARIANT and to set the Ray log destination.",
-    )
-    parser.add_argument(
-        "--timeout",
-        type=float,
-        metavar="<float>",
-        default=None,
-        help="Time limit (in hours) for each trial run. Default is no limit.",
-    )
-    tune_parser.add_argument(
-        "--resume",
-        action="store_true",
-        help="Resume previous run. Note that you must also set a unique experiment\
-                name identifier via `--experiment NAME` to be able to resume.",
-    )
-
-    # ML
-    tune_parser.add_argument(
-        "--algorithm",
-        type=str,
-        choices=["hyperopt", "ax", "optuna", "pbt", "random"],
-        default="hyperopt",
-        help="Search algorithm to use for Autotuning.",
-    )
-    tune_parser.add_argument(
-        "--eval",
-        type=str,
-        choices=["default", "ppa-improv"],
-        default="default",
-        help="Evaluate function to use with search algorithm.",
-    )
-    tune_parser.add_argument(
-        "--samples",
-        type=int,
-        metavar="<int>",
-        default=10,
-        help="Number of samples for tuning.",
-    )
-    tune_parser.add_argument(
-        "--iterations",
-        type=int,
-        metavar="<int>",
-        default=1,
-        help="Number of iterations for tuning.",
-    )
-    tune_parser.add_argument(
-        "--resources_per_trial",
-        type=float,
-        metavar="<float>",
-        default=1,
-        help="Number of CPUs to request for each tuning job.",
-    )
-    tune_parser.add_argument(
-        "--reference",
-        type=str,
-        metavar="<path>",
-        default=None,
-        help="Reference file for use with PPAImprov.",
-    )
-    tune_parser.add_argument(
-        "--perturbation",
-        type=int,
-        metavar="<int>",
-        default=25,
-        help="Perturbation interval for PopulationBasedTraining.",
-    )
-    tune_parser.add_argument(
-        "--seed",
-        type=int,
-        metavar="<int>",
-        default=42,
-        help="Random seed. (0 means no seed.)",
-    )
-
-    # Workload
-    parser.add_argument(
-        "--jobs",
-        type=int,
-        metavar="<int>",
-        default=int(np.floor(cpu_count() / 2)),
-        help="Max number of concurrent jobs.",
-    )
-    parser.add_argument(
-        "--openroad_threads",
-        type=int,
-        metavar="<int>",
-        default=16,
-        help="Max number of threads openroad can use.",
-    )
-    parser.add_argument(
-        "--server",
-        type=str,
-        metavar="<ip|servername>",
-        default=None,
-        help="The address of Ray server to connect.",
-    )
-    parser.add_argument(
-        "--port",
-        type=int,
-        metavar="<int>",
-        default=10001,
-        help="The port of Ray server to connect.",
-    )
-
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="count",
-        default=0,
-        help="Verbosity level.\n\t0: only print Ray status\n\t1: also print"
-        " training stderr\n\t2: also print training stdout.",
-    )
-
-    args = parser.parse_args()
-    if args.mode == "tune":
-        args.algorithm = args.algorithm.lower()
-        # Validation of arguments
-        if args.eval == "ppa-improv" and args.reference is None:
-            print(
-                '[ERROR TUN-0006] The argument "--eval ppa-improv"'
-                ' requires that "--reference <FILE>" is also given.'
-            )
-            sys.exit(7)
-
-        # Check for experiment name and resume flag.
-        if args.resume and args.experiment == "test":
-            print(
-                '[ERROR TUN-0031] The flag "--resume"'
-                ' requires that "--experiment NAME" is also given.'
-            )
-            sys.exit(1)
-
-    # If the experiment name is the default, add a UUID to the end.
-    if args.experiment == "test":
-        id = str(uuid())[:8]
-        args.experiment = f"{args.mode}-{id}"
-    else:
-        args.experiment += f"-{args.mode}"
-
-    if args.timeout is not None:
-        args.timeout = round(args.timeout * 3600)
-
-    return args
-
-
 def set_algorithm(
     algorithm_name, experiment_name, best_params, seed, perturbation, jobs, config
 ):
@@ -578,49 +389,57 @@ def main():
 
     # Read config and original files before handling where to run in case we
     # need to upload the files.
-    config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(
-        os.path.abspath(args.config), args.mode, getattr(args, "algorithm", None)
-    )
+    if args.mode == "tune":
+        config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(
+            file_name=os.path.abspath(args.tune.config),
+            mode=args.mode,
+            algorithm=args.tune.algorithm,
+        )
+    else:
+        config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(
+            file_name=os.path.abspath(args.sweep.config),
+            mode=args.mode,
+        )
 
     LOCAL_DIR, ORFS_FLOW_DIR, INSTALL_PATH = prepare_ray_server(args)
 
     if args.mode == "tune":
         best_params = set_best_params(args.platform, args.design)
         search_algo = set_algorithm(
-            args.algorithm,
+            args.tune.algorithm,
             args.experiment,
             best_params,
-            args.seed,
-            args.perturbation,
+            args.tune.seed,
+            args.tune.perturbation,
             args.jobs,
             config_dict,
         )
-        TrainClass = set_training_class(args.eval)
+        TrainClass = set_training_class(args.tune.eval)
         # PPAImprov requires a reference file to compute training scores.
-        if args.eval == "ppa-improv":
-            reference = read_metrics(args.reference)
+        if args.tune.eval == "ppa-improv":
+            reference = read_metrics(args.tune.reference)
 
         tune_args = dict(
             name=args.experiment,
             metric=METRIC,
             mode="min",
-            num_samples=args.samples,
+            num_samples=args.tune.samples,
             fail_fast=False,
             storage_path=LOCAL_DIR,
-            resume=args.resume,
-            stop={"training_iteration": args.iterations},
+            resume=args.tune.resume,
+            stop={"training_iteration": args.tune.iterations},
             resources_per_trial={"cpu": os.cpu_count() / args.jobs},
             log_to_file=["trail-out.log", "trail-err.log"],
             trial_name_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
             trial_dirname_creator=lambda x: f"variant-{x.trainable_name}-{x.trial_id}-ray",
         )
-        if args.algorithm == "pbt":
+        if args.tune.algorithm == "pbt":
             os.environ["TUNE_MAX_PENDING_TRIALS_PG"] = str(args.jobs)
             tune_args["scheduler"] = search_algo
         else:
             tune_args["search_alg"] = search_algo
             tune_args["scheduler"] = AsyncHyperBandScheduler()
-        if args.algorithm != "ax":
+        if args.tune.algorithm != "ax":
             tune_args["config"] = config_dict
         analysis = tune.run(TrainClass, **tune_args)
 
