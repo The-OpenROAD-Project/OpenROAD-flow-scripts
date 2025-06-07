@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 70856.21,
+        "value": 70778.51,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -28,7 +28,7 @@
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 36,
+        "value": 4,
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
@@ -44,15 +44,15 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 10,
+        "value": 6,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -1.36,
+        "value": -1.32,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 103720,
+        "value": 101560,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
