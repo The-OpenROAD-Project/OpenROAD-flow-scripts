@@ -18,11 +18,10 @@ export DESIGN_NICKNAME?=$(DESIGN_NAME)
 # Setup variables to point to other location for the following sub directory
 # - designs - default is under current directory
 # - platforms - default is under current directory
-# - work home - default is current directory
 # - utils, scripts, test - default is under current directory
 export DESIGN_HOME   ?= $(FLOW_HOME)/designs
 export PLATFORM_HOME ?= $(FLOW_HOME)/platforms
-export WORK_HOME     ?= .
+# WORK_HOME is set up in flow/Makefile
 
 export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
