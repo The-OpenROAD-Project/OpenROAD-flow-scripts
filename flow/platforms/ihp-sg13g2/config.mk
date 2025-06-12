@@ -63,8 +63,12 @@ export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sg13g2_buf_4
 export ABC_LOAD_IN_FF = 6.0
-# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
+ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
+  ifneq ($(wildcard $(SDC_FILE)),)
+    # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
+    export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
+  endif
+endif
 
 # -----------------------------------------------------
 #  Sizing
