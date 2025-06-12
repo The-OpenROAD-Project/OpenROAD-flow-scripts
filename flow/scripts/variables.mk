@@ -3,15 +3,6 @@
 # lazy evaluation, conditional code, include statements,
 # etc.
 
-# Setup variables to point to root / head of the OpenROAD directory
-# - the following settings allowed user to point OpenROAD binaries to different
-#   location
-# - default is current install / clone directory
-ifeq ($(origin FLOW_HOME), undefined)
-FLOW_HOME := $(abspath $(dir $(firstword $(MAKEFILE_LIST)))/..)
-endif
-export FLOW_HOME
-
 export DESIGN_NICKNAME?=$(DESIGN_NAME)
 
 #-------------------------------------------------------------------------------
@@ -21,7 +12,6 @@ export DESIGN_NICKNAME?=$(DESIGN_NAME)
 # - utils, scripts, test - default is under current directory
 export DESIGN_HOME   ?= $(FLOW_HOME)/designs
 export PLATFORM_HOME ?= $(FLOW_HOME)/platforms
-# WORK_HOME is set up in flow/Makefile
 
 export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts

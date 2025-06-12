@@ -146,7 +146,7 @@ SHELL          := /usr/bin/env bash
 #   location
 # - default is current install / clone directory
 ifeq ($(origin FLOW_HOME), undefined)
-FLOW_HOME := $(abspath $(dir $(firstword $(MAKEFILE_LIST))))
+  FLOW_HOME := $(abspath $(dir $(firstword $(MAKEFILE_LIST))))
 endif
 export FLOW_HOME
 
