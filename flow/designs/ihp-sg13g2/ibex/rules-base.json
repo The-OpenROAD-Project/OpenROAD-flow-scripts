@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 20844,
+        "value": 21142,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -44,7 +44,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 51,
+        "value": 32,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
