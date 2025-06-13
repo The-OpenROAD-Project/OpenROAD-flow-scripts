@@ -10,17 +10,6 @@ set pin_count_before [sta::network_leaf_pin_count]
 
 set_dont_use $::env(DONT_USE_CELLS)
 
-# Do not buffer chip-level designs
-# by default, IO ports will be buffered
-# to not buffer IO ports, set environment variable
-# DONT_BUFFER_PORT = 1
-if { ![env_var_exists_and_non_empty FOOTPRINT] } {
-  if { ![env_var_equals DONT_BUFFER_PORTS 1] } {
-    puts "Perform port buffering..."
-    buffer_ports
-  }
-}
-
 repair_design_helper
 
 if { [env_var_exists_and_non_empty TIE_SEPARATION] } {
