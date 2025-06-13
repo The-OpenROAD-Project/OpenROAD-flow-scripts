@@ -66,5 +66,7 @@ else
 export DESIGN_TYPE = CHIP_NODEN
 endif
 
+export CTS_ARGS = -no_insertion_delay
+
 # enable slack margin for setup and hold fix after CTS
 export SETUP_SLACK_MARGIN ?= 100
