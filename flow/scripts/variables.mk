@@ -41,7 +41,7 @@ include $(PLATFORM_DIR)/config.mk
 
 # __SPACE__ is a workaround for whitespace hell in "foreach"; there
 # is no way to escape space in defaults.py and get "foreach" to work.
-$(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
+$(foreach line,$(shell $(PYTHON_EXE) $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
 
 export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
@@ -70,6 +70,8 @@ export NUM_CORES
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
+export PYTHON_EXE ?= $(shell command -v python3)
+
 export TIME_BIN   ?= env time
 TIME_CMD = $(TIME_BIN) -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
 TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
