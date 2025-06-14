@@ -24,9 +24,6 @@ export PLACE_DENSITY ?= 0.50
 
 export IO_CONSTRAINTS  = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/io.tcl
 
-# to be removed once gpl is fixed for "corner buffers" issue
-export GPL_KEEP_OVERFLOW = 0
-
 export MACRO_PLACE_HALO = 7 7 
 export MACRO_WRAPPERS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/wrappers.tcl
 
