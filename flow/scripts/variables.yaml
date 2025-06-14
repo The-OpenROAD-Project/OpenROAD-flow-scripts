@@ -328,13 +328,13 @@ IO_CONSTRAINTS:
     - place
 IO_PLACER_H:
   description: >
-    The metal layer on which to place the I/O pins horizontally (top and bottom
+    A list of metal layers on which the I/O pins are placed horizontally (top and bottom
     of the die).
   stages:
     - place
 IO_PLACER_V:
   description: >
-    The metal layer on which to place the I/O pins vertically (sides of the
+    A list of metal layers on which the I/O pins are placed vertically (sides of the
     die).
   stages:
     - place
