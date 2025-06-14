@@ -104,6 +104,9 @@ The `autotuner.distributed` module uses [Ray's](https://docs.ray.io/en/latest/in
 fully utilize available hardware resources from a single server 
 configuration, on-premise or over the cloud with multiple CPUs.
 
+For advanced users, we have provided a configuration file, please
+refer to [this guide](./CLIGuideAutotuner.md).
+
 The two modes of operation:
 - `sweep`, where every possible parameter combination in the search space is tested
 - `tune`, where we use Ray's Tune feature to intelligently search the space and optimize hyperparameters using one of the algorithms listed above.
@@ -124,25 +127,25 @@ The following commands should be run from `./tools/AutoTuner`.
 
 #### Tune only 
 
-* AutoTuner: `openroad_autotuner tune -h`
+* AutoTuner: `python -m autotuner.distributed tune -h`
 
 Example:
 
 ```shell
-openroad_autotuner --design gcd --platform sky130hd \
+python -m autotuner.distributed --design gcd --platform sky130hd \
+                       tune --samples 5 \
                        --config ../../flow/designs/sky130hd/gcd/autotuner.json \
-                       tune --samples 5
 ```
 #### Sweep only 
 
-* Parameter sweeping: `openroad_autotuner sweep -h`
+* Parameter sweeping: `python -m autotuner.distributed sweep -h`
 
 Example:
 
 ```shell
-openroad_autotuner --design gcd --platform sky130hd \
-                       --config src/autotuner/distributed-sweep-example.json \
-                       sweep
+python -m autotuner.distributed --design gcd --platform sky130hd \
+                       sweep \
+                       --config src/autotuner/distributed-sweep-example.json
 ```
 
 #### Plot images
