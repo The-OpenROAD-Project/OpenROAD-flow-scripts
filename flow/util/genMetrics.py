@@ -13,7 +13,6 @@ from subprocess import check_output, call, STDOUT
 
 import argparse
 import json
-import pandas as pd
 import re
 from glob import glob
 
@@ -346,10 +345,6 @@ def extract_metrics(
     else:
         metrics_dict["total_time"] = str(total)
 
-    metrics_df = pd.DataFrame(list(metrics_dict.items()))
-    col_index = metrics_df.iloc[0][1] + "__" + metrics_df.iloc[1][1]
-    metrics_df.columns = ["Metrics", col_index]
-
     if hier_json:
         # Convert the Metrics dictionary to hierarchical format by stripping
         # the stage as a 'key'
@@ -363,13 +358,11 @@ def extract_metrics(
     with open(output, "w") as resultSpecfile:
         json.dump(metrics_dict, resultSpecfile, indent=2, sort_keys=True)
 
-    return metrics_dict, metrics_df
-
 
 args = parse_args()
 now = datetime.now()
 
-metrics_dict, metrics_df = extract_metrics(
+extract_metrics(
     os.path.join(os.path.dirname(os.path.realpath(__file__)), "../"),
     args.platform,
     args.design,
