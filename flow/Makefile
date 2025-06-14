@@ -207,7 +207,7 @@ $(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
 	$(PYTHON_EXE) $(UTILS_DIR)/preprocessLib.py -i $^ -o $@
 
 $(OBJECTS_DIR)/lib/merged.lib: $(DONT_USE_LIBS)
-	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
+	$(PYTHON_EXE) $(UTILS_DIR)/merge_lib.py $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
 
 # Pre-process KLayout tech
 # ==============================================================================
