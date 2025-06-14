@@ -39,7 +39,7 @@ module hpdcache_sram_wbyteenable
     input  logic [DATA_SIZE/8-1:0] wbyteenable,
     output logic [DATA_SIZE-1:0]   rdata
 );
-   fakeram7_256x256 ram_i (
+   fakeram7_128x64 ram_i (
         .clk (clk),
         .ce_in(cs),
         .we_in(we),
