@@ -204,10 +204,10 @@ versions.txt:
 .SECONDEXPANSION:
 $(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
 	@mkdir -p $(OBJECTS_DIR)/lib
-	$(UTILS_DIR)/preprocessLib.py -i $^ -o $@
+	$(PYTHON_EXE) $(UTILS_DIR)/preprocessLib.py -i $^ -o $@
 
 $(OBJECTS_DIR)/lib/merged.lib: $(DONT_USE_LIBS)
-	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
+	$(PYTHON_EXE) $(UTILS_DIR)/merge_lib.py $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
 
 # Pre-process KLayout tech
 # ==============================================================================
@@ -271,9 +271,9 @@ do-synth-report:
 .PHONY: memory
 memory:
 	if [ -f $(RESULTS_DIR)/mem_hierarchical.json ]; then \
-		python3 $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem_hierarchical.json; \
+		$(PYTHON_EXE) $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem_hierarchical.json; \
 	fi
-	python3 $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
+	$(PYTHON_EXE) $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
 
 # ==============================================================================
 
@@ -619,12 +619,12 @@ finish: $(LOG_DIR)/6_report.log \
 
 .PHONY: elapsed
 elapsed:
-	-@$(UTILS_DIR)/genElapsedTime.py -d $(BLOCK_LOG_FOLDERS) $(LOG_DIR)
+	-@$(PYTHON_EXE) $(UTILS_DIR)/genElapsedTime.py -d $(BLOCK_LOG_FOLDERS) $(LOG_DIR)
 
 # Useful when working with macros, see elapsed time for all macros in platform
 .PHONY: elapsed-all
 elapsed-all:
-	@$(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
+	@$(PYTHON_EXE) $(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
 
 $(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(RESULTS_DIR)/5_route.sdc $(FILL_CONFIG),density_fill))
 

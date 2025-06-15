@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 731,
+        "value": 726,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,11 +20,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 64,
+        "value": 63,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 64,
+        "value": 63,
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {

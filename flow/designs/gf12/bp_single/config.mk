@@ -66,5 +66,8 @@ else
 export DESIGN_TYPE = CHIP_NODEN
 endif
 
+# Override cts arguments to set `-no_insertion_delay`
+export CTS_ARGS = -no_insertion_delay -sink_clustering_enable -balance_levels -repair_clock_nets
+
 # enable slack margin for setup and hold fix after CTS
 export SETUP_SLACK_MARGIN ?= 100
