@@ -8,5 +8,7 @@
             "name": "Light",
             "data": "\n                QWidget {\n                    background-color: #f8f8f8;\n                    color: black;\n                }\n                QPushButton {\n                    background-color: #e0e0e0;\n                    color: black;\n                    border: 1px solid #bbbbbb;\n                }\n                QPushButton:hover {\n                    background-color: #d6d6d6;\n                }\n                QComboBox {\n                    background-color: #ffffff;\n                    color: black;\n                    border: 1px solid #bbbbbb;\n                }\n            "
         }
-    ]
+    ],
+
+    "version": "v2.1.2"
 }

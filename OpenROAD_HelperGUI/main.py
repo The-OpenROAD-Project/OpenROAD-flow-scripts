@@ -1,15 +1,16 @@
 import sys
 import os
 import shutil
-import subprocess
+import requests
 import re
 import json
-from PyQt6.QtWidgets import QApplication,QDialog,QFileDialog,QGraphicsDropShadowEffect, QMainWindow, QTextEdit, QSplitter, QVBoxLayout, QHBoxLayout, QPushButton, QComboBox, QLabel, QWidget
-from PyQt6.QtCore import Qt,QProcess  # Import Qt for alignment
+from PyQt6.QtWidgets import QLineEdit,QApplication,QDialog,QFileDialog,QGraphicsDropShadowEffect, QMainWindow, QTextEdit, QSplitter, QVBoxLayout, QHBoxLayout, QPushButton, QComboBox, QLabel, QWidget
+from PyQt6.QtCore import Qt,QProcess,QProcessEnvironment  # Import Qt for alignment
+from PyQt6.QtGui import QIcon
 
 filepath = ""
 comStart = "cd .. && cd flow && "
-comEnd = "&& cd .. && cd OpenROAD_HelperGUI; exec bash"
+comEnd = "&& cd .. && cd OpenROAD_HelperGUI"
 
 def command(command:str):
     return comStart + command + comEnd
@@ -19,7 +20,7 @@ class SettingsWindow(QDialog):
 
     themes = []
 
-    def reposition(self,parent):
+    def reposition(self,parent=None):
         """Center the settings window relative to the main window."""
         parent_geometry = parent.geometry()
         x = parent_geometry.x() + (parent_geometry.width() - self.width()) // 2
@@ -96,7 +97,7 @@ class SettingsWindow(QDialog):
 
         command = "rm -rf OpenROAD_HelperGUI && git clone https://github.com/BattusaiKuroKame/OpenROAD_HelperGUI.git"
 
-        self.parent().log("\nUpdate Command"+"\n"+command +"\n")
+        self.parent().log("\nUpdate Command"+"\n"+command +"\n\nRun this command in the 'OpenROAD-flow-scripts/' Directory")
 
 
 
@@ -124,19 +125,60 @@ class SettingsWindow(QDialog):
         self.parent().log("Theme Applied!")
         # print("Settings Applied!")  # Debugging message
 
-# Widget to display log messages
-class LogWidget(QWidget):
+class ColorBox(QLabel):
     def __init__(self):
         super().__init__()
-        
+        # self.setFixedSize(100, 100)
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setStyleSheet("background-color: white; border: 1px solid black;")
+
+    def setColor(self,col = "white"):
+        self.setStyleSheet(f"background-color: {col}; border: 1px solid black;")
+
+# Widget to display log messages
+class LogWidget(QWidget):
+    def __init__(self,main_window):
+        super().__init__()
+        self.main_window = main_window
+        self.log = main_window.log  # Reference to main app's log method
+
+        # self.main_window = main_window
         self.layout = QVBoxLayout()
-        
         # Text area for log messages
         self.log_display = QTextEdit()
         self.log_display.setReadOnly(True)  # Make it read-only
         
         self.layout.addWidget(self.log_display)
+
+        # Horizontal layout for input and button
+        # Input field and Run button
+        input_layout = QHBoxLayout()
+        self.input_box = QLineEdit()
+        self.reset_path_button = QPushButton("Reset Path")
+        input_layout.addWidget(self.input_box,9)
+        input_layout.addWidget(self.reset_path_button,1)
+
+        self.layout.addLayout(input_layout)
+
+        #ColorBox
+        self.indicator = ColorBox()
+        self.layout.addWidget(self.indicator)
         self.setLayout(self.layout)
+
+        # Connect the Run button
+        self.input_box.returnPressed.connect(self.handle_run_clicked)
+        self.reset_path_button.clicked.connect(self.handle_reset_clicked)
+
+    def handle_run_clicked(self,):
+        cmd = self.input_box.text().strip()
+        self.main_window.run(cmd)
+        self.input_box.clear()
+
+    def handle_reset_clicked(self):
+        cmd = "cd "+ self.main_window.path
+        self.main_window.run(cmd)
+        
+
         
     # Method to append log messages
     def append_log(self, message):
@@ -153,6 +195,23 @@ class ConfigWidget(QWidget):
         self.imported_design = None  # Store the last imported design name
         self.layout = QVBoxLayout()
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        repo_name = "BattusaiKuroKame/OpenROAD_HelperGUI"
+        with open(filepath+"settings.json","r") as file:
+            data = json.load(file)
+            self.version = data["version"]
+
+        aVersion = self.check_latest_version(repo_name, self.version)
+
+        if self.version != aVersion:
+            comm = f"\nnewer version {aVersion} is available"
+        else:
+            comm = ""
+
+        # Version
+        self.versionLabel = QLabel(f"{self.version}{comm}")
+        self.versionLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.layout.addWidget(self.versionLabel)
         
         # Settings Button
         self.settings_button = QPushButton("⚙ Settings")
@@ -229,6 +288,7 @@ class ConfigWidget(QWidget):
         self.source_env_button = QPushButton("Source Env")
         self.source_env_button.clicked.connect(self.source_env)
         self.source_env_button.setToolTip("Source the .env file in the flow scripts directory")
+        self.main_window.log_widget.indicator.setColor("white")
         self.layout.addWidget(self.source_env_button)
         
         #Run Make Button
@@ -247,6 +307,12 @@ class ConfigWidget(QWidget):
         self.openGui_button = QPushButton("OpenROAD Gui")
         self.openGui_button.clicked.connect(self.openGui)
         self.openGui_button.setToolTip("Open Generated GDSII File")
+        self.layout.addWidget(self.openGui_button)
+
+        # Run make clean
+        self.openGui_button = QPushButton("Make clean")
+        self.openGui_button.clicked.connect(self.makeClean)
+        self.openGui_button.setToolTip("Reset files")
         self.layout.addWidget(self.openGui_button)
         
         # Edit File Area
@@ -286,6 +352,34 @@ class ConfigWidget(QWidget):
             items = [item for item in os.listdir(pdk_path) if item != 'src']
             self.pdk_dropdown.addItems(items)
             # self.pdk_dropdown.addItems(os.listdir(pdk_path))
+
+    def check_latest_version(self,repo: str, current_version: str = None):
+        """
+        Checks the latest release version of a GitHub repository.
+
+        Parameters:
+            repo (str): GitHub repository in "owner/repo" format.
+            current_version (str): (Optional) Your currently installed version.
+
+        Returns:
+            str: The latest version tag name.
+        """
+        url = f"https://api.github.com/repos/{repo}/releases/latest"
+
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+
+            latest_release = response.json()
+            latest_version = latest_release["tag_name"]
+
+            # print(f"Latest version on GitHub: {latest_version}")
+
+            return latest_version
+
+        except requests.exceptions.RequestException as e:
+            self.log("Error checking for updates:", e)
+
     
     # Button action methods
     def open_settings(self):
@@ -304,14 +398,7 @@ class ConfigWidget(QWidget):
     def source_env(self):
         # self.log("Source Env button clicked")
         if self.is_ubuntu():
-
-            # result = subprocess.run(["bash", "-i", "-c", "cd .. && source ./env.sh && cd flow && echo 'Env sourced'"],capture_output=True, text=True)
-            # if result.returncode == 0:
-            #     self.log(f"Sourced .env file successfully: {result.stdout}")
-            # else:
-            #     self.log(f"Failed to source .env file: {result.stderr}")
-            self.main_window.run("cd .. && source ./env.sh && cd OpenROAD_HelperGUI && echo 'Env sourced'")
-            # subprocess.run(["bash", "-i", "-c", "cd .. && source ./env.sh && cd flow && echo 'Env sourced'"],capture_output=True, text=True)
+            self.main_window.run("cd .. && source ./env.sh && cd OpenROAD_HelperGUI")
         else:
             self.log("NOT UBUNTU")
             # self.log(self.main_window.path)
@@ -319,6 +406,37 @@ class ConfigWidget(QWidget):
     def reset_import(self):
         self.imported_design = None
         self.imported_design_label.setText(f"Imported Design: {self.imported_design}")
+        
+    def combine_verilog_files(self,input_dir, output_dir,name):
+        """
+        Combines all .v files in the given directory into a single .v file.
+
+        Parameters:
+        input_dir (str): Path to the directory containing .v files.
+        output_file (str): Path to the output .v file to be created.
+        """
+        if not os.path.isdir(input_dir):
+            raise ValueError(f"The path '{input_dir}' is not a valid directory.")
+
+        verilog_files = sorted(
+        [f for f in os.listdir(input_dir) if f.endswith(".v")],
+        key=lambda x: x.lower()
+        )
+
+        if not verilog_files:
+            raise FileNotFoundError("No .v files found in the specified directory.")
+        
+        filepath = output_dir + "/" + name
+
+        with open(filepath, "w") as outfile:
+            for filename in verilog_files:
+                file_path = os.path.join(input_dir, filename)
+                with open(file_path, "r") as infile:
+                    outfile.write(f"// --- Start of {filename} ---\n")
+                    outfile.write(infile.read())
+                    # outfile.write(f"\n// --- End of {filename} ---\n\n")
+
+        self.log(f"Combined {len(verilog_files)} files into '{filepath}'.")
     
     def import_design(self):
         # self.log("Import Design button clicked")
@@ -333,6 +451,8 @@ class ConfigWidget(QWidget):
             shutil.copytree(design_folder, dest_src, dirs_exist_ok=True)
             # shutil.copytree(design_folder, dest_pdk, dirs_exist_ok=True)
             os.makedirs(dest_pdk, exist_ok=True)
+            
+            self.combine_verilog_files(input_dir=design_folder, output_dir = dest_src ,name = self.imported_design + ".v")
             
             self.reset_config()
             self.reset_constraint()
@@ -400,16 +520,17 @@ class ConfigWidget(QWidget):
     def run_make(self):
         # self.log("Run Make button clicked")
         if self.is_ubuntu():
-            # subprocess.Popen(["gnome-terminal", "--", "bash", "-c", "make; exec bash"])
-            # self.main_window.run('make; exec bash')
+            # subprocess.Popen(["gnome-terminal", "--", "bash", "-c", "make"])
+            # self.main_window.run('make')
             if self.imported_design and self.pdk:
-                self.main_window.log(f'\nMAKE\nDesign: {self.imported_design}\n PDK: {self.pdk}')
-                self.main_window.run(f"cd .. && cd flow && make DESIGN_CONFIG=./designs/{self.pdk}/{self.imported_design}/config.mk"+' && cd .. && cd OpenROAD_HelperGUI; exec bash')
+                temp = f'\nMAKE\nDesign: {self.imported_design}\n PDK: {self.pdk}'
+                self.main_window.log(temp)
+                self.main_window.run(f"cd .. && cd flow && make DESIGN_CONFIG=./designs/{self.pdk}/{self.imported_design}/config.mk"+f' && cd .. && cd OpenROAD_HelperGUI;echo "{temp}"')
                 self.log("Running make...")
             else:
                 # self.log("SELECT DESIGN AND PDK FIRST")
                 self.main_window.log('\nDEFAULT MAKE')
-                self.main_window.run('make; exec bash')
+                self.main_window.run('make')
         else:
             self.log("NOT UBUNTU")
 
@@ -417,6 +538,13 @@ class ConfigWidget(QWidget):
         if self.is_ubuntu():
             self.main_window.run(command('make gui_final'))
             self.log("Opening OpenROAD GUI")
+        else:
+            self.log("NOT UBUNTU")
+
+    def makeClean(self):
+        if self.is_ubuntu():
+            self.main_window.run(command('make clean'))
+            self.log("make clean")
         else:
             self.log("NOT UBUNTU")
 
@@ -436,7 +564,6 @@ class ConfigWidget(QWidget):
             self.log("SELECT DESIGN AND PDK FIRST")
     
     def save_file(self):
-        self.log("Save File button clicked")
 
         if self.current_file:
             with open(self.current_file, "w") as file:
@@ -448,14 +575,18 @@ class ConfigWidget(QWidget):
 # Main application window
 class SimpleMainWindow(QMainWindow):
 
+    path = ""
+
     def __init__(self):
 
         super().__init__()
         self.initUI()
         self.process = QProcess(self)  # Persistent shell process
+        env = QProcessEnvironment.systemEnvironment()
+        env.insert("TERM", "dumb")
+        self.process.setProcessEnvironment(env)
         self.process.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
-        self.process.readyRead.connect(self.read_output)
-
+        self.process.readyReadStandardOutput.connect(self.read_output)
         self.path = os.path.dirname(os.path.abspath(__file__))
         self.log("Current Directory:\n"+self.path)
 
@@ -476,15 +607,12 @@ class SimpleMainWindow(QMainWindow):
         
 
         # Log widget to display application logs
-        self.log_widget = LogWidget()
+        #LEFT
+        self.log_widget = LogWidget(self)
         self.splitter.addWidget(self.log_widget)
-
-        # #Persistent Terminal
-        # self.output = QTextEdit(self)
-        # self.output.setReadOnly(True)
-        # self.layout.addWidget(self.output)
         
-        # Config widget
+        # Config widget where most of the buttons exist
+        #RIGHT
         self.config_widget = ConfigWidget(self)
         self.splitter.addWidget(self.config_widget)
         
@@ -495,29 +623,63 @@ class SimpleMainWindow(QMainWindow):
         self.log("Application started.")  # Log initial message
         # self.log("Path is "+ self.path)  # Log initial message
 
+    def is_ubuntu(self):
+        try:
+            # with open("/etc/os-release") as f:
+            #     return any("ubuntu" in line.lower() for line in f)
+            with open("/etc/os-release") as f:
+                content = f.read().lower()  # Read all content and convert to lowercase
+
+                if "ubuntu" in content:
+                    return "Ubuntu"
+                elif "centos" in content:
+                    return "CentOS"
+                elif "debian" in content:
+                    return "Debian"
+                else:
+                    return "Unknown Linux distribution"
+        except FileNotFoundError:
+            return False
+
     def run(self, cmd ):
-        """Send a command to the persistent shell"""
-        if cmd:     #self.run_command(cmd = "ls")
-            self.process.write((cmd + "\n").encode())
-        # if script:    #self.run_command(script = ["/path/to/your_script.sh",[arg1],[arg2]])
-            # self.process.start("bash", script)
+        if not(self.is_ubuntu() == False):
+            """Send a command to the persistent shell"""
+            if cmd:     #self.run_command(cmd = "ls")
+                self.log_widget.indicator.setColor("red")
+
+                #Wrapper to encase the command into
+                wrapper = f"{cmd}\n\n"
+
+                self.process.write((wrapper).encode())
+                if not self.process.waitForStarted():
+                    error_type = self.process.error()             # e.g., QProcess.FailedToStart
+                    error_string = self.process.errorString()     # e.g., "Process failed to start"
+                    
+                    self.log("Error Occured")
+                    self.log(f"Error type: {error_type}")
+                    self.log(f"Error details: {error_string}")
+                    
+                    self.log_widget.indicator.setColor("lime")
+        else:
+            self.log("Windows cannot run bash commands")
     
     def read_output(self):
-        def strip_ansi_codes(text):
-            """Removes ANSI escape sequences from shell output."""
-            ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-            return ansi_escape.sub('', text)
-
-
         """Read the output from the shell and clean it."""
         output = self.process.readAllStandardOutput().data().decode()
-        clean_output = strip_ansi_codes(output)  # Remove ANSI codes
-        self.log("\n"+clean_output+"\n")
 
-    # def read_output(self):
-    #     """Read the output from the shell"""
-    #     output = self.process.readAllStandardOutput().data().decode()
-    #     self.log(output)
+        if output.endswith("$ "):
+            self.log_widget.indicator.setColor("lime")#"green")
+        else:
+            self.log_widget.indicator.setColor("red")
+
+        def filter_prompt_lines(output):
+            lines = output.splitlines(keepends=True)  # Keep '\n'
+            if lines:
+                lines.pop()
+            return "".join(lines)
+
+        
+        self.log(""+filter_prompt_lines(output)+"\n")
     
     # Method to log messages to the log widget
     def log(self, message):
