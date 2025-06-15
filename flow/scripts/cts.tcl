@@ -70,7 +70,7 @@ if {![env_var_equals SKIP_CTS_REPAIR_TIMING 1]} {
     exit $result
   }
 
-  check_placement -verbose
+  check_placement -verbose -report_file_name $::env(REPORTS_DIR)/4_1_cts_placement.json
 }
 
 report_metrics 4 "cts final"
