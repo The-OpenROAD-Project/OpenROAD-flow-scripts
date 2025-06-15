@@ -2,6 +2,8 @@
 
 This repository provides a graphical user interface (GUI) for the OpenROAD flow, designed to streamline and simplify the process of setting up design and PDK files OpenROAD tools in an intuitive manner. It is intended to be run in an Ubuntu environment and uses **PyQt6** for the GUI.
 
+![Screenshot 2025-05-24 115742](https://github.com/user-attachments/assets/a00fb8cb-4125-4e9a-a062-423aefa72e8e)
+
 ## Features
 
 - **Interactive GUI** for the OpenROAD flow with easy-to-use controls.
@@ -16,10 +18,14 @@ Before using this GUI, ensure the following dependencies are installed:
 
 1. **Ubuntu 20.04 or later**.
 2. **OpenROAD flow tools**. You can install OpenROAD from the [official repository][(https://github.com/The-OpenROAD-Project/OpenROAD](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts)).
-3. **Python 3.x** and **PyQt6** for the GUI:
+3. **Ubuntu Update and Upgrade commands (may skip)**
+   ```
+   sudo apt update && sudo apt upgrade -y
+   ```
+4. **Python 3.x** and **PyQt6** for the GUI:
 
    ```bash
-   sudo apt update && sudo apt upgrade -y && sudo apt install -y python3 python3-pip && pip install --upgrade pip && pip install PyQt6
+   sudo apt install -y python3 python3-pip && pip install --upgrade pip && pip install PyQt6 && pip install requests
    ```
 
 ## Installation
@@ -29,7 +35,7 @@ Before using this GUI, ensure the following dependencies are installed:
    rm -rf OpenROAD_HelperGUI && git clone https://github.com/BattusaiKuroKame/OpenROAD_HelperGUI.git
    ```
 
-2. Install the required Python dependencies:
+2. Install the required Python dependencies (Skip if already installed python 3 and PyQT6 from the Prerequisites section):
    ```bash
    cd OpenROAD_HelperGUI && pip3 install -r requirements.txt
    ```
@@ -63,12 +69,15 @@ These options can be adjusted directly through the GUI interface.
 ## Troubleshooting
 
 - Ensure that OpenROAD tools are correctly installed and accessible from the command line.
-- Check that all required Python dependencies are installed by running
-- Try reinstalling PyQt6 using pip
+- Check that all required Python dependencies are installed by running:
+  ```bash
+  pip3 install -r requirements.txt
+  ```
+- If any errors occur, refer to the **Log Output** section in the GUI for details on what might have gone wrong.
 
 ## License
 
-This project is licensed under the **GPU License**. For more information, refer to the [LICENSE](LICENSE) file.
+This project is licensed under the **GPL License**. For more information, refer to the [LICENSE](LICENSE) file.
 
 
 ## Contributing
