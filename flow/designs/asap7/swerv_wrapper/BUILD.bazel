@@ -56,7 +56,7 @@ BLACKBOXES = [
     variant = "netlist",
     verilog_files = [
         "macros.v",
-        "//designs/src/swerv:verilog",
+        "//flow/designs/src/swerv:verilog",
     ],
     deps = FAKERAMS,
 ) for name in BLACKBOXES]
@@ -100,10 +100,6 @@ orfs_flow(
     arguments = {
         "LIB_MODEL": "CCS",
         "SYNTH_HIERARCHICAL": "1",
-        "RTLMP_MAX_INST": "30000",
-        "RTLMP_MIN_INST": "5000",
-        "RTLMP_MAX_MACRO": "30",
-        "RTLMP_MIN_MACRO": "4",
         "DIE_AREA": "0 0 550 600",
         "CORE_AREA": "5 5 545 595",
         "PLACE_PINS_ARGS": "-exclude left:* -exclude right:*",

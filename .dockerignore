@@ -10,6 +10,11 @@ flow/reports
 flow/objects
 flow/tech
 
+bazel-bin/
+bazel-obj/
+bazel-OpenROAD-flow-scripts/
+bazel-testlogs/
+
 # Tar archives
 flow/*tar.gz
 flow/run-me*.sh

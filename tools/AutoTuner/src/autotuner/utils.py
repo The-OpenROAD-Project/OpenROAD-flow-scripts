@@ -40,10 +40,10 @@ import re
 import yaml
 import subprocess
 import sys
+import uuid
+import time
 from multiprocessing import cpu_count
 from datetime import datetime
-from uuid import uuid4 as uuid
-from time import time
 
 import numpy as np
 import ray
@@ -307,8 +307,14 @@ def openroad(
             base_dir, f"flow/reports/{args.platform}/{args.design}", flow_variant
         )
     )
+    results_path = os.path.abspath(
+        os.path.join(
+            base_dir, f"flow/results/{args.platform}/{args.design}", flow_variant
+        )
+    )
     os.makedirs(log_path, exist_ok=True)
     os.makedirs(report_path, exist_ok=True)
+    os.makedirs(results_path, exist_ok=True)
 
     if install_path is None:
         install_path = os.path.join(base_dir, "tools/install")
@@ -338,6 +344,9 @@ def openroad(
     metrics_command += f" -v {flow_variant}"
     metrics_command += f" -d {args.design}"
     metrics_command += f" -p {args.platform}"
+    metrics_command += f" --logs {log_path}"
+    metrics_command += f" --reports {report_path}"
+    metrics_command += f" --results {results_path}"
     metrics_command += f" -o {metrics_file}"
     run_command(
         args,
@@ -571,91 +580,25 @@ def read_config(file_name, mode, algorithm):
     return config, sdc_file, fr_file
 
 
-def clone(args, path):
-    """
-    Clone base repo in the remote machine. Only used for Kubernetes at GCP.
-    """
-    if args.git_clone:
-        run_command(args, f"rm -rf {path}")
-    if not os.path.isdir(f"{path}/.git"):
-        git_command = "git clone --depth 1 --recursive --single-branch"
-        git_command += f" {args.git_clone_args}"
-        git_command += f" --branch {args.git_orfs_branch}"
-        git_command += f" {args.git_url} {path}"
-        run_command(args, git_command)
-
-
-def build(args, base, install):
-    """
-    Build OpenROAD, Yosys and other dependencies.
-    """
-    build_command = f'cd "{base}"'
-    if args.git_clean:
-        build_command += " && git clean -xdf tools"
-        build_command += " && git submodule foreach --recursive git clean -xdf"
-    if (
-        args.git_clean
-        or not os.path.isfile(f"{install}/OpenROAD/bin/openroad")
-        or not os.path.isfile(f"{install}/yosys/bin/yosys")
-    ):
-        build_command += ' && bash -ic "./build_openroad.sh'
-        # Some GCP machines have 200+ cores. Let's be reasonable...
-        build_command += f" --local --nice --threads {min(32, cpu_count())}"
-        if args.git_latest:
-            build_command += " --latest"
-        build_command += f' {args.build_args}"'
-    run_command(args, build_command)
-
-
-@ray.remote
-def setup_repo(args, base):
-    """
-    Clone ORFS repository and compile binaries.
-    """
-    print(f"[INFO TUN-0000] Remote folder: {base}")
-    install = f"{base}/tools/install"
-    if args.server is not None:
-        clone(base)
-    build(base, install)
-    return install
-
-
 def prepare_ray_server(args):
     """
     Prepares Ray server and returns basic directories.
     """
     # Connect to remote Ray server if any, otherwise will run locally
     if args.server is not None:
-        # At GCP we have a NFS folder that is present for all worker nodes.
-        # This allows to build required binaries once. We clone, build and
-        # store intermediate files at LOCAL_DIR.
-        with open(args.config) as config_file:
-            local_dir = "/shared-data/autotuner"
-            local_dir += f"-orfs-{args.git_orfs_branch}"
-            if args.git_or_branch != "":
-                local_dir += f"-or-{args.git_or_branch}"
-            if args.git_latest:
-                local_dir += "-or-latest"
         # Connect to ray server before first remote execution.
         ray.init(f"ray://{args.server}:{args.port}")
-        # Remote functions return a task id and are non-blocking. Since we
-        # need the setup repo before continuing, we call ray.get() to wait
-        # for its completion.
-        install_path = ray.get(setup_repo.remote(local_dir))
-        orfs_flow_dir = os.path.join(local_dir, "flow")
-        local_dir += f"/flow/logs/{args.platform}/{args.design}"
-        print("[INFO TUN-0001] NFS setup completed.")
-    else:
-        orfs_dir = getattr(args, "orfs", None)
-        # For local runs, use the same folder as other ORFS utilities.
-        orfs_flow_dir = os.path.abspath(
-            os.path.join(orfs_dir, "flow")
-            if orfs_dir
-            else os.path.join(os.path.dirname(__file__), "../../../../flow")
-        )
-        local_dir = f"logs/{args.platform}/{args.design}"
-        local_dir = os.path.join(orfs_flow_dir, local_dir)
-        install_path = os.path.abspath(os.path.join(orfs_flow_dir, "../tools/install"))
+        print("[INFO TUN-0001] Connected to Ray server.")
+    # Common variables used for local and remote runs.
+    orfs_dir = getattr(args, "orfs", None)
+    orfs_flow_dir = os.path.abspath(
+        os.path.join(orfs_dir, "flow")
+        if orfs_dir
+        else os.path.join(os.path.dirname(__file__), "../../../../flow")
+    )
+    local_dir = f"logs/{args.platform}/{args.design}"
+    local_dir = os.path.join(orfs_flow_dir, local_dir)
+    install_path = os.path.abspath(os.path.join(orfs_flow_dir, "../tools/install"))
     return local_dir, orfs_flow_dir, install_path
 
 
@@ -681,15 +624,15 @@ def openroad_distributed(
     )
     if variant is None:
         variant = config.replace(" ", "_").replace("=", "_")
-    t = time()
+    t = time.time()
     metric_file = openroad(
         args=args,
         base_dir=repo_dir,
         parameters=config,
-        flow_variant=f"{uuid()}-{variant}",
+        flow_variant=f"{uuid.uuid4()}-{variant}" if variant else f"{uuid.uuid4()}",
         install_path=install_path,
     )
-    duration = time() - t
+    duration = time.time() - t
     return metric_file, duration
 
 

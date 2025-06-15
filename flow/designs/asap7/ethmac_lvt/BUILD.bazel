@@ -20,5 +20,5 @@ orfs_flow(
         "SDC_FILE": [":constraint.sdc"],
     },
     top = "ethmac",
-    verilog_files = ["//designs/src/ethmac_lvt:verilog"],
+    verilog_files = ["//flow/designs/src/ethmac_lvt:verilog"],
 )

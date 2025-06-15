@@ -104,8 +104,6 @@ ERROR_METRIC = 9e99
 ORFS_FLOW_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../flow")
 )
-# URL to ORFS GitHub repository
-ORFS_URL = "https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
 # Global variable for args
 args = None
 
@@ -314,60 +312,6 @@ def parse_arguments():
         action="store_true",
         help="Resume previous run. Note that you must also set a unique experiment\
                 name identifier via `--experiment NAME` to be able to resume.",
-    )
-
-    # Setup
-    parser.add_argument(
-        "--git_clean",
-        action="store_true",
-        help="Clean binaries and build files."
-        " WARNING: may lose previous data."
-        " Use carefully.",
-    )
-    parser.add_argument(
-        "--git_clone",
-        action="store_true",
-        help="Force new git clone."
-        " WARNING: may lose previous data."
-        " Use carefully.",
-    )
-    parser.add_argument(
-        "--git_clone_args",
-        type=str,
-        metavar="<str>",
-        default="",
-        help="Additional git clone arguments.",
-    )
-    parser.add_argument(
-        "--git_latest", action="store_true", help="Use latest version of OpenROAD app."
-    )
-    parser.add_argument(
-        "--git_or_branch",
-        type=str,
-        metavar="<str>",
-        default="",
-        help="OpenROAD app branch to use.",
-    )
-    parser.add_argument(
-        "--git_orfs_branch",
-        type=str,
-        metavar="<str>",
-        default="master",
-        help="OpenROAD-flow-scripts branch to use.",
-    )
-    parser.add_argument(
-        "--git_url",
-        type=str,
-        metavar="<url>",
-        default=ORFS_URL,
-        help="OpenROAD-flow-scripts repo URL to use.",
-    )
-    parser.add_argument(
-        "--build_args",
-        type=str,
-        metavar="<str>",
-        default="",
-        help="Additional arguments given to ./build_openroad.sh.",
     )
 
     # ML
@@ -621,9 +565,7 @@ def sweep():
         temp = dict()
         for value in parameter:
             temp.update(value)
-        queue.put(
-            [args, repo_dir, temp, LOCAL_DIR, SDC_ORIGINAL, FR_ORIGINAL, INSTALL_PATH]
-        )
+        queue.put([args, repo_dir, temp, SDC_ORIGINAL, FR_ORIGINAL, INSTALL_PATH])
     workers = [consumer.remote(queue) for _ in range(args.jobs)]
     print("[INFO TUN-0009] Waiting for results.")
     ray.get(workers)
@@ -689,7 +631,7 @@ def main():
         # if all runs have failed
         if analysis.best_result[METRIC] == ERROR_METRIC:
             print("[ERROR TUN-0016] No successful runs found.")
-            sys.exit(1)
+            sys.exit(16)
     elif args.mode == "sweep":
         sweep()
 

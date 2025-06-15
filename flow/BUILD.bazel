@@ -18,7 +18,7 @@ filegroup(
         "scripts/synth*.tcl",
         "platforms/common/**/*.v",
     ]) + [
-        "//util:makefile_yosys",
+        "//flow/util:makefile_yosys",
     ],
     visibility = ["//visibility:public"],
 )
@@ -31,12 +31,11 @@ filegroup(
         "scripts/*.tcl",
         "platforms/common/**/*.v",
     ]) + [
-        "//util:makefile",
+        "//flow/util:makefile",
     ],
     visibility = ["//visibility:public"],
 )
 
-# These are the only PDKs for which we have BUILD.bazel files for now
 [orfs_pdk(
     name = pdk,
     srcs = glob([
@@ -46,17 +45,22 @@ filegroup(
         )
         for ext in [
             "gds",
-            "lib.gz",
             "lef",
             "lib",
             "lyt",
             "mk",
             "rules",
-            "sdc",
             "tcl",
             "v",
-            "tlef",
-        ]
+        ] + {
+            "sky130hd": ["tlef"],
+            "asap7": [
+                "lib.gz",
+                "sdc",
+            ],
+        }.get(pdk, [])
+    ] + [
+        "platforms/common/**/*.v",
     ]),
     config = ":platforms/{pdk}/config.mk".format(pdk = pdk),
     visibility = ["//visibility:public"],

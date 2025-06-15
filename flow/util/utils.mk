@@ -5,9 +5,9 @@ metadata: finish metadata-generate metadata-check
 
 .PHONY: metadata-generate
 metadata-generate:
-	@mkdir -p $(REPORTS_DIR)
-	@echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
-	$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
+	mkdir -p $(REPORTS_DIR)
+	echo $(DESIGN_DIR) > $(REPORTS_DIR)/design-dir.txt
+	$(PYTHON_EXE) $(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
 	    -p $(PLATFORM) \
 	    -v $(FLOW_VARIANT) \
 	    --logs $(LOG_DIR) \
@@ -20,7 +20,7 @@ export RULES_JSON ?= $(DESIGN_DIR)/rules-$(FLOW_VARIANT).json
 
 .PHONY: metadata-check
 metadata-check:
-	@$(UTILS_DIR)/checkMetadata.py \
+	$(PYTHON_EXE) $(UTILS_DIR)/checkMetadata.py \
 	    -m $(REPORTS_DIR)/metadata.json \
 	    -r $(RULES_JSON) 2>&1 \
 	    | tee $(abspath $(REPORTS_DIR)/metadata-check.log)
@@ -40,8 +40,8 @@ update_metadata:
 
 .PHONY: do-update_rules
 do-update_rules:
-	@mkdir -p $(REPORTS_DIR)
-	$(UTILS_DIR)/genRuleFile.py \
+	mkdir -p $(REPORTS_DIR)
+	$(PYTHON_EXE) $(UTILS_DIR)/genRuleFile.py \
 	    --rules $(RULES_JSON) \
 	    --new-rules $(REPORTS_DIR)/rules.json \
 	    --reference $(REPORTS_DIR)/metadata.json \
@@ -59,7 +59,7 @@ update_rules: do-update_rules do-copy_update_rules
 
 .PHONY: do-update_rules_force
 do-update_rules_force:
-	@mkdir -p $(REPORTS_DIR)
+	mkdir -p $(REPORTS_DIR)
 	$(UTILS_DIR)/genRuleFile.py \
 	    --rules $(RULES_JSON) \
 	    --new-rules $(REPORTS_DIR)/rules.json \
@@ -74,7 +74,7 @@ update_rules_force: do-update_rules_force
 
 .PHONY: update_metadata_autotuner
 update_metadata_autotuner:
-	@$(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
+	$(PYTHON_EXE) $(UTILS_DIR)/genMetrics.py -d $(DESIGN_NICKNAME) \
 	    -p $(PLATFORM) \
 	    -v $(FLOW_VARIANT) \
 	    --logs $(LOG_DIR) \
@@ -93,7 +93,7 @@ $(RESULTS_DIR)/6_net_rc.csv:
 
 .PHONY: correlate_rc
 correlate_rc: $(RESULTS_DIR)/6_net_rc.csv
-	$(UTILS_DIR)/correlateRC.py $(RESULTS_DIR)/6_net_rc.csv
+	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py $(RESULTS_DIR)/6_net_rc.csv
 
 # TODO Make always wants to redo designs with this rule, regardless of which variations are tried.
 #	$(MAKE) DESIGN_CONFIG=$$config write_net_rc; \
@@ -104,7 +104,7 @@ correlate_platform_rc:
 	  design=$$(basename $$(dirname $$config)); \
 	  make DESIGN_CONFIG=./$$config results/$(PLATFORM)/$$design/base/6_net_rc.csv; \
 	done
-	$(UTILS_DIR)/correlateRC.py $$(find results/$(PLATFORM)/*/base -name 6_net_rc.csv)
+	$(PYTHON_EXE) $(UTILS_DIR)/correlateRC.py $$(find results/$(PLATFORM)/*/base -name 6_net_rc.csv)
 
 # Run test using gnu parallel
 #-------------------------------------------------------------------------------

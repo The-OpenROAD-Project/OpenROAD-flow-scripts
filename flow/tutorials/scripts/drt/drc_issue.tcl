@@ -8,7 +8,6 @@ read_sdc ./gcd/gcd.sdc
 # global_route
 set_global_routing_layer_adjustment met1-met5 0.5
 set_routing_layers -signal met1-met5
-set_macro_extension 2
 global_route -guide_file [make_result_file route.guide] \
              -congestion_iterations 100 \
              -verbose

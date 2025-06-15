@@ -187,15 +187,15 @@ minimum required timing constraint.
 create_clock -name core_clock -period 17.4 [get_ports {clk_i}]
 ```
 
-### Design Input Verilog
+### Design Input SystemVerilog
 
-The Verilog input files are located in `./designs/src/ibex/`
+The SystemVerilog input files are located in `./designs/src/ibex_sv/`
 
-The design is defined in `ibex_core.v` available
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/ibex_core.v).
+The design is defined in `ibex_core.sv` available
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex_sv/ibex_core.sv).
 
 Refer to the `ibex` design `README.md`
-[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex/README.md).
+[here](https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/blob/master/flow/designs/src/ibex_sv/README.md).
 
 ## Running The Automated RTL-to-GDS Flow
 

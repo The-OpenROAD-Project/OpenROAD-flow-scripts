@@ -11,6 +11,7 @@ export PLACE_DENSITY = 0.80
 # fakeram7 doesn't block off M5, so limit to M4 here.
 # However, PDN will use M5, so it is still added to blockages.
 export MAX_ROUTING_LAYER = M4
+export MIN_CLK_ROUTING_LAYER = M2
 
 export PLACE_PINS_ARGS = -min_distance 6 -min_distance_in_tracks
 export IO_CONSTRAINTS  = $(DESIGN_HOME)/asap7/riscv32i-mock-sram/fakeram7_256x32/io.tcl

@@ -1,0 +1,8 @@
+tools/
+dependencies/
+docker/
+etc/
+jenkins/
+docs/
+
+

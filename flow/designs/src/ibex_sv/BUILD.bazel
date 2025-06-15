@@ -1,0 +1,9 @@
+filegroup(
+    name = "verilog",
+    srcs = glob(include = [
+        "**/*.sv",
+        "**/*.svh",
+        "**/*.v",
+    ]),
+    visibility = ["//visibility:public"],
+)
