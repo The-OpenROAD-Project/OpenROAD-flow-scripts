@@ -3,15 +3,6 @@
 # lazy evaluation, conditional code, include statements,
 # etc.
 
-# Setup variables to point to root / head of the OpenROAD directory
-# - the following settings allowed user to point OpenROAD binaries to different
-#   location
-# - default is current install / clone directory
-ifeq ($(origin FLOW_HOME), undefined)
-FLOW_HOME := $(abspath $(dir $(firstword $(MAKEFILE_LIST)))/..)
-endif
-export FLOW_HOME
-
 export DESIGN_NICKNAME?=$(DESIGN_NAME)
 
 #-------------------------------------------------------------------------------
@@ -21,7 +12,6 @@ export DESIGN_NICKNAME?=$(DESIGN_NAME)
 # - utils, scripts, test - default is under current directory
 export DESIGN_HOME   ?= $(FLOW_HOME)/designs
 export PLATFORM_HOME ?= $(FLOW_HOME)/platforms
-# WORK_HOME is set up in flow/Makefile
 
 export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
@@ -51,7 +41,7 @@ include $(PLATFORM_DIR)/config.mk
 
 # __SPACE__ is a workaround for whitespace hell in "foreach"; there
 # is no way to escape space in defaults.py and get "foreach" to work.
-$(foreach line,$(shell $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
+$(foreach line,$(shell $(PYTHON_EXE) $(SCRIPTS_DIR)/defaults.py),$(eval export $(subst __SPACE__, ,$(line))))
 
 export LOG_DIR     = $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
 export OBJECTS_DIR = $(WORK_HOME)/objects/$(PLATFORM)/$(DESIGN_NICKNAME)/$(FLOW_VARIANT)
@@ -80,6 +70,8 @@ export NUM_CORES
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
+export PYTHON_EXE ?= $(shell command -v python3)
+
 export TIME_BIN   ?= env time
 TIME_CMD = $(TIME_BIN) -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
 TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)

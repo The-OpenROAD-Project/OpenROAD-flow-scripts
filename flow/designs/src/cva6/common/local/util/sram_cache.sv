@@ -52,7 +52,7 @@ module sram_cache #(
         rdata_o    = rdata_user[DATA_AND_USER_WIDTH-1:DATA_WIDTH];
         ruser_o    = rdata_user[USER_WIDTH-1:0];
       end
-       fakeram7_256x256 i_tc_sram_wrapper(
+       fakeram7_64x256 i_tc_sram_wrapper(
         .clk    ( clk_i                     ),
         .ce_in    ( req_i                     ),
         .we_in     ( we_i                      ),
@@ -91,7 +91,7 @@ module sram_cache #(
         rdata_o    = rdata_user;
         ruser_o    = '0;
       end
-       fakeram7_256x256 i_tc_sram_wrapper(
+       fakeram7_64x25 i_tc_sram_wrapper(
         .clk    ( clk_i                     ),
         .ce_in    ( req_i                     ),
         .we_in     ( we_i                      ),
