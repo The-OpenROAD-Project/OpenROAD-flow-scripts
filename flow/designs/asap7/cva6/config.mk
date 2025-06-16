@@ -88,10 +88,10 @@ export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x256.lib \
 
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
-export CORE_UTILIZATION       = 40
+export CORE_UTILIZATION       = 50
 export CORE_MARGIN            = 2
 export MACRO_HALO             = 5
-export PLACE_DENSITY          = 0.50
+export PLACE_DENSITY          = 0.64
 
 # a smoketest for this option, there are a
 # few last gasp iterations
@@ -101,3 +101,7 @@ export SKIP_LAST_GASP ?= 1
 export SYNTH_MINIMUM_KEEP_SIZE ?= 40000
 
 export SYNTH_HDL_FRONTEND = slang
+
+export ASAP7_USE_VT = RVT LVT SLVT
+
+export CTS_LIB_NAME = asap7sc7p5t_INVBUF_SLVT_FF_nldm_211120
