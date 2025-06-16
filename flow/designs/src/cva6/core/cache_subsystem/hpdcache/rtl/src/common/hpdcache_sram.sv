@@ -39,7 +39,7 @@ module hpdcache_sram
     output logic [DATA_SIZE-1:0]  rdata
 );
 
-    fakeram7_256x256 ram_i (
+    fakeram7_64x28 ram_i (
         .clk(clk),
         .ce_in(cs),
         .we_in(we),
