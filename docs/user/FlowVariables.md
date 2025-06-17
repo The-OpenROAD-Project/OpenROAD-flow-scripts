@@ -128,7 +128,7 @@ configuration file.
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| | |
 | <a name="MIN_ROUTING_LAYER"></a>MIN_ROUTING_LAYER| The lowest metal layer name to be used in routing.| | |
 | <a name="PDN_TCL"></a>PDN_TCL| File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.| | |
-| <a name="PLACE_DENSITY"></a>PLACE_DENSITY| The desired placement density of cells. It reflects how spread the cells would be on the core area. 1.0 = closely dense. 0.0 = widely spread.| | |
+| <a name="PLACE_DENSITY"></a>PLACE_DENSITY| The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread. The intended effort is also communicated by this parameter. Use a low value for faster builds and higher value for better quality of results. If a too low value is used, the placer will not be able to place all cells and a recommended minimum placement density can be found in the logs. A too high value can lead to excessive runtimes, even timeouts and subtle failures in the flow after placement, such as in CTS or global routing when timing repair fails. The default is platform specific.| | |
 | <a name="PLACE_DENSITY_LB_ADDON"></a>PLACE_DENSITY_LB_ADDON| Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.| | |
 | <a name="PLACE_PINS_ARGS"></a>PLACE_PINS_ARGS| Arguments to place_pins| | |
 | <a name="PLACE_SITE"></a>PLACE_SITE| Placement site for core cells defined in the technology LEF file.| | |

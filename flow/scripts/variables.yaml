@@ -380,8 +380,15 @@ PLACE_PINS_ARGS:
   default: ""
 PLACE_DENSITY:
   description: >
-    The desired placement density of cells. It reflects how spread the cells
-    would be on the core area. 1.0 = closely dense. 0.0 = widely spread.
+    The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread.
+
+    The intended effort is also communicated by this parameter. Use a low value for faster builds and higher value for better quality of results.
+
+    If a too low value is used, the placer will not be able to place all cells and a recommended minimum placement density can be found in the logs.
+
+    A too high value can lead to excessive runtimes, even timeouts and subtle failures in the flow after placement, such as in CTS or global routing when timing repair fails.
+
+    The default is platform specific.
   stages:
     - floorplan
     - place
