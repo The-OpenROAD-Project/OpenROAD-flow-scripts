@@ -143,8 +143,6 @@ configuration file.
 | <a name="REMOVE_CELLS_FOR_EQY"></a>REMOVE_CELLS_FOR_EQY| String patterns directly passed to write_verilog -remove_cells <> for equivalence checks.| | |
 | <a name="REPAIR_PDN_VIA_LAYER"></a>REPAIR_PDN_VIA_LAYER| Remove power grid vias which generate DRC violations after detailed routing.| | |
 | <a name="REPORT_CLOCK_SKEW"></a>REPORT_CLOCK_SKEW| Report clock skew as part of reporting metrics, starting at CTS, before which there is no clock skew. This metric can be quite time-consuming, so it can be useful to disable.| 1| |
-| <a name="RESYNTH_AREA_RECOVER"></a>RESYNTH_AREA_RECOVER| Enable re-synthesis for area reclaim.| 0| |
-| <a name="RESYNTH_TIMING_RECOVER"></a>RESYNTH_TIMING_RECOVER| Enable re-synthesis for timing optimization.| 0| |
 | <a name="ROUTING_LAYER_ADJUSTMENT"></a>ROUTING_LAYER_ADJUSTMENT| Adjusts routing layer capacities to manage congestion and improve detailed routing. High values ease detailed routing but risk excessive detours and long global routing times, while low values reduce global routing failure but can complicate detailed routing. The global routing running time normally reduces dramatically (entirely design specific, but going from hours to minutes has been observed) when the value is low (such as 0.10). Sometimes, global routing will succeed with lower values and fail with higher values. Exploring results with different values can help shed light on the problem. Start with a too low value, such as 0.10, and bisect to value that works by doing multiple global routing runs. As a last resort, `make global_route_issue` and using the tools/OpenROAD/etc/deltaDebug.py can be useful to debug global routing errors. If there is something specific that is impossible to route, such as a clock line over a macro, global routing will terminate with DRC errors routes that could have been routed were it not for the specific impossible routes. deltaDebug.py should weed out the possible routes and leave a minimal failing case that pinpoints the problem.| 0.5| |
 | <a name="RTLMP_AREA_WT"></a>RTLMP_AREA_WT| Weight for the area of the current floorplan.| 0.1| |
 | <a name="RTLMP_ARGS"></a>RTLMP_ARGS| Overrides all other RTL macro placer arguments.| | |
@@ -258,8 +256,6 @@ configuration file.
 - [PLACE_DENSITY_LB_ADDON](#PLACE_DENSITY_LB_ADDON)
 - [PLACE_SITE](#PLACE_SITE)
 - [REMOVE_ABC_BUFFERS](#REMOVE_ABC_BUFFERS)
-- [RESYNTH_AREA_RECOVER](#RESYNTH_AREA_RECOVER)
-- [RESYNTH_TIMING_RECOVER](#RESYNTH_TIMING_RECOVER)
 - [RTLMP_AREA_WT](#RTLMP_AREA_WT)
 - [RTLMP_ARGS](#RTLMP_ARGS)
 - [RTLMP_BOUNDARY_WT](#RTLMP_BOUNDARY_WT)
