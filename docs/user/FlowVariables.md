@@ -1,10 +1,48 @@
-# Environment Variables for the OpenROAD Flow Scripts
+# Variables for the OpenROAD Flow Scripts
 
-
-Environment variables are used in the OpenROAD flow to define various
+Variables are used in the OpenROAD flow to define various
 platform, design and tool specific variables to allow finer control and
-user overrides at various flow stages. These are defined in the
-`config.mk` file located in the platform and design specific directories.
+user overrides at various flow stages.
+
+These are normally defined in the `config.mk` file located in the platform and design-specific directories, but can also be defined on the command line or via environment variables. For example:
+
+- Command line: `make PLACE_DENSITY=0.5`
+- Environment variable: `export PLACE_DENSITY=0.5`
+
+This works provided that `config.mk` has defined it as a default value using the `export PLACE_DENSITY?=0.4` syntax.
+
+The actual value used is determined by the priority rules set by `make`:
+
+1. **Makefile Definitions**: Variables defined in the `Makefile` or included files are used when they are defined using the no-override `=` operator, `export PLACE_DENSITY=0.4` syntax. The priority within the included files is the `DESIGN_CONFIG` file, then `Makefile` definitions and finally platform(PDK) defined variables.
+2. **Command Line**: Variables defined on the command line take the highest priority in overriding defaults.
+3. **Environment Variables**: Variables exported in the shell environment are used if not overridden by the command line.
+4. **Default Values**: Variables defined with the `?=` operator in the `Makefile` are used only if the variable is not already defined elsewhere.
+
+## Effects of variables
+
+The variables for ORFS are not fully independent and can interact in complex ways. Small changes to a combination of variables can have large consequences, such as on macro placement, which can lead to vastly different quality of results.
+
+Due to the large number of variables, some of which are continuous and require long runtimes, other discrete, it is not feasible to perform an exhaustive end-to-end search for the best combination of variables.
+
+Instead, the following approaches are used to determine reasonable values, up to a point of diminishing returns:
+
+- **Experience**: Leveraging domain expertise to set initial values.
+- **AI**: Using machine learning techniques to explore variable combinations.
+- **Parameter Sweeps**: Testing a smaller subset of variables to identify optimal ranges.
+
+These values are then set in configuration files and kept under source control alongside the RTL input.
+
+## Types of variables
+
+Variables values are set in ORFS scripts or `config.mk` files and are kept in source control together with configuration files and RTL.
+
+It is an ongoing effort to move variables upwards in the categories below.
+
+| Category           | Definition                                                                 | User Involvement                       | Examples                                | Automation Potential       | Notes                                                                 |
+|--------------------|----------------------------------------------------------------------------|----------------------------------------|-----------------------------------------|-----------------------------|-----------------------------------------------------------------------|
+| **Trivial**         | Automatically determined by tool with near-optimal results.              | None (unless debugging)                | Buffer sizing, default layers           | **High** – can be hidden     | Best if invisible; surfaced only in debug or verbose mode.           |
+| **Easy**            | Requires input, but easy to tune using reports or visuals.               | Moderate – copy/edit from reports      | `PLACE_DENSITY`   | **Medium–High**              | Smooth response curves, intuitive tuning.                            |
+| **Complex**           |  Small changes in values may result in large effects. | High – requires multiple runs/sweeps   | `CTS_DISTANCE_BUF`, small changes can have large effects on skew and quality of results. Small changes to independent inputs, such as RTL, can invalidate earlier "good values".  | **Low–Medium**               | Needs scripted sweeps and statistical evaluation.                    |
 
 ## Platform
 
@@ -20,7 +58,7 @@ variable. For OpenROAD Flow Scripts we have the following public platforms:
 -   `nangate45`
 -   `asap7`
 
-## Platform Specific Environment Variables
+## Platform Specific Variables
 
 
 The table below lists the complete set of variables used in each of the
