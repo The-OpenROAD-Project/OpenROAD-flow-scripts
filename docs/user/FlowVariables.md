@@ -18,9 +18,25 @@ The actual value used is determined by the priority rules set by `make`:
 3. **Environment Variables**: Variables exported in the shell environment are used if not overridden by the command line.
 4. **Default Values**: Variables defined with the `?=` operator in the `Makefile` are used only if the variable is not already defined elsewhere.
 
+## Effects of variables
+
+The variables for ORFS are not fully independent and can interact in complex ways. Small changes to a combination of variables can have large consequences, such as on macro placement, which can lead to vastly different quality of results.
+
+Due to the large number of variables, some of which are continuous and require long runtimes, other discrete, it is not feasible to perform an exhaustive end-to-end search for the best combination of variables.
+
+Instead, the following approaches are used to determine reasonable values, up to a point of diminishing returns:
+
+- **Experience**: Leveraging domain expertise to set initial values.
+- **AI**: Using machine learning techniques to explore variable combinations.
+- **Parameter Sweeps**: Testing a smaller subset of variables to identify optimal ranges.
+
+These values are then set in configuration files and kept under source control alongside the RTL input.
+
 ## Types of variables
 
 Variables values are set in ORFS scripts or `config.mk` files and are kept in source control together with configuration files and RTL.
+
+It is an ongoing effort to move variables upwards in the categories below.
 
 | Category           | Definition                                                                 | User Involvement                       | Examples                                | Automation Potential       | Notes                                                                 |
 |--------------------|----------------------------------------------------------------------------|----------------------------------------|-----------------------------------------|-----------------------------|-----------------------------------------------------------------------|
