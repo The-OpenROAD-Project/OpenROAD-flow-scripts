@@ -1,10 +1,33 @@
-# Environment Variables for the OpenROAD Flow Scripts
+# Variables for the OpenROAD Flow Scripts
 
-
-Environment variables are used in the OpenROAD flow to define various
+Variables are used in the OpenROAD flow to define various
 platform, design and tool specific variables to allow finer control and
-user overrides at various flow stages. These are defined in the
-`config.mk` file located in the platform and design specific directories.
+user overrides at various flow stages.
+
+These are normally defined in the `config.mk` file located in the platform and design-specific directories, but can also be defined on the command line or via environment variables. For example:
+
+- Command line: `make PLACE_DENSITY=0.5`
+- Environment variable: `export PLACE_DENSITY=0.5`
+
+This works provided that `config.mk` has defined it as a default value using the `export PLACE_DENSITY?=0.4` syntax.
+
+The actual value used is determined by the priority rules set by `make`:
+
+1. **Makefile Definitions**: Variables defined in the `Makefile` or included files are used when they are defined using the no-override `=` operator, `export PLACE_DENSITY=0.4` syntax. The priority within the included files is the `DESIGN_CONFIG` file, then `Makefile` definitions and finally platform(PDK) defined variables.
+2. **Command Line**: Variables defined on the command line take the highest priority in overriding defaults.
+3. **Environment Variables**: Variables exported in the shell environment are used if not overridden by the command line.
+4. **Default Values**: Variables defined with the `?=` operator in the `Makefile` are used only if the variable is not already defined elsewhere.
+
+## Types of variables
+
+Variables values are set in ORFS scripts or `config.mk` files and are kept in source control together with configuration files and RTL.
+
+| Category           | Definition                                                                 | User Involvement                       | Examples                                | Automation Potential       | Notes                                                                 |
+|--------------------|----------------------------------------------------------------------------|----------------------------------------|-----------------------------------------|-----------------------------|-----------------------------------------------------------------------|
+| **Trivial**         | Automatically determined by tool with near-optimal results.              | None (unless debugging)                | Buffer sizing, default layers           | **High** – can be hidden     | Best if invisible; surfaced only in debug or verbose mode.           |
+| **Easy**            | Requires input, but easy to tune using reports or visuals.               | Moderate – copy/edit from reports      | `PLACE_DENSITY`   | **Medium–High**              | Smooth response curves, intuitive tuning.                            |
+| **Nasty**           | Affects randomness or non-determinism; results vary by run.              | High – requires multiple runs/sweeps   | `CTS_DISTANCE_BUF`       | **Low–Medium**               | Needs scripted sweeps and statistical evaluation.                    |
+| **Pinata Nightmare**| No clear mental model between value and effect, no accurate way to communicate intent; tuning is long turnaround time guesswork.     | Very High – frustrating trial-and-error, few users, if any, can even attempt to succeed | RTLMP_FENCE_LX | **Very Low**                 | Should be deprecated, automated, or hidden from normal usage.        |
 
 ## Platform
 
@@ -20,7 +43,7 @@ variable. For OpenROAD Flow Scripts we have the following public platforms:
 -   `nangate45`
 -   `asap7`
 
-## Platform Specific Environment Variables
+## Platform Specific Variables
 
 
 The table below lists the complete set of variables used in each of the
