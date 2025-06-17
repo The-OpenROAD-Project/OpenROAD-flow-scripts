@@ -708,18 +708,6 @@ DIE_AREA:
   stages:
     - floorplan
   tunable: 1
-RESYNTH_AREA_RECOVER:
-  description: |
-    Enable re-synthesis for area reclaim.
-  stages:
-    - floorplan
-  default: 0
-RESYNTH_TIMING_RECOVER:
-  description: |
-    Enable re-synthesis for timing optimization.
-  stages:
-    - floorplan
-  default: 0
 MACRO_ROWS_HALO_X:
   description: >
     Horizontal distance between the edge of the macro and the beginning of the
