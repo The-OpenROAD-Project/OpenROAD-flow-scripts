@@ -214,13 +214,13 @@ TIEHI_CELL_AND_PORT:
     Netlist.
   stages:
     - synth
-    - place
+    - floorplan
 TIELO_CELL_AND_PORT:
   description: |
     Tie low cells used in Yosys synthesis to replace a logical 0 in the Netlist.
   stages:
     - synth
-    - place
+    - floorplan
 MIN_BUF_CELL_AND_PORTS:
   description: |
     Used to insert a buffer cell to pass through wires. Used in synthesis.
