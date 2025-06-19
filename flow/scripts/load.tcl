@@ -22,7 +22,12 @@ proc load_design {design_file sdc_file} {
         read_lef $lef
       }
     }
-    read_verilog $::env(RESULTS_DIR)/$design_file
+    # Uncomment the following line to read the design file in Verilog
+    #read_verilog $::env(RESULTS_DIR)/$design_file
+    # Comment the following lines to read the design file in Verilog
+    read_naja_if_interface $::env(RESULTS_DIR)/../../../../snl/db_interface.snl
+    read_naja_if_implementation $::env(RESULTS_DIR)/../../../../snl/db_implementation.snl
+
     link_design $::env(DESIGN_NAME)
   } elseif {$ext == ".odb"} {
     read_db $::env(RESULTS_DIR)/$design_file

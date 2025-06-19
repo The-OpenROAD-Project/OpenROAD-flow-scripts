@@ -106,6 +106,8 @@ else
   export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 endif
 
+OPENROAD_EXE = /Users/noamcohen/dev/interchangeFormat/OpenROAD/build/src/openroad
+
 export OPENROAD_ARGS = -no_init -threads $(NUM_CORES) $(OR_ARGS)
 export OPENROAD_CMD = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 export OPENROAD_NO_EXIT_CMD = $(OPENROAD_EXE) $(OPENROAD_ARGS)
@@ -117,6 +119,8 @@ else
   YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 endif
 export YOSYS_EXE
+
+YOSYS_EXE := /Users/noamcohen/dev/OR/OpenROAD-flow-scripts/tools/yosys/yosys -m snl-yosys-plugin 
 
 # Use locally installed and built klayout if it exists, otherwise use klayout in path
 KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)

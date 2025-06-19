@@ -65,6 +65,9 @@ if {$use_floorplan_def} {
         -die_area  [ICeWall get_die_area] \
         -core_area [ICeWall get_core_area] \
         -site      $::env(PLACE_SITE)
+    
+    # print above command with the numbers 
+    puts "#### initialize_floorplan -die_area [ICeWall get_die_area] -core_area [ICeWall get_core_area] -site $::env(PLACE_SITE)"
 
     ICeWall init_footprint $env(SIG_MAP_FILE)
 } elseif {$use_die_and_core_area} {
@@ -72,6 +75,8 @@ if {$use_floorplan_def} {
                          -core_area $::env(CORE_AREA) \
                          -site $::env(PLACE_SITE) \
                          {*}$additional_args
+    # print above command with the numbers
+    puts "#### initialize_floorplan -die_area $::env(DIE_AREA) -core_area $::env(CORE_AREA) -site $::env(PLACE_SITE)"
 } elseif {$use_core_utilization} {
     set aspect_ratio 1.0
     if {[env_var_exists_and_non_empty "CORE_ASPECT_RATIO"]} {
@@ -86,6 +91,8 @@ if {$use_floorplan_def} {
                          -core_space $core_margin \
                          -site $::env(PLACE_SITE) \
                          {*}$additional_args
+    # print above command with the numbers
+    puts "#### initialize_floorplan -utilization $::env(CORE_UTILIZATION) -aspect_ratio $aspect_ratio -core_space $core_margin -site $::env(PLACE_SITE)"
 } else {
     puts "Error: No floorplan initialization method specified"
     exit 1

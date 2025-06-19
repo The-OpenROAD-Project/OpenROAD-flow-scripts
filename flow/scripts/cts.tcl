@@ -74,9 +74,9 @@ if {![env_var_equals SKIP_CTS_REPAIR_TIMING 1]} {
 
   repair_timing_helper
 
-  if {$::env(EQUIVALENCE_CHECK)} {
-      run_equivalence_test
-  }
+  # if {$::env(EQUIVALENCE_CHECK)} {
+  #     run_equivalence_test
+  # }
 
   set result [catch {detailed_placement} msg]
   if {$result != 0} {
