@@ -170,7 +170,7 @@ _installUbuntuPackages() {
         fi
         else
             if [[ $1 == 20.04 ]]; then
-                klayoutChecksum=15a26f74cf396d8a10b7985ed70ab135
+                klayoutChecksum=f78d41edf5bcfa5f1990bde1a9307e9e
             else
                 klayoutChecksum=54748a49e1ab53e14cf5bf95feb2f25a
             fi
