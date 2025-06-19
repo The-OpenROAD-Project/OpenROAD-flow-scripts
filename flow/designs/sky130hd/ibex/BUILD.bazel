@@ -5,11 +5,13 @@ orfs_flow(
     arguments = {
         "ADDER_MAP_FILE": "",
         "CORE_UTILIZATION": "45",
-        "PLACE_DENSITY_LB_ADDON": "0.2",
+        "PLACE_DENSITY_LB_ADDON": "0.25",
         "TNS_END_PERCENT": "100",
         "REMOVE_ABC_BUFFERS": "1",
         "SYNTH_HDL_FRONTEND": "slang",
         "VERILOG_INCLUDE_DIRS": "flow/designs/src/ibex_sv/vendor/lowrisc_ip/prim/rtl",
+        "CTS_CLUSTER_SIZE": "20",
+        "CTS_CLUSTER_DIAMETER": "50",
     },
     pdk = "@docker_orfs//:sky130hd",
     sources = {
