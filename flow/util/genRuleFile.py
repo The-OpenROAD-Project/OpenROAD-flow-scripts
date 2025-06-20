@@ -21,8 +21,6 @@ def gen_rule_file(
     metrics_file=None,
     metrics_to_consider=[],
 ):
-    print(f"{os.path.normpath(rules_file)} updates:")
-
     with open(metrics_file, "r") as f:
         metrics = json.load(f)
     if not isinstance(metrics, dict):
@@ -296,6 +294,7 @@ def gen_rule_file(
         rules[field] = dict(value=rule_value, compare=option["compare"])
 
     if len(change_str) > 0:
+        print(f"{os.path.normpath(rules_file)} updates:")
         print(format_str.format("Metric", "Old", "New", "Type"), end="")
         print(format_str.format("------", "---", "---", "----"), end="")
         print(change_str)

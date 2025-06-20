@@ -1,10 +1,48 @@
-# Environment Variables for the OpenROAD Flow Scripts
+# Variables for the OpenROAD Flow Scripts
 
-
-Environment variables are used in the OpenROAD flow to define various
+Variables are used in the OpenROAD flow to define various
 platform, design and tool specific variables to allow finer control and
-user overrides at various flow stages. These are defined in the
-`config.mk` file located in the platform and design specific directories.
+user overrides at various flow stages.
+
+These are normally defined in the `config.mk` file located in the platform and design-specific directories, but can also be defined on the command line or via environment variables. For example:
+
+- Command line: `make PLACE_DENSITY=0.5`
+- Environment variable: `export PLACE_DENSITY=0.5`
+
+This works provided that `config.mk` has defined it as a default value using the `export PLACE_DENSITY?=0.4` syntax.
+
+The actual value used is determined by the priority rules set by `make`:
+
+1. **Makefile Definitions**: Variables defined in the `Makefile` or included files are used when they are defined using the no-override `=` operator, `export PLACE_DENSITY=0.4` syntax. The priority within the included files is the `DESIGN_CONFIG` file, then `Makefile` definitions and finally platform(PDK) defined variables.
+2. **Command Line**: Variables defined on the command line take the highest priority in overriding defaults.
+3. **Environment Variables**: Variables exported in the shell environment are used if not overridden by the command line.
+4. **Default Values**: Variables defined with the `?=` operator in the `Makefile` are used only if the variable is not already defined elsewhere.
+
+## Effects of variables
+
+The variables for ORFS are not fully independent and can interact in complex ways. Small changes to a combination of variables can have large consequences, such as on macro placement, which can lead to vastly different quality of results.
+
+Due to the large number of variables, some of which are continuous and require long runtimes, other discrete, it is not feasible to perform an exhaustive end-to-end search for the best combination of variables.
+
+Instead, the following approaches are used to determine reasonable values, up to a point of diminishing returns:
+
+- **Experience**: Leveraging domain expertise to set initial values.
+- **AI**: Using machine learning techniques to explore variable combinations.
+- **Parameter Sweeps**: Testing a smaller subset of variables to identify optimal ranges.
+
+These values are then set in configuration files and kept under source control alongside the RTL input.
+
+## Types of variables
+
+Variables values are set in ORFS scripts or `config.mk` files and are kept in source control together with configuration files and RTL.
+
+It is an ongoing effort to move variables upwards in the categories below.
+
+| Category           | Definition                                                                 | User Involvement                       | Examples                                | Automation Potential       | Notes                                                                 |
+|--------------------|----------------------------------------------------------------------------|----------------------------------------|-----------------------------------------|-----------------------------|-----------------------------------------------------------------------|
+| **Trivial**         | Automatically determined by tool with near-optimal results.              | None (unless debugging)                | Buffer sizing, default layers           | **High** – can be hidden     | Best if invisible; surfaced only in debug or verbose mode.           |
+| **Easy**            | Requires input, but easy to tune using reports or visuals.               | Moderate – copy/edit from reports      | `PLACE_DENSITY`   | **Medium–High**              | Smooth response curves, intuitive tuning.                            |
+| **Complex**           |  Small changes in values may result in large effects. | High – requires multiple runs/sweeps   | `CTS_DISTANCE_BUF`, small changes can have large effects on skew and quality of results. Small changes to independent inputs, such as RTL, can invalidate earlier "good values".  | **Low–Medium**               | Needs scripted sweeps and statistical evaluation.                    |
 
 ## Platform
 
@@ -20,7 +58,7 @@ variable. For OpenROAD Flow Scripts we have the following public platforms:
 -   `nangate45`
 -   `asap7`
 
-## Platform Specific Environment Variables
+## Platform Specific Variables
 
 
 The table below lists the complete set of variables used in each of the
@@ -108,8 +146,8 @@ configuration file.
 | <a name="GUI_TIMING"></a>GUI_TIMING| Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.| 1| |
 | <a name="HOLD_SLACK_MARGIN"></a>HOLD_SLACK_MARGIN| Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix or underfix (negative value, terminate retiming before 0 or positive slack). floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0 (default hold slack margin). This avoids overrepair in floorplan for hold by default, but allows skipping hold repair using a negative HOLD_SLACK_MARGIN. Exiting timing repair early is useful in exploration where the .sdc has a fixed clock period at the design's target clock period and where HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair (extremely long running times) when exploring different parameter settings. When an ideal clock is used, that is before CTS, a clock insertion delay of 0 is used in timing paths. This creates a mismatch between macros that have a .lib file from after CTS, when the clock is propagated. To mitigate this, OpenSTA will use subtract the clock insertion delay of macros when calculating timing with ideal clock. Provided that min_clock_tree_path and max_clock_tree_path are in the .lib file, which is the case for macros built with OpenROAD. This is less accurate than if OpenROAD had created a placeholder clock tree for timing estimation purposes prior to CTS. There will inevitably be inaccuracies in the timing calculation prior to CTS. Use a slack margin that is low enough, even negative, to avoid overrepair. Inaccuracies in the timing prior to CTS can also lead to underrepair, but there no obvious and simple way to avoid underrapir in these cases. Overrepair can lead to excessive runtimes in repair or too much buffering being added, which can present itself as congestion of hold cells or buffer cells. Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration when trying to find the minimum clock period for a design. The SDC_FILE for a design can be quite complicated and instead of modifying the clock period in the SDC_FILE, which can be non-trivial, the clock period can be fixed at the target frequency and the SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible current minimum clock period.| 0| |
 | <a name="IO_CONSTRAINTS"></a>IO_CONSTRAINTS| File path to the IO constraints .tcl file.| | |
-| <a name="IO_PLACER_H"></a>IO_PLACER_H| The metal layer on which to place the I/O pins horizontally (top and bottom of the die).| | |
-| <a name="IO_PLACER_V"></a>IO_PLACER_V| The metal layer on which to place the I/O pins vertically (sides of the die).| | |
+| <a name="IO_PLACER_H"></a>IO_PLACER_H| A list of metal layers on which the I/O pins are placed horizontally (top and bottom of the die).| | |
+| <a name="IO_PLACER_V"></a>IO_PLACER_V| A list of metal layers on which the I/O pins are placed vertically (sides of the die).| | |
 | <a name="IR_DROP_LAYER"></a>IR_DROP_LAYER| Default metal layer to report IR drop.| | |
 | <a name="KLAYOUT_TECH_FILE"></a>KLAYOUT_TECH_FILE| A mapping from LEF/DEF to GDS using the KLayout tool.| | |
 | <a name="LATCH_MAP_FILE"></a>LATCH_MAP_FILE| List of latches treated as a black box by Yosys.| | |
@@ -128,7 +166,7 @@ configuration file.
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| | |
 | <a name="MIN_ROUTING_LAYER"></a>MIN_ROUTING_LAYER| The lowest metal layer name to be used in routing.| | |
 | <a name="PDN_TCL"></a>PDN_TCL| File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.| | |
-| <a name="PLACE_DENSITY"></a>PLACE_DENSITY| The desired placement density of cells. It reflects how spread the cells would be on the core area. 1.0 = closely dense. 0.0 = widely spread.| | |
+| <a name="PLACE_DENSITY"></a>PLACE_DENSITY| The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread. The intended effort is also communicated by this parameter. Use a low value for faster builds and higher value for better quality of results. If a too low value is used, the placer will not be able to place all cells and a recommended minimum placement density can be found in the logs. A too high value can lead to excessive runtimes, even timeouts and subtle failures in the flow after placement, such as in CTS or global routing when timing repair fails. The default is platform specific.| | |
 | <a name="PLACE_DENSITY_LB_ADDON"></a>PLACE_DENSITY_LB_ADDON| Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.| | |
 | <a name="PLACE_PINS_ARGS"></a>PLACE_PINS_ARGS| Arguments to place_pins| | |
 | <a name="PLACE_SITE"></a>PLACE_SITE| Placement site for core cells defined in the technology LEF file.| | |
@@ -143,8 +181,6 @@ configuration file.
 | <a name="REMOVE_CELLS_FOR_EQY"></a>REMOVE_CELLS_FOR_EQY| String patterns directly passed to write_verilog -remove_cells <> for equivalence checks.| | |
 | <a name="REPAIR_PDN_VIA_LAYER"></a>REPAIR_PDN_VIA_LAYER| Remove power grid vias which generate DRC violations after detailed routing.| | |
 | <a name="REPORT_CLOCK_SKEW"></a>REPORT_CLOCK_SKEW| Report clock skew as part of reporting metrics, starting at CTS, before which there is no clock skew. This metric can be quite time-consuming, so it can be useful to disable.| 1| |
-| <a name="RESYNTH_AREA_RECOVER"></a>RESYNTH_AREA_RECOVER| Enable re-synthesis for area reclaim.| 0| |
-| <a name="RESYNTH_TIMING_RECOVER"></a>RESYNTH_TIMING_RECOVER| Enable re-synthesis for timing optimization.| 0| |
 | <a name="ROUTING_LAYER_ADJUSTMENT"></a>ROUTING_LAYER_ADJUSTMENT| Adjusts routing layer capacities to manage congestion and improve detailed routing. High values ease detailed routing but risk excessive detours and long global routing times, while low values reduce global routing failure but can complicate detailed routing. The global routing running time normally reduces dramatically (entirely design specific, but going from hours to minutes has been observed) when the value is low (such as 0.10). Sometimes, global routing will succeed with lower values and fail with higher values. Exploring results with different values can help shed light on the problem. Start with a too low value, such as 0.10, and bisect to value that works by doing multiple global routing runs. As a last resort, `make global_route_issue` and using the tools/OpenROAD/etc/deltaDebug.py can be useful to debug global routing errors. If there is something specific that is impossible to route, such as a clock line over a macro, global routing will terminate with DRC errors routes that could have been routed were it not for the specific impossible routes. deltaDebug.py should weed out the possible routes and leave a minimal failing case that pinpoints the problem.| 0.5| |
 | <a name="RTLMP_AREA_WT"></a>RTLMP_AREA_WT| Weight for the area of the current floorplan.| 0.1| |
 | <a name="RTLMP_ARGS"></a>RTLMP_ARGS| Overrides all other RTL macro placer arguments.| | |
@@ -172,6 +208,7 @@ configuration file.
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.| | |
 | <a name="SDC_GUT"></a>SDC_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| | |
 | <a name="SEAL_GDS"></a>SEAL_GDS| Seal macro to place around the design.| | |
+| <a name="SETUP_REPAIR_SEQUENCE"></a>SETUP_REPAIR_SEQUENCE| Specifies the sequence of moves to do in repair_timing -setup. This should be a string of move keywords separated by commas such as the default when not used: "unbuffer,sizedown,sizeup,swap,buffer,clone,split".| | |
 | <a name="SETUP_SLACK_MARGIN"></a>SETUP_SLACK_MARGIN| Specifies a time margin for the slack when fixing setup violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack). See HOLD_SLACK_MARGIN for more details.| 0| |
 | <a name="SET_RC_TCL"></a>SET_RC_TCL| Metal & Via RC definition file path.| | |
 | <a name="SKIP_CTS_REPAIR_TIMING"></a>SKIP_CTS_REPAIR_TIMING| Skipping CTS repair, which can take a long time, can be useful in architectural exploration or when getting CI up and running.| | |
@@ -257,8 +294,6 @@ configuration file.
 - [PLACE_DENSITY_LB_ADDON](#PLACE_DENSITY_LB_ADDON)
 - [PLACE_SITE](#PLACE_SITE)
 - [REMOVE_ABC_BUFFERS](#REMOVE_ABC_BUFFERS)
-- [RESYNTH_AREA_RECOVER](#RESYNTH_AREA_RECOVER)
-- [RESYNTH_TIMING_RECOVER](#RESYNTH_TIMING_RECOVER)
 - [RTLMP_AREA_WT](#RTLMP_AREA_WT)
 - [RTLMP_ARGS](#RTLMP_ARGS)
 - [RTLMP_BOUNDARY_WT](#RTLMP_BOUNDARY_WT)
@@ -278,6 +313,7 @@ configuration file.
 - [RTLMP_RPT_DIR](#RTLMP_RPT_DIR)
 - [RTLMP_SIGNATURE_NET_THRESHOLD](#RTLMP_SIGNATURE_NET_THRESHOLD)
 - [RTLMP_WIRELENGTH_WT](#RTLMP_WIRELENGTH_WT)
+- [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
 - [SKIP_LAST_GASP](#SKIP_LAST_GASP)
@@ -324,6 +360,7 @@ configuration file.
 - [POST_CTS_TCL](#POST_CTS_TCL)
 - [REMOVE_CELLS_FOR_EQY](#REMOVE_CELLS_FOR_EQY)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_CTS_REPAIR_TIMING](#SKIP_CTS_REPAIR_TIMING)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
@@ -342,6 +379,7 @@ configuration file.
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
 - [SKIP_INCREMENTAL_REPAIR](#SKIP_INCREMENTAL_REPAIR)

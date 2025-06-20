@@ -6,17 +6,17 @@ export PROCESS = ihp-sg13g2
 # ----------------------------------------------------
 # Add IO related files when a TCL script is assigned to 'FOOTPRINT_TCL'.
 # This variable is used to pass IO information.
-export LOAD_ADDITIONAL_FILES ?= yes
-ifdef FOOTPRINT_TCL
-ifdef LOAD_ADDITIONAL_FILES
-  export ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/sg13g2_io.lef \
-                            $(PLATFORM_DIR)/lef/bondpad_70x70.lef
-  export ADDITIONAL_SLOW_LIBS = $(ADDITIONAL_LIBS) $(PLATFORM_DIR)/lib/sg13g2_io_slow_1p08V_3p0V_125C.lib
-  export ADDITIONAL_FAST_LIBS = $(ADDITIONAL_LIBS) $(PLATFORM_DIR)/lib/sg13g2_io_fast_1p32V_3p6V_m40C.lib
-  export ADDITIONAL_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_typ_1p2V_3p3V_25C.lib
-  export ADDITIONAL_GDS += $(PLATFORM_DIR)/gds/sg13g2_io.gds \
-                           $(PLATFORM_DIR)/gds/bondpad_70x70.gds
-endif
+export LOAD_ADDITIONAL_FILES ?= 1
+ifneq ($(FOOTPRINT_TCL),)
+  ifeq ($(LOAD_ADDITIONAL_FILES),1)
+    export ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/sg13g2_io.lef \
+                              $(PLATFORM_DIR)/lef/bondpad_70x70.lef
+    export ADDITIONAL_SLOW_LIBS = $(ADDITIONAL_LIBS) $(PLATFORM_DIR)/lib/sg13g2_io_slow_1p08V_3p0V_125C.lib
+    export ADDITIONAL_FAST_LIBS = $(ADDITIONAL_LIBS) $(PLATFORM_DIR)/lib/sg13g2_io_fast_1p32V_3p6V_m40C.lib
+    export ADDITIONAL_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_typ_1p2V_3p3V_25C.lib
+    export ADDITIONAL_GDS += $(PLATFORM_DIR)/gds/sg13g2_io.gds \
+                            $(PLATFORM_DIR)/gds/bondpad_70x70.gds
+  endif
 endif
 export TECH_LEF ?= $(PLATFORM_DIR)/lef/sg13g2_tech.lef
 export SC_LEF ?= $(PLATFORM_DIR)/lef/sg13g2_stdcell.lef
@@ -63,8 +63,12 @@ export CLKGATE_MAP_FILE = $(PLATFORM_DIR)/cells_clkgate.v
 # Define ABC driver and load
 export ABC_DRIVER_CELL = sg13g2_buf_4
 export ABC_LOAD_IN_FF = 6.0
-# Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
-export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
+ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
+  ifneq ($(wildcard $(SDC_FILE)),)
+    # Set yosys-abc clock period to first "clk_period" value or "-period" value found in sdc file
+    export ABC_CLOCK_PERIOD_IN_PS ?= $(shell sed -nE "s/^set clk_period (.+)|.* -period (.+) .*/\1\2/p" $(SDC_FILE) | head -1 | awk '{print $$1*1000}')
+  endif
+endif
 
 # -----------------------------------------------------
 #  Sizing

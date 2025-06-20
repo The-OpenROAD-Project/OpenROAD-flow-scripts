@@ -16,7 +16,8 @@ proc save_progress {stage} {
 # Run CTS
 set cts_args [list \
           -sink_clustering_enable \
-          -balance_levels]
+          -balance_levels \
+	  -repair_clock_nets]
 
 append_env_var cts_args CTS_BUF_DISTANCE -distance_between_buffers 1
 append_env_var cts_args CTS_CLUSTER_SIZE -sink_clustering_size 1
@@ -29,30 +30,14 @@ if {[env_var_exists_and_non_empty CTS_ARGS]} {
   set cts_args $::env(CTS_ARGS)
 }
 
-log_cmd clock_tree_synthesis {*}$cts_args
-
-if {[env_var_equals CTS_SNAPSHOTS 1]} {
-  save_progress 4_1_pre_repair_clock_nets
-}
-
-set_propagated_clock [all_clocks]
-
 set_dont_use $::env(DONT_USE_CELLS)
 
-utl::push_metrics_stage "cts__{}__pre_repair"
+log_cmd clock_tree_synthesis {*}$cts_args
 
+utl::push_metrics_stage "cts__{}__pre_repair_timing"
 estimate_parasitics -placement
 if { $::env(DETAILED_METRICS) } {
-  report_metrics 4 "cts pre-repair"
-}
-utl::pop_metrics_stage
-
-repair_clock_nets
-
-utl::push_metrics_stage "cts__{}__post_repair"
-estimate_parasitics -placement
-if { $::env(DETAILED_METRICS) } {
-  report_metrics 4 "cts post-repair"
+  report_metrics 4 "cts pre-repair-timing"
 }
 utl::pop_metrics_stage
 

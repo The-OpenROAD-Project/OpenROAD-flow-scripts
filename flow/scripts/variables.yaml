@@ -328,13 +328,13 @@ IO_CONSTRAINTS:
     - place
 IO_PLACER_H:
   description: >
-    The metal layer on which to place the I/O pins horizontally (top and bottom
+    A list of metal layers on which the I/O pins are placed horizontally (top and bottom
     of the die).
   stages:
     - place
 IO_PLACER_V:
   description: >
-    The metal layer on which to place the I/O pins vertically (sides of the
+    A list of metal layers on which the I/O pins are placed vertically (sides of the
     die).
   stages:
     - place
@@ -380,8 +380,15 @@ PLACE_PINS_ARGS:
   default: ""
 PLACE_DENSITY:
   description: >
-    The desired placement density of cells. It reflects how spread the cells
-    would be on the core area. 1.0 = closely dense. 0.0 = widely spread.
+    The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread.
+
+    The intended effort is also communicated by this parameter. Use a low value for faster builds and higher value for better quality of results.
+
+    If a too low value is used, the placer will not be able to place all cells and a recommended minimum placement density can be found in the logs.
+
+    A too high value can lead to excessive runtimes, even timeouts and subtle failures in the flow after placement, such as in CTS or global routing when timing repair fails.
+
+    The default is platform specific.
   stages:
     - floorplan
     - place
@@ -487,6 +494,15 @@ SETUP_SLACK_MARGIN:
     - floorplan
     - grt
   default: 0
+SETUP_REPAIR_SEQUENCE:
+  description: |
+    Specifies the sequence of moves to do in repair_timing -setup. This should be a string
+    of move keywords separated by commas such as the default when not used:
+    "unbuffer,sizedown,sizeup,swap,buffer,clone,split".
+  stages:
+    - cts
+    - floorplan
+    - grt
 SKIP_GATE_CLONING:
   description: >
     Do not use gate cloning transform to fix timing violations (default: use
@@ -699,18 +715,6 @@ DIE_AREA:
   stages:
     - floorplan
   tunable: 1
-RESYNTH_AREA_RECOVER:
-  description: |
-    Enable re-synthesis for area reclaim.
-  stages:
-    - floorplan
-  default: 0
-RESYNTH_TIMING_RECOVER:
-  description: |
-    Enable re-synthesis for timing optimization.
-  stages:
-    - floorplan
-  default: 0
 MACRO_ROWS_HALO_X:
   description: >
     Horizontal distance between the edge of the macro and the beginning of the

@@ -22,8 +22,9 @@ gui::set_display_controls "Layers/*" visible true
 gui::set_display_controls "Nets/*" visible true
 gui::set_display_controls "Instances/*" visible true
 gui::set_display_controls "Shape Types/*" visible true
-gui::set_display_controls "Misc/Instances/*" visible true
-gui::set_display_controls "Misc/Instances/Pin Names" visible false
+gui::set_display_controls "Misc/Instances/*" visible false
+gui::set_display_controls "Misc/Instances/Pins" visible true
+gui::set_display_controls "Misc/Instances/Blockages" visible true
 gui::set_display_controls "Misc/Scale bar" visible true
 gui::set_display_controls "Misc/Highlight selected" visible true
 gui::set_display_controls "Misc/Detailed view" visible true
@@ -35,8 +36,9 @@ gui::set_display_controls "Nets/Ground" visible false
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_routing.webp
 
 # The placement view without routing
-gui::set_display_controls "Layers/*" visible false
+gui::set_display_controls "Shape Types/Routing/*" visible false
 gui::set_display_controls "Instances/Physical/*" visible false
+gui::set_display_controls "Misc/Instances/*" visible false
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_placement.webp
 
 if {[env_var_exists_and_non_empty PWR_NETS_VOLTAGES]} {
@@ -48,14 +50,13 @@ if {[env_var_exists_and_non_empty PWR_NETS_VOLTAGES]} {
 }
 
 # The clock view: all clock nets and buffers
-gui::set_display_controls "Layers/*" visible true
+gui::set_display_controls "Shape Types/Routing/*" visible true
 gui::set_display_controls "Nets/*" visible false
 gui::set_display_controls "Nets/Clock" visible true
 gui::set_display_controls "Instances/*" visible false
 gui::set_display_controls "Instances/StdCells/Clock tree/*" visible true
 gui::set_display_controls "Instances/StdCells/Sequential" visible true
 gui::set_display_controls "Instances/Macro" visible true
-gui::set_display_controls "Misc/Instances/*" visible false
 select -name "clk*" -type Inst
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_clocks.webp
 gui::clear_selections
@@ -74,7 +75,10 @@ foreach clock [get_clocks *] {
 gui::hide_widget "Clock Tree Viewer"
 
 # The resizer view: all instances created by the resizer grouped
-gui::set_display_controls "Layers/*" visible false
+gui::set_display_controls "Nets/*" visible true
+gui::set_display_controls "Nets/Power" visible false
+gui::set_display_controls "Nets/Ground" visible false
+gui::set_display_controls "Shape Types/Routing/*" visible false
 gui::set_display_controls "Instances/*" visible true
 gui::set_display_controls "Instances/Physical/*" visible false
 select -name "hold*" -type Inst -highlight 0       ;# green

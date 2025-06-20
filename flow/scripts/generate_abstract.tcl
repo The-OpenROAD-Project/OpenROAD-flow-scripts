@@ -21,7 +21,15 @@ if {$design_stage >= 4} {
 # write_timing_model includes the source latency in the model
 set_clock_latency -source 0 [all_clocks]
 puts "Generating abstract views"
-log_cmd write_timing_model $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lib
+if {[env_var_exists_and_non_empty CORNERS]} {
+  # corners
+  foreach corner $::env(CORNERS) {
+    log_cmd write_timing_model -corner $corner $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_$corner.lib
+  }
+  unset corner
+} else {
+  log_cmd write_timing_model $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_typ.lib
+}
 log_cmd write_abstract_lef -bloat_occupied_layers $::env(RESULTS_DIR)/$::env(DESIGN_NAME).lef
 
 if {[env_var_exists_and_non_empty CDL_FILES]} {

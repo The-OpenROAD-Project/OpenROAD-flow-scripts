@@ -89,23 +89,29 @@ include $(DESIGN_CONFIG)
 
 export DESIGN_DIR ?= $(dir $(DESIGN_CONFIG))
 
-# default value "base" is duplicated from variables.yaml because we need it
+# default value "base" for FLOW_VARIANT and "." for WORK_HOME are duplicated
+# from variables.yaml and variables.mk because we need it
 # earlier in the flow for BLOCKS. BLOCKS is a feature specific to the
 # ORFS Makefile.
 export FLOW_VARIANT?=base
+export WORK_HOME?=.
 # BLOCKS is a ORFS make flow specific feature.
 ifneq ($(BLOCKS),)
   # Normally this comes from variables.yaml, but we need it here to set up these variables
   # which are part of the DESIGN_CONFIG. BLOCKS is a Makefile specific concept.
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LIBS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
-  $(foreach block,$(BLOCKS),$(eval BLOCK_LOG_FOLDERS += ./logs/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LEFS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_TYP_LIBS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}_typ.lib))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_FAST_LIBS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}_fast.lib))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_SLOW_LIBS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}_slow.lib))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_GDS += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_CDL += $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.cdl))
+  $(foreach block,$(BLOCKS),$(eval BLOCK_LOG_FOLDERS += $(WORK_HOME)/logs/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/))
   export ADDITIONAL_LEFS += $(BLOCK_LEFS)
-  export ADDITIONAL_LIBS += $(BLOCK_LIBS)
+  export ADDITIONAL_LIBS += $(BLOCK_TYP_LIBS)
+  export ADDITIONAL_TYP_LIBS += $(BLOCK_TYP_LIBS)
+  export ADDITIONAL_FAST_LIBS += $(BLOCK_FAST_LIBS)
+  export ADDITIONAL_SLOW_LIBS += $(BLOCK_SLOW_LIBS)
   export ADDITIONAL_GDS += $(BLOCK_GDS)
-  export GDS_FILES += $(BLOCK_GDS)
   ifneq ($(CDL_FILES),)
     export CDL_FILES += $(BLOCK_CDL)
   endif
@@ -140,7 +146,7 @@ SHELL          := /usr/bin/env bash
 #   location
 # - default is current install / clone directory
 ifeq ($(origin FLOW_HOME), undefined)
-FLOW_HOME := $(abspath $(dir $(firstword $(MAKEFILE_LIST))))
+  FLOW_HOME := $(abspath $(dir $(firstword $(MAKEFILE_LIST))))
 endif
 export FLOW_HOME
 
@@ -168,27 +174,19 @@ endef
 
 # Targets to harden Blocks in case of hierarchical flow is triggered
 .PHONY: build_macros
-build_macros: $(BLOCK_LEFS) $(BLOCK_LIBS)
+build_macros: $(BLOCK_LEFS) $(BLOCK_TYP_LIBS)
 
-$(foreach block,$(BLOCKS),$(eval $(call GENERATE_ABSTRACT_RULE,./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef,./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lib,$(shell dirname $(DESIGN_CONFIG))/${block}/config.mk)))
-$(foreach block,$(BLOCKS),$(eval ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: ./results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
+$(foreach block,$(BLOCKS),$(eval $(call GENERATE_ABSTRACT_RULE,$(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef,$(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}_typ.lib,$(shell dirname $(DESIGN_CONFIG))/${block}/config.mk)))
+$(foreach block,$(BLOCKS),$(eval $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
 
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
 .PHONY: versions.txt
 versions.txt:
 	mkdir -p $(OBJECTS_DIR)
-	@if [ -z "$(YOSYS_EXE)" ]; then \
-		echo >> $(OBJECTS_DIR)/$@ "yosys not installed"; \
-	else \
-		$(YOSYS_EXE) -V > $(OBJECTS_DIR)/$@; \
-	fi
-	@echo openroad `$(OPENROAD_EXE) -version` >> $(OBJECTS_DIR)/$@
-	@if [ -z "$(KLAYOUT_CMD)" ]; then \
-		echo >> $(OBJECTS_DIR)/$@ "klayout not installed"; \
-	else \
-		$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@; \
-	fi
+	@echo "yosys $(shell $(YOSYS_EXE) -V 2>&1)" > $(OBJECTS_DIR)/$@
+	@echo "openroad $(shell $(OPENROAD_EXE) -version 2>&1)" >> $(OBJECTS_DIR)/$@
+	@echo "klayout $(shell $(KLAYOUT_CMD) -zz -v 2>&1)" >> $(OBJECTS_DIR)/$@
 
 # Pre-process libraries
 # ==============================================================================
@@ -198,10 +196,10 @@ versions.txt:
 .SECONDEXPANSION:
 $(DONT_USE_LIBS): $$(filter %$$(@F) %$$(@F).gz,$(LIB_FILES))
 	@mkdir -p $(OBJECTS_DIR)/lib
-	$(UTILS_DIR)/preprocessLib.py -i $^ -o $@
+	$(PYTHON_EXE) $(UTILS_DIR)/preprocessLib.py -i $^ -o $@
 
 $(OBJECTS_DIR)/lib/merged.lib: $(DONT_USE_LIBS)
-	$(UTILS_DIR)/mergeLib.pl $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
+	$(PYTHON_EXE) $(UTILS_DIR)/merge_lib.py $(PLATFORM)_merged $(DONT_USE_LIBS) > $@
 
 # Pre-process KLayout tech
 # ==============================================================================
@@ -265,9 +263,9 @@ do-synth-report:
 .PHONY: memory
 memory:
 	if [ -f $(RESULTS_DIR)/mem_hierarchical.json ]; then \
-		python3 $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem_hierarchical.json; \
+		$(PYTHON_EXE) $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem_hierarchical.json; \
 	fi
-	python3 $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
+	$(PYTHON_EXE) $(SCRIPTS_DIR)/mem_dump.py $(RESULTS_DIR)/mem.json
 
 # ==============================================================================
 
@@ -613,12 +611,12 @@ finish: $(LOG_DIR)/6_report.log \
 
 .PHONY: elapsed
 elapsed:
-	-@$(UTILS_DIR)/genElapsedTime.py -d $(BLOCK_LOG_FOLDERS) $(LOG_DIR)
+	-@$(PYTHON_EXE) $(UTILS_DIR)/genElapsedTime.py -d $(BLOCK_LOG_FOLDERS) $(LOG_DIR)
 
 # Useful when working with macros, see elapsed time for all macros in platform
 .PHONY: elapsed-all
 elapsed-all:
-	@$(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
+	@$(PYTHON_EXE) $(UTILS_DIR)/genElapsedTime.py -d $(shell find $(WORK_HOME)/logs/$(PLATFORM)/*/*/ -type d)
 
 $(eval $(call do-step,6_1_fill,$(RESULTS_DIR)/5_route.odb $(RESULTS_DIR)/5_route.sdc $(FILL_CONFIG),density_fill))
 
@@ -765,7 +763,7 @@ clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_f
 
 .PHONY: nuke
 nuke: clean_test clean_issues
-	rm -rf ./results ./logs ./reports ./objects
+	rm -rf $(WORK_HOME)/results $(WORK_HOME)/logs $(WORK_HOME)/reports $(WORK_HOME)/objects
 	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def
 	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
 	rm -f $(OBJECTS_DIR)/versions.txt $(OBJECTS_DIR)/copyright.txt dummy.guide
