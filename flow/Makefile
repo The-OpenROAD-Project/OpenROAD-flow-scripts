@@ -184,17 +184,9 @@ $(foreach block,$(BLOCKS),$(eval $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKN
 .PHONY: versions.txt
 versions.txt:
 	mkdir -p $(OBJECTS_DIR)
-	@if [ -z "$(YOSYS_EXE)" ]; then \
-		echo >> $(OBJECTS_DIR)/$@ "yosys not installed"; \
-	else \
-		$(YOSYS_EXE) -V > $(OBJECTS_DIR)/$@; \
-	fi
-	@echo openroad `$(OPENROAD_EXE) -version` >> $(OBJECTS_DIR)/$@
-	@if [ -z "$(KLAYOUT_CMD)" ]; then \
-		echo >> $(OBJECTS_DIR)/$@ "klayout not installed"; \
-	else \
-		$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@; \
-	fi
+	@echo "yosys $(shell $(YOSYS_EXE) -V 2>&1)" > $(OBJECTS_DIR)/$@
+	@echo "openroad $(shell $(OPENROAD_EXE) -version 2>&1)" >> $(OBJECTS_DIR)/$@
+	@echo "klayout $(shell $(KLAYOUT_CMD) -zz -v 2>&1)" >> $(OBJECTS_DIR)/$@
 
 # Pre-process libraries
 # ==============================================================================
