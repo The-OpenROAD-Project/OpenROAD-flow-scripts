@@ -88,10 +88,10 @@ export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x256.lib \
 
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
-export CORE_UTILIZATION       = 50
+export CORE_UTILIZATION       = 70
 export CORE_MARGIN            = 2
-export MACRO_HALO             = 5
-export PLACE_DENSITY          = 0.64
+export MACRO_PLACE_HALO       = 3 3
+export PLACE_DENSITY          = 0.73
 
 # a smoketest for this option, there are a
 # few last gasp iterations
