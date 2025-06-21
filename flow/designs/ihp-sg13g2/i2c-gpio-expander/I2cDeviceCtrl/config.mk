@@ -1,0 +1,20 @@
+export DESIGN_NAME = I2cDeviceCtrl
+export TOP_DESIGN_NICKNAME = i2c-gpio-expander
+export DESIGN_NICKNAME = ${TOP_DESIGN_NICKNAME}_${DESIGN_NAME}
+export PLATFORM = ihp-sg13g2
+
+export VERILOG_FILES = $(DESIGN_HOME)/$(PLATFORM)/${TOP_DESIGN_NICKNAME}/I2cGpioExpander.v \
+
+export SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(TOP_DESIGN_NICKNAME)/${DESIGN_NAME}/constraint.sdc
+
+export DIE_AREA = 0.0 0.0 147.84 147.42
+export CORE_AREA = 18.72 18.9 128.64 128.52
+
+export MAX_ROUTING_LAYER = TopMetal2
+
+export TNS_END_PERCENT = 100
+export PLACE_DENSITY = 0.75
+
+export CORNERS = slow typ fast
+
+export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(TOP_DESIGN_NICKNAME)/${DESIGN_NAME}/pdn.tcl
