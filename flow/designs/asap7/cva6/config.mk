@@ -91,7 +91,7 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constr
 export CORE_UTILIZATION       = 70
 export CORE_MARGIN            = 2
 export MACRO_PLACE_HALO       = 3 3
-export PLACE_DENSITY          = 0.73
+export PLACE_DENSITY          = 0.67
 
 # a smoketest for this option, there are a
 # few last gasp iterations
