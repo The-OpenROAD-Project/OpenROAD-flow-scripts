@@ -30,8 +30,7 @@ if {[env_var_exists_and_non_empty SYNTH_OPERATIONS_ARGS]} {
 
 if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
   # Perform standard coarse-level synthesis script, flatten right away
-  # (-flatten part of $synth_args per default)
-  synth -run :fine {*}$synth_full_args
+  synth -flatten -run :fine {*}$synth_full_args
 } else {
   # Perform standard coarse-level synthesis script,
   # defer flattening until we have decided what hierarchy to keep
@@ -48,7 +47,7 @@ if {![env_var_equals SYNTH_HIERARCHICAL 1]} {
   }
 
   # Re-run coarse-level script, this time do pass -flatten
-  synth -run coarse:fine {*}$synth_full_args
+  synth -flatten -run coarse:fine {*}$synth_full_args
 }
 
 json -o $::env(RESULTS_DIR)/mem.json
