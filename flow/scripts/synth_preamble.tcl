@@ -48,20 +48,22 @@ proc read_design_sources {} {
     plugin -i slang
     yosys read_slang -D SYNTHESIS --keep-hierarchy --compat=vcs \
       --ignore-assertions --top $::env(DESIGN_NAME) \
-      {*}$vIdirsArgs {*}$::env(VERILOG_FILES) {*}$::env(VERILOG_DEFINES)
+      {*}$vIdirsArgs {*}$::env(VERILOG_FILES) {*}[env_var_or_empty VERILOG_DEFINES]
     # Workaround for yosys-slang#119
     setattr -unset init
   } elseif {[env_var_equals SYNTH_HDL_FRONTEND verific]} {
     if {[env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS]} {
-	verific -vlog-incdir {*}$::env(VERILOG_INCLUDE_DIRS)
+	    verific -vlog-incdir {*}$::env(VERILOG_INCLUDE_DIRS)
     }
     if {[env_var_exists_and_non_empty VERILOG_DEFINES]} {
-	verific -vlog-define {*}$::env(VERILOG_DEFINES)
+	    verific -vlog-define {*}$::env(VERILOG_DEFINES)
     }
     verific -sv2012 {*}$::env(VERILOG_FILES)
   } elseif {![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND]} {
     verilog_defaults -push
-    verilog_defaults -add {*}$::env(VERILOG_DEFINES)
+    if {[env_var_exists_and_non_empty VERILOG_DEFINES]} {
+      verilog_defaults -add {*}$::env(VERILOG_DEFINES)
+    }
     foreach file $::env(VERILOG_FILES) {
       read_verilog -defer -sv {*}$vIdirsArgs $file
     }

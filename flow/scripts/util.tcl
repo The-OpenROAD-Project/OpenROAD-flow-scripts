@@ -124,6 +124,14 @@ proc append_env_var {list_name var_name prefix has_arg} {
   }
 }
 
+# Non-empty defaults should go into variables.yaml, generally
+proc env_var_or_empty {env_var} {
+  if {[env_var_exists_and_non_empty $env_var]} {
+    return $::env($env_var)
+  }
+  return ""
+}
+
 proc find_macros {} {
   set macros ""
 
