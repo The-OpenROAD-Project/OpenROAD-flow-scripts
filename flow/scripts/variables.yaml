@@ -377,7 +377,6 @@ PLACE_PINS_ARGS:
     Arguments to place_pins
   stages:
     - place
-  default: ""
 PLACE_DENSITY:
   description: >
     The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread.
@@ -407,7 +406,6 @@ GLOBAL_PLACEMENT_ARGS:
   description: >
     Use additional tuning parameters during global placement other than default
     args defined in global_place.tcl.
-  default: ""
 ENABLE_DPO:
   description: |
     Enable detail placement with improve_placement feature.
@@ -603,7 +601,6 @@ VERILOG_DEFINES:
   description: >
     Preprocessor defines passed to the language frontend.
     Example: `-D HPDCACHE_ASSERT_OFF`
-  default: ""
   stages:
     - synth
 SDC_FILE:
@@ -683,7 +680,6 @@ SYNTH_KEEP_MODULES:
 SYNTH_ARGS:
   description: |
     Optional synthesis variables for yosys.
-  default: ""
 SYNTH_HIER_SEPARATOR:
   description: |
     Separator used for the synthesis flatten stage.
@@ -693,7 +689,6 @@ VERILOG_TOP_PARAMS:
     Apply toplevel params (if exist).
   stages:
     - synth
-  default: ""
 CORE_ASPECT_RATIO:
   description: >
     The core aspect ratio (height / width). This value is ignored if

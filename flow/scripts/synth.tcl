@@ -21,7 +21,7 @@ if {[env_var_exists_and_non_empty SYNTH_HIER_SEPARATOR]} {
   scratchpad -set flatten.separator $::env(SYNTH_HIER_SEPARATOR)
 }
 
-set synth_full_args $::env(SYNTH_ARGS)
+set synth_full_args [env_var_or_empty SYNTH_ARGS]
 if {[env_var_exists_and_non_empty SYNTH_OPERATIONS_ARGS]} {
   set synth_full_args [concat $synth_full_args $::env(SYNTH_OPERATIONS_ARGS)]
 } else {

@@ -39,7 +39,7 @@ proc do_placement {global_placement_args} {
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)] \
     $global_placement_args]
 
-  lappend all_args {*}$::env(GLOBAL_PLACEMENT_ARGS)
+  lappend all_args {*}[env_var_or_empty GLOBAL_PLACEMENT_ARGS]
 
   log_cmd global_placement {*}$all_args
 }
