@@ -541,7 +541,8 @@ clean_cts:
 route: $(RESULTS_DIR)/5_route.odb \
        $(RESULTS_DIR)/5_route.sdc
 
-.PHONY: grt
+.PHONY: grt globalroute
+globalroute: grt
 grt: $(RESULTS_DIR)/5_1_grt.odb
 
 # ==============================================================================
