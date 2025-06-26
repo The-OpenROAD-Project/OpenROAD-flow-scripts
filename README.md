@@ -46,6 +46,14 @@ timeline
 
 ## Tool Installation
 
+There are different ways to install and develop OpenROAD and ORFS, which is the best fit depends use-case, experience and personal taste.
+
+### Use Bazel, avoid installing anything at all and adapt the flow to your needs in your own repository
+
+[bazel-orfs](https://github.com/The-OpenROAD-Project/bazel-orfs) provides a seamless, reproducible way to manage dependencies and adapt the flow without requiring manual installations(no Docker images, sudo bash scripts, etc.)
+
+By leveraging [Bazel](https://bazel.build/)'s robust build system, all dependencies are automatically resolved, versioned, and built in a consistent environment. This eliminates setup complexity, ensures fast incremental builds, and allows for easy customization of the flow, making it an efficient choice for both [beginners](https://github.com/Pinata-Consulting/RegFileStudy) and [advanced](https://github.com/The-OpenROAD-Project/megaboom) users.
+
 ### Docker Based Installation
 
 To ease dependency installation issues, ORFS uses docker images.
