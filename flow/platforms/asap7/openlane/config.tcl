@@ -15,7 +15,7 @@ set ::env(STD_CELL_GROUND_PINS) "VSS"
 set ::env(TECH_LEF) "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)/techlef/asap7_tech_1x_201209.lef"
 set ::env(CELLS_LEF) [glob "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)/lef/*.lef"]
 set ::env(GDS_FILES) [glob "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)/gds/*.gds"]
-set ::env(STD_CELL_LIBRARY_CDL)	"$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)/cdl/$::env(STD_CELL_LIBRARY).cdl"
+set ::env(STD_CELL_LIBRARY_CDL) "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)/cdl/$::env(STD_CELL_LIBRARY).cdl"
 
 set ::env(GPIO_PADS_LEF) ""
 
@@ -25,7 +25,7 @@ set ::env(GPIO_PADS_VERILOG) ""
 set ::env(TECH_LEF_OPT) "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY_OPT)/techlef/$::env(STD_CELL_LIBRARY_OPT).tlef"
 set ::env(CELLS_LEF_OPT) [glob "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY_OPT)/lef/*.lef"]
 set ::env(GDS_FILES_OPT) [glob "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY_OPT)/gds/*.gds"]
-set ::env(STD_CELL_LIBRARY_OPT_CDL)	"$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY_OPT)/cdl/$::env(STD_CELL_LIBRARY_OPT).cdl"
+set ::env(STD_CELL_LIBRARY_OPT_CDL) "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY_OPT)/cdl/$::env(STD_CELL_LIBRARY_OPT).cdl"
 
 
 # Optimization library slowest corner
@@ -100,15 +100,15 @@ set ::env(VIAS_RC) "\
 
 # Layer RC Values
 set ::env(LAYERS_RC) "\
-	M1 1.1368e-01 1.3889e-01,\
-	M2 1.3426e-01 2.4222e-02,\
-	M3 1.2918e-01 2.4222e-02,\
-	M4 1.1396e-01 1.6778e-02,\
-	M5 1.3323e-01 1.4677e-02,\
-	M6 1.1575e-01 1.0371e-02,\
-	M7 1.3293e-01 9.6720e-03,\
-	M8 1.1822e-01 7.4310e-03,\
-	M9 1.3497e-01 6.8740e-03"
+    M1 1.1368e-01 1.3889e-01,\
+    M2 1.3426e-01 2.4222e-02,\
+    M3 1.2918e-01 2.4222e-02,\
+    M4 1.1396e-01 1.6778e-02,\
+    M5 1.3323e-01 1.4677e-02,\
+    M6 1.1575e-01 1.0371e-02,\
+    M7 1.3293e-01 9.6720e-03,\
+    M8 1.1822e-01 7.4310e-03,\
+    M9 1.3497e-01 6.8740e-03"
 
 # Extra PDN configs
 set ::env(FP_PDN_RAILS_LAYER) met1

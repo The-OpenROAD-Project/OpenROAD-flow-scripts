@@ -27,7 +27,7 @@ proc read_checkpoint {file} {
     read_json $file
   } else {
     read_rtlil $file
-  }  
+  }
 }
 
 proc read_design_sources {} {
@@ -53,10 +53,10 @@ proc read_design_sources {} {
     setattr -unset init
   } elseif {[env_var_equals SYNTH_HDL_FRONTEND verific]} {
     if {[env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS]} {
-	    verific -vlog-incdir {*}$::env(VERILOG_INCLUDE_DIRS)
+        verific -vlog-incdir {*}$::env(VERILOG_INCLUDE_DIRS)
     }
     if {[env_var_exists_and_non_empty VERILOG_DEFINES]} {
-	    verific -vlog-define {*}$::env(VERILOG_DEFINES)
+        verific -vlog-define {*}$::env(VERILOG_DEFINES)
     }
     verific -sv2012 {*}$::env(VERILOG_FILES)
   } elseif {![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND]} {
@@ -69,7 +69,7 @@ proc read_design_sources {} {
     }
     verilog_defaults -pop
   } else {
-    error "Unrecognized HDL frontend: $::env(SYNTH_HDL_FRONTEND)" 
+    error "Unrecognized HDL frontend: $::env(SYNTH_HDL_FRONTEND)"
   }
 
   # Read platform specific mapfile for OPENROAD_CLKGATE cells

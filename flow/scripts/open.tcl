@@ -31,13 +31,13 @@ proc read_timing {input_file} {
   if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
     source $::env(PLATFORM_DIR)/derate.tcl
   }
-  
+
   source $::env(PLATFORM_DIR)/setRC.tcl
   if {$design_stage >= 4} {
     # CTS has run, so propagate clocks
     set_propagated_clock [all_clocks]
   }
-  
+
   if {$design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef]} {
     log_cmd read_spef $::env(RESULTS_DIR)/6_final.spef
   } elseif {$design_stage >= 5} {

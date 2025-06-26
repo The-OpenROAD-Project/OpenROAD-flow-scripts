@@ -8,7 +8,7 @@ proc load_design {design_file sdc_file} {
   if {[env_var_exists_and_non_empty PLATFORM_TCL]} {
     log_cmd source $::env(PLATFORM_TCL)
   }
-  
+
   # Read liberty files
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
@@ -46,7 +46,7 @@ proc load_design {design_file sdc_file} {
 }
 
 #===========================================================================================
-# Routines to run equivalence tests when they are enabled. 
+# Routines to run equivalence tests when they are enabled.
 
 proc get_verilog_cells_for_design { } {
     set dir "$::env(PLATFORM_DIR)/work_around_yosys/"
@@ -98,7 +98,7 @@ proc write_eqy_script { } {
     # Gold netlist
     puts $outfile "\[gold]\nread_verilog -sv $::env(RESULTS_DIR)/4_before_rsz.v $cell_files\n"
     puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
-    # Modified netlist 
+    # Modified netlist
     puts $outfile "\[gate]\nread_verilog -sv $::env(RESULTS_DIR)/4_after_rsz.v $cell_files\n"
     puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
 

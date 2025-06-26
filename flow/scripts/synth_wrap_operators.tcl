@@ -53,7 +53,7 @@ foreach info $deferred_cells {
   # iterate over all architectures, both the default and non-default
   foreach arch [lrange $info 2 end] {
     set suffix [lindex $arch 0]
-    set extra_map_args [lrange $arch 1 end] 
+    set extra_map_args [lrange $arch 1 end]
 
     # map all operator copies which were selected to have this architecture
     techmap -map +/techmap.v {*}$extra_map_args A:source_cell=$type A:architecture=$suffix %i

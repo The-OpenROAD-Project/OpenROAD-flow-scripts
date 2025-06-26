@@ -74,7 +74,7 @@ if {[find_macros] != ""} {
   }
 
   source $::env(SCRIPTS_DIR)/placement_blockages.tcl
-  block_channels $blockage_width 
+  block_channels $blockage_width
 } else {
   puts "No macros found: Skipping macro_placement"
 }

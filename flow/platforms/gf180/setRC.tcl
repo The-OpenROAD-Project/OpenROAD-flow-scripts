@@ -49,7 +49,7 @@ if { $metal == "6" } {
       }
     }
   }
-  
+
   set_wire_rc -signal -layer Metal2
   set_wire_rc -clock  -layer Metal4
 

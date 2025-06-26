@@ -56,7 +56,7 @@ proc write_rc_csv { filename } {
       }
     }
   }
-  puts $stream "" 
+  puts $stream ""
 
   set use_drt_data [env_var_exists_and_non_empty CORRELATE_DRT_WIRELENGTH]
 
@@ -85,7 +85,7 @@ proc write_rc_csv { filename } {
           puts -nonewline $stream ",[ord::dbu_to_microns $length]"
         } else {
           puts -nonewline $stream ",$length"
-        }  
+        }
       }
 
       puts $stream ""
@@ -197,7 +197,7 @@ proc compare_wire_rc1 { net var_name ref_var_name } {
   } else {
     set cap_delta 0.0
   }
-  
+
   set total_cap [expr $pin_cap + $wire_cap]
   set total_cap_ref [expr $pin_cap + $wire_cap_ref]
   if { $total_cap_ref != 0.0 } {
@@ -205,7 +205,7 @@ proc compare_wire_rc1 { net var_name ref_var_name } {
   } else {
     set total_delta 0.0
   }
-  
+
   set fanout [llength [get_pins -of $net -filter "direction == input"]]
 
   puts -nonewline "[format %-20s $net_name] [format %5d $fanout] [format %8s [sta::format_capacitance $wire_cap 3]] [format %8s [sta::format_capacitance $wire_cap_ref 3]] [format %4.0f $cap_delta]% [format %4.0f $total_delta]%"

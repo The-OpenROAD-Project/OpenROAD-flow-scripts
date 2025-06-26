@@ -1,6 +1,6 @@
 namespace eval wrapper {
   variable wrapper_cfg
-  
+
   proc set_message {level message} {
     return "\[$level\] $message"
   }
@@ -100,7 +100,7 @@ namespace eval wrapper {
   }
 
   proc clear_left {physical_pin blockages} {
-    set track [dict get $physical_pin track] 
+    set track [dict get $physical_pin track]
 
     foreach blockage $blockages {
       if {[dict get $blockage track] == $track && [dict get $blockage to] < [dict get $physical_pin from]} {
@@ -111,7 +111,7 @@ namespace eval wrapper {
   }
 
   proc clear_right {physical_pin blockages} {
-    set track [dict get $physical_pin track] 
+    set track [dict get $physical_pin track]
 
     foreach blockage $blockages {
       if {[dict get $blockage track] == $track && [dict get $blockage from] > [dict get $physical_pin to]} {
@@ -122,11 +122,11 @@ namespace eval wrapper {
   }
 
   proc create_def_wrapper {cell_name new_cell_name} {
-    variable tech    
+    variable tech
     set orig_cell [lef get_cell $cell_name]
-    
+
     set design $orig_cell
-    
+
     dict set design name $new_cell_name
     dict set design tool "cell-veneer"
     dict set design units 2000
@@ -142,10 +142,10 @@ namespace eval wrapper {
     dict set design components u0 cell_name $cell_name
     dict set design components u0 placed "0 0"
     dict set design components u0 orientation "N"
-    
+
     dict for {pin_name pin} [dict get $orig_cell pins] {
-      
-      dict set design pins $pin_name net_name $pin_name 
+
+      dict set design pins $pin_name net_name $pin_name
       if {[dict exists $pin use]} {
         if {[dict get $pin use] == "POWER" || [dict get $pin use] == "GROUND"} {
           dict set design special_nets $pin_name connections [list "PIN $pin_name" "* $pin_name"]
@@ -161,7 +161,7 @@ namespace eval wrapper {
 
     return $design
   }
-  
+
   proc get_port_offset {port} {
     if {[dict exists $port fixed]} {
       return [dict get $port fixed]
@@ -174,7 +174,7 @@ namespace eval wrapper {
 
   proc move_m2_pins_to_edge {cell_name cell_data} {
     variable wrapper_cfg
-    
+
     set wrapper_cell [lef get_cell [dict get $wrapper_cfg padding_cell]]
     set padding_cell_width [lindex [dict get $wrapper_cell die_area] 2]
     set def_units [dict get $wrapper_cfg def_units]
@@ -187,7 +187,7 @@ namespace eval wrapper {
     set lower_y [expr 2 * 128]
     set upper_y [expr 8 * 128]
     set via_overlap [expr round([dict get $wrapper_cfg via_overlap] * $def_units)]
-    
+
     set right_padding 0
     set left_padding 0
 
@@ -241,7 +241,7 @@ namespace eval wrapper {
         # Route M2 out to the side of the block
         lappend wires [list \
           layer $layer_name \
-          points [list [list $x1 $y] [list $x3 $y] [dict get $wrapper_cfg via]] 
+          points [list [list $x1 $y] [list $x3 $y] [dict get $wrapper_cfg via]]
         ]
         set new_wire [list \
           layer "M1" \
@@ -379,7 +379,7 @@ namespace eval wrapper {
       [expr [lindex [dict get $design die_area] 2] + (($pad_idx - ($left_padding + 1)) * $padding_cell_width)] \
       [lindex [dict get $design die_area] 3] \
     ]
-    
+
     # Extend VDD, VSS, VPW, VNW pins to be the width of the wrapper
     #   VDD overlaps by 0.009 on each side
     #   VSS overlaps by 0.009 on each side
@@ -425,12 +425,12 @@ namespace eval wrapper {
 
   proc build_wrappers {data} {
     variable wrapper_cfg
-    
+
     set designs {}
 
     dict for {cell_name cell_data} $data {
       set data [move_m2_pins_to_edge $cell_name $cell_data $wrapper_cfg]
-      dict set designs [dict get $data name] $data 
+      dict set designs [dict get $data name] $data
     }
 
     return $designs
@@ -444,10 +444,10 @@ namespace eval wrapper {
     } else {
       set offset [list 0 0]
     }
-    
+
     return [absolute_rectangle [dict get [lindex [dict get $port layers $layer shapes] 0] rect] $offset]
   }
-  
+
   proc wrap_macro {cell_name} {
     variable tech
     set wrapper [wrapper::create_def_wrapper $cell_name ${cell_name}_mod]
@@ -456,7 +456,7 @@ namespace eval wrapper {
 
     set cell [lef get_cell $cell_name]
     # debug "$cell_name"
-    
+
     # Order the signal pins based on the y location of the pin
     set pin_info {}
     set net_info {}
@@ -542,8 +542,8 @@ namespace eval wrapper {
       dict set wrapper obstructions $obs_layer $obstructions
       # debug "Added wrapper obstruction [list 0 0 [expr $width + $macro_x] $height]"
     }
-    
-    
+
+
     # Add wrapper pins and nets
     dict for {net_name net} [dict get $net_info] {
       set grid_y [dict get $net grid_y]
@@ -557,7 +557,7 @@ namespace eval wrapper {
       ]
       # debug "Replacing pin $net_name with $new_port"
       dict set wrapper pins $net_name ports [list $new_port]
-      
+
       set segments {}
 
       # First segment from RAM to jog location, to the y grid of the pin
@@ -655,9 +655,9 @@ namespace eval wrapper {
         }
       }
     }
-    
+
     foreach layer_name [dict keys [dict get $tech layer]] {
-      foreach property {direction width non_preferred_width} { 
+      foreach property {direction width non_preferred_width} {
         if {[dict exists $tech layer $layer_name $property]} {
           def set_layer_info $layer_name $property [dict get $tech layer $layer_name $property]
         }
@@ -672,22 +672,22 @@ namespace eval wrapper {
 
   proc set_macro_config {lef_tech} {
     variable tech
-    
+
     set tech [convert_tech_to_def_units $lef_tech]
   }
-  
+
   proc macro {lef_file} {
     lef read_macros $lef_file
     set cells {}
-    
+
     foreach cell_name [dict keys [lef get_cells]] {
     # debug "$cell_name"
       set designs  [list ${cell_name}_mod [wrap_macro $cell_name]]
       lef write_macros ${cell_name}_mod.lef $designs
       def write_cells $designs
-      lappend cells $cell_name      
+      lappend cells $cell_name
     }
-    
+
     return $cells
   }
 
