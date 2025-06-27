@@ -362,7 +362,7 @@ CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
     - place
     - floorplan
   default: 0
-  type: float
+  type: int
   tunable: 1
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
@@ -373,7 +373,7 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     - cts
     - grt
   default: 0
-  type: float
+  type: int
   tunable: 1
 PLACE_PINS_ARGS:
   description: |
