@@ -73,17 +73,9 @@ if {$use_floorplan_def} {
                          -site $::env(PLACE_SITE) \
                          {*}$additional_args
 } elseif {$use_core_utilization} {
-    set aspect_ratio 1.0
-    if {[env_var_exists_and_non_empty "CORE_ASPECT_RATIO"]} {
-        set aspect_ratio $::env(CORE_ASPECT_RATIO)
-    }
-    set core_margin 1.0
-    if {[env_var_exists_and_non_empty "CORE_MARGIN"]} {
-        set core_margin $::env(CORE_MARGIN)
-    }
     initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
-                         -aspect_ratio $aspect_ratio \
-                         -core_space $core_margin \
+                         -aspect_ratio $::env(CORE_ASPECT_RATIO) \
+                         -core_space $::env(CORE_MARGIN) \
                          -site $::env(PLACE_SITE) \
                          {*}$additional_args
 } else {
