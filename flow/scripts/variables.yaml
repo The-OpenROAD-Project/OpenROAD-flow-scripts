@@ -695,6 +695,7 @@ CORE_ASPECT_RATIO:
     `CORE_UTILIZATION` is undefined.
   stages:
     - floorplan
+  default: 1.0
   tunable: 1
 CORE_MARGIN:
   description: >
@@ -705,6 +706,7 @@ CORE_MARGIN:
     is undefined.
   stages:
     - floorplan
+  default: 1.0
   tunable: 1
 DIE_AREA:
   description: >
