@@ -746,14 +746,14 @@ CTS_BUF_LIST:
 CTS_CLUSTER_DIAMETER:
   description: >
     Maximum diameter (in microns) of sink cluster.
-  default: 20
+  default: 50
   stages:
     - cts
   tunable: 1
 CTS_CLUSTER_SIZE:
   description: >
     Maximum number of sinks per cluster.
-  default: 50
+  default: 20
   stages:
     - cts
   tunable: 1
