@@ -22,10 +22,10 @@ proc fast_route {} {
   }
 }
 
-proc repair_timing_helper { {hold_margin 1} } {
-  set additional_args "-verbose"
+proc repair_timing_helper { args } {
+  set additional_args "$args -verbose"
   append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
-  if {$hold_margin || $::env(HOLD_SLACK_MARGIN) < 0} {
+  if {$::env(HOLD_SLACK_MARGIN) < 0} {
     append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
   }
   append_env_var additional_args SETUP_MOVE_SEQUENCE -sequence 1
