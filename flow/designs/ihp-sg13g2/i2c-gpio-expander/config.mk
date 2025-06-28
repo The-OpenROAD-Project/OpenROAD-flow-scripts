@@ -9,7 +9,7 @@ export SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 export SEAL_GDS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/sealring.gds.gz
 
 export DIE_AREA = 0.0 0.0 1050.0 1050.0
-export CORE_AREA = 425.28 427.16 631.2 630.24
+export CORE_AREA = 351.36 351.54 699.84 699.3
 
 export MAX_ROUTING_LAYER = TopMetal2
 
@@ -20,3 +20,5 @@ export CORNERS = slow fast
 
 export FOOTPRINT_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/pad.tcl
 export PDN_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/pdn.tcl
+
+export BLOCKS = I2cDeviceCtrl
