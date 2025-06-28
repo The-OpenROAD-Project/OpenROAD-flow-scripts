@@ -95,6 +95,7 @@ CORE_UTILIZATION:
   stages:
     - floorplan
   tunable: 1
+  type: float
 CORE_AREA:
   description: >
     The core area specified as a list of lower-left and upper-right corners in
@@ -361,6 +362,7 @@ CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
     - place
     - floorplan
   default: 0
+  type: int
   tunable: 1
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
@@ -371,6 +373,7 @@ CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
     - cts
     - grt
   default: 0
+  type: int
   tunable: 1
 PLACE_PINS_ARGS:
   description: |
@@ -399,6 +402,7 @@ PLACE_DENSITY_LB_ADDON:
     - floorplan
     - place
   tunable: 1
+  type: float
 REPAIR_PDN_VIA_LAYER:
   description: |
     Remove power grid vias which generate DRC violations after detailed routing.
@@ -697,6 +701,7 @@ CORE_ASPECT_RATIO:
     - floorplan
   default: 1.0
   tunable: 1
+  type: float
 CORE_MARGIN:
   description: >
     The margin between the core area and die area, specified in microns.
@@ -708,6 +713,7 @@ CORE_MARGIN:
     - floorplan
   default: 1.0
   tunable: 1
+  type: float
 DIE_AREA:
   description: >
     The die area specified as a list of lower-left and upper-right corners in
@@ -752,6 +758,7 @@ CTS_CLUSTER_DIAMETER:
   stages:
     - cts
   tunable: 1
+  type: float
 CTS_CLUSTER_SIZE:
   description: >
     Maximum number of sinks per cluster.
@@ -759,6 +766,7 @@ CTS_CLUSTER_SIZE:
   stages:
     - cts
   tunable: 1
+  type: int
 CTS_LIB_NAME:
   description: |
     Name of the Liberty library to use in selecting the clock buffers.
