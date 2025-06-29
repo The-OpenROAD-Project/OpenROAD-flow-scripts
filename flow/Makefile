@@ -184,17 +184,9 @@ $(foreach block,$(BLOCKS),$(eval $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKN
 .PHONY: versions.txt
 versions.txt:
 	mkdir -p $(OBJECTS_DIR)
-	@if [ -z "$(YOSYS_EXE)" ]; then \
-		echo >> $(OBJECTS_DIR)/$@ "yosys not installed"; \
-	else \
-		$(YOSYS_EXE) -V > $(OBJECTS_DIR)/$@; \
-	fi
-	@echo openroad `$(OPENROAD_EXE) -version` >> $(OBJECTS_DIR)/$@
-	@if [ -z "$(KLAYOUT_CMD)" ]; then \
-		echo >> $(OBJECTS_DIR)/$@ "klayout not installed"; \
-	else \
-		$(KLAYOUT_CMD) -zz -v >> $(OBJECTS_DIR)/$@; \
-	fi
+	@echo "yosys $(if $(YOSYS_EXE),$(shell $(YOSYS_EXE) -V 2>&1),not available)" > $(OBJECTS_DIR)/$@
+	@echo "openroad $(if $(OPENROAD_EXE),$(shell $(OPENROAD_EXE) -version 2>&1),not available)" >> $(OBJECTS_DIR)/$@
+	@echo "klayout $(if $(KLAYOUT_CMD),$(shell $(KLAYOUT_CMD) -zz -v 2>&1),not available)" >> $(OBJECTS_DIR)/$@
 
 # Pre-process libraries
 # ==============================================================================
@@ -549,7 +541,8 @@ clean_cts:
 route: $(RESULTS_DIR)/5_route.odb \
        $(RESULTS_DIR)/5_route.sdc
 
-.PHONY: grt
+.PHONY: grt globalroute
+globalroute: grt
 grt: $(RESULTS_DIR)/5_1_grt.odb
 
 # ==============================================================================

@@ -1,7 +1,7 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 read_design_sources
 
-dict for {key value} $::env(VERILOG_TOP_PARAMS) {
+dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
   # Apply toplevel parameters
   chparam -set $key $value $::env(DESIGN_NAME)
 }

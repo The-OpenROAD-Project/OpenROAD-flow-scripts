@@ -5,7 +5,7 @@ optuna==3.6.0
 pandas>=2.0,<=2.2.1
 bayesian-optimization==1.4.0
 colorama==0.4.6
-tensorboard>=2.14.0,<=2.16.2
+tensorboard>=2.17.0
 protobuf>=5.26.1
 SQLAlchemy==1.4.17
 urllib3>=1.26.17
