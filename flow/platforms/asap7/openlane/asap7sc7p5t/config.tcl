@@ -11,9 +11,9 @@ set ::env(LIB_SLOWEST) ""
 
 set lib_path "$libs_ref/lib"
 foreach lib {"AO" "INVBUF" "OA" "SEQ" "SIMPLE"} {
-    append ::env(LIB_FASTEST) "$lib_path/asap7sc7p5t_${lib}_RVT_FF_nldm_201020.lib "
-    append ::env(LIB_TYPICAL) "$lib_path/asap7sc7p5t_${lib}_RVT_TT_nldm_201020.lib "
-    append ::env(LIB_SLOWEST) "$lib_path/asap7sc7p5t_${lib}_RVT_SS_nldm_201020.lib "
+  append ::env(LIB_FASTEST) "$lib_path/asap7sc7p5t_${lib}_RVT_FF_nldm_201020.lib "
+  append ::env(LIB_TYPICAL) "$lib_path/asap7sc7p5t_${lib}_RVT_TT_nldm_201020.lib "
+  append ::env(LIB_SLOWEST) "$lib_path/asap7sc7p5t_${lib}_RVT_SS_nldm_201020.lib "
 }
 
 set ::env(LIB_SYNTH) $::env(LIB_TYPICAL)
@@ -36,7 +36,7 @@ set ::env(FP_ENDCAP_CELL) "TAPCELL_ASAP7_75t_R"
 # defaults (can be overridden by designs):
 set ::env(SYNTH_DRIVING_CELL) "BUFx2_ASAP7_75t_R"
 set ::env(SYNTH_DRIVING_CELL_PIN) "Y"
-set ::env(SYNTH_CAP_LOAD) "4.61057" ; # femtofarad INVx8_ASAP7_75t_R pin A cap
+set ::env(SYNTH_CAP_LOAD) "4.61057" ;# femtofarad INVx8_ASAP7_75t_R pin A cap
 set ::env(SYNTH_MIN_BUF_PORT) "BUFx2_ASAP7_75t_R A Y"
 set ::env(SYNTH_TIEHI_PORT) "TIEHIx1_ASAP7_75t_R H"
 set ::env(SYNTH_TIELO_PORT) "TIELOx1_ASAP7_75t_R L"

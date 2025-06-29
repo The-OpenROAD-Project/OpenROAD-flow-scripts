@@ -5,12 +5,12 @@ load_design 4_cts.odb 4_cts.sdc
 
 # This proc is here to allow us to use 'return' to return early from this
 # file which is sourced
-proc global_route_helper {} {
-  if {[env_var_exists_and_non_empty PRE_GLOBAL_ROUTE]} {
+proc global_route_helper { } {
+  if { [env_var_exists_and_non_empty PRE_GLOBAL_ROUTE] } {
     source $::env(PRE_GLOBAL_ROUTE)
   }
 
-  proc do_global_route {} {
+  proc do_global_route { } {
     set all_args [concat [list \
       -congestion_report_file $::global_route_congestion_report] \
       $::env(GLOBAL_ROUTE_ARGS)]
@@ -19,14 +19,16 @@ proc global_route_helper {} {
   }
 
   pin_access -bottom_routing_layer $::env(MIN_ROUTING_LAYER) \
-             -top_routing_layer $::env(MAX_ROUTING_LAYER)
+    -top_routing_layer $::env(MAX_ROUTING_LAYER)
 
-  set result [catch {do_global_route} errMsg]
+  set result [catch { do_global_route } errMsg]
 
-  if {$result != 0} {
-    if {[expr !$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
+  if { $result != 0 } {
+    if {
+      [expr !$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
         ![file exists $::global_route_congestion_report] || \
-        [file size $::global_route_congestion_report] == 0]} {
+        [file size $::global_route_congestion_report] == 0]
+    } {
       write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
       error $errMsg
     }
@@ -36,13 +38,13 @@ proc global_route_helper {} {
   }
 
   set_placement_padding -global \
-      -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
-      -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
+    -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
+    -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
   set_propagated_clock [all_clocks]
   estimate_parasitics -global_routing
 
-  if {[env_var_exists_and_non_empty DONT_USE_CELLS]} {
+  if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
     set_dont_use $::env(DONT_USE_CELLS)
   }
 
@@ -88,7 +90,7 @@ proc global_route_helper {} {
   # Route the modified nets by rsz journal restore
   log_cmd global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
 
-  if {![env_var_equals SKIP_ANTENNA_REPAIR 1]} {
+  if { ![env_var_equals SKIP_ANTENNA_REPAIR 1] } {
     puts "Repair antennas..."
     repair_antennas -iterations 5
     check_placement -verbose

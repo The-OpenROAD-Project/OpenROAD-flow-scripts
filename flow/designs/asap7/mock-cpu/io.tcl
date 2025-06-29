@@ -1,7 +1,7 @@
 # bazel has root of OpenROAD-flow-scripts as working directory
 foreach prefix {"" flow/} {
   set f ${prefix}designs/src/mock-array/util.tcl
-  if {[file exists $f]} {
+  if { [file exists $f] } {
     source $f
   }
 }

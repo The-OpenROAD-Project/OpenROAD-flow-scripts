@@ -1,13 +1,13 @@
 proc report_puts { out } {
-    upvar 1 when when
-    upvar 1 filename filename
-    set fileId [open $filename a]
-    puts $fileId $out
-    close $fileId
+  upvar 1 when when
+  upvar 1 filename filename
+  set fileId [open $filename a]
+  puts $fileId $out
+  close $fileId
 }
 
-proc report_metrics { stage when {include_erc true} {include_clock_skew true} } {
-  if {[env_var_equals SKIP_REPORT_METRICS 1]} {
+proc report_metrics { stage when { include_erc true } { include_clock_skew true } } {
+  if { [env_var_equals SKIP_REPORT_METRICS 1] } {
     return
   }
   puts "Report metrics stage $stage, $when..."
@@ -33,7 +33,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
   report_worst_slack_metric >> $filename
   report_worst_slack_metric -hold >> $filename
 
-  if {$include_clock_skew && $::env(REPORT_CLOCK_SKEW)} {
+  if { $include_clock_skew && $::env(REPORT_CLOCK_SKEW) } {
     report_puts "\n=========================================================================="
     report_puts "$when report_clock_skew"
     report_puts "--------------------------------------------------------------------------"
@@ -57,7 +57,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
   report_puts "--------------------------------------------------------------------------"
   report_checks -unconstrained -fields {slew cap input net fanout} -format full_clock_expanded >> $filename
 
-  if {$include_erc} {
+  if { $include_erc } {
     report_puts "\n=========================================================================="
     report_puts "$when report_check_types -max_slew -max_cap -max_fanout -violators"
     report_puts "--------------------------------------------------------------------------"
@@ -75,7 +75,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
     report_puts "--------------------------------------------------------------------------"
     report_puts "[sta::max_slew_check_limit]"
 
-    if {[sta::max_slew_check_limit] < 1e30} {
+    if { [sta::max_slew_check_limit] < 1e30 } {
       report_puts "\n=========================================================================="
       report_puts "$when max_slew_check_slack_limit"
       report_puts "--------------------------------------------------------------------------"
@@ -92,7 +92,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
     report_puts "--------------------------------------------------------------------------"
     report_puts "[sta::max_fanout_check_limit]"
 
-    if {[sta::max_fanout_check_limit] < 1e30} {
+    if { [sta::max_fanout_check_limit] < 1e30 } {
       report_puts "\n=========================================================================="
       report_puts "$when max_fanout_check_slack_limit"
       report_puts "--------------------------------------------------------------------------"
@@ -109,7 +109,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
     report_puts "--------------------------------------------------------------------------"
     report_puts "[sta::max_capacitance_check_limit]"
 
-    if {[sta::max_capacitance_check_limit] < 1e30} {
+    if { [sta::max_capacitance_check_limit] < 1e30 } {
       report_puts "\n=========================================================================="
       report_puts "$when max_capacitance_check_slack_limit"
       report_puts "--------------------------------------------------------------------------"
@@ -142,7 +142,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
     report_puts "hold violation count [sta::endpoint_violation_count min]"
 
     set critical_path [lindex [find_timing_paths -sort_by_slack] 0]
-    if {$critical_path != ""} {
+    if { $critical_path != "" } {
       set path_delay [sta::format_time [[$critical_path path] arrival] 4]
       set path_slack [sta::format_time [[$critical_path path] slack] 4]
     } else {
@@ -150,52 +150,52 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
       set path_slack 0
     }
 
-    if { [llength [all_registers]] != 0} {
-    report_puts "\n=========================================================================="
-    report_puts "$when report_checks -path_delay max reg to reg"
-    report_puts "--------------------------------------------------------------------------"
-    report_checks -path_delay max -from [all_registers] -to [all_registers] -format full_clock_expanded >> $filename    
-    report_puts "\n=========================================================================="
-    report_puts "$when report_checks -path_delay min reg to reg"
-    report_puts "--------------------------------------------------------------------------"
-    report_checks -path_delay min -from [all_registers] -to [all_registers]  -format full_clock_expanded >> $filename         
+    if { [llength [all_registers]] != 0 } {
+      report_puts "\n=========================================================================="
+      report_puts "$when report_checks -path_delay max reg to reg"
+      report_puts "--------------------------------------------------------------------------"
+      report_checks -path_delay max -from [all_registers] -to [all_registers] -format full_clock_expanded >> $filename
+      report_puts "\n=========================================================================="
+      report_puts "$when report_checks -path_delay min reg to reg"
+      report_puts "--------------------------------------------------------------------------"
+      report_checks -path_delay min -from [all_registers] -to [all_registers] -format full_clock_expanded >> $filename
 
-    set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay max -from [all_inputs] -to [all_registers]] 0]
-    if {$inp_to_reg_critical_path != ""} {
-      set target_clock_latency_max [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
+      set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay max -from [all_inputs] -to [all_registers]] 0]
+      if { $inp_to_reg_critical_path != "" } {
+        set target_clock_latency_max [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
+      } else {
+        set target_clock_latency_max 0
+      }
+
+
+      set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay min -from [all_inputs] -to [all_registers]] 0]
+      if { $inp_to_reg_critical_path != "" } {
+        set target_clock_latency_min [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
+        set source_clock_latency [sta::format_time [$inp_to_reg_critical_path source_clk_latency] 4]
+      } else {
+        set target_clock_latency_min 0
+        set source_clock_latency 0
+      }
+
+      report_puts "\n=========================================================================="
+      report_puts "$when critical path target clock latency max path"
+      report_puts "--------------------------------------------------------------------------"
+      report_puts "$target_clock_latency_max"
+
+      report_puts "\n=========================================================================="
+      report_puts "$when critical path target clock latency min path"
+      report_puts "--------------------------------------------------------------------------"
+      report_puts "$target_clock_latency_min"
+
+      report_puts "\n=========================================================================="
+      report_puts "$when critical path source clock latency min path"
+      report_puts "--------------------------------------------------------------------------"
+      report_puts "$source_clock_latency"
     } else {
-      set target_clock_latency_max 0	
-    }
-
-
-    set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay min -from [all_inputs] -to [all_registers]] 0]
-    if {$inp_to_reg_critical_path != ""} {
-      set target_clock_latency_min [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
-      set source_clock_latency [sta::format_time [$inp_to_reg_critical_path source_clk_latency] 4]
-    } else {
-      set target_clock_latency_min 0	
-      set source_clock_latency 0
-    }
-      
-    report_puts "\n=========================================================================="
-    report_puts "$when critical path target clock latency max path"
-    report_puts "--------------------------------------------------------------------------"
-    report_puts "$target_clock_latency_max"
-
-    report_puts "\n=========================================================================="
-    report_puts "$when critical path target clock latency min path"
-    report_puts "--------------------------------------------------------------------------"
-    report_puts "$target_clock_latency_min"
-
-    report_puts "\n=========================================================================="
-    report_puts "$when critical path source clock latency min path"
-    report_puts "--------------------------------------------------------------------------"
-    report_puts "$source_clock_latency"
-    } else {
-    puts "No registers in design"
+      puts "No registers in design"
     }
     # end if all_registers
-      
+
     report_puts "\n=========================================================================="
     report_puts "$when critical path delay"
     report_puts "--------------------------------------------------------------------------"
@@ -215,7 +215,7 @@ proc report_metrics { stage when {include_erc true} {include_clock_skew true} } 
   report_puts "\n=========================================================================="
   report_puts "$when report_power"
   report_puts "--------------------------------------------------------------------------"
-  if {[env_var_exists_and_non_empty CORNERS]} {
+  if { [env_var_exists_and_non_empty CORNERS] } {
     foreach corner $::env(CORNERS) {
       report_puts "Corner: $corner"
       report_power -corner $corner >> $filename

@@ -15,7 +15,7 @@ set ::env(STD_CELL_GROUND_PINS) "VSS"
 set ::env(TECH_LEF) "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)/techlef/asap7_tech_1x_201209.lef"
 set ::env(CELLS_LEF) [glob "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)/lef/*.lef"]
 set ::env(GDS_FILES) [glob "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)/gds/*.gds"]
-set ::env(STD_CELL_LIBRARY_CDL)	"$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)/cdl/$::env(STD_CELL_LIBRARY).cdl"
+set ::env(STD_CELL_LIBRARY_CDL) "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY)/cdl/$::env(STD_CELL_LIBRARY).cdl"
 
 set ::env(GPIO_PADS_LEF) ""
 
@@ -25,7 +25,7 @@ set ::env(GPIO_PADS_VERILOG) ""
 set ::env(TECH_LEF_OPT) "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY_OPT)/techlef/$::env(STD_CELL_LIBRARY_OPT).tlef"
 set ::env(CELLS_LEF_OPT) [glob "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY_OPT)/lef/*.lef"]
 set ::env(GDS_FILES_OPT) [glob "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY_OPT)/gds/*.gds"]
-set ::env(STD_CELL_LIBRARY_OPT_CDL)	"$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY_OPT)/cdl/$::env(STD_CELL_LIBRARY_OPT).cdl"
+set ::env(STD_CELL_LIBRARY_OPT_CDL) "$::env(PDK_ROOT)/$::env(PDK)/libs.ref/$::env(STD_CELL_LIBRARY_OPT)/cdl/$::env(STD_CELL_LIBRARY_OPT).cdl"
 
 
 # Optimization library slowest corner

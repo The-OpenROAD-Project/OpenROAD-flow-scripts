@@ -1,4 +1,4 @@
-proc block_channels {channel_width_in_microns} {
+proc block_channels { channel_width_in_microns } {
   set tech [ord::get_db_tech]
   set units [$tech getDbUnitsPerMicron]
   set block [ord::get_db_block]
@@ -8,7 +8,7 @@ proc block_channels {channel_width_in_microns} {
   #
   set shapes {}
   foreach inst [$block getInsts] {
-    if {[[$inst getMaster] getType] == "BLOCK"} {
+    if { [[$inst getMaster] getType] == "BLOCK" } {
       set box [$inst getBBox]
       lappend shapes [odb::newSetFromRect [$box xMin] [$box yMin] [$box xMax] [$box yMax]]
     }
@@ -37,9 +37,8 @@ proc block_channels {channel_width_in_microns} {
   #
   set rects [odb::getRectangles $shapeSet]
   foreach rect $rects {
-      set b [odb::dbBlockage_create $block \
-                 [$rect xMin] [$rect yMin] [$rect xMax] [$rect yMax]]
-      $b setSoft
+    set b [odb::dbBlockage_create $block \
+      [$rect xMin] [$rect yMin] [$rect xMax] [$rect yMax]]
+    $b setSoft
   }
 }
-
