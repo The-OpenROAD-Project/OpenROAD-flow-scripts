@@ -24,7 +24,7 @@ set clk_core_inout_16mA_ports [get_ports {
 	io_gpio_5_PAD 
 	io_gpio_6_PAD 
 	io_gpio_7_PAD 
-}] 
+}]
 set_driving_cell -lib_cell sg13g2_IOPadInOut16mA -pin pad $clk_core_inout_16mA_ports
 set_input_delay 8 -clock clk_core $clk_core_inout_16mA_ports
 set_output_delay 8 -clock clk_core $clk_core_inout_16mA_ports
@@ -32,7 +32,7 @@ set_output_delay 8 -clock clk_core $clk_core_inout_16mA_ports
 set clk_core_inout_4mA_ports [get_ports { 
 	io_i2c_scl_PAD 
 	io_i2c_sda_PAD 
-}] 
+}]
 set_driving_cell -lib_cell sg13g2_IOPadInOut4mA -pin pad $clk_core_inout_4mA_ports
 set_input_delay 8 -clock clk_core $clk_core_inout_4mA_ports
 set_output_delay 8 -clock clk_core $clk_core_inout_4mA_ports
@@ -42,13 +42,13 @@ set clk_core_input_ports [get_ports {
 	io_address_0_PAD 
 	io_address_1_PAD 
 	io_address_2_PAD 
-}] 
+}]
 set_driving_cell -lib_cell sg13g2_IOPadIn -pin pad $clk_core_input_ports
 set_input_delay 8 -clock clk_core $clk_core_input_ports
 
 set clk_core_output_4mA_ports [get_ports { 
 	io_i2c_interrupt_PAD 
-}] 
+}]
 set_driving_cell -lib_cell sg13g2_IOPadOut4mA -pin pad $clk_core_output_4mA_ports
 set_output_delay 8 -clock clk_core $clk_core_output_4mA_ports
 

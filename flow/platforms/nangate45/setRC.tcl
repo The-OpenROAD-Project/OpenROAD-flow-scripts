@@ -12,4 +12,4 @@ set_layer_rc -layer metal8 -resistance 1.8750e-04 -capacitance 9.69714E-02
 #set_layer_rc -layer metal10 -resistance 3.7500e-05 -capacitance 2.8042e-02
 
 set_wire_rc -signal -layer metal3
-set_wire_rc -clock  -layer metal5
+set_wire_rc -clock -layer metal5
