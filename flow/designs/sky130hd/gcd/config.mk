@@ -7,7 +7,17 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 # Adders degrade GCD
 export ADDER_MAP_FILE :=
 
-export CORE_UTILIZATION = 40
+#export CORE_UTILIZATION = 40
 export TNS_END_PERCENT = 100
 export EQUIVALENCE_CHECK   ?=   1
 export REMOVE_CELLS_FOR_EQY = sky130_fd_sc_hd__tapvpwrvgnd*
+
+# AutoTuner parameters to trigger failure
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 2
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 2
+export CORE_ASPECT_RATIO = 0.6738200737000811
+export CORE_UTILIZATION = 35
+export CTS_CLUSTER_DIAMETER = 321
+export CTS_CLUSTER_SIZE = 89
+export PLACE_DENSITY_LB_ADDON = 0.0649907957849524
+export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
