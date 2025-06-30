@@ -72,6 +72,7 @@ proc get_height { cell } {
   return [expr [lindex [dict get $cell die_area] 3] - [lindex [dict get $cell die_area] 1]]
 }
 
+# tclint-disable line-length
 proc read_macros { file_name } {
   variable cells
   variable def_units
@@ -93,17 +94,11 @@ proc read_macros { file_name } {
         } elseif { [regexp {CLASS\s+([^\s]*)} $line - cell_class] } {
           dict set cells $cell_name cell_class $cell_class
         } elseif { [regexp {ORIGIN\s+([^\s]*)\s+([^\s]*)} $line - origin_x origin_y] } {
-          dict set cells $cell_name origin \
-            [lmap x [list $origin_x $origin_y] { expr round($x * $def_units) }]
+          dict set cells $cell_name origin [lmap x [list $origin_x $origin_y] { expr round($x * $def_units) }]
         } elseif { [regexp {FOREIGN\s+([^\s]*)\s+([^\s]*)\s+([^\s]*)} $line - foreign x y] } {
-          dict set cells $cell_name foreign \
-            [list ref $foreign \
-              origin [lmap x [list $x $y] { expr round($x * $def_units) }]]
+          dict set cells $cell_name foreign [list ref $foreign origin [lmap x [list $x $y] { expr round($x * $def_units) }]]
         } elseif { [regexp {SIZE\s+([^\s]*)\s+BY\s+([^\s]*)} $line - width height] } {
-          dict set cells $cell_name die_area \
-            [list 0 0 \
-              [expr round($width * $def_units)] \
-              [expr round($height * $def_units)]]
+          dict set cells $cell_name die_area [list 0 0 [expr round($width * $def_units)] [expr round($height * $def_units)]]
         } elseif { [regexp {SYMMETRY\s+(.*)\s;} $line - symmetry] } {
           dict set cells $cell_name symmetry $symmetry
         } elseif { [regexp {SITE\s+([^\s]*)} $line - site] } {
@@ -123,10 +118,7 @@ proc read_macros { file_name } {
               dict set cells $cell_name pins $pin_name use $use
             } elseif { [regexp {ANTENNAMODEL\s+([^\s]*)} $line - antennamodel] } {
               continue
-            } elseif {
-              [regexp {ANTENNAGATEAREA\s+([^\s]*)\s+LAYER\s+([^\s]*)} \
-                $line - gate_area layer]
-            } {
+            } elseif { [regexp {ANTENNAGATEAREA\s+([^\s]*)\s+LAYER\s+([^\s]*)} $line - gate_area layer] } {
               if { [info vars antennamodel] == "" } {
                 set antennamodel "default"
               }
@@ -148,10 +140,7 @@ proc read_macros { file_name } {
               }
               lappend model [list gate_area $gate_area]
               dict set cells $cell_name pins $pin_name antenna_model $antennamodel $model
-            } elseif {
-              [regexp {ANTENNADIFFAREA\s+([^\s]*)\s+LAYER\s+([^\s]*)} \
-                $line - antennadiffarea layer]
-            } {
+            } elseif { [regexp {ANTENNADIFFAREA\s+([^\s]*)\s+LAYER\s+([^\s]*)} $line - antennadiffarea layer] } {
               dict set cells $cell_name pins $pin_name antennadiffarea area $antennadiffarea
               dict set cells $cell_name pins $pin_name antennadiffarea layer $antennadiffarea
             } elseif { [regexp {ANTENNADIFFAREA\s+([^\s]*)\s} $line - antennadiffarea] } {
@@ -167,10 +156,7 @@ proc read_macros { file_name } {
                   continue
                 } elseif { [regexp {LAYER\s+([^\s]*)} $line - layer] } {
                   continue
-                } elseif {
-                  [regexp {RECT\s+MASK\s+([^\s]*)\s+([0-9\-\.]*)\s\s*([0-9\-\.]*)\
-        \s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - mask x1 y1 x2 y2]
-                } {
+                } elseif { [regexp {RECT\s+MASK\s+([^\s]*)\s+([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - mask x1 y1 x2 y2] } {
                   if { [dict exists $port layers $layer shapes] } {
                     set layer_shapes [dict get $port layers $layer shapes]
                   } else {
@@ -183,16 +169,11 @@ proc read_macros { file_name } {
                     dict set port fixed $offset
                   }
                   set new_shape [list \
-                    rect [relative_rectangle \
-                      [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }] \
-                      $offset] \
+                    rect [relative_rectangle [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }] $offset] \
                     mask $mask]
                   lappend layer_shapes $new_shape
                   dict set port layers $layer shapes $layer_shapes
-                } elseif {
-                  [regexp {RECT\s([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\
-        \s\s*([0-9\-\.]*)} $line - x1 y1 x2 y2]
-                } {
+                } elseif { [regexp {RECT\s([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - x1 y1 x2 y2] } {
                   if { [dict exists $port layers $layer shapes] } {
                     set layer_shapes [dict get $port layers $layer shapes]
                   } else {
@@ -205,9 +186,7 @@ proc read_macros { file_name } {
                     dict set port fixed $offset
                   }
                   set new_shape [list \
-                    rect [relative_rectangle \
-                      [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }] \
-                      $offset]]
+                    rect [relative_rectangle [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }] $offset]]
                   lappend layer_shapes $new_shape
                   dict set port layers $layer shapes $layer_shapes
                 } elseif { [regexp {END} $line] } {
@@ -234,39 +213,26 @@ proc read_macros { file_name } {
             set line [gets $ch]
             if { [regexp {^\s*$} $line] } {
               continue
-            } elseif {
-              [regexp {LAYER\s+([^\s]*)(\s+DESIGNRULEWIDTH\s+([0-9.]+))?} \
-                $line - layer - drw]
-            } {
+            } elseif { [regexp {LAYER\s+([^\s]*)(\s+DESIGNRULEWIDTH\s+([0-9.]+))?} $line - layer - drw] } {
               if { $drw != "" } {
                 dict set cells $cell_name layers $layer drw $drw
               }
               continue
-            } elseif {
-              [regexp {RECT\s+MASK\s+([^\s]*)\s+([0-9\-\.]*)\s\s*([0-9\-\.]*)\
-      \s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - mask x1 y1 x2 y2]
-            } {
+            } elseif { [regexp {RECT\s+MASK\s+([^\s]*)\s+([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - mask x1 y1 x2 y2] } {
               if { [dict exists $cells $cell_name obstructions $layer] } {
                 set obstructions [dict get $cells $cell_name obstructions $layer]
               } else {
                 set obstructions {}
               }
-              lappend obstructions [concat \
-                [list rect [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }]] \
-                [list mask $mask]]
+              lappend obstructions [list rect [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }] mask $mask]
               dict set cells $cell_name obstructions $layer $obstructions
-            } elseif {
-              [regexp {RECT\s([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\
-      \s\s*([0-9\-\.]*)} $line - x1 y1 x2 y2]
-            } {
+            } elseif { [regexp {RECT\s([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - x1 y1 x2 y2] } {
               if { [dict exists $cells $cell_name obstructions $layer] } {
                 set obstructions [dict get $cells $cell_name obstructions $layer]
               } else {
                 set obstructions {}
               }
-              lappend obstructions [concat \
-                [list rect \
-                  [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }]]]
+              lappend obstructions [list rect [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }]]
               dict set cells $cell_name obstructions $layer $obstructions
             } elseif { [regexp {END} $line] } {
               break
@@ -285,6 +251,7 @@ proc read_macros { file_name } {
 
   ::close $ch
 }
+# tclint-enable line-length
 
 proc get_blockage_layers { design } {
   if { [dict exists $design blockage_layers] } {
