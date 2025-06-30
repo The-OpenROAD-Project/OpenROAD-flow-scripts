@@ -222,6 +222,16 @@ TIELO_CELL_AND_PORT:
   stages:
     - synth
     - place
+TIE_SEPARATION:
+  description: |
+    Distance separating tie high/low instances from the load.
+  stages:
+    - place
+EARLY_SIZING_CAP_RATIO:
+  description: |
+    Ratio between the input pin capacitance and the output pin load during initial gate sizing.
+  stages:
+    - place
 MIN_BUF_CELL_AND_PORTS:
   description: |
     Used to insert a buffer cell to pass through wires. Used in synthesis.
