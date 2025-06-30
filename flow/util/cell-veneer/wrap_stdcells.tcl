@@ -102,8 +102,10 @@ proc clear_left { physical_pin blockages } {
   set track [dict get $physical_pin track]
 
   foreach blockage $blockages {
-    if { [dict get $blockage track] == $track && \
-       [dict get $blockage to] < [dict get $physical_pin from] } {
+    if {
+      [dict get $blockage track] == $track &&
+      [dict get $blockage to] < [dict get $physical_pin from]
+    } {
       return 0
     }
   }
@@ -114,8 +116,10 @@ proc clear_right { physical_pin blockages } {
   set track [dict get $physical_pin track]
 
   foreach blockage $blockages {
-    if { [dict get $blockage track] == $track && \
-       [dict get $blockage from] > [dict get $physical_pin to] } {
+    if {
+      [dict get $blockage track] == $track &&
+      [dict get $blockage from] > [dict get $physical_pin to]
+    } {
       return 0
     }
   }
@@ -184,7 +188,7 @@ proc move_m2_pins_to_edge { cell_name cell_data } {
   set new_pin_layer_width [expr round( \
     [dict get $wrapper_cfg layer $new_pin_layer_name width] * \
     $def_units \
-  )]
+    )]
   set cell_width [lindex [dict get [lef get_cell $cell_name] die_area] 2]
   set design [wrapper::create_def_wrapper $cell_name ${cell_name}_mod]
   set lower_y [expr 2 * 128]
@@ -290,9 +294,7 @@ proc move_m2_pins_to_edge { cell_name cell_data } {
             [expr round($x2 - ($new_pin_layer_width / 2))] \
             $lower_y \
             [expr round($x2 + ($new_pin_layer_width / 2))] \
-            $upper_y \
-          ] \
-        ]
+            $upper_y]]
         if { [dict exists $port layers "M1" shapes] } {
           set shapes [dict get $port layers "M1" shapes]
         } else {
@@ -382,8 +384,7 @@ proc move_m2_pins_to_edge { cell_name cell_data } {
     0 \
     [concat \
       [expr [lindex [dict get $design die_area] 2] + \
-      (($pad_idx - ($left_padding + 1)) * $padding_cell_width)] \
-    ] \
+        (($pad_idx - ($left_padding + 1)) * $padding_cell_width)]] \
     [lindex [dict get $design die_area] 3]]
 
   # Extend VDD, VSS, VPW, VNW pins to be the width of the wrapper
@@ -452,10 +453,7 @@ proc get_pin_rect { port layer } {
   return [absolute_rectangle \
     [dict get \
       [lindex \
-        [dict get $port layers $layer shapes] 0 \
-      ] rect \
-    ] $offset \
-  ]
+        [dict get $port layers $layer shapes] 0] rect] $offset]
 }
 
 proc wrap_macro { cell_name } {
@@ -523,8 +521,7 @@ proc wrap_macro { cell_name } {
       dict set net_info [dict get $grid_pins $pin_pos] h_offset \
         [expr \
           [dict get $net_info [dict get $grid_pins $prev_pos] h_offset] \
-          + 3 \
-        ]
+          + 3]
     }
     set prev_pos $pin_pos
   }
@@ -580,13 +577,10 @@ proc wrap_macro { cell_name } {
     dict set new_port fixed [list 0 $y_position]
     dict set new_port layers "C4" shapes [list \
       [list rect [concat \
-      [list 0 \
-        [expr 0 - [dict get $tech layer C4 width] / 2] \
-        [dict get $tech layer C4 depth] \
-        [expr 0 + [dict get $tech layer C4 width] / 2] \
-      ] \
-      ]] \
-    ]
+        [list 0 \
+          [expr 0 - [dict get $tech layer C4 width] / 2] \
+          [dict get $tech layer C4 depth] \
+          [expr 0 + [dict get $tech layer C4 width] / 2]]]]]
     # debug "Replacing pin $net_name with $new_port"
     dict set wrapper pins $net_name ports [list $new_port]
 
@@ -595,8 +589,7 @@ proc wrap_macro { cell_name } {
     # First segment from RAM to jog location, to the y grid of the pin
     set target_grid_point [expr \
       ($wrapper_depth - [dict get $net h_offset]) * \
-      [dict get $tech pitch vertical_track] \
-    ]
+      [dict get $tech pitch vertical_track]]
     set width [dict get $tech layer [dict get $net pin_layer] width]
     lappend segments [list \
       layer [dict get $net pin_layer] \
@@ -641,7 +634,7 @@ proc test_harness { wrappers } {
   def new_design "test_harness" [dict get $wrapper_cfg def_units] \
     [concat [list 0 0] \
       [list [expr round($grid_x_size * $num_grids)] \
-            [expr round($grid_y_size * $num_grids)]]]
+        [expr round($grid_y_size * $num_grids)]]]
 
   foreach cell [dict keys $wrappers] {
     set x [expr round(($idx % $num_grids) * $grid_x_size)]
@@ -687,7 +680,7 @@ proc convert_tech_to_def_units { tech } {
         dict set tech layer $layer_name $property \
           [expr round( \
             [dict get $layer $property] * $def_units \
-          )]
+            )]
       }
     }
   }

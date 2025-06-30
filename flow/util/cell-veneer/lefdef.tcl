@@ -98,7 +98,7 @@ proc read_macros { file_name } {
         } elseif { [regexp {FOREIGN\s+([^\s]*)\s+([^\s]*)\s+([^\s]*)} $line - foreign x y] } {
           dict set cells $cell_name foreign \
             [list ref $foreign \
-            origin [lmap x [list $x $y] { expr round($x * $def_units) }]]
+              origin [lmap x [list $x $y] { expr round($x * $def_units) }]]
         } elseif { [regexp {SIZE\s+([^\s]*)\s+BY\s+([^\s]*)} $line - width height] } {
           dict set cells $cell_name die_area \
             [list 0 0 \
@@ -123,8 +123,10 @@ proc read_macros { file_name } {
               dict set cells $cell_name pins $pin_name use $use
             } elseif { [regexp {ANTENNAMODEL\s+([^\s]*)} $line - antennamodel] } {
               continue
-            } elseif { [regexp {ANTENNAGATEAREA\s+([^\s]*)\s+LAYER\s+([^\s]*)} \
-              $line - gate_area layer] } {
+            } elseif {
+              [regexp {ANTENNAGATEAREA\s+([^\s]*)\s+LAYER\s+([^\s]*)} \
+                $line - gate_area layer]
+            } {
               if { [info vars antennamodel] == "" } {
                 set antennamodel "default"
               }
@@ -146,8 +148,10 @@ proc read_macros { file_name } {
               }
               lappend model [list gate_area $gate_area]
               dict set cells $cell_name pins $pin_name antenna_model $antennamodel $model
-            } elseif { [regexp {ANTENNADIFFAREA\s+([^\s]*)\s+LAYER\s+([^\s]*)} \
-              $line - antennadiffarea layer] } {
+            } elseif {
+              [regexp {ANTENNADIFFAREA\s+([^\s]*)\s+LAYER\s+([^\s]*)} \
+                $line - antennadiffarea layer]
+            } {
               dict set cells $cell_name pins $pin_name antennadiffarea area $antennadiffarea
               dict set cells $cell_name pins $pin_name antennadiffarea layer $antennadiffarea
             } elseif { [regexp {ANTENNADIFFAREA\s+([^\s]*)\s} $line - antennadiffarea] } {
@@ -163,8 +167,10 @@ proc read_macros { file_name } {
                   continue
                 } elseif { [regexp {LAYER\s+([^\s]*)} $line - layer] } {
                   continue
-                } elseif { [regexp {RECT\s+MASK\s+([^\s]*)\s+([0-9\-\.]*)\s\s*([0-9\-\.]*)\
-        \s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - mask x1 y1 x2 y2] } {
+                } elseif {
+                  [regexp {RECT\s+MASK\s+([^\s]*)\s+([0-9\-\.]*)\s\s*([0-9\-\.]*)\
+        \s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - mask x1 y1 x2 y2]
+                } {
                   if { [dict exists $port layers $layer shapes] } {
                     set layer_shapes [dict get $port layers $layer shapes]
                   } else {
@@ -183,8 +189,10 @@ proc read_macros { file_name } {
                     mask $mask]
                   lappend layer_shapes $new_shape
                   dict set port layers $layer shapes $layer_shapes
-                } elseif { [regexp {RECT\s([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\
-        \s\s*([0-9\-\.]*)} $line - x1 y1 x2 y2] } {
+                } elseif {
+                  [regexp {RECT\s([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\
+        \s\s*([0-9\-\.]*)} $line - x1 y1 x2 y2]
+                } {
                   if { [dict exists $port layers $layer shapes] } {
                     set layer_shapes [dict get $port layers $layer shapes]
                   } else {
@@ -196,11 +204,10 @@ proc read_macros { file_name } {
                     set offset [lmap x [list $x1 $y1] { expr round($x * $def_units) }]
                     dict set port fixed $offset
                   }
-                    set new_shape [list \
+                  set new_shape [list \
                     rect [relative_rectangle \
                       [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }] \
-                      $offset] \
-                    ]
+                      $offset]]
                   lappend layer_shapes $new_shape
                   dict set port layers $layer shapes $layer_shapes
                 } elseif { [regexp {END} $line] } {
@@ -227,36 +234,39 @@ proc read_macros { file_name } {
             set line [gets $ch]
             if { [regexp {^\s*$} $line] } {
               continue
-            } elseif { [regexp {LAYER\s+([^\s]*)(\s+DESIGNRULEWIDTH\s+([0-9.]+))?} \
-              $line - layer - drw] } {
+            } elseif {
+              [regexp {LAYER\s+([^\s]*)(\s+DESIGNRULEWIDTH\s+([0-9.]+))?} \
+                $line - layer - drw]
+            } {
               if { $drw != "" } {
                 dict set cells $cell_name layers $layer drw $drw
               }
               continue
-            } elseif { [regexp {RECT\s+MASK\s+([^\s]*)\s+([0-9\-\.]*)\s\s*([0-9\-\.]*)\
-      \s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - mask x1 y1 x2 y2] } {
+            } elseif {
+              [regexp {RECT\s+MASK\s+([^\s]*)\s+([0-9\-\.]*)\s\s*([0-9\-\.]*)\
+      \s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)} $line - mask x1 y1 x2 y2]
+            } {
               if { [dict exists $cells $cell_name obstructions $layer] } {
                 set obstructions [dict get $cells $cell_name obstructions $layer]
               } else {
                 set obstructions {}
               }
-                lappend obstructions [concat \
+              lappend obstructions [concat \
                 [list rect [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }]] \
-                [list mask $mask] \
-                ]
+                [list mask $mask]]
               dict set cells $cell_name obstructions $layer $obstructions
-            } elseif { [regexp {RECT\s([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\
-      \s\s*([0-9\-\.]*)} $line - x1 y1 x2 y2] } {
+            } elseif {
+              [regexp {RECT\s([0-9\-\.]*)\s\s*([0-9\-\.]*)\s\s*([0-9\-\.]*)\
+      \s\s*([0-9\-\.]*)} $line - x1 y1 x2 y2]
+            } {
               if { [dict exists $cells $cell_name obstructions $layer] } {
                 set obstructions [dict get $cells $cell_name obstructions $layer]
               } else {
                 set obstructions {}
               }
-                lappend obstructions [concat \
+              lappend obstructions [concat \
                 [list rect \
-                  [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }] \
-                ] \
-                ]
+                  [lmap x [list $x1 $y1 $x2 $y2] { expr round($x * $def_units) }]]]
               dict set cells $cell_name obstructions $layer $obstructions
             } elseif { [regexp {END} $line] } {
               break
@@ -337,8 +347,7 @@ proc write { design } {
   out "  FOREIGN [dict get $design foreign ref] [dict get $design foreign origin] ;"
   out [concat \
     "  SIZE [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units]" \
-    " BY [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units] ;" \
-  ]
+    " BY [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units] ;"]
   out "  SYMMETRY [dict get $design symmetry] ;"
   if { [dict exists $design site] } {
     out "  SITE [dict get $design site] ;"
@@ -369,10 +378,9 @@ proc write { design } {
 
             if { [dict exists $shape mask] } {
               out [concat \
-              "         RECT MASK [dict get $shape mask]" \
-              " [lmap x $rect { expr {1.0 * $x / $def_units} }]" \
-              " ;" \
-              ]
+                "         RECT MASK [dict get $shape mask]" \
+                " [lmap x $rect { expr { 1.0 * $x / $def_units } }]" \
+                " ;"]
             } else {
               out "         RECT [lmap x $rect { expr 1.0 * $x / $def_units }] ;"
             }
@@ -393,8 +401,7 @@ proc write { design } {
       set sheet [concat \
         0 0 \
         [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units] \
-        [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units] \
-      ]
+        [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units]]
       foreach layer_name [get_blockage_layers $design] {
         if { [dict exists $design layers $layer_name drw] } {
           set drw "DESIGNRULEWIDTH [dict get $design layers $layer_name drw] "
@@ -408,12 +415,11 @@ proc write { design } {
       dict for {layer_name obstructions} [dict get $design obstructions] {
         out "    LAYER $layer_name ;"
         foreach obs $obstructions {
-            if { [dict exists $obs mask] } {
+          if { [dict exists $obs mask] } {
             out [concat \
               "      RECT MASK [dict get $obs mask]" \
-              " [lmap x [dict get $obs rect] { expr {1.0 * $x / $def_units} }]" \
-              " ;" \
-            ]
+              " [lmap x [dict get $obs rect] { expr { 1.0 * $x / $def_units } }]" \
+              " ;"]
           } else {
             out "      RECT [lmap x [dict get $obs rect] { expr 1.0 * $x / $def_units }] ;"
           }
@@ -579,8 +585,7 @@ proc shift_point { point x y } {
 proc shift_rect { rect x y } {
   return [concat \
     [list [expr [lindex $rect 0] + $x] [expr [lindex $rect 1] + $y]] \
-    [list [expr [lindex $rect 2] + $x] [expr [lindex $rect 3] + $y]] \
-  ]
+    [list [expr [lindex $rect 2] + $x] [expr [lindex $rect 3] + $y]]]
 }
 
 proc shift_origin { design x y } {
@@ -770,8 +775,7 @@ proc write { design } {
   out ""
   out [concat \
     "DIEAREA ( [lrange [dict get $design die_area] 0 1] )" \
-    " ( [lrange [dict get $design die_area] 2 3] ) ;" \
-  ]
+    " ( [lrange [dict get $design die_area] 2 3] ) ;"]
 
   if { [dict exists $design tracks] } {
 
@@ -784,12 +788,10 @@ proc write { design } {
         [dict get $design rows $idx site] \
         [dict get $design rows $idx start] \
         [dict get $design rows $idx height] \
-        [dict get $design rows $idx orientation] \
-      ]
+        [dict get $design rows $idx orientation]]
       out [concat \
         " DO [dict get $design rows $idx num_sites] BY 1 STEP " \
-        "[dict get $design rows $idx site_width] 0 ;" \
-      ]
+        "[dict get $design rows $idx site_width] 0 ;"]
     }
   }
 
@@ -799,8 +801,7 @@ proc write { design } {
     dict for {pin_name pin} [dict get $design pins] {
       out -nonewline [concat \
         "- $pin_name + NET [dict get $pin net_name]" \
-        "+ DIRECTION [dict get $pin direction] " \
-      ]
+        "+ DIRECTION [dict get $pin direction] "]
       if { [dict exists $pin use] } {
         out -nonewline "+ USE [dict get $pin use] "
       }
@@ -898,10 +899,9 @@ proc write { design } {
               set mask ""
             }
             if { [llength $point] == 2 } {
-                out -nonewline [concat \
+              out -nonewline [concat \
                 "  + $type [dict get $route layer] " \
-                "[get_line_width [dict get $route layer] [list $first_point $point]] " \
-                ]
+                "[get_line_width [dict get $route layer] [list $first_point $point]] "]
               out -nonewline $shape
               out -nonewline $points
               out -nonewline $mask
@@ -935,18 +935,16 @@ proc write { design } {
         out -nonewline [concat \
           "  + ROUTED [dict get $route layer] " \
           "[expr round([dict get $route width])] " \
-          "+ SHAPE [dict get $route shape] " \
-        ]
+          "+ SHAPE [dict get $route shape] "]
         foreach point [dict get $route points] {
           out -nonewline " $point"
         }
         out ""
 
         foreach route [lrange [dict get $net routes] 1 end] {
-            out [concat \
+          out [concat \
             "    NEW [dict get $route layer] [expr round([dict get $route width])]" \
-            "+ SHAPE [dict get $route shape] " \
-            ]
+            "+ SHAPE [dict get $route shape] "]
           foreach point [dict get $route points] {
             out -nonewline " $point"
           }

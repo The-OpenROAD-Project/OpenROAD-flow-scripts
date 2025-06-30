@@ -71,7 +71,7 @@ proc write_rc_csv { filename } {
       lassign $rc_var1($net_name) wire_res1 wire_cap1
       lassign $rc_var2($net_name) wire_res2 wire_cap2
       lassign $rc_var3($net_name) wire_res3 wire_cap3
-      set net_type [expr {[string equal $type "CLOCK"] ? "clock" : "signal"}]
+      set net_type [expr { [string equal $type "CLOCK"] ? "clock" : "signal" }]
       puts -nonewline $stream "[get_full_name $net],$net_type,"
       puts -nonewline $stream [concat \
         [format "%.3e" $wire_res1] "," [format "%.3e" $wire_cap1] "," \
@@ -225,14 +225,12 @@ proc compare_wire_rc1 { net var_name ref_var_name } {
     [format "%8s" [sta::format_capacitance $wire_cap 3]] " " \
     [format "%8s" [sta::format_capacitance $wire_cap_ref 3]] " " \
     [format "%4.0f" $cap_delta]% " " \
-    [format "%4.0f" $total_delta]% \
-  ]
+    [format "%4.0f" $total_delta]%]
   if { $res > 0.0 } {
     puts [concat \
       [format "%8s" [sta::format_resistance $res 3]] " " \
       [format "%8s" [sta::format_resistance $res_ref 3]] " " \
-      [format "%4.0f" $res_delta]% \
-    ]
+      [format "%4.0f" $res_delta]%]
   } else {
     puts ""
   }
@@ -252,13 +250,11 @@ proc write_layer_rc_cmds { adjustment } {
       set cap_area [$layer getCapacitance]
       # Convert pF/um to F/um.
       set cap [expr \
-        ($cap_edge * 2.0 + $wire_width * $cap_area) * 1e-12 / (1.0 + $adjustment / 100.0) \
-      ]
+        ($cap_edge * 2.0 + $wire_width * $cap_area) * 1e-12 / (1.0 + $adjustment / 100.0)]
       puts [concat \
         "set_layer_rc -layer [$layer getConstName] " \
         "-resistance [format %.4e [sta::resistance_sta_ui $res]] " \
-        "-capacitance [format %.4e [sta::capacitance_sta_ui $cap]]" \
-      ]
+        "-capacitance [format %.4e [sta::capacitance_sta_ui $cap]]"]
     }
   }
 }
