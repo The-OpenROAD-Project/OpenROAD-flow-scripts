@@ -46,7 +46,7 @@ proc write_rc_csv { filename } {
     set is_routing([$layer getNumber]) $routing
     set is_routing([$layer getNumber]) $routing
     puts -nonewline $stream " [$layer getName]"
-    if $routing {
+    if { $routing } {
       puts -nonewline $stream "(routing)"
     } else {
       # insert via resistance information
@@ -75,7 +75,7 @@ proc write_rc_csv { filename } {
       puts -nonewline $stream "[format %.3e $wire_res1],[format %.3e $wire_cap1],[format %.3e $wire_res2],[format %.3e $wire_cap2],[format %.3e $wire_res3],[format %.3e $wire_cap3]"
       set db_net [sta::sta_to_db_net $net]
 
-      if $use_drt_data {
+      if { $use_drt_data } {
         set layer_lengths [drt::route_layer_lengths [$db_net getWire]]
       } else {
         set layer_lengths [grt::route_layer_lengths $db_net]
@@ -83,7 +83,7 @@ proc write_rc_csv { filename } {
 
       for { set layer 0 } { $layer < [$tech getLayerCount] } { incr layer } {
         set length [lindex $layer_lengths $layer]
-        if $is_routing($layer) {
+        if { $is_routing($layer) } {
           puts -nonewline $stream ",[ord::dbu_to_microns $length]"
         } else {
           puts -nonewline $stream ",$length"

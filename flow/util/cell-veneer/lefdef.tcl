@@ -13,6 +13,7 @@ proc relative_rectangle { rect offset } {
     [expr [lindex $rect 3] - [lindex $offset 1]]]
 }
 
+# tclint-disable-next-line command-args
 if [package vcompare 8.6 $tcl_version] {
     proc lmap {_var list body} {
         upvar 1 $_var var
@@ -26,11 +27,13 @@ namespace eval lef {
 variable lefOut stdout
 variable def_units 2000
 
+# tclint-disable-next-line redefined-builtin
 proc open { file_name } {
   variable lefOut
   set lefOut [::open $file_name w]
 }
 
+# tclint-disable-next-line redefined-builtin
 proc close { } {
   variable lefOut
   if { $lefOut != "stdout" } {
@@ -288,13 +291,13 @@ proc write_footer { } {
 #       - shape
 #       - ports: a list of lists of shapes that make up a physical connection
 #               - layer
-#               - rect 
+#               - rect
 #               - mask?
 #   - obstructions
 #       - layer: a dictionaries with layer_name as the key
-#           - rect 
+#           - rect
 #           - mask?
-#             
+#
 proc write { design } {
   set def_units [dict get $design units]
 
@@ -449,11 +452,13 @@ variable def_units
 variable defOut stdout
 variable designs {}
 
+# tclint-disable-next-line redefined-builtin
 proc open { file_name } {
   variable defOut
   set defOut [::open $file_name w]
 }
 
+# tclint-disable-next-line redefined-builtin
 proc close { } {
   variable defOut
   if { $defOut != "stdout" } {
@@ -499,12 +504,12 @@ proc out { args } {
 #               - shapes : list of rectangles (or polygons)
 #                   - (rect|polygon)
 #   - physical_viarules: dict with the name of the viarule as the key
-#       - rule        
-#       - cutsize     
-#       - layers      
-#       - cutspacing  
-#       - enclosure   
-#       - rowcol      
+#       - rule
+#       - cutsize
+#       - layers
+#       - cutspacing
+#       - enclosure
+#       - rowcol
 #   - components: dict with the instance name of the component as the key
 #       - inst_name
 #       - cell_name
@@ -512,19 +517,19 @@ proc out { args } {
 #       - orientation
 #   - nets: dict with the name of the net as the key
 #       - use: SIGNAL | POWER | GROUND
-#       - connections: list of instance pin pairs  
-#       - routes: list of dictionaries              
-#           - layer                                
-#           - points: list of points, where a point can be an XY location or the name of a VIA 
-#   - special_nets: dict with the name of the net as the key
-#       - use: SIGNAL | POWER | GROUND                                    
-#       - connections: list of instance pin pairs  
-#       - routes: list of dictioaries              
-#           - layer                                
-#           - width                                
-#           - shape                                
+#       - connections: list of instance pin pairs
+#       - routes: list of dictionaries
+#           - layer
 #           - points: list of points, where a point can be an XY location or the name of a VIA
-#                              
+#   - special_nets: dict with the name of the net as the key
+#       - use: SIGNAL | POWER | GROUND
+#       - connections: list of instance pin pairs
+#       - routes: list of dictioaries
+#           - layer
+#           - width
+#           - shape
+#           - points: list of points, where a point can be an XY location or the name of a VIA
+#
 
 proc shift_point { point x y } {
   return [list [expr [lindex $point 0] + $x] [expr [lindex $point 1] + $y]]
@@ -727,8 +732,8 @@ proc write { design } {
 
   if { [dict exists $design rows] } {
     foreach idx [lsort -integer [dict keys $design rows]] {
-      out -nonewline "ROW ROW_$idx [dict keys $design rows $idx site] [dict keys $design rows $idx start] [dict keys $design rows $idx height] [dict keys $design rows $idx orientation]"
-      out " DO [dict keys $design rows $idx num_sites] BY 1 STEP [dict keys $design rows $idx site_width] 0 ;"
+      out -nonewline "ROW ROW_$idx [dict get $design rows $idx site] [dict get $design rows $idx start] [dict get $design rows $idx height] [dict get $design rows $idx orientation]"
+      out " DO [dict get $design rows $idx num_sites] BY 1 STEP [dict get $design rows $idx site_width] 0 ;"
     }
   }
 

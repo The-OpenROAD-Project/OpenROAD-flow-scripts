@@ -193,7 +193,7 @@ proc move_m2_pins_to_edge { cell_name cell_data } {
   dict for {pin_name pin} [dict get $cell_data pins] {
     set wires {}
     foreach physical_pin $pin {
-      if { [dict get $physical_pin to] >= [expr $cell_width / 2.0] } {
+      if { [dict get $physical_pin to] >= ($cell_width / 2.0) } {
         if { [dict exists $cell_data blockages] } {
           if { [wrapper::clear_right $physical_pin [dict get $cell_data blockages]] } {
             set direction right
@@ -470,7 +470,7 @@ proc wrap_macro { cell_name } {
     # Need to check that the grid point we're trying to use is going to be accessible.
     # If it is not, then try the point 2 grid points higher
     if { [dict exists $grid_pins $grid_y] } {
-      if { [dict exists [expr $grid_y + 2]] } {
+      if { [dict exists $grid_pins [expr $grid_y + 2]] } {
         puts "Cell $cell_name"
         puts "Problem assigning pin grid - requested and upper grid points for $pin_name at $grid_y already allocated to [dict get $grid_pins $grid_y] and [dict get $grid_pins [expr $grid_y + 2]]"
         exit -1
