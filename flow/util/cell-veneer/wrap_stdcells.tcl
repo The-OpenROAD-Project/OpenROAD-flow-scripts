@@ -102,7 +102,10 @@ proc clear_left { physical_pin blockages } {
   set track [dict get $physical_pin track]
 
   foreach blockage $blockages {
-    if { [dict get $blockage track] == $track && [dict get $blockage to] < [dict get $physical_pin from] } {
+    if {
+      [dict get $blockage track] == $track &&
+      [dict get $blockage to] < [dict get $physical_pin from]
+    } {
       return 0
     }
   }
@@ -113,7 +116,10 @@ proc clear_right { physical_pin blockages } {
   set track [dict get $physical_pin track]
 
   foreach blockage $blockages {
-    if { [dict get $blockage track] == $track && [dict get $blockage from] > [dict get $physical_pin to] } {
+    if {
+      [dict get $blockage track] == $track &&
+      [dict get $blockage from] > [dict get $physical_pin to]
+    } {
       return 0
     }
   }
@@ -179,7 +185,10 @@ proc move_m2_pins_to_edge { cell_name cell_data } {
   set layer_name [dict get $wrapper_cfg remove_pins layer]
   set layer_width [expr round([dict get $wrapper_cfg layer $layer_name width] * $def_units)]
   set new_pin_layer_name [dict get $wrapper_cfg new_pins layer]
-  set new_pin_layer_width [expr round([dict get $wrapper_cfg layer $new_pin_layer_name width] * $def_units)]
+  set new_pin_layer_width [expr round( \
+    [dict get $wrapper_cfg layer $new_pin_layer_name width] * \
+    $def_units \
+    )]
   set cell_width [lindex [dict get [lef get_cell $cell_name] die_area] 2]
   set design [wrapper::create_def_wrapper $cell_name ${cell_name}_mod]
   set lower_y [expr 2 * 128]
@@ -193,7 +202,7 @@ proc move_m2_pins_to_edge { cell_name cell_data } {
   dict for {pin_name pin} [dict get $cell_data pins] {
     set wires {}
     foreach physical_pin $pin {
-      if { [dict get $physical_pin to] >= [expr $cell_width / 2.0] } {
+      if { [dict get $physical_pin to] >= ($cell_width / 2.0) } {
         if { [dict exists $cell_data blockages] } {
           if { [wrapper::clear_right $physical_pin [dict get $cell_data blockages]] } {
             set direction right
@@ -280,7 +289,12 @@ proc move_m2_pins_to_edge { cell_name cell_data } {
           dict set design obstructions M2 $m2_obstructions
         }
         # Replace the M2 port with an M1 port which is now at the side of the cells
-        set new_pin_rect [list [expr round($x2 - ($new_pin_layer_width / 2))] $lower_y [expr round($x2 + ($new_pin_layer_width / 2))] $upper_y]
+        set new_pin_rect [concat \
+          [list \
+            [expr round($x2 - ($new_pin_layer_width / 2))] \
+            $lower_y \
+            [expr round($x2 + ($new_pin_layer_width / 2))] \
+            $upper_y]]
         if { [dict exists $port layers "M1" shapes] } {
           set shapes [dict get $port layers "M1" shapes]
         } else {
@@ -368,7 +382,9 @@ proc move_m2_pins_to_edge { cell_name cell_data } {
   dict set design die_area [list \
     0 \
     0 \
-    [expr [lindex [dict get $design die_area] 2] + (($pad_idx - ($left_padding + 1)) * $padding_cell_width)] \
+    [concat \
+      [expr [lindex [dict get $design die_area] 2] + \
+        (($pad_idx - ($left_padding + 1)) * $padding_cell_width)]] \
     [lindex [dict get $design die_area] 3]]
 
   # Extend VDD, VSS, VPW, VNW pins to be the width of the wrapper
@@ -434,7 +450,10 @@ proc get_pin_rect { port layer } {
     set offset [list 0 0]
   }
 
-  return [absolute_rectangle [dict get [lindex [dict get $port layers $layer shapes] 0] rect] $offset]
+  return [absolute_rectangle \
+    [dict get \
+      [lindex \
+        [dict get $port layers $layer shapes] 0] rect] $offset]
 }
 
 proc wrap_macro { cell_name } {
@@ -465,14 +484,19 @@ proc wrap_macro { cell_name } {
     }
 
     set macro_pin_y [expr ([lindex $pin_rect 1] + [lindex $pin_rect 3]) / 2]
-    set grid_y [expr round((floor(([lindex $pin_rect 1] + [lindex $pin_rect 3]) / 2 / [dict get $tech pitch horizontal_track]) - 1))]
+    set grid_y [expr round((floor( \
+      ([lindex $pin_rect 1] + [lindex $pin_rect 3]) / 2 / \
+      [dict get $tech pitch horizontal_track]) - 1))]
 
     # Need to check that the grid point we're trying to use is going to be accessible.
     # If it is not, then try the point 2 grid points higher
     if { [dict exists $grid_pins $grid_y] } {
-      if { [dict exists [expr $grid_y + 2]] } {
+      if { [dict exists $grid_pins [expr $grid_y + 2]] } {
         puts "Cell $cell_name"
-        puts "Problem assigning pin grid - requested and upper grid points for $pin_name at $grid_y already allocated to [dict get $grid_pins $grid_y] and [dict get $grid_pins [expr $grid_y + 2]]"
+        puts [concat "Problem assigning pin grid - requested and upper grid points " \
+          "for $pin_name at " \
+          "$grid_y already allocated to [dict get $grid_pins $grid_y] and " \
+          "[dict get $grid_pins [expr $grid_y + 2]]"]
         exit -1
       }
       set grid_y [expr $grid_y + 2]
@@ -486,6 +510,7 @@ proc wrap_macro { cell_name } {
   set order [lsort -integer [dict keys $grid_pins]]
   set prev_pos [lindex $order 0]
 
+  # tclint-disable-next-line line-length
   # We will have a jog in the track, which needs to be on a vertical grid 3 units from the edge of the macro
   # If there is another pin close by, the we will need to have the jog 3 grids further in
   dict set net_info [dict get $grid_pins $prev_pos] h_offset 3
@@ -493,7 +518,10 @@ proc wrap_macro { cell_name } {
     if { $pin_pos - $prev_pos > 3 } {
       dict set net_info [dict get $grid_pins $pin_pos] h_offset 3
     } else {
-      dict set net_info [dict get $grid_pins $pin_pos] h_offset [expr [dict get $net_info [dict get $grid_pins $prev_pos] h_offset] + 3]
+      dict set net_info [dict get $grid_pins $pin_pos] h_offset \
+        [expr \
+          [dict get $net_info [dict get $grid_pins $prev_pos] h_offset] \
+          + 3]
     }
     set prev_pos $pin_pos
   }
@@ -507,12 +535,18 @@ proc wrap_macro { cell_name } {
   }
   set wrapper_depth [expr $wrapper_depth + 3]
   set macro_x [expr $wrapper_depth * [dict get $tech pitch vertical_track]]
-  set width [expr round((floor([lef get_width $cell] / [dict get $tech pitch vertical_track]) + 1) * [dict get $tech pitch vertical_track] )]
-  set height [expr round((floor([lef get_height $cell] / [dict get $tech pitch horizontal_track]) + 1) * [dict get $tech pitch horizontal_track])]
+  set width [expr round((floor([lef get_width $cell] / \
+    [dict get $tech pitch vertical_track]) + 1) * \
+    [dict get $tech pitch vertical_track])]
+  set height [expr round((floor([lef get_height $cell] / \
+    [dict get $tech pitch horizontal_track]) + 1) * \
+    [dict get $tech pitch horizontal_track])]
 
   # Now we know where the macro is placed, we know the size of the wrapper
   dict set wrapper die_area [list [expr round(-1 * $macro_x)] 0 [expr $width] $height]
   # debug "Set die area [dict get $wrapper die_area]"
+
+  # tclint-disable-next-line line-length
   # Now we know the maximum extent of the space needed for the job we can add in the pins the appropriate number of grids to the left of the RAM
 
   # Shift the wrapper so the lower left corner is at (0, 0)
@@ -542,14 +576,20 @@ proc wrap_macro { cell_name } {
     dict set new_port layers {}
     dict set new_port fixed [list 0 $y_position]
     dict set new_port layers "C4" shapes [list \
-      [list rect [list 0 [expr 0 - [dict get $tech layer C4 width] / 2] [dict get $tech layer C4 depth] [expr 0 + [dict get $tech layer C4 width] / 2]]]]
+      [list rect [concat \
+        [list 0 \
+          [expr 0 - [dict get $tech layer C4 width] / 2] \
+          [dict get $tech layer C4 depth] \
+          [expr 0 + [dict get $tech layer C4 width] / 2]]]]]
     # debug "Replacing pin $net_name with $new_port"
     dict set wrapper pins $net_name ports [list $new_port]
 
     set segments {}
 
     # First segment from RAM to jog location, to the y grid of the pin
-    set target_grid_point [expr ($wrapper_depth - [dict get $net h_offset]) * [dict get $tech pitch vertical_track]]
+    set target_grid_point [expr \
+      ($wrapper_depth - [dict get $net h_offset]) * \
+      [dict get $tech pitch vertical_track]]
     set width [dict get $tech layer [dict get $net pin_layer] width]
     lappend segments [list \
       layer [dict get $net pin_layer] \
@@ -591,7 +631,10 @@ proc test_harness { wrappers } {
   set grid_x_size [expr $max_cell_width + (2 * $site_width)]
   set grid_y_size [expr 4 * $site_height]
 
-  def new_design "test_harness" [dict get $wrapper_cfg def_units] [list 0 0 [expr round($grid_x_size * $num_grids)] [expr round($grid_y_size * $num_grids)]]
+  def new_design "test_harness" [dict get $wrapper_cfg def_units] \
+    [concat [list 0 0] \
+      [list [expr round($grid_x_size * $num_grids)] \
+        [expr round($grid_y_size * $num_grids)]]]
 
   foreach cell [dict keys $wrappers] {
     set x [expr round(($idx % $num_grids) * $grid_x_size)]
@@ -617,6 +660,7 @@ proc set_stdcell_config { config } {
 }
 
 proc run { } {
+  # tclint-disable-next-line line-length
   set file_name /projects/ssg/pj10000064_diphda/users/colhol01/openroad/library/arm/cp/14lpp/sc10p5mcpp84_base_lvt_c14/r2p1/lef/sc10p5mcpp84_14lpp_base_lvt_c14.lef
 
   lef read_macros $file_name
@@ -633,7 +677,10 @@ proc convert_tech_to_def_units { tech } {
   dict for {layer_name layer} [dict get $tech layer] {
     foreach property {depth width non_preferred_width} {
       if { [dict exists $layer $property] } {
-        dict set tech layer $layer_name $property [expr round([dict get $layer $property] * $def_units)]
+        dict set tech layer $layer_name $property \
+          [expr round( \
+            [dict get $layer $property] * $def_units \
+            )]
       }
     }
   }
@@ -646,8 +693,10 @@ proc convert_tech_to_def_units { tech } {
     }
   }
 
-  dict set tech pitch vertical_track [expr round([dict get $tech pitch vertical_track] * $def_units)]
-  dict set tech pitch horizontal_track [expr round([dict get $tech pitch horizontal_track] * $def_units)]
+  dict set tech pitch vertical_track [expr round( \
+    [dict get $tech pitch vertical_track] * $def_units)]
+  dict set tech pitch horizontal_track [expr round( \
+    [dict get $tech pitch horizontal_track] * $def_units)]
 
   return $tech
 }

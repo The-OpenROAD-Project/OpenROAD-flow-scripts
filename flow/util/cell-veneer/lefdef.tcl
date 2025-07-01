@@ -13,6 +13,7 @@ proc relative_rectangle { rect offset } {
     [expr [lindex $rect 3] - [lindex $offset 1]]]
 }
 
+# tclint-disable-next-line command-args
 if [package vcompare 8.6 $tcl_version] {
     proc lmap {_var list body} {
         upvar 1 $_var var
@@ -26,11 +27,13 @@ namespace eval lef {
 variable lefOut stdout
 variable def_units 2000
 
+# tclint-disable-next-line redefined-builtin
 proc open { file_name } {
   variable lefOut
   set lefOut [::open $file_name w]
 }
 
+# tclint-disable-next-line redefined-builtin
 proc close { } {
   variable lefOut
   if { $lefOut != "stdout" } {
@@ -69,6 +72,7 @@ proc get_height { cell } {
   return [expr [lindex [dict get $cell die_area] 3] - [lindex [dict get $cell die_area] 1]]
 }
 
+# tclint-disable line-length
 proc read_macros { file_name } {
   variable cells
   variable def_units
@@ -247,6 +251,7 @@ proc read_macros { file_name } {
 
   ::close $ch
 }
+# tclint-enable line-length
 
 proc get_blockage_layers { design } {
   if { [dict exists $design blockage_layers] } {
@@ -267,6 +272,7 @@ proc write_header { } {
 proc write_footer { } {
 
 }
+# tclint-disable-next-line line-length
 # Read a LEF from a file into a dictionary with the name of the cell as the key and the following entries
 #   - cell_class
 #   - origin
@@ -288,13 +294,13 @@ proc write_footer { } {
 #       - shape
 #       - ports: a list of lists of shapes that make up a physical connection
 #               - layer
-#               - rect 
+#               - rect
 #               - mask?
 #   - obstructions
 #       - layer: a dictionaries with layer_name as the key
-#           - rect 
+#           - rect
 #           - mask?
-#             
+#
 proc write { design } {
   set def_units [dict get $design units]
 
@@ -306,7 +312,9 @@ proc write { design } {
     out "  ORIGIN 0.0 0.0 ;"
   }
   out "  FOREIGN [dict get $design foreign ref] [dict get $design foreign origin] ;"
-  out "  SIZE [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units] BY [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units] ;"
+  out [concat \
+    "  SIZE [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units]" \
+    " BY [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units] ;"]
   out "  SYMMETRY [dict get $design symmetry] ;"
   if { [dict exists $design site] } {
     out "  SITE [dict get $design site] ;"
@@ -336,7 +344,10 @@ proc write { design } {
             set rect [absolute_rectangle [dict get $shape rect] $offset]
 
             if { [dict exists $shape mask] } {
-              out "         RECT MASK [dict get $shape mask] [lmap x $rect { expr 1.0 * $x / $def_units }] ;"
+              out [concat \
+                "         RECT MASK [dict get $shape mask]" \
+                " [lmap x $rect { expr { 1.0 * $x / $def_units } }]" \
+                " ;"]
             } else {
               out "         RECT [lmap x $rect { expr 1.0 * $x / $def_units }] ;"
             }
@@ -354,7 +365,10 @@ proc write { design } {
       dict for {layer_name obstructions} [dict get $design obstructions] {
         lappend blocked_layers $layer_name
       }
-      set sheet "0 0 [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units] [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units]"
+      set sheet [concat \
+        0 0 \
+        [expr 1.0 * [lindex [dict get $design die_area] 2] / $def_units] \
+        [expr 1.0 * [lindex [dict get $design die_area] 3] / $def_units]]
       foreach layer_name [get_blockage_layers $design] {
         if { [dict exists $design layers $layer_name drw] } {
           set drw "DESIGNRULEWIDTH [dict get $design layers $layer_name drw] "
@@ -369,7 +383,10 @@ proc write { design } {
         out "    LAYER $layer_name ;"
         foreach obs $obstructions {
           if { [dict exists $obs mask] } {
-            out "      RECT MASK [dict get $obs mask] [lmap x [dict get $obs rect] { expr 1.0 * $x / $def_units }] ;"
+            out [concat \
+              "      RECT MASK [dict get $obs mask]" \
+              " [lmap x [dict get $obs rect] { expr { 1.0 * $x / $def_units } }]" \
+              " ;"]
           } else {
             out "      RECT [lmap x [dict get $obs rect] { expr 1.0 * $x / $def_units }] ;"
           }
@@ -449,11 +466,13 @@ variable def_units
 variable defOut stdout
 variable designs {}
 
+# tclint-disable-next-line redefined-builtin
 proc open { file_name } {
   variable defOut
   set defOut [::open $file_name w]
 }
 
+# tclint-disable-next-line redefined-builtin
 proc close { } {
   variable defOut
   if { $defOut != "stdout" } {
@@ -499,12 +518,12 @@ proc out { args } {
 #               - shapes : list of rectangles (or polygons)
 #                   - (rect|polygon)
 #   - physical_viarules: dict with the name of the viarule as the key
-#       - rule        
-#       - cutsize     
-#       - layers      
-#       - cutspacing  
-#       - enclosure   
-#       - rowcol      
+#       - rule
+#       - cutsize
+#       - layers
+#       - cutspacing
+#       - enclosure
+#       - rowcol
 #   - components: dict with the instance name of the component as the key
 #       - inst_name
 #       - cell_name
@@ -512,26 +531,28 @@ proc out { args } {
 #       - orientation
 #   - nets: dict with the name of the net as the key
 #       - use: SIGNAL | POWER | GROUND
-#       - connections: list of instance pin pairs  
-#       - routes: list of dictionaries              
-#           - layer                                
-#           - points: list of points, where a point can be an XY location or the name of a VIA 
-#   - special_nets: dict with the name of the net as the key
-#       - use: SIGNAL | POWER | GROUND                                    
-#       - connections: list of instance pin pairs  
-#       - routes: list of dictioaries              
-#           - layer                                
-#           - width                                
-#           - shape                                
+#       - connections: list of instance pin pairs
+#       - routes: list of dictionaries
+#           - layer
 #           - points: list of points, where a point can be an XY location or the name of a VIA
-#                              
+#   - special_nets: dict with the name of the net as the key
+#       - use: SIGNAL | POWER | GROUND
+#       - connections: list of instance pin pairs
+#       - routes: list of dictioaries
+#           - layer
+#           - width
+#           - shape
+#           - points: list of points, where a point can be an XY location or the name of a VIA
+#
 
 proc shift_point { point x y } {
   return [list [expr [lindex $point 0] + $x] [expr [lindex $point 1] + $y]]
 }
 
 proc shift_rect { rect x y } {
-  return [list [expr [lindex $rect 0] + $x] [expr [lindex $rect 1] + $y] [expr [lindex $rect 2] + $x] [expr [lindex $rect 3] + $y]]
+  return [concat \
+    [list [expr [lindex $rect 0] + $x] [expr [lindex $rect 1] + $y]] \
+    [list [expr [lindex $rect 2] + $x] [expr [lindex $rect 3] + $y]]]
 }
 
 proc shift_origin { design x y } {
@@ -719,7 +740,9 @@ proc write { design } {
   }
 
   out ""
-  out "DIEAREA ( [lrange [dict get $design die_area] 0 1] ) ( [lrange [dict get $design die_area] 2 3] ) ;"
+  out [concat \
+    "DIEAREA ( [lrange [dict get $design die_area] 0 1] )" \
+    " ( [lrange [dict get $design die_area] 2 3] ) ;"]
 
   if { [dict exists $design tracks] } {
 
@@ -727,8 +750,15 @@ proc write { design } {
 
   if { [dict exists $design rows] } {
     foreach idx [lsort -integer [dict keys $design rows]] {
-      out -nonewline "ROW ROW_$idx [dict keys $design rows $idx site] [dict keys $design rows $idx start] [dict keys $design rows $idx height] [dict keys $design rows $idx orientation]"
-      out " DO [dict keys $design rows $idx num_sites] BY 1 STEP [dict keys $design rows $idx site_width] 0 ;"
+      out -nonewline [concat \
+        "ROW ROW_$idx" \
+        [dict get $design rows $idx site] \
+        [dict get $design rows $idx start] \
+        [dict get $design rows $idx height] \
+        [dict get $design rows $idx orientation]]
+      out [concat \
+        " DO [dict get $design rows $idx num_sites] BY 1 STEP " \
+        "[dict get $design rows $idx site_width] 0 ;"]
     }
   }
 
@@ -736,7 +766,9 @@ proc write { design } {
     out ""
     out "PINS [dict size [dict get $design pins]] ;"
     dict for {pin_name pin} [dict get $design pins] {
-      out -nonewline "- $pin_name + NET [dict get $pin net_name] + DIRECTION [dict get $pin direction] "
+      out -nonewline [concat \
+        "- $pin_name + NET [dict get $pin net_name]" \
+        "+ DIRECTION [dict get $pin direction] "]
       if { [dict exists $pin use] } {
         out -nonewline "+ USE [dict get $pin use] "
       }
@@ -834,7 +866,9 @@ proc write { design } {
               set mask ""
             }
             if { [llength $point] == 2 } {
-              out -nonewline "  + $type [dict get $route layer] [get_line_width [dict get $route layer] [list $first_point $point]] "
+              out -nonewline [concat \
+                "  + $type [dict get $route layer] " \
+                "[get_line_width [dict get $route layer] [list $first_point $point]] "]
               out -nonewline $shape
               out -nonewline $points
               out -nonewline $mask
@@ -865,14 +899,19 @@ proc write { design } {
       }
       if { [dict exists $net routes] } {
         set route [lindex [dict get $net routes] 0]
-        out -nonewline "  + ROUTED [dict get $route layer] [expr round([dict get $route width])] + SHAPE [dict get $route shape] "
+        out -nonewline [concat \
+          "  + ROUTED [dict get $route layer] " \
+          "[expr round([dict get $route width])] " \
+          "+ SHAPE [dict get $route shape] "]
         foreach point [dict get $route points] {
           out -nonewline " $point"
         }
         out ""
 
         foreach route [lrange [dict get $net routes] 1 end] {
-          out "    NEW [dict get $route layer] [expr round([dict get $route width])] + SHAPE [dict get $route shape] "
+          out [concat \
+            "    NEW [dict get $route layer] [expr round([dict get $route width])]" \
+            "+ SHAPE [dict get $route shape] "]
           foreach point [dict get $route points] {
             out -nonewline " $point"
           }

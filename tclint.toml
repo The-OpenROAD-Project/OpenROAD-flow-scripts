@@ -5,10 +5,10 @@ exclude = [
     "flow/logs",
     "flow/designs",
     "flow/platforms",
-    "flow/util",
     "flow/scripts/*.tcl",
     "tools/OpenROAD",
     "tools/yosys",
+    "tools/yosys-slang",
 ]
 
 ignore = [
