@@ -768,12 +768,12 @@ proc write { design } {
     dict for {pin_name pin} [dict get $design pins] {
       out -nonewline [concat \
         "- $pin_name + NET [dict get $pin net_name]" \
-        "+ DIRECTION [dict get $pin direction] "]
+        "+ DIRECTION [dict get $pin direction]"]
       if { [dict exists $pin use] } {
-        out -nonewline "+ USE [dict get $pin use] "
+        out -nonewline " + USE [dict get $pin use]"
       }
       if { [dict exists $pin special] } {
-        out -nonewline "+ SPECIAL "
+        out -nonewline " + SPECIAL"
       }
       out ""
       if { [dict exists $pin ports] } {
