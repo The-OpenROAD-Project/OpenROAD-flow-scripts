@@ -108,8 +108,14 @@ proc write_eqy_script { } {
   # See issue OpenROAD#6545 "Equivalence check failure due to non-unique resizer nets"
   puts $outfile "gate-nomatch net*"
 
-  # Necessary to avoid false positive after Yosys 0.49
-  puts $outfile "gate-nomatch clone*\n\n"
+  # Forbid matching on buffer instances or cloned instances to make it less
+  # likely EQY will fail to prove equivalence because of its assuming structural
+  # similarity between gold and gate netlists. This doesn't remove coverage.
+  puts $outfile "gate-nomatch clone*"
+  puts $outfile "gate-nomatch place*"
+  puts $outfile "gate-nomatch rebuffer*"
+  puts $outfile "gate-nomatch wire*"
+  puts $outfile "gate-nomatch place*\n\n"
 
   # Equivalence check recipe 1
   puts $outfile "\[strategy basic]\nuse sat\ndepth 10\n\n"
