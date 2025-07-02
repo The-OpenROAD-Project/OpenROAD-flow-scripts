@@ -24,6 +24,8 @@ jobs:
           python-version: "3.10"
       - name: Install Python Packages
         run: |
+          python3 -m venv ./venv
+          source ./venv/bin/activate
           pip install firebase-admin
       - name: Execute Python Script Update
         env:

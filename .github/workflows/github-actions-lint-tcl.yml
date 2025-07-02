@@ -17,7 +17,9 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          python3 -m pip install -U --user tclint==0.4.2
+          python3 -m venv ./venv
+          source ./venv/bin/activate
+          pip install tclint==0.4.2
 
       - name: Lint
         run: |

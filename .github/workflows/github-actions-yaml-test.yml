@@ -25,6 +25,8 @@ jobs:
         git diff --exit-code docs/user/FlowVariables.md
     - name: Run yamlfix check
       run: |
+        python3 -m venv ./venv
+        source ./venv/bin/activate
         pip install --quiet yamlfix==1.17.0
         yamlfix --version
         set -x
