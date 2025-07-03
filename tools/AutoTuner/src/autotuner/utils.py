@@ -42,6 +42,8 @@ import subprocess
 import sys
 import uuid
 import time
+import torch
+import random
 from datetime import datetime
 
 import numpy as np
@@ -98,9 +100,6 @@ def run_command(
 
 def set_seed(seed: int):
     """Set seed for reproducibility."""
-    import torch
-    import random
-
     # TODO: shift seed validation into validate_args during parse_arguments
     # Pre-set seed if user sets seed to 0
     if seed == 0:
