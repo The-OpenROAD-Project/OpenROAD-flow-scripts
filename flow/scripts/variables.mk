@@ -214,4 +214,8 @@ vars:
 
 .PHONY: print-%
 # Print any variable, for instance: make print-DIE_AREA
-print-%  : ; @echo "$* = $($*)"
+print-%:
+	$(file >$(OBJECTS_DIR)/print_tmp_$$,$($*))
+	@echo -n "$* = "
+	@cat $(OBJECTS_DIR)/print_tmp_$$
+	@rm $(OBJECTS_DIR)/print_tmp_$$
