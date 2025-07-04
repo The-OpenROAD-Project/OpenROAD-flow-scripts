@@ -69,7 +69,7 @@ set sdc_version 2.0
 set clk_port [get_ports $clk_port_name]
 create_clock -period $clk_period -waveform [list 0 [expr $clk_period / 2]] -name $clk_name $clk_port
 
-set non_clk_inputs [lsearch -inline -all -not -exact [all_inputs] $clk_port]
+set non_clk_inputs [all_inputs -no_clocks]
 set all_register_outputs [get_pins -of_objects [all_registers] -filter {direction == output}]
 
 # Optimization targets: overconstrain by default and
