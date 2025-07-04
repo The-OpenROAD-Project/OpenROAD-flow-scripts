@@ -22,7 +22,7 @@ while read -r VAR; do
         # they are invalid in shell
         continue
     fi
-    name="${VAR%=*}"
+    name="${VAR%%=*}"
     value="${VAR#*=}"
     if [[ "${name}" =~ ^[[:digit:]] ]] ; then
         # skip if the name starts with a number
