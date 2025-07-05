@@ -114,7 +114,8 @@ if { $total_power_vcd == $total_power_user_activity } {
 }
 
 if { abs($total_power_vcd - $total_power_user_activity) > 1e-3 } {
-  puts "Error: Total power mismatch between VCD and user activity: $total_power_vcd vs $total_power_user_activity"
+  puts "Error: Total power mismatch between VCD and user activity: \
+    $total_power_vcd vs $total_power_user_activity"
   exit 1
 }
 

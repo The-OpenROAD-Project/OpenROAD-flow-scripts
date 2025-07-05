@@ -52,10 +52,14 @@ set_clock_groups -name group1 -logically_exclusive \
   -group [get_clocks $jtag_clk_name] \
   -group [get_clocks $clk_name]
 
-set_input_delay [expr $jtag_clk_period * $jtag_clk_io_pct] -clock $jtag_clk_name [get_ports jtag_tdi]
-set_input_delay [expr $jtag_clk_period * $jtag_clk_io_pct] -clock $jtag_clk_name [get_ports jtag_tms]
-set_input_delay [expr $jtag_clk_period * $jtag_clk_io_pct] -clock $jtag_clk_name [get_ports jtag_trst]
-set_output_delay [expr $jtag_clk_period * $jtag_clk_io_pct] -clock $jtag_clk_name [get_ports jtag_tdo]
+set_input_delay [expr $jtag_clk_period * $jtag_clk_io_pct] \
+  -clock $jtag_clk_name [get_ports jtag_tdi]
+set_input_delay [expr $jtag_clk_period * $jtag_clk_io_pct] \
+  -clock $jtag_clk_name [get_ports jtag_tms]
+set_input_delay [expr $jtag_clk_period * $jtag_clk_io_pct] \
+  -clock $jtag_clk_name [get_ports jtag_trst]
+set_output_delay [expr $jtag_clk_period * $jtag_clk_io_pct] \
+  -clock $jtag_clk_name [get_ports jtag_tdo]
 
 set_max_fanout 10 [current_design]
 
