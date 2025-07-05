@@ -23,9 +23,13 @@ jobs:
     - name: Check if FlowVariables.md is up to date
       run: |
         git diff --exit-code docs/user/FlowVariables.md
+    - name: Install dependencies
+      run: |
+        python3 -m venv venv
+        venv/bin/pip install --quiet yamlfix==1.17.0
     - name: Run yamlfix check
       run: |
-        pip install --quiet yamlfix==1.17.0
+        source venv/bin/activate
         yamlfix --version
         set -x
         yamlfix -c yamlfix.toml flow/scripts/variables.yaml
