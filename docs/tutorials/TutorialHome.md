@@ -3,3 +3,5 @@
 The links to the main flow tutorial, where we go through each step of 
 the RTL-GDSII flow are as [follows](FlowTutorial.md). We have also provided
 Google Colab packaging for ease of experimentation [here](Notebooks.md).
+
+If you are interested in running OpenROAD locally, also check out the [Docker OpenROAD Quickstart Guide](DockerORQuickstart.md).
