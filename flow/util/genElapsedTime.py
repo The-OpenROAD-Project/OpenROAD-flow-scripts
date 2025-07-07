@@ -62,20 +62,22 @@ def print_log_dir_times(logdir, args):
                         int(line.split("Peak memory: ")[1].split("KB")[0]) / 1024
                     )
 
-            # content hash for .odb file alongside .log file is useful to
+            # content hash for the result file alongside .log file is useful to
             # debug divergent results under what should be identical
             # builds(such as local and CI builds)
-            odb_file = pathlib.Path(
-                str(f).replace("logs/", "results/").replace(".log", ".odb")
-            )
-            if odb_file.exists():
-                hasher = hashlib.sha1()
-                with open(odb_file, "rb") as odb_f:
-                    while chunk := odb_f.read(16 * 1024 * 1024):
-                        hasher.update(chunk)
-                odb_hash = hasher.hexdigest()
-            else:
-                odb_hash = "N/A"
+            for ext in [".odb", ".rtlil", ".v"]:
+                result_file = pathlib.Path(
+                    str(f).replace("logs/", "results/").replace(".log", ext)
+                )
+                if result_file.exists():
+                    hasher = hashlib.sha1()
+                    with open(result_file, "rb") as odb_f:
+                        while chunk := odb_f.read(16 * 1024 * 1024):
+                            hasher.update(chunk)
+                    odb_hash = hasher.hexdigest()
+                    break
+                else:
+                    odb_hash = "N/A"
 
             if not found:
                 print("No elapsed time found in", str(f), file=sys.stderr)
