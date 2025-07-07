@@ -814,10 +814,10 @@ set_disable_timing -from {CLKA} -to {CLKB} [get_cells {r2f.rocket.RocketTile.dca
 set_disable_timing -from {CLKB} -to {CLKA} [get_cells {r2f.rocket.RocketTile.dcache.meta.tag_arr.mem.macro_mem0.macro_mem0}]
 set_disable_timing -from {CLKA} -to {CLKB} [get_cells {r2f.rocket.RocketTile.dcache.meta.tag_arr.mem.macro_mem1.macro_mem0}]
 set_disable_timing -from {CLKB} -to {CLKA} [get_cells {r2f.rocket.RocketTile.dcache.meta.tag_arr.mem.macro_mem1.macro_mem0}]
-set_false_path\
-    -to [list [get_ports {rocc_ctrl_o_exception_}]\
-           [get_ports {rocc_ctrl_o_host_id_}]\
-           [get_ports {rocc_ctrl_o_s_}]]
+set_false_path \
+  -to [list [get_ports {rocc_ctrl_o_exception_}] \
+    [get_ports {rocc_ctrl_o_host_id_}] \
+    [get_ports {rocc_ctrl_o_s_}]]
 ###############################################################################
 # Environment
 ###############################################################################

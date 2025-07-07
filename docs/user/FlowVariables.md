@@ -128,6 +128,7 @@ configuration file.
 | <a name="DONT_USE_CELLS"></a>DONT_USE_CELLS| Dont use cells eases pin access in detailed routing.| |
 | <a name="DONT_USE_LIBS"></a>DONT_USE_LIBS| Set liberty files as `dont_use`.| |
 | <a name="DPO_MAX_DISPLACEMENT"></a>DPO_MAX_DISPLACEMENT| Specifies how far an instance can be moved when optimizing.| 5 1|
+| <a name="EARLY_SIZING_CAP_RATIO"></a>EARLY_SIZING_CAP_RATIO| Ratio between the input pin capacitance and the output pin load during initial gate sizing.| |
 | <a name="ENABLE_DPO"></a>ENABLE_DPO| Enable detail placement with improve_placement feature.| 1|
 | <a name="EQUIVALENCE_CHECK"></a>EQUIVALENCE_CHECK| Enable running equivalence checks to verify logical correctness of repair_timing.| 0|
 | <a name="FASTROUTE_TCL"></a>FASTROUTE_TCL| Specifies a Tcl script with commands to run before FastRoute.| |
@@ -234,6 +235,7 @@ configuration file.
 | <a name="TECH_LEF"></a>TECH_LEF| A technology LEF file of the PDK that includes all relevant information regarding metal layers, vias, and spacing requirements.| |
 | <a name="TIEHI_CELL_AND_PORT"></a>TIEHI_CELL_AND_PORT| Tie high cells used in Yosys synthesis to replace a logical 1 in the Netlist.| |
 | <a name="TIELO_CELL_AND_PORT"></a>TIELO_CELL_AND_PORT| Tie low cells used in Yosys synthesis to replace a logical 0 in the Netlist.| |
+| <a name="TIE_SEPARATION"></a>TIE_SEPARATION| Distance separating tie high/low instances from the load.| |
 | <a name="TNS_END_PERCENT"></a>TNS_END_PERCENT| Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all violating endpoints by default (reduce to 5% for runtime). Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed.| 100|
 | <a name="USE_FILL"></a>USE_FILL| Whether to perform metal density filling.| 0|
 | <a name="VERILOG_DEFINES"></a>VERILOG_DEFINES| Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`| |
@@ -329,6 +331,7 @@ configuration file.
 
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [CELL_PAD_IN_SITES_GLOBAL_PLACEMENT](#CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
+- [EARLY_SIZING_CAP_RATIO](#EARLY_SIZING_CAP_RATIO)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
 - [GPL_ROUTABILITY_DRIVEN](#GPL_ROUTABILITY_DRIVEN)
 - [GPL_TIMING_DRIVEN](#GPL_TIMING_DRIVEN)
@@ -343,6 +346,7 @@ configuration file.
 - [PLACE_PINS_ARGS](#PLACE_PINS_ARGS)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
+- [TIE_SEPARATION](#TIE_SEPARATION)
 
 ## cts variables
 

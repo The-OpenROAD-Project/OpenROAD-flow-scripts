@@ -29,22 +29,21 @@ set_case_analysis 0 [get_ports scan_enable_i]
 set_max_fanout $maxFanout [current_design]
 
 
-
 # False path some of the quasi-static signals.
 #set_false_path -from tile_id_i
 
 # TCDM Master
-set_input_delay  [expr 0.85*$clock_cycle] -clock vclk_i [get_ports -filter { name =~ tcdm_master_.*req_.*_i}] 
+set_input_delay [expr 0.85*$clock_cycle] -clock vclk_i [get_ports -filter { name =~ tcdm_master_.*req_.*_i}]
 set_output_delay [expr 0.85*$clock_cycle] -clock vclk_i [get_ports -filter { name =~ tcdm_master_*req_*_o}]
 
-set_input_delay  [expr 0.65*$clock_cycle] -clock vclk_i [get_ports -filter  {name =~ tcdm_master_*resp_*_i}]
+set_input_delay [expr 0.65*$clock_cycle] -clock vclk_i [get_ports -filter {name =~ tcdm_master_*resp_*_i}]
 set_output_delay [expr 0.85*$clock_cycle] -clock vclk_i [get_ports -filter {name =~ tcdm_master_*resp_*_o}]
 
 # TCDM Slave
 #set_input_delay  [expr 0.65*$clock_cycle] -clock vclk_i [get_ports -filter {name =~ tcdm_slave_*req_*_i}] 
 set_output_delay [expr 0.85*$clock_cycle] -clock vclk_i [get_ports -filter {name =~ tcdm_slave_*req_*_o}]
 
-set_input_delay  [expr 0.85*$clock_cycle] -clock vclk_i [get_ports -filter  {name =~ tcdm_slave_*resp_*_i}] 
+set_input_delay [expr 0.85*$clock_cycle] -clock vclk_i [get_ports -filter {name =~ tcdm_slave_*resp_*_i}]
 set_output_delay [expr 0.85*$clock_cycle] -clock vclk_i [get_ports -filter {name =~ tcdm_slave_*resp_*_o}]
 
 # Refill port
@@ -52,7 +51,7 @@ set_output_delay [expr 0.85*$clock_cycle] -clock vclk_i [get_ports -filter {name
 #set_output_delay [expr 0.50*$clock_cycle] -clock vclk_i [get_ports -filter {name =~ refill_*_o}]
 
 # Reset
-set_input_delay  [expr 0.30*$clock_cycle] -clock vclk_i rst_ni
+set_input_delay [expr 0.30*$clock_cycle] -clock vclk_i rst_ni
 
 # Critical range
 # Depending on the synthesis tool used, this can be helpful.

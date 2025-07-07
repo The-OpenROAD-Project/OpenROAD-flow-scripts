@@ -49,8 +49,8 @@ set jtag_clk_port [get_ports $jtag_clk_port_name]
 create_clock -name $jtag_clk_name -period $jtag_clk_period $jtag_clk_port
 
 set_clock_groups -name group1 -logically_exclusive \
-    -group [get_clocks $jtag_clk_name]\
-    -group [get_clocks $clk_name]
+  -group [get_clocks $jtag_clk_name] \
+  -group [get_clocks $clk_name]
 
 set_input_delay [expr $jtag_clk_period * $jtag_clk_io_pct] -clock $jtag_clk_name [get_ports jtag_tdi]
 set_input_delay [expr $jtag_clk_period * $jtag_clk_io_pct] -clock $jtag_clk_name [get_ports jtag_tms]

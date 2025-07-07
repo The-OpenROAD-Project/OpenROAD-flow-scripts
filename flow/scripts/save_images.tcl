@@ -7,7 +7,7 @@ set height [ord::dbu_to_microns $height]
 set resolution [expr $height / 1000]
 
 set markerdb [[ord::get_db_block] findMarkerCategory DRC]
-if {$markerdb != "NULL" && [$markerdb getMarkerCount] > 0} {
+if { $markerdb != "NULL" && [$markerdb getMarkerCount] > 0 } {
   gui::select_marker_category $markerdb
 }
 
@@ -41,7 +41,7 @@ gui::set_display_controls "Instances/Physical/*" visible false
 gui::set_display_controls "Misc/Instances/*" visible false
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_placement.webp
 
-if {[env_var_exists_and_non_empty PWR_NETS_VOLTAGES]} {
+if { [env_var_exists_and_non_empty PWR_NETS_VOLTAGES] } {
   gui::set_display_controls "Heat Maps/IR Drop" visible true
   gui::set_heatmap IRDrop Layer $::env(IR_DROP_LAYER)
   gui::set_heatmap IRDrop ShowLegend 1
@@ -66,8 +66,8 @@ foreach clock [get_clocks *] {
   if { [llength [get_property $clock sources]] > 0 } {
     set clock_name [get_name $clock]
     save_clocktree_image -clock $clock_name \
-        -width 1024 -height 1024 \
-        $::env(REPORTS_DIR)/cts_$clock_name.webp
+      -width 1024 -height 1024 \
+      $::env(REPORTS_DIR)/cts_$clock_name.webp
     gui::select_clockviewer_clock $clock_name
     save_image -resolution $resolution $::env(REPORTS_DIR)/cts_${clock_name}_layout.webp
   }
@@ -81,17 +81,17 @@ gui::set_display_controls "Nets/Ground" visible false
 gui::set_display_controls "Shape Types/Routing/*" visible false
 gui::set_display_controls "Instances/*" visible true
 gui::set_display_controls "Instances/Physical/*" visible false
-select -name "hold*" -type Inst -highlight 0       ;# green
-select -name "input*" -type Inst -highlight 1      ;# yellow
+select -name "hold*" -type Inst -highlight 0 ;# green
+select -name "input*" -type Inst -highlight 1 ;# yellow
 select -name "output*" -type Inst -highlight 1
-select -name "repeater*" -type Inst -highlight 3   ;# magenta
+select -name "repeater*" -type Inst -highlight 3 ;# magenta
 select -name "fanout*" -type Inst -highlight 3
 select -name "load_slew*" -type Inst -highlight 3
 select -name "max_cap*" -type Inst -highlight 3
 select -name "max_length*" -type Inst -highlight 3
 select -name "wire*" -type Inst -highlight 3
-select -name "rebuffer*" -type Inst -highlight 4   ;# red
-select -name "split*" -type Inst -highlight 5      ;# dark green
+select -name "rebuffer*" -type Inst -highlight 4 ;# red
+select -name "split*" -type Inst -highlight 5 ;# dark green
 
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_resizer.webp
 

@@ -7,7 +7,7 @@ load_design 3_place.odb 3_place.sdc
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
 
-proc save_progress {stage} {
+proc save_progress { stage } {
   puts "Run 'make gui_$stage.odb' to load progress snapshot"
   write_db $::env(RESULTS_DIR)/$stage.odb
   write_sdc -no_timestamp $::env(RESULTS_DIR)/$stage.sdc
@@ -15,9 +15,9 @@ proc save_progress {stage} {
 
 # Run CTS
 set cts_args [list \
-          -sink_clustering_enable \
-          -balance_levels \
-	  -repair_clock_nets]
+  -sink_clustering_enable \
+  -balance_levels \
+  -repair_clock_nets]
 
 append_env_var cts_args CTS_BUF_DISTANCE -distance_between_buffers 1
 append_env_var cts_args CTS_CLUSTER_SIZE -sink_clustering_size 1
@@ -26,7 +26,7 @@ append_env_var cts_args CTS_BUF_LIST -buf_list 1
 append_env_var cts_args CTS_LIB_NAME -library 1
 
 
-if {[env_var_exists_and_non_empty CTS_ARGS]} {
+if { [env_var_exists_and_non_empty CTS_ARGS] } {
   set cts_args $::env(CTS_ARGS)
 }
 
@@ -42,29 +42,29 @@ if { $::env(DETAILED_METRICS) } {
 utl::pop_metrics_stage
 
 set_placement_padding -global \
-    -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
-    -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
+  -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
+  -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 detailed_placement
 
 estimate_parasitics -placement
 
-if {[env_var_equals CTS_SNAPSHOTS 1]} {
+if { [env_var_equals CTS_SNAPSHOTS 1] } {
   save_progress 4_1_pre_repair_hold_setup
 }
 
-if {![env_var_equals SKIP_CTS_REPAIR_TIMING 1]} {
-  if {$::env(EQUIVALENCE_CHECK)} {
-      write_eqy_verilog 4_before_rsz.v
+if { ![env_var_equals SKIP_CTS_REPAIR_TIMING 1] } {
+  if { $::env(EQUIVALENCE_CHECK) } {
+    write_eqy_verilog 4_before_rsz.v
   }
 
   repair_timing_helper
 
-  if {$::env(EQUIVALENCE_CHECK)} {
-      run_equivalence_test
+  if { $::env(EQUIVALENCE_CHECK) } {
+    run_equivalence_test
   }
 
-  set result [catch {detailed_placement} msg]
-  if {$result != 0} {
+  set result [catch { detailed_placement } msg]
+  if { $result != 0 } {
     save_progress 4_1_error
     puts "Detailed placement failed in CTS: $msg"
     exit $result

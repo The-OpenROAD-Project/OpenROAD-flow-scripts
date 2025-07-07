@@ -31,7 +31,7 @@ set_false_path -to [get_ports *rst_n]
 set non_clk_inputs {}
 set clock_ports [list [get_ports $clk1_name] [get_ports $clk2_name]]
 foreach input [all_inputs] {
-  if {[lsearch -exact $clock_ports $input] == -1} {
+  if { [lsearch -exact $clock_ports $input] == -1 } {
     lappend non_clk_inputs $input
   }
 }
