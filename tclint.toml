@@ -3,7 +3,8 @@
 exclude = [
     "flow/results",
     "flow/logs",
-    "flow/designs",
+    "flow/designs/asap7/cva6/constraint.sdc",
+    "flow/designs/nangate45/bp_quad/bsg_chip.sdc",
     "flow/platforms",
     "flow/scripts/*.tcl",
     "tools/OpenROAD",

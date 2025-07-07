@@ -6,4 +6,5 @@ foreach prefix {"" flow/} {
   }
 }
 
-set_io_pin_constraint -order -group -region bottom:* -pin_names [concat [match_pins .*] [match_pins clk input 1]]
+set_io_pin_constraint -order -group -region bottom:* \
+  -pin_names [concat [match_pins .*] [match_pins clk input 1]]
