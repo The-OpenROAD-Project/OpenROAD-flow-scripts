@@ -1,5 +1,5 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
-read_checkpoint $::env(RESULTS_DIR)/1_synth.rtlil
+read_checkpoint $::env(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
 
 hierarchy -check -top $::env(DESIGN_NAME)
 
@@ -145,7 +145,7 @@ if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
 }
 
 # Write synthesized design
-write_verilog -nohex -nodec $::env(RESULTS_DIR)/1_1_yosys.v
+write_verilog -nohex -nodec $::env(RESULTS_DIR)/1_2_yosys.v
 # One day a more sophisticated synthesis will write out a modified
 # .sdc file after synthesis. For now, just copy the input .sdc file,
 # making synthesis more consistent with other stages.
