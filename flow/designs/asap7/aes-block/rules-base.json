@@ -24,7 +24,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1744,
+        "value": 1331,
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -33.09,
+        "value": -18.47,
         "compare": ">="
     }
 }
