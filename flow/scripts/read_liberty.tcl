@@ -1,5 +1,5 @@
 #Read Liberty
-if {[env_var_exists_and_non_empty CORNERS]} {
+if { [env_var_exists_and_non_empty CORNERS] } {
   # corners
   define_corners {*}$::env(CORNERS)
   foreach corner $::env(CORNERS) {

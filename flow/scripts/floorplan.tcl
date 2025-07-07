@@ -3,14 +3,14 @@ source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
 load_design 1_synth.v 1_synth.sdc
 
-proc report_unused_masters {} {
+proc report_unused_masters { } {
   set db [ord::get_db]
   set libs [$db getLibs]
   set masters ""
   foreach lib $libs {
     foreach master [$lib getMasters] {
       # filter out non-block masters, or you can remove this conditional to detect any unused master
-      if {[$master getType] == "BLOCK"} {
+      if { [$master getType] == "BLOCK" } {
         lappend masters $master
       }
     }
@@ -45,61 +45,53 @@ append_env_var additional_args ADDITIONAL_SITES -additional_sites 1
 
 set use_floorplan_def [env_var_exists_and_non_empty FLOORPLAN_DEF]
 set use_footprint [env_var_exists_and_non_empty FOOTPRINT]
-set use_die_and_core_area [expr {[env_var_exists_and_non_empty DIE_AREA] && [env_var_exists_and_non_empty CORE_AREA]}]
+set use_die_and_core_area [expr { [env_var_exists_and_non_empty DIE_AREA] && [env_var_exists_and_non_empty CORE_AREA] }]
 set use_core_utilization [env_var_exists_and_non_empty CORE_UTILIZATION]
 
-set methods_defined [expr {$use_floorplan_def + $use_footprint + $use_die_and_core_area + $use_core_utilization}]
-if {$methods_defined > 1} {
-    puts "Error: Floorplan initialization methods are mutually exclusive, pick one."
-    exit 1
+set methods_defined [expr { $use_floorplan_def + $use_footprint + $use_die_and_core_area + $use_core_utilization }]
+if { $methods_defined > 1 } {
+  puts "Error: Floorplan initialization methods are mutually exclusive, pick one."
+  exit 1
 }
 
-if {$use_floorplan_def} {
-    # Initialize floorplan by reading in floorplan DEF
-    log_cmd read_def -floorplan_initialize $env(FLOORPLAN_DEF)
-} elseif {$use_footprint} {
-    # Initialize floorplan using ICeWall FOOTPRINT
-    ICeWall load_footprint $env(FOOTPRINT)
+if { $use_floorplan_def } {
+  # Initialize floorplan by reading in floorplan DEF
+  log_cmd read_def -floorplan_initialize $env(FLOORPLAN_DEF)
+} elseif { $use_footprint } {
+  # Initialize floorplan using ICeWall FOOTPRINT
+  ICeWall load_footprint $env(FOOTPRINT)
 
-    initialize_floorplan \
-        -die_area  [ICeWall get_die_area] \
-        -core_area [ICeWall get_core_area] \
-        -site      $::env(PLACE_SITE)
+  initialize_floorplan \
+    -die_area [ICeWall get_die_area] \
+    -core_area [ICeWall get_core_area] \
+    -site $::env(PLACE_SITE)
 
-    ICeWall init_footprint $env(SIG_MAP_FILE)
-} elseif {$use_die_and_core_area} {
-    initialize_floorplan -die_area $::env(DIE_AREA) \
-                         -core_area $::env(CORE_AREA) \
-                         -site $::env(PLACE_SITE) \
-                         {*}$additional_args
-} elseif {$use_core_utilization} {
-    set aspect_ratio 1.0
-    if {[env_var_exists_and_non_empty "CORE_ASPECT_RATIO"]} {
-        set aspect_ratio $::env(CORE_ASPECT_RATIO)
-    }
-    set core_margin 1.0
-    if {[env_var_exists_and_non_empty "CORE_MARGIN"]} {
-        set core_margin $::env(CORE_MARGIN)
-    }
-    initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
-                         -aspect_ratio $aspect_ratio \
-                         -core_space $core_margin \
-                         -site $::env(PLACE_SITE) \
-                         {*}$additional_args
+  ICeWall init_footprint $env(SIG_MAP_FILE)
+} elseif { $use_die_and_core_area } {
+  initialize_floorplan -die_area $::env(DIE_AREA) \
+    -core_area $::env(CORE_AREA) \
+    -site $::env(PLACE_SITE) \
+    {*}$additional_args
+} elseif { $use_core_utilization } {
+  initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
+    -aspect_ratio $::env(CORE_ASPECT_RATIO) \
+    -core_space $::env(CORE_MARGIN) \
+    -site $::env(PLACE_SITE) \
+    {*}$additional_args
 } else {
-    puts "Error: No floorplan initialization method specified"
-    exit 1
+  puts "Error: No floorplan initialization method specified"
+  exit 1
 }
 
 if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
   log_cmd source $::env(MAKE_TRACKS)
-} elseif {[file exists $::env(PLATFORM_DIR)/make_tracks.tcl]} {
+} elseif { [file exists $::env(PLATFORM_DIR)/make_tracks.tcl] } {
   log_cmd source $::env(PLATFORM_DIR)/make_tracks.tcl
 } else {
   make_tracks
 }
 
-if {[env_var_exists_and_non_empty FOOTPRINT_TCL]} {
+if { [env_var_exists_and_non_empty FOOTPRINT_TCL] } {
   log_cmd source $::env(FOOTPRINT_TCL)
 }
 
@@ -110,7 +102,7 @@ if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
   # Skip clone & split
   set ::env(SETUP_MOVE_SEQUENCE) "unbuffer,sizeup,swap,buffer"
   set ::env(SKIP_LAST_GASP) 1
-  repair_timing_helper 0
+  repair_timing_helper -setup
 }
 
 puts "Default units for flow"
@@ -123,7 +115,7 @@ if { [env_var_exists_and_non_empty POST_FLOORPLAN_TCL] } {
 }
 
 
-if {[env_var_exists_and_non_empty IO_CONSTRAINTS]} {
+if { [env_var_exists_and_non_empty IO_CONSTRAINTS] } {
   log_cmd source $::env(IO_CONSTRAINTS)
 }
 

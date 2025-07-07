@@ -1,4 +1,4 @@
-proc deleteRoutingObstructions {} {
+proc deleteRoutingObstructions { } {
   set db [ord::get_db]
   set chip [$db getChip]
   set block [$chip getBlock]

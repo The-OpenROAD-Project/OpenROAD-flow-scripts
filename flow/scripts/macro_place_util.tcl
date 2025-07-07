@@ -1,16 +1,16 @@
-if {[find_macros] != ""} {
-  if {![env_var_exists_and_non_empty RTLMP_RPT_DIR]} {
+if { [find_macros] != "" } {
+  if { ![env_var_exists_and_non_empty RTLMP_RPT_DIR] } {
     set ::env(RTLMP_RPT_DIR) "$::env(OBJECTS_DIR)/rtlmp"
   }
-  if {![env_var_exists_and_non_empty RTLMP_RPT_FILE]} {
+  if { ![env_var_exists_and_non_empty RTLMP_RPT_FILE] } {
     set ::env(RTLMP_RPT_FILE) "partition.txt"
   }
-  if {![env_var_exists_and_non_empty RTLMP_BLOCKAGE_FILE]} {
+  if { ![env_var_exists_and_non_empty RTLMP_BLOCKAGE_FILE] } {
     set ::env(RTLMP_BLOCKAGE_FILE) "$::env(OBJECTS_DIR)/rtlmp/partition.txt.blockage"
   }
 
   # If wrappers defined replace macros with their wrapped version
-  if {[env_var_exists_and_non_empty MACRO_WRAPPERS]} {
+  if { [env_var_exists_and_non_empty MACRO_WRAPPERS] } {
     source $::env(MACRO_WRAPPERS)
 
     set wrapped_macros [dict keys [dict get $wrapper around]]
@@ -18,7 +18,7 @@ if {[find_macros] != ""} {
     set block [ord::get_db_block]
 
     foreach inst [$block getInsts] {
-      if {[lsearch -exact $wrapped_macros [[$inst getMaster] getName]] > -1} {
+      if { [lsearch -exact $wrapped_macros [[$inst getMaster] getName]] > -1 } {
         set new_master [dict get $wrapper around [[$inst getMaster] getName]]
         puts "Replacing [[$inst getMaster] getName] with $new_master for [$inst getName]"
         $inst swapMaster [$db findMaster $new_master]
@@ -30,13 +30,13 @@ if {[find_macros] != ""} {
   set halo_max [expr max($halo_x, $halo_y)]
   set blockage_width $halo_max
 
-  if {[env_var_exists_and_non_empty MACRO_BLOCKAGE_HALO]} {
+  if { [env_var_exists_and_non_empty MACRO_BLOCKAGE_HALO] } {
     set blockage_width $::env(MACRO_BLOCKAGE_HALO)
   }
 
-  if {[env_var_exists_and_non_empty MACRO_PLACEMENT_TCL]} {
+  if { [env_var_exists_and_non_empty MACRO_PLACEMENT_TCL] } {
     log_cmd source $::env(MACRO_PLACEMENT_TCL)
-  } elseif {[env_var_exists_and_non_empty MACRO_PLACEMENT]} {
+  } elseif { [env_var_exists_and_non_empty MACRO_PLACEMENT] } {
     source $::env(SCRIPTS_DIR)/read_macro_placement.tcl
     log_cmd read_macro_placement $::env(MACRO_PLACEMENT)
   } else {
@@ -74,7 +74,7 @@ if {[find_macros] != ""} {
   }
 
   source $::env(SCRIPTS_DIR)/placement_blockages.tcl
-  block_channels $blockage_width 
+  block_channels $blockage_width
 } else {
   puts "No macros found: Skipping macro_placement"
 }

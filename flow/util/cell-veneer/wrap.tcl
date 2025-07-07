@@ -5,7 +5,7 @@ exec tclsh "$0" ${1+"$@"}
 package require wrapper
 package require lefdef
 
-if {[set idx [lsearch -exact $argv {-cfg}]] > -1} {
+if { [set idx [lsearch -exact $argv {-cfg}]] > -1 } {
   set cfg_file [lindex $argv [expr $idx + 1]]
   set argv [lreplace $argv $idx [expr $idx + 1]]
 
@@ -15,7 +15,7 @@ if {[set idx [lsearch -exact $argv {-cfg}]] > -1} {
   wrapper critical 2 "no configuration data loaded"
 }
 
-if {[lindex $argv 0] == "-macro"} {
+if { [lindex $argv 0] == "-macro" } {
   set lef_files [lrange $argv 1 end]
   set cells {}
   foreach file_name $lef_files {
