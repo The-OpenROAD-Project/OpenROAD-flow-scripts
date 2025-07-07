@@ -1,5 +1,5 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
-read_checkpoint $::env(RESULTS_DIR)/1_synth.rtlil
+read_checkpoint $::env(RESULTS_DIR)/1_0_yosys_canonicalize.rtlil
 
 hierarchy -check -top $::env(DESIGN_NAME)
 

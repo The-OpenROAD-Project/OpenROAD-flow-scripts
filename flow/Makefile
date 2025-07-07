@@ -286,12 +286,12 @@ do-yosys: $(DONT_USE_SC_LIB)
 
 .PHONY: do-yosys-canonicalize
 do-yosys-canonicalize: yosys-dependencies $(DONT_USE_SC_LIB)
-	$(SCRIPTS_DIR)/synth.sh $(SCRIPTS_DIR)/synth_canonicalize.tcl $(LOG_DIR)/1_1_yosys_canonicalize.log
+	$(SCRIPTS_DIR)/synth.sh $(SCRIPTS_DIR)/synth_canonicalize.tcl $(LOG_DIR)/1_0_yosys_canonicalize.log
 
-$(RESULTS_DIR)/1_synth.rtlil: $(YOSYS_DEPENDENCIES)
+$(RESULTS_DIR)/1_0_yosys_canonicalize.rtlil: $(YOSYS_DEPENDENCIES)
 	$(UNSET_AND_MAKE) do-yosys-canonicalize
 
-$(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_synth.rtlil
+$(RESULTS_DIR)/1_1_yosys.v: $(RESULTS_DIR)/1_0_yosys_canonicalize.rtlil
 	$(UNSET_AND_MAKE) do-yosys
 
 .PHONY: do-synth
