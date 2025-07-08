@@ -5,7 +5,6 @@ exclude = [
     "flow/logs",
     "flow/designs/asap7/cva6/constraint.sdc",
     "flow/designs/nangate45/bp_quad/bsg_chip.sdc",
-    "flow/platforms",
     "flow/scripts/*.tcl",
     "tools/OpenROAD",
     "tools/yosys",
