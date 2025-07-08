@@ -18,13 +18,17 @@ def print_log_dir_times(logdir, args):
     first = True
     totalElapsed = 0
     total_max_memory = 0
-    print(logdir)
+    if not args.match:
+        print(logdir)
 
     # Loop on all log files in the directory
     for f in sorted(pathlib.Path(logdir).glob("**/*.log")):
         if "eqy_output" in str(f):
             continue
         # Extract Elapsed Time line from log file
+        stem = os.path.splitext(os.path.basename(str(f)))[0]
+        if args.match and args.match != stem:
+            continue
         with open(str(f)) as logfile:
             found = False
             for line in logfile:
@@ -95,7 +99,7 @@ def print_log_dir_times(logdir, args):
             print(
                 format_str
                 % (
-                    os.path.splitext(os.path.basename(str(f)))[0],
+                    stem,
                     elapsedTime,
                     peak_memory,
                     odb_hash[0:20],
@@ -104,13 +108,17 @@ def print_log_dir_times(logdir, args):
         totalElapsed += elapsedTime
         total_max_memory = max(total_max_memory, int(peak_memory))
 
-    if totalElapsed != 0:
+    if totalElapsed != 0 and not args.match:
         print(format_str % ("Total", totalElapsed, total_max_memory, ""))
 
 
 def scan_logs(args):
     parser = argparse.ArgumentParser(
         description="Print elapsed time for every step in the flow"
+    )
+    parser.add_argument(
+        "--match",
+        help="Match this string in the log file names",
     )
     parser.add_argument(
         "--logDir", "-d", required=True, nargs="+", help="Log files directories"
