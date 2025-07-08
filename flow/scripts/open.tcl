@@ -28,7 +28,7 @@ proc read_timing { input_file } {
     set sdc_file $::env(SDC_FILE)
   }
   log_cmd read_sdc $sdc_file
-  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
+  if { [file exists $::env(PLATFORM_DIR)/derate.tcl] } {
     source $::env(PLATFORM_DIR)/derate.tcl
   }
 
@@ -57,7 +57,8 @@ proc read_timing { input_file } {
 
 if { [ord::openroad_gui_compiled] } {
   set db_basename [file rootname [file tail $input_file]]
-  gui::set_title "OpenROAD - $::env(PLATFORM)/$::env(DESIGN_NICKNAME)/$::env(FLOW_VARIANT) - ${db_basename}"
+  gui::set_title \
+    "OpenROAD - $::env(PLATFORM)/$::env(DESIGN_NICKNAME)/$::env(FLOW_VARIANT) - ${db_basename}"
 }
 
 if { [env_var_equals GUI_TIMING 1] } {
