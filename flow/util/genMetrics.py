@@ -288,7 +288,7 @@ def extract_metrics(
     # Accumulate time
     # =========================================================================
 
-    extractGnuTime("synth", metrics_dict, logPath + "/1_1_yosys.log")
+    extractGnuTime("synth", metrics_dict, logPath + "/1_2_yosys.log")
     extractGnuTime("floorplan", metrics_dict, logPath + "/2_1_floorplan.log")
     extractGnuTime("floorplan_io", metrics_dict, logPath + "/2_2_floorplan_io.log")
     extractGnuTime(
