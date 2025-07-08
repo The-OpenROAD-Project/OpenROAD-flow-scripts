@@ -95,6 +95,10 @@ if { [env_var_exists_and_non_empty FOOTPRINT_TCL] } {
   log_cmd source $::env(FOOTPRINT_TCL)
 }
 
+# This needs to come before any call to remove_buffers.  You could have one
+# tie driving multiple buffers that drive multiple outputs.
+repair_tie_fanout_helper
+
 if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
   # remove buffers inserted by yosys/abc
   remove_buffers
