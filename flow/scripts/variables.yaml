@@ -215,13 +215,13 @@ TIEHI_CELL_AND_PORT:
     Netlist.
   stages:
     - synth
-    - place
+    - floorplan
 TIELO_CELL_AND_PORT:
   description: |
     Tie low cells used in Yosys synthesis to replace a logical 0 in the Netlist.
   stages:
     - synth
-    - place
+    - floorplan
 TIE_SEPARATION:
   description: |
     Distance separating tie high/low instances from the load.

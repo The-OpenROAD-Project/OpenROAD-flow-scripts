@@ -18,13 +18,17 @@ def print_log_dir_times(logdir, args):
     first = True
     totalElapsed = 0
     total_max_memory = 0
-    print(logdir)
+    if not args.match:
+        print(logdir)
 
     # Loop on all log files in the directory
     for f in sorted(pathlib.Path(logdir).glob("**/*.log")):
         if "eqy_output" in str(f):
             continue
         # Extract Elapsed Time line from log file
+        stem = os.path.splitext(os.path.basename(str(f)))[0]
+        if args.match and args.match != stem:
+            continue
         with open(str(f)) as logfile:
             found = False
             for line in logfile:
@@ -62,20 +66,22 @@ def print_log_dir_times(logdir, args):
                         int(line.split("Peak memory: ")[1].split("KB")[0]) / 1024
                     )
 
-            # content hash for .odb file alongside .log file is useful to
+            # content hash for the result file alongside .log file is useful to
             # debug divergent results under what should be identical
             # builds(such as local and CI builds)
-            odb_file = pathlib.Path(
-                str(f).replace("logs/", "results/").replace(".log", ".odb")
-            )
-            if odb_file.exists():
-                hasher = hashlib.sha1()
-                with open(odb_file, "rb") as odb_f:
-                    while chunk := odb_f.read(16 * 1024 * 1024):
-                        hasher.update(chunk)
-                odb_hash = hasher.hexdigest()
-            else:
-                odb_hash = "N/A"
+            for ext in [".odb", ".rtlil", ".v"]:
+                result_file = pathlib.Path(
+                    str(f).replace("logs/", "results/").replace(".log", ext)
+                )
+                if result_file.exists():
+                    hasher = hashlib.sha1()
+                    with open(result_file, "rb") as odb_f:
+                        while chunk := odb_f.read(16 * 1024 * 1024):
+                            hasher.update(chunk)
+                    odb_hash = hasher.hexdigest()
+                    break
+                else:
+                    odb_hash = "N/A"
 
             if not found:
                 print("No elapsed time found in", str(f), file=sys.stderr)
@@ -93,7 +99,7 @@ def print_log_dir_times(logdir, args):
             print(
                 format_str
                 % (
-                    os.path.splitext(os.path.basename(str(f)))[0],
+                    stem,
                     elapsedTime,
                     peak_memory,
                     odb_hash[0:20],
@@ -102,13 +108,17 @@ def print_log_dir_times(logdir, args):
         totalElapsed += elapsedTime
         total_max_memory = max(total_max_memory, int(peak_memory))
 
-    if totalElapsed != 0:
+    if totalElapsed != 0 and not args.match:
         print(format_str % ("Total", totalElapsed, total_max_memory, ""))
 
 
 def scan_logs(args):
     parser = argparse.ArgumentParser(
         description="Print elapsed time for every step in the flow"
+    )
+    parser.add_argument(
+        "--match",
+        help="Match this string in the log file names",
     )
     parser.add_argument(
         "--logDir", "-d", required=True, nargs="+", help="Log files directories"

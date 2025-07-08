@@ -8,11 +8,11 @@ erase_non_stage_variables synth
 # floorplan step to be re-executed.
 if { [env_var_exists_and_non_empty SYNTH_NETLIST_FILES] } {
   if { [llength $::env(SYNTH_NETLIST_FILES)] == 1 } {
-    log_cmd exec cp -p $::env(SYNTH_NETLIST_FILES) $::env(RESULTS_DIR)/1_1_yosys.v
+    log_cmd exec cp -p $::env(SYNTH_NETLIST_FILES) $::env(RESULTS_DIR)/1_2_yosys.v
   } else {
     # The date should be the most recent date of the files, but to
     # keep things simple we just use the creation date
-    log_cmd exec cat {*}$::env(SYNTH_NETLIST_FILES) > $::env(RESULTS_DIR)/1_1_yosys.v
+    log_cmd exec cat {*}$::env(SYNTH_NETLIST_FILES) > $::env(RESULTS_DIR)/1_2_yosys.v
   }
   log_cmd exec cp -p $::env(SDC_FILE) $::env(RESULTS_DIR)/1_synth.sdc
   if { [env_var_exists_and_non_empty CACHED_REPORTS] } {
