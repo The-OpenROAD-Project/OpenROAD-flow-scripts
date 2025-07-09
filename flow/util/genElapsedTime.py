@@ -105,8 +105,10 @@ def print_log_dir_times(logdir, args):
                     odb_hash[0:20],
                 )
             )
-        totalElapsed += elapsedTime
-        total_max_memory = max(total_max_memory, int(peak_memory))
+        if elapsedTime is not None:
+            totalElapsed += elapsedTime
+        if peak_memory is not None:
+            total_max_memory = max(total_max_memory, int(peak_memory))
 
     if totalElapsed != 0 and not args.match:
         print(format_str % ("Total", totalElapsed, total_max_memory, ""))
