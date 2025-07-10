@@ -65,6 +65,7 @@ def print_log_dir_times(logdir, args):
                     peak_memory = int(
                         int(line.split("Peak memory: ")[1].split("KB")[0]) / 1024
                     )
+                    break
 
             # content hash for the result file alongside .log file is useful to
             # debug divergent results under what should be identical
