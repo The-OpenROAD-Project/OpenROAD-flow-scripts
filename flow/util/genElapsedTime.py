@@ -14,6 +14,26 @@ import sys
 # ==============================================================================
 
 
+def get_hash(f):
+    # content hash for the result file alongside .log file is useful to
+    # debug divergent results under what should be identical
+    # builds(such as local and CI builds)
+    for ext in [".odb", ".rtlil", ".v"]:
+        result_file = pathlib.Path(
+            str(f).replace("logs/", "results/").replace(".log", ext)
+        )
+        if result_file.exists():
+            hasher = hashlib.sha1()
+            with open(result_file, "rb") as odb_f:
+                while True:
+                    chunk = odb_f.read(16 * 1024 * 1024)
+                    if not chunk:
+                        break
+                    hasher.update(chunk)
+            return hasher.hexdigest()
+    return "N/A"
+
+
 def print_log_dir_times(logdir, args):
     first = True
     totalElapsed = 0
@@ -67,22 +87,7 @@ def print_log_dir_times(logdir, args):
                     )
                     break
 
-            # content hash for the result file alongside .log file is useful to
-            # debug divergent results under what should be identical
-            # builds(such as local and CI builds)
-            for ext in [".odb", ".rtlil", ".v"]:
-                result_file = pathlib.Path(
-                    str(f).replace("logs/", "results/").replace(".log", ext)
-                )
-                if result_file.exists():
-                    hasher = hashlib.sha1()
-                    with open(result_file, "rb") as odb_f:
-                        while chunk := odb_f.read(16 * 1024 * 1024):
-                            hasher.update(chunk)
-                    odb_hash = hasher.hexdigest()
-                    break
-                else:
-                    odb_hash = "N/A"
+            odb_hash = get_hash(f)
 
             if not found:
                 print("No elapsed time found in", str(f), file=sys.stderr)
