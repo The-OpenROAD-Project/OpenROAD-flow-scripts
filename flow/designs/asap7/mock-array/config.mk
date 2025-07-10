@@ -26,6 +26,10 @@ export DIE_AREA  = $(shell \
 export MACRO_PLACE_HALO = 0 2.16
 export RTLMP_BOUNDARY_WT = 0
 export RTLMP_FLOW ?= 1
+export RTLMP_MAX_INST = 250
+export RTLMP_MIN_INST = 50
+export RTLMP_MAX_MACRO = 64
+export RTLMP_MIN_MACRO = 8
 
 export BLOCKS                ?= Element
 
