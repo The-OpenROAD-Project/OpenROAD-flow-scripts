@@ -1,3 +1,9 @@
+# Source platform-related Tcl command (initially for suppressing Liberty
+# warnings
+if { [env_var_exists_and_non_empty PLATFORM_TCL] } {
+  source $::env(PLATFORM_TCL)
+}
+
 #Read Liberty
 if { [env_var_exists_and_non_empty CORNERS] } {
   # corners

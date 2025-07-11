@@ -3,12 +3,6 @@ source $::env(SCRIPTS_DIR)/util.tcl
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
 proc load_design { design_file sdc_file } {
-  # Source platform-related Tcl command (initially for suppressing Liberty
-  # warnings
-  if { [env_var_exists_and_non_empty PLATFORM_TCL] } {
-    log_cmd source $::env(PLATFORM_TCL)
-  }
-
   # Read liberty files
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
