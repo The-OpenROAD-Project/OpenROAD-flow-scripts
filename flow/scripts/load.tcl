@@ -3,7 +3,8 @@ source $::env(SCRIPTS_DIR)/util.tcl
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
 proc load_design { design_file sdc_file } {
-  # Read liberty files
+  source_env_var_if_exists PLATFORM_TCL
+
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
