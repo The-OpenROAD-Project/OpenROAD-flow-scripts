@@ -45,10 +45,12 @@ append_env_var additional_args ADDITIONAL_SITES -additional_sites 1
 
 set use_floorplan_def [env_var_exists_and_non_empty FLOORPLAN_DEF]
 set use_footprint [env_var_exists_and_non_empty FOOTPRINT]
-set use_die_and_core_area [expr { [env_var_exists_and_non_empty DIE_AREA] && [env_var_exists_and_non_empty CORE_AREA] }]
+set use_die_and_core_area \
+  [expr { [env_var_exists_and_non_empty DIE_AREA] && [env_var_exists_and_non_empty CORE_AREA] }]
 set use_core_utilization [env_var_exists_and_non_empty CORE_UTILIZATION]
 
-set methods_defined [expr { $use_floorplan_def + $use_footprint + $use_die_and_core_area + $use_core_utilization }]
+set methods_defined \
+  [expr { $use_floorplan_def + $use_footprint + $use_die_and_core_area + $use_core_utilization }]
 if { $methods_defined > 1 } {
   puts "Error: Floorplan initialization methods are mutually exclusive, pick one."
   exit 1

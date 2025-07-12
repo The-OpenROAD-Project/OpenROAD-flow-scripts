@@ -23,7 +23,7 @@ proc global_route_helper { } {
 
   if { $result != 0 } {
     if {
-      [expr !$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
+      [!$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
         ![file exists $::global_route_congestion_report] || \
         [file size $::global_route_congestion_report] == 0]
     } {
@@ -62,7 +62,8 @@ proc global_route_helper { } {
     log_cmd global_route -start_incremental
     log_cmd detailed_placement
     # Route only the modified net by DPL
-    log_cmd global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
+    log_cmd global_route -end_incremental \
+      -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
 
     # Repair timing using global route parasitics
     puts "Repair setup and hold violations..."
@@ -79,14 +80,16 @@ proc global_route_helper { } {
     log_cmd global_route -start_incremental
     log_cmd detailed_placement
     # Route only the modified net by DPL
-    log_cmd global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
+    log_cmd global_route -end_incremental \
+      -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
   }
 
 
   log_cmd global_route -start_incremental
   recover_power_helper
   # Route the modified nets by rsz journal restore
-  log_cmd global_route -end_incremental -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  log_cmd global_route -end_incremental \
+    -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
 
   if { ![env_var_equals SKIP_ANTENNA_REPAIR 1] } {
     puts "Repair antennas..."
