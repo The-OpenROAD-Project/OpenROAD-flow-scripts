@@ -141,7 +141,7 @@ proc convert_liberty_areas { } {
       continue
     }
     set area [rtlil::get_attr -string -mod $cell area]
-    if { $found_cell == "" || [$area < $found_cell_area] } {
+    if { $found_cell == "" || $area < $found_cell_area } {
       set found_cell $cell
       set found_cell_area $area
     }
