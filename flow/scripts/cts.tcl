@@ -75,9 +75,7 @@ if { ![env_var_equals SKIP_CTS_REPAIR_TIMING 1] } {
 
 report_metrics 4 "cts final"
 
-if { [env_var_exists_and_non_empty POST_CTS_TCL] } {
-  source $::env(POST_CTS_TCL)
-}
+source_env_var_if_exists POST_CTS_TCL
 
 write_db $::env(RESULTS_DIR)/4_1_cts.odb
 write_sdc -no_timestamp $::env(RESULTS_DIR)/4_cts.sdc
