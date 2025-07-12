@@ -32,6 +32,7 @@
 ## POSSIBILITY OF SUCH DAMAGE.
 ###############################################################################
 
+import glob
 import unittest
 import subprocess
 import os
@@ -41,9 +42,7 @@ from .autotuner_test_utils import AutoTunerTestUtils, accepted_rc
 from contextlib import contextmanager
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.join(cur_dir, "../src")
-orfs_dir = os.path.join(cur_dir, "../../../flow")
-os.chdir(src_dir)
+DEFAULT_MODIFIED_TIME = 0
 
 
 @contextmanager
@@ -65,34 +64,57 @@ class ResumeCheck(unittest.TestCase):
     design = "gcd"
     samples = 5
     iterations = 2
+    experiment_name = "test-resume"
 
     def setUp(self):
         self.config = os.path.join(
-            orfs_dir, "designs", self.platform, self.design, "autotuner.json"
+            cur_dir,
+            f"../../../flow/designs/{self.platform}/{self.design}/autotuner.json",
         )
         self.jobs = self.samples
         self.num_cpus = os.cpu_count()
 
-        # How it works: Say we have 5 samples and 5 iterations.
-        # If we want to limit to only 5 trials (and avoid any parallelism magic by Ray)
-        #  We can set resources_per_trial = NUM_CORES/5 = 3.2 (fractional resources_per_trial are allowed!)
-
         # Cast to 1 decimal place
         res_per_trial = float("{:.1f}".format(self.num_cpus / self.samples))
         options = ["", "--resume"]
-        self.exec = AutoTunerTestUtils.get_exec_cmd()
+        self.executable_command = AutoTunerTestUtils.get_exec_cmd()
         self.commands = [
-            f"{self.exec}"
+            f"{self.executable_command}"
             f" --design {self.design}"
             f" --platform {self.platform}"
             f" --config {self.config}"
             f" --jobs {self.jobs}"
-            f" --experiment test-resume"
+            f" --experiment {self.experiment_name}"
             f" tune --iterations {self.iterations} --samples {self.samples}"
             f" --resources_per_trial {res_per_trial}"
             f" {c}"
             for c in options
         ]
+
+    def get_last_modified_time(self, iteration: int = 0) -> int:
+        """
+        Returns the nth iteration time of a trial.
+
+        :param iteration: The iteration to check.
+        :return: The latest modified UNIX time of the nth iteration.
+                 If no folders are found, returns a default value.
+        """
+        if iteration < 0 or iteration >= self.iterations:
+            raise ValueError("Iteration must be between 0 and (iterations - 1)")
+
+        experiment_dir = os.path.join(
+            cur_dir,
+            f"../../../flow/logs/{self.platform}/{self.design}/{self.experiment_name}-tune",
+        )
+        iteration_folders = glob.glob(
+            os.path.join(experiment_dir, f"variant-*-or-{iteration}")
+        )
+        latest_modified_time = DEFAULT_MODIFIED_TIME
+        for folder in iteration_folders:
+            modified_time = os.path.getmtime(folder)
+            if modified_time > latest_modified_time:
+                latest_modified_time = modified_time
+        return latest_modified_time
 
     def test_tune_resume(self):
         # Goal is to first run the first config (without resume) and then run the second config (with resume)
@@ -100,15 +122,34 @@ class ResumeCheck(unittest.TestCase):
 
         # Run the first config asynchronously.
         print("Running the first config")
-        with managed_process(self.commands[0], shell=True) as proc:
-            time.sleep(120)
+        latest_modified_time = 0
+        with managed_process(self.commands[0].split()) as proc:
+            time.sleep(30)
+            # Check if first config is complete
+            while True:
+                cur_modified_time = self.get_last_modified_time()
+                print(f"Current modified time: {cur_modified_time}")
+                print(f"Latest modified time: {latest_modified_time}")
+                if abs(cur_modified_time - latest_modified_time) < 1e-3:
+                    break
+                latest_modified_time = cur_modified_time
+                time.sleep(10)
 
         # Keep trying to stop the ray cluster until it is stopped
         while 1:
-            proc = subprocess.run("ray status", shell=True)
+            proc = subprocess.run(
+                "ray status", shell=True, capture_output=True, text=True
+            )
+            if proc.returncode != 0:
+                print(f"Error running 'ray status': {proc.stderr}")
             no_nodes = proc.returncode != 0
-            proc = subprocess.run("ray stop", shell=True)
-            successful = proc.returncode in accepted_rc
+            proc = subprocess.run(
+                "ray stop", shell=True, capture_output=True, text=True
+            )
+            if proc.returncode not in accepted_rc:
+                print(f"Error running 'ray stop': {proc.stderr}")
+                raise RuntimeError("Failed to stop the ray cluster")
+            successful = True
 
             if no_nodes and successful:
                 break
