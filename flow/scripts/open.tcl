@@ -1,10 +1,10 @@
 source $::env(SCRIPTS_DIR)/util.tcl
-# Read liberty files
+
+source_env_var_if_exists PLATFORM_TCL
+
 source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
-# Read def
 if { [env_var_exists_and_non_empty DEF_FILE] } {
-  # Read lef
   log_cmd read_lef $::env(TECH_LEF)
   log_cmd read_lef $::env(SC_LEF)
   if { [env_var_exists_and_non_empty ADDITIONAL_LEFS] } {
