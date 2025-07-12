@@ -5,9 +5,7 @@ load_design 2_3_floorplan_tapcell.odb 2_1_floorplan.sdc
 source $::env(PDN_TCL)
 pdngen
 
-if { [env_var_exists_and_non_empty POST_PDN_TCL] } {
-  source $::env(POST_PDN_TCL)
-}
+source_env_var_if_exists POST_PDN_TCL
 
 # Check all supply nets
 set block [ord::get_db_block]

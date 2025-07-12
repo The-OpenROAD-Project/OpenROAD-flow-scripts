@@ -6,9 +6,7 @@ load_design 4_cts.odb 4_cts.sdc
 # This proc is here to allow us to use 'return' to return early from this
 # file which is sourced
 proc global_route_helper { } {
-  if { [env_var_exists_and_non_empty PRE_GLOBAL_ROUTE] } {
-    source $::env(PRE_GLOBAL_ROUTE)
-  }
+  source_env_var_if_exists PRE_GLOBAL_ROUTE
 
   proc do_global_route { } {
     set all_args [concat [list \

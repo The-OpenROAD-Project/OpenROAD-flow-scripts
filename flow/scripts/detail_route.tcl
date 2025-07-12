@@ -62,9 +62,7 @@ if { ![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1] } {
   utl::metric_int "antenna_diodes_count" -1
 }
 
-if { [env_var_exists_and_non_empty POST_DETAIL_ROUTE_TCL] } {
-  source $::env(POST_DETAIL_ROUTE_TCL)
-}
+source_env_var_if_exists POST_DETAIL_ROUTE_TCL
 
 check_antennas -report_file $env(REPORTS_DIR)/drt_antennas.log
 
