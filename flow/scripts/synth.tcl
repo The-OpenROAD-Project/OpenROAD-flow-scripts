@@ -25,7 +25,8 @@ set synth_full_args [env_var_or_empty SYNTH_ARGS]
 if { [env_var_exists_and_non_empty SYNTH_OPERATIONS_ARGS] } {
   set synth_full_args [concat $synth_full_args $::env(SYNTH_OPERATIONS_ARGS)]
 } else {
-  set synth_full_args [concat $synth_full_args "-extra-map $::env(FLOW_HOME)/platforms/common/lcu_kogge_stone.v"]
+  set synth_full_args [concat $synth_full_args \
+    "-extra-map $::env(FLOW_HOME)/platforms/common/lcu_kogge_stone.v"]
 }
 
 if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
@@ -52,7 +53,8 @@ if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
 
 json -o $::env(RESULTS_DIR)/mem.json
 # Run report and check here so as to fail early if this synthesis run is doomed
-exec -- $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
+exec -- $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/mem_dump.py \
+  --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
 
 if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
   synth -top $::env(DESIGN_NAME) -run fine: {*}$synth_full_args

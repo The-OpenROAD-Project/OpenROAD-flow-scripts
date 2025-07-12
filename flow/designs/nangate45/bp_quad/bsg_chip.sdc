@@ -144,5 +144,4 @@ set_input_delay -clock sdi_b_clk -max $mx_delay1 [get_ports p_co_8_i]
 set_input_delay -clock sdi_b_clk -min $mn_delay1 [get_ports p_co_8_i]
 set_input_delay -clock sdi_b_clk -clock_fall -max $mx_delay1 -add_delay [get_ports p_co_8_i]
 set_input_delay -clock sdi_b_clk -clock_fall -min $mn_delay1 -add_delay [get_ports p_co_8_i]
-set_timing_derate -early -cell_delay 0.97 [get_cells \
-  {bp_processor/cc/y_0__x_0__tile_node/tile/core/fe/mem/icache/tag_mem/macro_bmem/db1_wb_0__bank/macro_mem}]
+set_timing_derate -early -cell_delay 0.97 [get_cells {bp_processor/cc/y_0__x_0__tile_node/tile/core/fe/mem/icache/tag_mem/macro_bmem/db1_wb_0__bank/macro_mem}] ;# tclint-disable-line line-length

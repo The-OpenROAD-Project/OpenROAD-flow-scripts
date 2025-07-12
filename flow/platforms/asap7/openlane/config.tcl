@@ -1,3 +1,5 @@
+# tclint-disable line-length
+
 # Process node
 set ::env(PROCESS) 7
 set ::env(DEF_UNITS_PER_MICRON) 1000

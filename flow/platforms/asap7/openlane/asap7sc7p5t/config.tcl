@@ -1,3 +1,5 @@
+# tclint-disable line-length
+
 set current_folder [file dirname [file normalize [info script]]]
 # Technology lib
 
