@@ -124,10 +124,10 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/prects
 export SYNTH_HDL_FRONTEND  = slang
 export SYNTH_HIERARCHICAL ?= 0
 
-export CORE_UTILIZATION       = 25
+export CORE_UTILIZATION       = 35
 
 export CORE_MARGIN            = 2
-export MACRO_PLACE_HALO       = 4 4
+export MACRO_PLACE_HALO       = 2 2
 
 export PLACE_DENSITY          = 0.58
 
