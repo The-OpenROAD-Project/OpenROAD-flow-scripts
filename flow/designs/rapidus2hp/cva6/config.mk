@@ -93,17 +93,15 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constr
 
 # Must be defined before the ifeq's
 export SYNTH_HDL_FRONTEND  = slang
-export SYNTH_HIERARCHICAL ?= 0
+export SYNTH_HIERARCHICAL = 1
 
 ifeq ($(SYNTH_HDL_FRONTEND),verific)
   # Reduce utilization for verific since it runs into issues with DPL not being
   # able to place instances or with one-site gap/overlap issues
   export CORE_UTILIZATION       = 35
 else
-  ifeq ($(SYNTH_HIERARCHICAL),1)
-    # Reduce the amount of resizing done between GPL and DPL
-    export EARLY_SIZING_CAP_RATIO = 6
-  endif
+  # Reduce the amount of resizing done between GPL and DPL
+  export EARLY_SIZING_CAP_RATIO = 6
   export CORE_UTILIZATION       = 45
 endif
 
