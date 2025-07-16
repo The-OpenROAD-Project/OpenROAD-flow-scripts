@@ -59,6 +59,7 @@ proc read_design_sources { } {
       verific -vlog-define {*}$::env(VERILOG_DEFINES)
     }
     verific -sv2012 {*}$::env(VERILOG_FILES)
+    verific -import -no-split-complex-ports $::env(DESIGN_NAME)
   } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
     verilog_defaults -push
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
