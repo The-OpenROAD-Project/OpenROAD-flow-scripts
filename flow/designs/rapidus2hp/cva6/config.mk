@@ -98,11 +98,11 @@ export SYNTH_HIERARCHICAL = 1
 ifeq ($(SYNTH_HDL_FRONTEND),verific)
   # Reduce utilization for verific since it runs into issues with DPL not being
   # able to place instances or with one-site gap/overlap issues
-  export CORE_UTILIZATION       = 35
+  export CORE_UTILIZATION       = 45
 else
   # Reduce the amount of resizing done between GPL and DPL
   export EARLY_SIZING_CAP_RATIO = 6
-  export CORE_UTILIZATION       = 45
+  export CORE_UTILIZATION       = 50
 endif
 
 export CORE_MARGIN            = 2
@@ -118,3 +118,5 @@ export SKIP_LAST_GASP ?= 1
 
 # For use with SYNTH_HIERARCHICAL
 export SYNTH_MINIMUM_KEEP_SIZE ?= 40000
+
+#export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/io_constraints.tcl
