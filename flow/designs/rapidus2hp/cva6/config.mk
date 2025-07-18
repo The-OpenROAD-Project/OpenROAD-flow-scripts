@@ -102,7 +102,7 @@ ifeq ($(SYNTH_HDL_FRONTEND),verific)
 else
   # Reduce the amount of resizing done between GPL and DPL
   export EARLY_SIZING_CAP_RATIO = 6
-  export CORE_UTILIZATION       = 50
+  export CORE_UTILIZATION       = 55
 endif
 
 export CORE_MARGIN            = 2
@@ -120,3 +120,6 @@ export SKIP_LAST_GASP ?= 1
 export SYNTH_MINIMUM_KEEP_SIZE ?= 40000
 
 #export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/io_constraints.tcl
+
+# Remove rvfi_probes_o interface
+export SYNTH_CANONICALIZE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/canonicalize.tcl
