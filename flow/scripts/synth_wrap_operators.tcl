@@ -10,8 +10,8 @@ set deferred_cells {
   {
     \$macc
     MACC_{CONFIG}_{Y_WIDTH}{%unused}
-    {BASE -map +/choices/han-carlson.v}
     {BOOTH -max_iter 1 -map ../flow/scripts/synth_wrap_operators-booth.v}
+    {BASE -map +/choices/han-carlson.v}
   }
 }
 
