@@ -7,6 +7,11 @@ dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
 }
 
 hierarchy -check -top $::env(DESIGN_NAME)
+
+if { [env_var_exists_and_non_empty SYNTH_CANONICALIZE_TCL] } {
+  log_cmd source $::env(SYNTH_CANONICALIZE_TCL)
+}
+
 # Get rid of unused modules
 opt_clean -purge
 # The hash of this file will not change if files not part of synthesis do not change
