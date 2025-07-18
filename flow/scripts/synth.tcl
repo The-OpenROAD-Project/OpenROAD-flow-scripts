@@ -56,10 +56,11 @@ json -o $::env(RESULTS_DIR)/mem.json
 exec -- $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/mem_dump.py \
   --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
 
-if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
-  synth -top $::env(DESIGN_NAME) -run fine: {*}$synth_full_args
-} else {
+if { [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+     [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
   source $::env(SCRIPTS_DIR)/synth_wrap_operators.tcl
+} else {
+  synth -top $::env(DESIGN_NAME) -run fine: {*}$synth_full_args
 }
 
 # Get rid of indigestibles

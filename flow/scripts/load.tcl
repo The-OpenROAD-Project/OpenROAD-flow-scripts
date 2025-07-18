@@ -18,9 +18,19 @@ proc load_design { design_file sdc_file } {
       }
     }
     read_verilog $::env(RESULTS_DIR)/$design_file
-    link_design $::env(DESIGN_NAME)
+    if { [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+         [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
+      link_design -hier $::env(DESIGN_NAME)
+    } else {
+      link_design $::env(DESIGN_NAME)
+    }
   } elseif { $ext == ".odb" } {
-    read_db $::env(RESULTS_DIR)/$design_file
+    if { [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+         [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
+      read_db -hier $::env(RESULTS_DIR)/$design_file
+    } else {
+      read_db $::env(RESULTS_DIR)/$design_file
+    }
   } else {
     error "Unrecognized input file $design_file"
   }

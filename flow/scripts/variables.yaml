@@ -269,6 +269,13 @@ SYNTH_WRAPPED_OPERATORS:
     the flow.
   stages:
     - synth
+SWAP_ARITH_OPERATORS:
+  description: >
+    Improve timing QoR by swapping ALU and MULT arithmetic operators.
+  stages:
+    - synth
+    - floorplan
+    - place
 FLOORPLAN_DEF:
   description: |
     Use the DEF file to initialize floorplan.

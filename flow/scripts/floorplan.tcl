@@ -101,6 +101,11 @@ if { [env_var_exists_and_non_empty FOOTPRINT_TCL] } {
 # tie driving multiple buffers that drive multiple outputs.
 repair_tie_fanout_helper
 
+if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
+  estimate_parasitics -placement
+  replace_arith_modules
+}
+
 if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
   # remove buffers inserted by yosys/abc
   remove_buffers
