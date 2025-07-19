@@ -174,6 +174,7 @@ configuration file.
 | <a name="PLATFORM"></a>PLATFORM| Specifies process design kit or technology node to be used.| |
 | <a name="PLATFORM_TCL"></a>PLATFORM_TCL| Specifies a Tcl script with commands to run before loading design.| |
 | <a name="POST_CTS_TCL"></a>POST_CTS_TCL| Specifies a Tcl script with commands to run after CTS is completed.| |
+| <a name="PRE_GLOBAL_ROUTE_TCL"></a>PRE_GLOBAL_ROUTE_TCL| Specifies a Tcl script with commands to run before global route.| |
 | <a name="PROCESS"></a>PROCESS| Technology node or process in use.| |
 | <a name="PWR_NETS_VOLTAGES"></a>PWR_NETS_VOLTAGES| Used for IR Drop calculation.| |
 | <a name="RCX_RULES"></a>RCX_RULES| RC Extraction rules file path.| |
@@ -388,6 +389,7 @@ configuration file.
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
+- [PRE_GLOBAL_ROUTE_TCL](#PRE_GLOBAL_ROUTE_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
