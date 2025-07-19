@@ -824,6 +824,11 @@ ABSTRACT_SOURCE:
     Which .odb file to use to create abstract
   stages:
     - generate_abstract
+PRE_GLOBAL_ROUTE_TCL:
+  description: |
+    Specifies a Tcl script with commands to run before global route.
+  stages:
+    - grt
 GLOBAL_ROUTE_ARGS:
   description: >
     Replaces default arguments for global route.
