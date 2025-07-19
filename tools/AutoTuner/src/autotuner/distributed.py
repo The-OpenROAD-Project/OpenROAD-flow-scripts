@@ -63,14 +63,12 @@ import argparse
 import json
 import os
 import sys
-import random
 from itertools import product
 from uuid import uuid4 as uuid
 from collections import namedtuple
 from multiprocessing import cpu_count
 
 import numpy as np
-import torch
 
 import ray
 from ray import tune
@@ -94,6 +92,7 @@ from autotuner.utils import (
     prepare_ray_server,
     CONSTRAINTS_SDC,
     FASTROUTE_TCL,
+    set_seed,
 )
 
 # Name of the final metric
@@ -458,19 +457,7 @@ def set_algorithm(
     """
     Configure search algorithm.
     """
-    # Pre-set seed if user sets seed to 0
-    if seed == 0:
-        print(
-            "Warning: you have chosen not to set a seed. Do you wish to continue? (y/n)"
-        )
-        if input().lower() != "y":
-            sys.exit(0)
-        seed = None
-    else:
-        torch.manual_seed(seed)
-        np.random.seed(seed)
-        random.seed(seed)
-
+    set_seed(seed)
     if algorithm_name == "hyperopt":
         algorithm = HyperOptSearch(
             points_to_evaluate=best_params,
