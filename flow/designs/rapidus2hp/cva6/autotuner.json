@@ -4,15 +4,23 @@
         "type": "float",
         "minmax": [
             990,
-            1015
+            1250
         ],
         "step": 0
     },
     "CORE_UTILIZATION": {
         "type": "int",
         "minmax": [
+            40,
+            60
+        ],
+        "step": 1
+    },
+    "CTS_BUF_DISTANCE": {
+        "type": "int",
+        "minmax": [
             25,
-            45
+            50
         ],
         "step": 1
     },
