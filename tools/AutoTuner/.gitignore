@@ -10,3 +10,6 @@ __pycache__/
 # Autotuner env
 autotuner_env
 .env
+
+# Log files
+docker-build.log
