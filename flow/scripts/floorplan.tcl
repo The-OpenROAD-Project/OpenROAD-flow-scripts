@@ -93,9 +93,7 @@ if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
   make_tracks
 }
 
-if { [env_var_exists_and_non_empty FOOTPRINT_TCL] } {
-  log_cmd source $::env(FOOTPRINT_TCL)
-}
+source_env_var_if_exists FOOTPRINT_TCL
 
 # This needs to come before any call to remove_buffers.  You could have one
 # tie driving multiple buffers that drive multiple outputs.
@@ -121,14 +119,8 @@ report_units
 report_units_metric
 report_metrics 2 "floorplan final" false false
 
-if { [env_var_exists_and_non_empty POST_FLOORPLAN_TCL] } {
-  log_cmd source $::env(POST_FLOORPLAN_TCL)
-}
-
-
-if { [env_var_exists_and_non_empty IO_CONSTRAINTS] } {
-  log_cmd source $::env(IO_CONSTRAINTS)
-}
+source_env_var_if_exists POST_FLOORPLAN_TCL
+source_env_var_if_exists IO_CONSTRAINTS
 
 write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
 write_sdc -no_timestamp $::env(RESULTS_DIR)/2_1_floorplan.sdc
