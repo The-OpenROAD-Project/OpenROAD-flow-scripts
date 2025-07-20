@@ -216,6 +216,6 @@ proc place_density_with_lb_addon { } {
 
 proc source_env_var_if_exists { env_var } {
   if { [env_var_exists_and_non_empty $env_var] } {
-    source $::env($env_var)
+    log_cmd source $::env($env_var)
   }
 }
