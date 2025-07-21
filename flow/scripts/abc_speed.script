@@ -11,6 +11,7 @@
 &syn2
 &if -g -K 6
 &synch2
+&retime
 &nf
 &st
 &syn2
