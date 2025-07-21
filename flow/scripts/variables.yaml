@@ -776,8 +776,6 @@ CTS_BUF_LIST:
     List of cells used to construct the clock tree. Overrides buffer inference.
   stages:
     - cts
-  tunable: 1
-  type: float
 CTS_CLUSTER_DIAMETER:
   description: >
     Maximum diameter (in microns) of sink cluster.
