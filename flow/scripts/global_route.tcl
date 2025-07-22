@@ -23,9 +23,9 @@ proc global_route_helper { } {
 
   if { $result != 0 } {
     if {
-      [!$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
+        ![env_var_exists_and_non_empty GENERATE_ARTIFACTS_ON_FAILURE] || \
         ![file exists $::global_route_congestion_report] || \
-        [file size $::global_route_congestion_report] == 0]
+        [file size $::global_route_congestion_report] == 0
     } {
       write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
       error $errMsg
@@ -46,7 +46,7 @@ proc global_route_helper { } {
     set_dont_use $::env(DONT_USE_CELLS)
   }
 
-  if { !$::env(SKIP_INCREMENTAL_REPAIR) } {
+  if { ![env_var_exists_and_non_empty SKIP_INCREMENTAL_REPAIR] } {
     if { $::env(DETAILED_METRICS) } {
       report_metrics 5 "global route pre repair design"
     }
