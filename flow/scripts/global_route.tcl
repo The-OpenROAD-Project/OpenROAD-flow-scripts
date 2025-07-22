@@ -23,7 +23,7 @@ proc global_route_helper { } {
 
   if { $result != 0 } {
     if {
-      [!$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
+      [expr !$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
         ![file exists $::global_route_congestion_report] || \
         [file size $::global_route_congestion_report] == 0]
     } {
