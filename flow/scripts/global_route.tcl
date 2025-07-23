@@ -22,11 +22,7 @@ proc global_route_helper { } {
   set result [catch { do_global_route } errMsg]
 
   if { $result != 0 } {
-    if {
-      [!$::env(GENERATE_ARTIFACTS_ON_FAILURE) || \
-        ![file exists $::global_route_congestion_report] || \
-        [file size $::global_route_congestion_report] == 0]
-    } {
+    if { !$::env(GENERATE_ARTIFACTS_ON_FAILURE) } {
       write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
       error $errMsg
     }
