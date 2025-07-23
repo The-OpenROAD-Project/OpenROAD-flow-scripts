@@ -26,11 +26,9 @@ if { $design_stage >= 4 } {
 set_clock_latency -source 0 [all_clocks]
 puts "Generating abstract views"
 if { [env_var_exists_and_non_empty CORNERS] } {
-  # corners
   foreach corner $::env(CORNERS) {
     log_cmd write_timing_model -corner $corner $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_$corner.lib
   }
-  unset corner
 } else {
   log_cmd write_timing_model $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_typ.lib
 }
