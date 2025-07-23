@@ -233,6 +233,7 @@ TIE_SEPARATION:
     Distance separating tie high/low instances from the load.
   stages:
     - place
+  default: 0
 EARLY_SIZING_CAP_RATIO:
   description: |
     Ratio between the input pin capacitance and the output pin load during initial gate sizing.
