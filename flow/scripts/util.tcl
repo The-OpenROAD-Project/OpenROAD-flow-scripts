@@ -35,17 +35,6 @@ proc repair_tie_fanout_helper { } {
   repair_tie_fanout -separation $tie_separation $tiehi_pin
 }
 
-proc fast_route { } {
-  if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
-    log_cmd source $::env(FASTROUTE_TCL)
-  } else {
-    log_cmd \
-      set_global_routing_layer_adjustment \
-      $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) $::env(ROUTING_LAYER_ADJUSTMENT)
-    log_cmd set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
-  }
-}
-
 proc repair_timing_helper { args } {
   set additional_args "$args -verbose"
   append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
