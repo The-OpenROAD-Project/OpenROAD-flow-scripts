@@ -8,9 +8,10 @@ cd "$(dirname "$(readlink -f "$0")")/../"
 DESIGN_NAME=${1:-gcd}
 PLATFORM=${2:-nangate45}
 CONFIG_MK=${3:-config.mk}
-if [ $# -eq 4 ]; then
+if [ $# -ge 4 ]; then
   FLOW_VARIANT=$4
 fi
+TARGET=${5:-'finish metadata'}
 DESIGN_CONFIG=./designs/$PLATFORM/$DESIGN_NAME/$CONFIG_MK
 LOG_FILE=./logs/$PLATFORM/$DESIGN_NAME.log
 mkdir -p "./logs/$PLATFORM"
@@ -26,11 +27,15 @@ $__make clean_all clean_metadata 2>&1 | tee "$LOG_FILE"
 # turn off abort on error so we can always capture the result
 set +e
 
-$__make finish metadata 2>&1 | tee -a "$LOG_FILE"
+eval $__make "${TARGET}" 2>&1 | tee -a "$LOG_FILE"
 
 # Save the return code to return as the overall status after we package
 # the results
 ret=$?
+
+if [ "${TARGET}" != "finish metadata" ]; then
+  exit $ret
+fi
 
 if [ -z "${PRIVATE_DIR+x}" ]; then
   PRIVATE_DIR="../../private_tool_scripts"
