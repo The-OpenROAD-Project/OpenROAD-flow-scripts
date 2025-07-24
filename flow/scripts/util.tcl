@@ -13,39 +13,6 @@ proc log_cmd { cmd args } {
   return $result
 }
 
-proc repair_tie_fanout_helper { } {
-  if { [env_var_exists_and_non_empty TIE_SEPARATION] } {
-    set tie_separation $env(TIE_SEPARATION)
-  } else {
-    set tie_separation 0
-  }
-
-  # Repair tie lo fanout
-  puts "Repair tie lo fanout..."
-  set tielo_cell_name [lindex $::env(TIELO_CELL_AND_PORT) 0]
-  set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
-  set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $::env(TIELO_CELL_AND_PORT) 1]
-  repair_tie_fanout -separation $tie_separation $tielo_pin
-
-  # Repair tie hi fanout
-  puts "Repair tie hi fanout..."
-  set tiehi_cell_name [lindex $::env(TIEHI_CELL_AND_PORT) 0]
-  set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
-  set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $::env(TIEHI_CELL_AND_PORT) 1]
-  repair_tie_fanout -separation $tie_separation $tiehi_pin
-}
-
-proc fast_route { } {
-  if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
-    log_cmd source $::env(FASTROUTE_TCL)
-  } else {
-    log_cmd \
-      set_global_routing_layer_adjustment \
-      $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) $::env(ROUTING_LAYER_ADJUSTMENT)
-    log_cmd set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
-  }
-}
-
 proc repair_timing_helper { args } {
   set additional_args "$args -verbose"
   append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
