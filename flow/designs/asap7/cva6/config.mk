@@ -105,3 +105,6 @@ export SYNTH_HDL_FRONTEND = slang
 export ASAP7_USE_VT = RVT LVT SLVT
 
 export CTS_LIB_NAME = asap7sc7p5t_INVBUF_SLVT_FF_nldm_211120
+
+# Remove rvfi_probes_o interface
+export SYNTH_CANONICALIZE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/canonicalize.tcl
