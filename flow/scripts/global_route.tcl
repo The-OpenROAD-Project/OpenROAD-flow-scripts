@@ -16,8 +16,7 @@ proc global_route_helper { } {
     log_cmd global_route {*}$all_args
   }
 
-  pin_access -bottom_routing_layer $::env(MIN_ROUTING_LAYER) \
-    -top_routing_layer $::env(MAX_ROUTING_LAYER)
+  pin_access
 
   set result [catch { do_global_route } errMsg]
 
