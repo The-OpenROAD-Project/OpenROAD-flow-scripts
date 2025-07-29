@@ -154,8 +154,8 @@ class AutoTunerBase(tune.Trainable):
             install_path=INSTALL_PATH,
         )
         self.step_ += 1
-        (score, effective_clk_period, num_drc) = self.evaluate(
-            read_metrics(metrics_file)
+        (score, effective_clk_period, num_drc, die_area) = self.evaluate(
+            read_metrics(metrics_file, args.stop_stage)
         )
         # Feed the score back to Tune.
         # return must match 'metric' used in tune.run()
@@ -163,6 +163,7 @@ class AutoTunerBase(tune.Trainable):
             METRIC: score,
             "effective_clk_period": effective_clk_period,
             "num_drc": num_drc,
+            "die_area": die_area,
         }
 
     def evaluate(self, metrics):
@@ -174,13 +175,13 @@ class AutoTunerBase(tune.Trainable):
         error = "ERR" in metrics.values()
         not_found = "N/A" in metrics.values()
         if error or not_found:
-            return (ERROR_METRIC, "-", "-")
+            return (ERROR_METRIC, "-", "-", "-")
         effective_clk_period = metrics["clk_period"] - metrics["worst_slack"]
         num_drc = metrics["num_drc"]
         gamma = effective_clk_period / 10
         score = effective_clk_period
         score = score * (100 / self.step_) + gamma * num_drc
-        return (score, effective_clk_period, num_drc)
+        return (score, effective_clk_period, num_drc, metrics["die_area"])
 
     def _is_valid_config(self, config):
         """
@@ -247,13 +248,13 @@ class PPAImprov(AutoTunerBase):
         error = "ERR" in metrics.values() or "ERR" in reference.values()
         not_found = "N/A" in metrics.values() or "N/A" in reference.values()
         if error or not_found:
-            return (ERROR_METRIC, "-", "-")
+            return (ERROR_METRIC, "-", "-", "-")
         ppa = self.get_ppa(metrics)
         gamma = ppa / 10
         score = ppa * (self.step_ / 100) ** (-1) + (gamma * metrics["num_drc"])
         effective_clk_period = metrics["clk_period"] - metrics["worst_slack"]
         num_drc = metrics["num_drc"]
-        return (score, effective_clk_period, num_drc)
+        return (score, effective_clk_period, num_drc, metrics["die_area"])
 
 
 def parse_arguments():
@@ -306,6 +307,14 @@ def parse_arguments():
         metavar="<float>",
         default=None,
         help="Time limit (in hours) for each trial run. Default is no limit.",
+    )
+    parser.add_argument(
+        "--stop_stage",
+        type=str,
+        metavar="<str>",
+        choices=["floorplan", "place", "cts", "globalroute", "route", "finish"],
+        default="finish",
+        help="Name of the stage to stop after. Default is finish.",
     )
     tune_parser.add_argument(
         "--resume",
@@ -598,7 +607,7 @@ def main():
         TrainClass = set_training_class(args.eval)
         # PPAImprov requires a reference file to compute training scores.
         if args.eval == "ppa-improv":
-            reference = read_metrics(args.reference)
+            reference = read_metrics(args.reference, args.stop_stage)
 
         tune_args = dict(
             name=args.experiment,

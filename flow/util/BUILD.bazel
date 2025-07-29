@@ -25,7 +25,6 @@ MAKEFILE_SHARED = [
 filegroup(
     name = "makefile",
     srcs = glob(MAKEFILE_SHARED + [
-        "*.pl",
         "*.py",
         "*.sh",
     ]),
@@ -36,7 +35,7 @@ filegroup(
 filegroup(
     name = "makefile_yosys",
     srcs = glob(MAKEFILE_SHARED) + [
-        "mergeLib.pl",
+        "merge_lib.py",
         "preprocessLib.py",
     ],
     visibility = ["//visibility:public"],

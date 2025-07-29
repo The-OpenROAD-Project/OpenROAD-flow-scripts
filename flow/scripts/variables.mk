@@ -214,4 +214,16 @@ vars:
 
 .PHONY: print-%
 # Print any variable, for instance: make print-DIE_AREA
-print-%  : ; @echo "$* = $($*)"
+print-%:
+  # HERE BE DRAGONS!
+  #
+  # We have to use /tmp. $(OBJECTS_DIR) may not exist
+  # at $(file) expansion time, which is before commands are run
+  # here, so we can't mkdir -p $(OBJECTS_DIR) either
+  #
+  # We have to use $(file ...) because we want to be able
+  # to print variables that contain newlines.
+	$(file >/tmp/print_tmp$$,$($*))
+	@echo -n "$* = "
+	@cat /tmp/print_tmp$$
+	@rm /tmp/print_tmp$$

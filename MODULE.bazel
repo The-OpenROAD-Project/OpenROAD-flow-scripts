@@ -11,7 +11,7 @@ bazel_dep(name = "bazel-orfs")
 # To bump version, run: bazelisk run @bazel-orfs//:bump
 git_override(
     module_name = "bazel-orfs",
-    commit = "9a3778bdbe63106a894a03e865335a31ebc860d1",
+    commit = "f8a4b694b37c8f5322323eba9a9ae37f9541ee17",
     remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
 )
 
@@ -20,13 +20,13 @@ bazel_dep(name = "rules_python", version = "1.2.0")
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
     ignore_root_user_error = True,
-    python_version = "3.12",
+    python_version = "3.13",
 )
 
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
     hub_name = "orfs-pip",
-    python_version = "3.12",
+    python_version = "3.13",
     requirements_lock = "//flow:util/requirements_lock.txt",
 )
 use_repo(pip, "orfs-pip")
@@ -35,12 +35,12 @@ orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
 
 # To bump version, run: bazelisk run @bazel-orfs//:bump
 orfs.default(
-    image = "docker.io/openroad/orfs:v3.0-3190-g5ac9869c",
+    image = "docker.io/openroad/orfs:v3.0-3273-gedf3d6bf",
     # Use local files instead of docker image
     makefile = "//flow:makefile",
     makefile_yosys = "//flow:makefile_yosys",
     pdk = "//flow:asap7",
-    sha256 = "2ca999699bc91144074b7f23f42da9330d7279437c386a1413fba4a6a7520916",
+    sha256 = "f5692c6325ebcf27cc348e033355ec95c82c35ace1af7e72a0d352624ada143e",
 )
 use_repo(orfs, "com_github_nixos_patchelf_download")
 use_repo(orfs, "docker_orfs")

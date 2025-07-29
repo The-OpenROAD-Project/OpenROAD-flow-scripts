@@ -65,7 +65,10 @@ export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/common/local/util/
 	$(SRC_HOME)/core/cvxif_example/include/cvxif_instr_pkg.sv \
 	$(sort $(wildcard $(SRC_HOME)/core/frontend/*.sv)) \
 	$(SRC_HOME)/vendor/pulp-platform/tech_cells_generic/src/rtl/tc_sram.sv \
-	$(PLATFORM_DIR)/verilog/fakeram7_256x256.sv
+	$(PLATFORM_DIR)/verilog/fakeram7_64x256.sv \
+	$(PLATFORM_DIR)/verilog/fakeram7_128x64.sv \
+	$(PLATFORM_DIR)/verilog/fakeram7_64x28.sv \
+	$(PLATFORM_DIR)/verilog/fakeram7_64x25.sv
 
 export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include \
 	$(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/cvfpu/src/common_cells/include \
@@ -73,16 +76,22 @@ export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include
 
 export VERILOG_DEFINES += -D HPDCACHE_ASSERT_OFF
 
-export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_256x256.lef
+export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_64x256.lef \
+			 $(PLATFORM_DIR)/lef/fakeram7_128x64.lef \
+			 $(PLATFORM_DIR)/lef/fakeram7_64x28.lef \
+			 $(PLATFORM_DIR)/lef/fakeram7_64x25.lef
 
-export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_256x256.lib
+export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x256.lib \
+			 $(PLATFORM_DIR)/lib/NLDM/fakeram7_128x64.lib \
+			 $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x28.lib \
+			 $(PLATFORM_DIR)/lib/NLDM/fakeram7_64x25.lib
 
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
-export CORE_UTILIZATION       = 40
+export CORE_UTILIZATION       = 70
 export CORE_MARGIN            = 2
-export MACRO_HALO             = 5
-export PLACE_DENSITY          = 0.50
+export MACRO_PLACE_HALO       = 3 3
+export PLACE_DENSITY          = 0.73
 
 # a smoketest for this option, there are a
 # few last gasp iterations
@@ -92,3 +101,7 @@ export SKIP_LAST_GASP ?= 1
 export SYNTH_MINIMUM_KEEP_SIZE ?= 40000
 
 export SYNTH_HDL_FRONTEND = slang
+
+export ASAP7_USE_VT = RVT LVT SLVT
+
+export CTS_LIB_NAME = asap7sc7p5t_INVBUF_SLVT_FF_nldm_211120

@@ -1,11 +1,11 @@
 #Read Liberty
-if {[env_var_exists_and_non_empty CORNERS]} {
+if { [env_var_exists_and_non_empty CORNERS] } {
   # corners
   define_corners {*}$::env(CORNERS)
   foreach corner $::env(CORNERS) {
     set LIBKEY "[string toupper $corner]_LIB_FILES"
     foreach libFile $::env($LIBKEY) {
-      read_liberty -corner $corner $libFile
+      log_cmd read_liberty -corner $corner $libFile
     }
     unset LIBKEY
   }
@@ -13,6 +13,6 @@ if {[env_var_exists_and_non_empty CORNERS]} {
 } else {
   ## no corner
   foreach libFile $::env(LIB_FILES) {
-    read_liberty $libFile
+    log_cmd read_liberty $libFile
   }
 }

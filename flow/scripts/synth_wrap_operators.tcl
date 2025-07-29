@@ -10,12 +10,12 @@ set deferred_cells {
   {
     \$macc
     MACC_{CONFIG}_{Y_WIDTH}{%unused}
-    {BASE -map +/choices/han-carlson.v}
     {BOOTH -max_iter 1 -map ../flow/scripts/synth_wrap_operators-booth.v}
+    {BASE -map +/choices/han-carlson.v}
   }
 }
 
-techmap {*}[join [lmap cell $deferred_cells {string cat "-dont_map [lindex $cell 0]"}] " "]
+techmap {*}[join [lmap cell $deferred_cells { string cat "-dont_map [lindex $cell 0]" }] " "]
 
 foreach info $deferred_cells {
   set type [lindex $info 0]
@@ -37,7 +37,7 @@ foreach info $deferred_cells {
     t:$type r:A_WIDTH>=10 r:Y_WIDTH>=14 %i %i
 
   # make per-architecture copies of the unmapped module
-  foreach modname [tee -q -s result.string select -list-mod A:arithmetic_operator A:copy_pending %i] {
+  foreach modname [tee -q -s result.string select -list-mod A:arithmetic_operator A:copy_pending %i] { # tclint-disable-line line-length
     setattr -mod -unset copy_pending $modname
 
     # iterate over non-default architectures
@@ -53,7 +53,7 @@ foreach info $deferred_cells {
   # iterate over all architectures, both the default and non-default
   foreach arch [lrange $info 2 end] {
     set suffix [lindex $arch 0]
-    set extra_map_args [lrange $arch 1 end] 
+    set extra_map_args [lrange $arch 1 end]
 
     # map all operator copies which were selected to have this architecture
     techmap -map +/techmap.v {*}$extra_map_args A:source_cell=$type A:architecture=$suffix %i

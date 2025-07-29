@@ -1,4 +1,3 @@
-
 set design_rams {
   swerv {2048x39 256x34 64x21}
   bp_be_top {64x96 512x64 64x15}
@@ -11,7 +10,7 @@ set design_rams {
 set results_dir "~/import/fakeram/results"
 set flow_dir "~/import/flow/flow/platforms/nangate45"
 
-proc make_fakeram_links {} {
+proc make_fakeram_links { } {
   global design_rams flow_dir
 
   foreach {design sizes} $design_rams {
@@ -27,13 +26,15 @@ proc make_fakeram_links {} {
   }
 }
 
-proc copy_fakeram_results {} {
+proc copy_fakeram_results { } {
   global design_rams results_dir flow_dir
 
   foreach {design sizes} $design_rams {
     foreach size $sizes {
-      file copy -force $results_dir/fakeram45_$size/fakeram45_$size.lib $flow_dir/lib/fakeram45_$size.lib
-      file copy -force $results_dir/fakeram45_$size/fakeram45_$size.lef $flow_dir/lef/fakeram45_$size.lef
+      file copy -force \
+        $results_dir/fakeram45_$size/fakeram45_$size.lib $flow_dir/lib/fakeram45_$size.lib
+      file copy -force \
+        $results_dir/fakeram45_$size/fakeram45_$size.lef $flow_dir/lef/fakeram45_$size.lef
     }
   }
 }

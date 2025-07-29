@@ -330,6 +330,8 @@ def openroad(
     make_command += f" FLOW_VARIANT={flow_variant} {parameters}"
     make_command += " EQUIVALENCE_CHECK=0"
     make_command += f" NUM_CORES={args.openroad_threads} SHELL=bash"
+    if args.stop_stage != "finish":
+        make_command += f" {args.stop_stage}"
     run_command(
         args,
         make_command,
@@ -358,22 +360,29 @@ def openroad(
     return metrics_file
 
 
-def read_metrics(file_name):
+def read_metrics(file_name, stop_stage):
     """
     Collects metrics to evaluate the user-defined objective function.
+
+    stop_stage indicates the last stage executed, so get most of the metrics
+    from that stage. The default stop stage is "finish". But if the run stops
+    before "finish", then no need to extract the metrics from the route stage,
+    so set them to 0
     """
     with open(file_name) as file:
         data = json.load(file)
     clk_period = 9999999
     worst_slack = "ERR"
-    wirelength = "ERR"
-    num_drc = "ERR"
     total_power = "ERR"
     core_util = "ERR"
     final_util = "ERR"
     design_area = "ERR"
     die_area = "ERR"
     core_area = "ERR"
+    if stop_stage != "finish":
+        num_drc = wirelength = 0
+    else:
+        num_drc = wirelength = "ERR"
     for stage_name, value in data.items():
         if stage_name == "constraints" and len(value["clocks__details"]) > 0:
             clk_period = float(value["clocks__details"][0].split()[1])
@@ -383,17 +392,17 @@ def read_metrics(file_name):
             num_drc = value["route__drc_errors"]
         if stage_name == "detailedroute" and "route__wirelength" in value:
             wirelength = value["route__wirelength"]
-        if stage_name == "finish" and "timing__setup__ws" in value:
+        if stage_name == stop_stage and "timing__setup__ws" in value:
             worst_slack = value["timing__setup__ws"]
-        if stage_name == "finish" and "power__total" in value:
+        if stage_name == stop_stage and "power__total" in value:
             total_power = value["power__total"]
-        if stage_name == "finish" and "design__instance__utilization" in value:
+        if stage_name == stop_stage and "design__instance__utilization" in value:
             final_util = value["design__instance__utilization"]
-        if stage_name == "finish" and "design__instance__area" in value:
+        if stage_name == stop_stage and "design__instance__area" in value:
             design_area = value["design__instance__area"]
-        if stage_name == "finish" and "design__core__area" in value:
+        if stage_name == stop_stage and "design__core__area" in value:
             core_area = value["design__core__area"]
-        if stage_name == "finish" and "design__die__area" in value:
+        if stage_name == stop_stage and "design__die__area" in value:
             die_area = value["design__die__area"]
     ret = {
         "clk_period": clk_period,

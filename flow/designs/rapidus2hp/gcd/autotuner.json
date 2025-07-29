@@ -1,0 +1,35 @@
+{
+    "_SDC_FILE_PATH": "constraint.sdc",
+    "_SDC_CLK_PERIOD": {
+        "type": "float",
+        "minmax": [
+            180,
+            300
+        ],
+        "step": 0
+    },
+    "CORE_UTILIZATION": {
+        "type": "float",
+        "minmax": [
+            21,
+            60
+        ],
+        "step": 0
+    },
+    "CTS_CLUSTER_SIZE": {
+        "type": "int",
+        "minmax": [
+            10,
+            200
+        ],
+        "step": 1
+    },
+    "CTS_CLUSTER_DIAMETER": {
+        "type": "int",
+        "minmax": [
+            20,
+            400
+        ],
+        "step": 1
+    }
+}
