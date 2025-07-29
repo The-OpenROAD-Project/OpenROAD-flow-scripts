@@ -18,7 +18,7 @@ set_voltage_domain -name {CORE} -power {VDD} -ground {VSS}
 #   put stripe on M5 track
 # M4 M5 ring follow stripe width
 ####################################
-define_pdn_grid -name {top} -voltage_domains {CORE}  -pins {M5}
+define_pdn_grid -name {top} -voltage_domains {CORE} -pins {M5}
 
 add_pdn_ring -grid {top} -layers {M5 M4} -widths {0.12 0.12} -spacings {0.072} -core_offset {0.084}
 
