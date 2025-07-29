@@ -18,7 +18,10 @@ write_def $::env(RESULTS_DIR)/6_final.def
 write_verilog $::env(RESULTS_DIR)/6_final.v
 
 # Run extraction and STA
-if { [env_var_exists_and_non_empty RCX_RULES] } {
+if {
+  [env_var_exists_and_non_empty RCX_RULES]
+  && ![env_var_exists_and_non_empty SKIP_DRT]
+} {
   # RCX section
   define_process_corner -ext_model_index 0 X
   extract_parasitics -ext_model_file $::env(RCX_RULES)
