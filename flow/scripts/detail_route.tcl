@@ -5,6 +5,12 @@ if { ![grt::have_routes] } {
   error "Global routing failed, run `make gui_grt` and load $::global_route_congestion_report \
         in DRC viewer to view congestion"
 }
+
+if { [env_var_exists_and_non_empty SKIP_DRT] } {
+  write_db $::env(RESULTS_DIR)/5_2_route.odb
+  exit
+}
+
 erase_non_stage_variables route
 set_propagated_clock [all_clocks]
 
