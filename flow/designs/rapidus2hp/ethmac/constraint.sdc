@@ -22,7 +22,7 @@ set_output_delay [expr { $tx_clk_period * $clk_io_pct }] -clock $tx_clk_name \
 
 set rx_clk_name mrx_clk_pad_i
 set rx_clk_port [get_ports $rx_clk_name]
-set rx_clk_period 300
+set rx_clk_period 200
 create_clock -name $rx_clk_name -period $rx_clk_period $rx_clk_port
 set mrx_non_clock_inputs [lsearch -inline -all -not -exact [all_inputs] \
   $rx_clk_port]
