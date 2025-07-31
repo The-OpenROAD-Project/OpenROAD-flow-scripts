@@ -102,7 +102,7 @@ ifeq ($(SYNTH_HDL_FRONTEND),verific)
 else
   # Reduce the amount of resizing done between GPL and DPL
   export EARLY_SIZING_CAP_RATIO = 6
-  ifeq ($(TRACK_OPTION),6T)
+  ifeq ($(PLACE_SITE),SC6T)
     # Decrease the utilization so that the tall macros fit
     export CORE_UTILIZATION       = 50
   else

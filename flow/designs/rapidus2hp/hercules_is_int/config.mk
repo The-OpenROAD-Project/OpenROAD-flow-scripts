@@ -22,7 +22,7 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/prects
 export SYNTH_HDL_FRONTEND  = slang
 export SYNTH_HIERARCHICAL ?= 0
 
-ifeq ($(TRACK_OPTION), 6T)
+ifeq ($(PLACE_SITE), SC6T)
   export CORE_UTILIZATION       = 30
 else
   export CORE_UTILIZATION       = 35
