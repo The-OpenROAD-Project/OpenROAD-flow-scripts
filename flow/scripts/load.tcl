@@ -58,8 +58,10 @@ proc load_design { design_file sdc_file } {
 # Routines to run equivalence tests when they are enabled.
 
 proc get_verilog_cells_for_design { } {
-  set dir "$::env(PLATFORM_DIR)/work_around_yosys/"
-  set cell_files [glob $dir/*.v]
+  if {![env_var_exists_and_non_empty EQUIVALENCE_CHECK_USE_LIBS] || [env_var_equals EQUIVALENCE_CHECK_USE_LIBS 0]} {
+    set dir "$::env(PLATFORM_DIR)/work_around_yosys/"
+    set cell_files [glob $dir/*.v]
+  }  
 }
 
 proc write_eqy_verilog { filename } {
@@ -105,11 +107,44 @@ proc write_eqy_script { } {
   set top_cell [current_design]
   set cell_files [get_verilog_cells_for_design]
   set outfile [open "$::env(OBJECTS_DIR)/4_eqy_test.eqy" w]
+  puts "Generating equivalence checking script: $::env(OBJECTS_DIR)/4_eqy_test.eqy"
   # Gold netlist
-  puts $outfile "\[gold]\nread_verilog -sv $::env(RESULTS_DIR)/4_before_rsz.v $cell_files\n"
+  puts $outfile "\[gold]"
+  if { [env_var_exists_and_non_empty EQUIVALENCE_CHECK_USE_LIBS] } {
+    if { [env_var_equals EQUIVALENCE_CHECK_USE_LIBS 1] } {
+      puts "Using .lib files to determine function definitions of cells in gold design: $::env(LIB_FILES)"
+      puts $outfile "read_liberty -ignore_miss_func $::env(LIB_FILES)"
+    } elseif {[env_var_equals EQUIVALENCE_CHECK_USE_LIBS 0]} {
+      puts "Using verilog simulation models to determine function definitions of cells in gold design: $cell_files"
+      puts $outfile "read_verilog -sv $cell_files"
+    } else {
+      puts "Using .lib files to determine function definitions of cells in gold design: $::env(EQUIVALENCE_CHECK_USE_LIBS)"
+      puts $outfile "read_liberty -ignore_miss_func $::env(EQUIVALENCE_CHECK_USE_LIBS)"
+    }
+  } else {
+    puts "Using verilog simulation models for gold design: $cell_files"
+    puts $outfile "read_verilog -sv $cell_files"
+  }
+  puts $outfile "read_verilog -sv $::env(RESULTS_DIR)/4_before_rsz.v \n"
   puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
   # Modified netlist
-  puts $outfile "\[gate]\nread_verilog -sv $::env(RESULTS_DIR)/4_after_rsz.v $cell_files\n"
+  puts $outfile "\[gate]"
+  if { [env_var_exists_and_non_empty EQUIVALENCE_CHECK_USE_LIBS] } {
+    if { [env_var_equals EQUIVALENCE_CHECK_USE_LIBS 1] } {
+      puts "Using .lib files to determine function definitions of cells in modified design: $::env(LIB_FILES)"
+      puts $outfile "read_liberty -ignore_miss_func $::env(LIB_FILES)"
+    } elseif {[env_var_equals EQUIVALENCE_CHECK_USE_LIBS 0]} {
+      puts "Using verilog simulation models to determine function definitions of cells in modified design: $cell_files"
+      puts $outfile "read_verilog -sv $cell_files"
+    } else {
+      puts "Using .lib files to determine function definitions of cells in modified design: $::env(EQUIVALENCE_CHECK_USE_LIBS)"
+      puts $outfile "read_liberty -ignore_miss_func $::env(EQUIVALENCE_CHECK_USE_LIBS)"
+    }
+  } else {
+    puts "Using verilog simulation models for modified design: $cell_files"
+    puts $outfile "read_verilog -sv $cell_files"
+  }
+  puts $outfile "read_verilog -sv $::env(RESULTS_DIR)/4_after_rsz.v \n"
   puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
 
   # Recommendation from eqy team on how to speed up a design
