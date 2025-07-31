@@ -107,6 +107,9 @@ if { [env_var_exists_and_non_empty DFF_LIB_FILE] } {
 }
 opt
 
+# Replace undef values with defined constants
+setundef -zero
+
 if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
   log_cmd abc {*}$abc_args
 } else {
@@ -116,9 +119,6 @@ if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
   log_cmd abc_new {*}$abc_args
   delete {t:$specify*}
 }
-
-# Replace undef values with defined constants
-setundef -zero
 
 # Splitting nets resolves unwanted compound assign statements in netlist (assign {..} = {..})
 splitnets
