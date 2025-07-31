@@ -52,6 +52,9 @@ proc load_design { design_file sdc_file } {
     puts "Using CCS delay calculation"
     set_delay_calculator prima
   }
+
+  # Temporary until holding buffer filtering is implemented.
+  set_opt_config -disable_buffer_pruning
 }
 
 #===========================================================================================
