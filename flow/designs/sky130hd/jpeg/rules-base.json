@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 464771.19,
+        "value": 463729.45,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -28,7 +28,7 @@
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 220,
+        "value": 165,
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
@@ -48,7 +48,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.25,
+        "value": -0.2,
         "compare": ">="
     },
     "finish__design__instance__area": {
