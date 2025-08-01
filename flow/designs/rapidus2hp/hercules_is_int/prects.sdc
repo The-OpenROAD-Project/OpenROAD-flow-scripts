@@ -10,3 +10,5 @@ set_max_capacitance 10 [all_inputs]
 
 create_clock -name "clk" -add -period $clk_period \
   -waveform [list 0.0 [expr { 0.5 * $clk_period }]] [get_ports clk]
+
+set_propagated_clock [all_clocks]
