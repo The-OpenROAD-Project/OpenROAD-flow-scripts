@@ -1,10 +1,10 @@
 source $::env(SCRIPTS_DIR)/util.tcl
-# Read liberty files
+
+source_env_var_if_exists PLATFORM_TCL
+
 source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
-# Read def
 if { [env_var_exists_and_non_empty DEF_FILE] } {
-  # Read lef
   log_cmd read_lef $::env(TECH_LEF)
   log_cmd read_lef $::env(SC_LEF)
   if { [env_var_exists_and_non_empty ADDITIONAL_LEFS] } {
@@ -28,7 +28,7 @@ proc read_timing { input_file } {
     set sdc_file $::env(SDC_FILE)
   }
   log_cmd read_sdc $sdc_file
-  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
+  if { [file exists $::env(PLATFORM_DIR)/derate.tcl] } {
     source $::env(PLATFORM_DIR)/derate.tcl
   }
 
@@ -57,7 +57,8 @@ proc read_timing { input_file } {
 
 if { [ord::openroad_gui_compiled] } {
   set db_basename [file rootname [file tail $input_file]]
-  gui::set_title "OpenROAD - $::env(PLATFORM)/$::env(DESIGN_NICKNAME)/$::env(FLOW_VARIANT) - ${db_basename}"
+  gui::set_title \
+    "OpenROAD - $::env(PLATFORM)/$::env(DESIGN_NICKNAME)/$::env(FLOW_VARIANT) - ${db_basename}"
 }
 
 if { [env_var_equals GUI_TIMING 1] } {

@@ -45,10 +45,12 @@ append_env_var additional_args ADDITIONAL_SITES -additional_sites 1
 
 set use_floorplan_def [env_var_exists_and_non_empty FLOORPLAN_DEF]
 set use_footprint [env_var_exists_and_non_empty FOOTPRINT]
-set use_die_and_core_area [expr { [env_var_exists_and_non_empty DIE_AREA] && [env_var_exists_and_non_empty CORE_AREA] }]
+set use_die_and_core_area \
+  [expr { [env_var_exists_and_non_empty DIE_AREA] && [env_var_exists_and_non_empty CORE_AREA] }]
 set use_core_utilization [env_var_exists_and_non_empty CORE_UTILIZATION]
 
-set methods_defined [expr { $use_floorplan_def + $use_footprint + $use_die_and_core_area + $use_core_utilization }]
+set methods_defined \
+  [expr { $use_floorplan_def + $use_footprint + $use_die_and_core_area + $use_core_utilization }]
 if { $methods_defined > 1 } {
   puts "Error: Floorplan initialization methods are mutually exclusive, pick one."
   exit 1
@@ -91,13 +93,28 @@ if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
   make_tracks
 }
 
-if { [env_var_exists_and_non_empty FOOTPRINT_TCL] } {
-  log_cmd source $::env(FOOTPRINT_TCL)
-}
+source_env_var_if_exists FOOTPRINT_TCL
 
 # This needs to come before any call to remove_buffers.  You could have one
 # tie driving multiple buffers that drive multiple outputs.
-repair_tie_fanout_helper
+# Repair tie lo fanout
+puts "Repair tie lo fanout..."
+set tielo_cell_name [lindex $::env(TIELO_CELL_AND_PORT) 0]
+set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
+set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $::env(TIELO_CELL_AND_PORT) 1]
+repair_tie_fanout -separation $::env(TIE_SEPARATION) $tielo_pin
+
+# Repair tie hi fanout
+puts "Repair tie hi fanout..."
+set tiehi_cell_name [lindex $::env(TIEHI_CELL_AND_PORT) 0]
+set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
+set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $::env(TIEHI_CELL_AND_PORT) 1]
+repair_tie_fanout -separation $::env(TIE_SEPARATION) $tiehi_pin
+
+if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
+  estimate_parasitics -placement
+  replace_arith_modules
+}
 
 if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
   # remove buffers inserted by yosys/abc
@@ -114,14 +131,8 @@ report_units
 report_units_metric
 report_metrics 2 "floorplan final" false false
 
-if { [env_var_exists_and_non_empty POST_FLOORPLAN_TCL] } {
-  log_cmd source $::env(POST_FLOORPLAN_TCL)
-}
-
-
-if { [env_var_exists_and_non_empty IO_CONSTRAINTS] } {
-  log_cmd source $::env(IO_CONSTRAINTS)
-}
+source_env_var_if_exists POST_FLOORPLAN_TCL
+source_env_var_if_exists IO_CONSTRAINTS
 
 write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
 write_sdc -no_timestamp $::env(RESULTS_DIR)/2_1_floorplan.sdc

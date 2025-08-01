@@ -5,6 +5,12 @@ if { ![grt::have_routes] } {
   error "Global routing failed, run `make gui_grt` and load $::global_route_congestion_report \
         in DRC viewer to view congestion"
 }
+
+if { [env_var_exists_and_non_empty SKIP_DRT] } {
+  write_db $::env(RESULTS_DIR)/5_2_route.odb
+  exit
+}
+
 erase_non_stage_variables route
 set_propagated_clock [all_clocks]
 
@@ -12,8 +18,6 @@ set additional_args ""
 append_env_var additional_args dbProcessNode -db_process_node 1
 append_env_var additional_args OR_SEED -or_seed 1
 append_env_var additional_args OR_K -or_k 1
-append_env_var additional_args MIN_ROUTING_LAYER -bottom_routing_layer 1
-append_env_var additional_args MAX_ROUTING_LAYER -top_routing_layer 1
 append_env_var additional_args VIA_IN_PIN_MIN_LAYER -via_in_pin_bottom_layer 1
 append_env_var additional_args VIA_IN_PIN_MAX_LAYER -via_in_pin_top_layer 1
 append_env_var additional_args DISABLE_VIA_GEN -disable_via_gen 0
@@ -62,9 +66,7 @@ if { ![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1] } {
   utl::metric_int "antenna_diodes_count" -1
 }
 
-if { [env_var_exists_and_non_empty POST_DETAIL_ROUTE_TCL] } {
-  source $::env(POST_DETAIL_ROUTE_TCL)
-}
+source_env_var_if_exists POST_DETAIL_ROUTE_TCL
 
 check_antennas -report_file $env(REPORTS_DIR)/drt_antennas.log
 

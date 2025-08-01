@@ -3,13 +3,8 @@ source $::env(SCRIPTS_DIR)/util.tcl
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
 proc load_design { design_file sdc_file } {
-  # Source platform-related Tcl command (initially for suppressing Liberty
-  # warnings
-  if { [env_var_exists_and_non_empty PLATFORM_TCL] } {
-    log_cmd source $::env(PLATFORM_TCL)
-  }
+  source_env_var_if_exists PLATFORM_TCL
 
-  # Read liberty files
   source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
   # Read design files
@@ -23,9 +18,23 @@ proc load_design { design_file sdc_file } {
       }
     }
     read_verilog $::env(RESULTS_DIR)/$design_file
-    link_design $::env(DESIGN_NAME)
+    if {
+      [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+      [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
+    } {
+      link_design -hier $::env(DESIGN_NAME)
+    } else {
+      link_design $::env(DESIGN_NAME)
+    }
   } elseif { $ext == ".odb" } {
-    read_db $::env(RESULTS_DIR)/$design_file
+    if {
+      [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+      [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
+    } {
+      read_db -hier $::env(RESULTS_DIR)/$design_file
+    } else {
+      read_db $::env(RESULTS_DIR)/$design_file
+    }
   } else {
     error "Unrecognized input file $design_file"
   }
@@ -33,7 +42,7 @@ proc load_design { design_file sdc_file } {
   # Read SDC file
   read_sdc $::env(RESULTS_DIR)/$sdc_file
 
-  if [file exists $::env(PLATFORM_DIR)/derate.tcl] {
+  if { [file exists $::env(PLATFORM_DIR)/derate.tcl] } {
     log_cmd source $::env(PLATFORM_DIR)/derate.tcl
   }
 
@@ -46,7 +55,7 @@ proc load_design { design_file sdc_file } {
 }
 
 #===========================================================================================
-# Routines to run equivalence tests when they are enabled. 
+# Routines to run equivalence tests when they are enabled.
 
 proc get_verilog_cells_for_design { } {
   set dir "$::env(PLATFORM_DIR)/work_around_yosys/"
@@ -74,7 +83,8 @@ proc write_eqy_script_for_sky130hd { } {
   #[script]
   #prep -top aes_cipher_top -flatten
 
-  ## Using `rename -hide` is a better performing choice than nomatch if the signal names have no meaning at all
+  ## Using `rename -hide` is a better performing choice than nomatch
+  ##   if the signal names have no meaning at all
   #rename -hide */_*_.*
 
   ## This removes unused signals before partitioning so no partitions are created for them
@@ -98,7 +108,7 @@ proc write_eqy_script { } {
   # Gold netlist
   puts $outfile "\[gold]\nread_verilog -sv $::env(RESULTS_DIR)/4_before_rsz.v $cell_files\n"
   puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
-  # Modified netlist 
+  # Modified netlist
   puts $outfile "\[gate]\nread_verilog -sv $::env(RESULTS_DIR)/4_after_rsz.v $cell_files\n"
   puts $outfile "prep -top $top_cell -flatten\nmemory_map\n\n"
 
@@ -129,12 +139,14 @@ proc run_equivalence_test { } {
   write_eqy_verilog 4_after_rsz.v
   write_eqy_script
 
+  # tclint-disable-next-line command-args
   eval exec eqy -d $::env(LOG_DIR)/4_eqy_output \
     --force \
     --jobs $::env(NUM_CORES) \
     $::env(OBJECTS_DIR)/4_eqy_test.eqy \
     > $::env(LOG_DIR)/4_equivalence_check.log
-  set count [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
+  set count \
+    [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
   if { $count == 0 } {
     error "Repair timing output failed equivalence test"
   } else {

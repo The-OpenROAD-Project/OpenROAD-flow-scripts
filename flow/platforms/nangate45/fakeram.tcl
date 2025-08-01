@@ -31,8 +31,10 @@ proc copy_fakeram_results { } {
 
   foreach {design sizes} $design_rams {
     foreach size $sizes {
-      file copy -force $results_dir/fakeram45_$size/fakeram45_$size.lib $flow_dir/lib/fakeram45_$size.lib
-      file copy -force $results_dir/fakeram45_$size/fakeram45_$size.lef $flow_dir/lef/fakeram45_$size.lef
+      file copy -force \
+        $results_dir/fakeram45_$size/fakeram45_$size.lib $flow_dir/lib/fakeram45_$size.lib
+      file copy -force \
+        $results_dir/fakeram45_$size/fakeram45_$size.lef $flow_dir/lef/fakeram45_$size.lef
     }
   }
 }

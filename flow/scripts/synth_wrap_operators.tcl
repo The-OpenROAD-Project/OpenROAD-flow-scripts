@@ -10,8 +10,8 @@ set deferred_cells {
   {
     \$macc
     MACC_{CONFIG}_{Y_WIDTH}{%unused}
-    {BASE -map +/choices/han-carlson.v}
     {BOOTH -max_iter 1 -map ../flow/scripts/synth_wrap_operators-booth.v}
+    {BASE -map +/choices/han-carlson.v}
   }
 }
 
@@ -37,7 +37,7 @@ foreach info $deferred_cells {
     t:$type r:A_WIDTH>=10 r:Y_WIDTH>=14 %i %i
 
   # make per-architecture copies of the unmapped module
-  foreach modname [tee -q -s result.string select -list-mod A:arithmetic_operator A:copy_pending %i] {
+  foreach modname [tee -q -s result.string select -list-mod A:arithmetic_operator A:copy_pending %i] { # tclint-disable-line line-length
     setattr -mod -unset copy_pending $modname
 
     # iterate over non-default architectures

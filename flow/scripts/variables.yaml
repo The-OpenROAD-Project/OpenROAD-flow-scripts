@@ -194,6 +194,12 @@ SYNTH_NETLIST_FILES:
     subsequent modules are silently ignored and only the first module is used.
   stages:
     - synth
+SYNTH_CANONICALIZE_TCL:
+  description: >
+    Specifies a Tcl script with commands to run as part of the synth
+    canonicalize step.
+  stages:
+    - synth
 LATCH_MAP_FILE:
   description: |
     List of latches treated as a black box by Yosys.
@@ -226,7 +232,8 @@ TIE_SEPARATION:
   description: |
     Distance separating tie high/low instances from the load.
   stages:
-    - place
+    - floorplan
+  default: 0
 EARLY_SIZING_CAP_RATIO:
   description: |
     Ratio between the input pin capacitance and the output pin load during initial gate sizing.
@@ -269,6 +276,13 @@ SYNTH_WRAPPED_OPERATORS:
     the flow.
   stages:
     - synth
+SWAP_ARITH_OPERATORS:
+  description: >
+    Improve timing QoR by swapping ALU and MULT arithmetic operators.
+  stages:
+    - synth
+    - floorplan
+    - place
 FLOORPLAN_DEF:
   description: |
     Use the DEF file to initialize floorplan.
@@ -756,6 +770,8 @@ CTS_BUF_DISTANCE:
     Distance (in microns) between buffers.
   stages:
     - cts
+  tunable: 1
+  type: float
 CTS_BUF_LIST:
   description: |
     List of cells used to construct the clock tree. Overrides buffer inference.
@@ -807,6 +823,11 @@ ABSTRACT_SOURCE:
     Which .odb file to use to create abstract
   stages:
     - generate_abstract
+PRE_GLOBAL_ROUTE_TCL:
+  description: |
+    Specifies a Tcl script with commands to run before global route.
+  stages:
+    - grt
 GLOBAL_ROUTE_ARGS:
   description: >
     Replaces default arguments for global route.
@@ -977,3 +998,9 @@ RULES_JSON:
     config.mk or from bazel-orfs.
   stages:
     - test
+SKIP_DETAILED_ROUTE:
+  default: 0
+  description: >
+    Skips detailed route.
+  stages:
+    - route
