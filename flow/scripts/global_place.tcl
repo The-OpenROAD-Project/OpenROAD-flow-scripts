@@ -1,7 +1,7 @@
 utl::set_metrics_stage "globalplace__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables place
-load_design 3_2_place_iop.odb 2_floorplan.sdc
+load_design 3_1_place_iop.odb 2_floorplan.sdc
 
 set_dont_use $::env(DONT_USE_CELLS)
 
@@ -53,7 +53,7 @@ proc do_placement { global_placement_args } {
 
 set result [catch { do_placement $global_placement_args } errMsg]
 if { $result != 0 } {
-  write_db $::env(RESULTS_DIR)/3_3_place_gp-failed.odb
+  write_db $::env(RESULTS_DIR)/3_2_place_gp-failed.odb
   error $errMsg
 }
 
@@ -66,4 +66,4 @@ if { [env_var_equals CLUSTER_FLOPS 1] } {
 
 report_metrics 3 "global place" false false
 
-write_db $::env(RESULTS_DIR)/3_3_place_gp.odb
+write_db $::env(RESULTS_DIR)/3_2_place_gp.odb

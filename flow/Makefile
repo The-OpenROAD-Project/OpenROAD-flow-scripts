@@ -460,33 +460,31 @@ place: $(RESULTS_DIR)/3_place.odb \
 # ==============================================================================
 # STEP 1: Global placement without placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_1_place_gp_skip_io,$(RESULTS_DIR)/2_floorplan.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place_skip_io))
-
-$(eval $(call do-step,3_2_place_iop,$(RESULTS_DIR)/3_1_place_gp_skip_io.odb $(IO_CONSTRAINTS),io_placement))
+$(eval $(call do-step,3_1_place_iop,$(RESULTS_DIR)/2_floorplan.odb  $(RESULTS_DIR)/2_floorplan.sdc $(IO_CONSTRAINTS),io_placement))
 
 # STEP 3: Global placement with placed IOs, timing-driven, and routability-driven.
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_3_place_gp,$(RESULTS_DIR)/3_2_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place))
+$(eval $(call do-step,3_2_place_gp,$(RESULTS_DIR)/3_1_place_iop.odb $(RESULTS_DIR)/2_floorplan.sdc $(LIB_FILES),global_place))
 
 # STEP 4: Resizing & Buffering
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_4_place_resized,$(RESULTS_DIR)/3_3_place_gp.odb $(RESULTS_DIR)/2_floorplan.sdc,resize))
+$(eval $(call do-step,3_3_place_resized,$(RESULTS_DIR)/3_2_place_gp.odb $(RESULTS_DIR)/2_floorplan.sdc,resize))
 
 .PHONY: clean_resize
 clean_resize:
-	rm -f $(RESULTS_DIR)/3_4_place_resized.odb
+	rm -f $(RESULTS_DIR)/3_3_place_resized.odb
 
 # STEP 5: Detail placement
 #-------------------------------------------------------------------------------
-$(eval $(call do-step,3_5_place_dp,$(RESULTS_DIR)/3_4_place_resized.odb,detail_place))
+$(eval $(call do-step,3_4_place_dp,$(RESULTS_DIR)/3_3_place_resized.odb,detail_place))
 
-$(eval $(call do-copy,3_place,3_5_place_dp.odb,))
+$(eval $(call do-copy,3_place,3_4_place_dp.odb,))
 
 $(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
 
 .PHONY: do-place
 do-place:
-	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place do-3_place.sdc
+	$(UNSET_AND_MAKE) do-3_1_place_iop do-3_2_place_gp do-3_3_place_resized do-3_4_place_dp do-3_place do-3_place.sdc
 
 # Clean Targets
 #-------------------------------------------------------------------------------

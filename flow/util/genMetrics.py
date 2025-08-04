@@ -301,10 +301,10 @@ def extract_metrics(
     extractGnuTime(
         "globalplace_skip_io", metrics_dict, logPath + "/3_1_place_gp_skip_io.log"
     )
-    extractGnuTime("globalplace_io", metrics_dict, logPath + "/3_2_place_iop.log")
-    extractGnuTime("globalplace", metrics_dict, logPath + "/3_3_place_gp.log")
-    extractGnuTime("placeopt", metrics_dict, logPath + "/3_4_place_resized.log")
-    extractGnuTime("detailedplace", metrics_dict, logPath + "/3_5_place_dp.log")
+    extractGnuTime("globalplace_io", metrics_dict, logPath + "/3_1_place_iop.log")
+    extractGnuTime("globalplace", metrics_dict, logPath + "/3_2_place_gp.log")
+    extractGnuTime("placeopt", metrics_dict, logPath + "/3_3_place_resized.log")
+    extractGnuTime("detailedplace", metrics_dict, logPath + "/3_4_place_dp.log")
     extractGnuTime("cts", metrics_dict, logPath + "/4_1_cts.log")
     extractGnuTime("globalroute", metrics_dict, logPath + "/5_1_grt.log")
     extractGnuTime("fillcell", metrics_dict, logPath + "/5_2_fillcell.log")

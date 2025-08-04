@@ -1,7 +1,7 @@
 utl::set_metrics_stage "placeopt__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables place
-load_design 3_3_place_gp.odb 2_floorplan.sdc
+load_design 3_2_place_gp.odb 2_floorplan.sdc
 
 estimate_parasitics -placement
 
@@ -32,4 +32,4 @@ report_metrics 3 "resizer" true false
 puts "Instance count before $instance_count_before, after [sta::network_leaf_instance_count]"
 puts "Pin count before $pin_count_before, after [sta::network_leaf_pin_count]"
 
-write_db $::env(RESULTS_DIR)/3_4_place_resized.odb
+write_db $::env(RESULTS_DIR)/3_3_place_resized.odb
