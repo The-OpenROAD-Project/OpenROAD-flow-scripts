@@ -6,7 +6,7 @@ if { ![grt::have_routes] } {
         in DRC viewer to view congestion"
 }
 
-if { [env_var_exists_and_non_empty SKIP_DRT] } {
+if { [env_var_equals SKIP_DETAILED_ROUTE 1] } {
   write_db $::env(RESULTS_DIR)/5_2_route.odb
   exit
 }

@@ -20,7 +20,7 @@ write_verilog $::env(RESULTS_DIR)/6_final.v
 # Run extraction and STA
 if {
   [env_var_exists_and_non_empty RCX_RULES]
-  && ![env_var_exists_and_non_empty SKIP_DRT]
+  && [env_var_equals SKIP_DETAILED_ROUTE 0]
 } {
   # RCX section
   define_process_corner -ext_model_index 0 X
