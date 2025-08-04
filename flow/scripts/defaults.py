@@ -9,7 +9,13 @@ yaml_path = os.path.join(dir_path, "variables.yaml")
 with open(yaml_path, "r") as file:
     data = yaml.safe_load(file)
 
-for key, value in data.items():
-    if value.get("default", None) is None:
-        continue
-    print(f'export {key}?={str(value["default"]).replace(" ", "__SPACE__")}')
+defaults = {
+    key: value["default"]
+    for key, value in data.items()
+    if "default" in value and value["default"] is not None
+} | {
+    "VARIABLE_NAMES": " ".join(data.keys())
+}
+
+for key, value in defaults.items():
+    print(f'export {key}?={str(value).replace(" ", "__SPACE__")}')

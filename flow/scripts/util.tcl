@@ -98,6 +98,9 @@ proc find_sdc_file { input_file } {
 }
 
 proc env_var_equals { env_var value } {
+  if {[lsearch -exact $::env(VARIABLE_NAMES) $env_var] != -1} {
+    error "env_var_equals: $env_var is not defined in variables.yaml"
+  }
   return [expr { [info exists ::env($env_var)] && $::env($env_var) == $value }]
 }
 
