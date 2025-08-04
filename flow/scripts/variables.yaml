@@ -998,3 +998,9 @@ RULES_JSON:
     config.mk or from bazel-orfs.
   stages:
     - test
+SKIP_DETAILED_ROUTE:
+  default: 0
+  description: >
+    Skips detailed route.
+  stages:
+    - route
