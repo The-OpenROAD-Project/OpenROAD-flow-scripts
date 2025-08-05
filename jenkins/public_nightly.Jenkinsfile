@@ -2,7 +2,7 @@
 
 node {
 
-    properties([copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME)]);
+    defineKeepPolicy();
 
     stage('Checkout ORFS') {
         checkout([
@@ -23,26 +23,25 @@ node {
         }
     }
 
-
     stage('Checkout OpenROAD Latest') {
         checkout([$class: "GitSCM",
-              branches: [[name: "*/master"]],
-              doGenerateSubmoduleConfigurations: false,
-              extensions: [
+            branches: [[name: "*/master"]],
+            doGenerateSubmoduleConfigurations: false,
+            extensions: [
                 [
-                  $class: "SubmoduleOption",
-                  disableSubmodules: false,
-                  parentCredentials: true,
-                  recursiveSubmodules: true,
-                  reference: "",
-                  trackingSubmodules: false
+                    $class: "SubmoduleOption",
+                    disableSubmodules: false,
+                    parentCredentials: true,
+                    recursiveSubmodules: true,
+                    reference: "",
+                    trackingSubmodules: false
                 ],
                 [
-                  $class: "RelativeTargetDirectory",
-                  relativeTargetDir: "tools/OpenROAD"
+                    $class: "RelativeTargetDirectory",
+                    relativeTargetDir: "tools/OpenROAD"
                 ]
-              ]
-            ]);
+            ]
+        ]);
     }
 
     def DOCKER_IMAGE;

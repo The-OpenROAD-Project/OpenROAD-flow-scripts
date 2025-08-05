@@ -1,35 +1,21 @@
-@Library('utils@orfs-v2.3.5') _
+@Library('utils@orfs-dev') _
 
 node {
-    
-    def isDefaultBranch = (env.BRANCH_NAME == 'master') 
-    def daysToKeep = '20';
-    def numToKeep = (isDefaultBranch ? '-1' : '10');
 
-    properties([
-        copyArtifactPermission('${JOB_NAME},'+env.BRANCH_NAME),
-
-        buildDiscarder(logRotator(
-            daysToKeepStr:         daysToKeep,
-            artifactDaysToKeepStr: daysToKeep, 
-
-            numToKeepStr:          numToKeep,
-            artifactNumToKeepStr:  numToKeep 
-        ))
-    ]);
+    defineKeepPolicy();
 
     stage('Checkout') {
         if (env.BRANCH_NAME && env.BRANCH_NAME == 'master') {
             checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: scm.branches[0].name]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [
+                $class: 'GitSCM',
+                branches: [[name: scm.branches[0].name]],
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [
                     [$class: 'CloneOption', noTags: false],
                     [$class: 'SubmoduleOption', recursiveSubmodules: true]
-                    ],
-                    submoduleCfg: [],
-                    userRemoteConfigs: scm.userRemoteConfigs
+                ],
+                submoduleCfg: [],
+                userRemoteConfigs: scm.userRemoteConfigs
             ]);
         }
         else {
