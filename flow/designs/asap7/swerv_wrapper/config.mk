@@ -1,6 +1,8 @@
 export DESIGN_NAME = swerv_wrapper
 export PLATFORM    = asap7
 
+export SYNTH_HIERARCHICAL = 1
+
 # SYNTH_KEEP_MODULES below is a captured list of kept modules
 # with:
 #

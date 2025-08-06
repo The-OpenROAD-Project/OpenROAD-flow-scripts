@@ -9,14 +9,6 @@ if { [env_var_equals SYNTH_GUT 1] } {
   delete $::env(DESIGN_NAME)/c:*
 }
 
-if { [env_var_exists_and_non_empty SYNTH_KEEP_MODULES] } {
-  foreach module $::env(SYNTH_KEEP_MODULES) {
-    select -module $module
-    setattr -mod -set keep_hierarchy 1
-    select -clear
-  }
-}
-
 if { [env_var_exists_and_non_empty SYNTH_HIER_SEPARATOR] } {
   scratchpad -set flatten.separator $::env(SYNTH_HIER_SEPARATOR)
 }
@@ -37,7 +29,13 @@ if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
   # defer flattening until we have decided what hierarchy to keep
   synth -run :fine
 
-  if { [env_var_exists_and_non_empty SYNTH_MINIMUM_KEEP_SIZE] } {
+  if { [env_var_exists_and_non_empty SYNTH_KEEP_MODULES] } {
+    foreach module $::env(SYNTH_KEEP_MODULES) {
+      select -module $module
+      setattr -mod -set keep_hierarchy 1
+      select -clear
+    }
+  } elseif { [env_var_exists_and_non_empty SYNTH_MINIMUM_KEEP_SIZE] } {
     set ungroup_threshold $::env(SYNTH_MINIMUM_KEEP_SIZE)
     puts "Keep modules above estimated size of $ungroup_threshold gate equivalents"
 

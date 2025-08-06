@@ -702,7 +702,8 @@ DONT_USE_LIBS:
     Set liberty files as `dont_use`.
 SYNTH_KEEP_MODULES:
   description: |
-    Mark modules to keep from getting removed in flattening.
+    Mark modules to keep from getting removed in flattening. This option applies
+    when SYNTH_HIERARCHICAL is enabled.
   stages:
     - synth
 SYNTH_ARGS:
