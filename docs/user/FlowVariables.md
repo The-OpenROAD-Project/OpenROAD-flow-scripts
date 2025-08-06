@@ -229,7 +229,7 @@ configuration file.
 | <a name="SYNTH_HDL_FRONTEND"></a>SYNTH_HDL_FRONTEND| Select an alternative language frontend to ingest the design. Available option is "slang". If the variable is empty, design is read with the Yosys read_verilog command.| |
 | <a name="SYNTH_HIERARCHICAL"></a>SYNTH_HIERARCHICAL| Enable to Synthesis hierarchically, otherwise considered flat synthesis.| 0|
 | <a name="SYNTH_HIER_SEPARATOR"></a>SYNTH_HIER_SEPARATOR| Separator used for the synthesis flatten stage.| .|
-| <a name="SYNTH_KEEP_MODULES"></a>SYNTH_KEEP_MODULES| Mark modules to keep from getting removed in flattening.| |
+| <a name="SYNTH_KEEP_MODULES"></a>SYNTH_KEEP_MODULES| Mark modules to keep from getting removed in flattening. This option applies when SYNTH_HIERARCHICAL is enabled.| |
 | <a name="SYNTH_MEMORY_MAX_BITS"></a>SYNTH_MEMORY_MAX_BITS| Maximum number of bits for memory synthesis.| 4096|
 | <a name="SYNTH_MINIMUM_KEEP_SIZE"></a>SYNTH_MINIMUM_KEEP_SIZE| For hierarchical synthesis, we keep modules of larger area than given by this variable and flatten smaller modules. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| 0|
 | <a name="SYNTH_NETLIST_FILES"></a>SYNTH_NETLIST_FILES| Skips synthesis and uses the supplied netlist files. If the netlist files contains duplicate modules, which can happen when using hierarchical synthesis on indvidual netlist files and combining here, subsequent modules are silently ignored and only the first module is used.| |
