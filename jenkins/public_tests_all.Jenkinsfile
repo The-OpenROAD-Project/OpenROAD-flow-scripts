@@ -44,7 +44,7 @@ node {
 
     def DOCKER_IMAGE;
     stage('Build and Push Docker Image') {
-        DOCKER_IMAGE = dockerPush('ubuntu22.04', 'orfs');
+        DOCKER_IMAGE = dockerPush('ubuntu24.04', 'orfs');
         echo "Docker image is $DOCKER_IMAGE";
     }
 
