@@ -355,7 +355,7 @@ case "${platform}" in
 esac
 
 case "${os}" in
-    "CentOS Linux" )
+    "CentOS Linux" | "AlmaLinux" | "Rocky Linux" | "Red Hat Enterprise Linux" )
         if [[ ${CI} == "yes" ]]; then
             echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
         fi
