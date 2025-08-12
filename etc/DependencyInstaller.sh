@@ -62,12 +62,14 @@ _installCommon() {
     fi
 }
 
-_installCentosCleanUp() {
+# Enterprise Linux 7 cleanup
+_install_EL7_CleanUp() {
     yum clean -y all
     rm -rf /var/lib/apt/lists/*
 }
 
-_installCentosPackages() {
+# Enterprise Linux 7 package installation (EL7 = RHEL 7 or CentOS 7)
+_install_EL7_Packages() {
     yum -y update
     yum -y install \
         time \
@@ -86,6 +88,67 @@ _installCentosPackages() {
         yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
       fi
     fi
+}
+
+
+# Enterprise Linux 8/9 cleanup
+_install_EL8_EL9_CleanUp() {
+    dnf clean -y all
+    rm -rf /var/lib/apt/lists/*
+}
+
+# Enterprise Linux 8/9 package installation (EL8/EL9 = RHEL, Rocky Linux, AlmaLinux, or CentOS 8 as no CentOS 9 exists)
+_install_EL8_EL9_Packages() {
+    # Re-detect EL version for appropriate KLayout package
+    if [[ -f /etc/os-release ]]; then
+        elVersion=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g' | cut -d. -f1)
+    else
+        echo "ERROR: Could not detect Enterprise Linux version"
+        exit 1
+    fi
+
+    # EL8 and EL9 use `dnf`, instead of `yum`
+    dnf -y update
+    dnf -y install \
+        time \
+        ruby \
+        ruby-devel
+
+    # Install KLayout based on EL version, note the different URLs
+    case "${elVersion}" in
+        "8")
+            if ! [ -x "$(command -v klayout)" ]; then
+                dnf -y install https://www.klayout.org/downloads/CentOS_8/klayout-${klayoutVersion}-0.x86_64.rpm
+            else
+                currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+                if _versionCompare "$currentVersion" -ge $klayoutVersion; then
+                    echo "KLayout version greater than or equal to ${klayoutVersion}"
+                else
+                    echo "KLayout version less than ${klayoutVersion}"
+                    sudo dnf remove -y klayout
+                    dnf -y install https://www.klayout.org/downloads/CentOS_8/klayout-${klayoutVersion}-0.x86_64.rpm
+                fi
+            fi
+            ;;
+        "9")
+            if ! [ -x "$(command -v klayout)" ]; then
+                dnf -y install https://www.klayout.org/downloads/RockyLinux_9/klayout-${klayoutVersion}-0.x86_64.rpm
+            else
+                currentVersion=$(klayout -v | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+')
+                if _versionCompare "$currentVersion" -ge $klayoutVersion; then
+                    echo "KLayout version greater than or equal to ${klayoutVersion}"
+                else
+                    echo "KLayout version less than ${klayoutVersion}"
+                    sudo dnf remove -y klayout
+                    dnf -y install https://www.klayout.org/downloads/RockyLinux_9/klayout-${klayoutVersion}-0.x86_64.rpm
+                fi
+            fi
+            ;;
+        *)
+            echo "ERROR: Unsupported Enterprise Linux version: ${elVersion}"
+            exit 1
+            ;;
+    esac
 }
 
 _installUbuntuCleanUp() {
@@ -355,15 +418,45 @@ case "${platform}" in
 esac
 
 case "${os}" in
-    "CentOS Linux" | "AlmaLinux" | "Rocky Linux" | "Red Hat Enterprise Linux" )
+    "CentOS Linux" | "Red Hat Enterprise Linux Server" | "AlmaLinux" | "Rocky Linux" | "Red Hat Enterprise Linux" )
+        # Enterprise Linux support - dispatch based on version
         if [[ ${CI} == "yes" ]]; then
             echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
         fi
-        _installORDependencies
-        if [[ "${option}" == "base" || "${option}" == "all" ]]; then
-            _installCentosPackages
-            _installCentosCleanUp
+        
+        # Detect EL version to choose appropriate functions
+        if [[ -f /etc/os-release ]]; then
+            elVersion=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g' | cut -d. -f1)
+        else
+            echo "ERROR: Could not detect Enterprise Linux version" >&2
+            exit 1
         fi
+        
+	# First install OpenROAD base
+        _installORDependencies
+        
+	# Determine between EL7 vs EL8/9, since yum vs dnf should be used, and different Klayout builds exist
+        case "${elVersion}" in
+            "7")
+                # EL7 = RHEL 7 or CentOS 7
+                if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+                    _install_EL7_Packages
+                    _install_EL7_CleanUp
+                fi
+                ;;
+            "8"|"9")
+                # EL8/EL9 = RHEL, Rocky Linux, AlmaLinux, or CentOS 8+
+                if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+                    _install_EL8_EL9_Packages
+                    _install_EL8_EL9_CleanUp
+                fi
+                ;;
+            *)
+                echo "ERROR: Unsupported Enterprise Linux version: ${elVersion}" >&2
+                exit 1
+                ;;
+        esac
+        
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installCommon
         fi
