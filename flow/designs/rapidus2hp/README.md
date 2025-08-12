@@ -6,7 +6,7 @@ The ORFS-specific files for the Rapidus platform are stored separately in the pr
 
 ```
 cd rapidus_platform_dir_goes_here
-git clone http://github.com/The-OpenROAD-Project-private/rapidus
+git clone git@github.com:The-OpenROAD-Project-private/rapidus
 export PLATFORM_HOME=`pwd`/rapidus_platform_dir_goes_here
 ```
 
