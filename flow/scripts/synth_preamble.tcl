@@ -47,7 +47,7 @@ proc read_design_sources { } {
     # slang requires all files at once
     plugin -i slang
     yosys read_slang -D SYNTHESIS --keep-hierarchy --compat=vcs \
-      --ignore-assertions --top $::env(DESIGN_NAME) \
+      --ignore-assertions --no-implicit-memories --top $::env(DESIGN_NAME) \
       {*}$vIdirsArgs {*}$::env(VERILOG_FILES) {*}[env_var_or_empty VERILOG_DEFINES]
     # Workaround for yosys-slang#119
     setattr -unset init
