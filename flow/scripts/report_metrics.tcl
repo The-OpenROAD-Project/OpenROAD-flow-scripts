@@ -18,8 +18,8 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   report_puts "$when report_tns"
   report_puts "--------------------------------------------------------------------------"
   report_tns >> $filename
-  report_tns_metric >> $filename
-  report_tns_metric -hold >> $filename
+  report_tns_metric
+  report_tns_metric -hold
 
   report_puts "\n=========================================================================="
   report_puts "$when report_wns"
@@ -30,16 +30,17 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   report_puts "$when report_worst_slack"
   report_puts "--------------------------------------------------------------------------"
   report_worst_slack >> $filename
-  report_worst_slack_metric >> $filename
-  report_worst_slack_metric -hold >> $filename
+  report_worst_slack_metric
+  report_worst_slack_metric -hold
+  report_fmax_metric
 
   if { $include_clock_skew && $::env(REPORT_CLOCK_SKEW) } {
     report_puts "\n=========================================================================="
     report_puts "$when report_clock_skew"
     report_puts "--------------------------------------------------------------------------"
     report_clock_skew >> $filename
-    report_clock_skew_metric >> $filename
-    report_clock_skew_metric -hold >> $filename
+    report_clock_skew_metric
+    report_clock_skew_metric -hold
   }
 
   report_puts "\n=========================================================================="
@@ -228,12 +229,12 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
     foreach corner $::env(CORNERS) {
       report_puts "Corner: $corner"
       report_power -corner $corner >> $filename
-      report_power_metric -corner $corner >> $filename
+      report_power_metric -corner $corner
     }
     unset corner
   } else {
     report_power >> $filename
-    report_power_metric >> $filename
+    report_power_metric
   }
 
   # TODO these only work to stdout, whereas we want to append to the $filename
