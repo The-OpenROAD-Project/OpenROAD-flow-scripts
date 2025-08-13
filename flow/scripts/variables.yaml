@@ -200,6 +200,14 @@ SYNTH_CANONICALIZE_TCL:
     canonicalize step.
   stages:
     - synth
+SYNTH_RETIME_MODULES:
+  description: >
+    List of modules to apply retiming to. These modules must not get
+    dissolved and as such they should either be the top module or be included
+    in SYNTH_KEEP_MODULES. This is an experimental option and may cause adverse
+    effects.
+  stages:
+    - synth
 LATCH_MAP_FILE:
   description: |
     List of latches treated as a black box by Yosys.
