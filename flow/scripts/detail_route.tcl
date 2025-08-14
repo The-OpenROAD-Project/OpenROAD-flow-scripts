@@ -52,18 +52,18 @@ set all_args [concat [list \
 
 log_cmd detailed_route {*}$all_args
 
-if { ![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1] } {
+if { ![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1] && $::env(MAX_REPAIR_ANTENNAS_ITER_DRT) } {
   set repair_antennas_iters 1
   if { [repair_antennas] } {
     detailed_route {*}$all_args
   }
-  while { [check_antennas] && $repair_antennas_iters < 5 } {
+  while { [check_antennas] && $repair_antennas_iters < $::env(MAX_REPAIR_ANTENNAS_ITER_DRT) } {
     repair_antennas
     detailed_route {*}$all_args
     incr repair_antennas_iters
   }
 } else {
-  utl::metric_int "antenna_diodes_count" -1
+  utl::metric_int "antenna_diodes_count" 0
 }
 
 source_env_var_if_exists POST_DETAIL_ROUTE_TCL
