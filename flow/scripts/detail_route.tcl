@@ -63,7 +63,7 @@ if { ![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1] && $::env(MAX_REPAIR_ANTEN
     incr repair_antennas_iters
   }
 } else {
-  utl::metric_int "antenna_diodes_count" 0
+  utl::metric_int "antenna_diodes_count" -1
 }
 
 source_env_var_if_exists POST_DETAIL_ROUTE_TCL
