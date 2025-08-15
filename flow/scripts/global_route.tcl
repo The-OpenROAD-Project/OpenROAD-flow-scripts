@@ -86,9 +86,9 @@ proc global_route_helper { } {
   log_cmd global_route -end_incremental \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
 
-  if { ![env_var_equals SKIP_ANTENNA_REPAIR 1] } {
+  if { ![env_var_equals SKIP_ANTENNA_REPAIR 1] && $::env(MAX_REPAIR_ANTENNAS_ITER_GRT) } {
     puts "Repair antennas..."
-    repair_antennas -iterations 5
+    repair_antennas -iterations $::env(MAX_REPAIR_ANTENNAS_ITER_GRT)
     check_placement -verbose
     check_antennas -report_file $::env(REPORTS_DIR)/grt_antennas.log
   }
