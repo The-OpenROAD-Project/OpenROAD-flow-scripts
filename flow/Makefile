@@ -49,7 +49,7 @@
 # DESIGN_CONFIG=./designs/sky130hs/aes/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/ibex/config.mk
- DESIGN_CONFIG=./designs/sky130hs/jpeg/config.mk
+# DESIGN_CONFIG=./designs/sky130hs/jpeg/config.mk
 # DESIGN_CONFIG=./designs/sky130hs/riscv32i/config.mk
 
 # DESIGN_CONFIG=./designs/asap7/aes/config.mk
