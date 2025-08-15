@@ -32,6 +32,11 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   report_worst_slack >> $filename
   report_worst_slack_metric
   report_worst_slack_metric -hold
+
+  report_puts "\n=========================================================================="
+  report_puts "$when report_clock_min_period"
+  report_puts "--------------------------------------------------------------------------"
+  report_clock_min_period -include_port_paths >> $filename
   report_fmax_metric
 
   if { $include_clock_skew && $::env(REPORT_CLOCK_SKEW) } {
