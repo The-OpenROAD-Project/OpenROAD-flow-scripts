@@ -232,6 +232,20 @@ python3 ./tools/AutoTuner/test/smoke_test_tune.py
 python3 ./tools/AutoTuner/test/smoke_test_sample_iteration.py
 ```
 
+## Message glossary
+
+As tool developers, we can also choose to include useful information to the end user - 
+be it in the form on debugging tips, or solutions to fix the errors/warnings. We compile
+a list of such errors in this [table](./MessagesFinal.md). The good thing about
+this page is the ability to encode rich formatting using Markdown, enabling you
+to convey more information than what can be said from the limited messages in code.
+
+To format the information, refer to this [sample TUN information file](../messages/tun/0000.md).
+
+```bash
+cd ./docs/messages/tun && touch _NUM_.md
+```
+
 ## Citation
 
 Please cite the following paper.
