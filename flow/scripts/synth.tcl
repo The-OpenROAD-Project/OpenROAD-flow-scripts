@@ -62,7 +62,7 @@ if { [env_var_exists_and_non_empty SYNTH_RETIME_MODULES] } {
   memory_map
   opt -full
   techmap
-  abc -dff -script scripts/abc_retime.script
+  abc -dff -script $::env(SCRIPTS_DIR)/abc_retime.script
   select -clear
 }
 
@@ -123,7 +123,7 @@ setundef -zero
 if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
   log_cmd abc {*}$abc_args
 } else {
-  scratchpad -set abc9.script scripts/abc_speed_gia_only.script
+  scratchpad -set abc9.script $::env(SCRIPTS_DIR)/abc_speed_gia_only.script
   # crop out -script from arguments
   set abc_args [lrange $abc_args 2 end]
   log_cmd abc_new {*}$abc_args
