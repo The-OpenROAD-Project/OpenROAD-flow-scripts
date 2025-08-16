@@ -7,7 +7,7 @@ export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/include
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 export ABC_AREA = 1
 
-export CORE_UTILIZATION = 50
+export CORE_UTILIZATION = 65
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 
