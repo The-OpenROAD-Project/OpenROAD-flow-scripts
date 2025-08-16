@@ -116,10 +116,6 @@ export MAX_ROUTING_LAYER 		?= Metal5
 #export VIA_IN_PIN_MAX_LAYER ?= Metal1
 #export DISABLE_VIA_GEN      ?= 1
 
-# Max iterations of repair antennas
-export MAX_REPAIR_ANTENNAS_ITER_GRT ?= 5
-export MAX_REPAIR_ANTENNAS_ITER_DRT ?= 5
-
 # Define fastRoute tcl
 export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 

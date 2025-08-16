@@ -1013,3 +1013,17 @@ SKIP_DETAILED_ROUTE:
   stages:
     - route
     - final
+MAX_REPAIR_ANTENNAS_ITER_DRT:
+  default: 5
+  description: >
+    Defines the maximum number of iterations post-detailed routing repair
+    antennas will run.
+  stages:
+    - route
+MAX_REPAIR_ANTENNAS_ITER_GRT:
+  default: 5
+  description: >
+    Defines the maximum number of iterations post global routing repair
+    antennas will run.
+  stages:
+    - grt
