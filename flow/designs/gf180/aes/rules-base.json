@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 718283,
+        "value": 846140,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {

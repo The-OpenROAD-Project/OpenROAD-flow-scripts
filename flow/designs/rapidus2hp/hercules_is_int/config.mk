@@ -3,6 +3,11 @@ export PLATFORM               = rapidus2hp
 export DESIGN_NAME            = hercules_is_int
 
 export SRC_HOME = /platforms/Rapidus/designs/hercules_is_int
+
+ifeq ($(FLOW_VARIANT), gatelevel)
+  export SYNTH_NETLIST_FILES = $(SRC_HOME)/ca78_8t_postroute_0707.v
+endif
+
 export VERILOG_FILES          =	$(sort $(wildcard $(SRC_HOME)/hercules_issue/verilog/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/shared/verilog/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/models/cells/generic/*.sv))
@@ -11,10 +16,7 @@ export VERILOG_INCLUDE_DIRS =  $(SRC_HOME)/hercules_issue/verilog \
 	$(SRC_HOME)/shared/verilog \
 	$(SRC_HOME)/models/cells/generic
 
-export VERILOG_DEFINES += 
-
-export ADDITIONAL_LEFS = 
-export ADDITIONAL_LIBS += 
+export VERILOG_DEFINES +=
 
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/prects.sdc
 
@@ -22,7 +24,11 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/prects
 export SYNTH_HDL_FRONTEND  = slang
 export SYNTH_HIERARCHICAL ?= 0
 
-export CORE_UTILIZATION       = 35
+ifeq ($(PLACE_SITE), SC6T)
+  export CORE_UTILIZATION       = 30
+else
+  export CORE_UTILIZATION       = 35
+endif
 
 export CORE_MARGIN            = 2
 export MACRO_PLACE_HALO       = 2 2

@@ -56,6 +56,16 @@ json -o $::env(RESULTS_DIR)/mem.json
 exec -- $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/mem_dump.py \
   --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
 
+if { [env_var_exists_and_non_empty SYNTH_RETIME_MODULES] } {
+  select $::env(SYNTH_RETIME_MODULES)
+  opt -fast -full
+  memory_map
+  opt -full
+  techmap
+  abc -dff -script $::env(SCRIPTS_DIR)/abc_retime.script
+  select -clear
+}
+
 if {
   [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
   [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
@@ -107,18 +117,18 @@ if { [env_var_exists_and_non_empty DFF_LIB_FILE] } {
 }
 opt
 
+# Replace undef values with defined constants
+setundef -zero
+
 if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
   log_cmd abc {*}$abc_args
 } else {
-  scratchpad -set abc9.script scripts/abc_speed_gia_only.script
+  scratchpad -set abc9.script $::env(SCRIPTS_DIR)/abc_speed_gia_only.script
   # crop out -script from arguments
   set abc_args [lrange $abc_args 2 end]
   log_cmd abc_new {*}$abc_args
   delete {t:$specify*}
 }
-
-# Replace undef values with defined constants
-setundef -zero
 
 # Splitting nets resolves unwanted compound assign statements in netlist (assign {..} = {..})
 splitnets

@@ -91,7 +91,7 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constr
 export CORE_UTILIZATION       = 70
 export CORE_MARGIN            = 2
 export MACRO_PLACE_HALO       = 3 3
-export PLACE_DENSITY          = 0.73
+export PLACE_DENSITY          = 0.69
 
 # a smoketest for this option, there are a
 # few last gasp iterations
@@ -105,3 +105,6 @@ export SYNTH_HDL_FRONTEND = slang
 export ASAP7_USE_VT = RVT LVT SLVT
 
 export CTS_LIB_NAME = asap7sc7p5t_INVBUF_SLVT_FF_nldm_211120
+
+# Remove rvfi_probes_o interface
+export SYNTH_CANONICALIZE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/canonicalize.tcl
