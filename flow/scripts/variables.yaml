@@ -202,10 +202,29 @@ SYNTH_CANONICALIZE_TCL:
     - synth
 SYNTH_RETIME_MODULES:
   description: >
-    List of modules to apply retiming to. These modules must not get
+    *This is an experimental option and may cause adverse effects.*
+
+    *No effort has been made to check if the retimed RTL
+    is logically equivalent to the non-retimed RTL.*
+
+    List of modules to apply automatic retiming to. These modules must not get
     dissolved and as such they should either be the top module or be included
-    in SYNTH_KEEP_MODULES. This is an experimental option and may cause adverse
-    effects.
+    in SYNTH_KEEP_MODULES.
+
+    Architectural or manual retiming, as opposed to automatic retiming, is
+    usually preferred, because LEC(Logic Equivalence Check) will not work
+    together with automatic retiming.
+
+    The main use-case for automatic retiming is to quickly identify if
+    performance is left on the table and can be gained with architectural
+    retiming. Architectural retiming also has the advantage that it can change
+    the semantics of the RTL code limited only by not breaking the application,
+    hence retiming can't estimate this performance potential. Architectural retiming
+    can also consider placement and routing, whereas automatic retiming only
+    considers information available at synthesis time.
+
+    The current retiming will treat module ports like register endpoints/startpoints
+    and the objective isn't informed by SDC, even the clock period is ignored.
   stages:
     - synth
 LATCH_MAP_FILE:
