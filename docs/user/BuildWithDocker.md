@@ -1,5 +1,11 @@
 # Build from sources using Docker
 
+:::{Note}
+This document describes how to build your own Docker image.
+If your goal is to use the latest version of OpenROAD-Flow-Scripts,
+please refer to the [Docker Shell](./DockerShell.md) documentation.
+:::
+
 ## Prerequisites
 
 - For this method you only need to install
@@ -31,9 +37,9 @@ This greatly helps to reduce the compilation time needed.
 
 We recommend to use a Docker image of a supported OS
 and install OpenROAD using the pre-built binaries from
-Precision Innovations. 
-You can start the container in an interactive mode using 
-the command below. 
+Precision Innovations.
+You can start the container in an interactive mode using
+the command below.
 
 ```shell
 docker run -it ubuntu:22.04
@@ -87,7 +93,7 @@ exit
 ```
 
 Alternatively you may also use the `docker_shell` utility as follows.
-It is important that you are in the `flow` directory. 
+It is important that you are in the `flow` directory.
 
 ```shell
 cd flow
@@ -121,8 +127,8 @@ Then use:
 docker run --rm -it -e DISPLAY=<IP_LIKE_FROM_TUTORIAL>:0 --network host --privileged <IMAGE_NAME>
 ```
 
-Alternatively, you may also use the `docker_shell` utility for GUI as follows. 
-It is important that you are in the `flow` directory. 
+Alternatively, you may also use the `docker_shell` utility for GUI as follows.
+It is important that you are in the `flow` directory.
 
 ```shell
 cd flow
@@ -130,8 +136,8 @@ util/docker_shell gui_final
 ```
 
 ```{note}
-`docker_shell` is a helpful utility to automate the 
-aforementioned Docker commands using the user's parameters. 
+`docker_shell` is a helpful utility to automate the
+aforementioned Docker commands using the user's parameters.
 Do refer to the documentation [here](./DockerShell.md).
 ```
 
