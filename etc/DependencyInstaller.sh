@@ -10,7 +10,7 @@ else
 fi
 
 # package versions
-klayoutVersion=0.29.8
+klayoutVersion=0.30.3
 verilatorVersion=5.026
 
 _versionCompare() {
@@ -170,11 +170,11 @@ _installUbuntuPackages() {
         fi
         else
             if [[ $1 == 20.04 ]]; then
-                klayoutChecksum=bfa011330bc9e1f61b46f668379cc741
+                klayoutChecksum=e83be08033f2f69d83ab7bd494a7a858
             elif [[ $1 == 22.04 ]]; then
-                klayoutChecksum=60839f6b5b2b1c1e76bf0c1bc17bf18c
+                klayoutChecksum=6e431b0a1a34c16eab9958a2c28f88bd
             elif [[ $1 == 24.04 ]]; then
-                klayoutChecksum=b8909538985b15135b49e8d32a089d72
+                klayoutChecksum=2d186f0225dbac7ae2d790aa8fa57814
             else
                 echo "Unrecognized version of Ubuntu $1. Please install KLayout manually"
                 exit 1
