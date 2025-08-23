@@ -12,6 +12,7 @@ fi
 # package versions
 klayoutVersion=0.30.3
 verilatorVersion=5.026
+numThreads=$(nproc)
 
 _versionCompare() {
     local a b IFS=. ; set -f
@@ -54,7 +55,7 @@ _installCommon() {
             pushd verilator
                 autoconf
                 ./configure --prefix "${verilatorPrefix}"
-                make -j`nproc`
+                make -j "${numThreads}"
                 make install
             popd
             rm -r verilator
@@ -162,9 +163,9 @@ _installUbuntuPackages() {
             if [ ! -f ${klayoutPrefix}/klayout ]; then
                 _installKlayoutDependenciesUbuntuAarch64
                 echo "Installing KLayout for aarch64 architecture"
-                git clone https://github.com/KLayout/klayout.git
+                git clone --depth=1 -b "v${klayoutVersion}" https://github.com/KLayout/klayout.git
                 cd klayout
-                ./build.sh -bin "${klayoutPrefix}"
+                ./build.sh -bin "${klayoutPrefix}" -option -j "${numThreads}"
             else
                 echo "Klayout is already installed"
         fi
@@ -321,6 +322,10 @@ while [ "$#" -gt 0 ]; do
         -constant-build-dir)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
             constantBuildDir="true"
+            ;;
+        -threads=*)
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
+            numThreads=${1#*=}
             ;;
         *)
             echo "unknown option: ${1}" >&2
