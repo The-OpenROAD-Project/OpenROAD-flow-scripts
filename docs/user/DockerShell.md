@@ -1,19 +1,23 @@
 Building example design using Docker image
 ==========================================
 
-The `docker_shell` script is used as a prefix to launch a command using a OpenROAD docker image.
+The `docker_shell` script is used to launch a command using a OpenROAD-flow-scripts docker image.
 
 Also, the current working directory is mapped into the Docker image using the current user's credentials.
 
 Build docker image
 ------------------
 
-First build the docker image:
+You can skip this step if you would like to use the latest version from the master
+branch. If you are developing ORFS/OR, you should build your own image.
 
 ```
 cd OpenROAD-flow-scripts
 ./build_openroad.sh
 ```
+
+Run ORFS using `docker_shell`
+-----------------------------
 
 Build an example design and run the GUI:
 
@@ -33,7 +37,7 @@ If you need to use a different Docker image than default, override by using the 
 environment variable:
 
 ```
-OR_IMAGE=openroad/flow-ubuntu22.04-builder:v1234 util/docker_shell make
+OR_IMAGE=openroad/orfs:v1234 util/docker_shell make
 ```
 
 If you have built your OpenROAD Docker image using prebuilt binaries,
