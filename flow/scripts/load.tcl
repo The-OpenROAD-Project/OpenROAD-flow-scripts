@@ -2,6 +2,20 @@ source $::env(SCRIPTS_DIR)/util.tcl
 
 source $::env(SCRIPTS_DIR)/report_metrics.tcl
 
+# Feature toggle for now, eventually the -hier option
+# will be default and this code will be deleted.
+proc hier_options { } {
+  if {
+    [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+    [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] ||
+    [env_var_equals OPENROAD_HIERARCHICAL 1]
+  } {
+    return "-hier"
+  } else {
+    return ""
+  }
+}
+
 proc load_design { design_file sdc_file } {
   source_env_var_if_exists PLATFORM_TCL
 
@@ -18,23 +32,9 @@ proc load_design { design_file sdc_file } {
       }
     }
     read_verilog $::env(RESULTS_DIR)/$design_file
-    if {
-      [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
-      [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
-    } {
-      link_design -hier $::env(DESIGN_NAME)
-    } else {
-      link_design $::env(DESIGN_NAME)
-    }
+    link_design {*}[hier_options] $::env(DESIGN_NAME)
   } elseif { $ext == ".odb" } {
-    if {
-      [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
-      [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
-    } {
-      read_db -hier $::env(RESULTS_DIR)/$design_file
-    } else {
-      read_db $::env(RESULTS_DIR)/$design_file
-    }
+    read_db {*}[hier_options] $::env(RESULTS_DIR)/$design_file
   } else {
     error "Unrecognized input file $design_file"
   }

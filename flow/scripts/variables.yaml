@@ -1039,3 +1039,9 @@ MAX_REPAIR_ANTENNAS_ITER_GRT:
     antennas will run.
   stages:
     - grt
+OPENROAD_HIERARCHICAL:
+  description: >
+    Feature toggle to enable to run OpenROAD in hierarchical mode,
+    otherwise considered flat. Will eventually be the default and
+    this option will be retired.
+  default: 0
