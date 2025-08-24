@@ -186,3 +186,17 @@ proc source_env_var_if_exists { env_var } {
     log_cmd source $::env($env_var)
   }
 }
+
+# Feature toggle for now, eventually the -hier option
+# will be default and this code will be deleted.
+proc hier_options { } {
+  if {
+    [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+    [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] ||
+    [env_var_equals OPENROAD_HIERARCHICAL 1]
+  } {
+    return "-hier"
+  } else {
+    return ""
+  }
+}
