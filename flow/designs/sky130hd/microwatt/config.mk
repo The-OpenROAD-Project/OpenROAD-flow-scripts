@@ -11,8 +11,6 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 export DIE_AREA   = 0 0 3020 3610
 export CORE_AREA  = 10 10 3010 3600
 
-export PLACE_DENSITY ?= 0.2
-
 export microwatt_DIR = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)
 
 export ADDITIONAL_GDS  = $(wildcard $(microwatt_DIR)/gds/*.gds.gz)
@@ -33,7 +31,10 @@ export MACRO_BLOCKAGE_HALO = 151
 
 # There's less space due to the adapted blockage halos, so GPL requires a
 # higher density in order to run.
-export PLACE_DENSITY = 0.19
+export PLACE_DENSITY = 0.2
+
+# Extra effort to ease routing: avoid very tall std cell clusters in MPL.
+export RTLMP_MIN_AR = 0.40
 
 # CTS tuning
 export CTS_BUF_DISTANCE = 600

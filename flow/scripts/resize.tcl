@@ -10,27 +10,15 @@ set pin_count_before [sta::network_leaf_pin_count]
 
 set_dont_use $::env(DONT_USE_CELLS)
 
-repair_design_helper
-
-if { [env_var_exists_and_non_empty TIE_SEPARATION] } {
-  set tie_separation $env(TIE_SEPARATION)
-} else {
-  set tie_separation 0
+if { [env_var_exists_and_non_empty EARLY_SIZING_CAP_RATIO] } {
+  log_cmd set_opt_config -set_early_sizing_cap_ratio $env(EARLY_SIZING_CAP_RATIO)
 }
 
-# Repair tie lo fanout
-puts "Repair tie lo fanout..."
-set tielo_cell_name [lindex $env(TIELO_CELL_AND_PORT) 0]
-set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
-set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $env(TIELO_CELL_AND_PORT) 1]
-repair_tie_fanout -separation $tie_separation $tielo_pin
+if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
+  replace_arith_modules
+}
 
-# Repair tie hi fanout
-puts "Repair tie hi fanout..."
-set tiehi_cell_name [lindex $env(TIEHI_CELL_AND_PORT) 0]
-set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
-set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $env(TIEHI_CELL_AND_PORT) 1]
-repair_tie_fanout -separation $tie_separation $tiehi_pin
+repair_design_helper
 
 # hold violations are not repaired until after CTS
 

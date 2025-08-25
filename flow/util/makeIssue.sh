@@ -32,7 +32,7 @@ ISSUE_CP_PLATFORM_FILE_VARS="LIB_FILES \
                              PDN_TCL \
                              POST_PDN_TCL \
                              POST_CTS_TCL \
-                             PRE_GLOBAL_ROUTE \
+                             PRE_GLOBAL_ROUTE_TCL \
                              FASTROUTE_TCL \
                              POST_DETAIL_ROUTE_TCL \
                              RCX_RULES \

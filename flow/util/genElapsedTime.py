@@ -4,26 +4,51 @@
 # in the flow and prints it in a table
 # ---------------------------------------------------------------------------
 
+import argparse
+import hashlib
 import pathlib
 import os
-import argparse  # argument parsing
 import sys
 
 # Parse and validate arguments
 # ==============================================================================
 
 
+def get_hash(f):
+    # content hash for the result file alongside .log file is useful to
+    # debug divergent results under what should be identical
+    # builds(such as local and CI builds)
+    for ext in [".odb", ".rtlil", ".v"]:
+        result_file = pathlib.Path(
+            str(f).replace("logs/", "results/").replace(".log", ext)
+        )
+        if result_file.exists():
+            hasher = hashlib.sha1()
+            with open(result_file, "rb") as odb_f:
+                while True:
+                    chunk = odb_f.read(16 * 1024 * 1024)
+                    if not chunk:
+                        break
+                    hasher.update(chunk)
+            return hasher.hexdigest()
+    return "N/A"
+
+
 def print_log_dir_times(logdir, args):
     first = True
     totalElapsed = 0
     total_max_memory = 0
-    print(logdir)
+    if not args.match:
+        print(logdir)
 
     # Loop on all log files in the directory
     for f in sorted(pathlib.Path(logdir).glob("**/*.log")):
         if "eqy_output" in str(f):
             continue
         # Extract Elapsed Time line from log file
+        stem = os.path.splitext(os.path.basename(str(f)))[0]
+        if args.match and args.match != stem:
+            continue
         with open(str(f)) as logfile:
             found = False
             for line in logfile:
@@ -60,35 +85,48 @@ def print_log_dir_times(logdir, args):
                     peak_memory = int(
                         int(line.split("Peak memory: ")[1].split("KB")[0]) / 1024
                     )
+                    break
+
+            odb_hash = get_hash(f)
 
             if not found:
                 print("No elapsed time found in", str(f), file=sys.stderr)
                 continue
 
         # Print the name of the step and the corresponding elapsed time
-        format_str = "%-25s %20s %14s"
+        format_str = "%-25s %10s %14s %20s"
         if elapsedTime is not None and peak_memory is not None:
             if first and not args.noHeader:
-                print(format_str % ("Log", "Elapsed seconds", "Peak Memory/MB"))
+                print(
+                    format_str
+                    % ("Log", "Elapsed/s", "Peak Memory/MB", "sha1sum .odb [0:20)")
+                )
                 first = False
             print(
                 format_str
                 % (
-                    os.path.splitext(os.path.basename(str(f)))[0],
+                    stem,
                     elapsedTime,
                     peak_memory,
+                    odb_hash[0:20],
                 )
             )
-        totalElapsed += elapsedTime
-        total_max_memory = max(total_max_memory, int(peak_memory))
+        if elapsedTime is not None:
+            totalElapsed += elapsedTime
+        if peak_memory is not None:
+            total_max_memory = max(total_max_memory, int(peak_memory))
 
-    if totalElapsed != 0:
-        print(format_str % ("Total", totalElapsed, total_max_memory))
+    if totalElapsed != 0 and not args.match:
+        print(format_str % ("Total", totalElapsed, total_max_memory, ""))
 
 
 def scan_logs(args):
     parser = argparse.ArgumentParser(
         description="Print elapsed time for every step in the flow"
+    )
+    parser.add_argument(
+        "--match",
+        help="Match this string in the log file names",
     )
     parser.add_argument(
         "--logDir", "-d", required=True, nargs="+", help="Log files directories"

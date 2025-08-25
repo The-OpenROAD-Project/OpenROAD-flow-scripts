@@ -10,11 +10,13 @@ set clk_period 333
 set clk2_period 1000
 
 set clk1_name clk
-create_clock -name $clk1_name -period $clk_period -waveform [list 0 [expr $clk_period/2]] [get_ports $clk1_name]
+create_clock -name $clk1_name -period $clk_period -waveform \
+  [list 0 [expr $clk_period/2]] [get_ports $clk1_name]
 set_clock_uncertainty 10 [get_clocks $clk1_name]
 
 set clk2_name clk_uncore
-create_clock -name $clk2_name -period $clk2_period -waveform [list 0 [expr $clk_period/2]] [get_ports $clk2_name]
+create_clock -name $clk2_name -period $clk2_period -waveform \
+  [list 0 [expr $clk_period/2]] [get_ports $clk2_name]
 set_clock_uncertainty 10 [get_clocks $clk2_name]
 set_clock_groups -group $clk1_name -group $clk2_name -asynchronous -allow_paths
 
@@ -31,7 +33,7 @@ set_false_path -to [get_ports *rst_n]
 set non_clk_inputs {}
 set clock_ports [list [get_ports $clk1_name] [get_ports $clk2_name]]
 foreach input [all_inputs] {
-  if {[lsearch -exact $clock_ports $input] == -1} {
+  if { [lsearch -exact $clock_ports $input] == -1 } {
     lappend non_clk_inputs $input
   }
 }
