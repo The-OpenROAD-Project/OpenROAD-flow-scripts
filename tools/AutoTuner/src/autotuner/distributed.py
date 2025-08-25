@@ -384,7 +384,7 @@ def parse_arguments():
         "--memory_limit",
         type=float,
         metavar="<float>",
-        default=1,
+        default=None,
         help="Maximum memory in GB that each trial job can use, process will be killed and not retried if it exceeds.",
     )
 
