@@ -184,9 +184,9 @@ $(foreach block,$(BLOCKS),$(eval $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKN
 .PHONY: versions.txt
 versions.txt:
 	mkdir -p $(OBJECTS_DIR)
-	@echo "yosys $(if $(YOSYS_EXE),$(shell $(YOSYS_EXE) -V 2>&1),not available)" > $(OBJECTS_DIR)/$@
-	@echo "openroad $(if $(OPENROAD_EXE),$(shell $(OPENROAD_EXE) -version 2>&1),not available)" >> $(OBJECTS_DIR)/$@
-	@echo "klayout $(if $(KLAYOUT_CMD),$(shell $(KLAYOUT_CMD) -zz -v 2>&1),not available)" >> $(OBJECTS_DIR)/$@
+	@echo "yosys $(shell $(YOSYS_EXE) -V 2>&1)" > $(OBJECTS_DIR)/$@
+	@echo "openroad $(shell $(OPENROAD_EXE) -version 2>&1)" >> $(OBJECTS_DIR)/$@
+	@echo "klayout $(shell $(KLAYOUT_CMD) -zz -v 2>&1)" >> $(OBJECTS_DIR)/$@
 
 # Pre-process libraries
 # ==============================================================================
