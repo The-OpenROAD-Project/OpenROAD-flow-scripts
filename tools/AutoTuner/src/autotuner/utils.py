@@ -325,7 +325,7 @@ def openroad(
 
     make_command = export_command
     if args.memory_limit is not None:
-        make_command += f"ulimit -m {args.memory_limit * 1_000_000}; "
+        make_command += f"ulimit -v {args.memory_limit * 1_000_000}; "
     make_command += f"make -C {base_dir}/flow DESIGN_CONFIG=designs/"
     make_command += f"{args.platform}/{args.design}/config.mk"
     make_command += f" PLATFORM={args.platform}"
