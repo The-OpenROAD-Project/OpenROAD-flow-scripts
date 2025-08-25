@@ -28,6 +28,9 @@ if { [env_var_exists_and_non_empty SYNTH_OPERATIONS_ARGS] } {
   set synth_full_args [concat $synth_full_args \
     "-extra-map $::env(FLOW_HOME)/platforms/common/lcu_kogge_stone.v"]
 }
+if { [env_var_exists_and_non_empty SYNTH_OPT_HIER] } {
+  set synth_full_args [concat $synth_full_args -hieropt]
+}
 
 if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
   # Perform standard coarse-level synthesis script, flatten right away

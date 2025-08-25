@@ -95,21 +95,23 @@ if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
 
 source_env_var_if_exists FOOTPRINT_TCL
 
-# This needs to come before any call to remove_buffers.  You could have one
-# tie driving multiple buffers that drive multiple outputs.
-# Repair tie lo fanout
-puts "Repair tie lo fanout..."
-set tielo_cell_name [lindex $::env(TIELO_CELL_AND_PORT) 0]
-set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
-set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $::env(TIELO_CELL_AND_PORT) 1]
-repair_tie_fanout -separation $::env(TIE_SEPARATION) $tielo_pin
-
-# Repair tie hi fanout
-puts "Repair tie hi fanout..."
-set tiehi_cell_name [lindex $::env(TIEHI_CELL_AND_PORT) 0]
-set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
-set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $::env(TIEHI_CELL_AND_PORT) 1]
-repair_tie_fanout -separation $::env(TIE_SEPARATION) $tiehi_pin
+if { ![env_var_equal SKIP_REPAIR_TIE_FANOUT 1] } {
+  # This needs to come before any call to remove_buffers.  You could have one
+  # tie driving multiple buffers that drive multiple outputs.
+  # Repair tie lo fanout
+  puts "Repair tie lo fanout..."
+  set tielo_cell_name [lindex $::env(TIELO_CELL_AND_PORT) 0]
+  set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
+  set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $::env(TIELO_CELL_AND_PORT) 1]
+  repair_tie_fanout -separation $::env(TIE_SEPARATION) $tielo_pin
+  
+  # Repair tie hi fanout
+  puts "Repair tie hi fanout..."
+  set tiehi_cell_name [lindex $::env(TIEHI_CELL_AND_PORT) 0]
+  set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
+  set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $::env(TIEHI_CELL_AND_PORT) 1]
+  repair_tie_fanout -separation $::env(TIE_SEPARATION) $tiehi_pin
+}
 
 if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
   estimate_parasitics -placement
@@ -121,7 +123,7 @@ if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
   remove_buffers
 } else {
   # Skip clone & split
-  set ::env(SETUP_MOVE_SEQUENCE) "unbuffer,sizeup,swap,buffer"
+  set ::env(SETUP_MOVE_SEQUENCE) "unbuffer,sizeup,swap,buffer,vt_swap"
   set ::env(SKIP_LAST_GASP) 1
   repair_timing_helper -setup
 }
