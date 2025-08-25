@@ -200,6 +200,14 @@ SYNTH_CANONICALIZE_TCL:
     canonicalize step.
   stages:
     - synth
+SYNTH_RETIME_MODULES:
+  description: >
+    List of modules to apply retiming to. These modules must not get
+    dissolved and as such they should either be the top module or be included
+    in SYNTH_KEEP_MODULES. This is an experimental option and may cause adverse
+    effects.
+  stages:
+    - synth
 LATCH_MAP_FILE:
   description: |
     List of latches treated as a black box by Yosys.
@@ -276,6 +284,12 @@ SYNTH_WRAPPED_OPERATORS:
     the flow.
   stages:
     - synth
+    - floorplan
+    - place
+    - cts
+    - grt
+    - route
+    - final
 SWAP_ARITH_OPERATORS:
   description: >
     Improve timing QoR by swapping ALU and MULT arithmetic operators.
@@ -283,6 +297,10 @@ SWAP_ARITH_OPERATORS:
     - synth
     - floorplan
     - place
+    - cts
+    - grt
+    - route
+    - final
 FLOORPLAN_DEF:
   description: |
     Use the DEF file to initialize floorplan.
@@ -302,6 +320,8 @@ PLACE_SITE:
     Placement site for core cells defined in the technology LEF file.
   stages:
     - floorplan
+  type: string
+  tunable: 1
 TAPCELL_TCL:
   description: |
     Path to Endcap and Welltie cells file.
@@ -1022,3 +1042,23 @@ SKIP_DETAILED_ROUTE:
   stages:
     - route
     - final
+MAX_REPAIR_ANTENNAS_ITER_DRT:
+  default: 5
+  description: >
+    Defines the maximum number of iterations post-detailed routing repair
+    antennas will run.
+  stages:
+    - route
+MAX_REPAIR_ANTENNAS_ITER_GRT:
+  default: 5
+  description: >
+    Defines the maximum number of iterations post global routing repair
+    antennas will run.
+  stages:
+    - grt
+OPENROAD_HIERARCHICAL:
+  description: >
+    Feature toggle to enable to run OpenROAD in hierarchical mode,
+    otherwise considered flat. Will eventually be the default and
+    this option will be retired.
+  default: 0

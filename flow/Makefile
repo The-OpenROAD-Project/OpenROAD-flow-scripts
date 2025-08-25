@@ -414,9 +414,8 @@ do-$(1)$(if $(4),$(4),):
 	cp $(RESULTS_DIR)/$(2) $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb)
 endef
 
+$(eval $(call do-step,1_3_synth,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc,synth_odb))
 
-# STEP 1: Translate verilog to odb
-#-------------------------------------------------------------------------------
 $(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(DONT_USE_SC_LIB),floorplan))
 
 $(eval $(call do-copy,2_floorplan,2_1_floorplan.sdc,,.sdc))
@@ -775,13 +774,7 @@ nuke: clean_test clean_issues
 $(foreach file,$(RESULTS_DEF) $(RESULTS_GDS) $(RESULTS_OAS),klayout_$(file)): klayout_%: $(OBJECTS_DIR)/klayout.lyt
 	$(KLAYOUT_CMD) -nn $(OBJECTS_DIR)/klayout.lyt $(RESULTS_DIR)/$*
 
-.PHONY: gui_synth
-gui_synth:
-	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
-.PHONY: open_synth
-open_synth:
-	$(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/sta-synth.tcl
-
+$(eval $(call OPEN_GUI_SHORTCUT,synth,1_synth.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,floorplan,2_floorplan.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,place,3_place.odb))
 $(eval $(call OPEN_GUI_SHORTCUT,cts,4_cts.odb))

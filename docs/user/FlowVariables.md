@@ -163,9 +163,12 @@ configuration file.
 | <a name="MACRO_WRAPPERS"></a>MACRO_WRAPPERS| The wrapper file that replaces existing macros with their wrapped version.| |
 | <a name="MAKE_TRACKS"></a>MAKE_TRACKS| Tcl file that defines add routing tracks to a floorplan.| |
 | <a name="MATCH_CELL_FOOTPRINT"></a>MATCH_CELL_FOOTPRINT| Enforce sizing operations to only swap cells that have the same layout boundary.| 0|
+| <a name="MAX_REPAIR_ANTENNAS_ITER_DRT"></a>MAX_REPAIR_ANTENNAS_ITER_DRT| Defines the maximum number of iterations post-detailed routing repair antennas will run.| 5|
+| <a name="MAX_REPAIR_ANTENNAS_ITER_GRT"></a>MAX_REPAIR_ANTENNAS_ITER_GRT| Defines the maximum number of iterations post global routing repair antennas will run.| 5|
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.| |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| |
 | <a name="MIN_ROUTING_LAYER"></a>MIN_ROUTING_LAYER| The lowest metal layer name to be used in routing.| |
+| <a name="OPENROAD_HIERARCHICAL"></a>OPENROAD_HIERARCHICAL| Feature toggle to enable to run OpenROAD in hierarchical mode, otherwise considered flat. Will eventually be the default and this option will be retired.| 0|
 | <a name="PDN_TCL"></a>PDN_TCL| File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.| |
 | <a name="PLACE_DENSITY"></a>PLACE_DENSITY| The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread. The intended effort is also communicated by this parameter. Use a low value for faster builds and higher value for better quality of results. If a too low value is used, the placer will not be able to place all cells and a recommended minimum placement density can be found in the logs. A too high value can lead to excessive runtimes, even timeouts and subtle failures in the flow after placement, such as in CTS or global routing when timing repair fails. The default is platform specific.| |
 | <a name="PLACE_DENSITY_LB_ADDON"></a>PLACE_DENSITY_LB_ADDON| Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.| |
@@ -233,6 +236,7 @@ configuration file.
 | <a name="SYNTH_MEMORY_MAX_BITS"></a>SYNTH_MEMORY_MAX_BITS| Maximum number of bits for memory synthesis.| 4096|
 | <a name="SYNTH_MINIMUM_KEEP_SIZE"></a>SYNTH_MINIMUM_KEEP_SIZE| For hierarchical synthesis, we keep modules of larger area than given by this variable and flatten smaller modules. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| 0|
 | <a name="SYNTH_NETLIST_FILES"></a>SYNTH_NETLIST_FILES| Skips synthesis and uses the supplied netlist files. If the netlist files contains duplicate modules, which can happen when using hierarchical synthesis on indvidual netlist files and combining here, subsequent modules are silently ignored and only the first module is used.| |
+| <a name="SYNTH_RETIME_MODULES"></a>SYNTH_RETIME_MODULES| List of modules to apply retiming to. These modules must not get dissolved and as such they should either be the top module or be included in SYNTH_KEEP_MODULES. This is an experimental option and may cause adverse effects.| |
 | <a name="SYNTH_WRAPPED_OPERATORS"></a>SYNTH_WRAPPED_OPERATORS| Synthesize multiple architectural options for each arithmetic operator in the design. These options are available for switching among in later stages of the flow.| |
 | <a name="TAPCELL_TCL"></a>TAPCELL_TCL| Path to Endcap and Welltie cells file.| |
 | <a name="TAP_CELL_NAME"></a>TAP_CELL_NAME| Name of the cell to use in tap cell insertion.| |
@@ -269,6 +273,7 @@ configuration file.
 - [SYNTH_MEMORY_MAX_BITS](#SYNTH_MEMORY_MAX_BITS)
 - [SYNTH_MINIMUM_KEEP_SIZE](#SYNTH_MINIMUM_KEEP_SIZE)
 - [SYNTH_NETLIST_FILES](#SYNTH_NETLIST_FILES)
+- [SYNTH_RETIME_MODULES](#SYNTH_RETIME_MODULES)
 - [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
@@ -329,6 +334,7 @@ configuration file.
 - [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
+- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TAPCELL_TCL](#TAPCELL_TCL)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
@@ -355,6 +361,7 @@ configuration file.
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
+- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 
 ## cts variables
 
@@ -380,6 +387,8 @@ configuration file.
 - [SKIP_LAST_GASP](#SKIP_LAST_GASP)
 - [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
+- [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
+- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## grt variables
@@ -388,6 +397,7 @@ configuration file.
 - [DETAILED_METRICS](#DETAILED_METRICS)
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
+- [MAX_REPAIR_ANTENNAS_ITER_GRT](#MAX_REPAIR_ANTENNAS_ITER_GRT)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [PRE_GLOBAL_ROUTE_TCL](#PRE_GLOBAL_ROUTE_TCL)
@@ -400,6 +410,8 @@ configuration file.
 - [SKIP_LAST_GASP](#SKIP_LAST_GASP)
 - [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
+- [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
+- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## route variables
@@ -408,12 +420,15 @@ configuration file.
 - [DETAILED_ROUTE_END_ITERATION](#DETAILED_ROUTE_END_ITERATION)
 - [FILL_CELLS](#FILL_CELLS)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
+- [MAX_REPAIR_ANTENNAS_ITER_DRT](#MAX_REPAIR_ANTENNAS_ITER_DRT)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
+- [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
+- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 
 ## final variables
 
@@ -427,6 +442,8 @@ configuration file.
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
+- [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
+- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 
 ## generate_abstract variables
 
@@ -467,6 +484,7 @@ configuration file.
 - [KLAYOUT_TECH_FILE](#KLAYOUT_TECH_FILE)
 - [LIB_FILES](#LIB_FILES)
 - [MACRO_EXTENSION](#MACRO_EXTENSION)
+- [OPENROAD_HIERARCHICAL](#OPENROAD_HIERARCHICAL)
 - [PLATFORM](#PLATFORM)
 - [PLATFORM_TCL](#PLATFORM_TCL)
 - [PROCESS](#PROCESS)
