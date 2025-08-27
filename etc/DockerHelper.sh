@@ -65,6 +65,9 @@ _setup() {
             fromImage="${FROM_IMAGE_OVERRIDE:-"${org}/flow-${os}-dev"}:${imageTag}"
             context="."
             buildArgs="--build-arg numThreads=${numThreads}"
+            orVersion=$(git -C tools/OpenROAD describe --tags)
+            echo "OpenROAD version: ${orVersion}"
+            buildArgs+=" --build-arg openroadVersion=${orVersion}"
             ;;
         "dev" )
             fromImage="${FROM_IMAGE_OVERRIDE:-$osBaseImage}"
