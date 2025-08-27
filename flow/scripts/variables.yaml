@@ -573,6 +573,13 @@ SKIP_PIN_SWAP:
     - cts
     - floorplan
     - grt
+SKIP_VT_SWAP:
+  description: >
+    Do not perform VT swap to improve QoR (default: do VT swap).
+  stages:
+    - cts
+    - floorplan
+    - grt
 REMOVE_CELLS_FOR_EQY:
   description: >
     String patterns directly passed to write_verilog -remove_cells <> for
@@ -585,6 +592,11 @@ SKIP_CTS_REPAIR_TIMING:
     architectural exploration or when getting CI up and running.
   stages:
     - cts
+SKIP_REPAIR_TIE_FANOUT:
+  description: >
+    Skip repair_tie_fanout at floorplan step.
+  stages:
+    - floorplan
 MIN_ROUTING_LAYER:
   description: |
     The lowest metal layer name to be used in routing.
@@ -732,6 +744,11 @@ SYNTH_HIER_SEPARATOR:
   description: |
     Separator used for the synthesis flatten stage.
   default: .
+SYNTH_OPT_HIER:
+  description: |
+    Optimize constants across hierarchical boundaries.
+  stages:
+    - synth
 VERILOG_TOP_PARAMS:
   description: |
     Apply toplevel params (if exist).
