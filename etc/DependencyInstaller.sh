@@ -428,8 +428,8 @@ case "${platform}" in
 esac
 
 case "${os}" in
-    "CentOS Linux" | "Red Hat Enterprise Linux Server" | "AlmaLinux" | "Rocky Linux" | "Red Hat Enterprise Linux" )
-        # Enterprise Linux support - dispatch based on version
+    "CentOS Linux" | "Red Hat Enterprise Linux"* | "AlmaLinux" | "Rocky Linux")
+        # Enterprise Linux support - dispatch based on specific version
         if [[ ${CI} == "yes" ]]; then
             echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
         fi
@@ -442,10 +442,10 @@ case "${os}" in
             exit 1
         fi
         
-	# First install OpenROAD base
+        # First install OpenROAD base
         _installORDependencies
         
-	# Determine between EL7 vs EL8/9, since yum vs dnf should be used, and different Klayout builds exist
+        # Determine between EL7 vs EL8/9, since yum vs dnf should be used, and different Klayout builds exist
         case "${elVersion}" in
             "7")
                 # EL7 = RHEL 7 or CentOS 7
