@@ -54,7 +54,7 @@ To install OpenROAD-flow-scripts, refer to the
 documentation.
 
 In general, we recommend using `Docker` for an efficient user
-experience. Please refere to the [Docker Shell](../user/DockerShell.md)
+experience. Please refer to the [Docker Shell](../user/DockerShell.md)
 documentation.
 
 :::{Note}
