@@ -59,6 +59,7 @@ ROUTING_LAYER_ADJUSTMENT:
     deltaDebug.py should weed out the possible routes and leave
     a minimal failing case that pinpoints the problem.
   stages:
+    - floorplan
     - place
     - grt
     - route
@@ -601,6 +602,7 @@ MIN_ROUTING_LAYER:
   description: |
     The lowest metal layer name to be used in routing.
   stages:
+    - floorplan
     - place
     - grt
     - route
@@ -609,6 +611,7 @@ MAX_ROUTING_LAYER:
   description: |
     The highest metal layer name to be used in routing.
   stages:
+    - floorplan
     - place
     - grt
     - route

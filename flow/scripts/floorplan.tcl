@@ -29,15 +29,6 @@ proc report_unused_masters { } {
   }
 }
 
-if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
-  log_cmd source $::env(FASTROUTE_TCL)
-} else {
-  log_cmd \
-    set_global_routing_layer_adjustment \
-    $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) $::env(ROUTING_LAYER_ADJUSTMENT)
-  log_cmd set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
-}
-
 report_unused_masters
 
 #Run check_setup
@@ -100,6 +91,15 @@ if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
   log_cmd source $::env(PLATFORM_DIR)/make_tracks.tcl
 } else {
   make_tracks
+}
+
+if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
+  log_cmd source $::env(FASTROUTE_TCL)
+} else {
+  log_cmd \
+    set_global_routing_layer_adjustment \
+    $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER) $::env(ROUTING_LAYER_ADJUSTMENT)
+  log_cmd set_routing_layers -signal $::env(MIN_ROUTING_LAYER)-$::env(MAX_ROUTING_LAYER)
 }
 
 source_env_var_if_exists FOOTPRINT_TCL
