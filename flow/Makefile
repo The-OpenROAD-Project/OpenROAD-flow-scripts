@@ -132,7 +132,7 @@ MAKEFLAGS += --no-builtin-rules
 
 #-------------------------------------------------------------------------------
 # Default target when invoking without specific target.
-.DEFAULT_GOAL := finish
+.DEFAULT_GOAL := all
 
 #-------------------------------------------------------------------------------
 # Proper way to initiate SHELL for make
@@ -746,8 +746,22 @@ clean_finish:
 #
 # ==============================================================================
 
+.PHONY: check-openroad
+check-openroad:
+	@if [ "$(strip $(OPENROAD_IS_VALID))" != "true" ]; then \
+		echo "OPENROAD_EXE is set to '$(OPENROAD_EXE)', but it is either not found or not executable."; \
+		exit 1; \
+	fi
+
+.PHONY: check-yosys
+check-yosys:
+	@if [ "$(strip $(YOSYS_IS_VALID))" != "true" ]; then \
+		echo "YOSYS_EXE is set to '$(YOSYS_EXE)', but it is either not found or not executable."; \
+		exit 1; \
+	fi
+
 .PHONY: all
-all: synth floorplan place cts route finish
+all: check-yosys check-openroad synth floorplan place cts route finish
 
 .PHONY: clean
 clean:
