@@ -1061,4 +1061,4 @@ OPENROAD_HIERARCHICAL:
     Feature toggle to enable to run OpenROAD in hierarchical mode,
     otherwise considered flat. Will eventually be the default and
     this option will be retired.
-  default: 0
+  default: 1
