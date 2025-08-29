@@ -8,7 +8,7 @@ export VERILOG_INCLUDE_DIRS   = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/include
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_7nm.sdc
 export ABC_AREA               = 1
 
-export CORE_UTILIZATION       = 35
+export CORE_UTILIZATION       = 45
 export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 0.75
 export PLACE_DENSITY          = 0.62
