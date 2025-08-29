@@ -54,6 +54,8 @@ if {
   }
 } else {
   puts "OpenRCX is not enabled for this platform."
+  puts "Falling back to global route-based estimates."
+  log_cmd estimate_parasitics -global_routing
 }
 
 report_cell_usage
