@@ -182,7 +182,7 @@ $(foreach block,$(BLOCKS),$(eval $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKN
 # Utility to print tool version information
 #-------------------------------------------------------------------------------
 .PHONY: versions.txt
-versions.txt:
+versions.txt: check-yosys check-openroad
 	mkdir -p $(OBJECTS_DIR)
 	@echo "yosys $(shell $(YOSYS_EXE) -V 2>&1)" > $(OBJECTS_DIR)/$@
 	@echo "openroad $(shell $(OPENROAD_EXE) -version 2>&1)" >> $(OBJECTS_DIR)/$@
