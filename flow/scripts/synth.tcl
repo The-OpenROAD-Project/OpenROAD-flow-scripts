@@ -107,17 +107,12 @@ if { [env_var_exists_and_non_empty LATCH_MAP_FILE] } {
   techmap -map $::env(LATCH_MAP_FILE)
 }
 
-set dfflibmap_args ""
-foreach cell $::env(DONT_USE_CELLS) {
-  lappend dfflibmap_args -dont_use $cell
-}
-
 # Technology mapping of flip-flops
 # dfflibmap only supports one liberty file
 if { [env_var_exists_and_non_empty DFF_LIB_FILE] } {
-  dfflibmap -liberty $::env(DFF_LIB_FILE) {*}$dfflibmap_args
+  dfflibmap -liberty $::env(DFF_LIB_FILE) {*}$lib_dont_use_args
 } else {
-  dfflibmap -liberty $::env(DONT_USE_SC_LIB) {*}$dfflibmap_args
+  dfflibmap {*}$lib_args {*}$lib_dont_use_args
 }
 opt
 
@@ -152,7 +147,7 @@ insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
 # Reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check
 
-tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
+tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$lib_args
 
 # check the design is composed exclusively of target cells, and
 # check for other problems
