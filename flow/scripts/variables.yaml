@@ -380,10 +380,9 @@ MAKE_TRACKS:
     - floorplan
 IO_CONSTRAINTS:
   description: |
-    File path to the IO constraints .tcl file.
+    File path to the IO constraints .tcl file. Also used for manual placement.
   stages:
     - floorplan
-    - place
 IO_PLACER_H:
   description: >
     A list of metal layers on which the I/O pins are placed horizontally (top and bottom
