@@ -133,6 +133,8 @@ define \n
 
 endef
 
+.PHONY: $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue)
+
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue : versions.txt
 	$(UTILS_DIR)/makeIssue.sh $*
 
