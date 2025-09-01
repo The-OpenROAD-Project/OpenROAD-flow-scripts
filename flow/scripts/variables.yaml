@@ -203,10 +203,23 @@ SYNTH_CANONICALIZE_TCL:
     - synth
 SYNTH_RETIME_MODULES:
   description: >
-    List of modules to apply retiming to. These modules must not get
+    *This is an experimental option and may cause adverse effects.*
+    *No effort has been made to check if the retimed RTL is logically equivalent
+    to the non-retimed RTL.*
+
+    List of modules to apply automatic retiming to. These modules must not get
     dissolved and as such they should either be the top module or be included
-    in SYNTH_KEEP_MODULES. This is an experimental option and may cause adverse
-    effects.
+    in SYNTH_KEEP_MODULES.
+
+    The main use case is to quickly identify if performance can be improved by
+    manually retiming the input RTL.
+
+    Retiming will treat module ports like register endpoints/startpoints.
+    The objective function of retiming isn't informed by SDC, even the clock
+    period is ignored. As such, retiming will optimize for best delay
+    at potentially high register number cost. Automatic retiming can produce
+    suboptimal results as its timing model is crude and it doesn't find the
+    optimal distribution of registers on long pipelines. See OR discussion #8080.
   stages:
     - synth
 LATCH_MAP_FILE:
@@ -368,10 +381,9 @@ MAKE_TRACKS:
     - floorplan
 IO_CONSTRAINTS:
   description: |
-    File path to the IO constraints .tcl file.
+    File path to the IO constraints .tcl file. Also used for manual placement.
   stages:
     - floorplan
-    - place
 IO_PLACER_H:
   description: >
     A list of metal layers on which the I/O pins are placed horizontally (top and bottom
