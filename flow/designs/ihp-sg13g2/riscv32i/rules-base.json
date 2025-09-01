@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 170435,
+        "value": 159244,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -44,7 +44,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 12,
+        "value": 9,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
