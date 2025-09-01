@@ -179,15 +179,6 @@ build_macros: $(BLOCK_LEFS) $(BLOCK_TYP_LIBS)
 $(foreach block,$(BLOCKS),$(eval $(call GENERATE_ABSTRACT_RULE,$(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef,$(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}_typ.lib,$(shell dirname $(DESIGN_CONFIG))/${block}/config.mk)))
 $(foreach block,$(BLOCKS),$(eval $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/6_final.gds: $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NICKNAME)_$(block)/$(FLOW_VARIANT)/${block}.lef))
 
-# Utility to print tool version information
-#-------------------------------------------------------------------------------
-.PHONY: versions.txt
-versions.txt: check-yosys check-openroad
-	mkdir -p $(OBJECTS_DIR)
-	@echo "yosys $(shell $(YOSYS_EXE) -V 2>&1)" > $(OBJECTS_DIR)/$@
-	@echo "openroad $(shell $(OPENROAD_EXE) -version 2>&1)" >> $(OBJECTS_DIR)/$@
-	@echo "klayout $(shell $(SCRIPTS_DIR)/klayout.sh -zz -v 2>&1)" >> $(OBJECTS_DIR)/$@
-
 # Pre-process libraries
 # ==============================================================================
 
