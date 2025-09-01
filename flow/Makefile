@@ -300,8 +300,6 @@ clean_synth:
 	rm -f $(LOG_DIR)/1_*
 	rm -f $(SYNTH_STATS)
 	rm -f $(SDC_FILE_CLOCK_PERIOD)
-	rm -rf _tmp_yosys-abc-*
-
 
 # ==============================================================================
 #  _____ _     ___   ___  ____  ____  _        _    _   _
@@ -562,8 +560,6 @@ do-grt:
 
 .PHONY: clean_route
 clean_route:
-	rm -rf output*/ results*.out.dmp layer_*.mps
-	rm -rf *.gdid *.log *.met *.sav *.res.dmp
 	rm -rf $(RESULTS_DIR)/route.guide $(RESULTS_DIR)/output_guide.mod $(RESULTS_DIR)/updated_clks.sdc
 	rm -rf $(RESULTS_DIR)/5_*.odb $(RESULTS_DIR)/5_route.sdc $(RESULTS_DIR)/5_*.def $(RESULTS_DIR)/5_*.v
 	rm -f  $(REPORTS_DIR)/5_*
@@ -763,9 +759,7 @@ clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_f
 .PHONY: nuke
 nuke: clean_test clean_issues
 	rm -rf $(WORK_HOME)/results $(WORK_HOME)/logs $(WORK_HOME)/reports $(WORK_HOME)/objects
-	rm -rf layer_*.mps macrocell.list *best.plt *_pdn.def
-	rm -rf *.rpt *.rpt.old *.def.v pin_dumper.log
-	rm -f $(OBJECTS_DIR)/versions.txt $(OBJECTS_DIR)/copyright.txt dummy.guide
+	rm -f $(OBJECTS_DIR)/copyright.txt
 
 # DEF/GDS/OAS viewer shortcuts
 #-------------------------------------------------------------------------------
