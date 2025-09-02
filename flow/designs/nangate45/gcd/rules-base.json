@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 695,
+        "value": 685,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.08,
+        "value": -0.07,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 898,
+        "value": 1042,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -25.2,
+        "value": -24.48,
         "compare": ">="
     }
 }
