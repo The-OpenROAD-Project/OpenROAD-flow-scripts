@@ -830,6 +830,9 @@ export RUN_YOSYS_ARGS ?= -c $(SCRIPTS_DIR)/yosys_keep.tcl
 run-yosys:
 	$(YOSYS_EXE) $(RUN_YOSYS_ARGS)
 
+# Enable optimization across hierarchical boundaries by default
+export SYNTH_OPT_HIER ?= 1
+
 # Utilities
 #-------------------------------------------------------------------------------
 include $(UTILS_DIR)/utils.mk
