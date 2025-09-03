@@ -136,7 +136,7 @@ endef
 .PHONY: $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue)
 
 $(foreach script,$(ISSUE_SCRIPTS),$(script)_issue): %_issue :
-	$(UTILS_DIR)/makeIssue.sh $*
+	$(UTILS_DIR)/makeIssue.sh $(WORK_HOME)/$*
 
 .PHONY: clean_issues
 clean_issues:
