@@ -16,6 +16,10 @@ elif [[ "$@" == "-master" ]]; then
     git -C tools/OpenROAD fetch --tags >&2
     git describe
 else
-    echo "Usage: $0 {-dev|-master}"
+    echo "Usage:"
+    echo " To generate a tag for images that only have dev dependencies:"
+    echo "       $0 -dev"
+    echo " To generate a tag for full releases based on master branch"
+    echo "       $0 -master"
     exit 1
 fi
