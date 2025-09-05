@@ -1,0 +1,11 @@
+{
+    "_SDC_FILE_PATH": "constraint.sdc",
+    "_SDC_CLK_PERIOD": {
+        "type": "float",
+        "minmax": [
+            1270,
+            1370
+        ],
+        "step": 0
+    }
+}
