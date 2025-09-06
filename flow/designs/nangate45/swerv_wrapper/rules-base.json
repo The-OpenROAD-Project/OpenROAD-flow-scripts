@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.3,
+        "value": -0.26,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 737022,
+        "value": 735861,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
@@ -64,7 +64,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -19.37,
+        "value": -17.5,
         "compare": ">="
     }
 }
