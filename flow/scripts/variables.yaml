@@ -341,9 +341,12 @@ TAPCELL_TCL:
     Path to Endcap and Welltie cells file.
   stages:
     - floorplan
-MACRO_PLACEMENT_TCL:
+PREPLACE_MACROS_TCL:
   description: |
-    Specifies the path of a TCL file on how to place certain macros manually.
+    Specifies the path of a TCL file on how to place macros manually before the
+    macro placement stage. The use may choose to place just some of the macro in
+    the design. In this case, the macro placer will handle the remaining unplaced
+    macros.
   stages:
     - floorplan
 MACRO_PLACE_HALO:

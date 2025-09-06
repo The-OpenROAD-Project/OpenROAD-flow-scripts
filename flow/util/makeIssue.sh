@@ -17,7 +17,7 @@ ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \
                            FOOTPRINT \
                            SIG_MAP_FILE \
                            IO_CONSTRAINTS \
-                           MACRO_PLACEMENT_TCL \
+                           PREPLACE_MACROS_TCL \
                            MACRO_WRAPPERS \
                            RTLMP_CONFIG_FILE \
                            DFF_LIB_FILE "

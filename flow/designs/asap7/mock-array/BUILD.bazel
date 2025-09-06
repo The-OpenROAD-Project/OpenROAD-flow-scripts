@@ -135,7 +135,7 @@ orfs_flow(
     sources = {
         "SDC_FILE": [":mock-array-constraints"],
         "IO_CONSTRAINTS": [":mock-array-io"],
-        # "MACRO_PLACEMENT_TCL": [":macro-placement.tcl"],
+        # "PREPLACE_MACROS_TCL": [":macro-placement.tcl"],
     },
     verilog_files = ["//flow/designs/src/mock-array:verilog"],
 )

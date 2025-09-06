@@ -36,7 +36,7 @@ export BLOCKS                ?= Element
 ifneq ($(BLOCKS),)
   export GDS_ALLOW_EMPTY       = Element
   ifneq ($(RTLMP_FLOW), 1)
-    export MACRO_PLACEMENT_TCL   = $(DESIGN_HOME)/asap7/mock-array/macro-placement.tcl
+    export PREPLACE_MACROS_TCL   = $(DESIGN_HOME)/asap7/mock-array/macro-placement.tcl
   endif
   export PDN_TCL               = $(PLATFORM_DIR)/openRoad/pdn/BLOCKS_grid_strategy.tcl
 endif

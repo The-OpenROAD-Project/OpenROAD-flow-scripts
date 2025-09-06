@@ -155,7 +155,6 @@ configuration file.
 | <a name="LIB_FILES"></a>LIB_FILES| A Liberty file of the standard cell library with PVT characterization, input and output characteristics, timing and power definitions for each cell.| |
 | <a name="MACRO_BLOCKAGE_HALO"></a>MACRO_BLOCKAGE_HALO| Distance beyond the edges of a macro that will also be covered by the blockage generated for that macro. Note that the default macro blockage halo comes from the largest of the specified MACRO_PLACE_HALO x or y values. This variable overrides that calculation.| |
 | <a name="MACRO_EXTENSION"></a>MACRO_EXTENSION| Sets the number of GCells added to the blockages boundaries from macros.| |
-| <a name="MACRO_PLACEMENT_TCL"></a>MACRO_PLACEMENT_TCL| Specifies the path of a TCL file on how to place certain macros manually.| |
 | <a name="MACRO_PLACE_HALO"></a>MACRO_PLACE_HALO| Horizontal/vertical halo around macros (microns). Used by automatic macro placement.| |
 | <a name="MACRO_ROWS_HALO_X"></a>MACRO_ROWS_HALO_X| Horizontal distance between the edge of the macro and the beginning of the rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks design.| |
 | <a name="MACRO_ROWS_HALO_Y"></a>MACRO_ROWS_HALO_Y| Vertical distance between the edge of the macro and the beginning of the rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks design.| |
@@ -176,6 +175,7 @@ configuration file.
 | <a name="PLATFORM"></a>PLATFORM| Specifies process design kit or technology node to be used.| |
 | <a name="PLATFORM_TCL"></a>PLATFORM_TCL| Specifies a Tcl script with commands to run before loading design.| |
 | <a name="POST_CTS_TCL"></a>POST_CTS_TCL| Specifies a Tcl script with commands to run after CTS is completed.| |
+| <a name="PREPLACE_MACROS_TCL"></a>PREPLACE_MACROS_TCL| Specifies the path of a TCL file on how to place macros manually before the macro placement stage. The use may choose to place just some of the macro in the design. In this case, the macro placer will handle the remaining unplaced macros.| |
 | <a name="PRE_GLOBAL_ROUTE_TCL"></a>PRE_GLOBAL_ROUTE_TCL| Specifies a Tcl script with commands to run before global route.| |
 | <a name="PROCESS"></a>PROCESS| Technology node or process in use.| |
 | <a name="PWR_NETS_VOLTAGES"></a>PWR_NETS_VOLTAGES| Used for IR Drop calculation.| |
@@ -298,7 +298,6 @@ configuration file.
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [IO_CONSTRAINTS](#IO_CONSTRAINTS)
 - [MACRO_BLOCKAGE_HALO](#MACRO_BLOCKAGE_HALO)
-- [MACRO_PLACEMENT_TCL](#MACRO_PLACEMENT_TCL)
 - [MACRO_PLACE_HALO](#MACRO_PLACE_HALO)
 - [MACRO_ROWS_HALO_X](#MACRO_ROWS_HALO_X)
 - [MACRO_ROWS_HALO_Y](#MACRO_ROWS_HALO_Y)
@@ -311,6 +310,7 @@ configuration file.
 - [PLACE_DENSITY](#PLACE_DENSITY)
 - [PLACE_DENSITY_LB_ADDON](#PLACE_DENSITY_LB_ADDON)
 - [PLACE_SITE](#PLACE_SITE)
+- [PREPLACE_MACROS_TCL](#PREPLACE_MACROS_TCL)
 - [REMOVE_ABC_BUFFERS](#REMOVE_ABC_BUFFERS)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [RTLMP_AREA_WT](#RTLMP_AREA_WT)
