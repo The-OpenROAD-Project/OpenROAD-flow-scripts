@@ -21,6 +21,8 @@ export ADDITIONAL_LIBS = $(wildcard $(microwatt_DIR)/lib/*.lib)
 
 export SYNTH_HIERARCHICAL = 1
 
+export MACRO_PLACEMENT_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/macro_placement.tcl
+
 export MACRO_PLACE_HALO = 100 100
 
 # We use large placement blockages to try eliminating the channels between
