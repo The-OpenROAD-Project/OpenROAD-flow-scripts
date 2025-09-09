@@ -201,3 +201,39 @@ proc hier_options { } {
     return ""
   }
 }
+
+proc is_physical_only_master { master } {
+  set physical_only_type_patterns [list \
+    "COVER" \
+    "COVER_BUMP" \
+    "RING" \
+    "PAD_SPACER" \
+    "CORE_FEEDTHROUGH" \
+    "CORE_SPACER" \
+    "CORE_ANTENNACELL" \
+    "CORE_WELLTAP" \
+    "ENDCAP*"]
+  set master_type [$master getType]
+  foreach pattern $physical_only_type_patterns {
+    if { [string match $pattern $master_type] } {
+      return 1
+    }
+  }
+  return 0
+}
+
+# Finds all physical-only masters in the current database and
+# returns their names.
+proc find_physical_only_masters { } {
+  set db [::ord::get_db]
+  set libs [$db getLibs]
+  set physical_only_masters [list]
+  foreach lib $libs {
+    foreach master [$lib getMasters] {
+      if { [is_physical_only_master $master] } {
+        lappend physical_only_masters [$master getName]
+      }
+    }
+  }
+  return $physical_only_masters
+}
