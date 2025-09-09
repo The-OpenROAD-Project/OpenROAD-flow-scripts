@@ -25,7 +25,7 @@ export SYNTH_HIERARCHICAL    ?= 0
 ifeq ($(PLACE_SITE), SC6T)
   export CORE_UTILIZATION     = 30
 else
-  export CORE_UTILIZATION     = 54
+  export CORE_UTILIZATION     = 50
 endif
 
 export CORE_MARGIN            = 1
