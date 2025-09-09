@@ -52,3 +52,4 @@ export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.t
 # to real SRAMs and not instantiated as flops
 export SYNTH_MEMORY_MAX_BITS = 42000
 
+export SYNTH_OPT_HIER        = 0
