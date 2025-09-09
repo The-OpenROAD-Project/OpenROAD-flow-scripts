@@ -15,7 +15,6 @@ source $::env(SCRIPTS_DIR)/deleteRoutingObstructions.tcl
 deleteRoutingObstructions
 
 write_def $::env(RESULTS_DIR)/6_final.def
-#write_verilog $::env(RESULTS_DIR)/6_final.v
 write_verilog $::env(RESULTS_DIR)/6_final.v \
   -remove_cells [find_physical_only_masters]
 
