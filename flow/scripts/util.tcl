@@ -215,7 +215,7 @@ proc is_physical_only_master { master } {
     "ENDCAP*"]
   set master_type [$master getType]
   foreach pattern $physical_only_type_patterns {
-    if {[string match $pattern $master_type]} {
+    if { [string match $pattern $master_type] } {
       return 1
     }
   }
@@ -224,13 +224,13 @@ proc is_physical_only_master { master } {
 
 # Finds all physical-only masters in the current database and
 # returns their names.
-proc find_physical_only_masters {} {
+proc find_physical_only_masters { } {
   set db [::ord::get_db]
   set libs [$db getLibs]
   set physical_only_masters [list]
   foreach lib $libs {
     foreach master [$lib getMasters] {
-      if {[is_physical_only_master $master]} {
+      if { [is_physical_only_master $master] } {
         lappend physical_only_masters [$master getName]
       }
     }
