@@ -343,7 +343,9 @@ TAPCELL_TCL:
     - floorplan
 MACRO_PLACEMENT_TCL:
   description: |
-    Specifies the path of a TCL file on how to place certain macros manually.
+    Specifies the path of a TCL file on how to place macros manually.
+    The user may choose to place just some of the macros in the design.
+    The macro placer will handle the remaining unplaced macros.
   stages:
     - floorplan
 MACRO_PLACE_HALO:
