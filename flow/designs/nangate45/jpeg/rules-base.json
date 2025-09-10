@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.05,
+        "value": -0.03,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 103664,
+        "value": 103424,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
