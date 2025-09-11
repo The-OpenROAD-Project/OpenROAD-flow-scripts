@@ -25,6 +25,7 @@ proc repair_timing_helper { args } {
   append_env_var additional_args SKIP_GATE_CLONING -skip_gate_cloning 0
   append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
   append_env_var additional_args SKIP_LAST_GASP -skip_last_gasp 0
+  append_env_var additional_args SKIP_VT_SWAP -skip_vt_swap 0
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
   log_cmd repair_timing {*}$additional_args
 }
@@ -185,4 +186,54 @@ proc source_env_var_if_exists { env_var } {
   if { [env_var_exists_and_non_empty $env_var] } {
     log_cmd source $::env($env_var)
   }
+}
+
+# Feature toggle for now, eventually the -hier option
+# will be default and this code will be deleted.
+proc hier_options { } {
+  if {
+    [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+    [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] ||
+    [env_var_equals OPENROAD_HIERARCHICAL 1]
+  } {
+    return "-hier"
+  } else {
+    return ""
+  }
+}
+
+proc is_physical_only_master { master } {
+  set physical_only_type_patterns [list \
+    "COVER" \
+    "COVER_BUMP" \
+    "RING" \
+    "PAD_SPACER" \
+    "CORE_FEEDTHROUGH" \
+    "CORE_SPACER" \
+    "CORE_ANTENNACELL" \
+    "CORE_WELLTAP" \
+    "ENDCAP*"]
+  set master_type [$master getType]
+  foreach pattern $physical_only_type_patterns {
+    if { [string match $pattern $master_type] } {
+      return 1
+    }
+  }
+  return 0
+}
+
+# Finds all physical-only masters in the current database and
+# returns their names.
+proc find_physical_only_masters { } {
+  set db [::ord::get_db]
+  set libs [$db getLibs]
+  set physical_only_masters [list]
+  foreach lib $libs {
+    foreach master [$lib getMasters] {
+      if { [is_physical_only_master $master] } {
+        lappend physical_only_masters [$master getName]
+      }
+    }
+  }
+  return $physical_only_masters
 }

@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 26514,
+        "value": 26265,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -32,7 +32,7 @@
         "compare": "<="
     },
     "detailedroute__route__wirelength": {
-        "value": 298800,
+        "value": 291564,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 27064,
+        "value": 26566,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {

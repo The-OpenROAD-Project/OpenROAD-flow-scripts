@@ -16,7 +16,7 @@ if { [env_var_exists_and_non_empty DEF_FILE] } {
   log_cmd read_def $input_file
 } else {
   set input_file $::env(ODB_FILE)
-  log_cmd read_db $input_file
+  log_cmd read_db {*}[hier_options] $input_file
 }
 
 proc read_timing { input_file } {
