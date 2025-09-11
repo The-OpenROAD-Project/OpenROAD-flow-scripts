@@ -380,13 +380,6 @@ def parse_arguments():
         default=42,
         help="Random seed. (0 means no seed.)",
     )
-    tune_parser.add_argument(
-        "--memory_limit",
-        type=float,
-        metavar="<float>",
-        default=None,
-        help="Maximum memory in GB that each trial job can use, process will be killed and not retried if it exceeds.",
-    )
 
     # Workload
     parser.add_argument(
@@ -402,6 +395,13 @@ def parse_arguments():
         metavar="<int>",
         default=16,
         help="Max number of threads openroad can use.",
+    )
+    parser.add_argument(
+        "--memory_limit",
+        type=float,
+        metavar="<float>",
+        default=None,
+        help="Maximum memory in GB that each trial job can use, process will be killed and not retried if it exceeds.",
     )
     parser.add_argument(
         "--server",
