@@ -38,11 +38,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1741851582,
-        "narHash": "sha256-cPfs8qMccim2RBgtKGF+x9IBCduRvd/N5F4nYpU0TVE=",
+        "lastModified": 1744932701,
+        "narHash": "sha256-fusHbZCyv126cyArUwwKrLdCkgVAIaa/fQJYFlCEqiU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "6607cf789e541e7873d40d3a8f7815ea92204f32",
+        "rev": "b024ced1aac25639f8ca8fdfc2f8c4fbd66c48ef",
         "type": "github"
       },
       "original": {
@@ -89,17 +89,17 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1741801451,
-        "narHash": "sha256-fzWCeq0o6vx8/GoFcOtnaIENes3jXzNk9qfWnIaxtHI=",
+        "lastModified": 1745262648,
+        "narHash": "sha256-NPLjho9TAygCUbRGdR8y+gxYcV0tek2ceMmuoFhwv1s=",
         "ref": "refs/heads/master",
-        "rev": "ec1bf1a13902813b722f8341c432cd09714d9e55",
-        "revCount": 27845,
+        "rev": "7ecbe2e306a961888c17adc8eb761f51c94f06d8",
+        "revCount": 29094,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/The-OpenROAD-Project/OpenROAD"
       },
       "original": {
-        "rev": "ec1bf1a13902813b722f8341c432cd09714d9e55",
+        "rev": "7ecbe2e306a961888c17adc8eb761f51c94f06d8",
         "submodules": true,
         "type": "git",
         "url": "https://github.com/The-OpenROAD-Project/OpenROAD"
