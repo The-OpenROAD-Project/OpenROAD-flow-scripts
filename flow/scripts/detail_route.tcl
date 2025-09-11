@@ -6,7 +6,7 @@ if { ![grt::have_routes] } {
         in DRC viewer to view congestion"
 }
 
-if { [env_var_exists_and_non_empty SKIP_DRT] } {
+if { [env_var_equals SKIP_DETAILED_ROUTE 1] } {
   write_db $::env(RESULTS_DIR)/5_2_route.odb
   exit
 }
@@ -52,12 +52,15 @@ set all_args [concat [list \
 
 log_cmd detailed_route {*}$all_args
 
-if { ![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1] } {
+if {
+  ![env_var_equals SKIP_ANTENNA_REPAIR_POST_DRT 1] &&
+  [env_var_exists_and_non_empty MAX_REPAIR_ANTENNAS_ITER_DRT]
+} {
   set repair_antennas_iters 1
   if { [repair_antennas] } {
     detailed_route {*}$all_args
   }
-  while { [check_antennas] && $repair_antennas_iters < 5 } {
+  while { [check_antennas] && $repair_antennas_iters < $::env(MAX_REPAIR_ANTENNAS_ITER_DRT) } {
     repair_antennas
     detailed_route {*}$all_args
     incr repair_antennas_iters

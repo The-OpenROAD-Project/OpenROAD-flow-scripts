@@ -28,6 +28,9 @@ if { [env_var_exists_and_non_empty SYNTH_OPERATIONS_ARGS] } {
   set synth_full_args [concat $synth_full_args \
     "-extra-map $::env(FLOW_HOME)/platforms/common/lcu_kogge_stone.v"]
 }
+if { [env_var_exists_and_non_empty SYNTH_OPT_HIER] } {
+  set synth_full_args [concat $synth_full_args -hieropt]
+}
 
 if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
   # Perform standard coarse-level synthesis script, flatten right away
@@ -39,7 +42,8 @@ if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
 
   if { [env_var_exists_and_non_empty SYNTH_MINIMUM_KEEP_SIZE] } {
     set ungroup_threshold $::env(SYNTH_MINIMUM_KEEP_SIZE)
-    puts "Keep modules above estimated size of $ungroup_threshold gate equivalents"
+    puts "Keep modules above estimated size of
+      $ungroup_threshold gate equivalents"
 
     convert_liberty_areas
     keep_hierarchy -min_cost $ungroup_threshold
@@ -55,6 +59,16 @@ json -o $::env(RESULTS_DIR)/mem.json
 # Run report and check here so as to fail early if this synthesis run is doomed
 exec -- $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/mem_dump.py \
   --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
+
+if { [env_var_exists_and_non_empty SYNTH_RETIME_MODULES] } {
+  select $::env(SYNTH_RETIME_MODULES)
+  opt -fast -full
+  memory_map
+  opt -full
+  techmap
+  abc -dff -script $::env(SCRIPTS_DIR)/abc_retime.script
+  select -clear
+}
 
 if {
   [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
@@ -113,14 +127,15 @@ setundef -zero
 if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
   log_cmd abc {*}$abc_args
 } else {
-  scratchpad -set abc9.script scripts/abc_speed_gia_only.script
+  scratchpad -set abc9.script $::env(SCRIPTS_DIR)/abc_speed_gia_only.script
   # crop out -script from arguments
   set abc_args [lrange $abc_args 2 end]
   log_cmd abc_new {*}$abc_args
   delete {t:$specify*}
 }
 
-# Splitting nets resolves unwanted compound assign statements in netlist (assign {..} = {..})
+# Splitting nets resolves unwanted compound assign statements in
+# netlist (assign {..} = {..})
 splitnets
 
 # Remove unused cells and wires
@@ -139,7 +154,8 @@ tee -o $::env(REPORTS_DIR)/synth_check.txt check
 
 tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
 
-# check the design is composed exclusively of target cells, and check for other problems
+# check the design is composed exclusively of target cells, and
+# check for other problems
 if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
   check -assert -mapped
 } else {

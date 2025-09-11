@@ -49,68 +49,24 @@ Use the `bash` shell to run commands and scripts.
 
 #### OpenROAD-flow-scripts Installation
 
-To install OpenROAD-flow-scripts,  refer to the
+To install OpenROAD-flow-scripts, refer to the
 [Build or installing ORFS  Dependencies](https://openroad-flow-scripts.readthedocs.io/en/latest/#build-or-installing-orfs-dependencies)
 documentation.
 
 In general, we recommend using `Docker` for an efficient user
-experience. Install OpenROAD-flow-scripts using a docker as described
-here [Build from sources using Docker](../user/BuildWithDocker.md).
+experience. Please refer to the [Docker Shell](../user/DockerShell.md)
+documentation.
 
 :::{Note}
-If you need to update an existing OpenROAD-flow-scripts installation,
-follow instructions from [here](../user/FAQS.md#how-do-i-update-openroad-flow-scripts).
+If you need a custom Docker image, you can build your own with the instructions
+provided at: [Build from sources using Docker](../user/BuildWithDocker.md).
 :::
 
-OpenROAD-flow-scripts installation is complete.
-
-#### Running OpenROAD-flow-scripts inside the Docker
-
-Launch the docker with OpenROAD-flow-scripts container as follows:
-
-```shell
-docker run --rm -it -u $(id -u ${USER}):$(id -g ${USER}) -v $(pwd)/flow:/OpenROAD-flow-scripts/flow openroad/flow-ubuntu22.04-builder
-```
-
-:::{seealso}
-To launch OpenROAD GUI inside the docker, based on the OS, use the command from [here](../user/BuildWithDocker.md#enable-gui-support).
+:::{Note}
+If you need to update an existing OpenROAD-flow-scripts installation:
+- For local installs follow instructions from [here](../user/FAQS.md#how-do-i-update-openroad-flow-scripts).
+- For Docker run `docker pull openroad/orfs:latest` to update the image.
 :::
-
-Once you are entered into OpenROAD-flow-scripts container run:
-
-```shell
-source env.sh
-```
-
-If your installation is  successful, you will see the following message:
-
-```
-OPENROAD: /OpenROAD-flow-scripts/tools/OpenROAD
-```
-
-#### Verifying the Docker based  Installation
-
-To verify the installation run the built-in example design as follows:
-
-```shell
-cd flow
-make
-```
-
-A successful run end with the log:
-
-```
-[INFO] Writing out GDS/OAS 'results/nangate45/gcd/base/6_1_merged.gds'
-Elapsed time: 0:10.44[h:]min:sec. CPU time: user 2.17 sys 0.54 (26%). Peak memory: 274184KB.
-cp results/nangate45/gcd/base/6_1_merged.gds results/nangate45/gcd/base/6_final.gds
-Log                       Elapsed seconds
-1_1_yosys                          2
-3_3_place_gp                       1
-4_1_cts                            8
-5_2_route                   10
-6_1_merge                         10
-6_report                           3
-```
 
 ## Configuring The Design
 

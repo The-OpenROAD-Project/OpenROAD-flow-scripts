@@ -30,9 +30,10 @@ ENV PATH="/usr/local/bin/wrapped-cc:$PATH"
 
 COPY --link tools tools
 ARG numThreads=$(nproc)
+ARG openroadVersion=NotSet
 
 RUN echo "" > tools/yosys/abc/.gitcommit && \
-  ./build_openroad.sh --no_init --local --threads ${numThreads}
+  ./build_openroad.sh --no_init --local --threads ${numThreads} --openroad-args -DOPENROAD_VERSION=${openroadVersion}
 
 FROM orfs-base
 
