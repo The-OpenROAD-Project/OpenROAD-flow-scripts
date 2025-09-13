@@ -30,8 +30,7 @@ if [ "$PLATFORM_WITHOUT_DASHES" == "asap7" ] && [ "$DESIGN_NAME" == "gcd" ]; the
   python3 -m unittest tools.AutoTuner.test.ref_file_check.RefFileCheck
 
   echo "Running AutoTuner resume test (only once)"
-  # Temporarily disable resume check test due to flakiness
-  #python3 -m unittest tools.AutoTuner.test.resume_check.ResumeCheck.test_tune_resume
+  python3 -m unittest tools.AutoTuner.test.resume_check.ResumeCheck.test_tune_resume
 
   echo "Running AutoTuner binary check (only once)"
   openroad_autotuner -h
