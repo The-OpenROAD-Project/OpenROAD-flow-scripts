@@ -18,7 +18,7 @@ set_voltage_domain -name {CORE} -power {VDD} -ground {VSS}
 #####################################
 # standard cell grid
 ####################################
-define_pdn_grid -name {grid} -voltage_domains {CORE} -pins {TopMetal2}
+define_pdn_grid -name {grid} -voltage_domains {CORE} -pins {TopMetal1}
 add_pdn_ring -grid {grid} -layers {Metal5 TopMetal1} -widths {5.0} -spacings {2.0} \
   -core_offsets {4.5} -connect_to_pads
 add_pdn_stripe -grid {grid} -layer {Metal1} -width {0.44} -pitch {7.56} -offset {0} -followpins \
