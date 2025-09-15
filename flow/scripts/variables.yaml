@@ -296,25 +296,9 @@ SYNTH_WRAPPED_OPERATORS:
     Synthesize multiple architectural options for each arithmetic operator in the
     design. These options are available for switching among in later stages of
     the flow.
-  stages:
-    - synth
-    - floorplan
-    - place
-    - cts
-    - grt
-    - route
-    - final
 SWAP_ARITH_OPERATORS:
   description: >
     Improve timing QoR by swapping ALU and MULT arithmetic operators.
-  stages:
-    - synth
-    - floorplan
-    - place
-    - cts
-    - grt
-    - route
-    - final
 FLOORPLAN_DEF:
   description: |
     Use the DEF file to initialize floorplan.
