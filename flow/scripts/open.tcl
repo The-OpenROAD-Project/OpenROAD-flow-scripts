@@ -2,7 +2,9 @@ source $::env(SCRIPTS_DIR)/util.tcl
 
 source_env_var_if_exists PLATFORM_TCL
 
-source $::env(SCRIPTS_DIR)/read_liberty.tcl
+if { [env_var_equals GUI_TIMING 1] } {
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
+}
 
 if { [env_var_exists_and_non_empty DEF_FILE] } {
   log_cmd read_lef $::env(TECH_LEF)
