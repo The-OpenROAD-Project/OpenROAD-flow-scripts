@@ -577,6 +577,15 @@ SKIP_VT_SWAP:
     - cts
     - floorplan
     - grt
+SKIP_CRIT_VT_SWAP:
+  description: >
+    Do not perform VT swap on critical cells to improve QoR (default: do critical VT swap).
+    This is an additional VT swap on critical cells that remain near the end of setup fixing.
+    If SKIP_VT_SWAP is set to 1, this also disables critical cell VT swap.
+  stages:
+    - cts
+    - floorplan
+    - grt
 REMOVE_CELLS_FOR_EQY:
   description: >
     String patterns directly passed to write_verilog -remove_cells <> for
