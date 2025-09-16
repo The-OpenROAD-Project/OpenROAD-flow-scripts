@@ -15,7 +15,8 @@ source $::env(SCRIPTS_DIR)/deleteRoutingObstructions.tcl
 deleteRoutingObstructions
 
 write_def $::env(RESULTS_DIR)/6_final.def
-write_verilog $::env(RESULTS_DIR)/6_final.v
+write_verilog $::env(RESULTS_DIR)/6_final.v \
+  -remove_cells [find_physical_only_masters]
 
 # Run extraction and STA
 if {
@@ -54,6 +55,8 @@ if {
   }
 } else {
   puts "OpenRCX is not enabled for this platform."
+  puts "Falling back to global route-based estimates."
+  log_cmd estimate_parasitics -global_routing
 }
 
 report_cell_usage

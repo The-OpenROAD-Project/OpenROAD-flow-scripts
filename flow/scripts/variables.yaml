@@ -59,6 +59,7 @@ ROUTING_LAYER_ADJUSTMENT:
     deltaDebug.py should weed out the possible routes and leave
     a minimal failing case that pinpoints the problem.
   stages:
+    - floorplan
     - place
     - grt
     - route
@@ -202,10 +203,23 @@ SYNTH_CANONICALIZE_TCL:
     - synth
 SYNTH_RETIME_MODULES:
   description: >
-    List of modules to apply retiming to. These modules must not get
+    *This is an experimental option and may cause adverse effects.*
+    *No effort has been made to check if the retimed RTL is logically equivalent
+    to the non-retimed RTL.*
+
+    List of modules to apply automatic retiming to. These modules must not get
     dissolved and as such they should either be the top module or be included
-    in SYNTH_KEEP_MODULES. This is an experimental option and may cause adverse
-    effects.
+    in SYNTH_KEEP_MODULES.
+
+    The main use case is to quickly identify if performance can be improved by
+    manually retiming the input RTL.
+
+    Retiming will treat module ports like register endpoints/startpoints.
+    The objective function of retiming isn't informed by SDC, even the clock
+    period is ignored. As such, retiming will optimize for best delay
+    at potentially high register number cost. Automatic retiming can produce
+    suboptimal results as its timing model is crude and it doesn't find the
+    optimal distribution of registers on long pipelines. See OR discussion #8080.
   stages:
     - synth
 LATCH_MAP_FILE:
@@ -283,24 +297,12 @@ SYNTH_WRAPPED_OPERATORS:
     design. These options are available for switching among in later stages of
     the flow.
   stages:
-    - synth
-    - floorplan
-    - place
-    - cts
-    - grt
-    - route
-    - final
+    - All stages
 SWAP_ARITH_OPERATORS:
   description: >
     Improve timing QoR by swapping ALU and MULT arithmetic operators.
   stages:
-    - synth
-    - floorplan
-    - place
-    - cts
-    - grt
-    - route
-    - final
+    - All stages
 FLOORPLAN_DEF:
   description: |
     Use the DEF file to initialize floorplan.
@@ -327,15 +329,11 @@ TAPCELL_TCL:
     Path to Endcap and Welltie cells file.
   stages:
     - floorplan
-MACRO_PLACEMENT:
-  description: >
-    Specifies the path of a file on how to place certain macros manually using
-    read_macro_placement.
-  stages:
-    - floorplan
 MACRO_PLACEMENT_TCL:
   description: |
-    Specifies the path of a TCL file on how to place certain macros manually.
+    Specifies the path of a TCL file on how to place macros manually.
+    The user may choose to place just some of the macros in the design.
+    The macro placer will handle the remaining unplaced macros.
   stages:
     - floorplan
 MACRO_PLACE_HALO:
@@ -367,10 +365,9 @@ MAKE_TRACKS:
     - floorplan
 IO_CONSTRAINTS:
   description: |
-    File path to the IO constraints .tcl file.
+    File path to the IO constraints .tcl file. Also used for manual placement.
   stages:
     - floorplan
-    - place
 IO_PLACER_H:
   description: >
     A list of metal layers on which the I/O pins are placed horizontally (top and bottom
@@ -601,6 +598,7 @@ MIN_ROUTING_LAYER:
   description: |
     The lowest metal layer name to be used in routing.
   stages:
+    - floorplan
     - place
     - grt
     - route
@@ -609,6 +607,7 @@ MAX_ROUTING_LAYER:
   description: |
     The highest metal layer name to be used in routing.
   stages:
+    - floorplan
     - place
     - grt
     - route
@@ -817,7 +816,6 @@ CTS_BUF_LIST:
 CTS_CLUSTER_DIAMETER:
   description: >
     Maximum diameter (in microns) of sink cluster.
-  default: 20
   stages:
     - cts
   tunable: 1
@@ -825,7 +823,6 @@ CTS_CLUSTER_DIAMETER:
 CTS_CLUSTER_SIZE:
   description: >
     Maximum number of sinks per cluster.
-  default: 50
   stages:
     - cts
   tunable: 1
@@ -1062,3 +1059,5 @@ OPENROAD_HIERARCHICAL:
     otherwise considered flat. Will eventually be the default and
     this option will be retired.
   default: 0
+  stages:
+    - All stages

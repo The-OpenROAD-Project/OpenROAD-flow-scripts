@@ -3,6 +3,11 @@
 set -euo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+ISSUE_TARGET=$(basename $1)
+ISSUE_DEST=$(dirname $1)
+
+echo "Creating issue for target ${ISSUE_TARGET} in ${ISSUE_DEST}"
+
 currentDate=$(date +"%Y-%m-%d_%H-%M")
 ISSUE_TAG=${ISSUE_TAG:-"${DESIGN_NICKNAME}_${PLATFORM}_${FLOW_VARIANT}_${currentDate}"}
 ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \
@@ -12,7 +17,7 @@ ISSUE_CP_DESIGN_FILE_VARS="SDC_FILE \
                            FOOTPRINT \
                            SIG_MAP_FILE \
                            IO_CONSTRAINTS \
-                           MACRO_PLACEMENT \
+                           MACRO_PLACEMENT_TCL \
                            MACRO_WRAPPERS \
                            RTLMP_CONFIG_FILE \
                            DFF_LIB_FILE "
@@ -72,9 +77,9 @@ cat > ${RUN_ME_SCRIPT} <<EOF
 #!/usr/bin/env bash
 source ${VARS_BASENAME}.sh
 if [[ ! -z \${GDB+x} ]]; then
-    gdb --args openroad -no_init \${SCRIPTS_DIR}/$1.tcl
+    gdb --args openroad -no_init \${SCRIPTS_DIR}/${ISSUE_TARGET}.tcl
 else
-    openroad -no_init \${SCRIPTS_DIR}/$1.tcl
+    openroad -no_init \${SCRIPTS_DIR}/${ISSUE_TARGET}.tcl
 fi
 EOF
 chmod +x ${RUN_ME_SCRIPT}
@@ -83,7 +88,8 @@ rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true
 
 $DIR/generate-vars.sh ${VARS_BASENAME}
 
-echo "Archiving issue to $1_${ISSUE_TAG}.tar.gz"
+TAR_NAME=${ISSUE_DEST}/${ISSUE_TARGET}_${ISSUE_TAG}.tar.gz
+echo "Archiving issue to ${TAR_NAME}"
 # if pigz is installed, use it instead of gzip
 if command -v pigz &> /dev/null; then
     COMPRESS=pigz
@@ -101,9 +107,9 @@ else
 fi
 
 tar --use-compress-program=${COMPRESS} \
-    --ignore-failed-read -chf $1_${ISSUE_TAG}.tar.gz \
-    --transform="s|^|$1_${ISSUE_TAG}/|S" \
-    --transform="s|^$1_${ISSUE_TAG}${FLOW_HOME}/|$1_${ISSUE_TAG}/|S" \
+    --ignore-failed-read -chf ${TAR_NAME} \
+    --transform="s|^|${ISSUE_TARGET}_${ISSUE_TAG}/|S" \
+    --transform="s|^${ISSUE_TARGET}_${ISSUE_TAG}${FLOW_HOME}/|${ISSUE_TARGET}_${ISSUE_TAG}/|S" \
     $DESIGN_PLATFORM_FILES \
     $LOG_DIR \
     $OBJECTS_DIR \
@@ -114,12 +120,12 @@ tar --use-compress-program=${COMPRESS} \
 
 if [ -v EXCLUDE_PLATFORM ]; then
     # Remove liberty and lef files from tar file
-    gunzip -f $1_${ISSUE_TAG}.tar.gz
-    tar --list --file $1_${ISSUE_TAG}.tar | grep -iE "*.(lib|lef|tlef)$" | xargs -r tar --delete --file $1_${ISSUE_TAG}.tar
-    gzip $1_${ISSUE_TAG}.tar
+    gunzip -f ${TAR_NAME}
+    tar --list --file ${ISSUE_TARGET}_${ISSUE_TAG}.tar | grep -iE "*.(lib|lef|tlef)$" | xargs -r tar --delete --file ${ISSUE_TARGET}_${ISSUE_TAG}.tar
+    gzip ${ISSUE_TARGET}_${ISSUE_TAG}.tar
 fi
 
 if [ ! -z ${COPY_ISSUE+x} ]; then
     mkdir -p ${COPY_ISSUE} ;
-    cp $1_${ISSUE_TAG}.tar.gz ${COPY_ISSUE} ;
+    cp ${TAR_NAME} ${COPY_ISSUE} ;
 fi

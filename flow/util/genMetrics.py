@@ -231,10 +231,11 @@ def extract_metrics(
     # Synthesis
     # =========================================================================
 
+    # The new format (>= 0.57) is: <count> <area> cells
     extractTagFromFile(
         "synth__design__instance__count__stdcell",
         metrics_dict,
-        "Number of cells: +(\\S+)",
+        "^\\s+(\\d+)\\s+[-0-9.]+\\s+cells$",
         rptPath + "/synth_stat.txt",
     )
 

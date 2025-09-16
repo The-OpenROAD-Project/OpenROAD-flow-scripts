@@ -25,15 +25,21 @@ export SYNTH_HIERARCHICAL    ?= 0
 ifeq ($(PLACE_SITE), SC6T)
   export CORE_UTILIZATION     = 30
 else
-  export CORE_UTILIZATION     = 35
+  ifeq ($(SYNTH_HDL_FRONTEND), slang)
+    export CORE_UTILIZATION     = 52
+  else
+    export CORE_UTILIZATION     = 54
+  endif
 endif
 
 export CORE_MARGIN            = 1
 export PLACE_DENSITY          = 0.58
 
-# a smoketest for this option, there are a
-# few last gasp iterations
-export SKIP_LAST_GASP ?= 1
+export PLACE_PINS_ARGS = -min_distance_in_tracks -min_distance 1
+export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 0
+export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
+# temporarily skip over DPO to bypass one-site gap issues
+export ENABLE_DPO = 0
 
 # Selectively keep module hierarchies to match baseline data
 # ifeq ($(SYNTH_HDL_FRONTEND), verific)
@@ -60,5 +66,4 @@ export SKIP_LAST_GASP ?= 1
 # 	\\hercules_is_resc_ls$$hercules_is_int.u_grcl \
 # 	\\hercules_is_sxq$$hercules_is_int.u_sx0_iq \
 # 	\\hercules_is_sxq$$hercules_is_int.u_sx1_iq
-#   endif
 # endif
