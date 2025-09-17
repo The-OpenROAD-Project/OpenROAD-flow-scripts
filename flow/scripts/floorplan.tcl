@@ -61,7 +61,7 @@ if { $methods_defined > 1 } {
 # Method 1: Use existing DEF file with floorplan data
 if { $use_floorplan_def } {
   log_cmd read_def -floorplan_initialize $env(FLOORPLAN_DEF)
-# Method 2: Use ICeWall footprint file (platform-specific extension)
+  # Method 2: Use ICeWall footprint file (platform-specific extension)
 } elseif { $use_footprint } {
   ICeWall load_footprint $env(FOOTPRINT)
 
@@ -71,13 +71,13 @@ if { $use_floorplan_def } {
     -site $::env(PLACE_SITE)
 
   ICeWall init_footprint $env(SIG_MAP_FILE)
-# Method 3: Use explicit die and core area coordinates
+  # Method 3: Use explicit die and core area coordinates
 } elseif { $use_die_and_core_area } {
   initialize_floorplan -die_area $::env(DIE_AREA) \
     -core_area $::env(CORE_AREA) \
     -site $::env(PLACE_SITE) \
     {*}$additional_args
-# Method 4: Calculate core area from utilization, aspect ratio, and margins
+  # Method 4: Calculate core area from utilization, aspect ratio, and margins
 } elseif { $use_core_utilization } {
   initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
     -aspect_ratio $::env(CORE_ASPECT_RATIO) \
