@@ -98,7 +98,8 @@ if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
   make_tracks
 }
 
-# Configure global routing: FASTROUTE_TCL script or set_global_routing_layer_adjustment/set_routing_layers
+# Configure global routing: FASTROUTE_TCL script or
+# set_global_routing_layer_adjustment/set_routing_layers
 if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
   log_cmd source $::env(FASTROUTE_TCL)
 } else {
