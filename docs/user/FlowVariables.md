@@ -134,7 +134,10 @@ configuration file.
 | <a name="FASTROUTE_TCL"></a>FASTROUTE_TCL| Specifies a Tcl script with commands to run before FastRoute.| |
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
 | <a name="FILL_CONFIG"></a>FILL_CONFIG| JSON rule file for metal fill during chip finishing.| |
-| <a name="FLOORPLAN_DEF"></a>FLOORPLAN_DEF| Use the DEF file to initialize floorplan.| |
+| <a name="FLOORPLAN_DEF"></a>FLOORPLAN_DEF| Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
+| <a name="FLOW_VARIANT"></a>FLOW_VARIANT| Flow variant to use, used in the flow variant directory name.| base|
+| <a name="FOOTPRINT"></a>FOOTPRINT| Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
+| <a name="FOOTPRINT_TCL"></a>FOOTPRINT_TCL| Specifies a Tcl script with custom footprint-related commands for floorplan setup.| |
 | <a name="FLOW_VARIANT"></a>FLOW_VARIANT| Flow variant to use, used in the flow variant directory name.| base|
 | <a name="GDS_ALLOW_EMPTY"></a>GDS_ALLOW_EMPTY| Regular expression of module names of macros that have no .gds file| |
 | <a name="GDS_FILES"></a>GDS_FILES| Path to platform GDS files.| |
@@ -293,6 +296,8 @@ configuration file.
 - [CORE_UTILIZATION](#CORE_UTILIZATION)
 - [DIE_AREA](#DIE_AREA)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
+- [FOOTPRINT](#FOOTPRINT)
+- [FOOTPRINT_TCL](#FOOTPRINT_TCL)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [IO_CONSTRAINTS](#IO_CONSTRAINTS)
 - [MACRO_BLOCKAGE_HALO](#MACRO_BLOCKAGE_HALO)

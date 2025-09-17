@@ -43,12 +43,14 @@ puts "number instances in verilog is $num_instances"
 set additional_args ""
 append_env_var additional_args ADDITIONAL_SITES -additional_sites 1
 
+# Check which floorplan initialization method is specified (mutually exclusive)
 set use_floorplan_def [env_var_exists_and_non_empty FLOORPLAN_DEF]
 set use_footprint [env_var_exists_and_non_empty FOOTPRINT]
 set use_die_and_core_area \
   [expr { [env_var_exists_and_non_empty DIE_AREA] && [env_var_exists_and_non_empty CORE_AREA] }]
 set use_core_utilization [env_var_exists_and_non_empty CORE_UTILIZATION]
 
+# Enforce mutual exclusion - exactly one method must be specified
 set methods_defined \
   [expr { $use_floorplan_def + $use_footprint + $use_die_and_core_area + $use_core_utilization }]
 if { $methods_defined > 1 } {
@@ -56,11 +58,11 @@ if { $methods_defined > 1 } {
   exit 1
 }
 
+# Method 1: Use existing DEF file with floorplan data
 if { $use_floorplan_def } {
-  # Initialize floorplan by reading in floorplan DEF
   log_cmd read_def -floorplan_initialize $env(FLOORPLAN_DEF)
+# Method 2: Use ICeWall footprint file (platform-specific extension)
 } elseif { $use_footprint } {
-  # Initialize floorplan using ICeWall FOOTPRINT
   ICeWall load_footprint $env(FOOTPRINT)
 
   initialize_floorplan \
@@ -69,11 +71,13 @@ if { $use_floorplan_def } {
     -site $::env(PLACE_SITE)
 
   ICeWall init_footprint $env(SIG_MAP_FILE)
+# Method 3: Use explicit die and core area coordinates
 } elseif { $use_die_and_core_area } {
   initialize_floorplan -die_area $::env(DIE_AREA) \
     -core_area $::env(CORE_AREA) \
     -site $::env(PLACE_SITE) \
     {*}$additional_args
+# Method 4: Calculate core area from utilization, aspect ratio, and margins
 } elseif { $use_core_utilization } {
   initialize_floorplan -utilization $::env(CORE_UTILIZATION) \
     -aspect_ratio $::env(CORE_ASPECT_RATIO) \
@@ -85,6 +89,7 @@ if { $use_floorplan_def } {
   exit 1
 }
 
+# Create routing tracks: MAKE_TRACKS script, platform make_tracks.tcl, or make_tracks command
 if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
   log_cmd source $::env(MAKE_TRACKS)
 } elseif { [file exists $::env(PLATFORM_DIR)/make_tracks.tcl] } {
@@ -93,6 +98,7 @@ if { [env_var_exists_and_non_empty MAKE_TRACKS] } {
   make_tracks
 }
 
+# Configure global routing: FASTROUTE_TCL script or set_global_routing_layer_adjustment/set_routing_layers
 if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
   log_cmd source $::env(FASTROUTE_TCL)
 } else {
