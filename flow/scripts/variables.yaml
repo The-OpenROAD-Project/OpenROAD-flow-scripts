@@ -728,9 +728,6 @@ CDL_FILES:
 DFF_LIB_FILES:
   description: |
     Technology mapping liberty files for flip-flops.
-DONT_USE_LIBS:
-  description: |
-    Set liberty files as `dont_use`.
 SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.

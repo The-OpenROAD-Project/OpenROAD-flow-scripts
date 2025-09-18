@@ -94,19 +94,24 @@ if { $::env(ABC_AREA) } {
   set abc_script $::env(SCRIPTS_DIR)/abc_speed.script
 }
 
-# Technology mapping for cells
-# ABC supports multiple liberty files, but the hook from Yosys to ABC doesn't
-set abc_args [list -script $abc_script \
-  -liberty $::env(DONT_USE_SC_LIB) \
-  -constr $::env(OBJECTS_DIR)/abc.constr]
+# Create argument list for stat
+set lib_args ""
+foreach lib $::env(LIB_FILES) {
+  append lib_args "-liberty $lib "
+}
 
 # Exclude dont_use cells. This includes macros that are specified via
 # LIB_FILES and ADDITIONAL_LIBS that are included in LIB_FILES.
+set lib_dont_use_args ""
 if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
   foreach cell $::env(DONT_USE_CELLS) {
-    lappend abc_args -dont_use $cell
+    lappend lib_dont_use_args -dont_use $cell
   }
 }
+
+# Technology mapping for cells
+set abc_args [list -script $abc_script \
+  {*}$lib_args {*}$lib_dont_use_args -constr $::env(OBJECTS_DIR)/abc.constr]
 
 if { [env_var_exists_and_non_empty SDC_FILE_CLOCK_PERIOD] } {
   puts "Extracting clock period from SDC file: $::env(SDC_FILE_CLOCK_PERIOD)"
@@ -117,12 +122,6 @@ if { [env_var_exists_and_non_empty SDC_FILE_CLOCK_PERIOD] } {
     lappend abc_args -D $clock_period
   }
   close $fp
-}
-
-# Create argument list for stat
-set stat_libs ""
-foreach lib $::env(DONT_USE_LIBS) {
-  append stat_libs "-liberty $lib "
 }
 
 set constr [open $::env(OBJECTS_DIR)/abc.constr w]
