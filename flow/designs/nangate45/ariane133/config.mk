@@ -21,3 +21,5 @@ export MACRO_PLACE_HALO    = 10 10
 
 export TNS_END_PERCENT     = 100
 export SKIP_GATE_CLONING   = 1
+
+export SYNTH_OPT_HIER      = 0

@@ -67,3 +67,5 @@ export ENABLE_DPO = 0
 # 	\\hercules_is_sxq$$hercules_is_int.u_sx0_iq \
 # 	\\hercules_is_sxq$$hercules_is_int.u_sx1_iq
 # endif
+
+export SYNTH_OPT_HIER        = 0
