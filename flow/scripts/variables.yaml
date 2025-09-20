@@ -305,7 +305,7 @@ SWAP_ARITH_OPERATORS:
     - All stages
 FLOORPLAN_DEF:
   description: |
-    Use the DEF file to initialize floorplan.
+    Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.
   stages:
     - floorplan
     - place
@@ -737,9 +737,6 @@ CDL_FILES:
 DFF_LIB_FILES:
   description: |
     Technology mapping liberty files for flip-flops.
-DONT_USE_LIBS:
-  description: |
-    Set liberty files as `dont_use`.
 SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.
@@ -1028,6 +1025,16 @@ YOSYS_FLAGS:
   stages:
     - synth
   default: -v 3
+FOOTPRINT:
+  description: |
+    Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.
+  stages:
+    - floorplan
+FOOTPRINT_TCL:
+  description: |
+    Specifies a Tcl script with custom footprint-related commands for floorplan setup.
+  stages:
+    - floorplan
 FLOW_VARIANT:
   description: >
     Flow variant to use, used in the flow variant directory name.
