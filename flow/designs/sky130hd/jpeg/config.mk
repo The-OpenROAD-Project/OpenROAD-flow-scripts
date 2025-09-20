@@ -13,6 +13,3 @@ export TNS_END_PERCENT = 100
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
 
 export REMOVE_ABC_BUFFERS = 1
-
-# workaround for density growing to 0.91 from adjustments on TD/RD iterations
-export GPL_ROUTABILITY_DRIVEN = 0
