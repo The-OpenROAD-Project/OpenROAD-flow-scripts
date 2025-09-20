@@ -47,7 +47,6 @@ if { [find_macros] != "" } {
   append additional_rtlmp_args " -halo_width $halo_x"
   append additional_rtlmp_args " -halo_height $halo_y"
   append_env_var additional_rtlmp_args RTLMP_MIN_AR -min_ar 1
-  append_env_var additional_rtlmp_args RTLMP_SIGNATURE_NET_THRESHOLD -signature_net_threshold 1
   append_env_var additional_rtlmp_args RTLMP_AREA_WT -area_weight 1
   append_env_var additional_rtlmp_args RTLMP_WIRELENGTH_WT -wirelength_weight 1
   append_env_var additional_rtlmp_args RTLMP_OUTLINE_WT -outline_weight 1
