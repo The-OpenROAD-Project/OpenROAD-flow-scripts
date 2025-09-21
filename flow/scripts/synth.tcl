@@ -84,9 +84,7 @@ chformal -remove
 delete t:\$print
 
 # rename registers to have the verilog register name in its name
-# of the form \regName$_DFF_P_. We should fix yosys to make it the reg name.
-# At least this is predictable.
-renames -wire
+renames -wire -move-to-cell
 
 # Optimize the design
 opt -purge
