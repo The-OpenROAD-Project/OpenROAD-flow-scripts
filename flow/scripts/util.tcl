@@ -16,9 +16,7 @@ proc log_cmd { cmd args } {
 proc repair_timing_helper { args } {
   set additional_args "$args -verbose"
   append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
-  if { $::env(HOLD_SLACK_MARGIN) < 0 } {
-    append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
-  }
+  append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
   append_env_var additional_args SETUP_MOVE_SEQUENCE -sequence 1
   append_env_var additional_args TNS_END_PERCENT -repair_tns 1
   append_env_var additional_args SKIP_PIN_SWAP -skip_pin_swap 0
