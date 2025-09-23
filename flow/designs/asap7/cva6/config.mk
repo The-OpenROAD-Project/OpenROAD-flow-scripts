@@ -95,7 +95,7 @@ export PLACE_DENSITY          = 0.69
 
 # a smoketest for this option, there are a
 # few last gasp iterations
-export SKIP_LAST_GASP ?= 1
+#export SKIP_LAST_GASP ?= 1
 
 # For use with SYNTH_HIERARCHICAL
 export SYNTH_MINIMUM_KEEP_SIZE ?= 40000

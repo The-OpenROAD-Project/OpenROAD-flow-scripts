@@ -225,6 +225,7 @@ configuration file.
 | <a name="SKIP_REPAIR_TIE_FANOUT"></a>SKIP_REPAIR_TIE_FANOUT| Skip repair_tie_fanout at floorplan step.| |
 | <a name="SKIP_REPORT_METRICS"></a>SKIP_REPORT_METRICS| If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.| |
 | <a name="SKIP_VT_SWAP"></a>SKIP_VT_SWAP| Do not perform VT swap to improve QoR (default: do VT swap).| |
+| <a name="SKIP_CRIT_VT_SWAP"></a>SKIP_CRIT_VT_SWAP| Do not perform VT swap on critical cells to improve QoR (default: do critical VT swap).| |
 | <a name="SLEW_MARGIN"></a>SLEW_MARGIN| Specifies a slew margin when fixing max slew violations. This option allows you to overfix.| |
 | <a name="SWAP_ARITH_OPERATORS"></a>SWAP_ARITH_OPERATORS| Improve timing QoR by swapping ALU and MULT arithmetic operators.| |
 | <a name="SYNTH_ARGS"></a>SYNTH_ARGS| Optional synthesis variables for yosys.| |
@@ -341,6 +342,7 @@ configuration file.
 - [SKIP_REPAIR_TIE_FANOUT](#SKIP_REPAIR_TIE_FANOUT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SKIP_VT_SWAP](#SKIP_VT_SWAP)
+- [SKIP_CRIT_VT_SWAP](#SKIP_CRIT_VT_SWAP)
 - [TAPCELL_TCL](#TAPCELL_TCL)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
@@ -391,6 +393,7 @@ configuration file.
 - [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SKIP_VT_SWAP](#SKIP_VT_SWAP)
+- [SKIP_CRIT_VT_SWAP](#SKIP_CRIT_VT_SWAP)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## grt variables
@@ -413,6 +416,7 @@ configuration file.
 - [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SKIP_VT_SWAP](#SKIP_VT_SWAP)
+- [SKIP_CRIT_VT_SWAP](#SKIP_CRIT_VT_SWAP)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## route variables
