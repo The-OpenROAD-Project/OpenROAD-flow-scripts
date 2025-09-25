@@ -4,8 +4,8 @@ erase_non_stage_variables place
 load_design 3_5_place_dp.odb 3_place.sdc
 
 set_placement_padding -global \
-    -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
-    -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
+  -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
+  -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
 puts "Repair setup and hold violations"
 estimate_parasitics -placement
