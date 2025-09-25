@@ -68,6 +68,7 @@ from itertools import product
 from uuid import uuid4 as uuid
 from collections import namedtuple
 from multiprocessing import cpu_count
+import time
 
 import numpy as np
 import torch
@@ -91,7 +92,6 @@ from autotuner.utils import (
     parse_config,
     read_config,
     read_metrics,
-    prepare_ray_server,
     CONSTRAINTS_SDC,
     FASTROUTE_TCL,
 )
@@ -101,9 +101,18 @@ METRIC = "metric"
 # The worst of optimized metric
 ERROR_METRIC = 9e99
 # Path to the FLOW_HOME directory
-ORFS_FLOW_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../../../../flow")
-)
+if "ORFS_FLOW_DIR" in os.environ:
+    ORFS_FLOW_DIR  = os.environ["ORFS_FLOW_DIR"]
+else:
+    ORFS_FLOW_DIR = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "../../../../flow")
+    )
+if "INSTALL_PATH" in os.environ:
+    INSTALL_PATH = os.environ["INSTALL_PATH"]
+else:
+    INSTALL_PATH = os.path.abspath(os.path.join(ORFS_FLOW_DIR, "../tools/install"))
+LOCAL_DIR = ""
+
 # Global variable for args
 args = None
 
@@ -448,7 +457,7 @@ def parse_arguments():
 
     # If the experiment name is the default, add a UUID to the end.
     if args.experiment == "test":
-        id = str(uuid())[:8]
+        id = time.strftime("%Y%m%d-%H%M%S") + "-" + str(uuid())[:4]
         args.experiment = f"{args.mode}-{id}"
     else:
         args.experiment += f"-{args.mode}"
@@ -558,31 +567,38 @@ def save_best(results):
 
 def sweep():
     """Run sweep of parameters"""
-    if args.server is not None:
-        # For remote sweep we create the following directory structure:
-        #      1/     2/         3/       4/
-        # <repo>/<logs>/<platform>/<design>/
-        repo_dir = os.path.abspath(LOCAL_DIR + "/../" * 4)
-    else:
-        repo_dir = os.path.abspath(os.path.join(ORFS_FLOW_DIR, ".."))
+    repo_dir = os.path.abspath(os.path.join(ORFS_FLOW_DIR, ".."))
     print(f"[INFO TUN-0012] Log folder {LOCAL_DIR}.")
-    queue = Queue()
     parameter_list = list()
+    total_combinations = 1
     for name, content in config_dict.items():
+        print(f"[INFO TUN-0013] Sweeping {name} over {content}.")
         if not isinstance(content, list):
             print(f"[ERROR TUN-0015] {name} sweep is not supported.")
             sys.exit(1)
         if content[-1] == 0:
             print("[ERROR TUN-0014] Sweep does not support step value zero.")
             sys.exit(1)
-        parameter_list.append([{name: i} for i in np.arange(*content)])
+        parameter_list.append([{name: i} for i in np.round(np.arange(*content), 4).tolist()])
+        total_combinations *= len(parameter_list[-1])
+    print(f"[INFO TUN-0017] Total of {total_combinations} combinations.")
+    if total_combinations > 1000:
+        print(
+            "[WARN TUN-0033] The total number of combinations is very large."
+            " Do you wish to continue? (y/n)"
+        )
+        if input().lower() != "y":
+            sys.exit(1)
     parameter_list = list(product(*parameter_list))
+    queue = Queue()
     for parameter in parameter_list:
-        temp = dict()
+        params_to_sweep = dict()
         for value in parameter:
-            temp.update(value)
-        queue.put([args, repo_dir, temp, SDC_ORIGINAL, FR_ORIGINAL, INSTALL_PATH])
-    workers = [consumer.remote(queue) for _ in range(args.jobs)]
+            params_to_sweep.update(value)
+        queue.put([args, repo_dir, params_to_sweep, SDC_ORIGINAL, FR_ORIGINAL, INSTALL_PATH])
+    max_jobs = min(args.jobs, queue.qsize())
+    print(f"[INFO TUN-0008] Starting sweep with {max_jobs} workers.")
+    workers = [consumer.remote(queue) for _ in range(max_jobs)]
     print("[INFO TUN-0009] Waiting for results.")
     ray.get(workers)
     print("[INFO TUN-0010] Sweep complete.")
@@ -592,13 +608,12 @@ def main():
     global args, SDC_ORIGINAL, FR_ORIGINAL, LOCAL_DIR, INSTALL_PATH, ORFS_FLOW_DIR, config_dict, reference, best_params
     args = parse_arguments()
 
+    LOCAL_DIR = os.path.join(ORFS_FLOW_DIR, f"logs/{args.platform}/{args.design}")
     # Read config and original files before handling where to run in case we
     # need to upload the files.
     config_dict, SDC_ORIGINAL, FR_ORIGINAL = read_config(
         os.path.abspath(args.config), args.mode, getattr(args, "algorithm", None)
     )
-
-    LOCAL_DIR, ORFS_FLOW_DIR, INSTALL_PATH = prepare_ray_server(args)
 
     if args.mode == "tune":
         best_params = set_best_params(args.platform, args.design)
