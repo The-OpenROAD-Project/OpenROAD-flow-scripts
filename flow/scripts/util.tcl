@@ -24,6 +24,7 @@ proc repair_timing_helper { args } {
   append_env_var additional_args SKIP_BUFFER_REMOVAL -skip_buffer_removal 0
   append_env_var additional_args SKIP_LAST_GASP -skip_last_gasp 0
   append_env_var additional_args SKIP_VT_SWAP -skip_vt_swap 0
+  append_env_var additional_args SKIP_CRIT_VT_SWAP -skip_crit_vt_swap 0
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
   log_cmd repair_timing {*}$additional_args
 }
