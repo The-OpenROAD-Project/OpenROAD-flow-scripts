@@ -522,6 +522,7 @@ HOLD_SLACK_MARGIN:
     SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible
     current minimum clock period.
   stages:
+    - place
     - cts
     - floorplan
     - grt
