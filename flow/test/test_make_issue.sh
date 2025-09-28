@@ -9,13 +9,13 @@ set -ue -o pipefail
 TARGET=3_2_place_iop
 ISSUE_TARGET=io_placement
 
-make DESIGN_CONFIG=designs/asap7/mock-array/Element/config.mk $TARGET
-make ISSUE_TAG=tag DESIGN_CONFIG=designs/asap7/mock-array/Element/config.mk ${ISSUE_TARGET}_issue
+make DESIGN_CONFIG=designs/asap7/gcd/config.mk $TARGET
+make ISSUE_TAG=tag DESIGN_CONFIG=designs/asap7/gcd/config.mk ${ISSUE_TARGET}_issue
 # io placement needs ADDITIONAL_FILES to work, so not a random test
 test_archive=${ISSUE_TARGET}_tag.tar.gz
 ls -l $test_archive
 echo "Testing $test_archive"
-runme=$(realpath run-me-mock-array_Element-asap7-base.sh)
+runme=$(realpath run-me-gcd-asap7-base.sh)
 . ../env.sh
 rm -rf results/make-issue/
 mkdir -p results/make-issue/
@@ -24,4 +24,4 @@ tar --strip-components=1 -xzf ../../$test_archive
 sed -i 's/openroad -no_init/openroad -exit -no_init/g' $runme
 $runme
 # check for basic syntax errors
-openroad -exit -no_init vars-mock-array_Element-asap7-base.tcl
+openroad -exit -no_init vars-gcd-asap7-base.tcl
