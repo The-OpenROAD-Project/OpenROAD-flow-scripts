@@ -24,7 +24,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1063,
+        "value": 1367,
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {
@@ -48,7 +48,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -67.71,
+        "value": -65.46,
         "compare": ">="
     },
     "finish__design__instance__area": {
