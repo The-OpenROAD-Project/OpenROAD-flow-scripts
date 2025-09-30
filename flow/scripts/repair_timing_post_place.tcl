@@ -9,7 +9,7 @@ set_placement_padding -global \
 
 puts "Repair setup and hold violations"
 estimate_parasitics -placement
-repair_timing_helper
+log_cmd repair_timing -repair_tns $::env(TNS_END_PERCENT)
 
 # Legalize placement after timing repair
 detailed_placement
