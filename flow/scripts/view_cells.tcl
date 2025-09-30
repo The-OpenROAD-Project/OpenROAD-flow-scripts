@@ -10,7 +10,8 @@ if { [info exist ::env(ADDITIONAL_LEFS)] } {
 
 # Create the block
 set db [ord::get_db]
-set chip [odb::dbChip_create $db]
+set tech [ord::get_db_tech]
+set chip [odb::dbChip_create $db $tech]
 set block [odb::dbBlock_create $chip all_cells]
 
 # Get all the masters

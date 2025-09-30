@@ -49,6 +49,8 @@ Options:
     -l, --latest            Use the head of branch --or_branch or 'master'
                             by default for tools/OpenROAD.
 
+    -s, --skip_openroad     Skip building and all git operations on OpenROAD.
+
     --or_branch BRANCH_NAME Use the head of branch BRANCH for tools/OpenROAD.
 
     --or_repo REPO_URL      Use a fork at REPO-URL (https/ssh) for tools/OpenROAD.
@@ -106,6 +108,9 @@ while (( "$#" )); do
                         ;;
                 -l|--latest)
                         USE_OPENROAD_APP_LATEST=1
+                        ;;
+                -s|--skip_openroad)
+                        SKIP_OPENROAD=1
                         ;;
                 --or_branch)
                         OPENROAD_APP_BRANCH="$2"
@@ -237,9 +242,11 @@ __local_build()
             set -u
         fi
 
-        echo "[INFO FLW-0018] Compiling OpenROAD."
-        eval ${NICE} ./tools/OpenROAD/etc/Build.sh -dir="$DIR/tools/OpenROAD/build" -threads=${PROC} -cmake=\'${OPENROAD_APP_ARGS}\'
-        ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
+        if [ -z "${SKIP_OPENROAD+x}" ]; then
+            echo "[INFO FLW-0018] Compiling OpenROAD."
+            eval ${NICE} ./tools/OpenROAD/etc/Build.sh -dir="$DIR/tools/OpenROAD/build" -threads=${PROC} -cmake=\'${OPENROAD_APP_ARGS}\'
+            ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
+        fi
 
         YOSYS_ABC_PATH=tools/yosys/abc
         if [[ -d "${YOSYS_ABC_PATH}/.git" ]]; then
@@ -303,7 +310,7 @@ __common_setup()
                 __change_openroad_app_remote
         fi
 
-        if [ ! -z "${USE_OPENROAD_APP_LATEST+x}" ] || [ "${OPENROAD_APP_BRANCH}" != "master" ]; then
+        if [ -z "${SKIP_OPENROAD+x}" ] &&  ( [ ! -z "${USE_OPENROAD_APP_LATEST+x}" ] || [ "${OPENROAD_APP_BRANCH}" != "master" ] ) ; then
                 echo -n "[INFO FLW-0004] Updating OpenROAD app to the HEAD"
                 echo "  of ${OPENROAD_APP_REMOTE}/${OPENROAD_APP_BRANCH}."
                 __update_openroad_app_latest

@@ -16,7 +16,6 @@ proc save_progress { stage } {
 # Run CTS
 set cts_args [list \
   -sink_clustering_enable \
-  -balance_levels \
   -repair_clock_nets]
 
 append_env_var cts_args CTS_BUF_DISTANCE -distance_between_buffers 1

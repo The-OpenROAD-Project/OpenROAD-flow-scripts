@@ -34,3 +34,4 @@ create_clock [get_ports $clk_port] -name $clk_name -period $clk_period
 
 
 set_false_path -to [get_ports {rvfi_probes_o}]
+set_max_fanout 10 [current_design]
