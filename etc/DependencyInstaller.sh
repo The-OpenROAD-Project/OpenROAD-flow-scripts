@@ -24,7 +24,7 @@ _installORDependencies() {
     ./tools/OpenROAD/etc/DependencyInstaller.sh ${OR_INSTALLER_ARGS}
 }
 
-_installCommon() {
+_installPipCommon() {
     if [[ -f /opt/rh/rh-python38/enable ]]; then
         set +u
         source /opt/rh/rh-python38/enable
@@ -36,7 +36,10 @@ _installCommon() {
     else
         pip3 install --no-cache-dir --user -U $pkgs
     fi
+}
 
+_installVerilator() {
+    local baseDir
     if [[ "$constantBuildDir" == "true" ]]; then
         baseDir="/tmp/DependencyInstaller-ORFS"
         if [[ -d "$baseDir" ]]; then
@@ -468,7 +471,8 @@ case "${os}" in
         esac
         
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-            _installCommon
+            _installPipCommon
+            _installVerilator
         fi
         ;;
     "Ubuntu" | "Debian GNU/Linux rodete" )
@@ -486,10 +490,13 @@ case "${os}" in
             _installUbuntuCleanUp
         fi
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-            if [[ $version == "rodete" ]]; then
+            if [[ $version != "rodete" ]]; then
+                if _versionCompare ${version} -lt 23.04 ; then
+                    _installPipCommon
+                fi
+                _installVerilator
+            else
                 echo "Skip common for rodete"
-            elif _versionCompare ${version} -lt 23.04 ; then
-                _installCommon
             fi
         fi
         ;;
@@ -502,7 +509,8 @@ case "${os}" in
             _installDarwinPackages
         fi
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-            _installCommon
+            _installPipCommon
+            _installVerilator
         fi
         ;;
     *)
