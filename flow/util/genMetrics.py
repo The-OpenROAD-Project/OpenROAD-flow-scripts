@@ -262,6 +262,7 @@ def extract_metrics(
         r"^\[INFO RSZ-\d+\] (\d+) arithmetic instances have swapped.*",
         logPath + "/2_1_floorplan.log",
         defaultNotFound=0,
+        required=False,
     )
 
     # Place
@@ -298,6 +299,7 @@ def extract_metrics(
         r"^\[INFO RSZ-\d+\] (\d+) arithmetic instances have swapped.*",
         logPath + "/3_4_place_resized.log",
         defaultNotFound=0,
+        required=False,
     )
 
     floorplan_swapped = metrics_dict.get("floorplan__swapped_arithmetic_module_count", 0)
