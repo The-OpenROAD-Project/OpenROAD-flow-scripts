@@ -1,0 +1,51 @@
+{
+    "_SDC_FILE_PATH": "constraint.sdc",
+    "_SDC_CLK_PERIOD": {
+        "type": "float",
+        "minmax": [
+            990,
+            1250
+        ],
+        "step": 0
+    },
+    "CORE_UTILIZATION": {
+        "type": "int",
+        "minmax": [
+            40,
+            60
+        ],
+        "step": 1
+    },
+    "CTS_BUF_DISTANCE": {
+        "type": "int",
+        "minmax": [
+            25,
+            50
+        ],
+        "step": 1
+    },
+    "CTS_CLUSTER_SIZE": {
+        "type": "int",
+        "minmax": [
+            30,
+            60
+        ],
+        "step": 1
+    },
+    "CTS_CLUSTER_DIAMETER": {
+        "type": "int",
+        "minmax": [
+            15,
+            25
+        ],
+        "step": 1
+    },
+    "CORE_MARGIN": {
+        "type": "float",
+        "minmax": [
+            1.8,
+            2.1
+        ],
+        "step": 0
+    }
+}

@@ -54,6 +54,9 @@ export MACRO_PLACE_HALO = 7 7
 
 export MACRO_WRAPPERS = $(DESIGN_DIR)/wrappers.tcl
 
+# Temporarily disable NDR for clock nets
+export CTS_ARGS = -sink_clustering_enable -repair_clock_nets -distance_between_buffers 100 -apply_ndr none
+
 #export MAX_ROUTING_LAYER = H2 
 export FASTROUTE_TCL = $(DESIGN_DIR)/fastroute.tcl
 #

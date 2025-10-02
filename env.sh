@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 function __setpaths() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
-    DIR="$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]}"))"
+    DIR="$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' "${BASH_SOURCE[0]:-${(%):-%x}}"))"
   else
-    DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]}"))"
+    DIR="$(dirname $(readlink -f "${BASH_SOURCE[0]:-${(%):-%x}}"))"
   fi
 
   export OPENROAD=${DIR}/tools/OpenROAD

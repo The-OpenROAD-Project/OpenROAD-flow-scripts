@@ -182,7 +182,7 @@ $(foreach vt_type,$(OTHER_VT),\
   $(eval WC_NLDM_LIB_FILES += $(subst PLACEHOLDER,$(OTHER_VT_TAG),$(WC_NLDM_LIB_FILES_T))) \
   $(eval TC_NLDM_LIB_FILES += $(subst PLACEHOLDER,$(OTHER_VT_TAG),$(TC_NLDM_LIB_FILES_T))) \
   $(eval GDS_FILES += $(PLATFORM_DIR)/gds/asap7sc7p5t_28_$(OTHER_VT_TAG)_220121a.gds) \
-  $(eval FILL_CELLS += $(addsuffix $(PRIMARY_VT_TAG), $(FILL_CELLS_T))) \
+  $(eval FILL_CELLS += $(addsuffix $(OTHER_VT_TAG), $(FILL_CELLS_T))) \
 )
 
 # Dont use SC library based on CORNER selection
@@ -197,11 +197,6 @@ export GDS_FILES             += $(ADDITIONAL_GDS)
 export DB_FILES              += $(realpath $($(CORNER)_DB_FILES))
 export TEMPERATURE            = $($(CORNER)_TEMPERATURE)
 export VOLTAGE                = $($(CORNER)_VOLTAGE)
-
-# FIXME Need merged.lib for now, but ideally it shouldn't be necessary:
-#
-# https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts/pull/2139
-export DONT_USE_SC_LIB        = $(OBJECTS_DIR)/lib/merged.lib
 
 # ---------------------------------------------------------
 #  IR Drop

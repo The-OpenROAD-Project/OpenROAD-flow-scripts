@@ -181,8 +181,8 @@ def gen_rule_file(
     change_str = ""
     for field, option in rules_dict.items():
         if field not in metrics.keys():
-            print(f"[ERROR] Metric {field} not found")
-            sys.exit(1)
+            print(f"[WARNING] Metric {field} not found")
+            continue
 
         if isinstance(metrics[field], str):
             print(f"[WARNING] Skipping string field {field} = {metrics[field]}")

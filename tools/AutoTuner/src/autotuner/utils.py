@@ -324,6 +324,9 @@ def openroad(
     export_command += " && "
 
     make_command = export_command
+    if args.memory_limit is not None:
+        limit = int(args.memory_limit * 1_000_000)
+        make_command += f"ulimit -v {limit}; "
     make_command += f"make -C {base_dir}/flow DESIGN_CONFIG=designs/"
     make_command += f"{args.platform}/{args.design}/config.mk"
     make_command += f" PLATFORM={args.platform}"
@@ -450,40 +453,48 @@ def read_config(file_name, mode, algorithm):
         # algorithms should take different methods (will be added)
         if algorithm != "random":
             return config
-        dp_pad_min = data["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"]["minmax"][0]
-        dp_pad_step = data["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"]["step"]
-        if dp_pad_step == 1:
-            config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"] = tune.sample_from(
-                lambda spec: np.random.randint(
-                    dp_pad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1
+        if "CELL_PAD_IN_SITES_DETAIL_PLACEMENT" in data:
+            dp_pad_min = data["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"]["minmax"][0]
+            dp_pad_step = data["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"]["step"]
+            if dp_pad_step == 1:
+                config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"] = tune.sample_from(
+                    lambda spec: np.random.randint(
+                        dp_pad_min, spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1
+                    )
                 )
-            )
-        if dp_pad_step > 1:
-            config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"] = tune.sample_from(
-                lambda spec: random.randrange(
-                    dp_pad_min,
-                    spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1,
-                    dp_pad_step,
+            if dp_pad_step > 1:
+                config["CELL_PAD_IN_SITES_DETAIL_PLACEMENT"] = tune.sample_from(
+                    lambda spec: random.randrange(
+                        dp_pad_min,
+                        spec.config.CELL_PAD_IN_SITES_GLOBAL_PLACEMENT + 1,
+                        dp_pad_step,
+                    )
                 )
-            )
         return config
 
     def read_tune(this):
         from ray import tune
 
-        min_, max_ = this["minmax"]
-        if min_ == max_:
-            # Returning a choice of a single element allow pbt algorithm to
-            # work. pbt does not accept single values as tunable.
-            return tune.choice([min_, max_])
-        if this["type"] == "int":
-            if this["step"] == 1:
-                return tune.randint(min_, max_)
-            return tune.choice(np.ndarray.tolist(np.arange(min_, max_, this["step"])))
-        if this["type"] == "float":
-            if this["step"] == 0:
-                return tune.uniform(min_, max_)
-            return tune.choice(np.ndarray.tolist(np.arange(min_, max_, this["step"])))
+        if "minmax" in this:
+            min_, max_ = this["minmax"]
+            if min_ == max_:
+                # Returning a choice of a single element allow pbt algorithm to
+                # work. pbt does not accept single values as tunable.
+                return tune.choice([min_, max_])
+            if this["type"] == "int":
+                if this["step"] == 1:
+                    return tune.randint(min_, max_)
+                return tune.choice(
+                    np.ndarray.tolist(np.arange(min_, max_, this["step"]))
+                )
+            if this["type"] == "float":
+                if this["step"] == 0:
+                    return tune.uniform(min_, max_)
+                return tune.choice(
+                    np.ndarray.tolist(np.arange(min_, max_, this["step"]))
+                )
+        if this["type"] == "string":
+            return tune.choice(this["values"])
         return None
 
     def read_tune_ax(name, this):
@@ -493,33 +504,41 @@ def read_config(file_name, mode, algorithm):
         from ray import tune
 
         dict_ = dict(name=name)
-        if "minmax" not in this:
-            return None
-        min_, max_ = this["minmax"]
-        if min_ == max_:
-            dict_["type"] = "fixed"
-            dict_["value"] = min_
-        elif this["type"] == "int":
-            if this["step"] == 1:
-                dict_["type"] = "range"
-                dict_["bounds"] = [min_, max_]
-                dict_["value_type"] = "int"
+        if "minmax" in this:
+            min_, max_ = this["minmax"]
+            if min_ == max_:
+                dict_["type"] = "fixed"
+                dict_["value"] = min_
+            elif this["type"] == "int":
+                if this["step"] == 1:
+                    dict_["type"] = "range"
+                    dict_["bounds"] = [min_, max_]
+                    dict_["value_type"] = "int"
+                else:
+                    dict_["type"] = "choice"
+                    dict_["values"] = tune.randint(min_, max_, this["step"])
+                    dict_["value_type"] = "int"
+            elif this["type"] == "float":
+                if this["step"] == 1:
+                    dict_["type"] = "choice"
+                    dict_["values"] = tune.choice(
+                        np.ndarray.tolist(np.arange(min_, max_, this["step"]))
+                    )
+                    dict_["value_type"] = "float"
+                else:
+                    dict_["type"] = "range"
+                    dict_["bounds"] = [min_, max_]
+                    dict_["value_type"] = "float"
+            return dict_
+        if "values" in this:
+            dict_["type"] = "choice"
+            dict_["values"] = this["values"]
+            if this["type"] == "string":
+                dict_["value_type"] = "str"
             else:
-                dict_["type"] = "choice"
-                dict_["values"] = tune.randint(min_, max_, this["step"])
-                dict_["value_type"] = "int"
-        elif this["type"] == "float":
-            if this["step"] == 1:
-                dict_["type"] = "choice"
-                dict_["values"] = tune.choice(
-                    np.ndarray.tolist(np.arange(min_, max_, this["step"]))
-                )
-                dict_["value_type"] = "float"
-            else:
-                dict_["type"] = "range"
-                dict_["bounds"] = [min_, max_]
-                dict_["value_type"] = "float"
-        return dict_
+                dict_["value_type"] = this["type"]
+            return dict_
+        return None
 
     def read_tune_pbt(name, this):
         """
@@ -528,15 +547,17 @@ def read_config(file_name, mode, algorithm):
         """
         from ray import tune
 
-        if "minmax" not in this:
-            return None
-        min_, max_ = this["minmax"]
-        if min_ == max_:
-            return tune.choice([min_, max_])
-        if this["type"] == "int":
-            return tune.randint(min_, max_)
-        if this["type"] == "float":
-            return tune.uniform(min_, max_)
+        if "minmax" in this:
+            min_, max_ = this["minmax"]
+            if min_ == max_:
+                return tune.choice([min_, max_])
+            if this["type"] == "int":
+                return tune.randint(min_, max_)
+            if this["type"] == "float":
+                return tune.uniform(min_, max_)
+        if "values" in this:
+            return tune.choice(this["values"])
+        return None
 
     # Check file exists and whether it is a valid JSON file.
     assert os.path.isfile(file_name), f"File {file_name} not found."

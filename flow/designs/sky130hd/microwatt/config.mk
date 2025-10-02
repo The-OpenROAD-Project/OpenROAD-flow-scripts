@@ -33,6 +33,10 @@ export MACRO_BLOCKAGE_HALO = 151
 # higher density in order to run.
 export PLACE_DENSITY = 0.2
 
+# Extra effort to ease routing: avoid very tall std cell clusters in MPL.
+export RTLMP_MIN_AR = 0.40
+export RTLMP_NOTCH_WT = 20.0
+
 # CTS tuning
 export CTS_BUF_DISTANCE = 600
 export SKIP_GATE_CLONING = 1

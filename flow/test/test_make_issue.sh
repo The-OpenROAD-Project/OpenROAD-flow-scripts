@@ -6,19 +6,22 @@ set -ue -o pipefail
 # has some interesting "make issue" features to test,
 # such as ADDITIONAL_FILES
 
-make DESIGN_CONFIG=designs/asap7/mock-array/Element/config.mk floorplan
-make ISSUE_TAG=tag DESIGN_CONFIG=designs/asap7/mock-array/Element/config.mk io_placement_random_issue
+TARGET=3_2_place_iop
+ISSUE_TARGET=io_placement
+
+make DESIGN_CONFIG=designs/asap7/mock-array/Element/config.mk $TARGET
+make ISSUE_TAG=tag DESIGN_CONFIG=designs/asap7/mock-array/Element/config.mk ${ISSUE_TARGET}_issue
 # io placement needs ADDITIONAL_FILES to work, so not a random test
-test_archive=io_placement_random_tag.tar.gz
+test_archive=${ISSUE_TARGET}_tag.tar.gz
 ls -l $test_archive
 echo "Testing $test_archive"
+runme=$(realpath run-me-mock-array_Element-asap7-base.sh)
 . ../env.sh
 rm -rf results/make-issue/
 mkdir -p results/make-issue/
 cd results/make-issue/
 tar --strip-components=1 -xzf ../../$test_archive
-runme=run-me-mock-array_Element-asap7-base.sh
 sed -i 's/openroad -no_init/openroad -exit -no_init/g' $runme
-./$runme
+$runme
 # check for basic syntax errors
 openroad -exit -no_init vars-mock-array_Element-asap7-base.tcl

@@ -397,6 +397,13 @@ def parse_arguments():
         help="Max number of threads openroad can use.",
     )
     parser.add_argument(
+        "--memory_limit",
+        type=float,
+        metavar="<float>",
+        default=None,
+        help="Maximum memory in GB that each trial job can use, process will be killed and not retried if it exceeds.",
+    )
+    parser.add_argument(
         "--server",
         type=str,
         metavar="<ip|servername>",

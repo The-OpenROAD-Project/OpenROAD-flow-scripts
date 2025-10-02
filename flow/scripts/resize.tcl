@@ -11,7 +11,11 @@ set pin_count_before [sta::network_leaf_pin_count]
 set_dont_use $::env(DONT_USE_CELLS)
 
 if { [env_var_exists_and_non_empty EARLY_SIZING_CAP_RATIO] } {
-    log_cmd set_opt_config -set_early_sizing_cap_ratio $env(EARLY_SIZING_CAP_RATIO)
+  log_cmd set_opt_config -set_early_sizing_cap_ratio $env(EARLY_SIZING_CAP_RATIO)
+}
+
+if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
+  replace_arith_modules
 }
 
 repair_design_helper

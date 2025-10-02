@@ -18,8 +18,6 @@ if { ![env_var_exists_and_non_empty FOOTPRINT] } {
   }
 }
 
-fast_route
-
 set global_placement_args {}
 
 # Parameters for routability mode in global placement

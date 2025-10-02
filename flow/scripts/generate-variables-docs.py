@@ -43,7 +43,7 @@ for key in sorted(data):
 
 markdown_table += table_header + table_rows
 
-for stage in stages + ["All stages", "Uncategorized"]:
+for stage in stages + ["Uncategorized"]:
     markdown_table += f"## {stage} variables\n\n"
     stage_keys = [
         key

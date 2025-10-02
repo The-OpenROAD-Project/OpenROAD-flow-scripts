@@ -97,6 +97,8 @@ else
   export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 endif
 
+OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell test -x $(OPENROAD_EXE) && echo "true"),)
+
 export OPENROAD_ARGS = -no_init -threads $(NUM_CORES) $(OR_ARGS)
 export OPENROAD_CMD = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 export OPENROAD_NO_EXIT_CMD = $(OPENROAD_EXE) $(OPENROAD_ARGS)
@@ -109,18 +111,19 @@ else
 endif
 export YOSYS_EXE
 
+YOSYS_IS_VALID := $(if $(YOSYS_EXE),$(shell test -x $(YOSYS_EXE) && echo "true"),)
+
 # Use locally installed and built klayout if it exists, otherwise use klayout in path
 KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
 KLAYOUT_BIN_FROM_DIR = $(KLAYOUT_DIR)/klayout
 
 ifeq ($(wildcard $(KLAYOUT_BIN_FROM_DIR)), $(KLAYOUT_BIN_FROM_DIR))
-KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
+export KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
 else
 ifeq ($(KLAYOUT_CMD),)
-KLAYOUT_CMD := $(shell command -v klayout)
+export KLAYOUT_CMD := $(shell command -v klayout)
 endif
 endif
-KLAYOUT_FOUND            = $(if $(KLAYOUT_CMD),,$(error KLayout not found in PATH))
 
 ifneq ($(shell command -v stdbuf),)
   STDBUF_CMD ?= stdbuf -o L
@@ -131,9 +134,6 @@ WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.le
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))
 export ADDITIONAL_LEFS += $(WRAPPED_LEFS) $(WRAP_LEFS)
 export LIB_FILES += $(WRAP_LIBS) $(WRAPPED_LIBS)
-
-export DONT_USE_LIBS   = $(patsubst %.lib.gz, %.lib, $(addprefix $(OBJECTS_DIR)/lib/, $(notdir $(LIB_FILES))))
-export DONT_USE_SC_LIB ?= $(firstword $(DONT_USE_LIBS))
 
 # Stream system used for final result (GDS is default): GDS, GSDII, GDS2, OASIS, or OAS
 STREAM_SYSTEM ?= GDS
@@ -163,7 +163,7 @@ export TCLLIBPATH := util/cell-veneer $(TCLLIBPATH)
 export SYNTH_SCRIPT ?= $(SCRIPTS_DIR)/synth.tcl
 export SDC_FILE_CLOCK_PERIOD = $(RESULTS_DIR)/clock_period.txt
 
-export YOSYS_DEPENDENCIES=$(DONT_USE_LIBS) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
+export YOSYS_DEPENDENCIES=$(LIB_FILES) $(WRAPPED_LIBS) $(DFF_LIB_FILE) $(VERILOG_FILES) $(SYNTH_NETLIST_FILES) $(LATCH_MAP_FILE) $(ADDER_MAP_FILE) $(SDC_FILE_CLOCK_PERIOD)
 
 # Ubuntu 22.04 ships with older than 0.28.11, so support older versions
 # for a while still.
@@ -215,7 +215,15 @@ vars:
 .PHONY: print-%
 # Print any variable, for instance: make print-DIE_AREA
 print-%:
-	$(file >$(OBJECTS_DIR)/print_tmp_$$,$($*))
+  # HERE BE DRAGONS!
+  #
+  # We have to use /tmp. $(OBJECTS_DIR) may not exist
+  # at $(file) expansion time, which is before commands are run
+  # here, so we can't mkdir -p $(OBJECTS_DIR) either
+  #
+  # We have to use $(file ...) because we want to be able
+  # to print variables that contain newlines.
+	$(file >/tmp/print_tmp$$,$($*))
 	@echo -n "$* = "
-	@cat $(OBJECTS_DIR)/print_tmp_$$
-	@rm $(OBJECTS_DIR)/print_tmp_$$
+	@cat /tmp/print_tmp$$
+	@rm /tmp/print_tmp$$

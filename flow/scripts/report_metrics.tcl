@@ -18,8 +18,8 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   report_puts "$when report_tns"
   report_puts "--------------------------------------------------------------------------"
   report_tns >> $filename
-  report_tns_metric >> $filename
-  report_tns_metric -hold >> $filename
+  report_tns_metric
+  report_tns_metric -hold
 
   report_puts "\n=========================================================================="
   report_puts "$when report_wns"
@@ -30,32 +30,41 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
   report_puts "$when report_worst_slack"
   report_puts "--------------------------------------------------------------------------"
   report_worst_slack >> $filename
-  report_worst_slack_metric >> $filename
-  report_worst_slack_metric -hold >> $filename
+  report_worst_slack_metric
+  report_worst_slack_metric -hold
+
+  report_puts "\n=========================================================================="
+  report_puts "$when report_clock_min_period"
+  report_puts "--------------------------------------------------------------------------"
+  report_clock_min_period -include_port_paths >> $filename
+  report_fmax_metric
 
   if { $include_clock_skew && $::env(REPORT_CLOCK_SKEW) } {
     report_puts "\n=========================================================================="
     report_puts "$when report_clock_skew"
     report_puts "--------------------------------------------------------------------------"
     report_clock_skew >> $filename
-    report_clock_skew_metric >> $filename
-    report_clock_skew_metric -hold >> $filename
+    report_clock_skew_metric
+    report_clock_skew_metric -hold
   }
 
   report_puts "\n=========================================================================="
   report_puts "$when report_checks -path_delay min"
   report_puts "--------------------------------------------------------------------------"
-  report_checks -path_delay min -fields {slew cap input net fanout} -format full_clock_expanded >> $filename
+  report_checks -path_delay min -fields {slew cap input net fanout} \
+    -format full_clock_expanded >> $filename
 
   report_puts "\n=========================================================================="
   report_puts "$when report_checks -path_delay max"
   report_puts "--------------------------------------------------------------------------"
-  report_checks -path_delay max -fields {slew cap input net fanout} -format full_clock_expanded >> $filename
+  report_checks -path_delay max -fields {slew cap input net fanout} \
+    -format full_clock_expanded >> $filename
 
   report_puts "\n=========================================================================="
   report_puts "$when report_checks -unconstrained"
   report_puts "--------------------------------------------------------------------------"
-  report_checks -unconstrained -fields {slew cap input net fanout} -format full_clock_expanded >> $filename
+  report_checks -unconstrained -fields {slew cap input net fanout} \
+    -format full_clock_expanded >> $filename
 
   if { $include_erc } {
     report_puts "\n=========================================================================="
@@ -154,23 +163,29 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
       report_puts "\n=========================================================================="
       report_puts "$when report_checks -path_delay max reg to reg"
       report_puts "--------------------------------------------------------------------------"
-      report_checks -path_delay max -from [all_registers] -to [all_registers] -format full_clock_expanded >> $filename
+      report_checks -path_delay max -from [all_registers] -to [all_registers] \
+        -format full_clock_expanded >> $filename
       report_puts "\n=========================================================================="
       report_puts "$when report_checks -path_delay min reg to reg"
       report_puts "--------------------------------------------------------------------------"
-      report_checks -path_delay min -from [all_registers] -to [all_registers] -format full_clock_expanded >> $filename
+      report_checks -path_delay min -from [all_registers] -to [all_registers] \
+        -format full_clock_expanded >> $filename
 
-      set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay max -from [all_inputs] -to [all_registers]] 0]
+      set inp_to_reg_critical_path \
+        [lindex [find_timing_paths -path_delay max -from [all_inputs] -to [all_registers]] 0]
       if { $inp_to_reg_critical_path != "" } {
-        set target_clock_latency_max [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
+        set target_clock_latency_max \
+          [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
       } else {
         set target_clock_latency_max 0
       }
 
 
-      set inp_to_reg_critical_path [lindex [find_timing_paths -path_delay min -from [all_inputs] -to [all_registers]] 0]
+      set inp_to_reg_critical_path [lindex \
+        [find_timing_paths -path_delay min -from [all_inputs] -to [all_registers]] 0]
       if { $inp_to_reg_critical_path != "" } {
-        set target_clock_latency_min [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
+        set target_clock_latency_min \
+          [sta::format_time [$inp_to_reg_critical_path target_clk_delay] 4]
         set source_clock_latency [sta::format_time [$inp_to_reg_critical_path source_clk_latency] 4]
       } else {
         set target_clock_latency_min 0
@@ -219,12 +234,12 @@ proc report_metrics { stage when { include_erc true } { include_clock_skew true 
     foreach corner $::env(CORNERS) {
       report_puts "Corner: $corner"
       report_power -corner $corner >> $filename
-      report_power_metric -corner $corner >> $filename
+      report_power_metric -corner $corner
     }
     unset corner
   } else {
     report_power >> $filename
-    report_power_metric >> $filename
+    report_power_metric
   }
 
   # TODO these only work to stdout, whereas we want to append to the $filename

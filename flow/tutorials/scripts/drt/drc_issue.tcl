@@ -23,8 +23,6 @@ set drc_rpt [make_result_file 5_route_drc.rpt]
 set maze_log [make_result_file maze.log]
 detailed_route -output_drc $drc_rpt \
   -output_maze $maze_log \
-  -bottom_routing_layer met1 \
-  -top_routing_layer met5 \
   -verbose 1
 set route_def [make_result_file 5_route.def]
 write_def $route_def

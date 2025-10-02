@@ -25,7 +25,11 @@ set synth_full_args [env_var_or_empty SYNTH_ARGS]
 if { [env_var_exists_and_non_empty SYNTH_OPERATIONS_ARGS] } {
   set synth_full_args [concat $synth_full_args $::env(SYNTH_OPERATIONS_ARGS)]
 } else {
-  set synth_full_args [concat $synth_full_args "-extra-map $::env(FLOW_HOME)/platforms/common/lcu_kogge_stone.v"]
+  set synth_full_args [concat $synth_full_args \
+    "-extra-map $::env(FLOW_HOME)/platforms/common/lcu_kogge_stone.v"]
+}
+if { [env_var_exists_and_non_empty SYNTH_OPT_HIER] } {
+  set synth_full_args [concat $synth_full_args -hieropt]
 }
 
 if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
@@ -38,7 +42,8 @@ if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
 
   if { [env_var_exists_and_non_empty SYNTH_MINIMUM_KEEP_SIZE] } {
     set ungroup_threshold $::env(SYNTH_MINIMUM_KEEP_SIZE)
-    puts "Keep modules above estimated size of $ungroup_threshold gate equivalents"
+    puts "Keep modules above estimated size of
+      $ungroup_threshold gate equivalents"
 
     convert_liberty_areas
     keep_hierarchy -min_cost $ungroup_threshold
@@ -52,12 +57,26 @@ if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
 
 json -o $::env(RESULTS_DIR)/mem.json
 # Run report and check here so as to fail early if this synthesis run is doomed
-exec -- $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/mem_dump.py --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
+exec -- $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/mem_dump.py \
+  --max-bits $::env(SYNTH_MEMORY_MAX_BITS) $::env(RESULTS_DIR)/mem.json
 
-if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
-  synth -top $::env(DESIGN_NAME) -run fine: {*}$synth_full_args
-} else {
+if { [env_var_exists_and_non_empty SYNTH_RETIME_MODULES] } {
+  select $::env(SYNTH_RETIME_MODULES)
+  opt -fast -full
+  memory_map
+  opt -full
+  techmap
+  abc -dff -script $::env(SCRIPTS_DIR)/abc_retime.script
+  select -clear
+}
+
+if {
+  [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+  [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
+} {
   source $::env(SCRIPTS_DIR)/synth_wrap_operators.tcl
+} else {
+  synth -top $::env(DESIGN_NAME) -run fine: {*}$synth_full_args
 }
 
 # Get rid of indigestibles
@@ -88,34 +107,33 @@ if { [env_var_exists_and_non_empty LATCH_MAP_FILE] } {
   techmap -map $::env(LATCH_MAP_FILE)
 }
 
-set dfflibmap_args ""
-foreach cell $::env(DONT_USE_CELLS) {
-  lappend dfflibmap_args -dont_use $cell
-}
-
 # Technology mapping of flip-flops
 # dfflibmap only supports one liberty file
 if { [env_var_exists_and_non_empty DFF_LIB_FILE] } {
-  dfflibmap -liberty $::env(DFF_LIB_FILE) {*}$dfflibmap_args
+  dfflibmap -liberty $::env(DFF_LIB_FILE) {*}$lib_dont_use_args
 } else {
-  dfflibmap -liberty $::env(DONT_USE_SC_LIB) {*}$dfflibmap_args
+  dfflibmap {*}$lib_args {*}$lib_dont_use_args
 }
 opt
 
-if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
+# Replace undef values with defined constants
+setundef -zero
+
+if {
+  ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] &&
+  ![env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
+} {
   log_cmd abc {*}$abc_args
 } else {
-  scratchpad -set abc9.script scripts/abc_speed_gia_only.script
+  scratchpad -set abc9.script $::env(SCRIPTS_DIR)/abc_speed_gia_only.script
   # crop out -script from arguments
   set abc_args [lrange $abc_args 2 end]
   log_cmd abc_new {*}$abc_args
   delete {t:$specify*}
 }
 
-# Replace undef values with defined constants
-setundef -zero
-
-# Splitting nets resolves unwanted compound assign statements in netlist (assign {..} = {..})
+# Splitting nets resolves unwanted compound assign statements in
+# netlist (assign {..} = {..})
 splitnets
 
 # Remove unused cells and wires
@@ -132,10 +150,14 @@ insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
 # Reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check
 
-tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$stat_libs
+tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$lib_args
 
-# check the design is composed exclusively of target cells, and check for other problems
-if { ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] } {
+# check the design is composed exclusively of target cells, and
+# check for other problems
+if {
+  ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] &&
+  ![env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
+} {
   check -assert -mapped
 } else {
   # Wrapped operator synthesis leaves around $buf cells which `check -mapped`

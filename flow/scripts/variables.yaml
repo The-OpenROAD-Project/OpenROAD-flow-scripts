@@ -59,6 +59,7 @@ ROUTING_LAYER_ADJUSTMENT:
     deltaDebug.py should weed out the possible routes and leave
     a minimal failing case that pinpoints the problem.
   stages:
+    - floorplan
     - place
     - grt
     - route
@@ -194,6 +195,33 @@ SYNTH_NETLIST_FILES:
     subsequent modules are silently ignored and only the first module is used.
   stages:
     - synth
+SYNTH_CANONICALIZE_TCL:
+  description: >
+    Specifies a Tcl script with commands to run as part of the synth
+    canonicalize step.
+  stages:
+    - synth
+SYNTH_RETIME_MODULES:
+  description: >
+    *This is an experimental option and may cause adverse effects.*
+    *No effort has been made to check if the retimed RTL is logically equivalent
+    to the non-retimed RTL.*
+
+    List of modules to apply automatic retiming to. These modules must not get
+    dissolved and as such they should either be the top module or be included
+    in SYNTH_KEEP_MODULES.
+
+    The main use case is to quickly identify if performance can be improved by
+    manually retiming the input RTL.
+
+    Retiming will treat module ports like register endpoints/startpoints.
+    The objective function of retiming isn't informed by SDC, even the clock
+    period is ignored. As such, retiming will optimize for best delay
+    at potentially high register number cost. Automatic retiming can produce
+    suboptimal results as its timing model is crude and it doesn't find the
+    optimal distribution of registers on long pipelines. See OR discussion #8080.
+  stages:
+    - synth
 LATCH_MAP_FILE:
   description: |
     List of latches treated as a black box by Yosys.
@@ -226,7 +254,8 @@ TIE_SEPARATION:
   description: |
     Distance separating tie high/low instances from the load.
   stages:
-    - place
+    - floorplan
+  default: 0
 EARLY_SIZING_CAP_RATIO:
   description: |
     Ratio between the input pin capacitance and the output pin load during initial gate sizing.
@@ -268,10 +297,15 @@ SYNTH_WRAPPED_OPERATORS:
     design. These options are available for switching among in later stages of
     the flow.
   stages:
-    - synth
+    - All stages
+SWAP_ARITH_OPERATORS:
+  description: >
+    Improve timing QoR by swapping ALU and MULT arithmetic operators.
+  stages:
+    - All stages
 FLOORPLAN_DEF:
   description: |
-    Use the DEF file to initialize floorplan.
+    Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.
   stages:
     - floorplan
     - place
@@ -288,20 +322,18 @@ PLACE_SITE:
     Placement site for core cells defined in the technology LEF file.
   stages:
     - floorplan
+  type: string
+  tunable: 1
 TAPCELL_TCL:
   description: |
     Path to Endcap and Welltie cells file.
   stages:
     - floorplan
-MACRO_PLACEMENT:
-  description: >
-    Specifies the path of a file on how to place certain macros manually using
-    read_macro_placement.
-  stages:
-    - floorplan
 MACRO_PLACEMENT_TCL:
   description: |
-    Specifies the path of a TCL file on how to place certain macros manually.
+    Specifies the path of a TCL file on how to place macros manually.
+    The user may choose to place just some of the macros in the design.
+    The macro placer will handle the remaining unplaced macros.
   stages:
     - floorplan
 MACRO_PLACE_HALO:
@@ -333,10 +365,9 @@ MAKE_TRACKS:
     - floorplan
 IO_CONSTRAINTS:
   description: |
-    File path to the IO constraints .tcl file.
+    File path to the IO constraints .tcl file. Also used for manual placement.
   stages:
     - floorplan
-    - place
 IO_PLACER_H:
   description: >
     A list of metal layers on which the I/O pins are placed horizontally (top and bottom
@@ -539,6 +570,22 @@ SKIP_PIN_SWAP:
     - cts
     - floorplan
     - grt
+SKIP_VT_SWAP:
+  description: >
+    Do not perform VT swap to improve QoR (default: do VT swap).
+  stages:
+    - cts
+    - floorplan
+    - grt
+SKIP_CRIT_VT_SWAP:
+  description: >
+    Do not perform VT swap on critical cells to improve QoR (default: do critical VT swap).
+    This is an additional VT swap on critical cells that remain near the end of setup fixing.
+    If SKIP_VT_SWAP is set to 1, this also disables critical cell VT swap.
+  stages:
+    - cts
+    - floorplan
+    - grt
 REMOVE_CELLS_FOR_EQY:
   description: >
     String patterns directly passed to write_verilog -remove_cells <> for
@@ -551,10 +598,16 @@ SKIP_CTS_REPAIR_TIMING:
     architectural exploration or when getting CI up and running.
   stages:
     - cts
+SKIP_REPAIR_TIE_FANOUT:
+  description: >
+    Skip repair_tie_fanout at floorplan step.
+  stages:
+    - floorplan
 MIN_ROUTING_LAYER:
   description: |
     The lowest metal layer name to be used in routing.
   stages:
+    - floorplan
     - place
     - grt
     - route
@@ -563,6 +616,7 @@ MAX_ROUTING_LAYER:
   description: |
     The highest metal layer name to be used in routing.
   stages:
+    - floorplan
     - place
     - grt
     - route
@@ -683,9 +737,6 @@ CDL_FILES:
 DFF_LIB_FILES:
   description: |
     Technology mapping liberty files for flip-flops.
-DONT_USE_LIBS:
-  description: |
-    Set liberty files as `dont_use`.
 SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.
@@ -698,6 +749,11 @@ SYNTH_HIER_SEPARATOR:
   description: |
     Separator used for the synthesis flatten stage.
   default: .
+SYNTH_OPT_HIER:
+  description: |
+    Optimize constants across hierarchical boundaries.
+  stages:
+    - synth
 VERILOG_TOP_PARAMS:
   description: |
     Apply toplevel params (if exist).
@@ -756,6 +812,8 @@ CTS_BUF_DISTANCE:
     Distance (in microns) between buffers.
   stages:
     - cts
+  tunable: 1
+  type: float
 CTS_BUF_LIST:
   description: |
     List of cells used to construct the clock tree. Overrides buffer inference.
@@ -764,7 +822,6 @@ CTS_BUF_LIST:
 CTS_CLUSTER_DIAMETER:
   description: >
     Maximum diameter (in microns) of sink cluster.
-  default: 20
   stages:
     - cts
   tunable: 1
@@ -772,7 +829,6 @@ CTS_CLUSTER_DIAMETER:
 CTS_CLUSTER_SIZE:
   description: >
     Maximum number of sinks per cluster.
-  default: 50
   stages:
     - cts
   tunable: 1
@@ -807,6 +863,11 @@ ABSTRACT_SOURCE:
     Which .odb file to use to create abstract
   stages:
     - generate_abstract
+PRE_GLOBAL_ROUTE_TCL:
+  description: |
+    Specifies a Tcl script with commands to run before global route.
+  stages:
+    - grt
 GLOBAL_ROUTE_ARGS:
   description: >
     Replaces default arguments for global route.
@@ -964,6 +1025,16 @@ YOSYS_FLAGS:
   stages:
     - synth
   default: -v 3
+FOOTPRINT:
+  description: |
+    Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.
+  stages:
+    - floorplan
+FOOTPRINT_TCL:
+  description: |
+    Specifies a Tcl script with custom footprint-related commands for floorplan setup.
+  stages:
+    - floorplan
 FLOW_VARIANT:
   description: >
     Flow variant to use, used in the flow variant directory name.
@@ -977,3 +1048,32 @@ RULES_JSON:
     config.mk or from bazel-orfs.
   stages:
     - test
+SKIP_DETAILED_ROUTE:
+  default: 0
+  description: >
+    Skips detailed route.
+  stages:
+    - route
+    - final
+MAX_REPAIR_ANTENNAS_ITER_DRT:
+  default: 5
+  description: >
+    Defines the maximum number of iterations post-detailed routing repair
+    antennas will run.
+  stages:
+    - route
+MAX_REPAIR_ANTENNAS_ITER_GRT:
+  default: 5
+  description: >
+    Defines the maximum number of iterations post global routing repair
+    antennas will run.
+  stages:
+    - grt
+OPENROAD_HIERARCHICAL:
+  description: >
+    Feature toggle to enable to run OpenROAD in hierarchical mode,
+    otherwise considered flat. Will eventually be the default and
+    this option will be retired.
+  default: 0
+  stages:
+    - All stages

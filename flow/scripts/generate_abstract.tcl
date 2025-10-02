@@ -1,7 +1,11 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables generate_abstract
 
-set stem [expr { [env_var_exists_and_non_empty ABSTRACT_SOURCE] ? $::env(ABSTRACT_SOURCE) : "6_final" }]
+set stem [expr {
+  [env_var_exists_and_non_empty ABSTRACT_SOURCE] ?
+  $::env(ABSTRACT_SOURCE) :
+  "6_final"
+}]
 
 set result [find_sdc_file $stem.odb]
 set design_stage [lindex $result 0]
@@ -22,11 +26,9 @@ if { $design_stage >= 4 } {
 set_clock_latency -source 0 [all_clocks]
 puts "Generating abstract views"
 if { [env_var_exists_and_non_empty CORNERS] } {
-  # corners
   foreach corner $::env(CORNERS) {
     log_cmd write_timing_model -corner $corner $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_$corner.lib
   }
-  unset corner
 } else {
   log_cmd write_timing_model $::env(RESULTS_DIR)/$::env(DESIGN_NAME)_typ.lib
 }
