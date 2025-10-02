@@ -302,8 +302,12 @@ def extract_metrics(
         required=False,
     )
 
-    floorplan_swapped = metrics_dict.get("floorplan__swapped_arithmetic_module_count", 0)
-    placeopt_swapped = metrics_dict.get("placeopt__swapped_arithmetic_module_count", 0)
+    floorplan_swapped = metrics_dict.get(
+        "floorplan__swapped_arithmetic_module_count", 0
+    )
+    placeopt_swapped = metrics_dict.get(
+        "placeopt__swapped_arithmetic_module_count", 0
+    )
     total_swapped = int(floorplan_swapped) + int(placeopt_swapped)
     metrics_dict["finish__swapped_arithmetic_module_count"] = total_swapped
 
