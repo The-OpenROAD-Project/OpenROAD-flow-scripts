@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Check out repository code recursively
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Git prep
@@ -19,7 +19,7 @@ jobs:
           git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"
           git fetch
           git checkout "origin/pr/${{ github.event.client_payload.branch }}"
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.10"
       - name: Install Python Packages
@@ -58,7 +58,7 @@ jobs:
           git push origin "HEAD:refs/pull/${{ github.event.client_payload.branch }}/head"
       - if: "steps.remote-update.outputs.has_update == 'true' && github.event.client_payload.branch == 'master'"
         name: Create Draft PR
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ github.token }}
           signoff: true

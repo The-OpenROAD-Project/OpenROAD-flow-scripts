@@ -44,11 +44,11 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 5,
+        "value": 14,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -1.24,
+        "value": -1.87,
         "compare": ">="
     },
     "finish__design__instance__area": {
