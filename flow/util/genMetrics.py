@@ -102,9 +102,9 @@ def extractTagFromFile(
                 value = parsedMetrics[occurrence]
                 value = value.strip()
                 try:
-                    jsonFile[jsonTag] = float(value)
+                    jsonFile[jsonTag] = t(value)
                 except BaseException:
-                    jsonFile[jsonTag] = str(value)
+                    jsonFile[jsonTag] = value
         else:
             # Only print a warning if the defaultNotFound is not set
             print(
@@ -256,6 +256,14 @@ def extract_metrics(
     # =========================================================================
     merge_jsons(logPath, metrics_dict, "2_*.json")
 
+    extractTagFromFile(
+        "floorplan__swapped_arithmetic_module_count",
+        metrics_dict,
+        r"^\[INFO RSZ-\d+\] (\d+) arithmetic instances have swapped.*",
+        logPath + "/2_1_floorplan.log",
+        defaultNotFound=0,
+    )
+
     # Place
     # =========================================================================
     merge_jsons(logPath, metrics_dict, "3_*.json")
@@ -283,6 +291,19 @@ def extract_metrics(
         baseRegEx.format("finish slack div critical path delay", "(\\S+)"),
         rptPath + "/6_finish.rpt",
     )
+
+    extractTagFromFile(
+        "placeopt__swapped_arithmetic_module_count",
+        metrics_dict,
+        r"^\[INFO RSZ-\d+\] (\d+) arithmetic instances have swapped.*",
+        logPath + "/3_4_place_resized.log",
+        defaultNotFound=0,
+    )
+
+    floorplan_swapped = metrics_dict.get("floorplan__swapped_arithmetic_module_count", 0)
+    placeopt_swapped = metrics_dict.get("placeopt__swapped_arithmetic_module_count", 0)
+    total_swapped = int(floorplan_swapped) + int(placeopt_swapped)
+    metrics_dict["finish__swapped_arithmetic_module_count"] = total_swapped
 
     extractGnuTime("finish", metrics_dict, logPath + "/6_report.log")
 
