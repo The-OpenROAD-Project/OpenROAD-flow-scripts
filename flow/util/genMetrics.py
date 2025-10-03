@@ -309,9 +309,9 @@ def extract_metrics(
         "placeopt__design__instance__count__swapped_arithmetic_operator", 0
     )
     total_swapped = int(floorplan_swapped) + int(placeopt_swapped)
-    metrics_dict[
-        "finish__design__instance__count__swapped_arithmetic_operator"
-    ] = total_swapped
+    metrics_dict["finish__design__instance__count__swapped_arithmetic_operator"] = (
+        total_swapped
+    )
 
     extractGnuTime("finish", metrics_dict, logPath + "/6_report.log")
 
