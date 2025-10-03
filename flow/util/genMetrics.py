@@ -257,7 +257,7 @@ def extract_metrics(
     merge_jsons(logPath, metrics_dict, "2_*.json")
 
     extractTagFromFile(
-        "floorplan__swapped_arithmetic_module_count",
+        "floorplan__design__instance__arithmetic_module",
         metrics_dict,
         r"^\[INFO RSZ-\d+\] (\d+) arithmetic instances have swapped.*",
         logPath + "/2_1_floorplan.log",
@@ -294,7 +294,7 @@ def extract_metrics(
     )
 
     extractTagFromFile(
-        "placeopt__swapped_arithmetic_module_count",
+        "placeopt__design__instance__arithmetic_module",
         metrics_dict,
         r"^\[INFO RSZ-\d+\] (\d+) arithmetic instances have swapped.*",
         logPath + "/3_4_place_resized.log",
@@ -303,11 +303,11 @@ def extract_metrics(
     )
 
     floorplan_swapped = metrics_dict.get(
-        "floorplan__swapped_arithmetic_module_count", 0
+        "floorplan__design__instance__arithmetic_module", 0
     )
-    placeopt_swapped = metrics_dict.get("placeopt__swapped_arithmetic_module_count", 0)
+    placeopt_swapped = metrics_dict.get("placeopt__design__instance__arithmetic_module", 0)
     total_swapped = int(floorplan_swapped) + int(placeopt_swapped)
-    metrics_dict["finish__swapped_arithmetic_module_count"] = total_swapped
+    metrics_dict["finish__design__instance__arithmetic_module"] = total_swapped
 
     extractGnuTime("finish", metrics_dict, logPath + "/6_report.log")
 
