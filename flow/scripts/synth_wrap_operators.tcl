@@ -1,3 +1,5 @@
+
+# Set arithmetic operator modules. Default is the first module in the list.
 set deferred_cells {
   {
     \$alu
@@ -14,6 +16,40 @@ set deferred_cells {
     {BASE -map +/choices/han-carlson.v}
   }
 }
+
+# Reorder the modules based on envar
+proc reorder_deferred_cells {deferred_cells_var index env_var} {
+    upvar $deferred_cells_var deferred_cells
+
+    if {![info exists ::env($env_var)]} {
+        return
+    }
+
+    set cell_def [lindex $deferred_cells $index]
+
+    # Build lookup dict
+    set choice_map {}
+    foreach choice [lrange $cell_def 2 end] {
+        dict set choice_map [lindex $choice 0] $choice
+    }
+
+    # Build new choices
+    set new_choices {}
+    foreach name [split $::env($env_var)] {
+        if {[dict exists $choice_map $name]} {
+            lappend new_choices [dict get $choice_map $name]
+        } else {
+            puts "Warning: Unknown choice '$name' ignored for $env_var"
+        }
+    }
+
+    # Replace cell
+    lset deferred_cells $index [linsert $new_choices 0 {*}[lrange $cell_def 0 1]]
+}
+
+# Apply custom orders
+reorder_deferred_cells deferred_cells 0 SYNTH_WRAPPED_REORDER_ADDER
+reorder_deferred_cells deferred_cells 1 SYNTH_WRAPPED_REORDER_MULTIPLIER
 
 techmap {*}[join [lmap cell $deferred_cells { string cat "-dont_map [lindex $cell 0]" }] " "]
 
