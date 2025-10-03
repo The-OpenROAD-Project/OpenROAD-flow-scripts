@@ -137,6 +137,14 @@ def gen_rule_file(
             "round_value": False,
             "compare": ">=",
         },
+        "finish__timing__hold__tns": {
+            "mode": "padding",
+            "padding": 30,
+            "min_max": min,
+            "min_max_direct": 0,
+            "round_value": False,
+            "compare": ">=",
+        },
         "finish__design__instance__area": {
             "mode": "padding",
             "padding": 15,
