@@ -177,13 +177,17 @@ def gen_rule_file(
         "!=": operator.ne,
     }
 
-    period_list = metrics["constraints__clocks__details"]
+    period_list = metrics.get("constraints__clocks__details")
 
-    period = float(sub(r"^.*: ", "", period_list[0]))
-    if len(period_list) != 1:
-        print(
-            f"[WARNING] Multiple clocks not supported. Will use first clock: {period_list[0]}."
-        )
+    period = 0.0
+    if period_list:
+        period = float(sub(r"^.*: ", "", period_list[0]))
+        if len(period_list) != 1:
+            print(
+                f"[WARNING] Multiple clocks not supported. Will use first clock: {period_list[0]}."
+            )
+    else:
+        print("[WARNING] 'constraints__clocks__details' not found or is empty in metrics. Clock-related rules might be affected.")
 
     format_str = "| {:45} | {:8} | {:8} | {:8} |\n"
     change_str = ""
