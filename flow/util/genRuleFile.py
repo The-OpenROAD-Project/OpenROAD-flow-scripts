@@ -107,8 +107,8 @@ def gen_rule_file(
             "compare": ">=",
         },
         "cts__timing__hold__ws": {
-            "mode": "period",
-            "padding": 5,
+            "mode": "padding",
+            "padding": 20,
             "min_max": min,
             "min_max_direct": 0,
             "round_value": False,
@@ -149,8 +149,8 @@ def gen_rule_file(
             "compare": ">=",
         },
         "globalroute__timing__hold__ws": {
-            "mode": "period",
-            "padding": 5,
+            "mode": "padding",
+            "padding": 20,
             "min_max": min,
             "min_max_direct": 0,
             "round_value": False,
@@ -207,8 +207,8 @@ def gen_rule_file(
             "compare": ">=",
         },
         "detailedroute__timing__hold__ws": {
-            "mode": "period",
-            "padding": 5,
+            "mode": "padding",
+            "padding": 20,
             "min_max": min,
             "min_max_direct": 0,
             "round_value": False,
@@ -240,8 +240,8 @@ def gen_rule_file(
             "compare": ">=",
         },
         "finish__timing__hold__ws": {
-            "mode": "period",
-            "padding": 5,
+            "mode": "padding",
+            "padding": 20,
             "min_max": min,
             "min_max_direct": 0,
             "round_value": False,
