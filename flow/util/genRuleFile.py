@@ -356,7 +356,7 @@ def gen_rule_file(
         if option["round_value"] and not isinf(rule_value):
             rule_value = int(round(rule_value))
         else:
-            rule_value = ceil(rule_value * 100) / 100.0
+            rule_value = ceil(rule_value * 10000) / 10000.0
 
         preserve_old_rule = (
             True

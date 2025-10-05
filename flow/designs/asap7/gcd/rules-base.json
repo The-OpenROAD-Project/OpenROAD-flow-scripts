@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 43.11,
+        "value": 43.108,
         "compare": "<="
     },
     "constraints__clocks__count": {
