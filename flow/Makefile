@@ -463,6 +463,12 @@ $(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
 do-place:
 	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place do-3_place.sdc
 
+# Custom repair_timing target after placement  
+$(eval $(call do-step,3_6_place_repair_timing,$(RESULTS_DIR)/3_5_place_dp.odb $(RESULTS_DIR)/3_place.sdc,repair_timing_post_place))  
+  
+.PHONY: place_repair_timing  
+place_repair_timing: $(RESULTS_DIR)/3_6_place_repair_timing.odb
+
 # Clean Targets
 #-------------------------------------------------------------------------------
 .PHONY: clean_place
