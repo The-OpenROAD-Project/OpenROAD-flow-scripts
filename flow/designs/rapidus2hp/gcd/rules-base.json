@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 758,
+        "value": 738,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -32,11 +32,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -38.69,
+        "value": -45.18,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 40,
+        "value": 37,
         "compare": "<="
     },
     "finish__timing__drv__setup_violation_count": {
