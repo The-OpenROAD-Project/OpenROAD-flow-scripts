@@ -30,6 +30,7 @@ TNS_END_PERCENT:
     will always be fixed.
   default: 100
   stages:
+    - place
     - cts
     - floorplan
     - grt
