@@ -34,7 +34,7 @@ proc reorder_deferred_cells { deferred_cells_var index env_var } {
 
   # Build new choices
   set new_choices {}
-  foreach name [split $::env($env_var)] {
+  foreach name [split $::env($env_var) ","] {
     if { [dict exists $choice_map $name] } {
       lappend new_choices [dict get $choice_map $name]
     } else {
@@ -47,8 +47,8 @@ proc reorder_deferred_cells { deferred_cells_var index env_var } {
 }
 
 # Apply custom orders
-reorder_deferred_cells deferred_cells 0 SYNTH_WRAPPED_REORDER_ADDER
-reorder_deferred_cells deferred_cells 1 SYNTH_WRAPPED_REORDER_MULTIPLIER
+reorder_deferred_cells deferred_cells 0 SYNTH_WRAPPED_ADDERS
+reorder_deferred_cells deferred_cells 1 SYNTH_WRAPPED_MULTIPLIERS
 
 techmap {*}[join [lmap cell $deferred_cells { string cat "-dont_map [lindex $cell 0]" }] " "]
 
