@@ -4,6 +4,8 @@ load_design 2_floorplan.odb 2_floorplan.sdc
 
 if { [env_var_exists_and_non_empty FLOORPLAN_DEF] } {
   puts "FLOORPLAN_DEF is set. Skipping global placement without IOs"
+} elseif { [all_pins_placed] } {
+  puts "All pins are placed. Skipping global placement without IOs"
 } else {
   log_cmd global_placement -skip_io -density [place_density_with_lb_addon] \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
