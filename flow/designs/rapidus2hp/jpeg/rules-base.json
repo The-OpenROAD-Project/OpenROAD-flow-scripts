@@ -84,7 +84,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -28.2,
+        "value": -26.81,
         "compare": ">="
     }
 }

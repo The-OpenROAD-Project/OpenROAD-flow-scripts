@@ -19,7 +19,7 @@ else
 export SDC_FILE              = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 endif
 
-export CORE_UTILIZATION        = 45
+export CORE_UTILIZATION        = 70
 export CORE_ASPECT_RATIO       = 1
 export CORE_MARGIN             = 0.75
 export PLACE_DENSITY_LB_ADDON  = 0.20
