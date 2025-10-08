@@ -104,7 +104,7 @@ def extractTagFromFile(
                 try:
                     jsonFile[jsonTag] = t(value)
                 except BaseException:
-                    jsonFile[jsonTag] = value
+                    jsonFile[jsonTag] = str(value)
         else:
             # Only print a warning if the defaultNotFound is not set
             print(
