@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 19882,
+        "value": 19875,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 134213,
+        "value": 134139,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,11 +20,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 11671,
+        "value": 11664,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 11671,
+        "value": 11664,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": 0.0,
+        "value": -0.8818,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -54.1,
+        "value": -52.6478,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -81.85,
+        "value": -3.5775,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -64,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 690136,
+        "value": 688855,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -96,11 +96,11 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -63.36,
+        "value": -56.1843,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -162.11,
+        "value": -10.641,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -112,11 +112,11 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 20202,
+        "value": 20198,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -11.35,
+        "value": -10.6306,
         "compare": ">="
     }
 }

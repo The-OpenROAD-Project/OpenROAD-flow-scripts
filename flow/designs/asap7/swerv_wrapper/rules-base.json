@@ -96,7 +96,7 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -367.54,
+        "value": -297.323,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
@@ -116,7 +116,7 @@
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -24.59,
+        "value": -21.7631,
         "compare": ">="
     }
 }
