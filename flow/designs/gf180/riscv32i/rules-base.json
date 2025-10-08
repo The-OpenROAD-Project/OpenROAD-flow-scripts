@@ -27,9 +27,41 @@
         "value": 715,
         "compare": "<="
     },
+    "cts__timing__setup__ws": {
+        "value": -0.72,
+        "compare": ">="
+    },
+    "cts__timing__setup__tns": {
+        "value": -0.27,
+        "compare": ">="
+    },
+    "cts__timing__hold__ws": {
+        "value": 0.0,
+        "compare": ">="
+    },
+    "cts__timing__hold__tns": {
+        "value": 0.0,
+        "compare": ">="
+    },
     "globalroute__antenna_diodes_count": {
         "value": 0,
         "compare": "<="
+    },
+    "globalroute__timing__setup__ws": {
+        "value": -0.79,
+        "compare": ">="
+    },
+    "globalroute__timing__setup__tns": {
+        "value": -0.35,
+        "compare": ">="
+    },
+    "globalroute__timing__hold__ws": {
+        "value": 0.0,
+        "compare": ">="
+    },
+    "globalroute__timing__hold__tns": {
+        "value": 0.0,
+        "compare": ">="
     },
     "detailedroute__route__wirelength": {
         "value": 817804,
@@ -47,20 +79,40 @@
         "value": 5,
         "compare": "<="
     },
+    "detailedroute__timing__setup__ws": {
+        "value": -0.2682,
+        "compare": ">="
+    },
+    "detailedroute__timing__setup__tns": {
+        "value": 0.0,
+        "compare": ">="
+    },
+    "detailedroute__timing__hold__ws": {
+        "value": 0.0,
+        "compare": ">="
+    },
+    "detailedroute__timing__hold__tns": {
+        "value": 0.0,
+        "compare": ">="
+    },
     "finish__timing__setup__ws": {
         "value": -0.58,
         "compare": ">="
     },
+    "finish__timing__setup__tns": {
+        "value": -0.45,
+        "compare": ">="
+    },
+    "finish__timing__hold__ws": {
+        "value": 0.0,
+        "compare": ">="
+    },
+    "finish__timing__hold__tns": {
+        "value": 0.0,
+        "compare": ">="
+    },
     "finish__design__instance__area": {
         "value": 388398,
-        "compare": "<="
-    },
-    "finish__timing__drv__setup_violation_count": {
-        "value": 358,
-        "compare": "<="
-    },
-    "finish__timing__drv__hold_violation_count": {
-        "value": 100,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
