@@ -76,7 +76,7 @@ def extractTagFromFile(
     count=False,
     occurrence=-1,
     defaultNotFound="N/A",
-    t=str,
+    t=float,
     required=True,
 ):
     if jsonTag in jsonFile:
