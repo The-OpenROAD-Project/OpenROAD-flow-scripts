@@ -303,13 +303,13 @@ SYNTH_WRAPPED_ADDERS:
     Specify the adder modules that can be used for synthesis, separated by commas.
     The default adder module is determined by the first element of this variable.
   stages:
-    - All stages
+    - synth
 SYNTH_WRAPPED_MULTIPLIERS:
   description: >
     Specify the multiplier modules that can be used for synthesis, separated by commas.
     The default multiplier module is determined by the first element of this variable.
   stages:
-    - All stages
+    - synth
 SWAP_ARITH_OPERATORS:
   description: >
     Improve timing QoR by swapping ALU and MULT arithmetic operators.
