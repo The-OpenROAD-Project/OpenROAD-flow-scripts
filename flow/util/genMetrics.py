@@ -256,15 +256,6 @@ def extract_metrics(
     # =========================================================================
     merge_jsons(logPath, metrics_dict, "2_*.json")
 
-    extractTagFromFile(
-        "floorplan__design__instance__count__swapped_arithmetic_operator",
-        metrics_dict,
-        r"^\[INFO RSZ-\d+\] (\d+) arithmetic instances have swapped.*",
-        logPath + "/2_1_floorplan.log",
-        defaultNotFound=0,
-        required=False,
-    )
-
     # Place
     # =========================================================================
     merge_jsons(logPath, metrics_dict, "3_*.json")
@@ -291,26 +282,6 @@ def extract_metrics(
         metrics_dict,
         baseRegEx.format("finish slack div critical path delay", "(\\S+)"),
         rptPath + "/6_finish.rpt",
-    )
-
-    extractTagFromFile(
-        "placeopt__design__instance__count__swapped_arithmetic_operator",
-        metrics_dict,
-        r"^\[INFO RSZ-\d+\] (\d+) arithmetic instances have swapped.*",
-        logPath + "/3_4_place_resized.log",
-        defaultNotFound=0,
-        required=False,
-    )
-
-    floorplan_swapped = metrics_dict.get(
-        "floorplan__design__instance__count__swapped_arithmetic_operator", 0
-    )
-    placeopt_swapped = metrics_dict.get(
-        "placeopt__design__instance__count__swapped_arithmetic_operator", 0
-    )
-    total_swapped = int(floorplan_swapped) + int(placeopt_swapped)
-    metrics_dict["finish__design__instance__count__swapped_arithmetic_operator"] = (
-        total_swapped
     )
 
     extractGnuTime("finish", metrics_dict, logPath + "/6_report.log")
