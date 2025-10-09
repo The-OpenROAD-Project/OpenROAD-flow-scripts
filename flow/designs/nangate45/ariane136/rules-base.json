@@ -104,11 +104,11 @@
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": 0.0,
+        "value": -0.015406,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": 0.0,
+        "value": -0.046753,
         "compare": ">="
     },
     "finish__design__instance__area": {

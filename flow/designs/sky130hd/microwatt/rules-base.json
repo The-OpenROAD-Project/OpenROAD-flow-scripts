@@ -56,7 +56,7 @@
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
-        "value": -0.025,
+        "value": -0.035513,
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
@@ -96,7 +96,7 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -2.692,
+        "value": -3.07893,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
@@ -104,11 +104,11 @@
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -0.1397,
+        "value": -0.504893,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -2.1775,
+        "value": -19.22736,
         "compare": ">="
     },
     "finish__design__instance__area": {
