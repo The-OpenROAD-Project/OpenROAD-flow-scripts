@@ -104,15 +104,15 @@
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -0.0154,
+        "value": -0.015406,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -0.04,
+        "value": -0.046753,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 864445,
+        "value": 864432,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {

@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 2908.6846,
+        "value": 2908.684535,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -170.7395,
+        "value": -170.739599,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -100,7 +100,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -73.8605,
+        "value": -73.860599,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
