@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 215826,
+        "value": 215596,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -28,11 +28,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -300.4529,
+        "value": -646.216,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -15061.2,
+        "value": -20941.44,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -224.5294,
+        "value": -209.5378,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -157.8059,
+        "value": -151.3692,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -64,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 4200476,
+        "value": 4193512,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -80,27 +80,27 @@
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {
-        "value": -211.6979,
+        "value": -203.082,
         "compare": ">="
     },
     "detailedroute__timing__setup__tns": {
-        "value": -134.0196,
+        "value": -122.796,
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
-        "value": -43.6284,
+        "value": -35.9889,
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -4721.2199,
+        "value": -2804.58,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -219.3434,
+        "value": -206.4547,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -148.2936,
+        "value": -131.418,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -112,11 +112,11 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 218322,
+        "value": 218068,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {
-        "value": -15.3023,
+        "value": -14.3525,
         "compare": ">="
     }
 }
