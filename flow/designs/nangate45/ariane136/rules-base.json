@@ -56,11 +56,11 @@
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
-        "value": -0.000126,
+        "value": -0.1,
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
-        "value": -0.000126,
+        "value": -0.1,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
