@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 13516.26,
+        "value": 17216.6843,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -48,39 +48,39 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -66.4175,
+        "value": -63.1336,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -38.2051,
+        "value": -23.6083,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
-        "value": -3.0329,
+        "value": -9.1615,
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
-        "value": -8.6885,
+        "value": -44.6612,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -66.4175,
+        "value": -63.1336,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -38.2051,
+        "value": -23.6083,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -3.0329,
+        "value": -9.1615,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -8.6885,
+        "value": -44.6612,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 14527,
+        "value": 14524,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {

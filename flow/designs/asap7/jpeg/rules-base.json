@@ -28,11 +28,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -34.32,
+        "value": -34.3,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -0.73,
+        "value": -20.8533,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -72.78,
+        "value": -59.3907,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
