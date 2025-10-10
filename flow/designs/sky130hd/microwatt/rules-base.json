@@ -32,7 +32,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -450.2784,
+        "value": -450.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -44,7 +44,7 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 2016,
+        "value": 2084,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
@@ -56,11 +56,11 @@
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
-        "value": -0.035513,
+        "value": -0.028,
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
-        "value": -0.045847,
+        "value": -0.0423,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -76,7 +76,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 1307,
+        "value": 1311,
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {
@@ -84,7 +84,7 @@
         "compare": ">="
     },
     "detailedroute__timing__setup__tns": {
-        "value": -82.94148,
+        "value": -82.5,
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
@@ -100,15 +100,15 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -557.0015,
+        "value": -556.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -0.504893,
+        "value": -0.445,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -19.22736,
+        "value": -11.1,
         "compare": ">="
     },
     "finish__design__instance__area": {
