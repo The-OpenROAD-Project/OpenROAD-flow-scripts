@@ -80,7 +80,7 @@
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {
-        "value": -0.2682,
+        "value": -0.268,
         "compare": ">="
     },
     "detailedroute__timing__setup__tns": {
