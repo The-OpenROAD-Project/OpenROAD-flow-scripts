@@ -134,16 +134,6 @@ if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
   replace_arith_modules
 }
 
-if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
-  # remove buffers inserted by yosys/abc
-  remove_buffers
-} else {
-  # Skip clone & split
-  set ::env(SETUP_MOVE_SEQUENCE) "unbuffer,sizeup,swap,buffer,vt_swap"
-  set ::env(SKIP_LAST_GASP) 1
-  repair_timing_helper -setup
-}
-
 puts "Default units for flow"
 report_units
 report_units_metric
