@@ -36,10 +36,10 @@ export CORE_MARGIN            = 1
 export PLACE_DENSITY          = 0.58
 
 export PLACE_PINS_ARGS = -min_distance_in_tracks -min_distance 1
-export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 0
-export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
 # temporarily skip over DPO to bypass one-site gap issues
 export ENABLE_DPO = 0
+
+export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/place_pins.tcl
 
 # Selectively keep module hierarchies to match baseline data
 # ifeq ($(SYNTH_HDL_FRONTEND), verific)

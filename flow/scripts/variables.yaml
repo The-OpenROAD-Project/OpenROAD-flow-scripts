@@ -182,6 +182,7 @@ SYNTH_HDL_FRONTEND:
     command.
   stages:
     - synth
+    - floorplan
 SYNTH_BLACKBOXES:
   description: >
     List of cells treated as a black box by Yosys. With Bazel, this can be used
