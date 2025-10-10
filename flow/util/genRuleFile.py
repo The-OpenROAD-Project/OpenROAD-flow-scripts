@@ -356,7 +356,7 @@ def gen_rule_file(
         if option["round_value"] and not isinf(rule_value):
             rule_value = int(round(rule_value))
         else:
-            rule_value = float(f'{rule_value:.3g}')
+            rule_value = float(f"{rule_value:.3g}")
 
         preserve_old_rule = (
             True
@@ -380,7 +380,7 @@ def gen_rule_file(
                 if option["round_value"] and not isinf(rule_value):
                     rule_value = int(round(rule_value))
                 else:
-                    rule_value = float(f'{rule_value:.3g}')
+                    rule_value = float(f"{rule_value:.3g}")
 
             need_to_update = False
             if (
