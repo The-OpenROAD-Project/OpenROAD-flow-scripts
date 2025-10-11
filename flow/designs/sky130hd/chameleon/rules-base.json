@@ -88,7 +88,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
-        "value": -0.2416,
+        "value": -0.211,
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
