@@ -35,6 +35,14 @@ def gen_rule_file(
         print(f"[WARNING] No old rules file found {rules_file}")
         OLD_RULES = None
 
+    # Notes
+    # - Apply tighter margin on timing__setup__ws than timing__setup__tns
+    #   because WNS is more important.
+    # - Apply the consistent margins on timing__setup__* and timing__hold__*
+    # - Using 'period' mode for timing__setup__ws is conceptually right.
+    #   But it can cause smaller timing__setup__ws than timing__setup__tns,
+    #   which does not make sense. So we use 'mode=padding' for setup__ws now.
+
     # dict format
     # 'metric_name': {
     #     'padding': <float>, percentage of padding to use
@@ -91,7 +99,7 @@ def gen_rule_file(
             "compare": "<=",
         },
         "cts__timing__setup__ws": {
-            "mode": "period",
+            "mode": "padding",
             "padding": 5,
             "min_max": min,
             "min_max_direct": 0,
@@ -108,7 +116,7 @@ def gen_rule_file(
         },
         "cts__timing__hold__ws": {
             "mode": "padding",
-            "padding": 20,
+            "padding": 5,
             "min_max": min,
             "min_max_direct": 0,
             "round_value": False,
@@ -133,7 +141,7 @@ def gen_rule_file(
             "compare": "<=",
         },
         "globalroute__timing__setup__ws": {
-            "mode": "period",
+            "mode": "padding",
             "padding": 5,
             "min_max": min,
             "min_max_direct": 0,
@@ -150,7 +158,7 @@ def gen_rule_file(
         },
         "globalroute__timing__hold__ws": {
             "mode": "padding",
-            "padding": 20,
+            "padding": 5,
             "min_max": min,
             "min_max_direct": 0,
             "round_value": False,
@@ -191,7 +199,7 @@ def gen_rule_file(
             "compare": "<=",
         },
         "detailedroute__timing__setup__ws": {
-            "mode": "period",
+            "mode": "padding",
             "padding": 5,
             "min_max": min,
             "min_max_direct": 0,
@@ -208,7 +216,7 @@ def gen_rule_file(
         },
         "detailedroute__timing__hold__ws": {
             "mode": "padding",
-            "padding": 20,
+            "padding": 5,
             "min_max": min,
             "min_max_direct": 0,
             "round_value": False,
@@ -224,7 +232,7 @@ def gen_rule_file(
         },
         # finish
         "finish__timing__setup__ws": {
-            "mode": "period",
+            "mode": "padding",
             "padding": 5,
             "min_max": min,
             "min_max_direct": 0,
@@ -241,7 +249,7 @@ def gen_rule_file(
         },
         "finish__timing__hold__ws": {
             "mode": "padding",
-            "padding": 20,
+            "padding": 5,
             "min_max": min,
             "min_max_direct": 0,
             "round_value": False,
