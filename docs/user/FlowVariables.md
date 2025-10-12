@@ -126,7 +126,6 @@ configuration file.
 | <a name="DFF_LIB_FILES"></a>DFF_LIB_FILES| Technology mapping liberty files for flip-flops.| |
 | <a name="DIE_AREA"></a>DIE_AREA| The die area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2).| |
 | <a name="DONT_USE_CELLS"></a>DONT_USE_CELLS| Dont use cells eases pin access in detailed routing.| |
-| <a name="DONT_USE_LIBS"></a>DONT_USE_LIBS| Set liberty files as `dont_use`.| |
 | <a name="DPO_MAX_DISPLACEMENT"></a>DPO_MAX_DISPLACEMENT| Specifies how far an instance can be moved when optimizing.| 5 1|
 | <a name="EARLY_SIZING_CAP_RATIO"></a>EARLY_SIZING_CAP_RATIO| Ratio between the input pin capacitance and the output pin load during initial gate sizing.| |
 | <a name="ENABLE_DPO"></a>ENABLE_DPO| Enable detail placement with improve_placement feature.| 1|
@@ -134,8 +133,10 @@ configuration file.
 | <a name="FASTROUTE_TCL"></a>FASTROUTE_TCL| Specifies a Tcl script with commands to run before FastRoute.| |
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
 | <a name="FILL_CONFIG"></a>FILL_CONFIG| JSON rule file for metal fill during chip finishing.| |
-| <a name="FLOORPLAN_DEF"></a>FLOORPLAN_DEF| Use the DEF file to initialize floorplan.| |
+| <a name="FLOORPLAN_DEF"></a>FLOORPLAN_DEF| Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
 | <a name="FLOW_VARIANT"></a>FLOW_VARIANT| Flow variant to use, used in the flow variant directory name.| base|
+| <a name="FOOTPRINT"></a>FOOTPRINT| Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.| |
+| <a name="FOOTPRINT_TCL"></a>FOOTPRINT_TCL| Specifies a Tcl script with custom footprint-related commands for floorplan setup.| |
 | <a name="GDS_ALLOW_EMPTY"></a>GDS_ALLOW_EMPTY| Regular expression of module names of macros that have no .gds file| |
 | <a name="GDS_FILES"></a>GDS_FILES| Path to platform GDS files.| |
 | <a name="GENERATE_ARTIFACTS_ON_FAILURE"></a>GENERATE_ARTIFACTS_ON_FAILURE| For instance Bazel needs artifacts (.odb and .rpt files) on a failure to allow the user to save hours on re-running the failed step locally, but when working with a Makefile flow, it is more natural to fail the step and leave the user to manually inspect the logs and artifacts directly via the file system. Set to 1 to change the behavior to generate artifacts upon failure to e.g. do a global route. The exit code will still be non-zero on all other failures that aren't covered by the "useful to inspect the artifacts on failure" use-case. Example: just like detailed routing, a global route that fails with congestion, is not a build failure(as in exit code non-zero), it is a successful(as in zero exit code) global route that produce reports detailing the problem. Detailed route will not proceed, if there is global routing congestion This allows build systems, such as bazel, to create artifacts for global and detailed route, even if the operation had problems, without having know about the semantics between global and detailed route. Considering that global and detailed route can run for a long time and use a lot of memory, this allows inspecting results on a laptop for a build that ran on a server.| 0|
@@ -215,6 +216,7 @@ configuration file.
 | <a name="SETUP_REPAIR_SEQUENCE"></a>SETUP_REPAIR_SEQUENCE| Specifies the sequence of moves to do in repair_timing -setup. This should be a string of move keywords separated by commas such as the default when not used: "unbuffer,sizedown,sizeup,swap,buffer,clone,split".| |
 | <a name="SETUP_SLACK_MARGIN"></a>SETUP_SLACK_MARGIN| Specifies a time margin for the slack when fixing setup violations. This option allows you to overfix or underfix(negative value, terminate retiming before 0 or positive slack). See HOLD_SLACK_MARGIN for more details.| 0|
 | <a name="SET_RC_TCL"></a>SET_RC_TCL| Metal & Via RC definition file path.| |
+| <a name="SKIP_CRIT_VT_SWAP"></a>SKIP_CRIT_VT_SWAP| Do not perform VT swap on critical cells to improve QoR (default: do critical VT swap). This is an additional VT swap on critical cells that remain near the end of setup fixing. If SKIP_VT_SWAP is set to 1, this also disables critical cell VT swap.| |
 | <a name="SKIP_CTS_REPAIR_TIMING"></a>SKIP_CTS_REPAIR_TIMING| Skipping CTS repair, which can take a long time, can be useful in architectural exploration or when getting CI up and running.| |
 | <a name="SKIP_DETAILED_ROUTE"></a>SKIP_DETAILED_ROUTE| Skips detailed route.| 0|
 | <a name="SKIP_GATE_CLONING"></a>SKIP_GATE_CLONING| Do not use gate cloning transform to fix timing violations (default: use gate cloning).| |
@@ -239,6 +241,8 @@ configuration file.
 | <a name="SYNTH_NETLIST_FILES"></a>SYNTH_NETLIST_FILES| Skips synthesis and uses the supplied netlist files. If the netlist files contains duplicate modules, which can happen when using hierarchical synthesis on indvidual netlist files and combining here, subsequent modules are silently ignored and only the first module is used.| |
 | <a name="SYNTH_OPT_HIER"></a>SYNTH_OPT_HIER| Optimize constants across hierarchical boundaries.| |
 | <a name="SYNTH_RETIME_MODULES"></a>SYNTH_RETIME_MODULES| *This is an experimental option and may cause adverse effects.* *No effort has been made to check if the retimed RTL is logically equivalent to the non-retimed RTL.* List of modules to apply automatic retiming to. These modules must not get dissolved and as such they should either be the top module or be included in SYNTH_KEEP_MODULES. The main use case is to quickly identify if performance can be improved by manually retiming the input RTL. Retiming will treat module ports like register endpoints/startpoints. The objective function of retiming isn't informed by SDC, even the clock period is ignored. As such, retiming will optimize for best delay at potentially high register number cost. Automatic retiming can produce suboptimal results as its timing model is crude and it doesn't find the optimal distribution of registers on long pipelines. See OR discussion #8080.| |
+| <a name="SYNTH_WRAPPED_ADDERS"></a>SYNTH_WRAPPED_ADDERS| Specify the adder modules that can be used for synthesis, separated by commas. The default adder module is determined by the first element of this variable.| |
+| <a name="SYNTH_WRAPPED_MULTIPLIERS"></a>SYNTH_WRAPPED_MULTIPLIERS| Specify the multiplier modules that can be used for synthesis, separated by commas. The default multiplier module is determined by the first element of this variable.| |
 | <a name="SYNTH_WRAPPED_OPERATORS"></a>SYNTH_WRAPPED_OPERATORS| Synthesize multiple architectural options for each arithmetic operator in the design. These options are available for switching among in later stages of the flow.| |
 | <a name="TAPCELL_TCL"></a>TAPCELL_TCL| Path to Endcap and Welltie cells file.| |
 | <a name="TAP_CELL_NAME"></a>TAP_CELL_NAME| Name of the cell to use in tap cell insertion.| |
@@ -265,7 +269,6 @@ configuration file.
 - [MIN_BUF_CELL_AND_PORTS](#MIN_BUF_CELL_AND_PORTS)
 - [SDC_FILE](#SDC_FILE)
 - [SDC_GUT](#SDC_GUT)
-- [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
 - [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
 - [SYNTH_CANONICALIZE_TCL](#SYNTH_CANONICALIZE_TCL)
 - [SYNTH_GUT](#SYNTH_GUT)
@@ -277,7 +280,8 @@ configuration file.
 - [SYNTH_NETLIST_FILES](#SYNTH_NETLIST_FILES)
 - [SYNTH_OPT_HIER](#SYNTH_OPT_HIER)
 - [SYNTH_RETIME_MODULES](#SYNTH_RETIME_MODULES)
-- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
+- [SYNTH_WRAPPED_ADDERS](#SYNTH_WRAPPED_ADDERS)
+- [SYNTH_WRAPPED_MULTIPLIERS](#SYNTH_WRAPPED_MULTIPLIERS)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
 - [VERILOG_DEFINES](#VERILOG_DEFINES)
@@ -295,6 +299,8 @@ configuration file.
 - [CORE_UTILIZATION](#CORE_UTILIZATION)
 - [DIE_AREA](#DIE_AREA)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
+- [FOOTPRINT](#FOOTPRINT)
+- [FOOTPRINT_TCL](#FOOTPRINT_TCL)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [IO_CONSTRAINTS](#IO_CONSTRAINTS)
 - [MACRO_BLOCKAGE_HALO](#MACRO_BLOCKAGE_HALO)
@@ -334,14 +340,13 @@ configuration file.
 - [RTLMP_WIRELENGTH_WT](#RTLMP_WIRELENGTH_WT)
 - [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
+- [SKIP_CRIT_VT_SWAP](#SKIP_CRIT_VT_SWAP)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
 - [SKIP_LAST_GASP](#SKIP_LAST_GASP)
 - [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
 - [SKIP_REPAIR_TIE_FANOUT](#SKIP_REPAIR_TIE_FANOUT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SKIP_VT_SWAP](#SKIP_VT_SWAP)
-- [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
-- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TAPCELL_TCL](#TAPCELL_TCL)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
@@ -366,8 +371,7 @@ configuration file.
 - [PLACE_PINS_ARGS](#PLACE_PINS_ARGS)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
-- [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
-- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
+- [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## cts variables
 
@@ -388,14 +392,13 @@ configuration file.
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
+- [SKIP_CRIT_VT_SWAP](#SKIP_CRIT_VT_SWAP)
 - [SKIP_CTS_REPAIR_TIMING](#SKIP_CTS_REPAIR_TIMING)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
 - [SKIP_LAST_GASP](#SKIP_LAST_GASP)
 - [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SKIP_VT_SWAP](#SKIP_VT_SWAP)
-- [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
-- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## grt variables
@@ -412,14 +415,13 @@ configuration file.
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
+- [SKIP_CRIT_VT_SWAP](#SKIP_CRIT_VT_SWAP)
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
 - [SKIP_INCREMENTAL_REPAIR](#SKIP_INCREMENTAL_REPAIR)
 - [SKIP_LAST_GASP](#SKIP_LAST_GASP)
 - [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SKIP_VT_SWAP](#SKIP_VT_SWAP)
-- [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
-- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## route variables
@@ -435,8 +437,6 @@ configuration file.
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
-- [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
-- [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 
 ## final variables
 
@@ -450,6 +450,10 @@ configuration file.
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
+
+## All stages variables
+
+- [OPENROAD_HIERARCHICAL](#OPENROAD_HIERARCHICAL)
 - [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
 - [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
 
@@ -460,10 +464,6 @@ configuration file.
 ## test variables
 
 - [RULES_JSON](#RULES_JSON)
-
-## All stages variables
-
-
 
 ## Uncategorized variables
 
@@ -478,7 +478,6 @@ configuration file.
 - [DESIGN_NICKNAME](#DESIGN_NICKNAME)
 - [DFF_LIB_FILES](#DFF_LIB_FILES)
 - [DONT_USE_CELLS](#DONT_USE_CELLS)
-- [DONT_USE_LIBS](#DONT_USE_LIBS)
 - [DPO_MAX_DISPLACEMENT](#DPO_MAX_DISPLACEMENT)
 - [ENABLE_DPO](#ENABLE_DPO)
 - [FASTROUTE_TCL](#FASTROUTE_TCL)
@@ -492,7 +491,6 @@ configuration file.
 - [KLAYOUT_TECH_FILE](#KLAYOUT_TECH_FILE)
 - [LIB_FILES](#LIB_FILES)
 - [MACRO_EXTENSION](#MACRO_EXTENSION)
-- [OPENROAD_HIERARCHICAL](#OPENROAD_HIERARCHICAL)
 - [PLATFORM](#PLATFORM)
 - [PLATFORM_TCL](#PLATFORM_TCL)
 - [PROCESS](#PROCESS)

@@ -52,7 +52,8 @@ proc read_timing { input_file } {
   }
 
   # Warm up OpenSTA, so clicking on timing related buttons reacts faster
-  set _tmp [log_cmd find_timing_paths]
+  set _tmp [log_cmd sta::find_timing]
+  set _tmp [log_cmd sta::find_requireds]
 }
 
 if { [ord::openroad_gui_compiled] } {

@@ -25,7 +25,11 @@ export SYNTH_HIERARCHICAL    ?= 0
 ifeq ($(PLACE_SITE), SC6T)
   export CORE_UTILIZATION     = 30
 else
-  export CORE_UTILIZATION     = 52
+  ifeq ($(SYNTH_HDL_FRONTEND), slang)
+    export CORE_UTILIZATION     = 52
+  else
+    export CORE_UTILIZATION     = 54
+  endif
 endif
 
 export CORE_MARGIN            = 1
@@ -62,5 +66,4 @@ export ENABLE_DPO = 0
 # 	\\hercules_is_resc_ls$$hercules_is_int.u_grcl \
 # 	\\hercules_is_sxq$$hercules_is_int.u_sx0_iq \
 # 	\\hercules_is_sxq$$hercules_is_int.u_sx1_iq
-#   endif
 # endif

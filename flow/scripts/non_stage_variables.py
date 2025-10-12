@@ -18,6 +18,8 @@ with open(yaml_path, "r") as file:
 for key, value in data.items():
     if "stages" not in value:
         continue
+    if "All stages" in value["stages"]:
+        continue
     if sys.argv[1] in value["stages"]:
         continue
     # This variable is in a stage, but not in this stage
