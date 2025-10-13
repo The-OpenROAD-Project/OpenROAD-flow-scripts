@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 13516.26,
+        "value": 17216.6843,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 14746,
+        "value": 14156,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -27,28 +27,60 @@
         "value": 14906,
         "compare": "<="
     },
+    "cts__timing__setup__ws": {
+        "value": -56.2,
+        "compare": ">="
+    },
+    "cts__timing__setup__tns": {
+        "value": -56.2,
+        "compare": ">="
+    },
+    "cts__timing__hold__ws": {
+        "value": -56.2,
+        "compare": ">="
+    },
+    "cts__timing__hold__tns": {
+        "value": -56.2,
+        "compare": ">="
+    },
     "globalroute__antenna_diodes_count": {
-        "value": 0,
+        "value": 145,
         "compare": "<="
     },
+    "globalroute__timing__setup__ws": {
+        "value": -56.2,
+        "compare": ">="
+    },
+    "globalroute__timing__setup__tns": {
+        "value": -56.2,
+        "compare": ">="
+    },
+    "globalroute__timing__hold__ws": {
+        "value": -56.2,
+        "compare": ">="
+    },
+    "globalroute__timing__hold__tns": {
+        "value": -56.2,
+        "compare": ">="
+    },
     "finish__timing__setup__ws": {
-        "value": -188.55,
+        "value": -56.2,
+        "compare": ">="
+    },
+    "finish__timing__setup__tns": {
+        "value": -56.2,
+        "compare": ">="
+    },
+    "finish__timing__hold__ws": {
+        "value": -56.2,
+        "compare": ">="
+    },
+    "finish__timing__hold__tns": {
+        "value": -56.2,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 15035,
+        "value": 14524,
         "compare": "<="
-    },
-    "finish__timing__drv__setup_violation_count": {
-        "value": 7453,
-        "compare": "<="
-    },
-    "finish__timing__drv__hold_violation_count": {
-        "value": 100,
-        "compare": "<="
-    },
-    "finish__timing__wns_percent_delay": {
-        "value": -10.0,
-        "compare": ">="
     }
 }

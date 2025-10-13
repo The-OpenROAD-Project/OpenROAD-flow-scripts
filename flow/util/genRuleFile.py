@@ -35,6 +35,14 @@ def gen_rule_file(
         print(f"[WARNING] No old rules file found {rules_file}")
         OLD_RULES = None
 
+    # Notes
+    # - Apply tighter margin on timing__setup__ws than timing__setup__tns
+    #   because WNS is more important.
+    # - Apply the consistent margins on timing__setup__* and timing__hold__*
+    # - 'min_max_period' is used for timing__setup__* and timing__hold__*
+    #   to give small margin based on clock period to avoid failures by
+    #   small violations.
+
     # dict format
     # 'metric_name': {
     #     'padding': <float>, percentage of padding to use
@@ -90,12 +98,79 @@ def gen_rule_file(
             "round_value": True,
             "compare": "<=",
         },
+        "cts__timing__setup__ws": {
+            "mode": "padding",
+            "padding": 5,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "cts__timing__setup__tns": {
+            "mode": "padding",
+            "padding": 20,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "cts__timing__hold__ws": {
+            "mode": "padding",
+            "padding": 5,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "cts__timing__hold__tns": {
+            "mode": "padding",
+            "padding": 20,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
         # route
         "globalroute__antenna_diodes_count": {
-            "mode": "padding",
-            "padding": 50,
+            "mode": "metric",
+            "padding": 0.1,
+            "metric": "globalroute__route__net",
+            "min_max": max,
+            "min_max_direct": 100,
             "round_value": True,
             "compare": "<=",
+        },
+        "globalroute__timing__setup__ws": {
+            "mode": "padding",
+            "padding": 5,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "globalroute__timing__setup__tns": {
+            "mode": "padding",
+            "padding": 20,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "globalroute__timing__hold__ws": {
+            "mode": "padding",
+            "padding": 5,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "globalroute__timing__hold__tns": {
+            "mode": "padding",
+            "padding": 20,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
         },
         "detailedroute__route__wirelength": {
             "mode": "padding",
@@ -115,17 +190,76 @@ def gen_rule_file(
             "compare": "<=",
         },
         "detailedroute__antenna_diodes_count": {
-            "mode": "padding",
-            "padding": 50,
+            "mode": "metric",
+            "padding": 0.1,
+            "metric": "detailedroute__route__net",
             "min_max": max,
-            "min_max_direct": 5,
+            "min_max_direct": 100,
             "round_value": True,
             "compare": "<=",
         },
+        "detailedroute__timing__setup__ws": {
+            "mode": "padding",
+            "padding": 5,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "detailedroute__timing__setup__tns": {
+            "mode": "padding",
+            "padding": 20,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "detailedroute__timing__hold__ws": {
+            "mode": "padding",
+            "padding": 5,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "detailedroute__timing__hold__tns": {
+            "mode": "padding",
+            "padding": 20,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
         # finish
         "finish__timing__setup__ws": {
-            "mode": "period",
+            "mode": "padding",
             "padding": 5,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "finish__timing__setup__tns": {
+            "mode": "padding",
+            "padding": 20,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "finish__timing__hold__ws": {
+            "mode": "padding",
+            "padding": 5,
+            "min_max": min,
+            "min_max_period": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "finish__timing__hold__tns": {
+            "mode": "padding",
+            "padding": 20,
+            "min_max": min,
+            "min_max_period": 5,
             "round_value": False,
             "compare": ">=",
         },
@@ -134,29 +268,6 @@ def gen_rule_file(
             "padding": 15,
             "round_value": True,
             "compare": "<=",
-        },
-        "finish__timing__drv__setup_violation_count": {
-            "mode": "metric",
-            "padding": 5,
-            "metric": "placeopt__design__instance__count__stdcell",
-            "round_value": True,
-            "compare": "<=",
-        },
-        "finish__timing__drv__hold_violation_count": {
-            "mode": "padding",
-            "padding": 25,
-            "min_max": max,
-            "min_max_sum": 100,
-            "round_value": True,
-            "compare": "<=",
-        },
-        "finish__timing__wns_percent_delay": {
-            "mode": "padding",
-            "padding": 20,
-            "min_max": min,
-            "min_max_sum": -10,
-            "round_value": False,
-            "compare": ">=",
         },
     }
 
@@ -169,12 +280,18 @@ def gen_rule_file(
         "!=": operator.ne,
     }
 
-    period_list = metrics["constraints__clocks__details"]
+    period_list = metrics.get("constraints__clocks__details")
 
-    period = float(sub(r"^.*: ", "", period_list[0]))
-    if len(period_list) != 1:
+    period = 0.0
+    if period_list:
+        period = float(sub(r"^.*: ", "", period_list[0]))
+        if len(period_list) != 1:
+            print(
+                f"[WARNING] Multiple clocks not supported. Will use first clock: {period_list[0]}."
+            )
+    else:
         print(
-            f"[WARNING] Multiple clocks not supported. Will use first clock: {period_list[0]}."
+            "[WARNING] 'constraints__clocks__details' not found or is empty in metrics. Clock-related rules might be affected."
         )
 
     format_str = "| {:45} | {:8} | {:8} | {:8} |\n"
@@ -225,10 +342,14 @@ def gen_rule_file(
                 rule_value = option["min_max"](
                     rule_value + option["min_max_sum"], option["min_max_sum"]
                 )
+            elif "min_max_period" in option.keys():
+                rule_value = option["min_max"](
+                    rule_value, -period * option["min_max_period"] / 100.0
+                )
             else:
                 print(
                     f"[ERROR] Metric {field} has 'min_max' field but no "
-                    "'min_max_direct' or 'min_max_sum' field."
+                    "'min_max_direct', 'min_max_sum', or 'min_max_period' field."
                 )
                 sys.exit(1)
 
@@ -239,7 +360,7 @@ def gen_rule_file(
         if option["round_value"] and not isinf(rule_value):
             rule_value = int(round(rule_value))
         else:
-            rule_value = ceil(rule_value * 100) / 100.0
+            rule_value = float(f"{rule_value:.3g}")
 
         preserve_old_rule = (
             True
@@ -263,7 +384,7 @@ def gen_rule_file(
                 if option["round_value"] and not isinf(rule_value):
                     rule_value = int(round(rule_value))
                 else:
-                    rule_value = ceil(rule_value * 100) / 100.0
+                    rule_value = float(f"{rule_value:.3g}")
 
             need_to_update = False
             if (
