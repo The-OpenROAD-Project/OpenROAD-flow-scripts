@@ -40,7 +40,8 @@ def gen_rule_file(
     #   because WNS is more important.
     # - Apply the consistent margins on timing__setup__* and timing__hold__*
     # - 'min_max_period' is used for timing__setup__* and timing__hold__*
-    #   to give small margin to avoid failures by small violations.
+    #   to give small margin based on clock period to avoid failures by
+    #   small violations.
 
     # dict format
     # 'metric_name': {
