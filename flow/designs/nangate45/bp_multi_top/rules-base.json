@@ -80,19 +80,19 @@
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {
-        "value": -3.89,
+        "value": -3.88,
         "compare": ">="
     },
     "detailedroute__timing__setup__tns": {
-        "value": -4.4304,
+        "value": -4.43,
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
-        "value": -0.0646,
+        "value": 0.0,
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -0.8,
+        "value": 0.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
@@ -104,7 +104,7 @@
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -0.0317,
+        "value": -0.0278,
         "compare": ">="
     },
     "finish__timing__hold__tns": {

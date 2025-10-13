@@ -112,7 +112,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 1054989,
+        "value": 1054854,
         "compare": "<="
     },
     "finish__timing__wns_percent_delay": {

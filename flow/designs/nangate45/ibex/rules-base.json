@@ -96,7 +96,7 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -0.0254,
+        "value": -0.0237,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
