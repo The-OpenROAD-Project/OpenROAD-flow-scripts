@@ -478,11 +478,6 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit(1)
 
-    # jk: hack
-    args.tighten = False
-    args.failing = False
-    args.update = True
-
     gen_rule_file(
         args.rules,
         args.new_rules,
