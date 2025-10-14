@@ -23,3 +23,4 @@ export ADDITIONAL_LIBS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_N
 export DIE_AREA    = 0 0 424.92 499.4
 export CORE_AREA   = 10.07 9.8 414.85 489.6
 export TNS_END_PERCENT        = 100
+export SYNTH_OPT_HIER      = 0

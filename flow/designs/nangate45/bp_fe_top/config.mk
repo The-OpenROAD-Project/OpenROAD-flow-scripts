@@ -31,3 +31,4 @@ export TNS_END_PERCENT        = 100
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/fastroute.tcl
 
 export GPL_KEEP_OVERFLOW = 0
+export SYNTH_OPT_HIER    = 0
