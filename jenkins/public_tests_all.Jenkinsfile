@@ -1,8 +1,8 @@
-@Library('utils@orfs-v2.3.5') _
+@Library('utils@orfs-v2.3.6') _
 
 node {
-    
-    def isDefaultBranch = (env.BRANCH_NAME == 'master') 
+
+    def isDefaultBranch = (env.BRANCH_NAME == 'master')
     def daysToKeep = '20';
     def numToKeep = (isDefaultBranch ? '-1' : '10');
 
@@ -11,10 +11,10 @@ node {
 
         buildDiscarder(logRotator(
             daysToKeepStr:         daysToKeep,
-            artifactDaysToKeepStr: daysToKeep, 
+            artifactDaysToKeepStr: daysToKeep,
 
             numToKeepStr:          numToKeep,
-            artifactNumToKeepStr:  numToKeep 
+            artifactNumToKeepStr:  numToKeep
         ))
     ]);
 
