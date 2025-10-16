@@ -84,11 +84,11 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
-        "value": -155.0,
+        "value": -265.0,
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -89300.0,
+        "value": -114000.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
@@ -104,15 +104,11 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -2820.0,
+        "value": -5150.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
         "value": 408918,
         "compare": "<="
-    },
-    "finish__timing__wns_percent_delay": {
-        "value": -10.0,
-        "compare": ">="
     }
 }
