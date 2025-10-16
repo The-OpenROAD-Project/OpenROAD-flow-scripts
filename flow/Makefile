@@ -392,6 +392,17 @@ do-$(1)$(if $(4),$(4),):
 	cp $(RESULTS_DIR)/$(2) $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb)
 endef
 
+# ==============================================================================
+
+# Custom target to go from synthesis to placement in a single OpenROAD run
+$(eval $(call do-step,1_3_floorplan_to_place, $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc,floorplan_to_place))
+
+.PHONY: floorplan_to_place
+floorplan_to_place: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc
+	$(UNSET_AND_MAKE) do-1_3_floorplan_to_place
+
+# ==============================================================================
+
 $(eval $(call do-step,1_3_synth,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc,synth_odb))
 
 $(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(LIB_FILES) $(IO_CONSTRAINTS),floorplan))
