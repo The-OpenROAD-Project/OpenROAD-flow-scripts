@@ -357,8 +357,6 @@ report_metrics 3 "detailed place" true false
 write_db $::env(RESULTS_DIR)/3_5_place_dp.odb
 
 # Repair timing after placement
-source $::env(PLATFORM_DIR)/setRC.tcl
-
 utl::set_metrics_stage "place_repair_timing__{}"
 
 set_placement_padding -global \
