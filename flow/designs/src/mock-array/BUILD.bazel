@@ -1,7 +1,0 @@
-exports_files(["util.tcl"] + glob(["*.v"]))
-
-filegroup(
-    name = "verilog",
-    srcs = glob(["*.v"]),
-    visibility = ["//visibility:public"],
-)
