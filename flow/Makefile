@@ -392,11 +392,11 @@ do-$(1)$(if $(4),$(4),):
 	cp $(RESULTS_DIR)/$(2) $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb)
 endef
 
-$(eval $(call do-step,1_4_flow, $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc,flow))
+$(eval $(call do-step,1_3_floorplan_to_place, $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc,floorplan_to_place))
 
-.PHONY: flow
-flow:
-	$(UNSET_AND_MAKE) do-1_4_flow
+.PHONY: floorplan_to_place
+floorplan_to_place: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc
+	$(UNSET_AND_MAKE) do-1_3_floorplan_to_place
 
 $(eval $(call do-step,1_3_synth,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc,synth_odb))
 
