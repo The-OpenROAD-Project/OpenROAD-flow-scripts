@@ -64,8 +64,8 @@ export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/common/local/util/
 	$(SRC_HOME)/core/cvxif_example/include/cvxif_instr_pkg.sv \
 	$(sort $(wildcard $(SRC_HOME)/core/frontend/*.sv)) \
 	$(SRC_HOME)/vendor/pulp-platform/tech_cells_generic/src/rtl/tc_sram.sv \
-	$(PLATFORM_DIR)/ram/verilog/fakeram7_64x256_shim.sv \
-	$(PLATFORM_DIR)/ram/verilog/sacrls0g0d1p64x256m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.sv \
+	$(PLATFORM_DIR)/ram/verilog/fakeram7_64x256_shim_half.sv \
+	$(PLATFORM_DIR)/ram/verilog/sacrls0g0d1p64x128m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.sv \
 	$(PLATFORM_DIR)/ram/verilog/fakeram7_128x64_shim.sv \
 	$(PLATFORM_DIR)/ram/verilog/sacrls0g0d1p128x64m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.sv \
 	$(PLATFORM_DIR)/ram/verilog/fakeram7_64x28_shim.sv \
@@ -79,12 +79,12 @@ export VERILOG_INCLUDE_DIRS = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/core/include
 
 export VERILOG_DEFINES += -D HPDCACHE_ASSERT_OFF
 
-export ADDITIONAL_LEFS = $(PLATFORM_DIR)/ram/lef/sacrls0g0d1p64x256m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lef \
+export ADDITIONAL_LEFS = $(PLATFORM_DIR)/ram/lef/sacrls0g0d1p64x128m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lef \
 			 $(PLATFORM_DIR)/ram/lef/sacrls0g0d1p128x64m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lef \
 			 $(PLATFORM_DIR)/ram/lef/sacrls0g0d1p64x28m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lef \
 			 $(PLATFORM_DIR)/ram/lef/sacrls0g0d1p64x25m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lef
 
-export ADDITIONAL_LIBS += $(PLATFORM_DIR)/ram/lib/sacrls0g0d1p64x256m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lib \
+export ADDITIONAL_LIBS += $(PLATFORM_DIR)/ram/lib/sacrls0g0d1p64x128m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lib \
 			 $(PLATFORM_DIR)/ram/lib/sacrls0g0d1p128x64m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lib \
 			 $(PLATFORM_DIR)/ram/lib/sacrls0g0d1p64x28m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lib \
 			 $(PLATFORM_DIR)/ram/lib/sacrls0g0d1p64x25m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lib
@@ -95,20 +95,7 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constr
 export SYNTH_HDL_FRONTEND  = slang
 export SYNTH_HIERARCHICAL = 1
 
-ifeq ($(SYNTH_HDL_FRONTEND),verific)
-  # Reduce utilization for verific since it runs into issues with DPL not being
-  # able to place instances or with one-site gap/overlap issues
-  export CORE_UTILIZATION       = 45
-else
-  # Reduce the amount of resizing done between GPL and DPL
-  export EARLY_SIZING_CAP_RATIO = 6
-  ifeq ($(PLACE_SITE),SC6T)
-    # Decrease the utilization so that the tall macros fit
-    export CORE_UTILIZATION       = 50
-  else
-    export CORE_UTILIZATION       = 55
-  endif
-endif
+export CORE_UTILIZATION       = 65
 
 export CORE_MARGIN            = 2
 export MACRO_PLACE_HALO       = 2 2

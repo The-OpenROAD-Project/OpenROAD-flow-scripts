@@ -77,4 +77,6 @@ if { ![design_is_routed] } {
   error "Design has unrouted nets."
 }
 
+report_metrics 5 "detailed route"
+
 write_db $::env(RESULTS_DIR)/5_2_route.odb

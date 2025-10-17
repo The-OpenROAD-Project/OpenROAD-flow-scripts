@@ -21,21 +21,9 @@ export ADDITIONAL_LIBS = $(wildcard $(microwatt_DIR)/lib/*.lib)
 
 export SYNTH_HIERARCHICAL = 1
 
-export MACRO_PLACE_HALO = 100 100
+export PLACE_DENSITY = 0.3
 
-# We use large placement blockages to try eliminating the channels between
-# RAMs in order to make that space inaccessible for GPL. Experiments have
-# showed that connections crossing the RAMs vertically can be painful to
-# route.
-export MACRO_BLOCKAGE_HALO = 151
-
-# There's less space due to the adapted blockage halos, so GPL requires a
-# higher density in order to run.
-export PLACE_DENSITY = 0.2
-
-# Extra effort to ease routing: avoid very tall std cell clusters in MPL.
-export RTLMP_MIN_AR = 0.40
-export RTLMP_NOTCH_WT = 20.0
+export MACRO_PLACE_HALO = 60 60
 
 # CTS tuning
 export CTS_BUF_DISTANCE = 600

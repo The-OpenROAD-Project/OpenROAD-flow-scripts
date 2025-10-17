@@ -15,8 +15,12 @@ proc global_route_helper { } {
 
     log_cmd global_route {*}$all_args
   }
+  set additional_args ""
+  append_env_var additional_args dbProcessNode -db_process_node 1
+  append_env_var additional_args VIA_IN_PIN_MIN_LAYER -via_in_pin_bottom_layer 1
+  append_env_var additional_args VIA_IN_PIN_MAX_LAYER -via_in_pin_top_layer 1
 
-  pin_access
+  pin_access {*}$additional_args
 
   set result [catch { do_global_route } errMsg]
 

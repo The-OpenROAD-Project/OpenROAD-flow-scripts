@@ -36,3 +36,5 @@ export MACRO_PLACEMENT_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/macro_pla
 export MACRO_PLACE_HALO    = 10 10
 
 export TNS_END_PERCENT     = 100
+
+export HOLD_SLACK_MARGIN = 0.03

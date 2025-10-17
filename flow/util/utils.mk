@@ -60,7 +60,7 @@ update_rules: do-update_rules do-copy_update_rules
 .PHONY: do-update_rules_force
 do-update_rules_force:
 	mkdir -p $(REPORTS_DIR)
-	$(UTILS_DIR)/genRuleFile.py \
+	$(PYTHON_EXE) $(UTILS_DIR)/genRuleFile.py \
 	    --rules $(RULES_JSON) \
 	    --new-rules $(REPORTS_DIR)/rules.json \
 	    --reference $(REPORTS_DIR)/metadata.json \
