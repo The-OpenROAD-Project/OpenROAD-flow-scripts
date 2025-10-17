@@ -20,10 +20,7 @@ export BC_VOLTAGE          = 0.77
 export TC_VOLTAGE          = 0.70
 export WC_VOLTAGE          = 0.63
 
-# Dont use cells to ease congestion
-# Specify at least one filler cell if none
-export DONT_USE_CELLS          = *x1p*_ASAP7* *xp*_ASAP7*
-export DONT_USE_CELLS          += SDF* ICG*
+export DONT_USE_CELLS          = SDF* ICG*
 
 export SYNTH_MINIMUM_KEEP_SIZE       ?= 1000
 
