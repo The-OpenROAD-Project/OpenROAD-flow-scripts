@@ -111,7 +111,7 @@ if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
 
 source_env_var_if_exists FOOTPRINT_TCL
 
-if { ![env_var_equal SKIP_REPAIR_TIE_FANOUT 1] } {
+if { ![env_var_equals SKIP_REPAIR_TIE_FANOUT 1] } {
   # This needs to come before any call to remove_buffers.  You could have one
   # tie driving multiple buffers that drive multiple outputs.
   # Repair tie lo fanout
