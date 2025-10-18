@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+
+import sys
+
+for arg in sys.argv[1:]:
+    if arg.startswith("out_file="):
+       _, file_name = arg.split('=', 1)
+       with open(file_name, 'w') as f:
+           pass

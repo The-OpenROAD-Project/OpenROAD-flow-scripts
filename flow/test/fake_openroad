@@ -1,0 +1,47 @@
+#!/usr/bin/env tclsh
+
+proc unknown {cmd args} {
+  puts "'$cmd $args'"
+
+  # The return value is arbitrary but this seems to get through the flow
+  # The empty string fails as a boolean and 0 leads to a divide by zero.
+  return 1
+}
+
+# Create the (empty) output files
+proc write_db {args} {
+  set filename [lindex $args end]
+  close [open $filename w]
+}
+
+proc write_sdc {args} {
+  set filename [lindex $args end]
+  close [open $filename w]
+}
+
+set i 0
+while {$i < $argc} {
+  set arg [lindex $argv $i]
+  if {$arg == "-help"} {
+  } elseif {$arg == "-version"} {
+  } elseif {$arg == "-no_init"} {
+  } elseif {$arg == "-threads"} {
+    incr i
+  } elseif {$arg == "-no_splash"} {
+  } elseif {$arg == "-exit"} {
+  } elseif {$arg == "-gui"} {
+  } elseif {$arg == "-no_settings"} {
+  } elseif {$arg == "-python"} {
+    puts "-python not supported"
+    exit 1
+  } elseif {$arg == "-log"} {
+    incr i
+  } elseif {$arg == "-metrics"} {
+    incr i
+  } elseif {$arg == "-db"} {
+    incr i
+  } else {
+    source $arg
+  }
+  incr i
+}

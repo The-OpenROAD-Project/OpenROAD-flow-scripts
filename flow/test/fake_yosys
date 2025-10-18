@@ -1,0 +1,38 @@
+#!/usr/bin/env tclsh
+
+proc unknown {cmd args} {
+  puts "'$cmd $args'"
+
+  # The return value is arbitrary but this seems to get through the flow
+  # The empty string fails as a boolean and 0 leads to a divide by zero.
+  return 1
+}
+
+# Create the (empty) output files
+proc json {args} {
+  set filename [lindex $args end]
+  set f [open $filename w]
+  puts $f "{ \"modules\": {} }"
+  close $f
+}
+
+proc write_verilog {args} {
+  set filename [lindex $args end]
+  close [open $filename w]
+}
+
+set i 0
+while {$i < $argc} {
+  set arg [lindex $argv $i]
+  if {$arg == "-V"} {
+  } elseif {$arg == "-v"} {
+    incr i
+  } elseif {$arg == "-c"} {
+    incr i
+    source [lindex $argv $i]
+  } else {
+    puts "Unknown arg $arg"
+    exit 1
+  }
+  incr i
+}
