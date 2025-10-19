@@ -21,11 +21,13 @@ Currently the simplest way to build OpenROAD and run ORFS is to run one test, wh
 ``` shell
 cd tools/OpenROAD
 bazelisk test src/drt/...
-cd ../flow
+cd ../../flow
 make OPENROAD_EXE=$(pwd)/../tools/OpenROAD/bazel-out/k8-opt-exec-ST-*/bin/openroad
 ```
 
 Bazel could similarly be used to download and make available pre-built binaries for tools such as Yosys, eqy and KLayout.
+
+Running some quick tests will cause the desired exec config of OpenROAD to be built. There's no explicit Bazel way to build an exec config of an executable and we want to to use an exec config that is the same binary as is used for a local OpenROAD modify + test Bazel cycle.
 
 ## Build
 
