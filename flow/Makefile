@@ -58,7 +58,6 @@
 # DESIGN_CONFIG=./designs/asap7/ibex/config.mk
 # DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
 # DESIGN_CONFIG=./designs/asap7/megaboom/config.mk
-# DESIGN_CONFIG=./designs/asap7/mock-array/config.mk
 # DESIGN_CONFIG=./designs/asap7/riscv32i/config.mk
 # DESIGN_CONFIG=./designs/asap7/swerv_wrapper/config.mk
 # DESIGN_CONFIG=./designs/asap7/uart/config.mk
@@ -392,6 +391,17 @@ $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb): $(RESULTS_DIR)/$(2) $(3)
 do-$(1)$(if $(4),$(4),):
 	cp $(RESULTS_DIR)/$(2) $(RESULTS_DIR)/$(1)$(if $(4),$(4),.odb)
 endef
+
+# ==============================================================================
+
+# Custom target to go from synthesis to placement in a single OpenROAD run
+$(eval $(call do-step,1_3_floorplan_to_place, $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc,floorplan_to_place))
+
+.PHONY: floorplan_to_place
+floorplan_to_place: $(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc
+	$(UNSET_AND_MAKE) do-1_3_floorplan_to_place
+
+# ==============================================================================
 
 $(eval $(call do-step,1_3_synth,$(RESULTS_DIR)/1_synth.v $(RESULTS_DIR)/1_synth.sdc,synth_odb))
 

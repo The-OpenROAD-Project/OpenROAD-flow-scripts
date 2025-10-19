@@ -5,7 +5,9 @@ load_design 3_2_place_iop.odb 2_floorplan.sdc
 
 set_dont_use $::env(DONT_USE_CELLS)
 
-remove_buffers
+if { $::env(GPL_TIMING_DRIVEN) } {
+  remove_buffers
+}
 
 # Do not buffer chip-level designs
 # by default, IO ports will be buffered

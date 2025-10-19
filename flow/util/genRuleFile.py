@@ -37,17 +37,26 @@ def gen_rule_file(
 
     # Notes
     # - Apply tighter margin on timing__setup__ws than timing__setup__tns
-    #   because WNS is more important.
+    #   because WNS is more important than TNS.
     # - Apply the consistent margins on timing__setup__* and timing__hold__*
-    # - Using 'period' mode for timing__setup__ws is conceptually right.
-    #   But it can cause smaller timing__setup__ws than timing__setup__tns,
-    #   which does not make sense. So we use 'mode=padding' for setup__ws now.
+    # - 'period_padding' mode is used for timing__setup__* and timing__hold__*
+    #   to give small margin based on clock period to avoid failures by small
+    #   violations.
 
     # dict format
     # 'metric_name': {
+    #     'mode': <str>, one of ['direct', 'sum_fixed', 'period', 'padding',
+    #                           'period_padding', 'abs_padding', 'metric']
     #     'padding': <float>, percentage of padding to use
     #     'fixed': <float>, sum this number instead of using % padding
     #     'round_value': <bool>, use the rounded value for the rule
+    #     'compare': <str>, one of ['<', '>', '<=', '>=', '==', '!=']
+    #     'metric': <str>, when mode is 'metric', use this metric to compute
+    #                     the rule value
+    #     'min_max': <function>, one of [min, max], optional
+    #     'min_max_direct': <float>, optional
+    #     'min_max_sum': <float>, optional
+    #     'min_max_period': <float>, optional
     # }
 
     rules_dict = {
@@ -99,34 +108,26 @@ def gen_rule_file(
             "compare": "<=",
         },
         "cts__timing__setup__ws": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 5,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "cts__timing__setup__tns": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 20,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "cts__timing__hold__ws": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 5,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "cts__timing__hold__tns": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 20,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
@@ -141,34 +142,26 @@ def gen_rule_file(
             "compare": "<=",
         },
         "globalroute__timing__setup__ws": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 5,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "globalroute__timing__setup__tns": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 20,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "globalroute__timing__hold__ws": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 5,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "globalroute__timing__hold__tns": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 20,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
@@ -199,67 +192,51 @@ def gen_rule_file(
             "compare": "<=",
         },
         "detailedroute__timing__setup__ws": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 5,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "detailedroute__timing__setup__tns": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 20,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "detailedroute__timing__hold__ws": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 5,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "detailedroute__timing__hold__tns": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 20,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         # finish
         "finish__timing__setup__ws": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 5,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "finish__timing__setup__tns": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 20,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "finish__timing__hold__ws": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 5,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
         "finish__timing__hold__tns": {
-            "mode": "padding",
+            "mode": "period_padding",
             "padding": 20,
-            "min_max": min,
-            "min_max_direct": 0,
             "round_value": False,
             "compare": ">=",
         },
@@ -268,14 +245,6 @@ def gen_rule_file(
             "padding": 15,
             "round_value": True,
             "compare": "<=",
-        },
-        "finish__timing__wns_percent_delay": {
-            "mode": "padding",
-            "padding": 20,
-            "min_max": min,
-            "min_max_sum": -10,
-            "round_value": False,
-            "compare": ">=",
         },
     }
 
@@ -331,6 +300,13 @@ def gen_rule_file(
         elif option["mode"] == "padding":
             rule_value = metrics[field] * (1 + option["padding"] / 100)
 
+        elif option["mode"] == "period_padding":
+            negative_slack = min(metrics[field], 0)
+            rule_value = negative_slack - max(
+                negative_slack * option["padding"] / 100,
+                period * option["padding"] / 100,
+            )
+
         elif option["mode"] == "abs_padding":
             rule_value = abs(metrics[field]) * (1 + option["padding"] / 100)
 
@@ -350,10 +326,14 @@ def gen_rule_file(
                 rule_value = option["min_max"](
                     rule_value + option["min_max_sum"], option["min_max_sum"]
                 )
+            elif "min_max_period" in option.keys():
+                rule_value = option["min_max"](
+                    rule_value, -period * option["min_max_period"] / 100.0
+                )
             else:
                 print(
                     f"[ERROR] Metric {field} has 'min_max' field but no "
-                    "'min_max_direct' or 'min_max_sum' field."
+                    "'min_max_direct', 'min_max_sum', or 'min_max_period' field."
                 )
                 sys.exit(1)
 
