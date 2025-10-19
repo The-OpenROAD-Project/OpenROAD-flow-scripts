@@ -7,5 +7,3 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 
 export CORE_UTILIZATION = 45
 export PLACE_DENSITY_LB_ADDON = 0.2
-
-export REMOVE_ABC_BUFFERS = 1
