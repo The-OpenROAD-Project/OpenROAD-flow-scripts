@@ -3,7 +3,7 @@ read_checkpoint $::env(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
 
 hierarchy -check -top $::env(DESIGN_NAME)
 
-if { [env_var_equals SYNTH_GUT 1] } {
+if { $::env(SYNTH_GUT) } {
   # /deletes all cells at the top level, which will quickly optimize away
   # everything else, including macros.
   delete $::env(DESIGN_NAME)/c:*
@@ -32,7 +32,7 @@ if { [env_var_exists_and_non_empty SYNTH_OPT_HIER] } {
   set synth_full_args [concat $synth_full_args -hieropt]
 }
 
-if { ![env_var_equals SYNTH_HIERARCHICAL 1] } {
+if { !$::env(SYNTH_HIERARCHICAL) } {
   # Perform standard coarse-level synthesis script, flatten right away
   synth -flatten -run :fine {*}$synth_full_args
 } else {
