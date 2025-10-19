@@ -47,11 +47,11 @@ detailed_placement
 
 estimate_parasitics -placement
 
-if { [env_var_equals CTS_SNAPSHOTS 1] } {
+if { $::env(CTS_SNAPSHOTS) } {
   save_progress 4_1_pre_repair_hold_setup
 }
 
-if { ![env_var_equals SKIP_CTS_REPAIR_TIMING 1] } {
+if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
   if { $::env(EQUIVALENCE_CHECK) } {
     write_eqy_verilog 4_before_rsz.v
   }
