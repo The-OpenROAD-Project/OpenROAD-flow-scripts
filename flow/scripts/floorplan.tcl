@@ -111,7 +111,7 @@ if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
 
 source_env_var_if_exists FOOTPRINT_TCL
 
-if { ![env_var_equals SKIP_REPAIR_TIE_FANOUT 1] } {
+if { !$::env(SKIP_REPAIR_TIE_FANOUT) } {
   # This needs to come before any call to remove_buffers.  You could have one
   # tie driving multiple buffers that drive multiple outputs.
   # Repair tie lo fanout
@@ -134,7 +134,7 @@ if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
   replace_arith_modules
 }
 
-if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
+if { $::env(REMOVE_ABC_BUFFERS) } {
   # remove buffers inserted by yosys/abc
   remove_buffers
 } else {

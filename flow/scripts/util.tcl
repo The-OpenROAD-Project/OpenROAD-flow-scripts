@@ -195,7 +195,7 @@ proc hier_options { } {
   if {
     [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
     [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] ||
-    [env_var_equals OPENROAD_HIERARCHICAL 1]
+    $::env(OPENROAD_HIERARCHICAL)
   } {
     return "-hier"
   } else {
