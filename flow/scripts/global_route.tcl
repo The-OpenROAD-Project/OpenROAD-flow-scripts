@@ -15,8 +15,12 @@ proc global_route_helper { } {
 
     log_cmd global_route {*}$all_args
   }
+  set additional_args ""
+  append_env_var additional_args dbProcessNode -db_process_node 1
+  append_env_var additional_args VIA_IN_PIN_MIN_LAYER -via_in_pin_bottom_layer 1
+  append_env_var additional_args VIA_IN_PIN_MAX_LAYER -via_in_pin_top_layer 1
 
-  pin_access
+  pin_access {*}$additional_args
 
   set result [catch { do_global_route } errMsg]
 
@@ -87,7 +91,7 @@ proc global_route_helper { } {
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
 
   if {
-    ![env_var_equals SKIP_ANTENNA_REPAIR 1] &&
+    !$::env(SKIP_ANTENNA_REPAIR) &&
     [env_var_exists_and_non_empty MAX_REPAIR_ANTENNAS_ITER_GRT]
   } {
     puts "Repair antennas..."

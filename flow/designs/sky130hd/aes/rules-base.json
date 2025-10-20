@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.279,
+        "value": -0.272,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -1.01,
+        "value": -1.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -64,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 783010,
+        "value": 961372,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {

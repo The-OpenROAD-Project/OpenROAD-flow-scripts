@@ -128,6 +128,7 @@ SKIP_REPORT_METRICS:
     - grt
     - route
     - final
+  default: 0
 PROCESS:
   description: |
     Technology node or process in use.
@@ -163,6 +164,7 @@ SYNTH_GUT:
     instance.
   stages:
     - synth
+  default: 0
 SYNTH_HIERARCHICAL:
   description: |
     Enable to Synthesis hierarchically, otherwise considered flat synthesis.
@@ -322,6 +324,12 @@ FLOORPLAN_DEF:
   stages:
     - floorplan
     - place
+DONT_BUFFER_PORTS:
+  description: >
+    Do not buffer input/output ports during floorplanning.
+  stages:
+    - place
+  default: 0
 REMOVE_ABC_BUFFERS:
   description: >
     Remove abc buffers from the netlist. If timing repair in floorplanning is
@@ -330,6 +338,13 @@ REMOVE_ABC_BUFFERS:
   stages:
     - floorplan
   deprecated: 1
+  default: 0
+BALANCE_ROWS:
+  description: |
+    Balance rows during placement.
+  stages:
+    - place
+  default: 0
 PLACE_SITE:
   description: |
     Placement site for core cells defined in the technology LEF file.
@@ -497,6 +512,12 @@ CTS_ARGS:
     Override `clock_tree_synthesis` arguments.
   stages:
     - cts
+CTS_SNAPSHOTS:
+  description: |
+    Create ODB/SDC files at different stages of CTS.
+  stages:
+    - cts
+  default: 0
 HOLD_SLACK_MARGIN:
   description: >
     Specifies a time margin for the slack when fixing hold violations.
@@ -611,11 +632,13 @@ SKIP_CTS_REPAIR_TIMING:
     architectural exploration or when getting CI up and running.
   stages:
     - cts
+  default: 0
 SKIP_REPAIR_TIE_FANOUT:
   description: >
     Skip repair_tie_fanout at floorplan step.
   stages:
     - floorplan
+  default: 0
 MIN_ROUTING_LAYER:
   description: |
     The lowest metal layer name to be used in routing.
@@ -832,6 +855,12 @@ CTS_BUF_LIST:
     List of cells used to construct the clock tree. Overrides buffer inference.
   stages:
     - cts
+CLUSTER_FLOPS:
+  description: >
+    Minimum number of flip-flops per sink cluster.
+  stages:
+    - place
+  default: 0
 CTS_CLUSTER_DIAMETER:
   description: >
     Maximum diameter (in microns) of sink cluster.
@@ -1061,6 +1090,24 @@ RULES_JSON:
     config.mk or from bazel-orfs.
   stages:
     - test
+SKIP_ANTENNA_REPAIR_PRE_GRT:
+  default: 0
+  description: >
+    Skips antenna repair pre-global routing.
+  stages:
+    - grt
+SKIP_ANTENNA_REPAIR_POST_DRT:
+  default: 0
+  description: >
+    Skips antenna repair post-detailed routing.
+  stages:
+    - route
+SKIP_ANTENNA_REPAIR:
+  default: 0
+  description: >
+    Skips antenna repair entirely.
+  stages:
+    - grt
 SKIP_DETAILED_ROUTE:
   default: 0
   description: >

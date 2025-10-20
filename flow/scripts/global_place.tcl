@@ -14,7 +14,7 @@ if { $::env(GPL_TIMING_DRIVEN) } {
 # to not buffer IO ports, set environment variable
 # DONT_BUFFER_PORT = 1
 if { ![env_var_exists_and_non_empty FOOTPRINT] } {
-  if { ![env_var_equals DONT_BUFFER_PORTS 1] } {
+  if { !$::env(DONT_BUFFER_PORTS) } {
     puts "Perform port buffering..."
     buffer_ports
   }
@@ -52,7 +52,7 @@ if { $result != 0 } {
 
 estimate_parasitics -placement
 
-if { [env_var_equals CLUSTER_FLOPS 1] } {
+if { $::env(CLUSTER_FLOPS) } {
   cluster_flops
   estimate_parasitics -placement
 }
