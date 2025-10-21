@@ -111,7 +111,7 @@ for field, rule in rules.items():
             ERRORS += 1
     print(PRE, field, CHECK, "test:", build_value, compare, rule_value)
 
-print(f"Number of metadata check warnings: {WARNS}")
+print(f"Metadata check warnings: {WARNS}")
 
 if ERRORS == 0:
     print(f"All metadata rules passed ({len(rules)} rules)")
