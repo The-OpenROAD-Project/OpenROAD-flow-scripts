@@ -1,76 +1,76 @@
 {
     "cts__flow__warnings__count:RSZ-62": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:DRT-120": {
-        "value": 3,
+        "value": 2,
         "compare": "<=",
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:GRT-246": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:STA-450": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "finish__flow__warnings__count:STA-450": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:EST-27": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:IFP-28": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:RSZ-62": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:RSZ-75": {
-        "value": 1502,
+        "value": 1001,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:STA-345": {
-        "value": 3,
+        "value": 2,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-120": {
-        "value": 3,
+        "value": 2,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:FLW-10": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:GRT-246": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:RSZ-62": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:STA-450": {
-        "value": 3,
+        "value": 2,
         "compare": "<=",
         "level": "warning"
     },

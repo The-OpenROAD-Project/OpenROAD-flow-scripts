@@ -1,71 +1,71 @@
 {
     "cts__flow__warnings__count:STA-1140": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "detailedplace__flow__warnings__count:STA-1140": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:DRT-349": {
-        "value": 15,
+        "value": 10,
         "compare": "<=",
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:STA-1140": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "finish__flow__warnings__count:STA-1140": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:EST-27": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:PAD-33": {
-        "value": 6,
+        "value": 4,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:STA-1140": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:STA-347": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "globalplace__flow__warnings__count:STA-1140": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-349": {
-        "value": 15,
+        "value": 10,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:STA-1140": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "placeopt__flow__warnings__count:RSZ-20": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "placeopt__flow__warnings__count:STA-1140": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },

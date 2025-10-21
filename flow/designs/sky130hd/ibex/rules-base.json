@@ -1,36 +1,36 @@
 {
     "cts__flow__warnings__count:RSZ-62": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:DRT-120": {
-        "value": 24,
+        "value": 16,
         "compare": "<=",
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:DRT-349": {
-        "value": 15,
+        "value": 10,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:IFP-28": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-120": {
-        "value": 12,
+        "value": 8,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-349": {
-        "value": 15,
+        "value": 10,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:RSZ-62": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },

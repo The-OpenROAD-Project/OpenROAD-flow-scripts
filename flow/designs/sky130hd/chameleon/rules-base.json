@@ -1,41 +1,41 @@
 {
     "detailedroute__flow__warnings__count:DRT-349": {
-        "value": 15,
+        "value": 10,
         "compare": "<=",
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:GRT-243": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:EST-27": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:IFP-28": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:ODB-220": {
-        "value": 6,
+        "value": 4,
         "compare": "<=",
         "level": "warning"
     },
     "floorplan__flow__warnings__count:ORD-2011": {
-        "value": 6,
+        "value": 4,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-349": {
-        "value": 15,
+        "value": 10,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:GRT-243": {
-        "value": 2,
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
