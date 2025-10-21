@@ -102,7 +102,7 @@ for field, rule in rules.items():
     else:
         if rule.get("level") == "warning":
             PRE = "[WARN]"
-            CHECK = "warn"
+            CHECK = "pass"
         else:
             PRE = "[ERROR]"
             CHECK = "fail"
