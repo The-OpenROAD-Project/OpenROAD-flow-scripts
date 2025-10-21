@@ -12,6 +12,23 @@ cd OpenROAD-flow-scripts
 sudo ./setup.sh
 ```
 
+## Using Bazel to build OpenROAD and run the ORFS flow
+
+Long story short: OpenROAD will eventually switch to using Bazel for downloading dependencies and building OpenROAD for all the reasons that the DependencyInstaller.sh and cmake are hard to support and brittle across platforms.
+
+Currently the simplest way to build OpenROAD and run ORFS is to run one test, which will download all OpenROAD dependencies and build OpenROAD in the exec configuration:
+
+``` shell
+cd tools/OpenROAD
+bazelisk test src/drt/...
+cd ../../flow
+make OPENROAD_EXE=$(pwd)/../tools/OpenROAD/bazel-out/k8-opt-exec-ST-*/bin/openroad
+```
+
+Bazel could similarly be used to download and make available pre-built binaries for tools such as Yosys, eqy and KLayout.
+
+Running some quick tests will cause the desired exec config of OpenROAD to be built. There's no explicit Bazel way to build an exec config of an executable and we want to to use an exec config that is the same binary as is used for a local OpenROAD modify + test Bazel cycle.
+
 ## Build
 
 ``` shell
