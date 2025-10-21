@@ -5,6 +5,7 @@ from os import chdir, getcwd
 from os.path import isfile
 from re import sub
 import argparse
+import fnmatch
 import json
 import operator
 import os
@@ -60,6 +61,13 @@ def gen_rule_file(
     # }
 
     rules_dict = {
+        # all stages
+        "*__flow__warnings__count:*": {
+            "mode": "direct",
+            "round_value": True,
+            "compare": "<=",
+            "level": "warning",
+        },
         # synth
         "synth__design__instance__area__stdcell": {
             "mode": "padding",
@@ -308,130 +316,145 @@ def gen_rule_file(
 
     format_str = "| {:45} | {:8} | {:8} | {:8} |\n"
     change_str = ""
-    for field, option in rules_dict.items():
-        if field not in metrics.keys():
-            print(f"[WARNING] Metric {field} not found")
-            continue
 
-        if isinstance(metrics[field], str):
-            print(f"[WARNING] Skipping string field {field} = {metrics[field]}")
-            continue
+    processed_fields = set()
+    for pattern, option in rules_dict.items():
+        matching_fields = []
+        # Find all metric fields that match this pattern.
+        if "*" in pattern:
+            for metric_field in sorted(metrics.keys()):
+                if (
+                    fnmatch.fnmatch(metric_field, pattern)
+                    and metric_field not in processed_fields
+                ):
+                    matching_fields.append(metric_field)
+        elif pattern in metrics and pattern not in processed_fields:
+            matching_fields.append(pattern)
 
-        if len(period_list) != 1 and field == "globalroute__timing__clock__slack":
-            print("[WARNING] Skipping clock slack until multiple clocks support.")
-            continue
+        for field in matching_fields:
+            processed_fields.add(field)
+            if isinstance(metrics[field], str):
+                print(f"[WARNING] Skipping string field {field} = {metrics[field]}")
+                continue
 
-        rule_value = None
-        if option["mode"] == "direct":
-            rule_value = metrics[field]
+            if len(period_list) != 1 and field == "globalroute__timing__clock__slack":
+                print("[WARNING] Skipping clock slack until multiple clocks support.")
+                continue
 
-        elif option["mode"] == "sum_fixed":
-            rule_value = metrics[field] + option["padding"]
+            rule_value = None
+            if option["mode"] == "direct":
+                rule_value = metrics[field]
 
-        elif option["mode"] == "period":
-            rule_value = metrics[field] - period * option["padding"] / 100
-            rule_value = min(rule_value, 0)
+            elif option["mode"] == "sum_fixed":
+                rule_value = metrics[field] + option["padding"]
 
-        elif option["mode"] == "padding":
-            rule_value = metrics[field] * (1 + option["padding"] / 100)
+            elif option["mode"] == "period":
+                rule_value = metrics[field] - period * option["padding"] / 100
+                rule_value = min(rule_value, 0)
 
-        elif option["mode"] == "period_padding":
-            negative_slack = min(metrics[field], 0)
-            rule_value = negative_slack - max(
-                negative_slack * option["padding"] / 100,
-                period * option["padding"] / 100,
-            )
+            elif option["mode"] == "padding":
+                rule_value = metrics[field] * (1 + option["padding"] / 100)
 
-        elif option["mode"] == "abs_padding":
-            rule_value = abs(metrics[field]) * (1 + option["padding"] / 100)
-
-        elif option["mode"] == "metric":
-            rule_value = metrics[option["metric"]] * option["padding"] / 100
-
-        if (
-            field == "cts__design__instance__count__setup_buffer"
-            or field == "cts__design__instance__count__hold_buffer"
-        ):
-            rule_value = max(rule_value, metrics[field] * 1.1)
-
-        if "min_max" in option.keys():
-            if "min_max_direct" in option.keys():
-                rule_value = option["min_max"](rule_value, option["min_max_direct"])
-            elif "min_max_sum" in option.keys():
-                rule_value = option["min_max"](
-                    rule_value + option["min_max_sum"], option["min_max_sum"]
+            elif option["mode"] == "period_padding":
+                negative_slack = min(metrics[field], 0)
+                rule_value = negative_slack - max(
+                    negative_slack * option["padding"] / 100,
+                    period * option["padding"] / 100,
                 )
-            elif "min_max_period" in option.keys():
-                rule_value = option["min_max"](
-                    rule_value, -period * option["min_max_period"] / 100.0
-                )
-            else:
-                print(
-                    f"[ERROR] Metric {field} has 'min_max' field but no "
-                    "'min_max_direct', 'min_max_sum', or 'min_max_period' field."
-                )
+
+            elif option["mode"] == "abs_padding":
+                rule_value = abs(metrics[field]) * (1 + option["padding"] / 100)
+
+            elif option["mode"] == "metric":
+                rule_value = metrics[option["metric"]] * option["padding"] / 100
+
+            if (
+                field == "cts__design__instance__count__setup_buffer"
+                or field == "cts__design__instance__count__hold_buffer"
+            ):
+                rule_value = max(rule_value, metrics[field] * 1.1)
+
+            if "min_max" in option.keys():
+                if "min_max_direct" in option.keys():
+                    rule_value = option["min_max"](rule_value, option["min_max_direct"])
+                elif "min_max_sum" in option.keys():
+                    rule_value = option["min_max"](
+                        rule_value + option["min_max_sum"], option["min_max_sum"]
+                    )
+                elif "min_max_period" in option.keys():
+                    rule_value = option["min_max"](
+                        rule_value, -period * option["min_max_period"] / 100.0
+                    )
+                else:
+                    print(
+                        f"[ERROR] Metric {field} has 'min_max' field but no "
+                        "'min_max_direct', 'min_max_sum', or 'min_max_period' field."
+                    )
+                    sys.exit(1)
+
+            if rule_value is None:
+                print(f"[ERROR] Metric {field} has invalid mode {option['mode']}.")
                 sys.exit(1)
 
-        if rule_value is None:
-            print(f"[ERROR] Metric {field} has invalid mode {option['mode']}.")
-            sys.exit(1)
+            if option["round_value"] and not isinf(rule_value):
+                rule_value = int(round(rule_value))
+            else:
+                rule_value = float(f"{rule_value:.3g}")
 
-        if option["round_value"] and not isinf(rule_value):
-            rule_value = int(round(rule_value))
-        else:
-            rule_value = float(f"{rule_value:.3g}")
+            preserve_old_rule = (
+                True
+                if len(metrics_to_consider) > 0 and field not in metrics_to_consider
+                else False
+            )
+            has_old_rule = OLD_RULES is not None and field in OLD_RULES.keys()
 
-        preserve_old_rule = (
-            True
-            if len(metrics_to_consider) > 0 and field not in metrics_to_consider
-            else False
-        )
-        has_old_rule = OLD_RULES is not None and field in OLD_RULES.keys()
+            if has_old_rule and preserve_old_rule:
+                rule_value = OLD_RULES[field]["value"]
 
-        if has_old_rule and preserve_old_rule:
-            rule_value = OLD_RULES[field]["value"]
+            if has_old_rule and not preserve_old_rule:
+                old_rule = OLD_RULES[field]
+                if old_rule["compare"] != option["compare"]:
+                    print("[WARNING] Compare operator changed since last update.")
 
-        if has_old_rule and not preserve_old_rule:
-            old_rule = OLD_RULES[field]
-            if old_rule["compare"] != option["compare"]:
-                print("[WARNING] Compare operator changed since last update.")
+                compare = ops[option["compare"]]
 
-            compare = ops[option["compare"]]
+                if compare(rule_value, metrics[field]) and "padding" in option.keys():
+                    rule_value = metrics[field] * (1 + option["padding"] / 100)
+                    if option["round_value"] and not isinf(rule_value):
+                        rule_value = int(round(rule_value))
+                    else:
+                        rule_value = float(f"{rule_value:.3g}")
 
-            if compare(rule_value, metrics[field]) and "padding" in option.keys():
-                rule_value = metrics[field] * (1 + option["padding"] / 100)
-                if option["round_value"] and not isinf(rule_value):
-                    rule_value = int(round(rule_value))
-                else:
-                    rule_value = float(f"{rule_value:.3g}")
+                need_to_update = False
+                if (
+                    tighten
+                    and rule_value != old_rule["value"]
+                    and compare(rule_value, old_rule["value"])
+                ):
+                    need_to_update = True
+                    change_str += format_str.format(
+                        field, old_rule["value"], rule_value, "Tighten"
+                    )
 
-            need_to_update = False
-            if (
-                tighten
-                and rule_value != old_rule["value"]
-                and compare(rule_value, old_rule["value"])
-            ):
-                need_to_update = True
-                change_str += format_str.format(
-                    field, old_rule["value"], rule_value, "Tighten"
-                )
+                if failing and not compare(metrics[field], old_rule["value"]):
+                    need_to_update = True
+                    change_str += format_str.format(
+                        field, old_rule["value"], rule_value, "Failing"
+                    )
 
-            if failing and not compare(metrics[field], old_rule["value"]):
-                need_to_update = True
-                change_str += format_str.format(
-                    field, old_rule["value"], rule_value, "Failing"
-                )
+                if update and old_rule["value"] != rule_value:
+                    need_to_update = True
+                    change_str += format_str.format(
+                        field, old_rule["value"], rule_value, "Updating"
+                    )
 
-            if update and old_rule["value"] != rule_value:
-                need_to_update = True
-                change_str += format_str.format(
-                    field, old_rule["value"], rule_value, "Updating"
-                )
+                if not need_to_update:
+                    rule_value = old_rule["value"]
 
-            if not need_to_update:
-                rule_value = old_rule["value"]
-
-        rules[field] = dict(value=rule_value, compare=option["compare"])
+            rule_entry = {"value": rule_value, "compare": option["compare"]}
+            if "level" in option:
+                rule_entry["level"] = option["level"]
+            rules[field] = rule_entry
 
     if len(change_str) > 0:
         print(f"{os.path.normpath(rules_file)} updates:")
