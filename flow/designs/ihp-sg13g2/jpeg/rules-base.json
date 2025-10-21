@@ -1,4 +1,19 @@
 {
+    "detailedroute__flow__warnings__count:DRT-349": {
+        "value": 15,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:IFP-28": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:DRT-349": {
+        "value": 15,
+        "compare": "<=",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 1499147.11,
         "compare": "<="

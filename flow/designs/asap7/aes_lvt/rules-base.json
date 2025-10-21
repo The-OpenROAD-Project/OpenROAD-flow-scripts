@@ -1,4 +1,69 @@
 {
+    "cts__flow__warnings__count:STA-1212": {
+        "value": 1502,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "detailedplace__flow__warnings__count:STA-1212": {
+        "value": 1502,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "detailedroute__flow__warnings__count:GRT-246": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "detailedroute__flow__warnings__count:STA-1212": {
+        "value": 1502,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "finish__flow__warnings__count:STA-1212": {
+        "value": 1502,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:EST-27": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:IFP-28": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:RSZ-75": {
+        "value": 4,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:STA-1212": {
+        "value": 1502,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalplace__flow__warnings__count:STA-1212": {
+        "value": 1502,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:GRT-246": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:STA-1212": {
+        "value": 1502,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "placeopt__flow__warnings__count:STA-1212": {
+        "value": 1502,
+        "compare": "<=",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 1920.63,
         "compare": "<="

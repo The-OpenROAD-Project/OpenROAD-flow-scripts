@@ -1,4 +1,39 @@
 {
+    "cts__flow__warnings__count:RSZ-62": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "detailedroute__flow__warnings__count:GRT-246": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:EST-27": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:IFP-28": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:RSZ-75": {
+        "value": 286,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:GRT-246": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:RSZ-62": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 32643.82,
         "compare": "<="

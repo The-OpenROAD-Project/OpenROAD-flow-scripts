@@ -1,4 +1,32 @@
 {
+    "detailedroute__flow__warnings__count:DRT-142": {
+        "value": 8,
+        "compare": "<="
+    },
+    "floorplan__flow__warnings__count:EST-27": {
+        "value": 2,
+        "compare": "<="
+    },
+    "floorplan__flow__warnings__count:IFP-28": {
+        "value": 2,
+        "compare": "<="
+    },
+    "floorplan__flow__warnings__count:ODB-254": {
+        "value": 4,
+        "compare": "<="
+    },
+    "floorplan__flow__warnings__count:ODB-256": {
+        "value": 8,
+        "compare": "<="
+    },
+    "floorplan__flow__warnings__count:ODB-260": {
+        "value": 3,
+        "compare": "<="
+    },
+    "globalroute__flow__warnings__count:DRT-142": {
+        "value": 8,
+        "compare": "<="
+    },
     "synth__design__instance__area__stdcell": {
         "value": 3732.67,
         "compare": "<="
