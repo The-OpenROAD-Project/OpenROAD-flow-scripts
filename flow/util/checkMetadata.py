@@ -71,6 +71,7 @@ ops = {
 }
 
 ERRORS = 0
+WARNS = 0
 
 for field, rule in rules.items():
     compare = rule["compare"]
@@ -103,11 +104,14 @@ for field, rule in rules.items():
         if rule.get("level") == "warning":
             PRE = "[WARN]"
             CHECK = "pass"
+            WARNS += 1
         else:
             PRE = "[ERROR]"
             CHECK = "fail"
             ERRORS += 1
     print(PRE, field, CHECK, "test:", build_value, compare, rule_value)
+
+print(f"Number of metadata check warnings: {WARNS}")
 
 if ERRORS == 0:
     print(f"All metadata rules passed ({len(rules)} rules)")
