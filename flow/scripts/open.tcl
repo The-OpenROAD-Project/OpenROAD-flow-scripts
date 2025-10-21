@@ -2,7 +2,9 @@ source $::env(SCRIPTS_DIR)/util.tcl
 
 source_env_var_if_exists PLATFORM_TCL
 
-source $::env(SCRIPTS_DIR)/read_liberty.tcl
+if { [env_var_equals GUI_TIMING 1] } {
+  source $::env(SCRIPTS_DIR)/read_liberty.tcl
+}
 
 if { [env_var_exists_and_non_empty DEF_FILE] } {
   log_cmd read_lef $::env(TECH_LEF)
@@ -62,7 +64,7 @@ if { [ord::openroad_gui_compiled] } {
     "OpenROAD - $::env(PLATFORM)/$::env(DESIGN_NICKNAME)/$::env(FLOW_VARIANT) - ${db_basename}"
 }
 
-if { [env_var_equals GUI_TIMING 1] } {
+if { $::env(GUI_TIMING) } {
   puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
   read_timing $input_file
   if { [gui::enabled] } {
