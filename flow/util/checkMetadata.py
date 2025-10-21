@@ -100,9 +100,13 @@ for field, rule in rules.items():
         PRE = "[INFO]"
         CHECK = "pass"
     else:
-        PRE = "[ERROR]"
-        CHECK = "fail"
-        ERRORS += 1
+        if rule.get("level") == "warning":
+            PRE = "[WARN]"
+            CHECK = "warn"
+        else:
+            PRE = "[ERROR]"
+            CHECK = "fail"
+            ERRORS += 1
     print(PRE, field, CHECK, "test:", build_value, compare, rule_value)
 
 if ERRORS == 0:
