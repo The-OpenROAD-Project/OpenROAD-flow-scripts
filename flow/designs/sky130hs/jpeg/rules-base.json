@@ -1,11 +1,16 @@
 {
     "detailedroute__flow__warnings__count:DRT-120": {
-        "value": 33,
+        "value": 78,
         "compare": "<=",
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:DRT-349": {
         "value": 10,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "finish__flow__warnings__count:GUI-76": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
@@ -30,12 +35,17 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-120": {
-        "value": 11,
+        "value": 13,
         "compare": "<=",
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-349": {
         "value": 10,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:RSZ-62": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
@@ -100,7 +110,7 @@
         "compare": ">="
     },
     "globalroute__flow__warnings__type_count": {
-        "value": 2,
+        "value": 3,
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {
@@ -160,7 +170,7 @@
         "compare": ">="
     },
     "finish__flow__warnings__type_count": {
-        "value": 0,
+        "value": 1,
         "compare": "<="
     },
     "finish__timing__setup__ws": {

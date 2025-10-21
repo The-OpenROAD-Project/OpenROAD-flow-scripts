@@ -9,6 +9,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "finish__flow__warnings__count:GUI-76": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "floorplan__flow__warnings__count:IFP-28": {
         "value": 1,
         "compare": "<=",
@@ -145,7 +150,7 @@
         "compare": ">="
     },
     "finish__flow__warnings__type_count": {
-        "value": 0,
+        "value": 1,
         "compare": "<="
     },
     "finish__timing__setup__ws": {

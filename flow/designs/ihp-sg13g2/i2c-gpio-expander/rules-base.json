@@ -19,6 +19,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "finish__flow__warnings__count:GUI-76": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "finish__flow__warnings__count:STA-1140": {
         "value": 1,
         "compare": "<=",
@@ -190,7 +195,7 @@
         "compare": ">="
     },
     "finish__flow__warnings__type_count": {
-        "value": 1,
+        "value": 2,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
