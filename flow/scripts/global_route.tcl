@@ -13,7 +13,11 @@ proc global_route_helper { } {
       -congestion_report_file $::global_route_congestion_report] \
       $::env(GLOBAL_ROUTE_ARGS)]
 
-    log_cmd global_route {*}$all_args
+    if {[env_var_exists_and_non_empty ENABLE_RESISTANCE_AWARE]} {
+      log_cmd global_route {*}$all_args -resistance_aware
+    } else {
+      log_cmd global_route {*}$all_args
+    }
   }
   set additional_args ""
   append_env_var additional_args dbProcessNode -db_process_node 1
@@ -61,8 +65,13 @@ proc global_route_helper { } {
     log_cmd global_route -start_incremental
     log_cmd detailed_placement
     # Route only the modified net by DPL
-    log_cmd global_route -end_incremental \
-      -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
+    if {[env_var_exists_and_non_empty ENABLE_RESISTANCE_AWARE]} {
+      log_cmd global_route -end_incremental -resistance_aware \
+        -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
+    } else {
+      log_cmd global_route -end_incremental \
+        -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
+    }
 
     # Repair timing using global route parasitics
     puts "Repair setup and hold violations..."
@@ -79,16 +88,26 @@ proc global_route_helper { } {
     log_cmd global_route -start_incremental
     log_cmd detailed_placement
     # Route only the modified net by DPL
-    log_cmd global_route -end_incremental \
-      -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
+    if {[env_var_exists_and_non_empty ENABLE_RESISTANCE_AWARE]} {
+      log_cmd global_route -end_incremental -resistance_aware \
+        -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
+    } else {
+      log_cmd global_route -end_incremental \
+        -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
+    }
   }
 
 
   log_cmd global_route -start_incremental
   recover_power_helper
   # Route the modified nets by rsz journal restore
-  log_cmd global_route -end_incremental \
-    -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  if {[env_var_exists_and_non_empty ENABLE_RESISTANCE_AWARE]} {
+    log_cmd global_route -end_incremental -resistance_aware \
+      -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  } else {
+    log_cmd global_route -end_incremental  \
+      -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  }
 
   if {
     !$::env(SKIP_ANTENNA_REPAIR) &&
