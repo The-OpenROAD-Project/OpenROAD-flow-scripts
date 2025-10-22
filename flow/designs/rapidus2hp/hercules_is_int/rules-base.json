@@ -104,6 +104,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "globalroute__flow__warnings__count:RSZ-66": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalroute__flow__warnings__count:STA-122": {
         "value": 40,
         "compare": "<=",
@@ -185,7 +190,7 @@
         "compare": ">="
     },
     "globalroute__flow__warnings__type_count": {
-        "value": 7,
+        "value": 8,
         "compare": "<="
     },
     "globalroute__antenna_diodes_count": {
