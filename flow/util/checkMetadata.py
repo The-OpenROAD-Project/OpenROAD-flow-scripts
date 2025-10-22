@@ -100,15 +100,14 @@ for field, rule in rules.items():
     if op(build_value, rule_value):
         PRE = "[INFO]"
         CHECK = "pass"
+    elif rule.get("level") == "warning":
+        PRE = "[WARN]"
+        CHECK = "pass"
+        WARNS += 1
     else:
-        if rule.get("level") == "warning":
-            PRE = "[WARN]"
-            CHECK = "pass"
-            WARNS += 1
-        else:
-            PRE = "[ERROR]"
-            CHECK = "fail"
-            ERRORS += 1
+        PRE = "[ERROR]"
+        CHECK = "fail"
+        ERRORS += 1
     print(PRE, field, CHECK, "test:", build_value, compare, rule_value)
 
 print(f"Metadata check warnings: {WARNS}")
