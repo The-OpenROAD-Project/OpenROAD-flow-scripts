@@ -58,6 +58,9 @@ def gen_rule_file(
     #     'min_max_direct': <float>, optional
     #     'min_max_sum': <float>, optional
     #     'min_max_period': <float>, optional
+    #     'level': <bool>, severity level. ['warning' or 
+    #                                        others (means ERROR, default) ]
+    #               
     # }
 
     rules_dict = {
