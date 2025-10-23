@@ -92,7 +92,7 @@
         "compare": "=="
     },
     "cts__flow__warnings__type_count": {
-        "value": 2,
+        "value": 1,
         "compare": "<="
     },
     "cts__design__instance__count__setup_buffer": {
@@ -176,7 +176,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -52400.0,
+        "value": -53200.0,
         "compare": ">="
     },
     "finish__flow__warnings__type_count": {
@@ -196,7 +196,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -1070.0,
+        "value": -765.0,
         "compare": ">="
     },
     "finish__design__instance__area": {

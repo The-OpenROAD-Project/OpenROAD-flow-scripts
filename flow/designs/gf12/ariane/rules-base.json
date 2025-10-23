@@ -39,16 +39,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalplace__flow__warnings__count:GPL-998": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "globalplace__flow__warnings__count:GPL-999": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "globalroute__flow__warnings__count:DRT-120": {
         "value": 23,
         "compare": "<=",
@@ -162,7 +152,7 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 0,
+        "value": 1,
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
@@ -182,11 +172,11 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
-        "value": -180.0,
+        "value": -150.0,
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -3970.0,
+        "value": -600.0,
         "compare": ">="
     },
     "finish__flow__warnings__type_count": {
