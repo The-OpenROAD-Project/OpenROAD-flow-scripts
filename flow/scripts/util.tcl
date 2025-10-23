@@ -14,7 +14,7 @@ proc log_cmd { cmd args } {
 }
 
 proc repair_timing_helper { args } {
-  set additional_args "$args -verbose"
+  set additional_args {}
   append_env_var additional_args SETUP_SLACK_MARGIN -setup_margin 1
   append_env_var additional_args HOLD_SLACK_MARGIN -hold_margin 1
   append_env_var additional_args SETUP_MOVE_SEQUENCE -sequence 1
@@ -26,6 +26,8 @@ proc repair_timing_helper { args } {
   append_env_var additional_args SKIP_VT_SWAP -skip_vt_swap 0
   append_env_var additional_args SKIP_CRIT_VT_SWAP -skip_crit_vt_swap 0
   append_env_var additional_args MATCH_CELL_FOOTPRINT -match_cell_footprint 0
+  lappend additional_args {*}$args -verbose
+
   log_cmd repair_timing {*}$additional_args
 }
 
@@ -193,7 +195,7 @@ proc hier_options { } {
   if {
     [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
     [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] ||
-    [env_var_equals OPENROAD_HIERARCHICAL 1]
+    $::env(OPENROAD_HIERARCHICAL)
   } {
     return "-hier"
   } else {
