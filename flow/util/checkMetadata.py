@@ -80,6 +80,10 @@ for field, rule in rules.items():
 
     if field in metadata.keys():
         build_value = try_number(metadata[field])
+    elif "__warnings__count:" in field:
+        # Metric is a warning count. If the value is missing,
+        # there were zero warnings
+        build_value = 0.0
     else:
         print(f"[ERROR] Value not found for {field}.")
         sys.exit(1)
