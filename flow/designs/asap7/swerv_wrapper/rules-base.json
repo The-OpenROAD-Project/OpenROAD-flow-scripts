@@ -194,19 +194,19 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -296.0,
+        "value": -546.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -69400.0,
+        "value": -198000.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -340.0,
+        "value": -291.0,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -74800.0,
+        "value": -105000.0,
         "compare": ">="
     },
     "finish__design__instance__area": {

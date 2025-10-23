@@ -1,4 +1,9 @@
 {
+    "cts__flow__warnings__count:RSZ-62": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "detailedroute__flow__warnings__count:GRT-246": {
         "value": 1,
         "compare": "<=",
@@ -20,6 +25,11 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:GRT-246": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:RSZ-62": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
@@ -73,7 +83,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -0.4,
+        "value": -14.2,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -97,7 +107,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -0.4,
+        "value": -47.2,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -141,7 +151,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -3.62,
+        "value": -1.92,
         "compare": ">="
     },
     "finish__flow__warnings__type_count": {
@@ -153,7 +163,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -65.3,
+        "value": -98.5,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -161,7 +171,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -2.36,
+        "value": -0.927,
         "compare": ">="
     },
     "finish__design__instance__area": {
