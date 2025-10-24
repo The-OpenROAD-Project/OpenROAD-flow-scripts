@@ -34,6 +34,31 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:PDN-1031": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:TAP-14": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:TAP-15": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:TAP-16": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:TAP-17": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalroute__flow__warnings__count:DRT-142": {
         "value": 5,
         "compare": "<=",
@@ -52,14 +77,6 @@
         "value": 1,
         "compare": "=="
     },
-    "floorplan__flow__warnings__type_count": {
-        "value": 5,
-        "compare": "<="
-    },
-    "placeopt__flow__warnings__type_count": {
-        "value": 0,
-        "compare": "<="
-    },
     "placeopt__design__instance__area": {
         "value": 6874,
         "compare": "<="
@@ -68,17 +85,9 @@
         "value": 17680,
         "compare": "<="
     },
-    "detailedplace__flow__warnings__type_count": {
-        "value": 0,
-        "compare": "<="
-    },
     "detailedplace__design__violations": {
         "value": 0,
         "compare": "=="
-    },
-    "cts__flow__warnings__type_count": {
-        "value": 1,
-        "compare": "<="
     },
     "cts__design__instance__count__setup_buffer": {
         "value": 1445,
@@ -104,10 +113,6 @@
         "value": -204.0,
         "compare": ">="
     },
-    "globalroute__flow__warnings__type_count": {
-        "value": 2,
-        "compare": "<="
-    },
     "globalroute__antenna_diodes_count": {
         "value": 100,
         "compare": "<="
@@ -127,10 +132,6 @@
     "globalroute__timing__hold__tns": {
         "value": -204.0,
         "compare": ">="
-    },
-    "detailedroute__flow__warnings__type_count": {
-        "value": 1,
-        "compare": "<="
     },
     "detailedroute__route__wirelength": {
         "value": 161696,
@@ -163,10 +164,6 @@
     "detailedroute__timing__hold__tns": {
         "value": -204.0,
         "compare": ">="
-    },
-    "finish__flow__warnings__type_count": {
-        "value": 0,
-        "compare": "<="
     },
     "finish__timing__setup__ws": {
         "value": -51.0,

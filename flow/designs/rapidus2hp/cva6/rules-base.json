@@ -54,6 +54,16 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:PDN-110": {
+        "value": 12,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:STA-1257": {
+        "value": 1001,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalplace__flow__warnings__count:STA-122": {
         "value": 40,
         "compare": "<=",
@@ -122,14 +132,6 @@
         "value": 1,
         "compare": "=="
     },
-    "floorplan__flow__warnings__type_count": {
-        "value": 6,
-        "compare": "<="
-    },
-    "placeopt__flow__warnings__type_count": {
-        "value": 2,
-        "compare": "<="
-    },
     "placeopt__design__instance__area": {
         "value": 14156,
         "compare": "<="
@@ -138,17 +140,9 @@
         "value": 171414,
         "compare": "<="
     },
-    "detailedplace__flow__warnings__type_count": {
-        "value": 1,
-        "compare": "<="
-    },
     "detailedplace__design__violations": {
         "value": 0,
         "compare": "=="
-    },
-    "cts__flow__warnings__type_count": {
-        "value": 2,
-        "compare": "<="
     },
     "cts__design__instance__count__setup_buffer": {
         "value": 14906,
@@ -174,10 +168,6 @@
         "value": -225.0,
         "compare": ">="
     },
-    "globalroute__flow__warnings__type_count": {
-        "value": 8,
-        "compare": "<="
-    },
     "globalroute__antenna_diodes_count": {
         "value": 145,
         "compare": "<="
@@ -197,14 +187,6 @@
     "globalroute__timing__hold__tns": {
         "value": -262.0,
         "compare": ">="
-    },
-    "detailedroute__flow__warnings__type_count": {
-        "value": 1,
-        "compare": "<="
-    },
-    "finish__flow__warnings__type_count": {
-        "value": 1,
-        "compare": "<="
     },
     "finish__timing__setup__ws": {
         "value": -63.1,
