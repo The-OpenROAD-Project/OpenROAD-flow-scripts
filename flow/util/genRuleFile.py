@@ -502,9 +502,6 @@ if __name__ == "__main__":
         parser.print_help()
         sys.exit(1)
 
-    args.tighten = False
-    args.failing = False
-
     gen_rule_file(
         args.rules,
         args.new_rules,

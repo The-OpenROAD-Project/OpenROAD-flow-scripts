@@ -1,26 +1,36 @@
 {
-    "detailedroute__flow__warnings__count:GRT-246": {
+    "cts__flow__warnings__count:RSZ-0062": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "finish__flow__warnings__count:GUI-76": {
+    "detailedroute__flow__warnings__count:GRT-0246": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:EST-27": {
+    "finish__flow__warnings__count:GUI-0076": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:IFP-28": {
+    "floorplan__flow__warnings__count:EST-0027": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:ODB-11": {
+    "floorplan__flow__warnings__count:IFP-0028": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:ODB-0011": {
         "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:PDN-0195": {
+        "value": 11,
         "compare": "<=",
         "level": "warning"
     },
@@ -29,12 +39,12 @@
         "compare": "<=",
         "level": "warning"
     },
-    "flow__warnings__count:PDN-195": {
-        "value": 11,
+    "globalroute__flow__warnings__count:GRT-0246": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:GRT-246": {
+    "globalroute__flow__warnings__count:RSZ-0062": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
@@ -47,14 +57,6 @@
         "value": 1,
         "compare": "=="
     },
-    "floorplan__flow__warnings__type_count": {
-        "value": 3,
-        "compare": "<="
-    },
-    "placeopt__flow__warnings__type_count": {
-        "value": 0,
-        "compare": "<="
-    },
     "placeopt__design__instance__area": {
         "value": 244991,
         "compare": "<="
@@ -63,17 +65,9 @@
         "value": 38771,
         "compare": "<="
     },
-    "detailedplace__flow__warnings__type_count": {
-        "value": 0,
-        "compare": "<="
-    },
     "detailedplace__design__violations": {
         "value": 0,
         "compare": "=="
-    },
-    "cts__flow__warnings__type_count": {
-        "value": 0,
-        "compare": "<="
     },
     "cts__design__instance__count__setup_buffer": {
         "value": 3371,
@@ -99,10 +93,6 @@
         "value": 0.0,
         "compare": ">="
     },
-    "globalroute__flow__warnings__type_count": {
-        "value": 1,
-        "compare": "<="
-    },
     "globalroute__antenna_diodes_count": {
         "value": 0,
         "compare": "<="
@@ -122,10 +112,6 @@
     "globalroute__timing__hold__tns": {
         "value": 0.0,
         "compare": ">="
-    },
-    "detailedroute__flow__warnings__type_count": {
-        "value": 1,
-        "compare": "<="
     },
     "detailedroute__route__wirelength": {
         "value": 1659471,
@@ -158,10 +144,6 @@
     "detailedroute__timing__hold__tns": {
         "value": 0.0,
         "compare": ">="
-    },
-    "finish__flow__warnings__type_count": {
-        "value": 1,
-        "compare": "<="
     },
     "finish__timing__setup__ws": {
         "value": -0.127,

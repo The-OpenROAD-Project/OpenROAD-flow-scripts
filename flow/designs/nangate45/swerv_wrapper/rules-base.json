@@ -1,20 +1,25 @@
 {
-    "detailedroute__flow__warnings__count:GRT-246": {
+    "cts__flow__warnings__count:RSZ-0062": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "finish__flow__warnings__count:GUI-76": {
+    "detailedroute__flow__warnings__count:GRT-0246": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:EST-27": {
+    "finish__flow__warnings__count:GUI-0076": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:RSZ-62": {
+    "floorplan__flow__warnings__count:EST-0027": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:RSZ-0062": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
@@ -24,7 +29,12 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:GRT-246": {
+    "globalroute__flow__warnings__count:GRT-0246": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:RSZ-0062": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
