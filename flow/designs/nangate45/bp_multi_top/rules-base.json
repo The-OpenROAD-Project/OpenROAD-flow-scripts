@@ -1,6 +1,6 @@
 {
     "cts__flow__warnings__count:RSZ-2021": {
-        "value": 20,
+        "value": 90,
         "compare": "<=",
         "level": "warning"
     },
