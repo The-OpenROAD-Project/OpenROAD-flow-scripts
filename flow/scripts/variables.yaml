@@ -962,13 +962,6 @@ RTLMP_MIN_AR:
   default: 0.33
   stages:
     - floorplan
-RTLMP_SIGNATURE_NET_THRESHOLD:
-  description: >
-    Minimum number of connections between two clusters to be identified as
-    connected.
-  default: 50
-  stages:
-    - floorplan
 RTLMP_AREA_WT:
   description: >
     Weight for the area of the current floorplan.
