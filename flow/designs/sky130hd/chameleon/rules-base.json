@@ -34,6 +34,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:PDN-110": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalroute__flow__warnings__count:DRT-349": {
         "value": 10,
         "compare": "<=",

@@ -49,6 +49,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:STA-1212": {
+        "value": 1001,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalplace__flow__warnings__count:STA-1212": {
         "value": 1001,
         "compare": "<=",

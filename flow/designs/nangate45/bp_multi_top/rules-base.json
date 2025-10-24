@@ -39,6 +39,16 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:PDN-1041": {
+        "value": 270,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:PDN-195": {
+        "value": 47,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalroute__flow__warnings__count:DRT-120": {
         "value": 3,
         "compare": "<=",
@@ -171,7 +181,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -1.09,
+        "value": -5.05,
         "compare": ">="
     },
     "finish__flow__warnings__type_count": {

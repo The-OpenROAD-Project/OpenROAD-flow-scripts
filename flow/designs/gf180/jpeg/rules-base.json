@@ -24,6 +24,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:TAP-14": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalroute__flow__warnings__count:DRT-120": {
         "value": 48,
         "compare": "<=",

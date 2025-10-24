@@ -19,6 +19,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:FIN-10": {
+        "value": 12,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalroute__flow__warnings__count:DRT-349": {
         "value": 10,
         "compare": "<=",
