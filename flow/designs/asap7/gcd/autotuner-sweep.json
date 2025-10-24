@@ -1,0 +1,10 @@
+{
+    "PLACE_DENSITY_LB_ADDON": {
+        "type": "float",
+        "minmax": [
+            0.0,
+            0.2
+        ],
+        "step": 0.05
+    }
+}
