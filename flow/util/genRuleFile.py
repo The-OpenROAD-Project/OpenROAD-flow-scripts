@@ -64,7 +64,7 @@ def gen_rule_file(
 
     rules_dict = {
         # all stages
-        "*__flow__warnings__count:*": {
+        "*flow__warnings__count:*": {
             "mode": "direct",
             "round_value": True,
             "compare": "<=",
