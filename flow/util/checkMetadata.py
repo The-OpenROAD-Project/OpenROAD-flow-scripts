@@ -73,6 +73,13 @@ ops = {
 ERRORS = 0
 WARNS = 0
 
+# Check for new warnings
+for field, build_value in metadata.items():
+    if field not in rules.keys() and "__warnings__count:" in field:
+        print(f"[ERROR] {field} fail test: {build_value} (New warning)")
+        ERRORS += 1
+
+# Check for rules
 for field, rule in rules.items():
     compare = rule["compare"]
     op = ops[compare]
