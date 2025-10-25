@@ -1,45 +1,45 @@
 {
-    "cts__flow__warnings__count:RSZ-62": {
+    "cts__flow__warnings__count:RSZ-0062": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "detailedroute__flow__warnings__count:DRT-120": {
-        "value": 12,
+    "detailedroute__flow__warnings__count:DRT-0120": {
+        "value": 3,
         "compare": "<=",
         "level": "warning"
     },
-    "detailedroute__flow__warnings__count:DRT-349": {
+    "detailedroute__flow__warnings__count:DRT-0349": {
         "value": 10,
         "compare": "<=",
         "level": "warning"
     },
-    "finish__flow__warnings__count:GUI-76": {
+    "finish__flow__warnings__count:GUI-0076": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:IFP-28": {
+    "floorplan__flow__warnings__count:IFP-0028": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:ODB-220": {
+    "floorplan__flow__warnings__count:ODB-0220": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:DRT-120": {
-        "value": 2,
+    "globalroute__flow__warnings__count:DRT-0120": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:DRT-349": {
+    "globalroute__flow__warnings__count:DRT-0349": {
         "value": 10,
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:RSZ-62": {
+    "globalroute__flow__warnings__count:RSZ-0062": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
@@ -52,14 +52,6 @@
         "value": 1,
         "compare": "=="
     },
-    "floorplan__flow__warnings__type_count": {
-        "value": 2,
-        "compare": "<="
-    },
-    "placeopt__flow__warnings__type_count": {
-        "value": 0,
-        "compare": "<="
-    },
     "placeopt__design__instance__area": {
         "value": 232924,
         "compare": "<="
@@ -68,17 +60,9 @@
         "value": 19436,
         "compare": "<="
     },
-    "detailedplace__flow__warnings__type_count": {
-        "value": 0,
-        "compare": "<="
-    },
     "detailedplace__design__violations": {
         "value": 0,
         "compare": "=="
-    },
-    "cts__flow__warnings__type_count": {
-        "value": 1,
-        "compare": "<="
     },
     "cts__design__instance__count__setup_buffer": {
         "value": 1690,
@@ -104,10 +88,6 @@
         "value": -1.4,
         "compare": ">="
     },
-    "globalroute__flow__warnings__type_count": {
-        "value": 3,
-        "compare": "<="
-    },
     "globalroute__antenna_diodes_count": {
         "value": 100,
         "compare": "<="
@@ -127,10 +107,6 @@
     "globalroute__timing__hold__tns": {
         "value": -1.4,
         "compare": ">="
-    },
-    "detailedroute__flow__warnings__type_count": {
-        "value": 2,
-        "compare": "<="
     },
     "detailedroute__route__wirelength": {
         "value": 845495,
@@ -163,10 +139,6 @@
     "detailedroute__timing__hold__tns": {
         "value": -1.4,
         "compare": ">="
-    },
-    "finish__flow__warnings__type_count": {
-        "value": 1,
-        "compare": "<="
     },
     "finish__timing__setup__ws": {
         "value": -0.859,
