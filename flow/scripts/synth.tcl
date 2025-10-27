@@ -55,6 +55,20 @@ if { !$::env(SYNTH_HIERARCHICAL) } {
   synth -flatten -run coarse:fine {*}$synth_full_args
 }
 
+
+if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
+  foreach module [get_modules] {
+    foreach mem [get_memories $module] {
+      set size [memory_get $module $mem SIZE]
+
+      if {$size > $::env(SYNTH_MEMORY_MAX_BITS)} {
+          memory_set $module $mem SIZE 1
+          puts "Shrunk memory $mem in module $module from $size to 1"
+      }
+    }
+  }
+}
+
 json -o $::env(RESULTS_DIR)/mem.json
 # Run report and check here so as to fail early if this synthesis run is doomed
 exec -- $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/mem_dump.py \

@@ -177,6 +177,22 @@ SYNTH_MEMORY_MAX_BITS:
   default: 4096
   stages:
     - synth
+SYNTH_MOCK_LARGE_MEMORIES:
+  description: >
+    Reduce memories larger than SYNTH_MEMORY_MAX_BITS to 1 row.
+
+    This is useful to separate the concern of instantiating and placing
+    memories from investigating other issues with a design.
+
+    Memories with a single 1 row will of course have unrealistically good
+    timing and area characteristics, but timing will still correctly terminate
+    in a register.
+
+    Also, large port memories, typically register files, will still have the
+    retain a lot of the port logic that can be useful to investigate issues.
+  default: 0
+  stages:
+    - synth
 SYNTH_HDL_FRONTEND:
   description: >
     Select an alternative language frontend to ingest the design. Available option
