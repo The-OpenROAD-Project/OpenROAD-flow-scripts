@@ -57,14 +57,19 @@ if { !$::env(SYNTH_HIERARCHICAL) } {
 
 
 if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
-  foreach module [get_modules] {
-    foreach mem [get_memories $module] {
-      set size [memory_get $module $mem SIZE]
+  memory_collect
+  foreach path [tee -q -s result.string select -list t:\$mem_v2] {
+    set index [string first "/" $path]
+    set module [string range $path 0 [expr {$index - 1}]]
+    set instance [string range $path [expr {$index + 1}] end]
 
-      if {$size > $::env(SYNTH_MEMORY_MAX_BITS)} {
-          memory_set $module $mem SIZE 1
-          puts "Shrunk memory $mem in module $module from $size to 1"
-      }
+    set width [rtlil::get_param -uint $module $instance WIDTH]
+    set size [rtlil::get_param -uint $module $instance SIZE]
+    set nbits [expr $width * $size]
+    puts "Memory $path has dimensions $size x $width = $nbits"
+    if {$nbits > $::env(SYNTH_MEMORY_MAX_BITS)} {
+      rtlil::set_param -uint $module $instance SIZE 1
+      puts "Shrunk memory $path from $size rows to 1"
     }
   }
 }
