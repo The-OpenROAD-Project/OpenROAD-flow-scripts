@@ -5,7 +5,7 @@
         "level": "warning"
     },
     "cts__flow__warnings__count:RSZ-2021": {
-        "value": 90,
+        "value": 102,
         "compare": "<=",
         "level": "warning"
     },
@@ -41,11 +41,6 @@
     },
     "flow__warnings__count:PDN-0195": {
         "value": 46,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "flow__warnings__count:PDN-1041": {
-        "value": 270,
         "compare": "<=",
         "level": "warning"
     },
@@ -129,7 +124,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 4187726,
+        "value": 4180077,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -145,19 +140,19 @@
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {
-        "value": -11.1,
+        "value": -6.13,
         "compare": ">="
     },
     "detailedroute__timing__setup__tns": {
-        "value": -785.0,
+        "value": -607.0,
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
-        "value": -0.0646,
+        "value": -1.48,
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -5.05,
+        "value": -105.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {

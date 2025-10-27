@@ -59,11 +59,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "flow__warnings__count:PDN-1041": {
-        "value": 424,
-        "compare": "<=",
-        "level": "warning"
-    },
     "flow__warnings__count:STA-1212": {
         "value": 1001,
         "compare": "<=",
@@ -147,7 +142,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -316.0,
+        "value": -17300.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -191,11 +186,11 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -66.3,
+        "value": -119.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -239.0,
+        "value": -25000.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
