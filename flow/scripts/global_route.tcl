@@ -8,10 +8,13 @@ load_design 4_cts.odb 4_cts.sdc
 proc global_route_helper { } {
   source_env_var_if_exists PRE_GLOBAL_ROUTE_TCL
 
-  proc do_global_route { } {
+  set res_aware ""
+  append_env_var res_aware ENABLE_RESISTANCE_AWARE -resistance_aware 0
+
+  proc do_global_route { res_aware } {
     set all_args [concat [list \
       -congestion_report_file $::global_route_congestion_report] \
-      $::env(GLOBAL_ROUTE_ARGS)]
+      $::env(GLOBAL_ROUTE_ARGS) {*}$res_aware]
 
     log_cmd global_route {*}$all_args
   }
@@ -22,7 +25,7 @@ proc global_route_helper { } {
 
   pin_access {*}$additional_args
 
-  set result [catch { do_global_route } errMsg]
+  set result [catch { do_global_route $res_aware } errMsg]
 
   if { $result != 0 } {
     if { !$::env(GENERATE_ARTIFACTS_ON_FAILURE) } {
@@ -61,7 +64,7 @@ proc global_route_helper { } {
     log_cmd global_route -start_incremental
     log_cmd detailed_placement
     # Route only the modified net by DPL
-    log_cmd global_route -end_incremental \
+    log_cmd global_route -end_incremental {*}$res_aware \
       -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
 
     # Repair timing using global route parasitics
@@ -79,7 +82,7 @@ proc global_route_helper { } {
     log_cmd global_route -start_incremental
     log_cmd detailed_placement
     # Route only the modified net by DPL
-    log_cmd global_route -end_incremental \
+    log_cmd global_route -end_incremental {*}$res_aware \
       -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
   }
 
@@ -87,7 +90,7 @@ proc global_route_helper { } {
   log_cmd global_route -start_incremental
   recover_power_helper
   # Route the modified nets by rsz journal restore
-  log_cmd global_route -end_incremental \
+  log_cmd global_route -end_incremental {*}$res_aware \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
 
   if {

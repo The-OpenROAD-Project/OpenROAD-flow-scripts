@@ -1,4 +1,79 @@
 {
+    "cts__flow__warnings__count:RSZ-0062": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "detailedroute__flow__warnings__count:DRT-0142": {
+        "value": 5,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:EST-0027": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:IFP-0028": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:ODB-0254": {
+        "value": 3,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:ODB-0256": {
+        "value": 5,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:ODB-0260": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:RSZ-0075": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:PDN-1031": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:TAP-0014": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:TAP-0015": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:TAP-0016": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:TAP-0017": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:DRT-0142": {
+        "value": 5,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:RSZ-0062": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 134.0,
         "compare": "<="
