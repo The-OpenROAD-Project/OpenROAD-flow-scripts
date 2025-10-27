@@ -9,11 +9,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "cts__flow__warnings__count:RSZ-0066": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "cts__flow__warnings__count:STA-1551": {
         "value": 40,
         "compare": "<=",
@@ -25,7 +20,7 @@
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:DRT-0120": {
-        "value": 8,
+        "value": 7,
         "compare": "<=",
         "level": "warning"
     },
@@ -79,18 +74,18 @@
         "compare": "<=",
         "level": "warning"
     },
-    "flow__warnings__count:PDN-1031": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "flow__warnings__count:PDN-0110": {
-        "value": 771,
+        "value": 1001,
         "compare": "<=",
         "level": "warning"
     },
     "flow__warnings__count:PDN-0231": {
         "value": 8,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:PDN-1031": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
@@ -125,7 +120,7 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-0120": {
-        "value": 8,
+        "value": 7,
         "compare": "<=",
         "level": "warning"
     },
@@ -197,7 +192,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -1640.0,
+        "value": -2620.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -221,11 +216,11 @@
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
-        "value": -135.0,
+        "value": -117.0,
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
-        "value": -833.0,
+        "value": -569.0,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -253,15 +248,15 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
-        "value": -130.0,
+        "value": -120.0,
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -3910.0,
+        "value": -1310.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -116.0,
+        "value": -222.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
