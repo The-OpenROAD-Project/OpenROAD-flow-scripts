@@ -86,14 +86,14 @@ export MATCH_CELL_FOOTPRINT = 1
 export PLACE_SITE = CoreSite
 
 # IO Placer pin layers
-export IO_PLACER_H ?= Metal2
-export IO_PLACER_V ?= Metal3
+export IO_PLACER_V ?= Metal2
+export IO_PLACER_H ?= Metal3
 
 # Define default PDN config
 export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # To allow the core rings to fit inside the core area
-export CORE_MARGIN ?= 16.5
+export CORE_MARGIN ?= 17.5
 
 # There are no Endcap and Welltie cells in this PDK, so
 # `cut_rows` has to be called from the tapcell script.
@@ -110,8 +110,8 @@ export PLACE_DENSITY ?= 0.65
 #  Route
 # ---------------------------------------------------------
 # FastRoute options
-export MIN_ROUTING_LAYER 		?= Metal2
-export MAX_ROUTING_LAYER 		?= Metal5
+export MIN_ROUTING_LAYER    ?= Metal2
+export MAX_ROUTING_LAYER    ?= Metal5
 #export VIA_IN_PIN_MIN_LAYER ?= Metal1
 #export VIA_IN_PIN_MAX_LAYER ?= Metal1
 #export DISABLE_VIA_GEN      ?= 1
