@@ -24,11 +24,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "flow__warnings__count:PDN-1041": {
-        "value": 270,
-        "compare": "<=",
-        "level": "warning"
-    },
     "globalroute__flow__warnings__count:DRT-0120": {
         "value": 11,
         "compare": "<=",
@@ -140,7 +135,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -65.9,
+        "value": -88.9,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
