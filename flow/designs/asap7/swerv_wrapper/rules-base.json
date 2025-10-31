@@ -49,11 +49,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "flow__warnings__count:PDN-1041": {
-        "value": 424,
-        "compare": "<=",
-        "level": "warning"
-    },
     "flow__warnings__count:STA-1212": {
         "value": 1001,
         "compare": "<=",
@@ -176,11 +171,11 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -546.0,
+        "value": -441.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -206000.0,
+        "value": -223000.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -188,7 +183,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -94300.0,
+        "value": -86400.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
