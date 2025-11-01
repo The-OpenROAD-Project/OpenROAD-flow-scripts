@@ -55,6 +55,25 @@ if { !$::env(SYNTH_HIERARCHICAL) } {
   synth -flatten -run coarse:fine {*}$synth_full_args
 }
 
+
+if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
+  memory_collect
+  foreach path [tee -q -s result.string select -list t:\$mem_v2] {
+    set index [string first "/" $path]
+    set module [string range $path 0 [expr {$index - 1}]]
+    set instance [string range $path [expr {$index + 1}] end]
+
+    set width [rtlil::get_param -uint $module $instance WIDTH]
+    set size [rtlil::get_param -uint $module $instance SIZE]
+    set nbits [expr $width * $size]
+    puts "Memory $path has dimensions $size x $width = $nbits"
+    if {$nbits > $::env(SYNTH_MEMORY_MAX_BITS)} {
+      rtlil::set_param -uint $module $instance SIZE 1
+      puts "Shrunk memory $path from $size rows to 1"
+    }
+  }
+}
+
 json -o $::env(RESULTS_DIR)/mem.json
 # Run report and check here so as to fail early if this synthesis run is doomed
 exec -- $::env(PYTHON_EXE) $::env(SCRIPTS_DIR)/mem_dump.py \
