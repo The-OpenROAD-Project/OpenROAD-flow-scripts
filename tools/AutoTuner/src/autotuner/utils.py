@@ -40,9 +40,8 @@ import re
 import yaml
 import subprocess
 import sys
-import uuid
+from uuid import uuid4 as uuid
 import time
-from multiprocessing import cpu_count
 from datetime import datetime
 
 import numpy as np
@@ -319,9 +318,8 @@ def openroad(
     if install_path is None:
         install_path = os.path.join(base_dir, "tools/install")
 
-    export_command = f"export PATH={install_path}/OpenROAD/bin"
-    export_command += f":{install_path}/yosys/bin:$PATH"
-    export_command += " && "
+    export_command = f"export OPENROAD_EXE={install_path}/OpenROAD/bin/openroad &&"
+    export_command += f" export YOSYS_EXE={install_path}/yosys/bin/yosys &&"
 
     make_command = export_command
     if args.memory_limit is not None:
@@ -610,28 +608,6 @@ def read_config(file_name, mode, algorithm):
     return config, sdc_file, fr_file
 
 
-def prepare_ray_server(args):
-    """
-    Prepares Ray server and returns basic directories.
-    """
-    # Connect to remote Ray server if any, otherwise will run locally
-    if args.server is not None:
-        # Connect to ray server before first remote execution.
-        ray.init(f"ray://{args.server}:{args.port}")
-        print("[INFO TUN-0001] Connected to Ray server.")
-    # Common variables used for local and remote runs.
-    orfs_dir = getattr(args, "orfs", None)
-    orfs_flow_dir = os.path.abspath(
-        os.path.join(orfs_dir, "flow")
-        if orfs_dir
-        else os.path.join(os.path.dirname(__file__), "../../../../flow")
-    )
-    local_dir = f"logs/{args.platform}/{args.design}"
-    local_dir = os.path.join(orfs_flow_dir, local_dir)
-    install_path = os.path.abspath(os.path.join(orfs_flow_dir, "../tools/install"))
-    return local_dir, orfs_flow_dir, install_path
-
-
 @ray.remote
 def openroad_distributed(
     args,
@@ -643,6 +619,8 @@ def openroad_distributed(
     variant=None,
 ):
     """Simple wrapper to run openroad distributed with Ray."""
+    if variant is None and len(config) != 1:
+        variant = "multiple-params"
     config = parse_config(
         config=config,
         base_dir=repo_dir,
@@ -655,11 +633,12 @@ def openroad_distributed(
     if variant is None:
         variant = config.replace(" ", "_").replace("=", "_")
     t = time.time()
+    id = time.strftime("%Y%m%d-%H%M%S") + "-" + str(uuid())[:4]
     metric_file = openroad(
         args=args,
         base_dir=repo_dir,
         parameters=config,
-        flow_variant=f"{uuid.uuid4()}-{variant}" if variant else f"{uuid.uuid4()}",
+        flow_variant=f"{id}-{variant}" if variant else id,
         install_path=install_path,
     )
     duration = time.time() - t
@@ -671,7 +650,7 @@ def consumer(queue):
     """consumer"""
     while not queue.empty():
         next_item = queue.get()
-        name = next_item[1]
+        name = next_item[2]
         print(f"[INFO TUN-0007] Scheduling run for parameter {name}.")
         ray.get(openroad_distributed.remote(*next_item))
         print(f"[INFO TUN-0008] Finished run for parameter {name}.")
