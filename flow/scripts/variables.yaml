@@ -1137,3 +1137,11 @@ OPENROAD_HIERARCHICAL:
   default: 0
   stages:
     - All stages
+MAX_REPAIR_TIMING_ITER:
+  description: >
+    Maximum number of iterations for repair setup and repair hold.
+  stages:
+    - cts
+    - floorplan
+    - grt
+    - place
