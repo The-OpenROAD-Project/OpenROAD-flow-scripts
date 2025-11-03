@@ -169,6 +169,7 @@ configuration file.
 | <a name="MATCH_CELL_FOOTPRINT"></a>MATCH_CELL_FOOTPRINT| Enforce sizing operations to only swap cells that have the same layout boundary.| 0|
 | <a name="MAX_REPAIR_ANTENNAS_ITER_DRT"></a>MAX_REPAIR_ANTENNAS_ITER_DRT| Defines the maximum number of iterations post-detailed routing repair antennas will run.| 5|
 | <a name="MAX_REPAIR_ANTENNAS_ITER_GRT"></a>MAX_REPAIR_ANTENNAS_ITER_GRT| Defines the maximum number of iterations post global routing repair antennas will run.| 5|
+| <a name="MAX_REPAIR_TIMING_ITER"></a>MAX_REPAIR_TIMING_ITER| Maximum number of iterations for repair setup and repair hold.| |
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.| |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| |
 | <a name="MIN_ROUTING_LAYER"></a>MIN_ROUTING_LAYER| The lowest metal layer name to be used in routing.| |
@@ -317,6 +318,7 @@ configuration file.
 - [MACRO_WRAPPERS](#MACRO_WRAPPERS)
 - [MAKE_TRACKS](#MAKE_TRACKS)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
+- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [PDN_TCL](#PDN_TCL)
@@ -372,6 +374,7 @@ configuration file.
 - [IO_PLACER_H](#IO_PLACER_H)
 - [IO_PLACER_V](#IO_PLACER_V)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
+- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [PLACE_DENSITY](#PLACE_DENSITY)
@@ -396,6 +399,7 @@ configuration file.
 - [EQUIVALENCE_CHECK](#EQUIVALENCE_CHECK)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
+- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [POST_CTS_TCL](#POST_CTS_TCL)
 - [REMOVE_CELLS_FOR_EQY](#REMOVE_CELLS_FOR_EQY)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
@@ -417,6 +421,7 @@ configuration file.
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [MAX_REPAIR_ANTENNAS_ITER_GRT](#MAX_REPAIR_ANTENNAS_ITER_GRT)
+- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [PRE_GLOBAL_ROUTE_TCL](#PRE_GLOBAL_ROUTE_TCL)
