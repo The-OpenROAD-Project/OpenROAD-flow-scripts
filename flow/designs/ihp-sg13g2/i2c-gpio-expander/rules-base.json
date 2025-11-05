@@ -97,7 +97,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 965,
+        "value": 953,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -105,11 +105,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 84,
+        "value": 83,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 84,
+        "value": 83,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -197,7 +197,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 135675,
+        "value": 42034,
         "compare": "<="
     }
 }
