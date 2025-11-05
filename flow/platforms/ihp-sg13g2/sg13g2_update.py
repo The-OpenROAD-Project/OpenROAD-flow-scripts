@@ -72,6 +72,7 @@ sram_lib_corners = [
 # Klayout
 download_github_file("ihp-sg13g2/libs.tech/klayout/tech/sg13g2.lyp")
 download_github_file("ihp-sg13g2/libs.tech/klayout/tech/sg13g2.lyt")
+download_github_file("ihp-sg13g2/libs.tech/klayout/tech/sg13g2.map")
 download_github_file("ihp-sg13g2/libs.tech/klayout/tech/drc/sg13g2_minimal.lydrc", "drc")
 download_github_file("ihp-sg13g2/libs.tech/klayout/tech/drc/sg13g2_maximal.lydrc", "drc")
 # LIB
