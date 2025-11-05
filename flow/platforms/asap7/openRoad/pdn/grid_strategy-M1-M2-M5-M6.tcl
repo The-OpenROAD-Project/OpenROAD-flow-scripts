@@ -29,11 +29,11 @@ add_pdn_connect -grid {top} -layers {M5 M6}
 # grid for: CORE_macro_grid_1
 ####################################
 define_pdn_grid -name {CORE_macro_grid_1} -voltage_domains {CORE} -macro \
-  -orient {R0 R180 MX MY} -halo {2.0 2.0 2.0 2.0} -cells {.*}
+  -orient {R0 R180 MX MY} -halo {2.0 2.0 2.0 2.0} -default
 add_pdn_connect -grid {CORE_macro_grid_1} -layers {M4 M5}
 ####################################
 # grid for: CORE_macro_grid_2
 ####################################
 define_pdn_grid -name {CORE_macro_grid_2} -voltage_domains {CORE} -macro \
-  -orient {R90 R270 MXR90 MYR90} -halo {2.0 2.0 2.0 2.0} -cells {.*}
+  -orient {R90 R270 MXR90 MYR90} -halo {2.0 2.0 2.0 2.0} -default
 add_pdn_connect -grid {CORE_macro_grid_2} -layers {M4 M5}
