@@ -142,7 +142,9 @@ if { [env_var_equals REMOVE_ABC_BUFFERS 1] } {
   # Skip clone & split
   set ::env(SETUP_MOVE_SEQUENCE) "unbuffer,sizeup,swap,buffer,vt_swap"
   set ::env(SKIP_LAST_GASP) 1
-  repair_timing_helper -setup
+  set additional_args_repair_timing ""
+  append_env_var additional_args_repair_timing MAX_REPAIR_TIMING_ITER -max_iterations 1
+  repair_timing_helper -setup {*}$additional_args_repair_timing
 }
 
 puts "Default units for flow"
@@ -365,7 +367,12 @@ set_placement_padding -global \
 
 puts "Repair setup and hold violations"
 estimate_parasitics -placement
-log_cmd repair_timing -repair_tns $::env(TNS_END_PERCENT)
+
+set additional_args_repair_timing ""
+append_env_var additional_args_repair_timing MAX_REPAIR_TIMING_ITER -max_iterations 1
+
+log_cmd repair_timing -repair_tns $::env(TNS_END_PERCENT) \
+  {*}$additional_args_repair_timing
 
 # Legalize placement after timing repair
 detailed_placement
