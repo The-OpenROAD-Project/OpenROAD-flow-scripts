@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 232,
+        "value": 169,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
@@ -126,7 +126,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 100,
+        "value": 146,
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {

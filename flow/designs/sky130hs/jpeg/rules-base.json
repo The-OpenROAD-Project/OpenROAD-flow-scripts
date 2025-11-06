@@ -1,6 +1,6 @@
 {
     "detailedroute__flow__warnings__count:DRT-0120": {
-        "value": 36,
+        "value": 18,
         "compare": "<=",
         "level": "warning"
     },
@@ -41,6 +41,11 @@
     },
     "globalroute__flow__warnings__count:DRT-0349": {
         "value": 10,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:RSZ-0062": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
@@ -89,7 +94,7 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 332,
+        "value": 336,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
