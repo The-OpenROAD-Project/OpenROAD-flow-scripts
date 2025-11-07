@@ -58,7 +58,8 @@ if { !$::env(SYNTH_HIERARCHICAL) } {
 
 if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
   memory_collect
-  foreach path [tee -q -s result.string select -list t:\$mem_v2] {
+  set select [tee -q -s result.string select -list t:\$mem_v2]
+  foreach path [split [string trim $select] "\n"] {
     set index [string first "/" $path]
     set module [string range $path 0 [expr {$index - 1}]]
     set instance [string range $path [expr {$index + 1}] end]
