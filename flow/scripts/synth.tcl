@@ -59,6 +59,7 @@ if { !$::env(SYNTH_HIERARCHICAL) } {
 if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
   memory_collect
   set select [tee -q -s result.string select -list t:\$mem_v2]
+  set report_file [open $::env(REPORTS_DIR)/synth_mocked_memories.txt "w"]
   foreach path [split [string trim $select] "\n"] {
     set index [string first "/" $path]
     set module [string range $path 0 [expr { $index - 1 }]]
@@ -71,8 +72,15 @@ if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
     if { $nbits > $::env(SYNTH_MEMORY_MAX_BITS) } {
       rtlil::set_param -uint $module $instance SIZE 1
       puts "Shrunk memory $path from $size rows to 1"
+      puts -nonewline $report_file "$module:\n  width: $width\n  size: $size\n"
+      if { $::env(SYNTH_KEEP_MOCKED_MEMORIES) } {
+        select -module $module
+        setattr -mod -set keep_hierarchy 1
+        select -clear
+      }
     }
   }
+  close $report_file
 }
 
 json -o $::env(RESULTS_DIR)/mem.json

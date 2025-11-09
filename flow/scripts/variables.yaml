@@ -186,7 +186,15 @@ SYNTH_MEMORY_MAX_BITS:
     - synth
 SYNTH_MOCK_LARGE_MEMORIES:
   description: >
-    Reduce memories larger than SYNTH_MEMORY_MAX_BITS to 1 row.
+    Reduce Yosys inferred memories larger than SYNTH_MEMORY_MAX_BITS to 1 row.
+
+    Yosys will generally infer memories from behavioral Verilog code, whether
+    the memories are in standalone modules or instantiated within some
+    larger module.
+
+    fakeram and empty Verilog memories(blackboxes) of memories will not
+    be inferred memories by Yosys and are therefore not affected by
+    this variable.
 
     This is useful and convenient to separate the concern of instantiating
     and placing memories from investigating other issues with a design,
@@ -200,11 +208,32 @@ SYNTH_MOCK_LARGE_MEMORIES:
     Large port memories, typically register files, will still have the
     retain a lot of the port logic that can be useful to investigate issues.
 
-    Consider using SYNTH_KEEP_MODULES to keep the modules of the mocked
-    memories so that code outside the mocked memories is not
-    optimized as a consequence of mocking a memory, yielding better insight
-    into issues running the rest of the design through the ORFS flow.
+    This can be especially useful during development of designs where the
+    behavioral model comes first and suitable memories are matched up
+    when the design RTL is stable.
+
+    A typical use case would be Chisel which will generate a behavioral model
+    for a memories with the required clocks, ports, etc. in addition to a
+    computer readable file with the specification of the memories that
+    is used to
+    [automatically](https://chipyard.readthedocs.io/en/stable/Tools/Barstools.html/)
+    match up suitable memory macros later in the flow.
+
+    During an architectural screening study, a large range of memory
+    configurations can be investigated quickly with this option,
+    without getting bogged down in the concern of how to realize the
+    memories in silicon for emphemral RTL configurations that exist
+    only long enough to run through the ORFS flow to create a table
+    of some characteristics of a design configuration.
   default: 0
+  stages:
+    - synth
+SYNTH_KEEP_MOCKED_MEMORIES:
+  description: >
+    Keeping the mocked memories(not flattening them), preserves some of
+    the access logic complexity and avoids optimizations outside
+    of the mocked memory.
+  default: 1
   stages:
     - synth
 SYNTH_HDL_FRONTEND:
