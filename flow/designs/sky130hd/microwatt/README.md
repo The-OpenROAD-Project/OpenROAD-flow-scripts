@@ -169,6 +169,18 @@ Path Type: max
           -2.13   slack (VIOLATED)
 ```
 
+## Histogram of mocked memories
+
+It can be useful to look at the Endpoint Slack Histogram of mocked memories to examine if some of the paths are overly optimistic with a single row mocked memory or if the paths through the memory has problems even with a single row memory:
+
+Create a path group for the memories in question:
+
+    group_path -through *decode1_0* -name mocked
+
+Now that path group is in the dropdown in the Endpoint Slack Histogram:
+
+![Mocked memory Endpoint Slack Histogram](mocked-histogram.png)
+
 ## Conclusion
 
 Above there's no visible difference in the Endpoint Slack histogram for the two approaches. In other words, the design doesn't appear to be terribly sensitive to how RAMs are mocked, other factors dominate and merit further investigation.
