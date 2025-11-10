@@ -184,6 +184,12 @@ SYNTH_HDL_FRONTEND:
     command.
   stages:
     - synth
+SYNTH_SLANG_ARGS:
+  description: >
+    Additional arguments passed to the slang frontend during synthesis.
+  stages:
+    - synth
+  default: ""
 SYNTH_BLACKBOXES:
   description: >
     List of cells treated as a black box by Yosys. With Bazel, this can be used

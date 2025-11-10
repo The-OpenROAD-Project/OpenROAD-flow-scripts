@@ -29,3 +29,5 @@ export SKIP_LAST_GASP      ?= 1
 
 export CELL_PAD_IN_SITES_GLOBAL_PLACEMENT = 0
 export CELL_PAD_IN_SITES_DETAIL_PLACEMENT = 0
+
+export SYNTH_SLANG_ARGS = --no-implicit-memories
