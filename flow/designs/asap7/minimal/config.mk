@@ -15,9 +15,11 @@ export CORE_UTILIZATION ?= 10
 export PLACE_DENSITY ?= 0.20
 
 # This won't work with an empty .sdc file
-export SKIP_REPORT_METRICS = 1
+export SKIP_REPORT_METRICS ?= 1
 
 # Faster build, remove these in your own config.mk
-export SKIP_CTS_REPAIR_TIMING = 1
-export REMOVE_ABC_BUFFERS = 1
-export SKIP_INCREMENTAL_REPAIR = 1
+export SKIP_CTS_REPAIR_TIMING ?= 1
+export REMOVE_ABC_BUFFERS ?= 1
+export SKIP_INCREMENTAL_REPAIR ?= 1
+export GPL_TIMING_DRIVEN ?= 0
+export GPL_ROUTING_DRIVEN ?= 0
