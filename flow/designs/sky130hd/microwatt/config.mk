@@ -36,7 +36,15 @@ export SETUP_SLACK_MARGIN = 0.2
 # GRT non-default config
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/fastroute.tcl
 
-# This is high, some SRAMs should probably be converted
-# to real SRAMs and not instantiated as flops
-export SYNTH_MEMORY_MAX_BITS = 42000
-
+ifeq ($(SYNTH_MOCK_LARGE_MEMORIES),1)
+    # ca. 3 minutes to run make synth
+    #
+    # These module names comes from the error report when setting SYNTH_MEMORY_MAX_BITS=2048
+    # and SYNTH_MOCK_LARGE_MEMORIES=0
+    #
+    # The goal is to run through the flow quickly to learn what we can
+    # about the design without getting bogged down in memory issues.
+    export SYNTH_MEMORY_MAX_BITS ?= 1024
+else
+    export SYNTH_MEMORY_MAX_BITS ?= 42000
+endif
