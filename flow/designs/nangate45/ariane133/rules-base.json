@@ -1,6 +1,6 @@
 {
     "detailedroute__flow__warnings__count:DRT-0120": {
-        "value": 11,
+        "value": 12,
         "compare": "<=",
         "level": "warning"
     },
@@ -25,7 +25,7 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-0120": {
-        "value": 11,
+        "value": 12,
         "compare": "<=",
         "level": "warning"
     },
@@ -135,7 +135,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -88.9,
+        "value": -107.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
