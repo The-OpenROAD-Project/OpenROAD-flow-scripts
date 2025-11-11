@@ -13,9 +13,14 @@ the Verilog files do not have to be located in the OpenROAD-flow-scripts
 git repository, adjust the VERILOG_FILES argument to point to your Verilog
 files:
 
-```
-make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" clean_synth synth gui_synth
-```
+1. Clean and run flow through synthesis
+   ```
+   make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" clean_all synth do-1_3_synth
+   ```
+2. Bring up GUI for synthesis.
+   ```
+   make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" gui_synth
+   ```
 
 Where, the exploratory config.mk file to be replaced
 by a design specific config.mk file is:
@@ -36,11 +41,13 @@ The Verilog top module name is specified by:
 DESIGN_NAME=aes_cipher_top
 ```
 
-Synthesis cleaned and re-run by:
+The entire flow is cleaned and synthesis re-run by:
 
 ```
-clean_synth synth
+clean_all synth do-1_3_synth
 ```
+
+`do-1_3_synth` is an unconditional(no dependencies) make target that converts the synthesis Verilog netlist to an .odb file so that the `gui_synth` target is available to view the synthesis result in the OpenROAD GUI. The `gui_...` targets are created dynamically based on the existence of the corresponding .odb files, which is why you can get an error message if you specify `gui_...` on a make command line when the .odb file doesn't exist, even if your command is building the .odb file.
 
 The GUI is opened by the makefile target:
 
@@ -60,13 +67,15 @@ area required for the default placement density.
 Next to iterate on floorplan settings:
 
 ```
-make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" clean_floorplan floorplan gui_floorplan
+make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" clean_floorplan floorplan
+```
+
+```
+make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" gui_floorplan
 ```
 
 A few more things can be learned from looking at this minimal floorplan:
 
-- The pins are placed randomly on the edges and at least there
-  is enough space on the edges to fit the top level pins
 - Check that the floorplan size is not completely unreasonable and
   at least there is a chance that this design could go through
   placement with this density.
@@ -78,7 +87,8 @@ A few more things can be learned from looking at this minimal floorplan:
 Next to iterate on placement settings:
 
 ```
-make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" clean_place place gui_place
+make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" clean_place place
+make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" gui_place
 ```
 
 ![Alt text](gui_place_heatmap.png)
@@ -91,11 +101,12 @@ file can be learned:
 - Examine estimated routing congestion to get a sense if there
   is a chance that the design can be routed.
 - Get a sense of size and location of modules
+- The pins are on the edges and at least there
+  is enough space on the edges to fit the top level pins
 
 ## CTS(Clock tree Synthesis)
 
-After placement, CTS (clock tree synthesis is run). However the minimal design does
-not have a clock, so CTS runs quickly, but does nothing.
+After placement, CTS (clock tree synthesis is run). However the minimal design does not have a clock, so CTS runs quickly, but does nothing.
 
 ## `make gui_grt` OpenROAD GUI information
 
@@ -103,7 +114,8 @@ For non-trivial designs, some more work will need to be done in floorplan and
 placement before there is a chance that global routing will complete:
 
 ```
-make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" clean_place place gui_place
+make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" clean_grt grt
+make DESIGN_CONFIG=designs/asap7/minimal/config.mk DESIGN_NAME=aes_cipher_top VERILOG_FILES="$(ls designs/src/aes/*.v | xargs)" gui_grt
 ```
 
 ![Alt text](gui_grt.png)
