@@ -1,5 +1,5 @@
 export DESIGN_NICKNAME = minimal
-export SDC_FILE = $(FLOW_HOME)/designs/asap7/minimal/empty.sdc
+export SDC_FILE ?= $(FLOW_HOME)/designs/asap7/minimal/empty.sdc
 export PLATFORM = asap7
 # Faster build and more information in GUI with hierarchical synthesis
 export SYNTH_HIERARCHICAL ?= 1
