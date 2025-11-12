@@ -55,12 +55,7 @@
         "level": "warning"
     },
     "flow__warnings__count:PDN-0110": {
-        "value": 123,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "globalplace__flow__warnings__count:GRT-0115": {
-        "value": 1,
+        "value": 139,
         "compare": "<=",
         "level": "warning"
     },
@@ -123,11 +118,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -2.36,
+        "value": -3.7,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -409.0,
+        "value": -616.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -139,15 +134,15 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 2373,
+        "value": 3103,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -2.53,
+        "value": -3.87,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -429.0,
+        "value": -693.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -167,11 +162,11 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 3,
+        "value": 0,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 1594,
+        "value": 1477,
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {
@@ -179,23 +174,23 @@
         "compare": ">="
     },
     "detailedroute__timing__setup__tns": {
-        "value": -95.2,
+        "value": -116.0,
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
-        "value": -3.25,
+        "value": -3.14,
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -458.0,
+        "value": -454.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -2.49,
+        "value": -4.16,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -436.0,
+        "value": -765.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

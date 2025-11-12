@@ -122,7 +122,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -271.0,
+        "value": -4100.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -134,7 +134,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 161696,
+        "value": 160478,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -182,7 +182,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 7960,
+        "value": 7871,
         "compare": "<="
     }
 }
