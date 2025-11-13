@@ -397,6 +397,11 @@ DONT_BUFFER_PORTS:
   stages:
     - place
   default: 0
+BUFFER_PORTS_DONT_USE_CELLS:
+  description: >
+    List of cells that should not be used for buffering of input/output ports during floorplanning.
+  stages:
+    - place
 REMOVE_ABC_BUFFERS:
   description: >
     Remove abc buffers from the netlist. If timing repair in floorplanning is
