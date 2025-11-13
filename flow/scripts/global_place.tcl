@@ -5,6 +5,11 @@ load_design 3_2_place_iop.odb 2_floorplan.sdc
 
 set_dont_use $::env(DONT_USE_CELLS)
 
+# Also set dont_use for cells that should not be used for port buffering
+if { [env_var_exists_and_non_empty BUFFER_PORTS_DONT_USE_CELLS] } {
+  set_dont_use $::env(BUFFER_PORTS_DONT_USE_CELLS)
+}
+
 if { $::env(GPL_TIMING_DRIVEN) } {
   remove_buffers
 }
@@ -18,6 +23,13 @@ if { ![env_var_exists_and_non_empty FOOTPRINT] } {
     puts "Perform port buffering..."
     buffer_ports
   }
+}
+
+if { [env_var_exists_and_non_empty BUFFER_PORTS_DONT_USE_CELLS] } {
+  # Unset dont_use for cells that should not be used for port buffering
+  unset_dont_use $::env(BUFFER_PORTS_DONT_USE_CELLS)
+  # ...but set dont_use cells again in case any cells are in both BUFFER_PORTS_DONT_USE_CELLS and DONT_USE_CELLS
+  set_dont_use $::env(DONT_USE_CELLS)
 }
 
 set global_placement_args {}
