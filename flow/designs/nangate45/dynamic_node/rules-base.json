@@ -29,8 +29,8 @@
         "compare": "<=",
         "level": "warning"
     },
-    "flow__warnings__count:PDN-1041": {
-        "value": 270,
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },

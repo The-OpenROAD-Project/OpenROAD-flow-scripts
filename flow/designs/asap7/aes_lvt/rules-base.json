@@ -49,11 +49,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "flow__warnings__count:PDN-1041": {
-        "value": 424,
-        "compare": "<=",
-        "level": "warning"
-    },
     "flow__warnings__count:STA-1212": {
         "value": 1001,
         "compare": "<=",

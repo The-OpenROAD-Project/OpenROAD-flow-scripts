@@ -59,13 +59,13 @@
         "compare": "<=",
         "level": "warning"
     },
-    "flow__warnings__count:PDN-1041": {
-        "value": 424,
+    "flow__warnings__count:STA-1212": {
+        "value": 1001,
         "compare": "<=",
         "level": "warning"
     },
-    "flow__warnings__count:STA-1212": {
-        "value": 1001,
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
