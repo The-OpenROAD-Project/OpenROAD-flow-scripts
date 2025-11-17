@@ -397,6 +397,11 @@ DONT_BUFFER_PORTS:
   stages:
     - place
   default: 0
+BUFFER_PORTS_ARGS:
+  description: >
+    Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.
+  stages:
+    - place
 REMOVE_ABC_BUFFERS:
   description: >
     Remove abc buffers from the netlist. If timing repair in floorplanning is
