@@ -102,6 +102,7 @@ configuration file.
 | <a name="ADDITIONAL_LIBS"></a>ADDITIONAL_LIBS| Hardened macro library files listed here. The library information is immutable and used throughout all stages. Not stored in the .odb file.| |
 | <a name="BALANCE_ROWS"></a>BALANCE_ROWS| Balance rows during placement.| 0|
 | <a name="BLOCKS"></a>BLOCKS| Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by Makefile.| |
+| <a name="BUFFER_PORTS_ARGS"></a>BUFFER_PORTS_ARGS| Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.| |
 | <a name="CAP_MARGIN"></a>CAP_MARGIN| Specifies a capacitance margin when fixing max capacitance violations. This option allows you to overfix.| |
 | <a name="CDL_FILES"></a>CDL_FILES| Insert additional Circuit Description Language (`.cdl`) netlist files.| |
 | <a name="CELL_PAD_IN_SITES_DETAIL_PLACEMENT"></a>CELL_PAD_IN_SITES_DETAIL_PLACEMENT| Cell padding on both sides in site widths to ease routability in detail placement.| 0|
@@ -129,7 +130,6 @@ configuration file.
 | <a name="DFF_LIB_FILES"></a>DFF_LIB_FILES| Technology mapping liberty files for flip-flops.| |
 | <a name="DIE_AREA"></a>DIE_AREA| The die area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2).| |
 | <a name="DONT_BUFFER_PORTS"></a>DONT_BUFFER_PORTS| Do not buffer input/output ports during floorplanning.| 0|
-| <a name="BUFFER_PORTS_ARGS"></a>BUFFER_PORTS_ARGS| Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.| |
 | <a name="DONT_USE_CELLS"></a>DONT_USE_CELLS| Dont use cells eases pin access in detailed routing.| |
 | <a name="DPO_MAX_DISPLACEMENT"></a>DPO_MAX_DISPLACEMENT| Specifies how far an instance can be moved when optimizing.| 5 1|
 | <a name="EARLY_SIZING_CAP_RATIO"></a>EARLY_SIZING_CAP_RATIO| Ratio between the input pin capacitance and the output pin load during initial gate sizing.| |
@@ -370,6 +370,7 @@ configuration file.
 ## place variables
 
 - [BALANCE_ROWS](#BALANCE_ROWS)
+- [BUFFER_PORTS_ARGS](#BUFFER_PORTS_ARGS)
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [CELL_PAD_IN_SITES_GLOBAL_PLACEMENT](#CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 - [CLUSTER_FLOPS](#CLUSTER_FLOPS)
