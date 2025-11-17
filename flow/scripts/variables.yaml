@@ -399,7 +399,7 @@ DONT_BUFFER_PORTS:
   default: 0
 BUFFER_PORTS_ARGS:
   description: >
-    Specify arguments (such as -buffer_cell) to the buffer_ports call during placement.
+    Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.
   stages:
     - place
 REMOVE_ABC_BUFFERS:
