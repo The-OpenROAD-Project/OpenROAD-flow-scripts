@@ -1,9 +1,4 @@
 {
-    "cts__flow__warnings__count:RSZ-0062": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "detailedroute__flow__warnings__count:DRT-0349": {
         "value": 8,
         "compare": "<=",
@@ -34,13 +29,13 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:DRT-0349": {
-        "value": 8,
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:RSZ-0062": {
-        "value": 1,
+    "globalroute__flow__warnings__count:DRT-0349": {
+        "value": 8,
         "compare": "<=",
         "level": "warning"
     },

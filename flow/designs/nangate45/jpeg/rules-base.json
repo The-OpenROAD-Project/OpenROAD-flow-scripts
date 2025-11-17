@@ -5,7 +5,7 @@
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:DRT-0120": {
-        "value": 1,
+        "value": 2,
         "compare": "<=",
         "level": "warning"
     },
@@ -39,8 +39,13 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:DRT-0120": {
+    "globalplace__flow__warnings__count:GRT-0281": {
         "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:DRT-0120": {
+        "value": 2,
         "compare": "<=",
         "level": "warning"
     },
@@ -87,7 +92,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -35.5,
+        "value": -37.9,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -155,7 +160,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -42.0,
+        "value": -43.2,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

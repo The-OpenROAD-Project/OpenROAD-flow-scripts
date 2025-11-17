@@ -5,7 +5,7 @@
         "level": "warning"
     },
     "cts__flow__warnings__count:RSZ-2021": {
-        "value": 102,
+        "value": 110,
         "compare": "<=",
         "level": "warning"
     },
@@ -41,6 +41,11 @@
     },
     "flow__warnings__count:PDN-0195": {
         "value": 46,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },

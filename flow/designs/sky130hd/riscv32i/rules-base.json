@@ -4,6 +4,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "detailedroute__flow__warnings__count:DRT-0120": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
     "detailedroute__flow__warnings__count:DRT-0349": {
         "value": 10,
         "compare": "<=",
@@ -19,7 +24,12 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalplace__flow__warnings__count:GRT-0115": {
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:DRT-0120": {
         "value": 1,
         "compare": "<=",
         "level": "warning"

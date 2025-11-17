@@ -24,6 +24,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalroute__flow__warnings__count:GRT-0246": {
         "value": 1,
         "compare": "<=",

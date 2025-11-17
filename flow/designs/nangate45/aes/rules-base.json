@@ -1,4 +1,9 @@
 {
+    "cts__flow__warnings__count:RSZ-0062": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "detailedroute__flow__warnings__count:GRT-0246": {
         "value": 1,
         "compare": "<=",
@@ -21,11 +26,6 @@
     },
     "floorplan__flow__warnings__count:RSZ-0075": {
         "value": 1001,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "flow__warnings__count:PDN-1041": {
-        "value": 270,
         "compare": "<=",
         "level": "warning"
     },
