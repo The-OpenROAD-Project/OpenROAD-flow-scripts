@@ -55,18 +55,22 @@ node {
         buildBins(DOCKER_IMAGE, '--local --no_init --latest');
     }
 
-    stage('Run Tests') {
-        if (env.CHANGE_BRANCH && env.CHANGE_BRANCH.contains('ci-dev')) {
-            runTests(DOCKER_IMAGE, 'dev');
-        } else {
-            runTests(DOCKER_IMAGE, 'nightly');
+    try {
+        stage('Run Tests') {
+            if (env.CHANGE_BRANCH && env.CHANGE_BRANCH.contains('ci-dev')) {
+                runTests(DOCKER_IMAGE, 'dev');
+            } else {
+                runTests(DOCKER_IMAGE, 'nightly');
+            }
         }
-    }
-
-    stage ('Cleanup and Reporting') {
-        env.CHANGE_BRANCH = 'nightly'
-        env.BRANCH_NAME = 'nightly'
-        finalReport(DOCKER_IMAGE);
+    } catch (e) {
+        throw e
+    } finally {
+        stage ('Cleanup and Reporting') {
+            env.CHANGE_BRANCH = 'nightly'
+            env.BRANCH_NAME = 'nightly'
+            finalReport(DOCKER_IMAGE);
+        }
     }
 
 }
