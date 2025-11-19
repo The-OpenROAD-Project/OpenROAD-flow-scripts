@@ -2,7 +2,7 @@
 set sdc_version 1.4
 current_design hercules_is_int
 
-set clk_period 250
+set clk_period 0.250
 
 set_max_fanout 32 [current_design]
 set_load 10 [all_outputs]

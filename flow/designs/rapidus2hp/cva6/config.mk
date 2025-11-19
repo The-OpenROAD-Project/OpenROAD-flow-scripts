@@ -89,7 +89,11 @@ export ADDITIONAL_LIBS += $(PLATFORM_DIR)/ram/lib/sacrls0g0d1p64x128m2b1w0c1p0d0
 			 $(PLATFORM_DIR)/ram/lib/sacrls0g0d1p64x28m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lib \
 			 $(PLATFORM_DIR)/ram/lib/sacrls0g0d1p64x25m2b1w0c1p0d0i0s0cr0rr0rm4rw00ms0.lib
 
-export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
+ifeq ($(RAPIDUS_PDK_VERSION),)
+  export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint_ps.sdc
+else
+  export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
+endif
 
 # Must be defined before the ifeq's
 export SYNTH_HDL_FRONTEND  = slang

@@ -14,9 +14,17 @@ export SYNTH_HDL_FRONTEND = slang
 # if FLOW_VARIANT == pos_slack, use an SDC file that has a larger clock
 # resulting in positive slack
 ifeq ($(FLOW_VARIANT),pos_slack)
-export SDC_FILE              = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_pos_slack.sdc
+  ifeq ($(RAPIDUS_PDK_VERSION),)
+    export SDC_FILE              = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_pos_slack_ps.sdc
+  else
+    export SDC_FILE              = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_pos_slack.sdc
+  endif
 else
-export SDC_FILE              = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+  ifeq ($(RAPIDUS_PDK_VERSION),)
+    export SDC_FILE              = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_ps.sdc
+  else
+    export SDC_FILE              = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+  endif
 endif
 
 export CORE_UTILIZATION        = 70

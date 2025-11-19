@@ -11,7 +11,11 @@ export VERILOG_INCLUDE_DIRS =  $(SRC_HOME)/hercules_idecode/verilog \
 	$(SRC_HOME)/shared/verilog \
 	$(SRC_HOME)/models/cells/generic
 
-export SDC_FILE             = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/prects.sdc
+ifeq ($(RAPIDUS_PDK_VERSION),)
+  export SDC_FILE             = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/prects_ps.sdc
+else
+  export SDC_FILE             = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/prects.sdc
+endif
 
 export SYNTH_HDL_FRONTEND  ?= slang
 ifeq ($(SYNTH_HDL_FRONTEND), slang)
