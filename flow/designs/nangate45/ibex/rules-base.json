@@ -24,6 +24,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "floorplan__flow__warnings__count:RSZ-0062": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "floorplan__flow__warnings__count:RSZ-0075": {
         "value": 191,
         "compare": "<=",

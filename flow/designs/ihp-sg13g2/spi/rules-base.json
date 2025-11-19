@@ -19,16 +19,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:RSZ-0062": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:RSZ-0075": {
-        "value": 25,
-        "compare": "<=",
-        "level": "warning"
-    },
     "flow__warnings__count:FIN-0010": {
         "value": 12,
         "compare": "<=",
@@ -36,11 +26,6 @@
     },
     "globalroute__flow__warnings__count:DRT-0349": {
         "value": 10,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "globalroute__flow__warnings__count:RSZ-0062": {
-        "value": 1,
         "compare": "<=",
         "level": "warning"
     },

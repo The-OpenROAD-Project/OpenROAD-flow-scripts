@@ -59,6 +59,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalroute__flow__warnings__count:DRT-0120": {
         "value": 2,
         "compare": "<=",
@@ -142,7 +147,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -10200.0,
+        "value": -10300.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -190,7 +195,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -10400.0,
+        "value": -12500.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

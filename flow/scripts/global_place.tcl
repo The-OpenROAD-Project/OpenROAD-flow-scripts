@@ -16,7 +16,7 @@ if { $::env(GPL_TIMING_DRIVEN) } {
 if { ![env_var_exists_and_non_empty FOOTPRINT] } {
   if { !$::env(DONT_BUFFER_PORTS) } {
     puts "Perform port buffering..."
-    buffer_ports
+    buffer_ports {*}[env_var_or_empty BUFFER_PORTS_ARGS]
   }
 }
 

@@ -29,12 +29,7 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalplace__flow__warnings__count:GRT-0115": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "globalplace__flow__warnings__count:GRT-0704": {
+    "globalplace__flow__warnings__count:GRT-0281": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
@@ -150,7 +145,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -38.3,
+        "value": -39.1,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

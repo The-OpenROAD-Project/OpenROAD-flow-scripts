@@ -4,6 +4,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "detailedroute__flow__warnings__count:GRT-0243": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "finish__flow__warnings__count:GUI-0076": {
         "value": 1,
         "compare": "<=",
@@ -16,11 +21,6 @@
     },
     "globalroute__flow__warnings__count:DRT-0349": {
         "value": 10,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "globalroute__flow__warnings__count:RSZ-0062": {
-        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
