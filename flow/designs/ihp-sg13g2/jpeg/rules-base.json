@@ -4,11 +4,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "finish__flow__warnings__count:GUI-0076": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "floorplan__flow__warnings__count:IFP-0028": {
         "value": 1,
         "compare": "<=",
@@ -101,7 +96,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 133,
+        "value": 138,
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {

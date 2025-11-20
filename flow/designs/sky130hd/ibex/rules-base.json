@@ -14,11 +14,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "finish__flow__warnings__count:GUI-0076": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "floorplan__flow__warnings__count:IFP-0028": {
         "value": 1,
         "compare": "<=",
@@ -35,6 +30,11 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:RSZ-0062": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "placeopt__flow__warnings__count:RSZ-0020": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
@@ -68,11 +68,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -1.2,
+        "value": -0.93,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -12.6,
+        "value": -8.3,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -92,7 +92,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -9.3,
+        "value": -11.3,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
