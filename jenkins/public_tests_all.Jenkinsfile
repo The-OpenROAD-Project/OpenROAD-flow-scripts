@@ -52,16 +52,20 @@ node {
         buildBins(DOCKER_IMAGE);
     }
 
-    stage('Run Tests') {
-        if (env.CHANGE_BRANCH && env.CHANGE_BRANCH.contains('ci-dev')) {
-            runTests(DOCKER_IMAGE, 'dev');
-        } else {
-            runTests(DOCKER_IMAGE, 'pr');
+    try {
+        stage('Run Tests') {
+            if (env.CHANGE_BRANCH && env.CHANGE_BRANCH.contains('ci-dev')) {
+                runTests(DOCKER_IMAGE, 'dev');
+            } else {
+                runTests(DOCKER_IMAGE, 'pr');
+            }
         }
-    }
-
-    stage ('Cleanup and Reporting') {
-        finalReport(DOCKER_IMAGE);
+    } catch (e) {
+        throw e
+    } finally {
+        stage ('Cleanup and Reporting') {
+            finalReport(DOCKER_IMAGE);
+        }
     }
 
 }
