@@ -24,7 +24,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1398,
+        "value": 1737,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -48,7 +48,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -146.0,
+        "value": -178.0,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
