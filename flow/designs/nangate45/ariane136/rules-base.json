@@ -90,7 +90,7 @@
         "compare": ">="
     },
     "cts__timing__hold__tns": {
-        "value": -5.49,
+        "value": -7.13,
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {

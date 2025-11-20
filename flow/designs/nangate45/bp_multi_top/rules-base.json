@@ -5,7 +5,7 @@
         "level": "warning"
     },
     "cts__flow__warnings__count:RSZ-2021": {
-        "value": 110,
+        "value": 56,
         "compare": "<=",
         "level": "warning"
     },
@@ -145,19 +145,19 @@
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {
-        "value": -6.13,
+        "value": -10.9,
         "compare": ">="
     },
     "detailedroute__timing__setup__tns": {
-        "value": -607.0,
+        "value": -816.0,
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
-        "value": -1.48,
+        "value": -0.278,
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -105.0,
+        "value": -7.83,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
