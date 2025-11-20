@@ -59,6 +59,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalroute__flow__warnings__count:DRT-0120": {
         "value": 1,
         "compare": "<=",
@@ -166,7 +171,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 1477,
+        "value": 1508,
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {

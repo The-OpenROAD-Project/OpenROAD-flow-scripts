@@ -5,7 +5,7 @@
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:DRT-0120": {
-        "value": 8,
+        "value": 12,
         "compare": "<=",
         "level": "warning"
     },

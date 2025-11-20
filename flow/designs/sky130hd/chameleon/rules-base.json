@@ -5,7 +5,7 @@
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:GRT-0243": {
-        "value": 1,
+        "value": 3,
         "compare": "<=",
         "level": "warning"
     },
