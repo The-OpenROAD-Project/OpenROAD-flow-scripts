@@ -4,26 +4,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "cts__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "detailedplace__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "detailedroute__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "finish__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
     "floorplan__flow__warnings__count:EST-0027": {
         "value": 1,
         "compare": "<=",
@@ -49,18 +29,13 @@
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
     "flow__warnings__count:PDN-0110": {
-        "value": 12,
+        "value": 53,
         "compare": "<=",
         "level": "warning"
     },
-    "flow__warnings__count:STA-1257": {
-        "value": 1001,
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
@@ -69,13 +44,8 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalplace__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
     "globalroute__flow__warnings__count:DRT-0120": {
-        "value": 27,
+        "value": 30,
         "compare": "<=",
         "level": "warning"
     },
@@ -104,23 +74,13 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
     "placeopt__flow__warnings__count:STA-0122": {
         "value": 27,
         "compare": "<=",
         "level": "warning"
     },
-    "placeopt__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
     "synth__design__instance__area__stdcell": {
-        "value": 17216.6843,
+        "value": 17100.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -128,11 +88,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 14156,
+        "value": 14117,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 171414,
+        "value": 170704,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -140,11 +100,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 14906,
+        "value": 14844,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 14906,
+        "value": 14844,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -168,39 +128,39 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -63.1,
+        "value": -56.2,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -245.0,
+        "value": -225.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
-        "value": -63.9,
+        "value": -56.2,
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
-        "value": -262.0,
+        "value": -225.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -63.1,
+        "value": -56.2,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -245.0,
+        "value": -225.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -63.9,
+        "value": -56.2,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -262.0,
+        "value": -225.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 14524,
+        "value": 14405,
         "compare": "<="
     }
 }

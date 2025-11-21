@@ -58,11 +58,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.478,
+        "value": -0.384,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -1.72,
+        "value": -1.46,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 834929,
+        "value": 827164,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -142,7 +142,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 248742,
+        "value": 245144,
         "compare": "<="
     }
 }

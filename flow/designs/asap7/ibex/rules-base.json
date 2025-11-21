@@ -113,7 +113,7 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -213.0,
+        "value": -207.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
@@ -181,7 +181,7 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -180.0,
+        "value": -177.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {

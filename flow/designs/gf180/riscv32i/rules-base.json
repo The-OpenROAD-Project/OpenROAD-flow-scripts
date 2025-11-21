@@ -1,44 +1,4 @@
 {
-    "detailedroute__flow__warnings__count:DRT-0349": {
-        "value": 8,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "finish__flow__warnings__count:GUI-0076": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:EST-0027": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:IFP-0028": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:RSZ-0075": {
-        "value": 54,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "flow__warnings__count:TAP-0014": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "globalplace__flow__warnings__count:GRT-0281": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "globalroute__flow__warnings__count:DRT-0349": {
-        "value": 8,
-        "compare": "<=",
-        "level": "warning"
-    },
     "synth__design__instance__area__stdcell": {
         "value": 355874.87,
         "compare": "<="
@@ -52,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 9602,
+        "value": 9586,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -68,11 +28,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.726,
+        "value": -0.5,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -2.23,
+        "value": -2.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -88,11 +48,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.795,
+        "value": -0.5,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -2.3,
+        "value": -2.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -104,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 817804,
+        "value": 813705,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -136,11 +96,11 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -0.834,
+        "value": -0.522,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -2.38,
+        "value": -2.04,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
