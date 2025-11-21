@@ -1,7 +1,11 @@
+source $::env(PLATFORM_DIR)/util.tcl
+
 set clk_name core_clock
 set clk_port_name clk_i
 set clk_period 1468
 set clk_io_pct 0.2
+
+convert_time_value clk_period
 
 set clk_port [get_ports $clk_port_name]
 
