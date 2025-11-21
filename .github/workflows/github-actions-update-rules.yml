@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Check out repository code recursively
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Git prep
