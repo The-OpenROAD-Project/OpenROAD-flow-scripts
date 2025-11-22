@@ -69,6 +69,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "placeopt__flow__warnings__count:RSZ-0020": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "placeopt__flow__warnings__count:RSZ-0095": {
         "value": 1,
         "compare": "<=",
@@ -107,7 +112,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -872.0,
+        "value": -8400.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {

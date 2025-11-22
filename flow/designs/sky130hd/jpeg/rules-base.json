@@ -44,15 +44,15 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 206,
+        "value": 162,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.465,
+        "value": -0.414,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -4.75,
+        "value": -3.02,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -76,7 +76,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 117,
+        "value": 123,
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {

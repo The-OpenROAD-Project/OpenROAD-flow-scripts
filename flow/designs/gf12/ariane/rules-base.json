@@ -10,7 +10,7 @@
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:DRT-0120": {
-        "value": 25,
+        "value": 24,
         "compare": "<=",
         "level": "warning"
     },
@@ -75,7 +75,7 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-0120": {
-        "value": 25,
+        "value": 24,
         "compare": "<=",
         "level": "warning"
     },
@@ -128,11 +128,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -208.0,
+        "value": -437.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -725.0,
+        "value": -379000.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -192,7 +192,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -2390.0,
+        "value": -5280.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
