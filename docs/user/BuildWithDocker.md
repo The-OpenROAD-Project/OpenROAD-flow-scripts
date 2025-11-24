@@ -109,7 +109,7 @@ docker run --rm -it \
            -v ${HOME}/.Xauthority:/.Xauthority \
            --network host \
            --security-opt seccomp=unconfined \
-           openroad/flow-$OS_NAME-builder
+           openroad/orfs
 ```
 
 Running GUI with Docker on Mac OS X users, refer [here](https://cntnr.io/running-guis-with-docker-on-mac-os-x-a14df6a76efc).
