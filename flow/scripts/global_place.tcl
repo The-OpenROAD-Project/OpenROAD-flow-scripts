@@ -33,6 +33,25 @@ if { $::env(GPL_TIMING_DRIVEN) } {
   }
 }
 
+# Parameters for phi coefficients in global placement
+# Validate phi coefficient constraints before using them
+if { [info exists ::env(MIN_PLACE_STEP_COEF)] && [info exists ::env(MAX_PLACE_STEP_COEF)] } {
+  set min_phi $::env(MIN_PLACE_STEP_COEF)
+  set max_phi $::env(MAX_PLACE_STEP_COEF)
+
+  if { $min_phi > $max_phi } {
+    utl::error GPL 200 "MIN_PLACE_STEP_COEF ($min_phi) cannot be greater than MAX_PLACE_STEP_COEF ($max_phi)"
+  }
+}
+
+if { [info exists ::env(MIN_PLACE_STEP_COEF)] } {
+  lappend global_placement_args -min_phi_coef $::env(MIN_PLACE_STEP_COEF)
+}
+
+if { [info exists ::env(MAX_PLACE_STEP_COEF)] } {
+  lappend global_placement_args -max_phi_coef $::env(MAX_PLACE_STEP_COEF)
+}
+
 proc do_placement { global_placement_args } {
   set all_args [concat [list -density [place_density_with_lb_addon] \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \

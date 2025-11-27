@@ -571,6 +571,30 @@ GPL_ROUTABILITY_DRIVEN:
   stages:
     - place
   default: 1
+MIN_PLACE_STEP_COEF:
+  description: >
+    Sets the minimum phi coefficient (pcof_min / µ_k Lower Bound) for global
+    placement optimization. This parameter controls the step size lower bound
+    in the RePlAce Nesterov optimization algorithm. Lower values may improve
+    convergence but can increase runtime.
+    Valid range: 0.95-1.05
+  default: 0.95
+  stages:
+    - place
+  tunable: 1
+  type: float
+MAX_PLACE_STEP_COEF:
+  description: >
+    Sets the maximum phi coefficient (pcof_max / µ_k Upper Bound) for global
+    placement optimization. This parameter controls the step size upper bound
+    in the RePlAce Nesterov optimization algorithm. Higher values allow more
+    aggressive optimization but may risk divergence.
+    Valid range: 1.00-1.20
+  default: 1.05
+  stages:
+    - place
+  tunable: 1
+  type: float
 CAP_MARGIN:
   description: >
     Specifies a capacitance margin when fixing max capacitance violations. This
