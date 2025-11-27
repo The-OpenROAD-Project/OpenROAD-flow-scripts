@@ -9,26 +9,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "cts__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "detailedplace__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "detailedroute__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "finish__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
     "floorplan__flow__warnings__count:EST-0027": {
         "value": 1,
         "compare": "<=",
@@ -64,18 +44,8 @@
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
     "flow__warnings__count:GPL-0302": {
         "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "flow__warnings__count:STA-1257": {
-        "value": 1001,
         "compare": "<=",
         "level": "warning"
     },
@@ -86,11 +56,6 @@
     },
     "globalplace__flow__warnings__count:STA-0122": {
         "value": 27,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "globalplace__flow__warnings__count:STA-1257": {
-        "value": 1502,
         "compare": "<=",
         "level": "warning"
     },
@@ -124,18 +89,8 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:STA-1257": {
-        "value": 1502,
-        "compare": "<=",
-        "level": "warning"
-    },
     "placeopt__flow__warnings__count:STA-0122": {
         "value": 27,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "placeopt__flow__warnings__count:STA-1257": {
-        "value": 1502,
         "compare": "<=",
         "level": "warning"
     },
@@ -172,7 +127,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -531,
+        "value": -219.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -188,11 +143,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -40.9,
+        "value": -36.5,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -1124,
+        "value": -510.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -204,11 +159,11 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -40.9,
+        "value": -36.5,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -1124,
+        "value": -510.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -220,7 +175,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 37,
+        "value": 35,
         "compare": "<="
     }
 }

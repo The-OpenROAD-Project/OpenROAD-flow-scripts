@@ -74,6 +74,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "placeopt__flow__warnings__count:RSZ-0020": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 134.0,
         "compare": "<="
@@ -107,7 +112,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -313,
+        "value": -264.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -127,7 +132,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -357,
+        "value": -285.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {

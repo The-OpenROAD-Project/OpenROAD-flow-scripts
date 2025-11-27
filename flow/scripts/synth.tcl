@@ -120,7 +120,11 @@ renames -wire
 opt -purge
 
 # Technology mapping of adders
-if { [env_var_exists_and_non_empty ADDER_MAP_FILE] } {
+if {
+  [env_var_exists_and_non_empty ADDER_MAP_FILE] &&
+  ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] &&
+  ![env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
+} {
   # extract the full adders
   extract_fa
   # map full adders
