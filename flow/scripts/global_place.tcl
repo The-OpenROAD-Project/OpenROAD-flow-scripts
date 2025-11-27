@@ -35,8 +35,10 @@ if { $::env(GPL_TIMING_DRIVEN) } {
 
 # Parameters for phi coefficients in global placement
 # Validate phi coefficient constraints before using them
-if { [info exists ::env(MIN_PLACE_STEP_COEF)] \
-     && [info exists ::env(MAX_PLACE_STEP_COEF)] } {
+if {
+  [info exists ::env(MIN_PLACE_STEP_COEF)]
+  && [info exists ::env(MAX_PLACE_STEP_COEF)]
+} {
   set min_phi $::env(MIN_PLACE_STEP_COEF)
   set max_phi $::env(MAX_PLACE_STEP_COEF)
 
