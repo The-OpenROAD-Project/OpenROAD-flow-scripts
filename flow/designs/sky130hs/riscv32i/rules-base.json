@@ -1,4 +1,44 @@
 {
+    "cts__flow__warnings__count:RSZ-0062": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "detailedroute__flow__warnings__count:DRT-0349": {
+        "value": 10,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "finish__flow__warnings__count:GUI-0076": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:IFP-0028": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:ODB-0220": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:DRT-0349": {
+        "value": 10,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:RSZ-0062": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 97352.63,
         "compare": "<="
@@ -28,11 +68,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.957,
+        "value": -0.881,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -19.4,
+        "value": -369.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -48,11 +88,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -1.3,
+        "value": -1.16,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -95.8,
+        "value": -17.7,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -96,11 +136,11 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -1.13,
+        "value": -0.961,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -36.0,
+        "value": -7.38,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
