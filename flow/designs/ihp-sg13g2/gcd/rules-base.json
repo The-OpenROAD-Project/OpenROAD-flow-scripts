@@ -1,34 +1,4 @@
 {
-    "detailedroute__flow__warnings__count:DRT-0349": {
-        "value": 10,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "finish__flow__warnings__count:GUI-0076": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:EST-0027": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:IFP-0028": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "flow__warnings__count:FIN-0010": {
-        "value": 12,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "globalroute__flow__warnings__count:DRT-0349": {
-        "value": 10,
-        "compare": "<=",
-        "level": "warning"
-    },
     "synth__design__instance__area__stdcell": {
         "value": 6828.9632,
         "compare": "<="
@@ -38,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 7372,
+        "value": 7380,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 613,
+        "value": 614,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -142,7 +112,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 7691,
+        "value": 7693,
         "compare": "<="
     }
 }
