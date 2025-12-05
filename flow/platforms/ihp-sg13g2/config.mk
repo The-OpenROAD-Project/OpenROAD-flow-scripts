@@ -41,7 +41,8 @@ export DONT_USE_CELLS += \
 sg13g2_lgcp_1 \
 sg13g2_sighold \
 sg13g2_slgcp_1 \
-sg13g2_dfrbp_2
+sg13g2_dfrbp_2 \
+sg13g2_IOPad*
 
 
 # Define fill cells
