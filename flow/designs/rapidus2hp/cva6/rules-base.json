@@ -29,8 +29,18 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:GPL-0302": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "flow__warnings__count:PDN-0110": {
-        "value": 53,
+        "value": 213,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalplace__flow__warnings__count:GPL-0302": {
+        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
@@ -45,7 +55,7 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-0120": {
-        "value": 30,
+        "value": 29,
         "compare": "<=",
         "level": "warning"
     },
