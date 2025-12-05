@@ -79,11 +79,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:GRT-0273": {
-        "value": 24,
-        "compare": "<=",
-        "level": "warning"
-    },
     "globalroute__flow__warnings__count:RSZ-0062": {
         "value": 1,
         "compare": "<=",
