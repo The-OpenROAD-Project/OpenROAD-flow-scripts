@@ -28,11 +28,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.16,
+        "value": -0.14,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -0.58,
+        "value": -0.56,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
