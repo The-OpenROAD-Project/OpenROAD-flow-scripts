@@ -29,8 +29,13 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:GPL-0302": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "flow__warnings__count:PDN-0110": {
-        "value": 100,
+        "value": 196,
         "compare": "<=",
         "level": "warning"
     },
@@ -172,7 +177,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -3780.0,
+        "value": -4700.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {

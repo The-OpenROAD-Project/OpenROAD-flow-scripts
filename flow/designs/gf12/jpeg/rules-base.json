@@ -29,6 +29,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:GPL-0302": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "flow__warnings__count:PDN-1031": {
         "value": 2,
         "compare": "<=",
@@ -50,6 +55,11 @@
         "level": "warning"
     },
     "flow__warnings__count:TAP-0017": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalplace__flow__warnings__count:GPL-0302": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
