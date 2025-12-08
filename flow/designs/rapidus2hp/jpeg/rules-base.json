@@ -29,6 +29,16 @@
         "compare": "<=",
         "level": "warning"
     },
+    "flow__warnings__count:GPL-0302": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalplace__flow__warnings__count:GPL-0302": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalplace__flow__warnings__count:GRT-0281": {
         "value": 1,
         "compare": "<=",

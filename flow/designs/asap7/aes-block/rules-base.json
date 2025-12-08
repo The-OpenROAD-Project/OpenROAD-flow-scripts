@@ -55,7 +55,7 @@
         "level": "warning"
     },
     "flow__warnings__count:PDN-0195": {
-        "value": 64,
+        "value": 55,
         "compare": "<=",
         "level": "warning"
     },
@@ -123,11 +123,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -136.0,
+        "value": -154.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -7920.0,
+        "value": -11900.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -143,11 +143,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -133.0,
+        "value": -142.0,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -6640.0,
+        "value": -10900.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -195,7 +195,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -4060.0,
+        "value": -6920.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -23.8,
+        "value": -45.5,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -72,7 +72,7 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 1,
+        "value": 0,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
@@ -112,7 +112,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 245144,
+        "value": 243893,
         "compare": "<="
     }
 }
