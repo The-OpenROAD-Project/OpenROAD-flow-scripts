@@ -43,7 +43,12 @@ utl::pop_metrics_stage
 set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
-detailed_placement
+
+set result [catch { detailed_placement } msg]
+if { $result != 0 } {
+  save_progress 4_1_error
+  error "Detailed placement failed in CTS: $msg"
+}
 
 estimate_parasitics -placement
 
@@ -65,8 +70,7 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
   set result [catch { detailed_placement } msg]
   if { $result != 0 } {
     save_progress 4_1_error
-    puts "Detailed placement failed in CTS: $msg"
-    exit $result
+    error "Detailed placement failed in CTS: $msg"
   }
 
   check_placement -verbose
