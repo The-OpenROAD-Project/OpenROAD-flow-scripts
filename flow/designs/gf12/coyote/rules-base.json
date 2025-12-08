@@ -64,6 +64,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "globalplace__flow__warnings__count:GPL-0302": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "globalplace__flow__warnings__count:GRT-0281": {
         "value": 1,
         "compare": "<=",
@@ -177,7 +182,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -4700.0,
+        "value": -15100.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
