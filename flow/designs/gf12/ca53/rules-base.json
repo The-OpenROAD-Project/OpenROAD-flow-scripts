@@ -1,6 +1,6 @@
 {
     "cts__flow__warnings__count:CTS-0041": {
-        "value": 9,
+        "value": 8,
         "compare": "<=",
         "level": "warning"
     },
@@ -20,7 +20,7 @@
         "level": "warning"
     },
     "finish__flow__warnings__count:STA-1648": {
-        "value": 280,
+        "value": 284,
         "compare": "<=",
         "level": "warning"
     },
@@ -171,7 +171,7 @@
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
-        "value": -621.0,
+        "value": -485.0,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -203,7 +203,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -65400.0,
+        "value": -75300.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
@@ -219,7 +219,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -2050.0,
+        "value": -3010.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
