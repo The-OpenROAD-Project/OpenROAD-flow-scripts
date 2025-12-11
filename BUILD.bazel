@@ -1,0 +1,41 @@
+# run black and tclfmt on the codebase using python installation
+load("@orfs-pip//:requirements.bzl", "requirement")
+load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+
+exports_files(["open_plots.sh"])
+
+py_binary(
+    name = "black",
+    srcs = [
+        "etc/black.py",
+    ],
+    args = [],
+    main = "etc/black.py",
+    visibility = ["//visibility:public"],
+    deps = [requirement("black")],
+)
+
+py_binary(
+    name = "tclfmt",
+    srcs = [
+        "etc/tclfmt.py",
+    ],
+    args = [],
+    data = [":tclint.toml"],
+    main = "etc/tclfmt.py",
+    visibility = ["//visibility:public"],
+    deps = [requirement("tclint")],
+)
+
+sh_binary(
+    name = "format",
+    srcs = ["etc/format.sh"],
+    args = [
+        "$(location :black)",
+        "$(location :tclfmt)",
+    ],
+    data = [
+        ":black",
+        ":tclfmt",
+    ],
+)

@@ -3,6 +3,22 @@
 `bazel-orfs` is a Bazel package containing the definitions and logic governing the build process of ORFS designs.
 The module uses the `openroad/orfs` docker image to extract the flow scripts with dependencies, builds the Bazel environment around them and defines the methods of calling the ORFS Makefiles with selected designs.
 
+## Format all code, including submodules
+
+To format all files, run:
+
+    bazelisk run //:format
+
+In the above command, bazel sets up all dependencies and configuration files, without depending or using local files of configuration.
+
+Bazel expert tip: bearing in mind that `bazelisk run` will have pwd inside the runfiles of the target, you can run only black using:
+
+    bazelisk run :black -- $(pwd)
+
+Or tclfmt:
+
+    bazelisk run :tclfmt -- --in-place $(pwd)
+
 ## Run examples
 
 `flow/BUILD.bazel` contains definitions for various flows to serve as examples.
