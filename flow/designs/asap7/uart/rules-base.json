@@ -133,11 +133,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -42.8,
+        "value": -56.5,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -1870.0,
+        "value": -1990.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {

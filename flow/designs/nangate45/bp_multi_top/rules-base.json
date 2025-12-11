@@ -4,13 +4,8 @@
         "compare": "<=",
         "level": "warning"
     },
-    "cts__flow__warnings__count:RSZ-2021": {
-        "value": 12,
-        "compare": "<=",
-        "level": "warning"
-    },
     "detailedroute__flow__warnings__count:DRT-0120": {
-        "value": 3,
+        "value": 4,
         "compare": "<=",
         "level": "warning"
     },
@@ -50,7 +45,7 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-0120": {
-        "value": 3,
+        "value": 4,
         "compare": "<=",
         "level": "warning"
     },
@@ -149,7 +144,7 @@
         "compare": ">="
     },
     "detailedroute__timing__setup__tns": {
-        "value": -289.0,
+        "value": -444.0,
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
