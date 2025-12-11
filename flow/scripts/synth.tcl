@@ -1,3 +1,36 @@
+#
+# Extracts and returns module names from Verilog file
+#
+proc get_module_names { file_path } {
+  set module_list [list]
+  if { [catch { set fid [open $file_path r] } err] } {
+    error "Failed to open file $file_path: $err"
+  }
+
+  set regex {^[ \t]*module[ \t]+([A-Za-z_$][A-Za-z0-9_$]*)}
+
+  while { [gets $fid line] >= 0 } {
+    if { [regexp -nocase $regex $line match_all module_name] } {
+      lappend module_list $module_name
+    }
+  }
+
+  close $fid
+  return $module_list
+}
+
+#
+# Builds dfflegalize arg list
+#
+proc get_dfflegalize_args { file_path } {
+  set legalize_args [list]
+  set module_names [get_module_names $file_path]
+  foreach module_name $module_names {
+    lappend legalize_args -cell $module_name x
+  }
+  return $legalize_args
+}
+
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 read_checkpoint $::env(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
 
@@ -143,6 +176,10 @@ if { [env_var_exists_and_non_empty LATCH_MAP_FILE] } {
 # dfflibmap only supports one liberty file
 if { [env_var_exists_and_non_empty DFF_LIB_FILE] } {
   dfflibmap -liberty $::env(DFF_LIB_FILE) {*}$lib_dont_use_args
+} elseif { [env_var_exists_and_non_empty DFF_MAP_FILE] } {
+  set legalize_args [get_dfflegalize_args $::env(DFF_MAP_FILE)]
+  dfflegalize {*}$legalize_args
+  techmap -map $::env(DFF_MAP_FILE)
 } else {
   dfflibmap {*}$lib_args {*}$lib_dont_use_args
 }
