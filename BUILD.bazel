@@ -37,5 +37,7 @@ sh_binary(
     data = [
         ":black",
         ":tclfmt",
+        # runfiles are not transitive dependencies, so we need to add this explicitly
+        ":tclint.toml",
     ],
 )
