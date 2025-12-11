@@ -23,7 +23,7 @@ proc global_route_helper { } {
   append_env_var additional_args VIA_IN_PIN_MIN_LAYER -via_in_pin_bottom_layer 1
   append_env_var additional_args VIA_IN_PIN_MAX_LAYER -via_in_pin_top_layer 1
 
-  pin_access {*}$additional_args
+  log_cmd pin_access {*}$additional_args
 
   set result [catch { do_global_route $res_aware } errMsg]
 
