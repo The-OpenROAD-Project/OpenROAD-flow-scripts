@@ -1102,14 +1102,14 @@ RTLMP_FENCE_UX:
   description: >
     Defines the upper right X coordinate for the global fence bounding box in
     microns.
-  default: 100000000.0
+  default: 0.0
   stages:
     - floorplan
 RTLMP_FENCE_UY:
   description: >
     Defines the upper right Y coordinate for the global fence bounding box in
     microns.
-  default: 100000000.0
+  default: 0.0
   stages:
     - floorplan
 RTLMP_ARGS:
