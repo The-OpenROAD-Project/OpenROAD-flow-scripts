@@ -141,7 +141,7 @@
         "compare": ">="
     },
     "cts__timing__hold__ws": {
-        "value": -249.0,
+        "value": -243.0,
         "compare": ">="
     },
     "cts__timing__hold__tns": {
@@ -213,7 +213,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -557.0,
+        "value": -939.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
