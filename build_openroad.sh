@@ -262,10 +262,13 @@ __local_build()
         ${NICE} make install -C tools/yosys-slang -j "${PROC}" YOSYS_PREFIX="${INSTALL_PATH}/yosys/bin/" CMAKE_FLAGS="-DYOSYS_SLANG_REVISION=unknown -DSLANG_REVISION=unknown"
 
         echo "[INFO FLW-0031] Compiling kepler-formal"
-        # CMAKE_FLAGS added to work around yosys-slang#141 (unable to build outside of git checkout)
-        ${NICE} make install -C tools/kepler-formal -j4  CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" -DCMAKE_EXE_LINKER_FLAGS="-flto""
-        
-
+        cd tools/kepler-formal
+        git submodule update --init --recursive
+        cmake .. -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native \
+                -ffast-math -flto" -DCMAKE_EXE_LINKER_FLAGS="-flto"     
+        make -j4
+        cd ../../   
 }
 
 __update_openroad_app_remote()
