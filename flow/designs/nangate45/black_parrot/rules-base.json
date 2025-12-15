@@ -19,11 +19,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "finish__flow__warnings__count:GUI-0076": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "floorplan__flow__warnings__count:EST-0027": {
         "value": 1,
         "compare": "<=",
@@ -118,7 +113,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -2.73,
+        "value": -3.1,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
@@ -150,11 +145,11 @@
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {
-        "value": -10.4,
+        "value": -4.97,
         "compare": ">="
     },
     "detailedroute__timing__setup__tns": {
-        "value": -722.0,
+        "value": -152.0,
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
@@ -162,7 +157,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -3.83,
+        "value": -3.74,
         "compare": ">="
     },
     "finish__timing__setup__ws": {

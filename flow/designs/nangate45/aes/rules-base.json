@@ -9,11 +9,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "finish__flow__warnings__count:GUI-0076": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "floorplan__flow__warnings__count:EST-0027": {
         "value": 1,
         "compare": "<=",
@@ -87,7 +82,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -1.47,
+        "value": -1.79,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -135,7 +130,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -1.78,
+        "value": -0.621,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

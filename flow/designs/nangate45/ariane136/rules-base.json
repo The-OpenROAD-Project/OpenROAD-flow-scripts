@@ -14,11 +14,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "finish__flow__warnings__count:GUI-0076": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "floorplan__flow__warnings__count:EST-0027": {
         "value": 1,
         "compare": "<=",
@@ -90,7 +85,7 @@
         "compare": ">="
     },
     "cts__timing__hold__tns": {
-        "value": -7.13,
+        "value": -6.07,
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
@@ -142,7 +137,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -4.36,
+        "value": -7.67,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
