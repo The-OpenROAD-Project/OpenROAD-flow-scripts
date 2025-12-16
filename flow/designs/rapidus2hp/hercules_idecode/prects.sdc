@@ -11,6 +11,8 @@ convert_time_value clk_period
 set_max_fanout 32 [current_design]
 set_load [convert_cap_value 10] [all_outputs]
 set_max_capacitance [convert_cap_value 10] [all_inputs]
+# temporarily set max time borrow to workaround STA assert
+set_max_time_borrow 0.0 [all_registers -level_sensitive]
 
 create_clock -name "clk" -add -period $clk_period \
   -waveform [list 0.0 [expr 0.5*$clk_period]] [get_ports clk]
