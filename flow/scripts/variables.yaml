@@ -1215,3 +1215,15 @@ MAX_REPAIR_TIMING_ITER:
     - floorplan
     - grt
     - place
+NUM_CORES:
+  description: >
+    Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers
+    of cores in system as determined by system specific code in Makefile,
+    `nproc` is tried first.
+
+    OpenROAD does not limit itself to this number of cores across
+    OpenROAD running instances, which can lead to overprovisioning
+    in contexts such as bazel-orfs where there could be many
+    routing, or place jobs running at the same time.
+  stages:
+    - All stages
