@@ -1,6 +1,6 @@
 utl::set_metrics_stage "floorplan__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
-load_design 1_synth.v 1_synth.sdc
+load_design 1_synth.odb 1_synth.sdc
 
 # Floorplan
 
