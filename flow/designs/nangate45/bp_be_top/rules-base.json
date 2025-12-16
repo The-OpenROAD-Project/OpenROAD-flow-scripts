@@ -1,4 +1,49 @@
 {
+    "cts__flow__warnings__count:RSZ-0062": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "detailedroute__flow__warnings__count:GRT-0246": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:EST-0027": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:ODB-0011": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "floorplan__flow__warnings__count:RSZ-0075": {
+        "value": 13,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "flow__warnings__count:PDN-0195": {
+        "value": 11,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalplace__flow__warnings__count:GRT-0281": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:GRT-0246": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:RSZ-0062": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 268204.56,
         "compare": "<="
@@ -32,7 +77,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -22.0,
+        "value": -20.1,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -52,7 +97,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -18.3,
+        "value": -28.4,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -100,7 +145,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -35.5,
+        "value": -29.3,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

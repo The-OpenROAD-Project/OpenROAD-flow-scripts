@@ -175,6 +175,7 @@ configuration file.
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.| |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| |
 | <a name="MIN_ROUTING_LAYER"></a>MIN_ROUTING_LAYER| The lowest metal layer name to be used in routing.| |
+| <a name="NUM_CORES"></a>NUM_CORES| Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers of cores in system as determined by system specific code in Makefile, `nproc` is tried first. OpenROAD does not limit itself to this number of cores across OpenROAD running instances, which can lead to overprovisioning in contexts such as bazel-orfs where there could be many routing, or place jobs running at the same time.| |
 | <a name="OPENROAD_HIERARCHICAL"></a>OPENROAD_HIERARCHICAL| Feature toggle to enable to run OpenROAD in hierarchical mode, otherwise considered flat. Will eventually be the default and this option will be retired.| 0|
 | <a name="PDN_TCL"></a>PDN_TCL| File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.| |
 | <a name="PLACE_DENSITY"></a>PLACE_DENSITY| The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread. The intended effort is also communicated by this parameter. Use a low value for faster builds and higher value for better quality of results. If a too low value is used, the placer will not be able to place all cells and a recommended minimum placement density can be found in the logs. A too high value can lead to excessive runtimes, even timeouts and subtle failures in the flow after placement, such as in CTS or global routing when timing repair fails. The default is platform specific.| |
@@ -200,8 +201,8 @@ configuration file.
 | <a name="RTLMP_DEAD_SPACE"></a>RTLMP_DEAD_SPACE| Specifies the target dead space percentage, which influences the utilization of a cluster.| 0.05|
 | <a name="RTLMP_FENCE_LX"></a>RTLMP_FENCE_LX| Defines the lower left X coordinate for the global fence bounding box in microns.| 0.0|
 | <a name="RTLMP_FENCE_LY"></a>RTLMP_FENCE_LY| Defines the lower left Y coordinate for the global fence bounding box in microns.| 0.0|
-| <a name="RTLMP_FENCE_UX"></a>RTLMP_FENCE_UX| Defines the upper right X coordinate for the global fence bounding box in microns.| 100000000.0|
-| <a name="RTLMP_FENCE_UY"></a>RTLMP_FENCE_UY| Defines the upper right Y coordinate for the global fence bounding box in microns.| 100000000.0|
+| <a name="RTLMP_FENCE_UX"></a>RTLMP_FENCE_UX| Defines the upper right X coordinate for the global fence bounding box in microns.| 0.0|
+| <a name="RTLMP_FENCE_UY"></a>RTLMP_FENCE_UY| Defines the upper right Y coordinate for the global fence bounding box in microns.| 0.0|
 | <a name="RTLMP_MAX_INST"></a>RTLMP_MAX_INST| Maximum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
 | <a name="RTLMP_MAX_LEVEL"></a>RTLMP_MAX_LEVEL| Maximum depth of the physical hierarchy tree.| 2|
 | <a name="RTLMP_MAX_MACRO"></a>RTLMP_MAX_MACRO| Maximum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
@@ -480,6 +481,7 @@ configuration file.
 
 ## All stages variables
 
+- [NUM_CORES](#NUM_CORES)
 - [OPENROAD_HIERARCHICAL](#OPENROAD_HIERARCHICAL)
 - [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
 - [SYNTH_WRAPPED_OPERATORS](#SYNTH_WRAPPED_OPERATORS)
