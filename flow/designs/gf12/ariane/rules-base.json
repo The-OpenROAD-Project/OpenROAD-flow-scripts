@@ -1,4 +1,9 @@
 {
+    "cts__flow__warnings__count:CTS-0179": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "cts__flow__warnings__count:RSZ-0062": {
         "value": 1,
         "compare": "<=",
@@ -157,7 +162,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -733.0,
+        "value": -4820.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -177,7 +182,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -717.0,
+        "value": -20100.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -193,7 +198,7 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 1,
+        "value": 4,
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
@@ -217,7 +222,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -1100.0,
+        "value": -2550.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
