@@ -264,11 +264,13 @@ __local_build()
         echo "[INFO FLW-0031] Compiling kepler-formal"
         cd tools/kepler-formal
         git submodule update --init --recursive
+        mkdir build
+        cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release \
                 -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native \
                 -ffast-math -flto" -DCMAKE_EXE_LINKER_FLAGS="-flto"     
-        make -j4
-        cd ../../   
+        make -j4 install 
+        cd ../../../ 
 }
 
 __update_openroad_app_remote()
