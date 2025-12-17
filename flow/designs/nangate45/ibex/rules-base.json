@@ -96,11 +96,11 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -0.131,
+        "value": -0.11,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -3.23,
+        "value": -0.44,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
