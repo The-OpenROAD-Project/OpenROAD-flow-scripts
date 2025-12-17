@@ -266,9 +266,7 @@ __local_build()
         git submodule update --init --recursive
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native \
-                -ffast-math -flto" -DCMAKE_EXE_LINKER_FLAGS="-flto"     
+        cmake .. -DCMAKE_BUILD_TYPE=Release \\n  -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \\n  -DCMAKE_EXE_LINKER_FLAGS="-flto" \\n  -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \\n  -DCMAKE_INSTALL_RPATH="@executable_path/../lib"\n    
         make -j4 install 
         cd ../../../ 
 }
