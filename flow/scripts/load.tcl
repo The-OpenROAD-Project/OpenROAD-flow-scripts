@@ -106,3 +106,59 @@ proc run_equivalence_test { } {
     puts "Repair timing output passed equivalence test"
   }
 }
+
+proc write_lec_verilog { filename } {
+  if { [env_var_exists_and_non_empty REMOVE_CELLS_FOR_EQY] } {
+    write_verilog -remove_cells $::env(REMOVE_CELLS_FOR_EQY) $::env(RESULTS_DIR)/$filename
+  } else {
+    write_verilog $::env(RESULTS_DIR)/$filename
+  }
+}
+
+proc write_lec_script { } {
+  set outfile [open "$::env(OBJECTS_DIR)/4_lec_test.yml" w]
+  puts $outfile "format: verilog"
+  puts $outfile "input_paths:"
+  puts $outfile "  - $::env(RESULTS_DIR)/4_before_rsz.v"
+  puts $outfile "  - $::env(RESULTS_DIR)/4_after_rsz.v"
+  # Gold netlist
+  puts $outfile "liberty_files:"
+  foreach libFile $::env(LIB_FILES) {
+    file copy $libFile $::env(OBJECTS_DIR)/
+    # decompress .gz file
+    if { [string match "*.gz" $libFile] } {
+      set baseName [file tail [file rootname $libFile]]
+      exec gunzip -c $libFile > $::env(OBJECTS_DIR)/$baseName
+      puts $outfile " - $::env(OBJECTS_DIR)/$baseName"
+    } else {
+      puts $outfile " - $::env(OBJECTS_DIR)/[file tail $libFile]"
+    }
+  }
+  close $outfile
+}
+
+proc run_lec_test { } {
+  write_lec_verilog 4_after_rsz.v
+  write_lec_script
+
+  # tclint-disable-next-line command-args
+  eval exec kepler-formal --config $::env(OBJECTS_DIR)/4_lec_test.yml 
+  error "passed"
+  # delete decompressed files
+  foreach libFile $::env(LIB_FILES) {
+    if { [string match "*.gz" $libFile] } {
+      set baseName [file tail [file rootname $libFile]]
+      file delete $::env(OBJECTS_DIR)/$baseName
+    } else {
+      file delete $::env(OBJECTS_DIR)/[file tail $libFile]
+    }
+  }
+
+  # set count \
+  #   [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
+  # if { $count == 0 } {
+  #   error "Repair timing output failed equivalence test"
+  # } else {
+  #   puts "Repair timing output passed equivalence test"
+  # }
+}

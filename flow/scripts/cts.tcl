@@ -57,15 +57,21 @@ if { $::env(CTS_SNAPSHOTS) } {
 }
 
 if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
-  if { $::env(EQUIVALENCE_CHECK) } {
-    write_eqy_verilog 4_before_rsz.v
-  }
+  # if { $::env(EQUIVALENCE_CHECK) } {
+  #   write_eqy_verilog 4_before_rsz.v
+  # }
+
+  write_lec_verilog 4_lec_before_rsz.v
 
   repair_timing_helper
 
-  if { $::env(EQUIVALENCE_CHECK) } {
-    run_equivalence_test
-  }
+  # if { $::env(EQUIVALENCE_CHECK) } {
+  #   run_equivalence_test
+  # }
+
+  run_lec_test
+
+
 
   set result [catch { detailed_placement } msg]
   if { $result != 0 } {
