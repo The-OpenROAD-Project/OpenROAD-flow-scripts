@@ -275,7 +275,7 @@ __local_build()
         if [[ "$OSTYPE" == "darwin"* ]]; then
         RPATH_FLAG='-DCMAKE_INSTALL_RPATH=@executable_path/../lib'
         else
-        RPATH_FLAG='-DCMAKE_INSTALL_RPATH=\$ORIGIN/../lib'
+        RPATH_FLAG='-DCMAKE_INSTALL_RPATH=\$ORIGIN/../../lib'
         fi
 
         cmake .. \
