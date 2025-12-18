@@ -17,9 +17,7 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 export ADDITIONAL_LEFS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/*.lef))
 export ADDITIONAL_LIBS = $(sort $(wildcard $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/*.lib))
 
-
-# These values must be multiples of placement site
-# x=0.19 y=1.4
-export DIE_AREA    = 0 0 424.92 499.4
-export CORE_AREA   = 10.07 9.8 414.85 489.6
-export TNS_END_PERCENT        = 100
+export CORE_UTILIZATION       = 60
+export CORE_ASPECT_RATIO      = 1
+export CORE_MARGIN            = 2
+export PLACE_DENSITY          = 0.75
