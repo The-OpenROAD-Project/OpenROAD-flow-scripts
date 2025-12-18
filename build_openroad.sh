@@ -264,7 +264,10 @@ __local_build()
         echo "[INFO FLW-0031] Compiling kepler-formal"
         cd tools/kepler-formal
         git submodule update --init --recursive
-        mkdir build
+        # if build dir does not exist, create it
+        if [ ! -d build ]; then
+            mkdir build
+        fi
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release \\n  -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \\n  -DCMAKE_EXE_LINKER_FLAGS="-flto" \\n  -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \\n  -DCMAKE_INSTALL_RPATH="@executable_path/../lib"\n    
         make -j4 install 
