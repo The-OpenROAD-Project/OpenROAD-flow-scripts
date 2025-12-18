@@ -283,6 +283,8 @@ __local_build()
         -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
         -DCMAKE_EXE_LINKER_FLAGS="-flto" \
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+        -DCMAKE_SKIP_INSTALL_RPATH=FALSE \
+        -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
         $RPATH_FLAG
         make -j4 install
         cd ../../../
