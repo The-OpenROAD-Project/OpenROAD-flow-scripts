@@ -14,21 +14,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:ODB-0256": {
-        "value": 1001,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:ODB-0279": {
-        "value": 1001,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:ODB-0280": {
-        "value": 1001,
-        "compare": "<=",
-        "level": "warning"
-    },
     "flow__warnings__count:GPL-0302": {
         "value": 1,
         "compare": "<=",
