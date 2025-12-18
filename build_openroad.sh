@@ -272,13 +272,18 @@ __local_build()
 
         cd build
 
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+        RPATH_FLAG='-DCMAKE_INSTALL_RPATH=@executable_path/../lib'
+        else
+        RPATH_FLAG='-DCMAKE_INSTALL_RPATH=\$ORIGIN/../lib'
+        fi
+
         cmake .. \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
         -DCMAKE_EXE_LINKER_FLAGS="-flto" \
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-        -DCMAKE_INSTALL_RPATH="@executable_path/../lib"
-
+        $RPATH_FLAG
         make -j4 install
         cd ../../../
 
