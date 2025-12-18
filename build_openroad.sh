@@ -264,14 +264,24 @@ __local_build()
         echo "[INFO FLW-0031] Compiling kepler-formal"
         cd tools/kepler-formal
         git submodule update --init --recursive
+
         # if build dir does not exist, create it
         if [ ! -d build ]; then
-            mkdir build
+        mkdir build
         fi
+
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release \\n  -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \\n  -DCMAKE_EXE_LINKER_FLAGS="-flto" \\n  -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \\n  -DCMAKE_INSTALL_RPATH="@executable_path/../lib"\n    
-        make -j4 install 
-        cd ../../../ 
+
+        cmake .. \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
+        -DCMAKE_EXE_LINKER_FLAGS="-flto" \
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+        -DCMAKE_INSTALL_RPATH="@executable_path/../lib"
+
+        make -j4 install
+        cd ../../../
+
 }
 
 __update_openroad_app_remote()
