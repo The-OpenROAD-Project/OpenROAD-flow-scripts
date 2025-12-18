@@ -268,7 +268,7 @@ __local_build()
         # if build dir does not exist, create it
         if [ ! -d build ]; then
         mkdir build
-        fi
+        fi 
 
         cd build
 
@@ -283,7 +283,7 @@ __local_build()
         -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
         -DCMAKE_EXE_LINKER_FLAGS="-flto" \
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-        $RPATH_FLAG
+        "$RPATH_FLAG"
         make -j4 install
         cd ../../../
 
