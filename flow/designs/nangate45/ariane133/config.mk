@@ -12,7 +12,7 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/ariane133/ariane.sdc
 export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram45_256x16.lef
 export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/fakeram45_256x16.lib
 
-export CORE_UTILIZATION = 40
+export CORE_UTILIZATION = 60
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 5
 
