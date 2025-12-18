@@ -134,31 +134,33 @@ proc write_lec_script { } {
       puts $outfile " - $::env(OBJECTS_DIR)/[file tail $libFile]"
     }
   }
+  puts $outfile "log_file: $::env(LOG_DIR)/4_lec_check.log"
   close $outfile
 }
 
 proc run_lec_test { } {
+  foreach libFile $::env(LIB_FILES) {
+    if { [string match "*.gz" $libFile] } {
+      set baseName [file tail [file rootname $libFile]]
+      file delete $::env(OBJECTS_DIR)/$baseName
+    } 
+    # delete also the .gz file if existing
+    if { [file exists $::env(OBJECTS_DIR)/[file tail $libFile]] } {
+      file delete $::env(OBJECTS_DIR)/[file tail $libFile]
+    }
+  }
   write_lec_verilog 4_after_rsz.v
   write_lec_script
 
   # tclint-disable-next-line command-args
   eval exec kepler-formal --config $::env(OBJECTS_DIR)/4_lec_test.yml 
-  error "passed"
   # delete decompressed files
-  foreach libFile $::env(LIB_FILES) {
-    if { [string match "*.gz" $libFile] } {
-      set baseName [file tail [file rootname $libFile]]
-      file delete $::env(OBJECTS_DIR)/$baseName
-    } else {
-      file delete $::env(OBJECTS_DIR)/[file tail $libFile]
-    }
-  }
 
-  # set count \
-  #   [exec grep -c "Successfully proved designs equivalent" $::env(LOG_DIR)/4_equivalence_check.log]
-  # if { $count == 0 } {
-  #   error "Repair timing output failed equivalence test"
-  # } else {
-  #   puts "Repair timing output passed equivalence test"
-  # }
+  set count \
+    [exec grep -c "Found difference" $::env(LOG_DIR)/4_lec_check.log]
+  if { $count > 0 } {
+    error "Repair timing output failed lec test"
+  } else {
+    puts "Repair timing output passed lec test"
+  }
 }
