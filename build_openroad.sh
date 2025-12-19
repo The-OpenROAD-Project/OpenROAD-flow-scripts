@@ -29,6 +29,10 @@ OPENROAD_APP_ARGS=""
 DOCKER_OS_NAME="ubuntu22.04"
 PROC=-1
 
+VERIFIC_COMPONENTS='database util containers pct hier_tree verilog'
+WITH_VERIFIC=0
+VERIFIC_DIR=""
+
 function usage() {
         cat << EOF
 
@@ -36,6 +40,7 @@ Usage: $0 [-h|--help] [-o|--local] [-l|--latest]
           [--or_branch BRANCH_NAME] [--or_repo REPO_URL] [--no_init]
           [-n|--nice] [-t|--threads N]
           [--yosys-args-overwrite] [--yosys-args STRING]
+          [--with-verific PATH]
           [--openroad-args-overwrite] [--openroad-args STRING]
           [--install-path PATH] [--clean] [--clean-force]
 
@@ -66,6 +71,9 @@ Options:
                             Yosys compilation.
 
     --yosys-args STRING     Additional compilation flags for Yosys compilation.
+
+    --with-verific PATH     Compile Yosys with Verific support. PATH is the path
+                            to the Verific source folder.
 
     --openroad-args-overwrite
                             Do not use default flags set by this scrip during
@@ -138,6 +146,19 @@ while (( "$#" )); do
                         ;;
                 --yosys-args)
                         YOSYS_USER_ARGS="$2"
+                        shift
+                        ;;
+                --with-verific)
+                        YOSYS_USER_ARGS+=" ENABLE_VERIFIC=1"
+                        YOSYS_USER_ARGS+=" ENABLE_VERIFIC_VHDL=0"
+                        YOSYS_USER_ARGS+=" VERIFIC_COMPONENTS='${VERIFIC_COMPONENTS}'"
+                        VERIFIC_DIR=${2}
+                        if [ ! -d "${VERIFIC_DIR}" ]; then
+                                echo "[ERROR] Verific path '${VERIFIC_DIR}' does not exist." >&2
+                                exit 1
+                        fi
+                        YOSYS_USER_ARGS+=" VERIFIC_DIR=${VERIFIC_DIR}"
+                        WITH_VERIFIC=1
                         shift
                         ;;
                 --openroad-args-overwrite)
@@ -254,8 +275,17 @@ __local_build()
             git --work-tree=${YOSYS_ABC_PATH} --git-dir=${YOSYS_ABC_PATH}/.git update-index --refresh
         fi
 
+        if [ ${WITH_VERIFIC} -eq 1 ]; then
+                echo "[INFO FLW-0031] Compiling Verific components."
+                cp -r "${VERIFIC_DIR}" verific
+                for c in ${VERIFIC_COMPONENTS}; do
+                        make -j -C "verific/${c}" clean
+                        make -j -C "verific/${c}"
+                done
+        fi
+
         echo "[INFO FLW-0017] Compiling Yosys."
-        ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
+        eval ${NICE} make install -C tools/yosys -j "${PROC}" ${YOSYS_ARGS}
 
         echo "[INFO FLW-0030] Compiling yosys-slang."
         # CMAKE_FLAGS added to work around yosys-slang#141 (unable to build outside of git checkout)
@@ -289,7 +319,10 @@ __local_build()
         fi
         make -j4 install
         cd ../../../
-
+        if [ ${WITH_VERIFIC} -eq 1 ]; then
+                echo "[INFO FLW-0032] Cleaning up Verific components."
+                rm -rf verific
+        fi
 }
 
 __update_openroad_app_remote()
