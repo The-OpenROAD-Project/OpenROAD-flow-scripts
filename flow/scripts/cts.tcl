@@ -61,7 +61,7 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
     write_eqy_verilog 4_before_rsz.v
   }
   if { [env_var_exists_and_non_empty LEC_CHECK] } {
-    write_lec_verilog 4_lec_before_rsz.v
+    write_lec_verilog 4_before_rsz_lec.v
   }
 
   repair_timing_helper

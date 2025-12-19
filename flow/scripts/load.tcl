@@ -119,43 +119,22 @@ proc write_lec_script { } {
   set outfile [open "$::env(OBJECTS_DIR)/4_lec_test.yml" w]
   puts $outfile "format: verilog"
   puts $outfile "input_paths:"
-  puts $outfile "  - $::env(RESULTS_DIR)/4_before_rsz.v"
-  puts $outfile "  - $::env(RESULTS_DIR)/4_after_rsz.v"
+  puts $outfile "  - $::env(RESULTS_DIR)/4_before_rsz_lec.v"
+  puts $outfile "  - $::env(RESULTS_DIR)/4_after_rsz_lec.v"
   # Gold netlist
   puts $outfile "liberty_files:"
   foreach libFile $::env(LIB_FILES) {
-    file copy $libFile $::env(OBJECTS_DIR)/
-    # decompress .gz file
-    if { [string match "*.gz" $libFile] } {
-      set baseName [file tail [file rootname $libFile]]
-      exec gunzip -c $libFile > $::env(OBJECTS_DIR)/$baseName
-      puts $outfile " - $::env(OBJECTS_DIR)/$baseName"
-    } else {
-      puts $outfile " - $::env(OBJECTS_DIR)/[file tail $libFile]"
-    }
+    puts $outfile " - $libFile"
   }
   puts $outfile "log_file: $::env(LOG_DIR)/4_lec_check.log"
   close $outfile
 }
 
 proc run_lec_test { } {
-  foreach libFile $::env(LIB_FILES) {
-    if { [string match "*.gz" $libFile] } {
-      set baseName [file tail [file rootname $libFile]]
-      file delete $::env(OBJECTS_DIR)/$baseName
-    } 
-    # delete also the .gz file if existing
-    if { [file exists $::env(OBJECTS_DIR)/[file tail $libFile]] } {
-      file delete $::env(OBJECTS_DIR)/[file tail $libFile]
-    }
-  }
-  write_lec_verilog 4_after_rsz.v
+  write_lec_verilog 4_after_rsz_lec.v
   write_lec_script
-
   # tclint-disable-next-line command-args
   eval exec kepler-formal --config $::env(OBJECTS_DIR)/4_lec_test.yml 
-  # delete decompressed files
-
   set count \
     [exec grep -c "Found difference" $::env(LOG_DIR)/4_lec_check.log]
   if { $count > 0 } {

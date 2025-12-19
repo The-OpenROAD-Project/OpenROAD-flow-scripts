@@ -97,6 +97,8 @@ else
   export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 endif
 
+OPENROAD_EXE = /Users/noamcohen/dev/KFOR/OpenROAD/build/bin/openroad
+
 OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell test -x $(OPENROAD_EXE) && echo "true"),)
 
 export OPENROAD_ARGS = -no_init -threads $(NUM_CORES) $(OR_ARGS)
@@ -110,6 +112,8 @@ else
   YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 endif
 export YOSYS_EXE
+
+YOSYS_EXE = /Users/noamcohen/dev/formal/najaedaOR/ORFS/OpenROAD-flow-scripts/tools/yosys/yosys
 
 YOSYS_IS_VALID := $(if $(YOSYS_EXE),$(shell test -x $(YOSYS_EXE) && echo "true"),)
 
