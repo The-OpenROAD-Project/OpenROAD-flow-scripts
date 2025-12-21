@@ -4,11 +4,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "cts__flow__warnings__count:RSZ-0066": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "detailedroute__flow__warnings__count:DRT-0120": {
         "value": 3,
         "compare": "<=",
@@ -26,21 +21,6 @@
     },
     "floorplan__flow__warnings__count:ODB-0011": {
         "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:ODB-0254": {
-        "value": 3,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:ODB-0256": {
-        "value": 5,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:ODB-0260": {
-        "value": 2,
         "compare": "<=",
         "level": "warning"
     },
@@ -136,11 +116,11 @@
         "compare": ">="
     },
     "cts__timing__hold__ws": {
-        "value": -133.0,
+        "value": -75.0,
         "compare": ">="
     },
     "cts__timing__hold__tns": {
-        "value": -379.0,
+        "value": -300.0,
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
@@ -164,11 +144,11 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 2547385,
+        "value": 2535684,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 6,
+        "value": 0,
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
@@ -192,7 +172,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -50700.0,
+        "value": -51500.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
