@@ -73,8 +73,6 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
     run_lec_test
   }
 
-
-
   set result [catch { detailed_placement } msg]
   if { $result != 0 } {
     save_progress 4_1_error
