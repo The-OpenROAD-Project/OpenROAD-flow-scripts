@@ -118,7 +118,7 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -35.9,
+        "value": -44.1,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
@@ -138,11 +138,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -44.9,
+        "value": -56.2,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -1390.0,
+        "value": -1700.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -154,11 +154,11 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -44.9,
+        "value": -56.2,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -1390.0,
+        "value": -1700.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

@@ -1,6 +1,6 @@
 {
     "cts__flow__warnings__count:CTS-0041": {
-        "value": 5,
+        "value": 6,
         "compare": "<=",
         "level": "warning"
     },
@@ -98,7 +98,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 12484,
+        "value": 12438,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -118,11 +118,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -273.0,
+        "value": -247.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -1050000.0,
+        "value": -959000.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -138,7 +138,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -150.0,
+        "value": -164.0,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
@@ -154,7 +154,7 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -150.0,
+        "value": -164.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
@@ -170,7 +170,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 12763,
+        "value": 12718,
         "compare": "<="
     }
 }
