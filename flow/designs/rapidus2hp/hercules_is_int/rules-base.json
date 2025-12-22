@@ -59,11 +59,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "globalroute__flow__warnings__count:RSZ-0066": {
-        "value": 1,
-        "compare": "<=",
-        "level": "warning"
-    },
     "globalroute__flow__warnings__count:STA-0122": {
         "value": 27,
         "compare": "<=",
@@ -127,7 +122,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -1410000.0,
+        "value": -1420000.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -143,7 +138,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -1410000.0,
+        "value": -1420000.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
