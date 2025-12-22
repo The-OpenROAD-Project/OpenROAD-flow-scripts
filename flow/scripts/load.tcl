@@ -134,7 +134,7 @@ proc run_lec_test { } {
   write_lec_verilog 4_after_rsz_lec.v
   write_lec_script
   # tclint-disable-next-line command-args
-  eval exec kepler-formal --config $::env(OBJECTS_DIR)/4_lec_test.yml 
+  eval exec kepler-formal --config $::env(OBJECTS_DIR)/4_lec_test.yml
   set count \
     [exec grep -c "Found difference" $::env(LOG_DIR)/4_lec_check.log]
   if { $count > 0 } {
