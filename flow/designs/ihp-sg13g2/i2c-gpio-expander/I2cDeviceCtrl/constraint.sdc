@@ -16,7 +16,5 @@ set all_inputs_wo_clk_rst_clock [lreplace [all_inputs] $clk_indx_clock $clk_indx
 set_input_delay $input_delay_value_clock -clock [get_clocks clock] $all_inputs_wo_clk_rst_clock
 set_output_delay $output_delay_value_clock -clock [get_clocks clock] [all_outputs]
 
-set_load -pin_load 5 [all_inputs]
-set_load -pin_load 5 [all_outputs]
 set_timing_derate -early 0.95
 set_timing_derate -late 1.05
