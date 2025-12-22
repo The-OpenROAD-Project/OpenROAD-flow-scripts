@@ -286,7 +286,7 @@ _installUbuntuPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
-    brew install python libomp
+    brew install python libomp libtbb
     brew link --force libomp
     brew install --cask klayout
     brew install docker docker-buildx
@@ -300,7 +300,8 @@ _installCI() {
         coreutils \
         curl \
         python3 \
-        software-properties-common
+        software-properties-common \
+        libtbb-dev
 }
 
 _help() {
