@@ -286,7 +286,7 @@ _installUbuntuPackages() {
 
 _installDarwinPackages() {
     brew install libffi tcl-tk ruby
-    brew install python libomp libtbb
+    brew install python libomp doxygen capnp tbb bison flex boost spdlog zlib
     brew link --force libomp
     brew install --cask klayout
     brew install docker docker-buildx
@@ -301,7 +301,9 @@ _installCI() {
         curl \
         python3 \
         software-properties-common \
-        libtbb-dev
+        clang pkg-config \
+        libboost-dev libfl-dev libtbb-dev capnproto libcapnp-dev \
+        libgtest-dev libspdlog-dev libfmt-dev libboost-iostreams-dev zlib1g-dev
 }
 
 _help() {
