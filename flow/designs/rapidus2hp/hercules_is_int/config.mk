@@ -8,6 +8,10 @@ ifeq ($(FLOW_VARIANT), gatelevel)
   export SYNTH_NETLIST_FILES  = $(SRC_HOME)/ca78_8t_postroute_0707.v
 endif
 
+ifeq ($(FLOW_VARIANT), verific)
+	export SYNTH_HDL_FRONTEND = verific
+endif
+
 export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/hercules_issue/verilog/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/shared/verilog/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/models/cells/generic/*.sv))

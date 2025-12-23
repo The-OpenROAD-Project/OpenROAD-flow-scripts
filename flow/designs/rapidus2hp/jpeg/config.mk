@@ -3,6 +3,10 @@ export PLATFORM               = rapidus2hp
 export DESIGN_NAME            = jpeg_encoder
 export DESIGN_NICKNAME        = jpeg
 
+ifeq ($(FLOW_VARIANT), verific)
+	export SYNTH_HDL_FRONTEND = verific
+endif
+
 export VERILOG_FILES          = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*.v))
 export VERILOG_INCLUDE_DIRS   = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/include
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_7nm.sdc

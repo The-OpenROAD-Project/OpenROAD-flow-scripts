@@ -2,6 +2,10 @@ export PLATFORM               = rapidus2hp
 
 export DESIGN_NAME            = cva6
 
+ifeq ($(FLOW_VARIANT), verific)
+	export SYNTH_HDL_FRONTEND = verific
+endif
+
 # Some files are listed specifically vs. sorted wilcard to control the order (makes Verific happy)
 export SRC_HOME = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)
 export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/common/local/util/*.sv)) \
