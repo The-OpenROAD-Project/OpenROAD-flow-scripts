@@ -2,6 +2,10 @@ export PLATFORM             = rapidus2hp
 
 export DESIGN_NAME          = hercules_idecode
 
+ifeq ($(FLOW_VARIANT), verific)
+  export SYNTH_HDL_FRONTEND = verific
+endif
+
 export SRC_HOME             = /platforms/Rapidus/designs/hercules_idecode
 export VERILOG_FILES        = $(sort $(wildcard $(SRC_HOME)/hercules_idecode/verilog/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/shared/verilog/*.sv)) \

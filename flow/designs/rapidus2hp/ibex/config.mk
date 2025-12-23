@@ -3,6 +3,10 @@ export PLATFORM               = rapidus2hp
 export DESIGN_NICKNAME        = ibex
 export DESIGN_NAME            = ibex_core
 
+ifeq ($(FLOW_VARIANT), verific)
+	export SYNTH_HDL_FRONTEND = verific
+endif
+
 export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/ibex_sv/*.sv)) \
     $(DESIGN_HOME)/src/ibex_sv/syn/rtl/prim_clock_gating.v
 

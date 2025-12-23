@@ -2,6 +2,10 @@ export DESIGN_NICKNAME = gcd
 export DESIGN_NAME = gcd
 export PLATFORM    = rapidus2hp
 
+ifeq ($(FLOW_VARIANT), verific)
+	export SYNTH_HDL_FRONTEND = verific
+endif
+
 export VERILOG_FILES = $(DESIGN_HOME)/src/$(DESIGN_NAME)/gcd.v
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
 
