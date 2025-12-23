@@ -9,7 +9,17 @@ endif
 
 export VERILOG_FILES          = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*.v))
 export VERILOG_INCLUDE_DIRS   = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/include
-export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_7nm.sdc
+
+DEFAULT_SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_7nm.sdc
+_0P2A_8T_SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_0.2a_8T.sdc
+# Use $(if) to defer conditional eval until all makefiles are read
+export SDC_FILE = $(strip $(if $(filter 0.2a,$(RAPIDUS_PDK_VERSION)), \
+	$(if $(filter ra02h184_HST_45CPP,$(PLACE_SITE)), \
+	    $(_0P2A_8T_SDC_FILE), \
+	    $(DEFAULT_SDC_FILE)), \
+	$(DEFAULT_SDC_FILE)))
+
+
 export ABC_AREA               = 1
 
 export CORE_UTILIZATION       = 60

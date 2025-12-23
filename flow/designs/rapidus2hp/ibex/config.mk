@@ -15,12 +15,21 @@ export VERILOG_INCLUDE_DIRS = \
 
 export SYNTH_HDL_FRONTEND = slang
 
+
 # if FLOW_VARIANT == pos_slack, use an SDC file that has a larger clock
 # resulting in positive slack
 ifeq ($(FLOW_VARIANT),pos_slack)
 export SDC_FILE              = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_pos_slack.sdc
 else
-export SDC_FILE              = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+  DEFAULT_SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+  _0P2A_6T_SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_0.2a_6T.sdc
+  _0P2A_8T_SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_0.2a_8T.sdc
+  # Use $(if) to defer conditional eval until all makefiles are read
+  export SDC_FILE = $(strip $(if $(filter 0.2a,$(RAPIDUS_PDK_VERSION)), \
+	$(if $(filter ra02h138_DST_45CPP,$(PLACE_SITE)), \
+	    $(_0P2A_6T_SDC_FILE), \
+	    $(_0P2A_8T_SDC_FILE)), \
+	$(DEFAULT_SDC_FILE)))
 endif
 
 export CORE_UTILIZATION        = 70
