@@ -429,6 +429,10 @@ PLACE_SITE:
     - floorplan
   type: string
   tunable: 1
+LAYER_PARASITICS_FILE:
+  description: |
+    Path to per layer parasitics file. Defaults to $(PLATFORM_DIR)/setRC.tcl.
+  type: string
 TAPCELL_TCL:
   description: |
     Path to Endcap and Welltie cells file.
