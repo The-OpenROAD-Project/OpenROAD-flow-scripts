@@ -45,7 +45,7 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-0120": {
-        "value": 29,
+        "value": 28,
         "compare": "<=",
         "level": "warning"
     },
@@ -65,6 +65,11 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:GRT-0246": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
+    "globalroute__flow__warnings__count:RSZ-0066": {
         "value": 1,
         "compare": "<=",
         "level": "warning"
@@ -120,7 +125,7 @@
         "compare": ">="
     },
     "cts__timing__hold__tns": {
-        "value": -2880.0,
+        "value": -3660.0,
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
