@@ -321,12 +321,6 @@ write_db $::env(RESULTS_DIR)/3_4_place_resized.odb
 # Detailed placement
 utl::set_metrics_stage "detailedplace__{}"
 
-if { [env_var_exists_and_non_empty LAYER_PARASITICS_FILE] } {
-  log_cmd source $::env(LAYER_PARASITICS_FILE)
-} else {
-  log_cmd source $::env(PLATFORM_DIR)/setRC.tcl
-}
-
 proc do_dpl { } {
   # Only for use with hybrid rows
   if { [env_var_equals BALANCE_ROWS 1] } {
