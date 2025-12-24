@@ -32,7 +32,11 @@ proc load_design { design_file sdc_file } {
     log_cmd source $::env(PLATFORM_DIR)/derate.tcl
   }
 
-  source $::env(PLATFORM_DIR)/setRC.tcl
+  if { [env_var_exists_and_non_empty LAYER_PARASITICS_FILE] } {
+    log_cmd source $::env(LAYER_PARASITICS_FILE)
+  } else {
+    log_cmd source $::env(PLATFORM_DIR)/setRC.tcl
+  }
 
   if { [env_var_equals LIB_MODEL CCS] } {
     puts "Using CCS delay calculation"
