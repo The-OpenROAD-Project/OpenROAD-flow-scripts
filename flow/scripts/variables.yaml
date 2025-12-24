@@ -1231,3 +1231,10 @@ NUM_CORES:
     routing, or place jobs running at the same time.
   stages:
     - All stages
+KEEP_VARS:
+  description: >
+    Feature toggle to keep intermediate variables during the flow.
+    This is useful for the single-run flow, where all stages of the flow
+    are run in a single OpenROAD instance.
+  stages:
+    - All stages
