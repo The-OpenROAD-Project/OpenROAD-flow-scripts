@@ -18,11 +18,23 @@ export VERILOG_INCLUDE_DIRS =  $(SRC_HOME)/hercules_idecode/verilog \
 export SDC_FILE             = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/prects.sdc
 
 export SYNTH_HDL_FRONTEND  ?= slang
-ifeq ($(SYNTH_HDL_FRONTEND), slang)
-  export CORE_UTILIZATION     = 50
-else
-  export CORE_UTILIZATION     = 48
-endif
+
+# Use $(if) to defer conditional eval until all makefiles are read
+#
+# | Front End | Place Site | Utilization |
+# | --------- | ---------- | ----------- |
+# |   slang   |     6T     |      44     |
+# |   slang   |     6T     |      50     |
+# |  verific  |     6T     |      43     |
+# |  verific  |     6T     |      48     |
+
+export CORE_UTILIZATION = $(strip $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
+	$(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
+		44, \
+		50), \
+	$(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
+		43, \
+		48)))
 
 export CORE_MARGIN          = 1
 export PLACE_DENSITY        = 0.50
