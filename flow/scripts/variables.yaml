@@ -873,8 +873,9 @@ SYNTH_OPT_HIER:
     - synth
 VERILOG_TOP_PARAMS:
   description: |
-    Apply toplevel params (if exist).
-  stages:
+    Apply toplevel params (if exist). Passed in as a list of key value pairs
+    in tcl syntax; separated by spaces: PARAM1 VALUE1 PARAM2 VALUE2
+    stages:
     - synth
 CORE_ASPECT_RATIO:
   description: >
