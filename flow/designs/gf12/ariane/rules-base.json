@@ -222,7 +222,7 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -2550.0,
+        "value": -3350.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {

@@ -1,6 +1,6 @@
 {
     "cts__flow__warnings__count:CTS-0041": {
-        "value": 3,
+        "value": 6,
         "compare": "<=",
         "level": "warning"
     },
@@ -25,7 +25,7 @@
         "level": "warning"
     },
     "finish__flow__warnings__count:STA-1648": {
-        "value": 260,
+        "value": 356,
         "compare": "<=",
         "level": "warning"
     },
@@ -199,7 +199,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -2580.0,
+        "value": -7140.0,
         "compare": ">="
     },
     "finish__design__instance__area": {

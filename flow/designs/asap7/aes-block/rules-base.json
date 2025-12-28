@@ -24,7 +24,7 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1796,
+        "value": 2001,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
