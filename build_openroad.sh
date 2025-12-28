@@ -291,11 +291,38 @@ __local_build()
         # CMAKE_FLAGS added to work around yosys-slang#141 (unable to build outside of git checkout)
         ${NICE} make install -C tools/yosys-slang -j "${PROC}" YOSYS_PREFIX="${INSTALL_PATH}/yosys/bin/" CMAKE_FLAGS="-DYOSYS_SLANG_REVISION=unknown -DSLANG_REVISION=unknown"
 
+        echo "[INFO FLW-0031] Compiling kepler-formal"
+        cd tools/kepler-formal
+        git submodule update --init --recursive
+
+        # if build dir does not exist, create it
+        if [ ! -d build ]; then
+        mkdir build
+        fi 
+
+        cd build
+
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+        cmake .. \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
+        -DCMAKE_EXE_LINKER_FLAGS="-flto" \
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+        -DCMAKE_INSTALL_RPATH=@executable_path/../lib
+        else
+        cmake .. \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
+        -DCMAKE_EXE_LINKER_FLAGS="-flto" \
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+        -DCMAKE_INSTALL_RPATH=\$ORIGIN/../lib
+        fi
+        make -j4 install
+        cd ../../../
         if [ ${WITH_VERIFIC} -eq 1 ]; then
                 echo "[INFO FLW-0032] Cleaning up Verific components."
                 rm -rf verific
         fi
-
 }
 
 __update_openroad_app_remote()
