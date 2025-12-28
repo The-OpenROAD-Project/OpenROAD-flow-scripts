@@ -30,7 +30,7 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-0120": {
-        "value": 1,
+        "value": 5,
         "compare": "<=",
         "level": "warning"
     },
@@ -113,11 +113,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -29.5,
+        "value": -59.8,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -118.0,
+        "value": -1430.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -129,11 +129,11 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -29.5,
+        "value": -59.8,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -118.0,
+        "value": -1430.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
