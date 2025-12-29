@@ -106,4 +106,15 @@ gui::set_display_controls "Heat Maps/Routing Congestion" visible true
 
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_congestion.webp
 
+# The worst timing path view
+gui::set_display_controls "Heat Maps/Routing Congestion" visible false
+gui::set_display_controls "Timing Path/*" visible true
+gui::set_display_controls "Nets/*" visible false
+gui::set_display_controls "Instances/*" visible true
+gui::set_display_controls "Shape Types/Routing/*" visible false
+
+gui::show_worst_path
+save_image -resolution $resolution $::env(REPORTS_DIR)/final_worst_path.webp
+gui::set_display_controls "Timing Path/*" visible false
+
 gui::restore_display_controls
