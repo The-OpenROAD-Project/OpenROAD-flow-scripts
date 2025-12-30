@@ -22,7 +22,7 @@ proc write_lec_script { step, file1, file2 } {
 }
 
 proc run_lec_test { step, file1, file2 } {
-  write_lec_script step file1 file2
+  write_lec_script ${step} ${file1} ${file2}
   # tclint-disable-next-line command-args
   eval exec kepler-formal --config $::env(OBJECTS_DIR)/lec_test_${step}.yml
   set count \
