@@ -18,4 +18,4 @@ foreach net [$block getNets] {
   }
 }
 
-write_db $::env(RESULTS_DIR)/2_4_floorplan_pdn.odb
+orfs_write_db $::env(RESULTS_DIR)/2_4_floorplan_pdn.odb

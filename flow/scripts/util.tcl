@@ -241,3 +241,17 @@ proc find_physical_only_masters { } {
   }
   return $physical_only_masters
 }
+
+proc orfs_write_db { output_file } {
+  if { $::env(SINGLE_OPENROAD_INVOCATION_FLOW) } {
+    return
+  }
+  log_cmd write_db $output_file
+}
+
+proc orfs_write_sdc { output_file } {
+  if { $::env(SINGLE_OPENROAD_INVOCATION_FLOW) } {
+    return
+  }
+  log_cmd write_sdc -no_timestamp $output_file
+}
