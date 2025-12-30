@@ -17,12 +17,12 @@ proc write_lec_script { step, file1, file2 } {
   foreach libFile $::env(LIB_FILES) {
     puts $outfile " - $libFile"
   }
-  puts $outfile "log_file: $::env(LOG_DIR)/lec_check.log"
+  puts $outfile "log_file: $::env(LOG_DIR)/lec_check_${step}.log"
   close $outfile
 }
 
 proc run_lec_test { step, file1, file2 } {
-  write_lec_script step, file1, file2
+  write_lec_script step file1 file2
   # tclint-disable-next-line command-args
   eval exec kepler-formal --config $::env(OBJECTS_DIR)/lec_test_${step}.yml
   set count \
