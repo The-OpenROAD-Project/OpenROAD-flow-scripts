@@ -6,13 +6,12 @@ proc write_lec_verilog { filename } {
   }
 }
 
-proc write_lec_script { step, file1, file2 } {
+proc write_lec_script { step file1 file2 } {
   set outfile [open "$::env(OBJECTS_DIR)/lec_test_${step}.yml" w]
   puts $outfile "format: verilog"
   puts $outfile "input_paths:"
   puts $outfile "  - $::env(RESULTS_DIR)/${file1}"
   puts $outfile "  - $::env(RESULTS_DIR)/${file2}"
-  # Gold netlist
   puts $outfile "liberty_files:"
   foreach libFile $::env(LIB_FILES) {
     puts $outfile " - $libFile"
@@ -21,8 +20,8 @@ proc write_lec_script { step, file1, file2 } {
   close $outfile
 }
 
-proc run_lec_test { step, file1, file2 } {
-  write_lec_script ${step} ${file1} ${file2}
+proc run_lec_test { step file1 file2 } {
+  write_lec_script $step $file1 $file2
   # tclint-disable-next-line command-args
   eval exec kepler-formal --config $::env(OBJECTS_DIR)/lec_test_${step}.yml
   set count \
@@ -33,3 +32,4 @@ proc run_lec_test { step, file1, file2 } {
     puts "Repair timing output passed lec test"
   }
 }
+
