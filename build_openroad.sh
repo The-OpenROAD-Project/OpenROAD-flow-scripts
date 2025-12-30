@@ -305,15 +305,19 @@ __local_build()
         cmake .. -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
         -DCMAKE_EXE_LINKER_FLAGS="-flto" \
-        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+        -DCMAKE_BUILD_RPATH='@executable_path/../lib' \
         -DCMAKE_INSTALL_RPATH='@executable_path/../lib' \
+        -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
         -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}/kepler-formal"
         else
         cmake .. -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
         -DCMAKE_EXE_LINKER_FLAGS="-flto" \
-        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+        -DCMAKE_BUILD_RPATH='\$ORIGIN/../lib' \
         -DCMAKE_INSTALL_RPATH='\$ORIGIN/../lib' \
+        -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
         -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}/kepler-formal"
         fi
 
