@@ -319,7 +319,6 @@ __local_build()
 
         make -j"${PROC}" install
 
-
         cd ../../../
         if [ ${WITH_VERIFIC} -eq 1 ]; then
                 echo "[INFO FLW-0032] Cleaning up Verific components."
