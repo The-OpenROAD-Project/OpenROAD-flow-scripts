@@ -30,5 +30,10 @@ proc run_lec_test { step file1 file2 } {
     # This block executes if grep returns a non-zero exit code
     set count 0
   }
+  if { $count > 0 } {
+    error "Repair timing output failed lec test"
+  } else {
+    puts "Repair timing output passed lec test"
+  }
 }
 
