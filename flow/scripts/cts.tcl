@@ -72,7 +72,7 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
   }
   if { [env_var_exists_and_non_empty LEC_CHECK] } {
     write_lec_verilog 4_after_rsz_lec.v
-    run_lec_test 4_after 4_before_rsz_lec.v 4_after_rsz_lec.v
+    run_lec_test 4_rsz 4_before_rsz_lec.v 4_after_rsz_lec.v
   }
 
   set result [catch { detailed_placement } msg]
