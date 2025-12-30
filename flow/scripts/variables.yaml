@@ -429,6 +429,10 @@ PLACE_SITE:
     - floorplan
   type: string
   tunable: 1
+LAYER_PARASITICS_FILE:
+  description: |
+    Path to per layer parasitics file. Defaults to $(PLATFORM_DIR)/setRC.tcl.
+  type: string
 TAPCELL_TCL:
   description: |
     Path to Endcap and Welltie cells file.
@@ -869,8 +873,9 @@ SYNTH_OPT_HIER:
     - synth
 VERILOG_TOP_PARAMS:
   description: |
-    Apply toplevel params (if exist).
-  stages:
+    Apply toplevel params (if exist). Passed in as a list of key value pairs
+    in tcl syntax; separated by spaces: PARAM1 VALUE1 PARAM2 VALUE2
+    stages:
     - synth
 CORE_ASPECT_RATIO:
   description: >
@@ -1225,5 +1230,12 @@ NUM_CORES:
     OpenROAD running instances, which can lead to overprovisioning
     in contexts such as bazel-orfs where there could be many
     routing, or place jobs running at the same time.
+  stages:
+    - All stages
+KEEP_VARS:
+  description: >
+    Feature toggle to keep intermediate variables during the flow.
+    This is useful for the single-run flow, where all stages of the flow
+    are run in a single OpenROAD instance.
   stages:
     - All stages

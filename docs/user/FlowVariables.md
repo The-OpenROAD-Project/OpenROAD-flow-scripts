@@ -157,8 +157,10 @@ configuration file.
 | <a name="IO_PLACER_H"></a>IO_PLACER_H| A list of metal layers on which the I/O pins are placed horizontally (top and bottom of the die).| |
 | <a name="IO_PLACER_V"></a>IO_PLACER_V| A list of metal layers on which the I/O pins are placed vertically (sides of the die).| |
 | <a name="IR_DROP_LAYER"></a>IR_DROP_LAYER| Default metal layer to report IR drop.| |
+| <a name="KEEP_VARS"></a>KEEP_VARS| Feature toggle to keep intermediate variables during the flow. This is useful for the single-run flow, where all stages of the flow are run in a single OpenROAD instance.| |
 | <a name="KLAYOUT_TECH_FILE"></a>KLAYOUT_TECH_FILE| A mapping from LEF/DEF to GDS using the KLayout tool.| |
 | <a name="LATCH_MAP_FILE"></a>LATCH_MAP_FILE| Optional mapping file supplied to Yosys to map latches| |
+| <a name="LAYER_PARASITICS_FILE"></a>LAYER_PARASITICS_FILE| Path to per layer parasitics file. Defaults to $(PLATFORM_DIR)/setRC.tcl.| |
 | <a name="LIB_FILES"></a>LIB_FILES| A Liberty file of the standard cell library with PVT characterization, input and output characteristics, timing and power definitions for each cell.| |
 | <a name="MACRO_BLOCKAGE_HALO"></a>MACRO_BLOCKAGE_HALO| Distance beyond the edges of a macro that will also be covered by the blockage generated for that macro. Note that the default macro blockage halo comes from the largest of the specified MACRO_PLACE_HALO x or y values. This variable overrides that calculation.| |
 | <a name="MACRO_EXTENSION"></a>MACRO_EXTENSION| Sets the number of GCells added to the blockages boundaries from macros.| |
@@ -268,7 +270,7 @@ configuration file.
 | <a name="VERILOG_DEFINES"></a>VERILOG_DEFINES| Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`| |
 | <a name="VERILOG_FILES"></a>VERILOG_FILES| The path to the design Verilog/SystemVerilog files providing a description of modules.| |
 | <a name="VERILOG_INCLUDE_DIRS"></a>VERILOG_INCLUDE_DIRS| Specifies the include directories for the Verilog input files.| |
-| <a name="VERILOG_TOP_PARAMS"></a>VERILOG_TOP_PARAMS| Apply toplevel params (if exist).| |
+| <a name="VERILOG_TOP_PARAMS"></a>VERILOG_TOP_PARAMS| Apply toplevel params (if exist). Passed in as a list of key value pairs in tcl syntax; separated by spaces: PARAM1 VALUE1 PARAM2 VALUE2 stages: - synth| |
 | <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Flags to pass to yosys.| -v 3|
 ## synth variables
 
@@ -304,7 +306,6 @@ configuration file.
 - [VERILOG_DEFINES](#VERILOG_DEFINES)
 - [VERILOG_FILES](#VERILOG_FILES)
 - [VERILOG_INCLUDE_DIRS](#VERILOG_INCLUDE_DIRS)
-- [VERILOG_TOP_PARAMS](#VERILOG_TOP_PARAMS)
 - [YOSYS_FLAGS](#YOSYS_FLAGS)
 
 ## floorplan variables
@@ -481,6 +482,7 @@ configuration file.
 
 ## All stages variables
 
+- [KEEP_VARS](#KEEP_VARS)
 - [NUM_CORES](#NUM_CORES)
 - [OPENROAD_HIERARCHICAL](#OPENROAD_HIERARCHICAL)
 - [SWAP_ARITH_OPERATORS](#SWAP_ARITH_OPERATORS)
@@ -518,6 +520,7 @@ configuration file.
 - [GUI_TIMING](#GUI_TIMING)
 - [IR_DROP_LAYER](#IR_DROP_LAYER)
 - [KLAYOUT_TECH_FILE](#KLAYOUT_TECH_FILE)
+- [LAYER_PARASITICS_FILE](#LAYER_PARASITICS_FILE)
 - [LIB_FILES](#LIB_FILES)
 - [MACRO_EXTENSION](#MACRO_EXTENSION)
 - [PLATFORM](#PLATFORM)
@@ -537,4 +540,5 @@ configuration file.
 - [TAP_CELL_NAME](#TAP_CELL_NAME)
 - [TECH_LEF](#TECH_LEF)
 - [USE_FILL](#USE_FILL)
+- [VERILOG_TOP_PARAMS](#VERILOG_TOP_PARAMS)
 

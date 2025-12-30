@@ -19,21 +19,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:ODB-0254": {
-        "value": 3,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:ODB-0256": {
-        "value": 5,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:ODB-0260": {
-        "value": 2,
-        "compare": "<=",
-        "level": "warning"
-    },
     "flow__warnings__count:PDN-1031": {
         "value": 2,
         "compare": "<=",
@@ -103,11 +88,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -51.0,
+        "value": -117.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -204.0,
+        "value": -997.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {

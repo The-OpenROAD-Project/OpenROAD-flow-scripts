@@ -145,6 +145,9 @@ proc find_macros { } {
 }
 
 proc erase_non_stage_variables { stage_name } {
+  if { [info exists ::env(KEEP_VARS)] && $::env(KEEP_VARS) == 1 } {
+    return
+  }
   # "$::env(SCRIPTS_DIR)/stage_variables.py stage_name" returns list of
   # variables to erase.
   #
