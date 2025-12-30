@@ -145,7 +145,7 @@ proc find_macros { } {
 }
 
 proc erase_non_stage_variables { stage_name } {
-  if { $::env(SINGLE_OPENROAD_INVOCATION_FLOW) } {
+  if { $::env(KEEP_VARS) } {
     return
   }
   # "$::env(SCRIPTS_DIR)/stage_variables.py stage_name" returns list of
@@ -243,14 +243,14 @@ proc find_physical_only_masters { } {
 }
 
 proc orfs_write_db { output_file } {
-  if { $::env(SINGLE_OPENROAD_INVOCATION_FLOW) } {
+  if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
   log_cmd write_db $output_file
 }
 
 proc orfs_write_sdc { output_file } {
-  if { $::env(SINGLE_OPENROAD_INVOCATION_FLOW) } {
+  if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
     return
   }
   log_cmd write_sdc -no_timestamp $output_file

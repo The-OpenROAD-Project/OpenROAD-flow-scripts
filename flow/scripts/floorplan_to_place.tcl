@@ -1,5 +1,6 @@
 # Enable keeping variables between stages
-set ::env(SINGLE_OPENROAD_INVOCATION_FLOW) 1
+set ::env(KEEP_VARS) 1
+set ::env(WRITE_ODB_AND_SDC_EACH_STAGE) 0
 
 # Floorplan
 source $::env(SCRIPTS_DIR)/floorplan.tcl

@@ -1232,11 +1232,16 @@ NUM_CORES:
     routing, or place jobs running at the same time.
   stages:
     - All stages
-SINGLE_OPENROAD_INVOCATION_FLOW:
+KEEP_VARS:
   description: >
-    Instead of invoking OpenROAD once per stage and saving out the
-    .odb and .sdc file at each stage, invoke OpenROAD once and run
-    through all stages in a single OpenROAD instance.
+    Feature toggle to keep intermediate variables during the flow.
+    This is useful for the single-run flow, where all stages of the flow
+    are run in a single OpenROAD instance.
+  default: 0
+WRITE_ODB_AND_SDC_EACH_STAGE:
+  description: >
+    Save out .sdc and .odb file after each stage, useful to disable
+    when using a single OpenROAD instance to run all stages of the flow.
   stages:
     - All stages
-  default: 0
+  default: 1
