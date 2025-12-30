@@ -1,11 +1,6 @@
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
 read_design_sources
 
-dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
-  # Apply toplevel parameters
-  chparam -set $key $value $::env(DESIGN_NAME)
-}
-
 hierarchy -check -top $::env(DESIGN_NAME)
 
 source_env_var_if_exists SYNTH_CANONICALIZE_TCL
