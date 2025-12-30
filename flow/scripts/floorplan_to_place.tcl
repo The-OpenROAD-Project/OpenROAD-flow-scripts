@@ -1,5 +1,5 @@
 # Enable keeping variables between stages
-set ::env(KEEP_VARS) 1
+set ::env(SINGLE_OPENROAD_INVOCATION_FLOW) 1
 
 # Floorplan
 source $::env(SCRIPTS_DIR)/floorplan.tcl
@@ -30,3 +30,6 @@ source $::env(SCRIPTS_DIR)/detail_place.tcl
 
 # Repair timing after placement
 source $::env(SCRIPTS_DIR)/repair_timing_post_place.tcl
+
+write_db $::env(RESULTS_DIR)/3_6_place_repair_timing.odb
+write_sdc -no_timestamp $::env(RESULTS_DIR)/3_6_place_repair_timing.sdc
