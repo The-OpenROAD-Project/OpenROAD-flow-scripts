@@ -301,12 +301,13 @@ __local_build()
         fi 
         cd build
 
-        cmake .. -DCMAKE_BUILD_TYPE=Release \
+	cmake .. \
+        -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
         -DCMAKE_EXE_LINKER_FLAGS="-flto" \
-        -DCMAKE_BUILD_RPATH="${INSTALL_PATH}/kepler-formal/lib" \
+        -DCMAKE_BUILD_RPATH="${DIR}/tools/kepler-formal/build/thirdparty/naja/src/dnl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/nl/nl:${DIR}/tools/kepler-formal/build/thirdparty/naja/src/optimization" \
         -DCMAKE_INSTALL_RPATH="${INSTALL_PATH}/kepler-formal/lib" \
-        -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
+        -DCMAKE_BUILD_WITH_INSTALL_RPATH=OFF \
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=OFF \
         -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}/kepler-formal"
 
