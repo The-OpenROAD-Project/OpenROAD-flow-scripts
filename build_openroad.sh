@@ -299,25 +299,27 @@ __local_build()
         if [ ! -d build ]; then
         mkdir build
         fi 
-
         cd build
 
         if [[ "$OSTYPE" == "darwin"* ]]; then
-        cmake .. \
-        -DCMAKE_BUILD_TYPE=Release \
+        cmake .. -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
         -DCMAKE_EXE_LINKER_FLAGS="-flto" \
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-        -DCMAKE_INSTALL_RPATH=@executable_path/../lib
+        -DCMAKE_INSTALL_RPATH='@executable_path/../lib' \
+        -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}/kepler-formal"
         else
-        cmake .. \
-        -DCMAKE_BUILD_TYPE=Release \
+        cmake .. -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_FLAGS_RELEASE="-Ofast -march=native -ffast-math -flto" \
         -DCMAKE_EXE_LINKER_FLAGS="-flto" \
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-        -DCMAKE_INSTALL_RPATH=\$ORIGIN/../lib
+        -DCMAKE_INSTALL_RPATH='\$ORIGIN/../lib' \
+        -DCMAKE_INSTALL_PREFIX="${INSTALL_PATH}/kepler-formal"
         fi
-        make -j4 install
+
+        make -j"${PROC}" install
+
+
         cd ../../../
         if [ ${WITH_VERIFIC} -eq 1 ]; then
                 echo "[INFO FLW-0032] Cleaning up Verific components."
