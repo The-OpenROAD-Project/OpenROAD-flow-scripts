@@ -1,5 +1,6 @@
 utl::set_metrics_stage "cts__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
+source $::env(SCRIPTS_DIR)/lec_check.tcl
 erase_non_stage_variables cts
 load_design 3_place.odb 3_place.sdc
 
@@ -70,7 +71,8 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
     run_equivalence_test
   }
   if { [env_var_exists_and_non_empty LEC_CHECK] } {
-    run_lec_test
+    write_lec_verilog 4_after_rsz_lec.v
+    run_lec_test 4_after 4_before_rsz_lec.v 4_after_rsz_lec.v
   }
 
   set result [catch { detailed_placement } msg]
