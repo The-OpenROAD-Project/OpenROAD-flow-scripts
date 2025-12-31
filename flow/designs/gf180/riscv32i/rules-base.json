@@ -152,7 +152,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 454654,
+        "value": 453842,
         "compare": "<="
     }
 }

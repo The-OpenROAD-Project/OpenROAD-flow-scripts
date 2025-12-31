@@ -34,6 +34,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "globalroute__flow__warnings__count:RSZ-0062": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 305820.24,
         "compare": "<="

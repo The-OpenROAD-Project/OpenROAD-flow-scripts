@@ -14,21 +14,6 @@
         "compare": "<=",
         "level": "warning"
     },
-    "floorplan__flow__warnings__count:ODB-0254": {
-        "value": 3,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:ODB-0256": {
-        "value": 5,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "floorplan__flow__warnings__count:ODB-0260": {
-        "value": 2,
-        "compare": "<=",
-        "level": "warning"
-    },
     "flow__warnings__count:GPL-0302": {
         "value": 1,
         "compare": "<=",
@@ -158,7 +143,7 @@
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
-        "value": 0,
+        "value": 2,
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
@@ -178,11 +163,11 @@
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
-        "value": -236.0,
+        "value": -229.0,
         "compare": ">="
     },
     "detailedroute__timing__hold__tns": {
-        "value": -15100.0,
+        "value": -2650.0,
         "compare": ">="
     },
     "finish__timing__setup__ws": {

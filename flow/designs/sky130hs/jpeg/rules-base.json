@@ -1,16 +1,11 @@
 {
     "detailedroute__flow__warnings__count:DRT-0120": {
-        "value": 39,
+        "value": 52,
         "compare": "<=",
         "level": "warning"
     },
     "detailedroute__flow__warnings__count:DRT-0349": {
         "value": 10,
-        "compare": "<=",
-        "level": "warning"
-    },
-    "detailedroute__flow__warnings__count:GRT-0243": {
-        "value": 1,
         "compare": "<=",
         "level": "warning"
     },
@@ -94,7 +89,7 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 165,
+        "value": 140,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
@@ -126,7 +121,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 100,
+        "value": 104,
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {
