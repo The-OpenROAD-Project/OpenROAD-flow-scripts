@@ -9,6 +9,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "finish__flow__warnings__count:GUI-0076": {
+        "value": 2,
+        "compare": "<=",
+        "level": "warning"
+    },
     "floorplan__flow__warnings__count:EST-0027": {
         "value": 1,
         "compare": "<=",
@@ -78,11 +83,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 31904,
+        "value": 31863,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 661868,
+        "value": 661418,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -102,7 +107,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -291000.0,
+        "value": -292000.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -118,7 +123,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -243.0,
+        "value": -275.0,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
@@ -134,7 +139,7 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -243.0,
+        "value": -275.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
@@ -150,7 +155,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 33567,
+        "value": 33606,
         "compare": "<="
     }
 }
