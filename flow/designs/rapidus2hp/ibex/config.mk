@@ -24,15 +24,27 @@ else
   DEFAULT_SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
   _0P2A_6T_SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_0.2a_6T.sdc
   _0P2A_8T_SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_0.2a_8T.sdc
+  _0P3_8T_SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint_0.3_8T.sdc
+
   # Use $(if) to defer conditional eval until all makefiles are read
-  export SDC_FILE = $(strip $(if $(filter 0.2a,$(RAPIDUS_PDK_VERSION)), \
+  export SDC_FILE = $(strip \
+    $(if $(filter 0.2a,$(RAPIDUS_PDK_VERSION)), \
 	$(if $(filter ra02h138_DST_45CPP,$(PLACE_SITE)), \
 	    $(_0P2A_6T_SDC_FILE), \
 	    $(_0P2A_8T_SDC_FILE)), \
-	$(DEFAULT_SDC_FILE)))
+        $(if $(and $(filter 0.3,$(RAPIDUS_PDK_VERSION)),$(filter ra02h184_HST_45CPP,$(PLACE_SITE))), \
+            $(_0P3_8T_SDC_FILE), \
+            $(DEFAULT_SDC_FILE) \
+        ) \
+    ))
 endif
 
-export CORE_UTILIZATION        = 70
+export CORE_UTILIZATION = $(strip $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
+	$(if $(filter ra02h138_DST_45CPP,$(PLACE_SITE)), \
+		60, \
+		65), \
+	70))
+
 export CORE_ASPECT_RATIO       = 1
 export CORE_MARGIN             = 0.75
 export PLACE_DENSITY_LB_ADDON  = 0.20
