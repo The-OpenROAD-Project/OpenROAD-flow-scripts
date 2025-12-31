@@ -8,7 +8,7 @@ if { $::env(USE_FILL) } {
   # The .v file is just for debugging purposes, not a result of
   # this stage.
   write_verilog $::env(RESULTS_DIR)/6_1_fill.v
-  write_db $::env(RESULTS_DIR)/6_1_fill.odb
+  orfs_write_db $::env(RESULTS_DIR)/6_1_fill.odb
 } else {
   log_cmd exec cp $::env(RESULTS_DIR)/5_route.odb $::env(RESULTS_DIR)/6_1_fill.odb
   # There is no 5_route.v file to copy

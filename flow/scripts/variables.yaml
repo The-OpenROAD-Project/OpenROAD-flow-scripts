@@ -1237,5 +1237,13 @@ KEEP_VARS:
     Feature toggle to keep intermediate variables during the flow.
     This is useful for the single-run flow, where all stages of the flow
     are run in a single OpenROAD instance.
+  default: 0
   stages:
     - All stages
+WRITE_ODB_AND_SDC_EACH_STAGE:
+  description: >
+    Save out .sdc and .odb file after each stage, useful to disable
+    when using a single OpenROAD instance to run all stages of the flow.
+  stages:
+    - All stages
+  default: 1

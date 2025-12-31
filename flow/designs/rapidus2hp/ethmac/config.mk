@@ -10,7 +10,10 @@ export VERILOG_FILES         = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NIC
 export SDC_FILE              = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 export ABC_AREA               = 1
 
-export CORE_UTILIZATION       = 70
+export CORE_UTILIZATION = $(strip $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
+	65, \
+	70))
+
 export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 0.75
 export PLACE_DENSITY          = 0.70
