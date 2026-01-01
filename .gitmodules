@@ -7,3 +7,6 @@
 [submodule "tools/yosys-slang"]
 	path = tools/yosys-slang
 	url = https://github.com/povik/yosys-slang.git
+[submodule "tools/kepler-formal"]
+	path = tools/kepler-formal
+	url = https://github.com/keplertech/kepler-formal
