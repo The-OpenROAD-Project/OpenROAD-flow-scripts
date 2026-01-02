@@ -88,33 +88,34 @@ if { !$::env(SYNTH_HIERARCHICAL) } {
   synth -flatten -run coarse:fine {*}$synth_full_args
 }
 
+# Enumerate memories in log, single code path and useful to
+# see memories in log, and mock/keep as needed.
+memory_collect
+set select [tee -q -s result.string select -list t:\$mem_v2]
+set report_file [open $::env(REPORTS_DIR)/synth_mocked_memories.txt "w"]
+foreach path [split [string trim $select] "\n"] {
+  set index [string first "/" $path]
+  set module [string range $path 0 [expr { $index - 1 }]]
+  set instance [string range $path [expr { $index + 1 }] end]
 
-if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
-  memory_collect
-  set select [tee -q -s result.string select -list t:\$mem_v2]
-  set report_file [open $::env(REPORTS_DIR)/synth_mocked_memories.txt "w"]
-  foreach path [split [string trim $select] "\n"] {
-    set index [string first "/" $path]
-    set module [string range $path 0 [expr { $index - 1 }]]
-    set instance [string range $path [expr { $index + 1 }] end]
-
-    set width [rtlil::get_param -uint $module $instance WIDTH]
-    set size [rtlil::get_param -uint $module $instance SIZE]
-    set nbits [expr $width * $size]
-    puts "Memory $path has dimensions $size x $width = $nbits"
-    if { $nbits > $::env(SYNTH_MEMORY_MAX_BITS) } {
+  set width [rtlil::get_param -uint $module $instance WIDTH]
+  set size [rtlil::get_param -uint $module $instance SIZE]
+  set nbits [expr $width * $size]
+  puts "Memory $path has dimensions $size x $width = $nbits"
+  if { $nbits > $::env(SYNTH_MEMORY_MAX_BITS) } {
+    if { $::env(SYNTH_MOCK_LARGE_MEMORIES) } {
       rtlil::set_param -uint $module $instance SIZE 1
-      puts "Shrunk memory $path from $size rows to 1"
-      puts -nonewline $report_file "$module:\n  width: $width\n  size: $size\n"
-      if { $::env(SYNTH_KEEP_MOCKED_MEMORIES) } {
-        select -module $module
-        setattr -mod -set keep_hierarchy 1
-        select -clear
-      }
+    }
+    puts "Shrunk memory $path from $size rows to 1"
+    puts -nonewline $report_file "$module:\n  width: $width\n  size: $size\n"
+    if { $::env(SYNTH_KEEP_LARGE_MEMORIES) } {
+      select -module $module
+      setattr -mod -set keep_hierarchy 1
+      select -clear
     }
   }
-  close $report_file
 }
+close $report_file
 
 json -o $::env(RESULTS_DIR)/mem.json
 # Run report and check here so as to fail early if this synthesis run is doomed

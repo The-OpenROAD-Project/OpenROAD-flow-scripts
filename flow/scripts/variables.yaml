@@ -228,13 +228,9 @@ SYNTH_MOCK_LARGE_MEMORIES:
   default: 0
   stages:
     - synth
-SYNTH_KEEP_MOCKED_MEMORIES:
+SYNTH_KEEP_LARGE_MEMORIES:
   description: >
-    When `SYNTH_MOCK_LARGE_MEMORIES=1`, setting this to 1,
-    will keep mocked memories (not flattening them).
-
-    This preserves some of the access logic complexity and
-    avoids optimizations outside of the mocked memory.
+    Keep memories larger than `SYNTH_MEMORY_MAX_BITS`.
   default: 1
   stages:
     - synth
