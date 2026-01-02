@@ -44,11 +44,25 @@ proc read_design_sources { } {
   }
 
   if { [env_var_equals SYNTH_HDL_FRONTEND slang] } {
-    # slang requires all files at once
     plugin -i slang
-    yosys read_slang -D SYNTHESIS --keep-hierarchy --compat=vcs \
-      --ignore-assertions {*}$::env(SYNTH_SLANG_ARGS) --top $::env(DESIGN_NAME) \
-      {*}$vIdirsArgs {*}$::env(VERILOG_FILES) {*}[env_var_or_empty VERILOG_DEFINES]
+
+    set slang_args [list \
+      -D SYNTHESIS --keep-hierarchy --compat=vcs --ignore-assertions --top $::env(DESIGN_NAME) \
+      {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
+
+    # slang requires all files at once
+    lappend slang_args {*}$::env(VERILOG_FILES)
+
+    # Apply top-level parameters
+    dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
+      lappend slang_args -G "$key=$value"
+    }
+
+    # Add user arguments
+    lappend slang_args {*}$::env(SYNTH_SLANG_ARGS)
+
+    yosys read_slang {*}$slang_args
+
     # Workaround for yosys-slang#119
     setattr -unset init
   } elseif { [env_var_equals SYNTH_HDL_FRONTEND verific] } {
@@ -60,6 +74,11 @@ proc read_design_sources { } {
     }
     verific -sv2012 {*}$::env(VERILOG_FILES)
     verific -import -no-split-complex-ports $::env(DESIGN_NAME)
+
+    dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
+      # Apply top-level parameters
+      chparam -set $key $value $::env(DESIGN_NAME)
+    }
   } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
     verilog_defaults -push
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
@@ -69,6 +88,11 @@ proc read_design_sources { } {
       read_verilog -defer -sv {*}$vIdirsArgs $file
     }
     verilog_defaults -pop
+
+    dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
+      # Apply top-level parameters
+      chparam -set $key $value $::env(DESIGN_NAME)
+    }
   } else {
     error "Unrecognized HDL frontend: $::env(SYNTH_HDL_FRONTEND)"
   }

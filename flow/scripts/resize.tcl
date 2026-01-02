@@ -32,4 +32,4 @@ report_metrics 3 "resizer" true false
 puts "Instance count before $instance_count_before, after [sta::network_leaf_instance_count]"
 puts "Pin count before $pin_count_before, after [sta::network_leaf_pin_count]"
 
-write_db $::env(RESULTS_DIR)/3_4_place_resized.odb
+orfs_write_db $::env(RESULTS_DIR)/3_4_place_resized.odb

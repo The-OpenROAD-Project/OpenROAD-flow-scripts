@@ -46,7 +46,7 @@ proc do_placement { global_placement_args } {
 
 set result [catch { do_placement $global_placement_args } errMsg]
 if { $result != 0 } {
-  write_db $::env(RESULTS_DIR)/3_3_place_gp-failed.odb
+  orfs_write_db $::env(RESULTS_DIR)/3_3_place_gp-failed.odb
   error $errMsg
 }
 
@@ -59,4 +59,4 @@ if { $::env(CLUSTER_FLOPS) } {
 
 report_metrics 3 "global place" false false
 
-write_db $::env(RESULTS_DIR)/3_3_place_gp.odb
+orfs_write_db $::env(RESULTS_DIR)/3_3_place_gp.odb

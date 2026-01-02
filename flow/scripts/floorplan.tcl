@@ -150,5 +150,5 @@ report_metrics 2 "floorplan final" false false
 source_env_var_if_exists POST_FLOORPLAN_TCL
 source_env_var_if_exists IO_CONSTRAINTS
 
-write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
-write_sdc -no_timestamp $::env(RESULTS_DIR)/2_1_floorplan.sdc
+orfs_write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
+orfs_write_sdc $::env(RESULTS_DIR)/2_1_floorplan.sdc

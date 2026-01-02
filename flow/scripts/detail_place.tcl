@@ -32,10 +32,10 @@ proc do_dpl { } {
 
 set result [catch { do_dpl } errMsg]
 if { $result != 0 } {
-  write_db $::env(RESULTS_DIR)/3_5_place_dp-failed.odb
+  orfs_write_db $::env(RESULTS_DIR)/3_5_place_dp-failed.odb
   error $errMsg
 }
 
 report_metrics 3 "detailed place" true false
 
-write_db $::env(RESULTS_DIR)/3_5_place_dp.odb
+orfs_write_db $::env(RESULTS_DIR)/3_5_place_dp.odb

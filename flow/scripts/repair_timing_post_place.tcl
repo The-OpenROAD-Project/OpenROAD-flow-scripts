@@ -18,4 +18,4 @@ puts "Estimate parasitics"
 estimate_parasitics -placement
 report_metrics 3 "place repair timing" true false
 
-write_db $::env(RESULTS_DIR)/3_6_place_repair_timing.odb
+orfs_write_db $::env(RESULTS_DIR)/3_6_place_repair_timing.odb
