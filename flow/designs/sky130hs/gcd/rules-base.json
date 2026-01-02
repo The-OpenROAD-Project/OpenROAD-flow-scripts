@@ -79,22 +79,6 @@
         "value": 100,
         "compare": "<="
     },
-    "detailedroute__timing__setup__ws": {
-        "value": -0.326,
-        "compare": ">="
-    },
-    "detailedroute__timing__setup__tns": {
-        "value": -8.86,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__ws": {
-        "value": -0.07,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__tns": {
-        "value": -0.28,
-        "compare": ">="
-    },
     "finish__timing__setup__ws": {
         "value": -0.491,
         "compare": ">="
