@@ -35,7 +35,7 @@
         "level": "warning"
     },
     "globalroute__flow__warnings__count:DRT-0120": {
-        "value": 25,
+        "value": 27,
         "compare": "<=",
         "level": "warning"
     },
