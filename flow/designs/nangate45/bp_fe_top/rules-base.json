@@ -80,11 +80,11 @@
         "compare": "<="
     },
     "detailedroute__timing__setup__ws": {
-        "value": -2260.0,
+        "value": -0.09,
         "compare": ">="
     },
     "detailedroute__timing__setup__tns": {
-        "value": -92800.0,
+        "value": -0.36,
         "compare": ">="
     },
     "detailedroute__timing__hold__ws": {
@@ -100,7 +100,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -0.85,
+        "value": -0.795,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
