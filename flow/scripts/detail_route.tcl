@@ -7,7 +7,7 @@ if { ![grt::have_routes] } {
 }
 
 if { $::env(SKIP_DETAILED_ROUTE) } {
-  write_db $::env(RESULTS_DIR)/5_2_route.odb
+  orfs_write_db $::env(RESULTS_DIR)/5_2_route.odb
   exit
 }
 
@@ -79,4 +79,4 @@ if { ![design_is_routed] } {
 
 report_metrics 5 "detailed route"
 
-write_db $::env(RESULTS_DIR)/5_2_route.odb
+orfs_write_db $::env(RESULTS_DIR)/5_2_route.odb

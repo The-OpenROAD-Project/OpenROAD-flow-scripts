@@ -10,8 +10,8 @@ repair_clock_inverters
 
 proc save_progress { stage } {
   puts "Run 'make gui_$stage.odb' to load progress snapshot"
-  write_db $::env(RESULTS_DIR)/$stage.odb
-  write_sdc -no_timestamp $::env(RESULTS_DIR)/$stage.sdc
+  orfs_write_db $::env(RESULTS_DIR)/$stage.odb
+  orfs_write_sdc $::env(RESULTS_DIR)/$stage.sdc
 }
 
 # Run CTS
@@ -88,5 +88,5 @@ report_metrics 4 "cts final"
 
 source_env_var_if_exists POST_CTS_TCL
 
-write_db $::env(RESULTS_DIR)/4_1_cts.odb
-write_sdc -no_timestamp $::env(RESULTS_DIR)/4_cts.sdc
+orfs_write_db $::env(RESULTS_DIR)/4_1_cts.odb
+orfs_write_sdc $::env(RESULTS_DIR)/4_cts.sdc

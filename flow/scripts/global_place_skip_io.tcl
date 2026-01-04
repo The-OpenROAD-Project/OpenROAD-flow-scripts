@@ -13,4 +13,4 @@ if { [env_var_exists_and_non_empty FLOORPLAN_DEF] } {
     {*}[env_var_or_empty GLOBAL_PLACEMENT_ARGS]
 }
 
-write_db $::env(RESULTS_DIR)/3_1_place_gp_skip_io.odb
+orfs_write_db $::env(RESULTS_DIR)/3_1_place_gp_skip_io.odb

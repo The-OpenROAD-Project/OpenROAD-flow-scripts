@@ -29,11 +29,11 @@ proc global_route_helper { } {
 
   if { $result != 0 } {
     if { !$::env(GENERATE_ARTIFACTS_ON_FAILURE) } {
-      write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
+      orfs_write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
       error $errMsg
     }
-    write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt.sdc
-    write_db $::env(RESULTS_DIR)/5_1_grt.odb
+    orfs_write_sdc $::env(RESULTS_DIR)/5_1_grt.sdc
+    orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb
     return
   }
 
@@ -113,8 +113,8 @@ proc global_route_helper { } {
   source [file join $::env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
 
   write_guides $::env(RESULTS_DIR)/route.guide
-  write_db $::env(RESULTS_DIR)/5_1_grt.odb
-  write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt.sdc
+  orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb
+  orfs_write_sdc $::env(RESULTS_DIR)/5_1_grt.sdc
 }
 
 global_route_helper
