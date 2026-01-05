@@ -12,15 +12,19 @@ export VERILOG_INCLUDE_DIRS   = $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/include
 
 DEFAULT_SDC_FILE  = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_7nm.sdc
 _0P2A_8T_SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_0.2a_8T.sdc
+_0P15_SDC_FILE    = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_0.15.sdc
 _0P3_SDC_FILE     = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/jpeg_encoder15_0.3.sdc
 
 # Use $(if) to defer conditional eval until all makefiles are read
 export SDC_FILE = $(strip \
     $(if $(and $(filter 0.2a,$(RAPIDUS_PDK_VERSION)),$(filter ra02h184_HST_45CPP,$(PLACE_SITE))), \
         $(_0P2A_8T_SDC_FILE), \
-        $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
-            $(_0P3_SDC_FILE), \
-            $(DEFAULT_SDC_FILE) \
+        $(if $(filter 0.15,$(RAPIDUS_PDK_VERSION)), \
+            $(_0P15_SDC_FILE), \
+            $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
+                $(_0P3_SDC_FILE), \
+                $(DEFAULT_SDC_FILE) \
+            ) \
         ) \
     ))
 
