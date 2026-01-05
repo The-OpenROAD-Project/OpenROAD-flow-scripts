@@ -29,7 +29,7 @@ class TestParams(ParamTestBase):
                 return os.path.join(
                     self._design_full_dir, f"jpeg_encoder15_{pdk_version}_8T.sdc"
                 )
-        if pdk_version == "0.3":
+        if pdk_version in ["0.15", "0.3"]:
             return os.path.join(
                 self._design_full_dir, f"jpeg_encoder15_{pdk_version}.sdc"
             )
@@ -64,6 +64,17 @@ class TestParams(ParamTestBase):
 
         front_end = ""
         pdk_version = "0.2a"
+        for place_site in self._synopsys_site_list:
+            exp_sdc = self.get_exp_sdc(place_site, pdk_version)
+            self.execute_cmd(place_site, pdk_version, front_end, "SDC_FILE", exp_sdc)
+
+    def test_pdk_0p15(self):
+        """
+        Tests PDK 0.15 utilization
+        """
+
+        front_end = ""
+        pdk_version = "0.15"
         for place_site in self._synopsys_site_list:
             exp_sdc = self.get_exp_sdc(place_site, pdk_version)
             self.execute_cmd(place_site, pdk_version, front_end, "SDC_FILE", exp_sdc)

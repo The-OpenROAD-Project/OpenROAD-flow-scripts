@@ -72,6 +72,19 @@ class TestParams(ParamTestBase):
                     place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
                 )
 
+    def test_pdk_0p15(self):
+        """
+        Tests PDK 0.15 utilization
+        """
+
+        pdk_version = "0.15"
+        for front_end in self._front_end_list:
+            for place_site in self._synopsys_site_list:
+                exp_util = self.get_exp_util(place_site, front_end)
+                self.execute_cmd(
+                    place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
+                )
+
     def test_pdk_0p3(self):
         """
         Tests PDK 0.3 utilization
