@@ -107,9 +107,12 @@ export SDC_FILE = $(strip \
             $(_0P2A_6T_SDC_FILE), \
             $(_0P2A_8T_SDC_FILE) \
         ), \
-        $(if $(and $(filter 0.3,$(RAPIDUS_PDK_VERSION)),$(filter ra02h138_DST_45CPP,$(PLACE_SITE))), \
-            $(_0P3_6T_SDC_FILE), \
-            $(_0P3_8T_SDC_FILE) \
+        $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
+            $(if $(filter ra02h138_DST_45CPP,$(PLACE_SITE)), \
+                $(_0P3_6T_SDC_FILE), \
+                $(_0P3_8T_SDC_FILE) \
+            ), \
+            $(DEFAULT_SDC_FILE) \
         ) \
     ))
 
