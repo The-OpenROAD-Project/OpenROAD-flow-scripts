@@ -47,7 +47,8 @@ proc read_design_sources { } {
     plugin -i slang
 
     set slang_args [list \
-      -D SYNTHESIS --keep-hierarchy --compat=vcs --ignore-assertions --top $::env(DESIGN_NAME) \
+      -D SYNTHESIS --keep-hierarchy --compat=vcs --ignore-assertions \
+      --ignore-timing --top $::env(DESIGN_NAME) \
       {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
 
     # slang requires all files at once
