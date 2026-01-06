@@ -75,6 +75,17 @@ proc read_design_sources { } {
     # Add user arguments
     lappend slang_args {*}$::env(SYNTH_SLANG_ARGS)
 
+    # If the sources are solely .v files, enable Verilog compatibility
+    set has_non_v_files false
+    foreach fn $::env(VERILOG_FILES) {
+      if { [file extension [string trim $fn]] != ".v" } {
+        set has_non_v_files true
+      }
+    }
+    if { !$has_non_v_files } {
+      lappend slang_args --std=1364-2005
+    }
+
     yosys read_slang {*}$slang_args
 
     # Workaround for yosys-slang#119
