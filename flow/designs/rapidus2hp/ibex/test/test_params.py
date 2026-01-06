@@ -41,6 +41,8 @@ class TestParams(ParamTestBase):
             return os.path.join(
                 self._design_full_dir, f"constraint_{pdk_version}_8T.sdc"
             )
+        if pdk_version == "0.15":
+            return os.path.join(self._design_full_dir, f"constraint_{pdk_version}.sdc")
         if pdk_version == "0.3":
             if place_site in ["", "ra02h184_HST_45CPP"]:
                 return os.path.join(
@@ -85,6 +87,21 @@ class TestParams(ParamTestBase):
 
         front_end = ""
         pdk_version = "0.2a"
+        for place_site in self._synopsys_site_list:
+            exp_util = self.get_exp_util(place_site, pdk_version)
+            exp_sdc = self.get_exp_sdc(place_site, pdk_version)
+            self.execute_cmd(
+                place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
+            )
+            self.execute_cmd(place_site, pdk_version, front_end, "SDC_FILE", exp_sdc)
+
+    def test_pdk_0p15(self):
+        """
+        Tests PDK 0.15 utilization
+        """
+
+        front_end = ""
+        pdk_version = "0.15"
         for place_site in self._synopsys_site_list:
             exp_util = self.get_exp_util(place_site, pdk_version)
             exp_sdc = self.get_exp_sdc(place_site, pdk_version)
