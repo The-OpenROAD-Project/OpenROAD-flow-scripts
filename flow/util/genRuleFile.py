@@ -298,6 +298,10 @@ def gen_rule_file(
             matching_fields.append(pattern)
 
         for field in matching_fields:
+            # Replace ':' with '__' as the dashboard DB does not accept
+            # ':' in # field names.
+            if ":" in field:
+                field = field.replace(":", "__")
             processed_fields.add(field)
             if isinstance(metrics[field], str):
                 print(f"[WARNING] Skipping string field {field} = {metrics[field]}")
