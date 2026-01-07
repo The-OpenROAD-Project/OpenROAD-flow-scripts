@@ -1077,13 +1077,6 @@ RTLMP_NOTCH_WT:
   default: 10.0
   stages:
     - floorplan
-RTLMP_DEAD_SPACE:
-  description: >
-    Specifies the target dead space percentage, which influences the
-    utilization of a cluster.
-  default: 0.05
-  stages:
-    - floorplan
 RTLMP_RPT_DIR:
   description: >
     Path to the directory where reports are saved.
