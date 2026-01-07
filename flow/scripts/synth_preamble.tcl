@@ -53,9 +53,23 @@ proc read_design_sources { } {
     # slang requires all files at once
     lappend slang_args {*}$::env(VERILOG_FILES)
 
+    # Add clock gate cell definition, if available
+    if { [env_var_exists_and_non_empty CLKGATE_MAP_FILE] } {
+      lappend slang_args $::env(CLKGATE_MAP_FILE)
+    }
+
     # Apply top-level parameters
     dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
       lappend slang_args -G "$key=$value"
+    }
+
+    # Apply module blackboxing based on module names as they appear
+    # in the input, that is before any module name mangling done
+    # by elaboration and synthesis
+    if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
+      foreach m $::env(SYNTH_BLACKBOXES) {
+        lappend slang_args --blackboxed-module "$m"
+      }
     }
 
     # Add user arguments
@@ -79,6 +93,10 @@ proc read_design_sources { } {
       # Apply top-level parameters
       chparam -set $key $value $::env(DESIGN_NAME)
     }
+
+    if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
+      error "Non-empty SYNTH_BLACKBOXES unsupported with HDL frontend \"verific\""
+    }
   } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
     verilog_defaults -push
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
@@ -87,26 +105,25 @@ proc read_design_sources { } {
     foreach file $::env(VERILOG_FILES) {
       read_verilog -defer -sv {*}$vIdirsArgs $file
     }
+    # Read platform specific mapfile for OPENROAD_CLKGATE cells
+    if { [env_var_exists_and_non_empty CLKGATE_MAP_FILE] } {
+      read_verilog -defer $::env(CLKGATE_MAP_FILE)
+    }
     verilog_defaults -pop
 
     dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
       # Apply top-level parameters
       chparam -set $key $value $::env(DESIGN_NAME)
     }
+
+    if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
+      hierarchy -check -top $::env(DESIGN_NAME)
+      foreach m $::env(SYNTH_BLACKBOXES) {
+        blackbox $m
+      }
+    }
   } else {
     error "Unrecognized HDL frontend: $::env(SYNTH_HDL_FRONTEND)"
-  }
-
-  # Read platform specific mapfile for OPENROAD_CLKGATE cells
-  if { [env_var_exists_and_non_empty CLKGATE_MAP_FILE] } {
-    read_verilog -defer $::env(CLKGATE_MAP_FILE)
-  }
-
-  if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
-    hierarchy -check -top $::env(DESIGN_NAME)
-    foreach m $::env(SYNTH_BLACKBOXES) {
-      blackbox $m
-    }
   }
 }
 
