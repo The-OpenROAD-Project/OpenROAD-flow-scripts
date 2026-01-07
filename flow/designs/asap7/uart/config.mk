@@ -5,6 +5,9 @@ export DESIGN_NAME            = uart
 
 export VERILOG_FILES          = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NICKNAME)/*.v))
 export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
+# Exercise syntax on command line for a dummy module and
+# check that non-existant modules are silently ignored.
+export SYNTH_BLACKBOXES = dummy
 
 export PLACE_DENSITY          = 0.70
 export DIE_AREA               = 0 0 17 17
