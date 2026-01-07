@@ -50,11 +50,11 @@ if { $result != 0 } {
   error $errMsg
 }
 
-estimate_parasitics -placement
+log_cmd estimate_parasitics -placement
 
 if { $::env(CLUSTER_FLOPS) } {
   cluster_flops
-  estimate_parasitics -placement
+  log_cmd estimate_parasitics -placement
 }
 
 report_metrics 3 "global place" false false
