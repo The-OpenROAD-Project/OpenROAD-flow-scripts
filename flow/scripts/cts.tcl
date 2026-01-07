@@ -34,7 +34,7 @@ set_dont_use $::env(DONT_USE_CELLS)
 log_cmd clock_tree_synthesis {*}$cts_args
 
 utl::push_metrics_stage "cts__{}__pre_repair_timing"
-estimate_parasitics -placement
+log_cmd estimate_parasitics -placement
 if { $::env(DETAILED_METRICS) } {
   report_metrics 4 "cts pre-repair-timing"
 }
@@ -50,7 +50,7 @@ if { $result != 0 } {
   error "Detailed placement failed in CTS: $msg"
 }
 
-estimate_parasitics -placement
+log_cmd estimate_parasitics -placement
 
 if { $::env(CTS_SNAPSHOTS) } {
   save_progress 4_1_pre_repair_hold_setup
