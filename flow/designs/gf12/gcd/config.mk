@@ -18,4 +18,4 @@ export DESIGN_TYPE = CELL_NODEN
 endif
 
 export SKIP_GATE_CLONING = 1
-
+export SYNTH_HDL_FRONTEND = yosys

@@ -240,11 +240,15 @@ SYNTH_KEEP_MOCKED_MEMORIES:
     - synth
 SYNTH_HDL_FRONTEND:
   description: >
-    Select an alternative language frontend to ingest the design. Available option
-    is "slang". If the variable is empty, design is read with the Yosys read_verilog
-    command.
+    Select the language frontend to use for ingesting the design. Available options
+    are:
+
+    "slang" - SystemVerilog input by means of [slang](https://github.com/MikePopoloski/slang) and [yosys-slang](https://github.com/povik/yosys-slang)
+    "yosys" - Verilog and limited SystemVerilog input by means of [internal Yosys support]](https://yosyshq.readthedocs.io/projects/yosys/en/0.40/cmd/read_verilog.html)
+    "verific" - SystemVerilog input via a proprietary extension
   stages:
     - synth
+  default: "slang"
 SYNTH_SLANG_ARGS:
   description: >
     Additional arguments passed to the slang frontend during synthesis.

@@ -109,7 +109,10 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
       error "Non-empty SYNTH_BLACKBOXES unsupported with HDL frontend \"verific\""
     }
-  } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
+  } elseif {
+    [env_var_equals SYNTH_HDL_FRONTEND yosys] ||
+    ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND]
+  } {
     verilog_defaults -push
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
       verilog_defaults -add {*}$::env(VERILOG_DEFINES)
