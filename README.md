@@ -46,7 +46,12 @@ timeline
 
 ## Tool Installation
 
-There are different ways to install and develop OpenROAD and ORFS, which is the best fit depends use-case, experience and personal taste.
+There are multiple ways to install and develop OpenROAD and ORFS. However, the best option depends on your use case, experience level, and personal preference.
+
+
+ > **Recommendation for new users:**  
+ > If you are new to OpenROAD-flow-scripts, we recommend starting with the Docker-based installation to avoid dependency issues.
+
 
 ### Use Bazel, avoid installing anything at all and adapt the flow to your needs in your own repository
 
