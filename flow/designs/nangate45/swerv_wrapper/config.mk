@@ -23,3 +23,5 @@ export PLACE_DENSITY_LB_ADDON = 0.08
 export TNS_END_PERCENT        = 100
 
 export FASTROUTE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/fastroute.tcl
+
+export SWAP_ARITH_OPERATORS = 1

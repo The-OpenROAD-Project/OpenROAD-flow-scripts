@@ -112,6 +112,6 @@ setattr -mod -set abc9_box 1 A:arithmetic_operator
 techmap -map +/techmap.v -map +/choices/han-carlson.v
 
 proc design_has_extracted_operators {} {
-  set no_extracted [yosys tee -q -s result.string select -count a:implements_operator]
-  return [expr [lindex $no_extracted 0] > 0]
+  set no_extracted [yosys select -count a:implements_operator]
+  return [expr {[lindex $no_extracted 0] > 0}]
 }
