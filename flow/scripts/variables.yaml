@@ -255,6 +255,9 @@ SYNTH_BLACKBOXES:
   description: >
     List of cells treated as a black box by Yosys. With Bazel, this can be used
     to run synthesis in parallel for the large modules of the design.
+
+    Non-existant modules are ignored silently, useful when listing modules
+    statically, even if modules come and go dynamically.
   stages:
     - synth
 SYNTH_NETLIST_FILES:
