@@ -27,3 +27,5 @@ export RTLMP_MAX_MACRO = 10
 export RTLMP_MIN_MACRO = 1
 export RTLMP_MAX_INST = 80000
 export RTLMP_MIN_INST = 8000
+
+export SYNTH_HDL_FRONTEND = yosys
