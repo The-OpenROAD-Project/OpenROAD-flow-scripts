@@ -27,7 +27,7 @@ proc do_dpl { } {
 
   utl::info FLW 12 "Placement violations [check_placement -verbose]."
 
-  estimate_parasitics -placement
+  log_cmd estimate_parasitics -placement
 }
 
 set result [catch { do_dpl } errMsg]

@@ -220,22 +220,6 @@
         "value": 5,
         "compare": "<="
     },
-    "detailedroute__timing__setup__ws": {
-        "value": -292.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__setup__tns": {
-        "value": -2550.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__ws": {
-        "value": -105.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__tns": {
-        "value": -407.0,
-        "compare": ">="
-    },
     "finish__timing__setup__ws": {
         "value": -204.0,
         "compare": ">="

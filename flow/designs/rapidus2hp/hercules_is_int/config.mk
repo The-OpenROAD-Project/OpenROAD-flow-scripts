@@ -31,9 +31,9 @@ export SYNTH_HIERARCHICAL    ?= 0
 # | Front End | Place Site | Utilization |
 # | --------- | ---------- | ----------- |
 # |   slang   |     6T     |      30     |
-# |   slang   |     6T     |      52     |
+# |   slang   |     8T     |      52     |
 # |  verific  |     6T     |      30     |
-# |  verific  |     6T     |      54     |
+# |  verific  |     8T     |      54     |
 
 export CORE_UTILIZATION = $(strip $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
 	$(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \

@@ -346,6 +346,10 @@ def extract_metrics(
     else:
         metrics_dict["total_time"] = str(total)
 
+    metrics_dict = {
+        key.replace(":", "__"): value for key, value in metrics_dict.items()
+    }
+
     if hier_json:
         # Convert the Metrics dictionary to hierarchical format by stripping
         # the stage as a 'key'

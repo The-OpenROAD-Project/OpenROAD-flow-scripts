@@ -11,7 +11,7 @@ set deferred_cells {
   {
     \$macc
     MACC_{CONFIG}_{Y_WIDTH}{%unused}
-    {BOOTH -max_iter 1 -map ../flow/scripts/synth_wrap_operators-booth.v}
+    {BOOTH -max_iter 1 -map $::env(SCRIPTS_DIR)/synth_wrap_operators-booth.v}
     {BASE -map +/choices/han-carlson.v}
   }
 }

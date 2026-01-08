@@ -24,9 +24,9 @@ export SYNTH_HDL_FRONTEND  ?= slang
 # | Front End | Place Site | Utilization |
 # | --------- | ---------- | ----------- |
 # |   slang   |     6T     |      44     |
-# |   slang   |     6T     |      50     |
+# |   slang   |     8T     |      50     |
 # |  verific  |     6T     |      43     |
-# |  verific  |     6T     |      48     |
+# |  verific  |     8T     |      48     |
 
 export CORE_UTILIZATION = $(strip $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
 	$(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \

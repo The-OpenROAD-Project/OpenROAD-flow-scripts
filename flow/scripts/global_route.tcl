@@ -42,7 +42,7 @@ proc global_route_helper { } {
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
   set_propagated_clock [all_clocks]
-  estimate_parasitics -global_routing
+  log_cmd estimate_parasitics -global_routing
 
   if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
     set_dont_use $::env(DONT_USE_CELLS)
@@ -69,7 +69,7 @@ proc global_route_helper { } {
 
     # Repair timing using global route parasitics
     puts "Repair setup and hold violations..."
-    estimate_parasitics -global_routing
+    log_cmd estimate_parasitics -global_routing
 
     repair_timing_helper
 
@@ -104,7 +104,7 @@ proc global_route_helper { } {
   }
 
   puts "Estimate parasitics..."
-  estimate_parasitics -global_routing
+  log_cmd estimate_parasitics -global_routing
 
   report_metrics 5 "global route"
 
