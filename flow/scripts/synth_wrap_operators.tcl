@@ -1,5 +1,5 @@
 # Set arithmetic operator modules. Default is the first module in the list.
-set deferred_cells {
+set deferred_cells [list \
   {
     \$alu
     ALU_{A_WIDTH}_{A_SIGNED}_{B_WIDTH}_{B_SIGNED}_{Y_WIDTH}{%unused}
@@ -7,14 +7,12 @@ set deferred_cells {
     {KOGGE_STONE -map +/choices/kogge-stone.v}
     {SKLANSKY -map +/choices/sklansky.v}
     {BRENT_KUNG}
-  }
-  {
-    \$macc
-    MACC_{CONFIG}_{Y_WIDTH}{%unused}
-    {BOOTH -max_iter 1 -map $::env(SCRIPTS_DIR)/synth_wrap_operators-booth.v}
-    {BASE -map +/choices/han-carlson.v}
-  }
-}
+  } \
+  [list \
+    \$macc \
+    MACC_\{CONFIG\}_\{Y_WIDTH\}\{%unused\} \
+    [list BOOTH -max_iter 1 -map $::env(SCRIPTS_DIR)/synth_wrap_operators-booth.v] \
+    {BASE -map +/choices/han-carlson.v}]]
 
 # Reorder the modules based on envar
 proc reorder_deferred_cells { deferred_cells_var index env_var } {
