@@ -157,9 +157,9 @@ if {
   [env_var_exists_and_non_empty ADDER_MAP_FILE] &&
   (
     (![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] &&
-     ![env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]) ||
+      ![env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]) ||
     (([env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
-      [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]) && 
+        [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]) &&
       ![design_has_extracted_operators])
   )
 } {
