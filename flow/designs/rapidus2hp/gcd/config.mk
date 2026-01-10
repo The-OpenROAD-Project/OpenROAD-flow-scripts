@@ -30,3 +30,4 @@ export CORE_UTILIZATION = $(strip $(if $(filter 0.15,$(RAPIDUS_PDK_VERSION)), \
 
 export CORE_MARGIN = .5
 export PLACE_DENSITY = 0.42
+export SYNTH_HDL_FRONTEND = yosys

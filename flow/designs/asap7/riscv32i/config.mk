@@ -26,3 +26,5 @@ export TNS_END_PERCENT   = 100
 
 export CTS_CLUSTER_SIZE = 10
 export CTS_CLUSTER_DIAMETER = 50
+
+export SYNTH_HDL_FRONTEND = yosys

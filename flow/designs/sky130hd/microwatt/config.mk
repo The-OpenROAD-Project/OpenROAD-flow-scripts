@@ -48,3 +48,5 @@ ifeq ($(SYNTH_MOCK_LARGE_MEMORIES),1)
 else
     export SYNTH_MEMORY_MAX_BITS ?= 42000
 endif
+
+export SYNTH_HDL_FRONTEND = yosys

@@ -27,3 +27,4 @@ endif
 # slack margin to address WC corner
 export SETUP_SLACK_MARGIN ?= 180
 export HOLD_SLACK_MARGIN ?= 50
+export SYNTH_HDL_FRONTEND = yosys

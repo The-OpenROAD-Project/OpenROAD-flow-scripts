@@ -50,4 +50,4 @@ export FP_PDN_RAIL_WIDTH  = 0.48
 export FP_PDN_RAIL_OFFSET = 0
 export TNS_END_PERCENT    = 100
 
-
+export SYNTH_HDL_FRONTEND     = yosys

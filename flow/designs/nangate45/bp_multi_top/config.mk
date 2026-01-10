@@ -32,3 +32,5 @@ export MACRO_PLACE_HALO = 10 10
 
 export PLACE_DENSITY_LB_ADDON = 0.05
 export SKIP_GATE_CLONING      = 1
+
+export SYNTH_HDL_FRONTEND     = yosys

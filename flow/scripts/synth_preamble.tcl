@@ -47,7 +47,8 @@ proc read_design_sources { } {
     plugin -i slang
 
     set slang_args [list \
-      -D SYNTHESIS --keep-hierarchy --compat=vcs --ignore-assertions --top $::env(DESIGN_NAME) \
+      -D SYNTHESIS --keep-hierarchy --compat=vcs --ignore-assertions \
+      --ignore-timing --top $::env(DESIGN_NAME) \
       {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
 
     # slang requires all files at once
@@ -75,6 +76,17 @@ proc read_design_sources { } {
     # Add user arguments
     lappend slang_args {*}$::env(SYNTH_SLANG_ARGS)
 
+    # If the sources are solely .v files, enable Verilog compatibility
+    set has_non_v_files false
+    foreach fn $::env(VERILOG_FILES) {
+      if { [file extension [string trim $fn]] != ".v" } {
+        set has_non_v_files true
+      }
+    }
+    if { !$has_non_v_files } {
+      lappend slang_args --std=1364-2005
+    }
+
     yosys read_slang {*}$slang_args
 
     # Workaround for yosys-slang#119
@@ -97,7 +109,10 @@ proc read_design_sources { } {
     if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
       error "Non-empty SYNTH_BLACKBOXES unsupported with HDL frontend \"verific\""
     }
-  } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
+  } elseif {
+    [env_var_equals SYNTH_HDL_FRONTEND yosys] ||
+    ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND]
+  } {
     verilog_defaults -push
     if { [env_var_exists_and_non_empty VERILOG_DEFINES] } {
       verilog_defaults -add {*}$::env(VERILOG_DEFINES)

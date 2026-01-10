@@ -11,3 +11,4 @@ export CORE_MARGIN = 5
 export PLACE_DENSITY_LB_ADDON = 0.25
 export TNS_END_PERCENT        = 100
 
+export SYNTH_HDL_FRONTEND = yosys
