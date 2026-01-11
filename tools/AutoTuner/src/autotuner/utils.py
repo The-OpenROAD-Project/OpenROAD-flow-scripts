@@ -669,9 +669,34 @@ def openroad_distributed(
 @ray.remote
 def consumer(queue):
     """consumer"""
-    while not queue.empty():
-        next_item = queue.get()
-        name = next_item[1]
-        print(f"[INFO TUN-0007] Scheduling run for parameter {name}.")
-        ray.get(openroad_distributed.remote(*next_item))
-        print(f"[INFO TUN-0008] Finished run for parameter {name}.")
+    item = queue.get()
+    tb_logger = item[7]
+
+    while item:
+        args, repo_dir, config, sdc, fr, install, idx, _ = item
+        print(f"[INFO TUN-0007] Scheduling run for parameter {config}.")
+        metric_file, _ = ray.get(
+            openroad_distributed.remote(args, repo_dir, config, sdc, fr, install)
+        )
+        print(f"[INFO TUN-0008] Finished run for parameter {config}.")
+
+        metrics = read_metrics(metric_file, args.stop_stage)
+        effective_clk_period = (
+            metrics["clk_period"] - metrics["worst_slack"]
+            if metrics["worst_slack"] not in ("ERR", "N/A")
+            else "-"
+        )
+        score = effective_clk_period if effective_clk_period != "-" else 999999.0
+
+        ray.get(
+            tb_logger.log_sweep_metrics.remote(
+                params=config,
+                metrics=metrics,
+                score=score,
+                effective_clk_period=effective_clk_period,
+                num_drc=metrics.get("num_drc", "-"),
+                die_area=metrics.get("die_area", "-"),
+            )
+        )
+
+        item = queue.get() if not queue.empty() else None
