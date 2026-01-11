@@ -196,10 +196,13 @@ proc source_env_var_if_exists { env_var } {
 # will be default and this code will be deleted.
 proc hier_options { } {
   if {
-    [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
-    [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] ||
-    $::env(OPENROAD_HIERARCHICAL)
+    ([env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+      [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]) &&
+    !$::env(OPENROAD_HIERARCHICAL)
   } {
+    error "SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS require OPENROAD_HIERARCHICAL to be set."
+  }
+  if { $::env(OPENROAD_HIERARCHICAL) } {
     return "-hier"
   } else {
     return ""
