@@ -586,7 +586,7 @@ def sweep():
             sys.exit(1)
         parameter_list.append([{name: i} for i in np.arange(*content)])
     parameter_list = list(product(*parameter_list))
-    for idx, parameter in enumerate(parameter_list):
+    for parameter in parameter_list:
         temp = dict()
         for value in parameter:
             temp.update(value)
@@ -598,7 +598,6 @@ def sweep():
                 SDC_ORIGINAL,
                 FR_ORIGINAL,
                 INSTALL_PATH,
-                idx,
                 tb_logger,
             ]
         )

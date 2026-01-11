@@ -670,10 +670,10 @@ def openroad_distributed(
 def consumer(queue):
     """consumer"""
     item = queue.get()
-    tb_logger = item[7]
+    tb_logger = item[6]
 
     while item:
-        args, repo_dir, config, sdc, fr, install, idx, _ = item
+        args, repo_dir, config, sdc, fr, install, tb_logger = item
         print(f"[INFO TUN-0007] Scheduling run for parameter {config}.")
         metric_file, _ = ray.get(
             openroad_distributed.remote(args, repo_dir, config, sdc, fr, install)
