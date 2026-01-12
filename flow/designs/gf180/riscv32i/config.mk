@@ -11,3 +11,5 @@ export TNS_END_PERCENT = 100
 export SKIP_GATE_CLONING  = 1
 export PLACE_PINS_ARGS    = -min_distance 5
 export IO_CONSTRAINTS     = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/io.tcl
+
+export SWAP_ARITH_OPERATORS = 1

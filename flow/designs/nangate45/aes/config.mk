@@ -13,3 +13,5 @@ export REMOVE_CELLS_FOR_EQY   = TAPCELL*
 
 # workaround for high congestion in post-grt repair
 export SKIP_INCREMENTAL_REPAIR = 1
+
+export SWAP_ARITH_OPERATORS = 1
