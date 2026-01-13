@@ -1,0 +1,86 @@
+{
+    "synth__design__instance__area__stdcell": {
+        "value": 3300.0,
+        "compare": "<="
+    },
+    "constraints__clocks__count": {
+        "value": 1,
+        "compare": "=="
+    },
+    "placeopt__design__instance__area": {
+        "value": 3378,
+        "compare": "<="
+    },
+    "placeopt__design__instance__count__stdcell": {
+        "value": 99438,
+        "compare": "<="
+    },
+    "detailedplace__design__violations": {
+        "value": 0,
+        "compare": "=="
+    },
+    "cts__design__instance__count__setup_buffer": {
+        "value": 8647,
+        "compare": "<="
+    },
+    "cts__design__instance__count__hold_buffer": {
+        "value": 8647,
+        "compare": "<="
+    },
+    "cts__timing__setup__ws": {
+        "value": -13.2,
+        "compare": ">="
+    },
+    "cts__timing__setup__tns": {
+        "value": -53.0,
+        "compare": ">="
+    },
+    "cts__timing__hold__ws": {
+        "value": -13.2,
+        "compare": ">="
+    },
+    "cts__timing__hold__tns": {
+        "value": -53.0,
+        "compare": ">="
+    },
+    "globalroute__antenna_diodes_count": {
+        "value": 100,
+        "compare": "<="
+    },
+    "globalroute__timing__setup__ws": {
+        "value": -75.1,
+        "compare": ">="
+    },
+    "globalroute__timing__setup__tns": {
+        "value": -6740.0,
+        "compare": ">="
+    },
+    "globalroute__timing__hold__ws": {
+        "value": -13.2,
+        "compare": ">="
+    },
+    "globalroute__timing__hold__tns": {
+        "value": -53.0,
+        "compare": ">="
+    },
+    "finish__timing__setup__ws": {
+        "value": -75.1,
+        "compare": ">="
+    },
+    "finish__timing__setup__tns": {
+        "value": -6740.0,
+        "compare": ">="
+    },
+    "finish__timing__hold__ws": {
+        "value": -13.2,
+        "compare": ">="
+    },
+    "finish__timing__hold__tns": {
+        "value": -53.0,
+        "compare": ">="
+    },
+    "finish__design__instance__area": {
+        "value": 3474,
+        "compare": "<="
+    }
+}

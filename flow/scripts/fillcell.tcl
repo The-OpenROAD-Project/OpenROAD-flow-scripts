@@ -8,7 +8,7 @@ if { [env_var_exists_and_non_empty FILL_CELLS] } {
   log_cmd filler_placement $::env(FILL_CELLS)
   check_placement
 
-  write_db $::env(RESULTS_DIR)/5_3_fillcell.odb
+  orfs_write_db $::env(RESULTS_DIR)/5_3_fillcell.odb
 } else {
   log_cmd exec cp $::env(RESULTS_DIR)/5_2_route.odb $::env(RESULTS_DIR)/5_3_fillcell.odb
 }

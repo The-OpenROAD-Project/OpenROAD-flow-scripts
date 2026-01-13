@@ -7,7 +7,7 @@ if { ![grt::have_routes] } {
 }
 
 if { $::env(SKIP_DETAILED_ROUTE) } {
-  write_db $::env(RESULTS_DIR)/5_2_route.odb
+  orfs_write_db $::env(RESULTS_DIR)/5_2_route.odb
   exit
 }
 
@@ -77,6 +77,7 @@ if { ![design_is_routed] } {
   error "Design has unrouted nets."
 }
 
-report_metrics 5 "detailed route"
+# Don't report metrics as we have not extracted parasitics, which will happen
+# in final so there is no need to repeat it here.
 
-write_db $::env(RESULTS_DIR)/5_2_route.odb
+orfs_write_db $::env(RESULTS_DIR)/5_2_route.odb

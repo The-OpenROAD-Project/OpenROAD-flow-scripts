@@ -1,0 +1,86 @@
+{
+    "synth__design__instance__area__stdcell": {
+        "value": 22.2,
+        "compare": "<="
+    },
+    "constraints__clocks__count": {
+        "value": 1,
+        "compare": "=="
+    },
+    "placeopt__design__instance__area": {
+        "value": 32,
+        "compare": "<="
+    },
+    "placeopt__design__instance__count__stdcell": {
+        "value": 750,
+        "compare": "<="
+    },
+    "detailedplace__design__violations": {
+        "value": 0,
+        "compare": "=="
+    },
+    "cts__design__instance__count__setup_buffer": {
+        "value": 65,
+        "compare": "<="
+    },
+    "cts__design__instance__count__hold_buffer": {
+        "value": 65,
+        "compare": "<="
+    },
+    "cts__timing__setup__ws": {
+        "value": -26.5,
+        "compare": ">="
+    },
+    "cts__timing__setup__tns": {
+        "value": -345.0,
+        "compare": ">="
+    },
+    "cts__timing__hold__ws": {
+        "value": -5.0,
+        "compare": ">="
+    },
+    "cts__timing__hold__tns": {
+        "value": -20.0,
+        "compare": ">="
+    },
+    "globalroute__antenna_diodes_count": {
+        "value": 100,
+        "compare": "<="
+    },
+    "globalroute__timing__setup__ws": {
+        "value": -38.9,
+        "compare": ">="
+    },
+    "globalroute__timing__setup__tns": {
+        "value": -804.0,
+        "compare": ">="
+    },
+    "globalroute__timing__hold__ws": {
+        "value": -5.0,
+        "compare": ">="
+    },
+    "globalroute__timing__hold__tns": {
+        "value": -20.0,
+        "compare": ">="
+    },
+    "finish__timing__setup__ws": {
+        "value": -38.9,
+        "compare": ">="
+    },
+    "finish__timing__setup__tns": {
+        "value": -804.0,
+        "compare": ">="
+    },
+    "finish__timing__hold__ws": {
+        "value": -5.0,
+        "compare": ">="
+    },
+    "finish__timing__hold__tns": {
+        "value": -20.0,
+        "compare": ">="
+    },
+    "finish__design__instance__area": {
+        "value": 36,
+        "compare": "<="
+    }
+}

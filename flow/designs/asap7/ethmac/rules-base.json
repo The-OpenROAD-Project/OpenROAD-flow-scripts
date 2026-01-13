@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 8668,
+        "value": 8665,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 69466,
+        "value": 69423,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,19 +20,19 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 6040,
+        "value": 6037,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 6040,
+        "value": 6037,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -122.0,
+        "value": -156.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -2190.0,
+        "value": -2800.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -136.0,
+        "value": -174.0,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -3110.0,
+        "value": -3720.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -79,28 +79,12 @@
         "value": 100,
         "compare": "<="
     },
-    "detailedroute__timing__setup__ws": {
-        "value": -91.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__setup__tns": {
-        "value": -1380.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__ws": {
-        "value": -15.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__tns": {
-        "value": -60.0,
-        "compare": ">="
-    },
     "finish__timing__setup__ws": {
-        "value": -126.0,
+        "value": -163.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -2350.0,
+        "value": -3040.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

@@ -8,6 +8,10 @@ ifeq ($(FLOW_VARIANT), gatelevel)
   export SYNTH_NETLIST_FILES  = $(SRC_HOME)/ca78_8t_postroute_0707.v
 endif
 
+ifeq ($(FLOW_VARIANT), verific)
+	export SYNTH_HDL_FRONTEND = verific
+endif
+
 export VERILOG_FILES          = $(sort $(wildcard $(SRC_HOME)/hercules_issue/verilog/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/shared/verilog/*.sv)) \
 	$(sort $(wildcard $(SRC_HOME)/models/cells/generic/*.sv))
@@ -22,15 +26,22 @@ export SDC_FILE               = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/prects
 export SYNTH_HDL_FRONTEND    ?= slang
 export SYNTH_HIERARCHICAL    ?= 0
 
-ifeq ($(PLACE_SITE), SC6T)
-  export CORE_UTILIZATION     = 30
-else
-  ifeq ($(SYNTH_HDL_FRONTEND), slang)
-    export CORE_UTILIZATION     = 52
-  else
-    export CORE_UTILIZATION     = 54
-  endif
-endif
+# Use $(if) to defer conditional eval until all makefiles are read
+#
+# | Front End | Place Site | Utilization |
+# | --------- | ---------- | ----------- |
+# |   slang   |     6T     |      30     |
+# |   slang   |     8T     |      52     |
+# |  verific  |     6T     |      30     |
+# |  verific  |     8T     |      54     |
+
+export CORE_UTILIZATION = $(strip $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
+	$(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
+		30, \
+		52), \
+	$(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
+		30, \
+		54)))
 
 export CORE_MARGIN            = 1
 export PLACE_DENSITY          = 0.58

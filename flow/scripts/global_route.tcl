@@ -23,17 +23,17 @@ proc global_route_helper { } {
   append_env_var additional_args VIA_IN_PIN_MIN_LAYER -via_in_pin_bottom_layer 1
   append_env_var additional_args VIA_IN_PIN_MAX_LAYER -via_in_pin_top_layer 1
 
-  pin_access {*}$additional_args
+  log_cmd pin_access {*}$additional_args
 
   set result [catch { do_global_route $res_aware } errMsg]
 
   if { $result != 0 } {
     if { !$::env(GENERATE_ARTIFACTS_ON_FAILURE) } {
-      write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
+      orfs_write_db $::env(RESULTS_DIR)/5_1_grt-failed.odb
       error $errMsg
     }
-    write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt.sdc
-    write_db $::env(RESULTS_DIR)/5_1_grt.odb
+    orfs_write_sdc $::env(RESULTS_DIR)/5_1_grt.sdc
+    orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb
     return
   }
 
@@ -42,7 +42,7 @@ proc global_route_helper { } {
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
   set_propagated_clock [all_clocks]
-  estimate_parasitics -global_routing
+  log_cmd estimate_parasitics -global_routing
 
   if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
     set_dont_use $::env(DONT_USE_CELLS)
@@ -69,7 +69,7 @@ proc global_route_helper { } {
 
     # Repair timing using global route parasitics
     puts "Repair setup and hold violations..."
-    estimate_parasitics -global_routing
+    log_cmd estimate_parasitics -global_routing
 
     repair_timing_helper
 
@@ -104,7 +104,7 @@ proc global_route_helper { } {
   }
 
   puts "Estimate parasitics..."
-  estimate_parasitics -global_routing
+  log_cmd estimate_parasitics -global_routing
 
   report_metrics 5 "global route"
 
@@ -113,8 +113,8 @@ proc global_route_helper { } {
   source [file join $::env(SCRIPTS_DIR) "write_ref_sdc.tcl"]
 
   write_guides $::env(RESULTS_DIR)/route.guide
-  write_db $::env(RESULTS_DIR)/5_1_grt.odb
-  write_sdc -no_timestamp $::env(RESULTS_DIR)/5_1_grt.sdc
+  orfs_write_db $::env(RESULTS_DIR)/5_1_grt.odb
+  orfs_write_sdc $::env(RESULTS_DIR)/5_1_grt.sdc
 }
 
 global_route_helper

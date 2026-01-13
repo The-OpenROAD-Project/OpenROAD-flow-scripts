@@ -69,6 +69,11 @@
         "compare": "<=",
         "level": "warning"
     },
+    "placeopt__flow__warnings__count:RSZ-0020": {
+        "value": 1,
+        "compare": "<=",
+        "level": "warning"
+    },
     "placeopt__flow__warnings__count:RSZ-0095": {
         "value": 1,
         "compare": "<=",
@@ -83,7 +88,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 16726,
+        "value": 16686,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -103,11 +108,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -47.4,
+        "value": -40.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -872.0,
+        "value": -160.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -123,11 +128,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -48.1,
+        "value": -40.0,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -168.0,
+        "value": -359.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -154,22 +159,6 @@
         "value": 100,
         "compare": "<="
     },
-    "detailedroute__timing__setup__ws": {
-        "value": -40.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__setup__tns": {
-        "value": -160.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__ws": {
-        "value": -52.2,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__tns": {
-        "value": -1290.0,
-        "compare": ">="
-    },
     "finish__timing__setup__ws": {
         "value": -40.0,
         "compare": ">="
@@ -183,11 +172,11 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -160.0,
+        "value": -224.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 17355,
+        "value": 17222,
         "compare": "<="
     }
 }

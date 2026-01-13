@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 86433,
+        "value": 86398,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -76,24 +76,8 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 133,
+        "value": 110,
         "compare": "<="
-    },
-    "detailedroute__timing__setup__ws": {
-        "value": -0.4,
-        "compare": ">="
-    },
-    "detailedroute__timing__setup__tns": {
-        "value": -1.6,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__ws": {
-        "value": -0.4,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__tns": {
-        "value": -1.6,
-        "compare": ">="
     },
     "finish__timing__setup__ws": {
         "value": -0.4,
@@ -112,7 +96,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 1055630,
+        "value": 1053077,
         "compare": "<="
     }
 }

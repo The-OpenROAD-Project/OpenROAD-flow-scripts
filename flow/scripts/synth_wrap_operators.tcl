@@ -1,5 +1,5 @@
 # Set arithmetic operator modules. Default is the first module in the list.
-set deferred_cells {
+set deferred_cells [list \
   {
     \$alu
     ALU_{A_WIDTH}_{A_SIGNED}_{B_WIDTH}_{B_SIGNED}_{Y_WIDTH}{%unused}
@@ -7,14 +7,12 @@ set deferred_cells {
     {KOGGE_STONE -map +/choices/kogge-stone.v}
     {SKLANSKY -map +/choices/sklansky.v}
     {BRENT_KUNG}
-  }
-  {
-    \$macc
-    MACC_{CONFIG}_{Y_WIDTH}{%unused}
-    {BOOTH -max_iter 1 -map ../flow/scripts/synth_wrap_operators-booth.v}
-    {BASE -map +/choices/han-carlson.v}
-  }
-}
+  } \
+  [list \
+    \$macc \
+    MACC_\{CONFIG\}_\{Y_WIDTH\}\{%unused\} \
+    [list BOOTH -max_iter 1 -map $::env(SCRIPTS_DIR)/synth_wrap_operators-booth.v] \
+    {BASE -map +/choices/han-carlson.v}]]
 
 # Reorder the modules based on envar
 proc reorder_deferred_cells { deferred_cells_var index env_var } {
@@ -74,11 +72,12 @@ foreach info $deferred_cells {
   # make per-architecture copies of the unmapped module
   foreach modname [tee -q -s result.string select -list-mod A:arithmetic_operator A:copy_pending %i] { # tclint-disable-line line-length
     setattr -mod -unset copy_pending $modname
+    set base [rtlil::get_attr -string -mod $modname implements_operator]
+    setattr -set implements_operator \"$base\" t:$modname
 
     # iterate over non-default architectures
     foreach arch [lrange $info 3 end] {
       set suffix [lindex $arch 0]
-      set base [rtlil::get_attr -string -mod $modname implements_operator]
       set newname ${base}_${suffix}
       yosys copy $modname $newname
       yosys setattr -mod -set architecture \"$suffix\" $newname
@@ -109,3 +108,8 @@ chformal -remove
 setattr -mod -set abc9_script {"+&dch;&nf -R 5;"} A:arithmetic_operator
 setattr -mod -set abc9_box 1 A:arithmetic_operator
 techmap -map +/techmap.v -map +/choices/han-carlson.v
+
+proc design_has_extracted_operators { } {
+  set no_extracted [yosys select -count a:implements_operator]
+  return [expr { [lindex $no_extracted 0] > 0 }]
+}

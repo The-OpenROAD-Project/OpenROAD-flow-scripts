@@ -145,6 +145,9 @@ proc find_macros { } {
 }
 
 proc erase_non_stage_variables { stage_name } {
+  if { $::env(KEEP_VARS) } {
+    return
+  }
   # "$::env(SCRIPTS_DIR)/stage_variables.py stage_name" returns list of
   # variables to erase.
   #
@@ -193,10 +196,13 @@ proc source_env_var_if_exists { env_var } {
 # will be default and this code will be deleted.
 proc hier_options { } {
   if {
-    [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
-    [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] ||
-    $::env(OPENROAD_HIERARCHICAL)
+    ([env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
+      [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]) &&
+    !$::env(OPENROAD_HIERARCHICAL)
   } {
+    error "SYNTH_WRAPPED_OPERATORS or SWAP_ARITH_OPERATORS require OPENROAD_HIERARCHICAL to be set."
+  }
+  if { $::env(OPENROAD_HIERARCHICAL) } {
     return "-hier"
   } else {
     return ""
@@ -237,4 +243,18 @@ proc find_physical_only_masters { } {
     }
   }
   return $physical_only_masters
+}
+
+proc orfs_write_db { output_file } {
+  if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
+    return
+  }
+  log_cmd write_db $output_file
+}
+
+proc orfs_write_sdc { output_file } {
+  if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
+    return
+  }
+  log_cmd write_sdc -no_timestamp $output_file
 }

@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 526,
+        "value": 520,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,7 +20,7 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 46,
+        "value": 45,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
@@ -28,11 +28,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -39.4,
+        "value": -33.8,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -205.0,
+        "value": -103.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -38.9,
+        "value": -33.8,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -200.0,
+        "value": -102.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -64,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 1176,
+        "value": 1358,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -79,28 +79,12 @@
         "value": 100,
         "compare": "<="
     },
-    "detailedroute__timing__setup__ws": {
-        "value": -38.9,
-        "compare": ">="
-    },
-    "detailedroute__timing__setup__tns": {
-        "value": -200.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__ws": {
-        "value": -15.5,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__tns": {
-        "value": -62.0,
-        "compare": ">="
-    },
     "finish__timing__setup__ws": {
-        "value": -60.7,
+        "value": -56.6,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -632.0,
+        "value": -324.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

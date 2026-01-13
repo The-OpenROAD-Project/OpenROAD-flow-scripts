@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 2908.684535,
+        "value": 2830.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -28,11 +28,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -82.9,
+        "value": -50.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -313.0,
+        "value": -200.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -77.1,
+        "value": -53.4,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -280.0,
+        "value": -205.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -64,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 74871,
+        "value": 74215,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -79,28 +79,12 @@
         "value": 100,
         "compare": "<="
     },
-    "detailedroute__timing__setup__ws": {
-        "value": -50.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__setup__tns": {
-        "value": -200.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__ws": {
-        "value": -50.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__tns": {
-        "value": -200.0,
-        "compare": ">="
-    },
     "finish__timing__setup__ws": {
-        "value": -55.2,
+        "value": -50.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -209.0,
+        "value": -200.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

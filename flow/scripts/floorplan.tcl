@@ -1,7 +1,7 @@
 utl::set_metrics_stage "floorplan__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables floorplan
-load_design 1_synth.v 1_synth.sdc
+load_design 1_synth.odb 1_synth.sdc
 
 proc report_unused_masters { } {
   set db [ord::get_db]
@@ -130,7 +130,7 @@ if { !$::env(SKIP_REPAIR_TIE_FANOUT) } {
 }
 
 if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
-  estimate_parasitics -placement
+  log_cmd estimate_parasitics -placement
   replace_arith_modules
 }
 
@@ -150,5 +150,5 @@ report_metrics 2 "floorplan final" false false
 source_env_var_if_exists POST_FLOORPLAN_TCL
 source_env_var_if_exists IO_CONSTRAINTS
 
-write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
-write_sdc -no_timestamp $::env(RESULTS_DIR)/2_1_floorplan.sdc
+orfs_write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
+orfs_write_sdc $::env(RESULTS_DIR)/2_1_floorplan.sdc

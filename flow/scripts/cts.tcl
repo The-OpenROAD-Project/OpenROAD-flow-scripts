@@ -9,8 +9,8 @@ repair_clock_inverters
 
 proc save_progress { stage } {
   puts "Run 'make gui_$stage.odb' to load progress snapshot"
-  write_db $::env(RESULTS_DIR)/$stage.odb
-  write_sdc -no_timestamp $::env(RESULTS_DIR)/$stage.sdc
+  orfs_write_db $::env(RESULTS_DIR)/$stage.odb
+  orfs_write_sdc $::env(RESULTS_DIR)/$stage.sdc
 }
 
 # Run CTS
@@ -34,7 +34,7 @@ set_dont_use $::env(DONT_USE_CELLS)
 log_cmd clock_tree_synthesis {*}$cts_args
 
 utl::push_metrics_stage "cts__{}__pre_repair_timing"
-estimate_parasitics -placement
+log_cmd estimate_parasitics -placement
 if { $::env(DETAILED_METRICS) } {
   report_metrics 4 "cts pre-repair-timing"
 }
@@ -43,9 +43,14 @@ utl::pop_metrics_stage
 set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
-detailed_placement
 
-estimate_parasitics -placement
+set result [catch { detailed_placement } msg]
+if { $result != 0 } {
+  save_progress 4_1_error
+  error "Detailed placement failed in CTS: $msg"
+}
+
+log_cmd estimate_parasitics -placement
 
 if { $::env(CTS_SNAPSHOTS) } {
   save_progress 4_1_pre_repair_hold_setup
@@ -65,8 +70,7 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
   set result [catch { detailed_placement } msg]
   if { $result != 0 } {
     save_progress 4_1_error
-    puts "Detailed placement failed in CTS: $msg"
-    exit $result
+    error "Detailed placement failed in CTS: $msg"
   }
 
   check_placement -verbose
@@ -76,5 +80,5 @@ report_metrics 4 "cts final"
 
 source_env_var_if_exists POST_CTS_TCL
 
-write_db $::env(RESULTS_DIR)/4_1_cts.odb
-write_sdc -no_timestamp $::env(RESULTS_DIR)/4_cts.sdc
+orfs_write_db $::env(RESULTS_DIR)/4_1_cts.odb
+orfs_write_sdc $::env(RESULTS_DIR)/4_cts.sdc

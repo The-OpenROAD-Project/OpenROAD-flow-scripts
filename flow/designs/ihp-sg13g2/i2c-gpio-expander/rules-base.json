@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 953,
+        "value": 951,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -64,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 38502,
+        "value": 38152,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -78,22 +78,6 @@
     "detailedroute__antenna_diodes_count": {
         "value": 100,
         "compare": "<="
-    },
-    "detailedroute__timing__setup__ws": {
-        "value": -1.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__setup__tns": {
-        "value": -4.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__ws": {
-        "value": -1.0,
-        "compare": ">="
-    },
-    "detailedroute__timing__hold__tns": {
-        "value": -4.0,
-        "compare": ">="
     },
     "finish__timing__setup__ws": {
         "value": -1.0,
