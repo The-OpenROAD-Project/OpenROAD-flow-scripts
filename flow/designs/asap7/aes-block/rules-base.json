@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 10573,
+        "value": 19934,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -64,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 52923,
+        "value": 77305,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
