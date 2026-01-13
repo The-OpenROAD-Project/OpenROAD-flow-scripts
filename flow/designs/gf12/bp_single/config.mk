@@ -68,3 +68,4 @@ endif
 
 # enable slack margin for setup and hold fix after CTS
 export SETUP_SLACK_MARGIN ?= 100
+export SYNTH_HDL_FRONTEND = yosys

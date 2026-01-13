@@ -22,3 +22,5 @@ export MACRO_PLACE_HALO = 10 10
 
 export TNS_END_PERCENT = 100
 export PLACE_DENSITY = 0.35
+
+export SYNTH_HDL_FRONTEND = yosys

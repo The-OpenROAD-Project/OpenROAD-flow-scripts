@@ -13,3 +13,5 @@ export PLACE_DENSITY            = 0.71
 export TNS_END_PERCENT          = 100
 
 export IO_CONSTRAINTS        = designs/asap7/mock-cpu/io.tcl
+
+export SYNTH_HDL_FRONTEND = yosys
