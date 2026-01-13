@@ -52,7 +52,6 @@ if { [find_macros] != "" } {
   append_env_var additional_rtlmp_args RTLMP_OUTLINE_WT -outline_weight 1
   append_env_var additional_rtlmp_args RTLMP_BOUNDARY_WT -boundary_weight 1
   append_env_var additional_rtlmp_args RTLMP_NOTCH_WT -notch_weight 1
-  append_env_var additional_rtlmp_args RTLMP_DEAD_SPACE -target_dead_space 1
   append_env_var additional_rtlmp_args RTLMP_RPT_DIR -report_directory 1
   append_env_var additional_rtlmp_args RTLMP_FENCE_LX -fence_lx 1
   append_env_var additional_rtlmp_args RTLMP_FENCE_LY -fence_ly 1
