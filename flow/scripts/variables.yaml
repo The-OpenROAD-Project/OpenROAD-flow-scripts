@@ -908,7 +908,7 @@ CORE_ASPECT_RATIO:
   description: >
     The core aspect ratio (height / width).
 
-    This variable is only used when `CORE_UTILIZATION` is used.
+    This variable is only used when `CORE_UTILIZATION` is set.
   stages:
     - floorplan
   default: 1.0
@@ -921,7 +921,7 @@ CORE_MARGIN:
     values, one for each margin. The order of the four values are:
     `{bottom top left right}`.
 
-    This variable is only used when `CORE_UTILIZATION` is used.
+    This variable is only used when `CORE_UTILIZATION` is set.
   stages:
     - floorplan
   default: 1.0
