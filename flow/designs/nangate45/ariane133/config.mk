@@ -18,7 +18,7 @@ export CORE_MARGIN = 5
 
 export IO_CONSTRAINTS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/io.tcl
 
-export MACRO_PLACE_HALO    = 10 10
+export MACRO_PLACE_HALO    = 8 8
 
 export SKIP_GATE_CLONING   = 1
 
