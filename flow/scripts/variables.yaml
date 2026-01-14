@@ -563,6 +563,8 @@ GLOBAL_PLACEMENT_ARGS:
   description: >
     Use additional tuning parameters during global placement other than default
     args defined in global_place.tcl.
+  stages:
+    - place
 ENABLE_DPO:
   description: |
     Enable detail placement with improve_placement feature.
@@ -889,10 +891,14 @@ SYNTH_KEEP_MODULES:
 SYNTH_ARGS:
   description: |
     Optional synthesis variables for yosys.
+  stages:
+    - synth
 SYNTH_HIER_SEPARATOR:
   description: |
     Separator used for the synthesis flatten stage.
   default: .
+  stages:
+    - synth
 SYNTH_OPT_HIER:
   description: |
     Optimize constants across hierarchical boundaries.
