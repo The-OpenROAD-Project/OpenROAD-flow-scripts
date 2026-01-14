@@ -287,6 +287,21 @@ def run_command(
         raise RuntimeError
 
 
+def calculate_trial_path(args, base_dir, flow_variant):
+    """
+    Calculate the log path and flow variant
+    """
+    flow_variant_with_experiment = f"{args.experiment}/{flow_variant}"
+    log_path = os.path.abspath(
+        os.path.join(
+            base_dir,
+            f"flow/logs/{args.platform}/{args.design}",
+            flow_variant_with_experiment,
+        )
+    )
+    return log_path, flow_variant_with_experiment
+
+
 def openroad(
     args,
     base_dir,
@@ -297,10 +312,8 @@ def openroad(
     """
     Run OpenROAD-flow-scripts with a given set of parameters.
     """
-    # Make sure path ends in a slash, i.e., is a folder
-    flow_variant = f"{args.experiment}/{flow_variant}"
-    log_path = os.path.abspath(
-        os.path.join(base_dir, f"flow/logs/{args.platform}/{args.design}", flow_variant)
+    log_path, flow_variant = calculate_trial_path(
+        args=args, base_dir=base_dir, flow_variant=flow_variant
     )
     report_path = os.path.abspath(
         os.path.join(
@@ -643,6 +656,20 @@ def openroad_distributed(
     variant=None,
 ):
     """Simple wrapper to run openroad distributed with Ray."""
+    if variant is None:
+        variant_parts = []
+        for key, value in config.items():
+            if key not in ["_SDC_FILE_PATH", "_FR_FILE_PATH"]:
+                variant_parts.append(f"{key}_{value}")
+        variant = "_".join(variant_parts) if variant_parts else ""
+    flow_variant = f"{uuid.uuid4()}-{variant}" if variant else f"{uuid.uuid4()}"
+
+    trial_path, _ = calculate_trial_path(
+        args=args, base_dir=repo_dir, flow_variant=flow_variant
+    )
+
+    os.makedirs(trial_path, exist_ok=True)
+
     config = parse_config(
         config=config,
         base_dir=repo_dir,
@@ -651,15 +678,15 @@ def openroad_distributed(
         constraints_sdc=CONSTRAINTS_SDC,
         fr_original=fr_original,
         fastroute_tcl=FASTROUTE_TCL,
+        path=trial_path,
     )
-    if variant is None:
-        variant = config.replace(" ", "_").replace("=", "_")
+
     t = time.time()
     metric_file = openroad(
         args=args,
         base_dir=repo_dir,
         parameters=config,
-        flow_variant=f"{uuid.uuid4()}-{variant}" if variant else f"{uuid.uuid4()}",
+        flow_variant=flow_variant,
         install_path=install_path,
     )
     duration = time.time() - t
