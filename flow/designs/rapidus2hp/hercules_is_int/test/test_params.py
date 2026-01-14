@@ -21,9 +21,13 @@ class TestParams(ParamTestBase):
 
         ParamTestBase.set_up(self, "hercules_is_int")
 
-    def get_exp_util(self, place_site, front_end):
+    def get_exp_util(self, place_site, front_end, pdk_version):
         """Returns the expected value"""
 
+        if pdk_version == "0.3":
+            if front_end == "verific":
+                return 55
+            return 54
         if front_end == "verific":
             if place_site in ["SC6T", "ra02h138_DST_45CPP"]:
                 return 30
@@ -33,15 +37,15 @@ class TestParams(ParamTestBase):
                 return 30
             return 52
 
-    def test_pdk_0p2_default(self):
+    def test_pdk_0p2a_default(self):
         """
-        Tests PDK 0.2 utilization
+        Tests PDK 0.2a utilization
         """
 
         pdk_version = ""
         for front_end in self._front_end_list:
-            for place_site in self._ibm_site_list:
-                exp_util = self.get_exp_util(place_site, front_end)
+            for place_site in self._synopsys_site_list:
+                exp_util = self.get_exp_util(place_site, front_end, pdk_version)
                 self.execute_cmd(
                     place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
                 )
@@ -54,7 +58,7 @@ class TestParams(ParamTestBase):
         pdk_version = "0.2"
         for front_end in self._front_end_list:
             for place_site in self._ibm_site_list:
-                exp_util = self.get_exp_util(place_site, front_end)
+                exp_util = self.get_exp_util(place_site, front_end, pdk_version)
                 self.execute_cmd(
                     place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
                 )
@@ -67,7 +71,7 @@ class TestParams(ParamTestBase):
         pdk_version = "0.2a"
         for front_end in self._front_end_list:
             for place_site in self._synopsys_site_list:
-                exp_util = self.get_exp_util(place_site, front_end)
+                exp_util = self.get_exp_util(place_site, front_end, pdk_version)
                 self.execute_cmd(
                     place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
                 )
@@ -80,7 +84,7 @@ class TestParams(ParamTestBase):
         pdk_version = "0.15"
         for front_end in self._front_end_list:
             for place_site in self._synopsys_site_list:
-                exp_util = self.get_exp_util(place_site, front_end)
+                exp_util = self.get_exp_util(place_site, front_end, pdk_version)
                 self.execute_cmd(
                     place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
                 )
@@ -93,7 +97,7 @@ class TestParams(ParamTestBase):
         pdk_version = "0.3"
         for front_end in self._front_end_list:
             for place_site in self._synopsys_site_list:
-                exp_util = self.get_exp_util(place_site, front_end)
+                exp_util = self.get_exp_util(place_site, front_end, pdk_version)
                 self.execute_cmd(
                     place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
                 )
