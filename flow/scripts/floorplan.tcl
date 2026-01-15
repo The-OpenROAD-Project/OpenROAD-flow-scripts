@@ -152,3 +152,9 @@ source_env_var_if_exists IO_CONSTRAINTS
 
 orfs_write_db $::env(RESULTS_DIR)/2_1_floorplan.odb
 orfs_write_sdc $::env(RESULTS_DIR)/2_1_floorplan.sdc
+
+if { $::env(FLOORPLAN_PDN_DRY_RUN) } {
+  puts "PDN dry run to check for errors"
+  set ::env(WRITE_ODB_AND_SDC_EACH_STAGE) 0
+  source $::env(SCRIPTS_DIR)/pdn.tcl
+}

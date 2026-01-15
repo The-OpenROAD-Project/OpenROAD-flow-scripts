@@ -393,6 +393,14 @@ SWAP_ARITH_OPERATORS:
     Improve timing QoR by swapping ALU and MULT arithmetic operators.
   stages:
     - All stages
+FLOORPLAN_PDN_DRY_RUN:
+  description: >
+    Perform a dry run of the PDN step to check for errors without writing
+    the ODB and SDC files early in the floorplan flow. This makes it easier
+    to connect any errors to the cause: unworkable floorplan.
+  stages:
+    - floorplan
+  default: 1
 FLOORPLAN_DEF:
   description: |
     Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.
