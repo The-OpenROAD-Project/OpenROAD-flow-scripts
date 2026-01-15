@@ -32,12 +32,12 @@ class TestParams(ParamTestBase):
             return 65
         return 70
 
-    def test_pdk_0p2_default(self):
-        """Tests PDK 0.2 Utilization"""
+    def test_pdk_0p2a_default(self):
+        """Tests PDK 0.2a Utilization"""
 
         front_end = ""
         pdk_version = ""
-        for place_site in self._ibm_site_list:
+        for place_site in self._synopsys_site_list:
             exp_util = self.get_exp_util(place_site, pdk_version)
             self.execute_cmd(
                 place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util

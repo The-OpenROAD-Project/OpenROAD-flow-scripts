@@ -563,6 +563,8 @@ GLOBAL_PLACEMENT_ARGS:
   description: >
     Use additional tuning parameters during global placement other than default
     args defined in global_place.tcl.
+  stages:
+    - place
 ENABLE_DPO:
   description: |
     Enable detail placement with improve_placement feature.
@@ -889,10 +891,14 @@ SYNTH_KEEP_MODULES:
 SYNTH_ARGS:
   description: |
     Optional synthesis variables for yosys.
+  stages:
+    - synth
 SYNTH_HIER_SEPARATOR:
   description: |
     Separator used for the synthesis flatten stage.
   default: .
+  stages:
+    - synth
 SYNTH_OPT_HIER:
   description: |
     Optimize constants across hierarchical boundaries.
@@ -906,8 +912,9 @@ VERILOG_TOP_PARAMS:
     - synth
 CORE_ASPECT_RATIO:
   description: >
-    The core aspect ratio (height / width). This value is ignored if
-    `CORE_UTILIZATION` is undefined.
+    The core aspect ratio (height / width).
+
+    This variable is only used when `CORE_UTILIZATION` is set.
   stages:
     - floorplan
   default: 1.0
@@ -918,8 +925,9 @@ CORE_MARGIN:
     The margin between the core area and die area, specified in microns.
     Allowed values are either one value for all margins or a set of four
     values, one for each margin. The order of the four values are:
-    `{bottom top left right}`. This variable is ignored if `CORE_UTILIZATION`
-    is undefined.
+    `{bottom top left right}`.
+
+    This variable is only used when `CORE_UTILIZATION` is set.
   stages:
     - floorplan
   default: 1.0

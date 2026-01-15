@@ -24,7 +24,9 @@ class TestParams(ParamTestBase):
     def get_exp_sdc(self, place_site, pdk_version):
         """Returns the expected SDC file path"""
 
-        if pdk_version == "0.2a":
+        if pdk_version in ["", "0.2a"]:
+            if pdk_version == "":
+                pdk_version = "0.2a"
             if place_site in ["", "ra02h184_HST_45CPP"]:
                 return os.path.join(
                     self._design_full_dir, f"jpeg_encoder15_{pdk_version}_8T.sdc"
@@ -35,14 +37,14 @@ class TestParams(ParamTestBase):
             )
         return os.path.join(self._design_full_dir, "jpeg_encoder15_7nm.sdc")
 
-    def test_pdk_0p2_default(self):
+    def test_pdk_0p2a_default(self):
         """
-        Tests PDK 0.2 utilization
+        Tests PDK 0.2a utilization
         """
 
         front_end = ""
         pdk_version = ""
-        for place_site in self._ibm_site_list:
+        for place_site in self._synopsys_site_list:
             exp_sdc = self.get_exp_sdc(place_site, pdk_version)
             self.execute_cmd(place_site, pdk_version, front_end, "SDC_FILE", exp_sdc)
 
