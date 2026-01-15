@@ -31,15 +31,15 @@ class TensorBoardLogger:
         """Log metrics from a single sweep run"""
         self.writer.add_scalar("sweep/score", score, self.step)
 
-        if effective_clk_period != "-":
+        if isinstance(effective_clk_period, (int, float)):
             self.writer.add_scalar(
                 "sweep/effective_clk_period", effective_clk_period, self.step
             )
 
-        if num_drc != "-":
+        if isinstance(num_drc, (int, float)):
             self.writer.add_scalar("sweep/num_drc", num_drc, self.step)
 
-        if die_area != "-":
+        if isinstance(die_area, (int, float)):
             self.writer.add_scalar("sweep/die_area", die_area, self.step)
 
         for key, value in metrics.items():
