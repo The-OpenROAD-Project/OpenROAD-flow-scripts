@@ -927,6 +927,9 @@ CORE_MARGIN:
     values, one for each margin. The order of the four values are:
     `{bottom top left right}`.
 
+    If this value is too high, then area is wasted, too low and PDN
+    can fail.
+
     This variable is only used when `CORE_UTILIZATION` is set.
   stages:
     - floorplan

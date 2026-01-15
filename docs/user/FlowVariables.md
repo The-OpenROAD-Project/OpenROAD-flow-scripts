@@ -111,7 +111,7 @@ configuration file.
 | <a name="CLUSTER_FLOPS"></a>CLUSTER_FLOPS| Minimum number of flip-flops per sink cluster.| 0|
 | <a name="CORE_AREA"></a>CORE_AREA| The core area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2).| |
 | <a name="CORE_ASPECT_RATIO"></a>CORE_ASPECT_RATIO| The core aspect ratio (height / width). This variable is only used when `CORE_UTILIZATION` is set.| 1.0|
-| <a name="CORE_MARGIN"></a>CORE_MARGIN| The margin between the core area and die area, specified in microns. Allowed values are either one value for all margins or a set of four values, one for each margin. The order of the four values are: `{bottom top left right}`. This variable is only used when `CORE_UTILIZATION` is set.| 1.0|
+| <a name="CORE_MARGIN"></a>CORE_MARGIN| The margin between the core area and die area, specified in microns. Allowed values are either one value for all margins or a set of four values, one for each margin. The order of the four values are: `{bottom top left right}`. If this value is too high, then area is wasted, too low and PDN can fail. This variable is only used when `CORE_UTILIZATION` is set.| 1.0|
 | <a name="CORE_UTILIZATION"></a>CORE_UTILIZATION| The core utilization percentage (0-100).| |
 | <a name="CORNER"></a>CORNER| PVT corner library selection. Only available for ASAP7 and GF180 PDKs.| |
 | <a name="CTS_ARGS"></a>CTS_ARGS| Override `clock_tree_synthesis` arguments.| |
