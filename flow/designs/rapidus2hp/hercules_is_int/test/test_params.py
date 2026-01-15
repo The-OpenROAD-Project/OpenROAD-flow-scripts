@@ -25,9 +25,7 @@ class TestParams(ParamTestBase):
         """Returns the expected value"""
 
         if pdk_version == "0.3":
-            if front_end == "verific":
-                return 55
-            return 54
+            return 56
         if front_end == "verific":
             if place_site in ["SC6T", "ra02h138_DST_45CPP"]:
                 return 30

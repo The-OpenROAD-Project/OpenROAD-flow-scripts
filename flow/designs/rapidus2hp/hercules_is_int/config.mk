@@ -34,15 +34,11 @@ export SYNTH_HIERARCHICAL    ?= 0
 # |   non-0.3   |   slang   |     8T     |      52     |
 # |      all    |  verific  |     6T     |      30     |
 # |   non-0.3   |  verific  |     8T     |      54     |
-# |      0.3    |   slang   |     8T     |      54     |
-# |      0.3    |  verific  |     8T     |      55     |
+# |      0.3    |  any  |     8T     |      56     |
 
 export CORE_UTILIZATION = $(strip \
     $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
-        $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
-            54, \
-            55 \
-        ), \
+        56, \
         $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
 	    $(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
                 30, \
