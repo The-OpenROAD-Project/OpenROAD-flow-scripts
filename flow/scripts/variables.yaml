@@ -295,6 +295,16 @@ SYNTH_RETIME_MODULES:
     optimal distribution of registers on long pipelines. See OR discussion #8080.
   stages:
     - synth
+SYNTH_REPEATABLE_BUILD:
+  description: >
+    License to prune anything that makes builds less repeatable, typically
+    used with Bazel to ensure that builds are bit-for-bit identical so that
+    caching works optimally.
+
+    Removes debug information that encodes paths, timestamps, etc.
+  stages:
+    - synth
+  default: 0
 DFF_MAP_FILE:
   description: |
     Optional mapping file supplied to Yosys to map D flip-flops
