@@ -452,12 +452,26 @@ MACRO_PLACE_HALO:
   description: >
     Horizontal/vertical halo around macros (microns). Used by automatic macro
     placement.
+
+    There is no provision for setting a halo per macro, this is a global
+    setting. With an advanced flow, beyond the scope of ORFS, a user
+    could generate a mock .lef with halos that vary per macro,
+    generate a macro placement .tcl and use `MACRO_PLACEMENT_TCL` to
+    place macros. A .lef halo excludes all instances, including standard
+    cells and macros. `MACRO_PLACE_HALO` applies only to macros.
+
+    If this value is too high, then area is wasted, too low and the flow can
+    fail later in detailed placement or routing.
   stages:
     - floorplan
 MACRO_BLOCKAGE_HALO:
   description: >
     Distance beyond the edges of a macro that will also be covered by the
     blockage generated for that macro.
+
+    To ease routing around macros, it can be useful to have a larger
+    `MACRO_PLACE_HALO` than `MACRO_BLOCKAGE_HALO`.
+
     Note that the default macro blockage halo comes from the largest of the
     specified MACRO_PLACE_HALO x or y values. This variable overrides that
     calculation.
