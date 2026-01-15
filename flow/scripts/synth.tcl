@@ -32,7 +32,7 @@ proc get_dfflegalize_args { file_path } {
 }
 
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
-read_checkpoint $::env(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
+read_checkpoint $::env(RESULTS_DIR)/1_1_yosys_canonicalize.v
 
 hierarchy -check -top $::env(DESIGN_NAME)
 

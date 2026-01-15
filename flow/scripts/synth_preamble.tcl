@@ -25,8 +25,10 @@ proc read_checkpoint { file } {
   # We are reading a Yosys checkpoint
   if { [file extension $file] == ".json" } {
     read_json $file
-  } else {
+  } elseif { [file extension $file] == ".rtlil" } {
     read_rtlil $file
+  } elseif { [file extension $file] == ".v" } {
+    read_verilog $file
   }
 }
 
