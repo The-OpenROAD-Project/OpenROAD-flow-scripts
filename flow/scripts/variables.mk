@@ -70,7 +70,8 @@ export NUM_CORES
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
-export PYTHON_EXE ?= $(shell command -v python3)
+PYTHON_EXE ?= $(shell command -v python3)
+export PYTHON_EXE := $(PYTHON_EXE)
 
 export TIME_BIN   ?= env time
 TIME_CMD = $(TIME_BIN) -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
@@ -78,7 +79,7 @@ TIME_TEST = $(shell $(TIME_CMD) echo foo 2>/dev/null)
 ifeq (,$(strip $(TIME_TEST)))
   TIME_CMD = $(TIME_BIN)
 endif
-export TIME_CMD
+export TIME_CMD := $(TIME_CMD)
 
 # The following determine the executable location for each tool used by this flow.
 # Priority is given to
@@ -87,15 +88,18 @@ export TIME_CMD
 #          2.1 if in Nix shell: openroad, yosys from the environment
 #          2.2 ORFS compiled tools: openroad, yosys
 ifneq (${IN_NIX_SHELL},)
-  export OPENROAD_EXE ?= $(shell command -v openroad)
+  OPENROAD_EXE ?= $(shell command -v openroad)
 else
-  export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+  OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
 endif
 ifneq (${IN_NIX_SHELL},)
-  export OPENSTA_EXE ?= $(shell command -v sta)
+  OPENSTA_EXE ?= $(shell command -v sta)
 else
-  export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
+  OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 endif
+
+export OPENROAD_EXE := $(OPENROAD_EXE)
+export OPENSTA_EXE  := $(OPENSTA_EXE)
 
 OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell test -x $(OPENROAD_EXE) && echo "true"),)
 
@@ -109,7 +113,8 @@ ifneq (${IN_NIX_SHELL},)
 else
   YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
 endif
-export YOSYS_EXE
+
+export YOSYS_EXE := $(YOSYS_EXE)
 
 YOSYS_IS_VALID := $(if $(YOSYS_EXE),$(shell test -x $(YOSYS_EXE) && echo "true"),)
 
@@ -118,12 +123,14 @@ KLAYOUT_DIR = $(abspath $(FLOW_HOME)/../tools/install/klayout/)
 KLAYOUT_BIN_FROM_DIR = $(KLAYOUT_DIR)/klayout
 
 ifeq ($(wildcard $(KLAYOUT_BIN_FROM_DIR)), $(KLAYOUT_BIN_FROM_DIR))
-export KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
+KLAYOUT_CMD ?= sh -c 'LD_LIBRARY_PATH=$(dir $(KLAYOUT_BIN_FROM_DIR)) $$0 "$$@"' $(KLAYOUT_BIN_FROM_DIR)
 else
 ifeq ($(KLAYOUT_CMD),)
-export KLAYOUT_CMD := $(shell command -v klayout)
+KLAYOUT_CMD ?= $(shell command -v klayout)
 endif
 endif
+
+export KLAYOUT_CMD := $(KLAYOUT_CMD)
 
 ifneq ($(shell command -v stdbuf),)
   STDBUF_CMD ?= stdbuf -o L
