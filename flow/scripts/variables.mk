@@ -89,12 +89,20 @@ export TIME_CMD
 ifneq (${IN_NIX_SHELL},)
   export OPENROAD_EXE ?= $(shell command -v openroad)
 else
-  export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+  ifneq ($(wildcard $(FLOW_HOME)/../tools/OpenROAD/bazel-bin/openroad),)
+    export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/OpenROAD/bazel-bin/openroad)
+  else
+    export OPENROAD_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/openroad)
+  endif
 endif
 ifneq (${IN_NIX_SHELL},)
   export OPENSTA_EXE ?= $(shell command -v sta)
 else
-  export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
+  ifneq ($(wildcard $(FLOW_HOME)/../tools/OpenROAD/bazel-bin/sta),)
+    export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/OpenROAD/bazel-bin/sta)
+  else
+    export OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
+  endif
 endif
 
 OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell test -x $(OPENROAD_EXE) && echo "true"),)
