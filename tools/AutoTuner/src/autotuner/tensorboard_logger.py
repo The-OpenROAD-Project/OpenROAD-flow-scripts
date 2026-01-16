@@ -53,7 +53,7 @@ class TensorBoardLogger:
                 k: v if isinstance(v, (int, float, str, bool)) else str(v)
                 for k, v in params.items()
             },
-            {"hparam/score": score if score < ERROR_METRIC else 0.0},
+            {"hparam/metric": score},
         )
 
         self.step += 1
