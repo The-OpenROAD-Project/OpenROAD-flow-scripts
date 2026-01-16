@@ -2,8 +2,6 @@
 # file to avoid having to adding the to the make command line.
 -include settings.mk
 
-#export SWAP_ARITH_OPERATORS=1
-
 # ==============================================================================
 # Uncomment or add the design to run
 # ==============================================================================
