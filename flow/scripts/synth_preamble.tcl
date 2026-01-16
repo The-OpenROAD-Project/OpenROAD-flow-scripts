@@ -31,9 +31,6 @@ proc read_checkpoint { file } {
 }
 
 proc read_design_sources { } {
-  # We are reading Verilog sources
-  source $::env(SCRIPTS_DIR)/synth_stdcells.tcl
-
   # Setup verilog include directories
   set vIdirsArgs ""
   if { [env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS] } {
