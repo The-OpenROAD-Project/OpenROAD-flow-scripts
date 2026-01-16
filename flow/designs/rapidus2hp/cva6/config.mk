@@ -117,7 +117,7 @@ export SDC_FILE = $(strip \
     ))
 
 # Must be defined before the ifeq's
-export SYNTH_HDL_FRONTEND  = slang
+export SYNTH_HDL_FRONTEND  ?= slang
 export SYNTH_HIERARCHICAL = 1
 
 export CORE_UTILIZATION       = 65
