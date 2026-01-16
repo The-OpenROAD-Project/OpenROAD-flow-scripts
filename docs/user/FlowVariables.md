@@ -110,8 +110,8 @@ configuration file.
 | <a name="CLKGATE_MAP_FILE"></a>CLKGATE_MAP_FILE| Optional mapping file supplied to Yosys to map clock gating cells| |
 | <a name="CLUSTER_FLOPS"></a>CLUSTER_FLOPS| Minimum number of flip-flops per sink cluster.| 0|
 | <a name="CORE_AREA"></a>CORE_AREA| The core area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2).| |
-| <a name="CORE_ASPECT_RATIO"></a>CORE_ASPECT_RATIO| The core aspect ratio (height / width). This value is ignored if `CORE_UTILIZATION` is undefined.| 1.0|
-| <a name="CORE_MARGIN"></a>CORE_MARGIN| The margin between the core area and die area, specified in microns. Allowed values are either one value for all margins or a set of four values, one for each margin. The order of the four values are: `{bottom top left right}`. This variable is ignored if `CORE_UTILIZATION` is undefined.| 1.0|
+| <a name="CORE_ASPECT_RATIO"></a>CORE_ASPECT_RATIO| The core aspect ratio (height / width). This variable is only used when `CORE_UTILIZATION` is set.| 1.0|
+| <a name="CORE_MARGIN"></a>CORE_MARGIN| The margin between the core area and die area, specified in microns. Allowed values are either one value for all margins or a set of four values, one for each margin. The order of the four values are: `{bottom top left right}`. This variable is only used when `CORE_UTILIZATION` is set.| 1.0|
 | <a name="CORE_UTILIZATION"></a>CORE_UTILIZATION| The core utilization percentage (0-100).| |
 | <a name="CORNER"></a>CORNER| PVT corner library selection. Only available for ASAP7 and GF180 PDKs.| |
 | <a name="CTS_ARGS"></a>CTS_ARGS| Override `clock_tree_synthesis` arguments.| |
@@ -171,11 +171,13 @@ configuration file.
 | <a name="MACRO_WRAPPERS"></a>MACRO_WRAPPERS| The wrapper file that replaces existing macros with their wrapped version.| |
 | <a name="MAKE_TRACKS"></a>MAKE_TRACKS| Tcl file that defines add routing tracks to a floorplan.| |
 | <a name="MATCH_CELL_FOOTPRINT"></a>MATCH_CELL_FOOTPRINT| Enforce sizing operations to only swap cells that have the same layout boundary.| 0|
+| <a name="MAX_PLACE_STEP_COEF"></a>MAX_PLACE_STEP_COEF| Sets the maximum phi coefficient (pcof_max / µ_k Upper Bound) for global placement optimization. This parameter controls the step size upper bound in the RePlAce Nesterov optimization algorithm. Higher values allow more aggressive optimization but may risk divergence. Valid range: 1.00-1.20| 1.05|
 | <a name="MAX_REPAIR_ANTENNAS_ITER_DRT"></a>MAX_REPAIR_ANTENNAS_ITER_DRT| Defines the maximum number of iterations post-detailed routing repair antennas will run.| 5|
 | <a name="MAX_REPAIR_ANTENNAS_ITER_GRT"></a>MAX_REPAIR_ANTENNAS_ITER_GRT| Defines the maximum number of iterations post global routing repair antennas will run.| 5|
 | <a name="MAX_REPAIR_TIMING_ITER"></a>MAX_REPAIR_TIMING_ITER| Maximum number of iterations for repair setup and repair hold.| |
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.| |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| |
+| <a name="MIN_PLACE_STEP_COEF"></a>MIN_PLACE_STEP_COEF| Sets the minimum phi coefficient (pcof_min / µ_k Lower Bound) for global placement optimization. This parameter controls the step size lower bound in the RePlAce Nesterov optimization algorithm. Lower values may improve convergence but can increase runtime. Valid range: 0.95-1.05| 0.95|
 | <a name="MIN_ROUTING_LAYER"></a>MIN_ROUTING_LAYER| The lowest metal layer name to be used in routing.| |
 | <a name="NUM_CORES"></a>NUM_CORES| Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers of cores in system as determined by system specific code in Makefile, `nproc` is tried first. OpenROAD does not limit itself to this number of cores across OpenROAD running instances, which can lead to overprovisioning in contexts such as bazel-orfs where there could be many routing, or place jobs running at the same time.| |
 | <a name="OPENROAD_HIERARCHICAL"></a>OPENROAD_HIERARCHICAL| Feature toggle to enable to run OpenROAD in hierarchical mode, otherwise considered flat. Will eventually be the default and this option will be retired.| 0|
@@ -200,7 +202,6 @@ configuration file.
 | <a name="RTLMP_AREA_WT"></a>RTLMP_AREA_WT| Weight for the area of the current floorplan.| 0.1|
 | <a name="RTLMP_ARGS"></a>RTLMP_ARGS| Overrides all other RTL macro placer arguments.| |
 | <a name="RTLMP_BOUNDARY_WT"></a>RTLMP_BOUNDARY_WT| Weight for the boundary or how far the hard macro clusters are from boundaries.| 50.0|
-| <a name="RTLMP_DEAD_SPACE"></a>RTLMP_DEAD_SPACE| Specifies the target dead space percentage, which influences the utilization of a cluster.| 0.05|
 | <a name="RTLMP_FENCE_LX"></a>RTLMP_FENCE_LX| Defines the lower left X coordinate for the global fence bounding box in microns.| 0.0|
 | <a name="RTLMP_FENCE_LY"></a>RTLMP_FENCE_LY| Defines the lower left Y coordinate for the global fence bounding box in microns.| 0.0|
 | <a name="RTLMP_FENCE_UX"></a>RTLMP_FENCE_UX| Defines the upper right X coordinate for the global fence bounding box in microns.| 0.0|
@@ -241,7 +242,7 @@ configuration file.
 | <a name="SLEW_MARGIN"></a>SLEW_MARGIN| Specifies a slew margin when fixing max slew violations. This option allows you to overfix.| |
 | <a name="SWAP_ARITH_OPERATORS"></a>SWAP_ARITH_OPERATORS| Improve timing QoR by swapping ALU and MULT arithmetic operators.| |
 | <a name="SYNTH_ARGS"></a>SYNTH_ARGS| Optional synthesis variables for yosys.| |
-| <a name="SYNTH_BLACKBOXES"></a>SYNTH_BLACKBOXES| List of cells treated as a black box by Yosys. With Bazel, this can be used to run synthesis in parallel for the large modules of the design.| |
+| <a name="SYNTH_BLACKBOXES"></a>SYNTH_BLACKBOXES| List of cells treated as a black box by Yosys. With Bazel, this can be used to run synthesis in parallel for the large modules of the design. Non-existant modules are ignored silently, useful when listing modules statically, even if modules come and go dynamically.| |
 | <a name="SYNTH_CANONICALIZE_TCL"></a>SYNTH_CANONICALIZE_TCL| Specifies a Tcl script with commands to run as part of the synth canonicalize step.| |
 | <a name="SYNTH_GUT"></a>SYNTH_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| 0|
 | <a name="SYNTH_HDL_FRONTEND"></a>SYNTH_HDL_FRONTEND| Select an alternative language frontend to ingest the design. Available option is "slang". If the variable is empty, design is read with the Yosys read_verilog command.| |
@@ -286,11 +287,13 @@ configuration file.
 - [MIN_BUF_CELL_AND_PORTS](#MIN_BUF_CELL_AND_PORTS)
 - [SDC_FILE](#SDC_FILE)
 - [SDC_GUT](#SDC_GUT)
+- [SYNTH_ARGS](#SYNTH_ARGS)
 - [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
 - [SYNTH_CANONICALIZE_TCL](#SYNTH_CANONICALIZE_TCL)
 - [SYNTH_GUT](#SYNTH_GUT)
 - [SYNTH_HDL_FRONTEND](#SYNTH_HDL_FRONTEND)
 - [SYNTH_HIERARCHICAL](#SYNTH_HIERARCHICAL)
+- [SYNTH_HIER_SEPARATOR](#SYNTH_HIER_SEPARATOR)
 - [SYNTH_KEEP_MOCKED_MEMORIES](#SYNTH_KEEP_MOCKED_MEMORIES)
 - [SYNTH_KEEP_MODULES](#SYNTH_KEEP_MODULES)
 - [SYNTH_MEMORY_MAX_BITS](#SYNTH_MEMORY_MAX_BITS)
@@ -343,7 +346,6 @@ configuration file.
 - [RTLMP_AREA_WT](#RTLMP_AREA_WT)
 - [RTLMP_ARGS](#RTLMP_ARGS)
 - [RTLMP_BOUNDARY_WT](#RTLMP_BOUNDARY_WT)
-- [RTLMP_DEAD_SPACE](#RTLMP_DEAD_SPACE)
 - [RTLMP_FENCE_LX](#RTLMP_FENCE_LX)
 - [RTLMP_FENCE_LY](#RTLMP_FENCE_LY)
 - [RTLMP_FENCE_UX](#RTLMP_FENCE_UX)
@@ -383,13 +385,16 @@ configuration file.
 - [DONT_BUFFER_PORTS](#DONT_BUFFER_PORTS)
 - [EARLY_SIZING_CAP_RATIO](#EARLY_SIZING_CAP_RATIO)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
+- [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
 - [GPL_ROUTABILITY_DRIVEN](#GPL_ROUTABILITY_DRIVEN)
 - [GPL_TIMING_DRIVEN](#GPL_TIMING_DRIVEN)
 - [IO_PLACER_H](#IO_PLACER_H)
 - [IO_PLACER_V](#IO_PLACER_V)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
+- [MAX_PLACE_STEP_COEF](#MAX_PLACE_STEP_COEF)
 - [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
+- [MIN_PLACE_STEP_COEF](#MIN_PLACE_STEP_COEF)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [PLACE_DENSITY](#PLACE_DENSITY)
 - [PLACE_DENSITY_LB_ADDON](#PLACE_DENSITY_LB_ADDON)
@@ -519,7 +524,6 @@ configuration file.
 - [FLOW_VARIANT](#FLOW_VARIANT)
 - [GDS_FILES](#GDS_FILES)
 - [GENERATE_ARTIFACTS_ON_FAILURE](#GENERATE_ARTIFACTS_ON_FAILURE)
-- [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
 - [GUI_TIMING](#GUI_TIMING)
 - [IR_DROP_LAYER](#IR_DROP_LAYER)
 - [KLAYOUT_TECH_FILE](#KLAYOUT_TECH_FILE)
@@ -538,8 +542,6 @@ configuration file.
 - [SEAL_GDS](#SEAL_GDS)
 - [SET_RC_TCL](#SET_RC_TCL)
 - [SLEW_MARGIN](#SLEW_MARGIN)
-- [SYNTH_ARGS](#SYNTH_ARGS)
-- [SYNTH_HIER_SEPARATOR](#SYNTH_HIER_SEPARATOR)
 - [TAP_CELL_NAME](#TAP_CELL_NAME)
 - [TECH_LEF](#TECH_LEF)
 - [USE_FILL](#USE_FILL)

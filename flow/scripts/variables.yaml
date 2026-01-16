@@ -255,6 +255,9 @@ SYNTH_BLACKBOXES:
   description: >
     List of cells treated as a black box by Yosys. With Bazel, this can be used
     to run synthesis in parallel for the large modules of the design.
+
+    Non-existant modules are ignored silently, useful when listing modules
+    statically, even if modules come and go dynamically.
   stages:
     - synth
 SYNTH_NETLIST_FILES:
@@ -560,6 +563,8 @@ GLOBAL_PLACEMENT_ARGS:
   description: >
     Use additional tuning parameters during global placement other than default
     args defined in global_place.tcl.
+  stages:
+    - place
 ENABLE_DPO:
   description: |
     Enable detail placement with improve_placement feature.
@@ -580,6 +585,30 @@ GPL_ROUTABILITY_DRIVEN:
   stages:
     - place
   default: 1
+MIN_PLACE_STEP_COEF:
+  description: >
+    Sets the minimum phi coefficient (pcof_min / µ_k Lower Bound) for global
+    placement optimization. This parameter controls the step size lower bound
+    in the RePlAce Nesterov optimization algorithm. Lower values may improve
+    convergence but can increase runtime.
+    Valid range: 0.95-1.05
+  default: 0.95
+  stages:
+    - place
+  tunable: 1
+  type: float
+MAX_PLACE_STEP_COEF:
+  description: >
+    Sets the maximum phi coefficient (pcof_max / µ_k Upper Bound) for global
+    placement optimization. This parameter controls the step size upper bound
+    in the RePlAce Nesterov optimization algorithm. Higher values allow more
+    aggressive optimization but may risk divergence.
+    Valid range: 1.00-1.20
+  default: 1.05
+  stages:
+    - place
+  tunable: 1
+  type: float
 CAP_MARGIN:
   description: >
     Specifies a capacitance margin when fixing max capacitance violations. This
@@ -862,10 +891,14 @@ SYNTH_KEEP_MODULES:
 SYNTH_ARGS:
   description: |
     Optional synthesis variables for yosys.
+  stages:
+    - synth
 SYNTH_HIER_SEPARATOR:
   description: |
     Separator used for the synthesis flatten stage.
   default: .
+  stages:
+    - synth
 SYNTH_OPT_HIER:
   description: |
     Optimize constants across hierarchical boundaries.
@@ -879,8 +912,9 @@ VERILOG_TOP_PARAMS:
     - synth
 CORE_ASPECT_RATIO:
   description: >
-    The core aspect ratio (height / width). This value is ignored if
-    `CORE_UTILIZATION` is undefined.
+    The core aspect ratio (height / width).
+
+    This variable is only used when `CORE_UTILIZATION` is set.
   stages:
     - floorplan
   default: 1.0
@@ -891,8 +925,9 @@ CORE_MARGIN:
     The margin between the core area and die area, specified in microns.
     Allowed values are either one value for all margins or a set of four
     values, one for each margin. The order of the four values are:
-    `{bottom top left right}`. This variable is ignored if `CORE_UTILIZATION`
-    is undefined.
+    `{bottom top left right}`.
+
+    This variable is only used when `CORE_UTILIZATION` is set.
   stages:
     - floorplan
   default: 1.0
@@ -1075,13 +1110,6 @@ RTLMP_NOTCH_WT:
     Weight for the notch, or the existence of dead space that cannot be used
     for placement and routing.
   default: 10.0
-  stages:
-    - floorplan
-RTLMP_DEAD_SPACE:
-  description: >
-    Specifies the target dead space percentage, which influences the
-    utilization of a cluster.
-  default: 0.05
   stages:
     - floorplan
 RTLMP_RPT_DIR:
