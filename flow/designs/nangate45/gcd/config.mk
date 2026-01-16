@@ -15,3 +15,6 @@ export REMOVE_CELLS_FOR_EQY   = TAPCELL*
 
 # This needs a smaller pitch to accomodate a small block
 export PDN_TCL ?= $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/grid_strategy-M1-M4-M7.tcl
+
+export SYNTH_HDL_FRONTEND ?= slang
+export OPENROAD_HIERARCHICAL ?= 1
