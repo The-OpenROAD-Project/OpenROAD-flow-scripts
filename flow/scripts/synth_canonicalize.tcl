@@ -5,6 +5,8 @@ hierarchy -check -top $::env(DESIGN_NAME)
 
 source_env_var_if_exists SYNTH_CANONICALIZE_TCL
 
+# Easier to read .rtlil, we'll load liberty cells later
+delete =A:\liberty_cell=1
 # Get rid of unused modules
 opt_clean -purge
 # The hash of this file will not change if files not part of synthesis do not change
