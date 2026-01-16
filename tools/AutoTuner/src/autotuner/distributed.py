@@ -92,6 +92,8 @@ from autotuner.utils import (
     read_config,
     read_metrics,
     prepare_ray_server,
+    calculate_score,
+    ERROR_METRIC,
     CONSTRAINTS_SDC,
     FASTROUTE_TCL,
 )
@@ -99,8 +101,6 @@ from autotuner.tensorboard_logger import TensorBoardLogger
 
 # Name of the final metric
 METRIC = "metric"
-# The worst of optimized metric
-ERROR_METRIC = 9e99
 # Path to the FLOW_HOME directory
 ORFS_FLOW_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../flow")
@@ -173,16 +173,7 @@ class AutoTunerBase(tune.Trainable):
         It can change in any form to minimize the score (return value).
         Default evaluation function optimizes effective clock period.
         """
-        error = "ERR" in metrics.values()
-        not_found = "N/A" in metrics.values()
-        if error or not_found:
-            return (ERROR_METRIC, "-", "-", "-")
-        effective_clk_period = metrics["clk_period"] - metrics["worst_slack"]
-        num_drc = metrics["num_drc"]
-        gamma = effective_clk_period / 10
-        score = effective_clk_period
-        score = score * (100 / self.step_) + gamma * num_drc
-        return (score, effective_clk_period, num_drc, metrics["die_area"])
+        return calculate_score(metrics, step=self.step_)
 
     def _is_valid_config(self, config):
         """

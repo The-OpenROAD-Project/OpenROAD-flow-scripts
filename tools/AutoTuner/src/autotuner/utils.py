@@ -69,6 +69,24 @@ CONSTRAINTS_SDC = "constraint.sdc"
 # Name of the TCL script run before routing
 FASTROUTE_TCL = "fastroute.tcl"
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+# The worst of optimized metric
+ERROR_METRIC = 9e99
+
+
+def calculate_score(metrics, step=1):
+    """Calculate optimization score from metrics."""
+    error = "ERR" in metrics.values()
+    not_found = "N/A" in metrics.values()
+
+    if error or not_found:
+        return (ERROR_METRIC, "-", "-", "-")
+
+    effective_clk_period = metrics["clk_period"] - metrics["worst_slack"]
+    num_drc = metrics["num_drc"]
+    gamma = effective_clk_period / 10
+    score = effective_clk_period * (100 / step) + gamma * num_drc
+
+    return (score, effective_clk_period, num_drc, metrics["die_area"])
 
 
 def write_sdc(variables, path, sdc_original, constraints_sdc):
@@ -708,12 +726,7 @@ def consumer(queue):
         print(f"[INFO TUN-0008] Finished run for parameter {config}.")
 
         metrics = read_metrics(metric_file, args.stop_stage)
-        effective_clk_period = (
-            metrics["clk_period"] - metrics["worst_slack"]
-            if metrics["worst_slack"] not in ("ERR", "N/A")
-            else "-"
-        )
-        score = effective_clk_period if effective_clk_period != "-" else 999999.0
+        score, effective_clk_period, num_drc, die_area = calculate_score(metrics)
 
         ray.get(
             tb_logger.log_sweep_metrics.remote(
@@ -721,8 +734,8 @@ def consumer(queue):
                 metrics=metrics,
                 score=score,
                 effective_clk_period=effective_clk_period,
-                num_drc=metrics.get("num_drc", "-"),
-                die_area=metrics.get("die_area", "-"),
+                num_drc=num_drc,
+                die_area=die_area,
             )
         )
 
