@@ -5,6 +5,8 @@ from typing import Any, Union
 import ray
 from tensorboardX import SummaryWriter
 
+from autotuner.utils import ERROR_METRIC
+
 logger = logging.getLogger(__name__)
 
 
@@ -51,7 +53,7 @@ class TensorBoardLogger:
                 k: v if isinstance(v, (int, float, str, bool)) else str(v)
                 for k, v in params.items()
             },
-            {"hparam/score": score if score != 999999.0 else 0.0},
+            {"hparam/score": score if score < ERROR_METRIC else 0.0},
         )
 
         self.step += 1
