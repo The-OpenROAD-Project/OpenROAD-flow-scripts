@@ -569,13 +569,24 @@ def sweep():
     queue = Queue()
     parameter_list = list()
     for name, content in config_dict.items():
-        if not isinstance(content, list):
+        if isinstance(content, dict) and content.get("type") == "string":
+            if "values" not in content:
+                print(
+                    f"[ERROR TUN-0016] {name} string parameter missing 'values' field."
+                )
+                sys.exit(1)
+            if not isinstance(content["values"], list) or len(content["values"]) == 0:
+                print(f"[ERROR TUN-0017] {name} 'values' must be a non-empty list.")
+                sys.exit(1)
+            parameter_list.append([{name: i} for i in content["values"]])
+        elif isinstance(content, list):
+            if content[-1] == 0:
+                print("[ERROR TUN-0014] Sweep does not support step value zero.")
+                sys.exit(1)
+            parameter_list.append([{name: i} for i in np.arange(*content)])
+        else:
             print(f"[ERROR TUN-0015] {name} sweep is not supported.")
             sys.exit(1)
-        if content[-1] == 0:
-            print("[ERROR TUN-0014] Sweep does not support step value zero.")
-            sys.exit(1)
-        parameter_list.append([{name: i} for i in np.arange(*content)])
     parameter_list = list(product(*parameter_list))
     for parameter in parameter_list:
         temp = dict()

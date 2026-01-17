@@ -442,6 +442,8 @@ def read_config(file_name, mode, algorithm):
         return ret
 
     def read_sweep(this):
+        if this.get("type") == "string":
+            return {"type": "string", "values": this["values"]}
         return [*this["minmax"], this["step"]]
 
     def apply_condition(config, data):
