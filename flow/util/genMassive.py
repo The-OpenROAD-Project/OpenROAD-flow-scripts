@@ -11,7 +11,6 @@ import re
 import itertools
 import glob
 
-
 PUBLIC = ["nangate45", "sky130hd", "sky130hs", "asap7"]
 
 # The number of generated config files into
