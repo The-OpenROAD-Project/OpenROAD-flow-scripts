@@ -4,7 +4,6 @@ import sys
 import re
 import os
 
-
 sweep = sys.argv[1]
 output = sys.argv[2]
 remainder = sys.argv[3:]
