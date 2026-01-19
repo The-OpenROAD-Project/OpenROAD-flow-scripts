@@ -12,5 +12,9 @@ if { $::env(SYNTH_REPEATABLE_BUILD) } {
   setattr -unset src *
   setattr -mod -unset src *
 }
+
+# Strip away standard cell definitions to make the checkpoint smaller.
+delete =A:\liberty_cell=1
+
 # The hash of this file will not change if files not part of synthesis do not change
 write_rtlil $::env(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
