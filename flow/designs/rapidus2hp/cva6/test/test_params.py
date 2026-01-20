@@ -21,70 +21,76 @@ class TestParams(ParamTestBase):
 
         ParamTestBase.set_up(self, "cva6")
 
-    def test_pdk_0p2_default(self):
-        """Tests PDK 0.2 SDC file - should be default for both 6T and 8T"""
+    def get_exp_sdc(self, place_site, pdk_version):
+        """Returns the expected SDC file path"""
 
-        pdk_version = ""
-        exp_sdc = os.path.join(self._design_full_dir, "constraint.sdc")
-        for front_end in self._front_end_list:
-            for place_site in self._ibm_site_list:
-                self.execute_cmd(
-                    place_site, pdk_version, front_end, "SDC_FILE", exp_sdc
+        if pdk_version in ["", "0.2a", "0.3"]:
+            if pdk_version == "":
+                pdk_version = "0.2a"
+            if place_site == "ra02h138_DST_45CPP":
+                return os.path.join(
+                    self._design_full_dir, f"constraint_{pdk_version}_6T.sdc"
                 )
+            return os.path.join(
+                self._design_full_dir, f"constraint_{pdk_version}_8T.sdc"
+            )
+
+        return os.path.join(self._design_full_dir, "constraint.sdc")
+
+    def test_pdk_0p2a_default(self):
+        """
+        Tests PDK 0.2a
+        """
+
+        front_end = ""
+        pdk_version = ""
+        for place_site in self._synopsys_site_list:
+            exp_sdc = self.get_exp_sdc(place_site, pdk_version)
+            self.execute_cmd(place_site, pdk_version, front_end, "SDC_FILE", exp_sdc)
 
     def test_pdk_0p2(self):
-        """Tests PDK 0.2 SDC file - should be default for both 6T and 8T"""
+        """
+        Tests PDK 0.2
+        """
 
+        front_end = ""
         pdk_version = "0.2"
-        exp_sdc = os.path.join(self._design_full_dir, "constraint.sdc")
-        for front_end in self._front_end_list:
-            for place_site in self._ibm_site_list:
-                self.execute_cmd(
-                    place_site, pdk_version, front_end, "SDC_FILE", exp_sdc
-                )
+        for place_site in self._ibm_site_list:
+            exp_sdc = self.get_exp_sdc(place_site, pdk_version)
+            self.execute_cmd(place_site, pdk_version, front_end, "SDC_FILE", exp_sdc)
 
     def test_pdk_0p2a(self):
         """
-        Tests PDK 0.2a SDC file
-        6T: constraint_0.2a_6T.sdc
-        8T: constraint_0.2a_8T.sdc
+        Tests PDK 0.2a
         """
 
+        front_end = ""
         pdk_version = "0.2a"
-        for front_end in self._front_end_list:
-            for place_site in self._synopsys_site_list:
-                if place_site == "":
-                    track_height = "8T"
-                else:
-                    track_height = self.get_track_height(place_site)
-                exp_sdc = os.path.join(
-                    self._design_full_dir,
-                    f"constraint_{pdk_version}_{track_height}.sdc",
-                )
-                self.execute_cmd(
-                    place_site, pdk_version, front_end, "SDC_FILE", exp_sdc
-                )
+        for place_site in self._synopsys_site_list:
+            exp_sdc = self.get_exp_sdc(place_site, pdk_version)
+            self.execute_cmd(place_site, pdk_version, front_end, "SDC_FILE", exp_sdc)
+
+    def test_pdk_0p15(self):
+        """
+        Tests PDK 0.15
+        """
+
+        front_end = ""
+        pdk_version = "0.15"
+        for place_site in self._synopsys_site_list:
+            exp_sdc = self.get_exp_sdc(place_site, pdk_version)
+            self.execute_cmd(place_site, pdk_version, front_end, "SDC_FILE", exp_sdc)
 
     def test_pdk_0p3(self):
         """
-        Tests PDK 0.3 SDC file
-        6T: constraint_0.3_6T.sdc
-        8T: constraint_0.3_8T.sdc
+        Tests PDK 0.3
         """
 
+        front_end = ""
         pdk_version = "0.3"
-        for front_end in self._front_end_list:
-            for place_site in self._synopsys_site_list:
-                if place_site == "":
-                    track_height = "8T"
-                else:
-                    track_height = self.get_track_height(place_site)
-                exp_sdc = os.path.join(
-                    self._design_full_dir, f"constraint_0.3_{track_height}.sdc"
-                )
-                self.execute_cmd(
-                    place_site, pdk_version, front_end, "SDC_FILE", exp_sdc
-                )
+        for place_site in self._synopsys_site_list:
+            exp_sdc = self.get_exp_sdc(place_site, pdk_version)
+            self.execute_cmd(place_site, pdk_version, front_end, "SDC_FILE", exp_sdc)
 
 
 if __name__ == "__main__":

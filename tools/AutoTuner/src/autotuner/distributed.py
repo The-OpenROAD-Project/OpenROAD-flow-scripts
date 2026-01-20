@@ -154,7 +154,7 @@ class AutoTunerBase(tune.Trainable):
             install_path=INSTALL_PATH,
         )
         self.step_ += 1
-        (score, effective_clk_period, num_drc, die_area) = self.evaluate(
+        score, effective_clk_period, num_drc, die_area = self.evaluate(
             read_metrics(metrics_file, args.stop_stage)
         )
         # Feed the score back to Tune.

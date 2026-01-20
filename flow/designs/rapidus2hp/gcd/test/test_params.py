@@ -21,22 +21,26 @@ class TestParams(ParamTestBase):
 
         ParamTestBase.set_up(self, "gcd")
 
-    def get_exp_util(self, place_site):
+    def get_exp_util(self, place_site, pdk_version):
         """Returns the expected value"""
 
+        if pdk_version == "0.15":
+            if place_site == "ra02h138_DST_45CPP":
+                return 36
+            return 40
         if place_site in ["SC6T", "ra02h138_DST_45CPP"]:
             return 43
         return 45
 
-    def test_pdk_0p2_default(self):
+    def test_pdk_0p2a_default(self):
         """
-        Tests PDK 0.2 utilization
+        Tests PDK 0.2a utilization
         """
 
         front_end = ""
         pdk_version = ""
-        for place_site in self._ibm_site_list:
-            exp_util = self.get_exp_util(place_site)
+        for place_site in self._synopsys_site_list:
+            exp_util = self.get_exp_util(place_site, pdk_version)
             self.execute_cmd(
                 place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
             )
@@ -49,7 +53,7 @@ class TestParams(ParamTestBase):
         front_end = ""
         pdk_version = "0.2"
         for place_site in self._ibm_site_list:
-            exp_util = self.get_exp_util(place_site)
+            exp_util = self.get_exp_util(place_site, pdk_version)
             self.execute_cmd(
                 place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
             )
@@ -62,7 +66,20 @@ class TestParams(ParamTestBase):
         front_end = ""
         pdk_version = "0.2a"
         for place_site in self._synopsys_site_list:
-            exp_util = self.get_exp_util(place_site)
+            exp_util = self.get_exp_util(place_site, pdk_version)
+            self.execute_cmd(
+                place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
+            )
+
+    def test_pdk_0p15(self):
+        """
+        Tests PDK 0.15 utilization
+        """
+
+        front_end = ""
+        pdk_version = "0.15"
+        for place_site in self._synopsys_site_list:
+            exp_util = self.get_exp_util(place_site, pdk_version)
             self.execute_cmd(
                 place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
             )
@@ -75,7 +92,7 @@ class TestParams(ParamTestBase):
         front_end = ""
         pdk_version = "0.3"
         for place_site in self._synopsys_site_list:
-            exp_util = self.get_exp_util(place_site)
+            exp_util = self.get_exp_util(place_site, pdk_version)
             self.execute_cmd(
                 place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
             )

@@ -200,30 +200,6 @@ def gen_rule_file(
             "round_value": True,
             "compare": "<=",
         },
-        "detailedroute__timing__setup__ws": {
-            "mode": "period_padding",
-            "padding": 5,
-            "round_value": False,
-            "compare": ">=",
-        },
-        "detailedroute__timing__setup__tns": {
-            "mode": "period_padding",
-            "padding": 20,
-            "round_value": False,
-            "compare": ">=",
-        },
-        "detailedroute__timing__hold__ws": {
-            "mode": "period_padding",
-            "padding": 5,
-            "round_value": False,
-            "compare": ">=",
-        },
-        "detailedroute__timing__hold__tns": {
-            "mode": "period_padding",
-            "padding": 20,
-            "round_value": False,
-            "compare": ">=",
-        },
         # finish
         "finish__timing__setup__ws": {
             "mode": "period_padding",
@@ -298,6 +274,10 @@ def gen_rule_file(
             matching_fields.append(pattern)
 
         for field in matching_fields:
+            # Replace ':' with '__' as the dashboard DB does not accept
+            # ':' in # field names.
+            if ":" in field:
+                field = field.replace(":", "__")
             processed_fields.add(field)
             if isinstance(metrics[field], str):
                 print(f"[WARNING] Skipping string field {field} = {metrics[field]}")

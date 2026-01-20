@@ -15,3 +15,4 @@ export MAX_ROUTING_LAYER       ?= M5
 export PLACE_PINS_ARGS = -annealing
 
 export PDN_TCL                = $(PLATFORM_DIR)/openRoad/pdn/BLOCK_grid_strategy.tcl
+

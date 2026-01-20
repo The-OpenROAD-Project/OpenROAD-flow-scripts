@@ -130,7 +130,7 @@ if { !$::env(SKIP_REPAIR_TIE_FANOUT) } {
 }
 
 if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
-  estimate_parasitics -placement
+  log_cmd estimate_parasitics -placement
   replace_arith_modules
 }
 

@@ -21,46 +21,68 @@ class TestParams(ParamTestBase):
 
         ParamTestBase.set_up(self, "ethmac")
 
-    def test_pdk_0p2_default(self):
-        """Tests PDK 0.2 Utilization - should be 70"""
+    def get_exp_util(self, place_site, pdk_version):
+        """Returns the expected utilization"""
+
+        if pdk_version == "0.15":
+            if place_site == "ra02h138_DST_45CPP":
+                return 63
+            return 65
+        if pdk_version == "0.3":
+            return 65
+        return 70
+
+    def test_pdk_0p2a_default(self):
+        """Tests PDK 0.2a Utilization"""
 
         front_end = ""
         pdk_version = ""
-        exp_util = 70
-        for place_site in self._ibm_site_list:
+        for place_site in self._synopsys_site_list:
+            exp_util = self.get_exp_util(place_site, pdk_version)
             self.execute_cmd(
                 place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
             )
 
     def test_pdk_0p2(self):
-        """Tests PDK 0.2 Utilization - should be 70"""
+        """Tests PDK 0.2 Utilization"""
 
         front_end = ""
         pdk_version = "0.2"
-        exp_util = 70
         for place_site in self._ibm_site_list:
+            exp_util = self.get_exp_util(place_site, pdk_version)
             self.execute_cmd(
                 place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
             )
 
     def test_pdk_0p2a(self):
-        """Tests PDK 0.2a Utilization - should be 70"""
+        """Tests PDK 0.2a Utilization"""
 
         front_end = ""
         pdk_version = "0.2a"
-        exp_util = 70
         for place_site in self._synopsys_site_list:
+            exp_util = self.get_exp_util(place_site, pdk_version)
+            self.execute_cmd(
+                place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
+            )
+
+    def test_pdk_0p15(self):
+        """Tests PDK 0.15 Utilization"""
+
+        front_end = ""
+        pdk_version = "0.15"
+        for place_site in self._synopsys_site_list:
+            exp_util = self.get_exp_util(place_site, pdk_version)
             self.execute_cmd(
                 place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
             )
 
     def test_pdk_0p3(self):
-        """Tests PDK 0.2a Utilization - should be 65"""
+        """Tests PDK 0.3 Utilization"""
 
         front_end = ""
         pdk_version = "0.3"
-        exp_util = 65
         for place_site in self._synopsys_site_list:
+            exp_util = self.get_exp_util(place_site, pdk_version)
             self.execute_cmd(
                 place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
             )

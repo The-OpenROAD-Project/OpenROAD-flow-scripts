@@ -28,20 +28,28 @@ export SYNTH_HIERARCHICAL    ?= 0
 
 # Use $(if) to defer conditional eval until all makefiles are read
 #
-# | Front End | Place Site | Utilization |
-# | --------- | ---------- | ----------- |
-# |   slang   |     6T     |      30     |
-# |   slang   |     8T     |      52     |
-# |  verific  |     6T     |      30     |
-# |  verific  |     8T     |      54     |
+# | PDK Version | Front End | Place Site | Utilization |
+# | ------------| --------- | ---------- | ----------- |
+# |      all    |   slang   |     6T     |      30     |
+# |   non-0.3   |   slang   |     8T     |      52     |
+# |      all    |  verific  |     6T     |      30     |
+# |   non-0.3   |  verific  |     8T     |      54     |
+# |      0.3    |  any  |     8T     |      56     |
 
-export CORE_UTILIZATION = $(strip $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
-	$(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
-		30, \
-		52), \
-	$(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
-		30, \
-		54)))
+export CORE_UTILIZATION = $(strip \
+    $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
+        56, \
+        $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
+	    $(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
+                30, \
+                52 \
+            ), \
+	    $(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
+                30, \
+                54 \
+            ) \
+        ) \
+    ))
 
 export CORE_MARGIN            = 1
 export PLACE_DENSITY          = 0.58

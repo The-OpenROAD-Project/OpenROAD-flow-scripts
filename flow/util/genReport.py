@@ -2,6 +2,7 @@
 """
 Generate reports from current logs
 """
+
 import argparse
 import os
 import re
