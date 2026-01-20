@@ -24,15 +24,15 @@
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1506,
+        "value": 1445,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -173.0,
+        "value": -163.0,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -9760.0,
+        "value": -8890.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -48,7 +48,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -172.0,
+        "value": -164.0,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
