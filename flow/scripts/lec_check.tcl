@@ -36,4 +36,3 @@ proc run_lec_test { step file1 file2 } {
     puts "Repair timing output passed lec test"
   }
 }
-
