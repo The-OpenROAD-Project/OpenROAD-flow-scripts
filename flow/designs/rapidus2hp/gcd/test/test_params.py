@@ -19,7 +19,7 @@ class TestParams(ParamTestBase):
     def setUp(self):
         """Sets up test variables"""
 
-        ParamTestBase.set_up(self, "gcd")
+        ParamTestBase.setUp(self, "gcd")
 
     def get_exp_util(self, place_site, pdk_version):
         """Returns the expected value"""

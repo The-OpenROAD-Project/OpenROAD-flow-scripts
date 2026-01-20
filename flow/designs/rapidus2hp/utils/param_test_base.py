@@ -9,7 +9,7 @@ import unittest
 class ParamTestBase(unittest.TestCase):
     """Base class for testing params"""
 
-    def set_up(self, design_name):
+    def setUp(self, design_name):
         """
         Sets up common member variables.
         Assumes we're running in flow directory
@@ -18,8 +18,8 @@ class ParamTestBase(unittest.TestCase):
         self._platform = "rapidus2hp"
         self._design = design_name
         self._design_dir = os.path.join("designs", self._platform, self._design)
-        self._design_full_dir = os.path.join(os.getcwd(), self._design_dir)
         self._cmd_base = f"make DESIGN_CONFIG={self._design_dir}/config.mk"
+        self._design_full_dir = os.path.join(os.getcwd(), self._design_dir)
         self._result_re = re.compile(r"\S+\s+\=\s+(\S+)")
         self._front_end_list = ["", "slang", "verific"]
         self._ibm_site_list = ["", "SC6T", "SC8T"]
@@ -34,7 +34,9 @@ class ParamTestBase(unittest.TestCase):
             return "6T"
         return "8T"
 
-    def build_cmd(self, place_site, pdk_version, front_end, param_name):
+    def build_cmd(
+        self, place_site, pdk_version, front_end, param_name, flow_variant=None
+    ):
         """Builds the command to execute"""
 
         str_buf = [self._cmd_base]
@@ -44,18 +46,27 @@ class ParamTestBase(unittest.TestCase):
             str_buf.append(f"RAPIDUS_PDK_VERSION={pdk_version}")
         if front_end == "verific":
             str_buf.append(f"SYNTH_HDL_FRONTEND={front_end}")
+        if flow_variant and flow_variant != "":
+            str_buf.append(f"FLOW_VARIANT={flow_variant}")
         str_buf.append(f"print-{param_name}")
         return " ".join(str_buf)
 
     def execute_cmd(self, place_site, pdk_version, front_end, param_name, exp_result):
         """
         Executes command
-          check if return code is 0
-          check if value matches expected result
         """
 
         test_tag = f"'{place_site}' '{pdk_version}' '{front_end}'"
         cmd = self.build_cmd(place_site, pdk_version, front_end, param_name)
+        self.execute_cmd_int(cmd, test_tag, exp_result)
+
+    def execute_cmd_int(self, cmd, test_tag, exp_result):
+        """
+        Executes command
+          check if return code is 0
+          check if value matches expected result
+        """
+
         out = subprocess.run(
             cmd, check=True, shell=True, capture_output=True, text=True
         )
