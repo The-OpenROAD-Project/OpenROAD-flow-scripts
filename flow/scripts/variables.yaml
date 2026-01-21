@@ -914,6 +914,15 @@ SYNTH_OPT_HIER:
     Optimize constants across hierarchical boundaries.
   stages:
     - synth
+SYNTH_ODB_TCL:
+  description: |
+    Specifies a Tcl script with commands to run as part of the synth ODB
+    generation step.
+
+    Useful in bazel-orfs flows which can paralleled hierarchical synthesis
+    and needs to clean up the final netlist.
+  stages:
+    - synth
 VERILOG_TOP_PARAMS:
   description: |
     Apply toplevel params (if exist). Passed in as a list of key value pairs
