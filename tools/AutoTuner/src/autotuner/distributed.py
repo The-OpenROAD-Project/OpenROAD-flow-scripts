@@ -67,7 +67,6 @@ import random
 from itertools import product
 from uuid import uuid4 as uuid
 from collections import namedtuple
-from multiprocessing import cpu_count
 
 import numpy as np
 import torch
@@ -86,6 +85,7 @@ from ray.util.queue import Queue
 from ax.service.ax_client import AxClient
 
 from autotuner.utils import (
+    add_common_args,
     openroad,
     consumer,
     parse_config,
@@ -152,6 +152,7 @@ class AutoTunerBase(tune.Trainable):
             parameters=self.parameters,
             flow_variant=self._variant,
             install_path=INSTALL_PATH,
+            stage=args.stop_stage,
         )
         self.step_ += 1
         score, effective_clk_period, num_drc, die_area = self.evaluate(
@@ -269,30 +270,9 @@ def parse_arguments():
     tune_parser = subparsers.add_parser("tune")
     _ = subparsers.add_parser("sweep")
 
-    # DUT
-    parser.add_argument(
-        "--design",
-        type=str,
-        metavar="<gcd,jpeg,ibex,aes,...>",
-        required=True,
-        help="Name of the design for Autotuning.",
-    )
-    parser.add_argument(
-        "--platform",
-        type=str,
-        metavar="<sky130hd,sky130hs,asap7,...>",
-        required=True,
-        help="Name of the platform for Autotuning.",
-    )
+    add_common_args(parser)
 
     # Experiment Setup
-    parser.add_argument(
-        "--config",
-        type=str,
-        metavar="<path>",
-        required=True,
-        help="Configuration file that sets which knobs to use for Autotuning.",
-    )
     parser.add_argument(
         "--experiment",
         type=str,
@@ -300,21 +280,6 @@ def parse_arguments():
         default="test",
         help="Experiment name. This parameter is used to prefix the"
         " FLOW_VARIANT and to set the Ray log destination.",
-    )
-    parser.add_argument(
-        "--timeout",
-        type=float,
-        metavar="<float>",
-        default=None,
-        help="Time limit (in hours) for each trial run. Default is no limit.",
-    )
-    parser.add_argument(
-        "--stop_stage",
-        type=str,
-        metavar="<str>",
-        choices=["floorplan", "place", "cts", "globalroute", "route", "finish"],
-        default="finish",
-        help="Name of the stage to stop after. Default is finish.",
     )
     tune_parser.add_argument(
         "--resume",
@@ -383,48 +348,11 @@ def parse_arguments():
 
     # Workload
     parser.add_argument(
-        "--jobs",
-        type=int,
-        metavar="<int>",
-        default=int(np.floor(cpu_count() / 2)),
-        help="Max number of concurrent jobs.",
-    )
-    parser.add_argument(
-        "--openroad_threads",
-        type=int,
-        metavar="<int>",
-        default=16,
-        help="Max number of threads openroad can use.",
-    )
-    parser.add_argument(
         "--memory_limit",
         type=float,
         metavar="<float>",
         default=None,
         help="Maximum memory in GB that each trial job can use, process will be killed and not retried if it exceeds.",
-    )
-    parser.add_argument(
-        "--server",
-        type=str,
-        metavar="<ip|servername>",
-        default=None,
-        help="The address of Ray server to connect.",
-    )
-    parser.add_argument(
-        "--port",
-        type=int,
-        metavar="<int>",
-        default=10001,
-        help="The port of Ray server to connect.",
-    )
-
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="count",
-        default=0,
-        help="Verbosity level.\n\t0: only print Ray status\n\t1: also print"
-        " training stderr\n\t2: also print training stdout.",
     )
 
     args = parser.parse_args()
