@@ -295,6 +295,16 @@ SYNTH_RETIME_MODULES:
     optimal distribution of registers on long pipelines. See OR discussion #8080.
   stages:
     - synth
+SYNTH_REPEATABLE_BUILD:
+  description: >
+    License to prune anything that makes builds less repeatable, typically
+    used with Bazel to ensure that builds are bit-for-bit identical so that
+    caching works optimally.
+
+    Removes debug information that encodes paths, timestamps, etc.
+  stages:
+    - synth
+  default: 0
 DFF_MAP_FILE:
   description: |
     Optional mapping file supplied to Yosys to map D flip-flops
@@ -1143,6 +1153,15 @@ RTLMP_FENCE_UY:
     Defines the upper right Y coordinate for the global fence bounding box in
     microns.
   default: 0.0
+  stages:
+    - floorplan
+RTLMP_DATA_FLOW_DRIVEN:
+  description: >
+    Specifies whether the macro placer should use data-flow driven macro placement.
+    Data-flow driven works by adding a wire length component that takes into account
+    the data paths of the design. This optional can increase run time significantly
+    for large designs.
+  default: 1
   stages:
     - floorplan
 RTLMP_ARGS:
