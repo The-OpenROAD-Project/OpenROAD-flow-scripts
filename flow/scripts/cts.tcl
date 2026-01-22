@@ -3,9 +3,6 @@ source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables cts
 load_design 3_place.odb 3_place.sdc
 
-# jk:
-#set_debug_level CTS htree_builder_fix 1
-
 # Clone clock tree inverters next to register loads
 # so cts does not try to buffer the inverted clocks.
 repair_clock_inverters
