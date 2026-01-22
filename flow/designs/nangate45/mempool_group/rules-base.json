@@ -84,7 +84,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -12500.0,
+        "value": -10500.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
