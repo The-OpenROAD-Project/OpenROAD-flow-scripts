@@ -32,9 +32,9 @@ class TestParams(ParamTestBase):
             return 43
         return 45
 
-    def test_pdk_0p2a_default(self):
+    def test_pdk_0p3_default(self):
         """
-        Tests PDK 0.2a utilization
+        Tests PDK 0.3 utilization
         """
 
         front_end = ""
