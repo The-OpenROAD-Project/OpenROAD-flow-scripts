@@ -1171,7 +1171,7 @@ RTLMP_ARGS:
     - floorplan
 GDS_ALLOW_EMPTY:
   description: >
-    Regular expression of module names of macros that have no .gds file
+    Single regular expression of module names of macros that have no .gds file
   stages:
     - final
 RUN_SCRIPT:

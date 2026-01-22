@@ -26,7 +26,7 @@ class TestParams(ParamTestBase):
 
         if pdk_version in ["", "0.2a", "0.3"]:
             if pdk_version == "":
-                pdk_version = "0.2a"
+                pdk_version = "0.3"
             if place_site == "ra02h138_DST_45CPP":
                 return os.path.join(
                     self._design_full_dir, f"constraint_{pdk_version}_6T.sdc"
@@ -37,9 +37,9 @@ class TestParams(ParamTestBase):
 
         return os.path.join(self._design_full_dir, "constraint.sdc")
 
-    def test_pdk_0p2a_default(self):
+    def test_pdk_0p3_default(self):
         """
-        Tests PDK 0.2a
+        Tests PDK 0.3
         """
 
         front_end = ""
