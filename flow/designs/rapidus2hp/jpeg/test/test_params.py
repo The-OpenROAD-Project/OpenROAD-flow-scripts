@@ -19,7 +19,7 @@ class TestParams(ParamTestBase):
     def setUp(self):
         """Sets up test variables"""
 
-        ParamTestBase.set_up(self, "jpeg")
+        ParamTestBase.setUp(self, "jpeg")
 
     def get_exp_sdc(self, place_site, pdk_version):
         """Returns the expected SDC file path"""
