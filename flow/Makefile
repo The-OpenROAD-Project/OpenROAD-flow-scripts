@@ -2,6 +2,8 @@
 # file to avoid having to adding the to the make command line.
 -include settings.mk
 
+export OPENROAD_HIERARCHICAL=1
+
 # ==============================================================================
 # Uncomment or add the design to run
 # ==============================================================================
