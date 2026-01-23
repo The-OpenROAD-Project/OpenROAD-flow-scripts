@@ -218,8 +218,10 @@ hilomap -singleton \
   -hicell {*}$::env(TIEHI_CELL_AND_PORT) \
   -locell {*}$::env(TIELO_CELL_AND_PORT)
 
-# Insert buffer cells for pass through wires
-insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
+if { $::env(SYNTH_INSBUF) } {
+  # Insert buffer cells for pass through wires
+  insbuf -buf {*}$::env(MIN_BUF_CELL_AND_PORTS)
+}
 
 # Reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check
