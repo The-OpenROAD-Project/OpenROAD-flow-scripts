@@ -19,7 +19,7 @@ class TestParams(ParamTestBase):
     def setUp(self):
         """Sets up test variables"""
 
-        ParamTestBase.set_up(self, "ethmac")
+        ParamTestBase.setUp(self, "ethmac")
 
     def get_exp_util(self, place_site, pdk_version):
         """Returns the expected utilization"""
@@ -28,12 +28,12 @@ class TestParams(ParamTestBase):
             if place_site == "ra02h138_DST_45CPP":
                 return 63
             return 65
-        if pdk_version == "0.3":
+        if pdk_version in ["", "0.3"]:
             return 65
         return 70
 
-    def test_pdk_0p2a_default(self):
-        """Tests PDK 0.2a Utilization"""
+    def test_pdk_0p3_default(self):
+        """Tests PDK 0.3 Utilization"""
 
         front_end = ""
         pdk_version = ""

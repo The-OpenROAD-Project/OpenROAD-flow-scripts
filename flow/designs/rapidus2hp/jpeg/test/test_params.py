@@ -19,27 +19,27 @@ class TestParams(ParamTestBase):
     def setUp(self):
         """Sets up test variables"""
 
-        ParamTestBase.set_up(self, "jpeg")
+        ParamTestBase.setUp(self, "jpeg")
 
     def get_exp_sdc(self, place_site, pdk_version):
         """Returns the expected SDC file path"""
 
-        if pdk_version in ["", "0.2a"]:
-            if pdk_version == "":
-                pdk_version = "0.2a"
+        if pdk_version == "0.2a":
             if place_site in ["", "ra02h184_HST_45CPP"]:
                 return os.path.join(
                     self._design_full_dir, f"jpeg_encoder15_{pdk_version}_8T.sdc"
                 )
-        if pdk_version in ["0.15", "0.3"]:
+        if pdk_version in ["", "0.15", "0.3"]:
+            if pdk_version == "":
+                pdk_version = "0.3"
             return os.path.join(
                 self._design_full_dir, f"jpeg_encoder15_{pdk_version}.sdc"
             )
         return os.path.join(self._design_full_dir, "jpeg_encoder15_7nm.sdc")
 
-    def test_pdk_0p2a_default(self):
+    def test_pdk_0p3_default(self):
         """
-        Tests PDK 0.2a utilization
+        Tests PDK 0.3 utilization
         """
 
         front_end = ""

@@ -92,14 +92,15 @@ from autotuner.utils import (
     read_config,
     read_metrics,
     prepare_ray_server,
+    calculate_score,
+    ERROR_METRIC,
     CONSTRAINTS_SDC,
     FASTROUTE_TCL,
 )
+from autotuner.tensorboard_logger import TensorBoardLogger
 
 # Name of the final metric
 METRIC = "metric"
-# The worst of optimized metric
-ERROR_METRIC = 9e99
 # Path to the FLOW_HOME directory
 ORFS_FLOW_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../flow")
@@ -172,16 +173,7 @@ class AutoTunerBase(tune.Trainable):
         It can change in any form to minimize the score (return value).
         Default evaluation function optimizes effective clock period.
         """
-        error = "ERR" in metrics.values()
-        not_found = "N/A" in metrics.values()
-        if error or not_found:
-            return (ERROR_METRIC, "-", "-", "-")
-        effective_clk_period = metrics["clk_period"] - metrics["worst_slack"]
-        num_drc = metrics["num_drc"]
-        gamma = effective_clk_period / 10
-        score = effective_clk_period
-        score = score * (100 / self.step_) + gamma * num_drc
-        return (score, effective_clk_period, num_drc, metrics["die_area"])
+        return calculate_score(metrics, step=self.step_)
 
     def _is_valid_config(self, config):
         """
@@ -566,25 +558,56 @@ def sweep():
     else:
         repo_dir = os.path.abspath(os.path.join(ORFS_FLOW_DIR, ".."))
     print(f"[INFO TUN-0012] Log folder {LOCAL_DIR}.")
+
+    tb_log_dir = os.path.join(LOCAL_DIR, args.experiment)
+    print(
+        f"[INFO TUN-0034] TensorBoard logging enabled. Run: tensorboard --logdir={tb_log_dir}"
+    )
+
+    tb_logger = TensorBoardLogger.remote(log_dir=tb_log_dir)
+
     queue = Queue()
     parameter_list = list()
     for name, content in config_dict.items():
-        if not isinstance(content, list):
+        if isinstance(content, dict) and content.get("type") == "string":
+            if "values" not in content:
+                print(
+                    f"[ERROR TUN-0016] {name} string parameter missing 'values' field."
+                )
+                sys.exit(1)
+            if not isinstance(content["values"], list) or len(content["values"]) == 0:
+                print(f"[ERROR TUN-0017] {name} 'values' must be a non-empty list.")
+                sys.exit(1)
+            parameter_list.append([{name: i} for i in content["values"]])
+        elif isinstance(content, list):
+            if content[-1] == 0:
+                print("[ERROR TUN-0014] Sweep does not support step value zero.")
+                sys.exit(1)
+            parameter_list.append([{name: i} for i in np.arange(*content)])
+        else:
             print(f"[ERROR TUN-0015] {name} sweep is not supported.")
             sys.exit(1)
-        if content[-1] == 0:
-            print("[ERROR TUN-0014] Sweep does not support step value zero.")
-            sys.exit(1)
-        parameter_list.append([{name: i} for i in np.arange(*content)])
     parameter_list = list(product(*parameter_list))
     for parameter in parameter_list:
         temp = dict()
         for value in parameter:
             temp.update(value)
-        queue.put([args, repo_dir, temp, SDC_ORIGINAL, FR_ORIGINAL, INSTALL_PATH])
+        queue.put(
+            [
+                args,
+                repo_dir,
+                temp,
+                SDC_ORIGINAL,
+                FR_ORIGINAL,
+                INSTALL_PATH,
+                tb_logger,
+            ]
+        )
     workers = [consumer.remote(queue) for _ in range(args.jobs)]
     print("[INFO TUN-0009] Waiting for results.")
     ray.get(workers)
+    ray.get(tb_logger.close.remote())
+    print(f"[INFO TUN-0035] TensorBoard events written to {tb_log_dir}")
     print("[INFO TUN-0010] Sweep complete.")
 
 

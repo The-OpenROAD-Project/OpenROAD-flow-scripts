@@ -19,12 +19,12 @@ class TestParams(ParamTestBase):
     def setUp(self):
         """Sets up test variables"""
 
-        ParamTestBase.set_up(self, "ibex")
+        ParamTestBase.setUp(self, "ibex")
 
     def get_exp_util(self, place_site, pdk_version):
         """Returns the expected utilization"""
 
-        if pdk_version == "0.3":
+        if pdk_version in ["", "0.3"]:
             if place_site == "ra02h138_DST_45CPP":
                 return 60
             return 65
@@ -33,9 +33,7 @@ class TestParams(ParamTestBase):
     def get_exp_sdc(self, place_site, pdk_version):
         """Returns the expected SDC file path"""
 
-        if pdk_version in ["", "0.2a"]:
-            if pdk_version == "":
-                pdk_version = "0.2a"
+        if pdk_version == "0.2a":
             if place_site == "ra02h138_DST_45CPP":
                 return os.path.join(
                     self._design_full_dir, f"constraint_{pdk_version}_6T.sdc"
@@ -45,16 +43,18 @@ class TestParams(ParamTestBase):
             )
         if pdk_version == "0.15":
             return os.path.join(self._design_full_dir, f"constraint_{pdk_version}.sdc")
-        if pdk_version == "0.3":
+        if pdk_version in ["", "0.3"]:
+            if pdk_version == "":
+                pdk_version = "0.3"
             if place_site in ["", "ra02h184_HST_45CPP"]:
                 return os.path.join(
                     self._design_full_dir, f"constraint_{pdk_version}_8T.sdc"
                 )
         return os.path.join(self._design_full_dir, "constraint.sdc")
 
-    def test_pdk_0p2a_default(self):
+    def test_pdk_0p3_default(self):
         """
-        Tests PDK 0.2a utilization
+        Tests PDK 0.3 utilization
         """
 
         front_end = ""
@@ -126,6 +126,16 @@ class TestParams(ParamTestBase):
                 place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
             )
             self.execute_cmd(place_site, pdk_version, front_end, "SDC_FILE", exp_sdc)
+
+    def test_flow_variant(self):
+        """Tests that setting the flow variant uses the right frontend"""
+
+        test_tag = "flow_variant default"
+        cmd = self.build_cmd("", "", "", "SYNTH_HDL_FRONTEND")
+        self.execute_cmd_int(cmd, test_tag, "slang")
+        test_tag = "flow_variant verific"
+        cmd = self.build_cmd("", "", "", "SYNTH_HDL_FRONTEND", "verific")
+        self.execute_cmd_int(cmd, test_tag, "verific")
 
 
 if __name__ == "__main__":

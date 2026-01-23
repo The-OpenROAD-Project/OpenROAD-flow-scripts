@@ -19,7 +19,7 @@ class TestParams(ParamTestBase):
     def setUp(self):
         """Sets up test variables"""
 
-        ParamTestBase.set_up(self, "gcd")
+        ParamTestBase.setUp(self, "gcd")
 
     def get_exp_util(self, place_site, pdk_version):
         """Returns the expected value"""
@@ -32,9 +32,9 @@ class TestParams(ParamTestBase):
             return 43
         return 45
 
-    def test_pdk_0p2a_default(self):
+    def test_pdk_0p3_default(self):
         """
-        Tests PDK 0.2a utilization
+        Tests PDK 0.3 utilization
         """
 
         front_end = ""

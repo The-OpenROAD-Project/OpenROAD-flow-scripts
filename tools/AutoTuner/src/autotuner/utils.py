@@ -69,6 +69,24 @@ CONSTRAINTS_SDC = "constraint.sdc"
 # Name of the TCL script run before routing
 FASTROUTE_TCL = "fastroute.tcl"
 DATE = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+# The worst of optimized metric
+ERROR_METRIC = 9e99
+
+
+def calculate_score(metrics, step=1):
+    """Calculate optimization score from metrics."""
+    error = "ERR" in metrics.values()
+    not_found = "N/A" in metrics.values()
+
+    if error or not_found:
+        return (ERROR_METRIC, "-", "-", "-")
+
+    effective_clk_period = metrics["clk_period"] - metrics["worst_slack"]
+    num_drc = metrics["num_drc"]
+    gamma = effective_clk_period / 10
+    score = effective_clk_period * (100 / step) + gamma * num_drc
+
+    return (score, effective_clk_period, num_drc, metrics["die_area"])
 
 
 def write_sdc(variables, path, sdc_original, constraints_sdc):
@@ -287,6 +305,21 @@ def run_command(
         raise RuntimeError
 
 
+def calculate_trial_path(args, base_dir, flow_variant):
+    """
+    Calculate the log path and flow variant
+    """
+    flow_variant_with_experiment = f"{args.experiment}/{flow_variant}"
+    log_path = os.path.abspath(
+        os.path.join(
+            base_dir,
+            f"flow/logs/{args.platform}/{args.design}",
+            flow_variant_with_experiment,
+        )
+    )
+    return log_path, flow_variant_with_experiment
+
+
 def openroad(
     args,
     base_dir,
@@ -297,10 +330,8 @@ def openroad(
     """
     Run OpenROAD-flow-scripts with a given set of parameters.
     """
-    # Make sure path ends in a slash, i.e., is a folder
-    flow_variant = f"{args.experiment}/{flow_variant}"
-    log_path = os.path.abspath(
-        os.path.join(base_dir, f"flow/logs/{args.platform}/{args.design}", flow_variant)
+    log_path, flow_variant = calculate_trial_path(
+        args=args, base_dir=base_dir, flow_variant=flow_variant
     )
     report_path = os.path.abspath(
         os.path.join(
@@ -442,6 +473,8 @@ def read_config(file_name, mode, algorithm):
         return ret
 
     def read_sweep(this):
+        if this.get("type") == "string":
+            return {"type": "string", "values": this["values"]}
         return [*this["minmax"], this["step"]]
 
     def apply_condition(config, data):
@@ -643,6 +676,20 @@ def openroad_distributed(
     variant=None,
 ):
     """Simple wrapper to run openroad distributed with Ray."""
+    if variant is None:
+        variant_parts = []
+        for key, value in config.items():
+            if key not in ["_SDC_FILE_PATH", "_FR_FILE_PATH"]:
+                variant_parts.append(f"{key}_{value}")
+        variant = "_".join(variant_parts) if variant_parts else ""
+    flow_variant = f"{uuid.uuid4()}-{variant}" if variant else f"{uuid.uuid4()}"
+
+    trial_path, _ = calculate_trial_path(
+        args=args, base_dir=repo_dir, flow_variant=flow_variant
+    )
+
+    os.makedirs(trial_path, exist_ok=True)
+
     config = parse_config(
         config=config,
         base_dir=repo_dir,
@@ -651,15 +698,15 @@ def openroad_distributed(
         constraints_sdc=CONSTRAINTS_SDC,
         fr_original=fr_original,
         fastroute_tcl=FASTROUTE_TCL,
+        path=trial_path,
     )
-    if variant is None:
-        variant = config.replace(" ", "_").replace("=", "_")
+
     t = time.time()
     metric_file = openroad(
         args=args,
         base_dir=repo_dir,
         parameters=config,
-        flow_variant=f"{uuid.uuid4()}-{variant}" if variant else f"{uuid.uuid4()}",
+        flow_variant=flow_variant,
         install_path=install_path,
     )
     duration = time.time() - t
@@ -669,9 +716,29 @@ def openroad_distributed(
 @ray.remote
 def consumer(queue):
     """consumer"""
-    while not queue.empty():
-        next_item = queue.get()
-        name = next_item[1]
-        print(f"[INFO TUN-0007] Scheduling run for parameter {name}.")
-        ray.get(openroad_distributed.remote(*next_item))
-        print(f"[INFO TUN-0008] Finished run for parameter {name}.")
+    item = queue.get()
+    tb_logger = item[6]
+
+    while item:
+        args, repo_dir, config, sdc, fr, install, tb_logger = item
+        print(f"[INFO TUN-0007] Scheduling run for parameter {config}.")
+        metric_file, _ = ray.get(
+            openroad_distributed.remote(args, repo_dir, config, sdc, fr, install)
+        )
+        print(f"[INFO TUN-0008] Finished run for parameter {config}.")
+
+        metrics = read_metrics(metric_file, args.stop_stage)
+        score, effective_clk_period, num_drc, die_area = calculate_score(metrics)
+
+        ray.get(
+            tb_logger.log_sweep_metrics.remote(
+                params=config,
+                metrics=metrics,
+                score=score,
+                effective_clk_period=effective_clk_period,
+                num_drc=num_drc,
+                die_area=die_area,
+            )
+        )
+
+        item = queue.get() if not queue.empty() else None
