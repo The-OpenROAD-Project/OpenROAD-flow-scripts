@@ -94,3 +94,17 @@ Load synthesis result and list modules that were kept in hierarchical synthesis:
     aes_cipher_top
     aes_key_expand_128
     %
+
+## Creating a .yaml file with specific variable values
+
+Print any variable in .yaml syntax. To create a .yaml file that
+contains value of variables, run:
+
+    make print-CORE_UTILIZATION print-PLACE_DENSITY > foo.yaml
+
+Outputs foo.yaml:
+
+    CORE_UTILIZATION: 55
+    PLACE_DENSITY: 0.30
+
+Useful in bazel-orfs flows or debugging configuration.
