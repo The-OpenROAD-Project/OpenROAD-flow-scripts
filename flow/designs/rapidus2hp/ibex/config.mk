@@ -9,7 +9,7 @@ endif
 
 export VERILOG_FILES = \
     $(DESIGN_HOME)/src/ibex_sv/ibex_pkg.sv \
-    $(sort $(wildcard $(DESIGN_HOME)/src/ibex_sv/*.sv)) \
+    $(sort $(filter-out %/ibex_pkg.sv, $(wildcard $(DESIGN_HOME)/src/ibex_sv/*.sv))) \
     $(DESIGN_HOME)/src/ibex_sv/syn/rtl/prim_clock_gating.v
 
 export VERILOG_INCLUDE_DIRS = \
