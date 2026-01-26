@@ -213,7 +213,6 @@ vars:
 	$(UTILS_DIR)/generate-vars.sh $(OBJECTS_DIR)/vars
 
 .PHONY: print-%
-# Print any variable, for instance: make print-DIE_AREA
 print-%:
   # HERE BE DRAGONS!
   #
@@ -224,6 +223,6 @@ print-%:
   # We have to use $(file ...) because we want to be able
   # to print variables that contain newlines.
 	$(file >/tmp/print_tmp$$,$($*))
-	@echo -n "$* = "
+	@echo -n "$*: "
 	@cat /tmp/print_tmp$$
 	@rm /tmp/print_tmp$$

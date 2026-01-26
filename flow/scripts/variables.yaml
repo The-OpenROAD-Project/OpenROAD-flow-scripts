@@ -305,6 +305,16 @@ SYNTH_REPEATABLE_BUILD:
   stages:
     - synth
   default: 0
+SYNTH_INSBUF:
+  description: >
+    Insert input buffers on top-level input ports during synthesis.
+
+    Useful to disable when doing parallel synthesis and
+    concatenating netlists later as we're generating netlists
+    of submodules.
+  stages:
+    - synth
+  default: 1
 DFF_MAP_FILE:
   description: |
     Optional mapping file supplied to Yosys to map D flip-flops
