@@ -45,7 +45,11 @@ class TestParams(ParamTestBase):
             for place_site in self._synopsys_site_list:
                 exp_util = self.get_exp_util(place_site, front_end, pdk_version)
                 self.execute_cmd(
-                    place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
+                    "CORE_UTILIZATION",
+                    exp_util,
+                    place_site=place_site,
+                    pdk_version=pdk_version,
+                    front_end=front_end,
                 )
 
     def test_pdk_0p2(self):
@@ -58,7 +62,11 @@ class TestParams(ParamTestBase):
             for place_site in self._ibm_site_list:
                 exp_util = self.get_exp_util(place_site, front_end, pdk_version)
                 self.execute_cmd(
-                    place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
+                    "CORE_UTILIZATION",
+                    exp_util,
+                    place_site=place_site,
+                    pdk_version=pdk_version,
+                    front_end=front_end,
                 )
 
     def test_pdk_0p2a(self):
@@ -71,7 +79,11 @@ class TestParams(ParamTestBase):
             for place_site in self._synopsys_site_list:
                 exp_util = self.get_exp_util(place_site, front_end, pdk_version)
                 self.execute_cmd(
-                    place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
+                    "CORE_UTILIZATION",
+                    exp_util,
+                    place_site=place_site,
+                    pdk_version=pdk_version,
+                    front_end=front_end,
                 )
 
     def test_pdk_0p15(self):
@@ -84,7 +96,11 @@ class TestParams(ParamTestBase):
             for place_site in self._synopsys_site_list:
                 exp_util = self.get_exp_util(place_site, front_end, pdk_version)
                 self.execute_cmd(
-                    place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
+                    "CORE_UTILIZATION",
+                    exp_util,
+                    place_site=place_site,
+                    pdk_version=pdk_version,
+                    front_end=front_end,
                 )
 
     def test_pdk_0p3(self):
@@ -97,17 +113,21 @@ class TestParams(ParamTestBase):
             for place_site in self._synopsys_site_list:
                 exp_util = self.get_exp_util(place_site, front_end, pdk_version)
                 self.execute_cmd(
-                    place_site, pdk_version, front_end, "CORE_UTILIZATION", exp_util
+                    "CORE_UTILIZATION",
+                    exp_util,
+                    place_site=place_site,
+                    pdk_version=pdk_version,
+                    front_end=front_end,
                 )
 
     def test_flow_variant(self):
         """Tests that setting the flow variant uses the right frontend"""
 
         test_tag = "flow_variant default"
-        cmd = self.build_cmd("", "", "", "SYNTH_HDL_FRONTEND")
+        cmd = self.build_cmd("SYNTH_HDL_FRONTEND")
         self.execute_cmd_int(cmd, test_tag, "slang")
         test_tag = "flow_variant verific"
-        cmd = self.build_cmd("", "", "", "SYNTH_HDL_FRONTEND", "verific")
+        cmd = self.build_cmd("SYNTH_HDL_FRONTEND", flow_variant="verific")
         self.execute_cmd_int(cmd, test_tag, "verific")
 
 
