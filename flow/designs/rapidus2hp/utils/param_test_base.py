@@ -23,7 +23,7 @@ class ParamTestBase(unittest.TestCase):
         # Handle different make output
         #   param: value
         #   param = value
-        self._result_re = re.compile(r"\S+\s*(?:=|:)\s*(\S+)")
+        self._result_re = re.compile(r"\S+\s*(?:=|:)\s*(\S+)?")
         self._front_end_list = ["", "slang", "verific"]
         self._ibm_site_list = ["", "SC6T", "SC8T"]
         self._synopsys_site_list = ["", "ra02h138_DST_45CPP", "ra02h138_DST_45CPP"]
@@ -38,29 +38,41 @@ class ParamTestBase(unittest.TestCase):
         return "8T"
 
     def build_cmd(
-        self, place_site, pdk_version, front_end, param_name, flow_variant=None
+        self,
+        param_name,
+        place_site=None,
+        pdk_version=None,
+        front_end=None,
+        flow_variant=None,
     ):
         """Builds the command to execute"""
 
         str_buf = [self._cmd_base]
-        if place_site != "":
+        if place_site and place_site != "":
             str_buf.append(f"PLACE_SITE={place_site}")
-        if pdk_version != "":
+        if pdk_version and pdk_version != "":
             str_buf.append(f"RAPIDUS_PDK_VERSION={pdk_version}")
-        if front_end == "verific":
+        if front_end and front_end == "verific":
             str_buf.append(f"SYNTH_HDL_FRONTEND={front_end}")
         if flow_variant and flow_variant != "":
             str_buf.append(f"FLOW_VARIANT={flow_variant}")
         str_buf.append(f"print-{param_name}")
         return " ".join(str_buf)
 
-    def execute_cmd(self, place_site, pdk_version, front_end, param_name, exp_result):
+    def execute_cmd(
+        self, param_name, exp_result, place_site=None, pdk_version=None, front_end=None
+    ):
         """
         Executes command
         """
 
         test_tag = f"'{place_site}' '{pdk_version}' '{front_end}'"
-        cmd = self.build_cmd(place_site, pdk_version, front_end, param_name)
+        cmd = self.build_cmd(
+            param_name,
+            place_site=place_site,
+            pdk_version=pdk_version,
+            front_end=front_end,
+        )
         self.execute_cmd_int(cmd, test_tag, exp_result)
 
     def execute_cmd_int(self, cmd, test_tag, exp_result):
