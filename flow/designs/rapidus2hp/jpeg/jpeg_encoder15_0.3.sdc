@@ -4,7 +4,7 @@ current_design jpeg_encoder
 
 set clk_name clk
 set clk_port_name clk
-set clk_period 230
+set clk_period 200
 set clk_io_pct 0.2
 
 convert_time_value clk_period

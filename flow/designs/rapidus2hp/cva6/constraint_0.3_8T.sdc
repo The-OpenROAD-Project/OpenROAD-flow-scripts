@@ -5,7 +5,7 @@ source $::env(PLATFORM_DIR)/util.tcl
 set clk_name main_clk
 set clk_port clk_i
 set clk_ports_list [list $clk_port]
-set clk_period 550
+set clk_period 500
 
 convert_time_value clk_period
 
