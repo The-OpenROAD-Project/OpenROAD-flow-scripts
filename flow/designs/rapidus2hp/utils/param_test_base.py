@@ -20,7 +20,10 @@ class ParamTestBase(unittest.TestCase):
         self._design_dir = os.path.join("designs", self._platform, self._design)
         self._cmd_base = f"make DESIGN_CONFIG={self._design_dir}/config.mk"
         self._design_full_dir = os.path.join(os.getcwd(), self._design_dir)
-        self._result_re = re.compile(r"\S+\s+\=\s+(\S+)")
+        # Handle different make output
+        #   param: value
+        #   param = value
+        self._result_re = re.compile(r"\S+\s*(?:=|:)\s*(\S+)?")
         self._front_end_list = ["", "slang", "verific"]
         self._ibm_site_list = ["", "SC6T", "SC8T"]
         self._synopsys_site_list = ["", "ra02h138_DST_45CPP", "ra02h138_DST_45CPP"]
@@ -35,29 +38,41 @@ class ParamTestBase(unittest.TestCase):
         return "8T"
 
     def build_cmd(
-        self, place_site, pdk_version, front_end, param_name, flow_variant=None
+        self,
+        param_name,
+        place_site=None,
+        pdk_version=None,
+        front_end=None,
+        flow_variant=None,
     ):
         """Builds the command to execute"""
 
         str_buf = [self._cmd_base]
-        if place_site != "":
+        if place_site and place_site != "":
             str_buf.append(f"PLACE_SITE={place_site}")
-        if pdk_version != "":
+        if pdk_version and pdk_version != "":
             str_buf.append(f"RAPIDUS_PDK_VERSION={pdk_version}")
-        if front_end == "verific":
+        if front_end and front_end == "verific":
             str_buf.append(f"SYNTH_HDL_FRONTEND={front_end}")
         if flow_variant and flow_variant != "":
             str_buf.append(f"FLOW_VARIANT={flow_variant}")
         str_buf.append(f"print-{param_name}")
         return " ".join(str_buf)
 
-    def execute_cmd(self, place_site, pdk_version, front_end, param_name, exp_result):
+    def execute_cmd(
+        self, param_name, exp_result, place_site=None, pdk_version=None, front_end=None
+    ):
         """
         Executes command
         """
 
         test_tag = f"'{place_site}' '{pdk_version}' '{front_end}'"
-        cmd = self.build_cmd(place_site, pdk_version, front_end, param_name)
+        cmd = self.build_cmd(
+            param_name,
+            place_site=place_site,
+            pdk_version=pdk_version,
+            front_end=front_end,
+        )
         self.execute_cmd_int(cmd, test_tag, exp_result)
 
     def execute_cmd_int(self, cmd, test_tag, exp_result):
@@ -71,7 +86,8 @@ class ParamTestBase(unittest.TestCase):
             cmd, check=True, shell=True, capture_output=True, text=True
         )
         self.assertEqual(out.returncode, 0, f"Return code for {test_tag} is non-zero")
-        result = self._result_re.match(out.stdout)
+        stdout_str = out.stdout.rstrip()
+        result = self._result_re.match(stdout_str)
         self.assertIsNotNone(result, f"RE result {test_tag} is None")
         value = result.group(1)
         if isinstance(exp_result, int):
