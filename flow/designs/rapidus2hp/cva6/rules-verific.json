@@ -36,11 +36,11 @@
         "compare": ">="
     },
     "cts__timing__hold__ws": {
-        "value": -0.0275,
+        "value": -0.025,
         "compare": ">="
     },
     "cts__timing__hold__tns": {
-        "value": -0.11,
+        "value": -0.1,
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
@@ -56,11 +56,11 @@
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
-        "value": -0.0275,
+        "value": -0.025,
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
-        "value": -0.11,
+        "value": -0.1,
         "compare": ">="
     },
     "finish__timing__setup__ws": {
@@ -72,11 +72,11 @@
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -0.0275,
+        "value": -0.025,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -0.11,
+        "value": -0.1,
         "compare": ">="
     },
     "finish__design__instance__area": {

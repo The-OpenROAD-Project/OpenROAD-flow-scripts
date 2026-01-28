@@ -37,7 +37,7 @@ save_image -resolution $resolution $::env(REPORTS_DIR)/final_routing.webp
 
 # The placement view without routing
 gui::set_display_controls "Shape Types/Routing/*" visible false
-gui::set_display_controls "Instances/Physical/*" visible false
+gui::set_display_controls "Instances/Physical/Fill cell" visible false
 gui::set_display_controls "Misc/Instances/*" visible false
 save_image -resolution $resolution $::env(REPORTS_DIR)/final_placement.webp
 

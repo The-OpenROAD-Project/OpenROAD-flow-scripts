@@ -28,7 +28,7 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.0306,
+        "value": -0.0229,
         "compare": ">="
     },
     "cts__timing__setup__tns": {

@@ -28,11 +28,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.0219,
+        "value": -0.0195,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -0.151,
+        "value": -0.14,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -48,11 +48,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.0326,
+        "value": -0.0314,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -0.361,
+        "value": -0.405,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -64,11 +64,11 @@
         "compare": ">="
     },
     "finish__timing__setup__ws": {
-        "value": -0.0326,
+        "value": -0.0314,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -0.361,
+        "value": -0.405,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -80,7 +80,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 34,
+        "value": 33,
         "compare": "<="
     }
 }

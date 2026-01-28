@@ -271,10 +271,10 @@ def parse_config(
                 print(f"[ERROR TUN-0017] Variable {key} is not tunable.")
                 sys.exit(1)
             options += f" {key}={value}"
-    if sdc:
+    if sdc or sdc_original:
         write_sdc(sdc, path, sdc_original, constraints_sdc)
         options += f" SDC_FILE={path}/{constraints_sdc}"
-    if fast_route:
+    if fast_route or fr_original:
         write_fast_route(fast_route, path, platform, fr_original, fastroute_tcl)
         options += f" FASTROUTE_TCL={path}/{fastroute_tcl}"
     return options
