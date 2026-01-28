@@ -258,3 +258,127 @@ proc orfs_write_sdc { output_file } {
   }
   log_cmd write_sdc -no_timestamp $output_file
 }
+
+proc get_focus_endpoints { n_paths n_buckets } {
+  puts "Generating Focus List (In-Memory)..."
+
+  # 1. Initialize Deduplication Dictionary
+  set endpoints_to_keep [dict create]
+
+  # 2. Get Global WNS to define the Histogram Range
+  #    We assume we are looking for the violating range (WNS to 0.0)
+  set paths [find_timing_paths -group_path_count 1]
+  if { [llength $paths] == 0 } {
+    puts "Warning: No timing paths found."
+    return [list]
+  }
+
+  set wns [get_property [lindex $paths 0] slack]
+
+  # If design is clean (WNS > 0), define a default analysis range
+  # or just capture the least positive slack.
+  if { $wns > 0 } {
+    set wns -0.1
+    set range_top 0.1
+  } else {
+    set range_top 0.0
+  }
+
+  # Calculate Bucket Size
+  # We span from WNS (e.g. -5.0) up to 0.0
+  set total_range [expr { $range_top - $wns }]
+  set step [expr { $total_range / $n_buckets }]
+
+  puts "  WNS: [format %.3f $wns] | Range: [format %.3f $total_range] | Step: [format %.3f $step]"
+
+  puts "Path groups found: [sta::path_group_names]"
+
+  # 3. Iterate over All Path Groups
+  foreach group_name [sta::path_group_names] {
+    # ignore group names with space in name
+    if { [string first " " $group_name] != -1 } {
+      puts "  Warning: Skipping path group with space in name: '$group_name'"
+      continue
+    }
+    set group_count 0
+
+    # 4. Iterate over Buckets
+    for { set i 0 } { $i < $n_buckets } { incr i } {
+      set slack_min [expr { $wns + ($i * $step) }]
+      set slack_max [expr { $wns + (($i + 1) * $step) }]
+
+      # Query the specific slice of the histogram
+      set paths [find_timing_paths \
+        -path_group "$group_name" \
+        -slack_min $slack_min \
+        -slack_max $slack_max \
+        -group_path_count $n_paths]
+
+      foreach path $paths {
+        set end_pin [get_property $path endpoint]
+        set end_name [get_property $end_pin full_name]
+
+        # Add to dictionary (Key handles deduplication)
+        dict set endpoints_to_keep $end_name 1
+        incr group_count
+      }
+    }
+  }
+
+  set total_count [dict size $endpoints_to_keep]
+  # Return the list of keys (endpoint names)
+  return [dict keys $endpoints_to_keep]
+}
+
+proc prune_wns { } {
+  if { [env_var_exists_and_non_empty GUI_WNS] } {
+    puts "Context: Sparse Analysis Mode (WNS Limit: $::env(GUI_WNS))"
+
+    # --------------------------------------------------------
+    # 1. Get "Keep" List (Pure Tcl String Parsing)
+    # --------------------------------------------------------
+    set keep_inst_dict [dict create]
+    set buckets 10
+    set focus_pin_names [get_focus_endpoints $::env(GUI_WNS) $buckets]
+
+    foreach name $focus_pin_names {
+      # Strip the pin name to get the instance
+      set inst_name [file dirname $name]
+
+      # Handle top-level objects
+      if { $inst_name eq "." } { set inst_name $name }
+
+      dict set keep_inst_dict $inst_name 1
+    }
+    puts "  Preserving [dict size $keep_inst_dict] critical instances."
+
+    # --------------------------------------------------------
+    # 2. Get "Ignore" List (Database Traversal)
+    # --------------------------------------------------------
+    # We must iterate the collection here because 'all_registers'
+    # returns DB objects, not strings.
+    set ignore_list [list]
+    set count 0
+
+    foreach reg_obj [all_registers] {
+      # Only one DB call needed: getting the name
+      set reg_name [get_property $reg_obj full_name]
+
+      if { ![dict exists $keep_inst_dict $reg_name] } {
+        lappend ignore_list $reg_name
+        incr count
+      }
+    }
+
+    # --------------------------------------------------------
+    # 3. Apply Pruning
+    # --------------------------------------------------------
+    if { $count > 0 } {
+      puts "  Pruning $count register instances..."
+
+      set_false_path -to $ignore_list
+    } else {
+      puts "  Warning: No registers found to prune."
+    }
+  }
+}

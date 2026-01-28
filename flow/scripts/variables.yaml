@@ -518,6 +518,14 @@ GUI_TIMING:
     quite time consuming. Useful to disable when investigating non-timing
     aspects like floorplan, placement, routing, etc.
   default: 1
+GUI_WNS:
+  description: >
+    Prune register and pin endpoints not appearing in the N first WNS paths
+    in path groups and histogram buckets. This can be helpful for very large
+    designs of millions of instances.
+
+    Default, no pruning.
+  default:
 FILL_CELLS:
   description: >
     Fill cells are used to fill empty sites. If not set or empty, fill cell

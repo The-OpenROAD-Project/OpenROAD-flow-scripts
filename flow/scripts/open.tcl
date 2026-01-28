@@ -58,6 +58,7 @@ proc read_timing { input_file } {
 
   # Warm up OpenSTA, so clicking on timing related buttons reacts faster
   set _tmp [log_cmd sta::find_timing]
+  log_cmd prune_wns
   set _tmp [log_cmd sta::find_requireds]
 }
 
