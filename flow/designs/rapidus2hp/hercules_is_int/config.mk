@@ -27,18 +27,25 @@ export SYNTH_HDL_FRONTEND    ?= slang
 export SYNTH_HIERARCHICAL    ?= 0
 
 # Use $(if) to defer conditional eval until all makefiles are read
-#
-# | PDK Version | Front End | Place Site | Utilization |
-# | ------------| --------- | ---------- | ----------- |
-# |      all    |   slang   |     6T     |      30     |
-# |   non-0.3   |   slang   |     8T     |      52     |
-# |      all    |  verific  |     6T     |      30     |
-# |   non-0.3   |  verific  |     8T     |      54     |
-# |      0.3    |  any  |     8T     |      56     |
 
 export CORE_UTILIZATION = $(strip \
     $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
-        56, \
+        $(if $(filter ra02h138_DST_45CPP,$(PLACE_SITE)), \
+            $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
+                $(if $(filter 14LM,$(LAYER_STACK_OPTION)), \
+                    52, \
+                    $(if $(filter 16LM,$(LAYER_STACK_OPTION)), \
+                        54, \
+                        56 \
+                    ) \
+                ), \
+                $(if $(filter 14LM,$(LAYER_STACK_OPTION)), \
+                    50, \
+                    56 \
+                ) \
+            ), \
+            56 \
+        ), \
         $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
 	    $(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
                 30, \
