@@ -222,7 +222,8 @@ print-%:
   #
   # We have to use $(file ...) because we want to be able
   # to print variables that contain newlines.
-	$(file >/tmp/print_tmp$$,$($*))
+	$(eval TEMP_FILE := $(shell mktemp /tmp/print_tmp.XXXXXX))
+	@$(file >$(TEMP_FILE),$($*))
 	@echo -n "$*: "
-	@cat /tmp/print_tmp$$
-	@rm /tmp/print_tmp$$
+	@cat $(TEMP_FILE)
+	@rm -f $(TEMP_FILE)
