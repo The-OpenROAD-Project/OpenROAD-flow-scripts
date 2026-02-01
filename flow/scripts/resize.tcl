@@ -16,6 +16,7 @@ if { [env_var_exists_and_non_empty EARLY_SIZING_CAP_RATIO] } {
 
 if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
   replace_arith_modules
+  global_placement -incremental
 }
 
 repair_design_helper
