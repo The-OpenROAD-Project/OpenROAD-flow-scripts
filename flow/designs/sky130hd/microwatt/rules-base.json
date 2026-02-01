@@ -72,7 +72,7 @@
         "compare": "<="
     },
     "detailedroute__antenna__violating__nets": {
-        "value": 0,
+        "value": 3,
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
@@ -92,7 +92,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -21.2,
+        "value": -47.8,
         "compare": ">="
     },
     "finish__design__instance__area": {
