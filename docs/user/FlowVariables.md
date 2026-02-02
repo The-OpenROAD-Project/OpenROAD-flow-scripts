@@ -213,7 +213,7 @@ configuration file.
 | <a name="RTLMP_MIN_AR"></a>RTLMP_MIN_AR| Specifies the minimum aspect ratio (height/width).| 0.33|
 | <a name="RTLMP_MIN_INST"></a>RTLMP_MIN_INST| Minimum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
 | <a name="RTLMP_MIN_MACRO"></a>RTLMP_MIN_MACRO| Minimum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.| |
-| <a name="RTLMP_NOTCH_WT"></a>RTLMP_NOTCH_WT| Weight for the notch, or the existence of dead space that cannot be used for placement and routing.| 5.0|
+| <a name="RTLMP_NOTCH_WT"></a>RTLMP_NOTCH_WT| Weight for the notch, or the existence of dead space that cannot be used for placement and routing.| 50.0|
 | <a name="RTLMP_OUTLINE_WT"></a>RTLMP_OUTLINE_WT| Weight for violating the fixed outline constraint, meaning that all clusters should be placed within the shape of their parent cluster.| 100.0|
 | <a name="RTLMP_RPT_DIR"></a>RTLMP_RPT_DIR| Path to the directory where reports are saved.| |
 | <a name="RTLMP_WIRELENGTH_WT"></a>RTLMP_WIRELENGTH_WT| Weight for half-perimiter wirelength.| 100.0|

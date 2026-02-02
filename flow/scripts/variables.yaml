@@ -1129,7 +1129,7 @@ RTLMP_NOTCH_WT:
   description: >
     Weight for the notch, or the existence of dead space that cannot be used
     for placement and routing.
-  default: 5.0
+  default: 50.0
   stages:
     - floorplan
 RTLMP_RPT_DIR:
