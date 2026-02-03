@@ -28,6 +28,10 @@ class TestParams(ParamTestBase):
             if place_site == "ra02h138_DST_45CPP":
                 return 60
             return 65
+        if pdk_version == "0.15":
+            if place_site == "ra02h138_DST_45CPP":
+                return 52
+            return 65
         return 70
 
     def get_exp_sdc(self, place_site, pdk_version):

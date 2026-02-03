@@ -34,6 +34,10 @@ class TestParams(ParamTestBase):
             return os.path.join(
                 self._design_full_dir, f"constraint_{pdk_version}_8T.sdc"
             )
+        if pdk_version == "0.15" and place_site in ["", "ra02h184_HST_45CPP"]:
+            return os.path.join(
+                self._design_full_dir, f"constraint_{pdk_version}_8T.sdc"
+            )
 
         return os.path.join(self._design_full_dir, "constraint.sdc")
 
