@@ -105,6 +105,8 @@ METRIC = "metric"
 ORFS_FLOW_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "../../../../flow")
 )
+# Path to the WORK_HOME directory
+WORK_HOME = None
 # Global variable for args
 args = None
 
@@ -409,6 +411,13 @@ def parse_arguments():
         default=10001,
         help="The port of Ray server to connect.",
     )
+    parser.add_argument(
+        "--work-dir",
+        type=str,
+        metavar="<path>",
+        default=None,
+        help="Work directory for outputs (passed to ORFS as WORK_HOME).",
+    )
 
     parser.add_argument(
         "-v",
@@ -612,8 +621,13 @@ def sweep():
 
 
 def main():
-    global args, SDC_ORIGINAL, FR_ORIGINAL, LOCAL_DIR, INSTALL_PATH, ORFS_FLOW_DIR, config_dict, reference, best_params
+    global args, SDC_ORIGINAL, FR_ORIGINAL, LOCAL_DIR, INSTALL_PATH, ORFS_FLOW_DIR, WORK_HOME, config_dict, reference, best_params
     args = parse_arguments()
+
+    # Set WORK_HOME from --work-dir argument
+    WORK_HOME = args.work_dir
+    if WORK_HOME:
+        print(f"[INFO TUN-0040] Work directory (WORK_HOME): {WORK_HOME}")
 
     # Read config and original files before handling where to run in case we
     # need to upload the files.
