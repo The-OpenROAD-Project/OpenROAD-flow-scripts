@@ -29,7 +29,15 @@ class TestParams(ParamTestBase):
                 return os.path.join(
                     self._design_full_dir, f"jpeg_encoder15_{pdk_version}_8T.sdc"
                 )
-        if pdk_version in ["", "0.15", "0.3"]:
+        if pdk_version == "0.15":
+            if place_site in ["", "ra02h184_HST_45CPP"]:
+                return os.path.join(
+                    self._design_full_dir, f"jpeg_encoder15_{pdk_version}_8T.sdc"
+                )
+            return os.path.join(
+                self._design_full_dir, f"jpeg_encoder15_{pdk_version}_6T.sdc"
+            )
+        if pdk_version in ["", "0.3"]:
             if pdk_version == "":
                 pdk_version = "0.3"
             return os.path.join(

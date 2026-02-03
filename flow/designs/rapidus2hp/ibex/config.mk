@@ -50,11 +50,20 @@ else
     ))
 endif
 
-export CORE_UTILIZATION = $(strip $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
-	$(if $(filter ra02h138_DST_45CPP,$(PLACE_SITE)), \
+export CORE_UTILIZATION = $(strip \
+    $(if $(filter 0.15,$(RAPIDUS_PDK_VERSION)), \
+        $(if $(filter ra02h138_DST_45CPP,$(PLACE_SITE)), \
+	    52, \
+	    65 \
+        ), \
+        $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
+            $(if $(filter ra02h138_DST_45CPP,$(PLACE_SITE)), \
 		60, \
-		65), \
-	70))
+		65 \
+            ), \
+	    70 \
+        ) \
+    ))
 
 export CORE_ASPECT_RATIO       = 1
 export CORE_MARGIN             = 0.75

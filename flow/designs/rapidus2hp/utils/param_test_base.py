@@ -26,7 +26,7 @@ class ParamTestBase(unittest.TestCase):
         self._result_re = re.compile(r"\S+\s*(?:=|:)\s*(\S+)?")
         self._front_end_list = ["", "slang", "verific"]
         self._ibm_site_list = ["", "SC6T", "SC8T"]
-        self._synopsys_site_list = ["", "ra02h138_DST_45CPP", "ra02h138_DST_45CPP"]
+        self._synopsys_site_list = ["", "ra02h138_DST_45CPP", "ra02h184_HST_45CPP"]
 
     def get_track_height(self, place_site):
         """Returns the track height for the place site"""
@@ -60,7 +60,13 @@ class ParamTestBase(unittest.TestCase):
         return " ".join(str_buf)
 
     def execute_cmd(
-        self, param_name, exp_result, place_site=None, pdk_version=None, front_end=None
+        self,
+        param_name,
+        exp_result,
+        place_site=None,
+        pdk_version=None,
+        front_end=None,
+        debug=False,
     ):
         """
         Executes command
@@ -73,6 +79,8 @@ class ParamTestBase(unittest.TestCase):
             pdk_version=pdk_version,
             front_end=front_end,
         )
+        if debug:
+            print(cmd)
         self.execute_cmd_int(cmd, test_tag, exp_result)
 
     def execute_cmd_int(self, cmd, test_tag, exp_result):
