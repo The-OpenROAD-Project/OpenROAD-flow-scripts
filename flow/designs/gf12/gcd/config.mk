@@ -19,3 +19,5 @@ endif
 
 export SKIP_GATE_CLONING = 1
 
+export SWAP_ARITH_OPERATORS = 1
+export OPENROAD_HIERARCHICAL = 1

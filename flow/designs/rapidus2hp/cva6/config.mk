@@ -147,3 +147,6 @@ export SYNTH_MINIMUM_KEEP_SIZE ?= 40000
 
 # Remove rvfi_probes_o interface
 export SYNTH_CANONICALIZE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/canonicalize.tcl
+
+export SWAP_ARITH_OPERATORS = 1
+export OPENROAD_HIERARCHICAL = 1
