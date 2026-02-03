@@ -52,16 +52,33 @@ def download_github_file(
 
 
 sram_files = [
-    "RM_IHPSG13_1P_1024x16_c2_bm_bist",
-    "RM_IHPSG13_1P_1024x64_c2_bm_bist",
-    "RM_IHPSG13_1P_1024x8_c2_bm_bist",
-    "RM_IHPSG13_1P_2048x64_c2_bm_bist",
+    "RM_IHPSG13_1P_64x64_c2_bm_bist",
+    "RM_IHPSG13_1P_256x8_c3_bm_bist",
+    "RM_IHPSG13_1P_256x16_c2_bm_bist",
+    "RM_IHPSG13_1P_256x32_c2_bm_bist",
     "RM_IHPSG13_1P_256x48_c2_bm_bist",
     "RM_IHPSG13_1P_256x64_c2_bm_bist",
-    "RM_IHPSG13_1P_4096x16_c3_bm_bist",
-    "RM_IHPSG13_1P_4096x8_c3_bm_bist",
+    "RM_IHPSG13_1P_512x8_c3_bm_bist",
+    "RM_IHPSG13_1P_512x16_c2_bm_bist",
+    "RM_IHPSG13_1P_512x32_c2_bm_bist",
     "RM_IHPSG13_1P_512x64_c2_bm_bist",
-    "RM_IHPSG13_1P_64x64_c2_bm_bist",
+    "RM_IHPSG13_1P_1024x8_c2_bm_bist",
+    "RM_IHPSG13_1P_1024x16_c2_bm_bist",
+    "RM_IHPSG13_1P_1024x32_c2_bm_bist",
+    "RM_IHPSG13_1P_1024x64_c2_bm_bist",
+    "RM_IHPSG13_1P_2048x64_c2_bm_bist",
+    "RM_IHPSG13_1P_4096x8_c3_bm_bist",
+    "RM_IHPSG13_1P_4096x16_c3_bm_bist",
+    "RM_IHPSG13_1P_8192x32_c4",
+    "RM_IHPSG13_2P_64x32_c2",
+    "RM_IHPSG13_2P_256x8_c2_bm_bist",
+    "RM_IHPSG13_2P_256x16_c2_bm_bist",
+    "RM_IHPSG13_2P_256x32_c2_bm_bist",
+    "RM_IHPSG13_2P_512x8_c2_bm_bist",
+    "RM_IHPSG13_2P_512x16_c2_bm_bist",
+    "RM_IHPSG13_2P_512x32_c2_bm_bist",
+    "RM_IHPSG13_2P_1024x16_c2_bm_bist",
+    "RM_IHPSG13_2P_1024x32_c2_bm_bist",
 ]
 sram_lib_corners = [
     "slow_1p08V_125C",
@@ -73,8 +90,9 @@ sram_lib_corners = [
 download_github_file("ihp-sg13g2/libs.tech/klayout/tech/sg13g2.lyp")
 download_github_file("ihp-sg13g2/libs.tech/klayout/tech/sg13g2.lyt")
 download_github_file("ihp-sg13g2/libs.tech/klayout/tech/sg13g2.map")
-download_github_file("ihp-sg13g2/libs.tech/klayout/tech/drc/sg13g2_minimal.lydrc", "drc")
-download_github_file("ihp-sg13g2/libs.tech/klayout/tech/drc/sg13g2_maximal.lydrc", "drc")
+# The minimal/maximal DRC scripts have been replaced by a parameterizable sg13g2.drc in the main branch of IHP-Open-PDK.
+#download_github_file("ihp-sg13g2/libs.tech/klayout/tech/drc/sg13g2_minimal.lydrc", "drc")
+#download_github_file("ihp-sg13g2/libs.tech/klayout/tech/drc/sg13g2_maximal.lydrc", "drc")
 # LIB
 download_github_file("ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_slow_1p35V_125C.lib", "lib")
 download_github_file("ihp-sg13g2/libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_slow_1p08V_125C.lib", "lib")
