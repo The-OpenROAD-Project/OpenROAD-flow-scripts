@@ -20,21 +20,20 @@ export SDC_FILE             = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/prects.s
 export SYNTH_HDL_FRONTEND  ?= slang
 
 # Use $(if) to defer conditional eval until all makefiles are read
-#
-# | Front End | Place Site | Utilization |
-# | --------- | ---------- | ----------- |
-# |   slang   |     6T     |      44     |
-# |   slang   |     8T     |      50     |
-# |  verific  |     6T     |      43     |
-# |  verific  |     8T     |      48     |
-
-export CORE_UTILIZATION = $(strip $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
+export CORE_UTILIZATION = $(strip \
+    $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
+        $(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
+            $(if $(filter 0.15,$(RAPIDUS_PDK_VERSION)), \
+                42, \
+                44 \
+            ), \
+            50 \
+        ), \
 	$(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
-		44, \
-		50), \
-	$(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
-		43, \
-		48)))
+            43, \
+            48 \
+        ) \
+    ))
 
 export CORE_MARGIN          = 1
 export PLACE_DENSITY        = 0.50
