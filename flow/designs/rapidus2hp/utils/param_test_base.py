@@ -27,6 +27,7 @@ class ParamTestBase(unittest.TestCase):
         self._front_end_list = ["", "slang", "verific"]
         self._ibm_site_list = ["", "SC6T", "SC8T"]
         self._synopsys_site_list = ["", "ra02h138_DST_45CPP", "ra02h184_HST_45CPP"]
+        self._layer_stack_list = ["", "14LM", "16LM", "18LM", "20LM"]
 
     def get_track_height(self, place_site):
         """Returns the track height for the place site"""
@@ -44,6 +45,7 @@ class ParamTestBase(unittest.TestCase):
         pdk_version=None,
         front_end=None,
         flow_variant=None,
+        layer_stack=None,
     ):
         """Builds the command to execute"""
 
@@ -54,6 +56,8 @@ class ParamTestBase(unittest.TestCase):
             str_buf.append(f"RAPIDUS_PDK_VERSION={pdk_version}")
         if front_end and front_end == "verific":
             str_buf.append(f"SYNTH_HDL_FRONTEND={front_end}")
+        if layer_stack and layer_stack != "":
+            str_buf.append(f"LAYER_STACK_OPTION={layer_stack}")
         if flow_variant and flow_variant != "":
             str_buf.append(f"FLOW_VARIANT={flow_variant}")
         str_buf.append(f"print-{param_name}")
@@ -66,6 +70,7 @@ class ParamTestBase(unittest.TestCase):
         place_site=None,
         pdk_version=None,
         front_end=None,
+        layer_stack=None,
         debug=False,
     ):
         """
@@ -78,6 +83,7 @@ class ParamTestBase(unittest.TestCase):
             place_site=place_site,
             pdk_version=pdk_version,
             front_end=front_end,
+            layer_stack=layer_stack,
         )
         if debug:
             print(cmd)
