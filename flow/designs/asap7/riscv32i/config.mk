@@ -14,8 +14,8 @@ ifeq ($(BLOCKS),)
 	export ADDITIONAL_LIBS = $(LIB_DIR)/fakeram7_256x32.lib
 endif
 
-export DIE_AREA = 0 0 80 90
-export CORE_AREA = 5 5 75 85 
+export DIE_AREA = 0 0 70 80
+export CORE_AREA = 5 5 65 75
 
 export PLACE_DENSITY_LB_ADDON = 0.10
 

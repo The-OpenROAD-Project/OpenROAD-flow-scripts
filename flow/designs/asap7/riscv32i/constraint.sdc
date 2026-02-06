@@ -2,7 +2,7 @@ current_design riscv_top
 
 set clk_name clk
 set clk_port_name clk
-set clk_period 1000
+set clk_period 950
 set clk_io_pct 0.125
 
 set clk_port [get_ports $clk_port_name]
