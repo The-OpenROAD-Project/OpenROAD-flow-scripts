@@ -64,11 +64,8 @@ module limping_SyncSpRamBeNx64_00000008_00000100_0_2
    assign wren_b = ~WrEn_SI; // active-low global-write-enable
    assign csel_b = ~CSel_SI; // active-low chip-select-enable
    
-   fakeram45_256x16 macro_mem_0 (.clk(Clk_CI),.rd_out(RdData_DO[15:0]), .ce_in(csel_b),.we_in(wren_b),.addr_in(Addr_DI),.w_mask_in(WMaskIn),.wd_in(WrData_DI[15:0]));
-   // fakeram45_256x16 macro_mem_1 (.clk(Clk_CI),.rd_out(RdData_DO[31:16]),.ce_in(csel_b),.we_in(wren_b),.addr_in(Addr_DI),.w_mask_in(WMaskIn),.wd_in(WrData_DI[31:16]));
-   // fakeram45_256x16 macro_mem_2 (.clk(Clk_CI),.rd_out(RdData_DO[47:32]),.ce_in(csel_b),.we_in(wren_b),.addr_in(Addr_DI),.w_mask_in(WMaskIn),.wd_in(WrData_DI[47:32]));
-   // fakeram45_256x16 macro_mem_3 (.clk(Clk_CI),.rd_out(RdData_DO[63:48]),.ce_in(csel_b),.we_in(wren_b),.addr_in(Addr_DI),.w_mask_in(WMaskIn),.wd_in(WrData_DI[63:48]));
-   assign RdData_DO[63:16] = 48'h0;
+   assign RdData_DO[47:0] = 48'h0;
+   fakeram45_256x16 macro_mem_3 (.clk(Clk_CI),.rd_out(RdData_DO[63:48]),.ce_in(csel_b),.we_in(wren_b),.addr_in(Addr_DI),.w_mask_in(WMaskIn),.wd_in(WrData_DI[63:48]));
    
 
 endmodule // limping_SyncSpRamBeNx64_00000008_00000100_0_2
