@@ -28,6 +28,14 @@ proc calc_vertical_pad_location { index total IO_LENGTH IO_WIDTH BONDPAD_SIZE SE
   }]
 }
 
+# padframe core power pins
+add_global_connection -net {VDD} -pin_pattern {^vdd$} -power
+add_global_connection -net {VSS} -pin_pattern {^vss$} -ground
+
+# padframe io power pins
+add_global_connection -net {IOVDD} -pin_pattern {^iovdd$} -power
+add_global_connection -net {IOVSS} -pin_pattern {^iovss$} -ground
+
 make_fake_io_site -name IOLibSite -width 1 -height $IO_LENGTH
 make_fake_io_site -name IOLibCSite -width $IO_LENGTH -height $IO_LENGTH
 

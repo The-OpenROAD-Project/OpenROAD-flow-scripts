@@ -11,14 +11,6 @@ add_global_connection -net {VSS} -inst_pattern {.*} -pin_pattern {VSS!} -ground
 add_global_connection -net {VDD} -inst_pattern {.*} -pin_pattern {^VDD$} -power
 add_global_connection -net {VSS} -inst_pattern {.*} -pin_pattern {^VSS$} -ground
 
-# padframe core power pins
-add_global_connection -net {VDD} -pin_pattern {^vdd$} -power
-add_global_connection -net {VSS} -pin_pattern {^vss$} -ground
-
-# padframe io power pins
-add_global_connection -net {IOVDD} -pin_pattern {^iovdd$} -power
-add_global_connection -net {IOVSS} -pin_pattern {^iovss$} -ground
-
 global_connect
 
 # core voltage domain
