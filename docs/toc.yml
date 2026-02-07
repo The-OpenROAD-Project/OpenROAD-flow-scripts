@@ -40,6 +40,9 @@ entries:
 - file: user/FAQS.md
   title: FAQs
 
+- file: user/MessagesFinal.md
+  title: Message Glossary
+
 - file: tutorials/TutorialHome
   title: Tutorials
   entries:
