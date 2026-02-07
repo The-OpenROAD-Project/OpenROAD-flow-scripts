@@ -122,27 +122,28 @@ The order of the parameters matter. Arguments `--design`, `--platform` and
 The following commands should be run from `./tools/AutoTuner`.
 ```
 
-#### Tune only 
-
-* AutoTuner: `openroad_autotuner tune -h`
+#### Tune only
 
 Example:
 
 ```shell
-openroad_autotuner --design gcd --platform sky130hd \
-                       --config ../../flow/designs/sky130hd/gcd/autotuner.json \
-                       tune --samples 5
+python3 -m autotuner.distributed \
+  --design gcd \
+  --platform sky130hd \
+  --config ../../flow/designs/sky130hd/gcd/autotuner.json \
+  tune --samples 5
 ```
-#### Sweep only 
 
-* Parameter sweeping: `openroad_autotuner sweep -h`
+#### Sweep only
 
 Example:
 
 ```shell
-openroad_autotuner --design gcd --platform sky130hd \
-                       --config src/autotuner/distributed-sweep-example.json \
-                       sweep
+python3 -m autotuner.distributed \
+  --design gcd \
+  --platform sky130hd \
+  --config src/autotuner/distributed-sweep-example.json \
+  sweep
 ```
 
 #### Plot images
@@ -159,6 +160,19 @@ The graph will show the progression of one metric (see list below) over the exec
 python3 utils/plot.py --results_dir <your-autotuner-result-path>
 ```
 
+#### Work Directory
+
+Use `--work-dir` to specify a writable directory for outputs. This is passed to ORFS as `WORK_HOME`.
+
+```shell
+python3 -m autotuner.distributed \
+  --design gcd \
+  --platform sky130hd \
+  --config ../../flow/designs/sky130hd/gcd/autotuner.json \
+  --work-dir /tmp/autotuner123 \
+  tune --samples 5
+```
+
 ### Google Cloud Platform (GCP) distribution with Ray
 
 GCP Setup Tutorial coming soon.
@@ -171,6 +185,7 @@ GCP Setup Tutorial coming soon.
 | `--platform`                  | Name of the platform for Autotuning.                                                                  ||
 | `--config`                    | Configuration file that sets which knobs to use for Autotuning.                                       ||
 | `--experiment`                | Experiment name. This parameter is used to prefix the FLOW_VARIANT and to set the Ray log destination.| test |
+| `--work-dir`                  | Work directory for outputs (passed to ORFS as WORK_HOME).                                             | Installation directory |
 | `--git_clean`                 | Clean binaries and build files. **WARNING**: may lose previous data.                                  ||
 | `--git_clone`                 | Force new git clone. **WARNING**: may lose previous data.                                             ||
 | `--git_clone_args`            | Additional git clone arguments.                                                                       ||
