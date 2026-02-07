@@ -18,8 +18,8 @@ proc block_channels { channel_width_in_microns } {
   # Resize to fill the channels and edge gap
   #
   set resize_by [expr round($channel_width_in_microns * $units)]
-  set shapeSet [odb::orSets $shapes]
-  set shapeSet [odb::bloatSet $shapeSet $resize_by]
+  set shapeSet0 [odb::orSets $shapes]
+  set shapeSet1 [odb::bloatSet $shapeSet0 $resize_by]
 
   #
   # Clip result to the core area
@@ -30,7 +30,7 @@ proc block_channels { channel_width_in_microns } {
   set xh [$core xMax]
   set yh [$core yMax]
   set core_rect [odb::newSetFromRect $xl $yl $xh $yh]
-  set shapeSet [odb::andSet $shapeSet $core_rect]
+  set shapeSet [odb::andSet $shapeSet1 $core_rect]
 
   #
   # Output the blockages
@@ -40,5 +40,14 @@ proc block_channels { channel_width_in_microns } {
     set b [odb::dbBlockage_create $block \
       [$rect xMin] [$rect yMin] [$rect xMax] [$rect yMax]]
     $b setSoft
+  }
+
+  odb::destroySet $shapeSet
+  odb::destroySet $shapeSet1
+  odb::destroySet $shapeSet0
+  odb::destroySet $core_rect
+
+  foreach shape $shapes {
+        odb::destroySet $shape
   }
 }
