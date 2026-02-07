@@ -389,6 +389,8 @@ endef
 # Custom target to go from synthesis to placement in a single OpenROAD run
 $(eval $(call do-step,1_3_floorplan_to_place, $(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc,floorplan_to_place))
 
+$(eval $(call OPEN_GUI_SHORTCUT,yosys,1_2_yosys.v))
+
 .PHONY: floorplan_to_place
 floorplan_to_place: $(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc
 	$(UNSET_AND_MAKE) do-1_3_floorplan_to_place
@@ -777,6 +779,7 @@ $(eval $(call OPEN_GUI_SHORTCUT,final,6_final.odb))
 
 $(foreach file,$(RESULTS_DEF),$(eval $(call OPEN_GUI,$(file),DEF_FILE)))
 $(foreach file,$(RESULTS_ODB),$(eval $(call OPEN_GUI,$(file),ODB_FILE)))
+$(foreach file,$(RESULTS_V),$(eval $(call OPEN_GUI,$(file),V_FILE)))
 
 # Write a def for the corresponding odb
 $(foreach file,$(RESULTS_ODB),$(file).def): %.def:

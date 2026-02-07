@@ -62,6 +62,10 @@ gui_synth
 The module hierarchy can here be examined to give a sense of
 area required for the default placement density.
 
+## `make gui_yosys` OpenROAD GUI information for Yosys netlist
+
+It is possible to set up hierarchical synthesis using ORFS, in which case it can be helpful to view a netlist with blackboxed submodules, in which case there's no .odb file and `make gui_synth` is not available.
+
 ## `make gui_floorplan` OpenROAD GUI information
 
 Next to iterate on floorplan settings:
