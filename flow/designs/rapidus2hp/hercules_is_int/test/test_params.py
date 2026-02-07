@@ -35,6 +35,10 @@ class TestParams(ParamTestBase):
                     if layer_stack == "14LM":
                         return 50
             return 56
+        if pdk_version in "0.15":
+            if place_site == "ra02h138_DST_45CPP":
+                return 30
+            return 52
         if front_end == "verific":
             if place_site in ["SC6T", "ra02h138_DST_45CPP"]:
                 return 30

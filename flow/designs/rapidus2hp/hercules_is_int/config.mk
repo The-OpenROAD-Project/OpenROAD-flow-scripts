@@ -27,7 +27,6 @@ export SYNTH_HDL_FRONTEND    ?= slang
 export SYNTH_HIERARCHICAL    ?= 0
 
 # Use $(if) to defer conditional eval until all makefiles are read
-
 export CORE_UTILIZATION = $(strip \
     $(if $(filter 0.3,$(RAPIDUS_PDK_VERSION)), \
         $(if $(filter ra02h138_DST_45CPP,$(PLACE_SITE)), \
@@ -46,14 +45,20 @@ export CORE_UTILIZATION = $(strip \
             ), \
             56 \
         ), \
-        $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
-	    $(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
+        $(if $(filter 0.15,$(RAPIDUS_PDK_VERSION)), \
+            $(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
                 30, \
                 52 \
             ), \
-	    $(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
-                30, \
-                54 \
+            $(if $(filter slang,$(SYNTH_HDL_FRONTEND)), \
+                $(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
+                    30, \
+                    52 \
+                ), \
+	        $(if $(filter ra02h138_DST_45CPP SC6T,$(PLACE_SITE)), \
+                    30, \
+                    54 \
+                ) \
             ) \
         ) \
     ))
