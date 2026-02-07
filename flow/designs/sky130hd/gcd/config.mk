@@ -11,3 +11,4 @@ export CORE_UTILIZATION = 40
 export TNS_END_PERCENT = 100
 export EQUIVALENCE_CHECK   ?=   1
 export REMOVE_CELLS_FOR_EQY = sky130_fd_sc_hd__tapvpwrvgnd*
+export LEC_CHECK = 1
