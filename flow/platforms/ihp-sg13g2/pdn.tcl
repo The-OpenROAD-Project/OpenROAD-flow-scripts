@@ -7,9 +7,6 @@ add_global_connection -net {VDD} -pin_pattern {^VDDPE$}
 add_global_connection -net {VDD} -pin_pattern {^VDDCE$}
 add_global_connection -net {VSS} -pin_pattern {^VSS$} -ground
 add_global_connection -net {VSS} -pin_pattern {^VSSE$}
-# I/O pads
-add_global_connection -net {VDD} -pin_pattern {^vdd$} -power
-add_global_connection -net {VSS} -pin_pattern {^vss$} -ground
 global_connect
 ####################################
 # voltage domains
