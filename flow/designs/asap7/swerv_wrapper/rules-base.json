@@ -80,19 +80,19 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -402.0,
+        "value": -356.0,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -75900.0,
+        "value": -73200.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -200.0,
+        "value": -197.0,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -45200.0,
+        "value": -44300.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
