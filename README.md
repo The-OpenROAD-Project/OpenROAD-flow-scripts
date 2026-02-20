@@ -120,6 +120,12 @@ Document for detailed local build from sources and installation steps found [her
 ORFS supports hosting projects in your own git repository
 without the need to fork ORFS.
 
+> **Note for contributors forking ORFS:** If you intend to fork ORFS
+> to contribute changes, you must also fork the
+> [OpenROAD repository](https://github.com/The-OpenROAD-Project/OpenROAD).
+> This is required because OpenROAD is a Git submodule inside ORFS.
+> See the [Git Guide](./docs/contrib/GitGuide.md) for full instructions.
+
 To build from your own git repository:
 
     cd /home/me/myproject
