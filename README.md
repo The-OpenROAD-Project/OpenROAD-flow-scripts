@@ -48,6 +48,10 @@ timeline
 
 There are multiple ways to install and develop OpenROAD and ORFS. However, the best option depends on your use case, experience level, and personal preference.
 
+```{note}
+Forking ORFS? Also fork [`OpenROAD`](https://github.com/The-OpenROAD-Project/OpenROAD) and point the `tools/OpenROAD` submodule at your fork (e.g., `git submodule set-url tools/OpenROAD https://github.com/<you>/OpenROAD.git && git submodule update --init --recursive`). Otherwise a forked clone may fail to build.
+```
+
 
 > **Recommendation for new users:**  
 > If you are new to OpenROAD-flow-scripts, Docker can be a reliable way to get started since it avoids most dependency and environment issues.  
