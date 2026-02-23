@@ -5,6 +5,13 @@
 
 export DESIGN_NICKNAME?=$(DESIGN_NAME)
 
+ifneq ($(findstring $(abspath $(FLOW_HOME)),$(abspath $(DESIGN_CONFIG))),)
+  export ORFS_TEST_SUITE_DESIGN := 1
+else
+  export ORFS_TEST_SUITE_DESIGN := 0
+endif
+export LEC_CHECK ?= $(ORFS_TEST_SUITE_DESIGN)
+
 #-------------------------------------------------------------------------------
 # Setup variables to point to other location for the following sub directory
 # - designs - default is under current directory

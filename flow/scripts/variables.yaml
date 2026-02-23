@@ -1297,8 +1297,10 @@ WRITE_ODB_AND_SDC_EACH_STAGE:
   default: 1
 LEC_CHECK:
   description: >
-    Perform a formal equivalence check between before and after netlists.
-  default: 1
+    This is primarily an ORFS CI regression testing feature and is default 0
+    for DESIGN_CONFIG pointing designs outside of the ORFS tree.
+
+    Requires `KEPLER_FORMAL_EXE` to point to a built Kepler executable.
   stages:
     - cts
 REMOVE_CELLS_FOR_LEC:
