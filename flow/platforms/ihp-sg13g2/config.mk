@@ -31,6 +31,8 @@ export LIB_FILES ?= $(TYP_LIB_FILES)
 export GDS_FILES ?= $(PLATFORM_DIR)/gds/sg13g2_stdcell.gds \
                     $(ADDITIONAL_GDS)
 
+export PLATFORM_TCL ?= $(PLATFORM_DIR)/suppress_message.tcl
+
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none
 
