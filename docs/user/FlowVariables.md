@@ -128,6 +128,7 @@ configuration file.
 | <a name="DETAILED_METRICS"></a>DETAILED_METRICS| If set, then calls report_metrics prior to repair operations in the CTS and global route stages| 0|
 | <a name="DETAILED_ROUTE_ARGS"></a>DETAILED_ROUTE_ARGS| Add additional arguments for debugging purposes during detail route.| |
 | <a name="DETAILED_ROUTE_END_ITERATION"></a>DETAILED_ROUTE_END_ITERATION| Maximum number of iterations.| 64|
+| <a name="DETAIL_PLACEMENT_ARGS"></a>DETAIL_PLACEMENT_ARGS| Specify arguments to the detailed_placement call during placement.| |
 | <a name="DFF_LIB_FILES"></a>DFF_LIB_FILES| Technology mapping liberty files for flip-flops.| |
 | <a name="DFF_MAP_FILE"></a>DFF_MAP_FILE| Optional mapping file supplied to Yosys to map D flip-flops| |
 | <a name="DIE_AREA"></a>DIE_AREA| The die area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2).| |
@@ -389,6 +390,7 @@ configuration file.
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [CELL_PAD_IN_SITES_GLOBAL_PLACEMENT](#CELL_PAD_IN_SITES_GLOBAL_PLACEMENT)
 - [CLUSTER_FLOPS](#CLUSTER_FLOPS)
+- [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [DONT_BUFFER_PORTS](#DONT_BUFFER_PORTS)
 - [EARLY_SIZING_CAP_RATIO](#EARLY_SIZING_CAP_RATIO)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)

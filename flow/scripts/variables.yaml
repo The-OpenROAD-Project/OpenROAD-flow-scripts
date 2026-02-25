@@ -537,6 +537,11 @@ CELL_PAD_IN_SITES_GLOBAL_PLACEMENT:
   default: 0
   type: int
   tunable: 1
+DETAIL_PLACEMENT_ARGS:
+  description: >
+    Specify arguments to the detailed_placement call during placement.
+  stages:
+    - place
 CELL_PAD_IN_SITES_DETAIL_PLACEMENT:
   description: >
     Cell padding on both sides in site widths to ease routability in detail
