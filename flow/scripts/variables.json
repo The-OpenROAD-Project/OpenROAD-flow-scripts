@@ -1,0 +1,1180 @@
+{
+  "GENERATE_ARTIFACTS_ON_FAILURE": {
+    "description": "For instance Bazel needs artifacts (.odb and .rpt files) on a failure to allow the user to save hours on re-running the failed step locally, but when working with a Makefile flow, it is more natural to fail the step and leave the user to manually inspect the logs and artifacts directly via the file system. Set to 1 to change the behavior to generate artifacts upon failure to e.g. do a global route. The exit code will still be non-zero on all other failures that aren't covered by the \"useful to inspect the artifacts on failure\" use-case. Example: just like detailed routing, a global route that fails with congestion, is not a build failure(as in exit code non-zero), it is a successful(as in zero exit code) global route that produce reports detailing the problem. Detailed route will not proceed, if there is global routing congestion This allows build systems, such as bazel, to create artifacts for global and detailed route, even if the operation had problems, without having know about the semantics between global and detailed route. Considering that global and detailed route can run for a long time and use a lot of memory, this allows inspecting results on a laptop for a build that ran on a server.\n",
+    "default": 0
+  },
+  "TNS_END_PERCENT": {
+    "description": "Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all violating endpoints by default (reduce to 5% for runtime). Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed.\n",
+    "default": 100,
+    "stages": [
+      "place",
+      "cts",
+      "floorplan",
+      "grt"
+    ]
+  },
+  "ROUTING_LAYER_ADJUSTMENT": {
+    "default": 0.5,
+    "description": "Adjusts routing layer capacities to manage congestion and improve detailed routing. High values ease detailed routing but risk excessive detours and long global routing times, while low values reduce global routing failure but can complicate detailed routing. The global routing running time normally reduces dramatically (entirely design specific, but going from hours to minutes has been observed) when the value is low (such as 0.10). Sometimes, global routing will succeed with lower values and fail with higher values. Exploring results with different values can help shed light on the problem. Start with a too low value, such as 0.10, and bisect to value that works by doing multiple global routing runs. As a last resort, `make global_route_issue` and using the tools/OpenROAD/etc/deltaDebug.py can be useful to debug global routing errors. If there is something specific that is impossible to route, such as a clock line over a macro, global routing will terminate with DRC errors routes that could have been routed were it not for the specific impossible routes. deltaDebug.py should weed out the possible routes and leave a minimal failing case that pinpoints the problem.\n",
+    "stages": [
+      "floorplan",
+      "place",
+      "grt",
+      "route",
+      "final"
+    ]
+  },
+  "RECOVER_POWER": {
+    "description": "Specifies how many percent of paths with positive slacks can be slowed for power savings [0-100].\n",
+    "default": 0
+  },
+  "SKIP_INCREMENTAL_REPAIR": {
+    "default": 0,
+    "description": "Skip incremental repair in global route.\n",
+    "stages": [
+      "grt"
+    ]
+  },
+  "DETAILED_METRICS": {
+    "description": "If set, then calls report_metrics prior to repair operations in the CTS and global route stages\n",
+    "default": 0,
+    "stages": [
+      "cts",
+      "grt"
+    ]
+  },
+  "EQUIVALENCE_CHECK": {
+    "description": "Enable running equivalence checks to verify logical correctness of repair_timing.\n",
+    "default": 0,
+    "stages": [
+      "cts"
+    ]
+  },
+  "CORE_UTILIZATION": {
+    "description": "The core utilization percentage (0-100).\n",
+    "stages": [
+      "floorplan"
+    ],
+    "tunable": 1,
+    "type": "float"
+  },
+  "CORE_AREA": {
+    "description": "The core area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2).\n",
+    "stages": [
+      "floorplan"
+    ],
+    "tunable": 1
+  },
+  "REPORT_CLOCK_SKEW": {
+    "description": "Report clock skew as part of reporting metrics, starting at CTS, before which there is no clock skew. This metric can be quite time-consuming, so it can be useful to disable.\n",
+    "stages": [
+      "cts",
+      "grt",
+      "route",
+      "final"
+    ],
+    "default": 1
+  },
+  "SKIP_REPORT_METRICS": {
+    "description": "If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.\n",
+    "stages": [
+      "floorplan",
+      "place",
+      "cts",
+      "grt",
+      "route",
+      "final"
+    ],
+    "default": 0
+  },
+  "PROCESS": {
+    "description": "Technology node or process in use.\n"
+  },
+  "CORNER": {
+    "description": "PVT corner library selection. Only available for ASAP7 and GF180 PDKs.\n"
+  },
+  "TECH_LEF": {
+    "description": "A technology LEF file of the PDK that includes all relevant information regarding metal layers, vias, and spacing requirements.\n"
+  },
+  "SC_LEF": {
+    "description": "Path to technology standard cell LEF file.\n"
+  },
+  "GDS_FILES": {
+    "description": "Path to platform GDS files.\n"
+  },
+  "LIB_FILES": {
+    "description": "A Liberty file of the standard cell library with PVT characterization, input and output characteristics, timing and power definitions for each cell.\n"
+  },
+  "PLATFORM_TCL": {
+    "description": "Specifies a Tcl script with commands to run before loading design.\n"
+  },
+  "DONT_USE_CELLS": {
+    "description": "Dont use cells eases pin access in detailed routing.\n"
+  },
+  "SYNTH_GUT": {
+    "description": "Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.\n",
+    "stages": [
+      "synth"
+    ],
+    "default": 0
+  },
+  "SYNTH_HIERARCHICAL": {
+    "description": "Enable to Synthesis hierarchically, otherwise considered flat synthesis.\n",
+    "stages": [
+      "synth"
+    ],
+    "default": 0
+  },
+  "SYNTH_MEMORY_MAX_BITS": {
+    "description": "Maximum number of bits for memory synthesis.\nIdeally, real RAM or realistic fakeram should be used for RAMs much larger than 1024 bits.\nTo temporarily ignore the RAM concerns and investigate other aspects of the design, consider setting `SYNTH_MOCK_LARGE_MEMORIES=1`, or adjusting `SYNTH_MEMORY_MAX_BITS`.\n",
+    "default": 4096,
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_MOCK_LARGE_MEMORIES": {
+    "description": "Reduce Yosys inferred memories larger than SYNTH_MEMORY_MAX_BITS to 1 row.\nYosys will generally infer memories from behavioral Verilog code, whether the memories are in standalone modules or instantiated within some larger module.\nfakeram and empty Verilog memories(blackboxes) of memories will not be inferred memories by Yosys and are therefore not affected by this variable.\nThis is useful and convenient to separate the concern of instantiating and placing memories from investigating other issues with a design, though it comes at the expense of the increased accuracy that using realistic fakemem would provide.\nMemories with a single 1 row will of course have unrealistically good timing and area characteristics, but timing will still correctly terminate in a register.\nLarge port memories, typically register files, will still have the retain a lot of the port logic that can be useful to investigate issues.\nThis can be especially useful during development of designs where the behavioral model comes first and suitable memories are matched up when the design RTL is stable.\nA typical use case would be Chisel which will generate a behavioral model for a memories with the required clocks, ports, etc. in addition to a computer readable file with the specification of the memories that is used to [automatically](https://chipyard.readthedocs.io/en/stable/Tools/Barstools.html/) match up suitable memory macros later in the flow.\nDuring an architectural screening study, a large range of memory configurations can be investigated quickly with this option, without getting bogged down in the concern of how to realize the memories in silicon for emphemral RTL configurations that exist only long enough to run through the ORFS flow to create a table of some characteristics of a design configuration.\n",
+    "default": 0,
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_KEEP_MOCKED_MEMORIES": {
+    "description": "When `SYNTH_MOCK_LARGE_MEMORIES=1`, setting this to 1, will keep mocked memories (not flattening them).\nThis preserves some of the access logic complexity and avoids optimizations outside of the mocked memory.\n",
+    "default": 1,
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_HDL_FRONTEND": {
+    "description": "Select an alternative language frontend to ingest the design. Available option is \"slang\". If the variable is empty, design is read with the Yosys read_verilog command.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_SLANG_ARGS": {
+    "description": "Additional arguments passed to the slang frontend during synthesis.\n",
+    "stages": [
+      "synth"
+    ],
+    "default": ""
+  },
+  "SYNTH_BLACKBOXES": {
+    "description": "List of cells treated as a black box by Yosys. With Bazel, this can be used to run synthesis in parallel for the large modules of the design.\nNon-existant modules are ignored silently, useful when listing modules statically, even if modules come and go dynamically.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_NETLIST_FILES": {
+    "description": "Skips synthesis and uses the supplied netlist files. If the netlist files contains duplicate modules, which can happen when using hierarchical synthesis on indvidual netlist files and combining here, subsequent modules are silently ignored and only the first module is used.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_CANONICALIZE_TCL": {
+    "description": "Specifies a Tcl script with commands to run as part of the synth canonicalize step.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_RETIME_MODULES": {
+    "description": "*This is an experimental option and may cause adverse effects.* *No effort has been made to check if the retimed RTL is logically equivalent to the non-retimed RTL.*\nList of modules to apply automatic retiming to. These modules must not get dissolved and as such they should either be the top module or be included in SYNTH_KEEP_MODULES.\nThe main use case is to quickly identify if performance can be improved by manually retiming the input RTL.\nRetiming will treat module ports like register endpoints/startpoints. The objective function of retiming isn't informed by SDC, even the clock period is ignored. As such, retiming will optimize for best delay at potentially high register number cost. Automatic retiming can produce suboptimal results as its timing model is crude and it doesn't find the optimal distribution of registers on long pipelines. See OR discussion #8080.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_REPEATABLE_BUILD": {
+    "description": "License to prune anything that makes builds less repeatable, typically used with Bazel to ensure that builds are bit-for-bit identical so that caching works optimally.\nRemoves debug information that encodes paths, timestamps, etc.\n",
+    "stages": [
+      "synth"
+    ],
+    "default": 0
+  },
+  "SYNTH_INSBUF": {
+    "description": "Insert input buffers on top-level input ports during synthesis.\nUseful to disable when doing parallel synthesis and concatenating netlists later as we're generating netlists of submodules.\n",
+    "stages": [
+      "synth"
+    ],
+    "default": 1
+  },
+  "DFF_MAP_FILE": {
+    "description": "Optional mapping file supplied to Yosys to map D flip-flops\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "LATCH_MAP_FILE": {
+    "description": "Optional mapping file supplied to Yosys to map latches\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "CLKGATE_MAP_FILE": {
+    "description": "Optional mapping file supplied to Yosys to map clock gating cells\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "ADDER_MAP_FILE": {
+    "description": "Optional mapping file supplied to Yosys to map adders\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "TIEHI_CELL_AND_PORT": {
+    "description": "Tie high cells used in Yosys synthesis to replace a logical 1 in the Netlist.\n",
+    "stages": [
+      "synth",
+      "floorplan"
+    ]
+  },
+  "TIELO_CELL_AND_PORT": {
+    "description": "Tie low cells used in Yosys synthesis to replace a logical 0 in the Netlist.\n",
+    "stages": [
+      "synth",
+      "floorplan"
+    ]
+  },
+  "TIE_SEPARATION": {
+    "description": "Distance separating tie high/low instances from the load.\n",
+    "stages": [
+      "floorplan"
+    ],
+    "default": 0
+  },
+  "EARLY_SIZING_CAP_RATIO": {
+    "description": "Ratio between the input pin capacitance and the output pin load during initial gate sizing.\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "MIN_BUF_CELL_AND_PORTS": {
+    "description": "Used to insert a buffer cell to pass through wires. Used in synthesis.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "ABC_CLOCK_PERIOD_IN_PS": {
+    "description": "Clock period to be used by STA during synthesis. Default value read from `constraint.sdc`.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "ABC_DRIVER_CELL": {
+    "description": "Default driver cell used during ABC synthesis.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "ABC_LOAD_IN_FF": {
+    "description": "During synthesis set_load value used.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_MINIMUM_KEEP_SIZE": {
+    "description": "For hierarchical synthesis, we keep modules of larger area than given by this variable and flatten smaller modules. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.\n",
+    "stages": [
+      "synth"
+    ],
+    "default": 0
+  },
+  "SYNTH_WRAPPED_OPERATORS": {
+    "description": "Synthesize multiple architectural options for each arithmetic operator in the design. These options are available for switching among in later stages of the flow.\n",
+    "stages": [
+      "All stages"
+    ]
+  },
+  "SYNTH_WRAPPED_ADDERS": {
+    "description": "Specify the adder modules that can be used for synthesis, separated by commas. The default adder module is determined by the first element of this variable.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_WRAPPED_MULTIPLIERS": {
+    "description": "Specify the multiplier modules that can be used for synthesis, separated by commas. The default multiplier module is determined by the first element of this variable.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SWAP_ARITH_OPERATORS": {
+    "description": "Improve timing QoR by swapping ALU and MULT arithmetic operators.\n",
+    "stages": [
+      "All stages"
+    ]
+  },
+  "FLOORPLAN_DEF": {
+    "description": "Use the DEF file to initialize floorplan. Mutually exclusive with FOOTPRINT or DIE_AREA/CORE_AREA or CORE_UTILIZATION.\n",
+    "stages": [
+      "floorplan",
+      "place"
+    ]
+  },
+  "DONT_BUFFER_PORTS": {
+    "description": "Do not buffer input/output ports during floorplanning.\n",
+    "stages": [
+      "place"
+    ],
+    "default": 0
+  },
+  "BUFFER_PORTS_ARGS": {
+    "description": "Specify arguments to the buffer_ports call during placement. Only used if DONT_BUFFER_PORTS=0.\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "REMOVE_ABC_BUFFERS": {
+    "description": "Remove abc buffers from the netlist. If timing repair in floorplanning is taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.\n",
+    "stages": [
+      "floorplan"
+    ],
+    "deprecated": 1,
+    "default": 0
+  },
+  "BALANCE_ROWS": {
+    "description": "Balance rows during placement.\n",
+    "stages": [
+      "place"
+    ],
+    "default": 0
+  },
+  "PLACE_SITE": {
+    "description": "Placement site for core cells defined in the technology LEF file.\n",
+    "stages": [
+      "floorplan"
+    ],
+    "type": "string",
+    "tunable": 1
+  },
+  "LAYER_PARASITICS_FILE": {
+    "description": "Path to per layer parasitics file. Defaults to $(PLATFORM_DIR)/setRC.tcl.\n",
+    "type": "string"
+  },
+  "TAPCELL_TCL": {
+    "description": "Path to Endcap and Welltie cells file.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "MACRO_PLACEMENT_TCL": {
+    "description": "Specifies the path of a TCL file on how to place macros manually.\nThe user may choose to place just some of the macros in the design.\nThe macro placer will handle the remaining unplaced macros.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "MACRO_PLACE_HALO": {
+    "description": "Horizontal/vertical halo around macros (microns). Used by automatic macro placement.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "MACRO_BLOCKAGE_HALO": {
+    "description": "Distance beyond the edges of a macro that will also be covered by the blockage generated for that macro. Note that the default macro blockage halo comes from the largest of the specified MACRO_PLACE_HALO x or y values. This variable overrides that calculation.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "PDN_TCL": {
+    "description": "File path which has a set of power grid policies used by pdn to be applied to the design, such as layers to use, stripe width and spacing to generate the actual metal straps.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "MAKE_TRACKS": {
+    "description": "Tcl file that defines add routing tracks to a floorplan.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "IO_CONSTRAINTS": {
+    "description": "File path to the IO constraints .tcl file. Also used for manual placement.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "IO_PLACER_H": {
+    "description": "A list of metal layers on which the I/O pins are placed horizontally (top and bottom of the die).\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "IO_PLACER_V": {
+    "description": "A list of metal layers on which the I/O pins are placed vertically (sides of the die).\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "GUI_TIMING": {
+    "description": "Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.\n",
+    "default": 1
+  },
+  "FILL_CELLS": {
+    "description": "Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.\n",
+    "stages": [
+      "route"
+    ]
+  },
+  "TAP_CELL_NAME": {
+    "description": "Name of the cell to use in tap cell insertion.\n"
+  },
+  "CELL_PAD_IN_SITES_GLOBAL_PLACEMENT": {
+    "description": "Cell padding on both sides in site widths to ease routability during global placement.\n",
+    "stages": [
+      "place",
+      "floorplan"
+    ],
+    "default": 0,
+    "type": "int",
+    "tunable": 1
+  },
+  "DETAIL_PLACEMENT_ARGS": {
+    "description": "Specify arguments to the detailed_placement call during placement.\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "CELL_PAD_IN_SITES_DETAIL_PLACEMENT": {
+    "description": "Cell padding on both sides in site widths to ease routability in detail placement.\n",
+    "stages": [
+      "place",
+      "cts",
+      "grt"
+    ],
+    "default": 0,
+    "type": "int",
+    "tunable": 1
+  },
+  "PLACE_PINS_ARGS": {
+    "description": "Arguments to place_pins\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "PLACE_DENSITY": {
+    "description": "The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread.\nThe intended effort is also communicated by this parameter. Use a low value for faster builds and higher value for better quality of results.\nIf a too low value is used, the placer will not be able to place all cells and a recommended minimum placement density can be found in the logs.\nA too high value can lead to excessive runtimes, even timeouts and subtle failures in the flow after placement, such as in CTS or global routing when timing repair fails.\nThe default is platform specific.\n",
+    "stages": [
+      "floorplan",
+      "place"
+    ]
+  },
+  "PLACE_DENSITY_LB_ADDON": {
+    "description": "Check the lower boundary of the PLACE_DENSITY and add PLACE_DENSITY_LB_ADDON if it exists.\n",
+    "stages": [
+      "floorplan",
+      "place"
+    ],
+    "tunable": 1,
+    "type": "float"
+  },
+  "REPAIR_PDN_VIA_LAYER": {
+    "description": "Remove power grid vias which generate DRC violations after detailed routing.\n"
+  },
+  "GLOBAL_PLACEMENT_ARGS": {
+    "description": "Use additional tuning parameters during global placement other than default args defined in global_place.tcl.\n",
+    "stages": [
+      "place"
+    ]
+  },
+  "ENABLE_DPO": {
+    "description": "Enable detail placement with improve_placement feature.\n",
+    "default": 1
+  },
+  "DPO_MAX_DISPLACEMENT": {
+    "description": "Specifies how far an instance can be moved when optimizing.\n",
+    "default": "5 1"
+  },
+  "GPL_TIMING_DRIVEN": {
+    "description": "Specifies whether the placer should use timing driven placement.\n",
+    "stages": [
+      "place"
+    ],
+    "default": 1
+  },
+  "GPL_ROUTABILITY_DRIVEN": {
+    "description": "Specifies whether the placer should use routability driven placement.\n",
+    "stages": [
+      "place"
+    ],
+    "default": 1
+  },
+  "MIN_PLACE_STEP_COEF": {
+    "description": "Sets the minimum phi coefficient (pcof_min / \u00b5_k Lower Bound) for global placement optimization. This parameter controls the step size lower bound in the RePlAce Nesterov optimization algorithm. Lower values may improve convergence but can increase runtime. Valid range: 0.95-1.05\n",
+    "default": 0.95,
+    "stages": [
+      "place"
+    ],
+    "tunable": 1,
+    "type": "float"
+  },
+  "MAX_PLACE_STEP_COEF": {
+    "description": "Sets the maximum phi coefficient (pcof_max / \u00b5_k Upper Bound) for global placement optimization. This parameter controls the step size upper bound in the RePlAce Nesterov optimization algorithm. Higher values allow more aggressive optimization but may risk divergence. Valid range: 1.00-1.20\n",
+    "default": 1.05,
+    "stages": [
+      "place"
+    ],
+    "tunable": 1,
+    "type": "float"
+  },
+  "CAP_MARGIN": {
+    "description": "Specifies a capacitance margin when fixing max capacitance violations. This option allows you to overfix.\n"
+  },
+  "SLEW_MARGIN": {
+    "description": "Specifies a slew margin when fixing max slew violations. This option allows you to overfix.\n"
+  },
+  "CTS_ARGS": {
+    "description": "Override `clock_tree_synthesis` arguments.\n",
+    "stages": [
+      "cts"
+    ]
+  },
+  "CTS_SNAPSHOTS": {
+    "description": "Create ODB/SDC files at different stages of CTS.\n",
+    "stages": [
+      "cts"
+    ],
+    "default": 0
+  },
+  "HOLD_SLACK_MARGIN": {
+    "description": "Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix or underfix (negative value, terminate retiming before 0 or positive slack). floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0 (default hold slack margin). This avoids overrepair in floorplan for hold by default, but allows skipping hold repair using a negative HOLD_SLACK_MARGIN. Exiting timing repair early is useful in exploration where the .sdc has a fixed clock period at the design's target clock period and where HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair (extremely long running times) when exploring different parameter settings. When an ideal clock is used, that is before CTS, a clock insertion delay of 0 is used in timing paths. This creates a mismatch between macros that have a .lib file from after CTS, when the clock is propagated. To mitigate this, OpenSTA will use subtract the clock insertion delay of macros when calculating timing with ideal clock. Provided that min_clock_tree_path and max_clock_tree_path are in the .lib file, which is the case for macros built with OpenROAD. This is less accurate than if OpenROAD had created a placeholder clock tree for timing estimation purposes prior to CTS. There will inevitably be inaccuracies in the timing calculation prior to CTS. Use a slack margin that is low enough, even negative, to avoid overrepair. Inaccuracies in the timing prior to CTS can also lead to underrepair, but there no obvious and simple way to avoid underrapir in these cases. Overrepair can lead to excessive runtimes in repair or too much buffering being added, which can present itself as congestion of hold cells or buffer cells. Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration when trying to find the minimum clock period for a design. The SDC_FILE for a design can be quite complicated and instead of modifying the clock period in the SDC_FILE, which can be non-trivial, the clock period can be fixed at the target frequency and the SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible current minimum clock period.\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt"
+    ],
+    "default": 0
+  },
+  "SETUP_SLACK_MARGIN": {
+    "description": "Specifies a time margin for the slack when fixing setup violations.\nThis option allows you to overfix or underfix(negative value, terminate\nretiming before 0 or positive slack).\nSee HOLD_SLACK_MARGIN for more details.\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt"
+    ],
+    "default": 0
+  },
+  "SETUP_REPAIR_SEQUENCE": {
+    "description": "Specifies the sequence of moves to do in repair_timing -setup. This should be a string\nof move keywords separated by commas such as the default when not used:\n\"unbuffer,sizedown,sizeup,swap,buffer,clone,split\".\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt"
+    ]
+  },
+  "SKIP_GATE_CLONING": {
+    "description": "Do not use gate cloning transform to fix timing violations (default: use gate cloning).\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt"
+    ]
+  },
+  "SKIP_LAST_GASP": {
+    "description": "Do not use last gasp optimization to fix timing violations (default: use gate last gasp).\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt"
+    ]
+  },
+  "SKIP_PIN_SWAP": {
+    "description": "Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt"
+    ]
+  },
+  "SKIP_VT_SWAP": {
+    "description": "Do not perform VT swap to improve QoR (default: do VT swap).\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt"
+    ]
+  },
+  "SKIP_CRIT_VT_SWAP": {
+    "description": "Do not perform VT swap on critical cells to improve QoR (default: do critical VT swap). This is an additional VT swap on critical cells that remain near the end of setup fixing. If SKIP_VT_SWAP is set to 1, this also disables critical cell VT swap.\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt"
+    ]
+  },
+  "REMOVE_CELLS_FOR_EQY": {
+    "description": "String patterns directly passed to write_verilog -remove_cells <> for equivalence checks.\n",
+    "stages": [
+      "cts"
+    ]
+  },
+  "SKIP_CTS_REPAIR_TIMING": {
+    "description": "Skipping CTS repair, which can take a long time, can be useful in architectural exploration or when getting CI up and running.\n",
+    "stages": [
+      "cts"
+    ],
+    "default": 0
+  },
+  "SKIP_REPAIR_TIE_FANOUT": {
+    "description": "Skip repair_tie_fanout at floorplan step.\n",
+    "stages": [
+      "floorplan"
+    ],
+    "default": 0
+  },
+  "MIN_ROUTING_LAYER": {
+    "description": "The lowest metal layer name to be used in routing.\n",
+    "stages": [
+      "floorplan",
+      "place",
+      "grt",
+      "route",
+      "final"
+    ]
+  },
+  "MAX_ROUTING_LAYER": {
+    "description": "The highest metal layer name to be used in routing.\n",
+    "stages": [
+      "floorplan",
+      "place",
+      "grt",
+      "route",
+      "final"
+    ]
+  },
+  "DETAILED_ROUTE_ARGS": {
+    "description": "Add additional arguments for debugging purposes during detail route.\n",
+    "stages": [
+      "route"
+    ]
+  },
+  "MACRO_EXTENSION": {
+    "description": "Sets the number of GCells added to the blockages boundaries from macros.\n"
+  },
+  "DETAILED_ROUTE_END_ITERATION": {
+    "description": "Maximum number of iterations.\n",
+    "default": 64,
+    "stages": [
+      "route"
+    ]
+  },
+  "RCX_RULES": {
+    "description": "RC Extraction rules file path.\n"
+  },
+  "SET_RC_TCL": {
+    "description": "Metal & Via RC definition file path.\n"
+  },
+  "FILL_CONFIG": {
+    "description": "JSON rule file for metal fill during chip finishing.\n"
+  },
+  "KLAYOUT_TECH_FILE": {
+    "description": "A mapping from LEF/DEF to GDS using the KLayout tool.\n"
+  },
+  "IR_DROP_LAYER": {
+    "description": "Default metal layer to report IR drop.\n"
+  },
+  "PLATFORM": {
+    "required": true,
+    "description": "Specifies process design kit or technology node to be used.\n"
+  },
+  "DESIGN_NAME": {
+    "required": true,
+    "description": "The name of the top-level module of the design.\n"
+  },
+  "VERILOG_FILES": {
+    "required": true,
+    "description": "The path to the design Verilog/SystemVerilog files providing a description of modules.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "VERILOG_DEFINES": {
+    "description": "Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SDC_FILE": {
+    "required": true,
+    "description": "The path to design constraint (SDC) file.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SDC_GUT": {
+    "description": "Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "ADDITIONAL_FILES": {
+    "description": "Additional files to be added to `make issue` archive.\n"
+  },
+  "ADDITIONAL_LEFS": {
+    "description": "Hardened macro LEF view files listed here. The LEF information of the macros is immutable and used throughout all stages. Stored in the .odb file.\n"
+  },
+  "ADDITIONAL_LIBS": {
+    "description": "Hardened macro library files listed here. The library information is immutable and used throughout all stages. Not stored in the .odb file.\n"
+  },
+  "ADDITIONAL_GDS": {
+    "description": "Hardened macro GDS files listed here.\n",
+    "stages": [
+      "final"
+    ]
+  },
+  "VERILOG_INCLUDE_DIRS": {
+    "description": "Specifies the include directories for the Verilog input files.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "DESIGN_NICKNAME": {
+    "description": "DESIGN_NICKNAME just changes the directory name that ORFS outputs to be DESIGN_NICKNAME instead of DESIGN_NAME in case DESIGN_NAME is unwieldy or conflicts with a different design.\n"
+  },
+  "ABC_AREA": {
+    "description": "Strategies for Yosys ABC synthesis: Area/Speed. Default ABC_SPEED.\n",
+    "stages": [
+      "synth"
+    ],
+    "default": 0
+  },
+  "PWR_NETS_VOLTAGES": {
+    "description": "Used for IR Drop calculation.\n",
+    "stages": [
+      "final"
+    ]
+  },
+  "GND_NETS_VOLTAGES": {
+    "description": "Used for IR Drop calculation.\n",
+    "stages": [
+      "final"
+    ]
+  },
+  "BLOCKS": {
+    "description": "Blocks used as hard macros in a hierarchical flow. Do note that you have to specify block-specific inputs file in the directory mentioned by Makefile.\n"
+  },
+  "CDL_FILES": {
+    "description": "Insert additional Circuit Description Language (`.cdl`) netlist files.\n"
+  },
+  "DFF_LIB_FILES": {
+    "description": "Technology mapping liberty files for flip-flops.\n"
+  },
+  "SYNTH_KEEP_MODULES": {
+    "description": "Mark modules to keep from getting removed in flattening.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_ARGS": {
+    "description": "Optional synthesis variables for yosys.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_HIER_SEPARATOR": {
+    "description": "Separator used for the synthesis flatten stage.\n",
+    "default": ".",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_OPT_HIER": {
+    "description": "Optimize constants across hierarchical boundaries.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "VERILOG_TOP_PARAMS": {
+    "description": "Apply toplevel params (if exist). Passed in as a list of key value pairs\nin tcl syntax; separated by spaces: PARAM1 VALUE1 PARAM2 VALUE2\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "CORE_ASPECT_RATIO": {
+    "description": "The core aspect ratio (height / width).\nThis variable is only used when `CORE_UTILIZATION` is set.\n",
+    "stages": [
+      "floorplan"
+    ],
+    "default": 1.0,
+    "tunable": 1,
+    "type": "float"
+  },
+  "CORE_MARGIN": {
+    "description": "The margin between the core area and die area, specified in microns. Allowed values are either one value for all margins or a set of four values, one for each margin. The order of the four values are: `{bottom top left right}`.\nThis variable is only used when `CORE_UTILIZATION` is set.\n",
+    "stages": [
+      "floorplan"
+    ],
+    "default": 1.0,
+    "tunable": 1,
+    "type": "float"
+  },
+  "DIE_AREA": {
+    "description": "The die area specified as a list of lower-left and upper-right corners in microns (X1 Y1 X2 Y2).\n",
+    "stages": [
+      "floorplan"
+    ],
+    "tunable": 1
+  },
+  "MACRO_ROWS_HALO_X": {
+    "description": "Horizontal distance between the edge of the macro and the beginning of the rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks design.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "MACRO_ROWS_HALO_Y": {
+    "description": "Vertical distance between the edge of the macro and the beginning of the rows created by tapcell. Only available for ASAP7 PDK and GF180/uart-blocks design.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "MACRO_WRAPPERS": {
+    "description": "The wrapper file that replaces existing macros with their wrapped version.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "CTS_BUF_DISTANCE": {
+    "description": "Distance (in microns) between buffers.\n",
+    "stages": [
+      "cts"
+    ],
+    "tunable": 1,
+    "type": "float"
+  },
+  "CTS_BUF_LIST": {
+    "description": "List of cells used to construct the clock tree. Overrides buffer inference.\n",
+    "stages": [
+      "cts"
+    ]
+  },
+  "CLUSTER_FLOPS": {
+    "description": "Minimum number of flip-flops per sink cluster.\n",
+    "stages": [
+      "place"
+    ],
+    "default": 0
+  },
+  "CTS_CLUSTER_DIAMETER": {
+    "description": "Maximum diameter (in microns) of sink cluster.\n",
+    "stages": [
+      "cts"
+    ],
+    "tunable": 1,
+    "type": "float"
+  },
+  "CTS_CLUSTER_SIZE": {
+    "description": "Maximum number of sinks per cluster.\n",
+    "stages": [
+      "cts"
+    ],
+    "tunable": 1,
+    "type": "int"
+  },
+  "CTS_LIB_NAME": {
+    "description": "Name of the Liberty library to use in selecting the clock buffers.\n",
+    "stages": [
+      "cts"
+    ]
+  },
+  "CTS_SNAPSHOT": {
+    "description": "Creates ODB/SDC files prior to clock net and setup/hold repair.\n",
+    "stages": [
+      "cts"
+    ]
+  },
+  "POST_CTS_TCL": {
+    "description": "Specifies a Tcl script with commands to run after CTS is completed.\n",
+    "stages": [
+      "cts"
+    ]
+  },
+  "FASTROUTE_TCL": {
+    "description": "Specifies a Tcl script with commands to run before FastRoute.\n"
+  },
+  "USE_FILL": {
+    "description": "Whether to perform metal density filling.\n",
+    "default": 0
+  },
+  "SEAL_GDS": {
+    "description": "Seal macro to place around the design.\n"
+  },
+  "ABSTRACT_SOURCE": {
+    "description": "Which .odb file to use to create abstract\n",
+    "stages": [
+      "generate_abstract"
+    ]
+  },
+  "PRE_GLOBAL_ROUTE_TCL": {
+    "description": "Specifies a Tcl script with commands to run before global route.\n",
+    "stages": [
+      "grt"
+    ]
+  },
+  "GLOBAL_ROUTE_ARGS": {
+    "description": "Replaces default arguments for global route.\n",
+    "stages": [
+      "grt"
+    ],
+    "default": "-congestion_iterations 30 -congestion_report_iter_step 5 -verbose"
+  },
+  "MATCH_CELL_FOOTPRINT": {
+    "description": "Enforce sizing operations to only swap cells that have the same layout boundary.\n",
+    "stages": [
+      "floorplan",
+      "place",
+      "cts",
+      "route"
+    ],
+    "default": 0
+  },
+  "RTLMP_MAX_LEVEL": {
+    "description": "Maximum depth of the physical hierarchy tree.\n",
+    "default": 2,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_MAX_INST": {
+    "description": "Maximum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_MIN_INST": {
+    "description": "Minimum number of standard cells in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_MAX_MACRO": {
+    "description": "Maximum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_MIN_MACRO": {
+    "description": "Minimum number of macros in a cluster. If unset, rtl_macro_placer will calculate a value based on the design attributes.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_MIN_AR": {
+    "description": "Specifies the minimum aspect ratio (height/width).\n",
+    "default": 0.33,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_AREA_WT": {
+    "description": "Weight for the area of the current floorplan.\n",
+    "default": 0.1,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_WIRELENGTH_WT": {
+    "description": "Weight for half-perimiter wirelength.\n",
+    "default": 100.0,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_OUTLINE_WT": {
+    "description": "Weight for violating the fixed outline constraint, meaning that all clusters should be placed within the shape of their parent cluster.\n",
+    "default": 100.0,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_BOUNDARY_WT": {
+    "description": "Weight for the boundary or how far the hard macro clusters are from boundaries.\n",
+    "default": 50.0,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_NOTCH_WT": {
+    "description": "Weight for the notch, or the existence of dead space that cannot be used for placement and routing.\n",
+    "default": 50.0,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_RPT_DIR": {
+    "description": "Path to the directory where reports are saved.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_FENCE_LX": {
+    "description": "Defines the lower left X coordinate for the global fence bounding box in microns.\n",
+    "default": 0.0,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_FENCE_LY": {
+    "description": "Defines the lower left Y coordinate for the global fence bounding box in microns.\n",
+    "default": 0.0,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_FENCE_UX": {
+    "description": "Defines the upper right X coordinate for the global fence bounding box in microns.\n",
+    "default": 0.0,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_FENCE_UY": {
+    "description": "Defines the upper right Y coordinate for the global fence bounding box in microns.\n",
+    "default": 0.0,
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "RTLMP_ARGS": {
+    "description": "Overrides all other RTL macro placer arguments.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "GDS_ALLOW_EMPTY": {
+    "description": "Single regular expression of module names of macros that have no .gds file\n",
+    "stages": [
+      "final"
+    ]
+  },
+  "RUN_SCRIPT": {
+    "description": "Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.\n"
+  },
+  "RUN_LOG_NAME_STEM": {
+    "description": "Stem of the log file name, the log file will be named `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.\n",
+    "default": "run"
+  },
+  "YOSYS_FLAGS": {
+    "description": "Flags to pass to yosys.\n",
+    "stages": [
+      "synth"
+    ],
+    "default": "-v 3"
+  },
+  "FOOTPRINT": {
+    "description": "Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "FOOTPRINT_TCL": {
+    "description": "Specifies a Tcl script with custom footprint-related commands for floorplan setup.\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "FLOW_VARIANT": {
+    "description": "Flow variant to use, used in the flow variant directory name.\n",
+    "default": "base"
+  },
+  "RULES_JSON": {
+    "description": "json files with the metrics baseline regression rules. In the ORFS Makefile, this defaults to $DESIGN_DIR/rules-base.json, but ORFS does not mandate the users source directory layout and this can be placed elsewhere when the user sets up an ORFS config.mk or from bazel-orfs.\n",
+    "stages": [
+      "test"
+    ]
+  },
+  "SKIP_ANTENNA_REPAIR_PRE_GRT": {
+    "default": 0,
+    "description": "Skips antenna repair pre-global routing.\n",
+    "stages": [
+      "grt"
+    ]
+  },
+  "SKIP_ANTENNA_REPAIR_POST_DRT": {
+    "default": 0,
+    "description": "Skips antenna repair post-detailed routing.\n",
+    "stages": [
+      "route"
+    ]
+  },
+  "SKIP_ANTENNA_REPAIR": {
+    "default": 0,
+    "description": "Skips antenna repair entirely.\n",
+    "stages": [
+      "grt"
+    ]
+  },
+  "SKIP_DETAILED_ROUTE": {
+    "default": 0,
+    "description": "Skips detailed route.\n",
+    "stages": [
+      "route",
+      "final"
+    ]
+  },
+  "MAX_REPAIR_ANTENNAS_ITER_DRT": {
+    "default": 5,
+    "description": "Defines the maximum number of iterations post-detailed routing repair antennas will run.\n",
+    "stages": [
+      "route"
+    ]
+  },
+  "MAX_REPAIR_ANTENNAS_ITER_GRT": {
+    "default": 5,
+    "description": "Defines the maximum number of iterations post global routing repair antennas will run.\n",
+    "stages": [
+      "grt"
+    ]
+  },
+  "OPENROAD_HIERARCHICAL": {
+    "description": "Feature toggle to enable to run OpenROAD in hierarchical mode, otherwise considered flat. Will eventually be the default and this option will be retired.\n",
+    "default": 0,
+    "stages": [
+      "All stages"
+    ]
+  },
+  "MAX_REPAIR_TIMING_ITER": {
+    "description": "Maximum number of iterations for repair setup and repair hold.\n",
+    "stages": [
+      "cts",
+      "floorplan",
+      "grt",
+      "place"
+    ]
+  },
+  "NUM_CORES": {
+    "description": "Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers of cores in system as determined by system specific code in Makefile, `nproc` is tried first.\nOpenROAD does not limit itself to this number of cores across OpenROAD running instances, which can lead to overprovisioning in contexts such as bazel-orfs where there could be many routing, or place jobs running at the same time.\n",
+    "stages": [
+      "All stages"
+    ]
+  },
+  "KEEP_VARS": {
+    "description": "Feature toggle to keep intermediate variables during the flow. This is useful for the single-run flow, where all stages of the flow are run in a single OpenROAD instance.\n",
+    "default": 0,
+    "stages": [
+      "All stages"
+    ]
+  },
+  "WRITE_ODB_AND_SDC_EACH_STAGE": {
+    "description": "Save out .sdc and .odb file after each stage, useful to disable when using a single OpenROAD instance to run all stages of the flow.\n",
+    "stages": [
+      "All stages"
+    ],
+    "default": 1
+  },
+  "LEC_CHECK": {
+    "description": "Perform a formal equivalence check between before and after netlists.\nIf this fails, report an issue to OpenROAD.\n",
+    "default": 0,
+    "stages": [
+      "cts"
+    ]
+  },
+  "REMOVE_CELLS_FOR_LEC": {
+    "description": "String patterns directly passed to write_verilog -remove_cells <> for lec checks.\n",
+    "type": "string"
+  },
+  "ASAP7_USE_VT": {
+    "description": "A space separated list of VT options to use with the ASAP7 standard cell library: RVT, LVT, SLVT.\n",
+    "stages": [
+      "All stages"
+    ],
+    "default": "RVT"
+  }
+}

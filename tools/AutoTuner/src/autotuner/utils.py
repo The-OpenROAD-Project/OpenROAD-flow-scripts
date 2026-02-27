@@ -37,7 +37,6 @@ import glob
 import json
 import os
 import re
-import yaml
 import subprocess
 import sys
 import uuid
@@ -217,15 +216,15 @@ def parse_flow_variables(base_dir, platform):
 
 def parse_tunable_variables():
     """
-    Parse the tunable variables from variables.yaml
+    Parse the tunable variables from variables.json
     TODO: Tests.
     """
     cur_path = os.path.dirname(os.path.realpath(__file__))
-    vars_path = os.path.join(cur_path, "../../../../flow/scripts/variables.yaml")
+    vars_path = os.path.join(cur_path, "../../../../flow/scripts/variables.json")
 
-    # Read from variables.yaml and get variables with tunable = 1
+    # Read from variables.json and get variables with tunable = 1
     with open(vars_path) as file:
-        result = yaml.safe_load(file)
+        result = json.load(file)
     variables = {key for key, value in result.items() if value.get("tunable", 0) == 1}
     return variables
 

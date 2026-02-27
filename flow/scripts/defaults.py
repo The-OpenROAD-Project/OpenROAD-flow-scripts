@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
+import json
 import os
-import yaml
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-yaml_path = os.path.join(dir_path, "variables.yaml")
-with open(yaml_path, "r") as file:
-    data = yaml.safe_load(file)
+json_path = os.path.join(dir_path, "variables.json")
+with open(json_path, "r") as file:
+    data = json.load(file)
 
 for key, value in data.items():
     if value.get("default", None) is None:
