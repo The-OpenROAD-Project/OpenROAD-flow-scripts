@@ -8,8 +8,6 @@ set_propagated_clock [all_clocks]
 # Ensure all OR created (rsz/cts) instances are connected
 global_connect
 
-orfs_write_db $::env(RESULTS_DIR)/6_final.odb
-
 # Delete routing obstructions for final DEF
 source $::env(SCRIPTS_DIR)/deleteRoutingObstructions.tcl
 deleteRoutingObstructions
@@ -25,7 +23,7 @@ if {
 } {
   # RCX section
   define_process_corner -ext_model_index 0 X
-  extract_parasitics -ext_model_file $::env(RCX_RULES)
+  log_cmd extract_parasitics -ext_model_file $::env(RCX_RULES)
 
   # Write Spef
   write_spef $::env(RESULTS_DIR)/6_final.spef
@@ -58,6 +56,8 @@ if {
   puts "Falling back to global route-based estimates."
   log_cmd estimate_parasitics -global_routing
 }
+
+orfs_write_db $::env(RESULTS_DIR)/6_final.odb
 
 report_cell_usage
 
