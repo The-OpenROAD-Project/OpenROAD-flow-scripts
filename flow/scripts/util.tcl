@@ -1,3 +1,18 @@
+# Extract cell names from liberty files by parsing "cell(...)" declarations
+proc get_liberty_cell_names { lib_files } {
+  set cell_names [list]
+  foreach lib $lib_files {
+    set fid [open $lib r]
+    while { [gets $fid line] >= 0 } {
+      if { [regexp {^\s*cell\s*\(\s*"?([^")\s]+)"?\s*\)} $line -> cell_name] } {
+        lappend cell_names $cell_name
+      }
+    }
+    close $fid
+  }
+  return $cell_names
+}
+
 proc log_cmd { cmd args } {
   # log the command, escape arguments with spaces
   set log_cmd "$cmd[join [lmap arg $args { format " %s" [expr { [string match {* *} $arg] ? "\"$arg\"" : "$arg" }] }] ""]" ;# tclint-disable-line line-length
