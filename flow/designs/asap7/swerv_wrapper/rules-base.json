@@ -64,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 1711340,
+        "value": 1660921,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -80,11 +80,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -160.0,
+        "value": -87.5,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -12900.0,
+        "value": -367.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
