@@ -10,6 +10,21 @@ if [ $EUID -ne 0 ]; then
   exit 1
 fi
 
+BAZEL_ARG=""
+for arg in "$@"; do
+  case "${arg}" in
+    --bazel|-bazel)
+      BAZEL_ARG="-bazel"
+      ;;
+    *)
+      echo "unknown option: ${arg}" >&2
+      echo "Usage: $0 [--bazel]"
+      echo "  --bazel  Skip OpenROAD build dependencies (use when building OpenROAD with Bazel)"
+      exit 1
+      ;;
+  esac
+done
+
 tmpfile=$(mktemp)
 # any error messages from this command will stand out
 # more clearly when run as a separate command rather than
@@ -26,5 +41,5 @@ elif grep -q "^+" "$tmpfile"; then
   exit 1
 fi
 
-"$DIR/etc/DependencyInstaller.sh" -base
-sudo -u $SUDO_USER "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
+"$DIR/etc/DependencyInstaller.sh" -base ${BAZEL_ARG}
+sudo -u $SUDO_USER "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies" ${BAZEL_ARG}

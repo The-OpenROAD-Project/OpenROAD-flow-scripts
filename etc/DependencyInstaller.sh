@@ -26,6 +26,59 @@ _installORDependencies() {
     ./tools/OpenROAD/etc/DependencyInstaller.sh ${OR_INSTALLER_ARGS} -yosys-ver="${YOSYS_VER}"
 }
 
+# Install system packages for building Yosys/slang (via OR's -base),
+# then build Yosys/eqy/sby directly, skipping OpenROAD-specific build
+# dependencies (boost, swig, spdlog, eigen, or-tools, etc.) which Bazel
+# manages.
+_installBazelFlowDependencies() {
+    if [[ ${YOSYS_VER} == "" ]]; then
+        YOSYS_VER=v$(grep 'yosys_ver =' tools/yosys/docs/source/conf.py | awk -F'"' '{print $2}')
+    fi
+    # OR's -base installs system packages (build-essential, bison, flex,
+    # tcl-dev, libreadline-dev, libffi-dev, pkg-config, python3-dev, cmake,
+    # etc.) needed for building Yosys and yosys-slang.
+    if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+        ./tools/OpenROAD/etc/DependencyInstaller.sh -base
+    fi
+    # Build Yosys/eqy/sby without the full -common pass that would also
+    # compile boost, swig, spdlog, eigen, gtest, or-tools, abseil, etc.
+    if [[ "${option}" == "common" || "${option}" == "all" ]]; then
+        local yosys_prefix=${PREFIX:-"/usr/local"}
+        local buildDir
+        buildDir=$(mktemp -d /tmp/orfs-yosys-build-XXXXXX)
+
+        echo "Building Yosys ${YOSYS_VER} ..."
+        (
+            cd "${buildDir}"
+            git clone --depth=1 -b "${YOSYS_VER}" --recursive https://github.com/YosysHQ/yosys
+            cd yosys
+            make -j "${numThreads}" PREFIX="${yosys_prefix}" ABC_ARCHFLAGS=-Wno-register
+            make install PREFIX="${yosys_prefix}"
+        )
+
+        echo "Building eqy ${YOSYS_VER} ..."
+        (
+            cd "${buildDir}"
+            git clone --depth=1 -b "${YOSYS_VER}" https://github.com/YosysHQ/eqy
+            cd eqy
+            export PATH="${yosys_prefix}/bin:${PATH}"
+            make -j "${numThreads}" PREFIX="${yosys_prefix}"
+            make install PREFIX="${yosys_prefix}"
+        )
+
+        echo "Building sby ${YOSYS_VER} ..."
+        (
+            cd "${buildDir}"
+            git clone --depth=1 -b "${YOSYS_VER}" --recursive https://github.com/YosysHQ/sby
+            cd sby
+            export PATH="${yosys_prefix}/bin:${PATH}"
+            make -j "${numThreads}" PREFIX="${yosys_prefix}" install
+        )
+
+        rm -rf "${buildDir}"
+    fi
+}
+
 _installPipCommon() {
     if [[ -f /opt/rh/rh-python38/enable ]]; then
         set +u
@@ -150,41 +203,51 @@ _installKlayoutDependenciesUbuntuAarch64() {
 _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
+
+    # Flow-level packages needed regardless of how OpenROAD is built
     apt-get -y install --no-install-recommends \
-        bison \
         curl \
-        flex \
-        help2man \
-        libfl-dev \
-        libfl2 \
-        libgit2-dev \
-        libgoogle-perftools-dev \
-        libqt5multimediawidgets5 \
-        libqt5opengl5 \
-        libqt5svg5-dev \
-        libqt5xmlpatterns5-dev \
-        libz-dev \
         perl \
         python3-pip \
         python3-venv \
-        qtmultimedia5-dev \
-        qttools5-dev \
         ruby \
         ruby-dev \
-        time \
-        zlib1g \
-        zlib1g-dev
+        time
 
-    packages=()
-    # Choose libstdc++ version
-    if _versionCompare $1 -ge 25.04; then
-        packages+=("libstdc++-15-dev")
-    elif _versionCompare $1 -ge 24.04; then
-        packages+=("libstdc++-14-dev")
-    elif _versionCompare $1 -ge 22.10; then
-        packages+=("libstdc++-12-dev")
+    if [[ "${BAZEL}" == "no" ]]; then
+        # Additional packages only needed when building OpenROAD from source
+        # (not with Bazel). OR's -base already installs core build tools
+        # (build-essential, bison, flex, etc.). This list covers ORFS-specific
+        # extras like KLayout Qt deps and profiling.
+        apt-get -y install --no-install-recommends \
+            bison \
+            flex \
+            help2man \
+            libfl-dev \
+            libfl2 \
+            libgit2-dev \
+            libgoogle-perftools-dev \
+            libqt5multimediawidgets5 \
+            libqt5opengl5 \
+            libqt5svg5-dev \
+            libqt5xmlpatterns5-dev \
+            libz-dev \
+            qtmultimedia5-dev \
+            qttools5-dev \
+            zlib1g \
+            zlib1g-dev
+
+        packages=()
+        # Choose libstdc++ version
+        if _versionCompare $1 -ge 25.04; then
+            packages+=("libstdc++-15-dev")
+        elif _versionCompare $1 -ge 24.04; then
+            packages+=("libstdc++-14-dev")
+        elif _versionCompare $1 -ge 22.10; then
+            packages+=("libstdc++-12-dev")
+        fi
+        apt-get install -y --no-install-recommends ${packages[@]}
     fi
-    apt-get install -y --no-install-recommends ${packages[@]}
 
     # install KLayout
     if  [[ $1 == "rodete" ]]; then
@@ -316,6 +379,13 @@ Usage: $0 [-all|-base|-common] [-<ARGS>]
        $0 -constant-build-dir
                                 #  Use constant build directory, instead of
                                 #    random one.
+       $0 -bazel
+                                # Skip OpenROAD build dependencies. Only
+                                #    install flow-level dependencies
+                                #    (klayout, ruby, docker, pip packages).
+                                #    Use this when building OpenROAD with
+                                #    Bazel, which manages its own build
+                                #    dependencies.
 EOF
     exit "${1:-1}"
 }
@@ -331,6 +401,7 @@ option="none"
 isLocal="false"
 constantBuildDir="false"
 CI="no"
+BAZEL="no"
 
 # default values, can be overwritten by cmdline args
 while [ "$#" -gt 0 ]; do
@@ -373,6 +444,9 @@ while [ "$#" -gt 0 ]; do
         -constant-build-dir)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
             constantBuildDir="true"
+            ;;
+        -bazel)
+            BAZEL="yes"
             ;;
         -threads=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
@@ -431,8 +505,12 @@ case "${os}" in
         fi
         
         # First install OpenROAD base
-        _installORDependencies
-        
+        if [[ "${BAZEL}" == "yes" ]]; then
+            _installBazelFlowDependencies
+        else
+            _installORDependencies
+        fi
+
         # Determine between EL7 vs EL8/9, since yum vs dnf should be used, and different Klayout builds exist
         case "${elVersion}" in
             "7")
@@ -468,7 +546,11 @@ case "${os}" in
             echo "Installing CI Tools"
             _installCI
         fi
-        _installORDependencies
+        if [[ "${BAZEL}" == "yes" ]]; then
+            _installBazelFlowDependencies
+        else
+            _installORDependencies
+        fi
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installUbuntuPackages "${version}"
             _installUbuntuCleanUp
@@ -487,7 +569,11 @@ case "${os}" in
         if [[ ${CI} == "yes" ]]; then
             echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
         fi
-        _installORDependencies
+        if [[ "${BAZEL}" == "yes" ]]; then
+            _installBazelFlowDependencies
+        else
+            _installORDependencies
+        fi
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
             _installDarwinPackages
         fi

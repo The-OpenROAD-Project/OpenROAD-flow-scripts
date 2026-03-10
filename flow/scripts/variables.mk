@@ -107,7 +107,10 @@ export OPENROAD_GUI_CMD = $(OPENROAD_EXE) -gui $(OR_ARGS)
 ifneq (${IN_NIX_SHELL},)
   YOSYS_EXE ?= $(shell command -v yosys)
 else
-  YOSYS_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+  # Check build_openroad.sh location first, then Bazel setup-orfs location
+  _YOSYS_BUILD := $(abspath $(FLOW_HOME)/../tools/install/yosys/bin/yosys)
+  _YOSYS_DEPS := $(abspath $(FLOW_HOME)/../dependencies/bin/yosys)
+  YOSYS_EXE ?= $(if $(shell test -x $(_YOSYS_BUILD) && echo y),$(_YOSYS_BUILD),$(_YOSYS_DEPS))
 endif
 export YOSYS_EXE
 
