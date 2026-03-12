@@ -57,6 +57,7 @@ flow/*.opennet
 flow/platforms/*
 !flow/platforms/asap7
 !flow/platforms/ihp-sg13g2
+!flow/platforms/ihp-sg13cmos5l
 !flow/platforms/nangate45
 !flow/platforms/sky130hd
 !flow/platforms/sky130hs
