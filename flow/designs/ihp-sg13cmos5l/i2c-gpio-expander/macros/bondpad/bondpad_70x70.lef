@@ -1,0 +1,35 @@
+VERSION 5.7 ;
+NOWIREEXTENSIONATPIN ON ;
+DIVIDERCHAR "/" ;
+BUSBITCHARS "[]" ;
+
+MACRO bondpad_70x70
+  CLASS COVER ;
+  FOREIGN bondpad_70x70 ;
+  ORIGIN 0.0 0.0  ;
+  SIZE 70.000 BY 70.000 ;
+
+  PIN PAD
+    DIRECTION INOUT ;
+    USE SIGNAL ;
+    PORT
+      LAYER TopMetal1 ;
+        RECT 0.000 0.000 70.000 70.000 ;
+    END
+  END PAD
+
+  OBS
+    LAYER Metal1 ;
+      RECT 2.500 2.500 67.500 67.500 ;
+    LAYER Metal2 ;
+      RECT 2.000 2.000 68.000 68.000 ;
+    LAYER Metal3 ;
+      RECT 1.500 1.500 68.500 68.500 ;
+    LAYER Metal4 ;
+      RECT 1.000 1.000 69.000 69.000 ;
+    LAYER TopMetal1 ;
+      RECT 0.000 0.000 70.000 70.000 ;
+  END
+END bondpad_70x70
+
+END LIBRARY
