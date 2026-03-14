@@ -1,6 +1,7 @@
 utl::set_metrics_stage "floorplan__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables synth
+dump_stage_variables synth
 load_design 1_2_yosys.v 1_2_yosys.sdc
 source_step_tcl PRE SYNTH
 

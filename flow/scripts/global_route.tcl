@@ -1,6 +1,7 @@
 utl::set_metrics_stage "globalroute__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables grt
+dump_stage_variables grt
 load_design 4_cts.odb 4_cts.sdc
 
 # This proc is here to allow us to use 'return' to return early from this
