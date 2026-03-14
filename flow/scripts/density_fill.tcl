@@ -1,5 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables final
+dump_stage_variables final
 load_design 5_route.odb 5_route.sdc
 source_step_tcl PRE DENSITY_FILL
 

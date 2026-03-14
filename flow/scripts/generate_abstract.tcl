@@ -1,5 +1,6 @@
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables generate_abstract
+dump_stage_variables generate_abstract
 
 set stem [expr {
   [env_var_exists_and_non_empty ABSTRACT_SOURCE] ?

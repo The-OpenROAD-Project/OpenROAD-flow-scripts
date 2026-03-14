@@ -13,6 +13,7 @@ if { $::env(SKIP_DETAILED_ROUTE) } {
 }
 
 erase_non_stage_variables route
+dump_stage_variables route
 set_propagated_clock [all_clocks]
 
 set additional_args ""

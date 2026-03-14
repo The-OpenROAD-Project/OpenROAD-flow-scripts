@@ -167,6 +167,11 @@ proc erase_non_stage_variables { stage_name } {
   }
 }
 
+# Log stage variables to help humans and bots debug build issues.
+proc dump_stage_variables { stage_name } {
+  puts [exec $::env(SCRIPTS_DIR)/stage_variables.py $stage_name]
+}
+
 set global_route_congestion_report $::env(REPORTS_DIR)/congestion.rpt
 
 proc place_density_with_lb_addon { } {
