@@ -1194,6 +1194,164 @@ class TestMakeIntegration:
         )
 
 
+ALL_PLATFORMS = ["nangate45", "sky130hd", "sky130hs", "gf180", "ihp-sg13g2", "asap7"]
+
+
+class TestUnexpandedOutput:
+    """Verify config.py output uses $(PLATFORM_DIR) and $(PLATFORM) instead of absolute paths.
+
+    bazel-orfs runs in a sandbox where platform files live at different paths.
+    config.py must output symbolic references so consumers can expand on their end:
+    - Make: $(eval) expands $(PLATFORM_DIR) and $(PLATFORM)
+    - bazel-orfs: Python substitution when the Bazel rule executes
+    """
+
+    @pytest.fixture(autouse=True)
+    def _clean_env(self, monkeypatch):
+        for v in [
+            "ADDITIONAL_LIBS",
+            "ADDITIONAL_GDS",
+            "ADDITIONAL_LEFS",
+            "ADDITIONAL_SLOW_LIBS",
+            "ADDITIONAL_FAST_LIBS",
+            "ADDITIONAL_TYP_LIBS",
+            "BC_ADDITIONAL_LIBS",
+            "BLOCKS",
+            "CORNER",
+            "ASAP7_USE_VT",
+            "LIB_MODEL",
+            "CLUSTER_FLOPS",
+            "FOOTPRINT_TCL",
+            "LOAD_ADDITIONAL_FILES",
+            "TRACK_OPTION",
+            "METAL_OPTION",
+            "KVALUE",
+            "POWER_OPTION",
+            "SDC_FILE",
+            "ABC_CLOCK_PERIOD_IN_PS",
+            "DONT_USE_CELLS",
+        ]:
+            monkeypatch.delenv(v, raising=False)
+
+    @pytest.mark.parametrize("platform", ALL_PLATFORMS)
+    def test_json_no_absolute_platform_dir(self, platform, monkeypatch, tmp_path):
+        """JSON output must not contain the absolute platform_dir path."""
+        pd = os.path.abspath(os.path.join(FLOW_DIR, "platforms", platform))
+        monkeypatch.setenv("PLATFORM_DIR", pd)
+        monkeypatch.setenv("PLATFORM", platform)
+
+        mod = _load_config_module(platform)
+        cfg = mod.get_config()
+
+        # Capture JSON output
+        import io
+
+        buf = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = buf
+        cfg.output_json()
+        sys.stdout = old_stdout
+        data = json.loads(buf.getvalue())
+
+        for key, value in data.items():
+            assert pd not in value, (
+                f"{platform}: {key} contains absolute path {pd!r} "
+                f"instead of $(PLATFORM_DIR). Value: {value!r}"
+            )
+
+    @pytest.mark.parametrize("platform", ALL_PLATFORMS)
+    def test_make_no_absolute_platform_dir(self, platform, monkeypatch):
+        """Make output must not contain the absolute platform_dir path."""
+        pd = os.path.abspath(os.path.join(FLOW_DIR, "platforms", platform))
+        monkeypatch.setenv("PLATFORM_DIR", pd)
+        monkeypatch.setenv("PLATFORM", platform)
+
+        mod = _load_config_module(platform)
+        cfg = mod.get_config()
+
+        import io
+
+        buf = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = buf
+        cfg.output_make()
+        sys.stdout = old_stdout
+        output = buf.getvalue()
+
+        assert pd not in output, (
+            f"{platform}: Make output contains absolute path {pd!r} "
+            f"instead of $(PLATFORM_DIR)"
+        )
+
+    @pytest.mark.parametrize("platform", ["nangate45", "sky130hd", "sky130hs", "gf180"])
+    def test_glob_results_unexpanded(self, platform, monkeypatch):
+        """GDS_FILES from glob must use $(PLATFORM_DIR), not absolute paths."""
+        pd = os.path.abspath(os.path.join(FLOW_DIR, "platforms", platform))
+        monkeypatch.setenv("PLATFORM_DIR", pd)
+        monkeypatch.setenv("PLATFORM", platform)
+
+        mod = _load_config_module(platform)
+        cfg = mod.get_config()
+
+        import io
+
+        buf = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = buf
+        cfg.output_json()
+        sys.stdout = old_stdout
+        data = json.loads(buf.getvalue())
+
+        gds = data.get("GDS_FILES", "")
+        assert gds, f"{platform}: GDS_FILES is empty"
+        assert (
+            "$(PLATFORM_DIR)" in gds
+        ), f"{platform}: GDS_FILES glob result missing $(PLATFORM_DIR): {gds!r}"
+        assert pd not in gds, f"{platform}: GDS_FILES contains absolute path: {gds!r}"
+
+    @pytest.mark.parametrize(
+        "platform,keys",
+        [
+            (
+                "sky130hd",
+                [
+                    "KLAYOUT_TECH_FILE",
+                    "KLAYOUT_DRC_FILE",
+                    "CDL_FILE",
+                    "KLAYOUT_LVS_FILE",
+                ],
+            ),
+            ("sky130hs", ["KLAYOUT_TECH_FILE"]),
+        ],
+    )
+    def test_platform_name_unexpanded(self, platform, keys, monkeypatch):
+        """Variables using $(PLATFORM) in filenames must not expand it."""
+        pd = os.path.abspath(os.path.join(FLOW_DIR, "platforms", platform))
+        monkeypatch.setenv("PLATFORM_DIR", pd)
+        monkeypatch.setenv("PLATFORM", platform)
+
+        mod = _load_config_module(platform)
+        cfg = mod.get_config()
+
+        import io
+
+        buf = io.StringIO()
+        old_stdout = sys.stdout
+        sys.stdout = buf
+        cfg.output_json()
+        sys.stdout = old_stdout
+        data = json.loads(buf.getvalue())
+
+        for key in keys:
+            value = data.get(key, "")
+            assert (
+                "$(PLATFORM)" in value
+            ), f"{platform}: {key} should contain $(PLATFORM), got: {value!r}"
+            assert (
+                f"/{platform}." not in value
+            ), f"{platform}: {key} contains expanded platform name: {value!r}"
+
+
 if __name__ == "__main__":
     try:
         import pytest
