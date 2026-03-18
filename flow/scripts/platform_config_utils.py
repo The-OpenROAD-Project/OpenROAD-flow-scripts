@@ -31,6 +31,9 @@ class PlatformConfig:
                     os.path.abspath(sys._getframe(1).f_globals["__file__"])
                 ),
             )
+        self.platform = os.environ.get(
+            "PLATFORM", os.path.basename(self.platform_dir)
+        )
         self._vars = []  # ordered list of (key, value, conditional)
         self._index = {}  # key -> index in _vars for fast lookup
 
@@ -85,6 +88,29 @@ class PlatformConfig:
         """glob.glob(pattern) -- replaces $(wildcard ...)"""
         return " ".join(glob.glob(pattern))
 
+    def _unexpand(self, value):
+        """Replace expanded paths with Make variable references.
+
+        Consumers expand these on their end:
+        - Make: $(eval) expands $(PLATFORM_DIR) and $(PLATFORM)
+        - bazel-orfs: Python substitution when the rule executes
+        """
+        # Replace platform_dir first (longer, more specific)
+        value = value.replace(self.platform_dir, "$(PLATFORM_DIR)")
+        # Replace platform name within $(PLATFORM_DIR)/... paths only
+        # e.g. $(PLATFORM_DIR)/sky130hd.lyt -> $(PLATFORM_DIR)/$(PLATFORM).lyt
+        if self.platform:
+            value = value.replace(
+                "$(PLATFORM_DIR)/" + self.platform,
+                "$(PLATFORM_DIR)/$(PLATFORM)",
+            )
+            # Also in subdirectories: $(PLATFORM_DIR)/drc/sky130hd.lydrc
+            value = value.replace(
+                "/" + self.platform + ".",
+                "/$(PLATFORM).",
+            )
+        return value
+
     def output_make(self):
         """Print Make-compatible output lines.
 
@@ -93,6 +119,7 @@ class PlatformConfig:
         """
         for key, value, conditional in self._vars:
             op = "?=" if conditional else "="
+            value = self._unexpand(value)
             encoded = value.replace(" ", "__SPACE__")
             print(f"export {key}{op}{encoded}")
 
@@ -100,7 +127,7 @@ class PlatformConfig:
         """Print flat JSON dict for bazel-orfs or other consumers."""
         result = {}
         for key, value, _conditional in self._vars:
-            result[key] = value
+            result[key] = self._unexpand(value)
         json.dump(result, sys.stdout, indent=2)
         print()  # trailing newline
 
