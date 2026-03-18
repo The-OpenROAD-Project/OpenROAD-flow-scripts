@@ -1195,4 +1195,10 @@ class TestMakeIntegration:
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-v", "-m", "not integration"])
+    try:
+        import pytest
+
+        pytest.main([__file__, "-v", "-m", "not integration"])
+    except ImportError:
+        print("pytest not installed, skipping tests")
+        pass
