@@ -31,9 +31,7 @@ class PlatformConfig:
                     os.path.abspath(sys._getframe(1).f_globals["__file__"])
                 ),
             )
-        self.platform = os.environ.get(
-            "PLATFORM", os.path.basename(self.platform_dir)
-        )
+        self.platform = os.environ.get("PLATFORM", os.path.basename(self.platform_dir))
         self._vars = []  # ordered list of (key, value, conditional)
         self._index = {}  # key -> index in _vars for fast lookup
 
