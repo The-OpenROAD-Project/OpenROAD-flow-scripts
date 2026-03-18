@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 463729.45,
+        "value": 463000.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -28,11 +28,11 @@
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -0.888,
+        "value": -0.781,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -145.0,
+        "value": -110.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -44,7 +44,7 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 122,
+        "value": 100,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -250.0,
+        "value": -185.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -76,7 +76,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 125,
+        "value": 116,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
@@ -84,7 +84,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -128.0,
+        "value": -90.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
