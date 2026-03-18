@@ -37,6 +37,10 @@ else
   $(error [ERROR][FLOW] Platform '$(PLATFORM)' not found.)
 endif
 
+# PYTHON_EXE must be defined before including config.mk, as
+# config.mk may use $(shell $(PYTHON_EXE) ...) to generate variables.
+export PYTHON_EXE ?= $(shell command -v python3)
+
 include $(PLATFORM_DIR)/config.mk
 
 # __SPACE__ is a workaround for whitespace hell in "foreach"; there
@@ -70,7 +74,6 @@ export NUM_CORES
 
 #-------------------------------------------------------------------------------
 # setup all commands used within this flow
-export PYTHON_EXE ?= $(shell command -v python3)
 
 export TIME_BIN   ?= env time
 TIME_CMD = $(TIME_BIN) -f 'Elapsed time: %E[h:]min:sec. CPU time: user %U sys %S (%P). Peak memory: %MKB.'
