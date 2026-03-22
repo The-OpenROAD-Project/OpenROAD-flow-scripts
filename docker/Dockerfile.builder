@@ -16,8 +16,8 @@ COPY --link build_openroad.sh build_openroad.sh
 FROM orfs-base AS orfs-builder-base
 
 # Add compiler wrapper scripts for reproducible builds
-COPY --link docker/setup_compiler_wrappers.sh /tmp/
-RUN /tmp/setup_compiler_wrappers.sh && rm /tmp/setup_compiler_wrappers.sh
+COPY --link etc/setup_compiler_wrappers.sh /tmp/
+RUN sh /tmp/setup_compiler_wrappers.sh && rm /tmp/setup_compiler_wrappers.sh
 
 # Prepend wrapper directory to PATH so they override system compilers
 ENV PATH="/usr/local/bin/wrapped-cc:$PATH"

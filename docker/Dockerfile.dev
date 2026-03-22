@@ -17,7 +17,7 @@ ARG constantBuildDir="-constant-build-dir"
 
 # add compiler wrapper scripts for reproducible builds
 COPY setup_compiler_wrappers.sh /tmp/
-RUN /tmp/setup_compiler_wrappers.sh && rm /tmp/setup_compiler_wrappers.sh
+RUN sh /tmp/setup_compiler_wrappers.sh && rm /tmp/setup_compiler_wrappers.sh
 
 ENV PATH="/usr/local/bin/wrapped-cc:$PATH"
 
