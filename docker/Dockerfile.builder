@@ -15,15 +15,9 @@ COPY --link build_openroad.sh build_openroad.sh
 
 FROM orfs-base AS orfs-builder-base
 
-# Inject compiler wrapper scripts that append the macros
-RUN mkdir -p /usr/local/bin/wrapped-cc && \
-    echo '#!/bin/sh' > /usr/local/bin/wrapped-cc/gcc && \
-    echo 'exec /usr/bin/gcc -D__TIME__="\"0\"" -D__DATE__="\"0\"" -D__TIMESTAMP__="\"0\"" -Wno-builtin-macro-redefined "$@"' >> /usr/local/bin/wrapped-cc/gcc && \
-    chmod +x /usr/local/bin/wrapped-cc/gcc && \
-    ln -sf /usr/local/bin/wrapped-cc/gcc /usr/local/bin/wrapped-cc/cc && \
-    echo '#!/bin/sh' > /usr/local/bin/wrapped-cc/g++ && \
-    echo 'exec /usr/bin/g++ -D__TIME__="\"0\"" -D__DATE__="\"0\"" -D__TIMESTAMP__="\"0\"" -Wno-builtin-macro-redefined "$@"' >> /usr/local/bin/wrapped-cc/g++ && \
-    chmod +x /usr/local/bin/wrapped-cc/g++
+# Add compiler wrapper scripts for reproducible builds
+COPY --link docker/setup_compiler_wrappers.sh /tmp/
+RUN /tmp/setup_compiler_wrappers.sh && rm /tmp/setup_compiler_wrappers.sh
 
 # Prepend wrapper directory to PATH so they override system compilers
 ENV PATH="/usr/local/bin/wrapped-cc:$PATH"

@@ -67,7 +67,7 @@ Options:
     -n, --nice              Nice all jobs. Use all cpus unless --threads is
                             also given, then use N threads.
 
-    --yosys-args-overwrite  Do not use default flags set by this scrip during
+    --yosys-args-overwrite  Do not use default flags set by this script during
                             Yosys compilation.
 
     --yosys-args STRING     Additional compilation flags for Yosys compilation.
@@ -76,7 +76,7 @@ Options:
                             to the Verific source folder.
 
     --openroad-args-overwrite
-                            Do not use default flags set by this scrip during
+                            Do not use default flags set by this script during
                             OpenROAD app compilation.
 
     --openroad-args STRING  Additional compilation flags for OpenROAD app
