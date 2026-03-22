@@ -25,7 +25,11 @@ if grep -q "^-" "$tmpfile"; then
   if [[ "$OSTYPE" == "darwin"* ]]; then
     git submodule update --init --recursive
   else
-    sudo -u $SUDO_USER git submodule update --init --recursive
+    if [[ -n "${SUDO_USER:-}" ]]; then
+      sudo -u "$SUDO_USER" git submodule update --init --recursive
+    else
+      git submodule update --init --recursive
+    fi
   fi
 elif grep -q "^+" "$tmpfile"; then
   # Make it easy for users who are not hacking ORFS to do the right thing,
@@ -39,5 +43,9 @@ fi
 if [[ "$OSTYPE" == "darwin"* ]]; then
   "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
 else
-  sudo -u $SUDO_USER "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
+  if [[ -n "${SUDO_USER:-}" ]]; then
+    sudo -u "$SUDO_USER" "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
+  else
+    "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
+  fi
 fi
