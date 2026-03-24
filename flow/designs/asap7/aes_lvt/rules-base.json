@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 1920.63,
+        "value": 1910.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,7 +8,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 1978,
+        "value": 1954,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -96,7 +96,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 2017,
+        "value": 1992,
         "compare": "<="
     }
 }
