@@ -1,0 +1,31 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+py_library(
+    name = "config_mk_parser_lib",
+    srcs = ["config_mk_parser.py"],
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
+    name = "config_mk_parser",
+    srcs = ["config_mk_parser.py"],
+    visibility = ["//visibility:public"],
+)
+
+py_binary(
+    name = "config_mk_lint",
+    srcs = ["config_mk_parser.py"],
+    args = [
+        "--lint",
+        "--all",
+        "flow/designs",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "config_mk_parser_test",
+    srcs = ["config_mk_parser_test.py"],
+    data = glob(["../flow/designs/**/config.mk"]) + glob(["../flow/designs/src/**/*.mk"]),
+    deps = [":config_mk_parser_lib"],
+)
