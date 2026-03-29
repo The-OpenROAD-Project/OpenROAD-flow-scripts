@@ -1,60 +1,119 @@
 # OpenROAD-flow-scripts and Bazel integration
 
-`bazel-orfs` is a Bazel package containing the definitions and logic governing the build process of ORFS designs.
-The module uses the `openroad/orfs` docker image to extract the flow scripts with dependencies, builds the Bazel environment around them and defines the methods of calling the ORFS Makefiles with selected designs.
+Think in Make, test with Make, get Bazel performance, caching, and parallelism.
 
-## Run examples
+## How it works
 
-`flow/BUILD.bazel` contains definitions for various flows to serve as examples.
+`config.mk` is the canonical DSL for defining ORFS designs. The Bazel integration
+auto-generates `orfs_flow()` targets from these config.mk files using a Python parser,
+so you never need to maintain separate BUILD files for your designs.
 
-It is recommended to run the utility [Bazelisk](https://github.com/bazelbuild/bazelisk) to manage the version of `bazel` installed on the system.
-Details on installation can be found in the `bazel-orfs` [README](https://github.com/The-OpenROAD-Project/bazel-orfs?tab=readme-ov-file#requirements)
+```
+config.mk  -->  config_mk_parser.py  -->  orfs_flow() targets  -->  Bazel build
+```
 
-The flow can be ran with the following call structure:
+The `bazel-orfs` package defines the rules that drive the ORFS Makefile-based flow
+through Bazel, giving you:
+
+- **Caching**: unchanged stages are not re-run
+- **Parallelism**: independent designs and stages build concurrently
+- **Reproducibility**: hermetic builds with pinned tool versions
+- **Zero-docker mode**: everything runs from local sources, no Docker image required
+
+## Quick start
+
+Install [Bazelisk](https://github.com/bazelbuild/bazelisk), then:
 
 ```bash
-bazel build <target_name>_<stage_name>
+# Build GCD synthesis for ASAP7
+bazel build @orfs_designs//asap7/gcd:gcd_synth
+
+# Build full RTL-to-GDSII flow
+bazel build //flow/designs/asap7/gcd:gcd_final
+
+# Build for a different PDK
+bazel build //flow/designs/sky130hd/gcd:gcd_final
 ```
 
-For example, to run the stage `final`, along with all the dependent stages, call:
+## Adding a new design
+
+Just create a `config.mk` file in `flow/designs/<platform>/<design>/`:
+
+```makefile
+export PLATFORM = asap7
+export DESIGN_NAME = my_design
+export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NAME)/*.v))
+export SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/constraint.sdc
+export CORE_UTILIZATION = 50
+```
+
+Bazel targets auto-appear at `//flow/designs/<platform>/<design>:<design_name>_<stage>`.
+
+## Incremental caching
+
+Bazel only re-runs stages whose inputs changed. The variable metadata from
+`flow/scripts/variables.yaml` defines which ORFS variables affect which stages.
+
+For example, if you modify only `CORE_UTILIZATION` in
+`flow/designs/asap7/gcd/config.mk`, then:
+
 ```bash
-bazel build gcd_final
+bazel build //flow/designs/asap7/gcd:gcd_place
 ```
 
-Details on usage and defining of the flows are presented in the Usage section of the `bazel-orfs` [README](https://github.com/The-OpenROAD-Project/bazel-orfs?tab=readme-ov-file#usage)
+This re-runs from floorplan onward but **skips synthesis entirely** — because
+`variables.yaml` defines `CORE_UTILIZATION` as only affecting floorplan and
+later stages, not synthesis. The cached synthesis result is reused.
 
-## Dependency version management
+## config.mk DSL
 
-In the flow scipts, the `bazel-orfs` version is defined as
+The config.mk DSL is a restricted subset of Make. Supported features:
 
-```starlark
-bazel_dep(name = "bazel-orfs")
-git_override(
-    module_name = "bazel-orfs",
-    commit = "<Hash of the default bazel-orfs commit>",
-    remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
-)
+| Feature | Example |
+|---------|---------|
+| Variable assignment | `export VAR = value` |
+| Conditional default | `export VAR ?= value` |
+| Clear/immediate | `export VAR :=` |
+| Line continuations | `export FILES = a.v \`<br>`  b.v` |
+| Path variables | `$(DESIGN_HOME)`, `$(PLATFORM)`, `$(DESIGN_NAME)`, `$(DESIGN_NICKNAME)` |
+| Glob patterns | `$(sort $(wildcard $(DESIGN_HOME)/src/$(DESIGN_NAME)/*.v))` |
+| Hierarchical blocks | `export BLOCKS = sub_macro1 sub_macro2` |
+
+Run the linter to check your config.mk for unsupported features:
+
+```bash
+python3 bazel/config_mk_parser.py --lint flow/designs/asap7/gcd/config.mk
 ```
-However, as the referenced documentation shows, the git-based dependency can be overridden with a local repository.
-First, remove the `git_override` call entirely and replace it with a `local_path_override` call following this convention:
+
+## Zero-docker mode
+
+The default configuration uses no Docker image. All tools, scripts, PDKs, and
+flow infrastructure come from the local repository:
+
+- **Scripts**: `//flow:makefile` and `//flow:makefile_yosys`
+- **PDKs**: `//flow:asap7`, `//flow:sky130hd`, etc.
+- **OpenROAD**: built from `tools/OpenROAD/` or system-installed
+
+To switch to a Docker-based configuration, set the `image` attribute:
 
 ```starlark
-local_path_override(
-  module_name = "bazel-orfs",
-  path = "/replace/with/path/to/local/orfs/repository"
-)
-```
-
-`bazel-orfs` sets a default version of the docker image used to create the Bazel environment.
-This selection can be overridden by a following snippet inserted below the `bazel-orfs` declaration and override.
-
-```starlark
-orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
 orfs.default(
-    image = "tag-name",
+    image = "docker.io/openroad/orfs:tag",
     sha256 = "the-hash",
 )
 ```
 
-Substitute `tag-name` with the tag of the version needed and `the-hash` with the digest corresponding to the selected tag (without the `sha256:` prefix).
+## Dependency version management
+
+`bazel-orfs` is referenced in `MODULE.bazel`. To use a local checkout:
+
+```starlark
+local_path_override(
+    module_name = "bazel-orfs",
+    path = "/path/to/local/bazel-orfs",
+)
+```
+
+Details on usage and flow definitions are in the `bazel-orfs`
+[README](https://github.com/The-OpenROAD-Project/bazel-orfs?tab=readme-ov-file#usage).
 
