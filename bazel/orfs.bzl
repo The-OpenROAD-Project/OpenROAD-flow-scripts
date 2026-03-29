@@ -113,6 +113,15 @@ def orfs_design(platform = None, design = None):
             continue
         verilog_files.append(vf)
 
+    # Collect extra data dependencies for VERILOG_INCLUDE_DIRS
+    # Include dir files must be in the sandbox for synthesis to find them
+    extra_data = []
+    include_dirs = config["arguments"].get("VERILOG_INCLUDE_DIRS", "")
+    for inc_dir in include_dirs.replace("\t", " ").split(" "):
+        inc_dir = inc_dir.strip().rstrip("/")
+        if inc_dir:
+            extra_data.append("//" + inc_dir + ":include")
+
     orfs_flow(
         name = name,
         verilog_files = verilog_files,
@@ -120,4 +129,5 @@ def orfs_design(platform = None, design = None):
         arguments = config["arguments"],
         sources = sources,
         macros = macros if macros else [],
+        stage_data = {"synth": extra_data} if extra_data else {},
     )

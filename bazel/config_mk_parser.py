@@ -328,6 +328,10 @@ class ConfigMkParser:
                 ))
                 continue
 
+            # Skip Make recipe lines (tab-indented)
+            if line.startswith("\t"):
+                continue
+
             # Parse export assignments
             self._parse_assignment(stripped, line_num, raw_vars, result, conditional=False)
 
@@ -532,8 +536,8 @@ class ConfigMkParser:
             return [label]
 
         # Handle multi-glob with sort (e.g., cva6 with many $(sort $(wildcard ...)) joined)
-        # Split on whitespace and process each token
-        tokens = resolved.split()
+        # Tokenize preserving $(...) expressions as single units
+        tokens = self._tokenize_make_expr(resolved)
         multi_sort = False
         for token in tokens:
             token = token.strip()
@@ -566,16 +570,52 @@ class ConfigMkParser:
 
         return [resolved]  # Return raw if can't resolve
 
+    @staticmethod
+    def _tokenize_make_expr(value):
+        """Split a Make expression into tokens, preserving $(...) as single units.
+
+        Regular whitespace splitting breaks expressions like
+        $(sort $(wildcard path/*.sv)) into fragments. This tokenizer
+        tracks parenthesis nesting depth so $(...) groups stay intact.
+        """
+        tokens = []
+        current = []
+        depth = 0
+        i = 0
+        while i < len(value):
+            ch = value[i]
+            if ch == '$' and i + 1 < len(value) and value[i + 1] == '(':
+                current.append('$(')
+                depth += 1
+                i += 2
+                continue
+            if ch == '(' and depth > 0:
+                current.append(ch)
+                depth += 1
+            elif ch == ')' and depth > 0:
+                current.append(ch)
+                depth -= 1
+            elif ch in (' ', '\t') and depth == 0:
+                if current:
+                    tokens.append(''.join(current))
+                    current = []
+            else:
+                current.append(ch)
+            i += 1
+        if current:
+            tokens.append(''.join(current))
+        return tokens
+
     def _dir_to_verilog_label(self, dir_path):
         """Convert a directory path to a //flow/designs/src/<name>:verilog label."""
         # Normalize path
         dir_path = dir_path.strip().rstrip("/")
 
         # Check if it's under designs/src/
-        src_match = re.search(r'(?:flow/)?designs/src/([^/]+)(?:/.*)?$', dir_path)
+        src_match = re.search(r'(?:flow/)?designs/src/(.+)$', dir_path)
         if src_match:
-            src_name = src_match.group(1)
-            return f"//flow/designs/src/{src_name}:verilog"
+            rel_path = src_match.group(1)
+            return f"//flow/designs/src/{rel_path}:verilog"
 
         # Check if it's under flow/platforms/ (deprecated)
         plat_match = re.search(r'(?:flow/)?platforms/([^/]+)(/.*)?$', dir_path)
@@ -668,6 +708,19 @@ class ConfigMkParser:
         flow_candidate = os.path.join("flow", include_path)
         if os.path.exists(flow_candidate):
             return flow_candidate
+
+        # Try relative to the flow/ directory derived from base_dir
+        # (handles repo rule context where CWD != repo root)
+        # base_dir is like .../flow/designs/<platform>/<design>
+        # include_path is like designs/src/mock-alu/defaults.mk
+        try:
+            designs_idx = base_dir.rindex("/designs/")
+            flow_dir = base_dir[:designs_idx]
+            flow_rel = os.path.join(flow_dir, include_path)
+            if os.path.exists(flow_rel):
+                return flow_rel
+        except ValueError:
+            pass
 
         return None
 

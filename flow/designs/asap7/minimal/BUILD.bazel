@@ -1,5 +1,1 @@
-load("//bazel:orfs.bzl", "orfs_design")
-
-exports_files(glob(["*"]))
-
-orfs_design()
+# Note! This is a local make use only, not used with Bazel
