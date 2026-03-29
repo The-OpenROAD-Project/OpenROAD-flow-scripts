@@ -34,9 +34,6 @@ filegroup(
 # for scripts/synth.sh steps
 filegroup(
     name = "makefile_yosys",
-    srcs = glob(MAKEFILE_SHARED) + [
-        "merge_lib.py",
-        "preprocessLib.py",
-    ],
+    srcs = glob(MAKEFILE_SHARED),
     visibility = ["//visibility:public"],
 )
