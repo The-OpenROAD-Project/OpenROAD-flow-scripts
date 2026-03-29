@@ -7,10 +7,10 @@ module(
 )
 
 bazel_dep(name = "bazel-orfs")
-
-local_path_override(
+git_override(
     module_name = "bazel-orfs",
-    path = "../bazel-orfs",
+    commit = "2dbd8f0fa9c1f1cc4bf5d52f680b9116fb204219",
+    remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
 )
 
 bazel_dep(name = "rules_python", version = "1.2.0")
@@ -35,16 +35,38 @@ orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
 # Use docker image for yosys/klayout, local files for scripts and PDKs
 orfs.default(
     image = "docker.io/openroad/orfs:26Q1-755-g7a3f3d5eb",
-    sha256 = "933f0179ba7feca829768ab2daebe6c1b8b458bf656ef4becc251887725ac7be",
     makefile = "//flow:makefile",
     makefile_yosys = "//flow:makefile_yosys",
     pdk = "//flow:asap7",
+    sha256 = "933f0179ba7feca829768ab2daebe6c1b8b458bf656ef4becc251887725ac7be",
     variables_yaml = "//flow:scripts/variables.yaml",
 )
 use_repo(orfs, "docker_orfs")
 
+# Uncomment to build OpenROAD from source instead of using the ORFS image.
+# This is useful to test the latest OpenROAD before the ORFS image is updated.
+# See: https://github.com/The-OpenROAD-Project/bazel-orfs/blob/main/docs/openroad.md
+#
+# bazel_dep(name = "openroad")
+# git_override(
+#     module_name = "openroad",
+#     commit = "02507977b328194de770f321d89e3dae9d954a6d",
+#     init_submodules = True,
+#     patch_strip = 1,
+#     patches = ["@bazel-orfs//:openroad-llvm-root-only.patch", "@bazel-orfs//:openroad-visibility.patch"],
+#     remote = "https://github.com/The-OpenROAD-Project/OpenROAD.git",
+# )
+# bazel_dep(name = "qt-bazel")
+# git_override(
+#     module_name = "qt-bazel",
+#     commit = "df022f4ebaa4130713692fffd2f519d49e9d0b97",
+#     remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
+# )
+# bazel_dep(name = "toolchains_llvm", version = "1.5.0")
+
 # Auto-generate orfs_flow() targets from config.mk files
 orfs_designs = use_repo_rule("//bazel:designs.bzl", "orfs_designs")
+
 orfs_designs(
     name = "orfs_designs",
     designs_dir = "//flow/designs:BUILD.bazel",
@@ -57,4 +79,3 @@ orfs_designs(
         "sky130hs",
     ],
 )
-
