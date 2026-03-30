@@ -4,6 +4,7 @@ import sys
 import re
 import os
 
+
 def usage(script):
     print(
         f"Usage: {script} <sweep_name> <output_png> <congestion_file...> <sweep_value...>",
