@@ -4,9 +4,29 @@ import sys
 import re
 import os
 
+def usage(script):
+    print(
+        f"Usage: {script} <sweep_name> <output_png> <congestion_file...> <sweep_value...>",
+        file=sys.stderr,
+    )
+    print(
+        "Provide an even number of trailing arguments split equally between files and values.",
+        file=sys.stderr,
+    )
+
+
+if len(sys.argv) < 5:
+    usage(sys.argv[0])
+    sys.exit(2)
+
 sweep = sys.argv[1]
 output = sys.argv[2]
 remainder = sys.argv[3:]
+if len(remainder) % 2 != 0:
+    print("Error: trailing arguments must be an even count.", file=sys.stderr)
+    usage(sys.argv[0])
+    sys.exit(2)
+
 files = remainder[: len(remainder) // 2]
 values = remainder[len(remainder) // 2 :]
 
