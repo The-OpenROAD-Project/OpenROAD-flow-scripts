@@ -103,9 +103,16 @@ proc read_design_sources { } {
       # Apply top-level parameters
       chparam -set $key $value $::env(DESIGN_NAME)
     }
-
     if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
       error "Non-empty SYNTH_BLACKBOXES unsupported with HDL frontend \"verific\""
+    }
+  } elseif { [env_var_equals SYNTH_HDL_FRONTEND ghdl] } {
+    plugin -i ghdl
+    if { [info exists ::env(VHDL_FILES)] } {
+      for { set i 0 } { $i < [llength $::env(VHDL_FILES)] } { incr i } {
+        exec -- ghdl -a [lindex $::env(VHDL_FILES) $i]
+      }
+      yosys ghdl $::env(DESIGN_NAME)
     }
   } elseif { ![env_var_exists_and_non_empty SYNTH_HDL_FRONTEND] } {
     verilog_defaults -push

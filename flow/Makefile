@@ -44,6 +44,7 @@
 # DESIGN_CONFIG=./designs/sky130hd/chameleon/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/gcd/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/ibex/config.mk
+# DESIGN_CONFIG=./designs/sky130hd/counter/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/jpeg/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/microwatt/config.mk
 # DESIGN_CONFIG=./designs/sky130hd/riscv32i/config.mk
@@ -77,6 +78,7 @@
 # DESIGN_CONFIG=./designs/gf180/uart-blocks/config.mk
 
 #DESIGN_CONFIG=./designs/ihp-sg13g2/aes/config.mk
+#DESIGN_CONFIG=./designs/ihp-sg13g2/counter/config.mk
 #DESIGN_CONFIG=./designs/ihp-sg13g2/ibex/config.mk
 #DESIGN_CONFIG=./designs/ihp-sg13g2/gcd/config.mk
 #DESIGN_CONFIG=./designs/ihp-sg13g2/spi/config.mk
