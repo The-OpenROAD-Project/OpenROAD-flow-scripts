@@ -137,7 +137,7 @@ configuration file.
 | <a name="DPO_MAX_DISPLACEMENT"></a>DPO_MAX_DISPLACEMENT| Specifies how far an instance can be moved when optimizing.| 5 1|
 | <a name="EARLY_SIZING_CAP_RATIO"></a>EARLY_SIZING_CAP_RATIO| Ratio between the input pin capacitance and the output pin load during initial gate sizing.| |
 | <a name="ENABLE_DPO"></a>ENABLE_DPO| Enable detail placement with improve_placement feature.| 1|
-| <a name="EQUIVALENCE_CHECK"></a>EQUIVALENCE_CHECK| Enable running equivalence checks to verify logical correctness of repair_timing.| 0|
+| <a name="EQUIVALENCE_CHECK"></a>EQUIVALENCE_CHECK| Enable writing equivalence check files to verify logical correctness of repair_timing. Set RUN_EQY to actually run the eqy tool.| 0|
 | <a name="FASTROUTE_TCL"></a>FASTROUTE_TCL| Specifies a Tcl script with commands to run before FastRoute.| |
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
 | <a name="FILL_CONFIG"></a>FILL_CONFIG| JSON rule file for metal fill during chip finishing.| |
@@ -253,6 +253,7 @@ configuration file.
 | <a name="RTLMP_RPT_DIR"></a>RTLMP_RPT_DIR| Path to the directory where reports are saved.| |
 | <a name="RTLMP_WIRELENGTH_WT"></a>RTLMP_WIRELENGTH_WT| Weight for half-perimiter wirelength.| 100.0|
 | <a name="RULES_JSON"></a>RULES_JSON| json files with the metrics baseline regression rules. In the ORFS Makefile, this defaults to $DESIGN_DIR/rules-base.json, but ORFS does not mandate the users source directory layout and this can be placed elsewhere when the user sets up an ORFS config.mk or from bazel-orfs.| |
+| <a name="RUN_EQY"></a>RUN_EQY| Actually run the eqy equivalence checking tool. Requires EQUIVALENCE_CHECK to be enabled and eqy to be installed.| 0|
 | <a name="RUN_LOG_NAME_STEM"></a>RUN_LOG_NAME_STEM| Stem of the log file name, the log file will be named `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.| run|
 | <a name="RUN_SCRIPT"></a>RUN_SCRIPT| Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.| |
 | <a name="SC_LEF"></a>SC_LEF| Path to technology standard cell LEF file.| |
@@ -489,6 +490,7 @@ configuration file.
 - [PRE_CTS_TCL](#PRE_CTS_TCL)
 - [REMOVE_CELLS_FOR_EQY](#REMOVE_CELLS_FOR_EQY)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [RUN_EQY](#RUN_EQY)
 - [SETUP_REPAIR_SEQUENCE](#SETUP_REPAIR_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_CRIT_VT_SWAP](#SKIP_CRIT_VT_SWAP)

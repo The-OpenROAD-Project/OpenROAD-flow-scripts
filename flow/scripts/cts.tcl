@@ -68,7 +68,7 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
 
   repair_timing_helper
 
-  if { $::env(EQUIVALENCE_CHECK) } {
+  if { $::env(EQUIVALENCE_CHECK) && $::env(RUN_EQY) } {
     run_equivalence_test
   }
   if { $::env(LEC_CHECK) } {

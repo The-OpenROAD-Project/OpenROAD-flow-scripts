@@ -86,8 +86,15 @@ DETAILED_METRICS:
     - grt
 EQUIVALENCE_CHECK:
   description: >
-    Enable running equivalence checks to verify logical correctness of
-    repair_timing.
+    Enable writing equivalence check files to verify logical correctness of
+    repair_timing. Set RUN_EQY to actually run the eqy tool.
+  default: 0
+  stages:
+    - cts
+RUN_EQY:
+  description: >
+    Actually run the eqy equivalence checking tool. Requires EQUIVALENCE_CHECK
+    to be enabled and eqy to be installed.
   default: 0
   stages:
     - cts
