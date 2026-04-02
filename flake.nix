@@ -6,13 +6,14 @@
       type = "git";
       url = "https://github.com/The-OpenROAD-Project/OpenROAD";
       submodules = true;
-      rev = "7ecbe2e306a961888c17adc8eb761f51c94f06d8";
+      rev = "ce7ee82f49a965e90de5dfc8de6e4d7d32534984";
     };
     yosys = {
       type = "git";
-      url = "https://github.com/The-OpenROAD-Project/yosys";
+      url = "https://github.com/YosysHQ/yosys";
       submodules = true;
-      rev = "c4b5190229616f7ebf8197f43990b4429de3e420";
+      ref = "nella/carry-save-adders";
+      rev = "0909e462c3efc2ecd9395e1d69485f9ad4027857";
     };
   };
   outputs = { self, nixpkgs, flake-utils, openroad, yosys }: flake-utils.lib.eachDefaultSystem (

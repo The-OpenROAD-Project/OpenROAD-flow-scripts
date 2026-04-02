@@ -54,16 +54,16 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1724316499,
-        "narHash": "sha256-Qb9MhKBUTCfWg/wqqaxt89Xfi6qTD3XpTzQ9eXi3JmE=",
+        "lastModified": 1771419570,
+        "narHash": "sha256-bxAlQgre3pcQcaRUm/8A0v/X8d2nhfraWSFqVmMcBcU=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "797f7dc49e0bc7fab4b57c021cdf68f595e47841",
+        "rev": "6d41bc27aaf7b6a3ba6b169db3bd5d6159cfaa47",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "nixos-24.05",
+        "ref": "nixos-25.11",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -89,17 +89,17 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1745262648,
-        "narHash": "sha256-NPLjho9TAygCUbRGdR8y+gxYcV0tek2ceMmuoFhwv1s=",
+        "lastModified": 1774752712,
+        "narHash": "sha256-bF0ZqAhLrrTanmNqF5z/fHpGy17t/eAV2SUaOpkNYQ0=",
         "ref": "refs/heads/master",
-        "rev": "7ecbe2e306a961888c17adc8eb761f51c94f06d8",
-        "revCount": 29094,
+        "rev": "ce7ee82f49a965e90de5dfc8de6e4d7d32534984",
+        "revCount": 38824,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/The-OpenROAD-Project/OpenROAD"
       },
       "original": {
-        "rev": "7ecbe2e306a961888c17adc8eb761f51c94f06d8",
+        "rev": "ce7ee82f49a965e90de5dfc8de6e4d7d32534984",
         "submodules": true,
         "type": "git",
         "url": "https://github.com/The-OpenROAD-Project/OpenROAD"
@@ -149,20 +149,21 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1741764697,
-        "narHash": "sha256-5jQ9l0cyRhEI4UFInW3kqw5B+mdLFr66nfG716rO454=",
-        "ref": "refs/heads/master",
-        "rev": "c4b5190229616f7ebf8197f43990b4429de3e420",
-        "revCount": 14791,
+        "lastModified": 1775061651,
+        "narHash": "sha256-3a+Q9hkR4Ny07xdt2DEd3DM1n1pNy7iJlm7UT5pNbbk=",
+        "ref": "nella/carry-save-adders",
+        "rev": "0909e462c3efc2ecd9395e1d69485f9ad4027857",
+        "revCount": 16821,
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/The-OpenROAD-Project/yosys"
+        "url": "https://github.com/YosysHQ/yosys"
       },
       "original": {
-        "rev": "c4b5190229616f7ebf8197f43990b4429de3e420",
+        "ref": "nella/carry-save-adders",
+        "rev": "0909e462c3efc2ecd9395e1d69485f9ad4027857",
         "submodules": true,
         "type": "git",
-        "url": "https://github.com/The-OpenROAD-Project/yosys"
+        "url": "https://github.com/YosysHQ/yosys"
       }
     }
   },
