@@ -226,7 +226,11 @@ if { $::env(SYNTH_INSBUF) } {
 # Reports
 tee -o $::env(REPORTS_DIR)/synth_check.txt check
 
-tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$lib_args
+if { $::env(SYNTH_HIERARCHICAL) } {
+  tee -o $::env(REPORTS_DIR)/synth_stat.txt stat -hierarchy {*}$lib_args
+} else {
+  tee -o $::env(REPORTS_DIR)/synth_stat.txt stat {*}$lib_args
+}
 
 # check the design is composed exclusively of target cells, and
 # check for other problems
