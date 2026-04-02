@@ -131,8 +131,6 @@ if { [env_var_exists_and_non_empty SYNTH_RETIME_MODULES] } {
   select -clear
 }
 
-csa_tree
-
 if {
   [env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] ||
   [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]

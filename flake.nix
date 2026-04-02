@@ -12,8 +12,8 @@
       type = "git";
       url = "https://github.com/YosysHQ/yosys";
       submodules = true;
-      ref = "nella/carry-save-adders";
-      rev = "0909e462c3efc2ecd9395e1d69485f9ad4027857";
+      ref = "nella/csa-orfs-eval";
+      rev = "a41f55eba71a000a8aba26bb1b209659ffeb159a";
     };
   };
   outputs = { self, nixpkgs, flake-utils, openroad, yosys }: flake-utils.lib.eachDefaultSystem (
