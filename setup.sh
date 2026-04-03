@@ -26,15 +26,11 @@ tmpfile=$(mktemp)
 git submodule status --recursive > "$tmpfile"
 
 if grep -q "^-" "$tmpfile"; then
-<<<<<<< Updated upstream
-  sudo -u $SUDO_USER git submodule update --init --recursive
-=======
   if [[ "$OSTYPE" == "darwin"* ]]; then
     git submodule update --init --recursive
   else
     run_as_user git submodule update --init --recursive
   fi
->>>>>>> Stashed changes
 elif grep -q "^+" "$tmpfile"; then
   # Make it easy for users who are not hacking ORFS to do the right thing,
   # run with current submodules, at the cost of having ORFS
@@ -44,12 +40,8 @@ elif grep -q "^+" "$tmpfile"; then
 fi
 
 "$DIR/etc/DependencyInstaller.sh" -base
-<<<<<<< Updated upstream
-sudo -u $SUDO_USER "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
-=======
 if [[ "$OSTYPE" == "darwin"* ]]; then
   "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
 else
   run_as_user "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"
 fi
->>>>>>> Stashed changes
