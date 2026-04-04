@@ -10,8 +10,16 @@ bazel_dep(name = "bazel-orfs")
 # To bump version, run: bazelisk run @bazel-orfs//:bump
 git_override(
     module_name = "bazel-orfs",
-    commit = "f8a4b694b37c8f5322323eba9a9ae37f9541ee17",
+    commit = "d998bbff78c455718bd1a0191b4aa89ef9addac1",
     remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
+)
+
+# Transitive dep of bazel-orfs (lives in its verilog/ subdirectory).
+bazel_dep(name = "bazel-orfs-verilog")
+archive_override(
+    module_name = "bazel-orfs-verilog",
+    strip_prefix = "bazel-orfs-e46fca0214def95ecfbada54a8028da7d47fd122/verilog",
+    urls = ["https://github.com/The-OpenROAD-Project/bazel-orfs/archive/e46fca0214def95ecfbada54a8028da7d47fd122.tar.gz"],
 )
 
 bazel_dep(name = "rules_python", version = "1.8.5")
@@ -35,12 +43,50 @@ orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
 
 # To bump version, run: bazelisk run @bazel-orfs//:bump
 orfs.default(
-    image = "docker.io/openroad/orfs:v3.0-3273-gedf3d6bf",
+    image = "docker.io/openroad/orfs:26Q1-816-gf40d2f346",
     # Use local files instead of docker image
     makefile = "//flow:makefile",
     makefile_yosys = "//flow:makefile_yosys",
     pdk = "//flow:asap7",
-    sha256 = "f5692c6325ebcf27cc348e033355ec95c82c35ace1af7e72a0d352624ada143e",
+    sha256 = "2b05a14ae8062b4af82b245d648e95fa0293e09b61b57468518b66578744afb8",
+    variables_yaml = "//flow:scripts/variables.yaml",
 )
-use_repo(orfs, "com_github_nixos_patchelf_download")
 use_repo(orfs, "docker_orfs")
+
+# Uncomment to build OpenROAD from source instead of using the ORFS image.
+# This is useful to test the latest OpenROAD before the ORFS image is updated.
+# See: https://github.com/The-OpenROAD-Project/bazel-orfs/blob/main/docs/openroad.md
+#
+# bazel_dep(name = "openroad")
+# git_override(
+#     module_name = "openroad",
+#     commit = "df79404cd806cc435b3c3b53678ebf2441c31313",
+#     init_submodules = True,
+#     patch_strip = 1,
+#     patches = ["@bazel-orfs//:openroad-llvm-root-only.patch", "@bazel-orfs//:openroad-visibility.patch"],
+#     remote = "https://github.com/The-OpenROAD-Project/OpenROAD.git",
+# )
+# bazel_dep(name = "qt-bazel")
+# git_override(
+#     module_name = "qt-bazel",
+#     commit = "df022f4ebaa4130713692fffd2f519d49e9d0b97",
+#     remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
+# )
+# bazel_dep(name = "toolchains_llvm", version = "1.5.0")
+
+# Auto-generate orfs_flow() targets from config.mk files.
+# See bazel-orfs.md for usage.
+orfs_designs = use_repo_rule("@bazel-orfs//private:designs.bzl", "orfs_designs")
+
+orfs_designs(
+    name = "orfs_designs",
+    designs_dir = "//flow/designs:BUILD.bazel",
+    platforms = [
+        "asap7",
+        "gf180",
+        "ihp-sg13g2",
+        "nangate45",
+        "sky130hd",
+        "sky130hs",
+    ],
+)
