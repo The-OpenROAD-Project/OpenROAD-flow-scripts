@@ -1,0 +1,10 @@
+exports_files(
+    glob(["*.gds", "*.gds.gz"], allow_empty = True),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "gds",
+    srcs = glob(["*.gds", "*.gds.gz"], allow_empty = True),
+    visibility = ["//visibility:public"],
+)
