@@ -1,0 +1,7 @@
+load("@bazel-orfs//:openroad.bzl", "orfs_design")
+load("@orfs_designs//:designs.bzl", "DESIGNS")
+
+exports_files(glob(["*"]))
+
+# TODO(bazel-orfs): orfs_design(designs = DESIGNS)
+# Blocked: no VERILOG_FILES in config.mk (test-only design with empty SDC).

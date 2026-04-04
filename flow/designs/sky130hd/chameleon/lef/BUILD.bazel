@@ -1,0 +1,10 @@
+exports_files(
+    glob(["*.lef"]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "lef",
+    srcs = glob(["*.lef"]),
+    visibility = ["//visibility:public"],
+)

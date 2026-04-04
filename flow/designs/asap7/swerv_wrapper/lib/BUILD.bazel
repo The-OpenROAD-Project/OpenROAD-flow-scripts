@@ -1,0 +1,10 @@
+exports_files(
+    glob(["*.lib"]),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "lib",
+    srcs = glob(["*.lib"]),
+    visibility = ["//visibility:public"],
+)

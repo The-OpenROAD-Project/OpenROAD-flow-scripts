@@ -1,0 +1,6 @@
+load("@bazel-orfs//:openroad.bzl", "orfs_design")
+load("@orfs_designs//:designs.bzl", "DESIGNS")
+
+exports_files(glob(["*"]))
+
+orfs_design(designs = DESIGNS)
