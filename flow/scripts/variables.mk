@@ -132,6 +132,10 @@ ifneq ($(shell command -v stdbuf),)
   STDBUF_CMD ?= stdbuf -o L
 endif
 
+ifneq ($(shell command -v eqy),)
+  export RUN_EQY ?= 1
+endif
+
 #-------------------------------------------------------------------------------
 WRAPPED_LEFS = $(foreach lef,$(notdir $(WRAP_LEFS)),$(OBJECTS_DIR)/lef/$(lef:.lef=_mod.lef))
 WRAPPED_LIBS = $(foreach lib,$(notdir $(WRAP_LIBS)),$(OBJECTS_DIR)/$(lib:.lib=_mod.lib))

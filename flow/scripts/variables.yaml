@@ -94,8 +94,8 @@ EQUIVALENCE_CHECK:
 RUN_EQY:
   description: >
     Actually run the eqy equivalence checking tool. Requires EQUIVALENCE_CHECK
-    to be enabled and eqy to be installed.
-  default: 0
+    to be enabled and eqy to be installed. Defaults to 1 when eqy is found
+    in PATH.
   stages:
     - cts
 CORE_UTILIZATION:

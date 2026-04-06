@@ -253,7 +253,7 @@ configuration file.
 | <a name="RTLMP_RPT_DIR"></a>RTLMP_RPT_DIR| Path to the directory where reports are saved.| |
 | <a name="RTLMP_WIRELENGTH_WT"></a>RTLMP_WIRELENGTH_WT| Weight for half-perimiter wirelength.| 100.0|
 | <a name="RULES_JSON"></a>RULES_JSON| json files with the metrics baseline regression rules. In the ORFS Makefile, this defaults to $DESIGN_DIR/rules-base.json, but ORFS does not mandate the users source directory layout and this can be placed elsewhere when the user sets up an ORFS config.mk or from bazel-orfs.| |
-| <a name="RUN_EQY"></a>RUN_EQY| Actually run the eqy equivalence checking tool. Requires EQUIVALENCE_CHECK to be enabled and eqy to be installed.| 0|
+| <a name="RUN_EQY"></a>RUN_EQY| Actually run the eqy equivalence checking tool. Requires EQUIVALENCE_CHECK to be enabled and eqy to be installed. Defaults to 1 when eqy is found in PATH.| |
 | <a name="RUN_LOG_NAME_STEM"></a>RUN_LOG_NAME_STEM| Stem of the log file name, the log file will be named `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.| run|
 | <a name="RUN_SCRIPT"></a>RUN_SCRIPT| Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.| |
 | <a name="SC_LEF"></a>SC_LEF| Path to technology standard cell LEF file.| |
