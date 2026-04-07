@@ -1,0 +1,49 @@
+diff --git a/BUILD.bazel b/BUILD.bazel
+index 0556c28..3fb282c 100644
+--- a/BUILD.bazel
++++ b/BUILD.bazel
+@@ -219,7 +219,7 @@ cc_library(
+     includes = [
+         "include",
+     ],
+-    visibility = ["//:__subpackages__"],
++    visibility = ["//visibility:public"],
+     deps = [
+         "//src/sta:opensta_lib",
+         "@abseil-cpp//absl/base:core_headers",
+@@ -243,7 +243,7 @@ cc_library(
+         "include",
+         "include/ord",
+     ],
+-    visibility = ["//:__subpackages__"],
++    visibility = ["//visibility:public"],
+     deps = ["@abseil-cpp//absl/synchronization"],
+ )
+ 
+@@ -397,7 +397,7 @@ filegroup(
+     srcs = [
+         "src/Exception.i",
+     ],
+-    visibility = ["//:__subpackages__"],
++    visibility = ["//visibility:public"],
+ )
+ 
+ filegroup(
+@@ -405,7 +405,7 @@ filegroup(
+     srcs = [
+         "src/Exception-py.i",
+     ],
+-    visibility = ["//:__subpackages__"],
++    visibility = ["//visibility:public"],
+ )
+ 
+ filegroup(
+@@ -420,7 +420,7 @@ filegroup(
+     srcs = [
+         "src/options.i",
+     ],
+-    visibility = ["//:__subpackages__"],
++    visibility = ["//visibility:public"],
+ )
+ 
+ # Lightweight test suites that run without building OpenROAD.
