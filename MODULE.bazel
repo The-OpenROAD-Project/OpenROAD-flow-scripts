@@ -47,15 +47,9 @@ archive_override(
 )
 
 bazel_dep(name = "openroad")
-git_override(
+local_path_override(
     module_name = "openroad",
-    commit = "6037e4aa6525e296871b5518c311291a546df648",
-    init_submodules = True,
-    patch_strip = 1,
-    patches = [
-        "//:openroad-visibility.patch",
-    ],
-    remote = "https://github.com/The-OpenROAD-Project/OpenROAD.git",
+    path = "tools/OpenROAD",
 )
 
 bazel_dep(name = "qt-bazel")
