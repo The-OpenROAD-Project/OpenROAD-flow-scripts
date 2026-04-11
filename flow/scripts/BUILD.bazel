@@ -1,0 +1,13 @@
+load("@rules_python//python:defs.bzl", "py_library", "py_test")
+
+py_library(
+    name = "lib2v",
+    srcs = ["lib2v.py"],
+    visibility = ["//visibility:public"],
+)
+
+py_test(
+    name = "test_lib2v",
+    srcs = ["test_lib2v.py"],
+    deps = [":lib2v"],
+)
