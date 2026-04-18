@@ -95,7 +95,7 @@ module QSPI_XIP_CTRL(
                             else HREADYOUT <= 1'b0;
                 st_rw   :   if(HTRANS[1] & HSEL & HREADY & c_hit) HREADYOUT <= 1'b1;
                             else if(HTRANS[1] & HSEL & HREADY & ~c_hit) HREADYOUT <= 1'b0;
-                            //else HREADYOUT <= 1'b1;
+                            else HREADYOUT <= 1'b1;
             endcase
         
 
