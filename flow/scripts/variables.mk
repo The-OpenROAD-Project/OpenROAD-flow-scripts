@@ -92,8 +92,8 @@ else
   OPENSTA_EXE ?= $(abspath $(FLOW_HOME)/../tools/install/OpenROAD/bin/sta)
 endif
 
-export OPENROAD_EXE := $(OPENROAD_EXE)
-export OPENSTA_EXE  := $(OPENSTA_EXE)
+export OPENROAD_EXE
+export OPENSTA_EXE
 
 OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell test -x $(OPENROAD_EXE) && echo "true"),)
 
