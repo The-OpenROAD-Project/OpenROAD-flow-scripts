@@ -38,14 +38,14 @@ if { [find_macros] != "" } {
     log_cmd source $::env(MACRO_PLACEMENT_TCL)
   }
 
+  log_cmd set_macro_base_halo $halo_x $halo_y
+
   set additional_rtlmp_args ""
   append_env_var additional_rtlmp_args RTLMP_MAX_LEVEL -max_num_level 1
   append_env_var additional_rtlmp_args RTLMP_MAX_INST -max_num_inst 1
   append_env_var additional_rtlmp_args RTLMP_MIN_INST -min_num_inst 1
   append_env_var additional_rtlmp_args RTLMP_MAX_MACRO -max_num_macro 1
   append_env_var additional_rtlmp_args RTLMP_MIN_MACRO -min_num_macro 1
-  append additional_rtlmp_args " -halo_width $halo_x"
-  append additional_rtlmp_args " -halo_height $halo_y"
   append_env_var additional_rtlmp_args RTLMP_MIN_AR -min_ar 1
   append_env_var additional_rtlmp_args RTLMP_AREA_WT -area_weight 1
   append_env_var additional_rtlmp_args RTLMP_WIRELENGTH_WT -wirelength_weight 1
