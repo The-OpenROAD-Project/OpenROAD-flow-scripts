@@ -1240,6 +1240,12 @@
       "synth"
     ]
   },
+  "SYNTH_CHECKPOINT": {
+    "description": "Path to a Yosys RTLIL checkpoint to read in place of the default canonicalization checkpoint at the start of synth.tcl. Intended for parallel synthesis flows that reuse a checkpoint taken after coarse synthesis and `keep_hierarchy` have already been decided, so each partition skips that common prefix. Leave unset for the normal flow.\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "SYNTH_GUT": {
     "default": 0,
     "description": "Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.\n",
