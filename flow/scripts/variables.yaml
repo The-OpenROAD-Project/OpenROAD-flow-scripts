@@ -231,7 +231,7 @@ SYNTH_KEEP_MOCKED_MEMORIES:
 SYNTH_HDL_FRONTEND:
   description: >
     Select an alternative language frontend to ingest the design. Available option
-    is "slang". If the variable is empty, design is read with the Yosys read_verilog
+    is "slang" for systemverilog or "ghdl" for VHDL files. If the variable is empty, design is read with the Yosys read_verilog
     command.
   stages:
     - synth
@@ -885,6 +885,13 @@ VERILOG_DEFINES:
   description: >
     Preprocessor defines passed to the language frontend.
     Example: `-D HPDCACHE_ASSERT_OFF`
+  stages:
+    - synth
+VHDL_FILES:
+  required: true
+  description: >
+    The path to the design VHDL files providing a description
+    of modules.
   stages:
     - synth
 SDC_FILE:

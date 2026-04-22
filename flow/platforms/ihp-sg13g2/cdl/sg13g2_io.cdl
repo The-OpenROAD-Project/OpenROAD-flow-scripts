@@ -902,11 +902,11 @@ XR2 iovss sub! / ptap1 r=214.8m A=4.3n Perim=262.3u w=65.575u l=65.575u
 
 ************************************************************************
 * Library Name: sg13g2_io
-* Cell Name:    sg12g2_Gallery
+* Cell Name:    sg13g2_Gallery
 * View Name:    schematic
 ************************************************************************
 
-.SUBCKT sg12g2_Gallery
+.SUBCKT sg13g2_Gallery
 *.PININFO
 XI3 iovdd iovss vdd vss / sg13g2_IOPadIOVss
 XI4 iovdd iovss vdd vss / sg13g2_IOPadVdd
@@ -944,4 +944,3 @@ XI23 iovdd iovss vdd vss / sg13g2_Filler2000
 XI24 iovdd iovss vdd vss / sg13g2_Filler10000
 XI25 iovdd iovss net31 net30 vdd vss / sg13g2_IOPadAnalog
 .ENDS
-
