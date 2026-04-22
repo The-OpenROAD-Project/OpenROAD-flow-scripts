@@ -2,7 +2,9 @@ export DESIGN_NICKNAME = murax
 export DESIGN_NAME = de1_murax_franz
 export PLATFORM    = ihp-sg13g2
 
-export VHDL_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/murax/*.vhd)) 
+export VHDL_FILES = $(DESIGN_HOME)/src/murax/murax_pkg.vhd \
+                    $(DESIGN_HOME)/src/murax/murax_ram.vhd \
+                    $(DESIGN_HOME)/src/murax/de1_murax_franz.vhd
 
 export SYNTH_HDL_FRONTEND = ghdl
 
