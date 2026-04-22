@@ -32,7 +32,11 @@ proc get_dfflegalize_args { file_path } {
 }
 
 source $::env(SCRIPTS_DIR)/synth_preamble.tcl
-read_checkpoint $::env(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
+if { [env_var_exists_and_non_empty SYNTH_CHECKPOINT] } {
+  read_checkpoint $::env(SYNTH_CHECKPOINT)
+} else {
+  read_checkpoint $::env(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
+}
 
 hierarchy -check -top $::env(DESIGN_NAME)
 

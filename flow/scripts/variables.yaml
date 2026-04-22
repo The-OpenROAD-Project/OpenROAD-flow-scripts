@@ -256,6 +256,16 @@ SYNTH_BLACKBOXES:
     statically, even if modules come and go dynamically.
   stages:
     - synth
+SYNTH_CHECKPOINT:
+  description: >
+    Path to a Yosys RTLIL checkpoint to read in place of the default
+    canonicalization checkpoint at the start of synth.tcl.
+    Intended for parallel synthesis flows that reuse a checkpoint taken after
+    coarse synthesis and `keep_hierarchy` have already been decided, so each
+    partition skips that common prefix.
+    Leave unset for the normal flow.
+  stages:
+    - synth
 SYNTH_NETLIST_FILES:
   description: >
     Skips synthesis and uses the supplied netlist files. If the netlist files
