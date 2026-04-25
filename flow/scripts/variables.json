@@ -421,6 +421,7 @@
     "default": 0,
     "description": "Specifies a time margin for the slack when fixing hold violations. This option allows you to overfix or underfix (negative value, terminate retiming before 0 or positive slack). floorplan.tcl uses min of HOLD_SLACK_MARGIN and 0 (default hold slack margin). This avoids overrepair in floorplan for hold by default, but allows skipping hold repair using a negative HOLD_SLACK_MARGIN. Exiting timing repair early is useful in exploration where the .sdc has a fixed clock period at the design's target clock period and where HOLD/SETUP_SLACK_MARGIN is used to avoid overrepair (extremely long running times) when exploring different parameter settings. When an ideal clock is used, that is before CTS, a clock insertion delay of 0 is used in timing paths. This creates a mismatch between macros that have a .lib file from after CTS, when the clock is propagated. To mitigate this, OpenSTA will use subtract the clock insertion delay of macros when calculating timing with ideal clock. Provided that min_clock_tree_path and max_clock_tree_path are in the .lib file, which is the case for macros built with OpenROAD. This is less accurate than if OpenROAD had created a placeholder clock tree for timing estimation purposes prior to CTS. There will inevitably be inaccuracies in the timing calculation prior to CTS. Use a slack margin that is low enough, even negative, to avoid overrepair. Inaccuracies in the timing prior to CTS can also lead to underrepair, but there no obvious and simple way to avoid underrapir in these cases. Overrepair can lead to excessive runtimes in repair or too much buffering being added, which can present itself as congestion of hold cells or buffer cells. Another use of SETUP/HOLD_SLACK_MARGIN is design parameter exploration when trying to find the minimum clock period for a design. The SDC_FILE for a design can be quite complicated and instead of modifying the clock period in the SDC_FILE, which can be non-trivial, the clock period can be fixed at the target frequency and the SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible current minimum clock period.\n",
     "stages": [
+      "synth",
       "cts",
       "floorplan",
       "grt"
@@ -532,6 +533,7 @@
     "default": 0,
     "description": "Enforce sizing operations to only swap cells that have the same layout boundary.\n",
     "stages": [
+      "synth",
       "floorplan",
       "place",
       "cts",
@@ -1077,6 +1079,7 @@
   "SETUP_MOVE_SEQUENCE": {
     "description": "Passed as -sequence to repair_timing. This should be a string of move keywords separated by commas.\n",
     "stages": [
+      "synth",
       "cts",
       "floorplan",
       "grt"
@@ -1086,6 +1089,7 @@
     "default": 0,
     "description": "Specifies a time margin for the slack when fixing setup violations.\nThis option allows you to overfix or underfix(negative value, terminate\nretiming before 0 or positive slack).\nSee HOLD_SLACK_MARGIN for more details.\n",
     "stages": [
+      "synth",
       "cts",
       "floorplan",
       "grt"
@@ -1119,6 +1123,7 @@
   "SKIP_BUFFER_REMOVAL": {
     "description": "Passed as -skip_buffer_removal to repair_timing. Do not remove buffers as a transform to fix timing violations (default: allow buffer removal).\n",
     "stages": [
+      "synth",
       "cts",
       "floorplan",
       "grt"
@@ -1127,6 +1132,7 @@
   "SKIP_CRIT_VT_SWAP": {
     "description": "Do not perform VT swap on critical cells to improve QoR (default: do critical VT swap). This is an additional VT swap on critical cells that remain near the end of setup fixing. If SKIP_VT_SWAP is set to 1, this also disables critical cell VT swap.\n",
     "stages": [
+      "synth",
       "cts",
       "floorplan",
       "grt"
@@ -1150,6 +1156,7 @@
   "SKIP_GATE_CLONING": {
     "description": "Do not use gate cloning transform to fix timing violations (default: use gate cloning).\n",
     "stages": [
+      "synth",
       "cts",
       "floorplan",
       "grt"
@@ -1165,6 +1172,7 @@
   "SKIP_LAST_GASP": {
     "description": "Do not use last gasp optimization to fix timing violations (default: use gate last gasp).\n",
     "stages": [
+      "synth",
       "cts",
       "floorplan",
       "grt"
@@ -1173,6 +1181,7 @@
   "SKIP_PIN_SWAP": {
     "description": "Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).\n",
     "stages": [
+      "synth",
       "cts",
       "floorplan",
       "grt"
@@ -1200,6 +1209,7 @@
   "SKIP_VT_SWAP": {
     "description": "Do not perform VT swap to improve QoR (default: do VT swap).\n",
     "stages": [
+      "synth",
       "cts",
       "floorplan",
       "grt"
@@ -1414,6 +1424,7 @@
     "default": 100,
     "description": "Default TNS_END_PERCENT value for post CTS timing repair. Try fixing all violating endpoints by default (reduce to 5% for runtime). Specifies how many percent of violating paths to fix [0-100]. Worst path will always be fixed.\n",
     "stages": [
+      "synth",
       "place",
       "cts",
       "floorplan",

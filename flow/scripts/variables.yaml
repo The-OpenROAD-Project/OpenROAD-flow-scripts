@@ -30,6 +30,7 @@ TNS_END_PERCENT:
     will always be fixed.
   default: 100
   stages:
+    - synth
     - place
     - cts
     - floorplan
@@ -727,6 +728,7 @@ HOLD_SLACK_MARGIN:
     SETUP/HOLD_SLACK_MARGIN can be swept to find a plausible
     current minimum clock period.
   stages:
+    - synth
     - cts
     - floorplan
     - grt
@@ -738,6 +740,7 @@ SETUP_SLACK_MARGIN:
     retiming before 0 or positive slack).
     See HOLD_SLACK_MARGIN for more details.
   stages:
+    - synth
     - cts
     - floorplan
     - grt
@@ -748,6 +751,7 @@ SETUP_MOVE_SEQUENCE:
     Passed as -sequence to repair_timing. This should be a string of move
     keywords separated by commas.
   stages:
+    - synth
     - cts
     - floorplan
     - grt
@@ -756,6 +760,7 @@ SKIP_GATE_CLONING:
     Do not use gate cloning transform to fix timing violations (default: use
     gate cloning).
   stages:
+    - synth
     - cts
     - floorplan
     - grt
@@ -764,6 +769,7 @@ SKIP_LAST_GASP:
     Do not use last gasp optimization to fix timing violations (default: use
     gate last gasp).
   stages:
+    - synth
     - cts
     - floorplan
     - grt
@@ -772,6 +778,7 @@ SKIP_BUFFER_REMOVAL:
     Passed as -skip_buffer_removal to repair_timing. Do not remove buffers
     as a transform to fix timing violations (default: allow buffer removal).
   stages:
+    - synth
     - cts
     - floorplan
     - grt
@@ -780,6 +787,7 @@ SKIP_PIN_SWAP:
     Do not use pin swapping as a transform to fix timing violations (default:
     use pin swapping).
   stages:
+    - synth
     - cts
     - floorplan
     - grt
@@ -787,6 +795,7 @@ SKIP_VT_SWAP:
   description: >
     Do not perform VT swap to improve QoR (default: do VT swap).
   stages:
+    - synth
     - cts
     - floorplan
     - grt
@@ -798,6 +807,7 @@ SKIP_CRIT_VT_SWAP:
     fixing.
     If SKIP_VT_SWAP is set to 1, this also disables critical cell VT swap.
   stages:
+    - synth
     - cts
     - floorplan
     - grt
@@ -1310,6 +1320,7 @@ MATCH_CELL_FOOTPRINT:
     Enforce sizing operations to only swap cells that have the same layout
     boundary.
   stages:
+    - synth
     - floorplan
     - place
     - cts
