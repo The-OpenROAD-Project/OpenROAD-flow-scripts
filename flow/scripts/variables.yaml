@@ -450,11 +450,11 @@ BUFFER_PORTS_ARGS:
     - place
 REMOVE_ABC_BUFFERS:
   description: >
-    Remove abc buffers from the netlist. If timing repair in floorplanning is
+    Remove abc buffers from the netlist. If post-synth timing repair is
     taking too long, use a SETUP/HOLD_SLACK_MARGIN to terminate timing repair early
     instead of using REMOVE_ABC_BUFFERS or set SKIP_LAST_GASP=1.
   stages:
-    - floorplan
+    - synth
   deprecated: 1
   default: 0
 BALANCE_ROWS:

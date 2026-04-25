@@ -51,6 +51,20 @@ check_setup
 set num_instances [llength [get_cells -hier *]]
 puts "number instances in verilog is $num_instances"
 
+if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
+  # Enable sanity checker until replace_arith_modules becomes stable
+  set_debug_level ODB replace_design_check_sanity 1
+  replace_arith_modules
+}
+
+if { $::env(REMOVE_ABC_BUFFERS) } {
+  # remove buffers inserted by yosys/abc
+  remove_buffers
+} else {
+  # Skip clone & split
+  repair_timing_helper -setup -skip_last_gasp -sequence "unbuffer,sizeup,swap,vt_swap"
+}
+
 source_step_tcl POST SYNTH
 orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 # Canonicalize 1_synth.sdc. The original SDC_FILE provided by

@@ -76,8 +76,6 @@ if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
 source_env_var_if_exists FOOTPRINT_TCL
 
 if { !$::env(SKIP_REPAIR_TIE_FANOUT) } {
-  # This needs to come before any call to remove_buffers.  You could have one
-  # tie driving multiple buffers that drive multiple outputs.
   # Repair tie lo fanout
   puts "Repair tie lo fanout..."
   set tielo_cell_name [lindex $::env(TIELO_CELL_AND_PORT) 0]
@@ -91,20 +89,6 @@ if { !$::env(SKIP_REPAIR_TIE_FANOUT) } {
   set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
   set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $::env(TIEHI_CELL_AND_PORT) 1]
   repair_tie_fanout -separation $::env(TIE_SEPARATION) $tiehi_pin
-}
-
-if { [env_var_exists_and_non_empty SWAP_ARITH_OPERATORS] } {
-  # Enable sanity checker until replace_arith_modules becomes stable
-  set_debug_level ODB replace_design_check_sanity 1
-  replace_arith_modules
-}
-
-if { $::env(REMOVE_ABC_BUFFERS) } {
-  # remove buffers inserted by yosys/abc
-  remove_buffers
-} else {
-  # Skip clone & split
-  repair_timing_helper -setup -skip_last_gasp -sequence "unbuffer,sizeup,swap,vt_swap"
 }
 
 puts "Default units for flow"
