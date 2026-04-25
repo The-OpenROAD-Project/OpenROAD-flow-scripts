@@ -1180,9 +1180,9 @@
   },
   "SKIP_REPAIR_TIE_FANOUT": {
     "default": 0,
-    "description": "Skip repair_tie_fanout at floorplan step.\n",
+    "description": "Skip repair_tie_fanout at synth step.\n",
     "stages": [
-      "floorplan"
+      "synth"
     ]
   },
   "SKIP_REPORT_METRICS": {
@@ -1407,7 +1407,7 @@
     "default": 0,
     "description": "Distance separating tie high/low instances from the load.\n",
     "stages": [
-      "floorplan"
+      "synth"
     ]
   },
   "TNS_END_PERCENT": {

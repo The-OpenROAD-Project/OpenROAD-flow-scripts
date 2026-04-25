@@ -282,7 +282,7 @@ configuration file.
 | <a name="SKIP_INCREMENTAL_REPAIR"></a>SKIP_INCREMENTAL_REPAIR| Skip incremental repair in global route.| 0|
 | <a name="SKIP_LAST_GASP"></a>SKIP_LAST_GASP| Do not use last gasp optimization to fix timing violations (default: use gate last gasp).| |
 | <a name="SKIP_PIN_SWAP"></a>SKIP_PIN_SWAP| Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).| |
-| <a name="SKIP_REPAIR_TIE_FANOUT"></a>SKIP_REPAIR_TIE_FANOUT| Skip repair_tie_fanout at floorplan step.| 0|
+| <a name="SKIP_REPAIR_TIE_FANOUT"></a>SKIP_REPAIR_TIE_FANOUT| Skip repair_tie_fanout at synth step.| 0|
 | <a name="SKIP_REPORT_METRICS"></a>SKIP_REPORT_METRICS| If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.| 0|
 | <a name="SKIP_VT_SWAP"></a>SKIP_VT_SWAP| Do not perform VT swap to improve QoR (default: do VT swap).| |
 | <a name="SLANG_PLUGIN_PATH"></a>SLANG_PLUGIN_PATH| Path to the slang plugin for Yosys. This can be a full path to a custom-built plugin (e.g. for Bazel builds) or just the plugin name.| slang|
@@ -348,6 +348,7 @@ configuration file.
 - [REMOVE_ABC_BUFFERS](#REMOVE_ABC_BUFFERS)
 - [SDC_FILE](#SDC_FILE)
 - [SDC_GUT](#SDC_GUT)
+- [SKIP_REPAIR_TIE_FANOUT](#SKIP_REPAIR_TIE_FANOUT)
 - [SLANG_PLUGIN_PATH](#SLANG_PLUGIN_PATH)
 - [SYNTH_ARGS](#SYNTH_ARGS)
 - [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
@@ -374,6 +375,7 @@ configuration file.
 - [SYNTH_WRAPPED_MULTIPLIERS](#SYNTH_WRAPPED_MULTIPLIERS)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
+- [TIE_SEPARATION](#TIE_SEPARATION)
 - [UNSET_ABC9_BOX_CELLS](#UNSET_ABC9_BOX_CELLS)
 - [VERILOG_DEFINES](#VERILOG_DEFINES)
 - [VERILOG_FILES](#VERILOG_FILES)
@@ -443,13 +445,11 @@ configuration file.
 - [SKIP_GATE_CLONING](#SKIP_GATE_CLONING)
 - [SKIP_LAST_GASP](#SKIP_LAST_GASP)
 - [SKIP_PIN_SWAP](#SKIP_PIN_SWAP)
-- [SKIP_REPAIR_TIE_FANOUT](#SKIP_REPAIR_TIE_FANOUT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SKIP_VT_SWAP](#SKIP_VT_SWAP)
 - [TAPCELL_TCL](#TAPCELL_TCL)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
 - [TIELO_CELL_AND_PORT](#TIELO_CELL_AND_PORT)
-- [TIE_SEPARATION](#TIE_SEPARATION)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
 ## place variables

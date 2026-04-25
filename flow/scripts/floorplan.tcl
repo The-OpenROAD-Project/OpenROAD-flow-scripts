@@ -75,22 +75,6 @@ if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
 
 source_env_var_if_exists FOOTPRINT_TCL
 
-if { !$::env(SKIP_REPAIR_TIE_FANOUT) } {
-  # Repair tie lo fanout
-  puts "Repair tie lo fanout..."
-  set tielo_cell_name [lindex $::env(TIELO_CELL_AND_PORT) 0]
-  set tielo_lib_name [get_name [get_property [lindex [get_lib_cell $tielo_cell_name] 0] library]]
-  set tielo_pin $tielo_lib_name/$tielo_cell_name/[lindex $::env(TIELO_CELL_AND_PORT) 1]
-  repair_tie_fanout -separation $::env(TIE_SEPARATION) $tielo_pin
-
-  # Repair tie hi fanout
-  puts "Repair tie hi fanout..."
-  set tiehi_cell_name [lindex $::env(TIEHI_CELL_AND_PORT) 0]
-  set tiehi_lib_name [get_name [get_property [lindex [get_lib_cell $tiehi_cell_name] 0] library]]
-  set tiehi_pin $tiehi_lib_name/$tiehi_cell_name/[lindex $::env(TIEHI_CELL_AND_PORT) 1]
-  repair_tie_fanout -separation $::env(TIE_SEPARATION) $tiehi_pin
-}
-
 puts "Default units for flow"
 report_units
 report_units_metric

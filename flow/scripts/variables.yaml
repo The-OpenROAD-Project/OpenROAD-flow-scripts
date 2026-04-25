@@ -365,7 +365,7 @@ TIE_SEPARATION:
   description: |
     Distance separating tie high/low instances from the load.
   stages:
-    - floorplan
+    - synth
   default: 0
 UNSET_ABC9_BOX_CELLS:
   description: |
@@ -810,9 +810,9 @@ SKIP_CTS_REPAIR_TIMING:
   default: 0
 SKIP_REPAIR_TIE_FANOUT:
   description: >
-    Skip repair_tie_fanout at floorplan step.
+    Skip repair_tie_fanout at synth step.
   stages:
-    - floorplan
+    - synth
   default: 0
 MIN_ROUTING_LAYER:
   description: |
