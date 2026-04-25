@@ -88,15 +88,15 @@
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -17.4,
+        "value": -16.6,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -67.3,
+        "value": -66.6,
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 8049,
+        "value": 8047,
         "compare": "<="
     }
 }

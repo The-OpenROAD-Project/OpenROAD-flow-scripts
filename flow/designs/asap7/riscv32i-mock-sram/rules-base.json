@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -407.0,
+        "value": -253.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -80,11 +80,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -62.1,
+        "value": -55.7,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -298.0,
+        "value": -220.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
