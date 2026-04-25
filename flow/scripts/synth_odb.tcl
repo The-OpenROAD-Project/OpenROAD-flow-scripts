@@ -14,6 +14,43 @@ source_step_tcl PRE SYNTH
 # has historically removed ~50% of the design.
 eliminate_dead_logic
 
+proc report_unused_masters { } {
+  set db [ord::get_db]
+  set libs [$db getLibs]
+  set masters ""
+  foreach lib $libs {
+    foreach master [$lib getMasters] {
+      # filter out non-block masters, or you can remove this conditional to detect any unused master
+      if { [$master getType] == "BLOCK" } {
+        lappend masters $master
+      }
+    }
+  }
+
+  set block [ord::get_db_block]
+  set insts [$block getInsts]
+
+  foreach inst $insts {
+    set inst_master [$inst getMaster]
+    set masters [lsearch -all -not -inline $masters $inst_master]
+  }
+
+  foreach master $masters {
+    puts "Master [$master getName] is loaded but not used in the design"
+  }
+}
+
+report_unused_masters
+
+#Run check_setup
+puts "\n=========================================================================="
+puts "Synthesis check_setup"
+puts "--------------------------------------------------------------------------"
+check_setup
+
+set num_instances [llength [get_cells -hier *]]
+puts "number instances in verilog is $num_instances"
+
 source_step_tcl POST SYNTH
 orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 # Canonicalize 1_synth.sdc. The original SDC_FILE provided by
