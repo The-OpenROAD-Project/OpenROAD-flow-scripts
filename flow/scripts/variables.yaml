@@ -542,6 +542,19 @@ GUI_TIMING:
     quite time consuming. Useful to disable when investigating non-timing
     aspects like floorplan, placement, routing, etc.
   default: 1
+DEF_FILE:
+  description: >
+    Path to a DEF file to load when opening the GUI via `make gui_*` targets
+    or when running `write_def.tcl`. Set by the Make targets that drive
+    `open.tcl`.
+LIB_MODEL:
+  description: >
+    Liberty timing model selector. Set to `CCS` to enable Composite Current
+    Source delay calculation in `load.tcl`; otherwise NLDM is used.
+V_FILE:
+  description: >
+    Path to a Verilog netlist to load when opening the GUI via `make gui_*`
+    targets that drive `open.tcl`.
 FILL_CELLS:
   description: >
     Fill cells are used to fill empty sites. If not set or empty, fill cell
@@ -913,6 +926,13 @@ SDC_FILE:
   required: true
   description: |
     The path to design constraint (SDC) file.
+  stages:
+    - synth
+SDC_FILE_CLOCK_PERIOD:
+  description: >
+    Path to the file written by the synthesis preamble holding the clock
+    period extracted from `SDC_FILE`. Set by `variables.mk` and consumed by
+    Yosys.
   stages:
     - synth
 SDC_GUT:
@@ -1389,6 +1409,18 @@ RTLMP_RPT_DIR:
     Path to the directory where reports are saved.
   stages:
     - floorplan
+RTLMP_RPT_FILE:
+  description: >
+    File name for the RTL macro placer partition report. Defaults to
+    `partition.txt` if unset.
+  stages:
+    - floorplan
+RTLMP_BLOCKAGE_FILE:
+  description: >
+    Path to the RTL macro placer blockage file. Defaults to
+    `$(OBJECTS_DIR)/rtlmp/partition.txt.blockage` if unset.
+  stages:
+    - floorplan
 RTLMP_FENCE_LX:
   description: >
     Defines the lower left X coordinate for the global fence bounding box in
@@ -1447,11 +1479,13 @@ FOOTPRINT:
     Custom footprint definition file for ICeWall-based floorplan initialization. Mutually exclusive with FLOORPLAN_DEF or DIE_AREA/CORE_AREA or CORE_UTILIZATION.
   stages:
     - floorplan
+    - place
 FOOTPRINT_TCL:
   description: |
     Specifies a Tcl script with custom footprint-related commands for floorplan setup.
   stages:
     - floorplan
+    - place
 FLOW_VARIANT:
   description: >
     Flow variant to use, used in the flow variant directory name.

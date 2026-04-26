@@ -128,6 +128,7 @@ configuration file.
 | <a name="CTS_LIB_NAME"></a>CTS_LIB_NAME| Name of the Liberty library to use in selecting the clock buffers.| |
 | <a name="CTS_SNAPSHOT"></a>CTS_SNAPSHOT| Creates ODB/SDC files prior to clock net and setup/hold repair.| |
 | <a name="CTS_SNAPSHOTS"></a>CTS_SNAPSHOTS| Create ODB/SDC files at different stages of CTS.| 0|
+| <a name="DEF_FILE"></a>DEF_FILE| Path to a DEF file to load when opening the GUI via `make gui_*` targets or when running `write_def.tcl`. Set by the Make targets that drive `open.tcl`.| |
 | <a name="DESIGN_NAME"></a>DESIGN_NAME| The name of the top-level module of the design.| |
 | <a name="DESIGN_NICKNAME"></a>DESIGN_NICKNAME| DESIGN_NICKNAME just changes the directory name that ORFS outputs to be DESIGN_NICKNAME instead of DESIGN_NAME in case DESIGN_NAME is unwieldy or conflicts with a different design.| |
 | <a name="DETAILED_METRICS"></a>DETAILED_METRICS| If set, then calls report_metrics prior to repair operations in the CTS and global route stages| 0|
@@ -173,6 +174,7 @@ configuration file.
 | <a name="LEC_AUX_VERILOG_FILES"></a>LEC_AUX_VERILOG_FILES| Additional Verilog files (e.g. blackbox stubs) to include in LEC equivalence checks. Appended to the generated Verilog netlist before running the formal equivalence check.| |
 | <a name="LEC_CHECK"></a>LEC_CHECK| Perform a formal equivalence check between before and after netlists. If this fails, report an issue to OpenROAD.| 0|
 | <a name="LIB_FILES"></a>LIB_FILES| A Liberty file of the standard cell library with PVT characterization, input and output characteristics, timing and power definitions for each cell.| |
+| <a name="LIB_MODEL"></a>LIB_MODEL| Liberty timing model selector. Set to `CCS` to enable Composite Current Source delay calculation in `load.tcl`; otherwise NLDM is used.| |
 | <a name="MACRO_BLOCKAGE_HALO"></a>MACRO_BLOCKAGE_HALO| Distance beyond the edges of a macro that will also be covered by the blockage generated for that macro. Note that the default macro blockage halo comes from the largest of the specified MACRO_PLACE_HALO x or y values. This variable overrides that calculation.| |
 | <a name="MACRO_EXTENSION"></a>MACRO_EXTENSION| Sets the number of GCells added to the blockages boundaries from macros.| |
 | <a name="MACRO_PLACEMENT_TCL"></a>MACRO_PLACEMENT_TCL| Specifies the path of a TCL file on how to place macros manually. The user may choose to place just some of the macros in the design. The macro placer will handle the remaining unplaced macros.| |
@@ -246,6 +248,7 @@ configuration file.
 | <a name="ROUTING_LAYER_ADJUSTMENT"></a>ROUTING_LAYER_ADJUSTMENT| Adjusts routing layer capacities to manage congestion and improve detailed routing. High values ease detailed routing but risk excessive detours and long global routing times, while low values reduce global routing failure but can complicate detailed routing. The global routing running time normally reduces dramatically (entirely design specific, but going from hours to minutes has been observed) when the value is low (such as 0.10). Sometimes, global routing will succeed with lower values and fail with higher values. Exploring results with different values can help shed light on the problem. Start with a too low value, such as 0.10, and bisect to value that works by doing multiple global routing runs. As a last resort, `make global_route_issue` and using the tools/OpenROAD/etc/whittle.py can be useful to debug global routing errors. If there is something specific that is impossible to route, such as a clock line over a macro, global routing will terminate with DRC errors routes that could have been routed were it not for the specific impossible routes. whittle.py should weed out the possible routes and leave a minimal failing case that pinpoints the problem.| 0.5|
 | <a name="RTLMP_AREA_WT"></a>RTLMP_AREA_WT| Weight for the area of the current floorplan.| 0.1|
 | <a name="RTLMP_ARGS"></a>RTLMP_ARGS| Overrides all other RTL macro placer arguments.| |
+| <a name="RTLMP_BLOCKAGE_FILE"></a>RTLMP_BLOCKAGE_FILE| Path to the RTL macro placer blockage file. Defaults to `$(OBJECTS_DIR)/rtlmp/partition.txt.blockage` if unset.| |
 | <a name="RTLMP_BOUNDARY_WT"></a>RTLMP_BOUNDARY_WT| Weight for the boundary or how far the hard macro clusters are from boundaries.| 50.0|
 | <a name="RTLMP_FENCE_LX"></a>RTLMP_FENCE_LX| Defines the lower left X coordinate for the global fence bounding box in microns.| 0.0|
 | <a name="RTLMP_FENCE_LY"></a>RTLMP_FENCE_LY| Defines the lower left Y coordinate for the global fence bounding box in microns.| 0.0|
@@ -260,12 +263,14 @@ configuration file.
 | <a name="RTLMP_NOTCH_WT"></a>RTLMP_NOTCH_WT| Weight for the notch, or the existence of dead space that cannot be used for placement and routing.| 50.0|
 | <a name="RTLMP_OUTLINE_WT"></a>RTLMP_OUTLINE_WT| Weight for violating the fixed outline constraint, meaning that all clusters should be placed within the shape of their parent cluster.| 100.0|
 | <a name="RTLMP_RPT_DIR"></a>RTLMP_RPT_DIR| Path to the directory where reports are saved.| |
+| <a name="RTLMP_RPT_FILE"></a>RTLMP_RPT_FILE| File name for the RTL macro placer partition report. Defaults to `partition.txt` if unset.| |
 | <a name="RTLMP_WIRELENGTH_WT"></a>RTLMP_WIRELENGTH_WT| Weight for half-perimiter wirelength.| 100.0|
 | <a name="RULES_JSON"></a>RULES_JSON| json files with the metrics baseline regression rules. In the ORFS Makefile, this defaults to $DESIGN_DIR/rules-base.json, but ORFS does not mandate the users source directory layout and this can be placed elsewhere when the user sets up an ORFS config.mk or from bazel-orfs.| |
 | <a name="RUN_LOG_NAME_STEM"></a>RUN_LOG_NAME_STEM| Stem of the log file name, the log file will be named `$(LOG_DIR)/$(RUN_LOG_NAME_STEM).log`.| run|
 | <a name="RUN_SCRIPT"></a>RUN_SCRIPT| Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.| |
 | <a name="SC_LEF"></a>SC_LEF| Path to technology standard cell LEF file.| |
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.| |
+| <a name="SDC_FILE_CLOCK_PERIOD"></a>SDC_FILE_CLOCK_PERIOD| Path to the file written by the synthesis preamble holding the clock period extracted from `SDC_FILE`. Set by `variables.mk` and consumed by Yosys.| |
 | <a name="SDC_GUT"></a>SDC_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| |
 | <a name="SEAL_GDS"></a>SEAL_GDS| Seal macro to place around the design.| |
 | <a name="SETUP_MOVE_SEQUENCE"></a>SETUP_MOVE_SEQUENCE| Passed as -sequence to repair_timing. This should be a string of move keywords separated by commas.| |
@@ -328,6 +333,7 @@ configuration file.
 | <a name="VERILOG_TOP_PARAMS"></a>VERILOG_TOP_PARAMS| Apply toplevel params (if exist). Passed in as a list of key value pairs in tcl syntax; separated by spaces: PARAM1 VALUE1 PARAM2 VALUE2| |
 | <a name="VIA_IN_PIN_MAX_LAYER"></a>VIA_IN_PIN_MAX_LAYER| Passed as -via_in_pin_top_layer to pin_access and detailed_route.| |
 | <a name="VIA_IN_PIN_MIN_LAYER"></a>VIA_IN_PIN_MIN_LAYER| Passed as -via_in_pin_bottom_layer to pin_access and detailed_route.| |
+| <a name="V_FILE"></a>V_FILE| Path to a Verilog netlist to load when opening the GUI via `make gui_*` targets that drive `open.tcl`.| |
 | <a name="WRITE_ODB_AND_SDC_EACH_STAGE"></a>WRITE_ODB_AND_SDC_EACH_STAGE| Save out .sdc and .odb file after each stage, useful to disable when using a single OpenROAD instance to run all stages of the flow.| 1|
 | <a name="YOSYS_FLAGS"></a>YOSYS_FLAGS| Flags to pass to yosys.| -v 3|
 ## synth variables
@@ -346,6 +352,7 @@ configuration file.
 - [POST_SYNTH_TCL](#POST_SYNTH_TCL)
 - [PRE_SYNTH_TCL](#PRE_SYNTH_TCL)
 - [SDC_FILE](#SDC_FILE)
+- [SDC_FILE_CLOCK_PERIOD](#SDC_FILE_CLOCK_PERIOD)
 - [SDC_GUT](#SDC_GUT)
 - [SLANG_PLUGIN_PATH](#SLANG_PLUGIN_PATH)
 - [SYNTH_ARGS](#SYNTH_ARGS)
@@ -421,6 +428,7 @@ configuration file.
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [RTLMP_AREA_WT](#RTLMP_AREA_WT)
 - [RTLMP_ARGS](#RTLMP_ARGS)
+- [RTLMP_BLOCKAGE_FILE](#RTLMP_BLOCKAGE_FILE)
 - [RTLMP_BOUNDARY_WT](#RTLMP_BOUNDARY_WT)
 - [RTLMP_FENCE_LX](#RTLMP_FENCE_LX)
 - [RTLMP_FENCE_LY](#RTLMP_FENCE_LY)
@@ -435,6 +443,7 @@ configuration file.
 - [RTLMP_NOTCH_WT](#RTLMP_NOTCH_WT)
 - [RTLMP_OUTLINE_WT](#RTLMP_OUTLINE_WT)
 - [RTLMP_RPT_DIR](#RTLMP_RPT_DIR)
+- [RTLMP_RPT_FILE](#RTLMP_RPT_FILE)
 - [RTLMP_WIRELENGTH_WT](#RTLMP_WIRELENGTH_WT)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
@@ -464,6 +473,8 @@ configuration file.
 - [DONT_BUFFER_PORTS](#DONT_BUFFER_PORTS)
 - [EARLY_SIZING_CAP_RATIO](#EARLY_SIZING_CAP_RATIO)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
+- [FOOTPRINT](#FOOTPRINT)
+- [FOOTPRINT_TCL](#FOOTPRINT_TCL)
 - [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
 - [GPL_KEEP_OVERFLOW](#GPL_KEEP_OVERFLOW)
 - [GPL_ROUTABILITY_DRIVEN](#GPL_ROUTABILITY_DRIVEN)
@@ -628,6 +639,7 @@ configuration file.
 - [CAP_MARGIN](#CAP_MARGIN)
 - [CDL_FILES](#CDL_FILES)
 - [CORNER](#CORNER)
+- [DEF_FILE](#DEF_FILE)
 - [DESIGN_NAME](#DESIGN_NAME)
 - [DESIGN_NICKNAME](#DESIGN_NICKNAME)
 - [DONT_USE_CELLS](#DONT_USE_CELLS)
@@ -643,6 +655,7 @@ configuration file.
 - [KLAYOUT_TECH_FILE](#KLAYOUT_TECH_FILE)
 - [LAYER_PARASITICS_FILE](#LAYER_PARASITICS_FILE)
 - [LIB_FILES](#LIB_FILES)
+- [LIB_MODEL](#LIB_MODEL)
 - [MACRO_EXTENSION](#MACRO_EXTENSION)
 - [PLATFORM](#PLATFORM)
 - [PLATFORM_TCL](#PLATFORM_TCL)
@@ -661,4 +674,5 @@ configuration file.
 - [TECH_LEF](#TECH_LEF)
 - [USE_FILL](#USE_FILL)
 - [USE_NEGOTIATION](#USE_NEGOTIATION)
+- [V_FILE](#V_FILE)
 

@@ -113,19 +113,54 @@ proc find_sdc_file { input_file } {
   return [list $design_stage $sdc_file]
 }
 
+# Lazily load the set of variables declared in variables.yaml for the
+# current stage (or the full set if no stage has been registered, e.g. for
+# utility scripts like open.tcl). Populated eagerly by
+# erase_non_stage_variables; otherwise lazy-loaded on first lookup.
+proc orfs_load_declared_vars { { stage_name "" } } {
+  set cmd [list $::env(SCRIPTS_DIR)/declared_variables.py]
+  if { $stage_name ne "" } {
+    lappend cmd $stage_name
+  }
+  set ::orfs_declared_vars [exec {*}$cmd]
+  set ::orfs_stage $stage_name
+}
+
+# Error if env_var is not declared in variables.yaml for this stage. This
+# catches misspelled variable names (e.g. GTP_TIMING_DRIVEN vs
+# GPL_TIMING_DRIVEN) and wrong-stage variable references that
+# erase_non_stage_variables would otherwise silently turn into
+# "unset → default" behavior.
+proc orfs_check_declared { env_var } {
+  if { ![info exists ::orfs_declared_vars] } {
+    orfs_load_declared_vars
+  }
+  if { [lsearch -exact $::orfs_declared_vars $env_var] >= 0 } {
+    return
+  }
+  if { [info exists ::orfs_stage] && $::orfs_stage ne "" } {
+    error "ORFS variable '$env_var' is not declared in variables.yaml for stage\
+      '$::orfs_stage' (typo, or wrong stage?)"
+  }
+  error "ORFS variable '$env_var' is not declared in variables.yaml (typo?)"
+}
+
 proc env_var_equals { env_var value } {
+  orfs_check_declared $env_var
   return [expr { [info exists ::env($env_var)] && $::env($env_var) == $value }]
 }
 
 proc env_var_exists_and_non_empty { env_var } {
+  orfs_check_declared $env_var
   return [expr { [info exists ::env($env_var)] && ![string equal $::env($env_var) ""] }]
 }
 
 proc append_env_var { list_name var_name prefix has_arg } {
+  orfs_check_declared $var_name
   upvar $list_name list
   if {
-    (!$has_arg && [env_var_equals $var_name 1]) ||
-    ($has_arg && [env_var_exists_and_non_empty $var_name])
+    (!$has_arg && [info exists ::env($var_name)] && $::env($var_name) == 1) ||
+    ($has_arg && [info exists ::env($var_name)] && ![string equal $::env($var_name) ""])
   } {
     lappend list $prefix
     if { $has_arg } {
@@ -136,7 +171,8 @@ proc append_env_var { list_name var_name prefix has_arg } {
 
 # Non-empty defaults should go into variables.yaml, generally
 proc env_var_or_empty { env_var } {
-  if { [env_var_exists_and_non_empty $env_var] } {
+  orfs_check_declared $env_var
+  if { [info exists ::env($env_var)] && ![string equal $::env($env_var) ""] } {
     return $::env($env_var)
   }
   return ""
@@ -159,6 +195,9 @@ proc find_macros { } {
 }
 
 proc erase_non_stage_variables { stage_name } {
+  # Register the stage so the typo guard (orfs_check_declared) can scope
+  # its valid-name set to this stage.
+  orfs_load_declared_vars $stage_name
   if { $::env(KEEP_VARS) } {
     return
   }
@@ -201,6 +240,7 @@ proc place_density_with_lb_addon { } {
 }
 
 proc source_env_var_if_exists { env_var } {
+  # env_var_exists_and_non_empty already validates via orfs_check_declared
   if { [env_var_exists_and_non_empty $env_var] } {
     log_cmd source $::env($env_var)
   }
