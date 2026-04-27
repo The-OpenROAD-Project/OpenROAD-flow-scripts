@@ -404,7 +404,11 @@ floorplan_to_place: $(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc
 
 # ==============================================================================
 
+ifeq ($(SYNTH_USE_SYN),1)
+$(eval $(call do-step,1_synth,$(VERILOG_FILES) $(SDC_FILE) $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(LIB_FILES),synth_syn))
+else
 $(eval $(call do-step,1_synth,$(RESULTS_DIR)/1_2_yosys.v $(RESULTS_DIR)/1_2_yosys.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(LIB_FILES),synth_odb))
+endif
 
 $(RESULTS_DIR)/1_synth.sdc: $(RESULTS_DIR)/1_synth.odb
 

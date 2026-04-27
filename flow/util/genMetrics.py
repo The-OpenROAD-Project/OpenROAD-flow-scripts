@@ -209,6 +209,7 @@ def merge_jsons(root_path, output, files):
         with open(path, "r") as file:
             data = json.load(file)
         output.update(data)
+    return len(paths) != 0
 
 
 def extract_metrics(
@@ -246,21 +247,26 @@ def extract_metrics(
     # Synthesis
     # =========================================================================
 
+    # Try sourcing metrics from OpenROAD's syn flow first, fall back to parsing
+    # Yosys reports otherwise
+    found_synthesis_json = merge_jsons(logPath, metrics_dict, "1_*.json")
+
     # The new format (>= 0.57) with -hierarchy is:
     #    <count> <area> <local_count> <local_area> cells
-    extractTagFromFile(
-        "synth__design__instance__count__stdcell",
-        metrics_dict,
-        "^\\s+(\\d+)\\s+[-0-9.]+\\s+\\S+\\s+\\S+\\s+cells$",
-        rptPath + "/synth_stat.txt",
-    )
+    if not found_synthesis_json:
+        extractTagFromFile(
+            "synth__design__instance__count__stdcell",
+            metrics_dict,
+            "^\\s+(\\d+)\\s+[-0-9.]+\\s+\\S+\\s+\\S+\\s+cells$",
+            rptPath + "/synth_stat.txt",
+        )
 
-    extractTagFromFile(
-        "synth__design__instance__area__stdcell",
-        metrics_dict,
-        "Chip area for (?:top )?module.*: +(\\S+)",
-        rptPath + "/synth_stat.txt",
-    )
+        extractTagFromFile(
+            "synth__design__instance__area__stdcell",
+            metrics_dict,
+            "Chip area for (?:top )?module.*: +(\\S+)",
+            rptPath + "/synth_stat.txt",
+        )
 
     # Netlist hashes: fingerprints of the canonical RTLIL (pre-ABC) and
     # the final post-synthesis Verilog so the rules-base.json check
@@ -270,6 +276,7 @@ def extract_metrics(
         resultPath + "/1_1_yosys_canonicalize.rtlil"
     )
     metrics_dict["synth__netlist__hash"] = file_sha1(resultPath + "/1_2_yosys.v")
+
 
     # Clocks
     # =========================================================================
