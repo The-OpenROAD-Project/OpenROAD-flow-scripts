@@ -483,18 +483,6 @@
   "LIB_FILES": {
     "description": "A Liberty file of the standard cell library with PVT characterization, input and output characteristics, timing and power definitions for each cell.\n"
   },
-  "LIB_MODEL": {
-    "description": "Selects the standard cell library timing model. Set to CCS to use composite current source liberty files; default selects the NLDM (non-linear delay model) variant.\n",
-    "stages": [
-      "synth",
-      "floorplan",
-      "place",
-      "cts",
-      "grt",
-      "route",
-      "final"
-    ]
-  },
   "MACRO_BLOCKAGE_HALO": {
     "description": "Distance beyond the edges of a macro that will also be covered by the blockage generated for that macro. Note that the default macro blockage halo comes from the largest of the specified MACRO_PLACE_HALO x or y values. This variable overrides that calculation.\n",
     "stages": [
@@ -598,12 +586,6 @@
       "synth"
     ]
   },
-  "MIN_CLK_ROUTING_LAYER": {
-    "description": "Lowest metal layer that clock tree synthesis may use for clock routing. Mirrors MIN_ROUTING_LAYER but applies to clock nets.\n",
-    "stages": [
-      "cts"
-    ]
-  },
   "MIN_PLACE_STEP_COEF": {
     "default": 0.95,
     "description": "Sets the minimum phi coefficient (pcof_min / \u00b5_k Lower Bound) for global placement optimization. This parameter controls the step size lower bound in the RePlAce Nesterov optimization algorithm. Lower values may improve convergence but can increase runtime. Valid range: 0.95-1.05\n",
@@ -621,18 +603,6 @@
       "grt",
       "route",
       "final"
-    ]
-  },
-  "MOCK_ALU_OPERATIONS": {
-    "description": "Comma-separated list of ALU operations baked into the generated mock-alu RTL (e.g. ADD,SUB,AND). Consumed by the Chisel generator in src/mock-alu.\n",
-    "stages": [
-      "synth"
-    ]
-  },
-  "MOCK_ALU_WIDTH": {
-    "description": "Datapath width in bits for the generated mock-alu RTL. Consumed by the Chisel generator in src/mock-alu.\n",
-    "stages": [
-      "synth"
     ]
   },
   "NUM_CORES": {
@@ -1093,18 +1063,6 @@
     "required": true,
     "stages": [
       "synth"
-    ]
-  },
-  "SDC_FILE_EXTRA": {
-    "description": "Path to an additional Tcl file sourced from constraint.sdc and from place_pins I/O scripts. Used by designs that share helper Tcl between SDC and pin placement (e.g. mock-cpu).\n",
-    "stages": [
-      "synth",
-      "floorplan",
-      "place",
-      "cts",
-      "grt",
-      "route",
-      "final"
     ]
   },
   "SDC_GUT": {
