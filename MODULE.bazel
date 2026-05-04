@@ -35,6 +35,10 @@ BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
+    patch_strip = 1,
+    patches = [
+        "//bazel/bazel-orfs-patches:0001-stages-register-bazel-injected-vars-in-validator.patch",
+    ],
     remote = BAZEL_ORFS_REMOTE,
 )
 
