@@ -173,6 +173,7 @@ configuration file.
 | <a name="LEC_AUX_VERILOG_FILES"></a>LEC_AUX_VERILOG_FILES| Additional Verilog files (e.g. blackbox stubs) to include in LEC equivalence checks. Appended to the generated Verilog netlist before running the formal equivalence check.| |
 | <a name="LEC_CHECK"></a>LEC_CHECK| Perform a formal equivalence check between before and after netlists. If this fails, report an issue to OpenROAD.| 0|
 | <a name="LIB_FILES"></a>LIB_FILES| A Liberty file of the standard cell library with PVT characterization, input and output characteristics, timing and power definitions for each cell.| |
+| <a name="LIB_MODEL"></a>LIB_MODEL| Selects the standard cell library timing model. Set to CCS to use composite current source liberty files; default selects the NLDM (non-linear delay model) variant.| |
 | <a name="MACRO_BLOCKAGE_HALO"></a>MACRO_BLOCKAGE_HALO| Distance beyond the edges of a macro that will also be covered by the blockage generated for that macro. Note that the default macro blockage halo comes from the largest of the specified MACRO_PLACE_HALO x or y values. This variable overrides that calculation.| |
 | <a name="MACRO_EXTENSION"></a>MACRO_EXTENSION| Sets the number of GCells added to the blockages boundaries from macros.| |
 | <a name="MACRO_PLACEMENT_TCL"></a>MACRO_PLACEMENT_TCL| Specifies the path of a TCL file on how to place macros manually. The user may choose to place just some of the macros in the design. The macro placer will handle the remaining unplaced macros.| |
@@ -188,8 +189,11 @@ configuration file.
 | <a name="MAX_REPAIR_TIMING_ITER"></a>MAX_REPAIR_TIMING_ITER| Maximum number of iterations for repair setup and repair hold.| |
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.| |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| |
+| <a name="MIN_CLK_ROUTING_LAYER"></a>MIN_CLK_ROUTING_LAYER| Lowest metal layer that clock tree synthesis may use for clock routing. Mirrors MIN_ROUTING_LAYER but applies to clock nets.| |
 | <a name="MIN_PLACE_STEP_COEF"></a>MIN_PLACE_STEP_COEF| Sets the minimum phi coefficient (pcof_min / µ_k Lower Bound) for global placement optimization. This parameter controls the step size lower bound in the RePlAce Nesterov optimization algorithm. Lower values may improve convergence but can increase runtime. Valid range: 0.95-1.05| 0.95|
 | <a name="MIN_ROUTING_LAYER"></a>MIN_ROUTING_LAYER| The lowest metal layer name to be used in routing.| |
+| <a name="MOCK_ALU_OPERATIONS"></a>MOCK_ALU_OPERATIONS| Comma-separated list of ALU operations baked into the generated mock-alu RTL (e.g. ADD,SUB,AND). Consumed by the Chisel generator in src/mock-alu.| |
+| <a name="MOCK_ALU_WIDTH"></a>MOCK_ALU_WIDTH| Datapath width in bits for the generated mock-alu RTL. Consumed by the Chisel generator in src/mock-alu.| |
 | <a name="NUM_CORES"></a>NUM_CORES| Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers of cores in system as determined by system specific code in Makefile, `nproc` is tried first. OpenROAD does not limit itself to this number of cores across OpenROAD running instances, which can lead to overprovisioning in contexts such as bazel-orfs where there could be many routing, or place jobs running at the same time.| |
 | <a name="OPENROAD_HIERARCHICAL"></a>OPENROAD_HIERARCHICAL| Feature toggle to enable to run OpenROAD in hierarchical mode, otherwise considered flat. Will eventually be the default and this option will be retired.| 0|
 | <a name="OR_K"></a>OR_K| Passed as -or_k to detailed routing.| |
@@ -266,6 +270,7 @@ configuration file.
 | <a name="RUN_SCRIPT"></a>RUN_SCRIPT| Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.| |
 | <a name="SC_LEF"></a>SC_LEF| Path to technology standard cell LEF file.| |
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.| |
+| <a name="SDC_FILE_EXTRA"></a>SDC_FILE_EXTRA| Path to an additional Tcl file sourced from constraint.sdc and from place_pins I/O scripts. Used by designs that share helper Tcl between SDC and pin placement (e.g. mock-cpu).| |
 | <a name="SDC_GUT"></a>SDC_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| |
 | <a name="SEAL_GDS"></a>SEAL_GDS| Seal macro to place around the design.| |
 | <a name="SETUP_MOVE_SEQUENCE"></a>SETUP_MOVE_SEQUENCE| Passed as -sequence to repair_timing. This should be a string of move keywords separated by commas.| |
@@ -303,6 +308,7 @@ configuration file.
 | <a name="SYNTH_MINIMUM_KEEP_SIZE"></a>SYNTH_MINIMUM_KEEP_SIZE| For hierarchical synthesis, we keep modules of larger area than given by this variable and flatten smaller modules. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| 0|
 | <a name="SYNTH_MOCK_LARGE_MEMORIES"></a>SYNTH_MOCK_LARGE_MEMORIES| Reduce Yosys inferred memories larger than SYNTH_MEMORY_MAX_BITS to 1 row. Yosys will generally infer memories from behavioral Verilog code, whether the memories are in standalone modules or instantiated within some larger module. fakeram and empty Verilog memories(blackboxes) of memories will not be inferred memories by Yosys and are therefore not affected by this variable. This is useful and convenient to separate the concern of instantiating and placing memories from investigating other issues with a design, though it comes at the expense of the increased accuracy that using realistic fakemem would provide. Memories with a single 1 row will of course have unrealistically good timing and area characteristics, but timing will still correctly terminate in a register. Large port memories, typically register files, will still have the retain a lot of the port logic that can be useful to investigate issues. This can be especially useful during development of designs where the behavioral model comes first and suitable memories are matched up when the design RTL is stable. A typical use case would be Chisel which will generate a behavioral model for a memories with the required clocks, ports, etc. in addition to a computer readable file with the specification of the memories that is used to [automatically](https://chipyard.readthedocs.io/en/stable/Tools/Barstools.html/) match up suitable memory macros later in the flow. During an architectural screening study, a large range of memory configurations can be investigated quickly with this option, without getting bogged down in the concern of how to realize the memories in silicon for emphemral RTL configurations that exist only long enough to run through the ORFS flow to create a table of some characteristics of a design configuration.| 0|
 | <a name="SYNTH_NETLIST_FILES"></a>SYNTH_NETLIST_FILES| Skips synthesis and uses the supplied netlist files. If the netlist files contains duplicate modules, which can happen when using hierarchical synthesis on indvidual netlist files and combining here, subsequent modules are silently ignored and only the first module is used.| |
+| <a name="SYNTH_NUM_PARTITIONS"></a>SYNTH_NUM_PARTITIONS| Total number of partitions used by the parallel synthesis flow. Set automatically by bazel-orfs based on SYNTH_KEEP_MODULES; not typically set by users.| |
 | <a name="SYNTH_OPERATIONS_ARGS"></a>SYNTH_OPERATIONS_ARGS| Extra arguments appended to the Yosys synth command operations list. When set, replaces the default Kogge-Stone adder extra-map.| |
 | <a name="SYNTH_OPT_HIER"></a>SYNTH_OPT_HIER| Optimize constants across hierarchical boundaries.| |
 | <a name="SYNTH_REPEATABLE_BUILD"></a>SYNTH_REPEATABLE_BUILD| License to prune anything that makes builds less repeatable, typically used with Bazel to ensure that builds are bit-for-bit identical so that caching works optimally. Removes debug information that encodes paths, timestamps, etc.| 0|
@@ -342,10 +348,14 @@ configuration file.
 - [DFF_LIB_FILE](#DFF_LIB_FILE)
 - [DFF_MAP_FILE](#DFF_MAP_FILE)
 - [LATCH_MAP_FILE](#LATCH_MAP_FILE)
+- [LIB_MODEL](#LIB_MODEL)
 - [MIN_BUF_CELL_AND_PORTS](#MIN_BUF_CELL_AND_PORTS)
+- [MOCK_ALU_OPERATIONS](#MOCK_ALU_OPERATIONS)
+- [MOCK_ALU_WIDTH](#MOCK_ALU_WIDTH)
 - [POST_SYNTH_TCL](#POST_SYNTH_TCL)
 - [PRE_SYNTH_TCL](#PRE_SYNTH_TCL)
 - [SDC_FILE](#SDC_FILE)
+- [SDC_FILE_EXTRA](#SDC_FILE_EXTRA)
 - [SDC_GUT](#SDC_GUT)
 - [SLANG_PLUGIN_PATH](#SLANG_PLUGIN_PATH)
 - [SYNTH_ARGS](#SYNTH_ARGS)
@@ -363,6 +373,7 @@ configuration file.
 - [SYNTH_MINIMUM_KEEP_SIZE](#SYNTH_MINIMUM_KEEP_SIZE)
 - [SYNTH_MOCK_LARGE_MEMORIES](#SYNTH_MOCK_LARGE_MEMORIES)
 - [SYNTH_NETLIST_FILES](#SYNTH_NETLIST_FILES)
+- [SYNTH_NUM_PARTITIONS](#SYNTH_NUM_PARTITIONS)
 - [SYNTH_OPERATIONS_ARGS](#SYNTH_OPERATIONS_ARGS)
 - [SYNTH_OPT_HIER](#SYNTH_OPT_HIER)
 - [SYNTH_REPEATABLE_BUILD](#SYNTH_REPEATABLE_BUILD)
@@ -394,6 +405,7 @@ configuration file.
 - [FOOTPRINT_TCL](#FOOTPRINT_TCL)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [IO_CONSTRAINTS](#IO_CONSTRAINTS)
+- [LIB_MODEL](#LIB_MODEL)
 - [MACRO_BLOCKAGE_HALO](#MACRO_BLOCKAGE_HALO)
 - [MACRO_PLACEMENT_TCL](#MACRO_PLACEMENT_TCL)
 - [MACRO_PLACE_HALO](#MACRO_PLACE_HALO)
@@ -436,6 +448,7 @@ configuration file.
 - [RTLMP_OUTLINE_WT](#RTLMP_OUTLINE_WT)
 - [RTLMP_RPT_DIR](#RTLMP_RPT_DIR)
 - [RTLMP_WIRELENGTH_WT](#RTLMP_WIRELENGTH_WT)
+- [SDC_FILE_EXTRA](#SDC_FILE_EXTRA)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_BUFFER_REMOVAL](#SKIP_BUFFER_REMOVAL)
@@ -470,6 +483,7 @@ configuration file.
 - [GPL_TIMING_DRIVEN](#GPL_TIMING_DRIVEN)
 - [IO_PLACER_H](#IO_PLACER_H)
 - [IO_PLACER_V](#IO_PLACER_V)
+- [LIB_MODEL](#LIB_MODEL)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [MAX_PLACE_STEP_COEF](#MAX_PLACE_STEP_COEF)
 - [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
@@ -492,6 +506,7 @@ configuration file.
 - [PRE_REPAIR_TIMING_POST_PLACE_TCL](#PRE_REPAIR_TIMING_POST_PLACE_TCL)
 - [PRE_RESIZE_TCL](#PRE_RESIZE_TCL)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SDC_FILE_EXTRA](#SDC_FILE_EXTRA)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [TNS_END_PERCENT](#TNS_END_PERCENT)
 
@@ -510,11 +525,14 @@ configuration file.
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [LEC_CHECK](#LEC_CHECK)
+- [LIB_MODEL](#LIB_MODEL)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
+- [MIN_CLK_ROUTING_LAYER](#MIN_CLK_ROUTING_LAYER)
 - [POST_CTS_TCL](#POST_CTS_TCL)
 - [PRE_CTS_TCL](#PRE_CTS_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
+- [SDC_FILE_EXTRA](#SDC_FILE_EXTRA)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_BUFFER_REMOVAL](#SKIP_BUFFER_REMOVAL)
@@ -534,6 +552,7 @@ configuration file.
 - [ENABLE_RESISTANCE_AWARE](#ENABLE_RESISTANCE_AWARE)
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
+- [LIB_MODEL](#LIB_MODEL)
 - [MAX_REPAIR_ANTENNAS_ITER_GRT](#MAX_REPAIR_ANTENNAS_ITER_GRT)
 - [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
@@ -542,6 +561,7 @@ configuration file.
 - [PRE_GLOBAL_ROUTE_TCL](#PRE_GLOBAL_ROUTE_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SDC_FILE_EXTRA](#SDC_FILE_EXTRA)
 - [SETUP_MOVE_SEQUENCE](#SETUP_MOVE_SEQUENCE)
 - [SETUP_SLACK_MARGIN](#SETUP_SLACK_MARGIN)
 - [SKIP_ANTENNA_REPAIR](#SKIP_ANTENNA_REPAIR)
@@ -564,6 +584,7 @@ configuration file.
 - [DETAILED_ROUTE_END_ITERATION](#DETAILED_ROUTE_END_ITERATION)
 - [DISABLE_VIA_GEN](#DISABLE_VIA_GEN)
 - [FILL_CELLS](#FILL_CELLS)
+- [LIB_MODEL](#LIB_MODEL)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [MAX_REPAIR_ANTENNAS_ITER_DRT](#MAX_REPAIR_ANTENNAS_ITER_DRT)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
@@ -576,6 +597,7 @@ configuration file.
 - [PRE_FILLCELL_TCL](#PRE_FILLCELL_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SDC_FILE_EXTRA](#SDC_FILE_EXTRA)
 - [SKIP_ANTENNA_REPAIR_POST_DRT](#SKIP_ANTENNA_REPAIR_POST_DRT)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
@@ -588,6 +610,7 @@ configuration file.
 - [CDL_FILE](#CDL_FILE)
 - [GDS_ALLOW_EMPTY](#GDS_ALLOW_EMPTY)
 - [GND_NETS_VOLTAGES](#GND_NETS_VOLTAGES)
+- [LIB_MODEL](#LIB_MODEL)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [POST_DENSITY_FILL_TCL](#POST_DENSITY_FILL_TCL)
@@ -597,6 +620,7 @@ configuration file.
 - [PWR_NETS_VOLTAGES](#PWR_NETS_VOLTAGES)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
+- [SDC_FILE_EXTRA](#SDC_FILE_EXTRA)
 - [SKIP_DETAILED_ROUTE](#SKIP_DETAILED_ROUTE)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 
