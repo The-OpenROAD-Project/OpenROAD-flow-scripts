@@ -38,6 +38,7 @@ git_override(
     patch_strip = 1,
     patches = [
         "//bazel/bazel-orfs-patches:0001-stages-register-bazel-injected-vars-in-validator.patch",
+        "//bazel/bazel-orfs-patches:0002-synth_partition-fix-SYNTH_SKIP_KEEP-truthy-check.patch",
     ],
     remote = BAZEL_ORFS_REMOTE,
 )
