@@ -5,6 +5,6 @@ exports_files(
 
 filegroup(
     name = "verilog",
-    srcs = glob(include = ["*.v"]),
+    srcs = glob(include = ["*.v", "*.sv"], allow_empty = True),
     visibility = ["//visibility:public"],
 )

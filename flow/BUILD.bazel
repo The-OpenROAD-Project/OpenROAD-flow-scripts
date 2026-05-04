@@ -60,7 +60,7 @@ filegroup(
             "nangate45": ["cfg", "gds", "lef", "lib", "lyt", "mk", "rules", "tcl", "v"],
             "sky130hd": ["gds", "lef", "lib", "lyt", "mk", "rules", "tcl", "tlef", "v"],
             "sky130hs": ["gds", "lef", "lib", "lyt", "mk", "rules", "tcl", "tlef", "v"],
-        }[pdk]
+        }.get(pdk, [])
     ] + [
         "platforms/common/**/*.v",
     ]),
