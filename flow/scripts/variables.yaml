@@ -1585,10 +1585,3 @@ CDL_FILE:
     for generating Circuit Description Language output.
   stages:
     - final
-SYNTH_NUM_PARTITIONS:
-  description: >
-    Total number of partitions used by the parallel synthesis flow.
-    Set automatically by bazel-orfs based on SYNTH_KEEP_MODULES; not
-    typically set by users.
-  stages:
-    - synth

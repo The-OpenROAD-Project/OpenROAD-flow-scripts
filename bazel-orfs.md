@@ -35,29 +35,21 @@ bazelisk query //flow/designs/asap7/...:*
 
 ```starlark
 # flow/designs/<platform>/<design>/BUILD.bazel
-load("@bazel-orfs//:openroad.bzl", "orfs_design")
-load("@orfs_designs//:designs.bzl", "DESIGNS")
+load("//flow/designs:design.bzl", "design")
 
-exports_files(glob(["*"]))
-
-orfs_design(designs = DESIGNS)
+design()
 ```
 
 If `flow/designs/src/<n>/BUILD.bazel` is missing, add:
 
 ```starlark
-exports_files(glob(["*.v", "*.sv"], allow_empty = True), visibility = ["//visibility:public"])
-filegroup(name = "verilog", srcs = glob(["*.v", "*.sv"], allow_empty = True), visibility = ["//visibility:public"])
+load("//flow/designs:design.bzl", "files")
+
+files("verilog")
 ```
 
 A design counts as CI-tested iff `rules-base.json` exists; without it
 the generated targets get `tags = ["manual"]`.
-
-## Local bazel-orfs
-
-Replace the `git_override` for `bazel-orfs` and `bazel-orfs-verilog` in
-`MODULE.bazel` with `local_path_override` pointing at the checkout
-(and `…/verilog` for the latter).
 
 ## Parallelism
 
