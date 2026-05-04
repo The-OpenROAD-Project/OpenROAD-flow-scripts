@@ -5,4 +5,8 @@ etc/
 jenkins/
 docs/
 
+# Non-public PDKs: design dirs without matching flow/platforms/<pdk>/
+flow/designs/gf12/
+flow/designs/gf55/
+
 
