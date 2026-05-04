@@ -164,9 +164,13 @@ gallery: check-klayout $(RESULTS_DIR)/6_final_no_power.def $(RESULTS_DIR)/6_fina
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rm $(UTILS_DIR)/createGallery.py
 
-.PHONY: view_cells
+.PHONY: view_cells view_cells_web
 view_cells:
 	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/view_cells.tcl
+
+.PHONY: view_cells_web
+view_cells_web:
+	$(OPENROAD_WEB_CMD) $(SCRIPTS_DIR)/view_cells.tcl
 
 ## Quick access to command line
 .PHONY: command

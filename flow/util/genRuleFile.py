@@ -256,7 +256,7 @@ def gen_rule_file(
             "[WARNING] 'constraints__clocks__details' not found or is empty in metrics. Clock-related rules might be affected."
         )
 
-    format_str = "| {:45} | {:8} | {:8} | {:8} |\n"
+    format_str = "| {:45} | {:10} | {:10} | {:8} |\n"
     change_str = ""
 
     processed_fields = set()

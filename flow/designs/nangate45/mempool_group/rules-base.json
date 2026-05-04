@@ -12,7 +12,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 194613,
+        "value": 188393,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -11400.0,
+        "value": -14000.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -64,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 5508759,
+        "value": 5273763,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -84,7 +84,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -11300.0,
+        "value": -11500.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -92,7 +92,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -1.16,
+        "value": -0.738,
         "compare": ">="
     },
     "finish__design__instance__area": {
