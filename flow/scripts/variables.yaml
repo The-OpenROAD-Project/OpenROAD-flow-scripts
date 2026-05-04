@@ -1585,3 +1585,55 @@ CDL_FILE:
     for generating Circuit Description Language output.
   stages:
     - final
+LIB_MODEL:
+  description: >
+    Selects the standard cell library timing model. Set to CCS to use
+    composite current source liberty files; default selects the NLDM
+    (non-linear delay model) variant.
+  stages:
+    - synth
+    - floorplan
+    - place
+    - cts
+    - grt
+    - route
+    - final
+MIN_CLK_ROUTING_LAYER:
+  description: >
+    Lowest metal layer that clock tree synthesis may use for clock
+    routing. Mirrors MIN_ROUTING_LAYER but applies to clock nets.
+  stages:
+    - cts
+SDC_FILE_EXTRA:
+  description: >
+    Path to an additional Tcl file sourced from constraint.sdc and from
+    place_pins I/O scripts. Used by designs that share helper Tcl
+    between SDC and pin placement (e.g. mock-cpu).
+  stages:
+    - synth
+    - floorplan
+    - place
+    - cts
+    - grt
+    - route
+    - final
+SYNTH_NUM_PARTITIONS:
+  description: >
+    Total number of partitions used by the parallel synthesis flow.
+    Set automatically by bazel-orfs based on SYNTH_KEEP_MODULES; not
+    typically set by users.
+  stages:
+    - synth
+MOCK_ALU_OPERATIONS:
+  description: >
+    Comma-separated list of ALU operations baked into the generated
+    mock-alu RTL (e.g. ADD,SUB,AND). Consumed by the Chisel generator
+    in src/mock-alu.
+  stages:
+    - synth
+MOCK_ALU_WIDTH:
+  description: >
+    Datapath width in bits for the generated mock-alu RTL. Consumed by
+    the Chisel generator in src/mock-alu.
+  stages:
+    - synth

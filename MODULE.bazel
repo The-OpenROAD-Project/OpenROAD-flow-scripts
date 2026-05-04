@@ -5,17 +5,67 @@ module(
     version = "0.0.1",
 )
 
+# --- Regular dependencies ---
+
+bazel_dep(name = "rules_python", version = "1.8.5")
+bazel_dep(name = "rules_shell", version = "0.6.1")
+bazel_dep(name = "toolchains_llvm", version = "1.5.0")
+
+bazel_dep(name = "openroad")
+local_path_override(
+    module_name = "openroad",
+    path = "tools/OpenROAD",
+)
+
+bazel_dep(name = "qt-bazel")
+git_override(
+    module_name = "qt-bazel",
+    commit = "886104974c2fd72439f2c33b5deebf0fe4649df7",
+    remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
+)
+
 bazel_dep(name = "bazel-orfs")
+bazel_dep(name = "bazel-orfs-verilog")
+
+BAZEL_ORFS_COMMIT = "78f19f25cec73bdec3517a76465dec7ce17ce227"
+
+BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
 # To bump version, run: bazelisk run @bazel-orfs//:bump
 git_override(
     module_name = "bazel-orfs",
-    commit = "f8a4b694b37c8f5322323eba9a9ae37f9541ee17",
-    remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
+    commit = BAZEL_ORFS_COMMIT,
+    remote = BAZEL_ORFS_REMOTE,
 )
 
-bazel_dep(name = "rules_python", version = "1.8.5")
-bazel_dep(name = "rules_shell", version = "0.6.1")
+git_override(
+    module_name = "bazel-orfs-verilog",
+    commit = BAZEL_ORFS_COMMIT,
+    remote = BAZEL_ORFS_REMOTE,
+    strip_prefix = "verilog",
+)
+
+# yosys-slang is not on BCR. Pin to a commit on povik/yosys-slang master
+# that has the upstream Bazel build (povik/yosys-slang#310) and the
+# slang.so visibility fix (povik/yosys-slang#311). Submodules pull in
+# vendored slang and fmt sources.
+bazel_dep(name = "yosys-slang")
+git_override(
+    module_name = "yosys-slang",
+    commit = "7753ea70431d85929292b90c33b32f6dbdb3b048",
+    init_submodules = True,
+    remote = "https://github.com/povik/yosys-slang.git",
+)
+
+# --- Extensions ---
+
+llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
+llvm.toolchain(
+    llvm_version = "20.1.8",
+)
+use_repo(llvm, "llvm_toolchain")
+
+register_toolchains("@llvm_toolchain//:all")
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
@@ -32,15 +82,32 @@ pip.parse(
 use_repo(pip, "orfs-pip")
 
 orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
-
-# To bump version, run: bazelisk run @bazel-orfs//:bump
 orfs.default(
-    image = "docker.io/openroad/orfs:v3.0-3273-gedf3d6bf",
-    # Use local files instead of docker image
     makefile = "//flow:makefile",
     makefile_yosys = "//flow:makefile_yosys",
     pdk = "//flow:asap7",
-    sha256 = "f5692c6325ebcf27cc348e033355ec95c82c35ace1af7e72a0d352624ada143e",
+    variables_yaml = "//flow:scripts/variables.yaml",
+    # Expose the yosys-slang plugin via YOSYS_PLUGIN_PATH so
+    # SYNTH_HDL_FRONTEND=slang works for ibex, cva6, uart, etc.
+    yosys_plugins = ["@yosys-slang//src/yosys_plugin:slang.so"],
 )
-use_repo(orfs, "com_github_nixos_patchelf_download")
-use_repo(orfs, "docker_orfs")
+use_repo(orfs, "config")
+use_repo(orfs, "gnumake")
+use_repo(orfs, "orfs_variable_metadata")
+
+# Auto-generate orfs_flow() targets from config.mk files.
+# See bazel-orfs.md for usage.
+orfs_designs = use_repo_rule("@bazel-orfs//private:designs.bzl", "orfs_designs")
+
+orfs_designs(
+    name = "orfs_designs",
+    designs_dir = "//flow/designs:BUILD.bazel",
+    platforms = [
+        "asap7",
+        "gf180",
+        "ihp-sg13g2",
+        "nangate45",
+        "sky130hd",
+        "sky130hs",
+    ],
+)
