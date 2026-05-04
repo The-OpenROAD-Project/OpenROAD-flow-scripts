@@ -40,8 +40,9 @@ module WDT32 (
 	end
 	
 	reg wden_p;
-	always @(posedge clk) 
-	  wden_p <= WDEN;
+	always @(posedge clk or posedge rst)
+        if (rst) wden_p <= 1'b0;
+        else     wden_p <= WDEN;
 
 	always @(posedge clk or posedge rst)
 	begin

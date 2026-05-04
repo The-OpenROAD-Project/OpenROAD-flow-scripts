@@ -3,13 +3,12 @@ current_design jpeg_encoder
 set clk_name clk
 set clk_port_name clk
 set clk_period 600
-set clk_io_pct 0.2
 
-set clk_port [get_ports $clk_port_name]
+# Match the old set_input/output_delay = 0.2 * clk_period budget, as
+# optimization targets only (no set_input/output_delay — see rationale in
+# $PLATFORM_DIR/constraints.sdc).
+set in2reg_max [expr { $clk_period * 0.8 }]
+set reg2out_max [expr { $clk_period * 0.8 }]
+set in2out_max [expr { $clk_period * 0.6 }]
 
-create_clock -name $clk_name -period $clk_period $clk_port
-
-set non_clock_inputs [all_inputs -no_clocks]
-
-set_input_delay [expr $clk_period * $clk_io_pct] -clock $clk_name $non_clock_inputs
-set_output_delay [expr $clk_period * $clk_io_pct] -clock $clk_name [all_outputs]
+source $::env(PLATFORM_DIR)/constraints.sdc

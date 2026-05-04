@@ -18,6 +18,7 @@ infrastructure expects.
 """
 
 import argparse
+import os
 import resource
 import subprocess
 import sys
@@ -85,7 +86,12 @@ def run(argv: list[str] | None = None) -> int:
         log_file = open(args.log, "a" if args.append else "w")
 
     wall_start = time.monotonic()
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    env = os.environ.copy()
+    for var in ("RUNFILES_DIR", "RUNFILES_MANIFEST_FILE", "RUNFILES_MANIFEST_ONLY"):
+        env.pop(var, None)
+    proc = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=env
+    )
 
     try:
         for line in iter(proc.stdout.readline, b""):
