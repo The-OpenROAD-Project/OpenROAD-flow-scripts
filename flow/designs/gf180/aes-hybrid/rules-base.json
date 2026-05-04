@@ -1,6 +1,6 @@
 {
     "synth__design__instance__area__stdcell": {
-        "value": 634000.0,
+        "value": 489779.41376,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,11 +8,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 834351,
+        "value": 650139,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 24157,
+        "value": 21903,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,19 +20,19 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 2101,
+        "value": 1831,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 2101,
+        "value": 1831,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -1.02,
+        "value": -1.14,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -113.0,
+        "value": -137.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -52,7 +52,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -143.0,
+        "value": -154.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -64,7 +64,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 1869441,
+        "value": 1501193,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -80,11 +80,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -1.26,
+        "value": -1.28,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -140.0,
+        "value": -148.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -96,7 +96,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 895937,
+        "value": 752796,
         "compare": "<="
     }
 }
