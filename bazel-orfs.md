@@ -64,8 +64,3 @@ Replace the `git_override` for `bazel-orfs` and `bazel-orfs-verilog` in
 Each OpenROAD invocation takes `-threads <nproc>`. A wildcard
 `bazelisk test` runs designs in parallel and overcommits the host. Cap
 with `--jobs=N`.
-
-## Non-public PDKs
-
-`gf12`, `gf55`, `rapidus2hp` are not wired up; their platform files
-are not in this repo.
