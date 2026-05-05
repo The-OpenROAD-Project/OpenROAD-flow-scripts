@@ -324,6 +324,7 @@ configuration file.
 | <a name="USE_NEGOTIATION"></a>USE_NEGOTIATION| Enable using negotiation legalizer for detailed placement.| 0|
 | <a name="VERILOG_DEFINES"></a>VERILOG_DEFINES| Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`| |
 | <a name="VERILOG_FILES"></a>VERILOG_FILES| The path to the design Verilog/SystemVerilog files providing a description of modules.| |
+| <a name="VERILOG_FILES_BLACKBOX"></a>VERILOG_FILES_BLACKBOX| Verilog files (typically `IPs/*.v`) that are appended to VERILOG_FILES in hierarchical designs and treated as blackbox modules by yosys. Only used by config.mk; ORFS doesn't read it as an env var.| |
 | <a name="VERILOG_INCLUDE_DIRS"></a>VERILOG_INCLUDE_DIRS| Specifies the include directories for the Verilog input files.| |
 | <a name="VERILOG_TOP_PARAMS"></a>VERILOG_TOP_PARAMS| Apply toplevel params (if exist). Passed in as a list of key value pairs in tcl syntax; separated by spaces: PARAM1 VALUE1 PARAM2 VALUE2| |
 | <a name="VIA_IN_PIN_MAX_LAYER"></a>VIA_IN_PIN_MAX_LAYER| Passed as -via_in_pin_top_layer to pin_access and detailed_route.| |
@@ -376,6 +377,7 @@ configuration file.
 - [UNSET_ABC9_BOX_CELLS](#UNSET_ABC9_BOX_CELLS)
 - [VERILOG_DEFINES](#VERILOG_DEFINES)
 - [VERILOG_FILES](#VERILOG_FILES)
+- [VERILOG_FILES_BLACKBOX](#VERILOG_FILES_BLACKBOX)
 - [VERILOG_INCLUDE_DIRS](#VERILOG_INCLUDE_DIRS)
 - [VERILOG_TOP_PARAMS](#VERILOG_TOP_PARAMS)
 - [YOSYS_FLAGS](#YOSYS_FLAGS)
