@@ -1,0 +1,20 @@
+diff --git a/synth_partition.sh b/synth_partition.sh
+index 5fa420b..f37ca48 100755
+--- a/synth_partition.sh
++++ b/synth_partition.sh
+@@ -17,9 +17,12 @@ NUM_PARTITIONS=${SYNTH_NUM_PARTITIONS:?}
+ KEPT_JSON="$RESULTS_DIR/kept_modules.json"
+ OUTPUT="$RESULTS_DIR/partition_${PARTITION_ID}.v"
+ 
+-# Parse module list from JSON using sed (avoids python wrapper issues)
+-# JSON format: {"modules": ["mod1", "mod2", ...]}
+-ALL_MODULES=$(sed 's/.*\[//;s/\].*//;s/"//g;s/,/\n/g;s/ //g' "$KEPT_JSON")
++# Parse module list from JSON. Module names can contain '[' and ']'
++# (slang elaborates parameterized instances to names like
++# 'foo$bar.gen_tiles[0].i_tile.gen_banks[3]'), so a greedy sed regex is
++# unsafe. Module names cannot contain '"', so extracting all quoted
++# strings and skipping the first ("modules" key) is correct.
++ALL_MODULES=$(grep -oE '"[^"]+"' "$KEPT_JSON" | tail -n +2 | sed 's/"//g')
+ 
+ # When SYNTH_SKIP_KEEP=1, the keep-hierarchy discovery was skipped.
+ # Partitions read from canonical RTLIL and run full synthesis (coarse+fine).
