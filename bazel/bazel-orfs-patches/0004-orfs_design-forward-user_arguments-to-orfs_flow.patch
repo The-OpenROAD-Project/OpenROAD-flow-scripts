@@ -1,0 +1,48 @@
+diff --git a/private/orfs_design.bzl b/private/orfs_design.bzl
+index 3a0f3c2..cb607fc 100644
+--- a/private/orfs_design.bzl
++++ b/private/orfs_design.bzl
+@@ -44,7 +44,7 @@ def _convert_sources(sources, pkg):
+             result[var] = converted
+     return result
+ 
+-def orfs_design(name = None, platform = None, design = None, designs = None, mock_openroad = None, mock_yosys = None):  # buildifier: disable=unused-variable
++def orfs_design(name = None, platform = None, design = None, designs = None, mock_openroad = None, mock_yosys = None, user_arguments = []):  # buildifier: disable=unused-variable
+     """Create orfs_flow() targets for a design based on its parsed config.mk.
+ 
+     Call this from a design's BUILD.bazel:
+@@ -66,6 +66,12 @@ def orfs_design(name = None, platform = None, design = None, designs = None, moc
+         mock_yosys: Label for mock-yosys binary. When set, lint flow uses
+             this instead of real Yosys for synthesis.
+             Example: "//mock/yosys/src/bin:yosys".
++        user_arguments: List of variable names from config.mk that are
++            project-specific (read by user-supplied .tcl/.mk, not by
++            ORFS itself, e.g. FP_PDN_RAIL_OFFSET in a custom pdn.cfg).
++            Routed through orfs_flow(user_arguments=...) to bypass the
++            variables.yaml validator instead of being checked as known
++            ORFS arguments.
+     """
+     if designs == None:
+         fail("orfs_design() requires designs argument: pass DESIGNS from @orfs_designs//:designs.bzl")
+@@ -158,6 +164,13 @@ def orfs_design(name = None, platform = None, design = None, designs = None, moc
+     # Real flow — uses Docker image with real OpenROAD/Yosys
+     arguments = dict(config["arguments"])
+ 
++    # Move caller-flagged design-specific knobs out of arguments and into
++    # user_arguments so they bypass the variables.yaml validator.
++    user_args = {}
++    for var in user_arguments:
++        if var in arguments:
++            user_args[var] = arguments.pop(var)
++
+     # Default SYNTH_NUM_PARTITIONS to a static value so that the action graph
+     # is identical across machines and remote cache hits are possible.  Users
+     # who prefer local parallelism over caching can pass NUM_CPUS explicitly.
+@@ -174,6 +187,7 @@ def orfs_design(name = None, platform = None, design = None, designs = None, moc
+         verilog_files = verilog_files,
+         pdk = "//flow:" + platform,
+         arguments = arguments,
++        user_arguments = user_args,
+         sources = sources,
+         macros = macros if macros else [],
+         stage_data = {"synth": extra_data} if extra_data else {},

@@ -14,10 +14,15 @@ _GROUPS = {
     "gds": (["gds", "gds.gz"], ["gds", "gds.gz"]),
 }
 
-def design():
-    """Standard BUILD body for flow/designs/<platform>/<design>/."""
+def design(user_arguments = []):
+    """Standard BUILD body for flow/designs/<platform>/<design>/.
+
+    user_arguments: see orfs_design — list of config.mk var names that
+    are project-specific (read by the design's own .tcl/.mk, not by
+    ORFS) and should bypass the variables.yaml validator.
+    """
     native.exports_files(native.glob(["*"]))
-    orfs_design(designs = DESIGNS)
+    orfs_design(designs = DESIGNS, user_arguments = user_arguments)
 
 def files(group, extra_srcs = None):
     """Public exports_files + named filegroup over conventional extensions."""

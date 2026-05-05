@@ -50,6 +50,7 @@ git_override(
         "//bazel/bazel-orfs-patches:0001-stages-register-bazel-injected-vars-in-validator.patch",
         "//bazel/bazel-orfs-patches:0002-synth_partition-fix-SYNTH_SKIP_KEEP-truthy-check.patch",
         "//bazel/bazel-orfs-patches:0003-synth_partition-parse-kept_modules-json-without-greedy-sed.patch",
+        "//bazel/bazel-orfs-patches:0004-orfs_design-forward-user_arguments-to-orfs_flow.patch",
     ],
     remote = BAZEL_ORFS_REMOTE,
 )
