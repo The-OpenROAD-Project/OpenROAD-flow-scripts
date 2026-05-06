@@ -38,6 +38,18 @@ if { [env_var_exists_and_non_empty SYNTH_CHECKPOINT] } {
   read_checkpoint $::env(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
 }
 
+# When this synthesis run is one partition of a parallel split (driven by
+# an external orchestrator), `SYNTH_BLACKBOXES` lists modules outside this
+# partition.  Blackboxing them before the hierarchy check lets each
+# partition load the same canonical RTLIL checkpoint while only synthesising
+# its own subhierarchy.  Names not present in the loaded design are skipped
+# silently so the same list can be passed to every partition.
+if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
+  foreach m $::env(SYNTH_BLACKBOXES) {
+    catch { blackbox $m }
+  }
+}
+
 hierarchy -check -top $::env(DESIGN_NAME)
 
 if { $::env(SYNTH_GUT) } {
