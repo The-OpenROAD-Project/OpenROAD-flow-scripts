@@ -38,6 +38,32 @@ if { [env_var_exists_and_non_empty SYNTH_CHECKPOINT] } {
   read_checkpoint $::env(RESULTS_DIR)/1_1_yosys_canonicalize.rtlil
 }
 
+# When this synthesis run is one partition of a parallel split (driven by
+# an external orchestrator), `SYNTH_BLACKBOXES` lists modules outside this
+# partition.  Blackboxing them before the hierarchy check lets each
+# partition load the same canonical RTLIL checkpoint while only synthesising
+# its own subhierarchy.  Names not present in the loaded design are skipped
+# silently so the same list can be passed to every partition.
+#
+# This deliberately differs from the SYNTH_BLACKBOXES handling in
+# synth_preamble.tcl's `read_design_sources`, and the difference is correct
+# in both places — do not "harmonise" the two:
+#   * Order: here the design is already elaborated (read from RTLIL), so
+#     `blackbox` operates on resolved modules and must run before the
+#     hierarchy check.  In synth_preamble.tcl the verilog frontend uses
+#     `read_verilog -defer`, so `hierarchy -check -top` must run first to
+#     elaborate from the top before `blackbox` sees a populated module table.
+#   * Catch: here a missing name is expected because the same list is
+#     reused across partitions, and only this partition's portion exists in
+#     the checkpoint.  In synth_preamble.tcl a single design is being
+#     synthesised, so an unknown name is almost certainly a user typo and
+#     should fail loudly — `blackbox $m` without `catch` is intentional.
+if { [env_var_exists_and_non_empty SYNTH_BLACKBOXES] } {
+  foreach m $::env(SYNTH_BLACKBOXES) {
+    catch { blackbox $m }
+  }
+}
+
 hierarchy -check -top $::env(DESIGN_NAME)
 
 if { $::env(SYNTH_GUT) } {
