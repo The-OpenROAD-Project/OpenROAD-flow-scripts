@@ -238,7 +238,7 @@ __docker_build()
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
         options=""
-        if [ -n "${WITH_VERIFIC}" ]; then
+        if [ ${WITH_VERIFIC} -eq 1 ]; then
                 cp -r "${VERIFIC_SRC}" tools/verific
                 options="-buildArgs=--build-arg verificPath=tools/verific"
         fi
