@@ -67,20 +67,6 @@ git_override(
     remote = "https://github.com/povik/yosys-slang.git",
 )
 
-# YosysHQ/yosys 167c6c4 ("Replace deprecated Tcl API to fix use-after-free")
-# fixes a Tcl 9 use-after-free in rtlil::get_attr/get_param that produces
-# corrupted module names like '\K B-W_KOGGE_STONE' during ORFS-style
-# wrapcell flows. The fix is in yosys main but not yet in the BCR-tagged
-# 0.62; carry it as a patch until the next release lands.
-single_version_override(
-    module_name = "yosys",
-    patch_strip = 1,
-    patches = [
-        "//bazel/yosys-patches:0001-Replace-deprecated-Tcl-API-to-fix-use-after-free.patch",
-    ],
-    version = "0.62.bcr.2",
-)
-
 # --- Extensions ---
 
 llvm = use_extension(
