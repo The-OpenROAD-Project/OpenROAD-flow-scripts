@@ -1,4 +1,4 @@
-"""BUILD.bazel boilerplate for flow/designs/."""
+"""BUILD boilerplate for flow/designs/."""
 
 load("@orfs_designs//:designs.bzl", "orfs_design")
 
