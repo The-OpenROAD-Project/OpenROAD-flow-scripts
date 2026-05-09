@@ -1,12 +1,5 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_pdk")
 
-# Export platform files so designs can reference them directly via
-# ADDITIONAL_LEFS, ADDITIONAL_LIBS, etc. from PLATFORM_DIR.
-exports_files(
-    ["scripts/variables.yaml"] + glob(["platforms/**"]),
-    visibility = ["//visibility:public"],
-)
-
 # files shared between scripts/synth.sh and scripts/flow.sh steps
 MAKEFILE_SHARED = [
     "scripts/variables.json",

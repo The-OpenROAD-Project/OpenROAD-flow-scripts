@@ -3,7 +3,7 @@ load("//flow/designs:design.bzl", "design")
 # FP_PDN_RAIL_{OFFSET,WIDTH} are read by chameleon's own pdn.cfg, not
 # by ORFS itself — route them through user_arguments so the validator
 # doesn't reject them as unknown ORFS variables.
-design(user_arguments = [
+design(config = "config.mk", user_arguments = [
     "FP_PDN_RAIL_OFFSET",
     "FP_PDN_RAIL_WIDTH",
 ])
