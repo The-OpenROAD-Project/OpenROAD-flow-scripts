@@ -1,4 +1,4 @@
-# Extract cell names
+# Extract liberty cell names
 proc get_liberty_cell_names { } {
   return [tee -q -s result.string select -list-mod =A:liberty_cell]
 }
