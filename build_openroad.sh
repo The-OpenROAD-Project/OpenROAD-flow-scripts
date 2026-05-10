@@ -237,13 +237,13 @@ __docker_build()
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
-        options=""
-        if [ -n "${WITH_VERIFIC}" ]; then
+        local options=()
+        if [ "${WITH_VERIFIC}" -eq 1 ]; then
                 cp -r "${VERIFIC_SRC}" tools/verific
-                options="-buildArgs=--build-arg verificPath=tools/verific"
+                options=("-buildArgs=--build-arg verificPath=tools/verific")
         fi
         ./etc/DockerHelper.sh create -target=dev -os="${DOCKER_OS_NAME}" -threads="${PROC}"
-        ./etc/DockerHelper.sh create -target=builder -os="${DOCKER_OS_NAME}" -threads="${PROC}" "${options}"
+        ./etc/DockerHelper.sh create -target=builder -os="${DOCKER_OS_NAME}" -threads="${PROC}" "${options[@]}"
         rm -rf tools/verific
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 mv .dockerignore{.bak,}
