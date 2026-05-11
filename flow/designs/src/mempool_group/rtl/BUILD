@@ -1,0 +1,11 @@
+filegroup(
+    name = "include",
+    srcs = glob(["*.v", "*.sv", "*.svh"], allow_empty = True) + [
+        "//flow/designs/src/mempool_group/rtl/axi:assign.svh",
+        "//flow/designs/src/mempool_group/rtl/axi:typedef.svh",
+        "//flow/designs/src/mempool_group/rtl/common_cells:assertions.svh",
+        "//flow/designs/src/mempool_group/rtl/common_cells:registers.svh",
+        "//flow/designs/src/mempool_group/rtl/mempool:mempool.svh",
+    ],
+    visibility = ["//visibility:public"],
+)
