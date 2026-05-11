@@ -1,5 +1,6 @@
 utl::set_metrics_stage "finish__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
+source $::env(SCRIPTS_DIR)/lec_check.tcl
 erase_non_stage_variables final
 load_design 6_1_fill.odb 6_1_fill.sdc
 source_step_tcl PRE FINAL_REPORT
@@ -18,6 +19,10 @@ deleteRoutingObstructions
 write_def $::env(RESULTS_DIR)/6_final.def
 write_verilog $::env(RESULTS_DIR)/6_final.v \
   -remove_cells [find_physical_only_masters]
+
+if { $::env(LEC_CHECK) } {
+  run_lec_test 6_final 1_synth_lec.v 6_final.v
+}
 
 # Run extraction and STA
 if {

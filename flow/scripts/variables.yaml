@@ -1548,11 +1548,14 @@ WRITE_ODB_AND_SDC_EACH_STAGE:
   default: 1
 LEC_CHECK:
   description: >
-    Perform a formal equivalence check between before and after netlists.
-    If this fails, report an issue to OpenROAD.
+    Perform formal equivalence checks between before and after netlists.
+    This checks CTS repair timing and the initial synthesis netlist against
+    the final netlist. If this fails, report an issue to OpenROAD.
   default: 0
   stages:
+    - synth
     - cts
+    - final
 LEC_AUX_VERILOG_FILES:
   description: >
     Additional Verilog files (e.g. blackbox stubs) to include in LEC

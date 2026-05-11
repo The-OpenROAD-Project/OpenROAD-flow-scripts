@@ -31,3 +31,7 @@ orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 # which are read in here and a canonicalized version is written
 # out by OpenSTA that has no dependencies.
 orfs_write_sdc $::env(RESULTS_DIR)/1_synth.sdc
+if { $::env(LEC_CHECK) } {
+  write_verilog $::env(RESULTS_DIR)/1_synth_lec.v \
+    -remove_cells [find_physical_only_masters]
+}

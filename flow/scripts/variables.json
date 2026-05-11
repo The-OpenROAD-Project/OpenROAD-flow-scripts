@@ -475,9 +475,11 @@
   },
   "LEC_CHECK": {
     "default": 0,
-    "description": "Perform a formal equivalence check between before and after netlists. If this fails, report an issue to OpenROAD.\n",
+    "description": "Perform formal equivalence checks between before and after netlists. This checks CTS repair timing and the initial synthesis netlist against the final netlist. If this fails, report an issue to OpenROAD.\n",
     "stages": [
-      "cts"
+      "synth",
+      "cts",
+      "final"
     ]
   },
   "LIB_FILES": {
