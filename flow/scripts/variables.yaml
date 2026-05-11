@@ -1585,11 +1585,3 @@ CDL_FILE:
     for generating Circuit Description Language output.
   stages:
     - final
-VERILOG_FILES_BLACKBOX:
-  description: >
-    Verilog files (typically `IPs/*.v`) that are appended to
-    VERILOG_FILES in hierarchical designs and treated as blackbox
-    modules by yosys. Only used by config.mk; ORFS doesn't read it as
-    an env var.
-  stages:
-    - synth

@@ -45,7 +45,10 @@ BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
-    patches = ["//bazel:0001-orfs_design-accept-config-mk-explicitly-drop-exports.patch"],
+    patches = [
+        "//bazel:0001-orfs_design-accept-config-mk-explicitly-drop-exports.patch",
+        "//bazel:0002-orfs_design-add-local_arguments-to-drop-helper-vars.patch",
+    ],
     patch_strip = 1,
     remote = BAZEL_ORFS_REMOTE,
 )
@@ -112,7 +115,7 @@ use_repo(orfs, "gnumake")
 use_repo(orfs, "orfs_variable_metadata")
 
 # Auto-generate orfs_flow() targets from config.mk files.
-# See bazel-orfs.md for usage.
+# See flow/bazel-orfs.md for usage.
 orfs_designs = use_repo_rule("@bazel-orfs//private:designs.bzl", "orfs_designs")
 
 orfs_designs(

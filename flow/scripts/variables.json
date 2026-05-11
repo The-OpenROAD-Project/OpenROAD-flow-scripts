@@ -1447,12 +1447,6 @@
       "synth"
     ]
   },
-  "VERILOG_FILES_BLACKBOX": {
-    "description": "Verilog files (typically `IPs/*.v`) that are appended to VERILOG_FILES in hierarchical designs and treated as blackbox modules by yosys. Only used by config.mk; ORFS doesn't read it as an env var.\n",
-    "stages": [
-      "synth"
-    ]
-  },
   "VERILOG_INCLUDE_DIRS": {
     "description": "Specifies the include directories for the Verilog input files.\n",
     "stages": [

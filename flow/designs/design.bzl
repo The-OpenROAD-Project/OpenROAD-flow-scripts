@@ -13,7 +13,7 @@ _GROUPS = {
     "gds": ["gds", "gds.gz"],
 }
 
-def design(config = "config.mk", user_arguments = []):
+def design(config = "config.mk", user_arguments = [], local_arguments = []):
     """Standard BUILD body for flow/designs/<platform>/<design>/.
 
     Args:
@@ -21,8 +21,16 @@ def design(config = "config.mk", user_arguments = []):
         user_arguments: see orfs_design — list of config.mk var names that
             are project-specific (read by the design's own .tcl/.mk, not by
             ORFS) and should bypass the variables.yaml validator.
+        local_arguments: see orfs_design — list of config.mk var names that
+            are pure make-only helpers (used only via $(VAR) expansion
+            within the same config.mk, never read by ORFS or by user
+            .tcl/.mk). Dropped entirely before orfs_flow() is invoked.
     """
-    orfs_design(config = config, user_arguments = user_arguments)
+    orfs_design(
+        config = config,
+        user_arguments = user_arguments,
+        local_arguments = local_arguments,
+    )
 
 def files(group, extra_srcs = None):
     """Named filegroup over conventional extensions."""
