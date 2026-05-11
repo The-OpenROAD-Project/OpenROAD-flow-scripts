@@ -37,7 +37,7 @@ git_override(
 bazel_dep(name = "bazel-orfs", dev_dependency = True)
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
-BAZEL_ORFS_COMMIT = "b1ceeb28fc41b80b1fa85032e0770203847d4ba7"
+BAZEL_ORFS_COMMIT = "717655415dd4446ca4e2fc09907465c75cb23912"
 
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
@@ -45,11 +45,6 @@ BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
-    patches = [
-        "//bazel:0001-orfs_design-accept-config-mk-explicitly-drop-exports.patch",
-        "//bazel:0002-orfs_design-add-local_arguments-to-drop-helper-vars.patch",
-    ],
-    patch_strip = 1,
     remote = BAZEL_ORFS_REMOTE,
 )
 

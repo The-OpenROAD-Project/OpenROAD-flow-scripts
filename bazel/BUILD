@@ -1,3 +1,1 @@
-exports_files(
-    glob(["*.patch"]) + ["install.sh"],
-)
+exports_files(["install.sh"])
