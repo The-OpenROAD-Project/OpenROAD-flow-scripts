@@ -38,6 +38,22 @@ proc write_lec_script { step file1 file2 } {
   close $outfile
 }
 
+proc write_sec_script { step file1 file2 } {
+  set outfile [open "$::env(OBJECTS_DIR)/${step}_sec_test.yml" w]
+  puts $outfile "format: verilog"
+  puts $outfile "verification: sec"
+  puts $outfile "sec_engine: pdr"
+  puts $outfile "input_paths:"
+  puts $outfile "  - $::env(RESULTS_DIR)/${file1}"
+  puts $outfile "  - $::env(RESULTS_DIR)/${file2}"
+  puts $outfile "liberty_files:"
+  foreach libFile $::env(LIB_FILES) {
+    puts $outfile " - $libFile"
+  }
+  puts $outfile "log_file: $::env(LOG_DIR)/${step}_sec_check.log"
+  close $outfile
+}
+
 proc run_lec_test { step file1 file2 } {
   write_lec_script $step $file1 $file2
   # tclint-disable-next-line command-args
@@ -52,5 +68,22 @@ proc run_lec_test { step file1 file2 } {
     error "Repair timing output failed lec test"
   } else {
     puts "Repair timing output passed lec test"
+  }
+}
+
+proc run_sec_test { step file1 file2 } {
+  write_sec_script $step $file1 $file2
+  # tclint-disable-next-line command-args
+  eval exec $::env(KEPLER_FORMAL_EXE) --config $::env(OBJECTS_DIR)/${step}_sec_test.yml
+  try {
+    set count [exec grep -c "SEC found a counterexample" $::env(LOG_DIR)/${step}_sec_check.log]
+  } trap CHILDSTATUS {results options} {
+    # This block executes if grep returns a non-zero exit code
+    set count 0
+  }
+  if { $count > 0 } {
+    error "Global output failed sec test"
+  } else {
+    puts "Global output passed sec test"
   }
 }

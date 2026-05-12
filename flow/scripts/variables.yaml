@@ -1556,13 +1556,23 @@ LEC_CHECK:
     - synth
     - cts
     - final
+SEC_CHECK:
+  description: >
+    Perform a sequential equivalence check between the initial synthesis
+    netlist and final netlist with the Kepler Formal PDR engine. If this
+    fails, report an issue to OpenROAD.
+  default: 0
+  stages:
+    - synth
+    - final
 LEC_AUX_VERILOG_FILES:
   description: >
-    Additional Verilog files (e.g. blackbox stubs) to include in LEC
-    equivalence checks. Appended to the generated Verilog netlist before
-    running the formal equivalence check.
+    Additional Verilog files (e.g. blackbox stubs) to include in generated
+    netlists for formal equivalence checks.
   stages:
+    - synth
     - cts
+    - final
 REMOVE_CELLS_FOR_LEC:
   description: >
     String patterns directly passed to write_verilog -remove_cells <> for
