@@ -1079,8 +1079,8 @@
     "description": "Seal macro to place around the design.\n"
   },
   "SEC_CHECK": {
-    "description": "Perform a sequential equivalence check between the initial synthesis netlist and final netlist with the Kepler Formal PDR engine. If this fails, report an issue to OpenROAD.\n",
     "default": 0,
+    "description": "Perform a sequential equivalence check between the initial synthesis netlist and final netlist with the Kepler Formal PDR engine. If this fails, report an issue to OpenROAD.\n",
     "stages": [
       "synth",
       "final"
