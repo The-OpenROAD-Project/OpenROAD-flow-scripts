@@ -1,10 +1,5 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_pdk")
 
-exports_files(
-    ["scripts/variables.yaml"],
-    visibility = ["//visibility:public"],
-)
-
 # files shared between scripts/synth.sh and scripts/flow.sh steps
 MAKEFILE_SHARED = [
     "scripts/variables.json",
@@ -20,6 +15,7 @@ filegroup(
     srcs = ["Makefile"],
     data = glob(MAKEFILE_SHARED + [
         "scripts/*.script",
+        "scripts/*.v",
         "scripts/util.tcl",
         "scripts/synth*.tcl",
         "scripts/synth*.v",
@@ -50,22 +46,13 @@ filegroup(
             ext = ext,
             pdk = pdk,
         )
-        for ext in [
-            "gds",
-            "lef",
-            "lyp",
-            "lyt",
-            "mk",
-            "rules",
-            "tcl",
-            "v",
-        ] + {
-            "asap7": ["cfg", "json", "lib.gz", "sdc"],
-            "gf180": ["cfg", "layermap", "lyt_generic"],
-            "ihp-sg13g2": ["json"],
-            "nangate45": ["cfg"],
-            "sky130hd": ["json", "tlef"],
-            "sky130hs": ["json", "tlef"],
+        for ext in {
+            "asap7": ["cfg", "gds", "lef", "lib", "lib.gz", "lyt", "mk", "rules", "sdc", "sv", "tcl", "v"],
+            "gf180": ["cfg", "gds", "lef", "lib.gz", "lyt", "mk", "rules", "tcl", "v"],
+            "ihp-sg13g2": ["gds", "json", "lef", "lib", "lyt", "mk", "rules", "tcl", "v"],
+            "nangate45": ["cfg", "gds", "lef", "lib", "lyt", "mk", "rules", "tcl", "v"],
+            "sky130hd": ["gds", "lef", "lib", "lyt", "mk", "rules", "tcl", "tlef", "v"],
+            "sky130hs": ["gds", "lef", "lib", "lyt", "mk", "rules", "tcl", "tlef", "v"],
         }.get(pdk, [])
     ] + [
         "platforms/common/**/*.v",

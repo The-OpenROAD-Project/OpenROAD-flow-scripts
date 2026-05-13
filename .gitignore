@@ -105,3 +105,4 @@ bazel-testlogs
 
 # python venv
 venv/
+tmp/
