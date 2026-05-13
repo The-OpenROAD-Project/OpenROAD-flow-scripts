@@ -7,7 +7,7 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 # Adders degrade GCD
 export ADDER_MAP_FILE :=
 
-export CORE_UTILIZATION = 39
+export CORE_UTILIZATION = 40
 export TNS_END_PERCENT = 100
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1

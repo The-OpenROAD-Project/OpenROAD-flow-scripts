@@ -7,7 +7,7 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 
 export PLACE_PINS_ARGS = -min_distance 4 -min_distance_in_tracks
 
-export CORE_UTILIZATION = 34
+export CORE_UTILIZATION = 35
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 
