@@ -13,6 +13,11 @@ _GROUPS = {
     "gds": ["gds", "gds.gz"],
 }
 
+# Extensions exported as individual labels so bazel-orfs's per-file
+# cross-package references resolve. Kept tight on purpose: globbing "*"
+# silently exposes LICENSE/.gitignore/etc. as the public API surface.
+_EXPORTED_EXTS = ["v", "sv", "svh", "tcl", "sdc", "def", "cfg", "lef", "lib"]
+
 def design(config = "config.mk", user_arguments = [], local_arguments = []):
     """Standard BUILD body for flow/designs/<platform>/<design>/.
 
@@ -26,6 +31,19 @@ def design(config = "config.mk", user_arguments = [], local_arguments = []):
             within the same config.mk, never read by ORFS or by user
             .tcl/.mk). Dropped entirely before orfs_flow() is invoked.
     """
+
+    # Some designs share another design's SDC, Verilog, or constraint
+    # files via $(DESIGN_HOME)/<platform>/<other-design>/... paths in
+    # config.mk. bazel-orfs translates these into cross-package labels
+    # like //flow/designs/<platform>/<other-design>:constraint.sdc,
+    # which require explicit exports_files() on the source package.
+    exported = native.glob(
+        ["*.{}".format(e) for e in _EXPORTED_EXTS],
+        allow_empty = True,
+    )
+    if exported:
+        native.exports_files(exported, visibility = ["//visibility:public"])
+
     orfs_design(
         config = config,
         user_arguments = user_arguments,
@@ -33,11 +51,24 @@ def design(config = "config.mk", user_arguments = [], local_arguments = []):
     )
 
 def files(group, extra_srcs = None):
-    """Named filegroup over conventional extensions."""
+    """Named filegroup over conventional extensions.
+
+    Also exports the same files individually so per-file labels
+    (e.g. //flow/designs/src/gcd:gcd.v) resolve from sibling packages.
+    bazel-orfs's config_mk_parser emits such labels for
+    $(DESIGN_HOME)/src/<name>/<file> references.
+    """
     exts = _GROUPS[group]
+    srcs = native.glob(["*.{}".format(e) for e in exts], allow_empty = True) + \
+           (extra_srcs or [])
     native.filegroup(
         name = group,
-        srcs = native.glob(["*.{}".format(e) for e in exts], allow_empty = True) +
-               (extra_srcs or []),
+        srcs = srcs,
         visibility = ["//visibility:public"],
     )
+    exported = native.glob(
+        ["*.{}".format(e) for e in _EXPORTED_EXTS],
+        allow_empty = True,
+    )
+    if exported:
+        native.exports_files(exported, visibility = ["//visibility:public"])
