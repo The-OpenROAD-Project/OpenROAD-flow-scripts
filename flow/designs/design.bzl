@@ -16,7 +16,25 @@ _GROUPS = {
 # Extensions exported as individual labels so bazel-orfs's per-file
 # cross-package references resolve. Kept tight on purpose: globbing "*"
 # silently exposes LICENSE/.gitignore/etc. as the public API surface.
-_EXPORTED_EXTS = ["v", "sv", "svh", "tcl", "sdc", "def", "cfg", "lef", "lib"]
+# gds/gds.gz are inputs in hierarchical flows via ADDITIONAL_GDS.
+_EXPORTED_EXTS = ["v", "sv", "svh", "tcl", "sdc", "def", "cfg", "lef", "lib", "gds", "gds.gz"]
+
+def _export_design_files():
+    """Publicly export per-file labels for cross-package references.
+
+    bazel-orfs's config_mk_parser turns $(DESIGN_HOME)/... and
+    $(PLATFORM_DIR)/... paths in a config.mk into per-file bazel labels
+    like //flow/designs/<plat>/<other>:constraint.sdc.  Those labels
+    resolve only if the source package calls exports_files() on the
+    individual files — being part of a public filegroup is not
+    sufficient.
+    """
+    exported = native.glob(
+        ["*.{}".format(e) for e in _EXPORTED_EXTS],
+        allow_empty = True,
+    )
+    if exported:
+        native.exports_files(exported, visibility = ["//visibility:public"])
 
 def design(config = "config.mk", user_arguments = [], local_arguments = []):
     """Standard BUILD body for flow/designs/<platform>/<design>/.
@@ -31,19 +49,7 @@ def design(config = "config.mk", user_arguments = [], local_arguments = []):
             within the same config.mk, never read by ORFS or by user
             .tcl/.mk). Dropped entirely before orfs_flow() is invoked.
     """
-
-    # Some designs share another design's SDC, Verilog, or constraint
-    # files via $(DESIGN_HOME)/<platform>/<other-design>/... paths in
-    # config.mk. bazel-orfs translates these into cross-package labels
-    # like //flow/designs/<platform>/<other-design>:constraint.sdc,
-    # which require explicit exports_files() on the source package.
-    exported = native.glob(
-        ["*.{}".format(e) for e in _EXPORTED_EXTS],
-        allow_empty = True,
-    )
-    if exported:
-        native.exports_files(exported, visibility = ["//visibility:public"])
-
+    _export_design_files()
     orfs_design(
         config = config,
         user_arguments = user_arguments,
@@ -66,9 +72,4 @@ def files(group, extra_srcs = None):
         srcs = srcs,
         visibility = ["//visibility:public"],
     )
-    exported = native.glob(
-        ["*.{}".format(e) for e in _EXPORTED_EXTS],
-        allow_empty = True,
-    )
-    if exported:
-        native.exports_files(exported, visibility = ["//visibility:public"])
+    _export_design_files()
