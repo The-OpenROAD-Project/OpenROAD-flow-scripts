@@ -1,3 +1,12 @@
 build --incompatible_strict_action_env
 build --cxxopt "-std=c++20" --host_cxxopt "-std=c++20"
+
+# Don't track MODULE.bazel.lock.  Resolved versions ride along with the
+# pinned BCR + git_override(commit=…) coordinates in MODULE.bazel and
+# downstream cache hits are what we actually care about.  Tracking the
+# lockfile just means every bazel-orfs / yosys / openroad bump produces
+# a 1000-line lock diff that buries the real change.  Matches what
+# bazel-orfs itself does (its own .bazelrc:7).
+common --lockfile_mode=off
+
 try-import %workspace%/user.bazelrc

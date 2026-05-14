@@ -483,6 +483,10 @@
   "LIB_FILES": {
     "description": "A Liberty file of the standard cell library with PVT characterization, input and output characteristics, timing and power definitions for each cell.\n"
   },
+  "LIB_MODEL": {
+    "default": "NLDM",
+    "description": "Selects between NLDM and CCS timing models for the ASAP7 platform. Valid values: NLDM (default), CCS. Used in flow/platforms/asap7/config.mk to pick the LIB_DIR subdirectory and accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list, and in flow/scripts/load.tcl to gate CCS-specific Tcl branches.\n"
+  },
   "MACRO_BLOCKAGE_HALO": {
     "description": "Distance beyond the edges of a macro that will also be covered by the blockage generated for that macro. Note that the default macro blockage halo comes from the largest of the specified MACRO_PLACE_HALO x or y values. This variable overrides that calculation.\n",
     "stages": [
@@ -585,6 +589,9 @@
     "stages": [
       "synth"
     ]
+  },
+  "MIN_CLK_ROUTING_LAYER": {
+    "description": "The lowest metal layer name to be used for clock-net routing in global routing. Used in flow/platforms/*/fastroute.tcl as the lower bound of `set_routing_layers -clock`. Typically higher than MIN_ROUTING_LAYER so clock nets prefer the upper, lower-RC layers. No `stages:` list because floorplan.tcl also `source`s the platform fastroute.tcl.\n"
   },
   "MIN_PLACE_STEP_COEF": {
     "default": 0.95,

@@ -20,7 +20,6 @@ bazel_dep(name = "rules_shell", version = "0.6.1")
 # time.
 
 bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
-
 bazel_dep(name = "openroad", dev_dependency = True)
 local_path_override(
     module_name = "openroad",
@@ -37,7 +36,7 @@ git_override(
 bazel_dep(name = "bazel-orfs", dev_dependency = True)
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
-BAZEL_ORFS_COMMIT = "717655415dd4446ca4e2fc09907465c75cb23912"
+BAZEL_ORFS_COMMIT = "ce6efd96dfe39a9c4ef244f8712386f071545d77"
 
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
@@ -45,6 +44,15 @@ BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
+    patch_strip = 1,
+    patches = [
+        # Adds orfs_design(user_sources=[VAR,...]) / orfs_flow(user_sources={...})
+        # so design-private SOURCE_VARS path hooks (e.g. SDC_FILE_EXTRA in
+        # flow/designs/asap7/mock-cpu) bypass the variables.yaml validator
+        # without polluting the ORFS-wide variable schema. Drop once upstream
+        # bazel-orfs lands the user_sources= API.
+        "//bazel:0001-orfs_design-add-user_sources.patch",
+    ],
     remote = BAZEL_ORFS_REMOTE,
 )
 
@@ -79,7 +87,10 @@ llvm.toolchain(
 )
 use_repo(llvm, "llvm_toolchain")
 
-register_toolchains("@llvm_toolchain//:all", dev_dependency = True)
+register_toolchains(
+    "@llvm_toolchain//:all",
+    dev_dependency = True,
+)
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(

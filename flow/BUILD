@@ -1,5 +1,23 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_pdk")
 
+# Expose every individual file under platforms/ as a public source-file
+# target, so designs in other packages can refer to e.g.
+# //flow:platforms/asap7/verilog/fakeram7_64x28.sv directly. This is the
+# label form bazel-orfs's config_mk_parser produces for VERILOG_FILES /
+# ADDITIONAL_LEFS / ADDITIONAL_LIBS that point at platform-provided files.
+# Exclude package BUILD files so they aren't claimed as source labels by
+# any future sub-package under platforms/.
+exports_files(
+    glob(
+        ["platforms/**/*"],
+        exclude = [
+            "platforms/**/BUILD",
+            "platforms/**/BUILD.bazel",
+        ],
+    ),
+    visibility = ["//visibility:public"],
+)
+
 # files shared between scripts/synth.sh and scripts/flow.sh steps
 MAKEFILE_SHARED = [
     "scripts/variables.json",
@@ -47,27 +65,96 @@ filegroup(
             pdk = pdk,
         )
         for ext in {
-            "asap7": ["cfg", "gds", "lef", "lib", "lib.gz", "lyt", "mk", "rules", "sdc", "sv", "tcl", "v"],
-            "gf180": ["cfg", "gds", "lef", "lib.gz", "lyt", "mk", "rules", "tcl", "v"],
-            "ihp-sg13g2": ["gds", "json", "lef", "lib", "lyt", "mk", "rules", "tcl", "v"],
-            "nangate45": ["cfg", "gds", "lef", "lib", "lyt", "mk", "rules", "tcl", "v"],
-            "sky130hd": ["gds", "lef", "lib", "lyt", "mk", "rules", "tcl", "tlef", "v"],
-            "sky130hs": ["gds", "lef", "lib", "lyt", "mk", "rules", "tcl", "tlef", "v"],
+            "asap7": [
+                "cfg",
+                "gds",
+                "lef",
+                "lib",
+                "lib.gz",
+                "lyt",
+                "mk",
+                "rules",
+                "sdc",
+                "sv",
+                "tcl",
+                "v",
+            ],
+            "gf180": [
+                "cfg",
+                "gds",
+                "lef",
+                "lib.gz",
+                "lyt",
+                "mk",
+                "rules",
+                "tcl",
+                "v",
+            ],
+            "ihp-sg13g2": [
+                "gds",
+                "json",
+                "lef",
+                "lib",
+                "lyt",
+                "mk",
+                "rules",
+                "tcl",
+                "v",
+            ],
+            "nangate45": [
+                "cfg",
+                "gds",
+                "lef",
+                "lib",
+                "lyt",
+                "mk",
+                "rules",
+                "tcl",
+                "v",
+            ],
+            "sky130hd": [
+                "gds",
+                "lef",
+                "lib",
+                "lyt",
+                "mk",
+                "rules",
+                "tcl",
+                "tlef",
+                "v",
+            ],
+            "sky130hs": [
+                "gds",
+                "lef",
+                "lib",
+                "lyt",
+                "mk",
+                "rules",
+                "tcl",
+                "tlef",
+                "v",
+            ],
         }.get(pdk, [])
     ] + [
         "platforms/common/**/*.v",
     ]),
+    config = ":platforms/{pdk}/config.mk".format(pdk = pdk),
     libs = glob([
         "platforms/{pdk}/**/*.{ext}".format(
-            pdk = pdk,
             ext = ext,
+            pdk = pdk,
         )
         for ext in {
-            "asap7": ["lib", "lib.gz"],
+            "asap7": [
+                "lib",
+                "lib.gz",
+            ],
             "gf180": ["lib.gz"],
-        }.get(pdk, ["lib"])
+        }.get(
+            pdk,
+            ["lib"],
+        )
     ]),
-    config = ":platforms/{pdk}/config.mk".format(pdk = pdk),
     visibility = ["//visibility:public"],
 ) for pdk in [
     "asap7",
