@@ -19,6 +19,8 @@ _GROUPS = {
 # gds/gds.gz are inputs in hierarchical flows via ADDITIONAL_GDS.
 _EXPORTED_EXTS = ["v", "sv", "svh", "tcl", "sdc", "def", "cfg", "lef", "lib", "gds", "gds.gz"]
 
+_EXPORTS_SENTINEL = "_orfs_design_exports_sentinel"
+
 def _export_design_files():
     """Publicly export per-file labels for cross-package references.
 
@@ -28,13 +30,26 @@ def _export_design_files():
     resolve only if the source package calls exports_files() on the
     individual files — being part of a public filegroup is not
     sufficient.
+
+    Idempotent: design() and files() both call this, and a BUILD file
+    may legitimately call files() more than once (e.g. files("verilog")
+    and files("lef") in the same package).  A second native.exports_files
+    over the same paths is a duplicate-target error, so a sentinel rule
+    short-circuits subsequent calls within the same package.
     """
+    if _EXPORTS_SENTINEL in native.existing_rules():
+        return
     exported = native.glob(
         ["*.{}".format(e) for e in _EXPORTED_EXTS],
         allow_empty = True,
     )
     if exported:
         native.exports_files(exported, visibility = ["//visibility:public"])
+    native.filegroup(
+        name = _EXPORTS_SENTINEL,
+        srcs = [],
+        visibility = ["//visibility:private"],
+    )
 
 def design(config = "config.mk", user_arguments = [], local_arguments = []):
     """Standard BUILD body for flow/designs/<platform>/<design>/.
