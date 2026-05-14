@@ -37,7 +37,7 @@ git_override(
 bazel_dep(name = "bazel-orfs", dev_dependency = True)
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
-BAZEL_ORFS_COMMIT = "717655415dd4446ca4e2fc09907465c75cb23912"
+BAZEL_ORFS_COMMIT = "ce6efd96dfe39a9c4ef244f8712386f071545d77"
 
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
