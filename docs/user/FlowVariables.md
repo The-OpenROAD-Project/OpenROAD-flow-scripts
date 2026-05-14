@@ -268,7 +268,6 @@ configuration file.
 | <a name="RUN_SCRIPT"></a>RUN_SCRIPT| Path to script to run from `make run`, python or tcl script detected by .py or .tcl extension.| |
 | <a name="SC_LEF"></a>SC_LEF| Path to technology standard cell LEF file.| |
 | <a name="SDC_FILE"></a>SDC_FILE| The path to design constraint (SDC) file.| |
-| <a name="SDC_FILE_EXTRA"></a>SDC_FILE_EXTRA| Path to an extra Tcl file the design's own SDC / io.tcl can `source` for per-design hooks (constraints that don't fit cleanly in the shared SDC_FILE). bazel-orfs classifies this as a source-typed variable (path label), so the value is staged into the sandbox. Used by flow/designs/asap7/mock-cpu.| |
 | <a name="SDC_GUT"></a>SDC_GUT| Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.| |
 | <a name="SEAL_GDS"></a>SEAL_GDS| Seal macro to place around the design.| |
 | <a name="SETUP_MOVE_SEQUENCE"></a>SETUP_MOVE_SEQUENCE| Passed as -sequence to repair_timing. This should be a string of move keywords separated by commas.| |
@@ -659,7 +658,6 @@ configuration file.
 - [RUN_LOG_NAME_STEM](#RUN_LOG_NAME_STEM)
 - [RUN_SCRIPT](#RUN_SCRIPT)
 - [SC_LEF](#SC_LEF)
-- [SDC_FILE_EXTRA](#SDC_FILE_EXTRA)
 - [SEAL_GDS](#SEAL_GDS)
 - [SET_RC_TCL](#SET_RC_TCL)
 - [SLEW_MARGIN](#SLEW_MARGIN)

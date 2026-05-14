@@ -1072,9 +1072,6 @@
       "synth"
     ]
   },
-  "SDC_FILE_EXTRA": {
-    "description": "Path to an extra Tcl file the design's own SDC / io.tcl can `source` for per-design hooks (constraints that don't fit cleanly in the shared SDC_FILE). bazel-orfs classifies this as a source-typed variable (path label), so the value is staged into the sandbox. Used by flow/designs/asap7/mock-cpu.\n"
-  },
   "SDC_GUT": {
     "description": "Load design and remove all internal logic before doing synthesis. This is useful when creating a mock .lef abstract that has a smaller area than the amount of logic would allow. bazel-orfs uses this to mock SRAMs, for instance.\n",
     "stages": [

@@ -51,7 +51,7 @@ def _export_design_files():
         visibility = ["//visibility:private"],
     )
 
-def design(config = "config.mk", user_arguments = [], local_arguments = []):
+def design(config = "config.mk", user_arguments = [], user_sources = [], local_arguments = []):
     """Standard BUILD body for flow/designs/<platform>/<design>/.
 
     Args:
@@ -59,6 +59,10 @@ def design(config = "config.mk", user_arguments = [], local_arguments = []):
         user_arguments: see orfs_design — list of config.mk var names that
             are project-specific (read by the design's own .tcl/.mk, not by
             ORFS) and should bypass the variables.yaml validator.
+        user_sources: see orfs_design — list of config.mk var names that
+            are project-specific source-typed (path-label) hooks read only
+            by the design's own .tcl/.mk; the file is still staged into the
+            sandbox but the var name skips variables.yaml validation.
         local_arguments: see orfs_design — list of config.mk var names that
             are pure make-only helpers (used only via $(VAR) expansion
             within the same config.mk, never read by ORFS or by user
@@ -68,6 +72,7 @@ def design(config = "config.mk", user_arguments = [], local_arguments = []):
     orfs_design(
         config = config,
         user_arguments = user_arguments,
+        user_sources = user_sources,
         local_arguments = local_arguments,
     )
 
