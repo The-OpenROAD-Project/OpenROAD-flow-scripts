@@ -1,16 +1,26 @@
 {
+    "synth__yosys__version": {
+        "value": "0.65",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__abc__version": {
+        "value": "1.01",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__canonical_netlist__hash": {
-        "value": "6e8e16e4f9bdb0e3756653c3bd31fb223f21b445",
+        "value": "51e1c96c1cbd84acbe6094554dfc328512dada66",
         "compare": "==",
         "level": "warning"
     },
     "synth__preabc_netlist__hash": {
-        "value": "4ab7b6700d9ca14e2ee4531aceb79b339aabca73",
+        "value": "f1b261b2a091a9be65c846a11f71588d55210cee",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "95652d905a7cf9bc9c935a58e01a76e65327c8b3",
+        "value": "11a8cf6937376ae7e00f0afeee5304fa944a145e",
         "compare": "==",
         "level": "warning"
     },
@@ -47,7 +57,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -1190.0,
+        "value": -826.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -63,11 +73,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -62.2,
+        "value": -48.5,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -2090.0,
+        "value": -1500.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -95,11 +105,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -46.9,
+        "value": -35.8,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -1230.0,
+        "value": -707.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {

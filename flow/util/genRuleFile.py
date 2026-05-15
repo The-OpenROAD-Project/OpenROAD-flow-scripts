@@ -79,6 +79,16 @@ def gen_rule_file(
         # surfaces as a [WARN] diagnostic in checkMetadata.py without
         # failing the build, matching how rules-base.json already
         # treats warning counts.
+        "synth__yosys__version": {
+            "mode": "literal",
+            "compare": "==",
+            "level": "warning",
+        },
+        "synth__abc__version": {
+            "mode": "literal",
+            "compare": "==",
+            "level": "warning",
+        },
         "synth__canonical_netlist__hash": {
             "mode": "literal",
             "compare": "==",

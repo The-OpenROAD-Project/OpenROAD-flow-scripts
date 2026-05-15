@@ -288,6 +288,29 @@ def extract_metrics(
     )
     metrics_dict["synth__netlist__hash"] = file_sha1(resultPath + "/1_2_yosys.v")
 
+    # Yosys + ABC version fingerprints — surface bazel-vs-make
+    # version skew directly in `checkMetadata.py` output so a netlist
+    # hash diff isn't first mistaken for non-determinism. The yosys
+    # banner is the very first line of `1_2_yosys.log`; ABC's version
+    # is `puts`-emitted by `synth_preamble.tcl` from
+    # `yosys-abc -c "version; quit"` so it lands in the same log.
+    extractTagFromFile(
+        "synth__yosys__version",
+        metrics_dict,
+        r"^Yosys\s+(\S+)",
+        logPath + "/1_2_yosys.log",
+        t=str,
+        required=False,
+    )
+    extractTagFromFile(
+        "synth__abc__version",
+        metrics_dict,
+        r"^synth__abc__version:\s+(.+?)\s*$",
+        logPath + "/1_2_yosys.log",
+        t=str,
+        required=False,
+    )
+
     # Clocks
     # =========================================================================
     clk_list = read_sdc(resultPath + "/2_floorplan.sdc")
