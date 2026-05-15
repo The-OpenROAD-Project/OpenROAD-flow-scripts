@@ -63,6 +63,16 @@ git_override(
     strip_prefix = "verilog",
 )
 
+# Force yosys to 0.65 (from BCR PR #8863, picked up via the custom
+# registry in .bazelrc).  0.65 fixes the WRAPCELL/RTLIL-identifier
+# memory corruption that produces garbage like `\<garbage>_KOGGE_STONE`
+# strings in cva6 / ibex synthesis on 0.63.  bazel-orfs pins yosys=0.63
+# in its MODULE.bazel; this root override wins.
+single_version_override(
+    module_name = "yosys",
+    version = "0.65",
+)
+
 # yosys-slang is not on BCR. Pin to a commit on povik/yosys-slang master
 # that has the upstream Bazel build (povik/yosys-slang#310) and the
 # slang.so visibility fix (povik/yosys-slang#311). Submodules pull in

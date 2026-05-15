@@ -9,4 +9,12 @@ build --cxxopt "-std=c++20" --host_cxxopt "-std=c++20"
 # bazel-orfs itself does (its own .bazelrc:7).
 common --lockfile_mode=off
 
+# Test yosys 0.65 via the BCR PR (bazelbuild/bazel-central-registry#8863).
+# Upstream BCR doesn't have 0.65 yet, so point at oharboe's fork branch
+# as an additional registry; combined with single_version_override(yosys,
+# "0.65") in MODULE.bazel this resolves yosys to 0.65 with the
+# WRAPCELL/RTLIL-identifier corruption fix that was missing in 0.63.
+common --registry=https://raw.githubusercontent.com/oharboe/bazel-central-registry/yosys-0.65/
+common --registry=https://bcr.bazel.build/
+
 try-import %workspace%/user.bazelrc
