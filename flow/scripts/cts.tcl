@@ -61,13 +61,14 @@ if { $::env(CTS_SNAPSHOTS) } {
 }
 
 if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
-  if { $::env(LEC_CHECK) } {
+  set lec_enabled [lec_check_enabled]
+  if { $lec_enabled } {
     write_lec_verilog 4_before_rsz_lec.v
   }
 
   repair_timing_helper
 
-  if { $::env(LEC_CHECK) } {
+  if { $lec_enabled } {
     write_lec_verilog 4_after_rsz_lec.v
     run_lec_test 4_rsz 4_before_rsz_lec.v 4_after_rsz_lec.v
   }

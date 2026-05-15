@@ -99,7 +99,7 @@ def print_log_dir_times(logdir, args):
             if first and not args.noHeader:
                 print(
                     format_str
-                    % ("Log", "Elapsed/s", "Peak Memory/MB", "sha1sum .odb [0:20)")
+                    % ("Log", "Elapsed/s", "Peak Memory/MB", "sha1sum result [0:20)")
                 )
                 first = False
             print(
