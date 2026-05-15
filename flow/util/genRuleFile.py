@@ -89,7 +89,22 @@ def gen_rule_file(
             "compare": "==",
             "level": "warning",
         },
+        "synth__post_read_sources__hash": {
+            "mode": "literal",
+            "compare": "==",
+            "level": "warning",
+        },
+        "synth__post_hierarchy__hash": {
+            "mode": "literal",
+            "compare": "==",
+            "level": "warning",
+        },
         "synth__canonical_netlist__hash": {
+            "mode": "literal",
+            "compare": "==",
+            "level": "warning",
+        },
+        "synth__post_synth_main__hash": {
             "mode": "literal",
             "compare": "==",
             "level": "warning",

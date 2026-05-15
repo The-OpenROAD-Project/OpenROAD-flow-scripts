@@ -262,30 +262,52 @@ def extract_metrics(
         rptPath + "/synth_stat.txt",
     )
 
-    # Netlist hashes: front-end / mid-level / post-ABC fingerprints
-    # so the rules-base.json check (level=warning) flags where bazel-
-    # built vs make-built yosys diverge. See flow/README.md "Triaging
-    # a failing _test" → "Yosys-environment false positive".
+    # Yosys-state fingerprints — front-end through post-ABC — so the
+    # rules-base.json `level=warning` checks flag where bazel-built
+    # vs make-built yosys diverge. See flow/README.md "Triaging a
+    # failing _test" → "Yosys-environment false positive".
     #
-    #   canonical = after `read_design_sources` + `hierarchy -check` +
-    #               `opt_clean -purge` (front-end snapshot)
-    #   preabc    = immediately before the main `abc` call (after
-    #               techmap, dfflibmap, setundef etc.)
-    #   netlist   = `1_2_yosys.v`, post-ABC
+    #   post_read_sources = after `read_design_sources`
+    #                       (verilog/slang frontend only)
+    #   post_hierarchy    = after `hierarchy -check -top`
+    #                       (elaboration order)
+    #   canonical_netlist = after `opt_clean -purge`
+    #                       (= `1_1_yosys_canonicalize.rtlil`)
+    #   post_synth_main   = after `synth -run fine: -noabc`
+    #                       (main synth pipeline)
+    #   preabc_netlist    = immediately before the main `abc` call
+    #                       (techmap, dfflibmap, setundef etc.)
+    #   netlist           = `1_2_yosys.v`, post-ABC
+    #
+    # All except `canonical_netlist` and `netlist` are emitted by
+    # synth.tcl / synth_canonicalize.tcl via the `write_state_hash`
+    # helper as `<metric>: <sha>` lines in the surrounding yosys log
+    # (1_1_yosys_canonicalize.log or 1_2_yosys.log).  `canonical`
+    # and post-ABC come straight from `file_sha1` of the
+    # already-emitted RTLIL / Verilog.
+    for metric in ("synth__post_read_sources__hash",
+                   "synth__post_hierarchy__hash"):
+        extractTagFromFile(
+            metric,
+            metrics_dict,
+            rf"^{metric}:\s+([0-9a-f]{{40}})\s*$",
+            logPath + "/1_1_yosys_canonicalize.log",
+            t=str,
+            required=False,
+        )
     metrics_dict["synth__canonical_netlist__hash"] = file_sha1(
         resultPath + "/1_1_yosys_canonicalize.rtlil"
     )
-    # `synth__preabc_netlist__hash` is emitted by synth.tcl as a
-    # `synth__preabc_netlist__hash: <sha>` line in 1_2_yosys.log so we
-    # don't have to ship the full pre-ABC RTLIL as a bazel artifact.
-    extractTagFromFile(
-        "synth__preabc_netlist__hash",
-        metrics_dict,
-        r"^synth__preabc_netlist__hash:\s+([0-9a-f]{40})\s*$",
-        logPath + "/1_2_yosys.log",
-        t=str,
-        required=False,
-    )
+    for metric in ("synth__post_synth_main__hash",
+                   "synth__preabc_netlist__hash"):
+        extractTagFromFile(
+            metric,
+            metrics_dict,
+            rf"^{metric}:\s+([0-9a-f]{{40}})\s*$",
+            logPath + "/1_2_yosys.log",
+            t=str,
+            required=False,
+        )
     metrics_dict["synth__netlist__hash"] = file_sha1(resultPath + "/1_2_yosys.v")
 
     # Yosys + ABC version fingerprints — surface bazel-vs-make

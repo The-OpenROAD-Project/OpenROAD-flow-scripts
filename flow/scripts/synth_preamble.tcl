@@ -3,6 +3,31 @@ yosys -import
 source $::env(SCRIPTS_DIR)/util.tcl
 erase_non_stage_variables synth
 
+# Bisect bazel-vs-make yosys drift into front-end / hierarchy /
+# mid-level synth / pre-ABC / post-ABC buckets.  write_state_hash
+# dumps the current design state to a temp RTLIL, SHA-1's it,
+# deletes the temp, and emits a `<metric>: <sha>` line for
+# `genMetrics.py` to extract from the surrounding yosys log.  No
+# new bazel artifacts are shipped — only the hash strings in the
+# existing 1_1_yosys_canonicalize.log / 1_2_yosys.log files.
+#
+# `setattr -unset src` strips file:line attribute lines from the
+# RTLIL before hashing so the hash is path-independent (bazel
+# sandbox paths differ from the make build's relative paths;
+# without stripping, hashes always differ trivially).  The strip
+# is permanent for the rest of the yosys run, matching the
+# SYNTH_REPEATABLE_BUILD=1 path's behavior — src attributes are
+# debug metadata that no downstream pass relies on for decisions.
+proc write_state_hash { metric } {
+  setattr -unset src *
+  setattr -mod -unset src *
+  set tmp $::env(RESULTS_DIR)/.${metric}.tmp.rtlil
+  write_rtlil $tmp
+  set sha [lindex [split [exec sha1sum $tmp]] 0]
+  file delete $tmp
+  puts "${metric}: $sha"
+}
+
 # Emit the ABC version into the yosys log so `genMetrics.py` can pick
 # it up as `synth__abc__version` (a literal warning-level entry in
 # `rules-base.json`).  Combined with the yosys version banner already

@@ -9,18 +9,33 @@
         "compare": "==",
         "level": "warning"
     },
+    "synth__post_read_sources__hash": {
+        "value": "fc8ed9cca61614e52bc7621061eb3fea9fc09786",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__post_hierarchy__hash": {
+        "value": "fc8ed9cca61614e52bc7621061eb3fea9fc09786",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__canonical_netlist__hash": {
-        "value": "51e1c96c1cbd84acbe6094554dfc328512dada66",
+        "value": "579a132d7bd12d7a17c960889a88a625ba1bd761",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__post_synth_main__hash": {
+        "value": "022a854dceb7dfe23c650b960efd4a8bbf580602",
         "compare": "==",
         "level": "warning"
     },
     "synth__preabc_netlist__hash": {
-        "value": "f1b261b2a091a9be65c846a11f71588d55210cee",
+        "value": "6a40bd282d816cd8c48a4cbb4a8ceabc365ca6fb",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "11a8cf6937376ae7e00f0afeee5304fa944a145e",
+        "value": "c3163e9457e39e5d07c4030ce974232fc9e36f66",
         "compare": "==",
         "level": "warning"
     },
