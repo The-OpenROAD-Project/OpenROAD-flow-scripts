@@ -101,17 +101,21 @@ For each failing `<design>_test`, decide which bucket it falls into:
    bazel-orfs validates against.
 
 2. **Yosys-environment false positive (OpenROAD is idempotent given
-   the same netlist).** `rules-base.json` carries SHA-1 fingerprints
-   of `1_1_yosys_canonicalize.rtlil` and `1_2_yosys.v`
-   (`synth__canonical_netlist__hash` /  `synth__netlist__hash`) at
-   warning level, so a bazel-yosys vs make-yosys netlist drift
-   surfaces in `checkMetadata.py` as:
+   the same netlist).** `rules-base.json` carries three SHA-1
+   fingerprints of yosys' internal state at warning level so a
+   bazel-yosys vs make-yosys drift surfaces in `checkMetadata.py`
+   as three buckets:
 
-       [WARN] synth__canonical_netlist__hash differs test: <bazel-sha> == <make-sha>
-       [WARN] synth__netlist__hash differs test: <bazel-sha> == <make-sha>
+       [WARN] synth__canonical_netlist__hash differs test: <bazel> == <make>   # front-end + opt_clean
+       [WARN] synth__preabc_netlist__hash    differs test: <bazel> == <make>   # mid-level synth, immediately pre-ABC
+       [WARN] synth__netlist__hash           differs test: <bazel> == <make>   # post-ABC `1_2_yosys.v`
 
-   A QoR threshold breaking together with that warning is almost
-   always yosys-env drift. Confirm with the per-stage `.odb` SHA
+   The bucket(s) that DIFFER bisect where drift entered: front-end
+   already differing means iteration-order non-determinism is firing
+   in `read_design_sources`/`hierarchy`/`opt_clean`; pre-ABC matching
+   but post-ABC diverging means the bazel-pinned vs make-pulled ABC
+   are different revisions. A QoR threshold breaking together with
+   any of these is almost always yosys-env drift. Confirm with the per-stage `.odb` SHA
    matrix from `@bazel-orfs//:make-yosys-netlist` (feeds make's
    netlist into bazel) or its reverse-direction sibling
    `@bazel-orfs//:yosys-check` (bazel's netlist into make):

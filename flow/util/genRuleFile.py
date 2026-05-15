@@ -84,6 +84,11 @@ def gen_rule_file(
             "compare": "==",
             "level": "warning",
         },
+        "synth__preabc_netlist__hash": {
+            "mode": "literal",
+            "compare": "==",
+            "level": "warning",
+        },
         "synth__netlist__hash": {
             "mode": "literal",
             "compare": "==",

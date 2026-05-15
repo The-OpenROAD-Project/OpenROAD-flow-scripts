@@ -4,6 +4,11 @@
         "compare": "==",
         "level": "warning"
     },
+    "synth__preabc_netlist__hash": {
+        "value": "4ab7b6700d9ca14e2ee4531aceb79b339aabca73",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__netlist__hash": {
         "value": "95652d905a7cf9bc9c935a58e01a76e65327c8b3",
         "compare": "==",

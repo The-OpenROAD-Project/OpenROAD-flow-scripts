@@ -41,10 +41,19 @@ BAZEL_ORFS_COMMIT = "c000cb3fa5c756841de0411f848a211c360468c2"
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
 # To bump version, run: bazelisk run @bazel-orfs//:bump
+#
+# `patches =` keeps small bazel-orfs fixes vendored in this repo
+# while we iterate, instead of round-tripping every change through a
+# bazel-orfs PR + pin bump.  When a patch lands upstream, drop the
+# entry here and bump BAZEL_ORFS_COMMIT.
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
     remote = BAZEL_ORFS_REMOTE,
+    patch_strip = 1,
+    patches = [
+        "//patches/bazel-orfs:0001-flow.bzl-pull-synth-into-generate_metadata-data-deps.patch",
+    ],
 )
 
 git_override(

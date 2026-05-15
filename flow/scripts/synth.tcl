@@ -248,6 +248,23 @@ opt
 # Replace undef values with defined constants
 setundef -zero
 
+# Fingerprint the design state immediately before ABC runs so the
+# `synth__preabc_netlist__hash` rules-base.json check can isolate
+# mid-level-yosys drift from ABC drift.  Combined with
+# `synth__canonical_netlist__hash` (front-end + opt_clean snapshot)
+# and `synth__netlist__hash` (post-ABC `1_2_yosys.v`), this gives a
+# three-way bisection: front-end vs mid-level synth vs ABC.
+#
+# The RTLIL itself is written to a temp path, hashed, and deleted —
+# we only ship the SHA in the yosys log so we don't burden bazel's
+# action outputs with another large netlist artifact.  See
+# flow/util/genMetrics.py for the matching log-extraction.
+set preabc_tmp $::env(RESULTS_DIR)/1_2_yosys_preabc.rtlil
+write_rtlil $preabc_tmp
+set preabc_sha [lindex [split [exec sha1sum $preabc_tmp]] 0]
+file delete $preabc_tmp
+puts "synth__preabc_netlist__hash: $preabc_sha"
+
 if {
   ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] &&
   ![env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
