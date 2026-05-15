@@ -101,24 +101,29 @@ For each failing `<design>_test`, decide which bucket it falls into:
    bazel-orfs validates against.
 
 2. **Yosys-environment false positive (OpenROAD is idempotent given
-   the same netlist).** Bazel-built yosys and make-built yosys
-   produce different `1_2_yosys.v` for the same RTL, and that
-   netlist drift can move QoR past `rules-base.json` thresholds
-   even when OpenROAD itself is bit-deterministic. Confirm with:
+   the same netlist).** `rules-base.json` carries SHA-1 fingerprints
+   of `1_1_yosys_canonicalize.rtlil` and `1_2_yosys.v`
+   (`synth__canonical_netlist__hash` /  `synth__netlist__hash`) at
+   warning level, so a bazel-yosys vs make-yosys netlist drift
+   surfaces in `checkMetadata.py` as:
+
+       [WARN] synth__canonical_netlist__hash differs test: <bazel-sha> == <make-sha>
+       [WARN] synth__netlist__hash differs test: <bazel-sha> == <make-sha>
+
+   A QoR threshold breaking together with that warning is almost
+   always yosys-env drift. Confirm with the per-stage `.odb` SHA
+   matrix from `@bazel-orfs//:make-yosys-netlist` (feeds make's
+   netlist into bazel) or its reverse-direction sibling
+   `@bazel-orfs//:yosys-check` (bazel's netlist into make):
 
    ```bash
    bazelisk run @bazel-orfs//:make-yosys-netlist \
        //flow/designs/asap7/<design>:<design>_test
    ```
 
-   All stages MATCH in the `bazel+make-netlist` column → false
-   positive, ignore (or relax the threshold). Any DIFFER → real
-   bazel-vs-make OpenROAD divergence — file the per-stage SHA
-   matrix as an issue. `@bazel-orfs//:yosys-check` is the
-   reverse-direction wrapper (bazel's netlist into make).
-
-   Full workflow + interpretation, the `SYNTH_NETLIST_FILES` manual
-   override, and the `BLOCKS=` caveat live in
+   All stages MATCH → yosys-only drift, relax the threshold; any
+   DIFFER → real bazel-vs-make OpenROAD divergence, file the matrix
+   as an issue. Full workflow lives in
    [`@bazel-orfs//:TESTING.md`](https://github.com/The-OpenROAD-Project/bazel-orfs/blob/main/TESTING.md)
    under "Debugging OpenROAD determinism (bazel vs make)".
 
