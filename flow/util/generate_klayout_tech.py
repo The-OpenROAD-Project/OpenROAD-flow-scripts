@@ -51,11 +51,17 @@ def generate_klayout_tech(
     with open(template_lyt, "r") as f:
         content = f.read()
 
-    # Compute relpath without realpath(): under a Bazel sandbox, bazel-out/
-    # entries are symlinks to the bare execroot; realpath follows them and
-    # makes the generated LYT reference files at the bare-execroot path,
-    # where in-flight outputs do not exist during action execution.
-    resolved_lefs = [os.path.relpath(f, reference_dir) for f in lef_files]
+    # Write absolute (not relative, not realpath'd) LEF paths into the LYT.
+    # Klayout's Layout.read(def, layout_options) follows the symlinked input
+    # DEF to its realpath at the bare execroot and resolves relative
+    # <lef-files> entries from there.  Sibling intermediates like
+    # objects/klayout_tech.lef don't exist at the bare execroot during
+    # action execution -- they're only at the per-action sandbox -- so
+    # resolution fails with errno=2.  Plain abspath (NOT realpath, which
+    # would chase Bazel input-file symlinks back out to the bare execroot)
+    # keeps klayout pointed at the in-sandbox file.  reference_dir is now
+    # unused for LEFs.
+    resolved_lefs = [os.path.abspath(f) for f in lef_files]
 
     content = replace_lef_files(content, resolved_lefs)
 
