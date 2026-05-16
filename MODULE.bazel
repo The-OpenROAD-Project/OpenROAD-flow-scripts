@@ -49,11 +49,13 @@ BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
-    remote = BAZEL_ORFS_REMOTE,
     patch_strip = 1,
     patches = [
         "//patches/bazel-orfs:0001-flow.bzl-pull-synth-into-generate_metadata-data-deps.patch",
+        "//patches/bazel-orfs:0002-blender.bzl-export-blender_supports_pdk-predicate.patch",
+        "//patches/bazel-orfs:0003-orfs_design.bzl-forward-blender-silently-skip-unsupp.patch",
     ],
+    remote = BAZEL_ORFS_REMOTE,
 )
 
 git_override(

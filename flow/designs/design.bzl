@@ -74,6 +74,7 @@ def design(config = "config.mk", user_arguments = [], user_sources = [], local_a
         user_arguments = user_arguments,
         user_sources = user_sources,
         local_arguments = local_arguments,
+        blender = True,
     )
 
 def files(group, extra_srcs = None):
