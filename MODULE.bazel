@@ -18,6 +18,13 @@ bazel_dep(name = "rules_shell", version = "0.6.1")
 # dev_dependency = True makes those declarations no-ops in that case, so
 # our MODULE.bazel doesn't need to be patched at non-root consumption
 # time.
+#
+# Exception: bazel_dep(name = "bazel-orfs") is intentionally NOT dev-only,
+# because flow/BUILD has `load("@bazel-orfs//:openroad.bzl", "orfs_pdk")`
+# and load-visibility requires the bazel_dep to be honoured at non-root
+# consumption time too. The companion git_override below is silently
+# ignored by Bazel when @orfs is non-root, so the downstream module's
+# own bazel-orfs pin still wins.
 
 bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
 bazel_dep(name = "openroad", dev_dependency = True)
@@ -33,7 +40,8 @@ git_override(
     remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
 )
 
-bazel_dep(name = "bazel-orfs", dev_dependency = True)
+bazel_dep(name = "bazel-orfs")
+
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
 BAZEL_ORFS_COMMIT = "c000cb3fa5c756841de0411f848a211c360468c2"
