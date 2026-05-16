@@ -51,16 +51,15 @@ def generate_klayout_tech(
     with open(template_lyt, "r") as f:
         content = f.read()
 
-    # Both modes use relative paths from reference_dir, matching the
-    # original sed-based behavior which always uses realpath --relative-to.
-    resolved_lefs = [
-        os.path.relpath(os.path.realpath(f), os.path.realpath(reference_dir))
-        for f in lef_files
-    ]
+    # Compute relpath without realpath(): under a Bazel sandbox, bazel-out/
+    # entries are symlinks to the bare execroot; realpath follows them and
+    # makes the generated LYT reference files at the bare-execroot path,
+    # where in-flight outputs do not exist during action execution.
+    resolved_lefs = [os.path.relpath(f, reference_dir) for f in lef_files]
 
     content = replace_lef_files(content, resolved_lefs)
 
-    resolved_maps = [os.path.realpath(f) for f in map_files]
+    resolved_maps = [os.path.abspath(f) for f in map_files]
     content = replace_map_files(content, resolved_maps)
 
     with open(output_lyt, "w") as f:
