@@ -265,8 +265,7 @@ def extract_metrics(
     # Netlist hashes: fingerprints of the canonical RTLIL (pre-ABC) and
     # the final post-synthesis Verilog so the rules-base.json check
     # (level=warning) flags when bazel-built vs make-built yosys
-    # disagree for the same RTL. See flow/README.md "Triaging a failing
-    # _test" → "Yosys-environment false positive" for context.
+    # disagree for the same RTL.
     metrics_dict["synth__canonical_netlist__hash"] = file_sha1(
         resultPath + "/1_1_yosys_canonicalize.rtlil"
     )

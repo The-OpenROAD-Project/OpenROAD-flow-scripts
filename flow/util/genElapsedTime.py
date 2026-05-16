@@ -14,10 +14,11 @@ import sys
 # ==============================================================================
 
 
-# Primary data artifacts first, then the SDC constraint file: yosys
-# emits .v / .rtlil; OpenROAD stages emit .odb; both often emit a
-# .sdc alongside.
-RESULT_EXTS = [".v", ".rtlil", ".odb", ".sdc"]
+# Primary data artifacts first, then derived/exported artifacts and
+# the SDC constraint file: yosys emits .v / .rtlil; OpenROAD stages
+# emit .odb (and often .def / .sdc); routing emits .spef; finish
+# emits .gds.
+RESULT_EXTS = [".v", ".rtlil", ".odb", ".def", ".spef", ".gds", ".sdc"]
 
 
 def get_hashes(f):
