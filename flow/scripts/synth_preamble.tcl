@@ -36,20 +36,22 @@ proc write_state_hash { metric } {
 # the earlier "front-end non-determinism" misdiagnosis.  See
 # flow/README.md "Triaging a failing `_test`" → "Yosys-environment
 # false positive".
-if { [catch {
-  # `flow/scripts/variables.mk` exports YOSYS_EXE — yosys-abc is its
-  # sibling.  `info nameofexecutable` returns "./yosys-abc" under
-  # yosys' embedded tcl, which doesn't resolve at runtime; the
-  # exported absolute path is the reliable handle.
-  set _abc_path [file join [file dirname $::env(YOSYS_EXE)] yosys-abc]
-  set _abc_raw [exec $_abc_path -c "version; quit" 2>@1]
-  foreach _line [split $_abc_raw "\n"] {
-    if { [regexp {^UC Berkeley,\s+ABC\s+(\S+)} $_line -> _abc_ver] } {
-      puts "synth__abc__version: $_abc_ver"
-      break
+if {
+  [catch {
+    # `flow/scripts/variables.mk` exports YOSYS_EXE — yosys-abc is its
+    # sibling.  `info nameofexecutable` returns "./yosys-abc" under
+    # yosys' embedded tcl, which doesn't resolve at runtime; the
+    # exported absolute path is the reliable handle.
+    set _abc_path [file join [file dirname $::env(YOSYS_EXE)] yosys-abc]
+    set _abc_raw [exec $_abc_path -c "version; quit" 2>@1]
+    foreach _line [split $_abc_raw "\n"] {
+      if { [regexp {^UC Berkeley,\s+ABC\s+(\S+)} $_line -> _abc_ver] } {
+        puts "synth__abc__version: $_abc_ver"
+        break
+      }
     }
-  }
-} _err] } {
+  } _err]
+} {
   puts "\[WARN\] synth__abc__version extraction failed: $_err"
 }
 

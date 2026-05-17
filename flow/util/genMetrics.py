@@ -285,8 +285,7 @@ def extract_metrics(
     # (1_1_yosys_canonicalize.log or 1_2_yosys.log).  `canonical`
     # and post-ABC come straight from `file_sha1` of the
     # already-emitted RTLIL / Verilog.
-    for metric in ("synth__post_read_sources__hash",
-                   "synth__post_hierarchy__hash"):
+    for metric in ("synth__post_read_sources__hash", "synth__post_hierarchy__hash"):
         extractTagFromFile(
             metric,
             metrics_dict,
@@ -298,8 +297,7 @@ def extract_metrics(
     metrics_dict["synth__canonical_netlist__hash"] = file_sha1(
         resultPath + "/1_1_yosys_canonicalize.rtlil"
     )
-    for metric in ("synth__post_synth_main__hash",
-                   "synth__preabc_netlist__hash"):
+    for metric in ("synth__post_synth_main__hash", "synth__preabc_netlist__hash"):
         extractTagFromFile(
             metric,
             metrics_dict,
