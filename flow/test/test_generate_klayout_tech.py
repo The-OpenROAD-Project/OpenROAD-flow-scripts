@@ -130,12 +130,13 @@ class TestGenerateKlayoutTech(unittest.TestCase):
 
         self.assertIn("<lef-files>", content)
         self.assertNotIn("original.lef", content)
-        # Path should be relative to results_dir
-        expected_rel = os.path.relpath(
-            os.path.realpath(lef_path),
-            os.path.realpath(self.results_dir),
-        )
-        self.assertIn(expected_rel, content)
+        # LEF paths are written as plain abspath (not relpath, not realpath):
+        # klayout's Layout.read resolves relative <lef-files> entries
+        # against the realpath of the DEF being merged, which under a
+        # Bazel sandbox is the bare execroot -- the in-flight sibling
+        # files only exist in the per-action sandbox.  Absolute paths
+        # bypass the relative-resolution dance.
+        self.assertIn(os.path.abspath(lef_path), content)
 
     def test_with_map_files(self):
         with open(self.template, "w") as f:
