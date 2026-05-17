@@ -1,99 +1,23 @@
-From 75c7df636aace01bc21fa72d40dc541174671f76 Mon Sep 17 00:00:00 2001
+From f52fdae76f657e2ffb5df5f7e0b88218269f42cd Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind@ascenium.com>
-Date: Sun, 17 May 2026 15:02:44 +0200
-Subject: [PATCH] render_gds: phase logging + dynamic drop-to-GLB-budget
- heuristic
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Sun, 17 May 2026 22:14:16 +0200
+Subject: [PATCH] render_gds: trim layerstack before Blender import for
+ fast-turnaround viewer
 
-Headless run on sky130hd/microwatt's 562 MB merged GDS surfaces three
-distinct issues that the previous gltf-export path turned into an opaque
-"appears to choke" failure:
-
-1. No phase visibility.
-
-   The action log carried no breadcrumbs about which step OOMed or
-   returned CANCELLED inside the long bpy.ops sequence (addon-register,
-   gdsii-import, gltf-addon-enable, gltf-export, html-write).
-
-   Add a tiny `_log_phase()` helper that scrapes VmRSS/VmPeak from
-   /proc/self/status and prints one tagged line per phase boundary,
-   plus the imported mesh polygon/vertex totals and the .glb / .html
-   byte sizes.  Wraps the bpy.ops calls in try/except so a Python
-   exception inside the addon prints a full traceback before
-   sys.exit, instead of being swallowed into a bare `{'CANCELLED'}`.
-
-2. Int32 overflow in foreach_get for very large per-corner attributes.
-
-   With the phase logging in place, iter 1 surfaced:
-
-     Error: Array length mismatch (expected -464636871, got 609104952)
-     RuntimeError: internal error setting the array
-     File ".../io_scene_gltf2/blender/exp/gltf2_blender_gather_primitives_extract.py",
-       line 1405, in __get_normals
-       self.blender_mesh.corner_normals.foreach_get('vector', self.normals)
-
-   Blender 4.2's RNA bridge stores the foreach_get element count in a
-   signed int32; microwatt's mcon layer alone has ~9.3M extruded
-   polygons × 6 faces × 4 corners ≈ 223M corner-normals = 669M float32
-   values, which overflows.
-
-   The NORMAL attribute is gated by `self.use_normals` (`gltf_normals`
-   export setting); when False the failing path is never entered.
-   Pass `export_normals=False` plus belt-and-suspenders for the other
-   foreach_get-backed per-corner attributes (tangents, vertex colors,
-   custom attributes).  model-viewer falls back to face-derived flat
-   normals, which is the right look for a chip-layout scene anyway --
-   the extruded layers are already block-like and don't benefit from
-   smooth shading.
-
-3. GLB 4 GB single-file ceiling + browser per-tab memory cap.
-
-   With normals disabled, iter 2 tripped:
-
-     File ".../io_scene_gltf2/io/exp/gltf2_io_export.py", line 105,
-       in save_gltf
-       file.write(struct.pack("I", length))
-     struct.error: 'I' format requires 0 <= number <= 4294967295
-
-   i.e. GLB's binary container stores total length as uint32; microwatt's
-   raw vertex+index payload is ~10 GB (mcon alone ~2.9 GB raw, licon
-   ~2.6 GB).  Even if the GLB write succeeded, the base64-embedded data
-   URL in the HTML would exceed the ~2 GB per-tab memory cap mainstream
-   browsers enforce.
-
-   iter 3 used a hardcoded sky130-specific drop set (licon, li1, mcon,
-   met1, all vias) gated by `total_polys > 30_000_000`.  That worked
-   end-to-end (build succeeded; GLB 2.17 GB, HTML 2.89 GB) but is
-   PDK-specific and overshot the browser cap.
-
-   Replace with a dynamic heuristic: rank meshes by polygon-count ×
-   bytes-per-poly, drop biggest first until estimated GLB ≤
-   _MAX_GLB_BYTES (150 MB, ≈10% of the 2 GB browser-tab cap with
-   base64-inflation margin).  Bytes-per-poly is calibrated from iter 3
-   (39.7M Blender polygons -> 2.17 GB GLB -> ~55 b/poly; rounded up to
-   60 for pessimism).  Layer-name agnostic, so the same path serves
-   non-sky130 PDKs; gcd-class designs (<1M polygons) already fit under
-   the budget so the loop is a no-op for them.
-
-   Goal here is "bling and fun" loadability in a browser, not visual
-   fidelity -- the trade-off is acceptable for an investigation-record
-   viewer.  Phase log line `budget-trimmed` records the drop list and
-   estimated post-trim GLB so the next iteration can recalibrate
-   _GLB_BYTES_PER_POLY if the empirical ratio drifts.
-
-Signed-off-by: Øyvind Harboe <oyvind@ascenium.com>
-Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
+Recipe for a 'bling and fun' chip-layout viewer that finishes in
+seconds, fits in any browser, and still strongly resembles the
+real design.  Replaces the after-import bpy.data.objects drop with
+a YAML-level layerstack trim so Blender's addon never extrudes the
+doomed layers in the first place.
 ---
- tools/blendergds/render_gds.py | 187 ++++++++++++++++++++++++++++++---
- 1 file changed, 171 insertions(+), 16 deletions(-)
+ tools/blendergds/render_gds.py | 213 +++++++++++++++++++++++++++++----
+ 1 file changed, 193 insertions(+), 20 deletions(-)
 
 diff --git a/tools/blendergds/render_gds.py b/tools/blendergds/render_gds.py
-index 6cf4d75..d8bbbe1 100644
+index 6cf4d75..43186a2 100644
 --- a/tools/blendergds/render_gds.py
 +++ b/tools/blendergds/render_gds.py
-@@ -33,10 +33,82 @@ import importlib.util
+@@ -33,10 +33,97 @@ import importlib.util
  import shutil
  import sys
  import tempfile
@@ -102,51 +26,66 @@ index 6cf4d75..d8bbbe1 100644
  from pathlib import Path
  
  
-+# Target GLB binary size for the html-export path: ~10% of the ~2 GB
-+# per-tab memory cap mainstream browsers enforce on 64-bit Linux.  After
-+# 4/3 base64 inflation in the data: URL, this puts the resulting HTML
-+# at ~200 MB -- "bling and fun" loadable, with plenty of headroom for
-+# the browser to actually render the scene.  Empirical, not exact.
-+_MAX_GLB_BYTES = 150 * 1024 * 1024
++# Per-PDK "bling and fun" layer preset.  Each entry is the subset of
++# the addon's bundled layerstack YAML we keep when trimming for a
++# browser-loadable viewer:
++#
++#   * One substrate layer (paints the chip's transistor regions as a
++#     coloured background, so the viewer doesn't look like a bare
++#     metal stack floating in space).
++#   * The topmost 2-3 metal layers + the highest via stack between
++#     them (macros and top-level routing -- the visually distinctive
++#     bits that say "this is microwatt", "this is gcd", etc.).
++#
++# The dense interconnect / contact / lower-metal layers (mcon, licon,
++# li1, met1, met2, via, via2 on sky130) are dropped wholesale.  They
++# carry most of the polygon count but read as featureless noise at
++# any zoom level that fits a 10mm² chip on a laptop screen.
++#
++# Effect on microwatt sky130hd: drops ~26M input polygons down to
++# ~200K; the Blender per-layer extrusion that previously cost ~5-7 min
++# + 16 GB RSS becomes seconds and tens of MB.  The resulting GLB lands
++# under ~80 MB, the base64-embedded HTML under ~110 MB -- well inside
++# any browser tab's working budget.
++#
++# PDKs not in the table fall through to the unfiltered addon default
++# stack (gcd-class designs already fit; bigger designs in other PDKs
++# will need their own preset added here).
++_LAYER_PRESETS = {
++    "SKY130": ["nwell", "met3", "via4", "met4", "met5"],
++}
 +
-+# Bytes-per-polygon estimate, calibrated from a prior iteration on
-+# sky130hd/microwatt that produced 39_669_907 Blender polygons in a
-+# 2_169_758_252-byte GLB (export_normals=False, post-extrusion,
-+# triangulated by the gltf2 exporter).  ~55 bytes/poly empirically;
-+# round up to 60 so the heuristic is slightly pessimistic.
-+_GLB_BYTES_PER_POLY = 60
 +
++def _trim_layerstack(addon_module, addon_root, pdk_selection, tmpdir):
++    """Build a trimmed layerstack YAML containing only the entries listed
++    in _LAYER_PRESETS[pdk_selection], in the original YAML's order.
 +
-+def _drop_to_glb_budget(max_glb_bytes):
-+    """Greedily drop the biggest mesh objects until the estimated GLB
-+    binary size fits the budget.
-+
-+    The heuristic is intentionally cheap (no trial exports): rank meshes
-+    by polygon-count × bytes-per-poly, evict largest-first.  Always keeps
-+    at least one mesh -- a degenerate scene with a single mesh larger
-+    than the budget will go through to gltf-export and surface whatever
-+    failure mode that triggers, instead of producing an empty scene.
-+
-+    Returns (list-of-(name, est_bytes, polys) tuples for dropped meshes,
-+    estimated total GLB bytes after dropping).
++    Returns the path to the trimmed YAML to feed back into the addon via
++    `gdsii_use_custom_config=True` + `gdsii_config_path=<this>`, or None
++    if the PDK has no preset (fall through to the addon's default stack).
 +    """
-+    sized = sorted(
-+        (
-+            (len(o.data.polygons) * _GLB_BYTES_PER_POLY, o)
-+            for o in bpy.data.objects
-+            if o.type == "MESH"
-+        ),
-+        key=lambda x: x[0],
-+        reverse=True,
-+    )
-+    total = sum(sz for sz, _ in sized)
-+    dropped = []
-+    while total > max_glb_bytes and len(sized) > 1:
-+        sz, obj = sized.pop(0)
-+        dropped.append((obj.name, sz, len(obj.data.polygons)))
-+        bpy.data.objects.remove(obj, do_unlink=True)
-+        total -= sz
-+    return dropped, total
++    preset = _LAYER_PRESETS.get(pdk_selection)
++    if not preset:
++        return None
++    pdk_info = getattr(addon_module, "PDK_CONFIGS", {}).get(pdk_selection, {})
++    rel = pdk_info.get("config_path")
++    if not rel:
++        return None
++    yamlfile = Path(addon_root) / rel
++    if not yamlfile.is_file():
++        return None
++
++    import yaml  # staged via the addon's wheels
++
++    full = yaml.safe_load(yamlfile.read_text(encoding="utf-8"))
++    keep = set(preset)
++    # Preserve YAML insertion order so z-stack semantics in the addon
++    # (bottom-up extrusion + layered rendering) match the bundled file.
++    trimmed = {name: data for name, data in full.items() if name in keep}
++    missing = keep - trimmed.keys()
++    out = Path(tmpdir) / "trimmed_layerstack.yaml"
++    out.write_text(yaml.safe_dump(trimmed, default_flow_style=False, sort_keys=False))
++    return out, list(trimmed.keys()), missing
 +
 +
 +def _log_phase(phase: str, extra: str = "") -> None:
@@ -176,7 +115,7 @@ index 6cf4d75..d8bbbe1 100644
  def _split_argv():
      """Return Blender's pass-through args (everything after `--`)."""
      if "--" not in sys.argv:
-@@ -166,6 +238,8 @@ def main():
+@@ -166,6 +253,8 @@ def main():
      if not wheels_dir.is_dir():
          sys.exit(f"render_gds.py: wheels/ dir not found under {addon_root}")
  
@@ -185,7 +124,7 @@ index 6cf4d75..d8bbbe1 100644
      # Stage wheels into a temp site-packages and put it on sys.path BEFORE
      # importing the addon (which imports numpy/gdstk/klayout/yaml at module
      # scope).
-@@ -175,6 +249,7 @@ def main():
+@@ -175,6 +264,7 @@ def main():
      try:
          _stage_wheels(wheels_dir, site)
          sys.path.insert(0, str(site))
@@ -193,7 +132,7 @@ index 6cf4d75..d8bbbe1 100644
  
          # bpy is provided by Blender; importing it before this point would
          # leak partial init in --background mode.
-@@ -182,6 +257,7 @@ def main():
+@@ -182,48 +272,127 @@ def main():
  
          addon = _load_addon_module(addon_root)
          addon.register()
@@ -201,8 +140,13 @@ index 6cf4d75..d8bbbe1 100644
  
          # The addon's register_properties() declares four scene props via
          # the legacy `bpy.types.Scene.X = StringProperty(...)` form. In
-@@ -192,38 +268,113 @@ def main():
-         # which is what we want anyway.
+         # Blender 4.2 that registration is unreliable for empty-default
+-        # string props, so we only force the one that actually deviates
+-        # from the addon's default (the PDK key). The other three keep
+-        # their addon defaults — use_custom_config=False, custom_*=""—
+-        # which is what we want anyway.
++        # string props, so we only force the ones we actually need to
++        # deviate from the addon's defaults.
          bpy.context.scene.gdsii_pdk_selection = args.pdk
  
 -        result = bpy.ops.import_scene.gdsii(
@@ -212,6 +156,39 @@ index 6cf4d75..d8bbbe1 100644
 -            merge_layers=True,
 -            color_scheme="realistic",
 -        )
++        # Pre-trim the PDK layerstack to a "bling and fun" subset.  This
++        # MUST happen before bpy.ops.import_scene.gdsii because the
++        # addon's per-layer extrusion loop reads the layerstack YAML
++        # and pays full RAM/time cost for every entry; dropping entries
++        # at the YAML level is what lets a 562 MB GDS (microwatt) finish
++        # in seconds rather than 5-7 minutes + 16 GB RSS.  No-op for
++        # PDKs without a preset and for designs whose full stack is
++        # already small enough.
++        #
++        # We can't go through the addon's `gdsii_use_custom_config = True`
++        # path: that branch in `import_gdsii` skips initialising
++        # `pdk_info` and `addon_dir`, both of which are still used
++        # afterwards to resolve `color_path` -- so a custom YAML trips
++        # `UnboundLocalError: pdk_info` inside the addon.  Instead,
++        # monkey-patch PDK_CONFIGS[pdk]['config_path'] to point at the
++        # trimmed YAML (absolute path -- `addon_dir / Path("/abs")`
++        # evaluates to the absolute path in pathlib, so the else branch
++        # in the addon picks it up correctly).
++        trimmed = _trim_layerstack(addon, addon_root, args.pdk, tmp)
++        if trimmed is not None:
++            yaml_path, kept_layers, missing = trimmed
++            addon.PDK_CONFIGS.setdefault(args.pdk, {})["config_path"] = str(
++                yaml_path
++            )
++            _log_phase(
++                "layerstack-trimmed",
++                extra=(
++                    f"kept={kept_layers} "
++                    + (f"missing={sorted(missing)} " if missing else "")
++                    + f"yaml={yaml_path}"
++                ),
++            )
++
 +        try:
 +            result = bpy.ops.import_scene.gdsii(
 +                filepath=str(gds_path),
@@ -243,34 +220,6 @@ index 6cf4d75..d8bbbe1 100644
 +            _log_phase("blend-saved", extra=f"{out_path.stat().st_size} bytes")
  
          if args.out_html:
-+            # The GLB binary container stores its total length as a uint32
-+            # (struct.pack("I", length)), and the base64-embedded data URL
-+            # in the HTML must also stay under a browser tab's per-tab
-+            # memory cap.  Full-stack microwatt is ~10 GB of raw vertex+
-+            # index data -- 65x over the GLB ceiling, and unreachable to
-+            # a browser even if it fit.  Trim the scene to a "bling and
-+            # fun" working budget _GLB_BYTES_PER_POLY * polys ≤
-+            # _MAX_GLB_BYTES, dropping biggest meshes first.  The
-+            # heuristic is layer-name agnostic so non-sky130 PDKs work
-+            # the same way; the trade-off is that on a too-large scene
-+            # the layers with the highest polygon counts (typically the
-+            # densest interconnect/contact layers like mcon, licon, li1
-+            # on sky130hd) get evicted while the visually distinctive
-+            # ones (substrate, transistor regions, upper metals with
-+            # their macros) tend to stay.  gcd-class designs already fit
-+            # under the budget, so the drop loop is a no-op for them.
-+            dropped, est_glb = _drop_to_glb_budget(_MAX_GLB_BYTES)
-+            kept_objs = [o for o in bpy.data.objects if o.type == "MESH"]
-+            kept_polys = sum(len(o.data.polygons) for o in kept_objs)
-+            _log_phase(
-+                "budget-trimmed",
-+                extra=(
-+                    f"max_glb={_MAX_GLB_BYTES} estimated_glb={est_glb} "
-+                    f"dropped={dropped} kept_meshes={len(kept_objs)} "
-+                    f"kept_polys={kept_polys}"
-+                ),
-+            )
-+
              # io_scene_gltf2 ships with Blender as a core addon but is not
              # active under --factory-startup. Enable it before exporting.
              bpy.ops.preferences.addon_enable(module="io_scene_gltf2")
@@ -331,7 +280,7 @@ index 6cf4d75..d8bbbe1 100644
  
              _write_html(
                  template_path=Path(args.html_template).resolve(),
-@@ -232,6 +383,10 @@ def main():
+@@ -232,6 +401,10 @@ def main():
                  title=args.title,
                  out_path=Path(args.out_html).resolve(),
              )
