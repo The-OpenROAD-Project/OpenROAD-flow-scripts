@@ -1,0 +1,347 @@
+From 75c7df636aace01bc21fa72d40dc541174671f76 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind@ascenium.com>
+Date: Sun, 17 May 2026 15:02:44 +0200
+Subject: [PATCH] render_gds: phase logging + dynamic drop-to-GLB-budget
+ heuristic
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Headless run on sky130hd/microwatt's 562 MB merged GDS surfaces three
+distinct issues that the previous gltf-export path turned into an opaque
+"appears to choke" failure:
+
+1. No phase visibility.
+
+   The action log carried no breadcrumbs about which step OOMed or
+   returned CANCELLED inside the long bpy.ops sequence (addon-register,
+   gdsii-import, gltf-addon-enable, gltf-export, html-write).
+
+   Add a tiny `_log_phase()` helper that scrapes VmRSS/VmPeak from
+   /proc/self/status and prints one tagged line per phase boundary,
+   plus the imported mesh polygon/vertex totals and the .glb / .html
+   byte sizes.  Wraps the bpy.ops calls in try/except so a Python
+   exception inside the addon prints a full traceback before
+   sys.exit, instead of being swallowed into a bare `{'CANCELLED'}`.
+
+2. Int32 overflow in foreach_get for very large per-corner attributes.
+
+   With the phase logging in place, iter 1 surfaced:
+
+     Error: Array length mismatch (expected -464636871, got 609104952)
+     RuntimeError: internal error setting the array
+     File ".../io_scene_gltf2/blender/exp/gltf2_blender_gather_primitives_extract.py",
+       line 1405, in __get_normals
+       self.blender_mesh.corner_normals.foreach_get('vector', self.normals)
+
+   Blender 4.2's RNA bridge stores the foreach_get element count in a
+   signed int32; microwatt's mcon layer alone has ~9.3M extruded
+   polygons × 6 faces × 4 corners ≈ 223M corner-normals = 669M float32
+   values, which overflows.
+
+   The NORMAL attribute is gated by `self.use_normals` (`gltf_normals`
+   export setting); when False the failing path is never entered.
+   Pass `export_normals=False` plus belt-and-suspenders for the other
+   foreach_get-backed per-corner attributes (tangents, vertex colors,
+   custom attributes).  model-viewer falls back to face-derived flat
+   normals, which is the right look for a chip-layout scene anyway --
+   the extruded layers are already block-like and don't benefit from
+   smooth shading.
+
+3. GLB 4 GB single-file ceiling + browser per-tab memory cap.
+
+   With normals disabled, iter 2 tripped:
+
+     File ".../io_scene_gltf2/io/exp/gltf2_io_export.py", line 105,
+       in save_gltf
+       file.write(struct.pack("I", length))
+     struct.error: 'I' format requires 0 <= number <= 4294967295
+
+   i.e. GLB's binary container stores total length as uint32; microwatt's
+   raw vertex+index payload is ~10 GB (mcon alone ~2.9 GB raw, licon
+   ~2.6 GB).  Even if the GLB write succeeded, the base64-embedded data
+   URL in the HTML would exceed the ~2 GB per-tab memory cap mainstream
+   browsers enforce.
+
+   iter 3 used a hardcoded sky130-specific drop set (licon, li1, mcon,
+   met1, all vias) gated by `total_polys > 30_000_000`.  That worked
+   end-to-end (build succeeded; GLB 2.17 GB, HTML 2.89 GB) but is
+   PDK-specific and overshot the browser cap.
+
+   Replace with a dynamic heuristic: rank meshes by polygon-count ×
+   bytes-per-poly, drop biggest first until estimated GLB ≤
+   _MAX_GLB_BYTES (150 MB, ≈10% of the 2 GB browser-tab cap with
+   base64-inflation margin).  Bytes-per-poly is calibrated from iter 3
+   (39.7M Blender polygons -> 2.17 GB GLB -> ~55 b/poly; rounded up to
+   60 for pessimism).  Layer-name agnostic, so the same path serves
+   non-sky130 PDKs; gcd-class designs (<1M polygons) already fit under
+   the budget so the loop is a no-op for them.
+
+   Goal here is "bling and fun" loadability in a browser, not visual
+   fidelity -- the trade-off is acceptable for an investigation-record
+   viewer.  Phase log line `budget-trimmed` records the drop list and
+   estimated post-trim GLB so the next iteration can recalibrate
+   _GLB_BYTES_PER_POLY if the empirical ratio drifts.
+
+Signed-off-by: Øyvind Harboe <oyvind@ascenium.com>
+Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
+---
+ tools/blendergds/render_gds.py | 187 ++++++++++++++++++++++++++++++---
+ 1 file changed, 171 insertions(+), 16 deletions(-)
+
+diff --git a/tools/blendergds/render_gds.py b/tools/blendergds/render_gds.py
+index 6cf4d75..d8bbbe1 100644
+--- a/tools/blendergds/render_gds.py
++++ b/tools/blendergds/render_gds.py
+@@ -33,10 +33,82 @@ import importlib.util
+ import shutil
+ import sys
+ import tempfile
++import traceback
+ import zipfile
+ from pathlib import Path
+ 
+ 
++# Target GLB binary size for the html-export path: ~10% of the ~2 GB
++# per-tab memory cap mainstream browsers enforce on 64-bit Linux.  After
++# 4/3 base64 inflation in the data: URL, this puts the resulting HTML
++# at ~200 MB -- "bling and fun" loadable, with plenty of headroom for
++# the browser to actually render the scene.  Empirical, not exact.
++_MAX_GLB_BYTES = 150 * 1024 * 1024
++
++# Bytes-per-polygon estimate, calibrated from a prior iteration on
++# sky130hd/microwatt that produced 39_669_907 Blender polygons in a
++# 2_169_758_252-byte GLB (export_normals=False, post-extrusion,
++# triangulated by the gltf2 exporter).  ~55 bytes/poly empirically;
++# round up to 60 so the heuristic is slightly pessimistic.
++_GLB_BYTES_PER_POLY = 60
++
++
++def _drop_to_glb_budget(max_glb_bytes):
++    """Greedily drop the biggest mesh objects until the estimated GLB
++    binary size fits the budget.
++
++    The heuristic is intentionally cheap (no trial exports): rank meshes
++    by polygon-count × bytes-per-poly, evict largest-first.  Always keeps
++    at least one mesh -- a degenerate scene with a single mesh larger
++    than the budget will go through to gltf-export and surface whatever
++    failure mode that triggers, instead of producing an empty scene.
++
++    Returns (list-of-(name, est_bytes, polys) tuples for dropped meshes,
++    estimated total GLB bytes after dropping).
++    """
++    sized = sorted(
++        (
++            (len(o.data.polygons) * _GLB_BYTES_PER_POLY, o)
++            for o in bpy.data.objects
++            if o.type == "MESH"
++        ),
++        key=lambda x: x[0],
++        reverse=True,
++    )
++    total = sum(sz for sz, _ in sized)
++    dropped = []
++    while total > max_glb_bytes and len(sized) > 1:
++        sz, obj = sized.pop(0)
++        dropped.append((obj.name, sz, len(obj.data.polygons)))
++        bpy.data.objects.remove(obj, do_unlink=True)
++        total -= sz
++    return dropped, total
++
++
++def _log_phase(phase: str, extra: str = "") -> None:
++    """Print a single-line phase marker with VmRSS / VmPeak.
++
++    Blender's --background mode produces a lot of output; these prefixed
++    lines make it easy to grep the action log for the failing phase
++    (e.g. addon-register, klayout-merge inside gdsii operator, gltf-export,
++    html-write) and to see exactly where RSS spikes before an OOM.
++    """
++    rss = peak = "?"
++    try:
++        with open("/proc/self/status", "r", encoding="utf-8") as f:
++            for line in f:
++                if line.startswith("VmRSS:"):
++                    rss = line.split(":", 1)[1].strip()
++                elif line.startswith("VmPeak:"):
++                    peak = line.split(":", 1)[1].strip()
++    except OSError:
++        pass
++    msg = f"render_gds.py [{phase}] VmRSS={rss} VmPeak={peak}"
++    if extra:
++        msg += f" {extra}"
++    print(msg, flush=True)
++
++
+ def _split_argv():
+     """Return Blender's pass-through args (everything after `--`)."""
+     if "--" not in sys.argv:
+@@ -166,6 +238,8 @@ def main():
+     if not wheels_dir.is_dir():
+         sys.exit(f"render_gds.py: wheels/ dir not found under {addon_root}")
+ 
++    _log_phase("startup", extra=f"gds={gds_path} ({gds_path.stat().st_size} bytes)")
++
+     # Stage wheels into a temp site-packages and put it on sys.path BEFORE
+     # importing the addon (which imports numpy/gdstk/klayout/yaml at module
+     # scope).
+@@ -175,6 +249,7 @@ def main():
+     try:
+         _stage_wheels(wheels_dir, site)
+         sys.path.insert(0, str(site))
++        _log_phase("wheels-staged")
+ 
+         # bpy is provided by Blender; importing it before this point would
+         # leak partial init in --background mode.
+@@ -182,6 +257,7 @@ def main():
+ 
+         addon = _load_addon_module(addon_root)
+         addon.register()
++        _log_phase("addon-registered")
+ 
+         # The addon's register_properties() declares four scene props via
+         # the legacy `bpy.types.Scene.X = StringProperty(...)` form. In
+@@ -192,38 +268,113 @@ def main():
+         # which is what we want anyway.
+         bpy.context.scene.gdsii_pdk_selection = args.pdk
+ 
+-        result = bpy.ops.import_scene.gdsii(
+-            filepath=str(gds_path),
+-            setup_scene=True,
+-            create_collection=True,
+-            merge_layers=True,
+-            color_scheme="realistic",
+-        )
++        try:
++            result = bpy.ops.import_scene.gdsii(
++                filepath=str(gds_path),
++                setup_scene=True,
++                create_collection=True,
++                merge_layers=True,
++                color_scheme="realistic",
++            )
++        except Exception:
++            _log_phase("gdsii-import-exception")
++            traceback.print_exc()
++            sys.exit("render_gds.py: import_scene.gdsii raised — see traceback above")
+         if "FINISHED" not in result:
++            _log_phase("gdsii-import-nonfinished", extra=f"result={result!r}")
+             sys.exit(f"render_gds.py: import_scene.gdsii returned {result!r}")
+ 
++        mesh_objs = [o for o in bpy.data.objects if o.type == "MESH"]
++        total_polys = sum(len(o.data.polygons) for o in mesh_objs)
++        total_verts = sum(len(o.data.vertices) for o in mesh_objs)
++        _log_phase(
++            "gdsii-imported",
++            extra=f"meshes={len(mesh_objs)} polygons={total_polys} verts={total_verts}",
++        )
++
+         if args.out:
+             out_path = Path(args.out).resolve()
+             out_path.parent.mkdir(parents=True, exist_ok=True)
+             bpy.ops.wm.save_as_mainfile(filepath=str(out_path), copy=True)
++            _log_phase("blend-saved", extra=f"{out_path.stat().st_size} bytes")
+ 
+         if args.out_html:
++            # The GLB binary container stores its total length as a uint32
++            # (struct.pack("I", length)), and the base64-embedded data URL
++            # in the HTML must also stay under a browser tab's per-tab
++            # memory cap.  Full-stack microwatt is ~10 GB of raw vertex+
++            # index data -- 65x over the GLB ceiling, and unreachable to
++            # a browser even if it fit.  Trim the scene to a "bling and
++            # fun" working budget _GLB_BYTES_PER_POLY * polys ≤
++            # _MAX_GLB_BYTES, dropping biggest meshes first.  The
++            # heuristic is layer-name agnostic so non-sky130 PDKs work
++            # the same way; the trade-off is that on a too-large scene
++            # the layers with the highest polygon counts (typically the
++            # densest interconnect/contact layers like mcon, licon, li1
++            # on sky130hd) get evicted while the visually distinctive
++            # ones (substrate, transistor regions, upper metals with
++            # their macros) tend to stay.  gcd-class designs already fit
++            # under the budget, so the drop loop is a no-op for them.
++            dropped, est_glb = _drop_to_glb_budget(_MAX_GLB_BYTES)
++            kept_objs = [o for o in bpy.data.objects if o.type == "MESH"]
++            kept_polys = sum(len(o.data.polygons) for o in kept_objs)
++            _log_phase(
++                "budget-trimmed",
++                extra=(
++                    f"max_glb={_MAX_GLB_BYTES} estimated_glb={est_glb} "
++                    f"dropped={dropped} kept_meshes={len(kept_objs)} "
++                    f"kept_polys={kept_polys}"
++                ),
++            )
++
+             # io_scene_gltf2 ships with Blender as a core addon but is not
+             # active under --factory-startup. Enable it before exporting.
+             bpy.ops.preferences.addon_enable(module="io_scene_gltf2")
++            _log_phase("gltf-addon-enabled")
+ 
+             glb_tmp = tmp / "scene.glb"
+-            export_result = bpy.ops.export_scene.gltf(
+-                filepath=str(glb_tmp),
+-                export_format="GLB",
+-                export_apply=True,
+-                export_yup=True,
+-                export_lights=False,
+-                export_cameras=False,
+-                use_active_scene=True,
+-            )
++            try:
++                export_result = bpy.ops.export_scene.gltf(
++                    filepath=str(glb_tmp),
++                    export_format="GLB",
++                    export_apply=True,
++                    export_yup=True,
++                    export_lights=False,
++                    export_cameras=False,
++                    use_active_scene=True,
++                    # Per-corner attribute exports use foreach_get under the
++                    # hood and Blender 4.2's RNA bridge stores the element
++                    # count in a signed int32.  Microwatt's mcon layer alone
++                    # has ~9.3M extruded polygons × 6 faces × 4 corners ≈
++                    # 223M corner-normals = 669M float32 values, which
++                    # overflows int32 and yields:
++                    #
++                    #   Error: Array length mismatch
++                    #          (expected -464636871, got 609104952)
++                    #   RuntimeError: internal error setting the array
++                    #
++                    # in gltf2_blender_gather_primitives_extract.__get_normals.
++                    # Disabling normals (and the other per-corner attributes
++                    # gated by foreach_get -- tangents, vertex colors)
++                    # short-circuits the failing path before it allocates
++                    # the oversized buffer.  model-viewer falls back to
++                    # face-derived flat normals, which is the right look
++                    # for a chip-layout scene anyway (no smooth shading).
++                    export_normals=False,
++                    export_tangents=False,
++                    export_attributes=False,
++                    export_vertex_color="NONE",
++                )
++            except Exception:
++                _log_phase("gltf-export-exception")
++                traceback.print_exc()
++                sys.exit(
++                    "render_gds.py: export_scene.gltf raised — see traceback above"
++                )
+             if "FINISHED" not in export_result:
++                _log_phase("gltf-export-nonfinished", extra=f"result={export_result!r}")
+                 sys.exit(f"render_gds.py: export_scene.gltf returned {export_result!r}")
++            _log_phase("gltf-exported", extra=f"glb={glb_tmp.stat().st_size} bytes")
+ 
+             _write_html(
+                 template_path=Path(args.html_template).resolve(),
+@@ -232,6 +383,10 @@ def main():
+                 title=args.title,
+                 out_path=Path(args.out_html).resolve(),
+             )
++            _log_phase(
++                "html-written",
++                extra=f"out={Path(args.out_html).stat().st_size} bytes",
++            )
+     finally:
+         shutil.rmtree(tmp, ignore_errors=True)
+ 
+-- 
+2.51.0
+

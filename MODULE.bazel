@@ -63,6 +63,7 @@ git_override(
         "//patches/bazel-orfs:0002-blender.bzl-export-blender_supports_pdk-predicate.patch",
         "//patches/bazel-orfs:0003-orfs_design.bzl-forward-blender-silently-skip-unsupp.patch",
         "//patches/bazel-orfs:0004-environment.bzl-pull-src-OrfsDepInfo.files-into-sour.patch",
+        "//patches/bazel-orfs:0005-render_gds-log-phase-VmRSS-and-capture-op-tracebacks.patch",
     ],
     remote = BAZEL_ORFS_REMOTE,
 )
