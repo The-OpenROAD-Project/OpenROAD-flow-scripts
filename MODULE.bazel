@@ -57,6 +57,10 @@ BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
+    patch_strip = 1,
+    patches = [
+        "//patches/bazel-orfs:0001-render_gds-monkey-patch-PDK_CONFIGS-not-gdsii_use_custom_config.patch",
+    ],
     remote = BAZEL_ORFS_REMOTE,
 )
 

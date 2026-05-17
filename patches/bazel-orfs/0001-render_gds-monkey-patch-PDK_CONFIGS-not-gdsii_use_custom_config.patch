@@ -1,0 +1,49 @@
+From 0010e181efa28210dbf7839e6e6131139cc705bd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind@ascenium.com>
+Date: Mon, 18 May 2026 00:06:14 +0200
+Subject: [PATCH] render_gds: monkey-patch PDK_CONFIGS instead of
+ gdsii_use_custom_config
+
+The addon's gdsii_use_custom_config=True branch in import_gdsii skips
+initialising pdk_info and addon_dir, both of which are still used a
+few lines later to resolve color_path -- so any non-default
+layerstack YAML trips UnboundLocalError inside the addon.
+
+Patch the addon's PDK_CONFIGS dict at runtime instead, pointing the
+selected PDK's config_path entry at our trimmed YAML.  The else
+branch then fires normally, pdk_info is set, color_path resolves,
+and Path's absolute-RHS semantic makes addon_dir / Path(abs_path)
+evaluate to the absolute path.
+---
+ tools/blendergds/render_gds.py | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/tools/blendergds/render_gds.py b/tools/blendergds/render_gds.py
+index cbe116c..b53da1e 100644
+--- a/tools/blendergds/render_gds.py
++++ b/tools/blendergds/render_gds.py
+@@ -289,11 +289,19 @@ def main():
+         # in seconds rather than 5-7 minutes + 16 GB RSS.  No-op for
+         # PDKs without a preset and for designs whose full stack is
+         # already small enough.
++        # We can't go through the addon's `gdsii_use_custom_config = True`
++        # path: that branch in `import_gdsii` skips initialising
++        # `pdk_info` and `addon_dir`, both of which are still used
++        # afterwards to resolve `color_path` -- so a custom YAML trips
++        # `UnboundLocalError: pdk_info` inside the addon.  Instead,
++        # monkey-patch PDK_CONFIGS[pdk]['config_path'] to point at the
++        # trimmed YAML (absolute path -- `addon_dir / Path("/abs")`
++        # evaluates to the absolute path in pathlib, so the else branch
++        # in the addon picks it up correctly).
+         trimmed = _trim_layerstack(addon, addon_root, args.pdk, tmp)
+         if trimmed is not None:
+             yaml_path, kept_layers, missing = trimmed
+-            bpy.context.scene.gdsii_use_custom_config = True
+-            bpy.context.scene.gdsii_config_path = str(yaml_path)
++            addon.PDK_CONFIGS.setdefault(args.pdk, {})["config_path"] = str(yaml_path)
+             _log_phase(
+                 "layerstack-trimmed",
+                 extra=(
+-- 
+2.51.0
+
