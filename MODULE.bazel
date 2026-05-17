@@ -44,7 +44,7 @@ bazel_dep(name = "bazel-orfs")
 
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
-BAZEL_ORFS_COMMIT = "ef90d6c41fa8c1ebd5808371e82d33fee3ab1679"
+BAZEL_ORFS_COMMIT = "3a5ddd7eb48c363717e65903ae4573d528327fd3"
 
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
@@ -57,14 +57,6 @@ BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
-    patch_strip = 1,
-    patches = [
-        "//patches/bazel-orfs:0001-flow.bzl-pull-synth-into-generate_metadata-data-deps.patch",
-        "//patches/bazel-orfs:0002-blender.bzl-export-blender_supports_pdk-predicate.patch",
-        "//patches/bazel-orfs:0003-orfs_design.bzl-forward-blender-silently-skip-unsupp.patch",
-        "//patches/bazel-orfs:0004-environment.bzl-pull-src-OrfsDepInfo.files-into-sour.patch",
-        "//patches/bazel-orfs:0005-render_gds-log-phase-VmRSS-and-capture-op-tracebacks.patch",
-    ],
     remote = BAZEL_ORFS_REMOTE,
 )
 
