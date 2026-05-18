@@ -18,6 +18,22 @@ import matplotlib.pyplot as plt
 
 LAYER_HEADER_RE = re.compile("^([^\\(]+)\\(([^\\)]+)\\)$")
 
+# Helper functions
+# =============================================================================
+
+
+# sklearn's default baseline model for scoring the fit i.e., measuring R² is
+# "predict the mean" which is not the proper model for our regressions since
+# both R and C are through-origin fits - the R² computation doesn't behave
+# well for var(y) ≈ 0 - so we compute R² manually with a "predict zero"
+# baseline model.
+def compute_through_origin_fit_score(model, inputs, observed):
+    sum_squared_observed = (observed**2).sum()
+    if sum_squared_observed == 0:
+        raise ValueError("Cannot score fit: all observed values are zero.")
+    return 1.0 - ((observed - model.predict(inputs)) ** 2).sum() / sum_squared_observed
+
+
 # Parse and validate arguments
 # =============================================================================
 
@@ -410,8 +426,8 @@ if args.mode == "segment":
         resistances,
         capacitances_ff,
     ) in layer_models.items():
-        r_sq_res = res_model.score(lengths, resistances)
-        r_sq_cap = cap_model.score(lengths, capacitances_ff)
+        r_sq_res = compute_through_origin_fit_score(res_model, lengths, resistances)
+        r_sq_cap = compute_through_origin_fit_score(cap_model, lengths, capacitances_ff)
         print("{:<12s} | {:>8.4f} | {:>8.4f}".format(layer_name, r_sq_res, r_sq_cap))
     print("-" * 34)
     print("")
