@@ -19,7 +19,14 @@ erase_non_stage_variables synth
 # the canonical-RTLIL write.
 proc write_state_hash { metric } {
   design -push
-  setattr -unset src *
+  # `*/*` strips src attrs across objects in *all* modules.  Bare `*`
+  # only targets the current module's objects, which is fine after
+  # `hierarchy -check -top` collapses things to one design, but
+  # `write_state_hash` is called before `hierarchy` here, so the
+  # post-frontend state may have many separate modules whose src
+  # attrs would otherwise survive into the hashed RTLIL and break
+  # path-independence.
+  setattr -unset src */*
   setattr -mod -unset src *
   set tmp $::env(OBJECTS_DIR)/.${metric}.tmp.rtlil
   write_rtlil $tmp

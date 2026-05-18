@@ -280,7 +280,7 @@ def extract_metrics(
     extractTagFromFile(
         "synth__post_read_sources__hash",
         metrics_dict,
-        r"^synth__post_read_sources__hash:\s+([0-9a-f]{40})\s*$",
+        r"^\s*synth__post_read_sources__hash:\s+([0-9a-f]{40})\s*$",
         logPath + "/1_1_yosys_canonicalize.log",
         t=str,
         required=False,
