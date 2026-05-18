@@ -120,9 +120,7 @@ class TestGenerateKlayoutTech(unittest.TestCase):
             template_lyt=self.template,
             output_lyt=self.output,
             lef_files=[lef_path],
-            reference_dir=self.results_dir,
             map_files=[],
-            use_relative_paths=True,
         )
 
         with open(self.output) as f:
@@ -152,9 +150,7 @@ class TestGenerateKlayoutTech(unittest.TestCase):
             template_lyt=self.template,
             output_lyt=self.output,
             lef_files=[lef_path],
-            reference_dir=self.results_dir,
             map_files=[map_path],
-            use_relative_paths=False,
         )
 
         with open(self.output) as f:
@@ -181,9 +177,7 @@ class TestGenerateKlayoutTech(unittest.TestCase):
             template_lyt=self.template,
             output_lyt=self.output,
             lef_files=lef_files,
-            reference_dir=self.results_dir,
             map_files=[],
-            use_relative_paths=True,
         )
 
         with open(self.output) as f:
