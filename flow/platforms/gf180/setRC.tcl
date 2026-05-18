@@ -1,18 +1,7 @@
-# OpenRCX  - RC file for OpenROAD FS
-# Platform - GF180 gf180mcu-pdk
-#
-# NOTE: LEF contains RC values per layer
-
-# Tech LEF has the same unit RC for all layers
-# CAPACITANCE CPERSQDIST 0.0000394 ;
-# RESISTANCE RPERSQ 0.090000
-
-# These values are from five gf180 designs: ibex, jpeg, aes-hybrid, riscv32i, aes
-set_layer_rc -layer Metal2 -resistance 3.85861E-04 -capacitance 1.35357E-04
-set_layer_rc -layer Metal3 -resistance 2.06673E-04 -capacitance 1.46141E-04
-set_layer_rc -layer Metal4 -resistance 1.68609E-04 -capacitance 1.50688E-04
-set_layer_rc -layer Metal5 -resistance 7.92778E-05 -capacitance 1.55595E-04
-#set_wire_rc -resistance 2.35501E-04 -capacitance 1.42149E-04
+set_layer_rc -layer Metal2 -resistance 2.25636E-04 -capacitance 1.35357E-04
+set_layer_rc -layer Metal3 -resistance 2.25636E-04 -capacitance 1.46141E-04
+set_layer_rc -layer Metal4 -resistance 2.25637E-04 -capacitance 1.50688E-04
+set_layer_rc -layer Metal5 -resistance 5.85545E-05 -capacitance 1.55595E-04
 
 regexp {(\d+)} $::env(METAL_OPTION) metal
 

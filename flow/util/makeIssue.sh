@@ -56,8 +56,8 @@ if [[ ! -v EXCLUDE_PLATFORM ]]; then
     fi
 fi
 
-VARS_BASENAME=vars-$DESIGN_NICKNAME-$PLATFORM-$FLOW_VARIANT
-RUN_ME_SCRIPT=run-me-$DESIGN_NICKNAME-$PLATFORM-$FLOW_VARIANT.sh
+VARS_BASENAME=${WORK_HOME}/vars-$DESIGN_NICKNAME-$PLATFORM-$FLOW_VARIANT
+RUN_ME_SCRIPT=${WORK_HOME}/run-me-$DESIGN_NICKNAME-$PLATFORM-$FLOW_VARIANT.sh
 
 for i in $ISSUE_CP_FILE_VARS ; do
     if [ -v ${i} ]; then
@@ -73,6 +73,21 @@ ISSUE_CP_FILES+="${ISSUE_CP_FILES_PLATFORM} \
     $VARS_BASENAME.tcl \
     $VARS_BASENAME.gdb"
 
+ISSUE_SCRIPT=${SCRIPTS_DIR}/${ISSUE_TARGET}.tcl
+if grep -q -E "synth_preamble|yosys -import" "${ISSUE_SCRIPT}"; then
+    IS_YOSYS=1
+else
+    IS_YOSYS=0
+fi
+
+if [ "$IS_YOSYS" -eq 1 ]; then
+cat > ${RUN_ME_SCRIPT} <<EOF
+#!/usr/bin/env bash
+source ${VARS_BASENAME}.sh
+export PYTHON_EXE=\${PYTHON_EXE:-\$(command -v python3)}
+yosys ${YOSYS_FLAGS:-} -c \${SCRIPTS_DIR}/${ISSUE_TARGET}.tcl
+EOF
+else
 cat > ${RUN_ME_SCRIPT} <<EOF
 #!/usr/bin/env bash
 source ${VARS_BASENAME}.sh
@@ -82,6 +97,7 @@ else
     openroad -no_init -threads ${NUM_CORES:-1} \${SCRIPTS_DIR}/${ISSUE_TARGET}.tcl
 fi
 EOF
+fi
 chmod +x ${RUN_ME_SCRIPT}
 
 rm -f ${VARS_BASENAME}.sh ${VARS_BASENAME}.tcl ${VARS_BASENAME}.gdb || true

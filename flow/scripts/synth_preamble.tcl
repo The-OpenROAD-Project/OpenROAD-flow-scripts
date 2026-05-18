@@ -44,7 +44,7 @@ proc read_design_sources { } {
   }
 
   if { [env_var_equals SYNTH_HDL_FRONTEND slang] } {
-    plugin -i slang
+    plugin -i $::env(SLANG_PLUGIN_PATH)
 
     set slang_args [list \
       -D SYNTHESIS --keep-hierarchy --compat=vcs --ignore-assertions --top $::env(DESIGN_NAME) \

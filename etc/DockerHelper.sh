@@ -35,6 +35,7 @@ usage: $0 [CMD] [OPTIONS]
   -dry-run                      Do not push images to the repository
   -push-latest                  Push the latest image to the repository
   -no-constant-build-dir        Do not use constant build directory
+  -buildArgs=<ARGS>             Additional build arguments to pass to docker buildx
   -h -help                      Show this message and exits
 
 EOF
@@ -64,7 +65,7 @@ _setup() {
         "builder" | "master")
             fromImage="${FROM_IMAGE_OVERRIDE:-"${org}/flow-${os}-dev"}:${imageTag}"
             context="."
-            buildArgs="--build-arg numThreads=${numThreads}"
+            buildArgs+=" --build-arg numThreads=${numThreads}"
             orVersion=$(git -C tools/OpenROAD describe --tags)
             echo "OpenROAD version: ${orVersion}"
             buildArgs+=" --build-arg openroadVersion=${orVersion}"
@@ -76,7 +77,7 @@ _setup() {
             local yosys_ver
             yosys_ver=v$(grep 'yosys_ver =' tools/yosys/docs/source/conf.py | awk -F'"' '{print $2}')
             options+=" -yosys-ver=${yosys_ver}"
-            buildArgs="--build-arg \"options=${options}\" ${noConstantBuildDir}"
+            buildArgs+=" --build-arg \"options=${options}\" ${noConstantBuildDir}"
             ;;
         *)
             echo "Target ${target} not found" >&2
@@ -84,7 +85,7 @@ _setup() {
             ;;
     esac
     imagePath="${imageName}:${imageTag}"
-    buildArgs="--build-arg fromImage=${fromImage} ${buildArgs}"
+    buildArgs+=" ${buildArgs} --build-arg fromImage=${fromImage}"
     file="docker/Dockerfile.${target}"
 }
 
@@ -191,7 +192,7 @@ os="ubuntu22.04"
 target="dev"
 numThreads="-1"
 tag=""
-options=""
+buildArgs=""
 dryRun=0
 pushLatest=0
 
@@ -201,7 +202,7 @@ while [ "$#" -gt 0 ]; do
             _help 0
             ;;
         -ci )
-            options="-ci"
+            options+=" -ci"
             ;;
         -dry-run )
             dryRun=1
@@ -226,6 +227,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -tag=* )
             tag="${1#*=}"
+            ;;
+        -buildArgs=* )
+            buildArgs="${1#*=}"
             ;;
         -no-constant-build-dir )
             noConstantBuildDir="--build-arg constantBuildDir= "

@@ -109,3 +109,5 @@ export CTS_LIB_NAME = asap7sc7p5t_INVBUF_SLVT_FF_nldm_211120
 # Remove rvfi_probes_o interface
 export SYNTH_CANONICALIZE_TCL = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NAME)/canonicalize.tcl
 
+export SWAP_ARITH_OPERATORS = 1
+export OPENROAD_HIERARCHICAL = 1

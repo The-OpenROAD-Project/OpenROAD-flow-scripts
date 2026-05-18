@@ -4,6 +4,15 @@ export PLATFORM = ihp-sg13g2
 
 export VERILOG_FILES = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/$(DESIGN_NAME).v \
                        $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/I2cGpioExpander.v
+# IO pad cells -- platform config.mk adds these conditionally when
+# FOOTPRINT_TCL is set, but declare them explicitly for robustness.
+export VERILOG_FILES += $(PLATFORM_DIR)/verilog/sg13g2_io.v
+export ADDITIONAL_LEFS += $(PLATFORM_DIR)/lef/sg13g2_io.lef \
+                          $(PLATFORM_DIR)/lef/bondpad_70x70.lef
+export ADDITIONAL_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_typ_1p2V_3p3V_25C.lib
+export ADDITIONAL_SLOW_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_slow_1p08V_3p0V_125C.lib
+export ADDITIONAL_FAST_LIBS += $(PLATFORM_DIR)/lib/sg13g2_io_fast_1p32V_3p6V_m40C.lib
+export ADDITIONAL_GDS += $(PLATFORM_DIR)/gds/sg13g2_io.gds
 export SDC_FILE = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
 export SEAL_GDS = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/sealring.gds.gz

@@ -3,20 +3,94 @@
 module(
     name = "orfs",
     version = "0.0.1",
-    compatibility_level = 1,
 )
 
-bazel_dep(name = "bazel-orfs")
+# --- Regular dependencies (propagated to downstream consumers) ---
+
+bazel_dep(name = "rules_python", version = "1.8.5")
+bazel_dep(name = "rules_shell", version = "0.6.1")
+
+# --- Dev dependencies (only honoured when @orfs is the root module) ---
+#
+# When @orfs is consumed as a non-root dep (e.g. by tools/OpenROAD), the
+# downstream module brings its own openroad/qt-bazel/bazel-orfs/yosys-slang
+# pins and orfs.default() configuration. Marking everything below as
+# dev_dependency = True makes those declarations no-ops in that case, so
+# our MODULE.bazel doesn't need to be patched at non-root consumption
+# time.
+
+bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
+bazel_dep(name = "openroad", dev_dependency = True)
+local_path_override(
+    module_name = "openroad",
+    path = "tools/OpenROAD",
+)
+
+bazel_dep(name = "qt-bazel", dev_dependency = True)
+git_override(
+    module_name = "qt-bazel",
+    commit = "886104974c2fd72439f2c33b5deebf0fe4649df7",
+    remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
+)
+
+bazel_dep(name = "bazel-orfs", dev_dependency = True)
+bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
+
+BAZEL_ORFS_COMMIT = "ce6efd96dfe39a9c4ef244f8712386f071545d77"
+
+BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
 # To bump version, run: bazelisk run @bazel-orfs//:bump
 git_override(
     module_name = "bazel-orfs",
-    commit = "f8a4b694b37c8f5322323eba9a9ae37f9541ee17",
-    remote = "https://github.com/The-OpenROAD-Project/bazel-orfs.git",
+    commit = BAZEL_ORFS_COMMIT,
+    patch_strip = 1,
+    patches = [
+        # Adds orfs_design(user_sources=[VAR,...]) / orfs_flow(user_sources={...})
+        # so design-private SOURCE_VARS path hooks (e.g. SDC_FILE_EXTRA in
+        # flow/designs/asap7/mock-cpu) bypass the variables.yaml validator
+        # without polluting the ORFS-wide variable schema. Drop once upstream
+        # bazel-orfs lands the user_sources= API.
+        "//bazel:0001-orfs_design-add-user_sources.patch",
+    ],
+    remote = BAZEL_ORFS_REMOTE,
 )
 
-bazel_dep(name = "rules_python", version = "1.2.0")
-bazel_dep(name = "rules_shell", version = "0.6.1")
+git_override(
+    module_name = "bazel-orfs-verilog",
+    commit = BAZEL_ORFS_COMMIT,
+    remote = BAZEL_ORFS_REMOTE,
+    strip_prefix = "verilog",
+)
+
+# yosys-slang is not on BCR. Pin to a commit on povik/yosys-slang master
+# that has the upstream Bazel build (povik/yosys-slang#310) and the
+# slang.so visibility fix (povik/yosys-slang#311). Submodules pull in
+# vendored slang and fmt sources.
+bazel_dep(name = "yosys-slang", dev_dependency = True)
+git_override(
+    module_name = "yosys-slang",
+    commit = "7753ea70431d85929292b90c33b32f6dbdb3b048",
+    init_submodules = True,
+    remote = "https://github.com/povik/yosys-slang.git",
+)
+
+# --- Extensions ---
+
+llvm = use_extension(
+    "@toolchains_llvm//toolchain/extensions:llvm.bzl",
+    "llvm",
+    dev_dependency = True,
+)
+llvm.toolchain(
+    llvm_version = "20.1.8",
+)
+use_repo(llvm, "llvm_toolchain")
+
+register_toolchains(
+    "@llvm_toolchain//:all",
+    dev_dependency = True,
+)
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
@@ -32,16 +106,33 @@ pip.parse(
 )
 use_repo(pip, "orfs-pip")
 
-orfs = use_extension("@bazel-orfs//:extension.bzl", "orfs_repositories")
-
-# To bump version, run: bazelisk run @bazel-orfs//:bump
-orfs.default(
-    image = "docker.io/openroad/orfs:v3.0-3273-gedf3d6bf",
-    # Use local files instead of docker image
-    makefile = "//flow:makefile",
-    makefile_yosys = "//flow:makefile_yosys",
-    pdk = "//flow:asap7",
-    sha256 = "f5692c6325ebcf27cc348e033355ec95c82c35ace1af7e72a0d352624ada143e",
+orfs = use_extension(
+    "@bazel-orfs//:extension.bzl",
+    "orfs_repositories",
+    dev_dependency = True,
 )
-use_repo(orfs, "com_github_nixos_patchelf_download")
-use_repo(orfs, "docker_orfs")
+orfs.default(
+    # Expose the yosys-slang plugin via YOSYS_PLUGIN_PATH so
+    # SYNTH_HDL_FRONTEND=slang works for ibex, cva6, uart, etc.
+    yosys_plugins = ["@yosys-slang//src/yosys_plugin:slang.so"],
+)
+use_repo(orfs, "config")
+use_repo(orfs, "gnumake")
+use_repo(orfs, "orfs_variable_metadata")
+
+# Auto-generate orfs_flow() targets from config.mk files.
+# See flow/README.md for usage.
+orfs_designs = use_repo_rule("@bazel-orfs//private:designs.bzl", "orfs_designs")
+
+orfs_designs(
+    name = "orfs_designs",
+    designs_dir = "//flow/designs:BUILD",
+    platforms = [
+        "asap7",
+        "gf180",
+        "ihp-sg13g2",
+        "nangate45",
+        "sky130hd",
+        "sky130hs",
+    ],
+)

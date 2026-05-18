@@ -23,7 +23,7 @@ export MACRO_PLACE_HALO    = 8 8
 export SKIP_GATE_CLONING   = 1
 
 export RTLMP_MAX_LEVEL = 1
-export RTLMP_MAX_MACRO = 10
-export RTLMP_MIN_MACRO = 1
+export RTLMP_MAX_MACRO = 30
+export RTLMP_MIN_MACRO = 10
 export RTLMP_MAX_INST = 80000
 export RTLMP_MIN_INST = 8000

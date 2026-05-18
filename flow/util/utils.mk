@@ -89,13 +89,13 @@ write_net_rc: $(RESULTS_DIR)/6_net_rc.csv
 
 #$(RESULTS_DIR)/6_net_rc.csv: $(RESULTS_DIR)/4_cts.odb $(RESULTS_DIR)/6_final.spef
 $(RESULTS_DIR)/6_net_rc.csv:
-	($(TIME_CMD) $(OPENROAD_CMD) $(UTILS_DIR)/write_net_rc_script.tcl) 2>&1 | tee $(LOG_DIR)/6_write_net_rc.log
+	$(RUN_CMD) --log $(LOG_DIR)/6_write_net_rc.log --tee -- $(OPENROAD_CMD) $(UTILS_DIR)/write_net_rc_script.tcl
 
 .PHONY: write_segment_rc
 write_segment_rc: $(RESULTS_DIR)/6_segment_rc.csv
 
 $(RESULTS_DIR)/6_segment_rc.csv:
-	($(TIME_CMD) $(OPENROAD_CMD) $(UTILS_DIR)/write_segment_rc_script.tcl) 2>&1 | tee $(LOG_DIR)/6_write_segment_rc.log
+	$(RUN_CMD) --log $(LOG_DIR)/6_write_segment_rc.log --tee -- $(OPENROAD_CMD) $(UTILS_DIR)/write_segment_rc_script.tcl
 
 .PHONY: correlate_rc
 correlate_rc: $(RESULTS_DIR)/6_net_rc.csv
@@ -150,22 +150,27 @@ clean_issues:
 	rm -f vars*.sh vars*.tcl vars*.gdb run-me*.sh
 
 $(RESULTS_DIR)/6_final_only_clk.def: $(RESULTS_DIR)/6_final.def
-	$(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/deleteNonClkNets.tcl
+	$(RUN_CMD) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/deleteNonClkNets.tcl
 
 $(RESULTS_DIR)/6_final_no_power.def: $(RESULTS_DIR)/6_final.def
-	$(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/deletePowerNets.tcl
+	$(RUN_CMD) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/deletePowerNets.tcl
 
 
 .PHONY: gallery
 gallery: check-klayout $(RESULTS_DIR)/6_final_no_power.def $(RESULTS_DIR)/6_final_only_clk.def
-	($(TIME_CMD) klayout -z -nc -rx -rd gallery_json=util/gallery.json \
+	$(RUN_CMD) --log $(LOG_DIR)/6_1_merge.log --tee -- \
+	        klayout -z -nc -rx -rd gallery_json=util/gallery.json \
 	        -rd results_path=$(RESULTS_DIR) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
-	        -rm $(UTILS_DIR)/createGallery.py) 2>&1 | tee $(LOG_DIR)/6_1_merge.log
+	        -rm $(UTILS_DIR)/createGallery.py
 
-.PHONY: view_cells
+.PHONY: view_cells view_cells_web
 view_cells:
 	$(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/view_cells.tcl
+
+.PHONY: view_cells_web
+view_cells_web:
+	$(OPENROAD_WEB_CMD) $(SCRIPTS_DIR)/view_cells.tcl
 
 ## Quick access to command line
 .PHONY: command

@@ -10,6 +10,7 @@ function __setpaths() {
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
         export CMAKE_PREFIX_PATH="$(brew --prefix or-tools)"
+        export QT_QPA_PLATFORM=cocoa
     fi
 }
 __setpaths

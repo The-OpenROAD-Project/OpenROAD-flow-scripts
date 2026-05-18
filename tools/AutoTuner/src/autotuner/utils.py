@@ -365,7 +365,6 @@ def openroad(
     if work_home is not None:
         make_command += f" WORK_HOME={work_home}"
     make_command += f" FLOW_VARIANT={flow_variant} {parameters}"
-    make_command += " EQUIVALENCE_CHECK=0"
     make_command += f" NUM_CORES={args.openroad_threads} SHELL=bash"
     if args.stop_stage != "finish":
         make_command += f" {args.stop_stage}"

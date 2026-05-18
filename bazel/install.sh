@@ -88,10 +88,10 @@ for sub in tools/OpenROAD tools/yosys tools/yosys-slang; do
     fi
 done
 
-# --- OpenROAD (delegates to its own //:install) ---
+# --- OpenROAD (delegates to its own //packaging:install) ---
 if [[ $BUILD_OPENROAD -eq 1 ]]; then
     echo "=== Building OpenROAD with GUI support ==="
-    (cd "${WORKSPACE}/tools/OpenROAD" && bazelisk run --//:platform=gui //:install)
+    (cd "${WORKSPACE}/tools/OpenROAD" && bazelisk run --//:platform=gui //packaging:install)
 fi
 
 # --- Yosys ---

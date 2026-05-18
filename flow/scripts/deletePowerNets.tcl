@@ -1,3 +1,5 @@
+source $::env(SCRIPTS_DIR)/util.tcl
+
 read_lef $::env(TECH_LEF)
 read_lef $::env(SC_LEF)
 if { [info exist ::env(ADDITIONAL_LEFS)] } {

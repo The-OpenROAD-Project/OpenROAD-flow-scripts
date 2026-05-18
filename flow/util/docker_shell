@@ -82,7 +82,7 @@ if $USE_USER; then
     user_args="--entrypoint=entrypoint.sh --user=root"
     user_env="-e CUSTOM_USER=$(id --user --name) -e CUSTOM_USER_ID=$(id --user) -e CUSTOM_GROUP_ID=$(id --group)"
 elif [[ $container_engine == "podman" ]]; then
-    user_args="--privileged --userns=keep-id"
+    user_args="--privileged --userns=keep-id --user $(id -u):$(id -g)"
     user_env=
 else
     user_args="-u $(id -u ${USER}):$(id -g ${USER})"
@@ -117,7 +117,7 @@ DOCKER_CMD=(
     -e "YOSYS_EXE=$YOSYS_EXE"
     -e "OPENROAD_EXE=$OPENROAD_EXE"
     -e "KLAYOUT_CMD=$KLAYOUT_CMD"
-    -v "$WORKSPACE:/work"
+    -v "$WORKSPACE:/work:Z"
     --network host
     "${PORT_ARGS[@]}"
     "$IMAGE"

@@ -4,13 +4,13 @@ export PROCESS = 130
 #-----------------------------------------------------
 # Tech/Libs
 # ----------------------------------------------------
-export TECH_LEF = $(PLATFORM_DIR)/lef/sky130_fd_sc_hs.tlef
-export SC_LEF = $(PLATFORM_DIR)/lef/sky130_fd_sc_hs_merged.lef
+export TECH_LEF ?= $(PLATFORM_DIR)/lef/sky130_fd_sc_hs.tlef
+export SC_LEF ?= $(PLATFORM_DIR)/lef/sky130_fd_sc_hs_merged.lef
 
-export LIB_FILES = $(PLATFORM_DIR)/lib/sky130_fd_sc_hs__tt_025C_1v80.lib \
-                     $(ADDITIONAL_LIBS)
-export GDS_FILES = $(wildcard $(PLATFORM_DIR)/gds/*.gds) \
-                     $(ADDITIONAL_GDS)
+export LIB_FILES ?= $(PLATFORM_DIR)/lib/sky130_fd_sc_hs__tt_025C_1v80.lib
+export LIB_FILES += $(ADDITIONAL_LIBS)
+export GDS_FILES ?= $(wildcard $(PLATFORM_DIR)/gds/*.gds)
+export GDS_FILES += $(ADDITIONAL_GDS)
 
 # Dont use cells to ease congestion
 # Specify at least one filler cell if none

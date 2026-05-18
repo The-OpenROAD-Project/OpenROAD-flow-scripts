@@ -10,8 +10,8 @@ export VERILOG_FILES = $(sort $(wildcard $(DESIGN_HOME)/src/riscv32i/*.v))
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/riscv32i/constraint.sdc
 
 ifeq ($(BLOCKS),)
-	export ADDITIONAL_LEFS = ./platforms/$(PLATFORM)/lef/fakeram7_256x32.lef
-	export ADDITIONAL_LIBS = $(LIB_DIR)/fakeram7_256x32.lib
+	export ADDITIONAL_LEFS = $(PLATFORM_DIR)/lef/fakeram7_256x32.lef
+	export ADDITIONAL_LIBS = $(PLATFORM_DIR)/lib/NLDM/fakeram7_256x32.lib
 endif
 
 export CORE_UTILIZATION = 62

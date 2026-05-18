@@ -98,8 +98,11 @@ module jpeg_rle(clk, rst, ena, dstrb, din, size, rlen, amp, douten, bstart);
 	//
 
 	reg ddstrb;
-	always @(posedge clk)
-	  ddstrb <= #1 dstrb;
+	always @(posedge clk or negedge rst)
+	  if (!rst)
+	    ddstrb <= #1 1'b0;
+	  else
+	    ddstrb <= #1 dstrb;
 
 	// generate run-length encoded signals
 	jpeg_rle1 rle(

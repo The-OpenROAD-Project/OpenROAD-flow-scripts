@@ -88,7 +88,7 @@ DESIGN_CONFIG ?= ./designs/nangate45/gcd/config.mk
 export DESIGN_CONFIG
 include $(DESIGN_CONFIG)
 
-export DESIGN_DIR ?= $(dir $(DESIGN_CONFIG))
+export DESIGN_DIR ?= $(patsubst %/,%,$(dir $(DESIGN_CONFIG)))
 
 # default value "base" for FLOW_VARIANT and "." for WORK_HOME are duplicated
 # from variables.yaml and variables.mk because we need it
@@ -241,7 +241,7 @@ synth-report: synth
 
 .PHONY: do-synth-report
 do-synth-report:
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/1_2_yosys_metrics.log)
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/1_2_yosys_metrics.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_metrics.tcl
 
 .PHONY: memory
 memory:
@@ -315,17 +315,20 @@ $(OBJECTS_DIR)/copyright.txt:
 	@touch $(OBJECTS_DIR)/copyright.txt
 
 define OPEN_GUI_SHORTCUT
-.PHONY: gui_$(1) open_$(1)
+.PHONY: gui_$(1) open_$(1) web_$(1)
 gui_$(1): gui_$(2)
 open_$(1): open_$(2)
+web_$(1): web_$(2)
 endef
 
 define OPEN_GUI
-.PHONY: open_$(1) gui_$(1)
+.PHONY: open_$(1) gui_$(1) web_$(1)
 open_$(1):
 	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/open.tcl
 gui_$(1):
 	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/open.tcl
+web_$(1):
+	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_WEB_CMD) $(SCRIPTS_DIR)/open.tcl
 endef
 
 # Enables "make gui_5_1_grt-failed"
@@ -641,7 +644,7 @@ generate_abstract: $(RESULTS_DIR)/6_final.gds $(RESULTS_DIR)/6_final.def  $(RESU
 .PHONY: do-generate_abstract
 do-generate_abstract:
 	mkdir -p $(LOG_DIR) $(REPORTS_DIR)
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json) 2>&1 | tee $(abspath $(LOG_DIR)/generate_abstract.log)
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/generate_abstract.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/generate_abstract.tcl -metrics $(LOG_DIR)/generate_abstract.json
 
 .PHONY: clean_abstract
 clean_abstract:
@@ -661,7 +664,8 @@ gds: $(GDS_FINAL_FILE)
 # Merge wrapped macros using Klayout
 #-------------------------------------------------------------------------------
 $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
-	($(TIME_CMD) $(SCRIPTS_DIR)/klayout.sh -zz -rd design_name=$(basename $(notdir $@)) \
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log) --tee -- \
+	        $(SCRIPTS_DIR)/klayout.sh -zz -rd design_name=$(basename $(notdir $@)) \
 	        -rd in_def=$(OBJECTS_DIR)/def/$(notdir $(@:$(STREAM_SYSTEM_EXT)=def)) \
 	        -rd in_files="$(ADDITIONAL_GDSOAS)" \
 	        -rd config_file=$(FILL_CONFIG) \
@@ -669,7 +673,7 @@ $(WRAPPED_GDSOAS): $(OBJECTS_DIR)/klayout_wrap.lyt $(WRAPPED_LEFS)
 	        -rd out_file=$@ \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout_wrap.lyt \
 	        -rd layer_map=$(GDS_LAYER_MAP) \
-	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(abspath $(LOG_DIR)/6_merge_$(basename $(notdir $@)).log)
+	        -r $(UTILS_DIR)/def2stream.py
 
 # Merge GDS using Klayout
 #-------------------------------------------------------------------------------
@@ -678,14 +682,15 @@ $(GDS_MERGED_FILE): check-klayout $(RESULTS_DIR)/6_final.def $(OBJECTS_DIR)/klay
 
 .PHONY: do-gds-merged
 do-gds-merged:
-	($(TIME_CMD) $(STDBUF_CMD) $(SCRIPTS_DIR)/klayout.sh -zz -rd design_name=$(DESIGN_NAME) \
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_1_merge.log) --tee -- \
+	        $(SCRIPTS_DIR)/klayout.sh -zz -rd design_name=$(DESIGN_NAME) \
 	        -rd in_def=$(RESULTS_DIR)/6_final.def \
 	        -rd in_files="$(GDSOAS_FILES) $(WRAPPED_GDSOAS)" \
 	        -rd seal_file="$(SEAL_GDSOAS)" \
 	        -rd out_file=$(GDS_MERGED_FILE) \
 	        -rd tech_file=$(OBJECTS_DIR)/klayout.lyt \
 	        -rd layer_map=$(GDS_LAYER_MAP) \
-	        -r $(UTILS_DIR)/def2stream.py) 2>&1 | tee $(abspath $(LOG_DIR)/6_1_merge.log)
+	        -r $(UTILS_DIR)/def2stream.py
 
 $(RESULTS_DIR)/6_final.v: $(LOG_DIR)/6_report.log
 
@@ -702,9 +707,10 @@ drc: $(REPORTS_DIR)/6_drc.lyrdb
 
 $(REPORTS_DIR)/6_drc.lyrdb: $(GDS_FINAL_FILE) $(KLAYOUT_DRC_FILE)
 ifneq ($(KLAYOUT_DRC_FILE),)
-	($(TIME_CMD) $(SCRIPTS_DIR)/klayout.sh -zz -rd in_gds="$<" \
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_drc.log) --tee -- \
+	        $(SCRIPTS_DIR)/klayout.sh -zz -rd in_gds="$<" \
 	        -rd report_file=$(abspath $@) \
-	        -r $(KLAYOUT_DRC_FILE)) 2>&1 | tee $(abspath $(LOG_DIR)/6_drc.log)
+	        -r $(KLAYOUT_DRC_FILE)
 	# Hacky way of getting DRV count (don't error on no matches)
 	grep -c "<value>" $@ > $(REPORTS_DIR)/6_drc_count.rpt || [[ $$? == 1 ]]
 else
@@ -712,7 +718,7 @@ else
 endif
 
 $(RESULTS_DIR)/6_final.cdl: $(RESULTS_DIR)/6_final.v
-	($(TIME_CMD) $(OPENROAD_CMD) $(SCRIPTS_DIR)/cdl.tcl) 2>&1 | tee $(abspath $(LOG_DIR)/6_cdl.log)
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_cdl.log) --tee -- $(OPENROAD_CMD) $(SCRIPTS_DIR)/cdl.tcl
 
 $(OBJECTS_DIR)/6_final_concat.cdl: $(RESULTS_DIR)/6_final.cdl $(CDL_FILE)
 	cat $^ > $@
@@ -722,10 +728,11 @@ lvs: $(RESULTS_DIR)/6_lvs.lvsdb
 
 $(RESULTS_DIR)/6_lvs.lvsdb: $(GDS_FINAL_FILE) $(KLAYOUT_LVS_FILE) $(OBJECTS_DIR)/6_final_concat.cdl
 ifneq ($(KLAYOUT_LVS_FILE),)
-	($(TIME_CMD) $(SCRIPTS_DIR)/klayout.sh -b -rd in_gds="$<" \
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/6_lvs.log) --tee -- \
+	        $(SCRIPTS_DIR)/klayout.sh -b -rd in_gds="$<" \
 	        -rd cdl_file=$(abspath $(OBJECTS_DIR)/6_final_concat.cdl) \
 	        -rd report_file=$(abspath $@) \
-	        -r $(KLAYOUT_LVS_FILE)) 2>&1 | tee $(abspath $(LOG_DIR)/6_lvs.log)
+	        -r $(KLAYOUT_LVS_FILE)
 else
 	echo "LVS not supported on this platform" > $@
 endif

@@ -11,7 +11,6 @@ export ADDER_MAP_FILE :=
 export CORE_UTILIZATION ?= 55
 export PLACE_DENSITY_LB_ADDON = 0.20
 export TNS_END_PERCENT        = 100
-export REMOVE_CELLS_FOR_EQY   = TAPCELL*
 export SYNTH_REPEATABLE_BUILD ?= 1
 
 # This needs a smaller pitch to accomodate a small block

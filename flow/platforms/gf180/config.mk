@@ -13,12 +13,12 @@ export PROCESS                                = 180
 #----------------------------------------------------
 # OpenROAD
 #----------------------------------------------------
-export TECH_LEF                               = $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_tech.lef
+export TECH_LEF                              ?= $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_tech.lef
 
 export SC_LEF                                ?= $(PLATFORM_DIR)/lef/gf180mcu_$(METAL_OPTION)_$(KVALUE)K_$(TRACK_OPTION)_sc.lef
 
-export GDS_FILES                              = $(wildcard $(PLATFORM_DIR)/gds/$(TRACK_OPTION)/*.gds) \
-                                                $(ADDITIONAL_GDS)
+export GDS_FILES                             ?= $(wildcard $(PLATFORM_DIR)/gds/$(TRACK_OPTION)/*.gds)
+export GDS_FILES                             += $(ADDITIONAL_GDS)
 
 # Dont use cells 
 export DONT_USE_CELLS                         = *_1
@@ -118,17 +118,17 @@ export RCX_RC_CORNER                          = $($(CORNER)_RCX_RC_CORNER)
 #----------------------------------------------------------------------------------------------------
 # standard cell section
 #----------------------------------------------------------------------------------------------------
-export BC_LIB_FILES                           = $(abspath $(PLATFORM_DIR)/lib/gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__ff_n40C_5v50.lib.gz)
-export BC_TEMPERATURE                         = -40c
-export BC_VOLTAGE                             = 5.5
+export BC_LIB_FILES                          ?= $(abspath $(PLATFORM_DIR)/lib/gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__ff_n40C_5v50.lib.gz)
+export BC_TEMPERATURE                        ?= -40c
+export BC_VOLTAGE                            ?= 5.5
 
-export WC_LIB_FILES                           = $(abspath $(PLATFORM_DIR)/lib/gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__ss_125C_4v50.lib.gz)
-export WC_TEMPERATURE                         = 125c
-export WC_VOLTAGE                             = 4.5
+export WC_LIB_FILES                          ?= $(abspath $(PLATFORM_DIR)/lib/gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__ss_125C_4v50.lib.gz)
+export WC_TEMPERATURE                        ?= 125c
+export WC_VOLTAGE                            ?= 4.5
 
-export TC_LIB_FILES                           = $(abspath $(PLATFORM_DIR)/lib/gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tt_025C_5v00.lib.gz)
-export TC_TEMPERATURE                         = 25c
-export TC_VOLTAGE                             = 5.0
+export TC_LIB_FILES                          ?= $(abspath $(PLATFORM_DIR)/lib/gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__tt_025C_5v00.lib.gz)
+export TC_TEMPERATURE                        ?= 25c
+export TC_VOLTAGE                            ?= 5.0
 
 # ----------------------------------------------------------------------------------------------------
 # now, set files from user setting CORNER

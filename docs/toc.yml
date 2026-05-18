@@ -11,6 +11,8 @@ entries:
     entries:
     - file: user/DockerShell.md
       title: Docker Shell utility
+    - file: user/ClaudeCode.md
+      title: Claude Code in Docker
   - file: user/BuildLocally.md
     title: Build Locally
   - file: user/BuildWithWSL.md

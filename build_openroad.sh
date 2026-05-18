@@ -29,9 +29,11 @@ OPENROAD_APP_ARGS=""
 DOCKER_OS_NAME="ubuntu22.04"
 PROC=-1
 
-VERIFIC_COMPONENTS='database util containers pct hier_tree verilog'
 WITH_VERIFIC=0
-VERIFIC_DIR=""
+VERIFIC_SRC=""
+VERIFIC_COMPONENTS='database util containers pct hier_tree verilog'
+VERIFIC_ARGS=" VERIFIC_COMPONENTS='${VERIFIC_COMPONENTS}'"
+VERIFIC_ARGS+=" ENABLE_VERIFIC=1 ENABLE_VERIFIC_VHDL=0 VERIFIC_DIR=verific"
 
 function usage() {
         cat << EOF
@@ -145,20 +147,17 @@ while (( "$#" )); do
                         YOSYS_OVERWRITE_ARGS=1
                         ;;
                 --yosys-args)
-                        YOSYS_USER_ARGS="$2"
+                        YOSYS_USER_ARGS+="$2"
                         shift
                         ;;
                 --with-verific)
-                        YOSYS_USER_ARGS+=" ENABLE_VERIFIC=1"
-                        YOSYS_USER_ARGS+=" ENABLE_VERIFIC_VHDL=0"
-                        YOSYS_USER_ARGS+=" VERIFIC_COMPONENTS='${VERIFIC_COMPONENTS}'"
-                        VERIFIC_DIR=${2}
-                        if [ ! -d "${VERIFIC_DIR}" ]; then
-                                echo "[ERROR] Verific path '${VERIFIC_DIR}' does not exist." >&2
+                        WITH_VERIFIC=1
+                        VERIFIC_SRC=${2}
+                        if [ ! -d "${VERIFIC_SRC}" ]; then
+                                echo "[ERROR] Verific path '${VERIFIC_SRC}' does not exist." >&2
                                 exit 1
                         fi
-                        YOSYS_USER_ARGS+=" VERIFIC_DIR=${VERIFIC_DIR}"
-                        WITH_VERIFIC=1
+                        YOSYS_USER_ARGS+="${VERIFIC_ARGS}"
                         shift
                         ;;
                 --openroad-args-overwrite)
@@ -238,8 +237,14 @@ __docker_build()
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
+        local options=()
+        if [ "${WITH_VERIFIC}" -eq 1 ]; then
+                cp -r "${VERIFIC_SRC}" tools/verific
+                options=("-buildArgs=--build-arg verificPath=tools/verific")
+        fi
         ./etc/DockerHelper.sh create -target=dev -os="${DOCKER_OS_NAME}" -threads="${PROC}"
-        ./etc/DockerHelper.sh create -target=builder -os="${DOCKER_OS_NAME}" -threads="${PROC}"
+        ./etc/DockerHelper.sh create -target=builder -os="${DOCKER_OS_NAME}" -threads="${PROC}" "${options[@]}"
+        rm -rf tools/verific
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 mv .dockerignore{.bak,}
         fi
@@ -248,39 +253,112 @@ __docker_build()
 __local_build()
 {
         if [[ "$OSTYPE" == "darwin"* ]]; then
-          export PATH="$(brew --prefix bison)/bin:$(brew --prefix flex)/bin:$(brew --prefix tcl-tk)/bin:$PATH"
-          export CMAKE_PREFIX_PATH=$(brew --prefix or-tools)
+                        
+                _bison=$(brew --prefix bison 2>/dev/null || true)
+                _flex=$(brew --prefix flex 2>/dev/null || true)
+                _ortools=$(brew --prefix or-tools 2>/dev/null || true)
+
+                if [[ -z "$_bison" || ! -d "$_bison/bin" ]]; then
+                        echo "[ERROR] bison not found or broken. Run: brew install bison" >&2
+                        exit 1
+                fi
+                if [[ -z "$_flex" || ! -d "$_flex/bin" ]]; then
+                        echo "[ERROR] flex not found or broken. Run: brew install flex" >&2
+                        exit 1
+                fi
+                if [[ -z "$_ortools" || ! -d "$_ortools/lib" || ! -d "$_ortools/include" ]]; then
+                        echo "[ERROR] or-tools not found or broken. Run: brew install or-tools" >&2
+                        exit 1
+                fi
+
+                export PATH="$_bison/bin:$_flex/bin:$PATH"
+                export CMAKE_PREFIX_PATH="${_ortools}"
+
+                _qt5=$(brew --prefix qt@5 2>/dev/null || true)
+                if [[ -z "$_qt5" || ! -d "$_qt5/lib" ]]; then
+                        echo "[ERROR] qt@5 not found or broken. Run: brew install qt@5" >&2
+                        exit 1
+                fi
+                
+                cmakeOptions+=" -DQt5_DIR=$_qt5/lib/cmake/Qt5"
+
+                _tcl8=$(brew --prefix tcl-tk@8 2>/dev/null || true)     
+                if [[ -z "$_tcl8" || ! -d "$_tcl8/lib" || ! -d "$_tcl8/include" ]]; then
+                        echo "[ERROR] tcl-tk@8 not found or broken. Run: brew install tcl-tk@8" >&2
+                        exit 1
+                fi
+                
+                cmakeOptions+=" -DTCL_LIBRARY=$_tcl8/lib/libtcl8.6.dylib"
+
+                cmakeOptions+=" -DTCL_INCLUDE_PATH=$_tcl8/include"
+                cmakeOptions+=" -DFLEX_INCLUDE_DIR=$_flex/include"
+
+                cmakeOptions+=" -DCMAKE_CXX_FLAGS=-DBOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED"
+
+                _icu="$(brew --prefix icu4c 2>/dev/null || true)"
+                if [[ -z "$_icu" || ! -d "$_icu/lib" ]]; then
+                        echo "[ERROR] icu4c not found or broken. Run: brew install icu4c" >&2
+                        exit 1
+                fi
+
+                export LDFLAGS="-L$_icu/lib"
+                export CPPFLAGS="-I$_icu/include" 
+                export PKG_CONFIG_PATH="$_icu/lib/pkgconfig"
+
+                _extra_lib_paths=("/opt/homebrew/lib")
+
+                _joined_paths="$(IFS=:; echo "${_extra_lib_paths[*]}")"
+
+                export LIBRARY_PATH="${_joined_paths}${LIBRARY_PATH:+:$LIBRARY_PATH}"
+                echo "[INFO] General LIBRARY_PATH=$LIBRARY_PATH"
         fi
         if [[ -f "/opt/rh/rh-python38/enable" ]]; then
-            set +u
-            source /opt/rh/rh-python38/enable
-            set -u
+                set +u
+                source /opt/rh/rh-python38/enable
+                set -u
         fi
         if [[ -f "/opt/rh/devtoolset-8/enable" ]]; then
-            # the scl script has unbound variables
-            set +u
-            source /opt/rh/devtoolset-8/enable
-            set -u
+                # the scl script has unbound variables
+                set +u
+                source /opt/rh/devtoolset-8/enable
+                set -u
         fi
 
         if [ -z "${SKIP_OPENROAD+x}" ]; then
-            echo "[INFO FLW-0018] Compiling OpenROAD."
-            eval ${NICE} ./tools/OpenROAD/etc/Build.sh -dir="$DIR/tools/OpenROAD/build" -threads=${PROC} -cmake=\'${OPENROAD_APP_ARGS}\'
-            ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
+                echo "[INFO FLW-0018] Compiling OpenROAD."
+                if [ -f "${DIR}/openroad_deps_prefixes.txt" ]; then
+                        DEPS_PREFIX_ARG="${DIR}/openroad_deps_prefixes.txt"
+                elif [ -f "${DIR}/tools/OpenROAD/etc/openroad_deps_prefixes.txt" ]; then
+                        DEPS_PREFIX_ARG="${DIR}/tools/OpenROAD/etc/openroad_deps_prefixes.txt"
+                elif [ -f /etc/openroad_deps_prefixes.txt ]; then
+                        DEPS_PREFIX_ARG="/etc/openroad_deps_prefixes.txt"
+                else
+                        DEPS_PREFIX_ARG=""
+                fi
+                if [[ -n "${DEPS_PREFIX_ARG}" ]]; then
+                        echo "[INFO FLW-0029] Found OpenROAD dependencies prefixes file: '${DEPS_PREFIX_ARG}'."
+                        DEPS_PREFIX_ARG="-deps-prefixes-file=${DEPS_PREFIX_ARG}"
+                fi
+                eval ${NICE} ./tools/OpenROAD/etc/Build.sh \
+                        -dir="$DIR/tools/OpenROAD/build" \
+                        -threads=${PROC} \
+                        -cmake=\'${OPENROAD_APP_ARGS}\' \
+                        ${DEPS_PREFIX_ARG}
+                ${NICE} cmake --build tools/OpenROAD/build --target install -j "${PROC}"
         fi
 
         YOSYS_ABC_PATH=tools/yosys/abc
         if [[ -d "${YOSYS_ABC_PATH}/.git" ]]; then
-            # update indexes to make sure git diff-index uses correct data
-            git --work-tree=${YOSYS_ABC_PATH} --git-dir=${YOSYS_ABC_PATH}/.git update-index --refresh
+                # update indexes to make sure git diff-index uses correct data
+                git --work-tree=${YOSYS_ABC_PATH} --git-dir=${YOSYS_ABC_PATH}/.git update-index --refresh
         fi
 
         if [ ${WITH_VERIFIC} -eq 1 ]; then
                 echo "[INFO FLW-0031] Compiling Verific components."
-                cp -r "${VERIFIC_DIR}" verific
+                cp -r "${VERIFIC_SRC}" tools/yosys/verific
                 for c in ${VERIFIC_COMPONENTS}; do
-                        make -j -C "verific/${c}" clean
-                        make -j -C "verific/${c}"
+                        make -j -C "tools/yosys/verific/${c}" clean
+                        make -j -C "tools/yosys/verific/${c}"
                 done
         fi
 
@@ -305,7 +383,7 @@ __local_build()
 
         if [ ${WITH_VERIFIC} -eq 1 ]; then
                 echo "[INFO FLW-0032] Cleaning up Verific components."
-                rm -rf verific
+                rm -rf tools/yosys/verific
         fi
 }
 

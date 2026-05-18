@@ -15,5 +15,9 @@ export PLACE_DENSITY            = 0.65
 export TNS_END_PERCENT          = 100
 
 export CLUSTER_FLOPS            = 1
+export CLUSTER_FLOPS_ARGS       = -num_paths 200 -tray_weight 4.0
 export ENABLE_DPO               = 0
+
+# Disabled until KF can handle mbff
+export LEC_CHECK                = 0
 

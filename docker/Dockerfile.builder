@@ -31,9 +31,25 @@ ENV PATH="/usr/local/bin/wrapped-cc:$PATH"
 COPY --link tools tools
 ARG numThreads=$(nproc)
 ARG openroadVersion=NotSet
+ARG verificPath=""
 
-RUN echo "" > tools/yosys/abc/.gitcommit && \
-  ./build_openroad.sh --no_init --local --threads ${numThreads} --openroad-args -DOPENROAD_VERSION=${openroadVersion}
+RUN <<EOF
+set -e
+echo "" > tools/yosys/abc/.gitcommit
+if [ -n "${verificPath}" ]; then
+    verificArgs="--with-verific ${verificPath}"
+else
+    verificArgs=""
+fi
+./build_openroad.sh --no_init \
+                    --local \
+                    --threads ${numThreads} \
+                    --openroad-args -DOPENROAD_VERSION=${openroadVersion} \
+                    ${verificArgs}
+if [ -n "${verificPath}" ]; then
+    rm -rf "${verificPath}"
+fi
+EOF
 
 FROM orfs-base
 

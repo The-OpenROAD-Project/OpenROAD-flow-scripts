@@ -150,6 +150,7 @@ OpenROAD-flow-scripts supports Verilog to GDS for the following open platforms:
 - Nangate45 / FreePDK45
 - SKY130
 - GF180
+- SG13G2
 
 These platforms have a permissive license which allows us to
 redistribute the PDK and OpenROAD platform-specific files. The platform

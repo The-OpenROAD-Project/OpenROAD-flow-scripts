@@ -15,22 +15,29 @@ jobs:
         fetch-depth: 1
         sparse-checkout: |
           flow/scripts/generate-variables-docs.py
+          flow/scripts/yaml_to_json.py
+          flow/scripts/variables.yaml
+          flow/scripts/variables.json
           docs/user/FlowVariables.md
           yamlfix.toml
-    - name: Run generate-variables-docs.py
-      run: |
-        python3 flow/scripts/generate-variables-docs.py
-    - name: Check if FlowVariables.md is up to date
-      run: |
-        git diff --exit-code docs/user/FlowVariables.md
     - name: Install dependencies
       run: |
         python3 -m venv venv
-        venv/bin/pip install --quiet yamlfix==1.17.0
+        venv/bin/pip install --quiet pyyaml yamlfix==1.19.1
+    - name: Run generate-variables-docs.py
+      run: |
+        venv/bin/python3 flow/scripts/generate-variables-docs.py
+    - name: Check if FlowVariables.md is up to date
+      run: |
+        git diff --exit-code docs/user/FlowVariables.md
+    - name: Check variables.json is up to date
+      run: |
+        venv/bin/python3 flow/scripts/yaml_to_json.py
+        git diff --exit-code flow/scripts/variables.json
     - name: Run yamlfix check
       run: |
         source venv/bin/activate
         yamlfix --version
         set -x
         yamlfix -c yamlfix.toml flow/scripts/variables.yaml
-        git diff flow/scripts/variables.yaml
+        git diff --exit-code flow/scripts/variables.yaml

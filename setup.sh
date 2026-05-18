@@ -35,6 +35,18 @@ elif grep -q "^+" "$tmpfile"; then
   exit 1
 fi
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  if [[ ! -d "$DIR/.venv" ]]; then
+    echo "Creating Python virtual environment at $DIR/.venv"
+    python3 -m venv "$DIR/.venv"
+  fi
+
+  echo "Activating virtual environment"
+  source "$DIR/.venv/bin/activate"
+
+  python -m pip install --upgrade pip
+fi
+
 "$DIR/etc/DependencyInstaller.sh" -base
 if [[ "$OSTYPE" == "darwin"* ]]; then
   "$DIR/etc/DependencyInstaller.sh" -common -prefix="$DIR/dependencies"

@@ -28,8 +28,7 @@ RUN mkdir -p /usr/local/bin/wrapped-cc && \
 
 ENV PATH="/usr/local/bin/wrapped-cc:$PATH"
 
-RUN ./DependencyInstaller.sh -base $options $constantBuildDir \
-    && ./DependencyInstaller.sh -common $options $constantBuildDir \
+RUN ./DependencyInstaller.sh -all $options $constantBuildDir -save-deps-prefixes=/etc/openroad_deps_prefixes.txt \
     && rm -rf /tmp/installer /tmp/* /var/tmp/* /var/lib/apt/lists/*
 
 ARG fromImage
@@ -37,3 +36,5 @@ ARG fromImage
 RUN echo "$fromImage" | grep -q "ubuntu" && \
     strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so || \
     echo "Skipping strip command as fromImage does not contain 'ubuntu'"
+
+WORKDIR /OpenROAD-flow-scripts

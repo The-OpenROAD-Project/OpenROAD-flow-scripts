@@ -11,8 +11,8 @@ echo "Running $2.tcl, stage $1"
   eval "$OPENROAD_EXE $OPENROAD_ARGS -exit \"$SCRIPTS_DIR/noop.tcl\"" \
     >"$LOG_DIR/$1.tmp.log" 2>&1
 
-  eval "$TIME_CMD $OPENROAD_CMD -no_splash \"$SCRIPTS_DIR/$2.tcl\" -metrics \"$LOG_DIR/$1.json\"" \
-    2>&1 | tee -a "$(realpath "$LOG_DIR/$1.tmp.log")"
+  $PYTHON_EXE "$SCRIPTS_DIR/run_command.py" --log "$(realpath "$LOG_DIR/$1.tmp.log")" --append --tee -- \
+    $OPENROAD_CMD -no_splash "$SCRIPTS_DIR/$2.tcl" -metrics "$LOG_DIR/$1.json"
 )
 
 # Log the hash for this step. The summary "make elapsed" in "make finish",

@@ -37,17 +37,33 @@ _installPipCommon() {
         set -u
     fi
     local pkgs="pandas numpy firebase_admin click pyyaml yamlfix"
-    if [[ $(id -u) == 0 ]]; then
-        pip3 install --no-cache-dir -U $pkgs
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        if [[ "$EUID" -eq 0 ]]; then
+            echo "Error: Do NOT run with sudo."
+            exit 1
+        fi
+        if [[ -n "${VIRTUAL_ENV:-}" ]]; then
+            pip3 install --no-cache-dir -U $pkgs
+        else
+            echo "Error: Activate a virtual environment on macOS."
+            exit 1
+        fi
     else
-        pip3 install --no-cache-dir --user -U $pkgs
+        if [[ $(id -u) == 0 ]]; then
+            pip3 install --no-cache-dir -U $pkgs
+        else
+            pip3 install --no-cache-dir --user -U $pkgs
+        fi
     fi
+}
+
+_installPipSystem() {
+    apt-get -y install python3-pandas python3-numpy python3-click python3-yaml python3-yamlfix
 }
 
 # Enterprise Linux 7 cleanup
 _install_EL7_CleanUp() {
     yum clean -y all
-    rm -rf /var/lib/apt/lists/*
 }
 
 # Enterprise Linux 7 package installation (EL7 = RHEL 7 or CentOS 7)
@@ -76,7 +92,6 @@ _install_EL7_Packages() {
 # Enterprise Linux 8/9 cleanup
 _install_EL8_EL9_CleanUp() {
     dnf clean -y all
-    rm -rf /var/lib/apt/lists/*
 }
 
 # Enterprise Linux 8/9 package installation (EL8/EL9 = RHEL, Rocky Linux, AlmaLinux, or CentOS 8 as no CentOS 9 exists)
@@ -368,6 +383,9 @@ while [ "$#" -gt 0 ]; do
             CI="yes"
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} -save-deps-prefixes=/etc/openroad_deps_prefixes.txt"
             ;;
+        -save-deps-prefixes=*)
+            OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
+            ;;
         -yosys-ver=*)
             YOSYS_VER=${1#*=}
             ;;
@@ -426,7 +444,7 @@ case "${os}" in
         if [[ ${CI} == "yes" ]]; then
             echo "WARNING: Installing CI dependencies is only supported on Ubuntu 22.04" >&2
         fi
-        
+
         # Detect EL version to choose appropriate functions
         if [[ -f /etc/os-release ]]; then
             elVersion=$(awk -F= '/^VERSION_ID/{print $2}' /etc/os-release | sed 's/"//g' | cut -d. -f1)
@@ -434,10 +452,10 @@ case "${os}" in
             echo "ERROR: Could not detect Enterprise Linux version" >&2
             exit 1
         fi
-        
+
         # First install OpenROAD base
         _installORDependencies
-        
+
         # Determine between EL7 vs EL8/9, since yum vs dnf should be used, and different Klayout builds exist
         case "${elVersion}" in
             "7")
@@ -459,7 +477,7 @@ case "${os}" in
                 exit 1
                 ;;
         esac
-        
+
         if [[ "${option}" == "common" || "${option}" == "all" ]]; then
             _installPipCommon
         fi
@@ -478,14 +496,18 @@ case "${os}" in
             _installUbuntuPackages "${version}"
             _installUbuntuCleanUp
         fi
-        if [[ "${option}" == "common" || "${option}" == "all" ]]; then
-            if [[ $version != "rodete" ]]; then
+        if [[ $version != "rodete" ]]; then
+            if [[ "${option}" == "common" || "${option}" == "all" ]]; then
                 if _versionCompare ${version} -lt 23.04 ; then
                     _installPipCommon
+                else
+                    if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+                        _installPipSystem
+                    fi
                 fi
-            else
-                echo "Skip common for rodete"
             fi
+        else
+            echo "Skip pip packages for rodete"
         fi
         ;;
     "Darwin" )

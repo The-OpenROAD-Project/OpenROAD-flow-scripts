@@ -69,7 +69,7 @@ if { $result != 0 } {
 log_cmd estimate_parasitics -placement
 
 if { $::env(CLUSTER_FLOPS) } {
-  cluster_flops
+  log_cmd cluster_flops {*}[env_var_or_empty CLUSTER_FLOPS_ARGS]
   log_cmd estimate_parasitics -placement
 }
 

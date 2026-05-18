@@ -84,13 +84,6 @@ DETAILED_METRICS:
   stages:
     - cts
     - grt
-EQUIVALENCE_CHECK:
-  description: >
-    Enable running equivalence checks to verify logical correctness of
-    repair_timing.
-  default: 0
-  stages:
-    - cts
 CORE_UTILIZATION:
   description: |
     The core utilization percentage (0-100).
@@ -135,6 +128,14 @@ PROCESS:
 CORNER:
   description: >
     PVT corner library selection. Only available for ASAP7 and GF180 PDKs.
+CORNERS:
+  description: >
+    List of timing corner names for multi-corner analysis (e.g. "slow fast").
+    When set, liberty files are loaded per corner using uppercase
+    <CORNER>_LIB_FILES environment variables (e.g. corner "slow" reads
+    SLOW_LIB_FILES) and timing models are generated per corner.
+  stages:
+    - All stages
 TECH_LEF:
   description: >
     A technology LEF file of the PDK that includes all relevant information
@@ -150,6 +151,14 @@ LIB_FILES:
     A Liberty file of the standard cell library with PVT characterization,
     input and output characteristics, timing and power definitions for each
     cell.
+LIB_MODEL:
+  description: >
+    Selects between NLDM and CCS timing models for the ASAP7 platform.
+    Valid values: NLDM (default), CCS. Used in
+    flow/platforms/asap7/config.mk to pick the LIB_DIR subdirectory and
+    accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list,
+    and in flow/scripts/load.tcl to gate CCS-specific Tcl branches.
+  default: NLDM
 PLATFORM_TCL:
   description: |
     Specifies a Tcl script with commands to run before loading design.
@@ -174,10 +183,8 @@ SYNTH_HIERARCHICAL:
 SYNTH_MEMORY_MAX_BITS:
   description: >
     Maximum number of bits for memory synthesis.
-
     Ideally, real RAM or realistic fakeram should be used for RAMs
     much larger than 1024 bits.
-
     To temporarily ignore the RAM concerns and investigate other
     aspects of the design, consider setting `SYNTH_MOCK_LARGE_MEMORIES=1`,
     or adjusting `SYNTH_MEMORY_MAX_BITS`.
@@ -187,38 +194,30 @@ SYNTH_MEMORY_MAX_BITS:
 SYNTH_MOCK_LARGE_MEMORIES:
   description: >
     Reduce Yosys inferred memories larger than SYNTH_MEMORY_MAX_BITS to 1 row.
-
     Yosys will generally infer memories from behavioral Verilog code, whether
     the memories are in standalone modules or instantiated within some
     larger module.
-
     fakeram and empty Verilog memories(blackboxes) of memories will not
     be inferred memories by Yosys and are therefore not affected by
     this variable.
-
     This is useful and convenient to separate the concern of instantiating
     and placing memories from investigating other issues with a design,
     though it comes at the expense of the increased accuracy that using
     realistic fakemem would provide.
-
     Memories with a single 1 row will of course have unrealistically good
     timing and area characteristics, but timing will still correctly terminate
     in a register.
-
     Large port memories, typically register files, will still have the
     retain a lot of the port logic that can be useful to investigate issues.
-
     This can be especially useful during development of designs where the
     behavioral model comes first and suitable memories are matched up
     when the design RTL is stable.
-
     A typical use case would be Chisel which will generate a behavioral model
     for a memories with the required clocks, ports, etc. in addition to a
     computer readable file with the specification of the memories that
     is used to
     [automatically](https://chipyard.readthedocs.io/en/stable/Tools/Barstools.html/)
     match up suitable memory macros later in the flow.
-
     During an architectural screening study, a large range of memory
     configurations can be investigated quickly with this option,
     without getting bogged down in the concern of how to realize the
@@ -232,7 +231,6 @@ SYNTH_KEEP_MOCKED_MEMORIES:
   description: >
     When `SYNTH_MOCK_LARGE_MEMORIES=1`, setting this to 1,
     will keep mocked memories (not flattening them).
-
     This preserves some of the access logic complexity and
     avoids optimizations outside of the mocked memory.
   default: 1
@@ -245,6 +243,13 @@ SYNTH_HDL_FRONTEND:
     command.
   stages:
     - synth
+SLANG_PLUGIN_PATH:
+  description: >
+    Path to the slang plugin for Yosys. This can be a full path to a
+    custom-built plugin (e.g. for Bazel builds) or just the plugin name.
+  default: slang
+  stages:
+    - synth
 SYNTH_SLANG_ARGS:
   description: >
     Additional arguments passed to the slang frontend during synthesis.
@@ -255,11 +260,32 @@ SYNTH_BLACKBOXES:
   description: >
     List of cells treated as a black box by Yosys. With Bazel, this can be used
     to run synthesis in parallel for the large modules of the design.
-
     Non-existant modules are ignored silently, useful when listing modules
     statically, even if modules come and go dynamically.
   stages:
     - synth
+SYNTH_CHECKPOINT:
+  description: >
+    Path to a Yosys RTLIL checkpoint to read in place of the default
+    canonicalization checkpoint at the start of synth.tcl.
+    Intended for parallel synthesis flows that reuse a checkpoint taken after
+    coarse synthesis and `keep_hierarchy` have already been decided, so each
+    partition skips that common prefix.
+    Leave unset for the normal flow.
+  stages:
+    - synth
+SYNTH_SKIP_KEEP:
+  description: >
+    Only meaningful together with SYNTH_CHECKPOINT. When set, signals that
+    the supplied checkpoint is still canonical RTLIL (coarse synth and
+    `keep_hierarchy` have not been run yet), so synth.tcl runs the full
+    coarse+fine synthesis flattened.
+    When unset and SYNTH_CHECKPOINT is used, synth.tcl assumes the
+    checkpoint already has coarse synth + `keep_hierarchy` done and
+    resumes from `coarse:fine`.
+  stages:
+    - synth
+  default: 0
 SYNTH_NETLIST_FILES:
   description: >
     Skips synthesis and uses the supplied netlist files. If the netlist files
@@ -279,20 +305,17 @@ SYNTH_RETIME_MODULES:
     *This is an experimental option and may cause adverse effects.*
     *No effort has been made to check if the retimed RTL is logically equivalent
     to the non-retimed RTL.*
-
     List of modules to apply automatic retiming to. These modules must not get
     dissolved and as such they should either be the top module or be included
     in SYNTH_KEEP_MODULES.
-
     The main use case is to quickly identify if performance can be improved by
     manually retiming the input RTL.
-
     Retiming will treat module ports like register endpoints/startpoints.
     The objective function of retiming isn't informed by SDC, even the clock
     period is ignored. As such, retiming will optimize for best delay
     at potentially high register number cost. Automatic retiming can produce
     suboptimal results as its timing model is crude and it doesn't find the
-    optimal distribution of registers on long pipelines. See OR discussion #8080.
+    optimal distribution of registers on long pipelines. See OR discussion  # 8080.
   stages:
     - synth
 SYNTH_REPEATABLE_BUILD:
@@ -300,7 +323,6 @@ SYNTH_REPEATABLE_BUILD:
     License to prune anything that makes builds less repeatable, typically
     used with Bazel to ensure that builds are bit-for-bit identical so that
     caching works optimally.
-
     Removes debug information that encodes paths, timestamps, etc.
   stages:
     - synth
@@ -308,7 +330,6 @@ SYNTH_REPEATABLE_BUILD:
 SYNTH_INSBUF:
   description: >
     Insert input buffers on top-level input ports during synthesis.
-
     Useful to disable when doing parallel synthesis and
     concatenating netlists later as we're generating netlists
     of submodules.
@@ -450,6 +471,11 @@ BALANCE_ROWS:
   stages:
     - place
   default: 0
+ADDITIONAL_SITES:
+  description: >
+    Passed as -additional_sites to initialize_floorplan.
+  stages:
+    - floorplan
 PLACE_SITE:
   description: |
     Placement site for core cells defined in the technology LEF file.
@@ -507,7 +533,8 @@ IO_CONSTRAINTS:
     - floorplan
 IO_PLACER_H:
   description: >
-    A list of metal layers on which the I/O pins are placed horizontally (top and bottom
+    A list of metal layers on which the I/O pins are placed horizontally (top and
+    bottom
     of the die).
   stages:
     - place
@@ -566,13 +593,13 @@ PLACE_PINS_ARGS:
 PLACE_DENSITY:
   description: >
     The desired average placement density of cells: 1.0 = dense, 0.0 = widely spread.
-
-    The intended effort is also communicated by this parameter. Use a low value for faster builds and higher value for better quality of results.
-
-    If a too low value is used, the placer will not be able to place all cells and a recommended minimum placement density can be found in the logs.
-
-    A too high value can lead to excessive runtimes, even timeouts and subtle failures in the flow after placement, such as in CTS or global routing when timing repair fails.
-
+    The intended effort is also communicated by this parameter. Use a low value for
+    faster builds and higher value for better quality of results.
+    If a too low value is used, the placer will not be able to place all cells and
+    a recommended minimum placement density can be found in the logs.
+    A too high value can lead to excessive runtimes, even timeouts and subtle failures
+    in the flow after placement, such as in CTS or global routing when timing repair
+    fails.
     The default is platform specific.
   stages:
     - floorplan
@@ -603,6 +630,10 @@ DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
+USE_NEGOTIATION:
+  description: |
+    Enable using negotiation legalizer for detailed placement.
+  default: 0
 GPL_TIMING_DRIVEN:
   description: |
     Specifies whether the placer should use timing driven placement.
@@ -615,6 +646,12 @@ GPL_ROUTABILITY_DRIVEN:
   stages:
     - place
   default: 1
+GPL_KEEP_OVERFLOW:
+  description: >
+    Passed as -keep_resize_below_overflow to global_placement.
+    Only used when GPL_TIMING_DRIVEN is enabled.
+  stages:
+    - place
 MIN_PLACE_STEP_COEF:
   description: >
     Sets the minimum phi coefficient (pcof_min / µ_k Lower Bound) for global
@@ -643,10 +680,12 @@ CAP_MARGIN:
   description: >
     Specifies a capacitance margin when fixing max capacitance violations. This
     option allows you to overfix.
+  tunable: 1
 SLEW_MARGIN:
   description: >
     Specifies a slew margin when fixing max slew violations. This option allows
     you to overfix.
+  tunable: 1
 CTS_ARGS:
   description: |
     Override `clock_tree_synthesis` arguments.
@@ -711,11 +750,11 @@ SETUP_SLACK_MARGIN:
     - floorplan
     - grt
   default: 0
-SETUP_REPAIR_SEQUENCE:
-  description: |
-    Specifies the sequence of moves to do in repair_timing -setup. This should be a string
-    of move keywords separated by commas such as the default when not used:
-    "unbuffer,sizedown,sizeup,swap,buffer,clone,split".
+  tunable: 1
+SETUP_MOVE_SEQUENCE:
+  description: >
+    Passed as -sequence to repair_timing. This should be a string of move
+    keywords separated by commas.
   stages:
     - cts
     - floorplan
@@ -732,6 +771,14 @@ SKIP_LAST_GASP:
   description: >
     Do not use last gasp optimization to fix timing violations (default: use
     gate last gasp).
+  stages:
+    - cts
+    - floorplan
+    - grt
+SKIP_BUFFER_REMOVAL:
+  description: >
+    Passed as -skip_buffer_removal to repair_timing. Do not remove buffers
+    as a transform to fix timing violations (default: allow buffer removal).
   stages:
     - cts
     - floorplan
@@ -753,19 +800,15 @@ SKIP_VT_SWAP:
     - grt
 SKIP_CRIT_VT_SWAP:
   description: >
-    Do not perform VT swap on critical cells to improve QoR (default: do critical VT swap).
-    This is an additional VT swap on critical cells that remain near the end of setup fixing.
+    Do not perform VT swap on critical cells to improve QoR (default: do critical
+    VT swap).
+    This is an additional VT swap on critical cells that remain near the end of setup
+    fixing.
     If SKIP_VT_SWAP is set to 1, this also disables critical cell VT swap.
   stages:
     - cts
     - floorplan
     - grt
-REMOVE_CELLS_FOR_EQY:
-  description: >
-    String patterns directly passed to write_verilog -remove_cells <> for
-    equivalence checks.
-  stages:
-    - cts
 SKIP_CTS_REPAIR_TIMING:
   description: >
     Skipping CTS repair, which can take a long time, can be useful in
@@ -797,9 +840,33 @@ MAX_ROUTING_LAYER:
     - grt
     - route
     - final
+MIN_CLK_ROUTING_LAYER:
+  description: >
+    The lowest metal layer name to be used for clock-net routing in global
+    routing. Used in flow/platforms/*/fastroute.tcl as the lower bound of
+    `set_routing_layers -clock`. Typically higher than MIN_ROUTING_LAYER so
+    clock nets prefer the upper, lower-RC layers. No `stages:` list because
+    floorplan.tcl also `source`s the platform fastroute.tcl.
+VIA_IN_PIN_MIN_LAYER:
+  description: >
+    Passed as -via_in_pin_bottom_layer to pin_access and detailed_route.
+  stages:
+    - grt
+    - route
+VIA_IN_PIN_MAX_LAYER:
+  description: >
+    Passed as -via_in_pin_top_layer to pin_access and detailed_route.
+  stages:
+    - grt
+    - route
 DETAILED_ROUTE_ARGS:
   description: |
     Add additional arguments for debugging purposes during detail route.
+  stages:
+    - route
+DISABLE_VIA_GEN:
+  description: >
+    Passed as -disable_via_gen to detailed_route.
   stages:
     - route
 MACRO_EXTENSION:
@@ -809,6 +876,16 @@ DETAILED_ROUTE_END_ITERATION:
   description: >
     Maximum number of iterations.
   default: 64
+  stages:
+    - route
+OR_K:
+  description: >
+    Passed as -or_k to detailed routing.
+  stages:
+    - route
+OR_SEED:
+  description: >
+    Passed as -or_seed to detailed routing.
   stages:
     - route
 RCX_RULES:
@@ -910,9 +987,12 @@ BLOCKS:
 CDL_FILES:
   description: |
     Insert additional Circuit Description Language (`.cdl`) netlist files.
-DFF_LIB_FILES:
-  description: |
-    Technology mapping liberty files for flip-flops.
+DFF_LIB_FILE:
+  description: >
+    Single Liberty file for flip-flop technology mapping (dfflibmap) during
+    synthesis. Takes precedence over DFF_MAP_FILE when set.
+  stages:
+    - synth
 SYNTH_KEEP_MODULES:
   description: |
     Mark modules to keep from getting removed in flattening.
@@ -921,6 +1001,12 @@ SYNTH_KEEP_MODULES:
 SYNTH_ARGS:
   description: |
     Optional synthesis variables for yosys.
+  stages:
+    - synth
+SYNTH_OPERATIONS_ARGS:
+  description: >
+    Extra arguments appended to the Yosys synth command operations list.
+    When set, replaces the default Kogge-Stone adder extra-map.
   stages:
     - synth
 SYNTH_HIER_SEPARATOR:
@@ -943,7 +1029,6 @@ VERILOG_TOP_PARAMS:
 CORE_ASPECT_RATIO:
   description: >
     The core aspect ratio (height / width).
-
     This variable is only used when `CORE_UTILIZATION` is set.
   stages:
     - floorplan
@@ -956,7 +1041,6 @@ CORE_MARGIN:
     Allowed values are either one value for all margins or a set of four
     values, one for each margin. The order of the four values are:
     `{bottom top left right}`.
-
     This variable is only used when `CORE_UTILIZATION` is set.
   stages:
     - floorplan
@@ -1004,10 +1088,18 @@ CTS_BUF_LIST:
     - cts
 CLUSTER_FLOPS:
   description: >
-    Minimum number of flip-flops per sink cluster.
+    Enable clustering of flip-flops into multi-bit flip-flops, if the platform
+    PDK includes multi-bit flip-flops
   stages:
     - place
   default: 0
+CLUSTER_FLOPS_ARGS:
+  description: >
+    Additional arguments passed to the cluster_flops command.
+    Only used when CLUSTER_FLOPS is set.
+  stages:
+    - place
+  default: ""
 CTS_CLUSTER_DIAMETER:
   description: >
     Maximum diameter (in microns) of sink cluster.
@@ -1223,6 +1315,11 @@ GLOBAL_ROUTE_ARGS:
   stages:
     - grt
   default: -congestion_iterations 30 -congestion_report_iter_step 5 -verbose
+ENABLE_RESISTANCE_AWARE:
+  description: >
+    Passed as -resistance_aware to global_route.
+  stages:
+    - grt
 MATCH_CELL_FOOTPRINT:
   description: >
     Enforce sizing operations to only swap cells that have the same layout
@@ -1443,7 +1540,6 @@ NUM_CORES:
     Passed to `openroad -threads $(NUM_CORES)`, defaults to numbers
     of cores in system as determined by system specific code in Makefile,
     `nproc` is tried first.
-
     OpenROAD does not limit itself to this number of cores across
     OpenROAD running instances, which can lead to overprovisioning
     in contexts such as bazel-orfs where there could be many
@@ -1468,9 +1564,15 @@ WRITE_ODB_AND_SDC_EACH_STAGE:
 LEC_CHECK:
   description: >
     Perform a formal equivalence check between before and after netlists.
-
     If this fails, report an issue to OpenROAD.
   default: 0
+  stages:
+    - cts
+LEC_AUX_VERILOG_FILES:
+  description: >
+    Additional Verilog files (e.g. blackbox stubs) to include in LEC
+    equivalence checks. Appended to the generated Verilog netlist before
+    running the formal equivalence check.
   stages:
     - cts
 REMOVE_CELLS_FOR_LEC:
@@ -1485,3 +1587,16 @@ ASAP7_USE_VT:
   stages:
     - All stages
   default: RVT
+CACHED_REPORTS:
+  description: >
+    List of pre-existing report files to copy into the reports directory
+    before synthesis. Used when reusing prior synthesis results with
+    SYNTH_NETLIST_FILES.
+  stages:
+    - synth
+CDL_FILE:
+  description: >
+    CDL master netlist file used as the -masters argument to write_cdl
+    for generating Circuit Description Language output.
+  stages:
+    - final

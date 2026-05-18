@@ -1,13 +1,22 @@
 #!/usr/bin/env python3
 
+import json
+import argparse
+import os
+from datetime import datetime, timezone
+
+# --- FIRESTORE (remove when deprecating) ---
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-from datetime import datetime, timezone
-import json
-import argparse
-import re
-import os
+
+# --- END FIRESTORE ---
+
+# --- PUBSUB ---
+from google.cloud import pubsub_v1
+from google.oauth2 import service_account
+
+# --- END PUBSUB ---
 
 # make sure the working dir is flow/
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -27,10 +36,31 @@ parser.add_argument(
 parser.add_argument("--cred", type=str, help="Service account credentials file")
 parser.add_argument("--variant", type=str, default="base")
 
+# --- PUBSUB args ---
+parser.add_argument(
+    "--jenkinsEnv",
+    type=str,
+    default="unknown",
+    choices=["public", "secure", "unknown"],
+    help="Jenkins environment (public or secure)",
+)
+parser.add_argument("--pubsubProjectID", type=str, help="GCP project ID for Pub/Sub")
+parser.add_argument(
+    "--pubsubTopicID",
+    type=str,
+    default="ci-metrics-reports-topics",
+    help="Pub/Sub topic ID",
+)
+parser.add_argument(
+    "--pubsubCred", type=str, help="Service account credentials file for Pub/Sub"
+)
+# --- END PUBSUB args ---
+
 # Parse the arguments
 args = parser.parse_args()
 
 
+# --- FIRESTORE (remove when deprecating) ---
 def upload_data(db, dataFile, platform, design, variant, args, rules):
     # Set the document data
     key = args.commitSHA + "-" + platform + "-" + design + "-" + variant
@@ -57,7 +87,7 @@ def upload_data(db, dataFile, platform, design, variant, args, rules):
     excludes = ["run", "commit", "total_time", "constraints"]
     gen_date = datetime.now()
     for k, v in data.items():
-        new_key = re.sub(":", "__", k)  # replace ':' with '__'
+        new_key = k.replace(":", "__")  # replace ':' with '__'
         new_data[new_key] = v
         stage_name = k.split("__")[0]
         if stage_name not in excludes:
@@ -166,6 +196,112 @@ def upload_data(db, dataFile, platform, design, variant, args, rules):
         raise Exception(f"Failed to upload data for {platform} {design} {variant}.")
 
 
+# --- END FIRESTORE ---
+
+
+# --- PUBSUB ---
+# Pub/Sub hard cap is 10 MB. Stay under with safety margin to leave room for
+# attribute overhead and future payload growth.
+MAX_PUBSUB_BYTES = 8 * 1024 * 1024
+
+
+def build_design_record(dataFile, platform, design, variant, rules):
+    """Return a dict for one design to be included in the pipeline-level payload."""
+    with open(dataFile) as f:
+        data = json.load(f)
+    metrics = {k.replace(":", "__"): v for k, v in data.items()}
+    return {
+        "platform": platform,
+        "design": design,
+        "variant": variant,
+        "rules": rules,
+        "metrics": metrics,
+    }
+
+
+def build_pipeline_payload(design_records, args):
+    """Return the v2 pipeline-level payload dict."""
+    return {
+        "payload_schema_version": 2,
+        "jenkins_env": args.jenkinsEnv,
+        "build_id": args.buildID,
+        "branch_name": args.branchName,
+        "pipeline_id": args.pipelineID,
+        "change_branch": args.changeBranch,
+        "commit_sha": args.commitSHA,
+        "jenkins_url": args.jenkinsURL,
+        "designs": design_records,
+    }
+
+
+def publish_pipeline_report(publisher, topic_path, message_data, design_count, args):
+    """Publish a pre-encoded v2 pipeline message."""
+    size_kb = len(message_data) / 1024
+    print(
+        f"[INFO] Publishing pipeline report ({design_count} designs, {size_kb:.1f} KB) to Pub/Sub."
+    )
+    future = publisher.publish(
+        topic_path,
+        data=message_data,
+        payload_schema_version="2",
+        jenkins_env=args.jenkinsEnv,
+    )
+    message_id = future.result()
+    print(f"[INFO] Published pipeline report to Pub/Sub (message ID: {message_id}).")
+
+
+def publish_v1_per_design(publisher, topic_path, design_records, args):
+    """Fallback path used when the v2 pipeline payload exceeds MAX_PUBSUB_BYTES.
+
+    Emits one v1-format message per design (no payload_schema_version, metrics
+    flattened at the root), matching the legacy schema the ingestion service
+    still supports.
+    """
+    futures = []
+    for d in design_records:
+        payload = {
+            "build_id": args.buildID,
+            "branch_name": args.branchName,
+            "pipeline_id": args.pipelineID,
+            "change_branch": args.changeBranch,
+            "commit_sha": args.commitSHA,
+            "jenkins_url": args.jenkinsURL,
+            "jenkins_env": args.jenkinsEnv,
+            "rules": d["rules"],
+        }
+        payload.update(d["metrics"])
+
+        message_data = json.dumps(payload, default=str).encode("utf-8")
+        try:
+            future = publisher.publish(
+                topic_path,
+                data=message_data,
+                jenkins_env=args.jenkinsEnv,
+            )
+            futures.append((d, future))
+        except Exception as e:
+            print(
+                f"[WARN] Pub/Sub v1 fallback publish failed for "
+                f"{d['platform']} {d['design']} {d['variant']}: {e}"
+            )
+
+    for d, future in futures:
+        try:
+            message_id = future.result()
+            print(
+                f"[INFO] Published v1 fallback message (ID: {message_id}) for "
+                f"{d['platform']} {d['design']} {d['variant']}."
+            )
+        except Exception as e:
+            print(
+                f"[WARN] Pub/Sub v1 fallback publish failed for "
+                f"{d['platform']} {d['design']} {d['variant']}: {e}"
+            )
+
+
+# --- END PUBSUB ---
+
+
 def get_rules(dataFile):
     data = {}
     if os.path.exists(dataFile):
@@ -175,12 +311,37 @@ def get_rules(dataFile):
     return data
 
 
-# Initialize Firebase Admin SDK with service account credentials
-firebase_admin.initialize_app(credentials.Certificate(args.cred))
-# Initialize Firestore client
-db = firestore.client()
+# --- FIRESTORE init (remove when deprecating) ---
+db = None
+if args.cred:
+    firebase_admin.initialize_app(credentials.Certificate(args.cred))
+    db = firestore.client()
+# --- END FIRESTORE init ---
+
+# --- PUBSUB init ---
+publisher = None
+topic_path = None
+if args.pubsubCred and args.pubsubProjectID:
+    pubsub_credentials = service_account.Credentials.from_service_account_file(
+        args.pubsubCred
+    )
+    publisher = pubsub_v1.PublisherClient(credentials=pubsub_credentials)
+    topic_path = publisher.topic_path(args.pubsubProjectID, args.pubsubTopicID)
+    print(f"[INFO] Pub/Sub publisher initialized for topic: {topic_path}")
+elif args.pubsubProjectID:
+    # No credentials file — use default credentials (e.g., emulator or ADC)
+    publisher = pubsub_v1.PublisherClient()
+    topic_path = publisher.topic_path(args.pubsubProjectID, args.pubsubTopicID)
+    print(
+        f"[INFO] Pub/Sub publisher initialized (default creds) for topic: {topic_path}"
+    )
+# --- END PUBSUB init ---
 
 RUN_FILENAME = "metadata.json"
+
+# --- PUBSUB ---
+design_records = []
+# --- END PUBSUB ---
 
 for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
     dirList = reportDir.split(os.sep)
@@ -199,6 +360,42 @@ for reportDir, dirs, files in sorted(os.walk("reports", topdown=False)):
         print(f"[WARN] Skiping upload {platform} {design} {variant}.")
         continue
     print(f"[INFO] Get rules for {platform} {design} {variant}.")
-    rules = get_rules(os.path.join("designs", platform, design, RUN_FILENAME))
-    print(f"[INFO] Upload data for {platform} {design} {variant}.")
-    upload_data(db, dataFile, platform, design, variant, args, rules)
+    rules = get_rules(
+        os.path.join("designs", platform, design, f"rules-{variant}.json")
+    )
+
+    # --- FIRESTORE (remove when deprecating) ---
+    if db:
+        print(f"[INFO] Upload data for {platform} {design} {variant}.")
+        upload_data(db, dataFile, platform, design, variant, args, rules)
+    # --- END FIRESTORE ---
+
+    # --- PUBSUB ---
+    if publisher:
+        design_records.append(
+            build_design_record(dataFile, platform, design, variant, rules)
+        )
+    # --- END PUBSUB ---
+
+# --- PUBSUB ---
+if publisher and design_records:
+    payload = build_pipeline_payload(design_records, args)
+    message_data = json.dumps(payload, default=str).encode("utf-8")
+
+    if len(message_data) > MAX_PUBSUB_BYTES:
+        print(
+            f"[WARN] v2 payload size {len(message_data) / 1024:.1f} KB exceeds "
+            f"{MAX_PUBSUB_BYTES // 1024} KB cap. Falling back to v1 per-design publish "
+            f"({len(design_records)} messages)."
+        )
+        publish_v1_per_design(publisher, topic_path, design_records, args)
+    else:
+        try:
+            publish_pipeline_report(
+                publisher, topic_path, message_data, len(design_records), args
+            )
+        except Exception as e:
+            print(f"[WARN] Pub/Sub publish failed for pipeline report: {e}")
+elif publisher and not design_records:
+    print("[WARN] Pub/Sub publisher initialized but no design records were collected.")
+# --- END PUBSUB ---

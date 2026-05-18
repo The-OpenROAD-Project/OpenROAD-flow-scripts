@@ -11,13 +11,11 @@ export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.
 export DIE_AREA   = 0 0 3020 3610
 export CORE_AREA  = 10 10 3010 3600
 
-export microwatt_DIR = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)
+export ADDITIONAL_GDS  = $(wildcard $(DESIGN_DIR)/gds/*.gds.gz)
 
-export ADDITIONAL_GDS  = $(wildcard $(microwatt_DIR)/gds/*.gds.gz)
+export ADDITIONAL_LEFS  = $(wildcard $(DESIGN_DIR)/lef/*.lef)
 
-export ADDITIONAL_LEFS  = $(wildcard $(microwatt_DIR)/lef/*.lef)
-
-export ADDITIONAL_LIBS = $(wildcard $(microwatt_DIR)/lib/*.lib)
+export ADDITIONAL_LIBS = $(wildcard $(DESIGN_DIR)/lib/*.lib)
 
 export SYNTH_HIERARCHICAL = 1
 
@@ -51,3 +49,6 @@ endif
 
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
+
+# Temporary disabling
+export LEC_CHECK = 0

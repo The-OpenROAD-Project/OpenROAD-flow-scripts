@@ -70,8 +70,8 @@ END Cont
 LAYER Metal1
   TYPE		ROUTING ;
   DIRECTION	HORIZONTAL ;
-  PITCH		0.42 ;
-  OFFSET	0.0 ;
+  PITCH		0.48 0.42 ;
+  OFFSET	0.0 0.0 ;
   WIDTH		0.16 ;
   MAXWIDTH	30 ;
   AREA		0.09 ;
@@ -113,8 +113,8 @@ END Via1
 LAYER Metal2
   TYPE		ROUTING ;
   DIRECTION	VERTICAL ;
-  PITCH		0.48 ;
-  OFFSET	0.0 ;
+  PITCH		0.48 0.42 ;
+  OFFSET	0.0 0.0 ;
   WIDTH		0.20 ;
   MAXWIDTH	30 ;
   MINIMUMDENSITY        35.0 ;
@@ -133,7 +133,6 @@ LAYER Metal2
   THICKNESS 0.450 ;
   ANTENNACUMAREARATIO 200 ;
   ANTENNACUMDIFFAREARATIO PWL ( ( 0 200 ) ( 0.159 200 ) ( 0.16  3200 ) ( 100 2000000 ) ) ;
-  WIREEXTENSION 0.10 ;
   RESISTANCE RPERSQ 0.103 ;
   CAPACITANCE  CPERSQDIST 1.81E-05 ;
   EDGECAPACITANCE  4.47E-05 ;
@@ -156,8 +155,8 @@ END Via2
 LAYER Metal3
   TYPE		ROUTING ;
   DIRECTION	HORIZONTAL ;
-  PITCH		0.42 ;
-  OFFSET	0.0 ;
+  PITCH		0.48 0.42 ;
+  OFFSET	0.0 0.0 ;
   WIDTH		0.20 ;
   MINIMUMDENSITY        35.0 ;
   MAXIMUMDENSITY        60.0 ;
@@ -198,8 +197,8 @@ END Via3
 LAYER Metal4
   TYPE		ROUTING ;
   DIRECTION	VERTICAL ;
-  PITCH		0.48 ;
-  OFFSET	0.0 ;
+  PITCH		0.48 0.42 ;
+  OFFSET	0.0 0.0 ;
   WIDTH		0.20 ;
   MINIMUMDENSITY        35.0 ;
   MAXIMUMDENSITY        60.0 ;
@@ -239,8 +238,8 @@ END Via4
 LAYER Metal5
   TYPE		ROUTING ;
   DIRECTION	HORIZONTAL ;
-  PITCH		0.42 ;
-  OFFSET	0.0 ;
+  PITCH		0.48 0.42 ;
+  OFFSET	0.0 0.0 ;
   WIDTH		0.20 ;
   MINIMUMDENSITY        35.0 ;
   MAXIMUMDENSITY        60.0 ;
@@ -279,8 +278,8 @@ END TopVia1
 LAYER TopMetal1
   TYPE		ROUTING ;
   DIRECTION	VERTICAL ;
-  PITCH		2.28 ;
-  OFFSET	1.64 ;
+  PITCH		3.28 3.28 ;
+  OFFSET	1.64 1.64 ;
   WIDTH		1.64 ;
   MINIMUMDENSITY        25.0 ;
   MAXIMUMDENSITY        70.0 ;
@@ -313,14 +312,18 @@ END TopVia2
 LAYER TopMetal2
   TYPE		ROUTING ;
   DIRECTION	HORIZONTAL ;
-  PITCH		4 ;
-  OFFSET	2 ;
+  PITCH		4 4 ;
+  OFFSET	2 2 ;
   WIDTH		2 ;
   MINIMUMDENSITY        25.0 ;
   MAXIMUMDENSITY        70.0 ;
   DENSITYCHECKSTEP 100 ;
   DENSITYCHECKWINDOW 200 200 ;
   SPACING 2 ;
+  SPACINGTABLE
+  PARALLELRUNLENGTH 0.00   50.00
+  WIDTH 0.00         2.0    2.0
+  WIDTH 5.00         2.0    5.0 ;
   HEIGHT 11.160 ;
 #  CURRENTDEN 0 ;
   THICKNESS 3.0 ;
@@ -425,7 +428,7 @@ Via  Via1_s DEFAULT
       RECT -0.19 -0.19 0.19 0.19 ;
   END Via1_s
 
-####### Definitions of Via1 duoble cut ########
+####### Definitions of Via1 double cut ########
 
 Via Via1_DC1B DEFAULT
     RESISTANCE 20.0 ;
@@ -616,7 +619,7 @@ Via  Via2_s DEFAULT
       RECT -0.19 -0.19 0.19 0.19 ;
   END Via2_s
 
-#######  Definitions of Via2 duoble cut ##############
+#######  Definitions of Via2 double cut ##############
 
 Via Via2_DC1B DEFAULT
     RESISTANCE 20.0 ;
@@ -807,7 +810,7 @@ Via  Via3_s DEFAULT
       RECT -0.19 -0.19 0.19 0.19 ;
   END Via3_s
 
-#######  Definitions of Via3 duoble cut ##############
+#######  Definitions of Via3 double cut ##############
 
 Via Via3_DC1B DEFAULT
     RESISTANCE 20.0 ;
@@ -998,7 +1001,7 @@ Via  Via4_s DEFAULT
       RECT -0.19 -0.19 0.19 0.19 ;
   END Via4_s
 
-#######  Definitions of Via4 duoble cut ##############
+#######  Definitions of Via4 double cut ##############
 
 Via Via4_DC1B DEFAULT
     RESISTANCE 20.0 ;
@@ -1172,26 +1175,26 @@ ViaRULE via4Array GENERATE
         RESISTANCE 20.0 ;
 END via4Array
 ###########################################
-ViaRULE viagen56 GENERATE
+ViaRULE viaTop1Array GENERATE
   LAYER Metal5 ;
-    ENCLOSURE 0 0 ;
+    ENCLOSURE 0.1 0.1 ;
   LAYER TopMetal1 ;
-    ENCLOSURE 0.61 0.61 ;
+    ENCLOSURE 0.42 0.42 ;
   LAYER TopVia1 ;
     RECT -0.21 -0.21 0.21 0.21 ;
     SPACING 0.84 BY 0.84 ;
     RESISTANCE 4.0 ;
-END viagen56
+END viaTop1Array
 
-ViaRULE viagen67 GENERATE
+ViaRULE viaTop2Array GENERATE
   LAYER TopMetal1 ;
     ENCLOSURE 0.5 0.5 ;
   LAYER TopMetal2 ;
-    ENCLOSURE 0.55 0.55 ;
+    ENCLOSURE 0.5 0.5 ;
   LAYER TopVia2 ;
     RECT -0.45 -0.45 0.45 0.45 ;
     SPACING 1.96 BY 1.96 ;
     RESISTANCE 2.2 ;
-END viagen67
+END viaTop2Array
 
 END LIBRARY
