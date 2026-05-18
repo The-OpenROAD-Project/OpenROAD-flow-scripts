@@ -262,10 +262,29 @@ def extract_metrics(
         rptPath + "/synth_stat.txt",
     )
 
-    # Netlist hashes: fingerprints of the canonical RTLIL (pre-ABC) and
-    # the final post-synthesis Verilog so the rules-base.json check
-    # (level=warning) flags when bazel-built vs make-built yosys
-    # disagree for the same RTL.
+    # Netlist hashes: fingerprints at three points in the yosys
+    # pipeline so the rules-base.json check (level=warning) can
+    # isolate frontend drift (yosys-slang isn't idempotent) from
+    # mid-synth drift from ABC drift.
+    #
+    #   post_read_sources = state right after `read_design_sources`
+    #                       (HDL frontend output only)
+    #   canonical_netlist = state after `opt_clean -purge`
+    #                       (= `1_1_yosys_canonicalize.rtlil`)
+    #   netlist           = `1_2_yosys.v`, post-ABC
+    #
+    # `post_read_sources` is emitted by synth_canonicalize.tcl via
+    # `write_state_hash` (synth_preamble.tcl) as a `<metric>: <sha>`
+    # line in 1_1_yosys_canonicalize.log; the other two come straight
+    # from `file_sha1` of the already-emitted RTLIL / Verilog.
+    extractTagFromFile(
+        "synth__post_read_sources__hash",
+        metrics_dict,
+        r"^synth__post_read_sources__hash:\s+([0-9a-f]{40})\s*$",
+        logPath + "/1_1_yosys_canonicalize.log",
+        t=str,
+        required=False,
+    )
     metrics_dict["synth__canonical_netlist__hash"] = file_sha1(
         resultPath + "/1_1_yosys_canonicalize.rtlil"
     )

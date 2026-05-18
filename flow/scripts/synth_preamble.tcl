@@ -3,6 +3,32 @@ yosys -import
 source $::env(SCRIPTS_DIR)/util.tcl
 erase_non_stage_variables synth
 
+# Fingerprint the current yosys design state to a `<metric>: <sha>`
+# line in the surrounding yosys log so `genMetrics.py` can pick it up.
+#
+# `setattr -unset src` strips file:line attribute lines from the
+# RTLIL before hashing so the hash is path-independent (bazel sandbox
+# paths differ from the classic-make build's relative paths; without
+# stripping, hashes always differ trivially).
+#
+# The strip is wrapped in `design -push` / `design -pop` so it does
+# not leak into the rest of the synth run -- src attributes are
+# preserved for back-annotation / debugging downstream.  This matters
+# specifically for builds without `SYNTH_REPEATABLE_BUILD=1`, where
+# synth_canonicalize.tcl deliberately leaves src attrs alone after
+# the canonical-RTLIL write.
+proc write_state_hash { metric } {
+  design -push
+  setattr -unset src *
+  setattr -mod -unset src *
+  set tmp $::env(OBJECTS_DIR)/.${metric}.tmp.rtlil
+  write_rtlil $tmp
+  design -pop
+  set sha [lindex [split [exec sha1sum $tmp]] 0]
+  file delete $tmp
+  puts "${metric}: $sha"
+}
+
 # If using a cached, gate level netlist, then copy over to the results dir with
 # preserve timestamps flag set. If you don't, subsequent runs will cause the
 # floorplan step to be re-executed.
