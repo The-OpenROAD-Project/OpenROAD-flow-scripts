@@ -34,9 +34,9 @@ def generate_klayout_tech(
     template_lyt,
     output_lyt,
     lef_files,
-    reference_dir,
     map_files,
-    use_relative_paths,
+    reference_dir=None,
+    use_relative_paths=False,
 ):
     """Generate a klayout .lyt file from a platform template.
 
@@ -44,9 +44,13 @@ def generate_klayout_tech(
         template_lyt: Path to the platform .lyt template file.
         output_lyt: Path to write the generated .lyt file.
         lef_files: List of LEF file paths to include.
-        reference_dir: Directory to compute relative paths from.
         map_files: List of map file paths.
-        use_relative_paths: If True, compute paths relative to reference_dir.
+        reference_dir: Unused. Accepted for backward compatibility with
+            callers (e.g. flow/Makefile) that still pass it from when
+            paths were resolved relative to this directory.
+        use_relative_paths: Unused. Same backward-compat rationale as
+            reference_dir -- paths are always written as plain abspath
+            now, regardless of this flag.
     """
     with open(template_lyt, "r") as f:
         content = f.read()
@@ -59,8 +63,8 @@ def generate_klayout_tech(
     # action execution -- they're only at the per-action sandbox -- so
     # resolution fails with errno=2.  Plain abspath (NOT realpath, which
     # would chase Bazel input-file symlinks back out to the bare execroot)
-    # keeps klayout pointed at the in-sandbox file.  reference_dir is now
-    # unused for LEFs.
+    # keeps klayout pointed at the in-sandbox file.  reference_dir and
+    # use_relative_paths are both ignored.
     resolved_lefs = [os.path.abspath(f) for f in lef_files]
 
     content = replace_lef_files(content, resolved_lefs)
@@ -85,8 +89,12 @@ def main():
     )
     parser.add_argument(
         "--reference-dir",
-        required=True,
-        help="Directory for computing relative paths",
+        required=False,
+        default=None,
+        help=(
+            "Unused; accepted for backward compatibility. LEF / map paths "
+            "are written as plain abspath regardless of this directory."
+        ),
     )
     parser.add_argument(
         "--map-files", nargs="*", default=[], help="Map files to include"
@@ -94,7 +102,10 @@ def main():
     parser.add_argument(
         "--use-relative-paths",
         action="store_true",
-        help="Use paths relative to reference-dir",
+        help=(
+            "Unused; accepted for backward compatibility. LEF / map paths "
+            "are written as plain abspath regardless of this flag."
+        ),
     )
     args = parser.parse_args()
 

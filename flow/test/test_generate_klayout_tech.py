@@ -160,7 +160,10 @@ class TestGenerateKlayoutTech(unittest.TestCase):
         with open(self.output) as f:
             content = f.read()
 
-        self.assertIn(os.path.realpath(map_path), content)
+        # Same abspath semantics as LEFs: map files are also written as
+        # plain absolute paths so klayout doesn't resolve them relative
+        # to the bare-execroot realpath of the input DEF.
+        self.assertIn(os.path.abspath(map_path), content)
         self.assertNotIn("original.map", content)
 
     def test_multiple_lef_files(self):
