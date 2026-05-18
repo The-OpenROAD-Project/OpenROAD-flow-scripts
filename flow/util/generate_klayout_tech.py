@@ -34,8 +34,8 @@ def generate_klayout_tech(
     template_lyt,
     output_lyt,
     lef_files,
-    map_files,
     reference_dir=None,
+    map_files=None,
     use_relative_paths=False,
 ):
     """Generate a klayout .lyt file from a platform template.
@@ -44,10 +44,10 @@ def generate_klayout_tech(
         template_lyt: Path to the platform .lyt template file.
         output_lyt: Path to write the generated .lyt file.
         lef_files: List of LEF file paths to include.
-        map_files: List of map file paths.
         reference_dir: Unused. Accepted for backward compatibility with
             callers (e.g. flow/Makefile) that still pass it from when
             paths were resolved relative to this directory.
+        map_files: List of map file paths.
         use_relative_paths: Unused. Same backward-compat rationale as
             reference_dir -- paths are always written as plain abspath
             now, regardless of this flag.
@@ -69,7 +69,7 @@ def generate_klayout_tech(
 
     content = replace_lef_files(content, resolved_lefs)
 
-    resolved_maps = [os.path.abspath(f) for f in map_files]
+    resolved_maps = [os.path.abspath(f) for f in (map_files or [])]
     content = replace_map_files(content, resolved_maps)
 
     with open(output_lyt, "w") as f:
