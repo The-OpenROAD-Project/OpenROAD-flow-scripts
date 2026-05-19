@@ -1,6 +1,16 @@
 {
+    "synth__canonical_netlist__hash": {
+        "value": "34f678ad6ee91a3facb09f4176e4d9e3003c86a4",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__netlist__hash": {
+        "value": "bb9473b3c4c02199f8863880e39ad81a25d809f0",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
-        "value": 148000.0,
+        "value": 147000.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -8,7 +18,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 167557,
+        "value": 166353,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -64,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 728653,
+        "value": 704140,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -96,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 179425,
+        "value": 178015,
         "compare": "<="
     }
 }
