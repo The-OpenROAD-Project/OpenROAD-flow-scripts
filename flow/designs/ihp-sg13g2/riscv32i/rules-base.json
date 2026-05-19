@@ -1,4 +1,14 @@
 {
+    "synth__canonical_netlist__hash": {
+        "value": "4db909030190a23886f847e432968207d8d195ab",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__netlist__hash": {
+        "value": "82281e3369193e7868c1b129369f0b9dd383bb12",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 137000.0,
         "compare": "<="
@@ -64,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 469295,
+        "value": 455443,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {

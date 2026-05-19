@@ -1,6 +1,16 @@
 {
+    "synth__canonical_netlist__hash": {
+        "value": "baa8886b2d156c1dff12efae38c38956730bb00a",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__netlist__hash": {
+        "value": "c7cf43cf1bf4c698e7c304853e39fc9cb4f2e3c4",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
-        "value": 280000.0,
+        "value": 278000.0,
         "compare": "<="
     },
     "constraints__clocks__count": {
@@ -12,7 +22,7 @@
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 20659,
+        "value": 20256,
         "compare": "<="
     },
     "detailedplace__design__violations": {
