@@ -73,6 +73,15 @@ if { $::env(SYNTH_GUT) } {
 }
 
 if { [env_var_exists_and_non_empty SYNTH_KEEP_MODULES] } {
+  # In partition mode (SYNTH_BLACKBOXES set) only this partition's top
+  # module plus its own subhierarchy is present; the other kept modules
+  # are blackboxed and won't be found. The same SYNTH_KEEP_MODULES list
+  # is reused across partitions, so a missing name there is expected.
+  # Outside partition mode, a missing name is almost certainly a typo or
+  # a stale post-refactor reference, and silently skipping it turns the
+  # whole keep into a no-op -- collect all missing names and fail loudly.
+  set strict [expr { ![env_var_exists_and_non_empty SYNTH_BLACKBOXES] }]
+  set missing [list]
   foreach module $::env(SYNTH_KEEP_MODULES) {
     # Two patterns so both frontends work:
     #  - `$module` matches the bare name produced by verilog.
@@ -87,9 +96,25 @@ if { [env_var_exists_and_non_empty SYNTH_KEEP_MODULES] } {
     # other pattern still applies -- no regression for non-slang.
     # `-module <name>` would error if the module doesn't exist, which
     # is why we use bare patterns instead.
-    select "$module" "$module\\\$*"
+    if { $strict } {
+      # `-assert-any` errors out if neither pattern matched. Catch so
+      # all missing names are reported in one consolidated error rather
+      # than failing on the first.
+      if { [catch { select -assert-any "$module" "$module\\\$*" }] } {
+        lappend missing $module
+        select -clear
+        continue
+      }
+    } else {
+      select "$module" "$module\\\$*"
+    }
     setattr -mod -set keep_hierarchy 1
     select -clear
+  }
+  if { [llength $missing] > 0 } {
+    error "SYNTH_KEEP_MODULES contains [llength $missing] module name(s)\
+      not present in the elaborated design (typos, post-refactor renames,\
+      or wrong-design list): [join $missing {, }]"
   }
 }
 
