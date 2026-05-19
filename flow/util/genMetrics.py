@@ -5,6 +5,7 @@
 # information in specific files using regular expressions
 # -----------------------------------------------------------------------------
 
+import hashlib
 import os
 import shutil
 from datetime import datetime, timedelta
@@ -190,6 +191,18 @@ def git_head_commit(git_exe, folder):
     )
 
 
+def file_sha1(path):
+    """SHA-1 of `path`, or "N/A" if absent. Read in chunks so large
+    netlists don't blow the heap."""
+    if not os.path.isfile(path):
+        return "N/A"
+    hasher = hashlib.sha1()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(16 * 1024 * 1024), b""):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
 def merge_jsons(root_path, output, files):
     paths = sorted(glob(os.path.join(root_path, files)))
     for path in paths:
@@ -248,6 +261,15 @@ def extract_metrics(
         "Chip area for (?:top )?module.*: +(\\S+)",
         rptPath + "/synth_stat.txt",
     )
+
+    # Netlist hashes: fingerprints of the canonical RTLIL (pre-ABC) and
+    # the final post-synthesis Verilog so the rules-base.json check
+    # (level=warning) flags when bazel-built vs make-built yosys
+    # disagree for the same RTL.
+    metrics_dict["synth__canonical_netlist__hash"] = file_sha1(
+        resultPath + "/1_1_yosys_canonicalize.rtlil"
+    )
+    metrics_dict["synth__netlist__hash"] = file_sha1(resultPath + "/1_2_yosys.v")
 
     # Clocks
     # =========================================================================
