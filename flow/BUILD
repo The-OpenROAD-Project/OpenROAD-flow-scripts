@@ -18,6 +18,15 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 
+# Expose synth.tcl as an addressable source label so bazel-orfs can
+# point its `_synth_tcl` attr default at `@orfs//flow:scripts/synth.tcl`
+# instead of vendoring its own (drifting) copy at the bazel-orfs repo
+# root. See bazel-orfs `private/rules.bzl`.
+exports_files(
+    ["scripts/synth.tcl"],
+    visibility = ["//visibility:public"],
+)
+
 # files shared between scripts/synth.sh and scripts/flow.sh steps
 MAKEFILE_SHARED = [
     "scripts/variables.json",
