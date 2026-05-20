@@ -71,6 +71,7 @@ _install_EL7_Packages() {
     yum -y update
     yum -y install \
         time \
+        readline \
         ruby \
         ruby-devel
 
@@ -108,6 +109,7 @@ _install_EL8_EL9_Packages() {
     dnf -y update
     dnf -y install \
         time \
+        readline \
         ruby \
         ruby-devel
 
@@ -186,6 +188,7 @@ _installUbuntuPackages() {
         libqt5opengl5 \
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
+        libreadline-dev \
         libtbb-dev \
         libz-dev \
         perl \
