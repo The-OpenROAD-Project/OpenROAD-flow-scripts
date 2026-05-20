@@ -80,7 +80,7 @@ if { [ord::openroad_gui_compiled] } {
 
 if { [env_var_equals LIB_MODEL CCS] } {
   puts "Using CCS delay calculation"
-  set_delay_calculator prima
+  log_cmd set_delay_calculator prima
 }
 
 if { $::env(GUI_TIMING) } {
