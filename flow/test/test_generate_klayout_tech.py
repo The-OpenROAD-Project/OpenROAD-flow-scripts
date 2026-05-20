@@ -120,9 +120,7 @@ class TestGenerateKlayoutTech(unittest.TestCase):
             template_lyt=self.template,
             output_lyt=self.output,
             lef_files=[lef_path],
-            reference_dir=self.results_dir,
             map_files=[],
-            use_relative_paths=True,
         )
 
         with open(self.output) as f:
@@ -130,12 +128,13 @@ class TestGenerateKlayoutTech(unittest.TestCase):
 
         self.assertIn("<lef-files>", content)
         self.assertNotIn("original.lef", content)
-        # Path should be relative to results_dir
-        expected_rel = os.path.relpath(
-            os.path.realpath(lef_path),
-            os.path.realpath(self.results_dir),
-        )
-        self.assertIn(expected_rel, content)
+        # LEF paths are written as plain abspath (not relpath, not realpath):
+        # klayout's Layout.read resolves relative <lef-files> entries
+        # against the realpath of the DEF being merged, which under a
+        # Bazel sandbox is the bare execroot -- the in-flight sibling
+        # files only exist in the per-action sandbox.  Absolute paths
+        # bypass the relative-resolution dance.
+        self.assertIn(os.path.abspath(lef_path), content)
 
     def test_with_map_files(self):
         with open(self.template, "w") as f:
@@ -151,15 +150,16 @@ class TestGenerateKlayoutTech(unittest.TestCase):
             template_lyt=self.template,
             output_lyt=self.output,
             lef_files=[lef_path],
-            reference_dir=self.results_dir,
             map_files=[map_path],
-            use_relative_paths=False,
         )
 
         with open(self.output) as f:
             content = f.read()
 
-        self.assertIn(os.path.realpath(map_path), content)
+        # Same abspath semantics as LEFs: map files are also written as
+        # plain absolute paths so klayout doesn't resolve them relative
+        # to the bare-execroot realpath of the input DEF.
+        self.assertIn(os.path.abspath(map_path), content)
         self.assertNotIn("original.map", content)
 
     def test_multiple_lef_files(self):
@@ -177,9 +177,7 @@ class TestGenerateKlayoutTech(unittest.TestCase):
             template_lyt=self.template,
             output_lyt=self.output,
             lef_files=lef_files,
-            reference_dir=self.results_dir,
             map_files=[],
-            use_relative_paths=True,
         )
 
         with open(self.output) as f:
