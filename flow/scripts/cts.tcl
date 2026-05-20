@@ -46,7 +46,7 @@ set_placement_padding -global \
   -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
-set dpl_args {}
+set dpl_args [env_var_or_empty CTS_DPL_DISPLACEMENT]
 append_env_var dpl_args USE_NEGOTIATION -use_negotiation 0
 set result [catch { log_cmd detailed_placement {*}$dpl_args } msg]
 if { $result != 0 } {
