@@ -66,12 +66,17 @@ _install_EL7_CleanUp() {
     yum clean -y all
 }
 
+# Build deps for yosys (compiled inside OpenROAD's installer). Must run
+# before _installORDependencies, since OpenROAD no longer installs readline.
+_installYosysBuildDeps_EL7() {
+    yum -y install readline-devel
+}
+
 # Enterprise Linux 7 package installation (EL7 = RHEL 7 or CentOS 7)
 _install_EL7_Packages() {
     yum -y update
     yum -y install \
         time \
-        readline \
         ruby \
         ruby-devel
 
@@ -95,6 +100,12 @@ _install_EL8_EL9_CleanUp() {
     dnf clean -y all
 }
 
+# Build deps for yosys (compiled inside OpenROAD's installer). Must run
+# before _installORDependencies, since OpenROAD no longer installs readline.
+_installYosysBuildDeps_EL8_EL9() {
+    dnf -y install readline-devel
+}
+
 # Enterprise Linux 8/9 package installation (EL8/EL9 = RHEL, Rocky Linux, AlmaLinux, or CentOS 8 as no CentOS 9 exists)
 _install_EL8_EL9_Packages() {
     # Re-detect EL version for appropriate KLayout package
@@ -109,7 +120,6 @@ _install_EL8_EL9_Packages() {
     dnf -y update
     dnf -y install \
         time \
-        readline \
         ruby \
         ruby-devel
 
@@ -168,6 +178,14 @@ _installKlayoutDependenciesUbuntuAarch64() {
     echo "All dependencies installed successfully"
 }
 
+# Build deps for yosys (compiled inside OpenROAD's installer). Must run
+# before _installORDependencies, since OpenROAD no longer installs readline.
+_installYosysBuildDeps_Ubuntu() {
+    export DEBIAN_FRONTEND="noninteractive"
+    apt-get -y update
+    apt-get -y install --no-install-recommends libreadline-dev
+}
+
 _installUbuntuPackages() {
     export DEBIAN_FRONTEND="noninteractive"
     apt-get -y update
@@ -188,7 +206,6 @@ _installUbuntuPackages() {
         libqt5opengl5 \
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
-        libreadline-dev \
         libtbb-dev \
         libz-dev \
         perl \
@@ -456,6 +473,14 @@ case "${os}" in
             exit 1
         fi
 
+        # Install yosys build deps before OpenROAD's installer compiles yosys
+        if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+            case "${elVersion}" in
+                "7") _installYosysBuildDeps_EL7 ;;
+                "8"|"9") _installYosysBuildDeps_EL8_EL9 ;;
+            esac
+        fi
+
         # First install OpenROAD base
         _installORDependencies
 
@@ -493,6 +518,9 @@ case "${os}" in
         if [[ ${CI} == "yes" ]]; then
             echo "Installing CI Tools"
             _installCI
+        fi
+        if [[ "${option}" == "base" || "${option}" == "all" ]]; then
+            _installYosysBuildDeps_Ubuntu
         fi
         _installORDependencies
         if [[ "${option}" == "base" || "${option}" == "all" ]]; then
