@@ -21,7 +21,8 @@ RUN sh /tmp/setup_compiler_wrappers.sh && rm /tmp/setup_compiler_wrappers.sh
 
 ENV PATH="/usr/local/bin/wrapped-cc:$PATH"
 
-RUN ./DependencyInstaller.sh -all $options $constantBuildDir -save-deps-prefixes=/etc/openroad_deps_prefixes.txt \
+RUN ./DependencyInstaller.sh -base $options $constantBuildDir -save-deps-prefixes=/etc/openroad_deps_prefixes.txt \
+    && ./DependencyInstaller.sh -common $options $constantBuildDir -save-deps-prefixes=/etc/openroad_deps_prefixes.txt \
     && rm -rf /tmp/installer /tmp/* /var/tmp/* /var/lib/apt/lists/*
 
 ARG fromImage
