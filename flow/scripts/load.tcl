@@ -46,6 +46,6 @@ proc load_design { design_file sdc_file } {
 
   if { [env_var_equals LIB_MODEL CCS] } {
     puts "Using CCS delay calculation"
-    set_delay_calculator prima
+    log_cmd set_delay_calculator prima
   }
 }
