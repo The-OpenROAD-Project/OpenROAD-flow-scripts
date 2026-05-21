@@ -69,7 +69,7 @@ Options:
     -n, --nice              Nice all jobs. Use all cpus unless --threads is
                             also given, then use N threads.
 
-    --yosys-args-overwrite  Do not use default flags set by this scrip during
+    --yosys-args-overwrite  Do not use default flags set by this script during
                             Yosys compilation.
 
     --yosys-args STRING     Additional compilation flags for Yosys compilation.
@@ -78,7 +78,7 @@ Options:
                             to the Verific source folder.
 
     --openroad-args-overwrite
-                            Do not use default flags set by this scrip during
+                            Do not use default flags set by this script during
                             OpenROAD app compilation.
 
     --openroad-args STRING  Additional compilation flags for OpenROAD app
@@ -237,13 +237,13 @@ __docker_build()
                 cp .dockerignore{,.bak}
                 sed -i '/flow\/platforms/d' .dockerignore
         fi
-        options=""
-        if [ -n "${WITH_VERIFIC}" ]; then
+        local options=()
+        if [ "${WITH_VERIFIC}" -eq 1 ]; then
                 cp -r "${VERIFIC_SRC}" tools/verific
-                options="-buildArgs=--build-arg verificPath=tools/verific"
+                options=("-buildArgs=--build-arg verificPath=tools/verific")
         fi
         ./etc/DockerHelper.sh create -target=dev -os="${DOCKER_OS_NAME}" -threads="${PROC}"
-        ./etc/DockerHelper.sh create -target=builder -os="${DOCKER_OS_NAME}" -threads="${PROC}" "${options}"
+        ./etc/DockerHelper.sh create -target=builder -os="${DOCKER_OS_NAME}" -threads="${PROC}" "${options[@]}"
         rm -rf tools/verific
         if [ ! -z "${DOCKER_COPY_PLATFORMS+x}" ]; then
                 mv .dockerignore{.bak,}

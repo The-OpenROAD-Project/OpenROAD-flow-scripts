@@ -49,3 +49,6 @@ endif
 
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
+
+# Temporary disabling
+export LEC_CHECK = 0

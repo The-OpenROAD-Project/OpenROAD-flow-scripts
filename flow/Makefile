@@ -200,7 +200,6 @@ do-klayout:
 		--template $(KLAYOUT_TECH_FILE) \
 		--output $(OBJECTS_DIR)/klayout.lyt \
 		--lef-files $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS) \
-		--reference-dir $(RESULTS_DIR) \
 		--map-files $(wildcard $(FLOW_HOME)/platforms/$(PLATFORM)/*map)
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
@@ -212,8 +211,7 @@ do-klayout_wrap:
 	$(PYTHON_EXE) $(UTILS_DIR)/generate_klayout_tech.py \
 		--template $(KLAYOUT_TECH_FILE) \
 		--output $(OBJECTS_DIR)/klayout_wrap.lyt \
-		--lef-files $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS) \
-		--reference-dir $(OBJECTS_DIR)/def
+		--lef-files $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS)
 
 $(WRAPPED_LEFS):
 	mkdir -p $(OBJECTS_DIR)/lef $(OBJECTS_DIR)/def

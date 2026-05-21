@@ -1,4 +1,14 @@
 {
+    "synth__canonical_netlist__hash": {
+        "value": "99d2cc38bbf65e6dcbb229c66ff97c9212eb1fea",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__netlist__hash": {
+        "value": "87e89ea6e953310a2702b0881810f42a4378df42",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 118000.0,
         "compare": "<="
@@ -8,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 160499,
+        "value": 159595,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 19517,
+        "value": 19233,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -96,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 176489,
+        "value": 172963,
         "compare": "<="
     }
 }
