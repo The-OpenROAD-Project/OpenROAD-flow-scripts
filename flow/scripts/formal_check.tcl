@@ -54,6 +54,13 @@ proc write_sec_script { step file1 file2 } {
   close $outfile
 }
 
+proc formal_check_label { step } {
+  if { [string equal $step 4_rsz] } {
+    return "Repair timing output"
+  }
+  return "Global output"
+}
+
 proc run_lec_test { step file1 file2 } {
   write_lec_script $step $file1 $file2
   # tclint-disable-next-line command-args
@@ -64,10 +71,11 @@ proc run_lec_test { step file1 file2 } {
     # This block executes if grep returns a non-zero exit code
     set count 0
   }
+  set label [formal_check_label $step]
   if { $count > 0 } {
-    error "Repair timing output failed lec test"
+    error "$label failed lec test"
   } else {
-    puts "Repair timing output passed lec test"
+    puts "$label passed lec test"
   }
 }
 
