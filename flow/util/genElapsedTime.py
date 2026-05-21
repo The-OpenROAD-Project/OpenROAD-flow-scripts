@@ -14,24 +14,42 @@ import sys
 # ==============================================================================
 
 
-def get_hash(f):
-    # content hash for the result file alongside .log file is useful to
-    # debug divergent results under what should be identical
-    # builds(such as local and CI builds)
-    for ext in [".odb", ".rtlil", ".v"]:
+# Primary data artifacts first, then derived/exported artifacts and
+# the SDC constraint file: yosys emits .v / .rtlil; OpenROAD stages
+# emit .odb (and often .def / .sdc); routing emits .spef; finish
+# emits .gds.
+RESULT_EXTS = [".v", ".rtlil", ".odb", ".def", ".spef", ".gds", ".sdc"]
+
+
+def get_hashes(f):
+    """Return [(ext, sha1), ...] for every result file alongside log
+    `f` whose extension is in RESULT_EXTS.  A yosys stage typically
+    produces both `.v` and `.sdc`; a floorplan/route stage produces
+    `.odb` (and often `.sdc`); the canonicalize stage produces
+    `.rtlil`.  Hashing each separately makes "the netlist changed"
+    distinguishable from "the SDC changed" in the elapsed-time table
+    used to triage divergent local vs CI builds.
+
+    Falls back to a single ("", "N/A") entry when no result file
+    exists so the caller always emits at least one row per stage.
+    """
+    results = []
+    for ext in RESULT_EXTS:
         result_file = pathlib.Path(
             str(f).replace("logs/", "results/").replace(".log", ext)
         )
         if result_file.exists():
             hasher = hashlib.sha1()
-            with open(result_file, "rb") as odb_f:
+            with open(result_file, "rb") as rf:
                 while True:
-                    chunk = odb_f.read(16 * 1024 * 1024)
+                    chunk = rf.read(16 * 1024 * 1024)
                     if not chunk:
                         break
                     hasher.update(chunk)
-            return hasher.hexdigest()
-    return "N/A"
+            results.append((ext, hasher.hexdigest()))
+    if not results:
+        results.append(("", "N/A"))
+    return results
 
 
 def print_log_dir_times(logdir, args):
@@ -87,37 +105,49 @@ def print_log_dir_times(logdir, args):
                     )
                     break
 
-            odb_hash = get_hash(f)
+            hashes = get_hashes(f)
 
             if not found:
                 print("No elapsed time found in", str(f), file=sys.stderr)
                 continue
 
-        # Print the name of the step and the corresponding elapsed time
-        format_str = "%-25s %10s %14s %20s"
+        # Print the name of the step and the corresponding elapsed time.
+        # One row per (stage, result-file-ext); only the first row of a
+        # stage shows elapsed/peak.
+        format_str = "%-25s %-6s %10s %14s %20s"
         if elapsedTime is not None and peak_memory is not None:
             if first and not args.noHeader:
                 print(
                     format_str
-                    % ("Log", "Elapsed/s", "Peak Memory/MB", "sha1sum .odb [0:20)")
+                    % (
+                        "Log",
+                        "Ext",
+                        "Elapsed/s",
+                        "Peak Memory/MB",
+                        "sha1sum result [0:20)",
+                    )
                 )
                 first = False
-            print(
-                format_str
-                % (
-                    stem,
-                    elapsedTime,
-                    peak_memory,
-                    odb_hash[0:20],
+            stage_first = True
+            for ext, h in hashes:
+                print(
+                    format_str
+                    % (
+                        stem,
+                        ext,
+                        elapsedTime if stage_first else "",
+                        peak_memory if stage_first else "",
+                        h[0:20],
+                    )
                 )
-            )
+                stage_first = False
         if elapsedTime is not None:
             totalElapsed += elapsedTime
         if peak_memory is not None:
             total_max_memory = max(total_max_memory, int(peak_memory))
 
     if totalElapsed != 0 and not args.match:
-        print(format_str % ("Total", totalElapsed, total_max_memory, ""))
+        print(format_str % ("Total", "", totalElapsed, total_max_memory, ""))
 
 
 def scan_logs(args):

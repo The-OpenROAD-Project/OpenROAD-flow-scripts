@@ -151,6 +151,14 @@ LIB_FILES:
     A Liberty file of the standard cell library with PVT characterization,
     input and output characteristics, timing and power definitions for each
     cell.
+LIB_MODEL:
+  description: >
+    Selects between NLDM and CCS timing models for the ASAP7 platform.
+    Valid values: NLDM (default), CCS. Used in
+    flow/platforms/asap7/config.mk to pick the LIB_DIR subdirectory and
+    accumulate the corresponding $(CORNER)_$(LIB_MODEL)_LIB_FILES list,
+    and in flow/scripts/load.tcl to gate CCS-specific Tcl branches.
+  default: NLDM
 PLATFORM_TCL:
   description: |
     Specifies a Tcl script with commands to run before loading design.
@@ -832,6 +840,13 @@ MAX_ROUTING_LAYER:
     - grt
     - route
     - final
+MIN_CLK_ROUTING_LAYER:
+  description: >
+    The lowest metal layer name to be used for clock-net routing in global
+    routing. Used in flow/platforms/*/fastroute.tcl as the lower bound of
+    `set_routing_layers -clock`. Typically higher than MIN_ROUTING_LAYER so
+    clock nets prefer the upper, lower-RC layers. No `stages:` list because
+    floorplan.tcl also `source`s the platform fastroute.tcl.
 VIA_IN_PIN_MIN_LAYER:
   description: >
     Passed as -via_in_pin_bottom_layer to pin_access and detailed_route.

@@ -1,4 +1,14 @@
 {
+    "synth__canonical_netlist__hash": {
+        "value": "608c7e7060b1b403c0e893101b0bd83a23b7f306",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__netlist__hash": {
+        "value": "624023bd257848127135daf0c0d20528d8fb9315",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 823000.0,
         "compare": "<="
@@ -8,7 +18,7 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 827643,
+        "value": 827380,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
@@ -32,7 +42,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -502.0,
+        "value": -480.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -52,7 +62,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -556.0,
+        "value": -570.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -84,7 +94,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -549.0,
+        "value": -577.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -96,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 837050,
+        "value": 836564,
         "compare": "<="
     }
 }

@@ -106,8 +106,15 @@ for field, rule in rules.items():
             PRE = "[INFO]"
             CHECK = "pass"
         elif rule.get("level") == "warning":
+            # Warning-level rules never fail the build, but the prior
+            # message ("[WARN] field pass test: a == b") was misleading
+            # when a != b -- the build_value clearly differed from the
+            # rule_value yet "pass" implied a match. Say "differs"
+            # instead so the diagnostic reads naturally for fields like
+            # the netlist hash where the user wants visibility without
+            # an error.
             PRE = "[WARN]"
-            CHECK = "pass"
+            CHECK = "differs"
             WARNS += 1
         else:
             PRE = "[ERROR]"

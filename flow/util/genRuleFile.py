@@ -46,8 +46,11 @@ def gen_rule_file(
 
     # dict format
     # 'metric_name': {
-    #     'mode': <str>, one of ['direct', 'sum_fixed', 'period', 'padding',
-    #                           'period_padding', 'abs_padding', 'metric']
+    #     'mode': <str>, one of ['direct', 'literal', 'sum_fixed', 'period',
+    #                           'padding', 'period_padding', 'abs_padding',
+    #                           'metric'].  'literal' propagates the metric
+    #                           value verbatim (e.g. a hash string) and
+    #                           skips all numeric padding/rounding.
     #     'padding': <float>, percentage of padding to use
     #     'fixed': <float>, sum this number instead of using % padding
     #     'round_value': <bool>, use the rounded value for the rule
@@ -71,6 +74,21 @@ def gen_rule_file(
             "level": "warning",
         },
         # synth
+        # Yosys netlist hash fingerprints. `mode: literal` propagates
+        # the string value verbatim; `level: warning` means a mismatch
+        # surfaces as a [WARN] diagnostic in checkMetadata.py without
+        # failing the build, matching how rules-base.json already
+        # treats warning counts.
+        "synth__canonical_netlist__hash": {
+            "mode": "literal",
+            "compare": "==",
+            "level": "warning",
+        },
+        "synth__netlist__hash": {
+            "mode": "literal",
+            "compare": "==",
+            "level": "warning",
+        },
         "synth__design__instance__area__stdcell": {
             "mode": "padding",
             "padding": 15,
@@ -279,7 +297,7 @@ def gen_rule_file(
             if ":" in field:
                 field = field.replace(":", "__")
             processed_fields.add(field)
-            if isinstance(metrics[field], str):
+            if isinstance(metrics[field], str) and option["mode"] != "literal":
                 print(f"[WARNING] Skipping string field {field} = {metrics[field]}")
                 continue
 
@@ -289,6 +307,9 @@ def gen_rule_file(
 
             rule_value = None
             if option["mode"] == "direct":
+                rule_value = metrics[field]
+
+            elif option["mode"] == "literal":
                 rule_value = metrics[field]
 
             elif option["mode"] == "sum_fixed":
@@ -342,10 +363,11 @@ def gen_rule_file(
                 print(f"[ERROR] Metric {field} has invalid mode {option['mode']}.")
                 sys.exit(1)
 
-            if option["round_value"] and not isinf(rule_value):
-                rule_value = int(round(rule_value))
-            else:
-                rule_value = float(f"{rule_value:.3g}")
+            if option["mode"] != "literal":
+                if option["round_value"] and not isinf(rule_value):
+                    rule_value = int(round(rule_value))
+                else:
+                    rule_value = float(f"{rule_value:.3g}")
 
             preserve_old_rule = (
                 True

@@ -1,3 +1,11 @@
+proc lec_check_enabled { } {
+  return [expr {
+    [env_var_equals LEC_CHECK 1]
+    && [info exists ::env(KEPLER_FORMAL_EXE)]
+    && [file executable $::env(KEPLER_FORMAL_EXE)]
+  }]
+}
+
 proc write_lec_verilog { filename } {
   set remove_cells [find_physical_only_masters]
   if { [env_var_exists_and_non_empty REMOVE_CELLS_FOR_LEC] } {

@@ -78,6 +78,11 @@ if { [ord::openroad_gui_compiled] } {
     "OpenROAD - $::env(PLATFORM)/$::env(DESIGN_NICKNAME)/$::env(FLOW_VARIANT) - ${db_basename}"
 }
 
+if { [env_var_equals LIB_MODEL CCS] } {
+  puts "Using CCS delay calculation"
+  log_cmd set_delay_calculator prima
+}
+
 if { $::env(GUI_TIMING) } {
   puts "GUI_TIMING=1 reading timing, takes a little while for large designs..."
   read_timing $input_file
