@@ -816,6 +816,14 @@ SKIP_CTS_REPAIR_TIMING:
   stages:
     - cts
   default: 0
+ENABLE_PLACE_REPAIR_TIMING:
+  description: >
+    Run repair_timing during the placement resize stage using placement
+    parasitics. Disabled by default; pre-CTS setup/hold repair is skipped
+    unless this is set to 1.
+  stages:
+    - place
+  default: 0
 SKIP_REPAIR_TIE_FANOUT:
   description: >
     Skip repair_tie_fanout at floorplan step.

@@ -320,6 +320,13 @@
     "default": 1,
     "description": "Enable detail placement with improve_placement feature.\n"
   },
+  "ENABLE_PLACE_REPAIR_TIMING": {
+    "default": 0,
+    "description": "Run repair_timing during the placement resize stage using placement parasitics. Disabled by default; pre-CTS setup/hold repair is skipped unless this is set to 1.\n",
+    "stages": [
+      "place"
+    ]
+  },
   "ENABLE_RESISTANCE_AWARE": {
     "description": "Passed as -resistance_aware to global_route.\n",
     "stages": [
