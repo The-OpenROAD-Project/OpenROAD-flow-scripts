@@ -51,7 +51,8 @@ EOF
 RUN find /OpenROAD-flow-scripts/tools \( -name "*LICENSE*" -o -name "*LICENSES*" \) \
     | grep -v '/OpenROAD/src/sta/' \
     | grep -v '/AutoTuner/' \
-    | while read -r f; do \
+    | grep -v '^/OpenROAD-flow-scripts/tools/install/' \
+    | while IFS= read -r f; do \
         rel="${f#/OpenROAD-flow-scripts/tools/}"; \
         mkdir -p "/OpenROAD-flow-scripts/tools/install/licenses/$(dirname "$rel")"; \
         cp -r "$f" "/OpenROAD-flow-scripts/tools/install/licenses/$rel"; \
