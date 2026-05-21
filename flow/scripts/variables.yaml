@@ -1197,11 +1197,6 @@ POST_PDN_TCL:
     Specifies a Tcl script with commands to run after PDN generation.
   stages:
     - floorplan
-POST_REPAIR_TIMING_POST_PLACE_TCL:
-  description: |
-    Specifies a Tcl script with commands to run after post-place timing repair.
-  stages:
-    - place
 POST_RESIZE_TCL:
   description: |
     Specifies a Tcl script with commands to run after resize.
@@ -1277,11 +1272,6 @@ PRE_PDN_TCL:
     Specifies a Tcl script with commands to run before PDN generation.
   stages:
     - floorplan
-PRE_REPAIR_TIMING_POST_PLACE_TCL:
-  description: |
-    Specifies a Tcl script with commands to run before post-place timing repair.
-  stages:
-    - place
 PRE_RESIZE_TCL:
   description: |
     Specifies a Tcl script with commands to run before resize.

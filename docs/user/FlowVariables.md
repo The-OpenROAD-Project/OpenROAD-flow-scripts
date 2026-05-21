@@ -217,7 +217,6 @@ configuration file.
 | <a name="POST_IO_PLACEMENT_TCL"></a>POST_IO_PLACEMENT_TCL| Specifies a Tcl script with commands to run after IO placement.| |
 | <a name="POST_MACRO_PLACE_TCL"></a>POST_MACRO_PLACE_TCL| Specifies a Tcl script with commands to run after macro placement.| |
 | <a name="POST_PDN_TCL"></a>POST_PDN_TCL| Specifies a Tcl script with commands to run after PDN generation.| |
-| <a name="POST_REPAIR_TIMING_POST_PLACE_TCL"></a>POST_REPAIR_TIMING_POST_PLACE_TCL| Specifies a Tcl script with commands to run after post-place timing repair.| |
 | <a name="POST_RESIZE_TCL"></a>POST_RESIZE_TCL| Specifies a Tcl script with commands to run after resize.| |
 | <a name="POST_SYNTH_TCL"></a>POST_SYNTH_TCL| Specifies a Tcl script with commands to run after synthesis ODB generation.| |
 | <a name="POST_TAPCELL_TCL"></a>POST_TAPCELL_TCL| Specifies a Tcl script with commands to run after tapcell.| |
@@ -234,7 +233,6 @@ configuration file.
 | <a name="PRE_IO_PLACEMENT_TCL"></a>PRE_IO_PLACEMENT_TCL| Specifies a Tcl script with commands to run before IO placement.| |
 | <a name="PRE_MACRO_PLACE_TCL"></a>PRE_MACRO_PLACE_TCL| Specifies a Tcl script with commands to run before macro placement.| |
 | <a name="PRE_PDN_TCL"></a>PRE_PDN_TCL| Specifies a Tcl script with commands to run before PDN generation.| |
-| <a name="PRE_REPAIR_TIMING_POST_PLACE_TCL"></a>PRE_REPAIR_TIMING_POST_PLACE_TCL| Specifies a Tcl script with commands to run before post-place timing repair.| |
 | <a name="PRE_RESIZE_TCL"></a>PRE_RESIZE_TCL| Specifies a Tcl script with commands to run before resize.| |
 | <a name="PRE_SYNTH_TCL"></a>PRE_SYNTH_TCL| Specifies a Tcl script with commands to run before synthesis ODB generation.| |
 | <a name="PRE_TAPCELL_TCL"></a>PRE_TAPCELL_TCL| Specifies a Tcl script with commands to run before tapcell.| |
@@ -487,13 +485,11 @@ configuration file.
 - [POST_GLOBAL_PLACE_SKIP_IO_TCL](#POST_GLOBAL_PLACE_SKIP_IO_TCL)
 - [POST_GLOBAL_PLACE_TCL](#POST_GLOBAL_PLACE_TCL)
 - [POST_IO_PLACEMENT_TCL](#POST_IO_PLACEMENT_TCL)
-- [POST_REPAIR_TIMING_POST_PLACE_TCL](#POST_REPAIR_TIMING_POST_PLACE_TCL)
 - [POST_RESIZE_TCL](#POST_RESIZE_TCL)
 - [PRE_DETAIL_PLACE_TCL](#PRE_DETAIL_PLACE_TCL)
 - [PRE_GLOBAL_PLACE_SKIP_IO_TCL](#PRE_GLOBAL_PLACE_SKIP_IO_TCL)
 - [PRE_GLOBAL_PLACE_TCL](#PRE_GLOBAL_PLACE_TCL)
 - [PRE_IO_PLACEMENT_TCL](#PRE_IO_PLACEMENT_TCL)
-- [PRE_REPAIR_TIMING_POST_PLACE_TCL](#PRE_REPAIR_TIMING_POST_PLACE_TCL)
 - [PRE_RESIZE_TCL](#PRE_RESIZE_TCL)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
