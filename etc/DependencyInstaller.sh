@@ -71,8 +71,11 @@ _install_EL7_Packages() {
     yum -y update
     yum -y install \
         time \
+        readline \
         ruby \
-        ruby-devel
+        ruby-devel \
+        tcl-tclreadline \
+        tcl-tclreadline-devel
 
     if ! [ -x "$(command -v klayout)" ]; then
       yum -y install https://www.klayout.org/downloads/CentOS_7/klayout-${klayoutVersion}-0.x86_64.rpm
@@ -108,8 +111,20 @@ _install_EL8_EL9_Packages() {
     dnf -y update
     dnf -y install \
         time \
+        readline \
         ruby \
         ruby-devel
+
+    if [[ "${elVersion}" == "8" ]]; then
+        dnf -y install \
+            tcl-tclreadline \
+            tcl-tclreadline-devel
+    fi
+
+    if [[ "${elVersion}" == "9" ]]; then
+        dnf -y install \
+            https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/Packages/readline-devel-8.1-4.el9.x86_64.rpm
+    fi
 
     # Install KLayout based on EL version, note the different URLs
     case "${elVersion}" in
@@ -186,6 +201,7 @@ _installUbuntuPackages() {
         libqt5opengl5 \
         libqt5svg5-dev \
         libqt5xmlpatterns5-dev \
+        libreadline-dev \
         libtbb-dev \
         libz-dev \
         perl \
@@ -196,6 +212,7 @@ _installUbuntuPackages() {
         qttools5-dev \
         ruby \
         ruby-dev \
+        tcl-tclreadline \
         time \
         zlib1g \
         zlib1g-dev

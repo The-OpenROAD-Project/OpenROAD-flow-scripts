@@ -1,4 +1,14 @@
 {
+    "synth__canonical_netlist__hash": {
+        "value": "2427a81238731cb7068ba9ca3da18ec2837ebf31",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__netlist__hash": {
+        "value": "4617e66bebd8728c158a91b4760b8d4ca0bb2114",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 24000.0,
         "compare": "<="
@@ -8,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 25242,
+        "value": 25239,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 12080,
+        "value": 12066,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -20,11 +30,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 1050,
+        "value": 1049,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1050,
+        "value": 1049,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -96,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 26358,
+        "value": 26188,
         "compare": "<="
     }
 }
