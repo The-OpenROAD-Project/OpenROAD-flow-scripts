@@ -16,6 +16,7 @@ proc do_dpl { } {
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
   set dpl_args [env_var_or_empty DETAIL_PLACEMENT_ARGS]
+  set_debug_level DPL negotiation 1
   append_env_var dpl_args DPL_USE_OLD_DIAMOND -use_old_diamond 0
   log_cmd detailed_placement {*}$dpl_args
 
