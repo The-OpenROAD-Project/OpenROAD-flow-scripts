@@ -15,12 +15,11 @@ if { [env_var_exists_and_non_empty ADDITIONAL_LEFS] } {
 set_dont_use $::env(DONT_USE_CELLS)
 
 # Setup verilog include directories
-set vIdirsArgs ""
+set vIdirsArgs [list]
 if { [env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS] } {
   foreach dir $::env(VERILOG_INCLUDE_DIRS) {
     lappend vIdirsArgs "-I$dir"
   }
-  set vIdirsArgs [join $vIdirsArgs]
 }
 
 set elaborate_args [list \
