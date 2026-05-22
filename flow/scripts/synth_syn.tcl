@@ -24,14 +24,14 @@ if { [env_var_exists_and_non_empty VERILOG_INCLUDE_DIRS] } {
 }
 
 set elaborate_args [list \
-	-D SYNTHESIS --compat=vcs --ignore-assertions --no-implicit-memories --top $::env(DESIGN_NAME) \
-	{*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
+  -D SYNTHESIS --compat=vcs --ignore-assertions --no-implicit-memories --top $::env(DESIGN_NAME) \
+  {*}$vIdirsArgs {*}[env_var_or_empty VERILOG_DEFINES]]
 
 lappend elaborate_args {*}$::env(VERILOG_FILES)
 
 # Apply top-level parameters
 dict for {key value} [env_var_or_empty VERILOG_TOP_PARAMS] {
-	lappend elaborate_args -G "$key=$value"
+  lappend elaborate_args -G "$key=$value"
 }
 
 # Apply module blackboxing based on module names as they appear
@@ -59,7 +59,7 @@ if { !$has_non_v_files } {
 sv_elaborate {*}$elaborate_args
 syn::stats
 
-if {$::env(DESIGN_NAME) == "cva6"} {
+if { $::env(DESIGN_NAME) == "cva6" } {
   syn::remove_ports rvfi_probes_o
 }
 synthesize
