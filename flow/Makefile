@@ -283,6 +283,18 @@ clean_synth:
 	rm -f $(SYNTH_STATS)
 	rm -f $(SDC_FILE_CLOCK_PERIOD)
 
+# Run Synthesis using OpenROAD's integrated synthesizer (sv_elaborate +
+# synthesize, OpenROAD #10473). Drives `synth_syn.tcl`, which reads
+# LEF/Liberty/SDC straight from the ORFS env vars and writes 1_synth.odb
+# + 1_synth.sdc directly -- bypassing the Yosys + synth_odb chain. Used
+# by the bazel-orfs `orfs_openroad_synth_rule` for the `_syn` flow
+# variant. Independent of the Yosys recipes above; either path can run.
+.PHONY: do-syn-synth
+do-syn-synth:
+	@mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
+	$(RUN_CMD) --log $(abspath $(LOG_DIR)/1_synth.log) --tee -- \
+		$(OPENROAD_CMD) $(SCRIPTS_DIR)/synth_syn.tcl
+
 # ==============================================================================
 #  _____ _     ___   ___  ____  ____  _        _    _   _
 # |  ___| |   / _ \ / _ \|  _ \|  _ \| |      / \  | \ | |

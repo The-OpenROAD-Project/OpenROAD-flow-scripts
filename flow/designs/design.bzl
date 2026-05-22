@@ -1,6 +1,7 @@
 """BUILD boilerplate for flow/designs/."""
 
-load("@orfs_designs//:designs.bzl", "orfs_design")
+load("@bazel-orfs//:openroad.bzl", "orfs_flow", "orfs_openroad_synth")
+load("@orfs_designs//:designs.bzl", "DESIGNS", "orfs_design")
 
 # Per filegroup target: extensions included in the filegroup.
 # bazel-orfs's config_mk_parser produces these target names from
@@ -76,6 +77,7 @@ def design(config = "config.mk", user_arguments = [], user_sources = [], local_a
         local_arguments = local_arguments,
         blender = True,
     )
+    _emit_syn_variant(DESIGNS.get(_design_key()))
 
 def files(group, extra_srcs = None):
     """Named filegroup over conventional extensions.
@@ -94,3 +96,60 @@ def files(group, extra_srcs = None):
         visibility = ["//visibility:public"],
     )
     _export_design_files()
+
+def _design_key():
+    """Map this BUILD package to its DESIGNS key.
+
+    `native.package_name()` looks like `flow/designs/<platform>/<dir>`;
+    the DESIGNS dict is keyed by `<platform>/<dir>` (bazel-orfs's
+    config_mk_parser also indexes by directory name when it differs
+    from the nickname). Returns "" for packages outside that layout
+    so the lookup misses cleanly.
+    """
+    parts = native.package_name().split("/")
+    if len(parts) < 2:
+        return ""
+    return "{}/{}".format(parts[-2], parts[-1])
+
+def _emit_syn_variant(entry):
+    """Emit the `_syn` variant chain for `entry` from DESIGNS.
+
+    Adds `<name>_syn_synth` (built-in OpenROAD synth, driven by
+    flow/scripts/synth_syn.tcl) plus the downstream `_syn_*` chain
+    via `orfs_flow(variant = "syn", previous_stage = {...})`.
+
+    No-op for hierarchical designs (`entry["blocks"]` non-empty); the
+    built-in synthesizer doesn't handle BLOCKS yet and those would
+    just fail. Flat designs pick the variant up for free.
+
+    All emitted targets are tagged `manual` so `bazel build //...`
+    does not pick them up while the OpenROAD synth tool (PR #10473)
+    matures.
+    """
+    if entry == None or entry.get("blocks"):
+        return
+    name = entry["name"]
+    pdk = "//flow:" + entry["platform"]
+    syn_args = dict(entry["arguments"])
+    syn_synth = name + "_syn_synth"
+    orfs_openroad_synth(
+        name = syn_synth,
+        module_top = name,
+        verilog_files = entry["verilog_files"],
+        sources = entry["sources"],
+        arguments = syn_args,
+        pdk = pdk,
+        variant = "syn",
+        tags = ["manual"],
+    )
+    orfs_flow(
+        name = name,
+        variant = "syn",
+        verilog_files = entry["verilog_files"],
+        sources = entry["sources"],
+        arguments = syn_args,
+        pdk = pdk,
+        previous_stage = {"floorplan": ":" + syn_synth},
+        tags = ["manual"],
+        test_kwargs = {"tags": ["orfs", "manual"]},
+    )

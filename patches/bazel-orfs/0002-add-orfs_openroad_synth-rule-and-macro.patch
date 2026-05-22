@@ -1,0 +1,265 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind@ascenium.com>
+Date: Fri, 22 May 2026 00:00:00 +0200
+Subject: [PATCH] flow: orfs_openroad_synth_rule + macro for OpenROAD-driven
+ synthesis
+
+Adds a parallel synth rule that drives OpenROAD's integrated
+synthesizer (sv_elaborate + synthesize, OpenROAD #10473) via the ORFS
+Makefile target `do-syn-synth`. The new `flow/scripts/synth_syn.tcl`
+script reads LEF/Liberty/SDC straight from the ORFS env vars and
+writes `1_synth.odb` + `1_synth.sdc` directly -- bypassing the Yosys
++ synth_odb chain entirely.
+
+OrfsInfo shape matches `orfs_synth_rule`, so
+`orfs_flow(previous_stage = {"floorplan": ":<name>_syn_synth"})`
+chains downstream stages unchanged. Used by ORFS's `design()` wrapper
+to emit a `_syn` variant alongside every flat design.
+
+`orfs_synth`, `orfs_synth_rule` and every other existing symbol are
+untouched. Vendored here until the integrated syn tool stabilises and
+this lands upstream in bazel-orfs.
+---
+ openroad.bzl       |   2 +
+ private/flow.bzl   |  14 ++++
+ private/rules.bzl  | 178 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 194 insertions(+)
+
+diff --git a/openroad.bzl b/openroad.bzl
+--- a/openroad.bzl
++++ b/openroad.bzl
+@@ -19,6 +19,7 @@
+ load(
+     "//private:flow.bzl",
+     _orfs_flow = "orfs_flow",
++    _orfs_openroad_synth = "orfs_openroad_synth",
+     _orfs_synth = "orfs_synth",
+     _orfs_update = "orfs_update",
+ )
+@@ -133,6 +134,7 @@
+ orfs_blender = _orfs_blender
+ orfs_flow = _orfs_flow
+ orfs_synth = _orfs_synth
++orfs_openroad_synth = _orfs_openroad_synth
+ orfs_update = _orfs_update
+ 
+ # Design config macros
+diff --git a/private/flow.bzl b/private/flow.bzl
+--- a/private/flow.bzl
++++ b/private/flow.bzl
+@@ -18,6 +18,7 @@
+     "orfs_run",
+     "orfs_squashed",
+     "orfs_synth_rule",
++    "orfs_openroad_synth_rule",
+ )
+ load(
+     "//private:stages.bzl",
+@@ -165,6 +166,19 @@
+     orfs_synth_rule(**_filter_stage_args("synth", **kwargs))
+     _create_deps_tar(kwargs.get("name"), **kwargs)
+ 
++def orfs_openroad_synth(**kwargs):
++    """Parallel to `orfs_synth`, but drives OpenROAD's integrated
++    synthesizer (`sv_elaborate` + `synthesize`, OpenROAD #10473) via
++    the ORFS Makefile target `do-syn-synth`. The script
++    `flow/scripts/synth_syn.tcl` writes `1_synth.odb` and
++    `1_synth.sdc` directly; no Yosys, no `synth_odb.tcl`.
++
++    The rule's OrfsInfo shape is identical to `orfs_synth_rule`'s, so
++    `orfs_flow(previous_stage = {"floorplan": ":<name>_syn_synth"})`
++    chains downstream stages unchanged.
++    """
++    orfs_openroad_synth_rule(**_filter_stage_args("synth", **kwargs))
++
+ def _step_name(name, variant, stage):
+     if variant:
+         name += "_" + variant
+diff --git a/private/rules.bzl b/private/rules.bzl
+--- a/private/rules.bzl
++++ b/private/rules.bzl
+@@ -1480,6 +1480,184 @@
+     executable = True,
+ )
+ 
++# --- OpenROAD integrated-synth implementation ---
++#
++# Mirrors _yosys_impl but drives OpenROAD's built-in synthesizer
++# (sv_elaborate + synthesize, OpenROAD #10473) via the ORFS Makefile
++# target `do-syn-synth`. The script `flow/scripts/synth_syn.tcl`
++# writes `1_synth.odb` and `1_synth.sdc` directly, so this rule does
++# not run Yosys, does not declare `1_2_yosys.v`, and does not invoke
++# `synth_odb.tcl` -- it is a single make-shell action.
++#
++# Provider shape matches `orfs_synth_rule` so that
++# `orfs_flow(previous_stage = {"floorplan": ":<name>_syn_synth"})`
++# chains downstream stages unchanged.
++
++def _openroad_synth_impl(ctx):
++    all_arguments = merge_arguments(
++        data_arguments(ctx) | required_arguments(ctx),
++        orfs_additional_arguments(
++            [dep[OrfsInfo] for dep in ctx.attr.deps],
++            use_pre_layout = True,
++        ),
++    )
++    config = declare_artifact(ctx, "results", "1_synth.mk")
++    ctx.actions.write(
++        output = config,
++        content = config_content(
++            ctx,
++            all_arguments,
++            [file.path for file in ctx.files.extra_configs],
++        ),
++    )
++
++    synth_logs = declare_artifacts(ctx, "logs", ["1_synth.log"])
++    synth_odb = declare_artifact(ctx, "results", "1_synth.odb")
++    synth_sdc = declare_artifact(ctx, "results", "1_synth.sdc")
++    synth_outputs = [synth_odb, synth_sdc]
++
++    commands = [_make_cmd(ctx)] + generation_commands(synth_logs + synth_outputs)
++
++    ctx.actions.run_shell(
++        arguments = [
++            "--file",
++            ctx.file._makefile.path,
++            "do-syn-synth",
++        ],
++        command = EXPAND_VERILOG_DIRS + " && ".join(commands),
++        env = config_overrides(
++            ctx,
++            verilog_arguments(ctx.files.verilog_files) |
++            flow_environment(ctx) |
++            config_environment(config),
++        ),
++        inputs = depset(
++            [config] + ctx.files.verilog_files + ctx.files.extra_configs,
++            transitive = [
++                data_inputs(ctx),
++                pdk_inputs(ctx),
++                deps_inputs(ctx),
++            ],
++        ),
++        outputs = synth_outputs + synth_logs,
++        tools = flow_inputs(ctx),
++    )
++
++    # data_arguments → JSON for downstream OrfsInfo.arguments propagation
++    # (same role the Yosys path uses 1_synth.args.json for).
++    synth_args_json = declare_artifact(ctx, "results", "1_synth.args.json")
++    ctx.actions.write(
++        output = synth_args_json,
++        content = json.encode(
++            data_arguments(ctx) | verilog_arguments(ctx.files.verilog_files),
++        ),
++    )
++
++    config_short = declare_artifact(ctx, "results", "1_synth.short.mk")
++    ctx.actions.write(
++        output = config_short,
++        content = config_content(
++            ctx,
++            arguments = hack_away_prefix(
++                arguments = merge_arguments(
++                    data_arguments(ctx) | required_arguments(ctx),
++                    orfs_additional_arguments([dep[OrfsInfo] for dep in ctx.attr.deps]),
++                ) | verilog_arguments(ctx.files.verilog_files),
++                prefix = config_short.root.path,
++            ),
++            paths = [file.short_path for file in ctx.files.extra_configs],
++        ),
++    )
++
++    outputs = synth_outputs
++
++    runfiles = ctx.runfiles(
++        [config_short] + outputs + synth_logs + ctx.files.extra_configs,
++        transitive_files = depset(
++            transitive = [
++                flow_inputs(ctx),
++                deps_inputs(ctx),
++                pdk_inputs(ctx),
++            ],
++        ),
++    )
++
++    return [
++        DefaultInfo(
++            files = depset(outputs),
++            runfiles = runfiles,
++        ),
++        OutputGroupInfo(
++            logs = depset(synth_logs),
++            reports = depset([]),
++            **{f.basename: depset([f]) for f in [config] + outputs}
++        ),
++        OrfsDepInfo(
++            make = config_short,
++            config = config_short,
++            renames = [],
++            files = depset(
++                [config_short] + ctx.files.verilog_files + ctx.files.extra_configs,
++            ),
++            runfiles = runfiles,
++        ),
++        OrfsInfo(
++            stage = "1_synth",
++            config = config,
++            variant = ctx.attr.variant,
++            odb = synth_odb,
++            gds = None,
++            lef = None,
++            lib = None,
++            lib_pre_layout = None,
++            additional_gds = depset(
++                [dep[OrfsInfo].gds for dep in ctx.attr.deps if dep[OrfsInfo].gds],
++            ),
++            additional_lefs = depset(
++                [dep[OrfsInfo].lef for dep in ctx.attr.deps if dep[OrfsInfo].lef],
++            ),
++            additional_libs = depset(
++                [dep[OrfsInfo].lib for dep in ctx.attr.deps if dep[OrfsInfo].lib],
++            ),
++            additional_libs_pre_layout = depset(
++                [
++                    (dep[OrfsInfo].lib_pre_layout or dep[OrfsInfo].lib)
++                    for dep in ctx.attr.deps
++                    if (dep[OrfsInfo].lib_pre_layout or dep[OrfsInfo].lib)
++                ],
++            ),
++            arguments = depset([synth_args_json]),
++        ),
++        ctx.attr.pdk[PdkInfo],
++        TopInfo(
++            module_top = ctx.attr.module_top,
++        ),
++        LoggingInfo(
++            logs = depset(synth_logs),
++            reports = depset([]),
++            drcs = depset([]),
++            jsons = depset([]),
++        ),
++    ]
++
++orfs_openroad_synth_rule = rule(
++    implementation = _openroad_synth_impl,
++    attrs = flow_attrs() | synth_attrs() | {
++        "_stage": attr.string(
++            default = "synth",
++        ),
++    },
++    provides = [
++        DefaultInfo,
++        OutputGroupInfo,
++        OrfsDepInfo,
++        OrfsInfo,
++        PdkInfo,
++        TopInfo,
++        LoggingInfo,
++    ],
++)
++
+ # --- Make-based stage implementation ---
+ 
+ _PRE_LAYOUT_STAGES = ("2_floorplan", "3_place")

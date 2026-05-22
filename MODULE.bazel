@@ -52,6 +52,7 @@ git_override(
     patch_strip = 1,
     patches = [
         "//patches/bazel-orfs:0001-render_gds-monkey-patch-PDK_CONFIGS-not-gdsii_use_custom_config.patch",
+        "//patches/bazel-orfs:0002-add-orfs_openroad_synth-rule-and-macro.patch",
     ],
     remote = BAZEL_ORFS_REMOTE,
 )
