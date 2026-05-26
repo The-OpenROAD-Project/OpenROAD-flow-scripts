@@ -36,23 +36,14 @@ git_override(
 bazel_dep(name = "bazel-orfs", dev_dependency = True)
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
-BAZEL_ORFS_COMMIT = "3a5ddd7eb48c363717e65903ae4573d528327fd3"
+BAZEL_ORFS_COMMIT = "6ebadeb4be5c9ada103081c9a5e668c014126616"
 
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
 # To bump version, run: bazelisk run @bazel-orfs//:bump
-#
-# `patches =` keeps small bazel-orfs fixes vendored in this repo while
-# we iterate, instead of round-tripping every change through a
-# bazel-orfs PR + pin bump.  When a patch lands upstream, drop the
-# entry here and bump BAZEL_ORFS_COMMIT.
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
-    patch_strip = 1,
-    patches = [
-        "//patches/bazel-orfs:0001-render_gds-monkey-patch-PDK_CONFIGS-not-gdsii_use_custom_config.patch",
-    ],
     remote = BAZEL_ORFS_REMOTE,
 )
 
