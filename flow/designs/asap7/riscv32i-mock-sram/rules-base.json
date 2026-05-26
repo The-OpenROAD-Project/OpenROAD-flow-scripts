@@ -1,6 +1,6 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "52b64582f28d0ff10363e398dcb68a7ada693e7a",
+        "value": "bad877d8f39f15d290e37aecfc64b22ef6e33bf7",
         "compare": "==",
         "level": "warning"
     },
@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -230.0,
+        "value": -478.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
