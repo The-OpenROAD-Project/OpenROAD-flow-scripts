@@ -1,4 +1,7 @@
 # Build working directories
+tools/OpenROAD/build/
+tools/yosys-slang/build/
+tools/kepler-formal/build/
 
 # Build files
 build_openroad.log
