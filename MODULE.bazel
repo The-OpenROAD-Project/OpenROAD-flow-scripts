@@ -44,6 +44,25 @@ BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
+    patch_strip = 1,
+    patches = [
+        # Parent synth depends only on each macro's _synth target
+        # (not _generate_abstract). Companion to ORFS-side changes
+        # in flow/scripts/{synth_odb.tcl,load.tcl} — synth_odb.tcl
+        # emits port-only stub LEF + Liberty (gated on
+        # ORFS_WRITE_SYNTH_STUBS=1) that the parent's synth_odb
+        # consumes in place of waiting for the macro's
+        # floorplan/place/cts. Floorplan onwards still pulls real
+        # LEFs via deps on _generate_abstract. The primary motivation
+        # is `make gui_synth` turnaround for engineers iterating on
+        # RTL: today a parent's synthesis blocks on every child
+        # macro's full PD flow, which can be hours on a large
+        # hierarchical design; with these patches it blocks only on
+        # each child's synthesis. To upstream into bazel-orfs.
+        "//orfs-bazel-patches:synth-stubs-env.patch",
+        "//orfs-bazel-patches:synth-stubs-rules.patch",
+        "//orfs-bazel-patches:synth-stubs-flow.patch",
+    ],
     remote = BAZEL_ORFS_REMOTE,
 )
 

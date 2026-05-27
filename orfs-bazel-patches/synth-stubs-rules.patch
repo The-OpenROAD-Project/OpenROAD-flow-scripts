@@ -1,0 +1,69 @@
+private/rules.bzl: SYNTH_STUB_OUTPUTS + OrfsInfo.lef/lib_pre_layout for synth
+
+--- a/private/rules.bzl
++++ b/private/rules.bzl
+@@ -744,8 +744,21 @@
+ 
+ CANON_OUTPUT = "1_1_yosys_canonicalize.rtlil"
+ SYNTH_OUTPUTS = ["1_2_yosys.v", "1_2_yosys.sdc", "1_synth.sdc", "mem.json"]
++# Synth-stage stub artifacts: port-only LEF + Liberty emitted by
++# synth_odb.tcl (when ORFS_WRITE_SYNTH_STUBS=1). Parents instantiating
++# this design as a macro consume them at synth_odb time so they don't
++# have to wait for our floorplan/place/cts to produce real LEF and
++# post-place Liberty. Augmented in place by lefin when the real LEF
++# is read at the parent's floorplan stage (load.tcl's
++# ORFS_AUGMENT_STUB_MASTERS path). Filename is per-design to avoid
++# lefin's `library (1_synth) already exists` error when a parent
++# reads multiple sibling stubs (lefin derives library name from LEF
++# basename).
+ SYNTH_REPORTS = ["synth_stat.txt", "synth_mocked_memories.txt"]
+ 
++def synth_stub_outputs(module_top):
++    return ["{}_1_synth.lef".format(module_top), "{}_1_synth.lib".format(module_top)]
++
+ def _yosys_parallel_synth(ctx, config, canon_output, synth_outputs, synth_logs, synth_reports, num_partitions, save_odb, all_arguments = {}):
+     """Parallel synthesis: keep → kept-json → N partitions → merge.
+ 
+@@ -1123,7 +1136,10 @@
+                     deps_inputs(ctx),
+                 ],
+             ),
+-            outputs = [synth_outputs["1_synth.odb"], synth_outputs["1_synth.sdc"]],
++            outputs = [
++                synth_outputs["1_synth.odb"],
++                synth_outputs["1_synth.sdc"],
++            ] + [synth_outputs[n] for n in synth_stub_outputs(ctx.attr.module_top)],
+             tools = yosys_and_flow_tools,
+         )
+ 
+@@ -1199,8 +1215,9 @@
+ 
+     synth_logs = declare_artifacts(ctx, "logs", ["1_2_yosys.log", "1_2_yosys_metrics.log"] + (["1_synth.log"] if save_odb else []))
+ 
++    stub_outputs = synth_stub_outputs(ctx.attr.module_top) if save_odb else []
+     synth_outputs = {}
+-    for output in SYNTH_OUTPUTS + (["1_synth.odb"] if save_odb else []):
++    for output in SYNTH_OUTPUTS + (["1_synth.odb"] + stub_outputs if save_odb else []):
+         synth_outputs[output] = declare_artifact(ctx, "results", output)
+ 
+     synth_reports = declare_artifacts(ctx, "reports", SYNTH_REPORTS)
+@@ -1415,9 +1432,17 @@
+             variant = ctx.attr.variant,
+             odb = synth_outputs.get("1_synth.odb"),
+             gds = None,
+-            lef = None,
++            # Port-only stub LEF + Liberty written by synth_odb.tcl
++            # under ORFS_WRITE_SYNTH_STUBS=1. A parent that targets
++            # this rule (instead of <name>_generate_abstract) for its
++            # synth-stage deps consumes these stubs and schedules
++            # without waiting for our floorplan/place/cts. lefin
++            # augments stub masters with full geometry when the real
++            # macro LEF is read at the parent's floorplan stage
++            # (load.tcl's ORFS_AUGMENT_STUB_MASTERS path).
++            lef = synth_outputs.get("{}_1_synth.lef".format(ctx.attr.module_top)),
+             lib = None,
+-            lib_pre_layout = None,
++            lib_pre_layout = synth_outputs.get("{}_1_synth.lib".format(ctx.attr.module_top)),
+             additional_gds = depset(
+                 [dep[OrfsInfo].gds for dep in ctx.attr.deps if dep[OrfsInfo].gds],
+             ),

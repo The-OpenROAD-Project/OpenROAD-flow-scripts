@@ -1,0 +1,29 @@
+private/environment.bzl: ORFS_WRITE_SYNTH_STUBS + ORFS_AUGMENT_STUB_MASTERS env
+
+--- a/private/environment.bzl
++++ b/private/environment.bzl
+@@ -56,6 +56,24 @@
+         "KLAYOUT_CMD": _executable_path(_klayout_attr(ctx)),
+         "OPENROAD_EXE": _executable_path(ctx.attr.openroad),
+         "OPENSTA_EXE": _executable_path(ctx.attr.opensta),
++        # See flow/scripts/synth_odb.tcl and flow/scripts/load.tcl in
++        # OpenROAD-flow-scripts:
++        # - WRITE_SYNTH_STUBS=1 tells synth_odb.tcl to emit port-only
++        #   stub <design>_1_synth.lef + .lib for this design so parents
++        #   can consume them at synth time without waiting on this
++        #   macro's floorplan/place/cts.
++        # - AUGMENT_STUB_MASTERS=1 tells load.tcl's .odb branch to
++        #   read_lef ADDITIONAL_LEFS after read_db so lefin augments
++        #   stub masters (1×1, no geometry) baked into 1_synth.odb
++        #   with the real macro LEF at floorplan and later stages.
++        # Both env vars are no-ops on ORFS revisions that don't have
++        # the matching synth-stub-masters changes in load.tcl /
++        # synth_odb.tcl. AUGMENT_STUB_MASTERS is currently experimental
++        # — it requires an OpenROAD bbox-refresh API for the full PD
++        # flow to work end-to-end; until then it's only useful with
++        # synth-only targets such as gui_synth.
++        "ORFS_WRITE_SYNTH_STUBS": "1",
++        "ORFS_AUGMENT_STUB_MASTERS": "1",
+     } | orfs_environment(ctx)
+ 
+ def yosys_environment(ctx):

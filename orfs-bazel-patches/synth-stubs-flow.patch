@@ -1,0 +1,43 @@
+private/flow.bzl: substitute macros->_synth for synth deps in _orfs_pass
+
+--- a/private/flow.bzl
++++ b/private/flow.bzl
+@@ -38,6 +38,29 @@
+     kwargs.pop("yosys", None)
+     return kwargs
+ 
++_GENERATE_ABSTRACT_SUFFIX = "_generate_abstract"
++
++def _synth_macros(macros):
++    """Substitute each `<name>_generate_abstract` macro label with its
++    `<name>_synth` sibling so the parent's synth Bazel action depends
++    only on each child macro's synth target, not the macro's full
++    PD flow.
++
++    The substituted target's OrfsInfo carries a port-only stub LEF
++    (1_synth.lef) and stub Liberty (1_synth.lib) emitted by
++    synth_odb.tcl under ORFS_WRITE_SYNTH_STUBS=1. Labels that
++    don't follow the `_generate_abstract` convention are passed
++    through unchanged (e.g. behavioral macros without a synth flow).
++    """
++    out = []
++    for m in macros:
++        s = str(m)
++        if s.endswith(_GENERATE_ABSTRACT_SUFFIX):
++            out.append(s[:-len(_GENERATE_ABSTRACT_SUFFIX)] + "_synth")
++        else:
++            out.append(m)
++    return out
++
+ def _merge_extra_arguments(a, b):
+     """Merge two {stage: [label, ...]} dicts, concatenating per-stage lists."""
+     merged = dict(a)
+@@ -518,7 +541,7 @@
+                 stage_arguments = stage_arguments,
+                 arguments = arguments,
+                 sources = sources,
+-                deps = macros,
++                deps = _synth_macros(macros),
+                 kept_macros = kept_macros if kept_macros != None else {},
+                 kept_macros_enabled = kept_macros != None,
+                 module_top = top,
