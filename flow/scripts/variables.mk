@@ -17,7 +17,7 @@ export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
 export TEST_DIR      ?= $(FLOW_HOME)/test
 
-PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
+PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 ihp-sg13cmos5l gf180
 
 ifeq ($(origin PLATFORM), undefined)
   $(error PLATFORM variable not set.)
