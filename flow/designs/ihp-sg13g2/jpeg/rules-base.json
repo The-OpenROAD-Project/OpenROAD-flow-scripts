@@ -1,4 +1,14 @@
 {
+    "synth__canonical_netlist__hash": {
+        "value": "d3f3846909d24de41ed7f1dfcefe047a6e1ed607",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__netlist__hash": {
+        "value": "11e38d8a9ded5dc5aa8465f4a0920d256ce76287",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 1499147.11,
         "compare": "<="
@@ -76,7 +86,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 142,
+        "value": 114,
         "compare": "<="
     },
     "finish__timing__setup__ws": {

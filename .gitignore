@@ -103,6 +103,8 @@ bazel-bin
 bazel-out
 bazel-OpenROAD-flow-scripts
 bazel-testlogs
+MODULE.bazel.lock
 
 # python venv
 venv/
+tmp/

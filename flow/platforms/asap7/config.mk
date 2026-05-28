@@ -66,6 +66,7 @@ export SET_RC_TCL              = $(PLATFORM_DIR)/setRC.tcl
 export MIN_ROUTING_LAYER       ?= M2
 export MIN_CLK_ROUTING_LAYER   ?= M4
 export MAX_ROUTING_LAYER       ?= M7
+export ENABLE_RESISTANCE_AWARE ?= 1
 
 # Define fastRoute tcl
 export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl

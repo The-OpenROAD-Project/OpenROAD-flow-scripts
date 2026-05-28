@@ -15,15 +15,9 @@ COPY --link build_openroad.sh build_openroad.sh
 
 FROM orfs-base AS orfs-builder-base
 
-# Inject compiler wrapper scripts that append the macros
-RUN mkdir -p /usr/local/bin/wrapped-cc && \
-    echo '#!/bin/sh' > /usr/local/bin/wrapped-cc/gcc && \
-    echo 'exec /usr/bin/gcc -D__TIME__="\"0\"" -D__DATE__="\"0\"" -D__TIMESTAMP__="\"0\"" -Wno-builtin-macro-redefined "$@"' >> /usr/local/bin/wrapped-cc/gcc && \
-    chmod +x /usr/local/bin/wrapped-cc/gcc && \
-    ln -sf /usr/local/bin/wrapped-cc/gcc /usr/local/bin/wrapped-cc/cc && \
-    echo '#!/bin/sh' > /usr/local/bin/wrapped-cc/g++ && \
-    echo 'exec /usr/bin/g++ -D__TIME__="\"0\"" -D__DATE__="\"0\"" -D__TIMESTAMP__="\"0\"" -Wno-builtin-macro-redefined "$@"' >> /usr/local/bin/wrapped-cc/g++ && \
-    chmod +x /usr/local/bin/wrapped-cc/g++
+# Add compiler wrapper scripts for reproducible builds
+COPY --link etc/setup_compiler_wrappers.sh /tmp/
+RUN sh /tmp/setup_compiler_wrappers.sh && rm /tmp/setup_compiler_wrappers.sh
 
 # Prepend wrapper directory to PATH so they override system compilers
 ENV PATH="/usr/local/bin/wrapped-cc:$PATH"
@@ -50,6 +44,19 @@ if [ -n "${verificPath}" ]; then
     rm -rf "${verificPath}"
 fi
 EOF
+
+# Collect LICENSE files from tool source trees into the install directory so
+# they are available in the final image. tools/OpenROAD/src/sta is excluded
+# because it is covered by a separate commercial license agreement.
+RUN find /OpenROAD-flow-scripts/tools \( -name "*LICENSE*" -o -name "*LICENSES*" \) \
+    | grep -v '/OpenROAD/src/sta/' \
+    | grep -v '/AutoTuner/' \
+    | grep -v '^/OpenROAD-flow-scripts/tools/install/' \
+    | while IFS= read -r f; do \
+        rel="${f#/OpenROAD-flow-scripts/tools/}"; \
+        mkdir -p "/OpenROAD-flow-scripts/tools/install/licenses/$(dirname "$rel")"; \
+        cp -r "$f" "/OpenROAD-flow-scripts/tools/install/licenses/$rel"; \
+    done
 
 FROM orfs-base
 

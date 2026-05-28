@@ -1,3 +1,11 @@
+// (* keep_hierarchy *) preserves the fifo1 instance boundary (fifo_in,
+// fifo_out in mock_cpu) through Yosys flattening so the SDC can
+// reference fifo_in/<pin> and fifo_out/<pin> directly. SYNTH_KEEP_MODULES
+// doesn't work here because hierarchy elaboration specializes fifo1 into
+// $paramod$<hash>\fifo1 variants before the flow's SYNTH_KEEP_MODULES
+// loop runs. An RTL attribute rides through elaboration onto each
+// specialized clone.
+(* keep_hierarchy *)
 module fifo1 #(
     parameter DSIZE = 8,
     parameter ASIZE = 4

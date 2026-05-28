@@ -32,10 +32,6 @@ proc report_unused_masters { } {
 
 report_unused_masters
 
-# Eliminate dead logic
-eliminate_dead_logic
-
-
 #Run check_setup
 puts "\n=========================================================================="
 puts "Floorplan check_setup"
@@ -116,6 +112,22 @@ if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
 
 source_env_var_if_exists FOOTPRINT_TCL
 
+# The transforms below (repair_tie_fanout, replace_arith_modules,
+# remove_buffers, repair_timing_helper) look like synthesis-stage
+# operations: they all act on the netlist and don't touch placement.
+# But they DO depend on having a floorplan in place — initialize_floorplan
+# above placed the bterms on the die boundary and set_routing_layers
+# configured the layer stack used for parasitic estimation. Without that
+# context, top-level ports look like they're at (0,0) and timing analysis
+# misjudges paths into/out of I/O.
+#
+# PR #4187 tried moving this block to synth_odb.tcl. It regressed setup
+# TNS by 1.7-46x on I/O-heavy designs (asap7/aes-block 2.5x, asap7/jpeg_lvt
+# 37x, asap7/swerv_wrapper 46x finish-hold-TNS, nangate45/ariane133 1.7x)
+# while leaving internal-logic-dominated designs like asap7/ibex
+# unchanged. The move was reverted; only eliminate_dead_logic stayed in
+# synth_odb.tcl because it is a pure netlist transform that doesn't
+# depend on placement or routing-layer context.
 if { !$::env(SKIP_REPAIR_TIE_FANOUT) } {
   # This needs to come before any call to remove_buffers.  You could have one
   # tie driving multiple buffers that drive multiple outputs.

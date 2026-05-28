@@ -1,4 +1,14 @@
 {
+    "synth__canonical_netlist__hash": {
+        "value": "N/A",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__netlist__hash": {
+        "value": "b6f8ea66f3c6e3acaa00d44dd0b50c5f80dbaaef",
+        "compare": "==",
+        "level": "warning"
+    },
     "constraints__clocks__count": {
         "value": 1,
         "compare": "=="
@@ -88,7 +98,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -2170.0,
+        "value": -4350.0,
         "compare": ">="
     },
     "finish__design__instance__area": {

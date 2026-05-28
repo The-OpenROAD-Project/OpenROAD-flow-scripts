@@ -1,4 +1,14 @@
 {
+    "synth__canonical_netlist__hash": {
+        "value": "79bb486be7570e7e421fd58aa35e4fd0cbbafb61",
+        "compare": "==",
+        "level": "warning"
+    },
+    "synth__netlist__hash": {
+        "value": "e9b3e4abd3ee516a83a28b91bda7e49828af43df",
+        "compare": "==",
+        "level": "warning"
+    },
     "synth__design__instance__area__stdcell": {
         "value": 358000.0,
         "compare": "<="

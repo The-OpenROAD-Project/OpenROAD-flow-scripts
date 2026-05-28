@@ -200,7 +200,6 @@ do-klayout:
 		--template $(KLAYOUT_TECH_FILE) \
 		--output $(OBJECTS_DIR)/klayout.lyt \
 		--lef-files $(OBJECTS_DIR)/klayout_tech.lef $(SC_LEF) $(ADDITIONAL_LEFS) \
-		--reference-dir $(RESULTS_DIR) \
 		--map-files $(wildcard $(FLOW_HOME)/platforms/$(PLATFORM)/*map)
 
 $(OBJECTS_DIR)/klayout_wrap.lyt: $(KLAYOUT_TECH_FILE) $(OBJECTS_DIR)/klayout_tech.lef
@@ -212,8 +211,7 @@ do-klayout_wrap:
 	$(PYTHON_EXE) $(UTILS_DIR)/generate_klayout_tech.py \
 		--template $(KLAYOUT_TECH_FILE) \
 		--output $(OBJECTS_DIR)/klayout_wrap.lyt \
-		--lef-files $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS) \
-		--reference-dir $(OBJECTS_DIR)/def
+		--lef-files $(OBJECTS_DIR)/klayout_tech.lef $(WRAP_LEFS)
 
 $(WRAPPED_LEFS):
 	mkdir -p $(OBJECTS_DIR)/lef $(OBJECTS_DIR)/def
@@ -315,17 +313,20 @@ $(OBJECTS_DIR)/copyright.txt:
 	@touch $(OBJECTS_DIR)/copyright.txt
 
 define OPEN_GUI_SHORTCUT
-.PHONY: gui_$(1) open_$(1)
+.PHONY: gui_$(1) open_$(1) web_$(1)
 gui_$(1): gui_$(2)
 open_$(1): open_$(2)
+web_$(1): web_$(2)
 endef
 
 define OPEN_GUI
-.PHONY: open_$(1) gui_$(1)
+.PHONY: open_$(1) gui_$(1) web_$(1)
 open_$(1):
 	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_NO_EXIT_CMD) $(SCRIPTS_DIR)/open.tcl
 gui_$(1):
 	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_GUI_CMD) $(SCRIPTS_DIR)/open.tcl
+web_$(1):
+	$(2)=$(RESULTS_DIR)/$(1) $(OPENROAD_WEB_CMD) $(SCRIPTS_DIR)/open.tcl
 endef
 
 # Enables "make gui_5_1_grt-failed"

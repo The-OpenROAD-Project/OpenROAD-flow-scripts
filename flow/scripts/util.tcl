@@ -7,13 +7,22 @@ proc log_cmd { cmd args } {
   # log the command, escape arguments with spaces
   set log_cmd "$cmd[join [lmap arg $args { format " %s" [expr { [string match {* *} $arg] ? "\"$arg\"" : "$arg" }] }] ""]" ;# tclint-disable-line line-length
   puts $log_cmd
-  set start [clock seconds]
+  # Tcl's `clock` lives in clock.tcl, auto-loaded from TCL_LIBRARY. Hermetic
+  # build environments (e.g. Bazel linking yosys against @tcl_lang) don't
+  # always ship the Tcl library in runfiles, so `clock` may be undefined.
+  # The timing log is cosmetic — skip it when `clock` isn't available.
+  set has_clock [expr { [info commands clock] ne "" }]
+  if { $has_clock } {
+    set start [clock seconds]
+  }
   set result [uplevel 1 [list $cmd {*}$args]]
-  set time [expr { [clock seconds] - $start }]
-  if { $time >= 5 } {
-    # Ideally we'd use a single line, but the command can output text
-    # and we don't want to mix it with the log, so output the time it took afterwards.
-    puts "Took $time seconds: $log_cmd"
+  if { $has_clock } {
+    set time [expr { [clock seconds] - $start }]
+    if { $time >= 5 } {
+      # Ideally we'd use a single line, but the command can output text
+      # and we don't want to mix it with the log, so output the time it took afterwards.
+      puts "Took $time seconds: $log_cmd"
+    }
   }
   return $result
 }
