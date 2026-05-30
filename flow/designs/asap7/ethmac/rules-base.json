@@ -90,11 +90,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -98.5,
+        "value": -98.2,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -1450.0,
+        "value": -1430.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
