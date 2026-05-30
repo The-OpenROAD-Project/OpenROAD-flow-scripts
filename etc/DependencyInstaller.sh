@@ -36,23 +36,24 @@ _installPipCommon() {
         source /opt/rh/rh-python38/enable
         set -u
     fi
-    local pkgs="pandas numpy firebase_admin click pyyaml yamlfix"
+    local lockfile
+    lockfile="$(dirname "$(realpath "$0")")/requirements-common_lock.txt"
     if [[ "$OSTYPE" == "darwin"* ]]; then
         if [[ "$EUID" -eq 0 ]]; then
             echo "Error: Do NOT run with sudo."
             exit 1
         fi
         if [[ -n "${VIRTUAL_ENV:-}" ]]; then
-            pip3 install --no-cache-dir -U $pkgs
+            pip3 install --no-cache-dir -r "$lockfile"
         else
             echo "Error: Activate a virtual environment on macOS."
             exit 1
         fi
     else
         if [[ $(id -u) == 0 ]]; then
-            pip3 install --no-cache-dir -U $pkgs
+            pip3 install --no-cache-dir -r "$lockfile"
         else
-            pip3 install --no-cache-dir --user -U $pkgs
+            pip3 install --no-cache-dir --user -r "$lockfile"
         fi
     fi
 }
