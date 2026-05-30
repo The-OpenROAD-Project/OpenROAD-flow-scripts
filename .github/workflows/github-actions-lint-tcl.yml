@@ -15,10 +15,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.10"
+
       - name: Install Dependencies
         run: |
           python3 -m venv venv
-          venv/bin/pip install tclint==0.7.0
+          venv/bin/pip install -r .github/requirements/tclint_lock.txt
 
       - name: Lint
         run: |
