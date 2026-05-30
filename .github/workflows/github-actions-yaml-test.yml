@@ -20,14 +20,14 @@ jobs:
           flow/scripts/variables.json
           docs/user/FlowVariables.md
           yamlfix.toml
-          .github/requirements/yaml-test_lock.txt
+          .github/requirements/requirements_lock.txt
     - uses: actions/setup-python@v6
       with:
         python-version: "3.10"
     - name: Install dependencies
       run: |
         python3 -m venv venv
-        venv/bin/pip install --quiet -r .github/requirements/yaml-test_lock.txt
+        venv/bin/pip install --quiet -r .github/requirements/requirements_lock.txt
     - name: Run generate-variables-docs.py
       run: |
         venv/bin/python3 flow/scripts/generate-variables-docs.py

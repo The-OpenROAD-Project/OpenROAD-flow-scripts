@@ -22,7 +22,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python3 -m venv venv
-          venv/bin/pip install -r .github/requirements/tclint_lock.txt
+          venv/bin/pip install -r .github/requirements/requirements_lock.txt
 
       - name: Lint
         run: |
