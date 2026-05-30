@@ -25,7 +25,7 @@ jobs:
       - name: Install Python Packages
         run: |
           python3 -m venv venv
-          venv/bin/pip install firebase-admin
+          venv/bin/pip install -r .github/requirements/update-rules_lock.txt
       - name: Execute Python Script Update
         env:
           CREDS_FILE: ${{ secrets.CREDS_FILE }}
