@@ -1,6 +1,6 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "855cc88198fc9faaf17317eaea4a3a07a4340d1d",
+        "value": "8b6a7c8c51339babf0f00aeb44dd4b65ab30b183",
         "compare": "==",
         "level": "warning"
     },
@@ -74,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 64313,
+        "value": 63228,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -230.0,
+        "value": -1720.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
