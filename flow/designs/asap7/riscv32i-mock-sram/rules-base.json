@@ -1,6 +1,6 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "52b64582f28d0ff10363e398dcb68a7ada693e7a",
+        "value": "855cc88198fc9faaf17317eaea4a3a07a4340d1d",
         "compare": "==",
         "level": "warning"
     },
@@ -74,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 64405,
+        "value": 64313,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
