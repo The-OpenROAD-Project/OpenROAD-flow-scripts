@@ -90,7 +90,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -61.6,
+        "value": -61.1,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
