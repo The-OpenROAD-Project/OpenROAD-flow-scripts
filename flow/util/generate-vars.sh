@@ -60,8 +60,11 @@ while read -r VAR; do
         # symlink-resolved form may appear in values. Skip when WORK_HOME is
         # FLOW_HOME, which is handled via ${FLOW_HOME} below.
         for work_path in "${WORK_HOME:-.}" "${WORK_ROOT}"; do
+            work_path="${work_path%/}"
             if [[ "${work_path}" == /* && "${work_path}" != "${FLOW_ROOT}" ]]; then
-                value=$(sed -e "s,\(^\|[: \"']\)${work_path},\1.,g" <<< "${value}")
+                # require a path boundary after the match so e.g. /tmp/work
+                # does not corrupt /tmp/work_other
+                value=$(sed -e "s,\(^\|[: \"']\)${work_path}\(/\|[: \"']\|$\),\1.\2,g" <<< "${value}")
             fi
         done
         for path in workspace platforms; do

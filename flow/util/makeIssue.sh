@@ -132,9 +132,9 @@ fi
 # the tarball root instead of recreating the absolute path (e.g. tmp/...).
 # Both the literal and the symlink-resolved form may appear in member names.
 WORK_ROOT=$(realpath "${WORK_HOME:-.}")
-WORK_HOME_TRANSFORMS=(--transform="s|^${ISSUE_TARGET}_${ISSUE_TAG}${WORK_ROOT}/|${ISSUE_TARGET}_${ISSUE_TAG}/|S")
-if [[ "${WORK_HOME:-.}" == /* && "${WORK_HOME:-.}" != "${WORK_ROOT}" ]]; then
-    WORK_HOME_TRANSFORMS+=(--transform="s|^${ISSUE_TARGET}_${ISSUE_TAG}${WORK_HOME}/|${ISSUE_TARGET}_${ISSUE_TAG}/|S")
+WORK_HOME_TRANSFORMS=(--transform="s|^${ISSUE_TARGET}_${ISSUE_TAG}${WORK_ROOT}//*|${ISSUE_TARGET}_${ISSUE_TAG}/|S")
+if [[ "${WORK_HOME:-.}" == /* && "${WORK_HOME%/}" != "${WORK_ROOT}" ]]; then
+    WORK_HOME_TRANSFORMS+=(--transform="s|^${ISSUE_TARGET}_${ISSUE_TAG}${WORK_HOME%/}//*|${ISSUE_TARGET}_${ISSUE_TAG}/|S")
 fi
 tar --use-compress-program=${COMPRESS} \
     --ignore-failed-read -chf ${TAR_NAME} \
