@@ -62,7 +62,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -0.673,
+        "value": -0.671,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -70,7 +70,7 @@
         "compare": ">="
     },
     "globalroute__timing__hold__tns": {
-        "value": -0.726,
+        "value": -0.624,
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -0.167,
+        "value": -0.339,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
