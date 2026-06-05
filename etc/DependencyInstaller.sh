@@ -37,7 +37,7 @@ _installPipCommon() {
         set -u
     fi
     local lockfile
-    lockfile="$(dirname "$(realpath "$0")")/requirements-common_lock.txt"
+    lockfile="$(cd "$(dirname "$0")" && pwd)/requirements-common_lock.txt"
     if [[ "$OSTYPE" == "darwin"* ]]; then
         if [[ "$EUID" -eq 0 ]]; then
             echo "Error: Do NOT run with sudo."
