@@ -2,12 +2,15 @@
 
 set -euo pipefail
 
-# Make sure we are on the correct folder before beginning
+# Capture the script's absolute directory before any cd
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    cd "$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' $0))/../"
+    _script_dir="$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' $0))"
 else
-    cd "$(dirname $(readlink -f $0))/../"
+    _script_dir="$(dirname $(readlink -f $0))"
 fi
+
+# Make sure we are on the correct folder before beginning
+cd "${_script_dir}/../"
 
 # package versions
 klayoutVersion=0.30.7
@@ -37,7 +40,7 @@ _installPipCommon() {
         set -u
     fi
     local lockfile
-    lockfile="$(cd "$(dirname "$0")" && pwd)/requirements-common_lock.txt"
+    lockfile="${_script_dir}/requirements-common_lock.txt"
     if [[ "$OSTYPE" == "darwin"* ]]; then
         if [[ "$EUID" -eq 0 ]]; then
             echo "Error: Do NOT run with sudo."
