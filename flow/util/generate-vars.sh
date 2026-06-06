@@ -3,6 +3,7 @@ set -euo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 FLOW_ROOT=$(realpath "${FLOW_HOME}")
 ORFS_ROOT=$(realpath "${FLOW_HOME}/../")
+WORK_ROOT=$(realpath "${WORK_HOME:-.}")
 
 # exclude system and CI variables
 EXCLUDED_VARS='MAKE|MAKEFLAGS|PERL5LIB|QT_QPA_PLATFORM'
@@ -54,6 +55,18 @@ while read -r VAR; do
 
     # PII members use PRESERVE_PATHS=1 make issue ...
     if [[ ! -v PRESERVE_PATHS ]]; then
+        # Relativize paths under WORK_HOME (e.g. a CI workspace); makeIssue.sh
+        # stores those files at the tarball root. Both the literal and the
+        # symlink-resolved form may appear in values. Skip when WORK_HOME is
+        # FLOW_HOME, which is handled via ${FLOW_HOME} below.
+        for work_path in "${WORK_HOME:-.}" "${WORK_ROOT}"; do
+            work_path="${work_path%/}"
+            if [[ "${work_path}" == /* && "${work_path}" != "${FLOW_ROOT}" ]]; then
+                # require a path boundary after the match so e.g. /tmp/work
+                # does not corrupt /tmp/work_other
+                value=$(sed -e "s,\(^\|[: \"']\)${work_path}\(/\|[: \"']\|$\),\1.\2,g" <<< "${value}")
+            fi
+        done
         for path in workspace platforms; do
             value=$(sed -e "s,\(^\|[: \"']\)/${path},\1./${path},g" <<< "${value}")
         done
