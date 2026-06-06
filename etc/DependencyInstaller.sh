@@ -2,12 +2,15 @@
 
 set -euo pipefail
 
-# Make sure we are on the correct folder before beginning
+# Capture the script's absolute directory before any cd
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    cd "$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' $0))/../"
+    _script_dir="$(dirname $(perl -e 'use Cwd "abs_path";print abs_path(shift)' $0))"
 else
-    cd "$(dirname $(readlink -f $0))/../"
+    _script_dir="$(dirname $(readlink -f $0))"
 fi
+
+# Make sure we are on the correct folder before beginning
+cd "${_script_dir}/../"
 
 # package versions
 klayoutVersion=0.30.7
@@ -36,23 +39,24 @@ _installPipCommon() {
         source /opt/rh/rh-python38/enable
         set -u
     fi
-    local pkgs="pandas numpy firebase_admin click pyyaml yamlfix"
+    local lockfile
+    lockfile="${_script_dir}/requirements-common_lock.txt"
     if [[ "$OSTYPE" == "darwin"* ]]; then
         if [[ "$EUID" -eq 0 ]]; then
             echo "Error: Do NOT run with sudo."
             exit 1
         fi
         if [[ -n "${VIRTUAL_ENV:-}" ]]; then
-            pip3 install --no-cache-dir -U $pkgs
+            pip3 install --no-cache-dir -r "$lockfile"
         else
             echo "Error: Activate a virtual environment on macOS."
             exit 1
         fi
     else
         if [[ $(id -u) == 0 ]]; then
-            pip3 install --no-cache-dir -U $pkgs
+            pip3 install --no-cache-dir -r "$lockfile"
         else
-            pip3 install --no-cache-dir --user -U $pkgs
+            pip3 install --no-cache-dir --user -r "$lockfile"
         fi
     fi
 }
