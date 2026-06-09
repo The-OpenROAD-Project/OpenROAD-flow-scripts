@@ -16,8 +16,8 @@ export GDS_FILES = $(PLATFORM_DIR)/gds/gt2_6t_std_cells_w31_lvt.gds \
                    $(ADDITIONAL_GDS)
 
 # Cells that should not be used in synthesis/optimization
-export DONT_USE_CELLS = gt2_6t_filler_w31_lvt gt2_6t_tapbspdn_w31_lvt \
-                       gt2_6t_tapfspdn_w31_lvt gt2_6t_decapcc_w31_lvt \
+export DONT_USE_CELLS = gt2_6t_filler_w31_lvt gt2_6t_tap_w31_lvt \
+                       gt2_6t_decapcc_w31_lvt \
                        gt2_6t_tiehigh_w31_lvt gt2_6t_tielow_w31_lvt
 
 # Fill cells used in fill cell insertion
@@ -56,7 +56,7 @@ export PDN_TCL ?= $(PLATFORM_DIR)/pdn.tcl
 
 # Endcap and Welltie cells
 export TAPCELL_TCL ?= $(PLATFORM_DIR)/tapcell.tcl
-export TAP_CELL_NAME = gt2_6t_tapbspdn_w31_lvt
+export TAP_CELL_NAME = gt2_6t_tap_w31_lvt
 
 export MACRO_PLACE_HALO ?= 1.0 1.0
 
