@@ -630,10 +630,14 @@ DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
-USE_NEGOTIATION:
+DPL_USE_OLD_DIAMOND:
   description: |
-    Enable using negotiation legalizer for detailed placement.
+    Use the former diamond search legalizer for detailed placement instead of the default negotiation legalizer.
   default: 0
+  stages:
+    - place
+    - cts
+    - grt
 GPL_TIMING_DRIVEN:
   description: |
     Specifies whether the placer should use timing driven placement.

@@ -306,6 +306,15 @@
   "DONT_USE_CELLS": {
     "description": "Dont use cells eases pin access in detailed routing.\n"
   },
+  "DPL_USE_OLD_DIAMOND": {
+    "default": 0,
+    "description": "Use the former diamond search legalizer for detailed placement instead of the default negotiation legalizer.\n",
+    "stages": [
+      "place",
+      "cts",
+      "grt"
+    ]
+  },
   "DPO_MAX_DISPLACEMENT": {
     "default": "5 1",
     "description": "Specifies how far an instance can be moved when optimizing.\n"
@@ -1436,10 +1445,6 @@
   "USE_FILL": {
     "default": 0,
     "description": "Whether to perform metal density filling.\n"
-  },
-  "USE_NEGOTIATION": {
-    "default": 0,
-    "description": "Enable using negotiation legalizer for detailed placement.\n"
   },
   "VERILOG_DEFINES": {
     "description": "Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`\n",

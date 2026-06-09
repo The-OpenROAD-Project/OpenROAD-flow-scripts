@@ -47,7 +47,7 @@ set_placement_padding -global \
   -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 
 set dpl_args {}
-append_env_var dpl_args USE_NEGOTIATION -use_negotiation 0
+append_env_var dpl_args DPL_USE_OLD_DIAMOND -use_old_diamond 0
 set result [catch { log_cmd detailed_placement {*}$dpl_args } msg]
 if { $result != 0 } {
   save_progress 4_1_error
