@@ -70,7 +70,7 @@ export PLACE_DENSITY ?= 0.40
 #---------------------------------------------------------
 export MIN_ROUTING_LAYER = M2
 export MIN_CLK_ROUTING_LAYER = M3
-export MAX_ROUTING_LAYER = M5
+export MAX_ROUTING_LAYER = M13
 
 export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 
