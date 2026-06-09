@@ -22275,9 +22275,24 @@ library(gt2_6t_w31_lvt_tt_0p7v25c) {
     }
   }
 
-  cell (gt2_6t_tap_w31_lvt) {
+  cell (gt2_6t_tapfspdn_w31_lvt) {
     cell_leakage_power : 0 ;
     area : 0.012096;
+
+    pg_pin(vdd) {
+      pg_type : primary_power ;
+      voltage_name : vdd ;
+    }
+
+    pg_pin(vss) {
+      pg_type : primary_ground ;
+      voltage_name : vss ;
+    }
+  }
+
+  cell (gt2_6t_tapbspdn_w31_lvt) {
+    cell_leakage_power : 0 ;
+    area : 0.006048;
 
     pg_pin(vdd) {
       pg_type : primary_power ;
