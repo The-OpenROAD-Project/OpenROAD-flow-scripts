@@ -53,6 +53,12 @@ proc read_timing { input_file } {
   if { $design_stage >= 4 } {
     # CTS has run, so propagate clocks
     set_propagated_clock [all_clocks]
+  } else {
+    # Pre-CTS there is no clock tree, so CRPR has no real launch/capture
+    # common-path delay to remove and its correction is ~0. On designs with
+    # high clock reconvergence the CRPR tag set can still grow to tens of GB
+    # and OOM the process. Skip it pre-CTS.
+    sta::set_crpr_enabled 0
   }
 
   if { $design_stage >= 6 && [file exist $::env(RESULTS_DIR)/6_final.spef] } {
