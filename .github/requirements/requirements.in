@@ -1,0 +1,4 @@
+firebase-admin
+pyyaml
+tclint==0.7.0
+yamlfix==1.19.1

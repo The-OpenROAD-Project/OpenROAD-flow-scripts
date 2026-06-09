@@ -37,6 +37,7 @@ extensions = [
     "sphinx_copybutton",
     "myst_parser",
     "sphinxcontrib.mermaid",
+    "sphinx_llm.txt",
 ]
 
 myst_enable_extensions = [

@@ -15,13 +15,12 @@ make ISSUE_TAG=tag DESIGN_CONFIG=designs/asap7/gcd/config.mk ${ISSUE_TARGET}_iss
 test_archive=${ISSUE_TARGET}_tag.tar.gz
 ls -l $test_archive
 echo "Testing $test_archive"
-runme=$(realpath run-me-gcd-asap7-base.sh)
 . ../env.sh
 rm -rf results/make-issue/
 mkdir -p results/make-issue/
 cd results/make-issue/
 tar --strip-components=1 -xzf ../../$test_archive
-sed -i 's/openroad -no_init/openroad -exit -no_init/g' $runme
-$runme
+sed -i 's/openroad -no_init/openroad -exit -no_init/g' run-me-gcd-asap7-base.sh
+./run-me-gcd-asap7-base.sh
 # check for basic syntax errors
 openroad -exit -no_init vars-gcd-asap7-base.tcl
