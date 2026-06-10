@@ -23,7 +23,7 @@
 
 export PROCESS = 2
 
-export GT2N_USE_W  ?= w31
+export GT2N_USE_W  ?= w31 w13
 export GT2N_USE_VT ?= lvt hvt svt ulvt elvt
 
 export PRIMARY_W  = $(word 1, $(GT2N_USE_W))
