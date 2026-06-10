@@ -77,7 +77,7 @@ proc extract_stage { input_file } {
   # Match the stage prefix on the basename, not the full path: an ancestor
   # dir like ".../4_slices/3_place.odb" would otherwise match "4_" -> stage 4.
   set stage_file [file tail $input_file]
-  if { ![regexp {^([0-9])_(([0-9])_)?} $stage_file match num1 _ num2] } {
+  if { ![regexp {^([0-9])_(?:([0-9])_)?} $stage_file match num1 num2] } {
     puts "Error: Could not determine design stage from $input_file"
     exit 1
   }
