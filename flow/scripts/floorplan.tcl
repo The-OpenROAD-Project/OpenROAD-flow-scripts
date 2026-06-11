@@ -111,6 +111,7 @@ if { [env_var_exists_and_non_empty FASTROUTE_TCL] } {
 }
 
 source_env_var_if_exists FOOTPRINT_TCL
+set_dont_use $::env(DONT_USE_CELLS)
 
 # The transforms below (repair_tie_fanout, replace_arith_modules,
 # remove_buffers, repair_timing_helper) look like synthesis-stage
