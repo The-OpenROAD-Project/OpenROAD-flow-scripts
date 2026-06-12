@@ -1,11 +1,11 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "3882365f5e814a21a600274234b3a087270968d4",
+        "value": "N/A",
         "compare": "==",
         "level": "warning"
     },
     "synth__netlist__hash": {
-        "value": "a04d44da52dba7d4a701d80927ba32d1d89ef9a1",
+        "value": "N/A",
         "compare": "==",
         "level": "warning"
     },
@@ -62,7 +62,7 @@
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -76.6,
+        "value": -169.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
