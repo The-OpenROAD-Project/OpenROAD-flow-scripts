@@ -143,6 +143,7 @@ configuration file.
 | <a name="DPO_MAX_DISPLACEMENT"></a>DPO_MAX_DISPLACEMENT| Specifies how far an instance can be moved when optimizing.| 5 1|
 | <a name="EARLY_SIZING_CAP_RATIO"></a>EARLY_SIZING_CAP_RATIO| Ratio between the input pin capacitance and the output pin load during initial gate sizing.| |
 | <a name="ENABLE_DPO"></a>ENABLE_DPO| Enable detail placement with improve_placement feature.| 1|
+| <a name="ENABLE_PLACE_REPAIR_TIMING"></a>ENABLE_PLACE_REPAIR_TIMING| Run repair_timing during the placement resize stage using placement parasitics. Disabled by default; pre-CTS setup/hold repair is skipped unless this is set to 1.| 0|
 | <a name="ENABLE_RESISTANCE_AWARE"></a>ENABLE_RESISTANCE_AWARE| Passed as -resistance_aware to global_route.| |
 | <a name="FASTROUTE_TCL"></a>FASTROUTE_TCL| Specifies a Tcl script with commands to run before FastRoute.| |
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
@@ -216,7 +217,6 @@ configuration file.
 | <a name="POST_IO_PLACEMENT_TCL"></a>POST_IO_PLACEMENT_TCL| Specifies a Tcl script with commands to run after IO placement.| |
 | <a name="POST_MACRO_PLACE_TCL"></a>POST_MACRO_PLACE_TCL| Specifies a Tcl script with commands to run after macro placement.| |
 | <a name="POST_PDN_TCL"></a>POST_PDN_TCL| Specifies a Tcl script with commands to run after PDN generation.| |
-| <a name="POST_REPAIR_TIMING_POST_PLACE_TCL"></a>POST_REPAIR_TIMING_POST_PLACE_TCL| Specifies a Tcl script with commands to run after post-place timing repair.| |
 | <a name="POST_RESIZE_TCL"></a>POST_RESIZE_TCL| Specifies a Tcl script with commands to run after resize.| |
 | <a name="POST_SYNTH_TCL"></a>POST_SYNTH_TCL| Specifies a Tcl script with commands to run after synthesis ODB generation.| |
 | <a name="POST_TAPCELL_TCL"></a>POST_TAPCELL_TCL| Specifies a Tcl script with commands to run after tapcell.| |
@@ -233,7 +233,6 @@ configuration file.
 | <a name="PRE_IO_PLACEMENT_TCL"></a>PRE_IO_PLACEMENT_TCL| Specifies a Tcl script with commands to run before IO placement.| |
 | <a name="PRE_MACRO_PLACE_TCL"></a>PRE_MACRO_PLACE_TCL| Specifies a Tcl script with commands to run before macro placement.| |
 | <a name="PRE_PDN_TCL"></a>PRE_PDN_TCL| Specifies a Tcl script with commands to run before PDN generation.| |
-| <a name="PRE_REPAIR_TIMING_POST_PLACE_TCL"></a>PRE_REPAIR_TIMING_POST_PLACE_TCL| Specifies a Tcl script with commands to run before post-place timing repair.| |
 | <a name="PRE_RESIZE_TCL"></a>PRE_RESIZE_TCL| Specifies a Tcl script with commands to run before resize.| |
 | <a name="PRE_SYNTH_TCL"></a>PRE_SYNTH_TCL| Specifies a Tcl script with commands to run before synthesis ODB generation.| |
 | <a name="PRE_TAPCELL_TCL"></a>PRE_TAPCELL_TCL| Specifies a Tcl script with commands to run before tapcell.| |
@@ -465,6 +464,7 @@ configuration file.
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [DONT_BUFFER_PORTS](#DONT_BUFFER_PORTS)
 - [EARLY_SIZING_CAP_RATIO](#EARLY_SIZING_CAP_RATIO)
+- [ENABLE_PLACE_REPAIR_TIMING](#ENABLE_PLACE_REPAIR_TIMING)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
 - [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
 - [GPL_KEEP_OVERFLOW](#GPL_KEEP_OVERFLOW)
@@ -485,13 +485,11 @@ configuration file.
 - [POST_GLOBAL_PLACE_SKIP_IO_TCL](#POST_GLOBAL_PLACE_SKIP_IO_TCL)
 - [POST_GLOBAL_PLACE_TCL](#POST_GLOBAL_PLACE_TCL)
 - [POST_IO_PLACEMENT_TCL](#POST_IO_PLACEMENT_TCL)
-- [POST_REPAIR_TIMING_POST_PLACE_TCL](#POST_REPAIR_TIMING_POST_PLACE_TCL)
 - [POST_RESIZE_TCL](#POST_RESIZE_TCL)
 - [PRE_DETAIL_PLACE_TCL](#PRE_DETAIL_PLACE_TCL)
 - [PRE_GLOBAL_PLACE_SKIP_IO_TCL](#PRE_GLOBAL_PLACE_SKIP_IO_TCL)
 - [PRE_GLOBAL_PLACE_TCL](#PRE_GLOBAL_PLACE_TCL)
 - [PRE_IO_PLACEMENT_TCL](#PRE_IO_PLACEMENT_TCL)
-- [PRE_REPAIR_TIMING_POST_PLACE_TCL](#PRE_REPAIR_TIMING_POST_PLACE_TCL)
 - [PRE_RESIZE_TCL](#PRE_RESIZE_TCL)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
