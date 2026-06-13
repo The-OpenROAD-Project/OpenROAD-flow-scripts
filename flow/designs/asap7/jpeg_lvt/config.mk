@@ -18,3 +18,4 @@ export RECOVER_POWER          = 100
 
 export ASAP7_USE_VT           = LVT
 
+export SYNTH_USE_SYN = 1

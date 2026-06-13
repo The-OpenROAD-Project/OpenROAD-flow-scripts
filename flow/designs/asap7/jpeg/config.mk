@@ -15,3 +15,4 @@ export PLACE_DENSITY          = 0.75
 
 export TNS_END_PERCENT        = 100
 
+export SYNTH_USE_SYN = 1

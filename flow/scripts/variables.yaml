@@ -115,6 +115,7 @@ SKIP_REPORT_METRICS:
     If set to 1, then metrics, report_metrics does nothing. Useful to speed up
     builds.
   stages:
+    - synth
     - floorplan
     - place
     - cts
@@ -177,6 +178,14 @@ SYNTH_GUT:
 SYNTH_HIERARCHICAL:
   description: |
     Enable to Synthesis hierarchically, otherwise considered flat synthesis.
+  stages:
+    - synth
+  default: 0
+SYNTH_USE_SYN:
+  description: >
+    If set to 1, run synthesis using the "syn" tool built into OpenROAD
+    (the synth_syn.tcl flow) instead of the default Yosys-based flow.
+    Defaults to 0 (Yosys flow).
   stages:
     - synth
   default: 0
