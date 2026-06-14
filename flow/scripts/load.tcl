@@ -16,11 +16,11 @@ proc load_design { design_file sdc_file } {
   # Read design files
   set ext [file extension $design_file]
   if { $ext == ".v" } {
-    read_lef $::env(TECH_LEF)
-    read_lef $::env(SC_LEF)
+    log_cmd read_lef $::env(TECH_LEF)
+    log_cmd read_lef $::env(SC_LEF)
     if { [env_var_exists_and_non_empty ADDITIONAL_LEFS] } {
       foreach lef $::env(ADDITIONAL_LEFS) {
-        read_lef $lef
+        log_cmd read_lef $lef
       }
     }
     log_cmd read_verilog $::env(RESULTS_DIR)/$design_file
