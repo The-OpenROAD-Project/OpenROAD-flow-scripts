@@ -14,3 +14,8 @@ export CORE_ASPECT_RATIO      = 1
 export CORE_MARGIN            = 2
 export PLACE_DENSITY_LB_ADDON = 0.20
 export TNS_END_PERCENT        = 100
+
+# Highest layer jpeg actually routes on (M10-M13 carry no wire). Capping here
+# instead of the platform M13 top shrinks the detailed-route grid, vias, and
+# DRC. See platforms/gt2n/config.mk.
+export MAX_ROUTING_LAYER      = M9

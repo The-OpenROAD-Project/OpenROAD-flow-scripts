@@ -118,7 +118,12 @@ export PLACE_DENSITY ?= 0.40
 #---------------------------------------------------------
 export MIN_ROUTING_LAYER = M2
 export MIN_CLK_ROUTING_LAYER = M3
-export MAX_ROUTING_LAYER = M13
+# MAX_ROUTING_LAYER is set per design (designs/gt2n/<design>/config.mk), not
+# platform-wide. gt2n exposes metal up to M13, but designs route well below
+# that (e.g. gcd~M5, jpeg~M9, aes~M10); routing to M13 needlessly grows the
+# detailed-route grid graph, via stack, and DRC work for layers that carry no
+# wire. Each gt2n design must define MAX_ROUTING_LAYER (the flow requires it)
+# at the highest layer it actually needs.
 
 export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 

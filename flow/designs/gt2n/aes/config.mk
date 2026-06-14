@@ -17,3 +17,8 @@ export SKIP_INCREMENTAL_REPAIR = 1
 
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
+
+# Highest layer aes actually routes on (M11-M13 carry no wire). Capping here
+# instead of the platform M13 top shrinks the detailed-route grid, vias, and
+# DRC. See platforms/gt2n/config.mk.
+export MAX_ROUTING_LAYER = M10
