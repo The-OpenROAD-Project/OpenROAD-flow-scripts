@@ -5,15 +5,15 @@ erase_non_stage_variables synth
 source_env_var_if_exists PLATFORM_TCL
 source $::env(SCRIPTS_DIR)/read_liberty.tcl
 
-read_lef $::env(TECH_LEF)
-read_lef $::env(SC_LEF)
+log_cmd read_lef $::env(TECH_LEF)
+log_cmd read_lef $::env(SC_LEF)
 if { [env_var_exists_and_non_empty ADDITIONAL_LEFS] } {
   foreach lef $::env(ADDITIONAL_LEFS) {
-    read_lef $lef
+    log_cmd read_lef $lef
   }
 }
 if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
-  set_dont_use $::env(DONT_USE_CELLS)
+  log_cmd set_dont_use $::env(DONT_USE_CELLS)
 }
 
 # Setup verilog include directories
@@ -58,13 +58,13 @@ if { !$has_non_v_files } {
   lappend elaborate_args --std=1364-2005
 }
 
-sv_elaborate {*}$elaborate_args
-syn::stats
+log_cmd sv_elaborate {*}$elaborate_args
+log_cmd syn::stats
 
-synthesize
+log_cmd synthesize
 
-read_sdc $::env(SDC_FILE)
-repair_design -pre_placement
+log_cmd read_sdc $::env(SDC_FILE)
+log_cmd repair_design -pre_placement
 
 report_metrics 1 "synth" false false
 
