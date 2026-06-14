@@ -23,7 +23,7 @@ proc load_design { design_file sdc_file } {
         read_lef $lef
       }
     }
-    read_verilog $::env(RESULTS_DIR)/$design_file
+    log_cmd read_verilog $::env(RESULTS_DIR)/$design_file
     log_cmd link_design {*}[hier_options] $::env(DESIGN_NAME)
   } elseif { $ext == ".odb" } {
     log_cmd read_db {*}[hier_options] $::env(RESULTS_DIR)/$design_file

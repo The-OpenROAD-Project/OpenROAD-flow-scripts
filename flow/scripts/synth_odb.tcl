@@ -1,8 +1,8 @@
 utl::set_metrics_stage "synth__{}"
 source $::env(SCRIPTS_DIR)/load.tcl
 erase_non_stage_variables synth
-load_design 1_2_yosys.v 1_2_yosys.sdc
-source_step_tcl PRE SYNTH
+log_cmd load_design 1_2_yosys.v 1_2_yosys.sdc
+log_cmd source_step_tcl PRE SYNTH
 
 # Eliminate dead logic before writing the synthesis odb so that
 # 1_synth.odb already reflects the live design.
@@ -27,7 +27,7 @@ log_cmd eliminate_dead_logic
 report_design_area
 report_design_area_metrics
 
-source_step_tcl POST SYNTH
+log_cmd source_step_tcl POST SYNTH
 orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 # Canonicalize 1_synth.sdc. The original SDC_FILE provided by
 # the user could have dependencies, such as sourcing util.tcl,
