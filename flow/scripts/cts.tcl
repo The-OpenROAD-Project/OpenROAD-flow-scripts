@@ -66,7 +66,6 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
     write_lec_verilog 4_before_rsz_lec.v
   }
 
-  # Run LR global sizing before the legacy setup-repair phases (PR 10599 experiment)
   repair_timing_helper -phases "GLOBAL_SIZING LEGACY LAST_GASP CRIT_VT_SWAP"
 
   if { $lec_enabled } {
