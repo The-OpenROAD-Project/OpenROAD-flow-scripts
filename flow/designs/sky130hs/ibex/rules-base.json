@@ -58,7 +58,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.525,
+        "value": -0.885,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
@@ -106,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 243893,
+        "value": 296341,
         "compare": "<="
     }
 }

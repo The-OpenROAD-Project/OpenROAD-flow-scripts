@@ -12,7 +12,7 @@ export SYNTH_HDL_FRONTEND = slang
 
 export SDC_FILE      = $(DESIGN_HOME)/$(PLATFORM)/$(DESIGN_NICKNAME)/constraint.sdc
 
-export CORE_UTILIZATION = 40 
+export CORE_UTILIZATION = 32
 export CORE_ASPECT_RATIO = 1
 export CORE_MARGIN = 2
 

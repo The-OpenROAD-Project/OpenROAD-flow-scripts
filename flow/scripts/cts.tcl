@@ -66,7 +66,7 @@ if { !$::env(SKIP_CTS_REPAIR_TIMING) } {
     write_lec_verilog 4_before_rsz_lec.v
   }
 
-  repair_timing_helper
+  repair_timing_helper -phases "GLOBAL_SIZING LEGACY LAST_GASP CRIT_VT_SWAP"
 
   if { $lec_enabled } {
     write_lec_verilog 4_after_rsz_lec.v
