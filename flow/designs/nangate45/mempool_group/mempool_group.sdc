@@ -11,9 +11,6 @@ set clock_port_mempool_tile clk_i
 
 create_clock -name clk_i -period $clock_cycle [get_ports $clock_port_mempool_tile]
 set_clock_uncertainty $uncertainty [all_clocks]
-set_input_delay -clock [get_clocks clk_i] -add_delay -max $io_delay \
-  [all_inputs -no_clocks]
-set_output_delay -clock [get_clocks clk_i] -add_delay -max $io_delay [all_outputs]
 set_max_transition $maxTransition -clock_path [get_clocks clk_i]
 set_clock_latency $pre_cts_clock_latency_estimate [get_clocks clk_i]
 #set_propagated_clock [get_clocks clk_i]
@@ -25,6 +22,9 @@ set_clock_uncertainty $uncertainty [get_clocks vclk_i]
 set_clock_latency $pre_cts_clock_latency_estimate [get_clocks vclk_i]
 set_max_transition $maxTransition -clock_path [get_clocks vclk_i]
 
+set_input_delay -clock [get_clocks vclk_i] -add_delay -max $io_delay \
+  [all_inputs -no_clocks]
+set_output_delay -clock [get_clocks vclk_i] -add_delay -max $io_delay [all_outputs]
 
 set_case_analysis 0 [get_ports scan_enable_i]
 set_max_fanout $maxFanout [current_design]

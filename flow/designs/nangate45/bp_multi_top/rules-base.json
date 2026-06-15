@@ -14,7 +14,7 @@
         "compare": "<="
     },
     "constraints__clocks__count": {
-        "value": 1,
+        "value": 2,
         "compare": "=="
     },
     "placeopt__design__instance__area": {
