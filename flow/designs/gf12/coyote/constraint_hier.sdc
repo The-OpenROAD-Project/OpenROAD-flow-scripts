@@ -11,8 +11,8 @@ create_clock -name vclk -period 4000
 set_clock_transition 59.0000 [get_clocks {core_clk}]
 set_clock_uncertainty -setup 200.0000 core_clk
 set_clock_uncertainty -hold 20.0000 core_clk
-set_clock_latency 1000 [get_clocks {core_clk}]
-set_clock_latency 1000 [get_clocks {vclk}]
+set_clock_latency 335.750 [get_clocks {core_clk}]
+set_clock_latency 335.750 [get_clocks {vclk}]
 set_input_delay 2000 \
   -clock [get_clocks {vclk}] -add_delay [get_ports {en_i}]
 set_input_delay 2000 \

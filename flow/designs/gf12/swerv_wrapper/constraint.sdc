@@ -8,15 +8,15 @@ current_design swerv_wrapper
 ###############################################################################
 create_clock -name core_clock -period 1500.0 -waveform {0.0000 750.0} [get_ports {clk}]
 create_clock -name vclk_core_clock -period 1500.0
-set_clock_latency 187.5 [get_clocks {core_clock}]
-set_clock_latency 187.5 [get_clocks {vclk_core_clock}]
+set_clock_latency 244.780 [get_clocks {core_clock}]
+set_clock_latency 244.780 [get_clocks {vclk_core_clock}]
 set_clock_uncertainty -setup 70.0000 core_clock
 set_clock_uncertainty -hold 70.0000 core_clock
 #set_propagated_clock [get_clocks {core_clock}]
 create_clock -name jtag_clock -period 1500 -waveform {0.0000 750.0} [get_ports {jtag_tck}]
 create_clock -name vclk_jtag_clock -period 1500
-set_clock_latency 187.5 [get_clocks {jtag_clock}]
-set_clock_latency 187.5 [get_clocks {vclk_jtag_clock}]
+set_clock_latency 58.435 [get_clocks {jtag_clock}]
+set_clock_latency 58.435 [get_clocks {vclk_jtag_clock}]
 set_clock_uncertainty -setup 70.0000 jtag_clock
 set_clock_uncertainty -hold 70.0000 jtag_clock
 #set_propagated_clock [get_clocks {jtag_clock}]

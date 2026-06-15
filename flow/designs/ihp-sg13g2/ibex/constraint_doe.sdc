@@ -9,8 +9,8 @@ current_design ibex_core
 ###############################################################################
 create_clock -name core_clock -period 15.0 -waveform {0.0000 7.5} [get_ports {clk_i}]
 create_clock -name vclk -period 15.0
-set_clock_latency [expr $io_delay * 0.5] [get_clocks {core_clock}]
-set_clock_latency [expr $io_delay * 0.5] [get_clocks {vclk}]
+set_clock_latency 0.905 [get_clocks {core_clock}]
+set_clock_latency 0.905 [get_clocks {vclk}]
 
 set_clock_uncertainty $uncertainty [all_clocks]
 #

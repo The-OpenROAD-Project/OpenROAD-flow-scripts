@@ -1,8 +1,8 @@
 set clk_period 1.8
 create_clock [get_ports clk_i] -name CLK -period $clk_period
 create_clock -name vclk -period $clk_period
-set_clock_latency [expr $clk_period * .2] [get_clocks {CLK}]
-set_clock_latency [expr $clk_period * .2] [get_clocks {vclk}]
+set_clock_latency 0.355 [get_clocks {CLK}]
+set_clock_latency 0.355 [get_clocks {vclk}]
 set io_delay [expr $clk_period * .2]
 set_input_delay -clock vclk $io_delay [get_ports reset_i]
 set_input_delay -clock vclk $io_delay [get_ports {icache_id_i[0]}]

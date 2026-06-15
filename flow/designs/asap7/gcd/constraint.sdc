@@ -10,8 +10,8 @@ set clk_port [get_ports $clk_port_name]
 create_clock -name $clk_name -period $clk_period $clk_port
 set clk_io_name vclk_$clk_name
 create_clock -name $clk_io_name -period $clk_period
-set_clock_latency [expr $clk_period * $clk_io_pct * 0.5] [get_clocks $clk_name]
-set_clock_latency [expr $clk_period * $clk_io_pct * 0.5] [get_clocks $clk_io_name]
+set_clock_latency 36.225 [get_clocks $clk_name]
+set_clock_latency 36.225 [get_clocks $clk_io_name]
 
 set non_clock_inputs [all_inputs -no_clocks]
 

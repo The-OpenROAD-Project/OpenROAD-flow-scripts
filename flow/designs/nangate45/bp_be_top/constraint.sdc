@@ -1,7 +1,7 @@
 create_clock [get_ports clk_i] -name CLK -period 2.6 -waveform {0 1.3}
 create_clock -name vclk -period 2.6
-set_clock_latency 0.3 [get_clocks {CLK}]
-set_clock_latency 0.3 [get_clocks {vclk}]
+set_clock_latency 0.360 [get_clocks {CLK}]
+set_clock_latency 0.360 [get_clocks {vclk}]
 set_input_delay -clock vclk -max 0.6 [get_ports reset_i]
 set_input_delay -clock vclk -min 0.6 [get_ports reset_i]
 set_input_delay -clock vclk -max 0.6 [get_ports {fe_queue_i[133]}]

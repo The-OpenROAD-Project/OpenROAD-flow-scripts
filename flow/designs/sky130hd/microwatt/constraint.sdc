@@ -10,8 +10,8 @@ set clk_port [get_ports $clk_port_name]
 create_clock -name $clk_name -period $clk_period $clk_port
 set clk_io_name vclk_$clk_name
 create_clock -name $clk_io_name -period $clk_period
-set_clock_latency [expr $clk_period * $clk_io_pct * 0.5] [get_clocks $clk_name]
-set_clock_latency [expr $clk_period * $clk_io_pct * 0.5] [get_clocks $clk_io_name]
+set_clock_latency 3.960 [get_clocks $clk_name]
+set_clock_latency 3.960 [get_clocks $clk_io_name]
 
 # Should we create a virtual clock to constrain the UART since it is a much slower clock?
 set_input_delay [expr $clk_period * $clk_io_pct] -clock $clk_io_name [get_ports uart0_rxd]
@@ -52,10 +52,10 @@ set jtag_clk_io_pct 0.2
 set jtag_clk_port [get_ports $jtag_clk_port_name]
 
 create_clock -name $jtag_clk_name -period $jtag_clk_period $jtag_clk_port
-set_clock_latency [expr $jtag_clk_period * $jtag_clk_io_pct * 0.5] [get_clocks $jtag_clk_name]
+set_clock_latency 1.525 [get_clocks $jtag_clk_name]
 set jtag_io_clk_name vclk_$jtag_clk_name
 create_clock -name $jtag_io_clk_name -period $jtag_clk_period
-set_clock_latency [expr $jtag_clk_period * $jtag_clk_io_pct * 0.5] [get_clocks $jtag_io_clk_name]
+set_clock_latency 1.525 [get_clocks $jtag_io_clk_name]
 
 set_clock_groups -name group1 -logically_exclusive \
   -group [concat [get_clocks $jtag_clk_name] [get_clocks $jtag_io_clk_name]] \

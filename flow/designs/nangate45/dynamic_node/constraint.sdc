@@ -8,8 +8,8 @@ current_design dynamic_node_top_wrap
 ###############################################################################
 create_clock -name clk -period 6.0 [get_ports {clk}]
 create_clock -name vclk -period 6.0
-set_clock_latency 2.55 [get_clocks {clk}]
-set_clock_latency 2.55 [get_clocks {vclk}]
+set_clock_latency 0.240 [get_clocks {clk}]
+set_clock_latency 0.240 [get_clocks {vclk}]
 set_input_delay 4.0200 -clock [get_clocks {vclk}] -min -add_delay [get_ports {dataIn_E[0]}]
 set_input_delay 5.1000 -clock [get_clocks {vclk}] -max -add_delay [get_ports {dataIn_E[0]}]
 set_input_delay 4.0200 -clock [get_clocks {vclk}] -min -add_delay [get_ports {dataIn_E[10]}]

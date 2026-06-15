@@ -8,8 +8,8 @@ current_design jpeg_encoder
 
 create_clock -name "tclk" -period 1000.0 -waveform {0.0 500.0} [get_ports clk]
 create_clock -name vclk -period 1000.0
-set_clock_latency 50.0 [get_clocks {tclk}]
-set_clock_latency 50.0 [get_clocks {vclk}]
+set_clock_latency 204.110 [get_clocks {tclk}]
+set_clock_latency 204.110 [get_clocks {vclk}]
 set_propagated_clock [get_clocks tclk]
 set_load -pin_load -max 3.0 [get_ports {qnt_cnt[5]}]
 set_load -pin_load -max 3.0 [get_ports {qnt_cnt[4]}]

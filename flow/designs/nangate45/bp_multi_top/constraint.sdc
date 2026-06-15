@@ -1,7 +1,7 @@
 create_clock [get_ports clk_i] -name CLK -period 4.8 -waveform {0 2.4}
 create_clock -name vclk -period 4.8
-set_clock_latency 0.9 [get_clocks {CLK}]
-set_clock_latency 0.9 [get_clocks {vclk}]
+set_clock_latency 0.540 [get_clocks {CLK}]
+set_clock_latency 0.540 [get_clocks {vclk}]
 set_input_delay -clock vclk -max 1.8 [get_ports reset_i]
 set_input_delay -clock vclk -min 0.6 [get_ports reset_i]
 set_input_delay -clock vclk -max 1.8 [get_ports {cce_inst_boot_rom_data_i[95]}]

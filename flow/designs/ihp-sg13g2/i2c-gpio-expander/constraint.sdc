@@ -11,8 +11,8 @@ set clk_core_io_name vclk_clk_core
 create_clock -name $clk_core_io_name -period 20.0
 set input_delay_value_clk_core 4.0
 set output_delay_value_clk_core 4.0
-set_clock_latency [expr $input_delay_value_clk_core * 0.5] [get_clocks clk_core]
-set_clock_latency [expr $input_delay_value_clk_core * 0.5] [get_clocks $clk_core_io_name]
+set_clock_latency 0.480 [get_clocks clk_core]
+set_clock_latency 0.480 [get_clocks $clk_core_io_name]
 set_clock_uncertainty 0.15 [get_clocks clk_core]
 set_clock_transition 0.25 [get_clocks clk_core]
 

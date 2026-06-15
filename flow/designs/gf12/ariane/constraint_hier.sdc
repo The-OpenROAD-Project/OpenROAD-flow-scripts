@@ -1,7 +1,7 @@
 create_clock [get_ports clk_i] -name core_clock -period 3000 -waveform {0 1500}
 create_clock -name vclk -period 3000
-set_clock_latency 750 [get_clocks {core_clock}]
-set_clock_latency 750 [get_clocks {vclk}]
+set_clock_latency 271.565 [get_clocks {core_clock}]
+set_clock_latency 271.565 [get_clocks {vclk}]
 set_input_delay -clock vclk 1500 [get_ports rst_ni]
 set_input_delay -clock vclk 1500 [get_ports {boot_addr_i[63]}]
 set_input_delay -clock vclk 1500 [get_ports {boot_addr_i[62]}]
