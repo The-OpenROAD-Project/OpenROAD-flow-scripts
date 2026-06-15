@@ -19,6 +19,7 @@
 # proprietary tool or a 3D field solver (e.g. FasterCap) run on
 # OpenRCX's own pattern DEFs. Until then this set_layer_rc table is
 # the working approximation.
+# (See the gt2n platform README for additional GT2N information.)
 #
 # Liberty units in gt2_6t_w*_*_tt_0p7v25c.lib:
 #   pulling_resistance_unit : 1ohm    -> R values are ohm / um

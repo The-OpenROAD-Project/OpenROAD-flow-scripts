@@ -4,6 +4,13 @@ Outputs Tcl set_layer_rc commands matching the existing setRC.tcl format.
 Units: R in ohm/um for metals (ohm/via for vias), C in pf/um, matching the
 gt2n libs (pulling_resistance_unit=1ohm, capacitive_load_unit=1pf).
 
+Input: GT2N/nxtgrd/GT2.itf -- the StarRC interconnect tech file shipped with
+the GT2N PDK (not in this repo). __main__ hardcodes a local path to it; point
+that at your PDK copy. The matching NXTGRD/QRC files (GT2N/nxtgrd/GT2.nxtgrd,
+GT2N/qrc/{GT2.ict, GT2_qrc.tch}) carry the full data a calibrated extractor
+needs; this script is only the analytical approximation behind setRC.tcl.
+(See the gt2n platform README for additional GT2N information.)
+
 Model:
   R/um  = RPSQ / WMIN
   C/um  = (Ca + Cb)*FRINGE_FACTOR + 2*Cc
@@ -89,6 +96,8 @@ def metal_rc(entries, idx):
 
 
 if __name__ == "__main__":
+    # GT2N/nxtgrd/GT2.itf from the PDK (StarRC interconnect tech file); edit
+    # this path to your local PDK checkout.
     entries = parse_itf("/home/mrg/orfs/GT2N/nxtgrd/GT2.itf")
     print("# Per-length metal R and C, derived analytically from GT2.itf.")
     print("# R/um = RPSQ / WMIN  (matches Fig 1(b) of the GT2N paper).")
