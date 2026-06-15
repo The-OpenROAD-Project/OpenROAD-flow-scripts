@@ -1191,6 +1191,7 @@
     "default": 0,
     "description": "If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.\n",
     "stages": [
+      "synth",
       "floorplan",
       "place",
       "cts",
@@ -1357,6 +1358,13 @@
   "SYNTH_SLANG_ARGS": {
     "default": "",
     "description": "Additional arguments passed to the slang frontend during synthesis.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_USE_SYN": {
+    "default": 0,
+    "description": "If set to 1, run synthesis using the \"syn\" tool built into OpenROAD (the synth_syn.tcl flow) instead of the default Yosys-based flow. Defaults to 0 (Yosys flow).\n",
     "stages": [
       "synth"
     ]

@@ -245,22 +245,7 @@ def extract_metrics(
 
     # Synthesis
     # =========================================================================
-
-    # The new format (>= 0.57) with -hierarchy is:
-    #    <count> <area> <local_count> <local_area> cells
-    extractTagFromFile(
-        "synth__design__instance__count__stdcell",
-        metrics_dict,
-        "^\\s+(\\d+)\\s+[-0-9.]+\\s+\\S+\\s+\\S+\\s+cells$",
-        rptPath + "/synth_stat.txt",
-    )
-
-    extractTagFromFile(
-        "synth__design__instance__area__stdcell",
-        metrics_dict,
-        "Chip area for (?:top )?module.*: +(\\S+)",
-        rptPath + "/synth_stat.txt",
-    )
+    merge_jsons(logPath, metrics_dict, "1_*.json")
 
     # Netlist hashes: fingerprints of the canonical RTLIL (pre-ABC) and
     # the final post-synthesis Verilog so the rules-base.json check
