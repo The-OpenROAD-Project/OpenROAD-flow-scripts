@@ -63,6 +63,7 @@ flow/platforms/*
 !flow/platforms/sky130io
 !flow/platforms/sky130ram
 !flow/platforms/gf180
+!flow/platforms/gt2n
 flow/private
 
 # network

@@ -1,0 +1,201 @@
+# BSD 3-Clause License
+#
+# Copyright 2025 Piyush Kumar, Dongwon Jang, Da Eun Shim, Azad Naeemi, or Georgia Institute of Technology
+#
+# Redistribution and use in source and binary forms, with or without 
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, 
+# this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice, 
+# this list of conditions and the following disclaimer in the documentation 
+# and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the copyright holder nor the names of its contributors 
+# may be used to endorse or promote products derived from this software without 
+# specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” 
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND 
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# GT2 layer map file
+
+NWELL       drawing     1       0
+NWELL       label       1       20
+NWELL       pin         1       251
+ACT         drawing     2       0
+ACT         label       2       20
+ACT         pin         2       251
+GATE        drawing     3       0
+GATE        label       3       20
+GATE        pin         3       251
+DUMMY       drawing     4       0
+DUMMY       label       4       20
+DUMMY       pin         4       251
+GCUT        drawing     5       0
+GCUT        label       5       20
+GCUT        pin         5       251
+NSEL        drawing     6       0
+NSEL        label       6       20
+NSEL        pin         6       251
+PSEL        drawing     7       0
+PSEL        label       7       20
+PSEL        pin         7       251
+BPR         drawing     8       0
+BPR         label       8       20
+BPR         pin         8       251
+VBPR        drawing     9       0
+VBPR        label       9       20
+VBPR        pin         9       251
+SDCON       drawing     10      0
+SDCON       label       10      20
+SDCON       pin         10      251
+VSD         drawing     11      0
+VSD         label       11      20
+VSD         pin         11      251
+VG          drawing     12      0
+VG          label       12      20
+VG          pin         12      251
+M0          drawing     20      0
+M0          label       20      20
+M0          pin         20      251
+V0          drawing     22      0
+V0          label       22      20
+V0          pin         22      251
+M1          drawing     25      0 
+M1          label       25      20
+M1          pin         25      251
+V1          drawing     27      0
+V1          label       27      20
+V1          pin         27      251
+M2          drawing     30      0
+M2          label       30      20
+M2          pin         30      251
+V2          drawing     32      0
+V2          label       32      20
+V2          pin         32      251
+M3          drawing     35      0
+M3          label       35      20
+M3          pin         35      251
+V3          drawing     37      0
+V3          label       37      20
+V3          pin         37      251
+M4          drawing     40      0
+M4          label       40      20
+M4          pin         40      251
+V4          drawing     42      0
+V4          label       42      20
+V4          pin         42      251
+M5          drawing     45      0
+M5          label       45      20
+M5          pin         45      251
+V5          drawing     47      0
+V5          label       47      20
+V5          pin         47      251
+M6          drawing     50      0
+M6          label       50      20
+M6          pin         50      251
+V6          drawing     52      0
+V6          label       52      20
+V6          pin         52      251
+M7          drawing     55      0
+M7          label       55      20
+M7          pin         55      251
+V7          drawing     57      0
+V7          label       57      20
+V7          pin         57      251
+M8          drawing     60      0
+M8          label       60      20
+M8          pin         60      251
+V8          drawing     62      0
+V8          label       62      20
+V8          pin         62      251
+M9          drawing     65      0
+M9          label       65      20
+M9          pin         65      251
+V9          drawing     67      0
+V9          label       67      20
+V9          pin         67      251
+M10         drawing     70      0
+M10         label       70      20
+M10         pin         70      251
+V10         drawing     72      0
+V10         label       72      20
+V10         pin         72      251
+M11         drawing     75      0
+M11         label       75      20
+M11         pin         75      251
+V11         drawing     77      0
+V11         label       77      20
+V11         pin         77      251
+M12         drawing     80      0
+M12         label       80      20
+M12         pin         80      251
+V12         drawing     82      0
+V12         label       82      20
+V12         pin         82      251
+M13         drawing     85      0
+M13         label       85      20
+M13         pin         85      251
+V13         drawing     87      0
+V13         label       87      20
+V13         pin         87      251
+RDL         drawing     90      0
+RDL         label       90      20
+RDL         pin         90      251
+ELVT        drawing     94      0
+ELVT        label       94      20
+ELVT        pin         94      251
+ULVT        drawing     95      0
+ULVT        label       95      20
+ULVT        pin         95      251
+SVT         drawing     96      0
+SVT         label       96      20
+SVT         pin         96      251
+HVT         drawing     97      0
+HVT         label       97      20
+HVT         pin         97      251
+SRAMVT      drawing     98      0
+SRAMVT      label       98      20
+SRAMVT      pin         98      251
+prBoundary  drawing     235	    0
+prBoundary  boundary	  235	    250
+BV0         drawing     910     0
+BV0         label       910     20
+BV0         pin         910     251
+BM1         drawing     920     0 
+BM1         label       920     20
+BM1         pin         920     251
+BV1         drawing     930     0
+BV1         label       930     20
+BV1         pin         930     251
+BM2         drawing     940     0
+BM2         label       940     20
+BM2         pin         940     251
+BV2         drawing     950     0
+BV2         label       950     20
+BV2         pin         950     251
+BM3         drawing     960     0
+BM3         label       960     20
+BM3         pin         960     251
+BV3         drawing     970     0
+BV3         label       970     20
+BV3         pin         970     251
+BM4         drawing     980     0
+BM4         label       980     20
+BM4         pin         980     251
+BV4         drawing     990     0
+BV4         label       990     20
+BV4         pin         990     251
+BRDL        drawing     1000    0
+BRDL        label       1000    20
+BRDL        pin         1000    251
