@@ -35,6 +35,16 @@ parser.add_argument(
 )
 parser.add_argument("--cred", type=str, help="Service account credentials file")
 parser.add_argument("--variant", type=str, default="base")
+parser.add_argument(
+    "--jobName",
+    type=str,
+    default=None,
+    help="Canonical Jenkins job-folder name (JOB_NAME with the trailing "
+    "/<branch> segment stripped, folder slashes kept). When set, the "
+    "Pub/Sub payload is emitted as schema v3 with a top-level job_name "
+    "so the backend resolves the pipeline directly instead of "
+    "classifying the BUILD_TAG.",
+)
 
 # --- PUBSUB args ---
 parser.add_argument(
@@ -220,9 +230,16 @@ def build_design_record(dataFile, platform, design, variant, rules):
 
 
 def build_pipeline_payload(design_records, args):
-    """Return the v2 pipeline-level payload dict."""
-    return {
-        "payload_schema_version": 2,
+    """Return the pipeline-level payload dict.
+
+    Emits schema v3 (v2 structure plus a top-level ``job_name``) when
+    ``--jobName`` is supplied; otherwise falls back to v2. The backend
+    requires a non-blank ``job_name`` for v3, so an empty job name keeps
+    the message on v2 and the legacy BUILD_TAG classifier.
+    """
+    job_name = args.jobName.strip() if args.jobName else None
+    payload = {
+        "payload_schema_version": 3 if job_name else 2,
         "jenkins_env": args.jenkinsEnv,
         "build_id": args.buildID,
         "branch_name": args.branchName,
@@ -232,18 +249,24 @@ def build_pipeline_payload(design_records, args):
         "jenkins_url": args.jenkinsURL,
         "designs": design_records,
     }
+    if job_name:
+        payload["job_name"] = job_name
+    return payload
 
 
 def publish_pipeline_report(publisher, topic_path, message_data, design_count, args):
-    """Publish a pre-encoded v2 pipeline message."""
+    """Publish a pre-encoded pipeline message (v3 when --jobName is set, else v2)."""
     size_kb = len(message_data) / 1024
+    job_name = args.jobName.strip() if args.jobName else None
+    schema_version = "3" if job_name else "2"
     print(
-        f"[INFO] Publishing pipeline report ({design_count} designs, {size_kb:.1f} KB) to Pub/Sub."
+        f"[INFO] Publishing v{schema_version} pipeline report "
+        f"({design_count} designs, {size_kb:.1f} KB) to Pub/Sub."
     )
     future = publisher.publish(
         topic_path,
         data=message_data,
-        payload_schema_version="2",
+        payload_schema_version=schema_version,
         jenkins_env=args.jenkinsEnv,
     )
     message_id = future.result()
