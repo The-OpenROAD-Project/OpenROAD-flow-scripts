@@ -1,5 +1,8 @@
 # layout out all cells in SC_LEF in a grid for viewing
 
+source $::env(SCRIPTS_DIR)/util.tcl
+source $::env(SCRIPTS_DIR)/read_liberty.tcl
+
 read_lef $::env(TECH_LEF)
 read_lef $::env(SC_LEF)
 if { [info exist ::env(ADDITIONAL_LEFS)] } {
