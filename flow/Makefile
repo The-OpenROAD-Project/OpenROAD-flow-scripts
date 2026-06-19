@@ -475,13 +475,17 @@ clean_resize:
 #-------------------------------------------------------------------------------
 $(eval $(call do-step,3_5_place_dp,$(RESULTS_DIR)/3_4_place_resized.odb,detail_place))
 
-$(eval $(call do-copy,3_place,3_5_place_dp.odb,))
+# STEP 6: Post-detailed-placement timing repair (coarse and fine moves)
+#-------------------------------------------------------------------------------
+$(eval $(call do-step,3_6_place_repair_timing,$(RESULTS_DIR)/3_5_place_dp.odb $(RESULTS_DIR)/2_floorplan.sdc,repair_timing_post_place))
+
+$(eval $(call do-copy,3_place,3_6_place_repair_timing.odb,))
 
 $(eval $(call do-copy,3_place,2_floorplan.sdc,,.sdc))
 
 .PHONY: do-place
 do-place:
-	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_place do-3_place.sdc
+	$(UNSET_AND_MAKE) do-3_1_place_gp_skip_io do-3_2_place_iop do-3_3_place_gp do-3_4_place_resized do-3_5_place_dp do-3_6_place_repair_timing do-3_place do-3_place.sdc
 
 # Clean Targets
 #-------------------------------------------------------------------------------

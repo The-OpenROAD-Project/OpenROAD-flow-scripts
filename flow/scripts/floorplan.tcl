@@ -157,8 +157,8 @@ if { $::env(REMOVE_ABC_BUFFERS) } {
   # remove buffers inserted by yosys/abc
   remove_buffers
 } else {
-  # Skip clone & split
-  repair_timing_helper -setup -skip_last_gasp -sequence "unbuffer,sizeup,swap,vt_swap"
+  # Coarse optimization only (netlist-changing moves), skip last gasp.
+  repair_timing_helper -setup -skip_last_gasp -phases "COARSE"
 }
 
 puts "Default units for flow"

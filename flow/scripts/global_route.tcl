@@ -73,7 +73,7 @@ proc global_route_helper { } {
     puts "Repair setup and hold violations..."
     log_cmd estimate_parasitics -global_routing
 
-    repair_timing_helper
+    repair_timing_helper -phases "COARSE FINE"
 
     if { $::env(DETAILED_METRICS) } {
       report_metrics 5 "global route post repair timing"

@@ -29,7 +29,7 @@ if { $::env(ENABLE_PLACE_REPAIR_TIMING) } {
   puts "Repair setup and hold violations..."
   log_cmd estimate_parasitics -placement
 
-  repair_timing_helper
+  repair_timing_helper -phases "COARSE FINE"
 }
 
 # post report
