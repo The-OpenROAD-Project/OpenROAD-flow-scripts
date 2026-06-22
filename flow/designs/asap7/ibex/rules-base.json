@@ -14,7 +14,7 @@
         "compare": "<="
     },
     "constraints__clocks__count": {
-        "value": 1,
+        "value": 2,
         "compare": "=="
     },
     "placeopt__design__instance__area": {
@@ -42,7 +42,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -7160.0,
+        "value": -11000.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
