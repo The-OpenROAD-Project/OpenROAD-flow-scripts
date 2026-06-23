@@ -1,7 +1,7 @@
 # Quickstart: Run gcd on nangate45 with Docker
 
-This guide runs the smallest ORFS smoke test ¡ª the `gcd` design on the
-`nangate45` platform ¡ª from RTL to GDS using the pre-built Docker image.
+This guide runs the smallest ORFS smoke test -- the `gcd` design on the
+`nangate45` platform -- from RTL to GDS using the pre-built Docker image.
 No local compilation is required.
 
 For the full RTL-to-GDS walkthrough with interactive examples, see the
@@ -50,9 +50,9 @@ Final layout files are written under the `base` flow variant:
 
 | Artifact | Path |
 |----------|------|
-| GDSII | `flow/results/nangate45/gcd/base/6_final.gds` |
-| DEF | `flow/results/nangate45/gcd/base/6_final.def` |
-| Logs | `flow/logs/nangate45/gcd/base/` |
+| GDSII | `results/nangate45/gcd/base/6_final.gds` |
+| DEF | `results/nangate45/gcd/base/6_final.def` |
+| Logs | `logs/nangate45/gcd/base/` |
 
 Confirm the GDS exists:
 
@@ -111,4 +111,4 @@ This quickstart was verified with:
 - Image: `openroad/orfs:latest`
 - Command: `util/docker_shell make DESIGN_CONFIG=./designs/nangate45/gcd/config.mk`
 - Full clean run (`make clean_all` then `make`): ~61 seconds wall time
-- Output: `flow/results/nangate45/gcd/base/6_final.gds` present
+- Output: `results/nangate45/gcd/base/6_final.gds` present
