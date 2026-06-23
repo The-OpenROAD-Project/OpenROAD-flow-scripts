@@ -1,0 +1,24 @@
+load("@orfs-pip//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary")
+
+# Synthetic-design generator (stdlib only).
+py_binary(
+    name = "gen_study",
+    srcs = ["gen_study.py"],
+    visibility = ["//visibility:public"],
+)
+
+# Aggregate the swept results and (re)generate the study plots + data table.
+# Run from the repo with:  bazelisk run //flow/docs/rcx:update
+# It resolves the flow/ results directory from BUILD_WORKING_DIRECTORY and
+# writes the PNGs back into docs/rcx/plots/.
+py_binary(
+    name = "update",
+    srcs = ["plot_rcx_study.py"],
+    main = "plot_rcx_study.py",
+    visibility = ["//visibility:public"],
+    deps = [
+        requirement("matplotlib"),
+        requirement("numpy"),
+    ],
+)

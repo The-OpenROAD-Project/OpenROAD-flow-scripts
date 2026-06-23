@@ -162,6 +162,9 @@ for rc_file in args.rc_file:
                     stack_line = line
                 continue
 
+            if line.startswith("#"):
+                continue
+
             tokens = line.strip().split(",")
 
             if args.mode == "segment":
@@ -172,15 +175,17 @@ for rc_file in args.rc_file:
             else:
                 netName = tokens[0]
 
+                # net CSV: name,type,fanout,grt_res,grt_cap,rcx_res,rcx_cap,<per-layer length>
                 data[design][netName] = {
                     "type": tokens[1],
-                    "grt_res": float(tokens[2]),
-                    "grt_cap": float(tokens[3]),
-                    "rcx_res": float(tokens[4]),
-                    "rcx_cap": float(tokens[5]),
+                    "fanout": int(tokens[2]),
+                    "grt_res": float(tokens[3]),
+                    "grt_cap": float(tokens[4]),
+                    "rcx_res": float(tokens[5]),
+                    "rcx_cap": float(tokens[6]),
                 }
 
-                layer_lengths = [float(tok) for tok in tokens[6:]]
+                layer_lengths = [float(tok) for tok in tokens[7:]]
                 for i, length in enumerate(layer_lengths):
                     if length > 0:
                         active_layers.add(i)

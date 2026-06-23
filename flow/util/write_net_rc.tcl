@@ -56,6 +56,7 @@ proc write_rc_csv { filename } {
     }
   }
   puts $stream ""
+  puts $stream "# columns: net,type,fanout,grt_res,grt_cap,rcx_res,rcx_cap,<per-layer length>"
 
   set use_drt_data [env_var_exists_and_non_empty CORRELATE_DRT_WIRELENGTH]
 
@@ -70,7 +71,8 @@ proc write_rc_csv { filename } {
       lassign $grt_net_name_to_rc($net_name) grt_net_res grt_net_cap
       lassign $rcx_net_name_to_rc($net_name) rcx_net_res rcx_net_cap
       set net_type [expr { [string equal $type "CLOCK"] ? "clock" : "signal" }]
-      puts -nonewline $stream "[get_full_name $net],$net_type,"
+      set fanout [llength [get_pins -of $net -filter "direction == input"]]
+      puts -nonewline $stream "[get_full_name $net],$net_type,$fanout,"
       puts -nonewline $stream [concat \
         [format "%.3e" $grt_net_res] "," [format "%.3e" $grt_net_cap] "," \
         [format "%.3e" $rcx_net_res] "," [format "%.3e" $rcx_net_cap]]
