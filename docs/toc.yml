@@ -45,6 +45,8 @@ entries:
 - file: tutorials/TutorialHome
   title: Tutorials
   entries:
+  - file: tutorials/QuickstartGcdNangate45
+    title: "Quickstart: gcd on nangate45 (Docker)"
   - file: tutorials/FlowTutorial
     title: Flow Tutorial
   - file: tutorials/Notebooks
