@@ -1,0 +1,78 @@
+{
+    "layers" : {
+        "Metal1" : {
+            "layer":                   34,
+            "name":                    "Metal1",
+            "dir":                     "H",
+            "datatype":                 0,
+            "space_to_outline":         5,
+            "non-opc": {
+                "datatype":             4,
+                "width":                [12.00, 6.00, 3.00, 2.00],
+                "height":               [2.00, 2.00, 2.00, 2.00],
+                "space_to_fill":        1.0,
+                "space_to_non_fill":    2.0
+            }
+        },
+
+        "Metal2" : {
+            "layer":                   36,
+            "name":                    "Metal2",
+            "dir":                     "V",
+            "datatype":                 0,
+            "space_to_outline":         5,
+            "non-opc": {
+                "datatype":             4,
+                "width":                [2.00, 2.00, 2.00, 2.00],
+                "height":               [12.00, 6.00, 3.00, 2.00],
+                "space_to_fill":        1.0,
+                "space_to_non_fill":    2.0
+            }
+        },
+
+        "Metal3" : {
+            "layer":                   42,
+            "name":                    "Metal3",
+            "dir":                     "H",
+            "datatype":                 0,
+            "space_to_outline":         5,
+            "non-opc": {
+                "datatype":             4,
+                "width":                [12.00, 6.00, 3.00, 2.00],
+                "height":               [2.00, 2.00, 2.00, 2.00],
+                "space_to_fill":        1.0,
+                "space_to_non_fill":    2.0
+            }
+        },
+
+        "Metal4" : {
+            "layer":                   46,
+            "name":                    "Metal4",
+            "dir":                     "V",
+            "datatype":                 0,
+            "space_to_outline":         5,
+            "non-opc": {
+                "datatype":             4,
+                "width":                [2.00, 2.00, 2.00, 2.00],
+                "height":               [12.00, 6.00, 3.00, 2.00],
+                "space_to_fill":        1.0,
+                "space_to_non_fill":    2.0
+            }
+        },
+
+        "Metal5" : {
+            "layer":                   81,
+            "name":                    "Metal5",
+            "dir":                     "H",
+            "datatype":                 0,
+            "space_to_outline":         5,
+            "non-opc": {
+                "datatype":             4,
+                "width":                [12.00, 6.00, 3.00, 2.00],
+                "height":               [2.00, 2.00, 2.00, 2.00],
+                "space_to_fill":        1.0,
+                "space_to_non_fill":    2.0
+            }
+        }
+    }
+}
