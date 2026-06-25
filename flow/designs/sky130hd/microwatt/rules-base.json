@@ -90,7 +90,7 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -2.73,
+        "value": -2.69,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
@@ -98,7 +98,7 @@
         "compare": ">="
     },
     "finish__timing__hold__ws": {
-        "value": -0.991,
+        "value": -0.989,
         "compare": ">="
     },
     "finish__timing__hold__tns": {
@@ -106,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 5575821,
+        "value": 5575637,
         "compare": "<="
     }
 }
