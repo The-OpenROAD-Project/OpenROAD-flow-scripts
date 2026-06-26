@@ -143,6 +143,7 @@ configuration file.
 | <a name="DPO_MAX_DISPLACEMENT"></a>DPO_MAX_DISPLACEMENT| Specifies how far an instance can be moved when optimizing.| 5 1|
 | <a name="EARLY_SIZING_CAP_RATIO"></a>EARLY_SIZING_CAP_RATIO| Ratio between the input pin capacitance and the output pin load during initial gate sizing.| |
 | <a name="ENABLE_DPO"></a>ENABLE_DPO| Enable detail placement with improve_placement feature.| 1|
+| <a name="ENABLE_PLACE_REPAIR_TIMING"></a>ENABLE_PLACE_REPAIR_TIMING| Run repair_timing during the placement resize stage using placement parasitics. Disabled by default; pre-CTS setup/hold repair is skipped unless this is set to 1.| 0|
 | <a name="ENABLE_RESISTANCE_AWARE"></a>ENABLE_RESISTANCE_AWARE| Passed as -resistance_aware to global_route.| |
 | <a name="FASTROUTE_TCL"></a>FASTROUTE_TCL| Specifies a Tcl script with commands to run before FastRoute.| |
 | <a name="FILL_CELLS"></a>FILL_CELLS| Fill cells are used to fill empty sites. If not set or empty, fill cell insertion is skipped.| |
@@ -216,7 +217,6 @@ configuration file.
 | <a name="POST_IO_PLACEMENT_TCL"></a>POST_IO_PLACEMENT_TCL| Specifies a Tcl script with commands to run after IO placement.| |
 | <a name="POST_MACRO_PLACE_TCL"></a>POST_MACRO_PLACE_TCL| Specifies a Tcl script with commands to run after macro placement.| |
 | <a name="POST_PDN_TCL"></a>POST_PDN_TCL| Specifies a Tcl script with commands to run after PDN generation.| |
-| <a name="POST_REPAIR_TIMING_POST_PLACE_TCL"></a>POST_REPAIR_TIMING_POST_PLACE_TCL| Specifies a Tcl script with commands to run after post-place timing repair.| |
 | <a name="POST_RESIZE_TCL"></a>POST_RESIZE_TCL| Specifies a Tcl script with commands to run after resize.| |
 | <a name="POST_SYNTH_TCL"></a>POST_SYNTH_TCL| Specifies a Tcl script with commands to run after synthesis ODB generation.| |
 | <a name="POST_TAPCELL_TCL"></a>POST_TAPCELL_TCL| Specifies a Tcl script with commands to run after tapcell.| |
@@ -233,7 +233,6 @@ configuration file.
 | <a name="PRE_IO_PLACEMENT_TCL"></a>PRE_IO_PLACEMENT_TCL| Specifies a Tcl script with commands to run before IO placement.| |
 | <a name="PRE_MACRO_PLACE_TCL"></a>PRE_MACRO_PLACE_TCL| Specifies a Tcl script with commands to run before macro placement.| |
 | <a name="PRE_PDN_TCL"></a>PRE_PDN_TCL| Specifies a Tcl script with commands to run before PDN generation.| |
-| <a name="PRE_REPAIR_TIMING_POST_PLACE_TCL"></a>PRE_REPAIR_TIMING_POST_PLACE_TCL| Specifies a Tcl script with commands to run before post-place timing repair.| |
 | <a name="PRE_RESIZE_TCL"></a>PRE_RESIZE_TCL| Specifies a Tcl script with commands to run before resize.| |
 | <a name="PRE_SYNTH_TCL"></a>PRE_SYNTH_TCL| Specifies a Tcl script with commands to run before synthesis ODB generation.| |
 | <a name="PRE_TAPCELL_TCL"></a>PRE_TAPCELL_TCL| Specifies a Tcl script with commands to run before tapcell.| |
@@ -312,6 +311,7 @@ configuration file.
 | <a name="SYNTH_RETIME_MODULES"></a>SYNTH_RETIME_MODULES| *This is an experimental option and may cause adverse effects.* *No effort has been made to check if the retimed RTL is logically equivalent to the non-retimed RTL.* List of modules to apply automatic retiming to. These modules must not get dissolved and as such they should either be the top module or be included in SYNTH_KEEP_MODULES. The main use case is to quickly identify if performance can be improved by manually retiming the input RTL. Retiming will treat module ports like register endpoints/startpoints. The objective function of retiming isn't informed by SDC, even the clock period is ignored. As such, retiming will optimize for best delay at potentially high register number cost. Automatic retiming can produce suboptimal results as its timing model is crude and it doesn't find the optimal distribution of registers on long pipelines. See OR discussion  # 8080.| |
 | <a name="SYNTH_SKIP_KEEP"></a>SYNTH_SKIP_KEEP| Only meaningful together with SYNTH_CHECKPOINT. When set, signals that the supplied checkpoint is still canonical RTLIL (coarse synth and `keep_hierarchy` have not been run yet), so synth.tcl runs the full coarse+fine synthesis flattened. When unset and SYNTH_CHECKPOINT is used, synth.tcl assumes the checkpoint already has coarse synth + `keep_hierarchy` done and resumes from `coarse:fine`.| 0|
 | <a name="SYNTH_SLANG_ARGS"></a>SYNTH_SLANG_ARGS| Additional arguments passed to the slang frontend during synthesis.| |
+| <a name="SYNTH_USE_SYN"></a>SYNTH_USE_SYN| If set to 1, run synthesis using the "syn" tool built into OpenROAD (the synth_syn.tcl flow) instead of the default Yosys-based flow. Defaults to 0 (Yosys flow).| 0|
 | <a name="SYNTH_WRAPPED_ADDERS"></a>SYNTH_WRAPPED_ADDERS| Specify the adder modules that can be used for synthesis, separated by commas. The default adder module is determined by the first element of this variable.| |
 | <a name="SYNTH_WRAPPED_MULTIPLIERS"></a>SYNTH_WRAPPED_MULTIPLIERS| Specify the multiplier modules that can be used for synthesis, separated by commas. The default multiplier module is determined by the first element of this variable.| |
 | <a name="SYNTH_WRAPPED_OPERATORS"></a>SYNTH_WRAPPED_OPERATORS| Synthesize multiple architectural options for each arithmetic operator in the design. These options are available for switching among in later stages of the flow.| |
@@ -353,6 +353,7 @@ configuration file.
 - [SDC_FILE](#SDC_FILE)
 - [SDC_GUT](#SDC_GUT)
 - [SEC_CHECK](#SEC_CHECK)
+- [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
 - [SLANG_PLUGIN_PATH](#SLANG_PLUGIN_PATH)
 - [SYNTH_ARGS](#SYNTH_ARGS)
 - [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
@@ -375,6 +376,7 @@ configuration file.
 - [SYNTH_RETIME_MODULES](#SYNTH_RETIME_MODULES)
 - [SYNTH_SKIP_KEEP](#SYNTH_SKIP_KEEP)
 - [SYNTH_SLANG_ARGS](#SYNTH_SLANG_ARGS)
+- [SYNTH_USE_SYN](#SYNTH_USE_SYN)
 - [SYNTH_WRAPPED_ADDERS](#SYNTH_WRAPPED_ADDERS)
 - [SYNTH_WRAPPED_MULTIPLIERS](#SYNTH_WRAPPED_MULTIPLIERS)
 - [TIEHI_CELL_AND_PORT](#TIEHI_CELL_AND_PORT)
@@ -469,6 +471,7 @@ configuration file.
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [DONT_BUFFER_PORTS](#DONT_BUFFER_PORTS)
 - [EARLY_SIZING_CAP_RATIO](#EARLY_SIZING_CAP_RATIO)
+- [ENABLE_PLACE_REPAIR_TIMING](#ENABLE_PLACE_REPAIR_TIMING)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
 - [GLOBAL_PLACEMENT_ARGS](#GLOBAL_PLACEMENT_ARGS)
 - [GPL_KEEP_OVERFLOW](#GPL_KEEP_OVERFLOW)
@@ -489,13 +492,11 @@ configuration file.
 - [POST_GLOBAL_PLACE_SKIP_IO_TCL](#POST_GLOBAL_PLACE_SKIP_IO_TCL)
 - [POST_GLOBAL_PLACE_TCL](#POST_GLOBAL_PLACE_TCL)
 - [POST_IO_PLACEMENT_TCL](#POST_IO_PLACEMENT_TCL)
-- [POST_REPAIR_TIMING_POST_PLACE_TCL](#POST_REPAIR_TIMING_POST_PLACE_TCL)
 - [POST_RESIZE_TCL](#POST_RESIZE_TCL)
 - [PRE_DETAIL_PLACE_TCL](#PRE_DETAIL_PLACE_TCL)
 - [PRE_GLOBAL_PLACE_SKIP_IO_TCL](#PRE_GLOBAL_PLACE_SKIP_IO_TCL)
 - [PRE_GLOBAL_PLACE_TCL](#PRE_GLOBAL_PLACE_TCL)
 - [PRE_IO_PLACEMENT_TCL](#PRE_IO_PLACEMENT_TCL)
-- [PRE_REPAIR_TIMING_POST_PLACE_TCL](#PRE_REPAIR_TIMING_POST_PLACE_TCL)
 - [PRE_RESIZE_TCL](#PRE_RESIZE_TCL)
 - [ROUTING_LAYER_ADJUSTMENT](#ROUTING_LAYER_ADJUSTMENT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)

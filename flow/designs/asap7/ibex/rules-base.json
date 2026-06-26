@@ -14,7 +14,7 @@
         "compare": "<="
     },
     "constraints__clocks__count": {
-        "value": 1,
+        "value": 2,
         "compare": "=="
     },
     "placeopt__design__instance__area": {
@@ -42,7 +42,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -1630.0,
+        "value": -11000.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -58,11 +58,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -75.7,
+        "value": -74.3,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -451.0,
+        "value": -432.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {

@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Check out repository code recursively
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
       - name: Git prep
@@ -19,13 +19,13 @@ jobs:
           git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/pr/*"
           git fetch
           git checkout "origin/pr/${{ github.event.client_payload.branch }}"
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: "3.10"
       - name: Install Python Packages
         run: |
           python3 -m venv venv
-          venv/bin/pip install firebase-admin
+          venv/bin/pip install -r .github/requirements/requirements_lock.txt
       - name: Execute Python Script Update
         env:
           CREDS_FILE: ${{ secrets.CREDS_FILE }}
@@ -58,7 +58,7 @@ jobs:
           git push origin "HEAD:refs/pull/${{ github.event.client_payload.branch }}/head"
       - if: "steps.remote-update.outputs.has_update == 'true' && github.event.client_payload.branch == 'master'"
         name: Create Draft PR
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1  # v8.1.1
         with:
           token: ${{ github.token }}
           signoff: true

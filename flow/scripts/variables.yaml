@@ -115,6 +115,7 @@ SKIP_REPORT_METRICS:
     If set to 1, then metrics, report_metrics does nothing. Useful to speed up
     builds.
   stages:
+    - synth
     - floorplan
     - place
     - cts
@@ -177,6 +178,14 @@ SYNTH_GUT:
 SYNTH_HIERARCHICAL:
   description: |
     Enable to Synthesis hierarchically, otherwise considered flat synthesis.
+  stages:
+    - synth
+  default: 0
+SYNTH_USE_SYN:
+  description: >
+    If set to 1, run synthesis using the "syn" tool built into OpenROAD
+    (the synth_syn.tcl flow) instead of the default Yosys-based flow.
+    Defaults to 0 (Yosys flow).
   stages:
     - synth
   default: 0
@@ -816,6 +825,14 @@ SKIP_CTS_REPAIR_TIMING:
   stages:
     - cts
   default: 0
+ENABLE_PLACE_REPAIR_TIMING:
+  description: >
+    Run repair_timing during the placement resize stage using placement
+    parasitics. Disabled by default; pre-CTS setup/hold repair is skipped
+    unless this is set to 1.
+  stages:
+    - place
+  default: 0
 SKIP_REPAIR_TIE_FANOUT:
   description: >
     Skip repair_tie_fanout at floorplan step.
@@ -1189,11 +1206,6 @@ POST_PDN_TCL:
     Specifies a Tcl script with commands to run after PDN generation.
   stages:
     - floorplan
-POST_REPAIR_TIMING_POST_PLACE_TCL:
-  description: |
-    Specifies a Tcl script with commands to run after post-place timing repair.
-  stages:
-    - place
 POST_RESIZE_TCL:
   description: |
     Specifies a Tcl script with commands to run after resize.
@@ -1269,11 +1281,6 @@ PRE_PDN_TCL:
     Specifies a Tcl script with commands to run before PDN generation.
   stages:
     - floorplan
-PRE_REPAIR_TIMING_POST_PLACE_TCL:
-  description: |
-    Specifies a Tcl script with commands to run before post-place timing repair.
-  stages:
-    - place
 PRE_RESIZE_TCL:
   description: |
     Specifies a Tcl script with commands to run before resize.

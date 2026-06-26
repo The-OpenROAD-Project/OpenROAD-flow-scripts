@@ -1,8 +1,0 @@
-"""Vendored patches applied on top of the bazel-orfs git_override pin.
-
-These are small fixes we keep here to reduce churn while iterating;
-when they land upstream, drop the entry from MODULE.bazel and bump
-BAZEL_ORFS_COMMIT instead.
-"""
-
-exports_files(glob(["*.patch"]))
