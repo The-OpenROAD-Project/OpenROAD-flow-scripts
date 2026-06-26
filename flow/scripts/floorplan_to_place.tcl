@@ -27,6 +27,3 @@ source $::env(SCRIPTS_DIR)/resize.tcl
 
 # Detailed placement
 source $::env(SCRIPTS_DIR)/detail_place.tcl
-
-# Repair timing after placement
-source $::env(SCRIPTS_DIR)/repair_timing_post_place.tcl

@@ -37,6 +37,7 @@ extensions = [
     "sphinx_copybutton",
     "myst_parser",
     "sphinxcontrib.mermaid",
+    "sphinx_llm.txt",
 ]
 
 myst_enable_extensions = [
@@ -78,6 +79,7 @@ exclude_patterns = [
     "docs/releases/PostAlpha2.1BranchMethodology.md",
     "main",
     "index.md",
+    "contrib/GitGuideAdapter.md",
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
@@ -162,14 +164,22 @@ def setup(app):
     url = "https://raw.githubusercontent.com/The-OpenROAD-Project/OpenROAD/master/docs/index.md"
     get_file_from_url(url, "SupportedOS.md")
 
-    # edit OpenROAD to OpenROAD-flow-scripts for GitGuide
+    # Adapt the downloaded GitGuide for ORFS: rename references and inject
+    # ORFS-specific submodule forking instructions from GitGuideAdapter.md.
     with open("contrib/GitGuide.md", "r") as f:
         content = f.read()
-    content = content.replace(
-        "user/Build.md", "../index.md#build-or-installing-orfs-dependencies"
+    content = (
+        content.replace(
+            "user/Build.md", "../index.md#build-or-installing-orfs-dependencies"
+        )
+        .replace("OpenROAD", "OpenROAD-flow-scripts")
+        .replace("The-OpenROAD-flow-scripts", "The-OpenROAD")
     )
-    content = content.replace("OpenROAD", "OpenROAD-flow-scripts")
-    content = content.replace("The-OpenROAD-flow-scripts", "The-OpenROAD")
+    with open("contrib/GitGuideAdapter.md", "r") as f:
+        adapter_content = f.read()
+    content = content.replace(
+        "## Creating a branch", adapter_content + "\n## Creating a branch"
+    )
     with open("contrib/GitGuide.md", "w") as f:
         f.write(content)
 

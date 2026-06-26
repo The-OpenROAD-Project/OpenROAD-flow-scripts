@@ -6,8 +6,8 @@ Metal1		NET		34		0
 Metal1		SPNET		34		0
 Metal1		PIN		34		0
 Metal1		LEFPIN		34		0
-Metal1		FILL		34		0
-Metal1		FILLOPC		34		0
+Metal1		FILL		34		4
+Metal1		FILLOPC		34		4
 Metal1		VIA		34		0
 Metal1		VIAFILL		34		0
 Metal1		VIAFILLOPC	34		0
@@ -31,8 +31,8 @@ Metal2		NET		36		0
 Metal2		SPNET		36		0
 Metal2		PIN		36		0
 Metal2		LEFPIN		36		0
-Metal2		FILL		36		0
-Metal2		FILLOPC		36		0
+Metal2		FILL		36		4
+Metal2		FILLOPC		36		4
 Metal2		VIA		36		0
 Metal2		VIAFILL		36		0
 Metal2		VIAFILLOPC	36		0
@@ -56,8 +56,8 @@ Metal3		NET		42		0
 Metal3		SPNET		42		0
 Metal3		PIN		42		0
 Metal3		LEFPIN		42		0
-Metal3		FILL		42		0
-Metal3		FILLOPC		42		0
+Metal3		FILL		42		4
+Metal3		FILLOPC		42		4
 Metal3		VIA		42		0
 Metal3		VIAFILL		42		0
 Metal3		VIAFILLOPC	42		0
@@ -81,8 +81,8 @@ Metal4		NET		46		0
 Metal4		SPNET		46		0
 Metal4		PIN		46		0
 Metal4		LEFPIN		46		0
-Metal4		FILL		46		0
-Metal4		FILLOPC		46		0
+Metal4		FILL		46		4
+Metal4		FILLOPC		46		4
 Metal4		VIA		46		0
 Metal4		VIAFILL		46		0
 Metal4		VIAFILLOPC	46		0
@@ -106,8 +106,8 @@ Metal5		NET		81		0
 Metal5		SPNET		81		0
 Metal5		PIN		81		0
 Metal5		LEFPIN		81		0
-Metal5		FILL		81		0
-Metal5		FILLOPC		81		0
+Metal5		FILL		81		4
+Metal5		FILLOPC		81		4
 Metal5		VIA		81		0
 Metal5		VIAFILL		81		0
 Metal5		VIAFILLOPC	81		0

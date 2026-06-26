@@ -17,7 +17,7 @@ export UTILS_DIR     ?= $(FLOW_HOME)/util
 export SCRIPTS_DIR   ?= $(FLOW_HOME)/scripts
 export TEST_DIR      ?= $(FLOW_HOME)/test
 
-PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180
+PUBLIC=nangate45 sky130hd sky130hs asap7 ihp-sg13g2 gf180 gt2n
 
 ifeq ($(origin PLATFORM), undefined)
   $(error PLATFORM variable not set.)
@@ -111,8 +111,8 @@ OPENROAD_IS_VALID := $(if $(OPENROAD_EXE),$(shell test -x $(OPENROAD_EXE) && ech
 export OPENROAD_ARGS = -no_init -threads $(NUM_CORES) $(OR_ARGS)
 export OPENROAD_CMD = $(OPENROAD_EXE) -exit $(OPENROAD_ARGS)
 export OPENROAD_NO_EXIT_CMD = $(OPENROAD_EXE) $(OPENROAD_ARGS)
-export OPENROAD_GUI_CMD = $(OPENROAD_EXE) -gui $(OR_ARGS)
-export OPENROAD_WEB_CMD = $(OPENROAD_EXE) -web $(OR_ARGS)
+export OPENROAD_GUI_CMD = $(OPENROAD_EXE) -gui -threads $(NUM_CORES) $(OR_ARGS)
+export OPENROAD_WEB_CMD = $(OPENROAD_EXE) -web -threads $(NUM_CORES) $(OR_ARGS)
 
 ifneq (${IN_NIX_SHELL},)
   YOSYS_EXE ?= $(shell command -v yosys)
