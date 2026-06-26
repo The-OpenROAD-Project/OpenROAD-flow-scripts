@@ -43,7 +43,7 @@ module fakeregfile_32x46
        end
        else if (wen_in)
        begin
-          mem[waddr_in] <= (wdata_in) | (mem[waddr_in]);
+          mem[waddr_in] <= wdata_in;
        end
    end
 
@@ -62,9 +62,6 @@ module fakeregfile_32x46
    // Timing check placeholders (will be replaced during SDF back-annotation)
    reg notifier;
    specify
-      // Delay from rclk to rdata_out
-      (posedge rclk *> rdata_out) = (0, 0);
-
       // Timing checks
       $width     (posedge rclk,           0, 0, notifier);
       $width     (negedge rclk,           0, 0, notifier);
