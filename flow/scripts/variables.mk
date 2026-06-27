@@ -221,6 +221,8 @@ ifeq ($(origin ABC_CLOCK_PERIOD_IN_PS), undefined)
    endif
 endif
 
+export OPT_POST_GRT_WNS ?= 1
+
 .PHONY: vars
 vars:
 	mkdir -p $(OBJECTS_DIR)
