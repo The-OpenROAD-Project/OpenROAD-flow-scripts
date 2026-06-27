@@ -1622,3 +1622,10 @@ CDL_FILE:
     for generating Circuit Description Language output.
   stages:
     - final
+OPT_POST_GRT_WNS:
+  default: 1
+  description: >
+    Optimize WNS after global routing by additional repair_timing that uses
+    VT swap and wire rerouting only to minimize placement and routing disturbance
+  stages:
+    - grt
