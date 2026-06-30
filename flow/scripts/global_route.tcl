@@ -66,10 +66,10 @@ proc global_route_helper { } {
     # Run to get modified net by DPL
     set dpl_args {}
     append_env_var dpl_args USE_NEGOTIATION -use_negotiation 0
-    log_cmd global_route -start_incremental {*}$use_cugr
+    log_cmd global_route -start_incremental
     log_cmd detailed_placement {*}$dpl_args
     # Route only the modified net by DPL
-    log_cmd global_route -end_incremental {*}$res_aware {*}$use_cugr \
+    log_cmd global_route -end_incremental {*}$res_aware \
       -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_design.rpt
 
     # Repair timing using global route parasitics
@@ -84,19 +84,19 @@ proc global_route_helper { } {
 
     # Running DPL to fix overlapped instances
     # Run to get modified net by DPL
-    log_cmd global_route -start_incremental {*}$use_cugr
+    log_cmd global_route -start_incremental
     log_cmd detailed_placement {*}$dpl_args
     check_placement -verbose
     # Route only the modified net by DPL
-    log_cmd global_route -end_incremental {*}$res_aware {*}$use_cugr \
+    log_cmd global_route -end_incremental {*}$res_aware \
       -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
   }
 
 
-  log_cmd global_route -start_incremental {*}$use_cugr
+  log_cmd global_route -start_incremental
   recover_power_helper
   # Route the modified nets by rsz journal restore
-  log_cmd global_route -end_incremental {*}$res_aware {*}$use_cugr \
+  log_cmd global_route -end_incremental {*}$res_aware \
     -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
 
   if {
