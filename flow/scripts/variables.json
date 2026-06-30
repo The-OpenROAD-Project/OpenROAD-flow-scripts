@@ -394,6 +394,13 @@
       "grt"
     ]
   },
+  "GLOBAL_ROUTE_USE_CUGR": {
+    "default": 0,
+    "description": "Passed as -use_cugr to global_route. Uses CUGR as the global routing solver instead of the default FastRoute solver. NOTE: CUGR is not ready for production.\n",
+    "stages": [
+      "grt"
+    ]
+  },
   "GND_NETS_VOLTAGES": {
     "description": "Used for IR Drop calculation.\n",
     "stages": [

@@ -11,10 +11,13 @@ proc global_route_helper { } {
   set res_aware ""
   append_env_var res_aware ENABLE_RESISTANCE_AWARE -resistance_aware 0
 
-  proc do_global_route { res_aware } {
+  set use_cugr ""
+  append_env_var use_cugr GLOBAL_ROUTE_USE_CUGR -use_cugr 0
+
+  proc do_global_route { res_aware use_cugr } {
     set all_args [concat [list \
       -congestion_report_file $::global_route_congestion_report] \
-      $::env(GLOBAL_ROUTE_ARGS) {*}$res_aware]
+      $::env(GLOBAL_ROUTE_ARGS) {*}$res_aware {*}$use_cugr]
 
     log_cmd global_route {*}$all_args
   }
@@ -25,7 +28,7 @@ proc global_route_helper { } {
 
   log_cmd pin_access {*}$additional_args
 
-  set result [catch { do_global_route $res_aware } errMsg]
+  set result [catch { do_global_route $res_aware $use_cugr } errMsg]
 
   if { $result != 0 } {
     if { !$::env(GENERATE_ARTIFACTS_ON_FAILURE) } {

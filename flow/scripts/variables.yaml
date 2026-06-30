@@ -1322,6 +1322,14 @@ GLOBAL_ROUTE_ARGS:
   stages:
     - grt
   default: -congestion_iterations 30 -congestion_report_iter_step 5 -verbose
+GLOBAL_ROUTE_USE_CUGR:
+  description: >
+    Passed as -use_cugr to global_route. Uses CUGR as the global routing
+    solver instead of the default FastRoute solver. NOTE: CUGR is not ready
+    for production.
+  stages:
+    - grt
+  default: 0
 ENABLE_RESISTANCE_AWARE:
   description: >
     Passed as -resistance_aware to global_route.
