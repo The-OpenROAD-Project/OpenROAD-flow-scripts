@@ -15,9 +15,14 @@ proc global_route_helper { } {
   append_env_var use_cugr GLOBAL_ROUTE_USE_CUGR -use_cugr 0
 
   proc do_global_route { res_aware use_cugr } {
+    # CUGR runs a full 3D maze pass per iteration; use a tighter default.
+    set cong_iters "-congestion_iterations 30"
+    if { $use_cugr ne "" } {
+      set cong_iters "-congestion_iterations 10"
+    }
     set all_args [concat [list \
       -congestion_report_file $::global_route_congestion_report] \
-      $::env(GLOBAL_ROUTE_ARGS) {*}$res_aware {*}$use_cugr]
+      $cong_iters $::env(GLOBAL_ROUTE_ARGS) {*}$res_aware {*}$use_cugr]
 
     log_cmd global_route {*}$all_args
   }

@@ -1318,10 +1318,12 @@ PRE_GLOBAL_ROUTE_TCL:
     - grt
 GLOBAL_ROUTE_ARGS:
   description: >
-    Replaces default arguments for global route.
+    Replaces default arguments for global route. The -congestion_iterations
+    default is set by the flow (30 for FastRoute, 10 for CUGR); add
+    -congestion_iterations here to override it.
   stages:
     - grt
-  default: -congestion_iterations 30 -congestion_report_iter_step 5 -verbose
+  default: -congestion_report_iter_step 5 -verbose
 GLOBAL_ROUTE_USE_CUGR:
   description: >
     Passed as -use_cugr to global_route. Uses CUGR as the global routing

@@ -388,8 +388,8 @@
     ]
   },
   "GLOBAL_ROUTE_ARGS": {
-    "default": "-congestion_iterations 30 -congestion_report_iter_step 5 -verbose",
-    "description": "Replaces default arguments for global route.\n",
+    "default": "-congestion_report_iter_step 5 -verbose",
+    "description": "Replaces default arguments for global route. The -congestion_iterations default is set by the flow (30 for FastRoute, 10 for CUGR); add -congestion_iterations here to override it.\n",
     "stages": [
       "grt"
     ]
