@@ -412,6 +412,14 @@ endif
 
 $(RESULTS_DIR)/1_synth.sdc: $(RESULTS_DIR)/1_synth.odb
 
+FORMAL_CHECK_DEPS =
+ifneq ($(filter 1,$(LEC_CHECK) $(SEC_CHECK)),)
+FORMAL_CHECK_DEPS += $(RESULTS_DIR)/1_synth_lec.v
+endif
+
+$(RESULTS_DIR)/1_synth_lec.v: $(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc
+	$(UNSET_AND_MAKE) do-1_synth
+
 $(eval $(call do-step,2_1_floorplan,$(RESULTS_DIR)/1_synth.odb $(RESULTS_DIR)/1_synth.sdc $(TECH_LEF) $(SC_LEF) $(ADDITIONAL_LEFS) $(FOOTPRINT) $(SIG_MAP_FILE) $(FOOTPRINT_TCL) $(LIB_FILES) $(IO_CONSTRAINTS),floorplan))
 
 $(eval $(call do-copy,2_floorplan,2_1_floorplan.sdc,,.sdc))
@@ -616,7 +624,7 @@ $(eval $(call do-copy,6_1_fill,5_route.sdc,,.sdc))
 
 $(eval $(call do-copy,6_final,5_route.sdc,,.sdc))
 
-$(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc,final_report,.log,$(LOG_DIR)))
+$(eval $(call do-step,6_report,$(RESULTS_DIR)/6_1_fill.odb $(RESULTS_DIR)/6_1_fill.sdc $(FORMAL_CHECK_DEPS),final_report,.log,$(LOG_DIR)))
 
 $(RESULTS_DIR)/6_final.def: $(LOG_DIR)/6_report.log
 
