@@ -97,7 +97,7 @@ proc global_route_helper { } {
 
       set repair_timing_args \
         [list -setup -sequence "vt_swap reroute" -skip_last_gasp -repair_tns 0 -verbose]
-      if { $::env(MATCH_CELL_FOOTPRINT) } {
+      if { [env_var_exists_and_non_empty MATCH_CELL_FOOTPRINT] } {
         lappend repair_timing_args -match_cell_footprint
       }
       if { $::env(SETUP_SLACK_MARGIN) != 0 } {
