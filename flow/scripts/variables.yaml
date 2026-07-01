@@ -643,6 +643,11 @@ USE_NEGOTIATION:
   description: |
     Enable using negotiation legalizer for detailed placement.
   default: 0
+GPL_RANDOM_SEED:
+  description: |
+    Specifies a random seed for global placement.  Useful for perturbation studies.
+  stages:
+    - place
 GPL_TIMING_DRIVEN:
   description: |
     Specifies whether the placer should use timing driven placement.
