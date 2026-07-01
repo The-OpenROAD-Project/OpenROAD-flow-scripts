@@ -639,6 +639,13 @@
       "All stages"
     ]
   },
+  "OPT_POST_GRT_WNS": {
+    "default": 1,
+    "description": "Optimize WNS after global routing by additional repair_timing that uses VT swap and wire rerouting only to minimize placement and routing disturbance\n",
+    "stages": [
+      "grt"
+    ]
+  },
   "OR_K": {
     "description": "Passed as -or_k to detailed routing.\n",
     "stages": [

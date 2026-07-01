@@ -95,7 +95,8 @@ proc global_route_helper { } {
       log_cmd global_route -end_incremental {*}$res_aware \
         -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing_opt_wns.rpt
 
-      set repair_timing_args [list -setup -sequence "vt_swap reroute" -skip_last_gasp -repair_tns 0 -verbose]
+      set repair_timing_args \
+        [list -setup -sequence "vt_swap reroute" -skip_last_gasp -repair_tns 0 -verbose]
       if { $::env(MATCH_CELL_FOOTPRINT) } {
         lappend repair_timing_args -match_cell_footprint
       }
