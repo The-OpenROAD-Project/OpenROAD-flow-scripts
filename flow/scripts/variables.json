@@ -413,6 +413,12 @@
       "place"
     ]
   },
+  "GPL_RANDOM_SEED": {
+    "description": "Specifies a random seed for global placement.  Useful for pertubation studies.\n",
+    "stages": [
+      "place"
+    ]
+  },
   "GPL_ROUTABILITY_DRIVEN": {
     "default": 1,
     "description": "Specifies whether the placer should use routability driven placement.\n",
