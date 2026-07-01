@@ -87,6 +87,29 @@ proc global_route_helper { } {
       report_metrics 5 "global route post repair timing"
     }
 
+    if { $::env(OPT_POST_GRT_WNS) } {
+      log_cmd global_route -start_incremental
+      log_cmd detailed_placement {*}$dpl_args
+      check_placement -verbose
+      # Route only the modified net by DPL
+      log_cmd global_route -end_incremental {*}$res_aware \
+        -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing_opt_wns.rpt
+
+      set repair_timing_args \
+        [list -setup -sequence "vt_swap reroute" -skip_last_gasp -repair_tns 0 -verbose]
+      if { [env_var_exists_and_non_empty MATCH_CELL_FOOTPRINT] } {
+        lappend repair_timing_args -match_cell_footprint
+      }
+      if { $::env(SETUP_SLACK_MARGIN) != 0 } {
+        lappend repair_timing_args -setup_margin $::env(SETUP_SLACK_MARGIN)
+      }
+      repair_timing {*}$repair_timing_args
+
+      if { $::env(DETAILED_METRICS) } {
+        report_metrics 5 "global route post repair timing_opt_wns"
+      }
+    }
+
     # Running DPL to fix overlapped instances
     # Run to get modified net by DPL
     log_cmd global_route -start_incremental
@@ -97,12 +120,13 @@ proc global_route_helper { } {
       -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
   }
 
-
-  log_cmd global_route -start_incremental
-  recover_power_helper
-  # Route the modified nets by rsz journal restore
-  log_cmd global_route -end_incremental {*}$res_aware \
-    -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  if { !$::env(OPT_POST_GRT_WNS) } {
+    log_cmd global_route -start_incremental
+    recover_power_helper
+    # Route the modified nets by rsz journal restore
+    log_cmd global_route -end_incremental {*}$res_aware \
+      -congestion_report_file $::env(REPORTS_DIR)/congestion_post_recover_power.rpt
+  }
 
   if {
     !$::env(SKIP_ANTENNA_REPAIR) &&
