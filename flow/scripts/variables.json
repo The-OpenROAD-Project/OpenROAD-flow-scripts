@@ -414,7 +414,7 @@
     ]
   },
   "GPL_RANDOM_SEED": {
-    "description": "Specifies a random seed for global placement.  Useful for pertubation studies.\n",
+    "description": "Specifies a random seed for global placement.  Useful for perturbation studies.\n",
     "stages": [
       "place"
     ]

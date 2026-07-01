@@ -645,7 +645,7 @@ USE_NEGOTIATION:
   default: 0
 GPL_RANDOM_SEED:
   description: |
-    Specifies a random seed for global placement.  Useful for pertubation studies.
+    Specifies a random seed for global placement.  Useful for perturbation studies.
   stages:
     - place
 GPL_TIMING_DRIVEN:

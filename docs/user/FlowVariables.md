@@ -160,7 +160,7 @@ configuration file.
 | <a name="GLOBAL_ROUTE_USE_CUGR"></a>GLOBAL_ROUTE_USE_CUGR| Passed as -use_cugr to global_route. Uses CUGR as the global routing solver instead of the default FastRoute solver. NOTE: CUGR is not ready for production.| 0|
 | <a name="GND_NETS_VOLTAGES"></a>GND_NETS_VOLTAGES| Used for IR Drop calculation.| |
 | <a name="GPL_KEEP_OVERFLOW"></a>GPL_KEEP_OVERFLOW| Passed as -keep_resize_below_overflow to global_placement. Only used when GPL_TIMING_DRIVEN is enabled.| |
-| <a name="GPL_RANDOM_SEED"></a>GPL_RANDOM_SEED| Specifies a random seed for global placement.  Useful for pertubation studies.| |
+| <a name="GPL_RANDOM_SEED"></a>GPL_RANDOM_SEED| Specifies a random seed for global placement.  Useful for perturbation studies.| |
 | <a name="GPL_ROUTABILITY_DRIVEN"></a>GPL_ROUTABILITY_DRIVEN| Specifies whether the placer should use routability driven placement.| 1|
 | <a name="GPL_TIMING_DRIVEN"></a>GPL_TIMING_DRIVEN| Specifies whether the placer should use timing driven placement.| 1|
 | <a name="GUI_TIMING"></a>GUI_TIMING| Load timing information when opening GUI. For large designs, this can be quite time consuming. Useful to disable when investigating non-timing aspects like floorplan, placement, routing, etc.| 1|
