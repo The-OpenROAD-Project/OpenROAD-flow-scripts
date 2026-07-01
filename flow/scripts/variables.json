@@ -388,8 +388,15 @@
     ]
   },
   "GLOBAL_ROUTE_ARGS": {
-    "default": "-congestion_iterations 30 -congestion_report_iter_step 5 -verbose",
-    "description": "Replaces default arguments for global route.\n",
+    "default": "-congestion_report_iter_step 5 -verbose",
+    "description": "Replaces default arguments for global route. The -congestion_iterations default is set by the flow (30 for FastRoute, 10 for CUGR); add -congestion_iterations here to override it.\n",
+    "stages": [
+      "grt"
+    ]
+  },
+  "GLOBAL_ROUTE_USE_CUGR": {
+    "default": 0,
+    "description": "Passed as -use_cugr to global_route. Uses CUGR as the global routing solver instead of the default FastRoute solver. NOTE: CUGR is not ready for production.\n",
     "stages": [
       "grt"
     ]

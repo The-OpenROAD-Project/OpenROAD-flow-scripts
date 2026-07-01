@@ -1,6 +1,6 @@
 {
     "synth__canonical_netlist__hash": {
-        "value": "787d6a4946b12ba374364f9b9de6770296d04729",
+        "value": "fb786d77e841d2488f5a6b7db514abf2010cf808",
         "compare": "==",
         "level": "warning"
     },
@@ -18,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 2296,
+        "value": 2291,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 11715,
+        "value": 11655,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -30,11 +30,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 1019,
+        "value": 1014,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 1019,
+        "value": 1014,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -58,7 +58,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -52.8,
+        "value": -52.1,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
@@ -74,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 64638,
+        "value": 61587,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -94,7 +94,7 @@
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -6380.0,
+        "value": -21300.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -106,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 2373,
+        "value": 2367,
         "compare": "<="
     }
 }
