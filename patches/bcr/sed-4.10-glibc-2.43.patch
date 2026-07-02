@@ -1,0 +1,64 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
+Date: Thu, 2 Jul 2026 17:05:27 +0200
+Subject: [PATCH] Fix gnulib vs glibc 2.43 and enable strnul
+
+gnulib's memchr replacement predates glibc 2.43, whose <string.h>
+defines memchr as a function-like macro (__glibc_const_generic); always
+undefine it before defining the replacement.  gnulib's error.c uses
+getprogname(), which glibc only declares under __USE_MISC and only
+since 2.38, and the pregenerated Bazel config does not provide gnulib's
+<stdlib.h> override; declare it directly.  file-has-acl.c uses strnul()
+unconditionally, but the generated string.h had GNULIB_STRNUL=0; flip
+it to 1 (lib/strnul.c is already compiled).
+---
+ BUILD.bazel  | 2 +-
+ lib/error.c  | 6 ++++++
+ lib/memchr.c | 4 +---
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/BUILD.bazel b/BUILD.bazel
+index 0d52d41..2f23fd8 100755
+--- a/BUILD.bazel
++++ b/BUILD.bazel
+@@ -505,7 +505,7 @@ autoconf(
+         checks.AC_SUBST("GNULIB_STRNCPY", 0),
+         checks.AC_SUBST("GNULIB_STRNDUP", 0),
+         checks.AC_SUBST("GNULIB_STRNLEN", 0),
+-        checks.AC_SUBST("GNULIB_STRNUL", 0),
++        checks.AC_SUBST("GNULIB_STRNUL", 1),
+         checks.AC_SUBST("GNULIB_STRPBRK", 0),
+         checks.AC_SUBST("GNULIB_STRPTIME", 0),
+         checks.AC_SUBST("GNULIB_STRSEP", 0),
+diff --git a/lib/error.c b/lib/error.c
+index e066241..14bb98d 100644
+--- a/lib/error.c
++++ b/lib/error.c
+@@ -31,6 +31,12 @@
+ 
+ #include <error.h>
+ 
++/* glibc declares getprogname in <stdlib.h> only under __USE_MISC and
++   only since 2.38; the pregenerated Bazel config does not provide
++   gnulib's <stdlib.h> override, so declare it directly (matches both
++   glibc's and gnulib's definition).  */
++const char *getprogname (void);
++
+ #include <stdarg.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+diff --git a/lib/memchr.c b/lib/memchr.c
+index 6adac7e..e4dc51b 100644
+--- a/lib/memchr.c
++++ b/lib/memchr.c
+@@ -46,9 +46,7 @@
+ #endif
+ 
+ #undef __memchr
+-#ifdef _LIBC
+-# undef memchr
+-#endif
++#undef memchr
+ 
+ #ifndef weak_alias
+ # define __memchr memchr

@@ -1,0 +1,8 @@
+"""Vendored patches applied on top of BCR module pins.
+
+Same idea as patches/bazel-orfs: keep small fixes here while they make
+their way upstream (gnulib / the BCR module), drop them once an
+upstream release carries the fix.
+"""
+
+exports_files(glob(["*.patch"]))

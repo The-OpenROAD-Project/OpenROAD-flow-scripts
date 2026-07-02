@@ -1,6 +1,23 @@
+load("@bazel-orfs//:yosys_pkg.bzl", "yosys_prefix_tar")
 load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 
 sh_binary(
     name = "install_for_bazel",
-    srcs = ["bazel/install.sh"],
+    # bazel/ is its own package (bazel/BUILD), so a cross-package label
+    # is required here; bazel/install.sh silently broke every root-package
+    # target once bazel/BUILD appeared.
+    srcs = ["//bazel:install.sh"],
+)
+
+# Relocatable PREFIX tarball of the hermetic bazel-built yosys
+# (bin/yosys, bin/yosys-abc, share/yosys/..., share/yosys/plugins/slang.so).
+# This is the single source of truth for the yosys that
+# etc/DependencyInstaller.sh and bazel/install.sh install; the version is
+# the @yosys pin in bazel-orfs MODULE.bazel (bump via
+# `bazelisk run @bazel-orfs//:bump`).
+yosys_prefix_tar(
+    name = "yosys_tar",
+    # Same label as orfs.default(yosys_plugins = ...) in MODULE.bazel, so
+    # SYNTH_HDL_FRONTEND=slang works identically in the classic flow.
+    plugins = ["@yosys-slang//src/yosys_plugin:slang.so"],
 )

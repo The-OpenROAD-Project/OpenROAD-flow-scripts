@@ -1,0 +1,130 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=C3=98yvind=20Harboe?= <oyvind.harboe@zylin.com>
+Date: Thu, 2 Jul 2026 16:29:00 +0200
+Subject: [PATCH] Add yosys_prefix_tar packaging macro and :yosys_tar target
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Package the hermetic @yosys BCR build (yosys binary, yosys-abc, share
+tree, optional plugins) as a relocatable PREFIX tarball via rules_pkg.
+Extract into any prefix; yosys finds share/ and abc relative to its
+binary, so no path patching is needed.
+
+This gives installers (e.g. ORFS DependencyInstaller.sh) a single
+source of truth for yosys instead of ad-hoc git-clone-and-make builds.
+
+Signed-off-by: Øyvind Harboe <oyvind.harboe@zylin.com>
+Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+---
+ BUILD         |  9 +++++++
+ yosys_pkg.bzl | 73 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
+ create mode 100644 yosys_pkg.bzl
+
+diff --git a/BUILD b/BUILD
+index f995236..390aeff 100644
+--- a/BUILD
++++ b/BUILD
+@@ -4,6 +4,7 @@
+ load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+ load("@rules_python//python:pip.bzl", "compile_pip_requirements")
+ load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
++load(":yosys_pkg.bzl", "yosys_prefix_tar")
+ 
+ exports_files([
+     "bump.py",
+@@ -31,6 +32,14 @@ exports_files([
+     "synth_partition.sh",
+ ])
+ 
++# Relocatable PREFIX tarball of the hermetic yosys build (bin/yosys,
++# bin/yosys-abc, share/yosys/...). Consumers that want plugins bundled
++# (e.g. yosys-slang) instantiate yosys_prefix_tar() themselves.
++yosys_prefix_tar(
++    name = "yosys_tar",
++    visibility = ["//visibility:public"],
++)
++
+ sh_binary(
+     name = "klayout",
+     srcs = ["klayout.sh"],
+diff --git a/yosys_pkg.bzl b/yosys_pkg.bzl
+new file mode 100644
+index 0000000..6751195
+--- /dev/null
++++ b/yosys_pkg.bzl
+@@ -0,0 +1,73 @@
++"""Package the hermetic @yosys build as a relocatable PREFIX tarball.
++
++The tarball follows the standard `make install` PREFIX layout:
++
++  bin/yosys
++  bin/yosys-abc
++  share/yosys/...
++  share/yosys/plugins/*.so   (optional, via the plugins attribute)
++
++Yosys resolves its data directory as <bindir>/../share/yosys/ and abc as
++<bindir>/yosys-abc (proc_self_dirname()), so the tarball can be extracted
++into any prefix (e.g. /usr/local or a user directory) without patching.
++"""
++
++load("@rules_pkg//pkg:mappings.bzl", "pkg_attributes", "pkg_files", "strip_prefix")
++load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
++
++# Label() resolves in bazel-orfs's repo mapping, so consumers of the
++# macro don't need their own @yosys/@abc bazel_dep.
++_YOSYS = Label("@yosys//:yosys")
++_YOSYS_SHARE = Label("@yosys//:yosys_share")
++_ABC = Label("@abc//:abc_bin")
++
++def yosys_prefix_tar(name, plugins = [], visibility = None):
++    """Create <name>.tar.gz with a relocatable PREFIX install of yosys.
++
++    Args:
++      name: name of the resulting pkg_tar target.
++      plugins: optional list of yosys plugin shared-object labels
++        (e.g. @yosys-slang//src/yosys_plugin:slang.so) placed in
++        share/yosys/plugins/ where `plugin -i <name>` finds them.
++      visibility: standard visibility.
++    """
++    pkg_files(
++        name = name + "_bin",
++        srcs = [
++            _YOSYS,
++            _ABC,
++        ],
++        attributes = pkg_attributes(mode = "0755"),
++        prefix = "bin",
++        renames = {
++            # proc_self_dirname() + "yosys-abc" is how yosys finds abc.
++            _ABC: "yosys-abc",
++        },
++    )
++    pkg_files(
++        name = name + "_share",
++        # The share tree is declared as share/<dst> in @yosys's root
++        # package; remap to the installed share/yosys/<dst> layout.
++        srcs = [_YOSYS_SHARE],
++        prefix = "share/yosys",
++        strip_prefix = strip_prefix.from_pkg("share"),
++    )
++    srcs = [
++        name + "_bin",
++        name + "_share",
++    ]
++    if plugins:
++        pkg_files(
++            name = name + "_plugins",
++            srcs = plugins,
++            attributes = pkg_attributes(mode = "0755"),
++            prefix = "share/yosys/plugins",
++        )
++        srcs.append(name + "_plugins")
++    pkg_tar(
++        name = name,
++        srcs = srcs,
++        extension = "tar.gz",
++        tags = ["manual"],
++        visibility = visibility,
++    )

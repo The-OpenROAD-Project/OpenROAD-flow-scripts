@@ -19,6 +19,7 @@ bazel_dep(name = "rules_shell", version = "0.6.1")
 # our MODULE.bazel doesn't need to be patched at non-root consumption
 # time.
 
+bazel_dep(name = "rules_pycross", version = "0.8.1", dev_dependency = True)
 bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
 bazel_dep(name = "openroad", dev_dependency = True)
 local_path_override(
@@ -41,9 +42,18 @@ BAZEL_ORFS_COMMIT = "6ebadeb4be5c9ada103081c9a5e668c014126616"
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
 # To bump version, run: bazelisk run @bazel-orfs//:bump
+#
+# `patches =` keeps small bazel-orfs changes vendored in this repo while
+# they make their way upstream, instead of round-tripping every change
+# through a bazel-orfs PR + pin bump.  When a patch lands upstream, drop
+# the entry here and bump BAZEL_ORFS_COMMIT.
 git_override(
     module_name = "bazel-orfs",
     commit = BAZEL_ORFS_COMMIT,
+    patch_strip = 1,
+    patches = [
+        "//patches/bazel-orfs:0001-add-yosys-prefix-tar-packaging.patch",
+    ],
     remote = BAZEL_ORFS_REMOTE,
 )
 
@@ -64,6 +74,17 @@ git_override(
     commit = "7753ea70431d85929292b90c33b32f6dbdb3b048",
     init_submodules = True,
     remote = "https://github.com/povik/yosys-slang.git",
+)
+
+# The sed resolved via @yosys -> abc -> readline -> ncurses ships a
+# gnulib whose memchr replacement does not compile against glibc 2.43
+# (its function-like memchr macro mangles the definition). Pin the
+# newest sed and carry small gnulib fixes until they land upstream.
+single_version_override(
+    module_name = "sed",
+    patch_strip = 1,
+    patches = ["//patches/bcr:sed-4.10-glibc-2.43.patch"],
+    version = "4.10",
 )
 
 # --- Extensions ---
@@ -88,6 +109,20 @@ python.toolchain(
     ignore_root_user_error = True,
     python_version = "3.13",
 )
+
+# sv-lang (via @openroad) pulls in rules_pycross, whose toolchain
+# computation fails on Python 3.8 (registered transitively via
+# or-tools -> pybind11_abseil, dropped from rules_python 2.0.0's
+# MINOR_MAPPING). pycross.configure_* tags are root-honored only, so the
+# workaround from tools/OpenROAD/MODULE.bazel must be repeated here.
+# Without it any target that needs python toolchain resolution from this
+# root (e.g. rules_pkg's pkg_tar) fails.
+pycross = use_extension(
+    "@rules_pycross//pycross/extensions:pycross.bzl",
+    "pycross",
+    dev_dependency = True,
+)
+pycross.configure_environments(python_versions = ["3.13"])
 
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(

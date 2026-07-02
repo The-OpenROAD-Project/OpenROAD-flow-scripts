@@ -27,10 +27,40 @@ _versionCompare() {
 }
 
 _installORDependencies() {
-    if [[ ${YOSYS_VER} == "" ]]; then
-        YOSYS_VER=v$(grep 'yosys_ver =' tools/yosys/docs/source/conf.py | awk -F'"' '{print $2}')
+    # Bootstrap bazelisk; the bazel-packaged yosys below needs it and it
+    # is idempotent (-bazel alone is a valid OpenROAD installer call).
+    ./tools/OpenROAD/etc/DependencyInstaller.sh -bazel ${PREFIX:+-prefix=${PREFIX}}
+
+    # Install the bazel-packaged yosys.  Single source of truth: the
+    # @yosys pin in bazel-orfs MODULE.bazel (bump via
+    # `bazelisk run @bazel-orfs//:bump`).  Bazel caches the build, so
+    # re-runs are fast: no git clone, no make, and the same hermetic
+    # yosys on every OS.
+    _installYosysBazel
+
+    # Delegate the rest.  Pass the version of the yosys installed above
+    # so the OpenROAD installer's _install_yosys version check succeeds
+    # and its git-clone-and-make build is a no-op; -eqy still installs
+    # eqy/sby against the bazel-built yosys.
+    local yosys_version
+    yosys_version=$("${PREFIX:-/usr/local}/bin/yosys" --version | awk '{print $2}')
+    ./tools/OpenROAD/etc/DependencyInstaller.sh ${OR_INSTALLER_ARGS} -yosys-ver="v${yosys_version}"
+}
+
+_installYosysBazel() {
+    local yosys_prefix=${PREFIX:-"/usr/local"}
+    local bazelisk="bazelisk"
+    if ! command -v bazelisk &> /dev/null; then
+        bazelisk="${yosys_prefix}/bin/bazelisk"
     fi
-    ./tools/OpenROAD/etc/DependencyInstaller.sh ${OR_INSTALLER_ARGS} -yosys-ver="${YOSYS_VER}"
+    # --symlink_prefix=/ avoids dropping bazel-* convenience symlinks
+    # (root-owned when run under sudo) in the source tree; resolve the
+    # tarball via the execution root instead of the symlinks.
+    "${bazelisk}" build --symlink_prefix=/ //:yosys_tar
+    local tarball
+    tarball="$("${bazelisk}" info execution_root)/$("${bazelisk}" cquery --symlink_prefix=/ --output=files //:yosys_tar 2> /dev/null)"
+    mkdir -p "${yosys_prefix}"
+    tar -xzf "${tarball}" -C "${yosys_prefix}"
 }
 
 _installPipCommon() {
@@ -350,10 +380,6 @@ Usage: $0 [-all|-base|-common] [-<ARGS>]
                                 #    sudo or with root access.
        $0 -ci
                                 # Installs CI tools
-       $0 -yosys-ver=VERSION
-                                # Installs specified version of Yosys.
-                                #    By default, the Yosys version is
-                                #    obtained from tools/yosys/docs/source/conf.py
        $0 -constant-build-dir
                                 #  Use constant build directory, instead of
                                 #    random one.
@@ -363,7 +389,6 @@ EOF
 
 # default args
 OR_INSTALLER_ARGS="-eqy"
-YOSYS_VER=""
 # default prefix
 PREFIX=""
 # default option
@@ -406,9 +431,6 @@ while [ "$#" -gt 0 ]; do
             ;;
         -save-deps-prefixes=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
-            ;;
-        -yosys-ver=*)
-            YOSYS_VER=${1#*=}
             ;;
         -prefix=*)
             OR_INSTALLER_ARGS="${OR_INSTALLER_ARGS} $1"
