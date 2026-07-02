@@ -120,9 +120,10 @@ make
 
 By default, the `gcd` design is selected using the
 `nangate45` platform. The resulting GDS will be available at
-`flow/results/nangate45/gcd/6_final.gds`. The flow should take only a few
+`flow/results/nangate45/gcd/base/6_final.gds`. The flow should take only a few
 minutes to produce a GDS for this design. We recommend implementing this
-design first to validate your flow and tool setup.
+design first to validate your flow and tool setup. For a minimal Docker-only
+walkthrough, see the [gcd quickstart](tutorials/QuickstartGcdNangate45.md).
 
 ### Design exploration and automatic parameter tuning
 
