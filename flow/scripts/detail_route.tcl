@@ -57,14 +57,22 @@ if {
   !$::env(SKIP_ANTENNA_REPAIR_POST_DRT) &&
   [env_var_exists_and_non_empty MAX_REPAIR_ANTENNAS_ITER_DRT]
 } {
-  set repair_antennas_iters 1
-  if { [repair_antennas] } {
-    detailed_route {*}$all_args
-  }
+  set repair_antennas_iters 0
+  set repair_antennas_count -1
+  utl::push_metrics_stage "detailedroute__{}__pre_repair"
   while { [check_antennas] && $repair_antennas_iters < $::env(MAX_REPAIR_ANTENNAS_ITER_DRT) } {
-    repair_antennas
+    utl::push_metrics_stage "detailedroute__{}__repair_iter_${repair_antennas_iters}"
+    set repair_antennas_count [repair_antennas]
     detailed_route {*}$all_args
+    utl::pop_metrics_stage
     incr repair_antennas_iters
+  }
+  utl::pop_metrics_stage
+  if { $repair_antennas_count == -1 } {
+    # Preserve the top-level diode count metric even when no post-DRT repair is needed.
+    repair_antennas
+  } else {
+    utl::metric_int "antenna_diodes_count" $repair_antennas_count
   }
 } else {
   utl::metric_int "antenna_diodes_count" -1
