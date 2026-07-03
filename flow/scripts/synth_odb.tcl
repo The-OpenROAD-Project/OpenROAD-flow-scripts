@@ -28,9 +28,35 @@ report_design_area
 report_design_area_metrics
 
 source_step_tcl POST SYNTH
-orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 # Canonicalize 1_synth.sdc. The original SDC_FILE provided by
 # the user could have dependencies, such as sourcing util.tcl,
 # which are read in here and a canonicalized version is written
 # out by OpenSTA that has no dependencies.
+#
+# Written before the fanout repair below so that its repair-scoping
+# set_max_fanout does not leak into the flow's SDC.
 orfs_write_sdc $::env(RESULTS_DIR)/1_synth.sdc
+
+# The synth stage owns the electrical sanity of its product. Raw yosys/ABC
+# output leaves egregious high-fanout nets unbuffered; STA on 1_synth.odb
+# then reports fanout artifacts instead of logic depth, which misleads
+# anyone using synth as a signal for RTL changes. synth_syn.tcl already
+# runs repair_design -pre_placement unconditionally before writing
+# 1_synth.odb; this is the yosys-path analog, but DRC-only and bounded:
+# -pre_placement is a whole-design gain round and conflicts with
+# -placement parasitics (EST-0104). set_max_fanout makes only the
+# egregious nets DRC violations; -max_wire_length large disables wire
+# splitting (unplaced cells have no meaningful wire length). Like
+# eliminate_dead_logic above, this is context-free (no die/bterm/layer
+# dependence) -- the floorplan.tcl conditioning block stays in floorplan
+# per PR #4187.
+if { !$::env(SKIP_SYNTH_REPAIR_DESIGN) } {
+  if { [env_var_exists_and_non_empty DONT_USE_CELLS] } {
+    set_dont_use $::env(DONT_USE_CELLS)
+  }
+  set_max_fanout $::env(SYNTH_REPAIR_DESIGN_MAX_FANOUT) [current_design]
+  log_cmd estimate_parasitics -placement
+  log_cmd repair_design -max_wire_length 1000000
+}
+
+orfs_write_db $::env(RESULTS_DIR)/1_synth.odb

@@ -288,6 +288,7 @@ configuration file.
 | <a name="SKIP_PIN_SWAP"></a>SKIP_PIN_SWAP| Do not use pin swapping as a transform to fix timing violations (default: use pin swapping).| |
 | <a name="SKIP_REPAIR_TIE_FANOUT"></a>SKIP_REPAIR_TIE_FANOUT| Skip repair_tie_fanout at floorplan step.| 0|
 | <a name="SKIP_REPORT_METRICS"></a>SKIP_REPORT_METRICS| If set to 1, then metrics, report_metrics does nothing. Useful to speed up builds.| 0|
+| <a name="SKIP_SYNTH_REPAIR_DESIGN"></a>SKIP_SYNTH_REPAIR_DESIGN| Skip the DRC-only repair_design of egregious high-fanout nets when writing 1_synth.odb.| 0|
 | <a name="SKIP_VT_SWAP"></a>SKIP_VT_SWAP| Do not perform VT swap to improve QoR (default: do VT swap).| |
 | <a name="SLANG_PLUGIN_PATH"></a>SLANG_PLUGIN_PATH| Path to the slang plugin for Yosys. This can be a full path to a custom-built plugin (e.g. for Bazel builds) or just the plugin name.| slang|
 | <a name="SLEW_MARGIN"></a>SLEW_MARGIN| Specifies a slew margin when fixing max slew violations. This option allows you to overfix.| |
@@ -309,6 +310,7 @@ configuration file.
 | <a name="SYNTH_NETLIST_FILES"></a>SYNTH_NETLIST_FILES| Skips synthesis and uses the supplied netlist files. If the netlist files contains duplicate modules, which can happen when using hierarchical synthesis on indvidual netlist files and combining here, subsequent modules are silently ignored and only the first module is used.| |
 | <a name="SYNTH_OPERATIONS_ARGS"></a>SYNTH_OPERATIONS_ARGS| Extra arguments appended to the Yosys synth command operations list. When set, replaces the default Kogge-Stone adder extra-map.| |
 | <a name="SYNTH_OPT_HIER"></a>SYNTH_OPT_HIER| Optimize constants across hierarchical boundaries.| |
+| <a name="SYNTH_REPAIR_DESIGN_MAX_FANOUT"></a>SYNTH_REPAIR_DESIGN_MAX_FANOUT| Fanout above which a net is considered an egregious violation to be buffered by the synth stage repair_design.| 64|
 | <a name="SYNTH_REPEATABLE_BUILD"></a>SYNTH_REPEATABLE_BUILD| License to prune anything that makes builds less repeatable, typically used with Bazel to ensure that builds are bit-for-bit identical so that caching works optimally. Removes debug information that encodes paths, timestamps, etc.| 0|
 | <a name="SYNTH_RETIME_MODULES"></a>SYNTH_RETIME_MODULES| *This is an experimental option and may cause adverse effects.* *No effort has been made to check if the retimed RTL is logically equivalent to the non-retimed RTL.* List of modules to apply automatic retiming to. These modules must not get dissolved and as such they should either be the top module or be included in SYNTH_KEEP_MODULES. The main use case is to quickly identify if performance can be improved by manually retiming the input RTL. Retiming will treat module ports like register endpoints/startpoints. The objective function of retiming isn't informed by SDC, even the clock period is ignored. As such, retiming will optimize for best delay at potentially high register number cost. Automatic retiming can produce suboptimal results as its timing model is crude and it doesn't find the optimal distribution of registers on long pipelines. See OR discussion  # 8080.| |
 | <a name="SYNTH_SKIP_KEEP"></a>SYNTH_SKIP_KEEP| Only meaningful together with SYNTH_CHECKPOINT. When set, signals that the supplied checkpoint is still canonical RTLIL (coarse synth and `keep_hierarchy` have not been run yet), so synth.tcl runs the full coarse+fine synthesis flattened. When unset and SYNTH_CHECKPOINT is used, synth.tcl assumes the checkpoint already has coarse synth + `keep_hierarchy` done and resumes from `coarse:fine`.| 0|
@@ -353,6 +355,7 @@ configuration file.
 - [SDC_FILE](#SDC_FILE)
 - [SDC_GUT](#SDC_GUT)
 - [SKIP_REPORT_METRICS](#SKIP_REPORT_METRICS)
+- [SKIP_SYNTH_REPAIR_DESIGN](#SKIP_SYNTH_REPAIR_DESIGN)
 - [SLANG_PLUGIN_PATH](#SLANG_PLUGIN_PATH)
 - [SYNTH_ARGS](#SYNTH_ARGS)
 - [SYNTH_BLACKBOXES](#SYNTH_BLACKBOXES)
@@ -371,6 +374,7 @@ configuration file.
 - [SYNTH_NETLIST_FILES](#SYNTH_NETLIST_FILES)
 - [SYNTH_OPERATIONS_ARGS](#SYNTH_OPERATIONS_ARGS)
 - [SYNTH_OPT_HIER](#SYNTH_OPT_HIER)
+- [SYNTH_REPAIR_DESIGN_MAX_FANOUT](#SYNTH_REPAIR_DESIGN_MAX_FANOUT)
 - [SYNTH_REPEATABLE_BUILD](#SYNTH_REPEATABLE_BUILD)
 - [SYNTH_RETIME_MODULES](#SYNTH_RETIME_MODULES)
 - [SYNTH_SKIP_KEEP](#SYNTH_SKIP_KEEP)

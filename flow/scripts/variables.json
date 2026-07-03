@@ -1220,6 +1220,13 @@
       "final"
     ]
   },
+  "SKIP_SYNTH_REPAIR_DESIGN": {
+    "default": 0,
+    "description": "Skip the DRC-only repair_design of egregious high-fanout nets when writing 1_synth.odb.\n",
+    "stages": [
+      "synth"
+    ]
+  },
   "SKIP_VT_SWAP": {
     "description": "Do not perform VT swap to improve QoR (default: do VT swap).\n",
     "stages": [
@@ -1351,6 +1358,13 @@
   },
   "SYNTH_OPT_HIER": {
     "description": "Optimize constants across hierarchical boundaries.\n",
+    "stages": [
+      "synth"
+    ]
+  },
+  "SYNTH_REPAIR_DESIGN_MAX_FANOUT": {
+    "default": 64,
+    "description": "Fanout above which a net is considered an egregious violation to be buffered by the synth stage repair_design.\n",
     "stages": [
       "synth"
     ]
