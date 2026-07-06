@@ -109,10 +109,10 @@ index b8c5b27f5e08..fa2f19820db2 100644
  
  This directory is hosted in bazel-orfs temporarily until the kepler-formal
 diff --git a/lec.bzl b/lec.bzl
-index f603baf15ea0..93fa1287b34c 100644
+index f603baf15ea0..5cad3a02e8f6 100644
 --- a/lec.bzl
 +++ b/lec.bzl
-@@ -1,17 +1,238 @@
+@@ -1,17 +1,244 @@
  """Rules for kepler-formal LEC (Logic Equivalence Checking).
  
 -Generates a config file from template, runs kepler-formal, and
@@ -190,10 +190,14 @@ index f603baf15ea0..93fa1287b34c 100644
 +rc=0
 +"$1" --config "$2" > "$3" 2>&1 || rc=$?
 +touch "$4"
++# SEC reports checked-output coverage; a PASS that skipped most
++# outputs is much weaker than a full proof, so record it next to the
++# verdict.
++cov="$(grep -o "checked-output coverage: [0-9.]*% ([0-9/]* covered/existing outputs)" "$3" | tail -n 1)"
 +if [ "$rc" -eq 0 ] && ! grep -q "Found difference" "$3" "$4"; then
-+  echo "PASS" > "$5"
++  echo "PASS${cov:+ ($cov)}" > "$5"
 +else
-+  echo "FAIL (kepler-formal exit=$rc)" > "$5"
++  echo "FAIL (kepler-formal exit=$rc)${cov:+ ($cov)}" > "$5"
 +fi
 +""",
 +        arguments = [
@@ -288,9 +292,11 @@ index f603baf15ea0..93fa1287b34c 100644
 +        """#!/bin/sh
 +status="$(cat "{status}")"
 +echo "{check}: $status"
-+if [ "$status" = "PASS" ]; then
++case "$status" in
++PASS*)
 +  exit 0
-+fi
++  ;;
++esac
 +echo "--- kepler-formal log (last 200 lines) ---"
 +tail -n 200 "{log}"
 +exit 1
@@ -356,7 +362,7 @@ index f603baf15ea0..93fa1287b34c 100644
  def _lec_test_impl(ctx):
      # Generate kepler-formal YAML config
      config = ctx.actions.declare_file(ctx.attr.name + ".yaml")
-@@ -91,35 +312,10 @@ lec_test = rule(
+@@ -91,35 +318,10 @@ lec_test = rule(
  
      Compares gold (reference) and gate (modified) Verilog netlists for
      combinational equivalence. Fails the test if any mismatch is found.
