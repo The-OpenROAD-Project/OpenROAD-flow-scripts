@@ -26,6 +26,8 @@ set global_placement_args {}
 # Parameters for routability mode in global placement
 append_env_var global_placement_args GPL_ROUTABILITY_DRIVEN -routability_driven 0
 
+append_env_var global_placement_args GPL_RANDOM_SEED -random_seed 1
+
 # Parameters for timing driven mode in global placement
 if { $::env(GPL_TIMING_DRIVEN) } {
   lappend global_placement_args {-timing_driven}

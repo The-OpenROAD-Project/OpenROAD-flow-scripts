@@ -413,6 +413,12 @@
       "place"
     ]
   },
+  "GPL_RANDOM_SEED": {
+    "description": "Specifies a random seed for global placement.  Useful for perturbation studies.\n",
+    "stages": [
+      "place"
+    ]
+  },
   "GPL_ROUTABILITY_DRIVEN": {
     "default": 1,
     "description": "Specifies whether the placer should use routability driven placement.\n",
@@ -637,6 +643,13 @@
     "description": "Feature toggle to enable to run OpenROAD in hierarchical mode, otherwise considered flat. Will eventually be the default and this option will be retired.\n",
     "stages": [
       "All stages"
+    ]
+  },
+  "OPT_POST_GRT_WNS": {
+    "default": 1,
+    "description": "Optimize WNS after global routing by additional repair_timing that uses VT swap and wire rerouting only to minimize placement and routing disturbance\n",
+    "stages": [
+      "grt"
     ]
   },
   "OR_K": {
