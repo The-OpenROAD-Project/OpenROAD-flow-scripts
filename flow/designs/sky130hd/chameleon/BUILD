@@ -4,13 +4,15 @@ load("//flow/designs:design.bzl", "design")
 # by ORFS itself — route them through user_arguments so the validator
 # doesn't reject them as unknown ORFS variables.
 #
-# VERILOG_FILES_BLACKBOX is a config.mk-local helper: only used via
-# $(VERILOG_FILES_BLACKBOX) expansion inside VERILOG_FILES.
+# VERILOG_FILES_BLACKBOX is a config.mk-local, source-typed helper:
+# only used via $(VERILOG_FILES_BLACKBOX) expansion inside
+# VERILOG_FILES. The new bazel-orfs validates sources too, so route it
+# through user_sources.
 design(
     config = "config.mk",
     user_arguments = [
         "FP_PDN_RAIL_OFFSET",
         "FP_PDN_RAIL_WIDTH",
     ],
-    local_arguments = ["VERILOG_FILES_BLACKBOX"],
+    user_sources = ["VERILOG_FILES_BLACKBOX"],
 )

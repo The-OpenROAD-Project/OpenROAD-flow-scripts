@@ -36,6 +36,9 @@
       "synth"
     ]
   },
+  "ADDITIONAL_FAST_LIBS": {
+    "description": "Fast-corner counterparts of ADDITIONAL_LIBS, appended to the FC corner's LIB_FILES (see flow/Makefile and e.g. the ihp-sg13g2 platform config.mk).\n"
+  },
   "ADDITIONAL_FILES": {
     "description": "Additional files to be added to `make issue` archive.\n"
   },
@@ -56,6 +59,12 @@
     "stages": [
       "floorplan"
     ]
+  },
+  "ADDITIONAL_SLOW_LIBS": {
+    "description": "Slow-corner counterparts of ADDITIONAL_LIBS, appended to the WC corner's LIB_FILES (see flow/Makefile and e.g. the ihp-sg13g2 platform config.mk).\n"
+  },
+  "ADDITIONAL_TYP_LIBS": {
+    "description": "Typical-corner counterparts of ADDITIONAL_LIBS, appended to the TC corner's LIB_FILES (see flow/Makefile and e.g. the ihp-sg13g2 platform config.mk).\n"
   },
   "ASAP7_USE_VT": {
     "default": "RVT",
@@ -432,6 +441,18 @@
       "floorplan"
     ]
   },
+  "IO_EAST_PINS": {
+    "description": "Pad instance names placed on the east (IO_EAST) pad row by platform pad-ring scripts (e.g. ihp-sg13g2 pad.tcl via place_pads).\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "IO_NORTH_PINS": {
+    "description": "Pad instance names placed on the north (IO_NORTH) pad row by platform pad-ring scripts (e.g. ihp-sg13g2 pad.tcl via place_pads).\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
   "IO_PLACER_H": {
     "description": "A list of metal layers on which the I/O pins are placed horizontally (top and bottom of the die).\n",
     "stages": [
@@ -442,6 +463,18 @@
     "description": "A list of metal layers on which the I/O pins are placed vertically (sides of the die).\n",
     "stages": [
       "place"
+    ]
+  },
+  "IO_SOUTH_PINS": {
+    "description": "Pad instance names placed on the south (IO_SOUTH) pad row by platform pad-ring scripts (e.g. ihp-sg13g2 pad.tcl via place_pads).\n",
+    "stages": [
+      "floorplan"
+    ]
+  },
+  "IO_WEST_PINS": {
+    "description": "Pad instance names placed on the west (IO_WEST) pad row by platform pad-ring scripts (e.g. ihp-sg13g2 pad.tcl via place_pads).\n",
+    "stages": [
+      "floorplan"
     ]
   },
   "IR_DROP_LAYER": {

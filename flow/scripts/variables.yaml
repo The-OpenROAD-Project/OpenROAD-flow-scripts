@@ -949,6 +949,21 @@ ADDITIONAL_LIBS:
   description: >
     Hardened macro library files listed here. The library information is
     immutable and used throughout all stages. Not stored in the .odb file.
+ADDITIONAL_FAST_LIBS:
+  description: >
+    Fast-corner counterparts of ADDITIONAL_LIBS, appended to the FC
+    corner's LIB_FILES (see flow/Makefile and e.g. the ihp-sg13g2
+    platform config.mk).
+ADDITIONAL_SLOW_LIBS:
+  description: >
+    Slow-corner counterparts of ADDITIONAL_LIBS, appended to the WC
+    corner's LIB_FILES (see flow/Makefile and e.g. the ihp-sg13g2
+    platform config.mk).
+ADDITIONAL_TYP_LIBS:
+  description: >
+    Typical-corner counterparts of ADDITIONAL_LIBS, appended to the TC
+    corner's LIB_FILES (see flow/Makefile and e.g. the ihp-sg13g2
+    platform config.mk).
 ADDITIONAL_GDS:
   description: |
     Hardened macro GDS files listed here.
@@ -1465,6 +1480,30 @@ FOOTPRINT:
 FOOTPRINT_TCL:
   description: |
     Specifies a Tcl script with custom footprint-related commands for floorplan setup.
+  stages:
+    - floorplan
+IO_NORTH_PINS:
+  description: >
+    Pad instance names placed on the north (IO_NORTH) pad row by
+    platform pad-ring scripts (e.g. ihp-sg13g2 pad.tcl via place_pads).
+  stages:
+    - floorplan
+IO_SOUTH_PINS:
+  description: >
+    Pad instance names placed on the south (IO_SOUTH) pad row by
+    platform pad-ring scripts (e.g. ihp-sg13g2 pad.tcl via place_pads).
+  stages:
+    - floorplan
+IO_EAST_PINS:
+  description: >
+    Pad instance names placed on the east (IO_EAST) pad row by
+    platform pad-ring scripts (e.g. ihp-sg13g2 pad.tcl via place_pads).
+  stages:
+    - floorplan
+IO_WEST_PINS:
+  description: >
+    Pad instance names placed on the west (IO_WEST) pad row by
+    platform pad-ring scripts (e.g. ihp-sg13g2 pad.tcl via place_pads).
   stages:
     - floorplan
 FLOW_VARIANT:
