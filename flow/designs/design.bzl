@@ -227,6 +227,9 @@ def _emit_lec(entry):
     )
     lec(
         name = name + "_lec_synth",
+        # pdr: the default (legacy) SEC engine was inconclusive on uart
+        # after 28min at k=32; pdr proves it at k=1 in seconds.
+        extra_config = ["sec_engine: pdr"],
         # sv2v: the behavioral canonicalized gold goes through the
         # SystemVerilog frontend, the gate netlist through the Verilog
         # netlist parser.
@@ -341,6 +344,7 @@ def _emit_syn_variant(entry, user_arguments = [], user_sources = [], local_argum
     )
     lec(
         name = name + "_syn_lec_synth",
+        extra_config = ["sec_engine: pdr"],
         format = "sv2v",
         gate_verilog_files = [":" + name + "_syn_synth_lec_v"],
         gold_verilog_files = [":" + name + "_canon_v"],
