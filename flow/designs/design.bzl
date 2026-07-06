@@ -219,12 +219,6 @@ def _emit_lec(entry):
         tags = ["manual"],
         visibility = ["//visibility:public"],
     )
-    native.filegroup(
-        name = name + "_yosys_v",
-        srcs = [":" + name + "_synth"],
-        output_group = "1_2_yosys.v",
-        tags = ["manual"],
-    )
     lec(
         name = name + "_lec_synth",
         # pdr: the default (legacy) SEC engine was inconclusive on uart
@@ -234,7 +228,12 @@ def _emit_lec(entry):
         # SystemVerilog frontend, the gate netlist through the Verilog
         # netlist parser.
         format = "sv2v",
-        gate_verilog_files = [":" + name + "_yosys_v"],
+        # The gate side is the OpenROAD-written netlist from 1_synth.odb
+        # rather than 1_2_yosys.v: linking drops unused modules (e.g.
+        # SYNTH_WRAPPED_OPERATORS adder variants), which would otherwise
+        # leave kepler-formal's top inference with multiple roots. It
+        # also covers the ODB import, and matches every later stage.
+        gate_verilog_files = [":" + name + "_synth_lec_v"],
         gold_verilog_files = [":" + name + "_canon_v"],
         liberty_files = liberty,
         tags = ["manual"],
