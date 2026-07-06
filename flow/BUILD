@@ -1,4 +1,5 @@
 load("@bazel-orfs//:openroad.bzl", "orfs_pdk")
+load("//flow/designs:design.bzl", "lec_check_targets", "lec_test_targets")
 
 # Expose every individual file under platforms/ as a public source-file
 # target, so designs in other packages can refer to e.g.
@@ -173,3 +174,42 @@ filegroup(
     "sky130hd",
     "sky130hs",
 ]]
+
+# Single-corner (typical) liberty sets per platform for kepler-formal
+# LEC: kepler-formal needs cell definitions, not timing corners, and
+# feeding it the same cells at several corners would double-define
+# them. Design-specific macro libs come in via ADDITIONAL_LIBS (see
+# lec_liberty in flow/designs/design.bzl).
+[filegroup(
+    name = pdk + "_lec_libs",
+    srcs = glob(patterns),
+    visibility = ["//visibility:public"],
+) for pdk, patterns in {
+    "asap7": ["platforms/asap7/lib/NLDM/*_TT_*.lib*"],
+    "gf180": ["platforms/gf180/lib/*__tt_025C_5v00.lib.gz"],
+    "ihp-sg13g2": ["platforms/ihp-sg13g2/lib/*_typ_*.lib"],
+    "nangate45": ["platforms/nangate45/lib/*.lib"],
+    "sky130hd": ["platforms/sky130hd/lib/*.lib"],
+    "sky130hs": ["platforms/sky130hs/lib/*tt_025C_1v80.lib"],
+}.items()]
+
+# LEC (kepler-formal) aggregates over every design and stage; all
+# constituents are tagged `manual` so wildcards skip them. Build the
+# checks first (this is where the SAT solving happens; throttle with
+# --jobs=N), then run the instant verdict tests:
+#
+#   bazelisk build //flow:lec_check --jobs=4
+#   bazelisk test  //flow:lec_test
+filegroup(
+    name = "lec_check",
+    srcs = lec_check_targets(),
+    tags = ["manual"],
+    visibility = ["//visibility:public"],
+)
+
+test_suite(
+    name = "lec_test",
+    tags = ["manual"],
+    tests = lec_test_targets(),
+    visibility = ["//visibility:public"],
+)

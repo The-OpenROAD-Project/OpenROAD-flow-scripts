@@ -1,6 +1,8 @@
 """BUILD boilerplate for flow/designs/."""
 
-load("@bazel-orfs//:openroad.bzl", "orfs_flow", "orfs_openroad_synth")
+load("@bazel-orfs//:canon_verilog.bzl", "orfs_canon_verilog")
+load("@bazel-orfs//:openroad.bzl", "orfs_flow", "orfs_openroad_synth", "orfs_run")
+load("@bazel-orfs-lec//:lec.bzl", "lec")
 load("@orfs_designs//:designs.bzl", "DESIGNS", "orfs_design")
 
 # Per filegroup target: extensions included in the filegroup.
@@ -77,7 +79,13 @@ def design(config = "config.mk", user_arguments = [], user_sources = [], local_a
         local_arguments = local_arguments,
         blender = True,
     )
-    _emit_syn_variant(DESIGNS.get(_design_key()))
+    _emit_lec(DESIGNS.get(_design_key()))
+    _emit_syn_variant(
+        DESIGNS.get(_design_key()),
+        user_arguments,
+        user_sources,
+        local_arguments,
+    )
 
 def files(group, extra_srcs = None):
     """Named filegroup over conventional extensions.
@@ -111,7 +119,143 @@ def _design_key():
         return ""
     return "{}/{}".format(parts[-2], parts[-1])
 
-def _emit_syn_variant(entry):
+# Stages whose .odb gets a LEC netlist extracted, with the .odb stem.
+# Adjacent pairs are compared: synth<->floorplan, floorplan<->place, ...
+LEC_STAGES = [
+    ("synth", "1_synth"),
+    ("floorplan", "2_floorplan"),
+    ("place", "3_place"),
+    ("cts", "4_cts"),
+    ("route", "5_route"),
+    ("final", "6_final"),
+]
+
+def lec_liberty(entry):
+    """Liberty inputs for kepler-formal: one-corner PDK libs + design macros."""
+    return ["//flow:{}_lec_libs".format(entry["platform"])] + \
+           entry["sources"].get("ADDITIONAL_LIBS", [])
+
+def _lec_design_keys():
+    """DESIGNS keys that correspond to design packages.
+
+    Filters out
+      - BLOCKS sub-flow entries (`<parent key>_<block>`), which live in
+        the parent's package, and
+      - nickname aliases: config_mk_parser indexes a design both by
+        directory name and by DESIGN_NICKNAME when they differ (e.g.
+        nangate45/black_parrot vs nangate45/bp). The entries are
+        identical, only the directory key is a real bazel package; of
+        each identical pair the longer key is the directory one
+        (nicknames abbreviate).
+      - designs without VERILOG_FILES (e.g. asap7/minimal), whose BUILD
+        files skip design() so no flow targets exist.
+    """
+    skip = {}
+    for key, entry in DESIGNS.items():
+        if not entry.get("verilog_files"):
+            skip[key] = True
+    for key, entry in DESIGNS.items():
+        for block in entry.get("blocks", []):
+            skip[key + "_" + block] = True
+    for key, entry in DESIGNS.items():
+        if key in skip:
+            continue
+        for other, other_entry in DESIGNS.items():
+            if other == key or other in skip:
+                continue
+            if entry == other_entry and len(other) > len(key):
+                skip[key] = True
+                break
+    return [key for key in DESIGNS.keys() if key not in skip]
+
+def lec_check_targets():
+    """Labels of all per-design lec_check targets (//flow:lec_check)."""
+    labels = []
+    for key in _lec_design_keys():
+        entry = DESIGNS[key]
+        package = "//flow/designs/" + key
+        name = entry["name"]
+        labels.append("{}:{}_lec_synth".format(package, name))
+        for stage, _ in LEC_STAGES[1:]:
+            labels.append("{}:{}_lec_{}".format(package, name, stage))
+        if not entry.get("blocks"):
+            labels.append("{}:{}_syn_lec_synth".format(package, name))
+    return labels
+
+def lec_test_targets():
+    """Labels of all per-design LEC verdict tests (//flow:lec_test)."""
+    return [label + "_test" for label in lec_check_targets()]
+
+def _emit_lec(entry):
+    """Emit kepler-formal LEC targets for `entry` from DESIGNS.
+
+    Per design (all tagged `manual`; see flow/README.md):
+      - `<n>_canon_v`: pre-synthesis Verilog written from the yosys
+        canonicalize RTLIL checkpoint. Using the post-canonicalization
+        netlist as SEC gold means kepler-formal never parses the raw
+        (System)Verilog sources — a failure implicates synthesis, not
+        canonicalization.
+      - `<n>_lec_synth` + `_test`: SEC of canonicalized RTL vs the
+        yosys synthesis netlist (kepler-formal pre-synthesis .v
+        support).
+      - `<n>_<stage>_lec_v`: per-stage netlist written by OpenROAD from
+        the stage .odb (physical-only cells removed; hierarchical for
+        OPENROAD_HIERARCHICAL designs).
+      - `<n>_lec_<stage>` + `_test` for floorplan/place/cts/route/final:
+        adjacent-pair gate-level LEC along the flow.
+
+    LEC runs at `bazel build` time (cacheable lec_check actions); the
+    `_test` targets only assert the recorded verdict.
+    """
+    if entry == None:
+        return
+    name = entry["name"]
+    liberty = lec_liberty(entry)
+    results_dir = "results/{}/{}/base".format(entry["platform"], name)
+
+    orfs_canon_verilog(
+        name = name + "_canon_v",
+        src = ":" + name + "_synth",
+        tags = ["manual"],
+        visibility = ["//visibility:public"],
+    )
+    native.filegroup(
+        name = name + "_yosys_v",
+        srcs = [":" + name + "_synth"],
+        output_group = "1_2_yosys.v",
+        tags = ["manual"],
+    )
+    lec(
+        name = name + "_lec_synth",
+        gate_verilog_files = [":" + name + "_yosys_v"],
+        gold_verilog_files = [":" + name + "_canon_v"],
+        liberty_files = liberty,
+        tags = ["manual"],
+        verification = "sec",
+        visibility = ["//visibility:public"],
+    )
+
+    previous = None
+    for stage, stem in LEC_STAGES:
+        orfs_run(
+            name = "{}_{}_lec_v".format(name, stage),
+            src = ":{}_{}".format(name, stage),
+            script = "@bazel-orfs-lec//:write_netlist.tcl",
+            outs = ["{}/{}_lec.v".format(results_dir, stem)],
+            tags = ["manual"],
+        )
+        if previous:
+            lec(
+                name = "{}_lec_{}".format(name, stage),
+                gate_verilog_files = [":{}_{}_lec_v".format(name, stage)],
+                gold_verilog_files = [":{}_{}_lec_v".format(name, previous)],
+                liberty_files = liberty,
+                tags = ["manual"],
+                visibility = ["//visibility:public"],
+            )
+        previous = stage
+
+def _emit_syn_variant(entry, user_arguments = [], user_sources = [], local_arguments = []):
     """Emit the `_syn` variant chain for `entry` from DESIGNS.
 
     Adds `<name>_syn_synth` (built-in OpenROAD synth, driven by
@@ -122,6 +266,11 @@ def _emit_syn_variant(entry):
     built-in synthesizer doesn't handle BLOCKS yet and those would
     just fail. Flat designs pick the variant up for free.
 
+    Project-specific config.mk vars (design()'s user_arguments /
+    user_sources / local_arguments) are split out of the DESIGNS entry
+    the same way orfs_design does, so orfs_flow's variables.yaml
+    validation only sees real ORFS variables.
+
     All emitted targets are tagged `manual` so `bazel build //...`
     does not pick them up while the OpenROAD synth tool (PR #10473)
     matures.
@@ -130,14 +279,33 @@ def _emit_syn_variant(entry):
         return
     name = entry["name"]
     pdk = "//flow:" + entry["platform"]
-    syn_args = dict(entry["arguments"])
+    syn_args = {
+        k: v
+        for k, v in entry["arguments"].items()
+        if k not in user_arguments and k not in local_arguments
+    }
+    syn_user_args = {
+        k: v
+        for k, v in entry["arguments"].items()
+        if k in user_arguments
+    }
+    syn_sources = {
+        k: v
+        for k, v in entry["sources"].items()
+        if k not in user_sources and k not in local_arguments
+    }
+    syn_user_sources = {
+        k: v
+        for k, v in entry["sources"].items()
+        if k in user_sources
+    }
     syn_synth = name + "_syn_synth"
     orfs_openroad_synth(
         name = syn_synth,
         module_top = name,
         verilog_files = entry["verilog_files"],
         sources = entry["sources"],
-        arguments = syn_args,
+        arguments = syn_args | syn_user_args,
         pdk = pdk,
         variant = "syn",
         tags = ["manual"],
@@ -146,10 +314,33 @@ def _emit_syn_variant(entry):
         name = name,
         variant = "syn",
         verilog_files = entry["verilog_files"],
-        sources = entry["sources"],
+        sources = syn_sources,
+        user_sources = syn_user_sources,
         arguments = syn_args,
+        user_arguments = syn_user_args,
         pdk = pdk,
         previous_stage = {"floorplan": ":" + syn_synth},
         tags = ["manual"],
         test_kwargs = {"tags": ["orfs", "manual"]},
+    )
+
+    # Pre-synthesis SEC of the built-in synth netlist against the yosys
+    # canonicalized RTL (`<n>_canon_v` from _emit_lec): both synthesizers
+    # are checked against the same canonicalization, so a `_syn` failure
+    # with a passing `<n>_lec_synth` implicates the built-in synthesis.
+    orfs_run(
+        name = name + "_syn_synth_lec_v",
+        src = ":" + syn_synth,
+        script = "@bazel-orfs-lec//:write_netlist.tcl",
+        outs = ["results/{}/{}/syn/1_synth_lec.v".format(entry["platform"], name)],
+        tags = ["manual"],
+    )
+    lec(
+        name = name + "_syn_lec_synth",
+        gate_verilog_files = [":" + name + "_syn_synth_lec_v"],
+        gold_verilog_files = [":" + name + "_canon_v"],
+        liberty_files = lec_liberty(entry),
+        tags = ["manual"],
+        verification = "sec",
+        visibility = ["//visibility:public"],
     )
