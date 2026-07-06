@@ -70,9 +70,10 @@ foreach scene [get_scenes] {
       save_clocktree_image -clock $clock_name \
         -width 1024 -height 1024 \
         -scene $scene \
-        $::env(REPORTS_DIR)/cts_$clock_name.webp
+        $::env(REPORTS_DIR)/cts_${scene_name}_${clock_name}.webp
       gui::select_clockviewer_clock $clock_name
-      save_image -resolution $resolution $::env(REPORTS_DIR)/cts_${scene_name}_${clock_name}_layout.webp
+      save_image -resolution $resolution \
+        $::env(REPORTS_DIR)/cts_${scene_name}_${clock_name}_layout.webp
     }
   }
 }
