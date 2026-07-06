@@ -227,6 +227,10 @@ def _emit_lec(entry):
     )
     lec(
         name = name + "_lec_synth",
+        # sv2v: the behavioral canonicalized gold goes through the
+        # SystemVerilog frontend, the gate netlist through the Verilog
+        # netlist parser.
+        format = "sv2v",
         gate_verilog_files = [":" + name + "_yosys_v"],
         gold_verilog_files = [":" + name + "_canon_v"],
         liberty_files = liberty,
@@ -337,6 +341,7 @@ def _emit_syn_variant(entry, user_arguments = [], user_sources = [], local_argum
     )
     lec(
         name = name + "_syn_lec_synth",
+        format = "sv2v",
         gate_verilog_files = [":" + name + "_syn_synth_lec_v"],
         gold_verilog_files = [":" + name + "_canon_v"],
         liberty_files = lec_liberty(entry),

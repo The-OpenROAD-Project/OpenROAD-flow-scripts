@@ -1,9 +1,9 @@
 diff --git a/canon_verilog.bzl b/canon_verilog.bzl
 new file mode 100644
-index 000000000000..7e4446f9a47f
+index 000000000000..41abf4d610ae
 --- /dev/null
 +++ b/canon_verilog.bzl
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,56 @@
 +"""orfs_canon_verilog: pre-synthesis Verilog from the canonicalize RTLIL.
 +
 +The synthesis canonicalize step (synth_canonicalize.tcl) writes
@@ -14,8 +14,11 @@ index 000000000000..7e4446f9a47f
 +the raw (System)Verilog edge cases, so an equivalence failure against
 +the synthesized netlist implicates synthesis, not canonicalization.
 +
-+`proc` and `memory_collect` only lower processes/memories to forms
-+write_verilog can emit; they do not synthesize.
++proc/pmuxtree/memory_collect only lower processes, parallel muxes
++and memories to forms write_verilog can emit (and kepler-formal's
++SystemVerilog frontend can lower: $pmux would be written as a Verilog
++function, which naja does not support in continuous assigns); they do
++not synthesize.
 +"""
 +
 +load("//private:attrs.bzl", "yosys_attrs")
@@ -34,7 +37,7 @@ index 000000000000..7e4446f9a47f
 +
 +    out = ctx.actions.declare_file("{}/{}".format(ctx.attr.name, "1_1_canonicalize.v"))
 +    ctx.actions.run_shell(
-+        command = '"$1" -q -p "read_rtlil $2; proc; memory_collect; write_verilog -noattr $3"',
++        command = '"$1" -q -p "read_rtlil $2; proc; pmuxtree; memory_collect; write_verilog -noattr $3"',
 +        arguments = [ctx.executable.yosys.path, rtlil.path, out.path],
 +        env = yosys_environment(ctx),
 +        inputs = depset([rtlil]),

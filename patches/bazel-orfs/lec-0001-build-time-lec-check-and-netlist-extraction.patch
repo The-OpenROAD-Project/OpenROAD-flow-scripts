@@ -109,10 +109,10 @@ index b8c5b27f5e08..fa2f19820db2 100644
  
  This directory is hosted in bazel-orfs temporarily until the kepler-formal
 diff --git a/lec.bzl b/lec.bzl
-index f603baf15ea0..8294aa34bb20 100644
+index f603baf15ea0..93fa1287b34c 100644
 --- a/lec.bzl
 +++ b/lec.bzl
-@@ -1,17 +1,231 @@
+@@ -1,17 +1,238 @@
  """Rules for kepler-formal LEC (Logic Equivalence Checking).
  
 -Generates a config file from template, runs kepler-formal, and
@@ -154,7 +154,7 @@ index f603baf15ea0..8294aa34bb20 100644
 +
 +def _lec_config(ctx, miter_log):
 +    """Build the kepler-formal YAML config content."""
-+    lines = ["format: verilog"]
++    lines = ["format: " + ctx.attr.format]
 +    if ctx.attr.verification != "lec":
 +        lines.append("verification: " + ctx.attr.verification)
 +    lines.append("input_paths:")
@@ -265,6 +265,13 @@ index f603baf15ea0..8294aa34bb20 100644
 +            default = "lec",
 +            values = ["lec", "sec"],
 +        ),
++        "format": attr.string(
++            doc = "Input format: verilog (netlist parser both sides), sv2v (gold through " +
++                  "the SystemVerilog frontend, gate as Verilog netlist; required for " +
++                  "behavioral/pre-synthesis gold and implies sec), or systemverilog.",
++            default = "verilog",
++            values = ["verilog", "sv2v", "systemverilog"],
++        ),
 +        "extra_config": attr.string_list(
 +            doc = "Extra raw YAML config lines appended to the generated kepler-formal " +
 +                  "config (e.g. 'sec_engine: pdr', 'solver: kissat').",
@@ -349,7 +356,7 @@ index f603baf15ea0..8294aa34bb20 100644
  def _lec_test_impl(ctx):
      # Generate kepler-formal YAML config
      config = ctx.actions.declare_file(ctx.attr.name + ".yaml")
-@@ -91,35 +305,10 @@ lec_test = rule(
+@@ -91,35 +312,10 @@ lec_test = rule(
  
      Compares gold (reference) and gate (modified) Verilog netlists for
      combinational equivalence. Fails the test if any mismatch is found.
