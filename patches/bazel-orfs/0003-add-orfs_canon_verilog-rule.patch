@@ -1,0 +1,59 @@
+diff --git a/canon_verilog.bzl b/canon_verilog.bzl
+new file mode 100644
+index 000000000000..7e4446f9a47f
+--- /dev/null
++++ b/canon_verilog.bzl
+@@ -0,0 +1,53 @@
++"""orfs_canon_verilog: pre-synthesis Verilog from the canonicalize RTLIL.
++
++The synthesis canonicalize step (synth_canonicalize.tcl) writes
++1_1_yosys_canonicalize.rtlil: the design after elaboration and
++hierarchy/opt_clean, before any synthesis. Converting that checkpoint
++to Verilog gives a pre-synthesis gold netlist for LEC/SEC that has
++already been chewed through yosys' frontend — kepler-formal never sees
++the raw (System)Verilog edge cases, so an equivalence failure against
++the synthesized netlist implicates synthesis, not canonicalization.
++
++`proc` and `memory_collect` only lower processes/memories to forms
++write_verilog can emit; they do not synthesize.
++"""
++
++load("//private:attrs.bzl", "yosys_attrs")
++load("//private:environment.bzl", "yosys_environment", "yosys_inputs")
++
++CANON_RTLIL = "1_1_yosys_canonicalize.rtlil"
++
++def _canon_verilog_impl(ctx):
++    groups = ctx.attr.src[OutputGroupInfo]
++    if not hasattr(groups, CANON_RTLIL):
++        fail("{} does not provide a '{}' output group; src must be an orfs synth target".format(
++            ctx.attr.src.label,
++            CANON_RTLIL,
++        ))
++    rtlil = getattr(groups, CANON_RTLIL).to_list()[0]
++
++    out = ctx.actions.declare_file("{}/{}".format(ctx.attr.name, "1_1_canonicalize.v"))
++    ctx.actions.run_shell(
++        command = '"$1" -q -p "read_rtlil $2; proc; memory_collect; write_verilog -noattr $3"',
++        arguments = [ctx.executable.yosys.path, rtlil.path, out.path],
++        env = yosys_environment(ctx),
++        inputs = depset([rtlil]),
++        outputs = [out],
++        tools = yosys_inputs(ctx),
++        mnemonic = "CanonVerilog",
++        progress_message = "Writing pre-synthesis Verilog %{label}",
++    )
++
++    return [DefaultInfo(files = depset([out]))]
++
++orfs_canon_verilog = rule(
++    implementation = _canon_verilog_impl,
++    doc = """Converts an orfs synth target's canonicalize RTLIL checkpoint
++    to pre-synthesis Verilog (results in <name>/1_1_canonicalize.v).""",
++    attrs = yosys_attrs() | {
++        "src": attr.label(
++            doc = "An orfs synth target (provides the {} output group).".format(CANON_RTLIL),
++            mandatory = True,
++        ),
++    },
++)

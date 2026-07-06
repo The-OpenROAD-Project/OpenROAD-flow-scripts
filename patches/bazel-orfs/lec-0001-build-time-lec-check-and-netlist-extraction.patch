@@ -1,0 +1,482 @@
+diff --git a/BUILD b/BUILD
+index a235249896f2..dcceb93a6532 100644
+--- a/BUILD
++++ b/BUILD
+@@ -1 +1,4 @@
+-exports_files(["lec.yaml.tpl"])
++exports_files([
++    "lec.yaml.tpl",
++    "write_netlist.tcl",
++])
+diff --git a/README.md b/README.md
+index b8c5b27f5e08..fa2f19820db2 100644
+--- a/README.md
++++ b/README.md
+@@ -1,13 +1,33 @@
+ # Logic equivalence checking with kepler-formal
+ 
+-The `lec_test` rule wraps [kepler-formal](https://github.com/nicedayzhu/kepler-formal)
+-for combinational logic equivalence checking (LEC) between gold (reference) and
+-gate (modified) Verilog netlists.
++Rules wrapping [kepler-formal](https://github.com/keplertech/kepler-formal)
++for logic equivalence checking (LEC) between gold (reference) and gate
++(modified) Verilog netlists.
+ 
+-## Quick start
++## Quick start — build-time check + instant test (preferred)
+ 
+ ```starlark
+-load("//lec:lec.bzl", "lec_test")
++load("@bazel-orfs-lec//:lec.bzl", "lec")
++
++lec(
++    name = "my_lec",
++    gold_verilog_files = [":canonicalized.v"],
++    gate_verilog_files = [":synth.v"],
++    liberty_files = ["//lib:cells.lib"],
++    verification = "sec",  # RTL gold vs gate netlist
++)
++```
++
++`bazelisk build :my_lec` runs kepler-formal as a build action and records
++the verdict in `my_lec.status` (plus the full log). `bazelisk test
++:my_lec_test` only asserts the recorded verdict — instant, cached, immune
++to test timeouts on long SAT runs. Build the checks first (throttled with
++`--jobs=N`; SAT solving is memory-hungry), then run the tests.
++
++## Quick start — test-time run
++
++```starlark
++load("@bazel-orfs-lec//:lec.bzl", "lec_test")
+ 
+ lec_test(
+     name = "my_lec_test",
+@@ -16,10 +36,6 @@ lec_test(
+ )
+ ```
+ 
+-Run:
+-
+-    bazelisk test :my_lec_test
+-
+ ## Attributes
+ 
+ | Attribute | Default | Description |
+@@ -27,17 +43,44 @@ Run:
+ | `gold_verilog_files` | required | Gold (reference) Verilog files |
+ | `gate_verilog_files` | required | Gate (modified) Verilog files |
+ | `liberty_files` | `[]` | Liberty (.lib) files for cell definitions. Optional for RTL-to-RTL checks, required for post-synthesis gate netlists. |
++| `verification` | `"lec"` | `lec` (combinational) or `sec` (sequential; accepts pre-synthesis RTL gold vs gate netlist). `lec()`/`lec_check` only. |
++| `extra_config` | `[]` | Extra raw YAML lines appended to the kepler-formal config (e.g. `sec_engine: pdr`). `lec()`/`lec_check` only. |
+ | `log_level` | `"info"` | Log verbosity: `debug`, `info`, `warning`, `error` |
+ 
++## Stage netlist extraction
++
++`write_netlist.tcl` extracts a LEC-comparable Verilog netlist from an ORFS
++stage `.odb` (physical-only masters removed). Wire it with `orfs_run`:
++
++```starlark
++load("@bazel-orfs//:openroad.bzl", "orfs_run")
++
++orfs_run(
++    name = "gcd_floorplan_lec_v",
++    src = ":gcd_floorplan",
++    script = "@bazel-orfs-lec//:write_netlist.tcl",
++    outs = ["results/asap7/gcd/base/2_floorplan_lec.v"],
++)
++```
++
++The output is written as `<odb stem>_lec.v` in the stage's results
++directory. Hierarchical designs (`OPENROAD_HIERARCHICAL=1`) are read with
++`-hier` and produce hierarchical netlists.
++
+ ## Requirements
+ 
+-kepler-formal operates on Verilog netlists and checks combinational
++With `verification = "lec"` (default), kepler-formal checks combinational
+ equivalence. The gold and gate netlists must satisfy:
+ 
+ - **No sequential boundary changes** between gold and gate
+ - **No name changes** for hierarchical instances, sequential instances, or
+   top-level ports
+ 
++`verification = "sec"` compares sequential behaviour through extracted
++transition systems and accepts pre-synthesis (RTL) Verilog for gold —
++internal names are not used as equivalence assumptions, but top terminal
++names must match.
++
+ ## Temporary home
+ 
+ This directory is hosted in bazel-orfs temporarily until the kepler-formal
+diff --git a/lec.bzl b/lec.bzl
+index f603baf15ea0..8294aa34bb20 100644
+--- a/lec.bzl
++++ b/lec.bzl
+@@ -1,17 +1,231 @@
+ """Rules for kepler-formal LEC (Logic Equivalence Checking).
+ 
+-Generates a config file from template, runs kepler-formal, and
+-reports pass/fail as a Bazel test.
++Two usage styles:
+ 
+-kepler-formal operates on Verilog netlists and checks combinational
+-equivalence. Sequential boundary changes are not supported.
++1. `lec_test`: runs kepler-formal at test time. Simple, but the
++   (potentially very long) SAT run re-executes whenever the test
++   re-runs and is subject to test timeouts.
+ 
+-Requirements for the input Verilog:
++2. `lec(name, ...)` macro: emits a build-time `lec_check` action that
++   runs kepler-formal during `bazel build`, records the verdict in
++   `<name>.status` (plus the full log), and a `<name>_test`
++   `lec_status_test` that only asserts the recorded verdict. The
++   expensive work caches like any other build artifact and the test is
++   instant, so wide `bazel test` sweeps do not time out.
++
++kepler-formal operates on Verilog netlists. The default `lec`
++verification checks combinational equivalence:
+   - No change of sequential boundaries between gold and gate.
+   - No change in names of hierarchical instances, sequential instances,
+     and top terminals.
++`verification = "sec"` selects sequential equivalence checking, which
++also accepts pre-synthesis (RTL) Verilog for gold, compared against a
++gate netlist (RTL-vs-gate).
+ """
+ 
++LecInfo = provider(
++    "Recorded verdict of a build-time kepler-formal run.",
++    fields = {
++        "status": "File: one-line PASS/FAIL verdict",
++        "log": "File: full kepler-formal stdout/stderr",
++        "miter_log": "File: kepler-formal miter log (YAML log_file)",
++    },
++)
++
++def _lec_config(ctx, miter_log):
++    """Build the kepler-formal YAML config content."""
++    lines = ["format: verilog"]
++    if ctx.attr.verification != "lec":
++        lines.append("verification: " + ctx.attr.verification)
++    lines.append("input_paths:")
++    lines.append(
++        "  - [" + ", ".join([f.path for f in ctx.files.gold_verilog_files]) + "]",
++    )
++    lines.append(
++        "  - [" + ", ".join([f.path for f in ctx.files.gate_verilog_files]) + "]",
++    )
++    if ctx.files.liberty_files:
++        lines.append("liberty_files:")
++        lines += ["  - " + f.path for f in ctx.files.liberty_files]
++    lines.append("log_level: " + ctx.attr.log_level)
++    lines.append("log_file: " + miter_log.path)
++    lines += ctx.attr.extra_config
++    return "\n".join(lines) + "\n"
++
++def _lec_check_impl(ctx):
++    config = ctx.actions.declare_file(ctx.attr.name + ".yaml")
++    log = ctx.actions.declare_file(ctx.attr.name + ".log")
++    miter_log = ctx.actions.declare_file(ctx.attr.name + ".miter.log")
++    status = ctx.actions.declare_file(ctx.attr.name + ".status")
++
++    ctx.actions.write(config, _lec_config(ctx, miter_log))
++
++    # The action itself always succeeds: the kepler-formal verdict
++    # (exit code, or "Found difference" in the logs) is captured in the
++    # .status file so that failures are cached build artifacts asserted
++    # by lec_status_test, not build errors.
++    ctx.actions.run_shell(
++        command = """
++set -u
++rc=0
++"$1" --config "$2" > "$3" 2>&1 || rc=$?
++touch "$4"
++if [ "$rc" -eq 0 ] && ! grep -q "Found difference" "$3" "$4"; then
++  echo "PASS" > "$5"
++else
++  echo "FAIL (kepler-formal exit=$rc)" > "$5"
++fi
++""",
++        arguments = [
++            ctx.executable._kepler_formal.path,
++            config.path,
++            log.path,
++            miter_log.path,
++            status.path,
++        ],
++        inputs = depset(
++            [config] +
++            ctx.files.gold_verilog_files +
++            ctx.files.gate_verilog_files +
++            ctx.files.liberty_files,
++        ),
++        outputs = [log, miter_log, status],
++        tools = [ctx.attr._kepler_formal[DefaultInfo].files_to_run],
++        mnemonic = "KeplerFormal",
++        progress_message = "LEC (kepler-formal) %{label}",
++    )
++
++    return [
++        DefaultInfo(files = depset([status, log, miter_log, config])),
++        LecInfo(status = status, log = log, miter_log = miter_log),
++    ]
++
++_LEC_IO_ATTRS = {
++    "gold_verilog_files": attr.label_list(
++        doc = "Gold (reference) Verilog files.",
++        allow_files = True,
++        providers = [DefaultInfo],
++    ),
++    "gate_verilog_files": attr.label_list(
++        doc = "Gate (modified) Verilog files.",
++        allow_files = True,
++        providers = [DefaultInfo],
++    ),
++    "liberty_files": attr.label_list(
++        doc = "Liberty (.lib) files for cell definitions. Optional for RTL-to-RTL checks.",
++        allow_files = True,
++        providers = [DefaultInfo],
++        default = [],
++    ),
++    "log_level": attr.string(
++        doc = "Log verbosity: debug, info, warning, error.",
++        default = "info",
++    ),
++    "_kepler_formal": attr.label(
++        doc = "kepler-formal binary.",
++        executable = True,
++        allow_files = True,
++        cfg = "exec",
++        default = Label("@kepler-formal//src/bin:kepler-formal"),
++    ),
++}
++
++lec_check = rule(
++    implementation = _lec_check_impl,
++    doc = """Build-time logic equivalence check using kepler-formal.
++
++    Runs kepler-formal as a (cacheable) build action and records the
++    verdict in `<name>.status` alongside the full log. Pair with
++    lec_status_test (or use the lec() macro) to surface the verdict as
++    a test.
++    """,
++    attrs = _LEC_IO_ATTRS | {
++        "verification": attr.string(
++            doc = "Verification mode: lec (combinational) or sec (sequential; accepts RTL gold).",
++            default = "lec",
++            values = ["lec", "sec"],
++        ),
++        "extra_config": attr.string_list(
++            doc = "Extra raw YAML config lines appended to the generated kepler-formal " +
++                  "config (e.g. 'sec_engine: pdr', 'solver: kissat').",
++            default = [],
++        ),
++    },
++)
++
++def _lec_status_test_impl(ctx):
++    info = ctx.attr.check[LecInfo]
++    script = ctx.actions.declare_file(ctx.attr.name + ".sh")
++    ctx.actions.write(
++        script,
++        """#!/bin/sh
++status="$(cat "{status}")"
++echo "{check}: $status"
++if [ "$status" = "PASS" ]; then
++  exit 0
++fi
++echo "--- kepler-formal log (last 200 lines) ---"
++tail -n 200 "{log}"
++exit 1
++""".format(
++            check = str(ctx.attr.check.label),
++            status = info.status.short_path,
++            log = info.log.short_path,
++        ),
++        is_executable = True,
++    )
++    return [
++        DefaultInfo(
++            executable = script,
++            runfiles = ctx.runfiles(files = [info.status, info.log]),
++        ),
++    ]
++
++lec_status_test = rule(
++    implementation = _lec_status_test_impl,
++    doc = """Asserts that a lec_check recorded PASS.
++
++    Instant: only reads the verdict recorded at build time, so LEC
++    results stay cached and wide test sweeps cannot time out on SAT
++    runtimes.
++    """,
++    attrs = {
++        "check": attr.label(
++            doc = "The lec_check whose verdict to assert.",
++            mandatory = True,
++            providers = [LecInfo],
++        ),
++    },
++    test = True,
++)
++
++def lec(name, tags = [], visibility = None, **kwargs):
++    """Build-time LEC with an instant verdict test.
++
++    Emits `<name>` (lec_check build target running kepler-formal) and
++    `<name>_test` (lec_status_test asserting the recorded verdict).
++
++    Args:
++        name: base name for the check/test pair.
++        tags: applied to both targets.
++        visibility: applied to both targets.
++        **kwargs: forwarded to lec_check (gold_verilog_files,
++            gate_verilog_files, liberty_files, verification,
++            extra_config, log_level).
++    """
++    lec_check(
++        name = name,
++        tags = tags,
++        visibility = visibility,
++        **kwargs
++    )
++    lec_status_test(
++        name = name + "_test",
++        check = ":" + name,
++        tags = tags,
++        visibility = visibility,
++    )
++
+ def _lec_test_impl(ctx):
+     # Generate kepler-formal YAML config
+     config = ctx.actions.declare_file(ctx.attr.name + ".yaml")
+@@ -91,35 +305,10 @@ lec_test = rule(
+ 
+     Compares gold (reference) and gate (modified) Verilog netlists for
+     combinational equivalence. Fails the test if any mismatch is found.
++    Runs kepler-formal at test time; prefer the lec() macro for
++    expensive checks so the SAT run caches as a build action.
+     """,
+-    attrs = {
+-        "gold_verilog_files": attr.label_list(
+-            doc = "Gold (reference) Verilog files.",
+-            allow_files = True,
+-            providers = [DefaultInfo],
+-        ),
+-        "gate_verilog_files": attr.label_list(
+-            doc = "Gate (modified) Verilog files.",
+-            allow_files = True,
+-            providers = [DefaultInfo],
+-        ),
+-        "liberty_files": attr.label_list(
+-            doc = "Liberty (.lib) files for cell definitions. Optional for RTL-to-RTL checks.",
+-            allow_files = True,
+-            providers = [DefaultInfo],
+-            default = [],
+-        ),
+-        "log_level": attr.string(
+-            doc = "Log verbosity: debug, info, warning, error.",
+-            default = "info",
+-        ),
+-        "_kepler_formal": attr.label(
+-            doc = "kepler-formal binary.",
+-            executable = True,
+-            allow_files = True,
+-            cfg = "exec",
+-            default = Label("@kepler-formal//src/bin:kepler-formal"),
+-        ),
++    attrs = _LEC_IO_ATTRS | {
+         "_config_template": attr.label(
+             default = "//:lec.yaml.tpl",
+             allow_single_file = True,
+diff --git a/test/BUILD b/test/BUILD
+new file mode 100644
+index 000000000000..3904dc6d9178
+--- /dev/null
++++ b/test/BUILD
+@@ -0,0 +1,33 @@
++"""lec module self-tests.
++
++Run from the lec module root (`cd lec && bazelisk test //test/...`).
++With no kepler-formal override in play these exercise the rule wiring
++against the CI mock (../mock/kepler-formal), which always reports
++equivalence; point the kepler-formal module at a real checkout to turn
++them into true LEC runs.
++"""
++
++load("//:lec.bzl", "lec", "lec_test")
++
++# Test-time rule: kepler-formal runs inside the test action.
++lec_test(
++    name = "fixture_runtime_lec_test",
++    gate_verilog_files = ["gate.v"],
++    gold_verilog_files = ["gold.v"],
++)
++
++# Build-time check + instant verdict test pairs:
++# fixture_lec/_test and fixture_sec/_test.
++lec(
++    name = "fixture_lec",
++    gate_verilog_files = ["gate.v"],
++    gold_verilog_files = ["gold.v"],
++)
++
++lec(
++    name = "fixture_sec",
++    extra_config = ["sec_engine: pdr"],
++    gate_verilog_files = ["gate.v"],
++    gold_verilog_files = ["gold.v"],
++    verification = "sec",
++)
+diff --git a/test/gate.v b/test/gate.v
+new file mode 100644
+index 000000000000..74c71d152180
+--- /dev/null
++++ b/test/gate.v
+@@ -0,0 +1,11 @@
++// Equivalent gate fixture: same function, restructured expression.
++module top (
++    input clk,
++    input a,
++    input b,
++    output reg y
++);
++  wire n1;
++  assign n1 = ~(~a | ~b);
++  always @(posedge clk) y <= n1;
++endmodule
+diff --git a/test/gold.v b/test/gold.v
+new file mode 100644
+index 000000000000..7586da2809cc
+--- /dev/null
++++ b/test/gold.v
+@@ -0,0 +1,9 @@
++// Trivial gold netlist fixture: y = a & b, registered.
++module top (
++    input clk,
++    input a,
++    input b,
++    output reg y
++);
++  always @(posedge clk) y <= a & b;
++endmodule
+diff --git a/write_netlist.tcl b/write_netlist.tcl
+new file mode 100644
+index 000000000000..f7a107aada09
+--- /dev/null
++++ b/write_netlist.tcl
+@@ -0,0 +1,15 @@
++# Writes a LEC-comparable Verilog netlist for an ORFS stage .odb.
++#
++# For use with bazel-orfs orfs_run(src = <stage>, script = this,
++# outs = ["results/<pdk>/<top>/<variant>/<stem>_lec.v"]): open.tcl
++# reads $::env(ODB_FILE) (honouring OPENROAD_HIERARCHICAL via
++# hier_options), liberty is read so physical-only master detection can
++# tell filler/tap/decap cells from logic, and the netlist is written
++# with those masters removed so kepler-formal only sees logic.
++source $::env(SCRIPTS_DIR)/util.tcl
++source $::env(SCRIPTS_DIR)/read_liberty.tcl
++source $::env(SCRIPTS_DIR)/open.tcl
++
++set stem [file rootname [file tail $::env(ODB_FILE)]]
++write_verilog -remove_cells [find_physical_only_masters] \
++  $::env(RESULTS_DIR)/${stem}_lec.v

@@ -1,0 +1,10 @@
+"""Mirrors of tools/OpenROAD/bazel/*-patches for single_version_override.
+
+single_version_override is only honored in the root module, and its
+patches= labels must live in the main repository — so the dependency
+fixes tools/OpenROAD carries for its own root builds are copied here
+verbatim. Keep in sync with the submodule; drop each file when the fix
+lands in a BCR release.
+"""
+
+exports_files(glob(["*.patch"]))

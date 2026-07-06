@@ -19,11 +19,77 @@ bazel_dep(name = "rules_shell", version = "0.6.1")
 # our MODULE.bazel doesn't need to be patched at non-root consumption
 # time.
 
-bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
+# Hermetic zero-sysroot LLVM toolchain (hermetic-llvm, BCR module "llvm"):
+# statically linked LLVM binaries and a cc_toolchain with no host compiler,
+# linker, headers or libraries involved. Mirrors tools/OpenROAD (which marks
+# it dev_dependency and documents that root modules bring their own C++
+# toolchain).
+bazel_dep(name = "llvm", version = "0.8.11", dev_dependency = True)
 bazel_dep(name = "openroad", dev_dependency = True)
 local_path_override(
     module_name = "openroad",
     path = "tools/OpenROAD",
+)
+
+# single_version_override is only honored in the root module, so the
+# fixes tools/OpenROAD carries for its own root builds must be mirrored
+# here. The patch files are copied into //patches/openroad-deps because
+# override patches must live in the main repository (see the comments in
+# tools/OpenROAD/MODULE.bazel for each):
+#  - abc: flush prompt/handle EOF without readline (yosys coprocess hang)
+#  - bison: gnulib wrapper-header precedence under hermetic-llvm
+#  - boost.icl: interval_set subtraction bug (boostorg/icl#54)
+#  - gawk: libc-header shadowing fix release
+#  - tcl_lang: tclZipfs crypt.h include under zero-sysroot toolchain
+single_version_override(
+    module_name = "abc",
+    patch_strip = 1,
+    patches = [
+        "//patches/openroad-deps:0001-mainUtils-flush-prompt-and-handle-eof-without-readline.patch",
+    ],
+)
+
+single_version_override(
+    module_name = "bison",
+    patch_strip = 1,
+    patches = [
+        "//patches/openroad-deps:0001-gnulib-wrapper-headers-use-I-not-isystem.patch",
+    ],
+    version = "3.8.2.bcr.7",
+)
+
+single_version_override(
+    module_name = "boost.icl",
+    patch_strip = 1,
+    patches = [
+        "//patches/openroad-deps:0001-refactor-interval-lookup-operations-icl-54.patch",
+    ],
+)
+
+single_version_override(
+    module_name = "gawk",
+    version = "5.3.2.bcr.7",
+)
+
+# m4 and sed: same gnulib libc-header shadowing class as gawk/bison
+# under hermetic-llvm (BCR #7642); these releases carry the fixes
+# (sed via BCR #7915).
+single_version_override(
+    module_name = "m4",
+    version = "1.4.21.bcr.4",
+)
+
+single_version_override(
+    module_name = "sed",
+    version = "4.9.bcr.5",
+)
+
+single_version_override(
+    module_name = "tcl_lang",
+    patch_strip = 1,
+    patches = [
+        "//patches/openroad-deps:0001-tclZipfs-include-vendored-minizip-crypt.h-by-path.patch",
+    ],
 )
 
 bazel_dep(name = "qt-bazel", dev_dependency = True)
@@ -36,7 +102,7 @@ git_override(
 bazel_dep(name = "bazel-orfs", dev_dependency = True)
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
-BAZEL_ORFS_COMMIT = "3a5ddd7eb48c363717e65903ae4573d528327fd3"
+BAZEL_ORFS_COMMIT = "970ff81f19dc602b44bb017f97dcdbc70f58fd89"
 
 BAZEL_ORFS_REMOTE = "https://github.com/The-OpenROAD-Project/bazel-orfs.git"
 
@@ -51,8 +117,8 @@ git_override(
     commit = BAZEL_ORFS_COMMIT,
     patch_strip = 1,
     patches = [
-        "//patches/bazel-orfs:0001-render_gds-monkey-patch-PDK_CONFIGS-not-gdsii_use_custom_config.patch",
         "//patches/bazel-orfs:0002-add-orfs_openroad_synth-rule-and-macro.patch",
+        "//patches/bazel-orfs:0003-add-orfs_canon_verilog-rule.patch",
     ],
     remote = BAZEL_ORFS_REMOTE,
 )
@@ -62,6 +128,32 @@ git_override(
     commit = BAZEL_ORFS_COMMIT,
     remote = BAZEL_ORFS_REMOTE,
     strip_prefix = "verilog",
+)
+
+# LEC (logic equivalence checking) rules wrapping kepler-formal. The
+# expansion patch (build-time lec_check + instant status test + stage
+# netlist extraction) is carried here until upstreamed to bazel-orfs.
+bazel_dep(name = "bazel-orfs-lec", dev_dependency = True)
+git_override(
+    module_name = "bazel-orfs-lec",
+    commit = BAZEL_ORFS_COMMIT,
+    patch_strip = 1,
+    patches = [
+        "//patches/bazel-orfs:lec-0001-build-time-lec-check-and-netlist-extraction.patch",
+    ],
+    remote = BAZEL_ORFS_REMOTE,
+    strip_prefix = "lec",
+)
+
+# kepler-formal is not on BCR yet (see its docs/bcr-roadmap.md). The lec
+# module's own kepler-formal override points at a CI mock and is a no-op
+# when it is not the root module, so the real, hermetically built (llvm
+# zero-sysroot toolchain) kepler-formal is pinned here.
+bazel_dep(name = "kepler-formal", dev_dependency = True)
+git_override(
+    module_name = "kepler-formal",
+    commit = "6af0212097e737a2d843eedd524023f49bd77945",
+    remote = "https://github.com/keplertech/kepler-formal.git",
 )
 
 # yosys-slang is not on BCR. Pin to a commit on povik/yosys-slang master
@@ -78,20 +170,24 @@ git_override(
 
 # --- Extensions ---
 
-llvm = use_extension(
-    "@toolchains_llvm//toolchain/extensions:llvm.bzl",
-    "llvm",
-    dev_dependency = True,
-)
-llvm.toolchain(
-    llvm_version = "20.1.8",
-)
-use_repo(llvm, "llvm_toolchain")
-
 register_toolchains(
-    "@llvm_toolchain//:all",
+    "@llvm//toolchain:all",
     dev_dependency = True,
 )
+
+# sv-lang (via tools/OpenROAD) pulls in rules_pycross, whose toolchain
+# extension fails on Python 3.8 (transitively registered via or-tools ->
+# pybind11_abseil, dropped from rules_python 2.0.0's MINOR_MAPPING).
+# pycross.configure_environments is root-honored only, so the workaround
+# must be mirrored here from tools/OpenROAD/MODULE.bazel.
+bazel_dep(name = "rules_pycross", version = "0.8.1", dev_dependency = True)
+
+pycross = use_extension(
+    "@rules_pycross//pycross/extensions:pycross.bzl",
+    "pycross",
+    dev_dependency = True,
+)
+pycross.configure_environments(python_versions = ["3.13"])
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
