@@ -44,6 +44,12 @@ bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
 # (appended) instead of odb order, and emitted vias in history-derived
 # order — a single-process flow routed differently than a fresh
 # process on a byte-identical database.
+#
+# patches/openroad/0003-drt-do-not-duplicate-bterm-access-points.patch:
+# every pin access update appended block-terminal access points
+# without destroying the previously written ones, so staged flows
+# accumulate stale access points at each stage that reruns pin access
+# (69 -> 138 on asap7/gcd between grt and route).
 bazel_dep(name = "openroad", dev_dependency = True)
 git_override(
     module_name = "openroad",
@@ -53,6 +59,7 @@ git_override(
     patches = [
         "//patches/openroad:0001-sta-register-new-instance-pin-vertices-as-endpoints.patch",
         "//patches/openroad:0002-drt-make-incremental-design-updates-match-a-fresh-read.patch",
+        "//patches/openroad:0003-drt-do-not-duplicate-bterm-access-points.patch",
     ],
     remote = "https://github.com/The-OpenROAD-Project/OpenROAD.git",
 )

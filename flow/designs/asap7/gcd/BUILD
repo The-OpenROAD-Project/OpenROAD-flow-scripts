@@ -114,14 +114,16 @@ orfs_run(
 # design-updates-match-a-fresh-read.patch; the routed layout is now
 # identical (equal DEF).
 #
+# The route .odb byte difference was NOT an odb id/freelist issue
+# (free lists serialize and reload): the per-stage flow accumulated
+# stale block-terminal access points on every pin access rerun — fixed
+# by patches/openroad/0003-drt-do-not-duplicate-bterm-access-points.
+# patch; route is byte-identical now.
+#
 # Known remaining divergence, deliberately left failing so it gets
-# root-caused rather than papered over: the route/final .odb files
-# still differ byte-wise from two causes. (1) odb serializes object
-# ids, and a database that lived through create/delete cycles reuses
-# freed ids where a freshly read one appends, so byte equality after
-# further edits needs canonical-id serialization. (2) 6_final.odb is
-# written mid-final_report in the per-stage flow but at end of script
-# here, and the RCX extraction in between reorders every dbWire
+# root-caused rather than papered over: 6_final.odb is written
+# mid-final_report in the per-stage flow but at end of script here,
+# and the RCX extraction in between reorders every dbWire
 # (odb orderWires), which also shows in the DEF.
 [
     sh_test(
