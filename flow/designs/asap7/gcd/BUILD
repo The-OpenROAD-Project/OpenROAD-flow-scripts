@@ -120,11 +120,12 @@ orfs_run(
 # by patches/openroad/0003-drt-do-not-duplicate-bterm-access-points.
 # patch; route is byte-identical now.
 #
-# Known remaining divergence, deliberately left failing so it gets
-# root-caused rather than papered over: 6_final.odb is written
-# mid-final_report in the per-stage flow but at end of script here,
-# and the RCX extraction in between reorders every dbWire
-# (odb orderWires), which also shows in the DEF.
+# The final stage used to diverge because the per-stage flow writes
+# 6_final.odb mid-final_report (before the RCX extraction reorders
+# every dbWire via odb orderWires) while this flow wrote at end of
+# script — resolved by splitting final_report.tcl around its write so
+# flow.tcl writes at the same point. All seven stage boundaries are
+# byte-identical between the two flows.
 [
     sh_test(
         name = "gcd_single_flow_{}_test".format(stage),

@@ -89,10 +89,12 @@ flow_write_db 5_3_fillcell.odb
 flow_write_db 5_route.odb
 flow_write_sdc 5_route.sdc
 
-# Finish
+# Finish. final_report.tcl is split around its 6_final.odb write so
+# this top level can write at the same point.
 flow_source density_fill.tcl
 flow_write_db 6_1_fill.odb
 flow_write_sdc 6_1_fill.sdc
 flow_write_sdc 6_final.sdc
-flow_source final_report.tcl
+flow_source final_connect.tcl
 flow_write_db 6_final.odb
+flow_source final_outputs.tcl
