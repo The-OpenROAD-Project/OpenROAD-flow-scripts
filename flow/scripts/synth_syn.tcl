@@ -68,12 +68,10 @@ log_cmd repair_design -pre_placement
 
 report_metrics 1 "synth" false false
 
-# Producing 1_synth.odb/.sdc is this step's contract:
-# unconditional, no WRITE_ODB_AND_SDC_EACH_STAGE.
-log_cmd write_db $::env(RESULTS_DIR)/1_synth.odb
+orfs_write_db $::env(RESULTS_DIR)/1_synth.odb
 # Canonicalize 1_synth.sdc. The original SDC_FILE provided by
 # the user could have dependencies, such as sourcing util.tcl,
 # which are read in here and a canonicalized version is written
 # out by OpenSTA that has no dependencies. Sole writer of
 # 1_synth.sdc.
-log_cmd write_sdc -no_timestamp $::env(RESULTS_DIR)/1_synth.sdc
+orfs_write_sdc $::env(RESULTS_DIR)/1_synth.sdc
