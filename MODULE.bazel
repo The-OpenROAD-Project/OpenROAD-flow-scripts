@@ -20,10 +20,34 @@ bazel_dep(name = "rules_shell", version = "0.6.1")
 # time.
 
 bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
+
+# openroad is normally consumed straight from the tools/OpenROAD
+# submodule via local_path_override. While OpenROAD fixes are carried
+# as patches in //patches/openroad (local_path_override does not accept
+# patches), it is fetched via git_override instead, pinned to the exact
+# commit the submodule records so make (submodule) and bazel (fetched +
+# patched) build the same base. Note that bazel builds the fetched
+# source, not the live submodule tree, while this override is in place;
+# revert to local_path_override when the patches land upstream.
+#
+# patches/openroad/0001-sta-register-new-instance-pin-vertices-as-endpoints.patch:
+# pins of a freshly created instance that are never connected (eg the
+# dangling outputs of CTS dummy-load buffers) never enter the STA
+# endpoint set, so their requireds are never seeded and a propagated
+# clock arrival yields a bogus negative net slack in the process that
+# inserted them — resistance-aware global routing then routes
+# differently in a single-process flow than in a stage-per-process
+# flow. Applies to the src/sta submodule content (init_submodules).
 bazel_dep(name = "openroad", dev_dependency = True)
-local_path_override(
+git_override(
     module_name = "openroad",
-    path = "tools/OpenROAD",
+    commit = "f4e5e40f4755f135fea8e567c8c6822136b48729",
+    init_submodules = True,
+    patch_strip = 1,
+    patches = [
+        "//patches/openroad:0001-sta-register-new-instance-pin-vertices-as-endpoints.patch",
+    ],
+    remote = "https://github.com/The-OpenROAD-Project/OpenROAD.git",
 )
 
 bazel_dep(name = "qt-bazel", dev_dependency = True)

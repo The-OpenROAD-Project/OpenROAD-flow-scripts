@@ -100,12 +100,19 @@ orfs_run(
 # file_a file_b ... (.sdc pair first: check_same.sh stops at a binary
 # diff, and the .sdc verdict should be reported before that).
 #
-# Known divergence, deliberately left failing so it gets root-caused
-# rather than papered over: from the grt stage on, the grt-stage
-# repair_timing inserts one extra buffer (8 vs 7 on asap7/gcd) when the
-# process continues from the in-memory CTS state instead of reloading
-# 4_cts.odb, even though the 4_cts.odb/.sdc it starts from are
-# byte-identical (all .sdc match through the whole flow).
+# The synth through grt boundaries are byte-identical. The grt stage
+# used to diverge (an extra repair_timing buffer): STA endpoint state
+# for CTS dummy-load pins differed between a process that inserted them
+# and a process that read the same design from disk, and
+# resistance-aware global routing consumed the resulting bogus net
+# slacks — fixed by patches/openroad/0001-sta-register-new-instance-
+# pin-vertices-as-endpoints.patch.
+#
+# Known remaining divergence, deliberately left failing so it gets
+# root-caused rather than papered over: route and final differ even
+# though the 5_1_grt.odb they start from is byte-identical — detail
+# route behaves differently in-process than freshly loaded (suspected
+# drt/pin-access module state carried over from the grt stage).
 [
     sh_test(
         name = "gcd_single_flow_{}_test".format(stage),
