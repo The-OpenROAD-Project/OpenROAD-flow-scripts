@@ -83,6 +83,20 @@ register_toolchains(
     dev_dependency = True,
 )
 
+# sv-lang (via tools/OpenROAD) pulls in rules_pycross, whose toolchain
+# extension fails on Python 3.8 (transitively registered via or-tools ->
+# pybind11_abseil, dropped from rules_python 2.0.0's MINOR_MAPPING).
+# pycross.configure_environments is root-honored only, so the workaround
+# must be mirrored here from tools/OpenROAD/MODULE.bazel.
+bazel_dep(name = "rules_pycross", version = "0.8.1", dev_dependency = True)
+
+pycross = use_extension(
+    "@rules_pycross//pycross/extensions:pycross.bzl",
+    "pycross",
+    dev_dependency = True,
+)
+pycross.configure_environments(python_versions = ["3.13"])
+
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
     ignore_root_user_error = True,
