@@ -88,25 +88,19 @@ orfs_run(
     ]
 ]
 
-# From the grt stage on, the single-process flow is known not to be
-# byte-equivalent to the per-stage flow yet: the grt-stage repair_timing
-# inserts one extra buffer (8 vs 7 on asap7/gcd) when the process
-# continues from the in-memory CTS state instead of reloading 4_cts.odb,
-# even though the 4_cts.odb/.sdc it starts from are byte-identical. The
-# comparisons are kept as manual targets so the gap stays measurable;
-# drop the tag once single-process equivalence holds through the flow.
-KNOWN_DIVERGENT_STAGES = [
-    "grt",
-    "route",
-    "final",
-]
-
 # Byte-compare each stage boundary's .odb/.sdc between the per-stage
 # flow and the single-process flow: equal files prove the
 # single-process mode is equivalent to the per-stage flow, not merely
 # that it runs to completion. check_same.sh takes file pairs:
 # file_a file_b ... (.sdc pair first: check_same.sh stops at a binary
 # diff, and the .sdc verdict should be reported before that).
+#
+# Known divergence, deliberately left failing so it gets root-caused
+# rather than papered over: from the grt stage on, the grt-stage
+# repair_timing inserts one extra buffer (8 vs 7 on asap7/gcd) when the
+# process continues from the in-memory CTS state instead of reloading
+# 4_cts.odb, even though the 4_cts.odb/.sdc it starts from are
+# byte-identical (all .sdc match through the whole flow).
 [
     sh_test(
         name = "gcd_single_flow_{}_test".format(stage),
@@ -135,7 +129,7 @@ KNOWN_DIVERGENT_STAGES = [
                 "odb",
             ]
         ],
-        tags = ["orfs"] + (["manual"] if stage in KNOWN_DIVERGENT_STAGES else []),
+        tags = ["orfs"],
     )
     for stage, stem in SINGLE_FLOW_STAGES.items()
 ]
@@ -145,6 +139,5 @@ test_suite(
     tests = [
         ":gcd_single_flow_{}_test".format(stage)
         for stage in SINGLE_FLOW_STAGES
-        if stage not in KNOWN_DIVERGENT_STAGES
     ],
 )

@@ -4,7 +4,7 @@
 # exposed via ODB_FILE, while RESULTS_DIR points at this run's own
 # variant folder.
 file mkdir $::env(RESULTS_DIR)
-exec cp $::env(ODB_FILE) $::env(RESULTS_DIR)/1_synth.odb
-exec cp [file rootname $::env(ODB_FILE)].sdc $::env(RESULTS_DIR)/1_synth.sdc
+file copy -force $::env(ODB_FILE) $::env(RESULTS_DIR)/1_synth.odb
+file copy -force [file rootname $::env(ODB_FILE)].sdc $::env(RESULTS_DIR)/1_synth.sdc
 
 source $::env(SCRIPTS_DIR)/flow.tcl
