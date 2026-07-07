@@ -1,0 +1,141 @@
+diff --git a/src/drt/src/db/obj/frBlock.h b/src/drt/src/db/obj/frBlock.h
+index ab21293087..3d642f631c 100644
+--- a/src/drt/src/db/obj/frBlock.h
++++ b/src/drt/src/db/obj/frBlock.h
+@@ -9,6 +9,7 @@
+ #include <set>
+ #include <string>
+ #include <type_traits>
++#include <unordered_map>
+ #include <utility>
+ #include <vector>
+ 
+@@ -379,6 +380,62 @@ class frBlock : public frBlockObject
+       net->setId(id++);
+     }
+   }
++  // Reorder nets_/insts_ to the given permutation and renumber ids.
++  // A fresh odb read creates them in odb iteration order while
++  // incremental updates append, which changes downstream iteration
++  // order (eg track assignment) and with it the routing result.
++  void orderNets(const std::vector<frNet*>& order)
++  {
++    std::vector<std::unique_ptr<frNet>> prev;
++    prev.swap(nets_);
++    std::unordered_map<frNet*, size_t> index;
++    index.reserve(prev.size());
++    for (size_t i = 0; i < prev.size(); i++) {
++      index[prev[i].get()] = i;
++    }
++    for (frNet* net : order) {
++      auto it = index.find(net);
++      if (it != index.end() && prev[it->second]) {
++        nets_.push_back(std::move(prev[it->second]));
++      }
++    }
++    // Anything not covered by order (there should be nothing) keeps
++    // its previous relative position at the end.
++    for (auto& net : prev) {
++      if (net) {
++        nets_.push_back(std::move(net));
++      }
++    }
++    int id = 0;
++    for (const auto& net : nets_) {
++      net->setId(id++);
++    }
++  }
++  void orderInsts(const std::vector<frInst*>& order)
++  {
++    std::vector<std::unique_ptr<frInst>> prev;
++    prev.swap(insts_);
++    std::unordered_map<frInst*, size_t> index;
++    index.reserve(prev.size());
++    for (size_t i = 0; i < prev.size(); i++) {
++      index[prev[i].get()] = i;
++    }
++    for (frInst* inst : order) {
++      auto it = index.find(inst);
++      if (it != index.end() && prev[it->second]) {
++        insts_.push_back(std::move(prev[it->second]));
++      }
++    }
++    for (auto& inst : prev) {
++      if (inst) {
++        insts_.push_back(std::move(inst));
++      }
++    }
++    int id = 0;
++    for (const auto& inst : insts_) {
++      inst->setId(id++);
++    }
++  }
+   void addNet(std::unique_ptr<frNet> in)
+   {
+     in->setId(nets_.size());
+diff --git a/src/drt/src/io/io.cpp b/src/drt/src/io/io.cpp
+index 5929913cf7..126ff248f6 100644
+--- a/src/drt/src/io/io.cpp
++++ b/src/drt/src/io/io.cpp
+@@ -3383,6 +3383,29 @@ void io::Parser::updateDesign()
+     netIn->clearOrigGuides();
+     updateNetRouting(netIn, db_net);
+   }
++  // Match a fresh read: order insts and nets as odb iterates them.
++  // Incremental updates append recreated objects at the end while odb
++  // recycles ids, and downstream iteration order affects the routing
++  // result.
++  std::vector<frInst*> inst_order;
++  inst_order.reserve(getBlock()->getInsts().size());
++  for (auto db_inst : block->getInsts()) {
++    auto inst = getBlock()->findInst(db_inst);
++    if (inst != nullptr) {
++      inst_order.push_back(inst);
++    }
++  }
++  getBlock()->orderInsts(inst_order);
++  std::vector<frNet*> net_order;
++  net_order.reserve(getBlock()->getNets().size());
++  for (auto db_net : block->getNets()) {
++    // Special nets live in the snet list and keep their order.
++    auto net = getBlock()->findNet(db_net->getName());
++    if (net != nullptr) {
++      net_order.push_back(net);
++    }
++  }
++  getBlock()->orderNets(net_order);
+   getDesign()->getRegionQuery()->init();
+   getDesign()->getRegionQuery()->initDRObj();
+ }
+@@ -3742,6 +3765,31 @@ void io::Writer::fillConnFigs(bool isTA, int verbose)
+     for (auto& it : connFigs_) {
+       mergeSplitConnFigs(it.second);
+     }
++  } else {
++    // The via order within a net is semantically irrelevant to the
++    // written wire but reflects the routing history (a process that
++    // ran earlier stages in memory orders them differently than one
++    // that read the same design from disk). Order vias canonically so
++    // the written database does not depend on that history; path segs
++    // keep their order.
++    for (auto& it : connFigs_) {
++      it.second.sort([](const std::shared_ptr<frConnFig>& lhs,
++                        const std::shared_ptr<frConnFig>& rhs) {
++        const bool lhs_via = lhs->typeId() == frcVia;
++        const bool rhs_via = rhs->typeId() == frcVia;
++        if (!lhs_via || !rhs_via) {
++          return false;
++        }
++        const auto lv = std::static_pointer_cast<frVia>(lhs);
++        const auto rv = std::static_pointer_cast<frVia>(rhs);
++        return std::make_tuple(lv->getViaDef()->getCutLayerNum(),
++                               lv->getOrigin().x(),
++                               lv->getOrigin().y())
++               < std::make_tuple(rv->getViaDef()->getCutLayerNum(),
++                                 rv->getOrigin().x(),
++                                 rv->getOrigin().y());
++      });
++    }
+   }
+ }
+ 

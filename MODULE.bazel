@@ -38,6 +38,12 @@ bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
 # inserted them — resistance-aware global routing then routes
 # differently in a single-process flow than in a stage-per-process
 # flow. Applies to the src/sta submodule content (init_submodules).
+#
+# patches/openroad/0002-drt-make-incremental-design-updates-match-a-fresh-read.patch:
+# detailed route iterated nets/instances in incremental-update order
+# (appended) instead of odb order, and emitted vias in history-derived
+# order — a single-process flow routed differently than a fresh
+# process on a byte-identical database.
 bazel_dep(name = "openroad", dev_dependency = True)
 git_override(
     module_name = "openroad",
@@ -46,6 +52,7 @@ git_override(
     patch_strip = 1,
     patches = [
         "//patches/openroad:0001-sta-register-new-instance-pin-vertices-as-endpoints.patch",
+        "//patches/openroad:0002-drt-make-incremental-design-updates-match-a-fresh-read.patch",
     ],
     remote = "https://github.com/The-OpenROAD-Project/OpenROAD.git",
 )

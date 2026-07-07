@@ -108,11 +108,21 @@ orfs_run(
 # slacks — fixed by patches/openroad/0001-sta-register-new-instance-
 # pin-vertices-as-endpoints.patch.
 #
+# The route stage used to route differently in-process (net/instance
+# iteration order and via emission order in drt reflected the process
+# history) — fixed by patches/openroad/0002-drt-make-incremental-
+# design-updates-match-a-fresh-read.patch; the routed layout is now
+# identical (equal DEF).
+#
 # Known remaining divergence, deliberately left failing so it gets
-# root-caused rather than papered over: route and final differ even
-# though the 5_1_grt.odb they start from is byte-identical — detail
-# route behaves differently in-process than freshly loaded (suspected
-# drt/pin-access module state carried over from the grt stage).
+# root-caused rather than papered over: the route/final .odb files
+# still differ byte-wise from two causes. (1) odb serializes object
+# ids, and a database that lived through create/delete cycles reuses
+# freed ids where a freshly read one appends, so byte equality after
+# further edits needs canonical-id serialization. (2) 6_final.odb is
+# written mid-final_report in the per-stage flow but at end of script
+# here, and the RCX extraction in between reorders every dbWire
+# (odb orderWires), which also shows in the DEF.
 [
     sh_test(
         name = "gcd_single_flow_{}_test".format(stage),
