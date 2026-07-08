@@ -40,7 +40,7 @@ git_override(
 # root-only) is dev-conditional — at non-root the consumer's own bazel-orfs
 # satisfies this dep. When @orfs is root, dev deps are honoured anyway, so
 # the resolved module graph is unchanged.
-bazel_dep(name = "bazel-orfs")
+bazel_dep(name = "bazel-orfs", version = "0.0.1")
 
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
