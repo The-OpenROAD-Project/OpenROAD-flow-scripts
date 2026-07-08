@@ -75,6 +75,8 @@ export MIN_ROUTING_LAYER = metal2
 export MIN_CLK_ROUTING_LAYER = metal4
 export MAX_ROUTING_LAYER = metal10
 
+export OPT_POST_GRT_WNS = 0
+
 # Define fastRoute tcl
 export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
 
