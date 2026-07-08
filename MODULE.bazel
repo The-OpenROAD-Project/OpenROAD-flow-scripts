@@ -21,6 +21,20 @@ bazel_dep(name = "rules_shell", version = "0.6.1")
 
 bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
 
+# sed is transitive (bazel-orfs -> abc -> readline -> ncurses -> sed).
+# Its vendored gnulib only #undefs memchr for _LIBC builds, and glibc
+# >= 2.42 defines memchr as a function-like _Generic macro under C23
+# (_GNU_SOURCE implies it), so lib/memchr.c no longer parses against
+# current host glibc headers. Patch the #undef in; root-honored only,
+# drop when a fixed sed lands in BCR.
+single_version_override(
+    module_name = "sed",
+    patch_strip = 1,
+    patches = [
+        "//patches/sed:0001-memchr-undef-glibc-const-generic-macro.patch",
+    ],
+)
+
 # openroad is normally consumed straight from the tools/OpenROAD
 # submodule via local_path_override. While OpenROAD fixes are carried
 # as patches in //patches/openroad (local_path_override does not accept

@@ -1,0 +1,17 @@
+diff --git a/lib/memchr.c b/lib/memchr.c
+index 0ca7b30..4483f58 100644
+--- a/lib/memchr.c
++++ b/lib/memchr.c
+@@ -46,9 +46,9 @@
+ #endif
+ 
+ #undef __memchr
+-#ifdef _LIBC
+-# undef memchr
+-#endif
++/* glibc >= 2.42 defines memchr as a function-like _Generic macro
++   (C23), which breaks the function definition below.  */
++#undef memchr
+ 
+ #ifndef weak_alias
+ # define __memchr memchr
