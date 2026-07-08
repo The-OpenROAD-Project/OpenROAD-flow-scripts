@@ -33,7 +33,15 @@ git_override(
     remote = "https://github.com/The-OpenROAD-Project/qt_bazel_prebuilts",
 )
 
-bazel_dep(name = "bazel-orfs", dev_dependency = True)
+# Exception to the dev-only rule above: flow/BUILD has
+# load("@bazel-orfs//:openroad.bzl", "orfs_pdk"), so @bazel-orfs must stay
+# visible from @orfs even at non-root consumption; a dev-only bazel_dep
+# suppresses that visibility. Only the git_override below (implicitly
+# root-only) is dev-conditional — at non-root the consumer's own bazel-orfs
+# satisfies this dep. When @orfs is root, dev deps are honoured anyway, so
+# the resolved module graph is unchanged.
+bazel_dep(name = "bazel-orfs")
+
 bazel_dep(name = "bazel-orfs-verilog", dev_dependency = True)
 
 BAZEL_ORFS_COMMIT = "6ebadeb4be5c9ada103081c9a5e668c014126616"
