@@ -19,19 +19,61 @@ bazel_dep(name = "rules_shell", version = "0.6.1")
 # our MODULE.bazel doesn't need to be patched at non-root consumption
 # time.
 
-bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
+# hermetic-llvm (BCR module "llvm") provides statically linked LLVM
+# binaries and a zero-sysroot cc_toolchain: no host compiler, linker or
+# /usr/include involved, so host glibc changes cannot break the build.
+# Mirrors tools/OpenROAD/MODULE.bazel (its llvm dep is dev-only, so it
+# does not propagate here).
+bazel_dep(name = "llvm", version = "0.8.11", dev_dependency = True)
 
-# sed is transitive (bazel-orfs -> abc -> readline -> ncurses -> sed).
-# Its vendored gnulib only #undefs memchr for _LIBC builds, and glibc
-# >= 2.42 defines memchr as a function-like _Generic macro under C23
-# (_GNU_SOURCE implies it), so lib/memchr.c no longer parses against
-# current host glibc headers. Patch the #undef in; root-honored only,
-# drop when a fixed sed lands in BCR.
+# The gnulib-based GNU tools (sed, gawk, m4, bison) vendor wrapper
+# headers that must shadow libc headers, which breaks against
+# hermetic-llvm's explicit libc -isystem entries (BCR #7642). Mirror
+# tools/OpenROAD's fixed-version overrides (single_version_override is
+# root-honored only); drop each when tools/OpenROAD drops its copy.
+#
+# sed is transitive (bazel-orfs -> abc -> readline -> ncurses -> sed);
+# 4.9.bcr.5 carries the upstream fix (BCR #7915).
 single_version_override(
     module_name = "sed",
+    version = "4.9.bcr.5",
+)
+
+# gawk is transitive (abc -> ncurses -> gawk; yosys -> gawk);
+# 5.3.2.bcr.7 carries the upstream fix (BCR #7989).
+single_version_override(
+    module_name = "gawk",
+    version = "5.3.2.bcr.7",
+)
+
+# m4 is transitive (rules_bison/rules_flex -> m4).
+single_version_override(
+    module_name = "m4",
+    version = "1.4.21.bcr.4",
+)
+
+# bison is transitive (rules_bison -> bison). 3.8.2.bcr.7 fixes lib/
+# but src/ still picks up raw libc headers; the patch restores gnulib
+# wrapper-header precedence via -I (to be proposed upstream as
+# 3.8.2.bcr.8, then drop).
+single_version_override(
+    module_name = "bison",
     patch_strip = 1,
     patches = [
-        "//patches/sed:0001-memchr-undef-glibc-const-generic-macro.patch",
+        "//patches/bison:0001-gnulib-wrapper-headers-use-I-not-isystem.patch",
+    ],
+    version = "3.8.2.bcr.7",
+)
+
+# tclZipfs.c's '#include "crypt.h"' picks up glibc's crypt.h instead of
+# the vendored minizip one when glibc headers are explicit -isystem
+# directories (hermetic-llvm zero-sysroot toolchain). Drop when fixed
+# in a tcl_lang BCR release.
+single_version_override(
+    module_name = "tcl_lang",
+    patch_strip = 1,
+    patches = [
+        "//patches/tcl_lang:0001-tclZipfs-include-vendored-minizip-crypt.h-by-path.patch",
     ],
 )
 
@@ -67,7 +109,7 @@ single_version_override(
 bazel_dep(name = "openroad", dev_dependency = True)
 git_override(
     module_name = "openroad",
-    commit = "f4e5e40f4755f135fea8e567c8c6822136b48729",
+    commit = "e82300449bc71da46a0959fdb67ab6686f7b1240",
     init_submodules = True,
     patch_strip = 1,
     patches = [
@@ -120,18 +162,8 @@ git_override(
 
 # --- Extensions ---
 
-llvm = use_extension(
-    "@toolchains_llvm//toolchain/extensions:llvm.bzl",
-    "llvm",
-    dev_dependency = True,
-)
-llvm.toolchain(
-    llvm_version = "20.1.8",
-)
-use_repo(llvm, "llvm_toolchain")
-
 register_toolchains(
-    "@llvm_toolchain//:all",
+    "@llvm//toolchain:all",
     dev_dependency = True,
 )
 

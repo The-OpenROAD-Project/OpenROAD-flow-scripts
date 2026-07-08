@@ -1,7 +1,0 @@
-"""sed fixes carried as single_version_override patches.
-
-Drop each file when a fixed sed module version lands in BCR and the
-override in MODULE.bazel is removed.
-"""
-
-exports_files(glob(["*.patch"]))

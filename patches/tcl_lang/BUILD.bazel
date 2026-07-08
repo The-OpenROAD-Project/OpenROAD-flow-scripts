@@ -1,0 +1,7 @@
+"""tcl_lang fixes carried as single_version_override patches.
+
+Mirrored from tools/OpenROAD/bazel/tcl-patches (overrides are
+root-honored only). Drop when tools/OpenROAD drops its copy.
+"""
+
+exports_files(glob(["*.patch"]))
