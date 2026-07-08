@@ -1,8 +1,8 @@
 diff --git a/src/drt/src/io/io.cpp b/src/drt/src/io/io.cpp
-index 126ff248f6..7e591084bb 100644
+index a84a977739..74514c58b8 100644
 --- a/src/drt/src/io/io.cpp
 +++ b/src/drt/src/io/io.cpp
-@@ -4138,6 +4138,16 @@ void io::Writer::updateDbAccessPoints(odb::dbBlock* block, odb::dbTech* db_tech)
+@@ -4143,6 +4143,16 @@ void io::Writer::updateDbAccessPoints(odb::dbBlock* block, odb::dbTech* db_tech)
        continue;
      }
      auto db_pin = (odb::dbBPin*) *db_pins.begin();

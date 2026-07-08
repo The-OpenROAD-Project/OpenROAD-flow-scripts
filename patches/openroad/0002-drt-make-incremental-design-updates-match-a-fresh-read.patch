@@ -74,7 +74,7 @@ index ab21293087..3d642f631c 100644
    {
      in->setId(nets_.size());
 diff --git a/src/drt/src/io/io.cpp b/src/drt/src/io/io.cpp
-index 5929913cf7..126ff248f6 100644
+index 5929913cf7..a84a977739 100644
 --- a/src/drt/src/io/io.cpp
 +++ b/src/drt/src/io/io.cpp
 @@ -3383,6 +3383,29 @@ void io::Parser::updateDesign()
@@ -107,23 +107,28 @@ index 5929913cf7..126ff248f6 100644
    getDesign()->getRegionQuery()->init();
    getDesign()->getRegionQuery()->initDRObj();
  }
-@@ -3742,6 +3765,31 @@ void io::Writer::fillConnFigs(bool isTA, int verbose)
+@@ -3742,6 +3765,36 @@ void io::Writer::fillConnFigs(bool isTA, int verbose)
      for (auto& it : connFigs_) {
        mergeSplitConnFigs(it.second);
      }
 +  } else {
 +    // The via order within a net is semantically irrelevant to the
-+    // written wire but reflects the routing history (a process that
-+    // ran earlier stages in memory orders them differently than one
-+    // that read the same design from disk). Order vias canonically so
-+    // the written database does not depend on that history; path segs
-+    // keep their order.
++    // written wire (each connFig is encoded as its own path) but
++    // reflects the routing history (a process that ran earlier stages
++    // in memory orders them differently than one that read the same
++    // design from disk). Order canonically so the written database
++    // does not depend on that history: non-vias first, keeping their
++    // relative order (list::sort is stable), then vias by cut layer
++    // and origin.
 +    for (auto& it : connFigs_) {
 +      it.second.sort([](const std::shared_ptr<frConnFig>& lhs,
 +                        const std::shared_ptr<frConnFig>& rhs) {
 +        const bool lhs_via = lhs->typeId() == frcVia;
 +        const bool rhs_via = rhs->typeId() == frcVia;
-+        if (!lhs_via || !rhs_via) {
++        if (lhs_via != rhs_via) {
++          return !lhs_via;
++        }
++        if (!lhs_via) {
 +          return false;
 +        }
 +        const auto lv = std::static_pointer_cast<frVia>(lhs);
