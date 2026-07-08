@@ -29,13 +29,13 @@ proc flow_source { script } {
 }
 
 proc flow_write_db { name } {
-  set path $::env(RESULTS_DIR)/$name
+  set path [file join $::env(RESULTS_DIR) $name]
   log_cmd write_db $path
   lappend ::flow_expected $path
 }
 
 proc flow_write_sdc { name } {
-  set path $::env(RESULTS_DIR)/$name
+  set path [file join $::env(RESULTS_DIR) $name]
   log_cmd write_sdc -no_timestamp $path
   lappend ::flow_expected $path
 }
