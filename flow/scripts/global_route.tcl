@@ -95,7 +95,7 @@ proc global_route_helper { } {
       -congestion_report_file $::env(REPORTS_DIR)/congestion_post_repair_timing.rpt
 
     log_cmd estimate_parasitics -global_routing
-    
+
     if { $::env(OPT_POST_GRT_WNS) } {
       set repair_timing_args \
         [list -setup -sequence "vt_swap reroute" -skip_last_gasp -repair_tns 0 -verbose]
