@@ -366,6 +366,7 @@ __local_build()
         echo "[INFO FLW-0017] Compiling Yosys."
         eval ${NICE} cmake -B tools/yosys/build tools/yosys \
                 -DCMAKE_BUILD_TYPE=Release \
+                -DYOSYS_SKIP_ABC_SUBMODULE_CHECK=ON \
                 ${YOSYS_ARGS}
         ${NICE} cmake --build tools/yosys/build --target install -j "${PROC}"
 
