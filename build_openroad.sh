@@ -369,13 +369,6 @@ __local_build()
                 ${YOSYS_ARGS}
         ${NICE} cmake --build tools/yosys/build --target install -j "${PROC}"
 
-        echo "[INFO FLW-0030] Compiling yosys-slang."
-        ${NICE} cmake -B tools/yosys-slang/build tools/yosys-slang \
-                -DYOSYS_CONFIG="${INSTALL_PATH}/yosys/bin/yosys-config" \
-                -DYOSYS_SLANG_REVISION=unknown \
-                -DSLANG_REVISION=unknown
-        ${NICE} cmake --build tools/yosys-slang/build --target install -j "${PROC}"
-
         echo "[INFO FLW-0031] Compiling kepler-formal"
         ${NICE} cmake -B tools/kepler-formal/build tools/kepler-formal \
                 -DCMAKE_BUILD_TYPE=Release \
