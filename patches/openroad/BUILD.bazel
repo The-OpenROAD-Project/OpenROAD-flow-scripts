@@ -1,9 +1,0 @@
-"""OpenROAD fixes carried as git_override patches.
-
-The openroad module is fetched via git_override (with submodules) and
-these patches are applied on top; they may therefore also patch
-submodule content such as src/sta. Drop each file when the fix lands
-upstream and the pinned commit is bumped past it.
-"""
-
-exports_files(glob(["*.patch"]))
