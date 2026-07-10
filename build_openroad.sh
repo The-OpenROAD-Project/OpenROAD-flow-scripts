@@ -32,8 +32,7 @@ PROC=-1
 WITH_VERIFIC=0
 VERIFIC_SRC=""
 VERIFIC_COMPONENTS='database util containers pct hier_tree verilog'
-VERIFIC_ARGS=" VERIFIC_COMPONENTS='${VERIFIC_COMPONENTS}'"
-VERIFIC_ARGS+=" ENABLE_VERIFIC=1 ENABLE_VERIFIC_VHDL=0 VERIFIC_DIR=verific"
+VERIFIC_ARGS=" -D YOSYS_VERIFIC_DIR=${DIR}/tools/yosys/verific"
 
 function usage() {
         cat << EOF
