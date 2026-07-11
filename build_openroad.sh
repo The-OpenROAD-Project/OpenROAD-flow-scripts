@@ -32,7 +32,7 @@ PROC=-1
 WITH_VERIFIC=0
 VERIFIC_SRC=""
 VERIFIC_COMPONENTS='database util containers pct hier_tree verilog'
-VERIFIC_ARGS=" -D YOSYS_VERIFIC_DIR=${DIR}/tools/yosys/verific"
+VERIFIC_ARGS=" -DYOSYS_VERIFIC_DIR=\"${DIR}/tools/yosys/verific\""
 
 function usage() {
         cat << EOF
@@ -206,7 +206,7 @@ fi
 echo "[INFO FLW-0028] Compiling with ${PROC} threads."
 
 # Only add install prefix variables after parsing arguments.
-YOSYS_ARGS+=" -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/yosys"
+YOSYS_ARGS+=" -DCMAKE_INSTALL_PREFIX=\"${INSTALL_PATH}/yosys\""
 OPENROAD_APP_ARGS+=" -D CMAKE_INSTALL_PREFIX=${INSTALL_PATH}/OpenROAD"
 if [ -n "$CMAKE_INSTALL_RPATH" ]; then
         OPENROAD_APP_ARGS+=" -D CMAKE_INSTALL_RPATH=${CMAKE_INSTALL_RPATH}"
