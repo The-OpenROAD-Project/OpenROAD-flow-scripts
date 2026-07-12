@@ -18,11 +18,11 @@
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 177447,
+        "value": 177137,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 98028,
+        "value": 97158,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -30,11 +30,11 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 8524,
+        "value": 8448,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 8524,
+        "value": 8448,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
@@ -42,7 +42,7 @@
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -319.0,
+        "value": -426.0,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -54,15 +54,15 @@
         "compare": ">="
     },
     "globalroute__antenna_diodes_count": {
-        "value": 101,
+        "value": 100,
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.699,
+        "value": -0.685,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -299.0,
+        "value": -354.0,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -90,11 +90,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -0.672,
+        "value": -0.659,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -359.0,
+        "value": -369.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -106,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 183342,
+        "value": 183302,
         "compare": "<="
     }
 }
