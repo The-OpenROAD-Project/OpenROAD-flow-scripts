@@ -16,7 +16,11 @@ proc do_dpl { } {
     -left $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT) \
     -right $::env(CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
   set dpl_args [env_var_or_empty DETAIL_PLACEMENT_ARGS]
-  set_debug_level DPL negotiation 1
+  #set_debug_level DPL negotiation 1
+  #dpl::detailed_placement_debug -deep_iterative -instance _tray_size8_3133 -paint_negotiation_pixels
+  #dpl::detailed_placement_debug -deep_iterative -instance place3228 -paint_negotiation_pixels
+  #dpl::detailed_placement_debug -deep_iterative -paint_negotiation_pixels
+  #set_debug_level DPL negotiation_runtime 1
   append_env_var dpl_args DPL_USE_OLD_DIAMOND -use_old_diamond 0
   log_cmd detailed_placement {*}$dpl_args
 
