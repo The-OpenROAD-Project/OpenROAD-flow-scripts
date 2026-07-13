@@ -309,6 +309,22 @@ proc orfs_write_sdc { output_file } {
   log_cmd write_sdc -no_timestamp $output_file
 }
 
+# For a stage that leaves the design unchanged, copying the input .odb
+# forward is much faster than serializing the in-memory database again
+# with write_db. Gated like orfs_write_db: in a single-process flow
+# (WRITE_ODB_AND_SDC_EACH_STAGE=0) the input file may not exist and no
+# stage file should be produced.
+#
+# exec cp rather than Tcl's file copy: file copy sets the destination
+# mtime with second resolution, which breaks make's timestamp-based
+# up-to-date checks for fast builds.
+proc orfs_copy_db { input_file output_file } {
+  if { !$::env(WRITE_ODB_AND_SDC_EACH_STAGE) } {
+    return
+  }
+  log_cmd exec cp $input_file $output_file
+}
+
 proc source_step_tcl { hook_type step_name } {
   set env_var "${hook_type}_${step_name}_TCL"
   source_env_var_if_exists $env_var
