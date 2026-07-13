@@ -19,7 +19,64 @@ bazel_dep(name = "rules_shell", version = "0.6.1")
 # our MODULE.bazel doesn't need to be patched at non-root consumption
 # time.
 
-bazel_dep(name = "toolchains_llvm", version = "1.5.0", dev_dependency = True)
+# hermetic-llvm (BCR module "llvm") provides statically linked LLVM
+# binaries and a zero-sysroot cc_toolchain: no host compiler, linker or
+# /usr/include involved, so host glibc changes cannot break the build.
+# Mirrors tools/OpenROAD/MODULE.bazel (its llvm dep is dev-only, so it
+# does not propagate here).
+bazel_dep(name = "llvm", version = "0.8.11", dev_dependency = True)
+
+# The gnulib-based GNU tools (sed, gawk, m4, bison) vendor wrapper
+# headers that must shadow libc headers, which breaks against
+# hermetic-llvm's explicit libc -isystem entries (BCR #7642). Mirror
+# tools/OpenROAD's fixed-version overrides (single_version_override is
+# root-honored only); drop each when tools/OpenROAD drops its copy.
+#
+# sed is transitive (bazel-orfs -> abc -> readline -> ncurses -> sed);
+# 4.9.bcr.5 carries the upstream fix (BCR #7915).
+single_version_override(
+    module_name = "sed",
+    version = "4.9.bcr.5",
+)
+
+# gawk is transitive (abc -> ncurses -> gawk; yosys -> gawk);
+# 5.3.2.bcr.7 carries the upstream fix (BCR #7989).
+single_version_override(
+    module_name = "gawk",
+    version = "5.3.2.bcr.7",
+)
+
+# m4 is transitive (rules_bison/rules_flex -> m4).
+single_version_override(
+    module_name = "m4",
+    version = "1.4.21.bcr.4",
+)
+
+# bison is transitive (rules_bison -> bison). 3.8.2.bcr.7 fixes lib/
+# but src/ still picks up raw libc headers; the patch restores gnulib
+# wrapper-header precedence via -I (to be proposed upstream as
+# 3.8.2.bcr.8, then drop).
+single_version_override(
+    module_name = "bison",
+    patch_strip = 1,
+    patches = [
+        "//patches/bison:0001-gnulib-wrapper-headers-use-I-not-isystem.patch",
+    ],
+    version = "3.8.2.bcr.7",
+)
+
+# tclZipfs.c's '#include "crypt.h"' picks up glibc's crypt.h instead of
+# the vendored minizip one when glibc headers are explicit -isystem
+# directories (hermetic-llvm zero-sysroot toolchain). Drop when fixed
+# in a tcl_lang BCR release.
+single_version_override(
+    module_name = "tcl_lang",
+    patch_strip = 1,
+    patches = [
+        "//patches/tcl_lang:0001-tclZipfs-include-vendored-minizip-crypt.h-by-path.patch",
+    ],
+)
+
 bazel_dep(name = "openroad", dev_dependency = True)
 local_path_override(
     module_name = "openroad",
@@ -76,20 +133,24 @@ git_override(
 
 # --- Extensions ---
 
-llvm = use_extension(
-    "@toolchains_llvm//toolchain/extensions:llvm.bzl",
-    "llvm",
-    dev_dependency = True,
-)
-llvm.toolchain(
-    llvm_version = "20.1.8",
-)
-use_repo(llvm, "llvm_toolchain")
-
 register_toolchains(
-    "@llvm_toolchain//:all",
+    "@llvm//toolchain:all",
     dev_dependency = True,
 )
+
+# sv-lang (via tools/OpenROAD) pulls in rules_pycross, whose toolchain
+# extension fails on Python 3.8 (transitively registered via or-tools ->
+# pybind11_abseil, dropped from rules_python 2.0.0's MINOR_MAPPING).
+# pycross.configure_environments is root-honored only, so the workaround
+# must be mirrored here from tools/OpenROAD/MODULE.bazel.
+bazel_dep(name = "rules_pycross", version = "0.8.1", dev_dependency = True)
+
+pycross = use_extension(
+    "@rules_pycross//pycross/extensions:pycross.bzl",
+    "pycross",
+    dev_dependency = True,
+)
+pycross.configure_environments(python_versions = ["3.13"])
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 python.toolchain(
