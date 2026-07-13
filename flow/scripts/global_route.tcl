@@ -70,7 +70,7 @@ proc global_route_helper { } {
     # Running DPL to fix overlapped instances
     # Run to get modified net by DPL
     set dpl_args {}
-    append_env_var dpl_args DPL_USE_OLD_DIAMOND -use_old_diamond 0
+    append_env_var dpl_args DPL_USE_DIAMOND_LEGALIZER -use_diamond_legalizer 0
     log_cmd global_route -start_incremental
     log_cmd detailed_placement {*}$dpl_args
     # Route only the modified net by DPL

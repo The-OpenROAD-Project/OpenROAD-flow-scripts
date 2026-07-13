@@ -639,7 +639,7 @@ DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
-DPL_USE_OLD_DIAMOND:
+DPL_USE_DIAMOND_LEGALIZER:
   description: |
     Use the former diamond search legalizer for detailed placement instead of the default negotiation legalizer.
   default: 0
