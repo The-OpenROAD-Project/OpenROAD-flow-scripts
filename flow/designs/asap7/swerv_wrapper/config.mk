@@ -61,4 +61,7 @@ export ROUTING_LAYER_ADJUSTMENT = 0.2
 export SWAP_ARITH_OPERATORS = 1
 export OPENROAD_HIERARCHICAL = 1
 
+# WORKAROUND: Resample ABC's order-sensitive mapping.
+export SYNTH_SCRAMBLE_SEED ?= 1
+
 export GPL_RANDOM_SEED = 2
