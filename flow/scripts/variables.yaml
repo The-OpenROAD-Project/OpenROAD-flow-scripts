@@ -258,12 +258,6 @@ SYNTH_SLANG_ARGS:
   stages:
     - synth
   default: ""
-SYNTH_SCRAMBLE_SEED:
-  description: >
-    Non-zero seed for `rename -scramble-name` run before ABC, to resample
-    ABC's order-sensitive technology mapping. Leave unset to disable.
-  stages:
-    - synth
 SYNTH_BLACKBOXES:
   description: >
     List of cells treated as a black box by Yosys. With Bazel, this can be used

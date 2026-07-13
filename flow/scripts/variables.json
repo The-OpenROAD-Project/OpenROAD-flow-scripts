@@ -1361,12 +1361,6 @@
       "synth"
     ]
   },
-  "SYNTH_SCRAMBLE_SEED": {
-    "description": "Non-zero seed for `rename -scramble-name` run before ABC, to resample ABC's order-sensitive technology mapping. Leave unset to disable.\n",
-    "stages": [
-      "synth"
-    ]
-  },
   "SYNTH_SKIP_KEEP": {
     "default": 0,
     "description": "Only meaningful together with SYNTH_CHECKPOINT. When set, signals that the supplied checkpoint is still canonical RTLIL (coarse synth and `keep_hierarchy` have not been run yet), so synth.tcl runs the full coarse+fine synthesis flattened. When unset and SYNTH_CHECKPOINT is used, synth.tcl assumes the checkpoint already has coarse synth + `keep_hierarchy` done and resumes from `coarse:fine`.\n",

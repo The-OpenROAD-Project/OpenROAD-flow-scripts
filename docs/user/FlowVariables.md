@@ -310,7 +310,6 @@ configuration file.
 | <a name="SYNTH_OPT_HIER"></a>SYNTH_OPT_HIER| Optimize constants across hierarchical boundaries.| |
 | <a name="SYNTH_REPEATABLE_BUILD"></a>SYNTH_REPEATABLE_BUILD| License to prune anything that makes builds less repeatable, typically used with Bazel to ensure that builds are bit-for-bit identical so that caching works optimally. Removes debug information that encodes paths, timestamps, etc.| 0|
 | <a name="SYNTH_RETIME_MODULES"></a>SYNTH_RETIME_MODULES| *This is an experimental option and may cause adverse effects.* *No effort has been made to check if the retimed RTL is logically equivalent to the non-retimed RTL.* List of modules to apply automatic retiming to. These modules must not get dissolved and as such they should either be the top module or be included in SYNTH_KEEP_MODULES. The main use case is to quickly identify if performance can be improved by manually retiming the input RTL. Retiming will treat module ports like register endpoints/startpoints. The objective function of retiming isn't informed by SDC, even the clock period is ignored. As such, retiming will optimize for best delay at potentially high register number cost. Automatic retiming can produce suboptimal results as its timing model is crude and it doesn't find the optimal distribution of registers on long pipelines. See OR discussion  # 8080.| |
-| <a name="SYNTH_SCRAMBLE_SEED"></a>SYNTH_SCRAMBLE_SEED| Non-zero seed for `rename -scramble-name` run before ABC, to resample ABC's order-sensitive technology mapping. Leave unset to disable.| |
 | <a name="SYNTH_SKIP_KEEP"></a>SYNTH_SKIP_KEEP| Only meaningful together with SYNTH_CHECKPOINT. When set, signals that the supplied checkpoint is still canonical RTLIL (coarse synth and `keep_hierarchy` have not been run yet), so synth.tcl runs the full coarse+fine synthesis flattened. When unset and SYNTH_CHECKPOINT is used, synth.tcl assumes the checkpoint already has coarse synth + `keep_hierarchy` done and resumes from `coarse:fine`.| 0|
 | <a name="SYNTH_SLANG_ARGS"></a>SYNTH_SLANG_ARGS| Additional arguments passed to the slang frontend during synthesis.| |
 | <a name="SYNTH_USE_SYN"></a>SYNTH_USE_SYN| If set to 1, run synthesis using the "syn" tool built into OpenROAD (the synth_syn.tcl flow) instead of the default Yosys-based flow. Defaults to 0 (Yosys flow).| 0|
@@ -371,7 +370,6 @@ configuration file.
 - [SYNTH_OPT_HIER](#SYNTH_OPT_HIER)
 - [SYNTH_REPEATABLE_BUILD](#SYNTH_REPEATABLE_BUILD)
 - [SYNTH_RETIME_MODULES](#SYNTH_RETIME_MODULES)
-- [SYNTH_SCRAMBLE_SEED](#SYNTH_SCRAMBLE_SEED)
 - [SYNTH_SKIP_KEEP](#SYNTH_SKIP_KEEP)
 - [SYNTH_SLANG_ARGS](#SYNTH_SLANG_ARGS)
 - [SYNTH_USE_SYN](#SYNTH_USE_SYN)

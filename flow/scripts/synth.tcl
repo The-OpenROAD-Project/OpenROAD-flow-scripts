@@ -251,13 +251,6 @@ opt
 # Replace undef values with defined constants
 setundef -zero
 
-# Optional (design opt-in via SYNTH_SCRAMBLE_SEED): scramble net/cell names to
-# resample ABC's order-sensitive mapping. No-op unless the seed is set.
-# `yosys` prefix: `rename` alone would hit the Tcl built-in of the same name.
-if { [env_var_exists_and_non_empty SYNTH_SCRAMBLE_SEED] } {
-  yosys rename -scramble-name -seed $::env(SYNTH_SCRAMBLE_SEED)
-}
-
 if {
   ![env_var_exists_and_non_empty SYNTH_WRAPPED_OPERATORS] &&
   ![env_var_exists_and_non_empty SWAP_ARITH_OPERATORS]
