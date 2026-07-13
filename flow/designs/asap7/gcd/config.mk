@@ -16,3 +16,4 @@ export PLACE_DENSITY          = 0.35
 # few last gasp iterations
 export SKIP_LAST_GASP ?= 1
 
+export SYNTH_USE_SYN = 1

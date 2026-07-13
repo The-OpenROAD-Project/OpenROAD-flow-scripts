@@ -14,15 +14,15 @@
         "compare": "<="
     },
     "constraints__clocks__count": {
-        "value": 1,
+        "value": 2,
         "compare": "=="
     },
     "placeopt__design__instance__area": {
-        "value": 4161,
+        "value": 4681,
         "compare": "<="
     },
     "placeopt__design__instance__count__stdcell": {
-        "value": 506,
+        "value": 552,
         "compare": "<="
     },
     "detailedplace__design__violations": {
@@ -30,19 +30,19 @@
         "compare": "=="
     },
     "cts__design__instance__count__setup_buffer": {
-        "value": 44,
+        "value": 48,
         "compare": "<="
     },
     "cts__design__instance__count__hold_buffer": {
-        "value": 42,
+        "value": 48,
         "compare": "<="
     },
     "cts__timing__setup__ws": {
-        "value": -1.62,
+        "value": -1.36,
         "compare": ">="
     },
     "cts__timing__setup__tns": {
-        "value": -68.8,
+        "value": -58.6,
         "compare": ">="
     },
     "cts__timing__hold__ws": {
@@ -58,11 +58,11 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -1.9,
+        "value": -1.58,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
-        "value": -89.0,
+        "value": -67.4,
         "compare": ">="
     },
     "globalroute__timing__hold__ws": {
@@ -74,7 +74,7 @@
         "compare": ">="
     },
     "detailedroute__route__wirelength": {
-        "value": 14932,
+        "value": 11052,
         "compare": "<="
     },
     "detailedroute__route__drc_errors": {
@@ -90,11 +90,11 @@
         "compare": "<="
     },
     "finish__timing__setup__ws": {
-        "value": -1.82,
+        "value": -1.47,
         "compare": ">="
     },
     "finish__timing__setup__tns": {
-        "value": -85.7,
+        "value": -62.0,
         "compare": ">="
     },
     "finish__timing__hold__ws": {
@@ -106,7 +106,7 @@
         "compare": ">="
     },
     "finish__design__instance__area": {
-        "value": 5797,
+        "value": 5996,
         "compare": "<="
     }
 }

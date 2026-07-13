@@ -8,10 +8,14 @@ if { [env_var_exists_and_non_empty FLOORPLAN_DEF] } {
 } elseif { [all_pins_placed] } {
   puts "All pins are placed. Skipping global placement without IOs"
 } else {
+  set global_placement_args {}
+  append_env_var global_placement_args GPL_RANDOM_SEED -random_seed 1
+
   log_cmd global_placement -skip_io -density [place_density_with_lb_addon] \
     -pad_left $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
     -pad_right $::env(CELL_PAD_IN_SITES_GLOBAL_PLACEMENT) \
-    {*}[env_var_or_empty GLOBAL_PLACEMENT_ARGS]
+    {*}[env_var_or_empty GLOBAL_PLACEMENT_ARGS] \
+    {*}$global_placement_args
 }
 
 source_step_tcl POST GLOBAL_PLACE_SKIP_IO

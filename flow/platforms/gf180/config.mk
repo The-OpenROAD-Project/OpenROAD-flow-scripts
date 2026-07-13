@@ -32,6 +32,10 @@ export FILL_CELLS                             ?= gf180mcu_fd_sc_mcu$(TRACK_OPTIO
                                                  gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_2 \
                                                  gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__fill_1
 
+# Metal density fill rules (OpenROAD density_fill). Applied at chip level
+# only when USE_FILL=1; macro/block builds leave USE_FILL=0 (the default).
+export FILL_CONFIG                            ?= $(PLATFORM_DIR)/fill.json
+
 export TIE_CELL                               = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__filltie
 export ENDCAP_CELL                            = gf180mcu_fd_sc_mcu$(TRACK_OPTION)$(POWER_OPTION)__endcap
 export RC_FILE                                = $(PLATFORM_DIR)/setRC.tcl
@@ -92,6 +96,8 @@ export PLACE_DENSITY                         ?= 0.40
 export MIN_ROUTING_LAYER                     ?= Metal2
 export MAX_ROUTING_LAYER                     ?= Metal5
 export DISABLE_VIA_GEN                       ?= 1
+
+export OPT_POST_GRT_WNS                      ?= 0
 
 # Define fastRoute tcl
 export FASTROUTE_TCL ?= $(PLATFORM_DIR)/fastroute.tcl
