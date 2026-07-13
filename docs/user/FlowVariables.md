@@ -140,7 +140,6 @@ configuration file.
 | <a name="DISABLE_VIA_GEN"></a>DISABLE_VIA_GEN| Passed as -disable_via_gen to detailed_route.| |
 | <a name="DONT_BUFFER_PORTS"></a>DONT_BUFFER_PORTS| Do not buffer input/output ports during floorplanning.| 0|
 | <a name="DONT_USE_CELLS"></a>DONT_USE_CELLS| Dont use cells eases pin access in detailed routing.| |
-| <a name="DPL_USE_DIAMOND_LEGALIZER"></a>DPL_USE_DIAMOND_LEGALIZER| Use the former diamond search legalizer for detailed placement instead of the default negotiation legalizer.| 0|
 | <a name="DPO_MAX_DISPLACEMENT"></a>DPO_MAX_DISPLACEMENT| Specifies how far an instance can be moved when optimizing.| 5 1|
 | <a name="EARLY_SIZING_CAP_RATIO"></a>EARLY_SIZING_CAP_RATIO| Ratio between the input pin capacitance and the output pin load during initial gate sizing.| |
 | <a name="ENABLE_DPO"></a>ENABLE_DPO| Enable detail placement with improve_placement feature.| 1|
@@ -469,7 +468,6 @@ configuration file.
 - [CLUSTER_FLOPS_ARGS](#CLUSTER_FLOPS_ARGS)
 - [DETAIL_PLACEMENT_ARGS](#DETAIL_PLACEMENT_ARGS)
 - [DONT_BUFFER_PORTS](#DONT_BUFFER_PORTS)
-- [DPL_USE_DIAMOND_LEGALIZER](#DPL_USE_DIAMOND_LEGALIZER)
 - [EARLY_SIZING_CAP_RATIO](#EARLY_SIZING_CAP_RATIO)
 - [ENABLE_PLACE_REPAIR_TIMING](#ENABLE_PLACE_REPAIR_TIMING)
 - [FLOORPLAN_DEF](#FLOORPLAN_DEF)
@@ -515,7 +513,6 @@ configuration file.
 - [CTS_SNAPSHOT](#CTS_SNAPSHOT)
 - [CTS_SNAPSHOTS](#CTS_SNAPSHOTS)
 - [DETAILED_METRICS](#DETAILED_METRICS)
-- [DPL_USE_DIAMOND_LEGALIZER](#DPL_USE_DIAMOND_LEGALIZER)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [LEC_CHECK](#LEC_CHECK)
@@ -540,7 +537,6 @@ configuration file.
 
 - [CELL_PAD_IN_SITES_DETAIL_PLACEMENT](#CELL_PAD_IN_SITES_DETAIL_PLACEMENT)
 - [DETAILED_METRICS](#DETAILED_METRICS)
-- [DPL_USE_DIAMOND_LEGALIZER](#DPL_USE_DIAMOND_LEGALIZER)
 - [ENABLE_RESISTANCE_AWARE](#ENABLE_RESISTANCE_AWARE)
 - [GLOBAL_ROUTE_ARGS](#GLOBAL_ROUTE_ARGS)
 - [GLOBAL_ROUTE_USE_CUGR](#GLOBAL_ROUTE_USE_CUGR)
