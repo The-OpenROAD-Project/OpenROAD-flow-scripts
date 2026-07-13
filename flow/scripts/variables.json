@@ -488,16 +488,20 @@
     "type": "string"
   },
   "LEC_AUX_VERILOG_FILES": {
-    "description": "Additional Verilog files (e.g. blackbox stubs) to include in LEC equivalence checks. Appended to the generated Verilog netlist before running the formal equivalence check.\n",
+    "description": "Additional Verilog files (e.g. blackbox stubs) to include in generated netlists for formal equivalence checks.\n",
     "stages": [
-      "cts"
+      "synth",
+      "cts",
+      "final"
     ]
   },
   "LEC_CHECK": {
     "default": 0,
-    "description": "Perform a formal equivalence check between before and after netlists. If this fails, report an issue to OpenROAD.\n",
+    "description": "Perform formal equivalence checks between before and after netlists. This checks CTS repair timing and the initial synthesis netlist against the final netlist. If this fails, report an issue to OpenROAD.\n",
     "stages": [
-      "cts"
+      "synth",
+      "cts",
+      "final"
     ]
   },
   "LIB_FILES": {
@@ -1095,6 +1099,14 @@
   },
   "SEAL_GDS": {
     "description": "Seal macro to place around the design.\n"
+  },
+  "SEC_CHECK": {
+    "default": 0,
+    "description": "Perform a sequential equivalence check between the initial synthesis netlist and final netlist with the Kepler Formal PDR engine. If this fails, report an issue to OpenROAD.\n",
+    "stages": [
+      "synth",
+      "final"
+    ]
   },
   "SETUP_MOVE_SEQUENCE": {
     "description": "Passed as -sequence to repair_timing. This should be a string of move keywords separated by commas.\n",
