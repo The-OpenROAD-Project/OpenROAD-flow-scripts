@@ -340,6 +340,7 @@ __local_build()
                         DEPS_PREFIX_ARG="-deps-prefixes-file=${DEPS_PREFIX_ARG}"
                 fi
                 eval ${NICE} ./tools/OpenROAD/etc/Build.sh \
+                        -cmake-build \
                         -dir="$DIR/tools/OpenROAD/build" \
                         -threads=${PROC} \
                         -cmake=\'${OPENROAD_APP_ARGS}\' \
