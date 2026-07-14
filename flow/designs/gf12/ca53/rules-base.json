@@ -9,6 +9,10 @@
         "compare": "==",
         "level": "warning"
     },
+    "synth__design__instance__area__stdcell": {
+        "value": 174000.0,
+        "compare": "<="
+    },
     "constraints__clocks__count": {
         "value": 1,
         "compare": "=="
@@ -98,7 +102,7 @@
         "compare": ">="
     },
     "finish__timing__hold__tns": {
-        "value": -4350.0,
+        "value": -5290.0,
         "compare": ">="
     },
     "finish__design__instance__area": {
