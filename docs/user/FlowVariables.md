@@ -189,7 +189,6 @@ configuration file.
 | <a name="MAX_PLACE_STEP_COEF"></a>MAX_PLACE_STEP_COEF| Sets the maximum phi coefficient (pcof_max / µ_k Upper Bound) for global placement optimization. This parameter controls the step size upper bound in the RePlAce Nesterov optimization algorithm. Higher values allow more aggressive optimization but may risk divergence. Valid range: 1.00-1.20| 1.05|
 | <a name="MAX_REPAIR_ANTENNAS_ITER_DRT"></a>MAX_REPAIR_ANTENNAS_ITER_DRT| Defines the maximum number of iterations post-detailed routing repair antennas will run.| 5|
 | <a name="MAX_REPAIR_ANTENNAS_ITER_GRT"></a>MAX_REPAIR_ANTENNAS_ITER_GRT| Defines the maximum number of iterations post global routing repair antennas will run.| 5|
-| <a name="MAX_REPAIR_TIMING_ITER"></a>MAX_REPAIR_TIMING_ITER| Maximum number of iterations for repair setup and repair hold.| |
 | <a name="MAX_ROUTING_LAYER"></a>MAX_ROUTING_LAYER| The highest metal layer name to be used in routing.| |
 | <a name="MIN_BUF_CELL_AND_PORTS"></a>MIN_BUF_CELL_AND_PORTS| Used to insert a buffer cell to pass through wires. Used in synthesis.| |
 | <a name="MIN_CLK_ROUTING_LAYER"></a>MIN_CLK_ROUTING_LAYER| The lowest metal layer name to be used for clock-net routing in global routing. Used in flow/platforms/*/fastroute.tcl as the lower bound of `set_routing_layers -clock`. Typically higher than MIN_ROUTING_LAYER so clock nets prefer the upper, lower-RC layers. No `stages:` list because floorplan.tcl also `source`s the platform fastroute.tcl.| |
@@ -409,7 +408,6 @@ configuration file.
 - [MACRO_WRAPPERS](#MACRO_WRAPPERS)
 - [MAKE_TRACKS](#MAKE_TRACKS)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
-- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [PDN_TCL](#PDN_TCL)
@@ -481,7 +479,6 @@ configuration file.
 - [IO_PLACER_V](#IO_PLACER_V)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
 - [MAX_PLACE_STEP_COEF](#MAX_PLACE_STEP_COEF)
-- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_PLACE_STEP_COEF](#MIN_PLACE_STEP_COEF)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
@@ -518,7 +515,6 @@ configuration file.
 - [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [LEC_CHECK](#LEC_CHECK)
 - [MATCH_CELL_FOOTPRINT](#MATCH_CELL_FOOTPRINT)
-- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [POST_CTS_TCL](#POST_CTS_TCL)
 - [PRE_CTS_TCL](#PRE_CTS_TCL)
 - [REPORT_CLOCK_SKEW](#REPORT_CLOCK_SKEW)
@@ -543,7 +539,6 @@ configuration file.
 - [GLOBAL_ROUTE_USE_CUGR](#GLOBAL_ROUTE_USE_CUGR)
 - [HOLD_SLACK_MARGIN](#HOLD_SLACK_MARGIN)
 - [MAX_REPAIR_ANTENNAS_ITER_GRT](#MAX_REPAIR_ANTENNAS_ITER_GRT)
-- [MAX_REPAIR_TIMING_ITER](#MAX_REPAIR_TIMING_ITER)
 - [MAX_ROUTING_LAYER](#MAX_ROUTING_LAYER)
 - [MIN_ROUTING_LAYER](#MIN_ROUTING_LAYER)
 - [OPT_POST_GRT_WNS](#OPT_POST_GRT_WNS)
