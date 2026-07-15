@@ -1460,10 +1460,6 @@
     "default": 0,
     "description": "Whether to perform metal density filling.\n"
   },
-  "USE_NEGOTIATION": {
-    "default": 0,
-    "description": "Enable using negotiation legalizer for detailed placement.\n"
-  },
   "VERILOG_DEFINES": {
     "description": "Preprocessor defines passed to the language frontend. Example: `-D HPDCACHE_ASSERT_OFF`\n",
     "stages": [
