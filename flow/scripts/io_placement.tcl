@@ -17,7 +17,7 @@ if {
   orfs_write_db $::env(RESULTS_DIR)/3_2_place_iop.odb
   write_pin_placement $::env(RESULTS_DIR)/3_2_place_iop.tcl
 } else {
-  log_cmd exec cp $::env(RESULTS_DIR)/3_1_place_gp_skip_io.odb $::env(RESULTS_DIR)/3_2_place_iop.odb
+  orfs_copy_db $::env(RESULTS_DIR)/3_1_place_gp_skip_io.odb $::env(RESULTS_DIR)/3_2_place_iop.odb
 }
 
 source_step_tcl POST IO_PLACEMENT

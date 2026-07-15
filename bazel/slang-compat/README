@@ -1,0 +1,6 @@
+Placeholder directory for the @slang alias build file to internally
+manifest. tools/OpenROAD's MODULE.bazel declares
+new_local_repository(name="slang", path="bazel/slang-compat"); the
+relative path resolves against the root workspace, so when ORFS is the
+root module consuming openroad via git_override the directory must
+exist here too. Mirrors tools/OpenROAD/bazel/slang-compat.

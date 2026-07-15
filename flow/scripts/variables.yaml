@@ -639,10 +639,6 @@ DPO_MAX_DISPLACEMENT:
   description: |
     Specifies how far an instance can be moved when optimizing.
   default: 5 1
-USE_NEGOTIATION:
-  description: |
-    Enable using negotiation legalizer for detailed placement.
-  default: 0
 GPL_RANDOM_SEED:
   description: |
     Specifies a random seed for global placement.  Useful for perturbation studies.

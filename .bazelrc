@@ -11,6 +11,15 @@ common --registry=https://raw.githubusercontent.com/oharboe/bazel-central-regist
 build --incompatible_strict_action_env
 build --cxxopt "-std=c++20" --host_cxxopt "-std=c++20"
 
+# Refuse to autodetect a local C++ toolchain (/usr/bin/gcc); the hermetic
+# toolchain must win resolution. Mirrors tools/OpenROAD/.bazelrc.
+common --repo_env=BAZEL_DO_NOT_DETECT_CPP_TOOLCHAIN=1
+
+# Launch py_binary via a shell stub instead of rules_python's legacy python
+# stub, whose '#!/usr/bin/env python3' shebang needs a host python3 before
+# the hermetic interpreter takes over. Mirrors tools/OpenROAD/.bazelrc.
+common --@rules_python//python/config_settings:bootstrap_impl=script
+
 # Don't track MODULE.bazel.lock.  Resolved versions ride along with the
 # pinned BCR + git_override(commit=…) coordinates in MODULE.bazel and
 # downstream cache hits are what we actually care about.  Tracking the

@@ -58,7 +58,7 @@
         "compare": "<="
     },
     "globalroute__timing__setup__ws": {
-        "value": -0.268,
+        "value": -0.267,
         "compare": ">="
     },
     "globalroute__timing__setup__tns": {
@@ -86,7 +86,7 @@
         "compare": "<="
     },
     "detailedroute__antenna_diodes_count": {
-        "value": 100,
+        "value": 108,
         "compare": "<="
     },
     "finish__timing__setup__ws": {
