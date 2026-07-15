@@ -5,7 +5,7 @@
 This tutorial covers how to correlate platform RC values and generate updated RC values for setRC.tcl.
 
 ## What’s unit RC?
-Unit resistance (resistance per unit length) or unit capacitance (capacitance per unit square distance) are used to estimate wire delays during place and route flow when fully extracted parasitics are not available. For example, global router can use unit RC to estimate delays for wires.
+Unit resistance (resistance per unit length) or unit capacitance (capacitance per unit length) is used to estimate wire delays during place and route flow when fully extracted parasitics are not available. For example, the global router can use unit RC to estimate delays for wires.
 
 Unit RC values can be defined in technology LEF, but many modern PDKs do not specify them. In some cases, the values that are specified are not accurate. 
 
