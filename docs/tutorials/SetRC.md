@@ -63,10 +63,9 @@ Segment RC CSV files from multiple designs can be combined to produce one large 
 % make DESIGN_CONFIG=./designs/asap7/ibex/config.mk write_segment_rc
 % make DESIGN_CONFIG=./designs/asap7/jpeg/config.mk
 % make DESIGN_CONFIG=./designs/asap7/jpeg/config.mk write_segment_rc
-% cat ./results/asap7/ibex/base/6_segment_rc.csv >> ./combined_csv
-% cat ./results/asap7/jpeg/base/6_segment_rc.csv >> ./combined_csv
+% cat ./results/asap7/ibex/base/6_segment_rc.csv ./results/asap7/jpeg/base/6_segment_rc.csv > combined_segment_rc.csv
 % ./util/correlateRC.py --mode segment combined_segment_rc.csv
-reading segment.csv
+reading combined_segment_rc.csv
 
 Units: resistance [kohm/um], capacitance [pf/um]
 
