@@ -302,6 +302,7 @@ configuration file.
 | <a name="SYNTH_INSBUF"></a>SYNTH_INSBUF| Insert input buffers on top-level input ports during synthesis. Useful to disable when doing parallel synthesis and concatenating netlists later as we're generating netlists of submodules.| 1|
 | <a name="SYNTH_KEEP_MOCKED_MEMORIES"></a>SYNTH_KEEP_MOCKED_MEMORIES| When `SYNTH_MOCK_LARGE_MEMORIES=1`, setting this to 1, will keep mocked memories (not flattening them). This preserves some of the access logic complexity and avoids optimizations outside of the mocked memory.| 1|
 | <a name="SYNTH_KEEP_MODULES"></a>SYNTH_KEEP_MODULES| Mark modules to keep from getting removed in flattening.| |
+| <a name="SYNTH_LEC_CHECK"></a>SYNTH_LEC_CHECK| Run a formal equivalence check between the input RTL and the OpenROAD-SYN synthesis netlist (1_synth.v). The RTL side goes through kepler-formal's experimental SystemVerilog frontend, which does not yet support all RTL constructs, so this is a separate opt-in from LEC_CHECK (which auto-enables when kepler-formal is installed and compares gate-level netlists only). Requires KEPLER_FORMAL_EXE.| 0|
 | <a name="SYNTH_MEMORY_MAX_BITS"></a>SYNTH_MEMORY_MAX_BITS| Maximum number of bits for memory synthesis. Ideally, real RAM or realistic fakeram should be used for RAMs much larger than 1024 bits. To temporarily ignore the RAM concerns and investigate other aspects of the design, consider setting `SYNTH_MOCK_LARGE_MEMORIES=1`, or adjusting `SYNTH_MEMORY_MAX_BITS`.| 4096|
 | <a name="SYNTH_MINIMUM_KEEP_SIZE"></a>SYNTH_MINIMUM_KEEP_SIZE| For hierarchical synthesis, we keep modules of larger area than given by this variable and flatten smaller modules. The area unit used is the size of a basic nand2 gate from the platform's standard cell library. The default value is platform specific.| 0|
 | <a name="SYNTH_MOCK_LARGE_MEMORIES"></a>SYNTH_MOCK_LARGE_MEMORIES| Reduce Yosys inferred memories larger than SYNTH_MEMORY_MAX_BITS to 1 row. Yosys will generally infer memories from behavioral Verilog code, whether the memories are in standalone modules or instantiated within some larger module. fakeram and empty Verilog memories(blackboxes) of memories will not be inferred memories by Yosys and are therefore not affected by this variable. This is useful and convenient to separate the concern of instantiating and placing memories from investigating other issues with a design, though it comes at the expense of the increased accuracy that using realistic fakemem would provide. Memories with a single 1 row will of course have unrealistically good timing and area characteristics, but timing will still correctly terminate in a register. Large port memories, typically register files, will still have the retain a lot of the port logic that can be useful to investigate issues. This can be especially useful during development of designs where the behavioral model comes first and suitable memories are matched up when the design RTL is stable. A typical use case would be Chisel which will generate a behavioral model for a memories with the required clocks, ports, etc. in addition to a computer readable file with the specification of the memories that is used to [automatically](https://chipyard.readthedocs.io/en/stable/Tools/Barstools.html/) match up suitable memory macros later in the flow. During an architectural screening study, a large range of memory configurations can be investigated quickly with this option, without getting bogged down in the concern of how to realize the memories in silicon for emphemral RTL configurations that exist only long enough to run through the ORFS flow to create a table of some characteristics of a design configuration.| 0|
@@ -345,6 +346,7 @@ configuration file.
 - [DFF_LIB_FILE](#DFF_LIB_FILE)
 - [DFF_MAP_FILE](#DFF_MAP_FILE)
 - [LATCH_MAP_FILE](#LATCH_MAP_FILE)
+- [LEC_AUX_VERILOG_FILES](#LEC_AUX_VERILOG_FILES)
 - [MIN_BUF_CELL_AND_PORTS](#MIN_BUF_CELL_AND_PORTS)
 - [POST_SYNTH_TCL](#POST_SYNTH_TCL)
 - [PRE_SYNTH_TCL](#PRE_SYNTH_TCL)
@@ -362,6 +364,7 @@ configuration file.
 - [SYNTH_INSBUF](#SYNTH_INSBUF)
 - [SYNTH_KEEP_MOCKED_MEMORIES](#SYNTH_KEEP_MOCKED_MEMORIES)
 - [SYNTH_KEEP_MODULES](#SYNTH_KEEP_MODULES)
+- [SYNTH_LEC_CHECK](#SYNTH_LEC_CHECK)
 - [SYNTH_MEMORY_MAX_BITS](#SYNTH_MEMORY_MAX_BITS)
 - [SYNTH_MINIMUM_KEEP_SIZE](#SYNTH_MINIMUM_KEEP_SIZE)
 - [SYNTH_MOCK_LARGE_MEMORIES](#SYNTH_MOCK_LARGE_MEMORIES)
