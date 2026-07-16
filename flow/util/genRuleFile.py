@@ -95,6 +95,24 @@ def gen_rule_file(
             "round_value": False,
             "compare": "<=",
         },
+        "synth__design__instance__count__stdcell": {
+            "mode": "padding",
+            "padding": 15,
+            "round_value": True,
+            "compare": "<=",
+        },
+        "synth__timing__setup__ws": {
+            "mode": "period_padding",
+            "padding": 5,
+            "round_value": False,
+            "compare": ">=",
+        },
+        "synth__timing__setup__tns": {
+            "mode": "period_padding",
+            "padding": 20,
+            "round_value": False,
+            "compare": ">=",
+        },
         # clock
         "constraints__clocks__count": {
             "mode": "direct",

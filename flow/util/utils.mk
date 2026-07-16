@@ -3,6 +3,12 @@
 .PHONY: metadata
 metadata: finish metadata-generate metadata-check
 
+# Synthesis-only metadata: generate and check QoR after just the synth
+# stage, without running the full flow. Used with FLOW_VARIANT=syn to
+# gate OpenROAD-SYN synthesis results against rules-syn.json.
+.PHONY: metadata-synth
+metadata-synth: synth metadata-generate metadata-check
+
 .PHONY: metadata-generate
 metadata-generate:
 	mkdir -p $(REPORTS_DIR)
